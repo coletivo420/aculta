@@ -1,4 +1,10 @@
 services:
+  aculta_lms_messenger.transactional_mail_type:
+    class: Drupal\aculta_lms_messenger\Mail\LmsTransactionalNoticeMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+
   Drupal\aculta_lms_messenger\LearningNoticeManagerInterface: '@aculta_lms_messenger.notice_manager'
   aculta_lms_messenger.notice_manager:
     class: Drupal\aculta_lms_messenger\LearningNoticeManager

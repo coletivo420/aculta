@@ -3,18 +3,21 @@
 Adapter opcional entre `aculta_lms` e o sistema de avisos global do
 `aculta_messenger`. Não cria caixa, entidade ou storage paralelo: persiste os
 avisos pessoais em Message, acrescenta-os pela extensão pública do Messenger e
-usa Message Notify para e-mails transacionais.
+usa a API `AcultaMailerInterface` para e-mails transacionais.
 
 ## Estado
 
-Versão 0.1.0-dev.17. Todos os produtores LMS — matrícula, certificado,
+Versão 0.1.0-dev.18. Todos os produtores LMS — matrícula, certificado,
 conclusão, avaliação, submissão, liberação de curso/aula/atividade, feedback e
 prazo — publicam `MessengerNoticeEvent`. O adapter educacional continua
 responsável por resolver destinatários conforme matrícula, publicação,
 permissões e contexto; o consumer encaminha os eventos ao
 `LearningNoticeManager`, que mantém a persistência Message, deduplicação, fila,
-digest e revalidação no acesso. Não existe caminho direto de gravação paralelo
-para os produtores migrados nem storage novo.
+digest e revalidação no acesso. Os e-mails transacionais usam a API
+`AcultaMailerInterface` e tipo de template registrado pelo adapter; o worker
+mantém o lock, revalida o acesso e repete falhas sem chamar `message_notify`
+diretamente. Não existe caminho direto de gravação paralelo para os produtores
+migrados nem storage novo.
 
 Matrícula e certificado têm e-mail transacional mínimo; conclusão, avaliação e
 resposta pendente entram no resumo diário opt-in. Um link revalida acesso e
@@ -34,7 +37,7 @@ gera erro 500. A suíte Unit LMS/Messenger passou com 86 testes / 460 assertions
 (8 depreciações PHPUnit); Kernel MariaDB: 23 / 730 assertions PASS (95
 depreciações Core/contrib). PHPCS Drupal/DrupalPractice PASS.
 
-Unit LMS/Messenger: 22 testes / 119 assertions PASS; Kernel SQLite da
+Unit LMS/Messenger: 24 testes / 137 assertions PASS; Kernel SQLite da
 persistência Message e do round-trip/replay do evento: 2 testes / 18 assertions
 PASS, com duas depreciações upstream de Message. PHPCS Drupal/DrupalPractice
 PASS. O módulo está em Dev e está habilitado no Runtime de teste. Kernel comprova

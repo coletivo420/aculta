@@ -1,3 +1,14 @@
+## 0.1.0-dev.18 — encaminhar e-mail LMS pelo ACULTA Mailer — 2026-10-24
+
+- Worker de avisos transacionais substitui `message_notify.sender` pela API
+  `AcultaMailerInterface`; o adapter registra um tipo próprio com somente
+  resumo e URL como variáveis escalares, e usa o UUID estável do Message para
+  correlação. Revalidação de acesso, lock e retentativas continuam antes/depois
+  do envio. Não houve envio real.
+- Testes de worker comprovam revalidação e construção da mensagem via mock do
+  Mailer; teste do tipo confirma o contrato dos templates. Unit LMS: 24 testes /
+  137 assertions PASS. PHPCS Drupal/DrupalPractice PASS.
+
 ## 0.1.0-dev.17 — centralizar todos os produtores de avisos LMS — 2026-10-24
 
 - Submissão, liberação de curso/aula/atividade, feedback e prazos agora

@@ -11,12 +11,14 @@ use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\message\MessageInterface;
-use Drupal\message_notify\MessageNotifyInterface;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Sends minimum enrollment and certificate notices via the existing mailer.
+ * Sends minimum enrollment and certificate notices through ACULTA Mailer.
  */
 #[QueueWorker(
   id: 'aculta_lms_messenger_email',
@@ -37,7 +39,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
     mixed $plugin_definition,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly LearningNoticeManagerInterface $notices,
-    private readonly MessageNotifyInterface $messageNotify,
+    private readonly AcultaMailerInterface $mailer,
     private readonly LockBackendInterface $lock,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -53,7 +55,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('aculta_lms_messenger.notice_manager'),
-      $container->get('message_notify.sender'),
+      $container->get('aculta_mailer.mailer'),
       $container->get('lock.persistent'),
     );
   }
@@ -92,7 +94,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
    */
   private function send(MessageInterface $message): void {
     $recipient = $this->entityTypeManager->getStorage('user')->load($message->getOwnerId());
-    if ($recipient === NULL || !$recipient->isActive() || !is_string($recipient->getEmail()) || $recipient->getEmail() === '') {
+    if (!$recipient instanceof UserInterface || !$recipient->isActive() || !is_string($recipient->getEmail()) || $recipient->getEmail() === '') {
       $message->set(self::DELIVERY_FIELD, 'failed')
         ->set(self::ATTEMPTS_FIELD, self::MAX_ATTEMPTS)
         ->save();
@@ -111,12 +113,18 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
       return;
     }
     $attempts++;
-    $message->setArguments([
-      '@summary' => (string) $notice['email_summary'],
-      '@url' => $notice['url']->toString(),
-    ]);
     $message->set(self::ATTEMPTS_FIELD, $attempts)->set(self::DELIVERY_FIELD, 'pending')->save();
-    if (!$this->messageNotify->send($message, ['save on success' => FALSE, 'save on fail' => FALSE])) {
+    $mail = new MailMessage(
+      'lms_transactional_notice',
+      (string) $recipient->getEmail(),
+      'pt-br',
+      [
+        'summary' => (string) $notice['email_summary'],
+        'url' => $notice['url']->toString(),
+      ],
+      (string) $message->uuid(),
+    );
+    if (!$this->mailer->send($mail)) {
       $message->set(self::DELIVERY_FIELD, 'failed')->save();
       if ($attempts < self::MAX_ATTEMPTS) {
         throw new \RuntimeException('LMS transactional notification email delivery failed.');
