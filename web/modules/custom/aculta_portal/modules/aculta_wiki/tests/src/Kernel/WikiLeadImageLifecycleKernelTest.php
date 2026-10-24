@@ -1269,6 +1269,15 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('aculta420:context-header', $startBuild['header']['#component']);
     self::assertSame('node.add', $startBuild['header']['#slots']['actions']['#url']->getRouteName());
     self::assertSame('aculta420:content-section', $startBuild['guide']['#component']);
+    $this->container->get('theme_installer')->install(['aculta420']);
+    $this->container->get('config.factory')->getEditable('system.theme')
+      ->set('default', 'aculta420')
+      ->save();
+    $this->container->get('theme.manager')->resetActiveTheme();
+    $startHtml = (string) $this->container->get('renderer')->renderRoot($startBuild);
+    self::assertStringContainsString('Seu espaço de contribuição', $startHtml);
+    self::assertStringContainsString('Criar verbete', $startHtml);
+    self::assertStringContainsString('Contribua com cuidado', $startHtml);
     $intentPage = WikiContributionIntentController::create($this->container)->page($own);
     $ownIntentCards = $intentPage['choices']['#slots']['body']['#slots']['items'];
     self::assertCount(1, $ownIntentCards, 'An editable own entry offers only the native full-edit action.');
