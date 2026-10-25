@@ -1,3 +1,16 @@
+## 0.1.1-dev.354 — retry da fila Wiki pelo Core Cron
+
+O Kernel da fila Wiki agora registra o plugin de teste no queue worker manager e
+executa `Cron::run()` com o worker de produção delegado. Uma falha transitória
+fica na DatabaseQueue; após expirar a lease do fixture, a rodada seguinte do
+Core Cron entrega e remove o item, persistindo tentativa e estado finais.
+
+Validação: suíte `tests/src/Integration` **107 testes / 1.336 assertions PASS**
+e `WikiNoticeEmailQueueKernelTest` **3/83 PASS** no MariaDB dedicado (cinco
+depreciações upstream de Core/contrib e sete notices PHPUnit no conjunto);
+PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime e
+transporte SMTP externo não utilizados.
+
 ## 0.1.1-dev.353 — cobrir o esgotamento após falha transitória
 
 Adicionada cobertura para o último erro transitório nas filas de e-mail direto

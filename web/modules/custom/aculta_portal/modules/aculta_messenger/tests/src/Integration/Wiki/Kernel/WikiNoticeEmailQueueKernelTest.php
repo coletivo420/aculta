@@ -45,6 +45,7 @@ final class WikiNoticeEmailQueueKernelTest extends KernelTestBase {
     'filter',
     'options',
     'message',
+    'aculta_messenger_wiki_cron_test',
   ];
 
   /**
@@ -172,6 +173,90 @@ final class WikiNoticeEmailQueueKernelTest extends KernelTestBase {
     self::assertSame('sent', $message->get('field_aculta_msg_delivery')->value);
     self::assertSame(2, (int) $message->get('field_aculta_messenger_attempts')->value);
     self::assertSame(0, $queue->numberOfItems());
+  }
+
+  /**
+   * Core Cron retains a failed item and completes it on a later invocation.
+   */
+  public function testCoreCronRetriesWikiEmailQueueItem(): void {
+    $user = User::create([
+      'name' => 'wiki_cron_recipient',
+      'mail' => 'wiki-cron@example.invalid',
+      'status' => 1,
+    ]);
+    $user->save();
+    $message = Message::create([
+      'template' => WikiNoticeManager::TEMPLATE,
+      'uid' => $user->id(),
+      'field_aculta_wiki_event_type' => 'proposal_outcome',
+      'field_aculta_wiki_source_uuid' => 'proposal-cron-uuid',
+      'field_aculta_wiki_event_version' => 'revision-1',
+      'field_aculta_wiki_read' => 0,
+      'field_aculta_wiki_digest_sent' => 1,
+      'field_aculta_msg_delivery' => 'pending',
+      'field_aculta_messenger_attempts' => 0,
+    ]);
+    $message->save();
+
+    $notices = $this->createMock(WikiNoticeManagerInterface::class);
+    $notices->expects(self::exactly(2))->method('resolve')->willReturn([
+      'email_summary' => 'Uma atualização da Wiki está disponível.',
+      'url' => Url::fromUri('https://aculta.example/wiki/proposta'),
+    ]);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->expects(self::exactly(2))->method('emailMode')
+      ->with((int) $user->id(), 'wiki')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $attempt = 0;
+    $mailer->expects(self::exactly(2))->method('deliver')->willReturnCallback(
+      static function (MailMessage $mail) use (&$attempt): SendResult {
+        self::assertSame('wiki_personal_notice', $mail->type);
+        if ($attempt++ === 0) {
+          throw new \RuntimeException('temporary transport failure');
+        }
+        return SendResult::sent();
+      },
+    );
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lockId = 'aculta_wiki_email:' . $message->id();
+    $lock->expects(self::exactly(2))->method('acquire')->with($lockId, 180.0)->willReturn(TRUE);
+    $lock->expects(self::exactly(2))->method('release')->with($lockId);
+    $worker = new WikiNoticeEmailWorker(
+      [],
+      'aculta_wiki_messenger_email',
+      ['cron' => ['time' => 60]],
+      $this->container->get('entity_type.manager'),
+      $notices,
+      $preferences,
+      $this->emailPolicy(TRUE),
+      $mailer,
+      $lock,
+    );
+    $this->container->set('aculta_messenger_test.wiki_notice_email_worker', $worker);
+
+    /** @var \Drupal\Core\Queue\QueueFactory $queueFactory */
+    $queueFactory = $this->container->get('queue');
+    $queue = $queueFactory->get('aculta_wiki_messenger_email');
+    $queue->createItem(['message_id' => (int) $message->id()]);
+
+    $cron = $this->container->get('cron');
+    self::assertTrue($cron->run());
+    self::assertSame(1, $queue->numberOfItems(), 'Core Cron keeps a retryable transport failure queued.');
+    $storedMessage = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
+    self::assertSame('failed', $storedMessage->get('field_aculta_msg_delivery')->value);
+    self::assertSame(1, (int) $storedMessage->get('field_aculta_messenger_attempts')->value);
+
+    // Expire only this fixture's queue lease to model the next scheduled cron.
+    $this->container->get('database')->update('queue')
+      ->fields(['expire' => 0])
+      ->condition('name', 'aculta_wiki_messenger_email')
+      ->execute();
+    self::assertTrue($cron->run());
+
+    self::assertSame(0, $queue->numberOfItems());
+    $storedMessage = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
+    self::assertSame('sent', $storedMessage->get('field_aculta_msg_delivery')->value);
+    self::assertSame(2, (int) $storedMessage->get('field_aculta_messenger_attempts')->value);
   }
 
   /**
