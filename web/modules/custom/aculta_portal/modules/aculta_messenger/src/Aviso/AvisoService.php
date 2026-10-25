@@ -133,6 +133,22 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
    *   Accessible notices for the account.
    */
   public function listarDaPessoa(int $uid, int $limite = self::PERSONAL_NOTICE_LIST_LIMIT, ?string $readState = NULL): array {
+    return $this->listarDaPessoaPaginada($uid, $limite, 0, $readState)['items'];
+  }
+
+  /**
+   * Loads one authorized page of Forum notices for an account.
+   *
+   * The extra candidate determines whether a next page exists. Access checks
+   * remain after loading the page so hidden topics never become render items.
+   *
+   * @return array{items: \Drupal\aculta_messenger\Entity\Aviso[], has_next: bool}
+   *   Accessible notices for this page and whether another candidate page is
+   *   available.
+   */
+  public function listarDaPessoaPaginada(int $uid, int $limite, int $offset, ?string $readState = NULL): array {
+    $limite = max(1, $limite);
+    $offset = max(0, $offset);
     $query = $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
       ->accessCheck(FALSE)
       ->condition('uid', $uid);
@@ -142,8 +158,11 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
     $ids = $query
       ->sort('contador_site', 'DESC')
       ->sort('changed', 'DESC')
-      ->range(0, $limite)
+      ->sort('id', 'DESC')
+      ->range($offset, $limite + 1)
       ->execute();
+    $hasNext = count($ids) > $limite;
+    $ids = array_slice($ids, 0, $limite);
     $notices = $this->entityTypeManager->getStorage('aculta_aviso')->loadMultiple($ids);
     $topicIds = [];
     foreach ($notices as $aviso) {
@@ -152,12 +171,13 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
     $topics = $this->entityTypeManager->getStorage('node')->loadMultiple(array_keys($topicIds));
     $recipient = $this->entityTypeManager->getStorage('user')->load($uid);
     if (!$recipient instanceof UserInterface || !$recipient->isActive()) {
-      return [];
+      return ['items' => [], 'has_next' => FALSE];
     }
-    return array_values(array_filter($notices, fn(Aviso $aviso): bool => $this->accessPolicy->canViewTopic(
+    $accessible = array_values(array_filter($notices, fn(Aviso $aviso): bool => $this->accessPolicy->canViewTopic(
       $topics[(int) $aviso->get('assunto_nid')->value] ?? NULL,
       $recipient,
     )));
+    return ['items' => $accessible, 'has_next' => $hasNext];
   }
 
   /**

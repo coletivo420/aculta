@@ -2074,3 +2074,9 @@ O contador do header agora carrega estados pessoais de dispensa em lote, após f
 
 Validação: `MessengerCountsTest` 3/27 PASS; combinado com `PersistentNoticeAccessTest` 8/38 PASS; Unit Messenger 155/968 e `AcultaMessengerServiceProviderTest` 4/14 PASS; PHPCS dos arquivos novos/serviço, PHP lint, índice e gate Drupal 11+ (1.155 checks) PASS. O PHPCS de `MessagesController` mantém baseline anterior; Runtime/navegador não executados.
 
+## 0.1.1-dev.206 — paginar avisos do Fórum na central da Conta
+
+A central oferece navegação anterior/seguinte quando a origem Fórum está selecionada, permitindo consultar históricos além dos 100 agregados por página. A consulta aplica o estado de leitura antes do limite, ordena com desempate estável e revalida acesso aos tópicos antes de renderizar. Gaveta e origens com adapters próprios mantêm seu fluxo; paginação unificada das demais origens ainda está pendente.
+
+Validação: `ForumNoticeIdempotencyKernelTest` **36 testes / 834 assertions PASS** em MariaDB dedicado, incluindo a cobertura de páginas completas e sem sobreposição. PHP lint e PHPCS Drupal/DrupalPractice nos arquivos sem baseline PASS; controllers mantêm seus baselines preexistentes (MessagesController 95/65; AvisosMensagensController 15/12). `git diff --check` e índice de status PASS. Browser, Runtime e paginação das outras origens não executados.
+

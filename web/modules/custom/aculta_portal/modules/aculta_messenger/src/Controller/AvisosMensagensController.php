@@ -59,14 +59,19 @@ final class AvisosMensagensController extends ControllerBase {
       $aba = 'avisos';
     }
     $uid = (int) $this->usuarioAtual->id();
-    $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
+    $query = $this->requestStack->getCurrentRequest()?->query->all() ?? [];
+    $filters = $this->noticeListFilter->normalize($query);
     $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
+    $rawForumOffset = $query['forum_offset'] ?? 0;
+    $forumOffset = is_int($rawForumOffset) ? $rawForumOffset
+      : (is_string($rawForumOffset) && ctype_digit($rawForumOffset) ? (int) $rawForumOffset : 0);
+    $pagination = ['forum_offset' => min(1_000_000, max(0, $forumOffset))];
     $naoLidosAvisos = $this->avisos->naoLidosTotal($uid);
     $naoLidasConversas = $this->conversas->count();
 
     $conteudo = $aba === 'mensagens'
       ? $this->conteudoMensagens($naoLidasConversas)
-      : $this->conteudoAvisos($filters);
+      : $this->conteudoAvisos($filters, $pagination);
 
     return [
       '#cache' => ['contexts' => ['user'], 'max-age' => 0, 'tags' => ['aculta_aviso_list']],
@@ -122,9 +127,9 @@ final class AvisosMensagensController extends ControllerBase {
    * Aba Avisos: a mesma lista da gaveta da barra (comunicados, avisos da pessoa e alertas), com o mesmo
    * comportamento: os links abrem o detalhe e a dispensa segue a regra da gaveta.
    */
-  private function conteudoAvisos(array $filters): array {
+  private function conteudoAvisos(array $filters, array $pagination): array {
     // Dentro da própria aba a lista já é completa: sem o link Ver todos.
-    return $this->mensagens->alertsBuild($filters, TRUE)['build'];
+    return $this->mensagens->alertsBuild($filters, TRUE, FALSE, $pagination)['build'];
   }
 
   /**

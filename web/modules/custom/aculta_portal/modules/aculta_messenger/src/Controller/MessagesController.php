@@ -719,11 +719,13 @@ final class MessagesController extends ControllerBase {
    * @param bool $includeFilters
    *   Whether to include drawer filter links with working account-page
    *   fallbacks.
+   * @param array $pagination
+   *   Optional page offsets for the account notice list.
    *
    * @return array{build: array, contador: int}
    *   Rendered list and current unread notice count.
    */
-  public function alertsBuild(array $filters = [], bool $includeReadActions = FALSE, bool $includeFilters = FALSE): array {
+  public function alertsBuild(array $filters = [], bool $includeReadActions = FALSE, bool $includeFilters = FALSE, array $pagination = []): array {
     $filters = $this->noticeListFilter->normalize($filters);
     $hasFilters = $filters['origem'] !== '' || $filters['leitura'] !== '';
     $storage = $this->entityTypes->getStorage('site_alert');
@@ -776,16 +778,30 @@ final class MessagesController extends ControllerBase {
     }
 
     // Avisos por pessoa (respostas e atualizações de tópicos seguidos): só da própria pessoa, com link para a página.
+    $forumHasNextPage = FALSE;
+    $forumOffset = max(0, (int) ($pagination['forum_offset'] ?? 0));
     if ($this->account->isAuthenticated()) {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0)->addCacheTags(['aculta_aviso_list']);
       $personalNoticeLimit = $includeReadActions
         ? AvisoService::PERSONAL_NOTICE_LIST_LIMIT
         : self::PERSONAL_NOTICE_PREVIEW_LIMIT;
-      $pessoais = $this->avisos->listarDaPessoa(
-        (int) $this->account->id(),
-        $personalNoticeLimit,
-        $filters['leitura'],
-      );
+      if ($includeReadActions && $filters['origem'] === 'forum') {
+        $forumPage = $this->avisos->listarDaPessoaPaginada(
+          (int) $this->account->id(),
+          $personalNoticeLimit,
+          $forumOffset,
+          $filters['leitura'],
+        );
+        $pessoais = $forumPage['items'];
+        $forumHasNextPage = $forumPage['has_next'];
+      }
+      else {
+        $pessoais = $this->avisos->listarDaPessoa(
+          (int) $this->account->id(),
+          $personalNoticeLimit,
+          $filters['leitura'],
+        );
+      }
       foreach ($pessoais as $aviso) {
         $nid = (int) $aviso->get('assunto_nid')->value;
         $contador = (int) $aviso->get('contador_site')->value;
@@ -878,11 +894,54 @@ final class MessagesController extends ControllerBase {
       ];
     }
 
+    $forumPager = [];
+    if ($includeReadActions && $filters['origem'] === 'forum'
+      && ($forumOffset > 0 || $forumHasNextPage)) {
+      $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
+      $pageSize = AvisoService::PERSONAL_NOTICE_LIST_LIMIT;
+      if ($forumOffset > 0) {
+        $previousUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
+          'query' => $filterQuery + ['forum_offset' => max(0, $forumOffset - $pageSize)],
+        ]);
+        $forumPager[] = PortalLinkElement::build(
+          $this->translation->translate('Avisos anteriores'),
+          $previousUrl,
+          ['data-portal-ui' => 'account-data-link'],
+        );
+      }
+      if ($forumHasNextPage) {
+        $nextUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
+          'query' => $filterQuery + ['forum_offset' => $forumOffset + $pageSize],
+        ]);
+        $forumPager[] = PortalLinkElement::build(
+          $this->translation->translate('Avisos seguintes'),
+          $nextUrl,
+          ['data-portal-ui' => 'account-data-link'],
+        );
+      }
+    }
+
+    $forumPagerBuild = [];
+    if ($forumPager !== []) {
+      $forumPagerBuild = [
+        '#type' => 'container',
+        '#attributes' => [
+          'role' => 'navigation',
+          'aria-label' => $this->translation->translate('Paginação dos avisos do Fórum'),
+        ],
+        'links' => [
+          '#theme' => 'item_list',
+          '#items' => $forumPager,
+        ],
+      ];
+    }
+
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'messenger-preview'],
       'filters' => $includeFilters ? $this->alertsFilterControlsBuild($filters) : [],
       'alerts' => ['#theme' => 'item_list', '#items' => $items],
+      'forum_pager' => $forumPagerBuild,
     ];
     $cacheability->applyTo($build);
     return [

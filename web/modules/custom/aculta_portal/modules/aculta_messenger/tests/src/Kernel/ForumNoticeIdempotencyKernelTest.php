@@ -211,6 +211,32 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Forum notice pages advance by a stable offset and report the next page.
+   */
+  public function testPersonalNoticePagesCoverTheFullAccessibleForumList(): void {
+    $author = $this->createUser('autor_paginas_central');
+    $follower = $this->createUser('seguidor_paginas_central');
+    $uid = (int) $follower->id();
+    $service = $this->createAvisoService([$uid], $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE));
+
+    for ($index = 1; $index <= 6; $index++) {
+      $topic = $this->createTopic('Tópico paginado ' . $index);
+      self::assertSame(1, $service->registrarResposta($this->createPersistedComment($topic, (int) $author->id())));
+    }
+
+    $firstPage = $service->listarDaPessoaPaginada($uid, 3, 0);
+    $secondPage = $service->listarDaPessoaPaginada($uid, 3, 3);
+    self::assertCount(3, $firstPage['items']);
+    self::assertTrue($firstPage['has_next']);
+    self::assertCount(3, $secondPage['items']);
+    self::assertFalse($secondPage['has_next']);
+    $firstTopicIds = array_map(static fn(Aviso $notice): int => (int) $notice->get('assunto_nid')->value, $firstPage['items']);
+    $secondTopicIds = array_map(static fn(Aviso $notice): int => (int) $notice->get('assunto_nid')->value, $secondPage['items']);
+    self::assertSame([], array_intersect($firstTopicIds, $secondTopicIds));
+    self::assertCount(6, array_unique([...$firstTopicIds, ...$secondTopicIds]));
+  }
+
+  /**
    * The public event contract persists one idempotent ForumPost notice.
    */
   public function testForumPostEventRoundTripUsesTheSharedNoticeAggregate(): void {
