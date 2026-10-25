@@ -1,3 +1,9 @@
+## 0.1.1-dev.272 — unificar contagem da central de avisos
+
+O badge da aba de Avisos agora conta todas as fontes da central: alertas ativos acessíveis, comunicados não lidos e avisos pessoais do Fórum e adapters. A gaveta e a central usam o mesmo agregador; abrir a aba de Mensagens calcula o total sem construir a lista de avisos.
+
+Validação: `MessengerCountsTest` **4/37 PASS**, Unit Messenger **273/2.154 PASS**, PHP lint PASS, PHPCS dos serviços e teste PASS. Os controllers mantêm seus baselines PHPCS (MessagesController 93/65; AvisosMensagensController 15/12), sem aumento. Kernel, Browser e Runtime não executados.
+
 ## 0.1.1-dev.271 — respeitar padrão administrativo do digest privado
 
 Contas sem preferência individual agora recebem o modo padrão `digest` definido pela administração para mensagens privadas, desde que o resumo semanal esteja permitido. Antes, esse padrão era convertido em envio direto, apesar de o formulário administrativo oferecer a opção semanal.

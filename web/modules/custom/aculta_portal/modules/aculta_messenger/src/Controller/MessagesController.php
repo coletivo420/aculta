@@ -1107,10 +1107,22 @@ final class MessagesController extends ControllerBase {
     $cacheability->applyTo($build);
     return [
       'build' => $build,
-      'contador' => $activeAlertCount
-        + $this->counts->unreadPersistentNoticeCount($this->account)
-        + ($this->account->isAuthenticated() ? $this->avisos->naoLidosTotal((int) $this->account->id()) : 0),
+      'contador' => $this->counts->totalUnreadNoticeCount(
+        $this->account,
+        $this->account->isAuthenticated() ? $this->avisos->naoLidosTotal((int) $this->account->id()) : 0,
+        $activeAlertCount,
+      ),
     ];
+  }
+
+  /**
+   * Counts unread notices for the account tab badge across every source.
+   */
+  public function unreadNoticeCount(): int {
+    $personalNoticeCount = $this->account->isAuthenticated()
+      ? $this->avisos->naoLidosTotal((int) $this->account->id())
+      : 0;
+    return $this->counts->totalUnreadNoticeCount($this->account, $personalNoticeCount);
   }
 
   /**

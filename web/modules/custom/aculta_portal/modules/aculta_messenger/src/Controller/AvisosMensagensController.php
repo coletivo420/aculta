@@ -8,7 +8,6 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Controller\MessagesController;
 use Drupal\aculta_messenger\Form\FriendRequestsForm;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
@@ -22,9 +21,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Central "Avisos/Mensagens" dentro de Minha conta (ACULTA Messenger, F5.2).
  *
- * Duas abas no mesmo padrão de Atividade e Meus Dados: Avisos (avisos por pessoa, só da própria conta) e Mensagens
- * (conversas, que continuam no sistema de mensagens; aqui só aparece a contagem e o link para abri-las). Os dois
- * sistemas não se misturam: esta página não grava nada e não cria conversa.
+ * Duas abas no mesmo padrão de Atividade e Meus Dados: Avisos (central unificada
+ * das origens acessíveis à conta) e Mensagens (conversas, que continuam no
+ * sistema de mensagens; aqui só aparece a contagem e o link para abri-las). Os
+ * dois sistemas não se misturam: esta página não cria conversas.
  */
 final class AvisosMensagensController extends ControllerBase {
 
@@ -32,7 +32,6 @@ final class AvisosMensagensController extends ControllerBase {
   public const ABAS = ['avisos' => 'Avisos', 'mensagens' => 'Mensagens'];
 
   public function __construct(
-    private readonly AvisoService $avisos,
     private readonly UnreadThreadCounter $conversas,
     private readonly AccountInterface $usuarioAtual,
     private readonly MessagesController $mensagens,
@@ -43,7 +42,6 @@ final class AvisosMensagensController extends ControllerBase {
 
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_messenger.aviso_service'),
       $container->get('aculta_messenger.unread_thread_counter'),
       $container->get('current_user'),
       $container->get('class_resolver')->getInstanceFromDefinition(MessagesController::class),
@@ -84,12 +82,16 @@ final class AvisosMensagensController extends ControllerBase {
       'notice_offset' => min(1_000_000, max(0, $noticeOffset)),
       'notice_offsets' => $originOffsets,
     ];
-    $naoLidosAvisos = $this->avisos->naoLidosTotal($uid);
     $naoLidasConversas = $this->conversas->count();
-
-    $conteudo = $aba === 'mensagens'
-      ? $this->conteudoMensagens($naoLidasConversas)
-      : $this->conteudoAvisos($filters, $pagination);
+    if ($aba === 'mensagens') {
+      $conteudo = $this->conteudoMensagens($naoLidasConversas);
+      $naoLidosAvisos = $this->mensagens->unreadNoticeCount();
+    }
+    else {
+      $noticeResult = $this->conteudoAvisos($filters, $pagination);
+      $conteudo = $noticeResult['build'];
+      $naoLidosAvisos = $noticeResult['contador'];
+    }
 
     return [
       '#cache' => ['contexts' => ['user'], 'max-age' => 0, 'tags' => ['aculta_aviso_list']],
@@ -147,7 +149,7 @@ final class AvisosMensagensController extends ControllerBase {
    */
   private function conteudoAvisos(array $filters, array $pagination): array {
     // Dentro da própria aba a lista já é completa: sem o link Ver todos.
-    return $this->mensagens->alertsBuild($filters, TRUE, FALSE, $pagination)['build'];
+    return $this->mensagens->alertsBuild($filters, TRUE, FALSE, $pagination);
   }
 
   /**

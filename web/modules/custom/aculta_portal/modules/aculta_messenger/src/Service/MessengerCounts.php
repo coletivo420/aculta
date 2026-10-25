@@ -70,6 +70,23 @@ final class MessengerCounts {
   }
 
   /**
+   * Counts all unread items represented by the unified notice center.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Account whose currently accessible items are counted.
+   * @param int $personalNoticeCount
+   *   Accessible unread Forum and adapter notices.
+   * @param int|null $activeAlertCount
+   *   Optional count already calculated for the current alert list.
+   */
+  public function totalUnreadNoticeCount(AccountInterface $account, int $personalNoticeCount, ?int $activeAlertCount = NULL): int {
+    $activeAlertCount ??= $this->visibleActiveAlertCount($account, new CacheableMetadata());
+    return max(0, $activeAlertCount)
+      + $this->unreadPersistentNoticeCount($account)
+      + max(0, $personalNoticeCount);
+  }
+
+  /**
    * Counts visible, published persistent notices not marked as read.
    */
   public function unreadPersistentNoticeCount(AccountInterface $account): int {
