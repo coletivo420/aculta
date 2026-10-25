@@ -15,6 +15,7 @@ use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\message_notify\MessageNotifyInterface;
+use Drupal\user\UserInterface;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_messenger\Mail\PrivateMessageNoticeMailType;
@@ -22,6 +23,7 @@ use Drupal\aculta_messenger\Service\MessengerMailDelivery;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -56,6 +58,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly LockBackendInterface $lock,
     private readonly AvisoPreferenciasInterface $preferences,
+    private readonly EmailConfirmationPolicy $emailPolicy,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -74,6 +77,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       $container->get('aculta_portal.domain_purpose'),
       $container->get('lock.persistent'),
       $container->get('aculta_messenger.aviso_preferencias'),
+      $container->get('aculta_portal.email_confirmation_policy'),
     );
   }
 
@@ -128,7 +132,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
    * Creates or retries the persisted event for one authorized recipient. */
   private function notifyRecipient(PrivateMessageInterface $privateMessage, PrivateMessageThreadInterface $thread, int $messageId, int $senderId, int $recipientId, bool $mailerManaged): void {
     $recipient = $this->entityTypeManager->getStorage('user')->load($recipientId);
-    if ($recipient === NULL || !$recipient->isActive()
+    if (!$recipient instanceof UserInterface || !$recipient->isActive()
       || !$recipient->hasPermission('use private messaging system')
       || !$recipient->hasPermission('access user profiles')
       || !$thread->access('view', $recipient, TRUE)->isAllowed()
@@ -148,11 +152,10 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
 
     // A private conversation always remains available in the site inbox;
     // this category controls only the supplemental minimal email.
-    if ($this->preferences->emailMode($recipientId, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
-      !== AvisoPreferencias::EMAIL_IMMEDIATE) {
-      return;
-    }
-    if (!is_string($recipient->getEmail()) || $recipient->getEmail() === '') {
+    if (!filter_var((string) $recipient->getEmail(), FILTER_VALIDATE_EMAIL)
+      || !$this->emailPolicy->isConfirmed($recipient)
+      || $this->preferences->emailMode($recipientId, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
+        !== AvisoPreferencias::EMAIL_IMMEDIATE) {
       return;
     }
 

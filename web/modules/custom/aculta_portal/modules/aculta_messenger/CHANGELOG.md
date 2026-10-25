@@ -1,3 +1,9 @@
+## 0.1.1-dev.244 — exigir e-mail confirmado para aviso de mensagem privada
+
+O worker de mensagens privadas agora revalida se o destinatário é uma conta ativa, tem acesso atual à thread, possui e-mail válido e confirmado, não está bloqueado e mantém a preferência de entrega direta antes de criar/enviar o aviso. O e-mail continua mínimo e sem conteúdo da conversa. Itens não confirmados não chegam ao Mailer e não consomem tentativa.
+
+Validação: `PrivateMessageNotificationWorkerTest` **6 testes / 111 assertions PASS**, incluindo confirmação e supressão do e-mail não confirmado; Unit Messenger completo **227 testes / 1.671 assertions PASS**; PHPCS Drupal/DrupalPractice, índice de status e diff check PASS. Sem Runtime ou SMTP.
+
 ## 0.1.1-dev.243 — preferências comuns para mensagens privadas e amizade
 
 Mensagens privadas e avisos de amizade passam a usar categorias administráveis no núcleo de preferências. A pessoa escolhe entre somente no site e site mais e-mail direto; essas categorias não oferecem digest. O formulário administrativo pode bloquear o envio direto sem remover a opção site-only. Conversas privadas e avisos de amizade permanecem no site independentemente do e-mail. Os workers revalidam consentimento atual e confirmação de e-mail antes do transporte; opt-out cancela sem contar tentativa. A preferência antiga de Private Message continua como fallback para contas sem escolha nova.

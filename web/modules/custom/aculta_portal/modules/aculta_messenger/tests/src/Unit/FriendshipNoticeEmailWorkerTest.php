@@ -194,6 +194,29 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * An unconfirmed email cancels friendship delivery without an attempt.
+   */
+  public function testUnconfirmedEmailSuppressesDeliveryWithoutAttempt(): void {
+    $state = ['status' => 'pending', 'attempts' => 0, 'mailer_managed' => TRUE];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    [$worker] = $this->deliveryWorker($state, $notifier, $mailer, AvisoPreferencias::EMAIL_IMMEDIATE, FALSE);
+
+    try {
+      $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertSame('cancelled', $state['status']);
+    self::assertSame(0, $state['attempts']);
+  }
+
+  /**
    * A transient retry reuses the same deterministic Mailer correlation.
    */
   public function testMailerManagedRetryKeepsTheSameCorrelation(): void {
@@ -308,11 +331,13 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
    *   Optional mocked ACULTA Mailer.
    * @param string $emailMode
    *   Current friendship email mode.
+   * @param bool $emailConfirmed
+   *   Whether the recipient email is confirmed.
    *
    * @return array{0: FriendshipNoticeEmailWorker, 1: MessageInterface}
    *   The worker and persisted message mock.
    */
-  private function deliveryWorker(array &$state, ?MessageNotifyInterface $notifier = NULL, ?AcultaMailerInterface $mailer = NULL, string $emailMode = AvisoPreferencias::EMAIL_IMMEDIATE): array {
+  private function deliveryWorker(array &$state, ?MessageNotifyInterface $notifier = NULL, ?AcultaMailerInterface $mailer = NULL, string $emailMode = AvisoPreferencias::EMAIL_IMMEDIATE, bool $emailConfirmed = TRUE): array {
     $message = $this->createMock(MessageInterface::class);
     $message->method('bundle')->willReturn(FriendshipNoticeSubscriber::TEMPLATE);
     $message->method('id')->willReturn('8');
@@ -378,7 +403,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     $preference->method('emailMode')->with(52, AvisoPreferencias::EMAIL_FRIENDSHIP)
       ->willReturn($emailMode);
     $emailUserData = $this->createMock(UserDataInterface::class);
-    $emailUserData->method('get')->with('aculta_portal', 52, 'email_confirmed')->willReturn(TRUE);
+    $emailUserData->method('get')->with('aculta_portal', 52, 'email_confirmed')->willReturn($emailConfirmed);
     $emailPolicy = new EmailConfirmationPolicy($emailUserData, $entityTypeManager, $this->createMock(ModuleHandlerInterface::class));
     return [
       $this->worker($entityTypeManager, $notifier ?? $this->createMock(MessageNotifyInterface::class), mailer: $mailer, preferences: $preference, emailPolicy: $emailPolicy),

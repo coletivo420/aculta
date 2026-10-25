@@ -8,12 +8,14 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\aculta_messenger\Plugin\QueueWorker\PrivateMessageNotificationWorker;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
@@ -29,6 +31,8 @@ use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
+use Drupal\user\UserDataInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -72,6 +76,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $privateMessageStorage->method('load')->with(15)->willReturn($privateMessage);
 
     $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('id')->willReturn('2');
     $recipient->method('isActive')->willReturn(TRUE);
     $recipient->method('hasPermission')->willReturn(TRUE);
     $recipient->method('getEmail')->willReturn('member@example.test');
@@ -141,6 +146,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       $this->domainPurposeManager($entityTypes),
       $lock,
       $preferences,
+      $this->emailPolicy($entityTypes),
     );
     $worker->processItem(['private_message_id' => 15]);
 
@@ -152,13 +158,15 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
   /**
    * New notices use the Mailer and omit private message content.
    */
-  public function testMailerManagedNoticeUsesPrivateTemplate(): void {
+  #[DataProvider('emailConfirmationCases')]
+  public function testMailerManagedNoticeUsesPrivateTemplate(bool $emailConfirmed): void {
     $privateMessage = $this->createMock(PrivateMessageInterface::class);
     $privateMessage->method('getOwnerId')->willReturn(1);
     $privateMessage->method('getCreatedTime')->willReturn(101);
     $privateMessageStorage = $this->createMock(EntityStorageInterface::class);
     $privateMessageStorage->method('load')->with(15)->willReturn($privateMessage);
     $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('id')->willReturn('2');
     $recipient->method('isActive')->willReturn(TRUE);
     $recipient->method('hasPermission')->willReturn(TRUE);
     $recipient->method('getEmail')->willReturn('member@example.test');
@@ -192,7 +200,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $notice->method('set')->willReturnSelf();
     $notice->method('setArguments')->willReturnSelf();
     $notice->method('save')->willReturn(1);
-    $noticeStorage->expects(self::once())->method('create')
+    $noticeStorage->expects($emailConfirmed ? self::once() : self::never())->method('create')
       ->with(self::callback(static fn(array $values): bool => ($values['field_aculta_mailer_managed'] ?? FALSE) === TRUE))
       ->willReturn($notice);
 
@@ -216,7 +224,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $legacy = $this->createMock(MessageNotifyInterface::class);
     $legacy->expects(self::never())->method('send');
     $mailer = $this->createMock(AcultaMailerInterface::class);
-    $mailer->expects(self::once())->method('deliver')
+    $mailer->expects($emailConfirmed ? self::once() : self::never())->method('deliver')
       ->with(self::callback(static fn(MailMessage $mail): bool =>
         $mail->type === 'private_message_notice'
         && $mail->to === 'member@example.test'
@@ -224,7 +232,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
         && !str_contains(serialize($mail->context), 'private body')))
       ->willReturn(SendResult::sent());
     $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-    $urlGenerator->expects(self::exactly(2))->method('generateFromRoute')
+    $urlGenerator->expects($emailConfirmed ? self::exactly(2) : self::never())->method('generateFromRoute')
       ->with('aculta_portal.dashboard')
       ->willReturn('https://account.example.test/minha-conta');
     $container = new ContainerBuilder();
@@ -233,7 +241,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     try {
       $worker = new PrivateMessageNotificationWorker(
         [], 'aculta_msg_private_notification', [], $entityTypes, $messageService, $legacy, $mailer,
-        $this->domainPurposeManager($entityTypes), $lock, $preferences,
+        $this->domainPurposeManager($entityTypes), $lock, $preferences, $this->emailPolicy($entityTypes, $emailConfirmed),
       );
       $worker->processItem(['private_message_id' => 15, 'mailer_managed' => TRUE]);
     }
@@ -272,6 +280,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $privateMessageStorage = $this->createMock(EntityStorageInterface::class);
     $privateMessageStorage->method('load')->with(15)->willReturn($privateMessage);
     $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('id')->willReturn('2');
     $recipient->method('isActive')->willReturn(TRUE);
     $recipient->method('hasPermission')->willReturn(TRUE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
@@ -337,9 +346,26 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       $domainPurposes,
       $lock,
       $this->createMock(AvisoPreferenciasInterface::class),
+      $this->emailPolicy($entities),
     );
 
     $worker->processItem(['private_message_id' => 15, 'mailer_managed' => TRUE]);
+  }
+
+  /**
+   * Provides both email confirmation states for the notification worker.
+   */
+  public static function emailConfirmationCases(): array {
+    return ['confirmed email' => [TRUE], 'unconfirmed email' => [FALSE]];
+  }
+
+  /**
+   * Creates the configured confirmation policy for a test recipient.
+   */
+  private function emailPolicy(EntityTypeManagerInterface $entityTypes, bool $confirmed = TRUE): EmailConfirmationPolicy {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturn($confirmed);
+    return new EmailConfirmationPolicy($userData, $entityTypes, $this->createMock(ModuleHandlerInterface::class));
   }
 
   /**
