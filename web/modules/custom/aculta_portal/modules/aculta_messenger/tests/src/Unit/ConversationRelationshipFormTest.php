@@ -193,6 +193,47 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
   }
 
   /**
+   * Clear-history controls render only in the conversation group menu.
+   */
+  public function testClearHistoryControlsAreLimitedToGroupMenu(): void {
+    $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('id')->willReturn(42);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $target = $this->activeUser(84);
+    $users = $this->createMock(EntityStorageInterface::class);
+    $users->method('load')->with(84)->willReturn($target);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('user')->willReturn($users);
+    $friendships = $this->createMock(FriendshipManagerInterface::class);
+    $friendships->method('areFriendsWith')->with(84)->willReturn(FALSE);
+    $friendships->method('getRelationshipWith')->with(84)->willReturn(NULL);
+    $bans = $this->createMock(PrivateMessageBanManagerInterface::class);
+    $bans->method('isBanned')->with(84)->willReturn(FALSE);
+    $form = new ConversationRelationshipForm(
+      $friendships,
+      $bans,
+      $account,
+      $entities,
+      $this->createMock(CacheTagsInvalidatorInterface::class),
+      $this->createMock(CsrfTokenGenerator::class),
+    );
+    (new \ReflectionProperty(FormBase::class, 'stringTranslation'))
+      ->setValue($form, $this->getStringTranslationStub());
+
+    $profileState = new FormState();
+    $profileState->set('profile', TRUE);
+    $profileState->set('return_path', '/members/84');
+    $profile = $form->buildForm([], $profileState, 84);
+    self::assertArrayNotHasKey('clear', $profile['actions']);
+    self::assertArrayNotHasKey('clear_confirm', $profile['actions']);
+
+    $groupState = new FormState();
+    $groupState->set('group', TRUE);
+    $group = $form->buildForm([], $groupState);
+    self::assertArrayHasKey('clear', $group['actions']);
+  }
+
+  /**
    * A removed participant cannot change relationship state.
    */
   public function testMemberActionRechecksThreadMembershipBeforeMutation(): void {

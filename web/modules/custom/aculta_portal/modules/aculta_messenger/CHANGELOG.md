@@ -1,10 +1,12 @@
 ## 0.1.1-dev.316 — concluir gate PHPCS do formulário de relacionamento
 
 Comentários e chamadas do `ConversationRelationshipForm` foram reformatados
-para seguir Drupal/DrupalPractice. O fluxo de ações, permissões e persistência
-permanece igual ao Dev.315.
+para seguir Drupal/DrupalPractice. Um teste também comprova que os controles
+de limpeza são renderizados no menu de grupo, mas não no perfil. O fluxo de
+ações, permissões e persistência permanece igual ao Dev.315.
 
-Validação: Unit Messenger **319 testes / 2.578 assertions PASS**; PHPCS
+Validação: `ConversationRelationshipFormTest` **7 testes / 49 assertions
+PASS**; Unit Messenger **320 testes / 2.586 assertions PASS**; PHPCS
 Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
 
 ## 0.1.1-dev.315 — impedir criação de thread por ação forjada de perfil

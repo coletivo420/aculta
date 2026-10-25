@@ -2,7 +2,7 @@
 
 ## Evolução recente
 
-- Dev.316 — comentários e chamadas do `ConversationRelationshipForm` formatados; gate PHPCS Drupal/DrupalPractice limpo, sem mudança funcional. Unit Messenger **319/2.578 PASS**, PHP lint e `git diff --check` PASS.
+- Dev.316 — comentários e chamadas do `ConversationRelationshipForm` formatados; teste prova que limpeza só é renderizada no menu de grupo. Gate PHPCS Drupal/DrupalPractice limpo. Focal **7/49 PASS**, Unit Messenger **320/2.586 PASS**, PHP lint e diff check PASS.
 - Dev.315 — ação de limpar histórico removida de formulários de perfil/relacionamento para impedir que um POST forjado crie uma thread vazia; ação disponível somente no menu de grupo e mutação exige conta ativa, permissões atuais, associação e acesso à thread. `ConversationRelationshipFormTest` **6/41 PASS**, Unit Messenger **319/2.578 PASS**, PHP lint/diff check PASS, PHPCS sem erros (14 avisos de linhas longas preexistentes).
 - Dev.314 — abertura de avisos da Wiki e Loja grava leitura pelo `setRead()` dos managers, revalidando titularidade e acesso à origem na mutação; revogação entre resolver e salvar agora bloqueia o redirect. `NoticeOpenControllerSafetyTest` **7/41 PASS**, Unit Messenger **318/2.577 PASS**, Integration MariaDB **98/1.173 PASS** (2 deprecações Core/contrib e 7 notices PHPUnit), PHPCS/PHP lint PASS.
 - Dev.313 — formulário de nova conversa passa no PHPCS Drupal/DrupalPractice sem alterar seu comportamento; PHPDocs e arrays ficaram claros e dentro dos padrões. `NewConversationRecipientIdsTest` **10/68 PASS**, Unit Messenger **316/2.569 PASS**, PHP lint e diff check PASS.
