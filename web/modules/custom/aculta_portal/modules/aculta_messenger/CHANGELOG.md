@@ -2130,3 +2130,15 @@ Validação: `LearningNoticeDigestIntegrationTest` **23/186 PASS**, `AvisosResum
 PHPCS Drupal/DrupalPractice, PHP lint, índice de status e gate Drupal 11+ (**1155 checks**) PASS. SMTP externo e Runtime
 não executados.
 
+## 0.1.1-dev.213 — paginar somente avisos ainda acessíveis
+
+A central varre candidatos em ordem estável, mas aplica offset e lookahead depois de revalidar acesso atual para Fórum,
+LMS, Wiki, Loja e Doações. `EligibleNoticePage` unifica a varredura dos adapters Message; o Fórum carrega os tópicos
+de cada lote uma vez. Filtros de leitura continuam no EntityQuery, e avisos inacessíveis não consomem a página nem
+ocultam itens autorizados mais antigos.
+
+Validação: `EligibleNoticePageTest` **2/7 PASS**, `ForumNoticeIdempotencyKernelTest` **37/870 PASS**, conjunto Unit
+focal **48/389 PASS** e Kernels LMS/Wiki/Loja/Doações **22/377 PASS**. PHPCS Drupal/DrupalPractice, PHP lint, índice
+de status e gate Drupal 11+ (**1155 checks**) PASS. Kernels reportaram deprecações de descoberta Message Core/contrib e
+notices PHPUnit existentes. Runtime e navegador não testados.
+

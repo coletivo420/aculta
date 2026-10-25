@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Integration\Commerce;
 
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
+use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
@@ -166,20 +167,23 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
       return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $query = $storage->getQuery()->accessCheck(FALSE)
-      ->condition('template', self::TEMPLATE)->condition('uid', (int) $account->id());
-    NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
-    $ids = $query
-      ->sort('created', 'DESC')
-      ->sort('id', 'DESC')
-      ->range(max(0, $offset), max(1, $limit) + 1)
-      ->execute();
-    $hasNext = count($ids) > max(1, $limit);
-    $ids = array_slice($ids, 0, max(1, $limit));
-    foreach ($storage->loadMultiple($ids) as $message) {
-      if (!$message instanceof MessageInterface || ($notice = $this->resolve($message, $account)) === NULL) {
-        continue;
-      }
+    $page = EligibleNoticePage::collect(
+      function (int $scanOffset, int $batchSize) use ($storage, $account, $filters): array {
+        $query = $storage->getQuery()->accessCheck(FALSE)
+          ->condition('template', self::TEMPLATE)
+          ->condition('uid', (int) $account->id());
+        NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
+        return $query->sort('created', 'DESC')->sort('id', 'DESC')
+          ->range($scanOffset, $batchSize)->execute();
+      },
+      static fn(array $ids): array => array_values($storage->loadMultiple($ids)),
+      fn(mixed $message): ?array => $message instanceof MessageInterface ? $this->resolve($message, $account) : NULL,
+      $limit,
+      $offset,
+    );
+    foreach ($page['items'] as $entry) {
+      $message = $entry['entity'];
+      $notice = $entry['resolved'];
       $unread = !(bool) $message->get(self::READ_FIELD)->value;
       $heading = [
         '#type' => 'container',
@@ -206,7 +210,7 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.commerce_notice_open', ['message' => $message->id()]), ['data-portal-ui' => 'notice-summary-link']),
       ];
     }
-    return $hasNext;
+    return $page['has_next'];
   }
 
   /**

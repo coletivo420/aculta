@@ -149,34 +149,59 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
   public function listarDaPessoaPaginada(int $uid, int $limite, int $offset, ?string $readState = NULL): array {
     $limite = max(1, $limite);
     $offset = max(0, $offset);
-    $query = $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('uid', $uid);
-    if (in_array($readState, ['read', 'unread'], TRUE)) {
-      $query->condition('contador_site', 0, $readState === 'read' ? '=' : '>');
-    }
-    $ids = $query
-      ->sort('contador_site', 'DESC')
-      ->sort('changed', 'DESC')
-      ->sort('id', 'DESC')
-      ->range($offset, $limite + 1)
-      ->execute();
-    $hasNext = count($ids) > $limite;
-    $ids = array_slice($ids, 0, $limite);
-    $notices = $this->entityTypeManager->getStorage('aculta_aviso')->loadMultiple($ids);
-    $topicIds = [];
-    foreach ($notices as $aviso) {
-      $topicIds[(int) $aviso->get('assunto_nid')->value] = TRUE;
-    }
-    $topics = $this->entityTypeManager->getStorage('node')->loadMultiple(array_keys($topicIds));
     $recipient = $this->entityTypeManager->getStorage('user')->load($uid);
     if (!$recipient instanceof UserInterface || !$recipient->isActive()) {
       return ['items' => [], 'has_next' => FALSE];
     }
-    $accessible = array_values(array_filter($notices, fn(Aviso $aviso): bool => $this->accessPolicy->canViewTopic(
-      $topics[(int) $aviso->get('assunto_nid')->value] ?? NULL,
-      $recipient,
-    )));
+    $noticeStorage = $this->entityTypeManager->getStorage('aculta_aviso');
+    $topicStorage = $this->entityTypeManager->getStorage('node');
+    $batchSize = max(20, $limite);
+    $scanOffset = 0;
+    $eligibleSkipped = 0;
+    $accessible = [];
+    $hasNext = FALSE;
+    do {
+      $query = $noticeStorage->getQuery()->accessCheck(FALSE)->condition('uid', $uid);
+      if (in_array($readState, ['read', 'unread'], TRUE)) {
+        $query->condition('contador_site', 0, $readState === 'read' ? '=' : '>');
+      }
+      $ids = $query
+        ->sort('contador_site', 'DESC')
+        ->sort('changed', 'DESC')
+        ->sort('id', 'DESC')
+        ->range($scanOffset, $batchSize)
+        ->execute();
+      if ($ids === []) {
+        break;
+      }
+      $scanOffset += count($ids);
+      $notices = $noticeStorage->loadMultiple($ids);
+      $topicIds = [];
+      foreach ($notices as $aviso) {
+        if ($aviso instanceof Aviso) {
+          $topicIds[(int) $aviso->get('assunto_nid')->value] = TRUE;
+        }
+      }
+      $topics = $topicStorage->loadMultiple(array_keys($topicIds));
+      foreach ($notices as $aviso) {
+        if (!$aviso instanceof Aviso || !$this->accessPolicy->canViewTopic(
+          $topics[(int) $aviso->get('assunto_nid')->value] ?? NULL,
+          $recipient,
+        )) {
+          continue;
+        }
+        if ($eligibleSkipped < $offset) {
+          $eligibleSkipped++;
+          continue;
+        }
+        if (count($accessible) >= $limite) {
+          $hasNext = TRUE;
+          break 2;
+        }
+        $accessible[] = $aviso;
+      }
+    } while (count($ids) === $batchSize);
+
     return ['items' => $accessible, 'has_next' => $hasNext];
   }
 

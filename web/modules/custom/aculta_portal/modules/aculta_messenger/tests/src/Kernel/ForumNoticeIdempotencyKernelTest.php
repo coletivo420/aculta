@@ -237,6 +237,36 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Revoked topics do not consume Forum page offsets or lookahead.
+   */
+  public function testPersonalNoticePaginationOffsetsOnlyCurrentlyAccessibleTopics(): void {
+    $author = $this->createUser('autor_topicos_revogados_paginacao');
+    $follower = $this->createUser('seguidor_topicos_revogados_paginacao');
+    $uid = (int) $follower->id();
+    $hiddenTopicIds = [];
+    $policy = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+    $policy->method('supportsTopic')->willReturn(TRUE);
+    $policy->method('canViewTopic')->willReturnCallback(static function (mixed $topic) use (&$hiddenTopicIds): bool {
+      return $topic !== NULL && !isset($hiddenTopicIds[(int) $topic->id()]);
+    });
+    $policy->method('canViewComment')->willReturn(TRUE);
+    $service = $this->createAvisoService([$uid], $policy);
+    $topicIds = [];
+    for ($index = 1; $index <= 10; $index++) {
+      $topic = $this->createTopic('Tópico revogado ' . $index);
+      $topicIds[] = (int) $topic->id();
+      self::assertSame(1, $service->registrarResposta($this->createPersistedComment($topic, (int) $author->id())));
+    }
+
+    $hiddenTopicIds = array_fill_keys(array_slice($topicIds, 5), TRUE);
+    $page = $service->listarDaPessoaPaginada($uid, 2, 2);
+    $actualTopicIds = array_map(static fn(Aviso $notice): int => (int) $notice->get('assunto_nid')->value, $page['items']);
+
+    self::assertSame(array_slice(array_reverse(array_slice($topicIds, 0, 5)), 2, 2), $actualTopicIds);
+    self::assertTrue($page['has_next'], 'A further accessible notice exists after the page even though newer rows are now inaccessible.');
+  }
+
+  /**
    * The public event contract persists one idempotent ForumPost notice.
    */
   public function testForumPostEventRoundTripUsesTheSharedNoticeAggregate(): void {

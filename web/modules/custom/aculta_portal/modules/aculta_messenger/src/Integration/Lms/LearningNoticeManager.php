@@ -28,6 +28,7 @@ use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\message\MessageInterface;
 use Drupal\user\UserInterface;
+use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_lms\Entity\CourseCertificate;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\lms\Entity\AnswerInterface;
@@ -419,26 +420,23 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $query = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('template', self::TEMPLATE)
-      ->condition('uid', (int) $account->id());
-    NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
-    $ids = $query
-      ->sort('created', 'DESC')
-      ->sort('id', 'DESC')
-      ->range(max(0, $offset), max(1, $limit) + 1)
-      ->execute();
-    $hasNext = count($ids) > max(1, $limit);
-    $ids = array_slice($ids, 0, max(1, $limit));
-    foreach ($storage->loadMultiple($ids) as $message) {
-      if (!$message instanceof MessageInterface) {
-        continue;
-      }
-      $notice = $this->resolve($message, $account);
-      if ($notice === NULL) {
-        continue;
-      }
+    $page = EligibleNoticePage::collect(
+      function (int $scanOffset, int $batchSize) use ($storage, $account, $filters): array {
+        $query = $storage->getQuery()->accessCheck(FALSE)
+          ->condition('template', self::TEMPLATE)
+          ->condition('uid', (int) $account->id());
+        NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
+        return $query->sort('created', 'DESC')->sort('id', 'DESC')
+          ->range($scanOffset, $batchSize)->execute();
+      },
+      static fn(array $ids): array => array_values($storage->loadMultiple($ids)),
+      fn(mixed $message): ?array => $message instanceof MessageInterface ? $this->resolve($message, $account) : NULL,
+      $limit,
+      $offset,
+    );
+    foreach ($page['items'] as $entry) {
+      $message = $entry['entity'];
+      $notice = $entry['resolved'];
       $title = $notice['title'];
       $heading = [
         '#type' => 'container',
@@ -477,7 +475,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         ]), ['data-portal-ui' => 'notice-summary-link']),
       ];
     }
-    return $hasNext;
+    return $page['has_next'];
   }
 
   /**
