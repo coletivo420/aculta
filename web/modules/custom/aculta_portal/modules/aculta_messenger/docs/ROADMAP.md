@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.250 — recuperação de falha ao enfileirar preserva estado terminal concorrente; somente `pending`/`failed` sem tentativa de entrega podem ser marcados como falha de enqueue. `FriendshipNoticeQueueTest` + `FriendshipNoticeEmailWorkerTest` **14/255 PASS**, PHPCS e lint PASS; Runtime/transporte externo pendentes.
 - Dev.249 — worker de amizade processa somente estados `pending` e `failed` recuperáveis; duplicatas atrasadas não reabrem avisos cancelados, falhas permanentes ou já enviados. `FriendshipNoticeEmailWorkerTest` **10/187 PASS**, lint PASS; Runtime/transporte externo pendentes.
 - Dev.248 — resumo semanal de Mensagens Privadas agrupado por remetente, com quantidade única e IDs de entrega exatos no manifesto; retries não perdem mensagens novas concorrentes nem repetem o título/contador. Unit Messenger **235/1.767 PASS**, PHPCS e diff check PASS; Kernel indisponível sem `SIMPLETEST_DB`, Runtime/SMTP pendentes.
 - Dev.247 — preferências de Mensagens Privadas migram para o Messenger; usuário escolhe direto, digest semanal ou sem e-mail. E-mail informa remetente e link, sem conteúdo; resumo respeita data âncora administrativa e intervalo de sete dias por conta, valida acesso/bloqueios e reutiliza Message e o digest compartilhado. Unit Messenger **234/1.766 PASS**; PHPCS, PHP lint, YAML parse e diff check PASS. `AvisosResumoMailerKernelTest` não executou por falta de `SIMPLETEST_DB`; update e Runtime pendentes.

@@ -1,3 +1,9 @@
+## 0.1.1-dev.250 — preservar cancelamento concorrente no enqueue
+
+Se a Queue API recusar uma inclusão enquanto outro processo altera o aviso, a recuperação agora só grava `failed` quando o registro ainda está `pending`/`failed` e não houve tentativa de entrega. Estados terminais, como `cancelled` e `failed_permanent`, são preservados.
+
+Validação: `FriendshipNoticeQueueTest` + `FriendshipNoticeEmailWorkerTest` **14 testes / 255 assertions PASS**; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Runtime e transporte externo não executados.
+
 ## 0.1.1-dev.249 — não reabrir avisos de amizade terminais
 
 O worker de e-mail de amizades agora aceita somente registros `pending` ou `failed` recuperáveis. Replays atrasados da fila não enviam novamente registros cancelados por opt-out/conta inelegível, falhas permanentes ou entregas já concluídas; o caminho de retry temporário permanece ativo.

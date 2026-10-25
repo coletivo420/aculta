@@ -80,7 +80,9 @@ final class FriendshipNoticeQueue implements FriendshipNoticeQueueInterface {
       }
       catch (\Throwable $exception) {
         $latest = $storage->load($messageId);
-        if ($latest instanceof MessageInterface && $latest->get(self::STATUS_FIELD)->value !== 'sent') {
+        if ($latest instanceof MessageInterface
+          && in_array($latest->get(self::STATUS_FIELD)->value, ['pending', 'failed'], TRUE)
+          && (int) $latest->get(self::DELIVERY_ATTEMPTS_FIELD)->value === 0) {
           $latest->set(self::STATUS_FIELD, 'failed')->save();
         }
         $this->logger->error('Could not queue friendship notice email for Message @id.', ['@id' => $messageId]);

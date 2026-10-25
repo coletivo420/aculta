@@ -92,6 +92,65 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
   }
 
   /**
+   * A concurrent terminal state is not overwritten when Queue API refuses.
+   */
+  public function testQueueRefusalPreservesConcurrentCancellation(): void {
+    $state = ['status' => 'pending', 'enqueue_attempts' => 0, 'delivery_attempts' => 0];
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('id')->willReturn('83');
+    $message->method('bundle')->willReturn(FriendshipNoticeSubscriber::TEMPLATE);
+    $message->method('get')->willReturnCallback(function (string $field) use (&$state): FieldItemListInterface {
+      return $this->fieldValue(match ($field) {
+        'field_aculta_msg_delivery' => $state['status'],
+        'field_aculta_enqueue_attempts' => $state['enqueue_attempts'],
+        'field_aculta_messenger_attempts' => $state['delivery_attempts'],
+        'field_aculta_mailer_managed' => FALSE,
+        default => throw new \InvalidArgumentException($field),
+      });
+    });
+    $calls = [];
+    $message->expects(self::exactly(2))->method('set')
+      ->willReturnCallback(static function (string $field, int|string $value) use (&$state, &$calls, $message): MessageInterface {
+        $calls[] = [$field, $value];
+        if ($field === 'field_aculta_enqueue_attempts') {
+          $state['enqueue_attempts'] = $value;
+        }
+        elseif ($field === 'field_aculta_msg_delivery') {
+          $state['status'] = $value;
+        }
+        return $message;
+      });
+    $message->expects(self::once())->method('save');
+
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::exactly(2))->method('load')->with(83)->willReturn($message);
+    $queue = $this->createMock(QueueInterface::class);
+    $queue->expects(self::once())->method('createItem')->willReturnCallback(static function () use (&$state): bool {
+      // Simulate an independent worker cancelling after the enqueue claim was
+      // saved but before this Queue API call reports its failure.
+      $state['status'] = 'cancelled';
+      return FALSE;
+    });
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->method('get')->willReturn($queue);
+    $lock = $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]);
+
+    try {
+      $this->queue($storage, $queueFactory, $lock)->enqueue($message);
+      self::fail('Queue refusal must be surfaced for bounded retry.');
+    }
+    catch (\RuntimeException $exception) {
+      self::assertSame('Friendship notice email could not be queued.', $exception->getMessage());
+    }
+
+    self::assertSame('cancelled', $state['status']);
+    self::assertSame([
+      ['field_aculta_enqueue_attempts', 1],
+      ['field_aculta_msg_delivery', 'pending'],
+    ], $calls);
+  }
+
+  /**
    * Cron requeues only stale pending/failed notices with no delivery attempts.
    */
   public function testCronRequeuesOldPendingNotice(): void {
