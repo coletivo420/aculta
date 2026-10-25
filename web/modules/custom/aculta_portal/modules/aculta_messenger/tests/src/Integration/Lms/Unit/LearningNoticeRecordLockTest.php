@@ -33,7 +33,7 @@ final class LearningNoticeRecordLockTest extends UnitTestCase {
     $account = $this->createMock(UserInterface::class);
     $account->method('isActive')->willReturn(TRUE);
     $accountStorage = $this->createMock(EntityStorageInterface::class);
-    $accountStorage->expects(self::once())->method('load')->with(27)->willReturn($account);
+    $accountStorage->expects(self::once())->method('loadUnchanged')->with(27)->willReturn($account);
     $messageStorage = $this->createMock(EntityStorageInterface::class);
     $messageStorage->expects(self::never())->method('getQuery');
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);

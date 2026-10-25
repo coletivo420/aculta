@@ -183,7 +183,7 @@ final class WikiNoticeManagerTest extends UnitTestCase {
     $user = $this->createMock(UserInterface::class);
     $user->method('isActive')->willReturn(TRUE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(27)->willReturn($user);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($user);
 
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();

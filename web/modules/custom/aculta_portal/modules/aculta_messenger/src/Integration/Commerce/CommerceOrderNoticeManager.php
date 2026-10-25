@@ -77,7 +77,7 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
       || ($event->metadata()['notice_type'] ?? NULL) !== 'order_placed') {
       return NULL;
     }
-    $account = $this->entityTypeManager->getStorage('user')->load($event->recipientUid());
+    $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($event->recipientUid());
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return NULL;
     }

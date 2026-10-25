@@ -1,3 +1,15 @@
+## 0.1.1-dev.327 — revalidar destinatários ao registrar avisos
+
+Consumers de amizade, LMS, Wiki e Loja consultam a conta com `loadUnchanged()`
+antes de persistir o aviso obrigatório no site. Contas desativadas após uma
+leitura anterior não recebem novos registros; as preferências de e-mail seguem
+controlando apenas o canal suplementar.
+
+Validação: Unit Messenger **324 testes / 2.629 assertions PASS**; Integration
+Unit LMS **46/417**, Loja **18/225** e Wiki **4/47 PASS**; focais de amizade,
+Loja, Wiki e LMS **17/208 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e
+`git diff --check` PASS. Sem Kernel/Runtime/SMTP.
+
 ## 0.1.1-dev.326 — recarregar origem e outbox nos workers de e-mail
 
 Workers de entrega direta recarregam os registros Message sob lock com

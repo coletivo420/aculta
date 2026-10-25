@@ -82,7 +82,7 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
     }
 
     $recipientId = $event->recipientUid();
-    $account = $this->entityTypeManager->getStorage('user')->load($recipientId);
+    $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($recipientId);
     if ($account === NULL || !$account->isActive()) {
       return;
     }

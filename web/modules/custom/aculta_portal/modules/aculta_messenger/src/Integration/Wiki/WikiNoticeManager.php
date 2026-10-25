@@ -75,7 +75,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
       || !in_array($event->metadata()['notice_type'] ?? NULL, ['review_requested', 'proposal_outcome'], TRUE)) {
       return NULL;
     }
-    $account = $this->entityTypeManager->getStorage('user')->load($event->recipientUid());
+    $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($event->recipientUid());
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return NULL;
     }

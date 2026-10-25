@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.327 — consumers de amizade, LMS, Wiki e Loja revalidam a conta no storage atual antes de persistir novos avisos no site; o opt-out afeta apenas e-mail. Unit Messenger **324/2.629 PASS**, Integration Unit LMS **46/417**, Loja **18/225**, Wiki **4/47**, focais **17/208**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime/SMTP.
 - Dev.326 — workers diretos recarregam Message sob lock e fontes de Fórum antes da validação final, evitando estado estático obsoleto em retries e revogações. Focais dos workers Fórum/amizade/PM/LMS/Wiki/Loja/Doação **58/951 PASS**, Unit Messenger **324/2.629 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime/SMTP.
 - Dev.325 — worker de avisos privados relê a mensagem de origem com `loadUnchanged()` antes de resolver thread e destinatários, evitando processar uma origem obsoleta. Worker **15/283 PASS**, Unit Messenger **324/2.629 PASS**, Integration LMS digest **25/210 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime.
 - Dev.324 — o provider do resumo semanal privado usa `loadUnchanged()` para revalidar a mensagem de origem; avisos cuja mensagem foi removida são cancelados sem incluir conteúdo privado no digest. `PrivateMessageDigestProviderTest` **5/81 PASS**, Unit Messenger **324/2.629 PASS**, Integration LMS digest **25/210 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime.

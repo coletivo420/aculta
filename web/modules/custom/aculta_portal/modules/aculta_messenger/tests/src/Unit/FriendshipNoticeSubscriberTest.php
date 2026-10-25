@@ -73,7 +73,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('isActive')->willReturn(TRUE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(20)->willReturn($recipient);
+    $userStorage->method('loadUnchanged')->with(20)->willReturn($recipient);
 
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->with(FALSE)->willReturnSelf();
@@ -109,7 +109,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('isActive')->willReturn(TRUE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(20)->willReturn($recipient);
+    $userStorage->method('loadUnchanged')->with(20)->willReturn($recipient);
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -149,7 +149,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('isActive')->willReturn(TRUE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(20)->willReturn($recipient);
+    $userStorage->method('loadUnchanged')->with(20)->willReturn($recipient);
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->with(FALSE)->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -185,7 +185,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('isActive')->willReturn(FALSE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(20)->willReturn($recipient);
+    $userStorage->method('loadUnchanged')->with(20)->willReturn($recipient);
     $messageStorage = $this->createMock(EntityStorageInterface::class);
     $messageStorage->expects(self::never())->method('getQuery');
     $messageStorage->expects(self::never())->method('create');
@@ -230,7 +230,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('isActive')->willReturn(TRUE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->expects(self::once())->method('load')->with($noticeRecipientId)->willReturn($recipient);
+    $userStorage->expects(self::once())->method('loadUnchanged')->with($noticeRecipientId)->willReturn($recipient);
 
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->with(FALSE)->willReturnSelf();

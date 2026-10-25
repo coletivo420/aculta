@@ -124,7 +124,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     ], TRUE)) {
       return NULL;
     }
-    $account = $this->entityTypeManager->getStorage('user')->load($uid);
+    $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return NULL;
     }
