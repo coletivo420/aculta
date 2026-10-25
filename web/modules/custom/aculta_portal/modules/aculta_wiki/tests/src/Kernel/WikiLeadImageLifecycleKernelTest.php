@@ -43,7 +43,7 @@ use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\workflows\Entity\Workflow;
-use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_mailer\Queue\MailQueue;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\aculta_wiki\Controller\WikiController;
 use Drupal\aculta_wiki\Service\WikiProposalSubmission;
@@ -57,7 +57,7 @@ use Drupal\aculta_wiki\Hook\WikiProposalLinkHooks;
 use Drupal\aculta_wiki\Hook\WikiEntryTitleSuggestions;
 use Drupal\aculta_wiki\Controller\WikiProposalStatusController;
 use Drupal\aculta_wiki\Controller\WikiContributionIntentController;
-use Drupal\aculta_wiki\Notifier\WikiProposalOutcomeNotifier;
+use Drupal\aculta_wiki\Service\WikiEditorialEventQueue;
 use Drupal\views\Entity\View;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -102,6 +102,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'aculta_wiki_access_test',
       'ckeditor5',
       'freelinking',
+      'history',
     ]);
     parent::bootKernel();
   }
@@ -114,6 +115,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     parent::setUp();
     $this->setSetting('file_private_path', $this->privateDirectory);
     $this->installEntitySchema('user');
+    $this->installEntitySchema('message');
+    $this->installEntitySchema('flagging');
     $this->installEntitySchema('profile');
     $this->installEntitySchema('path_alias');
     $this->installEntitySchema('domain');
@@ -122,6 +125,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('aculta_wiki_proposal');
     $this->installSchema('user', ['users_data']);
+    $this->installSchema('history', ['history']);
     $this->installSchema('file', ['file_usage']);
     $this->container->get('database')->schema()->createTable(
       'key_value_expire',
@@ -2828,14 +2832,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertCount(26, array_unique(array_merge($firstPageIds, $secondPageIds)));
     self::assertSame($firstPageIds, array_map(static fn (WikiProposal $item): int => (int) $item->id(), $queue->proposals('invalid-cursor')->getItems()));
 
-    $wikiTab = $this->container->get('aculta_studio.tab_manager')->createInstance('wiki');
+    $wikiTab = $this->container->get('aculta_studio.marley_tab_manager')->createInstance('wiki');
     self::assertTrue($wikiTab->access($reviewer)->isAllowed());
     self::assertArrayHasKey('moderacao', $wikiTab->sections($reviewer));
     self::assertArrayHasKey('propostas', $wikiTab->sections($reviewer)['moderacao']['tabs']);
     self::assertArrayNotHasKey('verbetes', $wikiTab->sections($reviewer));
     self::assertArrayNotHasKey('revisoes', $wikiTab->sections($reviewer));
     self::assertArrayNotHasKey('moderacao', $wikiTab->sections($submitter));
-    $studioProposalListing = $this->container->get('aculta_studio.listing')
+    $studioProposalListing = $this->container->get('aculta_studio.marley_listing')
       ->build(['entity' => 'wiki_proposal_queue'], $reviewer);
     self::assertCount(25, $studioProposalListing['table']['#rows']);
     self::assertContains('user.permissions', $studioProposalListing['#cache']['contexts']);
@@ -2849,6 +2853,10 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $oldProposalRevisionId = (int) $proposalToDecide->getRevisionId();
     $decisionService = $this->container->get('aculta_wiki.proposal_decision');
     self::assertInstanceOf(WikiProposalDecision::class, $decisionService);
+    $editorialQueue = $this->container->get('queue')->get(WikiEditorialEventQueue::QUEUE_ID);
+    $editorialEventsBeforeDecisions = $editorialQueue->numberOfItems();
+    $mailQueue = $this->container->get('queue')->get(MailQueue::QUEUE_NAME);
+    $legacyEmailsBeforeDecisions = $mailQueue->numberOfItems();
     $decisionForm = WikiProposalDecisionForm::create($this->container);
     $decisionState = new FormState();
     $decisionForm->buildForm([], $decisionState, $proposalToDecide);
@@ -3225,6 +3233,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
         'Nota editorial ' . $index,
       );
     }
+    self::assertGreaterThan($editorialEventsBeforeDecisions, $editorialQueue->numberOfItems(), 'Proposal outcomes continue through the persistent Messenger event queue.');
+    self::assertSame($legacyEmailsBeforeDecisions, $mailQueue->numberOfItems(), 'Proposal decisions no longer add direct legacy email jobs.');
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed(2);
     $this->container->get('current_user')->setAccount($submitter);
     $statusController = WikiProposalStatusController::create($this->container);
@@ -3261,43 +3271,6 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $statusBuild['history']['#slots']['body']['table']['#rows'][0]['feedback'],
     );
     self::assertSame('Enviada', $statusBuild['history']['#slots']['body']['table']['#rows'][1]['state']);
-    $memoryQueue = new class() {
-
-      /** @var list<\Drupal\aculta_mailer\Message\MailMessage> */
-      public array $items = [];
-
-      /** Stores a message captured by the notifier test. */
-      public function enqueue(MailMessage $message): void {
-        $this->items[] = $message;
-      }
-
-    };
-    $outcomeNotifier = new WikiProposalOutcomeNotifier(
-      $this->container->get('string_translation'),
-      $this->container->get('aculta_portal.email_confirmation_policy'),
-      $this->container->get('aculta_portal.domain_purpose'),
-      $this->container->get('uuid'),
-      $memoryQueue,
-    );
-    self::assertTrue($outcomeNotifier->notify($declinedProposal));
-    self::assertCount(1, $memoryQueue->items);
-    self::assertSame('aculta_wiki_proposal_outcome', $memoryQueue->items[0]->type);
-    self::assertSame('author@example.invalid', $memoryQueue->items[0]->to);
-    self::assertSame([
-      'subject',
-      'state',
-      'decision_note',
-      'proposal_url',
-    ], array_keys($memoryQueue->items[0]->context));
-    self::assertTrue($outcomeNotifier->notify($acceptedProposal));
-    self::assertCount(2, $memoryQueue->items);
-    self::assertSame('Aceita e publicada', $memoryQueue->items[1]->context['state']);
-    self::assertSame(
-      ['subject', 'state', 'decision_note', 'proposal_url'],
-      array_keys($memoryQueue->items[1]->context),
-      'The acceptance notice links privately without copying proposed content or personal details.',
-    );
-
     $this->container->get('current_user')->setAccount($submitter);
     $formState = new FormState();
     $proposalForm = WikiProposalSubmissionForm::create($this->container);
@@ -3731,9 +3704,9 @@ PHP;
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     self::assertNull($page->getNextCursor());
 
-    $wikiTab = $this->container->get('aculta_studio.tab_manager')->createInstance('wiki');
+    $wikiTab = $this->container->get('aculta_studio.marley_tab_manager')->createInstance('wiki');
     self::assertArrayHasKey('revisoes', $wikiTab->sections($reviewer)['moderacao']['tabs']);
-    $studioReviewListing = $this->container->get('aculta_studio.listing')
+    $studioReviewListing = $this->container->get('aculta_studio.marley_listing')
       ->build(['entity' => 'wiki_entry_review_queue'], $reviewer);
     self::assertCount(1, $studioReviewListing['table']['#rows']);
     self::assertSame('Abrir para revisão', (string) $studioReviewListing['table']['#rows'][0]['action']['data']['#title']);

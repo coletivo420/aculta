@@ -4,7 +4,7 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.113**. No Runtime de teste,
+Linha do projeto `aculta_wiki`: **0.1.0-dev.116**. No Runtime de teste,
 `aculta_wiki` e `aculta_studio` estão ativos e `aculta_index` permanece
 desativado. `drush cr` e o update autorizado 10001 foram aplicados; as rotas
 WE SATIVA existem e as quatro tabelas da entidade de proposta foram instaladas.
@@ -14,6 +14,21 @@ pendentes. `/wiki` é caminho interno da raiz Wiki e responde 404 quando chamado
 diretamente.
 
 ## Integração vigente Wiki ↔ Messenger — avisos editoriais
+
+Dev.116 conclui a remoção do e-mail direto legado de resultado de proposta.
+`WikiProposalDecision` continua enfileirando o evento persistente; o Messenger
+central decide aviso no site e e-mail conforme preferências. Kernel testa a
+ausência de novo Mailer job legado. Itens previamente enfileirados com o tipo
+removido serão encerrados como não registrados pelo Mailer; não foi feita
+limpeza de fila nem inspeção em Runtime. A notificação para caixas editoriais
+compartilhadas continua pendente de decisão de produto.
+
+Validação Dev.116: Kernel de decisão **1 teste / 216 assertions PASS** em
+MariaDB dedicado; Unit de QueueWorker/publisher **5/18 PASS**; PHPCS Drupal e
+DrupalPractice PASS. O Kernel emite deprecações de Core/contrib, sem falhas.
+Na classe Kernel completa (28/1.602), dois cenários independentes de limpeza
+de imagem continuam falhando porque o fixture parcial faz o inspetor global
+retornar `Unverifiable`; consulte a pendência M0 antes de homologar essa classe.
 
 O núcleo `aculta_messenger` é dono do consumer, persistência Message, central,
 contagem, preferências, deduplicação, abertura segura, filas, workers e e-mail.

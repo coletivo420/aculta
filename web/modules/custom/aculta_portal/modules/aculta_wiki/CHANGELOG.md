@@ -1587,3 +1587,24 @@
   PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel (SIMPLETEST_DB) e
   Runtime não executados. Nenhum e-mail real foi enviado.
 
+## 0.1.0-dev.116 — centralizar avisos de resultado de proposta (2026-10-24)
+
+- Removidos `WikiProposalOutcomeNotifier`, `WikiProposalOutcomeMailType` e o
+  fallback condicional que enfileirava e-mail direto à autoria. `WikiProposalDecision`
+  agora persiste o resultado somente na fila Wiki→Messenger; o adapter central
+  aplica deduplicação, acesso e preferências de entrega.
+- Kernel confirma que decisões bem-sucedidas continuam gerando eventos e não
+  acrescentam itens à fila legada do Mailer.
+- `WikiLeadImageLifecycleKernelTest::testProposalSubmissionUsesPrivateRevisionedEntityAndAccess`
+  passou **1 teste / 216 assertions**; Units do worker e publisher passaram
+  **5 testes / 18 assertions**; PHPCS Drupal/DrupalPractice PASS.
+- A classe Kernel completa executou 28 testes / 1.602 assertions, mas reteve
+  duas falhas do harness de limpeza de imagens: o inspetor global
+  retorna `Unverifiable` nas verificações de referências históricas/lotes. A
+  integração de decisão focal acima passa; essas falhas não foram tratadas como
+  aprovação nem alteradas nesta frente.
+- Itens já persistidos com o tipo removido serão encerrados pelo worker como
+  `unregistered_type`; os avisos do site do fluxo central continuam independentes.
+  A pendência operacional e a semântica da caixa editorial compartilhada seguem
+  documentadas sem alterar esse fluxo.
+

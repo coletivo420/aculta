@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Service;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -15,7 +14,6 @@ use Drupal\domain\DomainInterface;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Event\WikiProposalOutcomeRecordedEvent;
 use Drupal\node\NodeInterface;
-use Drupal\aculta_wiki\Notifier\WikiProposalOutcomeNotifier;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -37,11 +35,9 @@ final class WikiProposalDecision {
     private readonly AccountInterface $currentUser,
     private readonly Connection $database,
     private readonly WikiEditorialEventQueue $editorialEvents,
-    private readonly WikiProposalOutcomeNotifier $notifier,
     private readonly DomainPurposeManager $domainPurposes,
     private readonly StateTransitionValidationInterface $transitionValidation,
     private readonly ModerationInformationInterface $moderationInformation,
-    private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
   ) {}
 
   /**
@@ -138,9 +134,6 @@ final class WikiProposalDecision {
           $ownerId,
           $decision,
         ));
-      }
-      if ($this->moduleHandler === NULL || !$this->moduleHandler->moduleExists('aculta_wiki_messenger')) {
-        $this->notifier->notify($current);
       }
       unset($transaction);
 

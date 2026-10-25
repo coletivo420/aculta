@@ -39,10 +39,11 @@
 
 # Wiki — instruções locais
 
-# Contrato Wiki→Messenger v1: review-request para editoras/es com acesso atual e
-# outcome para autoria; eventos versionados por revisão em fila persistente com
-# retry. E-mails atuais permanecem. API de escrita do Messenger e producers Wiki
-# aguardam revisão/implementação; ver docs/MESSENGER-EVENT-CONTRACT.md.
+# Contrato Wiki→Messenger vigente: eventos editoriais versionados em fila
+# persistente; o núcleo Messenger controla avisos, preferências e e-mail. Não
+# criar notificadores ou transporte paralelos na Wiki. Ver
+# docs/MESSENGER-EVENT-CONTRACT.md. Notificação em caixas editoriais é decisão
+# de produto separada e ainda está em análise.
 
 # Dev.112: os dois value objects de evento implementam NAME, schema_version=1,
 # validação de UUID/revisão e allowlist; Unit 4/5. Ainda não enfileiram nem são

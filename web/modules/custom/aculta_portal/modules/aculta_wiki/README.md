@@ -29,8 +29,11 @@ pendentes, está em
   publishers nas transições. O consumer, Message, central, preferências e
   entrega foram migrados ao `aculta_messenger`; o submódulo antigo não tem
   implementação executável. Unit/Kernel centrais atuais constam no roadmap.
-  O fallback editorial legado para usuários elegíveis foi removido após a
-  migração; o recibo Commerce mantém a exceção documentada para convidados.
+  Dev.116 removeu o notifier de resultado de proposta e o tipo de e-mail
+  direto: novos resultados usam apenas o evento central, e e-mail segue as
+  preferências compartilhadas. O notifier de caixas editoriais compartilhadas
+  é independente e aguarda decisão de produto; o recibo Commerce mantém a
+  exceção documentada para convidados.
 
 - `0.1.0-dev.113`: transições Wiki persistem envelopes v1 na Queue API
   confiável e o worker despacha somente para eventos que tenham consumer

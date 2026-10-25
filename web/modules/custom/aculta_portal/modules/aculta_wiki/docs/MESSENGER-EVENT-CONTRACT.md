@@ -1,11 +1,11 @@
 # Contrato Wiki → ACULTA Messenger — avisos editoriais
 
-**Estado:** eventos e fila Wiki implementados; consumer e integração de entrega
-ao Messenger ainda pendentes.
+**Estado:** eventos Wiki, fila e adapter central Messenger estão implementados.
 **Escopo:** avisos pessoais obrigatórios no site e canais de e-mail governados
 por preferência da pessoa (desativado, direto ou resumo/digest) e política
-administrativa do ACULTA Mailer. O estado atual ainda contém e-mails legados;
-eles só serão removidos junto da migração comprovada para evitar duplicação.
+administrativa do ACULTA Mailer. Decisões de proposta publicam apenas o evento
+Wiki; o notifier e o tipo de e-mail direto legados foram removidos após a
+migração. O canal opcional respeita as preferências centrais.
 
 ## Eventos da Wiki
 
@@ -92,18 +92,14 @@ destinatário é `event name + source UUID + revision ID + recipient UID`.
 
 ## Estado de implementação
 
-Os value objects dos dois eventos estão implementados em `src/Event/`, com
-payload v1 validado por Unit (4 testes / 5 asserções). Dev.113 adiciona enqueue
-nas transições de revisão/decisão e QueueWorker com Queue API confiável. Dev.114
-adiciona `aculta_wiki_messenger`: consumer produtor valida revisão e destinatário,
-consumer Messenger persiste em Message com lock/deduplicação, Hook integra
-central/contador, acesso é revalidado na abertura e resumo; worker direto usa
-ACULTA Mailer e revalida preferência. Unit: 3 testes / 20 assertions PASS;
-PHPCS Drupal/DrupalPractice PASS. O
-install/update 10002 prepara a tabela Queue antes das transações; Kernel MariaDB
-isolado confirmou que rollback também remove o item (1/8). Uma
-exceção do consumer deixa o item reclamável após lease de 60 segundos; não há
-limite de tentativas nem retry imediato. Sem listener registrado, o worker lança
-exceção e conserva o item. O submódulo ainda não foi habilitado em Runtime nem
-validado por Kernel completo. Ao habilitá-lo, ele suprime os dois notifiers
-legados; quando permanece desabilitado, os fluxos legados continuam ativos.
+Os eventos versionados são persistidos na Queue API com rollback junto da
+revisão editorial. O adapter no núcleo `aculta_messenger` valida a revisão e o
+destinatário, persiste em Message com idempotência e lock, integra central e
+contador, e revalida acesso na abertura e no digest. A entrega de e-mail usa o
+Mailer central e preferências compartilhadas. Dev.116 remove o notifier de
+resultado de proposta e seu tipo direto, mantendo a decisão ligada apenas à
+fila Wiki→Messenger. O notifier de caixas editoriais compartilhadas é um fluxo
+separado e permanece sujeito à decisão de produto registrada no roadmap. A
+fila de e-mail direta de resultado não é mais produzida; itens históricos dessa
+chave serão tratados pelo Mailer como tipo não registrado, sem afetar o aviso
+obrigatório já publicado pela fila central.
