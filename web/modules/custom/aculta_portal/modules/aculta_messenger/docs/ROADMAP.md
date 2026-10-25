@@ -234,6 +234,8 @@ Concluir privacidade de conversas individuais/grupo, bloqueios, acesso/IDOR, CSR
 
 Revalidação completa em 2026-10-25: Unit **360/3.928**, Integration **107/1.336** e Kernel **55/1.160 PASS**. As suítes confirmam regras, persistência e rotas/CSRF no Kernel; não simulam sessão HTTP ponta a ponta nem substituem as validações visuais e de Runtime ainda listadas.
 
+Reexecução da Unit no checkout atual em 2026-10-25: **371/4.120 PASS** com PHPUnit 11.5.57/PHP 8.4.27. A tentativa de reexecução Kernel foi interrompida após detectar outra suíte Kernel ativa no mesmo banco dedicado; não há novo resultado Kernel a contabilizar. A evidência Kernel **55/1.160** acima permanece a última execução concluída; a revalidação atualizada do Kernel e da Integration continua pendente.
+
 Validação incremental Dev.370: o membro `teste.comum` abriu por sessão autenticada a gaveta populada por HTTP, **10/10** Firefox ESR no Runtime de teste, viewport efetivo 1270 px. O GET respondeu 200, renderizou três conversas, incluindo dois grupos separados, estados de leitura e rótulos acessíveis, sem overflow; nenhum POST foi emitido. Isto cobre listagem/leitura da gaveta, mas não cobre a criação e resposta por formulário autenticado.
 
 ## M2 — API central de eventos (0.2.0)
