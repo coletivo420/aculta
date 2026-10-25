@@ -29,7 +29,7 @@ final class MessengerCounts {
   ) {}
 
   /**
-   * Counts the active Site Alerts this account may see and has not dismissed.
+   * Counts active Site Alerts this account may see and has not read/dismissed.
    *
    * Alert entities and access results are added to cacheability so the render
    * array is invalidated when an alert or its access changes.
@@ -41,6 +41,9 @@ final class MessengerCounts {
     ?array $flagStates = NULL,
   ): int {
     $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
+    $readFlag = $account->isAuthenticated()
+      ? $this->flagService->getFlagById('aculta_site_alert_read')
+      : NULL;
     if ($visibleAlerts === NULL) {
       $visibleAlerts = [];
       foreach ($this->siteAlerts->getActiveAlerts() as $alert) {
@@ -52,7 +55,8 @@ final class MessengerCounts {
         }
       }
     }
-    if ($flagStates === NULL && $account->isAuthenticated() && $dismissalFlag instanceof FlagInterface) {
+    if ($flagStates === NULL && $account->isAuthenticated()
+      && ($dismissalFlag instanceof FlagInterface || $readFlag instanceof FlagInterface)) {
       $flagStates = $this->flagStateLoader->loadForAccount($visibleAlerts, $account);
     }
     $flagStates ??= [];
@@ -60,8 +64,10 @@ final class MessengerCounts {
     foreach ($visibleAlerts as $alert) {
       // Dispensa pertence a contas; não consultar Flag para uid 0 sem sessão.
       if ($account->isAuthenticated()
-        && $dismissalFlag instanceof FlagInterface
-        && isset($flagStates[$alert->id()][$dismissalFlag->id()])) {
+        && (($dismissalFlag instanceof FlagInterface
+            && isset($flagStates[$alert->id()][$dismissalFlag->id()]))
+          || ($readFlag instanceof FlagInterface
+            && isset($flagStates[$alert->id()][$readFlag->id()])))) {
         continue;
       }
       $count++;

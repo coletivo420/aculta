@@ -904,8 +904,7 @@ final class MessagesController extends ControllerBase {
       // Alerta do site: rótulo Lido / Não lido (o aviso persistente não tem rótulo). Abrir o alerta marca como lido.
       $rotulo = NULL;
       if ($this->account->isAuthenticated()) {
-        $leituraFlag = $this->flagService->getFlagById('aculta_site_alert_read');
-        $lido = $leituraFlag instanceof FlagInterface && isset($alertFlags[$leituraFlag->id()]);
+        $lido = isset($alertFlags['aculta_site_alert_read']);
         $rotulo = $this->readLabel(!$lido);
       }
       $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(

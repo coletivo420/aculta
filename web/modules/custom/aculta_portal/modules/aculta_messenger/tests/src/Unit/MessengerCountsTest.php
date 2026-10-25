@@ -46,11 +46,15 @@ final class MessengerCountsTest extends UnitTestCase {
     ]);
     $dismissalFlag = $this->createMock(FlagInterface::class);
     $dismissalFlag->method('id')->willReturn('aculta_site_alert_dismissed');
+    $readFlag = $this->createMock(FlagInterface::class);
+    $readFlag->method('id')->willReturn('aculta_site_alert_read');
     $flagService = $this->createMock(FlagServiceInterface::class);
-    $flagService->expects(self::once())
+    $flagService->expects(self::exactly(2))
       ->method('getFlagById')
-      ->with('aculta_site_alert_dismissed')
-      ->willReturn($dismissalFlag);
+      ->willReturnMap([
+        ['aculta_site_alert_dismissed', $dismissalFlag],
+        ['aculta_site_alert_read', $readFlag],
+      ]);
     $flagService->expects(self::never())->method('getFlagging');
     $flaggingStorage = $this->createMock(FlaggingStorageInterface::class);
     $flaggingStorage->expects(self::once())
@@ -67,6 +71,41 @@ final class MessengerCountsTest extends UnitTestCase {
     );
 
     self::assertSame(1, $counts->visibleActiveAlertCount($account, new CacheableMetadata()));
+  }
+
+  /**
+   * Read active alerts do not contribute to the unified unread badge.
+   */
+  public function testReadActiveAlertIsExcludedFromUnreadCount(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $alert = $this->alert(17, AccessResult::allowed());
+    $alerts = $this->createMock(GetAlertsInterface::class);
+    $alerts->method('getActiveAlerts')->willReturn([$alert]);
+    $dismissalFlag = $this->createMock(FlagInterface::class);
+    $dismissalFlag->method('id')->willReturn('aculta_site_alert_dismissed');
+    $readFlag = $this->createMock(FlagInterface::class);
+    $readFlag->method('id')->willReturn('aculta_site_alert_read');
+    $flagService = $this->createMock(FlagServiceInterface::class);
+    $flagService->method('getFlagById')->willReturnMap([
+      ['aculta_site_alert_dismissed', $dismissalFlag],
+      ['aculta_site_alert_read', $readFlag],
+    ]);
+    $flaggingStorage = $this->createMock(FlaggingStorageInterface::class);
+    $flaggingStorage->expects(self::once())
+      ->method('loadIsFlaggedMultiple')
+      ->with([$alert], $account)
+      ->willReturn([17 => ['aculta_site_alert_read' => 'aculta_site_alert_read']]);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->expects(self::once())->method('getStorage')->with('flagging')->willReturn($flaggingStorage);
+    $counts = new MessengerCounts(
+      $entityTypeManager,
+      $flagService,
+      $alerts,
+      new NoticeFlagStateLoader($entityTypeManager),
+    );
+
+    self::assertSame(0, $counts->visibleActiveAlertCount($account, new CacheableMetadata()));
   }
 
   /**
@@ -102,8 +141,13 @@ final class MessengerCountsTest extends UnitTestCase {
     $getAlerts->expects(self::never())->method('getActiveAlerts');
     $dismissalFlag = $this->createMock(FlagInterface::class);
     $dismissalFlag->method('id')->willReturn('aculta_site_alert_dismissed');
+    $readFlag = $this->createMock(FlagInterface::class);
+    $readFlag->method('id')->willReturn('aculta_site_alert_read');
     $flagService = $this->createMock(FlagServiceInterface::class);
-    $flagService->method('getFlagById')->willReturn($dismissalFlag);
+    $flagService->method('getFlagById')->willReturnMap([
+      ['aculta_site_alert_dismissed', $dismissalFlag],
+      ['aculta_site_alert_read', $readFlag],
+    ]);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->expects(self::never())->method('getStorage');
     $counts = new MessengerCounts(
@@ -134,8 +178,12 @@ final class MessengerCountsTest extends UnitTestCase {
     $dismissFlag = $this->createMock(FlagInterface::class);
     $dismissFlag->method('id')->willReturn('aculta_site_alert_dismissed');
     $readFlag = $this->createMock(FlagInterface::class);
+    $readFlag->method('id')->willReturn('aculta_site_alert_read');
     $flags = $this->createMock(FlagServiceInterface::class);
-    $flags->method('getFlagById')->with('aculta_site_alert_dismissed')->willReturn($dismissFlag);
+    $flags->method('getFlagById')->willReturnMap([
+      ['aculta_site_alert_dismissed', $dismissFlag],
+      ['aculta_site_alert_read', $readFlag],
+    ]);
 
     $flaggingStorage = $this->createMock(FlaggingStorageInterface::class);
     $flaggingStorage->method('loadIsFlaggedMultiple')->with([$alert], $account)->willReturn([]);

@@ -1,3 +1,14 @@
+## 0.1.1-dev.299 — alinhar badge aos alertas lidos
+
+O contador unificado agora exclui Alertas do site que a conta já abriu, além
+dos que dispensou. A lista usa os mesmos estados da consulta em lote, e o
+estado visual não faz uma nova resolução da Flag para cada alerta.
+
+Validação: `MessengerCountsTest` + `PersistentNoticeAccessTest` +
+`NoticeFlagStateLoaderTest` **13 testes / 65 assertions PASS**; PHP lint e
+PHPCS Drupal/DrupalPractice do serviço e teste PASS. `MessagesController`
+permanece no baseline PHPCS **93 erros / 65 avisos**. Sem Browser/Runtime.
+
 ## 0.1.1-dev.298 — preservar páginas por origem ao alterar leitura
 
 Ao marcar um aviso como lido ou não lido na lista global, o redirect agora
