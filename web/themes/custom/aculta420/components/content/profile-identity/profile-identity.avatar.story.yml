@@ -1,0 +1,13 @@
+name: Identidade com avatar autorizado
+description: 'Fixture estática: imagem substituída por placeholder sem arquivo externo nem serviço de imagem.'
+component: aculta420:profile-identity
+props:
+  display_name: Maria Exemplo
+  hint: O apelido público é independente dos dados cadastrais.
+slots:
+  avatar:
+    markup: '<span class="d-grid rounded-circle bg-body-secondary" style="inline-size:4.5rem;block-size:4.5rem;place-items:center" aria-hidden="true">M</span>'
+  public_link:
+    markup: '<a href="#publico">Ver perfil público</a>'
+  actions:
+    markup: '<a class="btn btn-outline-primary" href="#apelido">Editar apelido</a>'

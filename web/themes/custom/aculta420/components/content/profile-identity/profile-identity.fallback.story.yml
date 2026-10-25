@@ -1,0 +1,9 @@
+name: Identidade sem foto ou perfil público
+description: 'Apenas a inicial é exibida, sem criar link público que o owner não autorizou.'
+component: aculta420:profile-identity
+props:
+  display_name: Perfil Exemplo
+  hint: Atualize sua apresentação pública.
+slots:
+  actions:
+    markup: '<a class="btn btn-outline-primary" href="#foto">Adicionar foto</a>'

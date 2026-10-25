@@ -1,0 +1,8 @@
+name: Biografia não informada
+description: 'O conteúdo vazio é fornecido pelo owner, não inventado pelo tema.'
+component: aculta420:profile-bio
+props:
+  title: Biografia
+slots:
+  body:
+    markup: '<p>Você ainda não escreveu sua biografia.</p>'

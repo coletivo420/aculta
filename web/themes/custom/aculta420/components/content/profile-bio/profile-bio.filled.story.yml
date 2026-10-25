@@ -1,0 +1,10 @@
+name: Biografia preenchida com ação
+description: 'Texto e link fictícios como renderables no slot; SDC não cria o editor.'
+component: aculta420:profile-bio
+props:
+  title: Biografia
+slots:
+  body:
+    markup: '<p>Arte, participação comunitária e cultura.</p>'
+  actions:
+    markup: '<a href="#editar-bio">Editar biografia</a>'

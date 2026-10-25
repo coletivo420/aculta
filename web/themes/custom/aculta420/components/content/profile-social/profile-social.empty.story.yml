@@ -1,0 +1,8 @@
+name: Redes não informadas
+description: 'Nenhuma rede é inventada: o owner informa o estado para cada uma.'
+component: aculta420:profile-social
+props:
+  title: Redes sociais
+slots:
+  items:
+    markup: '<div>Instagram: não informado</div><div>Facebook: não informado</div><div>Reddit: não informado</div>'
