@@ -46,6 +46,13 @@ funcionalmente, inclusive depois de aprovado o Studio.
 - Nenhum alias transitório para `/studio/pessoal` será instalado:
   atualizar consumidores e testes diretamente para os nomes finais.
 
+## S-R3-B2 — cadastro separado de apelido (dev.18/30/74, código não homologado)
+
+- `/studio/conta/dados` delega o **mesmo Profile Form API de `PortalController::myData()`** ao Portal e usa seu `form_alter` por rota para apresentar nome e WhatsApp privados, sem `field_nickname`. Em `/dados` o formulário legado fica misto, inalterado.
+- `/studio/perfil/apelido` é um Form API independente do owner `aculta_user`; edita somente `Profile.field_nickname` da conta atual. `NicknamePolicy` reutiliza a consulta de colisões entre perfis de papel, compartilhada com `AccountCreationHooks`, e `AccountNames` mantém validação/slug/reservados. Não há segundo campo ou alias da rota pública.
+- Salvar retorna ao contexto da experiência; `/u/{apelido}` continua gerado por `PublicProfileLink` no MAIN e condicionado a `PublicProfilePolicy`. `/conta-legada` permanece permanente; `/` ainda é o hub do Studio.
+- Testes Unit escritos, **não executados**. Segurança HTTP, duplicidade concorrente, privacidade, perfil obrigatório, cache, integração com legado, sem JavaScript, checkout, Kernel/Functional e Firefox ESR/Runtime ainda não homologados. Menções anteriores a apelido pendente são históricas.
+
 ## S-R3-B1 — Documentos privados no Studio (dev.17)
 
 - `/studio/conta/documentos` reaproveita o mesmo

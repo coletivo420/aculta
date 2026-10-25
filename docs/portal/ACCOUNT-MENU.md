@@ -1,5 +1,12 @@
 # Menu da Minha conta
 
+## S-R3-B2 — dados privados e apelido público separados
+
+- `/studio/conta/dados` usa o Profile Form API do Portal e apenas nome cadastral/WhatsApp; não exibe o apelido comunitário.
+- `/studio/perfil/apelido` usa formulário independente do User e escreve apenas o mesmo `field_nickname`; submissão volta ao Perfil Studio.
+- `/dados` e a apresentação da Minha Conta original `/conta-legada` permanecem, inclusive shell, menus, AJAX, handlers e campos anteriores.
+- Testes Unit novos escritos e não executados; Kernel/Functional, domínio, cache e compatibilidade sem JavaScript/Firefox ainda aguardam evidências.
+
 ## S-R3-A — comparação do mesmo formulário em duas interfaces
 
 A Minha Conta original continua em `/conta-legada` com a navegação e

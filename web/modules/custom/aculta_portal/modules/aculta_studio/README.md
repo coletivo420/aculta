@@ -1,7 +1,17 @@
 # ACULTA Studio (`aculta_studio`)
 
 
-## Situação vigente — S-R3-B1, Studio dev.17
+## Situação vigente — S-R3-B2, Studio dev.18
+
+O Hub do ACULTA Studio responde em `/` no domínio ACCOUNT; `/studio` é somente caminho interno (404 direto). **Minha Conta original é permanente em `/conta-legada`.** Esta etapa separa o uso do mesmo Profile, sem armazenamento duplicado:
+
+- **`/studio/conta/dados`**: formulário cadastral privado do Portal com nome e WhatsApp, excluindo `field_nickname` apenas no Studio; `/dados` do legado preserva todos os campos atuais.
+- **`/studio/perfil/apelido`**: formulário isolado do ACULTA User, único responsável pela validação de nickname, gravando `Profile.field_nickname`. Sem CPF/CNPJ, endereço, senha ou e-mail de conta.
+- Editores existentes de endereço, documentos opcionais, segurança, OAuth, bio, privacidade e redes foram mantidos, assim como checkout e shell legados.
+
+Os testes Unit novos constam no Git, **mas não foram executados**. Gates PHP, Kernel/Functional, HTTP, cache, CSRF/no-JS, Firefox ESR e Runtime seguem obrigatórios. Documentação abaixo de dev.17 é histórica.
+
+## Situação anterior — S-R3-B1, Studio dev.17
 
 A raiz **`/` do Domain ACCOUNT serve o hub ACULTA Studio**,
 `/studio` é caminho técnico interno não público, e

@@ -1,6 +1,13 @@
 # ACULTA Studio — Roadmap multi-experiência
 
 
+## S-R3-B2 — separação de cadastro e apelido (Studio dev.18 / Portal dev.30 / User dev.74)
+
+- **Código entregue na PR #297:** `/studio/conta/dados` compõe Profile Form API somente com nome e WhatsApp privado. `/studio/perfil/apelido` entrega editor isolado do campo original `field_nickname` com as regras da ACULTA User. Não cria schema, alias nem editor de dados privados no Perfil.
+- `/conta-legada` permanece Minha Conta original; `/dados` legado preserva o formulário misto para comparação e `/` continua hub do Studio.
+- **Sem execução de testes novos:** PHPUnit Unit, Kernel/Functional, lint, PHPCS, validadores de rotas, Domain, aliases, cache, CSRF, sessão anônima/autenticada, CPF/CNPJ opcional, checkout, segurança/OAuth, CEP/Número/S-N, nickname inválido/duplicado/concorrente, no-JS, Firefox ESR/X11 e HTTP dependem de checkout e Runtime autorizados.
+- **Próxima fase S-R3-B3 após gates:** incluir pedidos, apoio e preferências na composição de Conta com owners originais; preparar S-R5 comparação funcional e visual da interface permanente.
+
 ## S-R3-B1 — Documentos da Conta, implementação dev.17
 
 - **Feito no código:** `/studio/conta/documentos` via o mesmo

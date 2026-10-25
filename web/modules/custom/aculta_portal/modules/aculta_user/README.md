@@ -1,6 +1,12 @@
 # ACULTA User (`aculta_user`)
 
-## Atualização de ownership — Conta e Perfil separados (dev.72)
+## Atualização de ownership — S-R3-B2, User dev.74
+
+`/studio/perfil/apelido` permite editar isoladamente o nickname do próprio `Profile`, usando `NicknameForm` e o serviço de unicidade `NicknamePolicy`, compartilhado agora com a criação do Profile. A gramática permanece em `AccountNames` e a URL pública canônica e sua privacidade continuam com os contratos preexistentes. Nenhum campo/entidade adicional foi criado.
+
+`/studio/conta/dados` não inclui mais o apelido, mas o editor legado `/dados` e Minha Conta permanente `/conta-legada` permanecem intactos. Unit novos escritos, ainda **não executados**; validar especialmente concorrência, slug, perfil privado, ownership e no-JS/Runtime.
+
+## Atualização anterior — Conta e Perfil separados (dev.72)
 
 `/studio/perfil` é a experiência independente de identidade comunitária.
 Bio, redes, foto/avatar, visibilidade e perfil público continuam controlados
