@@ -3348,3 +3348,14 @@ permanece intacto nesta microfase.
 
 Validação: testes focais e gates registrados após a implementação.
 
+## 0.1.1-dev.337 — cobrir ações de leitura de Conquistas
+
+Os testes da central verificam que avisos `aculta_msg_game_award` recebem a
+ação de leitura e que a mutação é delegada ao adapter opcional Game, junto à
+revalidação central de ownership/bundle pelo `loadUnchanged()`.
+
+Validação: `NoticeReadStateManagerTest` + `NoticeReadActionBuilderTest`
+**12 testes / 94 assertions PASS**; Unit Messenger **353/2.819 PASS**;
+PHPCS Drupal/DrupalPractice e `git diff --check` PASS. Kernel/Runtime não
+executados (`SIMPLETEST_DB` indisponível).
+

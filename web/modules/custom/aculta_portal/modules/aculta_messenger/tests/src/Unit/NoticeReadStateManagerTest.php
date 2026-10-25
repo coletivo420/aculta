@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
+use Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeManagerInterface;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeManagerInterface;
 use Drupal\aculta_messenger\Service\NoticeReadStateManager;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -72,6 +73,29 @@ final class NoticeReadStateManagerTest extends UnitTestCase {
     $container->expects(self::once())->method('get')->with('friendship')->willReturn($adapter);
 
     self::assertTrue((new NoticeReadStateManager($entities, $container))->setRead(44, $account, TRUE));
+  }
+
+  /**
+   * Game achievement Messages dispatch to the shared Game notice adapter.
+   */
+  public function testDispatchesGameAchievementReadState(): void {
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('bundle')->willReturn('aculta_msg_game_award');
+    $message->method('getOwnerId')->willReturn(8);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('loadUnchanged')->with(45)->willReturn($message);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('message')->willReturn($storage);
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $account->method('id')->willReturn('8');
+    $adapter = $this->createMock(GameAchievementNoticeManagerInterface::class);
+    $adapter->expects(self::once())->method('setRead')->with($message, $account, FALSE)->willReturn(TRUE);
+    $container = $this->createMock(ContainerInterface::class);
+    $container->expects(self::once())->method('has')->with('game')->willReturn(TRUE);
+    $container->expects(self::once())->method('get')->with('game')->willReturn($adapter);
+
+    self::assertTrue((new NoticeReadStateManager($entities, $container))->setRead(45, $account, FALSE));
   }
 
   /**
