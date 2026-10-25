@@ -41,6 +41,8 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
 
   public const TEMPLATE = 'aculta_msg_donation_notice';
 
+  private const PERSONAL_NOTICE_LIMIT = 20;
+
   public const DIRECT_EMAIL_QUEUE = 'aculta_messenger_donation_email';
 
   private const EVENT_FIELD = 'field_aculta_don_event';
@@ -306,8 +308,15 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
   /**
    * {@inheritdoc} */
   public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void {
+    $this->addPersonalNoticesPage($items, $account, $filters, self::PERSONAL_NOTICE_LIMIT, 0);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addPersonalNoticesPage(array &$items, AccountInterface $account, array $filters, int $limit, int $offset): bool {
     if (!$account->isAuthenticated()) {
-      return;
+      return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
     $query = $storage->getQuery()->accessCheck(FALSE)
@@ -316,8 +325,11 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
     NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
     $ids = $query
       ->sort('created', 'DESC')
-      ->range(0, 20)
+      ->sort('id', 'DESC')
+      ->range(max(0, $offset), max(1, $limit) + 1)
       ->execute();
+    $hasNext = count($ids) > max(1, $limit);
+    $ids = array_slice($ids, 0, max(1, $limit));
     foreach ($storage->loadMultiple($ids) as $message) {
       if (!$message instanceof MessageInterface || ($notice = $this->resolve($message, $account)) === NULL) {
         continue;
@@ -346,6 +358,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.donation_notice_open', ['message' => $message->id()]), ['data-portal-ui' => 'notice-summary-link']),
       ];
     }
+    return $hasNext;
   }
 
   /**

@@ -7,11 +7,11 @@ namespace Drupal\aculta_messenger\Integration\Wiki;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\message\MessageInterface;
-use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
+use Drupal\aculta_messenger\Aviso\PaginatedPersonalNoticeAdapterInterface;
 
 /**
  * Public adapter contract for Wiki notices in the Messenger. */
-interface WikiNoticeManagerInterface extends PersonalNoticeAdapterInterface {
+interface WikiNoticeManagerInterface extends PaginatedPersonalNoticeAdapterInterface {
 
   /**
    * Persists an eligible Wiki event for its recipient. */

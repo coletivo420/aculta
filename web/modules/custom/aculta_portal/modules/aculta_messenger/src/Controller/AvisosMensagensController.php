@@ -65,7 +65,13 @@ final class AvisosMensagensController extends ControllerBase {
     $rawForumOffset = $query['forum_offset'] ?? 0;
     $forumOffset = is_int($rawForumOffset) ? $rawForumOffset
       : (is_string($rawForumOffset) && ctype_digit($rawForumOffset) ? (int) $rawForumOffset : 0);
-    $pagination = ['forum_offset' => min(1_000_000, max(0, $forumOffset))];
+    $rawNoticeOffset = $query['notice_offset'] ?? 0;
+    $noticeOffset = is_int($rawNoticeOffset) ? $rawNoticeOffset
+      : (is_string($rawNoticeOffset) && ctype_digit($rawNoticeOffset) ? (int) $rawNoticeOffset : 0);
+    $pagination = [
+      'forum_offset' => min(1_000_000, max(0, $forumOffset)),
+      'notice_offset' => min(1_000_000, max(0, $noticeOffset)),
+    ];
     $naoLidosAvisos = $this->avisos->naoLidosTotal($uid);
     $naoLidasConversas = $this->conversas->count();
 

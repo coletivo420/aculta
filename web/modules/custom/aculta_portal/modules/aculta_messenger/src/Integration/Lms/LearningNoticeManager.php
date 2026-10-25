@@ -49,6 +49,8 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
 
   public const TEMPLATE = 'aculta_msg_lms_notice';
 
+  private const PERSONAL_NOTICE_LIMIT = 10;
+
   private const EVENT_FIELD = 'field_aculta_lms_event_type';
 
   private const SOURCE_FIELD = 'field_aculta_lms_source_uuid';
@@ -406,8 +408,15 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
    * Builds accessible, current notices for the Messenger avisos list.
    */
   public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void {
+    $this->addPersonalNoticesPage($items, $account, $filters, self::PERSONAL_NOTICE_LIMIT, 0);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addPersonalNoticesPage(array &$items, AccountInterface $account, array $filters, int $limit, int $offset): bool {
     if (!$account->isAuthenticated()) {
-      return;
+      return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
     $query = $storage->getQuery()
@@ -417,8 +426,11 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
     $ids = $query
       ->sort('created', 'DESC')
-      ->range(0, 10)
+      ->sort('id', 'DESC')
+      ->range(max(0, $offset), max(1, $limit) + 1)
       ->execute();
+    $hasNext = count($ids) > max(1, $limit);
+    $ids = array_slice($ids, 0, max(1, $limit));
     foreach ($storage->loadMultiple($ids) as $message) {
       if (!$message instanceof MessageInterface) {
         continue;
@@ -465,6 +477,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         ]), ['data-portal-ui' => 'notice-summary-link']),
       ];
     }
+    return $hasNext;
   }
 
   /**

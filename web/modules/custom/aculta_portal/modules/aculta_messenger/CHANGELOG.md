@@ -2092,3 +2092,9 @@ A falha de `pendingRecipientIds()` no cron atual agora também é considerada ao
 
 Validação: `LearningNoticeDigestIntegrationTest` **22 testes / 176 assertions PASS**, `AvisosResumoProviderPreferenceTest` **4/79 PASS** e `AvisosResumoMailerKernelTest` **2/31 PASS** em MariaDB dedicado. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Transporte externo e Runtime não executados.
 
+## 0.1.1-dev.209 — paginar adapters da central por origem
+
+O contrato opcional `PaginatedPersonalNoticeAdapterInterface` permite que LMS, Wiki, Loja e Doações entreguem páginas de 100 itens na central quando a pessoa seleciona uma origem. Os queries mantêm filtro de leitura antes do limite e ordenação por criação/ID; cada manager continua dono da revalidação de acesso e `Message`. A paginação usa offset por origem, links acessíveis anterior/seguinte e não altera os limites antigos da gaveta. Fórum continua usando seu próprio pager. Comunicados/Site Alert e paginação da lista sem filtro ficam fora desta microfase.
+
+Validação: dispatch opcional `PersonalNoticeAdapterHooksTest` **6/65 PASS**; Commerce Unit **5/58**, Wiki Unit **3/45**, Kernel LMS **4/47**, Wiki **7/129**, Commerce **4/67** e Doação **5/80 PASS**. PHPCS Drupal/DrupalPractice limpo nos arquivos novos/adapters; controllers mantêm baseline (MessagesController 95/65; AvisosMensagensController 15/12). PHP lint, `git diff --check` e gate Drupal 11+ PASS. Kernels reportam deprecações de annotations Message Core/contrib; visual/Runtime não executados.
+

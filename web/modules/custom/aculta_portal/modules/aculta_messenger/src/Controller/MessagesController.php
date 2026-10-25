@@ -11,6 +11,7 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Aviso\PersonalNoticePageState;
 use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
 use Drupal\aculta_messenger\Aviso\EmailPendingAviso;
@@ -780,6 +781,14 @@ final class MessagesController extends ControllerBase {
     // Avisos por pessoa (respostas e atualizações de tópicos seguidos): só da própria pessoa, com link para a página.
     $forumHasNextPage = FALSE;
     $forumOffset = max(0, (int) ($pagination['forum_offset'] ?? 0));
+    $adapterPageOrigins = ['aprendizagem', 'wiki', 'loja', 'doacao'];
+    $adapterPageState = NULL;
+    if ($includeReadActions && in_array($filters['origem'], $adapterPageOrigins, TRUE)) {
+      $adapterPageState = new PersonalNoticePageState(
+        $filters['origem'],
+        max(0, (int) ($pagination['notice_offset'] ?? 0)),
+      );
+    }
     if ($this->account->isAuthenticated()) {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0)->addCacheTags(['aculta_aviso_list']);
       $personalNoticeLimit = $includeReadActions
@@ -854,7 +863,11 @@ final class MessagesController extends ControllerBase {
       ), 'alerta', $this->account->isAuthenticated() ? !$lido : NULL);
     }
 
-    $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $this->account, $filters);
+    $adapterFilters = $filters;
+    if ($adapterPageState instanceof PersonalNoticePageState) {
+      $adapterFilters['page_state'] = $adapterPageState;
+    }
+    $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $this->account, $adapterFilters);
 
     if ($hasFilters) {
       $items = $this->noticeListFilter->apply($items, $filters);
@@ -894,7 +907,7 @@ final class MessagesController extends ControllerBase {
       ];
     }
 
-    $forumPager = [];
+    $noticePager = [];
     if ($includeReadActions && $filters['origem'] === 'forum'
       && ($forumOffset > 0 || $forumHasNextPage)) {
       $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
@@ -903,7 +916,7 @@ final class MessagesController extends ControllerBase {
         $previousUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
           'query' => $filterQuery + ['forum_offset' => max(0, $forumOffset - $pageSize)],
         ]);
-        $forumPager[] = PortalLinkElement::build(
+        $noticePager[] = PortalLinkElement::build(
           $this->translation->translate('Avisos anteriores'),
           $previousUrl,
           ['data-portal-ui' => 'account-data-link'],
@@ -913,7 +926,38 @@ final class MessagesController extends ControllerBase {
         $nextUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
           'query' => $filterQuery + ['forum_offset' => $forumOffset + $pageSize],
         ]);
-        $forumPager[] = PortalLinkElement::build(
+        $noticePager[] = PortalLinkElement::build(
+          $this->translation->translate('Avisos seguintes'),
+          $nextUrl,
+          ['data-portal-ui' => 'account-data-link'],
+        );
+      }
+    }
+
+    if ($adapterPageState instanceof PersonalNoticePageState
+      && ($adapterPageState->offset() > 0 || $adapterPageState->hasNext())) {
+      $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
+      $pagerOriginLabel = [
+        'aprendizagem' => 'Aprendizagem',
+        'wiki' => 'Wiki',
+        'loja' => 'Loja',
+        'doacao' => 'Doações',
+      ][$adapterPageState->origin()];
+      if ($adapterPageState->offset() > 0) {
+        $previousUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
+          'query' => $filterQuery + ['notice_offset' => max(0, $adapterPageState->offset() - PersonalNoticePageState::PAGE_SIZE)],
+        ]);
+        $noticePager[] = PortalLinkElement::build(
+          $this->translation->translate('Avisos anteriores'),
+          $previousUrl,
+          ['data-portal-ui' => 'account-data-link'],
+        );
+      }
+      if ($adapterPageState->hasNext()) {
+        $nextUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
+          'query' => $filterQuery + ['notice_offset' => $adapterPageState->offset() + PersonalNoticePageState::PAGE_SIZE],
+        ]);
+        $noticePager[] = PortalLinkElement::build(
           $this->translation->translate('Avisos seguintes'),
           $nextUrl,
           ['data-portal-ui' => 'account-data-link'],
@@ -922,16 +966,17 @@ final class MessagesController extends ControllerBase {
     }
 
     $forumPagerBuild = [];
-    if ($forumPager !== []) {
+    if ($noticePager !== []) {
+      $pagerOriginLabel = $filters['origem'] === 'forum' ? 'Fórum' : $pagerOriginLabel;
       $forumPagerBuild = [
         '#type' => 'container',
         '#attributes' => [
           'role' => 'navigation',
-          'aria-label' => $this->translation->translate('Paginação dos avisos do Fórum'),
+          'aria-label' => $this->translation->translate('Paginação dos avisos: @origin', ['@origin' => $pagerOriginLabel]),
         ],
         'links' => [
           '#theme' => 'item_list',
-          '#items' => $forumPager,
+          '#items' => $noticePager,
         ],
       ];
     }
@@ -941,7 +986,7 @@ final class MessagesController extends ControllerBase {
       '#attributes' => ['data-portal-ui' => 'messenger-preview'],
       'filters' => $includeFilters ? $this->alertsFilterControlsBuild($filters) : [],
       'alerts' => ['#theme' => 'item_list', '#items' => $items],
-      'forum_pager' => $forumPagerBuild,
+      'notice_pager' => $forumPagerBuild,
     ];
     $cacheability->applyTo($build);
     return [

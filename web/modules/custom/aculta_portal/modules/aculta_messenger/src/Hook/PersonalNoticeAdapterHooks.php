@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
+use Drupal\aculta_messenger\Aviso\PaginatedPersonalNoticeAdapterInterface;
+use Drupal\aculta_messenger\Aviso\PersonalNoticePageState;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Psr\Container\ContainerInterface;
@@ -21,6 +23,18 @@ final class PersonalNoticeAdapterHooks {
    * @var string[]
    */
   private const ADAPTERS = ['lms', 'wiki', 'commerce', 'donation'];
+
+  /**
+   * Maps adapter service IDs to central-list origins.
+   *
+   * @var array<string, string>
+   */
+  private const ORIGINS = [
+    'lms' => 'aprendizagem',
+    'wiki' => 'wiki',
+    'commerce' => 'loja',
+    'donation' => 'doacao',
+  ];
 
   /**
    * Constructs the hook dispatcher.
@@ -40,7 +54,12 @@ final class PersonalNoticeAdapterHooks {
    */
   #[Hook('aculta_messenger_personal_notices_alter')]
   public function noticesAlter(array &$items, AccountInterface $account, array $filters = []): void {
+    $pageState = $filters['page_state'] ?? NULL;
     foreach (self::ADAPTERS as $id) {
+      if ($pageState instanceof PersonalNoticePageState
+        && ($pageState->origin() !== (self::ORIGINS[$id] ?? NULL))) {
+        continue;
+      }
       try {
         $adapter = $this->adapter($id);
       }
@@ -53,7 +72,19 @@ final class PersonalNoticeAdapterHooks {
         // list while allowing independent origins to continue contributing.
         $contribution = [];
         try {
-          $adapter->addPersonalNotices($contribution, $account, $filters);
+          if ($pageState instanceof PersonalNoticePageState
+            && $adapter instanceof PaginatedPersonalNoticeAdapterInterface) {
+            $pageState->setHasNext($adapter->addPersonalNoticesPage(
+              $contribution,
+              $account,
+              $filters,
+              PersonalNoticePageState::PAGE_SIZE,
+              $pageState->offset(),
+            ));
+          }
+          else {
+            $adapter->addPersonalNotices($contribution, $account, $filters);
+          }
           if ($contribution !== []) {
             array_push($items, ...$contribution);
           }

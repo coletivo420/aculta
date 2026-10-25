@@ -7,11 +7,11 @@ namespace Drupal\aculta_messenger\Integration\Commerce;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\message\MessageInterface;
-use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
+use Drupal\aculta_messenger\Aviso\PaginatedPersonalNoticeAdapterInterface;
 
 /**
  * Shared interface for private Commerce order notices. */
-interface CommerceOrderNoticeManagerInterface extends PersonalNoticeAdapterInterface {
+interface CommerceOrderNoticeManagerInterface extends PaginatedPersonalNoticeAdapterInterface {
 
   /**
    * Persists an eligible event for the order's active customer. */

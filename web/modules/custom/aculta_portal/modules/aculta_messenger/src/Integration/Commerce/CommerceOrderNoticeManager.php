@@ -40,6 +40,8 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
 
   public const TEMPLATE = 'aculta_msg_commerce_order_notice';
 
+  private const PERSONAL_NOTICE_LIMIT = 10;
+
   private const EVENT_FIELD = 'field_aculta_commerce_event_type';
 
   private const SOURCE_FIELD = 'field_aculta_commerce_uuid';
@@ -153,15 +155,27 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
   /**
    * {@inheritdoc} */
   public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void {
+    $this->addPersonalNoticesPage($items, $account, $filters, self::PERSONAL_NOTICE_LIMIT, 0);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addPersonalNoticesPage(array &$items, AccountInterface $account, array $filters, int $limit, int $offset): bool {
     if (!$account->isAuthenticated()) {
-      return;
+      return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
     $query = $storage->getQuery()->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)->condition('uid', (int) $account->id());
     NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
     $ids = $query
-      ->sort('created', 'DESC')->range(0, 10)->execute();
+      ->sort('created', 'DESC')
+      ->sort('id', 'DESC')
+      ->range(max(0, $offset), max(1, $limit) + 1)
+      ->execute();
+    $hasNext = count($ids) > max(1, $limit);
+    $ids = array_slice($ids, 0, max(1, $limit));
     foreach ($storage->loadMultiple($ids) as $message) {
       if (!$message instanceof MessageInterface || ($notice = $this->resolve($message, $account)) === NULL) {
         continue;
@@ -192,6 +206,7 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.commerce_notice_open', ['message' => $message->id()]), ['data-portal-ui' => 'notice-summary-link']),
       ];
     }
+    return $hasNext;
   }
 
   /**

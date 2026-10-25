@@ -7,11 +7,11 @@ namespace Drupal\aculta_messenger\Integration\Donation;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\message\MessageInterface;
-use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
+use Drupal\aculta_messenger\Aviso\PaginatedPersonalNoticeAdapterInterface;
 
 /**
  * Persists, resolves and delivers personal Donation notices. */
-interface DonationNoticeManagerInterface extends PersonalNoticeAdapterInterface {
+interface DonationNoticeManagerInterface extends PaginatedPersonalNoticeAdapterInterface {
 
   /**
    * Records one order-created or payment-approved event idempotently. */

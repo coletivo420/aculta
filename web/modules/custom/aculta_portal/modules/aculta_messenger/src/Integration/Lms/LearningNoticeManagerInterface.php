@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Integration\Lms;
 
 use Drupal\Core\Session\AccountInterface;
-use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
+use Drupal\aculta_messenger\Aviso\PaginatedPersonalNoticeAdapterInterface;
 use Drupal\message\MessageInterface;
 
 /**
  * Contract for LMS avisos backed by ACULTA Messenger.
  */
-interface LearningNoticeManagerInterface extends PersonalNoticeAdapterInterface {
+interface LearningNoticeManagerInterface extends PaginatedPersonalNoticeAdapterInterface {
 
   /**
    * Records a notice once per source and recipient.

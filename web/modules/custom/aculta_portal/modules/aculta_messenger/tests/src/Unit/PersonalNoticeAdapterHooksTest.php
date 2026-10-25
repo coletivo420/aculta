@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
+use Drupal\aculta_messenger\Aviso\PaginatedPersonalNoticeAdapterInterface;
+use Drupal\aculta_messenger\Aviso\PersonalNoticePageState;
 use Drupal\aculta_messenger\Hook\PersonalNoticeAdapterHooks;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
@@ -19,6 +21,34 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(PersonalNoticeAdapterHooks::class)]
 #[Group('aculta_messenger')]
 final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
+
+  /**
+   * A filtered origin delegates its offset and page size to one adapter.
+   */
+  public function testSelectedOriginUsesThePaginatedAdapterContract(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $state = new PersonalNoticePageState('wiki', 100);
+    $lms = $this->createMock(PersonalNoticeAdapterInterface::class);
+    $lms->expects(self::never())->method('addPersonalNotices');
+    $wiki = $this->createMock(PaginatedPersonalNoticeAdapterInterface::class);
+    $wiki->expects(self::once())
+      ->method('addPersonalNoticesPage')
+      ->with(
+        self::anything(),
+        $account,
+        self::callback(static fn(array $filters): bool => ($filters['page_state'] ?? NULL) === $state),
+        100,
+        100,
+      )
+      ->willReturn(TRUE);
+    $wiki->expects(self::never())->method('addPersonalNotices');
+    $items = [];
+
+    (new PersonalNoticeAdapterHooks(['lms' => $lms, 'wiki' => $wiki]))
+      ->noticesAlter($items, $account, ['origem' => 'wiki', 'page_state' => $state]);
+
+    self::assertTrue($state->hasNext());
+  }
 
   /**
    * Dispatches list contributions and unread counts to enabled adapters only.
