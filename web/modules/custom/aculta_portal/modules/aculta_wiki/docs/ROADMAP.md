@@ -34,8 +34,8 @@ autorização; a classe `WikiLeadImageLifecycleKernelTest` passou completa em
 enumerador do Index também trata tipo sem schema instalado como vazio, e o
 Kernel de rebuild Wiki-owned voltou a concluir a geração. A página pública do
 verbete deixou de retornar 500 ao mesclar os contextos de cache do hook de
-contribuição; o HTML atual ainda serve `h1` vazio por template Twig compilado
-anterior à correção, pendente de `drush cr` autorizado no Runtime.
+contribuição e passou a titular o `h1` a partir de `node.label`; as 6 URLs
+publicadas retornam 200 e o smoke público fechou **114/114** em sete larguras.
 
 O núcleo `aculta_messenger` é dono do consumer, persistência Message, central,
 contagem, preferências, deduplicação, abertura segura, filas, workers e e-mail.

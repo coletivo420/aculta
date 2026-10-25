@@ -2,12 +2,11 @@
   base e `ContentEntityNullStorage` sem converter falha real em exclusão; a
   classe Kernel de imagem passou 29/1.642 e a suíte Kernel Wiki 31/1.692. O
   enumerador do Index trata tipo sem schema instalado como vazio. A busca
-  deixou de duplicar o `h1` e o hook do link de contribuição passou a mesclar
-  a metadata de cache, eliminando o HTTP 500 da página de verbete. Firefox
-  ESR/X11: público 85/85, WE SATIVA 31/31, moderação 20/20 e teclado 49/49 em
-  sete larguras. O `h1` do verbete e o sem-JS só ficam corretos após `drush cr`
-  no Runtime (template Twig compilado); Olivero, tema escuro efetivo, zoom real
-  e WCAG completa pendentes.
+  deixou de duplicar o `h1`; o hook do link de contribuição passou a mesclar a
+  metadata de cache (eliminando o HTTP 500) e o template usa `node.label` no
+  Context Header (eliminando o `h1` vazio). Firefox ESR/X11: público 114/114,
+  WE SATIVA 31/31, moderação 20/20, teclado 49/49 e sem-JS 16/16 em sete
+  larguras. Olivero, tema escuro efetivo, zoom real e WCAG completa pendentes.
 
 - Dev.106: Kernel invoca `WikiController::home()` sob purpose `wiki` e verifica
   o render array com categorias, verbetes recentes e alterações recentes
