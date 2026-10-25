@@ -65,6 +65,11 @@ final class MessagesController extends ControllerBase {
 
   private const PERSONAL_NOTICE_PREVIEW_LIMIT = 5;
 
+  /**
+   * Maximum offset per origin: 100 pages of 100 notices.
+   */
+  private const MAX_PERSONAL_NOTICE_OFFSET = PersonalNoticePageState::PAGE_SIZE * 100;
+
   public function __construct(
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly EntityTypeManagerInterface $entityTypes,
@@ -1239,7 +1244,7 @@ final class MessagesController extends ControllerBase {
    */
   private function safeNoticeOffset(mixed $value): int {
     $offset = filter_var($value, FILTER_VALIDATE_INT);
-    return $offset === FALSE ? 0 : min(1_000_000, max(0, $offset));
+    return $offset === FALSE ? 0 : min(self::MAX_PERSONAL_NOTICE_OFFSET, max(0, $offset));
   }
 
   /** Builds authorized notice render arrays and native per-member Flag actions. */

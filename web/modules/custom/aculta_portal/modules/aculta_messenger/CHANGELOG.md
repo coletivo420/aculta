@@ -1,3 +1,16 @@
+## 0.1.1-dev.294 — limitar varreduras de paginação por origem
+
+Offsets da central agora têm um limite de 100 páginas (10.000 avisos) por
+origem. Entradas inválidas e negativas voltam à primeira página; valores
+excessivos são limitados antes de iniciar consultas paginadas e revalidar
+acesso.
+
+Validação: `PersistentNoticePaginationTest` cobre os limites e a consulta por
+acesso; o conjunto focal passou **8 testes / 60 assertions**, PHP lint e PHPCS
+do teste PASS. `MessagesController` mantém o baseline preexistente de PHPCS
+após comparar com o HEAD anterior. O índice de status continua bloqueado por
+uma tabela desatualizada no README raiz, fora deste incremento.
+
 ## 0.1.1-dev.293 — validar endereço antes de resolver Loja e Wiki
 
 Os workers de entrega direta da Loja e Wiki agora cancelam endereços inválidos

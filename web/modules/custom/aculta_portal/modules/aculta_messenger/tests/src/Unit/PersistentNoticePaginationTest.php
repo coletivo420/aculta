@@ -34,6 +34,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class PersistentNoticePaginationTest extends UnitTestCase {
 
   /**
+   * Untrusted offsets cannot force unbounded per-origin history scans.
+   */
+  public function testNoticeOffsetIsValidatedAndCappedAtOneHundredPages(): void {
+    $controller = (new \ReflectionClass(MessagesController::class))->newInstanceWithoutConstructor();
+    $method = new \ReflectionMethod(MessagesController::class, 'safeNoticeOffset');
+
+    self::assertSame(250, $method->invoke($controller, '250'));
+    self::assertSame(0, $method->invoke($controller, '-1'));
+    self::assertSame(0, $method->invoke($controller, 'invalid'));
+    self::assertSame(10_000, $method->invoke($controller, '1000000'));
+  }
+
+  /**
    * Access-revoked and read rows do not consume page offsets or capacity.
    */
   public function testPageOffsetCountsOnlyAccessibleUnreadNotices(): void {
