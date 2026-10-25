@@ -211,3 +211,15 @@ A preferência de novas conversas e a amizade são verificadas durante a valida�
 
 A busca de destinatários e o formulário aberto por perfil usam a mesma checagem de elegibilidade. Ambos os lados de bloqueio são respeitados antes de revelar a identidade ou apresentar o composer. A preferência friend-only filtra somente o início de uma thread; se já existir uma conversa com o conjunto exato de membros, o composer continua disponível para resposta.
 
+## Revalidação em 2026-10-25
+
+A revisão de segurança reexecutou `PrivateMessageFormValidatorTest`,
+`NewConversationRecipientIdsTest` e `MessagesControllerMemberAccessTest`: **27
+testes / 169 assertions PASS**. `PrivateMessageRouteAccessKernelTest` também
+passou no MariaDB dedicado (**1 teste / 12 assertions**), verificando a rota
+POST de produção com token CSRF e membership real; foram reportadas sete
+depreciações dos annotations e validators do contrib `private_message`.
+A suíte Unit completa do Messenger passou (**282 testes / 2.308 assertions**).
+Kernel não valida o fluxo HTTP completo de envio, nem substitui navegador ou
+Runtime; esses gates seguem pendentes.
+
