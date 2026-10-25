@@ -1,3 +1,18 @@
+## 0.1.1-dev.339 — agrupar revalidação de avisos de Conquistas
+
+O adapter Game carrega em lote as concessões referenciadas pelos avisos e
+revalida a conta uma vez por página/contador antes de montar a central. A
+recarga invalida o cache estático das entidades antes do carregamento conjunto,
+mantendo as verificações de titularidade, catálogo e revogação sem consultas de
+origem ou conta repetidas por aviso.
+
+Validação: `GameAchievementNoticeManagerTest` **3 testes / 51 assertions PASS**;
+Unit Messenger **356 testes / 2.870 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Kernel Game
+**1 teste / 8 assertions PASS**; Integration Messenger **99 testes / 1.181
+assertions PASS** em SQLite temporário. Permanecem 2
+depreciações de annotations do Core/contrib e 7 notices PHPUnit; sem Runtime.
+
 ## 0.1.1-dev.336 — centralizar avisos de conquistas
 
 Concessões de `aculta_badge_award` publicam pelo contrato de eventos do

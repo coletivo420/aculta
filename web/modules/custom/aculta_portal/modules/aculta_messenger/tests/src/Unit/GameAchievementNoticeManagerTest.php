@@ -86,12 +86,7 @@ final class GameAchievementNoticeManagerTest extends UnitTestCase {
     $lock->expects(self::once())->method('acquire')->with($lockName, 30.0)->willReturn(TRUE);
     $lock->expects(self::once())->method('release')->with($lockName);
 
-    $manager = new GameAchievementNoticeManager(
-      $entities,
-      $this->badgeService($entities),
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
-      $lock,
-    );
+    $manager = $this->manager($entities, $lock);
 
     self::assertSame($message, $manager->record($event));
     self::assertSame([
@@ -113,7 +108,7 @@ final class GameAchievementNoticeManagerTest extends UnitTestCase {
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('isActive')->willReturn(TRUE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('loadUnchanged')->with($uid)->willReturn($recipient);
+    $userStorage->expects(self::once())->method('loadUnchanged')->with($uid)->willReturn($recipient);
     $award = $this->award($awardId, $uuid, $uid, 'associado');
     $awardStorage = $this->createMock(EntityStorageInterface::class);
     $awardStorage->method('loadByProperties')->with(['uuid' => $uuid])->willReturn([$awardId => $award]);
@@ -140,14 +135,61 @@ final class GameAchievementNoticeManagerTest extends UnitTestCase {
     $lock->expects(self::once())->method('acquire')->with($lockName, 30.0)->willReturn(TRUE);
     $lock->expects(self::once())->method('release')->with($lockName);
 
-    $manager = new GameAchievementNoticeManager(
-      $entities,
-      $this->badgeService($entities),
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
-      $lock,
-    );
+    $manager = $this->manager($entities, $lock);
 
     self::assertSame($existing, $manager->record($event));
+  }
+
+  /**
+   * The unread counter reloads source grants in one batch for revalidation.
+   */
+  public function testUnreadCountBatchReloadsAndValidatesGrants(): void {
+    $uid = 27;
+    $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('isActive')->willReturn(TRUE);
+    $recipient->method('id')->willReturn((string) $uid);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->expects(self::once())->method('loadUnchanged')->with($uid)->willReturn($recipient);
+
+    $uuids = [
+      'd68be3c8-48c2-4a44-92df-318f205a145e',
+      '1b955d88-b6c9-4309-bf08-ad345e4cbd7e',
+    ];
+    $messages = array_map(function (string $uuid) use ($uid): MessageInterface {
+      $message = $this->createMock(MessageInterface::class);
+      $message->method('bundle')->willReturn(GameAchievementNoticeManager::TEMPLATE);
+      $message->method('getOwnerId')->willReturn($uid);
+      $message->method('get')->with(GameAchievementNoticeManager::SOURCE_FIELD)
+        ->willReturn($this->field(['value' => $uuid]));
+      return $message;
+    }, $uuids);
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->with(FALSE)->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('execute')->willReturn([51, 52]);
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('getQuery')->willReturn($query);
+    $messageStorage->expects(self::once())->method('loadMultiple')->with([51, 52])->willReturn($messages);
+
+    $awards = [
+      $this->award(31, $uuids[0], $uid, 'associado'),
+      $this->award(32, $uuids[1], $uid, 'associado'),
+    ];
+    $awardStorage = $this->createMock(EntityStorageInterface::class);
+    $awardStorage->expects(self::once())->method('loadByProperties')
+      ->with(['uuid' => $uuids])->willReturn($awards);
+    $awardStorage->expects(self::once())->method('resetCache')->with(['31', '32']);
+    $awardStorage->expects(self::once())->method('loadMultiple')->with(['31', '32'])->willReturn($awards);
+
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnMap([
+      ['user', $userStorage],
+      ['message', $messageStorage],
+      ['aculta_badge_award', $awardStorage],
+    ]);
+
+    $manager = $this->manager($entities);
+    self::assertSame(2, $manager->unreadCount($uid));
   }
 
   /**
@@ -188,11 +230,26 @@ final class GameAchievementNoticeManagerTest extends UnitTestCase {
   }
 
   /**
+   * Creates the adapter with isolated entity and lock collaborators.
+   */
+  private function manager(EntityTypeManagerInterface $entities, ?LockBackendInterface $lock = NULL): GameAchievementNoticeManager {
+    $manager = new GameAchievementNoticeManager(
+      $entities,
+      $this->badgeService($entities),
+      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      $lock ?? $this->createMock(LockBackendInterface::class),
+    );
+    $manager->setStringTranslation($this->getStringTranslationStub());
+    return $manager;
+  }
+
+  /**
    * Creates a Drupal field item list with named public field values.
    */
   private function field(array $values, bool $empty = FALSE): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('__get')->willReturnCallback(static fn(string $name): mixed => $values[$name] ?? NULL);
+    $field->method('__isset')->willReturnCallback(static fn(string $name): bool => array_key_exists($name, $values));
     $field->method('isEmpty')->willReturn($empty);
     return $field;
   }

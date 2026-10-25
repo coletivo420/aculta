@@ -102,7 +102,12 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
       || !in_array($filters['leitura'] ?? '', ['', 'read', 'unread'], TRUE)) {
       return FALSE;
     }
+    $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $account->id());
+    if (!$recipient instanceof UserInterface || !$recipient->isActive()) {
+      return FALSE;
+    }
     $storage = $this->entityTypeManager->getStorage('message');
+    $awards = [];
     $page = EligibleNoticePage::collect(
       function (int $scanOffset, int $batchSize) use ($storage, $account, $filters): array {
         $query = $storage->getQuery()->accessCheck(FALSE)
@@ -112,9 +117,13 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
         return $query->sort('created', 'DESC')->sort('id', 'DESC')
           ->range($scanOffset, $batchSize)->execute();
       },
-      static fn(array $ids): array => array_values($storage->loadMultiple($ids)),
+      function (array $ids) use ($storage, &$awards): array {
+        $messages = array_values($storage->loadMultiple($ids));
+        $awards = $this->loadAwardsForMessages($messages);
+        return $messages;
+      },
       fn(mixed $message): ?array => $message instanceof MessageInterface
-        ? $this->resolve($message, $account)
+        ? $this->resolve($message, $account, $awards, $recipient)
         : NULL,
       $limit,
       $offset,
@@ -172,8 +181,10 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
       ->condition(self::READ_FIELD, 0)
       ->execute();
     $count = 0;
-    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
-      if ($message instanceof MessageInterface && $this->resolve($message, $account) !== NULL) {
+    $messages = $this->entityTypeManager->getStorage('message')->loadMultiple($ids);
+    $awards = $this->loadAwardsForMessages($messages);
+    foreach ($messages as $message) {
+      if ($message instanceof MessageInterface && $this->resolve($message, $account, $awards, $account) !== NULL) {
         $count++;
       }
     }
@@ -194,13 +205,20 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
 
   /**
    * Revalidates ownership, grant status, definition and active recipient. */
-  private function resolve(MessageInterface $message, AccountInterface $account): ?array {
+  private function resolve(
+    MessageInterface $message,
+    AccountInterface $account,
+    ?array $awards = NULL,
+    ?UserInterface $recipient = NULL,
+  ): ?array {
     if ($message->bundle() !== self::TEMPLATE || (int) $message->getOwnerId() !== (int) $account->id()) {
       return NULL;
     }
-    $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $account->id());
+    $recipient ??= $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $account->id());
     $awardUuid = (string) ($message->get(self::SOURCE_FIELD)->value ?? '');
-    $award = $awardUuid === '' ? NULL : $this->awardByUuid($awardUuid);
+    $award = $awardUuid === ''
+      ? NULL
+      : ($awards === NULL ? $this->awardByUuid($awardUuid) : ($awards[$awardUuid] ?? NULL));
     if (!$recipient instanceof UserInterface || !$recipient->isActive()
       || !$this->isAward($award)
       || (int) $award->get('uid')->target_id !== (int) $account->id()
@@ -212,6 +230,57 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
       return NULL;
     }
     return ['title' => (string) $this->t('Você conquistou: @label', ['@label' => $definition['label']])];
+  }
+
+  /**
+   * Loads current grants for a batch of recipient-owned notice Messages.
+   *
+   * UUIDs locate the canonical source records. The matching IDs are then
+   * cleared from entity storage's static cache and reloaded together, so a
+   * page or unread counter revalidates recipient and revocation without one
+   * query per row.
+   *
+   * @param array $messages
+   *   Candidate Message entities.
+   *
+   * @return array<string, \Drupal\Core\Entity\ContentEntityInterface>
+   *   Current grant entities keyed by UUID.
+   */
+  private function loadAwardsForMessages(array $messages): array {
+    $uuids = [];
+    foreach ($messages as $message) {
+      if (!$message instanceof MessageInterface) {
+        continue;
+      }
+      $uuid = (string) ($message->get(self::SOURCE_FIELD)->value ?? '');
+      if ($uuid !== '') {
+        $uuids[$uuid] = $uuid;
+      }
+    }
+    if ($uuids === []) {
+      return [];
+    }
+
+    $storage = $this->entityTypeManager->getStorage('aculta_badge_award');
+    $matches = $storage->loadByProperties(['uuid' => array_values($uuids)]);
+    $ids = [];
+    foreach ($matches as $award) {
+      if ($this->isAward($award) && isset($uuids[$award->uuid()]) && $award->id() !== NULL) {
+        $ids[] = $award->id();
+      }
+    }
+    if ($ids === []) {
+      return [];
+    }
+
+    $storage->resetCache($ids);
+    $awards = [];
+    foreach ($storage->loadMultiple($ids) as $award) {
+      if ($this->isAward($award) && isset($uuids[$award->uuid()])) {
+        $awards[$award->uuid()] = $award;
+      }
+    }
+    return $awards;
   }
 
   /**
