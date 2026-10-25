@@ -22,9 +22,10 @@ correlação direta, o registro é reconciliado como enviado para evitar uma
 segunda entrega. O teste cobre explicitamente os dois estados; nenhum conteúdo
 da conversa é incluído.
 
-Validação: Unit Messenger **310 testes / 2.494 assertions PASS**; adapters
-Integration Unit **75 testes / 777 assertions PASS**; PHPCS Drupal/DrupalPractice,
-PHP lint e `git diff --check` PASS. Sem Runtime ou SMTP.
+Validação: Unit Messenger **310 testes / 2.494 assertions PASS**, Kernel Messenger
+**50 testes / 1.076 assertions PASS** (10 deprecações Core/contrib registradas)
+e adapters Integration Unit **75 testes / 777 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Runtime ou SMTP.
 
 ## 0.1.1-dev.303 — cobrir compatibilidade de providers de digest antigos
 
