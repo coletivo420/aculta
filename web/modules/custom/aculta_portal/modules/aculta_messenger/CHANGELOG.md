@@ -1,3 +1,12 @@
+## 0.1.1-dev.390 — caracterizar update aditivo 10012
+
+`MessengerDefaultConfigUpdateTest` agora cobre também `update_10012`, que
+instala a configuração padrão do bundle compartilhado de avisos do Game por
+`ConfigInstaller::installDefaultConfig()`. A classe passou **6 testes / 18
+assertions** e a suíte Unit do Messenger **376 testes / 4.150 assertions**;
+PHPCS Drupal/DrupalPractice e PHP lint PASS. O update não foi aplicado no
+Runtime.
+
 ## 0.1.1-dev.389 — negar acesso HTTP de não participante
 
 O BrowserTest autentica um terceiro usuário sem membership na thread de grupo
