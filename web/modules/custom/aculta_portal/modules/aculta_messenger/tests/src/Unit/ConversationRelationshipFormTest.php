@@ -11,6 +11,7 @@ use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -156,6 +157,60 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
       'Não foi possível concluir a ação. Tente novamente.',
       $state->get('message'),
     );
+  }
+
+  /**
+   * An authorized member clears their own history and invalidates cached lists.
+   */
+  public function testAuthorizedMemberCanClearHistoryAndInvalidateCache(): void {
+    $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('id')->willReturn(42);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $sender = $this->activeUser(42);
+    $messages = $this->createMock(EntityReferenceFieldItemListInterface::class);
+    $messages->expects(self::once())->method('referencedEntities')->willReturn([]);
+
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->expects(self::exactly(2))->method('isMember')->with(42)->willReturn(TRUE);
+    $thread->expects(self::once())->method('access')
+      ->with('view', $sender, TRUE)
+      ->willReturn(AccessResult::allowed());
+    $thread->expects(self::once())->method('clearAccountHistory')->with($sender);
+    $thread->method('getCacheTags')->willReturn(['private_message_thread:123']);
+    $thread->expects(self::once())->method('get')->with('private_messages')->willReturn($messages);
+
+    $threadStorage = $this->createMock(EntityStorageInterface::class);
+    $threadStorage->expects(self::once())->method('load')->with(123)->willReturn($thread);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->expects(self::once())->method('loadUnchanged')->with(42)->willReturn($sender);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnMap([
+      ['private_message_thread', $threadStorage],
+      ['user', $userStorage],
+    ]);
+    $invalidator = $this->createMock(CacheTagsInvalidatorInterface::class);
+    $invalidator->expects(self::once())
+      ->method('invalidateTags')
+      ->with(['private_message_thread:123']);
+    $form = new ConversationRelationshipForm(
+      $this->createMock(FriendshipManagerInterface::class),
+      $this->createMock(PrivateMessageBanManagerInterface::class),
+      $account,
+      $entities,
+      $invalidator,
+      $this->createMock(CsrfTokenGenerator::class),
+    );
+    $form->setStringTranslation($this->getStringTranslationStub());
+
+    $state = new FormState();
+    $state->set('group', TRUE);
+    $state->set('thread_id', 123);
+    $state->setTriggeringElement(['#name' => 'clear_confirm']);
+    $state->setUserInput(['clear_confirm' => 'Confirmar limpeza do histórico']);
+    $build = [];
+    $form->submitForm($build, $state);
+
+    self::assertSame('Histórico limpo para você.', $state->get('message'));
   }
 
   /**

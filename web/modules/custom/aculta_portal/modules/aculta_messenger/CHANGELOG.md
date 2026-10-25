@@ -1,3 +1,13 @@
+## 0.1.1-dev.317 — cobrir limpeza autorizada do histórico
+
+Teste de regressão cobre o caminho bem-sucedido de limpeza de histórico:
+revalida conta e acesso, limpa somente para o membro atual e invalida tags de
+cache da thread. Nenhuma lógica de produção foi alterada.
+
+Validação: `ConversationRelationshipFormTest` **8 testes / 65 assertions
+PASS**; Unit Messenger **321 testes / 2.602 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+
 ## 0.1.1-dev.316 — concluir gate PHPCS do formulário de relacionamento
 
 Comentários e chamadas do `ConversationRelationshipForm` foram reformatados
