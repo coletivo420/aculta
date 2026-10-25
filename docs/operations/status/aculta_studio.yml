@@ -20,3 +20,10 @@ next_phase: 'Executar lint/PHPCS, PHPUnit Unit+Kernel+Functional, descoberta SDC
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
 # Gate: scripts/validate-no-temporary-route-aliases.php.
+
+# 2026-10-25: S-R5 instrumentada com matriz funcional/visual e teste Firefox ESR
+# somente leitura em tests/browser/aculta-studio/parity-s-r5.mjs.
+# Sem homologacao de S-R4 ou S-R5: execucao Drush, PHPUnit e Firefox pendente
+# no Homelab. Versao/estado/next_phase continuam os mesmos, pois nao houve
+# validacao nem nova feature runtime. Detalhes: docs/S-R5-MATRIZ-COMPARACAO.md
+# do submodulo aculta_studio. Sem merge/deploy.
