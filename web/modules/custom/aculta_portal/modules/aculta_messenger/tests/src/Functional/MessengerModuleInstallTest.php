@@ -273,6 +273,23 @@ PHP, FILE_APPEND);
     $messages = $thread->getMessages(TRUE);
     self::assertCount(1, $messages);
     self::assertSame($body, reset($messages)->getMessage());
+
+    $messageCount = count($messages);
+    $outsider = $this->drupalCreateUser([
+      'access user profiles',
+      'use private messaging system',
+    ]);
+    $this->drupalResetSession();
+    $this->getSession()->getDriver()->getClient()->restart();
+    $this->drupalLogin($outsider);
+    $this->drupalGet(Url::fromRoute('aculta_messenger.drawer_conversation', [
+      'private_message_thread' => $thread->id(),
+    ]), [], ['X-Requested-With' => 'XMLHttpRequest']);
+    self::assertContains($this->getSession()->getStatusCode(), [403, 404]);
+    self::assertStringNotContainsString($body, $this->getSession()->getPage()->getText());
+    $threadStorage->resetCache([$thread->id()]);
+    $thread = $threadStorage->loadUnchanged($thread->id());
+    self::assertCount($messageCount, $thread->getMessages(TRUE));
   }
 
   /**

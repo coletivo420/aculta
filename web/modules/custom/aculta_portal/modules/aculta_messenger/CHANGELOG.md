@@ -1,3 +1,14 @@
+## 0.1.1-dev.389 — negar acesso HTTP de não participante
+
+O BrowserTest autentica um terceiro usuário sem membership na thread de grupo
+e faz GET real ao endpoint do drawer. A resposta é negada (403/404), não contém
+a mensagem e a thread preserva a contagem de itens: **1 teste / 65 assertions
+PASS**. O caso exercita também o isolamento do cookie jar entre contas; uma
+tentativa anterior havia reaproveitado a sessão do remetente e não serviu como
+evidência. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+BrowserTest reportou 275 depreciações Core/contrib sem falhas. Tudo em site e
+banco temporários; sem alteração no Runtime.
+
 ## 0.1.1-dev.388 — revalidação das integrações e Kernels
 
 Reexecutadas as suítes completas do Messenger no snapshot desta branch:
