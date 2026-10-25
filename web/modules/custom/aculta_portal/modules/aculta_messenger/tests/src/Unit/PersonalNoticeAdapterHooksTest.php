@@ -53,9 +53,8 @@ final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
   /**
    * A page for a non-adapter origin does not trigger unrelated adapters.
    */
-  public function testNonAdapterOriginPageSkipsOptionalAdapters(): void {
+  public function testNonAdapterOriginSkipsOptionalAdapters(): void {
     $account = $this->createMock(AccountInterface::class);
-    $state = new PersonalNoticePageState('comunicado', 0);
     $lms = $this->createMock(PersonalNoticeAdapterInterface::class);
     $lms->expects(self::never())->method('addPersonalNotices');
     $wiki = $this->createMock(PaginatedPersonalNoticeAdapterInterface::class);
@@ -64,10 +63,9 @@ final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
     $items = [];
 
     (new PersonalNoticeAdapterHooks(['lms' => $lms, 'wiki' => $wiki]))
-      ->noticesAlter($items, $account, ['origem' => 'comunicado', 'page_state' => $state]);
+      ->noticesAlter($items, $account, ['origem' => 'comunicado']);
 
     self::assertSame([], $items);
-    self::assertFalse($state->hasNext());
   }
 
   /**
@@ -78,7 +76,7 @@ final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
     $lms = $this->createMock(PersonalNoticeAdapterInterface::class);
     $lms->expects(self::once())
       ->method('addPersonalNotices')
-      ->with(self::anything(), $account, ['origem' => 'wiki'])
+      ->with(self::anything(), $account, ['origem' => ''])
       ->willReturnCallback(static function (array &$items): void {
         $items[] = 'lms';
       });
@@ -86,7 +84,7 @@ final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
     $wiki = $this->createMock(PersonalNoticeAdapterInterface::class);
     $wiki->expects(self::once())
       ->method('addPersonalNotices')
-      ->with(self::anything(), $account, ['origem' => 'wiki'])
+      ->with(self::anything(), $account, ['origem' => ''])
       ->willReturnCallback(static function (array &$items): void {
         $items[] = 'wiki';
       });
@@ -95,7 +93,7 @@ final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
     $items = ['forum'];
     $count = 4;
 
-    $hooks->noticesAlter($items, $account, ['origem' => 'wiki']);
+    $hooks->noticesAlter($items, $account, ['origem' => '']);
     $hooks->unreadCountAlter($count, 42);
 
     self::assertSame(['forum', 'lms', 'wiki'], $items);
@@ -147,6 +145,28 @@ final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
 
     self::assertSame(['forum', 'healthy'], $items);
     self::assertSame(7, $count);
+  }
+
+  /**
+   * A source filter without page state invokes only its matching adapter.
+   */
+  public function testSourceFilterSkipsUnrelatedAdaptersWithoutPageState(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $lms = $this->createMock(PersonalNoticeAdapterInterface::class);
+    $lms->expects(self::never())->method('addPersonalNotices');
+    $wiki = $this->createMock(PersonalNoticeAdapterInterface::class);
+    $wiki->expects(self::once())
+      ->method('addPersonalNotices')
+      ->with(self::anything(), $account, ['origem' => 'wiki'])
+      ->willReturnCallback(static function (array &$items): void {
+        $items[] = 'wiki';
+      });
+    $items = [];
+
+    (new PersonalNoticeAdapterHooks(['lms' => $lms, 'wiki' => $wiki]))
+      ->noticesAlter($items, $account, ['origem' => 'wiki']);
+
+    self::assertSame(['wiki'], $items);
   }
 
   /**

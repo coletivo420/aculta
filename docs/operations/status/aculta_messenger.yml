@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: "Dev.237 suprime avisos enfileirados de mensagens já ocultadas pelo corte de limpeza individual (PrivateMessageNotificationWorkerTest 5/100 PASS; PHP lint e PHPCS PASS). Runtime e e-mail externo não executados."
+next_phase: "Dev.238 filtra dispatch para consultar somente o adapter da origem selecionada (PersonalNoticeAdapterHooksTest 9/78; central 22/180; PHPCS, lint e índice PASS). Paginação global/Runtime pendentes."

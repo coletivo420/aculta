@@ -7,6 +7,7 @@ namespace Drupal\aculta_messenger\Hook;
 use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
 use Drupal\aculta_messenger\Aviso\PaginatedPersonalNoticeAdapterInterface;
 use Drupal\aculta_messenger\Aviso\PersonalNoticePageState;
+use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Psr\Container\ContainerInterface;
@@ -55,9 +56,14 @@ final class PersonalNoticeAdapterHooks {
   #[Hook('aculta_messenger_personal_notices_alter')]
   public function noticesAlter(array &$items, AccountInterface $account, array $filters = []): void {
     $pageState = $filters['page_state'] ?? NULL;
+    $selectedOrigin = $filters['origem'] ?? '';
+    if (!is_string($selectedOrigin) || !in_array($selectedOrigin, NoticeListFilter::ORIGINS, TRUE)) {
+      $selectedOrigin = '';
+    }
     foreach (self::ADAPTERS as $id) {
-      if ($pageState instanceof PersonalNoticePageState
-        && ($pageState->origin() !== (self::ORIGINS[$id] ?? NULL))) {
+      $adapterOrigin = self::ORIGINS[$id] ?? NULL;
+      if (($pageState instanceof PersonalNoticePageState && $pageState->origin() !== $adapterOrigin)
+        || ($selectedOrigin !== '' && $selectedOrigin !== $adapterOrigin)) {
         continue;
       }
       try {

@@ -1,3 +1,9 @@
+## 0.1.1-dev.238 — despachar somente o adapter da origem filtrada
+
+A central agora chama somente o adapter que corresponde à origem selecionada. Filtros de Fórum, Comunicados, Alertas e Conta deixam de disparar consultas de LMS, Wiki, Loja e Doações; o contador agregado continua consultando todos os adapters.
+
+Validação: `PersonalNoticeAdapterHooksTest` **9 testes / 78 assertions PASS**; conjunto de filtros/paginação/ações da central **22/180 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e índice de status PASS. Runtime não executado.
+
 ## 0.1.1-dev.237 — respeitar o histórico apagado em avisos enfileirados
 
 O worker de e-mail de mensagens privadas agora compara a data da mensagem com o limite individual de limpeza do histórico. Uma mensagem já ocultada para o destinatário não gera aviso tardio, mesmo que mensagens posteriores mantenham a thread acessível.
