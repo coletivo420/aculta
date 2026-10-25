@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Cleanup;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\ContentEntityNullStorage;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -32,8 +33,31 @@ final class FileReferenceInspector implements FileReferenceInspectorInterface {
         continue;
       }
       try {
-        $definitions = $this->fieldManager->getFieldStorageDefinitions($entityTypeId);
+        $definition = $this->entityTypeManager->getDefinition($entityTypeId);
         $storage = $this->entityTypeManager->getStorage($entityTypeId);
+      }
+      catch (\Throwable) {
+        return FileReferenceStatus::Unverifiable;
+      }
+
+      // A registered entity type whose storage was never installed cannot
+      // hold references in this installation. Skipping it is not an
+      // authorization to delete: there is no base table to contain rows.
+      $baseTable = $definition->getBaseTable();
+      if ($baseTable === NULL) {
+        // A null-storage entity type (for example a preview stub) never
+        // persists rows, so it cannot reference anything. Any other storage
+        // without a base table cannot be verified and must fail closed.
+        if ($storage instanceof ContentEntityNullStorage) {
+          continue;
+        }
+        return FileReferenceStatus::Unverifiable;
+      }
+      try {
+        if (!$this->database->schema()->tableExists($baseTable)) {
+          continue;
+        }
+        $definitions = $this->fieldManager->getFieldStorageDefinitions($entityTypeId);
       }
       catch (\Throwable) {
         return FileReferenceStatus::Unverifiable;

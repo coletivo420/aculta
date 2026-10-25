@@ -1,3 +1,17 @@
+## 0.4.1-dev.32 — limpeza global ignora tipos sem armazenamento instalado (2026-10-25)
+
+- `FileReferenceInspector` deixa de tratar como `Unverifiable` os tipos de
+  entidade registrados sem tabela base instalada: sem armazenamento não há
+  linhas capazes de referenciar o alvo. O fail-closed permanece para tipos com
+  tabela base cuja consulta falhe e para storages não persistentes que não
+  sejam `ContentEntityNullStorage`.
+- Corrige os dois cenários de limpeza de imagem da Wiki que falhavam quando
+  `media_gallery` estava registrado sem schema e `entity_embed_fake_entity`
+  usava null storage. Nenhuma exclusão nova é autorizada: apenas tipos sem
+  linhas persistidas são ignorados; referências reais continuam retendo.
+- Kernel Wiki `WikiLeadImageLifecycleKernelTest` 28 testes / 1.611 asserções
+  PASS; Unit Wiki 82/448 PASS; PHPCS Drupal/DrupalPractice PASS.
+
 ## 0.4.1-dev.31 — caracterização de documentos S-R3-B1 (2026-10-25)
 
 - Novos testes Unit para AccountOtherDataForm: owner ausente, chave indisponível, campo cifrado com leitura mascarada e desabilitada, ausência de fingerprint, erro de decifração não revelado, entrada Form API, validação genérica e dado canônico no FormState.
