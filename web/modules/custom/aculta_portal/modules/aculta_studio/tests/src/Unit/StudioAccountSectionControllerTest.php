@@ -13,6 +13,7 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Verifies Portal Form API composition without nesting the account shell.
@@ -156,6 +157,46 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
     $routes = array_map(static fn (array $link): string => $link['#url']->getRouteName(),
       $page['navigation']['#items']);
     self::assertCount(5, $routes);
+    self::assertNotContains('aculta_studio.account_documents', $routes);
+  }
+
+  /**
+   * Direct access fails with 404 if the optional document owner is absent.
+   */
+  public function testDocumentsWithoutOwnerAreNotFound(): void {
+    $resolver = $this->createMock(ClassResolverInterface::class);
+    $resolver->expects(self::never())->method('getInstanceFromDefinition');
+    $this->expectException(NotFoundHttpException::class);
+    (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE)))->documents();
+  }
+
+  /**
+   * A denied member cannot inspect optional document availability.
+   */
+  public function testDocumentsRequirePortalPermissionBeforeOwnerResolution(): void {
+    $resolver = $this->createMock(ClassResolverInterface::class);
+    $resolver->expects(self::never())->method('getInstanceFromDefinition');
+    $this->expectException(AccessDeniedHttpException::class);
+    (new StudioAccountSectionController($resolver, $this->account(TRUE, FALSE)))->documents();
+  }
+
+  /**
+   * An installed but temporarily unavailable owner retains its own message.
+   */
+  public function testInstalledUnavailableDocumentOwnerCanRenderExplanation(): void {
+    $owner = new class {
+      public function otherData(): array {
+        return ['content' => ['form' => ['unavailable' => ['#plain_text' => 'Indisponível']]]];
+      }
+    };
+    $resolver = $this->createMock(ClassResolverInterface::class);
+    $resolver->expects(self::once())->method('getInstanceFromDefinition')
+      ->with(PortalController::class)->willReturn($owner);
+    $document = $this->createMock(AccountDocumentInterface::class);
+    $document->method('isAvailable')->willReturn(FALSE);
+    $page = (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE), $document))->documents();
+    self::assertSame('Indisponível', $page['content']['content']['form']['unavailable']['#plain_text']);
+    $routes = array_map(static fn (array $item): string => $item['#url']->getRouteName(), $page['navigation']['#items']);
     self::assertNotContains('aculta_studio.account_documents', $routes);
   }
 

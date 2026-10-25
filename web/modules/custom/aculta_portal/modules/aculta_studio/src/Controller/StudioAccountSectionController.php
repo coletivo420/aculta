@@ -11,6 +11,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Displays Portal-owned account sections without introducing a second shell.
@@ -101,6 +102,12 @@ final class StudioAccountSectionController {
   private function build(string $method, string $section): array {
     if (!$this->account->isAuthenticated() || !$this->account->hasPermission('access aculta portal')) {
       throw new AccessDeniedHttpException();
+    }
+    // Optional document capability must not be resolved when absent.
+    // The installed owner may still present its own unavailable/readonly
+    // state when encryption or fingerprint configuration is incomplete.
+    if ($method === 'otherData' && $this->documents === NULL) {
+      throw new NotFoundHttpException();
     }
 
     $portal = $this->resolver->getInstanceFromDefinition(PortalController::class);
