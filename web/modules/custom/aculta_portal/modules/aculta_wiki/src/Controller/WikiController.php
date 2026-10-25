@@ -14,8 +14,10 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Presentation\WikiSearchFormBuilderInterface;
 use Drupal\aculta_portal\Search\SearchPageController;
 use Drupal\domain\DomainInterface;
 use Drupal\node\NodeInterface;
@@ -44,6 +46,10 @@ final class WikiController extends ControllerBase {
     private readonly AccountInterface $account,
     #[Autowire(service: 'renderer')]
     private readonly RendererInterface $renderer,
+    #[Autowire(service: 'theme.manager')]
+    private readonly ?ThemeManagerInterface $themeManager = NULL,
+    #[Autowire(service: 'aculta_wiki.presentation.wiki_search_form')]
+    private readonly ?WikiSearchFormBuilderInterface $searchForm = NULL,
   ) {}
 
   /**
@@ -107,6 +113,12 @@ final class WikiController extends ControllerBase {
       ],
       'changes' => $this->recentChanges(),
     ];
+    // ACULTA420 suppresses the route page-title block on the Wiki home and
+    // relies on this controller heading. Other themes render the page title,
+    // so keeping both would produce two h1 elements.
+    if (!$this->shouldRenderOwnHeading()) {
+      unset($build['intro']['title']);
+    }
     return $build;
   }
 
@@ -121,11 +133,15 @@ final class WikiController extends ControllerBase {
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'wiki-search-results'],
+      '#attached' => ['library' => ['aculta_portal/search-preview']],
       '#cache' => [
         'contexts' => ['url.query_args:q', 'domain', 'user.permissions', 'user.node_grants:view'],
         'tags' => ['node_list:wiki_entry'],
       ],
       'context_tabs' => $this->contextNavigation('aculta_portal.wiki_search'),
+      // The Wiki search page owns a form so the route works without the
+      // ACULTA420 header presentation.
+      'search_form' => $this->searchForm?->build() ?? [],
     ];
     if ($term === '') {
       return $build;
@@ -191,6 +207,17 @@ final class WikiController extends ControllerBase {
       '#props' => ['label' => (string) $this->t('Navegação da Wiki420')],
       '#slots' => ['items' => ['#theme' => 'item_list', '#items' => $links]],
     ];
+  }
+
+  /**
+   * Whether this controller must render its own h1.
+   *
+   * ACULTA420 suppresses the route page-title block on the Wiki home. Other
+   * themes render that block, so the controller must not duplicate it.
+   */
+  private function shouldRenderOwnHeading(): bool {
+    return $this->themeManager === NULL
+      || $this->themeManager->getActiveTheme()->getName() === 'aculta420';
   }
 
   /**

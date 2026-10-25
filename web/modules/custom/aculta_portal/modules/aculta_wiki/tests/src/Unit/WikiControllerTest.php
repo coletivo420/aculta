@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_wiki\Unit;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Presentation\WikiSearchFormBuilderInterface;
 use Drupal\aculta_portal\Search\SearchPageController;
 use Drupal\aculta_wiki\Controller\WikiController;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -22,6 +23,8 @@ use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Theme\ActiveTheme;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -110,7 +113,7 @@ final class WikiControllerTest extends UnitTestCase {
   /**
    * Builds the controller with a stub translator and the given Domain.
    */
-  private function controller(?DomainInterface $domain, ?EntityStorageInterface $nodeStorage = NULL, ?EntityAccessControlHandlerInterface $nodeAccess = NULL, ?AccountInterface $account = NULL, ?Connection $database = NULL): WikiController {
+  private function controller(?DomainInterface $domain, ?EntityStorageInterface $nodeStorage = NULL, ?EntityAccessControlHandlerInterface $nodeAccess = NULL, ?AccountInterface $account = NULL, ?Connection $database = NULL, ?WikiSearchFormBuilderInterface $searchForm = NULL, ?ThemeManagerInterface $themeManager = NULL): WikiController {
     $translation = $this->createMock(TranslationInterface::class);
     $translation->method('translateString')
       ->willReturnCallback(static fn ($markup) => $markup->getUntranslatedString());
@@ -131,6 +134,8 @@ final class WikiControllerTest extends UnitTestCase {
       $this->createMock(DateFormatterInterface::class),
       $account ?? $this->createMock(AccountInterface::class),
       $renderer,
+      $themeManager,
+      $searchForm,
     );
 
     $property = new \ReflectionProperty(ControllerBase::class, 'stringTranslation');
@@ -179,6 +184,38 @@ final class WikiControllerTest extends UnitTestCase {
     $build = $this->controller(NULL)->search(Request::create('/wiki/busca'));
 
     self::assertContains('user.node_grants:view', $build['#cache']['contexts']);
+  }
+
+  /**
+   * The search route exposes its own preview form.
+   */
+  public function testSearchIncludesOwnPreviewForm(): void {
+    $builder = $this->createMock(WikiSearchFormBuilderInterface::class);
+    $builder->method('build')->willReturn(['#marker' => 'wiki-search-form']);
+
+    $build = $this->controller(NULL, searchForm: $builder)
+      ->search(Request::create('/wiki/busca', 'GET'));
+
+    $this->assertSame(['#marker' => 'wiki-search-form'], $build['search_form']);
+  }
+
+  /**
+   * The controller h1 is only rendered on the ACULTA420 home.
+   */
+  public function testHomeOwnsHeadingOnlyForAculta420(): void {
+    $nodeAccess = $this->createMock(EntityAccessControlHandlerInterface::class);
+    $nodeAccess->method('createAccess')->willReturn(AccessResult::allowed());
+
+    $build = $this->controller(NULL, NULL, $nodeAccess)->home();
+    $this->assertArrayHasKey('title', $build['intro']);
+
+    $activeTheme = $this->createMock(ActiveTheme::class);
+    $activeTheme->method('getName')->willReturn('olivero');
+    $themeManager = $this->createMock(ThemeManagerInterface::class);
+    $themeManager->method('getActiveTheme')->willReturn($activeTheme);
+
+    $build = $this->controller(NULL, NULL, $nodeAccess, themeManager: $themeManager)->home();
+    $this->assertArrayNotHasKey('title', $build['intro']);
   }
 
   /**
