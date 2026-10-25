@@ -78,6 +78,46 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
   }
 
   /**
+   * Invalid addresses cancel before Commerce or Wiki source resolution.
+   */
+  public function testInvalidEmailCancelsBeforeResolvingSource(): void {
+    foreach ([
+      ['commerce', 'aculta_msg_commerce_order_notice'],
+      ['wiki', 'aculta_msg_wiki_notice'],
+    ] as [$adapter, $bundle]) {
+      $message = $this->message($bundle, 'pending', 0);
+      $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'cancelled')->willReturnSelf();
+      $message->expects(self::once())->method('save')->willReturn(1);
+      $user = $this->createMock(UserInterface::class);
+      $user->method('id')->willReturn('27');
+      $user->method('isActive')->willReturn(TRUE);
+      $user->method('getEmail')->willReturn('invalid-address');
+      $messageStorage = $this->createMock(EntityStorageInterface::class);
+      $messageStorage->method('load')->with(101)->willReturn($message);
+      $userStorage = $this->createMock(EntityStorageInterface::class);
+      $userStorage->method('load')->with(27)->willReturn($user);
+      $entities = $this->createMock(EntityTypeManagerInterface::class);
+      $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+        'message' => $messageStorage,
+        'user' => $userStorage,
+        default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+      });
+      $manager = $this->createAdapterManager($adapter);
+      $manager->expects(self::never())->method('resolve');
+      $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+      $preferences->expects(self::never())->method('emailMode');
+      $mailer = $this->createMock(AcultaMailerInterface::class);
+      $mailer->expects(self::never())->method('deliver');
+      $userData = $this->createMock(UserDataInterface::class);
+      $userData->expects(self::never())->method('get');
+      $emailPolicy = new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class));
+
+      $this->worker($adapter, $entities, $manager, $mailer, $this->lock(), $preferences, $emailPolicy)
+        ->processItem(['message_id' => 101]);
+    }
+  }
+
+  /**
    * A revoked source suppresses both direct e-mail adapters.
    */
   public function testCommerceAndWikiAccessRevocationCancelsDirectEmail(): void {
@@ -129,6 +169,7 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
     $user = $this->createMock(UserInterface::class);
     $user->method('id')->willReturn('27');
     $user->method('isActive')->willReturn(TRUE);
+    $user->method('getEmail')->willReturn('member@example.invalid');
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->method('load')->with(27)->willReturn($user);
     $entities = $this->createMock(EntityTypeManagerInterface::class);

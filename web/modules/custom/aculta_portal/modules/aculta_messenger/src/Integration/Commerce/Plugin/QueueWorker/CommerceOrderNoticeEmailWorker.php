@@ -100,6 +100,10 @@ final class CommerceOrderNoticeEmailWorker extends QueueWorkerBase implements Co
       $this->finish($message, 'cancelled');
       return;
     }
+    if (!filter_var((string) $user->getEmail(), FILTER_VALIDATE_EMAIL)) {
+      $this->finish($message, 'cancelled');
+      return;
+    }
     if (!$this->emailPolicy->isConfirmed($user)) {
       $this->finish($message, 'cancelled');
       return;
@@ -109,7 +113,7 @@ final class CommerceOrderNoticeEmailWorker extends QueueWorkerBase implements Co
       return;
     }
     $notice = $this->notices->resolve($message, $user);
-    if ($notice === NULL || !filter_var((string) $user->getEmail(), FILTER_VALIDATE_EMAIL)) {
+    if ($notice === NULL) {
       $this->finish($message, 'cancelled');
       return;
     }

@@ -1,3 +1,11 @@
+## 0.1.1-dev.293 — validar endereço antes de resolver Loja e Wiki
+
+Os workers de entrega direta da Loja e Wiki agora cancelam endereços inválidos
+antes de consultar dados do pedido ou conteúdo editorial. A decisão não consome
+tentativas nem altera o aviso obrigatório no site.
+
+Validação: segurança Commerce/Wiki **12/166 PASS**, Integration Unit **75/777 PASS**, Kernels Wiki/Loja/LMS/Doações **23/396 PASS** (2 deprecações Core/contrib e 7 notices PHPUnit), PHPCS Drupal/DrupalPractice e PHP lint PASS. Sem Runtime/SMTP.
+
 ## 0.1.1-dev.292 — cancelar endereço inválido antes de resolver aviso LMS
 
 O worker direto do LMS agora cancela a entrega se a conta não estiver ativa ou
