@@ -2,7 +2,7 @@
 
 ## Evolução recente
 
-- **Dev.366 — compatibilidade com Game opcional:** o adapter de Conquistas e o consumer só são registrados quando o produtor `aculta_game` existe. Testes do container cobrem o módulo ausente e presente; Unit focal **10/56 PASS**, PHPCS e PHP lint PASS. A validação de site com Game desabilitado ainda depende de um Runtime correspondente.
+- **Dev.366 — compatibilidade com Game opcional:** o adapter de Conquistas e o consumer só são registrados quando o produtor `aculta_game` existe. Testes do container cobrem o módulo ausente e presente (**10/56 PASS**); a persistência Game passou **3/30** em Kernel MariaDB (duas depreciações upstream); Unit Messenger **370/3.980 PASS**, gate Drupal 11+ **1.155 checks** e índice PASS. PHPCS e lint também passaram. A validação de site com Game desabilitado ainda depende de um Runtime correspondente.
 - **Dev.365 — regressão da árvore completa de Kernels:** `tests/src/Kernel` passou **55/1.166** no MariaDB dedicado; dez depreciações Core/contrib e quatro notices PHPUnit, sem falhas. Inclui rotas/CSRF, amizade, retenção, Fórum, digest e Mailer. Runtime/Alpha e SMTP externo não executados.
 - **Dev.364 — regressão da árvore completa de integração:** `tests/src/Integration` passou **120/1.569** no MariaDB dedicado, sem falhas; cinco depreciações upstream e sete notices PHPUnit. A execução abrangeu Commerce, Doações, Game, LMS, Revista e Wiki depois do guard fail-closed da Revista.
 - **Dev.363 — revalidação do ledger do Fórum:** `ForumNoticeIdempotencyKernelTest` passou **39/919** no MariaDB dedicado (quatro notices PHPUnit), cobrindo novamente a suíte completa no estado atual do branch. Runtime/Alpha e SMTP externo não executados.

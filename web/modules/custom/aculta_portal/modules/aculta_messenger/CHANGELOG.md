@@ -3729,6 +3729,9 @@ desabilitado, a central continua inicializando sem dependências opcionais de
 Game.
 
 Validação: `AcultaMessengerServiceProviderTest` **10 testes / 56 assertions
-PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Não foi
-feito teste de Runtime.
+PASS** e `GameAchievementNoticePersistenceKernelTest` **3 testes / 30
+assertions PASS** em MariaDB dedicado (duas depreciações upstream de
+`message`/`message_template`); suíte Unit do Messenger **370 / 3.980 PASS**.
+PHPCS Drupal/DrupalPractice, PHP lint, gate Drupal 11+ (**1.155 checks**) e
+índice dos 41 componentes PASS. Não foi feito teste de Runtime.
 
