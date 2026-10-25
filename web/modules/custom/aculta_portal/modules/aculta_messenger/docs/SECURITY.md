@@ -99,11 +99,13 @@ ações continuam nos handlers nativos.
 
 ## Invariantes
 
-A preferência de e-mail é individual e usa `user.data` nativo do Private
-Message; o formulário salva somente para o UID autenticado e o worker revalida
-a escolha antes do envio. A página é sem cache compartilhado. Bloqueio usa o
-mecanismo nativo; assinar tópico nunca concede acesso, e Message Subscribe
-revalida visibilidade no dispatch.
+A preferência de e-mail é propriedade do Messenger e usa `user.data` sob o
+namespace `aculta_messenger`; o formulário salva somente para o UID autenticado
+e os workers revalidam a escolha antes do envio. A preferência nativa do Private
+Message controla somente a caixa de conversas e não substitui os modos de e-mail
+por categoria. A página de preferências é sem cache compartilhado. Bloqueios
+continuam usando o mecanismo nativo; seguir um tópico nunca concede acesso, e
+Message Subscribe revalida visibilidade no dispatch.
 
 - Cada leitura e escrita usa APIs públicas Drupal e permissões/access nativos;
   não consultar tabelas de contrib por SQL.
