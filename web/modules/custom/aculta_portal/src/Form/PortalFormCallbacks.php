@@ -239,6 +239,15 @@ final class PortalFormCallbacks {
     $formState->setRedirect($route);
   }
 
+  /**
+   * Returns private data submissions to Studio without changing legacy flow.
+   */
+  public function accountDataRedirect(array &$form, FormStateInterface $formState): void {
+    if ($this->routeMatch?->getRouteName() === 'aculta_studio.account_data') {
+      $formState->setRedirect('aculta_studio.account_data');
+    }
+  }
+
   /** Synchronizes Commerce address names with the participant profile. */
   public function syncCustomerAddressNames(array &$form, FormStateInterface $formState): void {
     $participant = $formState->getFormObject()->getEntity();

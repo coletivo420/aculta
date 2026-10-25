@@ -78,8 +78,8 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     $items = [
       [
         '#type' => 'link',
-        '#title' => new TranslatableMarkup('Informações cadastrais (formulário original)'),
-        '#url' => Url::fromRoute('aculta_portal.my_data'),
+        '#title' => new TranslatableMarkup('Informações cadastrais'),
+        '#url' => Url::fromRoute('aculta_studio.account_data'),
       ],
       [
         '#type' => 'link',

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_user\Hook;
 
 use Drupal\aculta_user\Account\AccountNames;
+use Drupal\aculta_user\Account\NicknamePolicy;
 use Drupal\aculta_user\Avatar\AvatarPool;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -25,6 +26,8 @@ final class AccountCreationHooks {
     private readonly AvatarPool $avatarPool,
     #[Autowire(service: 'transliteration')]
     private readonly PhpTransliteration $transliteration,
+    #[Autowire(service: 'aculta_user.nickname_policy')]
+    private readonly NicknamePolicy $nicknamePolicy,
   ) {}
 
   /**
@@ -75,18 +78,13 @@ final class AccountCreationHooks {
   private function unique(string $apelido, int $uid): string {
     $candidate = $apelido;
     $i = 2;
-    while (!AccountNames::isValid($candidate) || $this->taken($candidate)) {
+    while (!AccountNames::isValid($candidate) || $this->nicknamePolicy->isTaken($candidate)) {
       $candidate = mb_substr($apelido, 0, AccountNames::MAX - strlen('-' . $i)) . '-' . $i++;
       if ($i > 50) {
         return 'pessoa-' . $uid;
       }
     }
     return $candidate;
-  }
-
-  private function taken(string $apelido): bool {
-    return $this->entityTypeManager->getStorage('profile')->getQuery()
-      ->accessCheck(FALSE)->condition('type', PerfilDoPapel::TIPOS, 'IN')->condition('field_nickname', $apelido)->range(0, 1)->count()->execute() > 0;
   }
 
 }

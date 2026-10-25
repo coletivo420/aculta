@@ -17,8 +17,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  *
  * Address normalization, security and OAuth first-password
  * handling are delegated to the unchanged original Portal controller.
- * The mixed basics form remains on the legacy account until nickname is
- * separated from private fields; this composer does not render it.
+ * The basics form is scoped by PortalHooks; the legacy /dados form stays intact.
  * Studio owns only the route and the contextual navigation presentation.
  */
 final class StudioAccountSectionController {
@@ -28,6 +27,18 @@ final class StudioAccountSectionController {
     private readonly AccountInterface $account,
     private readonly ?AccountDocumentInterface $documents = NULL,
   ) {}
+
+  /**
+   * Portal-owned private account data through the existing Profile Form API.
+   *
+   * The Portal form-alter removes only the nickname from this Studio route.
+   *
+   * @return array<string, mixed>
+   *   Account data form in the Studio shell.
+   */
+  public function data(): array {
+    return $this->build('myData', 'dados');
+  }
 
   /**
    * Owner's existing canonical Commerce address Form API.
@@ -93,7 +104,7 @@ final class StudioAccountSectionController {
     }
 
     $portal = $this->resolver->getInstanceFromDefinition(PortalController::class);
-    // These five methods are explicit owner entry points. Do not
+    // These six methods are explicit owner entry points. Do not
     // dynamically route user input to an arbitrary Portal method.
     $content = $portal->{$method}();
     // Their legacy inner tabs point at original account routes. Remove only
@@ -123,7 +134,7 @@ final class StudioAccountSectionController {
    */
   private function navigation(string $section): array {
     $destinations = [
-      'dados' => ['Dados cadastrais (Conta original)', 'aculta_portal.my_data'],
+      'dados' => ['Dados cadastrais', 'aculta_studio.account_data'],
       'endereco' => ['Endereço', 'aculta_studio.account_address'],
       'documentos' => ['Documentos', 'aculta_studio.account_documents'],
       'seguranca' => ['E-mail e segurança', 'aculta_studio.account_security'],

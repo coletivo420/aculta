@@ -55,9 +55,14 @@ final class StudioProfileController {
     // not be inferred from the fact that the member can edit their profile.
     $publicUrl = $this->publicProfileLink?->build($user, $cache);
 
-    // Nickname editing must be extracted from the Portal's full personal-data
-    // form before enabling it here. Never embed an account form in Perfil.
-    $actions = [];
+    // Public identity is edited by its owner; never reuse the private
+    // account-data form to write the public nickname.
+    $actions = [[
+      '#type' => 'link',
+      '#title' => new TranslatableMarkup('Editar apelido público'),
+      '#url' => Url::fromRoute('aculta_studio.profile_nickname'),
+      '#attributes' => ['data-portal-ui' => 'studio-profile-nickname-edit'],
+    ]];
     if ($this->bioCard !== NULL && $this->socialCard !== NULL) {
       $actions[] = [
         '#type' => 'link',
@@ -118,7 +123,7 @@ final class StudioProfileController {
         '#attributes' => ['data-portal-ui' => 'studio-profile-identity'],
         'name' => ['#plain_text' => $user->getDisplayName()],
         'nickname_note' => [
-          '#plain_text' => new TranslatableMarkup('A edição isolada do apelido será integrada após separar esse campo do formulário cadastral.'),
+          '#plain_text' => new TranslatableMarkup('O apelido público é editado separadamente do nome cadastral e dos dados privados.'),
         ],
       ],
       'actions' => [
