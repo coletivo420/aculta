@@ -177,7 +177,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $failedLookupProvider->method('digestRowsFor')->willReturn([]);
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects(self::exactly(2))->method('deliver')->with(self::isInstanceOf(MailMessage::class))->willReturn(SendResult::sent());
-    $userData->expects(self::exactly(2))
+    $userData->expects(self::exactly(4))
       ->method('set')
       ->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value): void {
         self::assertSame('aculta_messenger', $module);

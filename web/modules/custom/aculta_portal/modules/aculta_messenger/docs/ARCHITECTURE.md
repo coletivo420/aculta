@@ -45,9 +45,13 @@ todo o lote. O Mailer suprime retries cuja correlação, tipo e destinatário j�
 aceitos no Mail Log ativo. Antes do envio, o Messenger persiste em `user.data` somente a
 correlação, instante e IDs/contadores do lote. Se uma confirmação falhar após o aceite, o
 retry consulta a correlação e confirma exatamente o manifesto salvo antes de processar
-eventos novos; o snapshot não guarda destinatário nem conteúdo. Um adapter opcional que
-esteja indisponível mantém o lote aceito retido, sem novo envio duplicado. Essa mitigação
-exige log persistido e não cria atomicidade entre o transporte externo e o Mail Log.
+eventos novos; o snapshot não guarda destinatário nem conteúdo. Um `accepted_at` persistido
+no snapshot registra a prova de aceite e permite concluir a recuperação mesmo após a
+expiração normal do Mail Log; snapshots antigos recebem esse marcador quando o Mailer ainda
+confirma o aceite. Se o adapter opcional estiver indisponível, o lote aceito permanece
+retido até ele voltar, sem novo envio duplicado. A pequena janela entre aceite externo e a
+persistência local da prova continua dependente da retenção do Mail Log e não cria
+atomicidade entre o transporte externo e o banco Drupal.
 
 ## Fontes de verdade e armazenamento
 

@@ -942,6 +942,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     );
 
     self::assertSame(0, $summary->enviarResumos(), 'Recognizing acceptance without an enabled adapter is reconciliation, not a new email.');
+    $snapshot['accepted_at'] = $this->container->get('datetime.time')->getRequestTime();
     self::assertSame($snapshot, $userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
   }
 

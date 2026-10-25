@@ -2117,3 +2117,15 @@ Validação: `PersistentNoticePaginationTest` **1/44 PASS**; estado da paginaç�
 **15/93 PASS**; PHPCS Drupal/DrupalPractice do novo teste, PHP lint e `git diff --check` PASS. O PHPCS do controller
 continua com o baseline existente de **95 erros / 65 avisos**. Runtime e navegador não executados.
 
+## 0.1.1-dev.212 — preservar aceite de digest além da retenção do Mailer
+
+O snapshot do digest registra `accepted_at` assim que o Mailer confirma o transporte. Snapshots legados recebem o mesmo
+marcador quando o Mail Log confirma o aceite. A recuperação passa a usar essa evidência persistida para aguardar adapters
+opcionais sem depender da retenção normal do Mail Log nem reenviar o lote já aceito; os acknowledgements continuam
+limitados aos IDs do manifesto original.
+
+Validação: `LearningNoticeDigestIntegrationTest` **23/186 PASS**, `AvisosResumoProviderPreferenceTest` **4/87 PASS**,
+`AvisosResumoMailerKernelTest` **2/31 PASS** e `ForumNoticeIdempotencyKernelTest` **36/834 PASS** no MariaDB dedicado;
+PHPCS Drupal/DrupalPractice, PHP lint, índice de status e gate Drupal 11+ (**1155 checks**) PASS. SMTP externo e Runtime
+não executados.
+

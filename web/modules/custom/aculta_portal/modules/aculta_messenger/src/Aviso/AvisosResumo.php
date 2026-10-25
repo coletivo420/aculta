@@ -432,6 +432,12 @@ final class AvisosResumo {
       }
       return self::RESULT_SKIPPED;
     }
+    // Persist proof of acceptance alongside the exact recovery manifest. The
+    // Mailer log can expire while an optional adapter is unavailable; keeping
+    // this marker lets recovery acknowledge the original batch without
+    // depending on the log's retention window or resending it.
+    $snapshot['accepted_at'] = $agora;
+    $this->userData->set('aculta_messenger', $uid, 'avisos_resumo_em_andamento', $snapshot);
     // Every adapter uses Drupal's shared database connection. Commit all
     // acknowledgements together so a failed source leaves the exact same batch
     // available for the stable Mailer correlation on the next cron run.
@@ -482,7 +488,10 @@ final class AvisosResumo {
       }
       return NULL;
     }
-    if (!$this->mailer->wasAcceptedCorrelation($snapshot['correlation_id'], self::CHAVE_MAIL, $recipient)) {
+    $acceptedAt = is_int($snapshot['accepted_at'] ?? NULL) && $snapshot['accepted_at'] > 0
+      ? $snapshot['accepted_at']
+      : NULL;
+    if ($acceptedAt === NULL && !$this->mailer->wasAcceptedCorrelation($snapshot['correlation_id'], self::CHAVE_MAIL, $recipient)) {
       $created = (int) ($snapshot['created'] ?? 0);
       if ($created > 0 && ($this->time->getRequestTime() - $created) < self::LOCK_LEASE_SECONDS) {
         // The original worker may still be inside its Mailer call after its
@@ -494,6 +503,12 @@ final class AvisosResumo {
       // pending rows; an unchanged batch retains its deterministic correlation.
       $this->userData->delete('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
       return NULL;
+    }
+    if ($acceptedAt === NULL) {
+      // Upgrade pre-marker snapshots as soon as the Mailer confirms acceptance.
+      // This durable evidence outlives its privacy-bounded delivery log.
+      $snapshot['accepted_at'] = $this->time->getRequestTime();
+      $this->userData->set('aculta_messenger', $uid, 'avisos_resumo_em_andamento', $snapshot);
     }
 
     $providers = [];

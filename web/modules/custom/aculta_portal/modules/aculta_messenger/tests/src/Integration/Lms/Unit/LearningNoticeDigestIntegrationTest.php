@@ -266,14 +266,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
         $correlations[] = $message->correlationId;
         return SendResult::sent();
       });
-    $mailer->expects($this->once())
-      ->method('wasAcceptedCorrelation')
-      ->willReturnCallback(static function (string $correlationId, string $type, ?string $recipient = NULL) use (&$correlations): bool {
-        self::assertSame($correlations[0], $correlationId);
-        self::assertSame(AvisosResumo::CHAVE_MAIL, $type);
-        self::assertSame('student@example.test', $recipient);
-        return TRUE;
-      });
+    $mailer->expects($this->never())->method('wasAcceptedCorrelation');
     $failedTransaction = new TestLearningDigestTransaction();
     $successfulTransaction = new TestLearningDigestTransaction();
     $database = $this->createMock(Connection::class);
@@ -325,6 +318,9 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
       };
     });
     $userData->expects($this->never())->method('delete');
+    $userData->expects($this->once())
+      ->method('set')
+      ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento', self::callback(static fn(array $value): bool => is_int($value['accepted_at'] ?? NULL)));
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects($this->never())->method('deliver');
     $mailer->expects($this->once())
@@ -337,6 +333,44 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
 
     $this->assertSame(0, $summary->enviarResumos(), 'A previously accepted email is reconciled without another transport attempt or a new-send count.');
     $this->assertSame([], $activeProvider->marked, 'No unrelated provider rows are acknowledged as part of the unavailable adapter batch.');
+  }
+
+  /**
+   * A persisted accepted marker survives expiration of the Mailer log.
+   */
+  public function testAcceptedDigestRecoverySurvivesMailerLogRetention(): void {
+    $snapshot = [
+      'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
+      'created' => 1_800_000_000,
+      'accepted_at' => 1_800_000_001,
+      'provider_lookup_failed' => FALSE,
+      'forum' => [],
+      'providers' => [[
+        'provider_id' => 'wiki',
+        'delivery_ids' => [802],
+      ],
+      ],
+    ];
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($snapshot): mixed {
+      if ($uid === NULL && $key === 'avisos_resumo_em_andamento') {
+        return [27 => $snapshot];
+      }
+      return match ($key) {
+        'avisos_resumo_em_andamento' => $snapshot,
+        'avisos_resumo_email', 'email_confirmed' => TRUE,
+        default => NULL,
+      };
+    });
+    $userData->expects(self::never())->method('delete');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('wasAcceptedCorrelation');
+    $mailer->expects(self::never())->method('deliver');
+    $activeProvider = new TestLearningDigestProvider([27]);
+    $summary = $this->createSummary($activeProvider, $mailer, TRUE, NULL, NULL, $userData);
+
+    self::assertSame(0, $summary->enviarResumos(), 'The persisted acceptance marker prevents a duplicate send after the Mailer log expires.');
+    self::assertSame([], $activeProvider->markedDeliveryIds, 'Rows from the unavailable adapter remain unacknowledged.');
   }
 
   /**
@@ -357,7 +391,9 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
       }
       return $key === 'avisos_resumo_em_andamento' ? $snapshot : NULL;
     });
-    $userData->expects($this->never())->method('set');
+    $userData->expects($this->once())
+      ->method('set')
+      ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento', self::callback(static fn(array $value): bool => $value['accepted_at'] === 1_800_000_000));
     $userData->expects($this->once())
       ->method('delete')
       ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento');
