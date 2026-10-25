@@ -1,3 +1,9 @@
+## 0.1.1-dev.271 — respeitar padrão administrativo do digest privado
+
+Contas sem preferência individual agora recebem o modo padrão `digest` definido pela administração para mensagens privadas, desde que o resumo semanal esteja permitido. Antes, esse padrão era convertido em envio direto, apesar de o formulário administrativo oferecer a opção semanal.
+
+Validação: `AvisoPreferenciasTest` **21/21, 61 assertions PASS**, Unit Messenger **272/2.144 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
 ## 0.1.1-dev.256 — fechar fallback de prefetch na leitura de avisos
 
 A classificação de navegação agora avalia `Sec-Purpose` e `Purpose` independentemente. Um cabeçalho novo vazio não esconde o cabeçalho legado que identifica prefetch/prerender; `Sec-Fetch-Site` também é normalizado antes da comparação.

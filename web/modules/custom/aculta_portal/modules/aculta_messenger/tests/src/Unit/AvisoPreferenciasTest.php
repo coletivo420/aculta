@@ -117,6 +117,35 @@ final class AvisoPreferenciasTest extends UnitTestCase {
   }
 
   /**
+   * Honors the administrator's weekly digest default for new preferences.
+   */
+  public function testPrivateMessageDigestCanBeTheAdministrativeDefault(): void {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::once())->method('get')
+      ->with(AvisoPreferencias::MODULO, 27, 'avisos_email_mode_' . AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
+      ->willReturn(NULL);
+    $preferences = new AvisoPreferencias(
+      $userData,
+      $this->getConfigFactoryStub([
+        'aculta_messenger.settings' => [
+          'email_modes' => [
+            AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => [
+              'digest' => TRUE,
+              'immediate' => TRUE,
+              'default_mode' => AvisoPreferencias::EMAIL_DIGEST,
+            ],
+          ],
+        ],
+      ]),
+    );
+
+    self::assertSame(
+      AvisoPreferencias::EMAIL_DIGEST,
+      $preferences->emailMode(27, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES),
+    );
+  }
+
+  /**
    * Malformed explicit administration policy fails closed for e-mail modes.
    */
   public function testMalformedAdministrativePolicyDisallowsEmailModes(): void {

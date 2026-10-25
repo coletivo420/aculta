@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.271 — corrigido o padrão administrativo de e-mail para contas sem preferência: `resumo semanal` agora é respeitado para mensagens privadas quando permitido. Antes, o formulário salvava `digest`, mas o serviço aceitava somente `off`/`immediate` e convertia a configuração em envio direto. `AvisoPreferenciasTest` **21/21, 61 assertions PASS**, Unit Messenger **272/2.144 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel/Browser/Runtime pendentes.
 - Dev.270 — replay de fila agora só processa registros privados `pending`/`failed`; cancelamento, envio concluído e falha permanente permanecem terminais mesmo após mudança da preferência. `PrivateMessageNotificationWorkerTest` **13/211 PASS**, Unit Messenger **271/2.139 PASS**, PHPCS/PHP lint PASS. Kernel/Browser/Runtime pendentes.
 - Dev.269 — provider semanal de mensagens privadas cobre agregação sem corpo, destinatários/IDs, acesso revogado e cancelamento; gravações separadas não dependem de retorno fluente de `set()`. Teste **2/50 PASS**, Unit Messenger **269/2.113 PASS**, PHPCS/PHP lint PASS. Kernel indisponível (`SIMPLETEST_DB` ausente); Browser/Runtime pendentes.
 - Dev.268 — cobertura do formulário de preferências de mensagens privadas: opções site/direto/semanal, restrição administrativa e persistência em `user.data` Messenger; texto confirma ausência de conteúdo privado nos e-mails. Teste **3/10 PASS**, Unit Messenger **268/2.083 PASS**, PHPCS e PHP lint PASS. Kernel/Browser/Runtime pendentes.

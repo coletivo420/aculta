@@ -136,7 +136,7 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
       if ($category === self::EMAIL_PRIVATE_MESSAGES) {
         $default = $this->configFactory?->get('aculta_messenger.settings')
           ->get('email_modes.' . self::EMAIL_PRIVATE_MESSAGES . '.default_mode');
-        $mode = in_array($default, [self::EMAIL_OFF, self::EMAIL_IMMEDIATE], TRUE)
+        $mode = in_array($default, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)
           ? $default
           : self::EMAIL_IMMEDIATE;
       }
