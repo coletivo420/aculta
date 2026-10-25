@@ -43,7 +43,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
    * Discards only the changed category while delivering eligible categories.
    */
   #[DataProvider('nonDigestEmailModes')]
-  public function testDiscardsCategoryAfterSwitchToNonDigestMode(string $mode): void {
+  public function testDiscardsCategoryAfterSwitchToNonDigestMode(string $mode, bool $supportsSelectiveDiscard): void {
     $account = $this->createMock(UserInterface::class);
     $account->method('id')->willReturn('27');
     $account->method('isActive')->willReturn(TRUE);
@@ -79,25 +79,36 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
         default => NULL,
       };
     });
-    $provider = $this->createMockForIntersectionOfInterfaces([
-      AvisoDigestProviderInterface::class,
-      AvisoDigestSelectiveDiscardInterface::class,
-    ]);
+    $provider = $supportsSelectiveDiscard
+      ? $this->createMockForIntersectionOfInterfaces([
+        AvisoDigestProviderInterface::class,
+        AvisoDigestSelectiveDiscardInterface::class,
+      ])
+      : $this->createMock(AvisoDigestProviderInterface::class);
     $provider->method('pendingRecipientIds')->willReturn([27]);
     $provider->method('digestRowsFor')->with(27)->willReturn([
       ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1, 'delivery_id' => 501],
       ['tipo' => 'wiki', 'titulo' => 'Revisão publicada', 'quantidade' => 1, 'delivery_id' => 502],
     ]);
-    $provider->expects(self::once())->method('discardDigestItems')->with(27, [501]);
-    $provider->expects(self::once())->method('markDigestSent')->with(27, [502]);
+    if ($supportsSelectiveDiscard) {
+      $provider->expects(self::once())->method('discardDigestItems')->with(27, [501]);
+      $provider->expects(self::once())->method('markDigestSent')->with(27, [502]);
+    }
+    else {
+      $provider->expects(self::never())->method('discardDigest');
+      $provider->expects(self::never())->method('markDigestSent');
+    }
     $mailer = $this->createMock(AcultaMailerInterface::class);
-    $mailer->expects(self::once())->method('deliver')->willReturn(SendResult::sent());
+    $mailer->expects($supportsSelectiveDiscard ? self::once() : self::never())
+      ->method('deliver')->willReturn(SendResult::sent());
     $mailer->expects(self::never())->method('send');
 
     $time = $this->createMock(TimeInterface::class);
     $time->method("getRequestTime")->willReturn(1_792_800_000);
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects(self::exactly(3))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturnOnConsecutiveCalls(TRUE, TRUE, FALSE);
+    $lock->expects(self::exactly($supportsSelectiveDiscard ? 3 : 1))
+      ->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)
+      ->willReturnOnConsecutiveCalls(...($supportsSelectiveDiscard ? [TRUE, TRUE, FALSE] : [TRUE]));
     $lock->expects(self::once())->method('release')->with('aculta_messenger.avisos_resumo.27');
     $summary = new AvisosResumo(
       $entities,
@@ -117,7 +128,10 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       [$provider],
     );
 
-    self::assertSame(1, $summary->enviarResumos());
+    self::assertSame($supportsSelectiveDiscard ? 1 : 0, $summary->enviarResumos());
+    if (!$supportsSelectiveDiscard) {
+      return;
+    }
     self::assertSame(0, $summary->enviarResumos(), 'A concurrent digest run skips a recipient whose lock is held.');
   }
 
@@ -125,8 +139,10 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
    * Provides all modes that must suppress pending digest rows. */
   public static function nonDigestEmailModes(): array {
     return [
-      'opt-out' => [AvisoPreferencias::EMAIL_OFF],
-      'direct delivery' => [AvisoPreferencias::EMAIL_IMMEDIATE],
+      'opt-out with selective discard' => [AvisoPreferencias::EMAIL_OFF, TRUE],
+      'direct delivery with selective discard' => [AvisoPreferencias::EMAIL_IMMEDIATE, TRUE],
+      'opt-out with legacy provider' => [AvisoPreferencias::EMAIL_OFF, FALSE],
+      'direct delivery with legacy provider' => [AvisoPreferencias::EMAIL_IMMEDIATE, FALSE],
     ];
   }
 

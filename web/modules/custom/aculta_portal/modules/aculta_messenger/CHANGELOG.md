@@ -1,3 +1,15 @@
+## 0.1.1-dev.303 — cobrir compatibilidade de providers de digest antigos
+
+Teste de caracterização confirma que providers que implementam somente o
+contrato base continuam carregáveis: diante de linhas com políticas mistas, o
+núcleo mantém o lote pendente sem enviar parcialmente nem descartar avisos
+elegíveis. A cobertura também verifica o caminho de descarte seletivo dos
+providers centrais.
+
+Validação: Unit Messenger **311 testes / 2.487 assertions PASS**; adapters
+Integration Unit **75 testes / 777 assertions PASS**. PHPCS e PHP lint PASS;
+sem Runtime ou envio de e-mail real.
+
 ## 0.1.1-dev.302 — preservar linhas elegíveis e eventos concorrentes no digest
 
 Uma capacidade opcional permite descarte seletivo sem alterar o contrato base
