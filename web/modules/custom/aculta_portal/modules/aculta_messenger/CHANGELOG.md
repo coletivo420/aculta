@@ -1,3 +1,14 @@
+## 0.1.1-dev.376 — revalidação dos Kernels de digest e idempotência
+
+No MariaDB dedicado `aculta_simpletest`, `AvisosResumoMailerKernelTest` passou
+**5 testes / 95 assertions** e `ForumNoticeIdempotencyKernelTest` passou
+**39/919**, com quatro notices PHPUnit. Isso revalida contenção entre boots,
+recuperação do aceite e expiração de lease enquanto o transporte continua em
+andamento. SMTP externo e Runtime não foram usados. O smoke visual da central
+não passou da etapa de autenticação: não encontrou o acionador do Messenger;
+o Firefox também registrou falha de escrita do perfil temporário com `/tmp`
+entre 98% e 100% de uso. Não houve interação com avisos.
+
 ## 0.1.1-dev.375 — caracterização do fallback de grupo por GET
 
 `NewConversationControllerTest` agora executa `composeGroup()` com uma
