@@ -150,15 +150,6 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       return;
     }
 
-    // A private conversation always remains available in the site inbox;
-    // this category controls only the supplemental minimal email.
-    if (!filter_var((string) $recipient->getEmail(), FILTER_VALIDATE_EMAIL)
-      || !$this->emailPolicy->isConfirmed($recipient)
-      || $this->preferences->emailMode($recipientId, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
-        !== AvisoPreferencias::EMAIL_IMMEDIATE) {
-      return;
-    }
-
     $ids = $this->entityTypeManager->getStorage('message')->getQuery()
       ->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
@@ -177,6 +168,18 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       && (bool) $notification->get(self::MAILER_MANAGED_FIELD)->value !== $mailerManaged) {
       // Old queue items stay on Message Notify; new items stay on the Mailer.
       // The marker prevents either worker path from claiming the other's row.
+      return;
+    }
+
+    // A private conversation always remains available in the site inbox;
+    // current confirmation and preference control only supplemental email.
+    if (!filter_var((string) $recipient->getEmail(), FILTER_VALIDATE_EMAIL)
+      || !$this->emailPolicy->isConfirmed($recipient)
+      || $this->preferences->emailMode($recipientId, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
+        !== AvisoPreferencias::EMAIL_IMMEDIATE) {
+      if ($notification !== NULL) {
+        $notification->set(self::STATUS_FIELD, 'cancelled')->save();
+      }
       return;
     }
 

@@ -1,3 +1,9 @@
+## 0.1.1-dev.245 — cancelar e-mail privado pendente após opt-out
+
+Se a preferência mudar para site-only ou o e-mail deixar de estar confirmado enquanto uma entrega privada está pendente, o worker agora atualiza o registro de outbox para `cancelled`. A mensagem continua na inbox do Private Message; o cancelamento evita deixar uma linha pendente sem retry nem transporte. Nenhuma tentativa é contabilizada quando o envio é suprimido.
+
+Validação: Unit Messenger **228 testes / 1.688 assertions PASS**; `PrivateMessageNotificationWorkerTest` **7/128 PASS**; PHPCS Drupal/DrupalPractice, índice de status e `git diff --check` PASS. Sem Runtime ou SMTP.
+
 ## 0.1.1-dev.244 — exigir e-mail confirmado para aviso de mensagem privada
 
 O worker de mensagens privadas agora revalida se o destinatário é uma conta ativa, tem acesso atual à thread, possui e-mail válido e confirmado, não está bloqueado e mantém a preferência de entrega direta antes de criar/enviar o aviso. O e-mail continua mínimo e sem conteúdo da conversa. Itens não confirmados não chegam ao Mailer e não consomem tentativa.

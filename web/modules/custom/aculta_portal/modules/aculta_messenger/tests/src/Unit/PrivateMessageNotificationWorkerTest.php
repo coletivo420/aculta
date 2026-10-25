@@ -159,7 +159,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
    * New notices use the Mailer and omit private message content.
    */
   #[DataProvider('emailConfirmationCases')]
-  public function testMailerManagedNoticeUsesPrivateTemplate(bool $emailConfirmed): void {
+  public function testMailerManagedNoticeUsesPrivateTemplate(bool $emailConfirmed, string $emailMode, bool $existingPending): void {
     $privateMessage = $this->createMock(PrivateMessageInterface::class);
     $privateMessage->method('getOwnerId')->willReturn(1);
     $privateMessage->method('getCreatedTime')->willReturn(101);
@@ -179,15 +179,21 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $messageService = $this->createMock(PrivateMessageServiceInterface::class);
     $messageService->method('getThreadFromMessage')->with($privateMessage)->willReturn($thread);
 
-    $query = $this->createMock(QueryInterface::class);
-    $query->method('accessCheck')->willReturnSelf();
-    $query->method('condition')->willReturnSelf();
-    $query->method('range')->willReturnSelf();
-    $query->method('execute')->willReturn([]);
+    $banQuery = $this->createMock(QueryInterface::class);
+    $banQuery->method('accessCheck')->willReturnSelf();
+    $banQuery->method('condition')->willReturnSelf();
+    $banQuery->method('range')->willReturnSelf();
+    $banQuery->method('execute')->willReturn([]);
     $banStorage = $this->createMock(EntityStorageInterface::class);
-    $banStorage->method('getQuery')->willReturn($query);
+    $banStorage->method('getQuery')->willReturn($banQuery);
+    $noticeQuery = $this->createMock(QueryInterface::class);
+    $noticeQuery->method('accessCheck')->willReturnSelf();
+    $noticeQuery->method('condition')->willReturnSelf();
+    $noticeQuery->method('range')->willReturnSelf();
+    $noticeQuery->method('execute')->willReturn($existingPending ? [88] : []);
     $noticeStorage = $this->createMock(EntityStorageInterface::class);
-    $noticeStorage->method('getQuery')->willReturn($query);
+    $noticeStorage->method('getQuery')->willReturn($noticeQuery);
+    $deliveryStatus = 'pending';
     $status = $this->field('pending');
     $attempts = $this->field(0);
     $managed = $this->field(TRUE);
@@ -197,12 +203,19 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       'field_aculta_messenger_attempts' => $attempts,
       default => $managed,
     });
-    $notice->method('set')->willReturnSelf();
+    $notice->method('set')->willReturnCallback(function (string $field, mixed $value) use ($notice, &$deliveryStatus): MessageInterface {
+      if ($field === 'field_aculta_msg_delivery') {
+        $deliveryStatus = $value;
+      }
+      return $notice;
+    });
     $notice->method('setArguments')->willReturnSelf();
     $notice->method('save')->willReturn(1);
-    $noticeStorage->expects($emailConfirmed ? self::once() : self::never())->method('create')
+    $shouldSend = $emailConfirmed && $emailMode === AvisoPreferencias::EMAIL_IMMEDIATE;
+    $noticeStorage->expects($existingPending ? self::never() : ($shouldSend ? self::once() : self::never()))->method('create')
       ->with(self::callback(static fn(array $values): bool => ($values['field_aculta_mailer_managed'] ?? FALSE) === TRUE))
       ->willReturn($notice);
+    $noticeStorage->method('load')->with(88)->willReturn($notice);
 
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('isHttps')->willReturn(TRUE);
@@ -218,13 +231,13 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     ]);
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->with(2, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
-      ->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+      ->willReturn($emailMode);
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn(TRUE);
     $legacy = $this->createMock(MessageNotifyInterface::class);
     $legacy->expects(self::never())->method('send');
     $mailer = $this->createMock(AcultaMailerInterface::class);
-    $mailer->expects($emailConfirmed ? self::once() : self::never())->method('deliver')
+    $mailer->expects($shouldSend ? self::once() : self::never())->method('deliver')
       ->with(self::callback(static fn(MailMessage $mail): bool =>
         $mail->type === 'private_message_notice'
         && $mail->to === 'member@example.test'
@@ -232,7 +245,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
         && !str_contains(serialize($mail->context), 'private body')))
       ->willReturn(SendResult::sent());
     $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-    $urlGenerator->expects($emailConfirmed ? self::exactly(2) : self::never())->method('generateFromRoute')
+    $urlGenerator->expects($shouldSend ? self::exactly(2) : self::never())->method('generateFromRoute')
       ->with('aculta_portal.dashboard')
       ->willReturn('https://account.example.test/minha-conta');
     $container = new ContainerBuilder();
@@ -247,6 +260,9 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     }
     finally {
       \Drupal::unsetContainer();
+    }
+    if ($existingPending && !$shouldSend) {
+      self::assertSame('cancelled', $deliveryStatus);
     }
   }
 
@@ -356,7 +372,11 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
    * Provides both email confirmation states for the notification worker.
    */
   public static function emailConfirmationCases(): array {
-    return ['confirmed email' => [TRUE], 'unconfirmed email' => [FALSE]];
+    return [
+      'confirmed and enabled' => [TRUE, AvisoPreferencias::EMAIL_IMMEDIATE, FALSE],
+      'unconfirmed email' => [FALSE, AvisoPreferencias::EMAIL_IMMEDIATE, FALSE],
+      'opt-out cancels persisted pending email' => [TRUE, AvisoPreferencias::EMAIL_OFF, TRUE],
+    ];
   }
 
   /**
