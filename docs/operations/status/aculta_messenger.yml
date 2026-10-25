@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: "Dev.206: central da Conta oferece paginação numerada ao filtrar origem Fórum; ForumNoticeIdempotencyKernelTest valida páginas completas e sem sobreposição. Paginação das demais origens e unificada segue pendente; HTTP funcional, smoke visual, SMTP e Runtime não homologados. Estado Dev."
+next_phase: "Dev.207: falha ao enumerar destinatários de um adapter não aplica intervalo compartilhado de 20h a entregas independentes; snapshot preserva falha para recovery. Unit AvisosResumoProviderPreferenceTest 4/79, LearningNoticeDigestIntegrationTest 21/162 e AvisosResumoMailerKernelTest 2/31 PASS. Dev.206 paginou origem Fórum na central. Paginação das demais origens, HTTP, smoke visual, SMTP e Runtime pendentes. Estado Dev."

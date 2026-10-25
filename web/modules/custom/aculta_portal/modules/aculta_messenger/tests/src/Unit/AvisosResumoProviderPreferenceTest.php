@@ -9,6 +9,7 @@ use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
@@ -153,7 +154,8 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
         default => NULL,
       };
     });
-    $provider = $this->createMock(AvisoDigestProviderInterface::class);
+    $provider = $this->createMock(AvisoDigestProviderIdentityInterface::class);
+    $provider->method('digestProviderId')->willReturn('wiki');
     $provider->method('pendingRecipientIds')->willReturn([27, 28]);
     $provider->method('digestRowsFor')->willReturnCallback(static function (int $uid): array {
       if ($uid === 27) {
@@ -162,27 +164,26 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       return [['tipo' => 'wiki', 'titulo' => 'Revisão publicada', 'quantidade' => 1, 'delivery_id' => 528]];
     });
     $provider->expects(self::once())->method('markDigestSent')->with(28, [528]);
-    $healthyProvider = $this->createMock(AvisoDigestProviderInterface::class);
+    $healthyProvider = $this->createMock(AvisoDigestProviderIdentityInterface::class);
+    $healthyProvider->method('digestProviderId')->willReturn('commerce');
     $healthyProvider->method('pendingRecipientIds')->willReturn([27]);
     $healthyProvider->method('digestRowsFor')->willReturnCallback(static fn(int $uid): array => $uid === 27 ? [
       ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1, 'delivery_id' => 527],
     ] : []);
     $healthyProvider->expects(self::once())->method('markDigestSent')->with(27, [527]);
-    $failedLookupProvider = $this->createMock(AvisoDigestProviderInterface::class);
+    $failedLookupProvider = $this->createMock(AvisoDigestProviderIdentityInterface::class);
+    $failedLookupProvider->method('digestProviderId')->willReturn('unavailable');
     $failedLookupProvider->expects(self::once())->method('pendingRecipientIds')->willThrowException(new \RuntimeException('Lookup fixture failure'));
     $failedLookupProvider->method('digestRowsFor')->willReturn([]);
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects(self::exactly(2))->method('deliver')->with(self::isInstanceOf(MailMessage::class))->willReturn(SendResult::sent());
-    $userData->expects(self::exactly(3))
+    $userData->expects(self::exactly(2))
       ->method('set')
       ->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value): void {
         self::assertSame('aculta_messenger', $module);
         self::assertContains($uid, [27, 28]);
-        self::assertContains($key, ['avisos_resumo_em_andamento', 'avisos_resumo_ultimo']);
-        if ($key === 'avisos_resumo_ultimo') {
-          self::assertSame(28, $uid);
-          self::assertSame(1_792_800_000, $value);
-        }
+        self::assertSame('avisos_resumo_em_andamento', $key);
+        self::assertTrue($value['provider_lookup_failed']);
       });
 
     $time = $this->createMock(TimeInterface::class);

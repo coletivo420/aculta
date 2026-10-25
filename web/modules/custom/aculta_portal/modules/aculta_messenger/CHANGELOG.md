@@ -2080,3 +2080,9 @@ A central oferece navegação anterior/seguinte quando a origem Fórum está sel
 
 Validação: `ForumNoticeIdempotencyKernelTest` **36 testes / 834 assertions PASS** em MariaDB dedicado, incluindo a cobertura de páginas completas e sem sobreposição. PHP lint e PHPCS Drupal/DrupalPractice nos arquivos sem baseline PASS; controllers mantêm seus baselines preexistentes (MessagesController 95/65; AvisosMensagensController 15/12). `git diff --check` e índice de status PASS. Browser, Runtime e paginação das outras origens não executados.
 
+## 0.1.1-dev.207 — preservar retry quando falha a descoberta de destinatários do digest
+
+Quando `pendingRecipientIds()` de qualquer adapter falha, o digest ainda pode entregar fontes independentes, mas não atualiza o intervalo compartilhado de 20 horas. O snapshot persistido conserva a falha e impede que a recuperação de um envio aceito aplique o intervalo antes de a fonte indisponível voltar. A fixture agora declara identidades estáveis distintas, caracterizando o caso sem colisão artificial de classe.
+
+Validação: `AvisosResumoProviderPreferenceTest` **4/79 PASS**, `LearningNoticeDigestIntegrationTest` **21/162 PASS** e `AvisosResumoMailerKernelTest` **2/31 PASS** em MariaDB dedicado. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Transporte externo e Runtime não executados.
+

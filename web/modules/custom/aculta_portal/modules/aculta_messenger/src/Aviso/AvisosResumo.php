@@ -130,6 +130,7 @@ final class AvisosResumo {
       }
     }
     $providers = $this->digestProviders;
+    $recipientLookupFailed = FALSE;
     foreach ($providers as $provider) {
       if (!$provider instanceof AvisoDigestProviderInterface) {
         continue;
@@ -142,6 +143,9 @@ final class AvisosResumo {
       catch (\Throwable $exception) {
         // A provider outage must not prevent Forum or other adapters from
         // delivering their independent pending digests during this cron run.
+        // Recipients cannot be identified, so do not apply the shared digest
+        // cooldown to another source's successful delivery in this run.
+        $recipientLookupFailed = TRUE;
         $this->logger?->error('Daily notice digest recipient lookup failed for provider @provider with @exception.', [
           '@provider' => get_class($provider),
           '@exception' => get_class($exception),
@@ -151,7 +155,7 @@ final class AvisosResumo {
     $enviados = 0;
     foreach ($porUsuario as $uid => $_) {
       try {
-        if ($this->enviarPara((int) $uid) === self::RESULT_SENT) {
+        if ($this->enviarPara((int) $uid, $recipientLookupFailed) === self::RESULT_SENT) {
           $enviados++;
         }
       }
@@ -171,14 +175,16 @@ final class AvisosResumo {
    *
    * @param int $uid
    *   Identificador da pessoa destinatária.
+   * @param bool $recipientLookupFailed
+   *   Whether a provider failed to enumerate its pending recipients.
    */
-  private function enviarPara(int $uid): int {
+  private function enviarPara(int $uid, bool $recipientLookupFailed): int {
     $lockName = 'aculta_messenger.avisos_resumo.' . $uid;
     if (!$this->lock->acquire($lockName, self::LOCK_LEASE_SECONDS)) {
       return self::RESULT_SKIPPED;
     }
     try {
-      return $this->enviarParaComLock($uid, $lockName);
+      return $this->enviarParaComLock($uid, $lockName, $recipientLookupFailed);
     }
     finally {
       $this->lock->release($lockName);
@@ -192,8 +198,10 @@ final class AvisosResumo {
    *   Recipient account ID.
    * @param string $lockName
    *   Recipient lock name held for this processing attempt.
+   * @param bool $recipientLookupFailed
+   *   Whether a provider failed to enumerate its pending recipients.
    */
-  private function enviarParaComLock(int $uid, string $lockName): int {
+  private function enviarParaComLock(int $uid, string $lockName, bool $recipientLookupFailed): int {
     $conta = $this->entityTypeManager->getStorage('user')->load($uid);
     if ($conta === NULL) {
       return self::RESULT_SKIPPED;
@@ -265,7 +273,7 @@ final class AvisosResumo {
       ];
     }
     $providersWithRows = [];
-    $providerLookupFailed = FALSE;
+    $providerLookupFailed = $recipientLookupFailed;
     foreach ($this->uniqueDigestProviders() as $provider) {
       if (!$provider instanceof AvisoDigestProviderInterface) {
         continue;
