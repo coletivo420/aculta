@@ -1,3 +1,16 @@
+## 0.1.1-dev.394 — estabilizar contenção concorrente do digest
+
+O marcador de conclusão usado pelo teste de oito workers agora é publicado
+por rename atômico. A carga repetida expôs uma corrida em que o transporte
+podia ler um arquivo antes do conteúdo `locked` estar completo e interpretar
+isso como falha. Após a correção, dez rodadas independentes passaram (**10/10,
+330 assertions**), totalizando 80 boots Drupal concorrentes e um único envio e
+acknowledgement por rodada. A suíte Kernel completa passou **56/1.192** no
+MariaDB dedicado (`aculta_simpletest`), com 10 depreciações e 4 notices
+upstream. PHPCS Drupal/DrupalPractice e PHP lint PASS. Temporários ficaram em
+diretório isolado sob `/var/tmp`; sem SMTP externo ou Runtime. A evidência
+confirma contenção repetida, não throughput sustentado ou homologação Alpha.
+
 ## 0.1.1-dev.393 — alinhar estados M1/M2 às evidências
 
 ROADMAP agora distingue histórico de estado atual: HTTP autenticado da
