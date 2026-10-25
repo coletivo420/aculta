@@ -20,7 +20,7 @@ try {
       heading: section.querySelector(':scope > h3')?.textContent.trim() || '',
       separator: !!section.querySelector(':scope > hr.aculta-notice-origin-separator'),
     })));`));
-    const originOrder = ['comunicado', 'forum', 'alerta', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conta', 'outros'];
+    const originOrder = ['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conta', 'outros'];
     const groupOrderValid = originSections.every((section, index) => {
       const orderIndex = originOrder.indexOf(section.origin);
       const previousIndex = index > 0 ? originOrder.indexOf(originSections[index - 1].origin) : -1;
