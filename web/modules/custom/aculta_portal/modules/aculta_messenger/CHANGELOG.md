@@ -1,3 +1,13 @@
+## 0.1.1-dev.328 — revalidar conta em avisos de Doação
+
+O consumer de Doações também relê a conta do destinatário antes de validar o
+pedido/pagamento e persistir o aviso no site. Completa a mesma checagem já
+aplicada aos consumers de amizade, LMS, Wiki e Loja.
+
+Validação: PHP lint, PHPCS Drupal/DrupalPractice e `git diff --check` PASS.
+`DonationNoticePersistenceKernelTest` não foi executado: `SIMPLETEST_DB` não
+está configurado. Sem Runtime/SMTP.
+
 ## 0.1.1-dev.327 — revalidar destinatários ao registrar avisos
 
 Consumers de amizade, LMS, Wiki e Loja consultam a conta com `loadUnchanged()`
