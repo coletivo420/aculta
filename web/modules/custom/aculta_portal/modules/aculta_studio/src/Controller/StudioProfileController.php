@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_studio\Controller;
 
 use Drupal\aculta_user\Bio\AccountBioCard;
+use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\aculta_user\PublicProfileLinkInterface;
 use Drupal\aculta_user\Social\SocialLinksCard;
 use Drupal\Component\Serialization\Json;
@@ -31,6 +32,7 @@ final class StudioProfileController {
     private readonly ?PublicProfileLinkInterface $publicProfileLink = NULL,
     private readonly ?AccountBioCard $bioCard = NULL,
     private readonly ?SocialLinksCard $socialCard = NULL,
+    private readonly ?AuthorIdentityResolver $identityResolver = NULL,
   ) {}
 
   /**
@@ -55,16 +57,29 @@ final class StudioProfileController {
     // not be inferred from the fact that the member can edit their profile.
     $publicUrl = $this->publicProfileLink?->build($user, $cache);
 
-    // Public identity is edited by its owner; never reuse the private
-    // account-data form to write the public nickname.
-    $actions = [[
+    // Prefer the ACULTA User nickname and policy-filtered avatar. The editor
+    // only handles the current user and never guesses a public URL.
+    $displayName = $user->getDisplayName();
+    $avatar = [];
+    $identity = $this->identityResolver?->resolve($user, 'profile_full');
+    if ($identity !== NULL) {
+      $cache->addCacheableDependency($identity);
+      $identityData = $identity->toArray();
+      $displayName = (string) ($identityData['display_name'] ?: $displayName);
+      $avatar = $identityData['avatar'] ?? [];
+    }
+
+    $identityActions = [[
       '#type' => 'link',
       '#title' => new TranslatableMarkup('Editar apelido público'),
       '#url' => Url::fromRoute('aculta_studio.profile_nickname'),
       '#attributes' => ['data-portal-ui' => 'studio-profile-nickname-edit'],
     ]];
+    $bioActions = [];
+    $socialActions = [];
+
     if ($this->bioCard !== NULL && $this->socialCard !== NULL) {
-      $actions[] = [
+      $identityActions[] = [
         '#type' => 'link',
         '#title' => new TranslatableMarkup('Alterar foto ou avatar'),
         '#url' => Url::fromRoute('aculta_user.foto'),
@@ -83,28 +98,37 @@ final class StudioProfileController {
           ],
         ],
       ];
-      $actions[] = [
+      $identityActions[] = [
         '#type' => 'link',
         '#title' => new TranslatableMarkup('Configurar privacidade'),
         '#url' => Url::fromRoute('aculta_studio.profile_privacy'),
       ];
-    }
-    if ($this->bioCard !== NULL && $this->socialCard !== NULL) {
-      $actions[] = [
+      $bioActions[] = [
         '#type' => 'link',
         '#title' => new TranslatableMarkup('Editar biografia'),
         '#url' => Url::fromRoute('aculta_studio.profile_bio'),
       ];
       foreach (['instagram' => 'Instagram', 'facebook' => 'Facebook', 'reddit' => 'Reddit'] as $key => $label) {
-        $actions[] = [
+        $socialActions[] = [
           '#type' => 'link',
           '#title' => new TranslatableMarkup('Editar @network', ['@network' => $label]),
           '#url' => Url::fromRoute('aculta_studio.profile_social', ['rede' => $key]),
         ];
       }
     }
+
+    $identitySlots = [
+      'actions' => [
+        '#theme' => 'item_list',
+        '#items' => $identityActions,
+        '#attributes' => ['data-portal-ui' => 'studio-profile-actions'],
+      ],
+    ];
+    if ($avatar !== []) {
+      $identitySlots['avatar'] = $avatar;
+    }
     if ($publicUrl !== NULL) {
-      $actions[] = [
+      $identitySlots['public_link'] = [
         '#type' => 'link',
         '#title' => new TranslatableMarkup('Ver perfil público'),
         '#url' => $publicUrl,
@@ -112,45 +136,69 @@ final class StudioProfileController {
       ];
     }
 
-    $build = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'studio-profile-editor'],
+    $slots = [
       'intro' => [
         '#plain_text' => new TranslatableMarkup('Administre somente sua identidade na comunidade: foto, biografia, redes e visibilidade. Informações cadastrais e segurança pertencem a Minha Conta.'),
       ],
       'identity' => [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'studio-profile-identity'],
-        'name' => ['#plain_text' => $user->getDisplayName()],
-        'nickname_note' => [
-          '#plain_text' => new TranslatableMarkup('O apelido público é editado separadamente do nome cadastral e dos dados privados.'),
+        '#type' => 'component',
+        '#component' => 'aculta420:profile-identity',
+        '#props' => [
+          'display_name' => $displayName,
+          'hint' => (string) new TranslatableMarkup('O apelido público é editado separadamente do nome cadastral e dos dados privados.'),
         ],
-      ],
-      'actions' => [
-        '#theme' => 'item_list',
-        '#items' => $actions,
-        '#attributes' => ['data-portal-ui' => 'studio-profile-actions'],
-      ],
-      '#cache' => [
-        'contexts' => ['user', 'user.permissions', 'url.site'],
-        // Editorial/profile decisions and direct account details are private.
-        'max-age' => 0,
+        '#slots' => $identitySlots,
+        '#cache' => ['contexts' => ['user'], 'max-age' => 0],
       ],
     ];
 
-    // ACULTA User owns the current values, edits and modal contracts. The
-    // same components used by Minha Conta are reused verbatim.
     if ($this->bioCard !== NULL && $this->socialCard !== NULL) {
-      $build['bio'] = $this->bioCard->build($user);
-      // The Studio uses dedicated, accessible Form API routes. Original
-      // modal edit controls are retained exclusively in Minha Conta legacy.
-      unset($build['bio']['edit']);
-      $build['social'] = $this->socialCard->build($user);
-      foreach ($build['social']['list']['items'] as &$item) {
-        unset($item['edit']);
+      // The read-only textarea, network rows and cache metadata are produced
+      // by aculta_user. Remove modal editors only in Studio; legacy is intact.
+      $bio = $this->bioCard->build($user);
+      unset($bio['title'], $bio['edit']);
+      $social = $this->socialCard->build($user);
+      unset($social['title']);
+      if (isset($social['list']['items']) && is_array($social['list']['items'])) {
+        foreach ($social['list']['items'] as &$item) {
+          unset($item['edit']);
+        }
+        unset($item);
       }
-      unset($item);
+
+      $slots['biography'] = [
+        '#type' => 'component',
+        '#component' => 'aculta420:profile-bio',
+        '#props' => ['title' => (string) new TranslatableMarkup('Biografia')],
+        '#slots' => [
+          'body' => $bio,
+          'actions' => ['#theme' => 'item_list', '#items' => $bioActions],
+        ],
+      ];
+      $slots['social'] = [
+        '#type' => 'component',
+        '#component' => 'aculta420:profile-social',
+        '#props' => ['title' => (string) new TranslatableMarkup('Redes sociais')],
+        '#slots' => [
+          'items' => $social,
+          'actions' => ['#theme' => 'item_list', '#items' => $socialActions],
+        ],
+      ];
     }
+
+    // Slots carry all owner metadata, while the complete personal editor
+    // is uncacheable and varies by account and permissions.
+    $build = [
+      '#type' => 'component',
+      '#component' => 'aculta420:profile-editor',
+      '#props' => [],
+      '#slots' => $slots,
+      '#attributes' => ['data-portal-ui' => 'studio-profile-editor'],
+      '#cache' => [
+        'contexts' => ['user', 'user.permissions', 'url.site'],
+        'max-age' => 0,
+      ],
+    ];
     $cache->applyTo($build);
     return $build;
   }
