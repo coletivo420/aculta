@@ -15,6 +15,7 @@ use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Drupal\Tests\UnitTestCase;
@@ -167,8 +168,10 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     $account->method('id')->willReturn(42);
     $account->method('isAuthenticated')->willReturn(TRUE);
     $sender = $this->activeUser(42);
+    $message = $this->createMock(PrivateMessageInterface::class);
+    $message->method('getCacheTags')->willReturn(['private_message:456']);
     $messages = $this->createMock(EntityReferenceFieldItemListInterface::class);
-    $messages->expects(self::once())->method('referencedEntities')->willReturn([]);
+    $messages->expects(self::once())->method('referencedEntities')->willReturn([$message]);
 
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->expects(self::exactly(2))->method('isMember')->with(42)->willReturn(TRUE);
@@ -191,7 +194,7 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     $invalidator = $this->createMock(CacheTagsInvalidatorInterface::class);
     $invalidator->expects(self::once())
       ->method('invalidateTags')
-      ->with(['private_message_thread:123']);
+      ->with(['private_message_thread:123', 'private_message:456']);
     $form = new ConversationRelationshipForm(
       $this->createMock(FriendshipManagerInterface::class),
       $this->createMock(PrivateMessageBanManagerInterface::class),
@@ -211,6 +214,58 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     $form->submitForm($build, $state);
 
     self::assertSame('Histórico limpo para você.', $state->get('message'));
+  }
+
+  /**
+   * Revoked messaging permission blocks history clearing in an active session.
+   */
+  public function testRevokedPermissionPreventsHistoryClearing(): void {
+    $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('id')->willReturn(42);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $sender = $this->createMock(UserInterface::class);
+    $sender->method('id')->willReturn('42');
+    $sender->method('isActive')->willReturn(TRUE);
+    $sender->method('hasPermission')->willReturnCallback(
+      static fn(string $permission): bool => $permission !== 'use private messaging system',
+    );
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->expects(self::once())->method('isMember')->with(42)->willReturn(TRUE);
+    $thread->expects(self::never())->method('access');
+    $thread->expects(self::never())->method('clearAccountHistory');
+    $threadStorage = $this->createMock(EntityStorageInterface::class);
+    $threadStorage->method('load')->with(123)->willReturn($thread);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('loadUnchanged')->with(42)->willReturn($sender);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnMap([
+      ['private_message_thread', $threadStorage],
+      ['user', $userStorage],
+    ]);
+    $invalidator = $this->createMock(CacheTagsInvalidatorInterface::class);
+    $invalidator->expects(self::never())->method('invalidateTags');
+    $form = new ConversationRelationshipForm(
+      $this->createMock(FriendshipManagerInterface::class),
+      $this->createMock(PrivateMessageBanManagerInterface::class),
+      $account,
+      $entities,
+      $invalidator,
+      $this->createMock(CsrfTokenGenerator::class),
+    );
+    $form->setStringTranslation($this->getStringTranslationStub());
+
+    $state = new FormState();
+    $state->set('group', TRUE);
+    $state->set('thread_id', 123);
+    $state->setTriggeringElement(['#name' => 'clear_confirm']);
+    $state->setUserInput(['clear_confirm' => 'Confirmar limpeza do histórico']);
+    $build = [];
+    $form->submitForm($build, $state);
+
+    self::assertSame(
+      'Não foi possível concluir a ação. Tente novamente.',
+      $state->get('message'),
+    );
   }
 
   /**

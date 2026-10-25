@@ -1,3 +1,14 @@
+## 0.1.1-dev.318 — cobrir permissão revogada e invalidação das mensagens
+
+A cobertura do fluxo de limpeza agora comprova que a revogação da permissão de
+mensagens encerra a operação antes do access handler e da mutação. O caminho de
+sucesso também verifica a invalidação das tags de cache da thread e de cada
+mensagem referenciada.
+
+Validação: `ConversationRelationshipFormTest` **9 testes / 71 assertions
+PASS**; Unit Messenger **322 testes / 2.608 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+
 ## 0.1.1-dev.317 — cobrir limpeza autorizada do histórico
 
 Teste de regressão cobre o caminho bem-sucedido de limpeza de histórico:

@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.318 — testes cobrem permissão de mensagens revogada antes da mutação e invalidação das tags da thread e das mensagens. Focal **9/71 PASS**, Unit Messenger **322/2.608 PASS**, PHPCS/PHP lint/diff check PASS.
 - Dev.317 — teste cobre a limpeza autorizada do histórico, acesso revalidado, escopo individual e invalidação de cache. Focal **8/65 PASS**, Unit Messenger **321/2.602 PASS**, PHPCS/PHP lint/diff check PASS.
 - Dev.316 — comentários e chamadas do `ConversationRelationshipForm` formatados; teste prova que limpeza só é renderizada no menu de grupo. Gate PHPCS Drupal/DrupalPractice limpo. Focal **7/49 PASS**, Unit Messenger **320/2.586 PASS**, PHP lint e diff check PASS.
 - Dev.315 — ação de limpar histórico removida de formulários de perfil/relacionamento para impedir que um POST forjado crie uma thread vazia; ação disponível somente no menu de grupo e mutação exige conta ativa, permissões atuais, associação e acesso à thread. `ConversationRelationshipFormTest` **6/41 PASS**, Unit Messenger **319/2.578 PASS**, PHP lint/diff check PASS, PHPCS sem erros (14 avisos de linhas longas preexistentes).
