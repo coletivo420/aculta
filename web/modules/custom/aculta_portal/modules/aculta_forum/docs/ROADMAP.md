@@ -130,6 +130,28 @@ autorização operacional: migração sobre dados reais, ativação do F-GROUP,
 entrega de e-mail/digest e concorrência entre processos. Checklist de Alpha em
 [`RC.md`](RC.md).
 
+**Auditoria das fases — 2026-10-25:** F-M0–F-M7 conferidas contra código,
+configuração, testes e documentos. **Fechadas:** F-M0 (matriz produtor →
+evento → destinatário → storage → canal → preferência → deduplicação →
+autorização → testes no [roadmap do
+Messenger](../../aculta_messenger/docs/ROADMAP.md), F-D41/F-D42 em
+[DECISOES](DECISOES.md) e fronteira em [OWNERSHIP](OWNERSHIP.md)) e F-M4
+(matriz de perfis em [RESTRICTED-FORUMS](RESTRICTED-FORUMS.md), com Kernel e
+Runtime controlado). **F-M6** tem todas as provas locais citadas abaixo;
+permanecem aparelho físico, validação com conteúdo restrito real, concorrência
+da limpeza e a política de aviso ao mover subárvore para outro tópico
+([MOVE-TOOLS](MOVE-TOOLS.md)). **Parciais por definição do fluxo vigente, com a
+parcela restante em Alpha:** F-M1, F-M2, F-M3 e F-M5; em F-M3, seguir/deixar de
+seguir não tem teste de navegador dedicado — a regra é estrutural (nenhum
+caminho liga Flag a conversa) e o e-mail segue fora da autorização. **F-M7** tem
+o pré-deploy fechado, mas o critério literal “Unit/Kernel/**Functional**” não é
+atendido: não há teste Functional e a validação HTTP autenticada é feita por
+navegador real, com a limitação registrada em RC.md. O bloco legado
+`0.1.0-rc.1 — Homologação integral` mais abaixo é plano anterior e não é o
+critério vigente; seus itens de homologação pertencem ao Alpha. Os números de
+dev.297–dev.313 são registro daquele momento e ficam substituídos pelos do
+candidato RC.
+
 **Evidência recente de F-M6 (parcial, dev.297–dev.306):** controlador de
 publicação, fila de moderação, edição pública, formulário de moderação por
 revisão, histórico, comparação de revisões e opções do Fórum estão provados em
