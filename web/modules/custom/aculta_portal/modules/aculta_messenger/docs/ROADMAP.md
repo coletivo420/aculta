@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.260 — leitura exige sinal explícito: Fetch da gaveta (`X-Requested-With`) ou navegação de documento ativada (`Sec-Fetch-User: ?1`). Requests sem Fetch Metadata, embeds, prefetch/prerender e cross-site não alteram leitura. Focais `MemberInitiatedRequestTest` + `NoticeOpenControllerSafetyTest` **10/53 PASS**, Unit Messenger **260/2.015 PASS**, PHPCS/lint PASS. Kernel/Browser/Runtime não executados.
 - Dev.259 — respostas revalidam bloqueios bilaterais após lock e reload da thread; bloqueio surgido após a checagem inicial impede persistência e libera os locks. Nova conversa revalida quando resolve thread concorrente. `PrivateMessageFormValidatorTest` **15/77 PASS**, Unit Messenger **259/2.011 PASS**, PHPCS do validator/teste e PHP lint PASS. `NewConversationForm` preserva baseline PHPCS 16/15. Kernel/Browser/Runtime não executados.
 - Dev.258 — redirects de abertura de avisos do LMS, Wiki, Loja e Doações declaram `Cache-Control: private, no-store` após resolver o destino e atualizar leitura. `NoticeOpenControllerSafetyTest` **5/33 PASS**, Unit Messenger **258/2.000 PASS**, PHPCS Drupal/DrupalPractice e lint PASS. Kernel/Browser/Runtime não executados.
 - Dev.257 — requests de sub-recursos (`iframe`, `image`, `script`, `object` e demais destinos explícitos) não atualizam o estado de leitura; navegação de documento e Fetch `empty` permanecem aceitos. `MemberInitiatedRequestTest` **4/16 PASS**, Unit Messenger **258/1.996 PASS**, PHPCS Drupal/DrupalPractice e lint PASS. Kernel/Browser/Runtime não executados.

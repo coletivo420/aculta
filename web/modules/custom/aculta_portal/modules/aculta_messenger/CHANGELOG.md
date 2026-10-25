@@ -2514,3 +2514,9 @@ Após adquirir e recarregar a thread, o envio revalida os bloqueios bilaterais i
 
 Validação: `PrivateMessageFormValidatorTest` **15/77 PASS**, Unit Messenger **259/2.011 PASS** e PHPCS Drupal/DrupalPractice PASS para `PrivateMessageFormValidator` e o teste. `NewConversationForm` mantém baseline PHPCS de **16 erros/15 avisos**, igual ao HEAD anterior; PHP lint dos arquivos alterados PASS. Kernel, Browser e Runtime não executados.
 
+## 0.1.1-dev.260 — exigir sinal explícito para atualizar leitura
+
+Requests que não trazem Fetch Metadata não são mais presumidos como navegação humana. A leitura só pode ser atualizada por Fetch da gaveta (`X-Requested-With: XMLHttpRequest`) ou navegação de documento com ativação explícita (`Sec-Fetch-User: ?1`); destinos de sub-recurso, prefetch e cross-site permanecem bloqueados. Links podem continuar abrindo seu destino, mas sem atualizar leitura quando não há sinal confiável.
+
+Validação: `MemberInitiatedRequestTest` e `NoticeOpenControllerSafetyTest` **10/53 PASS**, Unit Messenger **260/2.015 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+

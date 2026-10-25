@@ -21,7 +21,11 @@ final class MemberInitiatedRequestTest extends UnitTestCase {
    * An ordinary navigation without prefetch metadata may mark a notice read.
    */
   public function testSameOriginNavigationIsMemberInitiated(): void {
-    self::assertTrue(MemberInitiatedRequest::isMemberInitiated(Request::create('/avisos/wiki/1/abrir')));
+    $request = Request::create('/avisos/wiki/1/abrir');
+    $request->headers->set('Sec-Fetch-Site', 'same-origin');
+    $request->headers->set('Sec-Fetch-Dest', 'document');
+    $request->headers->set('Sec-Fetch-User', '?1');
+    self::assertTrue(MemberInitiatedRequest::isMemberInitiated($request));
   }
 
   /**
@@ -66,13 +70,35 @@ final class MemberInitiatedRequestTest extends UnitTestCase {
       $request = Request::create('/mensagens/conversa/1');
       $request->headers->set('Sec-Fetch-Site', 'same-site');
       $request->headers->set('Sec-Fetch-Dest', $destination);
+      $request->headers->set('X-Requested-With', 'XMLHttpRequest');
       self::assertFalse(MemberInitiatedRequest::isMemberInitiated($request), $destination);
     }
 
     $fetch = Request::create('/mensagens/conversa/1');
     $fetch->headers->set('Sec-Fetch-Site', 'same-origin');
     $fetch->headers->set('Sec-Fetch-Dest', 'empty');
+    $fetch->headers->set('X-Requested-With', 'XMLHttpRequest');
     self::assertTrue(MemberInitiatedRequest::isMemberInitiated($fetch));
+  }
+
+  /**
+   * Requests without metadata need a drawer marker or explicit user activation.
+   */
+  public function testRequestsWithoutFetchMetadataNeedExplicitMemberSignal(): void {
+    $unmarked = Request::create('/avisos/wiki/1/abrir');
+    self::assertFalse(MemberInitiatedRequest::isMemberInitiated($unmarked));
+
+    $image = Request::create('/avisos/wiki/1/abrir');
+    $image->headers->set('Accept', 'image/avif,image/webp,*/*');
+    self::assertFalse(MemberInitiatedRequest::isMemberInitiated($image));
+
+    $drawerFetch = Request::create('/avisos/wiki/1/abrir');
+    $drawerFetch->headers->set('X-Requested-With', 'XMLHttpRequest');
+    self::assertTrue(MemberInitiatedRequest::isMemberInitiated($drawerFetch));
+
+    $activatedDocument = Request::create('/avisos/wiki/1/abrir');
+    $activatedDocument->headers->set('Sec-Fetch-User', '?1');
+    self::assertTrue(MemberInitiatedRequest::isMemberInitiated($activatedDocument));
   }
 
 }

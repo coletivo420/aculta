@@ -112,11 +112,15 @@ final class MessagesControllerMemberAccessTest extends UnitTestCase {
     $thread->expects(self::once())->method('access')->with('view', $account, TRUE)->willReturn(AccessResult::allowed());
     $thread->expects(self::once())->method('isMember')->with(42)->willReturn(TRUE);
     $requestStack = new RequestStack();
-    $requestStack->push(Request::create(
+    $request = Request::create(
       '/mensagens/conversa/12/responder',
       'POST',
       ['message' => [['value' => ['malformed' => 'payload']]]],
-    ));
+    );
+    $request->headers->set('Sec-Fetch-Site', 'same-origin');
+    $request->headers->set('Sec-Fetch-Dest', 'empty');
+    $request->headers->set('X-Requested-With', 'XMLHttpRequest');
+    $requestStack->push($request);
     $controller = $this->controllerFor($account, $requestStack);
 
     $response = $controller->drawerReply($thread);

@@ -163,6 +163,9 @@ final class NoticeOpenControllerSafetyTest extends UnitTestCase {
    */
   private function requestStack(string $purpose): RequestStack {
     $request = Request::create('/avisos/mensagem/abrir');
+    $request->headers->set('Sec-Fetch-Site', 'same-origin');
+    $request->headers->set('Sec-Fetch-Dest', 'document');
+    $request->headers->set('Sec-Fetch-User', '?1');
     if ($purpose === 'cross-site') {
       $request->headers->set('Sec-Fetch-Site', 'cross-site');
     }
