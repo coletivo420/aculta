@@ -57,7 +57,11 @@ separador visual. Dentro de cada origem, usa-se a ordem mais recente disponível
 do Site, que não expõem data de criação. No Fórum, limpar os contadores de
 leitura e confirmar o digest preserva `changed`, para que alterações de entrega
 não façam avisos antigos parecerem recentes. Filtros e paginação são aplicados
-antes de construir as seções.
+antes de construir as seções. A visão global da Conta pagina cada origem com
+cursor próprio; avançar uma origem preserva os offsets das demais. Na visão sem
+filtro, comunicados, Fórum, Alertas do Site, Amizades, LMS, Wiki, Loja e Doações
+têm navegação independente; offsets da URL são normalizados e limitados pelo
+Messenger.
 
 ## 2. Avisos por pessoa (`aculta_aviso`)
 
