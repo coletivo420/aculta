@@ -199,6 +199,7 @@ try {
       const legacyHome = await inspect(browser, ACCOUNT + '/conta-legada');
       check(`${owner}: hub ACCOUNT na raiz`, hub.pathname === '/' && hub.origin === ACCOUNT);
       check(`${owner}: Conta Studio`, entry.pathname === '/studio/conta' && entry.origin === ACCOUNT);
+      check(`${owner}: HTTP de Conta Studio`, entry.status ? entry.status === 200 : null);
       check(`${owner}: legado permanente`, legacyHome.pathname === '/conta-legada' && legacyHome.origin === ACCOUNT);
       check(`${owner}: acesso ao legado pelo Studio`, entry.anchorHrefs.some(url => url.includes('conta-legada')));
 
@@ -223,6 +224,9 @@ try {
           continue;
         }
         check(`${owner}/${name}: rotas próprias`, studio.pathname === studioPath && old.pathname === legacyPath);
+        check(`${owner}/${name}: HTTP 200 Studio/legado`,
+          studio.status && old.status ? (studio.status === 200 && old.status === 200) : null,
+          'status de navegação indisponível vira SKIP');
         check(`${owner}/${name}: mesmo domínio ACCOUNT`, studio.origin === ACCOUNT && old.origin === ACCOUNT);
         if (mode === 'forms' || mode === 'different' || mode === 'optional') {
           compareFields(`${owner}/${name}`, studio, old, mode === 'different' ? 'different' : 'forms');
@@ -275,6 +279,8 @@ try {
         const guestHtml = await guest.source();
         check(`${owner}: MAIN acessível como visitante`,
           guestPage.origin === MAIN && guestPage.pathname === '/u/' + SLUGS[i]);
+        check(`${owner}: HTTP 200 perfil MAIN anônimo`, guestPage.status ? guestPage.status === 200 : null,
+          'HTTP desconhecido não é PASS');
         if (PUBLIC[i] === 'no') {
           check(`${owner}: perfil privado sem bio anônima`, !guestPage.publicBio);
           check(`${owner}: perfil privado sem links de contato anônimos`, !guestPage.publicLinks);
