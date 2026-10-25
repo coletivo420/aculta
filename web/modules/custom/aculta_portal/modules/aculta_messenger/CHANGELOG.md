@@ -2,7 +2,7 @@
 
 O worker direto de Doações agora revalida conta ativa, e-mail confirmado e preferência antes de resolver os dados do pedido. O aviso só é resolvido após consentimento atual; tentativas aumentam apenas quando o Mailer será chamado. Opt-out e acesso revogado cancelam a entrega sem registrar uma tentativa de transporte.
 
-Validação: `DonationNoticeEmailWorkerTest` **6 testes / 76 assertions PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem alteração de schema; sem Runtime ou SMTP externo.
+Validação: `DonationNoticeEmailWorkerTest` **7 testes / 88 assertions PASS**, incluindo opt-out e e-mail não confirmado antes da resolução do pedido; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem alteração de schema; sem Runtime ou SMTP externo.
 
 ## 0.1.1-dev.241 — falhar fechado em política de e-mail inválida
 

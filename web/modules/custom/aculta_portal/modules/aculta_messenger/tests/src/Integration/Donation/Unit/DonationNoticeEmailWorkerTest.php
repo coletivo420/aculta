@@ -82,6 +82,25 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * An unconfirmed recipient is cancelled before order details are resolved.
+   */
+  public function testUnconfirmedEmailCancelsBeforeResolvingOrder(): void {
+    $message = $this->message('pending');
+    $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'cancelled')->willReturnSelf();
+    $message->expects(self::once())->method('save')->willReturn(1);
+    [$entities] = $this->entities($message);
+    $notices = $this->createMock(DonationNoticeManagerInterface::class);
+    $notices->expects(self::never())->method('resolve');
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->expects(self::never())->method('emailMode');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+
+    $this->worker($entities, $notices, $preferences, $mailer, confirmed: FALSE)
+      ->processItem(['message_id' => 101]);
+  }
+
+  /**
    * A payment notice is cancelled when the donor loses order access.
    */
   public function testRevokedOrderAccessCancelsQueuedEmail(): void {
@@ -237,9 +256,10 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
     DonationNoticeManagerInterface $notices,
     AvisoPreferenciasInterface $preferences,
     AcultaMailerInterface $mailer,
+    bool $confirmed = TRUE,
   ): DonationNoticeEmailWorker {
     $userData = $this->createMock(UserDataInterface::class);
-    $userData->method('get')->with('aculta_portal', 27, 'email_confirmed')->willReturn(TRUE);
+    $userData->method('get')->with('aculta_portal', 27, 'email_confirmed')->willReturn($confirmed);
     $emailPolicy = new EmailConfirmationPolicy(
       $userData,
       $entities,
