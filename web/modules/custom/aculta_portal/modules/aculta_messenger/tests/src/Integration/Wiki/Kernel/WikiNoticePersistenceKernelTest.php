@@ -262,16 +262,21 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     self::assertNotNull($message);
     $replayedMessage = $manager->record($this->reviewEvent($uid, $entry));
     self::assertSame($message->id(), $replayedMessage?->id(), 'Replaying the same source revision reuses the persisted notice.');
+    $secondEntry = $this->createReviewEntry($reviewer);
+    $secondMessage = $manager->record($this->reviewEvent($uid, $secondEntry));
+    self::assertNotNull($secondMessage);
 
     $rows = $manager->digestRowsFor($uid);
 
-    self::assertCount(1, $rows);
+    self::assertCount(2, $rows);
     self::assertSame('wiki', $rows[0]['tipo']);
     self::assertSame(1, $rows[0]['quantidade']);
-    self::assertSame((int) $message->id(), $rows[0]['delivery_id']);
-    $manager->markDigestSent($uid, [$rows[0]['delivery_id']]);
+    self::assertEqualsCanonicalizing([(int) $message->id(), (int) $secondMessage->id()], array_column($rows, 'delivery_id'));
+    $manager->markDigestSent($uid, array_column($rows, 'delivery_id'));
     $stored = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
     self::assertSame(1, (int) $stored->get('field_aculta_wiki_digest_sent')->value);
+    $storedSecond = $this->container->get('entity_type.manager')->getStorage('message')->load($secondMessage->id());
+    self::assertSame(1, (int) $storedSecond->get('field_aculta_wiki_digest_sent')->value);
   }
 
   /**

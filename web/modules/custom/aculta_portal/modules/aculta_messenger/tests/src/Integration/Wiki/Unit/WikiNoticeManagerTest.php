@@ -145,6 +145,7 @@ final class WikiNoticeManagerTest extends UnitTestCase {
       $this->lock(),
       $this->createMock(LoggerInterface::class),
     );
+    $manager->setStringTranslation($this->getStringTranslationStub());
 
     try {
       self::assertSame(1, $manager->unreadCount(27));
@@ -167,7 +168,7 @@ final class WikiNoticeManagerTest extends UnitTestCase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
-    return new WikiNoticeManager(
+    $manager = new WikiNoticeManager(
       $entities,
       $domainPurposes,
       $preferences,
@@ -175,6 +176,8 @@ final class WikiNoticeManagerTest extends UnitTestCase {
       $this->lock(),
       $this->createMock(LoggerInterface::class),
     );
+    $manager->setStringTranslation($this->getStringTranslationStub());
+    return $manager;
   }
 
   /**

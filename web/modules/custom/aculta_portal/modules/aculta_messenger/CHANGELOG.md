@@ -1,3 +1,16 @@
+## 0.1.1-dev.344 — resolver avisos Wiki em lote na central e digest
+
+A listagem paginada e o digest da Wiki agora coletam os envelopes dos Messages
+do lote e resolvem revisões de verbetes/propostas em conjunto, preservando as
+checagens de revisão padrão, moderação, autoria, permissões, Domain/Purpose e
+acesso. `resolve()` usa o mesmo contrato em lote para ações individuais; os
+resolvedores escalares duplicados foram removidos.
+
+Validação: Wiki Integration Unit **4 testes / 47 assertions PASS**; Wiki Kernel
+**8 testes / 153 assertions PASS** (2 deprecações upstream `@EntityType`, 3
+notices PHPUnit); Unit Messenger **356/2.866 PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Runtime.
+
 ## 0.1.1-dev.343 — homologar revalidação em lote no Kernel LMS
 
 A fixture Kernel de matrícula caracteriza a consulta agrupada por UUID e a

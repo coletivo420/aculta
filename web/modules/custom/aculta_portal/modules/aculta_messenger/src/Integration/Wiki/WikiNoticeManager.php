@@ -143,18 +143,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
   /**
    * {@inheritdoc} */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array {
-    if (!$account->isAuthenticated() || (int) $message->getOwnerId() !== (int) $account->id()
-      || $message->bundle() !== self::TEMPLATE) {
-      return NULL;
-    }
-    $type = (string) $message->get(self::EVENT_FIELD)->value;
-    $uuid = (string) $message->get(self::SOURCE_FIELD)->value;
-    $revisionId = (int) $message->get(self::VERSION_FIELD)->value;
-    return match ($type) {
-      'review_requested' => $this->resolveReview($uuid, $revisionId, $account),
-      'proposal_outcome' => $this->resolveProposal($uuid, $revisionId, $account),
-      default => NULL,
-    };
+    return $this->resolveMessages([$message], $account)[(int) $message->id()] ?? NULL;
   }
 
   /**
@@ -171,6 +160,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
       return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
+    $resolved = [];
     $page = EligibleNoticePage::collect(
       function (int $scanOffset, int $batchSize) use ($storage, $account, $filters): array {
         $query = $storage->getQuery()->accessCheck(FALSE)
@@ -180,8 +170,14 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
         return $query->sort('created', 'DESC')->sort('id', 'DESC')
           ->range($scanOffset, $batchSize)->execute();
       },
-      static fn(array $ids): array => array_values($storage->loadMultiple($ids)),
-      fn(mixed $message): ?array => $message instanceof MessageInterface ? $this->resolve($message, $account) : NULL,
+      function (array $ids) use ($storage, $account, &$resolved): array {
+        $messages = array_values($storage->loadMultiple($ids));
+        $resolved = $this->resolveMessages($messages, $account);
+        return $messages;
+      },
+      function (mixed $message) use (&$resolved): ?array {
+        return $message instanceof MessageInterface ? ($resolved[(int) $message->id()] ?? NULL) : NULL;
+      },
       $limit,
       $offset,
     );
@@ -286,6 +282,49 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
   }
 
   /**
+   * Resolves a set of notice Messages with batched source and revision loads.
+   *
+   * @param \Drupal\message\MessageInterface[] $messages
+   *   Candidate notices owned by the account.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Current recipient whose access and ownership are revalidated.
+   *
+   * @return array<int, array{title: string, summary: string, email_summary: string, url: \Drupal\Core\Url}>
+   *   Resolved notice data keyed by Message ID.
+   */
+  private function resolveMessages(array $messages, AccountInterface $account): array {
+    if (!$account->isAuthenticated()) {
+      return [];
+    }
+    $reviewTargets = [];
+    $proposalTargets = [];
+    $messageTargets = [];
+    foreach ($messages as $message) {
+      if (!$message instanceof MessageInterface || ($envelope = $this->noticeEnvelope($message, $account)) === NULL) {
+        continue;
+      }
+      $key = $envelope['uuid'] . ':' . $envelope['revision_id'];
+      $messageTargets[(int) $message->id()] = [$envelope['type'], $key];
+      if ($envelope['type'] === 'review_requested') {
+        $reviewTargets[$key] = ['uuid' => $envelope['uuid'], 'revision_id' => $envelope['revision_id']];
+      }
+      else {
+        $proposalTargets[$key] = ['uuid' => $envelope['uuid'], 'revision_id' => $envelope['revision_id']];
+      }
+    }
+    $reviews = $this->resolveReviewTargets($reviewTargets, $account);
+    $proposals = $this->resolveProposalTargets($proposalTargets, $account);
+    $resolved = [];
+    foreach ($messageTargets as $messageId => [$type, $key]) {
+      $notice = $type === 'review_requested' ? ($reviews[$key] ?? NULL) : ($proposals[$key] ?? NULL);
+      if (is_array($notice)) {
+        $resolved[$messageId] = $notice;
+      }
+    }
+    return $resolved;
+  }
+
+  /**
    * Batch-loads current Wiki nodes and their referenced revisions.
    *
    * @param array<string, array{uuid: string, revision_id: int}> $targets
@@ -293,10 +332,10 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
    * @param \Drupal\user\UserInterface $account
    *   Active recipient whose reviewer permissions and access must be checked.
    *
-   * @return array<string, bool>
-   *   Eligible target keys.
+   * @return array<string, array{title: string, summary: string, email_summary: string, url: \Drupal\Core\Url}>
+   *   Accessible review target display data keyed by UUID and revision.
    */
-  private function resolveReviewTargets(array $targets, UserInterface $account): array {
+  private function resolveReviewTargets(array $targets, AccountInterface $account): array {
     if ($targets === [] || !$account->hasPermission('edit any wiki_entry content')
       || (!$account->hasPermission('use wiki_editorial transition review_to_draft')
         && !$account->hasPermission('use wiki_editorial transition review_to_published'))) {
@@ -332,8 +371,14 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
           || !$node->access('view revision', $account, TRUE)->isAllowed()) {
           continue;
         }
-        if ($this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $node->id()]) !== NULL) {
-          $resolved[$key] = TRUE;
+        $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $node->id()]);
+        if ($url !== NULL) {
+          $resolved[$key] = [
+            'title' => $this->t('Verbete aguardando revisão'),
+            'summary' => $this->t('Um verbete está disponível para análise editorial.'),
+            'email_summary' => $this->t('Há um verbete aguardando revisão editorial.'),
+            'url' => $url,
+          ];
         }
       }
       return $resolved;
@@ -349,10 +394,10 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
    * @param \Drupal\user\UserInterface $account
    *   Active recipient whose authorship and access must be checked.
    *
-   * @return array<string, bool>
-   *   Eligible target keys.
+   * @return array<string, array{title: string, summary: string, email_summary: string, url: \Drupal\Core\Url}>
+   *   Accessible proposal target display data keyed by UUID and revision.
    */
-  private function resolveProposalTargets(array $targets, UserInterface $account): array {
+  private function resolveProposalTargets(array $targets, AccountInterface $account): array {
     if ($targets === []) {
       return [];
     }
@@ -383,8 +428,14 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
         || !$proposal->access('view', $account, TRUE)->isAllowed()) {
         continue;
       }
-      if ($this->domainPurposes->canonicalRouteUrl('wiki', 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]) !== NULL) {
-        $resolved[$key] = TRUE;
+      $url = $this->domainPurposes->canonicalRouteUrl('wiki', 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
+      if ($url !== NULL) {
+        $resolved[$key] = [
+          'title' => $this->t('Atualização de proposta editorial'),
+          'summary' => $this->t('Há uma atualização privada na sua proposta para a Wiki.'),
+          'email_summary' => $this->t('Sua proposta para a Wiki recebeu uma atualização.'),
+          'url' => $url,
+        ];
       }
     }
     return $resolved;
@@ -428,8 +479,10 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
     }
     $ids = $this->pendingIds($uid);
     $rows = [];
-    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
-      if (!$message instanceof MessageInterface || ($notice = $this->resolve($message, $account)) === NULL) {
+    $messages = $this->entityTypeManager->getStorage('message')->loadMultiple($ids);
+    $resolved = $this->resolveMessages($messages, $account);
+    foreach ($messages as $message) {
+      if (!$message instanceof MessageInterface || ($notice = $resolved[(int) $message->id()] ?? NULL) === NULL) {
         if ($message instanceof MessageInterface) {
           $message->set(self::DIGEST_FIELD, 1)->save();
         }
@@ -489,61 +542,6 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
       $this->logger->error('Could not queue Wiki notice email for message @id.', ['@id' => $message->id()]);
       throw new \RuntimeException('Wiki notice email could not be queued.');
     }
-  }
-
-  /**
-   * Resolves an editorial review, revalidating revision and reviewer access. */
-  private function resolveReview(string $uuid, int $revisionId, AccountInterface $account): ?array {
-    if (!$account->hasPermission('edit any wiki_entry content')
-      || (!$account->hasPermission('use wiki_editorial transition review_to_draft')
-        && !$account->hasPermission('use wiki_editorial transition review_to_published'))) {
-      return NULL;
-    }
-    return $this->domainPurposes->runInPurpose('wiki', function () use ($uuid, $revisionId, $account): ?array {
-      $storage = $this->entityTypeManager->getStorage('node');
-      $ids = $storage->getQuery()->accessCheck(FALSE)->condition('uuid', $uuid)->condition('type', 'wiki_entry')->range(0, 1)->execute();
-      $node = $ids === [] ? NULL : $storage->loadRevision($revisionId);
-      if (!$node || $node->uuid() !== $uuid || (int) $node->getRevisionId() !== $revisionId
-        || !$node->isDefaultRevision() || !$node->hasField('moderation_state')
-        || $node->get('moderation_state')->value !== 'review'
-        || !$node->access('view', $account, TRUE)->isAllowed()
-        || !$node->access('view revision', $account, TRUE)->isAllowed()) {
-        return NULL;
-      }
-      $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $node->id()]);
-      if ($url === NULL) {
-        return NULL;
-      }
-      return [
-        'title' => $this->t('Verbete aguardando revisão'),
-        'summary' => $this->t('Um verbete está disponível para análise editorial.'),
-        'email_summary' => $this->t('Há um verbete aguardando revisão editorial.'),
-        'url' => $url,
-      ];
-    });
-  }
-
-  /**
-   * Resolves a proposal outcome only for its active author with current access. */
-  private function resolveProposal(string $uuid, int $revisionId, AccountInterface $account): ?array {
-    $storage = $this->entityTypeManager->getStorage('aculta_wiki_proposal');
-    $ids = $storage->getQuery()->accessCheck(FALSE)->condition('uuid', $uuid)->range(0, 1)->execute();
-    $proposal = $ids === [] ? NULL : $storage->loadRevision($revisionId);
-    if (!$account->isAuthenticated() || !$proposal || $proposal->uuid() !== $uuid || (int) $proposal->getRevisionId() !== $revisionId
-      || !$proposal->isDefaultRevision()
-      || (int) $proposal->getOwnerId() !== (int) $account->id() || !$proposal->access('view', $account, TRUE)->isAllowed()) {
-      return NULL;
-    }
-    $url = $this->domainPurposes->canonicalRouteUrl('wiki', 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
-    if ($url === NULL) {
-      return NULL;
-    }
-    return [
-      'title' => $this->t('Atualização de proposta editorial'),
-      'summary' => $this->t('Há uma atualização privada na sua proposta para a Wiki.'),
-      'email_summary' => $this->t('Sua proposta para a Wiki recebeu uma atualização.'),
-      'url' => $url,
-    ];
   }
 
 }
