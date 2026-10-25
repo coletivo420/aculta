@@ -74,8 +74,8 @@ O grupo criado pela interface usa `teste.b` e `teste.d` como destinatários e `t
 | 13 | Estado visual e anunciado de carregamento e erro recuperável na gaveta |
 
 `central-empty-state.mjs` é uma verificação focada da aba Avisos no host de Conta. Ela verifica filtros combinados ativos,
-estado vazio dentro da lista da conta (sem confundi-lo com a gaveta do cabeçalho), anúncio `role="status"` e espaçamento
-visual do tema.
+estado vazio dentro da lista da conta (sem confundi-lo com a gaveta do cabeçalho), anúncio `role="status"`, espaçamento
+visual do tema e a opção da origem Revista.
 
 `drawer-notice-filters.mjs` verifica a gaveta multidomínio no host do Portal: grupos de origem/leitura, seções de avisos
 com cabeçalhos/separadores por origem, preservação de filtros combinados após navegação AJAX e URLs de fallback da Conta.
@@ -93,7 +93,7 @@ e a captura guardam a dimensão real, sem declarar uma validação de 390 px.
 Em 2026-10-24, a suíte completa passou com **76/76 verificações** no Runtime de teste com Firefox ESR visível (`DISPLAY=:0`), incluindo estados loading/error e a preferência friends-only em conversa existente.
 O teste usa o diálogo do Drupal/jQuery UI para confirmar amizade e bloqueio, e comprova que Escape fecha o modal sem fechar a gaveta.
 
-Também em 2026-10-24, `central-empty-state.mjs` passou com **4/4 verificações** no host de Conta, confirmando os filtros ativos, o texto não vazio com `role="status"` na lista própria da central e o espaçamento visual.
+Também em 2026-10-24, `central-empty-state.mjs` passou com **4/4 verificações** no host de Conta, confirmando os filtros ativos, o texto não vazio com `role="status"` na lista própria da central e o espaçamento visual. Em 2026-10-25, foi acrescentada a verificação da opção Revista; a execução Firefox dessa revisão está pendente.
 
 Na mesma data, `drawer-notice-filters.mjs` passou **6/6 verificações** com viewport de 1280 px e **6/6** com janela solicitada de 390 px no host do Portal. O Firefox reportou viewport efetivo de 500 px na segunda execução; não se declara teste real a 390 px. A navegação apenas abriu a gaveta e consultou filtros, sem alterar avisos ou preferências.
 

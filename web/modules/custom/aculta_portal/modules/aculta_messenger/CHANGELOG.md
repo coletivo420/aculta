@@ -3635,3 +3635,13 @@ Validação: Unit focal de origem/listagem **14/51 PASS**, PHPCS Drupal/
 DrupalPractice do grouper e teste, PHP lint dos dois controllers e `git diff
 --check` PASS. HTTP, visual e Runtime não executados.
 
+## 0.1.1-dev.359 — cobertura visual das origens Revista e Conquistas
+
+Os scripts Firefox reutilizáveis agora reconhecem todas as origens no teste
+de ordenação dos grupos e verificam que Revista aparece como filtro na central
+da conta. O código funcional dos filtros já foi entregue em Dev.358.
+
+Validação: `node --check` nos dois scripts e `git diff --check` PASS. Firefox
+ESR visual não executado: `DISPLAY` não está definido e há sessões
+Firefox/geckodriver preexistentes em uso possível; não foram encerradas.
+

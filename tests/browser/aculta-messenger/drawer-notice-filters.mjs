@@ -21,7 +21,7 @@ try {
       separator: !!section.querySelector(':scope > hr[data-portal-ui="notice-origin-separator"]'),
       latest: Math.max(0, ...[...section.querySelectorAll('[data-aculta-notice-recency]')].map((notice) => Number(notice.dataset.acultaNoticeRecency) || 0)),
     })));`));
-    const originOrder = ['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conta', 'outros'];
+    const originOrder = ['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'revista', 'loja', 'doacao', 'conquistas', 'conta', 'outros'];
     const groupOrderValid = originSections.every((section, index) => {
       const orderIndex = originOrder.indexOf(section.origin);
       const previousIndex = index > 0 ? originOrder.indexOf(originSections[index - 1].origin) : -1;

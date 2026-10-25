@@ -27,6 +27,8 @@ try {
       stateText: state?.textContent.trim() || '',
       statePadding: state ? Number.parseFloat(getComputedStyle(state).paddingTop) : 0,
       selectedFilters: [...(filters?.querySelectorAll('[aria-current="page"]') || [])].map((link) => link.textContent.trim()),
+      magazineFilterHref: [...(filters?.querySelectorAll('a') || [])]
+        .find((link) => link.textContent.trim() === 'Revista')?.href || null,
     });
   `));
 
@@ -39,6 +41,11 @@ try {
     'Both origin and read-state filters remain active',
     rendered.selectedFilters.length === 2,
     JSON.stringify(rendered.selectedFilters),
+  );
+  check(
+    'The account notice center exposes the Revista origin filter',
+    rendered.magazineFilterHref !== null && new URL(rendered.magazineFilterHref).searchParams.get('origem') === 'revista',
+    rendered.magazineFilterHref || 'Revista filter not found',
   );
   check(
     'The empty state receives the Messenger theme spacing',
