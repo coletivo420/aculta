@@ -1,3 +1,16 @@
+## 0.1.1-dev.383 — instalação funcional isolada do Messenger
+
+`MessengerModuleInstallTest` instala `aculta_messenger` com suas dependências
+em BrowserTestBase e faz uma requisição HTTP real a `/user/login`. O teste usa
+Core/Composer e módulos do snapshot isolado da PR, servidor PHP local e banco
+MariaDB SimpleTest dedicado; nenhum dado do Runtime foi usado.
+
+Validação: **1 teste / 5 assertions PASS**, HTTP 200; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. PHPUnit reportou 189 depreciações de
+Core/contrib durante a instalação, sem falha. Isto comprova instalação e uma
+rota HTTP no site temporário; não homologa Runtime, sessão autenticada, envio de
+mensagem, visual nem e-mail externo.
+
 ## 0.1.1-dev.382 — Kernels dos consumers de domínio
 
 Os Kernels de integração LMS, Wiki, Commerce/Loja, Doações, Revista e Game

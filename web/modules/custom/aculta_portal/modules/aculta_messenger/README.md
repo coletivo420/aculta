@@ -1,6 +1,6 @@
 # ACULTA Messenger
 
-Versão de desenvolvimento atual: **0.1.1-dev.382**. O roadmap e o changelog
+Versão de desenvolvimento atual: **0.1.1-dev.383**. O roadmap e o changelog
 registram o estado de cada incremento e as verificações executadas.
 
 Infraestrutura unificada do ACULTA Portal para avisos do site, notificações, assinaturas, e-mail integrado e conversas privadas voluntárias entre membros. A fonte de verdade de cada
@@ -101,6 +101,11 @@ PASS** e `PrivateMessageRetentionKernelTest` **4/55 PASS** no MariaDB dedicado
 (10 depreciações upstream de Core/contrib no Kernel de retenção). Unit de
 retenção **3/76 PASS**. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
 PASS; Runtime e SMTP externo não utilizados.
+
+BrowserTestBase isolado instalou o Messenger e recebeu HTTP 200 em
+`/user/login` (**1 teste / 5 assertions PASS**, Dev.383); houve 189
+depreciações upstream de Core/contrib. O teste usa somente o banco SimpleTest
+dedicado e não comprova sessão autenticada, fluxo de envio, Runtime ou SMTP.
 
 A retenção de conversas usa cursor persistido para não deixar falhas antigas
 barrar lotes seguintes. Unit cobre paginação e rollback; o Kernel MariaDB cria
