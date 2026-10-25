@@ -121,9 +121,9 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
     }
     $notice = $this->notices->resolve($message, $recipient);
     if ($notice === NULL) {
-      // A removed membership suppresses a queued enrollment email. Certificate
-      // link stays valid by snapshot after course/account changes.
-      $message->set(self::DELIVERY_FIELD, 'failed')->save();
+      // A source that is no longer accessible must not be requeued by replaying
+      // the event. Certificate links stay valid through their stored snapshot.
+      $message->set(self::DELIVERY_FIELD, 'cancelled')->save();
       return;
     }
     $attempts = (int) $message->get(self::ATTEMPTS_FIELD)->value;

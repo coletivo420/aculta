@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Integration\Lms\Kernel;
 
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Integration\Lms\EventSubscriber\LearningNoticeEventSubscriber;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager;
+use Drupal\aculta_messenger\Integration\Lms\Plugin\QueueWorker\LmsNotificationEmailWorker;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_messenger\Service\NoticeReadStateManager;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -64,6 +67,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     parent::setUp();
 
     $this->installEntitySchema('user');
+    $this->installSchema('user', ['users_data']);
     $this->installEntitySchema('message');
     $this->installConfig(['system', 'user', 'filter', 'message']);
     MessageTemplate::create([
@@ -219,7 +223,10 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     $course->method('id')->willReturn('course-12');
     $course->method('bundle')->willReturn('lms_course');
     $course->method('label')->willReturn('Curso aberto');
-    $course->method('hasPermission')->with('take course', $learner)->willReturn(TRUE);
+    $course->method('hasPermission')->willReturnCallback(
+      static fn(string $permission, $account): bool => $permission === 'take course'
+        && (int) $account->id() === (int) $learner->id(),
+    );
     $courseAccessible = TRUE;
     $course->method('access')->willReturnCallback(function () use (&$courseAccessible): AccessResult {
       return $courseAccessible ? AccessResult::allowed() : AccessResult::forbidden();
@@ -257,7 +264,14 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       new RequestStack(),
     );
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
-    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_OFF);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $queue = $this->createMock(QueueInterface::class);
+    $queue->expects(self::once())
+      ->method('createItem')
+      ->with(self::callback(static fn(array $item): bool => (int) ($item['message_id'] ?? 0) > 0))
+      ->willReturn(1);
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->expects(self::once())->method('get')->with('aculta_lms_messenger_email')->willReturn($queue);
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn(TRUE);
     $manager = new LearningNoticeManager(
@@ -265,7 +279,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       $domainPurposes,
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
-      $this->createMock(QueueFactory::class),
+      $queueFactory,
       new NullLogger(),
       $this->createMock(MessengerNoticePublisherInterface::class),
       $lock,
@@ -302,6 +316,35 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     $courseAccessible = FALSE;
     self::assertFalse($central->setRead((int) $message->id(), $learner, FALSE));
     self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_lms_read')->value);
+
+    // The queued direct email rechecks the same course access at delivery.
+    $this->container->get('user.data')->set('aculta_portal', (int) $learner->id(), 'email_confirmed', TRUE);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    $workerLock = $this->createMock(LockBackendInterface::class);
+    $workerLock->expects(self::once())->method('acquire')->willReturn(TRUE);
+    $workerLock->expects(self::once())->method('release');
+    $worker = new LmsNotificationEmailWorker(
+      [],
+      'aculta_lms_messenger_email',
+      ['cron' => ['time' => 30]],
+      $realEntityTypeManager,
+      $manager,
+      $preferences,
+      new EmailConfirmationPolicy(
+        $this->container->get('user.data'),
+        $realEntityTypeManager,
+        $this->container->get('module_handler'),
+      ),
+      $mailer,
+      $workerLock,
+    );
+    $worker->processItem(['message_id' => (int) $message->id()]);
+
+    self::assertSame('cancelled', $storage->load($message->id())->get('field_aculta_msg_delivery')->value);
+    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_lms_read')->value, 'The required site notice remains stored when current course access is revoked.');
+    (new LearningNoticeEventSubscriber($manager, $preferences, new NullLogger()))->consume($event);
+    self::assertSame('cancelled', $storage->load($message->id())->get('field_aculta_msg_delivery')->value, 'Replaying the source event does not revive the cancelled direct email.');
   }
 
   /**

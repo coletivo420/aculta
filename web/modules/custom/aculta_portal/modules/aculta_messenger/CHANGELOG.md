@@ -1,3 +1,13 @@
+## 0.1.1-dev.229 — encerrar envio LMS quando o acesso é revogado
+
+Quando o worker LMS revalida uma inscrição sem acesso atual, marca a cópia de e-mail como `cancelled`, terminal para
+replays do evento. Antes, `failed` com zero tentativas permitia que o replay reabrisse a fila. O aviso obrigatório no
+site continua persistido e legível segundo as permissões atuais.
+
+Validação: `LearningNoticePersistenceKernelTest` **4 testes / 52 assertions PASS** no MariaDB dedicado; as 2
+deprecações são das annotations `message` e `message_template` do módulo contrib `message`. Não houve envio SMTP nem
+acesso ao Runtime.
+
 ## 0.1.1-dev.228 — testar revogação antes do e-mail direto da Wiki
 
 O Kernel agora cobre um aviso editorial enfileirado cuja revisão é publicada antes do processamento da fila. O worker
