@@ -34,7 +34,7 @@ final class NoticeReadStateManagerTest extends UnitTestCase {
     });
     $message->method('getOwnerId')->willReturn(8);
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->expects(self::once())->method('load')->with(12)->willReturn($message);
+    $storage->expects(self::once())->method('loadUnchanged')->with(12)->willReturn($message);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->expects(self::once())->method('getStorage')->with('message')->willReturn($storage);
     $account = $this->createMock(AccountInterface::class);
@@ -59,7 +59,7 @@ final class NoticeReadStateManagerTest extends UnitTestCase {
     $message->method('bundle')->willReturn('aculta_msg_friendship');
     $message->method('getOwnerId')->willReturn(8);
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->expects(self::once())->method('load')->with(44)->willReturn($message);
+    $storage->expects(self::once())->method('loadUnchanged')->with(44)->willReturn($message);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->with('message')->willReturn($storage);
     $account = $this->createMock(AccountInterface::class);
@@ -82,7 +82,7 @@ final class NoticeReadStateManagerTest extends UnitTestCase {
     $message->method('bundle')->willReturn('aculta_msg_wiki_notice');
     $message->method('getOwnerId')->willReturn(8);
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->expects(self::once())->method('load')->with(12)->willReturn($message);
+    $storage->expects(self::once())->method('loadUnchanged')->with(12)->willReturn($message);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->with('message')->willReturn($storage);
     $account = $this->createMock(AccountInterface::class);
@@ -105,7 +105,7 @@ final class NoticeReadStateManagerTest extends UnitTestCase {
     $message->method('bundle')->willReturn('aculta_msg_wiki_notice');
     $message->method('getOwnerId')->willReturn(99);
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->expects(self::once())->method('load')->with(12)->willReturn($message);
+    $storage->expects(self::once())->method('loadUnchanged')->with(12)->willReturn($message);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->with('message')->willReturn($storage);
     $account = $this->createMock(AccountInterface::class);
@@ -144,7 +144,7 @@ final class NoticeReadStateManagerTest extends UnitTestCase {
       return $bundle;
     });
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->method('load')->with(12)->willReturn($message);
+    $storage->method('loadUnchanged')->with(12)->willReturn($message);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->with('message')->willReturn($storage);
     $account = $this->createMock(AccountInterface::class);

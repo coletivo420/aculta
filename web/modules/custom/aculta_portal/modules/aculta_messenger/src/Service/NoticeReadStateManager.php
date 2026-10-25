@@ -31,7 +31,10 @@ final class NoticeReadStateManager implements NoticeReadStateManagerInterface {
     if ($messageId < 1 || !$account->isAuthenticated()) {
       return FALSE;
     }
-    $message = $this->entityTypeManager->getStorage('message')->load($messageId);
+    // Read-state mutation is an authorization boundary. Drop static-cache
+    // state so ownership, bundle, and source metadata are current before the
+    // owning adapter revalidates its own access policy.
+    $message = $this->entityTypeManager->getStorage('message')->loadUnchanged($messageId);
     if (!$message instanceof MessageInterface) {
       return FALSE;
     }

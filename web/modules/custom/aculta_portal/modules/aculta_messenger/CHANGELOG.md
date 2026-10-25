@@ -1,3 +1,16 @@
+## 0.1.1-dev.332 — reler Message antes de alterar estado de leitura
+
+O dispatcher da central agora carrega o `Message` sem reutilizar o cache
+estático antes de validar titularidade, bundle e metadados de origem. Isso
+impede que uma entidade já carregada e alterada durante a requisição seja usada
+para autorizar a mutação com estado obsoleto.
+
+Validação: `NoticeReadStateManagerTest` **7/53 PASS**, Unit Messenger
+**342/2.755 PASS**, PHPCS Drupal/DrupalPractice, PHP lint, YAML e
+`git diff --check` PASS. O índice gerado continua desatualizado na branch base
+(README raiz registra `dev.296`, manifest `dev.331`); não regenerei a tabela
+compartilhada. Kernel/Runtime/SMTP não executados.
+
 ## 0.1.1-dev.331 — unificar mutação de leitura de Doações
 
 O controller de avisos de Doações usa agora o contrato comum `setRead()` já
