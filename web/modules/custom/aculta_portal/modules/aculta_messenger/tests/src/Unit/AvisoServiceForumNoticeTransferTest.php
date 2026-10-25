@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Unit;
 
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\Update;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -12,6 +14,7 @@ use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
+use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
@@ -70,6 +73,65 @@ final class AvisoServiceForumNoticeTransferTest extends UnitTestCase {
     self::assertSame(8, $targetValues['contador_site']);
     self::assertSame(6, $targetValues['contador_email']);
     self::assertSame(42, $targetValues['ultimo_comentario']);
+  }
+
+  /**
+   * Idempotency keys of the moved Comments follow them to the destination.
+   */
+  public function testMovesNoticeEventKeysForMovedComments(): void {
+    $sourceValues = [
+      'uid' => 7,
+      'contador_site' => 1,
+      'contador_email' => 1,
+      'ultimo_comentario' => 42,
+    ];
+    $targetValues = [
+      'contador_site' => 0,
+      'contador_email' => 0,
+      'ultimo_comentario' => 0,
+    ];
+    $source = $this->notice($sourceValues, FALSE);
+    $target = $this->notice($targetValues, TRUE);
+    $source->expects(self::once())->method('delete');
+    $target->expects(self::once())->method('save');
+
+    $noticeStorage = $this->createMock(EntityStorageInterface::class);
+    $noticeStorage->expects(self::exactly(2))->method('getQuery')
+      ->willReturnOnConsecutiveCalls($this->query([101]), $this->query([202]));
+    $noticeStorage->expects(self::once())->method('loadMultiple')->with([101])
+      ->willReturn([101 => $source]);
+    $noticeStorage->expects(self::once())->method('load')->with(202)->willReturn($target);
+
+    $destination = $this->createMock(NodeInterface::class);
+    $destination->method('isPublished')->willReturn(TRUE);
+    $destination->method('label')->willReturn('Tópico destino');
+    $nodeStorage = $this->createMock(EntityStorageInterface::class);
+    $nodeStorage->expects(self::once())->method('load')->with(20)->willReturn($destination);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->willReturnMap([
+      ['node', $nodeStorage],
+      ['aculta_aviso', $noticeStorage],
+    ]);
+    $policy = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+    $policy->method('supportsTopic')->willReturn(TRUE);
+    $policy->method('canViewTopic')->with($destination, 7)->willReturn(TRUE);
+
+    $update = $this->createMock(Update::class);
+    $update->expects(self::once())->method('fields')->with(['nid' => 20])->willReturnSelf();
+    $update->expects(self::exactly(4))->method('condition')->willReturnSelf();
+    $update->expects(self::once())->method('execute')->willReturn(1);
+    $database = $this->createMock(Connection::class);
+    $database->expects(self::once())->method('update')
+      ->with(ForumNoticeEventSchema::TABLE)
+      ->willReturn($update);
+
+    $service = new AvisoService(
+      $entityTypeManager,
+      $this->createMock(FlagServiceInterface::class),
+      $policy,
+      $database,
+    );
+    self::assertSame(1, $service->transferTopicResponseNotices(10, 20, [5, 6]));
   }
 
   /**

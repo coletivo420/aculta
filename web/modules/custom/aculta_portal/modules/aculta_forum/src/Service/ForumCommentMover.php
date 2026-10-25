@@ -227,6 +227,7 @@ final class ForumCommentMover {
               $source_id,
               $destination_id,
               TRUE,
+              array_map('intval', array_keys($subtree)),
             ), ForumCommentSubtreeMovedEvent::NAME);
           }
 

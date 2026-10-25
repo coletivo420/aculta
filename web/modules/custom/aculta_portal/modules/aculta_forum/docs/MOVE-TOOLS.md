@@ -293,24 +293,24 @@ funcional, notificações existentes com seguidores, anexos reais pela política
 aprovação. O smoke Runtime confirmou especificamente a Flag de denúncia e sua
 fila; não clicou em seguir/salvar tópico.
 
-#### Avisos de comentários movimentados — decisão pendente
+#### Avisos de comentários movimentados — política aprovada em 2026-10-25
 
-O código atual do Messenger cria aviso em `comment_insert` e quando um
-comentário pendente passa a publicado. Atualizar um comentário publicado para
-movê-lo não dispara nenhum desses dois eventos, portanto não envia aviso novo.
-Avisos existentes continuam com `assunto_nid` da discussão de origem. Cada
-`aculta_aviso` agrega contadores por destinatário/tipo/tópico e guarda apenas o
-último Comment contado; não existe ledger de cada evento/recipient que permita
-reverter com segurança uma parte do contador ou recompor o último ID quando
-houve várias respostas. Por isso não se deve transferir, decrementá-los ou
-notificar seguidores do destino automaticamente sem uma política aprovada.
+Decisão do responsável: **mover e mesclar**. Quando a subárvore movida contém
+comentário publicado, o `ForumCommentSubtreeMovedEvent` leva os IDs dos
+comentários e o consumidor do Messenger transfere o agregado de avisos do tópico
+de origem para o destino, somando `contador_site`/`contador_email` e preservando
+o maior `ultimo_comentario`/`ultimo_post`. As chaves de idempotência
+(`aculta_messenger_forum_notice_event`) dos comentários movidos passam a apontar
+ao destino, para que replays e movimentos futuros sejam atribuídos ao novo
+tópico. Nenhum aviso novo é enviado pela movimentação.
 
-Antes de homologar movimentação de comentários publicados, o responsável deve
-definir se avisos antigos ficam como registro da notificação original, se são
-reconciliados com o destino (incluindo merge de contadores) ou se a mudança gera
-um aviso contextual de movimentação. Qualquer entrega no destino ainda precisa
-revalidar acesso atual e respeitar opt-in de e-mail; não usar `comment_update`
-como se fosse uma nova resposta.
+Cada `aculta_aviso` agrega por destinatário/tipo/tópico e guarda apenas o último
+Comment contado; a leitura é registrada por tópico, não por evento. Por isso a
+transferência é do agregado completo do tópico, e não de eventos isolados:
+reconciliar apenas parte dos contadores exigiria estado de leitura por evento.
+Quem perde acesso ao destino não recebe a linha transferida, e a entrega de
+e-mail continua revalidando acesso e opt-in no destino; não usar
+`comment_update` como se fosse uma nova resposta.
 
 O `ForumDiscussionWriteGuard` agora compartilha locks por tópico com gravação e
 exclusão de comentários normais; valida host/thread persistidos e o host do pai

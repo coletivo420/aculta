@@ -19,11 +19,11 @@ final class ForumCommentMoveSubscriberTest extends UnitTestCase {
     $notices = $this->createMock(ForumNoticeTransferInterface::class);
     $notices->expects(self::once())
       ->method('transferTopicResponseNotices')
-      ->with(10, 20)
+      ->with(10, 20, [5, 6])
       ->willReturn(2);
     $subscriber = new ForumCommentMoveSubscriber($notices);
 
-    $subscriber->transferNotices(new ForumCommentSubtreeMovedEvent(10, 20, TRUE));
+    $subscriber->transferNotices(new ForumCommentSubtreeMovedEvent(10, 20, TRUE, [5, 6]));
   }
 
   /**

@@ -364,7 +364,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
    * The historic counter cannot identify individual comments. Moving the whole
    * record is therefore intentional; destination records are merged.
    */
-  public function transferTopicResponseNotices(int $sourceNid, int $destinationNid): int {
+  public function transferTopicResponseNotices(int $sourceNid, int $destinationNid, array $commentIds = []): int {
     if ($sourceNid <= 0 || $destinationNid <= 0
       || $sourceNid === $destinationNid) {
       return 0;
@@ -382,6 +382,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       ->condition('tipo', Aviso::TIPO_RESPOSTA)
       ->execute();
     $moved = 0;
+    $movedUids = [];
     foreach ($storage->loadMultiple($ids) as $source) {
       $uid = (int) $source->get('uid')->target_id;
       if ($uid <= 0 || !$this->accessPolicy->canViewTopic($destination, $uid)) {
@@ -415,8 +416,42 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
         $source->save();
       }
       $moved++;
+      $movedUids[] = $uid;
     }
+    $this->moveNoticeEventKeys($sourceNid, $destinationNid, $commentIds, $movedUids);
     return $moved;
+  }
+
+  /**
+   * Moves the idempotency keys of the moved Comments to the destination.
+   *
+   * @param int $sourceNid
+   *   Source topic ID.
+   * @param int $destinationNid
+   *   Destination topic ID.
+   * @param int[] $commentIds
+   *   Comment IDs that changed topic.
+   * @param int[] $recipients
+   *   Recipients whose notice moved to the destination.
+   */
+  private function moveNoticeEventKeys(int $sourceNid, int $destinationNid, array $commentIds, array $recipients): void {
+    if (!$this->database instanceof Connection || $commentIds === [] || $recipients === []) {
+      return;
+    }
+    $ids = array_values(array_unique(array_filter(
+      array_map('intval', $commentIds),
+      static fn (int $id): bool => $id > 0,
+    )));
+    if ($ids === []) {
+      return;
+    }
+    $this->database->update(ForumNoticeEventSchema::TABLE)
+      ->fields(['nid' => $destinationNid])
+      ->condition('nid', $sourceNid)
+      ->condition('event_type', 'forum.comment_published')
+      ->condition('event_id', $ids, 'IN')
+      ->condition('uid', array_values(array_unique($recipients)), 'IN')
+      ->execute();
   }
 
   /**

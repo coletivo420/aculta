@@ -10,6 +10,6 @@ interface ForumNoticeTransferInterface {
 
   /**
    * Transfers complete response notice records and returns the number moved. */
-  public function transferTopicResponseNotices(int $sourceNid, int $destinationNid): int;
+  public function transferTopicResponseNotices(int $sourceNid, int $destinationNid, array $commentIds = []): int;
 
 }

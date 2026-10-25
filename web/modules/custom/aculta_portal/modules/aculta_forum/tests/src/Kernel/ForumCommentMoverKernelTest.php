@@ -254,6 +254,10 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertSame((int) $source->id(), $move_event->sourceTopicId);
     self::assertSame((int) $destination->id(), $move_event->destinationTopicId);
     self::assertTrue($move_event->containsPublishedComment);
+    self::assertEqualsCanonicalizing(
+      [(int) $root->id(), (int) $child->id(), (int) $grandchild->id()],
+      $move_event->commentIds,
+    );
 
     $storage = $this->container->get('entity_type.manager')->getStorage('comment');
     $moved_root = $storage->load($root->id());

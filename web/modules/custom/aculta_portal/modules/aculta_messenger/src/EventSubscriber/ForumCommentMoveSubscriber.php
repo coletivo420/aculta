@@ -27,7 +27,11 @@ final class ForumCommentMoveSubscriber implements EventSubscriberInterface {
    */
   public function transferNotices(ForumCommentSubtreeMovedEvent $event): void {
     if ($event->containsPublishedComment) {
-      $this->notices->transferTopicResponseNotices($event->sourceTopicId, $event->destinationTopicId);
+      $this->notices->transferTopicResponseNotices(
+        $event->sourceTopicId,
+        $event->destinationTopicId,
+        $event->commentIds,
+      );
     }
   }
 
