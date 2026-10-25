@@ -2508,3 +2508,9 @@ Os endpoints de abertura dos avisos de LMS, Wiki, Loja e Doações agora declara
 
 Validação: `NoticeOpenControllerSafetyTest` **5/33 PASS**, Unit Messenger **258/2.000 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
 
+## 0.1.1-dev.259 — revalidar bloqueios antes de persistir respostas
+
+Após adquirir e recarregar a thread, o envio revalida os bloqueios bilaterais imediatamente antes da submissão. Se o bloqueio tiver sido criado após a primeira validação, a mensagem é rejeitada e os locks de Flood e conversa são liberados. O fluxo de nova conversa também repete a checagem caso resolva uma thread concorrente existente.
+
+Validação: `PrivateMessageFormValidatorTest` **15/77 PASS**, Unit Messenger **259/2.011 PASS** e PHPCS Drupal/DrupalPractice PASS para `PrivateMessageFormValidator` e o teste. `NewConversationForm` mantém baseline PHPCS de **16 erros/15 avisos**, igual ao HEAD anterior; PHP lint dos arquivos alterados PASS. Kernel, Browser e Runtime não executados.
+

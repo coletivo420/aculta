@@ -81,6 +81,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $thread->method('id')->willReturn('123');
     $freshThread = $this->createMock(PrivateMessageThreadInterface::class);
     $freshThread->method('id')->willReturn('123');
+    $freshThread->method('getMembersId')->willReturn([42, 84]);
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::once())->method('loadUnchanged')->with(123)->willReturn($freshThread);
     $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
@@ -125,6 +126,56 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       ['release', 'aculta_messenger:conversation_write:123'],
       ['release', 'aculta_messenger.private_message_flood.42'],
     ], $lockCalls);
+  }
+
+  /**
+   * Rechecks bilateral blocks after acquiring the fresh conversation lock.
+   */
+  public function testBlockAddedDuringValidationRejectsReplyAndReleasesLocks(): void {
+    $flood = $this->createMock(FloodInterface::class);
+    $flood->expects(self::once())->method('isAllowed')->willReturn(TRUE);
+    $flood->expects(self::never())->method('register');
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('id')->willReturn('123');
+    $thread->method('getMembersId')->willReturn([42, 84]);
+    $freshThread = $this->createMock(PrivateMessageThreadInterface::class);
+    $freshThread->method('id')->willReturn('123');
+    $freshThread->method('getMembersId')->willReturn([42, 84]);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('loadUnchanged')->with(123)->willReturn($freshThread);
+    $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypes->expects(self::once())->method('getStorage')->with('private_message_thread')->willReturn($storage);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::exactly(2))->method('acquire')->willReturn(TRUE);
+    $lock->expects(self::exactly(2))->method('release');
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+    $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
+    $banManager->method('isBanned')->willReturn(FALSE);
+    $banManager->expects(self::exactly(2))
+      ->method('isCurrentUserBannedByUser')
+      ->with(84)
+      ->willReturnOnConsecutiveCalls(FALSE, TRUE);
+    $validator = new PrivateMessageFormValidator(
+      $flood,
+      $currentUser,
+      $this->translation('Não foi possível enviar a mensagem para esse destinatário.'),
+      $banManager,
+      $this->createMock(FriendshipManagerInterface::class),
+      $this->createMock(UserDataInterface::class),
+      $lock,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      new ConversationWriteLock($lock, $entityTypes),
+    );
+    $form = [];
+    $formState = $this->formState(FALSE);
+    $formState->set('thread', $thread);
+
+    $validator->validateBlockedRecipients($form, $formState);
+    self::assertFalse($formState->hasAnyErrors());
+    $validator->validateRateLimit($form, $formState);
+
+    self::assertSame('Não foi possível enviar a mensagem para esse destinatário.', $formState->getErrors()['members']);
   }
 
   /**

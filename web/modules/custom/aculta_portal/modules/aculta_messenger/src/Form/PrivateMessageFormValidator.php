@@ -160,7 +160,21 @@ final class PrivateMessageFormValidator {
 
     $thread = $formState->get('thread');
     if ($thread instanceof PrivateMessageThreadInterface && (int) $thread->id() > 0) {
-      $this->acquireThreadWriteLock($thread, $formState);
+      $freshThread = $this->acquireThreadWriteLock($thread, $formState);
+      if ($freshThread instanceof PrivateMessageThreadInterface && !$formState->hasAnyErrors()) {
+        try {
+          // Block state may have changed after the first validation. Recheck
+          // against the freshly loaded thread immediately before submission.
+          $this->validateBlockedRecipients($form, $formState);
+        }
+        catch (\Throwable $exception) {
+          $this->releaseSubmissionLocks();
+          throw $exception;
+        }
+        if ($formState->hasAnyErrors()) {
+          $this->releaseSubmissionLocks();
+        }
+      }
     }
 
   }

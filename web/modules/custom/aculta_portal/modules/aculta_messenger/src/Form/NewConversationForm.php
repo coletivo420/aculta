@@ -199,6 +199,12 @@ final class NewConversationForm extends FormBase {
     if (!$thread instanceof PrivateMessageThreadInterface) {
       return;
     }
+    // Recheck after resolving and locking a concurrently created thread.
+    $this->validator->validateBlockedRecipients($form, $formState);
+    if ($formState->hasAnyErrors()) {
+      $this->validator->releaseSubmissionLocks();
+      return;
+    }
     try {
       $message = PrivateMessage::create([
         'owner' => (int) $this->currentUser->id(),
