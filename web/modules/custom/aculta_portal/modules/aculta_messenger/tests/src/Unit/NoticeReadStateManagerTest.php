@@ -32,12 +32,14 @@ final class NoticeReadStateManagerTest extends UnitTestCase {
     $message->method('bundle')->willReturnCallback(static function () use (&$bundle): string {
       return $bundle;
     });
+    $message->method('getOwnerId')->willReturn(8);
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::once())->method('load')->with(12)->willReturn($message);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->expects(self::once())->method('getStorage')->with('message')->willReturn($storage);
     $account = $this->createMock(AccountInterface::class);
     $account->method('isAuthenticated')->willReturn(TRUE);
+    $account->method('id')->willReturn('8');
     $adapter = $this->createMock(WikiNoticeManagerInterface::class);
     $adapter->expects(self::once())->method('setRead')->with($message, $account, FALSE)->willReturn(TRUE);
     $container = $this->createMock(ContainerInterface::class);
@@ -55,12 +57,14 @@ final class NoticeReadStateManagerTest extends UnitTestCase {
   public function testDispatchesFriendshipReadState(): void {
     $message = $this->createMock(MessageInterface::class);
     $message->method('bundle')->willReturn('aculta_msg_friendship');
+    $message->method('getOwnerId')->willReturn(8);
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::once())->method('load')->with(44)->willReturn($message);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->with('message')->willReturn($storage);
     $account = $this->createMock(AccountInterface::class);
     $account->method('isAuthenticated')->willReturn(TRUE);
+    $account->method('id')->willReturn('8');
     $adapter = $this->createMock(FriendshipNoticeManagerInterface::class);
     $adapter->expects(self::once())->method('setRead')->with($message, $account, TRUE)->willReturn(TRUE);
     $container = $this->createMock(ContainerInterface::class);
@@ -76,17 +80,40 @@ final class NoticeReadStateManagerTest extends UnitTestCase {
   public function testRevokedSourceAccessIsPropagatedToCentralAction(): void {
     $message = $this->createMock(MessageInterface::class);
     $message->method('bundle')->willReturn('aculta_msg_wiki_notice');
+    $message->method('getOwnerId')->willReturn(8);
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::once())->method('load')->with(12)->willReturn($message);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->with('message')->willReturn($storage);
     $account = $this->createMock(AccountInterface::class);
     $account->method('isAuthenticated')->willReturn(TRUE);
+    $account->method('id')->willReturn('8');
     $adapter = $this->createMock(WikiNoticeManagerInterface::class);
     $adapter->expects(self::once())->method('setRead')->with($message, $account, TRUE)->willReturn(FALSE);
     $container = $this->createMock(ContainerInterface::class);
     $container->method('has')->with('wiki')->willReturn(TRUE);
     $container->method('get')->with('wiki')->willReturn($adapter);
+
+    self::assertFalse((new NoticeReadStateManager($entities, $container))->setRead(12, $account, TRUE));
+  }
+
+  /**
+   * Rejects another member's notice before touching an optional source adapter.
+   */
+  public function testOtherOwnerNoticeIsRejectedBeforeAdapterResolution(): void {
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('bundle')->willReturn('aculta_msg_wiki_notice');
+    $message->method('getOwnerId')->willReturn(99);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('load')->with(12)->willReturn($message);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('message')->willReturn($storage);
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $account->method('id')->willReturn('8');
+    $container = $this->createMock(ContainerInterface::class);
+    $container->expects(self::never())->method('has');
+    $container->expects(self::never())->method('get');
 
     self::assertFalse((new NoticeReadStateManager($entities, $container))->setRead(12, $account, TRUE));
   }

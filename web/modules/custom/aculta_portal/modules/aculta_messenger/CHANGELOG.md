@@ -1,3 +1,13 @@
+## 0.1.1-dev.300 — rejeitar avisos de outra conta na fronteira central
+
+`NoticeReadStateManager` agora compara o proprietário da entidade `Message`
+com a conta autenticada antes de resolver ou invocar um adapter opcional.
+Tentativas com ID de outra conta falham sem consultar LMS, Wiki, Loja,
+Doações ou Amizades; cada adapter continua revalidando acesso à sua origem.
+
+Validação: manager central, formulário e Amizades **16 testes / 121
+assertions PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS.
+
 ## 0.1.1-dev.299 — alinhar badge aos alertas lidos
 
 O contador unificado agora exclui Alertas do site que a conta já abriu, além

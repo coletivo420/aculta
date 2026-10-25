@@ -35,6 +35,9 @@ final class NoticeReadStateManager implements NoticeReadStateManagerInterface {
     if (!$message instanceof MessageInterface) {
       return FALSE;
     }
+    if ((int) $message->getOwnerId() !== (int) $account->id()) {
+      return FALSE;
+    }
 
     return match ($message->bundle()) {
       'aculta_msg_lms_notice' => $this->setLmsRead($message, $account, $read),
