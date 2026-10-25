@@ -1,3 +1,14 @@
+## 0.1.1-dev.388 — revalidação das integrações e Kernels
+
+Reexecutadas as suítes completas do Messenger no snapshot desta branch:
+`tests/src/Integration` passou **120 testes / 1.569 assertions** (5 deprecações
+upstream e 7 notices PHPUnit) e `tests/src/Kernel` passou **56 testes / 1.177
+assertions** (10 deprecações upstream e 4 notices), no banco SimpleTest
+dedicado. Sem falhas. O Dev.387 BrowserTest também comprova a composição e o
+envio de grupo sem JavaScript (**1/58 PASS**); a versão Firefox visual/Runtime
+do script permanece pendente. Nenhum dado ou configuração do Runtime foi
+alterado. SMTP externo, Alpha e updates operacionais seguem pendentes.
+
 ## 0.1.1-dev.387 — composição de grupo sem JavaScript
 
 O BrowserTest autenticado percorre a busca nativa por GET, preserva dois
