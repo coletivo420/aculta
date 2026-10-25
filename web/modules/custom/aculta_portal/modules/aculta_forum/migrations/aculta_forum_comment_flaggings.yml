@@ -14,10 +14,12 @@ process:
     plugin: default_value
     default_value: aculta_forum_post
   entity_id:
-    plugin: migration_lookup
-    migration: aculta_forum_comment_posts
-    source: cid
-    no_stub: true
+    - plugin: migration_lookup
+      migration: aculta_forum_comment_posts
+      source: cid
+      no_stub: true
+    - plugin: skip_on_empty
+      method: row
   uid: uid
   session_id: session_id
   global: global
@@ -25,7 +27,7 @@ process:
 destination:
   plugin: aculta_forum_comment_flagging
   default_bundle: sinalizar_post_forum
-  validate: true
+  validate: false
 migration_dependencies:
   required:
     - aculta_forum_comment_posts

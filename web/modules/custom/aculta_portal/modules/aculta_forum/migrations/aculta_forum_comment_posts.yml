@@ -20,4 +20,4 @@ process:
   legacy_author/target_id: legacy_author_id
 destination:
   plugin: aculta_forum_comment_post
-  validate: true
+  validate: false

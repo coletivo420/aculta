@@ -22,7 +22,7 @@ destination:
   plugin: 'entity:aculta_forum_post'
   overwrite_properties:
     - parent
-  validate: true
+  validate: false
 migration_dependencies:
   required:
     - aculta_forum_comment_posts
