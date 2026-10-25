@@ -1,3 +1,13 @@
+## 0.1.1-dev.276 — respeitar fuso do site na data do digest semanal
+
+A data inicial administrativa do resumo semanal de Mensagens Privadas agora é
+interpretada à meia-noite no fuso configurado pelo Drupal. Datas inválidas
+falham fechadas e não antecipam a entrega.
+
+Validação: `PrivateMessageDigestProviderTest` **4/71 PASS**, Unit Messenger
+**278/2.213 PASS**, PHPCS Drupal/DrupalPractice dos arquivos alterados PASS.
+Kernel, Browser e Runtime não executados.
+
 ## 0.1.1-dev.275 — caracterizar opt-out de amizade durante retry
 
 O teste agora cobre a preferência de e-mail alterada para site-only depois de uma falha temporária e antes do retry. O worker cancela o e-mail sem incrementar tentativas adicionais; um item de fila duplicado não revive a entrega cancelada. O aviso persistido no site não é alterado pelo worker de e-mail.

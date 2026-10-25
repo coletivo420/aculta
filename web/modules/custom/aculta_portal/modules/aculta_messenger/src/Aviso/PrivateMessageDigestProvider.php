@@ -192,9 +192,21 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
    */
   private function digestIsDue(int $uid): bool {
     $anchor = (string) $this->configFactory->get('aculta_messenger.settings')->get('private_message_digest_anchor');
-    $anchorTime = $anchor === '' ? 0 : strtotime($anchor . ' 00:00:00 UTC');
+    $timezone = (string) ($this->configFactory->get('system.date')?->get('timezone.default') ?: 'UTC');
+    try {
+      $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $anchor, new \DateTimeZone($timezone));
+    }
+    catch (\Throwable) {
+      return FALSE;
+    }
+    // An invalid or malformed administrative date must not silently turn the
+    // configured start into the Unix epoch and enable weekly delivery early.
+    if ($date === FALSE || $date->format('Y-m-d') !== $anchor) {
+      return FALSE;
+    }
+    $anchorTime = $date->getTimestamp();
     $lastSent = (int) $this->userData->get('aculta_messenger', $uid, 'private_message_digest_last_sent');
-    return $this->time->getRequestTime() >= max((int) $anchorTime, $lastSent + 7 * 86400);
+    return $this->time->getRequestTime() >= max($anchorTime, $lastSent + 7 * 86400);
   }
 
   /**

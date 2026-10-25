@@ -68,6 +68,73 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
   }
 
   /**
+   * The administrator's date starts at midnight in the site's timezone.
+   */
+  public function testAnchorUsesConfiguredSiteTimezone(): void {
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('getOwnerId')->willReturn(9);
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('getQuery')->willReturn($this->pendingQuery([41]));
+    $messageStorage->method('loadMultiple')->with([41])->willReturn([41 => $message]);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('message')->willReturn($messageStorage);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with(9, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
+      ->willReturn(AvisoPreferencias::EMAIL_DIGEST);
+    $configFactory = $this->getConfigFactoryStub([
+      'aculta_messenger.settings' => ['private_message_digest_anchor' => '2026-10-26'],
+      'system.date' => ['timezone' => ['default' => 'America/Sao_Paulo']],
+    ]);
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturn(0);
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturnOnConsecutiveCalls(
+      (int) strtotime('2026-10-26 02:59:59 UTC'),
+      (int) strtotime('2026-10-26 03:00:00 UTC'),
+    );
+    $provider = new PrivateMessageDigestProvider(
+      $entities,
+      $this->createMock(PrivateMessageServiceInterface::class),
+      $preferences,
+      $configFactory,
+      $userData,
+      $time,
+    );
+
+    self::assertSame([], $provider->pendingRecipientIds());
+    self::assertSame([9], $provider->pendingRecipientIds());
+  }
+
+  /**
+   * A malformed administrator anchor fails closed instead of enabling delivery.
+   */
+  public function testMalformedAnchorDoesNotEnableWeeklyDelivery(): void {
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('getOwnerId')->willReturn(9);
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('getQuery')->willReturn($this->pendingQuery([41]));
+    $messageStorage->method('loadMultiple')->with([41])->willReturn([41 => $message]);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('message')->willReturn($messageStorage);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with(9, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
+      ->willReturn(AvisoPreferencias::EMAIL_DIGEST);
+    $provider = new PrivateMessageDigestProvider(
+      $entities,
+      $this->createMock(PrivateMessageServiceInterface::class),
+      $preferences,
+      $this->getConfigFactoryStub([
+        'aculta_messenger.settings' => ['private_message_digest_anchor' => 'not-a-date'],
+        'system.date' => ['timezone' => ['default' => 'UTC']],
+      ]),
+      $this->createMock(UserDataInterface::class),
+      $this->createMock(TimeInterface::class),
+    );
+
+    self::assertSame([], $provider->pendingRecipientIds());
+  }
+
+  /**
    * Groups safe weekly summaries without reading private message bodies.
    */
   public function testDigestRowsGroupSendersWithoutReadingPrivateMessageBody(): void {

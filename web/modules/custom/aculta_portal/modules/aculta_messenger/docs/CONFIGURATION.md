@@ -80,7 +80,9 @@ pode habilitar os modos, definir o padrão para contas sem preferência e defini
 a data inicial global do digest semanal. Amizade permite somente entrega no
 site ou e-mail direto. Os avisos de Mensagens Privadas contêm somente o nome do
 remetente e link para a inbox; nunca incluem o corpo da mensagem. Cada conta
-recebe os resumos seguintes após sete dias. O update
+recebe os resumos seguintes após sete dias. A data inicial é considerada à
+meia-noite no fuso horário configurado em `system.date:timezone.default`; uma
+data administrativa inválida não habilita a entrega. O update
 `aculta_messenger_post_update_private_message_email_preferences` copia as
 preferências administrativas e individuais do Private Message para
 `aculta_messenger`; preserva uma escolha Messenger já existente e remove a chave
