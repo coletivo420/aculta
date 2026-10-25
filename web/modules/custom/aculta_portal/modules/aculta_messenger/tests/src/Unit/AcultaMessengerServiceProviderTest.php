@@ -40,13 +40,28 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     self::assertFalse($container->hasDefinition('aculta_messenger.commerce_notice_manager'));
     self::assertFalse($container->hasDefinition('aculta_messenger.donation_notice_manager'));
     self::assertFalse($container->hasDefinition('aculta_messenger.magazine_notice_manager'));
+    self::assertFalse($container->hasDefinition('aculta_messenger.game_achievement_notice_manager'));
+    self::assertFalse($container->hasDefinition('aculta_messenger.game_achievement_notice_consumer'));
     self::assertTrue($container->hasDefinition(PersonalNoticeAdapterHooks::class));
     $argument = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(0);
     self::assertInstanceOf(ServiceLocatorArgument::class, $argument);
-    self::assertSame(['game'], array_keys($argument->getValues()));
+    self::assertSame([], array_keys($argument->getValues()));
     $logger = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(1);
     self::assertInstanceOf(Reference::class, $logger);
     self::assertSame('logger.channel.aculta_messenger', (string) $logger);
+  }
+
+  /**
+   * The Game adapter is registered only when its domain module is enabled.
+   */
+  public function testGameAdapterFollowsProducerServicePresence(): void {
+    $container = new ContainerBuilder();
+    $container->setDefinition('aculta_game.forum_participation_policy', new Definition());
+
+    (new AcultaMessengerServiceProvider())->alter($container);
+
+    self::assertTrue($container->hasDefinition('aculta_messenger.game_achievement_notice_manager'));
+    self::assertTrue($container->hasDefinition('aculta_messenger.game_achievement_notice_consumer'));
   }
 
   /**
@@ -99,6 +114,7 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     $container = new ContainerBuilder();
     $container->setDefinition('aculta_messenger.notice_read_state', new Definition());
     $container->setDefinition('aculta_wiki.proposal_decision', new Definition());
+    $container->setDefinition('aculta_game.forum_participation_policy', new Definition());
 
     (new AcultaMessengerServiceProvider())->alter($container);
 
@@ -142,8 +158,8 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     $listHook = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(0);
     self::assertInstanceOf(ServiceLocatorArgument::class, $readAdapters);
     self::assertInstanceOf(ServiceLocatorArgument::class, $listHook);
-    self::assertSame(['game', 'friendship'], array_keys($readAdapters->getValues()));
-    self::assertSame(['game', 'friendship'], array_keys($listHook->getValues()));
+    self::assertSame(['friendship'], array_keys($readAdapters->getValues()));
+    self::assertSame(['friendship'], array_keys($listHook->getValues()));
     self::assertSame('aculta_messenger.friendship_notice_manager', (string) $readAdapters->getValues()['friendship']);
   }
 
@@ -161,6 +177,7 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
       'aculta_wiki.proposal_decision',
       'aculta_commerce.checkout_provider',
       'Drupal\\aculta_donation\\Hook\\DonationNoticeEventPublisher',
+      'aculta_game.forum_participation_policy',
     ] as $producer) {
       $container->setDefinition($producer, new Definition());
     }

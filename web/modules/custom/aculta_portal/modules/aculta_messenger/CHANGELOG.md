@@ -3721,3 +3721,14 @@ Validação: `node --check` nos dois scripts e `git diff --check` PASS. Firefox
 ESR visual não executado: `DISPLAY` não está definido e há sessões
 Firefox/geckodriver preexistentes em uso possível; não foram encerradas.
 
+## 0.1.1-dev.366 — registrar o adapter Game somente quando disponível
+
+O núcleo agora registra o consumer de conquistas e seus adapters de listagem e
+leitura apenas quando `aculta_game` fornece seu serviço de domínio. Com o módulo
+desabilitado, a central continua inicializando sem dependências opcionais de
+Game.
+
+Validação: `AcultaMessengerServiceProviderTest` **10 testes / 56 assertions
+PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Não foi
+feito teste de Runtime.
+
