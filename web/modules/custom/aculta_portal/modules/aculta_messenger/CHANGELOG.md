@@ -1,3 +1,15 @@
+## 0.1.1-dev.378 — regressão da configuração modular do Aviso Institucional
+
+Adicionado teste Unit que protege a dependência explícita de `menu_ui` e mantém
+opcional o form display condicionado por Domain e workflow editorial global.
+O teste verifica também que essa configuração não reaparece em
+`config/install`, onde impediria instalações independentes do Messenger.
+
+Validação: PHPUnit **1 teste / 5 assertions PASS**, PHPCS Drupal/DrupalPractice,
+PHP lint e diff check PASS. BrowserTestBase permanece inconclusivo antes das
+asserções HTTP devido à política de ACL do PHP Storage restrito no site
+temporário; não houve operação no Runtime nem envio externo de e-mail.
+
 ## 0.1.1-dev.377 — instalação modular independente de configuração editorial global
 
 `menu_ui` agora é dependência explícita, conforme o bundle `aculta_notice`. A
