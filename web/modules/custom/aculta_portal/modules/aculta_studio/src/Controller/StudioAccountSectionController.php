@@ -173,6 +173,8 @@ final class StudioAccountSectionController {
    *
    * @param array<string, mixed> $content
    *   The existing owner render array or built Form API.
+   * @param string $section
+   *   Identifier of the Studio section being rendered.
    *
    * @return array<string, mixed>
    *   A private render array.

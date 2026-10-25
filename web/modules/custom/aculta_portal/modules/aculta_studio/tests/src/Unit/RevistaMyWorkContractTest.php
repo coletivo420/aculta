@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
-use Drupal\aculta_studio\Plugin\MarleyTab\RevistaTab;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -14,6 +13,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_studio')]
 final class RevistaMyWorkContractTest extends UnitTestCase {
 
+  /**
+   * A personal listing requires an explicit author scope.
+   */
   public function testPersonalListingRequiresExplicitAuthorScope(): void {
     $source = file_get_contents(__DIR__ . '/../../../src/Plugin/MarleyTab/RevistaTab.php');
     self::assertIsString($source);
@@ -22,6 +24,9 @@ final class RevistaMyWorkContractTest extends UnitTestCase {
     self::assertStringContainsString("Meus conteúdos", $source);
   }
 
+  /**
+   * Seek pages are bounded, and authorization is checked on each page.
+   */
   public function testSeekPagesAreBoundedAndAuthorizationIsChecked(): void {
     $source = file_get_contents(__DIR__ . '/../../../src/MarleyListingBuilder.php');
     self::assertIsString($source);

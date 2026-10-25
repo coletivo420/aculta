@@ -18,6 +18,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_studio')]
 final class ProfileExperienceProviderTest extends UnitTestCase {
 
+  /**
+   * The profile experience has its own identity, separate from the account.
+   */
   public function testIndependentIdentity(): void {
     $provider = $this->provider(TRUE);
     self::assertSame('perfil', $provider->id());
@@ -28,6 +31,9 @@ final class ProfileExperienceProviderTest extends UnitTestCase {
     self::assertSame('aculta_studio.profile', $provider->build()['link']['#url']->getRouteName());
   }
 
+  /**
+   * Availability depends on the owner module, and access on the permission.
+   */
   public function testAvailabilityAndAccess(): void {
     $member = $this->account(TRUE, TRUE);
     $visitor = $this->account(FALSE, TRUE);
@@ -40,12 +46,18 @@ final class ProfileExperienceProviderTest extends UnitTestCase {
     self::assertTrue($this->provider(TRUE)->access($member)->isAllowed());
   }
 
+  /**
+   * Builds the provider with the owner module enabled or disabled.
+   */
   private function provider(bool $enabled): ProfileExperienceProvider {
     $modules = $this->createMock(ModuleHandlerInterface::class);
     $modules->method('moduleExists')->with('aculta_user')->willReturn($enabled);
     return new ProfileExperienceProvider($modules);
   }
 
+  /**
+   * Builds an account double with the given authentication and permission.
+   */
   private function account(bool $auth, bool $permission): AccountInterface {
     $account = $this->createMock(AccountInterface::class);
     $account->method('isAuthenticated')->willReturn($auth);

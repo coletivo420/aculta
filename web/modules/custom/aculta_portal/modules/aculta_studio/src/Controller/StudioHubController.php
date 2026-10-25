@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
  * Studio hub backed by the authorized experience registry.
- *
  */
 final class StudioHubController {
 

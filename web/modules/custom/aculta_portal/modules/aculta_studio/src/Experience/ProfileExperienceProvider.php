@@ -18,26 +18,44 @@ final class ProfileExperienceProvider implements StudioExperienceProviderInterfa
 
   public function __construct(private readonly ModuleHandlerInterface $modules) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public function id(): string {
     return 'perfil';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function label(): string {
     return 'Meu Perfil';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function purpose(): string {
     return 'account';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function routeName(): string {
     return 'aculta_studio.profile';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function available(): bool {
     return $this->modules->moduleExists('aculta_user');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function access(AccountInterface $account): AccessResultInterface {
     return AccessResult::allowedIf($account->isAuthenticated())
       ->andIf(AccessResult::allowedIfHasPermission($account, 'access aculta portal'))

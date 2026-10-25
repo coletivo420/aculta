@@ -92,7 +92,8 @@ final class StudioProfileController {
       '#title' => new TranslatableMarkup('Editar apelido público'),
       '#url' => Url::fromRoute('aculta_studio.profile_nickname'),
       '#attributes' => ['data-portal-ui' => 'studio-profile-nickname-edit'],
-    ]];
+    ],
+    ];
     $bioActions = [];
     $socialActions = [];
 

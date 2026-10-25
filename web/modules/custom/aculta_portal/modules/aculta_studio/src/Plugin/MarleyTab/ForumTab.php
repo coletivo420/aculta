@@ -24,18 +24,24 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 final class ForumTab extends MarleyTabBase {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function isAvailable(): bool {
     return $this->moduleHandler->moduleExists('aculta_forum');
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function access(AccountInterface $account): AccessResultInterface {
     return AccessResult::allowedIfHasPermission($account, 'create aculta forum posts')
       ->orIf(AccessResult::allowedIfHasPermission($account, 'moderar denuncias do forum'));
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function sections(AccountInterface $account): array {
     return [
       'discussoes' => [

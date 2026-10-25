@@ -31,6 +31,9 @@ final class LearnerDashboardComposer {
     $this->stringTranslation = $stringTranslation;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function build(): array {
     $data = $this->dashboards->studentDashboard($this->currentUser);
     $build = [

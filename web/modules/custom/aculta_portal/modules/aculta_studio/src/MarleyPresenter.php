@@ -24,6 +24,7 @@ final class MarleyPresenter {
    * Visible areas keyed by plugin id, in weight order.
    *
    * @return array<string, \Drupal\aculta_studio\MarleyTabInterface>
+   *   Visible tabs keyed by plugin identifier.
    */
   public function visibleTabs(AccountInterface $account): array {
     $visible = [];
@@ -40,9 +41,12 @@ final class MarleyPresenter {
   }
 
   /**
-   * The sections of an area the account can use: only sections with tabs, and tabs with allowed actions.
+   * Returns the sections an account can use.
+   *
+   * Only sections with tabs are kept, and only tabs with allowed actions.
    *
    * @return array<string, array{label: \Stringable|string, weight: int, tabs: array<string, array{label: \Stringable|string, weight: int, actions: array<int, array{title: \Stringable|string, url: \Drupal\Core\Url, access: bool}>}>}>
+   *   Sections keyed by identifier, in weight order.
    */
   public function sectionsFor(MarleyTabInterface $tab, AccountInterface $account): array {
     if (!$tab->access($account)->isAllowed()) {
@@ -52,14 +56,27 @@ final class MarleyPresenter {
     foreach ($tab->sections($account) as $sectionId => $section) {
       $tabs = [];
       foreach ($section['tabs'] ?? [] as $tabId => $item) {
-        $actions = array_values(array_filter($item['actions'] ?? [], static fn (array $action): bool => (bool) ($action['access'] ?? FALSE)));
-        // A tab is kept when it has an allowed action or a listing; a listing still applies the node access.
+        $actions = array_values(array_filter(
+          $item['actions'] ?? [],
+          static fn (array $action): bool => (bool) ($action['access'] ?? FALSE),
+        ));
+        // A tab is kept when it has an allowed action or a listing; a listing
+        // still applies the node access.
         if ($actions !== [] || isset($item['listing'])) {
-          $tabs[$tabId] = ['label' => $item['label'], 'weight' => $item['weight'] ?? 0, 'actions' => $actions, 'listing' => $item['listing'] ?? NULL];
+          $tabs[$tabId] = [
+            'label' => $item['label'],
+            'weight' => $item['weight'] ?? 0,
+            'actions' => $actions,
+            'listing' => $item['listing'] ?? NULL,
+          ];
         }
       }
       if ($tabs !== []) {
-        $sections[$sectionId] = ['label' => $section['label'], 'weight' => $section['weight'] ?? 0, 'tabs' => $this->byWeight($tabs)];
+        $sections[$sectionId] = [
+          'label' => $section['label'],
+          'weight' => $section['weight'] ?? 0,
+          'tabs' => $this->byWeight($tabs),
+        ];
       }
     }
     return $this->byWeight($sections);
@@ -69,10 +86,14 @@ final class MarleyPresenter {
    * Definitions ordered by their declared weight, then by id.
    *
    * @return array<string, array<string, mixed>>
+   *   Plugin definitions keyed by identifier.
    */
   private function sortedDefinitions(): array {
     $definitions = $this->tabs->getDefinitions();
-    uasort($definitions, static fn (array $a, array $b): int => [$a['weight'] ?? 0, $a['id']] <=> [$b['weight'] ?? 0, $b['id']]);
+    uasort(
+      $definitions,
+      static fn (array $a, array $b): int => [$a['weight'] ?? 0, $a['id']] <=> [$b['weight'] ?? 0, $b['id']],
+    );
     return $definitions;
   }
 

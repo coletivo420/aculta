@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\aculta_portal\Appearance\AppearanceForm;
 use Drupal\aculta_portal\Controller\PortalController;
@@ -30,7 +31,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container = new ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
   }
@@ -70,44 +71,101 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
     ];
 
     foreach ($methods as $studioMethod => $ownerMethod) {
-      $owner = new class {
+      $owner = new class() {
+
+        /**
+         * Calls made to the owner stub, in order.
+         *
+         * @var string[]
+         */
         public array $called = [];
 
+        /**
+         * Stub for the owner's personal data section.
+         *
+         * @return array<string, mixed>
+         *   A render array from the stub.
+         */
         public function myData(): array {
           $this->called[] = 'myData';
           return $this->build('myData');
         }
 
+        /**
+         * Stub for the owner's address section.
+         *
+         * @return array<string, mixed>
+         *   A render array from the stub.
+         */
         public function address(): array {
           $this->called[] = 'address';
           return $this->build('address');
         }
 
+        /**
+         * Stub for the owner's other-data section, which holds the documents.
+         *
+         * @return array<string, mixed>
+         *   A render array from the stub.
+         */
         public function otherData(): array {
           $this->called[] = 'otherData';
           return $this->build('documents');
         }
 
+        /**
+         * Stub for the owner's security section.
+         *
+         * @return array<string, mixed>
+         *   A render array from the stub.
+         */
         public function security(): array {
           $this->called[] = 'security';
           return $this->build('security');
         }
 
+        /**
+         * Stub for the owner's password section.
+         *
+         * @return array<string, mixed>
+         *   A render array from the stub.
+         */
         public function securityPassword(): array {
           $this->called[] = 'securityPassword';
           return $this->build('password');
         }
 
+        /**
+         * Stub for the owner's connected accounts section.
+         *
+         * @return array<string, mixed>
+         *   A render array from the stub.
+         */
         public function connections(): array {
           $this->called[] = 'connections';
           return $this->build('connections');
         }
 
+        /**
+         * Stub for the owner's orders section.
+         *
+         * @return array<string, mixed>
+         *   A render array from the stub.
+         */
         public function orders(): array {
           $this->called[] = 'orders';
           return $this->build('orders');
         }
 
+        /**
+         * Builds the render array the owner stub returns for a section.
+         *
+         * @param string $name
+         *   The section name the stub was called for.
+         *
+         * @return array<string, mixed>
+         *   A render array with the owner content and section.
+         */
         private function build(string $name): array {
           return [
             'content' => [
@@ -117,6 +175,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
             '#cache' => ['max-age' => 0],
           ];
         }
+
       };
 
       $resolver = $this->createMock(ClassResolverInterface::class);
@@ -158,10 +217,18 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
    * If CPF/CNPJ is unavailable, all other account sections remain usable.
    */
   public function testOptionalDocumentsAreAbsentFromContextualMenu(): void {
-    $owner = new class {
+    $owner = new class() {
+
+      /**
+       * Stub for the owner's address section, without the documents entry.
+       *
+       * @return array<string, mixed>
+       *   A render array from the stub.
+       */
       public function address(): array {
         return ['content' => ['form' => ['#type' => 'form']]];
       }
+
     };
     $resolver = $this->createMock(ClassResolverInterface::class);
     $resolver->method('getInstanceFromDefinition')->willReturn($owner);
@@ -196,10 +263,18 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
    * An installed but temporarily unavailable owner retains its own message.
    */
   public function testInstalledUnavailableDocumentOwnerCanRenderExplanation(): void {
-    $owner = new class {
+    $owner = new class() {
+
+      /**
+       * Stub for the owner's other-data section, reporting unavailability.
+       *
+       * @return array<string, mixed>
+       *   A render array with the owner explanation.
+       */
       public function otherData(): array {
         return ['content' => ['form' => ['unavailable' => ['#plain_text' => 'Indisponível']]]];
       }
+
     };
     $resolver = $this->createMock(ClassResolverInterface::class);
     $resolver->expects(self::once())->method('getInstanceFromDefinition')
@@ -218,10 +293,26 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
   public function testSupportDelegatesToOriginalOwner(): void {
     $action = ['#type' => 'link', '#title' => 'Pausar assinatura'];
     $owner = new class($action) {
+
+      /**
+       * Number of times the support stub was called.
+       */
       public int $calls = 0;
 
+      /**
+       * Keeps the support action the stub returns.
+       *
+       * @param array<string, mixed> $action
+       *   The support action render array.
+       */
       public function __construct(private readonly array $action) {}
 
+      /**
+       * Stub for the owner's support section, counting its calls.
+       *
+       * @return array<string, mixed>
+       *   The support action render array.
+       */
       public function mySupport(): array {
         $this->calls++;
         return [
@@ -229,6 +320,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
           '#cache' => ['contexts' => ['user'], 'max-age' => 0],
         ];
       }
+
     };
     $resolver = $this->createMock(ClassResolverInterface::class);
     $resolver->expects(self::once())->method('getInstanceFromDefinition')
@@ -237,8 +329,8 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
     self::assertSame(1, $owner->calls);
     self::assertSame($action, $page['content']['table']['#rows'][0]['data']);
     self::assertSame(['user'], $page['content']['#cache']['contexts']);
-    self::assertSame('aculta_studio.account_support', $page['navigation']['#items'][7]['#url']->getRouteName());
-    self::assertSame('page', $page['navigation']['#items'][7]['#attributes']['aria-current']);
+    $item = $this->navigationItem($page, 'aculta_studio.account_support');
+    self::assertSame('page', $item['#attributes']['aria-current']);
   }
 
   /**
@@ -267,8 +359,8 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
     $forms->expects(self::once())->method('getForm')->with(AppearanceForm::class)->willReturn($original);
     $page = (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE), NULL, $forms))->preferences();
     self::assertSame($original, $page['content']);
-    self::assertSame('aculta_studio.account_preferences', $page['navigation']['#items'][8]['#url']->getRouteName());
-    self::assertSame('page', $page['navigation']['#items'][8]['#attributes']['aria-current']);
+    $item = $this->navigationItem($page, 'aculta_studio.account_preferences');
+    self::assertSame('page', $item['#attributes']['aria-current']);
     self::assertSame(0, $page['#cache']['max-age']);
   }
 
@@ -292,6 +384,28 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
     $resolver->expects(self::never())->method('getInstanceFromDefinition');
     $this->expectException(\LogicException::class);
     (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE)))->preferences();
+  }
+
+  /**
+   * Finds a contextual navigation item by its route, not by its position.
+   *
+   * The position depends on whether the optional documents owner is installed.
+   *
+   * @param array<string, mixed> $page
+   *   The page render array returned by the controller.
+   * @param string $route
+   *   The route name of the wanted item.
+   *
+   * @return array<string, mixed>
+   *   The matching link render array.
+   */
+  private function navigationItem(array $page, string $route): array {
+    foreach ($page['navigation']['#items'] as $item) {
+      if ($item['#url']->getRouteName() === $route) {
+        return $item;
+      }
+    }
+    self::fail('Navigation item not found: ' . $route);
   }
 
   /**

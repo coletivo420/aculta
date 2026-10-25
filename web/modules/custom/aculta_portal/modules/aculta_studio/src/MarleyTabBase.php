@@ -42,6 +42,7 @@ abstract class MarleyTabBase extends PluginBase implements MarleyTabInterface, C
    * the access is the owner's route access evaluated in that domain (runInPurpose), never a copy of the rule.
    *
    * @return array{title: \Stringable|string, url: \Drupal\Core\Url, access: bool}
+   *   The action item for the tab.
    */
   protected function routeAction(\Stringable|string $title, string $route, array $params, AccountInterface $account, ?string $purpose = NULL): array {
     if ($purpose === NULL) {
@@ -56,7 +57,9 @@ abstract class MarleyTabBase extends PluginBase implements MarleyTabInterface, C
     return ['title' => $title, 'url' => $url, 'access' => (bool) $access];
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,

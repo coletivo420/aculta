@@ -20,26 +20,44 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
 
   public function __construct(private readonly ?AccountDocumentInterface $documents = NULL) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public function id(): string {
     return 'conta';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function label(): string {
     return 'Minha Conta';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function purpose(): string {
     return 'account';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function routeName(): string {
     return 'aculta_studio.account';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function available(): bool {
     return TRUE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function access(AccountInterface $account): AccessResultInterface {
     return AccessResult::allowedIf($account->isAuthenticated())
       ->andIf(AccessResult::allowedIfHasPermission($account, 'access aculta portal'))

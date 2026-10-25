@@ -12,10 +12,16 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * Unit tests for the Studio experience registry.
+ */
 #[CoversClass(StudioExperienceManager::class)]
 #[Group('aculta_studio')]
 final class StudioExperienceManagerTest extends UnitTestCase {
 
+  /**
+   * Checks provider metadata and that no LMS experience is registered.
+   */
   public function testProviderMetadataAndAbsenceOfLms(): void {
     $provider = new GanjalabExperienceProvider(NULL);
     self::assertSame('ganjalab', $provider->id());
@@ -48,6 +54,9 @@ final class StudioExperienceManagerTest extends UnitTestCase {
     self::assertFalse($manager->access('ganjalab', 'account', $account)->isAllowed());
   }
 
+  /**
+   * A duplicate provider identifier is rejected.
+   */
   public function testDuplicateProviderRejected(): void {
     $manager = new StudioExperienceManager();
     $provider = new GanjalabExperienceProvider(NULL);

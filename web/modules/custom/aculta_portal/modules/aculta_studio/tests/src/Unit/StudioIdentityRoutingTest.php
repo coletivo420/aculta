@@ -59,18 +59,39 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
    */
   public function testHubAccountAndProfileAccess(): void {
     $routes = $this->routes();
-    foreach (['aculta_studio.hub', 'aculta_studio.account', 'aculta_studio.account_data', 'aculta_studio.account_address', 'aculta_studio.account_documents', 'aculta_studio.account_security', 'aculta_studio.account_password', 'aculta_studio.account_connections', 'aculta_studio.account_orders', 'aculta_studio.account_support', 'aculta_studio.account_preferences'] as $id) {
+    $accountRoutes = [
+      'aculta_studio.hub',
+      'aculta_studio.account',
+      'aculta_studio.account_data',
+      'aculta_studio.account_address',
+      'aculta_studio.account_documents',
+      'aculta_studio.account_security',
+      'aculta_studio.account_password',
+      'aculta_studio.account_connections',
+      'aculta_studio.account_orders',
+      'aculta_studio.account_support',
+      'aculta_studio.account_preferences',
+    ];
+    foreach ($accountRoutes as $id) {
       $route = $routes[$id];
       self::assertSame('account', $route['options']['_aculta_domain_purpose']);
       self::assertSame('access aculta portal', $route['requirements']['_permission']);
       self::assertSame('TRUE', $route['requirements']['_user_is_logged_in']);
     }
-    foreach (['aculta_studio.profile', 'aculta_studio.profile_nickname', 'aculta_studio.profile_privacy', 'aculta_studio.profile_bio', 'aculta_studio.profile_social'] as $id) {
+    $profileRoutes = [
+      'aculta_studio.profile',
+      'aculta_studio.profile_nickname',
+      'aculta_studio.profile_privacy',
+      'aculta_studio.profile_bio',
+      'aculta_studio.profile_social',
+    ];
+    foreach ($profileRoutes as $id) {
       $route = $routes[$id];
       self::assertSame('account', $route['options']['_aculta_domain_purpose']);
       self::assertSame('aculta_studio.profile_access:access', $route['requirements']['_custom_access']);
     }
-    foreach (['aculta_studio.account_data', 'aculta_studio.account_address', 'aculta_studio.account_documents', 'aculta_studio.account_security', 'aculta_studio.account_password', 'aculta_studio.account_connections', 'aculta_studio.account_orders', 'aculta_studio.account_support', 'aculta_studio.account_preferences'] as $id) {
+    $noCacheRoutes = array_slice($accountRoutes, 2);
+    foreach ($noCacheRoutes as $id) {
       self::assertTrue($routes[$id]['options']['no_cache']);
     }
     self::assertTrue($routes['aculta_studio.profile_nickname']['options']['no_cache']);

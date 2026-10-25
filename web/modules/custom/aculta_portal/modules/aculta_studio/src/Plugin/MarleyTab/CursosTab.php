@@ -21,17 +21,23 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 final class CursosTab extends MarleyTabBase {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function isAvailable(): bool {
     return $this->moduleHandler->moduleExists('aculta_lms');
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function access(AccountInterface $account): AccessResultInterface {
     return AccessResult::allowedIfHasPermission($account, 'create lms_course group');
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function sections(AccountInterface $account): array {
     return [
       'turmas' => [
@@ -62,11 +68,11 @@ final class CursosTab extends MarleyTabBase {
     ];
   }
 
-
   /**
    * One tab per course the account can see; each lists only the classes linked to that course.
    *
    * @return array<string, array{label: \Stringable|string, weight: int, listing: array, actions: array}>
+   *   Tabs keyed by class identifier.
    */
   private function classTabs(AccountInterface $account): array {
     $tabs = [];

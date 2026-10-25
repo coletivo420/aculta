@@ -180,7 +180,12 @@ final class MarleyListingBuilder {
     }
 
     // A tabela rola dentro do próprio bloco no celular, sem rolagem horizontal da página.
-    $header = ['title' => $this->t('Título'), 'state' => $this->t('Situação'), 'author' => $this->t('Autor'), 'changed' => $this->t('Atualizado em')];
+    $header = [
+      'title' => $this->t('Título'),
+      'state' => $this->t('Situação'),
+      'author' => $this->t('Autor'),
+      'changed' => $this->t('Atualizado em'),
+    ];
     if (!empty($listing['editable'])) {
       $header['edit'] = $this->t('Ações');
     }
@@ -189,10 +194,10 @@ final class MarleyListingBuilder {
       '#attributes' => ['data-portal-ui' => 'studio-listing-wrap', 'data-aculta-studio' => 'listing-wrap'],
       'table' => [
         '#type' => 'table',
-      '#header' => $header,
-      '#rows' => $rows,
-      '#empty' => $this->t('Nenhum item nesta aba.'),
-      '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
+        '#header' => $header,
+        '#rows' => $rows,
+        '#empty' => $this->t('Nenhum item nesta aba.'),
+        '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
       ],
       'pager' => $mine && $nextCursor !== NULL
         ? [
@@ -373,10 +378,16 @@ final class MarleyListingBuilder {
   }
 
   /**
-   * Table of comments of a bundle by status (0 = not published, e.g. awaiting moderation), with the node
-   * they belong to. Comment access is checked per row through accessCheck(TRUE).
+   * Builds the table of comments of a bundle by status.
+   *
+   * Status 0 means not published, for example awaiting moderation. Each row
+   * belongs to a node, and comment access is checked with accessCheck(TRUE).
    *
    * @param array{entity: string, bundle: string, status: int} $listing
+   *   The listing definition: entity type, bundle and comment status.
+   *
+   * @return array<string, mixed>
+   *   A render array with the comments table.
    */
   private function buildComments(array $listing): array {
     $storage = $this->entityTypeManager->getStorage('comment');
@@ -391,11 +402,19 @@ final class MarleyListingBuilder {
     foreach ($storage->loadMultiple($ids) as $comment) {
       $node = $comment->getCommentedEntity();
       $rows[] = [
-        'title' => ['data' => ['#type' => 'link', '#title' => $comment->label() ?: $this->t('(sem assunto)'), '#url' => $comment->toUrl()]],
+        'title' => [
+          'data' => [
+            '#type' => 'link',
+            '#title' => $comment->label() ?: $this->t('(sem assunto)'),
+            '#url' => $comment->toUrl(),
+          ],
+        ],
         'state' => $this->t('Aguardando moderação'),
         'author' => $comment->getOwner()?->getDisplayName() ?? '',
         'changed' => $this->dateFormatter->format($comment->getChangedTime(), 'short'),
-        'node' => $node ? ['data' => ['#type' => 'link', '#title' => $node->label(), '#url' => $node->toUrl()]] : '',
+        'node' => $node
+          ? ['data' => ['#type' => 'link', '#title' => $node->label(), '#url' => $node->toUrl()]]
+          : '',
       ];
     }
     return [
@@ -418,11 +437,16 @@ final class MarleyListingBuilder {
     ];
   }
 
-
   /**
-   * Table of groups of a type (for example the classes of the LMS), each row checked by the Group access.
+   * Builds the table of groups of a type, for example the LMS classes.
+   *
+   * Each row is checked by the Group access.
    *
    * @param array{entity: string, bundle: string} $listing
+   *   The listing definition: entity type and group bundle.
+   *
+   * @return array<string, mixed>
+   *   A render array with the groups table.
    */
   private function buildGroups(array $listing): array {
     $storage = $this->entityTypeManager->getStorage('group');
@@ -459,7 +483,12 @@ final class MarleyListingBuilder {
       '#attributes' => ['data-portal-ui' => 'studio-listing-wrap', 'data-aculta-studio' => 'listing-wrap'],
       'table' => [
         '#type' => 'table',
-        '#header' => ['title' => $this->t('Turma'), 'state' => $this->t('Situação'), 'author' => $this->t('Criada por'), 'changed' => $this->t('Atualizada em')],
+        '#header' => [
+          'title' => $this->t('Turma'),
+          'state' => $this->t('Situação'),
+          'author' => $this->t('Criada por'),
+          'changed' => $this->t('Atualizada em'),
+        ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhum item nesta aba.'),
         '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
@@ -468,12 +497,17 @@ final class MarleyListingBuilder {
     ];
   }
 
-
   /**
-   * Table of the revisions of nodes of a bundle (the Wiki's history), newest first. Each revision row is checked
-   * by the node access of its node through the revision query, with accessCheck(TRUE).
+   * Builds the table of node revisions of a bundle, newest first.
+   *
+   * This is the Wiki history. Each revision row is checked by the node access
+   * of its node through the revision query, with accessCheck(TRUE).
    *
    * @param array{entity: string, bundle: string} $listing
+   *   The listing definition: entity type and node bundle.
+   *
+   * @return array<string, mixed>
+   *   A render array with the revisions table.
    */
   private function buildRevisions(array $listing): array {
     $storage = $this->entityTypeManager->getStorage('node');
@@ -492,7 +526,13 @@ final class MarleyListingBuilder {
         continue;
       }
       $rows[] = [
-        'title' => ['data' => ['#type' => 'link', '#title' => $revision->label(), '#url' => $revision->toUrl('revision')]],
+        'title' => [
+          'data' => [
+            '#type' => 'link',
+            '#title' => $revision->label(),
+            '#url' => $revision->toUrl('revision'),
+          ],
+        ],
         'state' => $revision->get('moderation_state')->value ?? '',
         'author' => $revision->getRevisionUser()?->getDisplayName() ?? '',
         'changed' => $this->dateFormatter->format($revision->getRevisionCreationTime(), 'short'),
@@ -503,7 +543,12 @@ final class MarleyListingBuilder {
       '#attributes' => ['data-portal-ui' => 'studio-listing-wrap', 'data-aculta-studio' => 'listing-wrap'],
       'table' => [
         '#type' => 'table',
-        '#header' => ['title' => $this->t('Revisão'), 'state' => $this->t('Situação'), 'author' => $this->t('Autor da revisão'), 'changed' => $this->t('Revisada em')],
+        '#header' => [
+          'title' => $this->t('Revisão'),
+          'state' => $this->t('Situação'),
+          'author' => $this->t('Autor da revisão'),
+          'changed' => $this->t('Revisada em'),
+        ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhum item nesta aba.'),
         '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
@@ -511,7 +556,6 @@ final class MarleyListingBuilder {
       '#cache' => ['contexts' => ['user', 'user.permissions'], 'tags' => ['node_list:' . $listing['bundle']]],
     ];
   }
-
 
   /**
    * Requires both entity visibility and explicit access to the revision.

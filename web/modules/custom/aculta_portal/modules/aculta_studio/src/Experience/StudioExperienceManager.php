@@ -13,7 +13,11 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class StudioExperienceManager {
 
-  /** @var array<string, \Drupal\aculta_studio\Experience\StudioExperienceProviderInterface> */
+  /**
+   * Providers keyed by experience identifier.
+   *
+   * @var array<string, \Drupal\aculta_studio\Experience\StudioExperienceProviderInterface>
+   */
   private array $providers = [];
 
   /**
@@ -40,6 +44,15 @@ final class StudioExperienceManager {
     return $this->providers;
   }
 
+  /**
+   * Returns the provider registered under the given identifier.
+   *
+   * @param string $id
+   *   Stable experience identifier.
+   *
+   * @return \Drupal\aculta_studio\Experience\StudioExperienceProviderInterface|null
+   *   The provider, or NULL when no experience uses this identifier.
+   */
   public function get(string $id): ?StudioExperienceProviderInterface {
     return $this->providers[$id] ?? NULL;
   }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Drupal\aculta_studio\Controller\StudioHubController;
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
 use Drupal\aculta_studio\Experience\StudioExperienceProviderInterface;
@@ -30,7 +31,7 @@ final class StudioHubControllerTest extends UnitTestCase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container = new ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
   }
@@ -124,18 +125,30 @@ final class StudioHubControllerTest extends UnitTestCase {
         private readonly string $purposeValue,
       ) {}
 
+      /**
+       * {@inheritdoc}
+       */
       public function id(): string {
         return $this->idValue;
       }
 
+      /**
+       * {@inheritdoc}
+       */
       public function label(): string {
         return $this->labelValue;
       }
 
+      /**
+       * {@inheritdoc}
+       */
       public function purpose(): string {
         return $this->purposeValue;
       }
 
+      /**
+       * {@inheritdoc}
+       */
       public function routeName(): string {
         return match ($this->idValue) {
           'conta' => 'aculta_studio.account',
@@ -146,14 +159,23 @@ final class StudioHubControllerTest extends UnitTestCase {
         };
       }
 
+      /**
+       * {@inheritdoc}
+       */
       public function available(): bool {
         return $this->availableValue;
       }
 
+      /**
+       * {@inheritdoc}
+       */
       public function access(AccountInterface $account): AccessResultInterface {
         return AccessResult::allowedIf($this->allowedValue);
       }
 
+      /**
+       * {@inheritdoc}
+       */
       public function build(): array {
         return [];
       }

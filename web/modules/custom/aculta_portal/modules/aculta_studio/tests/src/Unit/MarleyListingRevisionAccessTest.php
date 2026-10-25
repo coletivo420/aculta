@@ -18,6 +18,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_studio')]
 final class MarleyListingRevisionAccessTest extends UnitTestCase {
 
+  /**
+   * A visible node does not authorize a revision the account cannot view.
+   */
   public function testVisibleNodeDoesNotAuthorizeUnviewableRevision(): void {
     $account = $this->createMock(AccountInterface::class);
     $revision = $this->createMock(NodeInterface::class);
@@ -28,6 +31,9 @@ final class MarleyListingRevisionAccessTest extends UnitTestCase {
     self::assertFalse(MarleyListingBuilder::canViewRevision($revision, $account));
   }
 
+  /**
+   * A revision row needs both the node and the revision access to allow it.
+   */
   public function testBothAccessDecisionsMustAllow(): void {
     $account = $this->createMock(AccountInterface::class);
     $revision = $this->createMock(NodeInterface::class);
@@ -38,6 +44,9 @@ final class MarleyListingRevisionAccessTest extends UnitTestCase {
     self::assertTrue(MarleyListingBuilder::canViewRevision($revision, $account));
   }
 
+  /**
+   * A denied node short-circuits the revision access check.
+   */
   public function testDeniedNodeShortCircuitsRevisionAccess(): void {
     $account = $this->createMock(AccountInterface::class);
     $revision = $this->createMock(NodeInterface::class);

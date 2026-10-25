@@ -21,17 +21,23 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 final class GaleriasTab extends MarleyTabBase {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function isAvailable(): bool {
     return $this->moduleHandler->moduleExists('aculta_gallery');
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function access(AccountInterface $account): AccessResultInterface {
     return AccessResult::allowedIfHasPermission($account, 'create media');
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function sections(AccountInterface $account): array {
     return [
       'criar' => [

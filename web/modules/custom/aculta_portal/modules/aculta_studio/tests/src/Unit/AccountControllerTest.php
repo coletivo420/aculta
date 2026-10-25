@@ -59,30 +59,51 @@ final class AccountControllerTest extends UnitTestCase {
 
       public function __construct(private readonly bool $allowed) {}
 
+      /**
+       * {@inheritdoc}
+       */
       public function id(): string {
         return 'conta';
       }
 
+      /**
+       * {@inheritdoc}
+       */
       public function label(): string {
         return 'Minha Conta';
       }
 
+      /**
+       * {@inheritdoc}
+       */
       public function purpose(): string {
         return 'account';
       }
 
+      /**
+       * {@inheritdoc}
+       */
       public function routeName(): string {
         return 'aculta_studio.account';
       }
 
+      /**
+       * {@inheritdoc}
+       */
       public function available(): bool {
         return TRUE;
       }
 
+      /**
+       * {@inheritdoc}
+       */
       public function access(AccountInterface $account): AccessResultInterface {
         return $this->allowed ? AccessResult::allowed() : AccessResult::forbidden();
       }
 
+      /**
+       * {@inheritdoc}
+       */
       public function build(): array {
         return ['#type' => 'container', '#account' => TRUE];
       }
