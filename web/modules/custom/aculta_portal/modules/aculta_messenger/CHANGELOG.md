@@ -1,3 +1,21 @@
+## 0.1.1-dev.386 — resposta autenticada na conversa existente
+
+O hook de renderização agora adapta também o formulário nativo já presente no
+display `private_message_thread`, encaminhando-o ao endpoint POST protegido do
+drawer e marcando-o para o comportamento JavaScript compartilhado. Antes, o
+hook retornava sem adaptação quando o display padrão do contrib já fornecia o
+form, deixando `action` e atributos incompatíveis com a gaveta. O hook também
+fornece um render array vazio para o campo `updated` quando ausente, conforme
+esperado pelo preprocess do template instalado, sem alterar o módulo contrib.
+
+BrowserTest autenticado cria uma conversa, extrai os tokens do formulário de
+resposta e da rota, envia um POST HTTP real e confirma duas mensagens
+persistidas na thread: **1 teste / 35 assertions PASS**. Suíte Unit completa:
+**375 testes / 4.147 assertions PASS**. PHP lint, PHPCS Drupal/DrupalPractice e
+`git diff --check` PASS. PHPUnit reportou 275 depreciações de Core/contrib, sem
+falhas. Runtime, browser visual, fluxo de grupo sem JavaScript e Alpha seguem
+pendentes.
+
 ## 0.1.1-dev.385 — envio inicial de conversa exercitado por HTTP autenticado
 
 O BrowserTest agora autentica um membro pelo helper de sessão do Drupal, abre

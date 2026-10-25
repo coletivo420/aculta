@@ -96,7 +96,7 @@ PHP, FILE_APPEND);
   }
 
   /**
-   * An authenticated member can load the actual private-message composer.
+   * An authenticated member creates a conversation and replies over HTTP.
    */
   public function testAuthenticatedMemberCanOpenConversationComposer(): void {
     $member = $this->drupalCreateUser([
@@ -179,6 +179,42 @@ PHP, FILE_APPEND);
     $messages = $thread->getMessages(TRUE);
     self::assertCount(1, $messages);
     self::assertSame($body, reset($messages)->getMessage());
+
+    $this->drupalGet(Url::fromRoute('aculta_messenger.drawer_conversation', [
+      'private_message_thread' => $thread->id(),
+    ]), [], ['X-Requested-With' => 'XMLHttpRequest']);
+    self::assertSame(
+      200,
+      $this->getSession()->getStatusCode(),
+      mb_substr($this->getSession()->getPage()->getText(), 0, 400),
+    );
+    $replyForm = $this->getSession()->getPage()->find('css', 'form[data-aculta-reply-form]');
+    self::assertNotNull($replyForm, 'An authorized member sees the shared reply form.');
+    $replyAction = $replyForm->getAttribute('action');
+    $replyToken = $replyForm->find('css', 'input[name="form_token"]')?->getValue();
+    self::assertIsString($replyAction);
+    self::assertNotSame('', $replyToken);
+    self::assertNotSame('', parse_url($replyAction, PHP_URL_QUERY), 'The POST URL includes Drupal route CSRF protection.');
+
+    $replyBody = 'Resposta funcional autenticada do ACULTA Messenger.';
+    parse_str((string) parse_url($replyAction, PHP_URL_QUERY), $replyQuery);
+    $replyUrl = $this->buildUrl((string) parse_url($replyAction, PHP_URL_PATH), ['query' => $replyQuery]);
+    $response = $this->getHttpClient()->request('POST', $replyUrl, [
+      'cookies' => $this->getSessionCookies(),
+      'headers' => ['X-Requested-With' => 'XMLHttpRequest'],
+      'form_params' => [
+        'message' => [['value' => $replyBody]],
+        'reply_token' => $replyToken,
+      ],
+      'http_errors' => FALSE,
+    ]);
+    self::assertSame(200, $response->getStatusCode(), (string) $response->getBody());
+    $threadStorage->resetCache([$thread->id()]);
+    $thread = $threadStorage->loadUnchanged($thread->id());
+    $messages = $thread->getMessages(TRUE);
+    self::assertCount(2, $messages, (string) $response->getBody());
+    self::assertSame($replyBody, end($messages)->getMessage());
+    self::assertStringContainsString($replyBody, (string) $response->getBody());
   }
 
   /**
