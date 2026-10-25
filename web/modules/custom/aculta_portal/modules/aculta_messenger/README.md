@@ -81,7 +81,7 @@ post-update e o Messenger passa a ser sua fonte normativa.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento atual é `0.1.1-dev.345`. O núcleo oferece
+A versão em desenvolvimento atual é `0.1.1-dev.350`. O núcleo oferece
 `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`, consumers para
 Fórum, LMS, Wiki, Loja, Doações e conquistas do Game, agregação da central e entrega por e-mail
 direto ou digest sem substituir os storages existentes. O Fórum preserva
@@ -89,23 +89,23 @@ direto ou digest sem substituir os storages existentes. O Fórum preserva
 momento de abrir e entregar. Preferências individuais são limitadas pela
 política administrativa, e avisos no site continuam obrigatórios.
 
-Validação automatizada em 2026-10-25: Unit Messenger **356 testes / 2.866
-assertions PASS**; focais de preferências, formulários, digest privado e worker
-de mensagens **63 testes / 594 assertions PASS**; Kernel de migração de
-preferências e digest combinado **5 testes / 85 assertions PASS** no MariaDB
-dedicado, sem SMTP real. A Loja passou Integration Unit **18/227** e Kernel
-**4/75** (2 deprecações upstream `@EntityType`, 3 notices PHPUnit). PHPCS
-Drupal/DrupalPractice, PHP lint e `git diff --check` passaram. Runtime não foi
-utilizado. O validador do índice global apontou que o README raiz gerado está
-desatualizado; ele não foi regenerado para preservar alterações de outros
-componentes.
+Validação automatizada mais recente, em 2026-10-25: Unit Messenger **359 testes /
+2.922 assertions PASS**; testes focados de preferências, formulários, digest e
+workers de e-mail **75/835 PASS**; central de avisos — agrupamento, filtros e
+paginação — **21/65 PASS**. Retenção de conversas longas: Kernel
+`PrivateMessageRetentionKernelTest` **4/55 PASS** no MariaDB dedicado (10
+depreciações upstream de Core/contrib) e Unit de retenção **3/76 PASS**. PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS; Runtime e SMTP real
+não utilizados.
 
 A retenção de conversas usa cursor persistido para não deixar falhas antigas
 barrar lotes seguintes. Unit cobre paginação e rollback; o Kernel MariaDB cria
 threads, mensagens privadas e avisos Message reais, removendo apenas dados com
 mais de seis meses e preservando uma conversa recente. Também prova rollback
-transacional real quando a exclusão do aviso falha. Runtime não foi usado e
-nenhuma limpeza foi executada em dados reais.
+transacional real quando a exclusão do aviso falha. A limpeza de avisos agora
+consulta IDs de origem e apaga entidades em lotes de 500, mantendo SQL e memória
+limitados em conversas longas; o Kernel cobre 501 mensagens/avisos. Runtime não
+foi usado e nenhuma limpeza foi executada em dados reais.
 
 Dev.215 centraliza a criação de correlações UUID v5 para e-mails diretos do Fórum,
 LMS, Wiki, Loja e Doações. Retries reutilizam a mesma identidade e o ACULTA Mailer
