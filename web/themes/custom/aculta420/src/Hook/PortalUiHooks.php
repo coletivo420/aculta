@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420\Hook;
 
+use Drupal\Core\Url;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Template\Attribute;
 
@@ -18,12 +19,18 @@ final class PortalUiHooks {
 
   public const ATTRIBUTE = 'data-portal-ui';
 
-  /** Mapa token → classes de apresentação. A ordem dos tokens define a ordem das classes. */
+  /**
+   * Mapa token → classes de apresentação. A ordem dos tokens define a ordem das classes.
+   */
   public const TOKENS = [
     // Avisos e mensagens (classes de mensagens do Drupal, estilizadas aqui).
     'notice-warning' => ['messages', 'messages--warning'],
     'notice-error' => ['messages', 'messages--error'],
     'email-notice' => ['aculta-email-notice'],
+    // Checkout (Commerce): link para os outros dados fiscais da conta.
+    'fiscal-identity-other-data' => ['aculta-fiscal-identity-other-data'],
+    // Wiki: botão de contribuição na página do verbete.
+    'wiki-proposal-contribute' => ['button', 'button--secondary'],
     // Doação (aculta_donation): resumo da etapa de revisão e links de edição.
     'donation-summaries' => ['d-grid', 'gap-3'],
     'donation-summary' => ['card', 'card-body'],
@@ -123,7 +130,7 @@ final class PortalUiHooks {
     'h5p-dashboard-course' => ['aculta-lms-h5p-course'],
     'checkout-help' => ['checkout-help'],
     'gallery-dialog' => ['aculta-gallery-dialog'],
-    'mercado-pago-credentials-test' =>['mercado-pago-credentials', 'mercado-pago-credentials-test'],
+    'mercado-pago-credentials-test' => ['mercado-pago-credentials', 'mercado-pago-credentials-test'],
     'mercado-pago-credentials-stage' => ['mercado-pago-credentials', 'mercado-pago-credentials-stage'],
     'mercado-pago-credentials-prod' => ['mercado-pago-credentials', 'mercado-pago-credentials-prod'],
     'icon-search' => ['bi', 'bi-search'],
@@ -378,7 +385,9 @@ final class PortalUiHooks {
     'forum-category-count' => ['aculta-forum-category__count'],
   ];
 
-  /** Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements. */
+  /**
+   * Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements.
+   */
   #[Hook('preprocess_menu')]
   public function preprocessMenu(array &$variables): void {
     if (!empty($variables['items']) && is_array($variables['items'])) {
@@ -386,11 +395,16 @@ final class PortalUiHooks {
     }
   }
 
-  /** @param array<int|string, mixed> $items */
+  /**
+   * Replaces menu link tokens with the classes they stand for, recursively.
+   *
+   * @param array<int|string, mixed> $items
+   *   Menu items, passed by reference; children under "below" are mapped too.
+   */
   private function mapMenuLinkTokens(array &$items): void {
     foreach ($items as &$item) {
       $url = $item['url'] ?? NULL;
-      if ($url instanceof \Drupal\Core\Url) {
+      if ($url instanceof Url) {
         $attributes = $url->getOption('attributes') ?? [];
         $token = $attributes[self::ATTRIBUTE] ?? NULL;
         if (is_string($token) && isset(self::TOKENS[$token])) {
@@ -407,6 +421,15 @@ final class PortalUiHooks {
     unset($item);
   }
 
+  /**
+   * Maps the token attribute on the render elements of the portal.
+   *
+   * Runs for containers, links, HTML tags, lists, fieldsets, tables, form
+   * elements, images and portal elements.
+   *
+   * @param array<string, mixed> $variables
+   *   Template variables, altered in place.
+   */
   #[Hook('preprocess_container')]
   #[Hook('preprocess_link')]
   #[Hook('preprocess_html_tag')]
@@ -457,13 +480,17 @@ final class PortalUiHooks {
     }
   }
 
-  /** The details of the Opções box: mapped after the Bootstrap accordion has set its attributes. */
+  /**
+   * The details of the Opções box: mapped after the Bootstrap accordion has set its attributes.
+   */
   #[Hook('preprocess_details')]
   public function preprocessDetails(array &$variables): void {
     $this->preprocess($variables);
   }
 
-  /** Maps the neutral unread count from the account contract to the theme SDC. */
+  /**
+   * Maps the neutral unread count from the account contract to the theme SDC.
+   */
   private function addAccountUnreadBadges(array &$variables): void {
     foreach (['menu_items', 'accordion_items'] as $listName) {
       if (!is_array($variables[$listName] ?? NULL)) {
@@ -492,6 +519,8 @@ final class PortalUiHooks {
    *   Os atributos do elemento (lidos).
    * @param array<string, mixed> $container
    *   O array que contém os atributos (elemento ou item), alterado no lugar.
+   * @param string $key
+   *   A chave em que os atributos são gravados dentro do array.
    */
   private function applyArray(array $attributes, array &$container, string $key): void {
     if (!isset($attributes[self::ATTRIBUTE])) {
@@ -509,6 +538,12 @@ final class PortalUiHooks {
     $container[$key] = in_array($key, ['attributes', 'title_attributes', 'content_attributes'], TRUE) ? new Attribute($attributes) : $attributes;
   }
 
+  /**
+   * Applies the token attribute to an Attribute object, in place.
+   *
+   * @param \Drupal\Core\Template\Attribute $attributes
+   *   The attributes to read and update.
+   */
   private function apply(Attribute $attributes): void {
     if (!$attributes->offsetExists(self::ATTRIBUTE)) {
       return;

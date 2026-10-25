@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420\Hook;
 
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -403,7 +404,9 @@ final class ThemeHooks implements TrustedCallbackInterface {
     ];
   }
 
-  /** Maps the Portal's neutral Messenger action to its theme SDC. */
+  /**
+   * Maps the Portal's neutral Messenger action to its theme SDC.
+   */
   private function presentMessengerTrigger(array &$variables): void {
     $messenger = $variables['aculta_messenger'] ?? NULL;
     if (!is_array($messenger) || !is_string($messenger['url'] ?? NULL)) {
@@ -423,7 +426,9 @@ final class ThemeHooks implements TrustedCallbackInterface {
     unset($variables['aculta_messenger']);
   }
 
-  /** Maps the Portal's neutral alert action to the theme's SDC. */
+  /**
+   * Maps the Portal's neutral alert action to the theme's SDC.
+   */
   private function presentAlertsTrigger(array &$variables): void {
     $alerts = $variables['aculta_alerts'] ?? NULL;
     if (!is_array($alerts) || !is_string($alerts['url'] ?? NULL)) {
@@ -443,7 +448,9 @@ final class ThemeHooks implements TrustedCallbackInterface {
     unset($variables['aculta_alerts']);
   }
 
-  /** Exposes Private Message's native per-thread read state to accessible UI. */
+  /**
+   * Exposes Private Message's native per-thread read state to accessible UI.
+   */
   #[Hook('preprocess_private_message_thread')]
   public function preprocessPrivateMessageThread(array &$variables): void {
     $status = $variables['aculta_messenger_read_status'] ?? NULL;
@@ -457,7 +464,9 @@ final class ThemeHooks implements TrustedCallbackInterface {
     ];
   }
 
-  /** Wraps the native Private Message entity output in the theme's message item SDC. */
+  /**
+   * Wraps the native Private Message entity output in the theme's message item SDC.
+   */
   #[Hook('preprocess_private_message')]
   public function preprocessPrivateMessage(array &$variables): void {
     if (!is_array($variables['content'] ?? NULL)) {
@@ -529,7 +538,7 @@ final class ThemeHooks implements TrustedCallbackInterface {
       default => 'light',
     };
     $attributes = $variables['html_attributes'] ?? NULL;
-    if ($attributes instanceof \Drupal\Core\Template\Attribute) {
+    if ($attributes instanceof Attribute) {
       $attributes->removeAttribute('data-bs-theme');
       if ($themeMode !== NULL) {
         $attributes->setAttribute('data-bs-theme', $themeMode);

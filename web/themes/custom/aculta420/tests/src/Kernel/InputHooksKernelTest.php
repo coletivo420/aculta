@@ -21,10 +21,21 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class InputHooksKernelTest extends KernelTestBase {
 
+  /**
+   * Modules enabled for the test; only the system module is required.
+   *
+   * @var string[]
+   */
   protected static $modules = ['system'];
 
+  /**
+   * The hooks under test.
+   */
   private InputHooks $hooks;
 
+  /**
+   * Prepares the hooks service before each test.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->hooks = new InputHooks(new PortalUiHooks(), $this->container->get('extension.list.theme'));
@@ -135,7 +146,11 @@ final class InputHooksKernelTest extends KernelTestBase {
   /**
    * Variáveis de `input` com `image_button` e atributos em objeto Attribute.
    *
+   * @param string $src
+   *   Source of the image button.
+   *
    * @return array<string, mixed>
+   *   The template variables of the input element.
    */
   private function imageButton(string $src): array {
     return [

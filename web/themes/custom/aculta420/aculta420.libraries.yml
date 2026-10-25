@@ -103,4 +103,3 @@ messenger-notices:
   css:
     theme:
       css/components/messenger-notices.css: {}
-
