@@ -35,6 +35,17 @@ pendentes, está em
   é independente e aguarda decisão de produto; o recibo Commerce mantém a
   exceção documentada para convidados.
 
+- `0.1.0-dev.117` (2026-10-25): estabilização para RC. A limpeza de imagem voltou
+  a passar nos dois cenários que o fixture parcial marcava como `Unverifiable`
+  (tipos registrados sem tabela base e storages nulos são ignorados; falhas reais
+  seguem retendo arquivos). O enumerador do Content Index passou a tratar tipo
+  sem schema instalado como vazio, corrigindo o rebuild afetado pelo novo
+  `aculta_forum_post`. A busca pública deixou de duplicar o `<h1>`. Homologação
+  Firefox ESR/X11 em sete larguras: público 85/85, WE SATIVA 31/31, moderação
+  20/20, teclado 49/49 e sem-JavaScript 11/11. Suítes próprias: Unit 82/448 e
+  Kernel 30/1.661. Olivero, modo escuro efetivo, zoom real, leitor de tela e
+  WCAG 2.2 AA completa continuam pendentes; ver `CHANGELOG.md`.
+
 - `0.1.0-dev.113`: transições Wiki persistem envelopes v1 na Queue API
   confiável e o worker despacha somente para eventos que tenham consumer
   registrado. Falhas/no consumer mantêm o item para retry após lease; e-mail

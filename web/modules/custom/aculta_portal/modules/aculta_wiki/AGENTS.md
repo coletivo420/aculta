@@ -1,3 +1,11 @@
+- Dev.117: `FileReferenceInspector` (Portal) ignora tipo registrado sem tabela
+  base e `ContentEntityNullStorage` sem converter falha real em exclusão; a
+  classe Kernel de imagem passou 28/1.611 e a suíte Kernel Wiki 30/1.661. O
+  enumerador do Index trata tipo sem schema instalado como vazio. A busca
+  pública deixou de duplicar o `h1`. Firefox ESR/X11: público 85/85, WE SATIVA
+  31/31, moderação 20/20, teclado 49/49, sem-JS 11/11 em sete larguras.
+  Olivero, tema escuro efetivo, zoom real e WCAG completa pendentes.
+
 - Dev.106: Kernel invoca `WikiController::home()` sob purpose `wiki` e verifica
   o render array com categorias, verbetes recentes e alterações recentes
   (focal combinado 1/88). HTTP renderizado não foi comprovado: ACULTA420 e seu

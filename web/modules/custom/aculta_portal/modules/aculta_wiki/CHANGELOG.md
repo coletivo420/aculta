@@ -1608,3 +1608,36 @@
   A pendência operacional e a semântica da caixa editorial compartilhada seguem
   documentadas sem alterar esse fluxo.
 
+## 0.1.0-dev.117 — estabilizar limpeza, Index, busca e homologação (2026-10-25)
+
+- **Limpeza de imagem (W-F1).** `FileReferenceInspector` do Portal deixa de
+  retornar `Unverifiable` para tipos de entidade registrados sem tabela base
+  instalada (`media_gallery` no fixture) e para storages não persistentes
+  (`ContentEntityNullStorage`, como `entity_embed_fake_entity`). Tipos com
+  tabela base cuja consulta falhe continuam falhando fechados. Os dois cenários
+  que falhavam em `WikiLeadImageLifecycleKernelTest` passam; a política de
+  exclusão não foi flexibilizada.
+- **Rebuild do Content Index (W-F7).** `ContentIndexEntityEnumerator` trata
+  como vazio um tipo sem schema instalado em vez de cair em EntityQuery e
+  quebrar o rebuild. Corrige a regressão introduzida no grafo compartilhado pelo
+  novo `aculta_forum_post`; o Kernel Wiki-owned de rebuild mantém a asserção de
+  geração completa.
+- **Wiki420 pública (W-F4/W-F8).** A busca deixou de renderizar dois `<h1>`
+  (título da rota + título do controller). O HTML servido sem JavaScript agora
+  tem um único `h1` em home, listagem e busca.
+- **Homologação executada.** Firefox ESR/X11, tema ACULTA420, sete larguras
+  (320/360/390/768/1024/1280/1440): público 85/85, WE SATIVA autenticado 31/31,
+  moderação Studio 20/20, teclado 49/49 e sem-JavaScript 11/11. `aculta_forum_wiki`
+  está habilitado no Runtime e o provider `wiki` foi confirmado no resolver;
+  anônimo lê e não escreve nem modera. Nenhuma escrita de conteúdo ou configuração.
+- **Testes próprios.** Unit Wiki 82/448; Kernel Wiki 30/1.661; Messenger
+  integração Wiki Unit 4/47 e Kernel 11/236; Estatísticas Wiki Kernel 13/142;
+  `aculta_forum_wiki` Unit 5/28; Unit do enumerador do Index 7/59; PHPCS, PHP
+  lint, gates de índice/Drupal 11/aliases e `git diff --check` PASS.
+- **Pendências declaradas.** Olivero, modo escuro efetivo, zoom real 200%/400%,
+  leitor de tela e WCAG 2.2 AA completa não foram executados; o formulário de
+  decisão não foi aberto no navegador porque não havia proposta pendente no
+  Runtime. `validate-aculta-image.php` segue reprovando uma ocorrência R5
+  preexistente em `UnusedFileCleaner.php` (fora da Wiki). O Index continua
+  desativado no Runtime; ativação/rebuild exige autorização.
+

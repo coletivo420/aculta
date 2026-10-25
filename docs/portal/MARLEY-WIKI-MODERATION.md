@@ -81,7 +81,7 @@ Usar `field_wiki_references` e Media autorizada, `aculta_image` para processamen
 
 ## V-0.4-R / ACULTA Studio Marley D-A — auditoria do código existente
 
-[Inventário e contrato da janela Wiki](MARLEY-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. Acrescentar futuramente seção `moderacao` com gate próprio, pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. MarleyPresenter e URL/AJAX existentes serão preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Ainda faltam exame dirigido do listing builder, adapter de acesso e testes Runtime. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
+[Inventário e contrato da janela Wiki](MARLEY-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. A seção `moderacao` usa gate próprio (`moderate wiki proposals` ou transições de verbete), pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. MarleyPresenter e URL/AJAX existentes são preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Dev.117 validou no Runtime de teste o listing compartilhado, o estado vazio e o reflow em 320/360/390/768/1024/1280/1440 com `tests/browser/aculta-wiki/moderation.py`; o formulário de decisão não foi aberto no navegador porque não havia proposta pendente. Olivero, tema escuro, zoom real e WCAG completa seguem pendentes. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
 
 ## Decisão normativa: ACULTA Studio (2026-10-22)
 

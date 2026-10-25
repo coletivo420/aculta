@@ -4,14 +4,15 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.116**. No Runtime de teste,
+Linha do projeto `aculta_wiki`: **0.1.0-dev.117**. No Runtime de teste,
 `aculta_wiki` e `aculta_studio` estão ativos e `aculta_index` permanece
 desativado. `drush cr` e o update autorizado 10001 foram aplicados; as rotas
 WE SATIVA existem e as quatro tabelas da entidade de proposta foram instaladas.
-Firefox ESR/X11 autenticado passou 19/19, cobrindo home/CTA, início, workspace,
-formulário/retorno e reflow 320/390/1280. Olivero e WCAG 2.2 AA completa seguem
-pendentes. `/wiki` é caminho interno da raiz Wiki e responde 404 quando chamado
-diretamente.
+Firefox ESR/X11 autenticado passou 19/19 em dev.116 e, em dev.117, 31/31 no
+início/workspace e 20/20 na moderação Studio, cobrindo 320/360/390/768/1024/1280/1440.
+Olivero, modo escuro efetivo, zoom real 200%/400%, leitor de tela e WCAG 2.2 AA
+completa seguem pendentes. `/wiki` é caminho interno da raiz Wiki e responde 404
+quando chamado diretamente.
 
 ## Integração vigente Wiki ↔ Messenger — avisos editoriais
 
@@ -26,9 +27,12 @@ compartilhadas continua pendente de decisão de produto.
 Validação Dev.116: Kernel de decisão **1 teste / 216 assertions PASS** em
 MariaDB dedicado; Unit de QueueWorker/publisher **5/18 PASS**; PHPCS Drupal e
 DrupalPractice PASS. O Kernel emite deprecações de Core/contrib, sem falhas.
-Na classe Kernel completa (28/1.602), dois cenários independentes de limpeza
-de imagem continuam falhando porque o fixture parcial faz o inspetor global
-retornar `Unverifiable`; consulte a pendência M0 antes de homologar essa classe.
+**Dev.117 resolveu a pendência M0:** o inspetor global ignora tipos registrados
+sem tabela base instalada e storages nulos, sem transformar falha real em
+autorização; a classe `WikiLeadImageLifecycleKernelTest` passou completa em
+**28 testes / 1.611 asserções** e a suíte Kernel Wiki em **30/1.661**. O
+enumerador do Index também trata tipo sem schema instalado como vazio, e o
+Kernel de rebuild Wiki-owned voltou a concluir a geração.
 
 O núcleo `aculta_messenger` é dono do consumer, persistência Message, central,
 contagem, preferências, deduplicação, abertura segura, filas, workers e e-mail.

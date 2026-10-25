@@ -34,10 +34,15 @@ do formulário e a exibição `full` do `wiki_entry` vivem apenas em
 `config/sync`. O dono dessa configuração é decisão aberta do responsável (ver
 `docs/modules/WIKI-SUBMODULO.md`).
 
-O módulo está listado em `config/sync/core.extension.yml` e continua
-desabilitado no Runtime. Habilitar exige importar a configuração em um ambiente
-com backup verificado; nenhuma operação de Runtime foi feita por este
-adaptador.
+O módulo está listado em `config/sync/core.extension.yml` e **está habilitado no
+Runtime de teste** (2026-10-25). O resolver do Fórum reconstruído registra os
+providers `public_forum`, `publication`, `aculta_forum_lms` e
+`aculta_forum_wiki`; o contexto `wiki` resolve um verbete publicado no Domain
+Wiki. Verificação somente leitura: anônimo recebe leitura permitida, escrita e
+moderação negadas; ver `tests/browser/aculta-wiki/README.md`. O campo
+`field_aculta_discussion` existe nos 7 verbetes do Runtime, mas a discussão
+permanece fechada enquanto o status do campo não for aberto por decisão
+editorial. Nenhuma configuração foi importada ou alterada nesta revalidação.
 
 ## Testes
 

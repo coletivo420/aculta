@@ -47,10 +47,12 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Decisão da proposta pelo Form API | Kernel | `FormBuilder` preserva modos selecionados individualmente e a aplicação oficial usa append/replace configurados | aprovado (dev.59; focal: 1/154; classe: 21/939, 291 depreciações) |
 | Escolha explícita do modo de lista | Kernel MariaDB | Campo aprovado sem `replace`/`append` escolhido gera erro; modos válidos são enviados ao serviço e aplicados | aprovado (dev.91; focal 1/183; 202 depreciações upstream, 2 PHPUnit) |
 | Composição da revisão no GanjaLab | Kernel | SDCs apresentam contexto/contribuição e links autorizados; controles seguem no Form API | aprovado (dev.60; focal: 1/156; classe: 21/941, 291 depreciações) |
-| Workspace WE SATIVA visual/autoria | Browser Firefox ESR visível | ACULTA420 em 1280/390/320 px, rota de criação e retorno do formulário | aprovado no Runtime de teste (dev.111; 19/19); Kernels isolados do workspace 3/240. Olivero e WCAG 2.2 AA completa pendentes |
-| Páginas públicas e reflow Wiki | Browser Firefox ESR visível | Host de teste: home, listagem, busca e `/wiki` interno; 1280/390/320 px | aprovado para o CSS candidato em ACULTA420 (46/46; CSS direto por GET); agregado Runtime e Olivero pendentes |
-| Prévia e teclado da busca | Browser Firefox ESR visível | Searchbox nativo, região viva nomeada, resultados por Tab, foco/nome WebDriver-computed, 1280/320 px | dev.74: Unit 4/18 + fixture JS local 14/14; Runtime antigo 28/35 (semântica antiga e overflow submit); integração publicada, leitor de tela/contraste pendentes |
-| Layout sem-JS, teclado e WCAG 2.2 AA | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, foco/leitor de tela/contraste | pendente |
+| Workspace WE SATIVA visual/autoria | Browser Firefox ESR visível | ACULTA420 em sete larguras (320/360/390/768/1024/1280/1440), rota de criação e retorno do formulário | aprovado dev.117 (31/31, `tests/browser/aculta-wiki/we-sativa.py`); Kernels isolados do workspace 3/240. Olivero, modo escuro e WCAG 2.2 AA completa pendentes |
+| Páginas públicas e reflow Wiki | Browser Firefox ESR visível | Home, listagem, busca e `/wiki` interno em sete larguras | aprovado dev.117 (85/85, `visual.py`); modo escuro efetivo e Olivero pendentes |
+| Prévia e teclado da busca | Browser Firefox ESR visível | Searchbox nativo, região viva nomeada, resultados por Tab, foco/nome WebDriver-computed, 1280/320 px | aprovado dev.117 (49/49, `keyboard.py`); leitor de tela e contraste automático pendentes |
+| Busca sem JavaScript e um único H1 | Browser Firefox ESR sem JS + HTML | Home, listagem e busca servidas pelo Drupal | aprovado dev.117 (11/11, `no-js.py`); dois H1 corrigidos ao remover o título duplicado do controller |
+| Fila de moderação no Studio | Browser Firefox ESR visível, sessão autenticada | Listing compartilhado, estado vazio, sem overflow em sete larguras | aprovado dev.117 (20/20, `moderation.py`); formulário de decisão não aberto no navegador por ausência de proposta pendente no Runtime |
+| Layout sem-JS, teclado e WCAG 2.2 AA | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, foco/leitor de tela/contraste | parcial dev.117: teclado e sem-JS aprovados em ACULTA420; Olivero, leitor de tela, zoom real e contraste WCAG completo pendentes |
 
 ## Regressão Content Index — dev.61
 
@@ -117,7 +119,7 @@ PHPUnit; Runtime e filesystem instalado intocados.
 | Limpeza de órfã após exclusão da última origem | Kernel | Retém referências em revisão histórica; remove Media/File sem referências globais | aprovado (dev.51; 1 teste / 46 asserções) |
 | Retenção de uma hora | Kernel | Aguarda o grace period antes de considerar arquivo | aprovado (dev.53; incluído em 4 testes / 169 asserções) |
 | Limite de 25 e cursor rotativo | Kernel | Avança além dos primeiros 25 candidatos, inclusive se eles permanecerem em uso | aprovado (dev.53; teste alcança e remove o 26º arquivo liberado) |
-| Reuso por outro bundle e falha de inspeção global | Kernel | Mantém Media/File se Article referenciar a Media ou a inspeção falhar | aprovado (dev.53; incluído no focal) |
+| Reuso por outro bundle e falha de inspeção global | Kernel | Mantém Media/File se Article referenciar a Media ou a inspeção real falhar | aprovado (dev.53); dev.117 separa falha real (fail-closed) de tipo registrado sem schema/`ContentEntityNullStorage`, que não pode conter referências |
 | Alt obrigatória, formatos/tamanho e validação central | Unit | Envio inválido recebe erro sem criar Media; exceção em `Media::save()` reverte transação e caches | aprovado (dev.85; Wiki Unit 67/360) |
 
 Classe `WikiLeadImageLifecycleKernelTest` completa: revalidada no HEAD
