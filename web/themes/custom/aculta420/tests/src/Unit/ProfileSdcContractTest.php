@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Static SDC contracts for the future private own-profile Studio presenter.
  *
- * Runtime discovery/rendering, User ownership and cache remain integration gates.
+ * Runtime discovery, rendering, User ownership and cache are integration gates.
  */
 #[CoversNothing]
 #[Group('aculta420')]
@@ -88,6 +88,9 @@ final class ProfileSdcContractTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Returns the theme root directory.
+   */
   private function root(): string {
     return dirname(__DIR__, 3);
   }

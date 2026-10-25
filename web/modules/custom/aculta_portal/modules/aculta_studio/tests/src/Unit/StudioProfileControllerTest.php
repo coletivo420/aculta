@@ -21,6 +21,7 @@ use Drupal\profile\ProfileStorageInterface;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
@@ -30,9 +31,12 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 #[Group('aculta_studio')]
 final class StudioProfileControllerTest extends UnitTestCase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
-    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container = new ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
     // ACULTA User's original Bio/Social cards call Url::toString(TRUE)
     // while preparing modal links. Mock Core URL generation for Unit tests.
@@ -182,6 +186,9 @@ final class StudioProfileControllerTest extends UnitTestCase {
     (new StudioProfileController($entities, $account, $link))->page();
   }
 
+  /**
+   * Builds an account double with the given authentication and permission.
+   */
   private function account(bool $authenticated, bool $permitted): AccountInterface {
     $account = $this->createMock(AccountInterface::class);
     $account->method('isAuthenticated')->willReturn($authenticated);
@@ -190,6 +197,9 @@ final class StudioProfileControllerTest extends UnitTestCase {
     return $account;
   }
 
+  /**
+   * Builds the account user double whose data must stay out of Profile.
+   */
   private function user(): UserInterface {
     $user = $this->createMock(UserInterface::class);
     $user->method('id')->willReturn('7');

@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta420\Kernel;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\KernelTests\Components\ComponentKernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Proves that the private-profile SDCs render with Core props and slots.
@@ -15,6 +16,7 @@ use PHPUnit\Framework\Attributes\Group;
  * are supplied by theme components; those belong to the Studio/User owners.
  */
 #[Group('aculta420')]
+#[RunTestsInSeparateProcesses]
 final class ProfileSdcRenderKernelTest extends ComponentKernelTestBase {
 
   /**

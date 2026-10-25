@@ -18,6 +18,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_studio')]
 final class StudioProfileAccessTest extends UnitTestCase {
 
+  /**
+   * Requires the owner module and the account permission before access.
+   */
   public function testOwnerRequiredAndAccountAuthorized(): void {
     $disabled = $this->access(FALSE);
     $enabled = $this->access(TRUE);
@@ -30,12 +33,18 @@ final class StudioProfileAccessTest extends UnitTestCase {
     self::assertContains('user', $allowed->getCacheContexts());
   }
 
+  /**
+   * Builds the access service with the owner module enabled or disabled.
+   */
   private function access(bool $enabled): StudioProfileAccess {
     $modules = $this->createMock(ModuleHandlerInterface::class);
     $modules->method('moduleExists')->with('aculta_user')->willReturn($enabled);
     return new StudioProfileAccess($modules);
   }
 
+  /**
+   * Builds an account double with the given authentication and permission.
+   */
   private function account(bool $authenticated, bool $permission): AccountInterface {
     $account = $this->createMock(AccountInterface::class);
     $account->method('isAuthenticated')->willReturn($authenticated);
