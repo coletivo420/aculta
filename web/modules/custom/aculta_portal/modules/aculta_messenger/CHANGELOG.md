@@ -1,3 +1,9 @@
+## 0.1.1-dev.249 — não reabrir avisos de amizade terminais
+
+O worker de e-mail de amizades agora aceita somente registros `pending` ou `failed` recuperáveis. Replays atrasados da fila não enviam novamente registros cancelados por opt-out/conta inelegível, falhas permanentes ou entregas já concluídas; o caminho de retry temporário permanece ativo.
+
+Validação: `FriendshipNoticeEmailWorkerTest` **10 testes / 187 assertions PASS**; PHP lint nos arquivos alterados PASS. Runtime e transporte externo não executados.
+
 ## 0.1.1-dev.248 — agrupar mensagens por remetente no resumo semanal
 
 O resumo semanal de Mensagens Privadas agora agrega os avisos por remetente, com quantidade em uma única linha. O manifesto conserva cada ID de origem para reconhecer somente os itens realmente incluídos após retry; novas mensagens recebidas durante o transporte permanecem pendentes. A linha não repete contador/título e nunca inclui o conteúdo da conversa.

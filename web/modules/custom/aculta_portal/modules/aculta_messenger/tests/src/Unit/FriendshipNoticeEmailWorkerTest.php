@@ -194,6 +194,31 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * Cancelled and permanent failures cannot be revived by a stale queue item.
+   */
+  public function testTerminalNoticeStatesAreNotSentAgain(): void {
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    try {
+      foreach (['cancelled', 'failed_permanent', 'sent'] as $terminalStatus) {
+        $state = ['status' => $terminalStatus, 'attempts' => 1, 'mailer_managed' => TRUE];
+        $notifier = $this->createMock(MessageNotifyInterface::class);
+        $notifier->expects(self::never())->method('send');
+        $mailer = $this->createMock(AcultaMailerInterface::class);
+        $mailer->expects(self::never())->method('deliver');
+        [$worker] = $this->deliveryWorker($state, $notifier, $mailer);
+
+        $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+
+        self::assertSame($terminalStatus, $state['status']);
+        self::assertSame(1, $state['attempts']);
+      }
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+  }
+
+  /**
    * An unconfirmed email cancels friendship delivery without an attempt.
    */
   public function testUnconfirmedEmailSuppressesDeliveryWithoutAttempt(): void {

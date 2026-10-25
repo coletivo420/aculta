@@ -95,7 +95,7 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
       // persisted status and retry count written by the active worker.
       $message = $this->entityTypeManager->getStorage('message')->load($messageId);
       if (!$message instanceof MessageInterface || $message->bundle() !== FriendshipNoticeSubscriber::TEMPLATE
-        || $message->get(self::STATUS_FIELD)->value === 'sent') {
+        || !in_array($message->get(self::STATUS_FIELD)->value, ['pending', 'failed'], TRUE)) {
         return;
       }
       $mailerManaged = ($data['mailer_managed'] ?? FALSE) === TRUE;
