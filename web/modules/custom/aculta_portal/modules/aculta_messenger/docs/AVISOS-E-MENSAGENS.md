@@ -1,6 +1,6 @@
 # Avisos e mensagens no ACULTA Messenger
 
-Status: documento de referência, atualizado em 2026-10-24. Descreve o que o módulo faz hoje e o que está pendente.
+Status: documento de referência, atualizado em 2026-10-25. Descreve o que o módulo faz hoje e o que está pendente.
 Decisões de origem: F-D21 (política em `docs/portal/AVISOS-E-NOTIFICACOES.md`, no repositório).
 
 ## 1. Dois sistemas, dois destinos
@@ -17,7 +17,7 @@ contrato normativo.
 | Onde aparece | Caixa de conversas (Private Message) | Barra do site, lista de avisos e contadores |
 | Quem envia | Pessoas | O sistema (comunicados, respostas em tópico seguido) |
 | Entidade | `private_message` (nativa) | Comunicados `aculta_notice` (nó); Fórum `aculta_aviso`; adapters Message de LMS, Wiki, Loja, Doações e Amizades |
-| E-mail | Pelo Message Notify, quando a pessoa ativa | Sem e-mail, resumo diário ou envio direto, conforme preferência individual e modos autorizados pelo administrador |
+| E-mail | ACULTA Mailer: aviso genérico direto ou resumo semanal, sem conteúdo da conversa; itens antigos de Mensagens Privadas ou Amizades ainda usam Message Notify até a drenagem | Sem e-mail, resumo diário ou envio direto, conforme preferência individual e modos autorizados pelo administrador |
 | Contadores | Não lidas por conversa (nativo) | `contador_site` por tópico; `MessengerCounts` |
 
 Regra: uma resposta em tópico seguido é um **aviso**, não uma mensagem. A publicação de tópico também não gera mais

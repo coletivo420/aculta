@@ -1,6 +1,6 @@
 # Arquitetura do ACULTA Messenger
 
-**Fonte normativa principal.** Revisão: 2026-10-24. O inventário de rotas e classes implementadas está em [MESSENGER.md](../../../../../../docs/portal/MESSENGER.md); o plano de entrega é [ROADMAP.md](ROADMAP.md).
+**Fonte normativa principal.** Revisão: 2026-10-25. O inventário de rotas e classes implementadas está em [MESSENGER.md](../../../../../../docs/portal/MESSENGER.md); o plano de entrega é [ROADMAP.md](ROADMAP.md).
 
 ## Decisão e limites
 
@@ -67,18 +67,27 @@ destinatário. O evento de fila marca a entrega como gerenciada pelo Mailer; a e
 Message guarda esse ownership para que replays legados não a processem pelo caminho antigo.
 Itens previamente enfileirados sem o marcador continuam temporariamente em Message Notify,
 pois o caminho antigo não deixou correlação verificável para distinguir aceite de falha.
-Depois que a fila legada for drenada em ambiente operacional, a dependência e o caminho
-Message Notify serão removidos em uma atualização posterior. Update 10008 instala o campo
-aditivo; não foi aplicado no Runtime.
+Depois que a fila legada for drenada em ambiente operacional, a chamada de Message Notify
+e seu caminho de compatibilidade no Messenger serão removidos em uma atualização posterior.
+O pacote contrib continuará instalado enquanto Private Message/Message Subscribe o exigirem.
+Leitura somente em 2026-10-25: `updatedb:status` ainda lista as atualizações 10008–10011
+e os post-updates de preferências privada e compartilhada; nenhum update foi aplicado.
+Os campos de ownership, digest privado e leitura de amizade não estão disponíveis no
+Runtime até a atualização. Na mesma leitura, a fila
+`aculta_msg_friendship` continha 124 itens legados de um único campo
+(`message_id`), enquanto `aculta_msg_private_notification` não tinha itens.
+Nenhum item foi reivindicado, processado ou alterado. Portanto, o caminho
+compatível de amizade permanece até a fila ser drenada; não reencaminhar esses
+itens pelo Mailer, pois o aceite legado não tem correlação verificável.
 
 Pedidos e aceites de amizade seguem o mesmo ownership central: o `aculta_user` mantém
 entidade e workflow, enquanto o Messenger persiste o aviso no bundle `Message` existente e
 envia novos e-mails pelo tipo `friendship_notice` do ACULTA Mailer. O campo
 `field_aculta_mailer_managed` tem nome compatível com o limite de campo do Drupal e separa
 itens novos de fila dos itens antigos. Update 10009 instala o campo somente no bundle de
-amizade. Consulta Drush somente leitura ao Runtime de teste em 2026-10-24 encontrou 128
-itens pendentes nessa fila; nenhum item foi processado ou alterado, portanto o caminho
-compatível deve permanecer até a drenagem operacional ser confirmada.
+amizade. Consulta Drush somente leitura ao Runtime de teste em 2026-10-25 encontrou 124
+itens legados pendentes nessa fila; nenhum item foi processado ou alterado, portanto o
+caminho compatível deve permanecer até a drenagem operacional ser confirmada.
 
 Cada evento de transição transporta um identificador aleatório imutável além do timestamp
 `changed`. O timestamp tem precisão de segundos e, sozinho, não distingue um pedido

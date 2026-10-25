@@ -1,7 +1,7 @@
 # Inventário de integrações
 
 Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
-2026-10-14. Versões publicadas foram comparadas com os pacotes Composer
+2026-10-25. Versões publicadas foram comparadas com os pacotes Composer
 instalados nesta branch.
 
 ## Estado do repositório
@@ -37,13 +37,14 @@ de solicitação, aceite, cancelamento, recusa ou inbox de pedidos. Representar
 amizade apenas como Flag seria ambíguo: não há estado explícito de pedido e
 aceite, nem transições atômicas definidas pelo módulo.
 
-**Decisão para 0.1.1:** não instalar Friendship nem User Relationships e não
-simular workflow de amizade com flags. A capacidade social será implementada
-em `aculta_user`, que já é dono dos perfis e regras individuais de conta. O
-Messenger consumirá seu serviço público; Message/Message Notify continuam
-responsáveis por avisos, Private Message por conversas e User Data pela
-preferência de comunicação. Essa é uma lacuna funcional real, não uma nova
-engine de mensagens. Nenhum pacote Composer novo é necessário.
+**Registro histórico da decisão para 0.1.1:** não instalar os projetos contrib
+Friendship/User Relationships nem simular um workflow de amizade com flags. A
+implementação posterior criou a entidade e o workflow próprios em `aculta_user`,
+com eventos e avisos centralizados no Messenger. A atribuição antiga de entrega
+a Message Notify foi substituída pelo ACULTA Mailer para eventos novos; veja
+[ARCHITECTURE.md](ARCHITECTURE.md) para o estado normativo e a drenagem
+temporária de itens legados. Nenhum pacote Friendship/User Relationships foi
+adicionado.
 
 O código Friendship serve como referência para a máquina de estados e os casos
 de uso `follow`, `accept`, `remove`, `isFriend` e `hasRelationship`, não como
@@ -152,11 +153,13 @@ O submódulo `private_message_notify` também entregaria email via
 privada. Foi desinstalado do Runtime (0.1.1-dev.68), sem avisos nem tabelas
 próprias; o lifecycle guard do Messenger impede a reativação simultânea.
 
-O envio externo permanece no transporte de e-mail já instalado pelo projeto:
-Drupal Mail com Symfony Mailer/camada de envio E-Mails ACULTA. Message Notify é responsável pela
-preparação/entrega lógica; não há configuração SMTP ou transportador próprio do
-Messenger. O `private_message_notify` opcional é um possível chamador do mesmo
-serviço, portanto deve haver um único caminho ativo para notificar cada evento.
+O ACULTA Mailer é o transporte e a camada de composição de e-mail usados pelos
+fluxos novos do Messenger. O Messenger não configura SMTP nem mantém outro
+transportador. O submódulo opcional `private_message_notify` continua proibido:
+seu template padrão expõe o corpo da conversa. Message Notify permanece apenas
+como caminho temporário para itens antigos de amizade já enfileirados sem o
+marcador `field_aculta_mailer_managed`; esses itens não têm correlação que
+permita migrar o retry com segurança.
 
 A configuração exportada atual não concede `use private messaging system` nem
 `access user profiles` a papéis. A ativação do Messenger não deve conceder essas
@@ -173,15 +176,18 @@ de bloqueio nos dois sentidos antes do submit, sem informar ao remetente a
 existência ou a identidade de um bloqueador.
 
 O hook `private_message_new_message` grava um item no Queue API do Core. O
-worker resolve a thread após o salvamento, revalida membership/access, status,
-permissões e bloqueio, registra evento como Message e envia aviso com
-`message_notify.sender`. Uma referência Message → Private Message e lock por
-evento/destinatário evitam criar notificações duplicadas. O template contém o
-aviso e a URL da página central da conta, sem corpo, assunto ou trecho da
-conversa. O assunto é fixo e genérico. O link resolve a central `/mensagens` no
-purpose `account`. Falhas de entrega retornadas pelo notifier podem ser
-tentadas até três vezes; runtime no Homelab ainda é necessário para verificar o
-transporte existente.
+worker resolve a thread após o salvamento e revalida membership/access, status,
+permissões e bloqueios antes de registrar um aviso como Message. Novas
+notificações usam o ACULTA Mailer em envio direto ou como item de resumo
+semanal, conforme a preferência; o texto informa apenas que há uma nova
+mensagem e o nome do remetente, sem corpo, assunto ou trecho da conversa. O
+assunto é fixo e genérico, e o link resolve `/mensagens` no purpose `account`.
+Itens de amizade legados que ainda usam Message Notify são reconhecidos pelo
+ownership persistido e ficam nesse transporte até a drenagem operacional. Em
+2026-10-25, uma consulta somente leitura encontrou 124 itens legados na fila de
+amizade e nenhum item na fila de notificação privada; nenhuma fila foi
+processada ou alterada. A saída do caminho legado exige primeiro confirmar que
+a fila de amizade foi drenada.
 
 Este inventário é estático. Ainda não comprova instalação Drupal, habilitação,
 cache/access de runtime ou compatibilidade em PHP 8.5.

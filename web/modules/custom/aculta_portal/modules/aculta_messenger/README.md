@@ -168,6 +168,9 @@ Mensagens são conversas entre pessoas. Avisos são comunicações do sistema. A
 - Avisos novos de Mensagem Privada usam o tipo registrado no ACULTA Mailer e
   correlação determinística. O worker mantém temporariamente Message Notify
   somente para itens antigos sem o marcador de migração.
+- Novos avisos de amizade também usam ACULTA Mailer. Itens antigos que já estão
+  na fila de amizade continuam pelo transporte legado até sua drenagem; não são
+  retransmitidos pelo Mailer sem uma correlação de aceite verificável.
 - O adapter LMS central adiciona avisos educacionais à lista/contador global;
   digest e e-mail direto usam preferências comuns. O produtor no `aculta_lms`
   não implementa persistência ou entrega.
@@ -206,9 +209,10 @@ Composer. O inventário e os limites da inspeção estão em
 O PHP CLI disponível nesta execução é 8.4.26. O projeto pede PHP 8.5; esta
 máquina não comprova validação em PHP 8.5. Compatibilidade de cada dependência
 com PHP 8.5 também não é declarada até examinar código e metadados instalados.
-O transporte de e-mail já instalado é o caminho de entrega previsto: Drupal Mail
-com Symfony Mailer/camada de envio E-Mails ACULTA. O Messenger não adiciona SMTP ou outro
-transportador.
+O ACULTA Mailer transporta os avisos novos; o Messenger não adiciona SMTP nem
+outro transportador. Message Notify permanece temporariamente no caminho de
+compatibilidade dos itens legados de amizade até a drenagem documentada em
+[ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Domain Purpose
 

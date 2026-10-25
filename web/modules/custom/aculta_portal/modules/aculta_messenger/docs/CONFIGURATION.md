@@ -1,7 +1,7 @@
 # Configuração e operação
 
 Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
-2026-10-24.
+2026-10-25.
 
 ## Princípios
 
@@ -12,10 +12,11 @@ Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
 - Config exportável pode conter nomes, tipos e políticas, nunca tokens, senha,
   credencial SMTP ou segredo. Segredos, se uma integração futura realmente
   exigir, seguem Drupal Key provider `env` e o contrato de secrets do ACULTA.
-- A entrega usa a ferramenta de e-mail já instalada: Message Notify chama o
-  serviço de mail do Drupal, que usa o Symfony Mailer/camada de envio E-Mails ACULTA existente.
-  Não configurar SMTP ou outro transporte novo nem adicionar dependência para
-  isso.
+- A entrega nova usa `aculta_mailer.mailer`, que mantém o transporte e os
+  templates de e-mail ACULTA. Não configurar SMTP ou outro transporte novo nem
+  adicionar dependência para isso. A fila antiga de amizade permanece
+  temporariamente em Message Notify até ser drenada; o caminho não deve ser
+  removido nem os itens reenfileirados pelo Mailer antes dessa confirmação.
 - Administração de Site Alert e comunicados permanece em `main`.
 - A central pessoal e suas configurações ficam em `account`.
 
@@ -24,8 +25,9 @@ Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
 `aculta_messenger.info.yml` declara dependências no ACULTA Portal, nos cinco
 módulos integrados e nos módulos Core necessários ao bundle de aviso. A
 integração privada usa callback Form API, Flood e Queue API do Core,
-configuração Message exportável e o serviço existente
-`message_notify.sender`. As rotas são da central; o módulo acrescenta o tipo
+configuração Message exportável e o serviço `aculta_mailer.mailer` para novas
+entregas. `message_notify.sender` só permanece para itens legados de amizade
+ainda na fila. As rotas são da central; o módulo acrescenta o tipo
 de Node, uma decisão de node access e as permissões de Flag limitadas a
 `aculta_notice_read`. `composer.json` e `composer.lock` adicionam somente os
 cinco pacotes; versões em
