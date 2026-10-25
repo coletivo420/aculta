@@ -1,3 +1,14 @@
+## 0.1.1-dev.371 — responsividade da gaveta de conversas
+
+Repetido o smoke autenticado somente leitura com janela solicitada de 390 px.
+Firefox ESR entregou viewport efetivo de 500 px; as três linhas (incluindo dois
+grupos), estado de leitura e navegação acessível permaneceram sem overflow.
+
+Validação: **10/10 PASS** em viewport efetivo de 500 px; guard `teste.comum`
+PASS. A sessão não emitiu requests de escrita nem alterou dados. O resultado
+não declara viewport real de 390 px nem substitui teste em dispositivo/leitor
+de tela.
+
 ## 0.1.1-dev.370 — smoke HTTP somente leitura da gaveta populada
 
 Adicionada uma suíte BrowserTest versionada para a lista autenticada de
