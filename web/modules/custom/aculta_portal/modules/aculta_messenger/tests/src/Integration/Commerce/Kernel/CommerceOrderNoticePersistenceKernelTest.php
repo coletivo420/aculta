@@ -124,7 +124,6 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
     $uid = (int) $user->id();
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->with($uid, 'loja')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
-    $preferences->method('resumoEmailLigado')->with($uid)->willReturn(TRUE);
     $manager = $this->manager($preferences, NULL, $user);
     $consumer = new CommerceOrderNoticeConsumer($manager);
     $event = $this->event($uid);

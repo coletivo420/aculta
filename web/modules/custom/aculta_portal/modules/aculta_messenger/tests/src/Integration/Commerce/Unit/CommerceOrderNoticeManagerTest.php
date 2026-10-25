@@ -123,7 +123,6 @@ final class CommerceOrderNoticeManagerTest extends UnitTestCase {
       default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
     });
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
-    $preferences->method('resumoEmailLigado')->with(27)->willReturn(TRUE);
     $preferences->expects(self::once())->method('emailMode')->with(27, 'loja')->willReturn(AvisoPreferencias::EMAIL_OFF);
 
     self::assertSame([], $this->manager($entities, $preferences, $this->createMock(QueueFactory::class))->digestRowsFor(27));

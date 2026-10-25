@@ -205,7 +205,8 @@ O fluxo legado descrito em dev.5 foi substituído. Hoje `seguir_topico` define
 quem acompanha o tópico; publicação de Comment/ForumPost e revisão de tópico
 gera `MessengerNoticeEvent`, consumido pelo Messenger e agregado em
 `aculta_aviso` com idempotência no ledger existente. A leitura pelo tópico
-atualiza o contador do site; o resumo diário opt-in passa pelo ACULTA Mailer.
+atualiza o contador do site; o resumo diário selecionado por categoria passa
+pelo ACULTA Mailer.
 Publicar ou seguir conteúdo não cria conversa nem entrega uma Message aos
 seguidores.
 

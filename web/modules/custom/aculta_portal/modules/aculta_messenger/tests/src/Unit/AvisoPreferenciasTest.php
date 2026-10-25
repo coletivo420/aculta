@@ -117,6 +117,44 @@ final class AvisoPreferenciasTest extends UnitTestCase {
   }
 
   /**
+   * Explicit category selection replaces the legacy global digest gate.
+   */
+  public function testExplicitDigestModeDoesNotRequireLegacyGlobalOptIn(): void {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static fn(string $module, int $uid, string $key): mixed => match ($key) {
+      'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+      'avisos_resumo_email' => 0,
+      default => NULL,
+    });
+    $preferences = new AvisoPreferencias($userData);
+
+    self::assertSame(AvisoPreferencias::EMAIL_DIGEST, $preferences->emailMode(27, 'wiki'));
+  }
+
+  /**
+   * Accounts without a new preference retain prior opt-in or remain site-only.
+   */
+  public function testLegacyGlobalDigestOptInMigratesLazilyToCategoryMode(): void {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static fn(string $module, int $uid, string $key): mixed => match ($key) {
+      'avisos_resumo_email' => 1,
+      default => NULL,
+    });
+    $preferences = new AvisoPreferencias($userData);
+
+    self::assertSame(AvisoPreferencias::EMAIL_DIGEST, $preferences->emailMode(27, 'wiki'));
+  }
+
+  /**
+   * Missing legacy opt-in never enables email for a new account.
+   */
+  public function testMissingLegacyOptInDefaultsToSiteOnly(): void {
+    $preferences = new AvisoPreferencias($this->createMock(UserDataInterface::class));
+
+    self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, 'wiki'));
+  }
+
+  /**
    * Honors the administrator's weekly digest default for new preferences.
    */
   public function testPrivateMessageDigestCanBeTheAdministrativeDefault(): void {

@@ -62,15 +62,14 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
     ] as $element) {
       self::assertSame($expectedOptions, array_keys($form['avisos'][$element]['#options']), $element);
       self::assertStringContainsString('O aviso no site permanece ativo.', $form['avisos'][$element]['#description']->getUntranslatedString(), $element);
-      self::assertStringContainsString('O resumo diário também exige o opt-in geral acima', $form['avisos'][$element]['#description']->getUntranslatedString(), $element);
-      self::assertStringContainsString('o envio direto não depende dele', $form['avisos'][$element]['#description']->getUntranslatedString(), $element);
+      self::assertStringContainsString('Escolha sem e-mail, resumo diário ou envio direto', $form['avisos'][$element]['#description']->getUntranslatedString(), $element);
     }
     self::assertSame(
       [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE],
       array_keys($form['avisos']['email_amizade']['#options']),
       'Friendship email is site-only or direct, without digest mode.',
     );
-    self::assertArrayHasKey('resumo_email', $form['avisos'], 'Digest delivery remains a distinct general opt-in.');
+    self::assertArrayNotHasKey('resumo_email', $form['avisos'], 'Category mode is the single email preference.');
     self::assertArrayHasKey('aviso_sempre', $form['avisos'], 'Site notices remain mandatory.');
   }
 
@@ -146,7 +145,7 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
   public function testSubmitSavesModesForAllIntegratedOrigins(): void {
     $saved = [];
     $userData = $this->createMock(UserDataInterface::class);
-    $userData->expects(self::exactly(10))
+    $userData->expects(self::exactly(7))
       ->method('set')
       ->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use (&$saved): void {
         self::assertSame(AvisoPreferencias::MODULO, $module);
@@ -158,7 +157,6 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
     $account->method('id')->willReturn(27);
     $formBuilder = $this->formBuilder($account, $preferences);
     $formState = new FormState();
-    $formState->setValue('resumo_email', FALSE);
     $formState->setValue('email_respostas', AvisoPreferencias::EMAIL_DIGEST);
     $formState->setValue('email_atualizacoes', AvisoPreferencias::EMAIL_OFF);
     $formState->setValue('email_aprendizagem', AvisoPreferencias::EMAIL_IMMEDIATE);
@@ -171,9 +169,6 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
     $formBuilder->submit($form, $formState);
 
     self::assertSame([
-      'avisos_resumo_email' => 0,
-      'avisos_resumo_forum_resposta' => 1,
-      'avisos_resumo_forum_atualizacao' => 0,
       'avisos_email_mode_forum_resposta' => AvisoPreferencias::EMAIL_DIGEST,
       'avisos_email_mode_forum_atualizacao' => AvisoPreferencias::EMAIL_OFF,
       'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_IMMEDIATE,

@@ -23,7 +23,8 @@ use Psr\Log\LoggerInterface;
  * Resumo diário de avisos por e-mail (ACULTA Messenger, F5.2).
  *
  * Envia um e-mail diário por pessoa, com avisos atuais e accessíveis.
- * Exige opt-in, e-mail confirmado e conta ativa. Limpa pendências após sucesso.
+ * Exige modo digest por categoria, e-mail confirmado e conta ativa. Limpa
+ * pendências após sucesso.
  */
 final class AvisosResumo {
 
@@ -217,21 +218,6 @@ final class AvisosResumo {
     if ($recuperacao !== NULL) {
       return $recuperacao ? self::RESULT_RECONCILED : self::RESULT_SKIPPED;
     }
-    if (!$this->preferencias->resumoEmailLigado($uid)) {
-      foreach ($this->forumAvisosPendentes($uid) as $aviso) {
-        $this->avisos->clearPendingEmailCount(
-          $uid,
-          (int) $aviso->get('assunto_nid')->value,
-          (string) $aviso->get('tipo')->value,
-        );
-      }
-      foreach ($this->digestProviders as $provider) {
-        if ($provider instanceof AvisoDigestProviderInterface
-          && !$provider instanceof AvisoIndependentDigestProviderInterface) {
-          $provider->discardDigest($uid);
-        }
-      }
-    }
     if (!$conta->isActive() || $conta->getEmail() === '' || !$this->emailPolicy->isConfirmed($conta)) {
       return self::RESULT_SKIPPED;
     }
@@ -280,13 +266,6 @@ final class AvisosResumo {
     $providerLookupFailed = $recipientLookupFailed;
     foreach ($this->uniqueDigestProviders() as $provider) {
       if (!$provider instanceof AvisoDigestProviderInterface) {
-        continue;
-      }
-      // The global daily-summary opt-in applies to content-origin adapters.
-      // Private messages have a separately selected weekly digest and remain
-      // eligible when that independent channel is enabled.
-      if (!$this->preferencias->resumoEmailLigado($uid)
-        && !$provider instanceof AvisoIndependentDigestProviderInterface) {
         continue;
       }
       try {

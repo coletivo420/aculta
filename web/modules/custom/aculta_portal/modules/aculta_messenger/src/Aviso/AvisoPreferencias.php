@@ -24,6 +24,8 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
 
   public const MODULO = 'aculta_messenger';
 
+  private const LEGACY_DIGEST_OPT_IN = 'avisos_resumo_email';
+
   public const EMAIL_PRIVATE_MESSAGES = 'mensagens_privadas';
 
   public const EMAIL_FRIENDSHIP = 'amizade';
@@ -90,19 +92,6 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
   }
 
   /**
-   * Verifica se o resumo diário por e-mail está ligado para esta conta.
-   *
-   * @param int $uid
-   *   ID da conta.
-   *
-   * @return bool
-   *   TRUE quando a conta optou pelo resumo.
-   */
-  public function resumoEmailLigado(int $uid): bool {
-    return (bool) $this->userData->get(self::MODULO, $uid, 'avisos_resumo_email');
-  }
-
-  /**
    * Verifica se o tipo está incluído no resumo da conta.
    *
    * @param int $uid
@@ -146,7 +135,11 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
         $mode = self::EMAIL_IMMEDIATE;
       }
       else {
-        $mode = self::EMAIL_DIGEST;
+        // Preserve the old global opt-in for accounts that have not selected
+        // a category mode yet. New explicit choices no longer depend on it.
+        $mode = (bool) $this->userData->get(self::MODULO, $uid, self::LEGACY_DIGEST_OPT_IN)
+          ? self::EMAIL_DIGEST
+          : self::EMAIL_OFF;
       }
       // Preserve existing Forum reply/update choices until a new mode is saved.
       if (in_array($category, [ForumAviso::TIPO_RESPOSTA, ForumAviso::TIPO_ATUALIZACAO], TRUE)) {
@@ -175,14 +168,6 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
       throw new \InvalidArgumentException('Modo de e-mail inválido.');
     }
     $this->userData->set(self::MODULO, $uid, 'avisos_email_mode_' . $category, $mode);
-  }
-
-  /**
-   * Grava as preferências. Não altera os avisos no site. */
-  public function salvar(int $uid, bool $resumoEmail, bool $respostas, bool $atualizacoes): void {
-    $this->userData->set(self::MODULO, $uid, 'avisos_resumo_email', $resumoEmail ? 1 : 0);
-    $this->userData->set(self::MODULO, $uid, 'avisos_resumo_' . ForumAviso::TIPO_RESPOSTA, $respostas ? 1 : 0);
-    $this->userData->set(self::MODULO, $uid, 'avisos_resumo_' . ForumAviso::TIPO_ATUALIZACAO, $atualizacoes ? 1 : 0);
   }
 
 }

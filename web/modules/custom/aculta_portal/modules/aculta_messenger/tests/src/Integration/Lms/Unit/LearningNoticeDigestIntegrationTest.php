@@ -23,7 +23,6 @@ use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
-use Drupal\aculta_messenger\Aviso\AvisoIndependentDigestProviderInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
@@ -764,13 +763,13 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
-   * Independent weekly delivery remains eligible when daily digest is off.
+   * An explicit category digest works without the legacy global opt-in.
    */
   public function testIndependentWeeklyDigestIsNotDisabledByDailyOptOut(): void {
-    $provider = new IndependentTestLearningDigestProvider([27]);
+    $provider = new TestLearningDigestProvider([27]);
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects($this->once())->method('deliver')->willReturn(SendResult::sent());
-    $summary = $this->createSummary($provider, $mailer, FALSE);
+    $summary = $this->createSummary($provider, $mailer, FALSE, categoryMode: AvisoPreferencias::EMAIL_DIGEST);
 
     self::assertSame(1, $summary->enviarResumos());
     self::assertSame([[501]], $provider->markedDeliveryIds);
@@ -780,7 +779,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   /**
    * Builds the real Messenger digest service with an LMS provider.
    */
-  private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL, ?Connection $database = NULL, ?UserDataInterface $userDataOverride = NULL, ?TimeInterface $time = NULL): AvisosResumo {
+  private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL, ?Connection $database = NULL, ?UserDataInterface $userDataOverride = NULL, ?TimeInterface $time = NULL, ?string $categoryMode = NULL): AvisosResumo {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -801,7 +800,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $data = [];
     $userData = $userDataOverride ?? $this->createMock(UserDataInterface::class);
     if ($userDataOverride === NULL) {
-      $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($optIn, &$data): mixed {
+      $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($optIn, $categoryMode, &$data): mixed {
         if ($uid === NULL) {
           return [];
         }
@@ -809,6 +808,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
           return $data[$module][$uid][$key];
         }
         return match ($key) {
+          'avisos_email_mode_aprendizagem' => $categoryMode,
           'avisos_resumo_email' => $optIn,
           'email_confirmed' => TRUE,
           'avisos_resumo_ultimo' => 0,
@@ -974,11 +974,6 @@ class TestLearningDigestProvider implements AvisoDigestProviderIdentityInterface
   }
 
 }
-
-/**
- * Provider fixture for a channel with an independent weekly schedule.
- */
-final class IndependentTestLearningDigestProvider extends TestLearningDigestProvider implements AvisoIndependentDigestProviderInterface {}
 
 /**
  * Simulates a class refactor while preserving the LMS digest provider identity.

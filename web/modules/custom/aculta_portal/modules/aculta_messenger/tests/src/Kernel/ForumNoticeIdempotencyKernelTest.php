@@ -457,7 +457,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $userData = $this->container->get('user.data');
     $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
     $preferences = new AvisoPreferencias($userData);
-    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $preferences->saveEmailMode($uid, 'forum_resposta', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'forum_atualizacao', AvisoPreferencias::EMAIL_DIGEST);
     $topic = $this->createTopic('Resumo compartilhado');
     $directComment = $this->createPersistedComment($topic, (int) $author->id());
     $eventComment = $this->createPersistedComment($topic, (int) $author->id());
@@ -539,7 +540,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $userData = $this->container->get('user.data');
     $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
     $preferences = new AvisoPreferencias($userData);
-    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $preferences->saveEmailMode($uid, 'forum_resposta', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'forum_atualizacao', AvisoPreferencias::EMAIL_DIGEST);
     $topic = $this->createTopic('Digest com lease expirada');
     $firstComment = $this->createPersistedComment($topic, (int) $author->id());
     $secondComment = $this->createPersistedComment($topic, (int) $author->id());
@@ -810,7 +812,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $userData = $this->container->get('user.data');
     $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
     $preferences = new AvisoPreferencias($userData);
-    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $preferences->saveEmailMode($uid, 'forum_resposta', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'forum_atualizacao', AvisoPreferencias::EMAIL_DIGEST);
     $topic = $this->createTopic('Gerações do digest');
     $avisos = $this->createAvisoService(
       [$uid],
@@ -869,7 +872,9 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $userData = $this->container->get('user.data');
     $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
     $preferences = new AvisoPreferencias($userData);
-    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $preferences->saveEmailMode($uid, 'forum_resposta', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'forum_atualizacao', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'wiki', AvisoPreferencias::EMAIL_DIGEST);
     $topic = $this->createTopic('Digest transacional');
     $comment = $this->createPersistedComment($topic, (int) $author->id());
     $policy = $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE);
@@ -963,7 +968,9 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $uid = (int) $account->id();
     $userData = $this->container->get('user.data');
     $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
-    (new AvisoPreferencias($userData))->salvar($uid, TRUE, TRUE, TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->saveEmailMode($uid, 'forum_resposta', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'forum_atualizacao', AvisoPreferencias::EMAIL_DIGEST);
     $snapshot = [
       'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
       'created' => $this->container->get('datetime.time')->getRequestTime(),
@@ -1018,7 +1025,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $userData = $this->container->get('user.data');
     $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
     $preferences = new AvisoPreferencias($userData);
-    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $preferences->saveEmailMode($uid, 'forum_resposta', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'forum_atualizacao', AvisoPreferencias::EMAIL_DIGEST);
     $topic = $this->createTopic('Falha permanente do digest');
     $comment = $this->createPersistedComment($topic, (int) $author->id());
     $policy = $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE);

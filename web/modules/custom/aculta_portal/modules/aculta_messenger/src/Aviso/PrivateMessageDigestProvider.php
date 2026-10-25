@@ -18,7 +18,7 @@ use Drupal\user\UserDataInterface;
 
 /**
  * Supplies privacy-minimal weekly summaries of pending private messages. */
-final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityInterface, AvisoIndependentDigestProviderInterface {
+final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityInterface {
 
   use StringTranslationTrait;
 

@@ -86,7 +86,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     $userData = $this->container->get('user.data');
     $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
     $preferences = new AvisoPreferencias($userData);
-    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $preferences->saveEmailMode($uid, 'wiki', AvisoPreferencias::EMAIL_DIGEST);
 
     $database = $this->container->get('database');
     $provider = new DigestRecoveryProvider($uid, $database, failFirstAcknowledgement: TRUE);
@@ -222,7 +222,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     $userData = $this->container->get('user.data');
     $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
     $preferences = new AvisoPreferencias($userData);
-    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $preferences->saveEmailMode($uid, 'wiki', AvisoPreferencias::EMAIL_DIGEST);
 
     $database = $this->container->get('database');
     $provider = new DigestRecoveryProvider($uid, $database);
@@ -324,7 +324,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     $userData = $this->container->get('user.data');
     $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
     $preferences = new AvisoPreferencias($userData);
-    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $preferences->saveEmailMode($uid, 'wiki', AvisoPreferencias::EMAIL_DIGEST);
 
     $database = $this->container->get('database');
     $provider = new DigestRecoveryProvider($uid, $database);
@@ -432,7 +432,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     $userData = $this->container->get('user.data');
     $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
     $preferences = new AvisoPreferencias($userData);
-    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $preferences->saveEmailMode($uid, 'wiki', AvisoPreferencias::EMAIL_DIGEST);
 
     // KernelTestBase overrides the default backend globally; replace that
     // test-only override so this case can hold the real Mailer transport.

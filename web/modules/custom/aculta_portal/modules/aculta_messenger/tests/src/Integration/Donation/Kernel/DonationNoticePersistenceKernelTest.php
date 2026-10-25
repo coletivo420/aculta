@@ -136,7 +136,6 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
     $uid = (int) $user->id();
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->with($uid, 'doacao')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
-    $preferences->method('resumoEmailLigado')->with($uid)->willReturn(TRUE);
     $manager = $this->manager($preferences, $user);
     $consumer = new DonationNoticeEventConsumer($manager);
     $events = [

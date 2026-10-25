@@ -54,8 +54,12 @@ e-mail não pode ser removida e os avisos/conversas no site continuam disponíve
 Uma preferência individual temporariamente bloqueada pela política administrativa
 passa a valer novamente se o modo voltar a ser permitido.
 
-O opt-in geral de resumo diário habilita somente a inclusão de avisos no digest;
-ele não altera o envio direto, configurado separadamente em cada categoria.
+O modo escolhido em cada categoria é a única preferência de entrega para aquele
+canal: resumo diário ativa o digest sem um segundo opt-in. Contas sem uma
+preferência nova herdam o opt-in global legado apenas como valor inicial
+(digest para quem havia optado, somente no site para os demais); uma escolha
+explícita por categoria sempre prevalece. A chave antiga não é mais gravada nem
+usada como bloqueio de envio.
 
 Na aba Avisos da central da conta, filtros GET permitem selecionar origem
 (Comunicados, Fórum, Alertas, Amizades, Aprendizagem, Wiki, Loja, Doações ou Conta) e
@@ -75,7 +79,7 @@ post-update e o Messenger passa a ser sua fonte normativa.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento atual `0.1.1-dev.284` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento atual `0.1.1-dev.285` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação

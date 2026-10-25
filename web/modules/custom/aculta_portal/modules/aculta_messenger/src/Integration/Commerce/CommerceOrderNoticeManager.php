@@ -297,7 +297,6 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
   public function digestRowsFor(int $uid): array {
     $account = $this->entityTypeManager->getStorage('user')->load($uid);
     if (!$account instanceof UserInterface || !$account->isActive()
-      || !$this->preferences->resumoEmailLigado($uid)
       || $this->preferences->emailMode($uid, 'loja') !== AvisoPreferencias::EMAIL_DIGEST) {
       $this->discardDigest($uid);
       return [];

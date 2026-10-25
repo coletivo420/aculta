@@ -10,20 +10,12 @@ namespace Drupal\aculta_messenger\Aviso;
 interface AvisoPreferenciasInterface {
 
   /**
-   * Checks whether the account opted into the daily email digest. */
-  public function resumoEmailLigado(int $uid): bool;
-
-  /**
    * Checks whether the account includes a notice type in its digest. */
   public function tipoNoResumo(int $uid, string $tipo): bool;
 
   /**
    * Gets the account's email mode for a notice category. */
   public function emailMode(int $uid, string $category): string;
-
-  /**
-   * Saves digest preferences without changing site notices. */
-  public function salvar(int $uid, bool $resumoEmail, bool $respostas, bool $atualizacoes): void;
 
   /**
    * Saves direct, digest, or disabled email delivery for a category. */

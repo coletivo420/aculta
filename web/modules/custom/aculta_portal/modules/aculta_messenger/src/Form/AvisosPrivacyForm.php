@@ -20,7 +20,7 @@ use Drupal\node\NodeInterface;
 /**
  * Bloco "Avisos" da página de privacidade da conta (ACULTA Messenger, F5.2).
  *
- * Os avisos no site são obrigatórios. O bloco controla e-mail direto e resumo.
+ * Os avisos no site são obrigatórios. O bloco controla os modos de e-mail.
  */
 final class AvisosPrivacyForm {
 
@@ -47,51 +47,45 @@ final class AvisosPrivacyForm {
         '#markup' => new TranslatableMarkup('Avisos no site são sempre exibidos: respostas em tópicos que você segue e atualizações desses tópicos.'),
       ],
       'assinaturas' => $this->subscriptionsBuild(),
-      'resumo_email' => [
-        '#type' => 'checkbox',
-        '#title' => new TranslatableMarkup('Receber resumo diário por e-mail'),
-        '#description' => new TranslatableMarkup('Um e-mail por dia, somente quando houve novidade. Desligado por padrão. Este opt-in controla resumos; o envio direto é configurado separadamente por categoria.'),
-        '#default_value' => $this->preferencias->resumoEmailLigado($uid),
-      ],
       'email_respostas' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails de respostas em tópicos seguidos'),
-        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. O resumo diário também exige o opt-in geral acima; o envio direto não depende dele. O administrador pode limitar os modos disponíveis.'),
+        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. Escolha sem e-mail, resumo diário ou envio direto; a administração pode limitar as opções.'),
         '#options' => $this->emailModeOptions(Aviso::TIPO_RESPOSTA),
         '#default_value' => $this->preferencias->emailMode($uid, Aviso::TIPO_RESPOSTA),
       ],
       'email_atualizacoes' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails de atualizações de tópicos'),
-        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. O resumo diário também exige o opt-in geral acima; o envio direto não depende dele. O administrador pode limitar os modos disponíveis.'),
+        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. Escolha sem e-mail, resumo diário ou envio direto; a administração pode limitar as opções.'),
         '#options' => $this->emailModeOptions(Aviso::TIPO_ATUALIZACAO),
         '#default_value' => $this->preferencias->emailMode($uid, Aviso::TIPO_ATUALIZACAO),
       ],
       'email_aprendizagem' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails de aprendizagem'),
-        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. O resumo diário também exige o opt-in geral acima; o envio direto não depende dele. O administrador pode limitar os modos disponíveis.'),
+        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. Escolha sem e-mail, resumo diário ou envio direto; a administração pode limitar as opções.'),
         '#options' => $this->emailModeOptions('aprendizagem'),
         '#default_value' => $this->preferencias->emailMode($uid, 'aprendizagem'),
       ],
       'email_wiki' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails da Wiki'),
-        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. O resumo diário também exige o opt-in geral acima; o envio direto não depende dele. O administrador pode limitar os modos disponíveis.'),
+        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. Escolha sem e-mail, resumo diário ou envio direto; a administração pode limitar as opções.'),
         '#options' => $this->emailModeOptions('wiki'),
         '#default_value' => $this->preferencias->emailMode($uid, 'wiki'),
       ],
       'email_loja' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails da Loja'),
-        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. O resumo diário também exige o opt-in geral acima; o envio direto não depende dele. O administrador pode limitar os modos disponíveis.'),
+        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. Escolha sem e-mail, resumo diário ou envio direto; a administração pode limitar as opções.'),
         '#options' => $this->emailModeOptions('loja'),
         '#default_value' => $this->preferencias->emailMode($uid, 'loja'),
       ],
       'email_doacao' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails de doações'),
-        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. Inclui criação do pedido e aprovação de cada pagamento. O resumo diário também exige o opt-in geral acima; o envio direto não depende dele. O administrador pode limitar os modos disponíveis.'),
+        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. Inclui criação do pedido e aprovação de cada pagamento. Escolha sem e-mail, resumo diário ou envio direto; a administração pode limitar as opções.'),
         '#options' => $this->emailModeOptions('doacao'),
         '#default_value' => $this->preferencias->emailMode($uid, 'doacao'),
       ],
@@ -110,12 +104,6 @@ final class AvisosPrivacyForm {
    */
   public function submit(array &$form, FormStateInterface $formState): void {
     $this->removeSelectedSubscriptions($formState);
-    $this->preferencias->salvar(
-      (int) $this->currentUser->id(),
-      (bool) $formState->getValue('resumo_email'),
-      $formState->getValue('email_respostas') === AvisoPreferencias::EMAIL_DIGEST,
-      $formState->getValue('email_atualizacoes') === AvisoPreferencias::EMAIL_DIGEST,
-    );
     foreach ([Aviso::TIPO_RESPOSTA, Aviso::TIPO_ATUALIZACAO] as $category) {
       $mode = $formState->getValue('email_' . ($category === Aviso::TIPO_RESPOSTA ? 'respostas' : 'atualizacoes'));
       if (is_string($mode)) {

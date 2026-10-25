@@ -2714,3 +2714,20 @@ O worker reprocessa somente registros `pending` ou `failed`. Um item cancelado p
 
 Validação: `PrivateMessageNotificationWorkerTest` **13/211 PASS**; Unit Messenger **271/2.139 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
 
+## 0.1.1-dev.285 — unificar preferência de e-mail por categoria
+
+O modo selecionado por categoria (sem e-mail, direto ou resumo diário) passa a
+ser a fonte única de entrega. Removido o checkbox global redundante, os gates
+globais de Fórum/Wiki/Loja/Doações e a interface marcador que existia para
+contorná-los. Preferências novas explícitas não dependem de opt-in adicional;
+contas ainda sem modo salvo herdam o valor legado apenas como default, sem
+ativar e-mail para quem não havia optado. O digest semanal de Mensagens
+Privadas permanece independente e com data inicial administrativa. Avisos no
+site permanecem obrigatórios.
+
+Validação: Unit + Integration Unit **363 testes / 3.073 assertions PASS**;
+Kernels Fórum/digest **42/963 PASS** e Wiki/Loja/Doações **17/290 PASS** (2
+deprecações de descoberta de entidades Core/contrib e 7 notices PHPUnit).
+PHPCS Drupal/DrupalPractice, PHP lint, gate Drupal 11+ (**1.155 checks**) e
+índice de status PASS. Runtime e SMTP real não executados.
+

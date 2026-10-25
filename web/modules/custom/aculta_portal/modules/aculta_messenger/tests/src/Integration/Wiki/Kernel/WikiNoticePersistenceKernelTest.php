@@ -257,7 +257,6 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     $uid = (int) $reviewer->id();
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
-    $preferences->method('resumoEmailLigado')->with($uid)->willReturn(TRUE);
     $manager = $this->manager($preferences, NULL, $this->domainPurposeManager());
     $message = $manager->record($this->reviewEvent($uid, $entry));
     self::assertNotNull($message);
@@ -284,7 +283,6 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     $uid = (int) $reviewer->id();
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
-    $preferences->method('resumoEmailLigado')->with($uid)->willReturn(TRUE);
     $manager = $this->manager($preferences, NULL, $this->domainPurposeManager());
     $message = $manager->record($this->reviewEvent($uid, $entry));
     self::assertNotNull($message);

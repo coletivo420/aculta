@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Integration\Wiki;
 
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
@@ -419,7 +420,8 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
    * {@inheritdoc} */
   public function digestRowsFor(int $uid): array {
     $account = $this->entityTypeManager->getStorage('user')->load($uid);
-    if (!$account instanceof UserInterface || !$account->isActive() || !$this->preferences->resumoEmailLigado($uid)) {
+    if (!$account instanceof UserInterface || !$account->isActive()
+      || $this->preferences->emailMode($uid, 'wiki') !== AvisoPreferencias::EMAIL_DIGEST) {
       $this->discardDigest($uid);
       return [];
     }
