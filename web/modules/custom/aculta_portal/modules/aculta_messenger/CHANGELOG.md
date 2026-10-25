@@ -1,3 +1,7 @@
+## 0.1.1-dev.391 — concorrência entre workers de digest
+
+Reexecutado isoladamente `AvisosResumoMailerKernelTest::testIndependentDrupalWorkersDoNotSendConcurrentDigests` no MariaDB SimpleTest: **1 teste / 18 assertions PASS**. Três boots Drupal independentes competem pelo mesmo destinatário e prefixo; somente um envia/acknowledges, os demais observam o lock, com um único Mail Log/transporte. Atualiza a evidência de concorrência do M7; stress sustentado sob carga, Runtime e SMTP externo permanecem pendentes.
+
 ## 0.1.1-dev.390 — caracterizar update aditivo 10012
 
 `MessengerDefaultConfigUpdateTest` agora cobre também `update_10012`, que
