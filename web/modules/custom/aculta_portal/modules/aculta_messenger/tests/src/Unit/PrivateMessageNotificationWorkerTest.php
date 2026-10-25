@@ -48,6 +48,13 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
   }
 
   /**
+   * A queued notice is suppressed after the member clears its message history.
+   */
+  public function testClearedMessageDoesNotTriggerQueuedNotice(): void {
+    $this->assertNotificationSuppressed(TRUE, NULL, 100);
+  }
+
+  /**
    * A bilateral block suppresses queued notifications in either direction.
    */
   public function testEitherBlockDirectionSuppressesQueuedNotice(): void {
@@ -154,6 +161,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
   public function testMailerManagedNoticeUsesPrivateTemplate(): void {
     $privateMessage = $this->createMock(PrivateMessageInterface::class);
     $privateMessage->method('getOwnerId')->willReturn(1);
+    $privateMessage->method('getCreatedTime')->willReturn(101);
     $privateMessageStorage = $this->createMock(EntityStorageInterface::class);
     $privateMessageStorage->method('load')->with(15)->willReturn($privateMessage);
     $recipient = $this->createMock(UserInterface::class);
@@ -165,6 +173,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('getMembersId')->willReturn([1, 2]);
     $thread->method('access')->with('view', $recipient, TRUE)->willReturn(AccessResult::allowed());
+    $thread->method('getLastDeleteTimestamp')->with($recipient)->willReturn(100);
     $messageService = $this->createMock(PrivateMessageServiceInterface::class);
     $messageService->method('getThreadFromMessage')->with($privateMessage)->willReturn($thread);
 
@@ -259,10 +268,17 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
    *   Whether the recipient can still view the thread.
    * @param array|null $blockedPair
    *   Owner and target IDs for the block that applies, or NULL for no block.
+   * @param int|null $lastDeleteTimestamp
+   *   The recipient's history cutoff, or NULL when history was not cleared.
    */
-  private function assertNotificationSuppressed(bool $threadAccessible, ?array $blockedPair): void {
+  private function assertNotificationSuppressed(
+    bool $threadAccessible,
+    ?array $blockedPair,
+    ?int $lastDeleteTimestamp = NULL,
+  ): void {
     $privateMessage = $this->createMock(PrivateMessageInterface::class);
     $privateMessage->method('getOwnerId')->willReturn(1);
+    $privateMessage->method('getCreatedTime')->willReturn(100);
     $privateMessageStorage = $this->createMock(EntityStorageInterface::class);
     $privateMessageStorage->method('load')->with(15)->willReturn($privateMessage);
     $recipient = $this->createMock(UserInterface::class);
@@ -275,6 +291,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $thread->method('access')->with('view', $recipient, TRUE)->willReturn(
       $threadAccessible ? AccessResult::allowed() : AccessResult::forbidden(),
     );
+    $thread->method('getLastDeleteTimestamp')->with($recipient)->willReturn($lastDeleteTimestamp);
     $privateMessageService = $this->createMock(PrivateMessageServiceInterface::class);
     $privateMessageService->method('getThreadFromMessage')->with($privateMessage)->willReturn($thread);
 

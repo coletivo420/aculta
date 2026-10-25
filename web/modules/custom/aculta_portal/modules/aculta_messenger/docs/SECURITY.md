@@ -48,8 +48,12 @@ fechada para destinatários inelegíveis. A busca não revela esses membros.
 
 O evento de notificação é processado pela fila do Core após o hook nativo. A
 entrega revalida thread, usuário ativo, permissões e ambos os sentidos de
-bloqueio. Uma entidade Message persistida com referência à mensagem de origem,
-UID do destinatário e estado oferece deduplicação; lock cobre concorrência.
+bloqueio, além do limite individual de limpeza do histórico: mensagens criadas
+no mesmo instante ou antes da limpeza não geram aviso atrasado. Isso importa
+quando mensagens novas posteriores mantêm a thread acessível, mas o item
+enfileirado já não aparece para o destinatário. Uma entidade Message persistida
+com referência à mensagem de origem, UID do destinatário e estado oferece
+deduplicação; lock cobre concorrência.
 Novos itens usam Mailer com correlação determinística, e o log de aceite suprime
 retries do mesmo destinatário. Falhas temporárias têm no máximo três tentativas.
 Itens antigos de fila sem o marcador continuam temporariamente no caminho

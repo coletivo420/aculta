@@ -138,6 +138,16 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       return;
     }
 
+    // Thread access may be restored by a newer message after the recipient
+    // cleared their history. Do not notify about an older message that the
+    // Private Message module's per-member history filter still hides.
+    $lastDeleteTimestamp = $thread->getLastDeleteTimestamp($recipient);
+    if (is_numeric($lastDeleteTimestamp)
+      && (int) $lastDeleteTimestamp > 0
+      && $privateMessage->getCreatedTime() <= (int) $lastDeleteTimestamp) {
+      return;
+    }
+
     // Honor an explicit native Private Message email opt-out. The optional
     // contrib notifier is deliberately not enabled because its stock template
     // includes the private message body.

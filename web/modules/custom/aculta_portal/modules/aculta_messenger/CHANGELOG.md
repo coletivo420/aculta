@@ -1,3 +1,9 @@
+## 0.1.1-dev.237 — respeitar o histórico apagado em avisos enfileirados
+
+O worker de e-mail de mensagens privadas agora compara a data da mensagem com o limite individual de limpeza do histórico. Uma mensagem já ocultada para o destinatário não gera aviso tardio, mesmo que mensagens posteriores mantenham a thread acessível.
+
+Validação: `PrivateMessageNotificationWorkerTest` **5 testes / 100 assertions PASS**; PHP lint e PHPCS Drupal/DrupalPractice PASS. Runtime e e-mail externo não executados.
+
 ## 0.1.1-dev.236 — evitar hidratar o histórico na retenção
 
 A limpeza de conversas agora obtém IDs das referências `private_messages` da thread sem carregar cada entidade e corpo
