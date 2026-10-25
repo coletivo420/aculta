@@ -760,18 +760,9 @@ final class MessagesController extends ControllerBase {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
     }
     $items = [];
-    $paginatedOrigins = ['comunicado', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conquistas'];
+    $paginatedOrigins = array_values(array_diff(NoticeListFilter::PAGINATED_ORIGINS, ['forum']));
     $globalOriginPaging = $includeReadActions && $filters['origem'] === '';
-    $rawOriginOffsets = is_array($pagination['notice_offsets'] ?? NULL)
-      ? $pagination['notice_offsets']
-      : [];
-    $originOffsets = [];
-    foreach ([...$paginatedOrigins, 'forum'] as $origin) {
-      $offset = $this->safeNoticeOffset($rawOriginOffsets[$origin] ?? 0);
-      if ($offset > 0) {
-        $originOffsets[$origin] = $offset;
-      }
-    }
+    $originOffsets = PersonalNoticePageState::normalizeOffsets($pagination['notice_offsets'] ?? NULL);
     $originPageStates = [];
     if ($globalOriginPaging) {
       foreach ($paginatedOrigins as $origin) {

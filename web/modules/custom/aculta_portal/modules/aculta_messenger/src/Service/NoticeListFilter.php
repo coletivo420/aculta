@@ -11,7 +11,25 @@ use Drupal\Core\Entity\Query\QueryInterface;
  */
 final class NoticeListFilter {
 
-  public const ORIGINS = ['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conquistas', 'conta'];
+  /**
+   * Canonical origins accepted by filters and origin-specific pagination.
+   *
+   * @var string[]
+   */
+  public const ORIGINS = [
+    'comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja',
+    'doacao', 'conquistas', 'conta',
+  ];
+
+  /**
+   * Origins whose notice lists support page offsets.
+   *
+   * @var string[]
+   */
+  public const PAGINATED_ORIGINS = [
+    'comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja',
+    'doacao', 'conquistas',
+  ];
 
   public const READ_STATES = ['read', 'unread'];
 

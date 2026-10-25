@@ -67,17 +67,7 @@ final class AvisosMensagensController extends ControllerBase {
     $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
     $forumOffset = PersonalNoticePageState::normalizeOffset($query['forum_offset'] ?? 0);
     $noticeOffset = PersonalNoticePageState::normalizeOffset($query['notice_offset'] ?? 0);
-    $rawOriginOffsets = $query['notice_offsets'] ?? [];
-    $originOffsets = [];
-    if (is_array($rawOriginOffsets)) {
-      foreach (['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao'] as $origin) {
-        $rawOffset = $rawOriginOffsets[$origin] ?? NULL;
-        $offset = PersonalNoticePageState::normalizeOffset($rawOffset);
-        if ($offset > 0) {
-          $originOffsets[$origin] = $offset;
-        }
-      }
-    }
+    $originOffsets = PersonalNoticePageState::normalizeOffsets($query['notice_offsets'] ?? NULL);
     $pagination = [
       'forum_offset' => $forumOffset,
       'notice_offset' => $noticeOffset,

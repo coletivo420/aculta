@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- **Dev.346 — paginação por origem:** a origem Conquistas agora preserva o offset entre páginas, mudanças de leitura e links globais. Filtros mantêm todas as origens; offsets aceitam somente origens paginadas e continuam limitados. Unit Messenger **357/2.869 PASS**, PHPCS dos arquivos sem baseline preexistente, PHP lint e diff check PASS; sem Kernel/Runtime.
 - **Dev.345 — Loja em lote:** central e digest resolvem pedidos por bloco de avisos; UUIDs únicos são carregados juntos e recarregados sem cache antes de revalidar tipo de pedido, cliente, acesso e URL. O Kernel cobre avisos distintos do mesmo pedido e confirma uma carga de origem por invocação do digest. Commerce Integration Unit **5/59 PASS**; Kernel **4/75 PASS** (deprecações de descoberta `@EntityType` do Core/contrib e notices PHPUnit); Runtime não utilizado.
 
 - Dev.344 — listagem e digest da Wiki passam a agrupar por lote as revisões de verbetes e propostas; ações individuais usam o mesmo resolvedor. Permanecem validações de revisão padrão, moderação, autoria, permissões, Domain/Purpose e acesso atual; os métodos escalares duplicados foram removidos. Wiki Integration Unit **4/47**, Wiki Kernel **8/153 PASS** (2 depreciações upstream `@EntityType`, 3 notices PHPUnit), Unit Messenger **356/2.866 PASS**, PHPCS/PHP lint/diff check PASS. Runtime não utilizado.

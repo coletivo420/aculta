@@ -47,4 +47,23 @@ final class PersonalNoticePageStateTest extends UnitTestCase {
     (new PersonalNoticePageState('alerta', 0))->slice(['notice-1'], 0);
   }
 
+  /**
+   * Normalizes all paged origins, including achievements, and rejects others.
+   */
+  public function testNormalizeOffsetsKeepsAchievementPagesAndDropsUnknownOrigins(): void {
+    self::assertSame([
+      'forum' => 100,
+      'wiki' => PersonalNoticePageState::MAX_OFFSET,
+      'conquistas' => 300,
+    ], PersonalNoticePageState::normalizeOffsets([
+      'forum' => '100',
+      'conquistas' => 300,
+      'wiki' => 999999,
+      'conta' => 500,
+      'desconhecida' => 700,
+      'doacao' => -1,
+    ]));
+    self::assertSame([], PersonalNoticePageState::normalizeOffsets('invalid'));
+  }
+
 }

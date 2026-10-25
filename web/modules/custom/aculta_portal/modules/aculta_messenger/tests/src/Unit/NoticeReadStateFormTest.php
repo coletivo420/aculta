@@ -104,7 +104,7 @@ final class NoticeReadStateFormTest extends UnitTestCase {
     $account = $this->createMock(AccountInterface::class);
     $readState->expects(self::once())->method('setRead')->with(28, $account, TRUE)->willReturn(TRUE);
     $requestStack = new RequestStack();
-    $requestStack->push(Request::create('/avisos-mensagens/avisos?leitura=unread&notice_offsets%5Bwiki%5D=200&notice_offsets%5Bforum%5D=100&notice_offsets%5Bloja%5D=9999999&notice_offsets%5Bdesconhecida%5D=300'));
+    $requestStack->push(Request::create('/avisos-mensagens/avisos?leitura=unread&notice_offsets%5Bwiki%5D=200&notice_offsets%5Bforum%5D=100&notice_offsets%5Bloja%5D=9999999&notice_offsets%5Bconquistas%5D=300&notice_offsets%5Bdesconhecida%5D=300'));
     $form = $this->form($readState, $account, $requestStack);
     $form->setMessenger($this->createMock(MessengerInterface::class));
     $state = new FormState();
@@ -119,6 +119,7 @@ final class NoticeReadStateFormTest extends UnitTestCase {
         'forum' => 100,
         'wiki' => 200,
         'loja' => 10000,
+        'conquistas' => 300,
       ],
     ], $state->getRedirect()->getOptions()['query']);
   }

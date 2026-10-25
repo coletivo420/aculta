@@ -12,13 +12,6 @@ use Drupal\Core\Url;
 final class NoticePaginationUrlBuilder {
 
   /**
-   * Supported notice origins.
-   *
-   * @var string[]
-   */
-  private const ORIGINS = ['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao'];
-
-  /**
    * Builds a URL for one origin in the global, independently paged list.
    *
    * @param array<string, int> $currentOffsets
@@ -31,12 +24,12 @@ final class NoticePaginationUrlBuilder {
    *   Normalized origin/read-state filters.
    */
   public static function globalPage(array $currentOffsets, string $origin, int $targetOffset, array $filters): Url {
-    if (!in_array($origin, self::ORIGINS, TRUE)) {
+    if (!in_array($origin, NoticeListFilter::PAGINATED_ORIGINS, TRUE)) {
       throw new \InvalidArgumentException('Unsupported notice pagination origin.');
     }
     $offsets = [];
     foreach ($currentOffsets as $key => $offset) {
-      if (is_string($key) && in_array($key, self::ORIGINS, TRUE) && is_int($offset) && $offset > 0) {
+      if (is_string($key) && in_array($key, NoticeListFilter::PAGINATED_ORIGINS, TRUE) && is_int($offset) && $offset > 0) {
         $offsets[$key] = $offset;
       }
     }
@@ -63,7 +56,7 @@ final class NoticePaginationUrlBuilder {
    *   Normalized origin/read-state filters.
    */
   public static function filteredPage(string $origin, int $targetOffset, array $filters): Url {
-    if (!in_array($origin, self::ORIGINS, TRUE)) {
+    if (!in_array($origin, NoticeListFilter::PAGINATED_ORIGINS, TRUE)) {
       throw new \InvalidArgumentException('Unsupported notice pagination origin.');
     }
     $query = array_filter($filters, static fn(mixed $value): bool => is_string($value) && $value !== '');

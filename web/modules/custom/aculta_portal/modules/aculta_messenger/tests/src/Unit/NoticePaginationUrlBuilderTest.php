@@ -20,7 +20,7 @@ final class NoticePaginationUrlBuilderTest extends UnitTestCase {
    */
   public function testGlobalPagingPreservesSiblingOffsetsAndFilters(): void {
     $url = NoticePaginationUrlBuilder::globalPage(
-      ['forum' => 200, 'wiki' => 100, 'unknown' => 900],
+      ['forum' => 200, 'wiki' => 100, 'conquistas' => 300, 'unknown' => 900],
       'wiki',
       200,
       ['origem' => '', 'leitura' => 'unread'],
@@ -30,7 +30,7 @@ final class NoticePaginationUrlBuilderTest extends UnitTestCase {
     self::assertSame(['aba' => 'avisos'], $url->getRouteParameters());
     self::assertSame([
       'leitura' => 'unread',
-      'notice_offsets' => ['forum' => 200, 'wiki' => 200],
+      'notice_offsets' => ['forum' => 200, 'wiki' => 200, 'conquistas' => 300],
     ], $url->getOptions()['query']);
   }
 
@@ -57,6 +57,7 @@ final class NoticePaginationUrlBuilderTest extends UnitTestCase {
   public function testFilteredPagingUsesSourceSpecificOffset(): void {
     $forum = NoticePaginationUrlBuilder::filteredPage('forum', 300, ['origem' => 'forum', 'leitura' => 'unread']);
     $wiki = NoticePaginationUrlBuilder::filteredPage('wiki', 200, ['origem' => 'wiki', 'leitura' => 'read']);
+    $achievement = NoticePaginationUrlBuilder::filteredPage('conquistas', 500, ['origem' => 'conquistas']);
 
     self::assertSame([
       'origem' => 'forum',
@@ -68,6 +69,10 @@ final class NoticePaginationUrlBuilderTest extends UnitTestCase {
       'leitura' => 'read',
       'notice_offset' => 200,
     ], $wiki->getOptions()['query']);
+    self::assertSame([
+      'origem' => 'conquistas',
+      'notice_offset' => 500,
+    ], $achievement->getOptions()['query']);
   }
 
   /**
@@ -75,7 +80,7 @@ final class NoticePaginationUrlBuilderTest extends UnitTestCase {
    */
   public function testRejectsUnsupportedOrigin(): void {
     $this->expectException(\InvalidArgumentException::class);
-    NoticePaginationUrlBuilder::globalPage([], 'unknown', 100, []);
+    NoticePaginationUrlBuilder::globalPage([], 'conta', 100, []);
   }
 
 }

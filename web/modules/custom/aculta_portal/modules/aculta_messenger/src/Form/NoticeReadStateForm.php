@@ -102,13 +102,7 @@ final class NoticeReadStateForm extends FormBase {
         }
       }
       if ($filters['origem'] === '' && is_array($requestQuery['notice_offsets'] ?? NULL)) {
-        $offsets = [];
-        foreach (['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conquistas'] as $origin) {
-          $offset = PersonalNoticePageState::normalizeOffset($requestQuery['notice_offsets'][$origin] ?? NULL);
-          if ($offset > 0) {
-            $offsets[$origin] = $offset;
-          }
-        }
+        $offsets = PersonalNoticePageState::normalizeOffsets($requestQuery['notice_offsets']);
         if ($offsets !== []) {
           $query['notice_offsets'] = $offsets;
         }

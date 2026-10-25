@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Aviso;
 
+use Drupal\aculta_messenger\Service\NoticeListFilter;
+
 /**
  * Mutable per-request pagination result shared with a selected notice adapter.
  */
@@ -19,6 +21,26 @@ final class PersonalNoticePageState {
   public static function normalizeOffset(mixed $value): int {
     $offset = filter_var($value, FILTER_VALIDATE_INT);
     return $offset === FALSE ? 0 : min(self::MAX_OFFSET, max(0, $offset));
+  }
+
+  /**
+   * Normalizes supported origin offsets and drops unknown or first-page keys.
+   *
+   * @return array<string, int>
+   *   Positive bounded offsets keyed by paginated origin.
+   */
+  public static function normalizeOffsets(mixed $values): array {
+    if (!is_array($values)) {
+      return [];
+    }
+    $offsets = [];
+    foreach (NoticeListFilter::PAGINATED_ORIGINS as $origin) {
+      $offset = self::normalizeOffset($values[$origin] ?? NULL);
+      if ($offset > 0) {
+        $offsets[$origin] = $offset;
+      }
+    }
+    return $offsets;
   }
 
   /**

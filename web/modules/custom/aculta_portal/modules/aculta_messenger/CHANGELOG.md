@@ -1,3 +1,15 @@
+## 0.1.1-dev.346 — preservar paginação de Conquistas na central
+
+A lista única de origens pagináveis agora também é usada pelo controller da
+Conta, pelos links de navegação e pelo formulário de leitura. Conquistas deixa
+de perder seu offset ao navegar ou marcar um aviso como lido; origens sem
+paginação e valores inválidos continuam descartados.
+
+Validação: Unit Messenger **357 testes / 2.869 assertions PASS**; PHPCS
+Drupal/DrupalPractice nos arquivos alterados (exceto `MessagesController`, que
+mantém baseline de 93 erros/65 avisos), PHP lint e `git diff --check` PASS.
+Sem Kernel ou Runtime.
+
 ## 0.1.1-dev.345 — resolver pedidos da Loja em lote
 
 A listagem pessoal e o digest da Loja agora resolvem cada bloco de avisos com
