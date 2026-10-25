@@ -24,12 +24,14 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     $expected = [
       '/studio' => 'aculta_studio.hub',
       '/studio/conta' => 'aculta_studio.account',
+      '/studio/conta/dados' => 'aculta_studio.account_data',
       '/studio/conta/endereco' => 'aculta_studio.account_address',
       '/studio/conta/documentos' => 'aculta_studio.account_documents',
       '/studio/conta/seguranca' => 'aculta_studio.account_security',
       '/studio/conta/seguranca/senha' => 'aculta_studio.account_password',
       '/studio/conta/conexoes' => 'aculta_studio.account_connections',
       '/studio/perfil' => 'aculta_studio.profile',
+      '/studio/perfil/apelido' => 'aculta_studio.profile_nickname',
       '/studio/perfil/privacidade' => 'aculta_studio.profile_privacy',
       '/studio/perfil/bio' => 'aculta_studio.profile_bio',
       '/studio/perfil/redes/{rede}' => 'aculta_studio.profile_social',
@@ -54,21 +56,22 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
    */
   public function testHubAccountAndProfileAccess(): void {
     $routes = $this->routes();
-    foreach (['aculta_studio.hub', 'aculta_studio.account', 'aculta_studio.account_address', 'aculta_studio.account_documents', 'aculta_studio.account_security', 'aculta_studio.account_password', 'aculta_studio.account_connections'] as $id) {
+    foreach (['aculta_studio.hub', 'aculta_studio.account', 'aculta_studio.account_data', 'aculta_studio.account_address', 'aculta_studio.account_documents', 'aculta_studio.account_security', 'aculta_studio.account_password', 'aculta_studio.account_connections'] as $id) {
       $route = $routes[$id];
       self::assertSame('account', $route['options']['_aculta_domain_purpose']);
       self::assertSame('access aculta portal', $route['requirements']['_permission']);
       self::assertSame('TRUE', $route['requirements']['_user_is_logged_in']);
     }
-    foreach (['aculta_studio.profile', 'aculta_studio.profile_privacy', 'aculta_studio.profile_bio', 'aculta_studio.profile_social'] as $id) {
+    foreach (['aculta_studio.profile', 'aculta_studio.profile_nickname', 'aculta_studio.profile_privacy', 'aculta_studio.profile_bio', 'aculta_studio.profile_social'] as $id) {
       $route = $routes[$id];
       self::assertSame('account', $route['options']['_aculta_domain_purpose']);
       self::assertSame('aculta_studio.profile_access:access', $route['requirements']['_custom_access']);
     }
-    self::assertArrayNotHasKey('aculta_studio.account_data', $routes);
-    foreach (['aculta_studio.account_address', 'aculta_studio.account_documents', 'aculta_studio.account_security', 'aculta_studio.account_password', 'aculta_studio.account_connections'] as $id) {
+    foreach (['aculta_studio.account_data', 'aculta_studio.account_address', 'aculta_studio.account_documents', 'aculta_studio.account_security', 'aculta_studio.account_password', 'aculta_studio.account_connections'] as $id) {
       self::assertTrue($routes[$id]['options']['no_cache']);
     }
+    self::assertTrue($routes['aculta_studio.profile_nickname']['options']['no_cache']);
+    self::assertSame('\\Drupal\\aculta_user\\Form\\NicknameForm', $routes['aculta_studio.profile_nickname']['defaults']['_form']);
     self::assertSame('aculta_studio.hub_controller:page',
       $routes['aculta_studio.hub']['defaults']['_controller']);
     self::assertSame('aculta_studio.marley_controller:page',

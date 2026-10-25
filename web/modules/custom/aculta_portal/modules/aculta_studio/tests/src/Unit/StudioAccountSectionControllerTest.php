@@ -56,6 +56,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
    */
   public function testDelegatesAndReplacesOnlyLegacyNavigation(): void {
     $methods = [
+      'data' => 'myData',
       'address' => 'address',
       'documents' => 'otherData',
       'security' => 'security',
@@ -66,6 +67,11 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
     foreach ($methods as $studioMethod => $ownerMethod) {
       $owner = new class {
         public array $called = [];
+
+        public function myData(): array {
+          $this->called[] = 'myData';
+          return $this->build('myData');
+        }
 
         public function address(): array {
           $this->called[] = 'address';
@@ -123,7 +129,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
       $routes = array_map(static fn (array $link) => $link['#url']->getRouteName(),
         $page['navigation']['#items']);
       self::assertSame([
-        'aculta_portal.my_data',
+        'aculta_studio.account_data',
         'aculta_studio.account_address',
         'aculta_studio.account_documents',
         'aculta_studio.account_security',
