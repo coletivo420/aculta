@@ -1,3 +1,14 @@
+## 0.1.1-dev.367 — homologação visual da central e acompanhamentos
+
+As verificações visuais existentes foram repetidas no Firefox ESR visível do
+Runtime de teste: central filtrada **5/5** (host Conta) e gaveta **8/8** (host
+Portal, viewport 1270 px). A nova suíte `privacy-subscriptions.mjs` passou
+**9/9** em viewport efetivo 1270 px e **9/9** com janela solicitada de 390 px
+(viewport efetivo 500 px); valida teclado, estado vazio e reflow sem enviar o
+formulário. A conta `teste.comum` já tinha aceite de Termos; nenhuma Flag ou
+consentimento foi alterado. A lista populada e a paginação visual da central
+continuam sem fixture suficiente no Runtime.
+
 ## 0.1.1-dev.365 — regressão completa dos Kernels
 
 Reexecutada a árvore completa `tests/src/Kernel` no MariaDB dedicado. Os casos

@@ -121,6 +121,14 @@ export class Browser {
     return this.exec(`const el = [...${this.C}.querySelectorAll(${JSON.stringify(selector)})].find((x) => x.textContent.trim() === ${JSON.stringify(text)} || x.value === ${JSON.stringify(text)}); if (!el) return 0; el.click(); return 1;`);
   }
 
+  // Clicks a visible element through the WebDriver element endpoint.
+  async clickSelector(selector) {
+    const element = await wd('POST', this.p('/element'), { using: 'css selector', value: selector });
+    const id = element['element-6066-11e4-a52e-4f735466cecf'] || element.ELEMENT;
+    if (!id) throw new Error(`WebDriver did not return an element for ${selector}.`);
+    await wd('POST', this.p(`/element/${id}/click`), {});
+  }
+
   async waitText(text, timeoutMs = 15000) {
     return this.waitFor(`${this.C}.innerText.includes(${JSON.stringify(text)})`, text, timeoutMs);
   }

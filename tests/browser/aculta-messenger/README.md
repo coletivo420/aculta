@@ -21,7 +21,9 @@ DISPLAY=:0 geckodriver --port 4444 &
 DISPLAY=:0 node tests/browser/aculta-messenger/suite.mjs
 DISPLAY=:0 node tests/browser/aculta-messenger/central-empty-state.mjs
 DISPLAY=:0 node tests/browser/aculta-messenger/drawer-notice-filters.mjs
+DISPLAY=:0 node tests/browser/aculta-messenger/privacy-subscriptions.mjs
 DISPLAY=:0 SUITE_WIDTH=390 node tests/browser/aculta-messenger/drawer-notice-filters.mjs
+DISPLAY=:0 SUITE_WIDTH=390 node tests/browser/aculta-messenger/privacy-subscriptions.mjs
 ```
 
 O script recusa qualquer display diferente de `:0` e só aceita `SUITE_BASE`/`SUITE_LOGIN_URI` nos hosts HTTPS do servidor
@@ -83,6 +85,11 @@ com cabeçalhos/separadores por origem, preservação de filtros combinados apó
 Na sessão de 2026-10-24, o Firefox ESR limitou a janela solicitada de 390 px a um viewport efetivo de 500 px; o relatório
 e a captura guardam a dimensão real, sem declarar uma validação de 390 px.
 
+`privacy-subscriptions.mjs` usa a conta de teste `teste.comum` (aceite dos Termos já registrado), abre a página de Privacidade
+da Conta, testa por teclado a expansão de “Tópicos que você segue”, confere lista/estado vazio e verifica que a remoção continua
+sendo uma ação explícita. O script não envia o formulário nem altera Flags; também registra a largura efetiva para verificar
+reflow sem declarar um viewport menor que o Firefox entregou.
+
 ## Limites
 
 - Não substitui o teste em dispositivo de toque real nem com leitor de tela. Os 390 px são uma aproximação de layout.
@@ -98,3 +105,5 @@ Também em 2026-10-24, `central-empty-state.mjs` passou com **4/4 verificações
 Na mesma data, `drawer-notice-filters.mjs` passou **6/6 verificações** com viewport de 1280 px e **6/6** com janela solicitada de 390 px no host do Portal. O Firefox reportou viewport efetivo de 500 px na segunda execução; não se declara teste real a 390 px. A navegação apenas abriu a gaveta e consultou filtros, sem alterar avisos ou preferências.
 
 Em 2026-10-25, `drawer-notice-filters.mjs` passou **8/8 verificações** no Firefox ESR visível (`DISPLAY=:0`), host do Portal e viewport efetivo de 1270 px. A rodada confirmou seções com cabeçalho/separador por origem, navegação combinada Wiki + Não lidos e ausência de overflow. Quatro seções estavam disponíveis no estado da conta de teste; nenhum aviso ou preferência foi alterado.
+
+Também em 2026-10-25, `central-empty-state.mjs` passou **5/5** no host Conta e `privacy-subscriptions.mjs` passou **9/9** na conta `teste.comum`, com aceite dos Termos já existente. A página de Privacidade foi verificada em viewport efetivo 1270 px e, com janela solicitada de 390 px, em viewport efetivo 500 px; o resumo foi aberto/fechado com Enter, o estado vazio foi validado e não houve overflow. Não havia tópico seguido para validar linhas populadas; o formulário não foi enviado. Nenhum consentimento ou Flag foi alterado.
