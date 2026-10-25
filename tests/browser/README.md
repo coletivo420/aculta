@@ -57,6 +57,10 @@ pasta.
 | `visual.py`, `keyboard.py` | páginas públicas, reflow e teclado da busca | servidor de testes |
 | `we-sativa.py` | workspace autenticado, reflow 1280/390/320 px, ação nativa e retorno ao Studio | servidor de testes; login Drush da conta de teste |
 
+### `aculta-conta-raiz/`
+
+Raiz da Conta (Domain ACCOUNT) sem sessão: `/` e `/conta-legada` levam ao login, `/minha-conta` e `/studio` dão 404, e o login não tem rolagem horizontal em 390 px e 1280 px. Servidor de testes, Firefox ESR em `DISPLAY=:0`. Não cobre o estado logado. Ver `aculta-conta-raiz/README.md`.
+
 ### Fora da convenção de pasta
 
 Scripts de teste visual anteriores à regra, mantidos onde a frente dona os
