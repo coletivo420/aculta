@@ -1,3 +1,15 @@
+## 0.1.1-dev.333 — falhar fechado para preferência de e-mail inválida
+
+Uma preferência individual de categoria só herda o padrão administrativo se
+estiver ausente. Valor explícito inválido em `user.data` agora resolve para
+`off`, evitando que dado corrompido reative envio direto ou digest. Escolhas
+válidas e ausência de escolha mantêm o contrato existente.
+
+Validação: `AvisoPreferenciasTest` **36/137 PASS**, Unit Messenger
+**345/2.770 PASS**, PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS. O índice gerado do README raiz segue desatualizado na branch base; não
+regenerei a tabela compartilhada. Sem Kernel/Runtime/SMTP.
+
 ## 0.1.1-dev.332 — reler Message antes de alterar estado de leitura
 
 O dispatcher da central agora carrega o `Message` sem reutilizar o cache

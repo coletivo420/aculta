@@ -190,6 +190,47 @@ final class AvisoPreferenciasTest extends UnitTestCase {
   }
 
   /**
+   * A malformed saved preference cannot inherit an email-enabled admin default.
+   */
+  #[DataProvider('malformedSavedPreferenceCases')]
+  public function testMalformedSavedPreferenceFailsClosed(mixed $savedMode): void {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::once())->method('get')
+      ->with(AvisoPreferencias::MODULO, 27, 'avisos_email_mode_wiki')
+      ->willReturn($savedMode);
+    $preferences = new AvisoPreferencias(
+      $userData,
+      $this->getConfigFactoryStub([
+        'aculta_messenger.settings' => [
+          'email_modes' => [
+            'wiki' => [
+              'digest' => TRUE,
+              'immediate' => TRUE,
+              'default_mode' => AvisoPreferencias::EMAIL_IMMEDIATE,
+            ],
+          ],
+        ],
+      ]),
+    );
+
+    self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, 'wiki'));
+  }
+
+  /**
+   * Explicit malformed persisted values must not trigger an admin default.
+   *
+   * @return array<string, array{mixed}>
+   *   Malformed saved preference values.
+   */
+  public static function malformedSavedPreferenceCases(): array {
+    return [
+      'unknown string' => ['enabled'],
+      'boolean' => [TRUE],
+      'array' => [['mode' => AvisoPreferencias::EMAIL_IMMEDIATE]],
+    ];
+  }
+
+  /**
    * Provides defaults for each registered email category.
    *
    * @return array<string, array{string, string}>

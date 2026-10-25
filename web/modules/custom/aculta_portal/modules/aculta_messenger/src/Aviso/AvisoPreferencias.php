@@ -117,8 +117,13 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
       return self::EMAIL_OFF;
     }
     $mode = $this->userData->get(self::MODULO, $uid, 'avisos_email_mode_' . $category);
-    if (!in_array($mode, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)) {
+    if ($mode === NULL) {
       $mode = $this->defaultEmailMode($category);
+    }
+    elseif (!in_array($mode, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)) {
+      // Only a genuinely absent choice inherits the administrative default.
+      // A malformed explicit value must not reactivate email delivery.
+      return self::EMAIL_OFF;
     }
     return in_array($mode, $this->allowedEmailModes($category), TRUE) ? $mode : self::EMAIL_OFF;
   }

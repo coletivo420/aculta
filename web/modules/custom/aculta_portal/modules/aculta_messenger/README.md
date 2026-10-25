@@ -79,7 +79,7 @@ post-update e o Messenger passa a ser sua fonte normativa.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento atual é `0.1.1-dev.332`. O núcleo oferece
+A versão em desenvolvimento atual é `0.1.1-dev.333`. O núcleo oferece
 `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`, consumers para
 Fórum, LMS, Wiki, Loja e Doações, agregação da central e entrega por e-mail
 direto ou digest sem substituir os storages existentes. O Fórum preserva
