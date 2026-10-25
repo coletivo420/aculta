@@ -42,3 +42,10 @@ dependencies:
   - drupal:path
   - metatag:metatag
   - schema_metatag:schema_metatag
+  - schema_metatag:schema_article
+  - schema_metatag:schema_event
+  - schema_metatag:schema_image_object
+  - schema_metatag:schema_organization
+  - schema_metatag:schema_product
+  - schema_metatag:schema_web_site
+  - schema_metatag:schema_web_page

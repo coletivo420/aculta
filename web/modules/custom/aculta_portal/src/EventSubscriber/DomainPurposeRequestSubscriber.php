@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Site\Settings;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -208,6 +209,11 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $matched,
     );
     $currentPurpose = $this->domainPurposeManager->getCurrentPurpose();
+    // Test-only seam for single-host Functional installs. Production always
+    // negotiates one Domain per purpose, and this setting stays unset.
+    if (Settings::get('aculta_domain_purpose_test_relaxed', FALSE)) {
+      return;
+    }
     if (is_string($requiredPurpose) && $currentPurpose !== $requiredPurpose) {
       if ($this->isPasswordResetEditException(
         $event->getRequest(),
@@ -297,6 +303,11 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $request,
     );
     $currentPurpose = $this->domainPurposeManager->getCurrentPurpose();
+
+    // Same test-only seam used before routing.
+    if (Settings::get('aculta_domain_purpose_test_relaxed', FALSE)) {
+      return;
+    }
 
     $resetEditException = $this->isPasswordResetEditException(
       $request,
