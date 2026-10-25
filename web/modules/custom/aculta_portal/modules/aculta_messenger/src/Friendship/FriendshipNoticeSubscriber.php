@@ -11,6 +11,7 @@ use Drupal\aculta_user\Social\FriendshipStatus;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\message\MessageInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -39,6 +40,7 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly LockBackendInterface $lock,
     private readonly FriendshipNoticeQueueInterface $noticeQueue,
+    private readonly ?LoggerInterface $logger = NULL,
   ) {}
 
   /**
@@ -110,7 +112,7 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
         if ($message instanceof MessageInterface
           && $message->get('field_aculta_msg_delivery')->value === 'failed'
           && (int) $message->get('field_aculta_messenger_attempts')->value === 0) {
-          $this->noticeQueue->enqueue($message);
+          $this->enqueueSafely($message);
         }
         return;
       }
@@ -127,7 +129,7 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
         'field_aculta_mailer_managed' => TRUE,
       ]);
       $message->save();
-      $this->noticeQueue->enqueue($message);
+      $this->enqueueSafely($message);
     }
     finally {
       $this->lock->release($lockId);
@@ -149,6 +151,25 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
     return hash_equals(implode(':', [
       'user', 'friendship', $event->sourceEntityUuid(), $transition, $changed, $transitionId, (string) $event->recipientUid(),
     ]), $event->idempotencyKey());
+  }
+
+  /**
+   * Keeps a supplemental email queue failure from failing the relationship.
+   *
+   * The persistent site notice is already saved, and cron recovers stale
+   * pending/failed email deliveries. Queue implementations log their own
+   * failures; this record also covers a lock or other enqueue exception.
+   */
+  private function enqueueSafely(MessageInterface $message): void {
+    try {
+      $this->noticeQueue->enqueue($message);
+    }
+    catch (\Throwable $exception) {
+      $this->logger?->error('Friendship notice Message @id was saved; email enqueue will be recovered by cron (@exception).', [
+        '@id' => (string) $message->id(),
+        '@exception' => $exception::class,
+      ]);
+    }
   }
 
 }

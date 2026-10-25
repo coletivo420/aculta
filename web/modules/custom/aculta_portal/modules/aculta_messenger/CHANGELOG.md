@@ -1,3 +1,15 @@
+## 0.1.1-dev.284 — isolar falha de fila de amizade
+
+Depois de persistir o aviso obrigatório no site, falhas ao enfileirar o e-mail
+opcional não propagam erro para o pedido ou aceite de amizade. O subscriber
+registra apenas o ID técnico e a classe da exceção; o cron reconcilia estados
+`pending`/`failed`, inclusive em replay da mesma transição.
+
+Validação: `FriendshipNoticeSubscriberTest` **8/98 PASS**; suíte Unit Messenger
+**287/2.337 PASS**; `FriendshipNoticePipelineKernelTest` **1/23 PASS**, com duas
+depreciações de discovery do contrib `message`; PHPCS Drupal/DrupalPractice,
+PHP lint e gate Drupal 11+ (1.155 checks) PASS. Runtime não executado.
+
 ## 0.1.1-dev.283 — alinhar marcador visual de não lida
 
 O hook de renderização do Messenger aplica a regra canônica de `UnreadThreadCounter`

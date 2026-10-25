@@ -20,6 +20,7 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use Psr\Log\LoggerInterface;
 
 /**
  * Verifies friendship transitions create only the intended persistent notice.
@@ -37,6 +38,19 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       requesterId: 10,
       recipientId: 20,
       noticeRecipientId: 20,
+    );
+  }
+
+  /**
+   * An email queue outage does not turn a saved site notice into an error.
+   */
+  public function testNewNoticeSurvivesEmailEnqueueFailure(): void {
+    $this->assertNoticeForTransition(
+      FriendshipChangedEvent::REQUESTED,
+      requesterId: 10,
+      recipientId: 20,
+      noticeRecipientId: 20,
+      queueFails: TRUE,
     );
   }
 
@@ -112,12 +126,18 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $storage->expects(self::never())->method('create');
     $storage->expects(self::once())->method('load')->with(83)->willReturn($message);
     $queue = $this->createMock(FriendshipNoticeQueueInterface::class);
-    $queue->expects(self::once())->method('enqueue')->with($message);
+    $queue->expects(self::once())->method('enqueue')->with($message)
+      ->willThrowException(new \RuntimeException('Queue is unavailable.'));
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects(self::once())->method('error')->with(
+      'Friendship notice Message @id was saved; email enqueue will be recovered by cron (@exception).',
+      ['@id' => '83', '@exception' => \RuntimeException::class],
+    );
     $subscriber = new FriendshipNoticeSubscriber($this->entityTypeManager(
       $userStorage,
       $storage,
       $this->friendshipStorage($this->friendship(FriendshipStatus::Pending->value)),
-    ), $this->lock(), $queue);
+    ), $this->lock(), $queue, $logger);
 
     $subscriber->consume($this->event(FriendshipChangedEvent::REQUESTED));
   }
@@ -206,7 +226,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
   /**
    * Asserts the transition creates a Message for the expected recipient.
    */
-  private function assertNoticeForTransition(string $transition, int $requesterId, int $recipientId, int $noticeRecipientId): void {
+  private function assertNoticeForTransition(string $transition, int $requesterId, int $recipientId, int $noticeRecipientId, bool $queueFails = FALSE): void {
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('isActive')->willReturn(TRUE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
@@ -236,7 +256,18 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     ])->willReturn($message);
 
     $queue = $this->createMock(FriendshipNoticeQueueInterface::class);
-    $queue->expects(self::once())->method('enqueue')->with($message);
+    $enqueue = $queue->expects(self::once())->method('enqueue')->with($message);
+    $logger = $this->createMock(LoggerInterface::class);
+    if ($queueFails) {
+      $enqueue->willThrowException(new \RuntimeException('Queue is unavailable.'));
+      $logger->expects(self::once())->method('error')->with(
+        'Friendship notice Message @id was saved; email enqueue will be recovered by cron (@exception).',
+        ['@id' => '83', '@exception' => \RuntimeException::class],
+      );
+    }
+    else {
+      $logger->expects(self::never())->method('error');
+    }
 
     $status = $transition === FriendshipChangedEvent::REQUESTED
       ? FriendshipStatus::Pending->value
@@ -245,7 +276,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       $userStorage,
       $messageStorage,
       $this->friendshipStorage($this->friendship($status)),
-    ), $this->lock(), $queue);
+    ), $this->lock(), $queue, $logger);
     $subscriber->consume($this->event($transition, $requesterId, $recipientId));
   }
 
