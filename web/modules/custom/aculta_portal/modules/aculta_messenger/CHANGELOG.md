@@ -3746,3 +3746,17 @@ assertions PASS** em MariaDB dedicado (duas depreciações upstream de
 PHPCS Drupal/DrupalPractice, PHP lint, gate Drupal 11+ (**1.155 checks**) e
 índice dos 41 componentes PASS. Não foi feito teste de Runtime.
 
+## 0.1.1-dev.368 — paginação estável do contador de conversas
+
+`UnreadThreadCounter` deixou de hidratar toda a caixa de entrada de uma vez.
+Agora consulta membros por EntityQuery em páginas de 100, avançando por ID
+estável. Cada thread mantém a regra existente de leitura individual e passa
+pelo controle de acesso nativo antes da contagem. Isso evita o cursor temporal
+estrito do Private Message, que poderia perder threads empatadas, sem editar
+contrib nem depender de suas tabelas internas.
+
+Validação: Units focais **18/186 PASS**. `PrivateMessageRetentionKernelTest`
+**5/66 PASS** no MariaDB dedicado, incluindo 101 threads com `updated` igual
+atravessando o limite de página; dez depreciações Core/contrib preexistentes.
+Runtime, Alpha e teste visual com volume elevado não executados.
+

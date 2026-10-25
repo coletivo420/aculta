@@ -7,8 +7,10 @@ namespace Drupal\Tests\aculta_messenger\Kernel;
 use Drupal\aculta_messenger\Hook\PrivateMessageRetentionHooks;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_messenger\Service\ConversationWriteLock;
+use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Lock\DatabaseLockBackend;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
@@ -87,6 +89,34 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
       'field_name' => 'field_aculta_messenger_source_pm',
       'label' => 'Private message source',
     ])->save();
+  }
+
+  /**
+   * Counts equal-timestamp threads across stable ID pages.
+   */
+  public function testUnreadCounterPagesEqualTimestampThreadsWithoutLoss(): void {
+    $first = User::create(['name' => 'unread_counter_first', 'status' => 1]);
+    $first->save();
+    $second = User::create(['name' => 'unread_counter_second', 'status' => 1]);
+    $second->save();
+    $firstId = (int) $first->id();
+    $timestamp = 1_800_000_000;
+
+    for ($index = 0; $index < 101; $index++) {
+      $this->createThread([$first, $second], (int) $second->id(), $timestamp, 'Unread thread ' . $index);
+    }
+    $this->container->get('database')->update('pm_thread_history')
+      ->fields(['access_timestamp' => $timestamp - 1])
+      ->condition('uid', $firstId)
+      ->execute();
+
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('id')->willReturn($firstId);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $account->method('hasPermission')->willReturnCallback(static fn(string $permission): bool => $permission === 'use private messaging system');
+    $counter = new UnreadThreadCounter($account, $this->container->get('entity_type.manager'));
+
+    self::assertSame(101, $counter->count());
   }
 
   /**

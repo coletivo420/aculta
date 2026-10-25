@@ -4,18 +4,23 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Service;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
 
 /**
  * Counts unread conversations using Private Message's per-thread read state.
  */
 final class UnreadThreadCounter {
 
+  /**
+   * Bounds the number of thread entities hydrated for one counter request.
+   */
+  private const PAGE_SIZE = 100;
+
   public function __construct(
     private readonly AccountInterface $currentUser,
-    private readonly PrivateMessageServiceInterface $privateMessageService,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -26,15 +31,33 @@ final class UnreadThreadCounter {
       return 0;
     }
 
+    $storage = $this->entityTypeManager->getStorage('private_message_thread');
     $count = 0;
-    // The contrib count method loads every thread ID just to count it; then
-    // getThreadsForUser() repeats that query. FALSE requests the full thread
-    // collection directly and avoids the duplicate lookup.
-    foreach ($this->privateMessageService->getThreadsForUser(FALSE)['threads'] as $thread) {
-      if ($thread instanceof PrivateMessageThreadInterface && $this->isUnread($thread)) {
-        $count++;
+    $cursor = 0;
+    do {
+      // Use a stable entity-ID cursor rather than Private Message's timestamp
+      // cursor, which uses a strict comparison and can skip threads sharing a
+      // timestamp at a page boundary. EntityQuery keeps memory bounded without
+      // coupling this counter to the contrib mapper's table layout.
+      $threadIds = $storage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('members.target_id', (int) $this->currentUser->id())
+        ->condition('id', $cursor, '>')
+        ->sort('id', 'ASC')
+        ->range(0, self::PAGE_SIZE)
+        ->execute();
+      if (!$threadIds) {
+        break;
       }
-    }
+
+      foreach ($storage->loadMultiple($threadIds) as $thread) {
+        if ($thread instanceof PrivateMessageThreadInterface && $this->isUnread($thread)) {
+          $count++;
+        }
+      }
+
+      $cursor = (int) end($threadIds);
+    } while (count($threadIds) === self::PAGE_SIZE);
 
     return $count;
   }

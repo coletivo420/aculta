@@ -14,7 +14,6 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\site_alert\GetAlertsInterface;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
@@ -84,7 +83,7 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
     $time->method('getRequestTime')->willReturn($requestTime);
     return new MessengerBarHooks(
       $this->createMock(AccountInterface::class),
-      new UnreadThreadCounter($this->createMock(AccountInterface::class), $this->createMock(PrivateMessageServiceInterface::class)),
+      new UnreadThreadCounter($this->createMock(AccountInterface::class), $this->createMock(EntityTypeManagerInterface::class)),
       $this->createMock(GetAlertsInterface::class),
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(RendererInterface::class),

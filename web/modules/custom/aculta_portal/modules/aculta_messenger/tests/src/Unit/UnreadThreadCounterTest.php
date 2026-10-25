@@ -6,10 +6,12 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -116,14 +118,17 @@ final class UnreadThreadCounterTest extends UnitTestCase {
       accessResult: AccessResult::forbidden(),
     );
 
-    $service = $this->createMock(PrivateMessageServiceInterface::class);
-    $service->expects($this->never())->method('getCountThreadsForUser');
-    $service->expects($this->once())->method('getThreadsForUser')->with(FALSE)->willReturn([
-      'threads' => [$unread, $read, $inaccessible],
-      'next_exists' => FALSE,
-    ]);
+    $threadStorage = $this->createMock(EntityStorageInterface::class);
+    $query = $this->threadQuery([1, 2, 3], self::ME, 0);
+    $threadStorage->expects($this->once())->method('getQuery')->willReturn($query);
+    $threadStorage->expects($this->once())
+      ->method('loadMultiple')
+      ->with([1, 2, 3])
+      ->willReturn([$unread, $read, $inaccessible]);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->expects($this->once())->method('getStorage')->with('private_message_thread')->willReturn($threadStorage);
 
-    $this->assertSame(1, (new UnreadThreadCounter($account, $service))->count());
+    $this->assertSame(1, (new UnreadThreadCounter($account, $manager))->count());
   }
 
   /**
@@ -133,10 +138,38 @@ final class UnreadThreadCounterTest extends UnitTestCase {
     $account = $this->createMock(AccountInterface::class);
     $account->method('isAuthenticated')->willReturn(FALSE);
 
-    $service = $this->createMock(PrivateMessageServiceInterface::class);
-    $service->expects($this->never())->method('getThreadsForUser');
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->expects($this->never())->method('getStorage');
 
-    $this->assertSame(0, (new UnreadThreadCounter($account, $service))->count());
+    $this->assertSame(0, (new UnreadThreadCounter($account, $manager))->count());
+  }
+
+  /**
+   * Continues through stable-ID pages without skipping equal-time threads.
+   */
+  public function testCountLoadsThreadsInBoundedStableIdPages(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('id')->willReturn(self::ME);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+
+    $incoming = $this->message(self::OTHER, 1200);
+    $unread = $this->thread(updated: 1200, lastAccess: 1000, messages: [$incoming]);
+    $firstPage = range(1, 100);
+    $secondPage = [101];
+
+    $threadStorage = $this->createMock(EntityStorageInterface::class);
+    $threadStorage->expects(self::exactly(2))->method('getQuery')->willReturnOnConsecutiveCalls(
+      $this->threadQuery($firstPage, self::ME, 0),
+      $this->threadQuery($secondPage, self::ME, 100),
+    );
+    $threadStorage->expects(self::exactly(2))->method('loadMultiple')->willReturnOnConsecutiveCalls(
+      array_fill_keys($firstPage, $unread),
+      [101 => $unread],
+    );
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->expects(self::once())->method('getStorage')->with('private_message_thread')->willReturn($threadStorage);
+
+    self::assertSame(101, (new UnreadThreadCounter($account, $manager))->count());
   }
 
   /**
@@ -146,7 +179,40 @@ final class UnreadThreadCounterTest extends UnitTestCase {
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn(self::ME);
     $account->method('isAuthenticated')->willReturn(TRUE);
-    return new UnreadThreadCounter($account, $this->createMock(PrivateMessageServiceInterface::class));
+    return new UnreadThreadCounter($account, $this->createMock(EntityTypeManagerInterface::class));
+  }
+
+  /**
+   * Creates a query mock for one thread page.
+   *
+   * @param int[] $ids
+   *   The returned IDs.
+   * @param int $uid
+   *   The member filter.
+   * @param int $cursor
+   *   The exclusive ID cursor.
+   */
+  private function threadQuery(array $ids, int $uid, int $cursor): QueryInterface {
+    $query = $this->createMock(QueryInterface::class);
+    $query->expects(self::once())->method('accessCheck')->with(FALSE)->willReturnSelf();
+    $query->expects(self::exactly(2))->method('condition')->willReturnCallback(
+      static function (string $field, $value, ?string $operator = NULL) use ($uid, $cursor, $query) {
+        if ($field === 'members.target_id') {
+          self::assertSame($uid, $value);
+          self::assertNull($operator);
+        }
+        else {
+          self::assertSame('id', $field);
+          self::assertSame($cursor, $value);
+          self::assertSame('>', $operator);
+        }
+        return $query;
+      },
+    );
+    $query->expects(self::once())->method('sort')->with('id', 'ASC')->willReturnSelf();
+    $query->expects(self::once())->method('range')->with(0, 100)->willReturnSelf();
+    $query->expects(self::once())->method('execute')->willReturn($ids);
+    return $query;
   }
 
   /**
