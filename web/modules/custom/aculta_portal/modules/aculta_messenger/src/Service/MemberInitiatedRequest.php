@@ -12,11 +12,19 @@ use Symfony\Component\HttpFoundation\Request;
 final class MemberInitiatedRequest {
 
   /**
-   * Whether a request is a same-site navigation rather than prefetch/prerender.
+   * Whether a request is a page navigation or same-origin Fetch.
+   *
+   * Embedded subresources cannot update conversation read state.
    */
   public static function isMemberInitiated(?Request $request): bool {
-    if ($request === NULL
-      || strtolower(trim((string) $request->headers->get('Sec-Fetch-Site', ''))) === 'cross-site') {
+    if ($request === NULL) {
+      return FALSE;
+    }
+
+    $site = strtolower(trim((string) $request->headers->get('Sec-Fetch-Site', '')));
+    $destination = strtolower(trim((string) $request->headers->get('Sec-Fetch-Dest', '')));
+    if ($site === 'cross-site'
+      || ($destination !== '' && !in_array($destination, ['document', 'empty'], TRUE))) {
       return FALSE;
     }
     return !self::isPrefetchOrPrerender($request);

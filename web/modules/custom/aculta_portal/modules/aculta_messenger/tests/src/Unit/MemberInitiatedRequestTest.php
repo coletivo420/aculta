@@ -58,4 +58,21 @@ final class MemberInitiatedRequestTest extends UnitTestCase {
     self::assertTrue(MemberInitiatedRequest::isPrefetchOrPrerender($request));
   }
 
+  /**
+   * Embedded resource requests cannot mark a conversation read, but Fetch can.
+   */
+  public function testEmbeddedRequestsCannotTriggerReadState(): void {
+    foreach (['iframe', 'image', 'script', 'object'] as $destination) {
+      $request = Request::create('/mensagens/conversa/1');
+      $request->headers->set('Sec-Fetch-Site', 'same-site');
+      $request->headers->set('Sec-Fetch-Dest', $destination);
+      self::assertFalse(MemberInitiatedRequest::isMemberInitiated($request), $destination);
+    }
+
+    $fetch = Request::create('/mensagens/conversa/1');
+    $fetch->headers->set('Sec-Fetch-Site', 'same-origin');
+    $fetch->headers->set('Sec-Fetch-Dest', 'empty');
+    self::assertTrue(MemberInitiatedRequest::isMemberInitiated($fetch));
+  }
+
 }

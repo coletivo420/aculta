@@ -2496,3 +2496,9 @@ Preferências de Mensagens Privadas passam a ser próprias do Messenger, com mig
 
 Validação: testes Unit focais do worker, configuração administrativa, elegibilidade semanal e migração de padrão **11 testes / 174 assertions PASS**; PHPCS Drupal/DrupalPractice dos arquivos alterados PASS. A suíte completa, validação de configuração e índice de status ainda serão executados. Sem Runtime/SMTP.
 
+## 0.1.1-dev.257 — impedir leitura por requests de recursos incorporados
+
+A guarda de navegação agora rejeita destinos Fetch Metadata de sub-recursos, como `iframe`, `image`, `script` e `object`, evitando que embeds same-site acionem a leitura de uma conversa. Mantém navegação de documento e Fetch com destino `empty`, usado pela gaveta.
+
+Validação: `MemberInitiatedRequestTest` **4/16 PASS**, Unit Messenger **258/1.996 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
