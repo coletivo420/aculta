@@ -208,14 +208,24 @@ final class NewConversationForm extends FormBase {
   }
 
   public function submitForm(array &$form, FormStateInterface $formState): void {
-    $recipients = $this->recipients($formState);
-    if ($recipients === []) {
+    if ($formState->hasAnyErrors()) {
       $this->validator->releaseSubmissionLocks();
       return;
     }
-    // The Private Message mapper reads ->id() from each member, so the members are user entities, not IDs.
-    $sender = $this->entityTypes->getStorage('user')->load($this->currentUser->id());
-    if (!$sender instanceof UserInterface || !$sender->isActive()) {
+    $recipients = $this->recipients($formState, TRUE, TRUE);
+    if ($recipients === []) {
+      $formState->setErrorByName(
+        'members',
+        $this->t('Não foi possível iniciar uma conversa com este destinatário.'),
+      );
+      $this->validator->releaseSubmissionLocks();
+      return;
+    }
+    // Reload all participants at the persistence boundary; entity manager
+    // cache from initial validation must not preserve stale permissions.
+    $sender = $this->entityTypes->getStorage('user')->loadUnchanged((int) $this->currentUser->id());
+    if (!$sender instanceof UserInterface || !$this->policy->canReceiveMessages($sender)) {
+      $formState->setErrorByName('message', $this->t('Não foi possível enviar uma mensagem para essa conversa.'));
       $this->validator->releaseSubmissionLocks();
       return;
     }
@@ -234,6 +244,11 @@ final class NewConversationForm extends FormBase {
     }
     $thread = $this->validator->acquireThreadWriteLock($thread, $formState);
     if (!$thread instanceof PrivateMessageThreadInterface) {
+      return;
+    }
+    $this->validator->validateFreshThreadAccess($thread, $sender, $formState);
+    if ($formState->hasAnyErrors()) {
+      $this->validator->releaseSubmissionLocks();
       return;
     }
     // Recheck after resolving and locking a concurrently created thread.
@@ -339,10 +354,17 @@ final class NewConversationForm extends FormBase {
    *
    * @return \Drupal\user\UserInterface[]
    */
-  private function recipients(FormStateInterface $formState, bool $strict = TRUE): array {
+  private function recipients(
+    FormStateInterface $formState,
+    bool $strict = TRUE,
+    bool $reload = FALSE,
+  ): array {
     $recipients = [];
     foreach ($this->recipientIds($formState) as $uid) {
-      $user = $uid > 0 ? $this->entityTypes->getStorage('user')->load($uid) : NULL;
+      $storage = $this->entityTypes->getStorage('user');
+      $user = $uid > 0
+        ? ($reload ? $storage->loadUnchanged($uid) : $storage->load($uid))
+        : NULL;
       if (!$user instanceof UserInterface
         || !$this->policy->canReceiveMessages($user)
         || $this->memberIdentity->publicDisplayName($user) === NULL) {

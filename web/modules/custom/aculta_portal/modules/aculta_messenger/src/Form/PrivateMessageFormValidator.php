@@ -185,7 +185,7 @@ final class PrivateMessageFormValidator {
           // sender's membership and view access on the locked, fresh entity so
           // a concurrent removal cannot submit to a stale thread object.
           if (!$formState->hasAnyErrors()) {
-            $this->validateFreshThreadAccess($freshThread, $formState);
+            $this->validateFreshThreadAccess($freshThread, $sender, $formState);
           }
           // Block state may have changed after the first validation. Recheck
           // against the freshly loaded thread immediately before submission.
@@ -208,12 +208,14 @@ final class PrivateMessageFormValidator {
   /**
    * Requires the sender to retain view access to the freshly loaded thread.
    */
-  private function validateFreshThreadAccess(
+  public function validateFreshThreadAccess(
     PrivateMessageThreadInterface $thread,
+    UserInterface $sender,
     FormStateInterface $formState,
   ): void {
-    if (!$thread->isMember($this->currentUser->id())
-      || !$thread->access('view', $this->currentUser, TRUE)->isAllowed()) {
+    if ((int) $sender->id() !== (int) $this->currentUser->id()
+      || !$thread->isMember($sender->id())
+      || !$thread->access('view', $sender, TRUE)->isAllowed()) {
       $formState->setErrorByName(
         'message',
         $this->translation->translate('Não foi possível enviar uma mensagem para essa conversa.'),

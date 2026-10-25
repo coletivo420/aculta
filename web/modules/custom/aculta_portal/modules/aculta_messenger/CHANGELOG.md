@@ -1,3 +1,17 @@
+## 0.1.1-dev.309 — revalidar participantes ao iniciar conversa
+
+A criação da primeira mensagem recarrega participantes, confirma novamente a
+elegibilidade do remetente e dos destinatários e verifica acesso à thread
+recém-resolvida antes de persistir. A validação da resposta nativa usa também
+o remetente recarregado, protegendo contra permissões ou associação revogadas
+após a validação inicial. Bloqueios bilaterais seguem sendo revalidados sob
+lock.
+
+Validação: Unit Messenger **315 testes / 2.543 assertions PASS**; testes focados
+de conversa e privacidade **28 testes / 181 assertions PASS**; `git diff --check` PASS.
+PHPCS Drupal/DrupalPractice foi executado e reportou violações no arquivo
+extenso `NewConversationForm.php`; sem Runtime.
+
 ## 0.1.1-dev.308 — validar acesso da página unificada de e-mail
 
 Kernel exercita os checks reais do Drupal na rota `/configuracoes/email`:

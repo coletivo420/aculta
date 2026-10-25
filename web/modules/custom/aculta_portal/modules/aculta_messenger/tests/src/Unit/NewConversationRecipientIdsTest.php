@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Unit;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\aculta_messenger\Form\NewConversationForm;
 use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
 use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
@@ -25,6 +26,7 @@ use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
 use Drupal\user\UserDataInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -35,6 +37,166 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 #[CoversClass(NewConversationForm::class)]
 #[Group('aculta_messenger')]
 final class NewConversationRecipientIdsTest extends UnitTestCase {
+
+  /**
+   * Rechecks sender and recipient eligibility from uncached user entities.
+   */
+  #[DataProvider('submitPermissionRevocationCases')]
+  public function testSubmitRevalidatesParticipantPermissions(
+    bool $senderCanReceive,
+    bool $recipientCanReceive,
+    string $errorField,
+  ): void {
+    $sender = $this->eligibleParticipant(42, $senderCanReceive);
+    $recipient = $this->eligibleParticipant(84, $recipientCanReceive);
+    $users = [42 => $sender, 84 => $recipient];
+    $loads = [];
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('loadUnchanged')
+      ->willReturnCallback(static function (int $uid) use (&$loads, $users): ?UserInterface {
+        $loads[] = $uid;
+        return $users[$uid] ?? NULL;
+      });
+    $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypes->method('getStorage')->with('user')->willReturn($userStorage);
+    $identity = $this->createMock(PublicMemberIdentityInterface::class);
+    if ($recipientCanReceive) {
+      $identity->expects(self::once())->method('publicDisplayName')->with($recipient)->willReturn('Membro');
+    }
+    else {
+      $identity->expects(self::never())->method('publicDisplayName');
+    }
+    $mapper = $this->createMock(PrivateMessageMapperInterface::class);
+    $mapper->expects(self::never())->method('getThreadIdForMembers');
+    $privateMessages = $this->createMock(PrivateMessageServiceInterface::class);
+    $privateMessages->expects(self::never())->method('getThreadForMembers');
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $validator = new PrivateMessageFormValidator(
+      $this->createMock(FloodInterface::class),
+      $currentUser,
+      $this->createMock(TranslationInterface::class),
+      $this->createMock(PrivateMessageBanManagerInterface::class),
+      $this->createMock(FriendshipManagerInterface::class),
+      $this->createMock(UserDataInterface::class),
+      $lock,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      new ConversationWriteLock($lock, $this->createMock(EntityTypeManagerInterface::class)),
+      $this->createMock(EntityTypeManagerInterface::class),
+    );
+    $policy = new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []]));
+    $form = new NewConversationForm(
+      $currentUser,
+      $privateMessages,
+      $mapper,
+      $validator,
+      $entityTypes,
+      $identity,
+      $policy,
+    );
+    $form->setStringTranslation($this->getStringTranslationStub());
+    $formState = $this->formStateWithoutErrors();
+    $formState->setUserInput(['members' => ['84']]);
+    $formState->setValue('message', 'Primeira mensagem');
+
+    $formArray = [];
+    $form->submitForm($formArray, $formState);
+
+    self::assertArrayHasKey($errorField, $formState->getErrors());
+    self::assertSame($recipientCanReceive ? [84, 42] : [84], $loads);
+  }
+
+  /**
+   * Provides permission revocations that must stop a first-message submit.
+   */
+  public static function submitPermissionRevocationCases(): array {
+    return [
+      'recipient loses inbox permission' => [TRUE, FALSE, 'members'],
+      'sender loses inbox permission' => [FALSE, TRUE, 'message'],
+    ];
+  }
+
+  /**
+   * A locked thread that the fresh sender cannot view is never written to.
+   */
+  public function testSubmitRevalidatesAccessToLockedExistingThread(): void {
+    $sender = $this->eligibleParticipant(42, TRUE);
+    $recipient = $this->eligibleParticipant(84, TRUE);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('loadUnchanged')->willReturnCallback(static fn(int $uid): ?UserInterface => match ($uid) {
+      42 => $sender,
+      84 => $recipient,
+      default => NULL,
+    });
+    $staleThread = $this->createMock(PrivateMessageThreadInterface::class);
+    $staleThread->method('id')->willReturn('77');
+    $freshThread = $this->createMock(PrivateMessageThreadInterface::class);
+    $freshThread->method('id')->willReturn('77');
+    $freshThread->method('isMember')->with(42)->willReturn(TRUE);
+    $freshThread->expects(self::once())
+      ->method('access')
+      ->with('view', $sender, TRUE)
+      ->willReturn(AccessResult::forbidden());
+    $threadStorage = $this->createMock(EntityStorageInterface::class);
+    $threadStorage->expects(self::once())->method('load')->with(77)->willReturn($staleThread);
+    $threadStorage->expects(self::once())->method('loadUnchanged')->with(77)->willReturn($freshThread);
+    $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypes->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'user' => $userStorage,
+      'private_message_thread' => $threadStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+    $identity = $this->createMock(PublicMemberIdentityInterface::class);
+    $identity->method('publicDisplayName')->with($recipient)->willReturn('Membro');
+    $mapper = $this->createMock(PrivateMessageMapperInterface::class);
+    $mapper->expects(self::once())
+      ->method('getThreadIdForMembers')
+      ->with([$sender, $recipient])
+      ->willReturn(77);
+    $privateMessages = $this->createMock(PrivateMessageServiceInterface::class);
+    $privateMessages->expects(self::never())->method('getThreadForMembers');
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())
+      ->method('acquire')
+      ->with('aculta_messenger:conversation_write:77', ConversationWriteLock::LEASE_SECONDS)
+      ->willReturn(TRUE);
+    $lock->expects(self::once())
+      ->method('release')
+      ->with('aculta_messenger:conversation_write:77');
+    $validator = new PrivateMessageFormValidator(
+      $this->createMock(FloodInterface::class),
+      $currentUser,
+      $this->createMock(TranslationInterface::class),
+      $this->createMock(PrivateMessageBanManagerInterface::class),
+      $this->createMock(FriendshipManagerInterface::class),
+      $this->createMock(UserDataInterface::class),
+      $lock,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      new ConversationWriteLock($lock, $entityTypes),
+      $entityTypes,
+    );
+    $form = new NewConversationForm(
+      $currentUser,
+      $privateMessages,
+      $mapper,
+      $validator,
+      $entityTypes,
+      $identity,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+    );
+    $form->setStringTranslation($this->getStringTranslationStub());
+    $formState = $this->formStateWithoutErrors();
+    $formState->setUserInput(['members' => ['84']]);
+    $formState->setValue('message', 'Primeira mensagem');
+    $formArray = [];
+
+    $form->submitForm($formArray, $formState);
+
+    self::assertArrayHasKey('message', $formState->getErrors());
+  }
 
   /**
    * Duplicate and malformed submitted IDs cannot repeat or alter recipients.
@@ -136,7 +298,8 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
       $identity,
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
-    $formState = new FormState();
+    $form->setStringTranslation($this->getStringTranslationStub());
+    $formState = $this->formStateWithoutErrors();
     $formState->setUserInput(['members' => ['84']]);
     $recipients = new \ReflectionMethod(NewConversationForm::class, 'recipients');
 
@@ -265,7 +428,8 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
       $identity,
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
-    $formState = new FormState();
+    $form->setStringTranslation($this->getStringTranslationStub());
+    $formState = $this->formStateWithoutErrors();
     $formState->setUserInput(['members' => ['84']]);
     $formState->setValue('message', 'Primeira mensagem');
     $formState->set('pmt_entity', $candidateThread);
@@ -280,8 +444,8 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     $form->submitForm($render, $formState);
 
     self::assertSame(
-      'Não foi possível enviar a mensagem para esse destinatário.',
-      $formState->getErrors()['members'],
+      'Não foi possível iniciar uma conversa com este destinatário.',
+      (string) $formState->getErrors()['members'],
     );
   }
 
@@ -340,11 +504,31 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
   }
 
   /**
+   * Creates a form state with Drupal's static error flag reset for isolation.
+   */
+  private function formStateWithoutErrors(): FormState {
+    $anyErrors = new \ReflectionProperty(FormState::class, 'anyErrors');
+    $anyErrors->setAccessible(TRUE);
+    $anyErrors->setValue(NULL, FALSE);
+    return new FormState();
+  }
+
+  /**
    * Creates a member account stub.
    */
   private function user(int $uid): UserInterface {
     $user = $this->createMock(UserInterface::class);
     $user->method('id')->willReturn((string) $uid);
+    return $user;
+  }
+
+  /**
+   * Creates an account with controllable eligibility for private messages.
+   */
+  private function eligibleParticipant(int $uid, bool $eligible): UserInterface {
+    $user = $this->user($uid);
+    $user->method('isActive')->willReturn(TRUE);
+    $user->method('hasPermission')->willReturn($eligible);
     return $user;
   }
 
