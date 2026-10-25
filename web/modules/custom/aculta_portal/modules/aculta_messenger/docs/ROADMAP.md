@@ -236,6 +236,8 @@ Revalidação completa em 2026-10-25: Unit **360/3.928**, Integration **107/1.33
 
 Reexecução da Unit no checkout atual em 2026-10-25: **371/4.120 PASS** com PHPUnit 11.5.57/PHP 8.4.27. A tentativa de reexecução Kernel foi interrompida após detectar outra suíte Kernel ativa no mesmo banco dedicado; não há novo resultado Kernel a contabilizar. A evidência Kernel **55/1.160** acima permanece a última execução concluída; a revalidação atualizada do Kernel e da Integration continua pendente.
 
+Reexecução das Integration Unit no checkout atual em 2026-10-25: **83/872 PASS** (LMS, Wiki, Revista, Loja, Doações e Game), PHPUnit 11.5.57/PHP 8.4.27. Os sete testes Kernel da Integration não foram incluídos nesta execução por compartilharem o banco dedicado ocupado por outra suíte Kernel; não são declarados aprovados por esta reexecução.
+
 Validação incremental Dev.370: o membro `teste.comum` abriu por sessão autenticada a gaveta populada por HTTP, **10/10** Firefox ESR no Runtime de teste, viewport efetivo 1270 px. O GET respondeu 200, renderizou três conversas, incluindo dois grupos separados, estados de leitura e rótulos acessíveis, sem overflow; nenhum POST foi emitido. Isto cobre listagem/leitura da gaveta, mas não cobre a criação e resposta por formulário autenticado.
 
 ## M2 — API central de eventos (0.2.0)
