@@ -302,6 +302,14 @@ final class ThemeHooks implements TrustedCallbackInterface {
     $wikiEntryPage = $routeName === 'entity.node.canonical'
       && $routeNode instanceof NodeInterface
       && $routeNode->bundle() === 'wiki_entry';
+    // Wiki controller/form pages render their own Context Header h1.
+    $wikiContextPage = in_array($routeName, [
+      'aculta_wiki.contribution_intent',
+      'aculta_wiki.proposal_status',
+      'aculta_wiki.proposal_decide',
+      'aculta_studio.we_sativa',
+      'aculta_studio.we_sativa_start',
+    ], TRUE);
     $variables['institutional_home'] = $this->pathMatcher->isFrontPage();
     $brandMedia = $variables['domain_presentation']['regions']['brand_media'] ?? NULL;
     $variables['aculta_domain_brand_media'] = is_array($brandMedia) ? $this->brandMediaRender($brandMedia) : [];
@@ -349,7 +357,7 @@ final class ThemeHooks implements TrustedCallbackInterface {
       if ($destination !== NULL) {
         // Wiki entry and student dashboard Context Header SDCs own their H1.
         // Suppress only their redundant page-title block; preserve route titles.
-        if (($wikiEntryPage || $routeName === 'aculta_lms.student_dashboard')
+        if (($wikiEntryPage || $wikiContextPage || $routeName === 'aculta_lms.student_dashboard')
           && $destination === 'aculta_page_title') {
           unset($variables['page']['header'][$key]);
           continue;
