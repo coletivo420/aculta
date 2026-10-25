@@ -65,7 +65,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
       $container->get('aculta_messenger.aviso_preferencias'),
       $container->get('aculta_portal.email_confirmation_policy'),
       $container->get('aculta_mailer.mailer'),
-      $container->get('lock.persistent'),
+      $container->get('lock'),
     );
   }
 

@@ -13,6 +13,7 @@ use Drupal\aculta_mailer\Monitor\ImapClientInterface;
 use Drupal\aculta_mailer\Monitor\MailMonitor;
 use Drupal\aculta_mailer\Policy\QuotaSignal;
 use Drupal\aculta_mailer\Queue\MailQueue;
+use Drupal\aculta_mailer\Transport\SecretProviderInterface;
 use Drupal\aculta_mailer\Webhook\DeliveryEventApplier;
 use Drupal\aculta_mailer\Webhook\DeliveryEventType;
 use Drupal\Component\Datetime\TimeInterface;
@@ -185,6 +186,73 @@ MAIL;
     $this->assertSame(['checked' => 1, 'reports' => 0], $monitor->pollDmarc($client));
     $this->assertSame(['checked' => 0, 'reports' => 0], $monitor->pollDmarc($client));
     $this->assertSame([], $monitor->reports());
+  }
+
+  /**
+   * IMAP exception text is excluded from persistent state and operational logs.
+   */
+  public function testCronStoresOnlyImapFailureClass(): void {
+    $stateValues = [];
+    $state = $this->createMock(StateInterface::class);
+    $state->method('get')->willReturnCallback(static fn(string $key, mixed $default = NULL): mixed => $stateValues[$key] ?? $default);
+    $state->method('set')->willReturnCallback(static function (string $key, mixed $value) use (&$stateValues): void {
+      $stateValues[$key] = $value;
+    });
+
+    $configValues = [
+      'enabled' => TRUE,
+      'host' => '127.0.0.1',
+      'port' => 1,
+      'user' => 'private-mailbox@example.invalid',
+      'mailbox' => 'INBOX',
+      'bounce_interval' => 900,
+      'dmarc_interval' => 43200,
+    ];
+    $config = $this->createMock(ImmutableConfig::class);
+    $config->method('get')->willReturnCallback(static fn(?string $key = NULL): mixed => $configValues[$key ?? ''] ?? NULL);
+    $configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $configFactory->method('get')->willReturn($config);
+
+    $logged = [];
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->method('warning')->willReturnCallback(static function (string|\Stringable $message, array $context = []) use (&$logged): void {
+      $logged[] = [(string) $message, $context];
+    });
+    $secrets = $this->createMock(SecretProviderInterface::class);
+    $secrets->method('value')->with(MailMonitor::PASSWORD)->willReturn('test-secret');
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn(self::NOW);
+    $suppression = new MailSuppression($state, $time);
+    $monitor = new MailMonitor(
+      $configFactory,
+      $state,
+      $time,
+      $logger,
+      new DeliveryEventApplier($this->createMock(EntityTypeManagerInterface::class), $suppression),
+      new BounceParser(),
+      new DmarcReportParser(),
+      $secrets,
+      new MailAlerts(
+        $configFactory,
+        $state,
+        $time,
+        new MailQueue($this->createMock(QueueFactory::class)),
+        $this->createMock(UuidInterface::class),
+        $this->createMock(AdministratorRecipients::class),
+      ),
+      $this->createMock(QuotaSignal::class),
+    );
+
+    $monitor->cron();
+
+    $failure = $stateValues['aculta_mailer.imap.last_error'] ?? [];
+    $this->assertSame('dmarc', $failure['kind'] ?? NULL);
+    $this->assertArrayHasKey('error_class', $failure);
+    $this->assertArrayNotHasKey('message', $failure);
+    $this->assertCount(2, $logged);
+    $diagnostics = serialize([$failure, $logged]);
+    $this->assertStringNotContainsString('private-mailbox@example.invalid', $diagnostics);
+    $this->assertStringNotContainsString('test-secret', $diagnostics);
   }
 
 }

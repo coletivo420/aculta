@@ -24,6 +24,7 @@ DISPLAY=:0 node tests/browser/aculta-messenger/drawer-notice-filters.mjs
 DISPLAY=:0 node tests/browser/aculta-messenger/privacy-subscriptions.mjs
 DISPLAY=:0 node tests/browser/aculta-messenger/conversation-list-readonly.mjs
 DISPLAY=:0 node tests/browser/aculta-messenger/new-conversation-compose-readonly.mjs
+DISPLAY=:0 node tests/browser/aculta-messenger/new-conversation-nojs-readonly.mjs
 DISPLAY=:0 SUITE_WIDTH=390 node tests/browser/aculta-messenger/drawer-notice-filters.mjs
 DISPLAY=:0 SUITE_WIDTH=390 node tests/browser/aculta-messenger/privacy-subscriptions.mjs
 DISPLAY=:0 SUITE_WIDTH=390 node tests/browser/aculta-messenger/conversation-list-readonly.mjs
@@ -124,3 +125,10 @@ Na mesma data, `drawer-notice-filters.mjs` passou **6/6 verificações** com vie
 Em 2026-10-25, `drawer-notice-filters.mjs` passou **8/8 verificações** no Firefox ESR visível (`DISPLAY=:0`), host do Portal e viewport efetivo de 1270 px. A rodada confirmou seções com cabeçalho/separador por origem, navegação combinada Wiki + Não lidos e ausência de overflow. Quatro seções estavam disponíveis no estado da conta de teste; nenhum aviso ou preferência foi alterado.
 
 Também em 2026-10-25, `central-empty-state.mjs` passou **5/5** no host Conta e `privacy-subscriptions.mjs` passou **9/9** na conta `teste.comum`, com aceite dos Termos já existente. A página de Privacidade foi verificada em viewport efetivo 1270 px e, com janela solicitada de 390 px, em viewport efetivo 500 px; o resumo foi aberto/fechado com Enter, o estado vazio foi validado e não houve overflow. Não havia tópico seguido para validar linhas populadas; o formulário não foi enviado. Nenhum consentimento ou Flag foi alterado.
+
+`new-conversation-nojs-readonly.mjs` abre Firefox ESR visível com a preferência
+`javascript.enabled=false`. No host de teste, cobre o link da caixa de mensagens,
+busca GET, seleção cumulativa de duas pessoas, restauração/remoção de chips e a
+presença do formulário POST sem submetê-lo. Não cria conversas nem altera dados.
+Exige que a versão Dev.374 esteja instalada no Runtime; o teste está versionado,
+mas ainda não foi executado.

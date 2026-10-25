@@ -213,14 +213,40 @@ final class PrivateMessageFormValidator {
     UserInterface $sender,
     FormStateInterface $formState,
   ): void {
-    if ((int) $sender->id() !== (int) $this->currentUser->id()
-      || !$thread->isMember($sender->id())
-      || !$thread->access('view', $sender, TRUE)->isAllowed()) {
+    if (!$this->hasFreshThreadAccess($thread, $sender)) {
       $formState->setErrorByName(
         'message',
         $this->translation->translate('Não foi possível enviar uma mensagem para essa conversa.'),
       );
     }
+  }
+
+  /**
+   * Checks access to a reloaded thread at the persistence boundary.
+   *
+   * The contrib access handler denies viewing an empty thread until its first
+   * message is attached. A new conversation may allow that one empty state
+   * after the sender's identity, permission, and membership are revalidated.
+   */
+  public function hasFreshThreadAccess(
+    PrivateMessageThreadInterface $thread,
+    UserInterface $sender,
+    bool $allowNewEmptyThread = FALSE,
+  ): bool {
+    if ((int) $sender->id() !== (int) $this->currentUser->id()
+      || !$sender->isActive()
+      || !$sender->hasPermission('use private messaging system')
+      || !$thread->isMember($sender->id())) {
+      return FALSE;
+    }
+
+    if ($allowNewEmptyThread
+      && $thread->hasField('private_messages')
+      && $thread->get('private_messages')->isEmpty()) {
+      return TRUE;
+    }
+
+    return $thread->access('view', $sender, TRUE)->isAllowed();
   }
 
   /**

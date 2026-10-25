@@ -19,6 +19,7 @@ use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\Lock\DatabaseLockBackend;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -57,6 +58,8 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    // KernelTestBase replaces Drupal's database lock service with a no-op.
+    $this->container->set('lock', new DatabaseLockBackend($this->container->get('database')));
     $this->installEntitySchema('user');
     $this->installEntitySchema('aculta_aviso');
     $this->installEntitySchema('aculta_mail_log');
@@ -116,7 +119,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       $avisos,
       $this->container->get('settings'),
       $database,
-      $this->container->get('lock.persistent'),
+      $this->container->get('lock'),
       [$provider],
     );
 
@@ -260,7 +263,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       $avisos,
       $this->container->get('settings'),
       $database,
-      $this->container->get('lock.persistent'),
+      $this->container->get('lock'),
       [$provider],
     );
 
@@ -389,7 +392,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       $avisos,
       $this->container->get('settings'),
       $database,
-      $this->container->get('lock.persistent'),
+      $this->container->get('lock'),
       [$provider],
     );
 
@@ -410,6 +413,196 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       ->fetchField());
     self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
     self::assertCount(1, $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
+  }
+
+  /**
+   * Defers the stale worker after resuming with its recipient lease replaced.
+   */
+  public function testSuspendedWorkerCannotAcknowledgeAfterRecipientLeaseExpires(): void {
+    if (!function_exists('posix_kill') || !function_exists('proc_open')) {
+      self::markTestSkipped('POSIX process control and proc_open are required for the suspended-worker test.');
+    }
+
+    $account = User::create([
+      'name' => 'digest_worker_suspend',
+      'mail' => 'digest-suspend@example.test',
+      'status' => 1,
+      'langcode' => 'pt-br',
+      'preferred_langcode' => 'pt-br',
+    ]);
+    $account->save();
+    $uid = (int) $account->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    (new AvisoPreferencias($userData))->saveEmailMode($uid, 'wiki', AvisoPreferencias::EMAIL_DIGEST);
+
+    $database = $this->container->get('database');
+    $provider = new DigestRecoveryProvider($uid, $database);
+    $barrierDirectory = sys_get_temp_dir() . '/aculta-digest-suspend-' . bin2hex(random_bytes(8));
+    if (!mkdir($barrierDirectory, 0700) && !is_dir($barrierDirectory)) {
+      throw new \RuntimeException('Could not create the suspended digest marker directory.');
+    }
+    $acceptedMarker = $barrierDirectory . '/accepted-worker-pid';
+    $resumeMarker = $barrierDirectory . '/resume';
+    $transportCountMarker = $barrierDirectory . '/transport-count';
+    $environmentNames = [
+      'ACULTA_DIGEST_RECIPIENT_UID',
+      'ACULTA_DIGEST_SHARED_TEST_PREFIX',
+      'ACULTA_DIGEST_CRASH_MARKER',
+      'ACULTA_DIGEST_CRASH_COUNT_MARKER',
+      'ACULTA_DIGEST_SUSPEND_AFTER_ACCEPTANCE',
+      'ACULTA_DIGEST_RESUME_MARKER',
+    ];
+    $originalEnvironment = [];
+    foreach ($environmentNames as $name) {
+      $originalEnvironment[$name] = getenv($name);
+    }
+    putenv('ACULTA_DIGEST_RECIPIENT_UID=' . $uid);
+    putenv('ACULTA_DIGEST_SHARED_TEST_PREFIX=' . $database->getPrefix());
+    putenv('ACULTA_DIGEST_CRASH_MARKER=' . $acceptedMarker);
+    putenv('ACULTA_DIGEST_CRASH_COUNT_MARKER=' . $transportCountMarker);
+    putenv('ACULTA_DIGEST_SUSPEND_AFTER_ACCEPTANCE=1');
+    putenv('ACULTA_DIGEST_RESUME_MARKER=' . $resumeMarker);
+
+    $process = NULL;
+    $pipes = [];
+    $workerPid = NULL;
+    $leaseLock = NULL;
+    $leaseLockHeld = FALSE;
+    try {
+      $projectRoot = dirname(DRUPAL_ROOT);
+      $workerFixture = 'web/modules/custom/aculta_portal/modules/aculta_messenger/tests/fixtures/DigestCrashWorkerKernelTest.php';
+      $process = proc_open([
+        PHP_BINARY,
+        $projectRoot . '/vendor/bin/phpunit',
+        '-c',
+        $projectRoot . '/web/core/phpunit.xml.dist',
+        $projectRoot . '/' . $workerFixture,
+      ], [
+        0 => ['pipe', 'r'],
+        1 => ['pipe', 'w'],
+        2 => ['pipe', 'w'],
+      ], $pipes, $projectRoot);
+      self::assertIsResource($process);
+      fclose($pipes[0]);
+      stream_set_blocking($pipes[1], FALSE);
+      stream_set_blocking($pipes[2], FALSE);
+
+      $deadline = microtime(TRUE) + 45;
+      while (!is_file($acceptedMarker)) {
+        $status = proc_get_status($process);
+        if (!$status['running']) {
+          [$stdout, $stderr, $exitCode] = $this->collectWorkerProcess($process, $pipes);
+          $process = NULL;
+          throw new \RuntimeException('Digest worker exited before transport acceptance: ' . trim($stderr . "\n" . $stdout));
+        }
+        if (microtime(TRUE) >= $deadline) {
+          throw new \RuntimeException('Timed out waiting for the suspended digest worker to accept transport.');
+        }
+        usleep(10_000);
+      }
+
+      $workerPid = (int) file_get_contents($acceptedMarker);
+      self::assertGreaterThan(0, $workerPid, 'The accepted-delivery marker must identify the isolated Drupal worker.');
+      self::assertTrue(posix_kill($workerPid, SIGSTOP), 'The worker must be suspended after the Mailer accepts the digest.');
+
+      // Expire only this test recipient's lease and claim it from the parent
+      // process before resuming the suspended worker.
+      self::assertSame(1, $database->update('semaphore')
+        ->fields(['expire' => microtime(TRUE) - 1])
+        ->condition('name', 'aculta_messenger.avisos_resumo.' . $uid)
+        ->execute());
+      $leaseLock = $this->container->get('lock');
+      $leaseLockHeld = $leaseLock->acquire('aculta_messenger.avisos_resumo.' . $uid, 180.0);
+      self::assertTrue($leaseLockHeld, 'A fresh worker must be able to claim the expired recipient lease.');
+
+      self::assertTrue(file_put_contents($resumeMarker, 'resume', LOCK_EX) !== FALSE);
+      self::assertTrue(posix_kill($workerPid, SIGCONT), 'The suspended digest worker must resume.');
+      $workerPid = NULL;
+      [$stdout, $stderr, $exitCode] = $this->collectWorkerProcess($process, $pipes);
+      $process = NULL;
+      self::assertSame(0, $exitCode, 'The resumed worker must defer acknowledgement after losing its lease: ' . trim($stderr . "\n" . $stdout));
+      self::assertSame(0, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
+        ->fields('digest', ['acknowledged'])
+        ->condition('id', 1)
+        ->execute()
+        ->fetchField(), 'The stale worker must not acknowledge while another worker owns the recipient lease.');
+      $snapshot = $userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
+      self::assertIsArray($snapshot);
+      self::assertArrayNotHasKey('accepted_at', $snapshot);
+      self::assertSame("sent\n", file_get_contents($transportCountMarker));
+      self::assertCount(1, $this->container->get('entity_type.manager')->getStorage('aculta_mail_log')
+        ->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
+
+      $leaseLock->release('aculta_messenger.avisos_resumo.' . $uid);
+      $leaseLockHeld = FALSE;
+      $entityTypeManager = $this->container->get('entity_type.manager');
+      $access = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+      $access->method('supportsTopic')->willReturn(FALSE);
+      $avisos = new AvisoService(
+        $entityTypeManager,
+        $this->createMock(FlagServiceInterface::class),
+        $access,
+        $database,
+        $this->container->get('datetime.time'),
+        $this->container->get('lock'),
+      );
+      $summary = new AvisosResumo(
+        $entityTypeManager,
+        new AvisoPreferencias($userData),
+        $this->container->get('aculta_mailer.mailer'),
+        new EmailConfirmationPolicy($userData, $entityTypeManager, $this->container->get('module_handler')),
+        $userData,
+        $this->container->get('datetime.time'),
+        $avisos,
+        $this->container->get('settings'),
+        $database,
+        $leaseLock,
+        [$provider],
+      );
+
+      self::assertSame(0, $summary->enviarResumos(), 'The accepted manifest is reconciled without a second transport.');
+      self::assertSame(1, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
+        ->fields('digest', ['acknowledged'])
+        ->condition('id', 1)
+        ->execute()
+        ->fetchField());
+      self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
+      self::assertSame("sent\n", file_get_contents($transportCountMarker));
+      self::assertCount(1, $entityTypeManager->getStorage('aculta_mail_log')
+        ->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]), 'The suspended worker transported the digest only once.');
+    }
+    finally {
+      file_put_contents($resumeMarker, 'resume', LOCK_EX);
+      if ($workerPid !== NULL) {
+        posix_kill($workerPid, SIGCONT);
+        posix_kill($workerPid, SIGTERM);
+      }
+      if (is_resource($process)) {
+        proc_terminate($process);
+        foreach ($pipes as $pipe) {
+          if (is_resource($pipe)) {
+            fclose($pipe);
+          }
+        }
+        proc_close($process);
+      }
+      if ($leaseLockHeld && $leaseLock !== NULL) {
+        $leaseLock->release('aculta_messenger.avisos_resumo.' . $uid);
+      }
+      foreach ($originalEnvironment as $name => $value) {
+        if ($value === FALSE) {
+          putenv($name);
+        }
+        else {
+          putenv($name . '=' . $value);
+        }
+      }
+      foreach ([$acceptedMarker, $resumeMarker, $transportCountMarker] as $marker) {
+        @unlink($marker);
+      }
+      @rmdir($barrierDirectory);
+    }
   }
 
   /**
@@ -526,7 +719,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
         $avisos,
         $this->container->get('settings'),
         $database,
-        $this->container->get('lock.persistent'),
+        $this->container->get('lock'),
         [$provider],
       );
 
@@ -616,7 +809,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       $avisos,
       $this->container->get('settings'),
       $database,
-      $this->container->get('lock.persistent'),
+      $this->container->get('lock'),
       [$provider],
     );
 
@@ -630,6 +823,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     putenv('ACULTA_DIGEST_RECIPIENT_UID=' . $uid);
     putenv('ACULTA_DIGEST_SHARED_TEST_PREFIX=' . $database->getPrefix());
 
+    $workerCount = 8;
     $workers = [];
     try {
       $workerFixture = 'web/modules/custom/aculta_portal/modules/aculta_messenger/tests/fixtures/DigestCompetingWorkerKernelTest.php';
@@ -640,7 +834,6 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
         $projectRoot . '/web/core/phpunit.xml.dist',
         $projectRoot . '/' . $workerFixture,
       ];
-      $workerCount = 3;
       putenv('ACULTA_DIGEST_COMPETITOR_COUNT=' . $workerCount);
       for ($workerId = 1; $workerId <= $workerCount; $workerId++) {
         $pipes = [];
@@ -711,11 +904,12 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       putenv('ACULTA_DIGEST_SHARED_TEST_PREFIX');
       putenv('ACULTA_DIGEST_COMPETITOR_COUNT');
       putenv('ACULTA_DIGEST_COMPETITOR_ID');
-      foreach ([
-        'transport-started',
-        'competitor-ready-1', 'competitor-ready-2', 'competitor-ready-3',
-        'competitor-done-1', 'competitor-done-2', 'competitor-done-3',
-      ] as $filename) {
+      $markerFiles = ['transport-started'];
+      foreach (range(1, $workerCount) as $workerId) {
+        $markerFiles[] = 'competitor-ready-' . $workerId;
+        $markerFiles[] = 'competitor-done-' . $workerId;
+      }
+      foreach ($markerFiles as $filename) {
         @unlink($barrierDirectory . '/' . $filename);
       }
       @rmdir($barrierDirectory);

@@ -61,7 +61,7 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
       $container->get('aculta_messenger.forum_notice_event_producer'),
       $container->get('path_alias.manager'),
       $container->get('datetime.time'),
-      $container->get('lock.persistent'),
+      $container->get('lock'),
       $container->get('logger.factory'),
     );
   }

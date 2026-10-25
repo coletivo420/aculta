@@ -12,6 +12,7 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\Mailer\Exception\UnexpectedResponseException;
 
 /**
  * Falha de transporte de ponta a ponta: código SMTP, classe do erro, registro e failover pela fila.
@@ -54,8 +55,7 @@ final class MailDeliveryKernelTest extends KernelTestBase {
     $this->assertSame(DeliveryError::Permanent, $result->error);
     $this->assertSame(550, $result->smtpCode);
     $this->assertSame('smtp_550', $this->logFor(self::CORRELATION)->get('error_code')->value);
-    // O relatório guarda o texto completo do transporte; a mensagem ao usuário continua genérica.
-    $this->assertSame('Expected response code "250" but got code "550".', $this->logFor(self::CORRELATION)->get('error_message')->value);
+    $this->assertSame(UnexpectedResponseException::class . ' (SMTP 550)', $this->logFor(self::CORRELATION)->get('error_message')->value);
     $this->assertSame('failed', $this->logFor(self::CORRELATION)->get('status')->value);
   }
 
@@ -70,6 +70,24 @@ final class MailDeliveryKernelTest extends KernelTestBase {
     $this->assertSame(DeliveryError::Temporary, $result->error);
     $this->assertSame(421, $result->smtpCode);
     $this->assertSame('smtp', $this->lastHeaders()['X-Transport'] ?? NULL);
+  }
+
+  /**
+   * Persisted diagnostics omit arbitrary exception text that may contain PII.
+   */
+  public function testFailureLogStoresOnlyExceptionClassAndCode(): void {
+    $this->failWith(550);
+    $this->container->get('state')->set(
+      'aculta_mailer_test.failure_message',
+      'Mailbox private-person@example.invalid rejected; secret-token=personal-data',
+    );
+    $result = $this->mailer()->deliver($this->message(), 'smtp');
+
+    $this->assertFalse($result->sent);
+    $diagnostic = (string) $this->logFor(self::CORRELATION)->get('error_message')->value;
+    $this->assertSame(UnexpectedResponseException::class . ' (SMTP 550)', $diagnostic);
+    $this->assertStringNotContainsString('private-person@example.invalid', $diagnostic);
+    $this->assertStringNotContainsString('secret-token', $diagnostic);
   }
 
   /**

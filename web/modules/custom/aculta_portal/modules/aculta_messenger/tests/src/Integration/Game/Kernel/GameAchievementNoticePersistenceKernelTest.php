@@ -136,12 +136,20 @@ final class GameAchievementNoticePersistenceKernelTest extends KernelTestBase {
       $publisher,
       $this->badgeService(),
     );
+    $this->container->set('aculta_messenger.game_achievement_notice_migration', $migration);
+    require_once dirname(__DIR__, 5) . '/aculta_messenger.post_update.php';
+    $sandbox = [];
 
-    $lastUid = 0;
-    self::assertSame(1, $migration->migrateBatch($lastUid));
-    self::assertSame((int) $recipient->id(), $lastUid);
+    self::assertSame(
+      'Migrated 1 accounts with pending achievement notices.',
+      aculta_messenger_post_update_game_achievement_notices($sandbox),
+    );
+    self::assertSame(1, $sandbox['#finished']);
     self::assertNull($userData->get('aculta_user', (int) $recipient->id(), 'game_achievement_notice_queue'));
-    self::assertSame(0, $migration->migrateBatch($lastUid));
+    self::assertSame(
+      'Migrated 0 accounts with pending achievement notices.',
+      aculta_messenger_post_update_game_achievement_notices($sandbox),
+    );
   }
 
   /**

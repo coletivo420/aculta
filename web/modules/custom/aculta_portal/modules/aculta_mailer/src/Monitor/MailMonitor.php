@@ -152,14 +152,17 @@ final class MailMonitor {
         $this->state->delete(self::STATE_ERROR);
       }
       catch (\Throwable $error) {
+        $errorClass = $error::class;
         $this->state->set(self::STATE_ERROR, [
           'kind' => $kind,
           'when' => $now,
-          'message' => mb_substr($error->getMessage(), 0, 500),
+          'error_class' => $errorClass,
         ]);
-        $this->logger->warning('Monitoramento IMAP (@kind) falhou: @message', [
+        // Exception messages can echo mailbox addresses, server responses, or
+        // other personal data. Keep diagnostics categorical in logs and state.
+        $this->logger->warning('Monitoramento IMAP (@kind) falhou (@error_class).', [
           '@kind' => $kind,
-          '@message' => $error->getMessage(),
+          '@error_class' => $errorClass,
         ]);
       }
       $last[$kind] = $now;
@@ -256,11 +259,21 @@ final class MailMonitor {
   /**
    * Último erro de leitura, ou NULL. Sem credenciais.
    *
-   * @return array{kind: string, when: int, message: string}|null
-   *   Tipo da leitura, instante e mensagem segura.
+   * @return array{kind: string, when: int, error_class: class-string<\Throwable>}|null
+   *   Tipo da leitura, instante e classe da exceção, sem texto potencialmente sensível.
    */
   public function lastError(): ?array {
-    return $this->state->get(self::STATE_ERROR);
+    $error = $this->state->get(self::STATE_ERROR);
+    if (!is_array($error)) {
+      return NULL;
+    }
+    // Older state entries may contain the raw exception text. Do not expose
+    // that historical value through the administrative status screen.
+    return [
+      'kind' => in_array($error['kind'] ?? NULL, ['bounce', 'dmarc'], TRUE) ? $error['kind'] : 'imap',
+      'when' => (int) ($error['when'] ?? 0),
+      'error_class' => is_string($error['error_class'] ?? NULL) ? $error['error_class'] : 'LegacyTransportFailure',
+    ];
   }
 
   /**

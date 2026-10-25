@@ -34,7 +34,7 @@ final class MailFailureSubscriber implements EventSubscriberInterface {
     }
     $error = $event->getError();
     $code = (int) $error->getCode();
-    $this->failures->remember($correlation, $code > 0 ? $code : NULL, $error->getMessage());
+    $this->failures->remember($correlation, $code > 0 ? $code : NULL, $error->getMessage(), $error::class);
   }
 
 }

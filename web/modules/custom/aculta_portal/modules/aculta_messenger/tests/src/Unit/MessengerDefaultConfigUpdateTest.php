@@ -105,4 +105,22 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
     }
   }
 
+  /**
+   * The Game notice update installs its shared Message bundle defaults.
+   */
+  public function testUpdateInstallsGameNoticeConfiguration(): void {
+    $installer = $this->createMock(ConfigInstaller::class);
+    $installer->expects(self::once())->method('installDefaultConfig')->with('module', 'aculta_messenger');
+    $container = new ContainerBuilder();
+    $container->set('config.installer', $installer);
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
+    \Drupal::setContainer($container);
+    try {
+      aculta_messenger_update_10012();
+    }
+    finally {
+      \Drupal::unsetContainer();
+    }
+  }
+
 }

@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_mailer\Kernel;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
-use Drupal\Core\Lock\PersistentDatabaseLockBackend;
+use Drupal\Core\Lock\DatabaseLockBackend;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MessageIdFactory;
 use Drupal\KernelTests\KernelTestBase;
@@ -37,6 +37,7 @@ final class AcultaMailerKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->container->set('lock', new DatabaseLockBackend($this->container->get('database')));
     $this->installEntitySchema('aculta_mail_log');
   }
 
@@ -120,7 +121,7 @@ final class AcultaMailerKernelTest extends KernelTestBase {
       $correlationId,
     );
     $lockName = 'aculta_mailer.delivery.' . hash('sha256', $correlationId);
-    $otherRequestLock = new PersistentDatabaseLockBackend($this->container->get('database'));
+    $otherRequestLock = new DatabaseLockBackend($this->container->get('database'));
     $this->assertTrue($otherRequestLock->acquire($lockName, 180.0));
     try {
       $result = $this->container->get('aculta_mailer.mailer')->deliver($message);

@@ -1,3 +1,15 @@
+## 0.1.0-dev.74 — restringir detalhes pessoais nos logs operacionais — 2026-10-25
+
+Falhas IMAP agora guardam e registram somente a classe da exceção; o estado
+continua útil à tela administrativa sem carregar texto de servidor que possa
+conter dados pessoais. A tela exibe esse diagnóstico categórico. O plugin de
+transporte não copia a resposta completa do provedor para o logger: registra o
+transporte e o código SMTP. Novas falhas guardam somente classe/código no Mail Log e nos alertas. Registros
+históricos anteriores permanecem inalterados sob a retenção/acesso atuais; a
+tela mascara estado IMAP legado e nenhuma limpeza de logs foi executada.
+
+`MailMonitorTest` **6/18**, `MailSettingsKernelTest` **2/5**, Unit Mailer **161/331** e Kernel Mailer **46/214 PASS** no MariaDB dedicado. PHPCS Drupal/DrupalPractice passou sem erros; persistem avisos de linhas >80 chars nos arquivos tocados. Gate Drupal 11+ (**1.155 checks**), índice e diff check PASS. PHP 8.4.27; Runtime e SMTP externo não usados.
+
 ## 0.1.0-dev.73 — consulta de aceite por correlação — 2026-10-24
 
 O contrato público do Mailer agora permite consultar se uma correlação opaca foi aceita, sem exigir o endereço original.

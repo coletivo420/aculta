@@ -55,7 +55,11 @@ final class FailingTestMailer implements MailInterface, ContainerFactoryPluginIn
     $email = new Email();
     $email->getHeaders()->addTextHeader('X-Aculta-Mail-ID', (string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''));
     $code = (int) $this->state->get('aculta_mailer_test.failure_code', 550);
-    $error = new UnexpectedResponseException('Expected response code "250" but got code "' . $code . '".', $code);
+    $errorMessage = (string) $this->state->get(
+      'aculta_mailer_test.failure_message',
+      'Expected response code "250" but got code "' . $code . '".',
+    );
+    $error = new UnexpectedResponseException($errorMessage, $code);
     $this->dispatcher->dispatch(new FailedMessageEvent($email, $error));
     return FALSE;
   }

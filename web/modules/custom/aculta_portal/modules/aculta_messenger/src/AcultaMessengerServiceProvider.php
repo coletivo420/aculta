@@ -94,7 +94,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
           new Reference('entity_type.manager'),
           new Reference('aculta_user.badge_service'),
           new Reference('aculta_portal.domain_purpose'),
-          new Reference('lock.persistent'),
+          new Reference('lock'),
         ],
       ));
       $container->setAlias(GameAchievementNoticeManagerInterface::class, 'aculta_messenger.game_achievement_notice_manager');
@@ -154,7 +154,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         new Reference('queue'),
         new Reference('logger.channel.aculta_messenger'),
         new Reference('aculta_messenger.notice_event_publisher'),
-        new Reference('lock.persistent'),
+        new Reference('lock'),
       ],
     ))->addTag('aculta_messenger.aviso_digest_provider');
     $container->setAlias(LearningNoticeManagerInterface::class, 'aculta_messenger.lms_notice_manager');
@@ -195,7 +195,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         new Reference('aculta_portal.domain_purpose'),
         new Reference('aculta_messenger.aviso_preferencias'),
         new Reference('queue'),
-        new Reference('lock.persistent'),
+        new Reference('lock'),
         new Reference('logger.channel.aculta_messenger'),
       ],
     ))->addTag('aculta_messenger.aviso_digest_provider');
@@ -233,7 +233,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         new Reference('aculta_portal.domain_purpose'),
         new Reference('aculta_messenger.aviso_preferencias'),
         new Reference('queue'),
-        new Reference('lock.persistent'),
+        new Reference('lock'),
         new Reference('flag'),
         new Reference('logger.channel.aculta_messenger'),
       ],
@@ -272,7 +272,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         new Reference('aculta_portal.checkout_settings'),
         new Reference('aculta_messenger.aviso_preferencias'),
         new Reference('queue'),
-        new Reference('lock.persistent'),
+        new Reference('lock'),
         new Reference('logger.channel.aculta_messenger'),
       ],
     ))->addTag('aculta_messenger.aviso_digest_provider');
@@ -309,7 +309,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         new Reference('aculta_portal.domain_purpose'),
         new Reference('aculta_messenger.aviso_preferencias'),
         new Reference('queue'),
-        new Reference('lock.persistent'),
+        new Reference('lock'),
         new Reference('logger.channel.aculta_messenger'),
       ],
     ))->addTag('aculta_messenger.aviso_digest_provider');

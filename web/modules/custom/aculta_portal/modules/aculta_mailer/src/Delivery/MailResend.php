@@ -94,7 +94,14 @@ final class MailResend {
     // Falha de novo: o registro mostra a nova tentativa e mantém o conteúdo cifrado para outra tentativa.
     $code = $result['code'];
     $errorCode = $code !== NULL ? 'smtp_' . $code : 'sem_codigo_temporaria';
-    $this->log->record($message, MailStatus::Failed, $attempt, $transportName, $errorCode, $result['message']);
+    $this->log->record(
+      $message,
+      MailStatus::Failed,
+      $attempt,
+      $transportName,
+      $errorCode,
+      DeliveryFailureSummary::create($result['error_class'] ?? NULL, $code),
+    );
     return SendResult::failed(DeliveryError::Temporary, $code);
   }
 

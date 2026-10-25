@@ -33,7 +33,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Plugin de envio do Core pela camada de envio E-Mails ACULTA (F15).
  *
- * Não é o padrão do site: `system.mail` continua no contrib até a troca, depois da equivalência comprovada.
+ * Backend de `system.mail`; detalhes ambientais no roadmap do Mailer.
  */
 #[Mail(
   id: 'aculta_mailer',
@@ -167,11 +167,18 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       $this->providerMessages->remember((string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), $result['provider_id']);
     }
     if (!$result['sent']) {
-      // Mesmo registro de falha que o envio do módulo usa para classificar (código SMTP e texto completo).
-      $this->failures->remember((string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), $result['code'], $result['message']);
-      $this->logger->error('Envio pela camada E-Mails ACULTA recusado pelo transporte @id: @message', [
+      // Keep the same transient failure details used by the API for classification.
+      $this->failures->remember(
+        (string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''),
+        $result['code'],
+        $result['message'],
+        $result['error_class'] ?? NULL,
+      );
+      // Transport exception text can contain a recipient or provider response.
+      // Persisted diagnostics contain only the exception class and SMTP code.
+      $this->logger->error('Envio pela camada E-Mails ACULTA recusado pelo transporte @id (código @code).', [
         '@id' => $transport->id(),
-        '@message' => $result['message'],
+        '@code' => $result['code'] ?? 'desconhecido',
       ]);
     }
     return $result['sent'];

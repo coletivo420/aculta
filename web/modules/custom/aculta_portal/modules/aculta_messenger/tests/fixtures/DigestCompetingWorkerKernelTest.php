@@ -65,7 +65,7 @@ final class DigestCompetingWorkerKernelTest extends KernelTestBase {
       throw new \RuntimeException('The digest worker fixture arguments are incomplete.');
     }
 
-    if (file_put_contents($barrierDirectory . '/competitor-ready-' . $workerId, 'ready', LOCK_EX) === FALSE) {
+    if (!$this->writeBarrierMarker($barrierDirectory . '/competitor-ready-' . $workerId, 'ready')) {
       throw new \RuntimeException('Could not signal that the Drupal worker finished bootstrapping.');
     }
 
@@ -110,14 +110,29 @@ final class DigestCompetingWorkerKernelTest extends KernelTestBase {
 
     try {
       self::assertSame(0, $summary->enviarResumos());
-      if (file_put_contents($barrierDirectory . '/competitor-done-' . $workerId, 'locked', LOCK_EX) === FALSE) {
+      if (!$this->writeBarrierMarker($barrierDirectory . '/competitor-done-' . $workerId, 'locked')) {
         throw new \RuntimeException('Could not signal that the digest lock rejected this worker.');
       }
     }
     catch (\Throwable $exception) {
-      file_put_contents($barrierDirectory . '/competitor-done-' . $workerId, 'error', LOCK_EX);
+      $this->writeBarrierMarker($barrierDirectory . '/competitor-done-' . $workerId, 'error');
       throw $exception;
     }
+  }
+
+  /**
+   * Publishes a complete marker atomically for the coordinating process.
+   */
+  private function writeBarrierMarker(string $path, string $contents): bool {
+    $temporaryPath = $path . '.' . getmypid() . '.' . bin2hex(random_bytes(4));
+    if (file_put_contents($temporaryPath, $contents, LOCK_EX) === FALSE) {
+      return FALSE;
+    }
+    if (!rename($temporaryPath, $path)) {
+      @unlink($temporaryPath);
+      return FALSE;
+    }
+    return TRUE;
   }
 
   /**

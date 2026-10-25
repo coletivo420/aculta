@@ -29,7 +29,7 @@ final class DigestBlockingTestMailer extends TestMailCollector {
 
     $started = $barrierDirectory . '/transport-started';
     $competitorCount = max(1, (int) getenv('ACULTA_DIGEST_COMPETITOR_COUNT'));
-    if (file_put_contents($started, 'started', LOCK_EX) === FALSE) {
+    if (!$this->writeBarrierMarker($started, 'started')) {
       throw new \RuntimeException('Could not signal the digest transport start.');
     }
 
@@ -55,6 +55,21 @@ final class DigestBlockingTestMailer extends TestMailCollector {
       usleep(10_000);
     } while (TRUE);
     return parent::mail($message);
+  }
+
+  /**
+   * Publishes a complete marker atomically for competing workers.
+   */
+  private function writeBarrierMarker(string $path, string $contents): bool {
+    $temporaryPath = $path . '.' . getmypid() . '.' . bin2hex(random_bytes(4));
+    if (file_put_contents($temporaryPath, $contents, LOCK_EX) === FALSE) {
+      return FALSE;
+    }
+    if (!rename($temporaryPath, $path)) {
+      @unlink($temporaryPath);
+      return FALSE;
+    }
+    return TRUE;
   }
 
 }
