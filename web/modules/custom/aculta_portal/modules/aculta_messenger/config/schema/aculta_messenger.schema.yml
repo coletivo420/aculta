@@ -55,7 +55,7 @@ aculta_messenger.email_modes:
   mapping:
     digest:
       type: boolean
-      label: 'Resumo diário'
+      label: 'Resumo por e-mail'
     immediate:
       type: boolean
       label: 'Envio direto'
