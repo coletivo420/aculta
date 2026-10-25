@@ -25,6 +25,7 @@ DISPLAY=:0 node tests/browser/aculta-messenger/privacy-subscriptions.mjs
 DISPLAY=:0 node tests/browser/aculta-messenger/conversation-list-readonly.mjs
 DISPLAY=:0 SUITE_WIDTH=390 node tests/browser/aculta-messenger/drawer-notice-filters.mjs
 DISPLAY=:0 SUITE_WIDTH=390 node tests/browser/aculta-messenger/privacy-subscriptions.mjs
+DISPLAY=:0 SUITE_WIDTH=390 node tests/browser/aculta-messenger/conversation-list-readonly.mjs
 ```
 
 O script recusa qualquer display diferente de `:0` e só aceita `SUITE_BASE`/`SUITE_LOGIN_URI` nos hosts HTTPS do servidor
@@ -37,7 +38,7 @@ Variáveis opcionais:
 | `SUITE_BASE` | `https://aculta.toca.net.br` | Site de teste |
 | `SUITE_LOGIN_URI` | `https://conta.aculta.toca.net.br` | URI do Drush para o link de login |
 | `SUITE_OUT` | `.suite-out/` (fora do Git) | Capturas e `results.json` |
-| `SUITE_WIDTH` | `1280` | Largura da janela solicitada para `drawer-notice-filters.mjs`; o relatório inclui a largura efetiva (Firefox pode limitá-la) |
+| `SUITE_WIDTH` | `1280` | Largura solicitada por `drawer-notice-filters.mjs` e `conversation-list-readonly.mjs`; Firefox pode impor outra largura efetiva |
 | `GECKODRIVER` | `http://127.0.0.1:4444` | Endereço do geckodriver |
 
 O script termina com código 1 se alguma verificação falhar, e grava `results.json` em `SUITE_OUT`.
@@ -95,8 +96,9 @@ reflow sem declarar um viewport menor que o Firefox entregou.
 IDs/rótulos acessíveis, grupos separados, estados de leitura e overflow horizontal. A conta tem três conversas sintéticas,
 incluindo dois grupos. Não abre threads, envia formulários, altera relacionamentos ou mensagens; só cria uma sessão temporária
 de navegador. Pré-requisito: executar `scripts/guard-teste-comum.sh` e confirmar no Runtime de teste que as três fixtures
-sintéticas ainda existem. Em 2026-10-25, Firefox ESR visível passou **10/10** em viewport efetivo de 1270 px; a cobertura não equivale
-a leitor de tela nem altera dados do Runtime.
+sintéticas ainda existem. Em 2026-10-25, Firefox ESR visível passou **10/10** em viewport efetivo de 1270 px e **10/10** com
+janela solicitada de 390 px (viewport efetivo de 500 px); não houve overflow. A cobertura não equivale a leitor de tela nem
+altera dados do Runtime.
 
 ## Limites
 
