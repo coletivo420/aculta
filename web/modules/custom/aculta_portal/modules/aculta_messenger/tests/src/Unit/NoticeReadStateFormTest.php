@@ -49,6 +49,74 @@ final class NoticeReadStateFormTest extends UnitTestCase {
   }
 
   /**
+   * A source page retains its offset when changing one notice read state.
+   */
+  public function testSubmitPreservesSelectedOriginPage(): void {
+    $readState = $this->createMock(NoticeReadStateManagerInterface::class);
+    $account = $this->createMock(AccountInterface::class);
+    $readState->expects(self::once())->method('setRead')->with(28, $account, TRUE)->willReturn(TRUE);
+    $requestStack = new RequestStack();
+    $requestStack->push(Request::create('/avisos-mensagens/avisos?origem=wiki&leitura=read&notice_offset=200'));
+    $form = $this->form($readState, $account, $requestStack);
+    $form->setMessenger($this->createMock(MessengerInterface::class));
+    $state = new FormState();
+    $state->setValues(['message_id' => '28', 'target_read' => '1']);
+    $build = [];
+
+    $form->submitForm($build, $state);
+
+    self::assertSame([
+      'origem' => 'wiki',
+      'leitura' => 'read',
+      'notice_offset' => 200,
+    ], $state->getRedirect()->getOptions()['query']);
+  }
+
+  /**
+   * The Forum page uses its own validated offset parameter.
+   */
+  public function testSubmitPreservesForumPage(): void {
+    $readState = $this->createMock(NoticeReadStateManagerInterface::class);
+    $account = $this->createMock(AccountInterface::class);
+    $readState->expects(self::once())->method('setRead')->with(28, $account, FALSE)->willReturn(TRUE);
+    $requestStack = new RequestStack();
+    $requestStack->push(Request::create('/avisos-mensagens/avisos?origem=forum&leitura=unread&forum_offset=300'));
+    $form = $this->form($readState, $account, $requestStack);
+    $form->setMessenger($this->createMock(MessengerInterface::class));
+    $state = new FormState();
+    $state->setValues(['message_id' => '28', 'target_read' => '0']);
+    $build = [];
+
+    $form->submitForm($build, $state);
+
+    self::assertSame([
+      'origem' => 'forum',
+      'leitura' => 'unread',
+      'forum_offset' => 300,
+    ], $state->getRedirect()->getOptions()['query']);
+  }
+
+  /**
+   * Invalid offsets and offsets for unrelated origins are not reflected.
+   */
+  public function testSubmitRejectsUnrelatedOrInvalidPageOffsets(): void {
+    $readState = $this->createMock(NoticeReadStateManagerInterface::class);
+    $account = $this->createMock(AccountInterface::class);
+    $readState->expects(self::once())->method('setRead')->with(28, $account, FALSE)->willReturn(TRUE);
+    $requestStack = new RequestStack();
+    $requestStack->push(Request::create('/avisos-mensagens/avisos?origem=wiki&notice_offset%5B%5D=200&forum_offset=300'));
+    $form = $this->form($readState, $account, $requestStack);
+    $form->setMessenger($this->createMock(MessengerInterface::class));
+    $state = new FormState();
+    $state->setValues(['message_id' => '28', 'target_read' => '0']);
+    $build = [];
+
+    $form->submitForm($build, $state);
+
+    self::assertSame(['origem' => 'wiki'], $state->getRedirect()->getOptions()['query']);
+  }
+
+  /**
    * Tampered IDs and a revoked source are rejected without a success redirect.
    */
   public function testRejectedStateChangeHasNoRedirect(): void {

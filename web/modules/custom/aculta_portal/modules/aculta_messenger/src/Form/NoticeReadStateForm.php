@@ -85,6 +85,22 @@ final class NoticeReadStateForm extends FormBase {
     $request = $this->noticeRequestStack->getCurrentRequest();
     $filters = $this->filter->normalize($request?->query->all() ?? []);
     $query = array_filter($filters, static fn(string $value): bool => $value !== '');
+    if ($request !== NULL) {
+      $requestQuery = $request->query->all();
+      $pagination = match ($filters['origem']) {
+        'forum' => ['forum_offset' => $requestQuery['forum_offset'] ?? NULL],
+        'comunicado', 'alerta', 'aprendizagem', 'wiki', 'loja', 'doacao' => [
+          'notice_offset' => $requestQuery['notice_offset'] ?? NULL,
+        ],
+        default => [],
+      };
+      foreach ($pagination as $key => $value) {
+        $offset = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+        if ($offset !== FALSE) {
+          $query[$key] = $offset;
+        }
+      }
+    }
     $form_state->setRedirect('aculta_messenger.avisos', ['aba' => 'avisos'], ['query' => $query]);
   }
 

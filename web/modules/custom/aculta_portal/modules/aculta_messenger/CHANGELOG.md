@@ -1,3 +1,13 @@
+## 0.1.1-dev.214 — preservar página ao atualizar leitura
+
+Ao marcar um aviso como lido ou não lido, o retorno à central preserva o offset da origem selecionada. O formulário aceita
+somente offsets inteiros não negativos e ignora offsets de outras origens ou parâmetros inválidos, mantendo os filtros
+normalizados e a autorização revalidada pelo adapter.
+
+Validação: `NoticeReadStateFormTest` **5/27 PASS**; Unit completo do Messenger **180/1.248 PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint, índice (41 componentes)
+e gate Portal Drupal 11+ (**1155 checks**) PASS. Runtime e navegador não executados.
+
 ## 0.1.1-dev.205 — rejeitar payloads de resposta malformados
 
 `drawerReply` deixa de converter valores não textuais em strings (por exemplo, um array enviado como `message[value]`, que
