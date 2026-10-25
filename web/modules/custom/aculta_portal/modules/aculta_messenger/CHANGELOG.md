@@ -1,3 +1,13 @@
+## 0.1.1-dev.365 — regressão completa dos Kernels
+
+Reexecutada a árvore completa `tests/src/Kernel` no MariaDB dedicado. Os casos
+abrangem rotas/CSRF, amizade, retenção transacional, ledger do Fórum,
+concorrência/recuperação do digest e integração com ACULTA Mailer.
+
+Validação: **55 testes / 1.166 assertions PASS**, com dez depreciações de
+Core/contrib e quatro notices PHPUnit. Runtime, Alpha e SMTP externo não
+executados.
+
 ## 0.1.1-dev.364 — regressão completa dos adapters de integração
 
 Reexecutada a árvore completa `tests/src/Integration` após a proteção do

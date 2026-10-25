@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- **Dev.365 — regressão da árvore completa de Kernels:** `tests/src/Kernel` passou **55/1.166** no MariaDB dedicado; dez depreciações Core/contrib e quatro notices PHPUnit, sem falhas. Inclui rotas/CSRF, amizade, retenção, Fórum, digest e Mailer. Runtime/Alpha e SMTP externo não executados.
 - **Dev.364 — regressão da árvore completa de integração:** `tests/src/Integration` passou **120/1.569** no MariaDB dedicado, sem falhas; cinco depreciações upstream e sete notices PHPUnit. A execução abrangeu Commerce, Doações, Game, LMS, Revista e Wiki depois do guard fail-closed da Revista.
 - **Dev.363 — revalidação do ledger do Fórum:** `ForumNoticeIdempotencyKernelTest` passou **39/919** no MariaDB dedicado (quatro notices PHPUnit), cobrindo novamente a suíte completa no estado atual do branch. Runtime/Alpha e SMTP externo não executados.
 - **Dev.362 — concorrência do digest sem colisão de bootstrap:** a regressão revelou que três KernelTestBase simultâneos tentavam criar a tabela temporária fixa do installer no mesmo prefixo MariaDB. O harness agora serializa os boots e deixa os três processos concorrerem pelo lock durante o transporte. `AvisosResumoMailerKernelTest` **5/95 PASS**, PHPCS/PHP lint/diff check PASS. Suspensão acima da lease, SMTP externo e Runtime continuam pendentes.
