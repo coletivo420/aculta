@@ -856,6 +856,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
         $this->container->get('logger.factory')->get('test'),
       ),
       $this->container->get('config.factory'),
+      $this->container->get('lock'),
     );
   }
 

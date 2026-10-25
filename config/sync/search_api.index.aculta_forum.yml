@@ -253,8 +253,6 @@ processor_settings:
 tracker_settings:
   default:
     indexing_order: fifo
-    plugin_id: default
-    settings: {  }
 options:
   cron_limit: 50
   delete_on_fail: true

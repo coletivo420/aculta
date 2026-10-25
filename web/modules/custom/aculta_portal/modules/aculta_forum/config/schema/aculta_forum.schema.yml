@@ -27,3 +27,32 @@ views.filter_value.aculta_forum_no_replies:
     value:
       type: string
       label: 'Valor'
+
+# Plugins de View próprios do Fórum. Sem estas entradas, a instalação limpa
+# rejeita as Views do módulo por schema incompleto.
+views.field.aculta_forum_reply_count:
+  type: views.field.numeric
+  label: 'Contagem de respostas do Fórum'
+
+views.field.aculta_forum_last_activity:
+  type: views.field.date
+  label: 'Última atividade do Fórum'
+
+views.cache.aculta_forum_post_tag:
+  type: views_cache
+  label: 'Cache por tag de posts do Fórum'
+  mapping:
+    options:
+      type: sequence
+      label: 'Opções'
+
+views.filter.aculta_forum_search_type:
+  type: views.filter.search_api_string
+  label: 'Tipo público do Fórum'
+  mapping:
+    value:
+      type: sequence
+      label: 'Tipos incluídos'
+      sequence:
+        type: string
+        label: 'Tipo'

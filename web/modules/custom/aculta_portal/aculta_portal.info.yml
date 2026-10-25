@@ -26,6 +26,8 @@ dependencies:
   - group:group
   - lms:lms
   - commerce:commerce
+  - commerce:commerce_cart
+  - commerce:commerce_store
   - commerce:commerce_order
   - commerce:commerce_payment
   - commerce_shipping:commerce_shipping

@@ -254,8 +254,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertContains('acultaForumAttachment', $editor['settings']['toolbar']['items']);
     self::assertContains('acultaForumGallery', $editor['settings']['toolbar']['items']);
     self::assertFalse($editor['image_upload']['status'], 'Forum uploads go through the centralized attachment policy.');
-    self::assertSame('private', $editor['image_upload']['scheme']);
-    self::assertSame('forum/anexos', $editor['image_upload']['directory']);
+    self::assertSame(['status' => FALSE], $editor['image_upload'], 'Disabled uploads keep only the schema-valid key.');
   }
 
   /**

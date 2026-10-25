@@ -13,6 +13,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\entity_usage\EntityUsageInterface;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
@@ -21,6 +22,11 @@ use Drupal\media\MediaInterface;
  * Cleans orphan Forum Media after an hour and temporary Files after Core's age.
  */
 final class ForumAttachmentCleanup {
+
+  /**
+   * Lock name shared by every cleanup runner, including cron processes.
+   */
+  public const LOCK_NAME = 'aculta_forum_attachment_cleanup';
 
   private const RETENTION = 3600;
 
@@ -34,25 +40,35 @@ final class ForumAttachmentCleanup {
     private readonly UnusedMediaCleaner $unusedMediaCleaner,
     private readonly UnusedFileCleaner $unusedFileCleaner,
     private readonly ConfigFactoryInterface $configFactory,
+    private readonly LockBackendInterface $lock,
   ) {}
 
   /**
    * Processes a bounded batch of orphan Media and expired temporary files.
    */
   public function cleanup(): int {
-    $requestTime = $this->time->getRequestTime();
-    $cutoff = $requestTime - self::RETENTION;
-    $removed = $this->cleanupOrphanMedia($cutoff);
-    if ($removed < self::LIMIT) {
-      $temporaryAge = (int) $this->configFactory->get('system.file')->get('temporary_maximum_age');
-      if ($temporaryAge > 0) {
-        $removed += $this->cleanupTemporaryFiles(
-          $requestTime - $temporaryAge,
-          self::LIMIT - $removed,
-        );
-      }
+    // Two cron processes must not select the same Media and delete it twice.
+    if (!$this->lock->acquire(self::LOCK_NAME, 0.0)) {
+      return 0;
     }
-    return $removed;
+    try {
+      $requestTime = $this->time->getRequestTime();
+      $cutoff = $requestTime - self::RETENTION;
+      $removed = $this->cleanupOrphanMedia($cutoff);
+      if ($removed < self::LIMIT) {
+        $temporaryAge = (int) $this->configFactory->get('system.file')->get('temporary_maximum_age');
+        if ($temporaryAge > 0) {
+          $removed += $this->cleanupTemporaryFiles(
+            $requestTime - $temporaryAge,
+            self::LIMIT - $removed,
+          );
+        }
+      }
+      return $removed;
+    }
+    finally {
+      $this->lock->release(self::LOCK_NAME);
+    }
   }
 
   /**

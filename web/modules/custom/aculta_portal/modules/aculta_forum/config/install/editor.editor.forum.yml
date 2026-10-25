@@ -33,9 +33,3 @@ settings:
       allow_view_mode_override: false
 image_upload:
   status: false
-  scheme: private
-  directory: forum/anexos
-  max_size: ''
-  max_dimensions:
-    width: null
-    height: null

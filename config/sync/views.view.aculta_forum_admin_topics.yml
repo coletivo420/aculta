@@ -100,6 +100,7 @@ display:
           entity_field: title
           plugin_id: field
           label: Título
+          type: string
           settings:
             link_to_entity: true
         field_aculta_categories:

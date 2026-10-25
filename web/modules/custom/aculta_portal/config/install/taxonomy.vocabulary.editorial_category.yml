@@ -1,0 +1,9 @@
+uuid: e1d85c3e-54a2-4a5b-a823-3fb1811976bc
+langcode: pt-br
+status: true
+dependencies: {  }
+name: 'Categoria editorial'
+vid: editorial_category
+description: 'Organização temática das notícias; criar termos conforme os conteúdos reais.'
+weight: 0
+new_revision: false

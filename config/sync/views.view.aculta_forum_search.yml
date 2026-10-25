@@ -126,7 +126,7 @@ display:
           field: forum_search_type
           relationship: none
           admin_label: 'Isolar tópicos e posts públicos do Fórum'
-          plugin_id: search_api_string
+          plugin_id: aculta_forum_search_type
           operator: IN
           value:
             - aculta_forum_topic
@@ -163,7 +163,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            reduce: false
           is_grouped: false
           group_info:
             label: Categoria
@@ -176,7 +175,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          reduce_duplicates: false
       style:
         type: default
       row:
