@@ -1,3 +1,14 @@
+## 0.1.1-dev.288 — recarregar remetente sem cache na resposta
+
+A verificação de conta e permissões para responder uma thread persistida usa
+`loadUnchanged()` após adquirir o lock da conversa. Uma desativação ou alteração
+de papéis feita por outra requisição não é mascarada pelo cache estático de
+entidades da requisição atual.
+
+Validação: Unit Messenger **296/2.354 PASS**; `PrivateMessageFloodKernelTest`
+**2/2 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Browser/Runtime não
+executados.
+
 ## 0.1.1-dev.287 — preservar estado nos links de paginação da central
 
 A composição de URLs da lista global agora passa por `NoticePaginationUrlBuilder`,

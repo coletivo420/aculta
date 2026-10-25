@@ -106,7 +106,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $sender->method('isActive')->willReturn(TRUE);
     $sender->method('hasPermission')->willReturn(TRUE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(42)->willReturn($sender);
+    $userStorage->expects(self::once())->method('loadUnchanged')->with(42)->willReturn($sender);
     $senderEntityTypes = $this->createMock(EntityTypeManagerInterface::class);
     $senderEntityTypes->method('getStorage')->with('user')->willReturn($userStorage);
     $validator = new PrivateMessageFormValidator(
@@ -648,7 +648,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $sender->method('isActive')->willReturn($active);
     $sender->method('hasPermission')->willReturn($permissions);
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->method('load')->willReturn($sender);
+    $storage->method('loadUnchanged')->willReturn($sender);
     $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypes->method('getStorage')->with('user')->willReturn($storage);
     return $entityTypes;

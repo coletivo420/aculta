@@ -177,7 +177,7 @@ final class PrivateMessageFormValidator {
       $freshThread = $this->acquireThreadWriteLock($thread, $formState);
       if ($freshThread instanceof PrivateMessageThreadInterface && !$formState->hasAnyErrors()) {
         try {
-          $sender = $this->entityTypeManager->getStorage('user')->load((int) $this->currentUser->id());
+          $sender = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $this->currentUser->id());
           if (!$sender instanceof UserInterface || !$this->policy->canReceiveMessages($sender)) {
             $formState->setErrorByName('message', $this->translation->translate('Não foi possível enviar uma mensagem para essa conversa.'));
           }
