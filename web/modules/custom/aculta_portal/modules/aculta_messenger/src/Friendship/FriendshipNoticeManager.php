@@ -104,7 +104,7 @@ final class FriendshipNoticeManager implements FriendshipNoticeManagerInterface 
    * {@inheritdoc}
    */
   public function unreadCount(int $uid): int {
-    $account = $this->entityTypeManager->getStorage('user')->load($uid);
+    $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return 0;
     }

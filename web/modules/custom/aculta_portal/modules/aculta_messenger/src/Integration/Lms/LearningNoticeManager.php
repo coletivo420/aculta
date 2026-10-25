@@ -233,7 +233,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course') {
       return;
     }
-    $student = $this->entityTypeManager->getStorage('user')->load((int) $answer->getUserId());
+    $student = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $answer->getUserId());
     if (!$student instanceof UserInterface || !$student->isActive() || !$this->hasCurrentEnrollment($course, $student)) {
       return;
     }
@@ -316,7 +316,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       return;
     }
     $course = $this->courseForAnswer($answer);
-    $learner = $this->entityTypeManager->getStorage('user')->load((int) $answer->getUserId());
+    $learner = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $answer->getUserId());
     $educator = $comment->getOwner();
     if (!$course instanceof CourseInterface || !$learner instanceof UserInterface || !$learner->isActive()
       || !$educator || (int) $educator->id() === (int) $learner->id()
@@ -484,7 +484,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
    * Counts only unread notices whose source access remains valid.
    */
   public function unreadCount(int $uid): int {
-    $account = $this->entityTypeManager->getStorage('user')->load($uid);
+    $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return 0;
     }
@@ -805,7 +805,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       || !$course->hasPermission('grade students', $account)) {
       return NULL;
     }
-    $student = $this->entityTypeManager->getStorage('user')->load((int) $answer->getUserId());
+    $student = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $answer->getUserId());
     if (!$student instanceof UserInterface || !$student->isActive() || !$this->hasCurrentEnrollment($course, $student)) {
       return NULL;
     }

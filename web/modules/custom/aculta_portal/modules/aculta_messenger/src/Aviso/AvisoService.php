@@ -149,7 +149,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
   public function listarDaPessoaPaginada(int $uid, int $limite, int $offset, ?string $readState = NULL): array {
     $limite = max(1, $limite);
     $offset = max(0, $offset);
-    $recipient = $this->entityTypeManager->getStorage('user')->load($uid);
+    $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$recipient instanceof UserInterface || !$recipient->isActive()) {
       return ['items' => [], 'has_next' => FALSE];
     }
@@ -253,7 +253,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       $topicIds[(int) $aviso->get('assunto_nid')->value] = TRUE;
     }
     $topics = $this->entityTypeManager->getStorage('node')->loadMultiple(array_keys($topicIds));
-    $recipient = $this->entityTypeManager->getStorage('user')->load($uid);
+    $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$recipient instanceof UserInterface || !$recipient->isActive()) {
       return 0;
     }

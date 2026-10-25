@@ -156,7 +156,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
     if ($envelope === NULL) {
       return NULL;
     }
-    $recipient = $this->entityTypeManager->getStorage('user')->load((int) $account->id());
+    $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $account->id());
     if (!$recipient instanceof UserInterface || !$recipient->isActive()) {
       return NULL;
     }
@@ -178,7 +178,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
    * {@inheritdoc}
    */
   public function unreadCount(int $uid): int {
-    $account = $this->entityTypeManager->getStorage('user')->load($uid);
+    $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return 0;
     }

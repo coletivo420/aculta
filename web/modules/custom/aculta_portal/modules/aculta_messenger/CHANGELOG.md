@@ -1,3 +1,15 @@
+## 0.1.1-dev.329 — revalidar contas ao listar e contar avisos
+
+Contadores e resoluções de avisos de Fórum, amizade, LMS, Wiki, Loja e Doações
+recarregam a conta antes de validar atividade, matrícula, acesso e titularidade.
+Os produtores educacionais também revalidam a conta do estudante antes de
+publicar avisos para educadores ou aprendizes.
+
+Validação: Unit Messenger **324/2.629 PASS**; Integration Unit LMS **46/417**,
+Loja **18/225**, Doações **7/88** e Wiki **4/47 PASS**; testes focais de acesso à central: amizade **3/36**, Loja **5/57**,
+Wiki **3/45** e acesso persistente **5/11 PASS**; transferência do aviso do Fórum **2/27 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS. Kernels e Runtime não executados (`SIMPLETEST_DB` ausente); sem SMTP.
+
 ## 0.1.1-dev.328 — revalidar conta em avisos de Doação
 
 O consumer de Doações também relê a conta do destinatário antes de validar o

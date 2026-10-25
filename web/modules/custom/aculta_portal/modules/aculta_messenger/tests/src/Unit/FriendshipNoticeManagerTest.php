@@ -116,7 +116,7 @@ final class FriendshipNoticeManagerTest extends UnitTestCase {
     $account = $this->createMock(UserInterface::class);
     $account->method('isActive')->willReturn(TRUE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->expects(self::once())->method('load')->with(27)->willReturn($account);
+    $userStorage->expects(self::once())->method('loadUnchanged')->with(27)->willReturn($account);
     $query = $this->createMock(QueryInterface::class);
     $query->expects(self::once())->method('accessCheck')->with(FALSE)->willReturnSelf();
     $expectedConditions = [

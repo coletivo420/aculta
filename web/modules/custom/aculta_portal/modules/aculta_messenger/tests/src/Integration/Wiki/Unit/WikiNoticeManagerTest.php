@@ -82,7 +82,7 @@ final class WikiNoticeManagerTest extends UnitTestCase {
     $account->method('isAuthenticated')->willReturn(TRUE);
     $account->method('hasPermission')->willReturn(TRUE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(27)->willReturn($account);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($account);
 
     $messages = [
       $this->noticeMessage(27, 'wiki-uuid-a', '11'),

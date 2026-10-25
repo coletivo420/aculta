@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.329 — contadores/resoluções de Fórum, amizade, LMS, Wiki, Loja e Doações revalidam estado atual da conta; LMS também relê estudantes nas checagens de matrícula e avaliação. Unit Messenger **324/2.629 PASS**, Integration Unit LMS **46/417**, Loja **18/225**, Doações **7/88**, Wiki **4/47**, focais amizade **3/36**, Loja **5/57**, Wiki **3/45**, acesso persistente **5/11** e transferência do aviso do Fórum **2/27**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime/SMTP.
 - Dev.328 — consumer de Doações relê a conta antes de validar fonte e persistir o aviso, completando a revalidação no limite de gravação junto a amizade, LMS, Wiki e Loja. PHPCS/PHP lint/diff check PASS; Kernel de Doações não executado porque `SIMPLETEST_DB` está ausente; sem Runtime/SMTP.
 - Dev.327 — consumers de amizade, LMS, Wiki e Loja revalidam a conta no storage atual antes de persistir novos avisos no site; o opt-out afeta apenas e-mail. Unit Messenger **324/2.629 PASS**, Integration Unit LMS **46/417**, Loja **18/225**, Wiki **4/47**, focais **17/208**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime/SMTP.
 - Dev.326 — workers diretos recarregam Message sob lock e fontes de Fórum antes da validação final, evitando estado estático obsoleto em retries e revogações. Focais dos workers Fórum/amizade/PM/LMS/Wiki/Loja/Doação **58/951 PASS**, Unit Messenger **324/2.629 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime/SMTP.
