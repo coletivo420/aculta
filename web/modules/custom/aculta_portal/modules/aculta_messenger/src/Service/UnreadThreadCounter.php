@@ -26,13 +26,11 @@ final class UnreadThreadCounter {
       return 0;
     }
 
-    $threadCount = $this->privateMessageService->getCountThreadsForUser();
-    if ($threadCount < 1) {
-      return 0;
-    }
-
     $count = 0;
-    foreach ($this->privateMessageService->getThreadsForUser($threadCount)['threads'] as $thread) {
+    // The contrib count method loads every thread ID just to count it; then
+    // getThreadsForUser() repeats that query. FALSE requests the full thread
+    // collection directly and avoids the duplicate lookup.
+    foreach ($this->privateMessageService->getThreadsForUser(FALSE)['threads'] as $thread) {
       if ($thread instanceof PrivateMessageThreadInterface && $this->isUnread($thread)) {
         $count++;
       }

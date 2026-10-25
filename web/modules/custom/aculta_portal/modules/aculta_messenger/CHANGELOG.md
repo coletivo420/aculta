@@ -1,3 +1,9 @@
+## 0.1.1-dev.273 — remover consulta duplicada no contador de mensagens
+
+O contador de conversas não consulta mais todos os IDs apenas para obter a quantidade antes de carregar todas as threads. Usa `getThreadsForUser(FALSE)`, que já retorna a coleção completa permitida pela API do Private Message.
+
+Validação inicial: `UnreadThreadCounterTest` **6/19 PASS**. Validação ampliada pendente.
+
 ## 0.1.1-dev.272 — unificar contagem da central de avisos
 
 O badge da aba de Avisos agora conta todas as fontes da central: alertas ativos acessíveis, comunicados não lidos e avisos pessoais do Fórum e adapters. A gaveta e a central usam o mesmo agregador; abrir a aba de Mensagens calcula o total sem construir a lista de avisos.

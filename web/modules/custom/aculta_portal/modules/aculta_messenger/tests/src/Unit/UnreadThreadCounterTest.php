@@ -79,8 +79,8 @@ final class UnreadThreadCounterTest extends UnitTestCase {
     );
 
     $service = $this->createMock(PrivateMessageServiceInterface::class);
-    $service->expects($this->once())->method('getCountThreadsForUser')->willReturn(3);
-    $service->expects($this->once())->method('getThreadsForUser')->with(3)->willReturn([
+    $service->expects($this->never())->method('getCountThreadsForUser');
+    $service->expects($this->once())->method('getThreadsForUser')->with(FALSE)->willReturn([
       'threads' => [$unread, $read, $inaccessible],
       'next_exists' => FALSE,
     ]);
@@ -96,7 +96,6 @@ final class UnreadThreadCounterTest extends UnitTestCase {
     $account->method('isAuthenticated')->willReturn(FALSE);
 
     $service = $this->createMock(PrivateMessageServiceInterface::class);
-    $service->expects($this->never())->method('getCountThreadsForUser');
     $service->expects($this->never())->method('getThreadsForUser');
 
     $this->assertSame(0, (new UnreadThreadCounter($account, $service))->count());
