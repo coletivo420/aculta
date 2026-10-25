@@ -94,8 +94,8 @@ final class WikiContributionIntentController extends ControllerBase {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-intent'],
       'header' => [
-        '#type' => 'component',
-        '#component' => 'aculta420:context-header',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'context-header',
         '#props' => [
           'eyebrow' => 'WE SATIVA · Wiki420',
           'title' => (string) $this->t('Como você quer contribuir?'),
@@ -156,13 +156,13 @@ final class WikiContributionIntentController extends ControllerBase {
       ? ['#plain_text' => $this->t('Nenhuma forma de contribuição está disponível para este verbete.')]
       : $cards;
     $build['choices'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420:content-section',
+      '#theme' => 'aculta_portal_component',
+      '#name' => 'content-section',
       '#props' => ['title' => (string) $this->t('Escolha uma forma de contribuir')],
       '#slots' => [
         'body' => [
-          '#type' => 'component',
-          '#component' => 'aculta420:content-grid',
+          '#theme' => 'aculta_portal_component',
+          '#name' => 'content-grid',
           '#props' => ['columns' => 2],
           '#slots' => ['items' => $cardItems],
         ],
@@ -177,8 +177,8 @@ final class WikiContributionIntentController extends ControllerBase {
    */
   private function intentCard(\Stringable|string $title, \Stringable|string $description, array $link): array {
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420:card',
+      '#theme' => 'aculta_portal_component',
+      '#name' => 'card',
       '#slots' => [
         'header' => ['#plain_text' => $title],
         'content' => ['#plain_text' => $description],

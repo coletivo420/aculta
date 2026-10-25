@@ -64,8 +64,8 @@ final class WikiProposalDecisionForm extends FormBase {
 
     $form['#attributes']['data-portal-ui'] = 'wiki-proposal-decision';
     $form['proposal_header'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420:context-header',
+      '#theme' => 'aculta_portal_component',
+      '#name' => 'context-header',
       '#props' => [
         'eyebrow' => (string) $this->t('ACULTA Studio Marley · Moderação Wiki'),
         'title' => (string) $this->t('Proposta: @title', ['@title' => $proposal->label()]),
@@ -182,8 +182,8 @@ final class WikiProposalDecisionForm extends FormBase {
       '#items' => $sourceLinks,
     ];
     $form['contribution'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420:content-section',
+      '#theme' => 'aculta_portal_component',
+      '#name' => 'content-section',
       '#props' => ['title' => (string) $this->t('Contribuição recebida')],
       '#slots' => ['body' => $contributionBody],
     ];

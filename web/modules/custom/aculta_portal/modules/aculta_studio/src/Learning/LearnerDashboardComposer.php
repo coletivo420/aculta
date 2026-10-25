@@ -39,8 +39,8 @@ final class LearnerDashboardComposer {
     $build = [
       '#type' => 'container',
       'context_header' => [
-        '#type' => 'component',
-        '#component' => 'aculta420:context-header',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'context-header',
         '#props' => [
           'eyebrow' => (string) $this->t('ACULTA Studio Ganjalab'),
           'title' => (string) $this->t('Meus cursos'),
@@ -86,8 +86,8 @@ final class LearnerDashboardComposer {
         $item['link'] = Link::fromTextAndUrl($this->t('Acessar curso'), $course['url'])->toRenderable();
       }
       $course_items[] = [
-        '#type' => 'component',
-        '#component' => 'aculta420:card',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'card',
         '#slots' => [
           'header' => $item['title'],
           'content' => [
@@ -100,14 +100,14 @@ final class LearnerDashboardComposer {
     }
     $build['courses'] = $course_items === []
       ? [
-        '#type' => 'component',
-        '#component' => 'aculta420:empty-state',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'empty-state',
         '#props' => ['compact' => TRUE],
         '#slots' => ['message' => ['#plain_text' => $this->t('Você ainda não está matriculado em nenhum curso.')]],
       ]
       : [
-        '#type' => 'component',
-        '#component' => 'aculta420:content-grid',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'content-grid',
         '#props' => ['columns' => 2],
         '#slots' => ['items' => $course_items],
       ];
@@ -132,8 +132,8 @@ final class LearnerDashboardComposer {
         ]))->toRenderable(),
       ];
       $certificate_items[] = [
-        '#type' => 'component',
-        '#component' => 'aculta420:card',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'card',
         '#slots' => [
           'header' => $certificate_data['course'],
           'content' => [
@@ -146,14 +146,14 @@ final class LearnerDashboardComposer {
     }
     $build['certificates'] = $certificate_items === []
       ? [
-        '#type' => 'component',
-        '#component' => 'aculta420:empty-state',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'empty-state',
         '#props' => ['compact' => TRUE],
         '#slots' => ['message' => ['#plain_text' => $this->t('Nenhum certificado emitido ainda.')]],
       ]
       : [
-        '#type' => 'component',
-        '#component' => 'aculta420:content-grid',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'content-grid',
         '#props' => ['columns' => 2],
         '#slots' => ['items' => $certificate_items],
       ];

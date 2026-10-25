@@ -49,8 +49,8 @@ final class WikiProposalStatusController extends ControllerBase {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'wiki-proposal-status'],
       'header' => [
-        '#type' => 'component',
-        '#component' => 'aculta420:context-header',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'context-header',
         '#props' => [
           'eyebrow' => (string) $this->t('WE SATIVA · Wiki420'),
           'title' => (string) $this->t('Proposta: @subject', ['@subject' => $proposal->label()]),
@@ -138,8 +138,8 @@ final class WikiProposalStatusController extends ControllerBase {
    */
   private function section(\Stringable|string $title, array $body): array {
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420:content-section',
+      '#theme' => 'aculta_portal_component',
+      '#name' => 'content-section',
       '#props' => ['title' => (string) $title],
       '#slots' => ['body' => $body],
     ];

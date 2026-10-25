@@ -1306,12 +1306,12 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     self::assertContains('user', $build['#cache']['contexts']);
     self::assertSame('WE SATIVA', $build['header']['#props']['title']);
-    self::assertSame('aculta420:context-header', $build['header']['#component']);
+    self::assertSame('context-header', $build['header']['#name']);
     self::assertSame('Meus verbetes', $build['entries']['#props']['title']);
-    self::assertSame('aculta420:content-section', $build['entries']['#component']);
+    self::assertSame('content-section', $build['entries']['#name']);
     $renderedItems = $build['entries']['#slots']['body']['items']['#slots']['items'];
     self::assertCount(1, $renderedItems);
-    self::assertSame('aculta420:card', $renderedItems[0]['#component']);
+    self::assertSame('card', $renderedItems[0]['#name']);
     self::assertStringContainsString('Meu verbete WE SATIVA', (string) $renderedItems[0]['#slots']['header']['#title']);
     self::assertSame('entity.node.edit_form', $renderedItems[0]['#slots']['footer']['#url']->getRouteName());
     self::assertSame('wiki420_aculta_org', $renderedItems[0]['#slots']['footer']['#url']->getOption('domain')->id());
@@ -1321,12 +1321,12 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('node.add', $createLink['#url']->getRouteName());
     self::assertSame(['node_type' => 'wiki_entry'], $createLink['#url']->getRouteParameters());
     self::assertSame('wiki420_aculta_org', $createLink['#url']->getOption('domain')->id());
-    self::assertSame('aculta420:content-grid', $build['entries']['#slots']['body']['items']['#component']);
+    self::assertSame('content-grid', $build['entries']['#slots']['body']['items']['#name']);
     $startBuild = $workspace->buildStart($author);
     self::assertSame('Seu espaço de contribuição', $startBuild['header']['#props']['title']);
-    self::assertSame('aculta420:context-header', $startBuild['header']['#component']);
+    self::assertSame('context-header', $startBuild['header']['#name']);
     self::assertSame('node.add', $startBuild['header']['#slots']['actions']['#url']->getRouteName());
-    self::assertSame('aculta420:content-section', $startBuild['guide']['#component']);
+    self::assertSame('content-section', $startBuild['guide']['#name']);
     $this->container->get('theme_installer')->install(['aculta420']);
     $this->container->get('config.factory')->getEditable('system.theme')
       ->set('default', 'aculta420')
@@ -1589,7 +1589,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     finally {
       $requestStack->pop();
     }
-    self::assertSame('aculta420:empty-state', $restrictedPage['proposals']['#slots']['body']['items']['#component']);
+    self::assertSame('empty-state', $restrictedPage['proposals']['#slots']['body']['items']['#name']);
   }
 
   /**
@@ -2680,7 +2680,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertCount(4, $intentCards);
     $intentIds = [];
     foreach ($intentCards as $card) {
-      self::assertSame('aculta420:card', $card['#component']);
+      self::assertSame('card', $card['#name']);
       $url = $card['#slots']['footer']['#url'];
       self::assertSame('aculta_wiki.proposal_submit', $url->getRouteName());
       $intentIds[] = $url->getOption('query')['intent'];
@@ -3022,8 +3022,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $decisionState = new FormState();
     $decisionState->addBuildInfo('args', [$acceptedCandidate]);
     $decisionBuild = $this->container->get('form_builder')->buildForm($decisionFormObject, $decisionState);
-    self::assertSame('aculta420:context-header', $decisionBuild['proposal_header']['#component']);
-    self::assertSame('aculta420:content-section', $decisionBuild['contribution']['#component']);
+    self::assertSame('context-header', $decisionBuild['proposal_header']['#name']);
+    self::assertSame('content-section', $decisionBuild['contribution']['#name']);
     self::assertSame(['list_modes', 'field_wiki_references'], $decisionBuild['editorial_decision']['list_modes']['field_wiki_references']['#parents']);
     self::assertSame(['list_modes', 'field_wiki_categories'], $decisionBuild['editorial_decision']['list_modes']['field_wiki_categories']['#parents']);
     self::assertSame(['list_modes', 'field_wiki_related'], $decisionBuild['editorial_decision']['list_modes']['field_wiki_related']['#parents']);
@@ -3282,8 +3282,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $historyProposal,
       Request::create('/wiki/propostas/' . $historyProposal->id()),
     );
-    self::assertSame('aculta420:context-header', $historyBuild['header']['#component']);
-    self::assertSame('aculta420:content-section', $historyBuild['history']['#component']);
+    self::assertSame('context-header', $historyBuild['header']['#name']);
+    self::assertSame('content-section', $historyBuild['history']['#name']);
     self::assertCount(20, $historyBuild['history']['#slots']['body']['table']['#rows']);
     self::assertNotEmpty($historyBuild['history']['#slots']['body']['pager']['#url']);
     $historyCursor = $historyBuild['history']['#slots']['body']['pager']['#url']->getOption('query')['revision_cursor'];
@@ -3334,7 +3334,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $proposalForm->continueToReview($build, $formState);
     self::assertSame('review', $formState->get('wiki_proposal_step'));
     $reviewBuild = $proposalForm->buildForm([], $formState, $target);
-    self::assertSame('aculta420:content-section', $reviewBuild['review']['#component']);
+    self::assertSame('content-section', $reviewBuild['review']['#name']);
     self::assertStringContainsString('Novo título sugerido', (string) $reviewBuild['review']['#slots']['body']['fields']['#plain_text']);
     self::assertFalse($reviewBuild['intent']['#access']);
     $formState->setRebuild(FALSE);
@@ -3376,7 +3376,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $pendingProposal,
       Request::create('/wiki/propostas/' . $pendingProposal->id()),
     );
-    self::assertSame('aculta420:context-header', $pendingStatus['header']['#component']);
+    self::assertSame('context-header', $pendingStatus['header']['#name']);
     self::assertSame('Retirar proposta', (string) $pendingStatus['header']['#slots']['actions']['#title']);
     $withdrawalForm = WikiProposalWithdrawalForm::create($this->container);
     $withdrawalState = new FormState();

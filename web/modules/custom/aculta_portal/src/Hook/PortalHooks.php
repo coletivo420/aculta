@@ -668,6 +668,17 @@ final class PortalHooks {
         'template' => 'portal-element',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
+      // Componente neutro: o módulo pede pelo nome; o tema monta o componente SDC.
+      'aculta_portal_component' => [
+        'variables' => [
+          'name' => NULL,
+          'props' => [],
+          'slots' => [],
+          'component' => NULL,
+        ],
+        'template' => 'portal-component',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
+      ],
       'aculta_portal_search_trigger' => [
         'variables' => [
           'url' => NULL,

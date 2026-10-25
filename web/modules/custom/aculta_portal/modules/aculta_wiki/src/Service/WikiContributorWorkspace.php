@@ -120,8 +120,8 @@ final class WikiContributorWorkspace {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-workspace'],
       'header' => [
-        '#type' => 'component',
-        '#component' => 'aculta420:context-header',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'context-header',
         '#props' => [
           'eyebrow' => (string) $this->t('Wiki420'),
           'title' => (string) $this->t('WE SATIVA'),
@@ -177,8 +177,8 @@ final class WikiContributorWorkspace {
       $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $node->id()]);
       if ($url !== NULL) {
         $item = [
-          '#type' => 'component',
-          '#component' => 'aculta420:card',
+          '#theme' => 'aculta_portal_component',
+          '#name' => 'card',
           '#slots' => [
             'header' => Link::fromTextAndUrl((string) $node->label(), $url)->toRenderable(),
             'content' => ['#plain_text' => $this->nodeState($node)],
@@ -237,8 +237,8 @@ final class WikiContributorWorkspace {
       $url = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
       if ($url !== NULL) {
         $proposalLinks[] = [
-          '#type' => 'component',
-          '#component' => 'aculta420:card',
+          '#theme' => 'aculta_portal_component',
+          '#name' => 'card',
           '#slots' => [
             'header' => Link::fromTextAndUrl((string) $proposal->label(), $url)->toRenderable(),
             'content' => ['#plain_text' => $this->proposalState($proposal)],
@@ -273,8 +273,8 @@ final class WikiContributorWorkspace {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-start'],
       'header' => [
-        '#type' => 'component',
-        '#component' => 'aculta420:context-header',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'context-header',
         '#props' => [
           'eyebrow' => (string) $this->t('Wiki420'),
           'title' => (string) $this->t('Seu espaço de contribuição'),
@@ -328,13 +328,13 @@ final class WikiContributorWorkspace {
         continue;
       }
       $build['continue'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420:content-section',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'content-section',
         '#props' => ['title' => (string) $this->t('Continuar de onde parou')],
         '#slots' => [
           'body' => [
-            '#type' => 'component',
-            '#component' => 'aculta420:card',
+            '#theme' => 'aculta_portal_component',
+            '#name' => 'card',
             '#slots' => [
               'header' => Link::fromTextAndUrl($this->t('Continuar: @title', ['@title' => $draft->label()]), $editUrl)->toRenderable(),
               'content' => ['#plain_text' => $this->t('Rascunho salvo. Você pode continuar editando antes de enviar para revisão.')],
@@ -357,13 +357,13 @@ final class WikiContributorWorkspace {
     }
 
     $build['guide'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420:content-section',
+      '#theme' => 'aculta_portal_component',
+      '#name' => 'content-section',
       '#props' => ['title' => (string) $this->t('Contribua com cuidado')],
       '#slots' => [
         'body' => [
-          '#type' => 'component',
-          '#component' => 'aculta420:card',
+          '#theme' => 'aculta_portal_component',
+          '#name' => 'card',
           '#slots' => [
             'header' => ['#plain_text' => $this->t('Use fontes que outras pessoas possam conferir')],
             'content' => ['#plain_text' => $this->t('Sugestões para verbetes publicados passam por revisão editorial. Indique de onde vem a informação e explique a mudança proposta.')],
@@ -543,8 +543,8 @@ final class WikiContributorWorkspace {
       $links[] = Link::fromTextAndUrl($label, $url)->toRenderable();
     }
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420:context-tabs',
+      '#theme' => 'aculta_portal_component',
+      '#name' => 'context-tabs',
       '#props' => ['label' => (string) $this->t('Filtrar meus verbetes')],
       '#slots' => ['items' => ['#theme' => 'item_list', '#items' => $links]],
     ];
@@ -647,13 +647,13 @@ final class WikiContributorWorkspace {
   private function listSection(\Stringable|string $title, array $items, \Stringable|string $emptyMessage, ?array $nextPage = NULL): array {
     $bodyItems = $items === []
       ? [
-        '#type' => 'component',
-        '#component' => 'aculta420:empty-state',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'empty-state',
         '#slots' => ['message' => ['#plain_text' => $emptyMessage]],
       ]
       : [
-        '#type' => 'component',
-        '#component' => 'aculta420:content-grid',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'content-grid',
         '#props' => ['columns' => 2],
         '#slots' => ['items' => $items],
       ];
@@ -665,8 +665,8 @@ final class WikiContributorWorkspace {
       $body['next_page'] = $nextPage;
     }
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420:content-section',
+      '#theme' => 'aculta_portal_component',
+      '#name' => 'content-section',
       '#props' => ['title' => (string) $title],
       '#slots' => ['body' => $body],
     ];

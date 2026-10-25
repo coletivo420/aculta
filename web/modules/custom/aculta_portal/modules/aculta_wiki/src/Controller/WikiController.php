@@ -159,8 +159,8 @@ final class WikiController extends ControllerBase {
     }
     else {
       $build['empty'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420:empty-state',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'empty-state',
         '#slots' => [
           'message' => [
             '#plain_text' => $this->t('Nenhum verbete publicado corresponde a essa busca.'),
@@ -186,8 +186,8 @@ final class WikiController extends ControllerBase {
       $links[] = Link::fromTextAndUrl($label, Url::fromRoute($route, [], ['attributes' => $attributes]))->toRenderable();
     }
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420:context-tabs',
+      '#theme' => 'aculta_portal_component',
+      '#name' => 'context-tabs',
       '#props' => ['label' => (string) $this->t('Navegação da Wiki420')],
       '#slots' => ['items' => ['#theme' => 'item_list', '#items' => $links]],
     ];

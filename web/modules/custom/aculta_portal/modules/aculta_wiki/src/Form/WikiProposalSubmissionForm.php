@@ -410,8 +410,8 @@ final class WikiProposalSubmissionForm extends FormBase {
     }
     $sourceUris = $this->getSourceUris((string) ($values['source_uris'] ?? ''));
     $items = [
-      '#type' => 'component',
-      '#component' => 'aculta420:content-section',
+      '#theme' => 'aculta_portal_component',
+      '#name' => 'content-section',
       '#props' => ['title' => (string) $this->t('Revise antes de enviar')],
       '#slots' => [
         'body' => [

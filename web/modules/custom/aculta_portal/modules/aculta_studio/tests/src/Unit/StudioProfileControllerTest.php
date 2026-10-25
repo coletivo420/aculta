@@ -78,12 +78,12 @@ final class StudioProfileControllerTest extends UnitTestCase {
   public function testOwnerOnlyPageWithoutOptionalUserModule(): void {
     $page = $this->controller(TRUE, TRUE, TRUE)->page();
 
-    self::assertSame('component', $page['#type']);
-    self::assertSame('aculta420:profile-editor', $page['#component']);
+    self::assertSame('aculta_portal_component', $page['#theme']);
+    self::assertSame('profile-editor', $page['#name']);
     self::assertSame('studio-profile-editor', $page['#attributes']['data-portal-ui']);
     $identity = $page['#slots']['identity'];
-    self::assertSame('component', $identity['#type']);
-    self::assertSame('aculta420:profile-identity', $identity['#component']);
+    self::assertSame('aculta_portal_component', $identity['#theme']);
+    self::assertSame('profile-identity', $identity['#name']);
     self::assertSame('Apelido não informado', $identity['#props']['display_name']);
     self::assertStringNotContainsString('conta-privada', $identity['#props']['display_name']);
     self::assertArrayNotHasKey('avatar', $identity['#slots']);
@@ -142,9 +142,9 @@ final class StudioProfileControllerTest extends UnitTestCase {
     $bioSlot = $page['#slots']['biography'];
     $socialSlot = $page['#slots']['social'];
 
-    self::assertSame('aculta420:profile-bio', $bioSlot['#component']);
-    self::assertSame('aculta420:profile-social', $socialSlot['#component']);
-    self::assertSame('aculta420:profile-identity', $identity['#component']);
+    self::assertSame('profile-bio', $bioSlot['#name']);
+    self::assertSame('profile-social', $socialSlot['#name']);
+    self::assertSame('profile-identity', $identity['#name']);
     self::assertSame('textarea', $bioSlot['#slots']['body']['text']['#type']);
     self::assertTrue($bioSlot['#slots']['body']['text']['#disabled']);
     self::assertArrayNotHasKey('edit', $bioSlot['#slots']['body']);

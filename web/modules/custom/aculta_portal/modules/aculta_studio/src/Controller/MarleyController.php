@@ -201,8 +201,8 @@ final class MarleyController {
         foreach ($section['tabs'] as $tab) {
           foreach ($tab['actions'] as $action) {
             $items[] = [
-              '#type' => 'component',
-              '#component' => 'aculta420:card',
+              '#theme' => 'aculta_portal_component',
+              '#name' => 'card',
               '#slots' => [
                 'header' => ['#plain_text' => (string) $action['title']],
                 'content' => ['#plain_text' => (string) $area->getPluginDefinition()['label']],
@@ -220,8 +220,8 @@ final class MarleyController {
       '#type' => 'container',
       '#attributes' => ['data-aculta-studio' => 'welcome'],
       'header' => [
-        '#type' => 'component',
-        '#component' => 'aculta420:context-header',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'context-header',
         '#props' => [
           'eyebrow' => (string) $this->t('ACULTA Studio Marley'),
           'title' => (string) $this->t('O que vamos criar hoje?'),
@@ -229,8 +229,8 @@ final class MarleyController {
         ],
       ],
       'create' => $items === [] ? [] : [
-        '#type' => 'component',
-        '#component' => 'aculta420:content-grid',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'content-grid',
         '#props' => ['columns' => 2],
         '#slots' => ['items' => $items],
       ],
@@ -275,8 +275,8 @@ final class MarleyController {
     // Keep real links, the Studio AJAX hooks, access and cache on the list.
     if ($behaviour === 'tab' || $behaviour === 'subtab') {
       return [
-        '#type' => 'component',
-        '#component' => 'aculta420:context-tabs',
+        '#theme' => 'aculta_portal_component',
+        '#name' => 'context-tabs',
         '#props' => ['label' => $label],
         '#slots' => ['items' => $list],
       ];

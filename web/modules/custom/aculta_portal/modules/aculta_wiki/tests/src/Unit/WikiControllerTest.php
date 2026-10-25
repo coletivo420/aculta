@@ -243,8 +243,8 @@ final class WikiControllerTest extends UnitTestCase {
     $this->assertContains(['type', 'wiki_entry', NULL], $conditions);
     $this->assertContains(['field_domain_source.target_id', 'wiki420_aculta_org', NULL], $conditions);
     $this->assertContains(['status', 1, NULL], $conditions);
-    $this->assertSame('component', $build['empty']['#type']);
-    $this->assertSame('aculta420:empty-state', $build['empty']['#component']);
+    $this->assertSame('aculta_portal_component', $build['empty']['#theme']);
+    $this->assertSame('empty-state', $build['empty']['#name']);
     $this->assertSame('Nenhum verbete publicado corresponde a essa busca.', (string) $build['empty']['#slots']['message']['#plain_text']);
     $this->assertArrayNotHasKey('results', $build);
   }
@@ -275,7 +275,8 @@ final class WikiControllerTest extends UnitTestCase {
     $build = $this->controller($this->domain(), $nodeStorage, account: $account, database: $database)
       ->search(Request::create('/wiki/busca', 'GET', ['q' => $term]));
 
-    self::assertSame('component', $build['empty']['#type']);
+    self::assertSame('aculta_portal_component', $build['empty']['#theme']);
+    self::assertSame('empty-state', $build['empty']['#name']);
     self::assertArrayNotHasKey('results', $build);
   }
 
