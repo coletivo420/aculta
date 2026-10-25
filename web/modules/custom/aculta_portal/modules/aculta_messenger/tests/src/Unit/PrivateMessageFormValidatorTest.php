@@ -217,6 +217,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $form = [];
 
     $validator->validateBlockedRecipients($form, $formState);
+    $validator->validateNewConversationPrivacy($form, $formState);
 
     $this->assertSame([], $formState->getErrors());
   }
