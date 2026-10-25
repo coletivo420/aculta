@@ -40,10 +40,10 @@ final class MailTransportSender {
   }
 
   /**
-   * Resultado do envio. A mensagem vai para o administrador; não contém credenciais.
+   * Resultado do envio; o texto da exceção fica em memória e não deve ser persistido nem registrado.
    *
-   * @return array{sent: bool, message: string, code: int|null, provider_id: string|null}
-   *   Se foi aceito, a mensagem de erro, o código SMTP da resposta (quando houver) e o ID que o provedor deu à mensagem.
+   * @return array{sent: bool, message: string, code: int|null, provider_id: string|null, error_class: class-string<\Throwable>|null}
+   *   Resultado, texto efêmero de erro, código SMTP, ID do provedor e classe da exceção.
    */
   public function send(MailTransport $transport, Email $email): array {
     try {
@@ -55,13 +55,20 @@ final class MailTransportSender {
         'message' => '',
         'code' => NULL,
         'provider_id' => $providerId !== NULL && $providerId !== '' ? trim($providerId, '<> ') : NULL,
+        'error_class' => NULL,
       ];
     }
     catch (TransportExceptionInterface | \RuntimeException $error) {
       $message = $error->getMessage();
       // Respostas do servidor citam o código: "...got code \"552\"..." ou "552 texto".
       $code = preg_match('/got code "?(\d{3})"?|^(\d{3})\b/', $message, $match) === 1 ? (int) ($match[1] ?: $match[2]) : NULL;
-      return ['sent' => FALSE, 'message' => $message, 'code' => $code, 'provider_id' => NULL];
+      return [
+        'sent' => FALSE,
+        'message' => $message,
+        'code' => $code,
+        'provider_id' => NULL,
+        'error_class' => $error::class,
+      ];
     }
   }
 

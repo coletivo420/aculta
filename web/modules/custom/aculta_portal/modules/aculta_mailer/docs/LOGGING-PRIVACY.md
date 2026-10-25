@@ -1,6 +1,6 @@
 # Registro de envios e privacidade (F7)
 
-Status: implementado em 0.1.0-dev.4; reenvio com conteúdo cifrado em 0.1.0-dev.38 (`aculta_mailer_update_10004`); prazo de 24 horas para links de uso único em 0.1.0-dev.39 (`aculta_mailer_update_10005`).
+Status: implementado em 0.1.0-dev.4; hardening de logs sem texto arbitrário em 0.1.0-dev.74; reenvio com conteúdo cifrado em 0.1.0-dev.38 (`aculta_mailer_update_10004`); prazo de 24 horas para links de uso único em 0.1.0-dev.39 (`aculta_mailer_update_10005`).
 
 ## O que é registrado
 
@@ -14,7 +14,7 @@ Entidade `aculta_mail_log` (uma por mensagem, identificada pelo correlation ID):
 | `langcode`, `transport`, `attempts` | Idioma, transporte usado e número da tentativa. |
 | `status` | Estado (`sent`, `deferred`, `failed`). `sent` é "aceito pelo sistema de e-mail", não "entregue". |
 | `error_code` | Código curto: `smtp_<código>` (ex.: `smtp_554`) ou `sem_codigo_<classe>`. |
-| `error_message` | Texto completo da falha do transporte, como o servidor devolveu. Visível só no relatório do admin (ver abaixo). |
+| `error_message` | Desde Dev.74, classe da exceção e código SMTP, sem texto arbitrário do provedor. Entradas históricas anteriores podem conter texto bruto; não são reescritas automaticamente. |
 | `sent`, `created`, `changed` | Datas. |
 | `payload_cipher` | Só nas mensagens com falha: conteúdo para reenvio, cifrado (destinatário, assunto, corpo renderizado e cabeçalhos). Apagado quando a mensagem é aceita, e junto com o registro pela retenção. Ver *Reenvio*. |
 
@@ -23,13 +23,14 @@ Entidade `aculta_mail_log` (uma por mensagem, identificada pelo correlation ID):
 - Corpo renderizado, assunto e contexto em claro (links de login, recuperação, confirmação). Para mensagens com falha, o conteúdo vai ao campo `payload_cipher`, cifrado (ver *Reenvio*).
 - Tokens, URLs secretas e credenciais.
 - O endereço de e-mail em claro.
+- Texto arbitrário de exceção SMTP/IMAP em novos registros, logs operacionais, estado do monitor e alertas administrativos.
 - Mensagem genérica ao usuário: quem envia (cadastro, conquista) vê só a mensagem genérica da camada de envio E-Mails ACULTA.
 
 ## Relatório de falhas
 
-- Página `/painel-administrativo/aculta/mail/falhas`: falhas dos últimos 30 dias com o texto completo.
-- O texto do servidor pode conter o endereço do destinatário (ex.: `<pessoa@dominio>`). Por isso o relatório é restrito e o aviso aparece na página.
-- O usuário final nunca vê este texto.
+- Página `/painel-administrativo/aculta/mail/falhas`: falhas dos últimos 30 dias com diagnóstico categórico (classe e código).
+- Registros históricos anteriores a Dev.74 podem conter o texto bruto da resposta do servidor, inclusive endereço do destinatário. A tela continua mascarando a forma do erro IMAP antigo; o estado é substituído pela próxima tentativa do cron (ou removido no sucesso). Logs de envio legados permanecem sob o acesso administrativo e a retenção existente; nenhum registro histórico foi reescrito ou apagado por esta implementação.
+- O usuário final nunca vê o diagnóstico.
 
 ## Acesso
 

@@ -5,9 +5,9 @@
 Status atualizado em 2026-10-20. Cada fase vira commit(s) atômico(s) na branch autorizada; PR só quando solicitada.
 Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser declaradas validadas sem evidência.
 
-Para correlações idempotentes, o serviço de entrega usa lock persistente por UUID antes da consulta ao log e do
-transporte. Contenção retorna falha temporária para retry. A proteção de repetição após aceite continua condicionada ao
-registro Mailer, e a janela após aceite externo antes da gravação local não pode ser fechada pelo lock Drupal.
+Para correlações idempotentes, o serviço de entrega usa o serviço Drupal `lock` com proprietário por processo antes da consulta ao log e do transporte. Não usar `lock.persistent` em leases temporárias: seu identificador compartilhado permitia a renovação por um processo obsoleto após expiração/substituição. Contenção retorna falha temporária para retry. A proteção de repetição após aceite continua condicionada ao registro Mailer, e a janela após aceite externo antes da gravação local não pode ser fechada pelo lock Drupal.
+
+**Dev.74 — privacidade de diagnósticos:** logs operacionais omitem texto arbitrário de exceções SMTP/IMAP, registrando transporte/código ou classe da exceção. O estado IMAP e sua tela administrativa também guardam/exibem somente a classe. Novas falhas persistem somente classe/código no Mail Log e nos alertas; estados e logger não guardam texto arbitrário. Entradas históricas anteriores podem reter respostas brutas até sua retenção normal; nenhum update de limpeza foi criado ou executado. Testes `MailMonitorTest` 6/18, `MailSettingsKernelTest` 2/5, Unit 161/331 e Kernel 46/214 PASS no MariaDB dedicado; PHPCS sem erros, gate Drupal 11+ (1.155 checks) e índice PASS. Runtime e SMTP externo não usados.
 
 | Fase | Entrega | Estado |
 |---|---|---|
@@ -18,7 +18,7 @@ registro Mailer, e a janela após aceite externo antes da gravação local não 
 | F4 | Branding: layouts e envelope HTML com o logo do tema (`aculta420.settings`, lido pelo tema; sem cópia por marca, desde 0.1.0-dev.32). Modo claro e escuro pelos tokens do tema. Recebimento do logo conferido pelo responsável | Concluída (0.1.0-dev.32) |
 | F5 | Policy: hierarquia global → tipo, ajustes por plugin (`transport`, `reply_to`, `priority`, `skip`), limites por transporte e tela de edição (`/politicas`), coberta por teste de formulário | Concluída (0.1.0-dev.31) |
 | F6 | Queue: fila `aculta_mailer_send`, worker com retry e failover, classificação SMTP real pelo código, cota tratada como temporária para o failover | Concluída (0.1.0-dev.31) |
-| F7 | Logging: registro com texto completo da falha (relatório do admin), retenção, ligar/desligar. Reenvio de falha com o conteúdo cifrado (`MAILER_PAYLOAD_KEY`), guardado só nas mensagens com falha; links de uso único expiram em 24 horas (0.1.0-dev.39) | Concluída (0.1.0-dev.39) |
+| F7 | Logging: novos registros guardam classe/código, sem texto arbitrário de exceção/PII; registros legados permanecem restritos e sob retenção. Retenção, ligar/desligar e reenvio cifrado (`MAILER_PAYLOAD_KEY`) | Implementada para novos registros (Dev.74); limpeza histórica não executada |
 | F8 | Dashboard: contagens por período, estado, tipo, transporte e motivo, agregadas no banco; rótulos em português. Gráficos fora deste RC (a confirmar) | Concluída sem gráficos (0.1.0-dev.31; gráficos a confirmar) |
 | F9 | Usuário: pedido de confirmação e demais e-mails de conta já saem pela camada (system.mail). Textos de troca de e-mail e de reset continuam nos módulos de origem | Parcial (envio pela camada; textos do contrib) |
 | F10 | Eventos de entrega: contrato de provedor, endpoint, aplicação com transições, monitoramento IMAP de bounces e DMARC. Provedor Brevo (token de portador em `BREVO_WEBHOOK_TOKEN`, o Brevo não assina eventos), lista de supressão (hard bounce, endereço inválido e spam) e chave geral de envio. Webhook cadastrado no ambiente de teste (0.1.0-dev.34). Produção: registrar o webhook com o endereço de produção quando o responsável decidir | Parcial (produção pendente) |

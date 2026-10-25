@@ -40,7 +40,7 @@ final class MailLogRecorder {
    * @param string|null $errorCode
    *   Código curto e controlado pelo módulo.
    * @param string|null $errorMessage
-   *   Texto completo da falha do transporte, para o relatório do admin (ver LOGGING-PRIVACY.md).
+   *   Diagnóstico categórico sem texto arbitrário do transporte (ver LOGGING-PRIVACY.md).
    * @param string|null $providerMessageId
    *   ID que o provedor deu à mensagem aceita; sem valor, o registro não é alterado.
    * @param string|null $payloadCipher

@@ -6,6 +6,7 @@ namespace Drupal\aculta_mailer\Api;
 
 use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
+use Drupal\aculta_mailer\Delivery\DeliveryFailureSummary;
 use Drupal\aculta_mailer\Delivery\DeliverySettings;
 use Drupal\aculta_mailer\Delivery\MailSuppression;
 use Drupal\aculta_mailer\Delivery\MailPayloadRegistry;
@@ -197,13 +198,14 @@ final class AcultaMailer implements AcultaMailerInterface {
     $error = QuotaSignatures::matches((string) ($failure['message'] ?? ''))
       ? DeliveryError::Temporary
       : $this->classifier->classify($code);
-    // O texto completo vai só para o registro (relatório do admin); o usuário vê a mensagem genérica.
+    // Exception text is transient: persisted diagnostics contain only class and SMTP code.
     // Falha: o conteúdo vai ao registro cifrado, para o reenvio. Sem chave válida, nada é guardado.
     $payload = $this->payloads->take($message->correlationId);
     $cipher = $payload !== NULL ? $this->cipher->encrypt($payload) : NULL;
     $expires = $cipher !== NULL ? ($payload['expires'] ?? NULL) : NULL;
-    $this->log->record($message, MailStatus::Failed, 1, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL, NULL, $cipher, $expires);
-    $this->alerts->failure($message->type, $message->correlationId, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL);
+    $safeDetail = DeliveryFailureSummary::create($failure['error_class'] ?? NULL, $code);
+    $this->log->record($message, MailStatus::Failed, 1, $transportUsed, $this->errorCode($code, $error), $safeDetail, NULL, $cipher, $expires);
+    $this->alerts->failure($message->type, $message->correlationId, $transportUsed, $this->errorCode($code, $error), $safeDetail);
     // Texto de cota no erro: o transporte sai de uso pela janela, e o envio seguinte já segue pela contingência.
     $this->quotaSignal->failure($transportUsed, (string) ($failure['message'] ?? ''));
     // Sem conteúdo do e-mail nem destinatário no log: só tipo, correlação e código.

@@ -188,7 +188,7 @@ final class MailImapSettingsForm extends ConfigFormBase {
       $this->messenger()->addStatus($this->t('Conexão feita. Mensagens na pasta: @n.', ['@n' => count($client->uidsAbove(0))]));
     }
     catch (\Throwable $error) {
-      $this->messenger()->addError($this->t('Não foi possível ler a caixa: @message', ['@message' => $error->getMessage()]));
+      $this->messenger()->addError($this->t('Não foi possível ler a caixa (@error).', ['@error' => $error::class]));
     }
   }
 
@@ -234,10 +234,10 @@ final class MailImapSettingsForm extends ConfigFormBase {
     if ($error === NULL) {
       return '';
     }
-    return '<p>' . $this->t('Última falha (@kind, @when): @message', [
+    return '<p>' . $this->t('Última falha (@kind, @when): @error', [
       '@kind' => $error['kind'],
       '@when' => date('Y-m-d H:i', $error['when']),
-      '@message' => $error['message'],
+      '@error' => $error['error_class'],
     ]) . '</p>';
   }
 

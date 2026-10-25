@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_mailer\Kernel;
 
 use Drupal\aculta_mailer\Controller\MailSettingsController;
+use Drupal\aculta_mailer\Form\MailImapSettingsForm;
+use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -33,6 +35,22 @@ final class MailSettingsKernelTest extends KernelTestBase {
     $page = MailSettingsController::create($this->container)->settings();
     $this->assertArrayHasKey('#markup', $page);
     $this->assertStringContainsString('indisponível', (string) $page['#markup']);
+  }
+
+  /**
+   * IMAP status renders only the exception class, never transport exception text.
+   */
+  public function testImapFailureStatusDoesNotRenderExceptionMessage(): void {
+    $this->container->get('state')->set('aculta_mailer.imap.last_error', [
+      'kind' => 'bounce',
+      'when' => 1_800_000_000,
+      'message' => 'Legacy error for private-mailbox@example.invalid',
+    ]);
+    $form = MailImapSettingsForm::create($this->container)->buildForm([], new FormState());
+
+    $error = (string) $form['status']['error']['#markup'];
+    $this->assertStringContainsString('LegacyTransportFailure', $error);
+    $this->assertStringNotContainsString('private-mailbox@example.invalid', $error);
   }
 
 }

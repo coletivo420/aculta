@@ -1,3 +1,16 @@
+## 0.1.1-dev.396 — remover texto bruto de exceções dos logs operacionais
+
+A revisão M7 identificou logs que copiavam respostas de transporte e exceções
+IMAP sem filtro. Esses textos podem trazer endereços, dados da caixa ou
+respostas arbitrárias do provedor. O Mailer agora registra transporte e código
+SMTP, enquanto o monitor IMAP persiste e registra somente a classe da exceção;
+a tela administrativa também exibe apenas esse diagnóstico categórico. Novos
+registros de falha e alertas guardam somente classe/código, sem texto bruto.
+Registros históricos anteriores permanecem sob a retenção/acesso existentes;
+a tela mascara estado IMAP legado, e nenhuma limpeza de logs foi executada.
+
+`MailMonitorTest` **6/18**, `MailSettingsKernelTest` **2/5**, Unit Mailer **161/331** e Kernel Mailer **46/214 PASS** no MariaDB dedicado. PHPCS Drupal/DrupalPractice passou sem erros; há avisos de linhas >80 chars no baseline dos arquivos tocados. Gate Drupal 11+ (**1.155 checks**), índice de status e diff check PASS. PHP 8.4.27; SMTP real e Runtime não executados.
+
 ## 0.1.1-dev.395 — corrigir propriedade de locks durante digest e entrega
 
 Um teste com worker suspenso após aceite do Mailer encontrou uma falha real:

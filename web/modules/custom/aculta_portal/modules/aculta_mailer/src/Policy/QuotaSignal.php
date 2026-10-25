@@ -29,7 +29,7 @@ class QuotaSignal {
       return;
     }
     $this->quota->signal($transport);
-    $this->alerts->quotaReached($transport, $detail);
+    $this->alerts->quotaReached($transport, 'quota_signature_detected');
   }
 
   /**
