@@ -11,6 +11,16 @@ final class PersonalNoticePageState {
 
   public const PAGE_SIZE = 100;
 
+  public const MAX_OFFSET = self::PAGE_SIZE * 100;
+
+  /**
+   * Normalizes an untrusted offset and caps expensive deep pages.
+   */
+  public static function normalizeOffset(mixed $value): int {
+    $offset = filter_var($value, FILTER_VALIDATE_INT);
+    return $offset === FALSE ? 0 : min(self::MAX_OFFSET, max(0, $offset));
+  }
+
   /**
    * Whether the selected adapter has more candidate rows.
    *

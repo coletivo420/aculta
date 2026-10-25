@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Form;
 
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeReadStateManagerInterface;
+use Drupal\aculta_messenger\Aviso\PersonalNoticePageState;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -95,9 +96,21 @@ final class NoticeReadStateForm extends FormBase {
         default => [],
       };
       foreach ($pagination as $key => $value) {
-        $offset = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
-        if ($offset !== FALSE) {
-          $query[$key] = $offset;
+        $validOffset = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+        if ($validOffset !== FALSE) {
+          $query[$key] = PersonalNoticePageState::normalizeOffset($validOffset);
+        }
+      }
+      if ($filters['origem'] === '' && is_array($requestQuery['notice_offsets'] ?? NULL)) {
+        $offsets = [];
+        foreach (['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao'] as $origin) {
+          $offset = PersonalNoticePageState::normalizeOffset($requestQuery['notice_offsets'][$origin] ?? NULL);
+          if ($offset > 0) {
+            $offsets[$origin] = $offset;
+          }
+        }
+        if ($offsets !== []) {
+          $query['notice_offsets'] = $offsets;
         }
       }
     }

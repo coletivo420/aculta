@@ -1,3 +1,16 @@
+## 0.1.1-dev.298 — preservar páginas por origem ao alterar leitura
+
+Ao marcar um aviso como lido ou não lido na lista global, o redirect agora
+preserva os offsets independentes de cada origem. A allowlist e o limite de
+100 páginas são aplicados também ao processar o formulário; a troca de estado
+não reinicia a lista nem reflete offsets desconhecidos.
+
+Validação: conjunto central (`NoticeReadStateFormTest`, paginação, navegação e
+agrupamento) **18 testes / 111 assertions PASS**, PHP lint e PHPCS
+Drupal/DrupalPractice dos arquivos novos/limpos PASS. Controllers mantêm os
+baselines PHPCS preexistentes (108 erros / 77 avisos combinados). Sem
+Browser/Runtime.
+
 ## 0.1.1-dev.297 — tolerar metadados incompletos na central
 
 O agrupamento da central agora lê recência somente quando o aviso fornece

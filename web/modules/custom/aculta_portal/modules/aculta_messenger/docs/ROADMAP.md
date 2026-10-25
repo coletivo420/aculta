@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.298 — formulários de leitura na lista global preservam `notice_offsets` por origem após marcar lido/não lido; os offsets aceitos usam a mesma allowlist e limite de 100 páginas da listagem. Testes focais centrais **18/111 PASS**, PHP lint e PHPCS dos arquivos novos/limpos PASS; controllers sem aumento sobre baseline PHPCS confirmado (108 erros / 77 avisos combinados). Sem Browser/Runtime.
 - Dev.297 — a central não quebra ao agrupar itens de extensões com `#attributes` ausente ou fora do formato de array; esses avisos continuam visíveis e em ordem estável na seção “Outros avisos”. `NoticeOriginGrouperTest` **4/19 PASS**, PHP lint e PHPCS Drupal/DrupalPractice PASS; sem Browser/Runtime.
 - Dev.296 — retries de mensagens privadas consultam a correlação idempotente do Mailer antes de converter e-mail direto pendente em digest semanal; uma entrega já aceita é reconciliada localmente e não reaparece com outra correlação. `PrivateMessageNotificationWorkerTest` **14/260 PASS**, PHP lint e PHPCS Drupal/DrupalPractice PASS; sem Runtime/SMTP.
 - Dev.295 — `ConversationMessagingState` agora aplica bloqueios bilaterais a qualquer participante do grupo, não somente threads individuais; UI não mostra compositor quando o validador nativo recusaria o envio e usa texto genérico sem identificar o participante. Privacidade **29/169 PASS**, PHP lint e PHPCS dos arquivos novos/alterados PASS; baseline PHPCS do hook sem regressão. Browser/Runtime não executados.

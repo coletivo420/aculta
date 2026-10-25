@@ -8,6 +8,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_messenger\Aviso\PersonalNoticePageState;
 use Drupal\aculta_messenger\Controller\MessagesController;
 use Drupal\aculta_messenger\Form\FriendRequestsForm;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
@@ -60,26 +61,22 @@ final class AvisosMensagensController extends ControllerBase {
     $query = $this->requestStack->getCurrentRequest()?->query->all() ?? [];
     $filters = $this->noticeListFilter->normalize($query);
     $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
-    $rawForumOffset = $query['forum_offset'] ?? 0;
-    $forumOffset = is_int($rawForumOffset) ? $rawForumOffset
-      : (is_string($rawForumOffset) && ctype_digit($rawForumOffset) ? (int) $rawForumOffset : 0);
-    $rawNoticeOffset = $query['notice_offset'] ?? 0;
-    $noticeOffset = is_int($rawNoticeOffset) ? $rawNoticeOffset
-      : (is_string($rawNoticeOffset) && ctype_digit($rawNoticeOffset) ? (int) $rawNoticeOffset : 0);
+    $forumOffset = PersonalNoticePageState::normalizeOffset($query['forum_offset'] ?? 0);
+    $noticeOffset = PersonalNoticePageState::normalizeOffset($query['notice_offset'] ?? 0);
     $rawOriginOffsets = $query['notice_offsets'] ?? [];
     $originOffsets = [];
     if (is_array($rawOriginOffsets)) {
       foreach (['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao'] as $origin) {
         $rawOffset = $rawOriginOffsets[$origin] ?? NULL;
-        $offset = filter_var($rawOffset, FILTER_VALIDATE_INT);
-        if ($offset !== FALSE && $offset > 0) {
-          $originOffsets[$origin] = min(1_000_000, $offset);
+        $offset = PersonalNoticePageState::normalizeOffset($rawOffset);
+        if ($offset > 0) {
+          $originOffsets[$origin] = $offset;
         }
       }
     }
     $pagination = [
-      'forum_offset' => min(1_000_000, max(0, $forumOffset)),
-      'notice_offset' => min(1_000_000, max(0, $noticeOffset)),
+      'forum_offset' => $forumOffset,
+      'notice_offset' => $noticeOffset,
       'notice_offsets' => $originOffsets,
     ];
     $naoLidasConversas = $this->conversas->count();

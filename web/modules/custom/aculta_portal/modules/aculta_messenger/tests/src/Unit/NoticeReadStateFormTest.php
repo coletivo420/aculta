@@ -97,6 +97,33 @@ final class NoticeReadStateFormTest extends UnitTestCase {
   }
 
   /**
+   * The global list keeps each origin's page offset after a read-state change.
+   */
+  public function testSubmitPreservesValidatedGlobalOriginOffsets(): void {
+    $readState = $this->createMock(NoticeReadStateManagerInterface::class);
+    $account = $this->createMock(AccountInterface::class);
+    $readState->expects(self::once())->method('setRead')->with(28, $account, TRUE)->willReturn(TRUE);
+    $requestStack = new RequestStack();
+    $requestStack->push(Request::create('/avisos-mensagens/avisos?leitura=unread&notice_offsets%5Bwiki%5D=200&notice_offsets%5Bforum%5D=100&notice_offsets%5Bloja%5D=9999999&notice_offsets%5Bdesconhecida%5D=300'));
+    $form = $this->form($readState, $account, $requestStack);
+    $form->setMessenger($this->createMock(MessengerInterface::class));
+    $state = new FormState();
+    $state->setValues(['message_id' => '28', 'target_read' => '1']);
+    $build = [];
+
+    $form->submitForm($build, $state);
+
+    self::assertSame([
+      'leitura' => 'unread',
+      'notice_offsets' => [
+        'forum' => 100,
+        'wiki' => 200,
+        'loja' => 10000,
+      ],
+    ], $state->getRedirect()->getOptions()['query']);
+  }
+
+  /**
    * Invalid offsets and offsets for unrelated origins are not reflected.
    */
   public function testSubmitRejectsUnrelatedOrInvalidPageOffsets(): void {
