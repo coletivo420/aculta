@@ -1,3 +1,10 @@
+## 0.1.0-dev.19 — revisão S-R3-B1: editor CPF/CNPJ opcional (2026-10-25)
+
+- Rota /studio/conta/documentos agora verifica a ausência do owner após autorização e retorna 404 antes de resolver o Portal. Quando o serviço está instalado mas indisponível, mantém a mensagem segura do Form API original e oculta o link.
+- Testes Unit novos para 404/403, disponibilidade, formulários mascarados e destinos checkout/Studio/legado, sem duplicar dados, schema ou shell.
+- Auditoria: AccountDocumentStore verifica duplicidade por HMAC antes do save; ainda não há unicidade transacional sob concorrência. Esse limite é do módulo aculta_id_cpf.
+- **Não executado:** PHPUnit, lint, gates, Kernel/Functional, HTTP, Firefox ESR/X11 e Runtime. Sem merge/deploy. Minha Conta legada /conta-legada continua permanente.
+
 ## 0.1.0-dev.18 — S-R3-B2: Minha Conta e Meu Perfil editam campos separados (2026-10-25)
 
 - Nova `/studio/conta/dados`: formulário Portal/Profile original, limitado por route ID a dados cadastrais privados, sem apelido.

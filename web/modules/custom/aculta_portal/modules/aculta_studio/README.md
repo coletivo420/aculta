@@ -1,7 +1,13 @@
 # ACULTA Studio (`aculta_studio`)
 
 
-## Situação vigente — S-R3-B2, Studio dev.18
+## Situação vigente — auditoria S-R3-B1, Studio dev.19
+
+A rota privada `/studio/conta/documentos` mantém o mesmo `AccountOtherDataForm` e serviço opcional `aculta_id_cpf` do Portal. Sem serviço, acesso direto agora retorna 404 após autorização. Quando o serviço existe mas `isAvailable()` é falso, a página mantém o aviso seguro do owner sem apresentar input gravável e a navegação omite Documentos. Checkout permitido continua prioritário ao retorno para a origem.
+
+Foram escritos testes Unit complementares, **não executados**; Kernel/Functional, Firefox, CSRF/no-JS e Runtime continuam pendentes. A consulta de fingerprint HMAC do owner não assegura unicidade transacional entre gravações concorrentes. A experiência B2 e a Conta legada em `/conta-legada` permanecem intactas.
+
+## Histórico — S-R3-B2, Studio dev.18
 
 O Hub do ACULTA Studio responde em `/` no domínio ACCOUNT; `/studio` é somente caminho interno (404 direto). **Minha Conta original é permanente em `/conta-legada`.** Esta etapa separa o uso do mesmo Profile, sem armazenamento duplicado:
 

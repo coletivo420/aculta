@@ -1,6 +1,14 @@
 # ACULTA Studio — Roadmap multi-experiência
 
 
+## S-R3-B1 — revisão (Studio dev.19, Portal dev.31)
+
+- Código: acesso direto sem `aculta_id_cpf.account_document` retorna 404; com owner indisponível, formulário Portal mostra indisponibilidade, sem link na Conta Studio.
+- Unit novos escritos, não executados: owner ausente/temporariamente indisponível, autorização, máscara e somente leitura, validação genérica, URL segura de checkout e retorno por origem. Não criar outro armazenamento.
+- Limite identificado: fingerprint HMAC evita colisões sequenciais, **não garante unicidade em gravações simultâneas**. Estratégia transacional e Kernel MariaDB pertencem ao owner.
+- Gates pendentes: PHP lint, PHPUnit, Kernel/Functional, routes/Domain/aliases, CSRF, HTML sem vazamento, privacidade, Firefox ESR/X11, no-JS, checkout e comparação com `/dados/outros-dados` e `/conta-legada`. Não homologar como RC.
+- Após validar B1/B2, avançar a S-R3-B3 (pedidos/apoio/preferências), conservando o legado.
+
 ## S-R3-B2 — separação de cadastro e apelido (Studio dev.18 / Portal dev.30 / User dev.74)
 
 - **Código entregue na PR #297:** `/studio/conta/dados` compõe Profile Form API somente com nome e WhatsApp privado. `/studio/perfil/apelido` entrega editor isolado do campo original `field_nickname` com as regras da ACULTA User. Não cria schema, alias nem editor de dados privados no Perfil.

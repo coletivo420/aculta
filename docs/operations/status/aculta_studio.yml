@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.18 — S-R3-B2: dados privados em /studio/conta/dados e apelido público em /studio/perfil/apelido; /conta-legada permanente. Unit escritos, não executados."
-next_phase: 'Validar S-R3-B1/B2 em PHPUnit Unit, Kernel/Functional, gates de rotas/aliases, segurança/privacidade e perfil público; CPF/CNPJ ativo/ausente, checkout, OAuth e endereço. Smoke HTTP e Firefox ESR/X11 comparando /studio/conta/dados, /studio/perfil/apelido, / e /conta-legada; então S-R3-B3 pedidos, apoio e preferências.'
+version_note: "0.1.0-dev.19 — revisão S-R3-B1: documento sem owner 404, com owner indisponível aviso seguro; B2 e /conta-legada preservados. Unit não executados."
+next_phase: 'Executar Unit/Kernel/Functional e gates para B1/B2, testar owner CPF/CNPJ ausente/disponível/indisponível, máscara, sigilo, checkout, CSRF/no-JS, duas contas, concorrência de fingerprint e privacidade. Smoke Firefox ESR/X11 e Runtime comparando /studio/conta/documentos e /dados/outros-dados; depois S-R3-B3.'
 
 # 2026-10-24: P1-B em codigo: bridge Marley e preview /studio/inicio;
 # a home /studio continua legado Marley, sem Runtime homologado.

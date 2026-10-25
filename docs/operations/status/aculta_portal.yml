@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'Validar S-R3-B2 (Form API cadastral, legado, redirect, cache, acesso e checkout); homologar no Kernel domínio/grants dos providers do Content Index incluindo Activity; avançar relações allowlisted dos vídeos embutidos em Revista, Wiki, Fórum e LMS; homologar as APIs de limpeza compartilhada de Media/File, depois implementar prévia e execução explícita de posts com backup ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [limpeza](docs/portal/CONTENT-CLEANUP-POLICY.md), [roadmap Portal](docs/portal/ROADMAP.md))'
-version_note: "0.4.1-dev.30 — cadastro privado /studio/conta/dados sem nickname por Form API e redirect contextual; legado /dados e Commerce preservados. Gates/Unit/Runtime pendentes."
+next_phase: 'Executar testes B1/B2 de Form API CPF/CNPJ, checkout, cache e legado; homologar no Kernel domínio/grants dos providers do Content Index incluindo Activity; avançar relações allowlisted dos vídeos embutidos em Revista, Wiki, Fórum e LMS; homologar as APIs de limpeza compartilhada de Media/File, depois implementar prévia e execução explícita de posts com backup ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [limpeza](docs/portal/CONTENT-CLEANUP-POLICY.md), [roadmap Portal](docs/portal/ROADMAP.md))'
+version_note: "0.4.1-dev.31 — novos testes de Form API CPF/CNPJ e retorno checkout/Studio/legado B1; runtime Portal inalterado, execução PHPUnit/Kernel/Runtime pendente."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.

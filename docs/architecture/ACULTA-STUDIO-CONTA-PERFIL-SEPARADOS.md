@@ -46,6 +46,12 @@ funcionalmente, inclusive depois de aprovado o Studio.
 - Nenhum alias transitório para `/studio/pessoal` será instalado:
   atualizar consumidores e testes diretamente para os nomes finais.
 
+## S-R3-B1 — auditoria de documentos (dev.19/31, sem homologação)
+
+A integração reutiliza o Form API do Portal, o serviço opcional de CPF/CNPJ e os campos existentes, sem publicar documentos no Perfil. Ausência total do serviço causa 404 no editor Studio após autorização; indisponibilidade de chaves em owner instalado mantém somente a explicação genérica do formulário original, enquanto o link some do menu. Retornos por checkout válido, Studio e legado conservam o contexto.
+
+A verificação HMAC em `AccountDocumentStore` antecede o save e não garante unicidade transacional entre requisições concorrentes. Esse limite permanece no owner e depende de decisão separada sobre garantia forte. Testes Unit de acesso, máscara e destinos adicionados, **não executados**; faltam Kernel/Functional, PHP lint, HTTP, Firefox/Runtime, cache, CSRF e no-JS. A Conta original `/conta-legada` e o incremento B2 permanecem.
+
 ## S-R3-B2 — cadastro separado de apelido (dev.18/30/74, código não homologado)
 
 - `/studio/conta/dados` delega o **mesmo Profile Form API de `PortalController::myData()`** ao Portal e usa seu `form_alter` por rota para apresentar nome e WhatsApp privados, sem `field_nickname`. Em `/dados` o formulário legado fica misto, inalterado.
