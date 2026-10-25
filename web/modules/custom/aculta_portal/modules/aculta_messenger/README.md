@@ -65,14 +65,14 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.209` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.210` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
 de `ForumPost` e revisão de tópico pelo publisher; o consumer preserva
 `aculta_aviso` e revalida assinatura/acesso antes do registro. A prévia de busca
 de membros mantém as sugestões como links normais alcançáveis por Tab.
-O resumo diário mantém lock persistente por destinatário e snapshot sem PII. Dev.198/202 comprovam disputa entre dois boots Drupal e recuperação do lote aceito após reinício, sem segundo transporte; a revalidação de 2026-10-24 passou os Kernels Messenger/Mailer **38/865**. Dev.200 corrige o limite inicial da central da Conta. Dev.206 pagina Fórum; Dev.209 pagina LMS, Wiki, Loja e Doações quando a origem está filtrada, em páginas de até 100 itens. Paginação da lista global, comunicados e Site Alert ainda está pendente. O transporte SMTP real e a homologação no Runtime continuam pendentes.
+O resumo diário mantém lock persistente por destinatário e snapshot sem PII. Dev.198/202 comprovam disputa entre dois boots Drupal e recuperação do lote aceito após reinício, sem segundo transporte; a revalidação de 2026-10-24 passou os Kernels Messenger/Mailer **38/865**. Dev.200 corrige o limite inicial da central da Conta. Dev.206 pagina Fórum; Dev.209 pagina LMS, Wiki, Loja e Doações; Dev.210 completa paginação filtrada de Comunicados e Alertas do Site, até 100 itens e com leitura filtrada antes do limite. Paginação da lista global ainda está pendente. O transporte SMTP real e a homologação no Runtime continuam pendentes.
 O Kernel de integração exercita Messenger e ACULTA Mailer reais com transporte
 controlado: retry após falha de acknowledgement mantém um Mail Log e não envia
 o mesmo resumo novamente.

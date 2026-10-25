@@ -59,4 +59,24 @@ final class PersonalNoticePageState {
     $this->hasNext = $hasNext;
   }
 
+  /**
+   * Slices already-authorized and filtered rows for this page.
+   *
+   * @param array $items
+   *   Rows with access and read-state filters already applied.
+   * @param int $limit
+   *   Maximum number of rows to return.
+   *
+   * @return array
+   *   The requested page. `hasNext()` reports whether an extra row existed.
+   */
+  public function slice(array $items, int $limit): array {
+    if ($limit < 1) {
+      throw new \InvalidArgumentException('The page size must be positive.');
+    }
+    $page = array_slice($items, $this->offset, $limit + 1);
+    $this->hasNext = count($page) > $limit;
+    return array_slice($page, 0, $limit);
+  }
+
 }

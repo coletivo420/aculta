@@ -2102,3 +2102,9 @@ Revalidação de idempotência do digest: `LearningNoticeDigestIntegrationTest` 
 
 Auditoria focal dos modos de e-mail — **42 testes / 445 assertions PASS** para preferências pessoais, opções administrativas e workers diretos de Fórum, LMS, Wiki, Loja e Doações. README e configuração agora descrevem a propriedade do Messenger sobre os modos por categoria (`off`, direta, resumo), a obrigatoriedade do aviso no site e a separação da preferência nativa das conversas Private Message. Sem SMTP real ou homologação Runtime.
 
+## 0.1.1-dev.210 — paginar Comunicados e Alertas do Site por origem
+
+A central da Conta pagina os Nodes de comunicado com access e leitura aplicados antes da seleção de até 100 resultados; a ordenação é estável por criação e ID. Alertas do Site mantêm access e dismissal, ordenação estável por ID e filtro de leitura antes do slice. A navegação anterior/seguinte reutiliza `notice_offset`; prévia da gaveta e lista global conservam o contrato existente.
+
+Validação: `PersonalNoticePageStateTest`, `PersonalNoticeAdapterHooksTest` e `NoticeListFilterTest` **15/93 PASS**. PHPCS Drupal/DrupalPractice limpo nos arquivos novos/testes; `MessagesController` mantém baseline **95/65**. PHP lint e `git diff --check` PASS. Browser visual não executado: `DISPLAY` não está definido; Runtime não homologado.
+

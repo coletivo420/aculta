@@ -51,6 +51,26 @@ final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
   }
 
   /**
+   * A page for a non-adapter origin does not trigger unrelated adapters.
+   */
+  public function testNonAdapterOriginPageSkipsOptionalAdapters(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $state = new PersonalNoticePageState('comunicado', 0);
+    $lms = $this->createMock(PersonalNoticeAdapterInterface::class);
+    $lms->expects(self::never())->method('addPersonalNotices');
+    $wiki = $this->createMock(PaginatedPersonalNoticeAdapterInterface::class);
+    $wiki->expects(self::never())->method('addPersonalNotices');
+    $wiki->expects(self::never())->method('addPersonalNoticesPage');
+    $items = [];
+
+    (new PersonalNoticeAdapterHooks(['lms' => $lms, 'wiki' => $wiki]))
+      ->noticesAlter($items, $account, ['origem' => 'comunicado', 'page_state' => $state]);
+
+    self::assertSame([], $items);
+    self::assertFalse($state->hasNext());
+  }
+
+  /**
    * Dispatches list contributions and unread counts to enabled adapters only.
    */
   public function testOptionalAdaptersExtendListAndCount(): void {

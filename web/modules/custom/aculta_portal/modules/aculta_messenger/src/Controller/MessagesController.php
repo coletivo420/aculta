@@ -738,6 +738,13 @@ final class MessagesController extends ControllerBase {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
     }
     $items = [];
+    $paginatedOrigins = ['comunicado', 'alerta', 'aprendizagem', 'wiki', 'loja', 'doacao'];
+    $originPageState = $includeReadActions && in_array($filters['origem'], $paginatedOrigins, TRUE)
+      ? new PersonalNoticePageState(
+        $filters['origem'],
+        max(0, (int) ($pagination['notice_offset'] ?? 0)),
+      )
+      : NULL;
 
     $activeAlerts = $this->siteAlerts->getActiveAlerts();
     $visibleAlerts = [];
@@ -748,6 +755,9 @@ final class MessagesController extends ControllerBase {
         $visibleAlerts[] = $alert;
       }
     }
+    // Site Alert's upstream query does not promise an order. The same active
+    // set must retain a stable order across offset pages.
+    usort($visibleAlerts, static fn(SiteAlert $a, SiteAlert $b): int => (int) $b->id() <=> (int) $a->id());
     $alertFlagStates = [];
     if ($this->account->isAuthenticated() && $visibleAlerts !== []) {
       $alertFlagStates = $this->noticeFlagStateLoader->loadForAccount($visibleAlerts, $this->account);
@@ -755,7 +765,10 @@ final class MessagesController extends ControllerBase {
     }
 
     // Persistent notices always lead the list, ahead of the dismissable site alerts.
-    foreach ($this->buildPersistentNoticeItems(50, $cacheability, $filters) as $item) {
+    $persistentNoticeLimit = $originPageState?->origin() === 'comunicado'
+      ? PersonalNoticePageState::PAGE_SIZE
+      : 50;
+    foreach ($this->buildPersistentNoticeItems($persistentNoticeLimit, $cacheability, $filters, $originPageState) as $item) {
       $items[] = $item;
     }
 
@@ -781,15 +794,8 @@ final class MessagesController extends ControllerBase {
     // Avisos por pessoa (respostas e atualizações de tópicos seguidos): só da própria pessoa, com link para a página.
     $forumHasNextPage = FALSE;
     $forumOffset = max(0, (int) ($pagination['forum_offset'] ?? 0));
-    $adapterPageOrigins = ['aprendizagem', 'wiki', 'loja', 'doacao'];
-    $adapterPageState = NULL;
-    if ($includeReadActions && in_array($filters['origem'], $adapterPageOrigins, TRUE)) {
-      $adapterPageState = new PersonalNoticePageState(
-        $filters['origem'],
-        max(0, (int) ($pagination['notice_offset'] ?? 0)),
-      );
-    }
-    if ($this->account->isAuthenticated()) {
+    $includePersonalNotices = in_array($filters['origem'], ['', 'forum'], TRUE);
+    if ($this->account->isAuthenticated() && $includePersonalNotices) {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0)->addCacheTags(['aculta_aviso_list']);
       $personalNoticeLimit = $includeReadActions
         ? AvisoService::PERSONAL_NOTICE_LIST_LIMIT
@@ -864,11 +870,18 @@ final class MessagesController extends ControllerBase {
     }
 
     $adapterFilters = $filters;
-    if ($adapterPageState instanceof PersonalNoticePageState) {
-      $adapterFilters['page_state'] = $adapterPageState;
+    if ($originPageState instanceof PersonalNoticePageState) {
+      $adapterFilters['page_state'] = $originPageState;
     }
     $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $this->account, $adapterFilters);
 
+    if ($originPageState instanceof PersonalNoticePageState && $originPageState->origin() === 'alerta') {
+      // Site Alert currently exposes the complete active set through its
+      // upstream service. Apply source/read filters before slicing so the
+      // page never skips unread/read matches when the other state is larger.
+      $items = $this->noticeListFilter->apply($items, $filters);
+      $items = $originPageState->slice($items, PersonalNoticePageState::PAGE_SIZE);
+    }
     if ($hasFilters) {
       $items = $this->noticeListFilter->apply($items, $filters);
       foreach ($items as &$item) {
@@ -934,18 +947,21 @@ final class MessagesController extends ControllerBase {
       }
     }
 
-    if ($adapterPageState instanceof PersonalNoticePageState
-      && ($adapterPageState->offset() > 0 || $adapterPageState->hasNext())) {
+    if ($originPageState instanceof PersonalNoticePageState
+      && $originPageState->origin() !== 'forum'
+      && ($originPageState->offset() > 0 || $originPageState->hasNext())) {
       $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
       $pagerOriginLabel = [
+        'comunicado' => 'Comunicados',
+        'alerta' => 'Alertas do site',
         'aprendizagem' => 'Aprendizagem',
         'wiki' => 'Wiki',
         'loja' => 'Loja',
         'doacao' => 'Doações',
-      ][$adapterPageState->origin()];
-      if ($adapterPageState->offset() > 0) {
+      ][$originPageState->origin()];
+      if ($originPageState->offset() > 0) {
         $previousUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
-          'query' => $filterQuery + ['notice_offset' => max(0, $adapterPageState->offset() - PersonalNoticePageState::PAGE_SIZE)],
+          'query' => $filterQuery + ['notice_offset' => max(0, $originPageState->offset() - PersonalNoticePageState::PAGE_SIZE)],
         ]);
         $noticePager[] = PortalLinkElement::build(
           $this->translation->translate('Avisos anteriores'),
@@ -953,9 +969,9 @@ final class MessagesController extends ControllerBase {
           ['data-portal-ui' => 'account-data-link'],
         );
       }
-      if ($adapterPageState->hasNext()) {
+      if ($originPageState->hasNext()) {
         $nextUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
-          'query' => $filterQuery + ['notice_offset' => $adapterPageState->offset() + PersonalNoticePageState::PAGE_SIZE],
+          'query' => $filterQuery + ['notice_offset' => $originPageState->offset() + PersonalNoticePageState::PAGE_SIZE],
         ]);
         $noticePager[] = PortalLinkElement::build(
           $this->translation->translate('Avisos seguintes'),
@@ -1107,13 +1123,21 @@ final class MessagesController extends ControllerBase {
   }
 
   /** Builds authorized notice render arrays and native per-member Flag actions. */
-  private function buildPersistentNoticeItems(int $limit, CacheableMetadata $cacheability, array $filters = []): array {
+  private function buildPersistentNoticeItems(
+    int $limit,
+    CacheableMetadata $cacheability,
+    array $filters = [],
+    ?PersonalNoticePageState $pageState = NULL,
+  ): array {
     if (!in_array($filters['origem'] ?? '', ['', 'comunicado'], TRUE)) {
       return [];
     }
     $flag = $this->flagService->getFlagById('aculta_notice_read');
     $items = [];
     $offset = 0;
+    $eligibleOffset = $pageState?->origin() === 'comunicado' ? $pageState->offset() : 0;
+    $eligibleSeen = 0;
+    $pageState?->setHasNext(FALSE);
     $batchSize = max(20, $limit);
     $nodeStorage = $this->entityTypes->getStorage('node');
     do {
@@ -1122,6 +1146,7 @@ final class MessagesController extends ControllerBase {
         ->condition('type', 'aculta_notice')
         ->condition('status', 1)
         ->sort('created', 'DESC')
+        ->sort('nid', 'DESC')
         ->range($offset, $batchSize)
         ->execute();
       if ($ids === []) {
@@ -1153,6 +1178,13 @@ final class MessagesController extends ControllerBase {
         $readFilter = $filters['leitura'] ?? '';
         if (($readFilter === 'read' && !$read) || ($readFilter === 'unread' && $read)) {
           continue;
+        }
+        if ($eligibleSeen++ < $eligibleOffset) {
+          continue;
+        }
+        if ($pageState?->origin() === 'comunicado' && count($items) >= $limit) {
+          $pageState->setHasNext(TRUE);
+          break 2;
         }
         // The drawer lists a summary; the full notice opens in the same drawer (noticeDetail).
         // A persistent notice is not dismissed (no "×"): it stays in the list, and its own kind of card tells it apart.
