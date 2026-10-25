@@ -62,6 +62,20 @@ final class MessengerSettingsFormTest extends UnitTestCase {
         : [AvisoPreferencias::EMAIL_IMMEDIATE], $build['email_modes'][$category]['#default_value']);
       self::assertSame($expectedOptions, array_keys($build['email_modes'][$category]['#options']));
     }
+    foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
+      $defaultMode = $build['email_modes'][$category . '_default_mode'];
+      self::assertSame('select', $defaultMode['#type']);
+      self::assertSame(
+        $category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES || $category === AvisoPreferencias::EMAIL_FRIENDSHIP
+          ? AvisoPreferencias::EMAIL_IMMEDIATE
+          : AvisoPreferencias::EMAIL_OFF,
+        $defaultMode['#default_value'],
+        $category,
+      );
+      if ($category === AvisoPreferencias::EMAIL_FRIENDSHIP) {
+        self::assertArrayNotHasKey(AvisoPreferencias::EMAIL_DIGEST, $defaultMode['#options']);
+      }
+    }
     self::assertSame(
       AvisoPreferencias::EMAIL_IMMEDIATE,
       $build['email_modes'][AvisoPreferencias::EMAIL_PRIVATE_MESSAGES . '_default_mode']['#default_value'],
@@ -87,6 +101,7 @@ final class MessengerSettingsFormTest extends UnitTestCase {
         'email_modes' => [
           'wiki' => ['digest' => 'false', 'immediate' => '0'],
           'loja' => ['digest' => 0, 'immediate' => 'true'],
+          'doacao' => 'invalid',
         ],
       ],
     ]);
@@ -97,6 +112,8 @@ final class MessengerSettingsFormTest extends UnitTestCase {
 
     self::assertSame([], $build['email_modes']['wiki']['#default_value']);
     self::assertSame([], $build['email_modes']['loja']['#default_value']);
+    self::assertSame([], $build['email_modes']['doacao']['#default_value']);
+    self::assertSame([AvisoPreferencias::EMAIL_OFF], array_keys($build['email_modes']['doacao_default_mode']['#options']));
   }
 
   /**
@@ -126,6 +143,9 @@ final class MessengerSettingsFormTest extends UnitTestCase {
       $emailModes[$category] = [];
     }
     $emailModes['forum_resposta'] = [AvisoPreferencias::EMAIL_IMMEDIATE => AvisoPreferencias::EMAIL_IMMEDIATE];
+    $emailModes['forum_resposta_default_mode'] = AvisoPreferencias::EMAIL_IMMEDIATE;
+    $emailModes['wiki'] = [AvisoPreferencias::EMAIL_DIGEST => AvisoPreferencias::EMAIL_DIGEST];
+    $emailModes['wiki_default_mode'] = AvisoPreferencias::EMAIL_DIGEST;
     $emailModes[AvisoPreferencias::EMAIL_PRIVATE_MESSAGES] = [
       AvisoPreferencias::EMAIL_DIGEST => AvisoPreferencias::EMAIL_DIGEST,
     ];
@@ -148,13 +168,18 @@ final class MessengerSettingsFormTest extends UnitTestCase {
     self::assertSame([
       'digest' => FALSE,
       'immediate' => TRUE,
+      'default_mode' => AvisoPreferencias::EMAIL_IMMEDIATE,
     ], $saved['email_modes']['forum_resposta']);
     self::assertSame([
       'digest' => TRUE,
       'immediate' => FALSE,
       'default_mode' => AvisoPreferencias::EMAIL_OFF,
     ], $saved['email_modes'][AvisoPreferencias::EMAIL_PRIVATE_MESSAGES]);
-    self::assertSame(FALSE, $saved['email_modes']['wiki']['digest']);
+    self::assertSame([
+      'digest' => TRUE,
+      'immediate' => FALSE,
+      'default_mode' => AvisoPreferencias::EMAIL_DIGEST,
+    ], $saved['email_modes']['wiki']);
   }
 
 }

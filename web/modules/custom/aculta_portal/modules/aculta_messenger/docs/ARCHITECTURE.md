@@ -25,8 +25,9 @@ Seguir conteúdo expressa somente a intenção de receber avisos no site e, conf
 Fórum, LMS, Loja, Wiki e Doações seguem o mesmo contrato: o aviso na central do site é
 obrigatório; a pessoa pode escolher e-mail desativado, entrega direta ou resumo
 / digest. Administradores do Messenger restringem por categoria quais modos
-direto e resumo podem ser escolhidos; o opt-out individual permanece sempre
-disponível. ACULTA Mailer pode suspender um tipo ou transporte, mas não define a
+direto e resumo podem ser escolhidos e definem o padrão para contas sem escolha
+individual; preferências salvas continuam prevalecendo. O opt-out individual
+permanece sempre disponível. ACULTA Mailer pode suspender um tipo ou transporte, mas não define a
 preferência nem a cadência do aviso. Opt-out de e-mail nunca remove o aviso no
 site. Preferências aplicam-se por categoria/evento, e a entrega revalida política e acesso no
 momento do envio. A sequência de integração é LMS → Wiki → Fórum → Loja → Doações, sem

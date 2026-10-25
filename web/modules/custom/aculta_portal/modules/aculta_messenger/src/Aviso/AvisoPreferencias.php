@@ -126,12 +126,18 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
           : self::EMAIL_IMMEDIATE;
       }
       elseif ($category === self::EMAIL_FRIENDSHIP) {
-        // Friendship email was previously sent by default; preserve that
-        // behavior until the member explicitly chooses site-only delivery.
-        $mode = self::EMAIL_IMMEDIATE;
+        $default = $this->configFactory?->get('aculta_messenger.settings')
+          ->get('email_modes.' . self::EMAIL_FRIENDSHIP . '.default_mode');
+        $mode = in_array($default, [self::EMAIL_OFF, self::EMAIL_IMMEDIATE], TRUE)
+          ? $default
+          : self::EMAIL_IMMEDIATE;
       }
       else {
-        $mode = self::EMAIL_OFF;
+        $default = $this->configFactory?->get('aculta_messenger.settings')
+          ->get('email_modes.' . $category . '.default_mode');
+        $mode = in_array($default, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)
+          ? $default
+          : self::EMAIL_OFF;
       }
     }
     return in_array($mode, $this->allowedEmailModes($category), TRUE) ? $mode : self::EMAIL_OFF;

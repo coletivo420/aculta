@@ -61,4 +61,4 @@ aculta_messenger.email_modes:
       label: 'Envio direto'
     default_mode:
       type: string
-      label: 'Modo padrão para novas preferências'
+      label: 'Modo padrão para contas sem preferência'

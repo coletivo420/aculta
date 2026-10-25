@@ -96,8 +96,14 @@ final class MessengerSettingsForm extends ConfigFormBase {
       ],
     ];
     foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
-      $configured = $config->get('email_modes.' . $category);
-      $configured = is_array($configured) ? $configured : [];
+      $rawConfigured = $config->get('email_modes.' . $category);
+      $configured = is_array($rawConfigured)
+        ? $rawConfigured
+        : ($rawConfigured === NULL ? [] : [
+          'digest' => FALSE,
+          'immediate' => FALSE,
+          'default_mode' => AvisoPreferencias::EMAIL_OFF,
+        ]);
       $options = [
         AvisoPreferencias::EMAIL_IMMEDIATE => $this->t('Envio direto'),
       ];
@@ -121,30 +127,44 @@ final class MessengerSettingsForm extends ConfigFormBase {
         '#options' => $options,
         '#default_value' => $defaultModes,
       ];
-      if ($category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES) {
-        $form['email_modes'][$category . '_default_mode'] = [
-          '#type' => 'select',
-          '#title' => $this->t('Padrão para contas sem preferência de mensagens privadas'),
-          '#options' => [
-            AvisoPreferencias::EMAIL_OFF => $this->t('Somente no site'),
-            AvisoPreferencias::EMAIL_DIGEST => $this->t('Resumo semanal por e-mail'),
-            AvisoPreferencias::EMAIL_IMMEDIATE => $this->t('No site e por e-mail'),
-          ],
-          '#default_value' => in_array(
-            $configured['default_mode'] ?? NULL,
-            [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE],
-            TRUE,
-          )
-            ? $configured['default_mode']
-            : AvisoPreferencias::EMAIL_IMMEDIATE,
-          '#states' => [
-            'disabled' => [
-              ':input[name="email_modes[' . $category . '][' . AvisoPreferencias::EMAIL_IMMEDIATE . ']"]' => ['checked' => FALSE],
-              ':input[name="email_modes[' . $category . '][' . AvisoPreferencias::EMAIL_DIGEST . ']"]' => ['checked' => FALSE],
-            ],
-          ],
-        ];
+      $defaultMode = in_array(
+        $configured['default_mode'] ?? NULL,
+        [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE],
+        TRUE,
+      )
+        ? $configured['default_mode']
+        : ($category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES || $category === AvisoPreferencias::EMAIL_FRIENDSHIP
+          ? AvisoPreferencias::EMAIL_IMMEDIATE
+          : AvisoPreferencias::EMAIL_OFF);
+      $defaultOptions = [
+        AvisoPreferencias::EMAIL_OFF => $this->t('Somente no site'),
+      ];
+      if (!in_array($category, AvisoPreferencias::EMAIL_IMMEDIATE_ONLY_CATEGORIES, TRUE)) {
+        if (!array_key_exists('digest', $configured) || $configured['digest'] === TRUE) {
+          $defaultOptions[AvisoPreferencias::EMAIL_DIGEST] = $category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES
+            ? $this->t('Resumo semanal por e-mail')
+            : $this->t('Resumo diário por e-mail');
+        }
       }
+      if (!array_key_exists('immediate', $configured) || $configured['immediate'] === TRUE) {
+        $defaultOptions[AvisoPreferencias::EMAIL_IMMEDIATE] = $this->t('No site e por e-mail');
+      }
+      $defaultStates = [
+        ':input[name="email_modes[' . $category . '][' . AvisoPreferencias::EMAIL_IMMEDIATE . ']"]' => ['checked' => FALSE],
+      ];
+      if (!in_array($category, AvisoPreferencias::EMAIL_IMMEDIATE_ONLY_CATEGORIES, TRUE)) {
+        $defaultStates[':input[name="email_modes[' . $category . '][' . AvisoPreferencias::EMAIL_DIGEST . ']"]'] = ['checked' => FALSE];
+      }
+      $form['email_modes'][$category . '_default_mode'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Padrão para contas sem preferência: @category', [
+          '@category' => $this->emailCategoryTitle($category),
+        ]),
+        '#description' => $this->t('Escolhas já salvas pelas pessoas continuam prevalecendo.'),
+        '#options' => $defaultOptions,
+        '#default_value' => isset($defaultOptions[$defaultMode]) ? $defaultMode : AvisoPreferencias::EMAIL_OFF,
+        '#states' => ['disabled' => $defaultStates],
+      ];
     }
     return parent::buildForm($form, $form_state);
   }
@@ -161,14 +181,12 @@ final class MessengerSettingsForm extends ConfigFormBase {
         && in_array(AvisoPreferencias::EMAIL_DIGEST, $selected, TRUE),
         'immediate' => in_array(AvisoPreferencias::EMAIL_IMMEDIATE, $selected, TRUE),
       ];
-      if ($category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES) {
-        $defaultMode = $form_state->getValue(['email_modes', $category . '_default_mode']);
-        $emailModes[$category]['default_mode'] = match (TRUE) {
-          $defaultMode === AvisoPreferencias::EMAIL_IMMEDIATE && $emailModes[$category]['immediate'] => AvisoPreferencias::EMAIL_IMMEDIATE,
-          $defaultMode === AvisoPreferencias::EMAIL_DIGEST && $emailModes[$category]['digest'] => AvisoPreferencias::EMAIL_DIGEST,
-          default => AvisoPreferencias::EMAIL_OFF,
-        };
-      }
+      $defaultMode = $form_state->getValue(['email_modes', $category . '_default_mode']);
+      $emailModes[$category]['default_mode'] = match (TRUE) {
+        $defaultMode === AvisoPreferencias::EMAIL_IMMEDIATE && $emailModes[$category]['immediate'] => AvisoPreferencias::EMAIL_IMMEDIATE,
+        $defaultMode === AvisoPreferencias::EMAIL_DIGEST && $emailModes[$category]['digest'] => AvisoPreferencias::EMAIL_DIGEST,
+        default => AvisoPreferencias::EMAIL_OFF,
+      };
     }
     $this->config('aculta_messenger.settings')
       ->set('group_creation_enabled', (bool) $form_state->getValue('group_creation_enabled'))

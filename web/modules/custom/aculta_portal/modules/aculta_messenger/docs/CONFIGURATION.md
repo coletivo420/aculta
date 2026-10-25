@@ -77,7 +77,9 @@ Isso inclui Fórum, Aprendizagem, Wiki, Loja, Doações, Mensagens Privadas e
 Amizades; o formulário permanece disponível a membros sem permissão para
 iniciar conversas. As categorias de conteúdo oferecem sem e-mail, entrega
 direta ou resumo diário; a administração pode desabilitar cada modalidade em
-`aculta_messenger.settings:email_modes`. Mensagens Privadas oferecem sem
+`aculta_messenger.settings:email_modes` e definir o padrão de entrega para
+contas que ainda não salvaram uma preferência. Escolhas individuais explícitas
+continuam prevalecendo. Mensagens Privadas oferecem sem
 e-mail, aviso direto ou resumo semanal, sem incluir o corpo da conversa;
 Amizades oferecem somente no site ou e-mail direto. Os avisos no site e a
 inbox permanecem disponíveis independentemente dessas escolhas. O formulário
@@ -86,11 +88,12 @@ de seguir tópicos. O post-update
 `aculta_messenger_post_update_shared_email_preferences` migra o opt-in global
 legado e as exceções antigas do Fórum para modos individuais, preserva escolhas
 Messenger existentes e remove as chaves antigas após a cópia. Depois da
-migração, contas sem preferência ficam somente no site. Em Mensagens Privadas,
-a pessoa escolhe
-envio direto a cada mensagem, resumo semanal ou sem e-mail; a administração
-pode habilitar os modos, definir o padrão para contas sem preferência e definir
-a data inicial global do digest semanal. Amizade permite somente entrega no
+migração, contas sem preferência seguem o padrão administrativo de cada
+categoria; a configuração inicial mantém avisos de conteúdo somente no site.
+Em Mensagens Privadas, a pessoa escolhe envio direto a cada mensagem, resumo
+semanal ou sem e-mail; a administração pode habilitar os modos, definir o
+padrão para contas sem preferência e definir a data inicial global do digest
+semanal. Amizade permite somente entrega no
 site ou e-mail direto. Os avisos de Mensagens Privadas contêm somente o nome do
 remetente e link para a inbox; nunca incluem o corpo da mensagem. Cada conta
 recebe os resumos seguintes após sete dias. A data inicial é considerada à

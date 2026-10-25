@@ -162,6 +162,53 @@ final class AvisoPreferenciasTest extends UnitTestCase {
   }
 
   /**
+   * Uses the administrator's default for accounts without a saved choice.
+   */
+  #[DataProvider('administrativeDefaultCases')]
+  public function testAdministrativeDefaultAppliesAcrossCategories(string $category, string $defaultMode): void {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::once())
+      ->method('get')
+      ->with(AvisoPreferencias::MODULO, 27, 'avisos_email_mode_' . $category)
+      ->willReturn(NULL);
+    $preferences = new AvisoPreferencias(
+      $userData,
+      $this->getConfigFactoryStub([
+        'aculta_messenger.settings' => [
+          'email_modes' => [
+            $category => [
+              'digest' => $category !== AvisoPreferencias::EMAIL_FRIENDSHIP,
+              'immediate' => TRUE,
+              'default_mode' => $defaultMode,
+            ],
+          ],
+        ],
+      ]),
+    );
+
+    self::assertSame($defaultMode, $preferences->emailMode(27, $category));
+  }
+
+  /**
+   * Provides defaults for each registered email category.
+   *
+   * @return array<string, array{string, string}>
+   *   Categories and their administrative defaults.
+   */
+  public static function administrativeDefaultCases(): array {
+    $cases = [];
+    foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
+      $cases[$category] = [
+        $category,
+        $category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES || $category === AvisoPreferencias::EMAIL_FRIENDSHIP
+          ? AvisoPreferencias::EMAIL_IMMEDIATE
+          : AvisoPreferencias::EMAIL_DIGEST,
+      ];
+    }
+    return $cases;
+  }
+
+  /**
    * Honors the administrator's weekly digest default for new preferences.
    */
   public function testPrivateMessageDigestCanBeTheAdministrativeDefault(): void {

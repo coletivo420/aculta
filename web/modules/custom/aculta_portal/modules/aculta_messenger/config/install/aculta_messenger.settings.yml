@@ -7,21 +7,27 @@ email_modes:
   forum_resposta:
     digest: true
     immediate: true
+    default_mode: off
   forum_atualizacao:
     digest: true
     immediate: true
+    default_mode: off
   aprendizagem:
     digest: true
     immediate: true
+    default_mode: off
   wiki:
     digest: true
     immediate: true
+    default_mode: off
   loja:
     digest: true
     immediate: true
+    default_mode: off
   doacao:
     digest: true
     immediate: true
+    default_mode: off
   mensagens_privadas:
     digest: true
     immediate: true
@@ -29,4 +35,5 @@ email_modes:
   amizade:
     digest: false
     immediate: true
+    default_mode: immediate
 private_message_digest_anchor: '2026-10-26'
