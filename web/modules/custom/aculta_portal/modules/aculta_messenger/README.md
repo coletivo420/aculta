@@ -92,7 +92,8 @@ política administrativa, e avisos no site continuam obrigatórios.
 Validação automatizada mais recente, em 2026-10-25: Unit Messenger **359 testes /
 2.922 assertions PASS**; testes focados de preferências, formulários, digest e
 workers de e-mail **75/835 PASS**; central de avisos — agrupamento, filtros e
-paginação — **21/65 PASS**. Retenção de conversas longas: Kernel
+paginação — **21/65 PASS**; segurança de envio e validação de origem — **41/246
+PASS**. Retenção de conversas longas: Kernel
 `PrivateMessageRetentionKernelTest` **4/55 PASS** no MariaDB dedicado (10
 depreciações upstream de Core/contrib) e Unit de retenção **3/76 PASS**. PHPCS
 Drupal/DrupalPractice, PHP lint e `git diff --check` PASS; Runtime e SMTP real
