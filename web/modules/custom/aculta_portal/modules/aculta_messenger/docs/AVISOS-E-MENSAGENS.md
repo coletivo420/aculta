@@ -166,8 +166,11 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
 - Os avisos no site são **sempre exibidos**: não há opção para desligá-los.
 - **Resumo diário por e-mail**: desligado por padrão. Quando ligado, entram respostas/atualizações do Fórum conforme
   os controles abaixo e itens de módulos integradores que fornecem linhas pelo `AvisoDigestProviderInterface`.
+  Ao desligá-lo, os adapters de conteúdo (Fórum, LMS, Wiki, Loja e Doações) não enviam digest; a agenda semanal
+  independente de Mensagens Privadas continua obedecendo à preferência própria dessa categoria.
   Preferências em `user.data` (`aculta_messenger`).
-- Desligar o resumo zera as pendências de e-mail sob o lock do agregado; os avisos no site não são alterados.
+- Desligar o resumo diário zera as pendências de e-mail dos adapters de conteúdo sob o lock do agregado; os avisos no
+  site e a agenda semanal independente de Mensagens Privadas não são alterados.
 
 ## 7. Resumo diário por e-mail
 

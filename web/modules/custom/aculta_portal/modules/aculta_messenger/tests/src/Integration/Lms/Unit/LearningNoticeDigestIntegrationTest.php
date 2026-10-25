@@ -23,6 +23,7 @@ use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
+use Drupal\aculta_messenger\Aviso\AvisoIndependentDigestProviderInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
@@ -763,6 +764,20 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * Independent weekly delivery remains eligible when daily digest is off.
+   */
+  public function testIndependentWeeklyDigestIsNotDisabledByDailyOptOut(): void {
+    $provider = new IndependentTestLearningDigestProvider([27]);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())->method('deliver')->willReturn(SendResult::sent());
+    $summary = $this->createSummary($provider, $mailer, FALSE);
+
+    self::assertSame(1, $summary->enviarResumos());
+    self::assertSame([[501]], $provider->markedDeliveryIds);
+    self::assertSame([], $provider->discarded);
+  }
+
+  /**
    * Builds the real Messenger digest service with an LMS provider.
    */
   private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL, ?Connection $database = NULL, ?UserDataInterface $userDataOverride = NULL, ?TimeInterface $time = NULL): AvisosResumo {
@@ -959,6 +974,11 @@ class TestLearningDigestProvider implements AvisoDigestProviderIdentityInterface
   }
 
 }
+
+/**
+ * Provider fixture for a channel with an independent weekly schedule.
+ */
+final class IndependentTestLearningDigestProvider extends TestLearningDigestProvider implements AvisoIndependentDigestProviderInterface {}
 
 /**
  * Simulates a class refactor while preserving the LMS digest provider identity.

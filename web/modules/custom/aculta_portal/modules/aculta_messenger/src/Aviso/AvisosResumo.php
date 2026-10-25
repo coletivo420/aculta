@@ -282,6 +282,13 @@ final class AvisosResumo {
       if (!$provider instanceof AvisoDigestProviderInterface) {
         continue;
       }
+      // The global daily-summary opt-in applies to content-origin adapters.
+      // Private messages have a separately selected weekly digest and remain
+      // eligible when that independent channel is enabled.
+      if (!$this->preferencias->resumoEmailLigado($uid)
+        && !$provider instanceof AvisoIndependentDigestProviderInterface) {
+        continue;
+      }
       try {
         $providerRows = $provider->digestRowsFor($uid);
       }

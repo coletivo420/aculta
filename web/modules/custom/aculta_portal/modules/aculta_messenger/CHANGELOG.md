@@ -1,3 +1,13 @@
+## 0.1.1-dev.277 — respeitar opt-out do resumo diário nos adapters
+
+O opt-out geral agora impede que avisos de Fórum e adapters de conteúdo entrem
+no resumo diário após a limpeza das pendências. A agenda independente do resumo
+semanal de Mensagens Privadas continua funcionando segundo sua preferência.
+
+Validação: Unit Messenger **278/2.213 PASS**; testes Unit dos adapters
+**73/746 PASS**; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados
+PASS. Kernel, Browser e Runtime não executados.
+
 ## 0.1.1-dev.276 — respeitar fuso do site na data do digest semanal
 
 A data inicial administrativa do resumo semanal de Mensagens Privadas agora é
