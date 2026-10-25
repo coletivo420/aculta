@@ -16,7 +16,6 @@ const SENTINELS = [process.env.SR5_BIO_SENTINELA_A, process.env.SR5_BIO_SENTINEL
 const PUBLIC = [process.env.SR5_PERFIL_PUBLICO_A, process.env.SR5_PERFIL_PUBLICO_B];
 const DOCUMENTS = process.env.SR5_DOCUMENTOS || '';
 const results = [];
-const snapshots = [];
 
 if (process.env.DISPLAY !== ':0') throw Error('Exige DISPLAY=:0 e Firefox ESR visível.');
 if (new URL(ACCOUNT).origin !== 'https://conta.aculta.toca.net.br'
@@ -70,6 +69,8 @@ async function firefox(javascriptEnabled = true) {
   const base = endpoint => `/session/${result.sessionId}${endpoint}`;
   return {
     url: full => wd('POST', base('/url'), { url: full }),
+    currentUrl: () => wd('GET', base('/url')),
+    source: () => wd('GET', base('/source')),
     eval: source => wd('POST', base('/execute/sync'), { script: source, args: [] }),
     screenshot: async name => {
       const bytes = Buffer.from(await wd('GET', base('/screenshot')), 'base64');
@@ -142,7 +143,9 @@ const cases = [
   ['seguranca-email', '/studio/conta/seguranca', '/seguranca', 'forms'],
   ['seguranca-senha', '/studio/conta/seguranca/senha', '/seguranca/senha', 'forms'],
   ['conexoes', '/studio/conta/conexoes', '/conexoes', 'visual'],
-  ['pedidos', '/studio/conta/pedidos', '/pedidos', 'visual'],
+  // O Portal não registra uma rota legada /pedidos: usar dashboard como
+  // referência visual, sem alegar equivalência funcional de tabelas.
+  ['pedidos', '/studio/conta/pedidos', '/conta-legada', 'reference'],
   ['apoio', '/studio/conta/apoio', '/meu-apoio', 'visual'],
   ['preferencias', '/studio/conta/preferencias', '/configuracoes', 'forms'],
 ];
@@ -223,6 +226,9 @@ try {
         check(`${owner}/${name}: mesmo domínio ACCOUNT`, studio.origin === ACCOUNT && old.origin === ACCOUNT);
         if (mode === 'forms' || mode === 'different' || mode === 'optional') {
           compareFields(`${owner}/${name}`, studio, old, mode === 'different' ? 'different' : 'forms');
+        } else if (mode === 'reference') {
+          check(`${owner}/${name}: paridade de listagem com legado`, null,
+            'dashboard legado é referência visual; sem rota legada de pedidos');
         } else {
           if (studio.tableCount && old.tableCount) {
             check(`${owner}/${name}: quantidade de linhas`, studio.rowCount === old.rowCount,
@@ -290,9 +296,11 @@ try {
     await noJs.url(oneTimeLogin(USERS[0]));
     for (const path of ['/studio/conta/dados','/studio/conta/endereco','/studio/conta/seguranca','/studio/perfil/apelido','/studio/perfil/bio']) {
       await noJs.url(ACCOUNT + path);
-      const html = await wd('GET', '/status').then(() => true); // Driver responde; fallback não é um POST.
-      const current = await wd('GET', '/status').then(() => html);
-      check(`sem JS: navegação ${path}`, current === true, 'conferir submit/erros Form API manualmente');
+      const actual = new URL(await noJs.currentUrl());
+      const html = await noJs.source();
+      check(`sem JS: URL e acesso ${path}`, actual.origin === ACCOUNT && actual.pathname === path);
+      check(`sem JS: formulário próprio ${path}`, /<form\b/i.test(html) ? true : null,
+        'GET somente; nenhum submit, verificar operações em teste manual');
     }
   } finally { await noJs.close(); }
 } catch (error) {
