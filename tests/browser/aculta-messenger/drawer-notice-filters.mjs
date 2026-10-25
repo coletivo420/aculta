@@ -18,7 +18,7 @@ try {
     const originSections = JSON.parse(await browser.exec(`return JSON.stringify([...${drawer}.querySelectorAll('[data-aculta-notice-origin-section]')].map((section) => ({
       origin: section.dataset.acultaNoticeOriginSection,
       heading: section.querySelector(':scope > h3')?.textContent.trim() || '',
-      separator: !!section.querySelector(':scope > hr.aculta-notice-origin-separator'),
+      separator: !!section.querySelector(':scope > hr[data-portal-ui="notice-origin-separator"]'),
       latest: Math.max(0, ...[...section.querySelectorAll('[data-aculta-notice-recency]')].map((notice) => Number(notice.dataset.acultaNoticeRecency) || 0)),
     })));`));
     const originOrder = ['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conta', 'outros'];

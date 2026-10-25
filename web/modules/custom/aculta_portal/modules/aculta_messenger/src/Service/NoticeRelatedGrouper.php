@@ -75,11 +75,11 @@ final class NoticeRelatedGrouper {
       $result[] = [
         '#type' => 'details',
         '#title' => new TranslatableMarkup('@count avisos relacionados', ['@count' => count($members)]),
-        '#attributes' => ['class' => ['aculta-notice-related-group']],
+        '#attributes' => ['data-portal-ui' => 'notice-related-group'],
         'items' => [
           '#theme' => 'item_list',
           '#items' => $members,
-          '#attributes' => ['class' => ['aculta-notice-related-group__items']],
+          '#attributes' => ['data-portal-ui' => 'notice-related-group-items'],
         ],
       ];
     }

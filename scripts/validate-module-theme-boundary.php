@@ -239,7 +239,7 @@ $routes = (string) file_get_contents($module . '/src/EventSubscriber/DomainRoute
 $assert(!preg_match("/'entity\.commerce_payment_method\.(add_form|edit_form|delete_form|set_default)' => \['\/pagamentos/", $routes), 'DomainRouteSubscriber ainda define rota de meios de pagamento (/pagamentos/novo, editar, excluir, padrão).');
 $assert(!str_contains((string) file_get_contents($module . '/src/AccountShellBuilder.php'), 'commerce_payment_method'), 'AccountShellBuilder ainda lista "Meus pagamentos" (commerce_payment_method).');
 $assert(!str_contains((string) file_get_contents($root . '/config/sync/user.role.authenticated.yml'), 'commerce_payment_method'), 'Papel autenticado ainda tem permissão de meios de pagamento (config/sync/user.role.authenticated.yml).');
-$assert(str_contains($routes, 'PaymentMethodsRedirectController::redirectToOrders'), '/pagamentos deve redirecionar 301 para /pedidos (PaymentMethodsRedirectController).');
+$assert(!str_contains($routes, 'PaymentMethodsRedirectController'), 'Alias /pagamentos foi removido (e75437129): não deve haver PaymentMethodsRedirectController; a política é sem aliases temporários.');
 
 if ($failures !== []) {
   foreach ($failures as $failure) {

@@ -74,13 +74,13 @@ final class WikiProposalLinkHooks {
 
     $build['wiki_proposal_link'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['wiki-proposal-link']],
+      '#attributes' => ['data-portal-ui' => 'wiki-proposal-link'],
       'link' => [
         '#type' => 'link',
         '#title' => new TranslatableMarkup('Contribuir'),
         '#url' => $url,
         '#access' => $access,
-        '#attributes' => ['class' => ['button', 'button--secondary']],
+        '#attributes' => ['data-portal-ui' => 'wiki-proposal-contribute'],
       ],
       '#weight' => 100,
       '#cache' => [

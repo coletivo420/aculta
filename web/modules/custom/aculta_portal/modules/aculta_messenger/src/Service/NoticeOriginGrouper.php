@@ -70,7 +70,7 @@ final class NoticeOriginGrouper {
       $section = [
         '#type' => 'container',
         '#attributes' => [
-          'class' => ['aculta-notice-origin-section'],
+          'data-portal-ui' => 'notice-origin-section',
           'data-aculta-notice-origin-section' => $origin,
         ],
       ];
@@ -79,7 +79,7 @@ final class NoticeOriginGrouper {
           '#type' => 'html_tag',
           '#tag' => 'hr',
           '#attributes' => [
-            'class' => ['aculta-notice-origin-separator'],
+            'data-portal-ui' => 'notice-origin-separator',
             'aria-hidden' => 'true',
           ],
         ];
@@ -87,13 +87,13 @@ final class NoticeOriginGrouper {
       $section['heading'] = [
         '#theme' => 'aculta_portal_element',
         '#tag' => 'h3',
-        '#element_attributes' => new Attribute(['class' => ['aculta-notice-origin-heading']]),
+        '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-origin-heading']),
         '#value' => self::label($origin),
       ];
       $section['items'] = [
         '#theme' => 'item_list',
         '#items' => NoticeRelatedGrouper::group($groups[$origin]),
-        '#attributes' => ['class' => ['aculta-notice-origin-items']],
+        '#attributes' => ['data-portal-ui' => 'notice-origin-items'],
       ];
       $result[] = $section;
     }

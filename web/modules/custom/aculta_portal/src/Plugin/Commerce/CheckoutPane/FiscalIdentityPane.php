@@ -95,7 +95,7 @@ final class FiscalIdentityPane extends CheckoutPaneBase implements CheckoutPaneI
               ],
             ]),
             '#attributes' => [
-              'class' => ['aculta-fiscal-identity-other-data'],
+              'data-portal-ui' => 'fiscal-identity-other-data',
             ],
           ];
         }
