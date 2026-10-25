@@ -44,6 +44,7 @@ use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeOriginGrouper;
 use Drupal\aculta_messenger\Service\NoticePaginationUrlBuilder;
+use Drupal\aculta_messenger\Service\NoticePaginationNavigationBuilder;
 use Drupal\aculta_messenger\Service\SiteAlertNoticeSorter;
 use Drupal\aculta_messenger\Service\NoticeFlagStateLoader;
 use Drupal\aculta_messenger\Service\NoticeReadActionBuilder;
@@ -1087,23 +1088,13 @@ final class MessagesController extends ControllerBase {
       }
     }
 
-    $forumPagerBuild = [];
-    if ($noticePager !== []) {
-      $pagerOriginLabel = $globalOriginPaging
-        ? 'Todas as origens'
-        : ($filters['origem'] === 'forum' ? 'Fórum' : $pagerOriginLabel);
-      $forumPagerBuild = [
-        '#type' => 'container',
-        '#attributes' => [
-          'role' => 'navigation',
-          'aria-label' => $this->translation->translate('Paginação dos avisos: @origin', ['@origin' => $pagerOriginLabel]),
-        ],
-        'links' => [
-          '#theme' => 'item_list',
-          '#items' => $noticePager,
-        ],
-      ];
-    }
+    $pagerOriginLabel = $globalOriginPaging
+      ? 'Todas as origens'
+      : ($filters['origem'] === 'forum' ? 'Fórum' : ($pagerOriginLabel ?? 'Avisos'));
+    $forumPagerBuild = NoticePaginationNavigationBuilder::build(
+      $noticePager,
+      $this->translation->translate('Paginação dos avisos: @origin', ['@origin' => $pagerOriginLabel]),
+    );
 
     $build = [
       '#type' => 'container',

@@ -1,3 +1,14 @@
+## 0.1.1-dev.289 — nomear acessivelmente a navegação da central
+
+Os links de paginação da central são agrupados em um landmark `navigation`
+com rótulo contextual (todas as origens ou origem filtrada); páginas sem links
+não emitem um landmark vazio.
+
+Validação: Unit Messenger **298/2.359 PASS**; PHPCS Drupal/DrupalPractice dos
+arquivos novos PASS. Browser/Runtime não executados nesta sessão: `DISPLAY`
+não está definido e há sessões Firefox/geckodriver ativas; elas foram
+preservadas.
+
 ## 0.1.1-dev.288 — recarregar remetente sem cache na resposta
 
 A verificação de conta e permissões para responder uma thread persistida usa
