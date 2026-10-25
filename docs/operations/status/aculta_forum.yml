@@ -1,18 +1,18 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-state: Dev
+state: RC
 next_phase: >-
-  Regressão para Dev em 2026-10-25: todas as fases F-M0–F-M7 devem ser
-  fechadas com evidência antes de um novo candidato RC. Fechadas: F-M0 e
-  F-M4. Em fechamento: F-M1/F-M2 (homologação local do contrato de avisos),
-  F-M3 (seguir/deixar de seguir e avisos no navegador, mobile/teclado),
-  F-M5 (migração sintética com mapa e rollback), F-M6 (mover subárvore,
-  concorrência da limpeza, restritos reais) e F-M7 (Functional,
-  instalação/desinstalação). Permanecem como portas de fase, não como
-  pendência de código, os itens que exigem autorização operacional:
-  migração sobre dados reais, ativação do F-GROUP, entrega de e-mail/digest
-  e deploy em Alpha. Evidência de pré-deploy anterior em
+  Candidato RC 0.1.0-rc.2 concluído em 2026-10-25, depois de regredir para
+  Dev e fechar todas as fases F-M0–F-M7 com evidência executada. Unit
+  184/1.332, Unit Messenger 261/2.023, Kernel 150/2.863, Functional 6/6,
+  PHPCS sem erros, gates de rotas/Portal/slugs/Domain/status PASS e
+  navegador com seguir/avisos 13/13, acessibilidade 49/49 nos dois temas,
+  categorias 9/9, painel 12/12, anexo/mover 4/4 e F-GROUP local. O deploy
+  em Alpha continua dependendo de autorização operacional. Permanecem como
+  portas, não como pendência de código: migração sobre dados reais, entrega
+  de e-mail/digest, ativação do F-GROUP no servidor de testes e em produção,
+  aparelho físico e concorrência real. Checklist em
   [docs/RC.md](web/modules/custom/aculta_portal/modules/aculta_forum/docs/RC.md).
-version_note: "0.1.0-dev.318 (regressão para Dev após auditoria do roadmap; Unit 184/1.333 e Kernel 150/2.862 reexecutados; nenhuma fase F-M1–F-M3/F-M5–F-M7 pode ficar aberta em um novo RC)"
+version_note: "0.1.0-rc.2 (fases F-M0–F-M7 fechadas; Unit 184/1.332; Unit Messenger 261/2.023; Kernel 150/2.863; Functional 6/6; PHPCS 0 erros; navegador 13/13 e acessibilidade 49/49 nos dois temas; instalação limpa, migração/corte local e F-GROUP homologados)"
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; gate: scripts/validate-no-temporary-route-aliases.php.

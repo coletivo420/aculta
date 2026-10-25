@@ -1,9 +1,9 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-**Estado: Dev `0.1.0-dev.318` (2026-10-25).** O candidato `0.1.0-rc.1` foi
-retirado: as fases F-M0–F-M7 precisam ser fechadas com evidência antes de um
-novo RC. As verificações de pré-deploy de 2026-10-24 continuam registradas em
-[docs/RC.md](docs/RC.md).
+**Estado: candidato RC `0.1.0-rc.2` (2026-10-25).** Todas as fases F-M0–F-M7
+foram fechadas com evidência executada depois da regressão do `0.1.0-rc.1`.
+Gates, defeitos corrigidos, migração/corte local, F-GROUP homologado, rollback
+e portas de Alpha em [docs/RC.md](docs/RC.md).
 
 Submódulo de `aculta_portal`. O direcionamento vigente, aprovado pelo
 responsável em 2026-10-19, é reconstruir

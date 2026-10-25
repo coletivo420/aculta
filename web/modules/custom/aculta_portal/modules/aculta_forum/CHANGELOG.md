@@ -1,3 +1,69 @@
+## `0.1.0-rc.2` — candidato RC após fechar todas as fases — 2026-10-25
+
+- O candidato é declarado só depois do fechamento de F-M0–F-M7: Unit 184/1.332,
+  Unit Messenger 261/2.023, Kernel 150/2.863, Functional 6/6, PHPCS sem erros,
+  gates de rotas/Portal/slugs/Domain/status PASS e navegador com seguir/avisos
+  13/13, acessibilidade 49/49 nos dois temas, categorias 9/9, painel 12/12,
+  anexo/mover 4/4 e F-GROUP local.
+- Defeitos corrigidos nesta rodada: instalação limpa (configs base, schemas,
+  dependências de Commerce e schema_metatag), lock da limpeza, reconciliação de
+  avisos ao mover subárvore, validação da migração e denúncias sem post.
+- Migração e corte executados no banco local com backup verificado; avisos
+  permaneceram estáveis.
+- Detalhe, rollback e portas de Alpha em [`docs/RC.md`](docs/RC.md).
+
+## `0.1.0-dev.322` — F-GROUP homologado no ambiente local — 2026-10-25
+
+- `tests/runtime/fgroup-provision.php provision` no Runtime local simulado:
+  tipo `forum_associados`, role insider sincronizada, grupo, tópico restrito,
+  tópico público e quatro contas. `node_access` recebeu o grant do realm
+  `aculta_forum_restricted`; o público seguiu em `all:0`.
+- `fgroup-measure.php`: anônimo, ativo sem membership, suspenso e comum
+  negados; ativo com membership autorizado. `fgroup-search.php`: o ativo vê 2
+  resultados (público + restrito), os demais veem 1, com grants antes da
+  paginação. Anexo e galeria seguem a mesma regra.
+- Navegador Firefox ESR/X11: ativo com membership lê o título do tópico;
+  suspenso recebe 403. `teardown` restaurou `restricted_group_type` vazio e
+  `node_access` em `all` (26 linhas).
+- Ativação no servidor de testes e em produção não foi executada; produção
+  fica para a janela de deploy, conforme decisão de 2026-10-25.
+
+## `0.1.0-dev.321` — migração executável e corte local — 2026-10-25
+
+- As três migrações desativam a validação de entidade no destino, que rodava
+  como anônimo e recusava formato `forum` e transição de moderação; o destino
+  mantém as próprias checagens. Denúncias pulam linhas sem post migrado.
+- Runtime local, com backup `aculta-local-pre-cut-20261025.sql.gz`: posts
+  2/2 criados, pais sem pendências, denúncias sem origem; reexecução sem
+  duplicar. Corte executado: os 2 Comments legados foram removidos
+  (`comments=0`, `posts=5`) e os avisos permaneceram em 3→3. Rollback do lote
+  provado em Kernel; restauração integral pelo dump.
+- Defeito registrado: `drush migrate:import` da migração de denúncias falha no
+  wrapper do migrate_tools, enquanto a mesma migração pela API conclui.
+
+## `0.1.0-dev.320` — reconciliação de avisos ao mover subárvore — 2026-10-25
+
+- `ForumCommentSubtreeMovedEvent` leva os IDs dos comentários movidos. O
+  consumidor transfere o agregado ao destino, soma contadores, preserva os
+  maiores marcadores e move as chaves de idempotência desses comentários para
+  os destinatários cujo aviso foi transferido. Nenhum aviso novo é enviado.
+- Política aprovada em MOVE-TOOLS: mover e mesclar; a transferência é do
+  agregado do tópico porque a leitura é registrada por tópico, não por evento.
+- Unit Messenger 261/2.023; Kernels do Fórum 32/762 nos arquivos afetados.
+
+## `0.1.0-dev.319` — instalação limpa e limpeza concorrente — 2026-10-25
+
+- Configs de site usadas pelos módulos passam a viajar com eles (media type
+  image, vocabulários editoriais, servidor Search API, body, tipos de perfil e
+  `field_nickname`), percorrendo a decisão de 2026-10-25. Schema de terceiros
+  do `aculta_image`, schema dos plugins de View do Fórum, `image_upload`
+  desligado, `tracker_settings` e o campo de título das Views foram corrigidos;
+  `commerce_cart`/`commerce_store` viram dependência dura do Portal.
+- `ForumAttachmentCleanup` adquire lock de banco (`aculta_forum_attachment_cleanup`),
+  serializando execuções concorrentes de cron; release garantido em `finally`.
+- Suite Functional criada para instalação, rotas, formulário de tópico,
+  desinstalação e lock. Kernel dos arquivos afetados 32/762; Unit 184/1.332.
+
 ## `0.1.0-dev.318` — regressão para Dev após auditoria do roadmap — 2026-10-25
 
 - O candidato `0.1.0-rc.1` é retirado: a auditoria das fases F-M0–F-M7

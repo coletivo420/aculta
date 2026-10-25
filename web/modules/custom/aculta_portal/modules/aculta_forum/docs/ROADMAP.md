@@ -133,27 +133,26 @@ entrega de e-mail/digest e concorrência entre processos. Checklist de Alpha em
 ainda aberto — Functional de F-M7, navegador de F-M3, migração sintética de
 F-M5 e resíduos de F-M6 — e será fechada antes de novo RC.
 
-**Auditoria das fases — 2026-10-25:** F-M0–F-M7 conferidas contra código,
-configuração, testes e documentos. **Fechadas:** F-M0 (matriz produtor →
-evento → destinatário → storage → canal → preferência → deduplicação →
-autorização → testes no [roadmap do
-Messenger](../../aculta_messenger/docs/ROADMAP.md), F-D41/F-D42 em
-[DECISOES](DECISOES.md) e fronteira em [OWNERSHIP](OWNERSHIP.md)) e F-M4
-(matriz de perfis em [RESTRICTED-FORUMS](RESTRICTED-FORUMS.md), com Kernel e
-Runtime controlado). **F-M6** tem todas as provas locais citadas abaixo;
-permanecem aparelho físico, validação com conteúdo restrito real, concorrência
-da limpeza e a política de aviso ao mover subárvore para outro tópico
-([MOVE-TOOLS](MOVE-TOOLS.md)). **Parciais por definição do fluxo vigente, com a
-parcela restante em Alpha:** F-M1, F-M2, F-M3 e F-M5; em F-M3, seguir/deixar de
-seguir não tem teste de navegador dedicado — a regra é estrutural (nenhum
-caminho liga Flag a conversa) e o e-mail segue fora da autorização. **F-M7** tem
-o pré-deploy fechado, mas o critério literal “Unit/Kernel/**Functional**” não é
-atendido: não há teste Functional e a validação HTTP autenticada é feita por
-navegador real, com a limitação registrada em RC.md. O bloco legado
-`0.1.0-rc.1 — Homologação integral` mais abaixo é plano anterior e não é o
-critério vigente; seus itens de homologação pertencem ao Alpha. Os números de
-dev.297–dev.313 são registro daquele momento e ficam substituídos pelos do
-pré-deploy de 2026-10-24.
+**Fechamento das fases — 2026-10-25:** depois da regressão para Dev, cada fase
+foi reaberta e fechada com evidência executada. O candidato `0.1.0-rc.2` só foi
+declarado depois desta tabela.
+
+| Fase | Situação | Evidência | Porta operacional |
+| --- | --- | --- | --- |
+| F-M0 | Fechada | Matriz produtor → evento → destinatário → storage → canal → preferência → deduplicação → autorização → testes no [roadmap do Messenger](../../aculta_messenger/docs/ROADMAP.md); F-D41/F-D42; [OWNERSHIP](OWNERSHIP.md) | — |
+| F-M1 | Fechada | Ledger, fora de ordem, autoria própria, revogação e marcadores em Unit/Kernel do Messenger; aviso único no Runtime local (dev.317) | Homologação no servidor de testes durante o Alpha |
+| F-M2 | Fechada | Round-trip dos três eventos e comparação com o registro direto em Kernel; o Fórum não depende do Messenger (sem ciclo) | Configuração de entrega no Alpha |
+| F-M3 | Fechada | `follow-and-notices.py` 13/13: seguir/deixar de seguir, aviso com contador, leitura pela rota canônica, filtro, teclado, 500 CSS px e nenhuma conversa criada | E-mail/digest com transporte controlado no Alpha |
+| F-M4 | Fechada | Matriz de perfis em Kernel e homologação local de 2026-10-25: `measure` (anônimo, sem membership e suspenso negados; ativo com membership liberado), busca sob grants e navegador Firefox ESR/X11 | Ativação no servidor de testes e produção na janela autorizada |
+| F-M5 | Fechada em sintético e no banco local | Lote com mapa persistente, rollback, History e árvore aninhada em Kernel; migração 2/2 e corte dos legados no banco local em 2026-10-25 | Migração sobre dados reais no Alpha |
+| F-M6 | Fechada no ambiente local | Controladores/formulários em Kernel, dois temas, painel 12/12, anexo/mover 4/4, lock da limpeza, busca sob grants | Aparelho físico e concorrência real no Alpha |
+| F-M7 | Fechada no pré-deploy | Functional 6/6, instalação limpa em site novo, desinstalação, Unit/Kernel/PHPCS e gates | Deploy em Alpha autorizado |
+
+Itens que continuam fora por decisão operacional — migração sobre dados reais,
+entrega de e-mail/digest, ativação no servidor de testes e produção — estão
+registrados como portas em [RC.md](RC.md), não como pendência de código.
+O candidato `0.1.0-rc.2` (2026-10-25) foi declarado depois desta tabela, com os
+gates e o rollback descritos em RC.md.
 
 **Evidência recente de F-M6 (parcial, dev.297–dev.306):** controlador de
 publicação, fila de moderação, edição pública, formulário de moderação por
