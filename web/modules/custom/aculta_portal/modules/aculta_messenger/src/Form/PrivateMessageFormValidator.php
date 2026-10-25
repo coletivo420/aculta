@@ -90,10 +90,19 @@ final class PrivateMessageFormValidator {
       return;
     }
 
+    if (!$this->canStartNewConversation($thread)) {
+      $formState->setErrorByName('members', $this->translation->translate('Não foi possível iniciar uma conversa com este destinatário.'));
+    }
+  }
+
+  /**
+   * Checks recipient privacy without changing Form API validation state.
+   */
+  public function canStartNewConversation(PrivateMessageThreadInterface $thread): bool {
     // Staff roles may start new conversations despite the target preference.
-    // The preceding native block validation always remains in force.
+    // The preceding block validation always remains in force.
     if ($this->currentUser->hasRole('administrator') || $this->currentUser->hasRole('content_editor')) {
-      return;
+      return TRUE;
     }
 
     foreach ($thread->getMembersId() as $memberId) {
@@ -103,10 +112,10 @@ final class PrivateMessageFormValidator {
       }
       $preference = $this->userData->get('aculta_messenger', $recipientId, 'message_privacy');
       if ($preference === 'friends' && !$this->friendshipManager->areFriendsWith($recipientId)) {
-        $formState->setErrorByName('members', $this->translation->translate('Não foi possível iniciar uma conversa com este destinatário.'));
-        return;
+        return FALSE;
       }
     }
+    return TRUE;
   }
 
   /**

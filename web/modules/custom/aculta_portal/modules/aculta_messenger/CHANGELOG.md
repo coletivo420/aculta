@@ -2537,3 +2537,8 @@ Validação: `NewConversationControllerTest` + `NewConversationRecipientIdsTest`
 - Rejeita navegações ativadas com `Sec-Fetch-Site: same-site` antes de alterar estado de leitura; origens irmãs não equivalem à origem exata do site. Navegação explícita da própria origem e abertura por bookmark continuam permitidas.
 - `MemberInitiatedRequestTest` **6/22 PASS**, Unit Messenger **261/2.023 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
 
+## 0.1.1-dev.264 — revalidar privacidade antes de criar conversa
+
+- A criação consulta primeiro o mapper do Private Message. Threads existentes continuam aceitando respostas; antes de criar uma nova thread, a preferência friend-only e a amizade são revalidadas, impedindo persistir uma thread vazia se a autorização mudou desde a validação inicial.
+- `NewConversationRecipientIdsTest` + `PrivateMessageFormValidatorTest` **21/108 PASS**; Unit Messenger **263/2.039 PASS**; PHP lint PASS. PHPCS mantém os baselines existentes dos arquivos envolvidos. Kernel, Browser e Runtime não executados.
+

@@ -18,6 +18,8 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
+use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
@@ -117,6 +119,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     $form = new NewConversationForm(
       $this->createMock(AccountProxyInterface::class),
       $this->createMock(PrivateMessageServiceInterface::class),
+      $this->createMock(PrivateMessageMapperInterface::class),
       new PrivateMessageFormValidator(
         $this->createMock(FloodInterface::class),
         $this->createMock(AccountProxyInterface::class),
@@ -146,6 +149,113 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
   }
 
   /**
+   * Rechecks friend-only privacy at submit time before creating a thread.
+   */
+  public function testNewThreadRevalidatesPrivacyBeforeContribCreatesIt(): void {
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+    $currentUser->method('hasRole')->willReturn(FALSE);
+    $sender = $this->user(42);
+    $recipient = $this->user(84);
+    $candidateThread = $this->createMock(PrivateMessageThreadInterface::class);
+    $candidateThread->method('getMembersId')->willReturn([42, 84]);
+    $state = (object) ['privacy' => NULL];
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::exactly(2))->method('get')
+      ->willReturnCallback(static fn(string $module, int $uid, string $key): ?string => $state->privacy);
+    $friendships = $this->createMock(FriendshipManagerInterface::class);
+    $friendships->expects(self::once())->method('areFriendsWith')->with(84)->willReturn(FALSE);
+    $translation = $this->createMock(TranslationInterface::class);
+    $translation->method('translate')->willReturn('Não foi possível iniciar uma conversa com este destinatário.');
+    $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
+    $validator = new PrivateMessageFormValidator(
+      $this->createMock(FloodInterface::class),
+      $currentUser,
+      $translation,
+      $this->createMock(PrivateMessageBanManagerInterface::class),
+      $friendships,
+      $userData,
+      $this->createMock(LockBackendInterface::class),
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      new ConversationWriteLock($this->createMock(LockBackendInterface::class), $entityTypes),
+    );
+    $mapper = $this->createMock(PrivateMessageMapperInterface::class);
+    $mapper->expects(self::once())->method('getThreadIdForMembers')->with([$sender, $recipient])->willReturn(FALSE);
+    $privateMessageService = $this->createMock(PrivateMessageServiceInterface::class);
+    $privateMessageService->expects(self::never())->method('getThreadForMembers');
+    $newConversationForm = new NewConversationForm(
+      $currentUser,
+      $privateMessageService,
+      $mapper,
+      $validator,
+      $entityTypes,
+      $this->createMock(PublicMemberIdentityInterface::class),
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+    );
+    $formState = new FormState();
+    $anyErrors = new \ReflectionProperty(FormState::class, 'anyErrors');
+    $anyErrors->setAccessible(TRUE);
+    $anyErrors->setValue(NULL, FALSE);
+    $formState->set('pmt_entity', $candidateThread);
+    $initialForm = [];
+
+    // The target was initially open to messages; they changed the setting
+    // before the final submit handler reached the creation boundary.
+    $validator->validateNewConversationPrivacy($initialForm, $formState);
+    self::assertSame([], $formState->getErrors());
+    $state->privacy = 'friends';
+
+    $resolve = new \ReflectionMethod(NewConversationForm::class, 'resolveThreadForSubmission');
+    $build = [];
+    $arguments = [[$sender, $recipient], &$build, $formState];
+    self::assertNull($resolve->invokeArgs($newConversationForm, $arguments));
+    self::assertTrue($formState->get('aculta_messenger_new_conversation_privacy_rejected'));
+  }
+
+  /**
+   * Existing conversations stay replyable after privacy settings change.
+   */
+  public function testExistingThreadDoesNotReapplyNewConversationPrivacy(): void {
+    $existingThread = $this->createMock(PrivateMessageThreadInterface::class);
+    $threadStorage = $this->createMock(EntityStorageInterface::class);
+    $threadStorage->expects(self::once())->method('load')->with(77)->willReturn($existingThread);
+    $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypes->expects(self::once())->method('getStorage')->with('private_message_thread')->willReturn($threadStorage);
+    $mapper = $this->createMock(PrivateMessageMapperInterface::class);
+    $mapper->expects(self::once())->method('getThreadIdForMembers')->willReturn(77);
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::never())->method('get');
+    $validator = new PrivateMessageFormValidator(
+      $this->createMock(FloodInterface::class),
+      $currentUser,
+      $this->createMock(TranslationInterface::class),
+      $this->createMock(PrivateMessageBanManagerInterface::class),
+      $this->createMock(FriendshipManagerInterface::class),
+      $userData,
+      $this->createMock(LockBackendInterface::class),
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      new ConversationWriteLock($this->createMock(LockBackendInterface::class), $entityTypes),
+    );
+    $newConversationForm = new NewConversationForm(
+      $this->createMock(AccountProxyInterface::class),
+      $this->createMock(PrivateMessageServiceInterface::class),
+      $mapper,
+      $validator,
+      $entityTypes,
+      $this->createMock(PublicMemberIdentityInterface::class),
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+    );
+    $formState = new FormState();
+    $render = [];
+    $resolve = new \ReflectionMethod(NewConversationForm::class, 'resolveThreadForSubmission');
+    $arguments = [[$this->user(42), $this->user(84)], &$render, $formState];
+
+    self::assertSame($existingThread, $resolve->invokeArgs($newConversationForm, $arguments));
+  }
+
+  /**
    * Returns the original Drupal container when the test harness has one.
    */
   private function currentDrupalContainer(): ?ContainerInterface {
@@ -155,6 +265,15 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     catch (\Throwable) {
       return NULL;
     }
+  }
+
+  /**
+   * Creates a member account stub.
+   */
+  private function user(int $uid): UserInterface {
+    $user = $this->createMock(UserInterface::class);
+    $user->method('id')->willReturn((string) $uid);
+    return $user;
   }
 
 }

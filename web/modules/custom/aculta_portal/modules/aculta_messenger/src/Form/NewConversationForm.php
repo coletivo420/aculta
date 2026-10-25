@@ -17,6 +17,7 @@ use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
 use Drupal\private_message\Entity\PrivateMessage;
 use Drupal\private_message\Entity\PrivateMessageThread;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -31,6 +32,7 @@ final class NewConversationForm extends FormBase {
   public function __construct(
     private readonly AccountProxyInterface $currentUser,
     private readonly PrivateMessageServiceInterface $privateMessageService,
+    private readonly PrivateMessageMapperInterface $privateMessageMapper,
     private readonly PrivateMessageFormValidator $validator,
     private readonly EntityTypeManagerInterface $entityTypes,
     private readonly PublicMemberIdentityInterface $memberIdentity,
@@ -41,6 +43,7 @@ final class NewConversationForm extends FormBase {
     return new static(
       $container->get('current_user'),
       $container->get('private_message.service'),
+      $container->get('private_message.mapper'),
       $container->get('aculta_messenger.private_message_form_validator'),
       $container->get('entity_type.manager'),
       $container->get(PublicMemberIdentityInterface::class),
@@ -203,7 +206,10 @@ final class NewConversationForm extends FormBase {
     }
     // The Private Message mapper reads ->id() from each member, so the members are user entities, not IDs.
     $sender = $this->entityTypes->getStorage('user')->load($this->currentUser->id());
-    $thread = $this->privateMessageService->getThreadForMembers(array_merge([$sender], $recipients));
+    $thread = $this->resolveThreadForSubmission(array_merge([$sender], $recipients), $form, $formState);
+    if (!$thread instanceof PrivateMessageThreadInterface) {
+      return;
+    }
     $thread = $this->validator->acquireThreadWriteLock($thread, $formState);
     if (!$thread instanceof PrivateMessageThreadInterface) {
       return;
@@ -232,6 +238,43 @@ final class NewConversationForm extends FormBase {
     // The drawer receives the conversation as the answer to its POST (NewConversationController::compose).
     // A Form API redirect would send the drawer back to the compose step with a 303.
     $formState->disableRedirect();
+  }
+
+  /**
+   * Rechecks privacy before the service creates a new thread.
+   *
+   * The service's getThreadForMembers() method creates and saves a thread when
+   * none exists. Resolve existing threads first so that their replies continue
+   * to follow the established-thread policy, then revalidate preferences and
+   * friendship immediately before creating a new thread.
+   *
+   * @param \Drupal\user\UserInterface[] $members
+   *   Sender and recipients in the exact order used by Private Message.
+   * @param array $form
+   *   The active render form.
+   * @param \Drupal\Core\Form\FormStateInterface $formState
+   *   Current form input and validation state.
+   *
+   * @return \Drupal\private_message\Entity\PrivateMessageThreadInterface|null
+   *   An existing or newly created thread, or NULL when creation is refused.
+   */
+  private function resolveThreadForSubmission(array $members, array &$form, FormStateInterface $formState): ?PrivateMessageThreadInterface {
+    $threadId = $this->privateMessageMapper->getThreadIdForMembers($members);
+    if ($threadId) {
+      $thread = $this->entityTypes->getStorage('private_message_thread')->load((int) $threadId);
+      return $thread instanceof PrivateMessageThreadInterface ? $thread : NULL;
+    }
+
+    // Validation ran before submit. Repeat it at the persistence boundary so
+    // a newly friend-only target or ended friendship cannot slip through.
+    $pendingThread = $formState->get('pmt_entity');
+    if (!$pendingThread instanceof PrivateMessageThreadInterface
+      || !$this->validator->canStartNewConversation($pendingThread)) {
+      $formState->set('aculta_messenger_new_conversation_privacy_rejected', TRUE);
+      return NULL;
+    }
+    $thread = $this->privateMessageService->getThreadForMembers($members);
+    return $thread instanceof PrivateMessageThreadInterface ? $thread : NULL;
   }
 
   /** The ids of the conversation: the fixed member of the profile's route, else the chips posted with the form. */

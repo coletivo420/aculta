@@ -118,10 +118,14 @@ final class NewConversationController extends ControllerBase {
       'form' => $form,
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];
-    if ($request->isMethod('POST') && $formState->hasAnyErrors()) {
+    $errors = array_values(array_map(static fn($message) => (string) $message, $formState->getErrors()));
+    if ($formState->get('aculta_messenger_new_conversation_privacy_rejected')) {
+      $errors[] = (string) $this->t('Não foi possível iniciar uma conversa com este destinatário.');
+    }
+    if ($request->isMethod('POST') && $errors !== []) {
       $build['errors'] = [
         '#theme' => 'item_list',
-        '#items' => array_values(array_map(static fn($message) => (string) $message, $formState->getErrors())),
+        '#items' => $errors,
         '#attributes' => ['role' => 'alert'],
         '#weight' => -50,
       ];

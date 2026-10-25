@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.264 — revalida a política de novas conversas no limite de persistência e consulta o mapper antes da criação da thread; preserva respostas em threads existentes após mudança de preferência. Testes focais **21/108 PASS**, Unit Messenger **263/2.039 PASS**, PHP lint PASS; PHPCS mantém baselines existentes NewConversationForm **14/15** e NewConversationController **15/7**. Kernel/Browser/Runtime pendentes.
 - Dev.262 — busca de conversas consulta apelidos de Profile e resolve a identidade por `PublicMemberIdentityInterface`; elimina a busca por nome interno da conta e oculta usuários sem apelido público. Testes controller/form **5/27 PASS**, Unit Messenger **260/2.022 PASS**, resolver User **2/9 PASS**, Unit aculta_user **125/448 PASS** com depreciação preexistente de PHPUnit; PHPCS/lint dos arquivos novos PASS. Kernel/Browser/Runtime não executados.
 - Dev.261 — o Fetch da gaveta só atualiza leitura se for same-origin; requests `same-site` de outra origem não passam pelo sinal `X-Requested-With`. `MemberInitiatedRequestTest` **5/21 PASS**, Unit Messenger **260/2.016 PASS**, PHPCS/lint PASS. Kernel/Browser/Runtime não executados.
 - Dev.260 — leitura exige sinal explícito: Fetch da gaveta (`X-Requested-With`) ou navegação de documento ativada (`Sec-Fetch-User: ?1`). Requests sem Fetch Metadata, embeds, prefetch/prerender e cross-site não alteram leitura. Focais `MemberInitiatedRequestTest` + `NoticeOpenControllerSafetyTest` **10/53 PASS**, Unit Messenger **260/2.015 PASS**, PHPCS/lint PASS. Kernel/Browser/Runtime não executados.

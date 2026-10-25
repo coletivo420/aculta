@@ -192,3 +192,7 @@ mensagens não é incluído em e-mail.
 
 Controllers de conversa e abertura de avisos não marcam leitura em requests cross-site, prefetch ou prerender. A navegação de documento exige sinal de ativação explícita e `Sec-Fetch-Site` ausente, `same-origin` ou `none`; `same-site` é recusado porque uma origem irmã não é a origem do site. Fetch da gaveta aceita `XMLHttpRequest` com metadata ausente ou `same-origin`, e rejeita origins irmãs e destinos embutidos. Responses da gaveta e redirects de avisos são privados e `no-store`.
 
+## Política de início de conversa
+
+A preferência de novas conversas e a amizade são verificadas durante a validação e novamente no limite de persistência. O Messenger consulta primeiro o mapper do Private Message: threads existentes continuam sob a política de resposta; antes de `PrivateMessageService::getThreadForMembers()` criar uma nova thread, a permissão é revalidada. Se o destinatário passou a aceitar somente amigos e a amizade não existe, a criação é recusada sem persistir uma thread vazia. Bloqueios bilaterais continuam revalidados separadamente após o carregamento e o lock da thread.
+
