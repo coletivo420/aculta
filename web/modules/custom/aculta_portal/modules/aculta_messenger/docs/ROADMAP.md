@@ -90,11 +90,11 @@ Nesta revisão, publishers LMS, Wiki e Loja ficaram nos módulos de domínio; co
 
 ## M3 — Fórum e User (0.2.0)
 
-Preservar `seguir_topico`, F-D21/F-D42, `aculta_aviso`, leitura, digest e amizades. Revalidar publicação, revisão, Domain, acesso, autoria e assinatura; não reativar Message Subscribe nem iniciar conversas por interação editorial. Kernel User e cenários de aprovação tardia/revisões fora de ordem permanecem pendentes.
+**Estado local:** Fórum e User estão integrados aos consumidores centralizados do Messenger, preservando `seguir_topico`, F-D21/F-D42, `aculta_aviso`, leitura, digest e ownership de amizades em `aculta_user`. A chave persistente mínima `(destinatário, Comment)` evita perda de eventos quando a aprovação ocorre fora da ordem de criação; o post-update é idempotente e a retenção remove chaves expiradas em lotes. `ForumNoticeIdempotencyKernelTest` passou **37 testes / 870 assertions** no MariaDB dedicado, incluindo aprovações tardias/fora de ordem, replay, autoria própria, acesso revogado, movimentação de Comment, ledger e upgrade idempotente. `FriendshipNoticePipelineKernelTest` passou **1/16** no MariaDB dedicado para pedido e aceite em avisos distintos; esta suíte reporta duas deprecações de discovery dos plugins `message`/`message_template` do contrib `message`. **Runtime/Alpha e SMTP externo permanecem pendentes**; não houve operação de fila ou alteração de dados do Runtime.
 
 ## M4 — LMS (0.2.0)
 
-LMS publica eventos educacionais; Messenger persiste avisos e define canais. Aviso no site é obrigatório. Membro e administradores configuram e-mail desligado, direto ou digest/resumo, sujeito às regras do Mailer. Cursos, matrículas e Groups continuam no LMS; sem chat de turma ou inbox paralela. Unit integrada e Kernel LMS PASS; completar revogação e Runtime.
+LMS publica eventos educacionais; Messenger persiste avisos e define canais. Aviso no site é obrigatório. Membro e administradores configuram e-mail desligado, direto ou digest/resumo, sujeito às regras do Mailer. Cursos, matrículas e Groups continuam no LMS; sem chat de turma ou inbox paralela. A revalidação de acesso entre enqueue e envio agora está coberta: revogação marca o e-mail como cancelado terminal e replay não reabre a fila, mantendo o aviso do site. `LearningNoticePersistenceKernelTest` **4/52 PASS** no MariaDB dedicado; Unit LMS **44/402 PASS**. Runtime/Alpha e SMTP externo permanecem pendentes.
 
 ## M5 — Wiki, Loja, Doações e demais (0.3.0)
 
