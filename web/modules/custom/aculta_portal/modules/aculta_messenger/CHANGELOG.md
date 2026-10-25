@@ -1,3 +1,15 @@
+## 0.1.1-dev.379 — regressão completa dos testes Unit publicados
+
+A suíte Unit do Messenger no snapshot da PR passou **374 testes / 4.140
+assertions**. O carregamento foi direcionado ao código do worktree isolado da
+PR, evitando que o Composer do checkout principal usasse cópias de classes de
+outro snapshot. Inclui a regressão Dev.378 e os testes de composição
+progressiva/recuperação de destinatários.
+
+Esta execução é Unit local: não valida Kernel/Integration, HTTP com sessão,
+Runtime pós-update, SMTP ou Alpha. PHPUnit informou que o diretório de saída
+de BrowserTest não é gravável; isso não impediu nem alterou esta suíte Unit.
+
 ## 0.1.1-dev.378 — regressão da configuração modular do Aviso Institucional
 
 Adicionado teste Unit que protege a dependência explícita de `menu_ui` e mantém
