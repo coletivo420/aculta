@@ -1,7 +1,13 @@
 # ACULTA Studio — Roadmap multi-experiência
 
 
-## S-R4 — integração da tela Meu Perfil em SDCs (Studio dev.21)
+## Revisão pré-homologação S-R4 / passagem para S-R5 (Studio dev.22)
+
+- O nome de conta privada não é mais fallback de `profile-identity`: sem apelido resolvido, usa `Apelido não informado`. O Unit usa uma conta de teste com nome semelhante a e-mail para detectar regressão do vazamento. O resto da composição segue sendo a S-R4 dev.21.
+- O ACULTA420 dev.2 contém teste Kernel de descoberta/slots/cache/escape dos quatro SDCs, ainda não executado. Handoff operacional detalhado: [HANDOFF-S-R4-S-R5-2026-10-25.md](HANDOFF-S-R4-S-R5-2026-10-25.md).
+- Não chamar S-R4 de homologada ou iniciar a aceitação S-R5 sem executar os gates funcionais, de acesso/cross-account, Core SDC, responsividade e browser. Não criar duplicações de lógica de perfil/conta nem remover `/conta-legada`.
+
+## Histórico — S-R4 — integração da tela Meu Perfil em SDCs (Studio dev.21)
 
 - Código implementado na PR #297: `StudioProfileController` usa os quatro SDCs, com props e slots de render arrays providos por ACULTA User e `aculta_image`. `PublicProfileLink` continua árbitro do link público, e somente a pessoa dona da conta pode carregar o editor.
 - Edição segue sem duplicação para `aculta_studio.profile_nickname`, `profile_privacy`, `profile_bio`, `profile_social` e o modal original `aculta_user.foto`. Bio textarea desativada, linhas sociais e tags de cache do User são preservadas; botões modais originais removidos somente na composição Studio.

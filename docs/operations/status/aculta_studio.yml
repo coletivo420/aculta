@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.21 — S-R4: Meu Perfil composto por quatro SDCs do tema, com dados e Form API do User. Testes escritos, não executados."
-next_phase: 'Executar lint, PHPUnit Unit/Kernel/Functional, Foundation, validação de schemas e descoberta SDC, ACL com duas contas, avatar próprio privado, cache/Domain, no-JS/AJAX, Firefox ESR/X11 320/390/768/1024/1440px e Olivero; completar gates S-R3 e comparar Studio com /conta-legada na S-R5.'
+version_note: "0.1.0-dev.22 — S-R4: fallback neutro sem nome privado da Conta e Unit de regressão; 4 SDCs integrados, Kernel/Runtime pendentes."
+next_phase: 'Executar lint/PHPCS, PHPUnit Unit+Kernel+Functional, descoberta SDC, gates, duas contas, privacidade e avatar; Firefox ESR visível em 320-1440px, no-JS/AJAX, domínio ACCOUNT, comparação /studio/perfil e /conta-legada. Handoff: web/modules/custom/aculta_portal/modules/aculta_studio/docs/HANDOFF-S-R4-S-R5-2026-10-25.md. Sem merge/deploy.'
 
 # 2026-10-24: P1-B em codigo: bridge Marley e preview /studio/inicio;
 # a home /studio continua legado Marley, sem Runtime homologado.

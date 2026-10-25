@@ -1,3 +1,9 @@
+## 0.7.0-dev.2 — teste Kernel dos quatro SDCs de Meu Perfil (2026-10-25)
+
+- Criado `ProfileSdcRenderKernelTest`, com descoberta de `profile-editor`, `profile-identity`, `profile-bio`, `profile-social` via Core SDC. Renderiza componentes aninhados com props/slots e entradas demonstrativas, verifica escape, ausência de links públicos inferidos, estados vazios e metadata de cache.
+- A fixture de link foi mantida independente do roteamento para isolar o contrato de apresentação. Contratos SDC (schemas, Twig, CSS) **não foram alterados**; continuam experimentais.
+- **O teste foi escrito, mas não executado**, pois não há ambiente Drupal Kernel instalado/Runtime disponível nesta sessão; não afirmar sucesso em Core/UI Patterns ou Firefox.
+
 ## Nota documental — S-R4: consumo dos SDCs (2026-10-25)
 
 O Studio dev.21 passou a consumir os quatro SDCs experimentais

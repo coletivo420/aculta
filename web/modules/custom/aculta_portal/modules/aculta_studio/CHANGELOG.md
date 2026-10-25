@@ -1,3 +1,11 @@
+## 0.1.0-dev.22 — revisão estática S-R4 e handoff para S-R5 (2026-10-25)
+
+- Corrigida a substituição insegura de apelido ausente: `StudioProfileController` deixa de mostrar `User::getDisplayName()` (que pode representar e-mail ou nome de cadastro) em `profile-identity`; usa texto neutro `Apelido não informado`, até o `AuthorIdentityResolver` retornar apelido real do User. O link público continua exclusivamente condicionado ao `PublicProfileLink`.
+- Teste Unit `StudioProfileControllerTest` passou a usar um nome de conta deliberadamente privado para prevenir regressões de Conta versus Perfil. **Teste escrito, não executado.**
+- Compatibilidade do formato Drupal 11.3+ `#type: component`, `#props`, `#slots` e `#attributes` revisada na documentação do Core. Não equivale a render testado, pois o checkout/Runtime não foi disponibilizado.
+- Preparado plano de validação pré-S-R5 em `docs/HANDOFF-S-R4-S-R5-2026-10-25.md`: comandos, rotas, domínios, duas contas, avatar próprio, UI Patterns, regressão da Conta e browser Firefox ESR visível.
+- Sem novos campos, schema, páginas, alias, Form API nem alterações na Conta legada. Não houve PHPUnit/Kernel/Functional, lint, PHPCS, Drupal Runtime, geckodriver ou deploy. Não homologar esta etapa sem os gates.
+
 ## 0.1.0-dev.21 — S-R4: Meu Perfil integrado aos SDCs (2026-10-25)
 
 - `/studio/perfil` renderiza `aculta420:profile-editor`, `profile-identity`, `profile-bio` e `profile-social` via `#type: component` e slots do Drupal Core. Os quatro SDCs pertencem ao ACULTA420 (`0.7.0-dev.1`) e não decidem acesso ou armazenamento.

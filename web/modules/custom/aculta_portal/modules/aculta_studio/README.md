@@ -1,7 +1,15 @@
 # ACULTA Studio (`aculta_studio`)
 
 
-## Situação vigente — S-R4, Studio dev.21
+## Situação vigente — S-R4 dev.22 (revisão estática / não homologada)
+
+O editor `/studio/perfil` usa os quatro SDCs do tema; na ausência
+de apelido fornecido pelo User, apresenta agora o rótulo neutro
+`Apelido não informado` em vez do nome/usuário cadastral. Testes
+Unit e Kernel preparados, mas não executados; ver
+[handoff para validação e S-R5](docs/HANDOFF-S-R4-S-R5-2026-10-25.md).
+
+## Histórico — S-R4, Studio dev.21
 
 A tela `/studio/perfil` consome os quatro componentes experimentais
 `aculta420:profile-editor`, `profile-identity`, `profile-bio` e
