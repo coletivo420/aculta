@@ -8,8 +8,9 @@ permite retry com a correlação idempotente original. O aviso obrigatório no
 site permanece intacto.
 
 Validação: `ForumNoticeEmailWorkerTest` **4 testes / 76 assertions PASS**;
-Unit Messenger **316/2.568 PASS**; `ForumNoticeIdempotencyKernelTest` **39/910
-PASS** em SQLite (1 skipped, 4 notices PHPUnit); PHPCS Drupal/DrupalPractice e
+Unit Messenger **316/2.568 PASS**; `ForumNoticeIdempotencyKernelTest` **39/919
+PASS** e `AvisosResumoMailerKernelTest` **4/70 PASS** no MariaDB dedicado (4
+notices PHPUnit no Kernel do ledger); PHPCS Drupal/DrupalPractice e
 `git diff --check` PASS. Sem Runtime ou SMTP real.
 
 ## 0.1.1-dev.310 — identificar corretamente o salvamento de preferências de e-mail
