@@ -32,8 +32,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * Starts a new conversation from the multidomain bar drawer.
  *
- * The three fragments are rendered for the drawer and replace its content, as the other drawer views do.
- * Searching follows the header search: it starts from three characters and waits 300 ms (search-preview.js).
+ * Drawer fragments replace the current content, following the shared pattern.
+ * Search starts after three characters and waits 300 ms, like the header
+ * search preview.
  */
 final class NewConversationController extends ControllerBase {
 
@@ -54,6 +55,9 @@ final class NewConversationController extends ControllerBase {
     private readonly ConversationPolicy $policy,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -69,7 +73,9 @@ final class NewConversationController extends ControllerBase {
     );
   }
 
-  /** First step: the member search field, with the hint that the header search also shows. */
+  /**
+   * Renders the initial member-search step.
+   */
   public function start(): Response {
     $build = [
       'back' => $this->backLink(),
@@ -80,7 +86,9 @@ final class NewConversationController extends ControllerBase {
     return $this->fragment($build);
   }
 
-  /** Search results for the typed name: one checkbox per member, up to the group limit per choice. */
+  /**
+   * Renders eligible member results for the search term.
+   */
   public function search(Request $request): Response {
     $term = trim((string) $request->query->get('q', ''));
     $build = ['#cache' => ['contexts' => ['user'], 'max-age' => 0]];
@@ -145,8 +153,8 @@ final class NewConversationController extends ControllerBase {
    *   Members and their policy-approved display names.
    */
   private function memberResults(array $candidates): array {
-    // The same list as the header search's preview (search-preview-list, styled as its dropdown). Each name is a link:
-    // the drawer turns a press into a chip (messenger-drawers.js) and does not follow the link.
+    // Match the header search preview list. The drawer turns each link press
+    // into a recipient chip instead of following the link.
     $items = [];
     $group = Url::fromRoute('aculta_messenger.new_conversation_group');
     foreach ($candidates as $candidate) {
@@ -182,20 +190,30 @@ final class NewConversationController extends ControllerBase {
 
     $thread = $formState->get('thread');
     if ($request->isMethod('POST') && $thread instanceof PrivateMessageThreadInterface && !$formState->hasAnyErrors()) {
-      // Send, then show the conversation the way the drawer opens any thread: the drawer follows this redirect
-      // with fetch, so the conversation comes with its toolbar and "Opções" (MessagesController::drawerConversation).
-      return new RedirectResponse(Url::fromRoute('aculta_messenger.drawer_conversation', ['private_message_thread' => $thread->id()])->toString(), Response::HTTP_SEE_OTHER, [
-        'Cache-Control' => 'private, no-store',
-      ]);
+      // The drawer follows this redirect with fetch, so the conversation
+      // returns with its toolbar and options.
+      $url = Url::fromRoute('aculta_messenger.drawer_conversation', [
+        'private_message_thread' => $thread->id(),
+      ])->toString();
+      return new RedirectResponse(
+        $url,
+        Response::HTTP_SEE_OTHER,
+        ['Cache-Control' => 'private, no-store'],
+      );
     }
 
     $build = [
       'back' => $this->backLink(),
-      'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Nova conversa com @name', ['@name' => $publicName])],
+      'title' => [
+        '#type' => 'html_tag',
+        '#tag' => 'h2',
+        '#value' => $this->t('Nova conversa com @name', ['@name' => $publicName]),
+      ],
       'form' => $form,
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];
-    // The drawer shows only this fragment, so the form errors (e.g. the send limit) must be listed here too.
+    // The drawer shows only this fragment, so list form errors (for example,
+    // the send limit) here as well.
     if ($request->isMethod('POST') && $formState->hasAnyErrors()) {
       $build['errors'] = [
         '#theme' => 'item_list',
@@ -207,7 +225,8 @@ final class NewConversationController extends ControllerBase {
     return $this->fragment($build);
   }
 
-  /** Members searchable by public nickname and eligible to receive messages. */
+  /**
+   * Members searchable by public nickname and eligible to receive messages. */
   private function candidates(string $term): array {
     $profileStorage = $this->entityTypes->getStorage('profile');
     $profileIds = $profileStorage->getQuery()

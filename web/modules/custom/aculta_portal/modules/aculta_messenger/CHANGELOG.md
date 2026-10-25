@@ -1,3 +1,15 @@
+## 0.1.1-dev.369 — fechamento do baseline de estilo da nova conversa
+
+O controlador que inicia conversas individuais e em grupo foi ajustado ao
+padrão Drupal para documentação de métodos e legibilidade das linhas longas.
+Não houve mudança no comportamento de busca, elegibilidade, envio ou
+persistência.
+
+Validação: `NewConversationControllerTest` + `NewConversationRecipientIdsTest`
+**13/113 PASS**; PHPCS Drupal/DrupalPractice no controlador e formulário
+`NewConversationForm` PASS; PHP lint e `git diff --check` PASS. HTTP autenticado
+e Runtime continuam pendentes conforme M1.
+
 ## 0.1.1-dev.367 — homologação visual da central e acompanhamentos
 
 As verificações visuais existentes foram repetidas no Firefox ESR visível do
