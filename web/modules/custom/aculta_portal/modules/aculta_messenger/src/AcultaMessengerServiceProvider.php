@@ -87,21 +87,23 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
     }
 
     $optionalAdapters = [];
-    $container->setDefinition('aculta_messenger.game_achievement_notice_manager', new Definition(
-      GameAchievementNoticeManager::class,
-      [
-        new Reference('entity_type.manager'),
-        new Reference('aculta_user.badge_service'),
-        new Reference('aculta_portal.domain_purpose'),
-        new Reference('lock.persistent'),
-      ],
-    ));
-    $container->setAlias(GameAchievementNoticeManagerInterface::class, 'aculta_messenger.game_achievement_notice_manager');
-    $container->setDefinition('aculta_messenger.game_achievement_notice_consumer', new Definition(
-      GameAchievementNoticeEventConsumer::class,
-      [new Reference('aculta_messenger.game_achievement_notice_manager')],
-    ))->addTag('event_subscriber');
-    $optionalAdapters['game'] = new Reference('aculta_messenger.game_achievement_notice_manager');
+    if ($container->hasDefinition('aculta_game.forum_participation_policy')) {
+      $container->setDefinition('aculta_messenger.game_achievement_notice_manager', new Definition(
+        GameAchievementNoticeManager::class,
+        [
+          new Reference('entity_type.manager'),
+          new Reference('aculta_user.badge_service'),
+          new Reference('aculta_portal.domain_purpose'),
+          new Reference('lock.persistent'),
+        ],
+      ));
+      $container->setAlias(GameAchievementNoticeManagerInterface::class, 'aculta_messenger.game_achievement_notice_manager');
+      $container->setDefinition('aculta_messenger.game_achievement_notice_consumer', new Definition(
+        GameAchievementNoticeEventConsumer::class,
+        [new Reference('aculta_messenger.game_achievement_notice_manager')],
+      ))->addTag('event_subscriber');
+      $optionalAdapters['game'] = new Reference('aculta_messenger.game_achievement_notice_manager');
+    }
     if ($container->hasDefinition('aculta_messenger.friendship_notice_manager')) {
       $optionalAdapters['friendship'] = new Reference('aculta_messenger.friendship_notice_manager');
     }
