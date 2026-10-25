@@ -1,3 +1,12 @@
+## Estado S-R5 — comparação preparada, sem homologação (2026-10-25)
+
+A [matriz de paridade S-R5](docs/S-R5-MATRIZ-COMPARACAO.md) e
+`tests/browser/aculta-studio/parity-s-r5.mjs` cobrem a comparação preparatória
+da Conta Studio com `/conta-legada` e do Perfil Studio com `/u/{apelido}` no
+purpose MAIN, incluindo duas contas e casos de privacidade. Ainda não houve
+execução Firefox ESR/Drush/Runtime; a S-R4 mantém seus gates pendentes.
+Nenhuma versão foi promovida; não remover `/conta-legada`.
+
 # ACULTA Studio (`aculta_studio`)
 
 
