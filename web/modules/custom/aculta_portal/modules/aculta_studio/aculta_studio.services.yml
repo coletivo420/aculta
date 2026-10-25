@@ -49,6 +49,7 @@ services:
       - '@?aculta_user.account_bio_card'
       - '@?aculta_user.social_links_card'
       - '@?aculta_user.author_identity_resolver'
+      - '@?aculta_image.render'
   aculta_studio.experience.ganjalab:
     class: Drupal\aculta_studio\Experience\GanjalabExperienceProvider
     arguments: ['@?aculta_studio.learner_dashboard_composer']
