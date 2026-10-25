@@ -466,7 +466,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         '#attributes' => [
           'data-portal-ui' => 'notice-summary notice-summary-persistent',
           'data-aculta-notice-origin' => 'aprendizagem',
-          'data-aculta-notice-created' => (string) $message->getCreatedTime(),
+          'data-aculta-notice-recency' => (string) $message->getCreatedTime(),
           'data-aculta-notice-read' => (bool) $message->get(self::READ_FIELD)->value ? 'read' : 'unread',
           'data-aculta-notice-message-id' => (string) $message->id(),
           ...NoticeRelatedGrouper::sourceAttribute('aprendizagem', (string) $message->get(self::SOURCE_FIELD)->value),

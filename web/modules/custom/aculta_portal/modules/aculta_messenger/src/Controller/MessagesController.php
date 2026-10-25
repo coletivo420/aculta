@@ -878,7 +878,7 @@ final class MessagesController extends ControllerBase {
           FALSE,
           NULL,
           $this->readLabel($contador > 0),
-        ), 'forum', $contador > 0, (int) $aviso->get('created')->value);
+        ), 'forum', $contador > 0, (int) $aviso->getChangedTime());
       }
     }
 
@@ -1350,13 +1350,13 @@ final class MessagesController extends ControllerBase {
   /**
    * Adds neutral metadata consumed only by the central notice filters.
    */
-  private function withNoticeFilterMetadata(array $item, string $origin, ?bool $unread, int $created = 0): array {
+  private function withNoticeFilterMetadata(array $item, string $origin, ?bool $unread, int $recency = 0): array {
     $item['#attributes']['data-aculta-notice-origin'] = $origin;
     if ($unread !== NULL) {
       $item['#attributes']['data-aculta-notice-read'] = $unread ? 'unread' : 'read';
     }
-    if ($created > 0) {
-      $item['#attributes']['data-aculta-notice-created'] = (string) $created;
+    if ($recency > 0) {
+      $item['#attributes']['data-aculta-notice-recency'] = (string) $recency;
     }
     return $item;
   }

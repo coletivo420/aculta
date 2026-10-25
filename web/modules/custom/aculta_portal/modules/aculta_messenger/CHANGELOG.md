@@ -2553,3 +2553,9 @@ A central mantém os avisos agrupados por origem, separa visualmente cada seçã
 
 Validação: `NoticeOriginGrouperTest` **3/16 PASS**; Unit Messenger **265/2.073 PASS**; PHP lint dos arquivos alterados PASS. PHPCS, Kernel, Browser e Runtime não executados.
 
+## 0.1.1-dev.267 — ordenar avisos agregados pela atividade recente
+
+O metadado da central passa a representar recência, não criação. Para o Fórum, usa `changed`, que acompanha a última atividade no aviso agregado; as integrações baseadas em `Message` continuam usando a criação do evento individual. Isso mantém a ordenação alinhada às consultas de origem.
+
+Validação: Unit Messenger **265/2.073 PASS** e PHP lint dos arquivos alterados PASS. O Kernel `ForumNoticeIdempotencyKernelTest::testForumNoticeListSortsByRecencyRegardlessOfReadState` não foi executado porque `SIMPLETEST_DB` está ausente; PHPCS, Browser e Runtime também não executados.
+

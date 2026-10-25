@@ -85,7 +85,7 @@ final class FriendshipNoticeManager implements FriendshipNoticeManagerInterface 
         '#attributes' => [
           'data-portal-ui' => 'notice-summary notice-summary-persistent',
           'data-aculta-notice-origin' => 'amizade',
-          'data-aculta-notice-created' => (string) $message->getCreatedTime(),
+          'data-aculta-notice-recency' => (string) $message->getCreatedTime(),
           'data-aculta-notice-read' => $unread ? 'unread' : 'read',
           'data-aculta-notice-message-id' => (string) $message->id(),
         ],

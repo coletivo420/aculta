@@ -20,9 +20,9 @@ final class NoticeOriginGrouperTest extends UnitTestCase {
    * Groups notices by origin, ordering origin sections by their newest item.
    */
   public function testGroupsOriginsByLatestNoticeAndPreservesRecencyWithinOrigins(): void {
-    $forumRecent = ['#attributes' => ['data-aculta-notice-origin' => 'forum', 'data-aculta-notice-created' => '300'], 'id' => 'forum-recent'];
-    $forumOlder = ['#attributes' => ['data-aculta-notice-origin' => 'forum', 'data-aculta-notice-created' => '200'], 'id' => 'forum-older'];
-    $wikiRecent = ['#attributes' => ['data-aculta-notice-origin' => 'wiki', 'data-aculta-notice-created' => '400'], 'id' => 'wiki-recent'];
+    $forumRecent = ['#attributes' => ['data-aculta-notice-origin' => 'forum', 'data-aculta-notice-recency' => '300'], 'id' => 'forum-recent'];
+    $forumOlder = ['#attributes' => ['data-aculta-notice-origin' => 'forum', 'data-aculta-notice-recency' => '200'], 'id' => 'forum-older'];
+    $wikiRecent = ['#attributes' => ['data-aculta-notice-origin' => 'wiki', 'data-aculta-notice-recency' => '400'], 'id' => 'wiki-recent'];
     $groups = NoticeOriginGrouper::group([$forumOlder, $wikiRecent, $forumRecent]);
 
     self::assertCount(2, $groups);

@@ -205,7 +205,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
         '#attributes' => [
           'data-portal-ui' => 'notice-summary notice-summary-persistent',
           'data-aculta-notice-origin' => 'wiki',
-          'data-aculta-notice-created' => (string) $message->getCreatedTime(),
+          'data-aculta-notice-recency' => (string) $message->getCreatedTime(),
           'data-aculta-notice-read' => $unread ? 'unread' : 'read',
           'data-aculta-notice-message-id' => (string) $message->id(),
           ...NoticeRelatedGrouper::sourceAttribute('wiki', (string) $message->get(self::SOURCE_FIELD)->value),

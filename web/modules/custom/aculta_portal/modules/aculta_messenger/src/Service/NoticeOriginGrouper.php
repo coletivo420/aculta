@@ -33,10 +33,9 @@ final class NoticeOriginGrouper {
   /**
    * Groups notice rows into labeled sections with separators between origins.
    *
-   * Rows from one source are returned in recency order. Their creation
-   * timestamps also determine the order of origin sections, newest section
-   * first. Rows from older integrations without timestamp metadata retain
-   * their original position after timestamped rows.
+   * Recency timestamps determine item and origin section order, newest first.
+   * Rows from older integrations without timestamp metadata retain stable
+   * order after timestamped rows.
    *
    * @param array $items
    *   Notice render arrays with optional `data-aculta-notice-origin` metadata.
@@ -105,7 +104,7 @@ final class NoticeOriginGrouper {
   private static function latestTimestamp(array $items): int {
     $latest = 0;
     foreach ($items as $item) {
-      $created = $item['#attributes']['data-aculta-notice-created'] ?? 0;
+      $created = $item['#attributes']['data-aculta-notice-recency'] ?? 0;
       if (is_numeric($created)) {
         $latest = max($latest, (int) $created);
       }
@@ -117,7 +116,7 @@ final class NoticeOriginGrouper {
   private static function sortByRecency(array $items): array {
     $indexed = [];
     foreach (array_values($items) as $index => $item) {
-      $created = $item['#attributes']['data-aculta-notice-created'] ?? 0;
+      $created = $item['#attributes']['data-aculta-notice-recency'] ?? 0;
       $indexed[] = [
         'item' => $item,
         'created' => is_numeric($created) ? (int) $created : 0,
