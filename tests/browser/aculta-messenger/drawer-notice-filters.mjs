@@ -19,14 +19,18 @@ try {
       origin: section.dataset.acultaNoticeOriginSection,
       heading: section.querySelector(':scope > h3')?.textContent.trim() || '',
       separator: !!section.querySelector(':scope > hr.aculta-notice-origin-separator'),
+      latest: Math.max(0, ...[...section.querySelectorAll('[data-aculta-notice-recency]')].map((notice) => Number(notice.dataset.acultaNoticeRecency) || 0)),
     })));`));
     const originOrder = ['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conta', 'outros'];
     const groupOrderValid = originSections.every((section, index) => {
       const orderIndex = originOrder.indexOf(section.origin);
       const previousIndex = index > 0 ? originOrder.indexOf(originSections[index - 1].origin) : -1;
-      return orderIndex >= 0 && orderIndex > previousIndex && section.heading !== '' && section.separator === (index > 0);
+      const previous = originSections[index - 1];
+      const recencyValid = !previous || previous.latest > section.latest
+        || (previous.latest === section.latest && orderIndex > previousIndex);
+      return orderIndex >= 0 && recencyValid && section.heading !== '' && section.separator === (index > 0);
     });
-    check('Notice rows are grouped by origin with labeled headings and separators', groupOrderValid, JSON.stringify(originSections));
+    check('Notice rows are grouped by origin, newest sections first, with labeled headings and separators', groupOrderValid, JSON.stringify(originSections));
 
     await browser.exec(`${drawer}.querySelector('.aculta-alerts-filters__group').open = true; return 1;`);
     await browser.exec(`[...${drawer}.querySelectorAll('[data-aculta-drawer-filter]')].find((link) => link.textContent.trim() === 'Wiki')?.click(); return 1;`);
