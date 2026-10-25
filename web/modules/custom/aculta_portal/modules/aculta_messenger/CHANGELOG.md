@@ -1,3 +1,15 @@
+## 0.1.1-dev.324 — revalidar origem das mensagens no digest privado
+
+O provider semanal relê cada mensagem privada pendente com `loadUnchanged()`
+antes de conferir thread, participantes, bloqueios e histórico individual. Se a
+mensagem de origem já foi removida, o registro derivado é cancelado e não entra
+no e-mail. O corpo da conversa continua fora do digest.
+
+Validação: `PrivateMessageDigestProviderTest` **5 testes / 81 assertions PASS**;
+Unit Messenger **324 testes / 2.629 assertions PASS**;
+`LearningNoticeDigestIntegrationTest` **25 / 210 PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Kernel/Runtime.
+
 ## 0.1.1-dev.323 — exigir data inicial do resumo semanal
 
 A configuração administrativa do resumo semanal de mensagens privadas agora

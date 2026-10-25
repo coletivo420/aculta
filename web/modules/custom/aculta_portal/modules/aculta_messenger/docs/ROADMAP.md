@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.324 — o provider do resumo semanal privado usa `loadUnchanged()` para revalidar a mensagem de origem; avisos cuja mensagem foi removida são cancelados sem incluir conteúdo privado no digest. `PrivateMessageDigestProviderTest` **5/81 PASS**, Unit Messenger **324/2.629 PASS**, Integration LMS digest **25/210 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime.
 - Dev.323 — data âncora administrativa do resumo semanal de mensagens privadas é obrigatória, evitando configuração vazia que bloquearia o digest; `MessengerSettingsFormTest` **3/19 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime.
 - Dev.322 — a política de acesso do Fórum usa `loadUnchanged()` ao resolver um destinatário por UID; contas desativadas após leitura anterior deixam de autorizar tópicos, comentários e posts. `ForumNoticeAccessPolicyTest` **4/36 PASS**, Unit Messenger **324/2.625 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel, Runtime ou SMTP.
 - Dev.321 — workers de e-mail direto e providers de digest recarregam contas com `loadUnchanged()` antes de validar destinatário, remetente, preferências e compor a entrega, cobrindo Fórum, amizades, mensagens privadas, LMS, Wiki, Loja e Doações. Unit Messenger **323/2.618 PASS**, Integration Unit LMS/Loja/Doações/Wiki **75/777 PASS**, focais de preferências **38/310 PASS**, PHPCS/PHP lint/diff check PASS. Kernels não executados por ausência de `SIMPLETEST_DB`; sem Runtime/SMTP.

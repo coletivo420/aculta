@@ -187,7 +187,7 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
     $hiddenThread->method('access')->with('view', $recipient, TRUE)->willReturn(AccessResult::forbidden());
     $notices = [];
     $discardedNoticeFields = [];
-    foreach ([41 => 101, 42 => 102, 43 => 103] as $noticeId => $privateMessageId) {
+    foreach ([41 => 101, 42 => 102, 43 => 103, 44 => 104] as $noticeId => $privateMessageId) {
       $notice = $this->createMock(MessageInterface::class);
       $notice->method('id')->willReturn((string) $noticeId);
       $notice->method('bundle')->willReturn('aculta_msg_private_notification');
@@ -201,7 +201,7 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
         $item->method('__get')->with('target_id')->willReturn($privateMessageId);
         return $item;
       });
-      if ($noticeId === 43) {
+      if ($noticeId >= 43) {
         $notice->expects(self::exactly(2))->method('set')->willReturnCallback(
           static function (string $field, mixed $value) use (&$discardedNoticeFields): void {
             $discardedNoticeFields[] = [$field, $value];
@@ -211,10 +211,10 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
       }
       $notices[$noticeId] = $notice;
     }
-    $messageQuery = $this->pendingQuery([41, 42, 43]);
+    $messageQuery = $this->pendingQuery([41, 42, 43, 44]);
     $messageStorage = $this->createMock(EntityStorageInterface::class);
     $messageStorage->expects(self::once())->method('getQuery')->willReturn($messageQuery);
-    $messageStorage->method('loadMultiple')->with([41, 42, 43])->willReturn($notices);
+    $messageStorage->method('loadMultiple')->with([41, 42, 43, 44])->willReturn($notices);
 
     $privateMessages = [];
     foreach ([101 => 33, 102 => 33, 103 => 44] as $id => $senderId) {
@@ -225,7 +225,7 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
     }
     $privateMessageStorage = $this->createMock(EntityStorageInterface::class);
     $loadedPrivateMessageIds = [];
-    $privateMessageStorage->expects(self::exactly(3))->method('load')
+    $privateMessageStorage->expects(self::exactly(4))->method('loadUnchanged')
       ->willReturnCallback(static function (int $id) use (&$loadedPrivateMessageIds, $privateMessages): ?PrivateMessageInterface {
         $loadedPrivateMessageIds[] = $id;
         return $privateMessages[$id] ?? NULL;
@@ -273,7 +273,7 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
 
     $rows = $provider->digestRowsFor(9);
 
-    self::assertSame([101, 102, 103], $loadedPrivateMessageIds);
+    self::assertSame([101, 102, 103, 104], $loadedPrivateMessageIds);
     self::assertSame([[
       'tipo' => AvisoPreferencias::EMAIL_PRIVATE_MESSAGES,
       'titulo' => 'Você tem 2 novas mensagens de Remetente.',
@@ -283,6 +283,8 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
     ],
     ], $rows);
     self::assertSame([
+      ['field_aculta_pm_digest_sent', 1],
+      ['field_aculta_msg_delivery', 'cancelled'],
       ['field_aculta_pm_digest_sent', 1],
       ['field_aculta_msg_delivery', 'cancelled'],
     ], $discardedNoticeFields);

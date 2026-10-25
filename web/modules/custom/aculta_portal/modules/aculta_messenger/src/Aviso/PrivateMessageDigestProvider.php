@@ -93,7 +93,7 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
         continue;
       }
       $pmId = (int) ($notice->get(self::SOURCE_FIELD)->target_id ?? 0);
-      $privateMessage = $this->entityTypeManager->getStorage('private_message')->load($pmId);
+      $privateMessage = $this->entityTypeManager->getStorage('private_message')->loadUnchanged($pmId);
       if (!$privateMessage instanceof PrivateMessageInterface) {
         $this->markRecordsDone([$notice]);
         continue;
