@@ -1,3 +1,9 @@
+## 0.1.1-dev.275 — caracterizar opt-out de amizade durante retry
+
+O teste agora cobre a preferência de e-mail alterada para site-only depois de uma falha temporária e antes do retry. O worker cancela o e-mail sem incrementar tentativas adicionais; um item de fila duplicado não revive a entrega cancelada. O aviso persistido no site não é alterado pelo worker de e-mail.
+
+Validação: `FriendshipNoticeEmailWorkerTest` **12/241 PASS**, Unit Messenger **276/2.192 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
 ## 0.1.1-dev.274 — percorrer mensagens não lidas do fim para o começo
 
 A verificação de cada conversa percorre as referências cronológicas da mensagem mais nova para a mais antiga. Ela termina ao encontrar o timestamp de leitura e retorna assim que encontra uma mensagem recebida após esse limite, evitando examinar o histórico antigo em casos comuns.

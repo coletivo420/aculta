@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.275 — teste cobre opt-out de amizade alterado entre uma falha temporária e o retry: a fila cancela o envio sem nova tentativa, e replay posterior permanece terminal. `FriendshipNoticeEmailWorkerTest` **12/241 PASS**, Unit Messenger **276/2.192 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel/Browser/Runtime pendentes.
 - Dev.274 — `UnreadThreadCounter` examina referências de mensagens do fim para o começo e para no timestamp de leitura; threads com mensagem recebida recente encerram a busca sem inspecionar o histórico antigo. `UnreadThreadCounterTest` **8/27 PASS**, Unit Messenger **275/2.162 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel/Browser/Runtime pendentes.
 - Dev.273 — `UnreadThreadCounter` deixa de consultar a contagem completa de IDs e depois repetir a consulta para carregar a mesma coleção. Usa diretamente `getThreadsForUser(FALSE)`, conforme contrato da API Private Message; teste confirma um único carregamento. `UnreadThreadCounterTest` **6/19 PASS**; validação ampliada pendente.
 - Dev.272 — badge da aba de avisos passa a somar alertas ativos visíveis, comunicados ainda não lidos e avisos pessoais do Fórum/adapters; usa o mesmo contrato de contagem da gaveta e evita reconstruir a lista ao abrir a aba de Mensagens. `MessengerCountsTest` **4/37 PASS**, Unit Messenger **273/2.154 PASS**, PHP lint PASS. PHPCS dos serviços/teste PASS; controllers mantêm baseline (MessagesController 93 erros/65 avisos, sem aumento; AvisosMensagensController 15/12, sem aumento). Kernel/Browser/Runtime pendentes.
