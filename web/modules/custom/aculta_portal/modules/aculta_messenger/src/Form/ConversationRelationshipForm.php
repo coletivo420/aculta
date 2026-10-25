@@ -79,22 +79,26 @@ final class ConversationRelationshipForm extends FormBase {
       return [];
     }
     $formState->set('target', (int) $target->id());
-    // The form carries the drawer marker only: the styles and the script select it by this attribute.
+    // Styles and script select this form using the drawer marker.
     $form['#attributes'] = ['data-aculta-drawer-action' => ''];
     if ($postUrl !== NULL) {
-      // The drawer POSTs to the thread's relationship route, not to the GET route the form was built on.
+      // The drawer POSTs to the thread's relationship route, not the GET route.
       $form['#action'] = $this->actionWithSessionToken($postUrl);
     }
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
     $form['actions'] = ['#type' => 'actions'];
 
-    // Notice mode exposes the unblock action when this member blocked the other participant.
+    // Notice mode exposes unblock when this member blocked the other person.
     if ($formState->get('mode') === 'notice') {
-      // The hidden mode tells the POST answer which buttons the notice posted (their labels differ from the menu's).
+      // The hidden mode tells POST which notice-specific button was submitted.
       $form['mode'] = ['#type' => 'hidden', '#value' => 'notice'];
       $noticeTarget = (int) $target->id();
       if ($this->banManager->isBanned($noticeTarget)) {
-        $form['actions']['unban'] = $this->button('unban', $this->t('Clique aqui para desbloquear'), 'conversation-notice-action');
+        $form['actions']['unban'] = $this->button(
+          'unban',
+          $this->t('Clique aqui para desbloquear'),
+          'conversation-notice-action',
+        );
       }
       return $form;
     }
@@ -105,15 +109,26 @@ final class ConversationRelationshipForm extends FormBase {
 
     $targetId = (int) $target->id();
     if ($this->friendshipManager->areFriendsWith($targetId)) {
-      $form = ConfirmDialog::add($form, 'remove', $this->t('Desfazer amizade'), $this->t('Você quer mesmo desfazer a amizade com @name?', ['@name' => $target->getDisplayName()]), $this->t('Sim'), $this->t('Cancelar'));
+      $form = ConfirmDialog::add(
+        $form,
+        'remove',
+        $this->t('Desfazer amizade'),
+        $this->t('Você quer mesmo desfazer a amizade com @name?', ['@name' => $target->getDisplayName()]),
+        $this->t('Sim'),
+        $this->t('Cancelar'),
+      );
     }
-    // Only a pending request blocks a new one: a removed or declined relationship is still a row, but not a request.
-    elseif (($pending = $this->friendshipManager->getRelationshipWith($targetId)) === NULL || $pending->getStatus() !== FriendshipStatus::Pending->value) {
+    // Only a pending request blocks a new one. Removed or declined rows do not.
+    elseif (($pending = $this->friendshipManager->getRelationshipWith($targetId)) === NULL
+      || $pending->getStatus() !== FriendshipStatus::Pending->value) {
       $form['actions']['request'] = $this->button('request', $this->t('Adicionar amigo'));
     }
-    // A request this member sent can be cancelled here. An incoming request is not cancelled from this form.
+    // This member can cancel outgoing requests, but not incoming requests.
     elseif ((int) $pending->getRequesterId() === (int) $this->currentUser->id()) {
-      $form['actions']['cancel'] = $this->button('cancel', $this->t('Cancelar pedido de amizade'));
+      $form['actions']['cancel'] = $this->button(
+        'cancel',
+        $this->t('Cancelar pedido de amizade'),
+      );
     }
     // The member who received the request accepts or rejects it here.
     else {
@@ -121,7 +136,7 @@ final class ConversationRelationshipForm extends FormBase {
       $form['actions']['decline'] = $this->button('decline', $this->t('Rejeitar pedido de amizade'));
     }
 
-    // A profile offers "Iniciar conversa" in place of the thread-only clear action.
+    // A profile offers "Iniciar conversa" instead of thread-only clearing.
     if ($formState->get('profile') === TRUE) {
       $form['return'] = ['#type' => 'hidden', '#value' => (string) $formState->get('return_path')];
     }
@@ -129,7 +144,15 @@ final class ConversationRelationshipForm extends FormBase {
       $form['actions']['unban'] = $this->button('unban', $this->t('Desbloquear')) + ['#weight' => 10];
     }
     else {
-      $form = ConfirmDialog::add($form, 'ban', $this->t('Bloquear'), $this->t('Você quer mesmo bloquear @name?', ['@name' => $target->getDisplayName()]), $this->t('Sim'), $this->t('Cancelar'), 10);
+      $form = ConfirmDialog::add(
+        $form,
+        'ban',
+        $this->t('Bloquear'),
+        $this->t('Você quer mesmo bloquear @name?', ['@name' => $target->getDisplayName()]),
+        $this->t('Sim'),
+        $this->t('Cancelar'),
+        10,
+      );
     }
     return $form;
   }
@@ -156,13 +179,21 @@ final class ConversationRelationshipForm extends FormBase {
    */
   private function clearItems(array &$form, FormStateInterface $formState): void {
     if ($formState->get('clear_step') === 'confirm') {
-      // The hidden step tells the POST answer which button is posted (the confirmation's label differs from the menu's).
+      // The hidden step identifies the confirmation button on the POST.
       $form['clear_step'] = ['#type' => 'hidden', '#value' => 'confirm'];
-      $form['clear_text'] = $this->statusLine((string) $this->t('Limpar o histórico desta conversa só para você?'));
-      $form['actions']['clear_confirm'] = $this->button('clear_confirm', $this->t('Confirmar limpeza do histórico')) + ['#weight' => 5];
+      $form['clear_text'] = $this->statusLine((string) $this->t(
+        'Limpar o histórico desta conversa só para você?',
+      ));
+      $form['actions']['clear_confirm'] = $this->button(
+        'clear_confirm',
+        $this->t('Confirmar limpeza do histórico'),
+      ) + ['#weight' => 5];
     }
     else {
-      $form['actions']['clear'] = $this->button('clear', $this->t('Limpar histórico')) + ['#weight' => 5];
+      $form['actions']['clear'] = $this->button(
+        'clear',
+        $this->t('Limpar histórico'),
+      ) + ['#weight' => 5];
     }
   }
 
@@ -173,7 +204,10 @@ final class ConversationRelationshipForm extends FormBase {
     return [
       '#theme' => 'aculta_portal_element',
       '#tag' => 'p',
-      '#element_attributes' => new Attribute(['data-portal-ui' => 'messenger-options-status', 'role' => 'status']),
+      '#element_attributes' => new Attribute([
+        'data-portal-ui' => 'messenger-options-status',
+        'role' => 'status',
+      ]),
       '#value' => $text,
     ];
   }
@@ -204,8 +238,8 @@ final class ConversationRelationshipForm extends FormBase {
     }
     $target = $this->target((int) $formState->get('target'));
     $formState->disableRedirect();
-    // No rebuild: a rebuilt form comes back from the form cache without its constructor dependencies. The
-    // controller builds the updated panel again, from a new state, after this submit has run.
+    // No rebuild: a form-cache rebuild loses constructor dependencies. The
+    // controller renders the updated panel from a new state after this submit.
     if ($target === NULL) {
       $formState->set('message', (string) $this->t('Não foi possível atualizar esse relacionamento.'));
       return;
@@ -215,11 +249,14 @@ final class ConversationRelationshipForm extends FormBase {
       $formState->set('message', (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
       return;
     }
-    // Form API falls back to the first button when the posted button is missing. An action runs only when the
-    // button it names was actually posted, so a request without it can never cancel or accept anything.
+    // Form API falls back to the first button if POST omits its name.
+    // Require the named button in raw input before performing any action.
     $action = (string) ($formState->getTriggeringElement()['#name'] ?? '');
     if ($action === '' || !array_key_exists($action, (array) $formState->getUserInput())) {
-      $formState->set('message', (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
+      $formState->set(
+        'message',
+        (string) $this->t('Não foi possível concluir a ação. Tente novamente.'),
+      );
       return;
     }
     try {
