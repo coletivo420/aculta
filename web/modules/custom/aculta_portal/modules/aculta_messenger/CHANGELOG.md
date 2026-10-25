@@ -1,3 +1,15 @@
+## 0.1.1-dev.287 — preservar estado nos links de paginação da central
+
+A composição de URLs da lista global agora passa por `NoticePaginationUrlBuilder`,
+que mantém offsets independentes por origem e filtros ao avançar ou voltar.
+Origens não suportadas não podem gerar links de paginação. A paginação filtrada
+continua usando suas chaves de compatibilidade (`forum_offset`/`notice_offset`).
+
+Validação: Unit Messenger **296/2.353 PASS**; PHPCS Drupal/DrupalPractice dos
+arquivos novos PASS; PHP lint e gate Drupal 11+ (**1.155 checks**) PASS. O
+controller mantém seu baseline PHPCS (93 erros/65 avisos). Browser/Runtime
+pendentes.
+
 ## 0.1.1-dev.286 — revalidar elegibilidade do remetente em respostas
 
 Respostas em conversas existentes agora recarregam o usuário depois de adquirir

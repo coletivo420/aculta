@@ -43,6 +43,7 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeOriginGrouper;
+use Drupal\aculta_messenger\Service\NoticePaginationUrlBuilder;
 use Drupal\aculta_messenger\Service\SiteAlertNoticeSorter;
 use Drupal\aculta_messenger\Service\NoticeFlagStateLoader;
 use Drupal\aculta_messenger\Service\NoticeReadActionBuilder;
@@ -994,11 +995,12 @@ final class MessagesController extends ControllerBase {
       foreach ($globalPagerOriginLabels as $origin => $label) {
         $pageState = $originPageStates[$origin];
         if ($pageState->offset() > 0) {
-          $offsets = array_filter($originOffsets, static fn(int $offset): bool => $offset > 0);
-          $offsets[$origin] = max(0, $pageState->offset() - PersonalNoticePageState::PAGE_SIZE);
-          $previousUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
-            'query' => $filterQuery + ['notice_offsets' => $offsets],
-          ]);
+          $previousUrl = NoticePaginationUrlBuilder::globalPage(
+            $originOffsets,
+            $origin,
+            max(0, $pageState->offset() - PersonalNoticePageState::PAGE_SIZE),
+            $filterQuery,
+          );
           $noticePager[] = PortalLinkElement::build(
             $this->translation->translate('Avisos anteriores: @origin', ['@origin' => $label]),
             $previousUrl,
@@ -1006,11 +1008,12 @@ final class MessagesController extends ControllerBase {
           );
         }
         if ($pageState->hasNext()) {
-          $offsets = array_filter($originOffsets, static fn(int $offset): bool => $offset > 0);
-          $offsets[$origin] = $pageState->offset() + PersonalNoticePageState::PAGE_SIZE;
-          $nextUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
-            'query' => $filterQuery + ['notice_offsets' => $offsets],
-          ]);
+          $nextUrl = NoticePaginationUrlBuilder::globalPage(
+            $originOffsets,
+            $origin,
+            $pageState->offset() + PersonalNoticePageState::PAGE_SIZE,
+            $filterQuery,
+          );
           $noticePager[] = PortalLinkElement::build(
             $this->translation->translate('Avisos seguintes: @origin', ['@origin' => $label]),
             $nextUrl,
@@ -1024,9 +1027,11 @@ final class MessagesController extends ControllerBase {
       $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
       $pageSize = AvisoService::PERSONAL_NOTICE_LIST_LIMIT;
       if ($forumOffset > 0) {
-        $previousUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
-          'query' => $filterQuery + ['forum_offset' => max(0, $forumOffset - $pageSize)],
-        ]);
+        $previousUrl = NoticePaginationUrlBuilder::filteredPage(
+          'forum',
+          max(0, $forumOffset - $pageSize),
+          $filterQuery,
+        );
         $noticePager[] = PortalLinkElement::build(
           $this->translation->translate('Avisos anteriores'),
           $previousUrl,
@@ -1034,9 +1039,7 @@ final class MessagesController extends ControllerBase {
         );
       }
       if ($forumHasNextPage) {
-        $nextUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
-          'query' => $filterQuery + ['forum_offset' => $forumOffset + $pageSize],
-        ]);
+        $nextUrl = NoticePaginationUrlBuilder::filteredPage('forum', $forumOffset + $pageSize, $filterQuery);
         $noticePager[] = PortalLinkElement::build(
           $this->translation->translate('Avisos seguintes'),
           $nextUrl,
@@ -1059,9 +1062,11 @@ final class MessagesController extends ControllerBase {
         'doacao' => 'Doações',
       ][$originPageState->origin()];
       if ($originPageState->offset() > 0) {
-        $previousUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
-          'query' => $filterQuery + ['notice_offset' => max(0, $originPageState->offset() - PersonalNoticePageState::PAGE_SIZE)],
-        ]);
+        $previousUrl = NoticePaginationUrlBuilder::filteredPage(
+          $originPageState->origin(),
+          max(0, $originPageState->offset() - PersonalNoticePageState::PAGE_SIZE),
+          $filterQuery,
+        );
         $noticePager[] = PortalLinkElement::build(
           $this->translation->translate('Avisos anteriores'),
           $previousUrl,
@@ -1069,9 +1074,11 @@ final class MessagesController extends ControllerBase {
         );
       }
       if ($originPageState->hasNext()) {
-        $nextUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
-          'query' => $filterQuery + ['notice_offset' => $originPageState->offset() + PersonalNoticePageState::PAGE_SIZE],
-        ]);
+        $nextUrl = NoticePaginationUrlBuilder::filteredPage(
+          $originPageState->origin(),
+          $originPageState->offset() + PersonalNoticePageState::PAGE_SIZE,
+          $filterQuery,
+        );
         $noticePager[] = PortalLinkElement::build(
           $this->translation->translate('Avisos seguintes'),
           $nextUrl,
