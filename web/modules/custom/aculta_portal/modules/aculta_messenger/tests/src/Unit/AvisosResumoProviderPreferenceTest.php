@@ -300,7 +300,12 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn(TRUE);
     $logger = $this->createMock(LoggerInterface::class);
-    $logger->expects(self::exactly(2))->method('error');
+    $loggedErrors = [];
+    $logger->expects(self::exactly(2))
+      ->method('error')
+      ->willReturnCallback(static function (string $message, array $context) use (&$loggedErrors): void {
+        $loggedErrors[] = [$message, $context];
+      });
     $summary = new AvisosResumo(
       $entities,
       new AvisoPreferencias($userData),
@@ -317,6 +322,22 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     );
 
     self::assertSame(2, $summary->enviarResumos());
+    self::assertSame([
+      [
+        'Daily notice digest recipient lookup failed for provider @provider with @exception.',
+        [
+          '@provider' => get_class($failedLookupProvider),
+          '@exception' => \RuntimeException::class,
+        ],
+      ],
+      [
+        'Daily notice digest row lookup failed for provider @provider with @exception.',
+        [
+          '@provider' => get_class($provider),
+          '@exception' => \RuntimeException::class,
+        ],
+      ],
+    ], $loggedErrors, 'Logs contain only adapter and exception classes, never exception messages or recipient data.');
   }
 
   /**

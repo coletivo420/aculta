@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.312 — cobertura de privacidade dos logs verifica falha na enumeração de destinatários e na consulta de linhas do digest; somente classe do provider e classe da exceção são registradas, sem mensagem da exceção ou dados de conta. `AvisosResumoProviderPreferenceTest::testProviderFailureIsIsolatedPerRecipient` **1/33 PASS**; Unit Messenger **316/2.569 PASS**, PHPCS e diff check PASS.
 - Dev.311 — entrega direta bem-sucedida do Fórum reconhece exatamente um evento no `contador_email` na mesma transação que marca o ledger como enviado. Trocar de envio direto para digest não repete avisos já entregues; falhas no reconhecimento revertem ambos os estados e preservam o retry idempotente. `ForumNoticeEmailWorkerTest` **4/76 PASS**, Unit Messenger **316/2.568 PASS**, `ForumNoticeIdempotencyKernelTest` **39/919 PASS** e `AvisosResumoMailerKernelTest` **4/70 PASS** no MariaDB dedicado (4 notices PHPUnit no Kernel do ledger), PHPCS e diff check PASS; sem Runtime/SMTP.
 - Dev.310 — confirmação da área de conta passa a identificar o salvamento como preferências de e-mail. Unit Messenger **315/2.545 PASS** e Integration Unit **75/777 PASS**; PHPCS e diff check PASS.
 - Dev.309 — formulário de primeira mensagem recarrega permissões e identidade de remetente/destinatários e valida acesso à thread resolvida antes de persistir. Unit Messenger **315/2.543 PASS** e testes focados **28/181 PASS**. PHPCS executado e reportou violações no arquivo extenso `NewConversationForm.php`; Runtime pendente.

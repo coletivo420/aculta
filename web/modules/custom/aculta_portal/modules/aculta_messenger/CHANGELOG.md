@@ -1,3 +1,14 @@
+## 0.1.1-dev.312 — impedir dados pessoais nos logs de falha do digest
+
+Teste de regressão agora valida os dois caminhos de erro do digest: busca de
+destinatários e resolução das linhas de avisos. Os logs registram somente a
+classe do adapter e a classe da exceção; não incluem mensagem da exceção,
+destinatário, endereço ou conteúdo do aviso.
+
+Validação: `AvisosResumoProviderPreferenceTest::testProviderFailureIsIsolatedPerRecipient`
+**1 teste / 33 assertions PASS**; PHPCS Drupal/DrupalPractice e
+Unit Messenger **316 testes / 2.569 assertions PASS**; `git diff --check` PASS.
+
 ## 0.1.1-dev.311 — confirmar e-mail direto do Fórum junto ao digest
 
 Quando uma entrega direta do Fórum é aceita, o outbox agora marca o evento
