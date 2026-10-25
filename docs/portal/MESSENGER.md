@@ -105,7 +105,7 @@ Uma conversa com mais de duas pessoas não tem amizade nem bloqueio para o menu:
 | `aculta_messenger.new_conversation` | `/mensagens/nova` | GET | `NewConversationController::start` | Nova conversa: busca |
 | `aculta_messenger.new_conversation_search` | `/mensagens/nova/buscar` | GET | `NewConversationController::search` | Nova conversa: resultados |
 | `aculta_messenger.new_conversation_compose` | `/mensagens/nova/{user}/painel` | GET, POST | `NewConversationController::compose` | Nova conversa: primeira mensagem |
-| `aculta_messenger.communication_settings` | `/configuracoes/email` | GET | `CommunicationSettingsForm` | Preferências de e-mail |
+| `aculta_messenger.communication_settings` | `/configuracoes/email` | GET | `CommunicationSettingsForm` | Preferências por origem: Fórum, LMS, Wiki, Loja, Doações, Mensagens Privadas e Amizades; exige conta autenticada com `access aculta portal`, sem exigir permissão de chat |
 | `aculta_messenger.admin_notices` | `/painel-administrativo/avisos` | GET | `NoticeAdminController::overview` | Administração |
 | `aculta_messenger.admin_temporary_notices` | `/painel-administrativo/avisos/temporarios` | GET | `NoticeAdminController::temporary` | Administração |
 | `aculta_messenger.admin_persistent_notices` | `/painel-administrativo/avisos/persistentes` | GET | `NoticeAdminController::persistent` | Administração |

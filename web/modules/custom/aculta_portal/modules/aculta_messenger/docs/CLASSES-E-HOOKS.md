@@ -99,8 +99,8 @@ Gerado a partir do código em 2026-10-24 (`src/`). Cada classe aparece com a pri
 
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
-| `AvisosPrivacyForm` | `src/Form/AvisosPrivacyForm.php` | Preferências de e-mail e gerenciamento das Flags `seguir_topico` próprias na privacidade da conta. |
-| `CommunicationSettingsForm` | `src/Form/CommunicationSettingsForm.php` | Minha conta > Configurações > Notificações por e-mail (preferência de e-mail do Private Message). */ |
+| `AvisosPrivacyForm` | `src/Form/AvisosPrivacyForm.php` | Gerencia Flags `seguir_topico` próprias na privacidade da conta; preferências de e-mail ficam na página unificada. |
+| `CommunicationSettingsForm` | `src/Form/CommunicationSettingsForm.php` | Minha conta > Configurações > Notificações por e-mail para todas as origens e categorias. |
 | `ConversationRelationshipForm` | `src/Form/ConversationRelationshipForm.php` | "Opções" of a conversation in the multidomain bar drawer, and of a public profile. |
 | `FriendRequestsForm` | `src/Form/FriendRequestsForm.php` | Displays and handles the signed-in member's incoming friendship requests. */ |
 | `MessagePrivacyForm` | `src/Form/MessagePrivacyForm.php` | Reads and saves who may start a conversation with the member (the "all" or "friends" preference). |

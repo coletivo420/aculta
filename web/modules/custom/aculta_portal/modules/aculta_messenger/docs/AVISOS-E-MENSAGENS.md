@@ -215,7 +215,8 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
 - `src/Aviso/AvisoPreferencias.php`: preferências individuais de e-mail.
 - `src/Aviso/AvisosResumo.php`: envio do resumo diário combinado. Providers tagged `aculta_messenger.aviso_digest_provider`
   fornecem linhas com IDs de entrega e confirmam somente os itens incluídos após envio bem-sucedido.
-- `src/Form/AvisosPrivacyForm.php` + `src/Hook/AvisosPrivacyHooks.php`: bloco "Avisos" na privacidade da conta.
+- `src/Form/CommunicationSettingsForm.php`: preferências individuais de e-mail de todas as categorias, na aba de conta `/configuracoes/email`.
+- `src/Form/AvisosPrivacyForm.php` + `src/Hook/AvisosPrivacyHooks.php`: acompanhamento de tópicos do Fórum na privacidade da conta; as preferências de e-mail ficam na página unificada.
 - `src/Aviso/ForumNoticeEventProducer.php` e `src/EventSubscriber/ForumNoticeEventSubscriber.php`:
   adapter de publicação/consumo via `MessengerNoticeEvent`, preservando `aculta_aviso`
   e o ledger idempotente.
@@ -279,7 +280,7 @@ Regra de apresentação e de vida útil, por tipo de aviso (decisão do respons�
   mensagem é criada (conferido).
 - Entrega de atualização por mensagem substituída por aviso (worker reescrito).
 - Contador do ícone de avisos soma os avisos por pessoa.
-- Bloco de controles individuais na privacidade da conta, e resumo diário por e-mail com as regras da seção 7.
+- Preferências individuais de e-mail estão centralizadas em `/configuracoes/email`; a seção Avisos da privacidade da conta mantém o gerenciamento das Flags `seguir_topico`.
 - Testes unitários das regras de deduplicação e do intervalo. Testes no Runtime de teste: resposta, atualização
   (revisão repetida não conta), soma no ícone, leitura por todos os tipos, preferências, envio do resumo e zeragem
   ao desligar.

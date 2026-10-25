@@ -208,14 +208,16 @@ transportador.
 
 ## Domain Purpose
 
-Preferências de e-mail ficam em `/configuracoes/email` (Notificações por
-e-mail), na área ACCOUNT. O Messenger guarda modos por categoria em `user.data`:
-Fórum (respostas e atualizações), Aprendizagem, Wiki, Loja e Doações. A pessoa
-pode escolher sem e-mail, envio direto ou resumo diário; administradores podem
-remover as opções direta/resumo por categoria, sem desligar avisos obrigatórios
-no site. Conversas privadas continuam usando a preferência nativa do Private
-Message. Bloqueios e assinaturas reutilizam os mecanismos próprios de cada
-capacidade.
+Todas as preferências de e-mail ficam em `/configuracoes/email` (Notificações
+por e-mail), na área ACCOUNT, independentemente da permissão de iniciar
+conversas. O Messenger guarda modos por categoria em `user.data`: Fórum
+(respostas e atualizações), Aprendizagem, Wiki, Loja, Doações, Mensagens
+Privadas e Amizades. A pessoa pode escolher sem e-mail, envio direto ou resumo
+diário/semanal conforme a categoria; a administração pode remover modalidades
+por categoria, sem desligar avisos obrigatórios no site. O corpo das mensagens
+privadas nunca é enviado por e-mail. Bloqueios e assinaturas reutilizam os
+mecanismos próprios de cada capacidade; deixar de seguir tópicos continua nas
+configurações de Privacidade.
 
 `account` é o único purpose da caixa postal e da experiência do membro.
 `main` é o único purpose administrativo, inclusive para manutenção de Site

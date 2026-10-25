@@ -12,11 +12,12 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Minha conta > Configurações > entrega de e-mail das mensagens privadas. */
+ * Minha conta > Configurações > preferências de e-mail.
+ */
 final class CommunicationSettingsForm extends FormBase {
 
   /**
-   * Constructs the private message email preference form.
+   * Constructs the shared email preference form.
    */
   public function __construct(
     private readonly AccountProxyInterface $currentUser,
@@ -43,26 +44,28 @@ final class CommunicationSettingsForm extends FormBase {
   }
 
   /**
-   * Builds the member's private message email preferences.
+   * Builds the member's email preferences across notice origins.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $uid = (int) $this->currentUser->id();
-    $form['tabs'] = $this->settingsTabs->build('messaging');
+    $form['tabs'] = $this->settingsTabs->build('email');
     $form['intro'] = [
-      '#plain_text' => $this->t('As mensagens privadas permanecem na caixa de conversas do site. Por e-mail, você pode receber um aviso genérico a cada nova mensagem ou um resumo semanal; o conteúdo da conversa nunca é incluído.'),
+      '#plain_text' => $this->t('Avisos no site e mensagens na caixa de conversas continuam disponíveis. Escolha abaixo como receber cada tipo de aviso por e-mail. O conteúdo das mensagens privadas nunca é enviado por e-mail.'),
     ];
-    $form['receive_notification'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Avisos por e-mail de mensagens privadas'),
-      '#options' => $this->emailModeOptions(),
-      '#default_value' => $this->preferences->emailMode($uid, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES),
-      '#description' => $this->t('A administração pode desativar o e-mail. As mensagens continuam disponíveis no site.'),
+    $form['email_modes'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Entrega por e-mail'),
+      '#tree' => TRUE,
     ];
-    $form['subscriptions'] = [
-      '#type' => 'item',
-      '#title' => $this->t('Assinaturas de tópicos'),
-      '#plain_text' => $this->t('As assinaturas são escolhidas em cada tópico do fórum. Seguir um tópico não altera o acesso ao conteúdo.'),
-    ];
+    foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
+      $form['email_modes'][$category] = [
+        '#type' => 'select',
+        '#title' => $this->emailCategoryTitle($category),
+        '#options' => $this->emailModeOptions($category),
+        '#default_value' => $this->preferences->emailMode($uid, $category),
+        '#description' => $this->emailCategoryDescription($category),
+      ];
+    }
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar preferências')];
     $form['#cache']['max-age'] = 0;
@@ -70,34 +73,64 @@ final class CommunicationSettingsForm extends FormBase {
   }
 
   /**
-   * Saves the selected private message email mode.
+   * Saves the selected email mode for every notice category.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $mode = $form_state->getValue('receive_notification');
-    if (is_string($mode)) {
-      $this->preferences->saveEmailMode(
-        (int) $this->currentUser->id(),
-        AvisoPreferencias::EMAIL_PRIVATE_MESSAGES,
-        $mode,
-      );
+    $uid = (int) $this->currentUser->id();
+    foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
+      $mode = $form_state->getValue(['email_modes', $category]);
+      if (is_string($mode)) {
+        $this->preferences->saveEmailMode($uid, $category, $mode);
+      }
     }
     $this->messenger()->addStatus($this->t('Preferências de mensagens salvas.'));
     $form_state->setRedirect('aculta_messenger.communication_settings');
   }
 
   /**
-   * Provides the member's available private-message email choices.
+   * Provides modes allowed by the administrator for one category.
    */
-  private function emailModeOptions(): array {
+  private function emailModeOptions(string $category): array {
     $labels = [
       AvisoPreferencias::EMAIL_OFF => $this->t('Somente no site'),
+      AvisoPreferencias::EMAIL_DIGEST => $category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES
+        ? $this->t('Resumo semanal por e-mail')
+        : $this->t('Resumo diário por e-mail'),
       AvisoPreferencias::EMAIL_IMMEDIATE => $this->t('No site e por e-mail'),
-      AvisoPreferencias::EMAIL_DIGEST => $this->t('Resumo semanal por e-mail'),
     ];
     return array_intersect_key(
       $labels,
-      array_flip($this->preferences->allowedEmailModes(AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)),
+      array_flip($this->preferences->allowedEmailModes($category)),
     );
+  }
+
+  /**
+   * Returns a translated title for one notice category.
+   */
+  private function emailCategoryTitle(string $category): string {
+    return match ($category) {
+      'forum_resposta' => (string) $this->t('Respostas em tópicos seguidos do Fórum'),
+      'forum_atualizacao' => (string) $this->t('Atualizações de tópicos do Fórum'),
+      'aprendizagem' => (string) $this->t('Aprendizagem'),
+      'wiki' => (string) $this->t('Wiki'),
+      'loja' => (string) $this->t('Loja'),
+      'doacao' => (string) $this->t('Doações'),
+      AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => (string) $this->t('Mensagens privadas'),
+      AvisoPreferencias::EMAIL_FRIENDSHIP => (string) $this->t('Amizades'),
+      default => throw new \InvalidArgumentException('Categoria de aviso inválida.'),
+    };
+  }
+
+  /**
+   * Returns a description for one notice category.
+   */
+  private function emailCategoryDescription(string $category): string {
+    return match ($category) {
+      AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => (string) $this->t('O e-mail informa que há nova mensagem e quem enviou, sem conteúdo da conversa.'),
+      AvisoPreferencias::EMAIL_FRIENDSHIP => (string) $this->t('Pedidos e aceites continuam disponíveis na área de mensagens do site.'),
+      'doacao' => (string) $this->t('Inclui avisos distintos para pedido de doação criado e pagamento aprovado.'),
+      default => (string) $this->t('O aviso no site permanece ativo; a administração pode limitar as opções de e-mail.'),
+    };
   }
 
 }

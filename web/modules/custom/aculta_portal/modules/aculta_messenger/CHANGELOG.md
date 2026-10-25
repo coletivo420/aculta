@@ -1,3 +1,18 @@
+## 0.1.1-dev.304 — reunir preferências de e-mail por origem
+
+`/configuracoes/email` agora oferece as escolhas individuais de todas as
+categorias do Messenger, incluindo Fórum, LMS, Wiki, Loja, Doações, Mensagens
+Privadas e Amizades. A rota e a aba ficam disponíveis a membros com acesso ao
+Portal mesmo sem permissão para iniciar conversas. A seção Avisos da página de
+Privacidade mantém os acompanhamentos de tópicos e aponta para as preferências
+unificadas; os valores existentes em `user.data` não mudam.
+
+Validação: Unit Messenger **309 testes / 2.471 assertions PASS** e adapters
+Integration Unit **75 testes / 777 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e parse de routing/services YAML PASS. O índice de status falha porque
+a tabela gerada do README raiz está desatualizada; não foi regenerada para
+evitar alterações de outros componentes. Sem Runtime ou navegador.
+
 ## 0.1.1-dev.303 — cobrir compatibilidade de providers de digest antigos
 
 Teste de caracterização confirma que providers que implementam somente o

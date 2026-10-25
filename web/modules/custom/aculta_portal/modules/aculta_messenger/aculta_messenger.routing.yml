@@ -222,7 +222,7 @@ aculta_messenger.communication_settings:
     _form: '\Drupal\aculta_messenger\Form\CommunicationSettingsForm'
     _title: 'Notificações por e-mail'
   requirements:
-    _permission: 'access aculta portal,use private messaging system'
+    _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true

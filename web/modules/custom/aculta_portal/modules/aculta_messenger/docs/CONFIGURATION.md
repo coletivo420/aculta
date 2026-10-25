@@ -69,13 +69,18 @@ publicados e visíveis com links nativos lido/não lido do Flag.
 
 ## Checklist para implantação futura
 
-Preferências de e-mail em `/configuracoes/email` são propriedade do Messenger e
-ficam em `user.data` sob `aculta_messenger`. As categorias de conteúdo são
-respostas/atualizações do Fórum, Aprendizagem, Wiki, Loja e Doações. Para cada
-uma, a pessoa pode selecionar sem e-mail, entrega direta ou resumo diário,
-conforme `aculta_messenger.settings:email_modes`; a administração pode
-desabilitar entrega direta ou resumo. A seleção por categoria é suficiente e
-não depende de outro opt-in geral. O post-update
+Todas as preferências de e-mail ficam na página de conta `/configuracoes/email`,
+propriedade do Messenger e armazenada em `user.data` sob `aculta_messenger`.
+Isso inclui Fórum, Aprendizagem, Wiki, Loja, Doações, Mensagens Privadas e
+Amizades; o formulário permanece disponível a membros sem permissão para
+iniciar conversas. As categorias de conteúdo oferecem sem e-mail, entrega
+direta ou resumo diário; a administração pode desabilitar cada modalidade em
+`aculta_messenger.settings:email_modes`. Mensagens Privadas oferecem sem
+e-mail, aviso direto ou resumo semanal, sem incluir o corpo da conversa;
+Amizades oferecem somente no site ou e-mail direto. Os avisos no site e a
+inbox permanecem disponíveis independentemente dessas escolhas. O formulário
+de Privacidade continua responsável pela visibilidade do perfil e por deixar
+de seguir tópicos. O post-update
 `aculta_messenger_post_update_shared_email_preferences` migra o opt-in global
 legado e as exceções antigas do Fórum para modos individuais, preserva escolhas
 Messenger existentes e remove as chaves antigas após a cópia. Depois da

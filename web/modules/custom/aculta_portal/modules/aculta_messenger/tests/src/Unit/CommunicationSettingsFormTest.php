@@ -21,7 +21,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Tests member controls for privacy-minimal private-message email delivery.
+ * Tests the shared member controls for notice email delivery.
  */
 #[CoversClass(CommunicationSettingsForm::class)]
 #[Group('aculta_messenger')]
@@ -66,59 +66,70 @@ final class CommunicationSettingsFormTest extends UnitTestCase {
   }
 
   /**
-   * Offers direct, weekly digest, and site-only choices without message text.
+   * Offers the supported modes for every category on one settings page.
    */
   public function testBuildOffersSupportedModesAndExplainsPrivacy(): void {
     $form = $this->form(new AvisoPreferencias($this->createMock(UserDataInterface::class)));
     $build = $form->buildForm([], new FormState());
 
-    self::assertSame(
-      [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE, AvisoPreferencias::EMAIL_DIGEST],
-      array_keys($build['receive_notification']['#options']),
-    );
-    self::assertStringContainsString('nunca é incluído', $build['intro']['#plain_text']->getUntranslatedString());
+    foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
+      $expected = $category === AvisoPreferencias::EMAIL_FRIENDSHIP
+        ? [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE]
+        : [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE];
+      self::assertSame($expected, array_keys($build['email_modes'][$category]['#options']), $category);
+    }
+    self::assertStringContainsString('nunca é enviado', $build['intro']['#plain_text']->getUntranslatedString());
     self::assertSame(0, $build['#cache']['max-age']);
   }
 
   /**
-   * An administrator can remove member choices from the form.
+   * An administrator can remove member choices per category.
    */
   public function testBuildRespectsAdministrativeModeRestrictions(): void {
     $preferences = new AvisoPreferencias(
       $this->createMock(UserDataInterface::class),
       $this->getConfigFactoryStub([
         'aculta_messenger.settings' => [
-          'email_modes' => [AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => ['digest' => TRUE, 'immediate' => FALSE]],
+          'email_modes' => [
+            AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => ['digest' => TRUE, 'immediate' => FALSE],
+            'wiki' => ['digest' => FALSE, 'immediate' => TRUE],
+          ],
         ],
       ]),
     );
     $build = $this->form($preferences)->buildForm([], new FormState());
 
-    self::assertSame(
-      [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST],
-      array_keys($build['receive_notification']['#options']),
-    );
+    self::assertSame([AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST], array_keys($build['email_modes'][AvisoPreferencias::EMAIL_PRIVATE_MESSAGES]['#options']));
+    self::assertSame([AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE], array_keys($build['email_modes']['wiki']['#options']));
   }
 
   /**
-   * Saves only the selected Messenger-owned preference.
+   * Saves every selected Messenger-owned preference in the shared form.
    */
   public function testSubmitSavesSelectedMode(): void {
     $userData = $this->createMock(UserDataInterface::class);
-    $userData->expects(self::once())->method('set')->with(
-      AvisoPreferencias::MODULO,
-      27,
-      'avisos_email_mode_' . AvisoPreferencias::EMAIL_PRIVATE_MESSAGES,
-      AvisoPreferencias::EMAIL_DIGEST,
-    );
+    $saved = [];
+    $userData->expects(self::exactly(count(AvisoPreferencias::EMAIL_CATEGORIES)))
+      ->method('set')
+      ->willReturnCallback(static function (string $module, int $uid, string $key, mixed $mode) use (&$saved): void {
+        self::assertSame(AvisoPreferencias::MODULO, $module);
+        self::assertSame(27, $uid);
+        $saved[$key] = $mode;
+      });
     $form = $this->form(new AvisoPreferencias($userData));
     $form->setStringTranslation($this->getStringTranslationStub());
     $formState = new FormState();
-    $formState->setValue('receive_notification', AvisoPreferencias::EMAIL_DIGEST);
+    $modes = array_fill_keys(AvisoPreferencias::EMAIL_CATEGORIES, AvisoPreferencias::EMAIL_OFF);
+    $modes[AvisoPreferencias::EMAIL_PRIVATE_MESSAGES] = AvisoPreferencias::EMAIL_DIGEST;
+    $modes['wiki'] = AvisoPreferencias::EMAIL_IMMEDIATE;
+    $formState->setValue('email_modes', $modes);
 
     $formArray = [];
     $form->submitForm($formArray, $formState);
 
+    self::assertSame(AvisoPreferencias::EMAIL_DIGEST, $saved['avisos_email_mode_' . AvisoPreferencias::EMAIL_PRIVATE_MESSAGES]);
+    self::assertSame(AvisoPreferencias::EMAIL_IMMEDIATE, $saved['avisos_email_mode_wiki']);
+    self::assertCount(count(AvisoPreferencias::EMAIL_CATEGORIES), $saved);
     self::assertSame('aculta_messenger.communication_settings', $formState->getRedirect()->getRouteName());
   }
 

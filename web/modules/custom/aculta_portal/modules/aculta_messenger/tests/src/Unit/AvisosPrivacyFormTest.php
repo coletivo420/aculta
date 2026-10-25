@@ -12,7 +12,6 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Form\AvisosPrivacyForm;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -21,162 +20,31 @@ use Drupal\flag\FlaggingInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
-use Drupal\user\UserDataInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Covers member email preferences for all shared notice producers.
+ * Covers followed-topic controls embedded in account privacy settings.
  */
 #[CoversClass(AvisosPrivacyForm::class)]
 #[Group('aculta_messenger')]
 final class AvisosPrivacyFormTest extends UnitTestCase {
 
   /**
-   * User can select all delivery modes for every integrated origin.
+   * Privacy settings manage topic follows, not per-origin email preferences.
    */
-  public function testBuildOffersSameEmailModesForEveryOrigin(): void {
-    $userData = $this->createMock(UserDataInterface::class);
-    $userData->method('get')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
-    $preferences = new AvisoPreferencias($userData);
+  public function testPrivacyFormKeepsRequiredNoticeAndTopicFollowControls(): void {
     $account = $this->createMock(AccountProxyInterface::class);
     $account->method('id')->willReturn(27);
-    $formBuilder = $this->formBuilder($account, $preferences);
     $form = [];
 
-    $formBuilder->build($form);
+    $this->formBuilder($account)->build($form);
 
-    $expectedOptions = [
-      AvisoPreferencias::EMAIL_OFF,
-      AvisoPreferencias::EMAIL_DIGEST,
-      AvisoPreferencias::EMAIL_IMMEDIATE,
-    ];
-    foreach ([
-      'email_respostas',
-      'email_atualizacoes',
-      'email_aprendizagem',
-      'email_wiki',
-      'email_loja',
-      'email_doacao',
-    ] as $element) {
-      self::assertSame($expectedOptions, array_keys($form['avisos'][$element]['#options']), $element);
-      self::assertStringContainsString('O aviso no site permanece ativo.', $form['avisos'][$element]['#description']->getUntranslatedString(), $element);
-      self::assertStringContainsString('Escolha sem e-mail, resumo diário ou envio direto', $form['avisos'][$element]['#description']->getUntranslatedString(), $element);
-    }
-    self::assertSame(
-      [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE],
-      array_keys($form['avisos']['email_amizade']['#options']),
-      'Friendship email is site-only or direct, without digest mode.',
-    );
-    self::assertArrayNotHasKey('resumo_email', $form['avisos'], 'Category mode is the single email preference.');
-    self::assertArrayHasKey('aviso_sempre', $form['avisos'], 'Site notices remain mandatory.');
-  }
-
-  /**
-   * Admin policy removes delivery choices from the member form.
-   */
-  public function testBuildRespectsAdministrativeModePolicy(): void {
-    $userData = $this->createMock(UserDataInterface::class);
-    $settings = $this->getConfigFactoryStub([
-      'aculta_messenger.settings' => [
-        'email_modes' => ['wiki' => ['digest' => TRUE, 'immediate' => FALSE]],
-      ],
-    ]);
-    $preferences = new AvisoPreferencias($userData, $settings);
-    $account = $this->createMock(AccountProxyInterface::class);
-    $account->method('id')->willReturn(27);
-    $formBuilder = $this->formBuilder($account, $preferences);
-    $form = [];
-
-    $formBuilder->build($form);
-
-    self::assertSame(
-      [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST],
-      array_keys($form['avisos']['email_wiki']['#options']),
-    );
-    self::assertContains(AvisoPreferencias::EMAIL_OFF, array_keys($form['avisos']['email_doacao']['#options']));
-  }
-
-  /**
-   * Admin email policy is applied consistently to every shared origin.
-   */
-  public function testBuildAppliesAdministrativePolicyAcrossAllOrigins(): void {
-    $categories = [
-      'forum_resposta',
-      'forum_atualizacao',
-      'aprendizagem',
-      'wiki',
-      'loja',
-      'doacao',
-    ];
-    $emailModes = array_fill_keys($categories, ['digest' => TRUE, 'immediate' => FALSE]);
-    $settings = $this->getConfigFactoryStub([
-      'aculta_messenger.settings' => ['email_modes' => $emailModes],
-    ]);
-    $preferences = new AvisoPreferencias($this->createMock(UserDataInterface::class), $settings);
-    $account = $this->createMock(AccountProxyInterface::class);
-    $account->method('id')->willReturn(27);
-    $formBuilder = $this->formBuilder($account, $preferences);
-    $form = [];
-
-    $formBuilder->build($form);
-
-    $elements = [
-      'email_respostas',
-      'email_atualizacoes',
-      'email_aprendizagem',
-      'email_wiki',
-      'email_loja',
-      'email_doacao',
-    ];
-    foreach ($elements as $element) {
-      self::assertSame(
-        [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST],
-        array_keys($form['avisos'][$element]['#options']),
-        $element,
-      );
-    }
-  }
-
-  /**
-   * Saves per-origin modes while preserving mandatory site notices.
-   */
-  public function testSubmitSavesModesForAllIntegratedOrigins(): void {
-    $saved = [];
-    $userData = $this->createMock(UserDataInterface::class);
-    $userData->expects(self::exactly(7))
-      ->method('set')
-      ->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use (&$saved): void {
-        self::assertSame(AvisoPreferencias::MODULO, $module);
-        self::assertSame(27, $uid);
-        $saved[$key] = $value;
-      });
-    $preferences = new AvisoPreferencias($userData);
-    $account = $this->createMock(AccountProxyInterface::class);
-    $account->method('id')->willReturn(27);
-    $formBuilder = $this->formBuilder($account, $preferences);
-    $formState = new FormState();
-    $formState->setValue('email_respostas', AvisoPreferencias::EMAIL_DIGEST);
-    $formState->setValue('email_atualizacoes', AvisoPreferencias::EMAIL_OFF);
-    $formState->setValue('email_aprendizagem', AvisoPreferencias::EMAIL_IMMEDIATE);
-    $formState->setValue('email_wiki', AvisoPreferencias::EMAIL_OFF);
-    $formState->setValue('email_loja', AvisoPreferencias::EMAIL_DIGEST);
-    $formState->setValue('email_doacao', AvisoPreferencias::EMAIL_IMMEDIATE);
-    $formState->setValue('email_amizade', AvisoPreferencias::EMAIL_OFF);
-    $form = [];
-
-    $formBuilder->submit($form, $formState);
-
-    self::assertSame([
-      'avisos_email_mode_forum_resposta' => AvisoPreferencias::EMAIL_DIGEST,
-      'avisos_email_mode_forum_atualizacao' => AvisoPreferencias::EMAIL_OFF,
-      'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_IMMEDIATE,
-      'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_OFF,
-      'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_DIGEST,
-      'avisos_email_mode_doacao' => AvisoPreferencias::EMAIL_IMMEDIATE,
-      'avisos_email_mode_amizade' => AvisoPreferencias::EMAIL_OFF,
-    ], $saved);
+    self::assertArrayHasKey('aviso_sempre', $form['avisos']);
+    self::assertArrayHasKey('assinaturas', $form['avisos']);
+    self::assertArrayNotHasKey('email_wiki', $form['avisos']);
+    self::assertSame('aculta_messenger.communication_settings', $form['avisos']['email_settings']['#url']->getRouteName());
   }
 
   /**
@@ -207,7 +75,7 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
       ->willReturn([501 => $followedTopic, 502 => $privateTopic]);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->with('node')->willReturn($nodeStorage);
-    $formBuilder = $this->formBuilder($account, new AvisoPreferencias($this->createMock(UserDataInterface::class)), $flagService, NULL, $entityTypeManager);
+    $formBuilder = $this->formBuilder($account, $flagService, NULL, $entityTypeManager);
     $form = [];
 
     $formBuilder->build($form);
@@ -263,7 +131,6 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
     $messenger->expects(self::once())->method('addStatus');
     $formBuilder = $this->formBuilder(
       $account,
-      new AvisoPreferencias($this->createMock(UserDataInterface::class)),
       $flagService,
       $messenger,
       $entityTypeManager,
@@ -286,14 +153,12 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
    */
   private function formBuilder(
     AccountProxyInterface $account,
-    AvisoPreferencias $preferences,
     ?FlagServiceInterface $flagService = NULL,
     ?MessengerInterface $messenger = NULL,
     ?EntityTypeManagerInterface $entityTypeManager = NULL,
   ): AvisosPrivacyForm {
     return new AvisosPrivacyForm(
       $account,
-      $preferences,
       $entityTypeManager ?? $this->createMock(EntityTypeManagerInterface::class),
       $flagService ?? $this->createMock(FlagServiceInterface::class),
       $this->domainPurposeManager(),
@@ -336,7 +201,13 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('isHttps')->willReturn(TRUE);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
-    $domainStorage->method('load')->with('forum_aculta_org')->willReturn($domain);
+    $domainStorage->method('load')->willReturnCallback(
+      static fn(string $id): ?DomainInterface => in_array(
+        $id,
+        ['forum_aculta_org', 'conta_aculta_org'],
+        TRUE,
+      ) ? $domain : NULL,
+    );
     $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypes->method('getStorage')->with('domain')->willReturn($domainStorage);
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
