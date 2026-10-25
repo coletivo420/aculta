@@ -8,7 +8,9 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 
-/** Counts unread conversations using Private Message's per-thread read state. */
+/**
+ * Counts unread conversations using Private Message's per-thread read state.
+ */
 final class UnreadThreadCounter {
 
   public function __construct(
@@ -16,7 +18,9 @@ final class UnreadThreadCounter {
     private readonly PrivateMessageServiceInterface $privateMessageService,
   ) {}
 
-  /** Returns accessible conversations with incoming unread messages. */
+  /**
+   * Returns accessible conversations with incoming unread messages.
+   */
   public function count(): int {
     if (!$this->currentUser->isAuthenticated()) {
       return 0;
@@ -40,18 +44,21 @@ final class UnreadThreadCounter {
   /**
    * Checks a thread using its native per-user access timestamp.
    *
-   * A thread is unread when another member sent a message created after this member's last access.
-   * This is the only definition used by the badges, the inbox and the thread indicator.
+   * A thread is unread when another member sent a message created after this
+   * member's last access.
+   * This is the only definition used by the badges, the inbox and the thread
+   * indicator.
    */
   public function isUnread(PrivateMessageThreadInterface $thread): bool {
-    if (!$thread->access('view', $this->currentUser, TRUE)->isAllowed()) {
+    $lastAccess = (int) ($thread->getLastAccessTimestamp($this->currentUser) ?: 0);
+    // The thread's updated time is its latest message time. If nothing changed
+    // after the last access, no message can be newer. Short-circuit before
+    // access checking because private_message's access handler loads the list
+    // to apply the member's deletion cutoff.
+    if ((int) $thread->get('updated')->value <= $lastAccess) {
       return FALSE;
     }
-
-    $lastAccess = (int) ($thread->getLastAccessTimestamp($this->currentUser) ?: 0);
-    // The thread's updated time is its latest message time. If nothing changed after the last access,
-    // no message can be newer, so the messages do not need to be loaded.
-    if ((int) $thread->get('updated')->value <= $lastAccess) {
+    if (!$thread->access('view', $this->currentUser, TRUE)->isAllowed()) {
       return FALSE;
     }
 

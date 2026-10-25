@@ -1,3 +1,13 @@
+## 0.1.1-dev.227 — evitar carregar mensagens de threads já lidas
+
+`UnreadThreadCounter::isUnread()` agora compara primeiro `updated` com o histórico individual de acesso. Em threads sem
+atividade posterior, retorna como lida sem executar o access handler, que no `private_message` instalado carrega e filtra
+mensagens pelo corte de exclusão pessoal. Threads potencialmente não lidas continuam passando por access e pela inspeção
+de mensagens antes de serem contadas.
+
+Validação: `UnreadThreadCounterTest` **6 testes / 19 assertions PASS**; PHP lint e PHPCS Drupal/DrupalPractice PASS.
+Não altera a contagem nativa nem faz consultas de leitura/escrita no Runtime.
+
 ## 0.1.1-dev.226 — cobrir central sem adapters opcionais
 
 O dispatcher da central agora tem teste explícito de instalação sem os serviços opcionais LMS, Wiki, Loja e Doações. A

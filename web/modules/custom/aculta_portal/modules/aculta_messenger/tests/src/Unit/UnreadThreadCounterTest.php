@@ -27,7 +27,13 @@ final class UnreadThreadCounterTest extends UnitTestCase {
    * Skips loading message entities when the thread timestamp has not changed.
    */
   public function testThreadNotUpdatedSinceLastAccessIsReadWithoutLoadingMessages(): void {
-    $thread = $this->thread(updated: 1000, lastAccess: 1000, messages: [], loadMessages: $this->never());
+    $thread = $this->thread(
+      updated: 1000,
+      lastAccess: 1000,
+      messages: [],
+      loadMessages: $this->never(),
+      checkAccess: $this->never(),
+    );
     $this->assertFalse($this->counter()->isUnread($thread));
   }
 
@@ -119,6 +125,8 @@ final class UnreadThreadCounterTest extends UnitTestCase {
    *   Expected call count for loading messages.
    * @param \Drupal\Core\Access\AccessResult|null $accessResult
    *   Access result for the current user.
+   * @param \PHPUnit\Framework\MockObject\Rule\InvocationOrder|null $checkAccess
+   *   Expected access-check invocation count.
    *
    * @return \Drupal\private_message\Entity\PrivateMessageThreadInterface
    *   Thread mock.
@@ -129,9 +137,15 @@ final class UnreadThreadCounterTest extends UnitTestCase {
     array $messages,
     $loadMessages = NULL,
     ?AccessResult $accessResult = NULL,
+    $checkAccess = NULL,
   ): PrivateMessageThreadInterface {
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    $thread->method('access')->willReturn($accessResult ?? AccessResult::allowed());
+    if ($checkAccess !== NULL) {
+      $thread->expects($checkAccess)->method('access')->willReturn($accessResult ?? AccessResult::allowed());
+    }
+    else {
+      $thread->method('access')->willReturn($accessResult ?? AccessResult::allowed());
+    }
     $updatedField = new \stdClass();
     $updatedField->value = (string) $updated;
     $thread->method('get')->with('updated')->willReturn($updatedField);
