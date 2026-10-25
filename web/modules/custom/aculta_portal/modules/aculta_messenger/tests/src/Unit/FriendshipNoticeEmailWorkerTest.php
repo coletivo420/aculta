@@ -19,6 +19,7 @@ use Drupal\domain\DomainInterface;
 use Drupal\message\MessageInterface;
 use Drupal\message_notify\MessageNotifyInterface;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\Tests\UnitTestCase;
@@ -162,6 +163,47 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
 
     self::assertSame('sent', $state['status']);
     self::assertSame(1, $state['attempts']);
+  }
+
+  /**
+   * A transient retry reuses the same deterministic Mailer correlation.
+   */
+  public function testMailerManagedRetryKeepsTheSameCorrelation(): void {
+    $state = ['status' => 'pending', 'attempts' => 0, 'mailer_managed' => TRUE];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $mail) use (&$correlations): SendResult {
+        $correlations[] = $mail->correlationId;
+        return count($correlations) === 1
+          ? SendResult::failed(DeliveryError::Temporary, 421)
+          : SendResult::sent();
+      });
+    [$worker] = $this->deliveryWorker($state, $notifier, $mailer);
+
+    try {
+      try {
+        $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+        self::fail('A transient Mailer error must be retried by the queue.');
+      }
+      catch (\RuntimeException $exception) {
+        self::assertSame('Friendship notice email delivery failed.', $exception->getMessage());
+      }
+      $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertCount(2, $correlations);
+    self::assertSame($correlations[0], $correlations[1]);
+    self::assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $correlations[0]);
+    self::assertSame('sent', $state['status']);
+    self::assertSame(2, $state['attempts']);
   }
 
   /**
