@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- **Dev.373 — higiene dos post-updates:** docblock do post-update Game alinhado ao padrão Drupal; PHPCS Drupal/DrupalPractice de `aculta_messenger.install` e `aculta_messenger.post_update.php`, PHP lint e diff check PASS. Sem efeito funcional/Runtime.
 - **Dev.372 — composição local de grupo:** `new-conversation-compose-readonly.mjs` cobriu busca autenticada, seleção por Enter e clique, dois destinatários distintos, remoção acessível e limite configurado. Firefox ESR visível: **10/10 PASS**, viewport efetivo 1270 px, apenas GET 200, sem overflow/erros JS e sem submeter o formulário ou alterar dados. A criação e o envio HTTP continuam pendentes.
 - **Dev.371 — reflow da gaveta populada:** mesma suíte `conversation-list-readonly.mjs`, janela 390 px, Firefox ESR reportou viewport efetivo 500 px. **10/10 PASS**, sem overflow e sem escrita; a evidência não declara teste real a 390 px.
 - **Dev.370 — gaveta autenticada populada:** `conversation-list-readonly.mjs` passou **10/10** em Firefox ESR visível, viewport efetivo 1270 px. Runtime respondeu GET 200 para o fragmento, mostrou três conversas sintéticas com dois grupos separados, IDs/rótulos acessíveis e leitura explícita; sem overflow, erros JS ou requests de escrita. Guard `teste.comum` PASS. Nenhuma mensagem, amizade, bloqueio, preferência ou consentimento foi alterado. Smoke de leitura não substitui o fluxo mutável de criação/resposta, que permanece pendente.
