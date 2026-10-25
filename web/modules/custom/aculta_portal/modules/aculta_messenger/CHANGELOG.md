@@ -1,3 +1,17 @@
+## 0.1.1-dev.370 — smoke HTTP somente leitura da gaveta populada
+
+Adicionada uma suíte BrowserTest versionada para a lista autenticada de
+conversas. No Runtime de teste, `teste.comum` carregou três linhas sintéticas
+por GET 200, incluindo dois grupos separados; todos têm ID e rótulo de abertura
+acessível, estado de leitura explícito e não causam overflow no viewport de
+1270 px. O teste registra a resposta e não abre threads nem envia formulários.
+
+Validação: Firefox ESR visível **10/10 PASS**, sem requisições de escrita ou
+erros JavaScript; guard da conta `teste.comum` PASS. Nenhuma mensagem,
+preferência, amizade, bloqueio ou consentimento foi alterado. Runtime somente
+de leitura; HTTP de envio continua coberto apenas em Unit/Kernel e a sessão
+autenticada de criação/resposta ponta a ponta permanece pendente.
+
 ## 0.1.1-dev.369 — fechamento do baseline de estilo da nova conversa
 
 O controlador que inicia conversas individuais e em grupo foi ajustado ao
