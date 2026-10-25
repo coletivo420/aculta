@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.268 — cobertura do formulário de preferências de mensagens privadas: opções site/direto/semanal, restrição administrativa e persistência em `user.data` Messenger; texto confirma ausência de conteúdo privado nos e-mails. Teste **3/10 PASS**, Unit Messenger **268/2.083 PASS**, PHPCS e PHP lint PASS. Kernel/Browser/Runtime pendentes.
 - Dev.267 — metadado de ordenação passa a expressar recência; aviso agregado do Fórum usa `changed` (última atividade), enquanto adapters de eventos individuais usam a data do `Message`. Unit Messenger **265/2.073 PASS**, PHP lint PASS. Kernel indisponível (`SIMPLETEST_DB` ausente); PHPCS, Browser e Runtime não executados.
 - Dev.266 — central unificada preserva agrupamento por origem e separadores, ordenando seções pela data do aviso mais novo e itens por recência; avisos antigos sem timestamp mantêm ordem estável. Sem storage novo. `NoticeOriginGrouperTest` **3/16 PASS**, Unit Messenger **265/2.073 PASS**, PHP lint PASS. PHPCS, Kernel, Browser e Runtime pendentes.
 - Dev.265 — busca e compose direto compartilham elegibilidade de destinatário: conta ativa/permissões, identidade pública, bloqueios bilaterais e preferência friend-only. A validação detecta threads existentes e preserva respostas após mudança de preferência; nova thread revalida antes da criação. Focais **24/153 PASS**, Unit Messenger **265/2.072 PASS**, PHP lint PASS; PHPCS mantém baselines existentes NewConversationController **8/7** e NewConversationForm **14/15**. Kernel/Browser/Runtime pendentes.

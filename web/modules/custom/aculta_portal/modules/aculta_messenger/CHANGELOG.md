@@ -2559,3 +2559,9 @@ O metadado da central passa a representar recência, não criação. Para o Fór
 
 Validação: Unit Messenger **265/2.073 PASS** e PHP lint dos arquivos alterados PASS. O Kernel `ForumNoticeIdempotencyKernelTest::testForumNoticeListSortsByRecencyRegardlessOfReadState` não foi executado porque `SIMPLETEST_DB` está ausente; PHPCS, Browser e Runtime também não executados.
 
+## 0.1.1-dev.268 — cobrir as preferências pessoais de e-mail privado
+
+Adicionada cobertura direta ao formulário da conta para os três modos de mensagens privadas (somente site, aviso direto e resumo semanal), restrições administrativas e gravação da preferência no `user.data` do Messenger. O contrato de privacidade continua explícito: e-mail nunca inclui o conteúdo da conversa.
+
+Validação: `CommunicationSettingsFormTest` **3/10 PASS**; Unit Messenger **268/2.083 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
