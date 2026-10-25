@@ -103,6 +103,37 @@ final class AvisoPreferenciasTest extends UnitTestCase {
   }
 
   /**
+   * A temporary administrative restriction does not erase a member's choice.
+   */
+  public function testReenabledFriendshipEmailRestoresSavedMemberPreference(): void {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::exactly(2))->method('get')
+      ->with(AvisoPreferencias::MODULO, 27, 'avisos_email_mode_' . AvisoPreferencias::EMAIL_FRIENDSHIP)
+      ->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $userData->expects(self::never())->method('set');
+
+    $restricted = new AvisoPreferencias(
+      $userData,
+      $this->getConfigFactoryStub([
+        'aculta_messenger.settings' => [
+          'email_modes' => [AvisoPreferencias::EMAIL_FRIENDSHIP => ['immediate' => FALSE]],
+        ],
+      ]),
+    );
+    self::assertSame(AvisoPreferencias::EMAIL_OFF, $restricted->emailMode(27, AvisoPreferencias::EMAIL_FRIENDSHIP));
+
+    $reenabled = new AvisoPreferencias(
+      $userData,
+      $this->getConfigFactoryStub([
+        'aculta_messenger.settings' => [
+          'email_modes' => [AvisoPreferencias::EMAIL_FRIENDSHIP => ['immediate' => TRUE]],
+        ],
+      ]),
+    );
+    self::assertSame(AvisoPreferencias::EMAIL_IMMEDIATE, $reenabled->emailMode(27, AvisoPreferencias::EMAIL_FRIENDSHIP));
+  }
+
+  /**
    * Explicit category selection enables the selected category.
    */
   public function testExplicitDigestModeAppliesToItsCategory(): void {
