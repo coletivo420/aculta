@@ -27,6 +27,8 @@ use Drupal\message_notify\MessageNotifyInterface;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_mailer\Message\MessageIdFactory;
+use Drupal\aculta_messenger\Mail\PrivateMessageNoticeMailType;
 use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
@@ -187,6 +189,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     string $emailMode,
     bool $existingPending,
     string $initialStatus = 'pending',
+    bool $directDeliveryAlreadyAccepted = FALSE,
   ): void {
     $privateMessage = $this->createMock(PrivateMessageInterface::class);
     $privateMessage->method('getOwnerId')->willReturn(1);
@@ -229,15 +232,21 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $status->method('__get')->with('value')->willReturnCallback(static fn(): string => $deliveryStatus);
     $attempts = $this->field(0);
     $managed = $this->field(TRUE);
+    $digestSent = $this->field(0);
+    $digestSentValue = 0;
     $notice = $this->createMock(MessageInterface::class);
     $notice->method('get')->willReturnCallback(static fn(string $field): FieldItemListInterface => match ($field) {
       'field_aculta_msg_delivery' => $status,
       'field_aculta_messenger_attempts' => $attempts,
+      'field_aculta_pm_digest_sent' => $digestSent,
       default => $managed,
     });
-    $notice->method('set')->willReturnCallback(function (string $field, mixed $value) use ($notice, &$deliveryStatus): MessageInterface {
+    $notice->method('set')->willReturnCallback(function (string $field, mixed $value) use ($notice, &$deliveryStatus, &$digestSentValue): MessageInterface {
       if ($field === 'field_aculta_msg_delivery') {
         $deliveryStatus = $value;
+      }
+      if ($field === 'field_aculta_pm_digest_sent') {
+        $digestSentValue = $value;
       }
       return $notice;
     });
@@ -245,7 +254,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $notice->method('save')->willReturn(1);
     $recordRetryable = in_array($initialStatus, ['pending', 'failed'], TRUE);
     $shouldSend = $recordRetryable && $emailConfirmed && $emailMode === AvisoPreferencias::EMAIL_IMMEDIATE;
-    $shouldQueueDigest = $recordRetryable && $emailConfirmed && $emailMode === AvisoPreferencias::EMAIL_DIGEST;
+    $shouldQueueDigest = $recordRetryable && $emailConfirmed && $emailMode === AvisoPreferencias::EMAIL_DIGEST && !$directDeliveryAlreadyAccepted;
     $noticeStorage->expects($existingPending ? self::never() : (($shouldSend || $shouldQueueDigest) ? self::once() : self::never()))->method('create')
       ->with(self::callback(fn(array $values): bool => ($values['field_aculta_mailer_managed'] ?? FALSE) === TRUE
         && (!$shouldQueueDigest || ($values['field_aculta_pm_digest_sent'] ?? NULL) === 0)))
@@ -289,6 +298,15 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
         return TRUE;
       }))
       ->willReturn(SendResult::sent());
+    if ($emailMode === AvisoPreferencias::EMAIL_DIGEST && $emailConfirmed && $existingPending) {
+      $mailer->expects(self::once())->method('wasAcceptedCorrelation')
+        ->with(
+          MessageIdFactory::correlationIdFor('aculta_messenger:private-message:15:2:' . PrivateMessageNoticeMailType::ID),
+          PrivateMessageNoticeMailType::ID,
+          'member@example.test',
+        )
+        ->willReturn($directDeliveryAlreadyAccepted);
+    }
     $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
     $urlGenerator->expects($shouldSend ? self::exactly(2) : self::never())->method('generateFromRoute')
       ->with('aculta_portal.dashboard')
@@ -308,11 +326,15 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     finally {
       \Drupal::unsetContainer();
     }
-    if ($existingPending && !$shouldSend && !$shouldQueueDigest) {
+    if ($existingPending && !$shouldSend && !$shouldQueueDigest && !$directDeliveryAlreadyAccepted) {
       self::assertSame(
         in_array($initialStatus, ['cancelled', 'failed_permanent'], TRUE) ? $initialStatus : 'cancelled',
         $deliveryStatus,
       );
+    }
+    if ($directDeliveryAlreadyAccepted) {
+      self::assertSame('sent', $deliveryStatus);
+      self::assertSame(1, $digestSentValue);
     }
     if ($shouldSend) {
       self::assertSame('private_message_notice', $sentMail->type);
@@ -474,6 +496,13 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     return [
       'confirmed and enabled' => [TRUE, AvisoPreferencias::EMAIL_IMMEDIATE, FALSE],
       'weekly digest queues without sending' => [TRUE, AvisoPreferencias::EMAIL_DIGEST, FALSE],
+      'accepted direct email is reconciled before weekly digest' => [
+        TRUE,
+        AvisoPreferencias::EMAIL_DIGEST,
+        TRUE,
+        'pending',
+        TRUE,
+      ],
       'unconfirmed email' => [FALSE, AvisoPreferencias::EMAIL_IMMEDIATE, FALSE],
       'opt-out cancels persisted pending email' => [TRUE, AvisoPreferencias::EMAIL_OFF, TRUE],
       'opt-out cancellation remains terminal after opt-in' => [

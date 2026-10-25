@@ -54,8 +54,30 @@ final class MessengerMailDelivery {
       return SendResult::sent();
     }
 
-    $correlation = MessageIdFactory::correlationIdFor('aculta_messenger:' . $idempotencyKey);
+    $correlation = self::correlationIdFor($idempotencyKey);
     return $mailer->deliver(new MailMessage($type, $recipient, $langcode, $context, $correlation));
+  }
+
+  /**
+   * Checks whether this logical direct delivery was accepted for this address.
+   */
+  public static function wasAccepted(
+    AcultaMailerInterface $mailer,
+    string $type,
+    string $recipient,
+    string $idempotencyKey,
+  ): bool {
+    if ($idempotencyKey === '') {
+      throw new \InvalidArgumentException('Messenger mail idempotency key cannot be empty.');
+    }
+    return $mailer->wasAcceptedCorrelation(self::correlationIdFor($idempotencyKey), $type, $recipient);
+  }
+
+  /**
+   * Returns the stable correlation for one Messenger-owned logical delivery.
+   */
+  private static function correlationIdFor(string $idempotencyKey): string {
+    return MessageIdFactory::correlationIdFor('aculta_messenger:' . $idempotencyKey);
   }
 
 }

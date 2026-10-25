@@ -1,3 +1,15 @@
+## 0.1.1-dev.296 — reconciliar e-mail privado aceito antes do digest
+
+No retry de uma notificação privada, o worker consulta a correlação estável do
+Mailer antes de converter uma entrega direta pendente em item do resumo
+semanal. Se o Mailer já aceitou o aviso, o registro local é reconciliado como
+enviado, evitando um segundo e-mail quando a preferência mudou após uma falha
+de persistência. O conteúdo da mensagem privada continua fora do e-mail.
+
+Validação: `PrivateMessageNotificationWorkerTest` **14 testes / 260
+assertions PASS**, incluindo a troca de preferência após aceitação; PHP lint e
+PHPCS Drupal/DrupalPractice PASS. Sem Runtime ou SMTP.
+
 ## 0.1.1-dev.295 — respeitar bloqueios na apresentação de grupos
 
 O estado de envio da conversa agora examina todos os demais participantes em

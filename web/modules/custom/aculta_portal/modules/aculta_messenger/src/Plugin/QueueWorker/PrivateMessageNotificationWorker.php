@@ -209,6 +209,34 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     }
 
     if ($emailMode === AvisoPreferencias::EMAIL_DIGEST) {
+      // A direct email may have been accepted immediately before local
+      // acknowledgement failed. Reconcile that stable delivery before
+      // converting the retry into a separately correlated weekly digest.
+      $directIdempotencyKey = 'private-message:' . $messageId . ':' . $recipientId . ':' . PrivateMessageNoticeMailType::ID;
+      if ($mailerManaged && MessengerMailDelivery::wasAccepted(
+        $this->mailer,
+        PrivateMessageNoticeMailType::ID,
+        (string) $recipient->getEmail(),
+        $directIdempotencyKey,
+      )) {
+        if ($notification === NULL) {
+          $notification = $this->entityTypeManager->getStorage('message')->create([
+            'template' => self::TEMPLATE,
+            'uid' => $recipientId,
+            self::SOURCE_FIELD => $messageId,
+            self::STATUS_FIELD => 'sent',
+            self::ATTEMPTS_FIELD => 1,
+            self::MAILER_MANAGED_FIELD => TRUE,
+            self::DIGEST_FIELD => 1,
+          ]);
+        }
+        else {
+          $notification->set(self::STATUS_FIELD, 'sent');
+          $notification->set(self::DIGEST_FIELD, 1);
+        }
+        $notification->save();
+        return;
+      }
       if ($notification === NULL) {
         $notification = $this->entityTypeManager->getStorage('message')->create([
           'template' => self::TEMPLATE,
