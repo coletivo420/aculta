@@ -1,3 +1,9 @@
+## 0.1.1-dev.256 — fechar fallback de prefetch na leitura de avisos
+
+A classificação de navegação agora avalia `Sec-Purpose` e `Purpose` independentemente. Um cabeçalho novo vazio não esconde o cabeçalho legado que identifica prefetch/prerender; `Sec-Fetch-Site` também é normalizado antes da comparação.
+
+Validação: `MemberInitiatedRequestTest` **3/11 PASS**, Unit Messenger **257/1.991 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
 ## 0.1.1-dev.255 — revalidar ações de relacionamento na thread
 
 Os formulários de amizade e bloqueio agora carregam o ID da thread como estado interno do servidor e, antes da ação, recarregam conta/alvo/thread e revalidam conta ativa, permissões, membership de ambas as pessoas e autorização `view`. A ação falha genericamente se o acesso mudou desde a checagem de rota.

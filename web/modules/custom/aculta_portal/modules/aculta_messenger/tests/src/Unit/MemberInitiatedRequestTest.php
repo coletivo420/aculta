@@ -45,4 +45,17 @@ final class MemberInitiatedRequestTest extends UnitTestCase {
     self::assertTrue(MemberInitiatedRequest::isPrefetchOrPrerender($prerender));
   }
 
+  /**
+   * Either purpose header blocks prefetch when the other is empty.
+   */
+  public function testEmptySecPurposeDoesNotHidePurposePrefetch(): void {
+    $request = Request::create('/mensagens/conversa/1');
+    $request->headers->set('Sec-Purpose', '');
+    $request->headers->set('Purpose', 'PrEfEtCh');
+    $request->headers->set('Sec-Fetch-Site', 'CROSS-SITE');
+
+    self::assertFalse(MemberInitiatedRequest::isMemberInitiated($request));
+    self::assertTrue(MemberInitiatedRequest::isPrefetchOrPrerender($request));
+  }
+
 }

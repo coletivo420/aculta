@@ -15,7 +15,8 @@ final class MemberInitiatedRequest {
    * Whether a request is a same-site navigation rather than prefetch/prerender.
    */
   public static function isMemberInitiated(?Request $request): bool {
-    if ($request === NULL || $request->headers->get('Sec-Fetch-Site') === 'cross-site') {
+    if ($request === NULL
+      || strtolower(trim((string) $request->headers->get('Sec-Fetch-Site', ''))) === 'cross-site') {
       return FALSE;
     }
     return !self::isPrefetchOrPrerender($request);
@@ -28,8 +29,13 @@ final class MemberInitiatedRequest {
     if ($request === NULL) {
       return TRUE;
     }
-    $purpose = strtolower((string) ($request->headers->get('Sec-Purpose') ?? $request->headers->get('Purpose') ?? ''));
-    return str_contains($purpose, 'prefetch') || str_contains($purpose, 'prerender');
+    foreach (['Sec-Purpose', 'Purpose'] as $header) {
+      $purpose = strtolower(trim((string) $request->headers->get($header, '')));
+      if (str_contains($purpose, 'prefetch') || str_contains($purpose, 'prerender')) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
 }
