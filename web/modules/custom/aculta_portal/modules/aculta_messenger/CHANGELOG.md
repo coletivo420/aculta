@@ -2098,3 +2098,5 @@ O contrato opcional `PaginatedPersonalNoticeAdapterInterface` permite que LMS, W
 
 Validação: dispatch opcional `PersonalNoticeAdapterHooksTest` **6/65 PASS**; Commerce Unit **5/58**, Wiki Unit **3/45**, Kernel LMS **4/47**, Wiki **7/129**, Commerce **4/67** e Doação **5/80 PASS**. PHPCS Drupal/DrupalPractice limpo nos arquivos novos/adapters; controllers mantêm baseline (MessagesController 95/65; AvisosMensagensController 15/12). PHP lint, `git diff --check` e gate Drupal 11+ PASS. Kernels reportam deprecações de annotations Message Core/contrib; visual/Runtime não executados.
 
+Revalidação de idempotência do digest: `LearningNoticeDigestIntegrationTest` **22/176**, `AvisosResumoProviderPreferenceTest` **4/79**, `AvisosResumoMailTypeTest` **2/7** e Kernels Messenger/Mailer **38/865 em conjunto** PASS no MariaDB dedicado. A execução cobriu recuperação do lote aceito e dois workers Drupal independentes; não usou SMTP real nem Runtime.
+
