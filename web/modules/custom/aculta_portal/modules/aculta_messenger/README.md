@@ -87,13 +87,17 @@ direto ou digest sem substituir os storages existentes. O Fórum preserva
 momento de abrir e entregar. Preferências individuais são limitadas pela
 política administrativa, e avisos no site continuam obrigatórios.
 
-Validação automatizada recente: Unit Messenger **318 testes / 2.577
-assertions PASS**; Integration (incluindo Kernels MariaDB) **98 testes / 1.173
-assertions PASS**, com 2 deprecações de annotations do Core/contrib e 7 notices
-de PHPUnit; testes focados de preferências **54/619 PASS**. Os controllers de
-abertura revalidam acesso ao marcar avisos Wiki e Loja como lidos. Testes visuais não foram
-executados nesta sessão: `DISPLAY` não estava definido e Firefox/geckodriver já
-tinham sessões ativas. SMTP real e homologação no Runtime continuam pendentes.
+Validação automatizada registrada em Dev.335: Unit Messenger **346 testes / 2.780
+assertions PASS**; `AvisosResumoMailTypeTest` **3/8 PASS**. Os focais de
+preferências e formulários passaram **54 testes / 451 assertions**; a suíte
+específica de avisos de amizade passou **35 testes / 483 assertions** (inclui o
+worker de e-mail). PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+passaram. A suíte de integração MariaDB registrada
+anteriormente passou **98 testes / 1.173 assertions**, com 2 deprecações de
+annotations do Core/contrib e 7 notices de PHPUnit. O validador do índice global
+falhou porque o README raiz gerado já estava desatualizado; não regravei a tabela
+compartilhada. Kernel recente, SMTP real, testes visuais e homologação no Runtime
+não foram executados nesta microfase.
 
 A retenção de conversas usa cursor persistido para não deixar falhas antigas
 barrar lotes seguintes. Unit cobre paginação e rollback; o Kernel MariaDB cria
