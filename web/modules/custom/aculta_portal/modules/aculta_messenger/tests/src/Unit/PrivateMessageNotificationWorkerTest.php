@@ -336,6 +336,13 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       self::assertSame('sent', $deliveryStatus);
       self::assertSame(1, $digestSentValue);
     }
+    if ($existingPending
+      && $emailConfirmed
+      && $emailMode === AvisoPreferencias::EMAIL_DIGEST
+      && !$directDeliveryAlreadyAccepted) {
+      self::assertSame('pending', $deliveryStatus);
+      self::assertSame(0, $digestSentValue);
+    }
     if ($shouldSend) {
       self::assertSame('private_message_notice', $sentMail->type);
       self::assertSame('member@example.test', $sentMail->to);
@@ -496,6 +503,11 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     return [
       'confirmed and enabled' => [TRUE, AvisoPreferencias::EMAIL_IMMEDIATE, FALSE],
       'weekly digest queues without sending' => [TRUE, AvisoPreferencias::EMAIL_DIGEST, FALSE],
+      'unaccepted direct notice converts to weekly digest' => [
+        TRUE,
+        AvisoPreferencias::EMAIL_DIGEST,
+        TRUE,
+      ],
       'accepted direct email is reconciled before weekly digest' => [
         TRUE,
         AvisoPreferencias::EMAIL_DIGEST,

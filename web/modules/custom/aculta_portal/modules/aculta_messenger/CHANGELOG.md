@@ -13,6 +13,19 @@ PHP lint e parse de routing/services YAML PASS. O índice de status falha porque
 a tabela gerada do README raiz está desatualizada; não foi regenerada para
 evitar alterações de outros componentes. Sem Runtime ou navegador.
 
+## 0.1.1-dev.305 — caracterizar troca para digest antes da aceitação
+
+O worker de mensagens privadas revalida a preferência ao processar cada item:
+se a pessoa mudar de envio direto para resumo semanal antes da aceitação pelo
+Mailer, o aviso permanece pendente para o digest. Se o Mailer já aceitou a
+correlação direta, o registro é reconciliado como enviado para evitar uma
+segunda entrega. O teste cobre explicitamente os dois estados; nenhum conteúdo
+da conversa é incluído.
+
+Validação: Unit Messenger **310 testes / 2.494 assertions PASS**; adapters
+Integration Unit **75 testes / 777 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Sem Runtime ou SMTP.
+
 ## 0.1.1-dev.303 — cobrir compatibilidade de providers de digest antigos
 
 Teste de caracterização confirma que providers que implementam somente o
