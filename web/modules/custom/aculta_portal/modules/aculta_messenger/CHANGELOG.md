@@ -1,3 +1,18 @@
+## 0.1.1-dev.351 — paginar descoberta de destinatários do resumo
+
+O cron do resumo do Fórum agora consulta os avisos por cursor de ID, em páginas
+de 500, e hidrata somente uma página por vez ao montar a lista de destinatários.
+Isso evita carregar todas as entidades `aculta_aviso` pendentes de uma vez; a
+entrega combinada por conta, os locks e o reconhecimento idempotente permanecem.
+
+Validação: Unit Messenger **360/3.937 PASS**; `AvisosResumoProviderPreferenceTest`
+**11/1.207 PASS**, incluindo 501 avisos em duas páginas e cursor monotônico;
+`AvisosResumoMailerKernelTest` **4/70 PASS** no MariaDB dedicado; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime e SMTP externo
+não utilizados.
+O validador do índice global continua falhando porque o README raiz gerado está
+desatualizado; não foi regenerado para preservar alterações de outros componentes.
+
 ## 0.1.1-dev.350 — limitar lotes da retenção de conversas
 
 A limpeza de conversas privadas agora divide os IDs de origem em blocos de 500

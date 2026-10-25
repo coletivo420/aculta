@@ -17,8 +17,10 @@ use Drupal\aculta_messenger\Aviso\AvisosResumo;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Transaction;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -40,6 +42,100 @@ use PHPUnit\Framework\Attributes\Group;
 final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
 
   /**
+   * Recipient discovery hydrates Forum notices in cursor-based batches.
+   */
+  public function testForumRecipientDiscoveryLoadsAtMostFiveHundredNoticesAtOnce(): void {
+    $firstIds = range(1, 500);
+    $lastIds = [501];
+    $notices = [];
+    foreach (range(1, 501) as $id) {
+      $uidField = $this->createMock(FieldItemListInterface::class);
+      $uidField->method('__get')->with('target_id')->willReturn(27);
+      $notice = $this->createMock(ContentEntityInterface::class);
+      $notice->method('get')->with('uid')->willReturn($uidField);
+      $notices[$id] = $notice;
+    }
+
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->with(FALSE)->willReturnSelf();
+    $conditionCalls = [];
+    $query->method('condition')->willReturnCallback(static function (string $field, mixed $value, ?string $operator = NULL) use (&$conditionCalls, $query): QueryInterface {
+      $conditionCalls[] = [$field, $value, $operator];
+      return $query;
+    });
+    $query->method('sort')->with('id', 'ASC')->willReturnSelf();
+    $query->method('range')->with(0, 500)->willReturnSelf();
+    $query->method('execute')->willReturnOnConsecutiveCalls($firstIds, $lastIds, []);
+    $noticeStorage = $this->createMock(EntityStorageInterface::class);
+    $noticeStorage->expects(self::exactly(3))->method('getQuery')->willReturn($query);
+    $loadedBatches = [];
+    $noticeStorage->expects(self::exactly(3))->method('loadMultiple')->willReturnCallback(
+      static function (array $ids) use (&$loadedBatches, $notices): array {
+        $loadedBatches[] = $ids;
+        self::assertLessThanOrEqual(500, count($ids));
+        return array_intersect_key($notices, array_fill_keys($ids, TRUE));
+      },
+    );
+
+    $account = $this->createMock(UserInterface::class);
+    $account->method('id')->willReturn('27');
+    $account->method('isActive')->willReturn(TRUE);
+    $account->method('getEmail')->willReturn('digest-batch@example.test');
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->expects(self::once())->method('loadUnchanged')->with(27)->willReturn($account);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'aculta_aviso' => $noticeStorage,
+      'user' => $userStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(
+      static function (string $module, ?int $uid, ?string $key): mixed {
+        return match ([$module, $uid, $key]) {
+          ['aculta_messenger', NULL, 'avisos_resumo_em_andamento'] => [],
+          ['aculta_messenger', 27, 'avisos_resumo_em_andamento'] => NULL,
+          ['aculta_messenger', 27, 'avisos_resumo_ultimo'] => 0,
+          ['aculta_portal', 27, 'email_confirmed'] => TRUE,
+          default => NULL,
+        };
+      },
+    );
+    $preferences = new AvisoPreferencias($userData);
+    $avisos = (new \ReflectionClass(AvisoService::class))->newInstanceWithoutConstructor();
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturn(TRUE);
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn(1_800_000_000);
+    $summary = new AvisosResumo(
+      $entities,
+      $preferences,
+      $mailer,
+      new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class)),
+      $userData,
+      $time,
+      $avisos,
+      new Settings(['hash_salt' => 'unit-test-hash-salt']),
+      $this->databaseConnection(),
+      $lock,
+    );
+
+    self::assertSame(0, $summary->enviarResumos());
+    self::assertSame([$firstIds, $lastIds, []], $loadedBatches);
+    self::assertSame([
+      ['contador_email', 0, '>'],
+      ['id', 0, '>'],
+      ['contador_email', 0, '>'],
+      ['id', 500, '>'],
+      ['uid', 27, NULL],
+      ['contador_email', 0, '>'],
+    ], $conditionCalls);
+  }
+
+  /**
    * Malformed provider rows are not broadly discarded with valid digest rows.
    */
   public function testMalformedProviderRowsAreNotBroadlyDiscarded(): void {
@@ -50,6 +146,8 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $noticeQuery = $this->createMock(QueryInterface::class);
     $noticeQuery->method('accessCheck')->willReturnSelf();
     $noticeQuery->method('condition')->willReturnSelf();
+    $noticeQuery->method('sort')->willReturnSelf();
+    $noticeQuery->method('range')->willReturnSelf();
     $noticeQuery->method('execute')->willReturn([]);
     $noticeStorage = $this->createMock(EntityStorageInterface::class);
     $noticeStorage->method('getQuery')->willReturn($noticeQuery);
@@ -122,6 +220,8 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $noticeQuery = $this->createMock(QueryInterface::class);
     $noticeQuery->method('accessCheck')->willReturnSelf();
     $noticeQuery->method('condition')->willReturnSelf();
+    $noticeQuery->method('sort')->willReturnSelf();
+    $noticeQuery->method('range')->willReturnSelf();
     $noticeQuery->method('execute')->willReturn([]);
     $noticeStorage = $this->createMock(EntityStorageInterface::class);
     $noticeStorage->method('getQuery')->willReturn($noticeQuery);
@@ -173,6 +273,8 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
+    $query->method('sort')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
     $query->method('execute')->willReturn([]);
     $noticeStorage = $this->createMock(EntityStorageInterface::class);
     $noticeStorage->method('getQuery')->willReturn($query);
@@ -283,6 +385,8 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
+    $query->method('sort')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
     $query->method('execute')->willReturn([]);
     $noticeStorage = $this->createMock(EntityStorageInterface::class);
     $noticeStorage->method('getQuery')->willReturn($query);
@@ -403,6 +507,8 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
+    $query->method('sort')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
     $query->method('execute')->willReturn([]);
     $noticeStorage = $this->createMock(EntityStorageInterface::class);
     $noticeStorage->method('getQuery')->willReturn($query);
@@ -481,6 +587,8 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
+    $query->method('sort')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
     $query->method('execute')->willReturn([]);
     $noticeStorage = $this->createMock(EntityStorageInterface::class);
     $noticeStorage->method('getQuery')->willReturn($query);
@@ -556,6 +664,8 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
+    $query->method('sort')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
     $query->method('execute')->willReturn([]);
     $noticeStorage = $this->createMock(EntityStorageInterface::class);
     $noticeStorage->method('getQuery')->willReturn($query);

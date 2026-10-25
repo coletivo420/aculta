@@ -81,7 +81,7 @@ post-update e o Messenger passa a ser sua fonte normativa.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento atual é `0.1.1-dev.350`. O núcleo oferece
+A versão em desenvolvimento atual é `0.1.1-dev.351`. O núcleo oferece
 `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`, consumers para
 Fórum, LMS, Wiki, Loja, Doações e conquistas do Game, agregação da central e entrega por e-mail
 direto ou digest sem substituir os storages existentes. O Fórum preserva
@@ -89,15 +89,15 @@ direto ou digest sem substituir os storages existentes. O Fórum preserva
 momento de abrir e entregar. Preferências individuais são limitadas pela
 política administrativa, e avisos no site continuam obrigatórios.
 
-Validação automatizada mais recente, em 2026-10-25: Unit Messenger **359 testes /
-2.922 assertions PASS**; testes focados de preferências, formulários, digest e
-workers de e-mail **75/835 PASS**; central de avisos — agrupamento, filtros e
-paginação — **21/65 PASS**; segurança de envio e validação de origem — **41/246
-PASS**. Retenção de conversas longas: Kernel
-`PrivateMessageRetentionKernelTest` **4/55 PASS** no MariaDB dedicado (10
-depreciações upstream de Core/contrib) e Unit de retenção **3/76 PASS**. PHPCS
-Drupal/DrupalPractice, PHP lint e `git diff --check` PASS; Runtime e SMTP real
-não utilizados.
+Validação automatizada mais recente, em 2026-10-25: Unit Messenger **360 testes /
+3.937 assertions PASS**; digest/preferências **11/1.207 PASS** e conjunto amplo
+de preferências, formulários, digest e workers de e-mail **75/835 PASS**;
+central — agrupamento, filtros e paginação — **21/65 PASS**; segurança de envio
+e validação de origem — **41/246 PASS**. `AvisosResumoMailerKernelTest` **4/70
+PASS** e `PrivateMessageRetentionKernelTest` **4/55 PASS** no MariaDB dedicado
+(10 depreciações upstream de Core/contrib no Kernel de retenção). Unit de
+retenção **3/76 PASS**. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS; Runtime e SMTP externo não utilizados.
 
 A retenção de conversas usa cursor persistido para não deixar falhas antigas
 barrar lotes seguintes. Unit cobre paginação e rollback; o Kernel MariaDB cria

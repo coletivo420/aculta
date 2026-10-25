@@ -52,6 +52,11 @@ final class AvisosResumo {
    */
   public const INTERVALO_SEGUNDOS = 20 * 3600;
 
+  /**
+   * Maximum Forum notices hydrated per recipient scan page.
+   */
+  private const RECIPIENT_SCAN_BATCH_SIZE = 500;
+
   public const CHAVE_MAIL = 'avisos_resumo';
 
   /**
@@ -115,11 +120,23 @@ final class AvisosResumo {
    */
   public function enviarResumos(): int {
     $storage = $this->entityTypeManager->getStorage('aculta_aviso');
-    $ids = $storage->getQuery()->accessCheck(FALSE)->condition('contador_email', 0, '>')->execute();
     $porUsuario = [];
-    foreach ($storage->loadMultiple($ids) as $aviso) {
-      $porUsuario[(int) $aviso->get('uid')->target_id] = TRUE;
-    }
+    $lastNoticeId = 0;
+    do {
+      $ids = $storage->getQuery()->accessCheck(FALSE)
+        ->condition('contador_email', 0, '>')
+        ->condition('id', $lastNoticeId, '>')
+        ->sort('id', 'ASC')
+        ->range(0, self::RECIPIENT_SCAN_BATCH_SIZE)
+        ->execute();
+      if ($ids === []) {
+        break;
+      }
+      $lastNoticeId = max(array_map('intval', array_values($ids)));
+      foreach ($storage->loadMultiple($ids) as $aviso) {
+        $porUsuario[(int) $aviso->get('uid')->target_id] = TRUE;
+      }
+    } while (count($ids) === self::RECIPIENT_SCAN_BATCH_SIZE);
     // An accepted email may still need acknowledgement even when its
     // optional provider was disabled after transport acceptance. Include
     // those recipients so recovery can wait safely for the provider to return.
