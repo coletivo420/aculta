@@ -85,13 +85,13 @@ final class UnusedFileCleanerTest extends UnitTestCase {
   }
 
   /**
-   * Tests that a non-image file is removed through the File entity API.
+   * Tests that a non-image file is removed through the aculta_image owner.
    */
-  public function testRemovesUnusedNonImageThroughEntityApi(): void {
+  public function testRemovesUnusedNonImageThroughImageRemover(): void {
     $file = $this->file('application/pdf');
-    $file->expects(self::once())->method('delete');
+    $file->expects(self::never())->method('delete');
     $remover = $this->createMock(FileRemoverInterface::class);
-    $remover->expects(self::never())->method('delete');
+    $remover->expects(self::once())->method('delete')->with($file, 'portal_unused_file_cleanup')->willReturn(TRUE);
     $inspector = $this->createMock(FileReferenceInspectorInterface::class);
     $inspector->method('inspect')->willReturn(FileReferenceStatus::Clear);
     $cleaner = $this->cleaner([], $remover, $inspector);

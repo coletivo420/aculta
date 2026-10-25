@@ -70,13 +70,13 @@ final class UnusedFileCleaner {
     try {
       $mime = (string) $file->getMimeType();
       $isRaster = str_starts_with($mime, 'image/') || $this->imageInspector->dimensions($file->getFileUri()) !== NULL;
-      if ($isRaster) {
-        if (!str_starts_with($mime, 'image/') || !$this->imageRemover->delete($file, 'portal_unused_file_cleanup')) {
-          return FileCleanupStatus::OwnerRejected;
-        }
+      // A raster file with a non-image MIME type is ambiguous: keep it.
+      if ($isRaster && !str_starts_with($mime, 'image/')) {
+        return FileCleanupStatus::OwnerRejected;
       }
-      else {
-        $file->delete();
+      // Every deletion goes through the aculta_image owner, images or not.
+      if (!$this->imageRemover->delete($file, 'portal_unused_file_cleanup')) {
+        return FileCleanupStatus::OwnerRejected;
       }
     }
     catch (\Throwable $exception) {

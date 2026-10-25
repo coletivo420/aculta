@@ -12,7 +12,7 @@ use Drupal\file\FileInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 
 /**
- * Exclusão controlada de imagem após checar referências.
+ * Exclusão controlada de arquivos (imagens e não-imagens) após checar referências.
  */
 final class FileRemover implements FileRemoverInterface {
 
@@ -26,11 +26,11 @@ final class FileRemover implements FileRemoverInterface {
 
   /**
    * Deletes the file only when no entity references it.
+   *
+   * Applies to images and to other files. Derivatives are flushed for any
+   * file; for non-images there are none, so the flush is a no-op.
    */
   public function delete(FileInterface $file, string $motivo): bool {
-    if (!str_starts_with((string) $file->getMimeType(), 'image/')) {
-      return FALSE;
-    }
     if ($this->hasReferences($file)) {
       $this->loggerFactory->get('aculta_image')->notice(
         'Exclusão recusada: arquivo {fid} ainda em uso ({motivo}).',
