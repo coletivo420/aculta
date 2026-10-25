@@ -310,6 +310,8 @@ Validar retry/locks, concorrência, retenção, filas, N+1/paginação, cache po
 
 ## Evidências desta revalidação — 2026-10-25
 
+- Consulta somente leitura ao Runtime de teste em `toca`: Drush 13.8 conectou a Drupal **11.4.10**, banco `aculta_runtime`, usando `https://aculta.toca.net.br`. `updatedb:status` lista pendentes os hooks **10008–10012** e os post-updates `game_achievement_notices`, `private_message_email_preferences` e `shared_email_preferences`. Nenhum update foi aplicado. O checkout Runtime em `/home/aculta` está na branch autorizada mas divergente do remoto (**38 commits à frente, 45 atrás**) e tem alterações locais de Wiki/Game e arquivos não rastreados; foi preservado. Como os post-updates migram preferências e avisos de contas, a execução permanece pendente de checkout reconciliado e janela operacional autorizada. Os testes locais cobrem updates e migradores; não substituem essa execução/homologação.
+
 - No checkout `bc4b8c95`, a suíte Unit do Messenger passou **376 testes / 4.150 assertions**, a suíte Kernel passou **57 / 1.215** e a suíte Integration passou **120 / 1.569** no MariaDB dedicado `aculta_simpletest`. Unit terminou sem issues; Kernel reportou 10 deprecações upstream e quatro notices, e Integration cinco deprecações e sete notices. Nenhuma suíte teve falhas. O gate Drupal 11+ passou **1.155 checks** e o índice passou com **41 componentes**. Runtime, filas reais, SMTP e Alpha não foram usados; validação visual não foi iniciada porque não havia `DISPLAY`, havia sessões Firefox/WebDriver ativas e `/tmp` estava sem espaço livre.
 
 ## Evidências desta revisão — 2026-10-26
