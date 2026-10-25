@@ -149,6 +149,33 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
   }
 
   /**
+   * Members can remove their own follow after losing access to its topic.
+   */
+  public function testCanRemoveOwnFollowWhenTopicIsNoLongerViewable(): void {
+    $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('id')->willReturn(27);
+    $topic = $this->topic(501, 'Conteúdo restrito', FALSE);
+    $ownFollowing = $this->flagging(701, 27, 'seguir_topico', $topic);
+    $flag = $this->createMock(FlagInterface::class);
+    $flagService = $this->createMock(FlagServiceInterface::class);
+    $flagService->method('getFlagById')->with('seguir_topico')->willReturn($flag);
+    $flagService->method('getAllFlaggingByUser')->with($account)->willReturn([$ownFollowing]);
+    $flagService->expects(self::once())->method('unflag')->with($flag, $topic, $account);
+    $nodeStorage = $this->createMock(EntityStorageInterface::class);
+    $nodeStorage->expects(self::once())->method('loadMultiple')->with(['501'])->willReturn([501 => $topic]);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->with('node')->willReturn($nodeStorage);
+    $messenger = $this->createMock(MessengerInterface::class);
+    $messenger->expects(self::once())->method('addStatus');
+    $formBuilder = $this->formBuilder($account, $flagService, $messenger, $entityTypeManager);
+    $formState = new FormState();
+    $formState->setValue(['assinaturas', 'topics'], ['701' => ['remove' => 1]]);
+    $form = [];
+
+    $formBuilder->removeSubscriptionsSubmit($form, $formState);
+  }
+
+  /**
    * Creates the form builder with controlled Flag and URL services.
    */
   private function formBuilder(

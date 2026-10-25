@@ -1,3 +1,14 @@
+## 0.1.1-dev.334 — cobrir remoção de acompanhamentos inacessíveis
+
+O teste da lista de acompanhamentos agora prova que a pessoa pode remover uma
+Flag `seguir_topico` própria mesmo após perder acesso ao tópico. O controle não
+precisa exibir o título nem reabrir o conteúdo; titularidade e tipo da Flag
+continuam revalidados antes da remoção.
+
+Validação: `AvisosPrivacyFormTest` **4/40 PASS**, Unit Messenger
+**346/2.780 PASS**, PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS. Sem mudança de código de produção, Kernel, Runtime ou SMTP.
+
 ## 0.1.1-dev.333 — falhar fechado para preferência de e-mail inválida
 
 Uma preferência individual de categoria só herda o padrão administrativo se
