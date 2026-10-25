@@ -252,6 +252,7 @@ try {
       }
 
       const own = await inspect(browser, ACCOUNT + '/studio/perfil');
+      const ownHtml = await browser.source();
       check(`${owner}: perfil privado no ACCOUNT`, own.profileEditor && own.pathname === '/studio/perfil');
       check(`${owner}: não inferir apelido do login`, own.privateName !== USERS[i] || own.privateName === SLUGS[i],
         'verificar também fixture sem apelido em rodada S-R4');
@@ -260,19 +261,20 @@ try {
       } else check(`${owner}: link público condicionado`, null, 'SR5_PERFIL_PUBLICO_A/B sem fixture');
       if (SENTINELS.every(Boolean) && SENTINELS[0] !== SENTINELS[1]) {
         check(`${owner}: identidade própria no Studio`, own.markerFlags[i] === true);
-        check(`${owner}: nunca incluir bio do outro titular`, own.markerFlags[1-i] === false);
+        check(`${owner}: nunca incluir bio do outro titular no HTML`, !ownHtml.includes(SENTINELS[1-i]));
       } else check(`${owner}: isolamento com duas sentinelas`, null, 'SR5_BIO_SENTINELA_A/B ausentes');
       const publicPage = await inspect(browser, MAIN + '/u/' + SLUGS[i]);
+      const publicHtml = await browser.source();
       check(`${owner}: perfil público em MAIN`, publicPage.origin === MAIN && publicPage.pathname === '/u/' + SLUGS[i]);
       if (PUBLIC[i] === 'no') {
         check(`${owner}: perfil privado não mostra bio`, !publicPage.publicBio);
         check(`${owner}: perfil privado não mostra links de contato`, !publicPage.publicLinks);
         if (SENTINELS.every(Boolean) && SENTINELS[0] !== SENTINELS[1]) {
-          check(`${owner}: bio privada não vaza no MAIN`, !publicPage.markerFlags[i]);
+          check(`${owner}: bio privada não vaza no HTML MAIN`, !publicHtml.includes(SENTINELS[i]));
         } else check(`${owner}: bio privada não vaza no MAIN`, null, 'sentinelas ausentes');
       }
       if (SENTINELS.every(Boolean) && SENTINELS[0] !== SENTINELS[1]) {
-        check(`${owner}: bio do outro titular nunca aparece no MAIN`, !publicPage.markerFlags[1-i]);
+        check(`${owner}: bio do outro titular nunca aparece no HTML MAIN`, !publicHtml.includes(SENTINELS[1-i]));
       } else check(`${owner}: isolamento MAIN entre contas`, null, 'sentinelas ausentes');
       // E-mail no perfil público é opt-in do ACULTA User: NÃO proibir
       // indiscriminadamente; validar configuração do owner e fixture.
