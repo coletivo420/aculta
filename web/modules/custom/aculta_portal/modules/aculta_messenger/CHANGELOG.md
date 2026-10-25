@@ -1,3 +1,18 @@
+## 0.1.1-dev.361 — adapters opcionais sem configuração completa
+
+O adapter da Revista agora verifica a presença do template Message e de todos
+os campos de storage/instância antes de consultar ou gravar. Se a configuração
+do bundle ainda não foi instalada em um site existente, publisher, central,
+contador e digest falham fechados sem `QueryException`. O Kernel reproduz a
+configuração ausente, equivalente ao preflight do Runtime; nenhum update foi
+executado nesse ambiente.
+
+Validação: Kernel Magazine **10 testes / 227 assertions PASS** no MariaDB
+dedicado; Unit Messenger **369 / 3.976 PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Duas depreciações upstream de discovery
+`@EntityType` permanecem. Atualizações 10008–10012, HTTP autenticado, SMTP,
+Runtime após atualização e visual continuam pendentes.
+
 ## 0.1.1-dev.360 — avisos do fluxo editorial da Revista
 
 O adapter central agora recebe eventos de envio para revisão (`draft` →

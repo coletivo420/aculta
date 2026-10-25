@@ -305,6 +305,39 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * An uninstalled optional bundle is ignored without querying its fields. */
+  public function testMissingMagazineBundleDisablesAdapterSafely(): void {
+    $user = $this->createActiveUser();
+    $node = $this->publishedNode($user);
+    $event = $this->event($user, $node);
+    $entityTypeManager = $this->container->get('entity_type.manager');
+    $fieldConfigStorage = $entityTypeManager->getStorage('field_config');
+    $fieldStorage = $entityTypeManager->getStorage('field_storage_config');
+    foreach ([
+      'field_aculta_mag_event_type',
+      'field_aculta_mag_source_uuid',
+      'field_aculta_mag_event_version',
+      'field_aculta_mag_read',
+      'field_aculta_mag_digest_sent',
+      'field_aculta_msg_delivery',
+      'field_aculta_messenger_attempts',
+    ] as $field) {
+      $fieldConfigStorage->load('message.' . MagazineNoticeManager::TEMPLATE . '.' . $field)?->delete();
+      $fieldStorage->load('message.' . $field)?->delete();
+    }
+    $entityTypeManager->getStorage('message_template')->load(MagazineNoticeManager::TEMPLATE)?->delete();
+    $manager = $this->manager($this->createMock(AvisoPreferenciasInterface::class));
+    $items = [];
+
+    self::assertNull($manager->record($event));
+    self::assertSame(0, $manager->unreadCount((int) $user->id()));
+    self::assertSame([], $manager->pendingRecipientIds());
+    self::assertSame([], $manager->digestRowsFor((int) $user->id()));
+    self::assertFalse($manager->addPersonalNoticesPage($items, $user, [], 10, 0));
+    self::assertSame([], $items);
+  }
+
+  /**
    * Refuses a queued event after the source moved to another revision. */
   public function testStalePublicationRevisionIsNotPersisted(): void {
     $user = $this->createActiveUser();
