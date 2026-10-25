@@ -1,3 +1,17 @@
+## 0.1.1-dev.295 — respeitar bloqueios na apresentação de grupos
+
+O estado de envio da conversa agora examina todos os demais participantes em
+threads de grupo. Se qualquer participante bloqueou a conta atual ou foi
+bloqueado por ela, o compositor é substituído pelo aviso de bloqueio,
+coerente com a validação nativa que já recusava o envio.
+
+Validação: conjunto de privacidade `ConversationMessagingStateTest`,
+`PrivateMessageReplyHooksTest`, `PrivateMessageFormValidatorTest`,
+`PrivateMessageFormHooksTest` e `MessagesControllerMemberAccessTest` passou
+**29 testes / 169 assertions**; PHP lint e PHPCS Drupal/DrupalPractice dos
+arquivos novos/alterados passaram sem novas violações. O hook mantém seu
+baseline anterior de PHPCS (5 erros / 7 avisos). Sem Browser ou Runtime.
+
 ## 0.1.1-dev.294 — limitar varreduras de paginação por origem
 
 Offsets da central agora têm um limite de 100 páginas (10.000 avisos) por

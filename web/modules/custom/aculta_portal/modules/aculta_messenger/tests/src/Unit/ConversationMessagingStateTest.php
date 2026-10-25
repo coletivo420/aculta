@@ -56,4 +56,39 @@ final class ConversationMessagingStateTest extends UnitTestCase {
     }
   }
 
+  /**
+   * A block with any participant prevents replies in a group thread.
+   */
+  public function testBlockByOrFromAnyGroupMemberPreventsReplies(): void {
+    foreach ([
+      [84, TRUE, FALSE, ConversationMessagingState::BLOCKED_BY_ME],
+      [85, FALSE, TRUE, ConversationMessagingState::BLOCKED_BY_THEM],
+    ] as [$blockedMember, $blockedByMe, $blockedByThem, $expected]) {
+      $currentUser = $this->createMock(AccountProxyInterface::class);
+      $currentUser->method('id')->willReturn(42);
+      $thread = $this->createMock(PrivateMessageThreadInterface::class);
+      $thread->method('getMembersId')->willReturn([42, 84, 85]);
+      $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
+      $banManager->method('isBanned')->willReturnCallback(static fn(int $uid): bool => $uid === $blockedMember && $blockedByMe);
+      $banManager->method('isCurrentUserBannedByUser')->willReturnCallback(static fn(int $uid): bool => $uid === $blockedMember && $blockedByThem);
+
+      self::assertSame($expected, (new ConversationMessagingState($currentUser, $banManager))->stateFor($thread));
+    }
+  }
+
+  /**
+   * A group remains replyable when no participant is blocked.
+   */
+  public function testUnblockedGroupRemainsOpen(): void {
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('getMembersId')->willReturn([42, 84, 85]);
+    $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
+    $banManager->expects(self::exactly(2))->method('isBanned')->willReturn(FALSE);
+    $banManager->expects(self::exactly(2))->method('isCurrentUserBannedByUser')->willReturn(FALSE);
+
+    self::assertSame(ConversationMessagingState::OPEN, (new ConversationMessagingState($currentUser, $banManager))->stateFor($thread));
+  }
+
 }

@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.295 — `ConversationMessagingState` agora aplica bloqueios bilaterais a qualquer participante do grupo, não somente threads individuais; UI não mostra compositor quando o validador nativo recusaria o envio e usa texto genérico sem identificar o participante. Privacidade **29/169 PASS**, PHP lint e PHPCS dos arquivos novos/alterados PASS; baseline PHPCS do hook sem regressão. Browser/Runtime não executados.
 - Dev.294 — limita offsets não confiáveis da central a 100 páginas (10.000 avisos) por origem, evitando varreduras profundas excessivas sem alterar paginação válida. Testes focais de paginação **8/60 PASS**, PHP lint e PHPCS do teste PASS; PHPCS do controller manteve baseline do HEAD (**93 erros / 65 avisos**). O índice de status não passou porque a tabela do README raiz está desatualizada; não foi regenerada para preservar alterações paralelas.
 - Dev.293 — workers diretos da Loja e Wiki validam endereço antes de consultar a origem; destinatário inválido cancela somente o e-mail. Segurança Commerce/Wiki 12/166, Integration Unit 75/777, Kernels Wiki/Loja/LMS/Doações 23/396 (2 deprecações Core/contrib e 7 notices PHPUnit), PHPCS e PHP lint PASS; sem Runtime/SMTP.
 - Dev.292 — worker LMS cancela destinatário inativo ou endereço malformado antes de resolver a origem, sem classificar como falha retryable nem consumir tentativas. Worker 8/97, Unit Messenger 297/2.385, Integration Unit 74/755, PHPCS e PHP lint PASS; sem Runtime/SMTP.

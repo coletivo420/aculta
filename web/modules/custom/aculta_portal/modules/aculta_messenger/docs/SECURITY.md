@@ -57,7 +57,9 @@ revalida os IDs enviados pelo navegador, e a rota iniciada pelo perfil falha
 fechada para destinatários inelegíveis. A busca não revela esses membros.
 No envio de grupos, os bloqueios bilaterais são revalidados antes de o serviço
 contrib criar uma thread nova e novamente depois de resolver/recarregar a thread
-sob lock. Um bloqueio ocorrido após a validação não deixa uma thread vazia.
+sob lock. Em threads existentes, qualquer bloqueio entre a conta atual e outro
+participante oculta o compositor, mantendo a mesma política aplicada no submit.
+Um bloqueio ocorrido após a validação não deixa uma thread vazia.
 
 O evento de notificação é processado pela fila do Core após o hook nativo. A
 entrega revalida thread, usuário ativo, permissões e ambos os sentidos de

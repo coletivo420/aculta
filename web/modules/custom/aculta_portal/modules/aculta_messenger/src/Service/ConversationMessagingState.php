@@ -38,15 +38,16 @@ final class ConversationMessagingState {
    * The state of the conversation for the current member.
    */
   public function stateFor(PrivateMessageThreadInterface $thread): string {
-    $other = $this->otherMember($thread);
-    if ($other === NULL) {
-      return self::OPEN;
+    $others = $this->otherMembers($thread);
+    foreach ($others as $other) {
+      if ($this->banManager->isBanned($other)) {
+        return self::BLOCKED_BY_ME;
+      }
     }
-    if ($this->banManager->isBanned($other)) {
-      return self::BLOCKED_BY_ME;
-    }
-    if ($this->banManager->isCurrentUserBannedByUser($other)) {
-      return self::BLOCKED_BY_THEM;
+    foreach ($others as $other) {
+      if ($this->banManager->isCurrentUserBannedByUser($other)) {
+        return self::BLOCKED_BY_THEM;
+      }
     }
     return self::OPEN;
   }
@@ -55,11 +56,22 @@ final class ConversationMessagingState {
    * The other member in a one-to-one conversation, or NULL for other threads.
    */
   public function otherMember(PrivateMessageThreadInterface $thread): ?int {
-    $others = array_values(array_filter(
-      array_map('intval', $thread->getMembersId()),
-      fn(int $id) => $id !== (int) $this->currentUser->id(),
-    ));
+    $others = $this->otherMembers($thread);
     return count($others) === 1 ? $others[0] : NULL;
+  }
+
+  /**
+   * Returns distinct positive participants other than the current account.
+   *
+   * @return int[]
+   *   Other member IDs in the thread's stable membership order.
+   */
+  private function otherMembers(PrivateMessageThreadInterface $thread): array {
+    $currentId = (int) $this->currentUser->id();
+    return array_values(array_unique(array_filter(
+      array_map('intval', $thread->getMembersId()),
+      static fn(int $id): bool => $id > 0 && $id !== $currentId,
+    )));
   }
 
 }

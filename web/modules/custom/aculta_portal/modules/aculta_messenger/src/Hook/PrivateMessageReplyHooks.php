@@ -116,8 +116,10 @@ final class PrivateMessageReplyHooks {
     $other = $this->messagingState->otherMember($thread);
     $notice = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'messenger-notice', 'role' => 'status']];
     $text = match (TRUE) {
-      $state === ConversationMessagingState::BLOCKED_BY_ME => 'Você bloqueou essa pessoa, ',
-      $state === ConversationMessagingState::BLOCKED_BY_THEM => 'Essa pessoa bloqueou você, por isso não pode enviar ou receber mensagens.',
+      $state === ConversationMessagingState::BLOCKED_BY_ME && $other !== NULL => 'Você bloqueou essa pessoa, ',
+      $state === ConversationMessagingState::BLOCKED_BY_ME => 'Você bloqueou um participante desta conversa. Remova o bloqueio nas opções dessa pessoa para enviar mensagens novamente.',
+      $state === ConversationMessagingState::BLOCKED_BY_THEM && $other !== NULL => 'Essa pessoa bloqueou você, por isso não pode enviar ou receber mensagens.',
+      $state === ConversationMessagingState::BLOCKED_BY_THEM => 'Um participante bloqueou você, por isso não pode enviar ou receber mensagens nesta conversa.',
       default => 'Não é possível enviar mensagens nesta conversa.',
     };
     $notice['text'] = ['#plain_text' => $text];

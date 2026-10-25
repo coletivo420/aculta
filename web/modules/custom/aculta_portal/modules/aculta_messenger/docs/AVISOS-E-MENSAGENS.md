@@ -117,7 +117,7 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 
 - `Controller/MessagesController`, `NativePrivateMessageController`, `NewConversationController`: telas de conversa.
 - `Form/NewConversationForm`, `PrivateMessageFormValidator`, `FriendRequestsForm`: formulários de conversa e pedidos.
-- `Service/ConversationPolicy`, `ConversationMessagingState`: política de novas conversas; bloqueio bilateral em threads existentes.
+- `Service/ConversationPolicy`, `ConversationMessagingState`: política de novas conversas; bloqueios bilaterais em todos os participantes de threads existentes e estado correspondente do compositor.
 - `Service/UnreadThreadCounter`: contagem de conversas não lidas.
 - `Hook/PrivateMessage*Hooks`: formulários, respostas, retenção e apresentação das mensagens.
 - `Plugin/QueueWorker/PrivateMessageNotificationWorker`: entrega aviso genérico direto por e-mail ou registra o aviso mínimo para o digest semanal. O e-mail contém o nome do remetente e o link da inbox, nunca o conteúdo da mensagem; acesso, bloqueios, confirmação e preferência são revalidados.
