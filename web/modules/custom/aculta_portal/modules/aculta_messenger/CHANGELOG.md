@@ -1,3 +1,9 @@
+## 0.1.1-dev.254 — revalidar autorização ao limpar histórico
+
+A confirmação de limpeza agora revalida conta autenticada e ativa, membership e `thread->access('view', ..., TRUE)` imediatamente antes de alterar o histórico. A etapa inicial permanece somente confirmatória e não altera mensagens. O teste cobre acesso revogado e ausência de mutação antes da confirmação.
+
+Validação: `ConversationRelationshipFormTest` **3 testes / 27 assertions PASS**; Unit Messenger **254/1.976 PASS**; PHPCS Drupal/DrupalPractice do teste PASS. O formulário alterado ainda tem 15 erros/23 avisos de baseline no PHPCS Drupal (antes: 20/25); Kernel e Runtime não executados.
+
 ## 0.1.1-dev.253 — caracterizar elegibilidade dos destinatários de e-mail privado
 
 O teste do worker agora prova que conta inativa, revogação de `use private messaging system` ou de `access user profiles` interrompem o aviso antes da consulta de bloqueios, persistência do registro ou transporte. O worker mantém a revalidação dessas condições em cada entrega.

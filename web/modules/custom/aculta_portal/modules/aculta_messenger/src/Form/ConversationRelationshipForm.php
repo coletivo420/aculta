@@ -276,7 +276,9 @@ final class ConversationRelationshipForm extends FormBase {
     }
   }
 
-  /** The group actions: the same two steps of "Limpar histórico", on the thread the state names. */
+  /**
+   * Applies the two clear-history actions to the thread named in form state.
+   */
   private function submitGroup(FormStateInterface $formState): void {
     $formState->disableRedirect();
     $action = (string) ($formState->getTriggeringElement()['#name'] ?? '');
@@ -295,8 +297,9 @@ final class ConversationRelationshipForm extends FormBase {
         return;
 
       case 'clear_confirm':
-        $this->clearHistory($thread);
-        $formState->set('message', (string) $this->t('Histórico limpo para você.'));
+        $formState->set('message', $this->clearHistory($thread)
+          ? (string) $this->t('Histórico limpo para você.')
+          : (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
         return;
 
       default:
@@ -305,20 +308,37 @@ final class ConversationRelationshipForm extends FormBase {
   }
 
   /**
-   * Clears the history of the current member only. The message list is cached per message, so the tags of the thread
-   * and of its messages are invalidated too; otherwise the answer keeps the old list.
+   * Clears current-member history after revalidating account and thread access.
+   *
+   * The message list is cached per message. Invalidate thread and message tags
+   * so the response does not retain the old list.
+   *
+   * @return bool
+   *   TRUE when the history was cleared for the current member.
    */
-  private function clearHistory(PrivateMessageThreadInterface $thread): void {
-    $sender = $this->entityTypes->getStorage('user')->load((int) $this->currentUser->id());
+  private function clearHistory(PrivateMessageThreadInterface $thread): bool {
+    $uid = (int) $this->currentUser->id();
+    if (!$this->currentUser->isAuthenticated() || $uid < 1 || !$thread->isMember($uid)
+      || !$thread->access('view', $this->currentUser, TRUE)->isAllowed()) {
+      return FALSE;
+    }
+
+    $sender = $this->entityTypes->getStorage('user')->load($uid);
+    if (!$sender instanceof UserInterface || !$sender->isActive()) {
+      return FALSE;
+    }
     $thread->clearAccountHistory($sender);
     $tags = $thread->getCacheTags();
     foreach ($thread->get('private_messages')->referencedEntities() as $message) {
       $tags = array_merge($tags, $message->getCacheTags());
     }
     $this->cacheTagsInvalidator->invalidateTags($tags);
+    return TRUE;
   }
 
-  /** Only another active member can be the target: never the current account, never an anonymous or blocked one. */
+  /**
+   * Returns an active target distinct from the current account.
+   */
   private function target(int $uid): ?UserInterface {
     if ($uid <= 0 || $uid === (int) $this->currentUser->id() || !$this->currentUser->isAuthenticated()) {
       return NULL;
