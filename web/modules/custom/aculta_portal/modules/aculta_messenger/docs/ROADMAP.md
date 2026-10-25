@@ -310,7 +310,7 @@ Validar retry/locks, concorrência, retenção, filas, N+1/paginação, cache po
 
 ## Evidências desta revalidação — 2026-10-25
 
-- No checkout `bc4b8c95`, a suíte Unit do Messenger passou **376 testes / 4.150 assertions** e a suíte Kernel passou **57 / 1.215** no MariaDB dedicado `aculta_simpletest`; PHPUnit reportou 10 deprecações de Core/contrib e quatro notices, sem falhas. O gate Drupal 11+ passou **1.155 checks** e o índice passou com **41 componentes**. Runtime, filas reais, SMTP e Alpha não foram usados; validação visual não foi iniciada porque não havia `DISPLAY`, havia sessões Firefox/WebDriver ativas e `/tmp` estava sem espaço livre.
+- No checkout `bc4b8c95`, a suíte Unit do Messenger passou **376 testes / 4.150 assertions**, a suíte Kernel passou **57 / 1.215** e a suíte Integration passou **120 / 1.569** no MariaDB dedicado `aculta_simpletest`. Unit terminou sem issues; Kernel reportou 10 deprecações upstream e quatro notices, e Integration cinco deprecações e sete notices. Nenhuma suíte teve falhas. O gate Drupal 11+ passou **1.155 checks** e o índice passou com **41 componentes**. Runtime, filas reais, SMTP e Alpha não foram usados; validação visual não foi iniciada porque não havia `DISPLAY`, havia sessões Firefox/WebDriver ativas e `/tmp` estava sem espaço livre.
 
 ## Evidências desta revisão — 2026-10-26
 
