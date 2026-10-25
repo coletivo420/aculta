@@ -36,7 +36,12 @@ final class MemberInitiatedRequest {
     $drawerFetch = $requestedWith === 'xmlhttprequest'
       && ($destination === '' || $destination === 'empty')
       && ($site === '' || $site === 'same-origin');
+    // Same-site is not same-origin: a sibling domain can initiate an
+    // activated navigation with the member's session cookie. Do not let it
+    // change read state. "none" covers a browser initiated navigation such as
+    // opening a bookmark or typing the address.
     $activatedNavigation = $userActivation === '?1'
+      && in_array($site, ['', 'same-origin', 'none'], TRUE)
       && ($destination === '' || $destination === 'document');
     return $drawerFetch || $activatedNavigation;
   }

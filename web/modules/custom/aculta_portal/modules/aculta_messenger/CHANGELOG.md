@@ -2532,3 +2532,8 @@ A busca de destinatários usa apelidos dos perfis, resolve o nome pela API `Publ
 
 Validação: `NewConversationControllerTest` + `NewConversationRecipientIdsTest` **5/27 PASS**, Unit Messenger **260/2.022 PASS**; `AuthorIdentityResolverTest` **2/9 PASS**, Unit aculta_user **125/448 PASS** com uma depreciação preexistente de PHPUnit. PHPCS dos novos arquivos e lint PASS. Kernel, Browser e Runtime não executados.
 
+## 0.1.1-dev.263 — bloquear navegação iniciada por origem irmã
+
+- Rejeita navegações ativadas com `Sec-Fetch-Site: same-site` antes de alterar estado de leitura; origens irmãs não equivalem à origem exata do site. Navegação explícita da própria origem e abertura por bookmark continuam permitidas.
+- `MemberInitiatedRequestTest` **6/22 PASS**, Unit Messenger **261/2.023 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+

@@ -107,4 +107,16 @@ final class MemberInitiatedRequestTest extends UnitTestCase {
     self::assertTrue(MemberInitiatedRequest::isMemberInitiated($activatedDocument));
   }
 
+  /**
+   * A top-level navigation from a sibling origin cannot change read state.
+   */
+  public function testSameSiteActivatedNavigationIsNotMemberInitiated(): void {
+    $request = Request::create('/avisos/wiki/1/abrir');
+    $request->headers->set('Sec-Fetch-Site', 'same-site');
+    $request->headers->set('Sec-Fetch-Dest', 'document');
+    $request->headers->set('Sec-Fetch-User', '?1');
+
+    self::assertFalse(MemberInitiatedRequest::isMemberInitiated($request));
+  }
+
 }
