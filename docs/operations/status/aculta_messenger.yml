@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: "Dev.232 prova o retry temporário idempotente do digest: a mesma correlação é reutilizada (Unit 6/130; Kernel Mailer 4/70 PASS). Dev.231 cobre bloqueios e revogação no worker de mensagens privadas (Unit 4/82). Runtime e SMTP externo não executados."
+next_phase: "Dev.233 prova restrições administrativas uniformes nas seis categorias de e-mail (Unit 16/45 PASS). Dev.232 prova retry idempotente do digest (Unit 6/130; Kernel Mailer 4/70 PASS). Runtime e SMTP externo não executados."

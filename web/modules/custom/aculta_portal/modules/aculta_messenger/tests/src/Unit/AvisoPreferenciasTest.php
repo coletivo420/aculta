@@ -9,6 +9,7 @@ use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserDataInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -48,21 +49,52 @@ final class AvisoPreferenciasTest extends UnitTestCase {
 
   /**
    * An administrator restriction suppresses a disallowed saved user mode. */
-  public function testAdministrativePolicyRestrictsEffectiveEmailMode(): void {
+  #[DataProvider('administrativePolicyCases')]
+  public function testAdministrativePolicyRestrictsEffectiveEmailMode(
+    string $category,
+    array $configuredModes,
+    string $savedMode,
+    array $allowedModes,
+  ): void {
     $userData = $this->createMock(UserDataInterface::class);
     $userData->method('get')->willReturnCallback(static fn(string $module, int $uid, string $key): mixed => match ($key) {
-      'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_IMMEDIATE,
+      'avisos_email_mode_' . $category => $savedMode,
       default => NULL,
     });
     $configFactory = $this->getConfigFactoryStub([
-      'aculta_messenger.settings' => ['email_modes' => ['wiki' => ['digest' => TRUE, 'immediate' => FALSE]]],
+      'aculta_messenger.settings' => ['email_modes' => [$category => $configuredModes]],
     ]);
     $preferences = new AvisoPreferencias($userData, $configFactory);
 
-    self::assertSame([AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST], $preferences->allowedEmailModes('wiki'));
-    self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, 'wiki'));
+    self::assertSame($allowedModes, $preferences->allowedEmailModes($category));
+    self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, $category));
     $this->expectException(\InvalidArgumentException::class);
-    $preferences->saveEmailMode(27, 'wiki', AvisoPreferencias::EMAIL_IMMEDIATE);
+    $preferences->saveEmailMode(27, $category, $savedMode);
+  }
+
+  /**
+   * Builds both administrator mode restrictions for every shared origin.
+   *
+   * @return array<string, array{string, array<string, bool>, string, list<string>}>
+   *   Category, site policy, saved member mode, and allowed modes.
+   */
+  public static function administrativePolicyCases(): array {
+    $cases = [];
+    foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
+      $cases[$category . ' disallows direct delivery'] = [
+        $category,
+        ['digest' => TRUE, 'immediate' => FALSE],
+        AvisoPreferencias::EMAIL_IMMEDIATE,
+        [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST],
+      ];
+      $cases[$category . ' disallows digest'] = [
+        $category,
+        ['digest' => FALSE, 'immediate' => TRUE],
+        AvisoPreferencias::EMAIL_DIGEST,
+        [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE],
+      ];
+    }
+    return $cases;
   }
 
   /**

@@ -1,3 +1,21 @@
+## 0.1.1-dev.233 — verificar políticas administrativas por origem
+
+`AvisoPreferenciasTest` agora aplica ambas as restrições administrativas (desligar envio direto e desligar resumo)
+uniformemente a Fórum, Aprendizagem, Wiki, Loja e Doações. Para cada categoria, a preferência incompatível do membro
+falha fechada e não pode ser salva; o outro modo permitido continua disponível.
+
+Validação: teste focal **16 testes / 45 assertions PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime e e-mail
+externo não executados.
+
+## 0.1.1-dev.232 — provar idempotência da repetição do digest
+
+O teste do digest agora percorre a falha temporária do Mailer e uma nova tentativa após a janela de transporte: o lote
+permanece pendente, recebe a mesma correlação determinística e é confirmado uma vez após o envio aceito. A cobertura
+fecha a lacuna entre testar apenas a pendência da falha e comprovar a chave idempotente do retry.
+
+Validação: `AvisosResumoProviderPreferenceTest` **6/130 PASS**; `AvisosResumoMailerKernelTest` **4/70 PASS** em
+MariaDB dedicado. Runtime e transporte de e-mail externo não executados.
+
 ## 0.1.1-dev.231 — cobrir revogação e bloqueios no aviso de mensagem privada
 
 `PrivateMessageNotificationWorkerTest` agora comprova que a fila não cria aviso de e-mail após perder acesso à thread
@@ -2316,13 +2334,4 @@ Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **253 tes
 `PrivateMessageRetentionKernelTest` **2 testes / 29 assertions PASS** no MariaDB dedicado (10 deprecações de discovery e
 assinaturas de Message/Private Message Core/contrib); PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime e e-mail externo
 não executados.
-
-## 0.1.1-dev.232 — provar idempotência da repetição do digest
-
-O teste do digest agora percorre a falha temporária do Mailer e uma nova tentativa após a janela de transporte: o lote
-permanece pendente, recebe a mesma correlação determinística e é confirmado uma vez após o envio aceito. A cobertura
-fecha a lacuna entre testar apenas a pendência da falha e comprovar a chave idempotente do retry.
-
-Validação: `AvisosResumoProviderPreferenceTest` **6/130 PASS**; `AvisosResumoMailerKernelTest` **4/70 PASS** em
-MariaDB dedicado. Runtime e transporte de e-mail externo não executados.
 
