@@ -1,3 +1,18 @@
+## 0.1.1-dev.357 — primeira integração da Revista
+
+O núcleo Messenger agora possui o consumer e as configurações da origem Revista,
+com persistência no `Message` já compartilhado, aviso obrigatório no site,
+preferência de e-mail off/direto/digest, agrupamento da central e validação de
+acesso por lote. O adapter Magazine emite publicação/republicação e atualização
+pública para autor, coautores e seguidores elegíveis; inclui Flag para seguir
+publicações. Não cria conversa ou armazenamento paralelo. Eventos de envio e
+resultado da revisão editorial permanecem pendentes.
+
+Validação: Magazine Kernel **5 testes / 90 assertions PASS** em MariaDB
+dedicado; Unit Messenger e integração Magazine **369/3.965 PASS**; PHPCS e PHP lint dos arquivos alterados PASS.
+O Kernel registrou duas depreciações upstream `@EntityType` do
+Core/contrib. Runtime, SMTP, HTTP e Alpha não foram executados.
+
 ## 0.1.1-dev.356 — contenção do digest sob concorrência múltipla
 
 O teste de Kernel agora inicia três boots Drupal independentes enquanto o
@@ -3607,4 +3622,3 @@ Message compartilhado, sob lock e vinculada ao destinatário.
 Validação: `GameAchievementNoticeManagerTest` **2/32 PASS**; Unit Messenger
 **355/2.851 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
 PASS. Kernel/Runtime não executados (`SIMPLETEST_DB` indisponível).
-

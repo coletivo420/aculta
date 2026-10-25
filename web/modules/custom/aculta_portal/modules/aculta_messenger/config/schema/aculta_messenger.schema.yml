@@ -33,6 +33,9 @@ aculta_messenger.settings:
         wiki:
           type: aculta_messenger.email_modes
           label: 'Wiki'
+        revista:
+          type: aculta_messenger.email_modes
+          label: 'Revista'
         loja:
           type: aculta_messenger.email_modes
           label: 'Loja'
@@ -45,6 +48,16 @@ aculta_messenger.settings:
         amizade:
           type: aculta_messenger.email_modes
           label: 'Amizades'
+    magazine_events:
+      type: mapping
+      label: 'Eventos da Revista enviados ao Messenger'
+      mapping:
+        published:
+          type: boolean
+          label: 'Publicação inicial'
+        updated:
+          type: boolean
+          label: 'Nova revisão publicada'
     private_message_digest_anchor:
       type: string
       label: 'Data inicial do digest semanal de mensagens privadas'

@@ -20,6 +20,10 @@ email_modes:
     digest: true
     immediate: true
     default_mode: off
+  revista:
+    digest: true
+    immediate: true
+    default_mode: off
   loja:
     digest: true
     immediate: true
@@ -36,4 +40,7 @@ email_modes:
     digest: false
     immediate: true
     default_mode: immediate
+magazine_events:
+  published: true
+  updated: true
 private_message_digest_anchor: '2026-10-26'

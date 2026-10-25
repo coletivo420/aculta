@@ -41,6 +41,7 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
     ForumAviso::TIPO_ATUALIZACAO,
     'aprendizagem',
     'wiki',
+    'revista',
     'loja',
     'doacao',
     self::EMAIL_PRIVATE_MESSAGES,

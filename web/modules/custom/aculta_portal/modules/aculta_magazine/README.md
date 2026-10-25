@@ -47,6 +47,18 @@ Não existe uma rota separada `/painel-administrativo/revista/comentarios`. A
 colocação do bloco é configuração de site em Config Sync; a instalação do
 módulo fornece as Views e o caminho editorial.
 
+## Avisos da Revista
+
+`aculta_magazine` publica eventos de publicação/republicação e atualização no
+contrato central `aculta_messenger.notice_event_publisher`. O núcleo persiste o
+aviso como `Message`, agrega a origem Revista na central e coordena e-mail pelo
+Mailer conforme preferência da conta. `seguir_publicacao` é Flag opcional por
+publicação; acompanhar não altera acesso e não inicia conversa. A administração
+do Messenger pode habilitar separadamente publicação e atualização. O fluxo de
+envio para revisão e os resultados editoriais ainda não emitem avisos; ver
+[arquitetura](docs/ARCHITECTURE.md#11-integração-com-avisos-do-aculta-messenger)
+e o roadmap do Messenger.
+
 Comentários contextuais continuam como entidades Comment no Node `revista`.
 `aculta_forum` fornece o contexto compartilhado de leitura, resposta e moderação;
 essa integração não cria tópico público. Galerias são entidades `media_gallery`

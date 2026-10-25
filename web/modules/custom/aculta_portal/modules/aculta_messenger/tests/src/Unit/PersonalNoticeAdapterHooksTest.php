@@ -274,7 +274,7 @@ final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
    * An installation without optional adapter services keeps the core list usable. */
   public function testDisabledOptionalAdaptersDoNotBreakListOrCount(): void {
     $locator = $this->createMock(ContainerInterface::class);
-    $locator->expects(self::exactly(12))->method('has')->willReturn(FALSE);
+    $locator->expects(self::exactly(14))->method('has')->willReturn(FALSE);
     $locator->expects(self::never())->method('get');
     $logger = $this->createMock(LoggerInterface::class);
     $logger->expects(self::never())->method('error');

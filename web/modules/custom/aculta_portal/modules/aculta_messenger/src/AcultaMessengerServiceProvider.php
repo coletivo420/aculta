@@ -25,6 +25,12 @@ use Drupal\aculta_messenger\Integration\Lms\EventSubscriber\LearningNoticeEventS
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Lms\Mail\LmsTransactionalNoticeMailType;
+use Drupal\aculta_messenger\Integration\Magazine\AccessMagazineNotice;
+use Drupal\aculta_messenger\Integration\Magazine\Controller\MagazineNoticeOpenController;
+use Drupal\aculta_messenger\Integration\Magazine\EventSubscriber\MagazineNoticeEventSubscriber;
+use Drupal\aculta_messenger\Integration\Magazine\MagazineNoticeManager;
+use Drupal\aculta_messenger\Integration\Magazine\MagazineNoticeManagerInterface;
+use Drupal\aculta_messenger\Integration\Magazine\Mail\MagazineNoticeMailType;
 use Drupal\aculta_messenger\Integration\Wiki\AccessWikiNotice;
 use Drupal\aculta_messenger\Integration\Wiki\Controller\WikiNoticeOpenController;
 use Drupal\aculta_messenger\Integration\Wiki\EventSubscriber\WikiNoticeEventSubscriber;
@@ -76,6 +82,10 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       $this->registerDonationAdapter($container);
     }
 
+    if ($container->hasDefinition('Drupal\\aculta_magazine\\Hook\\MagazineNoticeEventPublisher')) {
+      $this->registerMagazineAdapter($container);
+    }
+
     $optionalAdapters = [];
     $container->setDefinition('aculta_messenger.game_achievement_notice_manager', new Definition(
       GameAchievementNoticeManager::class,
@@ -100,6 +110,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       'wiki' => 'aculta_messenger.wiki_notice_manager',
       'commerce' => 'aculta_messenger.commerce_notice_manager',
       'donation' => 'aculta_messenger.donation_notice_manager',
+      'magazine' => 'aculta_messenger.magazine_notice_manager',
     ] as $adapter => $service) {
       if ($container->hasDefinition($service)) {
         $optionalAdapters[$adapter] = new Reference($service);
@@ -205,6 +216,45 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
     ))->setPublic(TRUE);
     $container->setDefinition(WikiNoticeMailType::class, new Definition(
       WikiNoticeMailType::class,
+      [new Reference('string_translation')],
+    ))->addTag('aculta_mailer.type');
+  }
+
+  /**
+   * Registers the optional Magazine adapter in the shared notice core.
+   */
+  private function registerMagazineAdapter(ContainerBuilder $container): void {
+    $container->setDefinition('aculta_messenger.magazine_notice_manager', new Definition(
+      MagazineNoticeManager::class,
+      [
+        new Reference('entity_type.manager'),
+        new Reference('aculta_portal.domain_purpose'),
+        new Reference('aculta_messenger.aviso_preferencias'),
+        new Reference('queue'),
+        new Reference('lock.persistent'),
+        new Reference('flag'),
+        new Reference('logger.channel.aculta_messenger'),
+      ],
+    ))->addTag('aculta_messenger.aviso_digest_provider');
+    $container->setAlias(MagazineNoticeManagerInterface::class, 'aculta_messenger.magazine_notice_manager');
+    $container->setDefinition('aculta_messenger.magazine_notice_event_subscriber', new Definition(
+      MagazineNoticeEventSubscriber::class,
+      [new Reference('aculta_messenger.magazine_notice_manager')],
+    ))->addTag('event_subscriber');
+    $container->setDefinition('aculta_messenger.magazine_notice_access', new Definition(
+      AccessMagazineNotice::class,
+      [new Reference('aculta_messenger.magazine_notice_manager'), new Reference('current_user')],
+    ))->setPublic(TRUE);
+    $container->setDefinition('aculta_messenger.magazine_notice_open_controller', new Definition(
+      MagazineNoticeOpenController::class,
+      [
+        new Reference('aculta_messenger.magazine_notice_manager'),
+        new Reference('current_user'),
+        new Reference('request_stack'),
+      ],
+    ))->setPublic(TRUE);
+    $container->setDefinition(MagazineNoticeMailType::class, new Definition(
+      MagazineNoticeMailType::class,
       [new Reference('string_translation')],
     ))->addTag('aculta_mailer.type');
   }

@@ -8,6 +8,7 @@ use Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManagerInter
 use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
+use Drupal\aculta_messenger\Integration\Magazine\MagazineNoticeManagerInterface;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -46,6 +47,7 @@ final class NoticeReadStateManager implements NoticeReadStateManagerInterface {
     return match ($message->bundle()) {
       'aculta_msg_lms_notice' => $this->setLmsRead($message, $account, $read),
       'aculta_msg_wiki_notice' => $this->setWikiRead($message, $account, $read),
+      'aculta_msg_magazine_notice' => $this->setMagazineRead($message, $account, $read),
       'aculta_msg_commerce_order_notice' => $this->setCommerceRead($message, $account, $read),
       'aculta_msg_donation_notice' => $this->setDonationRead($message, $account, $read),
       'aculta_msg_friendship' => $this->setFriendshipRead($message, $account, $read),
@@ -75,6 +77,18 @@ final class NoticeReadStateManager implements NoticeReadStateManagerInterface {
     }
     $manager = $this->getAdapter('wiki');
     return $manager instanceof WikiNoticeManagerInterface
+      && $manager->setRead($message, $account, $read);
+  }
+
+  /**
+   * Delegates Revista read state when its optional adapter is enabled.
+   */
+  private function setMagazineRead(MessageInterface $message, AccountInterface $account, bool $read): bool {
+    if (!$this->hasAdapter('magazine')) {
+      return FALSE;
+    }
+    $manager = $this->getAdapter('magazine');
+    return $manager instanceof MagazineNoticeManagerInterface
       && $manager->setRead($message, $account, $read);
   }
 
@@ -114,7 +128,9 @@ final class NoticeReadStateManager implements NoticeReadStateManagerInterface {
       && $manager->setRead($message, $account, $read);
   }
 
-  /** Delegates achievement read state to the shared Game adapter. */
+  /**
+   * Delegates achievement read state to the shared Game adapter.
+   */
   private function setGameRead(MessageInterface $message, AccountInterface $account, bool $read): bool {
     if (!$this->hasAdapter('game')) {
       return FALSE;

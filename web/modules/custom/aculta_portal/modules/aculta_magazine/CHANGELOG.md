@@ -1,3 +1,12 @@
+## 0.5.0-dev.9 — eventos de publicação no Messenger
+
+- Publicações públicas e revisões públicas posteriores podem gerar eventos
+  compartilhados para autores/coautores e seguidores elegíveis, com opções
+  administrativas no Messenger e acesso revalidado pelo propósito `magazine`.
+- `seguir_publicacao` usa Flag; não cria acesso editorial, conversa ou inbox.
+- Eventos de envio para revisão e resultado editorial seguem pendentes nesta
+  implementação incremental.
+
 ## 0.5.0-dev.8 — remoção do migrador legado
 
 - Removidos o serviço, comando Drush e teste do migrador `article`/`blog` →
@@ -381,4 +390,3 @@ Classificação: PATCH (correção de cache; sem mudança de contrato).
   purpose `main`.
 - RUNTIME STATUS: PARTIAL; smoke HTTP e renderização da View no servidor de
   teste pendentes.
-

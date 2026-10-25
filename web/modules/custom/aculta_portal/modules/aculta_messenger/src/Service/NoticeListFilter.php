@@ -17,7 +17,7 @@ final class NoticeListFilter {
    * @var string[]
    */
   public const ORIGINS = [
-    'comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja',
+    'comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'revista', 'loja',
     'doacao', 'conquistas', 'conta',
   ];
 
@@ -27,7 +27,7 @@ final class NoticeListFilter {
    * @var string[]
    */
   public const PAGINATED_ORIGINS = [
-    'comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja',
+    'comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'revista', 'loja',
     'doacao', 'conquistas',
   ];
 

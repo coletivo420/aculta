@@ -1,4 +1,8 @@
 services:
+  Drupal\aculta_magazine\Hook\MagazineNoticeEventPublisher:
+    class: Drupal\aculta_magazine\Hook\MagazineNoticeEventPublisher
+    arguments: ['@flag', '@aculta_portal.domain_purpose', '@entity_type.manager', '@aculta_messenger.notice_event_publisher', '@config.factory', '@datetime.time']
+
   aculta_magazine.content_index_provider:
     class: Drupal\aculta_magazine\ContentIndex\MagazineContentIndexProvider
     tags:

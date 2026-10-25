@@ -330,6 +330,21 @@ aculta_messenger.wiki_notice_open:
       message:
         type: entity:message
 
+aculta_messenger.magazine_notice_open:
+  path: '/avisos/revista/{message}/abrir'
+  methods: [GET]
+  defaults:
+    _controller: 'aculta_messenger.magazine_notice_open_controller:open'
+    _title: 'Aviso da Revista'
+  requirements:
+    _custom_access: 'aculta_messenger.magazine_notice_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      message:
+        type: entity:message
+
 aculta_messenger.commerce_notice_open:
   path: '/avisos/loja/{message}/abrir'
   methods: [GET]

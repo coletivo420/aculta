@@ -113,6 +113,7 @@ final class CommunicationSettingsForm extends FormBase {
       'forum_atualizacao' => (string) $this->t('Atualizações de tópicos do Fórum'),
       'aprendizagem' => (string) $this->t('Aprendizagem'),
       'wiki' => (string) $this->t('Wiki'),
+      'revista' => (string) $this->t('Revista'),
       'loja' => (string) $this->t('Loja'),
       'doacao' => (string) $this->t('Doações'),
       AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => (string) $this->t('Mensagens privadas'),

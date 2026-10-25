@@ -39,6 +39,7 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     self::assertFalse($container->hasDefinition('aculta_messenger.wiki_notice_manager'));
     self::assertFalse($container->hasDefinition('aculta_messenger.commerce_notice_manager'));
     self::assertFalse($container->hasDefinition('aculta_messenger.donation_notice_manager'));
+    self::assertFalse($container->hasDefinition('aculta_messenger.magazine_notice_manager'));
     self::assertTrue($container->hasDefinition(PersonalNoticeAdapterHooks::class));
     $argument = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(0);
     self::assertInstanceOf(ServiceLocatorArgument::class, $argument);
@@ -77,6 +78,21 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
   }
 
   /**
+   * Magazine adapters are registered only when Magazine supplies its bridge.
+   */
+  public function testMagazineAdapterFollowsProducerServicePresence(): void {
+    $container = new ContainerBuilder();
+    $container->setDefinition('Drupal\\aculta_magazine\\Hook\\MagazineNoticeEventPublisher', new Definition());
+
+    (new AcultaMessengerServiceProvider())->alter($container);
+
+    self::assertTrue($container->hasDefinition('aculta_messenger.magazine_notice_manager'));
+    self::assertTrue($container->hasDefinition('aculta_messenger.magazine_notice_event_subscriber'));
+    self::assertTrue($container->hasDefinition('aculta_messenger.magazine_notice_access'));
+    self::assertTrue($container->hasDefinition('aculta_messenger.magazine_notice_open_controller'));
+  }
+
+  /**
    * Read-state dispatch uses only the optional adapters compiled into the site.
    */
   public function testReadStateLocatorContainsOnlyEnabledAdapters(): void {
@@ -91,6 +107,25 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     self::assertSame(['game', 'wiki'], array_keys($argument->getValues()));
     self::assertSame('aculta_messenger.game_achievement_notice_manager', (string) $argument->getValues()['game']);
     self::assertSame('aculta_messenger.wiki_notice_manager', (string) $argument->getValues()['wiki']);
+  }
+
+  /**
+   * Magazine list and read-state adapters share the same optional service.
+   */
+  public function testMagazineAdapterIsRegisteredForListAndReadState(): void {
+    $container = new ContainerBuilder();
+    $container->setDefinition('aculta_messenger.notice_read_state', new Definition());
+    $container->setDefinition('Drupal\\aculta_magazine\\Hook\\MagazineNoticeEventPublisher', new Definition());
+
+    (new AcultaMessengerServiceProvider())->alter($container);
+
+    $readAdapters = $container->getDefinition('aculta_messenger.notice_read_state')->getArgument(1);
+    $listHook = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(0);
+    self::assertInstanceOf(ServiceLocatorArgument::class, $readAdapters);
+    self::assertInstanceOf(ServiceLocatorArgument::class, $listHook);
+    self::assertContains('magazine', array_keys($readAdapters->getValues()));
+    self::assertContains('magazine', array_keys($listHook->getValues()));
+    self::assertSame('aculta_messenger.magazine_notice_manager', (string) $readAdapters->getValues()['magazine']);
   }
 
   /**

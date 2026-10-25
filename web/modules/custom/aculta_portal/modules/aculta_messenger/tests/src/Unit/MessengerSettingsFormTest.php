@@ -122,7 +122,7 @@ final class MessengerSettingsFormTest extends UnitTestCase {
   public function testSubmitPersistsEmailModesAndWeeklyDigestAnchor(): void {
     $config = $this->createMock(Config::class);
     $saved = [];
-    $config->expects(self::exactly(7))
+    $config->expects(self::exactly(8))
       ->method('set')
       ->willReturnCallback(static function (string $key, mixed $value) use (&$saved, $config): Config {
         $saved[$key] = $value;
@@ -165,6 +165,7 @@ final class MessengerSettingsFormTest extends UnitTestCase {
     $form->submitForm($formArray, $state);
 
     self::assertSame('2026-11-02', $saved['private_message_digest_anchor']);
+    self::assertSame(['published' => FALSE, 'updated' => FALSE], $saved['magazine_events']);
     self::assertSame([
       'digest' => FALSE,
       'immediate' => TRUE,

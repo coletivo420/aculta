@@ -63,7 +63,9 @@ final class NoticeListFilterTest extends UnitTestCase {
     ]));
   }
 
-  /** Achievement notices use the shared source and unread-state filters. */
+  /**
+   * Achievement notices use the shared source and unread-state filters.
+   */
   public function testFiltersAchievementOrigin(): void {
     $item = ['#attributes' => ['data-aculta-notice-origin' => 'conquistas', 'data-aculta-notice-read' => 'unread']];
     $filter = new NoticeListFilter();
@@ -73,6 +75,20 @@ final class NoticeListFilterTest extends UnitTestCase {
       'leitura' => 'unread',
     ]));
     self::assertSame([$item], $filter->apply([$item], ['origem' => 'conquistas', 'leitura' => 'unread']));
+  }
+
+  /**
+   * Revista notices use the same origin and read-state filter contract.
+   */
+  public function testFiltersMagazineOrigin(): void {
+    $item = ['#attributes' => ['data-aculta-notice-origin' => 'revista', 'data-aculta-notice-read' => 'unread']];
+    $filter = new NoticeListFilter();
+
+    self::assertSame(['origem' => 'revista', 'leitura' => 'unread'], $filter->normalize([
+      'origem' => 'revista',
+      'leitura' => 'unread',
+    ]));
+    self::assertSame([$item], $filter->apply([$item], ['origem' => 'revista', 'leitura' => 'unread']));
   }
 
   /**

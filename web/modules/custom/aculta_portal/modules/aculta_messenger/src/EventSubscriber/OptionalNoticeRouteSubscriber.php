@@ -21,6 +21,7 @@ final class OptionalNoticeRouteSubscriber extends RouteSubscriberBase {
   private const ROUTE_MODULES = [
     'aculta_messenger.lms_notice_open' => 'aculta_lms',
     'aculta_messenger.wiki_notice_open' => 'aculta_wiki',
+    'aculta_messenger.magazine_notice_open' => 'aculta_magazine',
     'aculta_messenger.commerce_notice_open' => 'aculta_commerce',
     'aculta_messenger.donation_notice_open' => 'aculta_donation',
   ];

@@ -1,6 +1,6 @@
 # ACULTA Messenger
 
-Versão de desenvolvimento atual: **0.1.1-dev.356**. O roadmap e o changelog
+Versão de desenvolvimento atual: **0.1.1-dev.357**. O roadmap e o changelog
 registram o estado de cada incremento e as verificações executadas.
 
 Infraestrutura unificada do ACULTA Portal para avisos do site, notificações, assinaturas, e-mail integrado e conversas privadas voluntárias entre membros. A fonte de verdade de cada
@@ -50,7 +50,7 @@ administrativas.
 
 Administradores controlam em **Configurações do Messenger** quais modos de
 resumo diário e envio direto ficam disponíveis para cada categoria de conteúdo
-(Fórum, aprendizagem, Wiki, Loja e Doações). Em mensagens privadas, a pessoa
+(Fórum, aprendizagem, Wiki, Loja, Doações e Revista). Em mensagens privadas, a pessoa
 escolhe somente no site, aviso direto ou digest semanal; o digest tem data inicial
 administrável e intervalo de sete dias por conta. Em amizades, escolhe somente
 no site ou aviso direto, sem digest. A administração pode desativar esses modos
@@ -67,7 +67,7 @@ explícita por categoria sempre prevalece. A chave antiga não é mais gravada n
 usada como bloqueio de envio.
 
 Na aba Avisos da central da conta, filtros GET permitem selecionar origem
-(Comunicados, Fórum, Alertas, Amizades, Aprendizagem, Wiki, Loja, Doações ou Conta) e
+(Comunicados, Fórum, Alertas, Amizades, Aprendizagem, Wiki, Loja, Doações, Revista ou Conta) e
 estado de leitura. A seleção roda no Messenger depois que os adapters contribuem;
 os links mantêm os filtros ao abrir um item e retornar. O fragmento padrão da
 gaveta continua sem filtros.
@@ -84,9 +84,9 @@ post-update e o Messenger passa a ser sua fonte normativa.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento atual é `0.1.1-dev.351`. O núcleo oferece
+A versão anterior deste resumo era `0.1.1-dev.351`. O núcleo oferece
 `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`, consumers para
-Fórum, LMS, Wiki, Loja, Doações e conquistas do Game, agregação da central e entrega por e-mail
+Fórum, LMS, Wiki, Loja, Doações, Revista e conquistas do Game, agregação da central e entrega por e-mail
 direto ou digest sem substituir os storages existentes. O Fórum preserva
 `aculta_aviso`; os demais adapters revalidam a fonte de verdade e o acesso no
 momento de abrir e entregar. Preferências individuais são limitadas pela
@@ -143,10 +143,11 @@ Fórum, Aprendizagem, Wiki, Loja e Doações: a opção direta pode ser removida
 remover `off`, digest ou os avisos obrigatórios no site. `AvisosPrivacyFormTest`
 e os testes de preferência/configuração passaram em conjunto (12/76).
 
-MAG 0.5-H foi inventariada: a Revista tem `uid`/`co_authors` e publica por
-transições do workflow, mas não há assinatura editorial nem publisher de avisos.
-Os destinatários (autor/coautores e exclusão de quem publica) aguardam definição;
-por isso a categoria `revista` e o consumer ainda não foram ativados.
+MAG 0.5-H foi inventariada e a integração inicial da Revista está em
+`0.1.1-dev.357`: publicação/atualização, acompanhamento por Flag, consumer
+Message e categoria `revista` já estão implementados. Envio para revisão e
+resultado editorial continuam pendentes; estado e evidências estão em
+[ROADMAP.md](docs/ROADMAP.md) e `aculta_magazine/docs/ARCHITECTURE.md` §11.
 
 O worker de atualização de tópicos usa o relógio injetável do Drupal no prazo
 de espera por alias; o resumo diário sempre usa `pt-br`, idioma único da

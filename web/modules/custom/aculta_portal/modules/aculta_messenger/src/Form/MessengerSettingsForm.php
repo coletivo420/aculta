@@ -166,6 +166,25 @@ final class MessengerSettingsForm extends ConfigFormBase {
         '#states' => ['disabled' => $defaultStates],
       ];
     }
+    $magazineEvents = $config->get('magazine_events') ?? [];
+    $form['magazine_events'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Avisos da Revista'),
+      '#description' => $this->t('Os avisos no site continuam obrigatórios. Estas opções controlam os eventos editoriais publicados pelo Messenger.'),
+      '#open' => TRUE,
+      'published' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Publicação inicial'),
+        '#description' => $this->t('Avisa coautores e pessoas que seguem a publicação quando ela se torna pública.'),
+        '#default_value' => $magazineEvents['published'] ?? TRUE,
+      ],
+      'updated' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Nova revisão publicada'),
+        '#description' => $this->t('Avisa coautores e seguidores quando uma nova revisão pública é salva.'),
+        '#default_value' => $magazineEvents['updated'] ?? TRUE,
+      ],
+    ];
     return parent::buildForm($form, $form_state);
   }
 
@@ -199,6 +218,10 @@ final class MessengerSettingsForm extends ConfigFormBase {
         (string) $form_state->getValue(['email_modes', 'private_message_digest_anchor']),
       )
       ->set('email_modes', $emailModes)
+      ->set('magazine_events', [
+        'published' => (bool) $form_state->getValue(['magazine_events', 'published']),
+        'updated' => (bool) $form_state->getValue(['magazine_events', 'updated']),
+      ])
       ->save();
     parent::submitForm($form, $form_state);
   }
@@ -212,6 +235,7 @@ final class MessengerSettingsForm extends ConfigFormBase {
       'forum_atualizacao' => (string) $this->t('Atualizações do Fórum'),
       'aprendizagem' => (string) $this->t('Aprendizagem'),
       'wiki' => (string) $this->t('Wiki'),
+      'revista' => (string) $this->t('Revista'),
       'loja' => (string) $this->t('Loja'),
       'doacao' => (string) $this->t('Doações'),
       AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => (string) $this->t('Mensagens privadas'),

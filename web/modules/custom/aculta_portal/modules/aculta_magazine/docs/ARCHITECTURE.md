@@ -65,6 +65,7 @@ Workflow `revista` (Content Moderation), estados e transições **exatamente** c
 | `RevistaFormHooks` | `form_alter` em `node_revista_form` / `node_revista_edit_form` | agrupa propriedades secundárias em `details` fechado (`#weight 90`), anexa `aculta_magazine/revista-form` |
 | `ArticleAuthorsHooks` | `node_view` | injeta `article_authors` no display `full` publicado, no propósito `magazine` |
 | `PublicationDiscussionHooks` | `node_load` | aplica o default de discussão em memória quando o campo vem ausente |
+| `MagazineNoticeEventPublisher` | `entity_insert`, `entity_update` | publica eventos habilitados de publicação/atualização para autor, coautores e seguidores elegíveis |
 
 Os hooks declarados usam atributos `#[Hook(...)]` (Drupal 11). Nenhum usa `\Drupal::` estático.
 
@@ -77,8 +78,9 @@ feedback de validação; não pode criar um segundo editor com validação próp
 | --- | --- | --- | --- |
 | `aculta_magazine.post_presentation` | `Presentation\PostPresentation` | `date.formatter`, `entity_type.manager`, `aculta_portal.domain_purpose` | cabeçalho de publicação (autor/data/hora) e ações de compartilhamento; cacheável |
 | `aculta_magazine.content_index_provider` | `ContentIndex\MagazineContentIndexProvider` | contrato neutro do Portal | projeção allowlist de metadados da revisão padrão e relações explícitas; descoberto pelo `aculta_index` opcional |
+| `MagazineNoticeEventPublisher` | `Hook\MagazineNoticeEventPublisher` | Flag, Domain Purpose, Entity Manager, Messenger publisher e configuração | emite eventos de workflow; não guarda avisos nem envia e-mail |
 
-Não há event subscriber, plugin manager, controller ou rota própria: as rotas administrativas vêm de Views e as rotas de conteúdo são as do Core.
+Rotas de conteúdo e administração continuam no Core e nas Views. Central, abertura, leitura e entrega dos avisos pertencem ao Messenger.
 
 ## 6. Configuração
 
@@ -133,8 +135,8 @@ estáticos não substituem validação de access do Drupal.
 
 O Magazine tem um único bundle `revista`, revisão editorial no workflow (`draft`, `review`, `published`, `archived`), autor em `node.uid` e coautores em `co_authors`. A publicação pode resultar de `publish` (`draft` → `published`) ou `review_to_published` (`review` → `published`). Comentários não definem a audiência de avisos editoriais.
 
-Decisão de produto aprovada em 2026-10-25: avisos podem alcançar participantes editoriais ou pessoas que seguem uma publicação, conforme o fato ocorrido. A administração do Messenger definirá os eventos editoriais habilitados e os canais permitidos. O aviso no site é obrigatório; e-mail segue a preferência da conta e a política administrativa compartilhada. Os fatos candidatos são envio de revisão, resultado editorial e publicação/republicação. Não avisar em salvamento comum, rascunho, comentário ou arquivamento, salvo habilitação explícita de um evento editorial pela administração. O autor/ator não recebe aviso de sua própria ação; autoria e coautoria continuam sendo resolvidas pelos campos atuais.
+Decisão de produto aprovada em 2026-10-25: avisos podem alcançar participantes editoriais ou pessoas que seguem uma publicação, conforme o fato ocorrido. A administração do Messenger define os eventos editoriais habilitados e os canais permitidos. O aviso no site é obrigatório; e-mail segue a preferência da conta e a política administrativa compartilhada. A implementação parcial atual emite publicação/republicação e atualização pública, com controles administrativos independentes `magazine_events.published` e `magazine_events.updated`; o consumer, a categoria `revista` e o acompanhamento `seguir_publicacao` usam o núcleo compartilhado. Envio para revisão e resultado editorial ainda não são emitidos. Não avisar em salvamento comum, rascunho, comentário ou arquivamento, salvo habilitação explícita de um evento editorial pela administração. O ator não recebe aviso de sua própria ação; autoria e coautoria continuam sendo resolvidas pelos campos atuais.
 
 A audiência de publicação inclui seguidores ativos da publicação; a audiência de eventos editoriais inclui somente autores/coautores ou editores elegíveis para aquele fato. A assinatura expressa deverá usar o mecanismo de Flag/Entity já instalado, sem conceder acesso ao conteúdo. Seguir nunca cria conversa, thread ou membership. As regras de acesso, revisão, Domain/Purpose e estado publicado são revalidadas ao emitir, abrir e entregar cada aviso.
 
-`aculta_magazine` publica fatos de workflow após sua persistência e mantém a ownership editorial. `aculta_messenger` é dono do adapter, Message, deduplicação, central, preferências, entrega e revalidação de acesso; `aculta_mailer` permanece dono do transporte. A categoria compartilhada `revista` deve estar configurada antes da entrega de e-mail. Não criar storage de avisos, caixa ou transporte no Magazine. A implementação desta integração e do acompanhamento de publicações ainda está pendente; este contrato substitui a decisão anterior que adiava destinatários por falta de definição de produto.
+`aculta_magazine` publica fatos de workflow após sua persistência e mantém a ownership editorial. `aculta_messenger` é dono do adapter, Message, deduplicação, central, preferências, entrega e revalidação de acesso; `aculta_mailer` permanece dono do transporte. Não criar storage de avisos, caixa ou transporte no Magazine. Evidência da implementação parcial: `MagazineNoticePersistenceKernelTest` **4/66 PASS** no MariaDB dedicado, com duas depreciações upstream de descoberta `@EntityType`; não equivale à homologação Runtime, SMTP ou HTTP. Permanecem pendentes avisos de envio/resultados de revisão e validação operacional. Este contrato substitui a decisão anterior que adiava destinatários por falta de definição de produto.

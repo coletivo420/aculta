@@ -214,6 +214,12 @@ services:
   aculta_messenger.wiki_notice_open_controller:
     class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
     public: true
+  aculta_messenger.magazine_notice_access:
+    class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
+    public: true
+  aculta_messenger.magazine_notice_open_controller:
+    class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
+    public: true
   aculta_messenger.commerce_notice_access:
     class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
     public: true

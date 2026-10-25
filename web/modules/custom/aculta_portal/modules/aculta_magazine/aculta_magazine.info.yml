@@ -9,9 +9,11 @@ dependencies:
   - aculta_portal:aculta_image
   - aculta_portal:aculta_user
   - aculta_portal:aculta_forum
+  - aculta_portal:aculta_messenger
   - aculta_portal:aculta_gallery
   - node:node
   - metatag:metatag
   - pathauto:pathauto
   - views:views
   - node_co_authors:node_co_authors
+  - flag:flag
