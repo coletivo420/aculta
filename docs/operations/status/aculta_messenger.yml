@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: "Dev.234 esclarece nas seis categorias que o resumo diário depende do opt-in geral e o envio direto não. AvisosPrivacyFormTest 6/79, central/preferências 39/250 e workers diretos 27/362 PASS. Runtime e SMTP externo não executados."
+next_phase: "Dev.235 valida payload string na primeira mensagem (conversas privadas 24/126 PASS; PHPCS do teste PASS, formulário sem regressão no baseline). Dev.234 esclarece digest versus envio direto (central/preferências 39/250; workers 27/362 PASS). Runtime e SMTP não executados."

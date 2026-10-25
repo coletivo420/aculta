@@ -1,3 +1,13 @@
+## 0.1.1-dev.235 — rejeitar payload estruturado como primeira mensagem
+
+O formulário de nova conversa agora aceita somente uma string não vazia para a primeira mensagem. Arrays ou outros tipos
+recebem erro de validação antes da resolução de destinatários e da aquisição de locks, evitando que o cast PHP grave
+`Array` como conteúdo. O fluxo nativo de respostas não foi alterado.
+
+Validação: `NewConversationRecipientIdsTest` **4 testes / 14 assertions PASS**; suites focais de conversas privadas
+**24/126 PASS**; PHP lint PASS. PHPCS do teste PASS; `NewConversationForm` mantém o baseline anterior, sem novas
+violações (**16 erros / 15 avisos**). Runtime não executado.
+
 ## 0.1.1-dev.234 — esclarecer as opções de digest e envio direto
 
 A tela de privacidade agora informa, para Fórum, Aprendizagem, Wiki, Loja e Doações, que o digest diário exige também

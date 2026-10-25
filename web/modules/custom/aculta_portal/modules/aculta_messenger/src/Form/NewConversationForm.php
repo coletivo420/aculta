@@ -158,8 +158,10 @@ final class NewConversationForm extends FormBase {
   }
 
   public function validateForm(array &$form, FormStateInterface $formState): void {
-    if (trim((string) $formState->getValue('message')) === '') {
+    $message = $formState->getValue('message');
+    if (!is_string($message) || trim($message) === '') {
       $formState->setErrorByName('message', $this->t('Escreva a mensagem antes de enviar.'));
+      return;
     }
     $recipients = $this->recipients($formState);
     $limit = $this->policy->maxRecipients(ConversationPolicy::KIND_GROUP, $this->currentUser);

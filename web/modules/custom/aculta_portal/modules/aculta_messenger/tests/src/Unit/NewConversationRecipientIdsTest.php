@@ -23,6 +23,8 @@ use Drupal\user\UserInterface;
 use Drupal\user\UserDataInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Tests canonicalization of untrusted group-conversation recipients.
@@ -60,6 +62,37 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
   public function testNonArrayInputProducesNoRecipients(): void {
     self::assertSame([], NewConversationForm::normalizeRecipientIds('42'));
     self::assertSame([], NewConversationForm::normalizeRecipientIds(NULL));
+  }
+
+  /**
+   * Rejects structured message input before resolving recipients.
+   */
+  public function testArrayMessageInputIsRejected(): void {
+    $form = (new \ReflectionClass(NewConversationForm::class))->newInstanceWithoutConstructor();
+    $formState = new FormState();
+    $formState->setValue('message', ['value' => 'forged']);
+    $render = [];
+    $translation = $this->createMock(TranslationInterface::class);
+    $translation->method('translate')->willReturnCallback(static fn(string $message): string => $message);
+    $originalContainer = $this->currentDrupalContainer();
+    $container = new ContainerBuilder();
+    $container->set('string_translation', $translation);
+    \Drupal::setContainer($container);
+
+    try {
+      $form->validateForm($render, $formState);
+
+      self::assertArrayHasKey('message', $formState->getErrors());
+      self::assertSame(['value' => 'forged'], $formState->getValue('message'));
+    }
+    finally {
+      if ($originalContainer instanceof ContainerInterface) {
+        \Drupal::setContainer($originalContainer);
+      }
+      else {
+        \Drupal::unsetContainer();
+      }
+    }
   }
 
   /**
@@ -106,6 +139,18 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
 
     $state->active = FALSE;
     self::assertSame([], $recipients->invoke($form, $formState));
+  }
+
+  /**
+   * Returns the original Drupal container when the test harness has one.
+   */
+  private function currentDrupalContainer(): ?ContainerInterface {
+    try {
+      return \Drupal::getContainer();
+    }
+    catch (\Throwable) {
+      return NULL;
+    }
   }
 
 }
