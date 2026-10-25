@@ -97,7 +97,7 @@ final class WikiProposalStatusController extends ControllerBase {
         '#type' => 'link',
         '#title' => $this->t('Retirar proposta'),
         '#url' => Url::fromRoute('aculta_wiki.proposal_withdraw', ['proposal' => $proposal->id()]),
-        '#attributes' => ['class' => ['button', 'button--secondary']],
+        '#attributes' => ['data-portal-ui' => 'wiki-proposal-contribute'],
       ];
     }
 
