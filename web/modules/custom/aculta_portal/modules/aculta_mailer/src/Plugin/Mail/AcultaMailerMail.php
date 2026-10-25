@@ -33,7 +33,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Plugin de envio do Core pela camada de envio E-Mails ACULTA (F15).
  *
- * Não é o padrão do site: `system.mail` continua no contrib até a troca, depois da equivalência comprovada.
+ * Backend de `system.mail`; detalhes ambientais no roadmap do Mailer.
  */
 #[Mail(
   id: 'aculta_mailer',

@@ -15,7 +15,7 @@ use Symfony\Component\Mime\Email;
 /**
  * Envia um e-mail pelo transporte da entidade e devolve o resultado.
  *
- * Na F14 não é o caminho de produção: o envio do site segue pelo módulo de envio atual até a F15.
+ * Serviço usado pelo plugin do Core selecionado em `system.mail`.
  */
 final class MailTransportSender {
 
