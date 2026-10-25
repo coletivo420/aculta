@@ -45,6 +45,69 @@ final class FriendRequestsFormTest extends UnitTestCase {
   }
 
   /**
+   * Uses controller-prefetched requests without issuing the query again.
+   */
+  public function testBuildFormUsesPrefetchedIncomingRequests(): void {
+    $request = $this->createMock(AcultaFriendshipInterface::class);
+    $request->method('getRequesterId')->willReturn(7);
+    $requester = $this->createMock(UserInterface::class);
+    $requester->method('id')->willReturn('7');
+    $requester->method('getDisplayName')->willReturn('Pessoa solicitante');
+    $requester->method('isActive')->willReturn(TRUE);
+    $friendships = $this->createMock(FriendshipManagerInterface::class);
+    $friendships->expects(self::never())->method('getIncomingRequests');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('loadMultiple')->with([7])->willReturn([7 => $requester]);
+    $entityManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityManager->method('getStorage')->with('user')->willReturn($storage);
+    $form = new FriendRequestsForm(
+      $friendships,
+      $entityManager,
+      $this->createMock(AccountProxyInterface::class),
+    );
+    $form->setStringTranslation($this->getStringTranslationStub());
+    $formState = $this->createMock(FormStateInterface::class);
+    $formState->method('isRebuilding')->willReturn(FALSE);
+
+    $built = $form->buildForm([], $formState, [$request]);
+
+    self::assertSame('Pessoa solicitante', $built['member_7']['name']['#plain_text']);
+  }
+
+  /**
+   * A post-submit rebuild reloads current requests instead of stale arguments.
+   */
+  public function testRebuildReloadsIncomingRequests(): void {
+    $staleRequest = $this->createMock(AcultaFriendshipInterface::class);
+    $staleRequest->method('getRequesterId')->willReturn(7);
+    $currentRequest = $this->createMock(AcultaFriendshipInterface::class);
+    $currentRequest->method('getRequesterId')->willReturn(8);
+    $requester = $this->createMock(UserInterface::class);
+    $requester->method('id')->willReturn('8');
+    $requester->method('getDisplayName')->willReturn('Pessoa atual');
+    $requester->method('isActive')->willReturn(TRUE);
+    $friendships = $this->createMock(FriendshipManagerInterface::class);
+    $friendships->expects(self::once())->method('getIncomingRequests')->willReturn([$currentRequest]);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('loadMultiple')->with([8])->willReturn([8 => $requester]);
+    $entityManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityManager->method('getStorage')->with('user')->willReturn($storage);
+    $form = new FriendRequestsForm(
+      $friendships,
+      $entityManager,
+      $this->createMock(AccountProxyInterface::class),
+    );
+    $form->setStringTranslation($this->getStringTranslationStub());
+    $formState = $this->createMock(FormStateInterface::class);
+    $formState->method('isRebuilding')->willReturn(TRUE);
+
+    $built = $form->buildForm([], $formState, [$staleRequest]);
+
+    self::assertArrayNotHasKey('member_7', $built);
+    self::assertSame('Pessoa atual', $built['member_8']['name']['#plain_text']);
+  }
+
+  /**
    * Revalidates that the current account is the request recipient on submit.
    */
   public function testSubmitAcceptsOnlyRequestAddressedToCurrentAccount(): void {

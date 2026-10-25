@@ -219,9 +219,10 @@ final class AvisosMensagensController extends ControllerBase {
    * barra (MessagesController::conversasBuild). As conversas continuam no sistema de mensagens.
    */
   private function conteudoMensagens(int $naoLidas): array {
-    $pedidos = $this->friendshipManager->getIncomingRequests() === []
+    $incomingRequests = $this->friendshipManager->getIncomingRequests();
+    $pedidos = $incomingRequests === []
       ? []
-      : ['pedidos_amizade' => $this->formBuilder()->getForm(FriendRequestsForm::class)];
+      : ['pedidos_amizade' => $this->formBuilder()->getForm(FriendRequestsForm::class, $incomingRequests)];
     return $pedidos + $this->mensagens->conversasBuild();
   }
 
