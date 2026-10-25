@@ -1,3 +1,15 @@
+## 0.1.1-dev.215 — tornar idempotentes os e-mails diretos
+
+Os workers de e-mail direto do Fórum, LMS, Wiki, Loja e Doações passam a compartilhar a geração de UUID v5 a partir da
+identidade lógica do aviso e do tipo de e-mail. Retries de um mesmo aviso usam a mesma correlação, ativando o lock e a
+deduplicação persistente do ACULTA Mailer. Antes de migrar um registro legado, o Messenger reconhece o aceite da antiga
+correlação UUID v4 para o mesmo tipo e destinatário, quando ainda presente no Mail Log.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **248/1.882 PASS**; `WikiNoticeEmailQueueKernelTest`
+**2/54 PASS** no MariaDB dedicado (2 deprecações de discovery `Message`/`message_template` do Core/contrib); PHPCS
+Drupal/DrupalPractice, PHP lint, índice (41 componentes), gate Portal Drupal 11+ (**1155 checks**) e
+`AcultaMailerKernelTest` **5/28 PASS**. SMTP e Runtime não executados.
+
 ## 0.1.1-dev.214 — preservar página ao atualizar leitura
 
 Ao marcar um aviso como lido ou não lido, o retorno à central preserva o offset da origem selecionada. O formulário aceita

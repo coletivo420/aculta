@@ -53,6 +53,14 @@ retido até ele voltar, sem novo envio duplicado. A pequena janela entre aceite 
 persistência local da prova continua dependente da retenção do Mail Log e não cria
 atomicidade entre o transporte externo e o banco Drupal.
 
+E-mails diretos de avisos do Fórum, LMS, Wiki, Loja e Doações usam correlação UUID v5
+determinística a partir da identidade da fonte e do tipo de e-mail. O retry mantém a mesma
+correlação, permitindo que o ACULTA Mailer serialize chamadas concorrentes e suprima um
+aceite já registrado. Durante a migração, o Messenger consulta o UUID v4 usado pelos
+workers antigos e conclui como enviado quando encontra o aceite legado para o mesmo tipo e
+destinatário. Essa compatibilidade depende da retenção configurada do Mail Log; o intervalo
+entre aceite externo e persistência do estado da entidade continua não transacional.
+
 ## Fontes de verdade e armazenamento
 
 | Dado | Fonte existente | Regra |

@@ -6,12 +6,12 @@ namespace Drupal\aculta_messenger\Integration\Wiki\Plugin\QueueWorker;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
-use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Integration\Wiki\Mail\WikiNoticeMailType;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
+use Drupal\aculta_messenger\Service\MessengerMailDelivery;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -109,13 +109,15 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
     $message->set('field_aculta_messenger_attempts', $attempts)
       ->set('field_aculta_msg_delivery', 'pending')->save();
     try {
-      $result = $this->mailer->deliver(new MailMessage(
+      $result = MessengerMailDelivery::deliver(
+        $this->mailer,
         WikiNoticeMailType::ID,
         (string) $user->getEmail(),
         'pt-br',
         ['summary' => (string) $notice['email_summary'], 'url' => $notice['url']->toString()],
+        $message->bundle() . ':' . $message->uuid() . ':' . WikiNoticeMailType::ID,
         (string) $message->uuid(),
-      ));
+      );
     }
     catch (\Throwable) {
       $this->finish($message, 'failed');

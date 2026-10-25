@@ -6,7 +6,6 @@ namespace Drupal\aculta_messenger\Plugin\QueueWorker;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
-use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
@@ -15,6 +14,7 @@ use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutbox;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutboxInterface;
 use Drupal\aculta_messenger\Mail\ForumNoticeMailType;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
+use Drupal\aculta_messenger\Service\MessengerMailDelivery;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\comment\CommentInterface;
@@ -138,13 +138,15 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
       ? 'Um tópico que você segue foi atualizado.'
       : 'Uma resposta foi publicada em um tópico que você segue.';
     try {
-      $result = $this->mailer->deliver(new MailMessage(
+      $result = MessengerMailDelivery::deliver(
+        $this->mailer,
         ForumNoticeMailType::ID,
         (string) $recipient->getEmail(),
         'pt-br',
         ['summary' => $summary, 'url' => $url->toString()],
+        'forum:' . $event['id'] . ':' . ForumNoticeMailType::ID,
         (string) $event['email_correlation'],
-      ));
+      );
     }
     catch (\Throwable) {
       $this->retryOrFail((int) $event['id'], (int) $event['email_attempts']);

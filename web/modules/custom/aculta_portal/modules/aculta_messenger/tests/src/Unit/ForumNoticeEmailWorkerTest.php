@@ -8,11 +8,13 @@ use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_mailer\Message\MessageIdFactory;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutbox;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutboxInterface;
+use Drupal\aculta_messenger\Mail\ForumNoticeMailType;
 use Drupal\aculta_messenger\Plugin\QueueWorker\ForumNoticeEmailWorker;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -165,7 +167,9 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
     $flags->method('getEntityFlaggings')->with($flag, $topic)->willReturn([$flagging]);
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects(self::once())->method('deliver')
-      ->with(self::callback(fn(MailMessage $mail): bool => $mail->correlationId === $event['email_correlation']))
+      ->with(self::callback(fn(MailMessage $mail): bool => $mail->correlationId === MessageIdFactory::correlationIdFor(
+        'aculta_messenger:forum:' . $event['id'] . ':' . ForumNoticeMailType::ID,
+      )))
       ->willThrowException(new \RuntimeException('Transport failure'));
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn(TRUE);
@@ -273,7 +277,9 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
     $flags->method('getEntityFlaggings')->with($flag, $topic)->willReturn([$flagging]);
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects(self::once())->method('deliver')
-      ->with(self::callback(fn(MailMessage $mail): bool => $mail->correlationId === $event['email_correlation']))
+      ->with(self::callback(fn(MailMessage $mail): bool => $mail->correlationId === MessageIdFactory::correlationIdFor(
+        'aculta_messenger:forum:' . $event['id'] . ':' . ForumNoticeMailType::ID,
+      )))
       ->willReturn(SendResult::failed(DeliveryError::Permanent, 550));
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn(TRUE);

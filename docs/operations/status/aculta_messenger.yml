@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: "Dev.214: formulário de leitura preserva o offset válido da origem selecionada ao retornar à central; Unit Messenger 180/1.248 PASS. Dev.213 pagina apenas avisos acessíveis; Dev.212 persiste aceite do digest além do Mail Log. Runtime, SMTP e smoke visual pendentes. Estado Dev."
+next_phase: "Dev.215: e-mails diretos do Fórum/LMS/Wiki/Loja/Doações usam correlação UUID v5 estável e conciliam aceites legados v4; Unit Messenger + adapters 248/1.882, Wiki Kernel 2/54, Mailer Kernel 5/28 PASS. PHPCS e gate Portal 1155 checks PASS. Runtime/SMTP pendentes. Estado Dev."

@@ -15,9 +15,9 @@ use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
-use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
+use Drupal\aculta_messenger\Service\MessengerMailDelivery;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -126,18 +126,20 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
     }
     $attempts++;
     $message->set(self::ATTEMPTS_FIELD, $attempts)->set(self::DELIVERY_FIELD, 'pending')->save();
-    $mail = new MailMessage(
-      'lms_transactional_notice',
-      (string) $recipient->getEmail(),
-      'pt-br',
-      [
-        'summary' => (string) $notice['email_summary'],
-        'url' => $notice['url']->toString(),
-      ],
-      (string) $message->uuid(),
-    );
+    $context = [
+      'summary' => (string) $notice['email_summary'],
+      'url' => $notice['url']->toString(),
+    ];
     try {
-      $result = $this->mailer->deliver($mail);
+      $result = MessengerMailDelivery::deliver(
+        $this->mailer,
+        'lms_transactional_notice',
+        (string) $recipient->getEmail(),
+        'pt-br',
+        $context,
+        $message->bundle() . ':' . $message->uuid() . ':lms_transactional_notice',
+        (string) $message->uuid(),
+      );
     }
     catch (\Throwable) {
       $message->set(self::DELIVERY_FIELD, 'failed')->save();

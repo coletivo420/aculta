@@ -65,7 +65,7 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.210` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.215` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
@@ -83,6 +83,11 @@ threads, mensagens privadas e avisos Message reais, removendo apenas dados com
 mais de seis meses e preservando uma conversa recente. Também prova rollback
 transacional real quando a exclusão do aviso falha. Runtime não foi usado e
 nenhuma limpeza foi executada em dados reais.
+
+Dev.215 centraliza a criação de correlações UUID v5 para e-mails diretos do Fórum,
+LMS, Wiki, Loja e Doações. Retries reutilizam a mesma identidade e o ACULTA Mailer
+deduplica aceite persistido; durante a migração, o Messenger também reconhece o
+aceite legado associado ao UUID v4 original quando ainda está no Mail Log.
 
 O Kernel de rotas também usa a definição de produção da resposta pela gaveta e o
 AccessManager/Core para confirmar CSRF e autorização por associação à thread:
