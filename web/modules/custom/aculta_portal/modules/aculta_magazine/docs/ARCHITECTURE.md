@@ -131,19 +131,10 @@ estáticos não substituem validação de access do Drupal.
 
 ## 11. Integração com avisos do ACULTA Messenger
 
-Inventário de 2026-10-24: o Magazine tem um único bundle `revista`, revisão editorial no workflow (`draft`, `review`,
-`published`, `archived`), autor em `node.uid` e coautores em `co_authors`. A publicação pode resultar de `publish`
-(`draft` → `published`) ou `review_to_published` (`review` → `published`). O código atual não tem publisher de eventos
-do Messenger nem mecanismo de assinatura de publicações. Comentários seguem no Node e não constituem audiência de
-notificação.
+O Magazine tem um único bundle `revista`, revisão editorial no workflow (`draft`, `review`, `published`, `archived`), autor em `node.uid` e coautores em `co_authors`. A publicação pode resultar de `publish` (`draft` → `published`) ou `review_to_published` (`review` → `published`). Comentários não definem a audiência de avisos editoriais.
 
-Não emitir aviso de rascunho, edição comum, revisão salva, arquivamento ou comentário. Um evento candidato é uma
-transição efetivamente salva para `published`; os destinatários ainda dependem de decisão editorial sobre autor e
-coautores e sobre excluir a conta que executou a publicação. Essa audiência não deve ser inferida de permissões de
-edição nem de quem comentou.
+Decisão de produto aprovada em 2026-10-25: avisos podem alcançar participantes editoriais ou pessoas que seguem uma publicação, conforme o fato ocorrido. A administração do Messenger definirá os eventos editoriais habilitados e os canais permitidos. O aviso no site é obrigatório; e-mail segue a preferência da conta e a política administrativa compartilhada. Os fatos candidatos são envio de revisão, resultado editorial e publicação/republicação. Não avisar em salvamento comum, rascunho, comentário ou arquivamento, salvo habilitação explícita de um evento editorial pela administração. O autor/ator não recebe aviso de sua própria ação; autoria e coautoria continuam sendo resolvidas pelos campos atuais.
 
-Quando o contrato de destinatários for aprovado, o Magazine será responsável apenas por publicar o evento de origem
-através do contrato compartilhado. `aculta_messenger` será dono da validação, deduplicação, Message, central, política
-de e-mail e revalidação da publicação; `aculta_mailer` continuará dono do transporte. A categoria `revista` deverá
-entrar nas preferências compartilhadas antes de habilitar entrega por e-mail. Nenhuma conversa privada ou thread será
-criada pelo evento. Até essa decisão, a integração permanece não implementada e não há consumer Magazine no Messenger.
+A audiência de publicação inclui seguidores ativos da publicação; a audiência de eventos editoriais inclui somente autores/coautores ou editores elegíveis para aquele fato. A assinatura expressa deverá usar o mecanismo de Flag/Entity já instalado, sem conceder acesso ao conteúdo. Seguir nunca cria conversa, thread ou membership. As regras de acesso, revisão, Domain/Purpose e estado publicado são revalidadas ao emitir, abrir e entregar cada aviso.
+
+`aculta_magazine` publica fatos de workflow após sua persistência e mantém a ownership editorial. `aculta_messenger` é dono do adapter, Message, deduplicação, central, preferências, entrega e revalidação de acesso; `aculta_mailer` permanece dono do transporte. A categoria compartilhada `revista` deve estar configurada antes da entrega de e-mail. Não criar storage de avisos, caixa ou transporte no Magazine. A implementação desta integração e do acompanhamento de publicações ainda está pendente; este contrato substitui a decisão anterior que adiava destinatários por falta de definição de produto.
