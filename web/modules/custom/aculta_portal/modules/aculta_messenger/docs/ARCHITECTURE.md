@@ -12,7 +12,7 @@ Seguir conteúdo expressa somente a intenção de receber avisos no site e, conf
 
 | Componente | Responsabilidade |
 | --- | --- |
-| `aculta_messenger` | Núcleo central de mensagens privadas, avisos, consumers/adapters LMS/Wiki/Fórum/Loja/Doações, agregação, deduplicação, preferências e orquestração dos canais. |
+| `aculta_messenger` | Núcleo central de mensagens privadas, avisos, consumers/adapters LMS/Wiki/Fórum/Loja/Doações/Game, agregação, deduplicação, preferências e orquestração dos canais. |
 | `aculta_user` | Identidade, contas, amizades, preferências de identidade e elegibilidade dos relacionamentos. |
 | `aculta_mailer` | Transporte, templates, cabeçalhos/rodapés, remetente, logs e métricas de e-mail. |
 | `aculta_forum`, `aculta_lms`, `aculta_wiki`, `aculta_commerce` | Conteúdo e workflows; publishers e seleção de destinatários segundo regras proprietárias. Não implementam consumers, armazenamento de avisos, filas de entrega ou transporte de e-mail. |
@@ -107,6 +107,7 @@ de terceiros. Avisos no site continuam obrigatórios independentemente da prefer
 | --- | --- | --- |
 | Threads, mensagens, participantes e leitura | Private Message | Preservar acesso por thread, bloqueios e estado nativo. |
 | Amizades | `aculta_user` | Messenger consulta a API; não replica o grafo social. |
+| Conquistas | `aculta_user` (`BadgeAward`) | O Game concede; Messenger persiste o aviso no bundle Message comum e valida titularidade e revogação ao listar ou alterar leitura. Avisos ainda pendentes no `user.data` legado são migrados por post-update. |
 | Assinaturas | Flag/Message Subscribe ou mecanismo proprietário já adotado pelo produtor | Assinatura nunca concede acesso. A política F-D21 do Fórum permanece ativa; não reativar entrega duplicada de publicação via Message Subscribe. |
 | Avisos por conteúdo do Fórum | `aculta_aviso` e contratos existentes | Manter histórico, agregação e marcadores; adaptar gradualmente. |
 | Outros avisos persistentes | Message/Message Notify/Flag conforme o fluxo existente | Sem inbox paralela ou tabela de notificações redundante. |

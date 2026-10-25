@@ -90,7 +90,7 @@ final class NoticeReadStateForm extends FormBase {
       $requestQuery = $request->query->all();
       $pagination = match ($filters['origem']) {
         'forum' => ['forum_offset' => $requestQuery['forum_offset'] ?? NULL],
-        'comunicado', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao' => [
+        'comunicado', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conquistas' => [
           'notice_offset' => $requestQuery['notice_offset'] ?? NULL,
         ],
         default => [],
@@ -103,7 +103,7 @@ final class NoticeReadStateForm extends FormBase {
       }
       if ($filters['origem'] === '' && is_array($requestQuery['notice_offsets'] ?? NULL)) {
         $offsets = [];
-        foreach (['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao'] as $origin) {
+        foreach (['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conquistas'] as $origin) {
           $offset = PersonalNoticePageState::normalizeOffset($requestQuery['notice_offsets'][$origin] ?? NULL);
           if ($offset > 0) {
             $offsets[$origin] = $offset;

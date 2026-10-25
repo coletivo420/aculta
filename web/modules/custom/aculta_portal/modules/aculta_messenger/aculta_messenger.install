@@ -154,3 +154,8 @@ function aculta_messenger_update_10010(): void {
 function aculta_messenger_update_10011(): void {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
 }
+
+/** Installs the shared Message-backed ACULTA Game achievement notice bundle. */
+function aculta_messenger_update_10012(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}

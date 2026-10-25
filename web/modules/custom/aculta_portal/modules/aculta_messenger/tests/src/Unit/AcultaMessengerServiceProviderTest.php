@@ -42,7 +42,7 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     self::assertTrue($container->hasDefinition(PersonalNoticeAdapterHooks::class));
     $argument = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(0);
     self::assertInstanceOf(ServiceLocatorArgument::class, $argument);
-    self::assertSame([], array_keys($argument->getValues()));
+    self::assertSame(['game'], array_keys($argument->getValues()));
     $logger = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(1);
     self::assertInstanceOf(Reference::class, $logger);
     self::assertSame('logger.channel.aculta_messenger', (string) $logger);
@@ -88,7 +88,8 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
 
     $argument = $container->getDefinition('aculta_messenger.notice_read_state')->getArgument(1);
     self::assertInstanceOf(ServiceLocatorArgument::class, $argument);
-    self::assertSame(['wiki'], array_keys($argument->getValues()));
+    self::assertSame(['game', 'wiki'], array_keys($argument->getValues()));
+    self::assertSame('aculta_messenger.game_achievement_notice_manager', (string) $argument->getValues()['game']);
     self::assertSame('aculta_messenger.wiki_notice_manager', (string) $argument->getValues()['wiki']);
   }
 
@@ -106,8 +107,8 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     $listHook = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(0);
     self::assertInstanceOf(ServiceLocatorArgument::class, $readAdapters);
     self::assertInstanceOf(ServiceLocatorArgument::class, $listHook);
-    self::assertSame(['friendship'], array_keys($readAdapters->getValues()));
-    self::assertSame(['friendship'], array_keys($listHook->getValues()));
+    self::assertSame(['game', 'friendship'], array_keys($readAdapters->getValues()));
+    self::assertSame(['game', 'friendship'], array_keys($listHook->getValues()));
     self::assertSame('aculta_messenger.friendship_notice_manager', (string) $readAdapters->getValues()['friendship']);
   }
 
@@ -152,7 +153,7 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     }
     $argument = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(0);
     self::assertInstanceOf(ServiceLocatorArgument::class, $argument);
-    self::assertSame(['lms', 'wiki', 'commerce', 'donation'], array_keys($argument->getValues()));
+    self::assertSame(['game', 'lms', 'wiki', 'commerce', 'donation'], array_keys($argument->getValues()));
   }
 
   /**

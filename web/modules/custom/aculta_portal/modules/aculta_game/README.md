@@ -1,6 +1,6 @@
 # ACULTA Game — conquistas e missões
 
-Versão atual: `0.1.0-dev.16` — primeira publicação de Comment ACULTA vigente ou
+Versão atual: `0.1.0-dev.17` — primeira publicação de Comment ACULTA vigente ou
 de `ForumPost` público pode conceder uma vez a conquista existente; migração,
 sincronização, autoria histórica e outros contextos permanecem inelegíveis.
 
@@ -114,8 +114,9 @@ podem ser revogadas. Não são concedidos papéis, descontos, moeda ou privilég
 As definições pertencem à Config API de User, não ao tema. Remover Game preserva
 concessões, definições e privacidade do User. O editor organiza identificação,
 imagem e condições em grupos; remoção da imagem exige confirmação e exclui o
-arquivo enviado quando não há outro uso. Conquistas novas geram aviso dispensável
-no Messenger e e-mail enfileirado, com preferência individual de recebimento.
+arquivo enviado quando não há outro uso. Conquistas novas geram aviso persistente na central compartilhada do Messenger,
+com leitura individual; o e-mail segue enfileirado e mantém a preferência atual
+até a migração de sua política.
 Entrega de e-mail depende do cron e da configuração do ambiente.
 
 Para arte de conquista, recomendamos imagem quadrada de **512 × 512 px**. O

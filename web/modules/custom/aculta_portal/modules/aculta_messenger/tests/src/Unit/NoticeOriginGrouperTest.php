@@ -70,6 +70,18 @@ final class NoticeOriginGrouperTest extends UnitTestCase {
     self::assertSame([$item], $groups[0]['items']['#items']);
   }
 
+  /** Achievement notices have a labeled section in the same recency order. */
+  public function testGroupsAchievementNoticesUnderTheirOwnOrigin(): void {
+    $item = ['#attributes' => ['data-aculta-notice-origin' => 'conquistas', 'data-aculta-notice-recency' => '500'], 'id' => 'award'];
+
+    $groups = NoticeOriginGrouper::group([$item]);
+
+    self::assertCount(1, $groups);
+    self::assertSame('conquistas', $groups[0]['#attributes']['data-aculta-notice-origin-section']);
+    self::assertSame('Conquistas', $groups[0]['heading']['#value']->getUntranslatedString());
+    self::assertSame([$item], $groups[0]['items']['#items']);
+  }
+
   /**
    * Keeps extension items visible when their optional render attributes differ.
    */

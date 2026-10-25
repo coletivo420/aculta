@@ -21,6 +21,7 @@ final class NoticeReadActionBuilder {
     'aculta_msg_commerce_order_notice',
     'aculta_msg_donation_notice',
     'aculta_msg_friendship',
+    'aculta_msg_game_award',
   ];
 
   public function __construct(

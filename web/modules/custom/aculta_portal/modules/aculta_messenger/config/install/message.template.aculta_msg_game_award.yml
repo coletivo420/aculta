@@ -1,0 +1,22 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+template: aculta_msg_game_award
+label: 'Aviso de conquista ACULTA'
+description: 'Aviso pessoal de uma conquista concedida, ligado ao registro BadgeAward.'
+text:
+  - value: 'Conquista obtida'
+    format: plain_text
+  - value: 'Uma conquista foi adicionada à sua conta ACULTA.'
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {  }

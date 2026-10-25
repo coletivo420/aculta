@@ -760,7 +760,7 @@ final class MessagesController extends ControllerBase {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
     }
     $items = [];
-    $paginatedOrigins = ['comunicado', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao'];
+    $paginatedOrigins = ['comunicado', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conquistas'];
     $globalOriginPaging = $includeReadActions && $filters['origem'] === '';
     $rawOriginOffsets = is_array($pagination['notice_offsets'] ?? NULL)
       ? $pagination['notice_offsets']
@@ -989,6 +989,7 @@ final class MessagesController extends ControllerBase {
       'wiki' => 'Wiki',
       'loja' => 'Loja',
       'doacao' => 'Doações',
+      'conquistas' => 'Conquistas',
     ];
     if ($globalOriginPaging) {
       $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
@@ -1145,6 +1146,7 @@ final class MessagesController extends ControllerBase {
       'wiki' => $this->translation->translate('Wiki'),
       'loja' => $this->translation->translate('Loja'),
       'doacao' => $this->translation->translate('Doações'),
+      'conquistas' => $this->translation->translate('Conquistas'),
       'conta' => $this->translation->translate('Conta'),
     ];
     $states = [

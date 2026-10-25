@@ -1,3 +1,17 @@
+## 0.1.1-dev.336 — centralizar avisos de conquistas
+
+Concessões de `aculta_badge_award` publicam pelo contrato de eventos do
+Messenger e geram Messages persistentes na central, com filtro por Conquistas,
+paginação, estado de leitura e revalidação do prêmio/conta. O post-update migra
+os IDs pendentes legados com deduplicação. Removidos o bloco e o formulário de
+avisos próprios do Game. O transporte de e-mail do Game permanece inalterado
+nesta microfase.
+
+Validação: Unit Messenger **351 testes / 2.800 assertions PASS**; Unit Game
+**11 testes / 51 assertions PASS**; PHPCS Drupal/DrupalPractice dos arquivos
+novos e alterados desta integração, PHP lint, YAML parse e `git diff --check`
+PASS. Update/Kernel/Runtime não executados; `SIMPLETEST_DB` indisponível.
+
 ## 0.1.1-dev.335 — assunto neutro para resumos combinados
 
 O assunto e o rótulo do resumo por e-mail não dizem mais que o conteúdo é
@@ -3322,4 +3336,15 @@ Kernels Fórum/digest **42/963 PASS** e Wiki/Loja/Doações **17/290 PASS** (2
 deprecações de descoberta de entidades Core/contrib e 7 notices PHPUnit).
 PHPCS Drupal/DrupalPractice, PHP lint, gate Drupal 11+ (**1.155 checks**) e
 índice de status PASS. Runtime e SMTP real não executados.
+
+## 0.1.1-dev.336 — centralizar avisos de conquistas
+
+Concessões de `aculta_badge_award` agora publicam o evento compartilhado do
+Messenger e viram Messages persistentes na central, com filtro por Conquistas,
+estado de leitura e revalidação do prêmio/conta ao listar e alterar leitura.
+Removidos o bloco e o formulário de avisos próprios do Game. Um post-update
+migra os IDs pendentes legados com deduplicação; o transporte de e-mail do Game
+permanece intacto nesta microfase.
+
+Validação: testes focais e gates registrados após a implementação.
 

@@ -79,15 +79,15 @@ post-update e o Messenger passa a ser sua fonte normativa.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento atual é `0.1.1-dev.335`. O núcleo oferece
+A versão em desenvolvimento atual é `0.1.1-dev.336`. O núcleo oferece
 `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`, consumers para
-Fórum, LMS, Wiki, Loja e Doações, agregação da central e entrega por e-mail
+Fórum, LMS, Wiki, Loja, Doações e conquistas do Game, agregação da central e entrega por e-mail
 direto ou digest sem substituir os storages existentes. O Fórum preserva
 `aculta_aviso`; os demais adapters revalidam a fonte de verdade e o acesso no
 momento de abrir e entregar. Preferências individuais são limitadas pela
 política administrativa, e avisos no site continuam obrigatórios.
 
-Validação automatizada registrada em Dev.335: Unit Messenger **346 testes / 2.780
+Validação automatizada anterior registrada em Dev.335: Unit Messenger **346 testes / 2.780
 assertions PASS**; `AvisosResumoMailTypeTest` **3/8 PASS**. Os focais de
 preferências e formulários passaram **54 testes / 451 assertions**; a suíte
 específica de avisos de amizade passou **35 testes / 483 assertions** (inclui o

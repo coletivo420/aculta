@@ -63,6 +63,18 @@ final class NoticeListFilterTest extends UnitTestCase {
     ]));
   }
 
+  /** Achievement notices use the shared source and unread-state filters. */
+  public function testFiltersAchievementOrigin(): void {
+    $item = ['#attributes' => ['data-aculta-notice-origin' => 'conquistas', 'data-aculta-notice-read' => 'unread']];
+    $filter = new NoticeListFilter();
+
+    self::assertSame(['origem' => 'conquistas', 'leitura' => 'unread'], $filter->normalize([
+      'origem' => 'conquistas',
+      'leitura' => 'unread',
+    ]));
+    self::assertSame([$item], $filter->apply([$item], ['origem' => 'conquistas', 'leitura' => 'unread']));
+  }
+
   /**
    * Read-state constraints are applied to source queries before their limit.
    */

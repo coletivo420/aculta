@@ -26,6 +26,7 @@ final class NoticeOriginGrouper {
     'wiki' => 'Wiki',
     'loja' => 'Loja',
     'doacao' => 'Doações',
+    'conquistas' => 'Conquistas',
     'conta' => 'Conta',
     'outros' => 'Outros avisos',
   ];
@@ -152,6 +153,7 @@ final class NoticeOriginGrouper {
       'wiki' => new TranslatableMarkup('Wiki'),
       'loja' => new TranslatableMarkup('Loja'),
       'doacao' => new TranslatableMarkup('Doações'),
+      'conquistas' => new TranslatableMarkup('Conquistas'),
       'conta' => new TranslatableMarkup('Conta'),
       default => new TranslatableMarkup('Outros avisos'),
     };

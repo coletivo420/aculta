@@ -16,6 +16,9 @@ use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManager;
 use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Donation\EventSubscriber\DonationNoticeEventConsumer;
 use Drupal\aculta_messenger\Integration\Donation\Mail\DonationNoticeMailType;
+use Drupal\aculta_messenger\Integration\Game\EventSubscriber\GameAchievementNoticeEventConsumer;
+use Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeManager;
+use Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Lms\Access\LearningNoticeAccessCheck;
 use Drupal\aculta_messenger\Integration\Lms\Controller\LearningNoticeOpenController;
 use Drupal\aculta_messenger\Integration\Lms\EventSubscriber\LearningNoticeEventSubscriber;
@@ -29,6 +32,7 @@ use Drupal\aculta_messenger\Integration\Wiki\Mail\WikiNoticeMailType;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
 use Drupal\aculta_messenger\Hook\PersonalNoticeAdapterHooks;
+use Drupal\aculta_messenger\Hook\BadgeAwardNoticeEventProducer;
 use Drupal\aculta_messenger\Mapper\MessengerPrivateMessageMapper;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
@@ -73,6 +77,21 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
     }
 
     $optionalAdapters = [];
+    $container->setDefinition('aculta_messenger.game_achievement_notice_manager', new Definition(
+      GameAchievementNoticeManager::class,
+      [
+        new Reference('entity_type.manager'),
+        new Reference('aculta_user.badge_service'),
+        new Reference('aculta_portal.domain_purpose'),
+        new Reference('lock.persistent'),
+      ],
+    ));
+    $container->setAlias(GameAchievementNoticeManagerInterface::class, 'aculta_messenger.game_achievement_notice_manager');
+    $container->setDefinition('aculta_messenger.game_achievement_notice_consumer', new Definition(
+      GameAchievementNoticeEventConsumer::class,
+      [new Reference('aculta_messenger.game_achievement_notice_manager')],
+    ))->addTag('event_subscriber');
+    $optionalAdapters['game'] = new Reference('aculta_messenger.game_achievement_notice_manager');
     if ($container->hasDefinition('aculta_messenger.friendship_notice_manager')) {
       $optionalAdapters['friendship'] = new Reference('aculta_messenger.friendship_notice_manager');
     }
@@ -102,6 +121,10 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         new ServiceLocatorArgument($optionalAdapters),
         new Reference('logger.channel.aculta_messenger'),
       ],
+    ))->setPublic(TRUE);
+    $container->setDefinition(BadgeAwardNoticeEventProducer::class, new Definition(
+      BadgeAwardNoticeEventProducer::class,
+      [new Reference('aculta_messenger.notice_event_publisher'), new Reference('module_handler')],
     ))->setPublic(TRUE);
   }
 
