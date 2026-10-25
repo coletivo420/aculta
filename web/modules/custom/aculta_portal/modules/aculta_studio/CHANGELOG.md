@@ -1,3 +1,10 @@
+## Nota de preparação S-R5 — paridade Conta/Perfil (2026-10-25)
+
+- Inventário estático de rotas, owners e políticas para comparação de `/studio/conta` com a interface permanente `/conta-legada`, e do editor `/studio/perfil` com o perfil público `/u/{apelido}` em MAIN. Matriz de casos, estados, diferenças intencionais, evidências e critérios: [S-R5-MATRIZ-COMPARACAO.md](docs/S-R5-MATRIZ-COMPARACAO.md).
+- Adicionada suíte de navegador somente leitura `tests/browser/aculta-studio/parity-s-r5.mjs`, com duas contas de teste independentes, acesso anônimo, GET sem JS, comparação estrutural de Form API, sentinelas de privacidade inclusive no HTML, screenshots dos viewports 320/375/390/768/1024/1440 px e registro PASS/FAIL/SKIP. Instruções e limites em `tests/browser/aculta-studio/README.md`.
+- A Conta Studio omite intencionalmente o apelido cadastral; a Conta legada mantém o campo. O Portal não registra rota legada `/pedidos`; a suíte evita inventá-la e compara `/conta-legada` somente como referência visual. Perfil privado em MAIN segue `PublicProfilePolicy` (apelido e foto possíveis; sem bio/redes/e-mail).
+- **Não houve execução no Firefox ESR/X11 nem Runtime Drupal**, pois não há checkout do Homelab neste ambiente. Apenas leitura estática e verificação de parse de código JavaScript com imports removidos para compilação. Todos os gates S-R4 e testes funcionais S-R5 continuam pendentes. **S-R4 não homologada; S-R5 iniciada como instrumentação, sem aceite.** Sem alteração de versão, contrato, Form API ou de `/conta-legada`; nenhum merge/deploy.
+
 ## 0.1.0-dev.22 — revisão estática S-R4 e handoff para S-R5 (2026-10-25)
 
 - Corrigida a substituição insegura de apelido ausente: `StudioProfileController` deixa de mostrar `User::getDisplayName()` (que pode representar e-mail ou nome de cadastro) em `profile-identity`; usa texto neutro `Apelido não informado`, até o `AuthorIdentityResolver` retornar apelido real do User. O link público continua exclusivamente condicionado ao `PublicProfileLink`.
