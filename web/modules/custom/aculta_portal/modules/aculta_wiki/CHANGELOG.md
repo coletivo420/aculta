@@ -1635,23 +1635,50 @@
   campo título, que o prop tipado como string descartava e deixava o `h1` vazio.
   O template agora usa `node.label`. As 6 URLs publicadas retornam 200 com um
   único `h1` titulado; o Kernel renderiza o tema e cobre os dois invariantes.
-- **Homologação executada.** Firefox ESR/X11, tema ACULTA420, sete larguras
-  (320/360/390/768/1024/1280/1440): público **114/114** (incluindo a página do
-  verbete), WE SATIVA autenticado **31/31**, moderação Studio **20/20**, teclado
-  **49/49** e sem-JavaScript **16/16**. `aculta_forum_wiki` está habilitado no
-  Runtime e o provider `wiki` foi confirmado no resolver; anônimo lê e não
-  escreve nem modera. Nenhuma escrita de conteúdo ou configuração; o cache do
-  Runtime de teste foi reconstruído com autorização para validar o template.
-- **Testes próprios.** Unit Wiki 82/449; Kernel Wiki 31/1.692 (classe de imagem
-  29/1.642); Messenger integração Wiki Unit 4/47 e Kernel 11/236; Estatísticas
-  Wiki Kernel 13/142; `aculta_forum_wiki` Unit 5/28; Unit do enumerador do
-  Index 7/59; PHPCS, PHP lint, gates de índice/Drupal 11/aliases, SDC/Foundation,
-  `validate-aculta-image` e `validate-module-theme-boundary` PASS. Os dois
-  últimos foram corrigidos pelas frentes de imagem e tema no mesmo worktree,
-  fora dos commits desta missão.
-- **Pendências declaradas.** Olivero, modo escuro efetivo, zoom real 200%/400%,
-  leitor de tela e WCAG 2.2 AA completa não foram executados; o formulário de
-  decisão não foi aberto no navegador porque não havia proposta pendente no
-  Runtime. O Index continua desativado no Runtime; ativação/rebuild exige
-  autorização.
+- **Content Index no Runtime (W-F7).** Com autorização, `aculta_index` foi
+  habilitado no Runtime de teste após backup do banco. A geração
+  `fceee33d-cb34-4c24-add1-56619c426b5a` foi construída, validada e ativada:
+  **145 entradas / 110 relações**, incluindo 7 verbetes e 15 categorias Wiki.
+  `aculta-index:audit` terminou `complete`/`valid` sem órfãos, fontes ausentes
+  ou ponteiro inválido. Consulta anônima retorna apenas os 6 verbetes
+  publicados, exclui o rascunho e não expõe `owner_uid`; o Search API
+  `aculta_conteudo` localiza o verbete. Backup prévio em
+  `/home/piradopirata/aculta-backups/runtime-pre-index-20261025.sql`.
+- **Independência de tema (W-F3/W-F4/W-F8).** A rota de busca passou a ter
+  formulário próprio, biblioteca de prévia e classe de comportamento; a home só
+  renderiza o `h1` do controller quando o ACULTA420 suprime o título da rota.
+  Componentes neutros ganharam fallback semântico no Portal para temas sem
+  mapeamento SDC, e o ACULTA420 suprime o título de rota duplicado nas páginas
+  contextuais da Wiki e do WE SATIVA. Resultado: **Olivero** público 130/130,
+  sem-JS 16/16, teclado 50/50, moderação 20/20 e WE SATIVA 31/31.
+- **Homologação executada (ACULTA420).** Oito larguras
+  (320/360/390/640/768/1024/1280/1440): público **130/130**, sem-JavaScript
+  **16/16**, teclado **49/49**, WE SATIVA **34/34** e moderação **22/22**. O
+  formulário de decisão foi aberto com uma proposta temporária criada como
+  fixture: **41/41** verificações, incluindo um único `h1`, Form API, nota e
+  links de comparação; a proposta e todas as revisões foram removidas em
+  seguida. `aculta_forum_wiki` está habilitado no Runtime e o provider `wiki`
+  foi confirmado no resolver; anônimo lê e não escreve nem modera.
+- **Modo escuro e reflow.** O padrão de aparência foi alternado para `dark`,
+  confirmado `data-bs-theme="dark"` e fundo `rgb(23, 21, 19)`; o smoke público
+  passou **114/114** e o padrão foi restaurado para `light`. A largura de 640 px
+  cobre o reflow equivalente a 200% de 1280 px e 320 px cobre 400%; zoom real do
+  navegador não foi executado.
+- **Testes próprios.** Unit Wiki **84/455**; Kernel Wiki **31/1.692** (classe de
+  imagem 29/1.642); Messenger integração Wiki Unit 4/47 e Kernel 11/236;
+  Estatísticas Wiki Kernel 13/142; `aculta_forum_wiki` Unit 5/28; Unit do
+  enumerador do Index 7/59; PHPCS dos arquivos da Wiki/PHP lint, gates de
+  índice/Drupal 11/aliases, SDC/Foundation, `validate-aculta-image` e
+  `validate-module-theme-boundary` PASS. O tema mantém 12 avisos de linha longa
+  preexistentes no PHPCS.
+- **Pendências declaradas.** Leitor de tela, auditoria WCAG 2.2 AA completa e
+  zoom real do navegador não foram executados. A configuração ativa dos papéis
+  no Runtime não contém `submit wiki proposals`/`view own wiki proposals` em
+  `email_confirmed` nem `moderate wiki proposals`/`view any wiki proposals` em
+  `content_editor`, embora estejam em `config/sync`; a concessão não foi feita
+  sem autorização RBAC explícita e bloqueia o fluxo de propostas para
+  participantes e a fila para editores. O `aculta_index` está ativo no Runtime,
+  mas `core.extension` ativo difere de `config/sync`; a exportação é decisão
+  pendente. A notificação para caixas editoriais compartilhadas continua
+  decisão de produto.
 

@@ -33,8 +33,8 @@ configuração do Runtime foi atualizado.
 
 `we-sativa.py` autentica no Runtime de teste com uma URL de login único gerada
 por Drush para a conta autorizada UID 5 (ajustável por variável), abre a home
-Wiki, segue o CTA para `/studio/we-sativa/inicio`, testa o reflow nas sete
-larguras (320/360/390/768/1024/1280/1440 px) e percorre “Meu
+Wiki, segue o CTA para `/studio/we-sativa/inicio`, testa o reflow nas oito
+larguras (320/360/390/640/768/1024/1280/1440 px) e percorre “Meu
 Trabalho” até o formulário Node nativo e seu retorno. Não envia formulários nem
 altera preferências ou conteúdo; grava capturas e resumo fora do repositório.
 
@@ -54,27 +54,33 @@ Variáveis: `WIKI_HOME_URL` (padrão `https://wiki420.aculta.toca.net.br/`),
 Drush funcional e Firefox ESR visível. A conta precisa ter confirmação de e-mail,
 acesso ao Studio e criação Wiki. A rodada autentica e cria uma sessão de navegador;
 não reconstrói caches/configuração, não publica nem grava conteúdo. O resultado
-avalia somente o tema ativo no Runtime de teste, não Olivero nem WCAG 2.2 AA
-completa.
+avalia somente o tema ativo no Runtime de teste; a rodada dev.117 também cobriu
+Olivero e modo escuro. Leitor de tela e WCAG 2.2 AA completa permanecem fora
+do escopo do script.
 
 O script valida raiz, listagem e busca em desktop e larguras móveis, verifica
 presença de `main`/`h1`, erros visíveis e rolagem horizontal, e confirma que o
 caminho interno `/wiki` responde 404 por GET. Também descobre na busca o link
 canônico de um verbete publicado e repete as verificações na página do verbete
 (um `h1` titulado, sem overflow e sem erro). Testa apenas o tema ativo no
-servidor. Olivero, leitores de tela, teclado e WCAG 2.2 AA precisam de sessões
-separadas. `WIKI_DARK=1` passa `ui.systemUsesDarkTheme` ao Firefox; no Runtime
-atual ele não produziu modo escuro efetivo, então isso não homologa o tema
-escuro.
+servidor. Olivero foi homologado em dev.117 com os mesmos scripts; leitores de
+tela, teclado e WCAG 2.2 AA completa precisam de sessões separadas. O modo
+escuro deve ser testado pelo padrão `aculta_portal.appearance.default_mode`
+(restaurado para `light`); `WIKI_DARK=1` apenas passa
+`ui.systemUsesDarkTheme` ao Firefox e não força o contrato do site. Use
+`WIKI_SKIP_SCREENSHOTS=1` quando o `/tmp` estiver sem espaço.
 
 ## Moderação no ACULTA Studio
 
 `moderation.py` autentica por URL única do Drush e abre
 `/studio/marley/wiki/moderacao/propostas`. Verifica o listing compartilhado,
-estado vazio e reflow nas sete larguras. Quando há proposta pendente, abre o
+estado vazio e reflow nas oito larguras. Quando há proposta pendente, abre o
 formulário de decisão e confere o Form API, a nota e os links de comparação,
-sem submeter. Use `WIKI_STUDIO_UID=1` no Runtime de teste, porque a conta UID 5
-é editora de verbetes, mas não tem `moderate wiki proposals`.
+sem submeter. A rodada dev.117 usou uma proposta temporária como fixture
+(41/41) e removeu entidade e revisões ao final. Use `WIKI_STUDIO_UID=1` no
+Runtime de teste, porque a conta UID 5 é editora de verbetes, mas não tem
+`moderate wiki proposals`; a configuração ativa dos papéis não contém as
+permissões de proposta presentes em `config/sync`.
 
 ```sh
 cd /home/piradopirata/projetos/aculta

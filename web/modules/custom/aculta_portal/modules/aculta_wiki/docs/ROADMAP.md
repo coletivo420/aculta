@@ -5,13 +5,15 @@ Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
 Linha do projeto `aculta_wiki`: **0.1.0-dev.117**. No Runtime de teste,
-`aculta_wiki` e `aculta_studio` estão ativos e `aculta_index` permanece
-desativado. `drush cr` e o update autorizado 10001 foram aplicados; as rotas
-WE SATIVA existem e as quatro tabelas da entidade de proposta foram instaladas.
-Firefox ESR/X11 autenticado passou 19/19 em dev.116 e, em dev.117, 31/31 no
-início/workspace e 20/20 na moderação Studio, cobrindo 320/360/390/768/1024/1280/1440.
-Olivero, modo escuro efetivo, zoom real 200%/400%, leitor de tela e WCAG 2.2 AA
-completa seguem pendentes. `/wiki` é caminho interno da raiz Wiki e responde 404
+`aculta_wiki`, `aculta_studio` e `aculta_index` estão ativos. `drush cr` e o
+update autorizado 10001 foram aplicados; as rotas WE SATIVA existem e as quatro
+tabelas da entidade de proposta foram instaladas. Em dev.117 o Index foi
+construído, validado, ativado e auditado; Firefox ESR/X11 passou público
+130/130, WE SATIVA 34/34, moderação 22/22, teclado 49/49 e sem-JS 16/16 no
+ACULTA420, e o equivalente em Olivero (130/130, 31/31, 20/20, 50/50, 16/16).
+Modo escuro confirmado e restaurado. Leitor de tela, WCAG 2.2 AA completa e zoom
+real do navegador seguem pendentes, assim como a divergência RBAC das permissões
+de proposta no Runtime. `/wiki` é caminho interno da raiz Wiki e responde 404
 quando chamado diretamente.
 
 ## Integração vigente Wiki ↔ Messenger — avisos editoriais
@@ -35,7 +37,11 @@ enumerador do Index também trata tipo sem schema instalado como vazio, e o
 Kernel de rebuild Wiki-owned voltou a concluir a geração. A página pública do
 verbete deixou de retornar 500 ao mesclar os contextos de cache do hook de
 contribuição e passou a titular o `h1` a partir de `node.label`; as 6 URLs
-publicadas retornam 200 e o smoke público fechou **114/114** em sete larguras.
+publicadas retornam 200 e o smoke público fechou **130/130** em oito larguras.
+O Index foi habilitado no Runtime, com geração validada, auditada sem órfãos e
+consulta pública sem expor rascunho ou autoria. Olivero, modo escuro e o
+formulário de decisão foram homologados; restam leitor de tela, WCAG completa,
+zoom real e a divergência RBAC das permissões de proposta.
 
 O núcleo `aculta_messenger` é dono do consumer, persistência Message, central,
 contagem, preferências, deduplicação, abertura segura, filas, workers e e-mail.

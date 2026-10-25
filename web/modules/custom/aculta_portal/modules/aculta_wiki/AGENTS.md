@@ -1,12 +1,14 @@
 - Dev.117: `FileReferenceInspector` (Portal) ignora tipo registrado sem tabela
   base e `ContentEntityNullStorage` sem converter falha real em exclusão; a
   classe Kernel de imagem passou 29/1.642 e a suíte Kernel Wiki 31/1.692. O
-  enumerador do Index trata tipo sem schema instalado como vazio. A busca
-  deixou de duplicar o `h1`; o hook do link de contribuição passou a mesclar a
-  metadata de cache (eliminando o HTTP 500) e o template usa `node.label` no
-  Context Header (eliminando o `h1` vazio). Firefox ESR/X11: público 114/114,
-  WE SATIVA 31/31, moderação 20/20, teclado 49/49 e sem-JS 16/16 em sete
-  larguras. Olivero, tema escuro efetivo, zoom real e WCAG completa pendentes.
+  enumerador do Index trata tipo sem schema instalado como vazio; o Index foi
+  ativado, reconstruído, validado e auditado no Runtime. A busca ganhou
+  formulário próprio e classes de prévia; componentes neutros têm fallback
+  semântico; o ACULTA420 mantém um único `h1` nas páginas contextuais. Firefox
+  ESR/X11: ACULTA420 público 130/130, WE SATIVA 34/34, moderação 22/22, teclado
+  49/49, sem-JS 16/16; Olivero 130/130, 31/31, 20/20, 50/50, 16/16; decisão
+  41/41 com fixture removida; modo escuro confirmado. Pendentes: leitor de tela,
+  WCAG completa, zoom real e divergência RBAC das permissões de proposta.
 
 - Dev.106: Kernel invoca `WikiController::home()` sob purpose `wiki` e verifica
   o render array com categorias, verbetes recentes e alterações recentes

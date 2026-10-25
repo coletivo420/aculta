@@ -39,14 +39,15 @@ pendentes, está em
   a passar nos dois cenários que o fixture parcial marcava como `Unverifiable`
   (tipos registrados sem tabela base e storages nulos são ignorados; falhas reais
   seguem retendo arquivos). O enumerador do Content Index passou a tratar tipo
-  sem schema instalado como vazio, corrigindo o rebuild afetado pelo novo
-  `aculta_forum_post`. A busca pública deixou de duplicar o `<h1>`. A página
-  pública do verbete deixou de retornar 500 (contextos de cache mesclados) e o
-  template passou a usar `node.label`, eliminando o `h1` vazio. Homologação
-  Firefox ESR/X11 em sete larguras: público 114/114, WE SATIVA 31/31, moderação
-  20/20, teclado 49/49 e sem-JavaScript 16/16. Suítes próprias: Unit 82/449 e
-  Kernel 31/1.692. Olivero, modo escuro efetivo, zoom real, leitor de tela e
-  WCAG 2.2 AA completa continuam pendentes; ver `CHANGELOG.md`.
+  sem schema instalado como vazio. A busca pública deixou de duplicar o `<h1>`,
+  a página do verbete deixou de retornar 500 e o template passou a usar
+  `node.label`. A busca ganhou formulário próprio e prévia independentes do
+  tema; componentes neutros têm fallback semântico e o ACULTA420 mantém um único
+  `h1` nas páginas contextuais. Runtime: Index ativado, geração validada e
+  auditada; Olivero e ACULTA420 homologados em oito larguras; modo escuro
+  confirmado. Suítes próprias: Unit 84/455 e Kernel 31/1.692. Pendências:
+  leitor de tela/WCAG completa, zoom real, divergência RBAC das permissões de
+  proposta no Runtime e exportação da configuração do Index. Ver `CHANGELOG.md`.
 
 - `0.1.0-dev.113`: transições Wiki persistem envelopes v1 na Queue API
   confiável e o worker despacha somente para eventos que tenham consumer
