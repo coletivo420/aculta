@@ -299,17 +299,21 @@ final class AvisosResumo {
       $eligibleRowsByDeliveryId = [];
       $seenDeliveryIds = [];
       $suppressedDeliveryIds = [];
+      $malformedRows = FALSE;
       foreach ($providerRows as $row) {
         if (!is_array($row) || !is_int($row['delivery_id'] ?? NULL) || $row['delivery_id'] < 1) {
+          $malformedRows = TRUE;
           continue;
         }
         // Category is required by the provider contract. A malformed row must
         // never bypass the account's category-level email policy.
         if (!is_string($row['tipo'] ?? NULL) || trim($row['tipo']) === '') {
+          $malformedRows = TRUE;
           continue;
         }
         $deliveryIds = $row['delivery_ids'] ?? [$row['delivery_id']];
         if (!is_array($deliveryIds) || $deliveryIds === []) {
+          $malformedRows = TRUE;
           continue;
         }
         $validDeliveryIds = array_values(array_unique(array_filter(
@@ -320,6 +324,7 @@ final class AvisosResumo {
         if (count($validDeliveryIds) !== count($deliveryIds)
           || !in_array($row['delivery_id'], $validDeliveryIds, TRUE)
           || array_intersect($validDeliveryIds, array_keys($seenDeliveryIds)) !== []) {
+          $malformedRows = TRUE;
           continue;
         }
         foreach ($validDeliveryIds as $deliveryId) {
@@ -335,6 +340,14 @@ final class AvisosResumo {
           'row' => $row,
           'delivery_ids' => $validDeliveryIds,
         ];
+      }
+      if ($malformedRows) {
+        // A malformed row has no safe acknowledgement identity. Keep it
+        // pending rather than letting a broad provider discard erase it.
+        $providerLookupFailed = TRUE;
+        $this->logger?->warning('Digest provider @provider returned malformed delivery rows; unrecognized rows remain pending.', [
+          '@provider' => get_class($provider),
+        ]);
       }
       if ($suppressedDeliveryIds !== []) {
         sort($suppressedDeliveryIds, SORT_NUMERIC);

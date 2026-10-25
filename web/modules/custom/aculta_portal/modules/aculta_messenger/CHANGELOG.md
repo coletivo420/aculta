@@ -1,3 +1,17 @@
+## 0.1.1-dev.307 — preservar avisos válidos ao filtrar linha de digest inválida
+
+Quando um provider retorna linhas inválidas junto de linhas válidas, o digest
+agora envia e confirma por ID somente as linhas válidas; a linha sem identidade
+segura fica pendente. O provider com inconsistência não avança o cooldown
+compartilhado, permitindo nova tentativa. O contrato anterior para um provider
+cujo lote inteiro é inválido permanece: descarte amplo do próprio provider para
+evitar retry infinito. Nenhum aviso do site ou de outra origem é removido.
+
+Validação: Unit Messenger **312 testes / 2.514 assertions PASS**; adapters
+Integration Unit **75 testes / 777 assertions PASS**; `AvisosResumoMailerKernelTest`
+**4 testes / 70 assertions PASS** no MariaDB dedicado; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Sem Runtime ou SMTP.
+
 ## 0.1.1-dev.306 — refletir políticas inválidas como desabilitadas
 
 O formulário administrativo agora trata somente o booleano `true` como modo

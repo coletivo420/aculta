@@ -40,6 +40,76 @@ use PHPUnit\Framework\Attributes\Group;
 final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
 
   /**
+   * Malformed provider rows are not broadly discarded with valid digest rows.
+   */
+  public function testMalformedProviderRowsAreNotBroadlyDiscarded(): void {
+    $account = $this->createMock(UserInterface::class);
+    $account->method('id')->willReturn('27');
+    $account->method('isActive')->willReturn(TRUE);
+    $account->method('getEmail')->willReturn('member@example.test');
+    $noticeQuery = $this->createMock(QueryInterface::class);
+    $noticeQuery->method('accessCheck')->willReturnSelf();
+    $noticeQuery->method('condition')->willReturnSelf();
+    $noticeQuery->method('execute')->willReturn([]);
+    $noticeStorage = $this->createMock(EntityStorageInterface::class);
+    $noticeStorage->method('getQuery')->willReturn($noticeQuery);
+    $noticeStorage->method('loadMultiple')->with([])->willReturn([]);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(27)->willReturn($account);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'aculta_aviso' => $noticeStorage,
+      'user' => $userStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static fn(string $module, ?int $uid, ?string $key): mixed => match ($key) {
+      'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+      'avisos_resumo_ultimo' => 0,
+      'email_confirmed' => TRUE,
+      'avisos_resumo_em_andamento' => [],
+      default => NULL,
+    });
+    $provider = $this->createMock(AvisoDigestProviderInterface::class);
+    $provider->method('pendingRecipientIds')->willReturn([27]);
+    $provider->method('digestRowsFor')->with(27)->willReturn([
+      ['tipo' => 'wiki', 'titulo' => 'Revisão publicada', 'quantidade' => 1],
+      ['tipo' => 'wiki', 'titulo' => 'Outra revisão', 'quantidade' => 1, 'delivery_id' => 502],
+    ]);
+    $provider->expects(self::never())->method('discardDigest');
+    $provider->expects(self::once())->method('markDigestSent')->with(27, [502]);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())->method('deliver')->willReturn(SendResult::sent());
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn(1_792_800_000);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::exactly(2))->method('acquire')
+      ->with('aculta_messenger.avisos_resumo.27', 180.0)
+      ->willReturnOnConsecutiveCalls(TRUE, TRUE);
+    $lock->expects(self::once())->method('release')->with('aculta_messenger.avisos_resumo.27');
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects(self::once())->method('warning')
+      ->with(self::stringContains('returned malformed delivery rows'), ['@provider' => get_class($provider)]);
+    $summary = new AvisosResumo(
+      $entities,
+      new AvisoPreferencias($userData),
+      $mailer,
+      new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class)),
+      $userData,
+      $time,
+      (new \ReflectionClass(AvisoService::class))->newInstanceWithoutConstructor(),
+      new Settings(['hash_salt' => 'unit-test-hash-salt']),
+      $this->databaseConnection(),
+      $lock,
+      [$provider],
+      $logger,
+    );
+
+    self::assertSame(1, $summary->enviarResumos());
+  }
+
+  /**
    * Discards only the changed category while delivering eligible categories.
    */
   #[DataProvider('nonDigestEmailModes')]

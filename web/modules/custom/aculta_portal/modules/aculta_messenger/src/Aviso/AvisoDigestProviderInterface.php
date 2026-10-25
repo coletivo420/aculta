@@ -18,7 +18,11 @@ interface AvisoDigestProviderInterface {
    * Returns summary rows for one recipient, revalidating current access.
    *
    * Each row includes a representative provider-owned `delivery_id`; grouped
-   * rows may include the exact `delivery_ids` to acknowledge safely.
+   * rows may include the exact `delivery_ids` to acknowledge safely. A row
+   * without a valid identity is never included in an email. If other valid
+   * rows are delivered, the malformed row is left pending because it cannot
+   * be acknowledged by ID. When no valid row can be included, the shared
+   * digest may invoke recipient-level discard to prevent an endless retry.
    *
    * @return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}>
    *   Digest rows with their provider-owned delivery IDs.
