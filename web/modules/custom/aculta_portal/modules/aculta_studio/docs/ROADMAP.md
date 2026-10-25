@@ -1,3 +1,10 @@
+## S-R5 — instrumentação e matriz de paridade (2026-10-25; sem homologação)
+
+- **Frente iniciada no código de testes e documentação:** [matriz S-R5](S-R5-MATRIZ-COMPARACAO.md) e [suíte Firefox ESR](../../../../../../tests/browser/aculta-studio/README.md) para comparar Conta Studio, Conta legada e Perfil em MAIN, sem criar novo storage, rotas ou operações.
+- Escopos contemplados: cadastro vs apelido, endereço/CEP/número/S-N, documentos CPF/CNPJ opcionais, e-mail/senha/OAuth, pedidos próprios, apoio/assinaturas, preferências, foto/avatar, bio, redes e acesso entre contas. Ao comparar pedidos, não supor rota legada `/pedidos`: Portal expõe o método proprietário, mas essa URL não foi identificada em `aculta_portal.routing.yml`.
+- **Critério de avanço preservado:** S-R4 só se encerra após gates Unit/Kernel/Functional, SDC Runtime, privacidade A/B, Firefox ESR visível e no-JS/AJAX. A suíte S-R5 preparada não os substitui. Executar S-R5 funcional e visual com evidências somente depois de S-R4 homologada. Continuar SDCs `experimental` e versões Dev.
+- **Testes reais desta rodada:** somente verificação estática de ownership/roteamento e parse JavaScript da suíte; PHP lint, PHPCS, PHPUnit, Firefox ESR/X11, HTTP/Drush, acesso, formulários e WCAG **não executados**. PR #297 preservada, sem merge/deploy.
+
 # ACULTA Studio — Roadmap multi-experiência
 
 
