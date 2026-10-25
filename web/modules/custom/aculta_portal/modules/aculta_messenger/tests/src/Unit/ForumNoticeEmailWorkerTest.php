@@ -343,7 +343,7 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
     $outbox = $this->createMock(ForumNoticeEmailOutboxInterface::class);
     $outbox->expects(self::once())->method('claim')->with(17)->willReturn($event);
     $outbox->expects(self::once())->method('setStatus')
-      ->with(17, ForumNoticeEmailOutbox::STATUS_FAILED);
+      ->with(17, ForumNoticeEmailOutbox::STATUS_FAILED_PERMANENT);
 
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('id')->willReturn('12');

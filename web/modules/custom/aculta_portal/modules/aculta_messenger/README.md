@@ -1,5 +1,8 @@
 # ACULTA Messenger
 
+Versão de desenvolvimento atual: **0.1.1-dev.352**. O roadmap e o changelog
+registram o estado de cada incremento e as verificações executadas.
+
 Infraestrutura unificada do ACULTA Portal para avisos do site, notificações, assinaturas, e-mail integrado e conversas privadas voluntárias entre membros. A fonte de verdade de cada
 capacidade permanece no módulo Drupal que a fornece; este submódulo compõe a
 experiência e aplica os contratos de acesso e Domain do Portal. A decisão

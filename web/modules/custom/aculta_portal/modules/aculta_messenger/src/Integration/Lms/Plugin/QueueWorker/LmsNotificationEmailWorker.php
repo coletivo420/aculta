@@ -128,7 +128,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
     }
     $attempts = (int) $message->get(self::ATTEMPTS_FIELD)->value;
     if ($attempts >= self::MAX_ATTEMPTS) {
-      $message->set(self::DELIVERY_FIELD, 'failed')->save();
+      $message->set(self::DELIVERY_FIELD, 'failed_permanent')->save();
       return;
     }
     $attempts++;
@@ -149,7 +149,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
       );
     }
     catch (\Throwable) {
-      $message->set(self::DELIVERY_FIELD, 'failed')->save();
+      $message->set(self::DELIVERY_FIELD, $attempts >= self::MAX_ATTEMPTS ? 'failed_permanent' : 'failed')->save();
       if ($attempts < self::MAX_ATTEMPTS) {
         throw new \RuntimeException('LMS transactional notification email delivery failed.');
       }
@@ -164,7 +164,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
         $message->set(self::DELIVERY_FIELD, 'failed_permanent')->save();
         return;
       }
-      $message->set(self::DELIVERY_FIELD, 'failed')->save();
+      $message->set(self::DELIVERY_FIELD, $attempts >= self::MAX_ATTEMPTS ? 'failed_permanent' : 'failed')->save();
       if ($attempts < self::MAX_ATTEMPTS) {
         throw new \RuntimeException('LMS transactional notification email delivery failed.');
       }

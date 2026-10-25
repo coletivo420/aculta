@@ -793,6 +793,8 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
+    $query->method('sort')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
     $query->method('execute')->willReturn([]);
     $noticeStorage = $this->createMock(EntityStorageInterface::class);
     $noticeStorage->method('getQuery')->willReturn($query);

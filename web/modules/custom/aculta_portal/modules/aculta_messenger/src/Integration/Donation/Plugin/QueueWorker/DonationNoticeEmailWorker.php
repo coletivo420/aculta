@@ -101,7 +101,7 @@ final class DonationNoticeEmailWorker extends QueueWorkerBase implements Contain
       }
       $currentAttempts = (int) $message->get('field_aculta_messenger_attempts')->value;
       if ($currentAttempts >= self::MAX_ATTEMPTS) {
-        $message->set('field_aculta_msg_delivery', 'failed')->save();
+        $message->set('field_aculta_msg_delivery', 'failed_permanent')->save();
         return;
       }
       $attempts = $currentAttempts + 1;
@@ -119,7 +119,10 @@ final class DonationNoticeEmailWorker extends QueueWorkerBase implements Contain
         );
       }
       catch (\Throwable) {
-        $message->set('field_aculta_msg_delivery', $attempts >= self::MAX_ATTEMPTS ? 'failed' : 'pending')->save();
+        $message->set(
+          'field_aculta_msg_delivery',
+          $attempts >= self::MAX_ATTEMPTS ? 'failed_permanent' : 'pending',
+        )->save();
         if ($attempts < self::MAX_ATTEMPTS) {
           throw new \RuntimeException('Donation notice e-mail delivery failed.');
         }
@@ -130,7 +133,9 @@ final class DonationNoticeEmailWorker extends QueueWorkerBase implements Contain
       }
       elseif ($result->cancelled || $result->error === DeliveryError::Permanent || $attempts >= self::MAX_ATTEMPTS) {
         $state = $result->cancelled ? 'cancelled'
-          : ($result->error === DeliveryError::Permanent ? 'failed_permanent' : 'failed');
+          : ($result->error === DeliveryError::Permanent || $attempts >= self::MAX_ATTEMPTS
+            ? 'failed_permanent'
+            : 'failed');
         $message->set('field_aculta_msg_delivery', $state)->save();
       }
       else {

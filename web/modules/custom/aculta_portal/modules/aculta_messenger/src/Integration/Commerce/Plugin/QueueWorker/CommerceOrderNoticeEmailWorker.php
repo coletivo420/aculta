@@ -80,8 +80,11 @@ final class CommerceOrderNoticeEmailWorker extends QueueWorkerBase implements Co
       // loaded a stale pending Message before another worker sent it.
       $message = $this->entityTypeManager->getStorage('message')->loadUnchanged($id);
       if (!$message instanceof MessageInterface || $message->bundle() !== 'aculta_msg_commerce_order_notice'
-        || !in_array($message->get('field_aculta_msg_delivery')->value, ['pending', 'failed'], TRUE)
-        || (int) $message->get('field_aculta_messenger_attempts')->value >= self::MAX_ATTEMPTS) {
+        || !in_array($message->get('field_aculta_msg_delivery')->value, ['pending', 'failed'], TRUE)) {
+        return;
+      }
+      if ((int) $message->get('field_aculta_messenger_attempts')->value >= self::MAX_ATTEMPTS) {
+        $this->finish($message, 'failed_permanent');
         return;
       }
       $this->send($message);
@@ -132,7 +135,7 @@ final class CommerceOrderNoticeEmailWorker extends QueueWorkerBase implements Co
       );
     }
     catch (\Throwable) {
-      $this->finish($message, 'failed');
+      $this->finish($message, $attempts >= self::MAX_ATTEMPTS ? 'failed_permanent' : 'failed');
       if ($attempts < self::MAX_ATTEMPTS) {
         throw new \RuntimeException('Commerce order notice email delivery failed.');
       }
@@ -146,7 +149,7 @@ final class CommerceOrderNoticeEmailWorker extends QueueWorkerBase implements Co
       $this->finish($message, 'failed_permanent');
       return;
     }
-    $this->finish($message, 'failed');
+    $this->finish($message, $attempts >= self::MAX_ATTEMPTS ? 'failed_permanent' : 'failed');
     if ($attempts < self::MAX_ATTEMPTS) {
       throw new \RuntimeException('Commerce order notice email delivery failed.');
     }

@@ -79,8 +79,11 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
       // Reload after acquiring the lock to avoid delivering a stale duplicate.
       $message = $this->entityTypeManager->getStorage('message')->loadUnchanged($id);
       if (!$message instanceof MessageInterface || $message->bundle() !== 'aculta_msg_wiki_notice'
-        || !in_array($message->get('field_aculta_msg_delivery')->value, ['pending', 'failed'], TRUE)
-        || (int) $message->get('field_aculta_messenger_attempts')->value >= self::MAX_ATTEMPTS) {
+        || !in_array($message->get('field_aculta_msg_delivery')->value, ['pending', 'failed'], TRUE)) {
+        return;
+      }
+      if ((int) $message->get('field_aculta_messenger_attempts')->value >= self::MAX_ATTEMPTS) {
+        $this->finish($message, 'failed_permanent');
         return;
       }
       $this->send($message);
@@ -131,7 +134,7 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
       );
     }
     catch (\Throwable) {
-      $this->finish($message, 'failed');
+      $this->finish($message, $attempts >= self::MAX_ATTEMPTS ? 'failed_permanent' : 'failed');
       if ($attempts < self::MAX_ATTEMPTS) {
         throw new \RuntimeException('Wiki notice email delivery failed.');
       }
@@ -145,7 +148,7 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
       $this->finish($message, 'failed_permanent');
       return;
     }
-    $this->finish($message, 'failed');
+    $this->finish($message, $attempts >= self::MAX_ATTEMPTS ? 'failed_permanent' : 'failed');
     if ($attempts < self::MAX_ATTEMPTS) {
       throw new \RuntimeException('Wiki notice email delivery failed.');
     }

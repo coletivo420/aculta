@@ -387,7 +387,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
       $this->restoreContainer($previous_container);
     }
 
-    self::assertSame('failed', $state['status']);
+    self::assertSame('failed_permanent', $state['status']);
     self::assertSame(3, $state['attempts']);
   }
 

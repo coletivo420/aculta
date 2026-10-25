@@ -177,7 +177,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
       return;
     }
     if ($result->error === DeliveryError::Permanent) {
-      $this->outbox->setStatus((int) $event['id'], ForumNoticeEmailOutbox::STATUS_FAILED);
+      $this->outbox->setStatus((int) $event['id'], ForumNoticeEmailOutbox::STATUS_FAILED_PERMANENT);
       return;
     }
     $this->retryOrFail((int) $event['id'], (int) $event['email_attempts']);
@@ -242,7 +242,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
     $terminal = $attempts >= self::MAX_ATTEMPTS;
     $this->outbox->setStatus(
       $id,
-      $terminal ? ForumNoticeEmailOutbox::STATUS_FAILED : ForumNoticeEmailOutbox::STATUS_PENDING,
+      $terminal ? ForumNoticeEmailOutbox::STATUS_FAILED_PERMANENT : ForumNoticeEmailOutbox::STATUS_PENDING,
     );
     if (!$terminal) {
       throw new \RuntimeException('Forum direct notice email delivery failed.');

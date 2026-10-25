@@ -1,3 +1,18 @@
+## 0.1.1-dev.352 — estados terminais de entrega direta
+
+Workers de e-mail direto agora persistem `failed_permanent` ao esgotar as
+tentativas, inclusive quando a última falha do transporte é transitória. O
+estado separa uma entrega encerrada de `failed`, que continua elegível a retry.
+Isso cobre Fórum, Wiki, Loja, Doações, LMS, amizades e avisos genéricos de
+mensagens privadas, sem reenviar conteúdo privado.
+
+Validação: Unit/Integration **437 testes / 4.735 assertions PASS**; focais de
+entrega **58/942 PASS**; Kernel Wiki, amizade e Fórum **43/1.012 PASS** no
+MariaDB dedicado (2 depreciações upstream `@EntityType`, 4 notices PHPUnit);
+PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Uma fixture
+LMS foi atualizada para implementar `sort()` e `range()` requeridos pelo
+scanner paginado do Fórum. Runtime e SMTP externo não utilizados.
+
 ## 0.1.1-dev.351 — paginar descoberta de destinatários do resumo
 
 O cron do resumo do Fórum agora consulta os avisos por cursor de ID, em páginas

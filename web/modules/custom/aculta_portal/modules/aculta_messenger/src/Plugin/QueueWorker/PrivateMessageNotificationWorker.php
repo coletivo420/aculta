@@ -265,13 +265,13 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
           'template' => self::TEMPLATE,
           'uid' => $recipientId,
           self::SOURCE_FIELD => $messageId,
-          self::STATUS_FIELD => 'failed',
+          self::STATUS_FIELD => 'failed_permanent',
           self::ATTEMPTS_FIELD => self::MAX_ATTEMPTS,
           self::MAILER_MANAGED_FIELD => $mailerManaged,
         ]);
       }
       else {
-        $notification->set(self::STATUS_FIELD, 'failed');
+        $notification->set(self::STATUS_FIELD, 'failed_permanent');
         $notification->set(self::ATTEMPTS_FIELD, self::MAX_ATTEMPTS);
       }
       $notification->save();
@@ -291,7 +291,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
 
     $attempts = (int) $notification->get(self::ATTEMPTS_FIELD)->value;
     if ($attempts >= self::MAX_ATTEMPTS) {
-      $notification->set(self::STATUS_FIELD, 'failed');
+      $notification->set(self::STATUS_FIELD, 'failed_permanent');
       $notification->save();
       return;
     }
@@ -318,7 +318,10 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
         );
       }
       catch (\Throwable $exception) {
-        $notification->set(self::STATUS_FIELD, 'failed')->save();
+        $notification->set(
+          self::STATUS_FIELD,
+          $attempts >= self::MAX_ATTEMPTS ? 'failed_permanent' : 'failed',
+        )->save();
         if ($attempts < self::MAX_ATTEMPTS) {
           throw new \RuntimeException('Private message email delivery failed.', 0, $exception);
         }
@@ -329,7 +332,12 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
         $notification->set(self::DIGEST_FIELD, 1)->save();
         return;
       }
-      $notification->set(self::STATUS_FIELD, $result->error === DeliveryError::Permanent ? 'failed_permanent' : 'failed')->save();
+      $notification->set(
+        self::STATUS_FIELD,
+        $result->error === DeliveryError::Permanent || $attempts >= self::MAX_ATTEMPTS
+          ? 'failed_permanent'
+          : 'failed',
+      )->save();
       if ($result->error !== DeliveryError::Permanent && $attempts < self::MAX_ATTEMPTS) {
         throw new \RuntimeException('Private message email delivery failed.');
       }
@@ -337,7 +345,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     }
 
     if (!$this->messageNotify->send($notification, ['save on success' => FALSE, 'save on fail' => FALSE])) {
-      $notification->set(self::STATUS_FIELD, 'failed');
+      $notification->set(self::STATUS_FIELD, $attempts >= self::MAX_ATTEMPTS ? 'failed_permanent' : 'failed');
       $notification->save();
       if ($attempts < self::MAX_ATTEMPTS) {
         throw new \RuntimeException('Private message email delivery failed.');

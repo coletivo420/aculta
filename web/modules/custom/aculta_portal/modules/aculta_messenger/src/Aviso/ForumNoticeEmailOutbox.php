@@ -30,6 +30,8 @@ final class ForumNoticeEmailOutbox implements ForumNoticeEmailOutboxInterface {
 
   public const STATUS_FAILED = 'failed';
 
+  public const STATUS_FAILED_PERMANENT = 'failed_permanent';
+
   private const LEASE_SECONDS = 600;
 
   private const BATCH_SIZE = 50;
@@ -104,7 +106,14 @@ final class ForumNoticeEmailOutbox implements ForumNoticeEmailOutboxInterface {
    * {@inheritdoc}
    */
   public function setStatus(int $id, string $status): void {
-    if (!in_array($status, [self::STATUS_PENDING, self::STATUS_SENT, self::STATUS_CANCELLED, self::STATUS_FAILED], TRUE)) {
+    $allowedStatuses = [
+      self::STATUS_PENDING,
+      self::STATUS_SENT,
+      self::STATUS_CANCELLED,
+      self::STATUS_FAILED,
+      self::STATUS_FAILED_PERMANENT,
+    ];
+    if (!in_array($status, $allowedStatuses, TRUE)) {
       throw new \InvalidArgumentException('Invalid Forum notice email state.');
     }
     $this->database->update(ForumNoticeEventSchema::TABLE)
