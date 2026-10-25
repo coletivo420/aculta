@@ -28,6 +28,7 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -40,7 +41,8 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
   /**
    * Discards a pending category when the current mode is no longer digest.
    */
-  public function testDiscardsCategoryAfterSwitchToOff(): void {
+  #[DataProvider('nonDigestEmailModes')]
+  public function testDiscardsCategoryAfterSwitchToNonDigestMode(string $mode): void {
     $account = $this->createMock(UserInterface::class);
     $account->method('id')->willReturn('27');
     $account->method('isActive')->willReturn(TRUE);
@@ -65,7 +67,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $userData = $this->createMock(UserDataInterface::class);
     $userData->method('get')->willReturnCallback(static fn(string $module, ?int $uid, ?string $key): mixed => match ($key) {
       'avisos_resumo_email' => TRUE,
-      'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_OFF,
+      'avisos_email_mode_loja' => $mode,
       'avisos_resumo_ultimo' => 0,
       'email_confirmed' => TRUE,
       default => NULL,
@@ -78,6 +80,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $provider->expects(self::once())->method('discardDigest')->with(27);
     $provider->expects(self::never())->method('markDigestSent');
     $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
     $mailer->expects(self::never())->method('send');
 
     $time = $this->createMock(TimeInterface::class);
@@ -105,6 +108,15 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
 
     self::assertSame(0, $summary->enviarResumos());
     self::assertSame(0, $summary->enviarResumos(), 'A concurrent digest run skips a recipient whose lock is held.');
+  }
+
+  /**
+   * Provides all modes that must suppress pending digest rows. */
+  public static function nonDigestEmailModes(): array {
+    return [
+      'opt-out' => [AvisoPreferencias::EMAIL_OFF],
+      'direct delivery' => [AvisoPreferencias::EMAIL_IMMEDIATE],
+    ];
   }
 
   /**

@@ -1,3 +1,12 @@
+## 0.1.1-dev.225 — cobrir troca de digest para envio direto
+
+O teste de preferência do digest agora cobre também a mudança de uma categoria para envio direto. A pendência dessa
+categoria é descartada do resumo, sem chamar o Mailer pelo digest; a notificação do site permanece obrigatória. O mesmo
+cenário também cobre opt-out.
+
+Validação: `AvisosResumoProviderPreferenceTest` **5 testes / 103 assertions PASS**; PHP lint e PHPCS Drupal/DrupalPractice
+PASS. Sem envio de e-mail ou acesso ao Runtime.
+
 ## 0.1.1-dev.224 — aplicar confirmação de e-mail a envios diretos integrados
 
 Os workers diretos de LMS, Wiki e Loja agora revalidam `EmailConfirmationPolicy` antes de resolver o aviso ou chamar o
