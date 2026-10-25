@@ -2317,3 +2317,12 @@ Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **253 tes
 assinaturas de Message/Private Message Core/contrib); PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime e e-mail externo
 não executados.
 
+## 0.1.1-dev.232 — provar idempotência da repetição do digest
+
+O teste do digest agora percorre a falha temporária do Mailer e uma nova tentativa após a janela de transporte: o lote
+permanece pendente, recebe a mesma correlação determinística e é confirmado uma vez após o envio aceito. A cobertura
+fecha a lacuna entre testar apenas a pendência da falha e comprovar a chave idempotente do retry.
+
+Validação: `AvisosResumoProviderPreferenceTest` **6/130 PASS**; `AvisosResumoMailerKernelTest` **4/70 PASS** em
+MariaDB dedicado. Runtime e transporte de e-mail externo não executados.
+

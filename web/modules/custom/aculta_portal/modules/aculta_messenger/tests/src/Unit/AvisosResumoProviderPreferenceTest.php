@@ -375,6 +375,100 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
   }
 
   /**
+   * A retry after the transport window reuses the same batch correlation.
+   */
+  public function testTemporaryFailureRetryKeepsBatchCorrelationId(): void {
+    $account = $this->createMock(UserInterface::class);
+    $account->method('id')->willReturn('27');
+    $account->method('isActive')->willReturn(TRUE);
+    $account->method('getEmail')->willReturn('member@example.test');
+
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('execute')->willReturn([]);
+    $noticeStorage = $this->createMock(EntityStorageInterface::class);
+    $noticeStorage->method('getQuery')->willReturn($query);
+    $noticeStorage->method('loadMultiple')->with([])->willReturn([]);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(27)->willReturn($account);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'aculta_aviso' => $noticeStorage,
+      'user' => $userStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+
+    $snapshot = NULL;
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use (&$snapshot): mixed {
+      return match ($key) {
+        'avisos_resumo_email' => TRUE,
+        'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_DIGEST,
+        'avisos_resumo_ultimo' => 0,
+        'avisos_resumo_em_andamento' => $snapshot,
+        'email_confirmed' => TRUE,
+        default => NULL,
+      };
+    });
+    $userData->method('set')->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use (&$snapshot): void {
+      if ($key === 'avisos_resumo_em_andamento') {
+        $snapshot = $value;
+      }
+    });
+    $userData->method('delete')->willReturnCallback(static function (string $module, int $uid, string $key) use (&$snapshot): void {
+      if ($key === 'avisos_resumo_em_andamento') {
+        $snapshot = NULL;
+      }
+    });
+    $provider = $this->createMock(AvisoDigestProviderIdentityInterface::class);
+    $provider->method('digestProviderId')->willReturn('loja');
+    $provider->method('pendingRecipientIds')->willReturn([27]);
+    $provider->method('digestRowsFor')->with(27)->willReturn([
+      ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1, 'delivery_id' => 501],
+    ]);
+    $provider->expects(self::once())->method('markDigestSent')->with(27, [501]);
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return count($correlations) === 1
+          ? SendResult::failed(DeliveryError::Temporary, NULL)
+          : SendResult::sent();
+      });
+    $mailer->method('wasAcceptedCorrelation')->willReturn(FALSE);
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturnOnConsecutiveCalls(1_792_800_000, 1_792_800_181, 1_792_800_181);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::exactly(4))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturn(TRUE);
+    $lock->expects(self::exactly(2))->method('release')->with('aculta_messenger.avisos_resumo.27');
+    $summary = new AvisosResumo(
+      $entities,
+      new AvisoPreferencias($userData),
+      $mailer,
+      new EmailConfirmationPolicy(
+        $userData,
+        $entities,
+        $this->createMock(ModuleHandlerInterface::class),
+      ),
+      $userData,
+      $time,
+      (new \ReflectionClass(AvisoService::class))->newInstanceWithoutConstructor(),
+      new Settings(['hash_salt' => 'unit-test-hash-salt']),
+      $this->databaseConnection(),
+      $lock,
+      [$provider],
+    );
+
+    self::assertSame(0, $summary->enviarResumos(), 'A temporary failure leaves the digest available for retry.');
+    self::assertSame(1, $summary->enviarResumos(), 'The unchanged pending batch is delivered once the transport window has elapsed.');
+    self::assertCount(2, $correlations);
+    self::assertSame($correlations[0], $correlations[1], 'A retry of the same logical batch uses the same Mailer idempotency key.');
+  }
+
+  /**
    * Creates a connection with transaction doubles for digest acknowledgement.
    */
   private function databaseConnection(): Connection {

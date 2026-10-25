@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.232, retry idempotente do digest: cobertura Unit força falha temporária, aguarda a janela do transporte e repete o mesmo lote; a correlação do Mailer permanece idêntica e o adapter recebe um único acknowledgement após aceite. `AvisosResumoProviderPreferenceTest` **6/130 PASS**; Kernel com Mailer/Mail Log real e MariaDB dedicado **4/70 PASS**; PHPCS Drupal/DrupalPractice PASS. Sem Runtime ou SMTP externo.
 - Dev.231, privacidade na entrega de mensagens privadas: teste do worker garante que perda de acesso à thread e bloqueios em qualquer direção impedem criação/envio do aviso de e-mail. Mailer e Message Notify não são chamados. `PrivateMessageNotificationWorkerTest` **4/82 PASS**; conjunto Unit Messenger/adapters **268/2.169 PASS**. PHPCS e PHP lint PASS; sem Runtime/e-mail real.
 - Dev.230, revogação nos adapters diretos: workers Commerce, Wiki e Doação cancelam sem chamar Mailer quando a origem fica inacessível; Unit focal **17/222 PASS**. Conjunto Unit do núcleo/adapters anterior **266/2.124 PASS**.
 - Dev.229, revogação no envio direto LMS: se a matrícula/curso já não permite acesso quando o worker processa a fila, a cópia de e-mail termina como `cancelled`; um replay do evento não reabre a entrega nem duplica a notificação. O aviso do site permanece armazenado. `LearningNoticePersistenceKernelTest` **4/52 PASS** no MariaDB dedicado, com 2 deprecações de discovery do Core `message`/`message_template`; sem Runtime ou SMTP.
