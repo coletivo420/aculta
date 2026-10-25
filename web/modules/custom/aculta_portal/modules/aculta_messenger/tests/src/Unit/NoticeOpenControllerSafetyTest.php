@@ -60,7 +60,7 @@ final class NoticeOpenControllerSafetyTest extends UnitTestCase {
 
     $donation = $this->createMock(DonationNoticeManagerInterface::class);
     $donation->method('resolve')->willReturn(['url' => $this->targetUrl()]);
-    $donation->expects(self::once())->method('markRead')->with(self::anything(), $account)->willReturn(TRUE);
+    $donation->expects(self::once())->method('setRead')->with(self::anything(), $account, TRUE)->willReturn(TRUE);
     $donationResponse = (new DonationNoticeOpenController($donation, $account, $request))->open($this->ownedMessage());
     self::assertSame(302, $donationResponse->getStatusCode());
     self::assertSame('no-store, private', $donationResponse->headers->get('Cache-Control'));
@@ -112,7 +112,7 @@ final class NoticeOpenControllerSafetyTest extends UnitTestCase {
   public function testDonationPrerenderDoesNotMarkRead(): void {
     $manager = $this->createMock(DonationNoticeManagerInterface::class);
     $manager->method('resolve')->willReturn(['url' => $this->targetUrl()]);
-    $manager->expects(self::never())->method('markRead');
+    $manager->expects(self::never())->method('setRead');
     $response = (new DonationNoticeOpenController($manager, $this->account(), $this->requestStack('prerender')))
       ->open($this->ownedMessage());
     self::assertSame(204, $response->getStatusCode());
@@ -142,6 +142,19 @@ final class NoticeOpenControllerSafetyTest extends UnitTestCase {
     $this->expectException(NotFoundHttpException::class);
 
     (new LearningNoticeOpenController($manager, $account, $this->requestStack('')))->open($this->ownedMessage());
+  }
+
+  /**
+   * Donation denies the redirect when access changes before the read mutation.
+   */
+  public function testDonationRejectsReadWhenAccessChangesAfterResolve(): void {
+    $account = $this->account();
+    $manager = $this->createMock(DonationNoticeManagerInterface::class);
+    $manager->method('resolve')->willReturn(['url' => $this->targetUrl()]);
+    $manager->expects(self::once())->method('setRead')->with(self::anything(), $account, TRUE)->willReturn(FALSE);
+    $this->expectException(NotFoundHttpException::class);
+
+    (new DonationNoticeOpenController($manager, $account, $this->requestStack('')))->open($this->ownedMessage());
   }
 
   /**

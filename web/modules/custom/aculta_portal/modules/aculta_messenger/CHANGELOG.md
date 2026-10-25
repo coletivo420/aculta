@@ -1,3 +1,15 @@
+## 0.1.1-dev.331 — unificar mutação de leitura de Doações
+
+O controller de avisos de Doações usa agora o contrato comum `setRead()` já
+adotado por LMS, Wiki e Loja. O alias `markRead()` foi removido do manager e da
+interface, sem consumidores além do próprio controller. Teste cobre revogação
+de acesso entre resolução e gravação, que retorna 404 sem redirecionar.
+
+Validação: `NoticeOpenControllerSafetyTest` **9/54 PASS**, Unit Messenger
+**342/2.755 PASS**, Integration Unit Doações **7/88 PASS**, PHPCS
+Drupal/DrupalPractice, PHP lint, YAML e `git diff --check` PASS. Kernel não
+executado (`SIMPLETEST_DB` ausente); sem Runtime/SMTP.
+
 ## 0.1.1-dev.330 — revalidar acesso LMS ao marcar aviso como lido
 
 A abertura de avisos educacionais agora usa a operação validada do manager para

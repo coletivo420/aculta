@@ -22,10 +22,6 @@ interface DonationNoticeManagerInterface extends PaginatedPersonalNoticeAdapterI
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;
 
   /**
-   * Marks an authorized, currently accessible notice as read. */
-  public function markRead(MessageInterface $message, AccountInterface $account): bool;
-
-  /**
    * Sets the read state after revalidating ownership and donation access.
    */
   public function setRead(MessageInterface $message, AccountInterface $account, bool $read): bool;

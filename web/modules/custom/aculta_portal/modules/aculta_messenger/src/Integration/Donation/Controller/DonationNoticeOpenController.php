@@ -35,7 +35,7 @@ final class DonationNoticeOpenController {
       return new Response('', Response::HTTP_NO_CONTENT, ['Cache-Control' => 'private, no-store']);
     }
     if (MemberInitiatedRequest::isMemberInitiated($request)
-      && !$this->notices->markRead($message, $this->currentUser)) {
+      && !$this->notices->setRead($message, $this->currentUser, TRUE)) {
       throw new NotFoundHttpException();
     }
     return new TrustedRedirectResponse($resolved['url']->toString(), Response::HTTP_FOUND, [

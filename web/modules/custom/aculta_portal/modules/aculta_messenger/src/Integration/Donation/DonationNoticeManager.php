@@ -439,12 +439,6 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
   }
 
   /**
-   * Marks an owned notice read after current source access is revalidated. */
-  public function markRead(MessageInterface $message, AccountInterface $account): bool {
-    return $this->setRead($message, $account, TRUE);
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function setRead(MessageInterface $message, AccountInterface $account, bool $read): bool {
