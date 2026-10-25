@@ -60,9 +60,14 @@ final class UnreadThreadCounter {
       return FALSE;
     }
 
-    foreach ($thread->getMessages() as $message) {
-      if ((int) $message->getOwnerId() !== (int) $this->currentUser->id()
-        && (int) $message->getCreatedTime() > $lastAccess) {
+    // Thread message references are appended chronologically. Walk backward
+    // so a recent incoming message exits quickly and old history is not
+    // examined once the member's last-access boundary is reached.
+    foreach (array_reverse($thread->getMessages()) as $message) {
+      if ((int) $message->getCreatedTime() <= $lastAccess) {
+        break;
+      }
+      if ((int) $message->getOwnerId() !== (int) $this->currentUser->id()) {
         return TRUE;
       }
     }

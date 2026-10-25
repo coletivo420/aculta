@@ -1,3 +1,9 @@
+## 0.1.1-dev.274 — percorrer mensagens não lidas do fim para o começo
+
+A verificação de cada conversa percorre as referências cronológicas da mensagem mais nova para a mais antiga. Ela termina ao encontrar o timestamp de leitura e retorna assim que encontra uma mensagem recebida após esse limite, evitando examinar o histórico antigo em casos comuns.
+
+Validação: `UnreadThreadCounterTest` **8/27 PASS**, Unit Messenger **275/2.162 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
 ## 0.1.1-dev.273 — remover consulta duplicada no contador de mensagens
 
 O contador de conversas não consulta mais todos os IDs apenas para obter a quantidade antes de carregar todas as threads. Usa `getThreadsForUser(FALSE)`, que já retorna a coleção completa permitida pela API do Private Message.

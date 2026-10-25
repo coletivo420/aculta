@@ -54,6 +54,44 @@ final class UnreadThreadCounterTest extends UnitTestCase {
   }
 
   /**
+   * Scans newest messages first and stops at the read boundary.
+   */
+  public function testUnreadScanDoesNotInspectOlderHistory(): void {
+    $newestOwnMessage = $this->message(self::ME, 1200);
+    $newestOwnMessage->expects(self::once())->method('getCreatedTime')->willReturn(1200);
+    $newestOwnMessage->expects(self::once())->method('getOwnerId')->willReturn(self::ME);
+    $oldIncomingMessage = $this->message(self::OTHER, 1000);
+    $oldIncomingMessage->expects(self::once())->method('getCreatedTime')->willReturn(1000);
+    $oldIncomingMessage->expects(self::never())->method('getOwnerId');
+    $thread = $this->thread(
+      updated: 1200,
+      lastAccess: 1100,
+      messages: [$oldIncomingMessage, $newestOwnMessage],
+    );
+
+    self::assertFalse($this->counter()->isUnread($thread));
+  }
+
+  /**
+   * Returns as soon as the newest unread incoming message is found.
+   */
+  public function testUnreadScanExitsOnNewestIncomingMessage(): void {
+    $newestIncomingMessage = $this->message(self::OTHER, 1200);
+    $newestIncomingMessage->expects(self::once())->method('getCreatedTime')->willReturn(1200);
+    $newestIncomingMessage->expects(self::once())->method('getOwnerId')->willReturn(self::OTHER);
+    $olderMessage = $this->message(self::OTHER, 1150);
+    $olderMessage->expects(self::never())->method('getCreatedTime');
+    $olderMessage->expects(self::never())->method('getOwnerId');
+    $thread = $this->thread(
+      updated: 1200,
+      lastAccess: 1100,
+      messages: [$olderMessage, $newestIncomingMessage],
+    );
+
+    self::assertTrue($this->counter()->isUnread($thread));
+  }
+
+  /**
    * Treats messages created at the last-access second as read.
    */
   public function testMessageCreatedInTheSameSecondAsLastAccessIsRead(): void {
