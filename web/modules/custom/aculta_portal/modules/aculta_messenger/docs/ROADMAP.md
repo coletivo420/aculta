@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.253 — teste de segurança do worker de mensagens privadas cobre conta inativa e revogação de cada permissão de inbox, exigindo saída antes da consulta de bloqueio, persistência ou transporte. `PrivateMessageNotificationWorkerTest` **11/185 PASS**, Unit Messenger **251/1.949 PASS** e PHPCS Drupal/DrupalPractice PASS; Browser, Kernel e Runtime não executados neste incremento.
 - Dev.252 — pedido e aceite de amizade entram na central unificada de avisos pela origem Amizades. Usa o `Message` atual, com read state, paginação, filtros, contador e rótulos genéricos; update 10011 é aditivo e uninstall protege fila/registros. Unit Messenger **247/1.894 PASS**, manager/adapters focais **42/277 PASS**, PHP lint PASS. PHPCS dos arquivos novos/limpos PASS; baseline existente de controllers e `LifecycleHooksTest` permanece. Kernel/Runtime e update pendentes (`SIMPLETEST_DB` ausente).
 - Dev.251 — testes cobrem os textos genéricos de pedido e aceite e provam que o contexto do Mailer contém somente resumo e link da conta. `FriendshipNoticeEmailWorkerTest` **11/211 PASS**; transporte mockado, Runtime/SMTP pendentes.
 - Dev.250 — recuperação de falha ao enfileirar preserva estado terminal concorrente; somente `pending`/`failed` sem tentativa de entrega podem ser marcados como falha de enqueue. `FriendshipNoticeQueueTest` + `FriendshipNoticeEmailWorkerTest` **14/255 PASS**, PHPCS e lint PASS; Runtime/transporte externo pendentes.

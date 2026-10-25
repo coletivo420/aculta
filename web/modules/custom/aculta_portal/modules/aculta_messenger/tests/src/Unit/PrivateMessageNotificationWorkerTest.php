@@ -67,6 +67,25 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
   }
 
   /**
+   * Inactive recipients and accounts without inbox permissions get no email.
+   */
+  #[DataProvider('ineligibleRecipientCases')]
+  public function testIneligibleRecipientCannotReceiveNotice(
+    bool $active,
+    bool $canUsePrivateMessages,
+    bool $canAccessProfiles,
+  ): void {
+    $this->assertNotificationSuppressed(
+      TRUE,
+      NULL,
+      NULL,
+      $active,
+      $canUsePrivateMessages,
+      $canAccessProfiles,
+    );
+  }
+
+  /**
    * Old queue records do not try to deliver a row owned by the Mailer.
    */
   public function testLegacyQueueDoesNotHandleMailerManagedNotification(): void {
@@ -295,11 +314,20 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
    *   Owner and target IDs for the block that applies, or NULL for no block.
    * @param int|null $lastDeleteTimestamp
    *   The recipient's history cutoff, or NULL when history was not cleared.
+   * @param bool $recipientActive
+   *   Whether the account is active.
+   * @param bool $canUsePrivateMessages
+   *   Whether the account retains the private-message permission.
+   * @param bool $canAccessProfiles
+   *   Whether the account retains profile access.
    */
   private function assertNotificationSuppressed(
     bool $threadAccessible,
     ?array $blockedPair,
     ?int $lastDeleteTimestamp = NULL,
+    bool $recipientActive = TRUE,
+    bool $canUsePrivateMessages = TRUE,
+    bool $canAccessProfiles = TRUE,
   ): void {
     $privateMessage = $this->createMock(PrivateMessageInterface::class);
     $privateMessage->method('getOwnerId')->willReturn(1);
@@ -308,13 +336,19 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $privateMessageStorage->method('load')->with(15)->willReturn($privateMessage);
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('id')->willReturn('2');
-    $recipient->method('isActive')->willReturn(TRUE);
-    $recipient->method('hasPermission')->willReturn(TRUE);
+    $recipient->method('isActive')->willReturn($recipientActive);
+    $recipient->method('hasPermission')->willReturnCallback(static fn(string $permission): bool => match ($permission) {
+      'use private messaging system' => $canUsePrivateMessages,
+      'access user profiles' => $canAccessProfiles,
+      default => FALSE,
+    });
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->method('load')->with(2)->willReturn($recipient);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('getMembersId')->willReturn([1, 2]);
-    $thread->method('access')->with('view', $recipient, TRUE)->willReturn(
+    $recipientEligible = $recipientActive && $canUsePrivateMessages && $canAccessProfiles;
+    $thread->expects($recipientEligible ? self::once() : self::never())
+      ->method('access')->with('view', $recipient, TRUE)->willReturn(
       $threadAccessible ? AccessResult::allowed() : AccessResult::forbidden(),
     );
     $thread->method('getLastDeleteTimestamp')->with($recipient)->willReturn($lastDeleteTimestamp);
@@ -322,7 +356,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $privateMessageService->method('getThreadFromMessage')->with($privateMessage)->willReturn($thread);
 
     $banStorage = $this->createMock(EntityStorageInterface::class);
-    $queryCount = !$threadAccessible ? 0 : ($blockedPair === [1, 2] ? 1 : 2);
+    $queryCount = !$recipientEligible || !$threadAccessible ? 0 : ($blockedPair === [1, 2] ? 1 : 2);
     $banStorage->expects(self::exactly($queryCount))->method('getQuery')->willReturnCallback(function () use ($blockedPair): QueryInterface {
       $conditions = [];
       $query = $this->createMock(QueryInterface::class);
@@ -388,6 +422,20 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       'weekly digest queues without sending' => [TRUE, AvisoPreferencias::EMAIL_DIGEST, FALSE],
       'unconfirmed email' => [FALSE, AvisoPreferencias::EMAIL_IMMEDIATE, FALSE],
       'opt-out cancels persisted pending email' => [TRUE, AvisoPreferencias::EMAIL_OFF, TRUE],
+    ];
+  }
+
+  /**
+   * Provides account eligibility conditions that suppress delivery.
+   *
+   * @return array<string, array{bool, bool, bool}>
+   *   Account status, private-message permission, and profile permission.
+   */
+  public static function ineligibleRecipientCases(): array {
+    return [
+      'inactive account' => [FALSE, TRUE, TRUE],
+      'private messaging permission revoked' => [TRUE, FALSE, TRUE],
+      'profile access permission revoked' => [TRUE, TRUE, FALSE],
     ];
   }
 

@@ -1,3 +1,9 @@
+## 0.1.1-dev.253 — caracterizar elegibilidade dos destinatários de e-mail privado
+
+O teste do worker agora prova que conta inativa, revogação de `use private messaging system` ou de `access user profiles` interrompem o aviso antes da consulta de bloqueios, persistência do registro ou transporte. O worker mantém a revalidação dessas condições em cada entrega.
+
+Validação: `PrivateMessageNotificationWorkerTest` **11 testes / 185 assertions PASS**; Unit Messenger **251/1.949 PASS**; PHPCS Drupal e DrupalPractice PASS. Browser, Kernel e Runtime não foram executados neste incremento.
+
 ## 0.1.1-dev.252 — integrar pedidos e aceites à central de avisos
 
 Os eventos de amizade agora aparecem também na central compartilhada sob a origem **Amizades**, com paginação, filtro, agrupamento, contador e estado lido/não lido no `Message` existente. Os textos não expõem nomes de terceiros. Update aditivo 10011 instala o campo de leitura nos registros existentes; a integração não cria inbox nem storage paralelo. Proteção de uninstall agora considera fila e registros de amizade.
