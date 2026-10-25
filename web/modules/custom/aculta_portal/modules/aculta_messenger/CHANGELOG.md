@@ -1,3 +1,16 @@
+## 0.1.1-dev.283 — alinhar marcador visual de não lida
+
+O hook de renderização do Messenger aplica a regra canônica de `UnreadThreadCounter`
+ao marcador `unread-thread` do inbox do Private Message. A diferença do upstream
+no limite de timestamps iguais deixa de produzir um indicador visual divergente;
+conversas realmente não lidas preservam a classe. O módulo contrib não foi
+alterado.
+
+Validação: `PrivateMessageUnreadIndicatorHooksTest` **4/4 PASS** e
+`UnreadThreadCounterTest` **8/27 PASS**; suíte Unit Messenger **286/2.316 PASS**;
+PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel de descoberta do hook,
+Browser e Runtime não executados.
+
 ## 0.1.1-dev.282 — distinguir transições de amizade no mesmo segundo
 
 O evento de amizade agora carrega um identificador aleatório imutável por

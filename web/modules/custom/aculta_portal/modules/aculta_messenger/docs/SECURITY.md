@@ -223,3 +223,12 @@ A suíte Unit completa do Messenger passou (**282 testes / 2.308 assertions**).
 Kernel não valida o fluxo HTTP completo de envio, nem substitui navegador ou
 Runtime; esses gates seguem pendentes.
 
+## Consistência visual de leitura
+
+O inbox contrib do Private Message marca uma mensagem criada no mesmo segundo
+do último acesso como não lida (`last_access <= message.created`), enquanto o
+contador compartilhado do Messenger usa `message.created > last_access`. O
+hook `PrivateMessageUnreadIndicatorHooks` aplica o resultado do contador ao
+marcador visual `unread-thread` apenas na visualização inbox. O histórico, o
+estado persistido e as regras de acesso do contrib permanecem inalterados.
+
