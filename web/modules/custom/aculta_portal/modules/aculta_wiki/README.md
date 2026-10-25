@@ -44,7 +44,7 @@ pendentes, está em
   pública do verbete deixou de retornar 500 (contextos de cache mesclados) e o
   template passou a usar `node.label`, eliminando o `h1` vazio. Homologação
   Firefox ESR/X11 em sete larguras: público 114/114, WE SATIVA 31/31, moderação
-  20/20, teclado 49/49 e sem-JavaScript 16/16. Suítes próprias: Unit 82/448 e
+  20/20, teclado 49/49 e sem-JavaScript 16/16. Suítes próprias: Unit 82/449 e
   Kernel 31/1.692. Olivero, modo escuro efetivo, zoom real, leitor de tela e
   WCAG 2.2 AA completa continuam pendentes; ver `CHANGELOG.md`.
 

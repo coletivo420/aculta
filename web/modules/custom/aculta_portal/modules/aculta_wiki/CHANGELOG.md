@@ -1642,16 +1642,16 @@
   Runtime e o provider `wiki` foi confirmado no resolver; anônimo lê e não
   escreve nem modera. Nenhuma escrita de conteúdo ou configuração; o cache do
   Runtime de teste foi reconstruído com autorização para validar o template.
-- **Testes próprios.** Unit Wiki 82/448; Kernel Wiki 31/1.692 (classe de imagem
+- **Testes próprios.** Unit Wiki 82/449; Kernel Wiki 31/1.692 (classe de imagem
   29/1.642); Messenger integração Wiki Unit 4/47 e Kernel 11/236; Estatísticas
   Wiki Kernel 13/142; `aculta_forum_wiki` Unit 5/28; Unit do enumerador do
-  Index 7/59; PHPCS, PHP lint, gates de índice/Drupal 11/aliases, SDC/Foundation
-  e `git diff --check` PASS.
+  Index 7/59; PHPCS, PHP lint, gates de índice/Drupal 11/aliases, SDC/Foundation,
+  `validate-aculta-image` e `validate-module-theme-boundary` PASS. Os dois
+  últimos foram corrigidos pelas frentes de imagem e tema no mesmo worktree,
+  fora dos commits desta missão.
 - **Pendências declaradas.** Olivero, modo escuro efetivo, zoom real 200%/400%,
   leitor de tela e WCAG 2.2 AA completa não foram executados; o formulário de
   decisão não foi aberto no navegador porque não havia proposta pendente no
-  Runtime. `validate-aculta-image.php` segue reprovando uma ocorrência R5
-  preexistente em `UnusedFileCleaner.php` (fora da Wiki) e o gate
-  módulo/tema mantém ocorrências preexistentes de SDC. O Index continua
-  desativado no Runtime; ativação/rebuild exige autorização.
+  Runtime. O Index continua desativado no Runtime; ativação/rebuild exige
+  autorização.
 
