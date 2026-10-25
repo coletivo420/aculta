@@ -7,11 +7,11 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 use Drupal\aculta_messenger\Hook\PrivateMessageUnreadIndicatorHooks;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -87,8 +87,7 @@ final class PrivateMessageUnreadIndicatorHooksTest extends UnitTestCase {
   private function hooks(): PrivateMessageUnreadIndicatorHooks {
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn(42);
-    $service = $this->createMock(PrivateMessageServiceInterface::class);
-    return new PrivateMessageUnreadIndicatorHooks(new UnreadThreadCounter($account, $service));
+    return new PrivateMessageUnreadIndicatorHooks(new UnreadThreadCounter($account, $this->createMock(EntityTypeManagerInterface::class)));
   }
 
   /**
