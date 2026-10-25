@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Integration\Commerce;
 
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestSelectiveDiscardInterface;
 use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
@@ -28,7 +29,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Stores and resolves Commerce order notices in Message, without a parallel inbox. */
-final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInterface, AvisoDigestProviderIdentityInterface {
+final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInterface, AvisoDigestProviderIdentityInterface, AvisoDigestSelectiveDiscardInterface {
 
   /**
    * {@inheritdoc}
@@ -330,6 +331,13 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
    * {@inheritdoc} */
   public function discardDigest(int $uid): void {
     $this->setDigestSent($uid);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigestItems(int $uid, array $deliveryIds): void {
+    $this->setDigestSent($uid, $deliveryIds);
   }
 
   /**

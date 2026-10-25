@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Integration\Donation;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestSelectiveDiscardInterface;
 use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
@@ -29,7 +30,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Stores Donation notices in the shared Message entity and digest pipeline. */
-final class DonationNoticeManager implements DonationNoticeManagerInterface, AvisoDigestProviderIdentityInterface {
+final class DonationNoticeManager implements DonationNoticeManagerInterface, AvisoDigestProviderIdentityInterface, AvisoDigestSelectiveDiscardInterface {
 
   /**
    * {@inheritdoc}
@@ -417,6 +418,13 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
    * {@inheritdoc} */
   public function discardDigest(int $uid): void {
     $this->setDigestDone($uid);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigestItems(int $uid, array $deliveryIds): void {
+    $this->setDigestDone($uid, $deliveryIds);
   }
 
   /**

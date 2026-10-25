@@ -18,7 +18,7 @@ use Drupal\user\UserDataInterface;
 
 /**
  * Supplies privacy-minimal weekly summaries of pending private messages. */
-final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityInterface {
+final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityInterface, AvisoDigestSelectiveDiscardInterface {
 
   use StringTranslationTrait;
 
@@ -157,6 +157,14 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
   public function discardDigest(int $uid): void {
     $ids = $this->pendingQuery($uid)->execute();
     $notices = $this->entityTypeManager->getStorage('message')->loadMultiple($ids);
+    $this->markRecordsDone($notices, $uid, 'cancelled');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigestItems(int $uid, array $deliveryIds): void {
+    $notices = $this->entityTypeManager->getStorage('message')->loadMultiple($deliveryIds);
     $this->markRecordsDone($notices, $uid, 'cancelled');
   }
 

@@ -36,7 +36,7 @@ interface AvisoDigestProviderInterface {
   public function markDigestSent(int $uid, array $deliveryIds): void;
 
   /**
-   * Discards pending email entries when the recipient has opted out.
+   * Discards all pending email entries for a recipient.
    */
   public function discardDigest(int $uid): void;
 

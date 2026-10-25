@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Integration\Wiki;
 
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestSelectiveDiscardInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
@@ -27,7 +28,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Stores and resolves Wiki notices in Message, without a parallel inbox. */
-final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigestProviderIdentityInterface {
+final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigestProviderIdentityInterface, AvisoDigestSelectiveDiscardInterface {
 
   /**
    * {@inheritdoc}
@@ -454,6 +455,13 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
    * {@inheritdoc} */
   public function discardDigest(int $uid): void {
     $this->setDigestSent($uid);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigestItems(int $uid, array $deliveryIds): void {
+    $this->setDigestSent($uid, $deliveryIds);
   }
 
   /**

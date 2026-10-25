@@ -33,6 +33,7 @@ use Drupal\aculta_lms\Entity\CourseCertificate;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\lms\Entity\AnswerInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestSelectiveDiscardInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
@@ -44,7 +45,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Persists and presents LMS notices using Messenger's Message entities.
  */
-final class LearningNoticeManager implements LearningNoticeManagerInterface, AvisoDigestProviderIdentityInterface {
+final class LearningNoticeManager implements LearningNoticeManagerInterface, AvisoDigestProviderIdentityInterface, AvisoDigestSelectiveDiscardInterface {
 
   use StringTranslationTrait;
 
@@ -591,6 +592,13 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
    */
   public function discardDigest(int $uid): void {
     $this->setDigestSent($uid);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigestItems(int $uid, array $deliveryIds): void {
+    $this->setDigestSent($uid, $deliveryIds);
   }
 
   /**

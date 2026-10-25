@@ -193,6 +193,11 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
   **somente após envio com sucesso**. O resumo captura a quantidade/IDs incluídos e confirma apenas esse lote; eventos
   chegados durante o transporte ficam pendentes para o próximo digest. O contador de e-mail do Fórum é descontado sob o
   mesmo lock usado pelos produtores, sem sobrescrever incrementos concorrentes.
+- Providers que implementam `AvisoDigestSelectiveDiscardInterface` podem descartar IDs específicos quando a preferência
+  de uma categoria muda antes da entrega. Categorias ainda autorizadas seguem no mesmo resumo; itens de e-mail descartados
+  não são reativados por uma futura troca de preferência, e isso não altera a cópia obrigatória do aviso na central do site.
+  Providers antigos continuam compatíveis; se devolverem categorias mistas sem essa capacidade, o núcleo deixa o lote
+  pendente em vez de descartar os itens elegíveis junto com os desautorizados.
 - Exceção de transporte mantém o lote pendente para retry e não interrompe os outros destinatários do cron. O log não
   inclui destinatário, conteúdo do aviso nem texto da exceção.
 - `AcultaMailerInterface` envia o modelo `avisos_resumo`; não usa `hook_mail`.

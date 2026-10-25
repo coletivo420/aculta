@@ -1,3 +1,18 @@
+## 0.1.1-dev.302 — preservar linhas elegíveis e eventos concorrentes no digest
+
+Uma capacidade opcional permite descarte seletivo sem alterar o contrato base
+dos providers de resumo. Se um adapter retornar categorias com políticas
+diferentes, o Messenger cancela somente os itens sem digest permitido e
+confirma os itens elegíveis após a aceitação do e-mail. Se o transporte
+cancelar o envio, descarta apenas o lote capturado, preservando eventos que
+chegaram durante o processamento. Providers antigos seguem compatíveis e
+mantêm lotes mistos pendentes quando não conseguem descartar por ID. Avisos
+persistidos no site não são afetados.
+
+Validação: Unit Messenger **309 testes / 2.465 assertions PASS**; adapters
+Integration Unit **75 testes / 777 assertions PASS**. PHPCS e PHP lint PASS;
+sem Runtime ou envio de e-mail real.
+
 ## 0.1.1-dev.301 — cobrir gravação administrativa das políticas de e-mail
 
 O formulário administrativo agora tem teste de submissão para as políticas

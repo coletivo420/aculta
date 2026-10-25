@@ -135,6 +135,44 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
   }
 
   /**
+   * Selective cancellation affects only the named recipient's email record.
+   */
+  public function testDiscardDigestCancelsSelectedRowsWithoutAdvancingWindow(): void {
+    $notice = $this->createMock(MessageInterface::class);
+    $notice->method('bundle')->willReturn('aculta_msg_private_notification');
+    $notice->method('getOwnerId')->willReturn(9);
+    $fields = [];
+    $notice->expects(self::exactly(2))->method('set')->willReturnCallback(
+      static function (string $field, mixed $value) use (&$fields, $notice): MessageInterface {
+        $fields[$field] = $value;
+        return $notice;
+      },
+    );
+    $notice->expects(self::once())->method('save');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('loadMultiple')->with([41])->willReturn([41 => $notice]);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->expects(self::once())->method('getStorage')->with('message')->willReturn($storage);
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::never())->method('set');
+    $provider = new PrivateMessageDigestProvider(
+      $entities,
+      $this->createMock(PrivateMessageServiceInterface::class),
+      $this->createMock(AvisoPreferenciasInterface::class),
+      $this->getConfigFactoryStub([]),
+      $userData,
+      $this->createMock(TimeInterface::class),
+    );
+
+    $provider->discardDigestItems(9, [41]);
+
+    self::assertSame([
+      'field_aculta_pm_digest_sent' => 1,
+      'field_aculta_msg_delivery' => 'cancelled',
+    ], $fields);
+  }
+
+  /**
    * Groups safe weekly summaries without reading private message bodies.
    */
   public function testDigestRowsGroupSendersWithoutReadingPrivateMessageBody(): void {

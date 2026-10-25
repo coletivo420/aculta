@@ -298,6 +298,7 @@ final class AvisosResumo {
       });
       $eligibleRowsByDeliveryId = [];
       $seenDeliveryIds = [];
+      $suppressedDeliveryIds = [];
       foreach ($providerRows as $row) {
         if (!is_array($row) || !is_int($row['delivery_id'] ?? NULL) || $row['delivery_id'] < 1) {
           continue;
@@ -305,9 +306,6 @@ final class AvisosResumo {
         // Category is required by the provider contract. A malformed row must
         // never bypass the account's category-level email policy.
         if (!is_string($row['tipo'] ?? NULL) || trim($row['tipo']) === '') {
-          continue;
-        }
-        if ($this->preferencias->emailMode($uid, $row['tipo']) !== AvisoPreferencias::EMAIL_DIGEST) {
           continue;
         }
         $deliveryIds = $row['delivery_ids'] ?? [$row['delivery_id']];
@@ -324,23 +322,46 @@ final class AvisosResumo {
           || array_intersect($validDeliveryIds, array_keys($seenDeliveryIds)) !== []) {
           continue;
         }
+        foreach ($validDeliveryIds as $deliveryId) {
+          $seenDeliveryIds[$deliveryId] = TRUE;
+        }
+        if ($this->preferencias->emailMode($uid, $row['tipo']) !== AvisoPreferencias::EMAIL_DIGEST) {
+          array_push($suppressedDeliveryIds, ...$validDeliveryIds);
+          continue;
+        }
         // Grouped provider rows retain every source ID so acknowledgement is
         // exact even if another event arrives while the email is in flight.
         $eligibleRowsByDeliveryId[$row['delivery_id']] = [
           'row' => $row,
           'delivery_ids' => $validDeliveryIds,
         ];
-        foreach ($validDeliveryIds as $deliveryId) {
-          $seenDeliveryIds[$deliveryId] = TRUE;
+      }
+      if ($suppressedDeliveryIds !== []) {
+        sort($suppressedDeliveryIds, SORT_NUMERIC);
+        $suppressedDeliveryIds = array_values(array_unique($suppressedDeliveryIds));
+        if ($provider instanceof AvisoDigestSelectiveDiscardInterface) {
+          $provider->discardDigestItems($uid, $suppressedDeliveryIds);
         }
       }
       $eligibleGroups = array_values($eligibleRowsByDeliveryId);
       $eligibleRows = array_column($eligibleGroups, 'row');
+      if ($suppressedDeliveryIds !== [] && $eligibleRows !== []
+        && !($provider instanceof AvisoDigestSelectiveDiscardInterface)) {
+        // Older providers cannot safely discard one category without also
+        // removing eligible rows. Leave that provider's batch pending.
+        $providerLookupFailed = TRUE;
+        $this->logger?->warning('Digest provider @provider lacks selective discard for mixed email preferences; its batch remains pending.', [
+          '@provider' => get_class($provider),
+        ]);
+        continue;
+      }
       if ($eligibleRows === []) {
         // Preferences can change after a provider queued a digest row. Clear
         // those pending records instead of sending after the user opted out
         // or switched that category to direct delivery.
-        $provider->discardDigest($uid);
+        if ($suppressedDeliveryIds === [] || !($provider instanceof AvisoDigestSelectiveDiscardInterface)) {
+          $provider->discardDigest($uid);
+        }
         continue;
       }
       array_push($linhas, ...$eligibleRows);
@@ -436,7 +457,12 @@ final class AvisosResumo {
           $this->avisos->clearPendingEmailCount($uid, $aviso['nid'], $aviso['tipo']);
         }
         foreach ($providersWithRows as $providerRows) {
-          $providerRows['provider']->discardDigest($uid);
+          if ($providerRows['provider'] instanceof AvisoDigestSelectiveDiscardInterface) {
+            $providerRows['provider']->discardDigestItems($uid, $providerRows['delivery_ids']);
+          }
+          else {
+            $providerRows['provider']->discardDigest($uid);
+          }
         }
         $this->userData->delete('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
       }

@@ -9,6 +9,7 @@ use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestSelectiveDiscardInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoService;
@@ -39,7 +40,7 @@ use PHPUnit\Framework\Attributes\Group;
 final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
 
   /**
-   * Discards a pending category when the current mode is no longer digest.
+   * Discards only the changed category while delivering eligible categories.
    */
   #[DataProvider('nonDigestEmailModes')]
   public function testDiscardsCategoryAfterSwitchToNonDigestMode(string $mode): void {
@@ -65,27 +66,38 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     });
 
     $userData = $this->createMock(UserDataInterface::class);
-    $userData->method('get')->willReturnCallback(static fn(string $module, ?int $uid, ?string $key): mixed => match ($key) {
-      'avisos_email_mode_loja' => $mode,
-      'avisos_resumo_ultimo' => 0,
-      'email_confirmed' => TRUE,
-      default => NULL,
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($mode): mixed {
+      if ($key === 'avisos_email_mode_loja') {
+        return $mode;
+      }
+      if ($key === 'avisos_email_mode_wiki') {
+        return AvisoPreferencias::EMAIL_DIGEST;
+      }
+      return match ($key) {
+        'avisos_resumo_ultimo' => 0,
+        'email_confirmed' => TRUE,
+        default => NULL,
+      };
     });
-    $provider = $this->createMock(AvisoDigestProviderInterface::class);
+    $provider = $this->createMockForIntersectionOfInterfaces([
+      AvisoDigestProviderInterface::class,
+      AvisoDigestSelectiveDiscardInterface::class,
+    ]);
     $provider->method('pendingRecipientIds')->willReturn([27]);
     $provider->method('digestRowsFor')->with(27)->willReturn([
       ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1, 'delivery_id' => 501],
+      ['tipo' => 'wiki', 'titulo' => 'Revisão publicada', 'quantidade' => 1, 'delivery_id' => 502],
     ]);
-    $provider->expects(self::once())->method('discardDigest')->with(27);
-    $provider->expects(self::never())->method('markDigestSent');
+    $provider->expects(self::once())->method('discardDigestItems')->with(27, [501]);
+    $provider->expects(self::once())->method('markDigestSent')->with(27, [502]);
     $mailer = $this->createMock(AcultaMailerInterface::class);
-    $mailer->expects(self::never())->method('deliver');
+    $mailer->expects(self::once())->method('deliver')->willReturn(SendResult::sent());
     $mailer->expects(self::never())->method('send');
 
     $time = $this->createMock(TimeInterface::class);
     $time->method("getRequestTime")->willReturn(1_792_800_000);
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects(self::exactly(2))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturnOnConsecutiveCalls(TRUE, FALSE);
+    $lock->expects(self::exactly(3))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturnOnConsecutiveCalls(TRUE, TRUE, FALSE);
     $lock->expects(self::once())->method('release')->with('aculta_messenger.avisos_resumo.27');
     $summary = new AvisosResumo(
       $entities,
@@ -105,7 +117,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       [$provider],
     );
 
-    self::assertSame(0, $summary->enviarResumos());
+    self::assertSame(1, $summary->enviarResumos());
     self::assertSame(0, $summary->enviarResumos(), 'A concurrent digest run skips a recipient whose lock is held.');
   }
 
@@ -256,12 +268,15 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $userData->expects(self::once())
       ->method('set')
       ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento', self::isType('array'));
-    $provider = $this->createMock(AvisoDigestProviderInterface::class);
+    $provider = $this->createMockForIntersectionOfInterfaces([
+      AvisoDigestProviderInterface::class,
+      AvisoDigestSelectiveDiscardInterface::class,
+    ]);
     $provider->method('pendingRecipientIds')->willReturn([27]);
     $provider->method('digestRowsFor')->with(27)->willReturn([
       ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1, 'delivery_id' => 501],
     ]);
-    $provider->expects(self::once())->method('discardDigest')->with(27);
+    $provider->expects(self::once())->method('discardDigestItems')->with(27, [501]);
     $provider->expects(self::never())->method('markDigestSent');
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects(self::once())
