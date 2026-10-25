@@ -61,7 +61,7 @@ final class FriendshipNoticeQueue implements FriendshipNoticeQueueInterface {
 
       $attempts = (int) $current->get(self::ENQUEUE_ATTEMPTS_FIELD)->value;
       if ($attempts >= self::MAX_ENQUEUE_ATTEMPTS) {
-        $current->set(self::STATUS_FIELD, 'failed')->save();
+        $current->set(self::STATUS_FIELD, 'failed_permanent')->save();
         $this->logger->error('Friendship notice Message @id exhausted queue enqueue attempts.', ['@id' => $messageId]);
         throw new \RuntimeException('Friendship notice queue enqueue attempts are exhausted.');
       }
@@ -108,7 +108,6 @@ final class FriendshipNoticeQueue implements FriendshipNoticeQueueInterface {
       ->condition('template', FriendshipNoticeSubscriber::TEMPLATE)
       ->condition(self::STATUS_FIELD, ['pending', 'failed'], 'IN')
       ->condition(self::DELIVERY_ATTEMPTS_FIELD, 0)
-      ->condition(self::ENQUEUE_ATTEMPTS_FIELD, self::MAX_ENQUEUE_ATTEMPTS, '<')
       ->condition('changed', $cutoff, '<=')
       ->sort('changed', 'ASC')
       ->range(0, self::BATCH_SIZE)

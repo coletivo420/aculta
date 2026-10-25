@@ -186,6 +186,44 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
   }
 
   /**
+   * Recovery makes an exhausted persisted enqueue lease permanently terminal.
+   */
+  public function testCronTerminatesNoticeAfterFinalEnqueueLeaseWasInterrupted(): void {
+    $message = $this->message(5, 'pending');
+    $message->expects(self::once())->method('set')
+      ->with('field_aculta_msg_delivery', 'failed_permanent')
+      ->willReturnSelf();
+    $message->expects(self::once())->method('save');
+
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->with(FALSE)->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('sort')->with('changed', 'ASC')->willReturnSelf();
+    $query->method('range')->with(0, 50)->willReturnSelf();
+    $query->expects(self::once())->method('execute')->willReturn([83]);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('getQuery')->willReturn($query);
+    $storage->expects(self::once())->method('loadMultiple')->with([83])->willReturn([$message]);
+    $storage->expects(self::once())->method('loadUnchanged')->with(83)->willReturn($message);
+
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->expects(self::never())->method('get');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())->method('acquire')
+      ->with('aculta_messenger:friendship_notice_email:83', 180.0)->willReturn(TRUE);
+    $lock->expects(self::once())->method('release')
+      ->with('aculta_messenger:friendship_notice_email:83');
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects(self::once())->method('error')->with(
+      'Friendship notice Message @id exhausted queue enqueue attempts.',
+      ['@id' => 83],
+    );
+    $time = $this->createConfiguredMock(TimeInterface::class, ['getRequestTime' => 1_800_000_000]);
+
+    $this->queue($storage, $queueFactory, $lock, $logger, $time)->requeuePending();
+  }
+
+  /**
    * Creates a friendship Message fixture with the technical queue fields.
    */
   private function message(int $enqueueAttempts, string $status, bool $mailerManaged = FALSE): MessageInterface {

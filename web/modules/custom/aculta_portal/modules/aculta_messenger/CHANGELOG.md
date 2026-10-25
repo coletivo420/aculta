@@ -1,3 +1,17 @@
+## 0.1.1-dev.349 — finalizar leases de enqueue interrompidos
+
+A recuperação da fila de amizades agora inclui leases que atingiram o limite de
+enqueue. Se o processo parar após persistir a quinta tentativa e antes da
+inserção na fila, o próximo cron grava `failed_permanent` e registra a falha,
+em vez de deixar o aviso `pending` sem recuperação. O worker já trata esse
+estado como terminal.
+
+Validação: `FriendshipNoticeQueueTest` **5/93 PASS**; Unit Messenger
+**359/2.910 PASS**; `FriendshipNoticePipelineKernelTest` **1/23 PASS** no
+MariaDB dedicado (2 depreciações upstream `@EntityType`); PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime e transporte
+de e-mail externo não utilizados.
+
 ## 0.1.1-dev.348 — recarregar estado persistido na fila de amizades
 
 A fila de e-mail de amizades agora compartilha o lock do worker ao adquirir a
