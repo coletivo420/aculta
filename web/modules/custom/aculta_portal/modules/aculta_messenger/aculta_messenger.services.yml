@@ -143,6 +143,14 @@ services:
   aculta_messenger.aviso_preferencias:
     class: Drupal\aculta_messenger\Aviso\AvisoPreferencias
     arguments: ['@user.data', '@config.factory']
+  aculta_messenger.private_message_digest_provider:
+    class: Drupal\aculta_messenger\Aviso\PrivateMessageDigestProvider
+    arguments: ['@entity_type.manager', '@private_message.service', '@aculta_messenger.aviso_preferencias', '@config.factory', '@user.data', '@datetime.time']
+    tags:
+      - { name: aculta_messenger.aviso_digest_provider }
+  aculta_messenger.private_message_email_preference_migration:
+    class: Drupal\aculta_messenger\Aviso\PrivateMessageEmailPreferenceMigration
+    arguments: ['@config.factory', '@user.data', '@database']
   aculta_messenger.avisos_privacy_form:
     class: Drupal\aculta_messenger\Form\AvisosPrivacyForm
     arguments: ['@current_user', '@aculta_messenger.aviso_preferencias', '@entity_type.manager', '@flag', '@aculta_portal.domain_purpose', '@messenger']

@@ -226,11 +226,11 @@ final class AvisosResumo {
         );
       }
       foreach ($this->digestProviders as $provider) {
-        if ($provider instanceof AvisoDigestProviderInterface) {
+        if ($provider instanceof AvisoDigestProviderInterface
+          && !$provider instanceof AvisoIndependentDigestProviderInterface) {
           $provider->discardDigest($uid);
         }
       }
-      return self::RESULT_SKIPPED;
     }
     if (!$conta->isActive() || $conta->getEmail() === '' || !$this->emailPolicy->isConfirmed($conta)) {
       return self::RESULT_SKIPPED;

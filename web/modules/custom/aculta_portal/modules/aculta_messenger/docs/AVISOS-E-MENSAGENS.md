@@ -106,7 +106,8 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 - `Service/ConversationPolicy`, `ConversationMessagingState`: política de novas conversas; bloqueio bilateral em threads existentes.
 - `Service/UnreadThreadCounter`: contagem de conversas não lidas.
 - `Hook/PrivateMessage*Hooks`: formulários, respostas, retenção e apresentação das mensagens.
-- `Plugin/QueueWorker/PrivateMessageNotificationWorker`: entrega, por e-mail, de mensagens privadas. Assim como os demais workers de e-mail direto, usa lease compartilhada de 180 s para cobrir o timeout de socket conhecido e a persistência do resultado.
+- `Plugin/QueueWorker/PrivateMessageNotificationWorker`: entrega aviso genérico direto por e-mail ou registra o aviso mínimo para o digest semanal. O e-mail contém o nome do remetente e o link da inbox, nunca o conteúdo da mensagem; acesso, bloqueios, confirmação e preferência são revalidados.
+- `Aviso/PrivateMessageDigestProvider`: contribui registros `Message` pendentes ao digest compartilhado; respeita a data âncora administrativa e o intervalo de sete dias por conta, revalida acesso à thread e marca somente os itens incluídos.
 - `Mapper/MessengerPrivateMessageMapper`: mapeamento de dados para o tema.
 
 **Avisos (comunicados, alertas e avisos por pessoa)**

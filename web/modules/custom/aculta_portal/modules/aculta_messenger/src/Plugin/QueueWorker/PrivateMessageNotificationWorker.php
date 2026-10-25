@@ -45,6 +45,8 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
 
   private const ATTEMPTS_FIELD = 'field_aculta_messenger_attempts';
 
+  private const DIGEST_FIELD = 'field_aculta_pm_digest_sent';
+
   private const MAX_ATTEMPTS = 3;
 
   public function __construct(
@@ -173,13 +175,34 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
 
     // A private conversation always remains available in the site inbox;
     // current confirmation and preference control only supplemental email.
+    $emailMode = $this->preferences->emailMode($recipientId, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES);
     if (!filter_var((string) $recipient->getEmail(), FILTER_VALIDATE_EMAIL)
       || !$this->emailPolicy->isConfirmed($recipient)
-      || $this->preferences->emailMode($recipientId, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
-        !== AvisoPreferencias::EMAIL_IMMEDIATE) {
+      || $emailMode === AvisoPreferencias::EMAIL_OFF) {
       if ($notification !== NULL) {
-        $notification->set(self::STATUS_FIELD, 'cancelled')->save();
+        $notification->set(self::STATUS_FIELD, 'cancelled');
+        $notification->set(self::DIGEST_FIELD, 1)->save();
       }
+      return;
+    }
+
+    if ($emailMode === AvisoPreferencias::EMAIL_DIGEST) {
+      if ($notification === NULL) {
+        $notification = $this->entityTypeManager->getStorage('message')->create([
+          'template' => self::TEMPLATE,
+          'uid' => $recipientId,
+          self::SOURCE_FIELD => $messageId,
+          self::STATUS_FIELD => 'pending',
+          self::ATTEMPTS_FIELD => 0,
+          self::MAILER_MANAGED_FIELD => $mailerManaged,
+          self::DIGEST_FIELD => 0,
+        ]);
+      }
+      else {
+        $notification->set(self::STATUS_FIELD, 'pending');
+        $notification->set(self::DIGEST_FIELD, 0);
+      }
+      $notification->save();
       return;
     }
 
@@ -229,6 +252,8 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     $notification->save();
 
     if ($mailerManaged) {
+      $sender = $this->entityTypeManager->getStorage('user')->load($senderId);
+      $senderName = $sender instanceof UserInterface ? $sender->getDisplayName() : 'outro usuário';
       try {
         $result = MessengerMailDelivery::deliver(
           $this->mailer,
@@ -236,21 +261,22 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
           (string) $recipient->getEmail(),
           'pt-br',
           [
-            'summary' => 'Você recebeu uma nova mensagem privada.',
+            'summary' => strtr('Você tem uma nova mensagem de @name.', ['@name' => $senderName]),
             'url' => $url->toString(),
           ],
           'private-message:' . $messageId . ':' . $recipientId . ':' . PrivateMessageNoticeMailType::ID,
         );
       }
-      catch (\Throwable) {
+      catch (\Throwable $exception) {
         $notification->set(self::STATUS_FIELD, 'failed')->save();
         if ($attempts < self::MAX_ATTEMPTS) {
-          throw new \RuntimeException('Private message email delivery failed.');
+          throw new \RuntimeException('Private message email delivery failed.', 0, $exception);
         }
         return;
       }
       if ($result->cancelled || $result->sent) {
-        $notification->set(self::STATUS_FIELD, $result->sent ? 'sent' : 'cancelled')->save();
+        $notification->set(self::STATUS_FIELD, $result->sent ? 'sent' : 'cancelled');
+        $notification->set(self::DIGEST_FIELD, 1)->save();
         return;
       }
       $notification->set(self::STATUS_FIELD, $result->error === DeliveryError::Permanent ? 'failed_permanent' : 'failed')->save();
@@ -270,6 +296,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     }
 
     $notification->set(self::STATUS_FIELD, 'sent');
+    $notification->set(self::DIGEST_FIELD, 1);
     $notification->save();
   }
 

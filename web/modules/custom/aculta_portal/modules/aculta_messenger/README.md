@@ -67,10 +67,13 @@ Messenger aplica o contrato compartilhado e revalida acesso.
 logs e métricas de envio. Não se mantém entrega paralela nos antigos
 submódulos `*_messenger`; seu código executável foi removido após a migração.
 O recibo Commerce permanece para convidados e como fallback.
+Para mensagens privadas, o Messenger oferece e-mail genérico direto ou digest
+semanal, sem conteúdo da conversa; preferências antigas são migradas por
+post-update e o Messenger passa a ser sua fonte normativa.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento atual `0.1.1-dev.236` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento atual `0.1.1-dev.247` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação

@@ -170,8 +170,10 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $recipient->method('isActive')->willReturn(TRUE);
     $recipient->method('hasPermission')->willReturn(TRUE);
     $recipient->method('getEmail')->willReturn('member@example.test');
+    $sender = $this->createMock(UserInterface::class);
+    $sender->method('getDisplayName')->willReturn('Remetente');
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(2)->willReturn($recipient);
+    $userStorage->method('load')->willReturnCallback(fn(int $uid): UserInterface => $uid === 2 ? $recipient : $sender);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('getMembersId')->willReturn([1, 2]);
     $thread->method('access')->with('view', $recipient, TRUE)->willReturn(AccessResult::allowed());
@@ -212,8 +214,10 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $notice->method('setArguments')->willReturnSelf();
     $notice->method('save')->willReturn(1);
     $shouldSend = $emailConfirmed && $emailMode === AvisoPreferencias::EMAIL_IMMEDIATE;
-    $noticeStorage->expects($existingPending ? self::never() : ($shouldSend ? self::once() : self::never()))->method('create')
-      ->with(self::callback(static fn(array $values): bool => ($values['field_aculta_mailer_managed'] ?? FALSE) === TRUE))
+    $shouldQueueDigest = $emailConfirmed && $emailMode === AvisoPreferencias::EMAIL_DIGEST;
+    $noticeStorage->expects($existingPending ? self::never() : (($shouldSend || $shouldQueueDigest) ? self::once() : self::never()))->method('create')
+      ->with(self::callback(fn(array $values): bool => ($values['field_aculta_mailer_managed'] ?? FALSE) === TRUE
+        && (!$shouldQueueDigest || ($values['field_aculta_pm_digest_sent'] ?? NULL) === 0)))
       ->willReturn($notice);
     $noticeStorage->method('load')->with(88)->willReturn($notice);
 
@@ -237,12 +241,12 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $legacy = $this->createMock(MessageNotifyInterface::class);
     $legacy->expects(self::never())->method('send');
     $mailer = $this->createMock(AcultaMailerInterface::class);
+    $sentMail = NULL;
     $mailer->expects($shouldSend ? self::once() : self::never())->method('deliver')
-      ->with(self::callback(static fn(MailMessage $mail): bool =>
-        $mail->type === 'private_message_notice'
-        && $mail->to === 'member@example.test'
-        && $mail->langcode === 'pt-br'
-        && !str_contains(serialize($mail->context), 'private body')))
+      ->with(self::callback(static function (MailMessage $mail) use (&$sentMail): bool {
+        $sentMail = $mail;
+        return TRUE;
+      }))
       ->willReturn(SendResult::sent());
     $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
     $urlGenerator->expects($shouldSend ? self::exactly(2) : self::never())->method('generateFromRoute')
@@ -261,8 +265,15 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     finally {
       \Drupal::unsetContainer();
     }
-    if ($existingPending && !$shouldSend) {
+    if ($existingPending && !$shouldSend && !$shouldQueueDigest) {
       self::assertSame('cancelled', $deliveryStatus);
+    }
+    if ($shouldSend) {
+      self::assertSame('private_message_notice', $sentMail->type);
+      self::assertSame('member@example.test', $sentMail->to);
+      self::assertSame('pt-br', $sentMail->langcode);
+      self::assertSame('Você tem uma nova mensagem de Remetente.', $sentMail->context['summary']);
+      self::assertStringNotContainsString('private body', serialize($sentMail->context));
     }
   }
 
@@ -374,6 +385,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
   public static function emailConfirmationCases(): array {
     return [
       'confirmed and enabled' => [TRUE, AvisoPreferencias::EMAIL_IMMEDIATE, FALSE],
+      'weekly digest queues without sending' => [TRUE, AvisoPreferencias::EMAIL_DIGEST, FALSE],
       'unconfirmed email' => [FALSE, AvisoPreferencias::EMAIL_IMMEDIATE, FALSE],
       'opt-out cancels persisted pending email' => [TRUE, AvisoPreferencias::EMAIL_OFF, TRUE],
     ];

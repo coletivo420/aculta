@@ -140,3 +140,10 @@ function aculta_messenger_update_10008(): void {
 function aculta_messenger_update_10009(): void {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
 }
+
+/**
+ * Installs the weekly digest state field for private-message notices.
+ */
+function aculta_messenger_update_10010(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}

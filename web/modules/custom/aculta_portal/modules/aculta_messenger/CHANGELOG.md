@@ -1,3 +1,9 @@
+## 0.1.1-dev.247 — centralizar e-mail privado e resumo semanal sem conteúdo
+
+Preferências de Mensagens Privadas passam a ser próprias do Messenger, com migração incremental da configuração e das escolhas legadas do Private Message; escolhas Messenger existentes são preservadas e a chave individual antiga é removida após cópia. A pessoa escolhe aviso genérico direto, resumo semanal ou sem e-mail. O resumo reutiliza os registros Message existentes, mostra remetente e link para a inbox, nunca o conteúdo da conversa, revalida acesso e bloqueios, respeita data âncora administrativa e intervalo de sete dias por conta. O digest privado não depende do opt-in de resumo diário das demais origens. Sem execução do update no Runtime.
+
+Validação: Unit Messenger **234 testes / 1.766 assertions PASS**; PHPCS Drupal/DrupalPractice nos arquivos alterados, PHP lint, YAML parse e `git diff --check` PASS. `AvisosResumoMailerKernelTest` não executou por ausência de `SIMPLETEST_DB`. Update, Runtime e SMTP permanecem pendentes.
+
 ## 0.1.1-dev.246 — paginação independente por origem na central
 
 A visão sem filtro da Conta agora pagina cada grupo separadamente: comunicados, Fórum, alertas do site, LMS, Wiki, Loja e Doações têm cursores próprios. Avançar um grupo preserva as posições dos demais, com filtros de leitura aplicados antes das páginas, ordem recente e separadores por origem mantidos. Offsets recebidos pela URL são validados e limitados; adapters opcionais continuam isolados. A paginação por origem já existente permanece compatível.
@@ -2423,4 +2429,16 @@ Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **253 tes
 `PrivateMessageRetentionKernelTest` **2 testes / 29 assertions PASS** no MariaDB dedicado (10 deprecações de discovery e
 assinaturas de Message/Private Message Core/contrib); PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime e e-mail externo
 não executados.
+
+## 0.1.1-dev.247 — migrar preferências de e-mail privado para o Messenger
+
+O Messenger passa a ser a fonte única das preferências de e-mail de Mensagens Privadas. O update incremental copia a política administrativa e as escolhas individuais de `private_message.receive_notification`, preserva valores Messenger existentes e remove cada chave individual antiga após a cópia. O formulário administrativo agora define também o padrão para contas sem preferência (somente site ou site e e-mail); opt-out individual e bloqueio administrativo continuam respeitados. O update não foi executado no Runtime.
+
+Validação desta revisão será registrada após executar a suíte Unit Messenger, PHPCS, lint, schema e índice de status. Sem Runtime, SMTP ou operação de produção.
+
+## 0.1.1-dev.247 — centralizar e-mail privado e resumo semanal sem conteúdo
+
+Preferências de Mensagens Privadas passam a ser próprias do Messenger, com migração incremental da configuração e das escolhas legadas do Private Message; escolhas Messenger existentes são preservadas e a chave individual antiga é removida após cópia. A pessoa escolhe aviso genérico direto, resumo semanal ou sem e-mail. O resumo reutiliza os registros Message existentes, mostra remetente e link para a inbox, nunca o conteúdo da conversa, revalida acesso e bloqueios, respeita data âncora administrativa e intervalo de sete dias por conta. O digest privado não depende do opt-in de resumo diário das demais origens. Sem execução do update no Runtime.
+
+Validação: testes Unit focais do worker, configuração administrativa, elegibilidade semanal e migração de padrão **11 testes / 174 assertions PASS**; PHPCS Drupal/DrupalPractice dos arquivos alterados PASS. A suíte completa, validação de configuração e índice de status ainda serão executados. Sem Runtime/SMTP.
 

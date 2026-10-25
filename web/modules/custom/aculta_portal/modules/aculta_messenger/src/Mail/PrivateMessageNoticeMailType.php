@@ -29,7 +29,7 @@ final class PrivateMessageNoticeMailType implements MailTypeInterface {
     return [
       'summary' => [
         'label' => (string) $this->translation->translate('Aviso de mensagem privada'),
-        'sample' => 'Você recebeu uma nova mensagem privada.',
+        'sample' => 'Você tem uma nova mensagem de outra pessoa.',
       ],
       'url' => [
         'label' => (string) $this->translation->translate('Link para abrir a caixa de mensagens'),
@@ -41,7 +41,7 @@ final class PrivateMessageNoticeMailType implements MailTypeInterface {
   /**
    * {@inheritdoc} */
   public function defaultSubject(): string {
-    return (string) $this->translation->translate('Nova mensagem privada na ACULTA');
+    return (string) $this->translation->translate('Aviso de nova mensagem privada na ACULTA');
   }
 
   /**

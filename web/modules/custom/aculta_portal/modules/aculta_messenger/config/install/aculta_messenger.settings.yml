@@ -23,8 +23,10 @@ email_modes:
     digest: true
     immediate: true
   mensagens_privadas:
-    digest: false
+    digest: true
     immediate: true
+    default_mode: immediate
   amizade:
     digest: false
     immediate: true
+private_message_digest_anchor: '2026-10-26'

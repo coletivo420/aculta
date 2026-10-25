@@ -11,6 +11,27 @@ use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 use Drupal\Core\Database\IntegrityConstraintViolationException;
 
 /**
+ * Moves Private Message email preferences into Messenger ownership.
+ */
+function aculta_messenger_post_update_private_message_email_preferences(array &$sandbox): string {
+  /** @var \Drupal\aculta_messenger\Aviso\PrivateMessageEmailPreferenceMigration $migration */
+  $migration = \Drupal::service('aculta_messenger.private_message_email_preference_migration');
+  if (!isset($sandbox['last_uid'])) {
+    $migration->migrateAdministrativeDefaults();
+    $sandbox['last_uid'] = 0;
+  }
+
+  $has_more = $migration->migrateUserBatch($sandbox['last_uid']);
+  if ($has_more) {
+    $sandbox['#finished'] = 0;
+    return 'Migrating Private Message email preferences to ACULTA Messenger.';
+  }
+
+  $sandbox['#finished'] = 1;
+  return 'Migrated Private Message email preferences to ACULTA Messenger.';
+}
+
+/**
  * Adds the per-member dismissal Flag for temporary Site Alerts.
  */
 function aculta_messenger_post_update_site_alert_dismissal_flag(array &$sandbox): string {

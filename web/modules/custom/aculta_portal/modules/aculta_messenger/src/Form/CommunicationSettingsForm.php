@@ -49,7 +49,7 @@ final class CommunicationSettingsForm extends FormBase {
     $uid = (int) $this->currentUser->id();
     $form['tabs'] = $this->settingsTabs->build('messaging');
     $form['intro'] = [
-      '#plain_text' => $this->t('As mensagens privadas permanecem na caixa de conversas do site. Você pode acrescentar um aviso por e-mail; o conteúdo da conversa não é incluído.'),
+      '#plain_text' => $this->t('As mensagens privadas permanecem na caixa de conversas do site. Por e-mail, você pode receber um aviso genérico a cada nova mensagem ou um resumo semanal; o conteúdo da conversa nunca é incluído.'),
     ];
     $form['receive_notification'] = [
       '#type' => 'select',
@@ -86,12 +86,13 @@ final class CommunicationSettingsForm extends FormBase {
   }
 
   /**
-   * Provides site-only or site-plus-email choices allowed by policy.
+   * Provides the member's available private-message email choices.
    */
   private function emailModeOptions(): array {
     $labels = [
       AvisoPreferencias::EMAIL_OFF => $this->t('Somente no site'),
       AvisoPreferencias::EMAIL_IMMEDIATE => $this->t('No site e por e-mail'),
+      AvisoPreferencias::EMAIL_DIGEST => $this->t('Resumo semanal por e-mail'),
     ];
     return array_intersect_key(
       $labels,

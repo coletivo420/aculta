@@ -74,11 +74,20 @@ ficam em `user.data` sob `aculta_messenger`. As categorias de conteúdo são
 respostas/atualizações do Fórum, Aprendizagem, Wiki, Loja e Doações. Para cada
 uma, a pessoa pode selecionar sem e-mail, entrega direta ou resumo diário,
 conforme `aculta_messenger.settings:email_modes`; a administração pode
-desabilitar entrega direta ou resumo. Mensagens privadas e amizade permitem
-somente entrega no site ou e-mail direto, sem digest, e a administração pode
-desabilitar o e-mail. Para contas sem preferência nova, mensagens privadas
-usam `private_message.receive_notification` como compatibilidade. Avisos no
-site e conversas na inbox permanecem disponíveis independentemente do opt-out.
+desabilitar entrega direta ou resumo. Em Mensagens Privadas, a pessoa escolhe
+envio direto a cada mensagem, resumo semanal ou sem e-mail; a administração
+pode habilitar os modos, definir o padrão para contas sem preferência e definir
+a data inicial global do digest semanal. Amizade permite somente entrega no
+site ou e-mail direto. Os avisos de Mensagens Privadas contêm somente o nome do
+remetente e link para a inbox; nunca incluem o corpo da mensagem. Cada conta
+recebe os resumos seguintes após sete dias. O update
+`aculta_messenger_post_update_private_message_email_preferences` copia as
+preferências administrativas e individuais do Private Message para
+`aculta_messenger`; preserva uma escolha Messenger já existente e remove a chave
+individual antiga somente depois da cópia. O update é incremental e não foi
+executado no Runtime. Após sua execução, o Messenger é a fonte única dessas
+preferências. Avisos no site e conversas na inbox permanecem disponíveis
+independentemente do opt-out.
 O ACULTA Mailer é o transporte comum; produtores e adapters do Messenger não
 configuram SMTP.
 

@@ -45,6 +45,9 @@ aculta_messenger.settings:
         amizade:
           type: aculta_messenger.email_modes
           label: 'Amizades'
+    private_message_digest_anchor:
+      type: string
+      label: 'Data inicial do digest semanal de mensagens privadas'
 
 aculta_messenger.email_modes:
   type: mapping
@@ -56,3 +59,6 @@ aculta_messenger.email_modes:
     immediate:
       type: boolean
       label: 'Envio direto'
+    default_mode:
+      type: string
+      label: 'Modo padrão para novas preferências'

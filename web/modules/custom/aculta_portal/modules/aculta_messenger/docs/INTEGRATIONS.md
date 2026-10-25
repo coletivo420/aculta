@@ -267,9 +267,17 @@ inbox individual.
 
 ## Fontes públicas consultadas
 
-A preferência de e-mail é persistida pelo Private Message via Core `user.data`
-(`private_message` / `receive_notification`). O formulário Messenger atualiza
-esse valor sem cópia; o worker aplica o opt-out antes de chamar Message Notify.
+O fluxo de e-mail de Mensagens Privadas pertence ao Messenger. O update
+`aculta_messenger_post_update_private_message_email_preferences` copia o padrão
+administrativo e as escolhas individuais de Core `user.data`
+(`private_message` / `receive_notification`) para chaves/configuração do
+Messenger, preserva preferências Messenger existentes e remove as chaves
+individuais antigas após a cópia. A pessoa escolhe aviso direto por mensagem,
+resumo semanal ou sem e-mail. Os avisos mostram somente o nome do remetente e
+link para a inbox, sem conteúdo da conversa. A data âncora do digest é definida
+pela administração; o intervalo seguinte é de sete dias por conta. O Messenger
+aplica opt-out, confirmação, acesso à thread e bloqueios antes do Mailer ou do
+digest. A execução do update permanece pendente de janela operacional.
 
 O ACULTA420 fornece SDCs para listas, itens, composição, notificações, alertas,
 contadores e estados. O Portal não referencia IDs dos componentes: o tema

@@ -51,9 +51,22 @@ final class MessengerSettingsFormTest extends UnitTestCase {
     );
     self::assertArrayHasKey('doacao', $build['email_modes']);
     foreach ([AvisoPreferencias::EMAIL_PRIVATE_MESSAGES, AvisoPreferencias::EMAIL_FRIENDSHIP] as $category) {
-      self::assertSame([AvisoPreferencias::EMAIL_IMMEDIATE], array_keys($build['email_modes'][$category]['#options']));
-      self::assertSame([AvisoPreferencias::EMAIL_IMMEDIATE], $build['email_modes'][$category]['#default_value']);
+      $expectedOptions = $category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES
+        ? [AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE]
+        : [AvisoPreferencias::EMAIL_IMMEDIATE];
+      self::assertSame($category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES
+        ? [AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE]
+        : [AvisoPreferencias::EMAIL_IMMEDIATE], $build['email_modes'][$category]['#default_value']);
+      self::assertSame($expectedOptions, array_keys($build['email_modes'][$category]['#options']));
     }
+    self::assertSame(
+      AvisoPreferencias::EMAIL_IMMEDIATE,
+      $build['email_modes'][AvisoPreferencias::EMAIL_PRIVATE_MESSAGES . '_default_mode']['#default_value'],
+    );
+    self::assertSame(
+      [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE],
+      array_keys($build['email_modes'][AvisoPreferencias::EMAIL_PRIVATE_MESSAGES . '_default_mode']['#options']),
+    );
   }
 
 }
