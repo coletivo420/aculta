@@ -1,3 +1,13 @@
+## 0.1.1-dev.381 — revalidação Unit dos consumers integrados
+
+Os diretórios Unit de integração dos adapters centrais (LMS, Wiki,
+Commerce/Loja, Doações, Revista e Game) passaram **83 testes / 872 assertions**
+no snapshot publicado, com autoload direcionado aos módulos desse snapshot.
+Sem conexão a banco, Runtime ou transporte externo.
+
+Kernel específico dos produtores, entrega HTTP, BrowserTest/visual, Runtime,
+SMTP e Alpha continuam pendentes.
+
 ## 0.1.1-dev.380 — revalidação Kernel do Messenger
 
 A árvore Kernel completa passou **56 testes / 1.177 assertions** no banco
