@@ -219,6 +219,14 @@ final class NewConversationForm extends FormBase {
       $this->validator->releaseSubmissionLocks();
       return;
     }
+    // Recheck blocks before the contrib service can persist a new thread.
+    // The later check against the locked resolved thread still protects the
+    // actual message write if the relationship changes during resolution.
+    $this->validator->validateBlockedRecipients($form, $formState);
+    if ($formState->hasAnyErrors()) {
+      $this->validator->releaseSubmissionLocks();
+      return;
+    }
     $thread = $this->resolveThreadForSubmission(array_merge([$sender], $recipients), $formState);
     if (!$thread instanceof PrivateMessageThreadInterface) {
       $this->validator->releaseSubmissionLocks();

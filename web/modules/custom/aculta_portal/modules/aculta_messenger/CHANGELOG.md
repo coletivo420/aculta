@@ -1,3 +1,15 @@
+## 0.1.1-dev.280 — revalidar bloqueios antes de criar grupos
+
+O envio de primeira mensagem em grupo agora checa novamente os bloqueios
+bilaterais antes de chamar a API contrib que persiste uma thread. A validação
+final após resolver/travar a conversa permanece, impedindo o envio se o estado
+mudar durante a criação.
+
+Validação: `NewConversationRecipientIdsTest` **7/39 PASS**, Unit Messenger
+**281/2.279 PASS**, PHPCS do teste PASS; `NewConversationForm` mantém baseline
+PHPCS **14 erros/15 avisos**, PHP lint PASS. Kernel, Browser e Runtime não
+executados.
+
 ## 0.1.1-dev.279 — revalidar membership ao responder thread
 
 O formulário nativo agora revalida membership e acesso `view` do remetente na

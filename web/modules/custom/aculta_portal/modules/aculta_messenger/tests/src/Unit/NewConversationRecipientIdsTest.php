@@ -211,6 +211,78 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
   }
 
   /**
+   * A block added after validation cannot leave an empty persisted thread.
+   */
+  public function testSubmitRechecksBlocksBeforeCreatingNewThread(): void {
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+    $sender = $this->eligibleUser(42);
+    $recipient = $this->eligibleUser(84);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('load')->willReturnCallback(static fn(int $uid): ?UserInterface => match ($uid) {
+      42 => $sender,
+      84 => $recipient,
+      default => NULL,
+    });
+    $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypes->method('getStorage')->with('user')->willReturn($storage);
+    $identity = $this->createMock(PublicMemberIdentityInterface::class);
+    $identity->method('publicDisplayName')->willReturn('membro');
+    $candidateThread = $this->createMock(PrivateMessageThreadInterface::class);
+    $candidateThread->method('getMembersId')->willReturn([42, 84]);
+    $state = (object) ['blocked' => FALSE];
+    $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
+    $banManager->method('isBanned')->willReturn(FALSE);
+    $banManager->method('isCurrentUserBannedByUser')
+      ->with(84)
+      ->willReturnCallback(static fn(): bool => $state->blocked);
+    $translation = $this->createMock(TranslationInterface::class);
+    $translation->method('translate')->willReturn('Não foi possível enviar a mensagem para esse destinatário.');
+    $validator = new PrivateMessageFormValidator(
+      $this->createMock(FloodInterface::class),
+      $currentUser,
+      $translation,
+      $banManager,
+      $this->createMock(FriendshipManagerInterface::class),
+      $this->createMock(UserDataInterface::class),
+      $this->createMock(LockBackendInterface::class),
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      new ConversationWriteLock($this->createMock(LockBackendInterface::class), $entityTypes),
+    );
+    $mapper = $this->createMock(PrivateMessageMapperInterface::class);
+    $mapper->expects(self::never())->method('getThreadIdForMembers');
+    $privateMessageService = $this->createMock(PrivateMessageServiceInterface::class);
+    $privateMessageService->expects(self::never())->method('getThreadForMembers');
+    $form = new NewConversationForm(
+      $currentUser,
+      $privateMessageService,
+      $mapper,
+      $validator,
+      $entityTypes,
+      $identity,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+    );
+    $formState = new FormState();
+    $formState->setUserInput(['members' => ['84']]);
+    $formState->setValue('message', 'Primeira mensagem');
+    $formState->set('pmt_entity', $candidateThread);
+    $formState->set('existing_conversation', FALSE);
+    $render = [];
+
+    // Initial validation succeeds; a block appears before Form API submits.
+    $validator->validateBlockedRecipients($render, $formState);
+    self::assertSame([], $formState->getErrors());
+    $state->blocked = TRUE;
+
+    $form->submitForm($render, $formState);
+
+    self::assertSame(
+      'Não foi possível enviar a mensagem para esse destinatário.',
+      $formState->getErrors()['members'],
+    );
+  }
+
+  /**
    * Existing conversations stay replyable after privacy settings change.
    */
   public function testExistingThreadDoesNotReapplyNewConversationPrivacy(): void {
@@ -269,6 +341,16 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
   private function user(int $uid): UserInterface {
     $user = $this->createMock(UserInterface::class);
     $user->method('id')->willReturn((string) $uid);
+    return $user;
+  }
+
+  /**
+   * Creates an active user with both native private-message permissions.
+   */
+  private function eligibleUser(int $uid): UserInterface {
+    $user = $this->user($uid);
+    $user->method('isActive')->willReturn(TRUE);
+    $user->method('hasPermission')->willReturn(TRUE);
     return $user;
   }
 
