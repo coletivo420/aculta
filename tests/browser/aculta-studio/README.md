@@ -19,3 +19,58 @@ Variáveis: `STUDIO_PAGE` (padrão `https://conta.aculta.toca.net.br/studio/marl
 
 Os seletores usam atributos de comportamento `data-aculta-studio*`, porque o tema troca os tokens `data-portal-ui`
 por classes na renderização.
+
+## Meu Perfil — S-R4 (suíte read-only, ainda sem execução no Runtime)
+
+Arquivo: `profile-s-r4.mjs`. Usa **Firefox ESR visível em X11** e geckodriver,
+o mesmo protocolo WebDriver/BiDi do `visual.mjs`. Verifica os quatro SDCs
+renderizados, ações do ACULTA User, isolamento com *duas sessões independentes*
+e sentinelas distintas, link público condicionado à fixture, reflow em
+320/375/390/768/1024/1440 px e capturas locais claro/escuro. Executa também
+uma sessão separada com JavaScript desabilitado, conferindo HTML do perfil e
+GET da edição de apelido.
+
+Primeiro, no **Homelab de testes identificado com hostname, branch, Drush e
+banco**, prepare **duas contas sintéticas** A e B com bio de marcador único,
+sem informações pessoais. Um dos perfis deve ser público e o outro privado.
+Prepare também casos adicionais de apelido ausente, foto publicada e não
+publicada, conforme a matriz do handoff S-R4. A suíte é não destrutiva: ela
+não cria contas, não altera perfis, não envia forms e não troca preferências.
+
+```sh
+export DISPLAY=:0
+export STUDIO_PROFILE_USER_A='conta-teste-A'
+export STUDIO_PROFILE_USER_B='conta-teste-B'
+export STUDIO_PROFILE_SENTINEL_A='marcador-unico-A-no-perfil'
+export STUDIO_PROFILE_SENTINEL_B='marcador-unico-B-no-perfil'
+export STUDIO_PROFILE_PUBLIC_A='yes'
+export STUDIO_PROFILE_PUBLIC_B='no'
+export STUDIO_PROFILE_BASE='https://conta.aculta.toca.net.br'
+export SUITE_OUT='/tmp/aculta-studio-profile-s-r4'
+# Em outra sessão X11: DISPLAY=:0 geckodriver --port 4444
+node tests/browser/aculta-studio/profile-s-r4.mjs
+```
+
+`GECKODRIVER` aceita a URL do servidor WebDriver (padrão
+`http://127.0.0.1:4444`); `STUDIO_PROFILE_DRUSH_URI` aceita override
+somente da mesma origem que `STUDIO_PROFILE_BASE`. A suíte bloqueia hosts
+de produção e exige duas contas distintas. Links temporários de login são
+gerados em memória por Drush e não são gravados no relatório. Evidências
+(`results.json`, PNG) ficam **somente em `$SUITE_OUT`**, fora do Git e
+devem ser tratadas como privadas. Status SKIP produz saída 3, FAIL produz 1,
+PASS total produz 0. Não usar SKIP como aceite.
+
+**Limitações:** o script não homologa upload/crop/modal AJAX, submissões
+Form API, CSRF, cache HTTP, ACL do perfil público em MAIN, segurança de CPF,
+persistência de preferência nem paridade S-R5. O modo escuro é exercitado
+apenas como atributo local de apresentação, sem gravação da preferência.
+A verificação de nome contendo `@` é uma triagem e não substitui uma
+fixture obrigatória sem apelido. As sentinelas de fixture devem estar
+visíveis no editor privado para demonstrar ausência de mistura entre contas.
+Capturas devem ser inspecionadas manualmente quanto a foco, contraste,
+overflow, zoom e layout, além das asserções automatizadas.
+
+**Situação no commit de inclusão:** script preparado e sintaxe conferida em
+cópia local com `node --check`; **Firefox ESR/Runtime ainda não executados**.
+A S-R4 permanece sem homologação; S-R5 continua bloqueada.
+
