@@ -22,6 +22,7 @@ DISPLAY=:0 node tests/browser/aculta-messenger/suite.mjs
 DISPLAY=:0 node tests/browser/aculta-messenger/central-empty-state.mjs
 DISPLAY=:0 node tests/browser/aculta-messenger/drawer-notice-filters.mjs
 DISPLAY=:0 node tests/browser/aculta-messenger/privacy-subscriptions.mjs
+DISPLAY=:0 node tests/browser/aculta-messenger/conversation-list-readonly.mjs
 DISPLAY=:0 SUITE_WIDTH=390 node tests/browser/aculta-messenger/drawer-notice-filters.mjs
 DISPLAY=:0 SUITE_WIDTH=390 node tests/browser/aculta-messenger/privacy-subscriptions.mjs
 ```
@@ -89,6 +90,13 @@ e a captura guardam a dimensão real, sem declarar uma validação de 390 px.
 da Conta, testa por teclado a expansão de “Tópicos que você segue”, confere lista/estado vazio e verifica que a remoção continua
 sendo uma ação explícita. O script não envia o formulário nem altera Flags; também registra a largura efetiva para verificar
 reflow sem declarar um viewport menor que o Firefox entregou.
+
+`conversation-list-readonly.mjs` abre a gaveta de conversas de `teste.comum` e valida a resposta GET, linhas individuais,
+IDs/rótulos acessíveis, grupos separados, estados de leitura e overflow horizontal. A conta tem três conversas sintéticas,
+incluindo dois grupos. Não abre threads, envia formulários, altera relacionamentos ou mensagens; só cria uma sessão temporária
+de navegador. Pré-requisito: executar `scripts/guard-teste-comum.sh` e confirmar no Runtime de teste que as três fixtures
+sintéticas ainda existem. Em 2026-10-25, Firefox ESR visível passou **10/10** em viewport efetivo de 1270 px; a cobertura não equivale
+a leitor de tela nem altera dados do Runtime.
 
 ## Limites
 
