@@ -7,9 +7,11 @@ cancelamento/entrega e que uma instância `Message` no cache estático sobrescre
 um estado terminal persistido. O teste usa instâncias distintas para
 representar o cache local e o estado atual no banco.
 
-Validação: `FriendshipNoticeQueueTest` **4/68 PASS**; Unit Messenger
-**358/2.885 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
-PASS. Sem Kernel, Runtime ou transporte de e-mail externo.
+Validação: fila/worker de amizade **16/309 PASS**; Unit Messenger
+**358/2.885 PASS**; `FriendshipNoticePipelineKernelTest` **1/23 PASS** no
+MariaDB dedicado (2 deprecações upstream `@EntityType`); PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Runtime ou
+transporte de e-mail externo.
 
 ## 0.1.1-dev.347 — revalidar estado das amizades sem cache
 
