@@ -3,6 +3,17 @@
 **PR única:** [#297](https://github.com/coletivo420/aculta/pull/297), branch `docs/aculta-forum-0.1.0-dev.1`.
 **Versões preservadas:** Studio `0.1.0-dev.22`, ACULTA420 `0.7.0-dev.2`.
 
+## Evidências da rodada de qualidade (2026-10-25, dev.23)
+
+Verificação executada no Runtime de teste, sem alterar dados:
+
+- `drush php:script` confirmou as 16 rotas `aculta_studio.*` de Conta e Perfil (`/studio/conta` … `/studio/conta/preferencias`, `/studio/perfil` … `/studio/perfil/redes/{rede}`).
+- Confirmou os caminhos legados da matriz: `/conta-legada`, `/dados`, `/dados/endereco`, `/dados/outros-dados`, `/seguranca`, `/seguranca/senha`, `/conexoes`, `/meu-apoio`, `/configuracoes`. Pedidos segue no owner Commerce (`view.commerce_user_orders.order_page` em `/pedidos`).
+- `/pagamentos` não tem rota, conforme `e75437129`.
+- Testes Unit de rotas, navegação, delegação e Form API passaram (60/60 em `aculta_studio`).
+
+Não cobre: formulários, dados reais, duas contas, sessão anônima, CSRF, no-JS, zoom e capturas no Firefox ESR. Esses itens permanecem pendentes e são a etapa de navegador.
+
 ## Regra de passagem
 
 A ordem de aceite continua **S-R4 homologada → S-R5 funcional/visual validada → decisão RC**.

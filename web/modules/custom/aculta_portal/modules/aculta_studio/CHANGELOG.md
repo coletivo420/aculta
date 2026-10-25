@@ -1,3 +1,11 @@
+## 0.1.0-dev.23 — qualidade S-R4/S-R5: PHPCS, testes de Conta e rotas verificadas (2026-10-25)
+
+- PHPCS Drupal e DrupalPractice limpo em `aculta_studio` (src e tests). Documentação ausente foi escrita com descrições reais, não com blocos vazios; arrays longos foram divididos e nomes totalmente qualificados trocados por `use`.
+- Os testes de navegação contextual da Conta passaram a localizar o item pela rota, não pela posição. A opção Documentos depende do owner opcional, então a posição mudava quando ele não estava instalado. Sem mudança no controller.
+- Gates executados nesta rodada: PHPUnit Unit `aculta_studio` 60/60 OK; `ProfileSdcRenderKernelTest` 3/3 OK no banco de teste dedicado; PHP lint sem erros; `drush` confirmou no Runtime de teste as 16 rotas `aculta_studio.*` e as 10 rotas legadas da matriz, com `/pagamentos` ausente.
+- Corrigido o validador de fronteira: a asserção de `/pagamentos` exigia um redirect removido de propósito em `e75437129`. Agora ela verifica a ausência do controller, conforme a política sem aliases temporários.
+- **Pendente, não homologado:** o validador de fronteira ainda aponta módulos de Studio, Wiki e LMS que renderizam SDCs do ACULTA420 por `#component => 'aculta420:...'`. Corrigir exige decisão de arquitetura. Os testes de navegador de S-R4/S-R5 não foram executados nesta rodada.
+
 ## Nota de preparação S-R5 — paridade Conta/Perfil (2026-10-25)
 
 - Inventário estático de rotas, owners e políticas para comparação de `/studio/conta` com a interface permanente `/conta-legada`, e do editor `/studio/perfil` com o perfil público `/u/{apelido}` em MAIN. Matriz de casos, estados, diferenças intencionais, evidências e critérios: [S-R5-MATRIZ-COMPARACAO.md](docs/S-R5-MATRIZ-COMPARACAO.md).
