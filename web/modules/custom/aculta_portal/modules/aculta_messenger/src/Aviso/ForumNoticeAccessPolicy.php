@@ -43,7 +43,7 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
     }
     $account = $recipient instanceof UserInterface
       ? $recipient
-      : $this->entityTypeManager->getStorage('user')->load($recipient);
+      : $this->entityTypeManager->getStorage('user')->loadUnchanged($recipient);
     if (!$account instanceof UserInterface || !$account->isActive() || !$entity->hasField('field_domain_source')) {
       return FALSE;
     }
@@ -69,7 +69,7 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
     $topic = $comment->getCommentedEntity();
     $account = $recipient instanceof UserInterface
       ? $recipient
-      : $this->entityTypeManager->getStorage('user')->load($recipient);
+      : $this->entityTypeManager->getStorage('user')->loadUnchanged($recipient);
     if (!$account instanceof UserInterface || !$topic instanceof NodeInterface || !$this->canViewTopic($topic, $account)) {
       return FALSE;
     }
@@ -90,7 +90,7 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
     $topic = $post->get('topic')->entity;
     $account = $recipient instanceof UserInterface
       ? $recipient
-      : $this->entityTypeManager->getStorage('user')->load($recipient);
+      : $this->entityTypeManager->getStorage('user')->loadUnchanged($recipient);
     if (!$account instanceof UserInterface || !$account->isActive()
       || !$topic instanceof NodeInterface || !$this->canViewTopic($topic, $account)) {
       return FALSE;

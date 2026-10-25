@@ -1,3 +1,14 @@
+## 0.1.1-dev.322 — revalidar acesso atual de avisos do Fórum
+
+`ForumNoticeAccessPolicy` carrega a conta por `loadUnchanged()` antes de
+autorizar acesso ao tópico, comentário ou post do Fórum. Uma conta desativada
+depois de ser lida anteriormente na requisição não permanece elegível para
+receber avisos ou e-mails.
+
+Validação: `ForumNoticeAccessPolicyTest` **4 testes / 36 assertions PASS**; Unit
+Messenger **324 testes / 2.625 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Kernels, Runtime e SMTP não executados.
+
 ## 0.1.1-dev.321 — revalidar contas em entregas diretas e digest
 
 Workers de e-mail direto e providers de resumo recarregam destinatários (e,

@@ -56,18 +56,28 @@ final class ForumNoticeAccessPolicyTest extends UnitTestCase {
   }
 
   /**
+   * A recipient deactivated after an earlier entity load is denied.
+   */
+  public function testCurrentInactiveRecipientIsRejected(): void {
+    [$policy, $topic] = $this->fixture('forum_aculta_org', AccessResult::allowed(), FALSE);
+    $topic->expects($this->never())->method('access');
+
+    self::assertFalse($policy->canViewTopic($topic, 42));
+  }
+
+  /**
    * Creates the Forum domain, active recipient, and topic fixtures.
    */
-  private function fixture(string $assignedDomain, AccessResult $access): array {
+  private function fixture(string $assignedDomain, AccessResult $access, bool $active = TRUE): array {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('id')->willReturn('forum_aculta_org');
     $domains = $this->createMock(EntityStorageInterface::class);
     $domains->method('load')->with('forum_aculta_org')->willReturn($domain);
 
     $account = $this->createMock(UserInterface::class);
-    $account->method('isActive')->willReturn(TRUE);
+    $account->method('isActive')->willReturn($active);
     $users = $this->createMock(EntityStorageInterface::class);
-    $users->method('load')->with(42)->willReturn($account);
+    $users->expects($this->once())->method('loadUnchanged')->with(42)->willReturn($account);
 
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {

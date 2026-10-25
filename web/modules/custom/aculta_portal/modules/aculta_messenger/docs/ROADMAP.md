@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.322 — a política de acesso do Fórum usa `loadUnchanged()` ao resolver um destinatário por UID; contas desativadas após leitura anterior deixam de autorizar tópicos, comentários e posts. `ForumNoticeAccessPolicyTest` **4/36 PASS**, Unit Messenger **324/2.625 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel, Runtime ou SMTP.
 - Dev.321 — workers de e-mail direto e providers de digest recarregam contas com `loadUnchanged()` antes de validar destinatário, remetente, preferências e compor a entrega, cobrindo Fórum, amizades, mensagens privadas, LMS, Wiki, Loja e Doações. Unit Messenger **323/2.618 PASS**, Integration Unit LMS/Loja/Doações/Wiki **75/777 PASS**, focais de preferências **38/310 PASS**, PHPCS/PHP lint/diff check PASS. Kernels não executados por ausência de `SIMPLETEST_DB`; sem Runtime/SMTP.
 - Dev.320 — digest relê conta sem cache estático antes de validar atividade, confirmação e e-mail; teste prova que uma conta desativada não recebe resumo mesmo se um cache anterior a apresentava ativa. Focal **10/192 PASS**, Unit Messenger **323/2.618 PASS**, PHPCS/PHP lint/diff check PASS.
 - Dev.319 — submit de limpeza do histórico recarrega a thread com `loadUnchanged()` antes de checar membership, evitando autorizar a ação a partir do cache estático do Entity API. Focal **9/71 PASS**, Unit Messenger **322/2.608 PASS**, PHPCS/PHP lint/diff check PASS.
