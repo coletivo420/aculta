@@ -6,6 +6,8 @@
 
 ## Auditorias e situação atual
 
+- Dev.221, rotas de abertura de avisos: LMS, Wiki, Loja e Doações declaram GET como único método, limitando as rotas de navegação que marcam leitura e redirecionam. `NoticeOpenRouteMethodTest` passou **1/8 assertions**; PHP lint, PHPCS e verificação YAML PASS. A validação cobre os contratos de configuração; HTTP funcional/Runtime seguem pendentes.
+
 - Idempotência de e-mail direto de amizade (2026-10-24): novo teste de caracterização força uma falha transitória do ACULTA Mailer seguida de sucesso e verifica que o worker repete exatamente o mesmo correlation UUID v5, sem chamar Message Notify no fluxo novo. `FriendshipNoticeEmailWorkerTest` **7/7 testes, 106 assertions PASS**; testes do produtor, subscriber e fila **13/13, 144 assertions PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. O transporte foi mockado; entrega SMTP e Runtime não foram executados.
 
 - Privacidade de conversas existentes (2026-10-24): ampliado `PrivateMessageFormValidatorTest::testFriendOnlyPreferenceDoesNotBlockRepliesToExistingThread()` para executar tanto a validação de bloqueio bilateral quanto a validação de preferência friends-only. O teste agora prova diretamente que a preferência de início não consulta amizade/preferência nem impede resposta em thread existente; a bateria da classe passou **13/13 testes, 57 assertions**. Não houve alteração de comportamento de produção.

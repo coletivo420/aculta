@@ -1,3 +1,9 @@
+## 0.1.1-dev.221 — restringir métodos das rotas de abertura de avisos
+
+As rotas de abertura dos avisos LMS, Wiki, Loja e Doações agora aceitam somente GET, conforme seus links de navegação. Isso impede que endpoints de leitura sejam chamados por métodos de escrita sem contrato. A revalidação de acesso à origem e a marcação como lido continuam no controller/manager existente.
+
+Validação: `NoticeOpenRouteMethodTest` **1/8 PASS**, PHP lint, PHPCS Drupal/DrupalPractice e validação YAML dos quatro métodos PASS. Roteamento HTTP/Runtime não executados.
+
 ## 0.1.1-dev.220 — renderizar token CSRF nos formulários do drawer
 
 Formulários de opções carregados como fragmentos agora geram o token de sessão da rota interna explicitamente. O placeholder lazy do gerador de URLs não era processado na resposta do drawer e fazia a rota protegida rejeitar o POST. A suíte de navegador passou a criar uma conversa em grupo com dois destinatários pela interface; os diagnósticos de fetch registram apenas caminho e presença de token, nunca seu valor.

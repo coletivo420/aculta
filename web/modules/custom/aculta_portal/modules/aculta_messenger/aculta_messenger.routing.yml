@@ -302,6 +302,7 @@ aculta_messenger.avisos_raiz:
 
 aculta_messenger.lms_notice_open:
   path: '/avisos/educacionais/{message}/abrir'
+  methods: [GET]
   defaults:
     _controller: 'aculta_messenger.lms_notice_open_controller:open'
     _title: 'Aviso de curso'
@@ -316,6 +317,7 @@ aculta_messenger.lms_notice_open:
 
 aculta_messenger.wiki_notice_open:
   path: '/avisos/wiki/{message}/abrir'
+  methods: [GET]
   defaults:
     _controller: 'aculta_messenger.wiki_notice_open_controller:open'
     _title: 'Aviso da Wiki'
@@ -330,6 +332,7 @@ aculta_messenger.wiki_notice_open:
 
 aculta_messenger.commerce_notice_open:
   path: '/avisos/loja/{message}/abrir'
+  methods: [GET]
   defaults:
     _controller: 'aculta_messenger.commerce_notice_open_controller:open'
     _title: 'Aviso da Loja'
@@ -344,6 +347,7 @@ aculta_messenger.commerce_notice_open:
 
 aculta_messenger.donation_notice_open:
   path: '/avisos/doacao/{message}/abrir'
+  methods: [GET]
   defaults:
     _controller: 'aculta_messenger.donation_notice_open_controller:open'
     _title: 'Aviso de doação'
