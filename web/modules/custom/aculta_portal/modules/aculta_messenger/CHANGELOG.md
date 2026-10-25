@@ -1,3 +1,14 @@
+## 0.1.1-dev.392 — concorrência com oito workers independentes
+
+O cenário de digest agora inicia **oito boots Drupal concorrentes** para o
+mesmo destinatário e prefixo MariaDB; só um transporte e acknowledgement são
+permitidos. `testIndependentDrupalWorkersDoNotSendConcurrentDigests` passou
+**1/33 assertions**. A suíte Kernel completa passou **56/1.192** (10
+depreciações Core/contrib e 4 notices PHPUnit), sem falhas. PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. A evidência mede
+contenção determinística, não carga sustentada do Runtime/Alpha; SMTP externo
+não foi usado.
+
 ## 0.1.1-dev.391 — concorrência entre workers de digest
 
 Reexecutado isoladamente `AvisosResumoMailerKernelTest::testIndependentDrupalWorkersDoNotSendConcurrentDigests` no MariaDB SimpleTest: **1 teste / 18 assertions PASS**. Três boots Drupal independentes competem pelo mesmo destinatário e prefixo; somente um envia/acknowledges, os demais observam o lock, com um único Mail Log/transporte. Atualiza a evidência de concorrência do M7; stress sustentado sob carga, Runtime e SMTP externo permanecem pendentes.

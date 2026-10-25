@@ -630,6 +630,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     putenv('ACULTA_DIGEST_RECIPIENT_UID=' . $uid);
     putenv('ACULTA_DIGEST_SHARED_TEST_PREFIX=' . $database->getPrefix());
 
+    $workerCount = 8;
     $workers = [];
     try {
       $workerFixture = 'web/modules/custom/aculta_portal/modules/aculta_messenger/tests/fixtures/DigestCompetingWorkerKernelTest.php';
@@ -640,7 +641,6 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
         $projectRoot . '/web/core/phpunit.xml.dist',
         $projectRoot . '/' . $workerFixture,
       ];
-      $workerCount = 3;
       putenv('ACULTA_DIGEST_COMPETITOR_COUNT=' . $workerCount);
       for ($workerId = 1; $workerId <= $workerCount; $workerId++) {
         $pipes = [];
@@ -711,11 +711,12 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       putenv('ACULTA_DIGEST_SHARED_TEST_PREFIX');
       putenv('ACULTA_DIGEST_COMPETITOR_COUNT');
       putenv('ACULTA_DIGEST_COMPETITOR_ID');
-      foreach ([
-        'transport-started',
-        'competitor-ready-1', 'competitor-ready-2', 'competitor-ready-3',
-        'competitor-done-1', 'competitor-done-2', 'competitor-done-3',
-      ] as $filename) {
+      $markerFiles = ['transport-started'];
+      foreach (range(1, $workerCount) as $workerId) {
+        $markerFiles[] = 'competitor-ready-' . $workerId;
+        $markerFiles[] = 'competitor-done-' . $workerId;
+      }
+      foreach ($markerFiles as $filename) {
         @unlink($barrierDirectory . '/' . $filename);
       }
       @rmdir($barrierDirectory);
