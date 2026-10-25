@@ -2,14 +2,20 @@
 **Versão:** G420-UX 0.6.0-dev.1 · **Data:** 2026-10-22 · **Estado:** planejamento visual, sem implementação.
 **Referências:** [Minha Jornada](GANJALAB-LEARNING-JOURNEY-VISUAL.md) · [Sala de Aprendizagem](GANJALAB-LEARNING-ROOM-VISUAL.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md).
 
+> **Contrato atualizado em 2026-10-25:** “Discussões” são Comments/tópicos
+> existentes do Fórum contextual, com membership e acesso atuais. Matrícula ou
+> seguimento não cria conversa privada, thread ou grupo no Messenger. Avisos
+> educacionais são publicados pelo `aculta_messenger`; site obrigatório e
+> e-mail conforme preferências individuais/políticas administrativas.
+
 ## Visão
-A turma é o ambiente comunitário **contextual do curso**; não é um segundo fórum público, rede social paralela ou nova entidade de membership. O estudante acompanha avisos, atividades coletivas, conversas e participantes que a política de visibilidade permitir. O docente edita e modera por ACULTA Studio Marley; o estudante participa via ACULTA Studio Ganjalab. Dados e acesso provêm de Drupal LMS/Group, `aculta_forum_lms`, `aculta_messenger` e `aculta_user`. **O módulo interno continua `aculta_lms`.**
+A turma é o ambiente comunitário **contextual do curso**; não é um segundo fórum público, rede social paralela ou nova entidade de membership. O estudante acompanha avisos do Messenger, atividades coletivas, discussões em Comments existentes e participantes que a política de visibilidade permitir. O docente edita e modera por ACULTA Studio Marley; o estudante participa via ACULTA Studio Ganjalab. Dados e acesso provêm de Drupal LMS/Group, `aculta_forum_lms`, `aculta_messenger` e `aculta_user`. **O módulo interno continua `aculta_lms`.**
 
 ## Destinos
 1. **Minhas Turmas:** turmas em que a pessoa possui membership vigente e acesso de estudante; cartão com nome do curso, turma, próxima ação e avisos somente se os providers oferecerem.
 2. **Visão da Turma:** identificação de curso/turma, contexto e docentes quando autorizado; abas/painéis **Mural / Discussões / Atividades / Participantes** condicionais.
 3. **Mural e Avisos:** comunicados oficiais do contexto Group; não duplicar Messenger nem improvisar feed sem provider.
-4. **Discussões:** tópicos de curso/turma e conversas de aula no `aculta_forum_lms` usando layout compartilhado do Fórum; não criar tópicos públicos automaticamente.
+4. **Discussões:** Comments/tópicos existentes de curso/turma/aula no `aculta_forum_lms`, usando layout compartilhado do Fórum; não criar tópicos públicos automaticamente nem conversas privadas no Messenger.
 5. **Participantes:** apresentar somente contas e campos cujo acesso Group, política de privacidade e consentimento permitam. Cartões de pessoa padronizados do `aculta_user`, não criar cartões específicos no LMS.
 6. **Atividades coletivas:** links aos prazos e formulários LMS oficiais; não criar submissão nem notas da turma no frontend.
 
@@ -31,7 +37,7 @@ ATIVIDADES
 [Pendente · prazo da turma] → abrir no LMS
 ```
 
-**Mobile 320–767px:** título curto e identificação persistente da turma; abas com scroll acessível ou menu compacto sem ocultar conteúdo; um painel por vez, cartões legíveis, ações em tamanho de toque. **Desktop:** coluna principal mural/conversas e sidebar contextual com próximos prazos e atalhos, sem replicar feed global. Tablet adapta os mesmos blocos.
+**Mobile 320–767px:** título curto e identificação persistente da turma; abas com scroll acessível ou menu compacto sem ocultar conteúdo; um painel por vez, cartões legíveis, ações em tamanho de toque. **Desktop:** coluna principal mural/discussões em Comments e sidebar contextual com próximos prazos e atalhos, sem replicar feed global. Tablet adapta os mesmos blocos.
 
 ## Componentes visuais candidatos ACULTA420
 `learning-class-card`, `learning-class-shell`, `learning-class-notice`, `learning-class-discussion-list`, `learning-class-activity-card`, `learning-class-members-preview`, `learning-class-empty-state`. Priorizar SDC/Bootstrap existentes, especialmente os cartões do `aculta_user` e a apresentação do Fórum; Twig não consulta Entity API. Modo escuro muda tokens, não estrutura.

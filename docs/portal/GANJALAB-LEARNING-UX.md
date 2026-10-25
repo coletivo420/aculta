@@ -2,6 +2,12 @@
 
 **Versão:** 0.1.0-dev.1 · **Estado:** documentação inicial de produto/UX; não é um novo módulo nem uma implementação funcional. **Data:** 2026-10-22.
 
+> **Contrato atualizado em 2026-10-25:** discussão de curso/turma/aula significa
+> somente Comments existentes e autorizados do `aculta_forum_lms`. Matrícula,
+> inscrição ou seguimento não cria conversa privada ou grupo no Messenger.
+> Avisos de LMS são agregados pelo Messenger; a entrega no site é obrigatória e
+> as opções de e-mail seguem preferências individuais e políticas administrativas.
+
 ## Identidade e divisão de responsabilidades
 
 - **ACULTA Studio Marley**: experiência pública de criação, edição, autoria, educação e moderação, executada tecnicamente pelo submódulo `aculta_studio` e pelos providers funcionais; acesso por permissões atuais.
@@ -23,7 +29,7 @@
 | Atividades | entregas, avaliações pendentes e feedback próprio | LMS Answer/Score com restrição por usuário/turma |
 | Minhas turmas | vínculos reais de estudante, avisos e calendário/prazos existentes | Group/relations LMS |
 | Materiais | PDFs, anexos, mídia e leituras autorizados | Media/File, PDF Viewer e Group |
-| Discussões | conversas do contexto da turma/aula | Fórum contextual; não abrir tópico público automaticamente |
+| Discussões | Comments/tópicos existentes no contexto autorizado da turma/aula | `aculta_forum_lms`; sem chat/thread/grupo automático do Messenger |
 | Certificados | certificados emitidos/verificáveis, quando o provider existir | contratos LMS/Entity Print/QR; mostrar como previsto até habilitação |
 | Notificações | avisos relevantes sobre cursos/turmas e entregas | `aculta_messenger`, sem canal paralelo |
 | Perfil e preferências | identidade, aparência, privacidade e acessibilidade | `aculta_user`/conta; persistência existente |

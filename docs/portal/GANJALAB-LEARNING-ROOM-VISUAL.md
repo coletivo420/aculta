@@ -2,8 +2,14 @@
 **Versão visual:** G420-UX 0.4.0-dev.1 · **Data:** 2026-10-22 · **Estado:** planejamento, não implementado.
 **Relacionados:** [Jornada ACULTA Studio Ganjalab](GANJALAB-LEARNING-UX.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md) · [Integração LMS](LMS-INTEGRATION-CONTRACTS.md) · [Identidade](ACULTA-STUDIO-IDENTITY.md).
 
+> **Contrato atualizado em 2026-10-25:** “Discussão” neste wireframe significa
+> somente Comments/tópicos existentes do `aculta_forum_lms`, condicionados ao
+> acesso atual. Não cria conversa privada, thread de Messenger ou grupo por
+> matrícula, inscrição ou seguimento. Avisos educacionais usam o
+> `aculta_messenger`; mensagens privadas são voluntárias entre membros.
+
 ## Propósito
-Criar um espaço mobile-first para estudar, ler, assistir, fazer atividades, consultar materiais e participar de conversas contextuais. Prioridade: **continuar de onde parou** e **completar a tarefa atual**, sem aparência de administração. O nome técnico **`aculta_lms` fica preservado**; Drupal LMS, Group e seus providers são fontes canônicas de matrículas, progresso, atividades, prazos, notas e autorizações. A experiência pública é ACULTA Studio Ganjalab; ACULTA420 detém o visual. Não implementar outro LMS, módulo, gradebook ou storage.
+Criar um espaço mobile-first para estudar, ler, assistir, fazer atividades, consultar materiais e participar das discussões existentes nos Comments autorizados. Prioridade: **continuar de onde parou** e **completar a tarefa atual**, sem aparência de administração. O nome técnico **`aculta_lms` fica preservado**; Drupal LMS, Group e seus providers são fontes canônicas de matrículas, progresso, atividades, prazos, notas e autorizações. A experiência pública é ACULTA Studio Ganjalab; ACULTA420 detém o visual. Não implementar outro LMS, módulo, gradebook ou storage.
 
 ## Modelo de navegação
 Dashboard `/studio/ganjalab` → Meu curso autorizado → Sala (atividade/aula permitida) → anterior/próxima **permitida** → retorno ao curso. URLs reais e acessíveis sem JS vêm das rotas/providers nativos; não inventar neste planejamento novos paths para aula.
@@ -49,7 +55,7 @@ ACULTA Studio Ganjalab / Meus cursos / Curso
 | H5P | player/atividade somente quando integração estiver habilitada e homologada | `aculta_lms_h5p` e LMS |
 | Questionário/entrega | formulários nativos, instruções, feedback e resultado real | LMS Answers/Webform Score/File Upload |
 | Materiais | lista de recursos vinculados e autorizados, sem copiar anexos | Media/File e adapters |
-| Discussão | Fórum contextual desta aula/turma, separado do fórum público | `aculta_forum_lms` e Group |
+| Discussão | Comments do Fórum contextual desta aula/turma, separado do fórum público | `aculta_forum_lms` e Group |
 
 Nenhum widget de UI deve inferir permissão, estado de conclusão ou nota. A substituição de leitor por AJAX não pode duplicar submissão ou contornar Form API/CSRF.
 
@@ -60,7 +66,7 @@ Indicador de progresso **apenas se serviço LMS confiável retornar valores**; m
 Fluxo: instruções → preenchimento/upload autorizado → revisão do envio → submissão no Form API → confirmação servida pelo backend → resultado/feedback quando liberado. Mensagem de envio é distinta de “avaliado”. Avisar mudança de prazo pelo fuso da conta, sem expor respostas/notas de outras pessoas. Em erro de rede, preservar resposta quando viável, sem fingir entrega.
 
 ## 4. Discussões e materiais
-Materiais complementares por aula e/ou curso: ícone + nome + tipo + acesso (visualizar/baixar) revalidado; PDF privado nunca recebe URL pública indevida. Conversa ligada à aula/turma via Fórum subkernel, com contexto de membership e moderação; nenhuma duplicação como tópico no fórum público. O conteúdo da discussão pode ser uma região sob a aula ou rota contextual real.
+Materiais complementares por aula e/ou curso: ícone + nome + tipo + acesso (visualizar/baixar) revalidado; PDF privado nunca recebe URL pública indevida. Discussão pela API Comment do Fórum subkernel, com contexto de membership e moderação; nenhuma conversa privada do Messenger nem duplicação como tópico no fórum público. O conteúdo da discussão pode ser uma região sob a aula ou rota contextual real.
 
 ## 5. Estados especiais
 - **Primeiro acesso:** acolhimento e orientação de como começar, sem tour bloqueador.

@@ -210,6 +210,15 @@ Portal–tema for atualizado.
 
 ### dev.12–16 — participação, contexto e integração
 
+> **Proposta histórica substituída em 2026-10-25.** Os itens abaixo registram
+> possibilidades discutidas antes do contrato compartilhado do Messenger e
+> não são requisitos futuros. Fóruns, LMS, Wiki e Revista mantêm as discussões
+> nos Comments das entidades de origem. Seguir conteúdo gera avisos no site e
+> e-mail conforme as preferências, nunca conversas ou grupos automáticos. A
+> comunicação privada entre membros usa somente o ACULTA Messenger. Consulte
+> `../aculta_messenger/docs/ARCHITECTURE.md` e
+> `../aculta_messenger/docs/ROADMAP.md`.
+
 - Favoritar/seguir/denunciar por APIs Flag/Messenger; controles aparecem por
   access e decisões de moderação continuam humanas.
 - Incluir ferramentas de mover comentário/subárvore, mover para tópico
@@ -219,9 +228,12 @@ Portal–tema for atualizado.
   de definir ACL, retenção, auditoria e integração com a infraestrutura
   existente.
 - LMS ganha navegação/avisos semelhantes, mas isolados por curso/turma/
-  atividade e moderados pelos Educadores.
-- Wiki e Revista ganham conversa dentro da entidade original, sem novos tópicos
-  públicos. Busca, contadores e notificações filtram pelo mesmo contexto.
+  atividade e moderados pelos Educadores. **Substituído:** avisos de LMS são
+  agregados pelo Messenger; matrícula não cria conversa ou grupo.
+- ~~Wiki e Revista ganham conversa dentro da entidade original, sem novos
+  tópicos públicos. Busca, contadores e notificações filtram pelo mesmo
+  contexto.~~ **Substituído:** discussões permanecem nos Comments próprios;
+  seguir conteúdo entrega avisos pelo Messenger e nunca abre chat contextual.
 - Investigar previews, badges e outros reforços comunitários depois de
   segurança, consentimento, manutenção e custo estarem documentados.
 
