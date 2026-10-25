@@ -35,7 +35,7 @@ final class AvisosResumoMailTypeTest extends UnitTestCase {
     $body = MailTemplateRenderer::fill($type->defaultBody(), ['resumo' => $linhas]);
     $this->assertStringContainsString('Respostas novas em "Tópico A": 2', $body);
     $this->assertStringContainsString('Atualizações em "Tópico B": 1', $body);
-    $this->assertStringContainsString('Minha conta > Privacidade', $body);
+    $this->assertStringContainsString('Minha conta > Configurações > Notificações por e-mail', $body);
   }
 
   /**

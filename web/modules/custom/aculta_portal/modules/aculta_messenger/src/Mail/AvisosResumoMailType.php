@@ -54,7 +54,7 @@ final class AvisosResumoMailType implements MailTypeInterface {
     $partes = [
       (string) $this->translation->translate('Você tem novidades nos seus avisos:'),
       '{{ resumo }}',
-      (string) $this->translation->translate('Para deixar de receber este resumo, altere a opção em Minha conta > Privacidade.'),
+      (string) $this->translation->translate('Para alterar como recebe avisos por e-mail, acesse Minha conta > Configurações > Notificações por e-mail.'),
     ];
     return implode("\n\n", $partes);
   }
