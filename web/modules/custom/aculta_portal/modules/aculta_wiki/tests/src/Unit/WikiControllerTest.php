@@ -155,7 +155,7 @@ final class WikiControllerTest extends UnitTestCase {
     $build = $this->controller(NULL)->search(Request::create('/wiki/busca', 'GET'));
 
     $this->assertSame('wiki-search-results', $build['#attributes']['data-portal-ui']);
-    $this->assertSame('Buscar na Wiki420', (string) $build['title']['#value']);
+    $this->assertArrayNotHasKey('title', $build);
     $this->assertSame(['url.query_args:q', 'domain', 'user.permissions', 'user.node_grants:view'], $build['#cache']['contexts']);
     $this->assertArrayNotHasKey('empty', $build);
     $this->assertArrayNotHasKey('results', $build);

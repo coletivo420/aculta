@@ -125,11 +125,6 @@ final class WikiController extends ControllerBase {
         'contexts' => ['url.query_args:q', 'domain', 'user.permissions', 'user.node_grants:view'],
         'tags' => ['node_list:wiki_entry'],
       ],
-      'title' => [
-        '#theme' => 'aculta_portal_element',
-        '#tag' => 'h1',
-        '#value' => $this->t('Buscar na Wiki420'),
-      ],
       'context_tabs' => $this->contextNavigation('aculta_portal.wiki_search'),
     ];
     if ($term === '') {
