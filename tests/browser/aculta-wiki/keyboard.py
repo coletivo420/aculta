@@ -198,7 +198,7 @@ try:
         summary["candidate_sizes"].append(width)
     live_sizes = [] if os.environ.get("WIKI_CANDIDATE_ONLY") == "1" else SIZES
     for width, name in live_sizes:
-        driver.get(BASE + "/wiki/busca")
+        driver.get(BASE + "/wiki/busca?aculta_check=" + str(int(time.time())))
         time.sleep(1)
         if os.environ.get("WIKI_CSS_OVERRIDE") == "1":
             loaded = driver.req("POST", session + "/execute/async", {

@@ -22,7 +22,9 @@ BASE = os.environ.get("WIKI_BASE_URL", "https://wiki420.aculta.toca.net.br").rst
 HOST = urlparse(BASE).hostname
 OUT = Path(os.environ.get("SUITE_OUT", "/tmp/aculta-wiki-visual"))
 OUT.mkdir(parents=True, exist_ok=True)
-WIDTHS = [(1280, "desktop"), (390, "mobile-390"), (320, "mobile-320")]
+WIDTHS = [(1440, "wide-1440"), (1280, "desktop"), (1024, "tablet-1024"),
+          (768, "tablet-768"), (390, "mobile-390"), (360, "mobile-360"),
+          (320, "mobile-320")]
 PAGES = [
     ("home", "/"),
     ("listing", "/wiki/verbetes"),
@@ -36,7 +38,8 @@ def check(name, ok, detail=""):
     print(f"{'PASS' if ok else 'FAIL'}  {name}" + (f" — {detail}" if detail else ""))
 
 
-driver = Driver(bidi=True)
+prefs = {"ui.systemUsesDarkTheme": 1} if os.environ.get("WIKI_DARK") == "1" else None
+driver = Driver(prefs=prefs, bidi=True)
 session = f"/session/{driver.session}"
 bidi = connect(driver.websocket_url)
 bidi_id = 0
@@ -69,7 +72,8 @@ def set_width(target):
 
 
 def inspect_page(name, path, width_name, expected_width):
-    url = BASE + path
+    separator = "&" if "?" in path else "?"
+    url = BASE + path + separator + "aculta_check=" + str(int(time.time()))
     try:
         driver.get(url)
     except WDError as error:

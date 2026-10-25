@@ -6,6 +6,10 @@ Confere páginas públicas da Wiki no Firefox ESR visível usando o WebDriver
 formulários ou mudanças persistentes. Os resultados não homologam o Runtime nem
 substituem teste de acessibilidade completo.
 
+Todos os scripts acrescentam um parâmetro `aculta_check` único para evitar
+servir uma entrada antiga do cache de página após mudança de código; continuam
+somente GET. Larguras padrão: 320, 360, 390, 768, 1024, 1280 e 1440 CSS px.
+
 ## Execução
 
 ```sh
@@ -29,7 +33,8 @@ configuração do Runtime foi atualizado.
 
 `we-sativa.py` autentica no Runtime de teste com uma URL de login único gerada
 por Drush para a conta autorizada UID 5 (ajustável por variável), abre a home
-Wiki, segue o CTA para `/studio/we-sativa/inicio`, testa o reflow 1280/390/320 px e percorre “Meu
+Wiki, segue o CTA para `/studio/we-sativa/inicio`, testa o reflow nas sete
+larguras (320/360/390/768/1024/1280/1440 px) e percorre “Meu
 Trabalho” até o formulário Node nativo e seu retorno. Não envia formulários nem
 altera preferências ou conteúdo; grava capturas e resumo fora do repositório.
 
@@ -56,7 +61,38 @@ O script valida raiz, listagem e busca em desktop e larguras móveis, verifica
 presença de `main`/`h1`, erros visíveis e rolagem horizontal, e confirma que o
 caminho interno `/wiki` responde 404 por GET. Testa apenas o tema ativo no
 servidor. Olivero, leitores de tela, teclado e WCAG 2.2 AA precisam de sessões
-separadas.
+separadas. `WIKI_DARK=1` passa `ui.systemUsesDarkTheme` ao Firefox; no Runtime
+atual ele não produziu modo escuro efetivo, então isso não homologa o tema
+escuro.
+
+## Moderação no ACULTA Studio
+
+`moderation.py` autentica por URL única do Drush e abre
+`/studio/marley/wiki/moderacao/propostas`. Verifica o listing compartilhado,
+estado vazio e reflow nas sete larguras. Quando há proposta pendente, abre o
+formulário de decisão e confere o Form API, a nota e os links de comparação,
+sem submeter. Use `WIKI_STUDIO_UID=1` no Runtime de teste, porque a conta UID 5
+é editora de verbetes, mas não tem `moderate wiki proposals`.
+
+```sh
+cd /home/piradopirata/projetos/aculta
+SUITE_OUT=/tmp/aculta-wiki-moderation DISPLAY=:0 WIKI_STUDIO_UID=1 \
+  python3 -I tests/browser/aculta-wiki/moderation.py
+```
+
+## Sem JavaScript
+
+`no-js.py` abre Firefox ESR com `javascript.enabled=false` e inspeciona o HTML
+servido pelo Drupal para home, listagem e busca. Exige um único `h1` por página,
+formulário nativo com `name="q"`, contagem e links de resultados renderizados no
+servidor. Não autentica nem altera o Runtime.
+
+```sh
+cd /home/piradopirata/projetos/aculta
+SUITE_OUT=/tmp/aculta-wiki-no-js DISPLAY=:0 \
+  python3 -I tests/browser/aculta-wiki/no-js.py
+```
+
 
 ## Teclado
 

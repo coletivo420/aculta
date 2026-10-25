@@ -25,7 +25,9 @@ USER_UID = os.environ.get("WIKI_STUDIO_UID", "5")
 USER = os.environ.get("WIKI_STUDIO_USER", "")
 OUT = Path(os.environ.get("SUITE_OUT", "/tmp/aculta-wiki-we-sativa"))
 OUT.mkdir(parents=True, exist_ok=True)
-WIDTHS = [(1280, "desktop"), (390, "mobile-390"), (320, "mobile-320")]
+WIDTHS = [(1440, "wide-1440"), (1280, "desktop"), (1024, "tablet-1024"),
+          (768, "tablet-768"), (390, "mobile-390"), (360, "mobile-360"),
+          (320, "mobile-320")]
 results = []
 
 
