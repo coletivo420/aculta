@@ -1,3 +1,14 @@
+## 0.1.1-dev.292 — cancelar endereço inválido antes de resolver aviso LMS
+
+O worker direto do LMS agora cancela a entrega se a conta não estiver ativa ou
+o endereço não passar validação sintática, sem marcar isso como falha de
+transporte nem consumir tentativas. A checagem ocorre antes de consultar a
+origem educacional; avisos obrigatórios no site permanecem intactos.
+
+Validação: worker LMS **8/97 PASS**, Unit Messenger **297/2.385 PASS**,
+Integration Unit **74/755 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS.
+Sem SMTP real ou Runtime.
+
 ## 0.1.1-dev.291 — migrar preferências legadas de resumo por categoria
 
 Adicionado post-update em lotes que copia o opt-in global antigo para cada

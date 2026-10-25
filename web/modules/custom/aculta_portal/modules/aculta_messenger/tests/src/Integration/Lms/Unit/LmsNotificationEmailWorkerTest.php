@@ -105,6 +105,24 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * Invalid recipient addresses are cancelled before source data is loaded. */
+  public function testInvalidRecipientEmailCancelsWithoutResolvingNotice(): void {
+    $message = $this->message('pending');
+    $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'cancelled')->willReturnSelf();
+    $message->expects(self::once())->method('save')->willReturn(1);
+    [$entities] = $this->entities($message, 'invalid-address');
+    $notices = $this->createMock(LearningNoticeManagerInterface::class);
+    $notices->expects(self::never())->method('resolve');
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->expects(self::never())->method('emailMode');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+
+    $this->worker($entities, $notices, $preferences, $mailer, $this->lock())
+      ->processItem(['message_id' => 101]);
+  }
+
+  /**
    * A duplicate queue item re-reads terminal state after acquiring its lock.
    */
   public function testSentMessageIsSkippedAfterLock(): void {
@@ -250,15 +268,17 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
    *
    * @param \Drupal\message\MessageInterface $message
    *   Notice message to return from storage.
+   * @param string $email
+   *   Recipient address returned by the account mock.
    *
    * @return array{0: \Drupal\Core\Entity\EntityTypeManagerInterface, 1: \Drupal\user\UserInterface}
    *   Entity manager and recipient account.
    */
-  private function entities(MessageInterface $message): array {
+  private function entities(MessageInterface $message, string $email = 'student@example.invalid'): array {
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('id')->willReturn('27');
     $recipient->method('isActive')->willReturn(TRUE);
-    $recipient->method('getEmail')->willReturn('student@example.invalid');
+    $recipient->method('getEmail')->willReturn($email);
     $messageStorage = $this->createMock(EntityStorageInterface::class);
     $messageStorage->method('load')->with(101)->willReturn($message);
     $userStorage = $this->createMock(EntityStorageInterface::class);

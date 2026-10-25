@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.292 — worker LMS cancela destinatário inativo ou endereço malformado antes de resolver a origem, sem classificar como falha retryable nem consumir tentativas. Worker 8/97, Unit Messenger 297/2.385, Integration Unit 74/755, PHPCS e PHP lint PASS; sem Runtime/SMTP.
 - Dev.291 — substitui o fallback global legado por um post-update incremental de preferências por origem; preserva escolhas novas e opt-outs antigos do Fórum, remove as chaves antigas após a cópia. `SharedEmailPreferenceMigrationTest` 1/25, `AvisoPreferenciasTest` 22/61, `AvisosResumoProviderPreferenceTest` 6/130, Unit Messenger 297/2.381, Integration Unit 73/745, LMS digest 25/210, Kernel de migração 1/15 (`aculta_simpletest`), PHPCS e PHP lint PASS; Runtime/update pendentes.
 - Dev.290 — corrige o PHPDoc de `emailMode()`: escolha explícita por categoria não depende do opt-in global; o fallback legado segue apenas para contas sem escolha nova. `AvisoPreferenciasTest` 24/64, `AvisosResumoProviderPreferenceTest` 6/130, Unit Messenger 298/2.359, PHP lint, PHPCS Drupal/DrupalPractice e índice PASS; sem Runtime/SMTP ou mudança de comportamento.
 - Dev.289 — links de paginação recebem landmark `navigation` com rótulo contextual de origem; sem links, o landmark não é renderizado. `NoticePaginationNavigationBuilderTest` 2/6 assertions; Unit Messenger **298/2.359 PASS**; PHPCS dos arquivos novos PASS. Smoke visual não executado: `DISPLAY` ausente e sessões Firefox/geckodriver ativas; preservadas.

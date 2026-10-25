@@ -105,10 +105,10 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
    */
   private function send(MessageInterface $message): void {
     $recipient = $this->entityTypeManager->getStorage('user')->load($message->getOwnerId());
-    if (!$recipient instanceof UserInterface || !$recipient->isActive() || !is_string($recipient->getEmail()) || $recipient->getEmail() === '') {
-      $message->set(self::DELIVERY_FIELD, 'failed')
-        ->set(self::ATTEMPTS_FIELD, self::MAX_ATTEMPTS)
-        ->save();
+    if (!$recipient instanceof UserInterface || !$recipient->isActive()
+      || !is_string($recipient->getEmail())
+      || !filter_var($recipient->getEmail(), FILTER_VALIDATE_EMAIL)) {
+      $message->set(self::DELIVERY_FIELD, 'cancelled')->save();
       return;
     }
     if (!$this->emailPolicy->isConfirmed($recipient)) {
