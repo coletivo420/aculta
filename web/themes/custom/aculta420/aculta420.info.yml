@@ -9,6 +9,7 @@ enforce_prop_schemas: true
 libraries:
   - aculta420/global
   - aculta420/album-slideshow
+  - aculta420/messenger-notices
 ckeditor5-stylesheets:
   - css/ckeditor5.css
 regions:
