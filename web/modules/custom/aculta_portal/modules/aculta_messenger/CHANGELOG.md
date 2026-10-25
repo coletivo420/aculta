@@ -1,3 +1,13 @@
+## 0.1.1-dev.387 — composição de grupo sem JavaScript
+
+O BrowserTest autenticado percorre a busca nativa por GET, preserva dois
+destinatários na composição progressiva e envia a primeira mensagem de grupo
+sem JavaScript. O teste confirma uma thread com o membro remetente e os dois
+destinatários, além da mensagem persistida: **1 teste / 58 assertions PASS**.
+PHPUnit reportou 275 depreciações de Core/contrib, sem falhas. Esta evidência é
+do site temporário BrowserTestBase; Firefox visível, Runtime e Alpha seguem
+pendentes.
+
 ## 0.1.1-dev.386 — resposta autenticada na conversa existente
 
 O hook de renderização agora adapta também o formulário nativo já presente no

@@ -98,12 +98,16 @@ PHP, FILE_APPEND);
   /**
    * An authenticated member creates a conversation and replies over HTTP.
    */
-  public function testAuthenticatedMemberCanOpenConversationComposer(): void {
+  public function testAuthenticatedMemberCanComposePrivateConversationOverHttp(): void {
     $member = $this->drupalCreateUser([
       'access user profiles',
       'use private messaging system',
     ]);
     $recipient = $this->drupalCreateUser([
+      'access user profiles',
+      'use private messaging system',
+    ]);
+    $recipientTwo = $this->drupalCreateUser([
       'access user profiles',
       'use private messaging system',
     ]);
@@ -122,14 +126,8 @@ PHP, FILE_APPEND);
         ])->save();
       }
     }
-    Profile::create([
-      'type' => 'authenticated',
-      'uid' => (int) $recipient->id(),
-      'status' => TRUE,
-      'is_default' => TRUE,
-      'field_nickname' => 'membro-' . $recipient->id(),
-      'field_perfil_publico' => TRUE,
-    ])->save();
+    $this->createPublicRecipientProfile($recipient);
+    $this->createPublicRecipientProfile($recipientTwo);
     self::assertSame(
       'membro-' . $recipient->id(),
       $this->container->get(PublicMemberIdentityInterface::class)
@@ -215,6 +213,80 @@ PHP, FILE_APPEND);
     self::assertCount(2, $messages, (string) $response->getBody());
     self::assertSame($replyBody, end($messages)->getMessage());
     self::assertStringContainsString($replyBody, (string) $response->getBody());
+
+    $this->assertNoJavaScriptGroupComposition($recipient, $recipientTwo);
+  }
+
+  /**
+   * A member can send a group message without JavaScript.
+   */
+  private function assertNoJavaScriptGroupComposition(UserInterface $firstRecipient, UserInterface $secondRecipient): void {
+    $entityTypeManager = $this->container->get('entity_type.manager');
+    $threadStorage = $entityTypeManager->getStorage('private_message_thread');
+    $messageStorage = $entityTypeManager->getStorage('private_message');
+    $threadIdsBefore = array_keys($threadStorage->loadMultiple());
+    $messageIdsBefore = array_keys($messageStorage->loadMultiple());
+
+    $this->drupalGet(Url::fromRoute('aculta_messenger.new_conversation', [], [
+      'query' => ['q' => 'membro-' . $firstRecipient->id()],
+    ]));
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->linkExists('membro-' . $firstRecipient->id());
+    $this->clickLink('membro-' . $firstRecipient->id());
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('membro-' . $firstRecipient->id());
+
+    $searchForm = $this->getSession()->getPage()->find('css', 'form[data-aculta-nojs-search]');
+    self::assertNotNull($searchForm, 'The native GET search is available without JavaScript.');
+    $searchForm->find('css', 'input[name="q"]')->setValue('membro-' . $secondRecipient->id());
+    $searchForm->find('css', 'input[type="submit"]')->click();
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->linkExists('membro-' . $secondRecipient->id());
+    $this->clickLink('membro-' . $secondRecipient->id());
+    $this->assertSession()->statusCodeEquals(200);
+
+    $form = $this->getSession()->getPage()->find('css', 'form[data-aculta-new-conversation-form]');
+    self::assertNotNull($form);
+    $selectedMembers = $form->findAll('css', 'input[name="members[]"]');
+    self::assertCount(2, $selectedMembers);
+    self::assertSame(
+      [(int) $firstRecipient->id(), (int) $secondRecipient->id()],
+      array_map(static fn($field): int => (int) $field->getAttribute('value'), $selectedMembers),
+    );
+    $this->assertSession()->pageTextContains('membro-' . $firstRecipient->id());
+    $this->assertSession()->pageTextContains('membro-' . $secondRecipient->id());
+
+    $body = 'Mensagem funcional de grupo sem JavaScript.';
+    $this->getSession()->getPage()->fillField('message', $body);
+    $form->find('css', 'input[type="submit"]')->click();
+
+    $threadIdsAfter = array_keys($threadStorage->loadMultiple());
+    $newThreadIds = array_values(array_diff($threadIdsAfter, $threadIdsBefore));
+    self::assertCount(1, $newThreadIds);
+    $thread = $threadStorage->load(reset($newThreadIds));
+    self::assertSame(
+      [(int) $this->loggedInUser->id(), (int) $firstRecipient->id(), (int) $secondRecipient->id()],
+      array_map('intval', $thread->getMembersId()),
+    );
+    $newMessageIds = array_values(array_diff(array_keys($messageStorage->loadMultiple()), $messageIdsBefore));
+    self::assertCount(1, $newMessageIds);
+    $messages = $thread->getMessages(TRUE);
+    self::assertCount(1, $messages);
+    self::assertSame($body, reset($messages)->getMessage());
+  }
+
+  /**
+   * Adds public profile fields used for eligible recipients.
+   */
+  private function createPublicRecipientProfile(UserInterface $recipient): void {
+    Profile::create([
+      'type' => 'authenticated',
+      'uid' => (int) $recipient->id(),
+      'status' => TRUE,
+      'is_default' => TRUE,
+      'field_nickname' => 'membro-' . $recipient->id(),
+      'field_perfil_publico' => TRUE,
+    ])->save();
   }
 
   /**
