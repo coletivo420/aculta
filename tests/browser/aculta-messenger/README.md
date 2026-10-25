@@ -91,3 +91,5 @@ Em 2026-10-24, a suíte completa passou com **76/76 verificações** no Runtime 
 O teste usa o diálogo do Drupal/jQuery UI para confirmar amizade e bloqueio, e comprova que Escape fecha o modal sem fechar a gaveta.
 
 Também em 2026-10-24, `central-empty-state.mjs` passou com **4/4 verificações** no host de Conta, confirmando os filtros ativos, o texto não vazio com `role="status"` na lista própria da central e o espaçamento visual.
+
+Na mesma data, `drawer-notice-filters.mjs` passou **6/6 verificações** com viewport de 1280 px e **6/6** com janela solicitada de 390 px no host do Portal. O Firefox reportou viewport efetivo de 500 px na segunda execução; não se declara teste real a 390 px. A navegação apenas abriu a gaveta e consultou filtros, sem alterar avisos ou preferências.
