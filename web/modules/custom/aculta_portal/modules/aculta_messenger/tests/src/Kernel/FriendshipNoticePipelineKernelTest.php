@@ -112,23 +112,54 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
     self::assertNotNull($requestNotice);
     self::assertTrue((bool) $requestNotice->get('field_aculta_mailer_managed')->value);
 
+    // Changed timestamps use second precision. With the same timestamp, a
+    // withdrawn and re-sent request is a new transition and must not collide
+    // with the first persistent notice.
+    $firstChanged = (int) $friendship->get('changed')->value;
+    $manager->cancel($friendship);
+    $friendship = $manager->request($recipient);
+    self::assertSame($firstChanged, (int) $friendship->get('changed')->value);
+    $requestNotices = $entityTypeManager->getStorage('message')->getQuery()->accessCheck(FALSE)
+      ->condition('template', FriendshipNoticeSubscriber::TEMPLATE)
+      ->condition('uid', (int) $recipient->id())
+      ->condition(FriendshipNoticeSubscriber::EVENT_FIELD, 'requested')
+      ->execute();
+    self::assertCount(2, $requestNotices);
+    $requestRecords = $entityTypeManager->getStorage('message')->loadMultiple($requestNotices);
+    $requestSources = array_map(
+      static fn(MessageInterface $notice): string => (string) $notice->get(FriendshipNoticeSubscriber::SOURCE_FIELD)->value,
+      $requestRecords,
+    );
+    self::assertCount(2, array_unique($requestSources));
+    self::assertCount(2, $queue->messageIds);
+
     $currentUser->setAccount($recipient);
     $manager->accept($friendship);
     $friendship = $entityTypeManager->getStorage('aculta_friendship')->load($friendship->id());
     self::assertSame('accepted', $friendship->getStatus());
-    self::assertCount(2, $queue->messageIds);
+    self::assertCount(3, $queue->messageIds);
     $acceptanceNotice = $this->loadNotice((int) $requester->id(), 'accepted');
     self::assertNotNull($acceptanceNotice);
     self::assertTrue((bool) $acceptanceNotice->get('field_aculta_mailer_managed')->value);
 
     self::assertSame(
-      2,
+      3,
       (int) $entityTypeManager->getStorage('message')->getQuery()->accessCheck(FALSE)
         ->condition('template', FriendshipNoticeSubscriber::TEMPLATE)
         ->count()->execute(),
-      'Only the request recipient and original requester receive one notice each.',
+      'The recipient receives one notice per request transition; acceptance goes to the requester.',
     );
-    self::assertSame([(int) $requestNotice->id(), (int) $acceptanceNotice->id()], $queue->messageIds);
+    self::assertSame(
+      [
+        (int) $requestNotice->id(),
+        (int) array_values(array_diff(
+          array_map(static fn(MessageInterface $notice): int => (int) $notice->id(), $requestRecords),
+          [(int) $requestNotice->id()],
+        ))[0],
+        (int) $acceptanceNotice->id(),
+      ],
+      $queue->messageIds,
+    );
 
     $noticeManager = new FriendshipNoticeManager($entityTypeManager);
     self::assertSame(1, $noticeManager->unreadCount((int) $requester->id()));

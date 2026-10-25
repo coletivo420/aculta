@@ -80,6 +80,12 @@ amizade. Consulta Drush somente leitura ao Runtime de teste em 2026-10-24 encont
 itens pendentes nessa fila; nenhum item foi processado ou alterado, portanto o caminho
 compatível deve permanecer até a drenagem operacional ser confirmada.
 
+Cada evento de transição transporta um identificador aleatório imutável além do timestamp
+`changed`. O timestamp tem precisão de segundos e, sozinho, não distingue um pedido
+cancelado e reenviado dentro do mesmo segundo. A chave idempotente combina origem, tipo de
+transição, versão da fonte, identificador do evento e destinatário; reprocessar o mesmo
+objeto conserva a chave, enquanto uma nova transição recebe outra.
+
 Os mesmos registros `aculta_msg_friendship` são adaptados pelo Messenger à central do site,
 com origem **Amizades**, estado de leitura individual e contador integrado. Pedido e aceite
 permanecem eventos de `aculta_user`; a apresentação na central não expõe nomes nem conteúdo

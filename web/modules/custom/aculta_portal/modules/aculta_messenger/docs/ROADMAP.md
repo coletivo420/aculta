@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.282 — eventos de amizade passam a levar `transition_id` além do timestamp de segundos. Isso evita que cancelar e reenviar um pedido no mesmo segundo deduplique a nova transição; replay do mesmo evento mantém a chave. Kernel `FriendshipNoticePipelineKernelTest` **1/23 PASS** no MariaDB dedicado, Unit Messenger **282/2.308 PASS**, Unit `aculta_user` **129/492 PASS** com uma depreciação PHPUnit e duas depreciações preexistentes do contrib `message`; PHPCS e lint PASS. Browser/Runtime/SMTP pendentes.
 - Dev.275 — teste cobre opt-out de amizade alterado entre uma falha temporária e o retry: a fila cancela o envio sem nova tentativa, e replay posterior permanece terminal. `FriendshipNoticeEmailWorkerTest` **12/241 PASS**, Unit Messenger **276/2.192 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel/Browser/Runtime pendentes.
 - Dev.274 — `UnreadThreadCounter` examina referências de mensagens do fim para o começo e para no timestamp de leitura; threads com mensagem recebida recente encerram a busca sem inspecionar o histórico antigo. `UnreadThreadCounterTest` **8/27 PASS**, Unit Messenger **275/2.162 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel/Browser/Runtime pendentes.
 - Dev.273 — `UnreadThreadCounter` deixa de consultar a contagem completa de IDs e depois repetir a consulta para carregar a mesma coleção. Usa diretamente `getThreadsForUser(FALSE)`, conforme contrato da API Private Message; teste confirma um único carregamento. `UnreadThreadCounterTest` **6/19 PASS**; validação ampliada pendente.

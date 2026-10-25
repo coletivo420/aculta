@@ -27,6 +27,7 @@ final class FriendshipNoticeEventProducerTest extends UnitTestCase {
    * A request publishes a recipient-scoped event without personal data.
    */
   public function testRequestPublishesCanonicalNoticeEvent(): void {
+    $transitionId = str_repeat('a', 32);
     $friendship = $this->createMock(AcultaFriendshipInterface::class);
     $friendship->method('getRequesterId')->willReturn(10);
     $friendship->method('getRecipientId')->willReturn(20);
@@ -50,13 +51,25 @@ final class FriendshipNoticeEventProducerTest extends UnitTestCase {
         && $event->recipientUid() === 20
         && $event->purpose() === 'account'
         && $event->occurredAt()->getTimestamp() === 1700000000
-        && $event->idempotencyKey() === 'user:friendship:friendship-uuid:requested:1700000000:20'
-        && $event->metadata() === ['transition' => FriendshipChangedEvent::REQUESTED],
+        && $event->idempotencyKey() === 'user:friendship:friendship-uuid:requested:1700000000:' . $transitionId . ':20'
+        && $event->metadata() === ['transition' => FriendshipChangedEvent::REQUESTED, 'transition_id' => $transitionId],
     ));
 
     (new FriendshipNoticeEventProducer($manager, $publisher))->publish(
-      new FriendshipChangedEvent(FriendshipChangedEvent::REQUESTED, '44', 10, 20, 1700000000),
+      new FriendshipChangedEvent(FriendshipChangedEvent::REQUESTED, '44', 10, 20, 1700000000, $transitionId),
     );
+  }
+
+  /**
+   * Distinct transitions in one second still receive different event keys.
+   */
+  public function testTransitionIdsDisambiguateSameSecondEvents(): void {
+    $first = new FriendshipChangedEvent(FriendshipChangedEvent::REQUESTED, '44', 10, 20, 1700000000);
+    $second = new FriendshipChangedEvent(FriendshipChangedEvent::REQUESTED, '44', 10, 20, 1700000000);
+
+    self::assertNotSame($first->transitionId, $second->transitionId);
+    self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/D', $first->transitionId);
+    self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/D', $second->transitionId);
   }
 
   /**

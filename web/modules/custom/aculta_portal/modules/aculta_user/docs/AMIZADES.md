@@ -98,7 +98,10 @@ recarrega a amizade por UUID e revalida estado e destinatário antes de criar o
 `Message` persistente e enfileirar o e-mail mínimo. User não depende do
 Messenger, e a integração não cria conversa privada nem storage de aviso
 paralelo. A cobertura atual é Unit; a prova Kernel do pipeline completo segue
-pendente.
+validada. Cada evento carrega um `transitionId` opaco e imutável; `changed` tem
+precisão de segundos e não diferencia sozinho pedidos cancelados e reenviados
+no mesmo segundo. Reprocessar o mesmo objeto conserva a chave; uma nova
+transição recebe outro identificador.
 
 ## Fontes
 

@@ -67,8 +67,16 @@ final class FriendshipNoticeEventProducer implements EventSubscriberInterface {
       $recipientId,
       'account',
       (new \DateTimeImmutable())->setTimestamp($event->changed),
-      implode(':', ['user', 'friendship', $uuid, $event->transition, $changed, (string) $recipientId]),
-      ['transition' => $event->transition],
+      implode(':', [
+        'user',
+        'friendship',
+        $uuid,
+        $event->transition,
+        $changed,
+        $event->transitionId,
+        (string) $recipientId,
+      ]),
+      ['transition' => $event->transition, 'transition_id' => $event->transitionId],
     ));
   }
 

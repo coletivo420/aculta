@@ -1,5 +1,10 @@
 # ACULTA User (`aculta_user`)
 
+Em dev.75, `FriendshipChangedEvent` transporta um identificador imutável por
+transição para consumidores distinguirem mudanças que ocorram no mesmo segundo;
+o ACULTA User continua sem dependência do Messenger. O Kernel completo da
+integração de avisos passou com duas depreciações do Core/contrib `message`.
+
 Em dev.74, a API `PublicMemberIdentityInterface` expõe somente o apelido aprovado
 pela política pública para consumidores como a busca de conversas do Messenger;
 nomes internos de conta não são fallback de identidade pública.

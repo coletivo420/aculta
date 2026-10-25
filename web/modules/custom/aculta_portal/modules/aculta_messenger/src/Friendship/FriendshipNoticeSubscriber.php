@@ -85,9 +85,11 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    // Keep the persisted legacy source key so replays remain compatible with
-    // notices created before this producer used the shared event envelope.
-    $source = $friendship->id() . ':' . $transition . ':' . $event->sourceRevisionOrVersion();
+    // The changed timestamp has second precision. Bind persistence to the
+    // transition identifier as well so a later request in the same second is
+    // distinct while replaying this event remains idempotent.
+    $source = $friendship->id() . ':' . $transition . ':' . $event->sourceRevisionOrVersion()
+      . ':' . $event->metadata()['transition_id'];
     $storage = $this->entityTypeManager->getStorage('message');
     $lockId = 'aculta_messenger:friendship_notice_record:' . hash('sha256', $event->idempotencyKey());
     if (!$this->lock->acquire($lockId, 30.0)) {
@@ -138,12 +140,14 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
   private function hasCanonicalKey(MessengerNoticeEvent $event): bool {
     $transition = $event->metadata()['transition'] ?? NULL;
     $changed = $event->sourceRevisionOrVersion();
+    $transitionId = $event->metadata()['transition_id'] ?? NULL;
     if (!in_array($transition, [FriendshipChangedEvent::REQUESTED, FriendshipChangedEvent::ACCEPTED], TRUE)
-      || $changed === NULL) {
+      || $changed === NULL || !is_string($transitionId)
+      || preg_match('/^[a-f0-9]{32}$/D', $transitionId) !== 1) {
       return FALSE;
     }
     return hash_equals(implode(':', [
-      'user', 'friendship', $event->sourceEntityUuid(), $transition, $changed, (string) $event->recipientUid(),
+      'user', 'friendship', $event->sourceEntityUuid(), $transition, $changed, $transitionId, (string) $event->recipientUid(),
     ]), $event->idempotencyKey());
   }
 

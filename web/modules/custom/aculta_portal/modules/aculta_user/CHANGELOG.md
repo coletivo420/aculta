@@ -1,3 +1,15 @@
+## 0.4.0-dev.75 — identificar cada transição de amizade
+
+`FriendshipChangedEvent` recebe um `transitionId` aleatório e imutável por
+instância, sem dados pessoais ou dependência do Messenger. Isso distingue
+transições com o mesmo timestamp de segundos; o adapter pode manter a chave
+idempotente quando o mesmo objeto de evento é reprocessado.
+
+Validação: Unit User **129/492 PASS**, uma depreciação PHPUnit preexistente;
+Unit Messenger **282/2.308 PASS**; Kernel de integração de amizade **1/23 PASS**
+no MariaDB dedicado, com duas depreciações de discovery de `message`; PHPCS e
+PHP lint PASS. Runtime não executado.
+
 ## 0.4.0-dev.74 — editor independente de apelido no Studio (2026-10-25)
 
 - `NicknameForm` usa Form API para alterar exclusivamente `Profile.field_nickname` do usuário atual, aplicando `AccountNames::isValid()` e retornando a `/studio/perfil`.

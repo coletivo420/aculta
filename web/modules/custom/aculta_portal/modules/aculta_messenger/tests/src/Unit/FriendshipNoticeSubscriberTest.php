@@ -226,7 +226,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $messageStorage->expects(self::once())->method('create')->with([
       'template' => FriendshipNoticeSubscriber::TEMPLATE,
       'uid' => $noticeRecipientId,
-      FriendshipNoticeSubscriber::SOURCE_FIELD => '44:' . $transition . ':1700000000',
+      FriendshipNoticeSubscriber::SOURCE_FIELD => '44:' . $transition . ':1700000000:' . str_repeat('a', 32),
       FriendshipNoticeSubscriber::EVENT_FIELD => $transition,
       FriendshipNoticeSubscriber::READ_FIELD => 0,
       'field_aculta_msg_delivery' => 'pending',
@@ -314,6 +314,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $eventType = $transition === FriendshipChangedEvent::REQUESTED
       ? 'aculta_user.friendship_requested'
       : 'aculta_user.friendship_accepted';
+    $transitionId = str_repeat('a', 32);
     return new MessengerNoticeEvent(
       $eventType,
       'aculta_user',
@@ -323,8 +324,8 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       $uid,
       'account',
       (new \DateTimeImmutable())->setTimestamp(1700000000),
-      implode(':', ['user', 'friendship', 'friendship-uuid', $transition, '1700000000', (string) $uid]),
-      ['transition' => $transition],
+      implode(':', ['user', 'friendship', 'friendship-uuid', $transition, '1700000000', $transitionId, (string) $uid]),
+      ['transition' => $transition, 'transition_id' => $transitionId],
     );
   }
 

@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.4.0-dev.74 — editor independente de apelido no Studio/Profile e PublicMemberIdentityInterface para consumidores públicos; policy de unicidade centralizada. AuthorIdentityResolverTest 2/9 e Unit User 125/448 PASS (uma depreciação PHPUnit preexistente); Units do formulário escritos no remoto, validação a executar após integração."
+version_note: "0.4.0-dev.75 — FriendshipChangedEvent inclui transitionId imutável por transição, sem dependência do Messenger. Unit User 129/492 PASS (uma depreciação PHPUnit preexistente); Kernel Messenger 1/23 PASS (duas depreciações message); PHPCS/PHP lint PASS. Runtime pendente."
 next_phase: Validar edição, concorrência, privacidade, slugs e acesso em PHPUnit/Kernel/Runtime; revisão autenticada, privacidade/termos e gates antes de RC; validar Runtime em Alpha ([documentação](web/modules/custom/aculta_portal/modules/aculta_user/README.md))
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.

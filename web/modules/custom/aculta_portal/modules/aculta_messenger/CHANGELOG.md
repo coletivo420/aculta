@@ -1,3 +1,19 @@
+## 0.1.1-dev.282 — distinguir transições de amizade no mesmo segundo
+
+O evento de amizade agora carrega um identificador aleatório imutável por
+transição. O consumidor inclui esse identificador na chave idempotente e no
+registro `Message`; pedidos cancelados e reenviados no mesmo segundo deixam de
+colidir por causa da precisão de `changed`, enquanto o replay do mesmo evento
+continua reutilizando a mesma chave. Nenhuma entidade ou tabela nova foi criada.
+
+Validação: `FriendshipNoticeEventProducerTest` +
+`FriendshipNoticeSubscriberTest` **11/94 PASS**; Unit Messenger **282/2.308
+PASS**; Unit `aculta_user` **129/492 PASS**, com uma depreciação PHPUnit
+preexistente; `FriendshipNoticePipelineKernelTest` **1/23 PASS** no MariaDB
+dedicado, com duas depreciações de discovery do contrib `message`; PHPCS
+Drupal/DrupalPractice e PHP lint PASS. Browser, Runtime e SMTP externo não
+executados.
+
 ## 0.1.1-dev.281 — serializar aviso de e-mail e retenção da conversa
 
 O worker de notificação de mensagem privada compartilha o lock por thread usado
