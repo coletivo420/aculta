@@ -1,3 +1,15 @@
+## 0.1.1-dev.350 — limitar lotes da retenção de conversas
+
+A limpeza de conversas privadas agora divide os IDs de origem em blocos de 500
+e apaga no máximo 500 avisos `Message` por consulta/carga. Isso limita
+parâmetros SQL e memória quando uma conversa longa tem muitos avisos. A
+exclusão continua dentro da transação da thread, com rollback conjunto.
+
+Validação: `PrivateMessageRetentionKernelTest` **4/55 PASS** no MariaDB
+dedicado (10 depreciações upstream de Core/contrib); Unit Messenger
+**359/2.922 PASS**; Unit de retenção **3/76 PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Runtime sem alteração.
+
 ## 0.1.1-dev.349 — finalizar leases de enqueue interrompidos
 
 A recuperação da fila de amizades agora inclui leases que atingiram o limite de

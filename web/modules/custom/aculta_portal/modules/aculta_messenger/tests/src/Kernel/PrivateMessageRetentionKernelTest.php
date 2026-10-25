@@ -210,6 +210,57 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
   }
 
   /**
+   * Retention deletes notices in bounded source and entity batches.
+   */
+  public function testRetentionDeletesNoticesForLongConversationInBatches(): void {
+    $first = User::create(['name' => 'retention_long_first', 'status' => 1]);
+    $first->save();
+    $second = User::create(['name' => 'retention_long_second', 'status' => 1]);
+    $second->save();
+    $timestamp = self::NOW - (200 * 86400);
+    $thread = $this->createThread([$first, $second], (int) $first->id(), $timestamp, 'Long conversation');
+    $messages = $thread->getMessages(TRUE);
+    $this->createNotice((int) $first->id(), (int) $messages[0]->id());
+
+    for ($index = 1; $index < 501; $index++) {
+      $privateMessage = PrivateMessage::create([
+        'owner' => (int) $first->id(),
+        'message' => ['value' => 'Long retention history.', 'format' => 'plain_text'],
+        'created' => $timestamp + $index,
+      ]);
+      $privateMessage->save();
+      $thread->addMessageById($privateMessage->id());
+      $this->createNotice((int) $first->id(), (int) $privateMessage->id());
+    }
+    $thread->save();
+    $this->container->get('database')->update('private_message_threads')
+      ->fields(['updated' => $timestamp])
+      ->condition('id', $thread->id())
+      ->execute();
+
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn(self::NOW);
+    $hook = new PrivateMessageRetentionHooks(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('database'),
+      $time,
+      $this->container->get('logger.factory'),
+      new ConversationPolicy($this->container->get('config.factory')),
+      new ConversationWriteLock($this->container->get('lock.persistent'), $this->container->get('entity_type.manager')),
+      $this->container->get('state'),
+    );
+
+    $hook->expireDormantThreads();
+
+    $entityTypeManager = $this->container->get('entity_type.manager');
+    self::assertNull($entityTypeManager->getStorage('private_message_thread')->loadUnchanged($thread->id()));
+    self::assertSame([], $entityTypeManager->getStorage('private_message')->getQuery()->accessCheck(FALSE)->execute());
+    self::assertSame([], $entityTypeManager->getStorage('message')->getQuery()->accessCheck(FALSE)
+      ->condition('template', self::NOTICE_TEMPLATE)
+      ->execute());
+  }
+
+  /**
    * Creates and persists one thread with one private message.
    */
   private function createThread(array $members, int $senderUid, int $timestamp, string $subject): PrivateMessageThread {

@@ -21,6 +21,8 @@ final class PrivateMessageRetentionHooks {
 
   private const CURSOR_KEY = 'aculta_messenger.private_message_retention_cursor';
 
+  private const NOTIFICATION_DELETE_BATCH_SIZE = 500;
+
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -126,13 +128,21 @@ final class PrivateMessageRetentionHooks {
       return;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $notificationIds = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('template', 'aculta_msg_private_notification')
-      ->condition('field_aculta_messenger_source_pm', $messageIds, 'IN')
-      ->execute();
-    if ($notificationIds !== []) {
-      $storage->delete($storage->loadMultiple($notificationIds));
+    // Keep both the SQL parameter list and hydrated Message set bounded for a
+    // conversation with a very long history or many group recipients.
+    foreach (array_chunk($messageIds, self::NOTIFICATION_DELETE_BATCH_SIZE) as $sourceIds) {
+      do {
+        $notificationIds = $storage->getQuery()
+          ->accessCheck(FALSE)
+          ->condition('template', 'aculta_msg_private_notification')
+          ->condition('field_aculta_messenger_source_pm', $sourceIds, 'IN')
+          ->sort('mid', 'ASC')
+          ->range(0, self::NOTIFICATION_DELETE_BATCH_SIZE)
+          ->execute();
+        if ($notificationIds !== []) {
+          $storage->delete($storage->loadMultiple($notificationIds));
+        }
+      } while (count($notificationIds) === self::NOTIFICATION_DELETE_BATCH_SIZE);
     }
   }
 

@@ -128,6 +128,8 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
     $noticeQuery = $this->createMock(QueryInterface::class);
     $noticeQuery->method('accessCheck')->willReturnSelf();
     $noticeQuery->method('condition')->willReturnSelf();
+    $noticeQuery->method('sort')->with('mid', 'ASC')->willReturnSelf();
+    $noticeQuery->method('range')->with(0, 500)->willReturnSelf();
     $noticeQuery->method('execute')->willReturn([90]);
     $notification = $this->createMock(EntityInterface::class);
     $noticeStorage = $this->createMock(EntityStorageInterface::class);
@@ -260,6 +262,8 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
       }
       return $query;
     });
+    $query->method('sort')->with('mid', 'ASC')->willReturnSelf();
+    $query->method('range')->with(0, 500)->willReturnSelf();
     $query->method('execute')->willReturn([90]);
     $notification = $this->createMock(EntityInterface::class);
     $storage = $this->createMock(EntityStorageInterface::class);
