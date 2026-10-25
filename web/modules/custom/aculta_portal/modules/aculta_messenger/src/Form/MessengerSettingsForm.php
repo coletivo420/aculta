@@ -108,10 +108,10 @@ final class MessengerSettingsForm extends ConfigFormBase {
       }
       $defaultModes = [];
       if (!in_array($category, AvisoPreferencias::EMAIL_IMMEDIATE_ONLY_CATEGORIES, TRUE)
-        && (!array_key_exists('digest', $configured) || (bool) $configured['digest'])) {
+        && (!array_key_exists('digest', $configured) || $configured['digest'] === TRUE)) {
         $defaultModes[] = AvisoPreferencias::EMAIL_DIGEST;
       }
-      if (!array_key_exists('immediate', $configured) || (bool) $configured['immediate']) {
+      if (!array_key_exists('immediate', $configured) || $configured['immediate'] === TRUE) {
         $defaultModes[] = AvisoPreferencias::EMAIL_IMMEDIATE;
       }
       $form['email_modes'][$category] = [

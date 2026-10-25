@@ -1,3 +1,16 @@
+## 0.1.1-dev.306 — refletir políticas inválidas como desabilitadas
+
+O formulário administrativo agora trata somente o booleano `true` como modo
+de e-mail permitido, alinhado ao serviço de preferências. Valores de
+configuração malformados como strings numéricas ou `"false"` deixam de aparecer
+marcados como ativos. A validação cobre resumo e envio direto.
+
+Validação: `MessengerSettingsFormTest` **3 testes / 18 assertions PASS**;
+Unit Messenger **311 testes / 2.496 assertions PASS**; adapters Integration
+Unit **75 testes / 777 assertions PASS**; PHPCS Drupal/DrupalPractice, PHP lint
+e `git diff --check` PASS. Kernel Messenger **50/1.076 PASS** na rodada Dev.305
+(10 depreciações Core/contrib); sem Runtime/SMTP.
+
 ## 0.1.1-dev.304 — reunir preferências de e-mail por origem
 
 `/configuracoes/email` agora oferece as escolhas individuais de todas as

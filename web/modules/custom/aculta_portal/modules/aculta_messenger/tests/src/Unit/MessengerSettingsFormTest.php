@@ -73,6 +73,32 @@ final class MessengerSettingsFormTest extends UnitTestCase {
   }
 
   /**
+   * Malformed policy values are not presented as enabled modes.
+   */
+  public function testBuildFailsClosedForMalformedEmailModeValues(): void {
+    $configFactory = $this->getConfigFactoryStub([
+      'aculta_messenger.settings' => [
+        'group_creation_enabled' => TRUE,
+        'group_max_members' => 10,
+        'retention_months' => 6,
+        'cleanup_batch' => 20,
+        'send_limit_per_hour' => 10,
+        'email_modes' => [
+          'wiki' => ['digest' => 'false', 'immediate' => '0'],
+          'loja' => ['digest' => 0, 'immediate' => 'true'],
+        ],
+      ],
+    ]);
+    $form = new MessengerSettingsForm($configFactory, $this->createMock(TypedConfigManagerInterface::class));
+    $form->setStringTranslation($this->getStringTranslationStub());
+
+    $build = $form->buildForm([], new FormState());
+
+    self::assertSame([], $build['email_modes']['wiki']['#default_value']);
+    self::assertSame([], $build['email_modes']['loja']['#default_value']);
+  }
+
+  /**
    * Administrative policy changes persist without disabling site notices.
    */
   public function testSubmitPersistsEmailModesAndWeeklyDigestAnchor(): void {
