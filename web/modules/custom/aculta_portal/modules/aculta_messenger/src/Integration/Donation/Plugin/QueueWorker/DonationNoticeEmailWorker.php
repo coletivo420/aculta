@@ -82,7 +82,7 @@ final class DonationNoticeEmailWorker extends QueueWorkerBase implements Contain
         return;
       }
       $uid = (int) $message->getOwnerId();
-      $recipient = $this->entityTypeManager->getStorage('user')->load($uid);
+      $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
       if (!$recipient instanceof UserInterface || !$recipient->isActive()
         || !filter_var((string) $recipient->getEmail(), FILTER_VALIDATE_EMAIL)
         || !$this->emailPolicy->isConfirmed($recipient)

@@ -385,7 +385,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
   /**
    * {@inheritdoc} */
   public function digestRowsFor(int $uid): array {
-    $account = $this->entityTypeManager->getStorage('user')->load($uid);
+    $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$account instanceof UserInterface || !$account->isActive()
       || $this->preferences->emailMode($uid, 'doacao') !== AvisoPreferencias::EMAIL_DIGEST) {
       $this->discardDigest($uid);

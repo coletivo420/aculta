@@ -107,7 +107,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
    * Revalidates recipient, current subscription, source publication and access. */
   private function deliver(array $event): void {
     $uid = (int) $event['uid'];
-    $recipient = $this->entityTypeManager->getStorage('user')->load($uid);
+    $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$recipient instanceof UserInterface || !$recipient->isActive()
       || !filter_var((string) $recipient->getEmail(), FILTER_VALIDATE_EMAIL)
       || !$this->emailPolicy->isConfirmed($recipient)) {

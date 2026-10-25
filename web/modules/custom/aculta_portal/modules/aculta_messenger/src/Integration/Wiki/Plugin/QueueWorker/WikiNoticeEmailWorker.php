@@ -94,7 +94,7 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
    * Revalidates user, mode, source access, and administrative Mailer policy. */
   private function send(MessageInterface $message): void {
     $uid = (int) $message->getOwnerId();
-    $user = $this->entityTypeManager->getStorage('user')->load($uid);
+    $user = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$user instanceof UserInterface || !$user->isActive()) {
       $this->finish($message, 'cancelled');
       return;

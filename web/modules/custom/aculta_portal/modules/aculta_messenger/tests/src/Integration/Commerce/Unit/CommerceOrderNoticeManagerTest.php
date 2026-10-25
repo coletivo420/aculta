@@ -108,7 +108,7 @@ final class CommerceOrderNoticeManagerTest extends UnitTestCase {
     $account = $this->createMock(UserInterface::class);
     $account->method('isActive')->willReturn(TRUE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(27)->willReturn($account);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($account);
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();

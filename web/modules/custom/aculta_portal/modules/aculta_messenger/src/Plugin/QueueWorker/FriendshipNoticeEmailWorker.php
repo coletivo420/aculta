@@ -104,7 +104,7 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
         return;
       }
 
-      $recipient = $this->entityTypeManager->getStorage('user')->load($message->getOwnerId());
+      $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($message->getOwnerId());
       if (!$recipient instanceof UserInterface || !$recipient->isActive()
         || !filter_var((string) $recipient->getEmail(), FILTER_VALIDATE_EMAIL)
         || !$this->emailPolicy->isConfirmed($recipient)

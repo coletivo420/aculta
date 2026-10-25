@@ -96,7 +96,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     $messageStorage = $this->createMock(EntityStorageInterface::class);
     $messageStorage->method('load')->with(8)->willReturn($message);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(52)->willReturn(NULL);
+    $userStorage->method('loadUnchanged')->with(52)->willReturn(NULL);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
     $domainStorage->method('load')->with('conta_aculta_org')->willReturn(NULL);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
@@ -480,7 +480,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     $messageStorage = $this->createMock(EntityStorageInterface::class);
     $messageStorage->method('load')->with(8)->willReturn($message);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(52)->willReturn($recipient);
+    $userStorage->method('loadUnchanged')->with(52)->willReturn($recipient);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
     $domainStorage->method('load')->with('conta_aculta_org')->willReturn($domain);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);

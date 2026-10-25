@@ -803,7 +803,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $account->method('getEmail')->willReturn('student@example.test');
     $account->method('getPreferredLangcode')->willReturn('pt-br');
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(27)->willReturn($account);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($account);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->willReturnCallback(static fn (string $type): EntityStorageInterface => $type === 'user' ? $userStorage : $noticeStorage);
 

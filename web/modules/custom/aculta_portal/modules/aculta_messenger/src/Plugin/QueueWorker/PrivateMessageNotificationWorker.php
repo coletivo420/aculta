@@ -152,7 +152,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
   /**
    * Creates or retries the persisted event for one authorized recipient. */
   private function notifyRecipient(PrivateMessageInterface $privateMessage, PrivateMessageThreadInterface $thread, int $messageId, int $senderId, int $recipientId, bool $mailerManaged): void {
-    $recipient = $this->entityTypeManager->getStorage('user')->load($recipientId);
+    $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($recipientId);
     if (!$recipient instanceof UserInterface || !$recipient->isActive()
       || !$recipient->hasPermission('use private messaging system')
       || !$recipient->hasPermission('access user profiles')
@@ -302,7 +302,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     $notification->save();
 
     if ($mailerManaged) {
-      $sender = $this->entityTypeManager->getStorage('user')->load($senderId);
+      $sender = $this->entityTypeManager->getStorage('user')->loadUnchanged($senderId);
       $senderName = $sender instanceof UserInterface ? $sender->getDisplayName() : 'outro usuário';
       try {
         $result = MessengerMailDelivery::deliver(

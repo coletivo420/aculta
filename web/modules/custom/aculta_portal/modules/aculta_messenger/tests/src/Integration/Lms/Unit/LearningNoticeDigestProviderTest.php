@@ -62,7 +62,7 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
     $message_storage->method('getQuery')->willReturn($query);
     $message_storage->method('loadMultiple')->with([1])->willReturn([$message]);
     $user_storage = $this->createMock(EntityStorageInterface::class);
-    $user_storage->method('load')->with(27)->willReturn($account);
+    $user_storage->method('loadUnchanged')->with(27)->willReturn($account);
     $certificate_storage = $this->createMock(EntityStorageInterface::class);
     $certificate_storage->expects(self::once())
       ->method('loadByProperties')
@@ -120,7 +120,7 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
     $message_storage->method('getQuery')->willReturn($query);
     $message_storage->method('loadMultiple')->with([1])->willReturn([$message]);
     $user_storage = $this->createMock(EntityStorageInterface::class);
-    $user_storage->method('load')->with(27)->willReturn($account);
+    $user_storage->method('loadUnchanged')->with(27)->willReturn($account);
     $status = $this->createMock(CourseStatusInterface::class);
     $status->method('getUserId')->willReturn('27');
     $status->method('isFinished')->willReturn(TRUE);

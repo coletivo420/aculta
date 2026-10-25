@@ -69,7 +69,7 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
     $account->method('isActive')->willReturn(TRUE);
     $account->method('getEmail')->willReturn('member@example.test');
     $users = $this->createMock(EntityStorageInterface::class);
-    $users->method('load')->with(12)->willReturn($account);
+    $users->method('loadUnchanged')->with(12)->willReturn($account);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
       'user' => $users,
@@ -149,7 +149,7 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
     $flagging->method('getOwnerId')->willReturn(12);
 
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(12)->willReturn($recipient);
+    $userStorage->method('loadUnchanged')->with(12)->willReturn($recipient);
     $nodeStorage = $this->createMock(EntityStorageInterface::class);
     $nodeStorage->method('load')->with(72)->willReturn($topic);
     $commentStorage = $this->createMock(EntityStorageInterface::class);
@@ -248,7 +248,7 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
     $flagging->method('getOwnerId')->willReturn(12);
 
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(12)->willReturn($recipient);
+    $userStorage->method('loadUnchanged')->with(12)->willReturn($recipient);
     $nodeStorage = $this->createMock(EntityStorageInterface::class);
     $nodeStorage->method('load')->with(72)->willReturn($topic);
     $commentStorage = $this->createMock(EntityStorageInterface::class);
@@ -359,7 +359,7 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
     $flagging->method('getOwnerId')->willReturn(12);
 
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(12)->willReturn($recipient);
+    $userStorage->method('loadUnchanged')->with(12)->willReturn($recipient);
     $nodeStorage = $this->createMock(EntityStorageInterface::class);
     $nodeStorage->method('load')->with(72)->willReturn($topic);
     $commentStorage = $this->createMock(EntityStorageInterface::class);

@@ -548,7 +548,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
    * {@inheritdoc}
    */
   public function digestRowsFor(int $uid): array {
-    $account = $this->entityTypeManager->getStorage('user')->load($uid);
+    $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$account instanceof UserInterface || !$account->isActive()) {
       $this->discardDigest($uid);
       return [];

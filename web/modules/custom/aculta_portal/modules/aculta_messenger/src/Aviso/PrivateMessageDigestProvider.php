@@ -77,7 +77,7 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
       $this->discardDigest($uid);
       return [];
     }
-    $recipient = $this->entityTypeManager->getStorage('user')->load($uid);
+    $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$recipient instanceof UserInterface || !$recipient->isActive()) {
       $this->discardDigest($uid);
       return [];
@@ -109,7 +109,7 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
         $this->markRecordsDone([$notice]);
         continue;
       }
-      $sender = $this->entityTypeManager->getStorage('user')->load($senderId);
+      $sender = $this->entityTypeManager->getStorage('user')->loadUnchanged($senderId);
       if (!$sender instanceof UserInterface || !$sender->isActive()) {
         $this->markRecordsDone([$notice]);
         continue;

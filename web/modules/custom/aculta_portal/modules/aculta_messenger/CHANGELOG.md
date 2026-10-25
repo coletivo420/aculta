@@ -1,3 +1,17 @@
+## 0.1.1-dev.321 — revalidar contas em entregas diretas e digest
+
+Workers de e-mail direto e providers de resumo recarregam destinatários (e,
+quando necessário, remetentes) com `loadUnchanged()` antes de validar conta,
+preferência ou compor mensagens. Isso impede que o cache estático do Entity API
+reutilize endereço ou estado de conta obsoleto nos fluxos de Fórum, amizade,
+mensagens privadas, LMS, Wiki, Loja e Doações.
+
+Validação: Unit Messenger **323 testes / 2.618 assertions PASS**; Integration
+Unit LMS/Loja/Doações/Wiki **75 testes / 777 assertions PASS**; focais de
+preferências **38 testes / 310 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Kernels não executados: `SIMPLETEST_DB` não
+está configurado. Runtime e transporte SMTP não executados.
+
 ## 0.1.1-dev.320 — revalidar conta antes de compor digest
 
 O resumo diário recarrega a conta com `loadUnchanged()` antes de verificar

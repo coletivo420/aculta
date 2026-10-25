@@ -103,7 +103,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $recipient->method('hasPermission')->willReturn(TRUE);
     $recipient->method('getEmail')->willReturn('member@example.test');
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(2)->willReturn($recipient);
+    $userStorage->method('loadUnchanged')->with(2)->willReturn($recipient);
 
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('id')->willReturn('123');
@@ -204,7 +204,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $sender = $this->createMock(UserInterface::class);
     $sender->method('getDisplayName')->willReturn('Remetente');
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->willReturnCallback(fn(int $uid): UserInterface => $uid === 2 ? $recipient : $sender);
+    $userStorage->method('loadUnchanged')->willReturnCallback(fn(int $uid): UserInterface => $uid === 2 ? $recipient : $sender);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('id')->willReturn('123');
     $thread->method('getMembersId')->willReturn([1, 2]);
@@ -405,7 +405,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       default => FALSE,
     });
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(2)->willReturn($recipient);
+    $userStorage->method('loadUnchanged')->with(2)->willReturn($recipient);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('id')->willReturn('123');
     $thread->method('getMembersId')->willReturn([1, 2]);

@@ -104,7 +104,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
    * Revalidates current ownership/access before sending a generic email.
    */
   private function send(MessageInterface $message): void {
-    $recipient = $this->entityTypeManager->getStorage('user')->load($message->getOwnerId());
+    $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($message->getOwnerId());
     if (!$recipient instanceof UserInterface || !$recipient->isActive()
       || !is_string($recipient->getEmail())
       || !filter_var($recipient->getEmail(), FILTER_VALIDATE_EMAIL)) {

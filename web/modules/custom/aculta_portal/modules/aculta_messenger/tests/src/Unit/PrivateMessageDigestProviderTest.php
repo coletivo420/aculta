@@ -239,7 +239,7 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
       $users[$uid] = $sender;
     }
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->willReturnCallback(static fn(int $uid): ?UserInterface => $users[$uid] ?? NULL);
+    $userStorage->method('loadUnchanged')->willReturnCallback(static fn(int $uid): ?UserInterface => $users[$uid] ?? NULL);
 
     $banQuery = $this->pendingQuery([]);
     $banStorage = $this->createMock(EntityStorageInterface::class);
