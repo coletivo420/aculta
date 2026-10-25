@@ -1,4 +1,10 @@
-# Candidato RC — `aculta_forum 0.1.0-rc.1`
+# Candidato RC — `aculta_forum 0.1.0-rc.1` — retirado
+
+> **Retirado em 2026-10-25.** O componente regrediu para `0.1.0-dev.318` e
+> `state: Dev`. A auditoria das fases F-M0–F-M7 encontrou critérios abertos
+> que este candidato tratava como limites de Alpha, entre eles o teste
+> Functional exigido em F-M7. Este documento permanece como registro das
+> verificações de pré-deploy de 2026-10-24, não como candidato ativo.
 
 Data: 2026-10-24. Branch: `docs/aculta-forum-0.1.0-dev.1`.
 Fluxo: [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md).

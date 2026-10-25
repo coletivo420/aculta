@@ -1,4 +1,21 @@
-## `0.1.0-rc.1` — candidato a RC — 2026-10-24
+## `0.1.0-dev.318` — regressão para Dev após auditoria do roadmap — 2026-10-25
+
+- O candidato `0.1.0-rc.1` é retirado: a auditoria das fases F-M0–F-M7
+  mostrou critérios abertos que a promoção havia tratado como limites de
+  Alpha. A versão volta a `0.1.0-dev.318` e o componente a `state: Dev`.
+- Fechadas na auditoria: F-M0 (matriz produtor → evento → destinatário →
+  storage → canal → preferência → deduplicação → autorização → testes) e
+  F-M4 (matriz de perfis dos fóruns restritos).
+- Devem ser fechadas antes de novo RC: F-M1/F-M2 (homologação local do
+  contrato de avisos), F-M3 (seguir/deixar de seguir e avisos no navegador,
+  mobile/teclado), F-M5 (migração sintética completa), F-M6 (mover subárvore,
+  concorrência da limpeza, restritos reais) e F-M7 (Functional,
+  instalação/desinstalação).
+- Gates reexecutados nesta revisão: Unit 184/1.333 e Kernel 150/2.862 no
+  MariaDB, 42 depreciações de Core/contrib, exit 0.
+- Nenhuma alteração de Runtime, configuração ou dados.
+
+## `0.1.0-rc.1` — candidato a RC — retirado em 2026-10-25
 
 - Promoção a candidato RC: escopo de código fechado, sem item funcional
   obrigatório pendente antes do deploy. Os passos que dependem de operação

@@ -119,8 +119,8 @@ Kernel focado no ledger passou com 24 testes / 533 assertions. Essa prova não
 substitui a homologação Runtime nem valida a configuração real do Mailer; F-M2
 continua parcial.
 
-**Candidato RC `0.1.0-rc.1` (2026-10-24):** o pré-deploy de **F-M7** está
-fechado — Unit 184/1.333, Kernel 150/2.862 em MariaDB, PHPCS sem erros,
+**Candidato RC `0.1.0-rc.1` (2026-10-24) — retirado em 2026-10-25:** o
+pré-deploy de **F-M7** está fechado — Unit 184/1.333, Kernel 150/2.862 em MariaDB, PHPCS sem erros,
 gates de rotas/Portal/slugs/Domain/status, revisão de código com cinco
 correções e dois itens registrados como dívida (DT-F01/DT-F02), e revisão de
 acessibilidade 49/49 em ACULTA420 e 49/49 em Olivero. As parcelas “Runtime
@@ -128,7 +128,10 @@ pendente” de F-M1/F-M2/F-M5 são validação de **Alpha**, por definição do 
 vigente, e não pendência de código deste candidato. Permanecem fora do RC, por
 autorização operacional: migração sobre dados reais, ativação do F-GROUP,
 entrega de e-mail/digest e concorrência entre processos. Checklist de Alpha em
-[`RC.md`](RC.md).
+[`RC.md`](RC.md). A retirada volta o componente a `0.1.0-dev.318` e
+`state: Dev`: parte do que era tratado como limite de Alpha é trabalho local
+ainda aberto — Functional de F-M7, navegador de F-M3, migração sintética de
+F-M5 e resíduos de F-M6 — e será fechada antes de novo RC.
 
 **Auditoria das fases — 2026-10-25:** F-M0–F-M7 conferidas contra código,
 configuração, testes e documentos. **Fechadas:** F-M0 (matriz produtor →
@@ -150,7 +153,7 @@ navegador real, com a limitação registrada em RC.md. O bloco legado
 `0.1.0-rc.1 — Homologação integral` mais abaixo é plano anterior e não é o
 critério vigente; seus itens de homologação pertencem ao Alpha. Os números de
 dev.297–dev.313 são registro daquele momento e ficam substituídos pelos do
-candidato RC.
+pré-deploy de 2026-10-24.
 
 **Evidência recente de F-M6 (parcial, dev.297–dev.306):** controlador de
 publicação, fila de moderação, edição pública, formulário de moderação por
@@ -1409,7 +1412,7 @@ neste índice público.
 Revisar APIs, ownership, documentação, código morto, matriz Advanced Forum e
 variantes; preparar homologação.
 
-## `0.1.0-rc.1` — Homologação integral
+## Plano legado de `0.1.0-rc.1` — homologação integral
 
 Unit, Kernel, Functional, gates Drupal/tema/fronteira, Domain, acesso, cache,
 segurança, browser/mobile, light/dark, acessibilidade, LMS, Wiki contratual,
@@ -1453,11 +1456,11 @@ substituir a mitigação por patch local sem antes verificar se a versão seguin
 do Group corrige o `postDelete()`; registrar a correção upstream e reavaliar a
 dependência `drupal/group: ^3.3` quando houver release com o pai chamado.
 
-## `0.1.0-rc.2` — Correções
+## Plano legado de `0.1.0-rc.2` — correções
 
 Corrigir regressões verificadas e repetir cobertura pertinente.
 
-## `0.1.0` — Estável
+## Plano legado de `0.1.0` — estável
 
 Release notes, upgrade, operação, rollback e revisão final. Não implantar produção
 automaticamente.

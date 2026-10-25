@@ -1,4 +1,4 @@
-## Candidato RC — gates e acessibilidade, 2026-10-24
+## Pré-deploy de 2026-10-24 — gates e acessibilidade (candidato retirado)
 
 - Unit do Fórum 184/1.333 (inclui `ForumServiceDefinitionsTest` e
   `RestrictedForumGroupResolverTest`); Kernel 150/2.862 no MariaDB

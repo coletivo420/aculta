@@ -1,7 +1,8 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-**Estado: candidato RC `0.1.0-rc.1` (2026-10-24).** Gates, revisão de código,
-revisão de acessibilidade, dependências, rollback e limites de Alpha em
+**Estado: Dev `0.1.0-dev.318` (2026-10-25).** O candidato `0.1.0-rc.1` foi
+retirado: as fases F-M0–F-M7 precisam ser fechadas com evidência antes de um
+novo RC. As verificações de pré-deploy de 2026-10-24 continuam registradas em
 [docs/RC.md](docs/RC.md).
 
 Submódulo de `aculta_portal`. O direcionamento vigente, aprovado pelo

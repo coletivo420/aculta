@@ -1,19 +1,18 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-state: RC
+state: Dev
 next_phase: >-
-  Candidato RC 0.1.0-rc.1 concluído; o deploy em Alpha depende de autorização
-  operacional. Escopo de código
-  fechado, Unit 184/1.333, Kernel 150/2.862, PHPCS sem erros, gates de
-  rotas, Portal, slugs, Domain e status PASS, revisão de código com cinco
-  correções (duas dívidas em DT-F01/DT-F02) e acessibilidade 49/49 em
-  ACULTA420 e 49/49 em Olivero. Alpha deve rodar updatedb e importar a
-  configuração, repetir o smoke autenticado em growroom420/conta, validar
-  aviso com duas contas sem e-mail real e, só com autorização específica,
-  executar a migração controlada com backup. Fora do pré-deploy por
-  autorização operacional: migração sobre dados reais, ativação do F-GROUP,
-  entrega de e-mail/digest e concorrência entre processos. Checklist em
+  Regressão para Dev em 2026-10-25: todas as fases F-M0–F-M7 devem ser
+  fechadas com evidência antes de um novo candidato RC. Fechadas: F-M0 e
+  F-M4. Em fechamento: F-M1/F-M2 (homologação local do contrato de avisos),
+  F-M3 (seguir/deixar de seguir e avisos no navegador, mobile/teclado),
+  F-M5 (migração sintética com mapa e rollback), F-M6 (mover subárvore,
+  concorrência da limpeza, restritos reais) e F-M7 (Functional,
+  instalação/desinstalação). Permanecem como portas de fase, não como
+  pendência de código, os itens que exigem autorização operacional:
+  migração sobre dados reais, ativação do F-GROUP, entrega de e-mail/digest
+  e deploy em Alpha. Evidência de pré-deploy anterior em
   [docs/RC.md](web/modules/custom/aculta_portal/modules/aculta_forum/docs/RC.md).
-version_note: "0.1.0-rc.1 (candidato RC: Unit 184/1.333; Kernel 150/2.862; PHPCS 0 erros; revisão de código com 5 correções; acessibilidade 49/49 em ACULTA420 e 49/49 em Olivero; gates globais de UI, pacotes, endereços e inventário reprovam apenas itens de outras frentes ou do ambiente local)"
+version_note: "0.1.0-dev.318 (regressão para Dev após auditoria do roadmap; Unit 184/1.333 e Kernel 150/2.862 reexecutados; nenhuma fase F-M1–F-M3/F-M5–F-M7 pode ficar aberta em um novo RC)"
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; gate: scripts/validate-no-temporary-route-aliases.php.
