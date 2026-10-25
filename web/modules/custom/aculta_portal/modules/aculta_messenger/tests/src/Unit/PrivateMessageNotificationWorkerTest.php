@@ -138,7 +138,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       $field === 'field_aculta_msg_delivery' ? $status : $mailerManaged);
     $messageStorage = $this->createMock(EntityStorageInterface::class);
     $messageStorage->method('getQuery')->willReturn($sentQuery);
-    $messageStorage->method('load')->with(88)->willReturn($notification);
+    $messageStorage->method('loadUnchanged')->with(88)->willReturn($notification);
 
     $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypes->method('getStorage')->willReturnMap([
@@ -259,7 +259,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       ->with(self::callback(fn(array $values): bool => ($values['field_aculta_mailer_managed'] ?? FALSE) === TRUE
         && (!$shouldQueueDigest || ($values['field_aculta_pm_digest_sent'] ?? NULL) === 0)))
       ->willReturn($notice);
-    $noticeStorage->method('load')->with(88)->willReturn($notice);
+    $noticeStorage->method('loadUnchanged')->with(88)->willReturn($notice);
 
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('isHttps')->willReturn(TRUE);

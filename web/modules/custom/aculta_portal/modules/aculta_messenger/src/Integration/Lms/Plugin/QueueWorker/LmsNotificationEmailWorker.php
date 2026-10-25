@@ -87,7 +87,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
     try {
       // Read current state only after locking so duplicate items cannot use a
       // stale Message loaded while another worker is delivering it.
-      $message = $this->entityTypeManager->getStorage('message')->load($messageId);
+      $message = $this->entityTypeManager->getStorage('message')->loadUnchanged($messageId);
       if (!$message instanceof MessageInterface || $message->bundle() !== 'aculta_msg_lms_notice'
         || !in_array($message->get(self::DELIVERY_FIELD)->value, ['pending', 'failed'], TRUE)
         || (int) $message->get(self::ATTEMPTS_FIELD)->value >= self::MAX_ATTEMPTS) {

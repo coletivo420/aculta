@@ -77,7 +77,7 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
     }
     try {
       // Reload after acquiring the lock to avoid delivering a stale duplicate.
-      $message = $this->entityTypeManager->getStorage('message')->load($id);
+      $message = $this->entityTypeManager->getStorage('message')->loadUnchanged($id);
       if (!$message instanceof MessageInterface || $message->bundle() !== 'aculta_msg_wiki_notice'
         || !in_array($message->get('field_aculta_msg_delivery')->value, ['pending', 'failed'], TRUE)
         || (int) $message->get('field_aculta_messenger_attempts')->value >= self::MAX_ATTEMPTS) {

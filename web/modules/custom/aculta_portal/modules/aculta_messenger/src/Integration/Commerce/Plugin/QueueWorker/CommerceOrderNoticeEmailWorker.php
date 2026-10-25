@@ -78,7 +78,7 @@ final class CommerceOrderNoticeEmailWorker extends QueueWorkerBase implements Co
     try {
       // Reload after acquiring the lock. A duplicate queue item may have
       // loaded a stale pending Message before another worker sent it.
-      $message = $this->entityTypeManager->getStorage('message')->load($id);
+      $message = $this->entityTypeManager->getStorage('message')->loadUnchanged($id);
       if (!$message instanceof MessageInterface || $message->bundle() !== 'aculta_msg_commerce_order_notice'
         || !in_array($message->get('field_aculta_msg_delivery')->value, ['pending', 'failed'], TRUE)
         || (int) $message->get('field_aculta_messenger_attempts')->value >= self::MAX_ATTEMPTS) {

@@ -221,7 +221,7 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
     $recipient->method('isActive')->willReturn(TRUE);
     $recipient->method('getEmail')->willReturn('donor@example.invalid');
     $messageStorage = $this->createMock(EntityStorageInterface::class);
-    $messageStorage->method('load')->with(101)->willReturn($message);
+    $messageStorage->method('loadUnchanged')->with(101)->willReturn($message);
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->method('loadUnchanged')->with(27)->willReturn($recipient);
     $entities = $this->createMock(EntityTypeManagerInterface::class);

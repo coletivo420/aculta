@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.326 — workers diretos recarregam Message sob lock e fontes de Fórum antes da validação final, evitando estado estático obsoleto em retries e revogações. Focais dos workers Fórum/amizade/PM/LMS/Wiki/Loja/Doação **58/951 PASS**, Unit Messenger **324/2.629 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime/SMTP.
 - Dev.325 — worker de avisos privados relê a mensagem de origem com `loadUnchanged()` antes de resolver thread e destinatários, evitando processar uma origem obsoleta. Worker **15/283 PASS**, Unit Messenger **324/2.629 PASS**, Integration LMS digest **25/210 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime.
 - Dev.324 — o provider do resumo semanal privado usa `loadUnchanged()` para revalidar a mensagem de origem; avisos cuja mensagem foi removida são cancelados sem incluir conteúdo privado no digest. `PrivateMessageDigestProviderTest` **5/81 PASS**, Unit Messenger **324/2.629 PASS**, Integration LMS digest **25/210 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime.
 - Dev.323 — data âncora administrativa do resumo semanal de mensagens privadas é obrigatória, evitando configuração vazia que bloquearia o digest; `MessengerSettingsFormTest` **3/19 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime.

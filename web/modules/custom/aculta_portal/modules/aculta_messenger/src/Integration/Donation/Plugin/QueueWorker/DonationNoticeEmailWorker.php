@@ -76,7 +76,7 @@ final class DonationNoticeEmailWorker extends QueueWorkerBase implements Contain
       throw new \RuntimeException('Donation notice email is already being processed.');
     }
     try {
-      $message = $this->entityTypeManager->getStorage('message')->load((int) $id);
+      $message = $this->entityTypeManager->getStorage('message')->loadUnchanged((int) $id);
       if (!$message instanceof MessageInterface || $message->bundle() !== DonationNoticeManager::TEMPLATE
         || $message->get('field_aculta_msg_delivery')->value !== 'pending') {
         return;

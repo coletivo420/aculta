@@ -121,7 +121,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
       return;
     }
 
-    $topic = $this->entityTypeManager->getStorage('node')->load((int) $event['nid']);
+    $topic = $this->entityTypeManager->getStorage('node')->loadUnchanged((int) $event['nid']);
     if (!$topic instanceof NodeInterface || !$this->accessPolicy->canViewTopic($topic, $recipient)
       || !$this->isCurrentFollower($topic, $uid)) {
       $this->outbox->setStatus((int) $event['id'], ForumNoticeEmailOutbox::STATUS_CANCELLED);
@@ -190,7 +190,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
     $uid = (int) $recipient->id();
     switch ((string) $event['event_type']) {
       case 'comment':
-        $comment = $this->entityTypeManager->getStorage('comment')->load($eventId);
+        $comment = $this->entityTypeManager->getStorage('comment')->loadUnchanged($eventId);
         $commentedEntity = $comment instanceof CommentInterface ? $comment->getCommentedEntity() : NULL;
         if (!$comment instanceof CommentInterface || (int) $comment->getOwnerId() === $uid
           || !$commentedEntity instanceof NodeInterface

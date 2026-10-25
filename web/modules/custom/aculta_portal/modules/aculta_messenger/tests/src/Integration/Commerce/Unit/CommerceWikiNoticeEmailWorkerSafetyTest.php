@@ -93,7 +93,7 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
       $user->method('isActive')->willReturn(TRUE);
       $user->method('getEmail')->willReturn('invalid-address');
       $messageStorage = $this->createMock(EntityStorageInterface::class);
-      $messageStorage->method('load')->with(101)->willReturn($message);
+      $messageStorage->method('loadUnchanged')->with(101)->willReturn($message);
       $userStorage = $this->createMock(EntityStorageInterface::class);
       $userStorage->method('loadUnchanged')->with(27)->willReturn($user);
       $entities = $this->createMock(EntityTypeManagerInterface::class);
@@ -133,7 +133,7 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
       $user->method('isActive')->willReturn(TRUE);
       $user->method('getEmail')->willReturn('member@example.invalid');
       $messageStorage = $this->createMock(EntityStorageInterface::class);
-      $messageStorage->method('load')->with(101)->willReturn($message);
+      $messageStorage->method('loadUnchanged')->with(101)->willReturn($message);
       $userStorage = $this->createMock(EntityStorageInterface::class);
       $userStorage->method('loadUnchanged')->with(27)->willReturn($user);
       $entities = $this->createMock(EntityTypeManagerInterface::class);
@@ -165,7 +165,7 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
     $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'cancelled')->willReturnSelf();
     $message->expects(self::once())->method('save')->willReturn(1);
     $messageStorage = $this->createMock(EntityStorageInterface::class);
-    $messageStorage->method('load')->with(101)->willReturn($message);
+    $messageStorage->method('loadUnchanged')->with(101)->willReturn($message);
     $user = $this->createMock(UserInterface::class);
     $user->method('id')->willReturn('27');
     $user->method('isActive')->willReturn(TRUE);
@@ -233,7 +233,7 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
       return TRUE;
     });
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->expects(self::once())->method('load')->with(101)->willReturnCallback(static function () use (&$locked, $message): MessageInterface {
+    $storage->expects(self::once())->method('loadUnchanged')->with(101)->willReturnCallback(static function () use (&$locked, $message): MessageInterface {
       self::assertTrue($locked, 'The current Message state is loaded only after acquiring the lock.');
       return $message;
     });
@@ -265,7 +265,7 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
     $recipient->method('isActive')->willReturn(TRUE);
     $recipient->method('getEmail')->willReturn('member@example.invalid');
     $messageStorage = $this->createMock(EntityStorageInterface::class);
-    $messageStorage->method('load')->with(101)->willReturn($message);
+    $messageStorage->method('loadUnchanged')->with(101)->willReturn($message);
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->method('loadUnchanged')->with(27)->willReturn($recipient);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
@@ -319,7 +319,7 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
     $recipient->method('isActive')->willReturn(TRUE);
     $recipient->method('getEmail')->willReturn('member@example.invalid');
     $messageStorage = $this->createMock(EntityStorageInterface::class);
-    $messageStorage->method('load')->with(101)->willReturn($message);
+    $messageStorage->method('loadUnchanged')->with(101)->willReturn($message);
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->method('loadUnchanged')->with(27)->willReturn($recipient);
     $entities = $this->createMock(EntityTypeManagerInterface::class);

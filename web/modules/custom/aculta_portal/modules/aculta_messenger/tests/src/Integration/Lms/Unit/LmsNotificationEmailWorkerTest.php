@@ -134,7 +134,7 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
       return TRUE;
     });
     $messageStorage = $this->createMock(EntityStorageInterface::class);
-    $messageStorage->expects(self::once())->method('load')->with(101)->willReturnCallback(static function () use (&$locked, $message): MessageInterface {
+    $messageStorage->expects(self::once())->method('loadUnchanged')->with(101)->willReturnCallback(static function () use (&$locked, $message): MessageInterface {
       self::assertTrue($locked, 'Message state must be read only after the worker has acquired its lock.');
       return $message;
     });
@@ -280,7 +280,7 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
     $recipient->method('isActive')->willReturn(TRUE);
     $recipient->method('getEmail')->willReturn($email);
     $messageStorage = $this->createMock(EntityStorageInterface::class);
-    $messageStorage->method('load')->with(101)->willReturn($message);
+    $messageStorage->method('loadUnchanged')->with(101)->willReturn($message);
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->method('loadUnchanged')->with(27)->willReturn($recipient);
     $entities = $this->createMock(EntityTypeManagerInterface::class);

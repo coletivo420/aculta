@@ -1,3 +1,17 @@
+## 0.1.1-dev.326 — recarregar origem e outbox nos workers de e-mail
+
+Workers de entrega direta recarregam os registros Message sob lock com
+`loadUnchanged()` antes de consultar estado e tentativas; a mesma revalidação
+é aplicada à mensagem privada de origem, ao tópico e ao comentário do Fórum.
+Isso evita decisões de entrega baseadas em entidades estáticas que outro worker
+ou processo já atualizou. Revisões específicas do Fórum continuam sendo
+resolvidas pelo ID de revisão para preservar o evento original.
+
+Validação: focais dos workers Fórum, amizade, Mensagens Privadas, LMS, Wiki,
+Loja e Doações **58 testes / 951 assertions PASS**; Unit Messenger **324 /
+2.629 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+Sem Kernel/Runtime/SMTP.
+
 ## 0.1.1-dev.325 — reler mensagem privada antes da entrega
 
 O worker de avisos de Mensagem Privada carrega a origem com `loadUnchanged()`

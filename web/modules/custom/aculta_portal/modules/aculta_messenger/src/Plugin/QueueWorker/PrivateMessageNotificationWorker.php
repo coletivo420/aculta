@@ -180,7 +180,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       ->execute();
     $notification = $ids === []
       ? NULL
-      : $this->entityTypeManager->getStorage('message')->load(reset($ids));
+      : $this->entityTypeManager->getStorage('message')->loadUnchanged(reset($ids));
 
     if ($notification !== NULL
       && !in_array((string) $notification->get(self::STATUS_FIELD)->value, ['pending', 'failed'], TRUE)) {

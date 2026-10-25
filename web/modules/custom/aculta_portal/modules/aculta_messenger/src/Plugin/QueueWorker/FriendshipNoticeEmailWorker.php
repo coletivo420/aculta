@@ -93,7 +93,7 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
     try {
       // Reload only after locking. Duplicate queue items must observe the
       // persisted status and retry count written by the active worker.
-      $message = $this->entityTypeManager->getStorage('message')->load($messageId);
+      $message = $this->entityTypeManager->getStorage('message')->loadUnchanged($messageId);
       if (!$message instanceof MessageInterface || $message->bundle() !== FriendshipNoticeSubscriber::TEMPLATE
         || !in_array($message->get(self::STATUS_FIELD)->value, ['pending', 'failed'], TRUE)) {
         return;
