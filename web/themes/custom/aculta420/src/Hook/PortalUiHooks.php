@@ -422,6 +422,48 @@ final class PortalUiHooks {
   }
 
   /**
+   * Componentes SDC do ACULTA420 que o módulo pode pedir pelo nome neutro.
+   *
+   * @var string[]
+   */
+  private const COMPONENTS = [
+    'card',
+    'content-grid',
+    'content-section',
+    'context-header',
+    'context-tabs',
+    'empty-state',
+    'profile-bio',
+    'profile-editor',
+    'profile-identity',
+    'profile-social',
+  ];
+
+  /**
+   * Builds the SDC component for a neutral component request from the module.
+   *
+   * Only names in COMPONENTS are rendered. Any other name renders nothing, so
+   * the module never chooses a theme component id.
+   *
+   * @param array<string, mixed> $variables
+   *   Template variables: name, props and slots, altered in place.
+   */
+  #[Hook('preprocess_aculta_portal_component')]
+  public function preprocessPortalComponent(array &$variables): void {
+    $name = $variables['name'] ?? NULL;
+    if (!is_string($name) || !in_array($name, self::COMPONENTS, TRUE)) {
+      $variables['component'] = [];
+      return;
+    }
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:' . $name,
+      '#props' => is_array($variables['props'] ?? NULL) ? $variables['props'] : [],
+      '#slots' => is_array($variables['slots'] ?? NULL) ? $variables['slots'] : [],
+    ];
+  }
+
+  /**
    * Maps the token attribute on the render elements of the portal.
    *
    * Runs for containers, links, HTML tags, lists, fieldsets, tables, form
