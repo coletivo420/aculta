@@ -5,7 +5,8 @@ inacessível entre o enqueue e o envio: a cópia de e-mail é cancelada e o Mail
 estado terminal e complementa os Kernels de revogação de acesso LMS e Wiki.
 
 Validação: `CommerceWikiNoticeEmailWorkerSafetyTest` + `DonationNoticeEmailWorkerTest` **17 testes / 222 assertions
-PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Sem SMTP ou Runtime.
+PASS**; conjunto Unit do núcleo Messenger e adapters LMS/Wiki/Commerce/Doação **266 testes / 2.124 assertions PASS**;
+PHPCS Drupal/DrupalPractice e PHP lint PASS. Sem SMTP ou Runtime.
 
 ## 0.1.1-dev.229 — encerrar envio LMS quando o acesso é revogado
 
