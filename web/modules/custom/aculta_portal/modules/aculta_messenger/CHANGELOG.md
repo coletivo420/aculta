@@ -1,3 +1,19 @@
+## 0.1.1-dev.377 — instalação modular independente de configuração editorial global
+
+`menu_ui` agora é dependência explícita, conforme o bundle `aculta_notice`. A
+configuração do formulário desse bundle que depende de `field_domain_source` e
+do workflow global `editorial` passou para `config/optional`; os demais campos
+do Aviso Institucional e o display público continuam obrigatórios no módulo.
+Assim, habilitar o Messenger não depende de importar previamente configuração
+global de Domain/workflow. O Configuration Sync continua fornecendo o display
+completo no site integrado.
+
+Validação: YAML parse e diff check passaram. A instalação do módulo em
+BrowserTestBase avançou até a primeira requisição sem erro de dependência de
+configuração; o teste funcional não completou os requests porque o PHP Storage
+restrito do Homelab exige ACL/setgid indisponível no site temporário. Nenhuma
+operação foi feita no Runtime ou em SMTP.
+
 ## 0.1.1-dev.376 — revalidação dos Kernels de digest e idempotência
 
 No MariaDB dedicado `aculta_simpletest`, `AvisosResumoMailerKernelTest` passou
