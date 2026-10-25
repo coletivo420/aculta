@@ -151,11 +151,16 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     $notifier->expects(self::never())->method('send');
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects(self::once())->method('deliver')
-      ->with(self::callback(static fn(MailMessage $mail): bool =>
-        $mail->type === 'friendship_notice'
-        && $mail->to === 'recipient@example.invalid'
-        && $mail->langcode === 'pt-br'
-        && !str_contains(serialize($mail->context), '52')))
+      ->with(self::callback(static function (MailMessage $mail): bool {
+        self::assertSame('friendship_notice', $mail->type);
+        self::assertSame('recipient@example.invalid', $mail->to);
+        self::assertSame('pt-br', $mail->langcode);
+        self::assertSame([
+          'summary' => 'Você recebeu um pedido de amizade.',
+          'url' => 'https://account.example.invalid/minha-conta',
+        ], $mail->context);
+        return !str_contains(serialize($mail->context), '52');
+      }))
       ->willReturn(SendResult::sent());
     [$worker] = $this->deliveryWorker($state, $notifier, $mailer);
 
@@ -168,6 +173,37 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
 
     self::assertSame('sent', $state['status']);
     self::assertSame(1, $state['attempts']);
+  }
+
+  /**
+   * Acceptance email states the transition without exposing account identity.
+   */
+  public function testAcceptanceEmailUsesOnlyGenericTransitionAndAccountLink(): void {
+    $state = ['status' => 'pending', 'attempts' => 0, 'mailer_managed' => TRUE];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())->method('deliver')
+      ->with(self::callback(static function (MailMessage $mail): bool {
+        self::assertSame([
+          'summary' => 'Seu pedido de amizade foi aceito.',
+          'url' => 'https://account.example.invalid/minha-conta',
+        ], $mail->context);
+        self::assertSame(['summary', 'url'], array_keys($mail->context));
+        return TRUE;
+      }))
+      ->willReturn(SendResult::sent());
+    [$worker] = $this->deliveryWorker($state, $notifier, $mailer, friendshipEvent: 'accepted');
+
+    try {
+      $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertSame('sent', $state['status']);
   }
 
   /**
@@ -358,11 +394,13 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
    *   Current friendship email mode.
    * @param bool $emailConfirmed
    *   Whether the recipient email is confirmed.
+   * @param string $friendshipEvent
+   *   Persisted transition used by the Mailer message.
    *
    * @return array{0: FriendshipNoticeEmailWorker, 1: MessageInterface}
    *   The worker and persisted message mock.
    */
-  private function deliveryWorker(array &$state, ?MessageNotifyInterface $notifier = NULL, ?AcultaMailerInterface $mailer = NULL, string $emailMode = AvisoPreferencias::EMAIL_IMMEDIATE, bool $emailConfirmed = TRUE): array {
+  private function deliveryWorker(array &$state, ?MessageNotifyInterface $notifier = NULL, ?AcultaMailerInterface $mailer = NULL, string $emailMode = AvisoPreferencias::EMAIL_IMMEDIATE, bool $emailConfirmed = TRUE, string $friendshipEvent = 'requested'): array {
     $message = $this->createMock(MessageInterface::class);
     $message->method('bundle')->willReturn(FriendshipNoticeSubscriber::TEMPLATE);
     $message->method('id')->willReturn('8');
@@ -375,12 +413,12 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     $attempt_items->method('__get')->with('value')->willReturnCallback(static function () use (&$state): int {
       return $state['attempts'];
     });
-    $message->method('get')->willReturnCallback(function (string $field) use (&$state, $status_items, $attempt_items): FieldItemListInterface {
+    $message->method('get')->willReturnCallback(function (string $field) use (&$state, $status_items, $attempt_items, $friendshipEvent): FieldItemListInterface {
       return match ($field) {
         'field_aculta_msg_delivery' => $status_items,
         'field_aculta_messenger_attempts' => $attempt_items,
         'field_aculta_mailer_managed' => $this->fieldValue($state['mailer_managed'] ?? FALSE),
-        FriendshipNoticeSubscriber::EVENT_FIELD => $this->fieldValue('requested'),
+        FriendshipNoticeSubscriber::EVENT_FIELD => $this->fieldValue($friendshipEvent),
         default => throw new \InvalidArgumentException('Unexpected field ' . $field),
       };
     });

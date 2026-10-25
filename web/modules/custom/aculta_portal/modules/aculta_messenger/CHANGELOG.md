@@ -1,3 +1,9 @@
+## 0.1.1-dev.251 — caracterizar os e-mails de pedido e aceite
+
+Os testes do worker agora verificam separadamente o texto genérico de pedido e de aceite de amizade e limitam o contexto enviado ao Mailer a `summary` e `url`, sem identidade de terceiros.
+
+Validação: `FriendshipNoticeEmailWorkerTest` **11 testes / 211 assertions PASS**. O transporte segue mockado; Runtime/SMTP não executados.
+
 ## 0.1.1-dev.250 — preservar cancelamento concorrente no enqueue
 
 Se a Queue API recusar uma inclusão enquanto outro processo altera o aviso, a recuperação agora só grava `failed` quando o registro ainda está `pending`/`failed` e não houve tentativa de entrega. Estados terminais, como `cancelled` e `failed_permanent`, são preservados.
