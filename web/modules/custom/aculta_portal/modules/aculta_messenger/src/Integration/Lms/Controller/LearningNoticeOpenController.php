@@ -39,8 +39,9 @@ final class LearningNoticeOpenController {
     if (MemberInitiatedRequest::isPrefetchOrPrerender($request)) {
       return new Response('', Response::HTTP_NO_CONTENT, ['Cache-Control' => 'private, no-store']);
     }
-    if (MemberInitiatedRequest::isMemberInitiated($request)) {
-      $this->notices->markRead($message);
+    if (MemberInitiatedRequest::isMemberInitiated($request)
+      && !$this->notices->setRead($message, $this->currentUser, TRUE)) {
+      throw new NotFoundHttpException();
     }
     return new TrustedRedirectResponse($target['url']->toString(), Response::HTTP_FOUND, [
       'Cache-Control' => 'private, no-store',

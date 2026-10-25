@@ -37,7 +37,7 @@ final class NoticeOpenControllerSafetyTest extends UnitTestCase {
 
     $lms = $this->createMock(LearningNoticeManagerInterface::class);
     $lms->method('resolve')->willReturn(['url' => $this->targetUrl()]);
-    $lms->expects(self::once())->method('markRead')->with($message);
+    $lms->expects(self::once())->method('setRead')->with($message, $account, TRUE)->willReturn(TRUE);
     $lmsResponse = (new LearningNoticeOpenController($lms, $account, $request))->open($message);
     self::assertSame(302, $lmsResponse->getStatusCode());
     self::assertSame('no-store, private', $lmsResponse->headers->get('Cache-Control'));
@@ -72,7 +72,7 @@ final class NoticeOpenControllerSafetyTest extends UnitTestCase {
   public function testLmsPrefetchDoesNotMarkRead(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
     $manager->method('resolve')->willReturn(['url' => $this->targetUrl()]);
-    $manager->expects(self::never())->method('markRead');
+    $manager->expects(self::never())->method('setRead');
     $response = (new LearningNoticeOpenController($manager, $this->account(), $this->requestStack('prefetch')))
       ->open($this->ownedMessage());
     self::assertSame(204, $response->getStatusCode());
@@ -129,6 +129,19 @@ final class NoticeOpenControllerSafetyTest extends UnitTestCase {
     $this->expectException(NotFoundHttpException::class);
 
     (new WikiNoticeOpenController($manager, $account, $this->requestStack('')))->open($this->ownedMessage());
+  }
+
+  /**
+   * LMS denies the redirect when access changes before the read mutation.
+   */
+  public function testLmsRejectsReadWhenAccessChangesAfterResolve(): void {
+    $account = $this->account();
+    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager->method('resolve')->willReturn(['url' => $this->targetUrl()]);
+    $manager->expects(self::once())->method('setRead')->with(self::anything(), $account, TRUE)->willReturn(FALSE);
+    $this->expectException(NotFoundHttpException::class);
+
+    (new LearningNoticeOpenController($manager, $account, $this->requestStack('')))->open($this->ownedMessage());
   }
 
   /**

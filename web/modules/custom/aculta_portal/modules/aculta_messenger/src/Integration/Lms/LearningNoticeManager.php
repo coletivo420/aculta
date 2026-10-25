@@ -504,15 +504,6 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   }
 
   /**
-   * Marks one owned record read after its source was revalidated.
-   */
-  public function markRead(MessageInterface $message): void {
-    if (!(bool) $message->get(self::READ_FIELD)->value) {
-      $message->set(self::READ_FIELD, 1)->save();
-    }
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function setRead(MessageInterface $message, AccountInterface $account, bool $read): bool {

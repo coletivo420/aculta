@@ -1,3 +1,17 @@
+## 0.1.1-dev.330 — revalidar acesso LMS ao marcar aviso como lido
+
+A abertura de avisos educacionais agora usa a operação validada do manager para
+alterar o estado de leitura. Se matrícula ou permissão mudar entre resolver o
+destino e gravar a leitura, a mutação falha e o controller não redireciona. O
+método legado `markRead()` foi removido do manager e de seu contrato; não havia
+outros consumidores.
+
+Validação: `NoticeOpenControllerSafetyTest` **8/48 PASS**, Unit Messenger
+**341/2.749 PASS**, Integration LMS Unit **46/417 PASS**, PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. O índice de status
+falha porque o README raiz já estava desatualizado; não regenerei a tabela
+gerada, que inclui alterações de outros componentes. Sem Kernel/Runtime/SMTP.
+
 ## 0.1.1-dev.329 — revalidar contas ao listar e contar avisos
 
 Contadores e resoluções de avisos de Fórum, amizade, LMS, Wiki, Loja e Doações

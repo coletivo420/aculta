@@ -49,11 +49,6 @@ interface LearningNoticeManagerInterface extends PaginatedPersonalNoticeAdapterI
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;
 
   /**
-   * Marks the owned message as read.
-   */
-  public function markRead(MessageInterface $message): void;
-
-  /**
    * Sets the read state after revalidating ownership and LMS access.
    */
   public function setRead(MessageInterface $message, AccountInterface $account, bool $read): bool;
