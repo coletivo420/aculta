@@ -10,7 +10,9 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Queue\QueueFactory;
 
-/** Protects Messenger-owned notification records during module removal. */
+/**
+ * Protects Messenger-owned notification records during module removal.
+ */
 final class LifecycleHooks {
 
   public function __construct(
@@ -20,7 +22,9 @@ final class LifecycleHooks {
     private readonly QueueFactory $queueFactory,
   ) {}
 
-  /** Prevents activating the upstream notifier with its private-body template. */
+  /**
+   * Prevents activating the upstream notifier with its private-body template.
+   */
   #[Hook('module_preinstall')]
   public function preventPrivateBodyNotifierConflict(string $module, bool $isSyncing): void {
     $conflictingPair = ($module === 'aculta_messenger' && $this->moduleHandler->moduleExists('private_message_notify'))
@@ -51,13 +55,21 @@ final class LifecycleHooks {
     if ($this->queueFactory->get('aculta_messenger_donation_email')->numberOfItems() > 0) {
       throw new \RuntimeException('ACULTA Messenger cannot be uninstalled while Donation notice emails remain queued. Process or clear the queue explicitly first.');
     }
+    if ($this->queueFactory->get('aculta_msg_friendship')->numberOfItems() > 0) {
+      throw new \RuntimeException('ACULTA Messenger cannot be uninstalled while friendship notice emails remain queued. Process or clear the queue explicitly first.');
+    }
 
     // A failed install can leave the module enabled before all upstream entity
     // storage definitions exist. Check each storage independently.
     if ($this->entityDefinitionUpdateManager->getEntityType('message') !== NULL) {
       $count = $this->entityTypeManager->getStorage('message')->getQuery()
         ->accessCheck(FALSE)
-        ->condition('template', ['aculta_msg_private_notification', 'aculta_msg_forum_published', 'aculta_msg_donation_notice'], 'IN')
+        ->condition('template', [
+          'aculta_msg_private_notification',
+          'aculta_msg_forum_published',
+          'aculta_msg_donation_notice',
+          'aculta_msg_friendship',
+        ], 'IN')
         ->count()
         ->execute();
       if ($count > 0) {

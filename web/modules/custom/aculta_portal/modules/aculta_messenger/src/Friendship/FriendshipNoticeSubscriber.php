@@ -27,6 +27,8 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
 
   public const EVENT_FIELD = 'field_aculta_friendship_event';
 
+  public const READ_FIELD = 'field_aculta_friendship_read';
+
   public const EMAIL_QUEUE = 'aculta_msg_friendship';
 
   private const REQUESTED_EVENT = 'aculta_user.friendship_requested';
@@ -116,6 +118,7 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
         'uid' => $recipientId,
         self::SOURCE_FIELD => $source,
         self::EVENT_FIELD => $transition,
+        self::READ_FIELD => 0,
         'field_aculta_msg_delivery' => 'pending',
         'field_aculta_messenger_attempts' => 0,
         'field_aculta_enqueue_attempts' => 0,

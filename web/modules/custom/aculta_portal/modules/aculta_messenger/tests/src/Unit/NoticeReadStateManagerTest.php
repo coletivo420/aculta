@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
+use Drupal\aculta_messenger\Friendship\FriendshipNoticeManagerInterface;
 use Drupal\aculta_messenger\Service\NoticeReadStateManager;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -46,6 +47,27 @@ final class NoticeReadStateManagerTest extends UnitTestCase {
     $manager = new NoticeReadStateManager($entities, $container);
 
     self::assertTrue($manager->setRead(12, $account, FALSE));
+  }
+
+  /**
+   * Friendship Messages dispatch to the core-owned friendship adapter.
+   */
+  public function testDispatchesFriendshipReadState(): void {
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('bundle')->willReturn('aculta_msg_friendship');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('load')->with(44)->willReturn($message);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('message')->willReturn($storage);
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $adapter = $this->createMock(FriendshipNoticeManagerInterface::class);
+    $adapter->expects(self::once())->method('setRead')->with($message, $account, TRUE)->willReturn(TRUE);
+    $container = $this->createMock(ContainerInterface::class);
+    $container->expects(self::once())->method('has')->with('friendship')->willReturn(TRUE);
+    $container->expects(self::once())->method('get')->with('friendship')->willReturn($adapter);
+
+    self::assertTrue((new NoticeReadStateManager($entities, $container))->setRead(44, $account, TRUE));
   }
 
   /**

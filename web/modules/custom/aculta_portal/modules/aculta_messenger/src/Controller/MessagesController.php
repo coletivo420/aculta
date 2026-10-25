@@ -756,7 +756,7 @@ final class MessagesController extends ControllerBase {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
     }
     $items = [];
-    $paginatedOrigins = ['comunicado', 'alerta', 'aprendizagem', 'wiki', 'loja', 'doacao'];
+    $paginatedOrigins = ['comunicado', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao'];
     $globalOriginPaging = $includeReadActions && $filters['origem'] === '';
     $rawOriginOffsets = is_array($pagination['notice_offsets'] ?? NULL)
       ? $pagination['notice_offsets']
@@ -980,6 +980,7 @@ final class MessagesController extends ControllerBase {
       'comunicado' => 'Comunicados',
       'forum' => 'Fórum',
       'alerta' => 'Alertas do site',
+      'amizade' => 'Amizades',
       'aprendizagem' => 'Aprendizagem',
       'wiki' => 'Wiki',
       'loja' => 'Loja',
@@ -1048,6 +1049,7 @@ final class MessagesController extends ControllerBase {
       $pagerOriginLabel = [
         'comunicado' => 'Comunicados',
         'alerta' => 'Alertas do site',
+        'amizade' => 'Amizades',
         'aprendizagem' => 'Aprendizagem',
         'wiki' => 'Wiki',
         'loja' => 'Loja',
@@ -1126,6 +1128,7 @@ final class MessagesController extends ControllerBase {
       'comunicado' => $this->translation->translate('Comunicados'),
       'forum' => $this->translation->translate('Fórum'),
       'alerta' => $this->translation->translate('Alertas do site'),
+      'amizade' => $this->translation->translate('Amizades'),
       'aprendizagem' => $this->translation->translate('Aprendizagem'),
       'wiki' => $this->translation->translate('Wiki'),
       'loja' => $this->translation->translate('Loja'),

@@ -74,6 +74,39 @@ final class NoticeReadActionBuilderTest extends UnitTestCase {
   }
 
   /**
+   * Friendship site notices receive the same protected read-state action.
+   */
+  public function testAttachesReadActionToFriendshipNotice(): void {
+    $friendship = $this->message(15, 42, 'aculta_msg_friendship');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('loadMultiple')->with([15])->willReturn([15 => $friendship]);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('message')->willReturn($storage);
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $account->method('id')->willReturn(42);
+    $action = ['#type' => 'form'];
+    $formBuilder = $this->createMock(FormBuilderInterface::class);
+    $formBuilder->expects(self::once())->method('getForm')
+      ->with(NoticeReadStateForm::class, 15, FALSE)
+      ->willReturn($action);
+
+    $items = (new NoticeReadActionBuilder($entities, $formBuilder))->attach(
+      [
+        [
+          '#attributes' => [
+            'data-aculta-notice-message-id' => '15',
+            'data-aculta-notice-read' => 'read',
+          ],
+        ],
+      ],
+      $account,
+    );
+
+    self::assertSame($action, $items[0]['read_state_action']);
+  }
+
+  /**
    * Creates a notice Message with ownership and type metadata.
    */
   private function message(int $id, int $ownerId, string $bundle): MessageInterface {

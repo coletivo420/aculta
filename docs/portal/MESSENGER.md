@@ -16,6 +16,7 @@ A mesma caixa "Opções" aparece no perfil público `/u/…`.
 Princípios:
 
 - **Ownership compartilhado:** `private_message` mantém conversas, mensagens e bloqueios; `aculta_user` mantém amizades; Messenger coordena avisos, integrações, preferências e canais. As entidades `Message`, `aculta_aviso`, Flags e Site Alert continuam como storages existentes conforme cada fluxo. `message_notify` permanece temporariamente para itens legados de fila ainda não drenados; Message Subscribe não entrega avisos de tópicos do Fórum.
+- Pedidos e aceites de amizade também aparecem na central de Avisos sob a origem **Amizades**. O estado lido/não lido fica no `Message` existente e é sempre independente da preferência de e-mail; o resumo não expõe nomes de terceiros.
 - **Submódulo compõe a experiência:** regras de envio, validação, rotas da gaveta e contadores.
 - **Tema apresenta:** SDC, CSS, JS de comportamento visual. Não tem regra de negócio.
 

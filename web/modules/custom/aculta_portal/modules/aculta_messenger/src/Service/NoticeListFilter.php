@@ -11,7 +11,7 @@ use Drupal\Core\Entity\Query\QueryInterface;
  */
 final class NoticeListFilter {
 
-  public const ORIGINS = ['comunicado', 'forum', 'alerta', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conta'];
+  public const ORIGINS = ['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conta'];
 
   public const READ_STATES = ['read', 'unread'];
 

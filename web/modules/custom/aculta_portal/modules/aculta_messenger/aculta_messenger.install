@@ -147,3 +147,10 @@ function aculta_messenger_update_10009(): void {
 function aculta_messenger_update_10010(): void {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
 }
+
+/**
+ * Adds site-read state to persisted friendship notice Messages.
+ */
+function aculta_messenger_update_10011(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}

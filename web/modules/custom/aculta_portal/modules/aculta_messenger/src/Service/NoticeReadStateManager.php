@@ -8,6 +8,7 @@ use Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManagerInter
 use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
+use Drupal\aculta_messenger\Friendship\FriendshipNoticeManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\message\MessageInterface;
@@ -40,6 +41,7 @@ final class NoticeReadStateManager implements NoticeReadStateManagerInterface {
       'aculta_msg_wiki_notice' => $this->setWikiRead($message, $account, $read),
       'aculta_msg_commerce_order_notice' => $this->setCommerceRead($message, $account, $read),
       'aculta_msg_donation_notice' => $this->setDonationRead($message, $account, $read),
+      'aculta_msg_friendship' => $this->setFriendshipRead($message, $account, $read),
       default => FALSE,
     };
   }
@@ -89,6 +91,18 @@ final class NoticeReadStateManager implements NoticeReadStateManagerInterface {
     }
     $manager = $this->getAdapter('donation');
     return $manager instanceof DonationNoticeManagerInterface
+      && $manager->setRead($message, $account, $read);
+  }
+
+  /**
+   * Delegates friendship read state to the core-owned shared adapter.
+   */
+  private function setFriendshipRead(MessageInterface $message, AccountInterface $account, bool $read): bool {
+    if (!$this->hasAdapter('friendship')) {
+      return FALSE;
+    }
+    $manager = $this->getAdapter('friendship');
+    return $manager instanceof FriendshipNoticeManagerInterface
       && $manager->setRead($message, $account, $read);
   }
 

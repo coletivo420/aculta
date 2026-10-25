@@ -42,6 +42,10 @@ services:
     class: Drupal\aculta_messenger\Service\NoticeReadStateManager
     arguments: ['@entity_type.manager', []]
   Drupal\aculta_messenger\Service\NoticeReadStateManagerInterface: '@aculta_messenger.notice_read_state'
+  aculta_messenger.friendship_notice_manager:
+    class: Drupal\aculta_messenger\Friendship\FriendshipNoticeManager
+    arguments: ['@entity_type.manager']
+  Drupal\aculta_messenger\Friendship\FriendshipNoticeManagerInterface: '@aculta_messenger.friendship_notice_manager'
   aculta_messenger.notice_read_action_builder:
     class: Drupal\aculta_messenger\Service\NoticeReadActionBuilder
     arguments: ['@entity_type.manager', '@form_builder']

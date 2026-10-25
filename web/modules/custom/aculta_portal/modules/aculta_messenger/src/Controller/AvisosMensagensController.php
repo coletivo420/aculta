@@ -71,7 +71,7 @@ final class AvisosMensagensController extends ControllerBase {
     $rawOriginOffsets = $query['notice_offsets'] ?? [];
     $originOffsets = [];
     if (is_array($rawOriginOffsets)) {
-      foreach (['comunicado', 'forum', 'alerta', 'aprendizagem', 'wiki', 'loja', 'doacao'] as $origin) {
+      foreach (['comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao'] as $origin) {
         $rawOffset = $rawOriginOffsets[$origin] ?? NULL;
         $offset = filter_var($rawOffset, FILTER_VALIDATE_INT);
         if ($offset !== FALSE && $offset > 0) {
@@ -159,6 +159,7 @@ final class AvisosMensagensController extends ControllerBase {
       'comunicado' => $this->t('Comunicados'),
       'forum' => $this->t('Fórum'),
       'alerta' => $this->t('Alertas do site'),
+      'amizade' => $this->t('Amizades'),
       'aprendizagem' => $this->t('Aprendizagem'),
       'wiki' => $this->t('Wiki'),
       'loja' => $this->t('Loja'),

@@ -32,6 +32,8 @@ integração decisória do primeiro verbete e critérios/configuração de isen�
 
 **Decisão:** mensagens humanas continuam no Private Message integrado ao `aculta_messenger`; avisos persistentes e pessoais usam infraestrutura existente (Message/Message Notify/Flag, `aculta_aviso` quando compatível). `aculta_user` controla identidade, amizades e preferências de conta; `aculta_mailer` controla transporte de e-mail. Adapters publicam eventos de produto sem criar inbox, notificadores ou tabelas paralelas.
 
+Pedidos e aceites de amizade também são apresentados na central pelo adapter central do Messenger, usando os registros `Message` existentes e estado de leitura por destinatário. O workflow e a entidade continuam no `aculta_user`; o canal do site não depende de e-mail.
+
 **Envelope de evento candidato:**
 `event_type`, `source_module`, `source_entity_type`, `source_entity_uuid`, `source_revision_or_version`, `recipient_uid`, `purpose`, `occurred_at`, `idempotency_key`, dados mínimos. Proibido transportar conteúdo privado, notas, respostas de prova ou emails sensíveis no payload.
 - Separar **geração de evento** de entrega e de visualização. O Messenger escolhe canal conforme preferências válidas e tipo de aviso; o producer não faz SMTP.

@@ -73,6 +73,9 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
     }
 
     $optionalAdapters = [];
+    if ($container->hasDefinition('aculta_messenger.friendship_notice_manager')) {
+      $optionalAdapters['friendship'] = new Reference('aculta_messenger.friendship_notice_manager');
+    }
     foreach ([
       'lms' => 'aculta_messenger.lms_notice_manager',
       'wiki' => 'aculta_messenger.wiki_notice_manager',

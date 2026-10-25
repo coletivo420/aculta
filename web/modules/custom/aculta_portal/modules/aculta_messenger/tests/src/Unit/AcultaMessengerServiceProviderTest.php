@@ -93,6 +93,25 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
   }
 
   /**
+   * The core friendship adapter serves both site notices and read actions.
+   */
+  public function testFriendshipAdapterIsRegisteredForListAndReadState(): void {
+    $container = new ContainerBuilder();
+    $container->setDefinition('aculta_messenger.friendship_notice_manager', new Definition());
+    $container->setDefinition('aculta_messenger.notice_read_state', new Definition());
+
+    (new AcultaMessengerServiceProvider())->alter($container);
+
+    $readAdapters = $container->getDefinition('aculta_messenger.notice_read_state')->getArgument(1);
+    $listHook = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(0);
+    self::assertInstanceOf(ServiceLocatorArgument::class, $readAdapters);
+    self::assertInstanceOf(ServiceLocatorArgument::class, $listHook);
+    self::assertSame(['friendship'], array_keys($readAdapters->getValues()));
+    self::assertSame(['friendship'], array_keys($listHook->getValues()));
+    self::assertSame('aculta_messenger.friendship_notice_manager', (string) $readAdapters->getValues()['friendship']);
+  }
+
+  /**
    * Drupal discovers central notice hooks and wires only enabled adapters.
    */
   public function testHookCollectorDiscoversSharedAdapterHooks(): void {

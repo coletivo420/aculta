@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Kernel;
 
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeQueueInterface;
+use Drupal\aculta_messenger\Friendship\FriendshipNoticeManager;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeEventProducer;
@@ -59,6 +60,7 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
       'field_aculta_messenger_attempts' => ['integer', []],
       'field_aculta_enqueue_attempts' => ['integer', []],
       'field_aculta_mailer_managed' => ['boolean', []],
+      'field_aculta_friendship_read' => ['boolean', []],
     ] as $name => [$type, $settings]) {
       $this->installMessageField($name, $type, $settings);
     }
@@ -127,6 +129,11 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
       'Only the request recipient and original requester receive one notice each.',
     );
     self::assertSame([(int) $requestNotice->id(), (int) $acceptanceNotice->id()], $queue->messageIds);
+
+    $noticeManager = new FriendshipNoticeManager($entityTypeManager);
+    self::assertSame(1, $noticeManager->unreadCount((int) $requester->id()));
+    self::assertTrue($noticeManager->setRead($acceptanceNotice, $requester, TRUE));
+    self::assertSame(0, $noticeManager->unreadCount((int) $requester->id()));
   }
 
   /**

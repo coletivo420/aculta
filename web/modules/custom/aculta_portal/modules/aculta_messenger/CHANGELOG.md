@@ -1,3 +1,9 @@
+## 0.1.1-dev.252 — integrar pedidos e aceites à central de avisos
+
+Os eventos de amizade agora aparecem também na central compartilhada sob a origem **Amizades**, com paginação, filtro, agrupamento, contador e estado lido/não lido no `Message` existente. Os textos não expõem nomes de terceiros. Update aditivo 10011 instala o campo de leitura nos registros existentes; a integração não cria inbox nem storage paralelo. Proteção de uninstall agora considera fila e registros de amizade.
+
+Validação: Unit Messenger **247 testes / 1.894 assertions PASS**; manager/adapters focais **42/277 PASS**; PHP lint passou. PHPCS dos arquivos novos/limpos passou; os controllers e `LifecycleHooksTest` mantêm violações preexistentes. Kernel não executado porque `SIMPLETEST_DB` está ausente; update e Runtime não executados.
+
 ## 0.1.1-dev.251 — caracterizar os e-mails de pedido e aceite
 
 Os testes do worker agora verificam separadamente o texto genérico de pedido e de aceite de amizade e limitam o contexto enviado ao Mailer a `summary` e `url`, sem identidade de terceiros.

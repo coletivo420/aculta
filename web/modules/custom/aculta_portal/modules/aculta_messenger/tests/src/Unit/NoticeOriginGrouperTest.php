@@ -46,4 +46,18 @@ final class NoticeOriginGrouperTest extends UnitTestCase {
     self::assertSame('aviso legado sem origem', $groups[0]['items']['#items'][0]['#plain_text']);
   }
 
+  /**
+   * Friendship notices have a dedicated section between site alerts and LMS.
+   */
+  public function testGroupsFriendshipNoticesUnderTheirOwnOrigin(): void {
+    $item = ['#attributes' => ['data-aculta-notice-origin' => 'amizade'], 'id' => 'friendship'];
+
+    $groups = NoticeOriginGrouper::group([$item]);
+
+    self::assertCount(1, $groups);
+    self::assertSame('amizade', $groups[0]['#attributes']['data-aculta-notice-origin-section']);
+    self::assertSame('Amizades', $groups[0]['heading']['#value']->getUntranslatedString());
+    self::assertSame([$item], $groups[0]['items']['#items']);
+  }
+
 }

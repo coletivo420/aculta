@@ -16,30 +16,37 @@ contrato normativo.
 | Para que serve | Conversa entre pessoas | Comunicar algo ao sistema, à pessoa ou ao site |
 | Onde aparece | Caixa de conversas (Private Message) | Barra do site, lista de avisos e contadores |
 | Quem envia | Pessoas | O sistema (comunicados, respostas em tópico seguido) |
-| Entidade | `private_message` (nativa) | Comunicados `aculta_notice` (nó); avisos por pessoa `aculta_aviso` (entidade própria) |
+| Entidade | `private_message` (nativa) | Comunicados `aculta_notice` (nó); Fórum `aculta_aviso`; adapters Message de LMS, Wiki, Loja, Doações e Amizades |
 | E-mail | Pelo Message Notify, quando a pessoa ativa | Sem e-mail, resumo diário ou envio direto, conforme preferência individual e modos autorizados pelo administrador |
 | Contadores | Não lidas por conversa (nativo) | `contador_site` por tópico; `MessengerCounts` |
 
 Regra: uma resposta em tópico seguido é um **aviso**, não uma mensagem. A publicação de tópico também não gera mais
 mensagem (ver seção 5).
 
-Avisos no site são obrigatórios. A pessoa escolhe sem e-mail, resumo diário ou
-envio direto para cada origem. Em Configurações do Messenger, administradores
-podem restringir os modos disponíveis por categoria; não podem remover a opção
-sem e-mail nem desligar a entrega no site. O ACULTA Mailer continua dono do
-transporte e pode suspender tipos de mensagem conforme sua política.
+Avisos no site são obrigatórios. Para Fórum, LMS, Wiki, Loja e Doações, a pessoa
+escolhe sem e-mail, resumo diário ou envio direto. Mensagens privadas oferecem
+sem e-mail, envio genérico direto ou resumo semanal; amizade oferece sem e-mail
+ou envio direto. Em Configurações do Messenger, administradores podem restringir
+os modos disponíveis por categoria; não podem remover a opção sem e-mail nem
+desligar a entrega no site. O ACULTA Mailer continua dono do transporte e pode
+suspender tipos de mensagem conforme sua política.
 
 O Messenger só permite preferências nas categorias registradas para Fórum,
-LMS (`aprendizagem`), Wiki, Loja e Doações. Categoria desconhecida falha fechada
+LMS (`aprendizagem`), Wiki, Loja, Doações, mensagens privadas e amizade. Categoria desconhecida falha fechada
 para e-mail e não é gravada em `user.data`; integrar uma nova origem exige
 adicionar explicitamente sua categoria e cobertura de teste.
 
 A aba Avisos da central da conta e a gaveta do cabeçalho filtram a lista
-compartilhada por origem e estado de leitura. A origem é marcada pelos
+compartilhada por origem (incluindo Amizades) e estado de leitura. A origem é marcada pelos
 produtores centralizados no Messenger depois de revalidar o acesso. Os links de
 abertura e retorno mantêm os filtros selecionados. Na gaveta, links carregam o
 fragmento no próprio painel; seus destinos apontam para a central da Conta como
 fallback funcional sem JavaScript.
+
+Pedidos e aceites de amizade aparecem como avisos no site usando o `Message`
+existente. O Messenger mantém estado lido/não lido e contagem por destinatário;
+os textos são genéricos e não expõem nomes de terceiros. Esse canal é obrigatório
+e não depende da preferência de e-mail.
 
 Na lista sem filtro, os avisos aparecem agrupados por origem, com cabeçalho e
 separador visual. Dentro de cada origem, usa-se a ordem mais recente disponível:

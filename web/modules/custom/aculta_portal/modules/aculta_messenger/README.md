@@ -56,7 +56,7 @@ O opt-in geral de resumo diário habilita somente a inclusão de avisos no diges
 ele não altera o envio direto, configurado separadamente em cada categoria.
 
 Na aba Avisos da central da conta, filtros GET permitem selecionar origem
-(Comunicados, Fórum, Alertas, Aprendizagem, Wiki, Loja, Doações ou Conta) e
+(Comunicados, Fórum, Alertas, Amizades, Aprendizagem, Wiki, Loja, Doações ou Conta) e
 estado de leitura. A seleção roda no Messenger depois que os adapters contribuem;
 os links mantêm os filtros ao abrir um item e retornar. O fragmento padrão da
 gaveta continua sem filtros.

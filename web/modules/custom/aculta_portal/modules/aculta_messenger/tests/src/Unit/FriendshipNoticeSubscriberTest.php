@@ -228,6 +228,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       'uid' => $noticeRecipientId,
       FriendshipNoticeSubscriber::SOURCE_FIELD => '44:' . $transition . ':1700000000',
       FriendshipNoticeSubscriber::EVENT_FIELD => $transition,
+      FriendshipNoticeSubscriber::READ_FIELD => 0,
       'field_aculta_msg_delivery' => 'pending',
       'field_aculta_messenger_attempts' => 0,
       'field_aculta_enqueue_attempts' => 0,

@@ -89,7 +89,7 @@ final class NoticeReadStateForm extends FormBase {
       $requestQuery = $request->query->all();
       $pagination = match ($filters['origem']) {
         'forum' => ['forum_offset' => $requestQuery['forum_offset'] ?? NULL],
-        'comunicado', 'alerta', 'aprendizagem', 'wiki', 'loja', 'doacao' => [
+        'comunicado', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'loja', 'doacao' => [
           'notice_offset' => $requestQuery['notice_offset'] ?? NULL,
         ],
         default => [],

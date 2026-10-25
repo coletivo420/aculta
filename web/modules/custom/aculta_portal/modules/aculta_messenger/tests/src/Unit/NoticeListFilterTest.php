@@ -57,6 +57,10 @@ final class NoticeListFilterTest extends UnitTestCase {
       'leitura' => 'unread-now',
     ]));
     self::assertSame($items, $filter->apply($items, ['origem' => 'forged']));
+    self::assertSame(['origem' => 'amizade', 'leitura' => ''], $filter->normalize([
+      'origem' => 'amizade',
+      'leitura' => '',
+    ]));
   }
 
   /**

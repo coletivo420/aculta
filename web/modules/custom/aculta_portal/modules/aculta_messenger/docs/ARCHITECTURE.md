@@ -80,6 +80,11 @@ amizade. Consulta Drush somente leitura ao Runtime de teste em 2026-10-24 encont
 itens pendentes nessa fila; nenhum item foi processado ou alterado, portanto o caminho
 compatível deve permanecer até a drenagem operacional ser confirmada.
 
+Os mesmos registros `aculta_msg_friendship` são adaptados pelo Messenger à central do site,
+com origem **Amizades**, estado de leitura individual e contador integrado. Pedido e aceite
+permanecem eventos de `aculta_user`; a apresentação na central não expõe nomes nem conteúdo
+de terceiros. Avisos no site continuam obrigatórios independentemente da preferência de e-mail.
+
 ## Fontes de verdade e armazenamento
 
 | Dado | Fonte existente | Regra |
