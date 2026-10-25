@@ -91,6 +91,33 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
   }
 
   /**
+   * Does not query LMS source storage before validating notice ownership.
+   */
+  public function testResolveRejectsAnotherMembersNoticeBeforeSourceLookup(): void {
+    $account = $this->createMock(UserInterface::class);
+    $account->method('isActive')->willReturn(TRUE);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $account->method('id')->willReturn('27');
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('bundle')->willReturn(LearningNoticeManager::TEMPLATE);
+    $message->method('getOwnerId')->willReturn('52');
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->expects(self::never())->method('getStorage');
+    $manager = new LearningNoticeManager(
+      $entities,
+      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
+      $this->createMock(DateFormatterInterface::class),
+      $this->createMock(QueueFactory::class),
+      new NullLogger(),
+      $this->createMock(MessengerNoticePublisherInterface::class),
+      $this->createMock(LockBackendInterface::class),
+    );
+
+    self::assertNull($manager->resolve($message, $account));
+  }
+
+  /**
    * Loads sources of one event type once for an entire digest batch.
    */
   public function testDigestLoadsSourceUuidsInOneBatch(): void {

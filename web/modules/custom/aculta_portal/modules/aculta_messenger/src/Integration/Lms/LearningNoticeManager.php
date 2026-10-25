@@ -199,6 +199,10 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
    * Resolves current source access and URL; stale/revoked access returns NULL.
    */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array {
+    if (!$account->isAuthenticated() || (int) $message->getOwnerId() !== (int) $account->id()
+      || $message->bundle() !== self::TEMPLATE) {
+      return NULL;
+    }
     return $this->resolveWithSources($message, $account, $this->loadSourcesForMessages([$message]));
   }
 

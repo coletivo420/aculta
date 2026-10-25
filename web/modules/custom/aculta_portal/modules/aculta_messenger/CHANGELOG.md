@@ -1,3 +1,13 @@
+## 0.1.1-dev.342 — validar ownership antes da consulta LMS
+
+A resolução individual agora verifica autenticação, titularidade e bundle do
+aviso antes de consultar qualquer storage de origem do LMS. A checagem interna
+continua repetida antes de montar o destino. O teste confirma que uma mensagem
+de outra pessoa termina sem consulta de fonte.
+
+Validação: Integration LMS Unit **48 testes / 445 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Kernel ou Runtime.
+
 ## 0.1.1-dev.341 — agrupar carregamento das fontes de avisos LMS
 
 A central, o contador de não lidos e o digest carregam em lote as entidades
