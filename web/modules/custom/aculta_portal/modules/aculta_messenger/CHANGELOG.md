@@ -2571,3 +2571,9 @@ O provider semanal agora persiste estado de entrega sem encadear `set()->save()`
 
 Validação: `PrivateMessageDigestProviderTest` **2/50 PASS**; Unit Messenger **269/2.113 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel indisponível (`SIMPLETEST_DB` ausente); Browser e Runtime não executados.
 
+## 0.1.1-dev.270 — manter cancelamentos de e-mail privado terminais
+
+O worker reprocessa somente registros `pending` ou `failed`. Um item cancelado por opt-out/admin, já enviado ou marcado como falha permanente não volta a ser enviado se a preferência mudar antes de um replay atrasado da fila.
+
+Validação: `PrivateMessageNotificationWorkerTest` **13/211 PASS**; Unit Messenger **271/2.139 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+

@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.270 — replay de fila agora só processa registros privados `pending`/`failed`; cancelamento, envio concluído e falha permanente permanecem terminais mesmo após mudança da preferência. `PrivateMessageNotificationWorkerTest` **13/211 PASS**, Unit Messenger **271/2.139 PASS**, PHPCS/PHP lint PASS. Kernel/Browser/Runtime pendentes.
 - Dev.269 — provider semanal de mensagens privadas cobre agregação sem corpo, destinatários/IDs, acesso revogado e cancelamento; gravações separadas não dependem de retorno fluente de `set()`. Teste **2/50 PASS**, Unit Messenger **269/2.113 PASS**, PHPCS/PHP lint PASS. Kernel indisponível (`SIMPLETEST_DB` ausente); Browser/Runtime pendentes.
 - Dev.268 — cobertura do formulário de preferências de mensagens privadas: opções site/direto/semanal, restrição administrativa e persistência em `user.data` Messenger; texto confirma ausência de conteúdo privado nos e-mails. Teste **3/10 PASS**, Unit Messenger **268/2.083 PASS**, PHPCS e PHP lint PASS. Kernel/Browser/Runtime pendentes.
 - Dev.267 — metadado de ordenação passa a expressar recência; aviso agregado do Fórum usa `changed` (última atividade), enquanto adapters de eventos individuais usam a data do `Message`. Unit Messenger **265/2.073 PASS**, PHP lint PASS. Kernel indisponível (`SIMPLETEST_DB` ausente); PHPCS, Browser e Runtime não executados.

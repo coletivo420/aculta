@@ -178,7 +178,12 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
    * New notices use the Mailer and omit private message content.
    */
   #[DataProvider('emailConfirmationCases')]
-  public function testMailerManagedNoticeUsesPrivateTemplate(bool $emailConfirmed, string $emailMode, bool $existingPending): void {
+  public function testMailerManagedNoticeUsesPrivateTemplate(
+    bool $emailConfirmed,
+    string $emailMode,
+    bool $existingPending,
+    string $initialStatus = 'pending',
+  ): void {
     $privateMessage = $this->createMock(PrivateMessageInterface::class);
     $privateMessage->method('getOwnerId')->willReturn(1);
     $privateMessage->method('getCreatedTime')->willReturn(101);
@@ -214,8 +219,9 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $noticeQuery->method('execute')->willReturn($existingPending ? [88] : []);
     $noticeStorage = $this->createMock(EntityStorageInterface::class);
     $noticeStorage->method('getQuery')->willReturn($noticeQuery);
-    $deliveryStatus = 'pending';
-    $status = $this->field('pending');
+    $deliveryStatus = $initialStatus;
+    $status = $this->createMock(FieldItemListInterface::class);
+    $status->method('__get')->with('value')->willReturnCallback(static fn(): string => $deliveryStatus);
     $attempts = $this->field(0);
     $managed = $this->field(TRUE);
     $notice = $this->createMock(MessageInterface::class);
@@ -232,8 +238,9 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     });
     $notice->method('setArguments')->willReturnSelf();
     $notice->method('save')->willReturn(1);
-    $shouldSend = $emailConfirmed && $emailMode === AvisoPreferencias::EMAIL_IMMEDIATE;
-    $shouldQueueDigest = $emailConfirmed && $emailMode === AvisoPreferencias::EMAIL_DIGEST;
+    $recordRetryable = in_array($initialStatus, ['pending', 'failed'], TRUE);
+    $shouldSend = $recordRetryable && $emailConfirmed && $emailMode === AvisoPreferencias::EMAIL_IMMEDIATE;
+    $shouldQueueDigest = $recordRetryable && $emailConfirmed && $emailMode === AvisoPreferencias::EMAIL_DIGEST;
     $noticeStorage->expects($existingPending ? self::never() : (($shouldSend || $shouldQueueDigest) ? self::once() : self::never()))->method('create')
       ->with(self::callback(fn(array $values): bool => ($values['field_aculta_mailer_managed'] ?? FALSE) === TRUE
         && (!$shouldQueueDigest || ($values['field_aculta_pm_digest_sent'] ?? NULL) === 0)))
@@ -285,7 +292,10 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       \Drupal::unsetContainer();
     }
     if ($existingPending && !$shouldSend && !$shouldQueueDigest) {
-      self::assertSame('cancelled', $deliveryStatus);
+      self::assertSame(
+        in_array($initialStatus, ['cancelled', 'failed_permanent'], TRUE) ? $initialStatus : 'cancelled',
+        $deliveryStatus,
+      );
     }
     if ($shouldSend) {
       self::assertSame('private_message_notice', $sentMail->type);
@@ -422,6 +432,18 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       'weekly digest queues without sending' => [TRUE, AvisoPreferencias::EMAIL_DIGEST, FALSE],
       'unconfirmed email' => [FALSE, AvisoPreferencias::EMAIL_IMMEDIATE, FALSE],
       'opt-out cancels persisted pending email' => [TRUE, AvisoPreferencias::EMAIL_OFF, TRUE],
+      'opt-out cancellation remains terminal after opt-in' => [
+        TRUE,
+        AvisoPreferencias::EMAIL_IMMEDIATE,
+        TRUE,
+        'cancelled',
+      ],
+      'permanent delivery failure remains terminal' => [
+        TRUE,
+        AvisoPreferencias::EMAIL_IMMEDIATE,
+        TRUE,
+        'failed_permanent',
+      ],
     ];
   }
 

@@ -163,7 +163,10 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       ? NULL
       : $this->entityTypeManager->getStorage('message')->load(reset($ids));
 
-    if ($notification !== NULL && $notification->get(self::STATUS_FIELD)->value === 'sent') {
+    if ($notification !== NULL
+      && !in_array((string) $notification->get(self::STATUS_FIELD)->value, ['pending', 'failed'], TRUE)) {
+      // A retry must not resurrect opt-outs, cancellations, successful sends,
+      // or permanent failures after the member's preference later changes.
       return;
     }
     if ($notification !== NULL
