@@ -1,3 +1,10 @@
+## 0.1.0-dev.20 — S-R3-B3: pedidos, apoio e preferências na Conta Studio (2026-10-25)
+
+- Três rotas canônicas exclusivas do ACCOUNT: `/studio/conta/pedidos`, `/studio/conta/apoio`, `/studio/conta/preferencias`. Todas exigem login, permissão `access aculta portal` e `no_cache`.
+- Os pedidos delegam a `PortalController::orders()` e preservam filtro por `uid`, exclusão de rascunhos Commerce, pagamento e URL de detalhe com Entity Access original. Apoio delega a `SupportController::mySupport()`, mantendo regras de assinatura, ações originais e host SUPPORT para novas doações. Preferências executam o `AppearanceForm` original via `form_builder` no contexto Studio, sem recriar armazenamento, POST ou regras de modo de cor; abas internas do Portal ainda apontam às preferências proprietárias originais.
+- O Studio controla só navegação contextual e composição. O `AccountExperienceProvider` abre essas três rotas, preservando `/conta-legada`, `/meu-apoio`, `/configuracoes`, checkout e actions de assinatura. Nenhum alias ou redirect temporário e nenhuma mudança em User/Perfil.
+- Testes Unit de rotas, navegação, delegação do owner, links de assinatura intactos, Form API, 403 e 404 foram atualizados/escritos, mas **não executados** nesta rodada. PHP lint/PHPCS, PHPUnit, Kernel/Functional, gate de aliases/status, Runtime, duas contas, CSRF/no-JS e Firefox ESR/X11 seguem pendentes. Não houve merge/deploy.
+
 ## 0.1.0-dev.19 — revisão S-R3-B1: editor CPF/CNPJ opcional (2026-10-25)
 
 - Rota /studio/conta/documentos agora verifica a ausência do owner após autorização e retorna 404 antes de resolver o Portal. Quando o serviço está instalado mas indisponível, mantém a mensagem segura do Form API original e oculta o link.

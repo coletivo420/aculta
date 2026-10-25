@@ -291,6 +291,9 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/studio/conta/seguranca` | E-mail e segurança | `aculta_studio.account_security`; usa `PortalController::security()`, com confirmação de e-mail original. |
 | `conta.aculta` | `/studio/conta/seguranca/senha` | Gerenciamento de senha | `aculta_studio.account_password`; usa `PortalController::securityPassword()` e fluxo de primeira senha OAuth existente. |
 | `conta.aculta` | `/studio/conta/conexoes` | Conexões de autenticação | `aculta_studio.account_connections`; usa `PortalController::connections()`. |
+| `conta.aculta` | `/studio/conta/pedidos` | Meus pedidos no Studio | `aculta_studio.account_orders`; delega a `PortalController::orders()` com Commerce, pedidos próprios e detalhes originais. |
+| `conta.aculta` | `/studio/conta/apoio` | Meu apoio no Studio | `aculta_studio.account_support`; delega a `SupportController::mySupport()`, preserva assinatura e host SUPPORT. |
+| `conta.aculta` | `/studio/conta/preferencias` | Preferências da Conta Studio | `aculta_studio.account_preferences`; Core Form API do `AppearanceForm` original, preserva configuração de modo de cor e abas do owner. |
 
 | `conta.aculta` | `/studio/perfil` | **Meu Perfil Studio** | `aculta_studio.profile`; apenas identidade pública editável por User; `/u/{apelido}` em MAIN preservado. |
 | `conta.aculta` | `/studio/perfil/apelido` | Apelido público | `aculta_studio.profile_nickname`, Form API do ACULTA User sobre `Profile.field_nickname`, acesso somente do titular, sem dados cadastrais. |

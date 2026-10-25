@@ -1,6 +1,14 @@
 # ACULTA Studio — Roadmap multi-experiência
 
 
+## S-R3-B3 — pedidos, apoio e preferências privados (Studio dev.20)
+
+- **Código entregue na PR #297:** três rotas canônicas `/studio/conta/{pedidos,apoio,preferencias}` com autenticação, permissão e purpose ACCOUNT. A navegação própria do Studio agora aponta a esses destinos; a Conta antiga em `/conta-legada` e as rotas originárias continuam disponíveis.
+- **Ownership:** `PortalController::orders()` mantém o filtro e o link de pedido Commerce, `SupportController::mySupport()` mantém histórico e Form API de assinatura recorrente sem duplicação, e `AppearanceForm` mantém escrita e invalidação de cache via Core Form API. Os links secundários de preferências ainda seguem `SettingsTabs` no owner; são intencionalmente preservados para outras preferências não integradas.
+- **Testes Unit escritos, não executados:** rota única, purpose/account, permissão e no-cache, navegação com/sem documentos, delegação dos métodos de pedidos e suporte, ações de assinatura, acesso negado, Form API de aparência com seus tabs. Não declarar gates PASS sem execução.
+- **Gates antes de S-R5/RC:** instalar/check-out correto; PHP lint e PHPCS, `phpunit` Unit/Kernel/Functional, `validate-module-theme-boundary.php`, `validate-aculta-portal-drupal11.php`, `validate-project-status-index.php`, `validate-no-temporary-route-aliases.php`, teste de duas contas com Commerce e assinaturas, pagamento, ação de assinatura em POST/CSRF, preferência persistida e invalidada, login anônimo, Domain ACCOUNT, cache de usuário, AJAX/no-JS e Firefox ESR/X11 em 320 px e Olivero.
+- **Limitação externa ainda aberta:** garantir unicidade transacional de CPF/CNPJ em B1; completar homologação B1/B2 sem mexer no legado. Próximo: fase S-R4 (SDC e edição de Perfil) e S-R5 (aceite Conta/Perfil com comparação visual), condicionadas a gates proporcionais.
+
 ## S-R3-B1 — revisão (Studio dev.19, Portal dev.31)
 
 - Código: acesso direto sem `aculta_id_cpf.account_document` retorna 404; com owner indisponível, formulário Portal mostra indisponibilidade, sem link na Conta Studio.

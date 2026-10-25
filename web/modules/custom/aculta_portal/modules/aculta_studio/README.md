@@ -1,7 +1,19 @@
 # ACULTA Studio (`aculta_studio`)
 
 
-## Situação vigente — auditoria S-R3-B1, Studio dev.19
+## Situação vigente — S-R3-B3, Studio dev.20 (código, sem homologação)
+
+Minha Conta Studio inclui agora as páginas privadas `/studio/conta/pedidos`, `/studio/conta/apoio` e `/studio/conta/preferencias`, além de cadastro, endereço, documentos opcionais e segurança. Os três destinos são exclusivos do purpose ACCOUNT e reusam os owners do Portal:
+
+- **Pedidos:** `PortalController::orders()`, Commerce e política existente de pedidos próprios; detalhe do pedido e Mercado Pago permanecem com seus fluxos.
+- **Meu apoio:** `SupportController::mySupport()`, com dados de apoio vinculados à própria conta e ações de assinatura nas rotas originais do Portal.
+- **Preferências:** `AppearanceForm` original via Core Form API, com gravação de `ColorModePreference` do Portal, seus próprios links de configurações e o contexto de POST da rota Studio.
+
+O Studio somente envolve os render arrays e aplica navegação contextual; não duplica entity, workflow, form, tabela ou shell, nem altera o Perfil público. As rotas originais `/meu-apoio` e `/configuracoes` e o legado permanente `/conta-legada` continuam disponíveis; o hub ACCOUNT fica em `/` (`/studio` técnico bloqueado diretamente).
+
+**Unit novos escritos mas não executados**; PHPUnit/Kernel/Functional, PHP lint, PHPCS, gates, Domain, cache, HTTP autenticado/anônimo, checkout, duas contas, Firefox ESR/X11, 320 px, Olivero e no-JS permanecem pendentes. Sem RC, merge ou deploy.
+
+## Histórico — auditoria S-R3-B1, Studio dev.19
 
 A rota privada `/studio/conta/documentos` mantém o mesmo `AccountOtherDataForm` e serviço opcional `aculta_id_cpf` do Portal. Sem serviço, acesso direto agora retorna 404 após autorização. Quando o serviço existe mas `isAvailable()` é falso, a página mantém o aviso seguro do owner sem apresentar input gravável e a navegação omite Documentos. Checkout permitido continua prioritário ao retorno para a origem.
 
