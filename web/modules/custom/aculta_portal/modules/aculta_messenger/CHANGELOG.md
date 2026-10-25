@@ -1,3 +1,15 @@
+## 0.1.1-dev.278 — paginar alertas do site por recência
+
+Alertas ativos agora são ordenados pelo campo `created` antes do corte das
+páginas da central; o ID é usado apenas como desempate estável. Isso mantém os
+itens mais recentes na primeira página mesmo quando a ordem dos IDs diverge da
+data de criação.
+
+Validação: `SiteAlertNoticeSorterTest` **1/41 PASS**, testes focais da central
+**5/101 PASS**, Unit Messenger **279/2.254 PASS**, PHPCS Drupal/DrupalPractice
+do sorter e teste e PHP lint PASS. `MessagesController` permanece no baseline
+PHPCS **93 erros/65 avisos**. Kernel, Browser e Runtime não executados.
+
 ## 0.1.1-dev.277 — respeitar opt-out do resumo diário nos adapters
 
 O opt-out geral agora impede que avisos de Fórum e adapters de conteúdo entrem

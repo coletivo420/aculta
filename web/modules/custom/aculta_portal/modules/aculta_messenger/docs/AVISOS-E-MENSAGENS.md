@@ -41,7 +41,10 @@ compartilhada por origem (incluindo Amizades) e estado de leitura. A origem é m
 produtores centralizados no Messenger depois de revalidar o acesso. Os links de
 abertura e retorno mantêm os filtros selecionados. Na gaveta, links carregam o
 fragmento no próprio painel; seus destinos apontam para a central da Conta como
-fallback funcional sem JavaScript.
+fallback funcional sem JavaScript. Na lista sem filtro, as origens são separadas
+em grupos ordenados pelo aviso mais recente; itens dentro de cada grupo também
+seguem recência. Alertas do site são ordenados por `created` antes da paginação,
+com ID como desempate estável.
 
 Pedidos e aceites de amizade aparecem como avisos no site usando o `Message`
 existente. O Messenger mantém estado lido/não lido e contagem por destinatário;

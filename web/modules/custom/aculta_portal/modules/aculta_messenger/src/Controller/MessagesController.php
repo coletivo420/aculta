@@ -43,6 +43,7 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeOriginGrouper;
+use Drupal\aculta_messenger\Service\SiteAlertNoticeSorter;
 use Drupal\aculta_messenger\Service\NoticeFlagStateLoader;
 use Drupal\aculta_messenger\Service\NoticeReadActionBuilder;
 use Drupal\aculta_messenger\Service\MemberInitiatedRequest;
@@ -799,9 +800,9 @@ final class MessagesController extends ControllerBase {
         $visibleAlerts[] = $alert;
       }
     }
-    // Site Alert's upstream query does not promise an order. The same active
-    // set must retain a stable order across offset pages.
-    usort($visibleAlerts, static fn(SiteAlert $a, SiteAlert $b): int => (int) $b->id() <=> (int) $a->id());
+    // Site Alert's upstream query does not promise an order. Sort by creation
+    // time before slicing pages; IDs provide a stable tie-breaker only.
+    $visibleAlerts = SiteAlertNoticeSorter::sort($visibleAlerts);
     $alertFlagStates = [];
     if ($this->account->isAuthenticated() && $visibleAlerts !== []) {
       $alertFlagStates = $this->noticeFlagStateLoader->loadForAccount($visibleAlerts, $this->account);
