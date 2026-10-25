@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: "Dev.379: suíte Unit completa do Messenger no snapshot publicado 374/4.140 PASS, incluindo Dev.378 e composição progressiva. Kernel/Integration, HTTP autenticado, BrowserTest/visual, Runtime pós-update, SMTP e Alpha continuam gates separados; Runtime em Dev.373 mantém updates 10008–10012 e post-updates sem execução."
+next_phase: "Dev.380: suíte Kernel do Messenger 56/1.177 PASS no MariaDB dedicado (10 depreciações Core/contrib e 4 notices); a árvore Kernel e os serviços cobertos correspondem ao snapshot publicado. Unit no snapshot publicado 374/4.140 PASS. HTTP autenticado, BrowserTest/visual, Integration do snapshot, Runtime pós-update, SMTP e Alpha são gates restantes; Runtime Dev.373 mantém updates 10008–10012 e post-updates sem execução."

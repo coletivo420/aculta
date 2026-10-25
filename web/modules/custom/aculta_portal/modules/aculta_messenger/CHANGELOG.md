@@ -1,3 +1,14 @@
+## 0.1.1-dev.380 — revalidação Kernel do Messenger
+
+A árvore Kernel completa passou **56 testes / 1.177 assertions** no banco
+dedicado `aculta_simpletest`. A execução foi feita no checkout de trabalho;
+os testes Kernel e os serviços exercitados não diferem do snapshot publicado
+nessa frente. PHPUnit reportou dez depreciações upstream de Core/contrib e
+quatro notices; sem falhas. Temporários e saída ficaram fora de `/tmp`.
+
+Este gate não valida HTTP com sessão, BrowserTest, Runtime pós-update, SMTP
+externo ou Alpha.
+
 ## 0.1.1-dev.379 — regressão completa dos testes Unit publicados
 
 A suíte Unit do Messenger no snapshot da PR passou **374 testes / 4.140
