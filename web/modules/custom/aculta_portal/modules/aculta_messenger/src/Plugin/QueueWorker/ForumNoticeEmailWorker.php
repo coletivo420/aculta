@@ -12,6 +12,7 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutbox;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutboxInterface;
+use Drupal\aculta_messenger\Aviso\ForumNoticeCounterInterface;
 use Drupal\aculta_messenger\Mail\ForumNoticeMailType;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\aculta_messenger\Service\MessengerMailDelivery;
@@ -47,6 +48,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
     mixed $plugin_definition,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ForumNoticeEmailOutboxInterface $outbox,
+    private readonly ForumNoticeCounterInterface $avisos,
     private readonly AvisoPreferenciasInterface $preferences,
     private readonly ForumNoticeAccessPolicyInterface $accessPolicy,
     private readonly FlagServiceInterface $flagService,
@@ -67,6 +69,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('aculta_messenger.forum_notice_email_outbox'),
+      $container->get('aculta_messenger.aviso_service'),
       $container->get('aculta_messenger.aviso_preferencias'),
       $container->get('aculta_messenger.forum_notice_access_policy'),
       $container->get('flag'),
@@ -153,7 +156,20 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
       return;
     }
     if ($result->sent) {
-      $this->outbox->setStatus((int) $event['id'], ForumNoticeEmailOutbox::STATUS_SENT);
+      $this->outbox->completeDirectDelivery(
+        (int) $event['id'],
+        function (array $delivery): void {
+          $noticeType = $delivery['event_type'] === 'topic_revision'
+            ? Aviso::TIPO_ATUALIZACAO
+            : Aviso::TIPO_RESPOSTA;
+          $this->avisos->acknowledgeEmailCount(
+            (int) $delivery['uid'],
+            (int) $delivery['nid'],
+            $noticeType,
+            1,
+          );
+        },
+      );
       return;
     }
     if ($result->cancelled) {

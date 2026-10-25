@@ -119,6 +119,40 @@ final class ForumNoticeEmailOutbox implements ForumNoticeEmailOutboxInterface {
   /**
    * {@inheritdoc}
    */
+  public function completeDirectDelivery(int $id, callable $acknowledge): bool {
+    $transaction = $this->database->startTransaction();
+    try {
+      // Transition first to acquire the row lock before touching the aggregate.
+      // The transaction rolls this state change back if the callback fails.
+      $updated = $this->database->update(ForumNoticeEventSchema::TABLE)
+        ->fields([
+          'email_status' => self::STATUS_SENT,
+          'email_updated' => $this->time->getRequestTime(),
+        ])
+        ->condition('id', $id)
+        ->condition('email_status', self::STATUS_PROCESSING)
+        ->execute();
+      if ($updated !== 1) {
+        unset($transaction);
+        return FALSE;
+      }
+      $event = $this->load($id);
+      if ($event === NULL) {
+        throw new \RuntimeException('Forum notice event disappeared during delivery completion.');
+      }
+      $acknowledge($event);
+      unset($transaction);
+      return TRUE;
+    }
+    catch (\Throwable $exception) {
+      $transaction->rollBack();
+      throw $exception;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function requeuePending(): void {
     $now = $this->time->getRequestTime();
     $table = ForumNoticeEventSchema::TABLE;

@@ -1507,6 +1507,94 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Direct email completion atomically acknowledges its Forum digest counter.
+   */
+  public function testOutboxDirectDeliveryAcknowledgesDigestCountAtomically(): void {
+    $author = $this->createUser('autor_email_direto');
+    $follower = $this->createUser('seguidor_email_direto');
+    $uid = (int) $follower->id();
+    $topic = $this->createTopic('Aviso direto sem duplicação');
+    $avisos = $this->createAvisoService(
+      [$uid],
+      $this->createAccessPolicy(canViewComment: TRUE),
+    );
+    $comment = $this->createPersistedComment($topic, (int) $author->id());
+    self::assertSame(1, $avisos->registrarResposta($comment));
+    $notice = reset($this->loadNotices($uid, (int) $topic->id()));
+    self::assertSame(1, (int) $notice->get('contador_email')->value);
+
+    $database = $this->container->get('database');
+    $id = (int) $database->select(ForumNoticeEventSchema::TABLE, 'event')
+      ->fields('event', ['id'])
+      ->condition('uid', $uid)
+      ->condition('event_type', 'comment')
+      ->condition('event_id', (int) $comment->id())
+      ->execute()
+      ->fetchField();
+    $database->update(ForumNoticeEventSchema::TABLE)
+      ->fields([
+        'email_status' => ForumNoticeEmailOutbox::STATUS_PROCESSING,
+        'email_attempts' => 1,
+        'email_correlation' => '01234567-89ab-4cde-8fab-0123456789ab',
+        'email_updated' => $this->container->get('datetime.time')->getRequestTime(),
+      ])
+      ->condition('id', $id)
+      ->execute();
+    $outbox = new ForumNoticeEmailOutbox(
+      $database,
+      $this->createMock(QueueFactory::class),
+      $this->container->get('datetime.time'),
+      $this->createMock(UuidInterface::class),
+      $this->createMock(LoggerInterface::class),
+    );
+
+    self::assertTrue($outbox->completeDirectDelivery($id, static function (array $event) use ($avisos): void {
+      $avisos->acknowledgeEmailCount(
+        (int) $event['uid'],
+        (int) $event['nid'],
+        Aviso::TIPO_RESPOSTA,
+        1,
+      );
+    }));
+    $updatedNotice = reset($this->loadNotices($uid, (int) $topic->id()));
+    self::assertSame(0, (int) $updatedNotice->get('contador_email')->value);
+    self::assertSame(ForumNoticeEmailOutbox::STATUS_SENT, $outbox->load($id)['email_status']);
+
+    $secondComment = $this->createPersistedComment($topic, (int) $author->id());
+    self::assertSame(1, $avisos->registrarResposta($secondComment));
+    $secondNotice = reset($this->loadNotices($uid, (int) $topic->id()));
+    self::assertSame(1, (int) $secondNotice->get('contador_email')->value);
+    $secondId = (int) $database->select(ForumNoticeEventSchema::TABLE, 'event')
+      ->fields('event', ['id'])
+      ->condition('uid', $uid)
+      ->condition('event_type', 'comment')
+      ->condition('event_id', (int) $secondComment->id())
+      ->execute()
+      ->fetchField();
+    $database->update(ForumNoticeEventSchema::TABLE)
+      ->fields([
+        'email_status' => ForumNoticeEmailOutbox::STATUS_PROCESSING,
+        'email_attempts' => 1,
+        'email_correlation' => '11234567-89ab-4cde-8fab-0123456789ab',
+        'email_updated' => $this->container->get('datetime.time')->getRequestTime(),
+      ])
+      ->condition('id', $secondId)
+      ->execute();
+    try {
+      $outbox->completeDirectDelivery($secondId, static function (): void {
+        throw new \RuntimeException('Simulated aggregate write failure.');
+      });
+      self::fail('A failed acknowledgement must roll back the outbox completion.');
+    }
+    catch (\RuntimeException $exception) {
+      self::assertSame('Simulated aggregate write failure.', $exception->getMessage());
+    }
+    $unchangedNotice = reset($this->loadNotices($uid, (int) $topic->id()));
+    self::assertSame(1, (int) $unchangedNotice->get('contador_email')->value);
+    self::assertSame(ForumNoticeEmailOutbox::STATUS_PROCESSING, $outbox->load($secondId)['email_status']);
+  }
+
+  /**
    * Cron recovery requeues expired processing and queued outbox rows.
    */
   public function testOutboxCronRecoversExpiredQueueLeases(): void {
