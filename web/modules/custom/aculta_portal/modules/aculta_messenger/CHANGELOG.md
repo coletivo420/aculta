@@ -2108,3 +2108,12 @@ A central da Conta pagina os Nodes de comunicado com access e leitura aplicados 
 
 Validação: `PersonalNoticePageStateTest`, `PersonalNoticeAdapterHooksTest` e `NoticeListFilterTest` **15/93 PASS**. PHPCS Drupal/DrupalPractice limpo nos arquivos novos/testes; `MessagesController` mantém baseline **95/65**. PHP lint e `git diff --check` PASS. Browser visual não executado: `DISPLAY` não está definido; Runtime não homologado.
 
+## 0.1.1-dev.211 — detectar a próxima página de avisos persistentes
+
+A paginação de Comunicados agora percorre o próximo aviso elegível após preencher a página para definir `hasNext`.
+Itens inacessíveis e já lidos continuam sem consumir offset ou capacidade. Chamadas sem paginação mantêm o limite anterior.
+
+Validação: `PersistentNoticePaginationTest` **1/44 PASS**; estado da paginação, dispatch de adapters e filtros
+**15/93 PASS**; PHPCS Drupal/DrupalPractice do novo teste, PHP lint e `git diff --check` PASS. O PHPCS do controller
+continua com o baseline existente de **95 erros / 65 avisos**. Runtime e navegador não executados.
+

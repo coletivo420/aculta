@@ -1197,7 +1197,7 @@ final class MessagesController extends ControllerBase {
           TRUE,
           NoticeType::normalize($node->hasField('field_aculta_notice_type') && !$node->get('field_aculta_notice_type')->isEmpty() ? (string) $node->get('field_aculta_notice_type')->value : NULL),
         ), 'comunicado', !$read);
-        if (count($items) >= $limit) {
+        if ($pageState?->origin() !== 'comunicado' && count($items) >= $limit) {
           break 2;
         }
       }

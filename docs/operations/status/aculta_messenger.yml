@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: "Dev.210: central também pagina Comunicados e Alertas do Site por origem, com filtro de leitura antes do limite; Alertas têm ordenação estável por ID. PersonalNoticePageStateTest + dispatch/filtros 15/93 PASS; PHPCS de arquivos novos limpo, controller baseline 95/65, lint e diff check PASS. Paginação global, HTTP, smoke visual, SMTP e Runtime pendentes. Estado Dev."
+next_phase: "Dev.211: paginação de Comunicados detecta próxima página após acesso e leitura; regressão PersistentNoticePaginationTest 1/44 PASS. Dev.210 pagina Comunicados e Alertas do Site por origem, com filtro de leitura antes do limite e ordenação estável de Alertas. PersonalNoticePageStateTest + dispatch/filtros 15/93 PASS; PHPCS do teste novo, lint e gate Portal 1155 checks PASS; controller mantém baseline 95/65. Paginação global, HTTP, smoke visual, SMTP e Runtime pendentes. Estado Dev."
