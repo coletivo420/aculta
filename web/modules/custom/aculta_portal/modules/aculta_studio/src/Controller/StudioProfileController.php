@@ -61,7 +61,9 @@ final class StudioProfileController {
 
     // Prefer the ACULTA User nickname and policy-filtered avatar. The editor
     // only handles the current user and never guesses a public URL.
-    $displayName = $user->getDisplayName();
+    // The private account's display name can be a legal name or even an
+    // e-mail address. Never substitute it for the community nickname.
+    $displayName = (string) new TranslatableMarkup('Apelido não informado');
     $avatar = [];
     $identity = $this->identityResolver?->resolve($user, 'profile_full');
     if ($identity !== NULL) {

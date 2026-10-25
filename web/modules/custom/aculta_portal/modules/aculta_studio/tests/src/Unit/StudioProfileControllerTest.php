@@ -80,7 +80,8 @@ final class StudioProfileControllerTest extends UnitTestCase {
     $identity = $page['#slots']['identity'];
     self::assertSame('component', $identity['#type']);
     self::assertSame('aculta420:profile-identity', $identity['#component']);
-    self::assertSame('Membro de teste', $identity['#props']['display_name']);
+    self::assertSame('Apelido não informado', $identity['#props']['display_name']);
+    self::assertStringNotContainsString('conta-privada', $identity['#props']['display_name']);
     self::assertArrayNotHasKey('avatar', $identity['#slots']);
     self::assertArrayNotHasKey('public_link', $identity['#slots']);
     self::assertSame('item_list', $identity['#slots']['actions']['#theme']);
@@ -192,7 +193,8 @@ final class StudioProfileControllerTest extends UnitTestCase {
   private function user(): UserInterface {
     $user = $this->createMock(UserInterface::class);
     $user->method('id')->willReturn('7');
-    $user->method('getDisplayName')->willReturn('Membro de teste');
+    // This potentially private account value must never appear in Profile.
+    $user->method('getDisplayName')->willReturn('conta-privada@example.invalid');
     $user->method('getCacheContexts')->willReturn(['user']);
     $user->method('getCacheTags')->willReturn(['user:7']);
     $user->method('getCacheMaxAge')->willReturn(0);
