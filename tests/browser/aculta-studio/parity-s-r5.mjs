@@ -267,7 +267,13 @@ try {
       if (PUBLIC[i] === 'no') {
         check(`${owner}: perfil privado não mostra bio`, !publicPage.publicBio);
         check(`${owner}: perfil privado não mostra links de contato`, !publicPage.publicLinks);
+        if (SENTINELS.every(Boolean) && SENTINELS[0] !== SENTINELS[1]) {
+          check(`${owner}: bio privada não vaza no MAIN`, !publicPage.markerFlags[i]);
+        } else check(`${owner}: bio privada não vaza no MAIN`, null, 'sentinelas ausentes');
       }
+      if (SENTINELS.every(Boolean) && SENTINELS[0] !== SENTINELS[1]) {
+        check(`${owner}: bio do outro titular nunca aparece no MAIN`, !publicPage.markerFlags[1-i]);
+      } else check(`${owner}: isolamento MAIN entre contas`, null, 'sentinelas ausentes');
       // E-mail no perfil público é opt-in do ACULTA User: NÃO proibir
       // indiscriminadamente; validar configuração do owner e fixture.
       for (const width of [320,375,390,768,1024,1440]) {
