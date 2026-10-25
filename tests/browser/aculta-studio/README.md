@@ -77,11 +77,11 @@ A S-R4 permanece sem homologação; S-R5 continua bloqueada.
 
 ## S-R5 — comparação de Conta e Perfil (suíte pré-homologação)
 
-Arquivo \`parity-s-r5.mjs\`: **somente leitura**, no Firefox ESR visível,
+Arquivo `parity-s-r5.mjs`: **somente leitura**, no Firefox ESR visível,
 com sessões WebDriver independentes para duas contas sintéticas. Compara
-\`/studio/conta\`, as nove seções de Conta, os formulários e o legado
-permanente \`/conta-legada\`, além de \`/studio/perfil\` no purpose ACCOUNT e
-\`/u/{apelido}\` no MAIN. Também verifica acesso anônimo e GET sem JavaScript,
+`/studio/conta`, as nove seções de Conta, os formulários e o legado
+permanente `/conta-legada`, além de `/studio/perfil` no purpose ACCOUNT e
+`/u/{apelido}` no MAIN. A política do MAIN também é examinada em sessão anônima separada, para não confundir informações próprias de um titular logado com conteúdo realmente público. A suíte verifica acesso anônimo e GET sem JavaScript,
 reflow em 320/375/390/768/1024/1440 px e produz screenshots comparativas.
 Nenhuma mudança de banco, permissão, preferência ou envio de formulário.
 
@@ -91,7 +91,7 @@ com apelidos válidos distintos, *sentinelas sintéticas de biografia*, estados
 público/privado distintos e decisões de foto/email/redes documentadas.
 Não usar contas pessoais. Executar somente no Homelab.
 
-\`\`\`bash
+```bash
 export DISPLAY=:0
 export SR5_ACCOUNT_ORIGIN=https://conta.aculta.toca.net.br
 export SR5_MAIN_ORIGIN=https://aculta.toca.net.br
@@ -107,27 +107,27 @@ export SR5_DOCUMENTOS=enabled  # ou disabled se o owner CPF estiver ausente
 export SUITE_OUT=/tmp/aculta-studio-s-r5
 DISPLAY=:0 geckodriver --port 4444 &
 node tests/browser/aculta-studio/parity-s-r5.mjs
-\`\`\`
+```
 
-\`SR5_WEBDRIVER\` permite alterar o endpoint WebDriver (padrão
-\`http://127.0.0.1:4444\`). O script exige explicitamente
-\`/usr/bin/firefox-esr\`; **não** há \`headless\`. URLs de produção são
-recusadas. \`SR5_DOCUMENTOS\` sem valor resulta em SKIP e não em PASS.
-Resultados \`PASS/FAIL/SKIP\` são gravados em \`$SUITE_OUT/results.json\`,
+`SR5_WEBDRIVER` permite alterar o endpoint WebDriver (padrão
+`http://127.0.0.1:4444`). O script exige explicitamente
+`/usr/bin/firefox-esr`; **não** há `headless`. URLs de produção são
+recusadas. `SR5_DOCUMENTOS` sem valor resulta em SKIP e não em PASS.
+Resultados `PASS/FAIL/SKIP` são gravados em `$SUITE_OUT/results.json`,
 com nomes de campos/formulários e contagens, mas sem valores privados.
 Capturas PNG podem conter dados da fixture: tratar como material privado,
 não anexar ao Git. O exit code é 0 se não houver FAIL/SKIP, 1 para FAIL
 e 3 quando existe SKIP sem FAIL.
 
-**Diferenças deliberadas:** o cadastro Studio omite \`field_nickname\`;
-o formulário legado em \`/dados\` permanece misto, enquanto a edição de
+**Diferenças deliberadas:** o cadastro Studio omite `field_nickname`;
+o formulário legado em `/dados` permanece misto, enquanto a edição de
 apelido do Studio vive no Perfil. Não existe rota Portal legada
-\`/pedidos\` declarada em \`aculta_portal.routing.yml\`; a suíte usa
-\`/conta-legada\` como **referência visual**, sem aprovar paridade de pedidos
+`/pedidos` declarada em `aculta_portal.routing.yml`; a suíte usa
+`/conta-legada` como **referência visual**, sem aprovar paridade de pedidos
 por contagem não comparável. Preferências e outros formulários pertencem
-ao Portal. O perfil privado de \`PublicProfilePolicy\` pode apresentar
+ao Portal. O perfil privado de `PublicProfilePolicy` pode apresentar
 apelido e foto, mas não bio nem redes; o link público é condicionado
-separadamente por \`PublicProfileLink\`. E-mail é opt-in no perfil público,
+separadamente por `PublicProfileLink`. E-mail é opt-in no perfil público,
 não deve ser condenado genericamente como violação da política.
 
 **Não cobre:** salvamento real, CSRF, AJAX, checkout, upload/crop/foto,
@@ -137,9 +137,9 @@ nem acessibilidade WCAG. Modo claro/escuro é comparação local de geometria
 e não grava preferência. Uma auditoria humana deve ler os screenshots
 pareados, exercitar os formulários nativos e documentar ações, resultados,
 erros e limitações. Campos dinâmicos opcionais podem exigir análise manual.
-\`SKIP\` **não** é aprovação. A execução de S-R5 não substitui gates
+`SKIP` **não** é aprovação. A execução de S-R5 não substitui gates
 pendentes da S-R4 e não promove SDCs experimentais para stable.
 
 Matriz de casos e critérios: 
-\`web/modules/custom/aculta_portal/modules/aculta_studio/docs/S-R5-MATRIZ-COMPARACAO.md\`.
+`web/modules/custom/aculta_portal/modules/aculta_studio/docs/S-R5-MATRIZ-COMPARACAO.md`.
 
