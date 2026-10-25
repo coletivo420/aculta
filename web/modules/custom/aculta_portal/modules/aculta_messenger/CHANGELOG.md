@@ -1,3 +1,16 @@
+## 0.1.1-dev.362 — bootstrap isolado no teste de concorrência do digest
+
+O teste com três workers Drupal concorrentes agora serializa somente o
+bootstrap do Kernel para evitar que o probe de instalação do Core crie a mesma
+tabela temporária ao mesmo tempo. Depois do bootstrap, os três processos
+continuam disputando simultaneamente o lock enquanto o transporte titular está
+aberto. A primeira execução reproduziu a colisão no prefixo compartilhado; a
+correção foi validada no MariaDB dedicado.
+
+Validação: `AvisosResumoMailerKernelTest` **5 testes / 95 assertions PASS**;
+PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. SMTP externo,
+Runtime e suspensão além da lease não foram testados.
+
 ## 0.1.1-dev.361 — adapters opcionais sem configuração completa
 
 O adapter da Revista agora verifica a presença do template Message e de todos

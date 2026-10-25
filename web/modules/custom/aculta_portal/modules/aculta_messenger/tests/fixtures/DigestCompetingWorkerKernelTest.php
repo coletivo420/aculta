@@ -65,6 +65,10 @@ final class DigestCompetingWorkerKernelTest extends KernelTestBase {
       throw new \RuntimeException('The digest worker fixture arguments are incomplete.');
     }
 
+    if (file_put_contents($barrierDirectory . '/competitor-ready-' . $workerId, 'ready', LOCK_EX) === FALSE) {
+      throw new \RuntimeException('Could not signal that the Drupal worker finished bootstrapping.');
+    }
+
     $deadline = microtime(TRUE) + 30;
     while (!is_file($barrierDirectory . '/transport-started')) {
       if (microtime(TRUE) >= $deadline) {
