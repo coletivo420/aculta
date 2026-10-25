@@ -76,7 +76,9 @@ entidade e workflow, enquanto o Messenger persiste o aviso no bundle `Message` e
 envia novos e-mails pelo tipo `friendship_notice` do ACULTA Mailer. O campo
 `field_aculta_mailer_managed` tem nome compatível com o limite de campo do Drupal e separa
 itens novos de fila dos itens antigos. Update 10009 instala o campo somente no bundle de
-amizade; nenhuma fila Runtime foi inspecionada ou alterada.
+amizade. Consulta Drush somente leitura ao Runtime de teste em 2026-10-24 encontrou 128
+itens pendentes nessa fila; nenhum item foi processado ou alterado, portanto o caminho
+compatível deve permanecer até a drenagem operacional ser confirmada.
 
 ## Fontes de verdade e armazenamento
 
