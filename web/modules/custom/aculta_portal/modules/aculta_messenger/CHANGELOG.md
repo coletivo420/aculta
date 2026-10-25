@@ -1,3 +1,13 @@
+## 0.1.1-dev.364 — regressão completa dos adapters de integração
+
+Reexecutada a árvore completa `tests/src/Integration` após a proteção do
+adapter Revista. Commerce, Doações, Game, LMS, Revista e Wiki passaram juntos
+no MariaDB dedicado; nenhuma falha funcional foi encontrada.
+
+Validação: **120 testes / 1.569 assertions PASS**, com cinco depreciações
+upstream e sete notices PHPUnit. A tentativa inicial sem `SIMPLETEST_DB` foi
+inválida e falhou no preflight; a execução válida usou `aculta_simpletest`.
+
 ## 0.1.1-dev.363 — revalidação do ledger e digest do Fórum
 
 Reexecutado `ForumNoticeIdempotencyKernelTest` no MariaDB dedicado após os
