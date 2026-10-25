@@ -1,3 +1,16 @@
+## 0.1.1-dev.382 — Kernels dos consumers de domínio
+
+Os Kernels de integração LMS, Wiki, Commerce/Loja, Doações, Revista e Game
+copiados do snapshot publicado passaram **37 testes / 697 assertions** no banco
+dedicado `aculta_simpletest`, com autoload dos módulos apontado ao snapshot. O
+Drupal Core e a descoberta de manifests vieram do checkout local. Foram
+reportadas cinco depreciações upstream (plugins Message/QueueWorker/
+MessagePurge) e sete notices PHPUnit; nenhuma falha.
+
+Os testes não processaram filas ou dados do Runtime e não chamaram SMTP
+externo. HTTP autenticado, visual, Runtime pós-update e Alpha permanecem fora
+deste gate.
+
 ## 0.1.1-dev.381 — revalidação Unit dos consumers integrados
 
 Os diretórios Unit de integração dos adapters centrais (LMS, Wiki,
