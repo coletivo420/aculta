@@ -9,9 +9,12 @@ publicações. Não cria conversa ou armazenamento paralelo. Eventos de envio e
 resultado da revisão editorial permanecem pendentes.
 
 Validação: Magazine Kernel **5 testes / 90 assertions PASS** em MariaDB
-dedicado; Unit Messenger e integração Magazine **369/3.965 PASS**; PHPCS e PHP lint dos arquivos alterados PASS.
-O Kernel registrou duas depreciações upstream `@EntityType` do
-Core/contrib. Runtime, SMTP, HTTP e Alpha não foram executados.
+dedicado; Unit Messenger e integração Magazine **369/3.965 PASS**; Integration
+completa **114/1.429 PASS**; Kernel central **55/1.166 PASS** em MariaDB.
+PHPCS Drupal/DrupalPractice, PHP lint (26 arquivos), YAML e diff check PASS.
+Integration registrou 5 depreciações upstream e 7 notices; Kernel, 10
+depreciações upstream e 4 notices. Runtime, SMTP, HTTP, visual e Alpha não
+foram executados.
 
 ## 0.1.1-dev.356 — contenção do digest sob concorrência múltipla
 
