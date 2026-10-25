@@ -41,7 +41,7 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     $thread->expects(self::never())->method('access');
     $thread->expects(self::never())->method('clearAccountHistory');
     $threadStorage = $this->createMock(EntityStorageInterface::class);
-    $threadStorage->method('load')->with(123)->willReturn($thread);
+    $threadStorage->method('loadUnchanged')->with(123)->willReturn($thread);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->expects(self::once())->method('getStorage')
       ->with('private_message_thread')->willReturn($threadStorage);
@@ -82,7 +82,7 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     $thread->expects(self::never())->method('clearAccountHistory');
 
     $threadStorage = $this->createMock(EntityStorageInterface::class);
-    $threadStorage->expects(self::once())->method('load')->with(123)->willReturn($thread);
+    $threadStorage->expects(self::once())->method('loadUnchanged')->with(123)->willReturn($thread);
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->expects(self::once())->method('loadUnchanged')->with(42)->willReturn($sender);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
@@ -127,7 +127,7 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     $thread->expects(self::never())->method('access');
     $thread->expects(self::never())->method('clearAccountHistory');
     $threadStorage = $this->createMock(EntityStorageInterface::class);
-    $threadStorage->method('load')->with(123)->willReturn($thread);
+    $threadStorage->method('loadUnchanged')->with(123)->willReturn($thread);
     $user = $this->createMock(UserInterface::class);
     $user->method('isActive')->willReturn(FALSE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
@@ -183,7 +183,7 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     $thread->expects(self::once())->method('get')->with('private_messages')->willReturn($messages);
 
     $threadStorage = $this->createMock(EntityStorageInterface::class);
-    $threadStorage->expects(self::once())->method('load')->with(123)->willReturn($thread);
+    $threadStorage->expects(self::once())->method('loadUnchanged')->with(123)->willReturn($thread);
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->expects(self::once())->method('loadUnchanged')->with(42)->willReturn($sender);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
@@ -234,7 +234,7 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     $thread->expects(self::never())->method('access');
     $thread->expects(self::never())->method('clearAccountHistory');
     $threadStorage = $this->createMock(EntityStorageInterface::class);
-    $threadStorage->method('load')->with(123)->willReturn($thread);
+    $threadStorage->method('loadUnchanged')->with(123)->willReturn($thread);
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->method('loadUnchanged')->with(42)->willReturn($sender);
     $entities = $this->createMock(EntityTypeManagerInterface::class);

@@ -325,7 +325,8 @@ final class ConversationRelationshipForm extends FormBase {
       $formState->set('message', (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
       return;
     }
-    $thread = $this->entityTypes->getStorage('private_message_thread')->load((int) $formState->get('thread_id'));
+    $thread = $this->entityTypes->getStorage('private_message_thread')
+      ->loadUnchanged((int) $formState->get('thread_id'));
     if (!$thread instanceof PrivateMessageThreadInterface || !$thread->isMember((int) $this->currentUser->id())) {
       $formState->set('message', (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
       return;

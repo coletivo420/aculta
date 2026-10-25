@@ -1,3 +1,13 @@
+## 0.1.1-dev.319 — recarregar thread antes de limpar histórico
+
+O submit do menu de grupo usa `loadUnchanged()` para revalidar a membership
+persistida sem confiar no cache estático do Entity API antes da confirmação de
+limpeza.
+
+Validação: `ConversationRelationshipFormTest` **9 testes / 71 assertions
+PASS**; Unit Messenger **322 testes / 2.608 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+
 ## 0.1.1-dev.318 — cobrir permissão revogada e invalidação das mensagens
 
 A cobertura do fluxo de limpeza agora comprova que a revogação da permissão de
