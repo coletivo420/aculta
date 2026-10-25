@@ -208,6 +208,18 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
   }
 
   /**
+   * The final transient Commerce and Wiki failures are terminal.
+   */
+  public function testExhaustedTransientFailuresBecomePermanent(): void {
+    foreach ([
+      ['commerce', 'aculta_msg_commerce_order_notice'],
+      ['wiki', 'aculta_msg_wiki_notice'],
+    ] as [$adapter, $bundle]) {
+      $this->assertMailerExceptionConsumesAttempt($adapter, $bundle, 4);
+    }
+  }
+
+  /**
    * Permanent Commerce failures become terminal without a retry.
    */
   public function testCommercePermanentMailerFailureIsTerminal(): void {
@@ -249,12 +261,9 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
   /**
    * Checks the persisted attempt counter when Mailer throws.
    */
-  private function assertMailerExceptionConsumesAttempt(string $adapter, string $bundle): void {
-    $message = $this->message($bundle, 'pending', 0);
-    $state = ['field_aculta_msg_delivery' => 'pending', 'field_aculta_messenger_attempts' => 0];
-    $message->method('get')->willReturnCallback(function (string $field) use (&$state): FieldItemListInterface {
-      return $this->field($state[$field]);
-    });
+  private function assertMailerExceptionConsumesAttempt(string $adapter, string $bundle, int $startingAttempts = 0): void {
+    $message = $this->message($bundle, 'pending', $startingAttempts);
+    $state = ['field_aculta_msg_delivery' => 'pending', 'field_aculta_messenger_attempts' => $startingAttempts];
     $message->expects(self::exactly(3))->method('set')->willReturnCallback(static function (string $field, mixed $value) use (&$state, $message): MessageInterface {
       $state[$field] = $value;
       return $message;
@@ -287,20 +296,25 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn(TRUE);
 
-    $this->withUrlAssembler(function () use ($adapter, $entities, $manager, $preferences, $mailer, $lock): void {
-      try {
-        $this->worker($adapter, $entities, $manager, $mailer, $lock, $preferences)->processItem(['message_id' => 101]);
-        self::fail('A transient Mailer exception must be rethrown for queue retry.');
+    $this->withUrlAssembler(function () use ($adapter, $entities, $manager, $preferences, $mailer, $lock, $startingAttempts): void {
+      if ($startingAttempts < 4) {
+        try {
+          $this->worker($adapter, $entities, $manager, $mailer, $lock, $preferences)->processItem(['message_id' => 101]);
+          self::fail('A transient Mailer exception before the final attempt must be retried.');
+        }
+        catch (\RuntimeException $exception) {
+          $expected = $adapter === 'commerce'
+            ? 'Commerce order notice email delivery failed.'
+            : 'Wiki notice email delivery failed.';
+          self::assertSame($expected, $exception->getMessage());
+        }
       }
-      catch (\RuntimeException $exception) {
-        $expected = $adapter === 'commerce'
-          ? 'Commerce order notice email delivery failed.'
-          : 'Wiki notice email delivery failed.';
-        self::assertSame($expected, $exception->getMessage());
+      else {
+        $this->worker($adapter, $entities, $manager, $mailer, $lock, $preferences)->processItem(['message_id' => 101]);
       }
     });
-    self::assertSame(1, $state['field_aculta_messenger_attempts']);
-    self::assertSame('failed', $state['field_aculta_msg_delivery']);
+    self::assertSame($startingAttempts + 1, $state['field_aculta_messenger_attempts']);
+    self::assertSame($startingAttempts >= 4 ? 'failed_permanent' : 'failed', $state['field_aculta_msg_delivery']);
   }
 
   /**

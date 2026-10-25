@@ -181,6 +181,38 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * The final transient transport exception is recorded as permanent.
+   */
+  public function testLastMailerExceptionIsPermanent(): void {
+    $message = $this->message('pending', 2);
+    $setCalls = [];
+    $message->expects(self::exactly(2))->method('set')->willReturnCallback(static function (string $field, mixed $value) use (&$setCalls, $message): MessageInterface {
+      $setCalls[] = [$field, $value];
+      return $message;
+    });
+    $message->expects(self::exactly(2))->method('save')->willReturn(1);
+    [$entities, $recipient] = $this->entities($message);
+    $notices = $this->createMock(DonationNoticeManagerInterface::class);
+    $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
+      'email_summary' => 'Aviso de doação.',
+      'url' => Url::fromUri('https://aculta.org/meu-apoio/pedidos/100'),
+    ]);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with(27, 'doacao')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())->method('deliver')->willThrowException(new \RuntimeException('Transport failure'));
+
+    $this->withUrlAssembler(function () use ($entities, $notices, $preferences, $mailer): void {
+      $this->worker($entities, $notices, $preferences, $mailer)->processItem(['message_id' => 101]);
+    });
+
+    self::assertSame([
+      ['field_aculta_messenger_attempts', 3],
+      ['field_aculta_msg_delivery', 'failed_permanent'],
+    ], $setCalls);
+  }
+
+  /**
    * A permanent Mailer result is terminal without queue retry.
    */
   public function testPermanentMailerFailureIsTerminal(): void {
@@ -235,14 +267,14 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
 
   /**
    * Creates a pending Donation Message fixture. */
-  private function message(string $delivery): MessageInterface {
+  private function message(string $delivery, int $attempts = 0): MessageInterface {
     $message = $this->createMock(MessageInterface::class);
     $message->method('bundle')->willReturn(DonationNoticeManager::TEMPLATE);
     $message->method('getOwnerId')->willReturn(27);
     $message->method('uuid')->willReturn('01234567-89ab-4cde-8fab-0123456789ab');
     $message->method('get')->willReturnCallback(fn (string $field): FieldItemListInterface => $this->field(match ($field) {
       'field_aculta_msg_delivery' => $delivery,
-      'field_aculta_messenger_attempts' => 0,
+      'field_aculta_messenger_attempts' => $attempts,
       default => throw new \InvalidArgumentException('Unexpected field: ' . $field),
     }));
     $message->method('set')->willReturnSelf();

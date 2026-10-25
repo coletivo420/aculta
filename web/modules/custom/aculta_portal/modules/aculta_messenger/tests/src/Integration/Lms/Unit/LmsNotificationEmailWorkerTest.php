@@ -205,6 +205,39 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * The last transient Mailer exception is terminal and does not requeue.
+   */
+  public function testLastMailerExceptionIsRecordedAsPermanentFailure(): void {
+    $message = $this->message('pending', 2);
+    $setCalls = [];
+    $message->expects(self::exactly(3))->method('set')->willReturnCallback(static function (string $field, mixed $value) use (&$setCalls, $message): MessageInterface {
+      $setCalls[] = [$field, $value];
+      return $message;
+    });
+    $message->expects(self::exactly(2))->method('save')->willReturn(1);
+    [$entities, $recipient] = $this->entities($message);
+    $notices = $this->createMock(LearningNoticeManagerInterface::class);
+    $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
+      'email_summary' => 'Certificado emitido.',
+      'url' => Url::fromUri('https://aculta.org/minha-conta/certificados'),
+    ]);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with(27, 'aprendizagem')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())->method('deliver')->willThrowException(new \RuntimeException('Transport failure'));
+
+    $this->withUrlAssembler(function () use ($entities, $notices, $preferences, $mailer): void {
+      $this->worker($entities, $notices, $preferences, $mailer, $this->lock())->processItem(['message_id' => 101]);
+    });
+
+    self::assertSame([
+      ['field_aculta_messenger_attempts', 3],
+      ['field_aculta_msg_delivery', 'pending'],
+      ['field_aculta_msg_delivery', 'failed_permanent'],
+    ], $setCalls);
+  }
+
+  /**
    * A permanent Mailer failure is terminal after one attempt.
    */
   public function testPermanentMailerFailureDoesNotRequestQueueRetry(): void {
