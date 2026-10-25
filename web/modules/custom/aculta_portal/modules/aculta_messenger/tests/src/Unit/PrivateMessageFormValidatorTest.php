@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Flood\FloodInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -32,6 +33,29 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 #[Group('aculta_messenger')]
 final class PrivateMessageFormValidatorTest extends UnitTestCase {
+
+  /**
+   * A new empty thread is allowed only after sender membership is revalidated.
+   */
+  public function testFreshAccessAllowsNewEmptyThreadForActiveMember(): void {
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('isMember')->with(42)->willReturn(TRUE);
+    $thread->method('hasField')->with('private_messages')->willReturn(TRUE);
+    $thread->expects(self::never())->method('access');
+    $messages = $this->createMock(FieldItemListInterface::class);
+    $messages->expects(self::once())->method('isEmpty')->willReturn(TRUE);
+    $thread->method('get')->with('private_messages')->willReturn($messages);
+    $sender = $this->createMock(UserInterface::class);
+    $sender->method('id')->willReturn(42);
+    $sender->method('isActive')->willReturn(TRUE);
+    $sender->method('hasPermission')->with('use private messaging system')->willReturn(TRUE);
+    $validator = $this->validator(
+      $this->createMock(FloodInterface::class),
+      42,
+    );
+
+    self::assertTrue($validator->hasFreshThreadAccess($thread, $sender, TRUE));
+  }
 
   /**
    * Tests the rate limit registers only valid submissions behavior.

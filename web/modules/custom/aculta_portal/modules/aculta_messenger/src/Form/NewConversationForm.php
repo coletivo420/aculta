@@ -19,6 +19,7 @@ use Drupal\private_message\Entity\PrivateMessageThread;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -285,10 +286,10 @@ final class NewConversationForm extends FormBase {
     if (!$thread instanceof PrivateMessageThreadInterface) {
       return;
     }
-    $this->validator->validateFreshThreadAccess($thread, $sender, $formState);
-    if ($formState->hasAnyErrors()) {
+    $allowNewEmptyThread = $formState->get('existing_conversation') !== TRUE;
+    if (!$this->validator->hasFreshThreadAccess($thread, $sender, $allowNewEmptyThread)) {
       $this->validator->releaseSubmissionLocks();
-      return;
+      throw new NotFoundHttpException();
     }
     // Recheck after resolving and locking a concurrently created thread.
     $this->validator->validateBlockedRecipients($form, $formState);

@@ -30,6 +30,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Tests canonicalization of untrusted group-conversation recipients.
@@ -193,9 +194,8 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     $formState->setValue('message', 'Primeira mensagem');
     $formArray = [];
 
+    $this->expectException(NotFoundHttpException::class);
     $form->submitForm($formArray, $formState);
-
-    self::assertArrayHasKey('message', $formState->getErrors());
   }
 
   /**

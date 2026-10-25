@@ -1,15 +1,24 @@
-## 0.1.1-dev.383 — instalação funcional isolada do Messenger
+## 0.1.1-dev.385 — envio inicial de conversa exercitado por HTTP autenticado
 
-`MessengerModuleInstallTest` instala `aculta_messenger` com suas dependências
-em BrowserTestBase e faz uma requisição HTTP real a `/user/login`. O teste usa
-Core/Composer e módulos do snapshot isolado da PR, servidor PHP local e banco
-MariaDB SimpleTest dedicado; nenhum dado do Runtime foi usado.
+O BrowserTest agora autentica um membro pelo helper de sessão do Drupal, abre
+o composer, seleciona um destinatário elegível e envia a primeira mensagem por
+POST real. O cenário revelou que o controle de acesso de `private_message`
+nega a visualização de uma thread vazia antes de ela receber sua primeira
+mensagem; a submissão tentava registrar um erro depois do fim da validação e
+respondia com exceção. A validação no limite de persistência agora permite
+somente esse estado inicial quando remetente ativo, permissão e membership são
+revalidados; threads existentes continuam usando o acesso nativo.
 
-Validação: **1 teste / 5 assertions PASS**, HTTP 200; PHPCS Drupal/DrupalPractice,
-PHP lint e `git diff --check` PASS. PHPUnit reportou 189 depreciações de
-Core/contrib durante a instalação, sem falha. Isto comprova instalação e uma
-rota HTTP no site temporário; não homologa Runtime, sessão autenticada, envio de
-mensagem, visual nem e-mail externo.
+Validação: BrowserTest **1 teste / 26 assertions PASS**; Unit focal
+`PrivateMessageFormValidatorTest` **4/30 PASS**; suíte Unit do Messenger
+**375 testes / 4.147 assertions PASS**; PHP lint, PHPCS Drupal/DrupalPractice e
+`git diff --check` PASS. PHPUnit reportou 274 depreciações de Core/contrib no
+BrowserTest, sem falha. O teste prova primeira mensagem e
+persistência de thread em site temporário; resposta em thread, Runtime, Firefox
+visual, SMTP e Alpha seguem pendentes. A raiz do host de teste, verificada em
+2026-10-25 após a correção do relato, responde HTTP 200; a rota Drupal `/`
+aponta para `entity.node.canonical` e a home configurada é `/node/1`, portanto
+não foi reproduzido `No route found` neste momento.
 
 ## 0.1.1-dev.384 — corrigir o escopo da evidência BrowserTest
 
@@ -25,6 +34,18 @@ habilitado; 189 depreciações Core/contrib, sem falhas. PHPCS Drupal/DrupalPrac
 PHP lint e `git diff --check` PASS. O servidor estático foi usado somente como
 URL-base de disponibilidade e não recebeu tráfego funcional da aplicação.
 
+## 0.1.1-dev.383 — instalação funcional isolada do Messenger
+
+`MessengerModuleInstallTest` instala `aculta_messenger` com suas dependências
+em BrowserTestBase e faz uma requisição HTTP real a `/user/login`. O teste usa
+Core/Composer e módulos do snapshot isolado da PR, servidor PHP local e banco
+MariaDB SimpleTest dedicado; nenhum dado do Runtime foi usado.
+
+Validação: **1 teste / 5 assertions PASS**, HTTP 200; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. PHPUnit reportou 189 depreciações de
+Core/contrib durante a instalação, sem falha. Isto comprova instalação e uma
+rota HTTP no site temporário; não homologa Runtime, sessão autenticada, envio de
+mensagem, visual nem e-mail externo.
 ## 0.1.1-dev.383 — instalação funcional isolada do Messenger (evidência corrigida em Dev.384)
 
 `MessengerModuleInstallTest` instalou `aculta_messenger` e suas dependências em
