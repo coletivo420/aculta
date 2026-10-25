@@ -71,3 +71,18 @@ As contagens históricas anteriores permanecem vinculadas à data de
 inventário e **não** são totais verificados da branch atual. Os
 SDCs novos ainda não possuem consumidor, nem validação no UI Patterns
 Library ou Firefox. O catálogo jamais deve usar dados privados reais.
+
+## Integração dos SDCs privados (S-R4, Studio dev.21)
+
+Os quatro SDCs experimentais `profile-editor`, `profile-identity`,
+`profile-bio` e `profile-social` passaram a ser consumidos em
+`/studio/perfil` pelo render element Core `#type: component`.
+O Studio entrega os slots autorizados dos serviços ACULTA User e
+`aculta_image`. O componente não faz consulta a entidades nem decide
+política de dados. O perfil público mantém sua filtragem original;
+a foto própria exibida no editor é privada à sessão titular.
+
+A mudança foi no consumidor Studio; as APIs do tema (Twig, CSS,
+props e slots) não foram alteradas e a versão fica `0.7.0-dev.1`.
+Sinais de código não equivalem a render validado: Unit, Kernel,
+UI Patterns Library e Firefox ESR/X11 seguem pendentes.

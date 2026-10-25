@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.7.0-dev.1 — quatro SDCs experimentais do Meu Perfil, oito stories e teste Unit de contrato escritos; não integrados ao Studio."
+version_note: "0.7.0-dev.1 — quatro SDCs experimentais de Meu Perfil agora consumidos no Studio dev.21; 8 stories, Unit escrito e Kernel/Firefox pendentes."
 next_phase: 'Validar descoberta SDC, schemas, Unit, UI Patterns, Foundation, Firefox ESR/X11 e responsividade 320/390/768/1024/1440, incluindo claro/escuro e teclado. Integrar ao Meu Perfil apenas na S-R4; manter pendências visuais de Revista, modais/QR e WE SATIVA antes de RC ([roadmap](web/themes/custom/aculta420/docs/roadmap.md)).'

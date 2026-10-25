@@ -1,3 +1,11 @@
+## Nota documental — S-R4: consumo dos SDCs (2026-10-25)
+
+O Studio dev.21 passou a consumir os quatro SDCs experimentais
+`profile-*` por `#type: component`, conservando props, slots, CSS,
+Twig e regras de origem inalterados. Sem nova versão do tema
+(persiste `0.7.0-dev.1`). Render real em UI Patterns, Kernel,
+Firefox ESR/X11 e Runtime ainda não homologados.
+
 ## 0.7.0-dev.1 — SDCs preparatórios do Meu Perfil (2026-10-25)
 
 Classificação: MINOR pré-1.0; novos componentes experimentais, sem quebra dos componentes estáveis.

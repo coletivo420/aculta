@@ -8,10 +8,10 @@ LMS, Domains, conteúdo ou persistência.
 
 Quatro SDCs experimentais para o editor privado (`profile-editor`,
 `profile-identity`, `profile-bio`, `profile-social`) foram criados
-com schema, Twig, CSS e duas stories por componente. Nenhum foi ligado
-aos formulários ou render arrays do Studio; sua integração funcional
-é a etapa posterior S-R4, com gates de acesso, cache e navegador
-ainda pendentes.
+com schema, Twig, CSS e duas stories por componente. Esses componentes agora são consumidos pela tela `/studio/perfil`
+no Studio dev.21, por render arrays com slots do Core. A versão do
+tema permanece a mesma; gates de descoberta, cache, acesso e
+Firefox ESR/X11 seguem pendentes.
 
 ## Fronteira de arquitetura
 
