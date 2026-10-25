@@ -58,6 +58,7 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
       'field_aculta_msg_delivery' => ['string', ['max_length' => 16]],
       'field_aculta_messenger_attempts' => ['integer', []],
       'field_aculta_enqueue_attempts' => ['integer', []],
+      'field_aculta_mailer_managed' => ['boolean', []],
     ] as $name => [$type, $settings]) {
       $this->installMessageField($name, $type, $settings);
     }
@@ -107,6 +108,7 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
     self::assertCount(1, $queue->messageIds, 'Replaying a pending request does not produce another notice.');
     $requestNotice = $this->loadNotice((int) $recipient->id(), 'requested');
     self::assertNotNull($requestNotice);
+    self::assertTrue((bool) $requestNotice->get('field_aculta_mailer_managed')->value);
 
     $currentUser->setAccount($recipient);
     $manager->accept($friendship);
@@ -115,6 +117,7 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
     self::assertCount(2, $queue->messageIds);
     $acceptanceNotice = $this->loadNotice((int) $requester->id(), 'accepted');
     self::assertNotNull($acceptanceNotice);
+    self::assertTrue((bool) $acceptanceNotice->get('field_aculta_mailer_managed')->value);
 
     self::assertSame(
       2,

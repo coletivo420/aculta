@@ -117,6 +117,11 @@ services:
     arguments: ['@string_translation']
     tags:
       - { name: aculta_mailer.type }
+  Drupal\aculta_messenger\Mail\FriendshipNoticeMailType:
+    class: Drupal\aculta_messenger\Mail\FriendshipNoticeMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
   aculta_messenger.forum_notice_access_policy:
     class: Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']

@@ -15,6 +15,10 @@ use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\message\MessageInterface;
 use Drupal\message_notify\MessageNotifyInterface;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
+use Drupal\aculta_messenger\Mail\FriendshipNoticeMailType;
+use Drupal\aculta_messenger\Service\MessengerMailDelivery;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,12 +39,15 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
 
   private const MAX_ATTEMPTS = 3;
 
+  private const MAILER_MANAGED_FIELD = 'field_aculta_mailer_managed';
+
   public function __construct(
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly MessageNotifyInterface $messageNotify,
+    private readonly AcultaMailerInterface $mailer,
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly LockBackendInterface $lock,
   ) {
@@ -57,6 +64,7 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('message_notify.sender'),
+      $container->get('aculta_mailer.mailer'),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('lock.persistent'),
     );
@@ -82,10 +90,16 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
         || $message->get(self::STATUS_FIELD)->value === 'sent') {
         return;
       }
+      $mailerManaged = ($data['mailer_managed'] ?? FALSE) === TRUE;
+      if ((bool) $message->get(self::MAILER_MANAGED_FIELD)->value !== $mailerManaged) {
+        // Keep each queue generation on its original transport.
+        return;
+      }
 
       $recipient = $this->entityTypeManager->getStorage('user')->load($message->getOwnerId());
       $url = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.dashboard');
-      if ($recipient === NULL || !$recipient->isActive() || !is_string($recipient->getEmail()) || $recipient->getEmail() === '' || $url === NULL) {
+      if ($recipient === NULL || !$recipient->isActive()
+        || !is_string($recipient->getEmail()) || $recipient->getEmail() === '' || $url === NULL) {
         $message->set(self::STATUS_FIELD, 'failed')->save();
         return;
       }
@@ -98,6 +112,39 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
       $attempts++;
       $message->setArguments(['@account_url' => $url->toString()]);
       $message->set(self::ATTEMPTS_FIELD, $attempts)->save();
+
+      if ($mailerManaged) {
+        $event = (string) $message->get(FriendshipNoticeSubscriber::EVENT_FIELD)->value;
+        $summary = $event === 'accepted'
+          ? 'Seu pedido de amizade foi aceito.'
+          : 'Você recebeu um pedido de amizade.';
+        try {
+          $result = MessengerMailDelivery::deliver(
+            $this->mailer,
+            FriendshipNoticeMailType::ID,
+            (string) $recipient->getEmail(),
+            'pt-br',
+            ['summary' => $summary, 'url' => $url->toString()],
+            'friendship-notice:' . $messageId . ':' . FriendshipNoticeMailType::ID,
+          );
+        }
+        catch (\Throwable) {
+          $message->set(self::STATUS_FIELD, 'failed')->save();
+          if ($attempts < self::MAX_ATTEMPTS) {
+            throw new \RuntimeException('Friendship notice email delivery failed.');
+          }
+          return;
+        }
+        if ($result->sent || $result->cancelled) {
+          $message->set(self::STATUS_FIELD, $result->sent ? 'sent' : 'cancelled')->save();
+          return;
+        }
+        $message->set(self::STATUS_FIELD, $result->error === DeliveryError::Permanent ? 'failed_permanent' : 'failed')->save();
+        if ($result->error !== DeliveryError::Permanent && $attempts < self::MAX_ATTEMPTS) {
+          throw new \RuntimeException('Friendship notice email delivery failed.');
+        }
+        return;
+      }
 
       if (!$this->messageNotify->send($message, ['save on success' => FALSE, 'save on fail' => FALSE])) {
         $message->set(self::STATUS_FIELD, 'failed')->save();

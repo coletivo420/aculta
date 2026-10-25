@@ -133,3 +133,10 @@ function aculta_messenger_update_10007(): void {
 function aculta_messenger_update_10008(): void {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
 }
+
+/**
+ * Adds the delivery ownership marker for centrally mailed friendship notices.
+ */
+function aculta_messenger_update_10009(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}

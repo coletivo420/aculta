@@ -8,6 +8,7 @@ dependencies:
     - field.field.message.aculta_msg_friendship.field_aculta_enqueue_attempts
     - field.field.message.aculta_msg_friendship.field_aculta_messenger_source_fr
     - field.field.message.aculta_msg_friendship.field_aculta_msg_delivery
+    - field.field.message.aculta_msg_friendship.field_aculta_mailer_managed
     - message.template.aculta_msg_friendship
   enforced:
     module:
@@ -28,4 +29,5 @@ hidden:
   field_aculta_enqueue_attempts: true
   field_aculta_messenger_source_fr: true
   field_aculta_msg_delivery: true
+  field_aculta_mailer_managed: true
   partial_1: true

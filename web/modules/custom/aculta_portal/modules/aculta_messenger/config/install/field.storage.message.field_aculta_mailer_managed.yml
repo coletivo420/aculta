@@ -6,8 +6,8 @@ dependencies:
   enforced:
     module:
       - aculta_messenger
-id: message.field_aculta_messenger_mailer_managed
-field_name: field_aculta_messenger_mailer_managed
+id: message.field_aculta_mailer_managed
+field_name: field_aculta_mailer_managed
 entity_type: message
 type: boolean
 settings: { }

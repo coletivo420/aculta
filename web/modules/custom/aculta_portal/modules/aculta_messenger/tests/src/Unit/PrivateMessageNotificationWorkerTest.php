@@ -175,7 +175,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $notice->method('setArguments')->willReturnSelf();
     $notice->method('save')->willReturn(1);
     $noticeStorage->expects(self::once())->method('create')
-      ->with(self::callback(static fn(array $values): bool => ($values['field_aculta_messenger_mailer_managed'] ?? FALSE) === TRUE))
+      ->with(self::callback(static fn(array $values): bool => ($values['field_aculta_mailer_managed'] ?? FALSE) === TRUE))
       ->willReturn($notice);
 
     $domain = $this->createMock(DomainInterface::class);

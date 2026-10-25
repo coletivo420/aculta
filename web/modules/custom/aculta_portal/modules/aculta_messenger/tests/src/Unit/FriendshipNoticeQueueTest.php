@@ -30,7 +30,7 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
    * A persisted notice gets a bounded enqueue claim before Queue API insertion.
    */
   public function testEnqueuePersistsAttemptBeforeCreatingQueueItem(): void {
-    $message = $this->message(0, 'pending');
+    $message = $this->message(0, 'pending', TRUE);
     $calls = [];
     $message->expects(self::exactly(2))
       ->method('set')
@@ -40,7 +40,7 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
       });
     $message->expects(self::once())->method('save');
     $queue = $this->createMock(QueueInterface::class);
-    $queue->expects(self::once())->method('createItem')->with(['message_id' => 83])->willReturn(501);
+    $queue->expects(self::once())->method('createItem')->with(['message_id' => 83, 'mailer_managed' => TRUE])->willReturn(501);
     $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->expects(self::once())->method('get')->with(FriendshipNoticeSubscriber::EMAIL_QUEUE)->willReturn($queue);
     $storage = $this->messageStorage($message);
@@ -109,7 +109,7 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
     $storage->expects(self::once())->method('loadMultiple')->with([83])->willReturn([$message]);
     $storage->expects(self::once())->method('load')->with(83)->willReturn($message);
     $queue = $this->createMock(QueueInterface::class);
-    $queue->expects(self::once())->method('createItem')->with(['message_id' => 83])->willReturn(501);
+    $queue->expects(self::once())->method('createItem')->with(['message_id' => 83, 'mailer_managed' => FALSE])->willReturn(501);
     $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->method('get')->willReturn($queue);
     $lock = $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]);
@@ -121,7 +121,7 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
   /**
    * Creates a friendship Message fixture with the technical queue fields.
    */
-  private function message(int $enqueueAttempts, string $status): MessageInterface {
+  private function message(int $enqueueAttempts, string $status, bool $mailerManaged = FALSE): MessageInterface {
     $message = $this->createMock(MessageInterface::class);
     $message->method('id')->willReturn('83');
     $message->method('bundle')->willReturn(FriendshipNoticeSubscriber::TEMPLATE);
@@ -129,6 +129,7 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
       ['field_aculta_msg_delivery', $this->fieldValue($status)],
       ['field_aculta_messenger_attempts', $this->fieldValue(0)],
       ['field_aculta_enqueue_attempts', $this->fieldValue($enqueueAttempts)],
+      ['field_aculta_mailer_managed', $this->fieldValue($mailerManaged)],
     ]);
     return $message;
   }

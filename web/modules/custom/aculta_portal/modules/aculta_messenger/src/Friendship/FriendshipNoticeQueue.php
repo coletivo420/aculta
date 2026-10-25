@@ -70,7 +70,10 @@ final class FriendshipNoticeQueue implements FriendshipNoticeQueueInterface {
         ->save();
       try {
         $itemId = $this->queueFactory->get(FriendshipNoticeSubscriber::EMAIL_QUEUE)
-          ->createItem(['message_id' => $messageId]);
+          ->createItem([
+            'message_id' => $messageId,
+            'mailer_managed' => (bool) $current->get('field_aculta_mailer_managed')->value,
+          ]);
         if ($itemId === FALSE) {
           throw new \RuntimeException('Friendship notice email could not be queued.');
         }

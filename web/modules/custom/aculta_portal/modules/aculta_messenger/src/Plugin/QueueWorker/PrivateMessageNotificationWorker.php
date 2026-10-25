@@ -37,7 +37,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
 
   private const SOURCE_FIELD = 'field_aculta_messenger_source_pm';
 
-  private const MAILER_MANAGED_FIELD = 'field_aculta_messenger_mailer_managed';
+  private const MAILER_MANAGED_FIELD = 'field_aculta_mailer_managed';
 
   private const STATUS_FIELD = 'field_aculta_msg_delivery';
 

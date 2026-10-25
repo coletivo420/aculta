@@ -18,6 +18,9 @@ use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\message\MessageInterface;
 use Drupal\message_notify\MessageNotifyInterface;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\SendResult;
+use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -73,7 +76,11 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     $message = $this->createMock(MessageInterface::class);
     $message->method('bundle')->willReturn(FriendshipNoticeSubscriber::TEMPLATE);
     $message->method('getOwnerId')->willReturn(52);
-    $message->method('get')->with('field_aculta_msg_delivery')->willReturn($status);
+    $message->method('get')->willReturnCallback(fn(string $field): FieldItemListInterface => match ($field) {
+      'field_aculta_msg_delivery' => $status,
+      'field_aculta_mailer_managed' => $this->fieldValue(FALSE),
+      default => throw new \InvalidArgumentException('Unexpected field ' . $field),
+    });
     $message->expects(self::once())
       ->method('set')
       ->with('field_aculta_msg_delivery', 'failed')
@@ -129,6 +136,35 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * New, explicitly marked notices use the centralized Mailer.
+   */
+  public function testMailerManagedNoticeUsesCentralMailer(): void {
+    $state = ['status' => 'pending', 'attempts' => 0, 'mailer_managed' => TRUE];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())->method('deliver')
+      ->with(self::callback(static fn(MailMessage $mail): bool =>
+        $mail->type === 'friendship_notice'
+        && $mail->to === 'recipient@example.invalid'
+        && $mail->langcode === 'pt-br'
+        && !str_contains(serialize($mail->context), '52')))
+      ->willReturn(SendResult::sent());
+    [$worker] = $this->deliveryWorker($state, $notifier, $mailer);
+
+    try {
+      $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertSame('sent', $state['status']);
+    self::assertSame(1, $state['attempts']);
+  }
+
+  /**
    * Transport failures are retried at most three times.
    */
   public function testTransportFailureRetriesThreeTimesAndThenStops(): void {
@@ -166,7 +202,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
 
   /**
    * Builds the queue worker with the configured domain resolver. */
-  private function worker(EntityTypeManagerInterface $entityTypeManager, MessageNotifyInterface $notifier, ?LockBackendInterface $lock = NULL): FriendshipNoticeEmailWorker {
+  private function worker(EntityTypeManagerInterface $entityTypeManager, MessageNotifyInterface $notifier, ?LockBackendInterface $lock = NULL, ?AcultaMailerInterface $mailer = NULL): FriendshipNoticeEmailWorker {
     $domainPurpose = new DomainPurposeManager(
       $entityTypeManager,
       $this->createMock(DomainNegotiatorInterface::class),
@@ -179,6 +215,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
       [],
       $entityTypeManager,
       $notifier,
+      $mailer ?? $this->createMock(AcultaMailerInterface::class),
       $domainPurpose,
       $lock ?? $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
     );
@@ -191,13 +228,16 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
    *   Mutable persisted field values used to simulate repeated queue loads.
    * @param \Drupal\message_notify\MessageNotifyInterface|null $notifier
    *   Optional mocked delivery service.
+   * @param \Drupal\aculta_mailer\Api\AcultaMailerInterface|null $mailer
+   *   Optional mocked ACULTA Mailer.
    *
    * @return array{0: FriendshipNoticeEmailWorker, 1: MessageInterface}
    *   The worker and persisted message mock.
    */
-  private function deliveryWorker(array &$state, ?MessageNotifyInterface $notifier = NULL): array {
+  private function deliveryWorker(array &$state, ?MessageNotifyInterface $notifier = NULL, ?AcultaMailerInterface $mailer = NULL): array {
     $message = $this->createMock(MessageInterface::class);
     $message->method('bundle')->willReturn(FriendshipNoticeSubscriber::TEMPLATE);
+    $message->method('id')->willReturn('8');
     $message->method('getOwnerId')->willReturn(52);
     $status_items = $this->createMock(FieldItemListInterface::class);
     $status_items->method('__get')->with('value')->willReturnCallback(static function () use (&$state): string {
@@ -207,10 +247,15 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     $attempt_items->method('__get')->with('value')->willReturnCallback(static function () use (&$state): int {
       return $state['attempts'];
     });
-    $message->method('get')->willReturnMap([
-      ['field_aculta_msg_delivery', $status_items],
-      ['field_aculta_messenger_attempts', $attempt_items],
-    ]);
+    $message->method('get')->willReturnCallback(function (string $field) use (&$state, $status_items, $attempt_items): FieldItemListInterface {
+      return match ($field) {
+        'field_aculta_msg_delivery' => $status_items,
+        'field_aculta_messenger_attempts' => $attempt_items,
+        'field_aculta_mailer_managed' => $this->fieldValue($state['mailer_managed'] ?? FALSE),
+        FriendshipNoticeSubscriber::EVENT_FIELD => $this->fieldValue('requested'),
+        default => throw new \InvalidArgumentException('Unexpected field ' . $field),
+      };
+    });
     $message->method('set')->willReturnCallback(static function (string $field, mixed $value) use (&$state, $message): MessageInterface {
       if ($field === 'field_aculta_msg_delivery') {
         $state['status'] = $value;
@@ -251,9 +296,18 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     \Drupal::setContainer($container);
 
     return [
-      $this->worker($entityTypeManager, $notifier ?? $this->createMock(MessageNotifyInterface::class)),
+      $this->worker($entityTypeManager, $notifier ?? $this->createMock(MessageNotifyInterface::class), mailer: $mailer),
       $message,
     ];
+  }
+
+  /**
+   * Creates a scalar field item fixture.
+   */
+  private function fieldValue(mixed $value): FieldItemListInterface {
+    $field = $this->createMock(FieldItemListInterface::class);
+    $field->method('__get')->with('value')->willReturn($value);
+    return $field;
   }
 
   /**

@@ -1,0 +1,23 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_mailer_managed
+    - message.template.aculta_msg_friendship
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_friendship.field_aculta_mailer_managed
+field_name: field_aculta_mailer_managed
+entity_type: message
+bundle: aculta_msg_friendship
+label: 'Entrega gerenciada pelo ACULTA Mailer'
+description: 'Indica que este aviso usa a entrega centralizada em vez da fila legada.'
+required: false
+translatable: false
+default_value: { }
+default_value_callback: ''
+settings:
+  on_label: 'Sim'
+  off_label: 'Não'
+field_type: boolean

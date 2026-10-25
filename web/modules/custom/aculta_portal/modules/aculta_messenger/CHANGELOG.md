@@ -1,3 +1,12 @@
+## 0.1.1-dev.219 — centralizar novos avisos de amizade no Mailer
+
+Novos avisos de pedido e aceite de amizade passam a usar o tipo mínimo `friendship_notice` do ACULTA Mailer e uma
+correlação determinística por registro persistido. O registro `Message` existente permanece como storage e chave de
+idempotência. O marcador `field_aculta_mailer_managed` separa a nova entrega das mensagens de fila anteriores,
+que continuam no Message Notify até a drenagem operacional. O update 10009 instala o campo aditivamente no bundle.
+
+Validação: Unit Messenger **188 testes / 1.319 assertions PASS**; `FriendshipNoticePipelineKernelTest` **1 teste / 16 assertions PASS** no MariaDB dedicado (2 deprecações Core/contrib); PHPCS Drupal/DrupalPractice, PHP lint, índice de status e gate Drupal 11+ (**1.155 checks**) PASS. SMTP e Runtime não executados.
+
 ## 0.1.1-dev.215 — tornar idempotentes os e-mails diretos
 
 Os workers de e-mail direto do Fórum, LMS, Wiki, Loja e Doações passam a compartilhar a geração de UUID v5 a partir da

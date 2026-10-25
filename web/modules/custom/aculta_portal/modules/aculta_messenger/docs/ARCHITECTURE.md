@@ -71,6 +71,13 @@ Depois que a fila legada for drenada em ambiente operacional, a dependência e o
 Message Notify serão removidos em uma atualização posterior. Update 10008 instala o campo
 aditivo; não foi aplicado no Runtime.
 
+Pedidos e aceites de amizade seguem o mesmo ownership central: o `aculta_user` mantém
+entidade e workflow, enquanto o Messenger persiste o aviso no bundle `Message` existente e
+envia novos e-mails pelo tipo `friendship_notice` do ACULTA Mailer. O campo
+`field_aculta_mailer_managed` tem nome compatível com o limite de campo do Drupal e separa
+itens novos de fila dos itens antigos. Update 10009 instala o campo somente no bundle de
+amizade; nenhuma fila Runtime foi inspecionada ou alterada.
+
 ## Fontes de verdade e armazenamento
 
 | Dado | Fonte existente | Regra |
