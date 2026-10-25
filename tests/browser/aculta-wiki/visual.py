@@ -23,7 +23,7 @@ HOST = urlparse(BASE).hostname
 OUT = Path(os.environ.get("SUITE_OUT", "/tmp/aculta-wiki-visual"))
 OUT.mkdir(parents=True, exist_ok=True)
 WIDTHS = [(1440, "wide-1440"), (1280, "desktop"), (1024, "tablet-1024"),
-          (768, "tablet-768"), (390, "mobile-390"), (360, "mobile-360"),
+          (768, "tablet-768"), (640, "zoom-200-equiv"), (390, "mobile-390"), (360, "mobile-360"),
           (320, "mobile-320")]
 PAGES = [
     ("home", "/"),
@@ -89,7 +89,7 @@ def inspect_page(name, path, width_name, expected_width):
     actual_width = set_width(expected_width)
     time.sleep(0.4)
     metrics = driver.js("""return (() => {
-      const main = document.querySelector('main, #main-content');
+      const main = (document.querySelector('main') || document.querySelector('#main-content'));
       const heading = main?.querySelector('h1');
       const visibleErrors = [...document.querySelectorAll('.messages--error, [role="alert"]')]
         .filter((el) => el.getClientRects().length)
@@ -120,8 +120,9 @@ def inspect_page(name, path, width_name, expected_width):
     check(f"{name}/{width_name}: sem overflow horizontal", metrics["documentWidth"] <= metrics["viewport"],
           f"viewport={metrics['viewport']} document={metrics['documentWidth']} root={metrics['rootClientWidth']} body={metrics['bodyWidth']} elements={metrics['overflowingElements']}")
     check(f"{name}/{width_name}: sem erro visível", not metrics["errors"], metrics["errors"])
-    screenshot = driver.req("GET", session + "/screenshot")
-    (OUT / f"{name}-{width_name}.png").write_bytes(base64.b64decode(screenshot))
+    if os.environ.get("WIKI_SKIP_SCREENSHOTS") != "1":
+        screenshot = driver.req("GET", session + "/screenshot")
+        (OUT / f"{name}-{width_name}.png").write_bytes(base64.b64decode(screenshot))
     metrics["requestedWidth"] = expected_width
     metrics["url"] = driver.url()
     return metrics

@@ -101,6 +101,20 @@ def focus_state():
           || style.outlineColor !== normalStyle.outlineColor
           || style.outlineOffset !== normalStyle.outlineOffset);
       const shadowVisible = style.boxShadow !== 'none' && style.boxShadow !== normalStyle.boxShadow;
+      // Themes may express focus with background, text decoration, border or a
+      // pseudo-element instead of an outline. Accept any visible delta so the
+      // smoke remains theme-neutral (ACULTA420 and Olivero).
+      const comparable = ['outlineStyle', 'outlineWidth', 'outlineColor', 'outlineOffset',
+        'boxShadow', 'backgroundColor', 'color', 'textDecorationLine',
+        'borderTopColor', 'borderBottomColor', 'filter', 'transform'];
+      const styleChanged = comparable.some((prop) => style[prop] !== normalStyle[prop]);
+      const pseudoChanged = ['::before', '::after'].some((pseudo) => {
+        const focused = getComputedStyle(el, pseudo);
+        const plain = getComputedStyle(normal, pseudo);
+        return ['outlineStyle', 'outlineWidth', 'outlineColor', 'boxShadow',
+          'backgroundColor', 'borderTopColor', 'borderBottomColor', 'transform',
+          'opacity', 'content'].some((prop) => focused[prop] !== plain[prop]);
+      });
       normal.remove();
       return {
         tag: el.tagName,
@@ -109,7 +123,7 @@ def focus_state():
         text: (el.innerText || el.value || '').trim().slice(0, 100),
         accessibleName: el.getAttribute('aria-label') || labelledBy.join(' ') || labels.join(' ') || el.getAttribute('title') || el.getAttribute('placeholder') || ((el.tagName === 'INPUT' && ['button', 'submit', 'reset'].includes(el.type)) ? el.value : '') || '',
         focusVisible: el.matches(':focus-visible'),
-        indicator: outlineVisible || shadowVisible,
+        indicator: outlineVisible || shadowVisible || styleChanged || pseudoChanged,
         rect: {left: Math.round(rect.left), top: Math.round(rect.top), right: Math.round(rect.right), bottom: Math.round(rect.bottom)},
         viewport: {width: window.innerWidth, height: window.innerHeight},
         visible: rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden',

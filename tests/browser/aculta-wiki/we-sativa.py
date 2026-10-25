@@ -26,7 +26,7 @@ USER = os.environ.get("WIKI_STUDIO_USER", "")
 OUT = Path(os.environ.get("SUITE_OUT", "/tmp/aculta-wiki-we-sativa"))
 OUT.mkdir(parents=True, exist_ok=True)
 WIDTHS = [(1440, "wide-1440"), (1280, "desktop"), (1024, "tablet-1024"),
-          (768, "tablet-768"), (390, "mobile-390"), (360, "mobile-360"),
+          (768, "tablet-768"), (640, "zoom-200-equiv"), (390, "mobile-390"), (360, "mobile-360"),
           (320, "mobile-320")]
 results = []
 
@@ -137,8 +137,8 @@ try:
         (OUT / "home-no-cta.png").write_bytes(base64.b64decode(screenshot))
         driver.get(PAGE)
     page_loaded = wait_for(
-        "!!document.querySelector('main, #main-content') && "
-        "document.querySelector('main, #main-content').innerText.includes('Seu espaço de contribuição')"
+        "!!(document.querySelector('main') || document.querySelector('#main-content')) && "
+        "(document.querySelector('main') || document.querySelector('#main-content')).innerText.includes('Seu espaço de contribuição')"
     )
     check("início WE SATIVA abre autenticado", page_loaded)
     if not page_loaded:
@@ -156,7 +156,7 @@ try:
         (OUT / "summary.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")
     else:
         metrics = driver.js("""return (() => {
-          const main = document.querySelector('main, #main-content');
+          const main = (document.querySelector('main') || document.querySelector('#main-content'));
           const text = main?.innerText || '';
           const links = [...(main?.querySelectorAll('a') || [])];
           const create = links.find((a) => a.textContent.trim() === 'Criar verbete');

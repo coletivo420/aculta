@@ -30,7 +30,7 @@ USER = os.environ.get("WIKI_STUDIO_USER", "")
 OUT = Path(os.environ.get("SUITE_OUT", "/tmp/aculta-wiki-moderation"))
 OUT.mkdir(parents=True, exist_ok=True)
 WIDTHS = [(1440, "wide-1440"), (1280, "desktop"), (1024, "tablet-1024"),
-          (768, "tablet-768"), (390, "mobile-390"), (360, "mobile-360"),
+          (768, "tablet-768"), (640, "zoom-200-equiv"), (390, "mobile-390"), (360, "mobile-360"),
           (320, "mobile-320")]
 results = []
 
@@ -108,7 +108,7 @@ def wait_for(script, timeout=25):
 
 def page_metrics():
     return driver.js("""return (() => {
-      const main = document.querySelector('main, #main-content');
+      const main = (document.querySelector('main') || document.querySelector('#main-content'));
       return {
         path: location.pathname,
         title: document.title,
@@ -128,14 +128,14 @@ try:
     driver.get(login_url)
     time.sleep(1.5)
     driver.get(BASE)
-    loaded = wait_for("!!document.querySelector('main, #main-content')")
+    loaded = wait_for("!!(document.querySelector('main') || document.querySelector('#main-content'))")
     check("fila de moderação abre autenticada", loaded)
     metrics = page_metrics() if loaded else {}
     check("fila tem main e um único h1",
           metrics.get("hasMain") and metrics.get("h1Count") == 1, metrics.get("heading", ""))
     check("fila não mostra erro visível", not metrics.get("errors"), metrics.get("errors", []))
     queue = driver.js("""return (() => {
-      const main = document.querySelector('main, #main-content');
+      const main = (document.querySelector('main') || document.querySelector('#main-content'));
       const table = [...document.querySelectorAll('table')].find((el) =>
         el.innerText.includes('Proposta') && el.innerText.includes('Situação'));
       const rows = table ? [...table.querySelectorAll('tbody tr')] : [];
