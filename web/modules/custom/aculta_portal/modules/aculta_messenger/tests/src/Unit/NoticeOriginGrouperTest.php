@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Service\NoticeOriginGrouper;
+use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -15,6 +16,15 @@ use PHPUnit\Framework\Attributes\Group;
 #[CoversClass(NoticeOriginGrouper::class)]
 #[Group('aculta_messenger')]
 final class NoticeOriginGrouperTest extends UnitTestCase {
+
+  /**
+   * Both the drawer and account center receive every allowed origin. */
+  public function testOriginOptionsMatchTheFilterAllowlist(): void {
+    $options = NoticeOriginGrouper::originOptions();
+
+    self::assertSame(NoticeListFilter::ORIGINS, array_keys($options));
+    self::assertSame('Revista', $options['revista']->getUntranslatedString());
+  }
 
   /**
    * Groups notices by origin, ordering origin sections by their newest item.

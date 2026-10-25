@@ -11,6 +11,7 @@ use Drupal\aculta_messenger\Aviso\PersonalNoticePageState;
 use Drupal\aculta_messenger\Form\FriendRequestsForm;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
+use Drupal\aculta_messenger\Service\NoticeOriginGrouper;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Template\Attribute;
@@ -183,18 +184,8 @@ final class AvisosMensagensController extends ControllerBase {
    * Builds accessible source and read-state links for the notice list.
    */
   private function noticeFiltersBuild(array $filters): array {
-    $origins = [
-      '' => $this->t('Todas as origens'),
-      'comunicado' => $this->t('Comunicados'),
-      'forum' => $this->t('Fórum'),
-      'alerta' => $this->t('Alertas do site'),
-      'amizade' => $this->t('Amizades'),
-      'aprendizagem' => $this->t('Aprendizagem'),
-      'wiki' => $this->t('Wiki'),
-      'loja' => $this->t('Loja'),
-      'doacao' => $this->t('Doações'),
-      'conta' => $this->t('Conta'),
-    ];
+    $origins = ['' => $this->t('Todas as origens')]
+      + NoticeOriginGrouper::originOptions();
     $states = [
       '' => $this->t('Todos os estados'),
       'unread' => $this->t('Não lidos'),

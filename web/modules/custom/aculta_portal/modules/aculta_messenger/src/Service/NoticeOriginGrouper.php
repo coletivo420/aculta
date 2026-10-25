@@ -33,6 +33,20 @@ final class NoticeOriginGrouper {
   ];
 
   /**
+   * Returns the translated filter labels for every supported notice origin.
+   *
+   * @return array<string, \Drupal\Core\StringTranslation\TranslatableMarkup>
+   *   Labels keyed by the stable origin ID.
+   */
+  public static function originOptions(): array {
+    $options = [];
+    foreach (NoticeListFilter::ORIGINS as $origin) {
+      $options[$origin] = self::label($origin);
+    }
+    return $options;
+  }
+
+  /**
    * Groups notice rows into labeled sections with separators between origins.
    *
    * Recency timestamps determine item and origin section order, newest first.

@@ -1127,19 +1127,8 @@ final class MessagesController extends ControllerBase {
       'aculta_messenger.avisos',
       ['aba' => 'avisos'],
     );
-    $origins = [
-      '' => $this->translation->translate('Todas as origens'),
-      'comunicado' => $this->translation->translate('Comunicados'),
-      'forum' => $this->translation->translate('Fórum'),
-      'alerta' => $this->translation->translate('Alertas do site'),
-      'amizade' => $this->translation->translate('Amizades'),
-      'aprendizagem' => $this->translation->translate('Aprendizagem'),
-      'wiki' => $this->translation->translate('Wiki'),
-      'loja' => $this->translation->translate('Loja'),
-      'doacao' => $this->translation->translate('Doações'),
-      'conquistas' => $this->translation->translate('Conquistas'),
-      'conta' => $this->translation->translate('Conta'),
-    ];
+    $origins = ['' => $this->translation->translate('Todas as origens')]
+      + NoticeOriginGrouper::originOptions();
     $states = [
       '' => $this->translation->translate('Todos os estados'),
       'unread' => $this->translation->translate('Não lidos'),

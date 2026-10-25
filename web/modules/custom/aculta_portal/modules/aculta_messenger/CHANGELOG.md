@@ -3625,3 +3625,13 @@ Message compartilhado, sob lock e vinculada ao destinatário.
 Validação: `GameAchievementNoticeManagerTest` **2/32 PASS**; Unit Messenger
 **355/2.851 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
 PASS. Kernel/Runtime não executados (`SIMPLETEST_DB` indisponível).
+## 0.1.1-dev.358 — filtros de origem consistentes na central
+
+A lista de origens suportadas agora alimenta os filtros da gaveta e da página
+da conta pelo mesmo contrato do agrupamento. Revista fica selecionável nos dois
+lugares, e o teste garante que todas as origens permitidas tenham rótulo.
+
+Validação: Unit focal de origem/listagem **14/51 PASS**, PHPCS Drupal/
+DrupalPractice do grouper e teste, PHP lint dos dois controllers e `git diff
+--check` PASS. HTTP, visual e Runtime não executados.
+
