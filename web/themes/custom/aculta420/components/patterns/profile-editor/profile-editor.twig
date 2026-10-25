@@ -1,0 +1,20 @@
+{# Somente composição; nenhum shell do Portal e nenhuma consulta de dados. #}
+<div{{ attributes.addClass('aculta-profile-editor') }}>
+  {% if intro %}
+    <div class="aculta-profile-editor__intro">{{ intro }}</div>
+  {% endif %}
+  <div class="aculta-profile-editor__grid">
+    {% if identity %}
+      <div class="aculta-profile-editor__identity">{{ identity }}</div>
+    {% endif %}
+    {% if biography %}
+      <div class="aculta-profile-editor__biography">{{ biography }}</div>
+    {% endif %}
+    {% if social %}
+      <div class="aculta-profile-editor__social">{{ social }}</div>
+    {% endif %}
+  </div>
+  {% if actions %}
+    <nav class="aculta-profile-editor__actions" aria-label="{{ 'Ações de meu perfil'|t }}">{{ actions }}</nav>
+  {% endif %}
+</div>

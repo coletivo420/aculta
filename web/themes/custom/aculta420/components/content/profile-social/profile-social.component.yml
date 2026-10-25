@@ -1,0 +1,23 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Redes sociais do meu perfil
+status: experimental
+group: Identity
+description: 'Painel visual do editor de redes; o ACULTA User entrega os itens com URLs, rótulos, estados, acessos e cache. Não inventa links públicos nem normaliza redes.'
+props:
+  type: object
+  required: [title]
+  properties:
+    title:
+      type: string
+      description: 'Título de seção, traduzido pelo owner.'
+slots:
+  items:
+    title: Itens de redes
+    description: 'Render arrays de redes preparadas pelo ACULTA User, inclusive estados não informados.'
+  actions:
+    title: Ações de redes
+    description: 'Edição de redes via Form API do owner, sem formulários próprios.'
+assets:
+  css:
+    component:
+      profile-social.css: {}

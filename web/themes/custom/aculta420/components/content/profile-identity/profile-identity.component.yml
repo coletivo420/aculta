@@ -1,0 +1,30 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Identidade do meu perfil
+status: experimental
+group: Identity
+description: 'Identidade do próprio usuário dentro do editor privado, distinta do cartão de autoria público. O owner decide nome, avatar, links e cacheabilidade.'
+props:
+  type: object
+  required: [display_name]
+  properties:
+    display_name:
+      type: string
+      description: 'Nome de exibição próprio já preparado pelo ACULTA User; nunca incluir e-mail ou dados cadastrais por padrão.'
+    hint:
+      type: [string, 'null']
+      default: null
+      description: 'Orientação textual opcional sobre a separação entre apelido e cadastro.'
+slots:
+  avatar:
+    title: Avatar
+    description: 'Render array de avatar próprio autorizado e renderizado pelo aculta_image. Vazio mostra a inicial.'
+  public_link:
+    title: Perfil público
+    description: 'Link canônico somente quando o PublicProfileLink permitir; sem inferir publicidade.'
+  actions:
+    title: Ações de identidade
+    description: 'Edição de foto/apelido/privacidade via URLs e formulários autorizados do owner.'
+assets:
+  css:
+    component:
+      profile-identity.css: {}
