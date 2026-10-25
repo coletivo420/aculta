@@ -222,7 +222,9 @@ function aculta_messenger_post_update_forum_notice_event_ledger(array &$sandbox)
   return sprintf('Migrated %d legacy Forum Comment event keys.', $count);
 }
 
-/** Migrates pending ACULTA Game award notices to the shared Messenger center. */
+/**
+ * Migrates pending ACULTA Game award notices to the shared Messenger center.
+ */
 function aculta_messenger_post_update_game_achievement_notices(array &$sandbox): string {
   /** @var \Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeMigration $migration */
   $migration = \Drupal::service('aculta_messenger.game_achievement_notice_migration');

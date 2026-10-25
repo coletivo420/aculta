@@ -1,3 +1,9 @@
+## 0.1.1-dev.373 — higiene dos post-updates
+
+O docblock do post-update de migração das conquistas Game passou a seguir o
+padrão Drupal. PHPCS Drupal/DrupalPractice dos hooks de update e post-update,
+PHP lint e `git diff --check` passaram. Sem mudança comportamental ou Runtime.
+
 ## 0.1.1-dev.372 — busca e composição local de grupo
 
 Adicionado smoke autenticado somente leitura para a tela compartilhada de
