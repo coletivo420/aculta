@@ -89,6 +89,44 @@ aculta_studio.account_connections:
     _aculta_domain_purpose: account
     no_cache: true
 
+# S-R3-B3: keep Commerce orders, support history and appearance Form API
+# with their Portal owners, composed under Studio without a second shell.
+aculta_studio.account_orders:
+  path: /studio/conta/pedidos
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:orders'
+    _title: 'Meus pedidos'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.account_support:
+  path: /studio/conta/apoio
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:support'
+    _title: 'Meu apoio'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.account_preferences:
+  path: /studio/conta/preferencias
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:preferences'
+    _title: 'Preferências da conta'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
 aculta_studio.profile:
   path: /studio/perfil
   defaults:
