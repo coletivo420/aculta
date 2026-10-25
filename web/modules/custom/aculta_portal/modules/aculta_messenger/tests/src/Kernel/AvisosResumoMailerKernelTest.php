@@ -133,6 +133,13 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       ->execute()
       ->fetchField(), 'The failed acknowledgement transaction rolls back provider state.');
 
+    // Simulate normal Mail Log retention before a disabled adapter returns.
+    // The persisted Messenger snapshot must remain enough to recover safely.
+    $database->delete('aculta_mail_log')
+      ->condition('id', reset($logs)->id())
+      ->execute();
+    self::assertSame([], $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
+
     $projectRoot = dirname(DRUPAL_ROOT);
     $originalUid = getenv('ACULTA_DIGEST_RECIPIENT_UID');
     $originalPrefix = getenv('ACULTA_DIGEST_SHARED_TEST_PREFIX');
@@ -190,7 +197,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       ->execute()
       ->fetchField());
     self::assertCount(1, $this->collectedMails());
-    self::assertCount(1, $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
+    self::assertSame([], $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
     self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
   }
 

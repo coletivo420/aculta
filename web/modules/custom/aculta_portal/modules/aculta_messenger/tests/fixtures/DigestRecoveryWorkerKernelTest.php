@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Kernel;
 
-use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
@@ -115,8 +114,7 @@ final class DigestRecoveryWorkerKernelTest extends KernelTestBase {
       ->fetchField());
     $logs = $entityTypeManager->getStorage('aculta_mail_log')
       ->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]);
-    self::assertCount(1, $logs);
-    self::assertSame(MailStatus::Sent->value, reset($logs)->get('status')->value);
+    self::assertSame([], $logs, 'The accepted snapshot completes recovery even after Mail Log retention.');
   }
 
   /**

@@ -2125,7 +2125,8 @@ opcionais sem depender da retenção normal do Mail Log nem reenviar o lote já 
 limitados aos IDs do manifesto original.
 
 Validação: `LearningNoticeDigestIntegrationTest` **23/186 PASS**, `AvisosResumoProviderPreferenceTest` **4/87 PASS**,
-`AvisosResumoMailerKernelTest` **2/31 PASS** e `ForumNoticeIdempotencyKernelTest` **36/834 PASS** no MariaDB dedicado;
+`AvisosResumoMailerKernelTest` **2/32 PASS**, incluindo recuperação cross-process após remoção do Mail Log, e
+`ForumNoticeIdempotencyKernelTest` **36/834 PASS** no MariaDB dedicado;
 PHPCS Drupal/DrupalPractice, PHP lint, índice de status e gate Drupal 11+ (**1155 checks**) PASS. SMTP externo e Runtime
 não executados.
 
