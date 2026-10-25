@@ -33,6 +33,8 @@ $assert = static function (bool $ok, string $message) use (&$failures, &$checks)
 $allowedThemeReferences = [
   // Verificação de ambiente: o relatório de requisitos mostra se o tema está instalado. Não é dependência visual.
   'src/Controller/PortalRequirementsController.php',
+  // Teste de integração: instala o ACULTA420 para renderizar os componentes neutros reais (não é código de produção).
+  'modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php',
 ];
 
 /** Cliquet: marcação de apresentação (classes Bootstrap/utilitárias) dentro de atributos de classe do módulo. */

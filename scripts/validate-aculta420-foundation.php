@@ -353,6 +353,7 @@ $expectedTemplates = [
   'views/views-view-table.html.twig',
   // Envelope HTML dos e-mails do aculta_mailer: cores dos tokens, claro e escuro inline (clientes de e-mail não carregam tokens.css).
   'aculta-mailer-wrap.html.twig',
+  'portal-component.html.twig',
 ];
 $actualTemplates = [];
 $templateRoot = $themeRoot . '/templates';
