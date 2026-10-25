@@ -340,6 +340,50 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * A current recipient lookup failure must suppress cooldown on recovery.
+   */
+  public function testAcceptedDigestRecoveryKeepsCooldownOpenAfterRecipientLookupFailure(): void {
+    $snapshot = [
+      'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
+      'created' => 1_800_000_000,
+      'provider_lookup_failed' => FALSE,
+      'forum' => [],
+      'providers' => [],
+    ];
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($snapshot): mixed {
+      if ($uid === NULL && $key === 'avisos_resumo_em_andamento') {
+        return [27 => $snapshot];
+      }
+      return $key === 'avisos_resumo_em_andamento' ? $snapshot : NULL;
+    });
+    $userData->expects($this->never())->method('set');
+    $userData->expects($this->once())
+      ->method('delete')
+      ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento');
+
+    $provider = $this->createMock(AvisoDigestProviderIdentityInterface::class);
+    $provider->method('digestProviderId')->willReturn('unavailable');
+    $provider->expects($this->once())
+      ->method('pendingRecipientIds')
+      ->willThrowException(new \RuntimeException('Recipient lookup unavailable'));
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $mailer->expects($this->once())
+      ->method('wasAcceptedCorrelation')
+      ->with($snapshot['correlation_id'], AvisosResumo::CHAVE_MAIL, 'student@example.test')
+      ->willReturn(TRUE);
+    $transaction = new TestLearningDigestTransaction();
+    $database = $this->createMock(Connection::class);
+    $database->expects($this->once())->method('startTransaction')->willReturn($transaction);
+    $summary = $this->createSummary([$provider], $mailer, TRUE, NULL, $database, $userData);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertTrue($transaction->committed);
+    $this->assertFalse($transaction->rolledBack);
+  }
+
+  /**
    * Legacy snapshots stay pending if a class maps to multiple adapters.
    */
   public function testLegacySnapshotDoesNotGuessBetweenProvidersOfTheSameClass(): void {

@@ -2086,3 +2086,9 @@ Quando `pendingRecipientIds()` de qualquer adapter falha, o digest ainda pode en
 
 Validação: `AvisosResumoProviderPreferenceTest` **4/79 PASS**, `LearningNoticeDigestIntegrationTest` **21/162 PASS** e `AvisosResumoMailerKernelTest` **2/31 PASS** em MariaDB dedicado. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Transporte externo e Runtime não executados.
 
+## 0.1.1-dev.208 — manter cooldown aberto durante recovery após falha do adapter
+
+A falha de `pendingRecipientIds()` no cron atual agora também é considerada ao reconciliar um snapshot aceito anteriormente. Assim, a recuperação confirma somente o lote já entregue, remove o snapshot após o acknowledgement e não grava o intervalo compartilhado enquanto uma origem pode continuar sem entregar destinatários pendentes. Uma regressão cobre a falha ocorrida depois de um snapshot antigo com `provider_lookup_failed: false`.
+
+Validação: `LearningNoticeDigestIntegrationTest` **22 testes / 176 assertions PASS**, `AvisosResumoProviderPreferenceTest` **4/79 PASS** e `AvisosResumoMailerKernelTest` **2/31 PASS** em MariaDB dedicado. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Transporte externo e Runtime não executados.
+

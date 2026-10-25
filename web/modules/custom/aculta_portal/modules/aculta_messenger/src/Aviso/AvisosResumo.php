@@ -209,7 +209,11 @@ final class AvisosResumo {
     // Recover the exact batch if the Mailer accepted it but a later
     // acknowledgement failed. This prevents a newly grown pending batch from
     // receiving a different correlation and resending already delivered rows.
-    $recuperacao = $this->recuperarDigestAceito($uid, (string) $conta->getEmail());
+    $recuperacao = $this->recuperarDigestAceito(
+      $uid,
+      (string) $conta->getEmail(),
+      $recipientLookupFailed,
+    );
     if ($recuperacao !== NULL) {
       return $recuperacao ? self::RESULT_RECONCILED : self::RESULT_SKIPPED;
     }
@@ -470,7 +474,7 @@ final class AvisosResumo {
    *   attempt should wait for the in-flight transport window, or NULL when no
    *   usable snapshot exists and the current pending batch can be built.
    */
-  private function recuperarDigestAceito(int $uid, string $recipient): ?bool {
+  private function recuperarDigestAceito(int $uid, string $recipient, bool $recipientLookupFailed): ?bool {
     $snapshot = $this->userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
     if (!is_array($snapshot) || !is_string($snapshot['correlation_id'] ?? NULL)) {
       if ($snapshot !== NULL) {
@@ -543,7 +547,7 @@ final class AvisosResumo {
           $provider->markDigestSent($uid, $deliveryIds);
         }
       }
-      if (empty($snapshot['provider_lookup_failed'])) {
+      if (empty($snapshot['provider_lookup_failed']) && !$recipientLookupFailed) {
         $this->userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', (int) ($snapshot['created'] ?? $this->time->getRequestTime()));
       }
       $this->userData->delete('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
