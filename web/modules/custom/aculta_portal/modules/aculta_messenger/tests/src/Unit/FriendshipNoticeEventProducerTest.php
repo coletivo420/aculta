@@ -36,7 +36,7 @@ final class FriendshipNoticeEventProducerTest extends UnitTestCase {
     $changed->method('__get')->with('value')->willReturn(1700000000);
     $friendship->method('get')->with('changed')->willReturn($changed);
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->method('load')->with('44')->willReturn($friendship);
+    $storage->method('loadUnchanged')->with('44')->willReturn($friendship);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->method('getStorage')->with('aculta_friendship')->willReturn($storage);
 
@@ -79,7 +79,7 @@ final class FriendshipNoticeEventProducerTest extends UnitTestCase {
     $friendship->method('getRequesterId')->willReturn(11);
     $friendship->method('getRecipientId')->willReturn(20);
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->method('load')->with('44')->willReturn($friendship);
+    $storage->method('loadUnchanged')->with('44')->willReturn($friendship);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->method('getStorage')->with('aculta_friendship')->willReturn($storage);
     $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
@@ -101,7 +101,7 @@ final class FriendshipNoticeEventProducerTest extends UnitTestCase {
     $changed->method('__get')->with('value')->willReturn(1700000001);
     $friendship->method('get')->with('changed')->willReturn($changed);
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->method('load')->with('44')->willReturn($friendship);
+    $storage->method('loadUnchanged')->with('44')->willReturn($friendship);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->method('getStorage')->with('aculta_friendship')->willReturn($storage);
     $publisher = $this->createMock(MessengerNoticePublisherInterface::class);

@@ -67,9 +67,12 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
     if (($event->metadata()['transition'] ?? NULL) !== $transition) {
       return;
     }
-    $matches = $this->entityTypeManager->getStorage('aculta_friendship')
-      ->loadByProperties(['uuid' => $event->sourceEntityUuid()]);
-    $friendship = reset($matches);
+    $friendshipStorage = $this->entityTypeManager->getStorage('aculta_friendship');
+    $matches = $friendshipStorage->loadByProperties(['uuid' => $event->sourceEntityUuid()]);
+    $cachedFriendship = reset($matches);
+    $friendship = $cachedFriendship instanceof AcultaFriendshipInterface && $cachedFriendship->id() !== NULL
+      ? $friendshipStorage->loadUnchanged($cachedFriendship->id())
+      : NULL;
     if (!$friendship instanceof AcultaFriendshipInterface
       || (int) $friendship->get('changed')->value !== (int) $event->sourceRevisionOrVersion()
       || ($transition === FriendshipChangedEvent::REQUESTED

@@ -40,7 +40,7 @@ final class FriendshipNoticeEventProducer implements EventSubscriberInterface {
       return;
     }
 
-    $friendship = $this->entityTypeManager->getStorage('aculta_friendship')->load($event->friendshipId);
+    $friendship = $this->entityTypeManager->getStorage('aculta_friendship')->loadUnchanged($event->friendshipId);
     if (!$friendship instanceof AcultaFriendshipInterface
       || $friendship->getRequesterId() !== $event->requesterId
       || $friendship->getRecipientId() !== $event->recipientId

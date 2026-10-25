@@ -224,6 +224,36 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
   }
 
   /**
+   * A same-second replay cannot use a cached pending state after acceptance.
+   */
+  public function testStaleTransitionStateIsReloadedBeforeNoticeCreation(): void {
+    $cachedFriendship = $this->friendship(FriendshipStatus::Pending->value);
+    $currentFriendship = $this->friendship(FriendshipStatus::Accepted->value);
+    $friendshipStorage = $this->createMock(EntityStorageInterface::class);
+    $friendshipStorage->expects(self::once())
+      ->method('loadByProperties')
+      ->with(['uuid' => 'friendship-uuid'])
+      ->willReturn([$cachedFriendship]);
+    $friendshipStorage->expects(self::once())
+      ->method('loadUnchanged')
+      ->with('44')
+      ->willReturn($currentFriendship);
+    $entityTypeManager = $this->entityTypeManager(
+      $this->createMock(EntityStorageInterface::class),
+      $this->createMock(EntityStorageInterface::class),
+      $friendshipStorage,
+    );
+    $entityTypeManager->getStorage('user')->expects(self::never())->method('loadUnchanged');
+    $entityTypeManager->getStorage('message')->expects(self::never())->method('getQuery');
+    $entityTypeManager->getStorage('message')->expects(self::never())->method('create');
+    $queue = $this->createMock(FriendshipNoticeQueueInterface::class);
+    $queue->expects(self::never())->method('enqueue');
+
+    (new FriendshipNoticeSubscriber($entityTypeManager, $this->lock(), $queue))
+      ->consume($this->event(FriendshipChangedEvent::REQUESTED));
+  }
+
+  /**
    * Asserts the transition creates a Message for the expected recipient.
    */
   private function assertNoticeForTransition(string $transition, int $requesterId, int $recipientId, int $noticeRecipientId, bool $queueFails = FALSE): void {
@@ -318,6 +348,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
   private function friendshipStorage(AcultaFriendshipInterface $friendship): EntityStorageInterface {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('loadByProperties')->with(['uuid' => 'friendship-uuid'])->willReturn([$friendship]);
+    $storage->method('loadUnchanged')->with('44')->willReturn($friendship);
     return $storage;
   }
 

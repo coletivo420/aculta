@@ -1,3 +1,15 @@
+## 0.1.1-dev.347 — revalidar estado das amizades sem cache
+
+O produtor e o consumer de eventos de amizade agora recarregam a relação sem
+cache estático antes de validar transição, versão e destinatário. Um replay
+antigo de pedido não produz aviso se a amizade já foi aceita, mesmo quando as
+duas transições têm o mesmo timestamp em segundos.
+
+Validação: testes de amizade **28 testes / 408 assertions PASS**; Unit
+Messenger **358/2.885 PASS**; Kernel MariaDB **1/23 PASS** (2 deprecações
+upstream de discovery `@EntityType`); PHPCS Drupal/DrupalPractice, PHP lint e
+`git diff --check` PASS. Sem Runtime ou e-mail externo.
+
 ## 0.1.1-dev.346 — preservar paginação de Conquistas na central
 
 A lista única de origens pagináveis agora também é usada pelo controller da
