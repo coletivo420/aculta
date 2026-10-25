@@ -147,6 +147,13 @@ mede seis meses desde a última atividade da conversa, não desde a criação de
 cada mensagem. Threads vencidas só são removidas quando o Cron executar; não
 se executa Cron durante atualização de código nem se apagam dados no deploy.
 
+A exclusão e o worker de avisos por e-mail usam o mesmo lock por thread. O
+worker mantém o lock enquanto recarrega a conversa, revalida cada destinatário
+e executa a entrega, de modo que a retenção não exclua a thread entre a
+verificação de acesso e o envio. Se outra operação já detém o lock ou a thread
+desapareceu, o item falha para retry; nenhuma rotina de retenção foi executada
+para validar essa alteração.
+
 ## Verificação obrigatória nas fases funcionais
 
 Cobrir isolamento entre usuários, IDOR, conteúdo não publicado, revogação de

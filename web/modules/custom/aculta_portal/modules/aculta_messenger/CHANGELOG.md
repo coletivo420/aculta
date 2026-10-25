@@ -1,3 +1,15 @@
+## 0.1.1-dev.281 — serializar aviso de e-mail e retenção da conversa
+
+O worker de notificação de mensagem privada compartilha o lock por thread usado
+pela retenção. Ele recarrega a thread sob lock, mantém a proteção durante as
+checagens por destinatário e a entrega, e falha de forma retryable se não puder
+obter uma thread persistida e atual. Isso fecha a corrida em que o Cron poderia
+remover a conversa depois da autorização do e-mail e antes do transporte.
+
+Validação: `PrivateMessageNotificationWorkerTest` **13/237 PASS**, Unit
+Messenger **281/2.305 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS.
+Kernel, Browser e Runtime não executados.
+
 ## 0.1.1-dev.280 — revalidar bloqueios antes de criar grupos
 
 O envio de primeira mensagem em grupo agora checa novamente os bloqueios

@@ -21,6 +21,7 @@ use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_messenger\Mail\PrivateMessageNoticeMailType;
 use Drupal\aculta_messenger\Service\MessengerMailDelivery;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
+use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
@@ -55,6 +56,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     mixed $plugin_definition,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly PrivateMessageServiceInterface $privateMessageService,
+    private readonly ConversationWriteLock $conversationWriteLock,
     private readonly MessageNotifyInterface $messageNotify,
     private readonly AcultaMailerInterface $mailer,
     private readonly DomainPurposeManager $domainPurposeManager,
@@ -74,6 +76,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('private_message.service'),
+      $container->get('aculta_messenger.conversation_write_lock'),
       $container->get('message_notify.sender'),
       $container->get('aculta_mailer.mailer'),
       $container->get('aculta_portal.domain_purpose'),
@@ -108,25 +111,41 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       throw new \RuntimeException('Private message thread is not available yet.');
     }
 
-    $senderId = (int) $privateMessage->getOwnerId();
-    $mailerManaged = ($data['mailer_managed'] ?? FALSE) === TRUE;
-    foreach ($thread->getMembersId() as $recipientId) {
-      $recipientId = (int) $recipientId;
-      if ($recipientId === $senderId) {
-        continue;
-      }
+    $threadId = (int) $thread->id();
+    if ($threadId < 1) {
+      throw new \RuntimeException('Private message thread is not persisted yet.');
+    }
+    // Retention uses this same lock. Hold it through recipient revalidation
+    // and delivery so a dormant thread cannot be deleted after access was
+    // checked but before its queued email is sent.
+    $freshThread = $this->conversationWriteLock->acquire($thread);
+    if (!$freshThread instanceof PrivateMessageThreadInterface) {
+      throw new \RuntimeException('Private message conversation is being updated.');
+    }
+    try {
+      $senderId = (int) $privateMessage->getOwnerId();
+      $mailerManaged = ($data['mailer_managed'] ?? FALSE) === TRUE;
+      foreach ($freshThread->getMembersId() as $recipientId) {
+        $recipientId = (int) $recipientId;
+        if ($recipientId === $senderId) {
+          continue;
+        }
 
-      $lockId = 'aculta_messenger:private_message:' . $messageId . ':' . $recipientId;
-      if (!$this->lock->acquire($lockId, MessengerEmailLock::TIMEOUT)) {
-        throw new \RuntimeException('Private message notification is already being processed.');
-      }
+        $lockId = 'aculta_messenger:private_message:' . $messageId . ':' . $recipientId;
+        if (!$this->lock->acquire($lockId, MessengerEmailLock::TIMEOUT)) {
+          throw new \RuntimeException('Private message notification is already being processed.');
+        }
 
-      try {
-        $this->notifyRecipient($privateMessage, $thread, $messageId, $senderId, $recipientId, $mailerManaged);
+        try {
+          $this->notifyRecipient($privateMessage, $freshThread, $messageId, $senderId, $recipientId, $mailerManaged);
+        }
+        finally {
+          $this->lock->release($lockId);
+        }
       }
-      finally {
-        $this->lock->release($lockId);
-      }
+    }
+    finally {
+      $this->conversationWriteLock->release($threadId);
     }
   }
 

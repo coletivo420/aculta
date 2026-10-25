@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\aculta_messenger\Plugin\QueueWorker\PrivateMessageNotificationWorker;
+use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
@@ -103,6 +104,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $userStorage->method('load')->with(2)->willReturn($recipient);
 
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('id')->willReturn('123');
     $thread->method('getMembersId')->willReturn([1, 2]);
     $thread->method('access')->with('view', $recipient, TRUE)->willReturn(AccessResult::allowed());
     $messageService = $this->createMock(PrivateMessageServiceInterface::class);
@@ -142,6 +144,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       ['user', $userStorage],
       ['private_message_ban', $banStorage],
       ['message', $messageStorage],
+      ['private_message_thread', $this->threadStorage($thread)],
     ]);
 
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
@@ -160,6 +163,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       [],
       $entityTypes,
       $messageService,
+      $this->conversationWriteLock($entityTypes),
       $notifier,
       $mailer,
       $this->domainPurposeManager($entityTypes),
@@ -199,6 +203,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->method('load')->willReturnCallback(fn(int $uid): UserInterface => $uid === 2 ? $recipient : $sender);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('id')->willReturn('123');
     $thread->method('getMembersId')->willReturn([1, 2]);
     $thread->method('access')->with('view', $recipient, TRUE)->willReturn(AccessResult::allowed());
     $thread->method('getLastDeleteTimestamp')->with($recipient)->willReturn(100);
@@ -251,6 +256,8 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $domain->method('isHttps')->willReturn(TRUE);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
     $domainStorage->method('load')->with('conta_aculta_org')->willReturn($domain);
+    $threadStorage = $this->createMock(EntityStorageInterface::class);
+    $threadStorage->expects(self::once())->method('loadUnchanged')->with(123)->willReturn($thread);
     $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypes->method('getStorage')->willReturnMap([
       ['private_message', $privateMessageStorage],
@@ -258,12 +265,20 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       ['private_message_ban', $banStorage],
       ['message', $noticeStorage],
       ['domain', $domainStorage],
+      ['private_message_thread', $threadStorage],
     ]);
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->with(2, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
       ->willReturn($emailMode);
+    $lockCalls = [];
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->method('acquire')->willReturn(TRUE);
+    $lock->method('acquire')->willReturnCallback(static function (string $name, float $timeout) use (&$lockCalls): bool {
+      $lockCalls[] = ['acquire', $name, $timeout];
+      return TRUE;
+    });
+    $lock->method('release')->willReturnCallback(static function (string $name) use (&$lockCalls): void {
+      $lockCalls[] = ['release', $name];
+    });
     $legacy = $this->createMock(MessageNotifyInterface::class);
     $legacy->expects(self::never())->method('send');
     $mailer = $this->createMock(AcultaMailerInterface::class);
@@ -283,8 +298,10 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     \Drupal::setContainer($container);
     try {
       $worker = new PrivateMessageNotificationWorker(
-        [], 'aculta_msg_private_notification', [], $entityTypes, $messageService, $legacy, $mailer,
-        $this->domainPurposeManager($entityTypes), $lock, $preferences, $this->emailPolicy($entityTypes, $emailConfirmed),
+        [], 'aculta_msg_private_notification', [], $entityTypes, $messageService,
+        new ConversationWriteLock($lock, $entityTypes), $legacy, $mailer,
+        $this->domainPurposeManager($entityTypes), $lock,
+        $preferences, $this->emailPolicy($entityTypes, $emailConfirmed),
       );
       $worker->processItem(['private_message_id' => 15, 'mailer_managed' => TRUE]);
     }
@@ -304,6 +321,12 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       self::assertSame('Você tem uma nova mensagem de Remetente.', $sentMail->context['summary']);
       self::assertStringNotContainsString('private body', serialize($sentMail->context));
     }
+    self::assertSame([
+      ['acquire', 'aculta_messenger:conversation_write:123', 180.0],
+      ['acquire', 'aculta_messenger:private_message:15:2', 180.0],
+      ['release', 'aculta_messenger:private_message:15:2'],
+      ['release', 'aculta_messenger:conversation_write:123'],
+    ], $lockCalls);
   }
 
   /**
@@ -355,6 +378,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->method('load')->with(2)->willReturn($recipient);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('id')->willReturn('123');
     $thread->method('getMembersId')->willReturn([1, 2]);
     $recipientEligible = $recipientActive && $canUsePrivateMessages && $canAccessProfiles;
     $thread->expects($recipientEligible ? self::once() : self::never())
@@ -396,6 +420,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       ['user', $userStorage],
       ['private_message_ban', $banStorage],
       ['message', $notificationStorage],
+      ['private_message_thread', $this->threadStorage($thread)],
     ]);
     $lockId = 'aculta_messenger:private_message:15:2';
     $lock = $this->createMock(LockBackendInterface::class);
@@ -412,6 +437,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       [],
       $entities,
       $privateMessageService,
+      $this->conversationWriteLock($entities),
       $messageNotify,
       $mailer,
       $domainPurposes,
@@ -421,6 +447,24 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     );
 
     $worker->processItem(['private_message_id' => 15, 'mailer_managed' => TRUE]);
+  }
+
+  /**
+   * Builds the shared conversation lock without coupling it to email locks.
+   */
+  private function conversationWriteLock(EntityTypeManagerInterface $entityTypes): ConversationWriteLock {
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->method('acquire')->willReturn(TRUE);
+    return new ConversationWriteLock($lock, $entityTypes);
+  }
+
+  /**
+   * Returns a thread storage that reloads the requested conversation.
+   */
+  private function threadStorage(PrivateMessageThreadInterface $thread): EntityStorageInterface {
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('loadUnchanged')->with(123)->willReturn($thread);
+    return $storage;
   }
 
   /**
