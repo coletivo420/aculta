@@ -656,6 +656,22 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
         stream_set_blocking($pipes[1], FALSE);
         stream_set_blocking($pipes[2], FALSE);
         $workers[$workerId] = ['process' => $process, 'pipes' => $pipes];
+
+        // KernelTestBase runs an installer probe with a fixed table name. All
+        // workers share the parent fixture prefix for lock contention, so
+        // serialize only their bootstrap and let each worker reach the barrier
+        // before starting the next one. Delivery attempts remain concurrent.
+        $readyPath = $barrierDirectory . '/competitor-ready-' . $workerId;
+        $readyDeadline = microtime(TRUE) + 30;
+        while (!is_file($readyPath)) {
+          if (microtime(TRUE) >= $readyDeadline) {
+            throw new \RuntimeException(sprintf(
+              'Digest worker %d did not finish its isolated Drupal bootstrap.',
+              $workerId,
+            ));
+          }
+          usleep(10_000);
+        }
       }
 
       $sentCount = $summary->enviarResumos();
@@ -695,7 +711,11 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       putenv('ACULTA_DIGEST_SHARED_TEST_PREFIX');
       putenv('ACULTA_DIGEST_COMPETITOR_COUNT');
       putenv('ACULTA_DIGEST_COMPETITOR_ID');
-      foreach (['transport-started', 'competitor-done-1', 'competitor-done-2', 'competitor-done-3'] as $filename) {
+      foreach ([
+        'transport-started',
+        'competitor-ready-1', 'competitor-ready-2', 'competitor-ready-3',
+        'competitor-done-1', 'competitor-done-2', 'competitor-done-3',
+      ] as $filename) {
         @unlink($barrierDirectory . '/' . $filename);
       }
       @rmdir($barrierDirectory);
