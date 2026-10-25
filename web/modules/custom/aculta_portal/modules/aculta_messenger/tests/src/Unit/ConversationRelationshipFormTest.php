@@ -16,7 +16,6 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -49,7 +48,6 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
       $this->createMock(PrivateMessageBanManagerInterface::class),
       $account,
       $entities,
-      $this->createMock(PrivateMessageServiceInterface::class),
       $this->createMock(CacheTagsInvalidatorInterface::class),
       $this->createMock(CsrfTokenGenerator::class),
     );
@@ -72,26 +70,30 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     $account = $this->createMock(AccountProxyInterface::class);
     $account->method('id')->willReturn(42);
     $account->method('isAuthenticated')->willReturn(TRUE);
+    $sender = $this->activeUser(42);
 
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('isMember')->with(42)->willReturn(TRUE);
     $thread->expects(self::once())->method('access')
-      ->with('view', $account, TRUE)
+      ->with('view', $sender, TRUE)
       ->willReturn(AccessResult::forbidden());
     $thread->expects(self::never())->method('clearAccountHistory');
 
     $threadStorage = $this->createMock(EntityStorageInterface::class);
     $threadStorage->expects(self::once())->method('load')->with(123)->willReturn($thread);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->expects(self::once())->method('loadUnchanged')->with(42)->willReturn($sender);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
-    $entities->expects(self::once())->method('getStorage')
-      ->with('private_message_thread')->willReturn($threadStorage);
+    $entities->method('getStorage')->willReturnMap([
+      ['private_message_thread', $threadStorage],
+      ['user', $userStorage],
+    ]);
 
     $form = new ConversationRelationshipForm(
       $this->createMock(FriendshipManagerInterface::class),
       $this->createMock(PrivateMessageBanManagerInterface::class),
       $account,
       $entities,
-      $this->createMock(PrivateMessageServiceInterface::class),
       $this->createMock(CacheTagsInvalidatorInterface::class),
       $this->createMock(CsrfTokenGenerator::class),
     );
@@ -120,14 +122,14 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     $account->method('isAuthenticated')->willReturn(TRUE);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('isMember')->with(42)->willReturn(TRUE);
-    $thread->method('access')->with('view', $account, TRUE)->willReturn(AccessResult::allowed());
+    $thread->expects(self::never())->method('access');
     $thread->expects(self::never())->method('clearAccountHistory');
     $threadStorage = $this->createMock(EntityStorageInterface::class);
     $threadStorage->method('load')->with(123)->willReturn($thread);
     $user = $this->createMock(UserInterface::class);
     $user->method('isActive')->willReturn(FALSE);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->expects(self::once())->method('load')->with(42)->willReturn($user);
+    $userStorage->expects(self::once())->method('loadUnchanged')->with(42)->willReturn($user);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->willReturnMap([
       ['private_message_thread', $threadStorage],
@@ -138,7 +140,6 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
       $this->createMock(PrivateMessageBanManagerInterface::class),
       $account,
       $entities,
-      $this->createMock(PrivateMessageServiceInterface::class),
       $this->createMock(CacheTagsInvalidatorInterface::class),
       $this->createMock(CsrfTokenGenerator::class),
     );
@@ -155,6 +156,40 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
       'Não foi possível concluir a ação. Tente novamente.',
       $state->get('message'),
     );
+  }
+
+  /**
+   * A profile action cannot create a thread by forging the hidden clear action.
+   */
+  public function testProfileCannotCreateThreadWithForgedClearAction(): void {
+    $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('id')->willReturn(42);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $target = $this->activeUser(84);
+    $users = $this->createMock(EntityStorageInterface::class);
+    $users->expects(self::once())->method('load')->with(84)->willReturn($target);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->expects(self::once())->method('getStorage')->with('user')->willReturn($users);
+    $form = new ConversationRelationshipForm(
+      $this->createMock(FriendshipManagerInterface::class),
+      $this->createMock(PrivateMessageBanManagerInterface::class),
+      $account,
+      $entities,
+      $this->createMock(CacheTagsInvalidatorInterface::class),
+      $this->createMock(CsrfTokenGenerator::class),
+    );
+    (new \ReflectionProperty(FormBase::class, 'stringTranslation'))
+      ->setValue($form, $this->getStringTranslationStub());
+
+    $state = new FormState();
+    $state->set('profile', TRUE);
+    $state->set('target', 84);
+    $state->setTriggeringElement(['#name' => 'clear_confirm']);
+    $state->setUserInput(['clear_confirm' => 'Confirmar limpeza do histórico']);
+    $build = [];
+    $form->submitForm($build, $state);
+
+    self::assertSame('Não foi possível concluir a ação. Tente novamente.', $state->get('message'));
   }
 
   /**
@@ -189,6 +224,10 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
       [42, $actor],
       [84, $target],
     ]);
+    $userStorage->method('loadUnchanged')->willReturnMap([
+      [42, $actor],
+      [84, $target],
+    ]);
 
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('isMember')->willReturnCallback(static fn(int|string $uid): bool => (int) $uid === 42
@@ -210,7 +249,6 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
       $banManager,
       $account,
       $entities,
-      $this->createMock(PrivateMessageServiceInterface::class),
       $this->createMock(CacheTagsInvalidatorInterface::class),
       $this->createMock(CsrfTokenGenerator::class),
     );
@@ -230,6 +268,17 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
       'Não foi possível concluir a ação. Tente novamente.',
       $state->get('message'),
     );
+  }
+
+  /**
+   * Creates an active account with the permissions required for messaging.
+   */
+  private function activeUser(int $uid): UserInterface {
+    $user = $this->createMock(UserInterface::class);
+    $user->method('id')->willReturn((string) $uid);
+    $user->method('isActive')->willReturn(TRUE);
+    $user->method('hasPermission')->willReturn(TRUE);
+    return $user;
   }
 
 }

@@ -1,3 +1,17 @@
+## 0.1.1-dev.315 — impedir criação de thread por ação forjada de perfil
+
+A ação de limpar histórico deixa de existir em formulários de perfil e de
+relacionamento individual; ela permanece somente no menu da conversa em grupo.
+Isso remove o caminho que chamava `getThreadForMembers()` e poderia criar uma
+thread vazia após um POST forjado. A limpeza agora revalida conta ativa,
+permissões atuais, associação e acesso à thread antes de alterar o histórico, e
+o formulário informa falha se a operação for recusada.
+
+Validação: `ConversationRelationshipFormTest` **6 testes / 41 assertions
+PASS**; Unit Messenger **319 testes / 2.578 assertions PASS**; PHP lint e
+`git diff --check` PASS; PHPCS Drupal/DrupalPractice sem erros (14 avisos
+preexistentes de linhas longas neste formulário).
+
 ## 0.1.1-dev.314 — revalidar acesso ao marcar avisos Wiki e Loja como lidos
 
 Os controllers agora delegam a gravação ao contrato `setRead()` dos respectivos
