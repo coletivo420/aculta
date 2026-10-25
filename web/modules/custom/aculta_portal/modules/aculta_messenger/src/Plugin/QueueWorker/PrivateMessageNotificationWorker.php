@@ -99,7 +99,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
 
     $privateMessage = $this->entityTypeManager
       ->getStorage('private_message')
-      ->load($messageId);
+      ->loadUnchanged($messageId);
     if (!$privateMessage instanceof PrivateMessageInterface) {
       return;
     }

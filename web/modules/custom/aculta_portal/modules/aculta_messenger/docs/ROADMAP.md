@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.325 — worker de avisos privados relê a mensagem de origem com `loadUnchanged()` antes de resolver thread e destinatários, evitando processar uma origem obsoleta. Worker **15/283 PASS**, Unit Messenger **324/2.629 PASS**, Integration LMS digest **25/210 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime.
 - Dev.324 — o provider do resumo semanal privado usa `loadUnchanged()` para revalidar a mensagem de origem; avisos cuja mensagem foi removida são cancelados sem incluir conteúdo privado no digest. `PrivateMessageDigestProviderTest` **5/81 PASS**, Unit Messenger **324/2.629 PASS**, Integration LMS digest **25/210 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime.
 - Dev.323 — data âncora administrativa do resumo semanal de mensagens privadas é obrigatória, evitando configuração vazia que bloquearia o digest; `MessengerSettingsFormTest` **3/19 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime.
 - Dev.322 — a política de acesso do Fórum usa `loadUnchanged()` ao resolver um destinatário por UID; contas desativadas após leitura anterior deixam de autorizar tópicos, comentários e posts. `ForumNoticeAccessPolicyTest` **4/36 PASS**, Unit Messenger **324/2.625 PASS**, PHPCS/PHP lint/diff check PASS; sem Kernel, Runtime ou SMTP.

@@ -1,3 +1,15 @@
+## 0.1.1-dev.325 — reler mensagem privada antes da entrega
+
+O worker de avisos de Mensagem Privada carrega a origem com `loadUnchanged()`
+antes de resolver a thread e os destinatários. Uma entidade removida ou alterada
+após uma leitura anterior no mesmo processo não serve de base para uma entrega
+posterior.
+
+Validação: `PrivateMessageNotificationWorkerTest` **15 testes / 283 assertions
+PASS**; Unit Messenger **324 testes / 2.629 assertions PASS**;
+`LearningNoticeDigestIntegrationTest` **25 / 210 PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Kernel/Runtime.
+
 ## 0.1.1-dev.324 — revalidar origem das mensagens no digest privado
 
 O provider semanal relê cada mensagem privada pendente com `loadUnchanged()`

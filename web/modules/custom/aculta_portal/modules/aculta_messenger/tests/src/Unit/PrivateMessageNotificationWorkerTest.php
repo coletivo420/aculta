@@ -95,7 +95,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $privateMessage = $this->createMock(PrivateMessageInterface::class);
     $privateMessage->method('getOwnerId')->willReturn(1);
     $privateMessageStorage = $this->createMock(EntityStorageInterface::class);
-    $privateMessageStorage->method('load')->with(15)->willReturn($privateMessage);
+    $privateMessageStorage->method('loadUnchanged')->with(15)->willReturn($privateMessage);
 
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('id')->willReturn('2');
@@ -195,7 +195,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $privateMessage->method('getOwnerId')->willReturn(1);
     $privateMessage->method('getCreatedTime')->willReturn(101);
     $privateMessageStorage = $this->createMock(EntityStorageInterface::class);
-    $privateMessageStorage->method('load')->with(15)->willReturn($privateMessage);
+    $privateMessageStorage->method('loadUnchanged')->with(15)->willReturn($privateMessage);
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('id')->willReturn('2');
     $recipient->method('isActive')->willReturn(TRUE);
@@ -395,7 +395,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $privateMessage->method('getOwnerId')->willReturn(1);
     $privateMessage->method('getCreatedTime')->willReturn(100);
     $privateMessageStorage = $this->createMock(EntityStorageInterface::class);
-    $privateMessageStorage->method('load')->with(15)->willReturn($privateMessage);
+    $privateMessageStorage->method('loadUnchanged')->with(15)->willReturn($privateMessage);
     $recipient = $this->createMock(UserInterface::class);
     $recipient->method('id')->willReturn('2');
     $recipient->method('isActive')->willReturn($recipientActive);
