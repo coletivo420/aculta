@@ -1,3 +1,13 @@
+## 0.1.1-dev.297 — tolerar metadados incompletos na central
+
+O agrupamento da central agora lê recência somente quando o aviso fornece
+`#attributes` no formato de array esperado. Itens de extensões com metadados
+ausentes ou em outro formato permanecem visíveis, na ordem estável, sem
+interromper a renderização das seções por origem.
+
+Validação: `NoticeOriginGrouperTest` **4 testes / 19 assertions PASS**, PHP
+lint e PHPCS Drupal/DrupalPractice PASS. Sem Browser/Runtime.
+
 ## 0.1.1-dev.296 — reconciliar e-mail privado aceito antes do digest
 
 No retry de uma notificação privada, o worker consulta a correlação estável do

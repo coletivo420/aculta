@@ -100,32 +100,43 @@ final class NoticeOriginGrouper {
     return $result;
   }
 
-  /** Finds the newest timestamp in one section; zero means legacy/unknown. */
+  /**
+   * Finds the newest timestamp in one section; zero means legacy/unknown.
+   */
   private static function latestTimestamp(array $items): int {
     $latest = 0;
     foreach ($items as $item) {
-      $created = $item['#attributes']['data-aculta-notice-recency'] ?? 0;
-      if (is_numeric($created)) {
-        $latest = max($latest, (int) $created);
-      }
+      $latest = max($latest, self::recencyTimestamp($item));
     }
     return $latest;
   }
 
-  /** Sorts one section newest first, retaining input order for equal/unknown dates. */
+  /**
+   * Sorts newest first and keeps input order for tied timestamps.
+   */
   private static function sortByRecency(array $items): array {
     $indexed = [];
     foreach (array_values($items) as $index => $item) {
-      $created = $item['#attributes']['data-aculta-notice-recency'] ?? 0;
       $indexed[] = [
         'item' => $item,
-        'created' => is_numeric($created) ? (int) $created : 0,
+        'created' => self::recencyTimestamp($item),
         'index' => $index,
       ];
     }
     usort($indexed, static fn(array $a, array $b): int =>
       ($b['created'] <=> $a['created']) ?: ($a['index'] <=> $b['index']));
     return array_column($indexed, 'item');
+  }
+
+  /**
+   * Reads recency only from the array metadata shape emitted by adapters.
+   */
+  private static function recencyTimestamp(mixed $item): int {
+    if (!is_array($item) || !is_array($item['#attributes'] ?? NULL)) {
+      return 0;
+    }
+    $created = $item['#attributes']['data-aculta-notice-recency'] ?? 0;
+    return is_numeric($created) ? (int) $created : 0;
   }
 
   /**

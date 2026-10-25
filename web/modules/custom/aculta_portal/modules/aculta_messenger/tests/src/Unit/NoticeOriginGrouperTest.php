@@ -20,9 +20,18 @@ final class NoticeOriginGrouperTest extends UnitTestCase {
    * Groups notices by origin, ordering origin sections by their newest item.
    */
   public function testGroupsOriginsByLatestNoticeAndPreservesRecencyWithinOrigins(): void {
-    $forumRecent = ['#attributes' => ['data-aculta-notice-origin' => 'forum', 'data-aculta-notice-recency' => '300'], 'id' => 'forum-recent'];
-    $forumOlder = ['#attributes' => ['data-aculta-notice-origin' => 'forum', 'data-aculta-notice-recency' => '200'], 'id' => 'forum-older'];
-    $wikiRecent = ['#attributes' => ['data-aculta-notice-origin' => 'wiki', 'data-aculta-notice-recency' => '400'], 'id' => 'wiki-recent'];
+    $forumRecent = [
+      '#attributes' => ['data-aculta-notice-origin' => 'forum', 'data-aculta-notice-recency' => '300'],
+      'id' => 'forum-recent',
+    ];
+    $forumOlder = [
+      '#attributes' => ['data-aculta-notice-origin' => 'forum', 'data-aculta-notice-recency' => '200'],
+      'id' => 'forum-older',
+    ];
+    $wikiRecent = [
+      '#attributes' => ['data-aculta-notice-origin' => 'wiki', 'data-aculta-notice-recency' => '400'],
+      'id' => 'wiki-recent',
+    ];
     $groups = NoticeOriginGrouper::group([$forumOlder, $wikiRecent, $forumRecent]);
 
     self::assertCount(2, $groups);
@@ -59,6 +68,22 @@ final class NoticeOriginGrouperTest extends UnitTestCase {
     self::assertSame('amizade', $groups[0]['#attributes']['data-aculta-notice-origin-section']);
     self::assertSame('Amizades', $groups[0]['heading']['#value']->getUntranslatedString());
     self::assertSame([$item], $groups[0]['items']['#items']);
+  }
+
+  /**
+   * Keeps extension items visible when their optional render attributes differ.
+   */
+  public function testMalformedAttributeMetadataRemainsStableAndDoesNotBreakGrouping(): void {
+    $items = [
+      ['#attributes' => 'legacy attributes', 'id' => 'string-attributes'],
+      ['#attributes' => new \stdClass(), 'id' => 'object-attributes'],
+    ];
+
+    $groups = NoticeOriginGrouper::group($items);
+
+    self::assertCount(1, $groups);
+    self::assertSame('outros', $groups[0]['#attributes']['data-aculta-notice-origin-section']);
+    self::assertSame($items, $groups[0]['items']['#items']);
   }
 
 }
