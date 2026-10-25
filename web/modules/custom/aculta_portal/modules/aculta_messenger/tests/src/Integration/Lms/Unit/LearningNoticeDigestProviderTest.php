@@ -66,7 +66,7 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
     $certificate_storage = $this->createMock(EntityStorageInterface::class);
     $certificate_storage->expects(self::once())
       ->method('loadByProperties')
-      ->with(['uuid' => 'removed-certificate-uuid'])
+      ->with(['uuid' => ['removed-certificate-uuid']])
       ->willReturn([]);
 
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
@@ -78,6 +78,64 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
     });
     $manager = new LearningNoticeManager(
       $entity_type_manager,
+      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
+      $this->createMock(DateFormatterInterface::class),
+      $this->createMock(QueueFactory::class),
+      new NullLogger(),
+      $this->createMock(MessengerNoticePublisherInterface::class),
+      $this->createMock(LockBackendInterface::class),
+    );
+
+    self::assertSame([], $manager->digestRowsFor(27));
+  }
+
+  /**
+   * Loads sources of one event type once for an entire digest batch.
+   */
+  public function testDigestLoadsSourceUuidsInOneBatch(): void {
+    $account = $this->createMock(UserInterface::class);
+    $account->method('isActive')->willReturn(TRUE);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $account->method('id')->willReturn('27');
+    $messages = [];
+    foreach (['certificate-one', 'certificate-two'] as $uuid) {
+      $message = $this->createMock(MessageInterface::class);
+      $message->method('bundle')->willReturn(LearningNoticeManager::TEMPLATE);
+      $message->method('getOwnerId')->willReturn('27');
+      $message->method('get')->willReturnCallback(fn(string $field): FieldItemListInterface => $this->field('value', match ($field) {
+        'field_aculta_lms_event_type' => 'certificate',
+        'field_aculta_lms_source_uuid' => $uuid,
+        default => throw new \InvalidArgumentException('Unexpected field: ' . $field),
+      }));
+      $message->expects(self::once())->method('set')->with('field_aculta_lms_digest_sent', 1)->willReturnSelf();
+      $message->expects(self::once())->method('save')->willReturn(1);
+      $messages[] = $message;
+    }
+
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('execute')->willReturn([1, 2]);
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('getQuery')->willReturn($query);
+    $messageStorage->method('loadMultiple')->with([1, 2])->willReturn($messages);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($account);
+    $certificateStorage = $this->createMock(EntityStorageInterface::class);
+    $certificateStorage->expects(self::once())
+      ->method('loadByProperties')
+      ->with(['uuid' => ['certificate-one', 'certificate-two']])
+      ->willReturn([]);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'user' => $userStorage,
+      'message' => $messageStorage,
+      'aculta_lms_certificate' => $certificateStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+    $manager = new LearningNoticeManager(
+      $entities,
       (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
@@ -122,6 +180,8 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
     $user_storage = $this->createMock(EntityStorageInterface::class);
     $user_storage->method('loadUnchanged')->with(27)->willReturn($account);
     $status = $this->createMock(CourseStatusInterface::class);
+    $status->method('id')->willReturn('71');
+    $status->method('uuid')->willReturn('orphaned-course-status-uuid');
     $status->method('getUserId')->willReturn('27');
     $status->method('isFinished')->willReturn(TRUE);
     $status->method('getStatus')->willReturn(CourseStatusInterface::STATUS_PASSED);
@@ -129,8 +189,10 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
     $status->expects(self::never())->method('getCourse');
     $status_storage = $this->createMock(EntityStorageInterface::class);
     $status_storage->method('loadByProperties')
-      ->with(['uuid' => 'orphaned-course-status-uuid'])
+      ->with(['uuid' => ['orphaned-course-status-uuid']])
       ->willReturn([$status]);
+    $status_storage->expects(self::once())->method('resetCache')->with(['71']);
+    $status_storage->expects(self::once())->method('loadMultiple')->with(['71'])->willReturn([$status]);
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
       'user' => $user_storage,

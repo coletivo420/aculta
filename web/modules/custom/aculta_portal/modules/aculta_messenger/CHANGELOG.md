@@ -1,3 +1,17 @@
+## 0.1.1-dev.341 — agrupar carregamento das fontes de avisos LMS
+
+A central, o contador de não lidos e o digest carregam em lote as entidades
+fonte referenciadas pelos avisos educacionais. Os registros encontrados são
+recarregados sem cache antes de validar titularidade, publicação, matrícula,
+permissões e acesso; avisos com fonte ausente continuam excluídos e itens
+inválidos do digest são descartados. O caminho público de resolução individual
+mantém as mesmas verificações.
+
+Validação: Integration LMS Unit **47 testes / 443 assertions PASS**; Unit
+Messenger **356 testes / 2.866 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Kernel não executado (`SIMPLETEST_DB`
+indisponível); sem Runtime.
+
 ## 0.1.1-dev.340 — testar e endurecer a migração de avisos do Game
 
 O post-update de avisos pendentes agora valida a fonte pelo tipo de entidade
