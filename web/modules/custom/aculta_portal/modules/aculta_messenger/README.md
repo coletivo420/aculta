@@ -79,7 +79,7 @@ post-update e o Messenger passa a ser sua fonte normativa.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento atual é `0.1.1-dev.313`. O núcleo oferece
+A versão em desenvolvimento atual é `0.1.1-dev.314`. O núcleo oferece
 `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`, consumers para
 Fórum, LMS, Wiki, Loja e Doações, agregação da central e entrega por e-mail
 direto ou digest sem substituir os storages existentes. O Fórum preserva
@@ -87,11 +87,11 @@ direto ou digest sem substituir os storages existentes. O Fórum preserva
 momento de abrir e entregar. Preferências individuais são limitadas pela
 política administrativa, e avisos no site continuam obrigatórios.
 
-Validação automatizada recente: Unit Messenger **316 testes / 2.569
+Validação automatizada recente: Unit Messenger **318 testes / 2.577
 assertions PASS**; Integration (incluindo Kernels MariaDB) **98 testes / 1.173
 assertions PASS**, com 2 deprecações de annotations do Core/contrib e 7 notices
-de PHPUnit; testes focados de preferências **54/619 PASS**. O formulário de
-primeira mensagem passa PHPCS Drupal/DrupalPractice. Testes visuais não foram
+de PHPUnit; testes focados de preferências **54/619 PASS**. Os controllers de
+abertura revalidam acesso ao marcar avisos Wiki e Loja como lidos. Testes visuais não foram
 executados nesta sessão: `DISPLAY` não estava definido e Firefox/geckodriver já
 tinham sessões ativas. SMTP real e homologação no Runtime continuam pendentes.
 

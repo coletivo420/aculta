@@ -35,8 +35,8 @@ final class CommerceOrderNoticeOpenController {
       return new Response('', Response::HTTP_NO_CONTENT, ['Cache-Control' => 'private, no-store']);
     }
     if (MemberInitiatedRequest::isMemberInitiated($request)
-      && !(bool) $message->get('field_aculta_commerce_read')->value) {
-      $message->set('field_aculta_commerce_read', 1)->save();
+      && !$this->notices->setRead($message, $this->currentUser, TRUE)) {
+      throw new NotFoundHttpException();
     }
     return new TrustedRedirectResponse($resolved['url']->toString(), Response::HTTP_FOUND, [
       'Cache-Control' => 'private, no-store',

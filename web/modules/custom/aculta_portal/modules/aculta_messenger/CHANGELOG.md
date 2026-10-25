@@ -1,3 +1,15 @@
+## 0.1.1-dev.314 — revalidar acesso ao marcar avisos Wiki e Loja como lidos
+
+Os controllers agora delegam a gravação ao contrato `setRead()` dos respectivos
+managers. A autorização da fonte e a titularidade do aviso são verificadas no
+momento da mutação; se o acesso tiver sido revogado depois da resolução do
+destino, a abertura é recusada.
+
+Validação: `NoticeOpenControllerSafetyTest` **7 testes / 41 assertions PASS**;
+Unit Messenger **318 testes / 2.577 assertions PASS**; Integration com MariaDB
+dedicado **98 testes / 1.173 assertions PASS** (2 deprecações Core/contrib, 7
+notices PHPUnit); PHPCS Drupal/DrupalPractice e PHP lint PASS.
+
 ## 0.1.1-dev.313 — alinhar formulário de nova conversa aos padrões Drupal
 
 O formulário de primeira mensagem recebeu PHPDocs completos e arrays/comentários

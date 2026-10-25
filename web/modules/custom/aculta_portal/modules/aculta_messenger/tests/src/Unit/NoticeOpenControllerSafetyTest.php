@@ -13,13 +13,13 @@ use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Wiki\Controller\WikiNoticeOpenController;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Url;
 use Drupal\message\MessageInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Ensures automatic requests do not mark source notices as read.
@@ -44,20 +44,16 @@ final class NoticeOpenControllerSafetyTest extends UnitTestCase {
 
     $wiki = $this->createMock(WikiNoticeManagerInterface::class);
     $wiki->method('resolve')->willReturn(['url' => $this->targetUrl()]);
-    $wikiRead = $this->field(FALSE);
-    $wikiMessage = $this->ownedMessageWithField('field_aculta_wiki_read', $wikiRead);
-    $wikiMessage->expects(self::once())->method('set')->with('field_aculta_wiki_read', 1)->willReturnSelf();
-    $wikiMessage->expects(self::once())->method('save')->willReturn(1);
+    $wiki->expects(self::once())->method('setRead')->with(self::anything(), $account, TRUE)->willReturn(TRUE);
+    $wikiMessage = $this->ownedMessage();
     $wikiResponse = (new WikiNoticeOpenController($wiki, $account, $request))->open($wikiMessage);
     self::assertSame(302, $wikiResponse->getStatusCode());
     self::assertSame('no-store, private', $wikiResponse->headers->get('Cache-Control'));
 
     $commerce = $this->createMock(CommerceOrderNoticeManagerInterface::class);
     $commerce->method('resolve')->willReturn(['url' => $this->targetUrl()]);
-    $commerceRead = $this->field(FALSE);
-    $commerceMessage = $this->ownedMessageWithField('field_aculta_commerce_read', $commerceRead);
-    $commerceMessage->expects(self::once())->method('set')->with('field_aculta_commerce_read', 1)->willReturnSelf();
-    $commerceMessage->expects(self::once())->method('save')->willReturn(1);
+    $commerce->expects(self::once())->method('setRead')->with(self::anything(), $account, TRUE)->willReturn(TRUE);
+    $commerceMessage = $this->ownedMessage();
     $commerceResponse = (new CommerceOrderNoticeOpenController($commerce, $account, $request))->open($commerceMessage);
     self::assertSame(302, $commerceResponse->getStatusCode());
     self::assertSame('no-store, private', $commerceResponse->headers->get('Cache-Control'));
@@ -123,30 +119,38 @@ final class NoticeOpenControllerSafetyTest extends UnitTestCase {
   }
 
   /**
+   * Wiki denies a read mutation if access changed after resolution.
+   */
+  public function testWikiRejectsReadWhenAccessChangesAfterResolve(): void {
+    $account = $this->account();
+    $manager = $this->createMock(WikiNoticeManagerInterface::class);
+    $manager->method('resolve')->willReturn(['url' => $this->targetUrl()]);
+    $manager->expects(self::once())->method('setRead')->with(self::anything(), $account, TRUE)->willReturn(FALSE);
+    $this->expectException(NotFoundHttpException::class);
+
+    (new WikiNoticeOpenController($manager, $account, $this->requestStack('')))->open($this->ownedMessage());
+  }
+
+  /**
+   * Commerce denies a read mutation if access changed after resolution.
+   */
+  public function testCommerceRejectsReadWhenAccessChangesAfterResolve(): void {
+    $account = $this->account();
+    $manager = $this->createMock(CommerceOrderNoticeManagerInterface::class);
+    $manager->method('resolve')->willReturn(['url' => $this->targetUrl()]);
+    $manager->expects(self::once())->method('setRead')->with(self::anything(), $account, TRUE)->willReturn(FALSE);
+    $this->expectException(NotFoundHttpException::class);
+
+    (new CommerceOrderNoticeOpenController($manager, $account, $this->requestStack('')))->open($this->ownedMessage());
+  }
+
+  /**
    * Creates an owned Message fixture.
    */
   private function ownedMessage(): MessageInterface {
     $message = $this->createMock(MessageInterface::class);
     $message->method('getOwnerId')->willReturn(42);
     return $message;
-  }
-
-  /**
-   * Creates an owned Message fixture with one field value.
-   */
-  private function ownedMessageWithField(string $fieldName, FieldItemListInterface $field): MessageInterface {
-    $message = $this->ownedMessage();
-    $message->method('get')->with($fieldName)->willReturn($field);
-    return $message;
-  }
-
-  /**
-   * Creates a scalar field item fixture.
-   */
-  private function field(mixed $value): FieldItemListInterface {
-    $field = $this->createMock(FieldItemListInterface::class);
-    $field->method('__get')->with('value')->willReturn($value);
-    return $field;
   }
 
   /**
