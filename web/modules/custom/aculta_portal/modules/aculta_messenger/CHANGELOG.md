@@ -1,3 +1,20 @@
+## 0.1.1-dev.355 — recuperar digest após encerramento abrupto do worker
+
+Kernel MariaDB agora mata um processo Drupal independente depois que o ACULTA
+Mailer registra o e-mail como aceito e antes do Messenger gravar `accepted_at`.
+O processo seguinte expira somente a lease fixture, reconhece o Mail Log e
+confirma o manifesto sem repetir a chamada ao transporte. A fixture de
+transporte conta tentativas entre processos por arquivo temporário; nenhum SMTP
+externo é usado.
+
+Validação: `AvisosResumoMailerKernelTest` **5/89 PASS**; Kernel completo do
+Messenger **55/1.160 PASS** (10 depreciações upstream e 4 notices PHPUnit),
+Unit **360/3.928 PASS**, Integration **107/1.336 PASS** (5 depreciações
+upstream e 7 notices). PHPCS Drupal/DrupalPractice, PHP lint, índice de status
+e gate Drupal 11+ **1.155 checks PASS**. SMTP real, Runtime e Alpha não foram
+executados. A janela entre aceite remoto SMTP e persistência do Mail Log segue
+não transacional.
+
 ## 0.1.1-dev.354 — retry da fila Wiki pelo Core Cron
 
 O Kernel da fila Wiki agora registra o plugin de teste no queue worker manager e

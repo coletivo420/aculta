@@ -413,6 +413,158 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
   }
 
   /**
+   * Recovers an accepted digest after the sending PHP process is killed.
+   */
+  public function testAcceptedDigestRecoversAfterAbruptWorkerTermination(): void {
+    if (!function_exists('posix_kill') || !function_exists('proc_open')) {
+      self::markTestSkipped('POSIX process control and proc_open are required for the crash-recovery test.');
+    }
+
+    $account = User::create([
+      'name' => 'digest_worker_crash',
+      'mail' => 'digest-crash@example.test',
+      'status' => 1,
+      'langcode' => 'pt-br',
+      'preferred_langcode' => 'pt-br',
+    ]);
+    $account->save();
+    $uid = (int) $account->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    (new AvisoPreferencias($userData))->saveEmailMode($uid, 'wiki', AvisoPreferencias::EMAIL_DIGEST);
+
+    $database = $this->container->get('database');
+    $provider = new DigestRecoveryProvider($uid, $database);
+    $barrierDirectory = sys_get_temp_dir() . '/aculta-digest-crash-' . bin2hex(random_bytes(8));
+    if (!mkdir($barrierDirectory, 0700) && !is_dir($barrierDirectory)) {
+      throw new \RuntimeException('Could not create the digest crash marker directory.');
+    }
+
+    $originalEnvironment = [];
+    $transportCountMarker = $barrierDirectory . '/transport-count';
+    foreach ([
+      'ACULTA_DIGEST_RECIPIENT_UID',
+      'ACULTA_DIGEST_SHARED_TEST_PREFIX',
+      'ACULTA_DIGEST_CRASH_MARKER',
+      'ACULTA_DIGEST_CRASH_COUNT_MARKER',
+    ] as $name) {
+      $originalEnvironment[$name] = getenv($name);
+    }
+    putenv('ACULTA_DIGEST_RECIPIENT_UID=' . $uid);
+    putenv('ACULTA_DIGEST_SHARED_TEST_PREFIX=' . $database->getPrefix());
+    putenv('ACULTA_DIGEST_CRASH_MARKER=' . $barrierDirectory . '/accepted');
+    putenv('ACULTA_DIGEST_CRASH_COUNT_MARKER=' . $transportCountMarker);
+
+    $pipes = [];
+    $process = NULL;
+    try {
+      $projectRoot = dirname(DRUPAL_ROOT);
+      $workerFixture = 'web/modules/custom/aculta_portal/modules/aculta_messenger/tests/fixtures/DigestCrashWorkerKernelTest.php';
+      $process = proc_open([
+        PHP_BINARY,
+        $projectRoot . '/vendor/bin/phpunit',
+        '-c',
+        $projectRoot . '/web/core/phpunit.xml.dist',
+        $projectRoot . '/' . $workerFixture,
+      ], [
+        0 => ['pipe', 'r'],
+        1 => ['pipe', 'w'],
+        2 => ['pipe', 'w'],
+      ], $pipes, $projectRoot);
+      self::assertIsResource($process);
+      fclose($pipes[0]);
+      stream_set_blocking($pipes[1], FALSE);
+      stream_set_blocking($pipes[2], FALSE);
+      [$stdout, $stderr, $exitCode] = $this->collectWorkerProcess($process, $pipes);
+      $process = NULL;
+
+      self::assertFileExists($barrierDirectory . '/accepted', 'The independent worker must die after Mailer acceptance.');
+      self::assertNotSame(0, $exitCode, 'The worker process is expected to terminate before digest acknowledgement.');
+
+      $mailLogStorage = $this->container->get('entity_type.manager')->getStorage('aculta_mail_log');
+      $acceptedLogs = $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]);
+      self::assertCount(1, $acceptedLogs, 'The real Mailer acceptance must be durable before the worker is killed. ' . trim($stderr . "\n" . $stdout));
+      self::assertSame('sent', reset($acceptedLogs)->get('status')->value);
+      $snapshot = $userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
+      self::assertIsArray($snapshot);
+      self::assertArrayNotHasKey('accepted_at', $snapshot, 'The worker died before writing its acceptance marker.');
+      self::assertSame(0, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
+        ->fields('digest', ['acknowledged'])
+        ->condition('id', 1)
+        ->execute()
+        ->fetchField());
+      self::assertSame("sent\n", file_get_contents($transportCountMarker));
+
+      $GLOBALS['config']['system.mail']['interface']['default'] = 'aculta_digest_crash_test';
+      $this->container->get('config.factory')->reset('system.mail');
+
+      // SIGKILL leaves the persistent recipient lease behind. Expire only this
+      // isolated test lock so a fresh worker can exercise Mail Log recovery.
+      $database->update('semaphore')
+        ->fields(['expire' => microtime(TRUE) - 1])
+        ->condition('name', 'aculta_messenger.avisos_resumo.' . $uid)
+        ->execute();
+
+      $entityTypeManager = $this->container->get('entity_type.manager');
+      $access = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+      $access->method('supportsTopic')->willReturn(FALSE);
+      $avisos = new AvisoService(
+        $entityTypeManager,
+        $this->createMock(FlagServiceInterface::class),
+        $access,
+        $database,
+        $this->container->get('datetime.time'),
+        $this->container->get('lock'),
+      );
+      $summary = new AvisosResumo(
+        $entityTypeManager,
+        new AvisoPreferencias($userData),
+        $this->container->get('aculta_mailer.mailer'),
+        new EmailConfirmationPolicy($userData, $entityTypeManager, $this->container->get('module_handler')),
+        $userData,
+        $this->container->get('datetime.time'),
+        $avisos,
+        $this->container->get('settings'),
+        $database,
+        $this->container->get('lock.persistent'),
+        [$provider],
+      );
+
+      self::assertSame(0, $summary->enviarResumos(), 'Recovery acknowledges the accepted manifest without sending a new email.');
+      self::assertSame(1, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
+        ->fields('digest', ['acknowledged'])
+        ->condition('id', 1)
+        ->execute()
+        ->fetchField());
+      self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
+      self::assertSame("sent\n", file_get_contents($transportCountMarker), 'Recovery must not call the transport twice.');
+      self::assertCount(1, $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
+    }
+    finally {
+      if (is_resource($process)) {
+        proc_terminate($process);
+        foreach ($pipes as $pipe) {
+          if (is_resource($pipe)) {
+            fclose($pipe);
+          }
+        }
+        proc_close($process);
+      }
+      foreach ($originalEnvironment as $name => $value) {
+        if ($value === FALSE) {
+          putenv($name);
+        }
+        else {
+          putenv($name . '=' . $value);
+        }
+      }
+      @unlink($barrierDirectory . '/accepted');
+      @unlink($transportCountMarker);
+      @rmdir($barrierDirectory);
+    }
+  }
+
+  /**
    * Proves two independent Drupal boots serialize a digest for one recipient.
    */
   public function testIndependentDrupalWorkersDoNotSendConcurrentDigests(): void {
