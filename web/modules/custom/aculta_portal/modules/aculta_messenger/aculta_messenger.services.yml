@@ -63,7 +63,7 @@ services:
       - '@private_message.ban_manager'
       - '@aculta_user.friendship_manager'
       - '@user.data'
-      - '@lock.persistent'
+      - '@lock'
       - '@aculta_messenger.conversation_policy'
       - '@aculta_messenger.conversation_write_lock'
       - '@entity_type.manager'
@@ -90,7 +90,7 @@ services:
 
   aculta_messenger.conversation_write_lock:
     class: Drupal\aculta_messenger\Service\ConversationWriteLock
-    arguments: ['@lock.persistent', '@entity_type.manager']
+    arguments: ['@lock', '@entity_type.manager']
 
   aculta_messenger.conversation_messaging:
     class: Drupal\aculta_messenger\Service\ConversationMessagingState
@@ -116,7 +116,7 @@ services:
     arguments: ['@aculta_messenger.forum_notice_email_outbox']
   aculta_messenger.friendship_notice_queue:
     class: Drupal\aculta_messenger\Friendship\FriendshipNoticeQueue
-    arguments: ['@entity_type.manager', '@queue', '@lock.persistent', '@datetime.time', '@logger.channel.aculta_messenger']
+    arguments: ['@entity_type.manager', '@queue', '@lock', '@datetime.time', '@logger.channel.aculta_messenger']
   Drupal\aculta_messenger\Mail\ForumNoticeMailType:
     class: Drupal\aculta_messenger\Mail\ForumNoticeMailType
     arguments: ['@string_translation']
@@ -164,7 +164,7 @@ services:
     arguments: ['@current_user', '@entity_type.manager', '@flag', '@aculta_portal.domain_purpose', '@messenger']
   aculta_messenger.avisos_resumo:
     class: Drupal\aculta_messenger\Aviso\AvisosResumo
-    arguments: ['@entity_type.manager', '@aculta_messenger.aviso_preferencias', '@aculta_mailer.mailer', '@aculta_portal.email_confirmation_policy', '@user.data', '@datetime.time', '@aculta_messenger.aviso_service', '@settings', '@database', '@lock.persistent', !tagged_iterator aculta_messenger.aviso_digest_provider, '@logger.channel.aculta_messenger']
+    arguments: ['@entity_type.manager', '@aculta_messenger.aviso_preferencias', '@aculta_mailer.mailer', '@aculta_portal.email_confirmation_policy', '@user.data', '@datetime.time', '@aculta_messenger.aviso_service', '@settings', '@database', '@lock', !tagged_iterator aculta_messenger.aviso_digest_provider, '@logger.channel.aculta_messenger']
 
   aculta_messenger.avisos_resumo_mail_type:
     class: Drupal\aculta_messenger\Mail\AvisosResumoMailType
@@ -173,7 +173,7 @@ services:
       - { name: aculta_mailer.type }
   aculta_messenger.friendship_notice_subscriber:
     class: Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber
-    arguments: ['@entity_type.manager', '@lock.persistent', '@aculta_messenger.friendship_notice_queue', '@logger.channel.aculta_messenger']
+    arguments: ['@entity_type.manager', '@lock', '@aculta_messenger.friendship_notice_queue', '@logger.channel.aculta_messenger']
     tags:
       - { name: event_subscriber }
   aculta_messenger.friendship_notice_event_producer:

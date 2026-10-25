@@ -16,11 +16,12 @@ use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\Lock\DatabaseLockBackend;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Kills an independent Drupal worker after the Mailer persists acceptance.
+ * Interrupts an independent Drupal worker after the Mailer persists acceptance.
  *
  * This fixture is invoked by AvisosResumoMailerKernelTest and shares its
  * isolated MariaDB prefix. It must not be discovered as a regular test.
@@ -54,6 +55,14 @@ final class DigestCrashWorkerKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->container->set('lock', new DatabaseLockBackend($this->container->get('database')));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function getDatabaseConnectionInfo() {
     $connectionInfo = parent::getDatabaseConnectionInfo();
     $prefix = getenv('ACULTA_DIGEST_SHARED_TEST_PREFIX');
@@ -73,8 +82,13 @@ final class DigestCrashWorkerKernelTest extends KernelTestBase {
   public function testWorkerDiesAfterMailerAcceptance(): void {
     $uid = (int) getenv('ACULTA_DIGEST_RECIPIENT_UID');
     $marker = getenv('ACULTA_DIGEST_CRASH_MARKER');
+    $suspendAfterAcceptance = getenv('ACULTA_DIGEST_SUSPEND_AFTER_ACCEPTANCE') === '1';
+    $resumeMarker = getenv('ACULTA_DIGEST_RESUME_MARKER');
     if ($uid < 1 || !is_string($marker) || $marker === '') {
       throw new \RuntimeException('The digest crash worker arguments are incomplete.');
+    }
+    if ($suspendAfterAcceptance && (!is_string($resumeMarker) || $resumeMarker === '')) {
+      throw new \RuntimeException('The suspended digest worker resume marker is missing.');
     }
 
     $GLOBALS['config']['system.mail']['interface']['default'] = 'aculta_digest_crash_test';
@@ -95,11 +109,18 @@ final class DigestCrashWorkerKernelTest extends KernelTestBase {
       $this->container->get('lock'),
     );
     $realMailer = $this->container->get('aculta_mailer.mailer');
-    $mailer = new class($realMailer, $marker) implements AcultaMailerInterface {
+    $mailer = new class(
+      $realMailer,
+      $marker,
+      $suspendAfterAcceptance,
+      is_string($resumeMarker) ? $resumeMarker : NULL,
+    ) implements AcultaMailerInterface {
 
       public function __construct(
         private readonly AcultaMailerInterface $inner,
         private readonly string $marker,
+        private readonly bool $suspendAfterAcceptance,
+        private readonly ?string $resumeMarker,
       ) {}
 
       /**
@@ -115,8 +136,19 @@ final class DigestCrashWorkerKernelTest extends KernelTestBase {
       public function deliver(MailMessage $message, ?string $transport = NULL): SendResult {
         $result = $this->inner->deliver($message, $transport);
         if ($result->sent) {
-          if (file_put_contents($this->marker, 'accepted', LOCK_EX) === FALSE) {
+          $markerValue = $this->suspendAfterAcceptance ? (string) getmypid() : 'accepted';
+          if (!$this->writeMarker($this->marker, $markerValue)) {
             throw new \RuntimeException('Could not write the post-acceptance marker.');
+          }
+          if ($this->suspendAfterAcceptance) {
+            $deadline = microtime(TRUE) + 45;
+            while (!is_file($this->resumeMarker)) {
+              if (microtime(TRUE) >= $deadline) {
+                throw new \RuntimeException('Timed out waiting for the suspended digest worker to resume.');
+              }
+              usleep(10_000);
+            }
+            return $result;
           }
           posix_kill(getmypid(), SIGKILL);
           // SIGKILL cannot be handled; keep the fixture from accidentally
@@ -135,6 +167,21 @@ final class DigestCrashWorkerKernelTest extends KernelTestBase {
         return $this->inner->wasAcceptedCorrelation($correlationId, $type, $recipient);
       }
 
+      /**
+       * Publishes the worker PID or acceptance marker atomically.
+       */
+      private function writeMarker(string $path, string $value): bool {
+        $temporaryPath = $path . '.' . getmypid() . '.' . bin2hex(random_bytes(4));
+        if (file_put_contents($temporaryPath, $value, LOCK_EX) === FALSE) {
+          return FALSE;
+        }
+        if (!rename($temporaryPath, $path)) {
+          @unlink($temporaryPath);
+          return FALSE;
+        }
+        return TRUE;
+      }
+
     };
     $summary = new AvisosResumo(
       $entityTypeManager,
@@ -146,11 +193,11 @@ final class DigestCrashWorkerKernelTest extends KernelTestBase {
       $avisos,
       $this->container->get('settings'),
       $database,
-      $this->container->get('lock.persistent'),
+      $this->container->get('lock'),
       [$provider],
     );
 
-    self::assertSame(1, $summary->enviarResumos());
+    self::assertSame($suspendAfterAcceptance ? 0 : 1, $summary->enviarResumos());
   }
 
   /**

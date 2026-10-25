@@ -93,10 +93,11 @@ final class AcultaMailer implements AcultaMailerInterface {
       return SendResult::failed(DeliveryError::Temporary, NULL);
     }
 
-    // The digest caller lock serializes one account. This Mailer-level lock
-    // also protects other idempotent callers and separate workers that race
-    // on the same correlation. The second caller fails retryably rather than
-    // sending while the first transport is still in flight.
+    // A per-process lock serializes duplicate correlation deliveries. The
+    // digest caller lock serializes one account. This Mailer-level lock also
+    // protects other idempotent callers and separate workers that race on the
+    // same correlation. The second caller fails retryably rather than sending
+    // while the first transport is still in flight.
     $lockName = 'aculta_mailer.delivery.' . hash('sha256', $message->correlationId);
     if (!$this->lock->acquire($lockName, self::IDEMPOTENCY_LOCK_LEASE)) {
       if ($this->log->wasAccepted($message)) {

@@ -1,3 +1,21 @@
+## 0.1.1-dev.395 — corrigir propriedade de locks durante digest e entrega
+
+Um teste com worker suspenso após aceite do Mailer encontrou uma falha real:
+`lock.persistent` usa o mesmo identificador entre requisições e permitia que o
+worker antigo renovasse uma lease já assumida por outro processo. Serviços
+temporários de digest, filas, conversas e idempotência do Mailer agora usam o
+serviço Drupal `lock`, cujo proprietário é específico ao processo. A cobertura
+Kernel substitui o backend nulo do `KernelTestBase` por `DatabaseLockBackend`.
+O teste suspende o worker, expira a lease somente no banco SimpleTest, assume-a
+com outro proprietário e retoma o processo: o worker antigo não confirma o
+manifesto, e a reconciliação posterior confirma o aceite sem novo transporte.
+
+Validação focal `AvisosResumoMailerKernelTest`: **6/133 PASS**. Kernels
+combinados Messenger + Mailer: **101/1.421 PASS**, com dez depreciações de
+Core/contrib e quatro notices PHPUnit preexistentes. Testes usam somente
+`aculta_simpletest` e transporte Drupal de teste; SMTP e Runtime não foram
+usados.
+
 ## 0.1.1-dev.394 — estabilizar contenção concorrente do digest
 
 O marcador de conclusão usado pelo teste de oito workers agora é publicado

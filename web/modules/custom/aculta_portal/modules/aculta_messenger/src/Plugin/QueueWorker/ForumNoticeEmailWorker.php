@@ -76,7 +76,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
       $container->get('aculta_portal.email_confirmation_policy'),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('aculta_mailer.mailer'),
-      $container->get('lock.persistent'),
+      $container->get('lock'),
     );
   }
 

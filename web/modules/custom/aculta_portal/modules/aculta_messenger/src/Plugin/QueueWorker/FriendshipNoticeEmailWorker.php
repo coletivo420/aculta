@@ -72,7 +72,7 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
       $container->get('message_notify.sender'),
       $container->get('aculta_mailer.mailer'),
       $container->get('aculta_portal.domain_purpose'),
-      $container->get('lock.persistent'),
+      $container->get('lock'),
       $container->get('aculta_messenger.aviso_preferencias'),
       $container->get('aculta_portal.email_confirmation_policy'),
     );
