@@ -1,3 +1,12 @@
+## 0.1.1-dev.372 — busca e composição local de grupo
+
+Adicionado smoke autenticado somente leitura para a tela compartilhada de
+nova conversa: busca por nome público, seleção por Enter e clique, chips
+distintos, remoção acessível, limite configurado e formulário sem submissão.
+No Runtime de teste, Firefox ESR visível passou **10/10** em viewport efetivo
+1270 px. Todas as chamadas registradas foram GET 200; sem overflow ou erros
+JavaScript. A sessão não criou conversa nem alterou dados.
+
 ## 0.1.1-dev.371 — responsividade da gaveta de conversas
 
 Repetido o smoke autenticado somente leitura com janela solicitada de 390 px.
