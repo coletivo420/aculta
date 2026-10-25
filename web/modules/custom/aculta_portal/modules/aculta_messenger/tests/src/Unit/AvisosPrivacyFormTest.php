@@ -61,6 +61,9 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
       'email_doacao',
     ] as $element) {
       self::assertSame($expectedOptions, array_keys($form['avisos'][$element]['#options']), $element);
+      self::assertStringContainsString('O aviso no site permanece ativo.', $form['avisos'][$element]['#description']->getUntranslatedString(), $element);
+      self::assertStringContainsString('O resumo diário também exige o opt-in geral acima', $form['avisos'][$element]['#description']->getUntranslatedString(), $element);
+      self::assertStringContainsString('o envio direto não depende dele', $form['avisos'][$element]['#description']->getUntranslatedString(), $element);
     }
     self::assertArrayHasKey('resumo_email', $form['avisos'], 'Digest delivery remains a distinct general opt-in.');
     self::assertArrayHasKey('aviso_sempre', $form['avisos'], 'Site notices remain mandatory.');

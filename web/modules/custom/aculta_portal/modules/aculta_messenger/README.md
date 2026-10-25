@@ -50,6 +50,9 @@ removida; avisos no site continuam obrigatórios. Uma preferência individual
 temporariamente bloqueada pela política administrativa passa a valer novamente
 se o modo voltar a ser permitido.
 
+O opt-in geral de resumo diário habilita somente a inclusão de avisos no digest;
+ele não altera o envio direto, configurado separadamente em cada categoria.
+
 Na aba Avisos da central da conta, filtros GET permitem selecionar origem
 (Comunicados, Fórum, Alertas, Aprendizagem, Wiki, Loja, Doações ou Conta) e
 estado de leitura. A seleção roda no Messenger depois que os adapters contribuem;
@@ -65,7 +68,7 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.223` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento atual `0.1.1-dev.234` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação

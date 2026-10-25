@@ -1,3 +1,12 @@
+## 0.1.1-dev.234 — esclarecer as opções de digest e envio direto
+
+A tela de privacidade agora informa, para Fórum, Aprendizagem, Wiki, Loja e Doações, que o digest diário exige também
+o opt-in geral, enquanto o envio direto é controlado somente pela preferência da categoria. O aviso no site permanece
+obrigatório. O controle geral foi descrito como opt-in de resumo, não de envio direto.
+
+Validação: `AvisosPrivacyFormTest` **6 testes / 79 assertions PASS**; central/preferências **39/250 PASS**; workers
+diretos por origem **27/362 PASS**; execução combinada **66/612 PASS**. Runtime e SMTP externo não executados.
+
 ## 0.1.1-dev.233 — verificar políticas administrativas por origem
 
 `AvisoPreferenciasTest` agora aplica ambas as restrições administrativas (desligar envio direto e desligar resumo)
