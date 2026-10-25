@@ -29,6 +29,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
+use Drupal\workflows\Entity\Workflow;
 use Drupal\flag\FlagServiceInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -45,6 +46,7 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
    * {@inheritdoc} */
   protected static $modules = [
     'system', 'user', 'field', 'text', 'filter', 'options', 'message', 'node',
+    'workflows', 'content_moderation',
   ];
 
   /**
@@ -55,21 +57,39 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
     $this->installSchema('user', ['users_data']);
     $this->installEntitySchema('message');
     $this->installEntitySchema('node');
+    $this->installEntitySchema('content_moderation_state');
     $this->installSchema('node', ['node_access']);
-    $this->installConfig(['system', 'user', 'filter', 'message', 'node']);
+    $this->installConfig(['system', 'user', 'filter', 'message', 'node', 'workflows', 'content_moderation']);
     NodeType::create(['type' => 'revista', 'name' => 'Revista', 'new_revision' => TRUE])->save();
-    FieldStorageConfig::create([
-      'entity_type' => 'node',
-      'field_name' => 'moderation_state',
-      'type' => 'string',
-      'settings' => ['max_length' => 32],
-    ])->save();
-    FieldConfig::create([
-      'entity_type' => 'node',
-      'field_name' => 'moderation_state',
-      'bundle' => 'revista',
-      'label' => 'Estado editorial',
-    ])->save();
+    $workflow = Workflow::create([
+      'id' => 'revista',
+      'type' => 'content_moderation',
+      'label' => 'Editorial da Revista',
+      'type_settings' => [
+        'states' => [
+          'draft' => ['label' => 'Rascunho', 'published' => FALSE, 'default_revision' => FALSE, 'weight' => 0],
+          'review' => ['label' => 'Em revisão', 'published' => FALSE, 'default_revision' => FALSE, 'weight' => 1],
+          'published' => ['label' => 'Publicado', 'published' => TRUE, 'default_revision' => TRUE, 'weight' => 2],
+        ],
+        'transitions' => [
+          'draft_to_review' => ['label' => 'Enviar para revisão', 'from' => ['draft'], 'to' => 'review', 'weight' => 0],
+          'review_to_draft' => [
+            'label' => 'Devolver para ajustes',
+            'from' => ['review'],
+            'to' => 'draft',
+            'weight' => 1,
+          ],
+          'publish' => [
+            'label' => 'Publicar',
+            'from' => ['draft', 'review', 'published'],
+            'to' => 'published',
+            'weight' => 2,
+          ],
+        ],
+      ],
+    ]);
+    $workflow->getTypePlugin()->addEntityTypeAndBundle('node', 'revista');
+    $workflow->save();
     MessageTemplate::create([
       'template' => MagazineNoticeManager::TEMPLATE,
       'label' => 'Aviso da Revista',
@@ -171,6 +191,120 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * Editorial submission alerts eligible authors with access to the revision. */
+  public function testPublisherTargetsAuthorWhenReviewRevisionIsSubmitted(): void {
+    $author = $this->createActiveUser();
+    $editor = $this->createActiveUser();
+    $node = Node::create([
+      'type' => 'revista',
+      'title' => 'Rascunho editorial',
+      'uid' => $author->id(),
+      'revision_uid' => $editor->id(),
+      'status' => 1,
+      'moderation_state' => 'published',
+    ]);
+    $node->save();
+    $node->setNewRevision(TRUE);
+    $node->setRevisionUserId((int) $author->id());
+    $node->set('moderation_state', 'draft');
+    $node->save();
+    $original = clone $node;
+    $node->setNewRevision(TRUE);
+    $node->setRevisionUserId((int) $editor->id());
+    $node->set('moderation_state', 'review');
+    $node->save();
+    $node->setOriginal($original);
+
+    self::assertSame('draft', $node->getOriginal()?->get('moderation_state')->value);
+    self::assertSame('review', $node->get('moderation_state')->value);
+    self::assertTrue($node->access('view', $author, TRUE)->isAllowed());
+    $domainPurposes = $this->domainPurposeManager();
+    $url = $domainPurposes->routeUrl('magazine', 'entity.node.latest_version', ['node' => $node->id()]);
+    self::assertNotNull($url);
+    $revisionAccess = $domainPurposes->runInPurpose('magazine', static fn() => $url->access($author, TRUE));
+    self::assertTrue($revisionAccess->isAllowed());
+
+    $this->editorialProducer($author, 'review_submitted')->entityUpdate($node);
+  }
+
+  /**
+   * Editorial event preferences can suppress a review submission notice. */
+  public function testEditorialSubmissionCanBeDisabledByAdministrator(): void {
+    $author = $this->createActiveUser();
+    $editor = $this->createActiveUser();
+    $node = Node::create([
+      'type' => 'revista',
+      'title' => 'Rascunho sem aviso',
+      'uid' => $author->id(),
+      'revision_uid' => $editor->id(),
+      'status' => 0,
+      'moderation_state' => 'draft',
+    ]);
+    $node->save();
+    $original = clone $node;
+    $node->setNewRevision(TRUE);
+    $node->setRevisionUserId((int) $editor->id());
+    $node->set('moderation_state', 'review');
+    $node->save();
+    $node->setOriginal($original);
+
+    $this->editorialProducer($author, 'review_submitted', FALSE)->entityUpdate($node);
+  }
+
+  /**
+   * Editorial return alerts the author after an editor requests changes. */
+  public function testPublisherTargetsAuthorWhenReviewIsReturned(): void {
+    $author = $this->createActiveUser();
+    $editor = $this->createActiveUser();
+    $node = Node::create([
+      'type' => 'revista',
+      'title' => 'Publicação em revisão',
+      'uid' => $author->id(),
+      'revision_uid' => $editor->id(),
+      'status' => 0,
+      'moderation_state' => 'draft',
+    ]);
+    $node->save();
+    $node->setNewRevision(TRUE);
+    $node->setRevisionUserId((int) $editor->id());
+    $node->set('moderation_state', 'review');
+    $node->save();
+    $review = clone $node;
+    $node->setNewRevision(TRUE);
+    $node->setRevisionUserId((int) $editor->id());
+    $node->set('moderation_state', 'draft');
+    $node->save();
+    $node->setOriginal($review);
+
+    $this->editorialProducer($author, 'review_returned')->entityUpdate($node);
+  }
+
+  /**
+   * Stores and opens an editorial notice on an unpublished default revision. */
+  public function testEditorialNoticeUsesAuthorizedCanonicalRoute(): void {
+    $author = $this->createActiveUser();
+    $node = Node::create([
+      'type' => 'revista',
+      'title' => 'Rascunho devolvido',
+      'uid' => $author->id(),
+      'status' => 0,
+      'moderation_state' => 'draft',
+    ]);
+    $node->save();
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_OFF);
+    $manager = $this->manager($preferences);
+
+    $message = $manager->record($this->editorialEvent($author, $node, 'review_returned'));
+
+    self::assertNotNull($message);
+    $resolved = $manager->resolve($message, $author);
+    self::assertNotNull($resolved);
+    self::assertSame('Uma publicação sua voltou da revisão editorial para ajustes.', (string) $resolved['summary']);
+    self::assertStringContainsString('/node/' . $node->id(), $resolved['url']->toString());
+  }
+
+  /**
    * Refuses a queued event after the source moved to another revision. */
   public function testStalePublicationRevisionIsNotPersisted(): void {
     $user = $this->createActiveUser();
@@ -217,6 +351,41 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * Creates a producer fixture and asserts its editorial event envelope. */
+  private function editorialProducer(User $author, string $noticeType, bool $enabled = TRUE): MagazineNoticeEventPublisher {
+    $settings = $this->createMock(Config::class);
+    $settings->method('get')->with('magazine_events.' . $noticeType)->willReturn($enabled);
+    $settingsFactory = $this->createMock(ConfigFactoryInterface::class);
+    $settingsFactory->method('get')->with('aculta_messenger.settings')->willReturn($settings);
+    $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
+    if ($enabled) {
+      $eventType = $noticeType === 'review_submitted'
+        ? 'magazine.editorial_review_submitted'
+        : 'magazine.editorial_review_returned';
+      $publisher->expects(self::once())->method('publish')->with(self::callback(static function (MessengerNoticeEvent $event) use ($author, $eventType, $noticeType): bool {
+        return $event->eventType() === $eventType
+          && $event->recipientUid() === (int) $author->id()
+          && $event->metadata()['notice_type'] === $noticeType
+          && $event->purpose() === 'magazine';
+      }));
+    }
+    else {
+      $publisher->expects(self::never())->method('publish');
+    }
+    $flags = $this->createMock(FlagServiceInterface::class);
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn(1_793_000_000);
+    return new MagazineNoticeEventPublisher(
+      $flags,
+      $this->domainPurposeManager(),
+      $this->container->get('entity_type.manager'),
+      $publisher,
+      $settingsFactory,
+      $time,
+    );
+  }
+
+  /**
    * Builds Domain Purpose context without enabling the Domain module. */
   private function domainPurposeManager(): DomainPurposeManager {
     $domain = $this->createMock(DomainInterface::class);
@@ -244,6 +413,8 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
       $role = Role::create(['id' => 'authenticated', 'label' => 'Authenticated']);
     }
     $role->grantPermission('access content')->save();
+    $role->grantPermission('view latest version')->save();
+    $role->grantPermission('view own unpublished content')->save();
     $user->save();
     return $user;
   }
@@ -275,6 +446,27 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
       'magazine',
       new \DateTimeImmutable('@' . $node->getChangedTime()),
       'magazine.publication_' . $noticeType . ':' . $node->uuid() . ':' . $node->getRevisionId() . ':' . $user->id(),
+      ['notice_type' => $noticeType, 'mail_policy' => 'user_preference'],
+    );
+  }
+
+  /**
+   * Creates the shared envelope for one editorial transition. */
+  private function editorialEvent(User $user, Node $node, string $noticeType): MessengerNoticeEvent {
+    $eventType = match ($noticeType) {
+      'review_submitted' => 'magazine.editorial_review_submitted',
+      'review_returned' => 'magazine.editorial_review_returned',
+    };
+    return new MessengerNoticeEvent(
+      $eventType,
+      'aculta_magazine',
+      'node',
+      $node->uuid(),
+      (string) $node->getRevisionId(),
+      (int) $user->id(),
+      'magazine',
+      new \DateTimeImmutable('@' . $node->getChangedTime()),
+      $eventType . ':' . $node->uuid() . ':' . $node->getRevisionId() . ':' . $user->id(),
       ['notice_type' => $noticeType, 'mail_policy' => 'user_preference'],
     );
   }

@@ -1,3 +1,14 @@
+## 0.5.0-dev.10 — eventos de transição editorial no Messenger
+
+- O publisher publica envio para revisão e devolução para ajustes pelo contrato
+  compartilhado do Messenger. A audiência são autores/coautores elegíveis, sem
+  autoaviso; os controles por evento ficam no Messenger.
+- O link de conteúdo usa a rota canônica quando a revisão editorial é padrão e
+  `entity.node.latest_version` somente para revisão pendente. Não há mensagem
+  contextual nem storage/e-mail local.
+- Kernel Magazine **9/208 PASS** e Unit Messenger/adapter **369/3.976** e
+  **3/6 PASS**. Runtime/SMTP não validados.
+
 ## 0.5.0-dev.9 — eventos de publicação no Messenger
 
 - Publicações públicas e revisões públicas posteriores podem gerar eventos

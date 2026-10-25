@@ -1,6 +1,6 @@
 # ACULTA Messenger
 
-Versão de desenvolvimento atual: **0.1.1-dev.357**. O roadmap e o changelog
+Versão de desenvolvimento atual: **0.1.1-dev.360**. O roadmap e o changelog
 registram o estado de cada incremento e as verificações executadas.
 
 Infraestrutura unificada do ACULTA Portal para avisos do site, notificações, assinaturas, e-mail integrado e conversas privadas voluntárias entre membros. A fonte de verdade de cada
@@ -143,10 +143,10 @@ Fórum, Aprendizagem, Wiki, Loja e Doações: a opção direta pode ser removida
 remover `off`, digest ou os avisos obrigatórios no site. `AvisosPrivacyFormTest`
 e os testes de preferência/configuração passaram em conjunto (12/76).
 
-MAG 0.5-H foi inventariada e a integração inicial da Revista está em
-`0.1.1-dev.357`: publicação/atualização, acompanhamento por Flag, consumer
-Message e categoria `revista` já estão implementados. Envio para revisão e
-resultado editorial continuam pendentes; estado e evidências estão em
+MAG 0.5-H foi inventariada e a integração da Revista está em
+`0.1.1-dev.360`: publicação/atualização e transições de envio/devolução
+editorial, acompanhamento por Flag, consumer Message e categoria `revista`
+estão implementados. Estado e evidências estão em
 [ROADMAP.md](docs/ROADMAP.md) e `aculta_magazine/docs/ARCHITECTURE.md` §11.
 
 O worker de atualização de tópicos usa o relógio injetável do Drupal no prazo

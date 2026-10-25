@@ -184,6 +184,18 @@ final class MessengerSettingsForm extends ConfigFormBase {
         '#description' => $this->t('Avisa coautores e seguidores quando uma nova revisão pública é salva.'),
         '#default_value' => $magazineEvents['updated'] ?? TRUE,
       ],
+      'review_submitted' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Envio para revisão editorial'),
+        '#description' => $this->t('Avisa autores e coautores elegíveis quando uma publicação entra em revisão.'),
+        '#default_value' => $magazineEvents['review_submitted'] ?? TRUE,
+      ],
+      'review_returned' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Devolução para ajustes'),
+        '#description' => $this->t('Avisa autores e coautores elegíveis quando uma publicação volta para ajustes.'),
+        '#default_value' => $magazineEvents['review_returned'] ?? TRUE,
+      ],
     ];
     return parent::buildForm($form, $form_state);
   }
@@ -221,6 +233,8 @@ final class MessengerSettingsForm extends ConfigFormBase {
       ->set('magazine_events', [
         'published' => (bool) $form_state->getValue(['magazine_events', 'published']),
         'updated' => (bool) $form_state->getValue(['magazine_events', 'updated']),
+        'review_submitted' => (bool) $form_state->getValue(['magazine_events', 'review_submitted']),
+        'review_returned' => (bool) $form_state->getValue(['magazine_events', 'review_returned']),
       ])
       ->save();
     parent::submitForm($form, $form_state);

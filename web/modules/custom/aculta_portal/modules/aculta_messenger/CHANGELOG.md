@@ -1,3 +1,20 @@
+## 0.1.1-dev.360 — avisos do fluxo editorial da Revista
+
+O adapter central agora recebe eventos de envio para revisão (`draft` →
+`review`) e devolução para ajustes (`review` → `draft`). A audiência editorial
+é restrita a autores/coautores autorizados e exclui quem executou a ação;
+seguidores continuam recebendo apenas eventos públicos. As opções de envio e
+devolução são independentes na administração. A abertura usa a rota canônica
+para revisões padrão ainda não publicadas e a rota de última versão somente
+quando existe revisão pendente acessível. A central reconhece a ação de leitura
+do bundle Message Revista.
+
+Validação: Kernel Revista **9 testes / 208 assertions PASS** no MariaDB
+dedicado; Unit Messenger **369 / 3.976 PASS**; Unit do adapter Revista **3 / 6
+PASS**. Foram reportadas duas depreciações upstream de descoberta `@EntityType`
+do Message/Core. Runtime, HTTP autenticado, SMTP real e visual permanecem
+pendentes.
+
 ## 0.1.1-dev.357 — primeira integração da Revista
 
 O núcleo Messenger agora possui o consumer e as configurações da origem Revista,

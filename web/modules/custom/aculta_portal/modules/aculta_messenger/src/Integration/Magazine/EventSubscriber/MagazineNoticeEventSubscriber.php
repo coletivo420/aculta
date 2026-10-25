@@ -29,10 +29,20 @@ final class MagazineNoticeEventSubscriber implements EventSubscriberInterface {
       || $event->sourceEntityType() !== 'node'
       || $event->purpose() !== 'magazine'
       || ($event->metadata()['mail_policy'] ?? NULL) !== 'user_preference'
-      || !in_array($event->eventType(), ['magazine.publication_published', 'magazine.publication_updated'], TRUE)) {
+      || !in_array($event->eventType(), [
+        'magazine.publication_published',
+        'magazine.publication_updated',
+        'magazine.editorial_review_submitted',
+        'magazine.editorial_review_returned',
+      ], TRUE)) {
       return;
     }
-    $expected = $event->eventType() === 'magazine.publication_published' ? 'published' : 'updated';
+    $expected = match ($event->eventType()) {
+      'magazine.publication_published' => 'published',
+      'magazine.publication_updated' => 'updated',
+      'magazine.editorial_review_submitted' => 'review_submitted',
+      'magazine.editorial_review_returned' => 'review_returned',
+    };
     if (($event->metadata()['notice_type'] ?? NULL) !== $expected) {
       return;
     }
