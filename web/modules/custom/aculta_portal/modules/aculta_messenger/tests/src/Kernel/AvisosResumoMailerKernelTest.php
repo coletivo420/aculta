@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Kernel;
 
 use Drupal\aculta_mailer\Message\MailStatus;
+use Drupal\aculta_mailer\Delivery\SendResult;
+use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_messenger_aviso_test\Kernel\DigestRecoveryProvider;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
@@ -199,6 +202,110 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     self::assertCount(1, $this->collectedMails());
     self::assertSame([], $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
     self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
+  }
+
+  /**
+   * Uses the real Mailer to test interruption before the accepted marker write.
+   */
+  public function testAcceptedDigestRecoversWhenMarkerWriteIsInterrupted(): void {
+    $account = User::create([
+      'name' => 'digest_marker_interruption',
+      'mail' => 'digest-marker@example.test',
+      'status' => 1,
+      'langcode' => 'pt-br',
+      'preferred_langcode' => 'pt-br',
+    ]);
+    $account->save();
+    $uid = (int) $account->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+
+    $database = $this->container->get('database');
+    $provider = new DigestRecoveryProvider($uid, $database);
+    $entityTypeManager = $this->container->get('entity_type.manager');
+    $noticeAccess = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+    $noticeAccess->method('supportsTopic')->willReturn(FALSE);
+    $avisos = new AvisoService(
+      $entityTypeManager,
+      $this->createMock(FlagServiceInterface::class),
+      $noticeAccess,
+      $database,
+      $this->container->get('datetime.time'),
+      $this->container->get('lock'),
+    );
+    $realMailer = $this->container->get('aculta_mailer.mailer');
+    $mailer = new class($realMailer) implements AcultaMailerInterface {
+
+      /**
+       * Whether the first accepted transport should simulate a process stop.
+       */
+      private bool $interruptAfterAcceptance = TRUE;
+
+      /**
+       * Wraps the real ACULTA Mailer.
+       */
+      public function __construct(private readonly AcultaMailerInterface $inner) {}
+
+      /**
+       * {@inheritdoc}
+       */
+      public function send(MailMessage $message): bool {
+        return $this->inner->send($message);
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function deliver(MailMessage $message, ?string $transport = NULL): SendResult {
+        $result = $this->inner->deliver($message, $transport);
+        if ($result->sent && $this->interruptAfterAcceptance) {
+          $this->interruptAfterAcceptance = FALSE;
+          throw new \RuntimeException('Simulated process interruption after Mailer acceptance.');
+        }
+        return $result;
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function wasAcceptedCorrelation(string $correlationId, string $type, ?string $recipient = NULL): bool {
+        return $this->inner->wasAcceptedCorrelation($correlationId, $type, $recipient);
+      }
+
+    };
+    $summary = new AvisosResumo(
+      $entityTypeManager,
+      $preferences,
+      $mailer,
+      new EmailConfirmationPolicy($userData, $entityTypeManager, $this->container->get('module_handler')),
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      $this->container->get('lock.persistent'),
+      [$provider],
+    );
+
+    self::assertSame(0, $summary->enviarResumos());
+    $mailLogStorage = $entityTypeManager->getStorage('aculta_mail_log');
+    self::assertCount(1, $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
+    self::assertCount(1, $this->collectedMails(), 'The real Mailer accepted and transported one email.');
+    $snapshot = $userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
+    self::assertIsArray($snapshot);
+    self::assertArrayNotHasKey('accepted_at', $snapshot, 'The interruption left only the pre-transport snapshot.');
+
+    self::assertSame(0, $summary->enviarResumos(), 'Retry reconciles the Mailer log instead of transporting the digest again.');
+    self::assertCount(1, $this->collectedMails());
+    self::assertSame(1, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
+      ->fields('digest', ['acknowledged'])
+      ->condition('id', 1)
+      ->execute()
+      ->fetchField());
+    self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
+    self::assertCount(1, $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
   }
 
   /**

@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.217: Kernel com ACULTA Mailer real simula interrupção após aceite e antes de persistir `accepted_at`; o retry consulta o Mail Log, confirma o manifesto original e mantém uma só entrega. `AvisosResumoMailerKernelTest` **3/47 PASS** com MariaDB dedicado, PHPCS e PHP lint PASS. Runtime/SMTP externo pendentes.
 - Dev.216: caracterizada a falha após aceite do Mailer e antes da persistência de `accepted_at`. O retry consulta a mesma correlação e confirma os IDs do manifesto original sem retransmitir; `LearningNoticeDigestIntegrationTest` **24/205 PASS** e `AvisosResumoMailerKernelTest` **2/32 PASS** com Mailer real e MariaDB dedicado. Runtime e SMTP não executados.
 - Dev.215: workers de e-mail direto do Fórum, LMS, Wiki, Loja e Doações compartilham correlação UUID v5 determinística e reconhecem aceite da correlação v4 legada antes de migrar retries pendentes. Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **248/1.882 PASS**; Wiki queue Kernel **2/54 PASS** no MariaDB dedicado, com duas deprecações de discovery `Message`/`message_template` do Core/contrib; `AcultaMailerKernelTest` **5/28 PASS**. PHPCS, lint, índice e gate Drupal 11+ **1155 checks PASS**. Runtime/SMTP pendentes.
 - Dev.214: a ação de leitura da central preserva o offset da origem selecionada ao retornar do formulário, sem refletir parâmetros malformados ou offsets de uma origem diferente. `NoticeReadStateFormTest` **5/27 PASS**, Unit Messenger **180/1.248 PASS**; Runtime e navegador não executados.

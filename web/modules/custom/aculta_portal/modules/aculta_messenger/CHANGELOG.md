@@ -2174,3 +2174,11 @@ Validação: `LearningNoticeDigestIntegrationTest` **24 testes / 205 assertions 
 **2 testes / 32 assertions PASS** com ACULTA Mailer e MariaDB dedicado. Nenhum Runtime ou transporte SMTP real
 foi utilizado.
 
+## 0.1.1-dev.217 — provar recuperação do digest com Mailer real
+
+O Kernel agora usa o ACULTA Mailer e seu Mail Log reais, interrompe o fluxo depois do aceite e antes de `accepted_at`, e
+reexecuta o digest. O retry reconhece a mesma correlação, confirma o manifesto original e mantém apenas um transporte.
+
+Validação: `AvisosResumoMailerKernelTest` **3 testes / 47 assertions PASS** com MariaDB dedicado; PHPCS e PHP lint PASS.
+Runtime e SMTP externo não executados.
+
