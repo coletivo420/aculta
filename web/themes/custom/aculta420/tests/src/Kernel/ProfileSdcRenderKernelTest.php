@@ -52,9 +52,10 @@ final class ProfileSdcRenderKernelTest extends ComponentKernelTestBase {
           ],
           '#slots' => [
             'actions' => [
-              '#type' => 'link',
-              '#title' => 'Editar apelido',
-              '#url' => \Drupal\Core\Url::fromUri('base:studio/perfil/apelido'),
+              '#type' => 'html_tag',
+              '#tag' => 'a',
+              '#value' => 'Editar apelido',
+              '#attributes' => ['href' => '#editar-apelido'],
             ],
           ],
         ],
