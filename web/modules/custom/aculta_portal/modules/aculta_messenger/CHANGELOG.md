@@ -5,9 +5,11 @@ de LMS, Doações, Wiki e Loja. A última tentativa agora é comprovadamente
 terminal (`failed_permanent`), enquanto tentativas intermediárias continuam
 retryable. O limite configurado por adapter é respeitado.
 
-Validação: Unit/Integration **440 testes / 4.794 assertions PASS**; os três
-arquivos focais de workers passaram **30/410 PASS**; PHPCS Drupal/DrupalPractice,
-PHP lint e `git diff --check` PASS. Runtime e SMTP externo não utilizados.
+Validação: Unit/Integration Unit **440 testes / 4.794 assertions PASS**; os
+três arquivos focais de workers **30/410 PASS**; Integration Kernel completa
+**106 testes / 1.307 assertions PASS** no MariaDB dedicado (2 depreciações
+upstream e 7 notices PHPUnit); PHPCS Drupal/DrupalPractice, PHP lint e
+`git diff --check` PASS. Runtime e SMTP externo não utilizados.
 
 ## 0.1.1-dev.352 — estados terminais de entrega direta
 
