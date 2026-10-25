@@ -7,9 +7,10 @@ retryable. O limite configurado por adapter é respeitado.
 
 Validação: Unit/Integration Unit **440 testes / 4.794 assertions PASS**; os
 três arquivos focais de workers **30/410 PASS**; Integration Kernel completa
-**106 testes / 1.307 assertions PASS** no MariaDB dedicado (2 depreciações
-upstream e 7 notices PHPUnit); PHPCS Drupal/DrupalPractice, PHP lint e
-`git diff --check` PASS. Runtime e SMTP externo não utilizados.
+**106 testes / 1.307 assertions PASS** e Kernel central **54/1.141 PASS** no
+MariaDB dedicado (2 + 10 depreciações upstream; 7 + 4 notices PHPUnit);
+PHPCS Drupal/DrupalPractice, PHP lint, `git diff --check`, índice de status e
+gate Drupal 11+ **1.155 checks PASS**. Runtime e SMTP externo não utilizados.
 
 ## 0.1.1-dev.352 — estados terminais de entrega direta
 
