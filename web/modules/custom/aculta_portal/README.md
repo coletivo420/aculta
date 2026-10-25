@@ -5,7 +5,25 @@ Core e de módulos contrib para as experiências de conta, conteúdo, Commerce,
 aprendizagem e domínios. Core/contrib continuam donos das entidades e regras que
 já fornecem.
 
-## Evolução planejada: Conta e Perfil no ACULTA Studio (2026-10-24)
+## Situação vigente — S-R3-B2, Portal dev.30 (2026-10-25)
+
+Minha Conta Studio `/studio/conta/dados` reutiliza o Form API de Profile
+do Portal para os dados cadastrais privados (nome e WhatsApp), excluindo
+`field_nickname` apenas nesta rota. A alteração foi feita no hook de
+formulário de acordo com o route ID, sem outra entidade, esquema ou handler.
+
+Meu Perfil Studio `/studio/perfil/apelido` pertence ao ACULTA User e usa
+o campo `Profile.field_nickname` original, independente da Conta.
+A interface legada em **`/conta-legada` é permanente**: `/dados`
+continua com seu formulário misto e todos os serviços de endereço,
+autenticação, e-mail, CPF/CNPJ, pedidos, checkout e menus intactos.
+A raiz `/` no ACCOUNT serve o hub do Studio; `/studio` direto e
+`/minha-conta` respondem 404. Código entregue, testes novos
+escritos **sem execução**; aguardam lint, PHPUnit, Kernel/Functional,
+Firefox ESR/X11 e Runtime. Contrato atual:
+[Conta e Perfil separados](../../../../docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+
+## Histórico — Evolução planejada: Conta e Perfil no ACULTA Studio (2026-10-24)
 
 A proposta STUDIO-P0–P7 reorganiza **navegação e apresentação** de Minha Conta
 e Meu Perfil sob um hub geral `/studio` e experiência `Meu Espaço`. O

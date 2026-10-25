@@ -284,7 +284,8 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/conexoes` | Conexões de autenticação social | Conta autenticada; provedores habilitados variam por ambiente. |
 | `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |
 | `conta.aculta` | `/studio` | Caminho técnico do hub | Rota interna `aculta_studio.hub`; acesso HTTP direto 404, use `/`. |
-| `conta.aculta` | `/studio/conta` | **Minha Conta Studio** | `aculta_studio.account`, autenticação + Portal; composição inicial de serviços cadastrais privados. Não retira a Conta legada. |
+| `conta.aculta` | `/studio/conta` | **Minha Conta Studio** | `aculta_studio.account`, autenticação + Portal; composição de serviços cadastrais privados. Não retira a Conta legada. |
+| `conta.aculta` | `/studio/conta/dados` | Dados cadastrais privados | `aculta_studio.account_data`, Profile Form API do Portal para nome e WhatsApp, sem o campo público de apelido. Legado `/dados` preservado. |
 | `conta.aculta` | `/studio/conta/endereco` | Endereço privado no Studio | `aculta_studio.account_address`; chama `PortalController::address()` e mantém o mesmo Profile Commerce, CEP, Número/S-N e retorno contextual; legado `/dados/endereco` preservado. |
 | `conta.aculta` | `/studio/conta/documentos` | Documentos privados CPF/CNPJ | `aculta_studio.account_documents`; mesmo form Portal, owner opcional `aculta_id_cpf`, link condicionado à disponibilidade e retorno contextual. |
 | `conta.aculta` | `/studio/conta/seguranca` | E-mail e segurança | `aculta_studio.account_security`; usa `PortalController::security()`, com confirmação de e-mail original. |
@@ -292,6 +293,7 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/studio/conta/conexoes` | Conexões de autenticação | `aculta_studio.account_connections`; usa `PortalController::connections()`. |
 
 | `conta.aculta` | `/studio/perfil` | **Meu Perfil Studio** | `aculta_studio.profile`; apenas identidade pública editável por User; `/u/{apelido}` em MAIN preservado. |
+| `conta.aculta` | `/studio/perfil/apelido` | Apelido público | `aculta_studio.profile_nickname`, Form API do ACULTA User sobre `Profile.field_nickname`, acesso somente do titular, sem dados cadastrais. |
 | `conta.aculta` | `/studio/perfil/bio` | Edição de bio | Form API original do ACULTA User, retorno contextual ao Studio. |
 | `conta.aculta` | `/studio/perfil/privacidade` | Visibilidade pública | Form API original do ACULTA User, permissões de autores/editores preservadas. |
 | `conta.aculta` | `/studio/perfil/redes/{rede}` | Redes sociais | Form API original do ACULTA User com validação proprietária. |
