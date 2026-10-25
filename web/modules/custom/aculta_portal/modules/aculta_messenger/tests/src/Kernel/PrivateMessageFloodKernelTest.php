@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_messenger\Kernel;
 
 use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
+use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
@@ -123,6 +124,7 @@ final class PrivateMessageFloodKernelTest extends KernelTestBase {
       $this->container->get('user.data'),
       $lock,
       new ConversationPolicy($this->container->get('config.factory')),
+      new ConversationWriteLock($lock, $this->container->get('entity_type.manager')),
     );
   }
 

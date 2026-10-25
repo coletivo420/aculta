@@ -240,14 +240,31 @@ final class MessagesController extends ControllerBase {
       $panel['message'] = implode(' ', array_map(static fn($error) => (string) $error, array_values($formState->getErrors())));
     }
     else {
-      $message = $this->entityTypes->getStorage('private_message')->create([
-        'owner' => (int) $this->account->id(),
-        'message' => ['value' => $text, 'format' => 'plain_text'],
-      ]);
-      $message->save();
-      $private_message_thread->addMessage($message);
-      $private_message_thread->save();
-      $this->replyValidator->registerRateLimit($form, $formState);
+      $freshThread = $formState->get('thread');
+      if (!$freshThread instanceof PrivateMessageThreadInterface) {
+        $this->replyValidator->releaseSubmissionLocks();
+        throw new NotFoundHttpException();
+      }
+      $access = $freshThread->access('view', $this->account, TRUE);
+      if (!$access->isAllowed() || !$freshThread->isMember($this->account->id())) {
+        $this->replyValidator->releaseSubmissionLocks();
+        throw new NotFoundHttpException();
+      }
+      $private_message_thread = $freshThread;
+      try {
+        $message = $this->entityTypes->getStorage('private_message')->create([
+          'owner' => (int) $this->account->id(),
+          'message' => ['value' => $text, 'format' => 'plain_text'],
+        ]);
+        $message->save();
+        $private_message_thread->addMessage($message);
+        $private_message_thread->save();
+        $this->replyValidator->registerRateLimit($form, $formState);
+      }
+      catch (\Throwable $exception) {
+        $this->replyValidator->releaseSubmissionLocks();
+        throw $exception;
+      }
     }
     return $this->conversationResponse($private_message_thread, $access, $panel);
   }

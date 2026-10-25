@@ -8,12 +8,15 @@ use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
+use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\Tests\UnitTestCase;
@@ -65,6 +68,63 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
 
     $validator->validateRateLimit($form, $this->formState(FALSE));
     $validator->registerRateLimit($form, new FormState());
+  }
+
+  /**
+   * Existing-thread replies hold the shared lock until their save callback.
+   */
+  public function testExistingThreadReplyHoldsWriteLockUntilFloodRegistration(): void {
+    $flood = $this->createMock(FloodInterface::class);
+    $flood->expects(self::once())->method('isAllowed')->willReturn(TRUE);
+    $flood->expects(self::once())->method('register');
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('id')->willReturn('123');
+    $freshThread = $this->createMock(PrivateMessageThreadInterface::class);
+    $freshThread->method('id')->willReturn('123');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('loadUnchanged')->with(123)->willReturn($freshThread);
+    $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypes->expects(self::once())->method('getStorage')->with('private_message_thread')->willReturn($storage);
+    $lockCalls = [];
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::exactly(2))->method('acquire')->willReturnCallback(static function (string $name, float $lease) use (&$lockCalls): bool {
+      $lockCalls[] = ['acquire', $name, $lease];
+      return TRUE;
+    });
+    $lock->expects(self::exactly(2))->method('release')->willReturnCallback(static function (string $name) use (&$lockCalls): void {
+      $lockCalls[] = ['release', $name];
+    });
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+    $validator = new PrivateMessageFormValidator(
+      $flood,
+      $currentUser,
+      $this->translation('blocked'),
+      $this->createMock(PrivateMessageBanManagerInterface::class),
+      $this->createMock(FriendshipManagerInterface::class),
+      $this->createMock(UserDataInterface::class),
+      $lock,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      new ConversationWriteLock($lock, $entityTypes),
+    );
+    $form = [];
+    $formState = $this->formState(FALSE);
+    $formState->set('thread', $thread);
+
+    $validator->validateRateLimit($form, $formState);
+    self::assertSame($freshThread, $formState->get('thread'));
+    self::assertSame([
+      ['acquire', 'aculta_messenger.private_message_flood.42', 180.0],
+      ['acquire', 'aculta_messenger:conversation_write:123', 180.0],
+    ], $lockCalls);
+
+    $validator->registerRateLimit($form, $formState);
+    self::assertSame([
+      ['acquire', 'aculta_messenger.private_message_flood.42', 180.0],
+      ['acquire', 'aculta_messenger:conversation_write:123', 180.0],
+      ['release', 'aculta_messenger:conversation_write:123'],
+      ['release', 'aculta_messenger.private_message_flood.42'],
+    ], $lockCalls);
   }
 
   /**
@@ -180,6 +240,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $this->createMock(UserDataInterface::class),
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      $this->writeLock(),
     );
     $form = [];
     $validator->validateBlockedRecipients($form, $formState);
@@ -213,6 +274,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $userData,
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      $this->writeLock(),
     );
     $form = [];
 
@@ -246,6 +308,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $userData,
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      $this->writeLock(),
     );
     $form = [];
 
@@ -279,6 +342,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
         $userData,
         $this->createMock(LockBackendInterface::class),
         new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      $this->writeLock(),
       );
       $form = [];
 
@@ -315,6 +379,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $userData,
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      $this->writeLock(),
     );
     $form = [];
 
@@ -343,6 +408,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $this->createMock(UserDataInterface::class),
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      $this->writeLock(),
     );
     $form = [];
     $validator->validateBlockedRecipients($form, $formState);
@@ -363,6 +429,17 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $this->createMock(UserDataInterface::class),
       $lock ?? $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      $this->writeLock(),
+    );
+  }
+
+  /**
+   * Creates an idle per-thread write-lock fixture.
+   */
+  private function writeLock(): ConversationWriteLock {
+    return new ConversationWriteLock(
+      $this->createMock(LockBackendInterface::class),
+      $this->createMock(EntityTypeManagerInterface::class),
     );
   }
 

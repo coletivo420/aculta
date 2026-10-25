@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 use Drupal\aculta_messenger\Form\NewConversationForm;
 use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
+use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Flood\FloodInterface;
@@ -89,6 +90,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
         $this->createMock(UserDataInterface::class),
         $this->createMock(LockBackendInterface::class),
         new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+        new ConversationWriteLock($this->createMock(LockBackendInterface::class), $entityTypes),
       ),
       $entityTypes,
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),

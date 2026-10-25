@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.222, retenção e gravações concorrentes: retenção e envio compartilham uma trava persistente por thread. A rotina recarrega a entidade depois do lock e revalida o corte temporal, evitando excluir thread selecionada como antiga enquanto uma resposta está sendo persistida. `PrivateMessageRetentionKernelTest` **3/42 PASS**, incluindo contenção entre dois proprietários de lock no MariaDB dedicado; `PrivateMessageFloodKernelTest` **2/21 PASS**; Unit focais **20/150 PASS**. Digest revalidado no HEAD atual: **75 testes / 1.244 assertions PASS** nas suítes Unit/Integration e Kernels Messenger/Mailer. SMTP e Runtime não executados.
 - Dev.220, formulários do drawer e grupos: ações dos formulários de relação agora incluem token CSRF de sessão materializado para a rota interna, corrigindo POSTs de fragmentos que preservavam um placeholder lazy e recebiam 403. A suíte Firefox ESR/X11 no Runtime de teste passou **90/90**: criação de grupo com dois destinatários pela interface, primeira mensagem persistida, CSRF concreto e POST protegido de limpeza de histórico aceito (HTTP 200), além dos fluxos existentes de amizade, bloqueio, histórico e responsividade. Os logs de fetch foram sanitizados para não registrar query tokens. Runtime aqui significa exclusivamente o ambiente de teste `aculta_runtime`; produção e SMTP não foram usados.
 
 ## Auditorias e situação atual

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\aculta_messenger\Service\ConversationPolicy;
+use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -31,6 +32,8 @@ final class PrivateMessageRetentionHooks {
     private readonly LoggerChannelFactoryInterface $loggerFactory,
     #[Autowire(service: 'aculta_messenger.conversation_policy')]
     private readonly ConversationPolicy $policy,
+    #[Autowire(service: 'aculta_messenger.conversation_write_lock')]
+    private readonly ConversationWriteLock $conversationWriteLock,
     #[Autowire(service: 'state')]
     private readonly StateInterface $state,
   ) {}
@@ -62,29 +65,45 @@ final class PrivateMessageRetentionHooks {
 
     $deleted = 0;
     foreach ($storage->loadMultiple($ids) as $thread) {
-      if (!$thread instanceof PrivateMessageThreadInterface || (int) $thread->get('updated')->value > $cutoff) {
+      if (!$thread instanceof PrivateMessageThreadInterface) {
         continue;
       }
-      $transaction = $this->database->startTransaction();
-      try {
-        // Capture source IDs first. The contrib thread lifecycle removes its
-        // messages, so notification records must be deleted only after that
-        // succeeds. The transaction restores both sides if either deletion
-        // fails.
-        $messageIds = array_values(array_map(
-          static fn($message): int => (int) $message->id(),
-          $thread->getMessages(TRUE),
-        ));
-        $thread->delete();
-        $this->deleteNotificationsFor($messageIds);
-        $transaction->commitOrRelease();
-        $deleted++;
+      $threadId = (int) $thread->id();
+      if (!$this->conversationWriteLock->acquireId($threadId)) {
+        continue;
       }
-      catch (\Throwable $exception) {
-        $transaction->rollBack();
-        $this->loggerFactory->get('aculta_messenger')->error('A private conversation could not be removed by the six-month retention task: @type.', [
-          '@type' => $exception::class,
-        ]);
+      try {
+        // Re-read after acquiring the same per-thread lock used by senders.
+        // An active conversation can no longer be deleted based on a stale
+        // candidate selected before a concurrent reply.
+        $thread = $storage->loadUnchanged($threadId);
+        if (!$thread instanceof PrivateMessageThreadInterface || (int) $thread->get('updated')->value > $cutoff) {
+          continue;
+        }
+        $transaction = $this->database->startTransaction();
+        try {
+          // Capture source IDs first. The contrib thread lifecycle removes its
+          // messages, so notification records must be deleted only after that
+          // succeeds. The transaction restores both sides if either deletion
+          // fails.
+          $messageIds = array_values(array_map(
+            static fn($message): int => (int) $message->id(),
+            $thread->getMessages(TRUE),
+          ));
+          $thread->delete();
+          $this->deleteNotificationsFor($messageIds);
+          $transaction->commitOrRelease();
+          $deleted++;
+        }
+        catch (\Throwable $exception) {
+          $transaction->rollBack();
+          $this->loggerFactory->get('aculta_messenger')->error('A private conversation could not be removed by the six-month retention task: @type.', [
+            '@type' => $exception::class,
+          ]);
+        }
+      }
+      finally {
+        $this->conversationWriteLock->release($threadId);
       }
     }
 

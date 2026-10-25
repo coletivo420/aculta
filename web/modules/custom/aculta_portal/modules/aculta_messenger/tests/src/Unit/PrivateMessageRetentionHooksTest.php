@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\aculta_messenger\Hook\PrivateMessageRetentionHooks;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
+use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Transaction;
@@ -15,6 +16,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
@@ -99,9 +101,9 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
         $stateData->cursor = 0;
       });
 
-    $oldestThread = $this->thread($stateData, TRUE, 1700);
-    $nextThread = $this->thread($stateData, FALSE, 1800);
-    $laterThread = $this->thread($stateData, FALSE, 1900);
+    $oldestThread = $this->thread($stateData, TRUE, 1700, 17);
+    $nextThread = $this->thread($stateData, FALSE, 1800, 18);
+    $laterThread = $this->thread($stateData, FALSE, 1900, 19);
     $cursorConditions = [];
     $threadQuery = $this->createMock(QueryInterface::class);
     $threadQuery->method('accessCheck')->willReturnSelf();
@@ -118,6 +120,11 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
     $threadStorage->method('getQuery')->willReturn($threadQuery);
     $threadStorage->expects(self::exactly(2))->method('loadMultiple')
       ->willReturnOnConsecutiveCalls([17 => $oldestThread, 18 => $nextThread], [19 => $laterThread]);
+    $threadStorage->method('loadUnchanged')->willReturnMap([
+      [17, $oldestThread],
+      [18, $nextThread],
+      [19, $laterThread],
+    ]);
 
     $noticeQuery = $this->createMock(QueryInterface::class);
     $noticeQuery->method('accessCheck')->willReturnSelf();
@@ -142,6 +149,8 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
     $time->method('getRequestTime')->willReturn(1_792_800_000);
     $loggerFactory = $this->createMock(LoggerChannelFactoryInterface::class);
     $loggerFactory->method('get')->with('aculta_messenger')->willReturn(new NullLogger());
+    $threadLock = $this->createMock(LockBackendInterface::class);
+    $threadLock->method('acquire')->willReturn(TRUE);
     $hook = new PrivateMessageRetentionHooks(
       $entityTypes,
       $database,
@@ -150,6 +159,7 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
       new ConversationPolicy($this->getConfigFactoryStub([
         'aculta_messenger.settings' => ['cleanup_batch' => 2],
       ])),
+      new ConversationWriteLock($threadLock, $entityTypes),
       $retentionState,
     );
 
@@ -180,6 +190,7 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
     $threadStorage = $this->createMock(EntityStorageInterface::class);
     $threadStorage->method('getQuery')->willReturn($threadQuery);
     $threadStorage->method('loadMultiple')->with([17])->willReturn([$thread]);
+    $threadStorage->method('loadUnchanged')->with(17)->willReturn($thread);
     $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypes->method('hasDefinition')->with('private_message_thread')->willReturn(TRUE);
     $entityTypes->method('getStorage')->willReturnMap([
@@ -193,6 +204,8 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
     $time->method('getRequestTime')->willReturn(1_792_800_000);
     $loggerFactory = $this->createMock(LoggerChannelFactoryInterface::class);
     $loggerFactory->method('get')->with('aculta_messenger')->willReturn(new NullLogger());
+    $threadLock = $this->createMock(LockBackendInterface::class);
+    $threadLock->method('acquire')->willReturn(TRUE);
 
     return new PrivateMessageRetentionHooks(
       $entityTypes,
@@ -200,6 +213,7 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
       $time,
       $loggerFactory,
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      new ConversationWriteLock($threadLock, $entityTypes),
       $this->createMock(StateInterface::class),
     );
   }
@@ -207,12 +221,13 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
   /**
    * Creates a thread fixture that can fail during deletion.
    */
-  private function thread(object $state, bool $failDeletion = FALSE, int $messageId = 700): PrivateMessageThreadInterface {
+  private function thread(object $state, bool $failDeletion = FALSE, int $messageId = 700, int $threadId = 17): PrivateMessageThreadInterface {
     $privateMessage = $this->createMock(PrivateMessageInterface::class);
     $privateMessage->method('id')->willReturn((string) $messageId);
     $updated = $this->createMock(FieldItemListInterface::class);
     $updated->method('__get')->with('value')->willReturn(0);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('id')->willReturn((string) $threadId);
     $thread->method('get')->with('updated')->willReturn($updated);
     $thread->method('getMessages')->with(TRUE)->willReturn([$privateMessage]);
     $thread->expects(self::once())->method('delete')->willReturnCallback(static function () use ($state, $failDeletion): void {

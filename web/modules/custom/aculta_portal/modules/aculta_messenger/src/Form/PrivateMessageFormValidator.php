@@ -11,6 +11,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
+use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
@@ -31,6 +32,11 @@ final class PrivateMessageFormValidator {
    */
   private ?string $rateLimitLockName = NULL;
 
+  /**
+   * Thread lock held until the submitted message is persisted.
+   */
+  private ?int $conversationLockThreadId = NULL;
+
   public function __construct(
     private readonly FloodInterface $flood,
     private readonly AccountProxyInterface $currentUser,
@@ -40,6 +46,7 @@ final class PrivateMessageFormValidator {
     private readonly UserDataInterface $userData,
     private readonly LockBackendInterface $lock,
     private readonly ConversationPolicy $policy,
+    private readonly ConversationWriteLock $conversationWriteLock,
   ) {}
 
   /**
@@ -151,6 +158,45 @@ final class PrivateMessageFormValidator {
       return;
     }
 
+    $thread = $formState->get('thread');
+    if ($thread instanceof PrivateMessageThreadInterface && (int) $thread->id() > 0) {
+      $this->acquireThreadWriteLock($thread, $formState);
+    }
+
+  }
+
+  /**
+   * Locks and refreshes an existing conversation before a new message is saved.
+   *
+   * Called by the custom first-message workflow after it resolves an existing
+   * thread; native replies acquire the same lock in validateRateLimit().
+   *
+   * @return \Drupal\private_message\Entity\PrivateMessageThreadInterface|null
+   *   Fresh thread when locked, or NULL when another operation owns it or it
+   *   was deleted before the lock could be acquired.
+   */
+  public function acquireThreadWriteLock(
+    PrivateMessageThreadInterface $thread,
+    FormStateInterface $formState,
+  ): ?PrivateMessageThreadInterface {
+    $threadId = (int) $thread->id();
+    if ($threadId < 1) {
+      return $thread;
+    }
+    if ($this->conversationLockThreadId === $threadId) {
+      return $thread;
+    }
+
+    $freshThread = $this->conversationWriteLock->acquire($thread);
+    if (!$freshThread instanceof PrivateMessageThreadInterface) {
+      $this->releaseRateLimitLock();
+      $formState->setErrorByName('message', $this->translation->translate('Esta conversa está sendo atualizada. Tente novamente.'));
+      return NULL;
+    }
+
+    $this->conversationLockThreadId = $threadId;
+    $formState->set('thread', $freshThread);
+    return $freshThread;
   }
 
   /**
@@ -167,9 +213,20 @@ final class PrivateMessageFormValidator {
   }
 
   /**
+   * Releases submission locks when persistence fails before the Flood callback.
+   */
+  public function releaseSubmissionLocks(): void {
+    $this->releaseRateLimitLock();
+  }
+
+  /**
    * Releases this request's flood lock, if validation acquired it.
    */
   private function releaseRateLimitLock(): void {
+    if ($this->conversationLockThreadId !== NULL) {
+      $this->conversationWriteLock->release($this->conversationLockThreadId);
+      $this->conversationLockThreadId = NULL;
+    }
     if ($this->rateLimitLockName !== NULL) {
       $this->lock->release($this->rateLimitLockName);
       $this->rateLimitLockName = NULL;

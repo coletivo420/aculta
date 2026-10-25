@@ -15,6 +15,7 @@ use Drupal\aculta_messenger\Controller\NewConversationController;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\private_message\Entity\PrivateMessage;
 use Drupal\private_message\Entity\PrivateMessageThread;
+use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -192,15 +193,25 @@ final class NewConversationForm extends FormBase {
     // The Private Message mapper reads ->id() from each member, so the members are user entities, not IDs.
     $sender = $this->entityTypes->getStorage('user')->load($this->currentUser->id());
     $thread = $this->privateMessageService->getThreadForMembers(array_merge([$sender], $recipients));
-    $message = PrivateMessage::create([
-      'owner' => (int) $this->currentUser->id(),
-      'message' => ['value' => (string) $formState->getValue('message'), 'format' => 'plain_text'],
-    ]);
-    $message->save();
-    $thread->addMessage($message);
-    $thread->save();
-    $this->validator->registerRateLimit($form, $formState);
-    $formState->set('thread', $thread);
+    $thread = $this->validator->acquireThreadWriteLock($thread, $formState);
+    if (!$thread instanceof PrivateMessageThreadInterface) {
+      return;
+    }
+    try {
+      $message = PrivateMessage::create([
+        'owner' => (int) $this->currentUser->id(),
+        'message' => ['value' => (string) $formState->getValue('message'), 'format' => 'plain_text'],
+      ]);
+      $message->save();
+      $thread->addMessage($message);
+      $thread->save();
+      $this->validator->registerRateLimit($form, $formState);
+      $formState->set('thread', $thread);
+    }
+    catch (\Throwable $exception) {
+      $this->validator->releaseSubmissionLocks();
+      throw $exception;
+    }
     // The drawer receives the conversation as the answer to its POST (NewConversationController::compose).
     // A Form API redirect would send the drawer back to the compose step with a 303.
     $formState->disableRedirect();

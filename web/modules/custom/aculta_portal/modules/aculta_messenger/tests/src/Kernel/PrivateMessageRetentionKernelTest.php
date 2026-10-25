@@ -6,7 +6,9 @@ namespace Drupal\Tests\aculta_messenger\Kernel;
 
 use Drupal\aculta_messenger\Hook\PrivateMessageRetentionHooks;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
+use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Lock\DatabaseLockBackend;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
@@ -115,6 +117,7 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
       $time,
       $this->container->get('logger.factory'),
       $policy,
+      new ConversationWriteLock($this->container->get('lock.persistent'), $this->container->get('entity_type.manager')),
       $this->container->get('state'),
     );
 
@@ -153,6 +156,7 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
       $time,
       $this->container->get('logger.factory'),
       new ConversationPolicy($this->container->get('config.factory')),
+      new ConversationWriteLock($this->container->get('lock.persistent'), $this->container->get('entity_type.manager')),
       $this->container->get('state'),
     );
 
@@ -164,6 +168,45 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     self::assertNotNull($threads->load($thread->id()), 'The thread deletion is rolled back.');
     self::assertNotNull($privateMessages->load($privateMessage->id()), 'Private Message lifecycle deletions are rolled back.');
     self::assertNotNull($notices->load($notice->id()), 'The notice remains available after the failed cleanup transaction.');
+  }
+
+  /**
+   * Retention skips a thread while a reply owns its per-thread write lock.
+   */
+  public function testRetentionSkipsThreadWithAnActiveWriter(): void {
+    $first = User::create(['name' => 'retention_active_first', 'status' => 1]);
+    $first->save();
+    $second = User::create(['name' => 'retention_active_second', 'status' => 1]);
+    $second->save();
+    $thread = $this->createThread([$first, $second], (int) $first->id(), self::NOW - (200 * 86400), 'Active reply race');
+    $threadId = (int) $thread->id();
+    // Use another backend instance to model a concurrent PHP request with a
+    // different Drupal lock owner, sharing only the dedicated test database.
+    $writeLock = new ConversationWriteLock(
+      new DatabaseLockBackend($this->container->get('database')),
+      $this->container->get('entity_type.manager'),
+    );
+    self::assertNotNull($writeLock->acquire($thread));
+
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn(self::NOW);
+    $hook = new PrivateMessageRetentionHooks(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('database'),
+      $time,
+      $this->container->get('logger.factory'),
+      new ConversationPolicy($this->container->get('config.factory')),
+      new ConversationWriteLock($this->container->get('lock.persistent'), $this->container->get('entity_type.manager')),
+      $this->container->get('state'),
+    );
+
+    $hook->expireDormantThreads();
+    $threadStorage = $this->container->get('entity_type.manager')->getStorage('private_message_thread');
+    self::assertNotNull($threadStorage->loadUnchanged($threadId));
+
+    $writeLock->release($threadId);
+    $hook->expireDormantThreads();
+    self::assertNull($threadStorage->loadUnchanged($threadId), 'The same dormant thread remains eligible after the writer releases its lock.');
   }
 
   /**

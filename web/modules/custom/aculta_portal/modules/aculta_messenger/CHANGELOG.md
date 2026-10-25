@@ -1,3 +1,16 @@
+## 0.1.1-dev.222 — coordenar retenção com gravações de conversas
+
+A limpeza por retenção agora compartilha uma trava persistente por thread com os caminhos de envio de respostas e de
+primeira mensagem em conversa existente. Depois de adquirir a trava, a retenção recarrega a thread e revalida sua idade
+antes de excluir; uma conversa que esteja sendo atualizada é preservada para o próximo cron.
+
+Validação: Unit de validação/envio e retenção **20 testes / 150 assertions PASS**; `PrivateMessageRetentionKernelTest`
+**3/42 PASS** no MariaDB dedicado (10 deprecações Core/contrib) e `PrivateMessageFloodKernelTest` **2/21 PASS**.
+Idempotência do digest revalidada em **75 testes / 1.244 assertions PASS** (Unit/Integration e Kernels Messenger/Mailer).
+PHP lint, PHPCS Drupal/DrupalPractice para serviço/testes, validação YAML, índice e gate Portal Drupal 11+ (**1.155
+checks**) PASS. Formulário e controller mantêm ocorrências PHPCS preexistentes fora dos trechos alterados. Nenhuma limpeza
+Runtime ou transporte SMTP executados.
+
 ## 0.1.1-dev.221 — restringir métodos das rotas de abertura de avisos
 
 As rotas de abertura dos avisos LMS, Wiki, Loja e Doações agora aceitam somente GET, conforme seus links de navegação. Isso impede que endpoints de leitura sejam chamados por métodos de escrita sem contrato. A revalidação de acesso à origem e a marcação como lido continuam no controller/manager existente.

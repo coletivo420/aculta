@@ -61,6 +61,7 @@ services:
       - '@user.data'
       - '@lock.persistent'
       - '@aculta_messenger.conversation_policy'
+      - '@aculta_messenger.conversation_write_lock'
     public: true
   aculta_messenger.private_message_account_route_subscriber:
     class: Drupal\aculta_messenger\EventSubscriber\PrivateMessageAccountRouteSubscriber
@@ -81,6 +82,10 @@ services:
     class: Drupal\aculta_messenger\Service\ConversationPolicy
     arguments:
       - '@config.factory'
+
+  aculta_messenger.conversation_write_lock:
+    class: Drupal\aculta_messenger\Service\ConversationWriteLock
+    arguments: ['@lock.persistent', '@entity_type.manager']
 
   aculta_messenger.conversation_messaging:
     class: Drupal\aculta_messenger\Service\ConversationMessagingState

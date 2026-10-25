@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: "Dev.221 limita a GET as rotas de abertura de avisos LMS, Wiki, Loja e Doação; teste de contrato 1/8, PHP lint, PHPCS e YAML PASS; HTTP funcional pendente. Dev.220 corrigiu CSRF dos formulários do drawer; Firefox ESR/X11 no Runtime de teste 90/90, sem SMTP/produção. Dev.219 centraliza avisos de amizade no Mailer; fila legada aguarda drenagem operacional."
+next_phase: "Dev.222 coordena retenção com gravações por lock persistente de thread; Unit 20/150, Kernels MariaDB de retenção 3/42 e Flood 2/21 PASS; digest revalidado 75/1.244. Lint, PHPCS focal, YAML, índice e gate Drupal 11+ 1155 checks PASS; Runtime e SMTP não executados. Dev.221 restringe rotas de abertura a GET; Dev.220 validou CSRF do drawer em Firefox ESR/X11 no Runtime de teste 90/90."
