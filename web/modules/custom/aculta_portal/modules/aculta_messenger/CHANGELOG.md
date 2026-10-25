@@ -1,3 +1,12 @@
+## 0.1.1-dev.323 — exigir data inicial do resumo semanal
+
+A configuração administrativa do resumo semanal de mensagens privadas agora
+exige uma data âncora. Isso impede que um campo apagado salve valor vazio e
+interrompa a elegibilidade do digest sem indicação clara.
+
+Validação: `MessengerSettingsFormTest` **3 testes / 19 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Kernel ou Runtime.
+
 ## 0.1.1-dev.322 — revalidar acesso atual de avisos do Fórum
 
 `ForumNoticeAccessPolicy` carrega a conta por `loadUnchanged()` antes de

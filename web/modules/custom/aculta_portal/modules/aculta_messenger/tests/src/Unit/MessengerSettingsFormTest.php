@@ -70,6 +70,7 @@ final class MessengerSettingsFormTest extends UnitTestCase {
       [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE],
       array_keys($build['email_modes'][AvisoPreferencias::EMAIL_PRIVATE_MESSAGES . '_default_mode']['#options']),
     );
+    self::assertTrue($build['email_modes']['private_message_digest_anchor']['#required']);
   }
 
   /**

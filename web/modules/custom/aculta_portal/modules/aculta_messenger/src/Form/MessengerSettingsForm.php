@@ -88,6 +88,7 @@ final class MessengerSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Data inicial do resumo semanal de mensagens privadas'),
       '#description' => $this->t('O primeiro resumo pode ser enviado nessa data ou depois dela. Para cada conta, os resumos seguintes respeitam sete dias desde o último envio.'),
       '#default_value' => $config->get('private_message_digest_anchor') ?: '2026-10-26',
+      '#required' => TRUE,
       '#states' => [
         'visible' => [
           ':input[name="email_modes[' . AvisoPreferencias::EMAIL_PRIVATE_MESSAGES . '][' . AvisoPreferencias::EMAIL_DIGEST . ']"]' => ['checked' => TRUE],
