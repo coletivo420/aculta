@@ -24,8 +24,6 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
 
   public const MODULO = 'aculta_messenger';
 
-  private const LEGACY_DIGEST_OPT_IN = 'avisos_resumo_email';
-
   public const EMAIL_PRIVATE_MESSAGES = 'mensagens_privadas';
 
   public const EMAIL_FRIENDSHIP = 'amizade';
@@ -103,19 +101,16 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
    *   TRUE quando o tipo está incluído.
    */
   public function tipoNoResumo(int $uid, string $tipo): bool {
-    if (in_array($tipo, [ForumAviso::TIPO_RESPOSTA, ForumAviso::TIPO_ATUALIZACAO], TRUE)) {
-      return $this->emailMode($uid, $tipo) === self::EMAIL_DIGEST;
-    }
-    $valor = $this->userData->get(self::MODULO, $uid, 'avisos_resumo_' . $tipo);
-    return $valor === NULL ? TRUE : (bool) $valor;
+    return $this->emailMode($uid, $tipo) === self::EMAIL_DIGEST;
   }
 
   /**
    * Returns the user's email delivery mode for one notice category.
    *
-   * An explicit category preference is authoritative and does not depend on
-   * the legacy global digest opt-in. Accounts without a category preference
-   * retain the legacy opt-in as a compatibility default for shared notices.
+   * An explicit category preference is authoritative. Shared notice categories
+   * default to site-only delivery when no choice is stored; legacy choices are
+   * copied by SharedEmailPreferenceMigration before their source keys are
+   * removed. Private messages and friendship retain their own defaults.
    */
   public function emailMode(int $uid, string $category): string {
     if (!in_array($category, self::EMAIL_CATEGORIES, TRUE)) {
@@ -136,18 +131,7 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
         $mode = self::EMAIL_IMMEDIATE;
       }
       else {
-        // Preserve the old global opt-in for accounts that have not selected
-        // a category mode yet. New explicit choices no longer depend on it.
-        $mode = (bool) $this->userData->get(self::MODULO, $uid, self::LEGACY_DIGEST_OPT_IN)
-          ? self::EMAIL_DIGEST
-          : self::EMAIL_OFF;
-      }
-      // Preserve existing Forum reply/update choices until a new mode is saved.
-      if (in_array($category, [ForumAviso::TIPO_RESPOSTA, ForumAviso::TIPO_ATUALIZACAO], TRUE)) {
-        $legacy = $this->userData->get(self::MODULO, $uid, 'avisos_resumo_' . $category);
-        if ($legacy !== NULL && !(bool) $legacy) {
-          $mode = self::EMAIL_OFF;
-        }
+        $mode = self::EMAIL_OFF;
       }
     }
     return in_array($mode, $this->allowedEmailModes($category), TRUE) ? $mode : self::EMAIL_OFF;

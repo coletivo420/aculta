@@ -156,6 +156,9 @@ services:
   aculta_messenger.private_message_email_preference_migration:
     class: Drupal\aculta_messenger\Aviso\PrivateMessageEmailPreferenceMigration
     arguments: ['@config.factory', '@user.data', '@database']
+  aculta_messenger.shared_email_preference_migration:
+    class: Drupal\aculta_messenger\Aviso\SharedEmailPreferenceMigration
+    arguments: ['@user.data', '@database']
   aculta_messenger.avisos_privacy_form:
     class: Drupal\aculta_messenger\Form\AvisosPrivacyForm
     arguments: ['@current_user', '@aculta_messenger.aviso_preferencias', '@entity_type.manager', '@flag', '@aculta_portal.domain_purpose', '@messenger']

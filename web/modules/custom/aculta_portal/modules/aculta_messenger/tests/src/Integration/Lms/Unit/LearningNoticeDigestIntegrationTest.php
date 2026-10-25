@@ -305,7 +305,9 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
           : $snapshot;
       }
       return match ($key) {
-        'avisos_resumo_email', 'email_confirmed' => TRUE,
+        'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_DIGEST,
+        'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+        'email_confirmed' => TRUE,
         'avisos_resumo_ultimo' => 0,
         default => NULL,
       };
@@ -383,7 +385,9 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
       }
       return match ($key) {
         'avisos_resumo_em_andamento' => $snapshot,
-        'avisos_resumo_email', 'email_confirmed' => TRUE,
+        'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_DIGEST,
+        'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+        'email_confirmed' => TRUE,
         default => NULL,
       };
     });
@@ -428,7 +432,9 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
       }
       return match ($key) {
         'avisos_resumo_em_andamento' => $snapshot,
-        'avisos_resumo_email', 'email_confirmed' => TRUE,
+        'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_DIGEST,
+        'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+        'email_confirmed' => TRUE,
         default => NULL,
       };
     });
@@ -512,7 +518,9 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
       }
       return match ($key) {
         'avisos_resumo_em_andamento' => $snapshot,
-        'avisos_resumo_email', 'email_confirmed' => TRUE,
+        'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_DIGEST,
+        'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+        'email_confirmed' => TRUE,
         default => NULL,
       };
     });
@@ -554,7 +562,9 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
       }
       return match ($key) {
         'avisos_resumo_em_andamento' => $snapshot,
-        'avisos_resumo_email', 'email_confirmed' => TRUE,
+        'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_DIGEST,
+        'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+        'email_confirmed' => TRUE,
         default => NULL,
       };
     });
@@ -808,8 +818,8 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
           return $data[$module][$uid][$key];
         }
         return match ($key) {
-          'avisos_email_mode_aprendizagem' => $categoryMode,
-          'avisos_resumo_email' => $optIn,
+          'avisos_email_mode_aprendizagem' => $categoryMode ?? ($optIn ? AvisoPreferencias::EMAIL_DIGEST : AvisoPreferencias::EMAIL_OFF),
+          'avisos_email_mode_wiki' => $optIn ? AvisoPreferencias::EMAIL_DIGEST : AvisoPreferencias::EMAIL_OFF,
           'email_confirmed' => TRUE,
           'avisos_resumo_ultimo' => 0,
           default => NULL,

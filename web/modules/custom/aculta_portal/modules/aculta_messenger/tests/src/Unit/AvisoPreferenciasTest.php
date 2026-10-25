@@ -13,24 +13,10 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Tests Forum channel preferences and legacy settings compatibility. */
+ * Tests Forum channel preferences and category email settings. */
 #[CoversClass(AvisoPreferencias::class)]
 #[Group('aculta_messenger')]
 final class AvisoPreferenciasTest extends UnitTestCase {
-
-  /**
-   * Preserves a prior digest opt-out until a new mode is selected. */
-  public function testLegacyForumDigestOptOutBecomesEmailOff(): void {
-    $userData = $this->createMock(UserDataInterface::class);
-    $userData->method('get')->willReturnCallback(static fn(string $module, int $uid, string $key): mixed => match ($key) {
-      'avisos_resumo_forum_resposta' => 0,
-      default => NULL,
-    });
-    $preferences = new AvisoPreferencias($userData);
-
-    self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, Aviso::TIPO_RESPOSTA));
-    self::assertFalse($preferences->tipoNoResumo(27, Aviso::TIPO_RESPOSTA));
-  }
 
   /**
    * Includes a Forum event in digest only when its current mode is digest. */
@@ -103,7 +89,7 @@ final class AvisoPreferenciasTest extends UnitTestCase {
   }
 
   /**
-   * A missing admin setting remains compatible with existing opt-in behavior. */
+   * A missing admin setting allows every supported email mode. */
   public function testMissingAdministrativePolicyAllowsAllModes(): void {
     $preferences = new AvisoPreferencias(
       $this->createMock(UserDataInterface::class),
@@ -117,13 +103,12 @@ final class AvisoPreferenciasTest extends UnitTestCase {
   }
 
   /**
-   * Explicit category selection replaces the legacy global digest gate.
+   * Explicit category selection enables the selected category.
    */
-  public function testExplicitDigestModeDoesNotRequireLegacyGlobalOptIn(): void {
+  public function testExplicitDigestModeAppliesToItsCategory(): void {
     $userData = $this->createMock(UserDataInterface::class);
     $userData->method('get')->willReturnCallback(static fn(string $module, int $uid, string $key): mixed => match ($key) {
       'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
-      'avisos_resumo_email' => 0,
       default => NULL,
     });
     $preferences = new AvisoPreferencias($userData);
@@ -132,23 +117,9 @@ final class AvisoPreferenciasTest extends UnitTestCase {
   }
 
   /**
-   * Accounts without a new preference retain prior opt-in or remain site-only.
+   * Missing category choice never enables email.
    */
-  public function testLegacyGlobalDigestOptInMigratesLazilyToCategoryMode(): void {
-    $userData = $this->createMock(UserDataInterface::class);
-    $userData->method('get')->willReturnCallback(static fn(string $module, int $uid, string $key): mixed => match ($key) {
-      'avisos_resumo_email' => 1,
-      default => NULL,
-    });
-    $preferences = new AvisoPreferencias($userData);
-
-    self::assertSame(AvisoPreferencias::EMAIL_DIGEST, $preferences->emailMode(27, 'wiki'));
-  }
-
-  /**
-   * Missing legacy opt-in never enables email for a new account.
-   */
-  public function testMissingLegacyOptInDefaultsToSiteOnly(): void {
+  public function testMissingCategoryPreferenceDefaultsToSiteOnly(): void {
     $preferences = new AvisoPreferencias($this->createMock(UserDataInterface::class));
 
     self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, 'wiki'));

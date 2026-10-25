@@ -32,6 +32,18 @@ function aculta_messenger_post_update_private_message_email_preferences(array &$
 }
 
 /**
+ * Migrates global digest choices to per-origin Messenger email preferences.
+ */
+function aculta_messenger_post_update_shared_email_preferences(array &$sandbox): string {
+  /** @var \Drupal\aculta_messenger\Aviso\SharedEmailPreferenceMigration $migration */
+  $migration = \Drupal::service('aculta_messenger.shared_email_preference_migration');
+  $sandbox['last_uid'] ??= 0;
+  $count = $migration->migrateBatch($sandbox['last_uid']);
+  $sandbox['#finished'] = $count < 500 ? 1 : 0;
+  return 'Migrated ' . $count . ' legacy shared-notice email preferences.';
+}
+
+/**
  * Adds the per-member dismissal Flag for temporary Site Alerts.
  */
 function aculta_messenger_post_update_site_alert_dismissal_flag(array &$sandbox): string {

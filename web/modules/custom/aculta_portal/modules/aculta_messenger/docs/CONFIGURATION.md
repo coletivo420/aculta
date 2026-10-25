@@ -75,9 +75,12 @@ respostas/atualizações do Fórum, Aprendizagem, Wiki, Loja e Doações. Para c
 uma, a pessoa pode selecionar sem e-mail, entrega direta ou resumo diário,
 conforme `aculta_messenger.settings:email_modes`; a administração pode
 desabilitar entrega direta ou resumo. A seleção por categoria é suficiente e
-não depende de outro opt-in geral. Para contas ainda sem modo salvo, a
-preferência global legada serve apenas como valor inicial compatível; ela não é
-mais gravada nem bloqueia modos explicitamente selecionados. Em Mensagens Privadas, a pessoa escolhe
+não depende de outro opt-in geral. O post-update
+`aculta_messenger_post_update_shared_email_preferences` migra o opt-in global
+legado e as exceções antigas do Fórum para modos individuais, preserva escolhas
+Messenger existentes e remove as chaves antigas após a cópia. Depois da
+migração, contas sem preferência ficam somente no site. Em Mensagens Privadas,
+a pessoa escolhe
 envio direto a cada mensagem, resumo semanal ou sem e-mail; a administração
 pode habilitar os modos, definir o padrão para contas sem preferência e definir
 a data inicial global do digest semanal. Amizade permite somente entrega no

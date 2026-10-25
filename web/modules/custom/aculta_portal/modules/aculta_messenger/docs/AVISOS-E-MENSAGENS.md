@@ -171,13 +171,18 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
 ## 6. Controles individuais (Minha conta > Privacidade, bloco "Avisos")
 
 - Os avisos no site são **sempre exibidos**: não há opção para desligá-los.
-- **Resumo diário por e-mail**: desligado por padrão. Quando ligado, entram respostas/atualizações do Fórum conforme
-  os controles abaixo e itens de módulos integradores que fornecem linhas pelo `AvisoDigestProviderInterface`.
-  Ao desligá-lo, os adapters de conteúdo (Fórum, LMS, Wiki, Loja e Doações) não enviam digest; a agenda semanal
-  independente de Mensagens Privadas continua obedecendo à preferência própria dessa categoria.
-  Preferências em `user.data` (`aculta_messenger`).
-- Desligar o resumo diário zera as pendências de e-mail dos adapters de conteúdo sob o lock do agregado; os avisos no
-  site e a agenda semanal independente de Mensagens Privadas não são alterados.
+- Cada categoria integrada (Fórum, LMS, Wiki, Loja e Doações) escolhe entre
+  sem e-mail, envio direto e resumo diário, conforme a política administrativa.
+  A escolha de uma categoria controla seu modo sem depender de um opt-in global.
+- Mensagens Privadas mantêm opções próprias: aviso genérico direto, resumo
+  semanal ou somente no site; Amizades permitem envio direto ou somente no site.
+- As preferências ficam em `user.data` do Messenger. Trocar para direto ou
+  somente no site descarta pendências de digest da categoria, sem afetar avisos
+  obrigatórios no site nem o digest semanal independente de Mensagens Privadas.
+- O post-update `aculta_messenger_post_update_shared_email_preferences` migra
+  escolhas do antigo resumo global e exceções do Fórum para modos por categoria,
+  preserva escolhas Messenger atuais e remove as chaves antigas após a cópia.
+  Ele é incremental e ainda precisa ser executado no Runtime.
 
 ## 7. Resumo diário por e-mail
 

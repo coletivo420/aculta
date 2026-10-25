@@ -66,7 +66,6 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
 
     $userData = $this->createMock(UserDataInterface::class);
     $userData->method('get')->willReturnCallback(static fn(string $module, ?int $uid, ?string $key): mixed => match ($key) {
-      'avisos_resumo_email' => TRUE,
       'avisos_email_mode_loja' => $mode,
       'avisos_resumo_ultimo' => 0,
       'email_confirmed' => TRUE,
@@ -160,8 +159,8 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
         return NULL;
       }
       return match ($key) {
-        'avisos_resumo_email' => TRUE,
-        'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+          'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+        'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_DIGEST,
         'avisos_resumo_ultimo' => 0,
         default => NULL,
       };
@@ -249,7 +248,6 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
 
     $userData = $this->createMock(UserDataInterface::class);
     $userData->method('get')->willReturnCallback(static fn(string $module, ?int $uid, ?string $key): mixed => match ($key) {
-      'avisos_resumo_email' => TRUE,
       'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_DIGEST,
       'avisos_resumo_ultimo' => 0,
       'email_confirmed' => TRUE,
@@ -325,7 +323,6 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
 
     $userData = $this->createMock(UserDataInterface::class);
     $userData->method('get')->willReturnCallback(static fn(string $module, ?int $uid, ?string $key): mixed => match ($key) {
-      'avisos_resumo_email' => TRUE,
       'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_DIGEST,
       'avisos_resumo_ultimo' => 0,
       'email_confirmed' => TRUE,
@@ -403,8 +400,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $userData = $this->createMock(UserDataInterface::class);
     $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use (&$snapshot): mixed {
       return match ($key) {
-        'avisos_resumo_email' => TRUE,
-        'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_DIGEST,
+          'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_DIGEST,
         'avisos_resumo_ultimo' => 0,
         'avisos_resumo_em_andamento' => $snapshot,
         'email_confirmed' => TRUE,

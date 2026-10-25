@@ -1,3 +1,13 @@
+## 0.1.1-dev.291 — migrar preferências legadas de resumo por categoria
+
+Adicionado post-update em lotes que copia o opt-in global antigo para cada
+categoria integrada, preserva escolhas Messenger já existentes e mantém os
+opt-outs específicos de respostas/atualizações do Fórum. As chaves antigas são
+removidas somente após a cópia. `emailMode()` agora usa apenas o modo da
+categoria; contas sem preferência compartilhada permanecem somente no site.
+
+Validação: `SharedEmailPreferenceMigrationTest` **1/25 PASS**, `AvisoPreferenciasTest` **22/61 PASS**, `AvisosResumoProviderPreferenceTest` **6/130 PASS**, Unit Messenger **297/2.381 PASS**, Integration Unit **73/745 PASS**, `LearningNoticeDigestIntegrationTest` **25/210 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime/update não executados.
+
 ## 0.1.1-dev.290 — esclarecer a precedência da preferência por categoria
 
 O contrato de `emailMode()` agora explica que uma escolha explícita por categoria
