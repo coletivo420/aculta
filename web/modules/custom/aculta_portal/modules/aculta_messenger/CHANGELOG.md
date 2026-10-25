@@ -1,3 +1,13 @@
+## 0.1.1-dev.393 — alinhar estados M1/M2 às evidências
+
+ROADMAP agora distingue histórico de estado atual: HTTP autenticado da
+conversa/resposta/grupo, fluxo sem JavaScript e negação a não participante
+estão comprovados no BrowserTest; o envelope/API, adapters, storage existente
+e idempotência passaram nas suítes Unit/Integration/Kernel. Permanecem
+pendentes os smokes visuais Firefox, Runtime/Alpha, updates operacionais e
+transporte externo; nenhum deles é declarado concluído por testes isolados.
+Índice de status regenerado e validado.
+
 ## 0.1.1-dev.392 — concorrência com oito workers independentes
 
 O cenário de digest agora inicia **oito boots Drupal concorrentes** para o
