@@ -53,6 +53,10 @@ final class MessengerSettingsFormTest extends UnitTestCase {
       $build['email_modes']['wiki']['#default_value'],
     );
     self::assertArrayHasKey('doacao', $build['email_modes']);
+    self::assertTrue($build['magazine_events']['published']['#default_value']);
+    self::assertTrue($build['magazine_events']['updated']['#default_value']);
+    self::assertTrue($build['magazine_events']['review_submitted']['#default_value']);
+    self::assertTrue($build['magazine_events']['review_returned']['#default_value']);
     foreach ([AvisoPreferencias::EMAIL_PRIVATE_MESSAGES, AvisoPreferencias::EMAIL_FRIENDSHIP] as $category) {
       $expectedOptions = $category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES
         ? [AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE]
@@ -159,13 +163,24 @@ final class MessengerSettingsFormTest extends UnitTestCase {
       'cleanup_batch' => 20,
       'send_limit_per_hour' => 10,
       'email_modes' => $emailModes,
+      'magazine_events' => [
+        'published' => TRUE,
+        'updated' => FALSE,
+        'review_submitted' => TRUE,
+        'review_returned' => FALSE,
+      ],
     ]);
 
     $formArray = [];
     $form->submitForm($formArray, $state);
 
     self::assertSame('2026-11-02', $saved['private_message_digest_anchor']);
-    self::assertSame(['published' => FALSE, 'updated' => FALSE], $saved['magazine_events']);
+    self::assertSame([
+      'published' => TRUE,
+      'updated' => FALSE,
+      'review_submitted' => TRUE,
+      'review_returned' => FALSE,
+    ], $saved['magazine_events']);
     self::assertSame([
       'digest' => FALSE,
       'immediate' => TRUE,

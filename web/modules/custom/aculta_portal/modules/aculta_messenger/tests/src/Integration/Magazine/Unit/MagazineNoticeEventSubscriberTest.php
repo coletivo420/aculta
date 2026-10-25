@@ -29,6 +29,28 @@ final class MagazineNoticeEventSubscriberTest extends TestCase {
   }
 
   /**
+   * Accepts only the supported submission and return workflow events. */
+  public function testConsumesEditorialReviewTransitions(): void {
+    $manager = $this->createMock(MagazineNoticeManagerInterface::class);
+    $manager->expects(self::exactly(2))->method('record')->with(self::callback(
+      static fn(MessengerNoticeEvent $event): bool => in_array($event->eventType(), [
+        'magazine.editorial_review_submitted',
+        'magazine.editorial_review_returned',
+      ], TRUE),
+    ));
+    $subscriber = new MagazineNoticeEventSubscriber($manager);
+    foreach ([
+      ['magazine.editorial_review_submitted', 'review_submitted'],
+      ['magazine.editorial_review_returned', 'review_returned'],
+    ] as [$eventType, $noticeType]) {
+      $subscriber->consume($this->event($eventType, 'aculta_magazine', 'node', 'magazine', [
+        'notice_type' => $noticeType,
+        'mail_policy' => 'user_preference',
+      ]));
+    }
+  }
+
+  /**
    * Rejects events outside the exact source, purpose and metadata contract. */
   public function testRejectsMismatchedEnvelope(): void {
     $manager = $this->createMock(MagazineNoticeManagerInterface::class);

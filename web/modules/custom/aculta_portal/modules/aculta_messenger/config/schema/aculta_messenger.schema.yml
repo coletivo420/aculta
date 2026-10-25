@@ -58,6 +58,12 @@ aculta_messenger.settings:
         updated:
           type: boolean
           label: 'Nova revisão publicada'
+        review_submitted:
+          type: boolean
+          label: 'Envio para revisão editorial'
+        review_returned:
+          type: boolean
+          label: 'Devolução para ajustes'
     private_message_digest_anchor:
       type: string
       label: 'Data inicial do digest semanal de mensagens privadas'

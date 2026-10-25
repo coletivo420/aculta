@@ -18,6 +18,7 @@ final class NoticeReadActionBuilder {
   private const SUPPORTED_BUNDLES = [
     'aculta_msg_lms_notice',
     'aculta_msg_wiki_notice',
+    'aculta_msg_magazine_notice',
     'aculta_msg_commerce_order_notice',
     'aculta_msg_donation_notice',
     'aculta_msg_friendship',

@@ -14,6 +14,7 @@ use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
@@ -65,20 +66,26 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
   /**
    * {@inheritdoc} */
   public function record(MessengerNoticeEvent $event): ?MessageInterface {
+    $noticeType = $event->metadata()['notice_type'] ?? NULL;
+    $eventTypes = [
+      'magazine.publication_published' => 'published',
+      'magazine.publication_updated' => 'updated',
+      'magazine.editorial_review_submitted' => 'review_submitted',
+      'magazine.editorial_review_returned' => 'review_returned',
+    ];
     if ($event->sourceModule() !== 'aculta_magazine'
       || $event->sourceEntityType() !== 'node'
       || $event->purpose() !== 'magazine'
-      || !in_array($event->eventType(), ['magazine.publication_published', 'magazine.publication_updated'], TRUE)
-      || ($event->metadata()['mail_policy'] ?? NULL) !== 'user_preference'
-      || !in_array($event->metadata()['notice_type'] ?? NULL, ['published', 'updated'], TRUE)) {
+      || ($eventTypes[$event->eventType()] ?? NULL) !== $noticeType
+      || ($event->metadata()['mail_policy'] ?? NULL) !== 'user_preference') {
       return NULL;
     }
     $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($event->recipientUid());
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return NULL;
     }
-    $node = $this->resolveSource($event->sourceEntityUuid(), (int) $event->sourceRevisionOrVersion(), $account);
-    if ($node === NULL || !$this->isRecipient($node, $event->recipientUid())) {
+    $node = $this->resolveSource($event->sourceEntityUuid(), (int) $event->sourceRevisionOrVersion(), $account, $noticeType);
+    if ($node === NULL || !$this->isRecipient($node, $event->recipientUid(), $noticeType)) {
       return NULL;
     }
 
@@ -176,7 +183,8 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       $type = (string) $message->get(self::EVENT_FIELD)->value;
       $uuid = (string) $message->get(self::SOURCE_FIELD)->value;
       $revision = (int) $message->get(self::VERSION_FIELD)->value;
-      if (in_array($type, ['published', 'updated'], TRUE) && $uuid !== '' && $revision > 0) {
+      if (in_array($type, ['published', 'updated', 'review_submitted', 'review_returned'], TRUE)
+        && $uuid !== '' && $revision > 0) {
         $valid[(int) $message->id()] = [$message, $type, $uuid, $revision];
         $uuids[$uuid] = $uuid;
       }
@@ -184,40 +192,54 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
     if ($uuids === []) {
       return [];
     }
-    $ids = $this->entityTypeManager->getStorage('node')->getQuery()->accessCheck(FALSE)
+    $storage = $this->entityTypeManager->getStorage('node');
+    if (!$storage instanceof RevisionableStorageInterface) {
+      return [];
+    }
+    $latest = $storage->getQuery()->latestRevision()->accessCheck(FALSE)
       ->condition('uuid', array_values($uuids), 'IN')->condition('type', 'revista')->execute();
-    $nodes = $this->entityTypeManager->getStorage('node')->loadMultiple($ids);
+    $nodes = $latest === [] ? [] : $storage->loadMultipleRevisions(array_keys($latest));
     $nodesByUuid = [];
     foreach ($nodes as $node) {
-      if ($node instanceof NodeInterface) {
+      if ($node instanceof NodeInterface && (int) $node->id() === (int) ($latest[$node->getRevisionId()] ?? 0)) {
         $nodesByUuid[$node->uuid()] = $node;
       }
     }
     $resolved = [];
     foreach ($valid as $id => [, $type, $uuid, $revision]) {
       $node = $nodesByUuid[$uuid] ?? NULL;
-      if (!$node instanceof NodeInterface || !$node->isPublished() || !$node->isDefaultRevision()
-        || (int) $node->getRevisionId() !== $revision
-        || ($node->hasField('moderation_state') && $node->get('moderation_state')->value !== 'published')
+      if (!$node instanceof NodeInterface || (int) $node->getRevisionId() !== $revision
+        || !$this->revisionIsEligible($node, $type)
         || !$this->domainPurposes->runInPurpose('magazine', static fn(): bool => $node->access('view', $account, TRUE)->isAllowed())
-        || !$this->isRecipient($node, (int) $account->id())) {
+        || !$this->isRecipient($node, (int) $account->id(), $type)) {
         continue;
       }
-      $url = $this->domainPurposes->routeUrl('magazine', 'entity.node.canonical', ['node' => $node->id()]);
-      if ($url === NULL) {
+      $url = in_array($type, ['review_submitted', 'review_returned'], TRUE) && !$node->isDefaultRevision()
+        ? $this->domainPurposes->routeUrl('magazine', 'entity.node.latest_version', ['node' => $node->id()])
+        : $this->domainPurposes->routeUrl('magazine', 'entity.node.canonical', ['node' => $node->id()]);
+      if ($url === NULL || !$this->domainPurposes->runInPurpose('magazine', static fn(): bool => $url->access($account, TRUE)->isAllowed())) {
         continue;
       }
-      $title = $type === 'published'
-      ? $this->t('Nova publicação na Revista')
-      : $this->t('Publicação atualizada na Revista');
+      $title = match ($type) {
+        'published' => $this->t('Nova publicação na Revista'),
+        'updated' => $this->t('Publicação atualizada na Revista'),
+        'review_submitted' => $this->t('Publicação enviada para revisão editorial'),
+        'review_returned' => $this->t('Publicação devolvida para ajustes'),
+      };
       $resolved[$id] = [
         'title' => $title,
-        'summary' => $type === 'published'
-          ? $this->t('Uma publicação da Revista que você acompanha está disponível.')
-          : $this->t('Uma publicação da Revista que você acompanha recebeu uma nova revisão.'),
-        'email_summary' => $type === 'published'
-          ? $this->t('Há uma nova publicação da Revista disponível.')
-          : $this->t('Uma publicação da Revista recebeu uma nova revisão.'),
+        'summary' => match ($type) {
+          'published' => $this->t('Uma publicação da Revista que você acompanha está disponível.'),
+          'updated' => $this->t('Uma publicação da Revista que você acompanha recebeu uma nova revisão.'),
+          'review_submitted' => $this->t('Sua publicação foi enviada para análise editorial.'),
+          'review_returned' => $this->t('Uma publicação sua voltou da revisão editorial para ajustes.'),
+        },
+        'email_summary' => match ($type) {
+          'published' => $this->t('Há uma nova publicação da Revista disponível.'),
+          'updated' => $this->t('Uma publicação da Revista recebeu uma nova revisão.'),
+          'review_submitted' => $this->t('Sua publicação foi enviada para análise editorial.'),
+          'review_returned' => $this->t('Uma publicação sua voltou da revisão editorial para ajustes.'),
+        },
         'url' => $url,
       ];
     }
@@ -375,17 +397,25 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
   }
 
   /**
-   * Resolves the exact current published node version and recipient access. */
-  private function resolveSource(string $uuid, int $revisionId, AccountInterface $account): ?NodeInterface {
+   * Resolves the exact latest source revision and recipient access.
+   */
+  private function resolveSource(string $uuid, int $revisionId, AccountInterface $account, string $noticeType): ?NodeInterface {
     if ($uuid === '' || $revisionId < 1 || !$account->isAuthenticated()) {
       return NULL;
     }
     $storage = $this->entityTypeManager->getStorage('node');
-    $ids = $storage->getQuery()->accessCheck(FALSE)->condition('uuid', $uuid)->condition('type', 'revista')->range(0, 1)->execute();
-    $node = $ids === [] ? NULL : $storage->load(reset($ids));
-    if (!$node instanceof NodeInterface || !$node->isPublished() || !$node->isDefaultRevision()
-      || (int) $node->getRevisionId() !== $revisionId
-      || ($node->hasField('moderation_state') && $node->get('moderation_state')->value !== 'published')) {
+    if (!$storage instanceof RevisionableStorageInterface) {
+      return NULL;
+    }
+    $latest = $storage->getQuery()->latestRevision()->accessCheck(FALSE)
+      ->condition('uuid', $uuid)->condition('type', 'revista')->execute();
+    if (!isset($latest[$revisionId])) {
+      return NULL;
+    }
+    $node = $storage->loadRevision($revisionId);
+    if (!$node instanceof NodeInterface || $node->uuid() !== $uuid
+      || (int) $node->id() !== (int) $latest[$revisionId]
+      || !$this->revisionIsEligible($node, $noticeType)) {
       return NULL;
     }
     $allowed = $this->domainPurposes->runInPurpose('magazine', static fn(): bool =>
@@ -395,8 +425,22 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
   }
 
   /**
+   * Confirms a source revision matches the event's public/editorial state. */
+  private function revisionIsEligible(NodeInterface $node, string $noticeType): bool {
+    $state = $node->hasField('moderation_state')
+      ? (string) $node->get('moderation_state')->value
+      : ($node->isPublished() ? 'published' : 'draft');
+    return match ($noticeType) {
+      'published', 'updated' => $node->isDefaultRevision() && $node->isPublished() && $state === 'published',
+      'review_submitted' => $state === 'review',
+      'review_returned' => $state === 'draft',
+      default => FALSE,
+    };
+  }
+
+  /**
    * Revalidates author, coauthor or current publication-following status. */
-  private function isRecipient(NodeInterface $node, int $uid): bool {
+  private function isRecipient(NodeInterface $node, int $uid, string $noticeType): bool {
     if ((int) $node->getOwnerId() === $uid) {
       return TRUE;
     }
@@ -406,6 +450,9 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
           return TRUE;
         }
       }
+    }
+    if (in_array($noticeType, ['review_submitted', 'review_returned'], TRUE)) {
+      return FALSE;
     }
     $flag = $this->flagService->getFlagById('seguir_publicacao');
     if ($flag === NULL) {

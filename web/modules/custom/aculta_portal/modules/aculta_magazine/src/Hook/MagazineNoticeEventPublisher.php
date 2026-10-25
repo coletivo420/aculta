@@ -48,13 +48,24 @@ final class MagazineNoticeEventPublisher {
  * Publishes a publication transition or a new published revision. */
   #[Hook('entity_update')]
   public function entityUpdate(EntityInterface $entity): void {
-    if (!$entity instanceof NodeInterface || $entity->bundle() !== 'revista'
-      || !$entity->isPublished() || !$this->isPublishedModerationState($entity)
-      || !$entity->isDefaultRevision() || $this->isSynchronizing($entity)) {
+    if (!$entity instanceof NodeInterface || $entity->bundle() !== 'revista' || $this->isSynchronizing($entity)) {
       return;
     }
     $original = $entity->getOriginal();
     if (!$original instanceof NodeInterface || $original->bundle() !== 'revista') {
+      return;
+    }
+    $originalState = $this->moderationState($original);
+    $currentState = $this->moderationState($entity);
+    if ($originalState === 'draft' && $currentState === 'review') {
+      $this->publishEditorialTransition($entity, 'review_submitted');
+      return;
+    }
+    if ($originalState === 'review' && $currentState === 'draft') {
+      $this->publishEditorialTransition($entity, 'review_returned');
+      return;
+    }
+    if (!$entity->isPublished() || $currentState !== 'published' || !$entity->isDefaultRevision()) {
       return;
     }
     $wasPublished = $original->isPublished() && $this->isPublishedModerationState($original);
@@ -81,12 +92,6 @@ final class MagazineNoticeEventPublisher {
       return;
     }
 
-    $authorUid = method_exists($node, 'getRevisionUserId')
-      ? (int) $node->getRevisionUserId()
-      : (int) $node->getOwnerId();
-    if ($authorUid < 1) {
-      $authorUid = (int) $node->getOwnerId();
-    }
     $recipients = [];
     $ownerUid = (int) $node->getOwnerId();
     if ($ownerUid > 0) {
@@ -110,8 +115,58 @@ final class MagazineNoticeEventPublisher {
       }
     }
 
+    $this->publishToRecipients($node, $eventType, $setting, $recipients, FALSE);
+  }
+
+  /**
+   * Publishes editorial review transitions to authors and coauthors. */
+  private function publishEditorialTransition(NodeInterface $node, string $setting): void {
+    if (!in_array($setting, ['review_submitted', 'review_returned'], TRUE)
+      || $this->configFactory->get('aculta_messenger.settings')->get('magazine_events.' . $setting) !== TRUE) {
+      return;
+    }
+    $expectedState = $setting === 'review_submitted' ? 'review' : 'draft';
+    $revisionId = (int) $node->getRevisionId();
+    $storage = $this->entityTypeManager->getStorage('node');
+    if ($revisionId < 1 || (int) $storage->getLatestRevisionId($node->id()) !== $revisionId
+      || $this->moderationState($node) !== $expectedState) {
+      return;
+    }
+    $recipients = [];
+    $ownerUid = (int) $node->getOwnerId();
+    if ($ownerUid > 0) {
+      $recipients[$ownerUid] = TRUE;
+    }
+    if ($node->hasField('co_authors')) {
+      foreach ($node->get('co_authors')->getValue() as $item) {
+        $uid = (int) ($item['target_id'] ?? 0);
+        if ($uid > 0) {
+          $recipients[$uid] = TRUE;
+        }
+      }
+    }
+    $eventType = $setting === 'review_submitted'
+      ? 'magazine.editorial_review_submitted'
+      : 'magazine.editorial_review_returned';
+    $this->publishToRecipients($node, $eventType, $setting, $recipients, TRUE);
+  }
+
+  /**
+   * Publishes a Magazine event to authorized recipients, excluding its actor. */
+  private function publishToRecipients(NodeInterface $node, string $eventType, string $setting, array $recipients, bool $latestVersion): void {
+    $uuid = $node->uuid();
+    $revisionId = (int) $node->getRevisionId();
+    if ($uuid === '' || $revisionId < 1) {
+      return;
+    }
+    $actorUid = method_exists($node, 'getRevisionUserId')
+      ? (int) $node->getRevisionUserId()
+      : (int) $node->getOwnerId();
+    if ($actorUid < 1) {
+      $actorUid = (int) $node->getOwnerId();
+    }
     foreach (array_keys($recipients) as $uid) {
-      if ($uid === $authorUid || !$this->recipientCanView($node, $uid)) {
+      if ($uid === $actorUid || !$this->recipientCanView($node, $uid, $latestVersion)) {
         continue;
       }
       $this->publisher->publish(new MessengerNoticeEvent(
@@ -131,14 +186,24 @@ final class MagazineNoticeEventPublisher {
 
   /**
    * Revalidates recipient account and node access within Magazine purpose. */
-  private function recipientCanView(NodeInterface $node, int $uid): bool {
+  private function recipientCanView(NodeInterface $node, int $uid, bool $latestVersion = FALSE): bool {
     $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return FALSE;
     }
-    $allowed = $this->domainPurposes->runInPurpose('magazine', static fn(): bool =>
-      $node->access('view', $account, TRUE)->isAllowed()
-    );
+    $allowed = $this->domainPurposes->runInPurpose('magazine', function () use ($node, $account, $latestVersion): bool {
+      if (!$node->access('view', $account, TRUE)->isAllowed()) {
+        return FALSE;
+      }
+      // Content Moderation keeps unpublished revisions as the default revision
+      // until a published default revision exists. The latest-version route
+      // requires a pending revision, so use canonical for the default.
+      $route = $latestVersion && !$node->isDefaultRevision()
+        ? 'entity.node.latest_version'
+        : 'entity.node.canonical';
+      $url = $this->domainPurposes->routeUrl('magazine', $route, ['node' => $node->id()]);
+      return $url !== NULL && $url->access($account, TRUE)->isAllowed();
+    });
     return $allowed === TRUE;
   }
 
@@ -147,6 +212,14 @@ final class MagazineNoticeEventPublisher {
   private function isPublishedModerationState(NodeInterface $node): bool {
     return !$node->hasField('moderation_state')
       || $node->get('moderation_state')->value === 'published';
+  }
+
+  /**
+   * Returns the workflow state, with publication flags as the fallback. */
+  private function moderationState(NodeInterface $node): string {
+    return $node->hasField('moderation_state')
+      ? (string) $node->get('moderation_state')->value
+      : ($node->isPublished() ? 'published' : 'draft');
   }
 
   /**
