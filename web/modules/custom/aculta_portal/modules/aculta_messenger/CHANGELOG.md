@@ -1,3 +1,13 @@
+## 0.1.1-dev.205 — rejeitar payloads de resposta malformados
+
+`drawerReply` deixa de converter valores não textuais em strings (por exemplo, um array enviado como `message[value]`, que
+virava o texto literal `Array`). A rota retorna 400 sem cache para o payload malformado, antes de validar flood ou tocar
+na conversa.
+
+Validação: `MessagesControllerMemberAccessTest` **4 testes / 36 assertions PASS**; PHPCS Drupal/DrupalPractice no teste,
+PHP lint e diff check PASS. O PHPCS do controller reporta violações preexistentes fora do trecho alterado. HTTP funcional
+com sessão e Runtime não executados.
+
 ## 0.1.1-dev.204 — rejeitar identidades duplicadas de digest
 
 O núcleo detecta adapters de digest sem identidade ou com identidade estável duplicada. Essas fontes ficam pendentes sem

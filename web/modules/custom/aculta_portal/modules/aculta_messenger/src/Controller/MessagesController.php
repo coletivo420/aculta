@@ -211,7 +211,15 @@ final class MessagesController extends ControllerBase {
     // The same rules as the native composer (block, friends-only, send limit), then the message is saved here.
     // The native form would redirect to its own page, which does not exist on this domain.
     $input = $this->requestStack->getCurrentRequest()?->request->all() ?? [];
-    $text = trim((string) ($input['message'][0]['value'] ?? ''));
+    $submittedText = $input['message'][0]['value'] ?? NULL;
+    if (!is_string($submittedText)) {
+      return new Response(
+        '',
+        Response::HTTP_BAD_REQUEST,
+        ['Cache-Control' => 'private, no-store'],
+      );
+    }
+    $text = trim($submittedText);
     $formState = new FormState();
     $formState->set('thread', $private_message_thread);
     $form = [];

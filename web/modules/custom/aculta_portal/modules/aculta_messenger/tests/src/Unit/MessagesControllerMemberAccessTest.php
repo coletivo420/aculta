@@ -103,6 +103,29 @@ final class MessagesControllerMemberAccessTest extends UnitTestCase {
   }
 
   /**
+   * Rejects an array masquerading as reply text without coercion or mutation.
+   */
+  public function testReplyHandlerRejectsMalformedTextPayload(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('id')->willReturn(42);
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->expects(self::once())->method('access')->with('view', $account, TRUE)->willReturn(AccessResult::allowed());
+    $thread->expects(self::once())->method('isMember')->with(42)->willReturn(TRUE);
+    $requestStack = new RequestStack();
+    $requestStack->push(Request::create(
+      '/mensagens/conversa/12/responder',
+      'POST',
+      ['message' => [['value' => ['malformed' => 'payload']]]],
+    ));
+    $controller = $this->controllerFor($account, $requestStack);
+
+    $response = $controller->drawerReply($thread);
+
+    self::assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+    self::assertEqualsCanonicalizing(['private', 'no-store'], explode(', ', (string) $response->headers->get('Cache-Control')));
+  }
+
+  /**
    * Creates a controller with only the current-account dependency initialized.
    */
   private function controllerFor(AccountInterface $account, ?RequestStack $requestStack = NULL): MessagesController {
