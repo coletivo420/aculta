@@ -222,6 +222,25 @@ final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
   }
 
   /**
+   * An installation without optional adapter services keeps the core list usable. */
+  public function testDisabledOptionalAdaptersDoNotBreakListOrCount(): void {
+    $locator = $this->createMock(ContainerInterface::class);
+    $locator->expects(self::exactly(8))->method('has')->willReturn(FALSE);
+    $locator->expects(self::never())->method('get');
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects(self::never())->method('error');
+    $hooks = new PersonalNoticeAdapterHooks($locator, $logger);
+    $items = ['forum-notice'];
+    $count = 3;
+
+    $hooks->noticesAlter($items, $this->createMock(AccountInterface::class));
+    $hooks->unreadCountAlter($count, 42);
+
+    self::assertSame(['forum-notice'], $items);
+    self::assertSame(3, $count);
+  }
+
+  /**
    * Negative adapter counts are rejected without reducing the central count.
    */
   public function testNegativeAdapterCountIsIgnored(): void {

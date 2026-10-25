@@ -1,3 +1,11 @@
+## 0.1.1-dev.226 — cobrir central sem adapters opcionais
+
+O dispatcher da central agora tem teste explícito de instalação sem os serviços opcionais LMS, Wiki, Loja e Doações. A
+lista e o contador preservam seus dados centrais, sem instanciar adapters ausentes nem registrar erro.
+
+Validação: `PersonalNoticeAdapterHooksTest` **8 testes / 73 assertions PASS**; PHP lint e PHPCS Drupal/DrupalPractice PASS.
+Sem Runtime.
+
 ## 0.1.1-dev.225 — cobrir troca de digest para envio direto
 
 O teste de preferência do digest agora cobre também a mudança de uma categoria para envio direto. A pendência dessa
