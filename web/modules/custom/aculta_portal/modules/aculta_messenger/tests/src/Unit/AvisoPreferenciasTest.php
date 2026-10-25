@@ -120,7 +120,12 @@ final class AvisoPreferenciasTest extends UnitTestCase {
    * Missing category choice never enables email.
    */
   public function testMissingCategoryPreferenceDefaultsToSiteOnly(): void {
-    $preferences = new AvisoPreferencias($this->createMock(UserDataInterface::class));
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::once())
+      ->method('get')
+      ->with(AvisoPreferencias::MODULO, 27, 'avisos_email_mode_wiki')
+      ->willReturn(NULL);
+    $preferences = new AvisoPreferencias($userData);
 
     self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, 'wiki'));
   }

@@ -6,7 +6,7 @@ opt-outs específicos de respostas/atualizações do Fórum. As chaves antigas s
 removidas somente após a cópia. `emailMode()` agora usa apenas o modo da
 categoria; contas sem preferência compartilhada permanecem somente no site.
 
-Validação: `SharedEmailPreferenceMigrationTest` **1/25 PASS**, `AvisoPreferenciasTest` **22/61 PASS**, `AvisosResumoProviderPreferenceTest` **6/130 PASS**, Unit Messenger **297/2.381 PASS**, Integration Unit **73/745 PASS**, `LearningNoticeDigestIntegrationTest` **25/210 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime/update não executados.
+Validação: `SharedEmailPreferenceMigrationTest` **1/25 PASS**, `AvisoPreferenciasTest` **22/61 PASS**, `AvisosResumoProviderPreferenceTest` **6/130 PASS**, Unit Messenger **297/2.381 PASS**, Integration Unit **73/745 PASS**, `LearningNoticeDigestIntegrationTest` **25/210 PASS**, `SharedEmailPreferenceMigrationKernelTest` **1/15 PASS** em `aculta_simpletest`, PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime/update não executados.
 
 ## 0.1.1-dev.290 — esclarecer a precedência da preferência por categoria
 
