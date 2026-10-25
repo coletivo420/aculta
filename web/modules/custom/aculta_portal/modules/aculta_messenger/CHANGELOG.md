@@ -2542,3 +2542,8 @@ Validação: `NewConversationControllerTest` + `NewConversationRecipientIdsTest`
 - A criação consulta primeiro o mapper do Private Message. Threads existentes continuam aceitando respostas; antes de criar uma nova thread, a preferência friend-only e a amizade são revalidadas, impedindo persistir uma thread vazia se a autorização mudou desde a validação inicial.
 - `NewConversationRecipientIdsTest` + `PrivateMessageFormValidatorTest` **21/108 PASS**; Unit Messenger **263/2.039 PASS**; PHP lint PASS. PHPCS mantém os baselines existentes dos arquivos envolvidos. Kernel, Browser e Runtime não executados.
 
+## 0.1.1-dev.265 — alinhar elegibilidade e respostas em threads existentes
+
+- Busca e compose por perfil usam a mesma regra: conta elegível, identidade pública, ausência de bloqueio bilateral e preferência de novas conversas. O mapper identifica threads existentes para que “somente amigos” não impeça respostas; a criação de uma thread nova repete a checagem no submit antes do serviço contrib persistir a thread.
+- `NewConversationControllerTest`, `NewConversationRecipientIdsTest` e `PrivateMessageFormValidatorTest` **24/153 PASS**; Unit Messenger **265/2.072 PASS**; PHP lint PASS. PHPCS mantém os baselines preexistentes. Kernel, Browser e Runtime não executados.
+

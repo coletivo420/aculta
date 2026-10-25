@@ -194,6 +194,14 @@ final class NewConversationForm extends FormBase {
     }
     $thread = PrivateMessageThread::create(['members' => $members]);
     $formState->set('pmt_entity', $thread);
+    $sender = $this->entityTypes->getStorage('user')->load($this->currentUser->id());
+    if ($sender instanceof UserInterface
+      && $this->privateMessageMapper->getThreadIdForMembers(
+        array_merge([$sender], $recipients),
+      )) {
+      // Existing threads remain replyable after preference changes.
+      $formState->set('existing_conversation', TRUE);
+    }
     $this->validator->validateBlockedRecipients($form, $formState);
     $this->validator->validateNewConversationPrivacy($form, $formState);
     $this->validator->validateRateLimit($form, $formState);
@@ -202,12 +210,18 @@ final class NewConversationForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $formState): void {
     $recipients = $this->recipients($formState);
     if ($recipients === []) {
+      $this->validator->releaseSubmissionLocks();
       return;
     }
     // The Private Message mapper reads ->id() from each member, so the members are user entities, not IDs.
     $sender = $this->entityTypes->getStorage('user')->load($this->currentUser->id());
-    $thread = $this->resolveThreadForSubmission(array_merge([$sender], $recipients), $form, $formState);
+    if (!$sender instanceof UserInterface || !$sender->isActive()) {
+      $this->validator->releaseSubmissionLocks();
+      return;
+    }
+    $thread = $this->resolveThreadForSubmission(array_merge([$sender], $recipients), $formState);
     if (!$thread instanceof PrivateMessageThreadInterface) {
+      $this->validator->releaseSubmissionLocks();
       return;
     }
     $thread = $this->validator->acquireThreadWriteLock($thread, $formState);
@@ -250,15 +264,13 @@ final class NewConversationForm extends FormBase {
    *
    * @param \Drupal\user\UserInterface[] $members
    *   Sender and recipients in the exact order used by Private Message.
-   * @param array $form
-   *   The active render form.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   Current form input and validation state.
    *
    * @return \Drupal\private_message\Entity\PrivateMessageThreadInterface|null
    *   An existing or newly created thread, or NULL when creation is refused.
    */
-  private function resolveThreadForSubmission(array $members, array &$form, FormStateInterface $formState): ?PrivateMessageThreadInterface {
+  private function resolveThreadForSubmission(array $members, FormStateInterface $formState): ?PrivateMessageThreadInterface {
     $threadId = $this->privateMessageMapper->getThreadIdForMembers($members);
     if ($threadId) {
       $thread = $this->entityTypes->getStorage('private_message_thread')->load((int) $threadId);

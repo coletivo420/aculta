@@ -315,7 +315,8 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $currentUser->method('id')->willReturn(42);
 
     $formState = $this->formState(FALSE);
-    $formState->set('thread', $thread);
+    $formState->set('pmt_entity', $thread);
+    $formState->set('existing_conversation', TRUE);
     $validator = new PrivateMessageFormValidator(
       $this->createMock(FloodInterface::class),
       $currentUser,

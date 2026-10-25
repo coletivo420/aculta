@@ -196,3 +196,5 @@ Controllers de conversa e abertura de avisos não marcam leitura em requests cro
 
 A preferência de novas conversas e a amizade são verificadas durante a validação e novamente no limite de persistência. O Messenger consulta primeiro o mapper do Private Message: threads existentes continuam sob a política de resposta; antes de `PrivateMessageService::getThreadForMembers()` criar uma nova thread, a permissão é revalidada. Se o destinatário passou a aceitar somente amigos e a amizade não existe, a criação é recusada sem persistir uma thread vazia. Bloqueios bilaterais continuam revalidados separadamente após o carregamento e o lock da thread.
 
+A busca de destinatários e o formulário aberto por perfil usam a mesma checagem de elegibilidade. Ambos os lados de bloqueio são respeitados antes de revelar a identidade ou apresentar o composer. A preferência friend-only filtra somente o início de uma thread; se já existir uma conversa com o conjunto exato de membros, o composer continua disponível para resposta.
+

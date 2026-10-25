@@ -206,9 +206,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     $state->privacy = 'friends';
 
     $resolve = new \ReflectionMethod(NewConversationForm::class, 'resolveThreadForSubmission');
-    $build = [];
-    $arguments = [[$sender, $recipient], &$build, $formState];
-    self::assertNull($resolve->invokeArgs($newConversationForm, $arguments));
+    self::assertNull($resolve->invoke($newConversationForm, [$sender, $recipient], $formState));
     self::assertTrue($formState->get('aculta_messenger_new_conversation_privacy_rejected'));
   }
 
@@ -248,11 +246,9 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
     $formState = new FormState();
-    $render = [];
     $resolve = new \ReflectionMethod(NewConversationForm::class, 'resolveThreadForSubmission');
-    $arguments = [[$this->user(42), $this->user(84)], &$render, $formState];
 
-    self::assertSame($existingThread, $resolve->invokeArgs($newConversationForm, $arguments));
+    self::assertSame($existingThread, $resolve->invoke($newConversationForm, [$this->user(42), $this->user(84)], $formState));
   }
 
   /**

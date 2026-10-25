@@ -17,6 +17,7 @@ use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
+use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
@@ -87,6 +88,7 @@ final class NewConversationControllerTest extends UnitTestCase {
       $account,
       $userData,
       $bans,
+      $this->createMock(PrivateMessageMapperInterface::class),
       $friendships,
       $this->createMock(FormBuilderInterface::class),
       $this->createMock(RendererInterface::class),
@@ -96,6 +98,90 @@ final class NewConversationControllerTest extends UnitTestCase {
 
     $candidates = new \ReflectionMethod(NewConversationController::class, 'candidates');
     self::assertSame([['user' => $users[2], 'name' => 'nickname-86']], $candidates->invoke($controller, 'nickname'));
+  }
+
+  /**
+   * Direct compose respects friend-only privacy and existing threads.
+   */
+  public function testDirectComposeAllowsOnlyFriendEligibleOrExistingRecipients(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('id')->willReturn('42');
+    $account->method('hasRole')->willReturn(FALSE);
+    $sender = $this->user(42);
+    $recipient = $this->user(84);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->expects(self::exactly(2))->method('load')->with(42)->willReturn($sender);
+    $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypes->expects(self::exactly(2))->method('getStorage')->with('user')->willReturn($userStorage);
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::exactly(2))->method('get')
+      ->with('aculta_messenger', 84, 'message_privacy')->willReturn('friends');
+    $friendships = $this->createMock(FriendshipManagerInterface::class);
+    $friendships->expects(self::exactly(2))->method('areFriendsWith')->with(84)->willReturn(FALSE);
+    $mapper = $this->createMock(PrivateMessageMapperInterface::class);
+    $mapper->expects(self::exactly(2))->method('getThreadIdForMembers')->with([$sender, $recipient])
+      ->willReturnOnConsecutiveCalls(FALSE, 77);
+    $identity = $this->createMock(PublicMemberIdentityInterface::class);
+    $identity->expects(self::exactly(2))->method('publicDisplayName')->with($recipient)->willReturn('membro-84');
+    $bans = $this->createMock(PrivateMessageBanManagerInterface::class);
+    $bans->expects(self::exactly(2))->method('isBanned')->with(84)->willReturn(FALSE);
+    $bans->expects(self::exactly(2))->method('isCurrentUserBannedByUser')->with(84)->willReturn(FALSE);
+    $controller = new NewConversationController(
+      $entityTypes,
+      $account,
+      $userData,
+      $bans,
+      $mapper,
+      $friendships,
+      $this->createMock(FormBuilderInterface::class),
+      $this->createMock(RendererInterface::class),
+      $identity,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+    );
+    $eligibleName = new \ReflectionMethod(NewConversationController::class, 'eligibleRecipientName');
+
+    self::assertNull($eligibleName->invoke($controller, $recipient, TRUE));
+    self::assertSame('membro-84', $eligibleName->invoke($controller, $recipient, TRUE));
+  }
+
+  /**
+   * The direct compose route never bypasses either member's block.
+   */
+  public function testDirectComposeRejectsBlockedRecipientBeforeShowingIdentity(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('id')->willReturn('42');
+    $recipient = $this->user(84);
+    $bans = $this->createMock(PrivateMessageBanManagerInterface::class);
+    $bans->expects(self::once())->method('isBanned')->with(84)->willReturn(TRUE);
+    $bans->expects(self::never())->method('isCurrentUserBannedByUser');
+    $identity = $this->createMock(PublicMemberIdentityInterface::class);
+    $identity->expects(self::never())->method('publicDisplayName');
+    $controller = new NewConversationController(
+      $this->createMock(EntityTypeManagerInterface::class),
+      $account,
+      $this->createMock(UserDataInterface::class),
+      $bans,
+      $this->createMock(PrivateMessageMapperInterface::class),
+      $this->createMock(FriendshipManagerInterface::class),
+      $this->createMock(FormBuilderInterface::class),
+      $this->createMock(RendererInterface::class),
+      $identity,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+    );
+    $eligibleName = new \ReflectionMethod(NewConversationController::class, 'eligibleRecipientName');
+
+    self::assertNull($eligibleName->invoke($controller, $recipient, TRUE));
+  }
+
+  /**
+   * Creates a test member with all required messaging permissions.
+   */
+  private function user(int $uid): UserInterface {
+    $user = $this->createMock(UserInterface::class);
+    $user->method('id')->willReturn((string) $uid);
+    $user->method('isActive')->willReturn(TRUE);
+    $user->method('hasPermission')->willReturn(TRUE);
+    return $user;
   }
 
 }

@@ -81,7 +81,9 @@ final class PrivateMessageFormValidator {
   /**
    * Restricts new threads according to the target member's preference. */
   public function validateNewConversationPrivacy(array &$form, FormStateInterface $formState): void {
-    if ($formState->hasAnyErrors() || $formState->get('thread') !== NULL) {
+    if ($formState->hasAnyErrors()
+      || $formState->get('thread') !== NULL
+      || $formState->get('existing_conversation') === TRUE) {
       return;
     }
 

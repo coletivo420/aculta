@@ -20,6 +20,7 @@ use Drupal\Core\Url;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -45,6 +46,7 @@ final class NewConversationController extends ControllerBase {
     private readonly AccountInterface $account,
     private readonly UserDataInterface $userData,
     private readonly PrivateMessageBanManagerInterface $banManager,
+    private readonly PrivateMessageMapperInterface $privateMessageMapper,
     private readonly FriendshipManagerInterface $friendshipManager,
     private readonly FormBuilderInterface $forms,
     private readonly RendererInterface $renderer,
@@ -58,6 +60,7 @@ final class NewConversationController extends ControllerBase {
       $container->get('current_user'),
       $container->get('user.data'),
       $container->get('private_message.ban_manager'),
+      $container->get('private_message.mapper'),
       $container->get('aculta_user.friendship_manager'),
       $container->get('form_builder'),
       $container->get('renderer'),
@@ -169,10 +172,8 @@ final class NewConversationController extends ControllerBase {
    * its validation errors.
    */
   public function compose(UserInterface $user, Request $request): Response {
-    $publicName = $this->memberIdentity->publicDisplayName($user);
-    if ((int) $user->id() === (int) $this->account->id()
-      || !$this->policy->canReceiveMessages($user)
-      || $publicName === NULL) {
+    $publicName = $this->eligibleRecipientName($user, TRUE);
+    if ($publicName === NULL) {
       throw new NotFoundHttpException();
     }
     $formState = new FormState();
@@ -231,18 +232,12 @@ final class NewConversationController extends ControllerBase {
 
     $users = $this->entityTypes->getStorage('user')->loadMultiple(array_values($userIds));
     $found = [];
-    $staff = $this->account->hasRole('administrator') || $this->account->hasRole('content_editor');
     foreach ($users as $user) {
-      if (!$user instanceof UserInterface || !$this->policy->canReceiveMessages($user)
-        || $this->banManager->isCurrentUserBannedByUser((int) $user->id())) {
+      if (!$user instanceof UserInterface) {
         continue;
       }
-      $publicName = $this->memberIdentity->publicDisplayName($user);
+      $publicName = $this->eligibleRecipientName($user);
       if ($publicName === NULL || mb_stripos($publicName, $term) === FALSE) {
-        continue;
-      }
-      $preference = $this->userData->get('aculta_messenger', (int) $user->id(), 'message_privacy');
-      if (!$staff && $preference === 'friends' && !$this->friendshipManager->areFriendsWith((int) $user->id())) {
         continue;
       }
       $found[] = ['user' => $user, 'name' => $publicName];
@@ -250,12 +245,51 @@ final class NewConversationController extends ControllerBase {
     return $found;
   }
 
-  /** Escapes wildcard characters for the profile nickname query. */
+  /**
+   * Returns a public name when the account may contact the member here.
+   */
+  private function eligibleRecipientName(UserInterface $user, bool $allowExistingThread = FALSE): ?string {
+    $uid = (int) $user->id();
+    if ($uid < 1 || $uid === (int) $this->account->id() || !$this->policy->canReceiveMessages($user)) {
+      return NULL;
+    }
+    // Blocks are bilateral and remain in force for staff accounts.
+    if ($this->banManager->isBanned($uid) || $this->banManager->isCurrentUserBannedByUser($uid)) {
+      return NULL;
+    }
+    $publicName = $this->memberIdentity->publicDisplayName($user);
+    if ($publicName === NULL) {
+      return NULL;
+    }
+    $staff = $this->account->hasRole('administrator') || $this->account->hasRole('content_editor');
+    $preference = $this->userData->get('aculta_messenger', $uid, 'message_privacy');
+    if (!$staff && $preference === 'friends' && !$this->friendshipManager->areFriendsWith($uid)) {
+      if (!$allowExistingThread || !$this->hasExistingThread($user)) {
+        return NULL;
+      }
+    }
+    return $publicName;
+  }
+
+  /**
+   * Checks for a thread with exactly the current members.
+   */
+  private function hasExistingThread(UserInterface $recipient): bool {
+    $sender = $this->entityTypes->getStorage('user')->load((int) $this->account->id());
+    return $sender instanceof UserInterface
+      && (bool) $this->privateMessageMapper->getThreadIdForMembers([$sender, $recipient]);
+  }
+
+  /**
+   * Escapes wildcard characters for the profile nickname query.
+   */
   private function escapeLike(string $value): string {
     return addcslashes($value, '\\%_');
   }
 
-  /** "← Todas as conversas", the same link and place as in the conversation view (top, under the drawer's X). */
+  /**
+   * Returns the back link shown beneath the drawer's close button.
+   */
   private function backLink(): array {
     return PortalLinkElement::build($this->t('← Todas as conversas'), Url::fromRoute('aculta_messenger.drawer_conversations'), [
       'data-aculta-drawer-back' => '',
@@ -263,7 +297,9 @@ final class NewConversationController extends ControllerBase {
     ]) + ['#weight' => -100];
   }
 
-  /** Renders a private, uncached HTML fragment. */
+  /**
+   * Renders a private, uncached HTML fragment.
+   */
   private function fragment(array $build): Response {
     $content = $this->renderer->renderInIsolation($build);
     return new Response((string) $content, Response::HTTP_OK, [
