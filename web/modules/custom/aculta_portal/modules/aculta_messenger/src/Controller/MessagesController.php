@@ -45,6 +45,7 @@ use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeFlagStateLoader;
 use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
 use Drupal\aculta_messenger\Service\NoticeReadActionBuilder;
+use Drupal\aculta_messenger\Service\MemberInitiatedRequest;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
@@ -1380,15 +1381,7 @@ final class MessagesController extends ControllerBase {
 
   /** A same-site, non-prefetch request, i.e. one the member opened on this site. */
   private function isMemberInitiatedRequest(): bool {
-    $request = $this->requestStack->getCurrentRequest();
-    if ($request === NULL) {
-      return FALSE;
-    }
-    if ($request->headers->get('Sec-Fetch-Site') === 'cross-site') {
-      return FALSE;
-    }
-    $purpose = strtolower((string) ($request->headers->get('Sec-Purpose') ?? $request->headers->get('Purpose') ?? ''));
-    return !str_contains($purpose, 'prefetch') && !str_contains($purpose, 'prerender');
+    return MemberInitiatedRequest::isMemberInitiated($this->requestStack->getCurrentRequest());
   }
 
 }

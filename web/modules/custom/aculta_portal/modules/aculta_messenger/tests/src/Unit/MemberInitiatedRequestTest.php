@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_messenger\Unit;
+
+use Drupal\aculta_messenger\Service\MemberInitiatedRequest;
+use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\HttpFoundation\Request;
+
+/**
+ * Tests that only member navigation may update notice read state.
+ */
+#[CoversClass(MemberInitiatedRequest::class)]
+#[Group('aculta_messenger')]
+final class MemberInitiatedRequestTest extends UnitTestCase {
+
+  /**
+   * An ordinary navigation without prefetch metadata may mark a notice read.
+   */
+  public function testSameOriginNavigationIsMemberInitiated(): void {
+    self::assertTrue(MemberInitiatedRequest::isMemberInitiated(Request::create('/avisos/wiki/1/abrir')));
+  }
+
+  /**
+   * Cross-site requests, prefetches, and prerenders cannot update read state.
+   */
+  public function testAutomatedOrCrossSiteRequestsAreNotMemberInitiated(): void {
+    $crossSite = Request::create('/avisos/wiki/1/abrir');
+    $crossSite->headers->set('Sec-Fetch-Site', 'cross-site');
+    $prefetch = Request::create('/avisos/wiki/1/abrir');
+    $prefetch->headers->set('Purpose', 'prefetch');
+    $prerender = Request::create('/avisos/wiki/1/abrir');
+    $prerender->headers->set('Sec-Purpose', 'prerender');
+
+    self::assertFalse(MemberInitiatedRequest::isMemberInitiated(NULL));
+    self::assertFalse(MemberInitiatedRequest::isMemberInitiated($crossSite));
+    self::assertFalse(MemberInitiatedRequest::isMemberInitiated($prefetch));
+    self::assertFalse(MemberInitiatedRequest::isMemberInitiated($prerender));
+    self::assertFalse(MemberInitiatedRequest::isPrefetchOrPrerender($crossSite));
+    self::assertTrue(MemberInitiatedRequest::isPrefetchOrPrerender(NULL));
+    self::assertTrue(MemberInitiatedRequest::isPrefetchOrPrerender($prefetch));
+    self::assertTrue(MemberInitiatedRequest::isPrefetchOrPrerender($prerender));
+  }
+
+}

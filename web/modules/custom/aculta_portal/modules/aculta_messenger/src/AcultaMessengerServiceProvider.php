@@ -134,7 +134,11 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
     ))->setPublic(TRUE);
     $container->setDefinition('aculta_messenger.lms_notice_open_controller', new Definition(
       LearningNoticeOpenController::class,
-      [new Reference('aculta_messenger.lms_notice_manager'), new Reference('current_user')],
+      [
+        new Reference('aculta_messenger.lms_notice_manager'),
+        new Reference('current_user'),
+        new Reference('request_stack'),
+      ],
     ))->setPublic(TRUE);
     $container->setDefinition(LmsTransactionalNoticeMailType::class, new Definition(
       LmsTransactionalNoticeMailType::class,
@@ -167,7 +171,11 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
     ))->setPublic(TRUE);
     $container->setDefinition('aculta_messenger.wiki_notice_open_controller', new Definition(
       WikiNoticeOpenController::class,
-      [new Reference('aculta_messenger.wiki_notice_manager'), new Reference('current_user')],
+      [
+        new Reference('aculta_messenger.wiki_notice_manager'),
+        new Reference('current_user'),
+        new Reference('request_stack'),
+      ],
     ))->setPublic(TRUE);
     $container->setDefinition(WikiNoticeMailType::class, new Definition(
       WikiNoticeMailType::class,
@@ -201,7 +209,11 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
     ))->setPublic(TRUE);
     $container->setDefinition('aculta_messenger.commerce_notice_open_controller', new Definition(
       CommerceOrderNoticeOpenController::class,
-      [new Reference('aculta_messenger.commerce_notice_manager'), new Reference('current_user')],
+      [
+        new Reference('aculta_messenger.commerce_notice_manager'),
+        new Reference('current_user'),
+        new Reference('request_stack'),
+      ],
     ))->setPublic(TRUE);
     $container->setDefinition(CommerceOrderNoticeMailType::class, new Definition(
       CommerceOrderNoticeMailType::class,
@@ -234,7 +246,11 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
     ))->setPublic(TRUE);
     $container->setDefinition('aculta_messenger.donation_notice_open_controller', new Definition(
       DonationNoticeOpenController::class,
-      [new Reference('aculta_messenger.donation_notice_manager'), new Reference('current_user')],
+      [
+        new Reference('aculta_messenger.donation_notice_manager'),
+        new Reference('current_user'),
+        new Reference('request_stack'),
+      ],
     ))->setPublic(TRUE);
     $container->setDefinition(DonationNoticeMailType::class, new Definition(
       DonationNoticeMailType::class,

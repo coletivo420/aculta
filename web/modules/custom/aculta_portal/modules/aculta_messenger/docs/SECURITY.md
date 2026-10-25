@@ -60,6 +60,12 @@ Itens antigos de fila sem o marcador continuam temporariamente no caminho
 Message Notify, sem garantia de correlação após aceite; o caminho e a dependência
 legados serão retirados depois de comprovado o esvaziamento da fila no Runtime.
 
+Abrir uma notificação por GET só muda seu estado de leitura em navegação iniciada
+no mesmo site. Prefetch e prerender recebem `204` privado sem redirect. Uma
+navegação cross-site pode seguir para o destino autorizado, mas não grava leitura.
+O mesmo classificador é usado pelos avisos LMS, Wiki, Loja, Doações, Alertas do
+Site e conversas.
+
 Para assinaturas, só se processam tópicos `forum` ainda publicados. Message
 Subscribe verifica status da conta e acesso de visualização do Node no dispatch.
 Flagging significa preferência de aviso, nunca acesso. O evento Message tem

@@ -166,11 +166,7 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
 
     $account = $this->createMock(AccountInterface::class);
     $lms = $this->createMock(PersonalNoticeAdapterInterface::class);
-    $lms->expects(self::once())
-      ->method('addPersonalNotices')
-      ->willReturnCallback(static function (array &$items): void {
-        $items[] = 'lms';
-      });
+    $lms->expects(self::never())->method('addPersonalNotices');
     $lms->expects(self::once())->method('unreadCount')->with(42)->willReturn(2);
     $wiki = $this->createMock(PersonalNoticeAdapterInterface::class);
     $wiki->expects(self::once())
@@ -216,7 +212,7 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     $moduleHandler->alter('aculta_messenger_personal_notices', $items, $account, $filters);
     $moduleHandler->alter('aculta_messenger_personal_notice_count', $count, $uid);
 
-    self::assertSame(['lms', 'wiki'], $items);
+    self::assertSame(['wiki'], $items);
     self::assertSame(5, $count);
   }
 

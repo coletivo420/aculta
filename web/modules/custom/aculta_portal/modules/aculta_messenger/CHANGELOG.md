@@ -1,3 +1,9 @@
+## 0.1.1-dev.239 — impedir leitura por prefetch de avisos
+
+As rotas GET de abertura de avisos LMS, Wiki, Loja e Doações agora compartilham a política de requisição iniciada pelo membro usada no Messenger. Prefetch e prerender recebem `204` privado sem redirecionamento; navegações cross-site ainda podem abrir o destino autorizado, mas não marcam o aviso como lido. A navegação normal mantém o redirect e a alteração de leitura.
+
+Validação: testes de requisição/abertura, ServiceProvider, contrato GET-only e acesso do controlador **18 testes / 118 assertions PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS nos arquivos modificados, exceto `MessagesController`, cujo baseline permanece idêntico (**95 erros / 65 avisos**). Sem Runtime ou navegação em navegador.
+
 ## 0.1.1-dev.238 — despachar somente o adapter da origem filtrada
 
 A central agora chama somente o adapter que corresponde à origem selecionada. Filtros de Fórum, Comunicados, Alertas e Conta deixam de disparar consultas de LMS, Wiki, Loja e Doações; o contador agregado continua consultando todos os adapters.
