@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Integration\Wiki\Kernel;
 
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_messenger\Integration\Wiki\Plugin\QueueWorker\WikiNoticeEmailWorker;
 use Drupal\aculta_messenger\Service\NoticeReadStateManager;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_messenger\Integration\Wiki\EventSubscriber\WikiNoticeEventSubscriber;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager;
@@ -57,6 +60,7 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     parent::setUp();
 
     $this->installEntitySchema('user');
+    $this->installSchema('user', ['users_data']);
     $this->installEntitySchema('message');
     $this->installEntitySchema('node');
     $this->installSchema('node', ['node_access']);
@@ -293,6 +297,57 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     self::assertSame([], $manager->digestRowsFor($uid));
     $stored = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
     self::assertSame(1, (int) $stored->get('field_aculta_wiki_digest_sent')->value, 'A revoked review is discarded from email and is not retried later.');
+  }
+
+  /**
+   * A queued direct email is cancelled if its review is no longer accessible.
+   */
+  public function testQueuedDirectEmailIsCancelledAfterReviewAccessIsRevoked(): void {
+    $reviewer = $this->createReviewer('wiki_direct_revoked_reviewer');
+    $entry = $this->createReviewEntry($reviewer);
+    $uid = (int) $reviewer->id();
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with($uid, 'wiki')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $queue = $this->createMock(QueueInterface::class);
+    $queue->expects(self::once())->method('createItem')->willReturn(1);
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->expects(self::once())->method('get')->with('aculta_wiki_messenger_email')->willReturn($queue);
+    $manager = $this->manager($preferences, $queueFactory, $this->domainPurposeManager());
+    $message = $manager->record($this->reviewEvent($uid, $entry));
+    self::assertNotNull($message);
+
+    // Replacing the current review revision invalidates the pending delivery.
+    $entry->setNewRevision(TRUE);
+    $entry->set('moderation_state', 'published');
+    $entry->save();
+
+    $this->container->get('user.data')->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())->method('acquire')->willReturn(TRUE);
+    $lock->expects(self::once())->method('release');
+    $worker = new WikiNoticeEmailWorker(
+      [],
+      'aculta_wiki_messenger_email',
+      ['cron' => ['time' => 60]],
+      $this->container->get('entity_type.manager'),
+      $manager,
+      $preferences,
+      new EmailConfirmationPolicy(
+        $this->container->get('user.data'),
+        $this->container->get('entity_type.manager'),
+        $this->container->get('module_handler'),
+      ),
+      $mailer,
+      $lock,
+    );
+
+    $worker->processItem(['message_id' => (int) $message->id()]);
+
+    $stored = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
+    self::assertSame('cancelled', $stored->get('field_aculta_msg_delivery')->value);
+    self::assertSame(0, (int) $stored->get('field_aculta_wiki_read')->value, 'The required site notice remains available after its email is cancelled.');
   }
 
   /**

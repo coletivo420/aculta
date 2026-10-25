@@ -1,3 +1,15 @@
+## 0.1.1-dev.228 — testar revogação antes do e-mail direto da Wiki
+
+O Kernel agora cobre um aviso editorial enfileirado cuja revisão é publicada antes do processamento da fila. O worker
+revalida a revisão, cancela somente o e-mail e mantém o aviso obrigatório no site. A microfase também auditou a
+idempotência do digest: lock concorrente, correlação estável, recuperação transacional e boot Drupal independente já
+estão cobertos sem exigir uma nova camada de persistência.
+
+Validação: `WikiNoticePersistenceKernelTest` **8 testes / 152 assertions PASS** no MariaDB dedicado; as 2 deprecações
+reportadas são das annotations `message` e `message_template` do módulo contrib `message`. `LearningNoticeDigestIntegrationTest`
+**24 testes / 205 assertions PASS**; `AvisosResumoMailerKernelTest` **4 testes / 70 assertions PASS**. Runtime e SMTP
+externo não executados.
+
 ## 0.1.1-dev.227 — evitar carregar mensagens de threads já lidas
 
 `UnreadThreadCounter::isUnread()` agora compara primeiro `updated` com o histórico individual de acesso. Em threads sem
