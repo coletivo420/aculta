@@ -72,10 +72,7 @@ agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicaç�
 de `ForumPost` e revisão de tópico pelo publisher; o consumer preserva
 `aculta_aviso` e revalida assinatura/acesso antes do registro. A prévia de busca
 de membros mantém as sugestões como links normais alcançáveis por Tab.
-O resumo diário mantém lock persistente por destinatário; Dev.198 comprova dois boots Drupal independentes concorrendo sobre o mesmo MariaDB; Dev.199 reconstrói o worker após falha de confirmação e recupera snapshot/Mail Log persistidos sem novo transporte: um único transporte é aceito, o worker concorrente não adquire a lease e o primeiro confirma apenas seu lote; o Kernel MariaDB
-confirma contenção e liberação por processos PHP independentes. Recuperar um
-envio já aceito não aumenta a contagem de novos e-mails do cron. Dev.200 corrige o limite inicial da central da Conta (100 avisos pessoais, prévia da gaveta em cinco). Dev.206 adiciona paginação anterior/seguinte para a origem Fórum, com ordenação estável e revalidação de acesso; o Kernel MariaDB prova páginas não sobrepostas (**1/32 PASS**). As demais origens ainda precisam de paginação própria ou unificada. O transporte
-SMTP real e a homologação no Runtime continuam pendentes.
+O resumo diário mantém lock persistente por destinatário e snapshot sem PII. Dev.198/202 comprovam disputa entre dois boots Drupal e recuperação do lote aceito após reinício, sem segundo transporte; a revalidação de 2026-10-24 passou os Kernels Messenger/Mailer **38/865**. Dev.200 corrige o limite inicial da central da Conta. Dev.206 pagina Fórum; Dev.209 pagina LMS, Wiki, Loja e Doações quando a origem está filtrada, em páginas de até 100 itens. Paginação da lista global, comunicados e Site Alert ainda está pendente. O transporte SMTP real e a homologação no Runtime continuam pendentes.
 O Kernel de integração exercita Messenger e ACULTA Mailer reais com transporte
 controlado: retry após falha de acknowledgement mantém um Mail Log e não envia
 o mesmo resumo novamente.
@@ -191,10 +188,14 @@ transportador.
 
 ## Domain Purpose
 
-Preferências de e-mail ficam em `/configuracoes/email` (Notificações por e-mail), na área ACCOUNT. O opt-out de
-e-mail reutiliza `private_message.receive_notification`; a entrega passa pela
-ferramenta de e-mail já instalada. Bloqueios e assinaturas usam os controles
-nativos por membro e por tópico.
+Preferências de e-mail ficam em `/configuracoes/email` (Notificações por
+e-mail), na área ACCOUNT. O Messenger guarda modos por categoria em `user.data`:
+Fórum (respostas e atualizações), Aprendizagem, Wiki, Loja e Doações. A pessoa
+pode escolher sem e-mail, envio direto ou resumo diário; administradores podem
+remover as opções direta/resumo por categoria, sem desligar avisos obrigatórios
+no site. Conversas privadas continuam usando a preferência nativa do Private
+Message. Bloqueios e assinaturas reutilizam os mecanismos próprios de cada
+capacidade.
 
 `account` é o único purpose da caixa postal e da experiência do membro.
 `main` é o único purpose administrativo, inclusive para manutenção de Site
@@ -213,19 +214,16 @@ cross-purpose usam `DomainPurposeManager`; mutações não atravessam hosts.
 
 ## Estado da implementação
 
-O módulo e os cinco módulos upstream estão selecionados em `core.extension`
-para a próxima importação de Config Sync; a ativação no runtime não foi feita.
-O formulário nativo
-usa Flood para limitar envios; novos eventos são processados em fila e entregues
-como Message Notify usando o mailer instalado, com um template que não expõe o
-corpo privado. Inbox, threads, criação/resposta, contagem de não lidas,
-bloqueio e access continuam pertencendo ao Private Message. As permissões
-`use private messaging system` e `access user profiles` não aparecem na
-configuração exportada de papéis; nenhuma concessão é feita pelo submódulo. A
-política dos papéis precisa ser aplicada por configuração administrativa
-revisada antes da ativação da experiência para membros. Homelab, fallback sem
-JavaScript, isolamento real, instalação do bundle editorial e acessibilidade
-do modal ainda não foram verificados.
+O módulo e os módulos upstream estão selecionados em `core.extension` para a
+próxima importação de Config Sync; ativação no Runtime não foi feita. O código
+mantém inbox, threads, criação/resposta, contagem, bloqueios e access no Private
+Message, usa Flood/Queue API e o Mailer instalado, sem incluir corpo privado em
+e-mail. Os testes Unit/Kernel de autorização, CSRF, Flood, amizades, avisos e
+digest estão registrados em [ROADMAP.md](docs/ROADMAP.md) e [SECURITY.md](docs/SECURITY.md).
+As permissões `use private messaging system` e `access user profiles` não são
+concedidas pelo submódulo; a política de papéis precisa ser revisada antes da
+ativação para membros. Requisição HTTP completa com sessão, smoke visual atual,
+Runtime e transporte SMTP permanecem pendentes.
 
 Para assinaturas, dev.5 reutiliza a flag Drupal `seguir_topico` dos tópicos
 `forum`. A publicação de tópico não gera mais mensagem: Message Subscribe não entrega para `forum`

@@ -2100,3 +2100,5 @@ Validação: dispatch opcional `PersonalNoticeAdapterHooksTest` **6/65 PASS**; C
 
 Revalidação de idempotência do digest: `LearningNoticeDigestIntegrationTest` **22/176**, `AvisosResumoProviderPreferenceTest` **4/79**, `AvisosResumoMailTypeTest` **2/7** e Kernels Messenger/Mailer **38/865 em conjunto** PASS no MariaDB dedicado. A execução cobriu recuperação do lote aceito e dois workers Drupal independentes; não usou SMTP real nem Runtime.
 
+Auditoria focal dos modos de e-mail — **42 testes / 445 assertions PASS** para preferências pessoais, opções administrativas e workers diretos de Fórum, LMS, Wiki, Loja e Doações. README e configuração agora descrevem a propriedade do Messenger sobre os modos por categoria (`off`, direta, resumo), a obrigatoriedade do aviso no site e a separação da preferência nativa das conversas Private Message. Sem SMTP real ou homologação Runtime.
+
