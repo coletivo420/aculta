@@ -11,6 +11,7 @@ use Drupal\private_message\Entity\PrivateMessageThread;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\Core\Routing\RouteMatch;
+use Drupal\Core\Session\AnonymousUserSession;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,6 +48,35 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     $this->installSchema('private_message', ['pm_thread_history']);
     $this->installConfig(['system', 'user', 'filter']);
     $this->grantMessagingPermissions();
+  }
+
+  /**
+   * Shared email settings require Portal access, not permission to start chats.
+   */
+  public function testEmailPreferencesRouteDoesNotRequirePrivateMessaging(): void {
+    $portalRole = Role::create(['id' => 'portal_email_settings', 'label' => 'Portal email settings']);
+    $portalRole->grantPermission('access aculta portal');
+    $portalRole->save();
+    $portalMember = User::create([
+      'name' => 'portal_email_member',
+      'mail' => 'portal-email@example.invalid',
+      'status' => 1,
+      'roles' => ['portal_email_settings'],
+    ]);
+    $portalMember->save();
+    $memberWithoutPortalAccess = $this->createMember('without_portal_email_access');
+
+    [$routeName, $route] = $this->productionEmailPreferencesRoute();
+    $routeMatch = new RouteMatch($routeName, $route);
+    $request = Request::create('/configuracoes/email', 'GET');
+    $access = $this->container->get('access_manager');
+
+    self::assertTrue(
+      $access->check($routeMatch, $portalMember, $request),
+      'A Portal member can manage notice preferences without permission to start private conversations.',
+    );
+    self::assertFalse($access->check($routeMatch, $memberWithoutPortalAccess, $request));
+    self::assertFalse($access->check($routeMatch, new AnonymousUserSession(), $request));
   }
 
   /**
@@ -124,6 +154,34 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     $route = $collection->get($name);
     $path = str_replace('{private_message_thread}', (string) $threadId, ltrim($definition['path'], '/'));
     return [$name, $route, $path];
+  }
+
+  /**
+   * Loads the production email-preferences route with Core access checks.
+   *
+   * @return array{string, \Symfony\Component\Routing\Route}
+   *   Route name and route definition.
+   */
+  private function productionEmailPreferencesRoute(): array {
+    $routeFile = dirname(__DIR__, 3) . '/aculta_messenger.routing.yml';
+    $definitions = Yaml::decode(file_get_contents($routeFile));
+    $name = 'aculta_messenger.communication_settings';
+    $definition = $definitions[$name];
+    $route = new Route(
+      $definition['path'],
+      $definition['defaults'] ?? [],
+      $definition['requirements'] ?? [],
+      $definition['options'] ?? [],
+      '',
+      [],
+      $definition['methods'] ?? [],
+    );
+    $collection = new RouteCollection();
+    $collection->add($name, $route);
+    $accessManager = $this->container->get('access_manager');
+    $providerProperty = new \ReflectionProperty($accessManager, 'checkProvider');
+    $providerProperty->getValue($accessManager)->setChecks($collection);
+    return [$name, $collection->get($name)];
   }
 
   /**

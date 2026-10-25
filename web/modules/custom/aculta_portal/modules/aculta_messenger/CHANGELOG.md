@@ -1,3 +1,16 @@
+## 0.1.1-dev.308 — validar acesso da página unificada de e-mail
+
+Kernel exercita os checks reais do Drupal na rota `/configuracoes/email`:
+membro autenticado com acesso ao Portal entra sem precisar da permissão para
+conversas privadas; usuário sem acesso ao Portal e usuário anônimo são
+rejeitados.
+
+Validação: `PrivateMessageRouteAccessKernelTest` **1 teste / 10 assertions
+PASS** no MariaDB dedicado; integração Kernel de Loja/Doações/LMS/Wiki **23
+testes / 396 assertions PASS** (2 depreciações Core/contrib e 7 notices
+registrados); PHPCS Drupal/DrupalPractice, PHP lint, YAML e `git diff --check`
+PASS.
+
 ## 0.1.1-dev.307 — preservar avisos válidos ao filtrar linha de digest inválida
 
 Quando um provider retorna linhas inválidas junto de linhas válidas, o digest
