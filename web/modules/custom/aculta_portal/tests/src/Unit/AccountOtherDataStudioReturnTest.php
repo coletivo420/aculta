@@ -51,7 +51,7 @@ final class AccountOtherDataStudioReturnTest extends UnitTestCase {
   public function testCheckoutDestinationTakesPriority(): void {
     foreach (['aculta_studio.account_documents', 'aculta_portal.my_data_other'] as $route) {
       $form = $this->form($route, '/checkout/19/order_information');
-      self::assertSame('internal:/checkout/19/order_information', $this->returnUrl($form)->getUri());
+      self::assertSame('base:checkout/19/order_information', $this->returnUrl($form)->getUri());
     }
   }
 
