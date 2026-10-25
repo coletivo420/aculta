@@ -30,9 +30,12 @@ DrupalPractice PASS. O Kernel emite deprecações de Core/contrib, sem falhas.
 **Dev.117 resolveu a pendência M0:** o inspetor global ignora tipos registrados
 sem tabela base instalada e storages nulos, sem transformar falha real em
 autorização; a classe `WikiLeadImageLifecycleKernelTest` passou completa em
-**28 testes / 1.611 asserções** e a suíte Kernel Wiki em **30/1.661**. O
+**29 testes / 1.642 asserções** e a suíte Kernel Wiki em **31/1.692**. O
 enumerador do Index também trata tipo sem schema instalado como vazio, e o
-Kernel de rebuild Wiki-owned voltou a concluir a geração.
+Kernel de rebuild Wiki-owned voltou a concluir a geração. A página pública do
+verbete deixou de retornar 500 ao mesclar os contextos de cache do hook de
+contribuição; o HTML atual ainda serve `h1` vazio por template Twig compilado
+anterior à correção, pendente de `drush cr` autorizado no Runtime.
 
 O núcleo `aculta_messenger` é dono do consumer, persistência Message, central,
 contagem, preferências, deduplicação, abertura segura, filas, workers e e-mail.

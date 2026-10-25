@@ -1625,19 +1625,33 @@
 - **Wiki420 pública (W-F4/W-F8).** A busca deixou de renderizar dois `<h1>`
   (título da rota + título do controller). O HTML servido sem JavaScript agora
   tem um único `h1` em home, listagem e busca.
+- **Página do verbete (W-F4).** `WikiProposalLinkHooks` usava
+  `CacheableMetadata::applyTo()` com um objeto novo, o que **substituía** os
+  contextos do build e removia `route.name.is_layout_builder_ui`; toda página
+  pública de verbete falhava o invariante do variation cache com HTTP 500. A
+  metadata agora é mesclada à existente. As URLs de verbete passaram de 500 para
+  200; o Kernel renderiza o template público com o tema ACULTA420 e exige um
+  único `h1` com o título. O HTML servido ainda mostra o `h1` vazio porque o
+  template compilado do Runtime é anterior à correção; `drush cr` no Runtime de
+  teste é necessário e não foi executado sem autorização.
 - **Homologação executada.** Firefox ESR/X11, tema ACULTA420, sete larguras
-  (320/360/390/768/1024/1280/1440): público 85/85, WE SATIVA autenticado 31/31,
-  moderação Studio 20/20, teclado 49/49 e sem-JavaScript 11/11. `aculta_forum_wiki`
-  está habilitado no Runtime e o provider `wiki` foi confirmado no resolver;
-  anônimo lê e não escreve nem modera. Nenhuma escrita de conteúdo ou configuração.
-- **Testes próprios.** Unit Wiki 82/448; Kernel Wiki 30/1.661; Messenger
-  integração Wiki Unit 4/47 e Kernel 11/236; Estatísticas Wiki Kernel 13/142;
-  `aculta_forum_wiki` Unit 5/28; Unit do enumerador do Index 7/59; PHPCS, PHP
-  lint, gates de índice/Drupal 11/aliases e `git diff --check` PASS.
+  (320/360/390/768/1024/1280/1440): público 85/85 nas três páginas originais,
+  WE SATIVA autenticado 31/31, moderação Studio 20/20 e teclado 49/49. O smoke
+  público ampliado reprova 7 verificações do verbete por causa do template Twig
+  compilado desatualizado (`h1` vazio), não do código atual. Sem-JavaScript
+  15/16, com a mesma pendência de `h1`. `aculta_forum_wiki` está habilitado no
+  Runtime e o provider `wiki` foi confirmado no resolver; anônimo lê e não
+  escreve nem modera. Nenhuma escrita de conteúdo ou configuração.
+- **Testes próprios.** Unit Wiki 82/448; Kernel Wiki 31/1.692 (classe de imagem
+  29/1.642); Messenger integração Wiki Unit 4/47 e Kernel 11/236; Estatísticas
+  Wiki Kernel 13/142; `aculta_forum_wiki` Unit 5/28; Unit do enumerador do
+  Index 7/59; PHPCS, PHP lint, gates de índice/Drupal 11/aliases e
+  `git diff --check` PASS.
 - **Pendências declaradas.** Olivero, modo escuro efetivo, zoom real 200%/400%,
   leitor de tela e WCAG 2.2 AA completa não foram executados; o formulário de
   decisão não foi aberto no navegador porque não havia proposta pendente no
-  Runtime. `validate-aculta-image.php` segue reprovando uma ocorrência R5
-  preexistente em `UnusedFileCleaner.php` (fora da Wiki). O Index continua
-  desativado no Runtime; ativação/rebuild exige autorização.
+  Runtime. O `h1` público depende de `drush cr` no Runtime de teste autorizado.
+  `validate-aculta-image.php` segue reprovando uma ocorrência R5 preexistente em
+  `UnusedFileCleaner.php` (fora da Wiki). O Index continua desativado no
+  Runtime; ativação/rebuild exige autorização.
 

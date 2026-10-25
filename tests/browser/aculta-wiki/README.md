@@ -59,11 +59,15 @@ completa.
 
 O script valida raiz, listagem e busca em desktop e larguras móveis, verifica
 presença de `main`/`h1`, erros visíveis e rolagem horizontal, e confirma que o
-caminho interno `/wiki` responde 404 por GET. Testa apenas o tema ativo no
-servidor. Olivero, leitores de tela, teclado e WCAG 2.2 AA precisam de sessões
-separadas. `WIKI_DARK=1` passa `ui.systemUsesDarkTheme` ao Firefox; no Runtime
-atual ele não produziu modo escuro efetivo, então isso não homologa o tema
-escuro.
+caminho interno `/wiki` responde 404 por GET. Também descobre na busca o link
+canônico de um verbete publicado e repete as verificações na página do verbete.
+Testa apenas o tema ativo no servidor. Olivero, leitores de tela, teclado e
+WCAG 2.2 AA precisam de sessões separadas. No Runtime de teste desta sessão, sete
+verificações `entry/*: main e h1` continuam reprovando porque o template Twig
+compilado é anterior à correção e serve `h1` vazio; a fonte atual passa no Kernel
+e o resultado muda após `drush cr` autorizado. `WIKI_DARK=1` passa
+`ui.systemUsesDarkTheme` ao Firefox; no Runtime atual ele não produziu modo
+escuro efetivo, então isso não homologa o tema escuro.
 
 ## Moderação no ACULTA Studio
 
@@ -83,9 +87,11 @@ SUITE_OUT=/tmp/aculta-wiki-moderation DISPLAY=:0 WIKI_STUDIO_UID=1 \
 ## Sem JavaScript
 
 `no-js.py` abre Firefox ESR com `javascript.enabled=false` e inspeciona o HTML
-servido pelo Drupal para home, listagem e busca. Exige um único `h1` por página,
-formulário nativo com `name="q"`, contagem e links de resultados renderizados no
-servidor. Não autentica nem altera o Runtime.
+servido pelo Drupal para home, listagem, busca e um verbete descoberto na busca.
+Exige um único `h1` por página, `h1` com título no verbete, formulário nativo com
+`name="q"`, contagem e links de resultados renderizados no servidor. Não
+autentica nem altera o Runtime. No Runtime atual, 15/16 passam e a verificação do
+texto do `h1` do verbete fica pendente do mesmo `drush cr` do Twig compilado.
 
 ```sh
 cd /home/piradopirata/projetos/aculta

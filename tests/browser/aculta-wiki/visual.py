@@ -141,6 +141,21 @@ try:
     })
     check("/wiki direto segue fechado como caminho interno", response["status"] == 404, response)
     summary["internalPath"] = response
+
+    # A published entry is the primary public artifact; discover its canonical
+    # URL from the server-rendered search instead of hardcoding a slug.
+    driver.get(BASE + "/wiki/busca?q=maconha&aculta_check=" + str(int(time.time())))
+    time.sleep(0.8)
+    entry_path = driver.js(
+        "return document.querySelector('main a[href*=\"/verbete/\"]')?.getAttribute('href') || ''"
+    )
+    check("verbete: link canônico presente na busca", bool(entry_path), entry_path)
+    if entry_path:
+        summary["pages"]["entry"] = {}
+        for width, width_name in WIDTHS:
+            summary["pages"]["entry"][width_name] = inspect_page(
+                "entry", entry_path, width_name, width,
+            )
     (OUT / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
 finally:
     bidi.close()

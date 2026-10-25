@@ -6,6 +6,7 @@ server-rendered HTML source. It makes no writes and does not authenticate.
 """
 
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -66,6 +67,26 @@ try:
     check("listagem: conteúdo principal presente", "<main" in listing_source)
     check("listagem: nenhuma mensagem de erro visível",
           "messages--error" not in listing_source)
+
+    # The canonical entry page is the primary public artifact.
+    match = re.search(r'href="(/verbete/[^"]+)"', search_source)
+    if match:
+        driver.get(BASE + match.group(1) + "?aculta_check=" + stamp)
+        entry_source = driver.req("GET", f"/session/{driver.session}/source")
+        entry_html = entry_source if isinstance(entry_source, str) else str(entry_source)
+        check("verbete: HTML servido sem JavaScript", bool(entry_html.strip()))
+        check("verbete: um único h1 no HTML", entry_html.count("<h1") == 1,
+              f"encontrados={entry_html.count('<h1')}")
+        heading = re.search(r"<h1[^>]*>(.*?)</h1>", entry_html, re.S)
+        heading_text = re.sub(r"<[^>]+>", "", heading.group(1)).strip() if heading else ""
+        check("verbete: h1 contém o título", bool(heading_text), heading_text)
+        check("verbete: conteúdo principal presente", "<main" in entry_html)
+        check("verbete: sem mensagem de erro visível",
+              "messages--error" not in entry_html
+              and "erro inesperado" not in entry_html.lower())
+        (OUT / "entry.html").write_text(entry_html, encoding="utf-8")
+    else:
+        check("verbete: link canônico encontrado na busca", False)
 finally:
     driver.close()
 

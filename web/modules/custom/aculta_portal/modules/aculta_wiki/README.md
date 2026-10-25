@@ -40,11 +40,15 @@ pendentes, está em
   (tipos registrados sem tabela base e storages nulos são ignorados; falhas reais
   seguem retendo arquivos). O enumerador do Content Index passou a tratar tipo
   sem schema instalado como vazio, corrigindo o rebuild afetado pelo novo
-  `aculta_forum_post`. A busca pública deixou de duplicar o `<h1>`. Homologação
+  `aculta_forum_post`. A busca pública deixou de duplicar o `<h1>`. A página
+  pública do verbete deixou de retornar 500: o hook do link de contribuição
+  substituía os contextos de cache do build; agora os mescla. Homologação
   Firefox ESR/X11 em sete larguras: público 85/85, WE SATIVA 31/31, moderação
-  20/20, teclado 49/49 e sem-JavaScript 11/11. Suítes próprias: Unit 82/448 e
-  Kernel 30/1.661. Olivero, modo escuro efetivo, zoom real, leitor de tela e
-  WCAG 2.2 AA completa continuam pendentes; ver `CHANGELOG.md`.
+  20/20, teclado 49/49. O smoke do verbete e o sem-JS ainda veem `h1` vazio por
+  template Twig compilado anterior à correção; `drush cr` no Runtime de teste
+  segue pendente de autorização. Suítes próprias: Unit 82/448 e Kernel 31/1.692.
+  Olivero, modo escuro efetivo, zoom real, leitor de tela e WCAG 2.2 AA completa
+  continuam pendentes; ver `CHANGELOG.md`.
 
 - `0.1.0-dev.113`: transições Wiki persistem envelopes v1 na Queue API
   confiável e o worker despacha somente para eventos que tenham consumer
