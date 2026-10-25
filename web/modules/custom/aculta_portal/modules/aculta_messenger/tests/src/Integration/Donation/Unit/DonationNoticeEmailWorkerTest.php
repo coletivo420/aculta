@@ -67,19 +67,11 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
    * Opt-out between queue creation and processing suppresses the email. */
   public function testCurrentOptOutCancelsQueuedEmail(): void {
     $message = $this->message('pending');
-    $message->expects(self::exactly(2))->method('set')->willReturnCallback(
-      static function (string $field, mixed $value) use ($message): MessageInterface {
-        self::assertContains($field, ['field_aculta_messenger_attempts', 'field_aculta_msg_delivery']);
-        return $message;
-      },
-    );
-    $message->expects(self::exactly(2))->method('save')->willReturn(1);
+    $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'cancelled')->willReturnSelf();
+    $message->expects(self::once())->method('save')->willReturn(1);
     [$entities] = $this->entities($message);
     $notices = $this->createMock(DonationNoticeManagerInterface::class);
-    $notices->expects(self::once())->method('resolve')->willReturn([
-      'email_summary' => 'Aviso de doação.',
-      'url' => Url::fromUri('https://aculta.org/meu-apoio/pedidos/100'),
-    ]);
+    $notices->expects(self::never())->method('resolve');
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_OFF);
     $mailer = $this->createMock(AcultaMailerInterface::class);
@@ -95,13 +87,13 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
   public function testRevokedOrderAccessCancelsQueuedEmail(): void {
     $message = $this->message('pending');
     $state = ['field_aculta_msg_delivery' => 'pending', 'field_aculta_messenger_attempts' => 0];
-    $message->expects(self::exactly(2))->method('set')->willReturnCallback(
+    $message->expects(self::once())->method('set')->willReturnCallback(
       static function (string $field, mixed $value) use (&$state, $message): MessageInterface {
         $state[$field] = $value;
         return $message;
       },
     );
-    $message->expects(self::exactly(2))->method('save')->willReturn(1);
+    $message->expects(self::once())->method('save')->willReturn(1);
     [$entities, $recipient] = $this->entities($message);
     $notices = $this->createMock(DonationNoticeManagerInterface::class);
     $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn(NULL);
@@ -112,7 +104,7 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
 
     $this->worker($entities, $notices, $preferences, $mailer)->processItem(['message_id' => 101]);
 
-    self::assertSame(1, $state['field_aculta_messenger_attempts']);
+    self::assertSame(0, $state['field_aculta_messenger_attempts']);
     self::assertSame('cancelled', $state['field_aculta_msg_delivery']);
   }
 

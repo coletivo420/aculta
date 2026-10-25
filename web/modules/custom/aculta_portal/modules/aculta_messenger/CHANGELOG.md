@@ -1,3 +1,9 @@
+## 0.1.1-dev.242 — validar Doações antes de contar tentativa de e-mail
+
+O worker direto de Doações agora revalida conta ativa, e-mail confirmado e preferência antes de resolver os dados do pedido. O aviso só é resolvido após consentimento atual; tentativas aumentam apenas quando o Mailer será chamado. Opt-out e acesso revogado cancelam a entrega sem registrar uma tentativa de transporte.
+
+Validação: `DonationNoticeEmailWorkerTest` **6 testes / 76 assertions PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem alteração de schema; sem Runtime ou SMTP externo.
+
 ## 0.1.1-dev.241 — falhar fechado em política de e-mail inválida
 
 Políticas administrativas de categoria só habilitam digest ou envio direto quando configuradas explicitamente como booleano `true`. Uma categoria explicitamente malformada agora permite apenas `off`; ausência da configuração continua compatível com os modos existentes. O rótulo da permissão administrativa passa a mencionar mensagens, avisos e e-mail.

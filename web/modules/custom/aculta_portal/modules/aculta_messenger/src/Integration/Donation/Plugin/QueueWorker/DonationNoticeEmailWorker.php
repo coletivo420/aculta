@@ -81,6 +81,24 @@ final class DonationNoticeEmailWorker extends QueueWorkerBase implements Contain
         || $message->get('field_aculta_msg_delivery')->value !== 'pending') {
         return;
       }
+      $uid = (int) $message->getOwnerId();
+      $recipient = $this->entityTypeManager->getStorage('user')->load($uid);
+      if (!$recipient instanceof UserInterface || !$recipient->isActive()
+        || !filter_var((string) $recipient->getEmail(), FILTER_VALIDATE_EMAIL)
+        || !$this->emailPolicy->isConfirmed($recipient)
+        || $this->preferences->emailMode($uid, 'doacao') !== AvisoPreferencias::EMAIL_IMMEDIATE) {
+        $message->set('field_aculta_msg_delivery', 'cancelled')->save();
+        return;
+      }
+
+      // Revalidate the order only after current email consent and account
+      // policy allow delivery; this avoids resolving donation details after
+      // opt-out or email revocation.
+      $notice = $this->notices->resolve($message, $recipient);
+      if ($notice === NULL) {
+        $message->set('field_aculta_msg_delivery', 'cancelled')->save();
+        return;
+      }
       $currentAttempts = (int) $message->get('field_aculta_messenger_attempts')->value;
       if ($currentAttempts >= self::MAX_ATTEMPTS) {
         $message->set('field_aculta_msg_delivery', 'failed')->save();
@@ -88,17 +106,6 @@ final class DonationNoticeEmailWorker extends QueueWorkerBase implements Contain
       }
       $attempts = $currentAttempts + 1;
       $message->set('field_aculta_messenger_attempts', $attempts)->save();
-      $uid = (int) $message->getOwnerId();
-      $recipient = $this->entityTypeManager->getStorage('user')->load($uid);
-      $notice = $recipient instanceof UserInterface ? $this->notices->resolve($message, $recipient) : NULL;
-      if (!$recipient instanceof UserInterface || !$recipient->isActive()
-        || !filter_var((string) $recipient->getEmail(), FILTER_VALIDATE_EMAIL)
-        || !$this->emailPolicy->isConfirmed($recipient)
-        || $this->preferences->emailMode($uid, 'doacao') !== AvisoPreferencias::EMAIL_IMMEDIATE
-        || $notice === NULL) {
-        $message->set('field_aculta_msg_delivery', 'cancelled')->save();
-        return;
-      }
 
       try {
         $result = MessengerMailDelivery::deliver(
