@@ -757,12 +757,37 @@ final class MessagesController extends ControllerBase {
     }
     $items = [];
     $paginatedOrigins = ['comunicado', 'alerta', 'aprendizagem', 'wiki', 'loja', 'doacao'];
-    $originPageState = $includeReadActions && in_array($filters['origem'], $paginatedOrigins, TRUE)
+    $globalOriginPaging = $includeReadActions && $filters['origem'] === '';
+    $rawOriginOffsets = is_array($pagination['notice_offsets'] ?? NULL)
+      ? $pagination['notice_offsets']
+      : [];
+    $originOffsets = [];
+    foreach ([...$paginatedOrigins, 'forum'] as $origin) {
+      $offset = $this->safeNoticeOffset($rawOriginOffsets[$origin] ?? 0);
+      if ($offset > 0) {
+        $originOffsets[$origin] = $offset;
+      }
+    }
+    $originPageStates = [];
+    if ($globalOriginPaging) {
+      foreach ($paginatedOrigins as $origin) {
+        $originPageStates[$origin] = new PersonalNoticePageState(
+          $origin,
+          $this->safeNoticeOffset($originOffsets[$origin] ?? 0),
+        );
+      }
+      $originPageStates['forum'] = new PersonalNoticePageState(
+        'forum',
+        $this->safeNoticeOffset($originOffsets['forum'] ?? 0),
+      );
+    }
+    $originPageState = !$globalOriginPaging && $includeReadActions && in_array($filters['origem'], $paginatedOrigins, TRUE)
       ? new PersonalNoticePageState(
         $filters['origem'],
-        max(0, (int) ($pagination['notice_offset'] ?? 0)),
+        $this->safeNoticeOffset($pagination['notice_offset'] ?? 0),
       )
       : NULL;
+    $persistentPageState = $originPageStates['comunicado'] ?? $originPageState;
 
     $activeAlerts = $this->siteAlerts->getActiveAlerts();
     $visibleAlerts = [];
@@ -783,10 +808,10 @@ final class MessagesController extends ControllerBase {
     }
 
     // Persistent notices always lead the list, ahead of the dismissable site alerts.
-    $persistentNoticeLimit = $originPageState?->origin() === 'comunicado'
+    $persistentNoticeLimit = $persistentPageState?->origin() === 'comunicado'
       ? PersonalNoticePageState::PAGE_SIZE
       : 50;
-    foreach ($this->buildPersistentNoticeItems($persistentNoticeLimit, $cacheability, $filters, $originPageState) as $item) {
+    foreach ($this->buildPersistentNoticeItems($persistentNoticeLimit, $cacheability, $filters, $persistentPageState) as $item) {
       $items[] = $item;
     }
 
@@ -811,14 +836,17 @@ final class MessagesController extends ControllerBase {
 
     // Avisos por pessoa (respostas e atualizações de tópicos seguidos): só da própria pessoa, com link para a página.
     $forumHasNextPage = FALSE;
-    $forumOffset = max(0, (int) ($pagination['forum_offset'] ?? 0));
+    $forumPageState = $originPageStates['forum'] ?? NULL;
+    $forumOffset = $forumPageState instanceof PersonalNoticePageState
+      ? $forumPageState->offset()
+      : $this->safeNoticeOffset($pagination['forum_offset'] ?? 0);
     $includePersonalNotices = in_array($filters['origem'], ['', 'forum'], TRUE);
     if ($this->account->isAuthenticated() && $includePersonalNotices) {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0)->addCacheTags(['aculta_aviso_list']);
       $personalNoticeLimit = $includeReadActions
         ? AvisoService::PERSONAL_NOTICE_LIST_LIMIT
         : self::PERSONAL_NOTICE_PREVIEW_LIMIT;
-      if ($includeReadActions && $filters['origem'] === 'forum') {
+      if ($includeReadActions && ($filters['origem'] === 'forum' || $globalOriginPaging)) {
         $forumPage = $this->avisos->listarDaPessoaPaginada(
           (int) $this->account->id(),
           $personalNoticeLimit,
@@ -827,6 +855,7 @@ final class MessagesController extends ControllerBase {
         );
         $pessoais = $forumPage['items'];
         $forumHasNextPage = $forumPage['has_next'];
+        $forumPageState?->setHasNext($forumHasNextPage);
       }
       else {
         $pessoais = $this->avisos->listarDaPessoa(
@@ -891,14 +920,22 @@ final class MessagesController extends ControllerBase {
     if ($originPageState instanceof PersonalNoticePageState) {
       $adapterFilters['page_state'] = $originPageState;
     }
+    if ($originPageStates !== []) {
+      $adapterFilters['page_states'] = $originPageStates;
+    }
     $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $this->account, $adapterFilters);
 
-    if ($originPageState instanceof PersonalNoticePageState && $originPageState->origin() === 'alerta') {
-      // Site Alert currently exposes the complete active set through its
-      // upstream service. Apply source/read filters before slicing so the
-      // page never skips unread/read matches when the other state is larger.
-      $items = $this->noticeListFilter->apply($items, $filters);
-      $items = $originPageState->slice($items, PersonalNoticePageState::PAGE_SIZE);
+    $alertPageState = $originPageStates['alerta'] ?? ($originPageState?->origin() === 'alerta' ? $originPageState : NULL);
+    if ($alertPageState instanceof PersonalNoticePageState) {
+      // Site Alert exposes the active set in one call. Slice only its source
+      // group after applying the member's read-state filter.
+      $alertItems = array_values(array_filter($items, static fn(array $item): bool =>
+        ($item['#attributes']['data-aculta-notice-origin'] ?? NULL) === 'alerta'));
+      $alertItems = $this->noticeListFilter->apply($alertItems, ['origem' => 'alerta', 'leitura' => $filters['leitura']]);
+      $pageItems = $alertPageState->slice($alertItems, PersonalNoticePageState::PAGE_SIZE);
+      $items = array_values(array_filter($items, static fn(array $item): bool =>
+        ($item['#attributes']['data-aculta-notice-origin'] ?? NULL) !== 'alerta'));
+      array_push($items, ...$pageItems);
     }
     if ($hasFilters) {
       $items = $this->noticeListFilter->apply($items, $filters);
@@ -939,7 +976,46 @@ final class MessagesController extends ControllerBase {
     }
 
     $noticePager = [];
-    if ($includeReadActions && $filters['origem'] === 'forum'
+    $globalPagerOriginLabels = [
+      'comunicado' => 'Comunicados',
+      'forum' => 'Fórum',
+      'alerta' => 'Alertas do site',
+      'aprendizagem' => 'Aprendizagem',
+      'wiki' => 'Wiki',
+      'loja' => 'Loja',
+      'doacao' => 'Doações',
+    ];
+    if ($globalOriginPaging) {
+      $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
+      foreach ($globalPagerOriginLabels as $origin => $label) {
+        $pageState = $originPageStates[$origin];
+        if ($pageState->offset() > 0) {
+          $offsets = array_filter($originOffsets, static fn(int $offset): bool => $offset > 0);
+          $offsets[$origin] = max(0, $pageState->offset() - PersonalNoticePageState::PAGE_SIZE);
+          $previousUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
+            'query' => $filterQuery + ['notice_offsets' => $offsets],
+          ]);
+          $noticePager[] = PortalLinkElement::build(
+            $this->translation->translate('Avisos anteriores: @origin', ['@origin' => $label]),
+            $previousUrl,
+            ['data-portal-ui' => 'account-data-link'],
+          );
+        }
+        if ($pageState->hasNext()) {
+          $offsets = array_filter($originOffsets, static fn(int $offset): bool => $offset > 0);
+          $offsets[$origin] = $pageState->offset() + PersonalNoticePageState::PAGE_SIZE;
+          $nextUrl = Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], [
+            'query' => $filterQuery + ['notice_offsets' => $offsets],
+          ]);
+          $noticePager[] = PortalLinkElement::build(
+            $this->translation->translate('Avisos seguintes: @origin', ['@origin' => $label]),
+            $nextUrl,
+            ['data-portal-ui' => 'account-data-link'],
+          );
+        }
+      }
+    }
+    if (!$globalOriginPaging && $includeReadActions && $filters['origem'] === 'forum'
       && ($forumOffset > 0 || $forumHasNextPage)) {
       $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
       $pageSize = AvisoService::PERSONAL_NOTICE_LIST_LIMIT;
@@ -965,7 +1041,7 @@ final class MessagesController extends ControllerBase {
       }
     }
 
-    if ($originPageState instanceof PersonalNoticePageState
+    if (!$globalOriginPaging && $originPageState instanceof PersonalNoticePageState
       && $originPageState->origin() !== 'forum'
       && ($originPageState->offset() > 0 || $originPageState->hasNext())) {
       $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
@@ -1001,7 +1077,9 @@ final class MessagesController extends ControllerBase {
 
     $forumPagerBuild = [];
     if ($noticePager !== []) {
-      $pagerOriginLabel = $filters['origem'] === 'forum' ? 'Fórum' : $pagerOriginLabel;
+      $pagerOriginLabel = $globalOriginPaging
+        ? 'Todas as origens'
+        : ($filters['origem'] === 'forum' ? 'Fórum' : $pagerOriginLabel);
       $forumPagerBuild = [
         '#type' => 'container',
         '#attributes' => [
@@ -1138,6 +1216,14 @@ final class MessagesController extends ControllerBase {
       'Cache-Control' => 'private, no-store, no-cache, must-revalidate',
       'X-Content-Type-Options' => 'nosniff',
     ]);
+  }
+
+  /**
+   * Normalizes an untrusted notice offset and caps expensive deep pages.
+   */
+  private function safeNoticeOffset(mixed $value): int {
+    $offset = filter_var($value, FILTER_VALIDATE_INT);
+    return $offset === FALSE ? 0 : min(1_000_000, max(0, $offset));
   }
 
   /** Builds authorized notice render arrays and native per-member Flag actions. */

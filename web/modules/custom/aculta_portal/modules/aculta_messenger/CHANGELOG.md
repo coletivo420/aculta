@@ -1,3 +1,9 @@
+## 0.1.1-dev.246 — paginação independente por origem na central
+
+A visão sem filtro da Conta agora pagina cada grupo separadamente: comunicados, Fórum, alertas do site, LMS, Wiki, Loja e Doações têm cursores próprios. Avançar um grupo preserva as posições dos demais, com filtros de leitura aplicados antes das páginas, ordem recente e separadores por origem mantidos. Offsets recebidos pela URL são validados e limitados; adapters opcionais continuam isolados. A paginação por origem já existente permanece compatível.
+
+Validação: Unit Messenger **229 testes / 1.702 assertions PASS**; `PersonalNoticeAdapterHooksTest`, `PersistentNoticePaginationTest` e `NoticeListFilterTest` **16/153 PASS**; PHPCS Drupal/DrupalPractice sem novos erros ante o baseline dos dois controllers; PHPCS limpo nos arquivos de hook/teste, PHP lint, índice e `git diff --check` PASS. Firefox/Runtime não executado.
+
 ## 0.1.1-dev.245 — cancelar e-mail privado pendente após opt-out
 
 Se a preferência mudar para site-only ou o e-mail deixar de estar confirmado enquanto uma entrega privada está pendente, o worker agora atualiza o registro de outbox para `cancelled`. A mensagem continua na inbox do Private Message; o cancelamento evita deixar uma linha pendente sem retry nem transporte. Nenhuma tentativa é contabilizada quando o envio é suprimido.

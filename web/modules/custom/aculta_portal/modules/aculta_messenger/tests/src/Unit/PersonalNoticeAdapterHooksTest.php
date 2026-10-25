@@ -51,6 +51,35 @@ final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
   }
 
   /**
+   * The all-origin account view pages each adapter with its own cursor.
+   */
+  public function testAllOriginViewUsesIndependentAdapterPageStates(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $lmsState = new PersonalNoticePageState('aprendizagem', 200);
+    $wikiState = new PersonalNoticePageState('wiki', 100);
+    $lms = $this->createMock(PaginatedPersonalNoticeAdapterInterface::class);
+    $lms->expects(self::once())
+      ->method('addPersonalNoticesPage')
+      ->with(self::anything(), $account, self::anything(), 100, 200)
+      ->willReturn(TRUE);
+    $wiki = $this->createMock(PaginatedPersonalNoticeAdapterInterface::class);
+    $wiki->expects(self::once())
+      ->method('addPersonalNoticesPage')
+      ->with(self::anything(), $account, self::anything(), 100, 100)
+      ->willReturn(FALSE);
+    $items = [];
+
+    (new PersonalNoticeAdapterHooks(['lms' => $lms, 'wiki' => $wiki]))
+      ->noticesAlter($items, $account, [
+        'origem' => '',
+        'page_states' => ['aprendizagem' => $lmsState, 'wiki' => $wikiState],
+      ]);
+
+    self::assertTrue($lmsState->hasNext());
+    self::assertFalse($wikiState->hasNext());
+  }
+
+  /**
    * A page for a non-adapter origin does not trigger unrelated adapters.
    */
   public function testNonAdapterOriginSkipsOptionalAdapters(): void {

@@ -56,12 +56,14 @@ final class PersonalNoticeAdapterHooks {
   #[Hook('aculta_messenger_personal_notices_alter')]
   public function noticesAlter(array &$items, AccountInterface $account, array $filters = []): void {
     $pageState = $filters['page_state'] ?? NULL;
+    $pageStates = is_array($filters['page_states'] ?? NULL) ? $filters['page_states'] : [];
     $selectedOrigin = $filters['origem'] ?? '';
     if (!is_string($selectedOrigin) || !in_array($selectedOrigin, NoticeListFilter::ORIGINS, TRUE)) {
       $selectedOrigin = '';
     }
     foreach (self::ADAPTERS as $id) {
       $adapterOrigin = self::ORIGINS[$id] ?? NULL;
+      $adapterPageState = $pageStates[$adapterOrigin] ?? $pageState;
       if (($pageState instanceof PersonalNoticePageState && $pageState->origin() !== $adapterOrigin)
         || ($selectedOrigin !== '' && $selectedOrigin !== $adapterOrigin)) {
         continue;
@@ -78,14 +80,14 @@ final class PersonalNoticeAdapterHooks {
         // list while allowing independent origins to continue contributing.
         $contribution = [];
         try {
-          if ($pageState instanceof PersonalNoticePageState
+          if ($adapterPageState instanceof PersonalNoticePageState
             && $adapter instanceof PaginatedPersonalNoticeAdapterInterface) {
-            $pageState->setHasNext($adapter->addPersonalNoticesPage(
+            $adapterPageState->setHasNext($adapter->addPersonalNoticesPage(
               $contribution,
               $account,
               $filters,
               PersonalNoticePageState::PAGE_SIZE,
-              $pageState->offset(),
+              $adapterPageState->offset(),
             ));
           }
           else {
