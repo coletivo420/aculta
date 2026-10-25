@@ -44,11 +44,13 @@ e-mail desligado, direto ou resumo/digest, sempre sujeito às políticas
 administrativas.
 
 Administradores controlam em **Configurações do Messenger** quais modos de
-resumo diário e envio direto ficam disponíveis para cada categoria integrada
-(Fórum, aprendizagem, Wiki, Loja e Doações). A opção sem e-mail não pode ser
-removida; avisos no site continuam obrigatórios. Uma preferência individual
-temporariamente bloqueada pela política administrativa passa a valer novamente
-se o modo voltar a ser permitido.
+resumo diário e envio direto ficam disponíveis para cada categoria de conteúdo
+(Fórum, aprendizagem, Wiki, Loja e Doações). Para mensagens privadas e amizade,
+a pessoa pode escolher entre somente no site e e-mail direto; essas categorias
+não usam digest. A administração pode desativar o e-mail direto. A opção sem
+e-mail não pode ser removida e os avisos/conversas no site continuam disponíveis.
+Uma preferência individual temporariamente bloqueada pela política administrativa
+passa a valer novamente se o modo voltar a ser permitido.
 
 O opt-in geral de resumo diário habilita somente a inclusão de avisos no digest;
 ele não altera o envio direto, configurado separadamente em cada categoria.

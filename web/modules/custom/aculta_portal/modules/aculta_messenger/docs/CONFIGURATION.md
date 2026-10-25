@@ -70,15 +70,17 @@ publicados e visíveis com links nativos lido/não lido do Flag.
 ## Checklist para implantação futura
 
 Preferências de e-mail em `/configuracoes/email` são propriedade do Messenger e
-ficam em `user.data` sob `aculta_messenger`. As categorias são respostas e
-atualizações do Fórum, Aprendizagem, Wiki, Loja e Doações. Para cada categoria,
-a pessoa pode selecionar sem e-mail, entrega direta ou resumo diário, conforme
-as opções mantidas em `aculta_messenger.settings:email_modes`; o administrador
-pode desabilitar entrega direta ou resumo por categoria. Avisos persistidos no
-site continuam obrigatórios e independentes do opt-out de e-mail. Conversas
-privadas continuam respeitando `private_message.receive_notification` e os
-bloqueios nativos. O ACULTA Mailer é o transporte comum; produtores e adapters
-do Messenger não configuram SMTP.
+ficam em `user.data` sob `aculta_messenger`. As categorias de conteúdo são
+respostas/atualizações do Fórum, Aprendizagem, Wiki, Loja e Doações. Para cada
+uma, a pessoa pode selecionar sem e-mail, entrega direta ou resumo diário,
+conforme `aculta_messenger.settings:email_modes`; a administração pode
+desabilitar entrega direta ou resumo. Mensagens privadas e amizade permitem
+somente entrega no site ou e-mail direto, sem digest, e a administração pode
+desabilitar o e-mail. Para contas sem preferência nova, mensagens privadas
+usam `private_message.receive_notification` como compatibilidade. Avisos no
+site e conversas na inbox permanecem disponíveis independentemente do opt-out.
+O ACULTA Mailer é o transporte comum; produtores e adapters do Messenger não
+configuram SMTP.
 
 1. Comparar configuração exportada dos cinco módulos e aprovar os componentes
    necessários; não fazer import/export automático.

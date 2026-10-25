@@ -24,6 +24,17 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
 
   public const MODULO = 'aculta_messenger';
 
+  public const EMAIL_PRIVATE_MESSAGES = 'mensagens_privadas';
+
+  public const EMAIL_FRIENDSHIP = 'amizade';
+
+  /**
+   * Categories whose existing email behavior is immediate-only. */
+  public const EMAIL_IMMEDIATE_ONLY_CATEGORIES = [
+    self::EMAIL_PRIVATE_MESSAGES,
+    self::EMAIL_FRIENDSHIP,
+  ];
+
   /**
    * Shared notice categories whose e-mail modes are controlled by the site. */
   public const EMAIL_CATEGORIES = [
@@ -33,6 +44,8 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
     'wiki',
     'loja',
     'doacao',
+    self::EMAIL_PRIVATE_MESSAGES,
+    self::EMAIL_FRIENDSHIP,
   ];
 
   public function __construct(
@@ -48,6 +61,21 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
     }
     $configured = $this->configFactory?->get('aculta_messenger.settings')->get('email_modes.' . $category);
     $allowed = [self::EMAIL_OFF];
+    if (in_array($category, self::EMAIL_IMMEDIATE_ONLY_CATEGORIES, TRUE)) {
+      if ($category === self::EMAIL_PRIVATE_MESSAGES
+        && $this->configFactory?->get('private_message.settings')?->get('enable_notifications') === FALSE) {
+        return $allowed;
+      }
+      if ($configured === NULL) {
+        return [...$allowed, self::EMAIL_IMMEDIATE];
+      }
+      if (!is_array($configured)) {
+        return $allowed;
+      }
+      return ($configured[self::EMAIL_IMMEDIATE] ?? FALSE) === TRUE
+        ? [...$allowed, self::EMAIL_IMMEDIATE]
+        : $allowed;
+    }
     if ($configured === NULL) {
       return [...$allowed, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE];
     }
@@ -110,8 +138,22 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
     }
     $mode = $this->userData->get(self::MODULO, $uid, 'avisos_email_mode_' . $category);
     if (!in_array($mode, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)) {
-      $mode = self::EMAIL_DIGEST;
-      // Preserve existing reply/update choices until the person selects a mode.
+      if ($category === self::EMAIL_PRIVATE_MESSAGES) {
+        $legacy = $this->userData->get('private_message', $uid, 'receive_notification');
+        $enabled = $legacy === NULL
+          ? (bool) $this->configFactory?->get('private_message.settings')?->get('notify_by_default')
+          : (bool) $legacy;
+        $mode = $enabled ? self::EMAIL_IMMEDIATE : self::EMAIL_OFF;
+      }
+      elseif ($category === self::EMAIL_FRIENDSHIP) {
+        // Friendship email was previously sent by default; preserve that
+        // behavior until the member explicitly chooses site-only delivery.
+        $mode = self::EMAIL_IMMEDIATE;
+      }
+      else {
+        $mode = self::EMAIL_DIGEST;
+      }
+      // Preserve existing Forum reply/update choices until a new mode is saved.
       if (in_array($category, [ForumAviso::TIPO_RESPOSTA, ForumAviso::TIPO_ATUALIZACAO], TRUE)) {
         $legacy = $this->userData->get(self::MODULO, $uid, 'avisos_resumo_' . $category);
         if ($legacy !== NULL && !(bool) $legacy) {

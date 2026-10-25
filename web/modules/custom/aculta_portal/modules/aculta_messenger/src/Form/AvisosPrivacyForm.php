@@ -95,6 +95,13 @@ final class AvisosPrivacyForm {
         '#options' => $this->emailModeOptions('doacao'),
         '#default_value' => $this->preferencias->emailMode($uid, 'doacao'),
       ],
+      'email_amizade' => [
+        '#type' => 'select',
+        '#title' => new TranslatableMarkup('E-mails de amizade'),
+        '#description' => new TranslatableMarkup('Pedidos recebidos e aceites continuam visíveis no site. O e-mail direto pode ser desativado por você ou pela administração.'),
+        '#options' => $this->emailModeOptions(AvisoPreferencias::EMAIL_FRIENDSHIP),
+        '#default_value' => $this->preferencias->emailMode($uid, AvisoPreferencias::EMAIL_FRIENDSHIP),
+      ],
     ];
   }
 
@@ -124,6 +131,10 @@ final class AvisosPrivacyForm {
       if (is_string($mode)) {
         $this->preferencias->saveEmailMode((int) $this->currentUser->id(), $category, $mode);
       }
+    }
+    $mode = $formState->getValue('email_amizade');
+    if (is_string($mode)) {
+      $this->preferencias->saveEmailMode((int) $this->currentUser->id(), AvisoPreferencias::EMAIL_FRIENDSHIP, $mode);
     }
   }
 

@@ -65,6 +65,11 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
       self::assertStringContainsString('O resumo diário também exige o opt-in geral acima', $form['avisos'][$element]['#description']->getUntranslatedString(), $element);
       self::assertStringContainsString('o envio direto não depende dele', $form['avisos'][$element]['#description']->getUntranslatedString(), $element);
     }
+    self::assertSame(
+      [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE],
+      array_keys($form['avisos']['email_amizade']['#options']),
+      'Friendship email is site-only or direct, without digest mode.',
+    );
     self::assertArrayHasKey('resumo_email', $form['avisos'], 'Digest delivery remains a distinct general opt-in.');
     self::assertArrayHasKey('aviso_sempre', $form['avisos'], 'Site notices remain mandatory.');
   }
@@ -141,7 +146,7 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
   public function testSubmitSavesModesForAllIntegratedOrigins(): void {
     $saved = [];
     $userData = $this->createMock(UserDataInterface::class);
-    $userData->expects(self::exactly(9))
+    $userData->expects(self::exactly(10))
       ->method('set')
       ->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use (&$saved): void {
         self::assertSame(AvisoPreferencias::MODULO, $module);
@@ -160,6 +165,7 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
     $formState->setValue('email_wiki', AvisoPreferencias::EMAIL_OFF);
     $formState->setValue('email_loja', AvisoPreferencias::EMAIL_DIGEST);
     $formState->setValue('email_doacao', AvisoPreferencias::EMAIL_IMMEDIATE);
+    $formState->setValue('email_amizade', AvisoPreferencias::EMAIL_OFF);
     $form = [];
 
     $formBuilder->submit($form, $formState);
@@ -174,6 +180,7 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
       'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_OFF,
       'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_DIGEST,
       'avisos_email_mode_doacao' => AvisoPreferencias::EMAIL_IMMEDIATE,
+      'avisos_email_mode_amizade' => AvisoPreferencias::EMAIL_OFF,
     ], $saved);
   }
 

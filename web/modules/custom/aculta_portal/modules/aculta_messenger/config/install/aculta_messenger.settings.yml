@@ -22,3 +22,9 @@ email_modes:
   doacao:
     digest: true
     immediate: true
+  mensagens_privadas:
+    digest: false
+    immediate: true
+  amizade:
+    digest: false
+    immediate: true

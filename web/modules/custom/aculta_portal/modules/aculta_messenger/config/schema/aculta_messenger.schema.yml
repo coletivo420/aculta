@@ -39,6 +39,12 @@ aculta_messenger.settings:
         doacao:
           type: aculta_messenger.email_modes
           label: 'Doações'
+        mensagens_privadas:
+          type: aculta_messenger.email_modes
+          label: 'Mensagens privadas'
+        amizade:
+          type: aculta_messenger.email_modes
+          label: 'Amizades'
 
 aculta_messenger.email_modes:
   type: mapping

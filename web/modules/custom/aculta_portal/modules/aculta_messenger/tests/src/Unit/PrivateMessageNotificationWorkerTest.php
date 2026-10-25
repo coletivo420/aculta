@@ -6,9 +6,10 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\aculta_messenger\Plugin\QueueWorker\PrivateMessageNotificationWorker;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -28,7 +29,6 @@ use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
-use Drupal\user\UserDataInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -120,13 +120,8 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       ['message', $messageStorage],
     ]);
 
-    $settings = $this->createMock(ImmutableConfig::class);
-    $settings->method('get')->willReturnMap([
-      ['enable_notifications', TRUE],
-      ['notify_by_default', TRUE],
-    ]);
-    $configFactory = $this->createMock(ConfigFactoryInterface::class);
-    $configFactory->method('get')->with('private_message.settings')->willReturn($settings);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn(TRUE);
     $lock->expects($this->once())->method('release')->with('aculta_messenger:private_message:15:2');
@@ -145,8 +140,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       $mailer,
       $this->domainPurposeManager($entityTypes),
       $lock,
-      $this->createMock(UserDataInterface::class),
-      $configFactory,
+      $preferences,
     );
     $worker->processItem(['private_message_id' => 15]);
 
@@ -214,13 +208,9 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       ['message', $noticeStorage],
       ['domain', $domainStorage],
     ]);
-    $settings = $this->createMock(ImmutableConfig::class);
-    $settings->method('get')->willReturnMap([
-      ['enable_notifications', TRUE],
-      ['notify_by_default', TRUE],
-    ]);
-    $configFactory = $this->createMock(ConfigFactoryInterface::class);
-    $configFactory->method('get')->with('private_message.settings')->willReturn($settings);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with(2, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
+      ->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn(TRUE);
     $legacy = $this->createMock(MessageNotifyInterface::class);
@@ -243,7 +233,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     try {
       $worker = new PrivateMessageNotificationWorker(
         [], 'aculta_msg_private_notification', [], $entityTypes, $messageService, $legacy, $mailer,
-        $this->domainPurposeManager($entityTypes), $lock, $this->createMock(UserDataInterface::class), $configFactory,
+        $this->domainPurposeManager($entityTypes), $lock, $preferences,
       );
       $worker->processItem(['private_message_id' => 15, 'mailer_managed' => TRUE]);
     }
@@ -346,8 +336,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       $mailer,
       $domainPurposes,
       $lock,
-      $this->createMock(UserDataInterface::class),
-      $this->createMock(ConfigFactoryInterface::class),
+      $this->createMock(AvisoPreferenciasInterface::class),
     );
 
     $worker->processItem(['private_message_id' => 15, 'mailer_managed' => TRUE]);

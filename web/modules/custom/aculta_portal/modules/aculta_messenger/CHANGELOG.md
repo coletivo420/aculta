@@ -1,3 +1,9 @@
+## 0.1.1-dev.243 — preferências comuns para mensagens privadas e amizade
+
+Mensagens privadas e avisos de amizade passam a usar categorias administráveis no núcleo de preferências. A pessoa escolhe entre somente no site e site mais e-mail direto; essas categorias não oferecem digest. O formulário administrativo pode bloquear o envio direto sem remover a opção site-only. Conversas privadas e avisos de amizade permanecem no site independentemente do e-mail. Os workers revalidam consentimento atual e confirmação de e-mail antes do transporte; opt-out cancela sem contar tentativa. A preferência antiga de Private Message continua como fallback para contas sem escolha nova.
+
+Validação: `AvisoPreferenciasTest`, `AvisosPrivacyFormTest`, `MessengerSettingsFormTest`, `PrivateMessageNotificationWorkerTest` e `FriendshipNoticeEmailWorkerTest` **39 testes / 400 assertions PASS**. Transporte mockado; SMTP e Runtime não executados.
+
 ## 0.1.1-dev.242 — validar Doações antes de contar tentativa de e-mail
 
 O worker direto de Doações agora revalida conta ativa, e-mail confirmado e preferência antes de resolver os dados do pedido. O aviso só é resolvido após consentimento atual; tentativas aumentam apenas quando o Mailer será chamado. Opt-out e acesso revogado cancelam a entrega sem registrar uma tentativa de transporte.

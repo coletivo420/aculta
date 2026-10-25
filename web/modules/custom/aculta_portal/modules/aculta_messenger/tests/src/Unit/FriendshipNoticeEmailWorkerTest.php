@@ -6,6 +6,9 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_messenger\Plugin\QueueWorker\FriendshipNoticeEmailWorker;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -13,6 +16,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\DomainInterface;
@@ -24,6 +28,7 @@ use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
+use Drupal\user\UserDataInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\RequestStack;
 use PHPUnit\Framework\Attributes\Group;
@@ -84,7 +89,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     });
     $message->expects(self::once())
       ->method('set')
-      ->with('field_aculta_msg_delivery', 'failed')
+      ->with('field_aculta_msg_delivery', 'cancelled')
       ->willReturnSelf();
     $message->expects(self::once())->method('save');
 
@@ -166,6 +171,29 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * Opt-out keeps the site notice and cancels email before counting a try.
+   */
+  public function testSiteOnlyPreferenceSuppressesEmailWithoutAttempt(): void {
+    $state = ['status' => 'pending', 'attempts' => 0, 'mailer_managed' => TRUE];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    [$worker] = $this->deliveryWorker($state, $notifier, $mailer, AvisoPreferencias::EMAIL_OFF);
+
+    try {
+      $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertSame('cancelled', $state['status']);
+    self::assertSame(0, $state['attempts']);
+  }
+
+  /**
    * A transient retry reuses the same deterministic Mailer correlation.
    */
   public function testMailerManagedRetryKeepsTheSameCorrelation(): void {
@@ -244,7 +272,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
 
   /**
    * Builds the queue worker with the configured domain resolver. */
-  private function worker(EntityTypeManagerInterface $entityTypeManager, MessageNotifyInterface $notifier, ?LockBackendInterface $lock = NULL, ?AcultaMailerInterface $mailer = NULL): FriendshipNoticeEmailWorker {
+  private function worker(EntityTypeManagerInterface $entityTypeManager, MessageNotifyInterface $notifier, ?LockBackendInterface $lock = NULL, ?AcultaMailerInterface $mailer = NULL, ?AvisoPreferenciasInterface $preferences = NULL, ?EmailConfirmationPolicy $emailPolicy = NULL): FriendshipNoticeEmailWorker {
     $domainPurpose = new DomainPurposeManager(
       $entityTypeManager,
       $this->createMock(DomainNegotiatorInterface::class),
@@ -260,6 +288,12 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
       $mailer ?? $this->createMock(AcultaMailerInterface::class),
       $domainPurpose,
       $lock ?? $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
+      $preferences ?? $this->createConfiguredMock(AvisoPreferenciasInterface::class, ['emailMode' => AvisoPreferencias::EMAIL_IMMEDIATE]),
+      $emailPolicy ?? new EmailConfirmationPolicy(
+        $this->createConfiguredMock(UserDataInterface::class, ['get' => TRUE]),
+        $entityTypeManager,
+        $this->createMock(ModuleHandlerInterface::class),
+      ),
     );
   }
 
@@ -272,11 +306,13 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
    *   Optional mocked delivery service.
    * @param \Drupal\aculta_mailer\Api\AcultaMailerInterface|null $mailer
    *   Optional mocked ACULTA Mailer.
+   * @param string $emailMode
+   *   Current friendship email mode.
    *
    * @return array{0: FriendshipNoticeEmailWorker, 1: MessageInterface}
    *   The worker and persisted message mock.
    */
-  private function deliveryWorker(array &$state, ?MessageNotifyInterface $notifier = NULL, ?AcultaMailerInterface $mailer = NULL): array {
+  private function deliveryWorker(array &$state, ?MessageNotifyInterface $notifier = NULL, ?AcultaMailerInterface $mailer = NULL, string $emailMode = AvisoPreferencias::EMAIL_IMMEDIATE): array {
     $message = $this->createMock(MessageInterface::class);
     $message->method('bundle')->willReturn(FriendshipNoticeSubscriber::TEMPLATE);
     $message->method('id')->willReturn('8');
@@ -311,6 +347,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     $message->method('save')->willReturn(1);
 
     $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('id')->willReturn('52');
     $recipient->method('isActive')->willReturn(TRUE);
     $recipient->method('getEmail')->willReturn('recipient@example.invalid');
     $domain = $this->createMock(DomainInterface::class);
@@ -337,8 +374,14 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     $container->set('url_generator', $urlGenerator);
     \Drupal::setContainer($container);
 
+    $preference = $this->createMock(AvisoPreferenciasInterface::class);
+    $preference->method('emailMode')->with(52, AvisoPreferencias::EMAIL_FRIENDSHIP)
+      ->willReturn($emailMode);
+    $emailUserData = $this->createMock(UserDataInterface::class);
+    $emailUserData->method('get')->with('aculta_portal', 52, 'email_confirmed')->willReturn(TRUE);
+    $emailPolicy = new EmailConfirmationPolicy($emailUserData, $entityTypeManager, $this->createMock(ModuleHandlerInterface::class));
     return [
-      $this->worker($entityTypeManager, $notifier ?? $this->createMock(MessageNotifyInterface::class), mailer: $mailer),
+      $this->worker($entityTypeManager, $notifier ?? $this->createMock(MessageNotifyInterface::class), mailer: $mailer, preferences: $preference, emailPolicy: $emailPolicy),
       $message,
     ];
   }

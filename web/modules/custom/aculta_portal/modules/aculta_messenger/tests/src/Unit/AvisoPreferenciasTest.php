@@ -81,18 +81,23 @@ final class AvisoPreferenciasTest extends UnitTestCase {
   public static function administrativePolicyCases(): array {
     $cases = [];
     foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
+      $immediateOnly = in_array($category, AvisoPreferencias::EMAIL_IMMEDIATE_ONLY_CATEGORIES, TRUE);
       $cases[$category . ' disallows direct delivery'] = [
         $category,
         ['digest' => TRUE, 'immediate' => FALSE],
         AvisoPreferencias::EMAIL_IMMEDIATE,
-        [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST],
+        $immediateOnly
+          ? [AvisoPreferencias::EMAIL_OFF]
+          : [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST],
       ];
-      $cases[$category . ' disallows digest'] = [
-        $category,
-        ['digest' => FALSE, 'immediate' => TRUE],
-        AvisoPreferencias::EMAIL_DIGEST,
-        [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE],
-      ];
+      if (!$immediateOnly) {
+        $cases[$category . ' disallows digest'] = [
+          $category,
+          ['digest' => FALSE, 'immediate' => TRUE],
+          AvisoPreferencias::EMAIL_DIGEST,
+          [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE],
+        ];
+      }
     }
     return $cases;
   }

@@ -6,7 +6,6 @@ namespace Drupal\aculta_messenger\Plugin\QueueWorker;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\Attribute\QueueWorker;
@@ -21,7 +20,8 @@ use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_messenger\Mail\PrivateMessageNoticeMailType;
 use Drupal\aculta_messenger\Service\MessengerMailDelivery;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
-use Drupal\user\UserDataInterface;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -55,8 +55,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     private readonly AcultaMailerInterface $mailer,
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly LockBackendInterface $lock,
-    private readonly UserDataInterface $userData,
-    private readonly ConfigFactoryInterface $configFactory,
+    private readonly AvisoPreferenciasInterface $preferences,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -74,8 +73,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       $container->get('aculta_mailer.mailer'),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('lock.persistent'),
-      $container->get('user.data'),
-      $container->get('config.factory'),
+      $container->get('aculta_messenger.aviso_preferencias'),
     );
   }
 
@@ -148,16 +146,10 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       return;
     }
 
-    // Honor an explicit native Private Message email opt-out. The optional
-    // contrib notifier is deliberately not enabled because its stock template
-    // includes the private message body.
-    $settings = $this->configFactory->get('private_message.settings');
-    if (!$settings->get('enable_notifications')) {
-      return;
-    }
-    $preference = $this->userData->get('private_message', $recipientId, 'receive_notification');
-    if (($preference !== NULL && !(bool) $preference)
-      || ($preference === NULL && !$settings->get('notify_by_default'))) {
+    // A private conversation always remains available in the site inbox;
+    // this category controls only the supplemental minimal email.
+    if ($this->preferences->emailMode($recipientId, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
+      !== AvisoPreferencias::EMAIL_IMMEDIATE) {
       return;
     }
     if (!is_string($recipient->getEmail()) || $recipient->getEmail() === '') {

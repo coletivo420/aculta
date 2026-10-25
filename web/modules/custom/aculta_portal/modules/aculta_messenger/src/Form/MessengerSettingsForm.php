@@ -86,8 +86,15 @@ final class MessengerSettingsForm extends ConfigFormBase {
     foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
       $configured = $config->get('email_modes.' . $category);
       $configured = is_array($configured) ? $configured : [];
+      $options = [
+        AvisoPreferencias::EMAIL_IMMEDIATE => $this->t('Envio direto'),
+      ];
+      if (!in_array($category, AvisoPreferencias::EMAIL_IMMEDIATE_ONLY_CATEGORIES, TRUE)) {
+        $options = [AvisoPreferencias::EMAIL_DIGEST => $this->t('Resumo diário')] + $options;
+      }
       $defaultModes = [];
-      if (!array_key_exists('digest', $configured) || (bool) $configured['digest']) {
+      if (!in_array($category, AvisoPreferencias::EMAIL_IMMEDIATE_ONLY_CATEGORIES, TRUE)
+        && (!array_key_exists('digest', $configured) || (bool) $configured['digest'])) {
         $defaultModes[] = AvisoPreferencias::EMAIL_DIGEST;
       }
       if (!array_key_exists('immediate', $configured) || (bool) $configured['immediate']) {
@@ -96,10 +103,7 @@ final class MessengerSettingsForm extends ConfigFormBase {
       $form['email_modes'][$category] = [
         '#type' => 'checkboxes',
         '#title' => $this->emailCategoryTitle($category),
-        '#options' => [
-          AvisoPreferencias::EMAIL_DIGEST => $this->t('Resumo diário'),
-          AvisoPreferencias::EMAIL_IMMEDIATE => $this->t('Envio direto'),
-        ],
+        '#options' => $options,
         '#default_value' => $defaultModes,
       ];
     }
@@ -114,7 +118,8 @@ final class MessengerSettingsForm extends ConfigFormBase {
     foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
       $selected = array_filter((array) $form_state->getValue(['email_modes', $category]));
       $emailModes[$category] = [
-        'digest' => in_array(AvisoPreferencias::EMAIL_DIGEST, $selected, TRUE),
+        'digest' => !in_array($category, AvisoPreferencias::EMAIL_IMMEDIATE_ONLY_CATEGORIES, TRUE)
+        && in_array(AvisoPreferencias::EMAIL_DIGEST, $selected, TRUE),
         'immediate' => in_array(AvisoPreferencias::EMAIL_IMMEDIATE, $selected, TRUE),
       ];
     }
@@ -140,6 +145,8 @@ final class MessengerSettingsForm extends ConfigFormBase {
       'wiki' => (string) $this->t('Wiki'),
       'loja' => (string) $this->t('Loja'),
       'doacao' => (string) $this->t('Doações'),
+      AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => (string) $this->t('Mensagens privadas'),
+      AvisoPreferencias::EMAIL_FRIENDSHIP => (string) $this->t('Amizades'),
       default => throw new \InvalidArgumentException('Categoria de aviso inválida.'),
     };
   }

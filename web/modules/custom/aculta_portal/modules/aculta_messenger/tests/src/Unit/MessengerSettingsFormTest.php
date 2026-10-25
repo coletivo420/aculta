@@ -50,6 +50,10 @@ final class MessengerSettingsFormTest extends UnitTestCase {
       $build['email_modes']['wiki']['#default_value'],
     );
     self::assertArrayHasKey('doacao', $build['email_modes']);
+    foreach ([AvisoPreferencias::EMAIL_PRIVATE_MESSAGES, AvisoPreferencias::EMAIL_FRIENDSHIP] as $category) {
+      self::assertSame([AvisoPreferencias::EMAIL_IMMEDIATE], array_keys($build['email_modes'][$category]['#options']));
+      self::assertSame([AvisoPreferencias::EMAIL_IMMEDIATE], $build['email_modes'][$category]['#default_value']);
+    }
   }
 
 }

@@ -6,6 +6,9 @@ namespace Drupal\aculta_messenger\Plugin\QueueWorker;
 
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -15,6 +18,7 @@ use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\message\MessageInterface;
 use Drupal\message_notify\MessageNotifyInterface;
+use Drupal\user\UserInterface;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_messenger\Mail\FriendshipNoticeMailType;
@@ -50,6 +54,8 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
     private readonly AcultaMailerInterface $mailer,
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly LockBackendInterface $lock,
+    private readonly AvisoPreferenciasInterface $preferences,
+    private readonly EmailConfirmationPolicy $emailPolicy,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -67,6 +73,8 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
       $container->get('aculta_mailer.mailer'),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('lock.persistent'),
+      $container->get('aculta_messenger.aviso_preferencias'),
+      $container->get('aculta_portal.email_confirmation_policy'),
     );
   }
 
@@ -97,9 +105,18 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
       }
 
       $recipient = $this->entityTypeManager->getStorage('user')->load($message->getOwnerId());
+      if (!$recipient instanceof UserInterface || !$recipient->isActive()
+        || !filter_var((string) $recipient->getEmail(), FILTER_VALIDATE_EMAIL)
+        || !$this->emailPolicy->isConfirmed($recipient)
+        || $this->preferences->emailMode((int) $message->getOwnerId(), AvisoPreferencias::EMAIL_FRIENDSHIP)
+          !== AvisoPreferencias::EMAIL_IMMEDIATE) {
+        // The site notice remains available; only its supplemental email is
+        // subject to confirmation and delivery preferences.
+        $message->set(self::STATUS_FIELD, 'cancelled')->save();
+        return;
+      }
       $url = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.dashboard');
-      if ($recipient === NULL || !$recipient->isActive()
-        || !is_string($recipient->getEmail()) || $recipient->getEmail() === '' || $url === NULL) {
+      if ($url === NULL) {
         $message->set(self::STATUS_FIELD, 'failed')->save();
         return;
       }
