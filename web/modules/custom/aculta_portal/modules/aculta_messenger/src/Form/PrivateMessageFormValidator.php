@@ -174,9 +174,15 @@ final class PrivateMessageFormValidator {
       $freshThread = $this->acquireThreadWriteLock($thread, $formState);
       if ($freshThread instanceof PrivateMessageThreadInterface && !$formState->hasAnyErrors()) {
         try {
+          // Thread access was checked while building the form. Revalidate the
+          // sender's membership and view access on the locked, fresh entity so
+          // a concurrent removal cannot submit to a stale thread object.
+          $this->validateFreshThreadAccess($freshThread, $formState);
           // Block state may have changed after the first validation. Recheck
           // against the freshly loaded thread immediately before submission.
-          $this->validateBlockedRecipients($form, $formState);
+          if (!$formState->hasAnyErrors()) {
+            $this->validateBlockedRecipients($form, $formState);
+          }
         }
         catch (\Throwable $exception) {
           $this->releaseSubmissionLocks();
@@ -188,6 +194,22 @@ final class PrivateMessageFormValidator {
       }
     }
 
+  }
+
+  /**
+   * Requires the sender to retain view access to the freshly loaded thread.
+   */
+  private function validateFreshThreadAccess(
+    PrivateMessageThreadInterface $thread,
+    FormStateInterface $formState,
+  ): void {
+    if (!$thread->isMember($this->currentUser->id())
+      || !$thread->access('view', $this->currentUser, TRUE)->isAllowed()) {
+      $formState->setErrorByName(
+        'message',
+        $this->translation->translate('Não foi possível enviar uma mensagem para essa conversa.'),
+      );
+    }
   }
 
   /**

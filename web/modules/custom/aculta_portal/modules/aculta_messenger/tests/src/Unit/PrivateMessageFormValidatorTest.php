@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Unit;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
@@ -82,6 +83,8 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $freshThread = $this->createMock(PrivateMessageThreadInterface::class);
     $freshThread->method('id')->willReturn('123');
     $freshThread->method('getMembersId')->willReturn([42, 84]);
+    $freshThread->method('isMember')->with(42)->willReturn(TRUE);
+    $freshThread->method('access')->with('view', self::isInstanceOf(AccountProxyInterface::class), TRUE)->willReturn(AccessResult::allowed());
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::once())->method('loadUnchanged')->with(123)->willReturn($freshThread);
     $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
@@ -141,6 +144,8 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $freshThread = $this->createMock(PrivateMessageThreadInterface::class);
     $freshThread->method('id')->willReturn('123');
     $freshThread->method('getMembersId')->willReturn([42, 84]);
+    $freshThread->method('isMember')->with(42)->willReturn(TRUE);
+    $freshThread->method('access')->with('view', self::isInstanceOf(AccountProxyInterface::class), TRUE)->willReturn(AccessResult::allowed());
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::once())->method('loadUnchanged')->with(123)->willReturn($freshThread);
     $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
@@ -176,6 +181,51 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $validator->validateRateLimit($form, $formState);
 
     self::assertSame('Não foi possível enviar a mensagem para esse destinatário.', $formState->getErrors()['members']);
+  }
+
+  /**
+   * A sender removed after form build cannot submit to the stale thread.
+   */
+  public function testRemovedSenderIsRejectedAfterThreadReload(): void {
+    $flood = $this->createMock(FloodInterface::class);
+    $flood->expects(self::once())->method('isAllowed')->willReturn(TRUE);
+    $flood->expects(self::never())->method('register');
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('id')->willReturn('123');
+    $freshThread = $this->createMock(PrivateMessageThreadInterface::class);
+    $freshThread->method('id')->willReturn('123');
+    $freshThread->method('isMember')->with(42)->willReturn(FALSE);
+    $freshThread->expects(self::never())->method('access');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('loadUnchanged')->with(123)->willReturn($freshThread);
+    $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypes->expects(self::once())->method('getStorage')->with('private_message_thread')->willReturn($storage);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::exactly(2))->method('acquire')->willReturn(TRUE);
+    $lock->expects(self::exactly(2))->method('release');
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+    $validator = new PrivateMessageFormValidator(
+      $flood,
+      $currentUser,
+      $this->translation('Não foi possível enviar uma mensagem para essa conversa.'),
+      $this->createMock(PrivateMessageBanManagerInterface::class),
+      $this->createMock(FriendshipManagerInterface::class),
+      $this->createMock(UserDataInterface::class),
+      $lock,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      new ConversationWriteLock($lock, $entityTypes),
+    );
+    $form = [];
+    $formState = $this->formState(FALSE);
+    $formState->set('thread', $thread);
+
+    $validator->validateRateLimit($form, $formState);
+
+    self::assertSame(
+      'Não foi possível enviar uma mensagem para essa conversa.',
+      $formState->getErrors()['message'],
+    );
   }
 
   /**

@@ -1,3 +1,13 @@
+## 0.1.1-dev.279 — revalidar membership ao responder thread
+
+O formulário nativo agora revalida membership e acesso `view` do remetente na
+thread recarregada sob lock, antes de concluir a resposta. A remoção concorrente
+do participante falha com mensagem genérica e libera os locks de envio.
+
+Validação: `PrivateMessageFormValidatorTest` **16/94 PASS**, Unit Messenger
+**280/2.271 PASS**, PHPCS Drupal/DrupalPractice dos arquivos alterados PASS.
+Kernel, Browser e Runtime não executados.
+
 ## 0.1.1-dev.278 — paginar alertas do site por recência
 
 Alertas ativos agora são ordenados pelo campo `created` antes do corte das
