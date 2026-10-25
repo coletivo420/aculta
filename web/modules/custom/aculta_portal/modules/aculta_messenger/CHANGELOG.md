@@ -1,3 +1,14 @@
+## 0.1.1-dev.363 — revalidação do ledger e digest do Fórum
+
+Reexecutado `ForumNoticeIdempotencyKernelTest` no MariaDB dedicado após os
+últimos incrementos do Messenger. A suíte confirma a paginação, acesso,
+idempotência, aprovações fora de ordem e recuperação do digest no estado
+atual do branch.
+
+Validação: Kernel do Fórum **39 testes / 919 assertions PASS**, com quatro
+notices PHPUnit; índice de status dos 41 componentes PASS. Runtime/Alpha e
+SMTP externo não executados.
+
 ## 0.1.1-dev.362 — bootstrap isolado no teste de concorrência do digest
 
 O teste com três workers Drupal concorrentes agora serializa somente o
