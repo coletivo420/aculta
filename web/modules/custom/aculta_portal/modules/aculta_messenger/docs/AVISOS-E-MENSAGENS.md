@@ -168,7 +168,7 @@ contador > 0; consumers pessoais centralizados para LMS, Wiki e Loja somam regis
 acessíveis não lidos pelo alter de contagem. O contador de conversas
 (outro ícone) não inclui avisos.
 
-## 6. Controles individuais (Minha conta > Privacidade, bloco "Avisos")
+## 6. Controles individuais (Minha conta > Configurações > Notificações por e-mail)
 
 - Os avisos no site são **sempre exibidos**: não há opção para desligá-los.
 - Cada categoria integrada (Fórum, LMS, Wiki, Loja e Doações) escolhe entre
