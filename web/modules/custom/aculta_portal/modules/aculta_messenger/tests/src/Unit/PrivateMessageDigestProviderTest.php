@@ -135,6 +135,44 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
   }
 
   /**
+   * Opt-out is resolved once per recipient with several pending messages.
+   */
+  public function testPendingRecipientDiscoveryDiscardsOneBatchPerRecipient(): void {
+    $notices = [];
+    foreach ([41, 42, 43] as $id) {
+      $notice = $this->createMock(MessageInterface::class);
+      $notice->method('getOwnerId')->willReturn(9);
+      $notice->method('bundle')->willReturn('aculta_msg_private_notification');
+      $notice->expects(self::exactly(2))->method('set')->willReturnSelf();
+      $notice->expects(self::once())->method('save');
+      $notices[$id] = $notice;
+    }
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::exactly(2))->method('loadMultiple')
+      ->willReturnCallback(static function (array $ids) use ($notices): array {
+        self::assertSame([41, 42, 43], $ids);
+        return $notices;
+      });
+    $storage->method('getQuery')->willReturn($this->pendingQuery([41, 42, 43]));
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('message')->willReturn($storage);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->expects(self::once())->method('emailMode')
+      ->with(9, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES)
+      ->willReturn(AvisoPreferencias::EMAIL_OFF);
+    $provider = new PrivateMessageDigestProvider(
+      $entities,
+      $this->createMock(PrivateMessageServiceInterface::class),
+      $preferences,
+      $this->getConfigFactoryStub([]),
+      $this->createMock(UserDataInterface::class),
+      $this->createMock(TimeInterface::class),
+    );
+
+    self::assertSame([], $provider->pendingRecipientIds());
+  }
+
+  /**
    * Selective cancellation affects only the named recipient's email record.
    */
   public function testDiscardDigestCancelsSelectedRowsWithoutAdvancingWindow(): void {

@@ -51,17 +51,26 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
    */
   public function pendingRecipientIds(): array {
     $ids = $this->pendingQuery()->execute();
-    $recipients = [];
+    $messagesByRecipient = [];
     foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
       if (!$message instanceof MessageInterface) {
         continue;
       }
       $uid = (int) $message->getOwnerId();
+      if ($uid > 0) {
+        $messagesByRecipient[$uid] = TRUE;
+      }
+    }
+
+    $recipients = [];
+    foreach (array_keys($messagesByRecipient) as $uid) {
       $mode = $this->preferences->emailMode($uid, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES);
       if ($mode === AvisoPreferencias::EMAIL_DIGEST && $this->digestIsDue($uid)) {
         $recipients[$uid] = TRUE;
       }
       elseif ($mode !== AvisoPreferencias::EMAIL_DIGEST) {
+        // Several pending messages for one member represent one preference
+        // decision. Cancel their e-mail records in one batch per recipient.
         $this->discardDigest($uid);
       }
     }
