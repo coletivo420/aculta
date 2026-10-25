@@ -13,8 +13,10 @@ use Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManagerInter
 use Drupal\aculta_messenger\Integration\Commerce\Plugin\QueueWorker\CommerceOrderNoticeEmailWorker;
 use Drupal\aculta_messenger\Integration\Wiki\Plugin\QueueWorker\WikiNoticeEmailWorker;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Url;
@@ -22,6 +24,7 @@ use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
 use Drupal\message\MessageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
+use Drupal\user\UserDataInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\DependencyInjection\Container;
@@ -60,6 +63,53 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
    */
   public function testWikiPermanentFailureReplayIsSkippedAfterLock(): void {
     $this->assertReplayIsSkippedAfterLock('wiki', 'aculta_msg_wiki_notice', 'failed_permanent');
+  }
+
+  /**
+   * Unconfirmed accounts do not receive direct Commerce notice emails. */
+  public function testCommerceUnconfirmedEmailCancelsDelivery(): void {
+    $this->assertUnconfirmedEmailCancelsDelivery('commerce', 'aculta_msg_commerce_order_notice');
+  }
+
+  /**
+   * Unconfirmed accounts do not receive direct Wiki notice emails. */
+  public function testWikiUnconfirmedEmailCancelsDelivery(): void {
+    $this->assertUnconfirmedEmailCancelsDelivery('wiki', 'aculta_msg_wiki_notice');
+  }
+
+  /**
+   * A queued direct message stays on-site while unconfirmed email is cancelled.
+   */
+  private function assertUnconfirmedEmailCancelsDelivery(string $adapter, string $bundle): void {
+    $message = $this->message($bundle, 'pending', 0);
+    $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'cancelled')->willReturnSelf();
+    $message->expects(self::once())->method('save')->willReturn(1);
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('load')->with(101)->willReturn($message);
+    $user = $this->createMock(UserInterface::class);
+    $user->method('id')->willReturn('27');
+    $user->method('isActive')->willReturn(TRUE);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(27)->willReturn($user);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'message' => $messageStorage,
+      'user' => $userStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+    $manager = $this->createAdapterManager($adapter);
+    $manager->expects(self::never())->method('resolve');
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->expects(self::never())->method('emailMode');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::once())->method('get')->with('aculta_portal', 27, 'email_confirmed')->willReturn(FALSE);
+    $policy = new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class));
+    $lock = $this->lock();
+
+    $this->worker($adapter, $entities, $manager, $mailer, $lock, $preferences, $policy)
+      ->processItem(['message_id' => 101]);
   }
 
   /**
@@ -130,6 +180,7 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
     });
     $message->expects(self::exactly(2))->method('save')->willReturn(1);
     $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('id')->willReturn('27');
     $recipient->method('isActive')->willReturn(TRUE);
     $recipient->method('getEmail')->willReturn('member@example.invalid');
     $messageStorage = $this->createMock(EntityStorageInterface::class);
@@ -183,6 +234,7 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
     });
     $message->expects(self::exactly(2))->method('save')->willReturn(1);
     $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('id')->willReturn('27');
     $recipient->method('isActive')->willReturn(TRUE);
     $recipient->method('getEmail')->willReturn('member@example.invalid');
     $messageStorage = $this->createMock(EntityStorageInterface::class);
@@ -232,6 +284,8 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
    *   Mocked lock backend.
    * @param \Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface|null $preferences
    *   Optional preference mock.
+   * @param \Drupal\aculta_portal\Account\EmailConfirmationPolicy|null $emailPolicy
+   *   Account confirmation policy. Defaults to a confirmed test account.
    */
   private function worker(
     string $adapter,
@@ -240,12 +294,31 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
     AcultaMailerInterface $mailer,
     LockBackendInterface $lock,
     ?AvisoPreferenciasInterface $preferences = NULL,
+    ?EmailConfirmationPolicy $emailPolicy = NULL,
   ): CommerceOrderNoticeEmailWorker|WikiNoticeEmailWorker {
     $preferences ??= $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $emailPolicy ??= $this->emailPolicy(TRUE);
     return $adapter === 'commerce'
-      ? new CommerceOrderNoticeEmailWorker([], 'test', [], $entities, $manager, $preferences, $mailer, $lock)
-      : new WikiNoticeEmailWorker([], 'test', [], $entities, $manager, $preferences, $mailer, $lock);
+      ? new CommerceOrderNoticeEmailWorker([], 'test', [], $entities, $manager, $preferences, $emailPolicy, $mailer, $lock)
+      : new WikiNoticeEmailWorker([], 'test', [], $entities, $manager, $preferences, $emailPolicy, $mailer, $lock);
+  }
+
+  /**
+   * Creates the account confirmation policy with a controlled state. */
+  private function emailPolicy(bool $confirmed): EmailConfirmationPolicy {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturn($confirmed);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    return new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class));
+  }
+
+  /**
+   * Creates an available lock backend. */
+  private function lock(): LockBackendInterface {
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->method('acquire')->willReturn(TRUE);
+    return $lock;
   }
 
   /**

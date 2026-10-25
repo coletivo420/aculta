@@ -1,3 +1,13 @@
+## 0.1.1-dev.224 — aplicar confirmação de e-mail a envios diretos integrados
+
+Os workers diretos de LMS, Wiki e Loja agora revalidam `EmailConfirmationPolicy` antes de resolver o aviso ou chamar o
+Mailer. Endereço não confirmado cancela somente a entrega por e-mail; o `Message` que mantém o aviso no site permanece
+intacto. Isso alinha os três adapters à regra já aplicada ao Fórum, Doações e ao digest combinado.
+
+Validação: Unit de LMS/Wiki/Loja **17 testes / 205 assertions PASS**; `WikiNoticeEmailQueueKernelTest` **2/54 PASS** no
+MariaDB dedicado (2 deprecações de discovery `Message`/`message_template` do Core). PHP lint PASS. SMTP externo e Runtime
+não executados.
+
 ## 0.1.1-dev.223 — caracterizar retry de digest após falha SMTP temporária
 
 O Kernel integrado ao ACULTA Mailer agora força uma resposta SMTP 421 e depois aceita o retry controlado. O aviso

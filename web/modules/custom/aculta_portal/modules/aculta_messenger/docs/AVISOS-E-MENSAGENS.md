@@ -165,6 +165,9 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
 - Exceção de transporte mantém o lote pendente para retry e não interrompe os outros destinatários do cron. O log não
   inclui destinatário, conteúdo do aviso nem texto da exceção.
 - `AcultaMailerInterface` envia o modelo `avisos_resumo`; não usa `hook_mail`.
+- Os envios diretos de Fórum, LMS, Wiki, Loja e Doações revalidam estado ativo, modo atual, endereço e a política
+  `EmailConfirmationPolicy` imediatamente antes da entrega. Se a confirmação ou preferência deixar de valer, somente o
+  e-mail é cancelado; o aviso obrigatório no site permanece no storage de origem.
 - A correlação do digest é um UUID v5 com chave HMAC pelo `hash_salt`, baseado no UID, destinatário e identificadores/tipos/quantidades do lote; títulos e conteúdo ficam fora. Na recuperação, o Messenger valida correlação, tipo e destinatário contra o hash mantido no Mail Log. Um retry confirma os IDs sem novo envio somente quando o destinatário atual corresponde ao aceite registrado. O snapshot não persiste o endereço. O reconhecimento entre Forum e adapters roda na transação padrão compartilhada; erro de qualquer confirmação reverte todas. A deduplicação Mailer depende do Mail Log ativo e persistido; não oferece atomicidade com o provedor externo.
 - Os adapters ACULTA de digest implementam `AvisoDigestProviderIdentityInterface` e declaram uma chave estável (`lms`, `wiki`, `commerce`, `donation`). Manifestos novos persistem essa chave, não o nome da classe PHP, para tolerar refatorações e proxies do container sem perder o reconhecimento de aceite. Providers existentes que implementam somente `AvisoDigestProviderInterface` continuam funcionando pelo fallback de classe; snapshots anteriores com `class` também são lidos durante a transição.
 

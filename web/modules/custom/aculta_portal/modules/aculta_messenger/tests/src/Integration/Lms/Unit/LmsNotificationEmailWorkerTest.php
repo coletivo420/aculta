@@ -12,8 +12,10 @@ use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Url;
@@ -21,6 +23,7 @@ use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
 use Drupal\message\MessageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
+use Drupal\user\UserDataInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\DependencyInjection\Container;
@@ -77,6 +80,28 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
     $lock = $this->lock();
 
     $this->worker($entities, $notices, $preferences, $mailer, $lock)->processItem(['message_id' => 101]);
+  }
+
+  /**
+   * An unconfirmed address cancels only LMS email delivery.
+   */
+  public function testUnconfirmedEmailCancelsDirectSend(): void {
+    $message = $this->message('pending');
+    $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'cancelled')->willReturnSelf();
+    $message->expects(self::once())->method('save')->willReturn(1);
+    [$entities] = $this->entities($message);
+    $notices = $this->createMock(LearningNoticeManagerInterface::class);
+    $notices->expects(self::never())->method('resolve');
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->expects(self::never())->method('emailMode');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::once())->method('get')->with('aculta_portal', 27, 'email_confirmed')->willReturn(FALSE);
+    $policy = new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class));
+
+    $this->worker($entities, $notices, $preferences, $mailer, $this->lock(), $policy)
+      ->processItem(['message_id' => 101]);
   }
 
   /**
@@ -260,6 +285,8 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
    *   Mailer mock.
    * @param \Drupal\Core\Lock\LockBackendInterface $lock
    *   Lock backend mock.
+   * @param \Drupal\aculta_portal\Account\EmailConfirmationPolicy|null $emailPolicy
+   *   Account confirmation policy. Defaults to a confirmed test account.
    *
    * @return \Drupal\aculta_messenger\Integration\Lms\Plugin\QueueWorker\LmsNotificationEmailWorker
    *   Configured worker.
@@ -270,8 +297,18 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
     AvisoPreferenciasInterface $preferences,
     AcultaMailerInterface $mailer,
     LockBackendInterface $lock,
+    ?EmailConfirmationPolicy $emailPolicy = NULL,
   ): LmsNotificationEmailWorker {
-    return new LmsNotificationEmailWorker([], 'test', [], $entities, $notices, $preferences, $mailer, $lock);
+    $emailPolicy ??= $this->emailPolicy($entities, TRUE);
+    return new LmsNotificationEmailWorker([], 'test', [], $entities, $notices, $preferences, $emailPolicy, $mailer, $lock);
+  }
+
+  /**
+   * Creates the account confirmation policy with a controlled state. */
+  private function emailPolicy(EntityTypeManagerInterface $entities, bool $confirmed): EmailConfirmationPolicy {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->with('aculta_portal', 27, 'email_confirmed')->willReturn($confirmed);
+    return new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class));
   }
 
   /**

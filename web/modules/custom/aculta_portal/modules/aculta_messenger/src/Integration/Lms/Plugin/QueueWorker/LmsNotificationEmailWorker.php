@@ -17,6 +17,7 @@ use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_messenger\Service\MessengerMailDelivery;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -44,6 +45,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly LearningNoticeManagerInterface $notices,
     private readonly AvisoPreferenciasInterface $preferences,
+    private readonly EmailConfirmationPolicy $emailPolicy,
     private readonly AcultaMailerInterface $mailer,
     private readonly LockBackendInterface $lock,
   ) {
@@ -61,6 +63,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
       $container->get('entity_type.manager'),
       $container->get('aculta_messenger.lms_notice_manager'),
       $container->get('aculta_messenger.aviso_preferencias'),
+      $container->get('aculta_portal.email_confirmation_policy'),
       $container->get('aculta_mailer.mailer'),
       $container->get('lock.persistent'),
     );
@@ -106,6 +109,10 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
       $message->set(self::DELIVERY_FIELD, 'failed')
         ->set(self::ATTEMPTS_FIELD, self::MAX_ATTEMPTS)
         ->save();
+      return;
+    }
+    if (!$this->emailPolicy->isConfirmed($recipient)) {
+      $message->set(self::DELIVERY_FIELD, 'cancelled')->save();
       return;
     }
     if ($this->preferences->emailMode((int) $recipient->id(), 'aprendizagem') !== AvisoPreferencias::EMAIL_IMMEDIATE) {

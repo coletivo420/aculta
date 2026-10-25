@@ -12,6 +12,9 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Integration\Wiki\Plugin\QueueWorker\WikiNoticeEmailWorker;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
@@ -20,6 +23,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\message\Entity\Message;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\user\Entity\User;
+use Drupal\user\UserDataInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -127,6 +131,7 @@ final class WikiNoticeEmailQueueKernelTest extends KernelTestBase {
       $this->container->get('entity_type.manager'),
       $notices,
       $preferences,
+      $this->emailPolicy(TRUE),
       $mailer,
       $lock,
     );
@@ -210,6 +215,7 @@ final class WikiNoticeEmailQueueKernelTest extends KernelTestBase {
       $this->container->get('entity_type.manager'),
       $notices,
       $preferences,
+      $this->emailPolicy(TRUE),
       $mailer,
       $lock,
     );
@@ -226,6 +232,18 @@ final class WikiNoticeEmailQueueKernelTest extends KernelTestBase {
     self::assertSame('cancelled', $persisted->get('field_aculta_msg_delivery')->value);
     self::assertSame(0, (int) $persisted->get('field_aculta_wiki_read')->value, 'Cancelling email does not mark the site notice read.');
     self::assertSame(0, $queue->numberOfItems());
+  }
+
+  /**
+   * Creates a confirmation policy fixture with a controlled account state. */
+  private function emailPolicy(bool $confirmed): EmailConfirmationPolicy {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturn($confirmed);
+    return new EmailConfirmationPolicy(
+      $userData,
+      $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(ModuleHandlerInterface::class),
+    );
   }
 
   /**

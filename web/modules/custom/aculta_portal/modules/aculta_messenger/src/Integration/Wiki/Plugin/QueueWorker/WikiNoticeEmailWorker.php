@@ -12,6 +12,7 @@ use Drupal\aculta_messenger\Integration\Wiki\Mail\WikiNoticeMailType;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\aculta_messenger\Service\MessengerMailDelivery;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -40,6 +41,7 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly WikiNoticeManagerInterface $notices,
     private readonly AvisoPreferenciasInterface $preferences,
+    private readonly EmailConfirmationPolicy $emailPolicy,
     private readonly AcultaMailerInterface $mailer,
     private readonly LockBackendInterface $lock,
   ) {
@@ -56,6 +58,7 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
       $container->get('entity_type.manager'),
       $container->get('aculta_messenger.wiki_notice_manager'),
       $container->get('aculta_messenger.aviso_preferencias'),
+      $container->get('aculta_portal.email_confirmation_policy'),
       $container->get('aculta_mailer.mailer'),
       $container->get('lock.persistent'),
     );
@@ -93,6 +96,10 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
     $uid = (int) $message->getOwnerId();
     $user = $this->entityTypeManager->getStorage('user')->load($uid);
     if (!$user instanceof UserInterface || !$user->isActive()) {
+      $this->finish($message, 'cancelled');
+      return;
+    }
+    if (!$this->emailPolicy->isConfirmed($user)) {
       $this->finish($message, 'cancelled');
       return;
     }
