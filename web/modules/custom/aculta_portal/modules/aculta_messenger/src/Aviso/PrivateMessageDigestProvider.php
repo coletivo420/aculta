@@ -168,7 +168,8 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
       if ($notice instanceof MessageInterface && $notice->bundle() === self::TEMPLATE
         && ($uid === NULL || (int) $notice->getOwnerId() === $uid)) {
         $notice->set(self::DIGEST_FIELD, 1);
-        $notice->set(self::DELIVERY_FIELD, $status)->save();
+        $notice->set(self::DELIVERY_FIELD, $status);
+        $notice->save();
       }
     }
   }

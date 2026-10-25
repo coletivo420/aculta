@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.269 — provider semanal de mensagens privadas cobre agregação sem corpo, destinatários/IDs, acesso revogado e cancelamento; gravações separadas não dependem de retorno fluente de `set()`. Teste **2/50 PASS**, Unit Messenger **269/2.113 PASS**, PHPCS/PHP lint PASS. Kernel indisponível (`SIMPLETEST_DB` ausente); Browser/Runtime pendentes.
 - Dev.268 — cobertura do formulário de preferências de mensagens privadas: opções site/direto/semanal, restrição administrativa e persistência em `user.data` Messenger; texto confirma ausência de conteúdo privado nos e-mails. Teste **3/10 PASS**, Unit Messenger **268/2.083 PASS**, PHPCS e PHP lint PASS. Kernel/Browser/Runtime pendentes.
 - Dev.267 — metadado de ordenação passa a expressar recência; aviso agregado do Fórum usa `changed` (última atividade), enquanto adapters de eventos individuais usam a data do `Message`. Unit Messenger **265/2.073 PASS**, PHP lint PASS. Kernel indisponível (`SIMPLETEST_DB` ausente); PHPCS, Browser e Runtime não executados.
 - Dev.266 — central unificada preserva agrupamento por origem e separadores, ordenando seções pela data do aviso mais novo e itens por recência; avisos antigos sem timestamp mantêm ordem estável. Sem storage novo. `NoticeOriginGrouperTest` **3/16 PASS**, Unit Messenger **265/2.073 PASS**, PHP lint PASS. PHPCS, Kernel, Browser e Runtime pendentes.

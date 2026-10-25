@@ -2565,3 +2565,9 @@ Adicionada cobertura direta ao formulário da conta para os três modos de mensa
 
 Validação: `CommunicationSettingsFormTest` **3/10 PASS**; Unit Messenger **268/2.083 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
 
+## 0.1.1-dev.269 — validar composição e acesso do digest privado
+
+O provider semanal agora persiste estado de entrega sem encadear `set()->save()`, compatível com o contrato `FieldableEntityInterface`. O teste cobre agrupamento de várias mensagens por remetente, IDs exatos de entrega, revalidação de acesso ao thread, cancelamento de linhas inacessíveis e ausência de leitura do corpo privado.
+
+Validação: `PrivateMessageDigestProviderTest` **2/50 PASS**; Unit Messenger **269/2.113 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel indisponível (`SIMPLETEST_DB` ausente); Browser e Runtime não executados.
+
