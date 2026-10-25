@@ -1,3 +1,14 @@
+## 0.1.1-dev.223 — caracterizar retry de digest após falha SMTP temporária
+
+O Kernel integrado ao ACULTA Mailer agora força uma resposta SMTP 421 e depois aceita o retry controlado. O aviso
+permanece pendente após a falha; a nova execução, depois da janela de segurança, reutiliza a correlação, atualiza o
+mesmo Mail Log e confirma o delivery ID uma única vez.
+
+Validação: `AvisosResumoMailerKernelTest` **4 testes / 70 assertions PASS** no MariaDB dedicado, incluindo os cenários
+anteriores de aceite/recuperação e concorrência; teste novo **1/23 PASS**. O conjunto focal de digest anteriormente
+revalidado passou **75/1.244**; com o novo Kernel, cobertura combinada executada nesta sequência: **76 testes / 1.267
+assertions PASS**. SMTP externo e Runtime não executados.
+
 ## 0.1.1-dev.222 — coordenar retenção com gravações de conversas
 
 A limpeza por retenção agora compartilha uma trava persistente por thread com os caminhos de envio de respostas e de

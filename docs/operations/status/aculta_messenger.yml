@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: "Dev.222 coordena retenção com gravações por lock persistente de thread; Unit 20/150, Kernels MariaDB de retenção 3/42 e Flood 2/21 PASS; digest revalidado 75/1.244. Lint, PHPCS focal, YAML, índice e gate Drupal 11+ 1155 checks PASS; Runtime e SMTP não executados. Dev.221 restringe rotas de abertura a GET; Dev.220 validou CSRF do drawer em Firefox ESR/X11 no Runtime de teste 90/90."
+next_phase: "Dev.223 cobre retry do digest após SMTP 421 com mesma correlação e acknowledgement único; `AvisosResumoMailerKernelTest` 4/70 PASS, cobertura digest 76/1.267. SMTP externo/Runtime não executados. Dev.222 protege retenção concorrente por trava compartilhada de thread; Unit 20/150, Kernels MariaDB 3/42 e Flood 2/21 PASS; gate Drupal 11+ 1155 checks PASS."

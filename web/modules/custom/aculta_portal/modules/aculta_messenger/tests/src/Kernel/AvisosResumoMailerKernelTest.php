@@ -14,6 +14,7 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\KernelTests\KernelTestBase;
@@ -201,6 +202,109 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       ->fetchField());
     self::assertCount(1, $this->collectedMails());
     self::assertSame([], $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
+    self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
+  }
+
+  /**
+   * Keeps the manifest pending after SMTP 421 and retries with its correlation.
+   */
+  public function testTemporaryTransportFailureRetriesSameDigestCorrelation(): void {
+    $account = User::create([
+      'name' => 'digest_temporary_retry',
+      'mail' => 'digest-temporary@example.test',
+      'status' => 1,
+      'langcode' => 'pt-br',
+      'preferred_langcode' => 'pt-br',
+    ]);
+    $account->save();
+    $uid = (int) $account->id();
+
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+
+    $database = $this->container->get('database');
+    $provider = new DigestRecoveryProvider($uid, $database);
+    $database->update(DigestRecoveryProvider::TABLE)
+      ->fields(['acknowledged' => 0])
+      ->condition('id', 1)
+      ->execute();
+    $noticeAccess = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+    $noticeAccess->method('supportsTopic')->willReturn(FALSE);
+    $flags = $this->createMock(FlagServiceInterface::class);
+    $now = 1_800_000_000;
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturnCallback(static function () use (&$now): int {
+      return $now;
+    });
+    $avisos = new AvisoService(
+      $this->container->get('entity_type.manager'),
+      $flags,
+      $noticeAccess,
+      $database,
+      $time,
+      $this->container->get('lock'),
+    );
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $this->container->get('aculta_mailer.mailer'),
+      new EmailConfirmationPolicy(
+        $userData,
+        $this->container->get('entity_type.manager'),
+        $this->container->get('module_handler'),
+      ),
+      $userData,
+      $time,
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      $this->container->get('lock.persistent'),
+      [$provider],
+    );
+
+    $GLOBALS['config']['system.mail']['interface']['default'] = 'aculta_digest_retry_test';
+    $this->container->get('config.factory')->reset('system.mail');
+    self::assertSame(0, $summary->enviarResumos());
+    self::assertSame(0, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
+      ->fields('digest', ['acknowledged'])
+      ->condition('id', 1)
+      ->execute()
+      ->fetchField(), 'A temporary SMTP failure must leave the site notice pending.');
+    self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_ultimo'));
+
+    $userState = $userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
+    self::assertIsArray($userState);
+    self::assertArrayNotHasKey('accepted_at', $userState);
+    $logs = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_mail_log')
+      ->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]);
+    self::assertCount(1, $logs);
+    self::assertSame('failed', reset($logs)->get('status')->value);
+    self::assertSame('smtp_421', reset($logs)->get('error_code')->value);
+
+    // Let the in-flight safety window expire before the next cron retry.
+    $now += 181;
+    self::assertSame(1, $summary->enviarResumos());
+
+    $state = $this->container->get('state');
+    $correlations = $state->get('aculta_messenger_aviso_test.digest_retry_correlations');
+    self::assertCount(2, $correlations);
+    self::assertNotSame('', $correlations[0]);
+    self::assertSame($correlations[0], $correlations[1], 'An unchanged pending manifest must reuse its correlation.');
+    self::assertSame(1, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
+      ->fields('digest', ['acknowledged'])
+      ->condition('id', 1)
+      ->execute()
+      ->fetchField());
+    self::assertSame(2, (int) $state->get('aculta_messenger_aviso_test.digest_retry_attempts'));
+    $updatedLogs = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_mail_log')
+      ->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]);
+    self::assertCount(1, $updatedLogs, 'The Mailer updates the failed correlation instead of creating a duplicate log row.');
+    self::assertSame('sent', reset($updatedLogs)->get('status')->value);
+    self::assertSame($now, (int) $userData->get('aculta_messenger', $uid, 'avisos_resumo_ultimo'));
     self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
   }
 
