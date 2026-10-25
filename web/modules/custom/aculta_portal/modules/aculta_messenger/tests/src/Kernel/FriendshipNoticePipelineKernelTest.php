@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Kernel;
 
-use Drupal\aculta_messenger\Friendship\FriendshipNoticeQueueInterface;
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\aculta_messenger\Friendship\FriendshipNoticeEventProducer;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeManager;
+use Drupal\aculta_messenger\Friendship\FriendshipNoticeQueue;
+use Drupal\aculta_messenger\Friendship\FriendshipNoticeQueueInterface;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
-use Drupal\aculta_messenger\Friendship\FriendshipNoticeEventProducer;
 use Drupal\aculta_user\Social\FriendshipManager;
+use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
@@ -18,6 +22,7 @@ use Drupal\message\MessageInterface;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Psr\Log\LoggerInterface;
 
 /**
  * Exercises the real User-to-Messenger friendship event path on Kernel storage.
@@ -165,6 +170,53 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
     self::assertSame(1, $noticeManager->unreadCount((int) $requester->id()));
     self::assertTrue($noticeManager->setRead($acceptanceNotice, $requester, TRUE));
     self::assertSame(0, $noticeManager->unreadCount((int) $requester->id()));
+  }
+
+  /**
+   * Cron marks an exhausted, persisted enqueue lease terminal without queueing.
+   */
+  public function testRecoveryMarksExhaustedEnqueueLeasePermanentlyFailed(): void {
+    $storage = $this->container->get('entity_type.manager')->getStorage('message');
+    $message = $storage->create([
+      'template' => FriendshipNoticeSubscriber::TEMPLATE,
+      'field_aculta_msg_delivery' => 'pending',
+      'field_aculta_messenger_attempts' => 0,
+      'field_aculta_enqueue_attempts' => 5,
+      'field_aculta_mailer_managed' => TRUE,
+      'field_aculta_friendship_read' => FALSE,
+    ]);
+    $message->save();
+    $messageId = (int) $message->id();
+
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->expects(self::never())->method('get');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())->method('acquire')
+      ->with(FriendshipNoticeSubscriber::EMAIL_LOCK_PREFIX . $messageId, 180.0)
+      ->willReturn(TRUE);
+    $lock->expects(self::once())->method('release')
+      ->with(FriendshipNoticeSubscriber::EMAIL_LOCK_PREFIX . $messageId);
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects(self::once())->method('error')->with(
+      'Friendship notice Message @id exhausted queue enqueue attempts.',
+      ['@id' => $messageId],
+    );
+    $time = $this->createConfiguredMock(TimeInterface::class, [
+      'getRequestTime' => time() + 10_000,
+    ]);
+    $queue = new FriendshipNoticeQueue(
+      $this->container->get('entity_type.manager'),
+      $queueFactory,
+      $lock,
+      $time,
+      $logger,
+    );
+
+    $queue->requeuePending();
+
+    $reloaded = $storage->loadUnchanged($messageId);
+    self::assertSame('failed_permanent', $reloaded->get('field_aculta_msg_delivery')->value);
+    self::assertSame(5, (int) $reloaded->get('field_aculta_enqueue_attempts')->value);
   }
 
   /**

@@ -7,7 +7,7 @@ em vez de deixar o aviso `pending` sem recuperação. O worker já trata esse
 estado como terminal.
 
 Validação: `FriendshipNoticeQueueTest` **5/93 PASS**; Unit Messenger
-**359/2.910 PASS**; `FriendshipNoticePipelineKernelTest` **1/23 PASS** no
+**359/2.910 PASS**; `FriendshipNoticePipelineKernelTest` **2/39 PASS** no
 MariaDB dedicado (2 depreciações upstream `@EntityType`); PHPCS
 Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime e transporte
 de e-mail externo não utilizados.
