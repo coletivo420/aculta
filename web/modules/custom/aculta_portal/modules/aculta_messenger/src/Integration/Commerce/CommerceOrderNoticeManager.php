@@ -203,6 +203,7 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
         '#attributes' => [
           'data-portal-ui' => 'notice-summary notice-summary-persistent',
           'data-aculta-notice-origin' => 'loja',
+          'data-aculta-notice-created' => (string) $message->getCreatedTime(),
           'data-aculta-notice-read' => $unread ? 'unread' : 'read',
           'data-aculta-notice-message-id' => (string) $message->id(),
           ...NoticeRelatedGrouper::sourceAttribute('loja', (string) $message->get(self::SOURCE_FIELD)->value),

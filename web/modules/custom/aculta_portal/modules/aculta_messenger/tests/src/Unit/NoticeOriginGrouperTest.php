@@ -17,21 +17,22 @@ use PHPUnit\Framework\Attributes\Group;
 final class NoticeOriginGrouperTest extends UnitTestCase {
 
   /**
-   * Groups origins in the central order and preserves recency within origins.
+   * Groups notices by origin, ordering origin sections by their newest item.
    */
-  public function testGroupsOriginsAndPreservesSourceRecencyOrder(): void {
-    $forumRecent = ['#attributes' => ['data-aculta-notice-origin' => 'forum'], 'id' => 'forum-recent'];
-    $forumOlder = ['#attributes' => ['data-aculta-notice-origin' => 'forum'], 'id' => 'forum-older'];
-    $wikiRecent = ['#attributes' => ['data-aculta-notice-origin' => 'wiki'], 'id' => 'wiki-recent'];
-    $groups = NoticeOriginGrouper::group([$wikiRecent, $forumRecent, $forumOlder]);
+  public function testGroupsOriginsByLatestNoticeAndPreservesRecencyWithinOrigins(): void {
+    $forumRecent = ['#attributes' => ['data-aculta-notice-origin' => 'forum', 'data-aculta-notice-created' => '300'], 'id' => 'forum-recent'];
+    $forumOlder = ['#attributes' => ['data-aculta-notice-origin' => 'forum', 'data-aculta-notice-created' => '200'], 'id' => 'forum-older'];
+    $wikiRecent = ['#attributes' => ['data-aculta-notice-origin' => 'wiki', 'data-aculta-notice-created' => '400'], 'id' => 'wiki-recent'];
+    $groups = NoticeOriginGrouper::group([$forumOlder, $wikiRecent, $forumRecent]);
 
     self::assertCount(2, $groups);
-    self::assertSame('forum', $groups[0]['#attributes']['data-aculta-notice-origin-section']);
-    self::assertSame('Fórum', $groups[0]['heading']['#value']->getUntranslatedString());
-    self::assertSame('forum-recent', $groups[0]['items']['#items'][0]['id']);
-    self::assertSame('forum-older', $groups[0]['items']['#items'][1]['id']);
+    self::assertSame('wiki', $groups[0]['#attributes']['data-aculta-notice-origin-section']);
+    self::assertSame('wiki-recent', $groups[0]['items']['#items'][0]['id']);
     self::assertArrayNotHasKey('separator', $groups[0]);
-    self::assertSame('wiki', $groups[1]['#attributes']['data-aculta-notice-origin-section']);
+    self::assertSame('forum', $groups[1]['#attributes']['data-aculta-notice-origin-section']);
+    self::assertSame('Fórum', $groups[1]['heading']['#value']->getUntranslatedString());
+    self::assertSame('forum-recent', $groups[1]['items']['#items'][0]['id']);
+    self::assertSame('forum-older', $groups[1]['items']['#items'][1]['id']);
     self::assertSame('hr', $groups[1]['separator']['#tag']);
   }
 

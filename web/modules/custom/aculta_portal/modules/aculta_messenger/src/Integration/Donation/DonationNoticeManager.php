@@ -354,6 +354,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
         '#attributes' => [
           'data-portal-ui' => 'notice-summary notice-summary-persistent',
           'data-aculta-notice-origin' => 'doacao',
+          'data-aculta-notice-created' => (string) $message->getCreatedTime(),
           'data-aculta-notice-read' => $unread ? 'unread' : 'read',
           'data-aculta-notice-message-id' => (string) $message->id(),
           ...NoticeRelatedGrouper::sourceAttribute('doacao', (string) $message->get(self::ORDER_FIELD)->value),

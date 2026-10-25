@@ -878,7 +878,7 @@ final class MessagesController extends ControllerBase {
           FALSE,
           NULL,
           $this->readLabel($contador > 0),
-        ), 'forum', $contador > 0);
+        ), 'forum', $contador > 0, (int) $aviso->get('created')->value);
       }
     }
 
@@ -914,7 +914,8 @@ final class MessagesController extends ControllerBase {
         FALSE,
         NoticeType::fromSeverity($alert->getSeverity()),
         $rotulo,
-      ), 'alerta', $this->account->isAuthenticated() ? !$lido : NULL);
+      ), 'alerta', $this->account->isAuthenticated() ? !$lido : NULL,
+        $alert->hasField('created') && !$alert->get('created')->isEmpty() ? (int) $alert->get('created')->value : 0);
     }
 
     $adapterFilters = $filters;
@@ -1304,7 +1305,7 @@ final class MessagesController extends ControllerBase {
           $read ? (string) $this->translation->translate('Lido') : (string) $this->translation->translate('Não lido'),
           TRUE,
           NoticeType::normalize($node->hasField('field_aculta_notice_type') && !$node->get('field_aculta_notice_type')->isEmpty() ? (string) $node->get('field_aculta_notice_type')->value : NULL),
-        ), 'comunicado', !$read);
+        ), 'comunicado', !$read, (int) $node->getCreatedTime());
         if ($pageState?->origin() !== 'comunicado' && count($items) >= $limit) {
           break 2;
         }
@@ -1349,10 +1350,13 @@ final class MessagesController extends ControllerBase {
   /**
    * Adds neutral metadata consumed only by the central notice filters.
    */
-  private function withNoticeFilterMetadata(array $item, string $origin, ?bool $unread): array {
+  private function withNoticeFilterMetadata(array $item, string $origin, ?bool $unread, int $created = 0): array {
     $item['#attributes']['data-aculta-notice-origin'] = $origin;
     if ($unread !== NULL) {
       $item['#attributes']['data-aculta-notice-read'] = $unread ? 'unread' : 'read';
+    }
+    if ($created > 0) {
+      $item['#attributes']['data-aculta-notice-created'] = (string) $created;
     }
     return $item;
   }

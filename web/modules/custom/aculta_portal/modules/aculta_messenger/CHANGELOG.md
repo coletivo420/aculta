@@ -2547,3 +2547,9 @@ Validação: `NewConversationControllerTest` + `NewConversationRecipientIdsTest`
 - Busca e compose por perfil usam a mesma regra: conta elegível, identidade pública, ausência de bloqueio bilateral e preferência de novas conversas. O mapper identifica threads existentes para que “somente amigos” não impeça respostas; a criação de uma thread nova repete a checagem no submit antes do serviço contrib persistir a thread.
 - `NewConversationControllerTest`, `NewConversationRecipientIdsTest` e `PrivateMessageFormValidatorTest` **24/153 PASS**; Unit Messenger **265/2.072 PASS**; PHP lint PASS. PHPCS mantém os baselines preexistentes. Kernel, Browser e Runtime não executados.
 
+## 0.1.1-dev.266 — ordenar seções da central pela atividade mais recente
+
+A central mantém os avisos agrupados por origem, separa visualmente cada seção e agora ordena as seções e seus itens pela data mais recente disponível. Avisos legados sem data explícita mantêm a ordem estável. A mudança usa os registros existentes, sem novo armazenamento.
+
+Validação: `NoticeOriginGrouperTest` **3/16 PASS**; Unit Messenger **265/2.073 PASS**; PHP lint dos arquivos alterados PASS. PHPCS, Kernel, Browser e Runtime não executados.
+
