@@ -16,11 +16,16 @@ use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\message_notify\MessageNotifyInterface;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
+use Drupal\aculta_messenger\Mail\PrivateMessageNoticeMailType;
+use Drupal\aculta_messenger\Service\MessengerMailDelivery;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\user\UserDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Sends minimal, deduplicated private-message email notices. */
+/**
+ * Sends minimal, deduplicated private-message email notices. */
 #[QueueWorker(
   id: 'aculta_msg_private_notification',
   title: new TranslatableMarkup('ACULTA Messenger private message notification'),
@@ -31,6 +36,8 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
   private const TEMPLATE = 'aculta_msg_private_notification';
 
   private const SOURCE_FIELD = 'field_aculta_messenger_source_pm';
+
+  private const MAILER_MANAGED_FIELD = 'field_aculta_messenger_mailer_managed';
 
   private const STATUS_FIELD = 'field_aculta_msg_delivery';
 
@@ -45,6 +52,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly PrivateMessageServiceInterface $privateMessageService,
     private readonly MessageNotifyInterface $messageNotify,
+    private readonly AcultaMailerInterface $mailer,
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly LockBackendInterface $lock,
     private readonly UserDataInterface $userData,
@@ -53,7 +61,8 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,
@@ -62,6 +71,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       $container->get('entity_type.manager'),
       $container->get('private_message.service'),
       $container->get('message_notify.sender'),
+      $container->get('aculta_mailer.mailer'),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('lock.persistent'),
       $container->get('user.data'),
@@ -69,7 +79,8 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     );
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function processItem($data): void {
     if (!is_array($data)) {
       return;
@@ -94,6 +105,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     }
 
     $senderId = (int) $privateMessage->getOwnerId();
+    $mailerManaged = ($data['mailer_managed'] ?? FALSE) === TRUE;
     foreach ($thread->getMembersId() as $recipientId) {
       $recipientId = (int) $recipientId;
       if ($recipientId === $senderId) {
@@ -106,7 +118,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       }
 
       try {
-        $this->notifyRecipient($privateMessage, $thread, $messageId, $senderId, $recipientId);
+        $this->notifyRecipient($privateMessage, $thread, $messageId, $senderId, $recipientId, $mailerManaged);
       }
       finally {
         $this->lock->release($lockId);
@@ -114,8 +126,9 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     }
   }
 
-  /** Creates or retries the persisted event for one authorized recipient. */
-  private function notifyRecipient(PrivateMessageInterface $privateMessage, PrivateMessageThreadInterface $thread, int $messageId, int $senderId, int $recipientId): void {
+  /**
+   * Creates or retries the persisted event for one authorized recipient. */
+  private function notifyRecipient(PrivateMessageInterface $privateMessage, PrivateMessageThreadInterface $thread, int $messageId, int $senderId, int $recipientId, bool $mailerManaged): void {
     $recipient = $this->entityTypeManager->getStorage('user')->load($recipientId);
     if ($recipient === NULL || !$recipient->isActive()
       || !$recipient->hasPermission('use private messaging system')
@@ -155,8 +168,15 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     if ($notification !== NULL && $notification->get(self::STATUS_FIELD)->value === 'sent') {
       return;
     }
+    if ($notification !== NULL
+      && (bool) $notification->get(self::MAILER_MANAGED_FIELD)->value !== $mailerManaged) {
+      // Old queue items stay on Message Notify; new items stay on the Mailer.
+      // The marker prevents either worker path from claiming the other's row.
+      return;
+    }
 
-    // Messages are read in the multidomain bar; the notice links to the member's account home.
+    // Messages are read in the multidomain bar; the notice links to the
+    // member's account home.
     $url = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.dashboard');
     if ($url === NULL) {
       if ($notification === NULL) {
@@ -166,6 +186,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
           self::SOURCE_FIELD => $messageId,
           self::STATUS_FIELD => 'failed',
           self::ATTEMPTS_FIELD => self::MAX_ATTEMPTS,
+          self::MAILER_MANAGED_FIELD => $mailerManaged,
         ]);
       }
       else {
@@ -183,6 +204,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
         self::SOURCE_FIELD => $messageId,
         self::STATUS_FIELD => 'pending',
         self::ATTEMPTS_FIELD => 0,
+        self::MAILER_MANAGED_FIELD => $mailerManaged,
       ]);
     }
 
@@ -198,6 +220,38 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     $notification->set(self::ATTEMPTS_FIELD, $attempts);
     $notification->save();
 
+    if ($mailerManaged) {
+      try {
+        $result = MessengerMailDelivery::deliver(
+          $this->mailer,
+          PrivateMessageNoticeMailType::ID,
+          (string) $recipient->getEmail(),
+          'pt-br',
+          [
+            'summary' => 'Você recebeu uma nova mensagem privada.',
+            'url' => $url->toString(),
+          ],
+          'private-message:' . $messageId . ':' . $recipientId . ':' . PrivateMessageNoticeMailType::ID,
+        );
+      }
+      catch (\Throwable) {
+        $notification->set(self::STATUS_FIELD, 'failed')->save();
+        if ($attempts < self::MAX_ATTEMPTS) {
+          throw new \RuntimeException('Private message email delivery failed.');
+        }
+        return;
+      }
+      if ($result->cancelled || $result->sent) {
+        $notification->set(self::STATUS_FIELD, $result->sent ? 'sent' : 'cancelled')->save();
+        return;
+      }
+      $notification->set(self::STATUS_FIELD, $result->error === DeliveryError::Permanent ? 'failed_permanent' : 'failed')->save();
+      if ($result->error !== DeliveryError::Permanent && $attempts < self::MAX_ATTEMPTS) {
+        throw new \RuntimeException('Private message email delivery failed.');
+      }
+      return;
+    }
+
     if (!$this->messageNotify->send($notification, ['save on success' => FALSE, 'save on fail' => FALSE])) {
       $notification->set(self::STATUS_FIELD, 'failed');
       $notification->save();
@@ -211,7 +265,8 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     $notification->save();
   }
 
-  /** Checks both block directions using the contrib entity API. */
+  /**
+   * Checks both block directions using the contrib entity API. */
   private function isBlockedPair(int $senderId, int $recipientId): bool {
     $storage = $this->entityTypeManager->getStorage('private_message_ban');
     foreach ([[$senderId, $recipientId], [$recipientId, $senderId]] as [$ownerId, $targetId]) {

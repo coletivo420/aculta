@@ -126,3 +126,10 @@ function aculta_messenger_update_10006(): void {
 function aculta_messenger_update_10007(): void {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
 }
+
+/**
+ * Adds the delivery ownership marker for centrally mailed private notices.
+ */
+function aculta_messenger_update_10008(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}

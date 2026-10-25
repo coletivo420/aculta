@@ -2182,3 +2182,15 @@ reexecuta o digest. O retry reconhece a mesma correlação, confirma o manifesto
 Validação: `AvisosResumoMailerKernelTest` **3 testes / 47 assertions PASS** com MariaDB dedicado; PHPCS e PHP lint PASS.
 Runtime e SMTP externo não executados.
 
+## 0.1.1-dev.218 — centralizar novos avisos de Mensagem Privada no Mailer
+
+Novos eventos de mensagem privada marcam sua entrega para o ACULTA Mailer, usam template mínimo sem o corpo privado e
+correlação idempotente por mensagem/destinatário. Registros antigos sem marcador permanecem temporariamente no fluxo
+Message Notify para não presumir se o transporte já aceitou o e-mail. O update 10008 instala o campo de ownership sem
+migrar filas ou apagar dados; a retirada do caminho legado exige evidência operacional de fila drenada.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **253 testes / 1.932 assertions PASS**;
+`PrivateMessageRetentionKernelTest` **2 testes / 29 assertions PASS** no MariaDB dedicado (10 deprecações de discovery e
+assinaturas de Message/Private Message Core/contrib); PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime e e-mail externo
+não executados.
+

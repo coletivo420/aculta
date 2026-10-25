@@ -61,6 +61,16 @@ workers antigos e conclui como enviado quando encontra o aceite legado para o me
 destinatário. Essa compatibilidade depende da retenção configurada do Mail Log; o intervalo
 entre aceite externo e persistência do estado da entidade continua não transacional.
 
+Novos avisos por e-mail de Mensagem Privada também usam um tipo registrado no Mailer,
+conteúdo genérico sem corpo da conversa e correlação UUID v5 por mensagem de origem e
+destinatário. O evento de fila marca a entrega como gerenciada pelo Mailer; a entidade
+Message guarda esse ownership para que replays legados não a processem pelo caminho antigo.
+Itens previamente enfileirados sem o marcador continuam temporariamente em Message Notify,
+pois o caminho antigo não deixou correlação verificável para distinguir aceite de falha.
+Depois que a fila legada for drenada em ambiente operacional, a dependência e o caminho
+Message Notify serão removidos em uma atualização posterior. Update 10008 instala o campo
+aditivo; não foi aplicado no Runtime.
+
 ## Fontes de verdade e armazenamento
 
 | Dado | Fonte existente | Regra |

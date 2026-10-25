@@ -50,9 +50,11 @@ O evento de notificação é processado pela fila do Core após o hook nativo. A
 entrega revalida thread, usuário ativo, permissões e ambos os sentidos de
 bloqueio. Uma entidade Message persistida com referência à mensagem de origem,
 UID do destinatário e estado oferece deduplicação; lock cobre concorrência.
-Falhas de entrega têm no máximo três tentativas. Queue API tem semântica de pelo
-menos uma execução: uma falha entre o aceite do transporte e a gravação final
-do estado pode repetir o aviso, limitação a verificar no transporte real.
+Novos itens usam Mailer com correlação determinística, e o log de aceite suprime
+retries do mesmo destinatário. Falhas temporárias têm no máximo três tentativas.
+Itens antigos de fila sem o marcador continuam temporariamente no caminho
+Message Notify, sem garantia de correlação após aceite; o caminho e a dependência
+legados serão retirados depois de comprovado o esvaziamento da fila no Runtime.
 
 Para assinaturas, só se processam tópicos `forum` ainda publicados. Message
 Subscribe verifica status da conta e acesso de visualização do Node no dispatch.

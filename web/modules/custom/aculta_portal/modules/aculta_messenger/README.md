@@ -65,7 +65,7 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.217` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.218` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
@@ -147,8 +147,9 @@ Mensagens são conversas entre pessoas. Avisos são comunicações do sistema. A
 - Private Message mantém conversas, mensagens, participantes e suas regras de
   acesso.
 - Message mantém eventos persistentes configurados como tipos de mensagem.
-- Message Notify entrega mensagens por notificadores existentes e pela
-  infraestrutura de e-mail do Drupal.
+- Avisos novos de Mensagem Privada usam o tipo registrado no ACULTA Mailer e
+  correlação determinística. O worker mantém temporariamente Message Notify
+  somente para itens antigos sem o marcador de migração.
 - O adapter LMS central adiciona avisos educacionais à lista/contador global;
   digest e e-mail direto usam preferências comuns. O produtor no `aculta_lms`
   não implementa persistência ou entrega.

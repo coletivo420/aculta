@@ -5,6 +5,7 @@ dependencies:
     - core.entity_view_mode.message.mail_body
     - field.field.message.aculta_msg_private_notification.field_aculta_msg_delivery
     - field.field.message.aculta_msg_private_notification.field_aculta_messenger_attempts
+    - field.field.message.aculta_msg_private_notification.field_aculta_messenger_mailer_managed
     - field.field.message.aculta_msg_private_notification.field_aculta_messenger_source_pm
     - message.template.aculta_msg_private_notification
   enforced:
@@ -23,5 +24,6 @@ content:
 hidden:
   field_aculta_msg_delivery: true
   field_aculta_messenger_attempts: true
+  field_aculta_messenger_mailer_managed: true
   field_aculta_messenger_source_pm: true
   partial_0: true
