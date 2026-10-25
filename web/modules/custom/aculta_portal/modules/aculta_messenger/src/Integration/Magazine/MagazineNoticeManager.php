@@ -47,6 +47,11 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
 
   private const ATTEMPTS_FIELD = 'field_aculta_messenger_attempts';
 
+  /**
+   * Whether the complete Message bundle configuration is available.
+   */
+  private ?bool $storageReady = NULL;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainPurposeManager $domainPurposes,
@@ -73,7 +78,8 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       'magazine.editorial_review_submitted' => 'review_submitted',
       'magazine.editorial_review_returned' => 'review_returned',
     ];
-    if ($event->sourceModule() !== 'aculta_magazine'
+    if (!$this->isStorageReady()
+      || $event->sourceModule() !== 'aculta_magazine'
       || $event->sourceEntityType() !== 'node'
       || $event->purpose() !== 'magazine'
       || ($eventTypes[$event->eventType()] ?? NULL) !== $noticeType
@@ -170,7 +176,7 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
    *   Resolved notices keyed by Message ID.
    */
   private function resolveMessages(array $messages, AccountInterface $account): array {
-    if (!$account->isAuthenticated()) {
+    if (!$account->isAuthenticated() || !$this->isStorageReady()) {
       return [];
     }
     $valid = [];
@@ -255,7 +261,7 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
   /**
    * {@inheritdoc} */
   public function addPersonalNoticesPage(array &$items, AccountInterface $account, array $filters, int $limit, int $offset): bool {
-    if (!$account->isAuthenticated()) {
+    if (!$account->isAuthenticated() || !$this->isStorageReady()) {
       return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
@@ -311,6 +317,9 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
   /**
    * {@inheritdoc} */
   public function unreadCount(int $uid): int {
+    if (!$this->isStorageReady()) {
+      return 0;
+    }
     $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return 0;
@@ -336,6 +345,9 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
   /**
    * {@inheritdoc} */
   public function pendingRecipientIds(): array {
+    if (!$this->isStorageReady()) {
+      return [];
+    }
     $ids = $this->entityTypeManager->getStorage('message')->getQuery()->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)->condition(self::DIGEST_FIELD, 0)->execute();
     $recipients = [];
@@ -350,6 +362,9 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
   /**
    * {@inheritdoc} */
   public function digestRowsFor(int $uid): array {
+    if (!$this->isStorageReady()) {
+      return [];
+    }
     $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
     if (!$account instanceof UserInterface || !$account->isActive()
       || $this->preferences->emailMode($uid, 'revista') !== AvisoPreferencias::EMAIL_DIGEST) {
@@ -469,6 +484,9 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
   /**
    * Marks pending digest lines complete, optionally restricted to their IDs. */
   private function setDigestSent(int $uid, ?array $deliveryIds = NULL): void {
+    if (!$this->isStorageReady()) {
+      return;
+    }
     $ids = $deliveryIds ?? $this->pendingIds($uid);
     foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
       if ($message instanceof MessageInterface && (int) $message->getOwnerId() === $uid && $message->bundle() === self::TEMPLATE) {
@@ -482,6 +500,38 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
   private function pendingIds(int $uid): array {
     return $this->entityTypeManager->getStorage('message')->getQuery()->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)->condition('uid', $uid)->condition(self::DIGEST_FIELD, 0)->execute();
+  }
+
+  /**
+   * Checks that the optional Magazine Message bundle is fully installed.
+   *
+   * The adapter may be present before its default configuration has been
+   * imported on an existing site. Avoid querying uninstalled fields in that
+   * state; the normal module update/configuration lifecycle will make it
+   * available on a later request.
+   */
+  private function isStorageReady(): bool {
+    if ($this->storageReady !== NULL) {
+      return $this->storageReady;
+    }
+    if ($this->entityTypeManager->getStorage('message_template')->load(self::TEMPLATE) === NULL) {
+      return $this->storageReady = FALSE;
+    }
+    $fields = [
+      self::EVENT_FIELD,
+      self::SOURCE_FIELD,
+      self::VERSION_FIELD,
+      self::READ_FIELD,
+      self::DIGEST_FIELD,
+      self::DELIVERY_FIELD,
+      self::ATTEMPTS_FIELD,
+    ];
+    $fieldStorageIds = array_map(static fn(string $field): string => 'message.' . $field, $fields);
+    $fieldConfigIds = array_map(static fn(string $field): string => 'message.' . self::TEMPLATE . '.' . $field, $fields);
+    $fieldStorages = $this->entityTypeManager->getStorage('field_storage_config')->loadMultiple($fieldStorageIds);
+    $fieldConfigs = $this->entityTypeManager->getStorage('field_config')->loadMultiple($fieldConfigIds);
+    return $this->storageReady = count($fieldStorages) === count($fields)
+      && count($fieldConfigs) === count($fields);
   }
 
   /**
