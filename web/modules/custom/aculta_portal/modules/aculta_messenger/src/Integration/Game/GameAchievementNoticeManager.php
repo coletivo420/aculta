@@ -10,7 +10,7 @@ use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\Badge\BadgeService;
-use Drupal\aculta_user\Entity\BadgeAward;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -47,7 +47,7 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
     $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($event->recipientUid());
     $award = $this->awardByUuid($event->sourceEntityUuid());
     if (!$recipient instanceof UserInterface || !$recipient->isActive()
-      || !$award instanceof BadgeAward
+      || !$this->isAward($award)
       || (int) $award->id() !== (int) $event->sourceRevisionOrVersion()
       || (int) $award->get('uid')->target_id !== $event->recipientUid()
       || !$award->get('revogado_em')->isEmpty()
@@ -202,7 +202,7 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
     $awardUuid = (string) ($message->get(self::SOURCE_FIELD)->value ?? '');
     $award = $awardUuid === '' ? NULL : $this->awardByUuid($awardUuid);
     if (!$recipient instanceof UserInterface || !$recipient->isActive()
-      || !$award instanceof BadgeAward
+      || !$this->isAward($award)
       || (int) $award->get('uid')->target_id !== (int) $account->id()
       || !$award->get('revogado_em')->isEmpty()) {
       return NULL;
@@ -216,13 +216,20 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
 
   /**
    * Loads a grant from the immutable UUID source. */
-  private function awardByUuid(string $uuid): ?BadgeAward {
+  private function awardByUuid(string $uuid): ?ContentEntityInterface {
     $matches = $this->entityTypeManager->getStorage('aculta_badge_award')->loadByProperties(['uuid' => $uuid]);
     $award = reset($matches);
-    if (!$award instanceof BadgeAward || $award->id() === NULL) {
+    if (!$this->isAward($award) || $award->id() === NULL) {
       return NULL;
     }
     return $this->entityTypeManager->getStorage('aculta_badge_award')->loadUnchanged((int) $award->id());
+  }
+
+  /**
+   * Checks a source entity loaded from the award storage. */
+  private function isAward(mixed $entity): bool {
+    return $entity instanceof ContentEntityInterface
+      && $entity->getEntityTypeId() === 'aculta_badge_award';
   }
 
   /**

@@ -3359,3 +3359,13 @@ Validação: `NoticeReadStateManagerTest` + `NoticeReadActionBuilderTest`
 PHPCS Drupal/DrupalPractice e `git diff --check` PASS. Kernel/Runtime não
 executados (`SIMPLETEST_DB` indisponível).
 
+## 0.1.1-dev.338 — testar persistência do adapter Game
+
+`GameAchievementNoticeManager` valida concessões pelo contrato Drupal
+`ContentEntityInterface` e confirma a persistência idempotente no bundle
+Message compartilhado, sob lock e vinculada ao destinatário.
+
+Validação: `GameAchievementNoticeManagerTest` **2/32 PASS**; Unit Messenger
+**355/2.851 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS. Kernel/Runtime não executados (`SIMPLETEST_DB` indisponível).
+
