@@ -1,3 +1,15 @@
+## 0.1.1-dev.343 — homologar revalidação em lote no Kernel LMS
+
+A fixture Kernel de matrícula caracteriza a consulta agrupada por UUID e a
+recarga da relação de turma antes de alterar leitura. A cobertura confirma a
+persistência, deduplicação, ownership e revogação de acesso usando Message
+real; nenhum Runtime ou fila de produção foi utilizado.
+
+Validação: Kernel LMS **4 testes / 52 assertions PASS** (2 deprecações
+upstream de descoberta `@EntityType` para `message` e `message_template`);
+Integration LMS Unit **48/445 PASS**; Unit Messenger **356/2.866 PASS**;
+PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+
 ## 0.1.1-dev.342 — validar ownership antes da consulta LMS
 
 A resolução individual agora verifica autenticação, titularidade e bundle do

@@ -232,6 +232,8 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       return $courseAccessible ? AccessResult::allowed() : AccessResult::forbidden();
     });
     $membership = $this->createMock(GroupMembership::class);
+    $membership->method('id')->willReturn('membership-24');
+    $membership->method('uuid')->willReturn('enrollment-source-uuid');
     $membership->method('getEntity')->willReturn($learner);
     $membership->method('getPluginId')->willReturn('group_membership');
     $membership->method('getGroup')->willReturn($class);
@@ -239,11 +241,14 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     $parentRelationship->method('getGroup')->willReturn($course);
     $relationshipStorage = $this->createMock(EntityStorageInterface::class);
     $relationshipStorage->method('loadByProperties')->willReturnCallback(static fn(array $properties): array => match (TRUE) {
-      ($properties['uuid'] ?? NULL) === 'enrollment-source-uuid' => [$membership],
+      ($properties['uuid'] ?? NULL) === ['enrollment-source-uuid'] => [$membership],
       ($properties['entity_id'] ?? NULL) === 'class-24'
         && ($properties['plugin_id'] ?? NULL) === 'lms_classes' => [$parentRelationship],
       default => [],
     });
+    $relationshipStorage->method('loadMultiple')->willReturnCallback(fn(array $ids): array => in_array('membership-24', $ids, TRUE)
+      ? ['membership-24' => $membership]
+      : []);
     $realEntityTypeManager = $this->container->get('entity_type.manager');
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => $type === 'group_relationship'
