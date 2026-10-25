@@ -1,3 +1,11 @@
+## 0.7.0-dev.3 — PHPCS do tema e tokens de Portal (2026-10-25)
+
+- PHPCS Drupal e DrupalPractice limpo em `src` e `tests` do tema. Blocos de documentação malformados foram corrigidos e os métodos sem descrição receberam texto real.
+- Novos tokens `fiscal-identity-other-data` (checkout Commerce) e `wiki-proposal-contribute` (botão da Wiki) mapeiam para as mesmas classes que já eram emitidas. A marcação visual não muda.
+- Avisos do Messenger passam a ser estilizados por `data-portal-ui` (`notice-origin-*`, `notice-related-group*`), e não mais por classes de design no módulo.
+- Gates executados: PHPUnit Unit do tema 12/12 OK; Kernel do tema 10 testes OK, incluindo `ProfileSdcRenderKernelTest` no banco de teste dedicado; PHPCS sem erros.
+- **Pendente:** o validador de fronteira aponta `Hook/ThemeHooks.php` registrando `page_attachments` para anexar a biblioteca de avisos. A regra permite apenas `preprocess_*`. A correção depende de decisão sobre onde a biblioteca deve ser carregada.
+
 ## 0.7.0-dev.2 — teste Kernel dos quatro SDCs de Meu Perfil (2026-10-25)
 
 - Criado `ProfileSdcRenderKernelTest`, com descoberta de `profile-editor`, `profile-identity`, `profile-bio`, `profile-social` via Core SDC. Renderiza componentes aninhados com props/slots e entradas demonstrativas, verifica escape, ausência de links públicos inferidos, estados vazios e metadata de cache.
