@@ -291,6 +291,76 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * Recovers acceptance when persisting its marker fails after transport.
+   */
+  public function testAcceptedDigestRecoveryAfterAcceptanceMarkerWriteFailure(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $snapshot = NULL;
+    $failAcceptedMarker = TRUE;
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use (&$snapshot): mixed {
+      if ($key === 'avisos_resumo_em_andamento') {
+        return $uid === NULL
+          ? ($snapshot === NULL ? [] : [27 => $snapshot])
+          : $snapshot;
+      }
+      return match ($key) {
+        'avisos_resumo_email', 'email_confirmed' => TRUE,
+        'avisos_resumo_ultimo' => 0,
+        default => NULL,
+      };
+    });
+    $userData->method('set')->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use (&$snapshot, &$failAcceptedMarker): void {
+      if ($key === 'avisos_resumo_em_andamento') {
+        if (isset($value['accepted_at']) && $failAcceptedMarker) {
+          $failAcceptedMarker = FALSE;
+          throw new \RuntimeException('Simulated persistence interruption after transport acceptance.');
+        }
+        $snapshot = $value;
+      }
+    });
+    $userData->method('delete')->willReturnCallback(static function (string $module, int $uid, string $key) use (&$snapshot): void {
+      if ($key === 'avisos_resumo_em_andamento') {
+        $snapshot = NULL;
+      }
+    });
+
+    $correlationId = NULL;
+    $recoveredCorrelationId = NULL;
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlationId): SendResult {
+        $correlationId = $message->correlationId;
+        return SendResult::sent();
+      });
+    $mailer->expects(self::once())
+      ->method('wasAcceptedCorrelation')
+      ->with(self::callback(static fn(string $value): bool => $value !== ''), AvisosResumo::CHAVE_MAIL, 'student@example.test')
+      ->willReturnCallback(static function (string $value) use (&$recoveredCorrelationId): bool {
+        $recoveredCorrelationId = $value;
+        return TRUE;
+      });
+    $transaction = new TestLearningDigestTransaction();
+    $database = $this->createMock(Connection::class);
+    $database->expects(self::once())->method('startTransaction')->willReturn($transaction);
+    $summary = $this->createSummary($provider, $mailer, TRUE, NULL, $database, $userData);
+
+    self::assertSame(0, $summary->enviarResumos(), 'A crash-equivalent marker failure does not count a completed digest run.');
+    self::assertNotNull($snapshot, 'The pre-transport manifest remains available for recovery.');
+    self::assertArrayNotHasKey('accepted_at', $snapshot, 'The simulated failure occurs before acceptance evidence is written.');
+    self::assertSame('lms', $snapshot['providers'][0]['provider_id'] ?? NULL);
+    self::assertSame([501], $snapshot['providers'][0]['delivery_ids'] ?? NULL);
+    self::assertSame(0, $summary->enviarResumos(), 'Retry consults Mailer acceptance and reconciles without sending again.');
+    self::assertNotEmpty($correlationId);
+    self::assertSame($correlationId, $recoveredCorrelationId);
+    self::assertSame([[501]], $provider->markedDeliveryIds);
+    self::assertNull($snapshot, 'Successful recovery removes the exact in-progress snapshot.');
+    self::assertTrue($transaction->committed);
+    self::assertFalse($transaction->rolledBack);
+  }
+
+  /**
    * An accepted batch waits for its optional provider to return before ack.
    */
   public function testAcceptedDigestWithUnavailableProviderKeepsRecoverySnapshot(): void {

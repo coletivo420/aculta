@@ -2164,3 +2164,13 @@ focal **48/389 PASS** e Kernels LMS/Wiki/Loja/Doações **22/377 PASS**. PHPCS D
 de status e gate Drupal 11+ (**1155 checks**) PASS. Kernels reportaram deprecações de descoberta Message Core/contrib e
 notices PHPUnit existentes. Runtime e navegador não testados.
 
+## 0.1.1-dev.216 — recuperar digest após falha ao gravar aceite
+
+Adicionada regressão para a janela em que o ACULTA Mailer já aceitou o digest, mas o processo falha antes de persistir
+`accepted_at`. No retry, o Messenger consulta a correlação determinística no Mailer, confirma somente os IDs do manifesto
+original e não realiza uma segunda entrega.
+
+Validação: `LearningNoticeDigestIntegrationTest` **24 testes / 205 assertions PASS**; `AvisosResumoMailerKernelTest`
+**2 testes / 32 assertions PASS** com ACULTA Mailer e MariaDB dedicado. Nenhum Runtime ou transporte SMTP real
+foi utilizado.
+
