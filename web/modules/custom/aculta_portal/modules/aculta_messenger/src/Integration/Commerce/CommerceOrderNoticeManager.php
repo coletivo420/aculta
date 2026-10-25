@@ -147,11 +147,7 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
   /**
    * {@inheritdoc} */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array {
-    $uuid = $this->orderUuidFromNotice($message, $account);
-    if ($uuid === NULL) {
-      return NULL;
-    }
-    return $this->resolveOrder($uuid, $account);
+    return $this->resolveMessages([$message], $account)[(string) $message->id()] ?? NULL;
   }
 
   /**
@@ -168,6 +164,7 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
       return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
+    $resolvedById = [];
     $page = EligibleNoticePage::collect(
       function (int $scanOffset, int $batchSize) use ($storage, $account, $filters): array {
         $query = $storage->getQuery()->accessCheck(FALSE)
@@ -177,8 +174,14 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
         return $query->sort('created', 'DESC')->sort('id', 'DESC')
           ->range($scanOffset, $batchSize)->execute();
       },
-      static fn(array $ids): array => array_values($storage->loadMultiple($ids)),
-      fn(mixed $message): ?array => $message instanceof MessageInterface ? $this->resolve($message, $account) : NULL,
+      function (array $ids) use ($storage, $account, &$resolvedById): array {
+        $messages = array_values($storage->loadMultiple($ids));
+        $resolvedById = $this->resolveMessages($messages, $account);
+        return $messages;
+      },
+      fn(mixed $message): ?array => $message instanceof MessageInterface
+        ? ($resolvedById[(string) $message->id()] ?? NULL)
+        : NULL,
       $limit,
       $offset,
     );
@@ -242,15 +245,7 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
 
     // Resolve source orders in one entity query rather than one UUID lookup
     // per unread Message. Access and ownership are still revalidated below.
-    $orders = $this->entityTypeManager->getStorage('commerce_order')->loadByProperties([
-      'uuid' => array_keys($uuids),
-    ]);
-    $ordersByUuid = [];
-    foreach ($orders as $order) {
-      if ($order instanceof OrderInterface) {
-        $ordersByUuid[$order->uuid()] = $order;
-      }
-    }
+    $ordersByUuid = $this->loadOrdersForUuids(array_keys($uuids));
     $accessible = [];
     foreach ($ordersByUuid as $uuid => $order) {
       $accessible[$uuid] = $this->resolveOrderEntity($order, $account) !== NULL;
@@ -303,9 +298,12 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
       return [];
     }
     $ids = $this->pendingIds($uid);
+    $messages = array_values($this->entityTypeManager->getStorage('message')->loadMultiple($ids));
+    $resolvedById = $this->resolveMessages($messages, $account);
     $rows = [];
-    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
-      if (!$message instanceof MessageInterface || ($notice = $this->resolve($message, $account)) === NULL) {
+    foreach ($messages as $message) {
+      $notice = $message instanceof MessageInterface ? ($resolvedById[(string) $message->id()] ?? NULL) : NULL;
+      if (!$message instanceof MessageInterface || $notice === NULL) {
         if ($message instanceof MessageInterface) {
           $message->set(self::DIGEST_FIELD, 1)->save();
         }
@@ -368,11 +366,67 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
   }
 
   /**
-   * Resolves an order only for its customer with current order access. */
-  private function resolveOrder(string $uuid, AccountInterface $account): ?array {
-    $orders = $this->entityTypeManager->getStorage('commerce_order')->loadByProperties(['uuid' => $uuid]);
-    $order = reset($orders);
-    return $order instanceof OrderInterface ? $this->resolveOrderEntity($order, $account) : NULL;
+   * Resolves notice messages against their customer's current order access.
+   */
+  private function resolveMessages(array $messages, AccountInterface $account): array {
+    $uuidByMessageId = [];
+    $uuids = [];
+    foreach ($messages as $message) {
+      if (!$message instanceof MessageInterface) {
+        continue;
+      }
+      $uuid = $this->orderUuidFromNotice($message, $account);
+      if ($uuid !== NULL) {
+        $uuidByMessageId[(string) $message->id()] = $uuid;
+        $uuids[$uuid] = TRUE;
+      }
+    }
+    if ($uuids === []) {
+      return [];
+    }
+
+    $orders = $this->loadOrdersForUuids(array_keys($uuids));
+    $resolvedByUuid = [];
+    foreach ($orders as $uuid => $order) {
+      $resolvedByUuid[$uuid] = $this->resolveOrderEntity($order, $account);
+    }
+    $resolvedByMessageId = [];
+    foreach ($uuidByMessageId as $messageId => $uuid) {
+      if (($resolvedByUuid[$uuid] ?? NULL) !== NULL) {
+        $resolvedByMessageId[$messageId] = $resolvedByUuid[$uuid];
+      }
+    }
+    return $resolvedByMessageId;
+  }
+
+  /**
+   * Loads fresh order entities for a unique set of source UUIDs.
+   *
+   * @return array<string, \Drupal\commerce_order\Entity\OrderInterface>
+   *   Orders keyed by UUID.
+   */
+  private function loadOrdersForUuids(array $uuids): array {
+    $uuids = array_values(array_unique(array_filter($uuids, static fn(mixed $uuid): bool => is_string($uuid) && $uuid !== '')));
+    if ($uuids === []) {
+      return [];
+    }
+    $storage = $this->entityTypeManager->getStorage('commerce_order');
+    $orders = $storage->loadByProperties(['uuid' => $uuids]);
+    $ids = [];
+    foreach ($orders as $order) {
+      if ($order instanceof OrderInterface && $order->id() !== NULL) {
+        $ids[] = $order->id();
+      }
+    }
+    $storage->resetCache($ids);
+    $freshOrders = $storage->loadMultiple($ids);
+    $ordersByUuid = [];
+    foreach ($freshOrders as $order) {
+      if ($order instanceof OrderInterface) {
+        $ordersByUuid[$order->uuid()] = $order;
+      }
+    }
+    return $ordersByUuid;
   }
 
   /**

@@ -2,6 +2,8 @@
 
 ## Evolução recente
 
+- **Dev.345 — Loja em lote:** central e digest resolvem pedidos por bloco de avisos; UUIDs únicos são carregados juntos e recarregados sem cache antes de revalidar tipo de pedido, cliente, acesso e URL. O Kernel cobre avisos distintos do mesmo pedido e confirma uma carga de origem por invocação do digest. Commerce Integration Unit **5/59 PASS**; Kernel **4/75 PASS** (deprecações de descoberta `@EntityType` do Core/contrib e notices PHPUnit); Runtime não utilizado.
+
 - Dev.344 — listagem e digest da Wiki passam a agrupar por lote as revisões de verbetes e propostas; ações individuais usam o mesmo resolvedor. Permanecem validações de revisão padrão, moderação, autoria, permissões, Domain/Purpose e acesso atual; os métodos escalares duplicados foram removidos. Wiki Integration Unit **4/47**, Wiki Kernel **8/153 PASS** (2 depreciações upstream `@EntityType`, 3 notices PHPUnit), Unit Messenger **356/2.866 PASS**, PHPCS/PHP lint/diff check PASS. Runtime não utilizado.
 - Dev.343 — Kernel LMS agora cobre a leitura do aviso de matrícula por fonte carregada em lote e recarregada sem cache; persistência, deduplicação, titularidade e revogação de acesso passam com Message real. Kernel LMS **4/52 PASS** (2 depreciações upstream de `@EntityType` em `message`/`message_template`), Integration LMS Unit **48/445 PASS**, Unit Messenger **356/2.866 PASS**, PHPCS, PHP lint e diff check PASS. Runtime e filas de produção não utilizados.
 - Dev.342 — `resolve()` verifica autenticação, titularidade e bundle do aviso antes de qualquer consulta de fonte LMS; teste prova que um aviso de outro membro não acessa o storage de origem. Integration LMS Unit **48/445 PASS**, PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS; sem Kernel/Runtime.

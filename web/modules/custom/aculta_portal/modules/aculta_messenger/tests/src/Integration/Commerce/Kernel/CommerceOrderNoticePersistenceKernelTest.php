@@ -23,6 +23,7 @@ use Drupal\Core\Queue\QueueInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\message\Entity\Message;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\user\Entity\User;
 use Drupal\domain\DomainInterface;
@@ -130,18 +131,30 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
 
     $consumer->consume($event);
     $consumer->consume($event);
+    Message::create([
+      'template' => CommerceOrderNoticeManager::TEMPLATE,
+      'uid' => $uid,
+      'field_aculta_commerce_event_type' => 'order_placed',
+      'field_aculta_commerce_uuid' => 'order-uuid',
+      'field_aculta_commerce_version' => '2',
+      'field_aculta_commerce_read' => 0,
+      'field_aculta_commerce_digest' => 0,
+      'field_aculta_msg_delivery' => 'sent',
+      'field_aculta_messenger_attempts' => 0,
+    ])->save();
     $rows = $manager->digestRowsFor($uid);
 
-    self::assertCount(1, $rows);
+    self::assertCount(2, $rows);
     self::assertSame('loja', $rows[0]['tipo']);
     self::assertGreaterThan(0, $rows[0]['delivery_id']);
+    self::assertSame(1, count(array_unique(array_column($rows, 'titulo'))));
     self::assertSame(
       array_column($rows, 'delivery_id'),
       array_column($manager->digestRowsFor($uid), 'delivery_id'),
       'Reading a digest does not duplicate or consume a pending row.',
     );
 
-    $manager->markDigestSent($uid, [$rows[0]['delivery_id']]);
+    $manager->markDigestSent($uid, array_column($rows, 'delivery_id'));
     self::assertSame([], $manager->digestRowsFor($uid));
   }
 
@@ -232,7 +245,9 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
     $order->method('getCustomerId')->willReturn((int) $orderCustomer->id());
     $order->method('access')->willReturn(AccessResult::allowed());
     $orderStorage = $this->createMock(EntityStorageInterface::class);
-    $orderStorage->method('loadByProperties')->willReturn([$order]);
+    $orderStorage->expects(self::exactly(2))->method('loadByProperties')->with(['uuid' => ['order-uuid']])->willReturn([$order]);
+    $orderStorage->expects(self::exactly(2))->method('resetCache')->with(['100']);
+    $orderStorage->method('loadMultiple')->willReturn(['100' => $order]);
 
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('isHttps')->willReturn(TRUE);

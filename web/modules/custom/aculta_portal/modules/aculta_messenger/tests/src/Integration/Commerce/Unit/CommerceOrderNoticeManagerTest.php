@@ -166,6 +166,9 @@ final class CommerceOrderNoticeManagerTest extends UnitTestCase {
       ->method('loadByProperties')
       ->with(['uuid' => ['order-a', 'order-b']])
       ->willReturn([$allowedOrder, $inaccessibleOrder]);
+    $orderStorage->expects(self::once())->method('resetCache')->with(['201', '202']);
+    $orderStorage->expects(self::once())->method('loadMultiple')->with(['201', '202'])
+      ->willReturn(['201' => $allowedOrder, '202' => $inaccessibleOrder]);
 
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('isHttps')->willReturn(TRUE);

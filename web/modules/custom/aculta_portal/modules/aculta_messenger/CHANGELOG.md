@@ -1,3 +1,14 @@
+## 0.1.1-dev.345 — resolver pedidos da Loja em lote
+
+A listagem pessoal e o digest da Loja agora resolvem cada bloco de avisos com
+uma consulta agrupada por UUID. Os pedidos encontrados são recarregados sem
+cache antes de revalidar tipo, titularidade, acesso e destino; resolução
+individual e contador seguem as mesmas verificações. O Kernel cobre dois
+avisos de versões distintas do mesmo pedido em uma única carga por digest.
+
+Validação: Commerce Integration Unit **5/59 PASS**; Commerce Kernel **4/75
+PASS** (2 deprecações upstream `@EntityType`, 3 notices PHPUnit); sem Runtime.
+
 ## 0.1.1-dev.344 — resolver avisos Wiki em lote na central e digest
 
 A listagem paginada e o digest da Wiki agora coletam os envelopes dos Messages
