@@ -25,13 +25,11 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class ThemeHooks implements TrustedCallbackInterface {
 
   /**
-   * Attaches notice grouping presentation to the account notice center.
+   * Attaches notice grouping presentation to pages with the shared header.
    */
   #[Hook('page_attachments')]
   public function attachMessengerNoticeStyles(array &$attachments): void {
-    if (in_array($this->routeMatch->getRouteName(), ['aculta_messenger.avisos', 'aculta_messenger.avisos_raiz'], TRUE)) {
-      $attachments['#attached']['library'][] = 'aculta420/messenger-notices';
-    }
+    $attachments['#attached']['library'][] = 'aculta420/messenger-notices';
   }
 
   /**

@@ -127,7 +127,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
   }
 
   /**
-   * Loads a person's notices, with unread items first and newest first.
+   * Loads a person's notices, newest first.
    *
    * @return \Drupal\aculta_messenger\Entity\Aviso[]
    *   Accessible notices for the account.
@@ -166,7 +166,6 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
         $query->condition('contador_site', 0, $readState === 'read' ? '=' : '>');
       }
       $ids = $query
-        ->sort('contador_site', 'DESC')
         ->sort('changed', 'DESC')
         ->sort('id', 'DESC')
         ->range($scanOffset, $batchSize)
@@ -435,7 +434,13 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       ->execute();
     foreach ($this->entityTypeManager->getStorage('aculta_aviso')->loadMultiple($ids) as $aviso) {
       if ((int) $aviso->get('contador_site')->value > 0) {
+        // Reading changes delivery state, not the activity's recency. Keep
+        // older notices from jumping ahead of newer activity in the list.
+        $changed = $aviso->getChangedTime();
         $aviso->set('contador_site', 0);
+        if ($changed !== NULL) {
+          $aviso->setChangedTime($changed);
+        }
         $aviso->save();
       }
     }
@@ -632,7 +637,14 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       $current = (int) $aviso->get('contador_email')->value;
       $next = $subtract ? max(0, $current - $amount) : 0;
       if ($next !== $current) {
-        $aviso->set('contador_email', $next)->save();
+        // Digest acknowledgment only changes delivery state. Preserve the
+        // activity timestamp used to order Forum notices.
+        $changed = $aviso->getChangedTime();
+        $aviso->set('contador_email', $next);
+        if ($changed !== NULL) {
+          $aviso->setChangedTime($changed);
+        }
+        $aviso->save();
       }
       return TRUE;
     });

@@ -15,6 +15,19 @@ try {
     const groups = await browser.exec(`return ${drawer}.querySelectorAll('.aculta-alerts-filters__group').length;`);
     check('Filters are presented as two compact disclosure groups', groups === 2, `${groups} groups`);
 
+    const originSections = JSON.parse(await browser.exec(`return JSON.stringify([...${drawer}.querySelectorAll('[data-aculta-notice-origin-section]')].map((section) => ({
+      origin: section.dataset.acultaNoticeOriginSection,
+      heading: section.querySelector(':scope > h3')?.textContent.trim() || '',
+      separator: !!section.querySelector(':scope > hr.aculta-notice-origin-separator'),
+    })));`));
+    const originOrder = ['comunicado', 'forum', 'alerta', 'aprendizagem', 'wiki', 'loja', 'doacao', 'conta', 'outros'];
+    const groupOrderValid = originSections.every((section, index) => {
+      const orderIndex = originOrder.indexOf(section.origin);
+      const previousIndex = index > 0 ? originOrder.indexOf(originSections[index - 1].origin) : -1;
+      return orderIndex >= 0 && orderIndex > previousIndex && section.heading !== '' && section.separator === (index > 0);
+    });
+    check('Notice rows are grouped by origin with labeled headings and separators', groupOrderValid, JSON.stringify(originSections));
+
     await browser.exec(`${drawer}.querySelector('.aculta-alerts-filters__group').open = true; return 1;`);
     await browser.exec(`[...${drawer}.querySelectorAll('[data-aculta-drawer-filter]')].find((link) => link.textContent.trim() === 'Wiki')?.click(); return 1;`);
     const wikiSelected = await browser.waitFor(
@@ -22,6 +35,12 @@ try {
       'Wiki filter selection',
     );
     check('Selecting an origin reloads the notice fragment in the same drawer', wikiSelected);
+    const wikiSection = JSON.parse(await browser.exec(`return JSON.stringify({
+      section: !!${drawer}.querySelector('[data-aculta-notice-origin-section="wiki"]'),
+      wikiRows: ${drawer}.querySelectorAll('[data-aculta-notice-origin="wiki"]').length,
+      otherRows: [...${drawer}.querySelectorAll('[data-aculta-notice-origin]')].filter((row) => row.dataset.acultaNoticeOrigin !== 'wiki').length,
+    });`));
+    check('Visible Wiki rows use their origin group and other source rows are hidden', wikiSection.otherRows === 0 && (wikiSection.wikiRows === 0 || wikiSection.section), JSON.stringify(wikiSection));
 
     await browser.exec(`${drawer}.querySelectorAll('.aculta-alerts-filters__group')[1].open = true; return 1;`);
     await browser.exec(`[...${drawer}.querySelectorAll('[data-aculta-drawer-filter]')].find((link) => link.textContent.trim() === 'Não lidos')?.click(); return 1;`);

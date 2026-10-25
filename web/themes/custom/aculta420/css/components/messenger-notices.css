@@ -1,4 +1,9 @@
 /* Related notices stay individually actionable inside a native disclosure. */
+.aculta-notice-origin-section { min-width: 0; }
+.aculta-notice-origin-heading { margin: 0; color: var(--aculta-text-primary); font-size: 1rem; font-weight: 700; }
+.aculta-notice-origin-separator { margin-block: 0.75rem; border-color: var(--aculta-border-subtle); opacity: 1; }
+.aculta-notice-origin-items > ul { display: grid; gap: 0.65rem; margin: 0.5rem 0 0; padding: 0; list-style: none; }
+
 .aculta-notice-related-group {
   margin-block: 0.75rem;
   border: 1px solid var(--aculta-border-subtle);

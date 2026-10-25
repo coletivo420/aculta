@@ -192,6 +192,34 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Forum notices sort by recency regardless of read state.
+   */
+  public function testForumNoticeListSortsByRecencyRegardlessOfReadState(): void {
+    $author = $this->createUser('autor_ordem_recente');
+    $follower = $this->createUser('seguidor_ordem_recente');
+    $uid = (int) $follower->id();
+    $olderTopic = $this->createTopic('Tópico anterior');
+    $newerTopic = $this->createTopic('Tópico recente');
+    $service = $this->createAvisoService([$uid], $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE));
+    self::assertSame(1, $service->registrarResposta($this->createPersistedComment($olderTopic, (int) $author->id())));
+    self::assertSame(1, $service->registrarResposta($this->createPersistedComment($newerTopic, (int) $author->id())));
+
+    // Reading only changes delivery state; it must not rewrite activity
+    // recency and make an old notice look new.
+    $beforeRead = $service->listarDaPessoa($uid);
+    $newerNotice = reset($beforeRead);
+    self::assertNotFalse($newerNotice);
+    $newerChanged = $newerNotice->getChangedTime();
+    $service->marcarLido($uid, (int) $newerTopic->id());
+    $notices = $service->listarDaPessoa($uid);
+
+    self::assertCount(2, $notices);
+    self::assertSame((int) $newerTopic->id(), (int) $notices[0]->get('assunto_nid')->value);
+    self::assertSame((int) $olderTopic->id(), (int) $notices[1]->get('assunto_nid')->value);
+    self::assertSame($newerChanged, $notices[0]->getChangedTime());
+  }
+
+  /**
    * The account-center limit includes more than the five-item drawer preview.
    */
   public function testPersonalNoticeListDefaultSupportsAccountCenter(): void {

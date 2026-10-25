@@ -1,3 +1,9 @@
+## 0.1.1-dev.240 — agrupar avisos por origem e ordenar por atualização
+
+A central unificada agora apresenta seções identificadas por origem, separadas visualmente, e mantém a ordem de atualização mais recente disponível dentro de cada seção. Fórum usa `changed` e ID; limpar contadores de leitura ou digest preserva `changed`, para que a entrega não reordene atividade. Adapters Message usam `created` e Alertas do Site usam ID decrescente como ordem estável, pois a entidade não expõe data de criação. Avisos antigos não lidos deixam de ficar acima dos mais recentes; filtros, paginação e agrupamento de eventos relacionados continuam preservados.
+
+Validação: Unit completo do Messenger **221 testes / 1.582 assertions PASS**, incluindo `NoticeOriginGrouperTest`, `NoticeRelatedGrouperTest` e `NoticeListFilterTest` (**9/41**); Kernel MariaDB completo `ForumNoticeIdempotencyKernelTest` **38/893 PASS** (teste focal de ordenação **1/22**); PHPCS Drupal/DrupalPractice e PHP lint dos arquivos novos/alterados PASS; `MessagesController` mantém violações preexistentes, com perfil **95 erros / 65 avisos** (HEAD anterior: 96/65). Foundation **345 checks PASS** e Design Foundations **2.170 checks PASS**. Smoke read-only `drawer-notice-filters.mjs` **8/8 PASS** no Firefox ESR visível, host de teste `aculta.toca.net.br`, viewport 1270 px. Runtime Alpha e demais viewports permanecem pendentes.
+
 ## 0.1.1-dev.239 — impedir leitura por prefetch de avisos
 
 As rotas GET de abertura de avisos LMS, Wiki, Loja e Doações agora compartilham a política de requisição iniciada pelo membro usada no Messenger. Prefetch e prerender recebem `204` privado sem redirecionamento; navegações cross-site ainda podem abrir o destino autorizado, mas não marcam o aviso como lido. A navegação normal mantém o redirect e a alteração de leitura.

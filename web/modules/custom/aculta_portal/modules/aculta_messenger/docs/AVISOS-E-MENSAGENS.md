@@ -41,6 +41,14 @@ abertura e retorno mantêm os filtros selecionados. Na gaveta, links carregam o
 fragmento no próprio painel; seus destinos apontam para a central da Conta como
 fallback funcional sem JavaScript.
 
+Na lista sem filtro, os avisos aparecem agrupados por origem, com cabeçalho e
+separador visual. Dentro de cada origem, usa-se a ordem mais recente disponível:
+`changed` no Fórum, `created` nos adapters Message e ID decrescente nos Alertas
+do Site, que não expõem data de criação. No Fórum, limpar os contadores de
+leitura e confirmar o digest preserva `changed`, para que alterações de entrega
+não façam avisos antigos parecerem recentes. Filtros e paginação são aplicados
+antes de construir as seções.
+
 ## 2. Avisos por pessoa (`aculta_aviso`)
 
 Um registro por **pessoa, tipo e tópico**. Tipos: `forum_resposta` (Comment ou post revisionável novo em tópico seguido) e

@@ -1,3 +1,9 @@
+## 0.6.1-dev.13 — separar visualmente avisos por origem — 2026-10-25
+
+O tema apresenta a divisão semântica das listas de avisos da central e da gaveta global por origem com separadores, preservando reflow e as listas internas de cada fonte. A biblioteca visual é anexada globalmente para cobrir o cabeçalho compartilhado; a aplicação do agrupamento permanece no contrato de renderização do Messenger.
+
+Validação: Unit completo Messenger **221/1.582 PASS**, `ThemeHooksTest` **1/1 PASS**, Kernel MariaDB `ForumNoticeIdempotencyKernelTest` **38/891 PASS**, Foundation **345 checks PASS** e Design Foundations **2.170 checks PASS**. `ThemeHooks` mantém o perfil PHPCS preexistente, com um erro a menos (9/11 contra 10/11 no HEAD). Smoke read-only do Messenger passou **8/8** no Firefox ESR visível no Runtime de teste, em 1270 px; Alpha e demais viewports pendentes.
+
 ## 0.6.1-dev.10 — estados de carregamento e erro na gaveta — 2026-10-24
 
 A gaveta agora apresenta o SDC `messenger-state` durante carregamentos AJAX e anuncia falhas de navegação como alerta.

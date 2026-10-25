@@ -42,8 +42,8 @@ use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Component\Utility\Crypt;
 use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
+use Drupal\aculta_messenger\Service\NoticeOriginGrouper;
 use Drupal\aculta_messenger\Service\NoticeFlagStateLoader;
-use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
 use Drupal\aculta_messenger\Service\NoticeReadActionBuilder;
 use Drupal\aculta_messenger\Service\MemberInitiatedRequest;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
@@ -920,7 +920,7 @@ final class MessagesController extends ControllerBase {
       $items = $this->noticeReadActionBuilder->attach($items, $this->account);
     }
 
-    $items = NoticeRelatedGrouper::group($items);
+    $items = NoticeOriginGrouper::group($items);
 
     if ($items === []) {
       $emptyMessage = $hasFilters
