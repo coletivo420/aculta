@@ -1,3 +1,13 @@
+## 0.1.1-dev.313 — alinhar formulário de nova conversa aos padrões Drupal
+
+O formulário de primeira mensagem recebeu PHPDocs completos e arrays/comentários
+formatados conforme Drupal/DrupalPractice. A mudança não altera validação,
+permissões, persistência ou experiência do fluxo.
+
+Validação: `NewConversationRecipientIdsTest` **10 testes / 68 assertions PASS**;
+Unit Messenger **316 testes / 2.569 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS.
+
 ## 0.1.1-dev.312 — impedir dados pessoais nos logs de falha do digest
 
 Teste de regressão agora valida os dois caminhos de erro do digest: busca de

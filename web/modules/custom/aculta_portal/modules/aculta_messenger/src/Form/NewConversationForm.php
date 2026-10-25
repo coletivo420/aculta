@@ -22,10 +22,10 @@ use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * First message of a new conversation, written inside the multidomain bar drawer.
+ * First message in a conversation inside the multidomain bar drawer.
  *
- * Reuses the send rules of the Messenger (block, friends-only preference, rate limit) and the Private
- * Message thread API. An existing conversation between the two members is reused.
+ * Reuses Messenger send rules and the Private Message thread API. An existing
+ * conversation between the selected members is reused.
  */
 final class NewConversationForm extends FormBase {
 
@@ -39,6 +39,9 @@ final class NewConversationForm extends FormBase {
     private readonly ConversationPolicy $policy,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('current_user'),
@@ -51,21 +54,25 @@ final class NewConversationForm extends FormBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_messenger_new_conversation';
   }
 
   /**
-   * One form for the whole new-conversation step: the member search with the chosen members, the first message and the
-   * actions. Without a fixed member (the search step) the members come from the chips; with one (the profile's
-   * "Iniciar conversa") the form is only the message.
+   * Builds the search, recipient chips, first message, and actions.
+   *
+   * A profile's "Iniciar conversa" action fixes the recipient, so that form
+   * contains only the message. The group flow uses the recipients in the chips.
    */
   public function buildForm(array $form, FormStateInterface $formState): array {
     $fixed = $formState->get('recipient') !== NULL;
     $limit = $this->policy->maxRecipients(ConversationPolicy::KIND_GROUP, $this->currentUser);
     $form['#attributes'] = ['data-aculta-new-conversation-form' => ''];
     if (!$fixed) {
-      // The drawer reads the search field and the chips (messenger-drawers.js); the form posts to the group route.
+      // The drawer reads search/chips and posts to the group route.
       $form['#action'] = Url::fromRoute('aculta_messenger.new_conversation_group')->toString();
       $form['#attributes'] += [
         'data-aculta-new-conversation' => '',
@@ -74,7 +81,11 @@ final class NewConversationForm extends FormBase {
       ];
       $form['chips'] = [
         '#type' => 'container',
-        '#attributes' => ['data-aculta-chips' => '', 'data-portal-ui' => 'new-conversation-chips', 'aria-live' => 'polite'],
+        '#attributes' => [
+          'data-aculta-chips' => '',
+          'data-portal-ui' => 'new-conversation-chips',
+          'aria-live' => 'polite',
+        ],
       ];
       foreach ($this->recipients($formState, FALSE) as $index => $user) {
         $form['chips']['chip_' . $index] = $this->chip($user);
@@ -121,16 +132,30 @@ final class NewConversationForm extends FormBase {
       '#weight' => 10,
       '#attributes' => ['data-portal-ui' => 'new-conversation-message'],
     ];
-    // Cancelar: discard the draft and return to the member search. Voltar: the conversation list.
-    // PortalLinkElement, not #type link: the theme maps data-portal-ui only on elements with a theme template, so each
-    // one takes its own button colour. The drawer finds them by their data attributes, which the helper keeps.
+    // Cancel returns to member search; home returns to the conversation list.
+    // PortalLinkElement preserves button styling and data attributes used by
+    // the drawer, unlike a generic link element.
     $cancelUrl = Url::fromRoute('aculta_messenger.new_conversation')->toString();
     $form['links'] = [
       '#type' => 'container',
       '#weight' => 20,
       '#attributes' => ['data-portal-ui' => 'new-conversation-links'],
-      'cancel' => PortalLinkElement::build($this->t('Cancelar'), Url::fromRoute('aculta_messenger.new_conversation'), ['data-aculta-conversation-url' => $cancelUrl, 'data-portal-ui' => 'new-conversation-cancel']),
-      'home' => PortalLinkElement::build($this->t('Voltar para o início'), Url::fromRoute('aculta_messenger.preview'), ['data-aculta-drawer-back' => '', 'data-portal-ui' => 'new-conversation-back']),
+      'cancel' => PortalLinkElement::build(
+        $this->t('Cancelar'),
+        Url::fromRoute('aculta_messenger.new_conversation'),
+        [
+          'data-aculta-conversation-url' => $cancelUrl,
+          'data-portal-ui' => 'new-conversation-cancel',
+        ],
+      ),
+      'home' => PortalLinkElement::build(
+        $this->t('Voltar para o início'),
+        Url::fromRoute('aculta_messenger.preview'),
+        [
+          'data-aculta-drawer-back' => '',
+          'data-portal-ui' => 'new-conversation-back',
+        ],
+      ),
     ];
     $form['actions'] = ['#type' => 'actions', '#weight' => 30];
     $form['actions']['submit'] = [
@@ -142,7 +167,11 @@ final class NewConversationForm extends FormBase {
     return $form;
   }
 
-  /** One chip: the member's name, a "×" to take it off, and the hidden field the send reads (members[]). */
+  /**
+   * Builds a recipient chip and its hidden member ID field.
+   *
+   * The drawer can remove the member with its accessible button.
+   */
   private function chip(UserInterface $user): array {
     $name = $this->memberIdentity->publicDisplayName($user) ?? (string) $this->t('Membro');
     return [
@@ -169,6 +198,9 @@ final class NewConversationForm extends FormBase {
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $formState): void {
     $message = $formState->getValue('message');
     if (!is_string($message) || trim($message) === '') {
@@ -187,7 +219,7 @@ final class NewConversationForm extends FormBase {
         return;
       }
     }
-    // The same rules as the native composer, applied to a thread that is not saved yet: every member is checked.
+    // Apply native composer rules to this unsaved thread and every member.
     $members = [(int) $this->currentUser->id()];
     foreach ($recipients as $recipient) {
       $members[] = (int) $recipient->id();
@@ -207,6 +239,9 @@ final class NewConversationForm extends FormBase {
     $this->validator->validateRateLimit($form, $formState);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()) {
       $this->validator->releaseSubmissionLocks();
@@ -272,8 +307,8 @@ final class NewConversationForm extends FormBase {
       $this->validator->releaseSubmissionLocks();
       throw $exception;
     }
-    // The drawer receives the conversation as the answer to its POST (NewConversationController::compose).
-    // A Form API redirect would send the drawer back to the compose step with a 303.
+    // NewConversationController::compose handles the drawer POST response.
+    // A Form API redirect would send it back to the compose step with a 303.
     $formState->disableRedirect();
   }
 
@@ -312,7 +347,9 @@ final class NewConversationForm extends FormBase {
     return $thread instanceof PrivateMessageThreadInterface ? $thread : NULL;
   }
 
-  /** The ids of the conversation: the fixed member of the profile's route, else the chips posted with the form. */
+  /**
+   * Returns target IDs from the profile route or submitted recipient chips.
+   */
   private function recipientIds(FormStateInterface $formState): array {
     $single = $formState->get('recipient');
     if ($single !== NULL) {
@@ -349,10 +386,13 @@ final class NewConversationForm extends FormBase {
   }
 
   /**
-   * The members the conversation will have besides the author. For the send, a member that does not exist or is inactive
-   * makes the list incomplete, which validation refuses. For the chips ($strict FALSE) the existing ones are shown.
+   * Returns conversation members other than the author.
+   *
+   * On submission, missing or inactive members make the list invalid. In chip
+   * rendering mode, unavailable members are omitted.
    *
    * @return \Drupal\user\UserInterface[]
+   *   Eligible recipients, or an empty list when strict loading fails.
    */
   private function recipients(
     FormStateInterface $formState,
