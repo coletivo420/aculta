@@ -130,7 +130,8 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
         $this->createMock(LockBackendInterface::class),
         new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
         new ConversationWriteLock($this->createMock(LockBackendInterface::class), $entityTypes),
-      ),
+        $this->createMock(EntityTypeManagerInterface::class),
+    ),
       $entityTypes,
       $identity,
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
@@ -178,6 +179,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       new ConversationWriteLock($this->createMock(LockBackendInterface::class), $entityTypes),
+      $this->createMock(EntityTypeManagerInterface::class),
     );
     $mapper = $this->createMock(PrivateMessageMapperInterface::class);
     $mapper->expects(self::once())->method('getThreadIdForMembers')->with([$sender, $recipient])->willReturn(FALSE);
@@ -248,6 +250,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       new ConversationWriteLock($this->createMock(LockBackendInterface::class), $entityTypes),
+      $this->createMock(EntityTypeManagerInterface::class),
     );
     $mapper = $this->createMock(PrivateMessageMapperInterface::class);
     $mapper->expects(self::never())->method('getThreadIdForMembers');
@@ -307,6 +310,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       new ConversationWriteLock($this->createMock(LockBackendInterface::class), $entityTypes),
+      $this->createMock(EntityTypeManagerInterface::class),
     );
     $newConversationForm = new NewConversationForm(
       $this->createMock(AccountProxyInterface::class),

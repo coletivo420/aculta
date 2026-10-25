@@ -45,8 +45,10 @@ Um callback separado consulta `private_message.ban_manager` e rejeita também
 destinatários que bloquearam o remetente, inclusive quando o modo nativo estiver
 configurado como passivo. A resposta é genérica para reduzir enumeração.
 Ao responder uma thread existente, o Messenger adquire o lock da conversa,
-recarrega a entidade e revalida membership e acesso `view` do remetente antes
-do submit. Uma remoção concorrente não pode enviar usando a thread antiga.
+recarrega o usuário remetente e exige conta ativa e as permissões atuais de
+mensageria e acesso a perfis. Em seguida recarrega a thread e revalida membership,
+acesso `view` e bloqueios antes do submit. A resposta é genérica; remoções de
+acesso concorrentes não permitem enviar usando a sessão ou thread antigas.
 
 A busca da gaveta e o envio de primeira mensagem aplicam a política central
 `ConversationPolicy::canReceiveMessages()`: o destinatário deve estar ativo e

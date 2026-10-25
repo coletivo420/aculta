@@ -125,6 +125,7 @@ final class PrivateMessageFloodKernelTest extends KernelTestBase {
       $lock,
       new ConversationPolicy($this->container->get('config.factory')),
       new ConversationWriteLock($lock, $this->container->get('entity_type.manager')),
+      $this->container->get('entity_type.manager'),
     );
   }
 

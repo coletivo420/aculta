@@ -20,8 +20,10 @@ use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserDataInterface;
+use Drupal\user\UserInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Covers the private-message block and flood safeguards.
@@ -100,6 +102,13 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     });
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('id')->willReturn(42);
+    $sender = $this->createMock(UserInterface::class);
+    $sender->method('isActive')->willReturn(TRUE);
+    $sender->method('hasPermission')->willReturn(TRUE);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(42)->willReturn($sender);
+    $senderEntityTypes = $this->createMock(EntityTypeManagerInterface::class);
+    $senderEntityTypes->method('getStorage')->with('user')->willReturn($userStorage);
     $validator = new PrivateMessageFormValidator(
       $flood,
       $currentUser,
@@ -110,6 +119,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $lock,
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       new ConversationWriteLock($lock, $entityTypes),
+      $senderEntityTypes,
     );
     $form = [];
     $formState = $this->formState(FALSE);
@@ -171,6 +181,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $lock,
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       new ConversationWriteLock($lock, $entityTypes),
+      $this->senderEntityTypeManager(TRUE, TRUE),
     );
     $form = [];
     $formState = $this->formState(FALSE);
@@ -215,6 +226,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $lock,
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       new ConversationWriteLock($lock, $entityTypes),
+      $this->senderEntityTypeManager(TRUE, TRUE),
     );
     $form = [];
     $formState = $this->formState(FALSE);
@@ -226,6 +238,63 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       'Não foi possível enviar uma mensagem para essa conversa.',
       $formState->getErrors()['message'],
     );
+  }
+
+  /**
+   * An ineligible sender cannot reply to an existing thread.
+   */
+  #[DataProvider('ineligibleSenderCases')]
+  public function testIneligibleSenderCannotReplyToExistingThread(bool $active, bool $permissions): void {
+    $flood = $this->createMock(FloodInterface::class);
+    $flood->expects(self::once())->method('isAllowed')->willReturn(TRUE);
+    $flood->expects(self::never())->method('register');
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('id')->willReturn('123');
+    $freshThread = $this->createMock(PrivateMessageThreadInterface::class);
+    $freshThread->method('id')->willReturn('123');
+    $freshThread->expects(self::never())->method('isMember');
+    $threadStorage = $this->createMock(EntityStorageInterface::class);
+    $threadStorage->method('loadUnchanged')->with(123)->willReturn($freshThread);
+    $threadEntityTypes = $this->createMock(EntityTypeManagerInterface::class);
+    $threadEntityTypes->method('getStorage')->with('private_message_thread')->willReturn($threadStorage);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::exactly(2))->method('acquire')->willReturn(TRUE);
+    $lock->expects(self::exactly(2))->method('release');
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+    $senderEntityTypes = $this->senderEntityTypeManager($active, $permissions);
+    $validator = new PrivateMessageFormValidator(
+      $flood,
+      $currentUser,
+      $this->translation('Não foi possível enviar uma mensagem para essa conversa.'),
+      $this->createMock(PrivateMessageBanManagerInterface::class),
+      $this->createMock(FriendshipManagerInterface::class),
+      $this->createMock(UserDataInterface::class),
+      $lock,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      new ConversationWriteLock($lock, $threadEntityTypes),
+      $senderEntityTypes,
+    );
+    $form = [];
+    $formState = $this->formState(FALSE);
+    $formState->set('thread', $thread);
+
+    $validator->validateRateLimit($form, $formState);
+
+    self::assertSame(
+      'Não foi possível enviar uma mensagem para essa conversa.',
+      $formState->getErrors()['message'],
+    );
+  }
+
+  /**
+   * Sender states rejected at the submit boundary.
+   */
+  public static function ineligibleSenderCases(): array {
+    return [
+      'account deactivated after form build' => [FALSE, TRUE],
+      'messaging permissions revoked after form build' => [TRUE, FALSE],
+    ];
   }
 
   /**
@@ -341,7 +410,8 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $this->createMock(UserDataInterface::class),
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
-      $this->writeLock(),
+        $this->writeLock(),
+      $this->createMock(EntityTypeManagerInterface::class),
     );
     $form = [];
     $validator->validateBlockedRecipients($form, $formState);
@@ -377,6 +447,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       $this->writeLock(),
+      $this->createMock(EntityTypeManagerInterface::class),
     );
     $form = [];
 
@@ -411,6 +482,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       $this->writeLock(),
+      $this->createMock(EntityTypeManagerInterface::class),
     );
     $form = [];
 
@@ -445,6 +517,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
         $this->createMock(LockBackendInterface::class),
         new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       $this->writeLock(),
+        $this->createMock(EntityTypeManagerInterface::class),
       );
       $form = [];
 
@@ -482,6 +555,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       $this->writeLock(),
+      $this->createMock(EntityTypeManagerInterface::class),
     );
     $form = [];
 
@@ -511,6 +585,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       $this->writeLock(),
+      $this->createMock(EntityTypeManagerInterface::class),
     );
     $form = [];
     $validator->validateBlockedRecipients($form, $formState);
@@ -532,6 +607,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $lock ?? $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       $this->writeLock(),
+      $this->createMock(EntityTypeManagerInterface::class),
     );
   }
 
@@ -562,6 +638,20 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $property->setAccessible(TRUE);
     $property->setValue(NULL, $hasErrors);
     return new FormState();
+  }
+
+  /**
+   * Creates an entity manager returning a sender with selected eligibility.
+   */
+  private function senderEntityTypeManager(bool $active, bool $permissions): EntityTypeManagerInterface {
+    $sender = $this->createMock(UserInterface::class);
+    $sender->method('isActive')->willReturn($active);
+    $sender->method('hasPermission')->willReturn($permissions);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('load')->willReturn($sender);
+    $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypes->method('getStorage')->with('user')->willReturn($storage);
+    return $entityTypes;
   }
 
 }

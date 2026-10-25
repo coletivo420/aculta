@@ -1,3 +1,16 @@
+## 0.1.1-dev.286 — revalidar elegibilidade do remetente em respostas
+
+Respostas em conversas existentes agora recarregam o usuário depois de adquirir
+o lock da thread e antes do submit. Conta inativa ou perda das permissões de
+mensageria/acesso a perfis interrompe o envio com erro genérico; a checagem de
+membership, access e bloqueios permanece na sequência. O fluxo de primeira
+mensagem mantém suas validações próprias.
+
+Validação: Unit Messenger **292/2.346 PASS**; Integration **96/96 PASS**
+(1.141 assertions; 2 depreciações Core/contrib e 7 PHPUnit notices);
+`PrivateMessageFloodKernelTest` está incluído. PHPCS Drupal/DrupalPractice, PHP lint
+e índice de status PASS. Browser e Runtime não executados.
+
 ## 0.1.1-dev.284 — isolar falha de fila de amizade
 
 Depois de persistir o aviso obrigatório no site, falhas ao enfileirar o e-mail

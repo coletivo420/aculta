@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Form;
 
 use Drupal\Core\Flood\FloodInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\UserDataInterface;
+use Drupal\user\UserInterface;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
@@ -47,6 +49,7 @@ final class PrivateMessageFormValidator {
     private readonly LockBackendInterface $lock,
     private readonly ConversationPolicy $policy,
     private readonly ConversationWriteLock $conversationWriteLock,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -174,10 +177,16 @@ final class PrivateMessageFormValidator {
       $freshThread = $this->acquireThreadWriteLock($thread, $formState);
       if ($freshThread instanceof PrivateMessageThreadInterface && !$formState->hasAnyErrors()) {
         try {
+          $sender = $this->entityTypeManager->getStorage('user')->load((int) $this->currentUser->id());
+          if (!$sender instanceof UserInterface || !$this->policy->canReceiveMessages($sender)) {
+            $formState->setErrorByName('message', $this->translation->translate('Não foi possível enviar uma mensagem para essa conversa.'));
+          }
           // Thread access was checked while building the form. Revalidate the
           // sender's membership and view access on the locked, fresh entity so
           // a concurrent removal cannot submit to a stale thread object.
-          $this->validateFreshThreadAccess($freshThread, $formState);
+          if (!$formState->hasAnyErrors()) {
+            $this->validateFreshThreadAccess($freshThread, $formState);
+          }
           // Block state may have changed after the first validation. Recheck
           // against the freshly loaded thread immediately before submission.
           if (!$formState->hasAnyErrors()) {

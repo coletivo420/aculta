@@ -66,6 +66,7 @@ services:
       - '@lock.persistent'
       - '@aculta_messenger.conversation_policy'
       - '@aculta_messenger.conversation_write_lock'
+      - '@entity_type.manager'
     public: true
   aculta_messenger.private_message_account_route_subscriber:
     class: Drupal\aculta_messenger\EventSubscriber\PrivateMessageAccountRouteSubscriber
