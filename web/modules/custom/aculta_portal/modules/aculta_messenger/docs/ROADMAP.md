@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.320 — digest relê conta sem cache estático antes de validar atividade, confirmação e e-mail; teste prova que uma conta desativada não recebe resumo mesmo se um cache anterior a apresentava ativa. Focal **10/192 PASS**, Unit Messenger **323/2.618 PASS**, PHPCS/PHP lint/diff check PASS.
 - Dev.319 — submit de limpeza do histórico recarrega a thread com `loadUnchanged()` antes de checar membership, evitando autorizar a ação a partir do cache estático do Entity API. Focal **9/71 PASS**, Unit Messenger **322/2.608 PASS**, PHPCS/PHP lint/diff check PASS.
 - Dev.318 — testes cobrem permissão de mensagens revogada antes da mutação e invalidação das tags da thread e das mensagens. Focal **9/71 PASS**, Unit Messenger **322/2.608 PASS**, PHPCS/PHP lint/diff check PASS.
 - Dev.317 — teste cobre a limpeza autorizada do histórico, acesso revalidado, escopo individual e invalidação de cache. Focal **8/65 PASS**, Unit Messenger **321/2.602 PASS**, PHPCS/PHP lint/diff check PASS.

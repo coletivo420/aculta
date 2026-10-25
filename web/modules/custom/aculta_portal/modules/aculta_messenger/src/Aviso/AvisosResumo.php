@@ -14,6 +14,7 @@ use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MessageIdFactory;
 use Drupal\user\UserDataInterface;
+use Drupal\user\UserInterface;
 use Drupal\aculta_messenger\Mail\AvisosResumoMailType;
 use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
@@ -203,8 +204,8 @@ final class AvisosResumo {
    *   Whether a provider failed to enumerate its pending recipients.
    */
   private function enviarParaComLock(int $uid, string $lockName, bool $recipientLookupFailed): int {
-    $conta = $this->entityTypeManager->getStorage('user')->load($uid);
-    if ($conta === NULL) {
+    $conta = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
+    if (!$conta instanceof UserInterface) {
       return self::RESULT_SKIPPED;
     }
     // Recover the exact batch if the Mailer accepted it but a later

@@ -1,3 +1,15 @@
+## 0.1.1-dev.320 — revalidar conta antes de compor digest
+
+O resumo diário recarrega a conta com `loadUnchanged()` antes de verificar
+atividade, confirmação e endereço de e-mail. Uma conta desativada depois de ter
+sido carregada em outro ponto da requisição não pode receber digest a partir de
+estado obsoleto.
+
+Validação: `AvisosResumoProviderPreferenceTest` **10 testes / 192 assertions
+PASS**, incluindo conta inativa no armazenamento atual; Unit Messenger **323
+testes / 2.618 assertions PASS**; PHPCS Drupal/DrupalPractice, PHP lint e
+`git diff --check` PASS.
+
 ## 0.1.1-dev.319 — recarregar thread antes de limpar histórico
 
 O submit do menu de grupo usa `loadUnchanged()` para revalidar a membership

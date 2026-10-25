@@ -55,7 +55,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $noticeStorage->method('getQuery')->willReturn($noticeQuery);
     $noticeStorage->method('loadMultiple')->with([])->willReturn([]);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(27)->willReturn($account);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($account);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
       'aculta_aviso' => $noticeStorage,
@@ -110,6 +110,57 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
   }
 
   /**
+   * A stale cached active account cannot receive a digest after deactivation.
+   */
+  public function testDigestSkipsAccountThatIsInactiveInUnchangedStorage(): void {
+    $account = $this->createMock(UserInterface::class);
+    $account->method('id')->willReturn('27');
+    $account->method('isActive')->willReturn(FALSE);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->expects(self::never())->method('load');
+    $userStorage->expects(self::once())->method('loadUnchanged')->with(27)->willReturn($account);
+    $noticeQuery = $this->createMock(QueryInterface::class);
+    $noticeQuery->method('accessCheck')->willReturnSelf();
+    $noticeQuery->method('condition')->willReturnSelf();
+    $noticeQuery->method('execute')->willReturn([]);
+    $noticeStorage = $this->createMock(EntityStorageInterface::class);
+    $noticeStorage->method('getQuery')->willReturn($noticeQuery);
+    $noticeStorage->method('loadMultiple')->with([])->willReturn([]);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'aculta_aviso' => $noticeStorage,
+      'user' => $userStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+    $provider = $this->createMock(AvisoDigestProviderInterface::class);
+    $provider->method('pendingRecipientIds')->willReturn([27]);
+    $provider->expects(self::never())->method('digestRowsFor');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())->method('acquire')
+      ->with('aculta_messenger.avisos_resumo.27', 180.0)
+      ->willReturn(TRUE);
+    $lock->expects(self::once())->method('release')->with('aculta_messenger.avisos_resumo.27');
+    $userData = $this->createMock(UserDataInterface::class);
+    $summary = new AvisosResumo(
+      $entities,
+      new AvisoPreferencias($userData),
+      $mailer,
+      new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class)),
+      $userData,
+      $this->createMock(TimeInterface::class),
+      (new \ReflectionClass(AvisoService::class))->newInstanceWithoutConstructor(),
+      new Settings(['hash_salt' => 'unit-test-hash-salt']),
+      $this->databaseConnection(),
+      $lock,
+      [$provider],
+    );
+
+    self::assertSame(0, $summary->enviarResumos());
+  }
+
+  /**
    * Discards only the changed category while delivering eligible categories.
    */
   #[DataProvider('nonDigestEmailModes')]
@@ -127,7 +178,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $noticeStorage->method('getQuery')->willReturn($query);
     $noticeStorage->method('loadMultiple')->with([])->willReturn([]);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(27)->willReturn($account);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($account);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
       'aculta_aviso' => $noticeStorage,
@@ -237,7 +288,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $noticeStorage->method('getQuery')->willReturn($query);
     $noticeStorage->method('loadMultiple')->with([])->willReturn([]);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->willReturnCallback(static fn(int $uid): ?UserInterface => $accounts[$uid] ?? NULL);
+    $userStorage->method('loadUnchanged')->willReturnCallback(static fn(int $uid): ?UserInterface => $accounts[$uid] ?? NULL);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
       'aculta_aviso' => $noticeStorage,
@@ -357,7 +408,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $noticeStorage->method('getQuery')->willReturn($query);
     $noticeStorage->method('loadMultiple')->with([])->willReturn([]);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(27)->willReturn($account);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($account);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
       'aculta_aviso' => $noticeStorage,
@@ -435,7 +486,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $noticeStorage->method('getQuery')->willReturn($query);
     $noticeStorage->method('loadMultiple')->with([])->willReturn([]);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(27)->willReturn($account);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($account);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
       'aculta_aviso' => $noticeStorage,
@@ -510,7 +561,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $noticeStorage->method('getQuery')->willReturn($query);
     $noticeStorage->method('loadMultiple')->with([])->willReturn([]);
     $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(27)->willReturn($account);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($account);
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
       'aculta_aviso' => $noticeStorage,
