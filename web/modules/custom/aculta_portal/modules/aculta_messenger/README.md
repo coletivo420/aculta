@@ -9,7 +9,9 @@ por conteúdo nunca criam conversas nem alteram participantes. O núcleo
 para LMS, Wiki, Fórum e Loja; módulos de domínio publicam eventos e selecionam
 destinatários conforme suas regras.
 
-Na dev.66, a cobertura do e-mail mínimo de amizade inclui sucesso, URL da conta,
+Na dev.262, a busca de destinatários usa o apelido público resolvido pelo
+ACULTA User; não revela o nome interno da conta e omite usuários sem identidade
+pública. Na dev.66, a cobertura do e-mail mínimo de amizade inclui sucesso, URL da conta,
 deduplicação e três tentativas limitadas em falha. Os testes não usam SMTP real;
 smoke autenticado e revisão visual permanecem pendentes.
 

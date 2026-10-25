@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Form\NewConversationForm;
+use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
 use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_messenger\Service\ConversationWriteLock;
@@ -111,6 +112,8 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     $storage->method('load')->with(84)->willReturn($recipient);
     $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypes->method('getStorage')->with('user')->willReturn($storage);
+    $identity = $this->createMock(PublicMemberIdentityInterface::class);
+    $identity->method('publicDisplayName')->with($recipient)->willReturn('public-84');
     $form = new NewConversationForm(
       $this->createMock(AccountProxyInterface::class),
       $this->createMock(PrivateMessageServiceInterface::class),
@@ -126,6 +129,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
         new ConversationWriteLock($this->createMock(LockBackendInterface::class), $entityTypes),
       ),
       $entityTypes,
+      $identity,
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
     $formState = new FormState();

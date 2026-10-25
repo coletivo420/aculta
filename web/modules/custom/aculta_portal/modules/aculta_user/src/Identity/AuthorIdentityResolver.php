@@ -22,7 +22,7 @@ use Drupal\user\UserInterface;
  * A identidade compartilhada aplica a policy pública ao apelido, link e avatar;
  * cada dado contextual adicional exige policy e metadata de cache próprias.
  */
-final class AuthorIdentityResolver {
+final class AuthorIdentityResolver implements PublicMemberIdentityInterface {
 
   /**
    * Variantes de contas User atendidas por esta resolução de identidade.
@@ -133,6 +133,15 @@ final class AuthorIdentityResolver {
       $bio !== '' ? $bio : NULL,
       $socialLinks,
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function publicDisplayName(UserInterface $account): ?string {
+    $identity = $this->resolve($account, 'author_minimal');
+    $name = $identity?->toArray()['display_name'] ?? NULL;
+    return is_string($name) && trim($name) !== '' ? $name : NULL;
   }
 
 }

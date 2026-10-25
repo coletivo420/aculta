@@ -843,3 +843,9 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
   leitura, sem alteração de conteúdo. HTTP/browser autenticado pendente. PHP CLI
   8.4.26, abaixo da baseline requerida 8.5. RUNTIME STATUS: PARTIAL.
 
+## 0.4.0-dev.74 — expor somente o nome público de membro
+
+`AuthorIdentityResolver` implementa `PublicMemberIdentityInterface`, que devolve somente o apelido aprovado pela política pública ou `NULL`. O contrato permite que módulos consumidores evitem usar `UserInterface::getDisplayName()` como identidade pública.
+
+Validação: `AuthorIdentityResolverTest` **2/9 PASS**, suíte Unit aculta_user **125/448 PASS**. A suíte mantém uma depreciação do PHPUnit em `AuthorCardVariantResolverTest`, fora deste incremento; PHPCS dos novos arquivos PASS.
+

@@ -2526,3 +2526,9 @@ O sinal `X-Requested-With` só autoriza atualização de leitura quando o Fetch 
 
 Validação: `MemberInitiatedRequestTest` **5/21 PASS**, Unit Messenger **260/2.016 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
 
+## 0.1.1-dev.262 — buscar membros pela identidade pública
+
+A busca de destinatários usa apelidos dos perfis, resolve o nome pela API `PublicMemberIdentityInterface` do ACULTA User e exclui identidades ausentes. Não consulta mais `users_field_data.name` nem mostra `getDisplayName()` em chips e títulos de nova conversa.
+
+Validação: `NewConversationControllerTest` + `NewConversationRecipientIdsTest` **5/27 PASS**, Unit Messenger **260/2.022 PASS**; `AuthorIdentityResolverTest` **2/9 PASS**, Unit aculta_user **125/448 PASS** com uma depreciação preexistente de PHPUnit. PHPCS dos novos arquivos e lint PASS. Kernel, Browser e Runtime não executados.
+

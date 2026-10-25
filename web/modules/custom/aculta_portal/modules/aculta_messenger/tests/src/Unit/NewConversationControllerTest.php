@@ -9,12 +9,15 @@ use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
+use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -46,12 +49,27 @@ final class NewConversationControllerTest extends UnitTestCase {
     $query->method('condition')->willReturnSelf();
     $query->method('sort')->willReturnSelf();
     $query->method('range')->willReturnSelf();
-    $query->method('execute')->willReturn([84, 85, 86]);
-    $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->method('getQuery')->willReturn($query);
-    $storage->method('loadMultiple')->with([84, 85, 86])->willReturn($users);
+    $query->method('execute')->willReturn([501, 502, 503]);
+    $profiles = [];
+    foreach ([84, 85, 86] as $uid) {
+      $profile = $this->createMock(ProfileInterface::class);
+      $profile->method('getOwnerId')->willReturn((string) $uid);
+      $profile->method('hasField')->with('field_nickname')->willReturn(TRUE);
+      $nickname = $this->createMock(FieldItemListInterface::class);
+      $nickname->method('isEmpty')->willReturn(FALSE);
+      $profile->method('get')->with('field_nickname')->willReturn($nickname);
+      $profiles[] = $profile;
+    }
+    $profileStorage = $this->createMock(EntityStorageInterface::class);
+    $profileStorage->method('getQuery')->willReturn($query);
+    $profileStorage->method('loadMultiple')->with([501, 502, 503])->willReturn($profiles);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('loadMultiple')->with([84, 85, 86])->willReturn($users);
     $entityTypes = $this->createMock(EntityTypeManagerInterface::class);
-    $entityTypes->method('getStorage')->with('user')->willReturn($storage);
+    $entityTypes->method('getStorage')->willReturnMap([
+      ['profile', $profileStorage],
+      ['user', $userStorage],
+    ]);
 
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn('42');
@@ -62,6 +80,8 @@ final class NewConversationControllerTest extends UnitTestCase {
     $bans->expects(self::exactly(2))->method('isCurrentUserBannedByUser')->willReturn(FALSE);
     $friendships = $this->createMock(FriendshipManagerInterface::class);
     $friendships->expects(self::once())->method('areFriendsWith')->with(85)->willReturn(FALSE);
+    $identity = $this->createMock(PublicMemberIdentityInterface::class);
+    $identity->method('publicDisplayName')->willReturnCallback(static fn(UserInterface $user): string => 'nickname-' . $user->id());
     $controller = new NewConversationController(
       $entityTypes,
       $account,
@@ -70,11 +90,12 @@ final class NewConversationControllerTest extends UnitTestCase {
       $friendships,
       $this->createMock(FormBuilderInterface::class),
       $this->createMock(RendererInterface::class),
+      $identity,
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
 
     $candidates = new \ReflectionMethod(NewConversationController::class, 'candidates');
-    self::assertSame([$users[2]], $candidates->invoke($controller, 'mem'));
+    self::assertSame([['user' => $users[2], 'name' => 'nickname-86']], $candidates->invoke($controller, 'nickname'));
   }
 
 }

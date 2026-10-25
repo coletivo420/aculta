@@ -1,5 +1,9 @@
 # ACULTA User (`aculta_user`)
 
+Em dev.74, a API `PublicMemberIdentityInterface` expõe somente o apelido aprovado
+pela política pública para consumidores como a busca de conversas do Messenger;
+nomes internos de conta não são fallback de identidade pública.
+
 ## Atualização de ownership — Conta e Perfil separados (dev.72)
 
 `/studio/perfil` é a experiência independente de identidade comunitária.

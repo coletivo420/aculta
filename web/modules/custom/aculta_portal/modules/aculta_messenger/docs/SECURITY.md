@@ -1,5 +1,10 @@
 # Segurança e privacidade
 
+A busca de pessoas para iniciar conversas consulta apelidos dos perfis e usa
+`aculta_user` (`PublicMemberIdentityInterface`) para obter o nome permitido pela
+política pública. Não pesquisa nomes internos de conta nem oferece fallback
+para `UserInterface::getDisplayName()`; contas sem apelido público não aparecem.
+
 Documento de referência arquitetural. Dono: `aculta_messenger` no ACULTA
 Portal. Revisão: 2026-10-24.
 

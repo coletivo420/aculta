@@ -27,6 +27,7 @@ services:
     arguments: ['@entity_type.manager', '@aculta_user.public_profile_link', '@aculta_image.render', '@aculta_user.public_profile_policy', '@aculta_user.social_networks', '@date.formatter']
     tags:
       - { name: aculta_portal.helper }
+  Drupal\aculta_user\Identity\PublicMemberIdentityInterface: '@aculta_user.author_identity_resolver'
   aculta_user.author_card_builder:
     class: Drupal\aculta_user\Identity\AuthorCardBuilder
     arguments: ['@aculta_user.author_identity_resolver']

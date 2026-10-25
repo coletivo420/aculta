@@ -13,6 +13,7 @@ use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Url;
 use Drupal\aculta_messenger\Controller\NewConversationController;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
+use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
 use Drupal\private_message\Entity\PrivateMessage;
 use Drupal\private_message\Entity\PrivateMessageThread;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
@@ -32,6 +33,7 @@ final class NewConversationForm extends FormBase {
     private readonly PrivateMessageServiceInterface $privateMessageService,
     private readonly PrivateMessageFormValidator $validator,
     private readonly EntityTypeManagerInterface $entityTypes,
+    private readonly PublicMemberIdentityInterface $memberIdentity,
     private readonly ConversationPolicy $policy,
   ) {}
 
@@ -41,6 +43,7 @@ final class NewConversationForm extends FormBase {
       $container->get('private_message.service'),
       $container->get('aculta_messenger.private_message_form_validator'),
       $container->get('entity_type.manager'),
+      $container->get(PublicMemberIdentityInterface::class),
       $container->get('aculta_messenger.conversation_policy'),
     );
   }
@@ -138,10 +141,16 @@ final class NewConversationForm extends FormBase {
 
   /** One chip: the member's name, a "×" to take it off, and the hidden field the send reads (members[]). */
   private function chip(UserInterface $user): array {
+    $name = $this->memberIdentity->publicDisplayName($user) ?? (string) $this->t('Membro');
     return [
       '#type' => 'container',
       '#attributes' => ['data-aculta-chip' => '', 'data-portal-ui' => 'new-conversation-chip'],
-      'name' => ['#type' => 'html_tag', '#tag' => 'span', '#value' => $user->getDisplayName(), '#attributes' => ['data-aculta-chip-name' => '', 'data-portal-ui' => 'new-conversation-chip-name']],
+      'name' => [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#value' => $name,
+        '#attributes' => ['data-aculta-chip-name' => '', 'data-portal-ui' => 'new-conversation-chip-name'],
+      ],
       'remove' => [
         '#type' => 'html_tag',
         '#tag' => 'button',
@@ -150,7 +159,7 @@ final class NewConversationForm extends FormBase {
           'type' => 'button',
           'data-aculta-chip-remove' => '',
           'data-portal-ui' => 'new-conversation-chip-remove',
-          'aria-label' => (string) $this->t('Remover @name', ['@name' => $user->getDisplayName()]),
+          'aria-label' => (string) $this->t('Remover @name', ['@name' => $name]),
         ],
       ],
       'member' => ['#type' => 'hidden', '#name' => 'members[]', '#value' => (string) $user->id()],
@@ -271,7 +280,9 @@ final class NewConversationForm extends FormBase {
     $recipients = [];
     foreach ($this->recipientIds($formState) as $uid) {
       $user = $uid > 0 ? $this->entityTypes->getStorage('user')->load($uid) : NULL;
-      if (!$user instanceof UserInterface || !$this->policy->canReceiveMessages($user)) {
+      if (!$user instanceof UserInterface
+        || !$this->policy->canReceiveMessages($user)
+        || $this->memberIdentity->publicDisplayName($user) === NULL) {
         if ($strict) {
           return [];
         }

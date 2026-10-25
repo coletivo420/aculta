@@ -38,6 +38,7 @@ resultado de access antes de serem usados.
 
 - `AuthorIdentityResolver` (`aculta_user.author_identity_resolver`): resolve User,
   perfil principal, apelido e URL pública opcional.
+- `PublicMemberIdentityInterface` (`Drupal\aculta_user\Identity\PublicMemberIdentityInterface`): expõe só o apelido permitido pela política pública, ou `NULL` sem identidade. Consumidores não devem usar o nome interno da conta como fallback público.
 - `AuthorIdentity`: contrato escalar cacheável de saída, sem regra de negócio.
 - `AuthorCardBuilder` (`aculta_user.author_card_builder`): cria o render array
   neutro `aculta_user_author_card` para o contrato de apresentação do tema.

@@ -8,6 +8,8 @@ use Drupal\aculta_messenger\Form\NewConversationForm;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
+use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
@@ -19,6 +21,7 @@ use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
+use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -26,7 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * "Iniciar nova conversa" in the multidomain bar drawer: find a member, then write the first message.
+ * Starts a new conversation from the multidomain bar drawer.
  *
  * The three fragments are rendered for the drawer and replace its content, as the other drawer views do.
  * Searching follows the header search: it starts from three characters and waits 300 ms (search-preview.js).
@@ -45,6 +48,7 @@ final class NewConversationController extends ControllerBase {
     private readonly FriendshipManagerInterface $friendshipManager,
     private readonly FormBuilderInterface $forms,
     private readonly RendererInterface $renderer,
+    private readonly PublicMemberIdentityInterface $memberIdentity,
     private readonly ConversationPolicy $policy,
   ) {}
 
@@ -57,6 +61,7 @@ final class NewConversationController extends ControllerBase {
       $container->get('aculta_user.friendship_manager'),
       $container->get('form_builder'),
       $container->get('renderer'),
+      $container->get(PublicMemberIdentityInterface::class),
       $container->get('aculta_messenger.conversation_policy'),
     );
   }
@@ -92,8 +97,10 @@ final class NewConversationController extends ControllerBase {
   }
 
   /**
-   * The send of the new-conversation form: the chips (members[]) and the message, posted together. Missing members or an
-   * empty message are reported by the form's validation; a valid send answers with the new conversation.
+   * Handles the new-conversation form submission.
+   *
+   * The chips and message are posted together. Form validation reports missing
+   * members or an empty message; a valid send redirects to the conversation.
    */
   public function composeGroup(Request $request): Response {
     $formState = new FormState();
@@ -123,20 +130,24 @@ final class NewConversationController extends ControllerBase {
   }
 
   /**
-   * The search results: one "Adicionar" button per member. The drawer turns a press into a chip in the field above
-   * (messenger-drawers.js); the chips stay there while the results change.
+   * Builds one "Adicionar" button per eligible member.
    *
-   * @param \Drupal\user\UserInterface[] $candidates
+   * The drawer turns each press into a chip and preserves chips across results.
+   *
+   * @param array<int, array{user: UserInterface, name: string}> $candidates
+   *   Members and their policy-approved display names.
    */
   private function memberResults(array $candidates): array {
     // The same list as the header search's preview (search-preview-list, styled as its dropdown). Each name is a link:
     // the drawer turns a press into a chip (messenger-drawers.js) and does not follow the link.
     $items = [];
     $group = Url::fromRoute('aculta_messenger.new_conversation_group');
-    foreach ($candidates as $user) {
-      $items[] = PortalLinkElement::build($user->getDisplayName(), $group, [
+    foreach ($candidates as $candidate) {
+      $user = $candidate['user'];
+      $name = $candidate['name'];
+      $items[] = PortalLinkElement::build($name, $group, [
         'data-aculta-add-member' => (string) $user->id(),
-        'data-aculta-member-name' => $user->getDisplayName(),
+        'data-aculta-member-name' => $name,
         'data-portal-ui' => 'new-conversation-add',
       ]);
     }
@@ -148,11 +159,16 @@ final class NewConversationController extends ControllerBase {
   }
 
   /**
-   * Second step: the first-message form for one member. The drawer posts the form here with fetch, so a
-   * successful POST answers with the new conversation and an invalid one with the form and its errors.
+   * Builds and submits the first-message form for one member.
+   *
+   * The drawer posts with Fetch and receives either a redirect or the form with
+   * its validation errors.
    */
   public function compose(UserInterface $user, Request $request): Response {
-    if ((int) $user->id() === (int) $this->account->id() || !$this->policy->canReceiveMessages($user)) {
+    $publicName = $this->memberIdentity->publicDisplayName($user);
+    if ((int) $user->id() === (int) $this->account->id()
+      || !$this->policy->canReceiveMessages($user)
+      || $publicName === NULL) {
       throw new NotFoundHttpException();
     }
     $formState = new FormState();
@@ -170,7 +186,7 @@ final class NewConversationController extends ControllerBase {
 
     $build = [
       'back' => $this->backLink(),
-      'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Nova conversa com @name', ['@name' => $user->getDisplayName()])],
+      'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Nova conversa com @name', ['@name' => $publicName])],
       'form' => $form,
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];
@@ -186,33 +202,51 @@ final class NewConversationController extends ControllerBase {
     return $this->fragment($build);
   }
 
-  /** Members the current account may message: active, not self, not blocking it, and allowed by privacy. */
+  /** Members searchable by public nickname and eligible to receive messages. */
   private function candidates(string $term): array {
-    $ids = $this->entityTypes->getStorage('user')->getQuery()
+    $profileStorage = $this->entityTypes->getStorage('profile');
+    $profileIds = $profileStorage->getQuery()
       ->accessCheck(FALSE)
-      ->condition('status', 1)
-      ->condition('uid', 0, '>')
-      ->condition('uid', (int) $this->account->id(), '<>')
-      ->condition('name', '%' . $this->escapeLike($term) . '%', 'LIKE')
-      ->sort('name')
-      ->range(0, 50)
+      ->condition('type', PerfilDoPapel::TIPOS, 'IN')
+      ->condition('field_nickname', '%' . $this->escapeLike($term) . '%', 'LIKE')
+      ->sort('field_nickname')
+      ->range(0, 100)
       ->execute();
+    $userIds = [];
+    foreach ($profileStorage->loadMultiple($profileIds) as $profile) {
+      if (!$profile instanceof ProfileInterface
+        || !$profile->hasField('field_nickname')
+        || $profile->get('field_nickname')->isEmpty()) {
+        continue;
+      }
+      $uid = (int) $profile->getOwnerId();
+      if ($uid > 0 && $uid !== (int) $this->account->id()) {
+        $userIds[$uid] = $uid;
+      }
+    }
+
+    $users = $this->entityTypes->getStorage('user')->loadMultiple(array_values($userIds));
     $found = [];
     $staff = $this->account->hasRole('administrator') || $this->account->hasRole('content_editor');
-    foreach ($this->entityTypes->getStorage('user')->loadMultiple($ids) as $user) {
+    foreach ($users as $user) {
       if (!$user instanceof UserInterface || !$this->policy->canReceiveMessages($user)
         || $this->banManager->isCurrentUserBannedByUser((int) $user->id())) {
+        continue;
+      }
+      $publicName = $this->memberIdentity->publicDisplayName($user);
+      if ($publicName === NULL || mb_stripos($publicName, $term) === FALSE) {
         continue;
       }
       $preference = $this->userData->get('aculta_messenger', (int) $user->id(), 'message_privacy');
       if (!$staff && $preference === 'friends' && !$this->friendshipManager->areFriendsWith((int) $user->id())) {
         continue;
       }
-      $found[] = $user;
+      $found[] = ['user' => $user, 'name' => $publicName];
     }
     return $found;
   }
 
+  /** Escapes wildcard characters for the profile nickname query. */
   private function escapeLike(string $value): string {
     return addcslashes($value, '\\%_');
   }
@@ -225,6 +259,7 @@ final class NewConversationController extends ControllerBase {
     ]) + ['#weight' => -100];
   }
 
+  /** Renders a private, uncached HTML fragment. */
   private function fragment(array $build): Response {
     $content = $this->renderer->renderInIsolation($build);
     return new Response((string) $content, Response::HTTP_OK, [
