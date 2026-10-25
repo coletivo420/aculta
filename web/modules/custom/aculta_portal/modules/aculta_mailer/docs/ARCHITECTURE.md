@@ -1,7 +1,10 @@
 # Arquitetura do ACULTA Mailer
 
-Status: **F0 (auditoria e especificação) e fundação de API em andamento.** Fase ativa e escopo em [ROADMAP](ROADMAP.md).
-Base da auditoria: [AUDIT](AUDIT.md). Decisões de porte: [UPSTREAM](UPSTREAM.md).
+Status: **plataforma de e-mail ativa no projeto.** A configuração versionada seleciona
+`aculta_mailer` em `system.mail`; a retirada do contrib de envio foi concluída no Runtime de teste
+(F15). Produção e Alpha continuam sujeitas ao ciclo autorizado indicado no
+[ROADMAP](ROADMAP.md). A auditoria e as decisões de porte são registros de origem:
+[AUDIT](AUDIT.md) e [UPSTREAM](UPSTREAM.md).
 
 ## 1. Princípio
 
@@ -16,16 +19,16 @@ Consumidores (aculta_user, aculta_game, aculta_messenger, aculta_forum, ...)
         │  AcultaMailerInterface (send)
         ▼
 aculta_mailer
-  ├── Message      MailMessage, MailStatus, MessageIdFactory        [F1, implementado]
-  ├── Delivery     RetrySchedule                                     [F1, implementado]
-  ├── Templates    aculta_mailer_template (Config Entity)            [F3, pendente]
-  ├── Branding     brand, layout                                     [F4, pendente]
-  ├── Policy       adjusters por plugin; reutiliza mailer_policy     [F5, pendente]
-  ├── Queue        worker de envio                                   [F6, pendente]
-  ├── Logging      content entity de log                             [F7, pendente]
-  └── Transport    adaptador para o Symfony Mailer via Core          [F2, pendente]
+  ├── Message      MailMessage, MailStatus, MessageIdFactory        [F1]
+  ├── Delivery     política, retries e failover                     [F2/F5/F6]
+  ├── Templates    aculta_mailer_template (Config Entity)            [F3]
+  ├── Branding     layouts e envelope HTML                           [F4]
+  ├── Policy       ajustes por tipo, transporte e prioridade         [F5]
+  ├── Queue        fila aculta_mailer_send e worker                  [F6]
+  ├── Logging      registro, retenção e retry cifrado                [F7/F16]
+  └── Transport    SMTP/Brevo pela API do Symfony Mailer             [F2/F14]
         ▼
-Drupal Core Mail (symfony_mailer) → Symfony Mailer → transporte (DSN)
+Drupal Core Mail (`system.mail = aculta_mailer`) → Symfony Mailer → SMTP/Brevo
 ```
 
 ## 3. Contratos públicos (F1)
@@ -49,8 +52,9 @@ Drupal Core Mail (symfony_mailer) → Symfony Mailer → transporte (DSN)
 4. **Retry só para erro temporário.** `RetrySchedule` recusa retry de erro permanente (destinatário inválido,
    hard bounce, supressão, bloqueio). Atrasos: imediato, +1 min, +5 min, +30 min, +2 h.
 5. **Nenhum host fixo.** O host do `Message-ID` e qualquer URL absoluta vêm de configuração por ambiente.
-6. **Submódulo opt-in.** O módulo não é habilitado por `aculta_portal` nesta fase, e não entra em `core.extension`.
-   A integração só ocorre em fase própria, com testes e migração.
+6. **Backend compartilhado do Core.** O módulo está habilitado na configuração versionada e é selecionado por
+   `system.mail`. A F15 removeu o contrib de envio no Runtime de teste depois da validação do caminho da aplicação;
+   a promoção para produção permanece sujeita ao ciclo operacional do projeto.
 7. **Sem novo segredo.** Nenhuma credencial é adicionada nesta fase.
 8. **Correlação idempotente.** `AcultaMailer` não reenvia uma mensagem se o registro ativo já confirmar a mesma correlação, tipo e destinatário como aceita. `wasAcceptedCorrelation()` permite que um consumidor interno reconcilie um lote persistido sem armazenar novamente endereço ou conteúdo; a correlação é opaca e gerada com chave HMACada com `hash_salt`. O UUID v5 é reservado a retries da mesma entrega lógica; mensagens novas continuam usando UUID v4. Envios idempotentes falham temporariamente se o log estiver desligado. Esta proteção depende do registro ativo e não equivale a uma transação com o provedor externo.
 
