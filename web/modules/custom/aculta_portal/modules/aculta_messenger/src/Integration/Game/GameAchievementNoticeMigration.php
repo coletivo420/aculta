@@ -8,8 +8,8 @@ use Drupal\user\UserInterface;
 use Drupal\aculta_messenger\Hook\BadgeAwardNoticeEventProducer;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_user\Badge\BadgeService;
-use Drupal\aculta_user\Entity\BadgeAward;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\user\UserDataInterface;
 
@@ -60,7 +60,7 @@ final class GameAchievementNoticeMigration {
       foreach ($pending as $awardId) {
         $award = $this->entityTypeManager->getStorage('aculta_badge_award')->loadUnchanged($awardId);
         if (!$account instanceof UserInterface || !$account->isActive()
-          || !$award instanceof BadgeAward || (int) $award->get('uid')->target_id !== $uid
+          || !$this->isAward($award) || (int) $award->get('uid')->target_id !== $uid
           || !$award->get('revogado_em')->isEmpty()) {
           continue;
         }
@@ -82,6 +82,14 @@ final class GameAchievementNoticeMigration {
       $lastUid = $uid;
     }
     return count($uids);
+  }
+
+  /**
+   * Confirms the canonical achievement entity type before reading fields.
+   */
+  private function isAward(mixed $entity): bool {
+    return $entity instanceof ContentEntityInterface
+      && $entity->getEntityTypeId() === 'aculta_badge_award';
   }
 
 }

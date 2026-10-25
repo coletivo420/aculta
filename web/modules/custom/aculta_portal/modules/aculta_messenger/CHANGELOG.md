@@ -1,3 +1,17 @@
+## 0.1.1-dev.340 — testar e endurecer a migração de avisos do Game
+
+O post-update de avisos pendentes agora valida a fonte pelo tipo de entidade
+Drupal `aculta_badge_award`, sem depender da classe PHP concreta. Kernels
+caracterizam deduplicação pelo consumer, descarte de concessões revogadas,
+alheias ou ausentes e preservação de fila/cursor quando a publicação falha.
+O post-update não foi executado no Runtime.
+
+Validação: Game Kernel **3 testes / 30 assertions PASS**; Unit Messenger
+**356 testes / 2.866 assertions PASS**; Integration Messenger **101 testes /
+1.203 assertions PASS** em SQLite temporário; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Permanecem 2 depreciações de annotations
+do Core/contrib e 7 notices PHPUnit na suíte Integration.
+
 ## 0.1.1-dev.339 — agrupar revalidação de avisos de Conquistas
 
 O adapter Game carrega em lote as concessões referenciadas pelos avisos e

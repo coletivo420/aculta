@@ -34,6 +34,9 @@ final class TestBadgeAward extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Badge'))
       ->setSetting('max_length', 64)
       ->setRequired(TRUE);
+    $fields['concedido_em'] = BaseFieldDefinition::create('timestamp')
+      ->setLabel(new TranslatableMarkup('Granted at'))
+      ->setRequired(TRUE);
     $fields['revogado_em'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(new TranslatableMarkup('Revoked at'));
     return $fields;
