@@ -11,6 +11,8 @@ use Drupal\aculta_user\Social\SocialLinksCard;
 use Drupal\aculta_user\Social\SocialNetworks;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\GeneratedUrl;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Tests\UnitTestCase;
@@ -32,6 +34,13 @@ final class StudioProfileControllerTest extends UnitTestCase {
     parent::setUp();
     $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
+    // ACULTA User's original Bio/Social cards call Url::toString(TRUE)
+    // while preparing modal links. Mock Core URL generation for Unit tests.
+    $generator = $this->createMock(UrlGeneratorInterface::class);
+    $generator->method('generateFromRoute')->willReturnCallback(
+      static fn (string $route): GeneratedUrl => (new GeneratedUrl())->setGeneratedUrl('/' . $route)
+    );
+    $container->set('url_generator', $generator);
     \Drupal::setContainer($container);
   }
 
