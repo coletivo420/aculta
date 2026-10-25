@@ -1,3 +1,12 @@
+## 0.1.1-dev.231 — cobrir revogação e bloqueios no aviso de mensagem privada
+
+`PrivateMessageNotificationWorkerTest` agora comprova que a fila não cria aviso de e-mail após perder acesso à thread
+e que bloqueio bilateral suprime a entrega nos dois sentidos. Nos três casos, nem o Mailer nem o Message Notify são
+chamados. Essa cobertura verifica a autorização no momento de processar a fila, além da validação no formulário.
+
+Validação: teste focal **4 testes / 82 assertions PASS**; conjunto Unit do Messenger e adapters LMS/Wiki/Commerce/Doação
+**268 testes / 2.169 assertions PASS**. PHPCS Drupal/DrupalPractice e PHP lint PASS; Runtime e e-mail real não executados.
+
 ## 0.1.1-dev.230 — caracterizar revogação nos adapters de Loja e Doação
 
 Os workers Commerce, Wiki e Doação ganharam cobertura explícita para o caso em que a revalidação de origem retorna

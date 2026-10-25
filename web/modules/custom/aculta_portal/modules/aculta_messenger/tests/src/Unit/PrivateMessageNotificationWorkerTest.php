@@ -41,6 +41,21 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
 
   /**
+   * A queued notice is suppressed after the recipient loses thread access.
+   */
+  public function testRevokedThreadAccessSuppressesQueuedNotice(): void {
+    $this->assertNotificationSuppressed(FALSE, NULL);
+  }
+
+  /**
+   * A bilateral block suppresses queued notifications in either direction.
+   */
+  public function testEitherBlockDirectionSuppressesQueuedNotice(): void {
+    $this->assertNotificationSuppressed(TRUE, [1, 2]);
+    $this->assertNotificationSuppressed(TRUE, [2, 1]);
+  }
+
+  /**
    * Old queue records do not try to deliver a row owned by the Mailer.
    */
   public function testLegacyQueueDoesNotHandleMailerManagedNotification(): void {
@@ -235,6 +250,90 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('__get')->with('value')->willReturn($value);
     return $field;
+  }
+
+  /**
+   * Asserts the queue worker does not persist or email an ineligible notice.
+   *
+   * @param bool $threadAccessible
+   *   Whether the recipient can still view the thread.
+   * @param array|null $blockedPair
+   *   Owner and target IDs for the block that applies, or NULL for no block.
+   */
+  private function assertNotificationSuppressed(bool $threadAccessible, ?array $blockedPair): void {
+    $privateMessage = $this->createMock(PrivateMessageInterface::class);
+    $privateMessage->method('getOwnerId')->willReturn(1);
+    $privateMessageStorage = $this->createMock(EntityStorageInterface::class);
+    $privateMessageStorage->method('load')->with(15)->willReturn($privateMessage);
+    $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('isActive')->willReturn(TRUE);
+    $recipient->method('hasPermission')->willReturn(TRUE);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(2)->willReturn($recipient);
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('getMembersId')->willReturn([1, 2]);
+    $thread->method('access')->with('view', $recipient, TRUE)->willReturn(
+      $threadAccessible ? AccessResult::allowed() : AccessResult::forbidden(),
+    );
+    $privateMessageService = $this->createMock(PrivateMessageServiceInterface::class);
+    $privateMessageService->method('getThreadFromMessage')->with($privateMessage)->willReturn($thread);
+
+    $banStorage = $this->createMock(EntityStorageInterface::class);
+    $queryCount = !$threadAccessible ? 0 : ($blockedPair === [1, 2] ? 1 : 2);
+    $banStorage->expects(self::exactly($queryCount))->method('getQuery')->willReturnCallback(function () use ($blockedPair): QueryInterface {
+      $conditions = [];
+      $query = $this->createMock(QueryInterface::class);
+      $query->method('accessCheck')->with(FALSE)->willReturnSelf();
+      $query->method('condition')->willReturnCallback(
+        static function (string $field, mixed $value, ?string $operator = NULL) use (&$conditions, $query): QueryInterface {
+          $conditions[$field] = $value;
+          return $query;
+        },
+      );
+      $query->method('range')->willReturnSelf();
+      $query->method('execute')->willReturnCallback(static function () use (&$conditions, $blockedPair): array {
+        return $blockedPair !== NULL
+          && (int) ($conditions['owner'] ?? 0) === $blockedPair[0]
+          && (int) ($conditions['target'] ?? 0) === $blockedPair[1]
+          ? [501]
+          : [];
+      });
+      return $query;
+    });
+    $notificationStorage = $this->createMock(EntityStorageInterface::class);
+    $notificationStorage->expects(self::never())->method('getQuery');
+    $notificationStorage->expects(self::never())->method('create');
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnMap([
+      ['private_message', $privateMessageStorage],
+      ['user', $userStorage],
+      ['private_message_ban', $banStorage],
+      ['message', $notificationStorage],
+    ]);
+    $lockId = 'aculta_messenger:private_message:15:2';
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())->method('acquire')->with($lockId, 180.0)->willReturn(TRUE);
+    $lock->expects(self::once())->method('release')->with($lockId);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    $messageNotify = $this->createMock(MessageNotifyInterface::class);
+    $messageNotify->expects(self::never())->method('send');
+    $domainPurposes = $this->domainPurposeManager($entities);
+    $worker = new PrivateMessageNotificationWorker(
+      [],
+      'aculta_msg_private_notification',
+      [],
+      $entities,
+      $privateMessageService,
+      $messageNotify,
+      $mailer,
+      $domainPurposes,
+      $lock,
+      $this->createMock(UserDataInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+    );
+
+    $worker->processItem(['private_message_id' => 15, 'mailer_managed' => TRUE]);
   }
 
   /**
