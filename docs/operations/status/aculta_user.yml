@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.4.0-dev.73 — renomeadas propriedades de route match nos formulários para evitar colisão readonly com FormBase; cache rebuild de Runtime completou e smoke HTTP passou."
-next_phase: Revisão autenticada, privacidade/termos e gates antes de RC; validar Runtime em Alpha ([documentação](web/modules/custom/aculta_portal/modules/aculta_user/README.md))
+version_note: "0.4.0-dev.74 — nickname em Form API Studio/Profile; lookup centralizado de unicidade na criação/edição. Unit escritos; validação ainda não executada."
+next_phase: Validar apelido inválido/duplicado, slugs, edição própria, privacidade e concorrência em PHPUnit/Kernel/Runtime; revisão autenticada, privacidade/termos e gates antes de RC; validar Runtime em Alpha ([documentação](web/modules/custom/aculta_portal/modules/aculta_user/README.md))
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.

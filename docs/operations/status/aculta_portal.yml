@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'Homologar no Kernel domínio/grants dos providers do Content Index incluindo Activity; avançar relações allowlisted dos vídeos embutidos em Revista, Wiki, Fórum e LMS; homologar as APIs de limpeza compartilhada de Media/File, depois implementar prévia e execução explícita de posts com backup ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [limpeza](docs/portal/CONTENT-CLEANUP-POLICY.md), [roadmap Portal](docs/portal/ROADMAP.md))'
-version_note: "0.4.1-dev.29 — retorno contextual do AccountOtherDataForm em Studio /studio/conta/documentos ou legado /dados/outros-dados; mesmo owner criptográfico, checkout preservado. Teste Unit novo criado; execução pendente."
+next_phase: 'Validar S-R3-B2 (Form API cadastral, legado, redirect, cache, acesso e checkout); homologar no Kernel domínio/grants dos providers do Content Index incluindo Activity; avançar relações allowlisted dos vídeos embutidos em Revista, Wiki, Fórum e LMS; homologar as APIs de limpeza compartilhada de Media/File, depois implementar prévia e execução explícita de posts com backup ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [limpeza](docs/portal/CONTENT-CLEANUP-POLICY.md), [roadmap Portal](docs/portal/ROADMAP.md))'
+version_note: "0.4.1-dev.30 — cadastro privado /studio/conta/dados sem nickname por Form API e redirect contextual; legado /dados e Commerce preservados. Gates/Unit/Runtime pendentes."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.

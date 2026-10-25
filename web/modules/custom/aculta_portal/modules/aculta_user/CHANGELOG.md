@@ -1,3 +1,9 @@
+## 0.4.0-dev.74 — editor independente de apelido no Studio (2026-10-25)
+
+- `NicknameForm` usa Form API para alterar exclusivamente `Profile.field_nickname` do usuário atual, aplicando `AccountNames::isValid()` e retornando a `/studio/perfil`.
+- `NicknamePolicy` centraliza busca de colisões em perfis de papel e agora também atende `AccountCreationHooks`. `PublicProfileLink`, `PublicProfilePolicy`, `/u/{apelido}`, rotas do legado e schema permanecem.
+- Testes Unit de apelido inválido/reservado/duplicado e política escritos, mas **não executados**. Conflitos de escrita simultânea, permissão, privacidade, cache e links públicos requerem Kernel/Functional/Runtime.
+
 ## 0.4.0-dev.73 — corrigir conflito de propriedade em FormBase (2026-10-24)
 
 - Os formulários de perfil usam `currentRouteMatch` em vez de redeclarar a

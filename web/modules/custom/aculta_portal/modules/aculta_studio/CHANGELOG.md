@@ -1,3 +1,10 @@
+## 0.1.0-dev.18 — S-R3-B2: Minha Conta e Meu Perfil editam campos separados (2026-10-25)
+
+- Nova `/studio/conta/dados`: formulário Portal/Profile original, limitado por route ID a dados cadastrais privados, sem apelido.
+- Nova `/studio/perfil/apelido`: editor proprietário `aculta_user\Form\NicknameForm` sobre o `field_nickname` do mesmo Profile, com validação e unicidade pelo ACULTA User.
+- Navegação e testes Unit ajustados; sem aliases, storage paralelo, alteração no checkout, mudança do hub `/` nem remoção da Minha Conta original `/conta-legada`.
+- Revisão estática realizada no GitHub. Testes de PHPUnit, PHPCS/lint, Kernel/Functional, gates, HTTP e Firefox ESR/X11 **não executados**; nenhuma homologação ou deploy.
+
 ## 0.1.0-dev.17 — S-R3-B1: Documentos privados na Minha Conta Studio (2026-10-24)
 
 - Nova rota canônica `/studio/conta/documentos` (purpose `account`,
