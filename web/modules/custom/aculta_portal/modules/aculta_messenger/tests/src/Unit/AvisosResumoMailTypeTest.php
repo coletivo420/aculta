@@ -30,7 +30,7 @@ final class AvisosResumoMailTypeTest extends UnitTestCase {
     ]);
 
     $this->assertSame(AvisosResumo::CHAVE_MAIL, $type->id());
-    $this->assertSame('Resumo diário de avisos', $type->defaultSubject());
+    $this->assertSame('Resumo de avisos', $type->defaultSubject());
     $this->assertSame([], MailTemplateRenderer::unknownPlaceholders($type->defaultBody(), array_keys($type->variables())));
     $body = MailTemplateRenderer::fill($type->defaultBody(), ['resumo' => $linhas]);
     $this->assertStringContainsString('Respostas novas em "Tópico A": 2', $body);

@@ -11,7 +11,7 @@ use Drupal\aculta_mailer\Type\MailTypeInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
- * Resumo diário do site por e-mail (ACULTA Messenger, F5.2).
+ * Resumo consolidado de avisos por e-mail (ACULTA Messenger, F5.2).
  *
  * O tipo declara o texto; o consumidor monta a variável `resumo`.
  */
@@ -34,7 +34,7 @@ final class AvisosResumoMailType implements MailTypeInterface {
   public function variables(): array {
     return [
       'resumo' => [
-        'label' => (string) $this->translation->translate('Linhas do resumo diário de avisos'),
+        'label' => (string) $this->translation->translate('Linhas do resumo de avisos'),
         'sample' => 'Respostas novas em "Tópico de exemplo": 2',
       ],
     ];
@@ -44,7 +44,7 @@ final class AvisosResumoMailType implements MailTypeInterface {
    * {@inheritdoc}
    */
   public function defaultSubject(): string {
-    return (string) $this->translation->translate('Resumo diário de avisos');
+    return (string) $this->translation->translate('Resumo de avisos');
   }
 
   /**

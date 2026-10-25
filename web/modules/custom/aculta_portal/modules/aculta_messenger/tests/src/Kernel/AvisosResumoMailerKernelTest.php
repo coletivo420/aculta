@@ -128,7 +128,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     $mails = $this->collectedMails();
     self::assertCount(1, $mails);
     self::assertSame('digest-recovery@example.test', $mails[0]['to']);
-    self::assertSame('Resumo diário de avisos', $mails[0]['subject']);
+    self::assertSame('Resumo de avisos', $mails[0]['subject']);
     self::assertStringContainsString('Revisão publicada', (string) $mails[0]['body']);
 
     self::assertSame(0, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')

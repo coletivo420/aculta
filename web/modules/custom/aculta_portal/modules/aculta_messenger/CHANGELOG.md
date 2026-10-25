@@ -1,3 +1,13 @@
+## 0.1.1-dev.335 — assunto neutro para resumos combinados
+
+O assunto e o rótulo do resumo por e-mail não dizem mais que o conteúdo é
+diário: o mesmo envio pode agregar avisos diários e o digest semanal de
+mensagens privadas. Nenhum conteúdo de conversa é incluído.
+
+Validação: `AvisosResumoMailTypeTest` 3/8, Unit Messenger 346/2.780,
+PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Índice de status
+falha pela tabela gerada do README raiz já desatualizada; sem Kernel/Runtime/SMTP.
+
 ## 0.1.1-dev.334 — cobrir remoção de acompanhamentos inacessíveis
 
 O teste da lista de acompanhamentos agora prova que a pessoa pode remover uma
