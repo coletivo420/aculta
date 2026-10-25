@@ -1,6 +1,16 @@
 # ACULTA Studio — Roadmap multi-experiência
 
 
+## Pré-S-R4 — SDCs do tema ACULTA420 (0.7.0-dev.1)
+
+O tema contém agora os SDCs experimentais `profile-editor`,
+`profile-identity`, `profile-bio` e `profile-social`, com
+8 stories estáticas e teste de contrato escrito. Não há integração
+funcional na experiência Meu Perfil ainda: ACULTA User, Form API,
+privacidade e dados permanecem intactos. A S-R4 integra os slots
+com render arrays autorizados e testa PHP, Kernel, cache,
+Firefox ESR/X11, mobile e modos claro/escuro. Não declarar homologado.
+
 ## S-R3-B3 — pedidos, apoio e preferências privados (Studio dev.20)
 
 - **Código entregue na PR #297:** três rotas canônicas `/studio/conta/{pedidos,apoio,preferencias}` com autenticação, permissão e purpose ACCOUNT. A navegação própria do Studio agora aponta a esses destinos; a Conta antiga em `/conta-legada` e as rotas originárias continuam disponíveis.

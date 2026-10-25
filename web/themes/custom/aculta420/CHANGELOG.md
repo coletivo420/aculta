@@ -1,3 +1,14 @@
+## 0.7.0-dev.1 — SDCs preparatórios do Meu Perfil (2026-10-25)
+
+Classificação: MINOR pré-1.0; novos componentes experimentais, sem quebra dos componentes estáveis.
+
+- `aculta420:profile-editor`: composição visual com slots para introdução, identidade, biografia, redes e ações.
+- `aculta420:profile-identity`: identidade privada do titular (nome textual, avatar e links autorizados), distinta do `author-card` público.
+- `aculta420:profile-bio` e `aculta420:profile-social`: painéis visuais com conteúdo e ações enviados por render arrays dos módulos proprietários.
+- Quatro contratos SDC com Twig, CSS mobile-first/tokens semânticos, duas stories estáticas por SDC e um teste Unit de metadados (escrito).
+- **Não houve integração com StudioProfileController nesta etapa**. User, Portal, Form API, imagem, privacidade, Conta e legado permanecem intactos.
+- **Não executados:** PHPUnit Unit, Kernel, Foundation, UI Patterns, CSS/build, HTTP, Firefox ESR/X11, temas, dark/light, zoom e Runtime. SDCs permanecem experimentais/Dev sem deploy ou merge.
+
 ## 0.6.1-dev.10 — estados de carregamento e erro na gaveta — 2026-10-24
 
 A gaveta agora apresenta o SDC `messenger-state` durante carregamentos AJAX e anuncia falhas de navegação como alerta.

@@ -6,7 +6,7 @@ props:
   hint: O apelido público é independente dos dados cadastrais.
 slots:
   avatar:
-    markup: '<span class="d-grid rounded-circle bg-body-secondary" style="inline-size:4.5rem;block-size:4.5rem;place-items:center" aria-hidden="true">M</span>'
+    markup: '<span class="d-grid rounded-circle bg-body-secondary" aria-hidden="true">M</span>'
   public_link:
     markup: '<a href="#publico">Ver perfil público</a>'
   actions:

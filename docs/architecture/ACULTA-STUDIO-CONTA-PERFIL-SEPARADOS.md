@@ -46,6 +46,18 @@ funcionalmente, inclusive depois de aprovado o Studio.
 - Nenhum alias transitório para `/studio/pessoal` será instalado:
   atualizar consumidores e testes diretamente para os nomes finais.
 
+## SDCs preparatórios, antes da S-R4
+
+O ACULTA420 `0.7.0-dev.1` contém quatro SDCs experimentais para
+Meu Perfil privado: `profile-editor`, `profile-identity`,
+`profile-bio`, `profile-social`. O tema é apenas visual:
+o ACULTA User mantém dados, regras de publicidade, edição e avatar;
+Studio fará a composição após validar os contratos. O cartão
+`author-card` permanece separado para autoria contextual.
+Foram registrados oito stories e testes Unit, **não executados**.
+Nenhuma mudança foi feita no comportamento atual, no perfil público,
+nos formulários ou na Conta legada.
+
 ## S-R3-B3 — pedidos, apoio e preferências (Studio dev.20, não homologado)
 
 As novas rotas `/studio/conta/pedidos`, `/studio/conta/apoio` e `/studio/conta/preferencias` são privadas, exigem login/permissão Portal no Domain ACCOUNT e possuem `no_cache`. O Studio não cria outra lógica de Commerce, de assinaturas ou de preferências: resolve `PortalController::orders()` e `SupportController::mySupport()` via o class resolver e constrói `AppearanceForm` pelo Form API Core, preservando o POST na página atual e as tabs de configurações do Portal. A seção de pedidos mantém filtro por uid; apoio usa o histórico e as ações do owner; preferências usam `ColorModePreference` sem criar outro campo.

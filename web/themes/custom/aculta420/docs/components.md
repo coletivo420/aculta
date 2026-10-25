@@ -1,5 +1,18 @@
 # Componentes
 
+## Componentes privados do Meu Perfil — pré-S-R4
+
+Disponíveis em código (tema 0.7.0-dev.1), mas **ainda sem consumidor**:
+`profile-editor`, `profile-identity`, `profile-bio` e `profile-social`.
+São SDCs de apresentação, não modelos de entidade ou formulários.
+O editor organiza `intro/identity/biography/social/actions`; a identidade
+recebe `display_name`, `hint` e slots para `avatar/public_link/actions`;
+bio e redes recebem `title` e slots autorizados de conteúdo/ações.
+O owner ACULTA User decide dados, proteção e cache. Studio adapta
+os render arrays; o tema só apresenta CSS e Twig. Cada SDC tem
+duas stories sem dados de usuários reais, e Unit estático escrito,
+**não executado**. S-R4 fará o wiring com validação Kernel/Firefox.
+
 ## Discussões ACULTA — contrato futuro
 
 O tema mantém os templates legados do Drupal Forum durante a migração e passa a
