@@ -83,7 +83,7 @@ final class CommunicationSettingsForm extends FormBase {
         $this->preferences->saveEmailMode($uid, $category, $mode);
       }
     }
-    $this->messenger()->addStatus($this->t('Preferências de mensagens salvas.'));
+    $this->messenger()->addStatus($this->t('Preferências de e-mail salvas.'));
     $form_state->setRedirect('aculta_messenger.communication_settings');
   }
 

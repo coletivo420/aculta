@@ -118,6 +118,13 @@ final class CommunicationSettingsFormTest extends UnitTestCase {
       });
     $form = $this->form(new AvisoPreferencias($userData));
     $form->setStringTranslation($this->getStringTranslationStub());
+    $status = $this->createMock(MessengerInterface::class);
+    $status->expects(self::once())
+      ->method('addStatus')
+      ->with(self::callback(
+        static fn(mixed $message): bool => (string) $message === 'Preferências de e-mail salvas.',
+      ));
+    $form->setMessenger($status);
     $formState = new FormState();
     $modes = array_fill_keys(AvisoPreferencias::EMAIL_CATEGORIES, AvisoPreferencias::EMAIL_OFF);
     $modes[AvisoPreferencias::EMAIL_PRIVATE_MESSAGES] = AvisoPreferencias::EMAIL_DIGEST;

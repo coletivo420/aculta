@@ -1,3 +1,13 @@
+## 0.1.1-dev.310 — identificar corretamente o salvamento de preferências de e-mail
+
+A confirmação do formulário da conta agora informa que foram salvas as
+preferências de e-mail, sem confundi-las com as preferências de mensagens.
+Teste unitário verifica o texto exibido ao salvar.
+
+Validação: formulário, preferências e entrega privada **45 testes / 461
+assertions PASS**; Unit Messenger **315 testes / 2.545 assertions PASS**;
+PHPCS Drupal/DrupalPractice nos arquivos alterados e `git diff --check` PASS.
+
 ## 0.1.1-dev.309 — revalidar participantes ao iniciar conversa
 
 A criação da primeira mensagem recarrega participantes, confirma novamente a
