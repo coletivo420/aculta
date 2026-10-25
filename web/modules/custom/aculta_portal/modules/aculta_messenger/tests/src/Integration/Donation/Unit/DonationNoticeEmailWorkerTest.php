@@ -90,6 +90,33 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * A payment notice is cancelled when the donor loses order access.
+   */
+  public function testRevokedOrderAccessCancelsQueuedEmail(): void {
+    $message = $this->message('pending');
+    $state = ['field_aculta_msg_delivery' => 'pending', 'field_aculta_messenger_attempts' => 0];
+    $message->expects(self::exactly(2))->method('set')->willReturnCallback(
+      static function (string $field, mixed $value) use (&$state, $message): MessageInterface {
+        $state[$field] = $value;
+        return $message;
+      },
+    );
+    $message->expects(self::exactly(2))->method('save')->willReturn(1);
+    [$entities, $recipient] = $this->entities($message);
+    $notices = $this->createMock(DonationNoticeManagerInterface::class);
+    $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn(NULL);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with(27, 'doacao')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+
+    $this->worker($entities, $notices, $preferences, $mailer)->processItem(['message_id' => 101]);
+
+    self::assertSame(1, $state['field_aculta_messenger_attempts']);
+    self::assertSame('cancelled', $state['field_aculta_msg_delivery']);
+  }
+
+  /**
    * Permanent failure state prevents duplicate queue delivery.
    */
   public function testPermanentFailureReplayIsSkipped(): void {

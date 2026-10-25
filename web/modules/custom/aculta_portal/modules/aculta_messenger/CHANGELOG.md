@@ -1,3 +1,12 @@
+## 0.1.1-dev.230 — caracterizar revogação nos adapters de Loja e Doação
+
+Os workers Commerce, Wiki e Doação ganharam cobertura explícita para o caso em que a revalidação de origem retorna
+inacessível entre o enqueue e o envio: a cópia de e-mail é cancelada e o Mailer não é chamado. A bateria inclui o
+estado terminal e complementa os Kernels de revogação de acesso LMS e Wiki.
+
+Validação: `CommerceWikiNoticeEmailWorkerSafetyTest` + `DonationNoticeEmailWorkerTest` **17 testes / 222 assertions
+PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Sem SMTP ou Runtime.
+
 ## 0.1.1-dev.229 — encerrar envio LMS quando o acesso é revogado
 
 Quando o worker LMS revalida uma inscrição sem acesso atual, marca a cópia de e-mail como `cancelled`, terminal para

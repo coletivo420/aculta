@@ -78,6 +78,46 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
   }
 
   /**
+   * A revoked source suppresses both direct e-mail adapters.
+   */
+  public function testCommerceAndWikiAccessRevocationCancelsDirectEmail(): void {
+    foreach ([
+      ['commerce', 'aculta_msg_commerce_order_notice'],
+      ['wiki', 'aculta_msg_wiki_notice'],
+    ] as [$adapter, $bundle]) {
+      $message = $this->message($bundle, 'pending', 0);
+      $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'cancelled')->willReturnSelf();
+      $message->expects(self::once())->method('save')->willReturn(1);
+      $user = $this->createMock(UserInterface::class);
+      $user->method('id')->willReturn('27');
+      $user->method('isActive')->willReturn(TRUE);
+      $user->method('getEmail')->willReturn('member@example.invalid');
+      $messageStorage = $this->createMock(EntityStorageInterface::class);
+      $messageStorage->method('load')->with(101)->willReturn($message);
+      $userStorage = $this->createMock(EntityStorageInterface::class);
+      $userStorage->method('load')->with(27)->willReturn($user);
+      $entities = $this->createMock(EntityTypeManagerInterface::class);
+      $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+        'message' => $messageStorage,
+        'user' => $userStorage,
+        default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+      });
+      $manager = $this->createAdapterManager($adapter);
+      $manager->expects(self::once())->method('resolve')->with($message, $user)->willReturn(NULL);
+      $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+      $preferences->method('emailMode')->with(27, $adapter === 'commerce' ? 'loja' : 'wiki')
+        ->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+      $mailer = $this->createMock(AcultaMailerInterface::class);
+      $mailer->expects(self::never())->method('deliver');
+
+      $this->withUrlAssembler(function () use ($adapter, $entities, $manager, $preferences, $mailer): void {
+        $this->worker($adapter, $entities, $manager, $mailer, $this->lock(), $preferences)
+          ->processItem(['message_id' => 101]);
+      });
+    }
+  }
+
+  /**
    * A queued direct message stays on-site while unconfirmed email is cancelled.
    */
   private function assertUnconfirmedEmailCancelsDelivery(string $adapter, string $bundle): void {
