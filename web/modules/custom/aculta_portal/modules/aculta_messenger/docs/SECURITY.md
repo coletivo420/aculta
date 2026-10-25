@@ -1,7 +1,7 @@
 # Segurança e privacidade
 
 Documento de referência arquitetural. Dono: `aculta_messenger` no ACULTA
-Portal. Revisão: 2026-10-14.
+Portal. Revisão: 2026-10-24.
 
 ## Matriz de acesso e privacidade
 
@@ -157,4 +157,4 @@ mensagens não é incluído em e-mail.
 - A exceção `administrator`/`content_editor` não pula os bloqueios bilaterais nativos do Private Message.
 - Notificações de amizade mostram somente pedidos destinados ao usuário atual; consultas limitam o recipient UID e os registros passam por access handler após load.
 - O contador e a página de mensagens são privados por usuário e sem cache compartilhado.
-- Homelab, atualização de schema, isolamento entre usuários e revisão completa contra IDOR permanecem pendentes; RUNTIME STATUS: DEFERRED.
+- Estado verificado em 2026-10-24: `PrivateMessageRouteAccessKernelTest`, `PrivateMessageFloodKernelTest` e `FriendshipNoticePipelineKernelTest` passaram **4 testes / 47 assertions** no MariaDB dedicado. A cobertura verifica rota POST do YAML de produção com membership e token Core, contenção do Flood por lock persistente e persistência/fila das transições de amizade. Unit de privacidade (`PrivateMessageFormValidatorTest`, `ConversationPolicyTest`, `ConversationMessagingStateTest`, `PrivateMessageFormHooksTest`, `NewConversationControllerTest`, `MessagesControllerMemberAccessTest` e `FriendshipBundleUpdateTest`) passou **29 testes / 138 assertions**, incluindo bloqueio bilateral, preferência de amizade, destinatários manipulados e payload de resposta inválido. Atualização do bundle tem teste Unit; não foi executado update em Runtime. Requisição HTTP completa com sessão/formulário, isolamento visual em navegador e homologação no Homelab/Runtime continuam pendentes; RUNTIME STATUS: DEFERRED.
