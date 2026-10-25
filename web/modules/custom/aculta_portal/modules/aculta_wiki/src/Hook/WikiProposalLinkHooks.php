@@ -51,7 +51,7 @@ final class WikiProposalLinkHooks {
       ->addCacheableDependency($entity);
     $access = $eligible->andIf($confirmed)->andIf($domain)->andIf($view)->andIf($published);
 
-    $cacheability = (new CacheableMetadata())
+    $cacheability = CacheableMetadata::createFromRenderArray($build)
       ->addCacheContexts(['user.permissions', 'domain'])
       ->addCacheableDependency($entity)
       ->addCacheableDependency($permission)

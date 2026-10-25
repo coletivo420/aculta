@@ -1341,7 +1341,13 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertCount(1, $ownIntentCards, 'An editable own entry offers only the native full-edit action.');
     self::assertSame('entity.node.edit_form', $ownIntentCards[0]['#slots']['footer']['#url']->getRouteName());
     self::assertSame((string) $own->id(), (string) $ownIntentCards[0]['#slots']['footer']['#url']->getRouteParameters()['node']);
-    $contributionLinkBuild = [];
+    $contributionLinkBuild = [
+      '#cache' => [
+        'contexts' => ['route.name.is_layout_builder_ui'],
+        'tags' => ['node_view'],
+        'max-age' => 3600,
+      ],
+    ];
     $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use (&$contributionLinkBuild, $own): void {
       $this->container->get(WikiProposalLinkHooks::class)->entityView(
         $contributionLinkBuild,
@@ -1350,8 +1356,42 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
         'full',
       );
     });
+    self::assertContains('route.name.is_layout_builder_ui', $contributionLinkBuild['#cache']['contexts']);
+    self::assertContains('node_view', $contributionLinkBuild['#cache']['tags']);
+    self::assertSame(3600, $contributionLinkBuild['#cache']['max-age']);
     self::assertSame('Contribuir', (string) $contributionLinkBuild['wiki_proposal_link']['link']['#title']);
     self::assertSame('aculta_wiki.contribution_intent', $contributionLinkBuild['wiki_proposal_link']['link']['#url']->getRouteName());
+  }
+
+  /**
+   * Renders a published entry with the public theme and one titled heading.
+   *
+   * This covers the Layout Builder cache-context merge and the custom full
+   * template that owns the public h1.
+   */
+  public function testWikiEntryFullViewRendersTitledHeading(): void {
+    $owner = $this->createOwner();
+    $entry = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete com título público',
+      'uid' => $owner->id(),
+      'status' => TRUE,
+    ]);
+    $entry->save();
+    $this->container->get('theme_installer')->install(['aculta420']);
+    $this->container->get('config.factory')->getEditable('system.theme')
+      ->set('default', 'aculta420')
+      ->save();
+    $this->container->get('theme.manager')->resetActiveTheme();
+
+    $build = $this->container->get('entity_type.manager')->getViewBuilder('node')->view($entry, 'full');
+    $html = (string) $this->container->get('renderer')->renderRoot($build);
+    self::assertSame(1, substr_count($html, '<h1'), 'The public entry page must render exactly one h1.');
+    self::assertMatchesRegularExpression(
+      '/<h1[^>]*>.*Verbete com título público.*<\/h1>/su',
+      $html,
+      'The public h1 must contain the entry title.',
+    );
   }
 
   /**
