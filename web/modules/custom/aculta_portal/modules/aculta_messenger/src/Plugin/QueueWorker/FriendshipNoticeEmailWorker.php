@@ -86,7 +86,7 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
     if ($messageId === FALSE || $messageId < 1) {
       return;
     }
-    $lockId = 'aculta_messenger:friendship_notice_email:' . $messageId;
+    $lockId = FriendshipNoticeSubscriber::EMAIL_LOCK_PREFIX . $messageId;
     if (!$this->lock->acquire($lockId, MessengerEmailLock::TIMEOUT)) {
       throw new \RuntimeException('Friendship notice email is already being processed.');
     }

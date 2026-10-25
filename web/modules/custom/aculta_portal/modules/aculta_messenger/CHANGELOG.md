@@ -1,3 +1,16 @@
+## 0.1.1-dev.348 — recarregar estado persistido na fila de amizades
+
+A fila de e-mail de amizades agora compartilha o lock do worker ao adquirir a
+tentativa de enqueue, e usa `loadUnchanged()` tanto nessa aquisição quanto ao
+tratar uma recusa do Queue API. Isso impede que o enqueue concorra com
+cancelamento/entrega e que uma instância `Message` no cache estático sobrescreva
+um estado terminal persistido. O teste usa instâncias distintas para
+representar o cache local e o estado atual no banco.
+
+Validação: `FriendshipNoticeQueueTest` **4/68 PASS**; Unit Messenger
+**358/2.885 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS. Sem Kernel, Runtime ou transporte de e-mail externo.
+
 ## 0.1.1-dev.347 — revalidar estado das amizades sem cache
 
 O produtor e o consumer de eventos de amizade agora recarregam a relação sem

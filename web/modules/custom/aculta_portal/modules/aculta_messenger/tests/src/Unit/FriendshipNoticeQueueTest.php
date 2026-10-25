@@ -45,8 +45,8 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
     $queueFactory->expects(self::once())->method('get')->with(FriendshipNoticeSubscriber::EMAIL_QUEUE)->willReturn($queue);
     $storage = $this->messageStorage($message);
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects(self::once())->method('acquire')->with('aculta_messenger:friendship_notice_enqueue:83', 30.0)->willReturn(TRUE);
-    $lock->expects(self::once())->method('release')->with('aculta_messenger:friendship_notice_enqueue:83');
+    $lock->expects(self::once())->method('acquire')->with('aculta_messenger:friendship_notice_email:83', 180.0)->willReturn(TRUE);
+    $lock->expects(self::once())->method('release')->with('aculta_messenger:friendship_notice_email:83');
 
     $this->queue($storage, $queueFactory, $lock)->enqueue($message);
     self::assertSame([
@@ -95,23 +95,21 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
    * A concurrent terminal state is not overwritten when Queue API refuses.
    */
   public function testQueueRefusalPreservesConcurrentCancellation(): void {
-    $state = ['status' => 'pending', 'enqueue_attempts' => 0, 'delivery_attempts' => 0];
-    $message = $this->createMock(MessageInterface::class);
-    $message->method('id')->willReturn('83');
-    $message->method('bundle')->willReturn(FriendshipNoticeSubscriber::TEMPLATE);
-    $message->method('get')->willReturnCallback(function (string $field) use (&$state): FieldItemListInterface {
-      return $this->fieldValue(match ($field) {
-        'field_aculta_msg_delivery' => $state['status'],
-        'field_aculta_enqueue_attempts' => $state['enqueue_attempts'],
-        'field_aculta_messenger_attempts' => $state['delivery_attempts'],
-        'field_aculta_mailer_managed' => FALSE,
-        default => throw new \InvalidArgumentException($field),
+    $makeMessage = function (string $status, int $enqueueAttempts): MessageInterface {
+      $state = ['status' => $status, 'enqueue_attempts' => $enqueueAttempts, 'delivery_attempts' => 0];
+      $message = $this->createMock(MessageInterface::class);
+      $message->method('id')->willReturn('83');
+      $message->method('bundle')->willReturn(FriendshipNoticeSubscriber::TEMPLATE);
+      $message->method('get')->willReturnCallback(function (string $field) use (&$state): FieldItemListInterface {
+        return $this->fieldValue(match ($field) {
+          'field_aculta_msg_delivery' => $state['status'],
+          'field_aculta_enqueue_attempts' => $state['enqueue_attempts'],
+          'field_aculta_messenger_attempts' => $state['delivery_attempts'],
+          'field_aculta_mailer_managed' => FALSE,
+          default => throw new \InvalidArgumentException($field),
+        });
       });
-    });
-    $calls = [];
-    $message->expects(self::exactly(2))->method('set')
-      ->willReturnCallback(static function (string $field, int|string $value) use (&$state, &$calls, $message): MessageInterface {
-        $calls[] = [$field, $value];
+      $message->method('set')->willReturnCallback(static function (string $field, int|string $value) use (&$state, $message): MessageInterface {
         if ($field === 'field_aculta_enqueue_attempts') {
           $state['enqueue_attempts'] = $value;
         }
@@ -120,15 +118,26 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
         }
         return $message;
       });
+      return $message;
+    };
+    $message = $makeMessage('pending', 0);
+    $cancelledMessage = $makeMessage('cancelled', 1);
+    $calls = [];
+    $message->expects(self::exactly(2))->method('set')->willReturnCallback(static function (string $field, int|string $value) use (&$calls, $message): MessageInterface {
+      $calls[] = [$field, $value];
+      return $message;
+    });
     $message->expects(self::once())->method('save');
+    $cancelledMessage->expects(self::never())->method('set');
+    $cancelledMessage->expects(self::never())->method('save');
 
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->expects(self::exactly(2))->method('load')->with(83)->willReturn($message);
+    $storage->expects(self::exactly(2))->method('loadUnchanged')->with(83)
+      ->willReturnOnConsecutiveCalls($message, $cancelledMessage);
     $queue = $this->createMock(QueueInterface::class);
-    $queue->expects(self::once())->method('createItem')->willReturnCallback(static function () use (&$state): bool {
+    $queue->expects(self::once())->method('createItem')->willReturnCallback(static function (): bool {
       // Simulate an independent worker cancelling after the enqueue claim was
       // saved but before this Queue API call reports its failure.
-      $state['status'] = 'cancelled';
       return FALSE;
     });
     $queueFactory = $this->createMock(QueueFactory::class);
@@ -143,7 +152,6 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
       self::assertSame('Friendship notice email could not be queued.', $exception->getMessage());
     }
 
-    self::assertSame('cancelled', $state['status']);
     self::assertSame([
       ['field_aculta_enqueue_attempts', 1],
       ['field_aculta_msg_delivery', 'pending'],
@@ -166,7 +174,7 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('getQuery')->willReturn($query);
     $storage->expects(self::once())->method('loadMultiple')->with([83])->willReturn([$message]);
-    $storage->expects(self::once())->method('load')->with(83)->willReturn($message);
+    $storage->expects(self::once())->method('loadUnchanged')->with(83)->willReturn($message);
     $queue = $this->createMock(QueueInterface::class);
     $queue->expects(self::once())->method('createItem')->with(['message_id' => 83, 'mailer_managed' => FALSE])->willReturn(501);
     $queueFactory = $this->createMock(QueueFactory::class);
@@ -197,7 +205,7 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
    * Creates storage returning the given Message on each requested reload. */
   private function messageStorage(MessageInterface $message, int $reloadCount = 1): EntityStorageInterface {
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->expects(self::exactly($reloadCount))->method('load')->with(83)->willReturn($message);
+    $storage->expects(self::exactly($reloadCount))->method('loadUnchanged')->with(83)->willReturn($message);
     return $storage;
   }
 

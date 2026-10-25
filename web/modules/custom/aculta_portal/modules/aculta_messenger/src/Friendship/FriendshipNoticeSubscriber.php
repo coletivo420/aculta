@@ -32,6 +32,11 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
 
   public const EMAIL_QUEUE = 'aculta_msg_friendship';
 
+  /**
+   * Shared between enqueue recovery and the delivery worker.
+   */
+  public const EMAIL_LOCK_PREFIX = 'aculta_messenger:friendship_notice_email:';
+
   private const REQUESTED_EVENT = 'aculta_user.friendship_requested';
 
   private const ACCEPTED_EVENT = 'aculta_user.friendship_accepted';
