@@ -156,7 +156,10 @@ final class WikiContentIndexRebuildKernelTest extends KernelTestBase {
     $generationManager = $this->container->get('aculta_index.generation_manager');
     self::assertSame($registry->fingerprint(), $generationManager->getProviderFingerprint($generationId));
     $complete = FALSE;
-    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
+    // Each provider/entity-type tuple consumes one batch, including tuples
+    // whose storage is not installed in this isolated fixture. Keep a bounded
+    // loop large enough for the shared dependency closure's provider inventory.
+    for ($batch = 0; $batch < 50 && !$complete; $batch++) {
       $complete = $rebuilder->processNextBatch($generationId, 20)['complete'];
     }
     self::assertTrue($complete, 'The real owner providers should finish the isolated generation.');

@@ -8,6 +8,7 @@ use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Site\Settings;
 use Psr\Log\LoggerInterface;
@@ -95,6 +96,9 @@ final class ContentIndexEntityEnumerator {
     }
 
     $entityType = $this->entityTypeManager->getDefinition($entityTypeId);
+    if (!$this->hasInstalledStorage($entityType)) {
+      return NULL;
+    }
     $idKey = $entityType->getKey('id');
     $bundleKey = $entityType->getKey('bundle') ?: NULL;
     if ($idKey === NULL) {
@@ -165,6 +169,9 @@ final class ContentIndexEntityEnumerator {
     }
 
     $entityType = $this->entityTypeManager->getDefinition($entityTypeId);
+    if (!$this->hasInstalledStorage($entityType)) {
+      return ['projections' => [], 'next_cursor' => NULL, 'exhausted' => TRUE];
+    }
     $idKey = $entityType->getKey('id');
     // EntityType::getKey() represents an absent key as an empty string in
     // current Core definitions and NULL in some test/custom definitions.
@@ -357,6 +364,23 @@ final class ContentIndexEntityEnumerator {
       '@cache_ms' => round($cacheMilliseconds, 3),
       '@total_ms' => round((hrtime(TRUE) - $batchStartedAt) / 1_000_000, 3),
     ]);
+  }
+
+  /**
+   * Reports whether a registered entity type has its SQL storage installed.
+   *
+   * A registered type without a base table cannot contain source rows in this
+   * database (for example, a module enabled in a partial fixture or a pending
+   * schema update). Enumeration treats it as empty instead of falling back to
+   * EntityQuery, which would fail on the missing table. Non-SQL storages keep
+   * their existing EntityQuery path.
+   */
+  private function hasInstalledStorage(EntityTypeInterface $entityType): bool {
+    $baseTable = $entityType->getBaseTable();
+    if ($this->database === NULL || !is_string($baseTable) || $baseTable === '') {
+      return TRUE;
+    }
+    return $this->database->schema()->tableExists($baseTable);
   }
 
   /**

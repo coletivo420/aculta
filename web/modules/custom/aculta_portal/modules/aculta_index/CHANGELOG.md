@@ -1,5 +1,17 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.175 — enumerar tipo registrado sem schema instalado (2026-10-25)
+
+- `ContentIndexEntityEnumerator` considera vazio um tipo de entidade cuja
+  tabela base não existe, em vez de cair em EntityQuery e lançar erro SQL.
+  É o caso de um módulo presente no grafo de dependências mas com schema não
+  instalado no banco corrente (fixture parcial ou update pendente). Storages
+  não SQL mantêm o caminho de EntityQuery.
+- O Kernel Wiki-owned de rebuild passou a percorrer tuplas de provider com
+  limite explícito maior, porque o inventário compartilhado cresceu com o novo
+  `aculta_forum_post`; a asserção de geração completa permanece. Classe Wiki
+  completa 30/1.661 PASS; Unit do enumerador 7/59 PASS.
+
 ## 0.1.0-dev.174 — fechar relações Wiki sem alvo indexável
 
 - O Kernel real agora testa categoria cujo vocabulário não possui provider:
