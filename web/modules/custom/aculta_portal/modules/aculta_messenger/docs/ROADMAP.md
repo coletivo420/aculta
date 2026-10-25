@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Updates aditivos de Message (2026-10-25): cobertura agora verifica `update_10009` (ownership de e-mail de amizade) e `update_10010` (digest semanal privado), além de 10008/10011. `MessengerDefaultConfigUpdateTest` **5/15 PASS**, Unit Messenger **326/2.635 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Nenhum update foi executado no Runtime.
 - Validação local 2026-10-25 no MariaDB dedicado: Unit Messenger **324/2.629 PASS**; Kernel Messenger **52/1.112 PASS** (10 deprecações de Core/contrib e 4 notices PHPUnit); Integration completa **98/1.173 PASS** (2 deprecações e 7 notices). O Runtime `aculta_runtime`, filas e SMTP não foram alterados nem usados pelos testes.
 - Dev.329 — contadores/resoluções de Fórum, amizade, LMS, Wiki, Loja e Doações revalidam estado atual da conta; LMS também relê estudantes nas checagens de matrícula e avaliação. Unit Messenger **324/2.629 PASS**, Integration Unit LMS **46/417**, Loja **18/225**, Doações **7/88**, Wiki **4/47**, focais amizade **3/36**, Loja **5/57**, Wiki **3/45**, acesso persistente **5/11** e transferência do aviso do Fórum **2/27**, PHPCS/PHP lint/diff check PASS; sem Kernel/Runtime/SMTP.
 - Dev.328 — consumer de Doações relê a conta antes de validar fonte e persistir o aviso, completando a revalidação no limite de gravação junto a amizade, LMS, Wiki e Loja. PHPCS/PHP lint/diff check PASS; Kernel de Doações não executado porque `SIMPLETEST_DB` está ausente; sem Runtime/SMTP.
