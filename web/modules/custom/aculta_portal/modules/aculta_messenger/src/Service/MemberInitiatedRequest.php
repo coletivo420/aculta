@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 final class MemberInitiatedRequest {
 
   /**
-   * Whether a request is an activated document navigation or drawer Fetch.
+   * Whether a request is an activated document navigation or same-origin Fetch.
    *
    * Embedded subresources cannot update conversation read state.
    */
@@ -34,7 +34,8 @@ final class MemberInitiatedRequest {
     }
 
     $drawerFetch = $requestedWith === 'xmlhttprequest'
-      && ($destination === '' || $destination === 'empty');
+      && ($destination === '' || $destination === 'empty')
+      && ($site === '' || $site === 'same-origin');
     $activatedNavigation = $userActivation === '?1'
       && ($destination === '' || $destination === 'document');
     return $drawerFetch || $activatedNavigation;

@@ -96,6 +96,12 @@ final class MemberInitiatedRequestTest extends UnitTestCase {
     $drawerFetch->headers->set('X-Requested-With', 'XMLHttpRequest');
     self::assertTrue(MemberInitiatedRequest::isMemberInitiated($drawerFetch));
 
+    $siblingOriginFetch = Request::create('/avisos/wiki/1/abrir');
+    $siblingOriginFetch->headers->set('Sec-Fetch-Site', 'same-site');
+    $siblingOriginFetch->headers->set('Sec-Fetch-Dest', 'empty');
+    $siblingOriginFetch->headers->set('X-Requested-With', 'XMLHttpRequest');
+    self::assertFalse(MemberInitiatedRequest::isMemberInitiated($siblingOriginFetch));
+
     $activatedDocument = Request::create('/avisos/wiki/1/abrir');
     $activatedDocument->headers->set('Sec-Fetch-User', '?1');
     self::assertTrue(MemberInitiatedRequest::isMemberInitiated($activatedDocument));

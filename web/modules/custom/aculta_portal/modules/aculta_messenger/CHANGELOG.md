@@ -2520,3 +2520,9 @@ Requests que não trazem Fetch Metadata não são mais presumidos como navegaç�
 
 Validação: `MemberInitiatedRequestTest` e `NoticeOpenControllerSafetyTest` **10/53 PASS**, Unit Messenger **260/2.015 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
 
+## 0.1.1-dev.261 — exigir same-origin no Fetch da gaveta
+
+O sinal `X-Requested-With` só autoriza atualização de leitura quando o Fetch Metadata declara `same-origin` (ou o navegador não fornece esse header) e o destino é `empty`. Requests marcados como `same-site` entre origens distintas não são aceitos como ação da gaveta.
+
+Validação: `MemberInitiatedRequestTest` **5/21 PASS**, Unit Messenger **260/2.016 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
