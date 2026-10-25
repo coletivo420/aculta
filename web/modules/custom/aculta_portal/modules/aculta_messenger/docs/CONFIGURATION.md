@@ -79,7 +79,9 @@ iniciar conversas. As categorias de conteúdo oferecem sem e-mail, entrega
 direta ou resumo diário; a administração pode desabilitar cada modalidade em
 `aculta_messenger.settings:email_modes` e definir o padrão de entrega para
 contas que ainda não salvaram uma preferência. Escolhas individuais explícitas
-continuam prevalecendo. Mensagens Privadas oferecem sem
+continuam prevalecendo. Um padrão administrativo inválido ou incompatível com
+as modalidades habilitadas é tratado como `off` (somente no site). Mensagens
+Privadas oferecem sem
 e-mail, aviso direto ou resumo semanal, sem incluir o corpo da conversa;
 Amizades oferecem somente no site ou e-mail direto. Os avisos no site e a
 inbox permanecem disponíveis independentemente dessas escolhas. O formulário

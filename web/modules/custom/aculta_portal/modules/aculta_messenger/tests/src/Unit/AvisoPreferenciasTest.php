@@ -238,6 +238,27 @@ final class AvisoPreferenciasTest extends UnitTestCase {
   }
 
   /**
+   * Missing defaults preserve direct delivery for chat notices.
+   */
+  public function testMissingPrivateAndFriendshipDefaultsRemainDirect(): void {
+    $preferences = new AvisoPreferencias(
+      $this->createMock(UserDataInterface::class),
+      $this->getConfigFactoryStub([
+        'aculta_messenger.settings' => ['email_modes' => []],
+      ]),
+    );
+
+    self::assertSame(
+      AvisoPreferencias::EMAIL_IMMEDIATE,
+      $preferences->emailMode(27, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES),
+    );
+    self::assertSame(
+      AvisoPreferencias::EMAIL_IMMEDIATE,
+      $preferences->emailMode(27, AvisoPreferencias::EMAIL_FRIENDSHIP),
+    );
+  }
+
+  /**
    * Malformed explicit administration policy fails closed for e-mail modes.
    */
   public function testMalformedAdministrativePolicyDisallowsEmailModes(): void {
@@ -248,6 +269,16 @@ final class AvisoPreferenciasTest extends UnitTestCase {
           'email_modes' => [
             'wiki' => 'invalid',
             'loja' => ['digest' => 'false', 'immediate' => 1],
+            AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => [
+              'digest' => TRUE,
+              'immediate' => TRUE,
+              'default_mode' => 'invalid',
+            ],
+            AvisoPreferencias::EMAIL_FRIENDSHIP => [
+              'digest' => FALSE,
+              'immediate' => TRUE,
+              'default_mode' => AvisoPreferencias::EMAIL_DIGEST,
+            ],
           ],
         ],
       ]),
@@ -255,6 +286,31 @@ final class AvisoPreferenciasTest extends UnitTestCase {
 
     self::assertSame([AvisoPreferencias::EMAIL_OFF], $preferences->allowedEmailModes('wiki'));
     self::assertSame([AvisoPreferencias::EMAIL_OFF], $preferences->allowedEmailModes('loja'));
+    self::assertSame(
+      [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE],
+      $preferences->allowedEmailModes(AvisoPreferencias::EMAIL_PRIVATE_MESSAGES),
+    );
+    self::assertSame(
+      [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE],
+      $preferences->allowedEmailModes(AvisoPreferencias::EMAIL_FRIENDSHIP),
+    );
+    self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES));
+    self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, AvisoPreferencias::EMAIL_FRIENDSHIP));
+  }
+
+  /**
+   * A malformed top-level email policy cannot re-enable direct delivery.
+   */
+  public function testMalformedTopLevelPolicyFailsClosed(): void {
+    $preferences = new AvisoPreferencias(
+      $this->createMock(UserDataInterface::class),
+      $this->getConfigFactoryStub([
+        'aculta_messenger.settings' => ['email_modes' => 'invalid'],
+      ]),
+    );
+
+    self::assertSame([AvisoPreferencias::EMAIL_OFF], $preferences->allowedEmailModes('wiki'));
+    self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, 'wiki'));
   }
 
   /**

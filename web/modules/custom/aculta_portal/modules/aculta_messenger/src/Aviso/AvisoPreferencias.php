@@ -58,7 +58,7 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
     if (!in_array($category, self::EMAIL_CATEGORIES, TRUE)) {
       return [self::EMAIL_OFF];
     }
-    $configured = $this->configFactory?->get('aculta_messenger.settings')->get('email_modes.' . $category);
+    $configured = $this->configuredEmailModes($category);
     $allowed = [self::EMAIL_OFF];
     if (in_array($category, self::EMAIL_IMMEDIATE_ONLY_CATEGORIES, TRUE)) {
       if ($configured === NULL) {
@@ -118,27 +118,7 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
     }
     $mode = $this->userData->get(self::MODULO, $uid, 'avisos_email_mode_' . $category);
     if (!in_array($mode, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)) {
-      if ($category === self::EMAIL_PRIVATE_MESSAGES) {
-        $default = $this->configFactory?->get('aculta_messenger.settings')
-          ->get('email_modes.' . self::EMAIL_PRIVATE_MESSAGES . '.default_mode');
-        $mode = in_array($default, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)
-          ? $default
-          : self::EMAIL_IMMEDIATE;
-      }
-      elseif ($category === self::EMAIL_FRIENDSHIP) {
-        $default = $this->configFactory?->get('aculta_messenger.settings')
-          ->get('email_modes.' . self::EMAIL_FRIENDSHIP . '.default_mode');
-        $mode = in_array($default, [self::EMAIL_OFF, self::EMAIL_IMMEDIATE], TRUE)
-          ? $default
-          : self::EMAIL_IMMEDIATE;
-      }
-      else {
-        $default = $this->configFactory?->get('aculta_messenger.settings')
-          ->get('email_modes.' . $category . '.default_mode');
-        $mode = in_array($default, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)
-          ? $default
-          : self::EMAIL_OFF;
-      }
+      $mode = $this->defaultEmailMode($category);
     }
     return in_array($mode, $this->allowedEmailModes($category), TRUE) ? $mode : self::EMAIL_OFF;
   }
@@ -159,6 +139,48 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
       throw new \InvalidArgumentException('Modo de e-mail inválido.');
     }
     $this->userData->set(self::MODULO, $uid, 'avisos_email_mode_' . $category, $mode);
+  }
+
+  /**
+   * Returns a category's configured modes, or NULL when that policy is absent.
+   *
+   * An explicitly malformed policy returns an empty array and therefore
+   * permits only site delivery. Missing configuration retains legacy defaults.
+   *
+   * @return array<string, mixed>|null
+   *   The configured category policy, or NULL when it is absent.
+   */
+  private function configuredEmailModes(string $category): ?array {
+    $emailModes = $this->configFactory?->get('aculta_messenger.settings')->get('email_modes');
+    if ($emailModes === NULL) {
+      return NULL;
+    }
+    if (!is_array($emailModes)) {
+      return [];
+    }
+    if (!array_key_exists($category, $emailModes)) {
+      return NULL;
+    }
+    return is_array($emailModes[$category]) ? $emailModes[$category] : [];
+  }
+
+  /**
+   * Resolves the admin default without re-enabling malformed policies.
+   */
+  private function defaultEmailMode(string $category): string {
+    $legacyDefault = in_array($category, [self::EMAIL_PRIVATE_MESSAGES, self::EMAIL_FRIENDSHIP], TRUE)
+      ? self::EMAIL_IMMEDIATE
+      : self::EMAIL_OFF;
+    $configured = $this->configuredEmailModes($category);
+    if ($configured === NULL || !array_key_exists('default_mode', $configured)) {
+      return $legacyDefault;
+    }
+
+    $allowedDefaults = $category === self::EMAIL_FRIENDSHIP
+      ? [self::EMAIL_OFF, self::EMAIL_IMMEDIATE]
+      : [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE];
+    $default = $configured['default_mode'];
+    return in_array($default, $allowedDefaults, TRUE) ? $default : self::EMAIL_OFF;
   }
 
 }
