@@ -70,7 +70,7 @@ export class Browser {
     if (!await this.waitFor(`document.querySelector('.aculta-messenger-trigger')`, `Messenger access for ${name}`, 10000)) {
       throw new Error(`A conta de teste ${name} não iniciou sessão com acesso ao Messenger.`);
     }
-    await this.exec(`window.__errs = []; window.addEventListener('error', (e) => window.__errs.push(String(e.message))); window.addEventListener('unhandledrejection', (e) => window.__errs.push('REJ ' + String(e.reason))); window.__f = []; const __of = window.fetch; window.fetch = (...a) => __of(...a).then((r) => { window.__f.push(String(a[1] && a[1].method || 'GET') + ' ' + r.status + ' ' + String(a[0]).slice(-40) + ' keys=' + (a[1] && a[1].body && a[1].body.keys ? [...a[1].body.keys()].join(',') : '-')); return r; }); return 1;`);
+    await this.exec(`window.__errs = []; window.addEventListener('error', (e) => window.__errs.push(String(e.message))); window.addEventListener('unhandledrejection', (e) => window.__errs.push('REJ ' + String(e.reason))); window.__f = []; const __of = window.fetch; window.fetch = (...a) => __of(...a).then((r) => { const u = new URL(String(a[0]), location.href); window.__f.push(String(a[1] && a[1].method || 'GET') + ' ' + r.status + ' ' + u.pathname + ' token=' + u.searchParams.has('token') + ' keys=' + (a[1] && a[1].body && a[1].body.keys ? [...a[1].body.keys()].join(',') : '-')); return r; }); return 1;`);
     return this;
   }
 
@@ -114,7 +114,7 @@ export class Browser {
     const ok = await this.waitFor(`${this.C}.querySelector('a[data-aculta-conversation-url][data-aculta-thread-id="${threadId}"]')`, 'thread row');
     if (!ok) return false;
     await this.exec(`${this.C}.querySelector('a[data-aculta-conversation-url][data-aculta-thread-id="${threadId}"]').click(); return 1;`);
-    return this.waitFor(`${this.C}.querySelector('.aculta-messenger-conversation-toolbar')`, 'toolbar');
+    return this.waitFor(`${this.C}.querySelector('[data-aculta-conversation-view][data-aculta-thread-id="${threadId}"]')`, `thread ${threadId}`);
   }
 
   async clickByText(selector, text) {

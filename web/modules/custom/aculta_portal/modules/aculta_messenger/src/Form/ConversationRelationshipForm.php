@@ -7,12 +7,14 @@ namespace Drupal\aculta_messenger\Form;
 use Drupal\aculta_messenger\Support\ConfirmDialog;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\aculta_user\Social\FriendshipStatus;
+use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Template\Attribute;
+use Drupal\Core\Url;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
@@ -39,6 +41,7 @@ final class ConversationRelationshipForm extends FormBase {
     private readonly EntityTypeManagerInterface $entityTypes,
     private readonly PrivateMessageServiceInterface $privateMessageService,
     private readonly CacheTagsInvalidatorInterface $cacheTagsInvalidator,
+    private readonly CsrfTokenGenerator $csrfToken,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -49,6 +52,7 @@ final class ConversationRelationshipForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('private_message.service'),
       $container->get('cache_tags.invalidator'),
+      $container->get('csrf_token'),
     );
   }
 
@@ -71,7 +75,7 @@ final class ConversationRelationshipForm extends FormBase {
     $form['#attributes'] = ['data-aculta-drawer-action' => ''];
     if ($postUrl !== NULL) {
       // The drawer POSTs to the thread's relationship route, not to the GET route the form was built on.
-      $form['#action'] = $postUrl;
+      $form['#action'] = $this->actionWithSessionToken($postUrl);
     }
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
     $form['actions'] = ['#type' => 'actions'];
@@ -131,7 +135,7 @@ final class ConversationRelationshipForm extends FormBase {
   private function groupForm(FormStateInterface $formState, ?string $postUrl): array {
     $form['#attributes'] = ['data-aculta-drawer-action' => ''];
     if ($postUrl !== NULL) {
-      $form['#action'] = $postUrl;
+      $form['#action'] = $this->actionWithSessionToken($postUrl);
     }
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
     $form['actions'] = ['#type' => 'actions'];
@@ -165,6 +169,22 @@ final class ConversationRelationshipForm extends FormBase {
       '#element_attributes' => new Attribute(['data-portal-ui' => 'messenger-options-status', 'role' => 'status']),
       '#value' => $text,
     ];
+  }
+
+  /**
+   * Replaces an unresolved route-token placeholder on fragment-rendered forms.
+   *
+   * Route URL generation can return a lazy placeholder when a form is rendered
+   * in isolation. The fragment response does not process that placeholder, so
+   * generate the route token from the internal action path directly.
+   */
+  private function actionWithSessionToken(string $postUrl): string {
+    $path = parse_url($postUrl, PHP_URL_PATH);
+    if (!is_string($path) || !str_starts_with($path, '/')) {
+      throw new \InvalidArgumentException('Relationship form actions must use an internal path.');
+    }
+    $token = $this->csrfToken->get(ltrim($path, '/'));
+    return Url::fromUserInput($path, ['query' => ['token' => $token]])->toString();
   }
 
   public function submitForm(array &$form, FormStateInterface $formState): void {

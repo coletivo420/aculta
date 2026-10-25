@@ -6,7 +6,7 @@ Sem dependências npm: usa o Node 22 (`fetch` e `child_process`) e o Drush do pr
 ## Onde roda
 
 Somente no **servidor de teste** (`https://aculta.toca.net.br`, runtime `aculta_runtime`). Nunca em produção.
-A preparação cria contas e uma conversa em grupo no banco de teste. As senhas são aleatórias e não são mostradas.
+A preparação cria contas e fixtures de conversa no banco de teste. As senhas são aleatórias e não são mostradas.
 
 ## Pré-requisitos
 
@@ -43,8 +43,9 @@ O script termina com código 1 se alguma verificação falhar, e grava `results.
 
 Roda sozinha no início da suíte e é idempotente:
 
-- cria `teste.b` e `teste.c` se faltarem (e-mail `@teste.invalid`, papel `email_confirmed`);
+- cria `teste.b`, `teste.c` e `teste.d` se faltarem (e-mail `@teste.invalid`, papel `email_confirmed`);
 - recria a conversa em grupo de `teste.comum`, `teste.b` e `teste.c` com uma mensagem.
+- remove somente a thread `teste.b`/`teste.c`/`teste.d`, para o teste criar esse grupo pela interface.
 
 Para rodar só a preparação: `php vendor/drush/drush/drush.php scr tests/browser/aculta-messenger/setup-accounts.php`.
 
@@ -52,12 +53,13 @@ A conversa um-a-um entre `teste.c` (conta comum) e `teste.b` é zerada pela pró
 `teste.b`, amizade, bloqueio, contadores de envio e mensagens), para que cada execução parta do mesmo estado.
 `teste.comum` tem o papel `content_editor` no Runtime e, por isso, não serve para verificar a restrição de mensagens
 “Somente amigos”; continua como terceiro participante da conversa em grupo.
+O grupo criado pela interface usa `teste.b` e `teste.d` como destinatários e `teste.c` como remetente.
 
 ## O que cobre
 
 | Fase | Assunto |
 | --- | --- |
-| 1 | "Iniciar nova conversa", busca, nova conversa, botões "Cancelar" e "Voltar para o início" (classe e ordem) |
+| 1 | "Iniciar nova conversa", busca, nova conversa, botões "Cancelar" e "Voltar para o início" (classe e ordem); cria pela interface um grupo com dois destinatários e envia a primeira mensagem |
 | 2 | Barra da conversa, menu da thread, "Limpar histórico" em duas etapas, pedido de amizade |
 | 3 | Aceite pelo destinatário |
 | 4 | "Desfazer amizade" em janela de confirmação; preferência "só amigos" não bloqueia resposta em thread existente |

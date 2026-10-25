@@ -7,8 +7,10 @@ import { writeFileSync } from 'node:fs';
 const A = 'teste.c';
 const B = 'teste.b';
 const C = 'teste.c';
+const D = 'teste.d';
 const MSG = 'Olá teste.b, mensagem do teste de navegador.';
 const GROUP_MSG = 'Mensagem de grupo de teste.';
+const UI_GROUP_MSG = 'Mensagem do grupo criado pela interface.';
 
 const baseUrl = new URL(BASE);
 const loginUrl = new URL(process.env.SUITE_LOGIN_URI || 'https://conta.aculta.toca.net.br');
@@ -22,7 +24,9 @@ const setupOut = setup();
 const groupId = /group thread (\d+)/.exec(setupOut)?.[1];
 const uidB = Number(/"teste\.b":(\d+)/.exec(setupOut)?.[1]);
 const uidA = Number(/"teste\.c":(\d+)/.exec(setupOut)?.[1]);
+const uidD = Number(/"teste\.d":(\d+)/.exec(setupOut)?.[1]);
 check('setup: the group thread exists', Boolean(groupId), setupOut.trim());
+check('setup: the UI group recipient exists', Number.isInteger(uidD) && uidD > 0);
 
 // Deterministic one-to-one start: no leftover privacy, friendship, block or flood counters between A and B.
 // (The group thread has three members and is not touched here.)
@@ -75,7 +79,36 @@ await b.typeIn(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] te
 await b.exec(`[...${b.C}.querySelectorAll('input[type=submit]')].find((x) => x.value === 'Enviar').click(); return 1;`);
 check('A: sending the first message opens the conversation with it', await b.waitText(MSG));
 check('A: no JavaScript errors so far', (await b.errors()).length === 0, JSON.stringify(await b.errors()));
+const directThreadId = Number(await b.exec(`return ${b.C}.querySelector('[data-aculta-conversation-view]')?.dataset.acultaThreadId || 0;`));
+check('A: the one-to-one conversation has a persisted thread ID', Number.isInteger(directThreadId) && directThreadId > 0, String(directThreadId));
 await b.shot('A-sent');
+
+// Create a three-member conversation through the UI, including both recipient chips and the first message.
+await b.exec(`${b.C}.querySelector('.aculta-messenger-back-link').click(); return 1;`);
+check('group create: return to conversation list', await b.waitFor(`${b.C}.querySelector('[data-aculta-conversation-url="/mensagens/nova"]')`, 'new conversation button'));
+await b.exec(`${b.C}.querySelector('[data-aculta-conversation-url="/mensagens/nova"]').click(); return 1;`);
+await b.waitFor(`${b.C}.querySelector('input[name=q]')`, 'group search');
+await b.clearAndType(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] input[name=q]`, B);
+check('group create: find first recipient', await b.waitFor(memberShown(B), 'first group recipient'));
+await pickMember(B);
+await b.clearAndType(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] input[name=q]`, D);
+check('group create: find second recipient', await b.waitFor(memberShown(D), 'second group recipient'));
+await pickMember(D);
+check('group create: both recipients are selected once', await b.waitFor(`${b.C}.querySelectorAll('[data-aculta-chip]').length === 2`, 'two recipient chips'));
+const selectedGroupMembers = await b.exec(`return JSON.stringify([...${b.C}.querySelectorAll('[data-aculta-chip] .aculta-chip__name')].map((x) => x.textContent.trim()).sort());`);
+check('group create: chips identify both selected members', JSON.stringify(JSON.parse(selectedGroupMembers)) === JSON.stringify([B, D].sort()), selectedGroupMembers);
+await b.typeIn(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] textarea`, UI_GROUP_MSG);
+await b.clickByText('input[type=submit]', 'Enviar');
+check('group create: first message opens the group conversation', await b.waitText(UI_GROUP_MSG));
+const uiGroupId = Number(await b.exec(`return ${b.C}.querySelector('[data-aculta-conversation-view]')?.dataset.acultaThreadId || 0;`));
+check('group create: conversation has a persisted thread ID', Number.isInteger(uiGroupId) && uiGroupId > 0, String(uiGroupId));
+if (Number.isInteger(uiGroupId) && uiGroupId > 0) {
+  const persistedMembers = JSON.parse(drush(`$thread = \\Drupal::entityTypeManager()->getStorage("private_message_thread")->load(${uiGroupId}); echo json_encode(array_map("intval", $thread?->getMembersId() ?? []));`));
+  check('group create: persisted membership contains A, B and D', persistedMembers.length === 3 && [uidA, uidB, uidD].every((uid) => persistedMembers.includes(uid)), JSON.stringify(persistedMembers));
+}
+await b.shot('group-created-through-ui');
+await b.exec(`${b.C}.querySelector('.aculta-messenger-back-link').click(); return 1;`);
+check('group create: return to the one-to-one thread', directThreadId > 0 && await b.openThread(directThreadId));
 
 // ---------- Phase 2: thread history and member actions, as A ----------
 const tbv = JSON.parse(await b.exec(`const t = ${b.C}.querySelector('.aculta-messenger-conversation-toolbar'); const back = t.querySelector('.aculta-messenger-back-link').getBoundingClientRect(); const opt = t.querySelector('.aculta-messenger-options__summary').getBoundingClientRect(); const box = t.querySelector('.aculta-messenger-options').getBoundingClientRect(); return JSON.stringify({ backLeft: back.left < opt.left, sameTop: Math.abs(back.top - box.top) < 4 });`));
@@ -84,8 +117,18 @@ check('A: "← Todas as conversas" and "Opções" are on the same row', tbv.same
 await b.openOptions();
 const items1 = await b.panelItems();
 check('A: thread menu contains only "Limpar histórico"', JSON.stringify(items1) === JSON.stringify(['button:Limpar histórico']), JSON.stringify(items1));
+const clearFormDebug = await b.exec(`const f = ${b.C}.querySelector('.aculta-messenger-options[open] form[data-aculta-drawer-action]'); const u = new URL(f?.action || location.href); return JSON.stringify({ action: u.pathname, hasRouteToken: u.searchParams.has('token'), names: f ? [...f.querySelectorAll('[name]')].map((x) => x.name) : [] });`);
+const clearPlaceholder = drush(`echo \\Drupal\\Component\\Utility\\Crypt::hashBase64("mensagens/conversa/${directThreadId}/relacao");`);
+const clearFormDetails = JSON.parse(clearFormDebug);
+clearFormDetails.tokenIsPlaceholder = await b.exec(`const u = new URL(${JSON.stringify('https://aculta.toca.net.br' + JSON.parse(clearFormDebug).action)} + '?token=' + encodeURIComponent(new URL(${b.C}.querySelector('.aculta-messenger-options[open] form[data-aculta-drawer-action]').action).searchParams.get('token'))); return u.searchParams.get('token') === ${JSON.stringify(clearPlaceholder)};`);
+clearFormDetails.currentUid = await b.exec(`return window.drupalSettings?.user?.uid ?? null;`);
+check('A: clear-history form has a concrete CSRF token for this member and route', clearFormDetails.action === `/mensagens/conversa/${directThreadId}/relacao` && clearFormDetails.hasRouteToken && !clearFormDetails.tokenIsPlaceholder && String(clearFormDetails.currentUid) === String(uidA), JSON.stringify(clearFormDetails));
 await b.shot('A-options');
-await b.clickByText('input[type=submit]', 'Limpar histórico');
+const clearClick = await b.clickByText('input[type=submit]', 'Limpar histórico');
+check('A: clear-history submit button is dispatched', clearClick === 1, String(clearClick));
+await sleep(500);
+const clearResponse = await b.exec(`return (window.__f || []).slice(-1)[0] || '';`);
+check('A: clear-history action is accepted by its protected route', String(clearResponse).includes(`POST 200 /mensagens/conversa/${directThreadId}/relacao`), String(clearResponse));
 check('A: "Limpar histórico" asks for confirmation in the menu, nothing cleared yet', await b.waitFor(`${b.C}.innerText.includes('Limpar o histórico desta conversa só para você?')`, 'confirm text'));
 check('A: the confirmation button is shown', (await b.panelItems()).includes('button:Confirmar limpeza do histórico'));
 check('A: the conversation is still there before confirming', await b.waitText(MSG, 3000));
@@ -109,7 +152,7 @@ await b.exec(`${b.C}.querySelector('.aculta-messenger-conversation__actions .acu
 // ---------- Phase 3: B accepts, as B ----------
 await b.open(B);
 await b.openDrawer();
-check('B: the conversation from A is in B\'s list', await b.openConversation(A));
+check('B: the conversation from A is in B\'s list', await b.openThread(directThreadId));
 await b.openOptions(A);
 const itemsB = await b.panelItems();
 check('B: recipient member menu: Aceitar, Rejeitar, Bloquear', JSON.stringify(itemsB) === JSON.stringify(['button:Aceitar pedido de amizade', 'button:Rejeitar pedido de amizade', 'button:Bloquear']), JSON.stringify(itemsB));
@@ -122,7 +165,7 @@ await b.shot('B-accepted');
 // ---------- Phase 4: A removes the friendship through its confirmation, then sees the friends-only notice ----------
 await b.open(A);
 await b.openDrawer();
-await b.openConversation(B);
+await b.openThread(directThreadId);
 await b.openOptions('teste.b');
 check('A: after acceptance the member menu shows "Desfazer amizade"', (await b.panelItems()).includes('button:Desfazer amizade'));
 drush(`\\Drupal::service("user.data")->set("aculta_messenger", ${uidB}, "message_privacy", "friends"); echo "ok";`);
@@ -147,7 +190,7 @@ check('A: friendship request does not remove access to the existing reply box', 
 // ---------- Phase 5: B accepts through the menu, then blocks A through its dialog ----------
 await b.open(B);
 await b.openDrawer();
-await b.openConversation(A);
+await b.openThread(directThreadId);
 await b.openOptions(A);
 await b.clickByText('input[type=submit]', 'Aceitar pedido de amizade');
 check('B: accepting the request from A (second time)', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options[open] .aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Desfazer amizade')`, 'undo btn 2'));
@@ -162,7 +205,7 @@ await b.shot('B-blocker-notice');
 
 await b.open(A);
 await b.openDrawer();
-check('A: the conversation stays in the list after being blocked', await b.openConversation(B));
+check('A: the conversation stays in the list after being blocked', await b.openThread(directThreadId));
 check('A: blocked member sees "Essa pessoa bloqueou você..." notice', await b.waitFor(`${b.C}.querySelector('.aculta-messenger-notice') && ${b.C}.querySelector('.aculta-messenger-notice').innerText.includes('Essa pessoa bloqueou você, por isso não pode enviar ou receber mensagens.')`, 'blocked notice'));
 check('A: blocked member has no reply box and no action link', !(await b.hasReplyBox()) && !(await b.exec(`return !!${b.C}.querySelector('.aculta-messenger-notice__action');`)));
 await b.shot('A-blocked-notice');
@@ -171,14 +214,14 @@ check('A: the previous messages are still visible when blocked', (await b.text()
 // ---------- Phase 6: B unblocks from its menu, both sides reopen ----------
 await b.open(B);
 await b.openDrawer();
-await b.openConversation(A);
+await b.openThread(directThreadId);
 await b.openOptions(A);
 await b.clickByText('input[type=submit]', 'Desbloquear');
 check('B: unblocking returns the reply box', await b.waitFor(`${b.C}.querySelector('textarea[name="message[0][value]"]')`, 'reply back'));
 
 await b.open(A);
 await b.openDrawer();
-await b.openConversation(B);
+await b.openThread(directThreadId);
 check('A: after the unblock the reply box is back for A', await b.waitFor(`${b.C}.querySelector('textarea[name="message[0][value]"]')`, 'A reply back'));
 
 // ---------- Phase 7: A blocks through its dialog and unblocks with the notice link ----------
@@ -201,7 +244,7 @@ await b.shot('A-replied');
 // ---------- Phase 9: mobile (390 px) ----------
 await b.open(A, { width: 390, height: 844 });
 await b.openDrawer();
-await b.openConversation(B);
+await b.openThread(directThreadId);
 const mob = JSON.parse(await b.exec(`const C = ${b.C}; const t = C.querySelector('.aculta-messenger-conversation-toolbar'); const back = t.querySelector('.aculta-messenger-back-link').getBoundingClientRect(); const s = t.querySelector('.aculta-messenger-options'); const label = t.querySelector('.aculta-messenger-options__label'); return JSON.stringify({ sameTop: Math.abs(back.top - s.getBoundingClientRect().top) < 4, labelHidden: !label || getComputedStyle(label).display === 'none', noOverflow: document.documentElement.scrollWidth <= window.innerWidth + 1 });`));
 check('mobile: "← Todas as conversas" and the hamburger share the row', mob.sameTop);
 check('mobile: the "Opções" label is hidden, only the icon shows', mob.labelHidden);
@@ -215,7 +258,7 @@ await b.close();
 // ---------- Phase 10: "Limpar histórico" in two steps, for A only ----------
 await b.open(A);
 await b.openDrawer();
-await b.openConversation(B);
+await b.openThread(directThreadId);
 await b.openOptions();
 await b.clickByText('input[type=submit]', 'Limpar histórico');
 check('A: first step asks for confirmation', await b.waitFor(`${b.C}.innerText.includes('Limpar o histórico desta conversa só para você?')`, 'confirm 2'));
@@ -225,7 +268,7 @@ check('A: the old messages are gone for A', await b.waitGone(MSG, 10000));
 await b.shot('A-cleared');
 await b.open(B);
 await b.openDrawer();
-await b.openConversation(A);
+await b.openThread(directThreadId);
 check('B: the messages are still there for B', await b.waitText(MSG, 10000));
 await b.shot('B-after-A-cleared');
 
@@ -265,7 +308,7 @@ await b.shot('group-B');
 // Keyboard regression: closing the nested Drupal confirmation must not dismiss the Bootstrap drawer.
 await b.exec(`${b.C}.querySelector('.aculta-messenger-back-link').click(); return 1;`);
 await b.waitFor(`!${b.C}.querySelector('.aculta-messenger-conversation-toolbar')`, 'return to conversation list');
-check('B: the one-to-one conversation remains available after the group view', await b.openConversation(A));
+check('B: the one-to-one conversation remains available after the group view', await b.openThread(directThreadId));
 await b.openOptions(A);
 await b.exec(`${b.C}.querySelector('[data-aculta-dialog-open="ban"]').click(); return 1;`);
 check('B: the block dialog opens for the keyboard regression check', await b.waitFor(`${b.C}.querySelector('.ui-dialog [data-aculta-dialog="ban"]')?.getClientRects().length`, 'B ban dialog'));

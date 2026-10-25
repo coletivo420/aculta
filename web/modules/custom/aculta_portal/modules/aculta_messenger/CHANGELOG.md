@@ -1,3 +1,9 @@
+## 0.1.1-dev.220 — renderizar token CSRF nos formulários do drawer
+
+Formulários de opções carregados como fragmentos agora geram o token de sessão da rota interna explicitamente. O placeholder lazy do gerador de URLs não era processado na resposta do drawer e fazia a rota protegida rejeitar o POST. A suíte de navegador passou a criar uma conversa em grupo com dois destinatários pela interface; os diagnósticos de fetch registram apenas caminho e presença de token, nunca seu valor.
+
+Validação: suíte Firefox ESR/X11 no Runtime de teste **90/90 PASS**, incluindo POST de limpeza de histórico aceito (**HTTP 200**) e ciclo completo de privacidade/conversa; PHP lint, Node syntax, PHPCS de `setup-accounts.php` e `git diff --check` PASS. PHPCS do formulário reporta violações preexistentes espalhadas pela classe; nenhuma aponta para o método novo. Produção e SMTP não usados.
+
 ## 0.1.1-dev.219 — centralizar novos avisos de amizade no Mailer
 
 Novos avisos de pedido e aceite de amizade passam a usar o tipo mínimo `friendship_notice` do ACULTA Mailer e uma
