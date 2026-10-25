@@ -1,3 +1,12 @@
+## 0.1.1-dev.290 — esclarecer a precedência da preferência por categoria
+
+O contrato de `emailMode()` agora explica que uma escolha explícita por categoria
+é independente do opt-in global legado. A leitura legada continua apenas como
+padrão de compatibilidade para contas sem escolha nova; o comportamento do
+serviço não mudou.
+
+Validação: `AvisoPreferenciasTest` **24/64 PASS**, `AvisosResumoProviderPreferenceTest` **6/130 PASS**, Unit Messenger **298/2.359 PASS**, PHP lint, PHPCS Drupal/DrupalPractice e índice de status PASS. Sem Runtime/SMTP; não houve mudança de comportamento.
+
 ## 0.1.1-dev.289 — nomear acessivelmente a navegação da central
 
 Os links de paginação da central são agrupados em um landmark `navigation`

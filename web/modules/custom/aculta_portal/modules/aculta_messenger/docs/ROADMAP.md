@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.290 — corrige o PHPDoc de `emailMode()`: escolha explícita por categoria não depende do opt-in global; o fallback legado segue apenas para contas sem escolha nova. `AvisoPreferenciasTest` 24/64, `AvisosResumoProviderPreferenceTest` 6/130, Unit Messenger 298/2.359, PHP lint, PHPCS Drupal/DrupalPractice e índice PASS; sem Runtime/SMTP ou mudança de comportamento.
 - Dev.289 — links de paginação recebem landmark `navigation` com rótulo contextual de origem; sem links, o landmark não é renderizado. `NoticePaginationNavigationBuilderTest` 2/6 assertions; Unit Messenger **298/2.359 PASS**; PHPCS dos arquivos novos PASS. Smoke visual não executado: `DISPLAY` ausente e sessões Firefox/geckodriver ativas; preservadas.
 - Dev.288 — respostas em threads existentes verificam conta/permissões com `EntityStorageInterface::loadUnchanged()` depois do lock, evitando confiar no cache estático da requisição para estado de usuário alterado concorrentemente. Unit Messenger **296/2.354 PASS**, `PrivateMessageFloodKernelTest` **2/2 PASS**, PHPCS e PHP lint PASS; Browser/Runtime pendentes.
 - Dev.287 — `NoticePaginationUrlBuilder` centraliza URLs da paginação global e filtrada. Avançar/voltar altera somente o offset da origem escolhida e preserva filtros e offsets irmãos; a allowlist rejeita origens desconhecidas. `NoticePaginationUrlBuilderTest` 4 testes, Unit Messenger **296/2.353 PASS**, PHPCS dos arquivos novos, PHP lint e gate Drupal 11+ **1.155 checks PASS**; Browser/Runtime pendentes.

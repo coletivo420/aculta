@@ -113,8 +113,9 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
   /**
    * Returns the user's email delivery mode for one notice category.
    *
-   * A missing preference defaults to the existing opt-in daily digest path;
-   * the global digest switch must still be enabled before digest delivery.
+   * An explicit category preference is authoritative and does not depend on
+   * the legacy global digest opt-in. Accounts without a category preference
+   * retain the legacy opt-in as a compatibility default for shared notices.
    */
   public function emailMode(int $uid, string $category): string {
     if (!in_array($category, self::EMAIL_CATEGORIES, TRUE)) {
