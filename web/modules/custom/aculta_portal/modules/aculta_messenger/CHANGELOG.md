@@ -1,3 +1,9 @@
+## 0.1.1-dev.241 — falhar fechado em política de e-mail inválida
+
+Políticas administrativas de categoria só habilitam digest ou envio direto quando configuradas explicitamente como booleano `true`. Uma categoria explicitamente malformada agora permite apenas `off`; ausência da configuração continua compatível com os modos existentes. O rótulo da permissão administrativa passa a mencionar mensagens, avisos e e-mail.
+
+Validação: `AvisoPreferenciasTest`, `AvisosPrivacyFormTest` e `MessengerSettingsFormTest` **24 testes / 129 assertions PASS**; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Não requer alteração de schema nem atualização de dados; Runtime e transporte SMTP não executados.
+
 ## 0.1.1-dev.240 — agrupar avisos por origem e ordenar por atualização
 
 A central unificada agora apresenta seções identificadas por origem, separadas visualmente, e mantém a ordem de atualização mais recente disponível dentro de cada seção. Fórum usa `changed` e ID; limpar contadores de leitura ou digest preserva `changed`, para que a entrega não reordene atividade. Adapters Message usam `created` e Alertas do Site usam ID decrescente como ordem estável, pois a entidade não expõe data de criação. Avisos antigos não lidos deixam de ficar acima dos mais recentes; filtros, paginação e agrupamento de eventos relacionados continuam preservados.

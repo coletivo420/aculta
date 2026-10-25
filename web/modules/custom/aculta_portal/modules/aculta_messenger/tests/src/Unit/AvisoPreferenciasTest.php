@@ -112,6 +112,26 @@ final class AvisoPreferenciasTest extends UnitTestCase {
   }
 
   /**
+   * Malformed explicit administration policy fails closed for e-mail modes.
+   */
+  public function testMalformedAdministrativePolicyDisallowsEmailModes(): void {
+    $preferences = new AvisoPreferencias(
+      $this->createMock(UserDataInterface::class),
+      $this->getConfigFactoryStub([
+        'aculta_messenger.settings' => [
+          'email_modes' => [
+            'wiki' => 'invalid',
+            'loja' => ['digest' => 'false', 'immediate' => 1],
+          ],
+        ],
+      ]),
+    );
+
+    self::assertSame([AvisoPreferencias::EMAIL_OFF], $preferences->allowedEmailModes('wiki'));
+    self::assertSame([AvisoPreferencias::EMAIL_OFF], $preferences->allowedEmailModes('loja'));
+  }
+
+  /**
    * Unknown notice categories fail closed and cannot persist email modes.
    */
   public function testUnknownCategoryCannotEnableEmail(): void {

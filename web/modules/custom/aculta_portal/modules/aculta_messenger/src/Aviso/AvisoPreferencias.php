@@ -48,13 +48,19 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
     }
     $configured = $this->configFactory?->get('aculta_messenger.settings')->get('email_modes.' . $category);
     $allowed = [self::EMAIL_OFF];
-    if (!is_array($configured)) {
+    if ($configured === NULL) {
       return [...$allowed, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE];
     }
-    if (!empty($configured[self::EMAIL_DIGEST])) {
+    // A malformed explicit policy must never re-enable modes. Missing config
+    // keeps the backwards-compatible defaults above; configured values must
+    // be actual booleans as required by the config schema.
+    if (!is_array($configured)) {
+      return $allowed;
+    }
+    if (($configured[self::EMAIL_DIGEST] ?? FALSE) === TRUE) {
       $allowed[] = self::EMAIL_DIGEST;
     }
-    if (!empty($configured[self::EMAIL_IMMEDIATE])) {
+    if (($configured[self::EMAIL_IMMEDIATE] ?? FALSE) === TRUE) {
       $allowed[] = self::EMAIL_IMMEDIATE;
     }
     return $allowed;
