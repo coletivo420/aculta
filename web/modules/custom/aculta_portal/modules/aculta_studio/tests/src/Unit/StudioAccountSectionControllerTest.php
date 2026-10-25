@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_studio\Unit;
 
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
+use Drupal\aculta_portal\Appearance\AppearanceForm;
 use Drupal\aculta_portal\Controller\PortalController;
+use Drupal\aculta_portal\Support\Controller\SupportController;
 use Drupal\aculta_studio\Controller\StudioAccountSectionController;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -63,6 +66,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
       'security' => 'security',
       'password' => 'securityPassword',
       'connections' => 'connections',
+      'orders' => 'orders',
     ];
 
     foreach ($methods as $studioMethod => $ownerMethod) {
@@ -99,6 +103,11 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
           return $this->build('connections');
         }
 
+        public function orders(): array {
+          $this->called[] = 'orders';
+          return $this->build('orders');
+        }
+
         private function build(string $name): array {
           return [
             'content' => [
@@ -126,7 +135,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
         $page['content']['content']['section']['form']);
       self::assertArrayNotHasKey('tabs', $page['content']['content']);
       self::assertSame('item_list', $page['navigation']['#theme']);
-      self::assertCount(6, $page['navigation']['#items']);
+      self::assertCount(9, $page['navigation']['#items']);
       $routes = array_map(static fn (array $link) => $link['#url']->getRouteName(),
         $page['navigation']['#items']);
       self::assertSame([
@@ -136,6 +145,9 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
         'aculta_studio.account_security',
         'aculta_studio.account_password',
         'aculta_studio.account_connections',
+        'aculta_studio.account_orders',
+        'aculta_studio.account_support',
+        'aculta_studio.account_preferences',
       ], $routes);
       self::assertSame(0, $page['#cache']['max-age']);
       self::assertContains('user', $page['#cache']['contexts']);
@@ -156,7 +168,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
     $page = (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE)))->address();
     $routes = array_map(static fn (array $link): string => $link['#url']->getRouteName(),
       $page['navigation']['#items']);
-    self::assertCount(5, $routes);
+    self::assertCount(8, $routes);
     self::assertNotContains('aculta_studio.account_documents', $routes);
   }
 
@@ -198,6 +210,88 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
     self::assertSame('Indisponível', $page['content']['content']['form']['unavailable']['#plain_text']);
     $routes = array_map(static fn (array $item): string => $item['#url']->getRouteName(), $page['navigation']['#items']);
     self::assertNotContains('aculta_studio.account_documents', $routes);
+  }
+
+  /**
+   * Support delegates to the original owner and preserves subscription actions.
+   */
+  public function testSupportDelegatesToOriginalOwner(): void {
+    $action = ['#type' => 'link', '#title' => 'Pausar assinatura'];
+    $owner = new class($action) {
+      public int $calls = 0;
+
+      public function __construct(private readonly array $action) {}
+
+      public function mySupport(): array {
+        $this->calls++;
+        return [
+          'table' => ['#type' => 'table', '#rows' => [['data' => $this->action]]],
+          '#cache' => ['contexts' => ['user'], 'max-age' => 0],
+        ];
+      }
+    };
+    $resolver = $this->createMock(ClassResolverInterface::class);
+    $resolver->expects(self::once())->method('getInstanceFromDefinition')
+      ->with(SupportController::class)->willReturn($owner);
+    $page = (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE)))->support();
+    self::assertSame(1, $owner->calls);
+    self::assertSame($action, $page['content']['table']['#rows'][0]['data']);
+    self::assertSame(['user'], $page['content']['#cache']['contexts']);
+    self::assertSame('aculta_studio.account_support', $page['navigation']['#items'][7]['#url']->getRouteName());
+    self::assertSame('page', $page['navigation']['#items'][7]['#attributes']['aria-current']);
+  }
+
+  /**
+   * Auth checks precede the support owner lookup.
+   */
+  public function testSupportAccessDeniedBeforeOwnerResolution(): void {
+    $resolver = $this->createMock(ClassResolverInterface::class);
+    $resolver->expects(self::never())->method('getInstanceFromDefinition');
+    $this->expectException(AccessDeniedHttpException::class);
+    (new StudioAccountSectionController($resolver, $this->account(TRUE, FALSE)))->support();
+  }
+
+  /**
+   * Core builds the original appearance form, without stripping owner tabs.
+   */
+  public function testPreferencesPreserveFormApiAndOwnerSettingsTabs(): void {
+    $resolver = $this->createMock(ClassResolverInterface::class);
+    $resolver->expects(self::never())->method('getInstanceFromDefinition');
+    $forms = $this->createMock(FormBuilderInterface::class);
+    $original = [
+      '#type' => 'form',
+      '#form_id' => 'aculta_portal_appearance_form',
+      'tabs' => ['#type' => 'container', 'owner_only' => TRUE],
+      'color_mode' => ['#type' => 'radios', '#required' => TRUE],
+    ];
+    $forms->expects(self::once())->method('getForm')->with(AppearanceForm::class)->willReturn($original);
+    $page = (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE), NULL, $forms))->preferences();
+    self::assertSame($original, $page['content']);
+    self::assertSame('aculta_studio.account_preferences', $page['navigation']['#items'][8]['#url']->getRouteName());
+    self::assertSame('page', $page['navigation']['#items'][8]['#attributes']['aria-current']);
+    self::assertSame(0, $page['#cache']['max-age']);
+  }
+
+  /**
+   * Anonymous visitors are rejected before the preference form is built.
+   */
+  public function testPreferencesDenyAnonymousBeforeBuildingForm(): void {
+    $forms = $this->createMock(FormBuilderInterface::class);
+    $forms->expects(self::never())->method('getForm');
+    $resolver = $this->createMock(ClassResolverInterface::class);
+    $resolver->expects(self::never())->method('getInstanceFromDefinition');
+    $this->expectException(AccessDeniedHttpException::class);
+    (new StudioAccountSectionController($resolver, $this->account(FALSE, TRUE), NULL, $forms))->preferences();
+  }
+
+  /**
+   * A misconfigured Studio cannot bypass the original Form API.
+   */
+  public function testPreferencesFailClosedWithoutFormBuilder(): void {
+    $resolver = $this->createMock(ClassResolverInterface::class);
+    $resolver->expects(self::never())->method('getInstanceFromDefinition');
+    $this->expectException(\LogicException::class);
+    (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE)))->preferences();
   }
 
   /**
