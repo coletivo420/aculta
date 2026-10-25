@@ -76,13 +76,24 @@ final class NewConversationController extends ControllerBase {
   /**
    * Renders the initial member-search step.
    */
-  public function start(): Response {
+  public function start(Request $request): Response {
+    $term = trim((string) $request->query->get('q', ''));
+    $selectedIds = NewConversationForm::normalizeRecipientIds($request->query->all('members'));
+    $formState = new FormState();
+    $formState->setUserInput(['members' => $selectedIds]);
     $build = [
       'back' => $this->backLink(),
       'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Nova conversa')],
-      'form' => $this->forms->buildForm(NewConversationForm::class, new FormState()),
+      'fallback_search' => $this->nativeSearchForm($term, $selectedIds),
+      'form' => $this->forms->buildForm(NewConversationForm::class, $formState),
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];
+    if (mb_strlen($term) >= self::MIN_CHARS) {
+      $candidates = array_slice($this->candidates($term), 0, self::MAX_RESULTS);
+      $build['search_results'] = $candidates === []
+        ? ['#plain_text' => $this->t('Nenhum membro encontrado.')]
+        : $this->memberResults($candidates, $selectedIds);
+    }
     return $this->fragment($build);
   }
 
@@ -98,11 +109,12 @@ final class NewConversationController extends ControllerBase {
     }
 
     $candidates = array_slice($this->candidates($term), 0, self::MAX_RESULTS);
+    $selectedIds = NewConversationForm::normalizeRecipientIds($request->query->all('members'));
     if ($candidates === []) {
       $build['empty'] = ['#plain_text' => $this->t('Nenhum membro encontrado.')];
     }
     else {
-      $build['results'] = $this->memberResults($candidates);
+      $build['results'] = $this->memberResults($candidates, $selectedIds);
     }
     return $this->fragment($build);
   }
@@ -115,6 +127,14 @@ final class NewConversationController extends ControllerBase {
    */
   public function composeGroup(Request $request): Response {
     $formState = new FormState();
+    $selectedIds = NewConversationForm::normalizeRecipientIds(
+      $request->isMethod('GET') ? $request->query->all('members') : $request->request->all('members'),
+    );
+    if ($request->isMethod('GET')) {
+      // This is a POST form; explicitly seed its chips from the GET selection
+      // carried by the progressive-enhancement links.
+      $formState->setUserInput(['members' => $selectedIds]);
+    }
     $form = $this->forms->buildForm(NewConversationForm::class, $formState);
 
     $thread = $formState->get('thread');
@@ -126,6 +146,7 @@ final class NewConversationController extends ControllerBase {
     $build = [
       'back' => $this->backLink(),
       'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Nova conversa')],
+      'fallback_search' => $this->nativeSearchForm('', $selectedIds),
       'form' => $form,
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];
@@ -151,17 +172,29 @@ final class NewConversationController extends ControllerBase {
    *
    * @param array<int, array{user: UserInterface, name: string}> $candidates
    *   Members and their policy-approved display names.
+   * @param int[] $selectedIds
+   *   IDs already selected in the group form.
    */
-  private function memberResults(array $candidates): array {
-    // Match the header search preview list. The drawer turns each link press
-    // into a recipient chip instead of following the link.
+  private function memberResults(array $candidates, array $selectedIds = []): array {
+    // The drawer turns links into chips. Without JavaScript each link carries
+    // the selected recipient IDs to the normal group-composition form.
     $items = [];
-    $group = Url::fromRoute('aculta_messenger.new_conversation_group');
+    $max = $this->policy->maxRecipients(ConversationPolicy::KIND_GROUP, $this->account);
+    if (count($selectedIds) >= $max) {
+      return ['#plain_text' => $this->t('Você atingiu o limite de @count pessoas nesta conversa.', ['@count' => $max])];
+    }
+    $selected = array_fill_keys($selectedIds, TRUE);
     foreach ($candidates as $candidate) {
       $user = $candidate['user'];
+      $uid = (int) $user->id();
+      if (isset($selected[$uid]) || count($selected) >= $max) {
+        continue;
+      }
       $name = $candidate['name'];
+      $members = [...$selectedIds, $uid];
+      $group = Url::fromRoute('aculta_messenger.new_conversation_group', [], ['query' => ['members' => $members]]);
       $items[] = PortalLinkElement::build($name, $group, [
-        'data-aculta-add-member' => (string) $user->id(),
+        'data-aculta-add-member' => (string) $uid,
         'data-aculta-member-name' => $name,
         'data-portal-ui' => 'new-conversation-add',
       ]);
@@ -171,6 +204,38 @@ final class NewConversationController extends ControllerBase {
       '#items' => $items,
       '#attributes' => ['data-portal-ui' => 'search-preview-list'],
     ];
+  }
+
+  /**
+   * Builds a native GET search form for members without JavaScript.
+   *
+   * @param string $term
+   *   Current search term.
+   * @param int[] $selectedIds
+   *   Selected recipients carried across search requests.
+   */
+  private function nativeSearchForm(string $term, array $selectedIds): array {
+    $form = [
+      '#type' => 'form',
+      '#method' => 'get',
+      '#action' => Url::fromRoute('aculta_messenger.new_conversation')->toString(),
+      '#attributes' => ['data-aculta-nojs-search' => '', 'data-portal-ui' => 'new-conversation-fallback-search'],
+      'q' => [
+        '#type' => 'search',
+        '#name' => 'q',
+        '#title' => $this->t('Buscar membro pelo nome'),
+        '#value' => $term,
+        '#maxlength' => 100,
+      ],
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Buscar'),
+      ],
+    ];
+    foreach ($selectedIds as $index => $uid) {
+      $form['member_' . $index] = ['#type' => 'hidden', '#name' => 'members[]', '#value' => (string) $uid];
+    }
+    return $form;
   }
 
   /**

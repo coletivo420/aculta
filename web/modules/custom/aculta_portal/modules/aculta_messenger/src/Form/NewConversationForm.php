@@ -87,8 +87,9 @@ final class NewConversationForm extends FormBase {
           'aria-live' => 'polite',
         ],
       ];
+      $selectedIds = $this->recipientIds($formState);
       foreach ($this->recipients($formState, FALSE) as $index => $user) {
-        $form['chips']['chip_' . $index] = $this->chip($user);
+        $form['chips']['chip_' . $index] = $this->chip($user, $selectedIds);
       }
       $form['q'] = [
         '#type' => 'search',
@@ -98,6 +99,7 @@ final class NewConversationForm extends FormBase {
         '#placeholder' => (string) $this->t('Buscar membro pelo nome'),
         '#maxlength' => 100,
         '#weight' => -10,
+        '#wrapper_attributes' => ['hidden' => TRUE, 'data-aculta-js-only' => ''],
         '#attributes' => [
           'autocomplete' => 'off',
           'data-portal-ui' => 'search-preview-input',
@@ -115,6 +117,8 @@ final class NewConversationForm extends FormBase {
           'role' => 'region',
           'aria-label' => $this->t('Resultados de membros'),
           'aria-live' => 'polite',
+          'hidden' => TRUE,
+          'data-aculta-js-only' => '',
         ],
         'hint' => ['#plain_text' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => NewConversationController::MIN_CHARS])],
       ];
@@ -170,10 +174,12 @@ final class NewConversationForm extends FormBase {
   /**
    * Builds a recipient chip and its hidden member ID field.
    *
-   * The drawer can remove the member with its accessible button.
+   * The drawer removes the chip in place; the link also works without
+   * JavaScript.
    */
-  private function chip(UserInterface $user): array {
+  private function chip(UserInterface $user, array $selectedIds): array {
     $name = $this->memberIdentity->publicDisplayName($user) ?? (string) $this->t('Membro');
+    $remaining = array_values(array_diff($selectedIds, [(int) $user->id()]));
     return [
       '#type' => 'container',
       '#attributes' => ['data-aculta-chip' => '', 'data-portal-ui' => 'new-conversation-chip'],
@@ -183,17 +189,15 @@ final class NewConversationForm extends FormBase {
         '#value' => $name,
         '#attributes' => ['data-aculta-chip-name' => '', 'data-portal-ui' => 'new-conversation-chip-name'],
       ],
-      'remove' => [
-        '#type' => 'html_tag',
-        '#tag' => 'button',
-        '#value' => '×',
-        '#attributes' => [
-          'type' => 'button',
+      'remove' => PortalLinkElement::build(
+        '×',
+        Url::fromRoute('aculta_messenger.new_conversation_group', [], ['query' => ['members' => $remaining]]),
+        [
           'data-aculta-chip-remove' => '',
           'data-portal-ui' => 'new-conversation-chip-remove',
           'aria-label' => (string) $this->t('Remover @name', ['@name' => $name]),
         ],
-      ],
+      ),
       'member' => ['#type' => 'hidden', '#name' => 'members[]', '#value' => (string) $user->id()],
     ];
   }

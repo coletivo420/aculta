@@ -139,6 +139,12 @@
               template.innerHTML = html;
               Drupal.detachBehaviors(content, null, 'unload');
               content.replaceChildren(template.content.cloneNode(true));
+              content.querySelectorAll('[data-aculta-nojs-search]').forEach((form) => {
+                form.hidden = true;
+              });
+              content.querySelectorAll('[data-aculta-js-only]').forEach((element) => {
+                element.hidden = false;
+              });
               Drupal.attachBehaviors(content);
             })
             .catch((error) => {

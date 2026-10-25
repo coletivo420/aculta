@@ -1,3 +1,18 @@
+## 0.1.1-dev.374 — composição de grupo sem JavaScript
+
+A ação de iniciar conversa agora tem link nativo. A busca GET conserva os
+destinatários já escolhidos; cada resultado abre o formulário de grupo com os
+selecionados, e cada chip oferece remoção por link. O formulário POST de primeira
+mensagem mantém suas validações existentes. No drawer, JavaScript oculta a busca
+de fallback e reativa a busca dinâmica existente.
+
+Validação: Unit Messenger **372/4.126 PASS**; PHPCS Drupal/DrupalPractice passa
+nos arquivos novos e no Form, e DrupalPractice passa no `MessagesController`;
+no relatório Drupal preexistente do controller, os erros/avisos caíram de
+94/65 para 92/63. PHP lint, `node --check` e `git diff --check` PASS. Firefox/
+Runtime não executados: o código está isolado na worktree de publicação e os
+updates Alpha do Runtime continuam pendentes. Nenhuma conversa foi criada.
+
 ## 0.1.1-dev.373 — higiene dos post-updates
 
 O docblock do post-update de migração das conquistas Game passou a seguir o

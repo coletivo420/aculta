@@ -532,23 +532,19 @@ final class MessagesController extends ControllerBase {
     ) + ['#weight' => -100];
   }
 
-  /**
-   * "Iniciar nova conversa": the first action of the first window.
-   *
-   * A button element: links and html_tag are rendered as strings in their pre-render, outside the theme
-   * hooks that map data-portal-ui tokens; the button goes through the input theme, which does.
-   */
+  /** Starts the shared new-conversation flow from the inbox. */
   private function newConversationAction(): array {
-    return ['new_conversation' => [
-      '#type' => 'button',
-      '#value' => $this->translation->translate('Iniciar nova conversa'),
-      '#attributes' => [
-        'type' => 'button',
-        'data-aculta-conversation-url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(),
-        'data-portal-ui' => 'new-conversation-link',
-      ],
-      '#weight' => -100,
-    ]];
+    return [
+      'new_conversation' => PortalLinkElement::build(
+        $this->translation->translate('Iniciar nova conversa'),
+        Url::fromRoute('aculta_messenger.new_conversation'),
+        [
+          'class' => 'btn btn-primary aculta-messenger-new-conversation',
+          'data-aculta-conversation-url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(),
+          'data-portal-ui' => 'new-conversation-link',
+        ],
+      ) + ['#weight' => -100],
+    ];
   }
 
   /**

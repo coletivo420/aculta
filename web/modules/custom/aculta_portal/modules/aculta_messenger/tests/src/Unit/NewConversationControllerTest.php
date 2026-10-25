@@ -11,7 +11,9 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\GeneratedUrl;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Drupal\Tests\UnitTestCase;
@@ -23,6 +25,8 @@ use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Tests that private-conversation search returns only eligible recipients.
@@ -30,6 +34,73 @@ use PHPUnit\Framework\Attributes\Group;
 #[CoversClass(NewConversationController::class)]
 #[Group('aculta_messenger')]
 final class NewConversationControllerTest extends UnitTestCase {
+
+  /**
+   * Native GET search and result links preserve selected group recipients.
+   */
+  public function testProgressiveSearchCarriesRecipientIdsWithoutJavaScript(): void {
+    $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+    $urlGenerator->method('generateFromRoute')->willReturnCallback(
+      static function (string $route, array $parameters = [], array $options = [], bool $collectMetadata = FALSE): string|GeneratedUrl {
+        $path = match ($route) {
+          'aculta_messenger.new_conversation' => '/mensagens/nova',
+          'aculta_messenger.new_conversation_group' => '/mensagens/nova/grupo/painel',
+          default => '/mensagens',
+        };
+        $query = http_build_query($options['query'] ?? []);
+        $url = $path . ($query === '' ? '' : '?' . $query);
+        return $collectMetadata ? (new GeneratedUrl())->setGeneratedUrl($url) : $url;
+      },
+    );
+    $previousContainer = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $container = new ContainerBuilder();
+    $container->set('url_generator', $urlGenerator);
+    \Drupal::setContainer($container);
+    try {
+      $account = $this->createMock(AccountInterface::class);
+      $recipient = $this->user(85);
+      $controller = new NewConversationController(
+        $this->createMock(EntityTypeManagerInterface::class),
+        $account,
+        $this->createMock(UserDataInterface::class),
+        $this->createMock(PrivateMessageBanManagerInterface::class),
+        $this->createMock(PrivateMessageMapperInterface::class),
+        $this->createMock(FriendshipManagerInterface::class),
+        $this->createMock(FormBuilderInterface::class),
+        $this->createMock(RendererInterface::class),
+        $this->createMock(PublicMemberIdentityInterface::class),
+        new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      );
+      $controller->setStringTranslation($this->getStringTranslationStub());
+      $memberResults = new \ReflectionMethod(NewConversationController::class, 'memberResults');
+      $results = $memberResults->invoke($controller, [['user' => $recipient, 'name' => 'membro-85']], [84]);
+      $link = $results['#items'][0];
+      self::assertSame(
+        '/mensagens/nova/grupo/painel?members%5B0%5D=84&amp;members%5B1%5D=85',
+        (string) $link['#element_attributes']->offsetGet('href'),
+      );
+      $atLimit = $memberResults->invoke($controller, [['user' => $recipient, 'name' => 'membro-85']], range(1, 10));
+      self::assertSame(
+        'Você atingiu o limite de 10 pessoas nesta conversa.',
+        (string) $atLimit['#plain_text'],
+      );
+
+      $searchForm = new \ReflectionMethod(NewConversationController::class, 'nativeSearchForm');
+      $form = $searchForm->invoke($controller, 'membro', [84]);
+      self::assertSame('get', $form['#method']);
+      self::assertSame('/mensagens/nova', $form['#action']);
+      self::assertSame('84', $form['member_0']['#value']);
+      self::assertSame('members[]', $form['member_0']['#name']);
+    }
+    finally {
+      if ($previousContainer instanceof ContainerInterface) {
+        \Drupal::setContainer($previousContainer);
+      }
+      else {
+        \Drupal::unsetContainer();
+      }
+    }
+  }
 
   /**
    * Excludes accounts without inbox permissions and friend-only nonfriends.

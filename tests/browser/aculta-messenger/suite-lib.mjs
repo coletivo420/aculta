@@ -54,11 +54,11 @@ export function setup() {
 export class Browser {
   constructor() { this.sid = null; this.width = 1280; this.height = 800; this.openOptionsLabel = null; }
 
-  async open(name, { width = 1280, height = 800 } = {}) {
+  async open(name, { width = 1280, height = 800, javascript = true } = {}) {
     await this.close();
     this.width = width; this.height = height;
     const host = new URL(BASE).hostname;
-    const { sessionId } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, 'moz:firefoxOptions': { prefs: { 'network.dns.localDomains': `${host},conta.${host}` } } } } });
+    const { sessionId } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, 'moz:firefoxOptions': { prefs: { 'network.dns.localDomains': `${host},conta.${host}`, 'javascript.enabled': javascript } } } } });
     this.sid = sessionId;
     await wd('POST', this.p('/window/rect'), { width, height });
     await wd('POST', this.p('/url'), { url: oneTimeLogin(name) });
