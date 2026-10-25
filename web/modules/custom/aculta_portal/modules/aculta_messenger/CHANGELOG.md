@@ -1,3 +1,12 @@
+## 0.1.1-dev.375 — caracterização do fallback de grupo por GET
+
+`NewConversationControllerTest` agora executa `composeGroup()` com uma
+requisição GET real e verifica que IDs válidos são deduplicados e restaurados
+no estado do formulário POST, sem enviar mensagem. Unit focal: **5 testes / 60
+assertions PASS**. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS. O teste visual sem JavaScript e o envio autenticado continuam pendentes;
+nenhuma conversa ou dado do Runtime foi criado.
+
 ## 0.1.1-dev.374 — composição de grupo sem JavaScript
 
 A ação de iniciar conversa agora tem link nativo. A busca GET conserva os
