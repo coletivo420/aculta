@@ -17,10 +17,10 @@ interface AvisoDigestProviderInterface {
   /**
    * Returns summary rows for one recipient, revalidating current access.
    *
-   * Each returned row includes its provider-owned `delivery_id`, which is used
-   * to acknowledge only the entries included in the successfully sent email.
+   * Each row includes a representative provider-owned `delivery_id`; grouped
+   * rows may include the exact `delivery_ids` to acknowledge safely.
    *
-   * @return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int}>
+   * @return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}>
    *   Digest rows with their provider-owned delivery IDs.
    */
   public function digestRowsFor(int $uid): array;
@@ -31,7 +31,7 @@ interface AvisoDigestProviderInterface {
    * @param int $uid
    *   Recipient account ID.
    * @param int[] $deliveryIds
-   *   IDs returned by digestRowsFor() for this recipient.
+   *   All IDs represented by digestRowsFor() rows for this recipient.
    */
   public function markDigestSent(int $uid, array $deliveryIds): void;
 

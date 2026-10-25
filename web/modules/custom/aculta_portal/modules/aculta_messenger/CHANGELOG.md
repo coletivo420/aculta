@@ -1,3 +1,9 @@
+## 0.1.1-dev.248 — agrupar mensagens por remetente no resumo semanal
+
+O resumo semanal de Mensagens Privadas agora agrega os avisos por remetente, com quantidade em uma única linha. O manifesto conserva cada ID de origem para reconhecer somente os itens realmente incluídos após retry; novas mensagens recebidas durante o transporte permanecem pendentes. A linha não repete contador/título e nunca inclui o conteúdo da conversa.
+
+Validação: Unit Messenger **235 testes / 1.767 assertions PASS**; PHPCS Drupal/DrupalPractice nos arquivos alterados e diff check PASS. Kernel não executado sem `SIMPLETEST_DB`; Runtime/SMTP não executados.
+
 ## 0.1.1-dev.247 — centralizar e-mail privado e resumo semanal sem conteúdo
 
 Preferências de Mensagens Privadas passam a ser próprias do Messenger, com migração incremental da configuração e das escolhas legadas do Private Message; escolhas Messenger existentes são preservadas e a chave individual antiga é removida após cópia. A pessoa escolhe aviso genérico direto, resumo semanal ou sem e-mail. O resumo reutiliza os registros Message existentes, mostra remetente e link para a inbox, nunca o conteúdo da conversa, revalida acesso e bloqueios, respeita data âncora administrativa e intervalo de sete dias por conta. O digest privado não depende do opt-in de resumo diário das demais origens. Sem execução do update no Runtime.

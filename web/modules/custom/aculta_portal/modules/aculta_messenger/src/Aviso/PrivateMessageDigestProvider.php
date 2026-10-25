@@ -87,7 +87,7 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
       $this->discardDigest($uid);
       return [];
     }
-    $rows = [];
+    $groups = [];
     foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($this->pendingQuery($uid)->execute()) as $notice) {
       if (!$notice instanceof MessageInterface || (int) $notice->getOwnerId() !== $uid) {
         continue;
@@ -114,11 +114,27 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
         $this->markRecordsDone([$notice]);
         continue;
       }
+      $groups[$senderId]['name'] = $sender->getDisplayName();
+      $groups[$senderId]['delivery_ids'][] = (int) $notice->id();
+    }
+    ksort($groups, SORT_NUMERIC);
+    $rows = [];
+    foreach ($groups as $group) {
+      $deliveryIds = array_values(array_unique($group['delivery_ids']));
+      sort($deliveryIds, SORT_NUMERIC);
+      $count = count($deliveryIds);
+      $title = $count === 1
+        ? $this->t('Você tem uma nova mensagem de @name.', ['@name' => $group['name']])
+        : $this->t('Você tem @count novas mensagens de @name.', [
+          '@count' => $count,
+          '@name' => $group['name'],
+        ]);
       $rows[] = [
         'tipo' => AvisoPreferencias::EMAIL_PRIVATE_MESSAGES,
-        'titulo' => (string) $this->t('Você tem uma nova mensagem de @name.', ['@name' => $sender->getDisplayName()]),
-        'quantidade' => 1,
-        'delivery_id' => (int) $notice->id(),
+        'titulo' => (string) $title,
+        'quantidade' => $count,
+        'delivery_id' => reset($deliveryIds),
+        'delivery_ids' => $deliveryIds,
       ];
     }
     return $rows;

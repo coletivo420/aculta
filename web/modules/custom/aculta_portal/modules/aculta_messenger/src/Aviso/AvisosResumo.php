@@ -311,6 +311,7 @@ final class AvisosResumo {
         return $key($a) <=> $key($b);
       });
       $eligibleRowsByDeliveryId = [];
+      $seenDeliveryIds = [];
       foreach ($providerRows as $row) {
         if (!is_array($row) || !is_int($row['delivery_id'] ?? NULL) || $row['delivery_id'] < 1) {
           continue;
@@ -323,12 +324,32 @@ final class AvisosResumo {
         if ($this->preferencias->emailMode($uid, $row['tipo']) !== AvisoPreferencias::EMAIL_DIGEST) {
           continue;
         }
-        // Provider implementations are extensible and may join through more
-        // than one relation. A delivery ID represents one persisted notice;
-        // never repeat that notice in the email or its idempotency manifest.
-        $eligibleRowsByDeliveryId[$row['delivery_id']] ??= $row;
+        $deliveryIds = $row['delivery_ids'] ?? [$row['delivery_id']];
+        if (!is_array($deliveryIds) || $deliveryIds === []) {
+          continue;
+        }
+        $validDeliveryIds = array_values(array_unique(array_filter(
+          $deliveryIds,
+          static fn(mixed $deliveryId): bool => is_int($deliveryId) && $deliveryId > 0,
+        )));
+        sort($validDeliveryIds, SORT_NUMERIC);
+        if (count($validDeliveryIds) !== count($deliveryIds)
+          || !in_array($row['delivery_id'], $validDeliveryIds, TRUE)
+          || array_intersect($validDeliveryIds, array_keys($seenDeliveryIds)) !== []) {
+          continue;
+        }
+        // Grouped provider rows retain every source ID so acknowledgement is
+        // exact even if another event arrives while the email is in flight.
+        $eligibleRowsByDeliveryId[$row['delivery_id']] = [
+          'row' => $row,
+          'delivery_ids' => $validDeliveryIds,
+        ];
+        foreach ($validDeliveryIds as $deliveryId) {
+          $seenDeliveryIds[$deliveryId] = TRUE;
+        }
       }
-      $eligibleRows = array_values($eligibleRowsByDeliveryId);
+      $eligibleGroups = array_values($eligibleRowsByDeliveryId);
+      $eligibleRows = array_column($eligibleGroups, 'row');
       if ($eligibleRows === []) {
         // Preferences can change after a provider queued a digest row. Clear
         // those pending records instead of sending after the user opted out
@@ -340,15 +361,18 @@ final class AvisosResumo {
       $providersWithRows[] = [
         'provider' => $provider,
         'provider_id' => $this->digestProviderId($provider),
-        'manifest_rows' => array_map(static fn(array $row): array => [
-          'tipo' => (string) ($row['tipo'] ?? ''),
-          'delivery_id' => (int) $row['delivery_id'],
-          'quantidade' => (int) ($row['quantidade'] ?? 1),
-        ], $eligibleRows),
-        'delivery_ids' => array_values(array_unique(array_map(
-          static fn(array $row): int => (int) ($row['delivery_id'] ?? 0),
-          $eligibleRows,
-        ))),
+        'manifest_rows' => array_merge(...array_map(static fn(array $group): array => array_map(
+          static fn(int $deliveryId): array => [
+            'tipo' => (string) ($group['row']['tipo'] ?? ''),
+            'delivery_id' => $deliveryId,
+            'quantidade' => 1,
+          ],
+          $group['delivery_ids'],
+        ), $eligibleGroups)),
+        'delivery_ids' => array_values(array_unique(array_merge(...array_map(
+          static fn(array $group): array => $group['delivery_ids'],
+          $eligibleGroups,
+        )))),
       ];
     }
     if ($linhas === []) {

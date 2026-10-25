@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Mail;
 
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
 use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_mailer\Type\MailTypeInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
@@ -73,6 +74,10 @@ final class AvisosResumoMailType implements MailTypeInterface {
     foreach ($linhas as $linha) {
       $tipo = (string) ($linha['tipo'] ?? '');
       if ($tipo === 'aprendizagem') {
+        $texto[] = (string) ($linha['titulo'] ?? '');
+        continue;
+      }
+      if ($tipo === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES) {
         $texto[] = (string) ($linha['titulo'] ?? '');
         continue;
       }

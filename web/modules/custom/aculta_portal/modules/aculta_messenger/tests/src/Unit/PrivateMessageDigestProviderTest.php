@@ -11,10 +11,10 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\message\MessageInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserDataInterface;
-use Drupal\message\MessageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -69,6 +69,7 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->with(FALSE)->willReturnSelf();
     $query->method('condition')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
     $query->method('execute')->willReturn($ids);
     return $query;
   }

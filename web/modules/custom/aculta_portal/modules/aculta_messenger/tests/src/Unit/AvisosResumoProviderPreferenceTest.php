@@ -425,9 +425,15 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $provider->method('digestProviderId')->willReturn('loja');
     $provider->method('pendingRecipientIds')->willReturn([27]);
     $provider->method('digestRowsFor')->with(27)->willReturn([
-      ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1, 'delivery_id' => 501],
+      [
+        'tipo' => 'loja',
+        'titulo' => 'Duas mensagens agrupadas',
+        'quantidade' => 2,
+        'delivery_id' => 501,
+        'delivery_ids' => [501, 502],
+      ],
     ]);
-    $provider->expects(self::once())->method('markDigestSent')->with(27, [501]);
+    $provider->expects(self::once())->method('markDigestSent')->with(27, [501, 502]);
     $correlations = [];
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects(self::exactly(2))

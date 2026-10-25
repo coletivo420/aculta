@@ -50,4 +50,16 @@ final class AvisosResumoMailTypeTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Private-message digests contain one compact line without duplicate count.
+   */
+  public function testPrivateMessageDigestLineDoesNotRepeatCount(): void {
+    self::assertSame(
+      'Você tem 3 novas mensagens de Ana.',
+      AvisosResumoMailType::formatLinhas([
+        ['tipo' => 'mensagens_privadas', 'titulo' => 'Você tem 3 novas mensagens de Ana.', 'quantidade' => 3],
+      ]),
+    );
+  }
+
 }
