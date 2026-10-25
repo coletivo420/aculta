@@ -18,7 +18,6 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\State\StateInterface;
-use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Psr\Log\NullLogger;
 use Drupal\Tests\UnitTestCase;
@@ -222,14 +221,23 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
    * Creates a thread fixture that can fail during deletion.
    */
   private function thread(object $state, bool $failDeletion = FALSE, int $messageId = 700, int $threadId = 17): PrivateMessageThreadInterface {
-    $privateMessage = $this->createMock(PrivateMessageInterface::class);
-    $privateMessage->method('id')->willReturn((string) $messageId);
     $updated = $this->createMock(FieldItemListInterface::class);
     $updated->method('__get')->with('value')->willReturn(0);
+    $privateMessages = $this->createMock(FieldItemListInterface::class);
+    $privateMessages->method('getValue')->willReturn([
+      ['target_id' => $messageId],
+      ['target_id' => '0'],
+      ['target_id' => $messageId],
+      ['malformed' => 'ignored'],
+    ]);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('id')->willReturn((string) $threadId);
-    $thread->method('get')->with('updated')->willReturn($updated);
-    $thread->method('getMessages')->with(TRUE)->willReturn([$privateMessage]);
+    $thread->method('get')->willReturnCallback(static fn(string $field): FieldItemListInterface => match ($field) {
+      'updated' => $updated,
+      'private_messages' => $privateMessages,
+      default => throw new \InvalidArgumentException('Unexpected thread field: ' . $field),
+    });
+    $thread->expects(self::never())->method('getMessages');
     $thread->expects(self::once())->method('delete')->willReturnCallback(static function () use ($state, $failDeletion): void {
       $state->thread_deleted = TRUE;
       if ($failDeletion) {
@@ -245,7 +253,13 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
   private function noticeStorage(object $state): EntityStorageInterface {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
-    $query->method('condition')->willReturnSelf();
+    $query->method('condition')->willReturnCallback(static function (string $field, mixed $value, ?string $operator = NULL) use ($query): QueryInterface {
+      if ($field === 'field_aculta_messenger_source_pm') {
+        self::assertSame([700], $value, 'Retention extracts unique valid IDs from the thread reference field.');
+        self::assertSame('IN', $operator);
+      }
+      return $query;
+    });
     $query->method('execute')->willReturn([90]);
     $notification = $this->createMock(EntityInterface::class);
     $storage = $this->createMock(EntityStorageInterface::class);

@@ -1,3 +1,13 @@
+## 0.1.1-dev.236 — evitar hidratar o histórico na retenção
+
+A limpeza de conversas agora obtém IDs das referências `private_messages` da thread sem carregar cada entidade e corpo
+de mensagem. IDs inválidos e repetidos são descartados antes de localizar avisos vinculados; a exclusão continua usando
+o ciclo de vida do Private Message e a mesma transação para manter rollback cruzado.
+
+Validação: `PrivateMessageRetentionHooksTest` **3 testes / 64 assertions PASS**; Kernel MariaDB dedicado
+`PrivateMessageRetentionKernelTest` **3/42 PASS** (10 deprecações de Core/contrib); PHPCS Drupal/DrupalPractice e PHP
+lint PASS. Runtime e limpeza de dados operacionais não executados.
+
 ## 0.1.1-dev.235 — rejeitar payload estruturado como primeira mensagem
 
 O formulário de nova conversa agora aceita somente uma string não vazia para a primeira mensagem. Arrays ou outros tipos

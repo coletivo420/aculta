@@ -86,10 +86,7 @@ final class PrivateMessageRetentionHooks {
           // messages, so notification records must be deleted only after that
           // succeeds. The transaction restores both sides if either deletion
           // fails.
-          $messageIds = array_values(array_map(
-            static fn($message): int => (int) $message->id(),
-            $thread->getMessages(TRUE),
-          ));
+          $messageIds = $this->privateMessageIds($thread);
           $thread->delete();
           $this->deleteNotificationsFor($messageIds);
           $transaction->commitOrRelease();
@@ -137,6 +134,32 @@ final class PrivateMessageRetentionHooks {
     if ($notificationIds !== []) {
       $storage->delete($storage->loadMultiple($notificationIds));
     }
+  }
+
+  /**
+   * Returns referenced Private Message IDs without hydrating message entities.
+   *
+   * Retention only needs source IDs for notification cleanup. Calling
+   * `getMessages(TRUE)` would load every message entity and body in the thread
+   * before deletion, which can consume excessive memory for long histories.
+   *
+   * @return int[]
+   *   Unique positive Private Message entity IDs.
+   */
+  private function privateMessageIds(PrivateMessageThreadInterface $thread): array {
+    $items = $thread->get('private_messages')->getValue();
+    if (!is_array($items)) {
+      return [];
+    }
+
+    $ids = [];
+    foreach ($items as $item) {
+      $id = is_array($item) ? filter_var($item['target_id'] ?? NULL, FILTER_VALIDATE_INT) : FALSE;
+      if ($id !== FALSE && $id > 0) {
+        $ids[$id] = $id;
+      }
+    }
+    return array_values($ids);
   }
 
 }
