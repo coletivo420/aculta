@@ -201,6 +201,10 @@ final class ConversationRelationshipForm extends FormBase {
       return;
     }
     $targetId = (int) $target->id();
+    if (!$this->memberActionAuthorized($formState, $target)) {
+      $formState->set('message', (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
+      return;
+    }
     // Form API falls back to the first button when the posted button is missing. An action runs only when the
     // button it names was actually posted, so a request without it can never cancel or accept anything.
     $action = (string) ($formState->getTriggeringElement()['#name'] ?? '');
@@ -345,6 +349,38 @@ final class ConversationRelationshipForm extends FormBase {
     }
     $user = $this->entityTypes->getStorage('user')->load($uid);
     return $user instanceof UserInterface && $user->isActive() ? $user : NULL;
+  }
+
+  /**
+   * Revalidates account and thread access before a member action.
+   */
+  private function memberActionAuthorized(FormStateInterface $formState, UserInterface $target): bool {
+    if ($formState->get('member_box') !== TRUE) {
+      return TRUE;
+    }
+
+    $uid = (int) $this->currentUser->id();
+    $targetUid = (int) $target->id();
+    $threadId = (int) $formState->get('thread_id');
+    if (!$this->currentUser->isAuthenticated() || $uid < 1 || $targetUid < 1 || $targetUid === $uid || $threadId < 1) {
+      return FALSE;
+    }
+
+    $userStorage = $this->entityTypes->getStorage('user');
+    $actor = $userStorage->load($uid);
+    $freshTarget = $userStorage->load($targetUid);
+    if (!$actor instanceof UserInterface || !$actor->isActive()
+      || !$actor->hasPermission('use private messaging system')
+      || !$actor->hasPermission('access user profiles')
+      || !$freshTarget instanceof UserInterface || !$freshTarget->isActive()) {
+      return FALSE;
+    }
+
+    $thread = $this->entityTypes->getStorage('private_message_thread')->loadUnchanged($threadId);
+    return $thread instanceof PrivateMessageThreadInterface
+      && $thread->isMember($uid)
+      && $thread->isMember($targetUid)
+      && $thread->access('view', $actor, TRUE)->isAllowed();
   }
 
   private function button(string $name, $label, string $token = 'conversation-action'): array {

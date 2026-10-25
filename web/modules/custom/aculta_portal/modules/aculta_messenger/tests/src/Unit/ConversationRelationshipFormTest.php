@@ -157,4 +157,79 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     );
   }
 
+  /**
+   * A removed participant cannot change relationship state.
+   */
+  public function testMemberActionRechecksThreadMembershipBeforeMutation(): void {
+    $this->assertMemberActionDenied(FALSE, TRUE);
+  }
+
+  /**
+   * A member whose thread access was revoked cannot change relationship state.
+   */
+  public function testMemberActionRechecksThreadAccessBeforeMutation(): void {
+    $this->assertMemberActionDenied(TRUE, FALSE);
+  }
+
+  /**
+   * Fails member actions when the target or thread is no longer eligible.
+   */
+  private function assertMemberActionDenied(bool $targetIsMember, bool $viewAllowed): void {
+    $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('id')->willReturn(42);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $actor = $this->createMock(UserInterface::class);
+    $actor->method('isActive')->willReturn(TRUE);
+    $actor->method('hasPermission')->willReturn(TRUE);
+    $target = $this->createMock(UserInterface::class);
+    $target->method('id')->willReturn('84');
+    $target->method('isActive')->willReturn(TRUE);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->willReturnMap([
+      [42, $actor],
+      [84, $target],
+    ]);
+
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('isMember')->willReturnCallback(static fn(int|string $uid): bool => (int) $uid === 42
+      || ($targetIsMember && (int) $uid === 84));
+    $thread->expects($targetIsMember ? self::once() : self::never())
+      ->method('access')->with('view', $actor, TRUE)
+      ->willReturn($viewAllowed ? AccessResult::allowed() : AccessResult::forbidden());
+    $threadStorage = $this->createMock(EntityStorageInterface::class);
+    $threadStorage->expects(self::once())->method('loadUnchanged')->with(123)->willReturn($thread);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnMap([
+      ['user', $userStorage],
+      ['private_message_thread', $threadStorage],
+    ]);
+    $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
+    $banManager->expects(self::never())->method('banUser');
+    $form = new ConversationRelationshipForm(
+      $this->createMock(FriendshipManagerInterface::class),
+      $banManager,
+      $account,
+      $entities,
+      $this->createMock(PrivateMessageServiceInterface::class),
+      $this->createMock(CacheTagsInvalidatorInterface::class),
+      $this->createMock(CsrfTokenGenerator::class),
+    );
+    (new \ReflectionProperty(FormBase::class, 'stringTranslation'))
+      ->setValue($form, $this->getStringTranslationStub());
+
+    $state = new FormState();
+    $state->set('member_box', TRUE);
+    $state->set('thread_id', 123);
+    $state->set('target', 84);
+    $state->setTriggeringElement(['#name' => 'ban']);
+    $state->setUserInput(['ban' => 'Bloquear']);
+    $build = [];
+    $form->submitForm($build, $state);
+
+    self::assertSame(
+      'Não foi possível concluir a ação. Tente novamente.',
+      $state->get('message'),
+    );
+  }
+
 }

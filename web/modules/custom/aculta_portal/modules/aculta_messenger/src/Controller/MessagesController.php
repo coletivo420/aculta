@@ -351,6 +351,7 @@ final class MessagesController extends ControllerBase {
     $state = new FormState();
     $state->set('target', (int) $user->id());
     $state->set('member_box', TRUE);
+    $state->set('thread_id', (int) $thread->id());
     $state->set('post_url', Url::fromRoute('aculta_messenger.member_relationship', [
       'private_message_thread' => $thread->id(),
       'user' => $user->id(),

@@ -1,3 +1,9 @@
+## 0.1.1-dev.255 — revalidar ações de relacionamento na thread
+
+Os formulários de amizade e bloqueio agora carregam o ID da thread como estado interno do servidor e, antes da ação, recarregam conta/alvo/thread e revalidam conta ativa, permissões, membership de ambas as pessoas e autorização `view`. A ação falha genericamente se o acesso mudou desde a checagem de rota.
+
+Validação: `ConversationRelationshipFormTest` **5/40 PASS**; Unit Messenger **256/1.989 PASS**; PHPCS Drupal/DrupalPractice do teste e gate Drupal 11+ (**1.155 checks**) PASS. O formulário mantém baseline PHPCS **15 erros/23 avisos**, sem aumento. Browser, Kernel e Runtime não executados.
+
 ## 0.1.1-dev.254 — revalidar autorização ao limpar histórico
 
 A confirmação de limpeza agora revalida conta autenticada e ativa, membership e `thread->access('view', ..., TRUE)` imediatamente antes de alterar o histórico. A etapa inicial permanece somente confirmatória e não altera mensagens. O teste cobre acesso revogado e ausência de mutação antes da confirmação.
