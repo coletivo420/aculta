@@ -24,8 +24,9 @@ O Drupal Core permite subdiretórios arbitrários dentro de `components/`.
 
 Cada componente é experimental, possui schema, Twig, CSS e duas stories
 estáticas. Não consulta entidades, decide acesso, cria links ou altera Form
-API. Nenhum consumidor Studio foi migrado; a integração pertence à S-R4.
-Requer verificação de descoberta SDC, render real e responsividade.
+API. O Studio dev.21 passou a consumir os quatro SDCs via
+`#type: component` e slots do Core; descoberta de SDC,
+render real e responsividade ainda exigem homologação.
 
 ## 0.1.0
 

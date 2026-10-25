@@ -2,6 +2,16 @@
 
 **MAG 0.5-R · 2026-10-22 · Planejamento, sem alteração funcional ou homologação.**
 
+### Meu Perfil Studio — S-R4 em SDCs (dev.21)
+
+A experiência `/studio/perfil` consome os quatro SDCs de
+apresentação do ACULTA420. Apelido, biografia, redes, visibilidade
+e autorizações continuam no `aculta_user`, imagem pelo
+`aculta_image`, e composição/rotas na `aculta_studio`.
+Nenhum shell ou storage paralelo foi criado, e o perfil público
+em MAIN não foi alterado. Os novos Unit são código escrito, não
+resultado executado; Kernel, UI Patterns, Firefox/Runtime pendentes.
+
 ### Minha Conta e Meu Perfil — alcance da composição Studio (dev.20)
 
 S-R3-B3 acrescentou `/studio/conta/pedidos`, `/studio/conta/apoio` e

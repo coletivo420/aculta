@@ -4,14 +4,16 @@ Tema público e sistema de componentes da plataforma Drupal da ACULTA. Implement
 a apresentação; não é fonte de verdade de identidade, autenticação, Commerce,
 LMS, Domains, conteúdo ou persistência.
 
-## Meu Perfil — preparação visual 0.7.0-dev.1
+## Meu Perfil — SDCs experimentais 0.7.0-dev.2
 
 Quatro SDCs experimentais para o editor privado (`profile-editor`,
 `profile-identity`, `profile-bio`, `profile-social`) foram criados
-com schema, Twig, CSS e duas stories por componente. Nenhum foi ligado
-aos formulários ou render arrays do Studio; sua integração funcional
-é a etapa posterior S-R4, com gates de acesso, cache e navegador
-ainda pendentes.
+com schema, Twig, CSS e duas stories por componente. Esses componentes agora são consumidos pela tela `/studio/perfil`
+no Studio dev.21, por render arrays com slots do Core. A versão do
+tema permanece a mesma; gates de descoberta, cache, acesso e
+Firefox ESR/X11 seguem pendentes. O teste Kernel de descoberta,
+composição e escape dos quatro SDCs foi adicionado, mas ainda
+não foi executado. A versão 0.7.0-dev.2 não equivale à homologação.
 
 ## Fronteira de arquitetura
 
