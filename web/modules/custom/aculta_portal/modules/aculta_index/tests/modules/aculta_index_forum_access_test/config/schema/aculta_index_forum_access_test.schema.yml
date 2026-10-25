@@ -1,0 +1,8 @@
+aculta_forum.settings:
+  type: config_object
+  label: 'Forum access settings used by the Index Kernel fixture'
+  mapping:
+    restricted_group_type:
+      type: string
+      label: 'Group type used for restricted forums'
+

@@ -1,0 +1,46 @@
+report-only:
+  enable: true
+  directives:
+    object-src:
+      base: none
+    script-src:
+      base: self
+    style-src:
+      base: self
+    worker-src:
+      base: self
+    base-uri:
+      base: self
+    form-action:
+      base: self
+    frame-ancestors:
+      base: self
+  reporting:
+    plugin: reporting
+    options:
+      endpoint: default
+enforce:
+  enable: false
+  directives:
+    object-src:
+      base: none
+    script-src:
+      base: any
+      flags:
+        - unsafe-inline
+        - report-sample
+    style-src:
+      base: any
+      flags:
+        - unsafe-inline
+        - report-sample
+    worker-src:
+      base: self
+    base-uri:
+      base: self
+    form-action:
+      base: self
+    frame-ancestors:
+      base: self
+  reporting:
+    plugin: none

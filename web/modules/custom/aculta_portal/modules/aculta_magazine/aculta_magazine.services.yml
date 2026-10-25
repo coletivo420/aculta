@@ -1,16 +1,17 @@
 services:
+  Drupal\aculta_magazine\Hook\MagazineNoticeEventPublisher:
+    class: Drupal\aculta_magazine\Hook\MagazineNoticeEventPublisher
+    arguments: ['@flag', '@aculta_portal.domain_purpose', '@entity_type.manager', '@aculta_messenger.notice_event_publisher', '@config.factory', '@datetime.time']
+
+  aculta_magazine.content_index_provider:
+    class: Drupal\aculta_magazine\ContentIndex\MagazineContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }
+
+  aculta_magazine.gallery_reference_migrator:
+    class: Drupal\aculta_magazine\Migration\GalleryReferenceMigrator
+    arguments: ['@entity_type.manager', '@entity_field.manager']
+
   aculta_magazine.post_presentation:
     class: Drupal\aculta_magazine\Presentation\PostPresentation
     arguments: ['@date.formatter', '@entity_type.manager', '@aculta_portal.domain_purpose']
-  aculta_magazine.forum_section_resolver:
-    class: Drupal\aculta_magazine\Forum\ForumSectionResolver
-    arguments: ['@entity_type.manager']
-  aculta_magazine.forum_topic_sync:
-    class: Drupal\aculta_magazine\Forum\ForumTopicSync
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@aculta_magazine.forum_section_resolver']
-  aculta_magazine.forum_opening_post:
-    class: Drupal\aculta_magazine\Presentation\ForumOpeningPost
-    arguments: ['@aculta_portal.domain_purpose', '@aculta_magazine.forum_topic_sync', '@aculta_image.render']
-  aculta_magazine.publication_type_converter:
-    class: Drupal\aculta_magazine\Forum\PublicationTypeConverter
-    arguments: ['@entity_type.manager', '@aculta_magazine.forum_topic_sync', '@database']

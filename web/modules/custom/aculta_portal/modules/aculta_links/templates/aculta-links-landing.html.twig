@@ -1,0 +1,9 @@
+<main aria-labelledby="aculta-links-landing-title">
+  <h1 id="aculta-links-landing-title">{{ title }}</h1>
+  {% if description %}
+    <p>{{ description }}</p>
+  {% endif %}
+  {% if has_links %}
+    {{ links }}
+  {% endif %}
+</main>

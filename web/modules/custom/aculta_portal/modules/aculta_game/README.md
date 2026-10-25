@@ -1,6 +1,8 @@
 # ACULTA Game — conquistas e missões
 
-Versão atual: `0.1.0-dev.7` — G5.2, com apresentação, avisos e e-mail de conquistas.
+Versão atual: `0.1.0-dev.17` — primeira publicação de Comment ACULTA vigente ou
+de `ForumPost` público pode conceder uma vez a conquista existente; migração,
+sincronização, autoria histórica e outros contextos permanecem inelegíveis.
 
 Submódulo opcional `aculta_game`, integrante do `aculta_portal`.
 Decisões de produto registradas em **2026-10-15**. G1 fornece a extensão instalável;
@@ -13,6 +15,14 @@ em [EXECUCAO.md](docs/EXECUCAO.md). G4 habilita três missões unitárias com pr
 Reconhecer contribuições culturais, comunitárias e de aprendizagem por conquistas
 e missões. Integrar as fontes reais do Portal e apresentar progresso compreensível,
 sem ranking, pontuação competitiva, XP/níveis ou benefícios financeiros.
+
+O trigger existente de primeira resposta publicada agora aceita Comments
+ACULTA vigentes e posts revisionáveis do Growroom. O Game observa a publicação
+pelos hooks genéricos de entidade e não adiciona dependência de módulo ao Fórum;
+migração, autoria histórica e outros contextos não recebem conquistas
+contemporâneas. Ver
+[`docs/ARQUITETURA.md`](docs/ARQUITETURA.md) e
+[`docs/PESQUISA.md`](docs/PESQUISA.md).
 
 **Conquistas são públicas por padrão**, com opção de ocultar, escolher quais ficam
 em destaque e organizar sua apresentação. A opção de privacidade da pessoa tem
@@ -104,8 +114,9 @@ podem ser revogadas. Não são concedidos papéis, descontos, moeda ou privilég
 As definições pertencem à Config API de User, não ao tema. Remover Game preserva
 concessões, definições e privacidade do User. O editor organiza identificação,
 imagem e condições em grupos; remoção da imagem exige confirmação e exclui o
-arquivo enviado quando não há outro uso. Conquistas novas geram aviso dispensável
-no Messenger e e-mail enfileirado, com preferência individual de recebimento.
+arquivo enviado quando não há outro uso. Conquistas novas geram aviso persistente na central compartilhada do Messenger,
+com leitura individual; o e-mail segue enfileirado e mantém a preferência atual
+até a migração de sua política.
 Entrega de e-mail depende do cron e da configuração do ambiente.
 
 Para arte de conquista, recomendamos imagem quadrada de **512 × 512 px**. O

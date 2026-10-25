@@ -1,7 +1,0 @@
-{# Project list rows inside the content-grid pattern; each row keeps its presenter. #}
-{% set items %}
-  {% for row in rows %}
-    <div{{ row.attributes.addClass('views-row') }}>{{ row.content }}</div>
-  {% endfor %}
-{% endset %}
-{{ include('aculta420:content-grid', { columns: 2, items: items }, with_context = false) }}

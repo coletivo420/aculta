@@ -1,0 +1,6 @@
+services:
+  aculta_pdf_viewer_group.course_document_content_index_provider:
+    class: Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
+    arguments: ['course_document', 'course_document', 'courses']
+    tags:
+      - { name: aculta_index.provider }

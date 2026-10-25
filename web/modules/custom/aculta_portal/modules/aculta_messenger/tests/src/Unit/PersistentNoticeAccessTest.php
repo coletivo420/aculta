@@ -14,12 +14,13 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\site_alert\GetAlertsInterface;
 use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
 use Drupal\aculta_messenger\Hook\MessengerBarHooks;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_messenger\Service\MessengerCounts;
+use Drupal\aculta_messenger\Service\NoticeFlagStateLoader;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\Tests\UnitTestCase;
@@ -82,15 +83,32 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
     $time->method('getRequestTime')->willReturn($requestTime);
     return new MessengerBarHooks(
       $this->createMock(AccountInterface::class),
-      new UnreadThreadCounter($this->createMock(AccountInterface::class), $this->createMock(PrivateMessageServiceInterface::class)),
+      new UnreadThreadCounter($this->createMock(AccountInterface::class), $this->createMock(EntityTypeManagerInterface::class)),
       $this->createMock(GetAlertsInterface::class),
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(RendererInterface::class),
       $time,
       $this->createMock(FlagServiceInterface::class),
       $this->createMock(FriendshipManagerInterface::class),
-      new MessengerCounts($this->createMock(EntityTypeManagerInterface::class), $this->createMock(FlagServiceInterface::class), $this->createMock(GetAlertsInterface::class)),
-      new AvisoService($this->createMock(EntityTypeManagerInterface::class), $this->createMock(FlagServiceInterface::class)),
+      new MessengerCounts(
+        $this->createMock(EntityTypeManagerInterface::class),
+        $this->createMock(FlagServiceInterface::class),
+        $this->createMock(GetAlertsInterface::class),
+        new NoticeFlagStateLoader($this->createMock(EntityTypeManagerInterface::class)),
+      ),
+      new AvisoService(
+        $this->createMock(EntityTypeManagerInterface::class),
+        $this->createMock(FlagServiceInterface::class),
+        new ForumNoticeAccessPolicy(
+          $this->createMock(EntityTypeManagerInterface::class),
+          new DomainPurposeManager(
+            $this->createMock(EntityTypeManagerInterface::class),
+            $this->createMock(DomainNegotiatorInterface::class),
+            $this->createMock(ConfigFactoryInterface::class),
+            new RequestStack(),
+          ),
+        ),
+      ),
       new DomainPurposeManager(
         $this->createMock(EntityTypeManagerInterface::class),
         $this->createMock(DomainNegotiatorInterface::class),

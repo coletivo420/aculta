@@ -4,7 +4,6 @@ global:
       'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap': { type: external, minified: true }
       css/tokens.css: {}
       css/components/ui-styles.css: {}
-      components/content/project-card/project-card.css: {}
       css/base.css: {}
       css/layout.css: {}
       css/components/institution-bar.css: {}
@@ -14,10 +13,12 @@ global:
       css/components/content.css: {}
       css/components/buttons.css: {}
       css/components/pdf-viewer.css: {}
+      css/components/document-viewer.css: {}
       css/drupal-bootstrap.css: {}
       css/components/institutional.css: {}
       css/components/footer.css: {}
       css/components/forms.css: {}
+      css/components/webform.css: {}
       css/components/search.css: {}
       css/components/wiki.css: {}
       css/components/product.css: {}
@@ -33,10 +34,13 @@ global:
       css/components/portal-address-number.css: {}
       css/components/portal-cart.css: {}
       css/components/unread-count.css: {}
+      css/components/consent-banner.css: {}
       css/components/portal-payment-notice.css: {}
       css/components/portal-requirements-report.css: {}
       css/components/sales-panel.css: {}
+      css/components/statistics.css: {}
       css/components/portal-support.css: {}
+      css/components/studio.css: {}
       css/components/auth.css: {}
   js:
     js/navigation.js: {}
@@ -85,6 +89,7 @@ messenger-drawers:
   css:
     theme:
       components/content/messenger-item/messenger-item.css: {}
+      components/feedback/messenger-state/messenger-state.css: {}
       css/components/messenger-drawer.css: {}
   js:
     js/messenger-drawers.js: {}
@@ -94,3 +99,7 @@ messenger-drawers:
     - core/once
     - bootstrap/bootstrap
 
+messenger-notices:
+  css:
+    theme:
+      css/components/messenger-notices.css: {}

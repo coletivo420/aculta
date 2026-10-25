@@ -18,11 +18,35 @@ final class UploadPolicy {
   /** Tamanho máximo do arquivo enviado, em bytes (10 MB). */
   public const MAX_BYTES = 10485760;
 
-  /** Validadores do Form API (managed_file / image) para um upload de imagem conforme a política. */
-  public function validators(): array {
+  /**
+   * Builds Form API validators for the central or a scoped image policy.
+   *
+   * Scoped extensions must be a subset of the central image catalog. A
+   * feature may raise the size limit explicitly while retaining this check.
+   *
+   * @param int|null $maxBytes
+   *   Maximum bytes. Defaults to 10 MB.
+   * @param string|null $extensions
+   *   Space-separated subset of the central image extensions.
+   *
+   * @return array<string, array<string, int|string>>
+   *   Validators for the Managed File API.
+   *
+   * @throws \InvalidArgumentException
+   *   When the scoped limit or extensions are invalid.
+   */
+  public function validators(?int $maxBytes = NULL, ?string $extensions = NULL): array {
+    $maxBytes ??= self::MAX_BYTES;
+    $extensions ??= self::EXTENSIONS;
+    $allowedExtensions = array_values(array_unique(preg_split('/\s+/', trim($extensions)) ?: []));
+    $centralExtensions = explode(' ', self::EXTENSIONS);
+    if ($maxBytes < 1 || $allowedExtensions === []
+      || array_diff($allowedExtensions, $centralExtensions) !== []) {
+      throw new \InvalidArgumentException('A política contextual de imagem excede o catálogo ACULTA.');
+    }
     return [
-      'FileExtension' => ['extensions' => self::EXTENSIONS],
-      'FileSizeLimit' => ['fileLimit' => self::MAX_BYTES],
+      'FileExtension' => ['extensions' => implode(' ', $allowedExtensions)],
+      'FileSizeLimit' => ['fileLimit' => $maxBytes],
     ];
   }
 

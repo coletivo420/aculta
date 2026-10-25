@@ -21,6 +21,7 @@ final class DocumentFieldMap {
     return match ($bundle) {
       'document' => 'field_media_document',
       'course_document' => 'field_media_course_document',
+      'forum_attachment' => 'field_media_forum_attachment',
       default => NULL,
     };
   }

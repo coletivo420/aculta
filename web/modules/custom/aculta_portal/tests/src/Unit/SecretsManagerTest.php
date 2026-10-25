@@ -29,8 +29,9 @@ final class SecretsManagerTest extends UnitTestCase {
     file_put_contents($this->base . '/config/secrets-contract.json', json_encode([
       'variables' => [
         ['name' => 'GOOGLE_OAUTH_CLIENT_ID', 'key_id' => 'g_id', 'required_in' => ['production', 'test']],
-        ['name' => 'SMTP2GO_PASSWORD', 'key_id' => 'smtp_pw', 'required_in' => ['test']],
+        ['name' => 'EXEMPLO_SENHA', 'key_id' => 'smtp_pw', 'required_in' => ['test']],
         ['name' => 'TURNSTILE_KEYS_JSON', 'key_id' => 'turnstile', 'required_in' => []],
+        ['name' => 'BREVO_API_KEY', 'key_id' => 'brevo_api_key', 'required_in' => []],
       ],
     ]));
   }
@@ -53,12 +54,12 @@ final class SecretsManagerTest extends UnitTestCase {
   }
 
   public function testSaveMergesAndKeepsValuesLeftEmpty(): void {
-    file_put_contents($this->store(), "GOOGLE_OAUTH_CLIENT_ID=antigo\nSMTP2GO_PASSWORD=senha-antiga\n");
-    $result = $this->manager()->save(['GOOGLE_OAUTH_CLIENT_ID' => 'novo', 'SMTP2GO_PASSWORD' => '', 'TURNSTILE_KEYS_JSON' => '']);
+    file_put_contents($this->store(), "GOOGLE_OAUTH_CLIENT_ID=antigo\nEXEMPLO_SENHA=senha-antiga\n");
+    $result = $this->manager()->save(['GOOGLE_OAUTH_CLIENT_ID' => 'novo', 'EXEMPLO_SENHA' => '', 'TURNSTILE_KEYS_JSON' => '']);
     $this->assertTrue($result['ok']);
     $this->assertSame(['GOOGLE_OAUTH_CLIENT_ID'], $result['updated']);
     $this->assertSame(
-      ['GOOGLE_OAUTH_CLIENT_ID' => 'novo', 'SMTP2GO_PASSWORD' => 'senha-antiga'],
+      ['GOOGLE_OAUTH_CLIENT_ID' => 'novo', 'EXEMPLO_SENHA' => 'senha-antiga'],
       SecretsFormat::parse((string) file_get_contents($this->store())),
     );
     $this->assertSame(0640, fileperms($this->store()) & 0777);
@@ -80,7 +81,7 @@ final class SecretsManagerTest extends UnitTestCase {
   public function testEnvironmentFromDeployerOverridesLocalSetting(): void {
     $this->assertSame('test', $this->manager()->environment());
     mkdir($this->base . '/var/deployer', 0700, TRUE);
-    file_put_contents($this->base . '/var/deployer/environment.json', json_encode(['schema' => 1, 'environment' => 'production', 'site' => 'https://aculta.org', 'changed_at' => 'x']));
+    file_put_contents($this->base . '/var/deployer/environment.json', json_encode(['schema' => 1, 'environment' => 'production', 'site' => 'https://example.invalid', 'changed_at' => 'x']));
     $this->assertSame('production', $this->manager()->environment());
     file_put_contents($this->base . '/var/deployer/environment.json', 'não é json');
     $this->assertSame('test', $this->manager()->environment());
@@ -103,6 +104,33 @@ final class SecretsManagerTest extends UnitTestCase {
 
   private function store(): string {
     return $this->base . '/secrets/aculta.secrets.env';
+  }
+
+  public function testValueReadsServerFileWhenNoKeyExists(): void {
+    file_put_contents($this->store(), "BREVO_API_KEY=valor-de-teste\n");
+    $this->assertSame('valor-de-teste', $this->manager()->value('BREVO_API_KEY'));
+  }
+
+  public function testValuePrefersKeyWhenKeyExists(): void {
+    file_put_contents($this->store(), "BREVO_API_KEY=do-arquivo\n");
+    $key = $this->createMock(\Drupal\key\KeyInterface::class);
+    $key->method('getKeyValue')->willReturn('da-key');
+    $keys = $this->createMock(KeyRepositoryInterface::class);
+    $keys->method('getKey')->with('brevo_api_key')->willReturn($key);
+    $logger = $this->createMock(LoggerChannelInterface::class);
+    $factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $factory->method('get')->willReturn($logger);
+    $settings = new Settings([
+      'aculta_secrets_file' => $this->store(),
+      'aculta_secrets_environment' => 'test',
+      'aculta_secrets_storage' => 'file',
+    ]);
+    $manager = new SecretsManager($keys, $settings, $factory, $this->base . '/web');
+    $this->assertSame('da-key', $manager->value('BREVO_API_KEY'));
+  }
+
+  public function testValueIsNullWhenNeitherKeyNorFileHasIt(): void {
+    $this->assertNull($this->manager()->value('BREVO_API_KEY'));
   }
 
 }

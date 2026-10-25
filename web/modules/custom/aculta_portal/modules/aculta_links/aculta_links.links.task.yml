@@ -1,0 +1,6 @@
+aculta_links.admin_subtab_social_links:
+  title: 'Redes sociais e botões'
+  route_name: aculta_links.social_links_settings
+  base_route: aculta_portal.admin
+  parent_id: aculta_portal.admin_tab_site
+  weight: 2

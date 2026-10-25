@@ -1,9 +1,7 @@
-uuid: 6f1c3a9e-2b7d-4e58-9a61-3c8d0e7f2b14
+uuid: 820d93d2-d2cb-4c32-8357-1e8f022f8a0a
 langcode: pt-br
 status: false
-dependencies:
-  module:
-    - captcha
+dependencies: {  }
 formId: aculta_login_popup_form
 captchaType: default
 label: 'Entrar pelo popup da barra (exceção do Turnstile)'

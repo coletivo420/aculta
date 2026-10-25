@@ -11,6 +11,9 @@ Purpose ativo desde 0.2.0-dev.57:
 O purpose `forum` foi implementado com os módulos `forum` e `flag`. A condição
 anterior (validação da feature de participação, F3) foi substituída por decisão
 do responsável em 2026-10-11, que pediu a raiz do host do fórum servindo `/forum`.
+Em 2026-10-19, esse caminho interno foi substituído pela View pública nova em
+`/discussoes`; a raiz permanece o endereço canônico, e acesso direto aos dois
+caminhos internos responde 404.
 
 Código customizado depende do purpose, não do hostname de ambiente.
 `DomainPurposeManager` centraliza Domain ID, URL correta, canonical de produção
@@ -33,16 +36,19 @@ hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado e
 | shop | loja.aculta.org | loja.aculta.toca.net.br | Domain ativo; catálogo futuro |
 | courses | cursos.aculta.org | cursos.aculta.toca.net.br | ativo |
 | forum | growroom420.aculta.org | growroom420.aculta.toca.net.br | ativo (0.2.0-dev.57) |
-| links | links.aculta.org | links.aculta.toca.net.br | perfil público de redes sociais; produção ainda não provisionada |
+| links | links.aculta.org | links.aculta.toca.net.br | Domain/purpose ativo; landing preservadora em `aculta_links`; Runtime de teste HTTP 200/404 confirmado; DNS de produção não provisionado |
 
 ## Redes sociais (LINKS)
 
-- A URL pública é a raiz `/` em `links.aculta.toca.net.br`. O front interno
+- A URL pública planejada é a raiz `/` em `links.aculta.toca.net.br`. O front interno
   `/redes-sociais` é resolvido para essa raiz pelo `PurposeFrontPathProcessor`.
-- A página é um Node `page` com `field_domain_source = links_aculta_org`; texto e
-  descrição permanecem editoriais no Drupal. Os perfis são salvos em
+- Em 2026-10-20, o Runtime não tinha Node `page` com
+  `field_domain_source = links_aculta_org` nem alias `/redes-sociais`; a raiz e o
+  path direto retornavam 404 antes da restauração. A rota `/redes-sociais` agora
+  tem fallback no `aculta_links`; após rebuild, HTTP da raiz confirmou 200 e o
+  acesso direto 404. Produção não confirmada. Perfis são salvos em
   `aculta_portal.social_links` e editados em Administração > Configuração >
-  ACULTA Portal > Redes sociais (`/painel-administrativo/configuracoes/aculta/portal/redes-sociais`).
+  ACULTA Portal > Redes sociais (`/painel-administrativo/aculta/redes-sociais`).
 - A tela aceita somente URLs HTTPS de `instagram.com`, `youtube.com`/`youtu.be`
   e `facebook.com`/`fb.com`. Valores vazios ocultam o canal. Instagram vem do
   perfil de organizador citado abaixo; YouTube e Facebook ficam vazios até a

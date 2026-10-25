@@ -1,0 +1,25 @@
+uuid: 3773bbae-8148-4b7a-adb7-6d5bc2d32278
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: sJrGITtMEFm24o7Hn7najD2ikEhBAydWRYehqn_g7i4
+id: message.field_aculta_messenger_attempts
+field_name: field_aculta_messenger_attempts
+entity_type: message
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

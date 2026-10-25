@@ -1,0 +1,6 @@
+<?php
+
+/**
+ * @file
+ * Confirmação de e-mail do ACULTA: API e entidade. Hooks em src/Hook (atributo #[Hook]).
+ */

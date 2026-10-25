@@ -1,0 +1,21 @@
+{# Preserva o teaser Node e apresenta ao lado a contagem Core de respostas. #}
+<div class="aculta-forum-topic-list-row">
+  <div class="aculta-forum-topic-list-row__topic">
+    {{ fields.rendered_entity.content }}
+  </div>
+  <dl class="aculta-forum-topic-list-row__meta">
+    <div>
+      <dt>{{ 'Respostas'|t }}</dt>
+      {% set reply_count = fields.comment_count.raw|default(0) %}
+      <dd>{{ reply_count }} {{ reply_count == 1 ? 'resposta'|t : 'respostas'|t }}</dd>
+    </div>
+    <div>
+      <dt>{{ 'Última atividade'|t }}</dt>
+      <dd>{{ fields.last_updated.content }}</dd>
+      {% if last_comment_author is defined %}
+        <dd class="aculta-forum-topic-list-row__last-author">{{ last_comment_author }}</dd>
+      {% endif %}
+    </div>
+    {{ last_comment_author_cache|default('') }}
+  </dl>
+</div>

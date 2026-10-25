@@ -1,5 +1,5 @@
 uuid: 2b1d1688-54fb-409a-84a2-08cb72f860c6
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   config:
@@ -766,4 +766,3 @@ display:
         - url.query_args
         - user.group_permissions
       tags: {  }
-

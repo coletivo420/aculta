@@ -1,0 +1,104 @@
+services:
+  aculta_wiki.published_participation_lookup:
+    class: Drupal\aculta_wiki\Participation\WikiPublishedParticipationLookup
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@current_user']
+    tags:
+      - { name: aculta_user.published_participation_lookup }
+
+  aculta_wiki.lead_image_cleanup:
+    class: Drupal\aculta_wiki\Cleanup\WikiLeadImageCleanup
+    arguments:
+      - '@entity_type.manager'
+      - '@datetime.time'
+      - '@keyvalue.expirable'
+      - '@aculta_portal.unused_media_cleaner'
+      - '@aculta_portal.unused_file_cleaner'
+      - '@logger.channel.aculta_wiki'
+
+  logger.channel.aculta_wiki:
+    parent: logger.channel_base
+    arguments: ['aculta_wiki']
+
+  aculta_wiki.contributor_workspace:
+    class: Drupal\aculta_wiki\Service\WikiContributorWorkspace
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@string_translation', '@request_stack']
+
+  aculta_wiki.content_index_provider:
+    class: Drupal\aculta_wiki\ContentIndex\WikiContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }
+
+  aculta_wiki.category_content_index_provider:
+    class: Drupal\aculta_wiki\ContentIndex\WikiCategoryContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }
+
+  aculta_wiki.proposal_submission:
+    class: Drupal\aculta_wiki\Service\WikiProposalSubmission
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_portal.email_confirmation_policy', '@flood', '@lock', '@keyvalue.expirable', '@database']
+
+  aculta_wiki.editorial_queue:
+    class: Drupal\aculta_wiki\Service\WikiEditorialQueue
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@content_moderation.state_transition_validation']
+
+  aculta_wiki.proposal_decision:
+    class: Drupal\aculta_wiki\Service\WikiProposalDecision
+    arguments: ['@entity_type.manager', '@current_user', '@database', '@aculta_wiki.editorial_event_queue', '@aculta_portal.domain_purpose', '@content_moderation.state_transition_validation', '@content_moderation.moderation_information']
+
+  aculta_wiki.editorial_event_queue:
+    class: Drupal\aculta_wiki\Service\WikiEditorialEventQueue
+    arguments: ['@queue', '@database']
+
+  aculta_wiki.proposal_withdrawal:
+    class: Drupal\aculta_wiki\Service\WikiProposalWithdrawal
+    arguments: ['@entity_type.manager', '@current_user', '@database']
+
+  aculta_wiki.presentation.wiki_search_form:
+    class: Drupal\aculta_wiki\Presentation\WikiSearchFormBuilder
+    arguments: ['@string_translation', '@request_stack']
+  aculta_wiki.wiki_lead_image_uploader:
+    class: Drupal\aculta_wiki\Upload\WikiLeadImageUploader
+    arguments: ['@entity_type.manager', '@database', '@file_system', '@aculta_portal.user_upload_policy', '@current_user', '@string_translation']
+  Drupal\aculta_wiki\Hook\WikiEntryImageHooks:
+    class: Drupal\aculta_wiki\Hook\WikiEntryImageHooks
+    arguments:
+      - '@string_translation'
+      - '@aculta_portal.user_upload_policy'
+      - '@aculta_portal.user_upload_dialog_builder'
+      - '@aculta_wiki.wiki_lead_image_uploader'
+      - '@aculta_wiki.contributor_workspace'
+      - '@aculta_portal.domain_purpose'
+      - '@current_user'
+      - '@router.route_provider'
+  Drupal\aculta_wiki\Hook\WikiLeadImageDownloadAccess:
+    class: Drupal\aculta_wiki\Hook\WikiLeadImageDownloadAccess
+    arguments: ['@file.repository', '@entity_type.manager']
+  Drupal\aculta_wiki\Type\WikiReviewMailType:
+    class: Drupal\aculta_wiki\Type\WikiReviewMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+  Drupal\aculta_wiki\Notifier\WikiReviewNotifier:
+    class: Drupal\aculta_wiki\Notifier\WikiReviewNotifier
+    arguments:
+      - '@config.factory'
+      - '@string_translation'
+      - '@uuid'
+      - '@?aculta_mailer.queue'
+      - '@?Drupal\aculta_mailer\Api\PublicUrlInterface'
+  Drupal\aculta_wiki\Hook\WikiReviewHooks:
+    class: Drupal\aculta_wiki\Hook\WikiReviewHooks
+    arguments:
+      - '@Drupal\aculta_wiki\Notifier\WikiReviewNotifier'
+      - '@aculta_wiki.editorial_event_queue'
+      - '@module_handler'
+  Drupal\aculta_wiki\Hook\WikiProposalLinkHooks:
+    class: Drupal\aculta_wiki\Hook\WikiProposalLinkHooks
+    arguments: ['@current_user', '@aculta_portal.domain_purpose', '@aculta_portal.email_confirmation_policy']
+
+
+  aculta_wiki.notice_event_publisher:
+    class: Drupal\aculta_wiki\EventSubscriber\WikiEditorialNoticePublisher
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@aculta_messenger.notice_event_publisher', '@datetime.time', '@logger.channel.aculta_messenger']
+    tags:
+      - { name: event_subscriber }

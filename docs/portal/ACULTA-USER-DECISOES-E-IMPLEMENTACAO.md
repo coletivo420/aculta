@@ -8,6 +8,13 @@ Status: **Implementado** (código commitado e verificado por HTTP/CLI), **Implem
 commitado, sem teste em navegador: a ferramenta de navegador não estava disponível), **Em andamento** (código não
 commitado ou não ligado), **Pendente** (decidido ou perguntado, sem código).
 
+> O inventário abaixo registra decisões e comportamento implementado da linha
+> atual. Em 2026-10-19 foi aprovada a API única de Author Cards do `aculta_user`
+> para a reconstrução contextual do `aculta_forum`; nenhum desses contratos é
+> substituído nesta fase documental. Veja
+> [`AUTHOR-CARDS.md`](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARDS.md)
+> e [`aculta_forum/docs/OWNERSHIP.md`](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/OWNERSHIP.md).
+
 ## 1. Decisões
 
 ### 1.1 Visibilidade e privacidade do perfil
@@ -87,7 +94,7 @@ Pendente: teste em navegador da abertura automática e do fechamento do popup; t
 | Só o administrador torna uma pessoa associada | Implementado (papel `associado`, sem permissões; concessão pelo administrador) | `user.role.associado`, relatório |
 | Papel `associado` basta (sem estado nem data de adesão) — usado por falta de resposta explícita | Implementado; **estado e data de associação pedidos e pendentes** (ver 2.1) | — |
 | RG não é cifrado | Implementado (`field_rg`, texto simples) | `config/install` |
-| CPF/CNPJ continua no campo único existente, cifrado pelo módulo de documento | Mantido | `aculta_associado_id` (campo `field_documento`) |
+| CPF/CNPJ continua no campo único existente, cifrado pelo módulo de documento | Mantido | `aculta_id_cpf` (campo `field_documento`) |
 | Só o administrador exporta o relatório | Implementado (permissão `export aculta associados`) | `AssociadosController` |
 | RG mascarado na tela; completo só na exportação | Implementado | `AssociadosController::mask` |
 | Data de nascimento preenchida pela pessoa | Campo existe; formulário "Informações Básicas" é o `/dados` já existente | `field_data_nascimento` |
@@ -98,7 +105,7 @@ Pendente: teste em navegador da abertura automática e do fechamento do popup; t
 | Primeiro comentário de quem não tem comentário publicado vai para a fila | Implementado (código; verificação em navegador pendente) | `ParticipationHooks::commentPresave` |
 | Criar tópico exige 10 comentários publicados | Implementado (limite configurável) | `ParticipationHooks::entityCreateAccess` |
 | Bloqueio de publicações enquanto o primeiro comentário aguarda | Implementado | `ParticipationRules` |
-| Painel `/painel-administrativo/configuracoes/aculta/portal/participacao` | Implementado | `ParticipationSettingsForm` |
+| Painel `/painel-administrativo/aculta/participacao` | Implementado | `ParticipationSettingsForm` |
 | Editor de conteúdo e administrador ficam isentos | Implementado | `papeis_isentos` |
 | Discussão vinculada: tópico de Fórum ligado a artigo, atividade, projeto, documento e verbete | Implementado (campo `field_discussao`) | `DiscussionHooks` |
 | Tipos com discussão vinculada (decisão 24) | Usado o padrão do plano; **confirmação pendente** | — |
@@ -144,7 +151,7 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 
 | Decisão | Status |
 | --- | --- |
-| Caixa de autor da publicação da Revista é programada no `aculta_user` (opção 1: presenter + contrato `data-portal-ui="author-card"` + componente no ACULTA420), sem módulo contrib de layout ou de exibição | Decidido (2026-10-13); documentado, não implementado; fase U2, PR próprio |
+| Caixa de autor da publicação da Revista é programada no `aculta_user` (opção 1: presenter + contrato `data-portal-ui="author-card"` + componente no ACULTA420), sem módulo contrib de layout ou de exibição | Decidido (2026-10-13); documentado, não implementado; fase U2, commits na branch autorizada; validar visualmente antes de RC |
 | A caixa mostra só nome de exibição (apelido), foto, bio e link para `/u/<apelido>`, cada um sob as regras de `PublicProfilePolicy` | Decidido; documentado |
 | O autor é `node.uid`; `field_editorial_author` não entra na caixa | Decidido; documentado |
 | Link para o perfil é construído no purpose `main` (perfil público só existe lá) | Decidido; documentado |
@@ -154,7 +161,7 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 | --- | --- | --- |
 | Hierarquia: authenticated < email_confirmed < estudante < associado < lms_teacher < gerente_loja < content_editor < administrator | Implementado (papéis e herança) | `docs/portal/PAPEIS-PARTICIPACAO.md` seção 1 |
 | Estudante: inscrito em algum curso, concedido na matrícula; só alunos (professor, criador e administração do LMS não concedem) | Implementado | `Hook\EnrollmentRoleHooks` |
-| Associado: atribuído manualmente pelo administrador; realm pelo papel | Implementado | `user.role.associado`, `RestrictedForumGrants` |
+| Associado: atribuído manualmente pelo administrador; realm pelo papel | Decisão histórica substituída em 2026-10-20: o Forum público não usa realms de visibilidade; marcador de associado permanece apenas para consumidores específicos | `user.role.associado`; a integração antiga com `RestrictedForumGrants` foi removida |
 | Gerente de Loja: produtos `produto_loja`, variações, atributos, categorias, pedidos (visualização) e relatório de vendas; financeiro só administrador | Implementado | `user.role.gerente_loja`, `SalesReportController` |
 | Herança unilateral por role_inheritance: estudante ← email_confirmed; associado ← estudante; lms_teacher ← associado. Exceções: content_editor ← email_confirmed; gerente_loja sem herança de lms_teacher | Implementado no Runtime e exportado | `config/sync/role_inheritance.settings.yml` |
 | role_hierarchy e role_inheritance habilitados, sem alterar acesso de não-administradores | Implementado | `core.extension` |

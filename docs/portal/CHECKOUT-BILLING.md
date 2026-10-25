@@ -38,7 +38,7 @@
 - `web/modules/contrib/commerce/modules/payment/src/Hook/CommercePaymentHooks.php` (unset do `billing_information`; contrib, não editar).
 - `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/PluginForm/Checkout/RedirectCheckoutForm.php` (mensagem de erro; porte próprio).
 - `web/modules/contrib/commerce/modules/payment/src/Plugin/Commerce/CheckoutPane/PaymentInformation.php` (formulário de cobrança).
-- `web/modules/contrib/agreement/src/Form/AgreementForm.php` (`settings.destination` e destino salvo).
+- A antiga implementação contrib usava `settings.destination`; o fluxo atual é próprio do Portal e registra o evento no ledger `aculta_user_agreement` antes de redirecionar ao destino local validado.
 
 ## Incidente de ambiente: redirecionamento do Mercado Pago com token de teste (2026-10-11)
 

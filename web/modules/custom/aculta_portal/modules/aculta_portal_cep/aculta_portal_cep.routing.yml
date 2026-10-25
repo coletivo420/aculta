@@ -10,7 +10,7 @@ aculta_portal_cep.lookup:
     _format: 'json'
 
 aculta_portal_cep.settings:
-  path: /painel-administrativo/configuracoes/aculta/portal/cep
+  path: /painel-administrativo/aculta/cep
   defaults:
     _form: '\Drupal\aculta_portal_cep\Form\CepSettingsForm'
     _title: Consulta de CEP

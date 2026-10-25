@@ -9,8 +9,13 @@ use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Url;
-use Drupal\email_confirmer\EmailConfirmationInterface;
-use Drupal\email_confirmer\EmailConfirmerManagerInterface;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
+use Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface;
+use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\user\UserInterface;
 use Throwable;
 
@@ -24,11 +29,15 @@ final class EmailConfirmationRequester {
   private const RESEND_WINDOW = 900;
 
   public function __construct(
-    private readonly EmailConfirmerManagerInterface $manager,
+    private readonly AcultaMailConfirmerManagerInterface $manager,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FloodInterface $flood,
     private readonly LockBackendInterface $lock,
     private readonly LoggerChannelInterface $logger,
+    private readonly AcultaMailerInterface $mailer,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly UuidInterface $uuid,
+    private readonly UrlGeneratorInterface $urlGenerator,
   ) {}
 
   /**
@@ -58,7 +67,7 @@ final class EmailConfirmationRequester {
       // repeatedly submitting the same account's request.
       $this->flood->register(self::FLOOD_EVENT, self::RESEND_WINDOW, $identifier);
 
-      $storage = $this->entityTypeManager->getStorage('email_confirmer_confirmation');
+      $storage = $this->entityTypeManager->getStorage('aculta_mail_confirmer');
       $confirmation = $this->manager->createConfirmation($email);
       $confirmation->setRealm(self::REALM)
         ->setProperty('user', $uid)
@@ -70,7 +79,7 @@ final class EmailConfirmationRequester {
       $confirmation->save();
 
       try {
-        $accepted = $confirmation->sendRequest();
+        $accepted = $this->sendRequest($confirmation);
       }
       catch (Throwable $exception) {
         $this->logFailure('The email confirmation backend threw while sending.', $exception);
@@ -114,7 +123,7 @@ final class EmailConfirmationRequester {
           continue;
         }
         try {
-          $old->cancel();
+          $this->manager->cancelConfirmation($old);
           $old->save();
         }
         catch (Throwable $exception) {
@@ -136,21 +145,50 @@ final class EmailConfirmationRequester {
     }
   }
 
-  /** @return \Drupal\email_confirmer\EmailConfirmationInterface[] */
+  /**
+   * Envia o pedido pelo aculta_mailer, com o mesmo limite de reenvio do contrib.
+   *
+   * Dentro da janela de reenvio, delega ao contrib, que enfileira. Fora dela, envia direto e grava a data do envio.
+   */
+  public function sendRequest(AcultaMailConfirmationInterface $confirmation): bool {
+    $delay = (int) $this->configFactory->get('aculta_mail_confirmer.settings')->get('resendrequest_delay');
+    if ($confirmation->isRequestSent() && $confirmation->getLastRequestDate() + $delay > time()) {
+      return $this->manager->sendRequest($confirmation);
+    }
+
+    $url = $this->urlGenerator->generateFromRoute('entity.aculta_mail_confirmer.response_form', [
+      'aculta_mail_confirmer' => $confirmation->uuid(),
+      'hash' => $this->manager->getHash($confirmation),
+    ], ['absolute' => TRUE]);
+    $message = new MailMessage(
+      EmailConfirmationRequestMailType::ID,
+      (string) $confirmation->getEmail(),
+      $confirmation->language()->getId(),
+      ['email' => (string) $confirmation->getEmail(), 'confirm_url' => $url],
+      $this->uuid->generate(),
+    );
+    $accepted = $this->mailer->send($message);
+    if ($accepted) {
+      $confirmation->setLastRequestDate(time());
+    }
+    return $accepted;
+  }
+
+  /** @return \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface[] */
   private function pendingFor(string $email, int $uid): array {
-    $storage = $this->entityTypeManager->getStorage('email_confirmer_confirmation');
+    $storage = $this->entityTypeManager->getStorage('aculta_mail_confirmer');
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('realm', self::REALM)
       ->condition('email', $email)
-      ->condition('status', EmailConfirmationInterface::ACTIVE)
-      ->condition('confirmed', EmailConfirmationInterface::UNCONFIRMED)
+      ->condition('status', AcultaMailConfirmationInterface::ACTIVE)
+      ->condition('confirmed', AcultaMailConfirmationInterface::UNCONFIRMED)
       ->sort('created', 'DESC')
       ->execute();
 
     return array_values(array_filter(
       $storage->loadMultiple($ids),
-      static fn(EmailConfirmationInterface $confirmation): bool => $confirmation->isPending()
+      fn(AcultaMailConfirmationInterface $confirmation): bool => $this->manager->isPending($confirmation)
         && (int) $confirmation->getProperty('user') === $uid,
     ));
   }

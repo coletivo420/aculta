@@ -1,4 +1,4 @@
-uuid: 43c8ca41-b0f0-412d-861c-4094d7b82235
+uuid: 5666cc14-d3d1-4d2e-be28-4ebffb294ba5
 langcode: pt-br
 status: true
 dependencies:
@@ -16,7 +16,7 @@ label: 'Imagens da galeria'
 description: 'Apenas imagens da biblioteca de mídia. Uma imagem pode estar em mais de uma galeria; remover a imagem da galeria não exclui a mídia.'
 required: false
 translatable: true
-default_value: {  }
+default_value: {}
 default_value_callback: ''
 settings:
   handler: 'default:media'
@@ -29,4 +29,3 @@ settings:
     auto_create: false
     auto_create_bundle: ''
 field_type: entity_reference
-

@@ -18,7 +18,7 @@ base_field: rid
 display:
   default:
     id: default
-    display_title: Padrão
+    display_title: Principal
     display_plugin: default
     position: 0
     display_options:
@@ -297,10 +297,10 @@ display:
           total_pages: null
           id: 0
           tags:
-            next: 'next ›'
-            previous: '‹ previous'
-            first: '« first'
-            last: 'last »'
+            next: 'próximo ›'
+            previous: '‹ anterior'
+            first: '« primeiro'
+            last: 'último »'
           expose:
             items_per_page: false
             items_per_page_label: 'Itens por página'

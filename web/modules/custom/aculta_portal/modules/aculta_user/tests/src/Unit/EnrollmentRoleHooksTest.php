@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_user\Unit;
 
 use Drupal\aculta_user\Hook\EnrollmentRoleHooks;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\Tests\UnitTestCase;
@@ -13,7 +17,10 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Concessão de estudante na matrícula em curso (decisão de 2026-10-17).
+ * Concessão da categoria estudante na matrícula em curso (2026-10-17).
+ *
+ * A concessão é a criação do perfil "estudante" da conta, e não a alteração
+ * de papel ou de campo da própria conta.
  */
 #[Group('aculta_user')]
 class EnrollmentRoleHooksTest extends UnitTestCase {
@@ -33,57 +40,77 @@ class EnrollmentRoleHooksTest extends UnitTestCase {
   }
 
   /**
-   * Conta com os papéis informados; registra a gravação em $salvou.
+   * Conta com o id informado; anônima quando o id é nulo.
    */
-  private function conta(bool $anonima, bool $temEstudante, bool &$salvou, bool &$adicionou): UserInterface {
+  private function conta(bool $anonima, int $id = 7): UserInterface {
     $conta = $this->createMock(UserInterface::class);
     $conta->method('isAnonymous')->willReturn($anonima);
-    $conta->method('hasRole')->with('estudante')->willReturn($temEstudante);
-    $conta->method('addRole')->willReturnCallback(static function () use (&$adicionou) {
-      $adicionou = TRUE;
-      return NULL;
-    });
-    $conta->method('save')->willReturnCallback(static function () use (&$salvou) {
-      $salvou = TRUE;
-      return 1;
-    });
+    $conta->method('id')->willReturn($id);
     return $conta;
   }
 
   /**
-   * Matrícula em curso concede estudante e grava a conta.
+   * Gestor de entidades cujo storage de perfil já contém os ids informados.
+   *
+   * O callback de criação marca $criou e registra os valores usados.
+   */
+  private function entityTypeManager(array $perfisExistentes, bool &$criou, ?array &$valoresCriados = NULL): EntityTypeManagerInterface {
+    $consulta = $this->createMock(QueryInterface::class);
+    $consulta->method('accessCheck')->willReturnSelf();
+    $consulta->method('condition')->willReturnSelf();
+    $consulta->method('range')->willReturnSelf();
+    $consulta->method('execute')->willReturn($perfisExistentes);
+
+    $perfil = $this->createMock(EntityInterface::class);
+    $perfil->method('save')->willReturn(1);
+
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('getQuery')->willReturn($consulta);
+    $storage->method('create')->willReturnCallback(static function (array $valores) use ($perfil, &$criou, &$valoresCriados) {
+      $criou = TRUE;
+      $valoresCriados = $valores;
+      return $perfil;
+    });
+
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->with('profile')->willReturn($storage);
+    return $entityTypeManager;
+  }
+
+  /**
+   * Matrícula em curso concede estudante criando o perfil da conta.
    */
   public function testMatriculaEmCursoConcedeEstudante(): void {
-    $salvou = FALSE;
-    $adicionou = FALSE;
-    $conta = $this->conta(FALSE, FALSE, $salvou, $adicionou);
-    (new EnrollmentRoleHooks())->groupRelationshipInsert($this->relacao('group_membership', 'lms_course', $conta));
-    $this->assertTrue($adicionou);
-    $this->assertTrue($salvou);
+    $criou = FALSE;
+    $valores = NULL;
+    $conta = $this->conta(FALSE);
+    (new EnrollmentRoleHooks($this->entityTypeManager([], $criou, $valores)))
+      ->groupRelationshipInsert($this->relacao('group_membership', 'lms_course', $conta));
+    $this->assertTrue($criou);
+    $this->assertSame(['type' => 'estudante', 'uid' => 7], $valores);
   }
 
   /**
-   * Matrícula de aluno (sem papel de professor ou administração) concede estudante.
+   * Aluno sem papel de professor ou administração concede estudante.
    */
   public function testMatriculaDeAlunoConcedeEstudante(): void {
-    $salvou = FALSE;
-    $adicionou = FALSE;
-    $conta = $this->conta(FALSE, FALSE, $salvou, $adicionou);
-    (new EnrollmentRoleHooks())->groupRelationshipInsert($this->relacao('group_membership', 'lms_course', $conta, []));
-    $this->assertTrue($adicionou);
+    $criou = FALSE;
+    $conta = $this->conta(FALSE);
+    (new EnrollmentRoleHooks($this->entityTypeManager([], $criou)))
+      ->groupRelationshipInsert($this->relacao('group_membership', 'lms_course', $conta, []));
+    $this->assertTrue($criou);
   }
 
   /**
-   * Matrícula com papel de professor, criador ou administração não concede estudante.
+   * Papel de professor, criador ou administração não concede estudante.
    */
   #[DataProvider('papeisNaoAlunoCasos')]
   public function testMatriculaComPapelNaoAlunoNaoConcede(string $papel): void {
-    $salvou = FALSE;
-    $adicionou = FALSE;
-    $conta = $this->conta(FALSE, FALSE, $salvou, $adicionou);
-    (new EnrollmentRoleHooks())->groupRelationshipInsert($this->relacao('group_membership', 'lms_course', $conta, [$papel]));
-    $this->assertFalse($adicionou);
-    $this->assertFalse($salvou);
+    $criou = FALSE;
+    $conta = $this->conta(FALSE);
+    (new EnrollmentRoleHooks($this->entityTypeManager([], $criou)))
+      ->groupRelationshipInsert($this->relacao('group_membership', 'lms_course', $conta, [$papel]));
+    $this->assertFalse($criou);
   }
 
   /**
@@ -99,29 +126,37 @@ class EnrollmentRoleHooksTest extends UnitTestCase {
   }
 
   /**
-   * Outros plugins, outros tipos de grupo, visitantes e contas que já são estudantes não são alterados.
-   *
+   * Outros plugins, outros tipos de grupo e visitantes não são alterados.
    */
   #[DataProvider('semConcessaoCasos')]
-  public function testSemConcessao(string $plugin, string $tipoGrupo, bool $anonima, bool $temEstudante): void {
-    $salvou = FALSE;
-    $adicionou = FALSE;
-    $conta = $this->conta($anonima, $temEstudante, $salvou, $adicionou);
-    (new EnrollmentRoleHooks())->groupRelationshipInsert($this->relacao($plugin, $tipoGrupo, $conta));
-    $this->assertFalse($adicionou);
-    $this->assertFalse($salvou);
+  public function testSemConcessao(string $plugin, string $tipoGrupo, bool $anonima): void {
+    $criou = FALSE;
+    $conta = $this->conta($anonima, $anonima ? 0 : 7);
+    (new EnrollmentRoleHooks($this->entityTypeManager([], $criou)))
+      ->groupRelationshipInsert($this->relacao($plugin, $tipoGrupo, $conta));
+    $this->assertFalse($criou);
   }
 
   /**
-   * Casos sem concessão: [plugin, tipo de grupo, anônima, já é estudante].
+   * Casos sem concessão: [plugin, tipo de grupo, anônima].
    */
   public static function semConcessaoCasos(): array {
     return [
-      'outro plugin de relação' => ['group_node', 'lms_course', FALSE, FALSE],
-      'grupo que não é curso nem turma' => ['group_membership', 'lms_other', FALSE, FALSE],
-      'visitante' => ['group_membership', 'lms_course', TRUE, FALSE],
-      'já é estudante' => ['group_membership', 'lms_course', FALSE, TRUE],
+      'outro plugin de relação' => ['group_node', 'lms_course', FALSE],
+      'grupo que não é curso nem turma' => ['group_membership', 'lms_other', FALSE],
+      'visitante' => ['group_membership', 'lms_course', TRUE],
     ];
+  }
+
+  /**
+   * Conta que já possui a categoria não recebe um segundo perfil.
+   */
+  public function testContaQueJaTemCategoriaNaoCriaOutroPerfil(): void {
+    $criou = FALSE;
+    $conta = $this->conta(FALSE);
+    (new EnrollmentRoleHooks($this->entityTypeManager(['profile:1'], $criou)))
+      ->groupRelationshipInsert($this->relacao('group_membership', 'lms_course', $conta));
+    $this->assertFalse($criou);
   }
 
 }

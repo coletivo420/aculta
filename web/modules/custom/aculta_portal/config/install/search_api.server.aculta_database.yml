@@ -1,0 +1,14 @@
+uuid: 6ef4c555-8c61-49c5-8483-412fce2c5f05
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - search_api_db
+id: aculta_database
+name: 'Banco do site (busca)'
+description: ''
+backend: search_api_db
+backend_config:
+  database: 'default:default'
+  min_chars: 3
+  matching: prefix

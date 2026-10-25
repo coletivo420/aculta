@@ -1,11 +1,66 @@
 # Roadmap — ACULTA PDF Viewer
 
+**Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). PV7 só pode ser classificada RC quando todo o escopo e testes, CSP em Report-Only configurada sem enforcement, acessibilidade e validação visual pré-deploy aplicável estiverem concluídos. Alpha valida a coleta/análise dos relatórios no servidor de desenvolvimento; enforcement será decidido após Alpha. LiteSpeed/Cloudflare são validados depois do deploy em produção.
+
 Este roadmap cobre somente o módulo compartilhado `aculta_pdf_viewer`. O
 roadmap LMS permanece em [ACULTA-LMS-ROADMAP.md](../../../../../../docs/modules/ACULTA-LMS-ROADMAP.md).
-Cada etapa deve permanecer pequena, revisável e rastreável na PR vigente. Nenhuma
-fase aqui autoriza merge, deploy ou operação de configuração no Runtime.
+Cada etapa deve permanecer pequena, revisável e rastreável por commits na branch
+autorizada. Nenhuma fase aqui autoriza merge, deploy ou operação de configuração
+no Runtime.
 
 ## Princípios e referência funcional
+
+### Integração planejada com limpeza de anexos do Portal — 2026-10-22
+
+O viewer continuará dono de renderização e acesso a PDFs. O Portal já dispõe
+parcialmente de `aculta_portal.unused_file_cleaner` para verificar/remover File;
+na IDX 0.1-R, o viewer deve expor referências de Media/arquivos e consumir esse
+serviço ao limpar anexos. Os adapters de Media `document` e `course_document`
+devem fornecer ao Portal as referências necessárias para que a exclusão de
+conteúdo confira uso e Group antes de limpar anexos. Arquivos não serão apagados
+pelo formatter; a remoção física de imagem continua em `aculta_image`. A política central está em
+[política de limpeza](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+
+### Comparação de recursos TNC solicitados em 2026-10-20
+
+O arquivo que o responsável enviou ao outro agente não está disponível neste
+checkout; esta análise usa a tabela compartilhada na conversa e as páginas TNC
+já referenciadas acima. Não reproduzir sua string posicional de 16 caracteres.
+As opções devem ser configurações Drupal nomeadas no formatter.
+
+As páginas do TNC descrevem três camadas: recursos gerais do viewer, padrões
+globais e substituições por FlipBook; também agrupam controles de navegação,
+conteúdo, ações e interface. Isso informa o catálogo de opções, mas o ACULTA
+não precisa criar entidade própria de FlipBook nem shortcode: o formatter e o
+display Drupal são as unidades de configuração e continuam usando Media/File
+como fonte de verdade. A página de toolbar recomenda miniaturas, bookmarks,
+zoom, busca, impressão, download e rotação, e identifica ações como compartilhar
+e leitura em voz alta que exigem decisões de acesso/terceiros e de
+acessibilidade. Fontes: [recursos básicos](https://docs.tncflipbook.com/article/348-basic-features),
+[customização](https://docs.tncflipbook.com/article/349-customization-options) e
+[padrões de toolbar](https://docs.tncflipbook.com/article/391-toolbar-defaults).
+
+| Grupo | Decisão ACULTA | Situação |
+|---|---|---|
+| Download, impressão, zoom, tela cheia, busca, navegação, viewer oficial | Controles administráveis no formatter; permissão efetiva do File continua obrigatória. Impressão abre o PDF.js completo, cujo fluxo imprime o documento inteiro. | Em dev.38, a revisão visual Firefox ESR 153.4 no X11 local carregou PDF público de 14 páginas no Runtime de teste. Desligados: os quatro botões de impressão/download do viewer completo ficaram ocultos e fora do foco; ligados: ficaram visíveis e focáveis. Observador confirmou que a política persiste após mudanças de toolbar. Sem teste de clique/impressão real. |
+| Zoom e rolagem padrão | Configuração nomeada. Zoom alimenta o canvas custom; rolagem é aplicada ao viewer oficial completo. | Zoom do canvas e padrões vertical/horizontal do PDF.js completo implementados. O canvas ACULTA permanece paginado. |
+| Página dupla e móvel | Desligado por padrão, opção configurável; não forçar página dupla móvel por padrão. | Wrapper do PDF.js aplica spread no viewer completo. Página dupla é desligada em telas móveis por padrão e só permanece ligada se a opção móvel for marcada. O canvas ACULTA permanece em página única. |
+| Idioma | Expor idiomas realmente instalados, iniciando com pt-BR. | A configuração oferece somente pt-BR e o propaga ao PDF.js. |
+| Rotação, contorno e miniaturas | Adaptar usando APIs PDF.js; outline só quando o documento fornecer marcadores; miniaturas sob demanda. | Rotação do canvas em dev.30, navegação por outline em dev.31 e miniaturas sob demanda em dev.33. Revisar teclado/leitor de tela e custo em PDFs extensos antes de RC. |
+| Compartilhamento | Somente link copiável, same-origin e sem serviços de terceiros. | Pendente; exigir revisão de URL/acesso para documento privado antes de implementar. |
+| Mão/arrastar | Baixa prioridade; só se o modo de leitura justificar e passar avaliação de teclado. | Fora do recorte atual. |
+| Leitura em voz alta | Pós-deploy. Avaliar suporte/voz do navegador no ambiente de produção e testar com leitor de tela antes de qualquer implementação. | Fora do escopo pré-deploy; registrar como evolução pós-deploy. |
+| Tema, ícones e embed | Tokens ACULTA420/Bootstrap; formatter configura título, link, destino e classe validada. | Campos do formatter presentes; confirmar apresentação com validação visual pré-RC. |
+
+Os padrões globais do leitor ficam na subaba Site → Leitor de PDF dentro do
+painel ACULTA. A configuração
+`aculta_pdf_viewer.settings` é fonte exportável do site; formatter de campo
+herda os valores por padrão e pode desligar a herança para manter seu próprio
+perfil. O link de impressão e o link ao viewer completo abrem um wrapper same-
+origin que configura rolagem e spread no PDF.js oficial antes de sua inicialização.
+Os flags nomeados de impressão e download ocultam os dois botões equivalentes no
+viewer oficial; o canvas ACULTA continua em navegação paginada e não usa esses
+modos. Essa ocultação é de apresentação: não substitui autorização do Drupal.
 
 O Media/File do Drupal continua sendo a fonte de verdade para documento,
 metadados, URL e acesso. O viewer usa o PDF.js local e só recebe arquivo
@@ -45,7 +100,71 @@ validação de custo, acessibilidade e desempenho em PDFs extensos.
 | PV4 — Miniaturas e preview | Integrar PDFPreview com miniatura da primeira página só para PDF público até 20 MiB; ImageMagick com timeout de 15 s; `public://pdfpreview`, JPEG 480×640 e erro fail-soft. Validar política/recursos no ambiente antes de habilitar processamento real. | Adapter fail-soft e referências opcionais implementados. Firefox no Runtime gerou e exibiu a miniatura JPEG da primeira página de um PDF público de 14 páginas pelo pipeline `aculta_image`; o arquivo de preview de teste foi removido após a homologação. Limites continuam sendo 20 MiB e timeout de 15 s; revisar com arquivos grandes e erro de conversão na PV7. | Desabilitar PDFPreview e manter leitor/link; não liberar PS nem modificar policy global sem revisão operacional. |
 | PV5 — Arquivos privados e públicos | Usar somente a rota privada do Drupal Core para `private://`, com File/Media/campo autorizados, cache de render max-age zero e sem thumbnail; validar unpublished, revogação de acesso, Group/turma, endpoint e fallback em Runtime. | Código e Config Sync usam o bundle privado `course_document`, relação Group obrigatória e guarda de ciclo de vida para mantê-lo não publicado. O bundle público `document` permanece inalterado. No Runtime de teste, submódulo, bundle, relação e permissões de estudante/educador estão ativos; os itens de configuração PV5 não têm drift. Firefox 153.4 ESR renderizou o Media privado embutido em página (14 páginas); o endpoint Core devolveu 200 para membro e 403 para não membro e anônimo. Remover membership ou relação Media↔Group negou a URL conhecida com 403; restaurar cada uma devolveu 200. A Media ficou não publicada. Os fixtures e uploads foram removidos depois da execução. A confidencialidade base de Group está homologada; CSP, cache em múltiplos proxies e navegadores adicionais permanecem no gate PV7. | Desabilitar a relação e o submódulo; manter o formatter/link Core; não alterar nem apagar Media/File. |
 | PV6 — Uso compartilhado e apresentação | Homologar o mesmo formatter/contrato para Revista420, artigos/blog, Wiki420, Fórum, projetos, documentos institucionais e LMS, sem acoplamento funcional ao LMS. ACULTA420 apresenta o contrato neutro do viewer, sem duplicar sua marcação funcional. | Concluída: Revista/artigos/blog/projetos usam Media `document` no formato `revista_editorial`; Wiki e Fórum oferecem `drupalMedia` em CKEditor 5 com pares editor/formato validados e `media_embed` restrito a `document`; documento institucional usa `aculta_pdf_file`; LMS usa `course_document` com controle Group. Kernel validou embed da Wiki; no Runtime, o render Drush do tópico de Fórum contém viewer/link autorizado e as páginas públicas de artigo, blog e projeto responderam 200 com o viewer. Firefox 153.4 ESR verificou 14 páginas, zoom, foco visível, nomes acessíveis, live regions, alvo mínimo de 44 px e viewport desktop/estreito; a página não transborda horizontalmente e o canvas pode rolar dentro do estágio ao ampliar. ACULTA420 já estiliza o contrato com tokens semânticos; não foi criado SDC redundante. | Restaurar `file_default` nos displays `node.document`; remover `editor.editor.wiki` e os editores de Media Embed, `media_embed` e tags `<drupal-media>` dos formatos `wiki` e `usuario_aculta`; restaurar `text_trimmed` no display do Fórum; conteúdo e arquivos permanecem intactos. |
-| PV7 — Release candidate | Executar matriz de browsers, arquivos pequenos/grandes, erro/rede lenta, PDF.js/worker, CSP, acessibilidade, cache, acesso, performance e produção LiteSpeed; rever licença e atualização de PDF.js. Registrar evidências e gates na PR/release. | Parcial em 2026-10-17: Firefox 153.4 ESR e Chromium 155.0.8059.39 no Runtime renderizaram PDFs de 1 MiB e 22 MiB (14 páginas); Chromium não registrou erros JS severos. PDF inválido exibiu fallback. Com cache desabilitado, Chromium sob 700 ms/64 KiB/s renderizou em 20,9 s; proxy local simulou 503 e o fallback apareceu. CSP simulada em loopback com `worker-src 'self'` permitiu o worker (fontes externas bloqueadas; scripts/styles inline permitidos para Drupal); CSP estrita continua pendente. PDF.js 6.4.299/licença Apache-2.0 conferidos; API e worker usam `?v=6.4.299` para invalidar cache versionado e manter o par sincronizado. Runtime: HTML privado sem cache; PDF/assets `max-age=31536000`; Range retornou 206. Unit 11/11 (145 assertions), Kernel 5/5 (106 assertions, quatro deprecações) e gate Drupal 11+ (904 checks) PASS. O papel `content_editor` tem criação e edição somente da própria Media `document`; upload e abertura do formulário de edição foram confirmados no Firefox Runtime. A identidade sintética, Media, File e perfil foram removidos; `teste.comum` já estava aceito, e as contas `qa_*` do inventário não existem neste Runtime. `config:status` falha por duplicidade pré-existente da chave `permissions` em `user.role.administrator.yml`; nenhum import global foi executado. CSP estrita, revisão acessível ampliada e validação LiteSpeed/Cloudflare pós-deploy continuam pendentes. | Reverter a fase liberando formatter Core/link; manter dependências até verificar referências no Composer/configuração. |
+| PV7 — RC, deploy Alpha e preparação de produção | Pré-RC exige CSP Report-Only sem enforcement, endpoint protegido, acessibilidade ampliada, testes de browser/arquivos/fallback/rede/cache/acesso/performance, gates e revisão visual pré-deploy. Após RC e deploy, Alpha valida relatórios no servidor de desenvolvimento; enforcement é decisão posterior. Produção vem após Alpha aprovado; LiteSpeed/Cloudflare ficam para validação pós-deploy produtivo. | 2026-10-20: `drupal/csp` 2.2.4 e `drupal/reporting` 2.2.0 ativos em Alpha; Report-Only true/enforce false. Decisão registrada: manter Report-Only e `dblog.settings:row_limit` atual de 1000; não ativar enforcement nesta etapa. DBLog limita quantidade, não prazo, e registra URL/User-Agent; revisar minimização, acesso e retenção antes da produção. Endpoint: Reporting API e legacy 202, objetos incompletos 400, >64 KiB 413, Content-Type incorreto 415, HEAD 405. Firefox ESR renderizou 14 páginas e validou página seguinte, zoom 125%, busca (5 resultados) e controles de 44 px. Miniatura `aculta_image` fixa em 480 px transbordou na captura 390×844; corrigida em ACULTA420 0.6.0-dev.125; Firefox confirmou miniatura contida e documento sem overflow em viewport efetivo 500 px. Em 0.1.0-dev.26, o cálculo preserva o ajuste à largura para dimensões atípicas, limita o canvas a 16 MP/16.384 px e troca renderizações abaixo de metade da escala pedida por mensagem acessível e link Core. Firefox ESR no Runtime renderizou o PDF público de 23 MB/14 páginas; fixtures temporários confirmaram a página 20.000 × 30.000 pt em 100% (653 × 980 px), a página 20.000 × 2.000.000 pt com fallback em 25% e a página 20.000 × 200.000 pt ampliada até 250%, limitada a 15.971.904 pixels/12.636 px de altura e indicada como 194% efetivos. Os fixtures foram removidos. Unit 25/25 (163 assertions, sem depreciações PHPUnit); Kernel PDF + Group 6/6 (145 assertions, 28 depreciações Core/contrib); Unit `aculta_image` 20/20 (71 assertions, 8 depreciações PHPUnit); Drupal 11+ 1005 checks, `validate-aculta-image`, .htaccess, endereços, status-index, foundation 366, design foundations 2103 e module-theme boundary 1608 PASS. A home do Alpha, numa visita limpa, gerou dois relatórios `style-src-attr` associados aos elementos `.vvjb-items` e `.ui-front`; amostras de script não vazias: zero. Arquivos locais pt-BR conferidos com o parser do Core: PO do Core e 12 PO contrib sem msgstr vazia; locale pt-BR também existe no pacote PDF.js. Isso não equivale à cobertura de todas as strings instaladas. O fetch inicial das traduções não foi repetido por rede. A versão 0.1.0-dev.28 acrescenta link na mesma origem para `web/libraries/pdf.js/web/viewer.html?file=...&locale=pt-BR`, somente depois de checar Media/campo/File e mantendo a URL Core protegida para PDF privado. HTTP GET do `viewer.html` retornou 200 em MAIN, Revista, Wiki, Fórum e Cursos; `viewer.mjs` e `locale/pt-BR/viewer.ftl` também responderam 200 no Homelab. Isso não testa a abertura do PDF, camada textual, interação ou acessibilidade. O canvas continua padrão; validar link com PDF, teclado/leitor de tela e CSP Report-Only, inclusive com PDFs marcados e sem tags. Não é RC: revisão acessível ampliada, gates finais no branch principal e aprovação do responsável continuam pendentes; produção não foi acessada. | Reverter a fase liberando formatter Core/link; manter dependências até verificar referências no Composer/configuração. |
+
+**Retomada do gate em 2026-10-20 nesta branch:** a suíte Unit passou com 26
+testes e 183 assertions. A suíte Kernel completa repetida no MariaDB dedicado
+falhou antes das assertions nos quatro cenários de render/Media Embed porque o
+container do `aculta_portal` ainda dependia do `agreement.handler` contrib, ausente no fixture. A dependência foi removida na integração posterior do ledger `aculta_user_agreement`;
+o teste de instalação também falha porque a View de cursos do LMS depende de
+`system.menu.admin`, que o fixture não instala. Não foram adicionados mocks nem
+alteradas dependências do Portal para ocultar o grafo de serviços. Status-index
+passou com 24 componentes e
+o gate Drupal 11+ com 1026 checks depois da atualização do índice raiz. Também
+passaram `validate-aculta-image`, fronteira módulo/tema (1629), endereços de
+ambiente (2942 arquivos), slugs públicos (391 rotas; baseline de 20 violações
+contrib) e `.htaccess`.
+
+No Homelab `toca`, a rota `/painel-administrativo/aculta/leitor-pdf` só apareceu
+no router após `drush cr`. O rebuild concluiu com aviso de diretório de asset
+H5P já existente. Como o objeto de configuração ainda não existia no Runtime,
+foi criado apenas `aculta_pdf_viewer.settings` a partir do Config Sync por meio
+da Config API; os valores foram conferidos: dez controles ligados, zoom
+`fit-width`, rolagem vertical e página dupla desligada em desktop/celular.
+Firefox autenticado revisou a subaba Site → Leitor de PDF visualmente. Em
+0.1.0-dev.36, o wrapper same-origin do PDF.js recebeu o PDF público PV7 de 14
+páginas: scroll mode horizontal e spread ativo no desktop, e spread desligado
+após reduzir a viewport para 500 px. O canvas ACULTA segue paginado. Kernel,
+gates finais e revisão acessível ampliada continuam abertos; permanece Dev.
+
+Na verificação de 2026-10-20, Firefox confirmou também a camada textual do
+viewer completo (texto do documento no `.textLayer` e rótulo de página no DOM)
+em viewport desktop de 1366 px e móvel de 560 px. O modo de duas páginas caiu
+para página única no viewport móvel e ambos mantiveram `scrollWidth` igual à
+largura da viewport. WebDriver confirmou navegação pelo atalho `n` da página 1
+para 2. `PageDown` em `fit-width` não alterou o número da página nessa
+verificação; não foi considerado evidência de navegação por teclado. Em teste
+real com Orca e Firefox ESR, o leitor anunciou documento/páginas, mas a leitura
+contínua não anunciou o corpo textual do PDF. Isso não valida leitura acessível
+do conteúdo; falta investigar foco/caret, navegação estrutural e PDF marcado no
+viewer completo. A sessão temporária foi encerrada. O
+Kernel segue sem chegar às assertions por dependências/serviços do Portal e da
+configuração LMS no fixture. Gates centrais ainda incluem trabalho não
+integrado de outros componentes; o viewer permanece Dev.
+
+Em 0.1.0-dev.37, Firefox headless servindo `web/` em `127.0.0.1` carregou o
+PDF de amostra de 14 páginas do próprio PDF.js. Com `print=0&download=0`, os
+botões primário e secundário de impressão/download ficaram `hidden`, com
+`aria-hidden=true` e `tabIndex=-1`; com ambos `1`, voltaram visíveis e focáveis.
+Essa verificação local valida o comportamento do wrapper, não a apresentação no
+Homelab. Nenhum arquivo do Runtime foi alterado.
+
+### Limite de acessibilidade da renderização
+
+O canvas do viewer é raster: seu nome identifica a página, mas ele não torna
+acessíveis o texto ou a estrutura interna do documento. O link ao PDF original
+permanece disponível; sua leitura acessível depende de o arquivo estar marcado
+corretamente e do leitor do navegador. O reader não declara conformidade WCAG
+do conteúdo enviado. Uma camada textual/estrutural fica fora do escopo implementado
+até avaliação específica: o upstream PDF.js registra limitações de teclado e
+semântica associadas ao text layer ([#15635](https://github.com/mozilla/pdf.js/issues/15635),
+[#20114](https://github.com/mozilla/pdf.js/issues/20114)). O código da versão
+6.4.299 também mostra que o viewer oficial combina
+[`TextLayerBuilder`](https://github.com/mozilla/pdf.js/blob/v6.4.299/web/text_layer_builder.js),
+[`StructTreeLayerBuilder`](https://github.com/mozilla/pdf.js/blob/v6.4.299/web/struct_tree_layer_builder.js)
+e a implementação de [`TextLayer`](https://github.com/mozilla/pdf.js/blob/v6.4.299/src/display/text_layer.js).
+O viewer completo é oferecido como alternativa, sem assumir que a presença
+dessas camadas torna documentos sem tags acessíveis.
 
 ## Próxima entrega
 
@@ -80,10 +199,12 @@ de teste. O cache de longo prazo agora recebe query versionada igual ao pacote
 Composer. O aceite foi registrado pelo formulário real do Portal para a conta
 sintética. Firefox salvou uma Media pela UI e abriu sua edição depois da
 concessão mínima de `edit own document media` ao papel editorial. Media, File,
-perfil e usuário de teste foram removidos. Auditar CSP estrita e ampliar a
-revisão acessível. Depois do deploy normal, confirmar que
-LiteSpeed/Cloudflare serve `pdf-viewer.mjs`, `pdf.mjs` e `pdf.worker.mjs` como
-JavaScript e que o viewer renderiza sem erro. Nenhum deploy foi feito.
+perfil e usuário de teste foram removidos. Em 2026-10-20, os três assets `.mjs`
+responderam no Homelab com MIME JavaScript e cache de um ano. O adapter também
+passou a confirmar que a fonte PDF existe e está legível antes de invocar
+PDFPreview/ImageMagick. Auditar CSP estrita e ampliar a revisão acessível no
+Homelab. LiteSpeed/Cloudflare e renderização após deploy são uma validação
+separada, posterior ao deploy; nenhum deploy foi feito nesta fase.
 
 ### Auditoria do contrib Drupal 3D Flipbook
 
@@ -108,4 +229,7 @@ foi homologada no Runtime de teste: membro recebeu o PDF, e remover membership o
 - [Drupal contrib 3D Flipbook — projeto distinto, fora da política de segurança](https://www.drupal.org/project/flipbook)
 - [Drupal contrib 3D Flipbook — release 11.0.2](https://www.drupal.org/project/flipbook/releases/11.0.2)
 - [PDF.js oficial](https://github.com/mozilla/pdf.js)
+- [Drupal CSP — projeto](https://www.drupal.org/project/csp)
+- [Drupal CSP — alterar a política do site](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/content-security-policy/altering-a-sites-policy)
+- [MDN — diretiva `worker-src`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/worker-src)
 - [Contrato de integração e acesso PDF ACULTA](../../../../../../docs/portal/PDF-VIEWER-INTEGRATION.md)

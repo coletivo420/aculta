@@ -1,0 +1,19 @@
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - aculta_forum
+  module:
+    - file
+    - media
+id: forum_attachment
+label: 'Anexo do Fórum'
+description: 'Arquivo privado cuja publicação acompanha as referências em comentários públicos do Fórum.'
+source: file
+queue_thumbnail_downloads: false
+new_revision: true
+source_configuration:
+  source_field: field_media_forum_attachment
+field_map:
+  name: name

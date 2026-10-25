@@ -2,7 +2,6 @@
   "dt": "DT-O10",
   "note": "Diferenças conhecidas entre o runtime de teste e config/sync. Só pode diminuir.",
   "names": [
-    "agreement.agreement.default",
     "captcha.captcha_point.commerce_checkout_flow_default",
     "captcha.captcha_point.commerce_order_item_add_to_cart_form",
     "comment.type.comment_forum",

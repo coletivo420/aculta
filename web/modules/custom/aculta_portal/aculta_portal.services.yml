@@ -1,4 +1,32 @@
 services:
+  aculta_portal.content_index_remote_video_provider:
+    class: Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
+    arguments: ['remote_video', 'remote_video']
+    tags:
+      - { name: aculta_index.provider }
+  aculta_portal.file_reference_inspector:
+    class: Drupal\aculta_portal\Cleanup\FileReferenceInspector
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@database']
+  aculta_portal.unused_file_cleaner:
+    class: Drupal\aculta_portal\Cleanup\UnusedFileCleaner
+    arguments: ['@file.usage', '@database', '@aculta_portal.file_reference_inspector', '@aculta_image.file_remover', '@aculta_image.inspector', '@aculta_portal.cleanup.logger']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_portal.unused_media_cleaner:
+    class: Drupal\aculta_portal\Cleanup\UnusedMediaCleaner
+    arguments: ['@aculta_portal.file_reference_inspector', '@aculta_portal.cleanup.logger']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_portal.cleanup.logger:
+    class: Drupal\Core\Logger\LoggerChannelInterface
+    factory: ['@logger.factory', 'get']
+    arguments: ['aculta_portal_cleanup']
+  aculta_portal.user_upload_policy:
+    class: Drupal\aculta_portal\Upload\UserUploadPolicy
+    arguments: ['@config.factory', '@aculta_image.upload_policy', '@aculta_image.inspector']
+  aculta_portal.user_upload_dialog_builder:
+    class: Drupal\aculta_portal\Upload\UserUploadDialogBuilder
+    arguments: ['@aculta_portal.user_upload_policy', '@string_translation']
   aculta_portal.helper_registry:
     class: Drupal\aculta_portal\Status\PortalHelperRegistry
     autowire: false
@@ -24,27 +52,32 @@ services:
       - { name: aculta_portal.helper }
   aculta_portal.registration_mail_policy:
     class: Drupal\aculta_portal\Account\RegistrationMailPolicy
-    arguments: ['@entity_type.manager', '@plugin.manager.mail']
+    arguments: ['@entity_type.manager', '@aculta_mailer.mailer', '@url_generator', '@uuid']
     tags:
       - { name: aculta_portal.helper }
+  aculta_portal.registration_existing_account_mail_type:
+    class: Drupal\aculta_portal\Account\RegistrationExistingAccountMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
   aculta_portal.color_mode_preference:
     class: Drupal\aculta_portal\Appearance\ColorModePreference
     arguments: ['@config.factory', '@user.data']
     tags:
       - { name: aculta_portal.helper }
-  aculta_portal.registration_terms:
-    class: Drupal\aculta_portal\Account\RegistrationTerms
-    arguments: ['@agreement.handler', '@entity_type.manager']
+  aculta_portal.aculta_user_agreement_registration:
+    class: Drupal\aculta_portal\Account\AcultaUserAgreementRegistration
+    arguments: ['@aculta_user.aculta_user_agreement_ledger']
     tags:
       - { name: aculta_portal.helper }
-  aculta_portal.account_terms_policy:
-    class: Drupal\aculta_portal\Account\AccountTermsPolicy
-    arguments: ['@agreement.handler', '@entity_type.manager']
+  aculta_portal.aculta_user_agreement_policy:
+    class: Drupal\aculta_portal\Account\AcultaUserAgreementPolicy
+    arguments: ['@aculta_user.aculta_user_agreement_ledger']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.access.protected_route:
     class: Drupal\aculta_portal\Access\ProtectedRouteAccessCheck
-    arguments: ['@aculta_portal.access.email_confirmed', '@class_resolver', '@aculta_portal.account_terms_policy']
+    arguments: ['@aculta_portal.access.email_confirmed', '@class_resolver', '@aculta_portal.aculta_user_agreement_policy']
     tags:
       - { name: aculta_portal.implementation }
   aculta_portal.access.email_confirmed:
@@ -54,15 +87,48 @@ services:
       - { name: aculta_portal.implementation }
   aculta_portal.email_confirmation_notice:
     class: Drupal\aculta_portal\Account\EmailConfirmationNotice
-    arguments: ['@aculta_portal.email_confirmation_policy', '@current_user', '@current_route_match', '@string_translation']
+    arguments: ['@aculta_portal.email_confirmation_policy', '@current_user', '@current_route_match', '@string_translation', '@module_handler']
+  aculta_portal.email_confirmation_request_mail_type:
+    class: Drupal\aculta_portal\Email\EmailConfirmationRequestMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+  Drupal\aculta_portal\Email\AccountPasswordResetMailType:
+    class: Drupal\aculta_portal\Email\AccountPasswordResetMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+  Drupal\aculta_portal\Email\AccountRegisterMailType:
+    class: Drupal\aculta_portal\Email\AccountRegisterMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+  Drupal\aculta_portal\Email\AccountRegisterAdminMailType:
+    class: Drupal\aculta_portal\Email\AccountRegisterAdminMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+  Drupal\aculta_portal\Email\AccountMailRouter:
+    class: Drupal\aculta_portal\Email\AccountMailRouter
+    arguments: ['@Drupal\aculta_mailer\Type\MailTypeRegistry', '@Drupal\aculta_mailer\Template\MailTemplateRenderer', '@Drupal\user\OneTimeAuthentication', '@config.factory', '@Drupal\aculta_portal\Domain\DomainPurposeManager']
   aculta_portal.email_confirmation_requester:
     class: Drupal\aculta_portal\Email\EmailConfirmationRequester
-    arguments: ['@email_confirmer', '@entity_type.manager', '@flood', '@lock.persistent', '@logger.channel.mail']
+    arguments: ['@aculta_mail_confirmer', '@entity_type.manager', '@flood', '@lock.persistent', '@logger.channel.mail', '@aculta_mailer.mailer', '@config.factory', '@uuid', '@url_generator']
     tags:
       - { name: aculta_portal.helper }
+  aculta_portal.email_confirmation_link_regenerator:
+    class: Drupal\aculta_portal\Email\EmailConfirmationLinkRegenerator
+    arguments: ['@aculta_portal.email_confirmation_requester', '@entity_type.manager']
+    tags:
+      - { name: aculta_mailer.link_regenerator }
+  aculta_portal.tracking_consent:
+    class: Drupal\aculta_portal\Account\AcultaUserAgreementTrackingConsent
+    arguments: ['@aculta_user.aculta_user_agreement_ledger', '@entity_type.manager']
+    tags:
+      - { name: aculta_mailer.tracking_consent }
   aculta_portal.email_confirmation_policy:
     class: Drupal\aculta_portal\Account\EmailConfirmationPolicy
-    arguments: ['@user.data', '@entity_type.manager']
+    arguments: ['@user.data', '@entity_type.manager', '@module_handler']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.email_confirmation_subscriber:
@@ -91,7 +157,7 @@ services:
       - { name: aculta_portal.helper }
   aculta_portal.form_callbacks:
     class: Drupal\aculta_portal\Form\PortalFormCallbacks
-    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory', '@aculta_portal.email_confirmation_requester', '@aculta_portal.registration_terms', '@aculta_portal.registration_mail_policy']
+    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory', '@aculta_portal.email_confirmation_requester', '@aculta_portal.aculta_user_agreement_registration', '@aculta_portal.registration_mail_policy', '@current_route_match']
   aculta_portal.search_results:
     class: Drupal\aculta_portal\Search\SearchResults
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
@@ -129,10 +195,10 @@ services:
     arguments: ['@aculta_portal.cart_utility', '@string_translation', '@renderer', '@messenger']
   aculta_portal.cart_consolidator:
     class: Drupal\aculta_portal\Cart\CartConsolidator
-    arguments: ['@commerce_cart.cart_provider', '@commerce_cart.cart_session', '@commerce_store.current_store', '@current_user']
+    arguments: ['@commerce_cart.cart_provider', '@commerce_cart.cart_session', '@commerce_store.current_store', '@current_user', '@aculta_portal.checkout_settings']
   aculta_portal.cart_utility:
     class: Drupal\aculta_portal\Cart\CartUtility
-    arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation']
+    arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation', '@aculta_portal.checkout_settings']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.search_utility:
@@ -162,15 +228,7 @@ services:
     arguments: ['@aculta_portal.account_courses', '@string_translation']
   aculta_portal.presentation.domain:
     class: Drupal\aculta_portal\Presentation\DomainPresentationBuilder
-    arguments: ['@aculta_portal.domain_purpose', '@string_translation', '@aculta_portal.presentation.wiki_search_form', '@path.matcher']
-  aculta_portal.presentation.wiki_search_form:
-    class: Drupal\aculta_portal\Presentation\WikiSearchFormBuilder
-    arguments: ['@string_translation', '@request_stack']
-  aculta_portal.presentation.social_links_page:
-    class: Drupal\aculta_portal\Presentation\SocialLinksPagePresenter
-    arguments: ['@config.factory', '@entity_type.manager', '@views.executable', '@string_translation', '@aculta_portal.domain_purpose']
-  aculta_portal.social_links_form_callbacks:
-    class: Drupal\aculta_portal\Presentation\SocialLinksFormCallbacks
+    arguments: ['@aculta_portal.domain_purpose', '@string_translation', '@?aculta_wiki.presentation.wiki_search_form', '@path.matcher']
   aculta_portal.content_purpose_resolver:
     class: Drupal\aculta_portal\Domain\ContentPurposeResolver
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
@@ -320,7 +378,7 @@ services:
     class: Drupal\aculta_portal\Sales\MercadoPagoPaymentPolicy
   aculta_portal.mercado_pago.refund_eligibility_subscriber:
     class: Drupal\aculta_portal\MercadoPago\RefundEligibilitySubscriber
-    arguments: ['@config.factory', '@aculta_portal.mercado_pago.payment_policy']
+    arguments: ['@config.factory', '@aculta_portal.mercado_pago.payment_policy', '@aculta_portal.checkout_settings']
     tags:
       - { name: event_subscriber }
   aculta_portal.mercado_pago.payment_service:
@@ -329,3 +387,52 @@ services:
   aculta_portal.mercado_pago.recurrence_service:
     class: Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService
     arguments: ['@aculta_portal.mercado_pago.client_factory', '@aculta_portal.mercado_pago.recurrence_request_builder', '@aculta_portal.mercado_pago.logger']
+
+  aculta_portal.secret_provider_adapter:
+    class: Drupal\aculta_portal\Secrets\SecretProviderAdapter
+    arguments: ['@aculta_portal.secrets_manager']
+
+  Drupal\aculta_mailer\Transport\SecretProviderInterface:
+    alias: aculta_portal.secret_provider_adapter
+
+  aculta_portal.secret_writer_adapter:
+    class: Drupal\aculta_portal\Secrets\SecretWriterAdapter
+    arguments: ['@aculta_portal.secrets_manager']
+
+  Drupal\aculta_mailer\Transport\SecretWriterInterface:
+    alias: aculta_portal.secret_writer_adapter
+  aculta_portal.checkout_context_registry:
+    class: Drupal\aculta_portal\Checkout\CheckoutContextRegistry
+    autowire: false
+    arguments: [!tagged_iterator aculta_portal.checkout_provider]
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_portal.checkout_settings:
+    class: Drupal\aculta_portal\Checkout\CheckoutSettings
+    arguments: ['@config.factory']
+  aculta_portal.checkout_configuration_resolver:
+    class: Drupal\aculta_portal\Checkout\CheckoutConfigurationResolver
+    arguments: ['@aculta_portal.checkout_context_registry']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_portal.fiscal_identity_policy:
+    class: Drupal\aculta_portal\Checkout\FiscalIdentityPolicy
+    arguments: ['@aculta_portal.checkout_settings', '@?aculta_id_cpf.account_document']
+
+  aculta_portal.checkout_policy_manager:
+    class: Drupal\aculta_portal\Checkout\CheckoutPolicyManager
+    arguments: ['@aculta_portal.checkout_configuration_resolver', '@aculta_portal.checkout_settings']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_portal.order_type_checkout_flows:
+    class: Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows
+    arguments: ['@entity_type.manager']
+  aculta_portal.commerce_checkout_route_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\CommerceCheckoutRouteSubscriber
+    arguments: ['@aculta_portal.checkout_policy_manager']
+    tags:
+      - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
+  aculta_portal.checkout_mapping_validator:
+    class: Drupal\aculta_portal\Checkout\CheckoutMappingValidator
+    arguments: ['@aculta_portal.checkout_configuration_resolver']

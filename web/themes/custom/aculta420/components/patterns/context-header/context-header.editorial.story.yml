@@ -1,0 +1,12 @@
+name: Wiki420 — contexto editorial
+description: 'Fixture estática com H1 do componente; não representa uma rota migrada.'
+component: aculta420:context-header
+props:
+  eyebrow: Wiki420 · Enciclopédia
+  title: História e contexto
+  subtitle: Panorama introdutório do tema.
+slots:
+  breadcrumbs:
+    markup: '<nav aria-label="Trilha de exemplo"><a href="#">Wiki</a></nav>'
+  actions:
+    markup: '<a href="#">Ver referências</a>'

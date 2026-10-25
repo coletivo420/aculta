@@ -1,0 +1,117 @@
+aculta_links.dashboard:
+  path: '/painel-administrativo/links'
+  defaults:
+    _controller: 'aculta_links.dashboard_controller:overview'
+    _title: 'ACULTA Links'
+  requirements:
+    _custom_access: 'aculta_links.dashboard_access:access'
+  options:
+    _admin_route: TRUE
+
+aculta_links.page_editor:
+  path: '/painel-administrativo/links/pagina/{aculta_link_page}/editar-itens'
+  defaults:
+    _form: '\Drupal\aculta_links\Form\LinkPageEditorForm'
+    _title: 'Editar itens da micropágina'
+  requirements:
+    _entity_access: 'aculta_link_page.update'
+  options:
+    _admin_route: TRUE
+    parameters:
+      aculta_link_page:
+        type: entity:aculta_link_page
+
+aculta_links.page_item_add:
+  path: '/painel-administrativo/links/pagina/{aculta_link_page}/item/adicionar'
+  defaults:
+    _form: '\Drupal\aculta_links\Form\LinkPageItemAddForm'
+    _title: 'Adicionar botão à micropágina'
+  requirements:
+    _entity_access: 'aculta_link_page.update'
+  options:
+    _admin_route: TRUE
+    parameters:
+      aculta_link_page:
+        type: entity:aculta_link_page
+
+aculta_links.page_public:
+  path: '/pagina/{slug}'
+  defaults:
+    _controller: 'aculta_links.public_page_controller:view'
+    _title: 'Micropágina'
+  requirements:
+    slug: '[a-z0-9]+(?:-[a-z0-9]+)*'
+  options:
+    _aculta_domain_purpose: links
+
+aculta_links.page_preview:
+  path: '/pagina/{slug}/previa'
+  defaults:
+    _controller: 'aculta_links.public_page_controller:previewBySlug'
+    _title: 'Pré-visualizar micropágina'
+  requirements:
+    slug: '[a-z0-9]+(?:-[a-z0-9]+)*'
+  options:
+    _aculta_domain_purpose: links
+
+aculta_links.page_qr_code:
+  path: '/pagina/{slug}/codigo-qr.svg'
+  defaults:
+    _controller: 'aculta_links.page_qr_code_controller:download'
+    _title: 'Código QR da micropágina'
+  requirements:
+    slug: '[a-z0-9]+(?:-[a-z0-9]+)*'
+  options:
+    _aculta_domain_purpose: links
+
+aculta_links.short_redirect:
+  path: '/redirecionar/{codigo}'
+  defaults:
+    _controller: 'aculta_links.public_page_controller:redirectByCode'
+    _title: 'Redirecionamento de link'
+  requirements:
+    codigo: '[0-9a-z]{12}'
+  methods: [GET, HEAD]
+  options:
+    _aculta_domain_purpose: links
+
+aculta_links.short_qr_code:
+  path: '/redirecionar/{codigo}/codigo-qr.svg'
+  defaults:
+    _controller: 'aculta_links.short_qr_code_controller:download'
+    _title: 'Código QR do link curto'
+  requirements:
+    codigo: '[0-9a-z]{12}'
+  methods: [GET, HEAD]
+  options:
+    _aculta_domain_purpose: links
+
+aculta_links.landing:
+  path: '/redes-sociais'
+  defaults:
+    _controller: 'aculta_links.landing_controller:view'
+    _title: 'ACULTA'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: links
+
+aculta_links.social_links_settings:
+  path: '/painel-administrativo/aculta/redes-sociais'
+  defaults:
+    _form: '\Drupal\aculta_links\Form\SocialLinksSettingsForm'
+    _title: 'Redes sociais e botões'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: true
+
+aculta_links.analytics_settings:
+  path: '/painel-administrativo/aculta/links/configuracoes'
+  defaults:
+    _form: '\Drupal\aculta_links\Form\LinkAnalyticsSettingsForm'
+    _title: 'Configurações de métricas do ACULTA Links'
+  requirements:
+    _permission: 'administer aculta links'
+  options:
+    _admin_route: true

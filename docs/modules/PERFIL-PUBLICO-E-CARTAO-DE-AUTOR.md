@@ -101,3 +101,10 @@ O link "Sortear novo avatar" leva token CSRF válido: requisição com o link do
 - Tipo de publicação "blog" da Revista e mapeamento de chamada/resumo (decisão do responsável).
 - Inspeção visual humana das telas (painel, perfil público, cartão de autor, abas).
 - Versão do `aculta_portal` (módulo pai) não marcada nesta entrega; o `aculta_user` está em 0.4.0-dev.2 (versão atual em `aculta_user.info.yml`).
+
+## Exceção registrada: autoria nos verbetes da Wiki (2026-10-20)
+
+- O AGENTS diz que a autoria de verbete publicado é pública, e o tipo `wiki_entry` está com `display_submitted: true`.
+- Mesmo assim, os templates `node--wiki-entry--full` e `node--wiki-entry--teaser` do ACULTA420 **não exibem** a autoria (decisão de apresentação anterior, mantida).
+- Decisão do responsável em 2026-10-20: manter a apresentação oculta e registrar a exceção. Para exibir a autoria, o tema precisa de autorização explícita e nova versão; a identidade continua vindo do `aculta_user`.
+- O gate `validate-aculta-portal-drupal11.php` verifica a configuração (`display_submitted: true`), não o template. A diferença entre configuração e apresentação fica registrada aqui.

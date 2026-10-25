@@ -1,0 +1,15 @@
+uuid: fdcf2a06-2ccc-4124-b3d0-44f5ba686298
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - flag.flag.seguir_topico
+  module:
+    - flag
+id: flag_action.seguir_topico_flag
+label: 'Seguir tópico'
+type: node
+plugin: 'flag_action:seguir_topico_flag'
+configuration:
+  flag_id: seguir_topico
+  flag_action: flag

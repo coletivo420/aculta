@@ -1,0 +1,10 @@
+aculta_wiki.settings:
+  type: config_object
+  label: 'Configurações da Wiki420'
+  mapping:
+    review_notifications:
+      type: boolean
+      label: 'Avisar as caixas editoriais quando um verbete entrar em revisão'
+    review_recipients:
+      type: string
+      label: 'Endereços que recebem os avisos de revisão'

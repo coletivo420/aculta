@@ -6,6 +6,7 @@ dependencies:
     - commerce_product.commerce_product_variation_type.camiseta_tamanho
     - core.entity_view_mode.commerce_product_variation.summary
     - field.field.commerce_product_variation.camiseta_tamanho.attribute_tamanho
+    - field.field.commerce_product_variation.camiseta_tamanho.weight
   module:
     - commerce_price
 id: commerce_product_variation.camiseta_tamanho.summary
@@ -52,4 +53,4 @@ hidden:
   search_api_excerpt: true
   sku: true
   title: true
-
+  weight: true

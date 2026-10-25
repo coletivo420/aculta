@@ -13,25 +13,54 @@ use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Displays and handles the signed-in member's incoming friendship requests. */
+/**
+ * Displays and handles incoming friendship requests for the signed-in member.
+ */
 final class FriendRequestsForm extends FormBase {
 
+  /**
+   * Constructs the incoming friendship requests form.
+   */
   public function __construct(
     private readonly FriendshipManagerInterface $friendshipManager,
     private readonly EntityTypeManagerInterface $entityManager,
     private readonly AccountProxyInterface $currentAccount,
   ) {}
 
+  /**
+   * Creates the form from the service container.
+   */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('aculta_user.friendship_manager'), $container->get('entity_type.manager'), $container->get('current_user'));
+    return new static(
+      $container->get('aculta_user.friendship_manager'),
+      $container->get('entity_type.manager'),
+      $container->get('current_user'),
+    );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_messenger_friend_requests';
   }
 
-  public function buildForm(array $form, FormStateInterface $form_state): array {
-    $requests = $this->friendshipManager->getIncomingRequests();
+  /**
+   * {@inheritdoc}
+   *
+   * @param array $form
+   *   The form render array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   * @param \Drupal\aculta_user\Entity\AcultaFriendshipInterface[]|null $requests
+   *   Authorized requests already queried by the controller, when available.
+   */
+  public function buildForm(array $form, FormStateInterface $form_state, ?array $requests = NULL): array {
+    // The controller can pass its authorized query result to avoid loading it
+    // twice. A rebuild after submit must fetch current relationship state.
+    if ($requests === NULL || $form_state->isRebuilding()) {
+      $requests = $this->friendshipManager->getIncomingRequests();
+    }
     $form['#cache']['contexts'][] = 'user';
     $form['intro'] = ['#plain_text' => $this->t('Pedidos de amizade')];
     if ($requests === []) {
@@ -60,6 +89,9 @@ final class FriendRequestsForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $name = (string) ($form_state->getTriggeringElement()['#name'] ?? '');
     if (!preg_match('/^(accept|decline)_([1-9][0-9]*)$/', $name, $matches)) {
@@ -74,7 +106,8 @@ final class FriendRequestsForm extends FormBase {
     }
     $relationship = $this->friendshipManager->getRelationshipWith($requesterId);
     try {
-      if (!$relationship instanceof AcultaFriendshipInterface || $relationship->getRecipientId() !== (int) $this->currentAccount->id()) {
+      if (!$relationship instanceof AcultaFriendshipInterface
+        || $relationship->getRecipientId() !== (int) $this->currentAccount->id()) {
         throw new \DomainException('This request is no longer available to the current member.');
       }
       if ($matches[1] === 'accept') {
@@ -85,7 +118,7 @@ final class FriendRequestsForm extends FormBase {
       }
       $this->messenger()->addStatus($matches[1] === 'accept' ? $this->t('Amizade confirmada.') : $this->t('Pedido recusado.'));
     }
-    catch (\DomainException|\RuntimeException $exception) {
+    catch (\DomainException | \RuntimeException $exception) {
       $this->messenger()->addError($this->t('Não foi possível atualizar o pedido. Atualize a página e tente novamente.'));
     }
     $form_state->setRebuild(TRUE);

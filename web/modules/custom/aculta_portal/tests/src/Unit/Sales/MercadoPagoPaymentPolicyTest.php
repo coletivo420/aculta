@@ -103,12 +103,20 @@ final class MercadoPagoPaymentPolicyTest extends UnitTestCase {
       'curso por item' => ['default', ['curso'], 'doacao', 'donation', TRUE],
       'compra de loja liberada' => ['default', ['produto'], 'doacao', 'donation', FALSE],
       'sem configuracao de doacao nao bloqueia' => ['default', ['produto'], '', '', FALSE],
+      'assinatura por pedido, mesmo com item de outro tipo' => ['assinatura', ['produto'], 'doacao', 'donation', TRUE],
+      'assinatura por pedido, sem configuracao de doacao' => ['assinatura', ['produto'], '', '', TRUE],
     ];
   }
 
   #[DataProvider('estornos')]
   public function testBloqueiaEstornoDeDoacaoECurso(string $pedido, array $itens, string $pedidoDoacao, string $itemDoacao, bool $bloqueado): void {
     $this->assertSame($bloqueado, $this->politica->bloqueiaEstorno($pedido, $itens, $pedidoDoacao, $itemDoacao));
+  }
+
+  public function testTiposExtrasSoAcrescentamBloqueio(): void {
+    $this->assertTrue($this->politica->bloqueiaEstorno('aula', ['produto'], 'doacao', 'donation', ['aula']));
+    $this->assertTrue($this->politica->bloqueiaEstorno('default', ['item_carrinho'], 'doacao', 'donation', [], ['item_carrinho']));
+    $this->assertFalse($this->politica->bloqueiaEstorno('default', ['produto'], 'doacao', 'donation', ['aula', ''], ['']));
   }
 
 }

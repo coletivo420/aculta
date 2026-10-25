@@ -11,8 +11,10 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Aviso\PersonalNoticePageState;
 use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
+use Drupal\aculta_messenger\Aviso\EmailPendingAviso;
 use Drupal\aculta_messenger\Support\NoticeType;
 use Drupal\aculta_messenger\Support\OptionsDisclosure;
 use Drupal\aculta_portal\Render\PortalLinkElement;
@@ -24,6 +26,7 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Template\Attribute;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
+use Drupal\flag\Entity\Storage\FlaggingStorageInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Render\RendererInterface;
@@ -38,6 +41,14 @@ use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Component\Utility\Crypt;
 use Drupal\aculta_messenger\Service\MessengerCounts;
+use Drupal\aculta_messenger\Service\NoticeListFilter;
+use Drupal\aculta_messenger\Service\NoticeOriginGrouper;
+use Drupal\aculta_messenger\Service\NoticePaginationUrlBuilder;
+use Drupal\aculta_messenger\Service\NoticePaginationNavigationBuilder;
+use Drupal\aculta_messenger\Service\SiteAlertNoticeSorter;
+use Drupal\aculta_messenger\Service\NoticeFlagStateLoader;
+use Drupal\aculta_messenger\Service\NoticeReadActionBuilder;
+use Drupal\aculta_messenger\Service\MemberInitiatedRequest;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
@@ -51,6 +62,8 @@ use Symfony\Component\HttpFoundation\Response;
 final class MessagesController extends ControllerBase {
 
   private const PRIVATE_MESSAGE_TEMPLATE = 'aculta_msg_private_notification';
+
+  private const PERSONAL_NOTICE_PREVIEW_LIMIT = 5;
 
   public function __construct(
     private readonly DomainPurposeManager $domainPurposeManager,
@@ -70,6 +83,10 @@ final class MessagesController extends ControllerBase {
     private readonly PrivateMessageFormValidator $replyValidator,
     private readonly CsrfTokenGenerator $csrfToken,
     private readonly AvisoService $avisos,
+    private readonly EmailPendingAviso $emailPendingAviso,
+    private readonly NoticeListFilter $noticeListFilter,
+    private readonly NoticeReadActionBuilder $noticeReadActionBuilder,
+    private readonly NoticeFlagStateLoader $noticeFlagStateLoader,
     private readonly ?ModuleHandlerInterface $extensionModuleHandler = NULL,
   ) {}
 
@@ -92,6 +109,10 @@ final class MessagesController extends ControllerBase {
       $container->get('aculta_messenger.private_message_form_validator'),
       $container->get('csrf_token'),
       $container->get('aculta_messenger.aviso_service'),
+      $container->get('aculta_messenger.email_pending_aviso'),
+      $container->get('aculta_messenger.notice_list_filter'),
+      $container->get('aculta_messenger.notice_read_action_builder'),
+      $container->get('aculta_messenger.notice_flag_state_loader'),
       $container->get('module_handler'),
     );
   }
@@ -195,7 +216,15 @@ final class MessagesController extends ControllerBase {
     // The same rules as the native composer (block, friends-only, send limit), then the message is saved here.
     // The native form would redirect to its own page, which does not exist on this domain.
     $input = $this->requestStack->getCurrentRequest()?->request->all() ?? [];
-    $text = trim((string) ($input['message'][0]['value'] ?? ''));
+    $submittedText = $input['message'][0]['value'] ?? NULL;
+    if (!is_string($submittedText)) {
+      return new Response(
+        '',
+        Response::HTTP_BAD_REQUEST,
+        ['Cache-Control' => 'private, no-store'],
+      );
+    }
+    $text = trim($submittedText);
     $formState = new FormState();
     $formState->set('thread', $private_message_thread);
     $form = [];
@@ -215,13 +244,31 @@ final class MessagesController extends ControllerBase {
       $panel['message'] = implode(' ', array_map(static fn($error) => (string) $error, array_values($formState->getErrors())));
     }
     else {
-      $message = $this->entityTypes->getStorage('private_message')->create([
-        'owner' => (int) $this->account->id(),
-        'message' => ['value' => $text, 'format' => 'plain_text'],
-      ]);
-      $message->save();
-      $private_message_thread->addMessage($message);
-      $private_message_thread->save();
+      $freshThread = $formState->get('thread');
+      if (!$freshThread instanceof PrivateMessageThreadInterface) {
+        $this->replyValidator->releaseSubmissionLocks();
+        throw new NotFoundHttpException();
+      }
+      $access = $freshThread->access('view', $this->account, TRUE);
+      if (!$access->isAllowed() || !$freshThread->isMember($this->account->id())) {
+        $this->replyValidator->releaseSubmissionLocks();
+        throw new NotFoundHttpException();
+      }
+      $private_message_thread = $freshThread;
+      try {
+        $message = $this->entityTypes->getStorage('private_message')->create([
+          'owner' => (int) $this->account->id(),
+          'message' => ['value' => $text, 'format' => 'plain_text'],
+        ]);
+        $message->save();
+        $private_message_thread->addMessage($message);
+        $private_message_thread->save();
+        $this->replyValidator->registerRateLimit($form, $formState);
+      }
+      catch (\Throwable $exception) {
+        $this->replyValidator->releaseSubmissionLocks();
+        throw $exception;
+      }
     }
     return $this->conversationResponse($private_message_thread, $access, $panel);
   }
@@ -307,6 +354,7 @@ final class MessagesController extends ControllerBase {
     $state = new FormState();
     $state->set('target', (int) $user->id());
     $state->set('member_box', TRUE);
+    $state->set('thread_id', (int) $thread->id());
     $state->set('post_url', Url::fromRoute('aculta_messenger.member_relationship', [
       'private_message_thread' => $thread->id(),
       'user' => $user->id(),
@@ -484,23 +532,19 @@ final class MessagesController extends ControllerBase {
     ) + ['#weight' => -100];
   }
 
-  /**
-   * "Iniciar nova conversa": the first action of the first window.
-   *
-   * A button element: links and html_tag are rendered as strings in their pre-render, outside the theme
-   * hooks that map data-portal-ui tokens; the button goes through the input theme, which does.
-   */
+  /** Starts the shared new-conversation flow from the inbox. */
   private function newConversationAction(): array {
-    return ['new_conversation' => [
-      '#type' => 'button',
-      '#value' => $this->translation->translate('Iniciar nova conversa'),
-      '#attributes' => [
-        'type' => 'button',
-        'data-aculta-conversation-url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(),
-        'data-portal-ui' => 'new-conversation-link',
-      ],
-      '#weight' => -100,
-    ]];
+    return [
+      'new_conversation' => PortalLinkElement::build(
+        $this->translation->translate('Iniciar nova conversa'),
+        Url::fromRoute('aculta_messenger.new_conversation'),
+        [
+          'class' => 'btn btn-primary aculta-messenger-new-conversation',
+          'data-aculta-conversation-url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(),
+          'data-portal-ui' => 'new-conversation-link',
+        ],
+      ) + ['#weight' => -100],
+    ];
   }
 
   /**
@@ -677,19 +721,32 @@ final class MessagesController extends ControllerBase {
 
   /** Displays currently active native Site Alerts in the same-origin modal. */
   public function alertsPreview(): Response {
-    $resultado = $this->alertsBuild();
+    $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
+    $resultado = $this->alertsBuild($filters, FALSE, TRUE);
     return $this->buildDrawerResponse($resultado['build'], [
       'X-Aculta-Alerts-Count' => (string) $resultado['contador'],
     ]);
   }
 
   /**
-   * Monta a lista de avisos da gaveta (comunicados, avisos da pessoa, alertas). Usada pela gaveta da barra e pela aba
-   * Avisos da conta, para que as duas mostrem a mesma coisa com o mesmo comportamento.
+   * Builds the shared notice list for the toolbar drawer and account page.
+   *
+   * @param array $filters
+   *   Optional origin and read-state filters from the account page or drawer.
+   * @param bool $includeReadActions
+   *   Whether to attach native per-member read-state actions.
+   * @param bool $includeFilters
+   *   Whether to include drawer filter links with working account-page
+   *   fallbacks.
+   * @param array $pagination
+   *   Optional page offsets for the account notice list.
    *
    * @return array{build: array, contador: int}
+   *   Rendered list and current unread notice count.
    */
-  public function alertsBuild(): array {
+  public function alertsBuild(array $filters = [], bool $includeReadActions = FALSE, bool $includeFilters = FALSE, array $pagination = []): array {
+    $filters = $this->noticeListFilter->normalize($filters);
+    $hasFilters = $filters['origem'] !== '' || $filters['leitura'] !== '';
     $storage = $this->entityTypes->getStorage('site_alert');
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['active_site_alerts'])
@@ -699,21 +756,110 @@ final class MessagesController extends ControllerBase {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
     }
     $items = [];
+    $paginatedOrigins = array_values(array_diff(NoticeListFilter::PAGINATED_ORIGINS, ['forum']));
+    $globalOriginPaging = $includeReadActions && $filters['origem'] === '';
+    $originOffsets = PersonalNoticePageState::normalizeOffsets($pagination['notice_offsets'] ?? NULL);
+    $originPageStates = [];
+    if ($globalOriginPaging) {
+      foreach ($paginatedOrigins as $origin) {
+        $originPageStates[$origin] = new PersonalNoticePageState(
+          $origin,
+          $this->safeNoticeOffset($originOffsets[$origin] ?? 0),
+        );
+      }
+      $originPageStates['forum'] = new PersonalNoticePageState(
+        'forum',
+        $this->safeNoticeOffset($originOffsets['forum'] ?? 0),
+      );
+    }
+    $originPageState = !$globalOriginPaging && $includeReadActions && in_array($filters['origem'], $paginatedOrigins, TRUE)
+      ? new PersonalNoticePageState(
+        $filters['origem'],
+        $this->safeNoticeOffset($pagination['notice_offset'] ?? 0),
+      )
+      : NULL;
+    $persistentPageState = $originPageStates['comunicado'] ?? $originPageState;
+
+    $activeAlerts = $this->siteAlerts->getActiveAlerts();
+    $visibleAlerts = [];
+    foreach ($activeAlerts as $alert) {
+      $access = $alert->access('view', $this->account, TRUE);
+      $cacheability->addCacheableDependency($alert)->addCacheableDependency($access);
+      if ($access->isAllowed()) {
+        $visibleAlerts[] = $alert;
+      }
+    }
+    // Site Alert's upstream query does not promise an order. Sort by creation
+    // time before slicing pages; IDs provide a stable tie-breaker only.
+    $visibleAlerts = SiteAlertNoticeSorter::sort($visibleAlerts);
+    $alertFlagStates = [];
+    if ($this->account->isAuthenticated() && $visibleAlerts !== []) {
+      $alertFlagStates = $this->noticeFlagStateLoader->loadForAccount($visibleAlerts, $this->account);
+      $cacheability->addCacheTags($this->entityTypes->getDefinition('flagging')->getListCacheTags());
+    }
 
     // Persistent notices always lead the list, ahead of the dismissable site alerts.
-    foreach ($this->buildPersistentNoticeItems(50, $cacheability) as $item) {
+    $persistentNoticeLimit = $persistentPageState?->origin() === 'comunicado'
+      ? PersonalNoticePageState::PAGE_SIZE
+      : 50;
+    foreach ($this->buildPersistentNoticeItems($persistentNoticeLimit, $cacheability, $filters, $persistentPageState) as $item) {
       $items[] = $item;
     }
 
+    // Aviso permanente de e-mail não confirmado: sem "×", some quando o e-mail é confirmado. Título e texto vêm do
+    // mesmo aviso (EmailPendingAviso), que também alimenta a caixa de atenção de Minha conta.
+    if ($this->emailPendingAviso->isPending($this->account)) {
+      $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
+      $aviso = $this->emailPendingAviso->ensure((int) $this->account->id());
+      $title = $this->emailPendingAviso->title($aviso);
+      if ($title !== NULL) {
+        $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
+          $title,
+          (string) $this->emailPendingAviso->body($aviso),
+          Url::fromRoute('aculta_portal.email_resend'),
+          [],
+          (string) $this->translation->translate('Confirmação pendente'),
+          TRUE,
+          NoticeType::WARNING,
+        ), 'conta', TRUE);
+      }
+    }
+
     // Avisos por pessoa (respostas e atualizações de tópicos seguidos): só da própria pessoa, com link para a página.
-    if ($this->account->isAuthenticated()) {
+    $forumHasNextPage = FALSE;
+    $forumPageState = $originPageStates['forum'] ?? NULL;
+    $forumOffset = $forumPageState instanceof PersonalNoticePageState
+      ? $forumPageState->offset()
+      : $this->safeNoticeOffset($pagination['forum_offset'] ?? 0);
+    $includePersonalNotices = in_array($filters['origem'], ['', 'forum'], TRUE);
+    if ($this->account->isAuthenticated() && $includePersonalNotices) {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0)->addCacheTags(['aculta_aviso_list']);
-      $pessoais = $this->avisos->listarDaPessoa((int) $this->account->id(), 5);
+      $personalNoticeLimit = $includeReadActions
+        ? AvisoService::PERSONAL_NOTICE_LIST_LIMIT
+        : self::PERSONAL_NOTICE_PREVIEW_LIMIT;
+      if ($includeReadActions && ($filters['origem'] === 'forum' || $globalOriginPaging)) {
+        $forumPage = $this->avisos->listarDaPessoaPaginada(
+          (int) $this->account->id(),
+          $personalNoticeLimit,
+          $forumOffset,
+          $filters['leitura'],
+        );
+        $pessoais = $forumPage['items'];
+        $forumHasNextPage = $forumPage['has_next'];
+        $forumPageState?->setHasNext($forumHasNextPage);
+      }
+      else {
+        $pessoais = $this->avisos->listarDaPessoa(
+          (int) $this->account->id(),
+          $personalNoticeLimit,
+          $filters['leitura'],
+        );
+      }
       foreach ($pessoais as $aviso) {
         $nid = (int) $aviso->get('assunto_nid')->value;
         $contador = (int) $aviso->get('contador_site')->value;
         // Aviso do Fórum: rótulo Lido/Não lido no topo da caixa, sem cor de tipo. Ler o tópico zera o contador.
-        $items[] = $this->noticeSummary(
+        $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
           (string) $aviso->get('titulo')->value,
           '',
           Url::fromRoute('entity.node.canonical', ['node' => $nid]),
@@ -722,20 +868,21 @@ final class MessagesController extends ControllerBase {
           FALSE,
           NULL,
           $this->readLabel($contador > 0),
-        );
+        ), 'forum', $contador > 0, (int) $aviso->getChangedTime());
       }
     }
 
     // Same criteria as the header bar, from the shared service.
-    $activeAlertCount = $this->counts->visibleActiveAlertCount($this->account, $cacheability);
+    $activeAlertCount = $this->counts->visibleActiveAlertCount(
+      $this->account,
+      $cacheability,
+      $visibleAlerts,
+      $alertFlagStates,
+    );
     $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
-    foreach ($this->siteAlerts->getActiveAlerts() as $alert) {
-      $access = $alert->access('view', $this->account, TRUE);
-      $cacheability->addCacheableDependency($alert)->addCacheableDependency($access);
-      if (!$access->isAllowed()) {
-        continue;
-      }
-      if ($this->account->isAuthenticated() && $dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $this->account) !== NULL) {
+    foreach ($visibleAlerts as $alert) {
+      $alertFlags = $alertFlagStates[$alert->id()] ?? [];
+      if ($this->account->isAuthenticated() && $dismissalFlag instanceof FlagInterface && isset($alertFlags[$dismissalFlag->id()])) {
         continue;
       }
       // Match the public render contract of SiteAlertBlock; formatted text and
@@ -744,11 +891,10 @@ final class MessagesController extends ControllerBase {
       // Alerta do site: rótulo Lido / Não lido (o aviso persistente não tem rótulo). Abrir o alerta marca como lido.
       $rotulo = NULL;
       if ($this->account->isAuthenticated()) {
-        $leituraFlag = $this->flagService->getFlagById('aculta_site_alert_read');
-        $lido = $leituraFlag instanceof FlagInterface && $this->flagService->getFlagging($leituraFlag, $alert, $this->account) !== NULL;
+        $lido = isset($alertFlags['aculta_site_alert_read']);
         $rotulo = $this->readLabel(!$lido);
       }
-      $items[] = $this->noticeSummary(
+      $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
         (string) $alert->getLabel(),
         $this->excerpt((string) $alert->getMessage()),
         Url::fromRoute('aculta_messenger.alert_detail', ['site_alert' => $alert->id()]),
@@ -757,24 +903,301 @@ final class MessagesController extends ControllerBase {
         FALSE,
         NoticeType::fromSeverity($alert->getSeverity()),
         $rotulo,
-      );
+      ), 'alerta', $this->account->isAuthenticated() ? !$lido : NULL,
+        $alert->hasField('created') && !$alert->get('created')->isEmpty() ? (int) $alert->get('created')->value : 0);
     }
 
-    $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $this->account);
+    $adapterFilters = $filters;
+    if ($originPageState instanceof PersonalNoticePageState) {
+      $adapterFilters['page_state'] = $originPageState;
+    }
+    if ($originPageStates !== []) {
+      $adapterFilters['page_states'] = $originPageStates;
+    }
+    $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $this->account, $adapterFilters);
+
+    $alertPageState = $originPageStates['alerta'] ?? ($originPageState?->origin() === 'alerta' ? $originPageState : NULL);
+    if ($alertPageState instanceof PersonalNoticePageState) {
+      // Site Alert exposes the active set in one call. Slice only its source
+      // group after applying the member's read-state filter.
+      $alertItems = array_values(array_filter($items, static fn(array $item): bool =>
+        ($item['#attributes']['data-aculta-notice-origin'] ?? NULL) === 'alerta'));
+      $alertItems = $this->noticeListFilter->apply($alertItems, ['origem' => 'alerta', 'leitura' => $filters['leitura']]);
+      $pageItems = $alertPageState->slice($alertItems, PersonalNoticePageState::PAGE_SIZE);
+      $items = array_values(array_filter($items, static fn(array $item): bool =>
+        ($item['#attributes']['data-aculta-notice-origin'] ?? NULL) !== 'alerta'));
+      array_push($items, ...$pageItems);
+    }
+    if ($hasFilters) {
+      $items = $this->noticeListFilter->apply($items, $filters);
+      foreach ($items as &$item) {
+        $link = $item['link']['#element_attributes'] ?? NULL;
+        if (!$link instanceof Attribute) {
+          continue;
+        }
+        foreach (['href', 'data-aculta-conversation-url'] as $attribute) {
+          if ($link->hasAttribute($attribute)) {
+            $link->setAttribute($attribute, $this->noticeListFilter->appendToUrl((string) $link->offsetGet($attribute), $filters));
+          }
+        }
+      }
+      unset($item);
+    }
+
+    if ($includeReadActions && $this->account->isAuthenticated()) {
+      $items = $this->noticeReadActionBuilder->attach($items, $this->account);
+    }
+
+    $items = NoticeOriginGrouper::group($items);
 
     if ($items === []) {
-      $items[] = ['#plain_text' => (string) $this->translation->translate('Não há avisos ativos neste momento.')];
+      $emptyMessage = $hasFilters
+        ? $this->translation->translate('Nenhum aviso corresponde aos filtros selecionados.')
+        : $this->translation->translate('Não há avisos ativos neste momento.');
+      $items[] = [
+        'value' => [
+          '#type' => 'container',
+          '#attributes' => [
+            'data-portal-ui' => 'messenger-state messenger-state-empty',
+            'role' => 'status',
+          ],
+          'message' => ['#plain_text' => (string) $emptyMessage],
+        ],
+      ];
     }
+
+    $noticePager = [];
+    $globalPagerOriginLabels = [
+      'comunicado' => 'Comunicados',
+      'forum' => 'Fórum',
+      'alerta' => 'Alertas do site',
+      'amizade' => 'Amizades',
+      'aprendizagem' => 'Aprendizagem',
+      'wiki' => 'Wiki',
+      'loja' => 'Loja',
+      'doacao' => 'Doações',
+      'conquistas' => 'Conquistas',
+    ];
+    if ($globalOriginPaging) {
+      $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
+      foreach ($globalPagerOriginLabels as $origin => $label) {
+        $pageState = $originPageStates[$origin];
+        if ($pageState->offset() > 0) {
+          $previousUrl = NoticePaginationUrlBuilder::globalPage(
+            $originOffsets,
+            $origin,
+            max(0, $pageState->offset() - PersonalNoticePageState::PAGE_SIZE),
+            $filterQuery,
+          );
+          $noticePager[] = PortalLinkElement::build(
+            $this->translation->translate('Avisos anteriores: @origin', ['@origin' => $label]),
+            $previousUrl,
+            ['data-portal-ui' => 'account-data-link'],
+          );
+        }
+        if ($pageState->hasNext()) {
+          $nextUrl = NoticePaginationUrlBuilder::globalPage(
+            $originOffsets,
+            $origin,
+            $pageState->offset() + PersonalNoticePageState::PAGE_SIZE,
+            $filterQuery,
+          );
+          $noticePager[] = PortalLinkElement::build(
+            $this->translation->translate('Avisos seguintes: @origin', ['@origin' => $label]),
+            $nextUrl,
+            ['data-portal-ui' => 'account-data-link'],
+          );
+        }
+      }
+    }
+    if (!$globalOriginPaging && $includeReadActions && $filters['origem'] === 'forum'
+      && ($forumOffset > 0 || $forumHasNextPage)) {
+      $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
+      $pageSize = AvisoService::PERSONAL_NOTICE_LIST_LIMIT;
+      if ($forumOffset > 0) {
+        $previousUrl = NoticePaginationUrlBuilder::filteredPage(
+          'forum',
+          max(0, $forumOffset - $pageSize),
+          $filterQuery,
+        );
+        $noticePager[] = PortalLinkElement::build(
+          $this->translation->translate('Avisos anteriores'),
+          $previousUrl,
+          ['data-portal-ui' => 'account-data-link'],
+        );
+      }
+      if ($forumHasNextPage) {
+        $nextUrl = NoticePaginationUrlBuilder::filteredPage('forum', $forumOffset + $pageSize, $filterQuery);
+        $noticePager[] = PortalLinkElement::build(
+          $this->translation->translate('Avisos seguintes'),
+          $nextUrl,
+          ['data-portal-ui' => 'account-data-link'],
+        );
+      }
+    }
+
+    if (!$globalOriginPaging && $originPageState instanceof PersonalNoticePageState
+      && $originPageState->origin() !== 'forum'
+      && ($originPageState->offset() > 0 || $originPageState->hasNext())) {
+      $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
+      $pagerOriginLabel = [
+        'comunicado' => 'Comunicados',
+        'alerta' => 'Alertas do site',
+        'amizade' => 'Amizades',
+        'aprendizagem' => 'Aprendizagem',
+        'wiki' => 'Wiki',
+        'loja' => 'Loja',
+        'doacao' => 'Doações',
+      ][$originPageState->origin()];
+      if ($originPageState->offset() > 0) {
+        $previousUrl = NoticePaginationUrlBuilder::filteredPage(
+          $originPageState->origin(),
+          max(0, $originPageState->offset() - PersonalNoticePageState::PAGE_SIZE),
+          $filterQuery,
+        );
+        $noticePager[] = PortalLinkElement::build(
+          $this->translation->translate('Avisos anteriores'),
+          $previousUrl,
+          ['data-portal-ui' => 'account-data-link'],
+        );
+      }
+      if ($originPageState->hasNext()) {
+        $nextUrl = NoticePaginationUrlBuilder::filteredPage(
+          $originPageState->origin(),
+          $originPageState->offset() + PersonalNoticePageState::PAGE_SIZE,
+          $filterQuery,
+        );
+        $noticePager[] = PortalLinkElement::build(
+          $this->translation->translate('Avisos seguintes'),
+          $nextUrl,
+          ['data-portal-ui' => 'account-data-link'],
+        );
+      }
+    }
+
+    $pagerOriginLabel = $globalOriginPaging
+      ? 'Todas as origens'
+      : ($filters['origem'] === 'forum' ? 'Fórum' : ($pagerOriginLabel ?? 'Avisos'));
+    $forumPagerBuild = NoticePaginationNavigationBuilder::build(
+      $noticePager,
+      $this->translation->translate('Paginação dos avisos: @origin', ['@origin' => $pagerOriginLabel]),
+    );
 
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'messenger-preview'],
+      'filters' => $includeFilters ? $this->alertsFilterControlsBuild($filters) : [],
       'alerts' => ['#theme' => 'item_list', '#items' => $items],
+      'notice_pager' => $forumPagerBuild,
     ];
     $cacheability->applyTo($build);
     return [
       'build' => $build,
-      'contador' => $activeAlertCount + $this->counts->unreadPersistentNoticeCount($this->account),
+      'contador' => $this->counts->totalUnreadNoticeCount(
+        $this->account,
+        $this->account->isAuthenticated() ? $this->avisos->naoLidosTotal((int) $this->account->id()) : 0,
+        $activeAlertCount,
+      ),
+    ];
+  }
+
+  /**
+   * Counts unread notices for the account tab badge across every source.
+   */
+  public function unreadNoticeCount(): int {
+    $personalNoticeCount = $this->account->isAuthenticated()
+      ? $this->avisos->naoLidosTotal((int) $this->account->id())
+      : 0;
+    return $this->counts->totalUnreadNoticeCount($this->account, $personalNoticeCount);
+  }
+
+  /**
+   * Builds compact source and read-state controls for the global notice drawer.
+   *
+   * Each link has an account-page href as its no-JavaScript fallback and a
+   * same-origin fragment URL for navigation inside the drawer.
+   */
+  private function alertsFilterControlsBuild(array $filters): array {
+    $fallbackUrl = $this->domainPurposeManager->routeUrl(
+      'account',
+      'aculta_messenger.avisos',
+      ['aba' => 'avisos'],
+    );
+    $origins = ['' => $this->translation->translate('Todas as origens')]
+      + NoticeOriginGrouper::originOptions();
+    $states = [
+      '' => $this->translation->translate('Todos os estados'),
+      'unread' => $this->translation->translate('Não lidos'),
+      'read' => $this->translation->translate('Lidos'),
+    ];
+    return [
+      '#type' => 'container',
+      '#attributes' => [
+        'data-portal-ui' => 'alerts-filters',
+        'data-aculta-notice-filters' => '',
+        'aria-label' => $this->translation->translate('Filtros de avisos'),
+      ],
+      'origins' => $this->alertsFilterDetailsBuild(
+        $origins,
+        'origem',
+        $filters,
+        (string) $this->translation->translate('Origem'),
+        $fallbackUrl,
+      ),
+      'read_state' => $this->alertsFilterDetailsBuild(
+        $states,
+        'leitura',
+        $filters,
+        (string) $this->translation->translate('Leitura'),
+        $fallbackUrl,
+      ),
+    ];
+  }
+
+  /**
+   * Builds one compact details group and its filter links.
+   */
+  private function alertsFilterDetailsBuild(
+    array $options,
+    string $parameter,
+    array $filters,
+    string $label,
+    ?Url $fallbackUrl,
+  ): array {
+    $activeValue = $filters[$parameter] ?? '';
+    $summary = $activeValue !== '' && isset($options[$activeValue])
+      ? $label . ': ' . $options[$activeValue]
+      : $label;
+    $links = [];
+    foreach ($options as $value => $optionLabel) {
+      $query = array_filter($filters, static fn(string $filter): bool => $filter !== '');
+      if ($value === '') {
+        unset($query[$parameter]);
+      }
+      else {
+        $query[$parameter] = $value;
+      }
+      $accountUrl = $fallbackUrl !== NULL ? clone $fallbackUrl : NULL;
+      if ($accountUrl !== NULL) {
+        $accountUrl->setOption('query', $query);
+      }
+      $fragmentUrl = Url::fromRoute('aculta_messenger.alerts_preview', [], ['query' => $query]);
+      $link = PortalLinkElement::build((string) $optionLabel, $accountUrl ?? $fragmentUrl, [
+        'data-aculta-drawer-filter' => '',
+        'data-aculta-drawer-filter-url' => $fragmentUrl->toString(),
+      ]);
+      if ($activeValue === $value) {
+        $link['#element_attributes']->setAttribute('aria-current', 'page');
+        $link['#element_attributes']->addClass('is-active');
+      }
+      $links[] = $link;
+    }
+    return [
+      '#type' => 'details',
+      '#title' => $summary,
+      '#open' => FALSE,
+      '#attributes' => ['data-portal-ui' => 'alerts-filters-group'],
+      'links' => ['#theme' => 'item_list', '#items' => $links],
     ];
   }
 
@@ -788,45 +1211,93 @@ final class MessagesController extends ControllerBase {
     ]);
   }
 
+  /**
+   * Normalizes an untrusted notice offset and caps expensive deep pages.
+   */
+  private function safeNoticeOffset(mixed $value): int {
+    return PersonalNoticePageState::normalizeOffset($value);
+  }
+
   /** Builds authorized notice render arrays and native per-member Flag actions. */
-  private function buildPersistentNoticeItems(int $limit, CacheableMetadata $cacheability): array {
-    $ids = $this->entityTypes->getStorage('node')->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', 'aculta_notice')
-      ->condition('status', 1)
-      ->sort('created', 'DESC')
-      ->range(0, $limit)
-      ->execute();
-    $nodes = $this->entityTypes->getStorage('node')->loadMultiple($ids);
+  private function buildPersistentNoticeItems(
+    int $limit,
+    CacheableMetadata $cacheability,
+    array $filters = [],
+    ?PersonalNoticePageState $pageState = NULL,
+  ): array {
+    if (!in_array($filters['origem'] ?? '', ['', 'comunicado'], TRUE)) {
+      return [];
+    }
     $flag = $this->flagService->getFlagById('aculta_notice_read');
     $items = [];
-    foreach ($nodes as $node) {
-      if (!$node instanceof NodeInterface) {
-        continue;
+    $offset = 0;
+    $eligibleOffset = $pageState?->origin() === 'comunicado' ? $pageState->offset() : 0;
+    $eligibleSeen = 0;
+    $pageState?->setHasNext(FALSE);
+    $batchSize = max(20, $limit);
+    $nodeStorage = $this->entityTypes->getStorage('node');
+    do {
+      $ids = $nodeStorage->getQuery()
+        ->accessCheck(TRUE)
+        ->condition('type', 'aculta_notice')
+        ->condition('status', 1)
+        ->sort('created', 'DESC')
+        ->sort('nid', 'DESC')
+        ->range($offset, $batchSize)
+        ->execute();
+      if ($ids === []) {
+        break;
       }
-      $access = $node->access('view', $this->account, TRUE);
-      $cacheability->addCacheableDependency($node)->addCacheableDependency($access);
-      if (!$access->isAllowed()) {
-        continue;
+      $offset += count($ids);
+      $nodes = $nodeStorage->loadMultiple($ids);
+      $readFlaggings = [];
+      if ($flag instanceof FlagInterface && $this->account->isAuthenticated() && $nodes !== []) {
+        $flaggingStorage = $this->entityTypes->getStorage('flagging');
+        if ($flaggingStorage instanceof FlaggingStorageInterface) {
+          $readFlaggings = $flaggingStorage->loadIsFlaggedMultiple($nodes, $this->account);
+          $cacheability->addCacheTags($this->entityTypes->getDefinition('flagging')->getListCacheTags());
+        }
       }
-      $read = FALSE;
-      if ($flag instanceof FlagInterface) {
-        $flagging = $this->flagService->getFlagging($flag, $node, $this->account);
-        $read = $flagging !== NULL;
-        $cacheability->addCacheTags($this->entityTypes->getDefinition('flagging')->getListCacheTags());
+      foreach ($nodes as $node) {
+        if (!$node instanceof NodeInterface) {
+          continue;
+        }
+        $access = $node->access('view', $this->account, TRUE);
+        $cacheability->addCacheableDependency($node)->addCacheableDependency($access);
+        if (!$access->isAllowed()) {
+          continue;
+        }
+        $read = FALSE;
+        if ($flag instanceof FlagInterface && $this->account->isAuthenticated()) {
+          $read = isset($readFlaggings[$node->id()][$flag->id()]);
+        }
+        $readFilter = $filters['leitura'] ?? '';
+        if (($readFilter === 'read' && !$read) || ($readFilter === 'unread' && $read)) {
+          continue;
+        }
+        if ($eligibleSeen++ < $eligibleOffset) {
+          continue;
+        }
+        if ($pageState?->origin() === 'comunicado' && count($items) >= $limit) {
+          $pageState->setHasNext(TRUE);
+          break 2;
+        }
+        // The drawer lists a summary; the full notice opens in the same drawer (noticeDetail).
+        // A persistent notice is not dismissed (no "×"): it stays in the list, and its own kind of card tells it apart.
+        $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
+          (string) $node->label(),
+          $this->excerpt($this->noticeText($node)),
+          Url::fromRoute('aculta_messenger.notice_detail', ['node' => $node->id()]),
+          [],
+          $read ? (string) $this->translation->translate('Lido') : (string) $this->translation->translate('Não lido'),
+          TRUE,
+          NoticeType::normalize($node->hasField('field_aculta_notice_type') && !$node->get('field_aculta_notice_type')->isEmpty() ? (string) $node->get('field_aculta_notice_type')->value : NULL),
+        ), 'comunicado', !$read, (int) $node->getCreatedTime());
+        if ($pageState?->origin() !== 'comunicado' && count($items) >= $limit) {
+          break 2;
+        }
       }
-      // The drawer lists a summary; the full notice opens in the same drawer (noticeDetail).
-      // A persistent notice is not dismissed (no "×"): it stays in the list, and its own kind of card tells it apart.
-      $items[] = $this->noticeSummary(
-        (string) $node->label(),
-        $this->excerpt($this->noticeText($node)),
-        Url::fromRoute('aculta_messenger.notice_detail', ['node' => $node->id()]),
-        [],
-        $read ? (string) $this->translation->translate('Lido') : (string) $this->translation->translate('Não lido'),
-        TRUE,
-        NoticeType::normalize($node->hasField('field_aculta_notice_type') && !$node->get('field_aculta_notice_type')->isEmpty() ? (string) $node->get('field_aculta_notice_type')->value : NULL),
-      );
-    }
+    } while (count($ids) === $batchSize);
     return $items;
   }
 
@@ -864,6 +1335,20 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
+   * Adds neutral metadata consumed only by the central notice filters.
+   */
+  private function withNoticeFilterMetadata(array $item, string $origin, ?bool $unread, int $recency = 0): array {
+    $item['#attributes']['data-aculta-notice-origin'] = $origin;
+    if ($unread !== NULL) {
+      $item['#attributes']['data-aculta-notice-read'] = $unread ? 'unread' : 'read';
+    }
+    if ($recency > 0) {
+      $item['#attributes']['data-aculta-notice-recency'] = (string) $recency;
+    }
+    return $item;
+  }
+
+  /**
    * Rótulo "Lido" ou "Não lido" de uma caixa de conversa ou de aviso do Fórum. Substitui a marcação por cor: o texto é a
    * única indicação de estado. Os avisos persistentes não usam este rótulo.
    */
@@ -894,9 +1379,11 @@ final class MessagesController extends ControllerBase {
 
   /** "← Todos os avisos": back to the notices list, in the same drawer. */
   private function backToNoticesLink(): array {
+    $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
+    $query = array_filter($filters, static fn(string $value): bool => $value !== '');
     return PortalLinkElement::build(
       $this->translation->translate('← Todos os avisos'),
-      Url::fromRoute('aculta_messenger.alerts_preview'),
+      Url::fromRoute('aculta_messenger.alerts_preview', [], ['query' => $query]),
       ['data-aculta-drawer-back' => '', 'data-portal-ui' => 'messenger-back-link'],
     ) + ['#weight' => -100];
   }
@@ -975,15 +1462,7 @@ final class MessagesController extends ControllerBase {
 
   /** A same-site, non-prefetch request, i.e. one the member opened on this site. */
   private function isMemberInitiatedRequest(): bool {
-    $request = $this->requestStack->getCurrentRequest();
-    if ($request === NULL) {
-      return FALSE;
-    }
-    if ($request->headers->get('Sec-Fetch-Site') === 'cross-site') {
-      return FALSE;
-    }
-    $purpose = strtolower((string) ($request->headers->get('Sec-Purpose') ?? $request->headers->get('Purpose') ?? ''));
-    return !str_contains($purpose, 'prefetch') && !str_contains($purpose, 'prerender');
+    return MemberInitiatedRequest::isMemberInitiated($this->requestStack->getCurrentRequest());
   }
 
 }

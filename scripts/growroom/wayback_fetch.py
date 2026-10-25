@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Baixa do Wayback só o que foi capturado (CDX já filtrado pela F1), em modo "assets" ou "html".
+"""Baixa do Wayback só o que foi capturado (CDX já filtrado pela F1), em modo "assets", "html" ou "imagens".
+
+- "assets" e "html": uma captura por URL (a mais recente com status 200).
+- "imagens": todas as capturas 200 de imagem do CDX, uma por par (URL, captura); grava no manifesto de assets.
+- "topicos-antigos": todas as capturas 200 de URLs "showtopic" (formato IPB 2), uma por par; grava no manifesto de html.
 
 Regras:
 - Cada URL é baixada da captura exata do CDX (status 200), sem seguir para outra data.
@@ -12,7 +16,7 @@ Regras:
   perfis-permitidos.json (gerado por build_mapping.py, regra de usuários da importação).
 - Downloads em paralelo com janela deslizante (WORKERS conexões); a gravação é sequencial.
 
-Uso: sudo -n python3 -B wayback_fetch.py {assets|html}
+Uso: sudo -n python3 -B wayback_fetch.py {assets|html|imagens|topicos-antigos}
 Exige acesso root ao armazenamento privado (/home/aculta/private/aculta/forum).
 """
 import hashlib
@@ -81,7 +85,7 @@ def select(mode: str):
 
 
 def root_for(mode: str) -> str:
-    return os.path.join(BASE, "html" if mode == "html" else "assets")
+    return os.path.join(BASE, "html" if mode in ("html", "topicos-antigos") else "assets")
 
 
 def base_path(root: str, orig: str) -> str:
@@ -142,6 +146,44 @@ def valid_records(manifest: str):
     return ok
 
 
+def select_pares(modo: str):
+    """Todas as capturas 200 do CDX de um tipo, uma por par (URL, captura).
+
+    "imagens": qualquer image/*. "topicos-antigos": text/html com "showtopic" na URL (formato IPB 2).
+    """
+    with open(CDX, encoding="utf-8") as fh:
+        rows = json.load(fh)[1:]
+    saida = set()
+    for ts, orig, status, mime, _d, _l in rows:
+        if status != "200":
+            continue
+        m = mime.split(";")[0].strip().lower()
+        if modo == "imagens" and m.startswith("image/"):
+            saida.add((ts, orig, m))
+        elif modo == "topicos-antigos" and m == "text/html" and "showtopic" in orig.lower():
+            saida.add((ts, orig, m))
+    return sorted(saida, key=lambda r: (r[1], r[0]))
+
+
+def valid_pairs(manifest: str):
+    """Pares (URL, captura) cujo arquivo existe e confere com o SHA-256 do registro."""
+    ok = set()
+    if os.path.exists(manifest):
+        with open(manifest, encoding="utf-8") as fh:
+            for line in fh:
+                try:
+                    r = json.loads(line)
+                except ValueError:
+                    continue
+                if r.get("http") == 200 and r.get("local"):
+                    p = os.path.join(BASE, r["local"])
+                    if os.path.isfile(p):
+                        with open(p, "rb") as arq:
+                            if hashlib.sha256(arq.read()).hexdigest() == r.get("sha256"):
+                                ok.add((r["original"], r["timestamp"]))
+    return ok
+
+
 def fetch(ts: str, orig: str):
     url = f"https://web.archive.org/web/{ts}id_/{orig}"
     for attempt in range(4):
@@ -167,12 +209,18 @@ def _baixar(item):
 
 def main(mode: str) -> None:
     root = root_for(mode)
-    manifest = os.path.join(BASE, f"manifest-{mode}.jsonl")
+    manifest_mode = {"imagens": "assets", "topicos-antigos": "html"}.get(mode, mode)
+    manifest = os.path.join(BASE, f"manifest-{manifest_mode}.jsonl")
     log_path = os.path.join(BASE, f"progress-{mode}.log")
     os.makedirs(root, exist_ok=True)
-    rows = select(mode)
-    ok = valid_records(manifest)
-    pendentes = [r for r in rows if r[1] not in ok]
+    if mode in ("imagens", "topicos-antigos"):
+        rows = select_pares(mode)
+        ok = valid_pairs(manifest)
+        pendentes = [r for r in rows if (r[1], r[0]) not in ok]
+    else:
+        rows = select(mode)
+        ok = valid_records(manifest)
+        pendentes = [r for r in rows if r[1] not in ok]
     print(f"{mode}: total {len(rows)}; válidos {len(ok)}; a baixar {len(pendentes)}", flush=True)
     fila = iter(pendentes)
     i = 0

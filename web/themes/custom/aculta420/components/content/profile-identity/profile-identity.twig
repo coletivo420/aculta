@@ -1,0 +1,18 @@
+{# O nome é texto; os slots vêm de serviços com acesso e cache resolvidos. #}
+<section{{ attributes.addClass('aculta-profile-identity') }} aria-label="{{ 'Identidade do meu perfil'|t }}">
+  <div class="aculta-profile-identity__main">
+    {% if avatar %}
+      <div class="aculta-profile-identity__avatar">{{ avatar }}</div>
+    {% else %}
+      <div class="aculta-profile-identity__avatar aculta-profile-identity__avatar--initial" aria-hidden="true">{{ display_name|slice(0, 1)|upper }}</div>
+    {% endif %}
+    <div class="aculta-profile-identity__details">
+      <h2 class="aculta-profile-identity__name">{{ display_name }}</h2>
+      {% if hint %}<p class="aculta-profile-identity__hint">{{ hint }}</p>{% endif %}
+      {% if public_link %}<div class="aculta-profile-identity__public-link">{{ public_link }}</div>{% endif %}
+    </div>
+  </div>
+  {% if actions %}
+    <div class="aculta-profile-identity__actions">{{ actions }}</div>
+  {% endif %}
+</section>

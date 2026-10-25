@@ -1,5 +1,5 @@
 /**
- * Prévia da busca no popup: espera 300 ms sem digitação e carrega o HTML da prévia da rota do Portal (mesmo host).
+ * Prévia da busca: espera 300 ms sem digitação e carrega o HTML da rota de prévia do mesmo host.
  * Só a resposta mais recente é exibida; falha mostra uma mensagem na própria caixa.
  */
 (function (Drupal, once) {
@@ -46,9 +46,6 @@
           }
         }, 0);
 
-        input.setAttribute('role', 'combobox');
-        input.setAttribute('aria-autocomplete', 'list');
-        input.setAttribute('aria-expanded', 'false');
         if (box) {
           input.setAttribute('aria-controls', box.id);
         }
@@ -58,14 +55,12 @@
             box.innerHTML = hintHtml;
             box.removeAttribute('hidden');
           }
-          input.setAttribute('aria-expanded', 'false');
         };
 
         const hidePreview = () => {
           if (box) {
             box.setAttribute('hidden', 'hidden');
           }
-          input.setAttribute('aria-expanded', 'false');
         };
 
         input.addEventListener('input', () => {
@@ -114,7 +109,6 @@
               .then((html) => {
                 if (current === controller && box) {
                   box.innerHTML = html;
-                  input.setAttribute('aria-expanded', box.querySelector('a') ? 'true' : 'false');
                 }
               })
               .catch((error) => {
@@ -127,39 +121,6 @@
               });
           }, DELAY_MS);
         });
-
-        // Setas: ↓ no campo entra na lista; ↑/↓ percorrem os resultados; ↑ no primeiro volta ao campo.
-        input.addEventListener('keydown', (event) => {
-          if (event.key === 'ArrowDown' && box) {
-            const first = box.querySelector('a');
-            if (first) {
-              event.preventDefault();
-              first.focus();
-            }
-          }
-        });
-        if (box) {
-          box.addEventListener('keydown', (event) => {
-            const links = Array.from(box.querySelectorAll('a'));
-            const index = links.indexOf(document.activeElement);
-            if (index === -1) {
-              return;
-            }
-            if (event.key === 'ArrowDown') {
-              event.preventDefault();
-              links[Math.min(index + 1, links.length - 1)].focus();
-            }
-            else if (event.key === 'ArrowUp') {
-              event.preventDefault();
-              if (index === 0) {
-                input.focus();
-              }
-              else {
-                links[index - 1].focus();
-              }
-            }
-          });
-        }
 
         // Diálogo: Tab e Shift+Tab fazem ciclo dentro do popup, nos dois extremos.
         // Fase de captura: roda antes do jQuery UI, e o diálogo é procurado a cada tecla.

@@ -1,0 +1,145 @@
+services:
+  aculta_statistics.catalog:
+    class: Drupal\aculta_statistics\Catalog\MetricCatalog
+
+  aculta_statistics.storage:
+    class: Drupal\aculta_statistics\Storage\DailyAggregateStorage
+    arguments: ['@database', '@datetime.time']
+
+  aculta_statistics.entity_metric_aggregator:
+    class: Drupal\aculta_statistics\Bridge\AuthorizedEntityMetricAggregator
+    arguments: ['@aculta_statistics.catalog', '@aculta_statistics.storage']
+
+  Drupal\aculta_portal\Statistics\ContentEntityMetricAggregatorInterface: '@aculta_statistics.entity_metric_aggregator'
+
+  aculta_statistics.retention:
+    class: Drupal\aculta_statistics\Retention\RetentionPolicy
+    arguments: ['@config.factory', '@aculta_statistics.catalog']
+
+  aculta_statistics.recorder:
+    class: Drupal\aculta_statistics\Recorder\StatisticsRecorder
+    arguments: ['@aculta_statistics.catalog', '@aculta_statistics.storage']
+
+  aculta_statistics.summary_lines:
+    class: Drupal\aculta_statistics\Report\StatisticsSummaryLines
+    arguments: ['@aculta_statistics.storage']
+
+  aculta_statistics.visitor_key:
+    class: Drupal\aculta_statistics\Visitor\VisitorKey
+    factory: ['Drupal\aculta_statistics\Visitor\VisitorKeyFactory', 'create']
+
+  aculta_statistics.commerce_reconciler:
+    class: Drupal\aculta_statistics\Reconciliation\CommerceReconciler
+    arguments: ['@entity_type.manager', '@aculta_statistics.storage']
+
+  aculta_statistics.wiki_provider:
+    class: Drupal\aculta_statistics\Wiki\WikiProvider
+    arguments: ['@entity_type.manager']
+
+  # Lê o histórico de revisões do Node em tempo de renderização; não grava nada.
+  aculta_statistics.wiki_revision_report:
+    class: Drupal\aculta_statistics\Wiki\WikiRevisionReport
+    arguments: ['@entity_type.manager', '@database']
+
+  aculta_statistics.email_provider:
+    class: Drupal\aculta_statistics\Email\EmailProvider
+    arguments: ['@entity_type.manager']
+
+  aculta_statistics.email_reconciler:
+    class: Drupal\aculta_statistics\Reconciliation\EmailReconciler
+    arguments: ['@aculta_statistics.email_provider', '@aculta_statistics.storage']
+
+  aculta_statistics.cart_abandonment_cron_hooks:
+    class: Drupal\aculta_statistics\Hook\CartAbandonmentCronHooks
+    arguments: ['@entity_type.manager', '@aculta_statistics.recorder', '@aculta_statistics.storage', '@module_handler']
+
+  aculta_statistics.commerce_order_domain_hooks:
+    class: Drupal\aculta_statistics\Hook\CommerceOrderDomainHooks
+    arguments: ['@aculta_statistics.purpose_resolver']
+
+  # Opcional: sem o portal instalado, pedidos seguem sem purpose (sem_dominio).
+  aculta_statistics.purpose_resolver:
+    class: Drupal\aculta_statistics\Domain\PortalPurposeResolver
+    arguments: ['@?Drupal\aculta_portal\Domain\DomainPurposeManager']
+
+  aculta_statistics.lms_class_resolver:
+    class: Drupal\aculta_statistics\Lms\LmsClassResolver
+    arguments: ['@entity_type.manager']
+
+  aculta_statistics.lms_events_subscriber:
+    class: Drupal\aculta_statistics\EventSubscriber\LmsEventsSubscriber
+    arguments: ['@aculta_statistics.recorder', '@keyvalue.expirable', '@aculta_statistics.lms_class_resolver']
+    tags:
+      - { name: event_subscriber }
+
+  aculta_statistics.commerce_payment_refund_hooks:
+    class: Drupal\aculta_statistics\Hook\CommercePaymentRefundHooks
+    arguments: ['@aculta_statistics.recorder', '@logger.factory']
+
+  aculta_statistics.commerce_order_paid_subscriber:
+    class: Drupal\aculta_statistics\EventSubscriber\CommerceOrderPaidSubscriber
+    arguments: ['@aculta_statistics.recorder', '@logger.factory']
+    tags:
+      - { name: event_subscriber }
+
+  # Produtor no aculta_forum: o assinante só conhece o nome do evento, sem dependência do módulo.
+  aculta_statistics.forum_activity_subscriber:
+    class: Drupal\aculta_statistics\EventSubscriber\ForumActivitySubscriber
+    arguments: ['@aculta_statistics.recorder']
+    tags:
+      - { name: event_subscriber }
+
+  aculta_statistics.lms_student_status_subscriber:
+    class: Drupal\aculta_statistics\EventSubscriber\LmsStudentStatusSubscriber
+    arguments: ['@aculta_statistics.storage']
+    tags:
+      - { name: event_subscriber }
+
+  aculta_statistics.student_data_purge_subscriber:
+    class: Drupal\aculta_statistics\EventSubscriber\StudentDataPurgeSubscriber
+    arguments: ['@aculta_statistics.storage']
+    tags:
+      - { name: event_subscriber }
+
+  aculta_statistics.lms_class_status_subscriber:
+    class: Drupal\aculta_statistics\EventSubscriber\LmsClassStatusSubscriber
+    arguments: ['@aculta_statistics.storage']
+    tags:
+      - { name: event_subscriber }
+
+  aculta_statistics.wiki_read_controller:
+    class: Drupal\aculta_statistics\Controller\WikiReadController
+    arguments: ['@aculta_statistics.recorder', '@flood', '@request_stack', '@aculta_statistics.visitor_key']
+
+  # Aliases por classe e interface, para injeção por tipo (autowiring).
+  Drupal\aculta_statistics\Catalog\MetricCatalog: '@aculta_statistics.catalog'
+  Drupal\aculta_statistics\Storage\AggregateStorageInterface: '@aculta_statistics.storage'
+  Drupal\aculta_statistics\Retention\RetentionPolicy: '@aculta_statistics.retention'
+  Drupal\aculta_statistics\Recorder\StatisticsRecorder: '@aculta_statistics.recorder'
+  Drupal\aculta_statistics\Visitor\VisitorKey: '@aculta_statistics.visitor_key'
+  Drupal\aculta_statistics\Reconciliation\CommerceReconciler: '@aculta_statistics.commerce_reconciler'
+  Drupal\aculta_statistics\Wiki\WikiProvider: '@aculta_statistics.wiki_provider'
+  Drupal\aculta_statistics\Wiki\WikiRevisionReport: '@aculta_statistics.wiki_revision_report'
+  Drupal\aculta_statistics\Email\EmailProviderInterface: '@aculta_statistics.email_provider'
+  Drupal\aculta_statistics\Reconciliation\EmailReconciler: '@aculta_statistics.email_reconciler'
+  # GA4 (0.6.0): desligado até propriedade e credencial existirem. Ver docs/INTEGRATIONS.md.
+  aculta_statistics.ga4_settings:
+    class: Drupal\aculta_statistics\Connector\Ga4\SecretsGa4Settings
+    arguments: ['@?aculta_portal.secrets_manager']
+  aculta_statistics.ga4_logger:
+    class: Psr\Log\LoggerInterface
+    factory: ['@logger.factory', 'get']
+    arguments: ['aculta_statistics']
+  aculta_statistics.ga4_client:
+    class: Drupal\aculta_statistics\Connector\Ga4\GoogleGa4ReportClient
+    arguments: ['@aculta_statistics.ga4_settings', '@aculta_statistics.ga4_logger']
+  Drupal\aculta_statistics\Connector\Ga4\Ga4ReportClient: '@aculta_statistics.ga4_client'
+  aculta_statistics.gsc_settings:
+    class: Drupal\aculta_statistics\Connector\SearchConsole\SecretsSearchConsoleSettings
+    arguments: ['@?aculta_portal.secrets_manager', '@aculta_statistics.ga4_settings']
+  aculta_statistics.gsc_client:
+    class: Drupal\aculta_statistics\Connector\SearchConsole\GoogleSearchConsoleClient
+    arguments: ['@aculta_statistics.gsc_settings', '@aculta_statistics.ga4_logger']
+  Drupal\aculta_statistics\Domain\PurposeResolverInterface: '@aculta_statistics.purpose_resolver'
+  Drupal\aculta_statistics\Lms\LmsClassResolverInterface: '@aculta_statistics.lms_class_resolver'
+  Drupal\aculta_mailer\Report\StatisticsLinesProviderInterface: '@aculta_statistics.summary_lines'

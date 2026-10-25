@@ -32,7 +32,6 @@ final class AdministrativeMenuHooks {
     'captcha.settings',
     'flood_control.admin',
     'entity.user.admin_form',
-    'agreement.admin',
   ];
 
   #[Hook('menu_links_discovered_alter')]

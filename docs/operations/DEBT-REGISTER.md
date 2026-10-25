@@ -1,6 +1,6 @@
 # Registro de dívidas e pendências
 
-Atualizado em 2026-10-18: reconciliação parcial dirigida de 29 objetos F7 no Runtime; drift global restante 284. Anterior: 2026-10-15 (revisão documental, PR #281): gates reexecutados e estados de DT-T19, DT-P20 e DT-O12 corrigidos. Merges #238 e #239 (2026-10-13 UTC). Revisão anterior: 2026-10-12; os resultados detalhados daquela data estão no snapshot
+Atualizado em 2026-10-19: correção de gate Foundation para placements administrativos do tema Claro. Reconciliação parcial dirigida de 29 objetos F7 no Runtime; drift global restante 284. Anterior: 2026-10-15 (revisão documental, PR #281): gates reexecutados e estados de DT-T19, DT-P20 e DT-O12 corrigidos. Merges #238 e #239 (2026-10-13 UTC). Revisão anterior: 2026-10-12; os resultados detalhados daquela data estão no snapshot
 [`docs/portal/historico/RELATORIO-ESTADO-2026-10-12.md`](../portal/historico/RELATORIO-ESTADO-2026-10-12.md). Estado corrente de código e gates: [RELATORIO-ESTADO-APOS-PR-238-239.md](../portal/RELATORIO-ESTADO-APOS-PR-238-239.md).
 
 Este é o registro único de dívidas históricas e pendências de desenvolvimento. Os roadmaps
@@ -39,7 +39,7 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-P06 | Enumeração de contas pelo cadastro | reaberta e resolvida em 0.2.0-dev.22: mensagem única para e-mail novo e já cadastrado; conta existente não é criada nem revelada; dono recebe aviso. Limites registrados no CHANGELOG | Média | Decisão do responsável (2026-10-09) | S4 | Resolvida |
 | DT-P07 | Mercado Pago não testado com credencial real | adiado a pedido do responsável (decisão sobre a credencial de sandbox) | Média | Sim (credencial de sandbox) | S3 | Aberta (adiada) |
 | DT-P08 | Login completo com CAPTCHA não exercitado por HTTP | widget Turnstile verificado em `/entrar`; resolução do desafio depende de exceção de teste aprovada pelo responsável | Média | Sim (exceção de teste do CAPTCHA) | S3 | Aberta (parcial) |
-| DT-P09 | Mensagem de webform via SMTP sem o modelo HTML | `docs/portal/EMAIL-TRANSPORT.md`, seção 9: teste controlado do Mailer Plus com HTML habilitado temporariamente em memória foi recebido e confirmado; a configuração versionada do contato permanece em texto simples (`html: false`) e o formato `email_html` não tem filtros exportados | Baixa | Não | S4 | Resolvida para compatibilidade do transporte; HTML permanece desativado no formulário público |
+| DT-P09 | Mensagem de webform via SMTP sem o modelo HTML | `docs/portal/EMAIL-TRANSPORT.md`, seção 9: teste controlado da camada de envio E-Mails ACULTA com HTML habilitado temporariamente em memória foi recebido e confirmado; a configuração versionada do contato permanece em texto simples (`html: false`) e o formato `email_html` não tem filtros exportados | Baixa | Não | S4 | Resolvida para compatibilidade do transporte; HTML permanece desativado no formulário público |
 | DT-P10 | Módulos de administração ativos em produção | `P10-R` risco 7 ("avaliar") | Média | Sim | S4 | Aberta |
 | DT-P11 | `validate-final-contact` não executa fora do ambiente local | local por desenho (recusa outros hosts); sai com código 2 porque o Turnstile recusa envio por script. Adiado com decisão: exceção de teste do CAPTCHA | Baixa | Sim (exceção de teste do CAPTCHA) | S3 | Aberta (adiada com decisão) |
 | DT-P12 | Conta: segurança/conexões e AJAX herdados da lista antiga de prioridades | `ROADMAP.md` antigo (prioridades 2 e 3); `js/account-navigation.js` com 183 linhas | Média | Sim (escopo) | S5 | Aberta |
@@ -87,6 +87,7 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-T14 | Foundation de 0.1.0 descrita como "preserva o shell existente" em documentos atuais | `architecture.md` e `development.md` reescritos (0.4.0-dev.2) | Baixa | Não | T0 | Resolvida |
 | DT-T20 | Página pública `links` responde 404 na raiz do host de teste `links.aculta.toca.net.br`; o shell de LINKS (`layout.links_page`) não foi verificado visualmente | Verificação visual de 2026-10-16 (`web/themes/custom/aculta420/CHANGELOG.md`, 0.6.0-dev.66) | Média | Não decidido | S2 | Aberta: causa não investigada (provisionamento do host ou rota) |
 | DT-T21 | Gate Foundation do ACULTA420 tinha expectativas obsoletas para o provider `bootstrap5`, o pacote 4.0.8, a versão do tema e a allowlist Twig | `scripts/validate-aculta420-foundation.php`; verificações reconciliadas com `aculta420.info.yml`, `web/themes/contrib/bootstrap/bootstrap.info.yml`, `composer.lock` e os templates atuais. Gate somente leitura PASS via Drush em 2026-10-18 | Média | Não | S2 | Resolvida em 0.6.0-dev.75 |
+| DT-T22 | Gate Foundation exigia tema público ACULTA420 em placements administrativos limitados por rota e corretamente atribuídos ao tema admin Claro | `block.block.aculta_magazine_admin_comments` usa só `/painel-administrativo/conteudo/revista` e `/admin/content/revista`; o gate agora distingue paths exclusivamente administrativos e valida tema/região pela informação do tema ativo | Média | Não | Fórum/Revista | Resolvida em 0.6.0-dev.102 após gate Runtime PASS |
 
 ## Operação e Runtime
 
@@ -99,14 +100,14 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-O05 | Credenciais de teste no Runtime local, sem rotação programada | `~/.config/aculta-homelab/test-credentials.env`; `TEST-DATA.md` | Baixa | Não | S6 | Aberta |
 | DT-O06 | Teste de login negado para conta bloqueada descrito como esperado, não executado | executado em 2026-10-09: o formulário de login recusa a conta bloqueada e aceita a ativa (conta de teste removida) | Baixa | Não | S3 | Resolvida |
 | DT-O07 | Config ainda com drift (`smtp.settings` e `system.mail`) | resolvida na M2 da migração do e-mail: `smtp.settings` removido, `drupal/smtp` removido e `system.mail` exportado como `symfony_mailer` (`docs/portal/EMAIL-TRANSPORT.md`, seção 9.7) | Média | Não | S3 | Resolvida (M2) |
-| DT-O10 | Linha de base de configuração e conteúdo: 274 itens observados em 2026-10-17; 271 após PV5; 315 antes da F7; 284 diferenças restantes após reconciliação parcial F7 em 2026-10-18, mais 10 imagens do catálogo | `scripts/validate-final-drupal.php`, listas `$known_drift` e `$known_files`; `config:status` no Runtime. 29 objetos F7 foram reconciliados após backup verificado, sem import global nem remoção; backup `/home/aculta/private/aculta/config-reconcile-20261018/aculta_runtime-before-f7.sql.gz`. Ainda inclui catálogo da loja (`commerce_product*`, `views.commerce_products`, `categoria_loja`), permissão `commerce_product` do papel anônimo (`user.role.anonymous`), textos/views do fórum, filas do flag, `agreement`/`email_confirmer` e divergências por módulo/domínio. Decisão de produto (catálogo e permissões públicas) e revisão de conteúdo ainda necessárias | Alta | Sim (decisão de catálogo e de permissões) | S2 | Aberta: catálogo fica fora do `config/sync` por decisão do responsável e **deve ser ativado nas versões RC** (ver `docs/operations/RC-READINESS.md`, pendência 2). Permanecem 284 diferenças globais para revisão; linha de base em `scripts/institution/CONFIG-DRIFT-BASELINE.json` deve ser atualizada após as decisões pendentes, sem importar o conjunto global automaticamente |
+| DT-O10 | Linha de base de configuração e conteúdo: 274 itens observados em 2026-10-17; 271 após PV5; 315 antes da F7; 284 diferenças restantes após reconciliação parcial F7 em 2026-10-18, mais 10 imagens do catálogo | `scripts/validate-final-drupal.php`, listas `$known_drift` e `$known_files`; `config:status` no Runtime. 29 objetos F7 foram reconciliados após backup verificado, sem import global nem remoção; backup `/home/aculta/private/aculta/config-reconcile-20261018/aculta_runtime-before-f7.sql.gz`. Ainda inclui catálogo da loja (`commerce_product*`, `views.commerce_products`, `categoria_loja`), permissão `commerce_product` do papel anônimo (`user.role.anonymous`), textos/views do fórum, filas do flag, `agreement`/`email_confirmer` e divergências por módulo/domínio. Decisão de produto (catálogo e permissões públicas) e revisão de conteúdo ainda necessárias | Alta | Sim (decisão de catálogo e de permissões) | S2 | Aberta: catálogo fica fora do `config/sync` por decisão do responsável; requisito de configuração permanece pendente para o candidato RC e só será aplicado ao Runtime em Alpha conforme o plano autorizado. Ver snapshot histórico `docs/operations/RC-READINESS.md`, pendência 2. Permanecem 284 diferenças globais para revisão; linha de base em `scripts/institution/CONFIG-DRIFT-BASELINE.json` deve ser atualizada após as decisões pendentes, sem importar o conjunto global automaticamente |
 | DT-O11 | Credencial de teste do Mercado Pago armazenada no banco do runtime (`access_token_test`, `public_key_test` no cadastro do gateway), contrariando a regra de Key/env | `scripts/validate-portal-commerce-security.php`, asserção "Fake runtime credentials were not persisted". `config/sync` está limpo. Corrigir exige remover o valor do banco e rotacionar o token, após autorização do responsável | Alta | Sim (autorização para limpar e rotacionar) | S1 | Parcial: tokens e chave de teste removidos do banco do runtime em 2026-10-11, e permissão anônima `view commerce_product` revogada no runtime de teste; gate de comércio passa. Pendente do responsável: rotação dos tokens no painel do Mercado Pago |
 | DT-O12 | `aculta_deployer` com falhas de teste e de `check`, Em 2026-10-15, `tests/run.php` aborta no teste de build (`RecursiveDirectoryIterator` sobre diretório temporário inexistente, linha 132), e `check` avisa que `services.local.yml` define `cookie_domain .aculta.test`, sem ambiente declarado. Detalhe de 2026-10-12: 27 PASS / 2 FAIL, `check` exit 1 e 52 avisos de perfil production | `tests/run.php` e `bin/aculta-deployer check` no submódulo | Média | Não | S6 | Aberta |
 | DT-BOUNDARY-GALLERY | Classe de design `photoswipe-gallery` montada no módulo `aculta_gallery` (`GalleryViewHooks.php`), que o gate de fronteira passou a enxergar | Gate `validate-module-theme-boundary`, regra 10 (lista `$knownDebt`). Achado ao ampliar a regra para todos os `src/` do módulo, em 2026-10-15 | Média | Não | Fora do Messenger | Aberta (registrada no gate) |
 | DT-O08 | PRs obsoletas acumuladas | PR antiga fechada em 2026-10-09 com arquivo em `archive/pr63` | Baixa | Não | — | Resolvida |
 | DT-O13 | Homologação da integração privada de documentos de turma no Runtime: bundle `course_document`, relação Group de `lms_course` e permissões de estudante/educador já estão ativos por importação parcial dirigida; falta verificar acesso HTTP por membro/não membro, remoção da relação e revogação de membership | `docs/operations/BANCO-DE-TESTE.md`; `config:status` no Runtime; backup pré-importação `/home/aculta/private/aculta/config-reconcile-20261017/aculta_runtime-before.sql.gz.gz` | Alta | Não | S2 | Parcial: configuração importada e sem drift nos itens PV5; não há Media de curso de teste, nem alteração de memberships. Validar matriz de acesso e cache antes do aceite de segurança; manter aberta enquanto a frente de contas/permissões estiver em andamento |
 | DT-O14 | Resíduos de configuração da base antiga `bootstrap5` no Runtime | Em 2026-10-18, `core.extension:theme.bootstrap5` foi removido via `drush config:delete`; o mapa de temas agora coincide com `config/sync/core.extension.yml`, e `system.theme` permanece `default: aculta420`, `admin: claro`. Cópia recuperável do mapa anterior: `/tmp/aculta-runtime-core-extension-theme-before-bootstrap5-20261018.yml`. Permanecem no banco `bootstrap5.settings` e `block.block.bootstrap5_search_form` (status ativo, dependência/tema `bootstrap5`); a importação parcial não foi repetida. | Média | Pode continuar bloqueando importações de configuração | S2 | Parcial: corrigido o registro de tema em `core.extension`; avaliar e remover os dois objetos órfãos em operação dirigida antes de retestar importações |
-| DT-O15 | Pedidos de amizade recebidos sem tela dedicada. A rota `/mensagens/notificacoes` saiu do código, e `FriendRequestsForm` não é renderizado em nenhum lugar; a barra continua contando os pedidos (`X-Aculta-Messages-Count` e contador do `MessengerBarHooks`). Aceitar e recusar só existem na página pública do perfil (`FriendshipActionForm`) | `aculta_messenger.routing.yml` sem a rota; `FriendRequestsForm` sem uso; `docs/architecture/ROUTES-SITEMAP.md` (caminhos removidos) | Média | Não | — | Aberta: decidir se os pedidos voltam à aba Mensagens de `/avisos-mensagens` ou se a página do perfil basta |
+| DT-O15 | Recebimento de pedidos de amizade na aba Mensagens | `AvisosMensagensController::conteudoMensagens()` inclui `FriendRequestsForm`; o Form revalida a conta destinatária; Unit `FriendRequestsFormTest` cobre exibição e aceite (2/12) | Média | Não | F14 | Implementado no código e coberto por Unit; revisão visual autenticada pendente |
 
 ## Mercado Pago (registrado em 2026-10-16)
 
@@ -120,7 +121,7 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-MP-06 | Kernel e teste visual do painel de pedidos e dos formulários de ação não executados (sem pedido de teste no Runtime) | `CHANGELOG` do módulo, 0.4.0-dev.69 | Média | Sim (antes de usar as ações) | F1 | Aberta |
 | DT-MP-07 | Dados de teste criados na conta de teste: plano `763715780e834403864cf3c154e3167b`, assinatura `4e7c1e310e84410985a281431511bdd3` (pending), comprador de teste `test_user_16487370811776439@testuser.com` (criado por `POST /users/test_user`) | Testes de 2026-10-16. A API não apaga plano nem usuário de teste | Baixa | Não | — | Aberta: limpeza manual no painel do Mercado Pago |
 | DT-MP-08 | Docblock de `PaymentClient::cancel` no SDK diz só `pending`; a documentação oficial lista também `in_process` e `authorized` | `vendor/mercadopago/dx-php` (3.16.0) | Baixa | Não | — | Aberta: código segue a documentação |
-| DT-MP-09 | **Gateway em modo `test` usa credenciais do tipo produção.** `access_token_test` e a Key `mercadopago_test_public_key` começam com `APP_USR-` (tipo produção; credenciais de teste começam com `TEST-`). A API recusou pagamento com cartão de teste: "Unauthorized use of live credentials". Chamadas anteriores (plano de teste, consultas) foram feitas nessa conta. Nenhuma cobrança foi feita. | Verificação por prefixo, 2026-10-16 (prefixo apenas; valores não impressos); resposta 401 da API a `POST /v1/payments` | **Crítica** | **Sim** | F1/F2 | Aberta. Aceite de risco do responsável para o merge da PR #291 em 2026-10-19: merge feito com o pagamento de teste ainda não validado; a dívida segue aberta e bloqueia a produção até o pagamento de teste ser aprovado. O responsável confirmou que as credenciais são de teste e pediu para desconsiderar o prefixo; a API continua recusando o pagamento de teste (2 tentativas, 401). Causa provável identificada: Causa provável (2026-10-16): o token pertence à aplicação de ID 8616430635467445, mas o usuário de teste da conta pertence à aplicação de client_id 3622136639627600 (campo test_data de /users/me). Pix sem cartão também recusado (código 7). Corrigir: usar o token da aplicação de client_id 3622136639627600. Nenhum pagamento de teste até resolver |
+| DT-MP-09 | **Gateway em modo `test` recusa pagamento de teste.** `access_token_test` e a Key `mercadopago_test_public_key` começam com `APP_USR-`; o prefixo não identifica o ambiente (decidir por modo e `live_mode`). A API recusou pagamento com cartão de teste: "Unauthorized use of live credentials". Chamadas anteriores (plano de teste, consultas) foram feitas nessa conta. Nenhuma cobrança foi feita. | Verificação por prefixo, 2026-10-16 (prefixo apenas; valores não impressos); resposta 401 da API a `POST /v1/payments` | **Crítica** | **Sim** | F1/F2 | Aberta. Aceite de risco do responsável para o merge da PR #291 em 2026-10-19: merge feito com o pagamento de teste ainda não validado; a dívida segue aberta e bloqueia a produção até o pagamento de teste ser aprovado. O responsável confirmou que as credenciais são de teste e pediu para desconsiderar o prefixo; a API continua recusando o pagamento de teste (2 tentativas, 401). Causa provável identificada: Causa provável (2026-10-16): o token pertence à aplicação de ID 8616430635467445, mas o usuário de teste da conta pertence à aplicação de client_id 3622136639627600 (campo test_data de /users/me). Pix sem cartão também recusado (código 7). Corrigir: usar o token da aplicação de client_id 3622136639627600. Nenhum pagamento de teste até resolver |
 
 ## Governança
 
@@ -139,7 +140,7 @@ Estado após a rodada. Só o que foi verificado está como resolvido.
 - **Pendente de decisão de escopo:** DT-P10 (módulos de administração em produção), DT-P12 (escopo da conta), DT-P13 (adoção de busca, engajamento e fórum; a busca já tem decisão pelo banco), DT-P23 (sitemap de apoio: módulo por domínio ou rota técnica), DT-T13 (módulo da biblioteca na F4).
 - **Pendente de autorização explícita:** DT-O01 (apagar 64 branches remotas já mescladas), DT-O02 (regerar o snapshot versionado em `estados/`; ver nota de 2026-10-10 abaixo).
 - **Pendente de ambiente com privilégio:** DT-O04 (diretório de agregados do Drupal com dono `aculta:www-data`), DT-P04 (PHP 8.5 não instalado neste host).
-- **Pendente de operação:** DT-O05 (rotação de credenciais de teste), DT-P05 e DT-O07 (e-mail em produção e drift de `smtp.settings` e `system.mail`, dependem de credenciais SMTP e de deploy).
+- **Pendente de operação:** DT-O05 (rotação de credenciais de teste) e DT-P05 (e-mail em produção, depende de credenciais SMTP2GO na camada de envio E-Mails ACULTA e de deploy). DT-O07 resolvida: o módulo `smtp` e `smtp.settings` foram removidos.
 - **Pendente de implementação maior:** DT-P01 (classes `aculta-*` no módulo, com ajuste visual), DT-P03 (testes de Kernel para P5–P7), DT-P08 (login com CAPTCHA por HTTP), DT-P11, DT-P20 (slugs de rotas de contrib), DT-O06 (teste de conta bloqueada).
 
 - **Nota (2026-10-10):** o responsável decidiu que os Estados são backups privados dos servidores. A pasta `estados/` saiu do índice do Git e está inteira no `.gitignore`; os arquivos permanecem no disco. DT-O02 deixa de ser uma regeração versionada e passa a ser apenas inventário e retenção do backup local.
@@ -151,3 +152,157 @@ Estado após a rodada. Só o que foi verificado está como resolvido.
 | DT-G03 | `validate-role-hierarchy` reprova: `in_array('email_confirmed', $papeis)` novo em `HerancaDePapeis::herdados()` (filtro da cadeia de herança, não concessão de acesso); linha de base 4, contagem 5 | `scripts/validate-role-hierarchy.php`; `web/modules/custom/aculta_portal/modules/aculta_user/src/Role/HerancaDePapeis.php`; AGENTS (acesso por permissão). A linha de base não foi ajustada sem decisão de hierarquia | Média | Não | — | Aberta: decidir entre refatorar o filtro ou registrar a exceção e atualizar a linha de base |
 | DT-G04 | `validate-admin-cleanup` reprova: sete Views de exemplo do VVJ (`vvja_example` a `vvjt_example`) estão ativas no Runtime de teste, vindas dos módulos `vvja`…`vvjt` habilitados, e não fazem parte do projeto | `scripts/validate-admin-cleanup.php`; `drush pm:list` (módulos vvj habilitados) | Média | Não | — | Aberta: desabilitar as Views de exemplo no Runtime (mudança persistente, com autorização) ou aceitá-las como exceção |
 | DT-G05 | Gates de ambiente que não passam no servidor de teste: `validate-final-contact`, `validate-final-drupal`, `validate-final-sitemap` e `validate-home-carousel` exigem host local (`localhost`/`127.0.0.1`); `validate-cross-domain-request-policy` reprova porque o host de teste está no cookie compartilhado; `validate-portal-commerce-security` depende do SMTP2GO do ambiente | Saídas dos gates em 2026-10-19 | Baixa | Não | — | Aberta: rodar os de host local em ambiente local; decidir a política de cookie compartilhado e o transporte de e-mail do comércio |
+
+## Kernel e Runtime (2026-10-21)
+
+| ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| DT-K01 | Conta de teste `teste.comum` com papéis além dos documentados: `gerente_loja`, `content_editor`, `lms_teacher` e `estudante`, além de `authenticated` e `email_confirmed` | `drush ev` no Runtime de teste (2026-10-21); `docs/portal/TESTES-NAVEGADOR.md` (seção C) passou a listar os papéis observados. Rotas administrativas respondem 403 | Média | Decisão registrada pelo responsável (2026-10-21): ajustar a documentação; a conta permanece como está | — | Resolvida (documentação corrigida em 2026-10-21) |
+| DT-K02 | Migração `article`/`blog` → `revista` aplicada no Runtime de teste (tipos `article` e `blog` ausentes; 16 nós `revista`; 3 `editorial_highlight`). A execução foi autorizada pelo responsável em 2026-10-21, conforme o plano do dono (`aculta_magazine/docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md`). O código do dono tem alterações não commitadas | `docs/architecture/aculta-kernels.md` (estado do código); plano do aculta_magazine | Alta | Decisão registrada pelo responsável (2026-10-21): migração autorizada. Código do dono commitado em `645fdbdd`; execução registrada no CHANGELOG do aculta_magazine | — | Resolvida (2026-10-21) |
+| DT-K03 | Layout do formulário de resposta LMS em 390 px (tema ACULTA420): "Minha conta" e "Sair" quebram em duas linhas no cabeçalho, e o banner de medição de audiência cobre a parte de baixo do botão "Concluir curso" | Revisão visual no Firefox/X11 com viewport emulado (`tests/browser/aculta-lms/answer-upload-visual.mjs`), captura `02-celular-formulario.png` (2026-10-21). Sem rolagem horizontal; o problema é de apresentação | Baixa | Não: o dono é o tema `aculta420`, que só muda com autorização explícita | — | Aberta (dívida de tema; correção pendente de autorização do tema) |
+
+## Gates fora do Studio (2026-10-21)
+
+Falhas encontradas ao validar o Studio. Não são do `aculta_studio`: pertencem aos donos indicados e
+exigem decisão ou revisão deles. Registradas para não se perderem.
+
+| ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| DT-K04 | Endereços de ambiente fixos em testes e configuração (`aculta.org` e `aculta.toca.net.br` fora do mapeamento do `aculta_deployer`) | `scripts/validate-environment-addresses.php`: 28 ocorrências em `aculta_qrcode` (testes Kernel e Unit), `aculta_statistics` (teste Unit), `aculta_mailer` (`MailTransportSenderEnvelopeTest`), `config/sync/aculta_mailer.brand.aculta.yml` e `config/sync/metatag.metatag_defaults.node__revista.yml`, e `aculta_magazine/src/Drush/Commands/PublicationBundleMigrationCommand.php` | Média | Decisão aplicada (2026-10-21): fixtures com `example.invalid` nos testes; arquivos com identidade institucional ou trava de ambiente declarados em `environment_bound` do `aculta_deployer` com motivo | — | Resolvida (gate PASS, 3496 arquivos) |
+| DT-K05 | Mapa módulo-tema sem linha para `aculta_editor` e `aculta_lms_resources` | `scripts/validate-module-theme-map.php`: 2 falhas (o mapa do `aculta_studio` já foi incluído) | Baixa | Não: documentação do dono de cada módulo | — | Resolvida (linhas incluídas no mapa, gate PASS) |
+| DT-K06 | Fundações de design do ACULTA420: envelope de e-mail com seletor de modo e ramos de modo de cor em Twig e PHP | `scripts/validate-aculta420-design-foundations.php`: 3 checagens (`Email envelope mode selector`, `Twig has no color-mode branch`, `PHP has no color-mode branch`) | Média | Decisão do responsável (2026-10-21): manter o modo de cor (contrato aculta_color_mode) e registrar a exceção no gate, que agora confere o envelope e seu hook pelo contrato | — | Resolvida (gate PASS, 2145 checagens) |
+
+## Studio: decisões de fechamento da diretiva visual (2026-10-21)
+
+| ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| DT-K07 | Publicação do Studio no servidor de desenvolvimento (Alpha) | Decisão do responsável (2026-10-21): não aplicável nesta fase; o Studio fica validado no Runtime de teste | Baixa | Decisão registrada: encerrado como não aplicável nesta fase | — | Encerrada (não aplicável nesta fase) |
+| DT-K08 | Validação de leitor de tela com usuário real (além do Orca) | Orca validado com fala gerada e som medido; decisão do responsável (2026-10-21): registrar como pendência para fase futura | Média | Decisão registrada: pendência para fase futura, dono e fase a definir | futura | Pendência registrada |
+
+## ACULTA Commerce — dívidas da fase C-0.1-C2 (2026-10-22)
+
+Estas tarefas dependem de servidor de testes, configuração ativa ou estado de dados e **não** foram dadas como concluídas pela inspeção estática. Donos: `aculta_commerce` (loja) e `aculta_portal` (carrinho transversal).
+
+| ID | Dívida | Evidência | Prioridade | Critério de fechamento | Estado |
+| --- | --- | --- | --- | --- | --- |
+| DT-COM-01 | Executar PHPUnit de caracterização dos separadores, slugs e limites de consolidação | `modules/aculta_commerce/tests/src/Unit/ExistingPortalCartContractTest.php` e `PortalCartConsolidatorBoundaryTest.php`; somente commitados, não executados no homelab | Alta | PHPUnit PASS com versão real do Drupal/Commerce; corrigir fixtures sem mudar contrato público | Pendente — runtime |
+| DT-COM-02 | Caracterizar consolidação real entre loja, curso e doação, incluindo atomicidade/rollback e itens incompatíveis | `src/Cart/CartConsolidator.php` move itens, salva e exclui pedidos; assinatura é exceção | Alta | Kernel/Functional com tipos reais, múltiplas lojas, impostos, frete, cupom, moeda, pagamento e falha injetada; prova de integridade | Pendente — runtime |
+| DT-COM-03 | Mapear configuração instalada da loja: stores, product/variation, order/item types, shipping, checkout, cupons, tributos, domain purpose e gateway | `aculta_commerce` é fundação; `ShopController` e checkout no Portal; sem acesso ao banco do servidor | Alta | Inventário sanitizado e snapshots pré/pós com `drush` e configurações exportadas | Pendente — runtime |
+| DT-COM-04 | Regressão da barra multidomínio, seleção de checkout e três fluxos, com Mercado Pago sandbox | ADR-013 preserva carrinho público; configurações `donate|cart|both` são intencionais | Alta | HTTP/Browser/ACL de loja/LMS/doações, login, domínios, assinaturas, webhook assinado/duplicado e checkout completo; evidências PASS | Pendente — runtime |
+| DT-COM-05 | Avaliar aritmética `float` e moeda exibida no carrinho, sem regressão visual | `CartUtility::build()` soma `float` e reutiliza última moeda observada | Média | Casos BRL/rounding e múltiplas moedas validados; proposta de correção comparada com baseline | Pendente — runtime |
+| DT-COM-06 | Aguardar contrato central P-CART B antes de registrar provider administrativo de Loja | `aculta_commerce` não contém serviços ativos; ADR-013 designa Portal como coordenador | Média | API real do registry Portal commitada, testes unitários e documentação de DI/ACL | Bloqueado — dependência entre frentes |
+| DT-COM-07 | Definir e validar integração real de catálogo com Content Index | Contrato preliminar em `modules/aculta_commerce/docs/CONTENT-INDEX.md`; API real ainda não identificada neste HEAD | Média | Serviços/adaptadores do índice detectados e homologados para publicação/despublicação/ACL/rebuild | Bloqueado — API externa à frente |
+
+## ACULTA Commerce — novas dívidas Green Stash (2026-10-22)
+
+| ID | Dívida | Evidência | Prioridade | Critério de encerramento | Estado |
+| --- | --- | --- | --- | --- | --- |
+| DT-COM-08 | Executar gates da fundação de acesso Green Stash | `GreenStashAccessPolicy`, permissão restrita, serviço e teste adicionados no Commerce | Alta | PHPUnit PASS, `drush cr`, `drush pm:list`, validação de YAML/DI e permissão no homelab; sem concessão involuntária | Pendente — runtime |
+| DT-COM-09 | Integrar provider Green Stash ao Studio e resolver propósito/domínio de rota | `StudioExperienceProviderInterface`/Manager disponíveis, mas ainda sem rota nem provider commerce; [plano](../../web/modules/custom/aculta_portal/modules/aculta_commerce/docs/GREEN-STASH-0.1.0-D.md) | Alta | Rota própria, provider registrado com segurança, acesso por operação/entidade e testes Kernel/Functional sem afetar GanjaLab | Pendente — próxima fase |
+| DT-COM-10 | Homologar layout Green Stash no ACULTA420 SDC/UI Suite, mobile-first e cabeçalho preservado | Interface ainda não criada e contrato visual pertence ao tema | Média | SDC/UI Suite conforme gate design, acesso keyboard, light/dark, no-JS e regressão multidomínio | Pendente — fase D-D |
+
+## ACULTA Commerce — Green Stash D-A/D-B (2026-10-22)
+
+| ID | Dívida | Evidência | Prioridade | Critério de encerramento | Estado |
+| --- | --- | --- | --- | --- | --- |
+| DT-COM-11 | Validar o container e registro condicional do provider Studio Green Stash no homelab | `aculta_commerce.module` aplica `hook_container_alter`, `aculta_commerce.services.yml` registra provider e controller, dependência declarada ao Studio | Alta | `drush cr` PASS; registry com GanjaLab420 e Green Stash, sem duplicação, container compilado sem erro; testes isolados com Commerce habilitado | Pendente — runtime |
+| DT-COM-12 | Homologar rota `/green-stash` e ACL real em múltiplos domínios | Rota purpose account, permission `access aculta green stash`; não há grants novos a roles | Alta | HTTP 403 guest/usuário não autorizado, HTTP 200 usuário explicitamente autorizado no purpose canônico, acesso sem dados de pedidos, sem impacto em GanjaLab/cabeçalho/carrinho | Pendente — runtime |
+| DT-COM-13 | Implementar conteúdo operacional autorizado e design SDC/UI Suite de Green Stash | Provider atual tem só render array informativo e sem dados reais | Média | Controller/permissões por entidade e loja, SDC no tema, mobile, light/dark, fallback sem JS e testes | Pendente — fases seguintes |
+
+## Commerce — frete brasileiro e estoque (2026-10-22)
+
+| ID | Dívida | Evidência | Prioridade | Critério de fechamento | Estado |
+| --- | --- | --- | --- | --- | --- |
+| DT-COM-14 | Inventariar Commerce Shipping instalado/configurado e dados físicos | `composer.json` já requer `commerce_shipping:^3.0`; shipment default e `AcultaShippingInformation` existentes | Alta | Drush/config/variações, origem/CEP, medidas e fluxo de remessas registrados no homelab | Pendente — runtime |
+| DT-COM-15 | Auditar fonte Melhor Envio e contrato oficial atual Correios, incluindo licença e compatibilidade API | [pesquisa Commerce](../../web/modules/custom/aculta_portal/modules/aculta_commerce/docs/SHIPPING-STOCK-BRAZIL-RESEARCH.md) | Alta | Código fonte versionado analisado, tabela portar/instalar/descartar e testes HTTP com fixture | Pendente — pesquisa de código |
+| DT-COM-16 | Validar `commerce_stock:^3.0` com Commerce 3 e consolidador existente | Contrib estável suporta Drupal 11, porém instalação/estado real desconhecidos | Alta | POC com dados fictícios, concorrência, devolução e excluindo LMS/doação; evidências PASS | Pendente — homelab |
+| DT-COM-17 | Definir transportadoras, conta de integração, CEP de origem e estratégia de etiqueta/rastreio | Nenhum contrato logístico confirmado; não inventar API/credenciais | Média | Decisão comercial registrada e testada em sandbox, sem exposição de segredos | Pendente — decisão operacional |
+| DT-CEP-01 | Testes Kernel e Functional do serviço `aculta_portal_cep.lookup`, do endpoint AJAX e do checkout | Só Unit foi executado (`CepLookupServiceTest`, 9 testes); Kernel exige instalação de teste isolada | Média | Kernel e Functional verdes no homelab, incluindo endpoint sem requisição interna e checkout sem regressão | Pendente — homelab |
+| DT-CEP-02 | Cache negativo para CEP inexistente | CEP não encontrado consulta ViaCEP e BrasilAPI a cada requisição; rate limit de 60/min mitiga | Baixa | Cache curto de resultado negativo com teste de cache e sem resultado positivo | Pendente |
+| DT-CEP-03 | Teste de navegador do autocompletar após a refatoração | `scripts/test-account-address-browser.py` exige Firefox no X11; não executado aqui | Média | 17 verificações PASS no Firefox X11 | Pendente — navegador |
+| DT-CEP-04 | Licença da base local de CEPs (DNE) versionada em `data/cep/` | Risco aceito pelo responsável em 2026-10-18 e 2026-10-19; herdado pelo submódulo | Média | Revisão jurídica registrada ou base substituída | Aceito — revisão pendente |
+| DT-ME-01 | Gate de PHPStan do submódulo | Repositório não tem configuração de PHPStan | Baixa | Configuração aprovada e PHPStan verde | Pendente — decisão de ferramenta |
+| DT-ME-02 | Kernel: snapshot do endereço do pedido | `BillingAddressPane::billingCopy()` congela o perfil fora de `draft`; sem teste de Kernel. Cadastro alterado após o pedido não pode mudar a remessa | Alta | Kernel: após alterar o cadastro com pedido fora de rascunho, perfil de envio e remessa permanecem iguais | Pendente — homelab |
+| DT-ME-03 | Fonte dos dados de remetente e destinatário na contratação | Contrato do carrinho exige `name` e `document` (CPF no destinatário; CPF/CNPJ no remetente). Não há origem confirmada no ACULTA para o remetente | Alta | Decisão do responsável sobre a fonte (perfil, `aculta_id_cpf` ou loja) e teste com dados fictícios | Pendente — decisão do responsável |
+| DT-ME-04 | Endereço sem número na API do Melhor Envio | Documentação não define representação para S/N. Contratação bloqueada com `sn_not_accepted_by_api`; cotação não exige número | Média | Confirmação com o suporte ou no sandbox; enquanto isso, bloqueio mantido | Pendente — sandbox |
+| DT-ME-05 | Tela administrativa da origem e conferência de endereço no Green Stash | Origem só existe em configuração (`settings:origin`, vazia por padrão) | Média | Form API e componentes SDC/UI Suite, com permissões, sem editar o endereço do cliente | Pendente — ME-0.5-B |
+| DT-ME-06 | Comentário de `StreetNumberField::validateNumber()` diz 1 a 4 dígitos | Código e mensagem usam `MAX_DIGITS = 10`; só o comentário está errado | Baixa | Comentário alinhado ao código, sem mudar a regra | Pendente — fase própria |
+
+## Green Stash — dívidas de UX mobile-first (2026-10-23)
+
+| ID | Pendência | Evidência / dependência | Encerramento |
+| --- | --- | --- | --- |
+| GS-UX-01 | Homologar provider/rota/container Green Stash | Hook/container atual sem gate runtime registrado | Drush cr e HTTP/Functional por purpose, guest e operador autorizado |
+| GS-UX-02 | Definir ACL por store, papel e ação | Permissão atual só autoriza entrar | Matriz Commerce access/Entity access e testes contra IDOR e vazamento de contadores |
+| GS-UX-03 | Inventariar componentes SDC/UI Suite realmente reutilizáveis | Plano visual novo em `GREEN-STASH-UX-MOBILE-FIRST.md` | Stories/design gates e matrizes 320px+/claro/escuro |
+| GS-UX-04 | Contratar agregações Stats para cards reais | Sem provider Green Stash de KPIs ainda | Queries autorizadas, paginadas e caches corretos, sem duplicar métricas |
+| GS-UX-05 | Estoque e expedição reais | Comércio Stock/Melhor Envio ainda em etapas próprias | APIs aprovadas, sandbox/homelab e telas com permissões reais |
+
+## Green Stash — gates GS-0.2-A/B (2026-10-23)
+
+| ID | Pendência | Critério para encerrar | Estado |
+| --- | --- | --- | --- |
+| GS-NAV-01 | Compilação de container e rota `/green-stash/{section}` | `drush cr`, HTTP 403/200 conforme permissão e domínio, rotas canônicas, registro Studio e PHPUnit PASS | Pendente — homelab |
+| GS-NAV-02 | Componentes SDC/UI Suite para navegação responsiva real | Tema ACULTA420 renderiza shell mobile-first, tabs/drawer acessível, 320px+ claro/escuro e fallback sem JS; Stories/gates PASS | Pendente — tema |
+| GS-NAV-03 | Navegação por capacidades granulares e dados operacionais reais | Grants Commerce por store e entidade; contadores e áreas sem permissões não aparecem; testes IDOR, acesso e cache | Pendente — GS-0.2-C |
+
+## Green Stash — rotas canônicas e registro de experiência
+
+| ID | Pendência | Critério de aceite |
+| --- | --- | --- |
+| GS-ROUTE-PTBR-01 | Validar URLs PT-BR `/estudio/loja/*`, domínio purpose account e ausência de colisão | Drush cr, route:list, HTTP 200/403/404 por perfil e host, navegação no navegador |
+| GS-STUDIO-DI-01 | Verificar descoberta do `AcultaCommerceServiceProvider` | Container compila, ExperienceManager contém green_stash, não duplica providers, GanjaLab420 permanece |
+| GS-LEGACY-01 | Determinar política de redirects das URLs `/green-stash/*` nunca homologadas | Auditoria de links; definir se redirect necessário, sem exposição de acesso |
+
+## GS-0.2-C — Catálogo operacional inicial (2026-10-23)
+
+| ID | Pendência | Critério de aceite |
+| --- | --- | --- |
+| GS-CAT-01 | Homologar leitura de `produto_loja` por permissões e stores | Testes Kernel/Functional com papéis e múltiplas lojas, sem vazamento de catálogo |
+| GS-CAT-02 | Substituir amostra de 100 IDs por paginação de verdade | Cursor/pager com filtros e segurança por store, desempenho em volumes altos |
+| GS-CAT-03 | Visual móvel definitivo e testes de navegação PT-BR | SDC/UI Suite, 320px+, acessibilidade, links e cache no homelab |
+
+## Green Stash GS-0.2-C.2 — validações restantes
+
+| ID | Pendência | Critério de encerramento |
+| --- | --- | --- |
+| GS-CAT-04 | Paginação parcial em contas com muitas entidades não autorizadas | Filtragem por store na query, cursor confiável sem salto/lacunas, teste com mais de 500 entidades e permissões seletivas |
+| GS-CAT-05 | Busca e cursor da listagem não homologados | Kernel/Functional de SQL/EntityQuery, HTTP e pesquisa no homelab; conferir `accessCheck` + grants por store e inexistência de dados de LMS |
+
+## GS-EDITOR — Interface operacional própria (2026-10-23)
+
+| ID | Dívida | Encerramento |
+| --- | --- | --- |
+| GS-EDITOR-01 | Detalhe e formulários próprios de criação/edição/variações de produtos | Operador autorizado trabalha via `/estudio/loja`, sem acesso a `/painel-administrativo`; CRUD, ACL por store, testes Kernel/Functional e SDC |
+| GS-EDITOR-02 | Fluxos de estoque/expedição/etiquetas integralmente no Studio | Commerce Stock/Shipping/Melhor Envio operam via controles Green Stash com confirmação/autorização, testes de integração |
+| GS-EDITOR-03 | Auditoria de links administrativos diretos nas experiências Green Stash | Nenhuma ação visível da loja aponta a edit-form administrativa ou `/admin/commerce`, teste regressivo |
+
+## Green Stash GS-EDITOR-0.2 — gates restantes
+
+| ID | Pendência | Critério de aceite |
+| --- | --- | --- |
+| GS-PRODUCT-DETAIL-01 | Homologar rota de detalhe por store e entidade | Testes Kernel e HTTP com produto loja/LMS, lojas concorrentes e operadores sem permissão; acesso indevido retorna 403/404 |
+| GS-PRODUCT-DETAIL-02 | Visual do detalhe do produto via SDC/UI Suite | Componentes ACULTA420 com campos autorizados, 320px+, navegação teclado e contraste light/dark |
+| GS-PRODUCT-DETAIL-03 | Contratos de criação/edição próprios Studio | Form API, permissões de create/update store/product, validações Commerce e transações/revisões comprovadas no homelab |
+
+## Green Stash — GS-EDITOR-0.3-A (2026-10-23)
+
+| ID | Dívida | Encerramento |
+| --- | --- | --- |
+| GS-CREATE-01 | Formulário e rota PT-BR ainda sem homologação Drupal no homelab | Drush cr, acesso anônimo/comum/operador; Form API GET/POST CSRF, createAccess, store update, validação de entidade, salvamento e redirect |
+| GS-CREATE-02 | Produto de rascunho sem variações, SKU e preço | Cadastro assistido próprio Studio, variação e preço com APIs Commerce; publicar só quando consistente |
+| GS-CREATE-03 | Integrar SDC/UI Suite e UX mobile-first no formulário | Stories ACULTA420, 320px+, light/dark, teclado, sem JS, testes no navegador |
+
+## Green Stash loja unica
+| ID | Pendencia | Aceite |
+| --- | --- | --- |
+| GS-SINGLE-STORE-01 | Validar resolucao da unica Commerce store e autorizacao | Testes Kernel/Functional no homelab; nenhuma escolha de loja e associacao correta |
+| GS-SINGLE-STORE-02 | Verificar segregacao de produtos LMS e Doacoes | Apenas produto_loja exibido; checkouts de LMS/Doacoes intocados |
+
+## ACULTA Forum — revisão de código do RC (2026-10-24)
+
+| ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| DT-F01 | Painel administrativo do Fórum executa 21 consultas de estatística por render (7 dias × 3 métricas) mais duas contagens | `ForumAdminOverviewController::activitySeries()` chama `statisticsStorage->total()` para cada dia e métrica; a página tem cache de 60 s | Baixa | Não; agregar em uma consulta com intervalo e agrupamento quando o histórico crescer | Alpha/pós-RC | Aberta |
+| DT-F02 | O predicado de "ForumPost publicado" e a ordenação de thread são reimplementados em quatro consultas | `ForumPostUnreadManager`, `ForumPublicPostStatistics`, `ForumUnreadContent` e `ForumPostThreadBuilder::getPageForPost()` repetem status/langcode/`first_published` e o desempate | Média | Não; extrair uma definição compartilhada antes de alterar a semântica de publicação | Pós-RC | Aberta |
+| DT-F03 | `drush migrate:import aculta_forum_comment_flaggings` falha no wrapper do migrate_tools com “The "" entity type does not exist”, embora a mesma migração conclua pela API (`MigrateExecutable`) | O destino customizado resolve o tipo pela API; o comando do Drush monta o destino antes do contexto de origem | Baixa | Não; a execução local usou a API e não havia denúncias de origem. Investigar o wrapper antes de migrar dados reais com denúncias | Alpha | Aberta |

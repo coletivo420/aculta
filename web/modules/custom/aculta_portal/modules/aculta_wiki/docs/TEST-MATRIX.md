@@ -1,0 +1,462 @@
+# Matriz de testes — ACULTA Wiki
+
+Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
+`planejado` continuam pendentes; a seção da Fase 5 registra o que já roda.
+
+## WE SATIVA no ACULTA Studio e moderação GanjaLab (dev.60)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Contrato Wiki→Messenger v1 | Revisão de contrato | Dois fatos editoriais, payload privado mínimo, destinatários revalidados, deduplicação por revisão e fila persistente; e-mails mantidos | escopo decidido; value objects v1 aprovados 4/5; API Messenger e producers pendentes |
+| Value objects de evento Wiki | Unit | UUID, revisão, UID/estado allowlisted e payload Queue v1 mínimos | aprovado dev.112; 4 testes / 5 asserções |
+| Producers Wiki→Messenger | Unit | Transição default para `review`, insert direto, deduplicação por estado, revisão não-default ignorada e canal de e-mail independente | aprovado dev.113; Unit eventos/hooks/worker 18 testes / 73 asserções |
+| Persistência e rollback da fila | Kernel MariaDB | Serviço real, tabela Queue provisionada antes da transação, enqueue rollback junto com decisão e item v1 persistido/deletado | aprovado dev.113; 1 teste / 8 asserções; 11 depreciações Core/contrib |
+| Decisão da proposta no container completo | Kernel MariaDB | Decisões geram evento na mesma transação após aplicar/publicar campos; retry preserva evento | não concluído: focal executou 94 asserções e parou no serviço ausente `aculta_studio.tab_manager` em alterações paralelas |
+| Consumo Messenger editorial | Kernel MariaDB + QueueWorker | Consumidor valida acesso atual, destinatários e idempotência; falha mantém item para retry pós-lease | pendente; não há consumer/API pública de gravação |
+| CTA da home Wiki para WE SATIVA | Kernel MariaDB | `createAccess()` e acesso da rota no Domain `account`; fallback nativo e cacheável; restaura purpose Wiki | aprovado dev.110; classe de ciclo de imagem 27/1.504, 304 depreciações Core/contrib, 28 PHPUnit e 3 PHP/Webform |
+| Update 10001 instala entidade tardia | Kernel MariaDB | Registra entidade de proposta e cria as quatro tabelas ausentes, incluindo `proposed_fields` | aprovado dev.111; 1 teste / 30 asserções; 197 depreciações Core/contrib, uma PHP/Webform e 2 PHPUnit |
+| CTA e início no Runtime | Firefox ESR/X11, sessão autenticada | Home Wiki → início account → Meu Trabalho → formulário/retorno; 1280/390/320 px | aprovado dev.111, Runtime 2026-10-24; 19/19 verificações após `updb` 10001 + `drush cr`; sem escrita de conteúdo |
+| Seletor contextual de contribuição | Kernel MariaDB | CTA usa rota Wiki; participantes confirmados veem quatro intenções allowlisted, edição direta vê somente formulário Core, pessoa não confirmada é bloqueada | aprovado (dev.89; 3 testes / 311 asserções) |
+| Entrada `/studio/we-sativa` | Kernel | Rota única no purpose `account`; provider disponível só com Wiki | aprovado (focal: 1 teste / 37 asserções; classe: 15 / 612) |
+| Início `/studio/we-sativa/inicio` | Kernel + Unit Studio | Purpose `account`, criação condicionada por `createAccess()` e rota, retomada de rascunho próprio atualizável, guia SDC, retorno do workspace e render ACULTA420; controller delega ao owner e nega acesso rejeitado | Kernel aprovado (dev.109; 2/208, 300 depreciações Core/contrib, uma PHP/Webform contrib e 3 PHPUnit); controller Unit 3/3, suíte Studio 20/61 |
+| Meu trabalho | Kernel MariaDB | 21 verbetes e propostas próprias paginam 20+1; outra autoria e candidato do mesmo UID sem `view` não aparecem; cursores e links no Domain `account` | aprovado (dev.83; focais 1/42 e 1/45; classe 24/1.142) |
+| Filtros dos verbetes | Kernel MariaDB | `draft`, `review`, `published` e todos; estados inválidos voltam a Todos; links preservam Domain/cursor de proposta e resetam cursor de verbete; 20+3 paginam sem duplicação/perda | aprovado (dev.88; focal 1/141; três Kernels workspace 3/235) |
+| Busca e alterações recentes por grants | Kernel MariaDB | Duas contas de mesmo papel recebem apenas verbetes autorizados na busca e lista recente; cache context de grants presente, inclusive vazio/negativo/malformado | aprovado (dev.90; focal 1/43; 283 depreciações upstream, 2 PHPUnit) |
+| Acesso ao Meu Trabalho e cache | Kernel | Conta confirmada com criação pode entrar no workspace próprio; conta alheia sem itens não pode; cache varia por usuário/domínio | aprovado; 286 depreciações Drupal/contrib e 16 PHPUnit na classe |
+| Autoria versus área editorial Studio | Unit Studio | `create wiki_entry content` sozinho não abre GanjaLab nem seu inventário compartilhado; edição ampla, revisão e moderação mantêm gates próprios | aprovado (Studio dev.5; 7 testes / 27 asserções) |
+| Rota de criação contextual | Kernel | `node.add` autoriza a conta confirmada; o link Studio conserva parâmetros e Domain Wiki quando iniciado em `main` | aprovado (dev.40; 1 teste / 41 asserções) |
+| Regressão R2 de rotas e acesso | Kernel MariaDB | Rotas/View, CTA por `createAccess()` e busca/alterações recentes sob grants/cache | revalidado no HEAD `c610030dd` (3 testes / 148 asserções; Runtime intocado) |
+| Construção do formulário Node | Kernel | Form API Core, conta confirmada, estado `draft` selecionado, transição `draft_to_review` e sem opção de publicar | aprovado (dev.42) |
+| Criação guiada e ações distintas | Kernel MariaDB | Campos ordenados e instruídos; salvar rascunho mantém `draft`; enviar usa transição para `review`; `status=1` não publica o rascunho | aprovado (dev.93; focal 1/77; 203 depreciações Core/contrib, 2 PHPUnit) |
+| Formato editorial na autoria | Kernel MariaDB | Conta `email_confirmed` recebe formato `wiki` com CKEditor 5; upload direto desativado; submits guardam conteúdo no formato autorizado | aprovado (dev.95; incluído no Kernel combinado 2/120; 203 depreciações upstream, 3 PHPUnit) |
+| Títulos semelhantes opcionais | Kernel MariaDB | Sugestões limitadas a títulos publicados, visíveis por grants e do Domain Wiki; ação não salva e não bloqueia a criação | aprovado (dev.94; busca 1/34; busca + submit Form API nativo 2/120; classe completa 27/1.425; 291 depreciações Core/contrib, 28 PHPUnit) |
+| Edição própria e Domain | Kernel | Workspace só mostra edição após `update` Entity Access no purpose Wiki; link usa rota Core e Domain Wiki | aprovado (dev.44; incluso nos 2 focais) |
+| Prévia privada | Kernel | Handler Core salva formulário temporário no tempstore; autora acessa, outra conta não; sem nova revisão persistida | aprovado (dev.44; focal combinado: 2 testes / 111 asserções; handler testado sem requisição HTTP) |
+| Submissão inicial do Node | Kernel | FormBuilder nativo persiste verbete privado em `draft` | aprovado (dev.42; 1 teste / 54 asserções) |
+| Envio para revisão | Kernel | Novo submit grava revisão `review` pela transição oficial `draft_to_review`, sem publicar | aprovado (dev.42; incluído no focal) |
+| Edição concorrente própria | Kernel MariaDB | Form API compara revisão-base e o save handler revalida sob `FOR UPDATE`, inclusive mudança entre validação e submit | aprovado (dev.70; 1/37; 203 depreciações Core/contrib/PHPUnit) |
+| Edição própria normal após proteção | Kernel MariaDB | Node Form Core salva rascunho e executa transição oficial `draft_to_review` | aprovado (dev.70; 1/67; 203 depreciações Core/contrib/PHPUnit) |
+| Paginação | Kernel | Cursores independentes para verbetes/propostas, ordem estável, acesso revalidado e cache por URL | aprovado (dev.47; focal combinado: 2 testes / 84 asserções; cursor posicional, links GET) |
+| Composição SDC do Meu Trabalho | Kernel | Cabeçalho, seções, cards, grade, estado vazio e ações autorizadas usam componentes existentes | aprovado (dev.54; focal combinado: 2 testes / 89 asserções) |
+| Status privado da proposta | Kernel | SDCs existentes exibem estado, conteúdo, retorno e histórico; retirada apenas para autoria em estado elegível | aprovado (dev.56; focal: 1 teste / 148 asserções) |
+| Aviso editorial de aceite | Kernel MariaDB | Autoria confirmada recebe estado, nota e URL privada após aceite/publicação, sem projetar campos sugeridos | aprovado (dev.108; focal 1/220; 202 depreciações Core/contrib/PHPUnit) |
+| Eventos Wiki→Messenger | Unit + Kernel | Transição padrão para review e decisão de proposta persistem payload v1; worker despacha com listener e mantém item para retry após lease quando consumer falta/falha | dev.113: focais pendentes de execução; consumer/idempotência Messenger pendentes |
+| Erro de revalidação da proposta | Kernel | Valores rejeitados pelo serviço geram erro geral do formulário e não persistem proposta | aprovado (dev.57; incluso no focal: 1 teste / 150 asserções) |
+| Submit da proposta pelo Form API | Kernel | `FormBuilder` mantém `field_values` estruturado e o campo selecionado é persistido na entidade privada | aprovado (dev.58; focal: 1/59; classe: 21/935, 291 depreciações) |
+| Proposta em duas etapas e revisão-base | Kernel MariaDB | Revisar mostra valores propostos; voltar preserva conteúdo; conflito de revisão não persiste proposta e rebase exige confirmação | aprovado (dev.92; focal 1/202; 202 depreciações Core/contrib, 2 PHPUnit) |
+| Decisão da proposta pelo Form API | Kernel | `FormBuilder` preserva modos selecionados individualmente e a aplicação oficial usa append/replace configurados | aprovado (dev.59; focal: 1/154; classe: 21/939, 291 depreciações) |
+| Escolha explícita do modo de lista | Kernel MariaDB | Campo aprovado sem `replace`/`append` escolhido gera erro; modos válidos são enviados ao serviço e aplicados | aprovado (dev.91; focal 1/183; 202 depreciações upstream, 2 PHPUnit) |
+| Composição da revisão no GanjaLab | Kernel | SDCs apresentam contexto/contribuição e links autorizados; controles seguem no Form API | aprovado (dev.60; focal: 1/156; classe: 21/941, 291 depreciações) |
+| Workspace WE SATIVA visual/autoria | Browser Firefox ESR visível | ACULTA420 e Olivero em oito larguras (320/360/390/640/768/1024/1280/1440), rota de criação e retorno do formulário | aprovado dev.117: ACULTA420 34/34 e Olivero 31/31 (`we-sativa.py`); Kernels isolados do workspace 3/240. Leitor de tela e WCAG 2.2 AA completa pendentes |
+| Páginas públicas e reflow Wiki | Browser Firefox ESR visível | Home, listagem, busca e `/wiki` interno em oito larguras, claro e escuro | aprovado dev.117: ACULTA420 130/130, Olivero 130/130 e modo escuro 114/114; zoom real do navegador pendente |
+| Página pública do verbete | Browser + Kernel | HTTP 200, um `h1` com título, sem overflow/erro nas oito larguras | aprovado dev.117: 6 URLs 200 com `h1` titulado; Kernel 29/1.642 renderiza o tema com um único `h1`; smoke 130/130 |
+| Prévia e teclado da busca | Browser Firefox ESR visível | Searchbox nativo, região viva nomeada, resultados por Tab, foco/nome WebDriver-computed, 1280/320 px | aprovado dev.117: ACULTA420 49/49 e Olivero 50/50 (`keyboard.py`); leitor de tela e contraste automático pendentes |
+| Busca sem JavaScript e um único H1 | Browser Firefox ESR sem JS + HTML | Home, listagem, busca e verbete servidos pelo Drupal | aprovado dev.117 (16/16 em ACULTA420 e Olivero, `no-js.py`) |
+| Fila de moderação e decisão no Studio | Browser Firefox ESR visível, sessão autenticada | Listing compartilhado, estado vazio, formulário de decisão, oito larguras | aprovado dev.117: fila 22/22 (ACULTA420) e 20/20 (Olivero); decisão 41/41 com proposta temporária, removida ao final. A fila para `content_editor` depende da divergência RBAC de permissões no Runtime |
+| Layout sem-JS, teclado e WCAG 2.2 AA | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, foco/leitor de tela/contraste | parcial dev.117: teclado, sem-JS, claro/escuro e um H1 aprovados; leitor de tela, zoom real e auditoria WCAG completa pendentes |
+| Content Index no Runtime | Drush + consulta anônima | Geração ativa, auditoria válida, exclusão de rascunho, sem autoria, Search API | aprovado dev.117: 145 entradas/110 relações, Wiki 7/15, audit `valid`, 6 verbetes publicados na consulta, Search API localiza o verbete |
+
+## Regressão Content Index — dev.61
+
+Revalidação WIKI-R1 no HEAD `03b840a7f` (2026-10-24): dois providers Unit e
+quatro Kernels de provider, acesso/relations, bootstrap owner e rebuild Wiki
+passaram em 20 testes / 425 asserções, MariaDB isolada. Projeção v4 e
+fingerprint inalterados; 240 depreciações Core/contrib e 3 PHPUnit. Sem rebuild
+ou alteração de Runtime.
+
+Revalidação no HEAD `847e45231`: quatro Kernels MariaDB aprovados (11 testes /
+385 asserções), incluindo descoberta do owner real, acesso/relações e rebuild
+Wiki-owned isolado. Projeção v4 e fingerprint inalterados; 243 depreciações
+Core/contrib/PHPUnit. Nenhuma geração ou configuração Runtime alterada.
+
+Revalidação WIKI-R1 no HEAD `b8e486673`: dois providers Unit e quatro Kernels
+Wiki-owned/Index passaram em 20 testes / 425 asserções; projeção v4/fingerprint
+inalterados. 243 depreciações upstream e 3 PHPUnit; Runtime/rebuild instalado
+intocados.
+
+Revalidação no HEAD `bea9cc4c3` (dev.84): providers Wiki/categoria Unit 9/40;
+quatro Kernels MariaDB 11/385, incluindo bootstrap owner real e rebuild
+Wiki-owned. Foram reportadas 243 depreciações Core/contrib/PHPUnit. A projeção
+v4/fingerprint continuam iguais; Runtime não foi tocado.
+
+Revalidada no HEAD após dev.77: Unit dos providers Wiki/categoria 9/40; os
+quatro Kernels abaixo, incluindo `WikiContentIndexRebuildKernelTest`, passaram
+em MariaDB isolada (11 testes / 385 asserções; 243 depreciações Core/contrib e
+PHPUnit). A geração foi construída/ativada somente no banco do teste. Provider
+v4, fingerprint e contrato não mudaram; Runtime e inventário instalado seguem
+pendentes.
+
+| Geração Wiki-owned | Kernel MariaDB | Bootstrap real Wiki/Image/Portal/Index, discovery, fingerprint v4, inventário semeado, owner_uid omitido, relações deduplicadas, validação e ativação isolada | aprovado (dev.69; 1/42; 201 depreciações Core/contrib); Runtime e configuração exportada completa não cobertos |
+
+Revalidação no HEAD dev.68: Wiki Unit dos providers, 9 testes / 40 asserções
+(3 depreciações PHPUnit); Kernel provider 1/17; Kernel acesso/relações 7/238
+(201 depreciações); Kernel owner/bootstrap 2/88 (243 depreciações). Os três
+Kernels passaram em MariaDB dedicada. O bootstrap valida geração semeada com
+identidades relevantes, não rebuild integral do inventário nem Runtime.
+
+| Suíte | Tipo | Cobertura | Estado |
+| --- | --- | --- | --- |
+| Wiki Unit | PHPUnit | Providers de verbete/categoria, hook de formulário de imagem e serviços Wiki | aprovado (dev.78; 66 testes / 344 asserções; 3 depreciações PHPUnit) |
+| ContentIndexWikiProviderKernelTest | Kernel MariaDB | Provider e integração do Index | aprovado |
+| ContentIndexWikiAccessKernelTest | Kernel MariaDB | Domain, grants, revisões e relações | aprovado |
+| ContentIndexOwnerIntegrationKernelTest | Kernel MariaDB | Bootstrap real e descoberta de provider owner | aprovado |
+| Três Kernels combinados | Kernel MariaDB | Regressão R1 no HEAD dev.75: provider, acesso/relações e bootstrap owner real | aprovado (10 testes / 343 asserções; 240 depreciações Core/contrib/PHPUnit) |
+| Ativação/rebuild e inventário completo do Index | Runtime | Integração instalada | pendente; sem operação Runtime nesta entrega |
+
+## R2 — ciclo de vida da imagem (dev.63; cobertura incremental até dev.53)
+
+Revalidação no HEAD `9da043aeb` (2026-10-24): classe Kernel completa aprovada
+em MariaDB, 27 testes / 1.500 asserções. 304 depreciações Core/contrib e 28
+PHPUnit; Runtime e filesystem instalado intocados.
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Media/File acompanham publicação | Kernel | Imagem de rascunho fica privada; publicação torna Media e download acessíveis | aprovado previamente |
+| Falha/rebuild e retry do mesmo arquivo | Kernel | Rollback limpa caches/chave; retry grava um único Media ligado ao Node | aprovado (classe completa revalidada no HEAD `369db1537`: inclui cenário) |
+| Falha no Node save | Kernel | Media removida e File volta a temporário | aprovado previamente |
+| Remoção com revisão antiga | Kernel | Media/File permanecem enquanto revisão ainda referencia a imagem | aprovado previamente |
+| Upload no formulário Node real | Kernel MariaDB | Form API processa `managed_file`, salva `draft` com alt e mantém Media/File sem acesso público | aprovado (dev.76; focal 1/41; classe 23/1.036) |
+| Revisão não padrão troca a imagem | Kernel MariaDB | Mantém imagem/arquivo da revisão padrão visíveis e substituta privada até publicação | aprovado (dev.79; focal 1/34; classe 24/1.129) |
+| Retorno do formulário para WE SATIVA | Kernel MariaDB | Link somente com rota e acesso workspace; URL no Domain `account`, cacheable | aprovado (dev.77; focal 1/70; classe 23/1.039) |
+| Limpeza de órfã após exclusão da última origem | Kernel | Retém referências em revisão histórica; remove Media/File sem referências globais | aprovado (dev.51; 1 teste / 46 asserções) |
+| Retenção de uma hora | Kernel | Aguarda o grace period antes de considerar arquivo | aprovado (dev.53; incluído em 4 testes / 169 asserções) |
+| Limite de 25 e cursor rotativo | Kernel | Avança além dos primeiros 25 candidatos, inclusive se eles permanecerem em uso | aprovado (dev.53; teste alcança e remove o 26º arquivo liberado) |
+| Reuso por outro bundle e falha de inspeção global | Kernel | Mantém Media/File se Article referenciar a Media ou a inspeção real falhar | aprovado (dev.53); dev.117 separa falha real (fail-closed) de tipo registrado sem schema/`ContentEntityNullStorage`, que não pode conter referências |
+| Alt obrigatória, formatos/tamanho e validação central | Unit | Envio inválido recebe erro sem criar Media; exceção em `Media::save()` reverte transação e caches | aprovado (dev.85; Wiki Unit 67/360) |
+
+Classe `WikiLeadImageLifecycleKernelTest` completa: revalidada no HEAD
+`5364d041b`, MariaDB, 27 testes / 1.453 asserções; 291 depreciações
+Core/contrib e 28 PHPUnit. O aviso de diretório BrowserTest não gravável não
+impediu a suíte.
+
+## R2 — rotas, domínio e acesso (dev.62; cobertura inicial dev.30)
+
+Revalidado no HEAD `8896527e7`: três Kernels MariaDB, 141 asserções; 283
+depreciações Core/contrib, 4 PHPUnit e uma depreciação PHP do Webform contrib.
+Runtime intocado.
+
+No HEAD `8d0bf703f` (2026-10-24), os testes Kernel de discovery das rotas/View,
+CTA por `createAccess()` e busca isolada por `user.node_grants:view` passaram
+(3 testes / 167 asserções; 300 depreciações Core/contrib, 4 PHPUnit e uma PHP
+do Webform contrib). Runtime não alterado nem homologado.
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Rotas públicas | Kernel | `/wiki`, busca e prévia têm exatamente um owner e permissão pública definida | revalidado no HEAD: parte do focal 3/141 (MariaDB) |
+| Raiz pública e caminho interno | Kernel | Purpose processor converte `/` em `/wiki`; `/wiki` direto continua sujeito ao 404 da FrontPathPolicy | aprovado (dev.64; 1 teste / 65 asserções) |
+| Rotas Wiki em domínio incorreto | Kernel | Subscriber de domínio retorna 404 no host principal para rotas com purpose `wiki` | aprovado (dev.65; focal 1/73) |
+| Listagem de verbetes | Kernel | `/wiki/verbetes` resolve uma View, purpose `wiki` e acesso autenticado | aprovado |
+| Grants divergentes | Kernel | Contas do mesmo papel recebem apenas verbetes autorizados | revalidado no HEAD: parte do focal 3/141 (MariaDB) |
+| Cache vazio/negativo/malformado | Kernel | Cache varia por node grants, incluindo termo vazio e `q[]` | aprovado (dev.62) |
+| CTA de criação | Kernel | Permissão cacheável acompanha Entity API `createAccess()` | revalidado no HEAD: parte do focal 3/141 (MariaDB) |
+| Home do domínio Wiki | Runtime HTTP | `/` retorna 200; `/wiki` retorna 404 como caminho interno conforme política multidomínio | read-only 2026-10-24; Drupal 11.4.10 / banco `aculta_runtime` |
+| Listagem, busca e prévia | Runtime HTTP | `/wiki/verbetes`, `/wiki/busca` e `/wiki/busca/previa` retornam 200 | read-only 2026-10-24; nenhum estado alterado |
+| Ativação e homologação integral | Operacional | Index e dependências necessários ativos; configuração e fluxos homologados | pendente; Index estava desativado e nenhum estado foi alterado |
+
+## R3 — evidência da primeira publicação
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Lookup contextual do User | Unit | Não combina contextos; provider ausente/duplicado/falho resulta indisponível e exige revisão | aprovado (3/19) |
+| Adapter Wiki descoberto | Kernel MariaDB | Provider `wiki_entry` real; ignora rascunho, outra autoria, outro Domain e Domain inativo; revisão pendente não-default preserva a publicação padrão | aprovado (dev.87; 1/45) |
+| Cache e Domain | Kernel MariaDB | Evidência tem tag de listagem; cache por usuário atual, `max-age: 0` para UID diferente; Domain anterior é restaurado | aprovado (dev.87) |
+| Domain canônico na criação | Kernel MariaDB | Campo vazio recebe Wiki; origem explícita é preservada | aprovado (focal 1/111; classe revalidada 27/1.453; 291 depreciações Core/contrib e 28 PHPUnit) |
+| Integração a permissões/transições | Kernel MariaDB | Primeiro verbete recebe Domain Wiki; editor publica pela transição oficial; lookup reconhece publicação e a autoria ainda envia o seguinte a `review`, sem `review_to_published` | aprovado (focal 1/111; classe 27/1.453) |
+
+## Aplicação editorial de propostas (dev.29)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Persistir campos estruturados | Kernel | Submissão via Form API guarda título selecionado na entidade privada | aprovado no teste focal existente; repetir classe após aceite |
+| Aprovar subconjunto e publicar | Kernel | Revisão-base atual recebe campo aprovado e publica por transições oficiais | aprovado (focal: 1 teste / 119 asserções; classe: 9 / 393) |
+| Revisão-base concorrente | Kernel | Aceite conflita sem mudar proposta ou verbete | aprovado (focal: 1 teste / 144 assertions; classe: 10 / 459) |
+| Escolha substituir/acrescentar em referências | Kernel | `append` preserva lista e deduplica URLs; `replace` substitui integralmente | aprovado (focal: 1 teste / 122; classe: 9 / 404) |
+| Escolha substituir/acrescentar em categorias/relações | Kernel | Listas validam destino e substituem/acrescentam sem duplicatas | aprovado (focal: 1 / 132; classe: 9 / 414) |
+| Moderador sem permissão de editar o verbete | Kernel | Aceite negado sem alterar proposta, revisão ou campos | aprovado (incluído no focal: 1 / 144; classe: 10 / 459) |
+| Sem permissão da transição oficial | Kernel | Operação negada sem persistência parcial | aprovado (incluído no focal: 1 / 144; classe: 10 / 459) |
+| Migração `proposed_fields` | Update hook | Instala armazenamento revisionável em proposta já existente | implementada; não aplicada ao Runtime |
+
+## Propostas privadas — status e histórico (dev.24)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Histórico da proposta | Kernel | Revisões autorizadas mostram data, estado e retorno, sem identidade de moderador | aprovado (1 teste / 93 assertions) |
+| Paginação do histórico | Kernel | 21 revisões são exibidas em páginas de 20 e 1, com cursor estável | aprovado |
+| Acesso à revisão | Kernel | Cada revisão passa por `view revision` antes de seus campos serem renderizados | aprovado |
+| Histórico de outra conta | Kernel | Acesso à proposta continua negado pelo Entity Access existente | aprovado em dev.22 |
+
+## Retirada de proposta pela autoria (dev.28)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Retirar estado `submitted` | Kernel | Form API confirma e grava nova revisão `withdrawn`; anterior permanece | aprovado (focal: 1 teste / 110 assertions; classe: 9 / 384) |
+| Retirar estado `needs_changes` | Kernel | Nova revisão encerra a proposta e preserva o retorno na revisão anterior | aprovado |
+| Outra pessoa autora | Kernel | Serviço nega retirada por Entity Access/ownership | aprovado |
+| Revisão-base obsoleta | Kernel | Conflito sem revisão extra | aprovado (dev.66; no focal 1/159) |
+| Reabrir proposta retirada | Kernel | Estado final impede nova decisão editorial | aprovado (dev.66; verifica estado e VID preservados) |
+
+## Fase 5 — busca e aviso de revisão
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Índice `aculta_conteudo` exportado | Unit | `wiki_entry` entre os bundles, `index_directly` e `track_changes_in_references` verdadeiros | aprovado |
+| Verbete sai de rascunho para revisão | Unit | `entity_update` dispara o aviso | aprovado |
+| Verbete continua em revisão | Unit | nenhum aviso | aprovado |
+| Verbete publicado entra em revisão | Unit | aviso disparado (compara com `getOriginal()`) | aprovado |
+| Verbete publicado é editado sem mudar de estado | Unit | nenhum aviso | aprovado |
+| Atualização de outro bundle | Unit | nenhum aviso | aprovado |
+| Entidade que não é nó | Unit | nenhum aviso | aprovado |
+| Tipo sem campo `moderation_state` | Unit | nenhum aviso | aprovado |
+| Aviso desligado na configuração | Unit | nenhum aviso | aprovado |
+| Fila do mailer ausente | Unit | nada enfileirado, sem erro | aprovado |
+| Aviso desligado | Unit | nenhuma mensagem enfileirada | aprovado |
+| Lista com endereço inválido | Unit | endereço descartado, envio só aos válidos | aprovado |
+| Dois destinatários cadastrados | Unit | uma mensagem por endereço, mesma correlação lógica | aprovado |
+| Sem URL pública disponível | Unit | contexto com `link` vazio | aprovado |
+| `isEnabled` | Unit | reflete a configuração sem alterar o padrão desligado | aprovado |
+| Tipo de e-mail `aculta_wiki_review` | Unit | ID válido e variáveis `verbete`, `estado`, `link` | aprovado |
+| Assunto e corpo do aviso | Unit | usam os três marcadores e nenhum campo de autoria | aprovado |
+| Contexto do aviso | Unit | sem `autor`, `autora`, `user` ou `uid` | aprovado |
+
+Suíte do submódulo verificada em 2026-10-22: `57 testes, 258 asserções, OK`,
+com duas deprecações do PHPUnit. Os cenários
+de navegador (busca do site, verbete publicado no resultado, tela
+`/painel-administrativo/aculta/wiki`) continuam na seção **Navegador** e só rodam
+depois da importação de configuração no servidor de testes.
+
+## Fase 5 — listagem e imagem de destaque
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Envio de imagem válida com descrição | Unit | sem erro de validação | aprovado |
+| Descrição vazia ou acima de 512 caracteres | Unit | erro em `wiki_lead_image][alt` | aprovado |
+| Mais de um arquivo por envio | Unit | erro em `wiki_lead_image][file` | aprovado |
+| Arquivo fora das extensões de imagem da política | Unit | erro em `wiki_lead_image][file` | aprovado |
+| Aba intocada | Unit | nenhum erro e nenhum campo alterado | aprovado |
+| Envio aceito | Unit | mídia `image` publicada com `alt`, campo aponta para ela | aprovado |
+| Reenvio após erro de validação | Unit | reusa a mídia do mesmo `form_state` | aprovado |
+| Caixa de remoção marcada | Unit | `field_wiki_image` esvaziado | aprovado |
+| Formulário do verbete | Unit | aba no grupo `advanced`, `#tree`, validadores `wiki`, ganchos de validação e envio | aprovado |
+| Formulário sem campo de imagem | Unit | mantém campo de título autoral sem adicionar widget ou aba de imagem | aprovado (`WikiEntryImageHooksTest`) |
+| Política sem extensão de imagem | Unit | aba não aparece e o widget central continua visível | aprovado |
+| Consumidor `wiki` exportado | Unit | `consumers.wiki` no `config/sync` e no schema | aprovado |
+| Diretório privado é preparado pelo uploader | Unit | chamada ao serviço FileSystem com criação e permissões | aprovado |
+| Visibilidade da Media e do arquivo segue estado do verbete | Kernel | rascunho permanece privado; verbete publicado permite acesso | aprovado (2 casos de dados MariaDB) |
+| Media existente em mudança posterior de publicação | Kernel | status e download seguem referências atuais publicadas; referências compartilhadas mantêm acesso | aprovado (dev.43; focal e regressões no subconjunto: 8 testes / 237 asserções) |
+| Exclusão do último Node que publica a Media | Kernel | hook de exclusão despublica a Media após apagar o último Node atual que a referencia | aprovado (dev.37; focal: 1 / 27; classe: 13 / 548) |
+| Falha após persistência do Node | Kernel | rollback remove Node e Media e restaura File temporário | aprovado (MariaDB) |
+| Remoção em nova revisão com referência antiga | Kernel | revisão antiga preserva Media/File no armazenamento, mas download é negado sem referência publicada atual | aprovado (dev.43; incluído nos 8 testes focais) |
+| Reuso da Media em outro conteúdo | Kernel | preservar arquivo até não haver usos em nenhuma entidade/revisão | aprovado para outro bundle Node (dev.53); outros entity types seguem cobertos pelo inspetor central |
+| Validador de upload inválido | Kernel | `alt` vazio produz erro; nenhuma Media é criada e o File permanece temporário | aprovado (dev.38; focal 1 / 27; classe 14 / 575) |
+| Arquivo privado após despublicar com revisão publicada anterior | Kernel | Core pode autorizar pela revisão antiga; hook da Wiki nega e o endpoint bloqueia o download | aprovado (dev.43; invocado por ModuleHandler no Kernel) |
+
+Revalidação da classe Kernel completa em 2026-10-24, HEAD `b5995d171`:
+27 testes / 1.475 asserções aprovados em MariaDB isolado. PHPUnit reportou 291
+depreciações Core/contrib e 28 PHPUnit. Runtime intocado.
+
+## Fase 2 — componentes movidos
+
+| Componente | Tipo | Cenários | Estado |
+| --- | --- | --- | --- |
+| `WikiController::home` | Kernel MariaDB | Sob purpose Wiki, compõe navegação, Views e renderização pelo ACULTA420 com SDCs reais | parcial (dev.107; focal 1/96; resposta HTTP 200/Runtime pendente) |
+| Purpose da rota home Wiki | Kernel MariaDB | Subscriber aceita o caminho interno `/wiki` quando servido pela raiz Wiki e devolve 404 no Domain principal | aprovado (dev.105; 1 teste / 84 asserções; 199 depreciações upstream, 2 PHPUnit) |
+| `WikiController::search` | Unit | Busca vazia, parâmetro `q[]` malformado, truncamento em `MAX_CHARS` e acesso/cache de grants | aprovado (`WikiControllerTest` 11 testes / 70 asserções) |
+| `WikiController::preview` | Unit | Entrada mínima, truncamento em `MAX_CHARS`, Entity Access dos resultados, link para busca completa e resposta privada | aprovado (`WikiControllerTest` 11/70; contagem textual renderizada segue sem teste) |
+| `WikiSearchFormBuilder` | Unit | `#action` e `data-preview-url` apontam para os nomes de rota estáveis | aprovado (4 testes / 18 asserções) |
+| Rotas | Kernel | `/wiki`, `/wiki/busca`, `/wiki/busca/previa` com os mesmos nomes e caminhos | aprovado (dev.20) |
+
+## Fase 4 — métricas de publicação
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Primeira publicação de um verbete | Unit | Um evento `wiki.entries.published` | planejado |
+| Revisão publicada de verbete já publicado | Unit | Um evento `wiki.entries.updated`, nenhum `published` | planejado |
+| Node importado ou sincronizado | Unit | Nenhum evento | planejado |
+| Agregado diário com publicação e revisão | Kernel | Contadores diários separados por métrica | planejado |
+
+## Rotas, grants e cache — Kernel real (dev.13)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Discovery das três rotas públicas da Wiki | Kernel | `/wiki`, `/wiki/busca` e `/wiki/busca/previa` com nomes/caminhos existentes | aprovado |
+| Discovery da página da View | Kernel | `view.wiki_entries.page_1` em `/wiki/verbetes` | aprovado |
+| Permissão de rota pública | Kernel | `access content` permite e negar a permissão bloqueia | aprovado |
+| Busca com grants distintos na mesma função | Kernel | cada conta recebe somente seu verbete publicado | aprovado |
+| Busca vazia e negativa | Kernel | sem resultados e cache inclui `user.node_grants:view` | aprovado |
+| CTA inicial — acesso real de criação | Kernel | `createAccess('wiki_entry')`; pessoa confirmada autorizada e não confirmada negada | aprovado (dev.20) |
+| Confirmação pelo Mail Confirmer real | Kernel | Confirmação `aculta_registration` aciona hook Portal, atribui `email_confirmed` e permite `createAccess('wiki_entry')` | aprovado (dev.36; focal: 1 / 33; classe: 11 / 492; 286 depreciações Core/contrib, 12 PHPUnit) |
+| Fila de revisão com candidatos negados | Kernel | 26 VIDs recentes sem grant não ocultam uma revisão autorizada mais antiga | aprovado (dev.21) |
+| Status privado da proposta | Kernel | Autoria lê status/nota; outra conta é negada pelo Entity Access da entidade | aprovado (dev.22) |
+| Aviso de decisão | Kernel | Fila em memória recebe estado, nota e URL privada; sem texto sugerido ou envio real | aprovado (dev.22) |
+| Redirect da submissão | Kernel | Abre a página privada do registro recém-persistido | aprovado (dev.23; 1 teste / 85 assertions) |
+
+Resultado Kernel dev.22: 9 testes / 355 assertions; 286 depreciações
+Drupal/contrib e 10 do PHPUnit. A suíte Unit passou com 66 testes / 338
+assertions e 3 depreciações PHPUnit.
+
+Resultado mais recente da classe Kernel (dev.21): 9 testes / 344 assertions,
+sem warnings; 284 depreciações Drupal/contrib e 10 do PHPUnit.
+
+Suíte Kernel da Wiki inicializa `aculta_wiki` e dependências reais, com MariaDB
+isolada. O fixture de grants está apenas em `tests/modules`; Runtime e
+configuração de produção não são usados. Resultado dev.20: 9 testes / 342
+assertions, sem warnings; 284 avisos de depreciação Drupal/contrib e 10 do
+PHPUnit. Unit: 66 testes / 338 assertions, 3 depreciações PHPUnit. A
+configuração Core `filter` foi instalada na fixture para usar o formato de
+fallback real e evitar warning falso de `entity_usage`.
+
+## Persistência de propostas — Kernel real (dev.14)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Submissão autorizada no purpose Wiki | Kernel | Entidade privada salva com autor, intenção, múltiplas fontes e VID-base do verbete publicado | aprovado (1 teste / 37 assertions) |
+| Leitura da proposta | Kernel | Autora e equipe editorial autorizada podem ler; outra conta não | aprovado |
+| Escrita da proposta pelo participante | Kernel | Autora não pode atualizar a proposta existente | aprovado |
+| Envio sem permissão | Kernel | Serviço nega antes de persistir | aprovado |
+| Envio fora do purpose Wiki | Kernel | Serviço nega antes de persistir | aprovado |
+| Fonte insegura | Kernel | Rejeita URI `javascript:` antes de persistir | aprovado |
+| Alvo alterado após carregar a página | Kernel | Serviço recarrega o Node e salva o VID padrão atual | aprovado |
+| Limite de abuso | Kernel | A 11ª proposta em uma hora recebe HTTP 429 e não persiste | aprovado (focal: 1 teste / 94 assertions) |
+| Reenvio com o mesmo token | Kernel | POST direto repetido e replay Form API retornam a proposta existente | aprovado (focal: 1 teste / 99 assertions; classe: 9 / 371) |
+| Contenção entre conexões idempotentes | Kernel MariaDB | Segundo DB connection aguarda, não persiste duplicata e replay posterior lê a proposta | aprovado (focal: 1 teste / 99 assertions) |
+| Concorrência entre processos PHP | Kernel MariaDB | Worker independente segura o lock; submissão concorrente não duplica proposta e replay retorna a existente | aprovado (dev.80; focal 1/164; classe 24/1.134; `DatabaseLockBackend` explícito porque o container Kernel substitui `@lock` por `NullLockBackend`) |
+| Decisão editorial e histórico | Kernel MariaDB | Form API/Content Moderation registra decisão, aplica somente campos aprovados e bloqueia VID-base obsoleto | aprovado (dev.81; focal 1/167; classe 24/1.137) |
+
+O Kernel focal passou sem warning; existem avisos de depreciação Core/contrib e
+do PHPUnit na closure completa de dependências. Não há rota/formulário que
+exponha propostas nesta entrega.
+
+## Consulta editorial — Kernel real (dev.15)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Consulta de propostas pendentes | Kernel | Apenas estados submetidos/autorizados; paginação 25+1 | aprovado |
+| Cursor de proposta inválido | Kernel | Reinicia a consulta sem erro | aprovado |
+| Sem permissão de moderação | Kernel | Serviço nega acesso antes da consulta | aprovado |
+| Revisão atual em `review` | Kernel | Retorna revisão `wiki_entry` atual com `view`, `view revision`, `update` e transição autorizada | aprovado |
+| Revisão anterior ou sem transição válida | Kernel | Não aparece na fila | cobertura parcial: revisão atual e transição válida caracterizadas |
+| Escopo de domínio | Kernel | Consulta dentro do purpose `wiki` e restaura `main` | aprovado |
+| Cache | Kernel | Metadados incluem conta, permissões, grants, domínio e cursor | aprovado |
+| Paginação da fila de revisões com candidatos inacessíveis | Kernel MariaDB | Ignora 26 candidatos negados, retorna 26 revisões autorizadas em páginas 25+1 e conserva somente a revisão atual | aprovado no HEAD (1 teste / 101 asserções; 198 depreciações Core/contrib, 2 PHPUnit) |
+| Resultado/URL da fila no Studio | Kernel | Lista propostas autorizadas e gera link para a rota de decisão com acesso permitido | aprovado (focal Kernel MariaDB; 3 novas asserções de rota/alvo/acesso) |
+
+Kernel MariaDB da classe completa: ver registro de execução atual no Roadmap.
+Decisões e aplicação são feitas pelo Form API proprietário da Wiki; a UI é
+apresentada na aba Wiki do GanjaLab.
+
+## Envio contextual de proposta — Kernel real (dev.16)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Rota de contribuição | Kernel | `/wiki/verbetes/{node}/contribuir`, exige `submit wiki proposals` e `node.view` | aprovado |
+| Formulário | Kernel | Form API constrói intenção, texto, justificativa e fontes | aprovado |
+| Validação do formulário | Kernel | Texto/justificativa obrigatórios e fontes apenas HTTP(S), máximo dez | aprovado (válido exercitado; inválidos no serviço) |
+| Callback de submissão | Kernel | Persiste pela API proprietária, atualiza revisão-base e redireciona ao verbete | aprovado |
+| Autorização e purpose no serviço | Kernel | Mantém proteção contra conta sem permissão, domínio incorreto e alvo despublicado | aprovado na cobertura do serviço dev.14 |
+| Aplicar o conteúdo selecionado ao Node | Kernel | Editor escolhe subconjunto; listas aceitam modo individual; publica pela transição oficial | aprovado (dev.66; fluxo decidido pelo responsável) |
+
+O módulo está desabilitado no Runtime; o endpoint só existe após ativação
+controlada.
+
+## Acesso ao envio de proposta — Kernel real (dev.17)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Conta confirmada com permissão e sem update | Kernel | Link contextual aparece no verbete publicado em purpose Wiki | aprovado |
+| Conta não confirmada com permissão | Kernel | Link não aparece e serviço nega antes de persistir | aprovado |
+| Cache do link | Kernel | Varia por permissões/domínio e inclui metadata de Entity Access | aprovado |
+| Sem permissão de proposta ou fora do domínio Wiki | Kernel | Endpoint nega acesso sem permissão e rejeita host `main` por purpose Wiki | aprovado (dev.103; focal 1/81) |
+
+Resultado da suíte Kernel da classe: 8 testes / 290 assertions, sem warnings;
+284 depreciações Drupal/contrib e 9 do PHPUnit.
+
+## Decisão editorial de proposta — Kernel real (dev.18)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Pedido de ajustes via Form API | Kernel | Nova revisão padrão privada, nota editorial e estado `needs_changes` | aprovado |
+| Recusa | Kernel | Nova revisão com estado `declined` e motivo | aprovado |
+| Revisão anterior da proposta | Kernel | Continua disponível com estado anterior e nota original | aprovado |
+| Decisão com VID esperado obsoleto | Kernel | Conflito, sem gravar revisão extra | aprovado |
+| Conta colaboradora sem permissão editorial | Kernel | Decisão negada | aprovado |
+| Nota vazia | Kernel | Serviço rejeita antes de persistir | aprovado |
+| Nota maior que 5.000 caracteres | Kernel | Form/service rejeita antes de persistir | aprovado (dev.66) |
+| Aceite e aplicação na revisão do verbete | Kernel | Só publica por workflow após aplicação editorial e conferência do VID-base | aprovado (dev.66; subconjunto aprovado pelo editor) |
+| Serialização da decisão com lock de outra conexão | Kernel MariaDB | Processo auxiliar segura `FOR UPDATE` no Node; serviço aguarda, aplica a revisão e o caso de VID obsoleto conflita sem escrita parcial | aprovado (dev.104; focal 1/216; classe 27/1.468; 291 depreciações Core/contrib, 28 PHPUnit) |
+
+O formulário de decisão não tem rota nem integração no Studio; seu consumo fica
+sob o contexto editorial do GanjaLab e acesso do backend Wiki.
+Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
+284 depreciações Drupal/contrib e 9 do PHPUnit.
+
+## Moderação na WikiTab — Kernel combinado (dev.19)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Moderador de propostas no Studio | Kernel | Só seção Moderação/Propostas; sem listagem genérica de verbetes/revisões | aprovado |
+| Fila de propostas no Studio | Kernel | Usa queue Wiki autorizada, pagina e gera links para o Form API proprietário | aprovado; revalidado dev.103 (focal combinado 2/306 com submissão privada) |
+| Fila de revisões Wiki | Kernel | Usa revisão atual e exibe apenas ação de formulário cujo route access passa no purpose Wiki | aprovado |
+| Usuário sem gate editorial | Kernel | Sem seção de moderação | aprovado |
+| Owner Wiki desabilitado com bundle retido | Unit Studio | WikiTab indisponível sem módulo `aculta_wiki`, mesmo se `wiki_entry` continuar configurado | aprovado (Studio dev.4; focal 3/10; suíte Unit 13/41) |
+| Visual no Firefox ESR/X11 e WCAG | Browser | Form/filas mobile-first em ACULTA420 e Olivero, foco, teclado e reflow | pendente; Runtime ainda não habilitado |
+
+## Controller — cache e acesso (dev.11)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Busca com `accessCheck(TRUE)` | Unit | Cache varia por `user.node_grants:view`, inclusive sem resultados | aprovado |
+| CTA para criar verbete | Unit | Usa `createAccess('wiki_entry')` e mantém o `AccessResult` cacheável | aprovado |
+| Busca em URLs de rota pública | Unit | Mantém `aculta_portal.wiki_search` e `aculta_portal.wiki_search_preview` | aprovado (form builder) |
+| Discovery das rotas no Runtime | Runtime | Rotas disponíveis após gate de ativação e configuração | pendente; não validado no Runtime |
+
+## Integração ACULTA Content Index — IDX 0.1
+
+Revalidação no HEAD `fc162b184` (2026-10-24): `ContentIndexWikiAccessKernelTest`,
+`ContentIndexOwnerIntegrationKernelTest` e `WikiContentIndexRebuildKernelTest`
+passaram em MariaDB isolada (10 testes / 368 asserções; 243 depreciações
+upstream). O conjunto comprova discovery dos módulos reais, grants/Domain,
+revisão padrão, atualização/exclusão, relações e ciclo de geração. Provider v4
+e fingerprint inalterados; Runtime e geração instalada intocados.
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Provider Wiki | Unit/Kernel | Metadados allowlisted, revisão padrão, rejeição de bundles não suportados, purpose `wiki` e ausência de `owner_uid` | aprovado (dev.50; provider v4) |
+| Compatibilidade de fingerprint | Kernel | Geração vinculada a inventário antigo é recusada no backfill e na ativação | aprovado (2 testes / 16 asserções; gate genérico do Index) |
+| Relações `field_wiki_related`, `field_wiki_categories`, `field_wiki_image` | Unit | `related_entry`, `wiki_category`, `wiki_image` deduplicadas, com tipos-alvo allowlisted | aprovado |
+| Provider de categoria Wiki | Unit | Só `taxonomy_term:wiki_category`, metadados mínimos e purpose `wiki` | aprovado |
+| Provider Wiki no ciclo do Index (harness) | Kernel | Classe de produção via tag fixture; backfill, relação deduplicada, update e delete | aprovado (1 teste / 17 assertions) |
+| Declaração/tag owner e bootstrap real | Kernel | Closure Wiki + Image + Portal + Index, providers tagueados descobertos e container compilado sem fixture | aprovado (dev.46; classe focal: 6 testes / 185 asserções) |
+| Projeção e filtro sob acesso real | Kernel | Provider v4, relação deduplicada, `EntityHooks` real, `main` nega, `wiki` autoriza, alvos privados filtrados e Domain restaurado | aprovado no teste owner real |
+| Consulta outgoing real sob acesso Wiki | Kernel | `ContentIndexRelationQuery` consulta `related_entry`, `wiki_category` e `wiki_image`; Entity Access filtra destinos por grants e Domain original restaura | aprovado (dev.46; geração semeada só com entidades necessárias; sem rebuild integral) |
+| Categoria sem provider de destino | Kernel | Destino não indexado não aparece na consulta outgoing | aprovado (dev.52; incluído na classe owner real) |
+| Media publicada ligada a verbete em rascunho | Kernel | A consulta não revela a relação se a origem não está autorizada | aprovado (dev.52; incluído na classe owner real) |
+| Revisão pendente não padrão | Kernel | Provider não projeta revisão pendente; revisão padrão publicada continua disponível | aprovado (dev.46) |
+| Domain Wiki ausente | Kernel | Access filter falha fechado sem recorrer ao Domain ativo | aprovado (dev.46) |
+| Regressão direcionada de providers e acesso Wiki | Kernel | Bootstrap owner, discovery real, providers Wiki e consulta de relações | aprovado (dev.46; 6 testes / 185 asserções; 201 depreciações upstream) |
+| Backfill, fingerprint, update e delete Wiki reais | Kernel | Geração real recebe projeção v4 sem UID; edição atualiza hash/rótulo e troca relações; exclusão remove entrada e outgoing | aprovado (dev.50; focal: 1 teste / 38 asserções; classe owner: 7/238; 201 depreciações upstream) |
+| Regressão R1 no HEAD dev.55 | Unit + Kernel | Providers Wiki/categoria, discovery e consulta autorizada de relações no bootstrap real | aprovado: Unit 9/40; três classes Kernel 10/343, MariaDB, 243 depreciações |
+
+
+| Ativação e reconstrução em Runtime | Runtime | Sem alteração de estado antes de homologação explicitamente agendada | pendente |
+
+Os adapters estão em código. O teste owner consulta as três relações pela API real
+com os providers descobertos pelo container. O cenário dev.50 executa um backfill
+e ativa uma geração isolada com dados da fixture; isso não equivale a reconstruir
+ou auditar o inventário completo instalado. No preflight read-only de 2026-10-23,
+`aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de teste; não
+houve rebuild nem alteração de configuração. Runtime segue sem homologação integral.
+
+O boot transversal `ContentIndexOwnerIntegrationKernelTest` também resolve e
+habilita a closure real de dependências de `aculta_wiki` e `aculta_index`, compila
+o container e confirma o registry via tags owner (1 teste / 8 assertions,
+registrado em 2026-10-23). Registro histórico de execução: naquela rodada, o
+teste Unit passou com 61 testes / 277 assertions e a repetição do Kernel não
+ocorreu porque `SIMPLETEST_DB` não estava configurada. Nesta atualização dev.20,
+o Kernel foi executado com MariaDB isolada (resultados acima); nenhum Runtime
+ou banco persistente foi alterado.
+
+## Navegador
+
+Revisão visual com Firefox ESR visível em `DISPLAY=:0` via geckodriver, nos temas
+ACULTA420 e Olivero, em claro e escuro, a 390, 768 e 1024 CSS px, depois que o
+módulo estiver habilitado no servidor de testes.

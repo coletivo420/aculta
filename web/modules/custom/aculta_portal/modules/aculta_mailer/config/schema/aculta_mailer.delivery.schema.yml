@@ -1,0 +1,34 @@
+aculta_mailer.delivery:
+  type: config_object
+  label: 'Entrega, alertas e resumo do ACULTA Mailer'
+  mapping:
+    bounce_address:
+      type: string
+      label: 'Endereço de retorno (envelope) dos transportes SMTP'
+    alerts_enabled:
+      type: boolean
+      label: 'Alertas de falha ativos'
+    alerts_recipients:
+      type: string
+      label: 'Destinatários dos alertas'
+    summary_enabled:
+      type: boolean
+      label: 'Resumo semanal ativo'
+    summary_recipients:
+      type: string
+      label: 'Destinatários do resumo semanal'
+    alerts_admins:
+      type: boolean
+      label: 'Alertas também para os administradores do site'
+    summary_admins:
+      type: boolean
+      label: 'Resumo também para os administradores do site'
+    brevo_enabled:
+      type: boolean
+      label: 'Transporte Brevo ligado'
+    sending_enabled:
+      type: boolean
+      label: 'Envio geral ligado (chave geral)'
+    tracking_enabled:
+      type: boolean
+      label: 'Rastreamento de aberturas e cliques ligado (só com consentimento)'

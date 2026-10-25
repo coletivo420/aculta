@@ -209,6 +209,11 @@ rota contrib `lms_file_upload.answer_file_download` por
 `/resposta/{lms_answer}/baixar-arquivo` em
 `UploadedAnswerRouteSubscriber`, mantendo o mesmo nome de rota para o plugin e
 aplicando a checagem de matrícula vigente descrita no contrato LMS.
+Tópicos privados do `aculta_forum_lms` usam a rota canônica técnica do Core
+`/node/{node}` somente quando um tópico autorizado é ligado a uma atividade; o
+Entity Access do Node/Group revalida o curso ou turma. Esse caminho não é
+indexado nem aparece em menus públicos. Não criar alias público para a discussão
+privada.
 
 ## FORUM
 
@@ -229,7 +234,7 @@ de registrar a rota. Esta decisão não altera as rotas atuais nesta entrega.
 
 Na implementação das rotas de produto, definir desde o início aliases amigáveis:
 
-- `/forum` ou root do subdomínio como landing;
+- root do subdomínio Forum como landing; o caminho interno `/discussoes` é oculto e responde 404 diretamente;
 - `/topico/<titulo>`;
 - `/criar-topico`;
 - `/categoria/<termo>` ou equivalente do Forum upstream;
@@ -436,3 +441,5 @@ Verificação após cada deploy: `/carrinho` 200 e `/cart` 404 no host principal
 baseline DT-P20 continua cobrindo as rotas dos módulos habilitados e só pode diminuir. Ao habilitar um
 módulo contrib com rota em caminho inglês ou numérico, o gate passa a falhar até que ele receba um
 caminho em português por override do Portal.
+
+- Exceção aprovada pelo responsável (2026-10-21): `/studio` no domínio de conta (`conta.aculta.*/studio`). O nome do Estúdio é o nome do produto e já aparece no roadmap e no módulo `aculta_studio`; o slug é estável, sem redirecionamento.

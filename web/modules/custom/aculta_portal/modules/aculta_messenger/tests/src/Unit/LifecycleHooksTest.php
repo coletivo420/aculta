@@ -24,6 +24,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_messenger')]
 final class LifecycleHooksTest extends UnitTestCase {
 
+  /**
+   * The optional notifier cannot coexist with Messenger.
+   */
   public function testOptionalNotifierCannotBeEnabledAlongsideMessenger(): void {
     $moduleHandler = $this->createMock(ModuleHandlerInterface::class);
     $moduleHandler->method('moduleExists')->with('aculta_messenger')->willReturn(TRUE);
@@ -33,6 +36,9 @@ final class LifecycleHooksTest extends UnitTestCase {
     $hooks->preventPrivateBodyNotifierConflict('private_message_notify', FALSE);
   }
 
+  /**
+   * Uninstall is blocked while private notification jobs remain queued.
+   */
   public function testUninstallIsBlockedWhilePrivateNotificationQueueHasItems(): void {
     $queue = $this->createMock(QueueInterface::class);
     $queue->expects($this->once())->method('numberOfItems')->willReturn(1);
@@ -55,6 +61,34 @@ final class LifecycleHooksTest extends UnitTestCase {
     $hooks->protectNotificationData('aculta_messenger', FALSE);
   }
 
+  /**
+   * Uninstall is blocked while friendship email jobs remain queued.
+   */
+  public function testUninstallIsBlockedWhileFriendshipEmailQueueHasItems(): void {
+    $emptyQueue = $this->createMock(QueueInterface::class);
+    $emptyQueue->method('numberOfItems')->willReturn(0);
+    $friendshipQueue = $this->createMock(QueueInterface::class);
+    $friendshipQueue->method('numberOfItems')->willReturn(1);
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->method('get')->willReturnCallback(static fn(string $name): QueueInterface =>
+      $name === 'aculta_msg_friendship' ? $friendshipQueue : $emptyQueue,
+    );
+    $definitionManager = $this->createMock(EntityDefinitionUpdateManagerInterface::class);
+    $definitionManager->expects(self::never())->method('getEntityType');
+    $hooks = new LifecycleHooks(
+      $this->createMock(EntityTypeManagerInterface::class),
+      $definitionManager,
+      $this->createMock(ModuleHandlerInterface::class),
+      $queueFactory,
+    );
+
+    $this->expectExceptionMessage('friendship notice emails remain queued');
+    $hooks->protectNotificationData('aculta_messenger', FALSE);
+  }
+
+  /**
+   * Uninstall is blocked while notice entities remain.
+   */
   public function testUninstallIsBlockedWhilePersistentNoticesRemain(): void {
     $emptyQueue = $this->createMock(QueueInterface::class);
     $emptyQueue->method('numberOfItems')->willReturn(0);
@@ -90,6 +124,9 @@ final class LifecycleHooksTest extends UnitTestCase {
     $hooks->protectNotificationData('aculta_messenger', FALSE);
   }
 
+  /**
+   * Uninstall is blocked while read flags remain.
+   */
   public function testUninstallIsBlockedWhileReadFlaggingsRemain(): void {
     $emptyQueue = $this->createMock(QueueInterface::class);
     $emptyQueue->method('numberOfItems')->willReturn(0);
@@ -119,6 +156,9 @@ final class LifecycleHooksTest extends UnitTestCase {
     $hooks->protectNotificationData('aculta_messenger', FALSE);
   }
 
+  /**
+   * Creates an entity query mock that returns the requested count.
+   */
   private function queryReturning(int $count): QueryInterface {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
@@ -128,6 +168,9 @@ final class LifecycleHooksTest extends UnitTestCase {
     return $query;
   }
 
+  /**
+   * Creates lifecycle hooks with optional module handler behavior.
+   */
   private function hooks(?ModuleHandlerInterface $moduleHandler = NULL): LifecycleHooks {
     return new LifecycleHooks(
       $this->createMock(EntityTypeManagerInterface::class),

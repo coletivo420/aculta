@@ -1,5 +1,7 @@
 # Plano do submódulo `aculta_user`
 
+**Ciclo vigente:** Dev → RC (código, testes, gates e revisão visual aplicável prontos) → deploy/validação Alpha no servidor de desenvolvimento → produção, conforme [ciclo de entrega](../operations/RELEASE-LIFECYCLE.md). Este plano histórico mantém registros antigos, mas não adia requisitos para depois do RC.
+
 Status: **plano de 2026-10-13, com implementação já iniciada**. O submódulo existe em `aculta_portal/modules/aculta_user` (versão 0.4.0-dev.2, `CHANGELOG.md` do submódulo). Esta seção 1 descreve a base de 2026-10-13 (`main` em `ce0941a`, Portal 0.3.0-dev.28) e não é mais o estado atual. O estado de cada decisão e de cada entrega está em [ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md](ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md); a verificação da fase U0 está em [ACULTA-USER-U0-VERIFICACAO.md](ACULTA-USER-U0-VERIFICACAO.md).
 
 Escopo: avatar, perfil público e autoria, integração com Wiki, Fórum e revista, funções sociais e gamificação, dentro de `web/modules/custom/aculta_portal/modules/aculta_user/`.
@@ -14,6 +16,14 @@ formulações antigas contraditórias de apresentação/gamificação deste plan
 não significam migração dos hooks, provider da entidade ou configuração do Runtime.
 A nova pesquisa compara releases e código, inclusive diferenças com páginas antigas.
 
+**Atualização de arquitetura (2026-10-19):** a reconstrução aprovada em
+`aculta_forum` substitui Forum contrib por um motor compartilhado de tópicos e
+comentários contextuais. O código e as tabelas de implementação desta página
+continuam descrevendo o estado atual; os novos contratos de identidade/cartões
+estão em [`aculta_user/docs/AUTHOR-CARDS.md`](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARDS.md).
+Não apagar hooks ou configurações legadas sem a fase de migração descrita em
+`aculta_forum/docs/MIGRATION-REMOVAL.md`.
+
 ## 1. Estado atual (o que já existe)
 
 | Capacidade | Onde está | Situação |
@@ -24,7 +34,7 @@ A nova pesquisa compara releases e código, inclusive diferenças com páginas a
 | Fórum | `forum` 1.1.3, `flag` 5.1.1, flags `seguir_topico` e `salvar_topico` (`0.2.0-dev.57`) | Adotado. Sem página "Atividade". |
 | Wiki | Nó `wiki_entry`, papéis `wiki_contributor` e `wiki_editor`, workflow `wiki_editorial`, módulo `diff` | Existe. Sem "Minhas contribuições". |
 | Revista | Nós `article` (Notícia), `document`, `activity`, `project`; autor = `node.uid` | Autor vem do Core, sem página de autor. Perfil público em `/u/<apelido>`, exceção registrada em `FRIENDLY-PORTUGUESE-SLUGS.md`; sem rota no código ainda. |
-| Notificações | Symfony Mailer (`symfony_mailer`, Mailer Plus) | Transporte pronto. Sem assinaturas. |
+| Notificações | Symfony Mailer (`symfony_mailer`, camada de envio E-Mails ACULTA) | Transporte pronto. Sem assinaturas. |
 | Gamificação, seguir pessoas, menções, denúncia | Não existem | `DT-P13`: denúncia de comentários pendente. |
 | Anti-abuso | `flood_control`, Turnstile, `username_enumeration_prevention` | Existe. |
 
@@ -50,7 +60,7 @@ Verificação a fazer no Homelab, antes de qualquer adoção: `composer show -a 
 | Pontos e badges | `gamification` 1.1.0-beta6 | Declara `^9 || ^10`, sem D11. Manutenção mínima. | Não adotar. Ver seção 5.G. |
 | Seguir pessoas | `friendship` | Documenta seguir e seguidores com campos de Views. Versão D11 não confirmada. | Avaliar após verificação no Homelab. Alternativa: Flag sobre entidade `user`. |
 | Seguir pessoas | `follow`, `follow_unfollow` | `follow` é para links de redes sociais; `follow_unfollow` é de era D7. | Não adotar. |
-| Notificações de comentários | `comment_notify`, `scn` | `scn` cita suporte a D11 e manutenção mínima; `comment_notify` sem D11 confirmado. | Não adotar sem verificação. Preferir Mailer Plus + fila do Core. |
+| Notificações de comentários | `comment_notify`, `scn` | `scn` cita suporte a D11 e manutenção mínima; `comment_notify` sem D11 confirmado. | Não adotar sem verificação. Preferir camada de envio E-Mails ACULTA + fila do Core. |
 | Notificações genéricas | `message`, `message_notify` | Branch de desenvolvimento de 2024, "use por sua conta e risco". | Não adotar. |
 | Avatar externo | `gravatar` | Não portado para D8+. | Não adotar (ver 5.A). |
 | Avatar | `avatar_kit` | Citado como alternativa ao Gravatar. D11 não confirmado. | Não adotar sem verificação; a necessidade é pequena. |
@@ -236,8 +246,10 @@ ACULTA420: PortalUiHooks (TOKENS) e/ou SDC `author-card` (Bootstrap card), escol
   `validate-environment-addresses.php`.
 - Navegador no servidor de testes (`TESTES-NAVEGADOR.md`): caixa visível em artigo da Revista, link só com perfil público.
 
-**Entrega:** fase U2, PR próprio, com `RUNTIME STATUS: DEFERRED` até o teste no Homelab. Marcadores de versão do
-`aculta_user` (`aculta_user.info.yml` e `CHANGELOG.md`) no mesmo PR.
+**Entrega:** fase U2 em commits na branch autorizada. Código, testes, gates e
+revisão visual aplicável ficam prontos antes de RC; o Runtime é validado em
+Alpha. Marcadores de versão do `aculta_user` (`aculta_user.info.yml` e
+`CHANGELOG.md`) acompanham mudança de código conforme a política de versão.
 
 **Pendências dependentes do responsável** (registradas em `ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md`, seção 2):
 - tipo de publicação "blog" (hoje a Revista usa `article`, "Notícia");
@@ -274,7 +286,7 @@ ACULTA420: PortalUiHooks (TOKENS) e/ou SDC `author-card` (Bootstrap card), escol
 - **Resposta:** o formulário de resposta fica **só** na discussão completa, no host FORUM. A página de conteúdo não envia POST para outro host (`CROSS-DOMAIN-REQUEST-POLICY.md`).
 - **Sem tópico vinculado:** a página do conteúdo não mostra bloco nem link de discussão. Nada de comentário solto no conteúdo.
 - **Criação do tópico:** manual, pelo editor do conteúdo ou pelo `wiki_editor`, por ação no próprio conteúdo. Não criar tópico automaticamente para todo conteúdo (a confirmar, decisão 24).
-- **Exceção da Revista (pedido do responsável, 2026-10-13):** cada publicação da Revista cria o tópico automaticamente, com o mesmo autor, na pasta da sua categoria. Implementado em `aculta_magazine` 0.1.0-dev.2 (`docs/README.md`, seção Fórum da Revista). A decisão 24 continua aberta para os demais tipos.
+- **Decisão substituída (2026-10-19):** publicações da Revista não criam tópicos públicos. Cada publicação usa Comment diretamente na entidade; os hooks de sincronização automática foram removidos em `aculta_magazine` 0.1.0-dev.10. Os tópicos históricos permanecem preservados durante a transição.
 - **Atividade:** a aba Comentários (seção E2) lista os comentários da pessoa nas discussões. Com isso, a decisão 22 fica resolvida: não há comentário em artigo.
 
 **Por que esta forma:**
@@ -290,10 +302,10 @@ ACULTA420: PortalUiHooks (TOKENS) e/ou SDC `author-card` (Bootstrap card), escol
 - Acesso anônimo de leitura do tópico no host FORUM (`access content` no papel anônimo já existe).
 - Pesquisa: a busca em drupal.org não confirmou detalhes de Views sobre comentários de outra entidade. Ver o registro de mudança de comentários como campos (`https://drupal.org/node/2100015`) e a documentação de Views de comentários no Homelab.
 
-#### E3.1 Como os comentários funcionam (implementado)
+#### E3.1 Como os comentários funcionavam no desenho anterior (histórico)
 
-Esta subseção descreve o que já está no código e no runtime, em 2026-10-14. As regras de moderação de tópico (E5) são
-propostas e não estão implementadas.
+Esta subseção preserva o registro do desenho anterior e sua homologação em 2026-10-14. A decisão foi substituída em
+2026-10-19: Revista usa Comment diretamente na publicação, e os hooks que sincronizavam tópicos foram removidos.
 
 - **Onde moram:** só no tópico do Fórum (`comment_forum`). A publicação da Revista não tem campo de comentário. Ela
   mostra a contagem e o link "Ver discussão completa (N comentários)" (`aculta_user` `DiscussionHooks`).
@@ -304,8 +316,8 @@ propostas e não estão implementadas.
 - **Moderação:** a do Core. Quem tem `skip comment approval` publica direto. Quem não tem entra na fila do
   `content_editor` (`administer comments`). Um comentário de quem não pode publicar sem aprovação não aparece na
   página até ser aprovado. Isso não é efeito da troca de tipo, nem de publicação.
-- **Exclusão da publicação:** o tópico é despublicado e a discussão é preservada (`ForumTopicSync::unpublish`).
-  Comentários não são apagados.
+- **Exclusão da publicação:** no desenho antigo, o tópico era despublicado e comentários permaneciam. No código atual,
+  não há despublicação automática de tópico legado; vínculos e conteúdo histórico aguardam o corte seguro autorizado.
 - **Troca de tipo (Notícia ↔ blog):** o tópico segue o nó da publicação nova. Comentários, autor e pasta permanecem
   (`docs/README.md`, seção "Trocar o tipo de uma publicação").
 - **Login para comentar:** o Core mostra "Efetue login ou registre-se para postar comentários". Nos tópicos do
@@ -313,8 +325,7 @@ propostas e não estão implementadas.
   é removida (`ForumTopicHooks::commentLinksAlter`, `aculta_magazine` 0.1.0-dev.5). Motivo: a repetição era
   visível quando havia comentário.
 
-Pendências desta subseção: a regra de criação de tópico com 10 comentários (E5) e a denúncia de comentário (`DT-P13`)
-continuam propostas.
+As regras de moderação descritas nas subseções atuais e em `aculta_forum/docs/CONTEXTS.md` são a referência vigente.
 
 ### E4. Verbetes chamados em todo o site, e papel de autor
 
@@ -404,7 +415,7 @@ continuam propostas.
 
 **Painel administrativo (`aculta_user`, linkado pelo hub do `aculta_portal`):**
 
-- Caminho: `/painel-administrativo/configuracoes/aculta/portal/participacao` (técnico, sem slug público). Permissão própria `administer aculta participacao`, com `restrict access`.
+- Caminho: `/painel-administrativo/aculta/participacao` (técnico, sem slug público). Permissão própria `administer aculta participacao`, com `restrict access`.
 - Configuração em `aculta_user.settings` (exportável; sem segredo):
   - `topico_limite_ativo` (liga/desliga o limite de criação de tópico);
   - `topico_comentarios_minimos` (padrão 10; número inteiro não negativo);
@@ -448,7 +459,7 @@ continuam propostas.
 - **Seguir pessoa:** Flag sobre entidade `user`, nome `seguir_pessoa`. A confirmar que Flag 5.1.1 aceita `entity:user` (verificação no Homelab). Se não aceitar, a alternativa é um campo de referência em uma entidade de vínculo, o que cria storage e exige decisão.
 - **Seguidores e seguindo:** contagens e listas por Views (`/seguindo`, `/seguidores`). Lista de seguidores de outras pessoas é privada por padrão.
 - **Feed:** View de atividades (tópicos, respostas, verbetes publicados) das pessoas seguidas. Sem contrib de atividade.
-- **Notificações:** somente opt-in. Envio por Mailer Plus, com fila do Core (`queue`), uma mensagem por evento de lote. Nenhum envio sem consentimento, e nada de PII no corpo além do necessário.
+- **Notificações:** somente opt-in. Envio por camada de envio E-Mails ACULTA, com fila do Core (`queue`), uma mensagem por evento de lote. Nenhum envio sem consentimento, e nada de PII no corpo além do necessário.
 
 ### G. Gamificação: badges, sem ranking
 
@@ -504,7 +515,10 @@ Regras:
 
 ## 6. Fases propostas
 
-Cada fase tem PR próprio (`AGENTS.md`, regra de encerramento). Código sem Runtime fica com `RUNTIME STATUS: DEFERRED`.
+Cada fase termina em commits na branch autorizada; PR só quando solicitada. Os
+critérios de código, testes, gates e revisão visual aplicável ficam prontos
+antes de RC. Código ainda não implantado registra Runtime como `DEFERRED`; a
+validação do servidor de desenvolvimento ocorre em Alpha.
 
 | Fase | Entrega | Critério de conclusão |
 | --- | --- | --- |
@@ -583,7 +597,8 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 
 **Status do bloqueio (atualizado após U0):** o bloqueio de 2026-10-13 não existe mais. O Homelab tem `composer install` concluído, Core 11.4.8 e Drush respondendo, com acesso ao banco `aculta_runtime`. Nenhum item deste plano foi validado no Runtime.
 
-**Status da ordem de implementação (cada item é um PR próprio, `RUNTIME STATUS: DEFERRED` até validação no Homelab):**
+**Status da ordem de implementação** (itens em commits na branch autorizada;
+Runtime `DEFERRED` até deploy/validação em Alpha):
 
 1. **U0 (no Homelab): concluído** no branch `aculta-user-u0` (commit `6d11bb2`, publicado, sem PR). Relatório: `docs/portal/ACULTA-USER-U0-VERIFICACAO.md`. Parada registrada: `lms_activity` não tem discussão nem comentário.
 2. **Configuração de papéis:** **parcial**, no branch `aculta-user-papeis` (commit `0fc367a`, `RUNTIME STATUS: DEFERRED`). Feito: `content_editor` recebe as permissões de `wiki_editor`, `administer comments` e `edit any forum content` (sem `administer forums`); `wiki_editor` recebe `revert wiki_entry revisions`; gate `scripts/validate-aculta-user-roles.php`. **Pendente:** `wiki_contributor` para `email_confirmed`. Drupal não mapeia papel para papel; a forma de conceder (hook de atribuição ou outra) é decisão do responsável.

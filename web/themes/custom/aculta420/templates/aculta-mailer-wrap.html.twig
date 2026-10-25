@@ -1,0 +1,88 @@
+{#
+/**
+ * @file
+ * Envelope HTML dos e-mails do ACULTA (hook aculta_mailer_wrap), montado pelo tema.
+ *
+ * Cores dos tokens do ACULTA420 (tokens.css), em claro e em escuro automático (prefers-color-scheme). Cada cor vem
+ * inline no modo claro (clientes sem CSS) e em classe, com override escuro com !important (clientes que leem o <style>).
+ *
+ * Variables:
+ * - body: corpo já escapado (HTML), quando is_html.
+ * - theme_logo: logo do tema, da configuração do tema (preprocess em src/Hook/MailEnvelopeHooks.php).
+ * - mail_colors: cores claras e escuras lidas dos tokens do tema (css/tokens.css) pelo mesmo preprocess.
+* - color_mode: light, dark ou auto (modo de cor do site). Em auto, o bloco prefers-color-scheme é emitido.
+* - show_footer: False quando o corpo já traz o rodapé do layout de marca (aculta_mailer).
+ * - is_html: True if generating HTML output, false for plain text.
+ * - subject: Email subject.
+ * - type, sub_type: tipo e subtipo do e-mail.
+ * - attributes: atributos do elemento raiz.
+ */
+#}
+{%
+  set classes = [
+    'email-type-' ~ type|clean_class,
+    'email-sub-type-' ~ sub_type|clean_class,
+  ]
+%}
+
+{% if is_html %}
+{% set c = mail_colors.light %}
+{% set d = mail_colors.dark %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="{{ color_mode == 'auto' ? 'light dark' : (color_mode == 'dark' ? 'dark' : 'light') }}">
+  <meta name="supported-color-schemes" content="{{ color_mode == 'auto' ? 'light dark' : (color_mode == 'dark' ? 'dark' : 'light') }}">
+  <title>{{ subject }}</title>
+  <style>
+    .aculta-mail-page { background: {{ c.page }}; }
+    .aculta-mail-card { background: {{ c.card }}; }
+    .aculta-mail-text { color: {{ c.text }}; }
+    .aculta-mail-footer { background: {{ c.footer }}; color: {{ c.footer_text }}; }
+    .aculta-mail-header { background: {{ c.header }}; }
+    {% if color_mode == 'auto' %}
+    @media (prefers-color-scheme: dark) {
+      .aculta-mail-page { background: {{ d.page }} !important; }
+      .aculta-mail-card { background: {{ d.card }} !important; }
+      .aculta-mail-text { color: {{ d.text }} !important; }
+      .aculta-mail-footer { background: {{ d.footer }} !important; color: {{ d.footer_text }} !important; }
+      .aculta-mail-header { background: {{ d.header }} !important; }
+    }
+    {% endif %}
+  </style>
+</head>
+<body class="aculta-mail-page" style="margin:0;padding:0;background:{{ c.page }};font-family:Arial,Helvetica,sans-serif;">
+<div{{ attributes.addClass(classes) }}>
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" class="aculta-mail-page" style="background:{{ c.page }};">
+    <tr>
+      <td align="center" style="padding:24px 16px;">
+        <table width="100%" cellpadding="0" cellspacing="0" role="presentation" class="aculta-mail-card" style="max-width:600px;background:{{ c.card }};border-radius:8px;">
+          <tr>
+            <td class="aculta-mail-header" style="background:{{ c.header }};padding:16px 24px;border-radius:8px 8px 0 0;">
+              <img src="{{ theme_logo }}" width="180" alt="ACULTA" style="display:block;border:0;width:180px;height:auto;">
+            </td>
+          </tr>
+          <tr>
+            <td class="aculta-mail-text" style="padding:24px;font-size:16px;line-height:1.5;color:{{ c.text }};">
+              {{ body }}
+            </td>
+          </tr>
+          {% if show_footer %}
+          <tr>
+            <td class="aculta-mail-footer" style="padding:16px 24px;background:{{ c.footer }};color:{{ c.footer_text }};font-size:13px;line-height:1.4;border-radius:0 0 8px 8px;">
+              Associação Cultural Antiproibicionista
+            </td>
+          </tr>
+          {% endif %}
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>
+{% else %}
+{{ body }}
+{% endif %}

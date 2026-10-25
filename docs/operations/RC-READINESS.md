@@ -1,9 +1,9 @@
 # Prontidão para RC — sitemap, descoberta e deployer
 
+> **Snapshot histórico (2026-10-09):** os resultados abaixo registram aquela rodada e não definem o status atual. O fluxo vigente é [Dev → RC (tudo pronto) → deploy/validação Alpha → produção](RELEASE-LIFECYCLE.md). Revalidar componentes e roadmaps antes de usar qualquer status deste relatório.
+
 Estado do projeto em 2026-10-09, medido no servidor de testes (`aculta.toca.net.br`, Drupal
-11.4.8, MariaDB). Este documento registra a bateria executada, o resultado de cada item e o que
-impede declarar RC para **todo o projeto**. A entrega em produção é decisão do responsável no fim do
-projeto e não faz parte deste RC (ver [DEPLOYMENT.md](DEPLOYMENT.md) e [RELEASES.md](RELEASES.md)).
+11.4.8, MariaDB). Este documento registra a bateria executada, o resultado de cada item naquela rodada e os bloqueios então identificados.
 
 ## Escopo coberto por este documento
 
@@ -43,8 +43,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 
 1. **Drift de configuração (resolvido em 2026-10-09)**: novo baseline (95 arquivos de idioma e
    tradução, sem host de teste e sem credencial). Ficam fora do baseline por serem de ambiente:
-   `simple_sitemap.settings` (`base_url` de teste no runtime) e `smtp.settings` (no runtime de teste,
-   o SMTP está ligado; `smtp_allowhtml` ainda difere do baseline). Classificação em
+   `simple_sitemap.settings` (`base_url` de teste no runtime). O módulo `smtp` e `smtp.settings` foram removidos (M2 do envio). Classificação em
    [Baseline de configuração](#baseline-de-configuração-2026-10-09).
 
 2. **Catálogo da loja (DT-O10), parcial**: a View `aculta_shop_catalog` e o modo
@@ -57,7 +56,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
    smoke visual/compra em MariaDB. Produtos e imagens são conteúdo, não configuração;
    vínculos de domínio e loja continuam por ambiente no `aculta_deployer`.
 
-## Estado por componente
+## Estado por componente (registro histórico de 2026-10-09)
 
 | Componente | Versão | Status |
 | --- | --- | --- |
@@ -85,11 +84,10 @@ web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/homologacao
 
 - Método: export do runtime para pasta temporária fora do repositório; comparação com `config/sync`
   por parser YAML (estrutura, ignorando `langcode` e `_core`).
-- Classificação: 906 arquivos iguais; 63 só de `langcode`; 32 de tradução (copiados); `smtp.settings`
-  (estrutural, fora do baseline); `simple_sitemap.settings` (host de teste, fora do baseline).
+- Classificação: 906 arquivos iguais; 63 só de `langcode`; 32 de tradução (copiados); `simple_sitemap.settings` (host de teste, fora do baseline).
 - Varredura antes do commit: nenhum host de teste novo em `config/sync`; nenhum valor de credencial.
-- SMTP no servidor de testes: ativado no runtime (`smtp.settings:smtp_on = true`, 2026-10-09). As
-  credenciais `SMTP2GO_USERNAME` e `SMTP2GO_PASSWORD` ainda **não** foram importadas; sem elas o envio
-  autenticado falha. Cadastrar pelo painel `/painel-administrativo/configuracoes/aculta/segredos`, nunca pelo Git. Em produção, a camada criptografada é provisionada pelo deployer após o deploy (fase 9).
+- Envio de e-mail (camada de envio E-Mails ACULTA, SMTP2GO): sem o módulo `smtp` legado. Desde 2026-10-19 o transporte do servidor de
+  testes está sem credenciais: o envio autenticado falha até o responsável gravar `SMTP2GO_USERNAME` e
+  `SMTP2GO_PASSWORD` (ver `docs/portal/EMAIL-TRANSPORT.md`, seção 0). Cadastrar pelo painel `/painel-administrativo/aculta/segredos`, nunca pelo Git. Em produção, a camada criptografada é provisionada pelo deployer após o deploy (fase 9).
 - Não exportado: `.htaccess` e as coleções `domain.*` (não vêm do export padrão).
 

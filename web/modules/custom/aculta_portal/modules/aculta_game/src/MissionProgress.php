@@ -8,6 +8,7 @@ use Drupal\aculta_user\Badge\BadgeCatalog;
 use Drupal\aculta_user\Badge\BadgeService;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -26,6 +27,7 @@ final class MissionProgress {
     private readonly ConfigFactoryInterface $configs,
     private readonly BadgeService $badges,
     private readonly EntityTypeManagerInterface $entities,
+    private readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /** Catálogo fechado: configuração não cria regras executáveis arbitrárias. */
@@ -55,19 +57,23 @@ final class MissionProgress {
       $cache->applyTo($build);
       return $build;
     }
+    // Data em que cada conquista foi obtida (tooltip "Obtida em"); só a concessão ativa conta.
     $active = [];
     foreach ($this->badges->activeFor($uid) as $award) {
-      $active[(string) $award->get('badge')->value] = TRUE;
+      $active[(string) $award->get('badge')->value] = (int) $award->get('concedido_em')->value;
       $cache->addCacheableDependency($award);
     }
     foreach ($this->definitions() as $id => $definition) {
       $done = isset($active[$definition['badge']]);
+      $data = $done ? $this->dateFormatter->format($active[$definition['badge']], 'custom', 'd/m/Y') : '';
       $build[$id] = [
         '#type' => 'details',
         '#title' => $this->t($definition['label']),
         '#open' => TRUE,
+        // Tooltip com a data de obtenção (title), presente só nas conquistas obtidas.
+        '#attributes' => $done ? ['title' => (string) $this->t('Obtida em @data', ['@data' => $data]), 'data-aculta-game' => 'obtida'] : [],
         'criterion' => ['#plain_text' => $this->t($definition['description'])],
-        'progress' => ['#plain_text' => $done ? $this->t('Concluída — 1 de 1 marco registrado.') : $this->t('A realizar — 0 de 1 marco registrado.')],
+        'progress' => ['#plain_text' => $done ? $this->t('Concluída em @data — 1 de 1 marco registrado.', ['@data' => $data]) : $this->t('A realizar — 0 de 1 marco registrado.')],
       ];
     }
     if (count($this->definitions()) === 0) {

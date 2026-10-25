@@ -1,0 +1,23 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+id: message.field_aculta_wiki_source_uuid
+field_name: field_aculta_wiki_source_uuid
+entity_type: message
+type: string
+settings:
+  max_length: 64
+  case_sensitive: true
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

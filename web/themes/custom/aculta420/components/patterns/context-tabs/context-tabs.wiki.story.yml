@@ -1,0 +1,8 @@
+name: Wiki420 — links de contexto
+description: 'Links estáticos para exemplificar navegação acessível e fallback sem JS.'
+component: aculta420:context-tabs
+props:
+  label: Navegação do verbete
+slots:
+  items:
+    markup: '<a href="#ler" aria-current="page">Ler</a> <a href="#historico">Histórico</a> <a href="#discussao">Discussão</a>'

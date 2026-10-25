@@ -1,0 +1,508 @@
+# Wiki420 como submódulo do Portal — planejamento
+
+Status: **implementado até a Fase 4** (incluindo o ranking por verbete, item 4.4);
+o submódulo está declarado em `config/sync/core.extension.yml` (ver "Estado ao fim
+da sessão de 2026-10-22"). Nenhuma rota foi alterada. No Runtime nada foi
+habilitado nesta frente: a ativação ocorre quando o ambiente importar a
+configuração.
+
+Este documento é a fonte única da frente. Cada fase termina antes da próxima começar.
+
+## Objetivos da frente
+
+1. **Submódulo:** criar `aculta_wiki` em
+   `web/modules/custom/aculta_portal/modules/aculta_wiki` e mover para ele o código inteiro
+   da Wiki (`WikiController`, `WikiSearchFormBuilder` e as rotas `aculta_portal.wiki_*`),
+   sem alterar URLs.
+2. **Estatísticas prontas para a Wiki:** preparar o `aculta_statistics` para receber a Wiki,
+   com `WikiProvider`, métricas de publicação e atualização, e ranking por verbete.
+   O Statistics continua só lendo conteúdo; o submódulo `aculta_wiki` não depende dele.
+3. **Construção contínua da Wiki:** depois dos objetivos 1 e 2, seguir com upload
+   contextual, adaptador de discussão do Fórum, busca e notificações.
+
+## Estado de partida (verificado no repositório)
+
+**Conteúdo e configuração** (em `config/sync`):
+
+- Tipo `wiki_entry`, fluxo `wiki_editorial` (rascunho, em revisão, publicado).
+- Views `wiki_entries` (`/wiki/verbetes`) e `wiki_categories`.
+- Domínio `wiki420` (produção `wiki420.aculta.org`).
+- Formato de texto `wiki`, com mídia `document` no CKEditor.
+
+**Código** (fora de `aculta_wiki`, ainda sem submódulo):
+
+- `aculta_portal/src/Controller/WikiController.php` (287 linhas).
+- `aculta_portal/src/Presentation/WikiSearchFormBuilder.php`.
+- Rotas `aculta_portal.wiki_home` (`/wiki`), `aculta_portal.wiki_search` (`/wiki/busca`) e
+  `aculta_portal.wiki_search_preview` (`/wiki/busca/previa`) em `aculta_portal.routing.yml`.
+
+**Estatísticas** (`aculta_statistics`, 0.9.0-dev.5):
+
+- Existe: `wiki.entries.read`, gravada pelo beacon `WikiReadController` e pelo
+  `WikiReadHooks`, com antiabuso por `flood` e retenção de 90 dias. Há testes unitários e de kernel.
+- Existe: `wiki.entries.published`, `wiki.entries.updated`, `WikiProvider` e o
+  ranking por verbete na área Wiki do painel, com exportação CSV.
+- Falta na Fase 4: a validação no Runtime (beacon e ranking com dados reais),
+  que depende de o ambiente importar a configuração.
+
+**Divergências corrigidas nesta entrega:** `CURRENT-STATE.md` dizia que o `aculta_statistics`
+não existia e que o contador de leitura não estava decidido. Ambos estavam desatualizados.
+
+## Regras que valem para esta frente
+
+- `docs/operations/AGENT-CONTENT.md`: mudança de escopo da Wiki (módulo próprio, busca,
+  notificações, perfis) exige atualizar, no mesmo commit, o inventário LGPD, a política de
+  privacidade e o `AGENTS.md` da Wiki.
+- A Wiki não é reimplementada no Fórum. O Fórum só oferece o adaptador de discussão por verbete.
+- O `aculta_statistics` só lê contagens e conteúdo. Nunca lê autoria privada.
+- Não abrir PR nem fazer merge sem pedido explícito do responsável.
+- Nenhuma métrica nova entra em produção antes de estar descrita no inventário LGPD.
+
+## Fase 0 — Planejamento e documentação (esta entrega)
+
+- Este documento.
+- Correção das divergências em `aculta_statistics` (`CURRENT-STATE.md`, `ROADMAP.md`,
+  `INTEGRATIONS.md`, `CHANGELOG.md`).
+- Referências atualizadas em `AGENT-CONTENT.md`, `LGPD-INVENTARIO.md`, `docs/modules/README.md`
+  e no adaptador de Fórum (`aculta_forum/docs/CONTEXTS.md`).
+
+**Verificação:** `git diff --stat` mostra só arquivos `.md`. Nenhum YAML, PHP ou config alterado.
+
+## Fase 1 — Casca do submódulo
+
+- Criar `aculta_wiki/aculta_wiki.info.yml`, `AGENTS.md`, `README.md`, `CHANGELOG.md`,
+  `docs/ROADMAP.md` e `docs/TEST-MATRIX.md`, seguindo o padrão dos outros submódulos do Portal.
+- Dependências declaradas: `aculta_portal`, `domain`, `views`, `node`, `content_moderation`.
+  Sem dependência de `aculta_statistics`.
+- Ainda não habilitado nesta fase.
+
+**Verificação:** validadores do repositório (`validate-own-module-packages` e
+`validate-public-slugs`, já citados no CHANGELOG do Portal) passam.
+
+## Fase 2 — Mover o código inteiro
+
+- Mover `WikiController`, `WikiSearchFormBuilder` e as três rotas `aculta_portal.wiki_*` para
+  `aculta_wiki`. Os caminhos e os nomes das rotas não mudam.
+- Os demais pontos de `aculta_portal` que citam `wiki420` (`DomainPurposeManager`,
+  `ContentPurposeResolver`, `PurposeFrontPathProcessor`, `DomainRouteSubscriber`,
+  `DomainPresentationBuilder`) tratam de domínio e purpose, não da Wiki. Ficam no Portal, com
+  revisão de cada um para confirmar que não há código da Wiki escondido.
+- Configuração: manter os UUIDs e IDs de `config/sync`. A decisão de quem é dono de cada item
+  está em "Decisões pendentes".
+- Habilitar `aculta_wiki` só quando as rotas estiverem movidas e testadas.
+
+**Verificação:**
+
+- Unit e kernel do controlador e da busca.
+- `drush cr` sem erro.
+- Config Sync sem diferenças.
+- HTTP 200 em `/wiki`, `/wiki/verbetes`, `/wiki/busca` e `/wiki/busca/previa` no domínio `wiki420`.
+- Backup privado antes de qualquer `updb`, como no procedimento atual.
+
+## Fase 3 — Documentação obrigatória da mudança de escopo
+
+- `AGENT-CONTENT.md`: atualizar "Estado atual" e "Mudança de escopo" para refletir o módulo.
+- `LGPD-INVENTARIO.md`: pendência 3 (base legal e retenção da Wiki) e a linha de
+  `aculta_statistics`, que já cita `wiki.entries.read`. Incluir `wiki.entries.published` e
+  `wiki.entries.updated` antes de criá-las.
+- Política de privacidade: seção "Bases legais por uso do site".
+- `aculta_wiki/AGENTS.md`: regras do submódulo.
+
+## Fase 4 — `aculta_statistics` pronto para receber a Wiki
+
+4.1. **Documentação corrigida** (feito na Fase 0).
+
+4.2. **`WikiProvider`** com duas métricas diárias agregadas, sem autoria:
+
+- `wiki.entries.published`: primeira publicação de um verbete. Seguir o padrão do Fórum (dev.5,
+  com a correção de primeira publicação de revisão), para não contar revisões como novos verbetes.
+- `wiki.entries.updated`: nova revisão publicada de um verbete já publicado.
+- Conteúdo sincronizado ou importado não gera evento.
+
+4.3. **Fronteira:** o provider lê entidades `wiki_entry` e eventos de publicação. Não importa
+classes do `aculta_wiki`. Se o submódulo não estiver habilitado, o provider não gera dados.
+
+4.4. **Ranking por verbete** no painel da área Wiki (feito): os verbetes mais lidos no
+período, com título resolvido na renderização. Verbetes excluídos saem do ranking sem erro.
+Exportação CSV com o mesmo recorte.
+
+4.5. **Catálogo e retenção:** registrar as duas métricas no `MetricCatalog` com sensibilidade
+pública e retenção de 90 dias, como `wiki.entries.read`.
+
+4.6. **Testes:**
+
+- Unit: `WikiProvider` e o cálculo de primeira publicação e atualização.
+- Kernel: agregado diário e ranking, incluindo verbete excluído.
+- Runtime: beacon responde 204 em verbete publicado; ranking exibe dados reais.
+
+**Gate:** nenhuma métrica nova é criada antes da atualização do inventário LGPD (Fase 3).
+
+## Fase 5 — Construção contínua da Wiki
+
+Ordem sugerida, depois das Fases 1–4:
+
+1. Contagem de verbetes na view `wiki_entries` e campos faltantes. A contagem, a
+   paginação e os campos do teaser (imagem de destaque, resumo e categorias) foram
+   entregues nesta sessão (ver estado abaixo).
+2. Upload contextual pela política central `aculta_portal.user_upload_policy`, com aba própria.
+   Entregue nesta sessão: aba "Imagem de destaque" no formulário do verbete, com o
+   consumidor `wiki` da política (ver estado abaixo).
+3. Adaptador `wiki` do Fórum: uma discussão por verbete, em Comment no Node. A revisão
+   editorial continua separada. Entregue nesta sessão: submódulo `aculta_forum_wiki`
+   com o provider `wiki` e o campo `field_aculta_discussion` no `wiki_entry` (ver
+   estado abaixo). Sem rota administrativa própria e sem habilitação no Runtime.
+4. Busca e notificações. Mudam a retenção e exigem atualizar o inventário LGPD de novo.
+   Entregue nesta sessão: `wiki_entry` no índice `aculta_conteudo` e aviso de revisão
+   pela fila do `aculta_mailer`, desligado por padrão, com o pacote LGPD no mesmo
+   commit (ver estado abaixo).
+5. Estatísticas de edição e revisão por verbete, a partir do histórico do Node.
+   Entregue nesta sessão: `WikiRevisionReport` no `aculta_statistics`, com a área Wiki
+   do painel e CSV (ver estado abaixo). Não cria métrica nem muda retenção.
+
+## Decisões pendentes (responsável)
+
+- **Dono da configuração:** manter os itens de `config/sync` no núcleo ou mover para
+  `aculta_wiki/config/install`? Recomendação: manter os UUIDs e mover só depois de confirmar
+  o Config Sync sem diferenças. O adaptador do Fórum acrescentou a instância de
+  `field_aculta_discussion`, o `hidden` no formulário e a exibição `full` do `wiki_entry`
+  em `config/sync` justamente porque essa decisão segue aberta.
+- **Ranking:** só no painel administrativo ou também público? Padrão adotado: só administrativo,
+  como os demais painéis do Statistics.
+- **Contagem de atualizações:** contar todas as revisões ou só revisões publicadas?
+  Padrão adotado: só revisões publicadas.
+
+## Riscos
+
+- **Produção ativa:** `wiki420.aculta.org` está no ar. A mudança precisa ser invisível ao visitante.
+- **URLs:** nenhuma URL pode mudar. Redirecionamentos não são previstos nesta frente.
+- **Dependência circular:** `aculta_wiki` não depende de `aculta_statistics`, e o Statistics
+  não importa classes do submódulo.
+- **Configuração:** mover configuração entre módulos pode gerar diferenças no Config Sync.
+  A Fase 2 cobre isso.
+
+## Mapa das tarefas desta sessão
+
+O briefing de 2026-10-22 organiza a execução da Fase 1 à Fase 4 em tarefas
+numeradas. Este mapa liga cada tarefa à fase correspondente e registra o estado
+ao fim da sessão.
+
+| ID | Tarefa | Fase do plano | Commit | Estado |
+| --- | --- | --- | --- | --- |
+| A1 | Inventário da Fase 2 e anexo neste documento | Fase 2 | `402622c7` | concluída |
+| A2 | Casca do submódulo (`info.yml`, AGENTS, README, CHANGELOG, ROADMAP, TEST-MATRIX) | Fase 1 | `b7195c45` | concluída |
+| B1 | Mover `WikiController` e `WikiSearchFormBuilder` | Fase 2 | `8208243b` | concluída |
+| B2 | Mover as três rotas com nomes e caminhos idênticos | Fase 2 | `320960cb` | concluída |
+| B3 | Revisar pontos `wiki420` de domínio/purpose | Fase 2 | `1a0c9d77` | concluída, sem mudança de código |
+| B4 | Testes unitários dos componentes movidos | Fase 2 | `a89b3d19` | concluída |
+| C1 | Atualizar regras de conteúdo e `AGENTS.md` do submódulo | Fase 3 | `dfa5dfd0` | concluída |
+| C2 | Conferir a seção de bases legais da política | Fase 3 | `d52f2fb3` | concluída, sem lacuna para a Wiki |
+| D1 | Inventário LGPD com as duas métricas planejadas | Fase 3 (gate) | `2f8b944a` | concluída |
+| D2 | Catálogo e retenção instalada | Fase 4 | `89b1d9d9` | concluída |
+| D3 | `WikiProvider` e testes de publicação/revisão/importação | Fase 4 | `6306768c` | concluída |
+| D4 | Teste de kernel do agregado diário (opcional) | Fase 4 | `39842f8b` | concluída |
+| E1 | Status final deste plano | Encerramento | este commit | concluída |
+| E2 | `git push` da branch | Encerramento | `39842f8b` em diante | concluída |
+| E3 | Ranking por verbete na área Wiki, com CSV | Fase 4 (item 4.4) | `44b957ba` | concluída |
+| E4 | Contagem e paginação da listagem `/wiki/verbetes` | Fase 5 (item 1) | nesta entrega | concluída |
+| E5 | Imagem, resumo e categorias no card da listagem | Fase 5 (item 1) | nesta entrega | concluída |
+| E6 | Upload contextual da imagem de destaque (consumidor `wiki`) | Fase 5 (item 2) | nesta entrega | concluída |
+| E7 | Adaptador `wiki` do Fórum: provider e discussão por verbete | Fase 5 (item 3) | nesta entrega | concluída |
+| E8 | Histórico de edição e revisão por verbete na área Wiki, com CSV | Fase 5 (item 5) | nesta entrega | concluída |
+| E9 | Busca no índice do site, aviso de revisão e pacote LGPD | Fase 5 (item 4) | nesta entrega | concluída |
+
+> **Retenção das métricas.** O briefing pede 90 dias para
+> `wiki.entries.published` e `wiki.entries.updated`. A documentação da
+> `aculta_statistics` descrevia a primeira como instantânea. Vale o briefing:
+> o catálogo e a configuração instalada usam 90 dias, e `METRIC-CATALOG.md`
+> foi corrigido nesta sessão.
+
+### Estado ao fim da sessão de 2026-10-22
+
+- **URLs preservadas.** As três rotas (`aculta_portal.wiki_home`,
+  `aculta_portal.wiki_search`, `aculta_portal.wiki_search_preview`) estão em
+  `aculta_wiki.routing.yml` com os mesmos nomes, caminhos, permissões e
+  controladores de antes.
+- **Submódulo desabilitado no Runtime, habilitado na configuração.** Por
+  decisão do responsável nesta data, `aculta_wiki` entrou em
+  `config/sync/core.extension.yml` (`aculta_wiki: 0`). A configuração
+  exportada passa a declarar o submódulo, e o próximo `drush config:import`
+  no ambiente é que o habilita. Não houve `updb`, limpeza de cache, ativação
+  de módulo nem qualquer operação no Runtime nesta sessão. As dependências
+  (`aculta_portal`, `node`) já estavam habilitadas, e o submódulo não tem
+  `config/install`; por isso a entrada basta.
+- **Retenção acessível no menu.** O formulário de prazos (`aculta_statistics`)
+  ganhou itens de menu ("Estatísticas", peso 12, e a subaba "Retenção") e um
+  atalho no painel para quem tem `administer aculta_statistics`. Até aqui o
+  formulário só era alcançável pela URL.
+- **Métricas prontas, sem emissão para conteúdo importado.** O catálogo, a
+  retenção instalada, o `WikiProvider` e o hook de publicação estão no código;
+  conteúdo sincronizado não conta. A produção das métricas só começa quando o
+  `aculta_wiki` for habilitado e verbetes forem publicados.
+- **Nenhum código de `aculta_wiki` no `aculta_statistics`.** A classificação
+  depende do tipo de conteúdo `wiki_entry` e do estado editorial, sem importar
+  classes do submódulo.
+- **Ranking por verbete (item 4.4).** A área Wiki do painel passou a listar os
+  verbetes mais lidos no período escolhido (7, 14 ou 30 dias), com o título
+  resolvido na renderização, e a exportar o mesmo recorte em CSV
+  (`/painel-administrativo/aculta/estatisticas/area/wiki/ranking.csv`). A
+  dimensão de `wiki.entries.read` é o ID do nó; dimensões que não são ID ou que
+  apontam para outro tipo de conteúdo ficam de fora. Verbete excluído sai da
+  lista sem erro, e a ordem vem da soma no período (`GROUP BY` em
+  `dimensionTotals()`), sem corte fixo.
+- **Listagem com contagem e paginação (Fase 5, item 1).** O display `page_1` da
+  view `wiki_entries` passou a usar pager completo de 12 itens e um cabeçalho
+  `@total verbetes publicados`, exibido inclusive quando não há resultados. O
+  caminho `wiki/verbetes` não mudou; os blocos `block_changes` (5 itens) e
+  `block_recent` continuam com limite fixo, sem paginador. `url.query_args`
+  entrou nos contextos de cache da página para que `?page=N` não sirva o cache
+  da primeira página.
+- **Campos do teaser (Fase 5, item 1).** O view mode `teaser` do `wiki_entry`
+  passou a renderizar `field_wiki_image`, e a ordem do card ficou imagem (peso
+  0), resumo (1) e categorias (2). A imagem usa o mesmo formatador da página do
+  verbete (`entity_reference_entity_view`, view mode `default`, sem link), sem
+  criar view mode de mídia nem nova superfície de Config Sync. O tema
+  (`node--wiki-entry--teaser.html.twig`, SDC `aculta420:wiki-entry` e
+  `wiki-entry.css`) mostra a imagem em recorte 16:9 (`aspect-ratio` +
+  `object-fit: cover`) e só a exibe quando o campo tem conteúdo e acesso; o
+  componente ganhou a story `wiki-entry.teaser.story.yml`. Nenhuma URL mudou e
+  os blocos continuam intactos.
+- **Upload da imagem de destaque (Fase 5, item 2).** O campo `field_wiki_image`
+  deixou de ser um autocomplete de mídia: o hook
+  `form_node_wiki_entry_form_alter` (`WikiEntryImageHooks`) oculta o widget
+  central e abre a aba "Imagem de destaque" dentro das abas verticais
+  `advanced`. A aba envia um arquivo por vez (`managed_file` em
+  `public://wiki/imagens`), exige descrição de até 512 caracteres, mostra a
+  imagem atual e oferece removê-la. A validação e o envio usam o **consumidor
+  `wiki`** da política central: `UserUploadPolicy` ganhou a aba "Wiki" em
+  `UserUploadSettingsForm`, o bloco `consumers.wiki` em
+  `config/sync/aculta_portal.user_upload.yml` e o mapeamento correspondente em
+  `aculta_portal.schema.yml`, com padrão herdando a política global. O envio
+  cria uma mídia `image` publicada (título = nome do arquivo, `field_media_image`
+  com `alt`) antes de salvar o verbete, pelo mesmo padrão do diálogo do Fórum;
+  a substituição não apaga a mídia anterior, porque revisões podem apontar para
+  ela. O arquivo enviado nunca passa pelo autocomplete de mídia, então o
+  uploader o marca como permanente antes de criar a mídia. A aba só aparece
+  quando a política do consumidor tem extensão de imagem habilitada; caso
+  contrário o widget central continua visível. `<details>` não sintetiza
+  `#tree`, por isso a aba o define explicitamente — sem isso os valores não
+  chegariam sob `wiki_lead_image`. O `info.yml` passou a declarar
+  `drupal:file` e `drupal:media`, que o fluxo agora usa. Nenhuma URL mudou.
+- **Adaptador `wiki` do Fórum (Fase 5, item 3).** O submódulo
+  `aculta_forum_wiki` registra `WikiDiscussionContextProvider` no serviço
+  tagueado `aculta_forum.discussion_context_provider`. O provider aceita apenas
+  Node `wiki_entry` com o campo compartilhado `field_aculta_discussion`, usa
+  `stableId` `wiki:node:{uuid}`, URL canônica do verbete e as políticas
+  `editorial_entity_access` (leitura, descoberta e notificação) e
+  `editorial_opt_in`. Leitura compõe Entity Access do verbete com o do campo;
+  escrita acrescenta `post comments` e o campo aberto; moderação usa
+  `administer comments`. O adaptador não cria tópico público, não reimplementa a
+  Wiki, não registra rotas e não toca o fluxo editorial. A instância do campo, o
+  `hidden` do formulário e a exibição `full` do `wiki_entry` existem apenas em
+  `config/sync`, porque o `aculta_wiki` não tem `config/install`; a decisão
+  sobre o dono dessa configuração continua aberta. O tema ACULTA420 recebe o
+  campo pelo slot `discussion` do SDC `aculta420:wiki-entry`, e o Olivero o
+  renderiza pela exibição `full` sem alteração de tema. `aculta_forum_wiki`
+  entrou em `config/sync/core.extension.yml` e continua desabilitado no Runtime.
+- **Histórico de edição por verbete (Fase 5, item 5).** O `aculta_statistics`
+  ganhou o `WikiRevisionReport` (`aculta_statistics.wiki_revision_report`), que
+  conta, para cada `wiki_entry`, as revisões guardadas pelo Node, quantas foram
+  publicadas e quantas continuam em rascunho, com a data da última edição. A
+  consulta lê `node`, `node_revision` e `node_field_revision` em tempo de
+  renderização, com `COUNT(DISTINCT vid)`, então tradução não duplica revisão.
+  A área Wiki do painel mostra a tabela `statistics-wiki-revisions` com rascunho
+  pendente primeiro, depois edição mais recente e, no empate, o ID do nó; a
+  lista corta em 50 verbetes, informa o corte e mantém os totais gerais, e o
+  CSV (`/painel-administrativo/aculta/estatisticas/area/wiki/revisoes.csv`)
+  traz todos. Por ser um retrato do histórico, não segue o seletor de período e
+  **não cria métrica nova nem muda retenção** — por isso não há gate de LGPD
+  pendente para este item. O recorte continua dependendo só do tipo de conteúdo
+  `wiki_entry`, sem importar classes do `aculta_wiki`.
+- **Busca no índice do site (Fase 5, item 4).** O `wiki_entry` entrou em
+  `bundles.selected` do índice `aculta_conteudo`
+  (`config/sync/search_api.index.aculta_conteudo.yml`), ao lado de `activity`,
+  `revista`, `document` e `page`. A busca pública da Wiki continua sendo a
+  consulta própria de `WikiController::findWikiEntries()`, com as mesmas três
+  rotas: nenhum caminho mudou. O que muda é a descoberta pelo índice do site,
+  que passa a devolver verbetes publicados; o `SearchPageController` reaplica
+  `access('view')` no resultado, então rascunho e revisão não aparecem, e os
+  termos digitados não são gravados. Verbetes já existentes só entram no índice
+  depois de uma reindexação no ambiente (`drush search-api:index`), passo de
+  deploy, não desta sessão.
+- **Aviso de revisão por e-mail (Fase 5, item 4).** `WikiReviewHooks`
+  (`entity_update`) avisa uma única vez quando um `wiki_entry` **entra** em
+  revisão, comparando o estado atual com `getOriginal()`. O tipo de e-mail
+  `aculta_wiki_review` (`WikiReviewMailType`) declara `verbete`, `estado` e
+  `link`; o `WikiReviewNotifier` enfileira uma mensagem por endereço editorial
+  na fila do `aculta_mailer`, com o contexto limitado a título, estado e link de
+  edição — **o nome de quem editou não vai no aviso**. O `aculta_wiki` não
+  depende do `aculta_mailer` em `info.yml`: a fila e a URL pública chegam como
+  serviços opcionais (`@?aculta_mailer.queue`,
+  `@?Drupal\aculta_mailer\Api\PublicUrlInterface`), e sem o mailer nada é
+  enviado nem quebra. O aviso vem **desligado** e sem destinatários; a tela
+  `/painel-administrativo/aculta/wiki` (`aculta_wiki.settings`, permissão
+  `administer aculta_wiki`) liga o aviso e cadastra as caixas. A configuração
+  `aculta_wiki.settings` não tem arquivo em `config/sync` nem `config/install`:
+  os padrões vivem no código até alguém salvar a tela.
+- **Pacote LGPD da Fase 5, item 4.** No mesmo commit: o inventário
+  (`docs/compliance/LGPD-INVENTARIO.md`) ganhou a linha `aculta_wiki` e a
+  pendência 3 foi atualizada; a cláusula de aviso de revisão entrou em
+  `docs/compliance/CLAUSULAS-POLITICA-ACEITE-UNICO.md`; o bullet da Wiki em
+  `scripts/institution/politica-de-privacidade.html` passou a descrever busca e
+  aviso; `docs/operations/AGENT-CONTENT.md` e o `AGENTS.md` do submódulo
+  registraram o novo escopo. Nenhuma **categoria nova** de dado pessoal foi
+  criada: a busca usa só conteúdo publicado, sem guardar termos, e o aviso usa
+  caixas editoriais da Associação, já cobertas pela linha do `aculta_mailer`
+  (HMAC e registro de 90 dias). A base legal segue a que já está publicada para
+  a Wiki (consentimento na contribuição e interesse legítimo na curadoria
+  editorial); nada foi inventado.
+- **Testes.** `WikiControllerTest`/`WikiSearchFormBuilderTest` (9 testes, 34
+  asserções), `WikiProviderTest` (8 testes, 17 asserções),
+  `WikiPublicationKernelTest` (2 testes, 22 asserções) e
+  `WikiRankingKernelTest` (3 testes: período e título atual, verbete excluído,
+  dimensão sem verbete legível), `WikiListingConfigTest` (2 testes: pager e
+  contagem na página, blocos intactos) e `WikiTeaserConfigTest` (2 testes:
+  imagem sem link via mídia, ordem e campos ocultos),
+  `WikiLeadImageUploaderTest` (10 testes: aceite, descrição obrigatória e
+  limite, um arquivo por envio, extensão de imagem, aba intocada, criação da
+  mídia, reuso após erro, remoção e envio vazio),
+  `WikiEntryImageHooksTest` (6 testes: aba e validadores, ganchos de validação
+  e envio, imagem atual, política sem imagem, campo sem acesso e formulário sem
+  o campo) e `WikiLeadImagePolicyTest` (3 testes: consumidor exportado, schema e
+  aba administrativa), `WikiReviewNotifierTest` (6 testes: desligado, sem
+  destinatário válido, sem fila, um aviso por endereço com contexto sem autoria,
+  link vazio sem URL pública e leitura do texto de destinatários),
+  `WikiReviewHooksTest` (8 testes: rascunho→revisão, revisão→revisão,
+  publicado→revisão, outros estados, outro tipo, entidade que não é nó, sem
+  campo de moderação e configuração desligada), `WikiReviewMailTypeTest`
+  (3 testes: identificador e variáveis, uso dos marcadores e ausência de
+  autoria) e `WikiSearchIndexConfigTest` (1 teste: `wiki_entry` no índice com os
+  quatro tipos anteriores e indexação direta) aprovados — suíte do submódulo:
+  `52 testes, 240 asserções`.
+  O adaptador do Fórum tem `WikiDiscussionContextProviderTest` (5 testes, 28
+  asserções: bundles aceitos, acesso e cache, campo fechado e permissão,
+  restrição do host e do campo preservada, verbete não persistido) e a suíte
+  unitária do `aculta_forum` continua passando (`105 testes, 799 asserções`).
+  O histórico de edição tem `WikiRevisionReportKernelTest` (5 testes: contagem
+  de publicadas e rascunhos, pendência antes de recência, outro tipo de
+  conteúdo ignorado, tabela do painel com CSV completo e recorte sem perder
+  totais); `WikiRankingKernelTest` passou a instalar a configuração de
+  `system`, porque a área Wiki agora formata data. Suítes do
+  `aculta_statistics`: kernel `41 testes, 311 asserções` e unitária
+  `105 testes, 428 asserções`, ambas aprovadas. A falha pré-existente de
+  `ForumActivitySubscriberTest::testSubscribedEventNames` (o commit `16537660`
+  incluiu `aculta_forum.post_created` sem atualizar o teste) foi corrigida
+  nesta sessão, junto com um teste do evento de post.
+- **O que ficou faltando.** A Fase 5 do plano está completa em código e
+  documentação (itens 1 a 5). Falta a validação em navegador com ACULTA420 e
+  Olivero depois da ativação — a imagem do card, a aba de upload, a discussão do
+  verbete, a tabela de revisões e a tela de aviso de revisão foram verificadas
+  por configuração e testes, não renderizadas em navegador. Falta também a
+  reindexação do `aculta_conteudo` no ambiente para que verbetes já publicados
+  apareçam na busca do site (`drush search-api:index`), passo de deploy. A
+  ativação em si depende de o ambiente importar a configuração e rodar os
+  passos de atualização com backup verificado.
+- **Fora do Git.** `node_modules/`, `package.json` e `package-lock.json`
+  seguem não versionados e foram deixados intactos.
+
+## Anexo — Inventário da Fase 2
+
+Levantamento feito com Grep em `web/modules/custom`, `web/themes/custom` e
+`config/sync`, excluindo `node_modules`, `vendor`, core e contrib. Classificação:
+**move** (vai para `aculta_wiki`), **fica no Portal** (domínio, purpose, tema ou
+configuração) e **revisar** (precisa de ajuste de contrato).
+
+### `WikiController`
+
+| Arquivo:linha | Ocorrência | Classificação | Ação |
+| --- | --- | --- | --- |
+| `web/modules/custom/aculta_portal/src/Controller/WikiController.php:28` | Declaração da classe | move | `git mv` para `aculta_wiki/src/Controller/` e namespace `Drupal\aculta_wiki\Controller` |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:192` | `_controller` da rota home | move | B2 move a rota inteira |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:226` | `_controller` da rota de busca | move | B2 move a rota inteira |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:234` | `_controller` da prévia | move | B2 move a rota inteira |
+| `web/modules/custom/aculta_portal/src/Controller/WikiController.php:162` | `Url::fromRoute('aculta_portal.wiki_search')` | move | Nome de rota não muda |
+| `web/modules/custom/aculta_portal/src/Controller/WikiController.php:67` | `Url::fromUserInput('/wiki/verbetes')` | move | Caminho servido por View; não muda |
+| `web/modules/custom/aculta_portal/src/Controller/ShopController.php:16` | Comentário cita `/wiki` como caminho de purpose | fica no Portal | Comentário de domínio; não é código da Wiki |
+
+### `WikiSearchFormBuilder`
+
+| Arquivo:linha | Ocorrência | Classificação | Ação |
+| --- | --- | --- | --- |
+| `web/modules/custom/aculta_portal/src/Presentation/WikiSearchFormBuilder.php:15` | Declaração da classe | move | `git mv` para `aculta_wiki/src/Presentation/` |
+| `web/modules/custom/aculta_portal/src/Presentation/WikiSearchFormBuilder.php:34` | Rota `aculta_portal.wiki_search` no formulário | move | Nome de rota não muda |
+| `web/modules/custom/aculta_portal/src/Presentation/WikiSearchFormBuilder.php:52` | Rota `aculta_portal.wiki_search_preview` | move | Nome de rota não muda |
+| `web/modules/custom/aculta_portal/aculta_portal.services.yml:211` | Definição do serviço | revisar | Definição vai para `aculta_wiki.services.yml`; o Portal passa a injetar a interface de forma opcional |
+| `web/modules/custom/aculta_portal/src/Presentation/DomainPresentationBuilder.php:64` | Tipo do construtor | revisar | Injetar `?WikiSearchFormBuilderInterface` com `@?aculta_wiki.presentation.wiki_search_form`; `wiki_search` fica `NULL` sem o submódulo |
+| `web/modules/custom/aculta_portal/tests/src/Unit/DomainPresentationContractTest.php:20` | Dados de purpose `wiki` | fica no Portal | Teste de contrato de apresentação |
+
+### `aculta_portal.wiki_` (nomes de rota)
+
+| Arquivo:linha | Ocorrência | Classificação | Ação |
+| --- | --- | --- | --- |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:189` | Definição `aculta_portal.wiki_home` | move | B2 move com o mesmo nome |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:223` | Definição `aculta_portal.wiki_search` | move | B2 move com o mesmo nome |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:231` | Definição `aculta_portal.wiki_search_preview` | move | B2 move com o mesmo nome |
+| `web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php:191-193` | Atribui `_aculta_domain_purpose: wiki` às rotas | fica no Portal | Concern de domínio; os nomes são estáveis |
+| `web/modules/custom/aculta_portal/src/Hook/PortalHooks.php:65` | `aculta_portal.wiki_home` em `PUBLIC_PORTAL_ROUTES` | fica no Portal | Concern de acesso público do Portal |
+| `web/modules/custom/aculta_portal/tests/src/Unit/DomainRoutePolicyTest.php:66` | Teste da política de rotas | fica no Portal | Cobre nomes estáveis, que não mudam |
+
+### `/wiki` (caminhos)
+
+| Arquivo:linha | Ocorrência | Classificação | Ação |
+| --- | --- | --- | --- |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:190,224,232` | Caminhos `/wiki`, `/wiki/busca`, `/wiki/busca/previa` | move | Caminhos idênticos em `aculta_wiki.routing.yml` |
+| `web/modules/custom/aculta_portal/src/PathProcessor/PurposeFrontPathProcessor.php:30,37` | `FRONT_PATHS['wiki'] = '/wiki'` | fica no Portal | Concern de domínio/purpose |
+| `web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php:237` | Comentário cita `/wiki` | fica no Portal | Comentário de domínio |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/aculta_statistics.routing.yml:10` | `/estatisticas/wiki/{node}/leitura` | fica | Beacon de leitura da estatística; URL própria, não é rota da Wiki |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Hook/WikiReadHooks.php:32` | Anexa biblioteca de leitura | fica | Estatística de leitura já existente |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Kernel/WikiReadKernelTest.php:106` | URL do beacon | fica | Teste da estatística |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Unit/WikiReadControllerTest.php:128` | URL do beacon | fica | Teste da estatística |
+| `web/modules/custom/aculta_portal/modules/aculta_deployer/tests/run.php:244` | Host `wiki420.aculta.org` | fica | Lista de hosts esperados; domínio não muda |
+| `config/sync/views.view.wiki_entries.yml:148` | Caminho `wiki/verbetes` | fica | View de configuração; `config/sync` não muda de dono nesta sessão |
+| `web/themes/custom/aculta420/src/Hook/ThemeHooks.php:260-274` | Marca `wiki420` no cabeçalho | fica | Tema; consome a chave neutra do Portal |
+| `web/themes/custom/aculta420/components/patterns/wiki-entry/wiki-entry.default.story.yml:5` | URL de exemplo | fica | Story do tema |
+
+### Fora dos módulos (documentação a revisar)
+
+| Arquivo:linha | Ocorrência | Classificação | Ação |
+| --- | --- | --- | --- |
+| `docs/operations/AGENT-CONTENT.md:83` | “Não existe um módulo de Wiki habilitado” | revisar | C1 atualiza o estado real: o código existe, mas o módulo não está habilitado |
+| `docs/operations/AGENT-CONTENT.md:87` | Regra de mudança de escopo | revisar | C1 registra a casca e a pendência de habilitação |
+| `scripts/institution/politica-de-privacidade.html:17` | Base legal da Wiki | fica | C2 confere a redação; não inventar base |
+| `docs/compliance/LGPD-INVENTARIO.md:53,67` | Métricas agregadas e pendência da Wiki | revisar | D1 lista as duas métricas; a base legal continua com o responsable |
+| `docs/portal/WIKI.md` | Apresentação e limites da Wiki420 | revisar | Atualizar apenas se o caminho dos componentes mudar |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/INTEGRATIONS.md` | “a Wiki não é módulo”; provedor `WikiProvider` | revisar | C1/E1 corrigem o estado e registram a divergência de retenção |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/METRIC-CATALOG.md` | Retenção de `wiki.entries.published` como “instantâneo” | revisar | Divergência com o briefing (90 dias para ambas); registrar em E1 |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/CURRENT-STATE.md` | “a Wiki não é módulo” | revisar | C1/E1 corrigem o estado |
+
+## Anexo — Fronteira Portal ↔ aculta_wiki (revisão da tarefa B3)
+
+Revisão dos cinco pontos do Portal que citam a Wiki420. Nenhum deles é
+funcionalidade da Wiki: todos resolvem domínio, purpose ou apresentação neutra.
+Ficam no Portal, com a justificativa abaixo.
+
+| Arquivo:linha | O que faz | Decisão |
+| --- | --- | --- |
+| `src/Domain/DomainPurposeManager.php:24` | Mapeia o purpose `wiki` para o Domain `wiki420_aculta_org` | fica — é o mapa de domínios da plataforma, não da Wiki |
+| `src/Domain/DomainPurposeManager.php:59` | Comentário sobre o sitemap e o host da Wiki | fica — comentário de contexto do domínio |
+| `src/Domain/ContentPurposeResolver.php:21,66-77,137` | Reconhece `wiki_entry` e rotas de nó da Wiki para atribuir o purpose | fica — resolução de purpose é do host; mover inverteria a dependência |
+| `src/PathProcessor/PurposeFrontPathProcessor.php:37` | Purpose `wiki` serve `/wiki` como raiz | fica — caminho público do domínio, contrato que não muda |
+| `src/EventSubscriber/DomainRouteSubscriber.php:191-197` | Marca `_aculta_domain_purpose: wiki` nas rotas da Wiki e na view | fica — usa nomes de rota e id de view, não classes do submódulo |
+| `src/Presentation/DomainPresentationBuilder.php:105,119,128` | Marca do cabeçalho, formulário de busca e cabeçalho do site | fica — apresentação neutra; o formulário entra por `WikiSearchFormBuilderInterface` opcional (B1) |
+
+Consequência: o submódulo depende do Portal; o Portal não importa nenhuma classe
+de `Drupal\aculta_wiki`. Se a Wiki deixar de existir, o Portal continua
+funcionando com `wiki_search` nulo, e o purpose/domínio permanecem inofensivos.
+
+## Anexo — Política de privacidade (verificação da tarefa C2)
+
+A seção “Bases legais por uso do site” existe em
+`scripts/institution/politica-de-privacidade.html` e já traz a linha da Wiki:
+
+> **Wiki**, quando ativa: consentimento na contribuição (art. 7º, I), e interesse
+> legítimo na curadoria editorial (art. 7º, IX).
+
+Não há lacuna de base legal. Nada foi inventado e nada foi alterado na política:
+o texto atual cobre contribuição e curadoria. As métricas planejadas
+(`wiki.entries.published`, `wiki.entries.updated`) são contagens diárias
+agregadas, sem autoria e sem IP, e não acrescentam uso de dado pessoal que exija
+nova base; a decisão de mencioná-las na política fica com o responsável.

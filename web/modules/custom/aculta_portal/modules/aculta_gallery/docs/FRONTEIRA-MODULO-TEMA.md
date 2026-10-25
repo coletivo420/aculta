@@ -20,8 +20,8 @@ de terceiros: o submódulo a configura, o tema estiliza o markup dela, e nenhum 
 | Peça | Dono | Arquivo | Motivo |
 | --- | --- | --- | --- |
 | Entidade `media_gallery`, campos, pathauto `/albuns/[title]` | submódulo | `config/install/*.yml` | Dados e URL pública pertencem ao domínio da galeria. |
-| Acesso só na Revista (D13) | submódulo | `src/Hook/GalleryPurposeAccessHooks.php` | Regra de negócio de purpose. |
-| Coleção administrativa, título apontando para a Revista | submódulo | `src/ListBuilder/AcultaGalleryListBuilder.php`, `src/Hook/GalleryListBuilderHooks.php` | Link é função; a edição continua no MAIN (política administrativa). |
+| Acesso público em todos os purposes | Core `media_gallery` + submódulo | permissões Core e publicação da entidade | Galerias são conteúdo transversal; consumidores controlam anexos contextuais por seus próprios fluxos. |
+| Coleção administrativa com alias em português | submódulo | `src/ListBuilder/AcultaGalleryListBuilder.php`, `src/Hook/GalleryListBuilderHooks.php` | Link usa o alias local; a edição continua no MAIN (política administrativa). |
 | View `aculta_album_fotos` (fotos do álbum, paginação, VVJS, PhotoSwipe) | submódulo (config) | `config/sync/views.view.aculta_album_fotos.yml` | Define o conteúdo do palco. |
 | View `aculta_albuns` (listagem `/albuns`) | submódulo (config) | `config/sync/views.view.aculta_albuns.yml` | Lista de álbuns; filtro de purpose está no hook de listagem. |
 | Palco e miniaturas (marcação) | submódulo | `src/Hook/GalleryViewHooks.php` | Monta `data-aculta-album-stage`, `data-aculta-album-thumbs` e `data-aculta-album-thumb`. |

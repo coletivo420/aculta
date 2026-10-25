@@ -1,11 +1,39 @@
 # Redirecionamentos e raízes dos subdomínios
 
+## Política atual de desenvolvimento — sem aliases temporários (2026-10-24)
+
+**Regra global:** uma URL renomeada em módulos ACULTA não mantém rota
+temporária nem redirect de compatibilidade. Atualizar consumidores para
+os nomes/paths canônicos; caminhos aposentados devem responder 404.
+Validar via `php scripts/validate-no-temporary-route-aliases.php`.
+
+**Removidos em código nesta frente:** aliases antigos de Studio/Marley,
+LMS/Ganjalab, Fórum administrativo e troca de e-mail do User;
+`/minha-conta/*` passa a 404 (continua como path técnico interno do
+front da Conta); os endpoints Commerce de address-book e `/pagamentos`
+não são mais publicados. As interfaces válidas são `/studio`,
+`/studio/marley`, `/studio/pessoal`, `/studio/ganjalab`,
+`/dados/endereco`, `/pedidos` e as rotas de segurança existentes.
+**Resta executar os testes do Runtime**. Tabelas históricas abaixo são
+registros do estado anterior e **não descrevem os aliases atualmente
+implementados**.
+
+**Fora desta proibição:** autenticação, logout, recuperação de conta,
+callbacks OAuth, purpose correto para carrinho/checkout, confirmação de
+e-mail, serviços de links curtos/QR e redirects de fluxo funcional que
+dependem do método HTTP ou do estado de sessão. O redirect de path antigo
+de checkout e o Core `user.page` exigem auditoria específica antes de
+alteração, para preservar pagamentos e navegação do Core. Não criar
+exceções de compatibilidade para novas rotas de projeto.
+
+
+
 Referência única do comportamento de raiz (`/`), de redirecionamento e de 404 em cada host do Portal.
 Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualquer regra.
 
 ## Regras vigentes
 
-1. **Caminho antigo responde 404; não há redirecionamento de slug.** É o padrão do projeto, antes e depois da versão estável (`AGENTS.md`, seção de slugs). Por isso `/apoie` responde 404.
+1. **Caminho antigo responde 404; não há redirecionamento de slug**, salvo exceções administrativas registradas neste documento. É o padrão do projeto, antes e depois da versão estável (`AGENTS.md`, seção de slugs). Por isso `/apoie` responde 404.
 2. **Redirecionamento entre purposes** usa `DomainPurposeManager` + `TrustedRedirectResponse`, nunca `RedirectResponse` cru para outro host (`DomainPurposeRequestSubscriber::retargetRedirect`).
 3. **Conta:** a raiz `/` do host de conta é o ponto de entrada da área logada. Visitante não logado é redirecionado (302) para `/entrar` do próprio host de conta; a visão geral (`/minha-conta` internamente) não é acessível diretamente. Após logout, o destino também é o login (`DomainPurposeRequestSubscriber`, `onRequestBeforeRouter` e bloco de `user.logout`).
 4. **Login com destino salvo** volta ao purpose de origem, validado por `isSafeLoginDestinationPath` (`LOGIN_DESTINATION_SESSION_KEY`).
@@ -30,7 +58,7 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 | revista420.aculta.toca.net.br (MAGAZINE) | 200 (`<front>`, com a marca da revista) | 404 | 404 | 404 | 404 | Sem reescrita: página inicial do site com o cabeçalho do host |
 | wiki420.aculta.toca.net.br (WIKI) | 200 (`/wiki` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | Página inicial da wiki |
 | cursos.aculta.toca.net.br (COURSES) | 200 (`/cursos` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | Página inicial dos cursos |
-| growroom420.aculta.toca.net.br (FORUM) | 200 (`/forum` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | Índice do fórum (módulo forum) |
+| growroom420.aculta.toca.net.br (FORUM) | 200 (`/discussoes` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | View `aculta_forum_public_topics`; caminho direto interno |
 
 Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero registros no Runtime de teste).
 
@@ -51,7 +79,7 @@ Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero r
 
 ## Mecanismo único da raiz (decisão de 2026-10-11)
 
-Toda raiz de subdomínio que serve conteúdo passa pelo `PurposeFrontPathProcessor` (`src/PathProcessor/PurposeFrontPathProcessor.php`), um `InboundPathProcessorInterface` com a tag `path_processor_inbound`, mapa único `FRONT_PATHS`. Não há redirecionamento. Sem entrada no mapa, o host usa o `<front>` do Core. Hoje, o `FRONT_PATHS` tem apoio, wiki, cursos, loja e fórum. Revista e principal usam o `<front>`. Para mudar a raiz de um host, altere só esse mapa e rode `php scripts/validate-root-policy.php`.
+Toda raiz de subdomínio que serve conteúdo passa pelo `PurposeFrontPathProcessor` (`src/PathProcessor/PurposeFrontPathProcessor.php`), um `InboundPathProcessorInterface` com a tag `path_processor_inbound`, mapa único `FRONT_PATHS`. Não há redirecionamento. Sem entrada no mapa, o host usa o `<front>` do Core. Hoje, o `FRONT_PATHS` tem apoio, wiki, cursos, loja e Fórum (`/discussoes`). Revista e principal usam o `<front>`. Para mudar a raiz de um host, altere só esse mapa e rode `php scripts/validate-root-policy.php`.
 
 ## Inventário de redirecionamentos e remoções (2026-10-11)
 
@@ -62,17 +90,18 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 | Origem | Destino | Código | Mecanismo (arquivo) | Motivo |
 | --- | --- | --- | --- | --- |
 | `/` no host de Conta, visitante | `/entrar` | 302 | `DomainPurposeRequestSubscriber` (`TrustedRedirectResponse`) | Raiz da conta exige login |
-| `/aceite-termos` (Conta ou Loja), após aceitar | destino salvo na sessão; sem destino, `<front>` do host onde o aceite foi feito | 302 | Agreement `aculta_account_terms`, `settings.destination` vazio (`config/sync/agreement.agreement.aculta_account_terms.yml`) | Volta à página pedida. Um destino fixo (`/minha-conta`, depois `/`) levava à página errada; corrigido em 0.3.0-dev.12 e 0.3.0-dev.14 (ver `docs/portal/CHECKOUT-BILLING.md`) |
+| `/aceite-termos` (Conta ou Loja), após aceitar | destino salvo na sessão; sem destino, `<front>` do host onde o aceite foi feito | 302 | Fluxo histórico do antigo Agreement; substituído pelo ledger `aculta_user_agreement` e pela rota `POST /termos/aceitar` | Comportamento preservado como referência histórica; a rota dedicada antiga responde 404. |
 | `/user/{uid}/edit`, próprio usuário | `/seguranca` (Conta) | 302 | `AccountRouteSubscriber` | Edição de conta acontece no painel |
 | `/user/{uid}/edit`, outro usuário | — | 403 | `AccountRouteSubscriber` | Sem acesso a conta alheia |
 | `/user/{uid}`, próprio usuário | `/` (Conta) | 302 | `AccountRouteSubscriber` | Perfil público não existe; a conta é a visão geral |
 | `/user/{uid}`, outro usuário | — | 403 | `AccountRouteSubscriber` | Sem acesso a conta alheia |
-| Rotas de troca de e-mail (`change_mail_page.*`) | `/seguranca` (Conta) | 302 | `AccountRouteSubscriber` | Troca de e-mail fica na segurança |
+| Rotas legadas de troca de e-mail (`aculta_user_changemail.legado`, `aculta_user_changemail.legado_usuario`) | `/seguranca` (Conta) | 302 | `ChangemailRedirectController` (aculta_user) | Troca de e-mail fica na segurança |
 | `/user` (página legada do Core) | raiz da Conta | 302 | `PortalController::legacyUserPageRedirect` | Página do Core sem interface própria |
 | `/carrinho` no host da loja (SHOP) | `/carrinho` no host principal (MAIN) | 302 | `DomainPurposeRequestSubscriber` e política de pagamento | Carrinho e checkout pertencem ao MAIN |
 | `/busca` enviada pelo formulário | `/busca?q=<termo>` | 302 | `SearchPageForm::submitForm` | Busca em GET com o termo na URL |
 | Destinos após formulários de conta (cadastro, segurança, dados, painel) | `aculta_portal.security`, `aculta_portal.dashboard`, `aculta_portal.my_data_address`, `<front>` | 302 | `PortalFormCallbacks` (`setRedirect`) | Retorno ao painel depois de salvar |
 | `/product/{id}` | `/loja/produto/...` (alias) | 301 | Módulo Redirect e alias do Pathauto | Caminho canônico do produto |
+| Caminhos antigos GET/HEAD/POST sob `/painel-administrativo/conteudo/forum` | `/painel-administrativo/forum` | 302 | `aculta_forum.legacy_admin_redirect*` com `LocalRedirectResponse` | A árvore antiga fora da seção canônica redireciona para a entrada; POST não executa a operação anterior. Os caminhos atuais de tópicos, comentários e configurações dentro de `/painel-administrativo/forum` são páginas próprias, não redirects |
 
 ### Caminhos removidos (404, sem redirecionamento)
 

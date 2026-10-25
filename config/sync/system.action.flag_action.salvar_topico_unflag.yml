@@ -1,0 +1,15 @@
+uuid: 324e982e-f8c2-417f-bd38-aa55216ae0d6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - flag.flag.salvar_topico
+  module:
+    - flag
+id: flag_action.salvar_topico_unflag
+label: 'Remover: Salvar tópico'
+type: node
+plugin: 'flag_action:salvar_topico_unflag'
+configuration:
+  flag_id: salvar_topico
+  flag_action: unflag

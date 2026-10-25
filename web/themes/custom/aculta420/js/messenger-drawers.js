@@ -80,6 +80,28 @@
       once('aculta-messenger-drawer', '[data-aculta-drawer-url]', context).forEach((drawer) => {
         let request;
         const content = drawer.querySelector('[data-aculta-drawer-content]');
+        const drawerType = drawer.dataset.acultaDrawerCount || 'messages';
+        const isAlertsDrawer = drawerType === 'alerts';
+        const showDrawerState = (state, message) => {
+          if (!content) {
+            return;
+          }
+          const feedback = document.createElement('div');
+          feedback.className = `aculta-messenger-state aculta-messenger-state--${state}`;
+          feedback.setAttribute('role', state === 'error' ? 'alert' : 'status');
+          feedback.dataset.acultaDrawerState = state;
+          feedback.textContent = message;
+          content.replaceChildren(feedback);
+        };
+
+        // Drupal's nested confirmation modal handles Escape first. Keep that
+        // key from reaching Bootstrap's document-level Offcanvas listener,
+        // which would otherwise close both the modal and the whole drawer.
+        drawer.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && event.target instanceof Element && event.target.closest('.ui-dialog')) {
+            event.stopPropagation();
+          }
+        });
 
         // init carries a POST body for the new-conversation form; the answer replaces the drawer content either way.
         const navigate = (url, init = {}) => {
@@ -90,6 +112,7 @@
           const activeRequest = new AbortController();
           request = activeRequest;
           content.setAttribute('aria-busy', 'true');
+          showDrawerState('loading', isAlertsDrawer ? Drupal.t('Carregando avisos…') : Drupal.t('Carregando conversa…'));
           fetch(url, {
             method: 'GET',
             credentials: 'same-origin',
@@ -102,24 +125,37 @@
               if (!response.ok) {
                 throw new Error('Drawer navigation failed.');
               }
-              updateCounter('messages', response.headers.get('X-Aculta-Messages-Count'));
+              const counterHeader = isAlertsDrawer ? 'X-Aculta-Alerts-Count' : 'X-Aculta-Messages-Count';
+              updateCounter(drawerType, response.headers.get(counterHeader));
               return response.text();
             })
             .then((html) => {
+              // A request cancelled by navigation or drawer closing must never
+              // overwrite the current panel after response.text() resolves.
+              if (activeRequest.signal.aborted || request !== activeRequest) {
+                return;
+              }
               const template = document.createElement('template');
               template.innerHTML = html;
               Drupal.detachBehaviors(content, null, 'unload');
               content.replaceChildren(template.content.cloneNode(true));
+              content.querySelectorAll('[data-aculta-nojs-search]').forEach((form) => {
+                form.hidden = true;
+              });
+              content.querySelectorAll('[data-aculta-js-only]').forEach((element) => {
+                element.hidden = false;
+              });
               Drupal.attachBehaviors(content);
             })
             .catch((error) => {
-              if (error.name !== 'AbortError') {
-                content.replaceChildren(document.createTextNode(Drupal.t('Não foi possível carregar esta conversa.')));
+              if (!activeRequest.signal.aborted && request === activeRequest && error.name !== 'AbortError') {
+                showDrawerState('error', isAlertsDrawer ? Drupal.t('Não foi possível carregar estes avisos.') : Drupal.t('Não foi possível carregar esta conversa.'));
               }
             })
             .finally(() => {
               if (request === activeRequest) {
                 content.setAttribute('aria-busy', 'false');
+                request = null;
               }
             });
         };
@@ -169,12 +205,12 @@
             return;
           }
           // The "Iniciar nova conversa" button carries data-aculta-conversation-url too; it is not in a form.
-          const link = event.target.closest('a[data-aculta-conversation-url], button[data-aculta-conversation-url], input[data-aculta-conversation-url], a[data-aculta-drawer-back]');
+          const link = event.target.closest('a[data-aculta-conversation-url], button[data-aculta-conversation-url], input[data-aculta-conversation-url], a[data-aculta-drawer-back], a[data-aculta-drawer-filter]');
           if (!link || !drawer.contains(link)) {
             return;
           }
           event.preventDefault();
-          navigate(link.dataset.acultaConversationUrl || link.href);
+          navigate(link.dataset.acultaDrawerFilterUrl || link.dataset.acultaConversationUrl || link.href);
         });
 
         drawer.addEventListener('submit', (event) => {
@@ -209,6 +245,7 @@
           const activeRequest = new AbortController();
           request = activeRequest;
           content.setAttribute('aria-busy', 'true');
+          showDrawerState('loading', Drupal.t('Carregando…'));
 
           fetch(endpoint, {
             method: 'GET',
@@ -228,6 +265,11 @@
               return response.text();
             })
             .then((html) => {
+              // A request cancelled by navigation or drawer closing must never
+              // overwrite the current panel after response.text() resolves.
+              if (activeRequest.signal.aborted || request !== activeRequest) {
+                return;
+              }
               const template = document.createElement('template');
               template.innerHTML = html;
               // Detach behaviors of the replaced content, as navigate() does, so listeners do not accumulate.
@@ -236,13 +278,14 @@
               Drupal.attachBehaviors(content);
             })
             .catch((error) => {
-              if (error.name !== 'AbortError') {
-                content.replaceChildren(document.createTextNode(drawer.dataset.acultaDrawerLabel || Drupal.t('Não foi possível carregar.')));
+              if (!activeRequest.signal.aborted && request === activeRequest && error.name !== 'AbortError') {
+                showDrawerState('error', drawer.dataset.acultaDrawerLabel || Drupal.t('Não foi possível carregar.'));
               }
             })
             .finally(() => {
               if (request === activeRequest) {
                 content.setAttribute('aria-busy', 'false');
+                request = null;
               }
             });
         });

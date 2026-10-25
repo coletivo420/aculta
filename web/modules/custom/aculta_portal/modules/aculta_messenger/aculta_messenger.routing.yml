@@ -40,6 +40,7 @@ aculta_messenger.profile_relationship:
   requirements:
     _permission: 'use private messaging system,access user profiles'
     _user_is_logged_in: 'TRUE'
+    _csrf_token: 'TRUE'
   options:
     no_cache: true
     parameters:
@@ -56,6 +57,7 @@ aculta_messenger.drawer_reply:
     _entity_access: 'private_message_thread.view'
     _permission: 'use private messaging system,access user profiles'
     _user_is_logged_in: 'TRUE'
+    _csrf_token: 'TRUE'
   options:
     no_cache: true
 
@@ -81,6 +83,7 @@ aculta_messenger.drawer_relationship:
     _entity_access: 'private_message_thread.view'
     _permission: 'use private messaging system,access user profiles'
     _user_is_logged_in: 'TRUE'
+    _csrf_token: 'TRUE'
   options:
     no_cache: true
 
@@ -109,6 +112,7 @@ aculta_messenger.member_relationship:
     _entity_access: 'private_message_thread.view'
     _permission: 'use private messaging system,access user profiles'
     _user_is_logged_in: 'TRUE'
+    _csrf_token: 'TRUE'
   options:
     no_cache: true
     parameters:
@@ -157,10 +161,10 @@ aculta_messenger.notice_detail:
         type: entity:node
 
 aculta_messenger.settings_form:
-  path: '/painel-administrativo/configuracoes/aculta/portal/mensagens'
+  path: '/painel-administrativo/aculta/mensagens'
   defaults:
     _form: '\Drupal\aculta_messenger\Form\MessengerSettingsForm'
-    _title: 'Chat: limites e limpeza'
+    _title: 'Configurações do Messenger'
   requirements:
     _permission: 'administer aculta messenger'
   options:
@@ -218,7 +222,7 @@ aculta_messenger.communication_settings:
     _form: '\Drupal\aculta_messenger\Form\CommunicationSettingsForm'
     _title: 'Notificações por e-mail'
   requirements:
-    _permission: 'access aculta portal,use private messaging system'
+    _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
@@ -295,3 +299,78 @@ aculta_messenger.avisos_raiz:
     _permission: 'access aculta portal'
   options:
     _aculta_domain_purpose: 'account'
+
+aculta_messenger.lms_notice_open:
+  path: '/avisos/educacionais/{message}/abrir'
+  methods: [GET]
+  defaults:
+    _controller: 'aculta_messenger.lms_notice_open_controller:open'
+    _title: 'Aviso de curso'
+  requirements:
+    _custom_access: 'aculta_messenger.lms_notice_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      message:
+        type: entity:message
+
+aculta_messenger.wiki_notice_open:
+  path: '/avisos/wiki/{message}/abrir'
+  methods: [GET]
+  defaults:
+    _controller: 'aculta_messenger.wiki_notice_open_controller:open'
+    _title: 'Aviso da Wiki'
+  requirements:
+    _custom_access: 'aculta_messenger.wiki_notice_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      message:
+        type: entity:message
+
+aculta_messenger.magazine_notice_open:
+  path: '/avisos/revista/{message}/abrir'
+  methods: [GET]
+  defaults:
+    _controller: 'aculta_messenger.magazine_notice_open_controller:open'
+    _title: 'Aviso da Revista'
+  requirements:
+    _custom_access: 'aculta_messenger.magazine_notice_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      message:
+        type: entity:message
+
+aculta_messenger.commerce_notice_open:
+  path: '/avisos/loja/{message}/abrir'
+  methods: [GET]
+  defaults:
+    _controller: 'aculta_messenger.commerce_notice_open_controller:open'
+    _title: 'Aviso da Loja'
+  requirements:
+    _custom_access: 'aculta_messenger.commerce_notice_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      message:
+        type: entity:message
+
+aculta_messenger.donation_notice_open:
+  path: '/avisos/doacao/{message}/abrir'
+  methods: [GET]
+  defaults:
+    _controller: 'aculta_messenger.donation_notice_open_controller:open'
+    _title: 'Aviso de doação'
+  requirements:
+    _custom_access: 'aculta_messenger.donation_notice_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      message:
+        type: entity:message

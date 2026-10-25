@@ -1,0 +1,96 @@
+/* ACULTA Studio (aculta_studio): apresentação das abas, do painel e das ações.
+   Marcação neutra vinda do módulo, traduzida em PortalUiHooks::TOKENS. */
+.studio__tabs {
+  border-bottom: 1px solid var(--bs-border-color);
+  margin-bottom: 1.5rem;
+}
+
+.studio__tab[aria-current="page"] {
+  font-weight: 700;
+}
+
+.studio__panel {
+  margin-bottom: 2rem;
+}
+
+.studio__heading {
+  margin-bottom: 1rem;
+}
+
+.studio__actions > li {
+  margin: 0;
+}
+
+/* Três níveis: áreas no topo (.studio__tabs), submenu à esquerda e abas da seção à direita. */
+.studio__layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.studio__sidebar {
+  flex: 0 0 14rem;
+  max-width: 14rem;
+}
+
+.studio__main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.studio__sections > li {
+  margin: 0;
+}
+
+.studio__link[aria-current="page"] {
+  font-weight: 700;
+}
+
+.studio__subtabs {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 767.98px) {
+  .studio__layout {
+    flex-direction: column;
+  }
+
+  .studio__sidebar,
+  .studio__main {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+/* O item_list do tema acrescenta list-group (vertical). Áreas e abas da seção são barras horizontais. */
+.studio__tabs.nav,
+.studio__subtabs.nav {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.studio__tabs > li,
+.studio__subtabs > li {
+  list-style: none;
+}
+
+.studio__sections > li {
+  list-style: none;
+}
+
+/* Movimento discreto e opcional: quem pede menos movimento não vê transições do Studio. */
+@media (prefers-reduced-motion: reduce) {
+  .studio__tab,
+  .studio__link,
+  .studio__action {
+    transition: none !important;
+  }
+}
+
+/* Região de avisos (aria-live): visualmente discreta, mas presente para leitores de tela. */
+.studio__live:empty {
+  display: none;
+}

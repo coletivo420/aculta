@@ -26,10 +26,10 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   admin_permission: 'administer aculta donation campaigns',
   entity_keys: ['id' => 'id', 'label' => 'label', 'status' => 'status'],
   links: [
-    'collection' => '/painel-administrativo/configuracoes/aculta/doacoes/campanhas',
-    'add-form' => '/painel-administrativo/configuracoes/aculta/doacoes/campanhas/adicionar',
-    'edit-form' => '/painel-administrativo/configuracoes/aculta/doacoes/campanhas/{aculta_donation_campaign}',
-    'delete-form' => '/painel-administrativo/configuracoes/aculta/doacoes/campanhas/{aculta_donation_campaign}/excluir',
+    'collection' => '/painel-administrativo/aculta/doacoes/campanhas',
+    'add-form' => '/painel-administrativo/aculta/doacoes/campanhas/adicionar',
+    'edit-form' => '/painel-administrativo/aculta/doacoes/campanhas/{aculta_donation_campaign}',
+    'delete-form' => '/painel-administrativo/aculta/doacoes/campanhas/{aculta_donation_campaign}/excluir',
   ],
   config_export: ['id', 'label', 'status', 'start', 'end', 'amounts', 'customAmount'],
 )]

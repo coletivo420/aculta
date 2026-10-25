@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
-use Drupal\aculta_lms\Access\UploadedAnswerAccessCheck;
+use Drupal\Component\Serialization\Json;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\StreamWrapper\PrivateStream;
+use Drupal\file\Entity\File;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\PermissionScopeInterface;
@@ -32,7 +33,8 @@ use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-/** Exercises attempt capture against real LMS and Comment entities. */
+/**
+ * Exercises attempt capture against real LMS and Comment entities. */
 #[TestGroup('aculta_lms')]
 #[RunTestsInSeparateProcesses]
 final class AttemptArchiveLifecycleTest extends KernelTestBase {
@@ -40,10 +42,20 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
   use LmsKernelTestTrait;
   use UserCreationTrait;
 
+  /**
+   * Modules required by the lifecycle integration tests.
+   *
+   * @var string[]
+   */
   protected static $modules = [
     'system',
     'user',
     'file',
+    'image',
+    'media',
+    'entity_usage',
+    'media_duplicates',
+    'aculta_image',
     'filter',
     'field',
     'flexible_permissions',
@@ -58,14 +70,17 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     'lms_file_upload',
   ];
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $container->register('stream_wrapper.private', PrivateStream::class)
       ->addTag('stream_wrapper', ['scheme' => 'private']);
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected function setUpFilesystem(): void {
     mkdir($this->siteDirectory, 0775);
     mkdir($this->siteDirectory . '/files', 0775);
@@ -76,6 +91,9 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $this->setSetting('config_sync_directory', $this->siteDirectory . '/files/config/sync');
   }
 
+  /**
+   * Installs schemas and configuration used by the real LMS entities.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
@@ -88,6 +106,7 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
+    $this->installSchema('entity_usage', ['entity_usage']);
     $this->installConfig(['file']);
     $this->installEntitySchema('lms_activity');
     $this->installEntitySchema('lms_lesson');
@@ -100,6 +119,9 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $this->installConfig(['group', 'lms', 'lms_answer_comments']);
   }
 
+  /**
+   * Preserves comments and snapshots across answer changes and deletion.
+   */
   public function testAnswerChangesReevaluationAndDeletionPreserveComments(): void {
     [$student, $course_status, $lesson_status, $activity, $answer] = $this->createAttempt();
     $this->createComment($answer, (int) $student->id(), 'Comentário publicado');
@@ -110,8 +132,8 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $archives = $this->archivesFor($course_status, $lesson_status, $activity);
     self::assertCount(1, $archives);
     self::assertSame('answer_changed', $archives[0]->get('event_type')->value);
-    self::assertSame(['answer' => 'Resposta original'], \Drupal\Component\Serialization\Json::decode($archives[0]->get('answer_data')->value));
-    $comments = \Drupal\Component\Serialization\Json::decode($archives[0]->get('answer_comments')->value);
+    self::assertSame(['answer' => 'Resposta original'], Json::decode($archives[0]->get('answer_data')->value));
+    $comments = Json::decode($archives[0]->get('answer_comments')->value);
     self::assertCount(1, $comments, 'Only published comments are included in the audit copy.');
     self::assertSame('Comentário publicado', $comments[0]['body']);
 
@@ -119,17 +141,20 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $archives = $this->archivesFor($course_status, $lesson_status, $activity);
     self::assertCount(2, $archives);
     self::assertSame('evaluation_changed', $archives[1]->get('event_type')->value);
-    self::assertSame(['answer' => 'Resposta revisada'], \Drupal\Component\Serialization\Json::decode($archives[1]->get('answer_data')->value));
+    self::assertSame(['answer' => 'Resposta revisada'], Json::decode($archives[1]->get('answer_data')->value));
     self::assertSame(0, (int) $archives[1]->get('score')->value);
 
     $answer->delete();
     $archives = $this->archivesFor($course_status, $lesson_status, $activity);
     self::assertCount(3, $archives);
     self::assertSame('deleted', $archives[2]->get('event_type')->value);
-    self::assertSame(['answer' => 'Resposta revisada'], \Drupal\Component\Serialization\Json::decode($archives[2]->get('answer_data')->value));
-    self::assertSame('Comentário publicado', \Drupal\Component\Serialization\Json::decode($archives[2]->get('answer_comments')->value)[0]['body']);
+    self::assertSame(['answer' => 'Resposta revisada'], Json::decode($archives[2]->get('answer_data')->value));
+    self::assertSame('Comentário publicado', Json::decode($archives[2]->get('answer_comments')->value)[0]['body']);
   }
 
+  /**
+   * Removes attempt history when its course status is deleted.
+   */
   public function testCourseStatusDeletionPurgesItsAttemptHistory(): void {
     [, $course_status, $lesson_status, $activity, $answer] = $this->createAttempt();
     $answer->delete();
@@ -140,6 +165,9 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertCount(0, $this->archivesFor($course_status, $lesson_status, $activity));
   }
 
+  /**
+   * Removes attempt history when its student account is deleted.
+   */
   public function testAccountDeletionPurgesItsAttemptHistory(): void {
     [$student, $course_status, $lesson_status, $activity, $answer] = $this->createAttempt();
     $answer->delete();
@@ -150,6 +178,9 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertCount(0, $this->archivesFor($course_status, $lesson_status, $activity));
   }
 
+  /**
+   * Removes attempt history when its course is deleted.
+   */
   public function testCourseDeletionPurgesItsAttemptHistory(): void {
     [, $course_status, $lesson_status, $activity, $answer] = $this->createAttempt();
     $course = $course_status->getCourse();
@@ -161,6 +192,9 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertCount(0, $this->archivesFor($course_status, $lesson_status, $activity));
   }
 
+  /**
+   * Restricts history to the current course and renders answer data as text.
+   */
   public function testHistoryAccessIsCourseScopedAndOutputIsPlainText(): void {
     [$student, $course_status, , , $answer] = $this->createAttempt('<script>alert(1)</script>Resposta');
     $course = $course_status->getCourse();
@@ -192,6 +226,37 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertTrue($archive->access('view', $student));
     self::assertTrue($archive->access('view', $teacher));
     self::assertFalse($archive->access('view', $outsider));
+
+    $session_account = $this->container->get('current_user');
+    $session_account->setAccount($student);
+    self::assertTrue($archive->access('view', $session_account), 'A session AccountProxy resolves to its active User entity.');
+    $student->block()->save();
+    $this->container->get('entity_type.manager')
+      ->getAccessControlHandler('aculta_lms_attempt_archive')
+      ->resetCache();
+    self::assertFalse($archive->access('view', $session_account), 'A blocked student session cannot access archived answers.');
+    $student->activate()->save();
+    $teacher->block()->save();
+    $this->container->get('entity_type.manager')
+      ->getAccessControlHandler('aculta_lms_attempt_archive')
+      ->resetCache();
+    self::assertFalse($archive->access('view', $teacher), 'A blocked educator cannot access archived answers.');
+    $teacher->activate()->save();
+    $this->container->get('entity_type.manager')
+      ->getAccessControlHandler('aculta_lms_attempt_archive')
+      ->resetCache();
+
+    $course->removeMember($student);
+    // Access results are cached for the current request; force a fresh result
+    // to model the next request after Group invalidates membership caches.
+    $this->container->get('entity_type.manager')
+      ->getAccessControlHandler('aculta_lms_attempt_archive')
+      ->resetCache();
+    self::assertFalse($archive->access('view', $student), 'Removing the student membership immediately revokes archive access.');
+    $course->addMember($student);
+    $this->container->get('entity_type.manager')
+      ->getAccessControlHandler('aculta_lms_attempt_archive')
+      ->resetCache();
 
     $other_course = Group::create([
       'type' => 'lms_course',
@@ -244,6 +309,9 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertContains('user.group_permissions', $cacheability->getCacheContexts());
   }
 
+  /**
+   * Revalidates uploaded-answer access after membership and account changes.
+   */
   public function testUploadedAnswerAccessTracksMembershipRevocationAndTeacherRole(): void {
     [$student, , , , $answer] = $this->createAttempt();
     $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
@@ -266,18 +334,73 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $teacher_role->save();
 
     $course->addMember($student);
+    $other_student = $this->createUser();
+    $course->addMember($other_student);
     $this->setCurrentUser($student);
-    $access_check = new UploadedAnswerAccessCheck();
-    self::assertTrue($access_check->access($answer, $student)->isAllowed(), 'An enrolled answer owner can download their file.');
+    $access_check = $this->container->get('aculta_lms.uploaded_answer_access');
+    $session_account = $this->container->get('current_user');
+    self::assertTrue($access_check->access($answer, $session_account)->isAllowed(), 'An enrolled answer owner can download their file.');
+    self::assertFalse($access_check->access($answer, $other_student)->isAllowed(), 'Another enrolled student cannot download a peer submission.');
+
+    $student->block()->save();
+    self::assertFalse($access_check->access($answer, $session_account)->isAllowed(), 'A blocked student session cannot download an uploaded answer.');
+    $student->activate()->save();
 
     $course->removeMember($student);
     self::assertFalse($access_check->access($answer, $student)->isAllowed(), 'Revoking membership immediately blocks the answer owner.');
 
     $teacher = $this->createUser();
     $course->addMember($teacher, ['group_roles' => [$teacher_role->id()]]);
-    self::assertTrue($access_check->access($answer, $teacher)->isAllowed(), 'An educator with grade permission retains access after student membership is revoked.');
+    $session_account->setAccount($teacher);
+    self::assertTrue($access_check->access($answer, $session_account)->isAllowed(), 'An educator with grade permission retains access after student membership is revoked.');
+    $teacher->block()->save();
+    self::assertFalse($access_check->access($answer, $session_account)->isAllowed(), 'A blocked educator session cannot download an uploaded answer.');
   }
 
+  /**
+   * Denies a pending answer after its lesson status is deleted.
+   */
+  public function testUploadedAnswerAccessFailsClosedDuringQueuedStatusDeletion(): void {
+    [$student, , $lesson_status, , $answer] = $this->createAttempt('Entrega pendente', 'file_upload');
+    $answer_id = (int) $answer->id();
+    $lesson_status->delete();
+
+    $answer_storage = $this->container->get('entity_type.manager')->getStorage('lms_answer');
+    $answer_storage->resetCache([$answer_id]);
+    $answer = $answer_storage->load($answer_id);
+    self::assertInstanceOf(AnswerInterface::class, $answer, 'LMS queues answer deletion after deleting its lesson status.');
+    self::assertNull($answer->get('lesson_status')->entity, 'The answer reference is temporarily unresolved before the queue runs.');
+
+    $this->setCurrentUser($student);
+    $access = $this->container->get('aculta_lms.uploaded_answer_access')->access($answer, $student);
+    self::assertFalse($access->isAllowed(), 'A missing course context never grants a private download.');
+    self::assertContains('user', $access->getCacheContexts());
+  }
+
+  /**
+   * Denies a pending answer while its course-status deletion is queued.
+   */
+  public function testUploadedAnswerAccessFailsClosedDuringQueuedCourseStatusDeletion(): void {
+    [$student, $course_status, $lesson_status, , $answer] = $this->createAttempt('Entrega pendente', 'file_upload');
+    $answer_id = (int) $answer->id();
+    $course_status->delete();
+
+    $answer_storage = $this->container->get('entity_type.manager')->getStorage('lms_answer');
+    $answer_storage->resetCache([$answer_id]);
+    $answer = $answer_storage->load($answer_id);
+    self::assertInstanceOf(AnswerInterface::class, $answer, 'LMS queues dependent statuses and answers after deleting a course status.');
+    self::assertNotNull($answer->get('lesson_status')->entity, 'The lesson status still exists until its queued deletion runs.');
+    self::assertNull($lesson_status->get('course_status')->entity, 'The lesson status temporarily has no course status reference.');
+
+    $this->setCurrentUser($student);
+    $access = $this->container->get('aculta_lms.uploaded_answer_access')->access($answer, $student);
+    self::assertFalse($access->isAllowed(), 'A removed course status never grants a private download during queue cleanup.');
+    self::assertContains('user', $access->getCacheContexts());
+  }
+
+  /**
+   * Streams an answer file only while course access remains current.
+   */
   public function testPrivateUploadRouteStreamsOnlyWhileCourseAccessIsCurrent(): void {
     [$student, , , , $answer] = $this->createAttempt('Entrega de teste', 'file_upload');
     $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
@@ -340,7 +463,49 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertTrue($access_manager->checkNamedRoute($route_name, ['lms_answer' => $answer->id()], $teacher, TRUE)->isAllowed());
   }
 
-  /** @return array{0: \Drupal\user\UserInterface, 1: CourseStatus, 2: LessonStatus, 3: Activity, 4: Answer} */
+  /**
+   * Tests ACULTA image constraints run through Drupal Core file validation. */
+  public function testSubmissionImageConstraintUsesCoreFileValidator(): void {
+    $validPath = $this->siteDirectory . '/private/answer-valid.png';
+    $invalidPath = $this->siteDirectory . '/private/answer-invalid.png';
+    file_put_contents($validPath, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l1sAAAAASUVORK5CYII=', TRUE));
+    file_put_contents($invalidPath, 'not an image');
+    try {
+      $validator = $this->container->get('file.validator');
+      $valid = File::create([
+        'uid' => 1,
+        'filename' => 'answer-valid.png',
+        'uri' => $validPath,
+        'filemime' => 'image/png',
+        'filesize' => filesize($validPath),
+      ]);
+      $invalid = File::create([
+        'uid' => 1,
+        'filename' => 'answer-invalid.png',
+        'uri' => $invalidPath,
+        'filemime' => 'image/png',
+        'filesize' => filesize($invalidPath),
+      ]);
+
+      self::assertCount(0, $validator->validate($valid, ['AcultaLmsSubmissionImage' => []]));
+      self::assertCount(1, $validator->validate($invalid, ['AcultaLmsSubmissionImage' => []]));
+    }
+    finally {
+      if (is_file($validPath)) {
+        unlink($validPath);
+      }
+      if (is_file($invalidPath)) {
+        unlink($invalidPath);
+      }
+    }
+  }
+
+  /**
+   * Creates a real course, status, activity, lesson and answer fixture.
+   *
+   * @return array{0: \Drupal\user\UserInterface, 1: CourseStatus, 2: LessonStatus, 3: Activity, 4: Answer}
+   *   The student and created LMS entities.
+   */
   private function createAttempt(string $answer_text = 'Resposta original', string $plugin_id = 'no_answer'): array {
     $owner = $this->createUser(['administer lms']);
     $student = $this->createUser();
@@ -396,6 +561,9 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     return [$student, $course_status, $lesson_status, $activity, $answer];
   }
 
+  /**
+   * Creates a comment attached to an LMS answer.
+   */
   private function createComment(AnswerInterface $answer, int $uid, string $body, int $status = CommentInterface::PUBLISHED): void {
     Comment::create([
       'comment_type' => 'lms_answer_comment',
@@ -409,7 +577,12 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     ])->save();
   }
 
-  /** @return \Drupal\aculta_lms\Entity\AttemptArchive[] */
+  /**
+   * Loads archived snapshots for a course status, lesson status and activity.
+   *
+   * @return \Drupal\aculta_lms\Entity\AttemptArchive[]
+   *   The matching snapshots ordered by archival time.
+   */
   private function archivesFor(CourseStatusInterface $course_status, LessonStatusInterface $lesson_status, Activity $activity): array {
     $storage = $this->container->get('entity_type.manager')->getStorage('aculta_lms_attempt_archive');
     $ids = $storage->getQuery()

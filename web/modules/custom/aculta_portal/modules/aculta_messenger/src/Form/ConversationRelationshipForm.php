@@ -7,28 +7,31 @@ namespace Drupal\aculta_messenger\Form;
 use Drupal\aculta_messenger\Support\ConfirmDialog;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\aculta_user\Social\FriendshipStatus;
+use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Template\Attribute;
+use Drupal\Core\Url;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * "Opções" of a conversation in the multidomain bar drawer, and of a public profile.
+ * Options for a conversation in the multidomain bar drawer or public profile.
  *
- * A member's box: friendship and block with that member only (state "target", flag "member_box"). Friendship and block
- * are per person, so a conversation with several members has one box for each of them, and never acts on the thread.
- * The conversation's menu ("group" state): only "Limpar histórico", for the current member. The notice of a blocked or
- * friends-only one-to-one conversation uses "target" as well.
+ * A member's box contains friendship and block actions for that member only
+ * (state "target", flag "member_box"). These actions never modify the thread.
+ * The conversation menu ("group" state) contains only "Limpar histórico" for
+ * the current member. A block notice in a one-to-one conversation uses
+ * "target" as well.
  *
- * Each button is a submit of this form. The drawer posts it with fetch and shows the conversation again, with the new
- * state; the profile posts it natively and goes back to the profile. Destructive actions ask first in a dialog.
+ * Each button submits this form. The drawer posts with fetch and shows the
+ * conversation again; the profile posts natively and returns to the profile.
+ * Destructive actions ask for confirmation in a dialog.
  */
 final class ConversationRelationshipForm extends FormBase {
 
@@ -37,25 +40,34 @@ final class ConversationRelationshipForm extends FormBase {
     private readonly PrivateMessageBanManagerInterface $banManager,
     private readonly AccountProxyInterface $currentUser,
     private readonly EntityTypeManagerInterface $entityTypes,
-    private readonly PrivateMessageServiceInterface $privateMessageService,
     private readonly CacheTagsInvalidatorInterface $cacheTagsInvalidator,
+    private readonly CsrfTokenGenerator $csrfToken,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_user.friendship_manager'),
       $container->get('private_message.ban_manager'),
       $container->get('current_user'),
       $container->get('entity_type.manager'),
-      $container->get('private_message.service'),
       $container->get('cache_tags.invalidator'),
+      $container->get('csrf_token'),
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_messenger_conversation_relationship';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $formState, ?int $targetUid = NULL, ?string $postUrl = NULL): array {
     $postUrl ??= $formState->get('post_url');
     if ($formState->get('group') === TRUE) {
@@ -67,26 +79,26 @@ final class ConversationRelationshipForm extends FormBase {
       return [];
     }
     $formState->set('target', (int) $target->id());
-    // The form carries the drawer marker only: the styles and the script select it by this attribute.
+    // Styles and script select this form using the drawer marker.
     $form['#attributes'] = ['data-aculta-drawer-action' => ''];
     if ($postUrl !== NULL) {
-      // The drawer POSTs to the thread's relationship route, not to the GET route the form was built on.
-      $form['#action'] = $postUrl;
+      // The drawer POSTs to the thread's relationship route, not the GET route.
+      $form['#action'] = $this->actionWithSessionToken($postUrl);
     }
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
     $form['actions'] = ['#type' => 'actions'];
 
-    // Notice mode: the one link that answers a blocked or friends-only conversation, shown in place of the reply box.
+    // Notice mode exposes unblock when this member blocked the other person.
     if ($formState->get('mode') === 'notice') {
-      // The hidden mode tells the POST answer which buttons the notice posted (their labels differ from the menu's).
+      // The hidden mode tells POST which notice-specific button was submitted.
       $form['mode'] = ['#type' => 'hidden', '#value' => 'notice'];
       $noticeTarget = (int) $target->id();
       if ($this->banManager->isBanned($noticeTarget)) {
-        $form['actions']['unban'] = $this->button('unban', $this->t('Clique aqui para desbloquear'), 'conversation-notice-action');
-      }
-      elseif (!$this->friendshipManager->areFriendsWith($noticeTarget)
-        && $this->friendshipManager->getRelationshipWith($noticeTarget)?->getStatus() !== FriendshipStatus::Pending->value) {
-        $form['actions']['request'] = $this->button('request', $this->t('clique aqui para enviar um pedido de Amizade.'), 'conversation-notice-action');
+        $form['actions']['unban'] = $this->button(
+          'unban',
+          $this->t('Clique aqui para desbloquear'),
+          'conversation-notice-action',
+        );
       }
       return $form;
     }
@@ -97,15 +109,26 @@ final class ConversationRelationshipForm extends FormBase {
 
     $targetId = (int) $target->id();
     if ($this->friendshipManager->areFriendsWith($targetId)) {
-      $form = ConfirmDialog::add($form, 'remove', $this->t('Desfazer amizade'), $this->t('Você quer mesmo desfazer a amizade com @name?', ['@name' => $target->getDisplayName()]), $this->t('Sim'), $this->t('Cancelar'));
+      $form = ConfirmDialog::add(
+        $form,
+        'remove',
+        $this->t('Desfazer amizade'),
+        $this->t('Você quer mesmo desfazer a amizade com @name?', ['@name' => $target->getDisplayName()]),
+        $this->t('Sim'),
+        $this->t('Cancelar'),
+      );
     }
-    // Only a pending request blocks a new one: a removed or declined relationship is still a row, but not a request.
-    elseif (($pending = $this->friendshipManager->getRelationshipWith($targetId)) === NULL || $pending->getStatus() !== FriendshipStatus::Pending->value) {
+    // Only a pending request blocks a new one. Removed or declined rows do not.
+    elseif (($pending = $this->friendshipManager->getRelationshipWith($targetId)) === NULL
+      || $pending->getStatus() !== FriendshipStatus::Pending->value) {
       $form['actions']['request'] = $this->button('request', $this->t('Adicionar amigo'));
     }
-    // A request this member sent can be cancelled here. An incoming request is not cancelled from this form.
+    // This member can cancel outgoing requests, but not incoming requests.
     elseif ((int) $pending->getRequesterId() === (int) $this->currentUser->id()) {
-      $form['actions']['cancel'] = $this->button('cancel', $this->t('Cancelar pedido de amizade'));
+      $form['actions']['cancel'] = $this->button(
+        'cancel',
+        $this->t('Cancelar pedido de amizade'),
+      );
     }
     // The member who received the request accepts or rejects it here.
     else {
@@ -113,29 +136,34 @@ final class ConversationRelationshipForm extends FormBase {
       $form['actions']['decline'] = $this->button('decline', $this->t('Rejeitar pedido de amizade'));
     }
 
-    // Menu order: friendship actions, then "Limpar histórico" (passed in by the controller), then the block last.
-    // On a profile there is no "Limpar histórico": the profile offers "Iniciar conversa" in its place.
+    // A profile offers "Iniciar conversa" instead of thread-only clearing.
     if ($formState->get('profile') === TRUE) {
       $form['return'] = ['#type' => 'hidden', '#value' => (string) $formState->get('return_path')];
-    }
-    // The box of one member carries only that member's actions: "Limpar histórico" stays in the conversation's menu.
-    elseif ($formState->get('member_box') !== TRUE) {
-      $this->clearItems($form, $formState);
     }
     if ($this->banManager->isBanned($targetId)) {
       $form['actions']['unban'] = $this->button('unban', $this->t('Desbloquear')) + ['#weight' => 10];
     }
     else {
-      $form = ConfirmDialog::add($form, 'ban', $this->t('Bloquear'), $this->t('Você quer mesmo bloquear @name?', ['@name' => $target->getDisplayName()]), $this->t('Sim'), $this->t('Cancelar'), 10);
+      $form = ConfirmDialog::add(
+        $form,
+        'ban',
+        $this->t('Bloquear'),
+        $this->t('Você quer mesmo bloquear @name?', ['@name' => $target->getDisplayName()]),
+        $this->t('Sim'),
+        $this->t('Cancelar'),
+        10,
+      );
     }
     return $form;
   }
 
-  /** The group menu: only "Limpar histórico" for the current member. */
+  /**
+   * The group menu contains only "Limpar histórico" for the current member.
+   */
   private function groupForm(FormStateInterface $formState, ?string $postUrl): array {
     $form['#attributes'] = ['data-aculta-drawer-action' => ''];
     if ($postUrl !== NULL) {
-      $form['#action'] = $postUrl;
+      $form['#action'] = $this->actionWithSessionToken($postUrl);
     }
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
     $form['actions'] = ['#type' => 'actions'];
@@ -147,30 +175,62 @@ final class ConversationRelationshipForm extends FormBase {
   }
 
   /**
-   * "Limpar histórico" in two steps inside the menu: the first click asks, the confirmation clears for this member only.
+   * Renders the two-step clear-history action for the current member.
    */
   private function clearItems(array &$form, FormStateInterface $formState): void {
     if ($formState->get('clear_step') === 'confirm') {
-      // The hidden step tells the POST answer which button is posted (the confirmation's label differs from the menu's).
+      // The hidden step identifies the confirmation button on the POST.
       $form['clear_step'] = ['#type' => 'hidden', '#value' => 'confirm'];
-      $form['clear_text'] = $this->statusLine((string) $this->t('Limpar o histórico desta conversa só para você?'));
-      $form['actions']['clear_confirm'] = $this->button('clear_confirm', $this->t('Confirmar limpeza do histórico')) + ['#weight' => 5];
+      $form['clear_text'] = $this->statusLine((string) $this->t(
+        'Limpar o histórico desta conversa só para você?',
+      ));
+      $form['actions']['clear_confirm'] = $this->button(
+        'clear_confirm',
+        $this->t('Confirmar limpeza do histórico'),
+      ) + ['#weight' => 5];
     }
     else {
-      $form['actions']['clear'] = $this->button('clear', $this->t('Limpar histórico')) + ['#weight' => 5];
+      $form['actions']['clear'] = $this->button(
+        'clear',
+        $this->t('Limpar histórico'),
+      ) + ['#weight' => 5];
     }
   }
 
-  /** A status line of the menu (a result message or a question), a neutral paragraph the theme styles. */
+  /**
+   * Builds a status line as a neutral paragraph styled by the theme.
+   */
   private function statusLine(string $text): array {
     return [
       '#theme' => 'aculta_portal_element',
       '#tag' => 'p',
-      '#element_attributes' => new Attribute(['data-portal-ui' => 'messenger-options-status', 'role' => 'status']),
+      '#element_attributes' => new Attribute([
+        'data-portal-ui' => 'messenger-options-status',
+        'role' => 'status',
+      ]),
       '#value' => $text,
     ];
   }
 
+  /**
+   * Replaces an unresolved route-token placeholder on fragment-rendered forms.
+   *
+   * Route URL generation can return a lazy placeholder when a form is rendered
+   * in isolation. The fragment response does not process that placeholder, so
+   * generate the route token from the internal action path directly.
+   */
+  private function actionWithSessionToken(string $postUrl): string {
+    $path = parse_url($postUrl, PHP_URL_PATH);
+    if (!is_string($path) || !str_starts_with($path, '/')) {
+      throw new \InvalidArgumentException('Relationship form actions must use an internal path.');
+    }
+    $token = $this->csrfToken->get(ltrim($path, '/'));
+    return Url::fromUserInput($path, ['query' => ['token' => $token]])->toString();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $formState): void {
     if ($formState->get('group') === TRUE) {
       $this->submitGroup($formState);
@@ -178,18 +238,25 @@ final class ConversationRelationshipForm extends FormBase {
     }
     $target = $this->target((int) $formState->get('target'));
     $formState->disableRedirect();
-    // No rebuild: a rebuilt form comes back from the form cache without its constructor dependencies. The
-    // controller builds the updated panel again, from a new state, after this submit has run.
+    // No rebuild: a form-cache rebuild loses constructor dependencies. The
+    // controller renders the updated panel from a new state after this submit.
     if ($target === NULL) {
       $formState->set('message', (string) $this->t('Não foi possível atualizar esse relacionamento.'));
       return;
     }
     $targetId = (int) $target->id();
-    // Form API falls back to the first button when the posted button is missing. An action runs only when the
-    // button it names was actually posted, so a request without it can never cancel or accept anything.
+    if (!$this->memberActionAuthorized($formState, $target)) {
+      $formState->set('message', (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
+      return;
+    }
+    // Form API falls back to the first button if POST omits its name.
+    // Require the named button in raw input before performing any action.
     $action = (string) ($formState->getTriggeringElement()['#name'] ?? '');
     if ($action === '' || !array_key_exists($action, (array) $formState->getUserInput())) {
-      $formState->set('message', (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
+      $formState->set(
+        'message',
+        (string) $this->t('Não foi possível concluir a ação. Tente novamente.'),
+      );
       return;
     }
     try {
@@ -213,18 +280,6 @@ final class ConversationRelationshipForm extends FormBase {
           }
           $this->friendshipManager->cancel($relationship);
           break;
-
-        case 'clear':
-          // First step: ask for confirmation in the same menu. Nothing is cleared yet.
-          $formState->set('clear_step', 'confirm');
-          return;
-
-        case 'clear_confirm':
-          // Second step: the same operation as the native clear-history form, for this member only.
-          $sender = $this->entityTypes->getStorage('user')->load((int) $this->currentUser->id());
-          $this->clearHistory($this->privateMessageService->getThreadForMembers([$sender, $target]));
-          $formState->set('message', (string) $this->t('Histórico limpo para você.'));
-          return;
 
         case 'accept':
           $relationship = $this->friendshipManager->getRelationshipWith($targetId);
@@ -255,12 +310,14 @@ final class ConversationRelationshipForm extends FormBase {
       }
       $formState->set('message', (string) $this->t('Atualizado.'));
     }
-    catch (\DomainException|\RuntimeException|\InvalidArgumentException) {
+    catch (\DomainException | \RuntimeException | \InvalidArgumentException) {
       $formState->set('message', (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
     }
   }
 
-  /** The group actions: the same two steps of "Limpar histórico", on the thread the state names. */
+  /**
+   * Applies the two clear-history actions to the thread named in form state.
+   */
   private function submitGroup(FormStateInterface $formState): void {
     $formState->disableRedirect();
     $action = (string) ($formState->getTriggeringElement()['#name'] ?? '');
@@ -268,7 +325,8 @@ final class ConversationRelationshipForm extends FormBase {
       $formState->set('message', (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
       return;
     }
-    $thread = $this->entityTypes->getStorage('private_message_thread')->load((int) $formState->get('thread_id'));
+    $thread = $this->entityTypes->getStorage('private_message_thread')
+      ->loadUnchanged((int) $formState->get('thread_id'));
     if (!$thread instanceof PrivateMessageThreadInterface || !$thread->isMember((int) $this->currentUser->id())) {
       $formState->set('message', (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
       return;
@@ -279,8 +337,9 @@ final class ConversationRelationshipForm extends FormBase {
         return;
 
       case 'clear_confirm':
-        $this->clearHistory($thread);
-        $formState->set('message', (string) $this->t('Histórico limpo para você.'));
+        $formState->set('message', $this->clearHistory($thread)
+          ? (string) $this->t('Histórico limpo para você.')
+          : (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
         return;
 
       default:
@@ -289,20 +348,40 @@ final class ConversationRelationshipForm extends FormBase {
   }
 
   /**
-   * Clears the history of the current member only. The message list is cached per message, so the tags of the thread
-   * and of its messages are invalidated too; otherwise the answer keeps the old list.
+   * Clears current-member history after revalidating account and thread access.
+   *
+   * The message list is cached per message. Invalidate thread and message tags
+   * so the response does not retain the old list.
+   *
+   * @return bool
+   *   TRUE when the history was cleared for the current member.
    */
-  private function clearHistory(PrivateMessageThreadInterface $thread): void {
-    $sender = $this->entityTypes->getStorage('user')->load((int) $this->currentUser->id());
+  private function clearHistory(PrivateMessageThreadInterface $thread): bool {
+    $uid = (int) $this->currentUser->id();
+    if (!$this->currentUser->isAuthenticated() || $uid < 1) {
+      return FALSE;
+    }
+    $sender = $this->entityTypes->getStorage('user')->loadUnchanged($uid);
+    if (!$sender instanceof UserInterface || (int) $sender->id() !== $uid
+      || !$sender->isActive()
+      || !$sender->hasPermission('use private messaging system')
+      || !$sender->hasPermission('access user profiles')
+      || !$thread->isMember($uid)
+      || !$thread->access('view', $sender, TRUE)->isAllowed()) {
+      return FALSE;
+    }
     $thread->clearAccountHistory($sender);
     $tags = $thread->getCacheTags();
     foreach ($thread->get('private_messages')->referencedEntities() as $message) {
       $tags = array_merge($tags, $message->getCacheTags());
     }
     $this->cacheTagsInvalidator->invalidateTags($tags);
+    return TRUE;
   }
 
-  /** Only another active member can be the target: never the current account, never an anonymous or blocked one. */
+  /**
+   * Returns an active target distinct from the current account.
+   */
   private function target(int $uid): ?UserInterface {
     if ($uid <= 0 || $uid === (int) $this->currentUser->id() || !$this->currentUser->isAuthenticated()) {
       return NULL;
@@ -311,6 +390,41 @@ final class ConversationRelationshipForm extends FormBase {
     return $user instanceof UserInterface && $user->isActive() ? $user : NULL;
   }
 
+  /**
+   * Revalidates account and thread access before a member action.
+   */
+  private function memberActionAuthorized(FormStateInterface $formState, UserInterface $target): bool {
+    if ($formState->get('member_box') !== TRUE) {
+      return TRUE;
+    }
+
+    $uid = (int) $this->currentUser->id();
+    $targetUid = (int) $target->id();
+    $threadId = (int) $formState->get('thread_id');
+    if (!$this->currentUser->isAuthenticated() || $uid < 1 || $targetUid < 1 || $targetUid === $uid || $threadId < 1) {
+      return FALSE;
+    }
+
+    $userStorage = $this->entityTypes->getStorage('user');
+    $actor = $userStorage->loadUnchanged($uid);
+    $freshTarget = $userStorage->loadUnchanged($targetUid);
+    if (!$actor instanceof UserInterface || !$actor->isActive()
+      || !$actor->hasPermission('use private messaging system')
+      || !$actor->hasPermission('access user profiles')
+      || !$freshTarget instanceof UserInterface || !$freshTarget->isActive()) {
+      return FALSE;
+    }
+
+    $thread = $this->entityTypes->getStorage('private_message_thread')->loadUnchanged($threadId);
+    return $thread instanceof PrivateMessageThreadInterface
+      && $thread->isMember($uid)
+      && $thread->isMember($targetUid)
+      && $thread->access('view', $actor, TRUE)->isAllowed();
+  }
+
+  /**
+   * Builds a submit action button.
+   */
   private function button(string $name, $label, string $token = 'conversation-action'): array {
     return [
       '#type' => 'submit',

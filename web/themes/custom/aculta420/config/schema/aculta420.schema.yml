@@ -11,3 +11,30 @@ aculta420.settings:
     bootstrap_icons:
       type: string
       label: 'Biblioteca de ícones da base Drupal Bootstrap'
+    b5_body_schema:
+      type: string
+      label: 'Esquema de cor do corpo Bootstrap'
+    b5_body_bg_schema:
+      type: string
+      label: 'Esquema de fundo do corpo Bootstrap'
+    b5_theme_mode:
+      type: string
+      label: 'Modo de cor Bootstrap'
+    b5_top_container:
+      type: string
+      label: 'Container da região superior Bootstrap'
+    b5_top_container_config:
+      type: string
+      label: 'Classes do container superior Bootstrap'
+    b5_navbar_schema:
+      type: string
+      label: 'Esquema de cor da navegação Bootstrap'
+    b5_navbar_bg_schema:
+      type: string
+      label: 'Esquema de fundo da navegação Bootstrap'
+    b5_footer_schema:
+      type: string
+      label: 'Esquema de cor do rodapé Bootstrap'
+    b5_footer_bg_schema:
+      type: string
+      label: 'Esquema de fundo do rodapé Bootstrap'

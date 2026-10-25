@@ -1,0 +1,68 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_studio\Unit;
+
+use Drupal\aculta_studio\Experience\GanjalabExperienceProvider;
+use Drupal\aculta_studio\Experience\AccountExperienceProvider;
+use Drupal\aculta_studio\Experience\StudioExperienceManager;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
+
+/**
+ * Unit tests for the Studio experience registry.
+ */
+#[CoversClass(StudioExperienceManager::class)]
+#[Group('aculta_studio')]
+final class StudioExperienceManagerTest extends UnitTestCase {
+
+  /**
+   * Checks provider metadata and that no LMS experience is registered.
+   */
+  public function testProviderMetadataAndAbsenceOfLms(): void {
+    $provider = new GanjalabExperienceProvider(NULL);
+    self::assertSame('ganjalab', $provider->id());
+    self::assertSame('account', $provider->purpose());
+    self::assertSame('aculta_lms.student_dashboard', $provider->routeName());
+    self::assertFalse($provider->available());
+    $manager = new StudioExperienceManager();
+    $manager->addProvider($provider);
+    self::assertSame($provider, $manager->get('ganjalab'));
+    self::assertNull($manager->get('missing'));
+    $account = $this->createMock(AccountInterface::class);
+    self::assertFalse($manager->access('ganjalab', 'account', $account)->isAllowed());
+    self::assertFalse($manager->access('ganjalab', 'wiki', $account)->isAllowed());
+  }
+
+  /**
+   * Discovery preserves registration order and does not grant extra access.
+   */
+  public function testProviderInventoryKeepsOrderAndDeniesOtherPurpose(): void {
+    $manager = new StudioExperienceManager();
+    $conta = new AccountExperienceProvider();
+    $ganjalab = new GanjalabExperienceProvider(NULL);
+    $manager->addProvider($conta);
+    $manager->addProvider($ganjalab);
+
+    self::assertSame(['conta', 'ganjalab'], array_keys($manager->all()));
+    self::assertSame($conta, $manager->all()['conta']);
+    $account = $this->createMock(AccountInterface::class);
+    self::assertFalse($manager->access('conta', 'forum', $account)->isAllowed());
+    self::assertFalse($manager->access('ganjalab', 'account', $account)->isAllowed());
+  }
+
+  /**
+   * A duplicate provider identifier is rejected.
+   */
+  public function testDuplicateProviderRejected(): void {
+    $manager = new StudioExperienceManager();
+    $provider = new GanjalabExperienceProvider(NULL);
+    $manager->addProvider($provider);
+    $this->expectException(\InvalidArgumentException::class);
+    $manager->addProvider($provider);
+  }
+
+}

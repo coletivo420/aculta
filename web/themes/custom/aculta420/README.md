@@ -4,6 +4,17 @@ Tema público e sistema de componentes da plataforma Drupal da ACULTA. Implement
 a apresentação; não é fonte de verdade de identidade, autenticação, Commerce,
 LMS, Domains, conteúdo ou persistência.
 
+## Meu Perfil — SDCs experimentais 0.7.0-dev.2
+
+Quatro SDCs experimentais para o editor privado (`profile-editor`,
+`profile-identity`, `profile-bio`, `profile-social`) foram criados
+com schema, Twig, CSS e duas stories por componente. Esses componentes agora são consumidos pela tela `/studio/perfil`
+no Studio dev.21, por render arrays com slots do Core. A versão do
+tema permanece a mesma; gates de descoberta, cache, acesso e
+Firefox ESR/X11 seguem pendentes. O teste Kernel de descoberta,
+composição e escape dos quatro SDCs foi adicionado, mas ainda
+não foi executado. A versão 0.7.0-dev.2 não equivale à homologação.
+
 ## Fronteira de arquitetura
 
 ```text
@@ -14,10 +25,16 @@ O Portal prepara URLs, dados, acesso e cache. O ACULTA420 escolhe a apresentaç�
 com Twig, Bootstrap e Single Directory Components (SDC) do Drupal Core. SDCs
 recebem props e slots de apresentação e não resolvem regras de domínio.
 
+Schema `aculta420.settings` inclui as opções Bootstrap `b5_*` preservadas nos
+defaults do tema. A instalação do ACULTA420 e a renderização dos SDCs da home
+Wiki foram verificadas em Kernel MariaDB; HTTP/Runtime e revisão visual seguem
+pendentes.
+
 ## Documentação
 
 - [Índice da documentação do tema](docs/README.md)
 - [Design system e tokens](docs/design-system.md)
+- [Auditoria Mobile First](docs/mobile-first-audit.md) — inventário e evidências de responsividade do tema e do Studio.
 - [Catálogo de componentes](docs/component-catalog.md)
 - [Shell multidomínio](docs/shell.md)
 - [Arquitetura](docs/architecture.md)
@@ -43,3 +60,9 @@ Consulte [components/README.md](components/README.md) antes de criar componentes
 Para mudanças coordenadas com funcionalidade do Portal, consulte a
 [fronteira Portal–tema](../../../../docs/portal/FRONTEIRA-MODULO-TEMA.md) e o
 [mapa módulo–tema](../../../../docs/portal/MAPA-MODULO-TEMA.md).
+
+## Planejamento visual compartilhado
+
+O tema passa a concentrar o planejamento de novos padrões visuais multiárea em [docs/visual-cross-product-roadmap.md](docs/visual-cross-product-roadmap.md). O shell multidomínio (Institution Bar + Domain Header) permanece obrigatório em todo o portal; Context Header é exclusivamente interno ao conteúdo. Antes de desenvolver componente: reaproveitar SDC/Core/Bootstrap existentes, comprovar consumidores reais, definir slots/props, documentar stories e validar mobile, WCAG e dark/light. A documentação é um plano, não componentes já implementados.
+
+A próxima fase do tema está especificada em [docs/theme-ux-0.8-a-ui-suite-audit.md](docs/theme-ux-0.8-a-ui-suite-audit.md), com inventário obrigatório de Core SDC, UI Patterns e UI Styles antes de criar novos padrões. Preservar o cabeçalho multidomínio global.

@@ -65,7 +65,6 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
     'disable' => 'desativar',
     'enable' => 'ativar',
     'captcha-points' => 'pontos-captcha',
-    'agreement' => 'acordo',
     'flood-control' => 'controle-sobrecarga',
   ];
 
@@ -104,8 +103,6 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
   }
 
   protected function alterRoutes(RouteCollection $collection): void {
-    // A tela do módulo contrib role_inheritance sai da coleção de rotas (sem aba nem link de menu).
-    $collection->remove('role_inheritance.config_role_inheritance');
     // A página de papéis do Core (/painel-administrativo/pessoas/roles) é substituída pela página Papéis e perfis do
     // ACULTA: cadeia de papéis, operações de cada papel (mesmo menu do Core) e criação de papel.
     if ($lista = $collection->get('entity.user_role.collection')) {

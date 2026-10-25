@@ -15,7 +15,7 @@ required: false
 translatable: true
 default_value:
   -
-    target_id: revista420_aculta_org
+    target_id: coletivo420_aculta_org
 default_value_callback: ''
 settings:
   handler: 'default:domain'

@@ -1,0 +1,30 @@
+uuid: 693a3476-52f4-40b4-ba49-c7adb22e4b4d
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_forum
+    - flag
+id: sinalizar_post_forum
+label: 'Sinalizar publicação do Fórum'
+bundles:
+  - aculta_forum_post
+entity_type: aculta_forum_post
+global: false
+flag_short: 'Denunciar publicação'
+flag_long: 'Denunciar esta publicação para a moderação.'
+flag_message: 'Publicação denunciada. A equipe vai analisar.'
+unflag_short: 'Retirar denúncia'
+unflag_long: ''
+unflag_message: 'Denúncia retirada.'
+unflag_denied_text: ''
+weight: 0
+flag_type: 'entity:aculta_forum_post'
+link_type: reload
+flagTypeConfig:
+  show_in_links: { }
+  show_as_field: true
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions: { }
+linkTypeConfig: { }

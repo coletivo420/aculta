@@ -1,3 +1,862 @@
+## 0.4.1-dev.32 — limpeza global ignora tipos sem armazenamento instalado (2026-10-25)
+
+- `FileReferenceInspector` deixa de tratar como `Unverifiable` os tipos de
+  entidade registrados sem tabela base instalada: sem armazenamento não há
+  linhas capazes de referenciar o alvo. O fail-closed permanece para tipos com
+  tabela base cuja consulta falhe e para storages não persistentes que não
+  sejam `ContentEntityNullStorage`.
+- Corrige os dois cenários de limpeza de imagem da Wiki que falhavam quando
+  `media_gallery` estava registrado sem schema e `entity_embed_fake_entity`
+  usava null storage. Nenhuma exclusão nova é autorizada: apenas tipos sem
+  linhas persistidas são ignorados; referências reais continuam retendo.
+- Kernel Wiki `WikiLeadImageLifecycleKernelTest` 28 testes / 1.611 asserções
+  PASS; Unit Wiki 82/448 PASS; PHPCS Drupal/DrupalPractice PASS.
+
+## 0.4.1-dev.31 — caracterização de documentos S-R3-B1 (2026-10-25)
+
+- Novos testes Unit para AccountOtherDataForm: owner ausente, chave indisponível, campo cifrado com leitura mascarada e desabilitada, ausência de fingerprint, erro de decifração não revelado, entrada Form API, validação genérica e dado canônico no FormState.
+- Teste de returnUrl cobre prioridade de checkout, bloqueio de destinos externos e retorno separado Studio/legado; expectativa de URL base alinhada ao Drupal 11.
+- Código runtime do Portal inalterado. **Testes não executados**; Kernel/Functional/Runtime ainda necessários.
+
+## 0.4.1-dev.30 — S-R3-B2: dados cadastrais sem apelido em Studio (2026-10-25)
+
+- `PortalHooks::formAlter` separa por route ID: `/studio/conta/dados` reutiliza `PortalController::myData()` e Profile Form API para nome e WhatsApp privados, sem `field_nickname`. O legado `/dados` conserva o formulário anterior.
+- `PortalFormCallbacks::accountDataRedirect()` conserva o retorno na Conta Studio, enquanto a sincronização de nomes com Commerce continua no mesmo owner. Nenhum schema, checkout ou shell foi removido.
+- Testes Unit de roteamento/delegação escritos, mas não executados; lint, gates, Kernel, Functional, Runtime e Firefox ESR/X11 pendentes.
+
+## 0.4.1-dev.29 — retorno contextual do documento CPF/CNPJ no Studio (2026-10-24)
+
+- `AccountOtherDataForm` continua usando o mesmo
+  `AccountDocumentInterface` para validar, cifrar e salvar uma única
+  vez o CPF/CNPJ. Apenas o destino padrão após submit considera a
+  rota `aculta_studio.account_documents`; o legado segue voltando
+  para `aculta_portal.my_data_other`.
+- Destino de checkout internamente permitido mantém precedência e
+  proteção original; não foram criados novos redirect aliases,
+  entidades, campos ou acesso público a documentos.
+- Teste Unit `AccountOtherDataStudioReturnTest` criado; sem execução
+  PHPUnit/Kernel/Runtime nesta edição.
+
+## 0.4.1-dev.28 — decisão da guarda do hub na raiz da Conta em FrontPathPolicy (2026-10-24)
+
+- A regra do hub do Studio na raiz do ACCOUNT (404 fora de `/`, login para anônimo) sai de
+  `DomainPurposeRequestSubscriber` e passa a `FrontPathPolicy::acaoDoHubNaConta`, função pura e testada
+  (`DomainPurposeRootGuardTest`). O subscriber só traduz a ação em resposta.
+- Gate `validate-aculta-portal-conta-root` atualizado para a nova forma. Mesmo comportamento HTTP.
+
+## 0.4.1-dev.27 — editor de endereço do Studio recebe país, Número e S/N (2026-10-24)
+
+- `PortalHooks::formAlter` aplicava o bloco de endereço (país padrão, Número/S-N, botão "Salvar endereço",
+  remoção de campos redundantes) só quando o caminho era `/dados/endereco`. Em `/studio/conta/endereco` o
+  bloco não rodava. Agora a condição usa a identidade da rota (`$isAddressRoute`), que cobre o Portal e o
+  Studio com o mesmo Profile Commerce.
+- Gate `scripts/validate-account-address.php` passa. Teste em Kernel/Firefox pendente.
+
+## 0.4.1-dev.26 — raiz da Conta serve o hub do Studio; Minha Conta original em /conta-legada (2026-10-24)
+
+- `PurposeFrontPathProcessor::FRONT_PATHS` ganha `account => /studio`. A raiz `/` do Domain ACCOUNT serve
+  o hub do Studio (`aculta_studio.hub`) por reescrita interna, sem redirect. `/studio` direto responde 404.
+- `aculta_portal.dashboard` (Minha Conta original) passa a `/conta-legada`. Controller, shell, formulários e
+  controles de acesso não mudaram. `/minha-conta` responde 404 sem redirect.
+- Visitante anônimo na raiz da Conta vai ao login do host de conta (302).
+- Gate `scripts/validate-aculta-portal-conta-root.php` atualizado para o novo contrato. Gate de endereço
+  (`PortalHooks`, país/Número/S-N) continua com FAIL pré-existente, fora deste commit.
+
+## 0.4.1-dev.25 — mesmos formulários de endereço em Conta Studio e legado (2026-10-24)
+
+- `PortalHooks` agora reconhece o ID de rota
+  `aculta_studio.account_address` além de
+  `aculta_portal.my_data_address`, preservando ocultação de campos
+  redundantes, país BR, Número/S-N, CEP, builders e o mesmo Profile
+  Commerce. Não mudou entidade, schema nem checkout.
+- `PortalFormCallbacks::addressRedirect` retorna ao editor pelo qual
+  o usuário salvou, sem mudar o retorno original da Conta legada.
+- Gate `scripts/validate-account-address.php` ampliado aos dois
+  editores; teste Unit do callback criado. **Execução desses gates,
+  Kernel/Runtime/Firefox pendente** nesta edição GitHub.
+
+## 0.4.1-dev.24 — política global sem aliases temporários (2026-10-24)
+
+- Removidos redirects de /minha-conta/* (agora 404), URLs antigas de address-book Commerce e listagem /pagamentos, bem como handlers órfãos. As rotas canônicas /, /dados/endereco e /pedidos permanecem; fluxos funcionais de autenticação, checkout e pagamento não foram alterados. Testes Runtime pendentes.
+- Regra transversal: `AGENTS.md` e `scripts/validate-no-temporary-route-aliases.php`.
+
+## 0.4.1-dev.23 — prévias de busca como regiões de navegação
+
+- O comportamento compartilhado mantém o input search nativo e apresenta as
+  respostas em regiões `aria-live` nomeadas. Como as respostas são links de
+  navegação, remove a semântica combobox e a captura das setas de edição; Tab
+  percorre os links. Wiki, busca popup e busca de membros declaram os rótulos
+  de suas regiões.
+- JavaScript passou `node --check`; markup Wiki passou Unit 4/18; fixture Firefox
+  do JS local passou 14/14. Browser no Runtime antigo identificou semântica
+  combobox/região antiga e submit fora da viewport (28/35). Nenhum Runtime foi
+  alterado.
+
+## 0.4.1-dev.22 — assumir o bundle compartilhado `remote_video`
+
+- `aculta_portal` fornece a configuração default do Media `remote_video`, seu
+  campo oEmbed e o provider mínimo do Content Index; a Media Library permanece
+  opcional.
+- Revista, Wiki, Fórum e LMS ficam documentados como consumidores. Este commit
+  não altera conteúdo Runtime nem cria links/relações implícitos entre entidades.
+
+## 0.4.1-dev.21 — normalizar timestamps do provider Media do Content Index
+
+- `MediaContentIndexProvider` converte explicitamente os timestamps da entidade
+  para inteiros antes de criar a projeção; o Media real do Core pode retornar
+  valores numéricos como strings após load.
+- Kernel MariaDB do Index cobre `media:image` em backfill, update e delete
+  usando Media/File reais; não habilita `aculta_image` completo nem altera
+  Runtime.
+
+## Não lançado — identidade fiscal no checkout comercial (CPF-CHECKOUT-0.2-I) — 2026-10-23
+
+- Política única `FiscalIdentityPolicy` (aculta_portal) para o checkout comercial de Loja e LMS. Doações ficam dispensadas. A consulta usa o contrato `AccountDocumentInterface` de `aculta_id_cpf`, sem copiar o documento para pedido, perfil ou sessão. Falha fechada.
+- Pane `aculta_fiscal_identity`: sem campo de entrada. Mostra o documento mascarado, aviso com link para `/dados/outros-dados`, ou mensagem genérica. Valida ao enviar a revisão, no servidor.
+- Flow `default` passa a ser o checkout comercial compartilhado. Login obrigatório e cadastro permitido. O tipo `curso` usa o flow `default`; o flow `curso` foi removido. Ativação depende de `config:import` autorizado.
+- Preferência pelo serviço do `aculta_associado_id` removida de `PortalController` e `AccountOtherDataForm`.
+- Testes Unit: `FiscalIdentityPolicyTest` (7). Kernel pendente. RUNTIME STATUS: DEFERRED.
+- Pane de identidade fiscal aceita o primeiro cadastro na própria compra (gravação única, mesmo serviço de Outros Dados). Depois de salvo, o checkout mostra o valor mascarado e não editável. Mensagens de erro genéricas.
+- Outros Dados volta ao checkout quando o link traz destino interno sob `/checkout/`.
+
+## 0.4.1-dev.20 — auditoria das alterações de checkout e flow efetivo (P-CART F) — 2026-10-22
+
+- As abas Comum, Loja e LMS registram no canal `aculta_portal_checkout` quem alterou o quê (contexto, valores antes e depois, uid), sem segredos; desligar o checkout comum gera aviso.
+- `OrderTypeCheckoutFlows` passa a devolver o flow efetivo, com o mesmo fallback `default` do `DefaultCheckoutFlowResolver` do Commerce quando o tipo de pedido não define flow (antes, vazio). Diagnóstico e campo da aba refletem o que o Commerce usa de fato. RUNTIME STATUS: DEFERRED.
+
+## 0.4.1-dev.19 — interface administrativa Carrinhos e checkouts (P-CART E) — 2026-10-22
+
+- Abas **Comum | Loja | LMS** em `/painel-administrativo/aculta/checkout[/loja|/lms]` (menu ACULTA > Carrinhos e checkouts), com Form API, Config API, abas por tarefas locais (funcionam sem JavaScript) e permissões separadas: `administer aculta checkout common|shop|lms`. Nenhuma dá acesso a pedidos.
+- Comum: chave global do checkout comum, diagnóstico dos providers, conflitos e referência dos gateways (sem credenciais). Loja e LMS: tipo de pedido e checkout flow nativo, com validação de conflito entre contextos (`CheckoutMappingValidator`). Salvar reconstrói as rotas.
+- Não altera o carrinho da barra multidomínio. Apresentação via tema (SDC/UI Suite) ainda pendente. RUNTIME STATUS: DEFERRED (formulários e acesso verificados por API no runtime local; navegador pendente).
+
+## 0.4.1-dev.18 — regra de estorno centralizada em MercadoPagoPaymentPolicy — 2026-10-22
+
+- `MercadoPagoPaymentPolicy::bloqueiaEstorno()` passa a ser o único lugar da regra "doações, assinaturas e cursos não têm estorno": `assinatura` entra como constante fixa, e os tipos de pedido e de item extras (doação pelo carrinho e tipo de pedido de curso configurado) chegam por parâmetros opcionais. `RefundEligibilitySubscriber` só reúne a configuração e faz uma chamada. Sem mudança de comportamento em relação a dev.17. RUNTIME STATUS: DEFERRED.
+
+## 0.4.1-dev.17 — estorno negado explicitamente para assinatura e doação pelo carrinho — 2026-10-22
+
+- `RefundEligibilitySubscriber` passa a negar estorno também para pedidos `assinatura`, para o `cart_order_type` e itens `cart_item_type` de Doações. Antes, a assinatura só era bloqueada se o tipo do item coincidisse com `donate_item_type`, e a doação feita pelo carrinho (modo `cart`/`both` com tipos próprios) não era coberta. Só acrescenta bloqueio; a regra fixa de `bloqueiaEstorno()` não mudou. Alinha o código a `PAYMENT-DOMAIN-POLICY.md` (sem estorno para doações, assinaturas e cursos). RUNTIME STATUS: DEFERRED.
+
+## 0.4.1-dev.16 — configuração de checkout, chave global e tipo de pedido de curso configurável (P-CART E) — 2026-10-22
+
+- Nova config `aculta_portal.checkout_settings` (schema e padrões que reproduzem o comportamento anterior) e serviço `CheckoutSettings`. `CheckoutPolicyManager` passa a respeitar a chave global `common_checkout_enabled`.
+- `CartUtility` e `CartConsolidator` reconhecem o tipo de pedido de curso configurado (e o histórico `curso`); `RefundEligibilitySubscriber` nega estorno também para o tipo configurado (só acrescenta bloqueio). Decisões em ADR-013, adendo de 2026-10-22. RUNTIME STATUS: DEFERRED.
+
+## 0.4.1-dev.15 — seleção das rotas globais de checkout centralizada (P-CART D) — 2026-10-22
+
+- Novo `CommerceCheckoutRouteSubscriber` e `CheckoutPolicyManager::commonCheckoutRoutesAvailable()`: a decisão que o `CartCheckoutRouteSubscriber` do Donation tomava (rotas do Commerce fechadas quando `donation_route` é `donate`) passa a ser do Portal, com comportamento idêntico. `CheckoutContextConfiguration` ganha `gatesCommonCheckout`.
+- Sem mudança observável: `donate`, `cart` e `both`, `/carrinho` e o carrinho da barra multidomínio ficam como estavam. RUNTIME STATUS: DEFERRED.
+
+## 0.4.1-dev.14 — providers de checkout e leitura do flow nativo (P-CART C) — 2026-10-22
+
+- Novo `OrderTypeCheckoutFlows`: lê o checkout flow associado ao tipo de pedido no Commerce, sem alterá-lo. Serve aos providers de Loja, LMS e Doações. Sem efeito público. RUNTIME STATUS: DEFERRED.
+
+## 0.4.1-dev.13 — contratos centrais de orquestração de checkout (P-CART B) — 2026-10-22
+
+- Novo `Drupal\aculta_portal\Checkout`: `CheckoutContextProviderInterface`, `CheckoutMode`, `CheckoutContextConfiguration`, `CheckoutContextRegistry`, `CheckoutConfigurationResolver` e `CheckoutPolicyManager`, registrados como serviços. Providers entram pela tag `aculta_portal.checkout_provider` (`tagged_iterator`).
+- Somente leitura e sem efeito público: nenhum provider registrado ainda, nenhuma rota, subscriber, carrinho ou checkout alterado (ADR-013).
+- Testes Unit: `Unit/Checkout/CheckoutOrchestrationTest.php`. RUNTIME STATUS: DEFERRED.
+
+## 0.4.1-dev.12 — ownership editorial de Activity e limpeza de Magazine
+
+- `EditorialHooks` deixa de executar comportamentos para `article`/`blog` e
+  deixa de possuir hooks específicos do bundle `activity`, agora mantidos por
+  `aculta_activity`.
+- Publicações atuais são mantidas pelo `aculta_magazine` no bundle `revista`.
+- Removido o migrador já executado de bundles `article`/`blog` para `revista`.
+
+## 0.4.1-dev.10 — versão explícita das projeções do Content Index
+
+- O contrato neutro `ContentIndexProviderInterface` passa a exigir
+  `getProjectionVersion()`; o registry inclui essa versão no fingerprint para
+  impedir resume de geração parcial com projeção alterada.
+
+## 0.4.1-dev.7 — provider remote_video adiado por ownership indefinido
+
+- Conforme decisão do responsável, `aculta_portal` deixa de registrar provider
+  para `media:remote_video`. O bundle permanece fora do catálogo até um módulo
+  proprietário ser definido; consulta a entradas antigas sem provider ativo
+  falha fechado.
+
+## 0.4.1-dev.6 — policy contextual de acesso para adapters do Content Index
+
+- Novo contrato `ContentIndexAccessPolicyProviderInterface` permite que um provider some regras contextuais à Entity Access; o filtro combina os resultados e propaga cacheability. O adapter LMS usa a API Group/LMS sem mover membership para o Index.
+
+## 0.4.1-dev.5 — contexto canônico de acesso do Content Index e providers Media
+
+- Novo contrato opcional de provider declara purpose para revalidar Entity
+  Access com o mesmo usuário no contexto Domain canônico; ausência do Domain
+  nega exposição em vez de voltar ao purpose da requisição.
+- `MediaContentIndexProvider` oferece projeção mínima aos bundles Media
+  `document`, `remote_video`, `course_document` e `forum_attachment`, com
+  registros nos módulos Viewer/Group/Fórum donos. A mídia `image` é registrada
+  pelo `aculta_image`; `remote_video` permanece temporariamente no Portal até
+  definição formal do módulo proprietário.
+- O Index segue opcional. Não houve ativação, import de configuração ou
+  alteração de Runtime.
+
+## 0.4.1-dev.4 — contrato neutro para o ACULTA Content Index (2026-10-22)
+
+- Adicionado o contrato público `ContentIndexProviderInterface` e os DTOs
+  `ContentIndexProjection` e `ContentIndexRelation` no namespace do Portal. O
+  submódulo opcional `aculta_index` pode descobrir providers por tag sem tornar
+  a API-base dependente dele.
+- A projeção representa uma identidade por entidade e idioma e aceita apenas
+  relações explícitas. Não inclui revisão, corpo, arquivos ou identificadores
+  pessoais.
+- Cobertura unitária inclui registro de provider e validação dos DTOs.
+
+## 0.4.1-dev.3 — leitura da interseção restrita da política de upload (2026-10-22)
+
+- `UserUploadPolicy::acceptedExtensions()` devolve, para exibição, as extensões
+  que um conjunto de validadores já restrito aceita — a interseção entre o que a
+  atividade pediu e o teto do consumidor. O `aculta_lms` usa o método no texto de
+  ajuda do campo File Upload: uma atividade mais restrita deixa de anunciar
+  extensões que o próprio upload recusaria.
+- A leitura de `FileExtension` permanece dentro de `UserUploadPolicy`, onde o
+  gate `validate-aculta-image` a autoriza; nenhuma política efetiva ou
+  configuração mudou.
+- Coberto pelo Kernel `SubmissionUploadPolicyKernelTest` do `aculta_lms`
+  (5 testes / 39 asserções).
+
+## 0.4.1-dev.2 — canonizar Media do Fórum por purpose (2026-10-22)
+
+- `ContentPurposeResolver` associa a rota canônica de Media `forum_attachment`
+  ao purpose `forum`, fazendo o subscriber de domínio responder 404 no purpose
+  incorreto antes do controller. O access do próprio Media e do File continua
+  revalidando host público e download privado.
+- Sem alteração Runtime ou teste automatizado.
+
+## 0.4.1-dev.1 — remoção do tipo de conteúdo projeto (2026-10-21)
+
+Classificação: PATCH na linha aberta, decidida pelo responsável.
+
+- Removido o tipo `project` do código e da configuração: campos, displays, view `aculta_projects`, blocos de cabeçalho, pathauto, metatag, captcha, permissão de criação e bundle de busca.
+- Removidos os campos `field_project` de activity, revista e media_gallery, e as views `aculta_related_activities` e `aculta_related_news`.
+- Runtime de teste: 5 nós de projeto excluídos depois de backup do banco; a configuração foi removida pela API do Drupal.
+- Página institucional Projetos (nó 7) despublicada e itens de menu desativados; o conteúdo foi mantido.
+- Instalador, manifestos e validadores deixam de criar ou exigir projetos.
+
+## 0.4.0-dev.252 — LMS como segundo consumidor da política de upload
+
+- Formulário `aculta_portal.user_upload_settings`: aba **LMS** ao lado do Fórum, com herança da política global ou override de extensões e tamanho. Os blocos do Fórum e do LMS passam a ser gerados pelo mesmo laço, sem mudança de comportamento para o Fórum.
+- Schema `aculta_portal.user_upload` aceita `consumers.lms`. Sem configuração salva, o LMS herda a política global; por isso nenhuma configuração exportada foi alterada.
+- `UserUploadPolicy::restrictValidators()`: limita as validações de um consumidor à sua política efetiva. Extensões fora da allowlist são removidas e o limite de tamanho só pode diminuir. O validador de imagem do `aculta_image` continua aplicado.
+- Wiki não recebe aba: `wiki_entry` não tem campo de envio por usuário; o contrato continua permitindo a integração quando esse campo existir.
+- Testes: `UserUploadPolicyKernelTest` (6 testes, 97 asserções, Kernel no banco `aculta_simpletest`, 8 deprecações do contrib) cobre a aba LMS e o teto de validadores. O contrato está em `docs/portal/USER-UPLOADS.md`.
+
+## 0.4.0-dev.248 — rastreamento de e-mail sob o aceite único, desligado até publicação
+
+- `AcultaUserAgreementTrackingConsent::hasConsent()` passa a usar o aceite único (`aculta_user_agreement_terms`), mas só responde verdadeiro quando `FUNCTION_PUBLISHED` for verdadeiro. A constante começa falsa.
+- Sem alteração de comportamento enquanto a constante for falsa: nenhum e-mail é rastreado.
+- Rascunho das cláusulas da política em `docs/compliance/CLAUSULAS-POLITICA-ACEITE-UNICO.md`.
+
+## 0.4.0-dev.247 — aceite único e rastreamento de e-mail desligado (falha fechada) — 2026-10-21
+
+- `aculta_portal.tracking_consent` (antes `aculta_portal.aculta_user_agreement_tracking`): sem aceite próprio. `hasConsent()` responde falso até a função constar da política e haver decisão do responsável.
+- Aceite continua sendo o único `aculta_user_agreement_terms` (`AcultaUserAgreementAcceptForm`, e o checkbox do cadastro, que grava o mesmo tipo).
+- Regra permanente no AGENTS.md (seção Aceite único) e em `docs/portal/ACEITE-UNICO.md`.
+
+## 0.4.0-dev.246 — prefixa adaptador de consentimento ao ledger ACULTA — 2026-10-21
+
+- O adapter `MailTrackingConsent` foi renomeado para `AcultaUserAgreementTrackingConsent` (arquivo, classe e referência de serviço), completando o prefixo ACULTA nos consumidores do ledger.
+- Documentação de integração e inventário de e-mail atualizados; serviço resolvido no Runtime após rebuild.
+- `aculta_portal.info.yml` 0.4.0-dev.246. Estado Dev.
+
+## 0.4.0-dev.245 — remove Agreement contrib e integra aceite ACULTA User — 2026-10-21
+
+- `aculta_portal` passa a consumir o ledger `aculta_user.aculta_user_agreement_ledger`; política, cadastro, aceite modal e hooks usam classes ACULTA prefixadas. Form callback, rota e serviços também adotam `aculta_user_agreement`.
+- O módulo contrib Agreement foi desinstalado no Runtime de testes e removido de `composer.json`/`composer.lock`, Config Sync, Views e referências de interface; o submódulo `aculta_user` mantém o registro append-only e a auditoria somente leitura.
+- Mantidos os registros legados recuperáveis, marcados como incompletos; update 10010 remove as evidências de contas já apagadas conforme a retenção definida pelo responsável.
+- Verificação Runtime: Agreement desativado, 4 eventos para 3 contas existentes, todas as cadeias verificáveis; MAIN e Conta HTTP 200 seguindo canonicalização HTTPS. `drush cr`/`updb` concluíram com aviso H5P não bloqueante.
+- `aculta_portal.info.yml` 0.4.0-dev.245. Estado Dev; validação visual autenticada e gates de RC continuam pendentes.
+
+## 0.4.0-dev.244 — namespaces próprios para aceite de Termos — 2026-10-21
+
+- Classes, serviço, função de callback, form ID e rota de aceite do Portal adotam o prefixo `aculta_user_agreement`; o Portal não referencia classes do módulo contrib.
+- O bypass administrativo do antigo Agreement passa ao permissionamento restrito `administer aculta user agreements`, que também dá acesso à consulta de auditoria.
+- PHP lint PASS. A migração e smoke do ledger estão documentadas em `aculta_user`.
+
+## 0.4.0-dev.243 — aceite e consentimento transferidos para aculta_user — 2026-10-21
+
+- Cadastro, bloqueio de Termos e autorização de rastreamento de e-mail passam a usar o ledger `aculta_user.consent_ledger`; removidas dessas integrações as chamadas a `agreement.handler`.
+- A retirada completa do contrib continua pendente: formulário de revogação, leitura das revisões dos documentos, tela de auditoria e limpeza de rotas/configuração/dependências ainda precisam ser entregues antes da desinstalação.
+- Testes: PHP lint dos arquivos novos/refatorados PASS; suíte automatizada e Runtime DEFERRED.
+
+## 0.4.0-dev.242 — aviso de e-mail não confirmado: caixa de atenção e título do aviso persistente — 2026-10-21
+
+- `EmailConfirmationNotice` mantém o aviso em "Minha conta", agora como caixa de atenção (`notice-warning`). O título passa pelo ponto `aculta_portal_email_notice` (alter), que o aculta_messenger usa para trazer o aviso persistente do sistema de avisos.
+- `aculta_portal.services.yml`: `module_handler` injetado em `aculta_portal.email_confirmation_notice`.
+- `EmailConfirmationPolicy::markConfirmed()` invoca `aculta_portal_email_confirmed` (uid) depois de gravar a confirmação e o papel; o aculta_messenger remove o aviso persistente nesse ponto, sem depender de `user_update` (a conta pode não ser salva se o papel já existe). `module_handler` injetado na política.
+- `aculta_portal.info.yml` 0.4.0-dev.242. RUNTIME STATUS: DEFERRED (inspeção visual no X11 registrada no roteiro).
+
+## 0.4.0-dev.241 — bloco "Alteração pendente" com parágrafos próprios — 2026-10-21
+
+- E-mail pendente e mensagem da aba E-mail passam a ser elementos `<p>` (`aculta_portal_element`), no lugar de texto solto que colava as duas linhas. Sem classe de design: o espaçamento está no tema aculta420 0.6.0-dev.135.
+- `aculta_portal.info.yml` 0.4.0-dev.241. RUNTIME STATUS: DEFERRED (inspeção visual no X11 registrada no roteiro de testes).
+
+## 0.4.0-dev.240 — troca de e-mail incorporada ao aculta_user; contrib change_mail_page retirado — 2026-10-21
+
+- Dependência `change_mail_page` removida de `aculta_portal.info.yml`. A aba E-mail da Segurança recebe o formulário pelo ponto `aculta_portal_changemail` (alter), entregue pelo aculta_user (`ChangemailForm`). O Portal só monta a aba e a mensagem de "sem serviço de mensagens".
+- Retirados: `PortalController` (import e montagem do `ChangeMailForm`), `FormHooks` (rótulos e callback do formulário do contrib), `PortalFormCallbacks::changeMailConfirmationMessage`, ramo de rota em `AccountRouteSubscriber`, mapeamento em `DomainRouteSubscriber`, breadcrumb de `AcultaBreadcrumbBuilder` e a entrada em `PortalRequirementsController`.
+- `EmailChangePolicy`: comentário atualizado. A regra não muda: troca de e-mail só na Minha Conta.
+- Gates: `validate-aculta-portal-drupal11`, `validate-public-slugs`, `validate-portal-commerce-security` e `institution/phase6-account-email-test.php` atualizados para a nova classe e para a ausência do contrib.
+- `aculta_portal.info.yml` 0.4.0-dev.240. RUNTIME STATUS: DEFERRED (teste de navegador da aba E-mail pendente).
+
+## 0.4.0-dev.239 — associado fora da hierarquia de papéis; item Associado na Minha conta — 2026-10-21
+
+- Papel `associado` retirado da cadeia de herança (`aculta_portal.role_hierarchy`) e do formulário da hierarquia. `lms_teacher` herda de `estudante`. Decisão do responsável de 2026-10-21 (associado é situação).
+- Perfil `associado` continua sendo o tipo de dados da situação; `roles` vazio no tipo de perfil (sem restrição por papel).
+- Item "Associado" no menu da Minha conta, ao lado de Atividade (rota `aculta_user.associado_pedido`).
+- Gate `scripts/validate-role-hierarchy.php` atualizado para a cadeia decidida: PASS.
+- `aculta_portal.info.yml` 0.4.0-dev.239. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.238 — remove a apresentação LINKS do Portal — 2026-10-20
+
+- Presenter e sugestões/preprocess específicos de links foram movidos ao submódulo. Portal mantém os serviços compartilhados de Domain; footer e dados da página agora pertencem ao `aculta_links`.
+- A configuração antiga continua versionada e dual-write para rollback, mas a apresentação passou a consumir `aculta_links.social_links`.
+- Landing usa serviço Drupal com injeção explícita.
+- Validação: Kernel 2/71, PHPCS/lint/YAML, ACULTA420 Foundation 366, mapa de módulos/tema 162 e mapa final via Drush PASS. Runtime após `cr`: landing HTTP 200 contém CTA, Instagram e projetos; presenter/hook estão resolvidos no container. Rebuild repetiu aviso de diretório de assets H5P. Portal/index estão bloqueados por commits paralelos anteriores (`d0c3086c`, `88745650`) que alteraram arquivos do Portal sem a linha correspondente no README; o histórico compartilhado não foi reescrito. Node editorial e produção não verificados nesta mudança.
+
+## 0.4.0-dev.237 — transfere configuração social ao ACULTA Links — 2026-10-20
+
+- A rota/admin links do purpose LINKS, formulário e callbacks Form API deixaram de pertencer ao Portal e foram movidos ao submódulo `aculta_links`; URL e permissão são preservadas.
+- Portal deixou de registrar a rota/menu/tab e o painel de requisitos não cria link para funcionalidade opcional. Presenter/hooks ainda são consumidores compartilhados e seguem temporariamente no Portal.
+- `aculta_portal.social_links` schema/export é mantido como fonte de rollback; o update do submódulo copia sem apagar e seu formulário dual-write evita perda ao reverter.
+- Validação: Portal 1015 checks, índice 26 componentes, mapa de módulos/tema 162, sitemap via Drush e Kernel 2/71 PASS; atualização 10002 aplicada isoladamente ao Runtime de teste e configuração antiga preservada. PHPCS/lint/YAML PASS. Smoke HTTP do formulário ainda pendente; Runtime não validado para produção.
+
+## 0.4.0-dev.236 — confirmação de e-mail com serviço por injeção — 2026-10-20
+
+- A classe de entidade `EmailConfirmationEntity` foi retirada: a expiração (24 h, `hash_expiration`) e as
+  transições vêm do `AcultaMailConfirmerManager` do `aculta_mail_confirmer` 0.1.0-dev.2. A classe sobrescrevia
+  `isExpired()` com `SingleUseLinkPolicy` e não tinha como usar serviços.
+- `EmailConfirmationRequester`, `TokenHooks` (link no host da conta) e `EmailConfirmationResponseAccessHandler`
+  chamam o manager; o handler passou a receber o serviço por `createInstance`.
+- Gate `validate-single-use-links` verifica a expiração no manager, não mais na classe do Portal.
+- Testes: `EmailConfirmationRequesterTest` atualizado para as chamadas do manager.
+
+## 0.4.0-dev.235 — email_confirmer incorporado como aculta_mail_confirmer — 2026-10-20
+
+- O contrib `drupal/email_confirmer` foi substituído pelo módulo `aculta_mail_confirmer` (e `aculta_mail_confirmer_user`). O Portal usa os nomes novos (serviço, entidade, rotas, token e realm).
+- Caminho do painel de requisitos: entrada do contrib removida (o módulo agora é do projeto).
+- Testes: Unit do Portal 240 OK; Kernel do Portal 26 OK (banco de teste) antes da remoção; revalidar após o commit.
+
+## 0.4.0-dev.234 — teste Kernel dos textos de conta — 2026-10-20
+
+- `AccountMailRouterKernelTest`: reset e cadastro saem com o texto aprovado, com conta real, link de uso único e entrada no domínio de Conta; chaves do Core que não são de conta ficam intactas. 3/3.
+- Suíte do Portal com banco de teste: 266 testes, sem falhas (deprecações de contrib e do Core, já existentes).
+
+## 0.4.0-dev.233 — abas do painel ACULTA: Visão geral, Site, Pessoas, Segurança e sistema — 2026-10-20
+
+- Abas no topo de `/painel-administrativo/aculta`, com subabas: **Site** (Aparência, Formas de apoio, Redes sociais e botões) e **Segurança e sistema** (Turnstile, Credenciais, Status, Implantação). As abas de Pessoas e de Doações e a barra do e-mail ficam nos módulos donos.
+- Sem aba do e-mail nem de Doações no grupo ACULTA: duplicavam a barra das telas do e-mail e de doações. Essas telas já têm barra própria e entradas no menu lateral.
+- Verificação visual no Runtime de teste (1270 e 500 px): cada área mostra uma barra; sem estouro horizontal.
+
+## 0.4.0-dev.232 — painel ACULTA em /painel-administrativo/aculta, com aba e subaba no menu — 2026-10-20
+
+- Página do Portal movida para `/painel-administrativo/aculta` (antes `.../configuracoes/aculta/portal`).
+- Configurações do Portal centralizadas sob `/painel-administrativo/aculta/...`: aparência, apoio, redes sociais, Turnstile, status, credenciais e implantação.
+- Menu: aba **ACULTA** em Administração, com os itens do Portal e a subaba **E-mail** (os itens do e-mail ficam em `links.menu.yml` do mailer).
+- Caminhos antigos `/painel-administrativo/configuracoes/aculta/...` respondem 404, sem redirecionamento.
+
+## 0.4.0-dev.231 — textos de conta aprovados na camada do aculta_mailer — 2026-10-20
+
+- Textos aprovados pelo responsável (2026-10-20) para reset de senha, cadastro concluído, conta criada pelo administrador e confirmação de novo e-mail. Os três primeiros são tipos novos (`account_password_reset`, `account_register`, `account_register_admin`); o de confirmação (`email_confirmation_request`) passa a ter o texto aprovado.
+- `AccountMailRouter` + `hook_mail_alter` (MailHooks): as mensagens do módulo `user` com essas três chaves trocam assunto e corpo pelo tipo da camada. O link de uso único vem do `OneTimeAuthentication`; a entrada vai para o domínio de Conta (`user.login`).
+- Sem links de uso único no registro (o plugin de envio já apaga o conteúdo de chaves de uso único, como antes).
+- Decisões aplicadas: prazo do link de 24 h; login por usuário e e-mail; registro de confirmação com 7 dias (mantido).
+- Evidência: renderização conferida com a conta de teste (uid 5) sem envio; Unit 2/2 (marcadores dos tipos e mapeamento das chaves do Core); a troca no envio foi conferida chamando o roteador com a conta de teste, sem envio; suíte do Portal 263 testes OK com banco de teste.
+- Ativo no Runtime de teste a partir desta versão; em produção, só com o deploy.
+
+## 0.4.0-dev.230 — preparar CSP Report-Only e ciclo Alpha — 2026-10-20
+
+- Adicionadas dependências Composer oficiais `drupal/csp` e `drupal/reporting` para integrar a política CSP Report-Only do leitor PDF e coletar violações em Alpha; enforcement permanece desligado.
+- `config/sync` habilita os módulos e o endpoint local. A coleta registra metadados técnicos no watchdog/DBLog; retenção e URLs reportadas precisam ser revistas antes da migração a produção.
+- O painel Status atribui os pacotes `drupal/csp` e `drupal/reporting` ao `aculta_pdf_viewer`, mantendo visíveis seus requisitos PHP no inventário de extensões.
+- Atualizada a governança Dev → RC (tudo pronto para deploy) → Alpha (servidor de desenvolvimento) → produção.
+- Composer audit não encontrou advisories. Runtime DEFERRED; gates e validação visual pré-deploy ainda pendentes.
+
+
+## 0.4.0-dev.229 — cobertura global de extensões PHP
+
+- O Status agora varre todos os pacotes de runtime de `composer.lock`; novos requisitos `ext-*` passam a aparecer sem inclusão manual da extensão no painel.
+- Atribuição explícita aos pacotes dos submódulos `aculta_image` e `aculta_pdf_viewer`, além do inventário global.
+- Gate `scripts/validate-php-extension-status.php` compara a detecção com os requisitos declarados no lockfile e exige a presença do scanner e dos mapas no relatório.
+- Evidência: gate `validate-php-extension-status` PASS (20 requisitos ext-*); PHPUnit Unit 3/3 (13 assertions) PASS; PHP lint PASS; `git diff --check` PASS. `validate-project-status-index` permanece bloqueado por commits prévios de `aculta_mailer`/`aculta_portal` sem atualização correspondente da linha raiz, incluindo o commit `17af34c706e6`; nenhuma alteração Mailer foi incluída.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.228 — status de extensões PHP das integrações
+
+- A página administrativa ACULTA Portal > Status deriva requisitos `ext-*` do `composer.lock` para os pacotes Composer mapeados às integrações e suas dependências transitivas.
+- Exibe extensão, integração, módulos Drupal relacionados, pacote declarante e se a extensão está carregada na SAPI PHP da requisição. Exclui `packages-dev` e `suggest` opcionais.
+- Contrato registrado em `docs/portal/PHP-EXTENSION-STATUS.md`; função incluída na descrição do módulo.
+- Evidência: PHPUnit Unit 1/1 (6 assertions) PASS; exemplo derivado do `composer.lock` listou 17 requisitos do Core e todos constaram carregados no PHP CLI desta workstation. `validate-own-module-packages` (27 checks) e `validate-public-slugs` PASS. O gate de endereços agora aponta três literais `aculta.org` em testes Mailer não incluídos nesta entrega. `validate-project-status-index` e o gate Drupal 11+ seguem bloqueados por alterações em `aculta_mailer` e pela regra de autoria pública da Wiki. Nenhum arquivo Mailer ou Wiki foi incluído nesta entrega.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.227 — reenvio de link de confirmação gera pedido novo
+
+- `EmailConfirmationLinkRegenerator`: dono do link de confirmação de e-mail para o reenvio manual do aculta_mailer. O reenvio passa pelo solicitante de confirmação: token novo, mensagem nova, e o conteúdo antigo é cancelado.
+- Serviço com tag `aculta_mailer.link_regenerator`.
+- Validado no Runtime de teste: falha real de confirmação guardada; reenvio gerou pedido novo enviado pela Hostinger; o conteúdo antigo ficou sem cifra e não pode mais ser reenviado.
+- Teste unitário do dono do link. Documento `LINKS-DE-USO-UNICO.md` atualizado.
+
+## 0.4.0-dev.226 — links de acesso único com validade de 24 horas em todo o projeto
+
+- Decisão do responsável: links de acesso único valem 24 horas. Revoga a validade infinita da confirmação de e-mail (`EmailConfirmationEntity::isExpired()`, agora em `SingleUseLinkPolicy::isExpired()`).
+- Regra, inventário, exceção (retentativa e failover automáticos da mesma mensagem) e gate em `docs/portal/LINKS-DE-USO-UNICO.md`; `EMAIL-CONFIRMATION-POLICY.md` §6.1 e `AGENTS.md` atualizados.
+- Gate `scripts/validate-single-use-links.php`: confere `password_reset_timeout` e `hash_expiration` (até 86400 s), as constantes da regra nos dois módulos, a ausência de `isExpired()` com retorno fixo e o cancelamento e a recusa de reenvio no aculta_mailer.
+- Validado: gate passa; testes de Kernel do aculta_mailer passam. Uma falha pré-existente em `ContentPurposeResolverTest` (propósito do fórum, de outro commit) continua aberta e não faz parte desta mudança.
+
+## 0.4.0-dev.227 — abas administrativas do Fórum
+
+- `/painel-administrativo/forum` é a aba Início (Painel Growroom420), mostra
+  apenas o resumo público e não repete links às ferramentas. A explicação dos
+  contextos fica na documentação. Tópicos, Comentários e Configurações aparecem nas abas
+  administrativas Drupal e como filhos no menu lateral; as filas de estado
+  continuam como subabas de Comentários. Caminhos antigos fora da seção mantêm
+  redirects locais.
+- As Views administrativas são limitadas ao Domain ativo do Growroom e mantêm
+  permissões e filtros fixos. O formulário específico do Fórum voltou a abrir
+  em seu caminho canônico. Validação Runtime/X11 registrada na matriz do
+  `aculta_forum` dev.122.
+
+## 0.4.0-dev.224 — tornar útil o painel central do Fórum
+
+- O painel administrativo independente do Growroom420 agora apresenta contagens
+  protegidas por Entity Access, resume os limites entre os quatro contextos e
+  aponta ao fórum público e às categorias pelo purpose dinâmico.
+- Fórum Unit direcionado: 2 testes/29 assertions PASS. Gates Drupal 11,
+  segurança de cache e smoke Runtime/X11 pendentes antes de declarar a versão
+  validada. Sem alteração de tema. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.223 — centralizar os caminhos administrativos específicos do Fórum
+
+- Os caminhos atuais de ferramentas do Growroom420 redirecionam para a entrada
+  canônica `/painel-administrativo/forum`; a página central permanece própria.
+  Displays de página administrativos foram removidos das Views, sem retirar os
+  displays base nem mexer nos painéis de LMS, Revista ou Wiki.
+- Forum + User Unit: 155 testes/831 assertions PASS; Kernel mover 3/84 PASS
+  (5 depreciações de Domain contrib), PHPCS PASS; gates Drupal 11 (988), mapa
+  (154) e slugs (381) PASS. Runtime `aculta_runtime`: duas Views importadas
+  parcialmente, cache reconstruído, rotas GET/POST resolvidas; anônimo recebe
+  403. Uid 1 autenticado: página central 200 e sete redirects GET 302; logout encerrou a sessão. Firefox/X11 GET-only 20/20; painel e 12 caminhos estáticos conferidos em 390/768/1024 CSS px sem overflow. Rotas dinâmicas não testadas sem fixtures. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.222 — corrigir validação da Action de movimento VBO
+
+- A validação do plugin de movimento lê a seleção preservada no `FormState`,
+  evitando contagem zero quando o VBO recria a Action sem restaurar contexto.
+- Kernel `ForumTopicMoverKernelTest`: 3 testes/84 assertions PASS; 5
+  depreciações de Domain contrib. Sem escrita de conteúdo no Runtime.
+
+## 0.4.0-dev.221 — mover tópicos do Fórum em lote com VBO — 2026-10-20
+
+- O `aculta_forum` passa a usar Views Bulk Operations 4.4.9, release estável
+  compatível com Drupal 11, para selecionar tópicos na View administrativa,
+  escolher categoria, confirmar e processar lotes de 10 com limite total de 50.
+  O Action revalida a permissão e cada tópico na execução; acervo histórico e
+  itens incompatíveis geram resultado por item sem alteração.
+- `ForumTopicMoverKernelTest` cobre dois tópicos movimentados pela Action e a
+  recusa do acervo histórico. Runtime de teste: VBO habilitado, somente a View de
+  tópicos importada parcialmente e cache reconstruído; RouteProvider, handler e
+  Action descobertos. Firefox/X11 autenticado listou as duas fixtures e registrou
+  sua seleção; a Action habilitou e abriu a configuração VBO (5/7 verificações),
+  mas o smoke não reconheceu o resumo/seletores e não submeteu a confirmação ou
+  Batch API. Fixtures removidas; verificação final confirmou zero tópicos e
+  Comments. A tradução pt-br falhou no download. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.220 — autoria editorial compartilhada entre Portal e ACULTA420 — 2026-10-20
+
+- Magazine usa `author_editorial` do `aculta_user`; identidade, avatar, bio e
+  redes respeitam a política de perfil, enquanto o consumidor fornece apenas
+  Autor/Coautor. O cartão SDC apresenta a inicial quando o slot de avatar está
+  ausente.
+- User Unit 63/222, Magazine Unit 7/31, PHPCS direcionado, Portal Drupal 11+
+  (988), mapa módulo/tema (153) e SDC schema (543) PASS. Runtime de teste:
+  cache rebuild e render de publicação PASS sem escrita; Firefox/X11 claro/escuro
+  em 1270/500 px. Gate de fronteira bloqueado por `aculta_mailer` citando o tema;
+  gate de Foundation/design também registra dívida da implementação de e-mail
+  paralela. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.219 — sincronizar permissões do fórum LMS — 2026-10-20
+
+- Config Sync passa a registrar `aculta_forum_lms` e `gnode`; importação
+  parcial revisada alinhou quatro Group roles e a herança de permissão de
+  Educador no Runtime de teste. A importação global segue insegura devido a
+  divergências não relacionadas. Nenhum conteúdo de discussão foi criado.
+- Adapter Unit 14/147 e Kernel LMS 2/74 PASS; HTTP `/` e `/categorias` 200.
+  Autorização sobre tópico
+  real, UI, Views, busca e filas ainda não foram homologadas. RUNTIME STATUS:
+  PARTIAL.
+
+## 0.4.0-dev.218 — habilitar adapter LMS no Runtime de teste — 2026-10-20
+
+- Corrigida a injeção do `DiscussionContextResolver` no hook do adapter LMS;
+  ativação de `aculta_forum_lms` e `gnode` no Runtime de teste concluída com
+  configuração instalável e sem criação de tópicos/comentários.
+- Unit 13/143 e Kernel 2/74 PASS (38 depreciações Core/contrib/LMS); HTTP 200 na
+  raiz pública e categorias. Config Sync e roles não importadas; homologação de
+  acesso/UI/filas pendente. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.217 — provar acesso contextual de Educador ao fórum de turma — 2026-10-20
+
+- O Kernel do adapter LMS separa propriedade e membership: um Educador membro
+  do curso, sem membership direto na turma e sem ser seu proprietário, consegue
+  visualizar o tópico da turma pelas permissões contextualizadas do Group.
+  Um outsider que possui apenas o papel global `lms_teacher` continua sem
+  acesso; moderação continua restrita ao Educador do curso.
+- `aculta_forum_lms` dev.12; Kernel 2 testes / 74 assertions PASS, com 38
+  depreciações de Core/contrib/LMS. Nenhuma ativação/importação no Runtime.
+
+## 0.4.0-dev.211 — cadastro com e-mail já usado pelo aculta_mailer — 2026-10-20
+
+## 0.4.0-dev.216 — provedor de credenciais para o transporte Brevo — 2026-10-20
+
+- `SecretProviderAdapter` implementa `SecretProviderInterface` (aculta_mailer) com o gerenciador de segredos, para o transporte Brevo ler `BREVO_API_KEY` sem depender do módulo de Key.
+
+## 0.4.0-dev.215 — credencial sem Key lida do arquivo do servidor — 2026-10-20
+
+- `SecretsManager::value()`: se existir configuração de Key para a variável, ela continua valendo; se não existir, o valor é lido do arquivo de credenciais do servidor. Nenhuma Key nova é criada.
+- Testes: `SecretsManagerTest` (8 testes, inclui os casos de arquivo e de precedência da Key).
+- Runtime: `BREVO_API_KEY` lida do arquivo do servidor.
+
+## 0.4.0-dev.214 — pedido de confirmação em português — 2026-10-20
+
+- O texto do pedido de confirmação de e-mail (`email_confirmation_request`) passa a ser em português; o link e a regra de reenvio não mudam.
+- Verificação no Runtime: um pedido aceito para o destinatário autorizado.
+
+## 0.4.0-dev.212 — pedido de confirmação de e-mail pelo aculta_mailer (F9) — 2026-10-20
+
+- `EmailConfirmationRequester::sendRequest()` envia o pedido pelo `aculta_mailer` (tipo `email_confirmation_request`), com o link de resposta do contrib e o mesmo limite de reenvio (`resendrequest_delay`). Dentro da janela, delega ao contrib, que enfileira.
+- O texto é o mesmo que estava em produção (`email_confirmer.settings`). O link é segredo: não entra em logs nem no registro do envio.
+- Testes: requester (7) e tipo (1) passam. Runtime: um pedido real aceito para o destinatário autorizado, com a confirmação temporária removida.
+- Não migrado nesta versão: a entidade e o token (continuam no `email_confirmer`), o e-mail de troca de endereço (`notify_current`) e a fila de reenvio do contrib.
+
+- `RegistrationMailPolicy` envia o aviso (DT-P06) pela API `AcultaMailerInterface`, em vez de `plugin.manager.mail`.
+  O texto e a chave `registration_existing_mail` permanecem; o tipo vive em `RegistrationExistingAccountMailType`,
+  registrado pela tag `aculta_mailer.type`. Os links de login e de recuperação chegam prontos no contexto.
+- `MailHooks` do Portal mantém só o redirecionamento de testes (`mail_alter`); o `hook_mail` do cadastro saiu.
+- `aculta_portal.info.yml` depende de `aculta_portal:aculta_mailer`; `config/sync/core.extension.yml` registra o submódulo.
+- Testes: `RegistrationMailPolicyKernelTest` (2 testes, 18 asserções) e `LoginBlockedAccountTest` (6 testes) PASS.
+- Runtime de teste: `aculta_mailer` habilitado com `drush en` (sem updb). Durante a migração, o Runtime ficou
+  inoperante por alguns minutos porque o código do Portal foi carregado antes do módulo; o código foi revertido para
+  HEAD, o módulo habilitado e as alterações reaplicadas. Nenhuma configuração foi exportada nem importada.
+  Drift de `core.extension` entre Runtime e `config/sync` é anterior e não relacionado (aculta_game, aculta_user, outros).
+
+## 0.4.0-dev.210 — retirar integrações de rota com bundles contrib — 2026-10-20
+
+- `ContentPurposeResolver` só reconhece `aculta_forum_topic`; `AccountTermsHooks`
+  não infere autenticação pela existência do campo do Forum antigo. Os
+  comentários ACULTA seguem a permissão do Comment e do contexto.
+- Portal Drupal 11+ 970, fronteira 1376, mapa 151, PHP lint e `git diff --check`
+  PASS. PHPCS completo dos arquivos Portal ainda aponta dívida preexistente em
+  outras linhas. Runtime de teste: cache rebuild e raízes de Conta/Fórum/Revista
+  HTTP 200; nenhuma importação/update. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.209 — corrigida falha de construção do controlador da conta — 2026-10-20
+
+- Corrigida a ordem de dependências de `PortalController`: a factory injetava
+  `key.repository` no lugar de `commerce_price.currency_formatter`, causando
+  `TypeError` e HTTP 500 em páginas autenticadas da Conta.
+- Runtime de teste: a factory do controlador instancia via Drush, o cache foi
+  reconstruído, e as raízes públicas verificadas respondem 200. O endpoint
+  autenticado não foi repetido por HTTP; RUNTIME STATUS: PARTIAL. PHP lint,
+  Portal Drupal 11+ (970), fronteira (1393) e mapa (154) PASS. PHPCS completo
+  de `PortalController.php` ainda aponta violações preexistentes fora da linha
+  alterada.
+
+## 0.4.0-dev.208 — apresentação navegável das categorias do Fórum — 2026-10-20
+
+- A View Core `/categorias` agora apresenta cartões do SDC `forum-category` e
+  liga o nome de cada termo à raiz do Growroom filtrada por `categoria={tid}`.
+  O TID fica oculto; a hierarquia, descrição e link continuam fornecidos pela
+  View/Portal, sem consulta ou construção de URL pelo tema.
+- Gates Drupal 11+ (970), fronteira (1388), mapa (154), SDC (531), design
+  (2103), Foundation (362), Unit Forum (54/382) e `git diff --check` PASS.
+- Runtime de teste: importação parcial isolada atualizou somente essa View;
+  `config:status` do objeto ficou sem diferenças e `/categorias` respondeu 200
+  com 12 termos. A inspeção HTTP encontrou token literal `[tid]`; o uso foi
+  corrigido para o placeholder Core `{{ tid }}` após conferir
+  `FieldPluginBase::getFieldTokenPlaceholder()`. A revalidação do link com TID
+  renderizado está pendente. Inspeção visual browser DEFERRED. RUNTIME STATUS:
+  PARTIAL.
+
+## 0.4.0-dev.207 — dados públicos de autoria do fórum — 2026-10-20
+
+- `aculta_user` resolve o ano de criação da conta via DateFormatter somente para
+  cartões `author_forum` e `author_forum_stacked` quando o perfil é público;
+  ACULTA420 o apresenta sem data exata. Variantes editoriais, LMS, Wiki,
+  comentários e autores históricos não recebem esse dado.
+- Pesquisa contrib adicional documentada: Author Pane (requisitos históricos
+  de autoria) e User Stats (estatísticas, com alertas de segurança/privacidade).
+  Não foi instalada dependência nem copiado código legado.
+- Unit direcionado de identidade + hook do Fórum: 8 testes / 42 assertions PASS;
+  suíte completa de `aculta_user`: 62 testes / 194 assertions PASS, 1 depreciação
+  PHPUnit preexistente; lint/PHPCS da implementação PHP, Portal 970, boundary
+  1384, mapa 154, Foundation 360, SDC 518, design 2089 e `git diff --check`
+  PASS. O PHPCS da suíte histórica contém violações preexistentes fora das
+  linhas novas. Runtime de teste: gate Foundation via Drush PASS; sem alterações
+  persistentes. Browser visual DEFERRED. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.206 — navegação do Growroom e higiene dos testes do Fórum — 2026-10-20
+
+- A raiz pública do Growroom420 apresenta tabs de descoberta com Discussões
+  ativa, reaproveitando tarefas locais do Drupal Core sem expor `/discussoes`.
+  HTTP Runtime: raiz e rotas irmãs 200; `/discussoes` 404. Cache rebuild PASS.
+- Suíte Unit do `aculta_forum`: 54 testes / 379 asserções PASS, sem
+  depreciações PHPUnit; PHPCS, gates Drupal 11+, módulo/tema e mapa PASS.
+- Auditoria adicional de `forum_access` 2.0.2 documentada no submódulo. Não foi
+  instalada dependência nem copiado código. RUNTIME STATUS: PASS para a
+  navegação da raiz; demais verificações de integração do Fórum permanecem
+  parciais conforme as entradas anteriores.
+
+## 0.4.0-dev.205 — identidade do último comentarista na lista do Fórum — 2026-10-19
+
+- A View pública de tópicos passa o UID do último comentário publicado por um
+  campo Core oculto. `aculta_forum` resolve a conta ativa por DI e pede o cartão
+  `author_forum` ao `aculta_user`; o tema apresenta a autoria junto da atividade.
+  Nenhum nome de login ou dado privado é consultado pelo tema.
+- Teste direcionado Forum Unit: 17 testes / 203 assertions; conjunto Forum Unit:
+  49 testes / 354 assertions PASS (3 deprecações PHPUnit preexistentes). PHPCS
+  dos arquivos novos, Portal 970, boundary 1374, mapa 154, SDC 516, design
+  2089, fixtures 157 e `git diff --check` PASS. Foundation falha pelo placement
+  preexistente `block.block.aculta_magazine_admin_comments`.
+- Runtime `toca`: backup privado e atualização somente do campo `last_comment_uid`
+  na View ativa, preservando os filtros/campos locais divergentes. Cache rebuild,
+  hook DI resolvido, cartão de uid 5 construído com o tema `aculta_user_author_card`,
+  View com 8 linhas/renderização e HTTP `/discussoes/novas` 200. A renderização
+  registrou `Missing text format: basic_html` em conteúdo-fixture preexistente;
+  nenhum comentário foi criado. Browser e cartão vinculado a comentário real
+  pendentes. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.204 — testes de isolamento dos avisos do Fórum — 2026-10-19
+
+- Complementa a integração `0.4.0-dev.203` com testes da política de acesso:
+  Domain Fórum + Node access permitido, domínio diferente e Node access negado.
+- Messenger Unit: 41 testes / 145 assertions PASS; PHPCS nos testes novos,
+  lint e `git diff --check` PASS. RUNTIME STATUS: PARTIAL conforme a entrega
+  base; nenhum dado de Runtime foi criado.
+
+## 0.4.0-dev.203 — avisos de tópicos seguidos com acesso revalidado — 2026-10-19
+
+- O Messenger entrega avisos de respostas publicadas/aprovadas e revisões somente
+  para tópicos públicos `aculta_forum_topic`, fora do fluxo Drupal Forum legado.
+  Uma política central confirma conta ativa, publicação, atribuição ao Domain
+  Fórum e acesso atual de cada destinatário ao tópico/comentário. A checagem
+  também protege gaveta, contadores e resumo por e-mail; tópicos com autoria
+  Growroom histórica e eventos de sincronização são excluídos.
+- `Message Subscribe` continua sem entregar mensagens de Fórum (F-D21); eventos
+  de publicação/atualização usam a fila e o serviço de avisos já existentes.
+- A fila carrega a revisão específica e inclui a primeira publicação, aprovação
+  e novas revisões publicadas, com deduplicação por revisão.
+- Messenger Unit 38/116, lint, PHPCS nos arquivos novos, Drupal 11+ (970),
+  fronteira (1372), mapa (154) e `git diff --check` PASS. PHPCS dos arquivos
+  novos PASS; os 46 erros restantes no conjunto dos arquivos tocados já existem
+  na base, enquanto os avisos caíram de 32 para 18 após a remoção do consumidor
+  morto de mensagem.
+- Runtime `toca`, Drupal 11.4.10, `aculta_runtime`, URI `growroom420` de teste:
+  cache rebuild e resolução do container/worker PASS; uid 5: 8 tópicos publicados
+  acessíveis, 0 avisos existentes/visíveis. Sem criação de aviso, flag ou e-mail.
+  Browser autenticado e entrega real continuam pendentes. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.200 — atalho para respostas não lidas do Fórum — 2026-10-19
+
+- `aculta_forum 0.1.0-dev.30` acrescenta contagem personalizada e link à
+  primeira resposta não lida somente na lista History autenticada, com cache
+  desativado para isolamento por usuário. Forum Unit 47/340, Kernel MariaDB
+  4/75 (access/History adjacente), PHPCS e gates Drupal 11+ (970), fronteira
+  (1368), mapa (154), slugs (387) PASS. Runtime importou somente a View com
+  backup e `config:status` ficou limpo; 8 itens autenticados via Drush,
+  anônimo HTTP 403. Não há resposta aprovada para validar contagem positiva.
+  RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.199 — ação de marcar discussões públicas como lidas — 2026-10-19
+
+- O `aculta_forum 0.1.0-dev.29` adiciona confirmação e processamento em lotes
+  para atualizar o History da conta autenticada nos tópicos públicos publicados
+  e acessíveis do domínio Fórum. Não altera Nodes, Comments ou discussões
+  privadas; a rota é negada fora do purpose `forum`.
+- Unit direcionado, lint, gates Drupal 11+, fronteira, mapa e slugs executados;
+  Forum Unit 47/335 e Kernel MariaDB 4/75; 5 deprecações do Domain contrib e 3
+  avisos antigos de PHPUnit. Runtime confirmou rota, service container,
+  construção de formulário e HTTP anônimo 403, sem executar a ação que grava
+  histórico. Gates Drupal 11+ (970), fronteira (1368), mapa (154) e slugs (387)
+  PASS. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.198 — variantes de autoria por contexto no ACULTA User — 2026-10-19
+
+- O inventário administrativo do Portal registra o helper
+  `aculta_user.author_card_variant_resolver`, e o mapa módulo/tema descreve a
+  separação Fórum, Revista, LMS e Wiki.
+- `aculta_user 0.4.0-dev.35` e ACULTA420 recebem contratos e apresentação
+  contextualizados; o tema ainda tem inspeção visual pendente e seu versionamento
+  independente não avançou devido ao gate Foundation bloqueado.
+- Gate Drupal 11+ (970), fronteira (1362), mapa (154), Unit User (60/175),
+  PHPCS e smoke de Runtime descritos nos changelogs dos componentes — PASS.
+  RUNTIME STATUS: PARTIAL; PHP 8.4.26 e browser autenticado/visual pendentes.
+
+## 0.4.0-dev.197 — índice público de categorias do Fórum — 2026-10-19
+
+- `aculta_forum 0.1.0-dev.28` acrescenta `/categorias`, View Core limitada ao
+  vocabulário público do Fórum, e liga os índices de categorias e discussões.
+- Runtime de teste: duas Views importadas parcialmente, HTTP 200 nas duas
+  páginas e Config Sync sem diferenças nesses objetos. Sem alterações em
+  conteúdo. Gate local-only de sitemap não é aplicável ao Homelab.
+
+## 0.4.0-dev.196 — subabas de estado de comentários do Fórum — 2026-10-19
+
+- Fórum administrativo ganhou abas para comentários publicados, rejeitados e
+  aguardando moderação, com escopo separado dos comentários da Revista.
+- O marcador de rejeição do Comment compartilhado é restrito pela permissão
+  `administer comments` e não aparece em renderização pública.
+- Testes direcionados e importação parcial no Runtime de teste; evidências,
+  contagens pós-limpeza e limite de browser registradas no CHANGELOG do
+  `aculta_forum`.
+
+## 0.4.0-dev.190 — paginação do índice público Growroom420 — 2026-10-19
+
+- A View `aculta_forum_public_topics` passa a usar pager Core completo, com 20
+  itens por página e navegação traduzida; mantém filtros fixos de publicação,
+  bundle, domínio e controle de acesso.
+- Instalação e Config Sync permanecem equivalentes; teste Unit confirma a
+  configuração de pager. Runtime de teste recebeu somente a configuração da
+  View e cache rebuild; nenhum conteúdo foi alterado. Pager ativo e lista HTTP verificados; navegação >20 e inspeção visual pendentes. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.187 — contrato de respostas públicas do Fórum — 2026-10-19
+
+- O teste de configuração do `aculta_forum` verifica equivalência do field Comment entre install/Config Sync, status aberto, formulário inline, tipo compartilhado, bloqueio de anônimos e permissão `post comments` para participantes confirmados: 8 testes / 55 assertions PASS; PHPCS PASS. Runtime de teste confirma o campo e permissão efetivos, sem conteúdo persistido. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.186 — aplica permissões próprias de tópico ao papel confirmado — 2026-10-19
+
+- `user.role.email_confirmed` preserva as dependências, permissões existentes e peso ativos do Runtime; acrescenta só a dependência do bundle novo e `create/edit own/delete own aculta_forum_topic`. Não concede `edit any` ou `delete any`.
+- PHPUnit `ForumTopicDisplayConfigTest`: 7 testes/47 assertions PASS; gate de papéis PASS. Runtime `toca`: importação parcial só do papel; uid 5 confirmado recebeu acesso à rota e formulário Core não submetido mostrou título, corpo, categoria e submit. Zero tópicos e comentários. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.185 — estado vazio da listagem do ACULTA Forum — 2026-10-19
+
+- `aculta_forum 0.1.0-dev.16` configura mensagem de estado vazio pela área Core `text_custom` na View; domínio, bundle, publicação e acesso permanecem fixos. Sem resultados, filtros e ação autorizada continuam disponíveis.
+- Unit `ForumTopicDisplayConfigTest`: 6 testes/42 assertions PASS. Runtime `toca`: importação parcial somente da View; HTTP da raiz 200 mostrou título, filtro e a mensagem vazia; `/discussoes` 404. Contagens: 0 tópicos novos e 0 comentários compartilhados. RUNTIME STATUS: PARTIAL; inspeção visual permanece pendente.
+
+## 0.4.0-dev.184 — preserva a raiz dos purposes diante do cache de rotas — 2026-10-19
+
+- O `DomainPurposeRequestSubscriber` restaura os marcadores da raiz no evento Request, antes do normalizador do Redirect. O cache de correspondência de rotas do Core conserva caminho e query, mas não os atributos de Request que o path processor define; sem isso, a raiz do Growroom podia redirecionar à rota interna `/discussoes`.
+- Teste Unit: 8 testes/20 assertions PASS, cobrindo os purposes mapeados, caminho não raiz, purpose ausente e prioridade anterior ao Redirect. Runtime `toca`: após cache rebuild, `/` e `/?cache_probe=forum184b` retornaram 200; `/discussoes` permaneceu 404. Nenhum Node, Comment, termo ou configuração do banco foi alterado. RUNTIME STATUS: PARTIAL (fluxos de criação e inspeção visual pendentes).
+
+## 0.4.0-dev.183 — autoria dos tópicos novos via ACULTA User — 2026-10-19
+
+- `aculta_user 0.4.0-dev.33` integra `AuthorCardBuilder` nos Nodes `aculta_forum_topic`: User usa `author_forum`, autoria legada usa `author_growroom_historico`; apenas full/teaser. O Forum não cria cartão nem consulta dados de perfil.
+- Moderação LMS continua dos Educadores com acesso pedagógico contextual; nenhuma regra LMS alterada. Unit do hook e identidade: 6 testes/23 assertions PASS, PHPCS e lint PASS. Runtime registrou o hook e renderizou `author_forum` num Node em memória; contagem permaneceu 0. A rota raiz com URL sem query respondeu 301 para `/discussoes`, enquanto a requisição de diagnóstico com query respondeu 200; causa/cache da diferença pendente de investigação visual/HTTP. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.182 — filtro de categoria no índice público do Fórum — 2026-10-19
+
+- View pública oferece filtro hierárquico Core Taxonomy para `aculta_forum_categories`; filtro continua no domínio ativo e no bundle público novo, sem afetar o índice legado. Cache da página inclui query args.
+- Unit de configuração: 6 testes/39 assertions PASS. Drupal 11+ (969), fronteira (1328), mapa (154), UI (285) e packages (22) PASS. Runtime `toca`: importação parcial só da View, plugin Core carregado, raiz e query de categoria HTTP 200; seletor presente e vocabulário vazio (0 termos). Nenhum termo ou tópico foi criado. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.181 — ação de criação condicionada por acesso — 2026-10-19
+
+- Na listagem raiz do Growroom, a ação de criar tópico aparece apenas quando a rota Core autoriza a conta atual. Metadados de acesso são propagados para o cache da View para evitar cache cruzado de permissões/participação.
+- PHPUnit Unit do Fórum: 11 testes/51 assertions PASS; PHPCS e gates Drupal 11+ (969), fronteira (1328), mapa (154), tokens (285), packages (22), slugs (387) PASS. Runtime `toca`: raiz 200, sem ação para anônimo, criação 403. Conta autorizada e navegador não validados. Nenhum formulário submetido ou conteúdo criado. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.180 — adiciona rota amigável de criação do tópico — 2026-10-19
+
+- `/criar-topico` usa o formulário Core `node.default` para `aculta_forum_topic`, com `_entity_create_access` por bundle e classificação do purpose `forum`. Sem permissão contextual, a rota nega acesso.
+- Sitemap atualizado. Runtime de teste: rota resolvida no purpose `forum`; conta sem permissão recebe 403 e purpose principal recebe 404. Nenhum conteúdo criado; formulário não submetido. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.179 — publica a listagem nova na raiz do Growroom420 — 2026-10-19
+
+- A View `aculta_forum_public_topics` ganhou Page display em `/discussoes` e agora serve `/` no purpose `forum`. Rotas da View são classificadas no purpose correto; `/discussoes` e o índice contrib antigo `/forum` permanecem fechados para acesso direto.
+- Sitemap, política de raiz e gate foram sincronizados. Importação parcial somente de `views.view.aculta_forum_public_topics`; cache rebuild e HTTP: `/` 200 com título da nova View, `/discussoes` e `/forum` 404. Nenhum conteúdo foi criado ou movido. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.178 — remove capacidades residuais de sincronização de tópicos — 2026-10-19
+
+- `ForumTopicSync` foi substituído por `LegacyPublicationTopicLookup`, que só lê vínculos editoriais históricos. Removidos os métodos de criar, sincronizar, despublicar e backfill; o update legado 10001 já não tenta criar tópicos quando executado em ambiente ainda pendente.
+- Conversão de tipo mantém referências antigas sem sincronizar o Node Forum. Nenhum conteúdo/configuração Runtime foi alterado. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.177 — encerra sincronização automática de tópicos editoriais — 2026-10-19
+
+- Removidos os hooks de insert/update/delete que criavam, atualizavam ou despublicavam Nodes do Forum contribuído ao salvar/excluir publicação. `field_aculta_discussion` está instalado nos dois bundles editoriais do Runtime de teste; as discussões permanecem diretamente na publicação.
+- Mantido somente o ajuste de links repetidos nos comentários dos tópicos históricos. Nenhum Node, Comment, termo ou vínculo legado foi alterado. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.176 — comentários diretos ativos no Runtime da Revista — 2026-10-19
+
+- Aplicadas parcialmente no Runtime de teste as duas instâncias Comment de `article`/`blog` e displays full; status padrão fica `Open` via configuração e hook em memória. Teste Kernel de field compartilhado e política de participação: 6 testes/81 assertions PASS. Sincronização automática de tópico antigo permanece como fallback de código até a próxima unidade; comentários não foram enviados.
+- A configuração de exibição mantém oculto o extra field `private_message_link`, já oculto no Runtime, para evitar alteração de apresentação durante a ativação da discussão.
+
+## 0.4.0-dev.175 — listagem isolada e domínio canônico do Fórum — 2026-10-19
+
+- A View `aculta_forum_public_topics` lista somente tópicos novos publicados no domínio ativo, preservando a reescrita `node_access`; CTools Views permite configurar pager e quantidade por bloco. A View antiga `aculta_forum_topics` não foi alterada.
+- `aculta_forum_topic` recebe `field_domain_source`; o hook OOP atribui o domínio canônico `forum` se estiver ausente e restringe criação ao purpose `forum`. Configuração da View não foi colocada em página/bloco nesta entrega.
+
+## 0.4.0-dev.174 — formulários e displays nativos do tópico público — 2026-10-19
+
+- O `aculta_forum_topic` ganha formulário com título, corpo e categoria, além de displays `full` (inclui Comment compartilhado) e `teaser` para futuras listagens. Controles de status e autoria histórica ficam fora do formulário.
+- Configuração duplicada em `aculta_forum/config/install` e Config Sync; teste Unit verifica correspondência e campos expostos. No Runtime de teste, importação parcial aplicou somente os três displays; smoke de Form API em Node não salvo confirmou campos esperados e status Comment `Open`. Unit (15 testes/67 assertions) e gates Drupal 11+, fronteira e mapa PASS; Runtime PARTIAL, sem teste de navegador ou fluxo persistido.
+
+## 0.4.0-dev.173 — status padrão das discussões editoriais existentes — 2026-10-19
+
+- `PublicationDiscussionHooks` completa em memória o status ausente de `field_aculta_discussion` com o default da configuração do campo (fallback `Open`), sem persistir alterações, preservando status `Hidden`/`Closed` explícitos e estatísticas de comentários carregadas pelo Core.
+- Teste Unit do hook: 4 testes/14 assertions PASS; PHP lint PASS. Config Sync e Runtime não foram alterados; fluxo visual/editorial em Runtime segue DEFERRED.
+
+## 0.4.0-dev.172 — comentários no contexto das publicações — 2026-10-19
+
+- `article` e `blog` recebem `field_aculta_discussion` com Comment compartilhado; o full display usa o formatter do Core. A conversão de tipo re-hospeda os Comments antes de remover o Node antigo.
+- `aculta_user` prepara `author_comment` nos Comments compartilhados; ACULTA420 apresenta o cartão e a resposta com tokens semânticos. A regra pública de primeiro comentário já cobre Revista e demais contexts fora do LMS.
+- O LMS permanece fora da moderação global: Educadores com autorização efetiva do contexto pedagógico serão responsáveis pela moderação; o contrato foi explicitado em `CONTEXTS.md` e `LMS-INTEGRATION-CONTRACTS.md`.
+- O fallback de criação de tópico Drupal Forum da Revista só atua quando o campo compartilhado não está instalado. Config Sync e Runtime não foram importados; status de abertura em publicações já existentes e inspeção visual seguem pendentes. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.171 — acervo Growroom congelado — 2026-10-19
+
+- Conteúdo de Fórum importado do Growroom e marcado por `field_autor_legado` é somente leitura, inclusive para administrador. `entity_access` nega alteração, exclusão e aprovação; a discussão do tópico fica fechada no `entity_presave`, inclusive durante a importação.
+- O formulário de administração de comentários oculta posts históricos e valida IDs enviados para impedir publicação/despublicação em lote. Configurações de campo agora permitem vincular autorias legadas ao tópico e ao Comment novos.
+- Drupal Forum contribuído permanece uma frente separada de retirada controlada; o acervo Growroom importado é conteúdo histórico preservado no novo motor. Nenhum Runtime ou conteúdo foi alterado nesta entrega. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.170 — moderação de tópico novo exige confirmação — 2026-10-19
+
+- A autorização para `content_editor` moderar Nodes `aculta_forum_topic` consulta a política central de confirmação real do e-mail. A regra não amplia o papel para `edit any`/`delete any`; criação e edição própria usam permissões nativas.
+- Teste Unit do access hook: 4 testes/18 assertions PASS. Validações estáticas e sintaxe ficam registradas no commit. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.169 — habilitação de permissões do tópico público — 2026-10-19
+
+- Config Sync registra `aculta_forum` como extensão habilitada e declara as permissões nativas do bundle `aculta_forum_topic`: participantes confirmados criam/editam/excluem os próprios tópicos. Moderação por editor fica pendente de access check que valide confirmação de e-mail; não há concessão direta de `edit any`/`delete any`. O bypass administrativo permanece do Core.
+- Preserva o `forum` contrib e seus dados; não houve importação de Config Sync, criação de categorias, conteúdo ou alteração persistente no Runtime. `aculta_forum` passa a `0.1.0-dev.6`. RUNTIME STATUS: DEFERRED para permissões administrativas efetivas.
+
+## 0.4.0-dev.168 — invalidação de cache nas regras de participação — 2026-10-19
+
+- Resultados de acesso à criação de tópicos agora incluem a cache tag de `aculta_user.settings`, o contexto de papéis e a lista de comentários. Mudanças nas opções administrativas ou nos papéis invalidam decisões de acesso em cache.
+- Teste Kernel `PublicDiscussionModerationKernelTest`: 5 testes/63 assertions PASS em `aculta_simpletest`; PHPCS, gate Drupal 11+ (969 checks), PHP lint e `git diff --check` PASS. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.167 — moderação inicial compartilhada em discussões públicas — 2026-10-19
+
+- `aculta_user` aplica a aprovação inicial em qualquer Node com `field_aculta_discussion`, exceto `aculta_lms_topic`. Comentário LMS publicado conta como participação aprovada nos demais contextos e remove o bloqueio temporário de criação de tópico.
+- O painel de participação permite desativar a política pública, além dos controles existentes de limite de tópico, bloqueio enquanto há aprovação pendente e papéis isentos.
+- Teste Kernel dedicado: 5 testes/63 assertions PASS em `aculta_simpletest`, incluindo comentário LMS publicado contando como aprovação, removendo bloqueio temporário e cacheabilidade de configuração/papéis. Gate Drupal 11+ (969 checks), PHPCS e `git diff --check` PASS. Fields da Revista continuam sem ativação no Runtime.
+- `aculta_user` atualizado para `0.4.0-dev.29`. RUNTIME STATUS: DEFERRED para comentários novos e UI administrativa.
+
+## 0.4.0-dev.166 — provider de contexto para comentários editoriais — 2026-10-19
+
+- `aculta_forum` adiciona provider contextual para Nodes `article` e `blog` quando o campo Comment compartilhado está presente. Leitura usa Entity/Field Access; escrita e moderação usam permissões nativas de Comment e propagam cacheability.
+- Testes Unit de `aculta_forum`: 12 testes/52 assertions. Teste Kernel em `aculta_simpletest`: 1 teste/18 assertions provou que o mesmo storage Comment pode ser anexado aos bundles `article`, `blog` e `aculta_forum_topic`.
+- As regras de participação/apresentação/moderação do `aculta_user` ainda precisam reconhecer `aculta_discussion_post`; por isso o campo de publicação ainda não foi ativado.
+- Cache rebuild e smoke de DI no Runtime de teste confirmaram dois providers e recusa de Article sem o field. Nenhum field editorial ou conteúdo foi criado/importado. PHP CLI 8.4.26. Runtime editorial: PARTIAL; comportamento funcional DEFERRED.
+- Cartão `author_comment`, UX e avisos permanecem pendentes.
+
+## 0.4.0-dev.165 — Context API do ACULTA Forum — 2026-10-19
+
+- Adicionado o módulo executável `aculta_forum` com Context API extensível, provider do tópico público e configuração de instalação nativa Node/Comment/Taxonomy; configuração instalada apenas no Runtime de teste.
+- Canonicalização multidomínio reconhece `aculta_forum_topic` como pertencente ao purpose `forum`, preservando o roteamento legado durante a migração.
+- Corrigida a orientação ambiental: no servidor de teste `toca`, Drush sem `--uri` mostrar `http://default` é esperado para `aculta_runtime`; o host/purpose deve ser explícito em operações sensíveis a domínio.
+- RUNTIME STATUS: PARTIAL — habilitado no Runtime `aculta_runtime` do servidor de teste em `growroom420.aculta.toca.net.br`; serviço e campos conferidos, zero conteúdo criado. PHP CLI 8.4.26; PHP-FPM/web 8.5 não foi confirmado.
+
+## 0.4.0-dev.164 — cartões de autoria compartilhados — 2026-10-19
+
+- Registra `aculta_user.author_card_builder` no inventário administrativo de Helpers; serviço com documentação própria e responsabilidade compartilhada entre o submódulo e o ACULTA420.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.163 — identidade base de autoria — 2026-10-19
+
+- O `aculta_user.author_identity_resolver` agora integra o inventário de Helpers ativos e prepara um view-model mínimo cacheável para a futura apresentação de autoria. A policy de perfil/link existente continua como fonte de acesso; não há dados de perfil privados no payload.
+- Entrega coordenada com `aculta_user` `0.4.0-dev.26` e `aculta_forum` `0.1.0-dev.2`. PR #296 (Portal `0.4.0-dev.162`) permanece separado; este marcador usa a versão seguinte da linha em andamento.
+- Teste Unit direcionado: 3 testes/12 assertions. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.161 — gates alinhados ao estado atual e item de menu duplicado
 
 - Removido o item de menu `aculta_portal.role_hierarchy_settings` (Papéis e perfis sob Administração). Ele já estava desativado em tempo de execução por `AdministrativeMenuHooks` (duplicava a aba de Pessoas); a entrada do YAML saiu junto, e o gate `validate-unique-paths-texts` passa. A rota `entity.user_role.collection` continua acessível por `aculta_portal.config_papeis_e_perfis`.
@@ -2094,6 +2953,24 @@ RUNTIME STATUS: validada no Runtime oficial (2026-10-09), sem teste humano: `/bu
 
 # Changelog — ACULTA Portal
 
+## 0.4.1-dev.11 — removidas rotas de bundle editorial aposentado
+
+- `EditorialHooks` deixa de executar comportamentos para `article`/`blog`; metadados e formulário da atividade permanecem no Portal.
+- Publicações atuais são mantidas pelo `aculta_magazine` no bundle `revista`.
+
+## 0.4.1-dev.9 — scanner de referências de texto por Entity Query
+
+- A inspeção de embeds em campos formatados usa Entity Query com `allRevisions()` em vez de inferir tabelas físicas; isso cobre corretamente campos base revisionáveis e mantém compatibilidade de banco.
+- O Kernel de limpeza de anexos do Fórum passou em SQLite temporário: 6 testes / 173 assertions. Sem Runtime.
+
+## 0.4.1-dev.8 — coordenador compartilhado de arquivos sem uso
+
+- Adicionados `aculta_portal.unused_file_cleaner` e `aculta_portal.unused_media_cleaner`: consultam File Usage/Entity Usage quando aplicável, referências estruturadas e embeds UUID em campos de texto/revisões; falham fechados quando não conseguem verificar.
+- Imagens continuam delegadas a `aculta_image.file_remover`; outros arquivos são removidos pela Entity API File depois da verificação.
+- O Portal remove Media não publicado submetido como candidato pelo módulo dono, via Entity API e após nova varredura de relações. A descoberta semântica de candidatos continua no módulo dono.
+- `aculta_image.cleanup` usa o serviço de File quando Portal está habilitado, preservando modo standalone; Fórum usa os serviços de Media e File para anexos órfãos.
+- Executor explícito para excluir conteúdo/posts, revisão operacional e adapters dos demais projetos ainda pendentes.
+
 ## Documentação — F1 validada no Runtime oficial — 2026-10-09
 
 Mudança apenas documental; a versão vigente segue `0.2.0-dev.18`.
@@ -2895,4 +3772,121 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 - O exportador Drush exige pacote/versão exatos do `composer.lock`, valida o unified diff com `git apply --check` antes de gerar manifesto e artefatos versionáveis; aplicação permanece no build Composer.
 - Adicionado patch para negar upload H5P que use bibliotecas locais restritas quando a conta não tem `create restricted h5p content types`; segue revisão e teste funcional antes de ativar H5P.
 - RUNTIME STATUS: `aculta_patcher` habilitado no Runtime de teste após backup privado `/home/aculta/private/aculta/aculta-runtime-before-aculta-patcher-20261018.sql.gz.gz` (0600); tabela e entidade foram verificadas via Drush. H5P permanece desativado. A rota existe no Router, mas HTTP visual retornou 404 e fica DEFERRED. Nenhum arquivo de Core/contrib foi editado manualmente.
+
+## 0.4.0-dev.195 — Fórum como aba isolada de Conteúdo — 2026-10-19
+
+- Fórum passa a ser aba própria dentro de `/painel-administrativo/conteudo`; a
+  listagem geral de Nodes tem filtro fixo para excluir tópicos do Fórum, mesmo
+  quando o filtro exposto de tipo é usado. “Comentários e moderação” é subaba
+  da seção Fórum; discussões ligadas a `field_aculta_discussion` saem da fila
+  genérica e permanecem no painel do contexto (Fórum ou Revista).
+- Os caminhos administrativos permanecem estáveis. Removidos os links estáticos
+  que duplicavam as abas fornecidas pelas Views.
+- Versões: Portal `0.4.0-dev.195`, Forum `0.1.0-dev.26`, User `0.4.0-dev.34`.
+- RUNTIME STATUS: PARTIAL. Runtime de teste: configuração dirigida das Views
+  aplicada com backup privado; abas Fórum e “Comentários e moderação” carregam
+  com a hierarquia esperada. Existem 8 tópicos de teste e 0 comentários; a View
+  geral responde sem tópicos quando filtrada por esse bundle. HTTP autenticado
+  ainda não foi validado.
+
+## 0.4.0-dev.194 — Fórum fora da listagem geral e correção do HTTP 500 — 2026-10-19
+
+- O Fórum e seus comentários passam a ser itens próprios no menu administrativo
+  `content`, no mesmo nível de Galerias. As páginas deixam de ser abas do
+  overview genérico; os caminhos permanecem estáveis.
+- A View administrativa volta a usar o campo de categoria com o handler válido
+  de referência a entidade. O handler inválido anterior causava `TypeError`
+  (`array + null`) e HTTP 500 quando havia resultados.
+- RUNTIME STATUS: PARTIAL. Os dois configs do Fórum foram atualizados no
+  Runtime após backup privado; uid 5 tem acesso às rotas e Views de tópicos e
+  comentários renderizam pelo Render API (42.819 e 2.871 bytes). HTTP autenticado
+  no navegador segue pendente. Nenhum conteúdo foi alterado.
+
+## 0.4.0-dev.193 — navegação administrativa visível para Fórum e Revista — 2026-10-19
+
+- Itens explícitos no menu administrativo de Conteúdo dão acesso às listagens do
+  Fórum, aos comentários do Fórum como subitem e à área unificada da Revista.
+- Acesso continua derivado das rotas/Views existentes; não foram criadas
+  permissões novas nem caminhos alternativos.
+- RUNTIME STATUS: PARTIAL. Após cache rebuild no Runtime, a árvore de menu e as
+  três rotas foram confirmadas acessíveis para uid 5. A autenticação HTTP
+  temporária gerada pelo Drush retornou 404; renderização no navegador segue
+  pendente.
+
+## 0.4.0-dev.191 — conteúdos administrativos de Fórum e Revista — 2026-10-19
+
+- O Fórum público tem listagens separadas de tópicos e comentários; a fila de
+  comentários fixa tipo, campo, entidade e bundle hospedeiro.
+- A Revista reúne publicações e comentários em
+  `/painel-administrativo/conteudo/revista`; o bloco de comentários é restrito
+  ao purpose main e à permissão de moderação.
+- LMS e Wiki têm contratos de administração independentes e só ativarão suas
+  listagens com seus adapters e validação contextual de acesso.
+- RUNTIME STATUS: PARTIAL. Views do Fórum foram carregadas no Runtime de teste;
+  configuração da Revista aguarda smoke dedicado.
+
+## 0.4.0-dev.197 — índice de categorias do ACULTA Forum — 2026-10-19
+
+- O ACULTA Forum ganha uma página Views própria em `/categorias`, restrita ao
+  vocabulário `aculta_forum_categories`, e uma aba de navegação pública ao lado
+  das discussões. A listagem usa Taxonomy e renderização nativa de termos; não
+  consulta Nodes diretamente nem expõe categorias de outros contextos.
+- Configuração de instalação e Config Sync são idênticas. A apresentação
+  hierárquica refinada e os contadores de tópicos permanecem nas etapas visuais
+  e de estatísticas do Fórum.
+
+## 0.4.0-dev.201 — respostas nos tópicos próprios do Fórum — 2026-10-19
+
+- Minha Conta consulta os tópicos públicos `aculta_forum_topic` e apresenta o
+  contador agregado de comentários publicados mantido pelo Comment Core.
+- PHPUnit Unit `aculta_user`: 60/60 testes, 175 assertions PASS; lint e gates
+  Drupal 11+ (970), fronteira (1368), mapa (154) e portal-ui docs PASS.
+- PHPCS mantém a linha de base anterior na classe alterada (23 erros/14 avisos);
+  PHP CLI 8.4.26. Runtime de teste via Drush, uid 5: 8 tópicos renderizáveis e
+  8 contagens encontradas, somente leitura; HTTP/browser autenticado pendente.
+  RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.202 — seguir e salvar tópicos do Fórum — 2026-10-19
+
+- As Flags `seguir_topico` e `salvar_topico` cobrem o bundle próprio do ACULTA
+  Forum, preservando registros e suporte transitório ao bundle antigo.
+- Forum Unit `ForumTopicDisplayConfigTest`: 16 testes / 199 assertions PASS;
+  gates Portal 11+ (970), fronteira (1370), mapa (154) PASS. Runtime de teste:
+  backup privado e alteração somente das duas configurações Flag; cache
+  rebuild e construção dos dois links como uid 5 PASS, sem gravar flagging.
+  Navegador autenticado pendente. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.213 — pesquisa pública do Growroom420 — 2026-10-20
+
+- A rota da View `aculta_forum_search` pertence ao purpose `forum`, com o mesmo
+  contrato de canonicalização das páginas públicas do Fórum. A busca usa índice
+  separado limitado a `aculta_forum_topic`; detalhes e limites em
+  `aculta_forum/docs/SEARCH.md`.
+- Testes Unit de consulta e classificação de rota: 5 testes / 17 asserções
+  PASS. Gates Portal Drupal 11+, fronteira, mapa, slugs e caminhos PASS.
+- Runtime `toca`: importação parcial apenas do índice e da View; cache rebuild;
+  `/pesquisar` HTTP 200 e consulta sem resultados HTTP 200. Antes da importação,
+  havia 0 tópicos e 0 Comments ACULTA; nenhum conteúdo foi criado. Firefox/X11
+  em 1024 px confirmou a página, mas exibiu a mensagem de validação CAPTCHA;
+  formulário não submetido, causa não isolada; ver a matriz do Forum. RUNTIME
+  STATUS: PARTIAL.
+
+## 0.4.0-dev.249 — reconhece contratos de iframe do H5P no gate Portal–tema
+
+- O gate `validate-module-theme-boundary.php` permite `h5p-iframe-wrapper` e `h5p-iframe`, exigidos pelo H5P Core para inicialização e apresentação do iframe; não são classes de design do Portal.
+- O mapa Portal–tema registra os contratos `h5p-content`, `h5p-editor`, `h5p-iframe-wrapper` e `h5p-iframe`.
+
+## 0.4.0-dev.250 — política central de upload de usuários
+
+- `aculta_portal.user_upload_policy` concentra extensões, limite padrão de 10 MB, validação de imagem via `aculta_image` e validadores Core reutilizáveis. `user_upload_dialog_builder` compartilha o shell do modal e os controles Managed File.
+- Opções globais e override por consumidor ficam em **ACULTA → Envio de arquivos por usuários**; a aba Fórum herda globalmente por padrão.
+- O modal e a integração de Media permanecem no domínio do consumidor; Wiki e LMS são a próxima etapa de migração.
+- Código e configuração ainda sem validação de Runtime; estado Dev.
+
+## 0.4.0-dev.251 — kernel central de upload alinhado às garantias do Fórum — 2026-10-21
+
+- `UserUploadPolicy` preserva as garantias de validação do fluxo antigo com allowlist e limite globais/por consumidor; configuração inválida de consumidor recua para a política global em vez de ampliar permissões. A UI central corrige resolução de tradução e usa os constraints File API de Drupal 11.
+- `UserUploadPolicyKernelTest`: 5 testes, 83 assertions PASS; cobre abas administrativas, fallback, Managed File, inspeção raster por `aculta_image` e restrição contextual de `aculta_gallery`. O Kernel de publicação/limpeza do Fórum permanece como regressão do lifecycle de consumidor.
+- X11 Firefox: fixture representativa do shell de upload com CSS real do ACULTA420 em 390, 768 e 1024 px; largura, rolagem e rótulo acessível PASS. Isso não substitui inspeção do modal servido por Drupal no Runtime, que permanece DEFERRED.
+- Validação: Kernel central 5/83, Kernel do Fórum 6/148, ACULTA420 `PortalUiHooksTest` 6/29, PHPCS e PHP lint PASS; gates `aculta_image` e `aculta_gallery` PASS. `validate-aculta-portal-drupal11` permanece bloqueado pelo índice global de status (faltam status de `aculta_document_viewer` e `aculta_document_viewer_group`; README gerado também desatualizado por frentes concorrentes). Nenhuma mudança de Runtime ou deploy.
 

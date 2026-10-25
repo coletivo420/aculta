@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Controller;
 
 use Drupal\aculta_image\ImageRenderer;
+use Drupal\aculta_portal\Secrets\SecretsManager;
 use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\aculta_portal\Form\AccountOtherDataForm;
@@ -12,7 +13,6 @@ use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Form\AccountPasswordCreateForm;
-use Drupal\change_mail_page\Form\ChangeMailForm;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -27,8 +27,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\email_confirmer\EmailConfirmerManagerInterface;
-use Drupal\key\KeyRepositoryInterface;
+use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -40,8 +39,7 @@ final class PortalController extends ControllerBase {
   /** Social Auth stores the network plugin ID, not its URL short name. */
   private const GOOGLE_SOCIAL_AUTH_PLUGIN_ID = 'social_auth_google';
 
-  /** Transporte do Mailer Plus usado pelo Portal (ver docs/portal/EMAIL-TRANSPORT.md). */
-  private const MAIL_TRANSPORT = 'smtp2go';
+  /** Transporte da camada de envio E-Mails ACULTA usado pelo Portal (ver docs/portal/EMAIL-TRANSPORT.md). */
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
@@ -51,16 +49,16 @@ final class PortalController extends ControllerBase {
     private readonly UserDataInterface $userData,
     private readonly AuthIntegrationManager $authIntegrationManager,
     private readonly BlockManagerInterface $blockManager,
-    private readonly EmailConfirmerManagerInterface $emailConfirmer,
+    private readonly AcultaMailConfirmerManagerInterface $emailConfirmer,
     private readonly RouteMatchInterface $routeMatch,
     private readonly AccountInterface $account,
     private readonly ModuleHandlerInterface $modules,
     private readonly ConfigFactoryInterface $configs,
     private readonly DateFormatterInterface $dateFormatter,
-    private readonly KeyRepositoryInterface $keys,
     private readonly CurrencyFormatterInterface $currencyFormatter,
     private readonly ?AccountDocumentInterface $accountDocument,
     private readonly ImageRenderer $imageRenderer,
+    private readonly SecretsManager $secrets,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -72,29 +70,26 @@ final class PortalController extends ControllerBase {
       $container->get('user.data'),
       $container->get('aculta_portal.auth_integration'),
       $container->get('plugin.manager.block'),
-      $container->get('email_confirmer'),
+      $container->get('aculta_mail_confirmer'),
       $container->get('current_route_match'),
       $container->get('current_user'),
       $container->get('module_handler'),
       $container->get('config.factory'),
       $container->get('date.formatter'),
-      $container->get('key.repository'),
       $container->get('commerce_price.currency_formatter'),
       self::accountDocumentService($container),
       $container->get('aculta_image.render'),
+      $container->get('aculta_portal.secrets_manager'),
     );
   }
 
   /**
-   * Resolves the canonical implementation, retaining the legacy service during migration.
+   * Resolves the official CPF/CNPJ implementation (aculta_id_cpf); NULL when the module is not enabled.
    */
   private static function accountDocumentService(ContainerInterface $container): ?AccountDocumentInterface {
-    foreach (['aculta_associado_id.account_document', 'aculta_id_cpf.account_document'] as $service_id) {
-      if ($container->has($service_id)) {
-        return $container->get($service_id);
-      }
-    }
-    return NULL;
+    return $container->has('aculta_id_cpf.account_document')
+      ? $container->get('aculta_id_cpf.account_document')
+      : NULL;
   }
 
   /**
@@ -177,15 +172,6 @@ final class PortalController extends ControllerBase {
   /** Caminho aposentado (página do acordo substituída pelo popup de aceite): responde 404. */
   public function retiredNotFound(): never {
     throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
-  }
-
-  /**
-   * Lista e cadastro de endereços do Commerce foram substituídos pelo formulário de Meus Dados (CEP).
-   * Todos os caminhos antigos redirecionam para lá (302). Ver docs/portal/REDIRECTS.md.
-   */
-  public function addressRedirect(): TrustedRedirectResponse {
-    $target = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.my_data_address');
-    return new TrustedRedirectResponse($target?->toString() ?? Url::fromRoute('aculta_portal.my_data')->toString(), 302);
   }
 
   /** Meus pedidos: compras da pessoa logada (rascunhos de carrinho ficam fora). */
@@ -374,20 +360,21 @@ final class PortalController extends ControllerBase {
       'current_label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('E-mail atual')],
       'current_email' => ['#plain_text' => $account->getEmail()],
     ];
-    if ($email_ready && $this->modules->moduleExists('email_confirmer_user') && $this->modules->moduleExists('change_mail_page')) {
-      $section_content['change_form'] = $this->accountFormBuilder->getForm(ChangeMailForm::class, $account);
+    if ($email_ready && $this->modules->moduleExists('aculta_mail_confirmer_user')) {
       $pending_email = $this->pendingEmail($account->id());
       if ($pending_email !== NULL) {
         $section_content['pending'] = [
           '#type' => 'container',
           '#attributes' => ['data-portal-ui' => 'security-pending', 'aria-live' => 'polite'],
           'label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('Alteração pendente')],
-          'email' => ['#plain_text' => $pending_email],
-          'message' => ['#plain_text' => $this->t('Aguardando confirmação no novo endereço.')],
+          'email' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $pending_email],
+          'message' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $this->t('Aguardando confirmação no novo endereço.')],
         ];
       }
     }
-    else {
+    // O formulário de pedido de troca é do aculta_user (ponto aculta_portal_changemail). Sem ele, a aba só informa.
+    $this->modules->alter('aculta_portal_changemail', $section_content, $account, $email_ready);
+    if (!isset($section_content['change_form'])) {
       $section_content['mail_notice'] = ['#plain_text' => $this->t('A alteração de e-mail estará disponível após a ativação do serviço de mensagens da conta.')];
     }
     return $section_content;
@@ -402,32 +389,34 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * Mailer Plus (mailer_override) envia pelo transporte SMTP2GO. As credenciais vêm de Keys
-   * (override nativo do módulo Key), nunca da configuração exportada.
+   * O envio do site é a camada de envio E-Mails ACULTA (system.mail): pronto quando o transporte padrão tem usuário e
+   * senha, e a senha está no arquivo de segredos. Nenhuma Key participa.
    */
   private function transactionalMailReady(): bool {
     $site_mail = trim((string) $this->configs->get('system.site')->get('mail'));
-    return $this->modules->moduleExists('mailer_override')
-      && $this->configs->get('mailer_transport.settings')->get('default_transport') === self::MAIL_TRANSPORT
-      && $this->keyHasValue('smtp2go_username')
-      && $this->keyHasValue('smtp2go_password')
+    $interface = (string) $this->configs->get('system.mail')->get('interface.default');
+    // Sem o módulo de envio habilitado, não há transporte a checar (a referência é por nome, sem classe).
+    if (!$this->modules->moduleExists('aculta_mailer')) {
+      return FALSE;
+    }
+    $transport = $this->entities->getStorage('aculta_mailer_transport')->load('smtp_hostinger');
+    return $interface === 'aculta_mailer'
+      && $transport !== NULL
+      && $transport->get('user') !== ''
+      && $transport->get('password_secret') !== ''
+      && $this->secrets->value((string) $transport->get('password_secret')) !== NULL
       && $site_mail !== '';
   }
 
-  private function keyHasValue(string $id): bool {
-    $key = $this->keys->getKey($id);
-    return $key !== NULL && trim((string) $key->getKeyValue()) !== '';
-  }
-
   private function pendingEmail(int|string $uid): ?string {
-    if (!$this->modules->moduleExists('email_confirmer_user')) {
+    if (!$this->modules->moduleExists('aculta_mail_confirmer_user')) {
       return NULL;
     }
-    $pending = $this->userData->get('email_confirmer_user', $uid, 'email_change_new_address');
+    $pending = $this->userData->get('aculta_mail_confirmer_user', $uid, 'email_change_new_address');
     if (!is_string($pending) || $pending === '') {
       return NULL;
     }
-    $confirmations = $this->emailConfirmer->getConfirmations($pending, 'pending', 0, 'email_confirmer_user');
+    $confirmations = $this->emailConfirmer->getConfirmations($pending, 'pending', 0, 'aculta_mail_confirmer_user');
     foreach ($confirmations as $confirmation) {
       if ((int) $confirmation->get('uid')->target_id === (int) $uid) {
         return $pending;

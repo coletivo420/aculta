@@ -1,0 +1,24 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.plain_text
+  enforced:
+    module:
+      - aculta_messenger
+template: aculta_msg_commerce_order_notice
+label: 'Aviso da Loja ACULTA'
+description: 'Aviso de pedido sem dados comerciais sensíveis.'
+text:
+  -
+    value: 'Pedido recebido na Loja ACULTA'
+    format: plain_text
+  -
+    value: '@summary Acesse: @url'
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {  }

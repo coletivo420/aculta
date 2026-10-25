@@ -1,28 +1,71 @@
 # Avisos e mensagens no ACULTA Messenger
 
-Status: documento de referência, atualizado em 2026-10-16. Descreve o que o módulo faz hoje e o que está pendente.
+Status: documento de referência, atualizado em 2026-10-25. Descreve o que o módulo faz hoje e o que está pendente.
 Decisões de origem: F-D21 (política em `docs/portal/AVISOS-E-NOTIFICACOES.md`, no repositório).
 
 ## 1. Dois sistemas, dois destinos
 
 Este módulo contém dois sistemas que **não se misturam**. Nenhuma notificação de aviso usa a caixa de mensagens, e
-nenhuma conversa usa o aviso.
+nenhuma conversa usa o aviso. Seguir tópico ou outro conteúdo significa receber
+avisos conforme acesso e preferências; isso não cria conversa nem adiciona
+participantes a threads. Consulte [ARCHITECTURE.md](ARCHITECTURE.md) para o
+contrato normativo.
 
 | | Mensagens | Avisos |
 |---|---|---|
 | Para que serve | Conversa entre pessoas | Comunicar algo ao sistema, à pessoa ou ao site |
 | Onde aparece | Caixa de conversas (Private Message) | Barra do site, lista de avisos e contadores |
 | Quem envia | Pessoas | O sistema (comunicados, respostas em tópico seguido) |
-| Entidade | `private_message` (nativa) | Comunicados `aculta_notice` (nó); avisos por pessoa `aculta_aviso` (entidade própria) |
-| E-mail | Pelo Message Notify, quando a pessoa ativa | Resumo diário opt-in, pela fila de envio do módulo (pendente) |
+| Entidade | `private_message` (nativa) | Comunicados `aculta_notice` (nó); Fórum `aculta_aviso`; adapters Message de LMS, Wiki, Loja, Doações e Amizades |
+| E-mail | ACULTA Mailer: aviso genérico direto ou resumo semanal, sem conteúdo da conversa; itens antigos de Mensagens Privadas ou Amizades ainda usam Message Notify até a drenagem | Sem e-mail, resumo diário ou envio direto, conforme preferência individual e modos autorizados pelo administrador |
 | Contadores | Não lidas por conversa (nativo) | `contador_site` por tópico; `MessengerCounts` |
 
 Regra: uma resposta em tópico seguido é um **aviso**, não uma mensagem. A publicação de tópico também não gera mais
 mensagem (ver seção 5).
 
+Avisos no site são obrigatórios. Para Fórum, LMS, Wiki, Loja e Doações, a pessoa
+escolhe sem e-mail, resumo diário ou envio direto. Mensagens privadas oferecem
+sem e-mail, envio genérico direto ou resumo semanal; amizade oferece sem e-mail
+ou envio direto. Em Configurações do Messenger, administradores podem restringir
+os modos disponíveis por categoria; não podem remover a opção sem e-mail nem
+desligar a entrega no site. O ACULTA Mailer continua dono do transporte e pode
+suspender tipos de mensagem conforme sua política.
+
+O Messenger só permite preferências nas categorias registradas para Fórum,
+LMS (`aprendizagem`), Wiki, Loja, Doações, mensagens privadas e amizade. Categoria desconhecida falha fechada
+para e-mail e não é gravada em `user.data`; integrar uma nova origem exige
+adicionar explicitamente sua categoria e cobertura de teste.
+
+A aba Avisos da central da conta e a gaveta do cabeçalho filtram a lista
+compartilhada por origem (incluindo Amizades) e estado de leitura. A origem é marcada pelos
+produtores centralizados no Messenger depois de revalidar o acesso. Os links de
+abertura e retorno mantêm os filtros selecionados. Na gaveta, links carregam o
+fragmento no próprio painel; seus destinos apontam para a central da Conta como
+fallback funcional sem JavaScript. Na lista sem filtro, as origens são separadas
+em grupos ordenados pelo aviso mais recente; itens dentro de cada grupo também
+seguem recência. Alertas do site são ordenados por `created` antes da paginação,
+com ID como desempate estável.
+
+Pedidos e aceites de amizade aparecem como avisos no site usando o `Message`
+existente. O Messenger mantém estado lido/não lido e contagem por destinatário;
+os textos são genéricos e não expõem nomes de terceiros. Esse canal é obrigatório
+e não depende da preferência de e-mail.
+
+Na lista sem filtro, os avisos aparecem agrupados por origem, com cabeçalho e
+separador visual. Dentro de cada origem, usa-se a ordem mais recente disponível:
+`changed` no Fórum, `created` nos adapters Message e ID decrescente nos Alertas
+do Site, que não expõem data de criação. No Fórum, limpar os contadores de
+leitura e confirmar o digest preserva `changed`, para que alterações de entrega
+não façam avisos antigos parecerem recentes. Filtros e paginação são aplicados
+antes de construir as seções. A visão global da Conta pagina cada origem com
+cursor próprio; avançar uma origem preserva os offsets das demais. Na visão sem
+filtro, comunicados, Fórum, Alertas do Site, Amizades, LMS, Wiki, Loja e Doações
+têm navegação independente; offsets da URL são normalizados e limitados pelo
+Messenger.
+
 ## 2. Avisos por pessoa (`aculta_aviso`)
 
-Um registro por **pessoa, tipo e tópico**. Tipos: `forum_resposta` (comentário novo em tópico seguido) e
+Um registro por **pessoa, tipo e tópico**. Tipos: `forum_resposta` (Comment ou post revisionável novo em tópico seguido) e
 `forum_atualizacao` (revisão nova de tópico seguido). Cada campo:
 
 | Campo | Função |
@@ -33,19 +76,38 @@ Um registro por **pessoa, tipo e tópico**. Tipos: `forum_resposta` (comentário
 | `titulo` | Título do tópico na época do aviso |
 | `contador_site` | Respostas novas não lidas. Zera quando a pessoa lê o tópico |
 | `contador_email` | Respostas ainda não enviadas no resumo por e-mail. Zera pelo resumo |
-| `ultimo_comentario` | Último comentário contado (tipo resposta). Garante que cada comentário conta uma vez |
+| `ultimo_comentario` | Maior CID já contado; preserva o marcador histórico e auxilia transferência do agregado. A idempotência usa o ledger `aculta_messenger_forum_notice_event`, com chave por destinatário/tipo/ID de evento |
+| `ultimo_post` | Último ID de revisão de `ForumPost` contado. Watermark separado evita colisão com CIDs de Comments e acompanha a ordem de publicação, mesmo quando a moderação aprova posts fora da ordem de criação |
 | `ultimo_evento` | Última revisão contada (tipo atualização). Garante que cada revisão conta uma vez |
 
 Regras (implementadas em `Aviso\AvisoService`):
 
-- Quem segue o tópico (flag `seguir_topico`) recebe o aviso. Quem escreveu o comentário não recebe aviso dele.
-- Só comentário **publicado** conta. Comentário criado não publicado conta quando for aprovado (`comment_update`).
-- Um comentário nunca conta duas vezes: se o identificador não for maior que `ultimo_comentario`, nada muda.
+- Quem segue o tópico (flag `seguir_topico`) recebe o aviso. A autoria da própria resposta não recebe aviso dela.
+- Só Comment ou `ForumPost` **publicado** conta. Comment pendente conta na aprovação; post pendente conta quando o workflow o publica pela primeira vez.
+- Uma revisão posterior de um post já publicado não cria outro aviso de resposta.
+- Cada evento de Comment, revisão de `ForumPost` ou tópico publicado é contado uma vez pela chave única `(uid, tipo, id_evento)`. A ordem de processamento não descarta eventos antigos. `ultimo_comentario`, `ultimo_post` e `ultimo_evento` permanecem máximos históricos, não chaves de idempotência. Lock por destinatário/tópico/tipo serializa os incrementos do agregado.
+- Uma primeira publicação de post revisionável nunca conta duas vezes: o ID
+  da revisão publicada é comparado somente com `ultimo_post`. Edições,
+  sincronizações e republicações de post já publicado anteriormente não geram
+  outra resposta.
 - Ler o tópico (requisição à rota canônica do nó, usuário autenticado) zera `contador_site` de **todos os tipos**
   daquele tópico.
 - Atualização de tópico seguido (fila de publicação) cria aviso `forum_atualizacao`, sem mensagem.
 - O aviso é visível só para a própria pessoa (`AvisoAccessControlHandler`). Administrar avisos exige
   `administer aculta avisos`.
+
+### 2.1 Elegibilidade e privacidade do contexto
+
+- A integração de seguir/notificar usa exclusivamente tópicos publicados do bundle `aculta_forum_topic`, Comments
+  publicados `aculta_discussion_post` e posts publicados/default do bundle `aculta_forum_post`. O bundle Drupal Forum
+  contribuído `forum` não participa desse fluxo.
+- Tópico com autoria histórica em `field_autor_legado` e eventos de sincronização são excluídos.
+- Antes de criar um aviso e antes de mostrá-lo, contá-lo ou incluí-lo no resumo por e-mail, o Messenger carrega a conta
+  ativa e revalida acesso de visualização no purpose `forum`, incluindo a atribuição explícita ao Domain público do Fórum.
+- Comments e posts exigem acesso ao tópico e à resposta correspondente na criação do aviso. Se o acesso deixar de existir, o aviso sai das listas e
+  contadores; seu contador pendente de e-mail é zerado antes de montar o resumo.
+- O serviço de acesso está em `Aviso\ForumNoticeAccessPolicy`; não depende do módulo Forum nem cria uma segunda fila ou
+  entidade. Domain Access determina o acesso ao nó no domínio ativo, então a revalidação executa no purpose correto.
 
 ## 3. Funções do módulo por camada
 
@@ -55,10 +117,11 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 
 - `Controller/MessagesController`, `NativePrivateMessageController`, `NewConversationController`: telas de conversa.
 - `Form/NewConversationForm`, `PrivateMessageFormValidator`, `FriendRequestsForm`: formulários de conversa e pedidos.
-- `Service/ConversationPolicy`, `ConversationMessagingState`: quem pode abrir conversa (privacidade e amizade).
+- `Service/ConversationPolicy`, `ConversationMessagingState`: política de novas conversas; bloqueios bilaterais em todos os participantes de threads existentes e estado correspondente do compositor.
 - `Service/UnreadThreadCounter`: contagem de conversas não lidas.
 - `Hook/PrivateMessage*Hooks`: formulários, respostas, retenção e apresentação das mensagens.
-- `Plugin/QueueWorker/PrivateMessageNotificationWorker`: entrega, por e-mail, de mensagens privadas.
+- `Plugin/QueueWorker/PrivateMessageNotificationWorker`: entrega aviso genérico direto por e-mail ou registra o aviso mínimo para o digest semanal. O e-mail contém o nome do remetente e o link da inbox, nunca o conteúdo da mensagem; acesso, bloqueios, confirmação e preferência são revalidados.
+- `Aviso/PrivateMessageDigestProvider`: contribui registros `Message` pendentes ao digest compartilhado; respeita a data âncora administrativa e o intervalo de sete dias por conta, revalida acesso à thread e marca somente os itens incluídos.
 - `Mapper/MessengerPrivateMessageMapper`: mapeamento de dados para o tema.
 
 **Avisos (comunicados, alertas e avisos por pessoa)**
@@ -69,14 +132,20 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 - `Hook/NoticeAdminHooks`, `EventSubscriber/NoticeAdminRouteSubscriber`: administração dos comunicados.
 - `Entity/Aviso`, `Entity/AvisoAccessControlHandler`: entidade do aviso por pessoa.
 - `Aviso/AvisoService`: regra de contagem, deduplicação e leitura dos avisos por pessoa.
-- `Hook/ForumAvisoHooks`: `comment_insert` e `comment_update` chamam o serviço.
+- `Hook/ForumAvisoHooks` envia Comments publicados/aprovados e primeira
+  publicação de ForumPost a `ForumNoticeEventProducer`; o evento passa pelo
+  publisher compartilhado e `ForumNoticeEventSubscriber` resolve a origem,
+  revalida destinatário/acesso e chama o agregador existente.
 - `EventSubscriber/ForumAvisoReadSubscriber`: leitura do tópico zera o contador do site.
 
 **Assinaturas e eventos**
 
-- `Hook/MessageSubscribeHooks`: destinatários de assinatura. **Hoje retorna vazio para tópicos de fórum** (seção 5).
+- Na privacidade da conta, Messenger lista as Flags `seguir_topico` pertencentes à pessoa e permite removê-las em lote. Os nodes são carregados em um lote pela Entity API. O link e o título do tópico só aparecem se o acesso atual permitir; itens indisponíveis recebem rótulo genérico e ainda podem ser desassinados. O submit reconsulta as Flags da conta e só remove IDs que continuam pertencendo à pessoa, carregando os alvos selecionados em lote antes de usar `FlagServiceInterface::unflag()`. Não cria storage, não muda acesso nem apaga avisos históricos.
+
+- `Hook/MessageSubscribeHooks`: aplica `message_subscribe_get_subscribers_alter` para remover destinatários de Message Subscribe em tópicos do ACULTA Fórum e Comments hospedados neles (F-D21); outros contextos mantêm os candidatos contrib. O hook aditivo `get_subscribers` não cancelava os destinatários do contrib.
 - `Hook/MessageSubscribeEventHooks`, `Plugin/QueueWorker/MessageSubscribeEventWorker`: fila do evento de publicação
-  de tópico. Ainda existe; sua entrega por mensagem foi desligada.
+  de tópico. A fila conserva o nome histórico, mas encaminha atualizações pelo
+  evento compartilhado e não chama a entrega de Message Subscribe.
 
 **Integração com o Portal e o tema**
 
@@ -94,35 +163,68 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 ## 5. Contador do ícone de avisos
 
 O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + **avisos por pessoa não lidos**
-(`AvisoService::naoLidosTotal`). Cada entrada é um grupo tipo + assunto com contador > 0. O contador de conversas
+(`AvisoService::naoLidosTotal`): avisos do Fórum são grupos tipo + assunto com
+contador > 0; consumers pessoais centralizados para LMS, Wiki e Loja somam registros
+acessíveis não lidos pelo alter de contagem. O contador de conversas
 (outro ícone) não inclui avisos.
 
-## 6. Controles individuais (Minha conta > Privacidade, bloco "Avisos")
+## 6. Controles individuais (Minha conta > Configurações > Notificações por e-mail)
 
 - Os avisos no site são **sempre exibidos**: não há opção para desligá-los.
-- **Resumo diário por e-mail**: desligado por padrão. Quando ligado, dois sub-controles escolhem o que entra:
-  respostas novas e atualizações de tópicos. Preferências em `user.data` (`aculta_messenger`).
-- Desligar o resumo zera os contadores de e-mail pendentes, para não acumular um resumo antigo.
+- Cada categoria integrada (Fórum, LMS, Wiki, Loja e Doações) escolhe entre
+  sem e-mail, envio direto e resumo diário, conforme a política administrativa.
+  A escolha de uma categoria controla seu modo sem depender de um opt-in global.
+- Mensagens Privadas mantêm opções próprias: aviso genérico direto, resumo
+  semanal ou somente no site; Amizades permitem envio direto ou somente no site.
+- As preferências ficam em `user.data` do Messenger. Trocar para direto ou
+  somente no site descarta pendências de digest da categoria, sem afetar avisos
+  obrigatórios no site nem o digest semanal independente de Mensagens Privadas.
+- O post-update `aculta_messenger_post_update_shared_email_preferences` migra
+  escolhas do antigo resumo global e exceções do Fórum para modos por categoria,
+  preserva escolhas Messenger atuais e remove as chaves antigas após a cópia.
+  Ele é incremental e ainda precisa ser executado no Runtime.
 
 ## 7. Resumo diário por e-mail
 
 - Roda no cron (`AvisosResumoHooks::cron`) e chama `AvisosResumo::enviarResumos()`.
 - Envia para contas **ativas, com e-mail e e-mail confirmado** (`EmailConfirmationPolicy`), com o resumo ligado.
-- Um e-mail por conta por dia, no máximo (intervalo de 20 horas), e só quando há contador de e-mail > 0.
-- Linhas agrupadas por tópico: tipo, título e quantidade. O contador de e-mail zera **somente após envio com sucesso**.
-- Sistema de e-mail do Drupal, com o modelo `avisos_resumo` (`hook_mail`).
+- Um e-mail por conta a cada 20 horas, no máximo, quando houver item de qualquer provider ativo.
+- Linhas do Fórum são agrupadas por tópico; providers podem acrescentar avisos revalidados. Pendências são confirmadas
+  **somente após envio com sucesso**. O resumo captura a quantidade/IDs incluídos e confirma apenas esse lote; eventos
+  chegados durante o transporte ficam pendentes para o próximo digest. O contador de e-mail do Fórum é descontado sob o
+  mesmo lock usado pelos produtores, sem sobrescrever incrementos concorrentes.
+- Providers que implementam `AvisoDigestSelectiveDiscardInterface` podem descartar IDs específicos quando a preferência
+  de uma categoria muda antes da entrega. Categorias ainda autorizadas seguem no mesmo resumo; itens de e-mail descartados
+  não são reativados por uma futura troca de preferência, e isso não altera a cópia obrigatória do aviso na central do site.
+  Providers antigos continuam compatíveis; se devolverem categorias mistas sem essa capacidade, o núcleo deixa o lote
+  pendente em vez de descartar os itens elegíveis junto com os desautorizados.
+- Exceção de transporte mantém o lote pendente para retry e não interrompe os outros destinatários do cron. O log não
+  inclui destinatário, conteúdo do aviso nem texto da exceção.
+- `AcultaMailerInterface` envia o modelo `avisos_resumo`; não usa `hook_mail`.
+- Os envios diretos de Fórum, LMS, Wiki, Loja e Doações revalidam estado ativo, modo atual, endereço e a política
+  `EmailConfirmationPolicy` imediatamente antes da entrega. Se a confirmação ou preferência deixar de valer, somente o
+  e-mail é cancelado; o aviso obrigatório no site permanece no storage de origem.
+- A correlação do digest é um UUID v5 com chave HMAC pelo `hash_salt`, baseado no UID, destinatário e identificadores/tipos/quantidades do lote; títulos e conteúdo ficam fora. Na recuperação, o Messenger valida correlação, tipo e destinatário contra o hash mantido no Mail Log. Um retry confirma os IDs sem novo envio somente quando o destinatário atual corresponde ao aceite registrado. O snapshot não persiste o endereço. O reconhecimento entre Forum e adapters roda na transação padrão compartilhada; erro de qualquer confirmação reverte todas. A deduplicação Mailer depende do Mail Log ativo e persistido; não oferece atomicidade com o provedor externo.
+- Os adapters ACULTA de digest implementam `AvisoDigestProviderIdentityInterface` e declaram uma chave estável (`lms`, `wiki`, `commerce`, `donation`). Manifestos novos persistem essa chave, não o nome da classe PHP, para tolerar refatorações e proxies do container sem perder o reconhecimento de aceite. Providers existentes que implementam somente `AvisoDigestProviderInterface` continuam funcionando pelo fallback de classe; snapshots anteriores com `class` também são lidos durante a transição.
 
 ## 8. Funções do módulo, resumo dos novos componentes
 
 - `src/Entity/Aviso.php`: entidade `aculta_aviso`. `AvisoAccessControlHandler`: a pessoa vê só os próprios avisos.
-- `src/Aviso/AvisoService.php`: regras de contagem (`isNewComment`, `isNewRevision`), `registrarResposta`,
+- `src/Aviso/AvisoService.php`: revalidação e regras de contagem (`isNewComment`, `isNewRevision`), `registrarResposta`,
   `notificarAtualizacao`, `marcarLido`, `naoLidosTotal`.
 - `src/Aviso/AvisoPreferencias.php`: preferências individuais de e-mail.
-- `src/Aviso/AvisosResumo.php`: envio do resumo diário.
-- `src/Form/AvisosPrivacyForm.php` + `src/Hook/AvisosPrivacyHooks.php`: bloco "Avisos" na privacidade da conta.
-- `src/Hook/ForumAvisoHooks.php`: `comment_insert` e `comment_update` (aprovação de comentário).
+- `src/Aviso/AvisosResumo.php`: envio do resumo diário combinado. Providers tagged `aculta_messenger.aviso_digest_provider`
+  fornecem linhas com IDs de entrega e confirmam somente os itens incluídos após envio bem-sucedido.
+- `src/Form/CommunicationSettingsForm.php`: preferências individuais de e-mail de todas as categorias, na aba de conta `/configuracoes/email`.
+- `src/Form/AvisosPrivacyForm.php` + `src/Hook/AvisosPrivacyHooks.php`: acompanhamento de tópicos do Fórum na privacidade da conta; as preferências de e-mail ficam na página unificada.
+- `src/Aviso/ForumNoticeEventProducer.php` e `src/EventSubscriber/ForumNoticeEventSubscriber.php`:
+  adapter de publicação/consumo via `MessengerNoticeEvent`, preservando `aculta_aviso`
+  e o ledger idempotente.
+- `src/Hook/ForumAvisoHooks.php`: converte `comment_insert`/aprovação e eventos
+  de ForumPost ao producer.
 - `src/EventSubscriber/ForumAvisoReadSubscriber.php`: leitura do tópico.
-- `src/Plugin/QueueWorker/MessageSubscribeEventWorker.php`: atualização de tópico seguido vira aviso.
+- `src/Plugin/QueueWorker/MessageSubscribeEventWorker.php`: atualização de tópico
+  seguido é publicada no contrato compartilhado e consumida como aviso.
 - `src/Hook/MessengerBarHooks.php`: soma os avisos por pessoa ao ícone de avisos.
 
 ## 8.1 Central "Avisos/Mensagens" em Minha conta
@@ -136,6 +238,8 @@ O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + *
     comunicados, avisos da pessoa e alertas do site, com os mesmos itens, links e ações de dispensa. Só lê os avisos da
     conta logada; a página não recebe parâmetro de usuário. Dentro da aba não há o link "Ver todos", porque a aba já é a
     lista completa; a gaveta da barra mantém o link (`alertsBuild(FALSE)` na aba).
+    Quando os filtros não retornam itens, a lista mantém um estado vazio no próprio resultado, com `role="status"` e
+    estilo neutro do contrato `messenger-state`; a mensagem é decidida pelo módulo segundo os filtros ativos.
   - **Mensagens** (`/avisos-mensagens/mensagens`): a **mesma lista de conversas da gaveta da barra**
     (`MessagesController::conversasBuild`), com o mesmo botão de nova conversa e os mesmos links. As conversas continuam
     no sistema de mensagens; a aba não cria nem altera conversas.
@@ -176,7 +280,7 @@ Regra de apresentação e de vida útil, por tipo de aviso (decisão do respons�
   mensagem é criada (conferido).
 - Entrega de atualização por mensagem substituída por aviso (worker reescrito).
 - Contador do ícone de avisos soma os avisos por pessoa.
-- Bloco de controles individuais na privacidade da conta, e resumo diário por e-mail com as regras da seção 7.
+- Preferências individuais de e-mail estão centralizadas em `/configuracoes/email`; a seção Avisos da privacidade da conta mantém o gerenciamento das Flags `seguir_topico`.
 - Testes unitários das regras de deduplicação e do intervalo. Testes no Runtime de teste: resposta, atualização
   (revisão repetida não conta), soma no ícone, leitura por todos os tipos, preferências, envio do resumo e zeragem
   ao desligar.

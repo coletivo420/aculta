@@ -40,37 +40,72 @@
 | `data-aculta-chip-remove` | exato | sim | 2 |
 | `data-aculta-chips` | exato | sim | 2 |
 | `data-aculta-clear` | exato | sim | 2 |
+| `data-aculta-confirming` | exato | sim | 1 |
 | `data-aculta-conversation-url` | exato | não | 1 |
 | `data-aculta-conversation-view` | exato | sim | 2 |
 | `data-aculta-dialog` | exato | sim | 3 |
 | `data-aculta-dialog-close` | exato | sim | 2 |
 | `data-aculta-dialog-open` | exato | sim | 2 |
+| `data-aculta-discussion-announcement` | exato | sim | 1 |
+| `data-aculta-discussion-first` | exato | sim | 1 |
+| `data-aculta-discussion-last` | exato | sim | 1 |
+| `data-aculta-discussion-next` | exato | sim | 1 |
+| `data-aculta-discussion-previous` | exato | sim | 1 |
+| `data-aculta-discussion-progress` | exato | não | 2 |
+| `data-aculta-discussion-range` | exato | sim | 1 |
+| `data-aculta-discussion-status` | exato | sim | 1 |
+| `data-aculta-discussion-thread` | exato | sim | 1 |
+| `data-aculta-discussion-unread` | exato | sim | 1 |
+| `data-aculta-document-control` | exato | sim | 4 |
+| `data-aculta-document-part` | exato | sim | 5 |
+| `data-aculta-document-viewer` | exato | sim | 3 |
+| `data-aculta-docx` | exato | sim | 2 |
+| `data-aculta-docx-frame-url` | exato | sim | 1 |
+| `data-aculta-docx-libs` | exato | sim | 1 |
+| `data-aculta-docx-status` | exato | sim | 0 |
+| `data-aculta-docx-title` | exato | sim | 1 |
+| `data-aculta-docx-url` | exato | sim | 1 |
 | `data-aculta-drawer-action` | exato | sim | 3 |
 | `data-aculta-drawer-back` | exato | sim | 4 |
 | `data-aculta-drawer-content` | exato | sim | 2 |
 | `data-aculta-drawer-count` | exato | sim | 2 |
+| `data-aculta-drawer-filter` | exato | sim | 2 |
+| `data-aculta-drawer-filter-url` | exato | sim | 1 |
 | `data-aculta-drawer-label` | exato | não | 2 |
 | `data-aculta-drawer-url` | exato | sim | 2 |
+| `data-aculta-forum-post-timestamp` | exato | sim | 3 |
 | `data-aculta-group-max` | exato | sim | 1 |
-| `data-aculta-json-form` | exato | sim | 2 |
-| `data-aculta-legenda` | exato | sim | 2 |
-| `data-aculta-member-name` | exato | sim | 1 |
-| `data-aculta-messenger-count` | exato | sim | 2 |
 | `data-aculta-imagem` | exato | não | 1 |
 | `data-aculta-imagem-alinhamento` | exato | não | 1 |
 | `data-aculta-imagem-legenda` | exato | não | 1 |
 | `data-aculta-imagem-modelo` | exato | não | 1 |
-| `data-aculta-confirming` | exato | sim | 1 |
+| `data-aculta-json-form` | exato | sim | 2 |
 | `data-aculta-lazy-src` | exato | sim | 2 |
+| `data-aculta-legenda` | exato | sim | 2 |
 | `data-aculta-lock-mirror` | exato | sim | 1 |
+| `data-aculta-mailer-table` | exato | não | 2 |
+| `data-aculta-member-name` | exato | sim | 1 |
+| `data-aculta-messenger-count` | exato | sim | 2 |
 | `data-aculta-modelo` | exato | sim | 3 |
 | `data-aculta-new-conversation` | exato | sim | 2 |
 | `data-aculta-new-conversation-form` | exato | sim | 2 |
+| `data-aculta-notice-filters` | exato | não | 2 |
+| `data-aculta-notice-message-id` | exato | não | 6 |
+| `data-aculta-notice-origin` | exato | não | 7 |
+| `data-aculta-notice-read` | exato | não | 9 |
 | `data-aculta-number` | exato | sim | 2 |
 | `data-aculta-number-sn` | exato | não | 1 |
 | `data-aculta-open-conversation` | exato | sim | 2 |
 | `data-aculta-options-url` | exato | sim | 2 |
 | `data-aculta-pdf-control` | exato | sim | 4 |
+| `data-aculta-pdf-default-scroll` | exato | não | 1 |
+| `data-aculta-pdf-default-zoom` | exato | não | 1 |
+| `data-aculta-pdf-double-page` | exato | não | 1 |
+| `data-aculta-pdf-double-page-mobile` | exato | não | 1 |
+| `data-aculta-pdf-show-fullscreen` | exato | não | 1 |
+| `data-aculta-pdf-show-page-navigation` | exato | não | 1 |
+| `data-aculta-pdf-show-search` | exato | não | 1 |
+| `data-aculta-pdf-show-zoom` | exato | não | 1 |
 | `data-aculta-pdf-title` | exato | sim | 1 |
 | `data-aculta-pdf-url` | exato | sim | 1 |
 | `data-aculta-pdf-viewer` | exato | sim | 3 |
@@ -79,6 +114,15 @@
 | `data-aculta-portal-link` | exato | não | 2 |
 | `data-aculta-reply-form` | exato | sim | 3 |
 | `data-aculta-sent-date` | exato | sim | 1 |
+| `data-aculta-sheet` | exato | sim | 2 |
+| `data-aculta-sheet-count` | exato | sim | 0 |
+| `data-aculta-sheet-format` | exato | sim | 1 |
+| `data-aculta-sheet-frame-url` | exato | sim | 1 |
+| `data-aculta-sheet-libs` | exato | sim | 1 |
+| `data-aculta-sheet-status` | exato | sim | 0 |
+| `data-aculta-sheet-tabulator` | exato | sim | 1 |
+| `data-aculta-sheet-title` | exato | sim | 1 |
+| `data-aculta-sheet-url` | exato | sim | 1 |
 | `data-aculta-thread-id` | exato | não | 1 |
 | `data-aculta-thread-unread` | exato | não | 1 |
 | `data-aculta-user` | exato | não | 1 |
@@ -117,7 +161,6 @@ Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima
 
 Montadas por concatenação no módulo (o gate não enxerga cada valor; a família é o contrato):
 
-- `article-author-social-link-*`: Links sociais do autor de artigo (uma família por rede).
 - `post-share-*`: Botões de compartilhamento da publicação (uma família por canal).
 - `public-profile-link-*`: Links sociais do perfil público (uma família por rede).
 - `social-links-channel-*`: Canais da página de redes sociais (uma família por canal).
@@ -139,6 +182,10 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `status-pending` | `aculta-portal-requirements__status--pending` | (montado dinamicamente ou só no tema) |
 | `requirements-indexing` | `aculta-portal-requirements__indexing` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
 | `messenger-preview` | `aculta-messenger-preview` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-state` | `aculta-messenger-state` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-state-empty` | `aculta-messenger-state--empty` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `alerts-filters` | `aculta-alerts-filters` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `alerts-filters-group` | `aculta-alerts-filters__group` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `messenger-preview-inbox-link` | `btn`, `btn-primary`, `aculta-messenger-preview__inbox-link` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `new-conversation-link` | `btn`, `btn-primary`, `aculta-messenger-new-conversation` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `new-conversation-submit` | `btn`, `btn-primary` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
@@ -153,6 +200,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `messenger-read-status` | `aculta-messenger-read-status` | `web/themes/custom/aculta420/src/Hook/ThemeHooks.php` |
 | `notice-read-status` | `aculta-messenger-read-status` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `notice-unread-status` | `aculta-messenger-read-status`, `aculta-messenger-read-status--unread` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `notice-read-state-form` | `aculta-notice-read-state-form` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NoticeReadStateForm.php` |
+| `notice-read-state-action` | `aculta-notice-read-state-action` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NoticeReadStateForm.php` |
 | `requirements-indexing-table` | `aculta-portal-requirements__indexing-table` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
 | `secrets-section` | `aculta-portal-secrets-section` | `web/modules/custom/aculta_portal/src/Secrets/SecretsController.php` |
 | `secret-value` | `aculta-secret-value` | `web/modules/custom/aculta_portal/src/Secrets/SecretsController.php` |
@@ -180,6 +229,9 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `wiki-search` | `aculta-wiki-search` | (montado dinamicamente ou só no tema) |
 | `wiki-search-results` | `aculta-wiki-search-results` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php` |
 | `wiki-recent-change` | `aculta-wiki-recent-change` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php` |
+| `we-sativa-workspace` | `d-grid gap-4 we-sativa__workspace` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributorWorkspace.php` |
+| `we-sativa-create` | `btn btn-primary` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributorWorkspace.php` |
+| `wiki-workspace-return` | `btn btn-outline-primary mb-3` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryImageHooks.php` |
 | `courses-home` | `courses-home` | `web/modules/custom/aculta_portal/src/Controller/CoursesController.php` |
 | `courses-home-intro` | `courses-home__intro` | `web/modules/custom/aculta_portal/src/Controller/CoursesController.php` |
 | `courses-home-collaboration` | `courses-home__collaboration` | `web/modules/custom/aculta_portal/src/Controller/CoursesController.php` |
@@ -194,6 +246,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `account-bio-text` | `portal-account-bio__text` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
 | `account-bio-edit` | `btn`, `btn-link`, `portal-account-bio__edit`, `bi`, `bi-pencil` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
 | `account-bio-actions` | `portal-account-bio__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php` |
+| `account-photo-actions` | `portal-account-photo__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/UserPictureForm.php` | Linha de ações do popup de foto (sortear, remover e salvar). Estilo em `portal-account.css`. |
 | `account-overview-actions` | `portal-account-overview__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountDashboardHooks.php` |
 | `account-view-profile` | `btn`, `btn-outline-secondary`, `portal-account-overview__profile` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountDashboardHooks.php` |
 | `post-meta` | `portal-post__meta` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/PostPresentation.php` |
@@ -211,26 +264,11 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `article-authors-title` | `portal-article-authors__title` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
 | `article-authors-list` | `portal-article-authors__list` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
 | `article-author` | `portal-article-author` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-photo` | `portal-article-author__photo` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-initial` | `portal-article-author__initial` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-text` | `portal-article-author__text` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-name` | `portal-article-author__name` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `discussion` | `portal-discussion` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/DiscussionHooks.php` |
-| `discussion-title` | `portal-discussion__title` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/DiscussionHooks.php` |
-| `discussion-list` | `portal-discussion__list` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/DiscussionHooks.php` |
-| `discussion-item` | `portal-discussion__item` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/DiscussionHooks.php` |
-| `discussion-link` | `portal-discussion__link` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/DiscussionHooks.php` |
 | `forum-opening-post` | `portal-forum-opening` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |
 | `forum-opening-post-title` | `portal-forum-opening__title` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |
 | `forum-opening-post-image` | `portal-forum-opening__image` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |
 | `forum-opening-post-body` | `portal-forum-opening__body` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |
 | `forum-opening-post-link` | `portal-forum-opening__link` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |
-| `article-author-role` | `portal-article-author__role` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-bio` | `portal-article-author__bio` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-social` | `portal-article-author__social` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-social-link-instagram` | `portal-article-author__social-link`, `bi`, `bi-instagram` | (montado dinamicamente ou só no tema) |
-| `article-author-social-link-facebook` | `portal-article-author__social-link`, `bi`, `bi-facebook` | (montado dinamicamente ou só no tema) |
-| `article-author-social-link-reddit` | `portal-article-author__social-link`, `bi`, `bi-reddit` | (montado dinamicamente ou só no tema) |
 | `public-profile` | `portal-profile` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `public-profile-header` | `portal-profile__header` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `public-profile-avatar` | `portal-profile__avatar` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
@@ -270,11 +308,11 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `social-links-channel-facebook` | `aculta-social-links__channel--facebook` | (montado dinamicamente ou só no tema) |
 | `social-links-list` | `aculta-social-links__list`, `list-unstyled` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
 | `social-links-footer-inner` | `aculta-social-links-footer__inner` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
-| `social-links-settings-button` | `aculta-social-links-settings-button` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksSettingsForm.php` |
+| `social-links-settings-button` | `aculta-social-links-settings-button` | `web/modules/custom/aculta_portal/modules/aculta_links/src/Form/SocialLinksSettingsForm.php` |
 | `security-card` | `aculta-security-card` | (montado dinamicamente ou só no tema) |
 | `security-pending` | `aculta-security-pending` | `web/modules/custom/aculta_portal/src/Controller/PortalController.php` |
 | `auth-provider` | `aculta-auth-provider` | `web/modules/custom/aculta_portal/src/Form/LoginPopupForm.php`<br>`web/modules/custom/aculta_portal/src/Hook/PortalHooks.php` |
-| `terms-modal-documents` | `portal-terms-modal__documents` | `web/modules/custom/aculta_portal/src/Form/AccountTermsAcceptForm.php` |
+| `terms-modal-documents` | `portal-terms-modal__documents` | `web/modules/custom/aculta_portal/src/Form/AcultaUserAgreementAcceptForm.php` |
 | `street-number` | `portal-street-number` | `web/modules/custom/aculta_portal/src/Account/StreetNumberField.php` |
 | `street-number-sn` | `portal-street-number-sn` | `web/modules/custom/aculta_portal/src/Account/StreetNumberField.php` |
 | `breadcrumb-item` | `breadcrumb-item` | `web/modules/custom/aculta_portal/src/Render/AccountAjaxMainContentRenderer.php` |
@@ -295,11 +333,17 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `social-link-dialog` | `aculta-social-link-dialog` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php` |
 | `secret-dialog` | `aculta-secret-dialog` | `web/modules/custom/aculta_portal/src/Secrets/Form/SecretClearForm.php`<br>`web/modules/custom/aculta_portal/src/Secrets/Form/SecretEditForm.php` |
 | `messenger-preview` | `aculta-messenger-preview` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-state` | `aculta-messenger-state` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-state-empty` | `aculta-messenger-state--empty` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `alerts-filters` | `aculta-alerts-filters` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `alerts-filters-group` | `aculta-alerts-filters__group` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `messenger-preview-inbox-link` | `btn`, `btn-primary`, `aculta-messenger-preview__inbox-link` | (montado pelo tema para link da inbox) |
 | `account-home` | `aculta-account-home` | (montado pelo tema no link Minha conta, a partir do token do módulo) |
 | `messenger-read-status` | `aculta-messenger-read-status` | `web/themes/custom/aculta420/src/Hook/ThemeHooks.php` |
 | `notice-read-status` | `aculta-messenger-read-status` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `notice-unread-status` | `aculta-messenger-read-status`, `aculta-messenger-read-status--unread` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `notice-read-state-form` | `aculta-notice-read-state-form` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NoticeReadStateForm.php` |
+| `notice-read-state-action` | `aculta-notice-read-state-action` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NoticeReadStateForm.php` |
 | `account-photo-trigger` | `portal-account-photo__trigger` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PhotoEditorHooks.php` |
 | `support-form` | `aculta-support` | `web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php` |
 | `security-password-form` | `aculta-security-password-form` | `web/modules/custom/aculta_portal/src/Hook/FormHooks.php` |
@@ -320,7 +364,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `public-profile-actions` | `portal-profile__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `friendship-action-form` | `portal-profile__friendship-form` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/FriendshipActionForm.php` |
 | `friendship-action-button` | `btn`, `btn-outline-secondary`, `portal-account-overview__profile` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/FriendshipActionForm.php` |
-| `forum-topic-unread` | `aculta-unread-count` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/ForumTopicCounterHooks.php` |
+| `forum-topic-unread` | `aculta-unread-count` | Reserva de apresentação para futura integração da View ACULTA; sem produtor ativo desde a remoção de `preprocess_forums` em dev.56. |
 | `profile-achievements` | `portal-profile__achievements` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
 | `profile-achievements-title` | `portal-profile__achievements-title` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
 | `profile-achievements-list` | `portal-profile__achievements-list` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
@@ -391,11 +435,20 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `shop-product-card` | `d-block`, `border`, `border-2`, `rounded-3`, `text-start`, `p-3`, `text-decoration-none` | `web/modules/custom/aculta_portal/src/Controller/ShopController.php` |
 | `requirements-cep` | `aculta-portal-requirements__cep` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
 | `requirements-cep-table` | `aculta-portal-requirements__cep-table` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
+| `requirements-php-extensions` | `aculta-portal-requirements__php-extensions` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` (tabela de extensões PHP) |
+| `lms-forum-moderation-overview` | `aculta-lms-forum-moderation__overview` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Controller/LmsForumModerationController.php` (resumo da moderação do Fórum no LMS) |
+| `lms-forum-moderation-queue` | `aculta-lms-forum-moderation__queue` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Controller/LmsForumModerationController.php` (fila de moderação por grupo) |
+| `lms-activity-discussions` | `card`, `card-body`, `mt-3` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Context/LmsActivityDiscussionResolver.php` |
+| `lms-h5p-activity` | `d-grid`, `gap-3` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Hook/LmsH5PDiscussionHooks.php` (player e conversas) |
+| `lms-h5p-discussions` | `card`, `card-body`, `mt-3` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Context/LmsH5PDiscussionResolver.php` |
+| `lms-h5p-course-documents` | `mt-3` | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/Field/FieldFormatter/aculta_H5PDefaultFormatter.php` |
 | `status-attention` | `aculta-portal-requirements__status--attention` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` (`status-` + `ok`, `attention` ou `error`) |
 | `cep-sources` | `aculta-cep-sources` | `web/modules/custom/aculta_portal/modules/aculta_portal_cep/src/Form/CepSettingsForm.php` |
 | `feedback-matched` | `feedback-section`, `matched-phrases` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
 | `feedback-unmatched` | `feedback-section`, `unmatched-phrases` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
 | `gallery-dialog` | `aculta-gallery-dialog` | `web/modules/custom/aculta_portal/modules/aculta_gallery/src/Form/GalleryEmbedDialogForm.php` |
+| `forum-attachment-dialog` | `aculta-forum-attachment-dialog` | `web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumAttachmentUploadDialogForm.php` |
+| `forum-gallery-dialog` | `aculta-forum-gallery-dialog` | `web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumGalleryUploadDialogForm.php` |
 | `phrase-match` | `phrase-match` (com `correct-answer`, classe de estado do LMS) | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
 | `phrase-mismatch` | `phrase-mismatch` (com `wrong-answer`, classe de estado do LMS) | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
 | `social-links-icon-instagram` | `bi`, `bi-instagram` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
@@ -408,6 +461,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `mercado-pago-credentials-test` | `mercado-pago-credentials`, `mercado-pago-credentials-test` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
 | `mercado-pago-credentials-stage` | `mercado-pago-credentials`, `mercado-pago-credentials-stage` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
 | `mercado-pago-credentials-prod` | `mercado-pago-credentials`, `mercado-pago-credentials-prod` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
+| `forum-category-count` | `aculta-forum-category__count` | `web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/ForumCategoryTopicCount.php` |
 
 ## Painéis de vendas e doações (dev.69 e 0.6.0-dev.67)
 

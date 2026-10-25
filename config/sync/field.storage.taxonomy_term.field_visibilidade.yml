@@ -12,16 +12,17 @@ settings:
   allowed_values:
     -
       value: publico
-      label: 'Público'
+      label: Público
     -
       value: email_confirmado
       label: 'E-mail confirmado'
     -
       value: estudante
-      label: 'Estudantes'
+      label: Estudantes
     -
       value: marcador_associado
       label: 'Marcadores de associado'
+  allowed_values_function: ''
 module: core
 locked: false
 cardinality: 1

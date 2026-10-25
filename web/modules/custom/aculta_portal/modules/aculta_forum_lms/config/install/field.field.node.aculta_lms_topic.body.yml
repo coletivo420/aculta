@@ -1,0 +1,24 @@
+uuid: 6e57c8aa-f0c2-4411-9fc4-73e48140bfaf
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.aculta_lms_topic
+  module:
+    - text
+id: node.aculta_lms_topic.body
+field_name: body
+entity_type: node
+bundle: aculta_lms_topic
+label: Corpo
+description: 'Conteúdo inicial da discussão pedagógica.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+  allowed_formats: {  }
+field_type: text_with_summary

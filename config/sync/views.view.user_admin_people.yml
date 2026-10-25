@@ -9,7 +9,7 @@ _core:
 id: user_admin_people
 label: Pessoas
 module: user
-description: 'Administração de contas, estados e papéis de acesso. Preserve os filtros e as ações de gestão de usuários.'
+description: 'Find and manage people interacting with your site.'
 tag: default
 base_table: users_field_data
 base_field: uid
@@ -342,8 +342,8 @@ display:
           hide_alter_empty: true
           type: timestamp_ago
           settings:
-            future_format: '@interval hence'
-            past_format: '@interval ago'
+            future_format: '@interval'
+            past_format: '@interval atrás'
             granularity: 2
         operations:
           id: operations
@@ -921,4 +921,3 @@ display:
         - url.query_args
         - user.permissions
       tags: {  }
-

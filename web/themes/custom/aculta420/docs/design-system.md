@@ -1,5 +1,51 @@
 # Design system
 
+## Discussões ACULTA — contrato planejado
+
+O Forum contrib não tem templates no tema desde 0.6.0-dev.105. O novo motor usa
+`node--aculta-forum-topic` e
+`comment--aculta-discussion-post`. `aculta_user` prepara identidade e access
+para Author Cards; ACULTA420 cuida de SDC/Bootstrap, layout, responsividade,
+acessibilidade e tokens light/dark. `discussion.css` estiliza o formulário
+nativo de respostas sem alterar access ou comportamento. Os seis presets estão
+em `aculta_forum/docs/ADVANCED-FORUM-PORT.md`.
+
+As Views públicas de tópicos reutilizam os mesmos cartões em “Todas”, “Novas”,
+“Sem resposta” e “Mais comentadas”. O cabeçalho de navegação usa chips focáveis
+com tokens semânticos; título, respostas e atividade empilham em telas menores.
+Filtros, ordenação, visibilidade e contagens continuam responsabilidade do
+Portal/Core, nunca do tema.
+
+O índice `/categorias` agrupa os cartões por categoria-pai com o agrupamento
+nativo da View Core. Os títulos dos grupos usam H2; os links dos termos usam H3
+e conservam a tipografia definida no SDC `content/forum-category`. O componente
+apresenta o termo e sua descrição; o link filtrado é preparado pela View a
+partir do TID. O componente não carrega Taxonomy nem constrói URLs; a navegação permanece sob
+responsabilidade do Portal.
+
+Na entrada do Growroom420, o mesmo SDC apresenta até seis categorias no bloco
+`block_landing` da View, posicionado na barra lateral por purpose e rota. Em
+telas largas a barra lateral antecede visualmente a lista recente; em telas
+estreitas aparece depois dela. Views/CTools controlam os dados, a quantidade e
+o pager, enquanto o tema compõe as colunas com tokens responsivos.
+
+O SDC `content/author-card` mantém o contrato de identidade entre contextos e
+mostra uma etiqueta neutra conforme a variante: Growroom420, Comentário da
+Revista, cursos e Wiki420. O módulo fornece a variante; o tema não consulta a
+entidade hospedeira nem revela papel, matrícula ou atividade. Na Revista, o
+Magazine fornece somente a designação Autor/Coautor; identidade, avatar, bio e
+redes públicas são preparados pelo `aculta_user` segundo opt-in e política de
+privacidade. Nos cartões do Fórum, apresenta opcionalmente o ano da conta
+fornecido pelo `aculta_user`, que omite o dado para perfis privados e autoria
+histórica. Stories cobrem separadamente `author_editorial`, `author_comment`,
+`author_lms` e `author_wiki`.
+
+O modal de upload compartilhado usa o token `user-upload-dialog`, preparado
+pelo `aculta_portal`. O Fórum acrescenta `forum-attachment-dialog` ou
+`forum-gallery-dialog` para os ajustes de largura do contexto. `PortalUiHooks`
+traduz os tokens e `dialog.css` define dimensões responsivas e rolagem no
+diálogo Core.
+
 ## Identidade
 
 ACULTA420 usa Bootstrap como infraestrutura e mantém identidade própria por
@@ -161,6 +207,22 @@ diferentes.
 Referência:
 https://getbootstrap.com/docs/5.3/customize/color-modes/
 
+## Mobile First
+
+ACULTA420 adota implementação mobile-first como decisão arquitetural em
+[`ADR-012`](../../../../../docs/decisions/ADR-012-aculta420-mobile-first.md).
+O componente começa pelo layout que cabe no menor espaço e ganha colunas e
+navegação simultânea conforme a tarefa e o conteúdo precisem delas. Bootstrap
+5.3.8 fornece breakpoints de referência; não converter media queries locais em
+lote. Grid, Flexbox, `minmax(0, 1fr)` e container queries são técnicas conforme
+o contexto, sem um arquivo global `responsive.css`.
+
+Conteúdo comum deve reflow em 320 CSS px, sem rolagem horizontal da página.
+Exceções bidimensionais mantêm seu próprio contêiner de rolagem. Claro e escuro
+compartilham geometria e markup, conforme o contrato de modos de cor acima. O
+inventário, os limites de evidência e a sequência estão na
+[`auditoria Mobile First`](mobile-first-audit.md).
+
 ## VVJB primeiro (carrossel)
 
 - O carrossel padrão do ACULTA é o VVJB (módulo `vvjb`, estilo de view `views_vvjb`). A home usa essa engine na view `home_editorial_highlights`.
@@ -208,7 +270,7 @@ do asset ACULTA já existente no próprio tema e recebe o token de filtro do she
 Nesse purpose, a página preserva a barra institucional multidomínio e um rodapé
 específico, omitindo o Domain Header e o rodapé padrão do site.
 O botão primário leva à raiz MAIN; botões adicionais configurados no Portal
-aparecem em seguida, e os canais sociais configurados permanecem no rodapé. O shell usa espaçamento vertical compacto para aproximar o conteúdo
+aparecem em seguida, e os canais sociais configurados permanecem no rodapé. Micropáginas podem escolher os presets `classic`, `soft` ou `outline`; o template legado omite a propriedade e mantém `classic`. Os presets alteram somente superfícies e bordas por tokens semânticos, sem CSS fornecido por usuários. O shell usa espaçamento vertical compacto para aproximar o conteúdo
 da barra institucional e do rodapé, sem remover a folga mínima de leitura.
 
 ## Primitives
@@ -240,8 +302,8 @@ O catálogo UI Styles também oferece elevação de superfície por
 tokens de cada modo. A opção é única e não substitui a sombra de foco/interação
 nem permite escolher valores livres.
 
-Os SDCs `project-card` e `course_card` compõem esse pattern em sua variante
-vertical, mantendo seus contratos especializados. Projetos preservam mídia já
+Os SDCs `course_card` compõem esse pattern em sua variante
+vertical, mantendo seus contratos especializados. O antigo `project-card` foi removido com o tipo projeto. Projetos preservam mídia já
 renderizada, categoria, resumo e CTA; o cartão do LMS mantém props/slots,
 marcação de integração e dados/access/cache fornecidos pelo Drupal LMS. A
 variante sobreposta segue reservada a mídias editoriais apropriadas, sem forçar
@@ -427,3 +489,7 @@ Levantados na varredura de 2026-10-14: declarados em `css/tokens.css` e sem entr
 | `--aculta-text-muted` | `var(--aculta-green-dark)` | 2 | Textos: destaque, inverso e muted. |
 
 Novo token no 0.6.0-dev.22: `--aculta-motion-quick: 150ms`, usado em `css/components/portal-account.css` para fechar a DT-T19 (durações fora de tokens).
+
+## Planejamento de evolução visual compartilhada — THEME-UX 0.8
+
+Aplicar a regra **reuse-first** de [visual-cross-product-roadmap.md](visual-cross-product-roadmap.md): primeiro os SDCs `card`, `content-section`, `content-grid`, `figure`, `quote`, `author-card`, Messenger, QR e LMS course card; avaliar variantes antes de criar `context-header`, `context-tabs`, `empty-state`, `content-reader`, `resource-list` e `status-timeline`. Cada padrão novo exige consumidor real, segundo consumidor interáreas, schema, story UI Patterns, tokens light/dark com geometria igual, responsividade 320–1440 e acessibilidade. Institution Bar e Domain Header do shell multidomínio são permanentes. É uma proposta de trabalho futuro, não SDC já disponível.

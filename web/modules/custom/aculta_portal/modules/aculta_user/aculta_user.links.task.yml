@@ -1,0 +1,13 @@
+# Aba Pessoas do painel ACULTA (decisão de 2026-10-20). Mensagens e CEP se somam como subabas em seus módulos.
+aculta_user.admin_tab_pessoas:
+  title: 'Pessoas'
+  route_name: aculta_user.participacao_settings
+  base_route: aculta_portal.admin
+  weight: 2
+
+aculta_user.admin_subtab_participacao:
+  title: 'Regras de participação'
+  route_name: aculta_user.participacao_settings
+  base_route: aculta_portal.admin
+  parent_id: aculta_user.admin_tab_pessoas
+  weight: 0

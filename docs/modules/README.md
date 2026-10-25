@@ -1,5 +1,7 @@
 # Módulos e integrações Drupal
 
+- [ACULTA Activity — roadmap](ACULTA-ACTIVITY-ROADMAP.md)
+
 Este índice leva à documentação transversal dos módulos Core/contrib e às
 entradas dos componentes próprios. O inventário instalado é definido por
 `composer.json`, `composer.lock` e pela configuração Drupal (`core.extension`);
@@ -18,6 +20,7 @@ esta página não replica listas de versões ou de módulos habilitados.
 - [Operações de módulos e infraestrutura](OPERATIONS.md)
 - [Roadmap do ACULTA LMS](ACULTA-LMS-ROADMAP.md)
 - [Auditoria H5P/LMS](LMS-H5P-AUDIT.md)
+- [Wiki420 como submódulo (planejamento)](WIKI-SUBMODULO.md)
 
 ## Componentes próprios
 
@@ -35,3 +38,7 @@ esta página não replica listas de versões ou de módulos habilitados.
 - Mudanças de módulo que afetem a apresentação também atualizam o
   [mapa módulo–tema](../portal/MAPA-MODULO-TEMA.md) e seguem a
   [fronteira Portal–tema](../portal/FRONTEIRA-MODULO-TEMA.md).
+
+## Kernels e ferramentas transversais
+
+Consultar [hierarquia de kernels](../architecture/aculta-kernels.md), [ADR](../decisions/ADR-011-aculta-kernels-studio.md) e [roadmap Studio/Revista](../portal/STUDIO-MAGAZINE-ROADMAP.md). Fórum e Galeria têm estruturas compartilhadas próprias. User, Image, Document Viewer, Messenger, confirmação de e-mail e Portal compõem serviços comuns. Studio é a interface consumidora por abas; essa nomenclatura não altera as fontes de verdade Core/contrib.

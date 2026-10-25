@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420\Hook;
 
+use Drupal\Core\Url;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Template\Attribute;
 
@@ -18,12 +19,18 @@ final class PortalUiHooks {
 
   public const ATTRIBUTE = 'data-portal-ui';
 
-  /** Mapa token → classes de apresentação. A ordem dos tokens define a ordem das classes. */
+  /**
+   * Mapa token → classes de apresentação. A ordem dos tokens define a ordem das classes.
+   */
   public const TOKENS = [
     // Avisos e mensagens (classes de mensagens do Drupal, estilizadas aqui).
     'notice-warning' => ['messages', 'messages--warning'],
     'notice-error' => ['messages', 'messages--error'],
     'email-notice' => ['aculta-email-notice'],
+    // Checkout (Commerce): link para os outros dados fiscais da conta.
+    'fiscal-identity-other-data' => ['aculta-fiscal-identity-other-data'],
+    // Wiki: botão de contribuição na página do verbete.
+    'wiki-proposal-contribute' => ['button', 'button--secondary'],
     // Doação (aculta_donation): resumo da etapa de revisão e links de edição.
     'donation-summaries' => ['d-grid', 'gap-3'],
     'donation-summary' => ['card', 'card-body'],
@@ -44,6 +51,16 @@ final class PortalUiHooks {
     // Cartão do produto: caixa com borda neutra (sem cor de botão), texto alinhado à esquerda.
     'shop-product-card' => ['d-block', 'border', 'border-2', 'rounded-3', 'text-start', 'p-3', 'text-decoration-none'],
     // Relatórios de requisitos e segredos (administração do Portal).
+    // Estatísticas (aculta_statistics): painel central e por área. O módulo envia só tokens; o tema define o visual.
+    'statistics-panel' => ['aculta-statistics'],
+    'statistics-areas' => ['aculta-statistics__areas'],
+    'statistics-controls' => ['aculta-statistics__controls'],
+    'statistics-form' => ['aculta-statistics__form'],
+    'statistics-summary' => ['aculta-statistics__summary'],
+    'statistics-comparison' => ['aculta-statistics__comparison'],
+    'statistics-chart' => ['aculta-statistics__chart'],
+    'statistics-table' => ['aculta-statistics__table'],
+    'statistics-note' => ['aculta-statistics__note'],
     'requirements' => ['aculta-portal-requirements'],
     'requirements-legend' => ['aculta-portal-requirements__legend'],
     'requirements-status' => ['aculta-portal-requirements__status'],
@@ -56,6 +73,15 @@ final class PortalUiHooks {
     'requirements-indexing-table' => ['aculta-portal-requirements__indexing-table'],
     'requirements-cep' => ['aculta-portal-requirements__cep'],
     'requirements-cep-table' => ['aculta-portal-requirements__cep-table'],
+    'requirements-php-extensions' => ['aculta-portal-requirements__php-extensions'],
+    // Painel de moderação do LMS no Fórum (aculta_forum_lms): estrutura por grupo, sem CSS próprio.
+    'lms-forum-moderation-overview' => ['aculta-lms-forum-moderation__overview'],
+    'lms-forum-moderation-queue' => ['aculta-lms-forum-moderation__queue'],
+    // Discussões LMS no player H5P e sob atividades gerais usam primitives Bootstrap.
+    'lms-activity-discussions' => ['card', 'card-body', 'mt-3'],
+    'lms-h5p-activity' => ['d-grid', 'gap-3'],
+    'lms-h5p-discussions' => ['card', 'card-body', 'mt-3'],
+    'lms-h5p-course-documents' => ['mt-3'],
     'cep-sources' => ['aculta-cep-sources'],
     'secrets-section' => ['aculta-portal-secrets-section'],
     'secret-value' => ['aculta-secret-value'],
@@ -78,6 +104,8 @@ final class PortalUiHooks {
     'new-conversation-cancel' => ['btn', 'aculta-new-conversation-cancel'],
     'conversation-action' => ['aculta-messenger-options__action'],
     'conversation-notice-action' => ['aculta-messenger-notice__action'],
+    'notice-read-state-form' => ['aculta-notice-read-state-form'],
+    'notice-read-state-action' => ['aculta-notice-read-state-action'],
     'new-conversation-links' => ['d-flex', 'flex-wrap', 'gap-2', 'mt-2'],
     'new-conversation-message' => ['form-control'],
     'new-conversation-results' => ['list-group'],
@@ -87,6 +115,10 @@ final class PortalUiHooks {
     'search-preview-full' => ['aculta-search-preview__full', 'btn', 'btn-outline-primary', 'btn-sm'],
     'hint' => ['small', 'text-body-secondary'],
     'hint-muted' => ['text-body-secondary'],
+    // Modal compartilhado de upload do Portal e tokens de contexto do Fórum.
+    'user-upload-dialog' => ['aculta-user-upload-dialog'],
+    'forum-attachment-dialog' => ['aculta-forum-attachment-dialog'],
+    'forum-gallery-dialog' => ['aculta-forum-gallery-dialog'],
     // Review de texto livre (aculta_lms): seções de retorno e cada frase verificada.
     'feedback-matched' => ['feedback-section', 'matched-phrases'],
     'feedback-unmatched' => ['feedback-section', 'unmatched-phrases'],
@@ -98,7 +130,7 @@ final class PortalUiHooks {
     'h5p-dashboard-course' => ['aculta-lms-h5p-course'],
     'checkout-help' => ['checkout-help'],
     'gallery-dialog' => ['aculta-gallery-dialog'],
-    'mercado-pago-credentials-test' =>['mercado-pago-credentials', 'mercado-pago-credentials-test'],
+    'mercado-pago-credentials-test' => ['mercado-pago-credentials', 'mercado-pago-credentials-test'],
     'mercado-pago-credentials-stage' => ['mercado-pago-credentials', 'mercado-pago-credentials-stage'],
     'mercado-pago-credentials-prod' => ['mercado-pago-credentials', 'mercado-pago-credentials-prod'],
     'icon-search' => ['bi', 'bi-search'],
@@ -109,6 +141,9 @@ final class PortalUiHooks {
     'wiki-search' => ['aculta-wiki-search'],
     'wiki-search-results' => ['aculta-wiki-search-results'],
     'wiki-recent-change' => ['aculta-wiki-recent-change'],
+    'we-sativa-workspace' => ['d-grid', 'gap-4', 'we-sativa__workspace'],
+    'we-sativa-create' => ['btn', 'btn-primary'],
+    'wiki-workspace-return' => ['btn', 'btn-outline-primary', 'mb-3'],
     'courses-home' => ['courses-home'],
     'courses-home-intro' => ['courses-home__intro'],
     'courses-home-collaboration' => ['courses-home__collaboration'],
@@ -120,6 +155,7 @@ final class PortalUiHooks {
     'account-avatar' => ['portal-account__avatar'],
     'account-avatar-empty' => ['portal-account__avatar', 'portal-account__avatar--empty'],
     'account-photo-preview' => ['portal-account-photo__preview'],
+    'account-photo-actions' => ['portal-account-photo__actions'],
     'account-bio-card' => ['card', 'card-body', 'portal-account-bio'],
     'account-bio-text' => ['portal-account-bio__text'],
     'account-bio-edit' => ['btn', 'btn-link', 'portal-account-bio__edit', 'bi', 'bi-pencil'],
@@ -144,29 +180,12 @@ final class PortalUiHooks {
     'article-authors-title' => ['portal-article-authors__title'],
     'article-authors-list' => ['portal-article-authors__list'],
     'article-author' => ['portal-article-author'],
-    'article-author-photo' => ['portal-article-author__photo'],
-    'article-author-initial' => ['portal-article-author__initial'],
-    'article-author-text' => ['portal-article-author__text'],
-    'article-author-name' => ['portal-article-author__name'],
-    // Bloco de discussão (comentários do Fórum), em caixa própria abaixo da autoria.
-    'discussion' => ['portal-discussion'],
-    'discussion-title' => ['portal-discussion__title'],
-    'discussion-list' => ['portal-discussion__list'],
-    'discussion-item' => ['portal-discussion__item'],
-    'discussion-link' => ['portal-discussion__link'],
-
     // Abertura do tópico do Fórum (resumo, imagem e link para a publicação da Revista).
     'forum-opening-post' => ['portal-forum-opening'],
     'forum-opening-post-title' => ['portal-forum-opening__title'],
     'forum-opening-post-image' => ['portal-forum-opening__image'],
     'forum-opening-post-body' => ['portal-forum-opening__body'],
     'forum-opening-post-link' => ['portal-forum-opening__link'],
-    'article-author-role' => ['portal-article-author__role'],
-    'article-author-bio' => ['portal-article-author__bio'],
-    'article-author-social' => ['portal-article-author__social'],
-    'article-author-social-link-instagram' => ['portal-article-author__social-link', 'bi', 'bi-instagram'],
-    'article-author-social-link-facebook' => ['portal-article-author__social-link', 'bi', 'bi-facebook'],
-    'article-author-social-link-reddit' => ['portal-article-author__social-link', 'bi', 'bi-reddit'],
     // Perfil público (/u/<apelido>).
     'public-profile' => ['portal-profile'],
     'public-profile-header' => ['portal-profile__header'],
@@ -256,6 +275,10 @@ final class PortalUiHooks {
     'social-link-dialog' => ['aculta-social-link-dialog'],
     'secret-dialog' => ['aculta-secret-dialog'],
     'messenger-preview' => ['aculta-messenger-preview'],
+    'messenger-state' => ['aculta-messenger-state'],
+    'messenger-state-empty' => ['aculta-messenger-state--empty'],
+    'alerts-filters' => ['aculta-alerts-filters'],
+    'alerts-filters-group' => ['aculta-alerts-filters__group'],
     'account-home' => ['aculta-account-home'],
     'notice-read-status' => ['aculta-messenger-read-status'],
     'notice-unread-status' => ['aculta-messenger-read-status', 'aculta-messenger-read-status--unread'],
@@ -340,9 +363,31 @@ final class PortalUiHooks {
     'sales-state-refunded' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--refunded'],
     'sales-state-voided' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--voided'],
     'sales-state-neutral' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--neutral'],
+    // ACULTA Studio (aculta_studio): abas, painel e ações da conta.
+    'studio-shell' => ['studio'],
+    'studio-tabs' => ['nav', 'nav-tabs', 'studio__tabs'],
+    'studio-tab' => ['nav-link', 'studio__tab'],
+    'studio-panel' => ['studio__panel', 'card', 'card-body'],
+    'studio-heading' => ['studio__heading', 'h4'],
+    'studio-actions' => ['studio__actions', 'list-unstyled', 'd-flex', 'flex-wrap', 'gap-2'],
+    'studio-action' => ['btn', 'btn-outline-primary', 'studio__action'],
+    'studio-empty' => ['text-muted'],
+    'studio-layout' => ['studio__layout'],
+    'studio-sidebar' => ['studio__sidebar'],
+    'studio-main' => ['studio__main'],
+    'studio-sections' => ['studio__sections', 'list-unstyled'],
+    'studio-subtabs' => ['nav', 'nav-tabs', 'studio__subtabs'],
+    'studio-link' => ['nav-link', 'studio__link'],
+    'studio-live' => ['studio__live', 'small', 'text-muted'],
+    'studio-listing' => ['table', 'table-hover', 'align-middle', 'studio__listing'],
+    'studio-listing-wrap' => ['table-responsive', 'studio__listing-wrap'],
+    // Fórum: contagem de tópicos visíveis no cartão de categoria.
+    'forum-category-count' => ['aculta-forum-category__count'],
   ];
 
-  /** Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements. */
+  /**
+   * Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements.
+   */
   #[Hook('preprocess_menu')]
   public function preprocessMenu(array &$variables): void {
     if (!empty($variables['items']) && is_array($variables['items'])) {
@@ -350,11 +395,16 @@ final class PortalUiHooks {
     }
   }
 
-  /** @param array<int|string, mixed> $items */
+  /**
+   * Replaces menu link tokens with the classes they stand for, recursively.
+   *
+   * @param array<int|string, mixed> $items
+   *   Menu items, passed by reference; children under "below" are mapped too.
+   */
   private function mapMenuLinkTokens(array &$items): void {
     foreach ($items as &$item) {
       $url = $item['url'] ?? NULL;
-      if ($url instanceof \Drupal\Core\Url) {
+      if ($url instanceof Url) {
         $attributes = $url->getOption('attributes') ?? [];
         $token = $attributes[self::ATTRIBUTE] ?? NULL;
         if (is_string($token) && isset(self::TOKENS[$token])) {
@@ -371,12 +421,63 @@ final class PortalUiHooks {
     unset($item);
   }
 
+  /**
+   * Componentes SDC do ACULTA420 que o módulo pode pedir pelo nome neutro.
+   *
+   * @var string[]
+   */
+  private const COMPONENTS = [
+    'card',
+    'content-grid',
+    'content-section',
+    'context-header',
+    'context-tabs',
+    'empty-state',
+    'profile-bio',
+    'profile-editor',
+    'profile-identity',
+    'profile-social',
+  ];
+
+  /**
+   * Builds the SDC component for a neutral component request from the module.
+   *
+   * Only names in COMPONENTS are rendered. Any other name renders nothing, so
+   * the module never chooses a theme component id.
+   *
+   * @param array<string, mixed> $variables
+   *   Template variables: name, props and slots, altered in place.
+   */
+  #[Hook('preprocess_aculta_portal_component')]
+  public function preprocessPortalComponent(array &$variables): void {
+    $name = $variables['name'] ?? NULL;
+    if (!is_string($name) || !in_array($name, self::COMPONENTS, TRUE)) {
+      $variables['component'] = [];
+      return;
+    }
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:' . $name,
+      '#props' => is_array($variables['props'] ?? NULL) ? $variables['props'] : [],
+      '#slots' => is_array($variables['slots'] ?? NULL) ? $variables['slots'] : [],
+    ];
+  }
+
+  /**
+   * Maps the token attribute on the render elements of the portal.
+   *
+   * Runs for containers, links, HTML tags, lists, fieldsets, tables, form
+   * elements, images and portal elements.
+   *
+   * @param array<string, mixed> $variables
+   *   Template variables, altered in place.
+   */
   #[Hook('preprocess_container')]
+  #[Hook('preprocess_link')]
   #[Hook('preprocess_html_tag')]
   #[Hook('preprocess_item_list')]
   #[Hook('preprocess_fieldset')]
   #[Hook('preprocess_table')]
-  #[Hook('preprocess_input')]
   #[Hook('preprocess_form_element')]
   #[Hook('preprocess_image')]
   #[Hook('preprocess_aculta_portal_element')]
@@ -421,13 +522,17 @@ final class PortalUiHooks {
     }
   }
 
-  /** The details of the Opções box: mapped after the Bootstrap accordion has set its attributes. */
+  /**
+   * The details of the Opções box: mapped after the Bootstrap accordion has set its attributes.
+   */
   #[Hook('preprocess_details')]
   public function preprocessDetails(array &$variables): void {
     $this->preprocess($variables);
   }
 
-  /** Maps the neutral unread count from the account contract to the theme SDC. */
+  /**
+   * Maps the neutral unread count from the account contract to the theme SDC.
+   */
   private function addAccountUnreadBadges(array &$variables): void {
     foreach (['menu_items', 'accordion_items'] as $listName) {
       if (!is_array($variables[$listName] ?? NULL)) {
@@ -456,6 +561,8 @@ final class PortalUiHooks {
    *   Os atributos do elemento (lidos).
    * @param array<string, mixed> $container
    *   O array que contém os atributos (elemento ou item), alterado no lugar.
+   * @param string $key
+   *   A chave em que os atributos são gravados dentro do array.
    */
   private function applyArray(array $attributes, array &$container, string $key): void {
     if (!isset($attributes[self::ATTRIBUTE])) {
@@ -473,6 +580,12 @@ final class PortalUiHooks {
     $container[$key] = in_array($key, ['attributes', 'title_attributes', 'content_attributes'], TRUE) ? new Attribute($attributes) : $attributes;
   }
 
+  /**
+   * Applies the token attribute to an Attribute object, in place.
+   *
+   * @param \Drupal\Core\Template\Attribute $attributes
+   *   The attributes to read and update.
+   */
   private function apply(Attribute $attributes): void {
     if (!$attributes->offsetExists(self::ATTRIBUTE)) {
       return;

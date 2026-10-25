@@ -14,7 +14,6 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\aculta_portal\Form\LoginPopupForm;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
-use Drupal\aculta_portal\Presentation\SocialLinksPagePresenter;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_portal\Account\StreetNumberField;
@@ -107,8 +106,6 @@ final class PortalHooks {
     private readonly DomainPresentationBuilder $domainPresentationBuilder,
     #[Autowire(service: 'renderer')]
     private readonly RendererInterface $renderer,
-    #[Autowire(service: 'aculta_portal.presentation.social_links_page')]
-    private readonly SocialLinksPagePresenter $socialLinksPagePresenter,
   ) {}
 
 
@@ -119,9 +116,6 @@ final class PortalHooks {
   public function preprocessPage(array &$variables): void {
     $domainPresentation = $this->domainPresentationBuilder->buildCurrent();
     $variables['domain_presentation'] = $domainPresentation?->toThemeArray();
-    if (($variables['domain_presentation']['identity']['purpose'] ?? NULL) === 'links') {
-      $variables['social_links_page_footer'] = $this->socialLinksPagePresenter->buildFooter();
-    }
     $variables['aculta_search_utility'] = $this->searchUtility->build();
     // Ícone da ACULTA na barra multidomínio: página inicial do domínio principal (purpose main), nunca fixa no código.
     $mainHome = $this->domainPurposeManager->pathUrl('main', '/');
@@ -521,14 +515,20 @@ final class PortalHooks {
     }
 
     $path = $this->currentPath->getPath();
+    $isStudioDataRoute = $this->routeMatch->getRouteName() === 'aculta_studio.account_data';
+    // Portal and Studio edit the same canonical Commerce customer address.
+    // Recognize both route IDs; legacy form scope and behavior stay unchanged.
+    $isAddressRoute = in_array($this->routeMatch->getRouteName(), [
+      'aculta_portal.my_data_address',
+      'aculta_studio.account_address',
+    ], TRUE);
     // /dados/endereco é tratado pelo bloco de endereço logo abaixo (país padrão, número e S/N). Este bloco de papel
     // retorna antes e não pode engolir essa página: o tipo authenticated também é tipo de papel.
-    if ($entity->getEntityTypeId() === 'profile' && PerfilDoPapel::ehTipoDePapel($entity) && $path !== '/dados/endereco') {
-      if ($path === '/dados') {
+    if ($entity->getEntityTypeId() === 'profile' && PerfilDoPapel::ehTipoDePapel($entity) && !$isAddressRoute) {
+      if ($path === '/dados' || $isStudioDataRoute) {
         // Keep this tab limited to personal basics, even if older active
         // Profile display configuration still contains address components.
         $allowed = [
-          'field_nickname',
           'field_first_name',
           'field_last_name',
           'field_whatsapp',
@@ -537,6 +537,10 @@ final class PortalHooks {
           'form_token',
           'form_id',
         ];
+        // The legacy /dados keeps its public nickname control unchanged.
+        if (!$isStudioDataRoute) {
+          array_unshift($allowed, 'field_nickname');
+        }
         foreach (array_keys($form) as $key) {
           if (!str_starts_with((string) $key, '#') && !in_array($key, $allowed, TRUE)) {
             unset($form[$key]);
@@ -548,14 +552,18 @@ final class PortalHooks {
           unset($form[$field]);
         }
       }
-      if ($path === '/dados' && isset($form['actions']['submit'])) {
+      if (($path === '/dados' || $isStudioDataRoute) && isset($form['actions']['submit'])) {
         $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:syncCustomerAddressNames';
+        if ($isStudioDataRoute) {
+          $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:accountDataRedirect';
+        }
       }
       return;
     }
 
+    // Portal (/dados/endereco) e Studio (/studio/conta/endereco) usam o mesmo editor de endereço.
     if ($entity->getEntityTypeId() === 'profile' && $entity->bundle() === 'authenticated'
-      && $path === '/dados/endereco'
+      && $isAddressRoute
       && (int) $entity->getOwnerId() === (int) $this->currentUser->id()) {
       // The Portal and Commerce edit the same customer Profile Address.
       $allowed = ['field_address', 'actions', 'form_build_id', 'form_token', 'form_id'];
@@ -658,6 +666,17 @@ final class PortalHooks {
           'element_attributes' => NULL,
         ],
         'template' => 'portal-element',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
+      ],
+      // Componente neutro: o módulo pede pelo nome; o tema monta o componente SDC.
+      'aculta_portal_component' => [
+        'variables' => [
+          'name' => NULL,
+          'props' => [],
+          'slots' => [],
+          'component' => NULL,
+        ],
+        'template' => 'portal-component',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
       'aculta_portal_search_trigger' => [

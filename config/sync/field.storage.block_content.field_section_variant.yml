@@ -18,9 +18,6 @@ settings:
       value: city
       label: Cidade
     -
-      value: participation
-      label: Participação
-    -
       value: transparency
       label: Transparência
   allowed_values_function: ''

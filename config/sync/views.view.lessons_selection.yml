@@ -17,7 +17,7 @@ base_field: id
 display:
   default:
     id: default
-    display_title: Default
+    display_title: Padrão
     display_plugin: default
     position: 0
     display_options:
@@ -32,7 +32,7 @@ display:
           admin_label: ''
           entity_type: lms_lesson
           plugin_id: lms_entity_selection
-          label: Selection
+          label: Seleção
           exclude: false
           alter:
             alter_text: false
@@ -300,7 +300,7 @@ display:
           exposed: true
           expose:
             operator_id: ''
-            label: Published
+            label: Publicado
             description: ''
             use_operator: false
             operator: status_op

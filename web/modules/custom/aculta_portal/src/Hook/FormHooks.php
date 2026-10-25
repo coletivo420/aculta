@@ -74,7 +74,7 @@ final class FormHooks {
         $form['actions']['submit']['#submit'] ?? [],
       );
       $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:requestRegistrationConfirmation';
-      $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:acceptRegistrationTerms';
+      $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:recordAcultaUserAgreementAcceptance';
     }
 
     if ($formId === 'user_login_form') {
@@ -98,19 +98,6 @@ final class FormHooks {
     // Formulário da conta em Segurança: a senha atual fica nesta página, sem o link de recuperação do Core.
     if ($formId === 'user_form' && $this->routeMatch->getRouteName() === 'aculta_portal.security_password' && isset($form['account']['current_pass'])) {
       $form['account']['current_pass']['#description'] = $this->translation->translate('Obrigatório para alterar a senha: informe sua senha atual.');
-    }
-
-    if ($formId === 'change_mail_form'
-      && $this->routeMatch->getRouteName() === 'aculta_portal.security') {
-      $form['account']['mail']['#title'] = $this->translation->translate('Novo e-mail');
-      $form['account']['mail']['#description'] = $this->translation->translate(
-        'Você precisará confirmar este endereço antes que ele passe a ser usado na sua conta.',
-      );
-      $form['account']['mail']['#attributes']['autocomplete'] = 'email';
-      $form['account']['current_pass']['#title'] = $this->translation->translate('Senha atual');
-      $form['account']['current_pass']['#attributes']['autocomplete'] = 'current-password';
-      $form['actions']['submit']['#value'] = $this->translation->translate('Solicitar alteração de e-mail');
-      $form['#submit'][] = 'aculta_portal.form_callbacks:changeMailConfirmationMessage';
     }
 
     if ($formId === 'user_form'
@@ -220,7 +207,7 @@ final class FormHooks {
    */
   private function accountAjaxSubmit(array &$form, string $formId): void {
     $route = $this->routeMatch->getRouteObject();
-    if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_account_terms_accept' || $formId === 'aculta_portal_account_password_create'
+    if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_aculta_user_agreement_accept' || $formId === 'aculta_portal_account_password_create'
       || $formId === 'user_login_form' || $formId === 'aculta_user_account_bio_form' || !empty($form['#aculta_json_save']) || !isset($form['actions']['submit'])) {
       return;
     }

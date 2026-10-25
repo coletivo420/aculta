@@ -1,0 +1,71 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de autoria
+status: experimental
+group: Identity
+description: 'Presentation of an authorized author identity prepared by aculta_user. It does not load entities or decide access.'
+props:
+  type: object
+  required:
+    - variant
+    - display_name
+  properties:
+    variant:
+      type: string
+      enum:
+        - profile_full
+        - profile_compact
+        - author_editorial
+        - author_comment
+        - author_forum
+        - author_forum_stacked
+        - author_lms
+        - author_wiki
+        - author_growroom_historico
+        - author_minimal
+      description: 'Presentation variant selected by the functional owner.'
+    display_name:
+      type: string
+      description: 'Public display name already filtered by aculta_user.'
+    profile_url:
+      type: [string, 'null']
+      description: 'Canonical public profile URL, or null when no public link is available.'
+    source_label:
+      type: [string, 'null']
+      description: 'Historical archive source label; never a user profile or account action.'
+    has_avatar:
+      type: boolean
+      description: 'Whether the authorized avatar render array is present; SDC slots can be empty but truthy.'
+    member_since:
+      type: [string, 'null']
+      description: 'Creation year for an account with a public profile; presented only on forum author variants.'
+    designation:
+      type: [string, 'null']
+      description: 'Contextual role prepared by the content owner, such as Autor or Coautor.'
+    bio:
+      type: [string, 'null']
+      description: 'Biography text approved for this public author-card context.'
+    social_links:
+      type: array
+      items:
+        type: object
+        required: [network, label, url]
+        properties:
+          network:
+            type: string
+            enum: [instagram, facebook, reddit]
+          label:
+            type: string
+          url:
+            type: string
+      description: 'Public social links already filtered by aculta_user policy.'
+slots:
+  avatar:
+    title: Avatar
+    description: 'Authorized Drupal render array generated through aculta_image.'
+  actions:
+    title: Ações autorizadas
+    description: 'Optional render arrays whose access was decided by the functional owner.'
+assets:
+  css:
+    component:
+      author-card.css: {}

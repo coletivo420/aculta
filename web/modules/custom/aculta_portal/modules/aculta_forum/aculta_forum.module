@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Hooks for the ACULTA Forum module.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_theme().
+ */
+function aculta_forum_theme($existing, $type, $theme, $path): array {
+  return [
+    // Register the page grouping as a theme hook so that themes without an
+    // override (for example Olivero) use the module's h2 template instead of
+    // Core's h3. ACULTA420 overrides the same hook with its own grid template.
+    'views_view_unformatted__aculta_forum_categories__page_categories' => [
+      'template' => 'views-view-unformatted--aculta-forum-categories--page-categories',
+      'path' => $path . '/templates',
+      'base hook' => 'views_view_unformatted',
+    ],
+  ];
+}

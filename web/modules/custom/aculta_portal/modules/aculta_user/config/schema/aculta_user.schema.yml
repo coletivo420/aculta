@@ -8,9 +8,9 @@ aculta_user.settings:
     topico_comentarios_minimos:
       type: integer
       label: 'Comentários publicados necessários para criar tópico'
-    primeiro_comentario_moderado:
+    primeiro_comentario_discussao_moderado:
       type: boolean
-      label: 'Primeiro comentário passa por moderação'
+      label: 'Comentários iniciais nos contextos de discussão não LMS passam por moderação'
     bloqueio_ate_aprovacao:
       type: boolean
       label: 'Bloqueia novas publicações enquanto o primeiro comentário aguarda'
@@ -19,3 +19,9 @@ aculta_user.settings:
       label: 'Papéis isentos das regras'
       sequence:
         type: string
+    wiki_edit_window_minutes:
+      type: integer
+      label: 'Prazo de edição das discussões Wiki em minutos'
+    comment_edit_window_minutes:
+      type: integer
+      label: 'Prazo de edição dos demais comentários compartilhados em minutos'

@@ -7,6 +7,9 @@ dependencies:
   module:
     - image
     - user
+third_party_settings:
+  aculta_image:
+    policy: default
 _core:
   default_config_hash: TE3gYVzd6g0deXqUl8SEu2azHwVG-SdXm3kwbrz0kHw
 id: user.user.user_picture
@@ -38,6 +41,3 @@ settings:
     width: null
     height: null
 field_type: image
-third_party_settings:
-  aculta_image:
-    policy: default

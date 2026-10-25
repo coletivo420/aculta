@@ -120,9 +120,6 @@ display:
     display_plugin: block
     position: 2
     display_options:
-      allow:
-        items_per_page: true
-        pager: pager
       title: 'Próximas atividades'
       empty:
         area:
@@ -175,6 +172,9 @@ display:
         filters: false
       display_extenders: {  }
       block_description: 'Próximas atividades'
+      allow:
+        items_per_page: true
+        pager: pager
     cache_metadata:
       max-age: -1
       contexts:

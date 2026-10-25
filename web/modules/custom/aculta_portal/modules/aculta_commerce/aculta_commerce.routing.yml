@@ -1,0 +1,41 @@
+aculta_commerce.green_stash:
+  path: '/estudio/loja'
+  defaults:
+    _controller: 'aculta_commerce.green_stash_controller:page'
+    _title: 'Green Stash'
+  requirements:
+    _permission: 'access aculta green stash'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_commerce.green_stash_area:
+  path: '/estudio/loja/{secao}'
+  defaults:
+    _controller: 'aculta_commerce.green_stash_controller:page'
+    _title: 'Green Stash'
+  requirements:
+    _permission: 'access aculta green stash'
+    secao: 'visao-geral|produtos|pedidos|estoque|envios|promocoes|clientes|relatorios|configuracoes'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_commerce.green_stash_product_detail:
+  path: '/estudio/loja/produtos/{produto}'
+  defaults:
+    _controller: 'aculta_commerce.green_stash_product_controller:detail'
+    _title: 'Detalhes do produto'
+  requirements:
+    _permission: 'access aculta green stash'
+    produto: '[1-9][0-9]*'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_commerce.green_stash_product_create:
+  path: '/estudio/loja/produtos/novo'
+  defaults:
+    _form: '\Drupal\aculta_commerce\Form\GreenStashProductCreateForm'
+    _title: 'Novo produto'
+  requirements:
+    _permission: 'access aculta green stash'
+  options:
+    _aculta_domain_purpose: account

@@ -1,0 +1,13 @@
+# Doações, dentro da aba ACULTA (decisão de 2026-10-20).
+aculta_donation.donation_settings:
+  title: Fluxo de doação
+  description: Valores e textos do fluxo de doação.
+  route_name: aculta_donation.donation_settings
+  parent: aculta_portal.admin
+  weight: 9
+entity.aculta_donation_campaign.collection:
+  title: Campanhas de doação
+  description: Campanhas com período e valor próprios.
+  route_name: entity.aculta_donation_campaign.collection
+  parent: aculta_portal.admin
+  weight: 10

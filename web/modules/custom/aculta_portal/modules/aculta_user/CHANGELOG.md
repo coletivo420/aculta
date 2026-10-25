@@ -1,4 +1,469 @@
+## 0.4.0-dev.75 — identificar cada transição de amizade
+
+`FriendshipChangedEvent` recebe um `transitionId` aleatório e imutável por
+instância, sem dados pessoais ou dependência do Messenger. Isso distingue
+transições com o mesmo timestamp de segundos; o adapter pode manter a chave
+idempotente quando o mesmo objeto de evento é reprocessado.
+
+Validação: Unit User **129/492 PASS**, uma depreciação PHPUnit preexistente;
+Unit Messenger **282/2.308 PASS**; Kernel de integração de amizade **1/23 PASS**
+no MariaDB dedicado, com duas depreciações de discovery de `message`; PHPCS e
+PHP lint PASS. Runtime não executado.
+
+## 0.4.0-dev.74 — editor independente de apelido no Studio (2026-10-25)
+
+- `NicknameForm` usa Form API para alterar exclusivamente `Profile.field_nickname` do usuário atual, aplicando `AccountNames::isValid()` e retornando a `/studio/perfil`.
+- `NicknamePolicy` centraliza busca de colisões em perfis de papel e agora também atende `AccountCreationHooks`. `PublicProfileLink`, `PublicProfilePolicy`, `/u/{apelido}`, rotas do legado e schema permanecem.
+- Testes Unit de apelido inválido/reservado/duplicado e política escritos, mas **não executados**. Conflitos de escrita simultânea, permissão, privacidade, cache e links públicos requerem Kernel/Functional/Runtime.
+
+## 0.4.0-dev.73 — corrigir conflito de propriedade em FormBase (2026-10-24)
+
+- Os formulários de perfil usam `currentRouteMatch` em vez de redeclarar a
+  propriedade herdada `$routeMatch` como `readonly`. O PHP 8.4 encerrava o
+  bootstrap durante o rebuild do container, bloqueando a recuperação do site.
+- PHP lint PASS. O rebuild do Runtime e o smoke HTTP foram executados após a
+  correção; sem alterações de dados ou configuração persistida.
+
+## 0.4.0-dev.72 — mesmo Form API em Perfil Studio independente (2026-10-24)
+
+- `AccountBioForm`, `SocialLinkForm` e `ProfileVisibilityForm` detectam
+  as rotas `aculta_studio.profile_bio`, `profile_social` e
+  `profile_privacy`, mantendo submit, validações, entidades e políticas
+  proprietárias. As rotas e comportamentos originais de Minha Conta
+  permanecem disponíveis para comparação.
+- Sem novos dados, fields ou aliases; perfil público `/u/{apelido}` intacto.
+  Testes/Runtime não executados nesta edição.
+- Referência: `docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md`.
+
+## 0.4.0-dev.71 — remoção de aliases temporários em desenvolvimento (2026-10-24)
+
+- Removidos aliases legados de troca de e-mail /seguranca/email e /seguranca/email/{user}; removido controller de redirecionamento órfão. E-mail e segurança continuam no Portal e nas suas rotas legítimas; /u/{apelido} preservado. Testes não executados neste incremento.
+- Regra transversal: `AGENTS.md` e `scripts/validate-no-temporary-route-aliases.php`.
+
+## 0.4.0-dev.70 — evidência publicada por contexto
+
+- Implementados `PublishedParticipationLookupInterface`, o valor agregado
+  `PublishedParticipationEvidence` e o dispatcher `PublishedParticipationLookup`.
+- O dispatcher não combina contextos; ausência/duplicidade de provider e
+  exceção retornam evidência indisponível, `max-age: 0` e indicação para exigir
+  revisão. O resultado não contém entidade, texto ou identidade do conteúdo.
+- Wiki fornece o provider de `wiki_entry`. As APIs e o comportamento atuais do
+  Fórum permanecem sem migração. Testes: User Unit 123/439; caracterização
+  Kernel 9/129; Fórum Kernel 1/39.
+
+## 0.4.0-dev.69 — referências ao bundle Revista canônico
+
+- Feed pessoal de publicações e variante de autoria passam a usar `revista`; removida a consulta quebrada ao bundle aposentado `article`.
+
+## 0.4.0-dev.68 — caracterização das políticas compartilhadas (XK 0.1-C1) — 2026-10-22
+
+- `ParticipationRules`, `ParticipationEditWindow`, `EditWindowExemptionInterface`
+  e os hooks consumidores ganharam testes de caracterização Unit e Kernel,
+  sem alteração de código de produção, DI, configuração ou permissões.
+- `docs/USER-PART-0.1-C1-CHARACTERIZATION.md` registra contratos, matriz de
+  testes, cacheability, falha conservadora e pendências conhecidas.
+- `PublishedParticipationLookupInterface` permanece documentada como candidata,
+  não implementada. Nenhum Runtime foi executado.
+
+## 0.4.0-dev.67 — contrato público de associado ativo para Group — 2026-10-22
+
+- `AssociadoMarker` implementa `ActiveAssociateInterface`
+  (`src/Associado/ActiveAssociateInterface.php`): `isActiveAssociate()` responde
+  pela situação `ativo` de `aculta_associado` e `associateCacheTags()` devolve
+  `aculta_associado_list` e `user:<uid>`.
+- Novo alias de serviço `aculta_user.active_associate` aponta para
+  `aculta_user.associado_marker`; consumidores (Fórum restrito via Group) passam
+  a depender só do contrato, sem papel `associado` e sem cópia de situação em
+  Group.
+- README e `docs/ASSOCIADO.md` documentam o contrato e o papel do consumidor.
+  Testes desta frente são Unit e ficam no Fórum; nenhum Runtime foi alterado.
+
+## 0.4.0-dev.66 — fila agrega denúncia de post revisionável — 2026-10-21
+
+- `ReportQueue` carrega flaggings de `aculta_forum_post`, em lotes e sem
+  dependência do módulo Fórum; valida o tópico hospedeiro e seu Domain purpose
+  antes de agrupar, e ignora posts/autores históricos.
+- Serviço recebe `DomainPurposeManager`; PHPCS/lint e gates estáticos PASS.
+  Sem import de configuração ou alteração no Runtime.
+
+## 0.4.0-dev.65 — posts revisionáveis na atividade pessoal — 2026-10-21
+
+- A aba Comentários de Minha Conta combina Comments públicos e posts
+  revisionáveis publicados pela própria pessoa, com ordenação cronológica e
+  revalidação de acesso no purpose `forum`. A entidade é detectada quando
+  disponível, sem dependência circular `aculta_user` → `aculta_forum`.
+- Links de posts apontam para `forum-post-{id}` na página canônica do tópico e
+  identificam assunto e tópico; nenhuma outra atividade de pessoa é exposta.
+- Validação estática concluída; testes e smoke autenticado ficam pendentes.
+
+## 0.4.0-dev.64 — compartilha autoria com posts revisionáveis do Fórum — 2026-10-21
+
+- `DiscussionCommentAuthorHooks` apresenta posts `aculta_forum_post` pelo `AuthorCardBuilder`: identidade User usa `author_forum`; `legacy_author` continua no cartão histórico, sem conversão para conta.
+- A leitura do corpo e a configuração do view mode permanecem no `aculta_forum`; `aculta_user` entrega somente o slot de autoria neutro e cacheável.
+- Integração preparada para a leitura revisionável; nenhum Runtime foi alterado.
+
+## 0.4.0-dev.63 — registra DI dos hooks de janela de edição — 2026-10-21
+
+- `ParticipationEditWindowHooks` agora é serviço do módulo com a política central injetada. Sem o registro, o `ClassResolver` tentava instanciar o hook sem argumentos e causava HTTP 500 nas rotas do portal.
+- A janela retorna `neutral` enquanto o prazo está aberto; ela só restringe após o vencimento e não concede edição sem a permissão do handler da entidade.
+- Sem campo/timestamp migrado, preserva o acesso-base até a migração ser aplicada; não bloqueia comentários existentes antes do update de dados.
+- Rebuild de cache no Runtime de teste após confirmar `aculta_runtime`; conta retornou 403 anônimo na rota protegida (sem 500), sem novo erro PHP. PHP CLI 8.4.26; 8.5 não validado. Runtime status: correção de código aplicada no Homelab; validação autenticada pendente.
+
+## 0.4.0-dev.62 — desacopla decisão de primeira moderação do Comment — 2026-10-21
+
+- `ParticipationRules::requiresFirstDiscussionModeration()` expõe a política
+  compartilhada para entidades de discussão futuras. Mantém configuração,
+  papéis isentos e aprovação anterior como fonte única; LMS continua fora do
+  hook de Comment e do workflow público do Fórum.
+- `ParticipationHooks` usa a nova API sem alterar a política observável dos
+  Comments compartilhados.
+- Kernel `PublicDiscussionModerationKernelTest`: cobertura da decisão genérica
+  para conta nova, participante com post publicado e opção administrativa
+  desligada. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.61 — aceite único: sem formulário de rastreamento e ledger só com os Termos — 2026-10-21
+
+- Removido `AcultaUserAgreementTrackingConsentForm` e a rota `/configuracoes/rastreamento-de-e-mail`. Não há mais segundo aceite.
+- `AcultaUserAgreementLedger` grava e lê só `aculta_user_agreement_terms`. Outro tipo é recusado na gravação e responde falso na leitura.
+- Eventos `ConsentRevokedEvent` (`aculta_user.consent_revoked`) e `AccountDeletedEvent` (`aculta_user.account_deleted`), para os módulos que guardam dado ligado à conta. Sem consumidor ainda.
+- Migração legada do `aculta_user.install`: só o aceite único entra no ledger. Ambiente de teste, sem migração de dados.
+- Regra e gate: `docs/portal/ACEITE-UNICO.md`, `php scripts/validate-single-acceptance.php`.
+
+## 0.4.0-dev.60 — conclui namespace do ledger e remove o Agreement contrib — 2026-10-21
+
+- Classes, arquivos, hooks, serviços, rotas, formulários e métodos próprios usam `AcultaUserAgreement*` / `aculta_user_agreement_*`; os identificadores antigos sobrevivem apenas nos updates históricos de migração/revogação.
+- `drupal/agreement` foi desinstalado do Runtime de testes, removido do Composer e de Config Sync. A migração preserva o estado legado disponível, identificado como estado final sem histórico anterior.
+- Update 10010 aplica a retenção escolhida: remove eventos legados de contas que já não existem; a exclusão de uma conta também apaga sua cadeia. Não se conserva dado pessoal após o fim da conta.
+- Runtime: Agreement desativado, 4 eventos/3 contas ativas após retenção, cadeias HMAC válidas. Home MAIN e Conta respondem HTTP 200 após seguir a canonicalização HTTPS. Rebuild de cache concluiu com aviso preexistente de cópia de asset H5P.
+- `aculta_user.info.yml` 0.4.0-dev.60. Estado Dev; revisão autenticada e gates de RC pendentes.
+
+## 0.4.0-dev.59 — preserva tipo fonte da evidência legada — 2026-10-21
+
+- Migration 10009 registra o tipo de origem do Agreement antigo e marca que o ledger preserva somente o último estado, sem IP/UA nem histórico anterior recuperável; reencadeia os HMACs.
+- `aculta_user.info.yml` 0.4.0-dev.59. Runtime update 10009 pendente.
+
+## 0.4.0-dev.58 — padroniza namespace `aculta_user_agreement` — 2026-10-21
+
+- Renomeadas classes, arquivos, serviços, rotas e funções próprias relacionadas aos Termos para `AcultaUserAgreement*` / `aculta_user_agreement_*`.
+- Nova migração 10007 renomeia a tabela/campo do ledger e reencadeia HMAC, preservando os 37 registros e seus timestamps. A leitura da tabela `agreement` fica restrita ao update histórico 10006.
+- Migração 10008 remove o permissionamento legado `bypass agreement` depois da migração do módulo contrib.
+- `aculta_user.info.yml` 0.4.0-dev.58. Runtime update 10007 ainda pendente.
+
+## 0.4.0-dev.57 — consulta administrativa read-only do ledger — 2026-10-21
+
+- Adicionada permissão restrita e rota em `/painel-administrativo/aculta/termos/aceites` para consultar eventos, IP/User-Agent, evidência legada e integridade HMAC. A tela não inclui operações de edição ou exclusão.
+- `aculta_user.info.yml` 0.4.0-dev.57. Runtime: código aplicado; acesso administrativo ainda requer smoke autenticado. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.56 — ledger de aceite e consentimento (em desenvolvimento) — 2026-10-21
+
+- Criado `aculta_user.consent_ledger`: eventos append-only por conta, com encadeamento HMAC verificável usando a chave privada do site; captura IP resolvido pelo Drupal e User-Agent em eventos novos.
+- Aceites de Termos e Privacidade registram UUID/revisão e hash do conteúdo resolvido pelos aliases atuais. Criado formulário autenticado para aceitar/revogar o rastreamento opcional em `/configuracoes/rastreamento-de-e-mail`.
+- `aculta_user_update_10006` copia o estado e data atuais do Agreement para evidência legada incompleta. O módulo contrib ainda não foi removido: faltam auditoria administrativa, limpeza das referências/configuração e validação antes da desinstalação.
+- Evidência pessoal é removida junto com a conta. HMAC detecta alterações na aplicação; não protege contra operador com acesso ao banco e à chave privada.
+- PHP lint: PASS. Runtime: 37 registros migrados, 34 cadeias verificadas sem divergência; smoke do site e da conta HTTP 200. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.55 — troca de e-mail incorporada (aba E-mail da Segurança) — 2026-10-21
+
+- Pedido de troca de e-mail nasce no aculta_user, no lugar do contrib `change_mail_page` (desinstalado no Runtime e removido do `composer.lock`). Classe `ChangemailForm`, ID de formulário `aculta_user_changemail_form`.
+- O formulário não grava o novo endereço: o `aculta_mail_confirmer_user` intercepta o save e envia o link de uso único de 24 horas. O e-mail só muda após a confirmação.
+- Melhorias sobre o contrib: a senha atual é conferida pelo serviço `password`, com limite de 5 tentativas erradas por hora (`flood`, evento `aculta_user_changemail_password`); e-mail igual ao atual é recusado; o formulário não é pré-preenchido com o e-mail atual; mensagens em português no próprio formulário.
+- Sem confirmação ligada (`aculta_mail_confirmer_user.settings` `user_email_change.enabled`), o formulário não é exibido e recusa o envio: nunca grava direto.
+- Hook `ChangemailHooks` no ponto `aculta_portal_changemail` (alter da aba E-mail; só entrega o formulário quando o envio está pronto).
+- Caminhos legados `/seguranca/email` e `/seguranca/email/{user}` (rotas `aculta_user_changemail.legado` e `aculta_user_changemail.legado_usuario`) viram `302` para a aba E-mail, via `ChangemailRedirectController`. Só a própria conta.
+- Teste: validação direta no Runtime (`drush scr`) confirmou senha errada recusada e nenhuma gravação do e-mail. Pedido válido e confirmação ficam para o teste de navegador.
+- `aculta_user.info.yml` 0.4.0-dev.55. RUNTIME STATUS: DEFERRED (teste de navegador da aba E-mail pendente).
+
+## 0.4.0-dev.54 — evento de transição de amizade para o Messenger — 2026-10-21
+
+- `FriendshipChangedEvent` (`aculta_user.friendship_changed`) disparado ao registrar um pedido (`requested`) e ao aceitar (`accepted`). Carrega só identificadores e o instante, sem dados pessoais.
+- `FriendshipManager` recebe o `event_dispatcher`.
+- `aculta_user.info.yml` 0.4.0-dev.54. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.53 — linha de ações da foto com token próprio do tema — 2026-10-21
+
+- Ações do popup de foto (sortear, remover e salvar) usam o token `account-photo-actions` (tema aculta420 0.6.0-dev.134), no lugar do token da bio.
+- `aculta_user.info.yml` 0.4.0-dev.53. RUNTIME STATUS: DEFERRED (inspeção visual humana pendente).
+
+## 0.4.0-dev.52 — botão de sorteio na linha de ações; pedido de adesão atualiza a tela — 2026-10-21
+
+- "Sortear novo avatar" passa a ser botão de envio (AJAX) na mesma linha de "Salvar foto do perfil", no lugar do link. Não grava: troca só a prévia do modal.
+- Pedido de adesão reconstrói o formulário: a resposta AJAX mostra "pedido em análise" sem recarregar.
+- Testes de navegador no X11 local (Chromium com janela visível) registrados em `docs/portal/TESTES-NAVEGADOR.md`, seção R.
+- `aculta_user.info.yml` 0.4.0-dev.52. RUNTIME STATUS: DEFERRED (inspeção visual humana pendente).
+
+## 0.4.0-dev.51 — convite de associado pelo administrador — 2026-10-21
+
+- Administrador convida uma pessoa a ser associada (situação `convidado`); a pessoa aceita ou recusa em `/associado`. O aceite grava a data de adesão. Adicionar direto (ativo, sem convite) continua disponível ao administrador.
+- Verificado no servidor de testes: convite, visão da pessoa com "Aceitar convite" e "Recusar convite", aceite com data de adesão.
+- `aculta_user.info.yml` 0.4.0-dev.51. RUNTIME STATUS: DEFERRED (navegador no X11 local pendente de execução).
+
+## 0.4.0-dev.50 — associado vira situação (não papel); pedido de adesão; só administrador concede — 2026-10-21
+
+- Associado deixa de ser papel. A situação fica na entidade `aculta_associado`: pendente, ativo, suspenso ou desligado, com **data de adesão** (primeira ativação) e autor/motivo da última alteração. Contrato em `docs/ASSOCIADO.md`.
+- Pedido de adesão pela própria pessoa, em `/associado` (Minha conta), só com e-mail confirmado. Pedido cria a situação "pendente"; não concede nada.
+- Só o administrador (`administer aculta associados`) concede, suspende, desliga ou recusa o pedido, em `/painel-administrativo/associados/{user}/situacao`. Ativar garante o perfil de associado (dados como RG ficam nele).
+- Migração `aculta_user_update_10005`: campos novos; contas já marcadas passam a "ativo" com data de adesão da marca.
+- Relatório de associados: situação, data de adesão e pedidos em análise; CSV com situação e data.
+- Papel `associado` removido da configuração, da cadeia de herança e das ações de papel (sem usuários com o papel). `lms_teacher` herda de `estudante`.
+- Verificado no servidor de testes: pedido, ativação pelo administrador, suspensão, visão da pessoa, negação de acesso à tela administrativa e de auto-concessão. Teste de Kernel não executável neste ambiente (cadeia de serviços do `aculta_portal`); registrado em `docs/PENDENCIAS.md`.
+- `aculta_user.info.yml` 0.4.0-dev.50. RUNTIME STATUS: DEFERRED (inspeção visual pendente).
+
+## 0.4.0-dev.49 — aba Pessoas do painel; formulário de participação corrigido — 2026-10-20
+
+- Aba **Pessoas** no painel ACULTA, com Regras de participação, Mensagens e CEP como subabas.
+- Correção: o formulário de participação chamava `user_role_names()`, função do Drupal 7 que não existe no Drupal 11. A página dava erro 500. Agora os papéis vêm de `Role::loadMultiple()`.
+
+## 0.4.0-dev.48 — regras de participação no painel ACULTA — 2026-10-20
+
+- Página de participação em `/painel-administrativo/aculta/participacao` e item na aba ACULTA.
+- Caminhos antigos `/painel-administrativo/configuracoes/aculta/...` respondem 404, sem redirecionamento.
+
+## 0.4.0-dev.47 — encaminhar a antiga fila de denúncias ao painel central do Fórum
+
+- `/painel-administrativo/forum/denuncias` mantém a permissão específica, mas
+  redireciona localmente para `/painel-administrativo/forum`, sem carregar ou
+  modificar denúncias nessa rota.
+- Adicionado teste unitário para a resposta local do redirect; a suíte Unit
+  combinada Forum + User passou com 155 testes/831 assertions. Runtime de teste resolve a rota, responde 403 para anônimo e, em sessão uid 1, retorna 302 para o painel; logout confirmado.
+- O smoke visual X11 autenticado GET-only incluiu a rota de denúncias entre os
+  12 caminhos estáticos que terminaram no painel central (20/20 verificações
+  totais); nenhuma denúncia ou outra entidade foi criada ou alterada.
+
+## 0.4.0-dev.46 — cartão editorial compartilhado e fallback de avatar — 2026-10-20
+
+- `author_editorial` passa a preparar identidade, avatar, designation, biografia e
+  redes no `AuthorCardBuilder`. Bio e redes exigem perfil público e opt-in; o
+  Magazine só envia Autor/Coautor. Sem apelido, usa o nome de exibição para
+  atribuição editorial, sem inventar URL de perfil.
+- O view-model informa explicitamente quando há avatar, para que o slot SDC vazio
+  apresente a inicial. Redes salvas também são filtradas por esquema HTTP(S) e
+  host suportado.
+- User Unit: 63 testes/222 assertions PASS; Magazine Unit: 7/31 PASS; PHPCS
+  direcionado PASS; Drupal 11+ 988, mapa módulo/tema 153 e schema SDC 543 PASS.
+  Runtime de teste: cache rebuild PASS, conteúdo editorial publicado renderizado
+  sem escrita; Firefox/X11 1270 e 500 px, claro/escuro, designation e inicial
+  verificados. A página testada tem 9 px de overflow lateral no visualizador PDF,
+  fora do cartão. PHP 8.4.26; baseline PHP 8.5 não disponível. RUNTIME STATUS:
+  PARTIAL.
+
+## 0.4.0-dev.45 — retirar autoria histórica da fila de denúncias
+
+- A fila específica do Fórum inclui somente tópicos públicos atuais e seus
+  comentários. Exclui conteúdo com `field_autor_legado` e qualquer flagging de
+  comentário hospedado em Revista, LMS, Wiki ou outro contexto. Flag continua
+  sendo a fonte de verdade, sem contador paralelo.
+- O gate de papéis deixa de exigir `edit any forum content`, permissão do
+  Drupal Forum contrib retirado, e verifica a permissão atual `moderar denuncias
+  do forum`; a moderação editorial de Nodes continua contextual no
+  `ForumModerationHooks`.
+- Unit `ReportQueueTest`: 3 testes/14 assertions PASS; PHPCS Drupal e PHP lint
+  PASS; evidências em `aculta_forum/docs/TEST-MATRIX.md`. A
+  concessão contextual das ações Flag está em `aculta_forum` dev.51. Runtime
+  `toca`: papel atualizado por import parcial e cache rebuild; fila de dados
+  aguarda os campos históricos e conteúdo de teste. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.44 — excluir autoria histórica da moderação inicial — 2026-10-20
+
+- A regra do primeiro comentário agora ignora discussões marcadas com
+  `field_autor_legado`, tanto no tópico hospedeiro quanto no Comment. Removida
+  a regra temporária de negar criação no bundle `forum` do Drupal contrib.
+- Kernel `PublicDiscussionModerationKernelTest`: 7 testes/84 assertions PASS no
+  banco dedicado `aculta_simpletest` (PHP CLI 8.4.26). Aviso do PHPUnit sobre
+  diretório de saída do browser não gravável; teste não usa esse diretório.
+  Runtime status: código carregado no ambiente, smoke autenticado pendente.
+
+## 0.4.0-dev.43 — aposentar níveis de visibilidade da taxonomia Forum — 2026-10-20
+
+- Removidos `RestrictedForumGrants`, `RestrictedForumHooks`, o subscriber 404,
+  três permissões de realms e o campo `field_visibilidade` da taxonomia `forums`.
+  Fórum Growroom novo permanece público; o LMS segue com Group access.
+- Retirados os grants dos papéis em Config Sync. A configuração ativa do Runtime
+  ainda requer import controlado. Unit/gates serão registrados após execução.
+  RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.42 — remover estrutura de discussão contrib do User — 2026-10-20
+
+- `ForumModerationHooks` agora protege apenas Nodes ACULTA importados com
+  `field_autor_legado`; removidos os branches Drupal Forum `forum`/
+  `comment_forum`. O campo antigo `field_discussao` e suas instâncias em
+  activity/article/document/project/wiki_entry saíram dos defaults de
+  instalação do User.
+- Unit User: 52 testes/175 assertions PASS, uma depreciação em dependência;
+  PHPCS e lint dos arquivos modificados PASS. Portal 11+ (970), fronteira
+  (1376), mapa (151) e `git diff --check` PASS. Remoção ainda está em código,
+  Config Sync/Install; Runtime tem permissões/configs antigas ativas até o
+  próximo import dirigido. Cache rebuild e roots Fórum/Conta/Revista HTTP 200;
+  nenhum updb/import. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.41 — regras de participação sem Forum contrib — 2026-10-20
+
+- A moderação do primeiro comentário usa somente o Comment compartilhado dos
+  contextos não LMS; `comment_forum` deixa de ser uma política de participação.
+  A criação de novos Nodes `forum` fica negada até a retirada oficial do
+  módulo contrib.
+- Update 10004 removeu do Runtime de teste a configuração persistida obsoleta;
+  `updatedb:status` ficou limpo e a chave não está mais salva.
+- Testes Unit do isolamento histórico: 13/80 PASS; Kernel da política pública:
+  7/85 PASS no banco dedicado `aculta_simpletest`. PHP 8.4.26 no ambiente de
+  teste; execução em PHP 8.5 continua pendente. PHPCS nos arquivos alterados,
+  Portal Drupal 11+ (970), fronteira (1393), mapa módulo/tema (154) e
+  `git diff --check` PASS.
+
+## Validação adicional — respostas nos tópicos próprios do Fórum — 2026-10-20
+
+- `ActivityControllerKernelTest` chama `view('forum')` com domínio/account e
+  Comment/Core no MariaDB `aculta_simpletest`: lista apenas o tópico publicado
+  da conta atual, mostra 2 respostas publicadas e ignora 1 pendente pelo
+  agregado `comment_entity_statistics`.
+- Kernel: 1 teste / 12 assertions PASS; 5 deprecações originadas pelo Domain
+  contrib 3.0.1. Unit de `aculta_user`: 62 testes / 194 assertions PASS.
+- Runtime `toca`: com duas fixtures próprias e uma de outro autor, o controller
+  autenticado retornou somente o tópico da conta QA; o título exibiu “2
+  comentários” para duas respostas publicadas e excluiu uma pendente. Firefox/
+  X11 confirmou a rota `/atividade/forum` em 1024 px e Responsive Design Mode
+  390 × 670 px; a lista continha apenas o tópico próprio, sem overflow visível.
+  As duas fixtures e três Comments foram removidos; estado final do Fórum: zero
+  tópicos e Comments. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.40 — ano da conta no cartão público de fórum — 2026-10-20
+
+- `AuthorIdentity` inclui o ano de criação da conta somente quando o perfil
+  inteiro é público e a variante é `author_forum` ou `author_forum_stacked`;
+  `author_comment`, editorial, LMS, Wiki e histórico não recebem o dado.
+  ACULTA420 apresenta “Conta ACULTA desde” com o ano UTC, sem data exata.
+- Unit de identidade + hook do Fórum: 8 testes / 42 assertions PASS; suíte
+  completa: 62 / 194 PASS, com 1 depreciação PHPUnit preexistente. PHPCS da
+  implementação PHP e gate Foundation PASS. Inspeção visual de cartão
+  persistido pendente. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.39 — remover apresentação do Forum contrib — 2026-10-19
+
+- Removido `ForumTopicPresentationHooks`, cujo contador e chamada de login
+  atendiam apenas Nodes `forum` e Comments `comment_forum`. A apresentação do
+  novo bundle `aculta_forum_topic` permanece nos contratos ACULTA atuais.
+- Runtime de teste confirma zero `comment_forum`; nenhum conteúdo foi alterado.
+  Unit: 60 testes/175 assertions PASS (1 depreciação PHPUnit); gates Drupal 11+
+  970, fronteira 1382 e mapa 154 PASS. Cache rebuild, ausência da classe, render
+  do Node legado e HTTP 200 após redirect passaram. Não há Comments antigos para
+  validar contagem; PHP 8.4.26 abaixo da baseline 8.5. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.38 — remover resumo editorial do Forum legado — 2026-10-19
+
+- Removido o `DiscussionHooks` de `aculta_user`, que consultava comments do
+  bundle contrib `comment_forum` por `field_discussao` com query sem access.
+  `article`/`blog` agora usam exclusivamente o campo Comment direto já
+  instalado; a leitura dos vínculos antigos permanece isolada para conversão
+  editorial até a retirada planejada dos dados.
+- Runtime `toca`: consulta somente leitura confirmou 8 vínculos em `article`, 4
+  em `blog`, e o campo `field_aculta_discussion` nos 12 Nodes; outros bundles
+  consultados não possuem vínculos legados. Cache rebuild, renderização full
+  da publicação e HTTP canônico (200 após redirect) passaram. Nenhum Node ou
+  Comment foi alterado. Unit `aculta_user`: 60 testes/175 assertions PASS;
+  gate Portal 970 e mapa módulo/tema 154 checks PASS. PHP CLI 8.4.26 está abaixo
+  da baseline 8.5; não há Comments reais para confirmar a exibição/submissão no
+  browser. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.37 — atividade com comentários do novo Fórum — 2026-10-19
+
+- A aba privada “Comentários” consulta exclusivamente Comments publicados do
+  bundle `aculta_discussion_post`, field compartilhado e Nodes
+  `aculta_forum_topic`; não depende mais de `comment_forum` do Drupal Forum
+  contrib. Cada link aponta ao domínio canônico do Fórum e à âncora do Comment.
+- Antes de renderizar, a tela revalida acesso ao tópico e ao Comment no purpose
+  `forum`, além de exigir host público publicado do bundle correto. Links de
+  tópicos próprios também usam Domain canônico e access contextual.
+- Auditoria adicional de contrib instalado e critérios para adaptar código
+  registrados em `aculta_forum/docs/PESQUISA.md`; nenhuma implementação ou
+  dependência nova foi copiada/adicionada.
+- Teste Kernel MariaDB: 6 testes/73 assertions PASS, incluindo query exata da
+  atividade (Forum publicado incluído; Revista e pendente excluídos). Unit
+  `aculta_user`: 60 testes/175 assertions PASS. PHP lint e gates Portal (970),
+  fronteira (1374), mapa (154), diff-check PASS. PHPCS do controller ainda
+  acusa dívida pré-existente: 22 erros/14 avisos, contra 23/14 na base; não foi
+  ampliada. Runtime `toca`: service/rota renderizada em leitura como uid 5, mas
+  sem comentários do novo bundle; consulta pública também retornou zero, logo
+  card/link com conteúdo e browser não foram exercitados. PHP CLI 8.4.26 está
+  abaixo da baseline 8.5. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.35 — variantes de autoria separadas pelo host da discussão — 2026-10-19
+
+- `DiscussionCommentAuthorHooks` consulta a entidade hospedeira pelo contrato
+  Core `CommentInterface::getCommentedEntity()` e seleciona `author_forum` para
+  respostas de tópicos públicos; `article`/`blog` usam `author_comment`, e os
+  bundles planejados LMS/Wiki têm variantes próprias. Hosts desconhecidos não
+  recebem o cartão errado. Access permanece no host/Comment; o resolver só
+  identifica contexto.
+- PHPUnit Unit para o mapeamento Forum/Revista/LMS/Wiki e hosts não suportados;
+  suíte Unit `aculta_user`: 60 testes / 175 assertions PASS (1 depreciação
+  preexistente); lint e PHPCS dos arquivos alterados PASS; Drupal 11+ (970),
+  fronteira (1362), mapa (154) e hierarquia PASS.
+- Runtime `toca`, Drupal 11.4.10: cache rebuild PASS; smoke sem persistência
+  resolveu Forum→`author_forum`, Revista→`author_comment`, LMS→`author_lms` e
+  Wiki→`author_wiki`. Não foi criado ou alterado Comment. Renderização de
+  comentários persistidos e inspeção visual seguem pendentes. PHP CLI e Runtime
+  estão em 8.4.26, abaixo da baseline de desenvolvimento 8.5. RUNTIME STATUS:
+  PARTIAL.
+
+## 0.4.0-dev.32 — autoria dos comentários compartilhados — 2026-10-19
+
+- `DiscussionCommentAuthorHooks` usa `AuthorCardBuilder` nas variantes `author_comment` e `author_growroom_historico` para Comments compartilhados. A autoria histórica mostra apenas nome e origem do acervo, sem conta ativa ou ações; identidade de User continua sujeita à policy pública.
+- A política de moderação de comentários do LMS foi documentada como responsabilidade de Educadores autorizados no contexto, sob o contrato do adapter LMS.
+- Validação Runtime e inspeção visual humana pendentes. RUNTIME STATUS: DEFERRED.
+
 # Changelog — aculta_user
+
+## 0.4.0-dev.34 — discussões contextuais fora da fila genérica — 2026-10-19
+
+- A alteração OOP da fila Core exclui Comments `aculta_discussion_post` cujo
+  host usa `field_aculta_discussion`; Fórum e publicações permanecem nas suas
+  áreas administrativas de contexto. IDs enviados manualmente também são
+  rejeitados. A proteção do acervo histórico continua ativa.
+- Teste Unit `ForumModerationHooksTest`: 12 testes / 68 assertions PASS;
+  PHPCS Drupal/DrupalPractice PASS. Runtime após cache rebuild confirma as abas
+  do Fórum; HTTP autenticado segue pendente.
+
+## 0.4.0-dev.33 — cartões de autoria nos tópicos ACULTA Forum — 2026-10-19
+
+- `PublicForumTopicAuthorHooks` usa `AuthorCardBuilder` para `author_forum` em tópicos User e `author_growroom_historico` em tópicos importados com autoria legada. Integra apenas bundles `aculta_forum_topic` em `full`/`teaser`; outros bundles e modos seguem intactos.
+- A policy e cache do resolver de identidade permanecem fonte de verdade; acervo histórico não vira User. `PublicForumTopicAuthorHooksTest` + `AuthorIdentityTest`: 6 testes/23 assertions PASS; PHPCS e lint PASS. Runtime após cache rebuild confirmou o hook OOP registrado; um Node unsaved em memória com uid de teste produziu `author_forum`, com contagem de tópicos inalterada. RUNTIME STATUS: PARTIAL; listagem vazia impede inspeção de um tópico persistido.
+
+## 0.4.0-dev.31 — acervo Growroom importado em modo somente leitura — 2026-10-19
+
+- Tópicos `aculta_forum_topic` e Comments `aculta_discussion_post` vinculados com `field_autor_legado` não podem ser editados, excluídos ou aprovados; a negação ocorre antes do bypass administrativo. A discussão é fechada no presave de tópicos históricos, inclusive na importação. Bundles contrib `forum`/`comment_forum` não são confundidos com a restauração.
+- A administração em lote do Core filtra comentários históricos e rejeita IDs forjados no POST; a exclusão do legado contrib `forum` continua uma operação separada da importação do acervo Growroom.
+- Testes Unit de access, fechamento, comentário histórico e distinção dos bundles contrib: 10 testes/53 assertions PASS. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.30 — moderação segura dos tópicos públicos novos — 2026-10-19
+
+- `ForumModerationHooks` cobre `aculta_forum_topic`: `content_editor` pode moderar tópicos de outros autores somente quando o marcador consultado por `EmailConfirmationPolicy` confirma o e-mail. Não foram concedidas permissões genéricas de editar/excluir qualquer tópico ao papel.
+- A autoria própria continua no access nativo do Node; conteúdo histórico mantém sua exceção; administrador mantém bypass. As decisões incluem variação por `user.roles` e tags da entidade.
+- Teste Unit: 4 testes/18 assertions PASS. Runtime de teste sem alteração persistente; RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.29 — cache das decisões de participação — 2026-10-19
+
+- `ParticipationHooks` adiciona a cache tag `config:aculta_user.settings` e o contexto `user.roles` às decisões de acesso para criação de tópicos, junto à tag `comment_list` e ao contexto `user`. Mudanças de configuração ou papéis invalidam/variam o resultado cacheado.
+- Teste Kernel: 5 testes/63 assertions PASS em `aculta_simpletest`; RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.28 — moderação de comentários públicos contextuais — 2026-10-19
+
+- A regra de moderação inicial cobre `aculta_discussion_post` em qualquer Node com `field_aculta_discussion`; `aculta_lms_topic` é excluído. Comentário LMS publicado conta como participação aprovada fora do LMS e limpa o bloqueio temporário de criação de tópico.
+- O painel de participação ganhou controle para ligar/desligar essa regra pública; os ajustes existentes de limite, bloqueio de tópico pendente e papéis isentos permanecem configuráveis.
+- Adicionada cobertura Kernel (5 testes/63 assertions, PASS em `aculta_simpletest`) para moderação nos contextos compartilhados, exclusão da moderação LMS, participação LMS como aprovação, cache de configuração/papéis e opção administrativa. Integração de campos da Revista não ativada.
+- RUNTIME STATUS: DEFERRED para o novo bundle e a UI.
+
+## 0.4.0-dev.27 — cartão compartilhado de autoria — 2026-10-19
+
+- `AuthorCardBuilder` e hook neutro `aculta_user_author_card` compõem o view-model cacheável; avatar usa `aculta_image`, e ações só entram como render arrays preparados por consumidores autorizados.
+- Corrigida a divergência de privacidade da foto: perfil público exige `field_exibir_foto`; perfil privado mantém a política existente de exibir foto e apelido. `PublicProfilePolicyTest` cobre opt-in e omissão.
+- ACULTA420 fornece o SDC experimental `content/author-card`, com cartões inline/empilhado e variante `author_growroom_historico` sem ações de conta. O nome conceitual anterior `author_legacy` foi substituído; autoria histórica ainda aguarda consumidor contextual autorizado.
+- Testes Unit `aculta_user`: 43 testes/87 assertions; gates Portal 968, fronteira 1272, mapa 153, imagem PASS. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.26 — identidade compartilhada de autoria — 2026-10-19
+
+- `AuthorIdentityResolver` (`aculta_user.author_identity_resolver`) compõe a conta Drupal, o perfil principal, a política de link público e a metadata de cache já mantida por `PublicProfileLink`.
+- `AuthorIdentity` exporta somente variante, apelido e URL canônica opcional; não contém entidade, e-mail ou campos de perfil privados. Variantes identificam consumidores, mas continuam compartilhando esse payload mínimo.
+- `author_legacy` não é aceito pelo resolver de `User`; autoria histórica permanece entidade independente.
+- Testes unitários direcionados: 3 testes, 12 assertions. RUNTIME STATUS: DEFERRED.
 
 ## 0.4.0-dev.25 — links de perfil com o apelido atual, em todo o site
 
@@ -378,4 +843,27 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
 - `RUNTIME STATUS: DEFERRED` — entidade ainda não instalada; interfaces,
   formulários e integração de notificações seguem em desenvolvimento.
 
+
+## 0.4.0-dev.36 — respostas nos tópicos próprios da atividade — 2026-10-19
+
+- A aba Fórum em Minha Conta lista o bundle `aculta_forum_topic` e mostra a
+  contagem publicada de respostas em cada tópico, usando o agregado de Comment
+  Core. O contador é privado à própria pessoa nessa tela; não há armazenamento
+  paralelo, contagem de pendências/rejeições nem consulta por linha.
+- Esta atualização também substitui a consulta obsoleta ao bundle contribuído
+  `forum` na lista de tópicos próprios. O histórico antigo não é migrado nem
+  alterado por esta tela.
+- Validação: Unit `aculta_user` 60/60 testes e 175 assertions PASS; PHP lint e
+  gates Portal 11+ (970), fronteira (1368) e mapa (154) PASS. PHPCS da classe
+  ainda registra 23 erros e 14 avisos já presentes na versão-base, sem aumento
+  da contagem após esta alteração. Runtime `toca`, Core 11.4.10, uid 5: render
+  direto da aba produziu 8 tópicos e 8 itens com contador agregado; somente
+  leitura, sem alteração de conteúdo. HTTP/browser autenticado pendente. PHP CLI
+  8.4.26, abaixo da baseline requerida 8.5. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.74 — expor somente o nome público de membro
+
+`AuthorIdentityResolver` implementa `PublicMemberIdentityInterface`, que devolve somente o apelido aprovado pela política pública ou `NULL`. O contrato permite que módulos consumidores evitem usar `UserInterface::getDisplayName()` como identidade pública.
+
+Validação: `AuthorIdentityResolverTest` **2/9 PASS**, suíte Unit aculta_user **125/448 PASS**. A suíte mantém uma depreciação do PHPUnit em `AuthorCardVariantResolverTest`, fora deste incremento; PHPCS dos novos arquivos PASS.
 

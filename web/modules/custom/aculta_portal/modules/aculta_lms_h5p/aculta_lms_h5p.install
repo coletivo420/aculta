@@ -5,6 +5,7 @@
  */
 
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
 
 /**
  * Preserve private content files when the integration is uninstalled.
@@ -26,6 +27,7 @@ function aculta_lms_h5p_uninstall(): void {
 function aculta_lms_h5p_install(): void {
   // Hub requests and telemetry require explicit opt-in. Both settings default
   // to disabled; local libraries are managed separately.
+  \Drupal::service('aculta_lms_h5p.asset_file_manager')->mirrorAssets();
 }
 
 /**
@@ -795,4 +797,107 @@ function aculta_lms_h5p_update_8005() {
   \Drupal::entityDefinitionUpdateManager()
     ->installFieldStorageDefinition('a11y_title', 'h5p_content', 'h5p_content', $storage_definition);
 
+}
+
+/**
+ * Historical placeholder. The current entity is installed by update 8007.
+ *
+ * @deprecated in aculta_lms_h5p: The H5P entity ID changed in update 8007.
+ */
+function aculta_lms_h5p_update_8006(): void {
+}
+
+/**
+ * Recreate the H5P content entity under its ACULTA-owned entity type ID.
+ *
+ * Legacy H5P content, completion data, course assignments, and old entity
+ * references are intentionally discarded. H5P library definitions remain.
+ */
+function aculta_lms_h5p_update_8007(): void {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $repository = \Drupal::service('entity.last_installed_schema.repository');
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $legacy_definition = $repository->getLastInstalledDefinition('h5p_content');
+
+  // Remove H5P-managed content media through the aculta_image-aware storage
+  // adapter before dropping the old entity table. Files retained because of
+  // other references remain protected by that adapter's normal policy.
+  if ($schema->tableExists('h5p_content')) {
+    $content_ids = $database->select('h5p_content', 'hc')
+      ->fields('hc', ['id'])
+      ->execute()
+      ->fetchCol();
+    if ($content_ids !== []) {
+      $storage_path = \Drupal::service('aculta_lms_h5p.storage_path')->getPath();
+      $file_storage = \Drupal::service('aculta_lms_h5p.file_storage_factory')->create($storage_path);
+      foreach ($content_ids as $content_id) {
+        $file_storage->deleteContent(['id' => (int) $content_id]);
+      }
+    }
+  }
+
+  // Remove references from courses and forum topics before dropping the old
+  // entity storage. The H5P protocol table names remain unchanged.
+  foreach ([
+    'group__field_h5p_activities' => 'h5p_content_id',
+    'group_revision__field_h5p_activities' => 'h5p_content_id',
+    'node__field_h5p_content' => 'field_h5p_content_target_id',
+    'node_revision__field_h5p_content' => 'field_h5p_content_target_id',
+  ] as $table => $column) {
+    if ($schema->tableExists($table) && $schema->fieldExists($table, $column)) {
+      $database->delete($table)->execute();
+    }
+  }
+
+  foreach (['h5p_content_libraries', 'h5p_content_user_data', 'h5p_points'] as $table) {
+    if ($schema->tableExists($table)) {
+      $database->delete($table)->execute();
+    }
+  }
+  if ($schema->tableExists('file_usage')) {
+    $database->delete('file_usage')
+      ->condition('module', 'aculta_lms_h5p')
+      ->condition('type', 'h5p_content')
+      ->execute();
+  }
+
+  if ($legacy_definition) {
+    // Core invokes the old storage schema handler to drop its tables and
+    // installed entity definition. This is an intentional destructive reset.
+    $update_manager->uninstallEntityType($legacy_definition);
+  }
+
+  $entity_type_id = 'aculta_h5p_content';
+  if (!$repository->getLastInstalledDefinition($entity_type_id)) {
+    $entity_type = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
+    $field_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions($entity_type_id);
+    $update_manager->installFieldableEntityType($entity_type, $field_definitions);
+  }
+
+  // Forum's optional entity reference field follows the new entity type ID.
+  // The old target type has already been removed from code at this point, so
+  // FieldStorageConfig::save() cannot calculate its old reference schema. The
+  // target column remains an integer in both entity types and all field rows
+  // were discarded above; update config and the installed definition directly.
+  $field_storage_config = \Drupal::configFactory()->getEditable('field.storage.node.field_h5p_content');
+  $field_settings = $field_storage_config->get('settings') ?? [];
+  if (($field_settings['target_type'] ?? NULL) === 'h5p_content') {
+    $field_settings['target_type'] = $entity_type_id;
+    $field_storage_config->set('settings', $field_settings)->save();
+
+    $field_storage_entity_storage = \Drupal::entityTypeManager()->getStorage('field_storage_config');
+    $field_storage_entity_storage->resetCache(['node.field_h5p_content']);
+    $entity_field_manager = \Drupal::service('entity_field.manager');
+    $entity_field_manager->clearCachedFieldDefinitions();
+    $field_definition = $entity_field_manager->getFieldStorageDefinitions('node')['field_h5p_content'] ?? NULL;
+    if ($field_definition) {
+      $repository->setLastInstalledFieldStorageDefinition($field_definition);
+    }
+  }
+}
+
+/** Publishes pinned Composer assets outside request-time library discovery. */
+function aculta_lms_h5p_update_8008(): void {
+  \Drupal::service('aculta_lms_h5p.asset_file_manager')->mirrorAssets();
 }

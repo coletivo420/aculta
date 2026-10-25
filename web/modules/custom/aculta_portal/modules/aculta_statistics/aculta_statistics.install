@@ -1,0 +1,61 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Instala a tabela de agregados diários do ACULTA Statistics.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function aculta_statistics_schema(): array {
+  return [
+    'aculta_statistics_daily' => [
+      'description' => 'Contadores diários agregados por métrica e dimensão. Sem dado pessoal.',
+      'fields' => [
+        'metric' => [
+          'description' => 'Identificador do catálogo, por exemplo links.link.clicks.',
+          'type' => 'varchar',
+          'length' => 64,
+          'not null' => TRUE,
+          'default' => '',
+        ],
+        'dimension' => [
+          'description' => 'Recorte de baixa cardinalidade; vazio quando a métrica não tem recorte.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => TRUE,
+          'default' => '',
+        ],
+        'day' => [
+          'description' => 'Dia UTC, em dias desde 1970-01-01.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ],
+        'total' => [
+          'description' => 'Contador do dia.',
+          'type' => 'int',
+          'size' => 'big',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ],
+        'updated' => [
+          'description' => 'Timestamp da última gravação.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ],
+      ],
+      'primary key' => ['metric', 'dimension', 'day'],
+      'indexes' => [
+        'metric_day' => ['metric', 'day'],
+      ],
+    ],
+  ];
+}

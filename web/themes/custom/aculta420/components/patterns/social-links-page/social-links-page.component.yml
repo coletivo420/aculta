@@ -12,16 +12,26 @@ props:
     has_links:
       type: boolean
       title: Has social links
+      default: false
+    theme_preset:
+      type: string
+      title: Theme preset
+      default: classic
+      enum: [classic, soft, outline]
     logo_src:
       type: string
       title: Logo URL
+    show_brand:
+      type: boolean
+      title: Show institutional brand
+      default: true
 slots:
   description:
     title: Description
     description: 'Rendered editorial summary from Drupal content.'
+  owner_identity:
+    title: Public owner identity
+    description: 'Optional, privacy-approved identity render array supplied by ACULTA Links.'
   links:
     title: Social links
     description: 'Primary MAIN link and configured additional buttons supplied by ACULTA Portal.'
-  projects:
-    title: ACULTA projects
-    description: 'Project teaser cards rendered by the ACULTA Projects View with the VVJB carousel.'

@@ -56,7 +56,7 @@ if (is_file($root . '/config/sync/user.role.wiki_contributor.yml')) {
 
 foreach ([
   'administer comments',
-  'edit any forum content',
+  'moderar denuncias do forum',
   'revert all revisions',
   'create wiki_entry content',
   'edit any wiki_entry content',

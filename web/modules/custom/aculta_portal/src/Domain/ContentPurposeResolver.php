@@ -33,6 +33,9 @@ final class ContentPurposeResolver {
     private readonly DomainPurposeManager $domainPurpose,
   ) {}
 
+  /**
+   * Resolves purpose metadata for an incoming route.
+   */
   public function requiredPurpose(
     Route $route,
     string $routeName,
@@ -94,8 +97,8 @@ final class ContentPurposeResolver {
         ? $this->entities->getStorage('node')->load((int) $parameter)
         : (is_object($parameter) ? $parameter : NULL);
 
-      // Tópicos do fórum (nós do tipo forum) pertencem ao purpose FORUM.
-      if ($node && $node->bundle() === 'forum') {
+      // Tópicos ACULTA pertencem ao purpose FORUM.
+      if ($node && $node->bundle() === 'aculta_forum_topic') {
         return 'forum';
       }
 
@@ -103,6 +106,20 @@ final class ContentPurposeResolver {
         return $this->domainPurpose->getPurposeForDomainId(
           (string) $node->get('field_domain_source')->target_id
         );
+      }
+    }
+
+    if ($routeName === 'entity.media.canonical') {
+      $parameter = $request->attributes->get('media');
+      if ($parameter === NULL && $raw instanceof ParameterBag) {
+        $parameter = $raw->get('media');
+      }
+      $media = is_numeric($parameter)
+        ? $this->entities->getStorage('media')->load((int) $parameter)
+        : (is_object($parameter) ? $parameter : NULL);
+
+      if ($media && method_exists($media, 'bundle') && $media->bundle() === 'forum_attachment') {
+        return 'forum';
       }
     }
 

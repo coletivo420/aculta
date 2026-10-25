@@ -1,0 +1,19 @@
+uuid: 651f365e-1a7c-45d2-917c-f94e3f5d908f
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - group.type.lms_course
+    - node.type.aculta_lms_topic
+  module:
+    - gnode
+    - node
+_core:
+  default_config_hash: JxZtf59roq5qPJr1m_IMe0O4wxHSrwh1NbHKy2xQRXs
+id: lms_course-3abb8caf7f7d526ecedee
+group_type: lms_course
+content_plugin: 'group_node:aculta_lms_topic'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

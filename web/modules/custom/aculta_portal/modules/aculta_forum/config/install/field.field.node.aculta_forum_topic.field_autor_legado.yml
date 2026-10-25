@@ -1,0 +1,21 @@
+uuid: 1f2bef2f-859b-483a-b6f2-c644a76b938c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_autor_legado
+    - node.type.aculta_forum_topic
+  module:
+    - aculta_user
+id: node.aculta_forum_topic.field_autor_legado
+field_name: field_autor_legado
+entity_type: node
+bundle: aculta_forum_topic
+label: 'Autoria histórica'
+description: 'Preenchido só em tópico do acervo importado do Growroom. Tópicos com essa autoria são somente leitura e têm a discussão fechada.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: entity_reference

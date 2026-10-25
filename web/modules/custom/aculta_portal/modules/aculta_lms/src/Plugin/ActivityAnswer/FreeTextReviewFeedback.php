@@ -10,6 +10,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\lms\Attribute\ActivityAnswer;
 use Drupal\lms\Entity\ActivityInterface;
 use Drupal\lms\Entity\Answer;
+use Drupal\lms\Entity\AnswerInterface;
 use Drupal\lms\Plugin\ActivityAnswerBase;
 
 /**
@@ -39,7 +40,10 @@ final class FreeTextReviewFeedback extends ActivityAnswerBase {
    * {@inheritdoc}
    */
   public function getScore(Answer $answer): float {
-    $activity = $answer->getActivity();
+    $activity = $this->activityForAnswer($answer);
+    if (!$activity instanceof ActivityInterface) {
+      return 0.0;
+    }
     $data = $answer->getData();
 
     // If no answer has been provided yet, return 0.
@@ -73,9 +77,11 @@ final class FreeTextReviewFeedback extends ActivityAnswerBase {
    */
   public function answeringForm(array &$form, FormStateInterface $form_state, Answer $answer): void {
     $data = $answer->getData();
-    $activity = $answer->getActivity();
-    $min_chars_field = $activity->get('minimum_characters');
-    $minimum_characters = !$min_chars_field->isEmpty() ? (int) $min_chars_field->first()->getValue()['value'] : 0;
+    $activity = $this->activityForAnswer($answer);
+    $min_chars_field = $activity?->get('minimum_characters');
+    $minimum_characters = $min_chars_field !== NULL && !$min_chars_field->isEmpty()
+      ? (int) $min_chars_field->first()->getValue()['value']
+      : 0;
 
     $form['answer'] = [
       '#title' => $this->t('Sua resposta'),
@@ -87,12 +93,18 @@ final class FreeTextReviewFeedback extends ActivityAnswerBase {
       '#minimum_characters' => $minimum_characters,
     ];
 
-    $this->addFeedbackElementsToAnsweringForm($form, $form_state, $answer);
+    // The contrib trait calls Answer::getActivity(), which assumes the
+    // referenced entity still exists. Keep the plain answer form usable if
+    // asynchronous LMS cleanup has removed that activity.
+    if ($activity instanceof ActivityInterface) {
+      $this->addFeedbackElementsToAnsweringForm($form, $form_state, $answer);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
+  // phpcs:ignore DrupalPractice.Objects.UnusedPrivateMethod -- Called by WithFeedbackPluginTrait's abstract private contract.
   private function buildFeedbackRenderArray(bool $is_correct, Answer $answer, ActivityInterface $activity): array {
     $feedback = [];
     $current_answer = $answer->getData()['answer'] ?? '';
@@ -160,6 +172,7 @@ final class FreeTextReviewFeedback extends ActivityAnswerBase {
   /**
    * {@inheritdoc}
    */
+  // phpcs:ignore DrupalPractice.Objects.UnusedPrivateMethod -- Called by WithFeedbackPluginTrait's abstract private contract.
   private function addAnswerClassesToForm(array &$form, bool $is_correct, Answer $answer): void {
     // This plugin has no form elements to add classes to.
   }
@@ -197,8 +210,11 @@ final class FreeTextReviewFeedback extends ActivityAnswerBase {
       $answer_markup = \nl2br(Html::escape($data['answer']));
     }
 
+    $activity = $this->activityForAnswer($answer);
     return [
-      'activity' => $this->entityTypeManager->getViewBuilder('lms_activity')->view($answer->getActivity(), 'activity'),
+      'activity' => $activity instanceof ActivityInterface
+        ? $this->entityTypeManager->getViewBuilder('lms_activity')->view($activity, 'activity')
+        : ['#plain_text' => $this->t('Atividade não disponível')],
       'answer' => [
         '#type' => 'fieldset',
         '#title' => $this->t('Resposta do estudante'),
@@ -207,6 +223,14 @@ final class FreeTextReviewFeedback extends ActivityAnswerBase {
         ],
       ],
     ];
+  }
+
+  /**
+   * Resolves the answer's activity without invoking its typed contrib getter.
+   */
+  private function activityForAnswer(Answer $answer): ?ActivityInterface {
+    $activity = $answer->get(AnswerInterface::ACTIVITY_FIELD)->entity;
+    return $activity instanceof ActivityInterface ? $activity : NULL;
   }
 
   /**

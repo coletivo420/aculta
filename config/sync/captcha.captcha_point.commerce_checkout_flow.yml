@@ -1,9 +1,7 @@
 uuid: d44c383c-85cb-49b0-9a4f-e6cf148d4ae3
 langcode: pt-br
 status: false
-dependencies:
-  module:
-    - captcha
+dependencies: {  }
 formId: commerce_checkout_flow
 captchaType: default
 label: 'Checkout (base de todos os fluxos): sem Turnstile para visitante'

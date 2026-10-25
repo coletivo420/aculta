@@ -1,0 +1,39 @@
+# Integração com Domain
+
+`links.aculta.org` é o registro `links_aculta_org`, purpose `links`. A raiz `/`
+é reescrita por `PurposeFrontPathProcessor` para `/redes-sociais` internamente.
+No Runtime de teste em 2026-10-20 esse path retornou 404: não havia Node com
+Domain Source `links_aculta_org` nem alias `/redes-sociais`. A recuperação deve
+fornecer a landing pelo `aculta_links`, sem publicar o caminho interno direto.
+O mapa de caminhos marca a entrada `links.aculta` e informa que DNS de produção
+precisa confirmação.
+
+Contrato futuro:
+
+- Resolver host/URL pelo `DomainPurposeManager`; nenhum hostname de ambiente
+  fixo em código ou configuração exportada.
+- Canonical das micropáginas deve ser gerado no purpose `links` via API canônica
+  do `DomainPurposeManager`, nunca derivado do host de entrada por concatenação.
+  A geração do metadado deve manter tags de cache do registro Domain e da
+  configuração de hostname.
+- Provisionar aliases `links.aculta.*` pela política Domain/`aculta_deployer`,
+  sem resolver hostnames em paralelo.
+- Micropáginas e links curtos usam APIs/rotas Drupal; `/pagina/{slug}` e
+  `/redirecionar/{codigo}` e `/redirecionar/{codigo}/codigo-qr.svg` são rotas
+  de `aculta_links` no purpose `links`. A administração
+  fica no purpose `main` sob `/painel-administrativo/**`. Verificar palavras
+  reservadas e sitemap antes de declarar caminhos.
+- Resolver destinos internos via Entity URL/Route APIs e purpose canônico; não
+  persistir URL absoluta ambiental.
+- Implementado em 0.4.0-dev.18 para destinos Link `entity:node/{id}`: usa o
+  `field_domain_source` do nó e `DomainPurposeManager::routeUrl()`. Página e
+  redirect públicos exigem nó publicado e viewável por anônimo; a prévia usa
+  access no purpose de origem com a conta atual. A renderização inclui tags,
+  contextos e max-age do nó, do Domain e do resultado de acesso. Outros tipos
+  entity e destinos `internal:/` ainda não são roteados entre purposes.
+- Cache público varia/invalida por Domain, path, idioma e entidades dependentes.
+- Redirect entre purposes segue `DomainPurposeManager` e política do Portal;
+  mutações no purpose errado falham fechadas.
+- Sessões e cookies seguem a política multidomínio central.
+
+O módulo declara rotas administrativas em `main` sob `/painel-administrativo/links/**`; estão registradas no Runtime de teste desde 2026-10-20 e mantêm as permissões Drupal/Entity Access. A existência de uma rota não concede acesso anônimo nem bypass de Domain. Produção não foi confirmada.

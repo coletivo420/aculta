@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Cart;
 
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\commerce_cart\CartProviderInterface;
 use Drupal\commerce_cart\CartSessionInterface;
 use Drupal\commerce_order\Entity\Order;
@@ -18,9 +19,6 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class CartConsolidator {
 
-  /** Categorias do carrinho, da mais exigente para a mais simples. */
-  private const PRIORIDADE = ['curso', 'default', 'doacao'];
-
   /** Tipo de pedido de assinatura: fora do carrinho unificado. */
   public const TIPO_ASSINATURA = 'assinatura';
 
@@ -29,7 +27,22 @@ final class CartConsolidator {
     private readonly CartSessionInterface $cartSession,
     private readonly CurrentStoreInterface $currentStore,
     private readonly AccountInterface $currentUser,
+    private readonly ?CheckoutSettings $settings = NULL,
   ) {}
+
+  /**
+   * Categorias do carrinho, da mais exigente para a mais simples: LMS (tipo configurado e histórico `curso`),
+   * Loja e doação.
+   *
+   * @return list<string>
+   */
+  private function prioridade(): array {
+    return [
+      ...($this->settings?->lmsOrderTypes() ?? [CheckoutSettings::LEGACY_LMS_ORDER_TYPE]),
+      $this->settings?->shopOrderType() ?? CheckoutSettings::DEFAULT_SHOP_ORDER_TYPE,
+      'doacao',
+    ];
+  }
 
   /**
    * Junta os carrinhos (exceto assinatura) em um pedido só e o torna o carrinho ativo. NULL se não há o que juntar.
@@ -84,12 +97,12 @@ final class CartConsolidator {
   /** Categoria final: a mais exigente entre as presentes. */
   private function tipoFinal(array $carrinhos): string {
     $presentes = array_map(static fn(OrderInterface $c): string => $c->bundle(), $carrinhos);
-    foreach (self::PRIORIDADE as $tipo) {
+    foreach ($this->prioridade() as $tipo) {
       if (in_array($tipo, $presentes, TRUE)) {
         return $tipo;
       }
     }
-    return 'default';
+    return $this->settings?->shopOrderType() ?? CheckoutSettings::DEFAULT_SHOP_ORDER_TYPE;
   }
 
 }

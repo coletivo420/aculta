@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for ACULTA LMS Resources.
+ */
+
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+
+/**
+ * Implements hook_install().
+ */
+function aculta_lms_resources_install(): void {
+  $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('group.lms_course.default');
+  if ($form_display instanceof EntityFormDisplayInterface) {
+    $form_display->setComponent('field_lms_readings', [
+      'type' => 'entity_reference_autocomplete',
+      'weight' => 6,
+      'region' => 'content',
+      'settings' => [
+        'match_operator' => 'CONTAINS',
+        'match_limit' => 10,
+        'size' => 60,
+        'placeholder' => '',
+      ],
+      'third_party_settings' => [],
+    ]);
+    $form_display->setComponent('field_lms_galleries', [
+      'type' => 'entity_reference_autocomplete',
+      'weight' => 7,
+      'region' => 'content',
+      'settings' => [
+        'match_operator' => 'CONTAINS',
+        'match_limit' => 10,
+        'size' => 60,
+        'placeholder' => '',
+      ],
+      'third_party_settings' => [],
+    ]);
+    $form_display->save();
+  }
+
+  $view_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load('group.lms_course.default');
+  if ($view_display instanceof EntityViewDisplayInterface) {
+    $view_display->setComponent('aculta_lms_course_resources', [
+      'weight' => 21,
+      'region' => 'content',
+    ]);
+    $view_display->setHidden('field_lms_readings', TRUE);
+    $view_display->setHidden('field_lms_galleries', TRUE);
+    $view_display->save();
+  }
+}
+

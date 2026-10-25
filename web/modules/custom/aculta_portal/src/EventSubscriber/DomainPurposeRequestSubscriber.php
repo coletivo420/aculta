@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Site\Settings;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,11 +38,32 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents(): array {
     // Match the same path before RouterListener/access checks (priority 32).
     return [
-      KernelEvents::REQUEST => [['onRequestBeforeRouter', 33], ['onRequest', 31]],
+      // Set root flags before Redirect's route normalizer (priority 30). The
+      // inbound path processor can have a cached path result without its
+      // request attributes, so the flags must also be restored here.
+      KernelEvents::REQUEST => [
+        ['onRequestDisableFrontNormalizer', 35],
+        ['onRequestBeforeRouter', 33],
+        ['onRequest', 31],
+      ],
       // Run before Core RedirectResponseSubscriber (priority 0) so any
       // intentional cross-domain target is already a secured redirect.
       KernelEvents::RESPONSE => ['onResponse', 1],
     ];
+  }
+
+  /**
+   * Prevents Redirect from canonicalizing a purpose root to its internal path.
+   */
+  public function onRequestDisableFrontNormalizer(RequestEvent $event): void {
+    if (!$event->isMainRequest()) {
+      return;
+    }
+
+    PurposeFrontPathProcessor::markRootRequest(
+      $event->getRequest(),
+      $this->domainPurposeManager->getCurrentPurpose(),
+    );
   }
 
   /** Sends completed logouts to the public account login page. */
@@ -105,24 +127,11 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $event->setResponse(new Response('', Response::HTTP_FORBIDDEN, ['Cache-Control' => 'private, no-store']));
       return;
     }
-    // Caminho antigo da área da conta (/minha-conta e subpáginas): 301 para a conta, sem o prefixo
-    // (/minha-conta -> /, /minha-conta/pedidos -> /pedidos). O caminho interno da visão geral não é público.
+    // The technical account prefix is not a public alias in development.
+    // The account home is the root of its purpose and all /minha-conta/*
+    // paths fail closed instead of redirecting.
     $accountPath = $event->getRequest()->getPathInfo();
     if ($accountPath === '/minha-conta' || str_starts_with($accountPath, '/minha-conta/')) {
-      $target = $accountPath === '/minha-conta' ? '/' : substr($accountPath, strlen('/minha-conta'));
-      if (in_array($event->getRequest()->getMethod(), ['GET', 'HEAD'], TRUE)) {
-        $url = $this->domainPurposeManager->pathUrl('account', $target);
-        if ($url !== NULL) {
-          $query = $event->getRequest()->getQueryString();
-          if ($query) {
-            $url->setOption('query', $event->getRequest()->query->all());
-          }
-          $event->setResponse(new TrustedRedirectResponse($url->toString(), Response::HTTP_MOVED_PERMANENTLY, [
-            'Cache-Control' => 'public, max-age=3600',
-          ]));
-          return;
-        }
-      }
       $event->setResponse(new Response('', Response::HTTP_NOT_FOUND, ['Cache-Control' => 'private, no-store']));
       return;
     }
@@ -164,16 +173,28 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       }
       return;
     }
-    // The overview route requires a permission, so Core denies it (403) during
-    // matching, before onRequest runs. Its internal path must fail closed as 404
-    // first, the same way the support route is handled.
-    if ($matched['_route'] === 'aculta_portal.dashboard' && $event->getRequest()->getPathInfo() !== '/') {
-      $event->setResponse($this->notFoundResponse());
-      return;
-    }
     // Visitante não logado na raiz da Conta vai ao login do próprio host de conta (302: o estado de login muda).
     // Feito antes do roteamento com acesso, que negaria a rota (403) antes de chegar a onRequest.
     if ($matched['_route'] === 'aculta_portal.dashboard' && !$this->currentUser->isAuthenticated()) {
+      $login = $this->domainPurposeManager->routeUrl('account', 'user.login');
+      if ($login !== NULL) {
+        $event->setResponse(new TrustedRedirectResponse($login->toString(), Response::HTTP_FOUND));
+        return;
+      }
+    }
+    // A raiz da Conta serve o hub do Studio (`/` reescrito para `/studio`). O caminho técnico `/studio` responde 404,
+    // e o visitante anônimo vai ao login do host de conta, sem depender do 403 do roteador.
+    $hubAction = FrontPathPolicy::acaoDoHubNaConta(
+      $this->domainPurposeManager->getCurrentPurpose(),
+      $event->getRequest()->getPathInfo(),
+      (string) $matched['_route'],
+      $this->currentUser->isAuthenticated(),
+    );
+    if ($hubAction === FrontPathPolicy::ACAO_NAO_ENCONTRADO) {
+      $event->setResponse($this->notFoundResponse());
+      return;
+    }
+    if ($hubAction === FrontPathPolicy::ACAO_LOGIN) {
       $login = $this->domainPurposeManager->routeUrl('account', 'user.login');
       if ($login !== NULL) {
         $event->setResponse(new TrustedRedirectResponse($login->toString(), Response::HTTP_FOUND));
@@ -188,6 +209,11 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $matched,
     );
     $currentPurpose = $this->domainPurposeManager->getCurrentPurpose();
+    // Test-only seam for single-host Functional installs. Production always
+    // negotiates one Domain per purpose, and this setting stays unset.
+    if (Settings::get('aculta_domain_purpose_test_relaxed', FALSE)) {
+      return;
+    }
     if (is_string($requiredPurpose) && $currentPurpose !== $requiredPurpose) {
       if ($this->isPasswordResetEditException(
         $event->getRequest(),
@@ -221,11 +247,6 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $request->getPathInfo(),
       (bool) $request->attributes->get(PurposeFrontPathProcessor::FRONT_ATTRIBUTE),
     )) {
-      throw new NotFoundHttpException();
-    }
-    // The account overview is served only at the ACCOUNT root. Its internal
-    // route path is never a public URL, so direct requests to it fail closed.
-    if ($routeName === 'aculta_portal.dashboard' && $request->getPathInfo() !== '/') {
       throw new NotFoundHttpException();
     }
     if (in_array($routeName, ['user.login', 'social_auth.network.redirect'], TRUE)
@@ -282,6 +303,11 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $request,
     );
     $currentPurpose = $this->domainPurposeManager->getCurrentPurpose();
+
+    // Same test-only seam used before routing.
+    if (Settings::get('aculta_domain_purpose_test_relaxed', FALSE)) {
+      return;
+    }
 
     $resetEditException = $this->isPasswordResetEditException(
       $request,

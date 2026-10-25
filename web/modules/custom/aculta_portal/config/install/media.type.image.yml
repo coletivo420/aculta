@@ -1,0 +1,16 @@
+uuid: a9ac1803-3af0-4969-a269-5b78cfbb4bb9
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: VWUWqwszm5ZaqT3frIPWjyyVmvmWnWMFRphkVXCl8t0
+id: image
+label: Imagem
+description: 'Imagens para projetos, notícias, atividades e demais conteúdos institucionais. Informe texto alternativo e utilize arquivos autorizados.'
+source: image
+queue_thumbnail_downloads: false
+new_revision: true
+source_configuration:
+  source_field: field_media_image
+field_map:
+  name: name

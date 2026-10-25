@@ -1,0 +1,29 @@
+services:
+  aculta_qrcode.payload_validator:
+    class: Drupal\aculta_qrcode\Service\QrCodePayloadValidator
+
+  aculta_qrcode.preset_registry:
+    class: Drupal\aculta_qrcode\Service\QrCodePresetRegistry
+
+  aculta_qrcode.generator:
+    class: Drupal\aculta_qrcode\Service\QrCodeGenerator
+
+  aculta_qrcode.manager:
+    class: Drupal\aculta_qrcode\Service\QrCodeManager
+    arguments: ['@entity_type.manager', '@aculta_qrcode.payload_validator', '@aculta_qrcode.preset_registry', '@current_user']
+
+  aculta_qrcode.url_resolver:
+    class: Drupal\aculta_qrcode\Service\QrCodeUrlResolver
+    arguments: ['@?aculta_portal.domain_purpose']
+
+  aculta_qrcode.redirect_controller:
+    class: Drupal\aculta_qrcode\Controller\QrCodeRedirectController
+    arguments: ['@aculta_qrcode.manager', '@datetime.time']
+
+  aculta_qrcode.exporter:
+    class: Drupal\aculta_qrcode\Service\QrCodeExporter
+    arguments: ['@aculta_qrcode.generator', '@aculta_qrcode.preset_registry', '@aculta_qrcode.url_resolver', '@file_system', '@?aculta_image.generated_file', '@?plugin.manager.entity_print.print_engine']
+
+  aculta_qrcode.download_controller:
+    class: Drupal\aculta_qrcode\Controller\QrCodeDownloadController
+    arguments: ['@aculta_qrcode.exporter']

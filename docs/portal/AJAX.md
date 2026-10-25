@@ -108,7 +108,9 @@ Behavior + `core/once`), com o endpoint escopado `/wiki/busca/previa`. O JavaScr
 custom já existente atende a prévia global e agora também a Wiki; não há um
 segundo framework de autocomplete. O formulário GET segue como fallback e o
 endpoint de prévia responde `no-store` após aplicar publicação, Domain e acesso
-ao nó.
+ao nó. Os resultados são links de navegação em regiões `aria-live` nomeadas;
+Tab percorre os links e setas continuam a editar o searchbox nativo. Não usar
+semântica combobox para uma lista de destinos de navegação.
 
 Preferir Views AJAX para:
 

@@ -39,6 +39,12 @@ se o usuário pode acessar a rota.
 
 `DomainPurposeRequestSubscriber` distingue dois tipos de wrong-purpose.
 
+Páginas canônicas de conteúdo têm o purpose resolvido pela entidade carregada.
+Além de Nodes e termos, `entity.media.canonical` resolve `forum_attachment`
+como `forum`; assim, a entidade Media recebe o mesmo 404 fail-closed quando
+solicitada em outro purpose. O download privado continua exigindo o access do
+Media, do campo e do File.
+
 ### Conteúdo/feature pública no purpose errado
 
 Exemplos:

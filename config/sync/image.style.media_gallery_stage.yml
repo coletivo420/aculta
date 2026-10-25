@@ -4,7 +4,6 @@ status: true
 dependencies: {  }
 name: media_gallery_stage
 label: 'Galeria - palco'
-pipeline: aculta_derivados
 effects:
   00272b5c-c420-4659-a35d-5861a70f68bd:
     uuid: 00272b5c-c420-4659-a35d-5861a70f68bd
@@ -14,4 +13,4 @@ effects:
       width: 1000
       height: null
       upscale: false
-
+pipeline: aculta_derivados

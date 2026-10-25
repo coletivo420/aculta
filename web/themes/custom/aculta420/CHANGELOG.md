@@ -1,3 +1,688 @@
+## 0.7.0-dev.3 — PHPCS do tema e tokens de Portal (2026-10-25)
+
+- PHPCS Drupal e DrupalPractice limpo em `src` e `tests` do tema. Blocos de documentação malformados foram corrigidos e os métodos sem descrição receberam texto real.
+- Novos tokens `fiscal-identity-other-data` (checkout Commerce) e `wiki-proposal-contribute` (botão da Wiki) mapeiam para as mesmas classes que já eram emitidas. A marcação visual não muda.
+- Avisos do Messenger passam a ser estilizados por `data-portal-ui` (`notice-origin-*`, `notice-related-group*`), e não mais por classes de design no módulo.
+- Gates executados: PHPUnit Unit do tema 12/12 OK; Kernel do tema 10 testes OK, incluindo `ProfileSdcRenderKernelTest` no banco de teste dedicado; PHPCS sem erros.
+- **Pendente:** o validador de fronteira aponta `Hook/ThemeHooks.php` registrando `page_attachments` para anexar a biblioteca de avisos. A regra permite apenas `preprocess_*`. A correção depende de decisão sobre onde a biblioteca deve ser carregada.
+
+## 0.7.0-dev.2 — teste Kernel dos quatro SDCs de Meu Perfil (2026-10-25)
+
+- Criado `ProfileSdcRenderKernelTest`, com descoberta de `profile-editor`, `profile-identity`, `profile-bio`, `profile-social` via Core SDC. Renderiza componentes aninhados com props/slots e entradas demonstrativas, verifica escape, ausência de links públicos inferidos, estados vazios e metadata de cache.
+- A fixture de link foi mantida independente do roteamento para isolar o contrato de apresentação. Contratos SDC (schemas, Twig, CSS) **não foram alterados**; continuam experimentais.
+- **O teste foi escrito, mas não executado**, pois não há ambiente Drupal Kernel instalado/Runtime disponível nesta sessão; não afirmar sucesso em Core/UI Patterns ou Firefox.
+
+## Nota documental — S-R4: consumo dos SDCs (2026-10-25)
+
+O Studio dev.21 passou a consumir os quatro SDCs experimentais
+`profile-*` por `#type: component`, conservando props, slots, CSS,
+Twig e regras de origem inalterados. Sem nova versão do tema
+(persiste `0.7.0-dev.1`). Render real em UI Patterns, Kernel,
+Firefox ESR/X11 e Runtime ainda não homologados.
+
+## 0.7.0-dev.1 — SDCs preparatórios do Meu Perfil (2026-10-25)
+
+Classificação: MINOR pré-1.0; novos componentes experimentais, sem quebra dos componentes estáveis.
+
+- `aculta420:profile-editor`: composição visual com slots para introdução, identidade, biografia, redes e ações.
+- `aculta420:profile-identity`: identidade privada do titular, distinta do `author-card` público.
+- `aculta420:profile-bio` e `aculta420:profile-social`: painéis visuais com conteúdo e ações enviados por render arrays dos módulos proprietários.
+- Quatro contratos SDC com Twig, CSS mobile-first/tokens semânticos, duas stories estáticas por SDC e um teste Unit de metadados (escrito).
+- Não integrados ao StudioProfileController nesta etapa; validação pendente.
+
+## 0.6.1-dev.13 — separar visualmente avisos por origem — 2026-10-25
+
+O tema apresenta a divisão semântica das listas de avisos da central e da gaveta global por origem com separadores, preservando reflow e as listas internas de cada fonte. A biblioteca visual é anexada globalmente para cobrir o cabeçalho compartilhado; a aplicação do agrupamento permanece no contrato de renderização do Messenger.
+
+Validação: Unit completo Messenger **221/1.582 PASS**, `ThemeHooksTest` **1/1 PASS**, Kernel MariaDB `ForumNoticeIdempotencyKernelTest` **38/891 PASS**, Foundation **345 checks PASS** e Design Foundations **2.170 checks PASS**. `ThemeHooks` mantém o perfil PHPCS preexistente, com um erro a menos (9/11 contra 10/11 no HEAD). Smoke read-only do Messenger passou **8/8** no Firefox ESR visível no Runtime de teste, em 1270 px; Alpha e demais viewports pendentes.
+
+## 0.6.1-dev.10 — estados de carregamento e erro na gaveta — 2026-10-24
+
+A gaveta agora apresenta o SDC `messenger-state` durante carregamentos AJAX e anuncia falhas de navegação como alerta.
+A biblioteca `messenger-drawers` carrega o CSS do componente para garantir a apresentação também nas respostas de
+fragmentos buscadas por `fetch`.
+
+Validação: suíte de navegador do Messenger, Firefox ESR visível no Runtime de teste: **76/76 verificações aprovadas**.
+
+## 0.6.1-dev.9 — não fechar a gaveta ao dispensar confirmação com Escape — 2026-10-24
+
+Escape fecha a confirmação de amizade/bloqueio sem propagar ao listener do Bootstrap Offcanvas, mantendo a conversa aberta. O contrato atualizado está em `docs/messenger.md`.
+
+Validação: suíte visível de navegador do Messenger em Firefox ESR (`DISPLAY=:0`), 75/75 verificações PASS; Escape fechou o modal e manteve gaveta e ação de bloqueio disponíveis. Sem mudança de autorização ou estado no módulo.
+
+## 0.6.1-dev.8 — ações de leitura na central de avisos — 2026-10-24
+
+Classificação: PATCH de integração visual.
+
+- Adiciona estilos de layout, foco e hover para os controles de leitura da
+  central do Messenger e mapeia os tokens `notice-read-state-form` e
+  `notice-read-state-action`. Revisão visual no Firefox ESR/Runtime pendente.
+
+## 0.6.1-dev.7 — schema das configurações do tema e render da home Wiki — 2026-10-24
+
+Classificação: PATCH de compatibilidade do tema.
+
+- `aculta420.settings` tipa as nove opções `b5_*` já fornecidas nos defaults do
+  tema. A instalação do ACULTA420 falhava no Kernel porque essas chaves não
+  tinham schema; não houve alteração de valores ou do contrato de apresentação.
+- Kernel da Wiki instala o tema e renderiza a home com os SDCs `context-tabs` e
+  `wiki-home` (focal 1/96). HTTP/Runtime e revisão visual continuam pendentes.
+
+## 0.6.1-dev.6 — apresentar ações do workspace WE SATIVA
+
+Classificação: PATCH de integração visual.
+
+- `PortalUiHooks` mapeia `we-sativa-workspace`, `we-sativa-create` e
+  `wiki-workspace-return` para utilitários Bootstrap; links agora recebem a
+  tradução de token no preprocess do tema.
+- Teste Unit cobre classes responsivas do workspace e ações. Firefox ESR/X11
+  ainda não foi executado para WE SATIVA; Runtime e tela em 320 px pendentes.
+
+## 0.6.1-dev.5 — ajustar busca da Wiki para não causar overflow
+
+Classificação: PATCH visual responsivo.
+
+- O submit do formulário de busca no cabeçalho Wiki deixa de herdar a largura
+  `100%` do `.form-control` dentro do item flex e passa a ocupar só seu conteúdo.
+- Firefox ESR visível no Runtime de teste, com CSS atual carregado diretamente
+  por GET no browser: 46/46 verificações, sem overflow em 320, 390 ou 1280 px.
+  O agregado/cache do Runtime não foi reconstruído; Olivero, contraste,
+  teclado/leitor de tela e demais larguras permanecem sem validação.
+
+## 0.6.1-dev.4 — removidos overrides de bundles editoriais aposentados
+
+- Removidos `node--article--full.html.twig` e `node--blog--full.html.twig`; `revista` é o único bundle editorial ativo.
+
+## 0.6.1-dev.3 — banner de consentimento sem sobreposição (2026-10-22)
+
+Classificação: PATCH de acessibilidade e reflow.
+
+- O banner passa a ocupar o fluxo após o rodapé, sem `position: fixed` cobrindo
+  conteúdo ou foco até a decisão. Modos claro/escuro mantêm a mesma geometria.
+- Firefox ESR no X11 do Runtime de teste: 15/15 verificações; capturas em
+  390, 768 e 1024 CSS px, claro/escuro, sem overflow horizontal. Inspeção das
+  capturas confirmou cartões livres da sobreposição em 390 px (claro/escuro) e
+  1024 px (escuro); foco do link de salto verificado. Sem alteração de conteúdo.
+
+## 0.6.1-dev.2 — hierarquia semântica dos cartões de categoria (2026-10-22)
+
+Classificação: PATCH de acessibilidade e tipografia na linha aberta.
+
+- Os títulos dos grupos da View `/categorias` usam H2; os links dos termos
+  usam H3, preservando o estilo tipográfico do cartão.
+- Firefox ESR/X11 no Runtime de teste: capturas em 320, 375, 390, 768, 1024 e
+  1440 CSS px; document scrollWidth igual a clientWidth em todos. Os grupos e
+  12 cartões renderizam. O banner global de consentimento se sobrepõe ao
+  conteúdo até a escolha da pessoa; dark mode, zoom e dispositivo real não
+  foram verificados. Nenhum teste automatizado executado.
+- Foundation ajustada para a versão atual do tema `0.6.1-dev.2`.
+
+## 0.6.1-dev.1 — remoção do tipo de conteúdo projeto (2026-10-21)
+
+Classificação: PATCH na linha aberta, decidida pelo responsável.
+
+- Removido o tipo `project` do código e da configuração: campos, displays, view `aculta_projects`, blocos de cabeçalho, pathauto, metatag, captcha, permissão de criação e bundle de busca.
+- Removidos os campos `field_project` de activity, revista e media_gallery, e as views `aculta_related_activities` e `aculta_related_news`.
+- Runtime de teste: 5 nós de projeto excluídos depois de backup do banco; a configuração foi removida pela API do Drupal.
+- Versão `0.6.1-dev.1` registrada no `aculta420.info.yml`.
+
+Documentação complementar, sem mudança de código ou versão:
+
+- Atualizada a divisão de responsabilidade da categoria: Views agrupa a página
+  `/categorias` por Parent; o SDC apresenta os termos e descrições.
+
+## 0.6.0-dev.147 — auditoria Mobile First (documental) — 2026-10-21
+
+Classificação: PATCH documental; sem alteração de código ou incremento de versão.
+
+- Criados ADR-012 e inventário MF-0.1 com evidências do CSS, shell, assets e
+  implementação/runtime atual do Studio. Roadmap Mobile First incluído como
+  projeto identificado por fases, sem substituir o SemVer do tema.
+- Preferência registrada para seletor nativo compacto de área no Studio mobile;
+  implementação, fallback e validação permanecem na MF-0.4.
+- Não executada homologação visual nesta fase. PHP CLI do checkout é 8.4.26;
+  compatibilidade com o baseline PHP 8.5 continua pendente.
+
+## 0.6.0-dev.143 — define tamanho dos modais de anexo e galeria do Fórum — 2026-10-21
+
+## 0.6.0-dev.146 — grade e abas das planilhas com tokens (homologação RC1) — 2026-10-21
+
+Classificação: PATCH (correção de apresentação com tokens semânticos).
+
+- A grade (`.tabulator`, cabeçalho, linhas, células, rodapé, filtros e paginação) e as abas da planilha usam tokens de superfície, texto, borda e foco. Antes, a grade ficava branca no modo escuro.
+- A aba ativa usa a cadeia completa de seletores do leitor, porque a regra do Tabulator é mais específica.
+- Medido no Runtime (Chromium X11): modo escuro, grade e abas com contraste; modo claro e modo escuro em 390 px sem rolagem horizontal; alvos de modo com 44 px.
+
+## 0.6.0-dev.145 — apresentação dos leitores DOCX e planilhas — 2026-10-21
+
+Classificação: MINOR (componente de apresentação novo, com contrato neutro).
+
+- Novo `css/components/document-viewer.css`, carregado pela biblioteca global do tema. Estiliza `[data-aculta-document-viewer]` e as partes `[data-aculta-document-part]` (cabeçalho, tipo, título, barra, zoom, status, quadro, modos e seletor de aba) com tokens semânticos (superfície, interação, foco, borda e tipografia). Sem cor fixa.
+- Tela cheia usa o mesmo contêiner, com fundo de página no modo `:fullscreen`.
+- Largura e altura do iframe do DOCX e do quadro da planilha respeitam o celular (16 px de gutter herdado do layout).
+- Testado no Runtime (Chromium X11) com DOCX e XLSX públicos: título com HTML aparece como texto; zoom 100% → 115%; tela cheia ativada por clique real; status oculto ao concluir.
+- Pendente: revisão visual em Firefox e em 390/768/1024 px; o PDF permanece com a folha `pdf-viewer.css`, sem alteração.
+
+Classificação: PATCH (apresentação responsiva com tokens semânticos e diálogo Core existente).
+
+- `PortalUiHooks` traduz `forum-attachment-dialog` e `forum-gallery-dialog` para classes do ACULTA420.
+- `dialog.css` define largura responsiva e rolagem para os modais de upload contextual; nenhum modal ou CSS paralelo é criado pelo Fórum.
+- `PortalUiHooksTest`: 6 testes/29 asserções PASS; Foundation: 368 checks PASS. Inspeção visual pré-RC pendente. Design Foundations continua com três falhas no contrato do envelope Mailer, fora desta mudança.
+
+## 0.6.0-dev.142 — modo de cor do envelope segue o controle do site — 2026-10-22
+
+Classificação: PATCH (apresentação do envelope; sem componente novo, sem cor nova).
+
+- `MailEnvelopeHooks` resolve o modo `light`, `dark` ou `auto` recebido do aculta_mailer. Em `light` não há bloco escuro; em `dark` as cores escuras valem; em `auto` vale `prefers-color-scheme`.
+- O template declara `color-scheme` conforme o modo e emite o bloco escuro só em `auto`.
+
+## 0.6.0-dev.141 — rodapé do envelope de e-mail segue o layout de marca — 2026-10-22
+
+Classificação: PATCH (apresentação do envelope do aculta_mailer; sem componente novo, sem cor nova).
+
+- `MailEnvelopeHooks`: `show_footer` é falso quando o e-mail tem layout de marca (o rodapé já vem do corpo). Sem layout, o rodapé fixo da associação continua.
+- `aculta-mailer-wrap.html.twig`: o rodapé fixo só é desenhado quando `show_footer`. Tokens claro e escuro inalterados.
+
+## 0.6.0-dev.140 — espaçamento para documentos H5P — 2026-10-21
+
+Classificação: PATCH (mapeia um token semântico do Portal para uma primitive Bootstrap existente).
+
+- `PortalUiHooks` mapeia `lms-h5p-course-documents` para `mt-3`, separando visualmente o PDF privado complementar do player.
+- Firefox no X11 (framebuffer 1024×768) confirmou H5P, PDF privado renderizado e Fórum contextual; o wrapper PDF recebeu `mt-3`. A fixture temporária foi removida.
+
+## 0.6.0-dev.139 — estilos do conteúdo no CKEditor 5 — 2026-10-21
+
+Classificação: PATCH (apresentação do conteúdo dentro do editor; sem componente novo, sem cor nova).
+
+- `css/ckeditor5.css`, registrado por `ckeditor5-stylesheets` em `aculta420.info.yml`: títulos, citação, link, destaque,
+  tabela, separador e quebra de página dentro de `.ck-content`, com tokens `--aculta-*` nos modos claro e escuro.
+- Afeta a área de edição de todos os formatos CKEditor 5 do site, não só os do `aculta_editor`. Conteúdo salvo não muda.
+- Revisão visual no editor pendente: a validação no navegador fica para o roteiro do `aculta_editor`.
+
+## 0.6.0-dev.138 — tokens semânticos para discussões do LMS — 2026-10-21
+
+Classificação: PATCH (mapeia a apresentação dos blocos existentes, sem criar novo componente).
+
+- `PortalUiHooks` traduz `lms-activity-discussions`, `lms-h5p-activity` e
+  `lms-h5p-discussions` para primitives Bootstrap. O adapter LMS emite somente
+  tokens semânticos, conforme a fronteira Portal–ACULTA420.
+- `PortalUiHooksTest` valida as classes geradas e a remoção dos tokens do HTML.
+- O player com tópico real ainda não está disponível no Runtime de teste; a
+  revisão visual permanece pendente.
+
+## 0.6.0-dev.137 — painéis de estatísticas por área com tokens data-portal-ui — 2026-10-21
+
+Classificação: PATCH (estilo de painel com tokens semânticos; sem contrato de componente novo, sem cor nova).
+
+- `PortalUiHooks`: tokens `statistics-panel`, `statistics-areas`, `statistics-controls`, `statistics-form`, `statistics-summary`, `statistics-comparison`, `statistics-chart`, `statistics-table` e `statistics-note` mapeados para classes BEM `aculta-statistics__*`.
+- `css/components/statistics.css` (biblioteca global): navegação por área, formulário de período e métrica, resumo, gráfico com rolagem horizontal, tabela e foco visível. Usa só tokens semânticos (`--aculta-*`), válidos no claro e no escuro. Responsivo: campos em largura total abaixo de 576px.
+- Autorizado pelo responsável em 2026-10-21 para os painéis de estatísticas.
+
+## 0.6.0-dev.136 — caixa de atenção para e-mail não confirmado — 2026-10-21
+
+Classificação: PATCH (classe de aviso com tokens de estado de atenção já existentes).
+
+- `.aculta-email-notice` em `account.css`: caixa de atenção (`--aculta-status-warning-*`, nos modos claro e escuro) no aviso de e-mail não confirmado de "Minha conta".
+- `aculta420.info.yml` 0.6.0-dev.136. RUNTIME STATUS: DEFERRED (inspeção visual no X11 registrada no roteiro).
+
+## 0.6.0-dev.135 — espaçamento do bloco "Alteração pendente" na aba E-mail — 2026-10-21
+
+Classificação: PATCH (ajuste de CSS; sem mudança nos tokens).
+
+- `.aculta-security-pending` ganha espaçamento entre título, e-mail e mensagem; o e-mail e a mensagem passam a ser parágrafos (o módulo emite `<p>`, sem classe de design), e o texto longo quebra dentro do bloco.
+- `aculta420.info.yml` 0.6.0-dev.135. RUNTIME STATUS: DEFERRED (inspeção visual no X11 pendente de registro).
+
+## 0.6.0-dev.134 — token próprio para as ações da foto de perfil — 2026-10-21
+
+Classificação: PATCH (token novo e regra de linha de ações; sem mudança nos tokens existentes).
+
+- Token `account-photo-actions` (classe `portal-account-photo__actions`) para a linha de ações do popup de foto: sortear, remover e salvar na mesma linha, alinhadas à direita, com quebra em tela pequena.
+- `aculta420.info.yml` 0.6.0-dev.134. RUNTIME STATUS: DEFERRED (inspeção visual humana pendente).
+
+## 0.6.0-dev.133 — contraste do banner de consentimento corrigido — 2026-10-20
+
+- O banner usa superfície `--aculta-surface-raised` e texto `--aculta-text-primary` (tokens com versão para modo escuro). O fundo verde anterior dava 3,34:1 para texto branco; agora o texto tem 12,4:1 no claro e 14,5:1 no escuro, e os botões 11,0:1.
+- O link de privacidade ficou sublinhado, para não depender só da cor.
+- Revisão visual feita no Firefox headless em 390 px e 1270 px (modo claro). Captura do modo escuro não obtida: o perfil de teste não aplicou o tema escuro. O contraste do escuro foi calculado a partir dos tokens. Teste de clique (aceitar/recusar) e leitor de tela continuam pendentes.
+- Gate de versão de fundação (`validate-aculta420-foundation.php`) atualizado para `0.6.0-dev.133`. Ele estava com `.131` desde o commit `1ac91b22`, que avançou o tema sem atualizá-lo.
+
+## 0.6.0-dev.132 — banner de consentimento para visitante anônimo — 2026-10-20
+
+- Novo SDC `feedback/consent-banner`: oculto por padrão, marcador `data-portal-ui="consent-banner"`, botões aceitar e recusar e link de privacidade. Estilos em `css/components/consent-banner.css`, só com tokens semânticos. Incluído em `page.html.twig`.
+- O comportamento vem do módulo `aculta_statistics`, desligado por padrão. Com a opção ligada, o JavaScript exibe o banner, grava a escolha em cookie e atualiza o Consent Mode v2.
+- Validação: SDC schema PASS, Foundation PASS (367), Design Foundations PASS (2129), Shell contract PASS (11), fronteira módulo–tema PASS (1835). Runtime de teste: página responde 200 com o banner oculto. Revisão visual responsiva e acessível, e teste com a opção ligada, pendentes antes de RC.
+
+## 0.6.0-dev.131 — componentes experimentais do QR Code dinâmico — 2026-10-20
+
+- Novos SDCs experimentais `content/qr-preview` (imagem SVG com texto alternativo e legenda opcional) e `content/qr-download` (lista de formatos para baixar). Status `experimental`; o Portal prepara URLs e textos, e o tema só renderiza.
+- Validação: SDC schema PASS, Foundation PASS (366 via Runtime de teste após `drush cr`), Shell contract PASS (11). Revisão visual responsiva e acessível dos componentes pendente antes de RC. O Runtime ainda não tem consumidor público destes componentes.
+
+## 0.6.0-dev.129 — separa a marca institucional da identidade de micropágina — 2026-10-20
+
+- O SDC `social-links-page` aceita `show_brand`; a landing institucional e o Node legado mantêm a marca ACULTA, enquanto micropáginas mostram seu título como H1 visível sem logo institucional indevida.
+- Validação: SDC schema PASS (36 componentes, 26 includes, 568 checks), Design Foundations PASS (2109), Foundation PASS (366 via Runtime de teste), fronteira módulo–tema PASS (1698). O Runtime ainda não contém micropáginas; landing institucional HTTP 200 preserva marca e projetos. Revisão responsiva da micropágina, claro/escuro, teclado e leitor de tela pendentes.
+
+## 0.6.0-dev.128 — apresenta a landing Links restaurada — 2026-10-20
+
+- Template da landing institucional usa o SDC `social-links-page`, com preset clássico e logo do tema, mantendo dados e render arrays preparados pelo Portal/Links.
+- Runtime após rebuild confirma root links HTTP 200; direct `/redes-sociais` HTTP 404. Firefox WebDriver 390 × 844 mostrou logo ACULTA, CTA e card publicado; SDC schema, Design Foundations e fronteira Portal–tema PASS. Desktop, dark, teclado, leitor de tela e interação do carrossel pendentes antes de RC.
+
+## 0.6.0-dev.127 — presets governados nas micropáginas — 2026-10-20
+
+- O SDC `social-links-page` aceita as variantes `classic`, `soft` e `outline`, usando tokens semânticos ACULTA420; a variante clássica permanece o fallback da landing institucional existente.
+- Gate Design Foundations PASS (2106), SDC schema PASS (36 componentes/555 verificações). Firefox headless em 390 × 844 CSS px mostrou o preset soft e a ausência de seção de projetos vazia; dark mode, outros presets, desktop e a11y permanecem pendentes antes de RC.
+
+## 0.6.0-dev.126 — Micropágina pública integrada ao SDC — 2026-10-20
+
+- Template `aculta-links-page.html.twig` reaproveita o SDC `social-links-page` para renderizar páginas públicas preparadas pelo módulo; o tema mantém toda a apresentação.
+- Revisão visual responsiva/acessível ainda pendente; estado Dev.
+
+## 0.6.0-dev.125 — miniatura PDF responsiva — 2026-10-20
+
+- A miniatura gerada pelo pipeline `aculta_image` respeita a largura do viewer em telas estreitas; tamanho intrínseco de 480 px não causa overflow horizontal.
+- Firefox ESR headless no Alpha mostrou o overflow em 390 × 844 antes da correção. Depois do ajuste, a miniatura coube no cartão; no Firefox WebDriver a página e o canvas renderizaram, os controles mantiveram 44 px, o documento não teve overflow e página seguinte/zoom/busca funcionaram. Gates Foundation (366), Design Foundations (2103) e fronteira módulo–tema (1608) PASS.
+- PV7 permanece Dev; não foi validada em produção.
+
+## 0.6.0-dev.124 — tokens do LMS no mapa; configuração de instalação alinhada ao Runtime — 2026-10-20
+
+- `PortalUiHooks::TOKENS`: `lms-forum-moderation-overview` e `lms-forum-moderation-queue` (painel de moderação do Fórum no LMS), sem CSS próprio.
+- `config/install/aculta420.settings.yml`: chaves `b5_*` do Runtime; removidas as `bootstrap_*` que o Runtime não tem (passam a valer os padrões da base). Corrige a divergência com `config/sync` no gate de fundação.
+- Gate de design: o envelope de e-mail (`aculta-mailer-wrap`) tem um único bloco de modo, alimentado pelos tokens (`MailEnvelopeHooks`); clientes de e-mail não carregam `tokens.css`. Exceção restrita, sem aceitar outros seletores de modo.
+- Evidência: `validate-aculta420-foundation` PASS (366); `validate-aculta420-design-foundations` PASS (2103); `validate-module-theme-boundary` PASS. Visual não revisado nesta versão (sem mudança de layout).
+
+## 0.6.0-dev.123 — token de requisitos de extensões PHP — 2026-10-20
+
+- Novo token `requirements-php-extensions` no mapa `PortalUiHooks::TOKENS`
+  (`aculta-portal-requirements__php-extensions`), usado pela tabela de extensões
+  PHP do painel de requisitos do Portal. Corrige a reprovação do gate de fronteira
+  Portal–tema (`validate-module-theme-boundary.php`). Sem CSS novo: a classe é gancho.
+  RUNTIME STATUS: não aplicável (sem mudança visual).
+
+## 0.6.0-dev.122 — cartão editorial usa view-model compartilhado — 2026-10-20
+
+- O SDC `content/author-card` exibe designation, bio e redes sociais autorizadas
+  pelo `aculta_user`; Magazine não replica a estrutura de identidade.
+- A presença do avatar usa prop explícita, então slot vazio mostra a inicial.
+  Firefox ESR/X11 no Runtime de teste: cartão conferido em 1270 e 500 CSS px,
+  nos modos claro e escuro; cartão contido e foco/link legíveis. A página de
+  fixture tem 9 px de overflow no preview PDF, fora da caixa de autoria; o Firefox
+  X11 desta sessão não permite viewport menor que 500 px. SDC schema PASS.
+  Foundation/design gates mantêm bloqueios já presentes na camada paralela de
+  e-mail. RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.121 — envelope de e-mail usa só o logo do tema — 2026-10-20
+
+- `templates/aculta-mailer-wrap.html.twig`: o logo vem sempre de `theme_logo` (configuração do tema). Não há mais logo por marca do `aculta_mailer`, que duplicava o arquivo.
+
+## 0.6.0-dev.120 — envelope de e-mail montado pelo tema, com cores dos tokens e modo escuro automático — 2026-10-20
+
+- `templates/aculta-mailer-wrap.html.twig`: envelope HTML do hook `aculta_mailer_wrap`, com cores lidas dos tokens do tema em claro e escuro (`prefers-color-scheme`).
+- `src/Hook/MailEnvelopeHooks.php`: lê `css/tokens.css` a cada montagem (bloco `:root` para o claro, bloco de modo escuro sobre ele) e entrega `mail_colors`; o logo vem de `aculta420.settings` (`logo.path`).
+- Quando um token muda, o e-mail muda junto, sem editar o template.
+
+## 0.6.0-dev.116 — apresentar salto à primeira resposta não lida — 2026-10-20
+
+## 0.6.0-dev.117 — envelope HTML dos e-mails do ACULTA — 2026-10-20
+
+- `templates/email-wrap.html.twig`: envelope HTML dos e-mails do Mailer Plus (hook `email_wrap`), com tabela, estilos em linha, logo horizontal do tema e rodapé institucional. O texto de cabeçalho e rodapé continua vindo dos layouts do `aculta_mailer` (dados).
+- A logo usa o caminho do tema; a conversão para endereço absoluto é feita pelo Mailer Plus no envio (política `mailer_url_to_absolute`).
+- Runtime de teste: dois envios reais para o destinatário autorizado, aceitos pelo sistema de e-mail. Conferência visual pelo destinatário pendente. RUNTIME STATUS: PARTIAL.
+
+- `[data-aculta-discussion-unread]` recebe a mesma hierarquia visual das ações
+  da barra. Em mobile, usa uma linha própria; no desktop, mantém o rótulo numa
+  linha e os controles compactos. O tema só apresenta o botão neutro criado pelo
+  Portal e não consulta os marcadores History.
+- Firefox ESR 153.4/X11/BiDi no Runtime, com mensagens e classe `.new`
+  sintéticas somente no DOM: controle dentro da barra em 320/360/390/500/1250
+  CSS px; área de ação 44 px no mobile, sem overflow e claro/escuro coerentes.
+  Foundation Runtime e gates direcionados PASS. Integração real autenticada e
+  leitor de tela pendentes. RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.115 — dar espaço ao slider e mostrar a posição no mobile — 2026-10-20
+
+- Em larguras até 575 px, as ações mantêm seus rótulos sem cortes, o slider
+  ganha uma linha de largura completa e o índice atual fica visível. Abaixo de
+  360 px, os botões se organizam em duas colunas; todos preservam alvos de toque
+  com 44 px de altura.
+- Firefox ESR 153.4/X11 e WebDriver BiDi no Runtime de teste, perfil anônimo
+  isolado: 320/360/390/500/1250 CSS px, claro/escuro, clique e slider testados
+  com seis mensagens sintéticas no DOM. Documento/corpo sem overflow; largura
+  de texto dos botões cabe em cada alvo. Foundation Runtime 366 e gates
+  direcionados PASS. Leitor de tela real pendente. RUNTIME STATUS: PASS no
+  escopo visual.
+
+## 0.6.0-dev.114 — acomodar controles de progresso em telas estreitas — 2026-10-20
+
+- A barra móvel usa cinco colunas efetivas, reduz os espaçamentos sem diminuir
+  a altura dos alvos de toque e, abaixo de 360 px, organiza as quatro ações em
+  duas linhas com o slider na largura completa. Corrige o botão “Fim” que
+  ultrapassava o fundo da barra em 390 px e rótulos sobrepostos em 320 px.
+- Firefox ESR 153.4/X11 e WebDriver BiDi no Runtime de teste, sessão anônima
+  isolada: viewport CSS 320/360/390/500/1250 px; claro/escuro, botão e slider
+  verificados com seis mensagens sintéticas somente no DOM. Documento/corpo sem
+  overflow; controles dentro da barra. Foundation Runtime e gates direcionados
+  PASS. Leitor de tela real pendente. RUNTIME STATUS: PASS no escopo visual.
+
+## 0.6.0-dev.113 — manter anúncios de progresso acessíveis sem poluir a leitura — 2026-10-20
+
+- O contador visual não é uma live region. O texto acessível permanece
+  sincronizado em `aria-live=off` durante rolagem e slider; ações de botão
+  alternam para `polite`. O tema oculta visualmente o atributo neutro do Portal.
+- ACULTA Forum dev.64 expõe `aria-valuetext` atualizado no slider e mantém a
+  posição visual sincronizada durante rolagem. Firefox ESR 153.4 no Runtime de
+  teste mediu a região oculta em 1×1 px; rolagem e slider mantiveram a mensagem
+  sincronizada em `aria-live=off`, e botão alternou para `polite` e anunciou.
+  WebDriver BiDi confirmou viewport 390 × 844 CSS px, barra `static` e sem
+  overflow horizontal. O browser foi headless; leitor de tela real e X11 visual
+  deste ajuste seguem pendentes.
+- Foundation Runtime 366 PASS; design foundations 2097, SDC 535, módulo/tema
+  boundary 1419 e map 152 PASS. RUNTIME STATUS: PARTIAL. Evidências em
+  `web/modules/custom/aculta_portal/modules/aculta_forum/docs/TEST-MATRIX.md`.
+
+## 0.6.0-dev.112 — evitar sobreposição dos controles no mobile — 2026-10-20
+
+- Em viewports estreitos, os controles de progresso voltam ao fluxo normal do
+  conteúdo em vez de permanecerem sticky sobre as mensagens. Botões e slider
+  continuam disponíveis no início da discussão e mantêm os destinos de salto.
+- Firefox ESR/X11 via WebDriver BiDi revalidou em 390 × 844 CSS px: a barra
+  fica `static`, não cruza a mensagem ativa, o status acompanha 5/6 e
+  documento/corpo medem 390 px. Foundation 365 PASS. Leitor de tela/AT
+  pendente. RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.111 — compensar cabeçalho na barra de progresso — 2026-10-20
+
+- A navegação sticky da discussão respeita o deslocamento do toolbar Drupal e
+  os 3 rem de scroll-padding do cabeçalho; ao rolar a thread, os controles não
+  ficam escondidos sob a navegação fixa.
+- Firefox ESR/X11 confirmou ao rolar para a quarta mensagem: barra completa
+  abaixo do cabeçalho, topo em 56 px, indicador “Mensagem 4 de 6 nesta página”
+  e viewport/documento/corpo em 500 px. Captura escura permanece privada na
+  pasta de evidências da dev.110. Foundation 365 PASS. 390/AT pendentes;
+  RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.110 — navegação visual de progresso em discussões — 2026-10-20
+
+- O Portal anexa controles funcionais ao campo de discussão compartilhado; o
+  tema apresenta a barra de progresso com hierarquia compacta, foco visível,
+  alvos de toque e scroll offset para as mensagens.
+- Layout adapta os seis controles a telas estreitas e mantém status acessível
+  para leitor de tela. Tema escuro herda os tokens semânticos existentes.
+- Firefox ESR/X11 validou visualmente barra e quatro controles em 1250/500 px;
+  largura total 500 px sem overflow e avanço/clique de teclado foram verificados
+  com DOM sintético da sessão, sem conteúdo salvo. Claro/escuro inspecionados;
+  gates SDC 535, Design Foundations 2097, Foundation 365, Shell 11, mapa e
+  fronteira PASS. Viewport 390 e assistivas pendentes. RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.109 — reduzir densidade vertical das listas do Fórum — 2026-10-20
+
+- Depois de comparar a lista X11 do Growroom com a categoria ativa do Ubuntu
+  Discourse, os cards públicos ficaram mais compactos em desktop: resumo e data
+  redundante saem somente da lista, avatar e autoria usam uma linha enxuta, e
+  contagem/atividade mantêm sua coluna. O detalhe do tópico, as variantes
+  compartilhadas do `aculta_user` e os dados/contagens preparados pelo Portal
+  não mudam. Em telas estreitas a coluna lateral continua empilhada.
+- Ubuntu Discourse atual, categoria [Support and Help](https://discourse.ubuntu.com/c/support-and-help/306),
+  foi observado com colunas Topic/Replies/Views/Activity; o ACULTA não adiciona
+  Views até validar uma fonte confiável. Firefox/X11 anônimo no Runtime `toca`
+  mostrou duas linhas em 1024 px; em 500 px o card empilha metadados e as tabs
+  quebram em duas linhas sem corte aparente. O detalhe do tópico em 500 px
+  manteve corpo, autoria, categoria e comentário.
+- Foundation (365), SDC (535), Design Foundations (2097), fronteira (1415),
+  mapa (152) e Portal 11+ (975) PASS. Cache rebuild e HTTP raiz/listas PASS.
+  Três tópicos e cinco Comments de QA, aliases e History relacionados foram
+  removidos; estado final 0 tópicos/Comments, 24 History (baseline) e duas
+  flags de avisos preservadas. Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-density-20261020/`.
+  Tema escuro, viewport CSS 390 px, teclado/leitor de tela e comparação integral
+  seguem pendentes. RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.108 — apresentar ações seguir/salvar do Fórum — 2026-10-20
+
+- Os links nativos de Flag na página completa do tópico recebem estilo de botão
+  pelos tokens ACULTA420, com estados hover e foco visível. O tema não consulta
+  Flag nem decide autorização; o Portal/Flag prepara os links autorizados.
+- Gates Foundation (364), SDC (535), Design Foundations (2097), fronteira
+  (1415) e mapa (152) PASS. Firefox/X11 autenticado em 1024 px mostrou os dois
+  controles; seguir e salvar gravaram e reverteram seus estados corretamente.
+  Firefox Responsive Design Mode autenticado em 390 × 670 px confirmou os dois
+  botões lado a lado, sem overflow horizontal visível. Modo escuro forçado
+  localmente no DOM foi inspecionado a 1024 px; preferência Runtime não alterada.
+  RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.107 — alinhar metadados da lista de tópicos — 2026-10-20
+
+- O cartão da lista agora envolve título, autoria, contagem de respostas e
+  atividade recente numa única superfície. A coluna de metadados tem largura
+  limitada; em mobile, ela passa para uma faixa abaixo do conteúdo. Isso corrige
+  a separação visual observada na captura de 768 px. Em larguras intermediárias,
+  as abas reduzem o espaçamento para permanecer em uma única linha; as datas da
+  atividade ficam sem quebra.
+- Firefox/X11 no Runtime `toca`: lista em 1024, 768 e 390 px e tópico em 390 px
+  revisados no modo claro, sem overflow horizontal observado. Gates Foundation
+  (364), SDC (535), Design Foundations (2097), fronteira (1415) e mapa (152)
+  PASS. Depois das capturas, as três fixtures QA foram removidas e o Runtime
+  confirmou 0 tópicos, 0 Comments, fila Messenger vazia e aliases removidos.
+  Capturas privadas em `/home/aculta/private/aculta/visual-tests/forum-dev56-20261020/`.
+  Modo escuro e fluxo autenticado não foram exercitados. RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.106 — categorias junto às discussões do Growroom420 — 2026-10-20
+
+- O SDC `forum-category` apresenta o bloco `block_landing` na barra lateral da
+  entrada pública. Layout responsivo coloca categorias antes da atividade em
+  telas largas e depois da lista em mobile; mantém os mesmos tokens claros e
+  escuros e a fonte de dados Views.
+- Gates: Foundation 364 via Drush no Runtime, SDC 535 e Design Foundations
+  2097 PASS. Firefox/X11 comparou 1024/768/390 px no claro e 1024/390 px no
+  escuro, aplicado apenas no DOM local; não foi observado overflow horizontal.
+  Tab mostrou o indicador de foco nos controles iniciais; fluxo completo e telas
+  com tópicos publicados permanecem pendentes. RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.105 — remover templates do Forum contribuído — 2026-10-20
+
+- Removidos os templates para a lista, tópicos e comentários do módulo Drupal
+  Forum, agora sem conteúdo e em retirada. Os presenters ACULTA para
+  `aculta_forum_topic` e `aculta_discussion_post` permanecem.
+- Os templates de artigo/blog deixaram de excluir nomes de campo da estrutura
+  antiga; regras CSS específicas de listagem e respostas legadas também foram
+  removidas. Foundation 362 via Drush, SDC 531, Design Foundations 2094,
+  fronteira 1386, mapa 151 e `git diff --check` PASS. Runtime de teste: cache rebuild e
+  raízes Fórum/Revista HTTP 200; nenhum conteúdo novo foi criado. Não há tópicos
+  persistidos para teste da página individual. PHP 8.4.26 abaixo da baseline
+  8.5. RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.104 — cartões para o índice público de categorias do Fórum — 2026-10-20
+
+- A página `/categorias` apresenta a hierarquia e as descrições da View Core em
+  cartões responsivos pelo SDC `content/forum-category`. A View continua dona
+  dos dados; o ACULTA420 só organiza e apresenta os campos renderizados.
+- SDC (531), design (2103), Foundation (362) e HTTP `/categorias` (200, 12
+  cartões) PASS. A inspeção HTTP revelou token literal; a View Core foi
+  corrigida para `{{ tid }}`. Browser visual não validado; RUNTIME STATUS:
+  PARTIAL.
+
+## 0.6.0-dev.103 — apresentar o ano da conta em autoria de fórum — 2026-10-20
+
+- O SDC `content/author-card` mostra o ano da conta apenas nos cartões
+  `author_forum`/`author_forum_stacked`, recebido como dado neutro de
+  `aculta_user`. Contas com perfil privado e autores históricos não exibem data.
+- Foundation 360, SDC 518, design foundations 2089, Portal 970, boundary 1384
+  e mapa 154 checks PASS. O gate Foundation foi executado via Drush no Runtime
+  de teste; nenhuma alteração persistente. Inspeção visual de cartão com tópico
+  salvo DEFERRED. RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.102 — renderizar comentários diretos da Revista — 2026-10-19
+
+- Os templates `article` e `blog` passam `content.field_aculta_discussion` ao
+  slot `discussion` do SDC da publicação e excluem esse render array do rodapé
+  genérico. O formatter Core ativa o formulário e a lista Comment compartilhada;
+  o tema aplica sua superfície à discussão e preserva o cartão `author_comment`
+  preparado por `aculta_user`.
+- Removidos do tema os tokens/camadas `portal-discussion*` sem produtor após a
+  remoção de `DiscussionHooks`; o SDC usa sua própria classe semântica.
+- O gate Foundation aceita placements administrativos limitados a rotas de
+  administração no tema admin ativo e verifica as regiões desse tema; placements
+  públicos continuam exigindo ACULTA420.
+- Runtime de teste `toca`: Firefox confirmou o formulário Core dentro do slot da
+  Revista. A submissão foi bloqueada pela política correta: os usuários de QA
+  têm papel histórico `email_confirmed`, mas não a marca canônica de confirmação;
+  nenhuma conta ou permissão foi alterada. Com Comments temporários pendentes,
+  as Views administrativas mostraram o CID do Fórum somente na fila do Fórum e
+  o CID da Revista somente no bloco da Revista. Ambos ficaram invisíveis para
+  visitantes anônimos. Os Comments e o tópico de teste foram removidos pela
+  Entity API; conferência final: 0 tópicos novos, 0 Comments novos, 0 Comments
+  na publicação e filas Messenger vazias.
+- Foundation (360), SDC (516), design foundations (2089), fixtures (157),
+  fronteira (1382), mapa (154) e Drupal 11+ (970) — PASS. RUNTIME STATUS:
+  PARTIAL: renderização e separação de moderação passaram; envio pelo formulário
+  autenticado continua pendente por falta de uma conta de QA já confirmada.
+
+## Alteração não marcada — autoria da última atividade do Fórum — 2026-10-19
+
+- As linhas de tópicos públicos apresentam o cartão contextual `author_forum`
+  preparado pelo Portal abaixo da data da última atividade. Estilos usam o SDC
+  existente e tokens semânticos; layout adapta o alinhamento para telas estreitas.
+- SDC 516, design foundations 2089 e fixtures 157 PASS. Runtime `toca`: CSS e
+  Twig ativos; View HTTP 200 e hook DI construiu cartão em chamada sintética.
+  Foundation bloqueada pelo placement preexistente da Revista; inspeção visual
+  desktop/mobile/claro/escuro pendente. A versão `0.6.0-dev.101` é mantida até
+  os gates e a revisão visual. RUNTIME STATUS: PARTIAL.
+
+## Alteração não marcada — identificação visual dos contextos de autoria — 2026-10-19
+
+- O SDC `content/author-card` apresenta rótulos contextuais neutros para Revista,
+  Growroom420, cursos e Wiki420, derivados apenas da variante preparada por
+  `aculta_user`. Não exibe papel, matrícula, estatística ou dado de perfil novo.
+- Stories independentes cobrem autoria editorial, comentário da Revista, LMS e
+  Wiki; YAML e Twig parse PASS. Gates SDC (516) e design foundations (2089)
+  PASS. Runtime `toca`: renderização do SDC confirmou os quatro rótulos após
+  cache rebuild, sem persistência; `/discussoes/novas` HTTP 200 e CSS público
+  servido contém a nova regra do cartão.
+- A versão `0.6.0-dev.101` permanece até a inspeção visual completa; Foundation
+  ainda tem o bloqueio administrativo preexistente da Revista registrado
+  abaixo. Inspeção de navegador desktop/390 px/dark pendente. RUNTIME STATUS:
+  PARTIAL.
+
+## Alteração não marcada — listas públicas do Fórum — 2026-10-19
+
+- As listagens de tópicos públicos apresentam os links de navegação como chips
+  com alvo confortável, foco visível e tokens semânticos. Em telas estreitas,
+  contagem de respostas e última atividade descem abaixo do título para evitar
+  apertar a coluna de conteúdo.
+- Gates SDC (516), design foundations (2081), mapa (154) e fronteira (1360)
+  PASS. Foundation falha por posicionamento divergente preexistente de
+  `block.block.aculta_magazine_admin_comments`; não foi alterado neste escopo.
+- Runtime `toca`: cache rebuild PASS, `/discussoes/novas` HTTP 200 e CSS servido
+  contém o seletor responsivo e os chips. Tema `0.6.0-dev.101` mantido até
+  corrigir o gate prévio e inspecionar navegador 390 px/desktop/dark. RUNTIME
+  STATUS: PARTIAL.
+
+## 0.6.0-dev.101 — corrige os cartões da lista Growroom420 — 2026-10-19
+
+### Alteração não marcada — contador da lista pública do Fórum
+
+- Template e CSS apresentam a contagem preparada pela View ao lado do teaser,
+  com contagem plural e data da última atividade. Runtime `toca`: HTTP 200,
+  oito linhas com `0 respostas` e data Core; nenhum conteúdo alterado. Gates SDC/design PASS. Foundation
+  bloqueada pelo posicionamento divergente do bloco
+  `block.block.aculta_magazine_admin_comments`; inspeção visual DEFERRED. Sem
+  nova marcação: permanece `0.6.0-dev.101`, RUNTIME STATUS PARTIAL.
+
+Classificação: PATCH visual baseado em inspeção Firefox.
+
+- O template do tópico declara explicitamente os modificadores teaser/full que
+  seus estilos utilizam; antes, as classes padrão do wrapper Node não estavam
+  presentes e os cards apareciam como conteúdo sem superfície/borda.
+- A categoria aparece como etiqueta semântica mesmo com formatter sem link. O
+  cartão de identidade continua vindo exclusivamente do `aculta_user`.
+- Foundation verifica a correspondência Twig/CSS. Firefox no Runtime de teste
+  confirmou estilos computados em desktop e viewport compacto de 500 px. O
+  viewport de 390 px e o modo escuro seguem pendentes. Nenhum conteúdo foi
+  alterado. RUNTIME STATUS: PARTIAL para apresentação; fluxo autenticado segue
+  pendente.
+
+## 0.6.0-dev.100 — restringe largura dos controles de resposta — 2026-10-19
+
+Classificação: PATCH de responsividade.
+
+- O formulário Comment amplia somente campos textuais e selects; caixas de seleção, radio, upload, hidden e botões mantêm suas dimensões próprias.
+- Foundation 354, SDC 516, design 2078 e fixtures 157 — PASS. A restrição evita dimensionar inputs binários e arquivos. Inspeção visual permanece pendente; nenhum conteúdo criado. RUNTIME STATUS: PARTIAL, após smoke HTTP e CSS em cache agregada da dev.99.
+
+## 0.6.0-dev.99 — formulário de resposta em discussões compartilhadas — 2026-10-19
+
+Classificação: PATCH de apresentação.
+
+- `discussion.css` apresenta o formulário nativo Comment com superfície semântica, campos em largura responsiva, foco visível e alvos de ação confortáveis em telas estreitas. O escopo se limita ao campo `field_aculta_discussion`; acesso, validação e submissão continuam no Drupal Core e Portal.
+- Foundation: 354 checks; SDC: 516; design: 2078; fixtures: 157; fronteira módulo/tema: 1331; mapa: 154 — PASS. Após cache rebuild no Runtime `toca`, raiz HTTP 200 e CSS agregado contém o seletor do formulário e o token de foco. Envio de comentário e inspeção visual no navegador ficam pendentes porque o Fórum está sem tópicos. RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.98 — estado vazio do índice Growroom420 — 2026-10-19
+
+Classificação: PATCH de apresentação.
+
+- `forum-index.css` apresenta a área vazia da View pública com tokens semânticos, borda e alinhamento responsivos; sem ramo por modo de cor.
+- Foundation 354 checks e design 2078 PASS. Runtime `toca`: raiz HTTP 200 renderiza a lista vazia; nenhum tópico/comentário criado. Inspeção visual no navegador pendente; RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.97 — identidade autorizada em tópicos públicos — 2026-10-19
+
+Classificação: PATCH de apresentação, sem alteração de contrato funcional.
+
+- `node--aculta-forum-topic.html.twig` preserva o markup e atributos do Node, apresenta o cartão preparado pelo `aculta_user` e omite `author_picture`/`author_name` do byline padrão do Core. Isso evita uma segunda fonte de avatar que não aplica a política de privacidade do perfil.
+- `forum-index.css` apresenta teasers, metadados e categorias com tokens semânticos e foco visível, em modos claro/escuro sem ramificação visual.
+- O gate da Foundation também volta a reconhecer `comment--aculta-discussion-post.html.twig`, incluído na dev.96 mas ausente da allowlist anterior; nenhum template foi removido para silenciar o gate.
+- Gates: Foundation 354 checks, SDC 516, design 2078, Portal boundary 1331, map 154 PASS. Runtime `toca`: `renderInIsolation()` de Node não salvo selecionou o presenter e incluiu `aculta-author-card`; o byline/imagem padrão Core ficou ausente. Zero Nodes gravados. Inspeção visual em navegador pendente. RUNTIME STATUS: PARTIAL.
+
+## 0.6.0-dev.96 — apresentação dos comentários compartilhados — 2026-10-19
+
+Classificação: PATCH visual para a experiência de discussão.
+
+- Novo template `comment--aculta-discussion-post.html.twig` apresenta cartões `author_comment` e `author_growroom_historico` preparados por `aculta_user`, corpo, permalink e ações do Comment. O cartão histórico identifica o acervo sem link de perfil.
+- `discussion.css` recebe layout responsivo com tokens semânticos; nenhuma consulta de entidade ou regra de acesso foi adicionada ao tema.
+- RUNTIME STATUS: DEFERRED; renderização visual em navegador pendente.
+
+## 0.6.0-dev.95 — testes automatizados de InputHooks e PortalUiHooks — 2026-10-19
+
+Classificação: PATCH sem mudança de comportamento. Testes e documentação.
+
+- `tests/src/Unit/PortalUiHooksTest.php` (5 testes, sem banco): tokens conhecidos viram classes e o atributo `data-portal-ui` é removido; token desconhecido não gera classe; tokens em `#attributes` de elemento de render; atributos em array viram `Attribute`; contador de não lidos só para inteiros positivos.
+- `tests/src/Kernel/InputHooksKernelTest.php` (7 testes, banco `aculta_simpletest`): ícones oficiais de adicionar e remover com as classes de botão; formato array e formato `Attribute`; imagem de outra origem e `submit` não mudam; tokens do Portal continuam valendo em `input`; ícone e token coexistem. Verifica que os SVGs existem no disco.
+- `web/libraries/` deixa de ser ignorado pelo `.gitignore` e passa a ser versionado (repositório público). O arquivo `inputmask-pages/.env` (vazio, do pacote upstream) é versionado com `git add -f`, porque a regra genérica `.env` continua valendo.
+- Validação: Unit 5/5 OK; Kernel 7/7 OK, com banco `aculta_simpletest` via `secrets/simpletest-db.env`.
+
+## 0.6.0-dev.94 — correção de arquitetura do preprocess de input; ícones oficiais — 2026-10-19
+
+Classificação: PATCH de arquitetura e apresentação. Corrige o commit `0.6.0-dev.93` antes de qualquer validação visual.
+
+- `preprocess_input` passa a ter uma única implementação, em `src/Hook/InputHooks.php`, que delega a tradução de tokens a `PortalUiHooks`. A lógica de ícone de `PortalUiHooks` (dev.93) foi removida dele. O Core lança exceção com duas implementações da mesma extensão.
+- Os SVGs de adicionar e remover deixam de ser desenhos próprios: passam a ser `plus-circle.svg` e `dash-circle.svg` do pacote oficial `bootstrap-icons@1.11.0` (npm, MIT), com integridade conferida. A única alteração é `fill` trocado pela cor da marca. Procedimento e regra de origem em `assets/icons/bootstrap-icons/README.md`.
+- Verificação de boas práticas de Drupal 11+, SDC e VVJ em `docs/verificacao-boas-praticas.md`: VVJB, VVJS e a API usada pelo tema conferidas no código instalado.
+- Renderização verificada no Runtime de teste (`renderInIsolation`): ícones oficiais com as classes do botão; tokens do Portal preservados em `input`. Validação visual não executada (NÃO VALIDADO).
+- Gate de Foundation: versão alinhada; 368 checks PASS.
+
+## 0.6.0-dev.93 — botões de imagem e webform_multiple do Webform — 2026-10-19
+
+Classificação: PATCH de apresentação. Autorizado na solicitação de portar também os itens sem uso atual nos formulários.
+
+- `image_button` do Webform (ícones de adicionar e remover de `webform_multiple` e de condições): o `src` passa a usar SVG do tema (`assets/icons/webform/`) e o elemento recebe `btn btn-sm btn-outline-primary webform-icon-button`. Continua `input[type=image]`, porque o Form API identifica o clique pelas coordenadas da imagem; trocar o elemento por `<button>` alteraria esse contrato. A troca é feita em `PortalUiHooks::preprocess()`, o único `preprocess_input` do tema (o Core não aceita dois).
+- `input[type=image]`: cursor e foco visível do tema; ícones de tamanho próprio, sem largura de campo de formulário.
+- `webform_multiple`: largura de coluna de operações, sem quebra, espaçamento entre botões, alça de arrastar, mensagem de lista vazia, container responsivo e linha de adição.
+- Renderização verificada no Runtime de teste (`renderInIsolation`) com `image_button` de adicionar e remover; `submit` não é alterado. Validação visual de `webform_multiple` não executada (NÃO VALIDADO).
+
+## 0.6.0-dev.92 — Webform: regras do webform_bootstrap 3.x portadas para o Bootstrap 5 — 2026-10-19
+
+Classificação: PATCH de apresentação. Autorizado na solicitação de portagem dos itens ainda não cobertos pelo tema.
+
+- Novo `css/components/webform.css`, carregado pela library `global`: título de composto sem moldura, título inline de elemento e de composto, alternância de ajuda/descrição do Likert em telas estreitas e modal de confirmação responsivo.
+- Itens do webform_bootstrap 3.x que já são cobertos pelo Bootstrap 5 ou pelo tema não foram portados (ver `docs/portal/WEBFORM-BOOTSTRAP-AVALIACAO.md`).
+- Gate de Foundation alinhado à versão. Causa corrigida no mesmo commit: o template `aculta-user-author-card.html.twig` (0.6.0-dev.91) não estava na allowlist de overrides Twig, e o gate reprovava. Incluído na lista revisada; 368 checks PASS.
+- Validação visual no navegador não executada nesta etapa; estado: NÃO VALIDADO.
+- Sem alteração de Portal, configuração exportada ou Runtime além do cache rebuild.
+
+## 0.6.0-dev.91 — cartão de autoria experimental — 2026-10-19
+
+- Novo SDC `content/author-card`, com variações visuais inline e empilhada, avatar/nome/link em slots e fallback por inicial; estilos usam tokens semânticos e suportam os modos de cor do tema.
+- Variantes funcionais são distintas por contexto (`author_forum`, `author_comment`, `author_editorial`, `author_lms`, `author_wiki`) e a autoria histórica se chama `author_growroom_historico`; o SDC compartilha o shell visual e não recebe dados de entidade.
+- Contraparte Twig do tema chama o componente via o theme hook neutro declarado por `aculta_user`; CSS, estrutura e identidade visual permanecem no ACULTA420.
+- Gate de Foundation alinhado à versão. Validação Runtime/visual não executada nesta etapa; estado: NÃO VALIDADO, RUNTIME STATUS: DEFERRED.
+
 ## 0.6.0-dev.90 — revisão do /code-review: escopo do recorte e clique nativo
 
 - O contêiner de rolagem da gaveta é resolvido uma vez, antes de o diálogo existir (`button.acultaScroller`). Antes, a partir da segunda abertura `closest('.ui-dialog-content')` retornava o próprio diálogo (o jQuery UI adiciona essa classe ao elemento), e o recorte voltava.
@@ -1379,4 +2064,59 @@ Classificação: PATCH de manutenção do tema e do gate.
 - `validate-aculta420-foundation.php`: PASS via Drush no Runtime Homelab, somente leitura. Nenhuma configuração ou banco foi alterado.
 - Runtime de teste: mapa `core.extension:theme` alinhado ao sync por remoção dirigida de `bootstrap5`; `aculta420` segue como tema padrão e `claro` como administrativo. Cópia recuperável do mapa anterior em `/tmp/aculta-runtime-core-extension-theme-before-bootstrap5-20261018.yml`.
 - DT-O14 permanece parcial: `bootstrap5.settings` e `block.block.bootstrap5_search_form` ainda existem no banco e apontam para a base antiga; não houve importação global nem exclusão desses objetos.
+
+## 0.6.0-dev.118 — organizar o formulário da busca pública do Fórum — 2026-10-20
+
+- O formulário `/pesquisar` usa colunas responsivas e mantém textos de ajuda
+  dentro dos filtros; o botão alinha com os campos em desktop e ocupa uma linha
+  própria em larguras intermediárias. Mobile empilha os controles.
+- Firefox ESR/X11 anônimo no Runtime: 1024 px confirma que os textos cabem e o
+  botão não sobrepõe as descrições. Responsive Design Mode chegou a 320×480,
+  mas a inspeção completa do formulário ficou abaixo da área capturada.
+- SDC 535, Design Foundations 2100/fixtures 157 e Shell Contract 11 PASS. O
+  Foundation reconhece a versão .118, mas reprova na allowlist por
+  `email-wrap.html.twig`, adicionado pela linha Mailer .117 e ainda não listado
+  no gate; nenhuma alteração da allowlist foi feita neste escopo. SHA em
+  `main`: pendente de merge da PR #297.
+
+## 0.6.0-dev.119 — apresentar estado vazio da busca do Fórum — 2026-10-20
+
+- O estado sem resultados de `/pesquisar` recebe o mesmo painel contido usado
+  pelo índice público do Fórum, com tokens semânticos e leitura responsiva.
+- Firefox ESR/X11 anônimo no Runtime de teste a 1024 px confirma painel, texto,
+  link e formulário sem sobreposição. Mobile, claro/escuro e acessibilidade
+  completa pendentes. SHA em `main`: pendente de merge da PR #297.
+- SDC (535), Design Foundations (2100), fixtures (157) e Shell Contract (11)
+  PASS. O Foundation reconhece a versão .119, mas a allowlist de Twig ainda não
+  inclui `email-wrap.html.twig` da linha paralela Mailer; a allowlist não foi
+  alterada aqui. SHA em `main`: pendente de merge da PR #297.
+
+## 0.6.0-dev.130 — recebe identidade pública opcional em micropáginas — 2026-10-20
+
+- O SDC `social-links-page` oferece slot opcional `owner_identity`; ACULTA Links envia apenas a identidade pública preparada por `aculta_user`.
+- SDC schema PASS (570 checks), Design Foundations PASS (2109); revisão visual responsiva e acessível ainda pendente, estado Dev.
+
+## 0.6.0-dev.144 — aplica apresentação comum aos modais de upload do Portal
+
+Classificação: PATCH de apresentação; mantém o diálogo Core e acrescenta token neutro compartilhável.
+
+- `user-upload-dialog` recebe classe semântica do ACULTA420 e tamanho responsivo com rolagem; o Fórum preserva tokens contextuais de anexo e galeria.
+- Documentação do design system atualizada. Inspeção visual pré-RC pendente.
+
+## 0.6.0-dev.144 — inspeção X11 do shell compartilhado de upload — 2026-10-21
+
+- Fixture representativa com o CSS real de `dialog.css` verificada no Firefox/X11 em 390, 768 e 1024 px: modal dentro do viewport, conteúdo com rolagem e rótulo do campo visível. Evidências locais privadas em `~/.local/share/aculta-evidence/user-upload-x11/`.
+- Limite: a fixture não é o formulário renderizado pelo Drupal; inspeção do modal servido no Runtime permanece pendente. Sem mudança de CSS ou versão do tema.
+
+## 0.6.1-dev.11 — controles de filtro na gaveta de avisos — 2026-10-24
+
+Adiciona apresentação responsiva e foco visível para grupos recolhíveis de filtros por origem e leitura. A navegação e o estado dos avisos continuam no módulo.
+
+Validação: `PortalUiHooksTest` 8/44 PASS; JavaScript passou em `node --check`; Firefox ESR/X11 no Runtime de teste passou em viewport real 1270 px e 500 px sem overflow horizontal. O Firefox limitou a largura solicitada de 390 px a 500 px.
+
+## 0.6.1-dev.12 — estilo da agrupação de avisos — 2026-10-24
+
+A central de avisos carrega estilo responsivo e foco visível para agrupamentos nativos `<details>`, mantendo cada aviso e ação acessível.
+
+Validação: lint PHP e `git diff --check` executados; PHPCS em `ThemeHooks.php` mantém erros/avisos preexistentes fora da nova função; smoke visual pendente.
 

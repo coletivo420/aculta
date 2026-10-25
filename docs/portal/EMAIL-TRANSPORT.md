@@ -1,4 +1,4 @@
-# Transporte de e-mail do Portal (migração para Mailer Plus)
+# Transporte de e-mail do Portal (migração para camada de envio E-Mails ACULTA)
 
 Status: **M0/M1/M2 e R3 concluídas; R4 alinha o template administrativo e registra a política atual do Webform.** Documento normativo da arquitetura de transporte.
 
@@ -6,21 +6,52 @@ Documentos relacionados: [DEBT-REGISTER](../operations/DEBT-REGISTER.md) (DT-P05
 [EMAIL-CONFIRMATION-POLICY.md](EMAIL-CONFIRMATION-POLICY.md), [GUARDRAILS.md](GUARDRAILS.md),
 [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md), `config/secrets-contract.json`.
 
+## 0. Estado atual do envio (2026-10-19)
+
+Envio pela camada de envio E-Mails ACULTA. O **transporte padrão é a Hostinger** (`smtp`, `smtp.hostinger.com:465`), versionado em
+`config/sync/mailer_transport.mailer_transport.smtp.yml` (sem credenciais) e apontado por `config/sync/mailer_transport.settings.yml`.
+O SMTP2GO (`mail.smtp2go.com:465`, `config/sync/mailer_transport.mailer_transport.smtp2go.yml`) fica disponível para troca,
+mas sua cota está esgotada.
+
+Remetente: `naoresponda@aculta.org`, o mesmo em teste e em produção, que é também a conta SMTP da Hostinger. A Hostinger
+aceita esse remetente: o teste de envio passa de `MAIL FROM` e falha apenas no destinatário de teste reservado (`example.invalid`).
+
+**Credenciais.** Usuário e senha da Hostinger ficam no próprio transporte da camada de envio E-Mails ACULTA, no banco do Runtime de teste, e não
+são versionados. O `config/sync` traz o transporte sem credenciais; o `config:status` aponta essa diferença, que é esperada.
+
+**Incidente de 2026-10-18 a 2026-10-19 (resolvido).** Os envios falhavam com
+`553 5.7.1 : Sender address rejected: not owned by user naoresponda@aculta.org`, porque o remetente de teste era
+`naoresponda@toca.net.br`. Com o remetente igual à conta autenticada, a Hostinger aceita o envio.
+
+**Regra.** A credencial de envio pode ficar no banco do Runtime (exceção aprovada em 2026-10-19 e registrada no `AGENTS.md`).
+Nunca vai para `config/sync`, para o repositório ou para exportação. O gate do Portal (`transactionalMailReady()`) e os validadores
+seguem o transporte padrão e verificam que a versão versionada não tem credenciais.
+
+**Tradução da camada de envio E-Mails ACULTA (2026-10-19).** Os 85 textos do `symfony_mailer` 2.0.2 estão traduzidos para pt-br no
+Runtime de teste (conferidos um a um contra o `.po` oficial). A tradução é estado do banco, não do repositório:
+**Tradução da camada de envio E-Mails ACULTA (2026-10-19).** Os textos do `symfony_mailer` 2.0.2 que estão no catálogo oficial e os que
+aparecem nas telas do módulo (formulários de transporte SMTP, DSN e Sendmail, substituição e política) estão em pt-br.
+Os textos extras estão em `web/modules/custom/aculta_portal/translations/symfony_mailer.pt-br.po`, importados como
+tradução customizada (`drush locale:import --type=customized --override=none pt-br <arquivo>`). Em cada ambiente, importar
+o catálogo oficial com `drush locale:update` e depois o arquivo do projeto. Nenhum arquivo de contrib é editado.
+Pendência: o prefixo "Warning:" da tela de substituição é texto fixo no código do módulo (`MailerOverrideController`, sem
+`t()`); só pode ser traduzido por correção no módulo ou por sobrescrita de tema, decisão a tomar.
+
 ## 1. Decisão
 
-Migrar o envio de e-mail do `drupal/smtp` (1.4, SMTP via `smtp.settings`) para **Mailer Plus**
+Migrar o envio de e-mail do `drupal/smtp` (1.4, SMTP via `smtp.settings`) para **camada de envio E-Mails ACULTA**
 (`drupal/symfony_mailer` 2.x), em modo override (`mailer_override`), mantendo o provedor SMTP2GO
 e as mesmas credenciais.
 
-Não há troca de provedor. O SMTP2GO continua sendo o servidor de envio; muda apenas quem fala com ele
-dentro do Drupal.
+Provedores de envio atuais: **Hostinger** e **SMTP2GO** (ver seção 0). A migração não trocou provedor; muda
+quem fala com eles dentro do Drupal.
 
 Motivos:
 
-- **Commerce e Core User**: passam a enviar pelo Mailer Plus com suporte nativo em modo override, sem
+- **Commerce e Core User**: passam a enviar pela camada de envio E-Mails ACULTA com suporte nativo em modo override, sem
   ajuste por módulo.
 - **E-mail HTML com modelo**: deve resolver DT-P09 (mensagem de webform via SMTP sem o modelo HTML).
-  O Mailer Plus declara que o Webform só funciona em modo de compatibilidade; isso **não é presumido**
+  A camada de envio E-Mails ACULTA declara que o Webform só funciona em modo de compatibilidade; isso **não é presumido**
   e precisa ser testado no Homelab antes de a DT-P09 ser fechada.
 - **Base para a pilha Message**: o mesmo transporte servirá a e-mails institucionais com apresentação
   própria, sem novo provedor.
@@ -33,7 +64,7 @@ Conferido em 2026-10-11 no pacote publicado `drupal/symfony_mailer` 2.0.2 (zip o
 |---|---|
 | Versão | `2.0.2` é a versão estável mais recente; `core_version_requirement: ^10.3 \|\| ^11`, compatível com o Core 11.4 instalado |
 | Dependências PHP | `symfony/mailer ^6.0 \|\| ^7.0`, `html2text/html2text ^4.0.1`, `tijsverkoyen/css-to-inline-styles ^2.2` |
-| Módulos do pacote | `symfony_mailer` (Mailer Plus), `mailer_transport`, `mailer_policy`, `mailer_override` |
+| Módulos do pacote | `symfony_mailer` (camada de envio E-Mails ACULTA), `mailer_transport`, `mailer_policy`, `mailer_override` |
 | Transporte SMTP | `mailer_transport` → `SmtpTransportUI` com campos `user`, `pass`, `host`, `port` e `query` |
 | Transporte padrão | `mailer_transport.settings:default_transport` (install: `sendmail`) |
 | Override do Core | `mailer_override` substitui o gerenciador de e-mail do Core; `MailerConfigOverride` aplica `config_overrides` de plugins |
@@ -50,7 +81,7 @@ Fontes consultadas:
   MailerConfigOverride on Drupal 11.4 when class-based hooks pull logger.factory during construction" e
   "Sendmail still being used when SMTP is default" (`https://www.drupal.org/project/issues/symfony_mailer`).
 
-**Não confirmado:** a documentação oficial de Key com Mailer Plus. O código do transporte SMTP não tem
+**Não confirmado:** a documentação oficial de Key com camada de envio E-Mails ACULTA. O código do transporte SMTP não tem
 integração com `drupal/key`. Ver seção 4.
 
 ## 3. Inventário do legado (o que sai na M2)
@@ -59,13 +90,12 @@ integração com `drupal/key`. Ver seção 4.
 |---|---|---|
 | `drupal/smtp` ^1.4 | `composer.json` (linha 250) | Envio SMTP atual |
 | `smtp` (módulo) | `config/sync/core.extension.yml` (linha 97), `web/modules/contrib/smtp` | Módulo ativo |
-| `smtp.settings` | `config/sync/smtp.settings.yml`; `smtp_on: true`, host `mail.smtp2go.com`, porta 2525, `smtp_password` vazio no arquivo | Configuração do envio |
-| Override de senha | `config/sync/key.config_override.smtp_password.yml`, `key.config_override.smtp_username.yml` | Liga `smtp.settings` às Keys |
-| Keys | `config/sync/key.key.smtp2go_username.yml`, `key.key.smtp2go_password.yml` (provider `env`, `SMTP2GO_USERNAME`, `SMTP2GO_PASSWORD`) | Credenciais, fora do Git |
+| `smtp.settings` | `config/sync/smtp.settings.yml`; `smtp_on: true`, host `mail.smtp2go.com`, porta 465 (ver seção 0), `smtp_password` vazio no arquivo | Configuração do envio |
+| Credenciais | Arquivo de segredos do servidor (`SMTP2GO_USERNAME`, `SMTP2GO_PASSWORD`); sem Key | Credenciais, fora do Git |
 | `system.mail` | `config/sync/system.mail.yml` (`interface.default: php_mail`, `webform: webform_php_mail`) | Backend do Core e do Webform |
-| Secrets Contract | `config/secrets-contract.json` (linhas 31 e 44) | Declara as variáveis SMTP2GO |
+| Secrets Contract | `config/secrets-contract.json` | Declara as variáveis SMTP2GO do arquivo de segredos |
 | Deploy por ambiente | `aculta_deployer/config/deploy.json` (`environment_bound`, `smtp.settings`, `system.mail`, `system.site`, `webform.webform.aculta_contact`) | Remetente e backend por ambiente |
-| Gate de Portal | `PortalController::transactionalMailReady()` (checa `moduleExists('smtp')`, `SMTPMailSystem`, `smtp.settings`) | Libera troca de e-mail em "Segurança" |
+| Gate de Portal | `PortalController::transactionalMailReady()` (checa `mailer_override`, transporte padrão `smtp2go` e usuário e senha do transporte) | Libera troca de e-mail em "Segurança" |
 | Scripts e docs | `scripts/validate-*.php`, `docs/operations/*.md`, `docs/modules/*.md`, `docs/integrations/GOOGLE.md` | Referências a `smtp.settings` e a `SMTP2GO` |
 
 Fora do escopo desta migração: `key.key.*` e `SMTP2GO_*` (são reaproveitados); o provedor SMTP2GO; o
@@ -85,14 +115,10 @@ que já liga `smtp.settings` às Keys hoje. Não é preciso código próprio. Ve
 `config_prefix` + `config_name` + `config_item` (caminho com pontos, por exemplo `configuration.pass`) e
 `key_id`. Ele só altera a configuração carregada em memória; não grava nada.
 
-Configuração a exportar no Homelab (M1, depois da ativação):
+Superado em 2026-10-19: não há mais Keys nem overrides de SMTP2GO. Mantido como registro da M1:
 
-- `mailer_transport.mailer_transport.smtp2go`: plugin `smtp`, host `mail.smtp2go.com`, porta `2525`,
+- `mailer_transport.mailer_transport.smtp2go`: plugin `smtp`, host `mail.smtp2go.com`, porta `465` (ver seção 0),
   `user` e `pass` vazios;
-- `key.config_override.mailer_smtp2go_username`: `config_prefix: mailer_transport.mailer_transport`,
-  `config_name: smtp2go`, `config_item: configuration.user`, `key_id: smtp2go_username`;
-- `key.config_override.mailer_smtp2go_password`: o mesmo, com `configuration.pass` e
-  `key_id: smtp2go_password`;
 - `mailer_transport.settings:default_transport: smtp2go`.
 
 Essas configurações **não entram em `config/sync` nesta fase**. Dependem do módulo `mailer_transport`
@@ -104,13 +130,13 @@ runtime (ver passo 2 da seção 5).
 
 ### 4.2 Remetente
 
-O remetente não é mais `smtp.settings:smtp_from`. Deve ser confirmado no Homelab se o Mailer Plus usa
+O remetente não é mais `smtp.settings:smtp_from`. Deve ser confirmado no Homelab se a camada de envio E-Mails ACULTA usa
 `system.site:mail` ou a política `mailer_policy`. Até a confirmação, `deploy.json` continua apontando
 `system.site` como fonte do remetente por ambiente.
 
 ### 4.3 Webform
 
-O Webform só funciona em modo de compatibilidade no Mailer Plus. DT-P09 **só é fechada** após teste
+O Webform só funciona em modo de compatibilidade na camada de envio E-Mails ACULTA. DT-P09 **só é fechada** após teste
 real de envio de formulário com o modelo HTML no Homelab.
 
 ### 4.4 Override de Core e sessão
@@ -192,7 +218,7 @@ Configuração local: durante o teste, `settings.local.php` (fora do Git) aponto
 ### 9.2 Reenvio após correção de `system.mail`
 
 - O teste de confirmação não chegou ao destino. Na análise, `system.mail:interface.default` estava como `SMTPMailSystem` (módulo `drupal/smtp`, legado). O envio passou pelo `mailer_override`, mas a configuração inconsistente precisava ser corrigida.
-- Runtime: `system.mail:interface.default` alterado para `symfony_mailer` (plugin do Mailer Plus, disponível na lista de plugins de e-mail).
+- Runtime: `system.mail:interface.default` alterado para `symfony_mailer` (plugin da camada de envio E-Mails ACULTA, disponível na lista de plugins de e-mail).
 - Reenvio do teste de confirmação para o responsável: aceito pelo `mailer_override` (`result=TRUE`, transporte `smtp2go`).
 - Alteração apenas no runtime. `config/sync/system.mail.yml` ainda declara `php_mail` e `deploy.json` ainda trata o backend por ambiente. Ajustar a configuração exportada faz parte da M2.
 - Webform: `system.mail:interface.webform` continua `webform_php_mail`. O teste com HTML (DT-P09) segue pendente, e esse valor é o que a DT-P09 precisa considerar.
@@ -207,7 +233,7 @@ Configuração local: durante o teste, `settings.local.php` (fora do Git) aponto
 
 - Montagem da mensagem do handler `institutional_notification` com HTML ligado, em memória, pelo `mailer_override` com `send = FALSE`: sem transmissão.
 - O corpo gerado é HTML (`<b>`, `<br>`, `<a>`), com o modelo `webform-email-message-html` do Webform aplicado.
-- **Não verificado:** o envoltório visual que o Mailer Plus aplica no modo de compatibilidade (`mailer_policy` com `email_theme`). Isso só aparece no e-mail recebido.
+- **Não verificado:** o envoltório visual que a camada de envio E-Mails ACULTA aplica no modo de compatibilidade (`mailer_policy` com `email_theme`). Isso só aparece no e-mail recebido.
 - O envio real do teste foi bloqueado pelo classificador de ações. Permanece pendente.
 - DT-P09 **não fechada**.
 
@@ -215,7 +241,7 @@ Configuração local: durante o teste, `settings.local.php` (fora do Git) aponto
 
 - Script `m1-webform-send.php` executado no terminal do responsável: `sendMessage=true`, com a notificação do formulário `aculta_contact` registrada ("Notificação institucional email").
 - Destino: `advfjpm@gmail.com`, com HTML ligado (só em memória; o formulário não foi alterado).
-- **Pendente:** confirmação visual do layout no e-mail recebido (envoltório do Mailer Plus). Enquanto não for confirmada, DT-P09 permanece aberta e a M2 bloqueada.
+- **Pendente:** confirmação visual do layout no e-mail recebido (envoltório da camada de envio E-Mails ACULTA). Enquanto não for confirmada, DT-P09 permanece aberta e a M2 bloqueada.
 
 ### 9.6 Fechamento da M1
 
@@ -254,15 +280,15 @@ Executada no mesmo PR da M1, a pedido do responsável (o `AGENTS.md` pede um PR 
 
 ### Caminho efetivo
 
-No Core 11.4.10 e Mailer Plus 2.0.2 instalados, `mailer_override` substitui o serviço `plugin.manager.mail` por
+No Core 11.4.10 e camada de envio E-Mails ACULTA 2.0.2 instalados, `mailer_override` substitui o serviço `plugin.manager.mail` por
 `MailManagerReplacement`. O mapa de overrides pode estar vazio: nesse caso, o módulo usa `LegacyMailer` como adaptador
-dos `hook_mail()` antigos, e esse adaptador ainda envia pela API de componentes do Mailer Plus. O transporte efetivo
+dos `hook_mail()` antigos, e esse adaptador ainda envia pela API de componentes da camada de envio E-Mails ACULTA. O transporte efetivo
 é `mailer_transport.settings:default_transport`, configurado como `smtp2go`. A configuração sincronizada mantém os
 transportes sendmail disponíveis, mas eles não são o padrão nem entram como retry/failover; o `MultiTransport` seleciona
 somente o ID solicitado e lança `MissingTransportException` quando ele não existe.
 
 O campo `system.mail:mailer_dsn` pertence ao backend Symfony Mailer experimental do Core. Ele não escolhe o transporte
-Mailer Plus enquanto `mailer_override` estiver ativo. Antes, seu valor `sendmail` era um caminho concorrente: se o
+camada de envio E-Mails ACULTA enquanto `mailer_override` estiver ativo. Antes, seu valor `sendmail` era um caminho concorrente: se o
 serviço de override deixasse de atuar, o Core poderia enviar pelo MTA local sem SMTP2GO. Agora usa o esquema reservado
 `aculta-disabled`, que o factory do Core não reconhece. Assim, o uso acidental desse backend falha no envio e não troca
 silenciosamente de provedor.
@@ -300,12 +326,11 @@ O destinatário exportado é o endereço institucional publicado na página de c
 usado no teste histórico.
 
 O teste registrado na seção 9.5 ligou HTML temporariamente em memória e foi recebido; ele confirma que o caminho
-Mailer Plus/Webform consegue enviar HTML. Não prova que o handler atual esteja em HTML. Mantemos texto simples porque
+camada de envio E-Mails ACULTA/Webform consegue enviar HTML. Não prova que o handler atual esteja em HTML. Mantemos texto simples porque
 `filter.format.email_html` não declara filtros e o corpo contém campos fornecidos por visitantes. Habilitar HTML exige
 um template que escape esses campos e validação específica do conteúdo final.
 
-O formulário `aculta_participation` não declara handlers de e-mail. Não foi escolhido destinatário para notificações
-de participação, então R4 não cria envios para esse formulário. O template de verificação administrativa do Mailer
+O formulário de participação `aculta_participation` foi removido; por isso R4 não tem mais envios para ele. O template de verificação administrativa do Mailer
 Plus foi localizado em português; a política está disponível apenas para a verificação iniciada por administrador.
 
 **Runtime status: DEFERRED.** R4 não importou configuração no Runtime: a linha de base tem divergências conhecidas,

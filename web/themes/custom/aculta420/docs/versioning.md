@@ -1,5 +1,16 @@
 # Versionamento
 
+## Ciclo de entrega (vigente em 2026-10-20)
+
+Toda alteração de fase no ciclo Dev → RC → deploy/validação Alpha → produção
+deve ser refletida neste versionamento, no roadmap do tema e nas instruções de
+IA (`AGENTS.md`). RC só é declarado quando código, gates/testes, revisão de
+código e validação visual pré-deploy aplicável estiverem concluídos. Alpha é a
+implantação/validação no servidor de desenvolvimento; depois de Alpha aprovado,
+o mesmo candidato segue para preparação de produção e validação pós-deploy.
+Registros anteriores permanecem históricos. Mudança apenas documental segue a
+regra específica abaixo e não avança marcador de versão do código.
+
 O versionamento do ACULTA420 controla as mudanças e os avanços **no código**. A versão é
 assinalada dentro do repositório. Tags no GitHub não são criadas por padrão.
 
@@ -113,12 +124,19 @@ Quando a fase fecha:
   arquivar o que for único fora do repositório antes de excluir a branch.
 - PR que muda a versão marcada precisa manter `info.yml`, `CHANGELOG.md`, roadmap e gate coerentes.
 
+## Preparação visual pré-S-R4
+
+Quatro SDCs novos, todos experimentais, foram classificados como
+MINOR pré-1.0: `0.7.0-dev.1`. Versão de código, sem alegar validação
+ou promoção `stable`. O consumo e o aceite serão feitos na S-R4.
+
 ## Histórico de marcações
 
 Marcações já feitas, por linha:
 
 | Versão | Marcação no código | Observação |
 | --- | --- | --- |
+| 0.6.1-dev.7 | Schema das configurações do tema e render da home Wiki em Kernel | marcada no código; HTTP/Runtime pendente |
 | 0.1.0 | Foundation | concluída |
 | 0.2.0 | fechamento da linha 0.2 | concluída |
 | 0.3.0 | fechamento da linha 0.3 | concluída |

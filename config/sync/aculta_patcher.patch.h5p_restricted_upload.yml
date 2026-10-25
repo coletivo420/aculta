@@ -1,14 +1,14 @@
 uuid: 28604f7a-45c9-4fb5-8d97-b80586bca516
 langcode: pt-br
-id: h5p_restricted_upload
-label: "H5P: bloquear tipos de conteúdo restritos no upload"
 status: true
-dependencies: []
+dependencies: {  }
 _core:
   default_config_hash: doQgu6rtI36y45YQEXbTPkvL1bt4jZWk26lhZfHCyBw
+id: h5p_restricted_upload
+label: 'H5P: bloquear tipos de conteúdo restritos no upload'
 package: h5p/h5p-editor
-version: "1.25"
-issue_url: "https://www.drupal.org/project/h5p/issues/3548290"
+version: '1.25'
+issue_url: 'https://www.drupal.org/project/h5p/issues/3548290'
 patch: |
   diff --git a/h5peditor-ajax.class.php b/h5peditor-ajax.class.php
   index 812bab3807127552bf053ce6e89ea10a8a4c8931..04610e444f14bd9aa4516afd93a7216af1fa891f 100644

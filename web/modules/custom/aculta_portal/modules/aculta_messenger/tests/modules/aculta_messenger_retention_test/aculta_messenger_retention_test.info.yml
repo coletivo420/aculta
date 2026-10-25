@@ -1,0 +1,5 @@
+name: 'ACULTA Messenger retention test fixture'
+type: module
+description: 'Injects deterministic failures into isolated retention Kernel tests.'
+package: Testing
+core_version_requirement: ^11.3

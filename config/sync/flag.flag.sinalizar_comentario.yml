@@ -7,7 +7,7 @@ dependencies:
 id: sinalizar_comentario
 label: 'Sinalizar comentário'
 bundles:
-  - comment_forum
+  - aculta_discussion_post
 entity_type: comment
 global: false
 flag_short: 'Denunciar comentário'

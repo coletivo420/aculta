@@ -20,7 +20,9 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Keeps the native Private Message reply form available in thread views. */
+/**
+ * Keeps the native Private Message reply form available in thread views.
+ */
 final class PrivateMessageReplyHooks {
 
   public function __construct(
@@ -36,7 +38,9 @@ final class PrivateMessageReplyHooks {
     private readonly ConversationMessagingState $messagingState,
   ) {}
 
-  /** Adds the native composer when a site's thread display omitted its field. */
+  /**
+   * Adds the native composer when a site's thread display omitted its field.
+   */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
     if (!$entity instanceof PrivateMessageThreadInterface
@@ -53,18 +57,24 @@ final class PrivateMessageReplyHooks {
       return;
     }
 
-    // The "← Todas as conversas" link is placed by MessagesController::drawerConversation, above the thread.
+    // The back link is placed by MessagesController::drawerConversation.
     $build['#cache']['contexts'][] = 'user';
     $build['#cache']['max-age'] = 0;
+    // The contrib thread preprocess renders this element directly even when
+    // the active display does not include the optional updated field.
+    $build['updated'] ??= ['#markup' => ''];
 
-    // A blocked or friends-only conversation keeps its history and shows a notice in place of the reply box.
+    // Keep history and replace the reply box with a notice when blocked.
     $messagingState = $this->messagingState->stateFor($entity);
     if ($messagingState !== ConversationMessagingState::OPEN) {
       $build['aculta_messenger_notice'] = $this->notice($entity, $messagingState);
       return;
     }
 
-    if (isset($build['private_message_form'])) {
+    if (isset($build['private_message_form']) && is_array($build['private_message_form'])) {
+      // The contrib default display may already include its native form. Keep
+      // that form, but route it through the protected drawer endpoint.
+      $this->configureReplyForm($build['private_message_form'], $entity);
       return;
     }
 
@@ -73,34 +83,44 @@ final class PrivateMessageReplyHooks {
       ->getFormObject('private_message', 'add')
       ->setEntity($message);
     $replyForm = $this->formBuilder->getForm($formObject, $entity);
+    $this->configureReplyForm($replyForm, $entity);
+    $build['aculta_messenger_reply_form'] = $replyForm;
+  }
+
+  /**
+   * Configures either native or fallback form for the shared drawer endpoint.
+   */
+  private function configureReplyForm(array &$replyForm, PrivateMessageThreadInterface $thread): void {
     $replyForm['#attributes']['id'] = 'aculta-messenger-reply-form';
     $replyForm['#attributes']['data-aculta-reply-form'] = '';
-    // The drawer posts the reply to its own route, so the conversation comes back in the drawer.
-    $replyForm['#action'] = Url::fromRoute('aculta_messenger.drawer_reply', ['private_message_thread' => $entity->id()])->toString();
+    // Keep the response in the drawer after posting the reply.
+    $replyForm['#action'] = Url::fromRoute(
+      'aculta_messenger.drawer_reply',
+      ['private_message_thread' => $thread->id()],
+    )->toString();
 
     // The native conversation history is rendered after the entity fields.
     // Keep the composer after that history in the account page and drawer.
     $replyForm['#weight'] = 10000;
-    $build['aculta_messenger_reply_form'] = $replyForm;
   }
 
   /**
    * Adjusts the thread view that Private Message renders in the drawer.
    *
-   * Alter, not view: the module adds its link in hook_entity_view(), and the order between modules is not ours.
+   * Alter, not view: the module adds a link in hook_entity_view().
+   * The order between modules is not ours.
    */
   #[Hook('entity_view_alter')]
   public function entityViewAlter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
     if (!$entity instanceof PrivateMessageThreadInterface || $display->getMode() !== 'full') {
       return;
     }
-    // "Limpar histórico" moved into the conversation's "Opções" (MessagesController::optionsDisclosure).
+    // "Limpar histórico" moved into the conversation's "Opções" menu.
     unset($build['clear_history_link']);
   }
 
   /**
-   * The members field label ("Member(s)") is a base field label: it is set on the field definition, so the
-   * thread view and its forms show the same Portuguese name.
+   * The members base field and its forms share the Portuguese label.
    */
   #[Hook('entity_base_field_info_alter')]
   public function entityBaseFieldInfoAlter(array &$fields, EntityTypeInterface $entity_type): void {
@@ -110,22 +130,22 @@ final class PrivateMessageReplyHooks {
   }
 
   /**
-   * The notice that replaces the reply box: the state's sentence, and the one action it allows (if any).
+   * Builds the notice that replaces the reply box.
+   *
+   * The notice includes the state sentence and its allowed action, if any.
    */
   private function notice(PrivateMessageThreadInterface $thread, string $state): array {
     $other = $this->messagingState->otherMember($thread);
-    $pending = $other !== NULL && $state === ConversationMessagingState::FRIENDS_ONLY ? $this->messagingState->pendingRequest($other) : NULL;
     $notice = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'messenger-notice', 'role' => 'status']];
     $text = match (TRUE) {
-      $state === ConversationMessagingState::BLOCKED_BY_ME => 'Você bloqueou essa pessoa, ',
-      $state === ConversationMessagingState::BLOCKED_BY_THEM => 'Essa pessoa bloqueou você, por isso não pode enviar ou receber mensagens.',
-      $pending === 'outgoing' => 'Essa pessoa só recebe mensagens de Amigos, você já enviou pedido de amizade, aguarde.',
-      $pending === 'incoming' => 'Essa pessoa só recebe mensagens de Amigos. Aceite o pedido de amizade nas Opções para conversar.',
-      default => 'Essa pessoa só recebe mensagens de Amigos, ',
+      $state === ConversationMessagingState::BLOCKED_BY_ME && $other !== NULL => 'Você bloqueou essa pessoa, ',
+      $state === ConversationMessagingState::BLOCKED_BY_ME => 'Você bloqueou um participante desta conversa. Remova o bloqueio nas opções dessa pessoa para enviar mensagens novamente.',
+      $state === ConversationMessagingState::BLOCKED_BY_THEM && $other !== NULL => 'Essa pessoa bloqueou você, por isso não pode enviar ou receber mensagens.',
+      $state === ConversationMessagingState::BLOCKED_BY_THEM => 'Um participante bloqueou você, por isso não pode enviar ou receber mensagens nesta conversa.',
+      default => 'Não é possível enviar mensagens nesta conversa.',
     };
     $notice['text'] = ['#plain_text' => $text];
-    $needsAction = $other !== NULL && ($state === ConversationMessagingState::BLOCKED_BY_ME
-      || ($state === ConversationMessagingState::FRIENDS_ONLY && $pending === NULL));
+    $needsAction = $other !== NULL && $state === ConversationMessagingState::BLOCKED_BY_ME;
     if ($needsAction) {
       $formState = new FormState();
       $formState->set('target', $other);

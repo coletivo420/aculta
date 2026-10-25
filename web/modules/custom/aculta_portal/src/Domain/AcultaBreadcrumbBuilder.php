@@ -89,12 +89,6 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
         $breadcrumb->addLink(Link::fromTextAndUrl($this->t('Segurança'), $parent_url));
       }
     }
-    elseif ($purpose === 'account' && $route_match->getRouteName() === 'change_mail_page.change_mail') {
-      $parent_url = $this->domainPurpose->routeUrl('account', 'aculta_portal.security');
-      if ($parent_url) {
-        $breadcrumb->addLink(Link::fromTextAndUrl($this->t('Segurança'), $parent_url));
-      }
-    }
     elseif ($purpose === 'magazine') {
       $term = $route_match->getParameter('taxonomy_term');
       if ($term instanceof TermInterface && in_array($term->bundle(), ['editorial_author', 'editorial_category'], TRUE)) {

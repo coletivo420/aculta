@@ -1,0 +1,24 @@
+discussion-progress:
+  js:
+    js/discussion-progress.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+forum-post-history:
+  js:
+    js/forum-post-history.js: {}
+  dependencies:
+    - core/jquery
+    - core/once
+    - core/drupal
+    - history/api
+
+ckeditor5.attachment:
+  js:
+    js/ckeditor5/acultaforum-attachment.js: {}
+  dependencies:
+    - core/ckeditor5
+    - core/drupal.ajax
+    - core/drupal.dialog.ajax
+    - entity_embed/entity_embed

@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Empty state
+status: experimental
+group: Feedback
+description: 'Neutral empty-result presentation using text from Drupal providers; never decides access or query results.'
+props:
+  type: object
+  properties:
+    compact:
+      type: boolean
+      default: false
+slots:
+  message:
+    title: Empty-state message
+    description: 'Localized and escaped Drupal render array supplied by the consumer.'
+  actions:
+    title: Actions
+    description: 'Optional permitted links provided by the consumer.'
+assets:
+  css:
+    component:
+      empty-state.css: {}

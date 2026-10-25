@@ -1,0 +1,23 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Biografia do meu perfil
+status: experimental
+group: Identity
+description: 'Painel somente visual para a bio privada em Meu Perfil. ACULTA User fornece texto/estado e rotas de edição; o SDC não cria textarea nem altera o conteúdo.'
+props:
+  type: object
+  required: [title]
+  properties:
+    title:
+      type: string
+      description: 'Título de seção, traduzido pelo owner.'
+slots:
+  body:
+    title: Conteúdo da biografia
+    description: 'Render array proprietário, inclusive o campo read-only ou mensagem quando vazia.'
+  actions:
+    title: Ações de biografia
+    description: 'Ações de edição com Form API/Modal autorizados pelo ACULTA User.'
+assets:
+  css:
+    component:
+      profile-bio.css: {}

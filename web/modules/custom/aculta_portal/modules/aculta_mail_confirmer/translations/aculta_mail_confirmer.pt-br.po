@@ -1,0 +1,61 @@
+# Textos do confirmador de e-mail que apareciam em inglês. Importar com:
+# drush locale:import --type=customized --override=none pt-br <este arquivo>
+msgid ""
+msgstr ""
+"Project-Id-Version: ACULTA Mail Confirmer\n"
+"Language: pt-br\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Email confirmation"
+msgstr "Confirmação de e-mail"
+
+msgid "Email confirmations"
+msgstr "Confirmações de e-mail"
+
+msgid "Confirm %email"
+msgstr "Confirmar %email"
+
+msgid "Confirmation done"
+msgstr "Confirmação concluída"
+
+msgid "Confirmation expired"
+msgstr "Confirmação expirada"
+
+msgid "Confirmation cancelled"
+msgstr "Confirmação cancelada"
+
+msgid "Already processed"
+msgstr "Já processada"
+
+msgid "Email confirmation cancelled."
+msgstr "Confirmação de e-mail cancelada."
+
+msgid "Email confirmation confirmed."
+msgstr "Confirmação de e-mail confirmada."
+
+msgid "There was an error processing your email confirmation."
+msgstr "Houve um erro ao processar a confirmação de e-mail."
+
+msgid "This email confirmation is no longer valid."
+msgstr "Esta confirmação de e-mail não é mais válida."
+
+msgid "A new confirmation message has been sent to %mail"
+msgstr "Uma nova mensagem de confirmação foi enviada para %mail"
+
+msgid "Unable to send email. Contact the site administrator if the problem persists."
+msgstr "Não foi possível enviar o e-mail. Entre em contato com a administração do site se o problema continuar."
+
+msgid "A message has been sent to the new email address %email to confirm the change. Until confirmed, your current address will be used."
+msgstr "Enviamos uma mensagem ao novo endereço %email para confirmar a troca. Até a confirmação, o endereço atual continua em uso."
+
+msgid "Your email address has been updated to %mail"
+msgstr "Seu endereço de e-mail foi atualizado para %mail"
+
+msgid "%user's email address has been updated to %mail"
+msgstr "O endereço de e-mail de %user foi atualizado para %mail"
+
+msgid "The email address %value is already taken."
+msgstr "O endereço de e-mail %value já está em uso."

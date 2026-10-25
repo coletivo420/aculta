@@ -1,0 +1,106 @@
+aculta_portal.wiki_home:
+  path: /wiki
+  defaults:
+    _controller: \Drupal\aculta_wiki\Controller\WikiController::home
+    _title: Wiki420
+  requirements:
+    _permission: access content
+  options:
+    _aculta_domain_purpose: wiki
+
+aculta_portal.wiki_search:
+  path: /wiki/busca
+  defaults:
+    _controller: \Drupal\aculta_wiki\Controller\WikiController::search
+    _title: Buscar na Wiki420
+  requirements:
+    _permission: access content
+  options:
+    _aculta_domain_purpose: wiki
+
+aculta_portal.wiki_search_preview:
+  path: /wiki/busca/previa
+  defaults:
+    _controller: '\Drupal\aculta_wiki\Controller\WikiController::preview'
+  requirements:
+    _permission: access content
+  options:
+    _aculta_domain_purpose: wiki
+
+aculta_wiki.contribution_intent:
+  path: '/wiki/verbetes/{node}/contribuir/como'
+  defaults:
+    _controller: '\Drupal\aculta_wiki\Controller\WikiContributionIntentController::page'
+    _title: 'Como você quer contribuir?'
+  requirements:
+    _permission: access content
+    _entity_access: 'node.view'
+  options:
+    _aculta_domain_purpose: wiki
+    parameters:
+      node:
+        type: entity:node
+
+aculta_wiki.proposal_submit:
+  path: '/wiki/verbetes/{node}/contribuir'
+  defaults:
+    _form: '\Drupal\aculta_wiki\Form\WikiProposalSubmissionForm'
+    _title: 'Contribuir com este verbete'
+  requirements:
+    _permission: 'submit wiki proposals'
+    _entity_access: 'node.view'
+  options:
+    _aculta_domain_purpose: wiki
+    parameters:
+      node:
+        type: entity:node
+
+aculta_wiki.proposal_status:
+  path: '/wiki/propostas/{proposal}'
+  defaults:
+    _controller: '\Drupal\aculta_wiki\Controller\WikiProposalStatusController::view'
+    _title: 'Minha proposta para a Wiki420'
+  requirements:
+    _entity_access: 'proposal.view'
+  options:
+    _aculta_domain_purpose: wiki
+    parameters:
+      proposal:
+        type: entity:aculta_wiki_proposal
+
+aculta_wiki.proposal_withdraw:
+  path: '/wiki/propostas/{proposal}/retirar'
+  defaults:
+    _form: '\Drupal\aculta_wiki\Form\WikiProposalWithdrawalForm'
+    _title: 'Retirar proposta da Wiki420'
+  requirements:
+    _entity_access: 'proposal.view'
+  options:
+    _aculta_domain_purpose: wiki
+    parameters:
+      proposal:
+        type: entity:aculta_wiki_proposal
+
+aculta_wiki.proposal_decide:
+  path: '/studio/marley/wiki/propostas/{proposal}/decidir'
+  defaults:
+    _form: '\Drupal\aculta_wiki\Form\WikiProposalDecisionForm'
+    _title: 'Avaliar proposta da Wiki'
+  requirements:
+    _permission: 'moderate wiki proposals'
+    _entity_access: 'proposal.update'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      proposal:
+        type: entity:aculta_wiki_proposal
+
+aculta_wiki.settings:
+  path: '/painel-administrativo/aculta/wiki'
+  defaults:
+    _form: '\Drupal\aculta_wiki\Form\WikiSettingsForm'
+    _title: 'Wiki420'
+  requirements:
+    _permission: 'administer aculta_wiki'
+  options:
+    _admin_route: TRUE

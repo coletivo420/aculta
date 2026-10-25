@@ -6,6 +6,7 @@ namespace Drupal\aculta_lms;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -13,13 +14,15 @@ use Drupal\Core\Url;
 use Drupal\aculta_lms\Form\CourseEnrollmentPurchaseForm;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 
-/** Builds the learner facing overview on the native course page. */
+/**
+ * Builds the learner facing overview on the native course page. */
 final class CourseRoomBuilder {
 
   public function __construct(
     private readonly AccountProxyInterface $currentUser,
     private readonly TranslationInterface $translation,
     private readonly FormBuilderInterface $formBuilder,
+    private readonly ClassRosterManager $classRosters,
   ) {}
 
   /**
@@ -54,9 +57,10 @@ final class CourseRoomBuilder {
       if ($lesson === NULL) {
         continue;
       }
-      $lessonAccess = $lesson->access('view', $this->currentUser, TRUE);
-      $cacheability->addCacheableDependency($lesson)->addCacheableDependency($lessonAccess);
-      if (!$lessonAccess->isAllowed()) {
+      $cacheability->addCacheableDependency($lesson);
+      // The LMS answer route checks takeAccess() on this parent course. Generic
+      // lesson view access is not the learner's contextual curriculum access.
+      if (!$lesson instanceof EntityPublishedInterface || !$lesson->isPublished()) {
         continue;
       }
       $activity = $lesson->get('activities')->first();
@@ -81,8 +85,13 @@ final class CourseRoomBuilder {
       '#value' => $this->translation->translate('Conteúdo do curso'),
     ];
     $build['lessons'] = $items === []
-      ? ['#plain_text' => $this->translation->translate('Este curso ainda não tem lições.')]
+      ? ['#plain_text' => $this->translation->translate('Este curso ainda não tem aulas.')]
       : ['#theme' => 'item_list', '#items' => $items];
+    $rosters = $this->classRosters->build($course, $this->currentUser);
+    if (isset($rosters['classes'])) {
+      $build['participant_rosters'] = $rosters;
+    }
+    $cacheability->addCacheableDependency(CacheableMetadata::createFromRenderArray($rosters));
     $cacheability->applyTo($build);
     return $build;
   }

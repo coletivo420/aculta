@@ -1,0 +1,13 @@
+uuid: 80fa1e81-5d4f-40c4-9621-882e83b178d4
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: u8D_vJbTMDc95ROh7UHCbxjrcm_1FEDzpqJbtSUkqFY
+name: 'Aviso institucional'
+type: aculta_notice
+description: 'Comunicado persistente da ACULTA, segmentado por papéis da conta e com validade opcional.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

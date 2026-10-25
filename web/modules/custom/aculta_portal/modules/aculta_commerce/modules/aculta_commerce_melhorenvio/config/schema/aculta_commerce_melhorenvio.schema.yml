@@ -1,0 +1,29 @@
+aculta_commerce_melhorenvio.settings:
+  type: config_object
+  label: 'ACULTA Commerce Melhor Envio'
+  mapping:
+    origin:
+      type: mapping
+      label: 'Endereço de origem (expedição)'
+      mapping:
+        country_code:
+          type: string
+          label: 'País'
+        postal_code:
+          type: string
+          label: 'CEP'
+        address_line1:
+          type: string
+          label: 'Logradouro, número ou S/N'
+        address_line2:
+          type: string
+          label: 'Complemento'
+        dependent_locality:
+          type: string
+          label: 'Bairro'
+        locality:
+          type: string
+          label: 'Cidade'
+        administrative_area:
+          type: string
+          label: 'UF'

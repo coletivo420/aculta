@@ -1,0 +1,8 @@
+name: 'ACULTA Index course document access test'
+type: module
+description: 'Provides a focused Group relation fixture for course-document Index access.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:media
+  - group:group

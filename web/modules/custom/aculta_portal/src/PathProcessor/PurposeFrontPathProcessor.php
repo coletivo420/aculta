@@ -29,7 +29,9 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
    * - support: a raiz serve o formulário de apoio (rota `aculta_portal.support_form`, `/apoio`).
    * - wiki e courses: a raiz serve a página inicial da wiki (`/wiki`) e dos cursos (`/cursos`). Verificado: texto igual.
    * - shop: a raiz serve a página inicial da loja (rota `aculta_portal.shop_home`, `/loja`, que mostra o nó 372).
-   * - forum: a raiz serve o índice do fórum (rota `forum.index`, `/forum`).
+   * - forum: a raiz serve a View nova de tópicos em `/discussoes`.
+   * - account: a raiz serve o hub do ACULTA Studio (rota `aculta_studio.hub`, `/studio`). A Minha Conta original
+   *   fica em `/conta-legada`, sem ser a raiz.
    * - magazine e main: sem reescrita. A raiz é o `<front>` (página inicial do site, com a marca do host).
    */
   public const FRONT_PATHS = [
@@ -37,8 +39,9 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
     'wiki' => '/wiki',
     'courses' => '/cursos',
     'shop' => '/loja',
-    'forum' => '/forum',
+    'forum' => '/discussoes',
     'links' => '/redes-sociais',
+    'account' => '/studio',
   ];
 
   public function __construct(
@@ -50,14 +53,29 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
       return $path;
     }
     $purpose = $this->domainPurposeManager->getCurrentPurpose();
-    if (!isset(self::FRONT_PATHS[$purpose])) {
+    if (!is_string($purpose) || !isset(self::FRONT_PATHS[$purpose])) {
       return $path;
+    }
+    self::markRootRequest($request, $purpose);
+    return self::FRONT_PATHS[$purpose];
+  }
+
+  /**
+   * Marks a purpose root before Redirect route normalization.
+   *
+   * Inbound path processor results are cached as path/query data; request
+   * attributes set here are not preserved when that cache is reused. The
+   * request subscriber calls this method before Redirect's normalizer too.
+   */
+  public static function markRootRequest(Request $request, ?string $purpose): void {
+    if ($request->getPathInfo() !== '/' || !is_string($purpose)
+      || !isset(self::FRONT_PATHS[$purpose])) {
+      return;
     }
     // A raiz é a URL pública: o normalizador do módulo redirect (prioridade 30) não deve redirecionar o alias
     // interno para a URL canônica. Documentado pelo módulo redirect como _disable_route_normalizer.
     $request->attributes->set('_disable_route_normalizer', TRUE);
     $request->attributes->set(self::FRONT_ATTRIBUTE, TRUE);
-    return self::FRONT_PATHS[$purpose];
   }
 
 }

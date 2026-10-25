@@ -1,0 +1,23 @@
+uuid: 360d44d2-ea23-4b63-a875-7cf01aa12359
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - comment
+    - node
+  enforced:
+    module:
+      - aculta_forum
+id: node.field_aculta_discussion
+field_name: field_aculta_discussion
+entity_type: node
+type: comment
+settings:
+  comment_type: aculta_discussion_post
+module: comment
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

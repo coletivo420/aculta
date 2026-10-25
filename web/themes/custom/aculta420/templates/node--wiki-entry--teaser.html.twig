@@ -7,8 +7,10 @@
     variant: 'teaser',
     url: url,
     title: title_link,
+    has_image: not node.field_wiki_image.isEmpty and content.field_wiki_image['#access']|default(true),
     has_summary: not node.field_wiki_summary.isEmpty and content.field_wiki_summary['#access']|default(true),
     has_categories: not node.field_wiki_categories.isEmpty and content.field_wiki_categories['#access']|default(true),
+    image: content.field_wiki_image,
     summary: content.field_wiki_summary,
     categories: content.field_wiki_categories
   }, with_context = false) }}

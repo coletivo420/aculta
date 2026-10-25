@@ -1,0 +1,2166 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_messenger\Kernel;
+
+use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Event\ForumCommentSubtreeMovedEvent;
+use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisosResumo;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
+use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducer;
+use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutbox;
+use Drupal\aculta_messenger\Aviso\AvisoRetencao;
+use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
+use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
+use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
+use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\aculta_messenger\EventSubscriber\ForumNoticeEventSubscriber;
+use Drupal\aculta_messenger\EventSubscriber\ForumCommentMoveSubscriber;
+use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
+use Drupal\aculta_messenger\Hook\AvisoRetencaoHooks;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
+use Drupal\aculta_mailer\Delivery\SendResult;
+use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Component\Uuid\UuidInterface;
+use Drupal\comment\CommentInterface;
+use Drupal\comment\Entity\Comment;
+use Drupal\comment\Entity\CommentType;
+use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Lock\PersistentDatabaseLockBackend;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Queue\QueueInterface;
+use Drupal\Core\Language\Language;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\flag\FlagInterface;
+use Drupal\flag\FlagServiceInterface;
+use Drupal\flag\FlaggingInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\KernelTests\KernelTestBase;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
+use Drupal\node\NodeInterface;
+use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Psr\Log\LoggerInterface;
+
+/**
+ * Fixes the no-duplicate notice behavior of the existing Forum events.
+ *
+ * Every scenario drives the production service through the same hooks that
+ * receive the Forum events. The only mocked collaborators are the ones that
+ * would otherwise require the full Messenger module: the flag service and the
+ * notice access policy. Entities, revision markers and counters are real.
+ */
+#[Group('aculta_messenger')]
+#[RunTestsInSeparateProcesses]
+final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = [
+    'system',
+    'user',
+    'field',
+    'filter',
+    'text',
+    'node',
+    'comment',
+    'aculta_forum_post_test',
+    'aculta_messenger_aviso_test',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->container->get('language.default')->set(new Language([
+      'id' => 'pt-br',
+      'name' => 'Português (Brasil)',
+      'direction' => LanguageInterface::DIRECTION_LTR,
+      'weight' => 0,
+    ]));
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('node');
+    $this->installEntitySchema('comment');
+    $this->installEntitySchema('aculta_forum_post');
+    $this->installEntitySchema('aculta_aviso');
+    $this->installSchema('aculta_messenger_aviso_test', [
+      ForumCommentNoticeSchema::TABLE,
+      ForumNoticeEventSchema::TABLE,
+    ]);
+    $this->installSchema('user', ['users_data']);
+    $this->installSchema('node', ['node_access']);
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node', 'comment']);
+    $this->container->get('state')->set('comment.maintain_entity_statistics', TRUE);
+    NodeType::create([
+      'type' => 'aculta_forum_topic',
+      'name' => 'ACULTA Forum topic',
+      'new_revision' => TRUE,
+    ])->save();
+    CommentType::create([
+      'id' => 'aculta_discussion_post',
+      'label' => 'ACULTA discussion post',
+      'target_entity_type_id' => 'node',
+    ])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_aculta_discussion',
+      'type' => 'comment',
+      'settings' => ['comment_type' => 'aculta_discussion_post'],
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_aculta_discussion',
+      'entity_type' => 'node',
+      'bundle' => 'aculta_forum_topic',
+      'label' => 'Comments',
+      'required' => TRUE,
+    ])->save();
+  }
+
+  /**
+   * Counts one notice per follower and never for the author or uid 0.
+   */
+  public function testFirstPublicationRegistersOneNoticePerFollower(): void {
+    $author = $this->createUser('autor');
+    $first = $this->createUser('seguidora_um');
+    $second = $this->createUser('seguidor_dois');
+    $topic = $this->createTopic('Tópico com seguidores');
+    $avisos = $this->createAvisoService([
+      (int) $author->id(),
+      0,
+      (int) $first->id(),
+      (int) $second->id(),
+    ]);
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+
+    $avisos->registrarPost($post);
+
+    foreach ([$first, $second] as $follower) {
+      $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+      self::assertCount(1, $notices);
+      $aviso = $notices[0];
+      self::assertSame(1, (int) $aviso->get('contador_site')->value);
+      self::assertSame(1, (int) $aviso->get('contador_email')->value);
+      self::assertSame(
+        (int) $post->getRevisionId(),
+        (int) $aviso->get('ultimo_post')->value,
+      );
+      self::assertSame('Tópico com seguidores', $aviso->get('titulo')->value);
+    }
+
+    self::assertCount(
+      0,
+      $this->loadNotices((int) $author->id(), (int) $topic->id()),
+    );
+  }
+
+  /**
+   * Forum read-state filters run before the per-account result limit.
+   */
+  public function testForumReadFilterSelectsMatchingAggregates(): void {
+    $author = $this->createUser('autor_filtro_leitura');
+    $follower = $this->createUser('seguidor_filtro_leitura');
+    $uid = (int) $follower->id();
+    $readTopic = $this->createTopic('Tópico lido');
+    $unreadTopic = $this->createTopic('Tópico não lido');
+    $service = $this->createAvisoService([$uid], $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE));
+    self::assertSame(1, $service->registrarResposta($this->createPersistedComment($readTopic, (int) $author->id())));
+    self::assertSame(1, $service->registrarResposta($this->createPersistedComment($unreadTopic, (int) $author->id())));
+
+    $service->marcarLido($uid, (int) $readTopic->id());
+
+    $read = $service->listarDaPessoa($uid, 1, 'read');
+    $unread = $service->listarDaPessoa($uid, 1, 'unread');
+    self::assertCount(1, $read);
+    self::assertSame((int) $readTopic->id(), (int) $read[0]->get('assunto_nid')->value);
+    self::assertCount(1, $unread);
+    self::assertSame((int) $unreadTopic->id(), (int) $unread[0]->get('assunto_nid')->value);
+  }
+
+  /**
+   * Forum notices sort by recency regardless of read state.
+   */
+  public function testForumNoticeListSortsByRecencyRegardlessOfReadState(): void {
+    $author = $this->createUser('autor_ordem_recente');
+    $follower = $this->createUser('seguidor_ordem_recente');
+    $uid = (int) $follower->id();
+    $olderTopic = $this->createTopic('Tópico anterior');
+    $newerTopic = $this->createTopic('Tópico recente');
+    $service = $this->createAvisoService([$uid], $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE));
+    self::assertSame(1, $service->registrarResposta($this->createPersistedComment($olderTopic, (int) $author->id())));
+    self::assertSame(1, $service->registrarResposta($this->createPersistedComment($newerTopic, (int) $author->id())));
+
+    // Reading only changes delivery state; it must not rewrite activity
+    // recency and make an old notice look new.
+    $beforeRead = $service->listarDaPessoa($uid);
+    $newerNotice = reset($beforeRead);
+    self::assertNotFalse($newerNotice);
+    $newerChanged = $newerNotice->getChangedTime();
+    $service->marcarLido($uid, (int) $newerTopic->id());
+    $notices = $service->listarDaPessoa($uid);
+
+    self::assertCount(2, $notices);
+    self::assertSame((int) $newerTopic->id(), (int) $notices[0]->get('assunto_nid')->value);
+    self::assertSame((int) $olderTopic->id(), (int) $notices[1]->get('assunto_nid')->value);
+    self::assertSame($newerChanged, $notices[0]->getChangedTime());
+  }
+
+  /**
+   * The account-center limit includes more than the five-item drawer preview.
+   */
+  public function testPersonalNoticeListDefaultSupportsAccountCenter(): void {
+    $author = $this->createUser('autor_lista_central');
+    $follower = $this->createUser('seguidor_lista_central');
+    $uid = (int) $follower->id();
+    $service = $this->createAvisoService([$uid], $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE));
+
+    for ($index = 1; $index <= 6; $index++) {
+      $topic = $this->createTopic('Tópico central ' . $index);
+      self::assertSame(1, $service->registrarResposta($this->createPersistedComment($topic, (int) $author->id())));
+    }
+
+    self::assertSame(100, AvisoService::PERSONAL_NOTICE_LIST_LIMIT);
+    self::assertCount(6, $service->listarDaPessoa($uid));
+    self::assertCount(5, $service->listarDaPessoa($uid, 5));
+  }
+
+  /**
+   * Forum notice pages advance by a stable offset and report the next page.
+   */
+  public function testPersonalNoticePagesCoverTheFullAccessibleForumList(): void {
+    $author = $this->createUser('autor_paginas_central');
+    $follower = $this->createUser('seguidor_paginas_central');
+    $uid = (int) $follower->id();
+    $service = $this->createAvisoService([$uid], $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE));
+
+    for ($index = 1; $index <= 6; $index++) {
+      $topic = $this->createTopic('Tópico paginado ' . $index);
+      self::assertSame(1, $service->registrarResposta($this->createPersistedComment($topic, (int) $author->id())));
+    }
+
+    $firstPage = $service->listarDaPessoaPaginada($uid, 3, 0);
+    $secondPage = $service->listarDaPessoaPaginada($uid, 3, 3);
+    self::assertCount(3, $firstPage['items']);
+    self::assertTrue($firstPage['has_next']);
+    self::assertCount(3, $secondPage['items']);
+    self::assertFalse($secondPage['has_next']);
+    $firstTopicIds = array_map(static fn(Aviso $notice): int => (int) $notice->get('assunto_nid')->value, $firstPage['items']);
+    $secondTopicIds = array_map(static fn(Aviso $notice): int => (int) $notice->get('assunto_nid')->value, $secondPage['items']);
+    self::assertSame([], array_intersect($firstTopicIds, $secondTopicIds));
+    self::assertCount(6, array_unique([...$firstTopicIds, ...$secondTopicIds]));
+  }
+
+  /**
+   * Revoked topics do not consume Forum page offsets or lookahead.
+   */
+  public function testPersonalNoticePaginationOffsetsOnlyCurrentlyAccessibleTopics(): void {
+    $author = $this->createUser('autor_topicos_revogados_paginacao');
+    $follower = $this->createUser('seguidor_topicos_revogados_paginacao');
+    $uid = (int) $follower->id();
+    $hiddenTopicIds = [];
+    $policy = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+    $policy->method('supportsTopic')->willReturn(TRUE);
+    $policy->method('canViewTopic')->willReturnCallback(static function (mixed $topic) use (&$hiddenTopicIds): bool {
+      return $topic !== NULL && !isset($hiddenTopicIds[(int) $topic->id()]);
+    });
+    $policy->method('canViewComment')->willReturn(TRUE);
+    $service = $this->createAvisoService([$uid], $policy);
+    $topicIds = [];
+    for ($index = 1; $index <= 10; $index++) {
+      $topic = $this->createTopic('Tópico revogado ' . $index);
+      $topicIds[] = (int) $topic->id();
+      self::assertSame(1, $service->registrarResposta($this->createPersistedComment($topic, (int) $author->id())));
+    }
+
+    $hiddenTopicIds = array_fill_keys(array_slice($topicIds, 5), TRUE);
+    $page = $service->listarDaPessoaPaginada($uid, 2, 2);
+    $actualTopicIds = array_map(static fn(Aviso $notice): int => (int) $notice->get('assunto_nid')->value, $page['items']);
+
+    self::assertSame(array_slice(array_reverse(array_slice($topicIds, 0, 5)), 2, 2), $actualTopicIds);
+    self::assertTrue($page['has_next'], 'A further accessible notice exists after the page even though newer rows are now inaccessible.');
+  }
+
+  /**
+   * The public event contract persists one idempotent ForumPost notice.
+   */
+  public function testForumPostEventRoundTripUsesTheSharedNoticeAggregate(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+
+    $flag = $this->createMock(FlagInterface::class);
+    $flagging = $this->createMock(FlaggingInterface::class);
+    $flagging->method('getOwnerId')->willReturn((int) $follower->id());
+    $flags = $this->createMock(FlagServiceInterface::class);
+    $flags->method('getFlagById')->with('seguir_topico')->willReturn($flag);
+    $flags->method('getEntityFlaggings')->willReturn([$flagging]);
+
+    $access = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+    $access->method('supportsTopic')->willReturn(TRUE);
+    $access->method('canViewPost')->willReturn(TRUE);
+    $access->method('canViewTopic')->willReturn(TRUE);
+
+    $avisos = new AvisoService(
+      $this->container->get('entity_type.manager'),
+      $flags,
+      $access,
+      $this->container->get('database'),
+      $this->container->get('datetime.time'),
+      $this->container->get('lock'),
+    );
+    $dispatcher = new EventDispatcher();
+    $dispatcher->addSubscriber(new ForumNoticeEventSubscriber(
+      $this->container->get('entity_type.manager'),
+      $avisos,
+    ));
+    $producer = new ForumNoticeEventProducer($flags, $access, new MessengerNoticePublisher($dispatcher));
+
+    self::assertSame(1, $producer->publishPost($post));
+    self::assertSame(1, $producer->publishPost($post), 'Replaying the producer event is harmless.');
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(1, (int) $notices[0]->get('contador_email')->value);
+    self::assertSame((int) $post->getRevisionId(), (int) $notices[0]->get('ultimo_post')->value);
+  }
+
+  /**
+   * A published Comment is delivered through the shared event contract once.
+   */
+  public function testCommentEventRoundTripUsesTheSharedNoticeAggregate(): void {
+    $author = $this->createUser('autora_comentario');
+    $follower = $this->createUser('seguidora_comentario');
+    $topic = $this->createTopic();
+    $comment = Comment::create([
+      'comment_type' => 'aculta_discussion_post',
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'uid' => $author->id(),
+      'subject' => 'Resposta publicada',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $comment->save();
+    $producer = $this->createEventProducer([
+      (int) $author->id(),
+      (int) $follower->id(),
+    ], $this->createAccessPolicy(canViewComment: TRUE));
+
+    self::assertSame(1, $producer->publishComment($comment));
+    self::assertSame(1, $producer->publishComment($comment), 'Replaying the Comment event is harmless.');
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(1, (int) $notices[0]->get('contador_email')->value);
+    self::assertSame((int) $comment->id(), (int) $notices[0]->get('ultimo_comentario')->value);
+    self::assertCount(0, $this->loadNotices((int) $author->id(), (int) $topic->id()));
+  }
+
+  /**
+   * Access revoked after publication is rechecked by the event consumer.
+   */
+  public function testCommentAccessRevokedBeforeConsumptionDoesNotPersistNotice(): void {
+    $author = $this->createUser('autor_revogacao');
+    $follower = $this->createUser('seguidor_revogado');
+    $topic = $this->createTopic();
+    $comment = Comment::create([
+      'comment_type' => 'aculta_discussion_post',
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'uid' => $author->id(),
+      'subject' => 'Resposta com acesso revogado',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $comment->save();
+    $policy = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+    $policy->method('supportsTopic')->willReturn(TRUE);
+    $policy->method('canViewTopic')->willReturn(TRUE);
+    $policy->method('canViewPost')->willReturn(TRUE);
+    $policy->expects(self::exactly(2))
+      ->method('canViewComment')
+      ->with(
+        self::callback(fn(CommentInterface $candidate): bool => $candidate->uuid() === $comment->uuid()),
+        (int) $follower->id(),
+      )
+      ->willReturnOnConsecutiveCalls(TRUE, FALSE);
+    $producer = $this->createEventProducer([
+      (int) $author->id(),
+      (int) $follower->id(),
+    ], $policy);
+
+    self::assertSame(1, $producer->publishComment($comment));
+    self::assertCount(0, $this->loadNotices((int) $follower->id(), (int) $topic->id()));
+    self::assertSame(0, (int) $this->container->get('database')
+      ->select(ForumNoticeEventSchema::TABLE)
+      ->condition('uid', (int) $follower->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
+   * The shared event path preserves the existing Forum notice aggregation.
+   */
+  public function testEventAndDirectCommentRegistrationShareExistingAggregate(): void {
+    $author = $this->createUser('autor_equivalencia');
+    $follower = $this->createUser('seguidor_equivalencia');
+    $topic = $this->createTopic('Tópico equivalente');
+    $directComment = $this->createPersistedComment($topic, (int) $author->id());
+    $eventComment = $this->createPersistedComment($topic, (int) $author->id());
+    $policy = $this->createAccessPolicy(canViewComment: TRUE);
+
+    $direct = $this->createAvisoService([(int) $follower->id()], $policy);
+    self::assertSame(1, $direct->registrarResposta($directComment));
+    $directNotices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $directNotices);
+    self::assertSame(1, (int) $directNotices[0]->get('contador_site')->value);
+    self::assertSame(1, (int) $directNotices[0]->get('contador_email')->value);
+
+    $producer = $this->createEventProducer([(int) $follower->id()], $policy);
+    self::assertSame(1, $producer->publishComment($eventComment));
+
+    $eventNotices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $eventNotices);
+    self::assertSame(2, (int) $eventNotices[0]->get('contador_site')->value);
+    self::assertSame(2, (int) $eventNotices[0]->get('contador_email')->value);
+    self::assertSame('Tópico equivalente', $eventNotices[0]->get('titulo')->value);
+    self::assertSame((string) $eventComment->id(), $eventNotices[0]->get('ultimo_comentario')->value);
+  }
+
+  /**
+   * A combined Forum digest sends one aggregate row through the ACULTA Mailer.
+   */
+  public function testDirectAndSharedEventsProduceOneCombinedDigestRow(): void {
+    $author = $this->createUser('autor_digest');
+    $follower = $this->createUser('seguidor_digest');
+    $follower->setEmail('seguidor@example.test');
+    $follower->set('langcode', 'pt-br');
+    $follower->set('preferred_langcode', 'pt-br');
+    $follower->save();
+    $uid = (int) $follower->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->saveEmailMode($uid, 'forum_resposta', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'forum_atualizacao', AvisoPreferencias::EMAIL_DIGEST);
+    $topic = $this->createTopic('Resumo compartilhado');
+    $directComment = $this->createPersistedComment($topic, (int) $author->id());
+    $eventComment = $this->createPersistedComment($topic, (int) $author->id());
+    $lateComment = $this->createPersistedComment($topic, (int) $author->id());
+    $policy = $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE);
+    $avisos = $this->createAvisoService([$uid], $policy);
+    self::assertSame(1, $avisos->registrarResposta($directComment));
+    $producer = $this->createEventProducer([$uid], $policy);
+    self::assertSame(1, $producer->publishComment($eventComment));
+
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $deliveries = 0;
+    $concurrentSummary = NULL;
+    $mailer->expects(self::once())
+      ->method('deliver')
+      ->willReturnCallback(function (MailMessage $message) use (&$deliveries, &$concurrentSummary, $avisos, $lateComment): SendResult {
+        $deliveries++;
+        self::assertSame(AvisosResumo::CHAVE_MAIL, $message->type);
+        self::assertSame('seguidor@example.test', $message->to);
+        self::assertSame('pt-br', $message->langcode);
+        self::assertSame('Respostas novas em "Resumo compartilhado": 2', $message->context['resumo']);
+        if ($deliveries === 1) {
+          self::assertInstanceOf(AvisosResumo::class, $concurrentSummary);
+          self::assertSame(0, $concurrentSummary->enviarResumos(), 'A separate request skips the recipient while its persistent lock is held.');
+          self::assertSame(1, $avisos->registrarResposta($lateComment), 'A new event arrives while the first digest is being sent.');
+        }
+        return SendResult::sent();
+      });
+    $emailPolicy = new EmailConfirmationPolicy(
+      $userData,
+      $this->container->get('entity_type.manager'),
+      $this->container->get('module_handler'),
+    );
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      $emailPolicy,
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $this->container->get('database'),
+      $this->container->get('lock.persistent'),
+    );
+    // A second backend instance models a separate request sharing the same DB
+    // semaphore table; reusing one backend would renew its own lock.
+    $concurrentSummary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      $emailPolicy,
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $this->container->get('database'),
+      new PersistentDatabaseLockBackend($this->container->get('database')),
+    );
+
+    self::assertSame(1, $summary->enviarResumos());
+    $notices = $this->loadNotices($uid, (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_email')->value, 'The concurrent event remains pending after acknowledging the first digest.');
+    self::assertSame((string) $lateComment->id(), $notices[0]->get('ultimo_comentario')->value);
+  }
+
+  /**
+   * An expired lease does not start an overlapping digest during transport.
+   */
+  public function testExpiredLeaseDefersRetryWhileDigestTransportIsInFlight(): void {
+    $author = $this->createUser('autor_digest_lease_expirada');
+    $follower = $this->createUser('seguidor_digest_lease_expirada');
+    $follower->setEmail('digest-lease@example.test');
+    $follower->set('langcode', 'pt-br');
+    $follower->set('preferred_langcode', 'pt-br');
+    $follower->save();
+    $uid = (int) $follower->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->saveEmailMode($uid, 'forum_resposta', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'forum_atualizacao', AvisoPreferencias::EMAIL_DIGEST);
+    $topic = $this->createTopic('Digest com lease expirada');
+    $firstComment = $this->createPersistedComment($topic, (int) $author->id());
+    $secondComment = $this->createPersistedComment($topic, (int) $author->id());
+    $policy = $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE);
+    $avisos = $this->createAvisoService([$uid], $policy);
+    self::assertSame(1, $avisos->registrarResposta($firstComment));
+
+    $database = $this->container->get('database');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $deliveries = 0;
+    $acceptedCorrelations = [];
+    $concurrentSummary = NULL;
+    $mailer->expects(self::once())
+      ->method('deliver')
+      ->willReturnCallback(function (MailMessage $message) use (&$deliveries, &$acceptedCorrelations, &$concurrentSummary, $database, $avisos, $secondComment, $uid): SendResult {
+        $deliveries++;
+        self::assertSame('digest-lease@example.test', $message->to);
+        self::assertSame('Respostas novas em "Digest com lease expirada": 1', $message->context['resumo']);
+        self::assertSame(1, $avisos->registrarResposta($secondComment));
+        $database->update('semaphore')
+          ->fields(['expire' => microtime(TRUE) - 1])
+          ->condition('name', 'aculta_messenger.avisos_resumo.' . $uid)
+          ->execute();
+        self::assertSame(0, $concurrentSummary->enviarResumos(), 'A replacement worker waits instead of sending an overlapping manifest.');
+        $acceptedCorrelations[$message->correlationId] = TRUE;
+        return SendResult::sent();
+      });
+    $mailer->method('wasAcceptedCorrelation')
+      ->willReturnCallback(static function (string $correlationId, string $type, ?string $recipient = NULL) use (&$acceptedCorrelations): bool {
+        return $type === AvisosResumo::CHAVE_MAIL
+          && $recipient === 'digest-lease@example.test'
+          && isset($acceptedCorrelations[$correlationId]);
+      });
+    $emailPolicy = new EmailConfirmationPolicy(
+      $userData,
+      $this->container->get('entity_type.manager'),
+      $this->container->get('module_handler'),
+    );
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      $emailPolicy,
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      $this->container->get('lock.persistent'),
+    );
+    $concurrentSummary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      $emailPolicy,
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      new PersistentDatabaseLockBackend($database),
+    );
+
+    self::assertSame(0, $summary->enviarResumos(), 'The stale worker defers acknowledgement after losing its lease.');
+    self::assertSame(0, $summary->enviarResumos(), 'The next run reconciles the exact batch accepted by the Mailer without counting another email.');
+    self::assertSame(1, $deliveries);
+    $notices = $this->loadNotices($uid, (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_email')->value, 'The event added after the snapshot remains pending for the next digest.');
+    self::assertSame((string) $secondComment->id(), $notices[0]->get('ultimo_comentario')->value);
+  }
+
+  /**
+   * The persistent digest lock excludes independent PHP processes on MariaDB.
+   */
+  public function testPersistentDigestLockSerializesIndependentProcesses(): void {
+    if ($this->container->get('database')->driver() !== 'mysql') {
+      $this->markTestSkipped('Digest lock process contention requires MariaDB.');
+    }
+
+    $database = $this->container->get('database');
+    $lockName = 'aculta_messenger.avisos_resumo.process_test.' . bin2hex(random_bytes(8));
+    $configPath = tempnam(sys_get_temp_dir(), 'aculta-digest-lock-db-');
+    if ($configPath === FALSE) {
+      throw new \RuntimeException('Could not allocate temporary digest lock configuration.');
+    }
+    $heldPath = $configPath . '.held';
+    $releasePath = $configPath . '.release';
+    chmod($configPath, 0600);
+    $configuration = json_encode(['connection' => $database->getConnectionOptions()], JSON_THROW_ON_ERROR);
+    if (file_put_contents($configPath, $configuration, LOCK_EX) !== strlen($configuration)) {
+      @unlink($configPath);
+      throw new \RuntimeException('Could not write temporary digest lock configuration.');
+    }
+
+    $holder = NULL;
+    $pipes = [];
+    try {
+      $holder = $this->startDigestLockProcess($configPath, $lockName, 'hold', $heldPath, $releasePath, $pipes);
+      $deadline = microtime(TRUE) + 15;
+      while (!is_file($heldPath)) {
+        $status = proc_get_status($holder);
+        if (!$status['running']) {
+          self::fail('Digest lock holder exited before acquiring its lock.');
+        }
+        if (microtime(TRUE) >= $deadline) {
+          self::fail('Timed out waiting for the independent digest lock holder.');
+        }
+        usleep(10_000);
+      }
+
+      self::assertFalse(
+        $this->runDigestLockProcess($configPath, $lockName, 'try', $heldPath, $releasePath),
+        'An independent process cannot acquire the recipient lock while the digest worker holds it.',
+      );
+      self::assertNotFalse(file_put_contents($releasePath, 'release', LOCK_EX));
+      [$stdout, $stderr, $exitCode] = $this->collectDigestLockProcess($holder, $pipes);
+      $holder = NULL;
+      self::assertSame(0, $exitCode, 'Digest lock holder failed: ' . trim((string) $stderr));
+      self::assertSame(['acquired' => TRUE, 'released' => TRUE], json_decode(trim((string) $stdout), TRUE, 512, JSON_THROW_ON_ERROR));
+
+      self::assertTrue(
+        $this->runDigestLockProcess($configPath, $lockName, 'try', $heldPath, $releasePath),
+        'A later independent process can acquire the recipient lock after release.',
+      );
+    }
+    finally {
+      if ($holder !== NULL && is_resource($holder)) {
+        @file_put_contents($releasePath, 'release', LOCK_EX);
+        foreach ($pipes as $pipe) {
+          if (is_resource($pipe)) {
+            fclose($pipe);
+          }
+        }
+        proc_terminate($holder);
+        proc_close($holder);
+      }
+      @unlink($configPath);
+      @unlink($heldPath);
+      @unlink($releasePath);
+    }
+  }
+
+  /**
+   * Starts a digest lock probe in a separate PHP process.
+   *
+   * @param string $configurationPath
+   *   Private file containing the isolated Kernel database connection options.
+   * @param string $lockName
+   *   The recipient lock name.
+   * @param string $action
+   *   Either "hold" or "try".
+   * @param string $heldPath
+   *   File created by a holder after successful acquisition.
+   * @param string $releasePath
+   *   File that asks a holder to release its lock.
+   * @param array<int, resource> $pipes
+   *   Process pipes, returned by reference.
+   *
+   * @return resource
+   *   The independent worker process.
+   */
+  private function startDigestLockProcess(string $configurationPath, string $lockName, string $action, string $heldPath, string $releasePath, array &$pipes) {
+    $worker = dirname(__DIR__, 2) . '/fixtures/digest-lock-process-worker.php';
+    $autoload = DRUPAL_ROOT . '/../vendor/autoload.php';
+    $process = proc_open([
+      PHP_BINARY,
+      $worker,
+      $autoload,
+      $configurationPath,
+      $action,
+      $lockName,
+      $heldPath,
+      $releasePath,
+    ], [
+      0 => ['pipe', 'r'],
+      1 => ['pipe', 'w'],
+      2 => ['pipe', 'w'],
+    ], $pipes, DRUPAL_ROOT);
+    if (!is_resource($process)) {
+      throw new \RuntimeException('Could not start an independent digest lock worker.');
+    }
+    fclose($pipes[0]);
+    stream_set_blocking($pipes[1], FALSE);
+    stream_set_blocking($pipes[2], FALSE);
+    return $process;
+  }
+
+  /**
+   * Runs a one-shot digest lock probe in an independent PHP process.
+   */
+  private function runDigestLockProcess(string $configurationPath, string $lockName, string $action, string $heldPath, string $releasePath): bool {
+    $pipes = [];
+    $process = $this->startDigestLockProcess($configurationPath, $lockName, $action, $heldPath, $releasePath, $pipes);
+    try {
+      [$stdout, $stderr, $exitCode] = $this->collectDigestLockProcess($process, $pipes);
+      self::assertSame(0, $exitCode, 'Digest lock probe failed: ' . trim($stderr));
+      $result = json_decode(trim($stdout), TRUE, 512, JSON_THROW_ON_ERROR);
+      self::assertIsArray($result);
+      return $result['acquired'] === TRUE;
+    }
+    finally {
+      foreach ($pipes as $pipe) {
+        if (is_resource($pipe)) {
+          fclose($pipe);
+        }
+      }
+      if (is_resource($process)) {
+        proc_terminate($process);
+        proc_close($process);
+      }
+    }
+  }
+
+  /**
+   * Collects output and exit status from an independent process.
+   *
+   * @param resource $process
+   *   The process resource.
+   * @param array<int, resource> $pipes
+   *   Process pipes, closed by this method.
+   *
+   * @return array{string, string, int}
+   *   Standard output, standard error, and exit code.
+   */
+  private function collectDigestLockProcess($process, array &$pipes): array {
+    $stdout = '';
+    $stderr = '';
+    $exitCode = NULL;
+    $deadline = microtime(TRUE) + 15;
+    do {
+      $stdout .= (string) stream_get_contents($pipes[1]);
+      $stderr .= (string) stream_get_contents($pipes[2]);
+      $status = proc_get_status($process);
+      if (!$status['running']) {
+        $exitCode = $status['exitcode'];
+        break;
+      }
+      if (microtime(TRUE) >= $deadline) {
+        throw new \RuntimeException('Timed out waiting for an independent digest lock process.');
+      }
+      usleep(10_000);
+    } while (TRUE);
+
+    $stdout .= (string) stream_get_contents($pipes[1]);
+    $stderr .= (string) stream_get_contents($pipes[2]);
+    foreach ($pipes as $pipe) {
+      if (is_resource($pipe)) {
+        fclose($pipe);
+      }
+    }
+    $pipes = [];
+    $closeCode = proc_close($process);
+    return [$stdout, $stderr, is_int($exitCode) && $exitCode >= 0 ? $exitCode : $closeCode];
+  }
+
+  /**
+   * A new Forum digest batch cannot reuse a previously accepted correlation.
+   */
+  public function testNewForumDigestGenerationGetsNewCorrelationAfterAcknowledgement(): void {
+    $author = $this->createUser('autor_digest_novo_lote');
+    $follower = $this->createUser('seguidor_digest_novo_lote');
+    $follower->setEmail('digest-generation@example.test');
+    $follower->set('langcode', 'pt-br');
+    $follower->set('preferred_langcode', 'pt-br');
+    $follower->save();
+    $uid = (int) $follower->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->saveEmailMode($uid, 'forum_resposta', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'forum_atualizacao', AvisoPreferencias::EMAIL_DIGEST);
+    $topic = $this->createTopic('Gerações do digest');
+    $avisos = $this->createAvisoService(
+      [$uid],
+      $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE),
+    );
+    // The higher Comment ID is approved and delivered first; approval of the
+    // older Comment must still become a new digest generation afterwards.
+    $newerComment = $this->createPublishedComment($topic, (int) $author->id(), 20);
+    $olderComment = $this->createPublishedComment($topic, (int) $author->id(), 10);
+    self::assertSame(1, $avisos->registrarResposta($newerComment));
+
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return SendResult::sent();
+      });
+    $emailPolicy = new EmailConfirmationPolicy(
+      $userData,
+      $this->container->get('entity_type.manager'),
+      $this->container->get('module_handler'),
+    );
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      $emailPolicy,
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $this->container->get('database'),
+      $this->container->get('lock.persistent'),
+    );
+
+    self::assertSame(1, $summary->enviarResumos());
+    $userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', 0);
+    self::assertSame(1, $avisos->registrarResposta($olderComment));
+    self::assertSame(1, $summary->enviarResumos());
+    self::assertNotSame($correlations[0], $correlations[1], 'A later event with the same pending quantity is a distinct logical digest.');
+  }
+
+  /**
+   * Rolls back all digest acknowledgements when one adapter fails.
+   */
+  public function testAcceptedDigestRetryReconcilesSnapshotAfterBatchGrows(): void {
+    $author = $this->createUser('autor_digest_rollback');
+    $follower = $this->createUser('seguidor_digest_rollback');
+    $follower->setEmail('digest-rollback@example.test');
+    $follower->set('langcode', 'pt-br');
+    $follower->set('preferred_langcode', 'pt-br');
+    $follower->save();
+    $uid = (int) $follower->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->saveEmailMode($uid, 'forum_resposta', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'forum_atualizacao', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'wiki', AvisoPreferencias::EMAIL_DIGEST);
+    $topic = $this->createTopic('Digest transacional');
+    $comment = $this->createPersistedComment($topic, (int) $author->id());
+    $policy = $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE);
+    $avisos = $this->createAvisoService([$uid], $policy);
+    self::assertSame(1, $avisos->registrarResposta($comment));
+
+    $database = $this->container->get('database');
+    $database->schema()->createTable('aculta_messenger_digest_ack_test', [
+      'fields' => [
+        'id' => ['type' => 'int', 'size' => 'normal', 'not null' => TRUE],
+        'acknowledged' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['id'],
+    ]);
+    $database->insert('aculta_messenger_digest_ack_test')->fields(['id' => 1, 'acknowledged' => 0])->execute();
+    $provider = new FailOnceDigestAckProvider($uid, $database);
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return SendResult::sent();
+      });
+    $mailer->method('wasAcceptedCorrelation')
+      ->willReturnCallback(static function (string $correlationId, string $type) use (&$correlations): bool {
+        return $type === AvisosResumo::CHAVE_MAIL && in_array($correlationId, $correlations, TRUE);
+      });
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      new EmailConfirmationPolicy(
+        $userData,
+        $this->container->get('entity_type.manager'),
+        $this->container->get('module_handler'),
+      ),
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      $this->container->get('lock.persistent'),
+      [$provider],
+    );
+
+    self::assertSame(0, $summary->enviarResumos());
+    $notice = $this->loadNotices($uid, (int) $topic->id())[0];
+    self::assertSame(1, (int) $notice->get('contador_email')->value, 'Forum email count rolls back when the adapter acknowledgement fails.');
+    self::assertSame(0, (int) $database->select('aculta_messenger_digest_ack_test', 't')->fields('t', ['acknowledged'])->condition('id', 1)->execute()->fetchField());
+
+    // A new Forum event arrives after the transport accepted the first
+    // manifest but the adapter acknowledgement rolled back. Recovery must
+    // acknowledge only the saved first batch and avoid a second email.
+    $secondComment = $this->createPersistedComment($topic, (int) $author->id());
+    self::assertSame(1, $avisos->registrarResposta($secondComment));
+    // Simulate a deployment that renames the provider class between the
+    // accepted delivery and its acknowledgement recovery.
+    $replacementProvider = new RecoveredDigestAckProvider($uid, $database);
+    $recoverySummary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      new EmailConfirmationPolicy(
+        $userData,
+        $this->container->get('entity_type.manager'),
+        $this->container->get('module_handler'),
+      ),
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      $this->container->get('lock.persistent'),
+      [$replacementProvider],
+    );
+    self::assertSame(0, $recoverySummary->enviarResumos(), 'Recovery acknowledges the accepted snapshot without counting a new email.');
+    self::assertCount(1, $correlations);
+    $notice = $this->loadNotices($uid, (int) $topic->id())[0];
+    self::assertSame(1, (int) $notice->get('contador_email')->value, 'The later Forum event stays pending after recovery of the accepted snapshot.');
+    self::assertSame(1, (int) $database->select('aculta_messenger_digest_ack_test', 't')->fields('t', ['acknowledged'])->condition('id', 1)->execute()->fetchField());
+  }
+
+  /**
+   * Accepted digests remain discoverable while their optional adapter is off.
+   */
+  public function testAcceptedDigestSnapshotRetriesWithoutEnabledProvider(): void {
+    $account = $this->createUser('digest_adapter_desativado');
+    $account->setEmail('digest-disabled-adapter@example.test');
+    $account->save();
+    $uid = (int) $account->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->saveEmailMode($uid, 'forum_resposta', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'forum_atualizacao', AvisoPreferencias::EMAIL_DIGEST);
+    $snapshot = [
+      'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
+      'created' => $this->container->get('datetime.time')->getRequestTime(),
+      'provider_lookup_failed' => FALSE,
+      'forum' => [],
+      'providers' => [
+        [
+          'provider_id' => 'wiki',
+          'delivery_ids' => [802],
+        ],
+      ],
+    ];
+    $userData->set('aculta_messenger', $uid, 'avisos_resumo_em_andamento', $snapshot);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    $mailer->expects(self::once())
+      ->method('wasAcceptedCorrelation')
+      ->with($snapshot['correlation_id'], AvisosResumo::CHAVE_MAIL, 'digest-disabled-adapter@example.test')
+      ->willReturn(TRUE);
+    $avisos = $this->createAvisoService([]);
+    $database = $this->container->get('database');
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      new AvisoPreferencias($userData),
+      $mailer,
+      new EmailConfirmationPolicy($userData, $this->container->get('entity_type.manager'), $this->container->get('module_handler')),
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      $this->container->get('lock.persistent'),
+      [],
+    );
+
+    self::assertSame(0, $summary->enviarResumos(), 'Recognizing acceptance without an enabled adapter is reconciliation, not a new email.');
+    $snapshot['accepted_at'] = $this->container->get('datetime.time')->getRequestTime();
+    self::assertSame($snapshot, $userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
+  }
+
+  /**
+   * A permanent email failure closes email delivery but preserves site notice.
+   */
+  public function testPermanentDigestFailureKeepsTheRequiredSiteNotice(): void {
+    $author = $this->createUser('autor_falha_digest');
+    $follower = $this->createUser('seguidor_falha_digest');
+    $follower->setEmail('seguidor-falha@example.test');
+    $follower->set('langcode', 'pt-br');
+    $follower->set('preferred_langcode', 'pt-br');
+    $follower->save();
+    $uid = (int) $follower->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->saveEmailMode($uid, 'forum_resposta', AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->saveEmailMode($uid, 'forum_atualizacao', AvisoPreferencias::EMAIL_DIGEST);
+    $topic = $this->createTopic('Falha permanente do digest');
+    $comment = $this->createPersistedComment($topic, (int) $author->id());
+    $policy = $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE);
+    $avisos = $this->createAvisoService([$uid], $policy);
+    self::assertSame(1, $avisos->registrarResposta($comment));
+
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())
+      ->method('deliver')
+      ->willReturn(SendResult::failed(DeliveryError::Permanent, 550));
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      new EmailConfirmationPolicy(
+        $userData,
+        $this->container->get('entity_type.manager'),
+        $this->container->get('module_handler'),
+      ),
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $this->container->get('database'),
+      $this->container->get('lock.persistent'),
+    );
+
+    self::assertSame(0, $summary->enviarResumos());
+    self::assertSame(0, $summary->enviarResumos(), 'A permanent email failure is not retried by a later digest run.');
+    $notices = $this->loadNotices($uid, (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(0, (int) $notices[0]->get('contador_email')->value);
+  }
+
+  /**
+   * A topic revision round-trips once and suppresses the revision author.
+   */
+  public function testTopicRevisionEventRoundTripUsesTheSharedNoticeAggregate(): void {
+    $author = $this->createUser('autor_topico');
+    $follower = $this->createUser('seguidora_topico');
+    $topic = $this->createTopic();
+    $topic->setRevisionUserId((int) $author->id());
+    $topic->setNewRevision(TRUE);
+    $topic->save();
+    $producer = $this->createEventProducer([
+      (int) $author->id(),
+      (int) $follower->id(),
+    ], $this->createAccessPolicy(canViewTopic: TRUE));
+
+    self::assertSame(1, $producer->publishTopicUpdate($topic, (int) $topic->getRevisionId()));
+    self::assertSame(1, $producer->publishTopicUpdate($topic, (int) $topic->getRevisionId()));
+    $updates = $this->loadNotices(
+      (int) $follower->id(),
+      (int) $topic->id(),
+      Aviso::TIPO_ATUALIZACAO,
+    );
+    self::assertCount(1, $updates);
+    self::assertSame(1, (int) $updates[0]->get('contador_site')->value);
+    self::assertSame((int) $topic->getRevisionId(), (int) $updates[0]->get('ultimo_evento')->value);
+    self::assertCount(0, $this->loadNotices(
+      (int) $author->id(),
+      (int) $topic->id(),
+      Aviso::TIPO_ATUALIZACAO,
+    ));
+  }
+
+  /**
+   * A member who unfollows before delivery is no longer eligible.
+   */
+  public function testFollowerWhoUnfollowsBeforeDeliveryGetsNoNotice(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('ex_seguidora');
+    $topic = $this->createTopic();
+    // The event is delivered after the flagging has been removed.
+    $avisos = $this->createAvisoService([]);
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+
+    self::assertSame(0, $avisos->registrarPost($post));
+    self::assertCount(0, $this->loadNotices((int) $follower->id(), (int) $topic->id()));
+    self::assertSame(0, (int) $this->container->get('database')
+      ->select(ForumNoticeEventSchema::TABLE)
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
+   * Repeating the same insert event never increases the stored counter.
+   */
+  public function testRepeatedDeliveryOfTheSameEventIsIgnored(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+    $avisos->registrarPost($post);
+    $avisos->registrarPost($post);
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_forum_post');
+    $avisos->registrarPost($storage->load($post->id()));
+
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(0, $avisos->registrarPost($post));
+  }
+
+  /**
+   * Pending posts and non-default revisions never register a notice.
+   */
+  public function testPendingAndNonDefaultRevisionsRegisterNothing(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    $pending = $this->createPost($topic, (int) $author->id(), FALSE);
+    self::assertSame(0, $avisos->registrarPost($pending));
+
+    $published = $this->createPost($topic, (int) $author->id(), TRUE);
+    $published->setNewRevision(TRUE);
+    $published->isDefaultRevision(FALSE);
+    $published->save();
+    self::assertSame(0, $avisos->registrarPost($published));
+
+    self::assertCount(
+      0,
+      $this->loadNotices((int) $follower->id(), (int) $topic->id()),
+    );
+  }
+
+  /**
+   * A first publication reported as an update counts exactly once.
+   */
+  public function testFirstPublicationUpdateCountsOnce(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    $post = $this->createPost($topic, (int) $author->id(), FALSE);
+
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_forum_post');
+    $before = $storage->loadUnchanged($post->id());
+    $previousRevision = (int) $post->getRevisionId();
+    $post->set('status', TRUE);
+    $post->set('first_published', time());
+    $post->setNewRevision(TRUE);
+    $post->save();
+    $post->setOriginal($before);
+    self::assertGreaterThan($previousRevision, (int) $post->getRevisionId());
+
+    self::assertSame(1, $avisos->registrarPost($post));
+    self::assertSame(0, $avisos->registrarPost($post));
+
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(
+      (int) $post->getRevisionId(),
+      (int) $notices[0]->get('ultimo_post')->value,
+    );
+  }
+
+  /**
+   * A delayed approval counts after a newer post was already published.
+   */
+  public function testOutOfOrderPostApprovalCountsEachPublicationOnce(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    // This post is created first but remains pending until after the second
+    // post has already been published and counted.
+    $delayed = $this->createPost($topic, (int) $author->id(), FALSE);
+    $newer = $this->createPost($topic, (int) $author->id(), TRUE);
+    $avisos->registrarPost($newer);
+
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_forum_post');
+    $beforeApproval = $storage->loadUnchanged($delayed->id());
+    $delayed->set('status', TRUE);
+    $delayed->set('first_published', time());
+    $delayed->setNewRevision(TRUE);
+    $delayed->save();
+    $delayed->setOriginal($beforeApproval);
+
+    self::assertSame(1, $avisos->registrarPost($delayed));
+    self::assertSame(0, $avisos->registrarPost($delayed));
+
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(2, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(2, (int) $notices[0]->get('contador_email')->value);
+    self::assertSame(
+      (int) $delayed->getRevisionId(),
+      (int) $notices[0]->get('ultimo_post')->value,
+    );
+    self::assertGreaterThan(
+      (int) $newer->getRevisionId(),
+      (int) $delayed->getRevisionId(),
+    );
+  }
+
+  /**
+   * Counts both replies when legacy comment approvals arrive out of order.
+   */
+  public function testOutOfOrderCommentApprovalCountsBothReplies(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService(
+      [(int) $follower->id(), (int) $author->id()],
+      $this->createAccessPolicy(canViewComment: TRUE),
+    );
+
+    // The second comment is approved first; the first comment is approved
+    // after it. Both approvals are distinct publish events and should count.
+    self::assertSame(1, $avisos->registrarResposta(
+      $this->createPublishedComment($topic, (int) $author->id(), 20),
+    ));
+    $delayed = $this->createPublishedComment($topic, (int) $author->id(), 10);
+    self::assertSame(1, $avisos->registrarResposta($delayed));
+    self::assertSame(0, $avisos->registrarResposta($delayed));
+
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(2, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(2, (int) $notices[0]->get('contador_email')->value);
+    self::assertSame(20, (int) $notices[0]->get('ultimo_comentario')->value);
+    self::assertSame(2, (int) $this->container->get('database')
+      ->select(ForumNoticeEventSchema::TABLE)
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+    self::assertCount(
+      0,
+      $this->loadNotices((int) $author->id(), (int) $topic->id()),
+    );
+  }
+
+  /**
+   * Moving a published reply transfers its aggregate without losing dedupe.
+   */
+  public function testMovedCommentTransfersPersistentAggregateAndKeepsLedger(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $source = $this->createTopic('Tópico de origem');
+    $destination = $this->createTopic('Tópico de destino');
+    $avisos = $this->createAvisoService(
+      [(int) $follower->id()],
+      $this->createAccessPolicy(canViewComment: TRUE),
+    );
+    $movedComment = $this->createPersistedComment($source, (int) $author->id());
+    $destinationComment = $this->createPersistedComment($destination, (int) $author->id());
+
+    self::assertSame(1, $avisos->registrarResposta($movedComment));
+    self::assertSame(1, $avisos->registrarResposta($destinationComment));
+
+    $movedComment->set('entity_id', $destination->id());
+    $movedComment->save();
+    (new ForumCommentMoveSubscriber($avisos))->transferNotices(
+      new ForumCommentSubtreeMovedEvent(
+        (int) $source->id(),
+        (int) $destination->id(),
+        TRUE,
+      ),
+    );
+
+    self::assertCount(0, $this->loadNotices((int) $follower->id(), (int) $source->id()));
+    $destinationNotices = $this->loadNotices((int) $follower->id(), (int) $destination->id());
+    self::assertCount(1, $destinationNotices);
+    self::assertSame(2, (int) $destinationNotices[0]->get('contador_site')->value);
+    self::assertSame(2, (int) $destinationNotices[0]->get('contador_email')->value);
+    self::assertSame((int) $destinationComment->id(), (int) $destinationNotices[0]->get('ultimo_comentario')->value);
+    self::assertSame('Tópico de destino', $destinationNotices[0]->get('titulo')->value);
+
+    // The source event key remains the dedupe authority after the Comment move.
+    self::assertSame(0, $avisos->registrarResposta($movedComment));
+    self::assertSame(2, (int) $this->container->get('database')
+      ->select(ForumNoticeEventSchema::TABLE)
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
+   * Out-of-order post and topic revisions remain countable.
+   */
+  public function testOutOfOrderPostAndTopicRevisionsAreCountedOnce(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    $first = $this->createPost($topic, (int) $author->id(), TRUE);
+    $second = $this->createPost($topic, (int) $author->id(), TRUE);
+
+    self::assertLessThan((int) $second->getRevisionId(), (int) $first->getRevisionId());
+    self::assertSame(1, $avisos->registrarPost($second));
+    self::assertSame(1, $avisos->registrarPost($first));
+    self::assertSame(0, $avisos->registrarPost($first));
+    $response = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $response);
+    self::assertSame(2, (int) $response[0]->get('contador_site')->value);
+    self::assertSame((int) $second->getRevisionId(), (int) $response[0]->get('ultimo_post')->value);
+
+    self::assertSame(1, $avisos->notificarAtualizacao($topic, 20));
+    self::assertSame(1, $avisos->notificarAtualizacao($topic, 10));
+    self::assertSame(0, $avisos->notificarAtualizacao($topic, 10));
+    $updates = $this->loadNotices(
+      (int) $follower->id(),
+      (int) $topic->id(),
+      Aviso::TIPO_ATUALIZACAO,
+    );
+    self::assertCount(1, $updates);
+    self::assertSame(2, (int) $updates[0]->get('contador_site')->value);
+    self::assertSame(20, (int) $updates[0]->get('ultimo_evento')->value);
+  }
+
+  /**
+   * A busy aggregate lock is waited on and retried before recording an event.
+   */
+  public function testLockContentionWaitsAndRetriesBeforeCountingNotice(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $lockName = sprintf(
+      'aculta_messenger:notice:%d:%d:%s',
+      $follower->id(),
+      $topic->id(),
+      Aviso::TIPO_RESPOSTA,
+    );
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::exactly(2))
+      ->method('acquire')
+      ->with($lockName, 60.0)
+      ->willReturnOnConsecutiveCalls(FALSE, TRUE);
+    $lock->expects(self::once())
+      ->method('wait')
+      ->with($lockName, 60);
+    $lock->expects(self::once())
+      ->method('release')
+      ->with($lockName);
+
+    $avisos = $this->createAvisoService([(int) $follower->id()], lock: $lock);
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+
+    self::assertSame(1, $avisos->registrarPost($post));
+    self::assertSame(1, (int) $this->loadNotices((int) $follower->id(), (int) $topic->id())[0]
+      ->get('contador_site')->value);
+  }
+
+  /**
+   * The event ledger follows the six-month notice retention policy.
+   */
+  public function testExpiredCommentNoticeKeysArePrunedInBoundedCronBatch(): void {
+    $now = 1_800_000_000;
+    $limit = AvisoRetencao::limite($now);
+    $database = $this->container->get('database');
+    foreach ([['event_id' => 30, 'created' => $limit], ['event_id' => 31, 'created' => $limit + 1]] as $event) {
+      $database->insert(ForumNoticeEventSchema::TABLE)
+        ->fields([
+          'uid' => 7,
+          'event_type' => 'comment',
+          'event_id' => $event['event_id'],
+          'nid' => 99,
+          'created' => $event['created'],
+        ])
+        ->execute();
+    }
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn($now);
+
+    (new AvisoRetencaoHooks(
+      $this->container->get('entity_type.manager'),
+      $time,
+      $database,
+    ))->expirarAvisos();
+
+    $ids = $database->select(ForumNoticeEventSchema::TABLE, 'event')
+      ->fields('event', ['event_id'])
+      ->orderBy('event_id')
+      ->execute()
+      ->fetchCol();
+    self::assertSame([31], array_map('intval', $ids));
+  }
+
+  /**
+   * The schema post-update creates the ledger once and tolerates re-entry.
+   */
+  public function testPostUpdateCreatesCommentLedgerIdempotently(): void {
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.post_update.php';
+
+    $schema = $this->container->get('database')->schema();
+    $table = ForumCommentNoticeSchema::TABLE;
+    $schema->dropTable($table);
+    $sandbox = [];
+
+    self::assertSame(
+      'Added the Forum Comment notice idempotency ledger.',
+      aculta_messenger_post_update_forum_comment_notice_ledger($sandbox),
+    );
+    self::assertTrue($schema->tableExists($table));
+    self::assertSame(
+      'The Forum Comment notice idempotency ledger already exists.',
+      aculta_messenger_post_update_forum_comment_notice_ledger($sandbox),
+    );
+  }
+
+  /**
+   * Direct-email outbox fields are added without replacing the event ledger.
+   */
+  public function testDirectEmailPostUpdateAddsLedgerColumnsIdempotently(): void {
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
+
+    $database = $this->container->get('database');
+    $schema = $database->schema();
+    $table = ForumNoticeEventSchema::TABLE;
+    foreach (['email_status', 'email_attempts', 'email_correlation', 'email_updated'] as $field) {
+      $schema->dropField($table, $field);
+    }
+    $schema->dropIndex($table, 'email_status');
+
+    aculta_messenger_update_10002();
+    aculta_messenger_update_10002();
+    aculta_messenger_update_10005();
+    aculta_messenger_update_10005();
+
+    self::assertTrue($schema->fieldExists($table, 'email_status'));
+    self::assertTrue($schema->fieldExists($table, 'email_attempts'));
+    self::assertTrue($schema->fieldExists($table, 'email_correlation'));
+    self::assertTrue($schema->fieldExists($table, 'email_updated'));
+    self::assertTrue($schema->indexExists($table, 'email_status'));
+  }
+
+  /**
+   * Outbox retries preserve one valid Mailer correlation ID for an event.
+   */
+  public function testOutboxClaimKeepsCorrelationIdAcrossRetries(): void {
+    $database = $this->container->get('database');
+    $now = $this->container->get('datetime.time')->getRequestTime();
+    $id = (int) $database->insert(ForumNoticeEventSchema::TABLE)
+      ->fields([
+        'uid' => 35,
+        'event_type' => 'comment',
+        'event_id' => 810,
+        'nid' => 72,
+        'created' => $now,
+        'email_status' => 'queued',
+        'email_attempts' => 0,
+        'email_correlation' => '',
+        'email_updated' => $now,
+      ])
+      ->execute();
+
+    $outbox = new ForumNoticeEmailOutbox(
+      $database,
+      $this->createMock(QueueFactory::class),
+      $this->container->get('datetime.time'),
+      $this->createConfiguredMock(UuidInterface::class, ['generate' => '01234567-89ab-4cde-8fab-0123456789ab']),
+      $this->createMock(LoggerInterface::class),
+    );
+    $firstClaim = $outbox->claim($id);
+    self::assertNotNull($firstClaim);
+    $correlation = (string) $firstClaim['email_correlation'];
+    self::assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $correlation);
+    self::assertSame(1, (int) $firstClaim['email_attempts']);
+
+    $database->update(ForumNoticeEventSchema::TABLE)
+      ->fields(['email_updated' => $now - 601])
+      ->condition('id', $id)
+      ->execute();
+    $retryClaim = $outbox->claim($id);
+    self::assertNotNull($retryClaim);
+    self::assertSame($correlation, $retryClaim['email_correlation']);
+    self::assertSame(2, (int) $retryClaim['email_attempts']);
+  }
+
+  /**
+   * Direct email completion atomically acknowledges its Forum digest counter.
+   */
+  public function testOutboxDirectDeliveryAcknowledgesDigestCountAtomically(): void {
+    $author = $this->createUser('autor_email_direto');
+    $follower = $this->createUser('seguidor_email_direto');
+    $uid = (int) $follower->id();
+    $topic = $this->createTopic('Aviso direto sem duplicação');
+    $avisos = $this->createAvisoService(
+      [$uid],
+      $this->createAccessPolicy(canViewComment: TRUE),
+    );
+    $comment = $this->createPersistedComment($topic, (int) $author->id());
+    self::assertSame(1, $avisos->registrarResposta($comment));
+    $notice = reset($this->loadNotices($uid, (int) $topic->id()));
+    self::assertSame(1, (int) $notice->get('contador_email')->value);
+
+    $database = $this->container->get('database');
+    $id = (int) $database->select(ForumNoticeEventSchema::TABLE, 'event')
+      ->fields('event', ['id'])
+      ->condition('uid', $uid)
+      ->condition('event_type', 'comment')
+      ->condition('event_id', (int) $comment->id())
+      ->execute()
+      ->fetchField();
+    $database->update(ForumNoticeEventSchema::TABLE)
+      ->fields([
+        'email_status' => ForumNoticeEmailOutbox::STATUS_PROCESSING,
+        'email_attempts' => 1,
+        'email_correlation' => '01234567-89ab-4cde-8fab-0123456789ab',
+        'email_updated' => $this->container->get('datetime.time')->getRequestTime(),
+      ])
+      ->condition('id', $id)
+      ->execute();
+    $outbox = new ForumNoticeEmailOutbox(
+      $database,
+      $this->createMock(QueueFactory::class),
+      $this->container->get('datetime.time'),
+      $this->createMock(UuidInterface::class),
+      $this->createMock(LoggerInterface::class),
+    );
+
+    self::assertTrue($outbox->completeDirectDelivery($id, static function (array $event) use ($avisos): void {
+      $avisos->acknowledgeEmailCount(
+        (int) $event['uid'],
+        (int) $event['nid'],
+        Aviso::TIPO_RESPOSTA,
+        1,
+      );
+    }));
+    $updatedNotice = reset($this->loadNotices($uid, (int) $topic->id()));
+    self::assertSame(0, (int) $updatedNotice->get('contador_email')->value);
+    self::assertSame(ForumNoticeEmailOutbox::STATUS_SENT, $outbox->load($id)['email_status']);
+
+    $secondComment = $this->createPersistedComment($topic, (int) $author->id());
+    self::assertSame(1, $avisos->registrarResposta($secondComment));
+    $secondNotice = reset($this->loadNotices($uid, (int) $topic->id()));
+    self::assertSame(1, (int) $secondNotice->get('contador_email')->value);
+    $secondId = (int) $database->select(ForumNoticeEventSchema::TABLE, 'event')
+      ->fields('event', ['id'])
+      ->condition('uid', $uid)
+      ->condition('event_type', 'comment')
+      ->condition('event_id', (int) $secondComment->id())
+      ->execute()
+      ->fetchField();
+    $database->update(ForumNoticeEventSchema::TABLE)
+      ->fields([
+        'email_status' => ForumNoticeEmailOutbox::STATUS_PROCESSING,
+        'email_attempts' => 1,
+        'email_correlation' => '11234567-89ab-4cde-8fab-0123456789ab',
+        'email_updated' => $this->container->get('datetime.time')->getRequestTime(),
+      ])
+      ->condition('id', $secondId)
+      ->execute();
+    try {
+      $outbox->completeDirectDelivery($secondId, static function (): void {
+        throw new \RuntimeException('Simulated aggregate write failure.');
+      });
+      self::fail('A failed acknowledgement must roll back the outbox completion.');
+    }
+    catch (\RuntimeException $exception) {
+      self::assertSame('Simulated aggregate write failure.', $exception->getMessage());
+    }
+    $unchangedNotice = reset($this->loadNotices($uid, (int) $topic->id()));
+    self::assertSame(1, (int) $unchangedNotice->get('contador_email')->value);
+    self::assertSame(ForumNoticeEmailOutbox::STATUS_PROCESSING, $outbox->load($secondId)['email_status']);
+  }
+
+  /**
+   * Cron recovery requeues expired processing and queued outbox rows.
+   */
+  public function testOutboxCronRecoversExpiredQueueLeases(): void {
+    $database = $this->container->get('database');
+    $now = $this->container->get('datetime.time')->getRequestTime();
+    $ids = [];
+    foreach ([ForumNoticeEmailOutbox::STATUS_PROCESSING, ForumNoticeEmailOutbox::STATUS_QUEUED] as $index => $status) {
+      $ids[] = (int) $database->insert(ForumNoticeEventSchema::TABLE)
+        ->fields([
+          'uid' => 35,
+          'event_type' => 'comment',
+          'event_id' => 900 + $index,
+          'nid' => 72,
+          'created' => $now,
+          'email_status' => $status,
+          'email_attempts' => 1,
+          'email_correlation' => '',
+          'email_updated' => $now - 601,
+        ])
+        ->execute();
+    }
+    $queue = $this->createMock(QueueInterface::class);
+    $queue->expects(self::exactly(2))
+      ->method('createItem')
+      ->willReturnOnConsecutiveCalls(1, 2);
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->method('get')->with(ForumNoticeEmailOutbox::QUEUE)->willReturn($queue);
+    $outbox = new ForumNoticeEmailOutbox(
+      $database,
+      $queueFactory,
+      $this->container->get('datetime.time'),
+      $this->createConfiguredMock(UuidInterface::class, ['generate' => '01234567-89ab-4cde-8fab-0123456789ab']),
+      $this->createMock(LoggerInterface::class),
+    );
+
+    $outbox->requeuePending();
+
+    foreach ($ids as $id) {
+      $row = $outbox->load($id);
+      self::assertNotNull($row);
+      self::assertSame(ForumNoticeEmailOutbox::STATUS_QUEUED, $row['email_status']);
+      self::assertSame($now, (int) $row['email_updated']);
+    }
+  }
+
+  /**
+   * The unified event ledger preserves keys from the prior Comment-only table.
+   */
+  public function testPostUpdateMigratesLegacyCommentKeysAcrossBatches(): void {
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.post_update.php';
+
+    $database = $this->container->get('database');
+    $schema = $database->schema();
+    $schema->dropTable(ForumNoticeEventSchema::TABLE);
+    for ($cid = 1_001; $cid <= 1_501; $cid++) {
+      $database->insert(ForumCommentNoticeSchema::TABLE)
+        ->fields(['uid' => 7, 'cid' => $cid, 'nid' => 99, 'created' => 1_800_000_000])
+        ->execute();
+    }
+    $sandbox = [];
+    aculta_messenger_post_update_forum_notice_event_ledger($sandbox);
+
+    self::assertLessThan(1, $sandbox['#finished']);
+    self::assertTrue($schema->tableExists(ForumCommentNoticeSchema::TABLE));
+    self::assertSame(500, (int) $database->select(ForumNoticeEventSchema::TABLE)
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+
+    aculta_messenger_post_update_forum_notice_event_ledger($sandbox);
+
+    self::assertTrue($schema->tableExists(ForumNoticeEventSchema::TABLE));
+    self::assertFalse($schema->tableExists(ForumCommentNoticeSchema::TABLE));
+    self::assertSame(501, (int) $database->select(ForumNoticeEventSchema::TABLE)
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+    $event = $database->select(ForumNoticeEventSchema::TABLE, 'event')
+      ->fields('event', ['uid', 'event_type', 'event_id', 'nid', 'created'])
+      ->condition('event_id', 1_001)
+      ->execute()
+      ->fetchAssoc();
+    self::assertSame([
+      'uid' => '7',
+      'event_type' => 'comment',
+      'event_id' => '1001',
+      'nid' => '99',
+      'created' => '1800000000',
+    ], $event);
+    self::assertSame(1_501, (int) $database->select(ForumNoticeEventSchema::TABLE, 'event')
+      ->fields('event', ['event_id'])
+      ->condition('event_id', 1_501)
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
+   * Editing an already published post does not add another notice.
+   */
+  public function testEditOfPublishedPostDoesNotRegisterNotice(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+    $post->set('first_published', time());
+    $post->save();
+    $avisos->registrarPost($post);
+    $firstRevision = (int) $post->getRevisionId();
+
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_forum_post');
+    $before = $storage->loadUnchanged($post->id());
+    $post->setNewRevision(TRUE);
+    $post->set('body', ['value' => 'Texto corrigido', 'format' => 'plain_text']);
+    $post->save();
+    $post->setOriginal($before);
+
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame($firstRevision, (int) $notices[0]->get('ultimo_post')->value);
+  }
+
+  /**
+   * A recipient without access to the post is never counted.
+   */
+  public function testRecipientWithoutPostAccessIsSkipped(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService(
+      [(int) $follower->id()],
+      $this->createAccessPolicy(canViewPost: FALSE),
+    );
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+
+    $avisos->registrarPost($post);
+
+    self::assertCount(
+      0,
+      $this->loadNotices((int) $follower->id(), (int) $topic->id()),
+    );
+  }
+
+  /**
+   * Topic update notices dedupe by revision and stay apart from responses.
+   */
+  public function testTopicUpdateNoticesAreDeduplicated(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+
+    self::assertSame(1, $avisos->notificarAtualizacao($topic, 10));
+    self::assertSame(0, $avisos->notificarAtualizacao($topic, 10));
+    self::assertSame(1, $avisos->notificarAtualizacao($topic, 11));
+
+    $updates = $this->loadNotices(
+      (int) $follower->id(),
+      (int) $topic->id(),
+      Aviso::TIPO_ATUALIZACAO,
+    );
+    self::assertCount(1, $updates);
+    self::assertSame(2, (int) $updates[0]->get('contador_site')->value);
+    self::assertSame(11, (int) $updates[0]->get('ultimo_evento')->value);
+
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+    self::assertSame(1, $avisos->registrarPost($post));
+
+    self::assertCount(
+      1,
+      $this->loadNotices((int) $follower->id(), (int) $topic->id()),
+    );
+    self::assertCount(
+      1,
+      $this->loadNotices(
+        (int) $follower->id(),
+        (int) $topic->id(),
+        Aviso::TIPO_ATUALIZACAO,
+      ),
+    );
+    self::assertSame(2, (int) $updates[0]->get('contador_site')->value);
+  }
+
+  /**
+   * A topic revision author does not receive an update notice for their action.
+   */
+  public function testTopicRevisionAuthorDoesNotReceiveOwnNotice(): void {
+    $author = $this->createUser('autora_atualizacao');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $topic->setRevisionUserId((int) $author->id());
+    $topic->save();
+    $avisos = $this->createAvisoService([
+      (int) $author->id(),
+      (int) $follower->id(),
+    ]);
+
+    self::assertSame(1, $avisos->notificarAtualizacao($topic, (int) $topic->getRevisionId()));
+    self::assertCount(0, $this->loadNotices(
+      (int) $author->id(),
+      (int) $topic->id(),
+      Aviso::TIPO_ATUALIZACAO,
+    ));
+    self::assertCount(1, $this->loadNotices(
+      (int) $follower->id(),
+      (int) $topic->id(),
+      Aviso::TIPO_ATUALIZACAO,
+    ));
+  }
+
+  /**
+   * Unpublished or unsupported topics and a missing flag register nothing.
+   */
+  public function testTopicWithoutEligiblePublicationRegistersNothing(): void {
+    $follower = $this->createUser('seguidora');
+    $unpublished = $this->createTopic('Tópico em rascunho', FALSE);
+    $published = $this->createTopic('Tópico publicado');
+
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    self::assertSame(0, $avisos->notificarAtualizacao($unpublished, 5));
+
+    $unsupported = $this->createAvisoService(
+      [(int) $follower->id()],
+      $this->createAccessPolicy(supportsTopic: FALSE),
+    );
+    self::assertSame(0, $unsupported->notificarAtualizacao($published, 5));
+
+    $noFlag = $this->createMock(FlagServiceInterface::class);
+    $noFlag->method('getFlagById')->willReturn(NULL);
+    $withoutFlag = new AvisoService(
+      $this->container->get('entity_type.manager'),
+      $noFlag,
+      $this->createAccessPolicy(),
+      $this->container->get('database'),
+      $this->container->get('datetime.time'),
+    );
+    self::assertSame(0, $withoutFlag->notificarAtualizacao($published, 5));
+
+    self::assertCount(
+      0,
+      $this->loadNotices((int) $follower->id(), (int) $unpublished->id()),
+    );
+    self::assertCount(
+      0,
+      $this->loadNotices((int) $follower->id(), (int) $published->id()),
+    );
+  }
+
+  /**
+   * Creates a persisted account.
+   */
+  private function createUser(string $name): UserInterface {
+    $user = User::create(['name' => $name, 'status' => 1]);
+    $user->save();
+    return $user;
+  }
+
+  /**
+   * Creates a persisted Forum topic.
+   */
+  private function createTopic(
+    string $title = 'Tópico de teste',
+    bool $published = TRUE,
+  ): NodeInterface {
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => $title,
+      'status' => $published ? 1 : 0,
+    ]);
+    $topic->save();
+    return $topic;
+  }
+
+  /**
+   * Creates a real published legacy Comment attached to a Forum topic.
+   */
+  private function createPersistedComment(NodeInterface $topic, int $author): CommentInterface {
+    $comment = Comment::create([
+      'comment_type' => 'aculta_discussion_post',
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'uid' => $author,
+      'subject' => 'Resposta de teste',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $comment->save();
+    return $comment;
+  }
+
+  /**
+   * Creates a persisted Forum post.
+   */
+  private function createPost(
+    NodeInterface $topic,
+    int $author,
+    bool $published,
+  ): ForumPost {
+    $post = ForumPost::create([
+      'uid' => $author,
+      'topic' => $topic->id(),
+      'body' => ['value' => 'Texto do post', 'format' => 'plain_text'],
+      'status' => $published,
+    ]);
+    $post->save();
+    return $post;
+  }
+
+  /**
+   * Builds a published legacy comment for notification characterization.
+   */
+  private function createPublishedComment(
+    NodeInterface $topic,
+    int $author,
+    int $comment_id,
+  ): CommentInterface {
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('id')->willReturn((string) $comment_id);
+    $comment->method('getOwnerId')->willReturn($author);
+    $comment->method('bundle')->willReturn('aculta_discussion_post');
+    $comment->method('isPublished')->willReturn(TRUE);
+    $comment->method('getCommentedEntity')->willReturn($topic);
+    return $comment;
+  }
+
+  /**
+   * Builds the service with the given follower accounts.
+   *
+   * @param int[] $followers
+   *   Account ids returned by the flagged topic query.
+   * @param \Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface|null $policy
+   *   Notice access policy; a permissive default is used when omitted.
+   * @param \Drupal\Core\Lock\LockBackendInterface|null $lock
+   *   Optional lock backend for retry characterization.
+   */
+  private function createAvisoService(
+    array $followers,
+    ?ForumNoticeAccessPolicyInterface $policy = NULL,
+    ?LockBackendInterface $lock = NULL,
+  ): AvisoService {
+    return new AvisoService(
+      $this->container->get('entity_type.manager'),
+      $this->createFlagService($followers),
+      $policy ?? $this->createAccessPolicy(),
+      $this->container->get('database'),
+      $this->container->get('datetime.time'),
+      $lock ?? $this->container->get('lock'),
+    );
+  }
+
+  /**
+   * Builds an actual producer-to-consumer event pipeline over test storage.
+   *
+   * @param int[] $followers
+   *   Account IDs returned by the topic's follow query.
+   * @param \Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface $policy
+   *   Access policy used by the producer and registrar.
+   */
+  private function createEventProducer(
+    array $followers,
+    ForumNoticeAccessPolicyInterface $policy,
+  ): ForumNoticeEventProducer {
+    $entityTypeManager = $this->container->get('entity_type.manager');
+    $flags = $this->createFlagService($followers);
+    $avisos = new AvisoService(
+      $entityTypeManager,
+      $flags,
+      $policy,
+      $this->container->get('database'),
+      $this->container->get('datetime.time'),
+      $this->container->get('lock'),
+    );
+    $dispatcher = new EventDispatcher();
+    $dispatcher->addSubscriber(new ForumNoticeEventSubscriber($entityTypeManager, $avisos));
+    return new ForumNoticeEventProducer(
+      $flags,
+      $policy,
+      new MessengerNoticePublisher($dispatcher),
+    );
+  }
+
+  /**
+   * Builds FlagService results for the given follower accounts.
+   *
+   * @param int[] $followers
+   *   Account IDs returned by the topic's follow query.
+   */
+  private function createFlagService(array $followers): FlagServiceInterface {
+    $flaggings = [];
+    foreach ($followers as $uid) {
+      $flagging = $this->createMock(FlaggingInterface::class);
+      $flagging->method('getOwnerId')->willReturn($uid);
+      $flaggings[] = $flagging;
+    }
+    $flag = $this->createMock(FlagInterface::class);
+    $flags = $this->createMock(FlagServiceInterface::class);
+    $flags->method('getFlagById')->with('seguir_topico')->willReturn($flag);
+    $flags->method('getEntityFlaggings')->willReturn($flaggings);
+    return $flags;
+  }
+
+  /**
+   * Builds a permissive notice access policy, optionally denying one check.
+   */
+  private function createAccessPolicy(
+    bool $supportsTopic = TRUE,
+    bool $canViewTopic = TRUE,
+    bool $canViewPost = TRUE,
+    bool $canViewComment = FALSE,
+  ): ForumNoticeAccessPolicyInterface {
+    $policy = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+    $policy->method('supportsTopic')->willReturn($supportsTopic);
+    $policy->method('canViewTopic')->willReturn($canViewTopic);
+    $policy->method('canViewPost')->willReturn($canViewPost);
+    $policy->method('canViewComment')->willReturn($canViewComment);
+    return $policy;
+  }
+
+  /**
+   * Loads a person's notices for a topic and type.
+   *
+   * @return \Drupal\aculta_messenger\Entity\Aviso[]
+   *   Stored notices, newest id last.
+   */
+  private function loadNotices(
+    int $uid,
+    int $nid,
+    string $tipo = Aviso::TIPO_RESPOSTA,
+  ): array {
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_aviso');
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('uid', $uid)
+      ->condition('assunto_nid', $nid)
+      ->condition('tipo', $tipo)
+      ->execute();
+    return array_values($storage->loadMultiple($ids));
+  }
+
+}
+
+/**
+ * Digest provider that fails after updating its source once.
+ */
+final class FailOnceDigestAckProvider implements AvisoDigestProviderIdentityInterface {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return 'wiki';
+  }
+
+  /**
+   * Whether the synthetic first failure has happened.
+   */
+  private bool $failed = FALSE;
+
+  public function __construct(
+    private readonly int $uid,
+    private readonly Connection $database,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function pendingRecipientIds(): array {
+    return [$this->uid];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestRowsFor(int $uid): array {
+    if ($uid !== $this->uid) {
+      return [];
+    }
+    return [
+      [
+        'tipo' => 'wiki',
+        'titulo' => 'Revisão publicada',
+        'quantidade' => 1,
+        'delivery_id' => 998,
+      ],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function markDigestSent(int $uid, array $deliveryIds): void {
+    $this->database->update('aculta_messenger_digest_ack_test')
+      ->fields(['acknowledged' => 1])
+      ->condition('id', 1)
+      ->execute();
+    if (!$this->failed) {
+      $this->failed = TRUE;
+      throw new \RuntimeException('Synthetic acknowledgement failure.');
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigest(int $uid): void {}
+
+}
+
+/**
+ * Replacement implementation used to prove recovery across a PHP class rename.
+ */
+final class RecoveredDigestAckProvider implements AvisoDigestProviderIdentityInterface {
+
+  public function __construct(
+    private readonly int $uid,
+    private readonly Connection $database,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return 'wiki';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function pendingRecipientIds(): array {
+    return [$this->uid];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestRowsFor(int $uid): array {
+    if ($uid !== $this->uid) {
+      return [];
+    }
+    return [
+      [
+        'tipo' => 'wiki',
+        'titulo' => 'Revisão publicada',
+        'quantidade' => 1,
+        'delivery_id' => 998,
+      ],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function markDigestSent(int $uid, array $deliveryIds): void {
+    $this->database->update('aculta_messenger_digest_ack_test')
+      ->fields(['acknowledged' => 1])
+      ->condition('id', 1)
+      ->execute();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigest(int $uid): void {}
+
+}

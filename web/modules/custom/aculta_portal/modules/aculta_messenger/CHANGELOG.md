@@ -1,6 +1,2959 @@
+## 0.1.1-dev.396 — remover texto bruto de exceções dos logs operacionais
+
+A revisão M7 identificou logs que copiavam respostas de transporte e exceções
+IMAP sem filtro. Esses textos podem trazer endereços, dados da caixa ou
+respostas arbitrárias do provedor. O Mailer agora registra transporte e código
+SMTP, enquanto o monitor IMAP persiste e registra somente a classe da exceção;
+a tela administrativa também exibe apenas esse diagnóstico categórico. Novos
+registros de falha e alertas guardam somente classe/código, sem texto bruto.
+Registros históricos anteriores permanecem sob a retenção/acesso existentes;
+a tela mascara estado IMAP legado, e nenhuma limpeza de logs foi executada.
+
+`MailMonitorTest` **6/18**, `MailSettingsKernelTest` **2/5**, Unit Mailer **161/331** e Kernel Mailer **46/214 PASS** no MariaDB dedicado. PHPCS Drupal/DrupalPractice passou sem erros; há avisos de linhas >80 chars no baseline dos arquivos tocados. Gate Drupal 11+ (**1.155 checks**), índice de status e diff check PASS. PHP 8.4.27; SMTP real e Runtime não executados.
+
+## 0.1.1-dev.395 — corrigir propriedade de locks durante digest e entrega
+
+Um teste com worker suspenso após aceite do Mailer encontrou uma falha real:
+`lock.persistent` usa o mesmo identificador entre requisições e permitia que o
+worker antigo renovasse uma lease já assumida por outro processo. Serviços
+temporários de digest, filas, conversas e idempotência do Mailer agora usam o
+serviço Drupal `lock`, cujo proprietário é específico ao processo. A cobertura
+Kernel substitui o backend nulo do `KernelTestBase` por `DatabaseLockBackend`.
+O teste suspende o worker, expira a lease somente no banco SimpleTest, assume-a
+com outro proprietário e retoma o processo: o worker antigo não confirma o
+manifesto, e a reconciliação posterior confirma o aceite sem novo transporte.
+
+Validação focal `AvisosResumoMailerKernelTest`: **6/133 PASS**. Kernels
+combinados Messenger + Mailer: **101/1.421 PASS**, com dez depreciações de
+Core/contrib e quatro notices PHPUnit preexistentes. Testes usam somente
+`aculta_simpletest` e transporte Drupal de teste; SMTP e Runtime não foram
+usados.
+
+## 0.1.1-dev.394 — estabilizar contenção concorrente do digest
+
+O marcador de conclusão usado pelo teste de oito workers agora é publicado
+por rename atômico. A carga repetida expôs uma corrida em que o transporte
+podia ler um arquivo antes do conteúdo `locked` estar completo e interpretar
+isso como falha. Após a correção, dez rodadas independentes passaram (**10/10,
+330 assertions**), totalizando 80 boots Drupal concorrentes e um único envio e
+acknowledgement por rodada. A suíte Kernel completa passou **56/1.192** no
+MariaDB dedicado (`aculta_simpletest`), com 10 depreciações e 4 notices
+upstream. PHPCS Drupal/DrupalPractice e PHP lint PASS. Temporários ficaram em
+diretório isolado sob `/var/tmp`; sem SMTP externo ou Runtime. A evidência
+confirma contenção repetida, não throughput sustentado ou homologação Alpha.
+
+## 0.1.1-dev.393 — alinhar estados M1/M2 às evidências
+
+ROADMAP agora distingue histórico de estado atual: HTTP autenticado da
+conversa/resposta/grupo, fluxo sem JavaScript e negação a não participante
+estão comprovados no BrowserTest; o envelope/API, adapters, storage existente
+e idempotência passaram nas suítes Unit/Integration/Kernel. Permanecem
+pendentes os smokes visuais Firefox, Runtime/Alpha, updates operacionais e
+transporte externo; nenhum deles é declarado concluído por testes isolados.
+Índice de status regenerado e validado.
+
+## 0.1.1-dev.392 — concorrência com oito workers independentes
+
+O cenário de digest agora inicia **oito boots Drupal concorrentes** para o
+mesmo destinatário e prefixo MariaDB; só um transporte e acknowledgement são
+permitidos. `testIndependentDrupalWorkersDoNotSendConcurrentDigests` passou
+**1/33 assertions**. A suíte Kernel completa passou **56/1.192** (10
+depreciações Core/contrib e 4 notices PHPUnit), sem falhas. PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. A evidência mede
+contenção determinística, não carga sustentada do Runtime/Alpha; SMTP externo
+não foi usado.
+
+## 0.1.1-dev.391 — concorrência entre workers de digest
+
+Reexecutado isoladamente `AvisosResumoMailerKernelTest::testIndependentDrupalWorkersDoNotSendConcurrentDigests` no MariaDB SimpleTest: **1 teste / 18 assertions PASS**. Três boots Drupal independentes competem pelo mesmo destinatário e prefixo; somente um envia/acknowledges, os demais observam o lock, com um único Mail Log/transporte. Atualiza a evidência de concorrência do M7; stress sustentado sob carga, Runtime e SMTP externo permanecem pendentes.
+
+## 0.1.1-dev.390 — caracterizar update aditivo 10012
+
+`MessengerDefaultConfigUpdateTest` agora cobre também `update_10012`, que
+instala a configuração padrão do bundle compartilhado de avisos do Game por
+`ConfigInstaller::installDefaultConfig()`. A classe passou **6 testes / 18
+assertions** e a suíte Unit do Messenger **376 testes / 4.150 assertions**;
+PHPCS Drupal/DrupalPractice e PHP lint PASS. O update não foi aplicado no
+Runtime.
+
+## 0.1.1-dev.389 — negar acesso HTTP de não participante
+
+O BrowserTest autentica um terceiro usuário sem membership na thread de grupo
+e faz GET real ao endpoint do drawer. A resposta é negada (403/404), não contém
+a mensagem e a thread preserva a contagem de itens: **1 teste / 65 assertions
+PASS**. O caso exercita também o isolamento do cookie jar entre contas; uma
+tentativa anterior havia reaproveitado a sessão do remetente e não serviu como
+evidência. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+BrowserTest reportou 275 depreciações Core/contrib sem falhas. Tudo em site e
+banco temporários; sem alteração no Runtime.
+
+## 0.1.1-dev.388 — revalidação das integrações e Kernels
+
+Reexecutadas as suítes completas do Messenger no snapshot desta branch:
+`tests/src/Integration` passou **120 testes / 1.569 assertions** (5 deprecações
+upstream e 7 notices PHPUnit) e `tests/src/Kernel` passou **56 testes / 1.177
+assertions** (10 deprecações upstream e 4 notices), no banco SimpleTest
+dedicado. Sem falhas. O Dev.387 BrowserTest também comprova a composição e o
+envio de grupo sem JavaScript (**1/58 PASS**); a versão Firefox visual/Runtime
+do script permanece pendente. Nenhum dado ou configuração do Runtime foi
+alterado. SMTP externo, Alpha e updates operacionais seguem pendentes.
+
+## 0.1.1-dev.387 — composição de grupo sem JavaScript
+
+O BrowserTest autenticado percorre a busca nativa por GET, preserva dois
+destinatários na composição progressiva e envia a primeira mensagem de grupo
+sem JavaScript. O teste confirma uma thread com o membro remetente e os dois
+destinatários, além da mensagem persistida: **1 teste / 58 assertions PASS**.
+PHPUnit reportou 275 depreciações de Core/contrib, sem falhas. Esta evidência é
+do site temporário BrowserTestBase; Firefox visível, Runtime e Alpha seguem
+pendentes.
+
+## 0.1.1-dev.386 — resposta autenticada na conversa existente
+
+O hook de renderização agora adapta também o formulário nativo já presente no
+display `private_message_thread`, encaminhando-o ao endpoint POST protegido do
+drawer e marcando-o para o comportamento JavaScript compartilhado. Antes, o
+hook retornava sem adaptação quando o display padrão do contrib já fornecia o
+form, deixando `action` e atributos incompatíveis com a gaveta. O hook também
+fornece um render array vazio para o campo `updated` quando ausente, conforme
+esperado pelo preprocess do template instalado, sem alterar o módulo contrib.
+
+BrowserTest autenticado cria uma conversa, extrai os tokens do formulário de
+resposta e da rota, envia um POST HTTP real e confirma duas mensagens
+persistidas na thread: **1 teste / 35 assertions PASS**. Suíte Unit completa:
+**375 testes / 4.147 assertions PASS**. PHP lint, PHPCS Drupal/DrupalPractice e
+`git diff --check` PASS. PHPUnit reportou 275 depreciações de Core/contrib, sem
+falhas. Runtime, browser visual, fluxo de grupo sem JavaScript e Alpha seguem
+pendentes.
+
+## 0.1.1-dev.385 — envio inicial de conversa exercitado por HTTP autenticado
+
+O BrowserTest agora autentica um membro pelo helper de sessão do Drupal, abre
+o composer, seleciona um destinatário elegível e envia a primeira mensagem por
+POST real. O cenário revelou que o controle de acesso de `private_message`
+nega a visualização de uma thread vazia antes de ela receber sua primeira
+mensagem; a submissão tentava registrar um erro depois do fim da validação e
+respondia com exceção. A validação no limite de persistência agora permite
+somente esse estado inicial quando remetente ativo, permissão e membership são
+revalidados; threads existentes continuam usando o acesso nativo.
+
+Validação: BrowserTest **1 teste / 26 assertions PASS**; Unit focal
+`PrivateMessageFormValidatorTest` **4/30 PASS**; suíte Unit do Messenger
+**375 testes / 4.147 assertions PASS**; PHP lint, PHPCS Drupal/DrupalPractice e
+`git diff --check` PASS. PHPUnit reportou 274 depreciações de Core/contrib no
+BrowserTest, sem falha. O teste prova primeira mensagem e
+persistência de thread em site temporário; resposta em thread, Runtime, Firefox
+visual, SMTP e Alpha seguem pendentes. A raiz do host de teste, verificada em
+2026-10-25 após a correção do relato, responde HTTP 200; a rota Drupal `/`
+aponta para `entity.node.canonical` e a home configurada é `/node/1`, portanto
+não foi reproduzido `No route found` neste momento.
+
+## 0.1.1-dev.384 — corrigir o escopo da evidência BrowserTest
+
+A revisão do resultado Dev.383 encontrou que o HTTP de `/user/login` retornava
+status 200 com corpo vazio no harness utilizado; isso não comprova uma rota
+Drupal servida e não pode ser contado como homologação HTTP. O teste foi
+reduzido ao que demonstrou: `aculta_messenger` e suas dependências instalam no
+site BrowserTestBase isolado. A rota, sessão autenticada e envio permanecem
+pendentes até corrigir o servidor/browser de teste.
+
+Validação corrigida: **1 teste / 4 assertions PASS** para instalação e módulo
+habilitado; 189 depreciações Core/contrib, sem falhas. PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. O servidor estático foi usado somente como
+URL-base de disponibilidade e não recebeu tráfego funcional da aplicação.
+
+## 0.1.1-dev.383 — instalação funcional isolada do Messenger
+
+`MessengerModuleInstallTest` instala `aculta_messenger` com suas dependências
+em BrowserTestBase e faz uma requisição HTTP real a `/user/login`. O teste usa
+Core/Composer e módulos do snapshot isolado da PR, servidor PHP local e banco
+MariaDB SimpleTest dedicado; nenhum dado do Runtime foi usado.
+
+Validação: **1 teste / 5 assertions PASS**, HTTP 200; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. PHPUnit reportou 189 depreciações de
+Core/contrib durante a instalação, sem falha. Isto comprova instalação e uma
+rota HTTP no site temporário; não homologa Runtime, sessão autenticada, envio de
+mensagem, visual nem e-mail externo.
+## 0.1.1-dev.383 — instalação funcional isolada do Messenger (evidência corrigida em Dev.384)
+
+`MessengerModuleInstallTest` instalou `aculta_messenger` e suas dependências em
+BrowserTestBase. A alegação inicial de que `/user/login` respondeu por HTTP foi
+retirada em Dev.384: o corpo retornado era vazio, portanto o teste não provou
+que a rota Drupal foi servida. A evidência válida limita-se à instalação do
+módulo; sessão autenticada e entrega seguem sem homologação.
+
+## 0.1.1-dev.382 — Kernels dos consumers de domínio
+
+Os Kernels de integração LMS, Wiki, Commerce/Loja, Doações, Revista e Game
+copiados do snapshot publicado passaram **37 testes / 697 assertions** no banco
+dedicado `aculta_simpletest`, com autoload dos módulos apontado ao snapshot. O
+Drupal Core e a descoberta de manifests vieram do checkout local. Foram
+reportadas cinco depreciações upstream (plugins Message/QueueWorker/
+MessagePurge) e sete notices PHPUnit; nenhuma falha.
+
+Os testes não processaram filas ou dados do Runtime e não chamaram SMTP
+externo. HTTP autenticado, visual, Runtime pós-update e Alpha permanecem fora
+deste gate.
+
+## 0.1.1-dev.381 — revalidação Unit dos consumers integrados
+
+Os diretórios Unit de integração dos adapters centrais (LMS, Wiki,
+Commerce/Loja, Doações, Revista e Game) passaram **83 testes / 872 assertions**
+no snapshot publicado, com autoload direcionado aos módulos desse snapshot.
+Sem conexão a banco, Runtime ou transporte externo.
+
+Kernel específico dos produtores, entrega HTTP, BrowserTest/visual, Runtime,
+SMTP e Alpha continuam pendentes.
+
+## 0.1.1-dev.380 — revalidação Kernel do Messenger
+
+A árvore Kernel completa passou **56 testes / 1.177 assertions** no banco
+dedicado `aculta_simpletest`. A execução foi feita no checkout de trabalho;
+os testes Kernel e os serviços exercitados não diferem do snapshot publicado
+nessa frente. PHPUnit reportou dez depreciações upstream de Core/contrib e
+quatro notices; sem falhas. Temporários e saída ficaram fora de `/tmp`.
+
+Este gate não valida HTTP com sessão, BrowserTest, Runtime pós-update, SMTP
+externo ou Alpha.
+
+## 0.1.1-dev.379 — regressão completa dos testes Unit publicados
+
+A suíte Unit do Messenger no snapshot da PR passou **374 testes / 4.140
+assertions**. O carregamento foi direcionado ao código do worktree isolado da
+PR, evitando que o Composer do checkout principal usasse cópias de classes de
+outro snapshot. Inclui a regressão Dev.378 e os testes de composição
+progressiva/recuperação de destinatários.
+
+Esta execução é Unit local: não valida Kernel/Integration, HTTP com sessão,
+Runtime pós-update, SMTP ou Alpha. PHPUnit informou que o diretório de saída
+de BrowserTest não é gravável; isso não impediu nem alterou esta suíte Unit.
+
+## 0.1.1-dev.378 — regressão da configuração modular do Aviso Institucional
+
+Adicionado teste Unit que protege a dependência explícita de `menu_ui` e mantém
+opcional o form display condicionado por Domain e workflow editorial global.
+O teste verifica também que essa configuração não reaparece em
+`config/install`, onde impediria instalações independentes do Messenger.
+
+Validação: PHPUnit **1 teste / 5 assertions PASS**, PHPCS Drupal/DrupalPractice,
+PHP lint e diff check PASS. BrowserTestBase permanece inconclusivo antes das
+asserções HTTP devido à política de ACL do PHP Storage restrito no site
+temporário; não houve operação no Runtime nem envio externo de e-mail.
+
+## 0.1.1-dev.377 — instalação modular independente de configuração editorial global
+
+`menu_ui` agora é dependência explícita, conforme o bundle `aculta_notice`. A
+configuração do formulário desse bundle que depende de `field_domain_source` e
+do workflow global `editorial` passou para `config/optional`; os demais campos
+do Aviso Institucional e o display público continuam obrigatórios no módulo.
+Assim, habilitar o Messenger não depende de importar previamente configuração
+global de Domain/workflow. O Configuration Sync continua fornecendo o display
+completo no site integrado.
+
+Validação: YAML parse e diff check passaram. A instalação do módulo em
+BrowserTestBase avançou até a primeira requisição sem erro de dependência de
+configuração; o teste funcional não completou os requests porque o PHP Storage
+restrito do Homelab exige ACL/setgid indisponível no site temporário. Nenhuma
+operação foi feita no Runtime ou em SMTP.
+
+## 0.1.1-dev.376 — revalidação dos Kernels de digest e idempotência
+
+No MariaDB dedicado `aculta_simpletest`, `AvisosResumoMailerKernelTest` passou
+**5 testes / 95 assertions** e `ForumNoticeIdempotencyKernelTest` passou
+**39/919**, com quatro notices PHPUnit. Isso revalida contenção entre boots,
+recuperação do aceite e expiração de lease enquanto o transporte continua em
+andamento. SMTP externo e Runtime não foram usados. O smoke visual da central
+não passou da etapa de autenticação: não encontrou o acionador do Messenger;
+o Firefox também registrou falha de escrita do perfil temporário com `/tmp`
+entre 98% e 100% de uso. Não houve interação com avisos.
+
+## 0.1.1-dev.375 — caracterização do fallback de grupo por GET
+
+`NewConversationControllerTest` agora executa `composeGroup()` com uma
+requisição GET real e verifica que IDs válidos são deduplicados e restaurados
+no estado do formulário POST, sem enviar mensagem. Unit focal: **5 testes / 60
+assertions PASS**. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS. O teste visual sem JavaScript e o envio autenticado continuam pendentes;
+nenhuma conversa ou dado do Runtime foi criado.
+
+## 0.1.1-dev.374 — composição de grupo sem JavaScript
+
+A ação de iniciar conversa agora tem link nativo. A busca GET conserva os
+destinatários já escolhidos; cada resultado abre o formulário de grupo com os
+selecionados, e cada chip oferece remoção por link. O formulário POST de primeira
+mensagem mantém suas validações existentes. No drawer, JavaScript oculta a busca
+de fallback e reativa a busca dinâmica existente.
+
+Validação: Unit Messenger **372/4.126 PASS**; PHPCS Drupal/DrupalPractice passa
+nos arquivos novos e no Form, e DrupalPractice passa no `MessagesController`;
+no relatório Drupal preexistente do controller, os erros/avisos caíram de
+94/65 para 92/63. PHP lint, `node --check` e `git diff --check` PASS. Firefox/
+Runtime não executados: o código está isolado na worktree de publicação e os
+updates Alpha do Runtime continuam pendentes. Nenhuma conversa foi criada.
+
+## 0.1.1-dev.373 — higiene dos post-updates
+
+O docblock do post-update de migração das conquistas Game passou a seguir o
+padrão Drupal. PHPCS Drupal/DrupalPractice dos hooks de update e post-update,
+PHP lint e `git diff --check` passaram. Sem mudança comportamental ou Runtime.
+
+## 0.1.1-dev.372 — busca e composição local de grupo
+
+Adicionado smoke autenticado somente leitura para a tela compartilhada de
+nova conversa: busca por nome público, seleção por Enter e clique, chips
+distintos, remoção acessível, limite configurado e formulário sem submissão.
+No Runtime de teste, Firefox ESR visível passou **10/10** em viewport efetivo
+1270 px. Todas as chamadas registradas foram GET 200; sem overflow ou erros
+JavaScript. A sessão não criou conversa nem alterou dados.
+
+## 0.1.1-dev.371 — responsividade da gaveta de conversas
+
+Repetido o smoke autenticado somente leitura com janela solicitada de 390 px.
+Firefox ESR entregou viewport efetivo de 500 px; as três linhas (incluindo dois
+grupos), estado de leitura e navegação acessível permaneceram sem overflow.
+
+Validação: **10/10 PASS** em viewport efetivo de 500 px; guard `teste.comum`
+PASS. A sessão não emitiu requests de escrita nem alterou dados. O resultado
+não declara viewport real de 390 px nem substitui teste em dispositivo/leitor
+de tela.
+
+## 0.1.1-dev.370 — smoke HTTP somente leitura da gaveta populada
+
+Adicionada uma suíte BrowserTest versionada para a lista autenticada de
+conversas. No Runtime de teste, `teste.comum` carregou três linhas sintéticas
+por GET 200, incluindo dois grupos separados; todos têm ID e rótulo de abertura
+acessível, estado de leitura explícito e não causam overflow no viewport de
+1270 px. O teste registra a resposta e não abre threads nem envia formulários.
+
+Validação: Firefox ESR visível **10/10 PASS**, sem requisições de escrita ou
+erros JavaScript; guard da conta `teste.comum` PASS. Nenhuma mensagem,
+preferência, amizade, bloqueio ou consentimento foi alterado. Runtime somente
+de leitura; HTTP de envio continua coberto apenas em Unit/Kernel e a sessão
+autenticada de criação/resposta ponta a ponta permanece pendente.
+
+## 0.1.1-dev.369 — fechamento do baseline de estilo da nova conversa
+
+O controlador que inicia conversas individuais e em grupo foi ajustado ao
+padrão Drupal para documentação de métodos e legibilidade das linhas longas.
+Não houve mudança no comportamento de busca, elegibilidade, envio ou
+persistência.
+
+Validação: `NewConversationControllerTest` + `NewConversationRecipientIdsTest`
+**13/113 PASS**; PHPCS Drupal/DrupalPractice no controlador e formulário
+`NewConversationForm` PASS; PHP lint e `git diff --check` PASS. HTTP autenticado
+e Runtime continuam pendentes conforme M1.
+
+## 0.1.1-dev.367 — homologação visual da central e acompanhamentos
+
+As verificações visuais existentes foram repetidas no Firefox ESR visível do
+Runtime de teste: central filtrada **5/5** (host Conta) e gaveta **8/8** (host
+Portal, viewport 1270 px). A nova suíte `privacy-subscriptions.mjs` passou
+**9/9** em viewport efetivo 1270 px e **9/9** com janela solicitada de 390 px
+(viewport efetivo 500 px); valida teclado, estado vazio e reflow sem enviar o
+formulário. A conta `teste.comum` já tinha aceite de Termos; nenhuma Flag ou
+consentimento foi alterado. A lista populada e a paginação visual da central
+continuam sem fixture suficiente no Runtime.
+
+## 0.1.1-dev.365 — regressão completa dos Kernels
+
+Reexecutada a árvore completa `tests/src/Kernel` no MariaDB dedicado. Os casos
+abrangem rotas/CSRF, amizade, retenção transacional, ledger do Fórum,
+concorrência/recuperação do digest e integração com ACULTA Mailer.
+
+Validação: **55 testes / 1.166 assertions PASS**, com dez depreciações de
+Core/contrib e quatro notices PHPUnit. Runtime, Alpha e SMTP externo não
+executados.
+
+## 0.1.1-dev.364 — regressão completa dos adapters de integração
+
+Reexecutada a árvore completa `tests/src/Integration` após a proteção do
+adapter Revista. Commerce, Doações, Game, LMS, Revista e Wiki passaram juntos
+no MariaDB dedicado; nenhuma falha funcional foi encontrada.
+
+Validação: **120 testes / 1.569 assertions PASS**, com cinco depreciações
+upstream e sete notices PHPUnit. A tentativa inicial sem `SIMPLETEST_DB` foi
+inválida e falhou no preflight; a execução válida usou `aculta_simpletest`.
+
+## 0.1.1-dev.363 — revalidação do ledger e digest do Fórum
+
+Reexecutado `ForumNoticeIdempotencyKernelTest` no MariaDB dedicado após os
+últimos incrementos do Messenger. A suíte confirma a paginação, acesso,
+idempotência, aprovações fora de ordem e recuperação do digest no estado
+atual do branch.
+
+Validação: Kernel do Fórum **39 testes / 919 assertions PASS**, com quatro
+notices PHPUnit; índice de status dos 41 componentes PASS. Runtime/Alpha e
+SMTP externo não executados.
+
+## 0.1.1-dev.362 — bootstrap isolado no teste de concorrência do digest
+
+O teste com três workers Drupal concorrentes agora serializa somente o
+bootstrap do Kernel para evitar que o probe de instalação do Core crie a mesma
+tabela temporária ao mesmo tempo. Depois do bootstrap, os três processos
+continuam disputando simultaneamente o lock enquanto o transporte titular está
+aberto. A primeira execução reproduziu a colisão no prefixo compartilhado; a
+correção foi validada no MariaDB dedicado.
+
+Validação: `AvisosResumoMailerKernelTest` **5 testes / 95 assertions PASS**;
+PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. SMTP externo,
+Runtime e suspensão além da lease não foram testados.
+
+## 0.1.1-dev.361 — adapters opcionais sem configuração completa
+
+O adapter da Revista agora verifica a presença do template Message e de todos
+os campos de storage/instância antes de consultar ou gravar. Se a configuração
+do bundle ainda não foi instalada em um site existente, publisher, central,
+contador e digest falham fechados sem `QueryException`. O Kernel reproduz a
+configuração ausente, equivalente ao preflight do Runtime; nenhum update foi
+executado nesse ambiente.
+
+Validação: Kernel Magazine **10 testes / 227 assertions PASS** no MariaDB
+dedicado; Unit Messenger **369 / 3.976 PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Duas depreciações upstream de discovery
+`@EntityType` permanecem. Atualizações 10008–10012, HTTP autenticado, SMTP,
+Runtime após atualização e visual continuam pendentes.
+
+## 0.1.1-dev.360 — avisos do fluxo editorial da Revista
+
+O adapter central agora recebe eventos de envio para revisão (`draft` →
+`review`) e devolução para ajustes (`review` → `draft`). A audiência editorial
+é restrita a autores/coautores autorizados e exclui quem executou a ação;
+seguidores continuam recebendo apenas eventos públicos. As opções de envio e
+devolução são independentes na administração. A abertura usa a rota canônica
+para revisões padrão ainda não publicadas e a rota de última versão somente
+quando existe revisão pendente acessível. A central reconhece a ação de leitura
+do bundle Message Revista.
+
+Validação: Kernel Revista **9 testes / 208 assertions PASS** no MariaDB
+dedicado; Unit Messenger **369 / 3.976 PASS**; Unit do adapter Revista **3 / 6
+PASS**. Foram reportadas duas depreciações upstream de descoberta `@EntityType`
+do Message/Core. Runtime, HTTP autenticado, SMTP real e visual permanecem
+pendentes.
+
+## 0.1.1-dev.357 — primeira integração da Revista
+
+O núcleo Messenger agora possui o consumer e as configurações da origem Revista,
+com persistência no `Message` já compartilhado, aviso obrigatório no site,
+preferência de e-mail off/direto/digest, agrupamento da central e validação de
+acesso por lote. O adapter Magazine emite publicação/republicação e atualização
+pública para autor, coautores e seguidores elegíveis; inclui Flag para seguir
+publicações. Não cria conversa ou armazenamento paralelo. Eventos de envio e
+resultado da revisão editorial permanecem pendentes.
+
+Validação: Magazine Kernel **5 testes / 90 assertions PASS** em MariaDB
+dedicado; Unit Messenger e integração Magazine **369/3.965 PASS**; Integration
+completa **114/1.429 PASS**; Kernel central **55/1.166 PASS** em MariaDB.
+PHPCS Drupal/DrupalPractice, PHP lint (26 arquivos), YAML e diff check PASS.
+Integration registrou 5 depreciações upstream e 7 notices; Kernel, 10
+depreciações upstream e 4 notices. Runtime, SMTP, HTTP, visual e Alpha não
+foram executados.
+
+## 0.1.1-dev.356 — contenção do digest sob concorrência múltipla
+
+O teste de Kernel agora inicia três boots Drupal independentes enquanto o
+worker titular mantém a entrega do digest aberta. Todos os concorrentes são
+rejeitados pelo lock do destinatário e o transporte registra uma única entrega.
+
+Validação: `AvisosResumoMailerKernelTest` **5/95 PASS**; Kernel do Messenger
+**55/1.166 PASS** no MariaDB dedicado (10 depreciações upstream e 4 notices
+PHPUnit); PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime, Alpha e SMTP
+externo não utilizados.
+
+## 0.1.1-dev.355 — recuperar digest após encerramento abrupto do worker
+
+Kernel MariaDB agora mata um processo Drupal independente depois que o ACULTA
+Mailer registra o e-mail como aceito e antes do Messenger gravar `accepted_at`.
+O processo seguinte expira somente a lease fixture, reconhece o Mail Log e
+confirma o manifesto sem repetir a chamada ao transporte. A fixture de
+transporte conta tentativas entre processos por arquivo temporário; nenhum SMTP
+externo é usado.
+
+Validação: `AvisosResumoMailerKernelTest` **5/89 PASS**; Kernel completo do
+Messenger **55/1.160 PASS** (10 depreciações upstream e 4 notices PHPUnit),
+Unit **360/3.928 PASS**, Integration **107/1.336 PASS** (5 depreciações
+upstream e 7 notices). PHPCS Drupal/DrupalPractice, PHP lint, índice de status
+e gate Drupal 11+ **1.155 checks PASS**. SMTP real, Runtime e Alpha não foram
+executados. A janela entre aceite remoto SMTP e persistência do Mail Log segue
+não transacional.
+
+## 0.1.1-dev.354 — retry da fila Wiki pelo Core Cron
+
+O Kernel da fila Wiki agora registra o plugin de teste no queue worker manager e
+executa `Cron::run()` com o worker de produção delegado. Uma falha transitória
+fica na DatabaseQueue; após expirar a lease do fixture, a rodada seguinte do
+Core Cron entrega e remove o item, persistindo tentativa e estado finais.
+
+Validação: suíte `tests/src/Integration` **107 testes / 1.336 assertions PASS**
+e `WikiNoticeEmailQueueKernelTest` **3/83 PASS** no MariaDB dedicado (cinco
+depreciações upstream de Core/contrib e sete notices PHPUnit no conjunto);
+PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime e
+transporte SMTP externo não utilizados.
+
+## 0.1.1-dev.353 — cobrir o esgotamento após falha transitória
+
+Adicionada cobertura para o último erro transitório nas filas de e-mail direto
+de LMS, Doações, Wiki e Loja. A última tentativa agora é comprovadamente
+terminal (`failed_permanent`), enquanto tentativas intermediárias continuam
+retryable. O limite configurado por adapter é respeitado.
+
+Validação: Unit/Integration Unit **440 testes / 4.794 assertions PASS**; os
+três arquivos focais de workers **30/410 PASS**; Integration Kernel completa
+**106 testes / 1.307 assertions PASS** e Kernel central **54/1.141 PASS** no
+MariaDB dedicado (2 + 10 depreciações upstream; 7 + 4 notices PHPUnit);
+PHPCS Drupal/DrupalPractice, PHP lint, `git diff --check`, índice de status e
+gate Drupal 11+ **1.155 checks PASS**. Runtime e SMTP externo não utilizados.
+
+## 0.1.1-dev.352 — estados terminais de entrega direta
+
+Workers de e-mail direto agora persistem `failed_permanent` ao esgotar as
+tentativas, inclusive quando a última falha do transporte é transitória. O
+estado separa uma entrega encerrada de `failed`, que continua elegível a retry.
+Isso cobre Fórum, Wiki, Loja, Doações, LMS, amizades e avisos genéricos de
+mensagens privadas, sem reenviar conteúdo privado.
+
+Validação: Unit/Integration **437 testes / 4.735 assertions PASS**; focais de
+entrega **58/942 PASS**; Kernel Wiki, amizade e Fórum **43/1.012 PASS** no
+MariaDB dedicado (2 depreciações upstream `@EntityType`, 4 notices PHPUnit);
+PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Uma fixture
+LMS foi atualizada para implementar `sort()` e `range()` requeridos pelo
+scanner paginado do Fórum. Runtime e SMTP externo não utilizados.
+
+## 0.1.1-dev.351 — paginar descoberta de destinatários do resumo
+
+O cron do resumo do Fórum agora consulta os avisos por cursor de ID, em páginas
+de 500, e hidrata somente uma página por vez ao montar a lista de destinatários.
+Isso evita carregar todas as entidades `aculta_aviso` pendentes de uma vez; a
+entrega combinada por conta, os locks e o reconhecimento idempotente permanecem.
+
+Validação: Unit Messenger **360/3.937 PASS**; `AvisosResumoProviderPreferenceTest`
+**11/1.207 PASS**, incluindo 501 avisos em duas páginas e cursor monotônico;
+`AvisosResumoMailerKernelTest` **4/70 PASS** no MariaDB dedicado; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime e SMTP externo
+não utilizados.
+O validador do índice global continua falhando porque o README raiz gerado está
+desatualizado; não foi regenerado para preservar alterações de outros componentes.
+
+## 0.1.1-dev.350 — limitar lotes da retenção de conversas
+
+A limpeza de conversas privadas agora divide os IDs de origem em blocos de 500
+e apaga no máximo 500 avisos `Message` por consulta/carga. Isso limita
+parâmetros SQL e memória quando uma conversa longa tem muitos avisos. A
+exclusão continua dentro da transação da thread, com rollback conjunto.
+
+Validação: `PrivateMessageRetentionKernelTest` **4/55 PASS** no MariaDB
+dedicado (10 depreciações upstream de Core/contrib); Unit Messenger
+**359/2.922 PASS**; Unit de retenção **3/76 PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Runtime sem alteração.
+
+## 0.1.1-dev.349 — finalizar leases de enqueue interrompidos
+
+A recuperação da fila de amizades agora inclui leases que atingiram o limite de
+enqueue. Se o processo parar após persistir a quinta tentativa e antes da
+inserção na fila, o próximo cron grava `failed_permanent` e registra a falha,
+em vez de deixar o aviso `pending` sem recuperação. O worker já trata esse
+estado como terminal.
+
+Validação: `FriendshipNoticeQueueTest` **5/93 PASS**; Unit Messenger
+**359/2.910 PASS**; `FriendshipNoticePipelineKernelTest` **2/39 PASS** no
+MariaDB dedicado (2 depreciações upstream `@EntityType`); PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime e transporte
+de e-mail externo não utilizados.
+
+## 0.1.1-dev.348 — recarregar estado persistido na fila de amizades
+
+A fila de e-mail de amizades agora compartilha o lock do worker ao adquirir a
+tentativa de enqueue, e usa `loadUnchanged()` tanto nessa aquisição quanto ao
+tratar uma recusa do Queue API. Isso impede que o enqueue concorra com
+cancelamento/entrega e que uma instância `Message` no cache estático sobrescreva
+um estado terminal persistido. O teste usa instâncias distintas para
+representar o cache local e o estado atual no banco.
+
+Validação: fila/worker de amizade **16/309 PASS**; Unit Messenger
+**358/2.885 PASS**; `FriendshipNoticePipelineKernelTest` **1/23 PASS** no
+MariaDB dedicado (2 deprecações upstream `@EntityType`); PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Runtime ou
+transporte de e-mail externo.
+
+## 0.1.1-dev.347 — revalidar estado das amizades sem cache
+
+O produtor e o consumer de eventos de amizade agora recarregam a relação sem
+cache estático antes de validar transição, versão e destinatário. Um replay
+antigo de pedido não produz aviso se a amizade já foi aceita, mesmo quando as
+duas transições têm o mesmo timestamp em segundos.
+
+Validação: testes de amizade **28 testes / 408 assertions PASS**; Unit
+Messenger **358/2.885 PASS**; Kernel MariaDB **1/23 PASS** (2 deprecações
+upstream de discovery `@EntityType`); PHPCS Drupal/DrupalPractice, PHP lint e
+`git diff --check` PASS. Sem Runtime ou e-mail externo.
+
+## 0.1.1-dev.346 — preservar paginação de Conquistas na central
+
+A lista única de origens pagináveis agora também é usada pelo controller da
+Conta, pelos links de navegação e pelo formulário de leitura. Conquistas deixa
+de perder seu offset ao navegar ou marcar um aviso como lido; origens sem
+paginação e valores inválidos continuam descartados.
+
+Validação: Unit Messenger **357 testes / 2.869 assertions PASS**; PHPCS
+Drupal/DrupalPractice nos arquivos alterados (exceto `MessagesController`, que
+mantém baseline de 93 erros/65 avisos), PHP lint e `git diff --check` PASS.
+Sem Kernel ou Runtime.
+
+## 0.1.1-dev.345 — resolver pedidos da Loja em lote
+
+A listagem pessoal e o digest da Loja agora resolvem cada bloco de avisos com
+uma consulta agrupada por UUID. Os pedidos encontrados são recarregados sem
+cache antes de revalidar tipo, titularidade, acesso e destino; resolução
+individual e contador seguem as mesmas verificações. O Kernel cobre dois
+avisos de versões distintas do mesmo pedido em uma única carga por digest.
+
+Validação: Commerce Integration Unit **5/59 PASS**; Commerce Kernel **4/75
+PASS** (2 deprecações upstream `@EntityType`, 3 notices PHPUnit); sem Runtime.
+
+## 0.1.1-dev.344 — resolver avisos Wiki em lote na central e digest
+
+A listagem paginada e o digest da Wiki agora coletam os envelopes dos Messages
+do lote e resolvem revisões de verbetes/propostas em conjunto, preservando as
+checagens de revisão padrão, moderação, autoria, permissões, Domain/Purpose e
+acesso. `resolve()` usa o mesmo contrato em lote para ações individuais; os
+resolvedores escalares duplicados foram removidos.
+
+Validação: Wiki Integration Unit **4 testes / 47 assertions PASS**; Wiki Kernel
+**8 testes / 153 assertions PASS** (2 deprecações upstream `@EntityType`, 3
+notices PHPUnit); Unit Messenger **356/2.866 PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Runtime.
+
+## 0.1.1-dev.343 — homologar revalidação em lote no Kernel LMS
+
+A fixture Kernel de matrícula caracteriza a consulta agrupada por UUID e a
+recarga da relação de turma antes de alterar leitura. A cobertura confirma a
+persistência, deduplicação, ownership e revogação de acesso usando Message
+real; nenhum Runtime ou fila de produção foi utilizado.
+
+Validação: Kernel LMS **4 testes / 52 assertions PASS** (2 deprecações
+upstream de descoberta `@EntityType` para `message` e `message_template`);
+Integration LMS Unit **48/445 PASS**; Unit Messenger **356/2.866 PASS**;
+PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+
+## 0.1.1-dev.342 — validar ownership antes da consulta LMS
+
+A resolução individual agora verifica autenticação, titularidade e bundle do
+aviso antes de consultar qualquer storage de origem do LMS. A checagem interna
+continua repetida antes de montar o destino. O teste confirma que uma mensagem
+de outra pessoa termina sem consulta de fonte.
+
+Validação: Integration LMS Unit **48 testes / 445 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Kernel ou Runtime.
+
+## 0.1.1-dev.341 — agrupar carregamento das fontes de avisos LMS
+
+A central, o contador de não lidos e o digest carregam em lote as entidades
+fonte referenciadas pelos avisos educacionais. Os registros encontrados são
+recarregados sem cache antes de validar titularidade, publicação, matrícula,
+permissões e acesso; avisos com fonte ausente continuam excluídos e itens
+inválidos do digest são descartados. O caminho público de resolução individual
+mantém as mesmas verificações.
+
+Validação: Integration LMS Unit **47 testes / 443 assertions PASS**; Unit
+Messenger **356 testes / 2.866 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Kernel não executado (`SIMPLETEST_DB`
+indisponível); sem Runtime.
+
+## 0.1.1-dev.340 — testar e endurecer a migração de avisos do Game
+
+O post-update de avisos pendentes agora valida a fonte pelo tipo de entidade
+Drupal `aculta_badge_award`, sem depender da classe PHP concreta. Kernels
+caracterizam deduplicação pelo consumer, descarte de concessões revogadas,
+alheias ou ausentes e preservação de fila/cursor quando a publicação falha.
+O post-update não foi executado no Runtime.
+
+Validação: Game Kernel **3 testes / 30 assertions PASS**; Unit Messenger
+**356 testes / 2.866 assertions PASS**; Integration Messenger **101 testes /
+1.203 assertions PASS** em SQLite temporário; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Permanecem 2 depreciações de annotations
+do Core/contrib e 7 notices PHPUnit na suíte Integration.
+
+## 0.1.1-dev.339 — agrupar revalidação de avisos de Conquistas
+
+O adapter Game carrega em lote as concessões referenciadas pelos avisos e
+revalida a conta uma vez por página/contador antes de montar a central. A
+recarga invalida o cache estático das entidades antes do carregamento conjunto,
+mantendo as verificações de titularidade, catálogo e revogação sem consultas de
+origem ou conta repetidas por aviso.
+
+Validação: `GameAchievementNoticeManagerTest` **3 testes / 51 assertions PASS**;
+Unit Messenger **356 testes / 2.870 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Kernel Game
+**1 teste / 8 assertions PASS**; Integration Messenger **99 testes / 1.181
+assertions PASS** em SQLite temporário. Permanecem 2
+depreciações de annotations do Core/contrib e 7 notices PHPUnit; sem Runtime.
+
+## 0.1.1-dev.336 — centralizar avisos de conquistas
+
+Concessões de `aculta_badge_award` publicam pelo contrato de eventos do
+Messenger e geram Messages persistentes na central, com filtro por Conquistas,
+paginação, estado de leitura e revalidação do prêmio/conta. O post-update migra
+os IDs pendentes legados com deduplicação. Removidos o bloco e o formulário de
+avisos próprios do Game. O transporte de e-mail do Game permanece inalterado
+nesta microfase.
+
+Validação: Unit Messenger **351 testes / 2.800 assertions PASS**; Unit Game
+**11 testes / 51 assertions PASS**; PHPCS Drupal/DrupalPractice dos arquivos
+novos e alterados desta integração, PHP lint, YAML parse e `git diff --check`
+PASS. Update/Kernel/Runtime não executados; `SIMPLETEST_DB` indisponível.
+
+## 0.1.1-dev.335 — assunto neutro para resumos combinados
+
+O assunto e o rótulo do resumo por e-mail não dizem mais que o conteúdo é
+diário: o mesmo envio pode agregar avisos diários e o digest semanal de
+mensagens privadas. Nenhum conteúdo de conversa é incluído.
+
+Validação: `AvisosResumoMailTypeTest` 3/8, Unit Messenger 346/2.780,
+PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Índice de status
+falha pela tabela gerada do README raiz já desatualizada; sem Kernel/Runtime/SMTP.
+
+## 0.1.1-dev.334 — cobrir remoção de acompanhamentos inacessíveis
+
+O teste da lista de acompanhamentos agora prova que a pessoa pode remover uma
+Flag `seguir_topico` própria mesmo após perder acesso ao tópico. O controle não
+precisa exibir o título nem reabrir o conteúdo; titularidade e tipo da Flag
+continuam revalidados antes da remoção.
+
+Validação: `AvisosPrivacyFormTest` **4/40 PASS**, Unit Messenger
+**346/2.780 PASS**, PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS. Sem mudança de código de produção, Kernel, Runtime ou SMTP.
+
+## 0.1.1-dev.333 — falhar fechado para preferência de e-mail inválida
+
+Uma preferência individual de categoria só herda o padrão administrativo se
+estiver ausente. Valor explícito inválido em `user.data` agora resolve para
+`off`, evitando que dado corrompido reative envio direto ou digest. Escolhas
+válidas e ausência de escolha mantêm o contrato existente.
+
+Validação: `AvisoPreferenciasTest` **36/137 PASS**, Unit Messenger
+**345/2.770 PASS**, PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS. O índice gerado do README raiz segue desatualizado na branch base; não
+regenerei a tabela compartilhada. Sem Kernel/Runtime/SMTP.
+
+## 0.1.1-dev.332 — reler Message antes de alterar estado de leitura
+
+O dispatcher da central agora carrega o `Message` sem reutilizar o cache
+estático antes de validar titularidade, bundle e metadados de origem. Isso
+impede que uma entidade já carregada e alterada durante a requisição seja usada
+para autorizar a mutação com estado obsoleto.
+
+Validação: `NoticeReadStateManagerTest` **7/53 PASS**, Unit Messenger
+**342/2.755 PASS**, PHPCS Drupal/DrupalPractice, PHP lint, YAML e
+`git diff --check` PASS. O índice gerado continua desatualizado na branch base
+(README raiz registra `dev.296`, manifest `dev.331`); não regenerei a tabela
+compartilhada. Kernel/Runtime/SMTP não executados.
+
+## 0.1.1-dev.331 — unificar mutação de leitura de Doações
+
+O controller de avisos de Doações usa agora o contrato comum `setRead()` já
+adotado por LMS, Wiki e Loja. O alias `markRead()` foi removido do manager e da
+interface, sem consumidores além do próprio controller. Teste cobre revogação
+de acesso entre resolução e gravação, que retorna 404 sem redirecionar.
+
+Validação: `NoticeOpenControllerSafetyTest` **9/54 PASS**, Unit Messenger
+**342/2.755 PASS**, Integration Unit Doações **7/88 PASS**, PHPCS
+Drupal/DrupalPractice, PHP lint, YAML e `git diff --check` PASS. Kernel não
+executado (`SIMPLETEST_DB` ausente); sem Runtime/SMTP.
+
+## 0.1.1-dev.330 — revalidar acesso LMS ao marcar aviso como lido
+
+A abertura de avisos educacionais agora usa a operação validada do manager para
+alterar o estado de leitura. Se matrícula ou permissão mudar entre resolver o
+destino e gravar a leitura, a mutação falha e o controller não redireciona. O
+método legado `markRead()` foi removido do manager e de seu contrato; não havia
+outros consumidores.
+
+Validação: `NoticeOpenControllerSafetyTest` **8/48 PASS**, Unit Messenger
+**341/2.749 PASS**, Integration LMS Unit **46/417 PASS**, PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. O índice de status
+falha porque o README raiz já estava desatualizado; não regenerei a tabela
+gerada, que inclui alterações de outros componentes. Sem Kernel/Runtime/SMTP.
+
+## 0.1.1-dev.329 — revalidar contas ao listar e contar avisos
+
+Contadores e resoluções de avisos de Fórum, amizade, LMS, Wiki, Loja e Doações
+recarregam a conta antes de validar atividade, matrícula, acesso e titularidade.
+Os produtores educacionais também revalidam a conta do estudante antes de
+publicar avisos para educadores ou aprendizes.
+
+Validação: Unit Messenger **324/2.629 PASS**; Integration Unit LMS **46/417**,
+Loja **18/225**, Doações **7/88** e Wiki **4/47 PASS**; testes focais de acesso à central: amizade **3/36**, Loja **5/57**,
+Wiki **3/45** e acesso persistente **5/11 PASS**; transferência do aviso do Fórum **2/27 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS. Kernels e Runtime não executados (`SIMPLETEST_DB` ausente); sem SMTP.
+
+## 0.1.1-dev.328 — revalidar conta em avisos de Doação
+
+O consumer de Doações também relê a conta do destinatário antes de validar o
+pedido/pagamento e persistir o aviso no site. Completa a mesma checagem já
+aplicada aos consumers de amizade, LMS, Wiki e Loja.
+
+Validação: PHP lint, PHPCS Drupal/DrupalPractice e `git diff --check` PASS.
+`DonationNoticePersistenceKernelTest` não foi executado: `SIMPLETEST_DB` não
+está configurado. Sem Runtime/SMTP.
+
+## 0.1.1-dev.327 — revalidar destinatários ao registrar avisos
+
+Consumers de amizade, LMS, Wiki e Loja consultam a conta com `loadUnchanged()`
+antes de persistir o aviso obrigatório no site. Contas desativadas após uma
+leitura anterior não recebem novos registros; as preferências de e-mail seguem
+controlando apenas o canal suplementar.
+
+Validação: Unit Messenger **324 testes / 2.629 assertions PASS**; Integration
+Unit LMS **46/417**, Loja **18/225** e Wiki **4/47 PASS**; focais de amizade,
+Loja, Wiki e LMS **17/208 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e
+`git diff --check` PASS. Sem Kernel/Runtime/SMTP.
+
+## 0.1.1-dev.326 — recarregar origem e outbox nos workers de e-mail
+
+Workers de entrega direta recarregam os registros Message sob lock com
+`loadUnchanged()` antes de consultar estado e tentativas; a mesma revalidação
+é aplicada à mensagem privada de origem, ao tópico e ao comentário do Fórum.
+Isso evita decisões de entrega baseadas em entidades estáticas que outro worker
+ou processo já atualizou. Revisões específicas do Fórum continuam sendo
+resolvidas pelo ID de revisão para preservar o evento original.
+
+Validação: focais dos workers Fórum, amizade, Mensagens Privadas, LMS, Wiki,
+Loja e Doações **58 testes / 951 assertions PASS**; Unit Messenger **324 /
+2.629 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+Sem Kernel/Runtime/SMTP.
+
+## 0.1.1-dev.325 — reler mensagem privada antes da entrega
+
+O worker de avisos de Mensagem Privada carrega a origem com `loadUnchanged()`
+antes de resolver a thread e os destinatários. Uma entidade removida ou alterada
+após uma leitura anterior no mesmo processo não serve de base para uma entrega
+posterior.
+
+Validação: `PrivateMessageNotificationWorkerTest` **15 testes / 283 assertions
+PASS**; Unit Messenger **324 testes / 2.629 assertions PASS**;
+`LearningNoticeDigestIntegrationTest` **25 / 210 PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Kernel/Runtime.
+
+## 0.1.1-dev.324 — revalidar origem das mensagens no digest privado
+
+O provider semanal relê cada mensagem privada pendente com `loadUnchanged()`
+antes de conferir thread, participantes, bloqueios e histórico individual. Se a
+mensagem de origem já foi removida, o registro derivado é cancelado e não entra
+no e-mail. O corpo da conversa continua fora do digest.
+
+Validação: `PrivateMessageDigestProviderTest` **5 testes / 81 assertions PASS**;
+Unit Messenger **324 testes / 2.629 assertions PASS**;
+`LearningNoticeDigestIntegrationTest` **25 / 210 PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Kernel/Runtime.
+
+## 0.1.1-dev.323 — exigir data inicial do resumo semanal
+
+A configuração administrativa do resumo semanal de mensagens privadas agora
+exige uma data âncora. Isso impede que um campo apagado salve valor vazio e
+interrompa a elegibilidade do digest sem indicação clara.
+
+Validação: `MessengerSettingsFormTest` **3 testes / 19 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Kernel ou Runtime.
+
+## 0.1.1-dev.322 — revalidar acesso atual de avisos do Fórum
+
+`ForumNoticeAccessPolicy` carrega a conta por `loadUnchanged()` antes de
+autorizar acesso ao tópico, comentário ou post do Fórum. Uma conta desativada
+depois de ser lida anteriormente na requisição não permanece elegível para
+receber avisos ou e-mails.
+
+Validação: `ForumNoticeAccessPolicyTest` **4 testes / 36 assertions PASS**; Unit
+Messenger **324 testes / 2.625 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Kernels, Runtime e SMTP não executados.
+
+## 0.1.1-dev.321 — revalidar contas em entregas diretas e digest
+
+Workers de e-mail direto e providers de resumo recarregam destinatários (e,
+quando necessário, remetentes) com `loadUnchanged()` antes de validar conta,
+preferência ou compor mensagens. Isso impede que o cache estático do Entity API
+reutilize endereço ou estado de conta obsoleto nos fluxos de Fórum, amizade,
+mensagens privadas, LMS, Wiki, Loja e Doações.
+
+Validação: Unit Messenger **323 testes / 2.618 assertions PASS**; Integration
+Unit LMS/Loja/Doações/Wiki **75 testes / 777 assertions PASS**; focais de
+preferências **38 testes / 310 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Kernels não executados: `SIMPLETEST_DB` não
+está configurado. Runtime e transporte SMTP não executados.
+
+## 0.1.1-dev.320 — revalidar conta antes de compor digest
+
+O resumo diário recarrega a conta com `loadUnchanged()` antes de verificar
+atividade, confirmação e endereço de e-mail. Uma conta desativada depois de ter
+sido carregada em outro ponto da requisição não pode receber digest a partir de
+estado obsoleto.
+
+Validação: `AvisosResumoProviderPreferenceTest` **10 testes / 192 assertions
+PASS**, incluindo conta inativa no armazenamento atual; Unit Messenger **323
+testes / 2.618 assertions PASS**; PHPCS Drupal/DrupalPractice, PHP lint e
+`git diff --check` PASS.
+
+## 0.1.1-dev.319 — recarregar thread antes de limpar histórico
+
+O submit do menu de grupo usa `loadUnchanged()` para revalidar a membership
+persistida sem confiar no cache estático do Entity API antes da confirmação de
+limpeza.
+
+Validação: `ConversationRelationshipFormTest` **9 testes / 71 assertions
+PASS**; Unit Messenger **322 testes / 2.608 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+
+## 0.1.1-dev.318 — cobrir permissão revogada e invalidação das mensagens
+
+A cobertura do fluxo de limpeza agora comprova que a revogação da permissão de
+mensagens encerra a operação antes do access handler e da mutação. O caminho de
+sucesso também verifica a invalidação das tags de cache da thread e de cada
+mensagem referenciada.
+
+Validação: `ConversationRelationshipFormTest` **9 testes / 71 assertions
+PASS**; Unit Messenger **322 testes / 2.608 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+
+## 0.1.1-dev.317 — cobrir limpeza autorizada do histórico
+
+Teste de regressão cobre o caminho bem-sucedido de limpeza de histórico:
+revalida conta e acesso, limpa somente para o membro atual e invalida tags de
+cache da thread. Nenhuma lógica de produção foi alterada.
+
+Validação: `ConversationRelationshipFormTest` **8 testes / 65 assertions
+PASS**; Unit Messenger **321 testes / 2.602 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+
+## 0.1.1-dev.316 — concluir gate PHPCS do formulário de relacionamento
+
+Comentários e chamadas do `ConversationRelationshipForm` foram reformatados
+para seguir Drupal/DrupalPractice. Um teste também comprova que os controles
+de limpeza são renderizados no menu de grupo, mas não no perfil. O fluxo de
+ações, permissões e persistência permanece igual ao Dev.315.
+
+Validação: `ConversationRelationshipFormTest` **7 testes / 49 assertions
+PASS**; Unit Messenger **320 testes / 2.586 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS.
+
+## 0.1.1-dev.315 — impedir criação de thread por ação forjada de perfil
+
+A ação de limpar histórico deixa de existir em formulários de perfil e de
+relacionamento individual; ela permanece somente no menu da conversa em grupo.
+Isso remove o caminho que chamava `getThreadForMembers()` e poderia criar uma
+thread vazia após um POST forjado. A limpeza agora revalida conta ativa,
+permissões atuais, associação e acesso à thread antes de alterar o histórico, e
+o formulário informa falha se a operação for recusada.
+
+Validação: `ConversationRelationshipFormTest` **6 testes / 41 assertions
+PASS**; Unit Messenger **319 testes / 2.578 assertions PASS**; PHP lint e
+`git diff --check` PASS; PHPCS Drupal/DrupalPractice sem erros (14 avisos
+preexistentes de linhas longas neste formulário).
+
+## 0.1.1-dev.314 — revalidar acesso ao marcar avisos Wiki e Loja como lidos
+
+Os controllers agora delegam a gravação ao contrato `setRead()` dos respectivos
+managers. A autorização da fonte e a titularidade do aviso são verificadas no
+momento da mutação; se o acesso tiver sido revogado depois da resolução do
+destino, a abertura é recusada.
+
+Validação: `NoticeOpenControllerSafetyTest` **7 testes / 41 assertions PASS**;
+Unit Messenger **318 testes / 2.577 assertions PASS**; Integration com MariaDB
+dedicado **98 testes / 1.173 assertions PASS** (2 deprecações Core/contrib, 7
+notices PHPUnit); PHPCS Drupal/DrupalPractice e PHP lint PASS.
+
+## 0.1.1-dev.313 — alinhar formulário de nova conversa aos padrões Drupal
+
+O formulário de primeira mensagem recebeu PHPDocs completos e arrays/comentários
+formatados conforme Drupal/DrupalPractice. A mudança não altera validação,
+permissões, persistência ou experiência do fluxo.
+
+Validação: `NewConversationRecipientIdsTest` **10 testes / 68 assertions PASS**;
+Unit Messenger **316 testes / 2.569 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS.
+
+## 0.1.1-dev.312 — impedir dados pessoais nos logs de falha do digest
+
+Teste de regressão agora valida os dois caminhos de erro do digest: busca de
+destinatários e resolução das linhas de avisos. Os logs registram somente a
+classe do adapter e a classe da exceção; não incluem mensagem da exceção,
+destinatário, endereço ou conteúdo do aviso.
+
+Validação: `AvisosResumoProviderPreferenceTest::testProviderFailureIsIsolatedPerRecipient`
+**1 teste / 33 assertions PASS**; PHPCS Drupal/DrupalPractice e
+Unit Messenger **316 testes / 2.569 assertions PASS**; `git diff --check` PASS.
+
+## 0.1.1-dev.311 — confirmar e-mail direto do Fórum junto ao digest
+
+Quando uma entrega direta do Fórum é aceita, o outbox agora marca o evento
+como enviado e reconhece exatamente um item no contador do digest na mesma
+transação. Isso impede que um e-mail direto já recebido reapareça em um resumo
+após a troca de preferência; falha no reconhecimento desfaz ambos os estados e
+permite retry com a correlação idempotente original. O aviso obrigatório no
+site permanece intacto.
+
+Validação: `ForumNoticeEmailWorkerTest` **4 testes / 76 assertions PASS**;
+Unit Messenger **316/2.568 PASS**; `ForumNoticeIdempotencyKernelTest` **39/919
+PASS** e `AvisosResumoMailerKernelTest` **4/70 PASS** no MariaDB dedicado (4
+notices PHPUnit no Kernel do ledger); PHPCS Drupal/DrupalPractice e
+`git diff --check` PASS. Sem Runtime ou SMTP real.
+
+## 0.1.1-dev.310 — identificar corretamente o salvamento de preferências de e-mail
+
+A confirmação do formulário da conta agora informa que foram salvas as
+preferências de e-mail, sem confundi-las com as preferências de mensagens.
+Teste unitário verifica o texto exibido ao salvar.
+
+Validação: formulário, preferências e entrega privada **45 testes / 461
+assertions PASS**; Unit Messenger **315 testes / 2.545 assertions PASS**;
+PHPCS Drupal/DrupalPractice nos arquivos alterados e `git diff --check` PASS.
+
+## 0.1.1-dev.309 — revalidar participantes ao iniciar conversa
+
+A criação da primeira mensagem recarrega participantes, confirma novamente a
+elegibilidade do remetente e dos destinatários e verifica acesso à thread
+recém-resolvida antes de persistir. A validação da resposta nativa usa também
+o remetente recarregado, protegendo contra permissões ou associação revogadas
+após a validação inicial. Bloqueios bilaterais seguem sendo revalidados sob
+lock.
+
+Validação: Unit Messenger **315 testes / 2.543 assertions PASS**; testes focados
+de conversa e privacidade **28 testes / 181 assertions PASS**; `git diff --check` PASS.
+PHPCS Drupal/DrupalPractice foi executado e reportou violações no arquivo
+extenso `NewConversationForm.php`; sem Runtime.
+
+## 0.1.1-dev.308 — validar acesso da página unificada de e-mail
+
+Kernel exercita os checks reais do Drupal na rota `/configuracoes/email`:
+membro autenticado com acesso ao Portal entra sem precisar da permissão para
+conversas privadas; usuário sem acesso ao Portal e usuário anônimo são
+rejeitados.
+
+Validação: `PrivateMessageRouteAccessKernelTest` **1 teste / 10 assertions
+PASS** no MariaDB dedicado; integração Kernel de Loja/Doações/LMS/Wiki **23
+testes / 396 assertions PASS** (2 depreciações Core/contrib e 7 notices
+registrados); PHPCS Drupal/DrupalPractice, PHP lint, YAML e `git diff --check`
+PASS.
+
+## 0.1.1-dev.307 — preservar avisos válidos ao filtrar linha de digest inválida
+
+Quando um provider retorna linhas inválidas junto de linhas válidas, o digest
+agora envia e confirma por ID somente as linhas válidas; a linha sem identidade
+segura fica pendente. O provider com inconsistência não avança o cooldown
+compartilhado, permitindo nova tentativa. O contrato anterior para um provider
+cujo lote inteiro é inválido permanece: descarte amplo do próprio provider para
+evitar retry infinito. Nenhum aviso do site ou de outra origem é removido.
+
+Validação: Unit Messenger **312 testes / 2.514 assertions PASS**; adapters
+Integration Unit **75 testes / 777 assertions PASS**; `AvisosResumoMailerKernelTest`
+**4 testes / 70 assertions PASS** no MariaDB dedicado; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Sem Runtime ou SMTP.
+
+## 0.1.1-dev.306 — refletir políticas inválidas como desabilitadas
+
+O formulário administrativo agora trata somente o booleano `true` como modo
+de e-mail permitido, alinhado ao serviço de preferências. Valores de
+configuração malformados como strings numéricas ou `"false"` deixam de aparecer
+marcados como ativos. A validação cobre resumo e envio direto.
+
+Validação: `MessengerSettingsFormTest` **3 testes / 18 assertions PASS**;
+Unit Messenger **311 testes / 2.496 assertions PASS**; adapters Integration
+Unit **75 testes / 777 assertions PASS**; PHPCS Drupal/DrupalPractice, PHP lint
+e `git diff --check` PASS. Kernel Messenger **50/1.076 PASS** na rodada Dev.305
+(10 depreciações Core/contrib); sem Runtime/SMTP.
+
+## 0.1.1-dev.304 — reunir preferências de e-mail por origem
+
+`/configuracoes/email` agora oferece as escolhas individuais de todas as
+categorias do Messenger, incluindo Fórum, LMS, Wiki, Loja, Doações, Mensagens
+Privadas e Amizades. A rota e a aba ficam disponíveis a membros com acesso ao
+Portal mesmo sem permissão para iniciar conversas. A seção Avisos da página de
+Privacidade mantém os acompanhamentos de tópicos e aponta para as preferências
+unificadas; os valores existentes em `user.data` não mudam.
+
+Validação: Unit Messenger **309 testes / 2.471 assertions PASS** e adapters
+Integration Unit **75 testes / 777 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e parse de routing/services YAML PASS. O índice de status falha porque
+a tabela gerada do README raiz está desatualizada; não foi regenerada para
+evitar alterações de outros componentes. Sem Runtime ou navegador.
+
+## 0.1.1-dev.305 — caracterizar troca para digest antes da aceitação
+
+O worker de mensagens privadas revalida a preferência ao processar cada item:
+se a pessoa mudar de envio direto para resumo semanal antes da aceitação pelo
+Mailer, o aviso permanece pendente para o digest. Se o Mailer já aceitou a
+correlação direta, o registro é reconciliado como enviado para evitar uma
+segunda entrega. O teste cobre explicitamente os dois estados; nenhum conteúdo
+da conversa é incluído.
+
+Validação: Unit Messenger **310 testes / 2.494 assertions PASS**, Kernel Messenger
+**50 testes / 1.076 assertions PASS** (10 deprecações Core/contrib registradas)
+e adapters Integration Unit **75 testes / 777 assertions PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Runtime ou SMTP.
+
+## 0.1.1-dev.303 — cobrir compatibilidade de providers de digest antigos
+
+Teste de caracterização confirma que providers que implementam somente o
+contrato base continuam carregáveis: diante de linhas com políticas mistas, o
+núcleo mantém o lote pendente sem enviar parcialmente nem descartar avisos
+elegíveis. A cobertura também verifica o caminho de descarte seletivo dos
+providers centrais.
+
+Validação: Unit Messenger **311 testes / 2.487 assertions PASS**; adapters
+Integration Unit **75 testes / 777 assertions PASS**. PHPCS e PHP lint PASS;
+sem Runtime ou envio de e-mail real.
+
+## 0.1.1-dev.302 — preservar linhas elegíveis e eventos concorrentes no digest
+
+Uma capacidade opcional permite descarte seletivo sem alterar o contrato base
+dos providers de resumo. Se um adapter retornar categorias com políticas
+diferentes, o Messenger cancela somente os itens sem digest permitido e
+confirma os itens elegíveis após a aceitação do e-mail. Se o transporte
+cancelar o envio, descarta apenas o lote capturado, preservando eventos que
+chegaram durante o processamento. Providers antigos seguem compatíveis e
+mantêm lotes mistos pendentes quando não conseguem descartar por ID. Avisos
+persistidos no site não são afetados.
+
+Validação: Unit Messenger **309 testes / 2.465 assertions PASS**; adapters
+Integration Unit **75 testes / 777 assertions PASS**. PHPCS e PHP lint PASS;
+sem Runtime ou envio de e-mail real.
+
+## 0.1.1-dev.301 — cobrir gravação administrativa das políticas de e-mail
+
+O formulário administrativo agora tem teste de submissão para as políticas
+por categoria, padrão permitido para avisos de mensagens privadas e data
+inicial do digest semanal. A cobertura confirma que desabilitar modalidades
+de e-mail não altera a persistência dos avisos obrigatórios no site.
+
+Validação: `MessengerSettingsFormTest` **2 testes / 16 assertions PASS**.
+Sem alteração funcional, SMTP ou Runtime.
+
+## 0.1.1-dev.300 — rejeitar avisos de outra conta na fronteira central
+
+`NoticeReadStateManager` agora compara o proprietário da entidade `Message`
+com a conta autenticada antes de resolver ou invocar um adapter opcional.
+Tentativas com ID de outra conta falham sem consultar LMS, Wiki, Loja,
+Doações ou Amizades; cada adapter continua revalidando acesso à sua origem.
+
+Validação: manager central, formulário e Amizades **16 testes / 121
+assertions PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS.
+
+## 0.1.1-dev.299 — alinhar badge aos alertas lidos
+
+O contador unificado agora exclui Alertas do site que a conta já abriu, além
+dos que dispensou. A lista usa os mesmos estados da consulta em lote, e o
+estado visual não faz uma nova resolução da Flag para cada alerta.
+
+Validação: `MessengerCountsTest` + `PersistentNoticeAccessTest` +
+`NoticeFlagStateLoaderTest` **13 testes / 65 assertions PASS**; PHP lint e
+PHPCS Drupal/DrupalPractice do serviço e teste PASS. `MessagesController`
+permanece no baseline PHPCS **93 erros / 65 avisos**. Sem Browser/Runtime.
+
+## 0.1.1-dev.298 — preservar páginas por origem ao alterar leitura
+
+Ao marcar um aviso como lido ou não lido na lista global, o redirect agora
+preserva os offsets independentes de cada origem. A allowlist e o limite de
+100 páginas são aplicados também ao processar o formulário; a troca de estado
+não reinicia a lista nem reflete offsets desconhecidos.
+
+Validação: conjunto central (`NoticeReadStateFormTest`, paginação, navegação e
+agrupamento) **18 testes / 111 assertions PASS**, PHP lint e PHPCS
+Drupal/DrupalPractice dos arquivos novos/limpos PASS. Controllers mantêm os
+baselines PHPCS preexistentes (108 erros / 77 avisos combinados). Sem
+Browser/Runtime.
+
+## 0.1.1-dev.297 — tolerar metadados incompletos na central
+
+O agrupamento da central agora lê recência somente quando o aviso fornece
+`#attributes` no formato de array esperado. Itens de extensões com metadados
+ausentes ou em outro formato permanecem visíveis, na ordem estável, sem
+interromper a renderização das seções por origem.
+
+Validação: `NoticeOriginGrouperTest` **4 testes / 19 assertions PASS**, PHP
+lint e PHPCS Drupal/DrupalPractice PASS. Sem Browser/Runtime.
+
+## 0.1.1-dev.296 — reconciliar e-mail privado aceito antes do digest
+
+No retry de uma notificação privada, o worker consulta a correlação estável do
+Mailer antes de converter uma entrega direta pendente em item do resumo
+semanal. Se o Mailer já aceitou o aviso, o registro local é reconciliado como
+enviado, evitando um segundo e-mail quando a preferência mudou após uma falha
+de persistência. O conteúdo da mensagem privada continua fora do e-mail.
+
+Validação: `PrivateMessageNotificationWorkerTest` **14 testes / 260
+assertions PASS**, incluindo a troca de preferência após aceitação; PHP lint e
+PHPCS Drupal/DrupalPractice PASS. Sem Runtime ou SMTP.
+
+## 0.1.1-dev.295 — respeitar bloqueios na apresentação de grupos
+
+O estado de envio da conversa agora examina todos os demais participantes em
+threads de grupo. Se qualquer participante bloqueou a conta atual ou foi
+bloqueado por ela, o compositor é substituído pelo aviso de bloqueio,
+coerente com a validação nativa que já recusava o envio.
+
+Validação: conjunto de privacidade `ConversationMessagingStateTest`,
+`PrivateMessageReplyHooksTest`, `PrivateMessageFormValidatorTest`,
+`PrivateMessageFormHooksTest` e `MessagesControllerMemberAccessTest` passou
+**29 testes / 169 assertions**; PHP lint e PHPCS Drupal/DrupalPractice dos
+arquivos novos/alterados passaram sem novas violações. O hook mantém seu
+baseline anterior de PHPCS (5 erros / 7 avisos). Sem Browser ou Runtime.
+
+## 0.1.1-dev.294 — limitar varreduras de paginação por origem
+
+Offsets da central agora têm um limite de 100 páginas (10.000 avisos) por
+origem. Entradas inválidas e negativas voltam à primeira página; valores
+excessivos são limitados antes de iniciar consultas paginadas e revalidar
+acesso.
+
+Validação: `PersistentNoticePaginationTest` cobre os limites e a consulta por
+acesso; o conjunto focal passou **8 testes / 60 assertions**, PHP lint e PHPCS
+do teste PASS. `MessagesController` mantém o baseline preexistente de PHPCS
+após comparar com o HEAD anterior. O índice de status continua bloqueado por
+uma tabela desatualizada no README raiz, fora deste incremento.
+
+## 0.1.1-dev.293 — validar endereço antes de resolver Loja e Wiki
+
+Os workers de entrega direta da Loja e Wiki agora cancelam endereços inválidos
+antes de consultar dados do pedido ou conteúdo editorial. A decisão não consome
+tentativas nem altera o aviso obrigatório no site.
+
+Validação: segurança Commerce/Wiki **12/166 PASS**, Integration Unit **75/777 PASS**, Kernels Wiki/Loja/LMS/Doações **23/396 PASS** (2 deprecações Core/contrib e 7 notices PHPUnit), PHPCS Drupal/DrupalPractice e PHP lint PASS. Sem Runtime/SMTP.
+
+## 0.1.1-dev.292 — cancelar endereço inválido antes de resolver aviso LMS
+
+O worker direto do LMS agora cancela a entrega se a conta não estiver ativa ou
+o endereço não passar validação sintática, sem marcar isso como falha de
+transporte nem consumir tentativas. A checagem ocorre antes de consultar a
+origem educacional; avisos obrigatórios no site permanecem intactos.
+
+Validação: worker LMS **8/97 PASS**, Unit Messenger **297/2.385 PASS**,
+Integration Unit **74/755 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS.
+Sem SMTP real ou Runtime.
+
+## 0.1.1-dev.291 — migrar preferências legadas de resumo por categoria
+
+Adicionado post-update em lotes que copia o opt-in global antigo para cada
+categoria integrada, preserva escolhas Messenger já existentes e mantém os
+opt-outs específicos de respostas/atualizações do Fórum. As chaves antigas são
+removidas somente após a cópia. `emailMode()` agora usa apenas o modo da
+categoria; contas sem preferência compartilhada permanecem somente no site.
+
+Validação: `SharedEmailPreferenceMigrationTest` **1/25 PASS**, `AvisoPreferenciasTest` **22/61 PASS**, `AvisosResumoProviderPreferenceTest` **6/130 PASS**, Unit Messenger **297/2.381 PASS**, Integration Unit **73/745 PASS**, `LearningNoticeDigestIntegrationTest` **25/210 PASS**, `SharedEmailPreferenceMigrationKernelTest` **1/15 PASS** em `aculta_simpletest`, PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime/update não executados.
+
+## 0.1.1-dev.290 — esclarecer a precedência da preferência por categoria
+
+O contrato de `emailMode()` agora explica que uma escolha explícita por categoria
+é independente do opt-in global legado. A leitura legada continua apenas como
+padrão de compatibilidade para contas sem escolha nova; o comportamento do
+serviço não mudou.
+
+Validação: `AvisoPreferenciasTest` **24/64 PASS**, `AvisosResumoProviderPreferenceTest` **6/130 PASS**, Unit Messenger **298/2.359 PASS**, PHP lint, PHPCS Drupal/DrupalPractice e índice de status PASS. Sem Runtime/SMTP; não houve mudança de comportamento.
+
+## 0.1.1-dev.289 — nomear acessivelmente a navegação da central
+
+Os links de paginação da central são agrupados em um landmark `navigation`
+com rótulo contextual (todas as origens ou origem filtrada); páginas sem links
+não emitem um landmark vazio.
+
+Validação: Unit Messenger **298/2.359 PASS**; PHPCS Drupal/DrupalPractice dos
+arquivos novos PASS. Browser/Runtime não executados nesta sessão: `DISPLAY`
+não está definido e há sessões Firefox/geckodriver ativas; elas foram
+preservadas.
+
+## 0.1.1-dev.288 — recarregar remetente sem cache na resposta
+
+A verificação de conta e permissões para responder uma thread persistida usa
+`loadUnchanged()` após adquirir o lock da conversa. Uma desativação ou alteração
+de papéis feita por outra requisição não é mascarada pelo cache estático de
+entidades da requisição atual.
+
+Validação: Unit Messenger **296/2.354 PASS**; `PrivateMessageFloodKernelTest`
+**2/2 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Browser/Runtime não
+executados.
+
+## 0.1.1-dev.287 — preservar estado nos links de paginação da central
+
+A composição de URLs da lista global agora passa por `NoticePaginationUrlBuilder`,
+que mantém offsets independentes por origem e filtros ao avançar ou voltar.
+Origens não suportadas não podem gerar links de paginação. A paginação filtrada
+continua usando suas chaves de compatibilidade (`forum_offset`/`notice_offset`).
+
+Validação: Unit Messenger **296/2.353 PASS**; PHPCS Drupal/DrupalPractice dos
+arquivos novos PASS; PHP lint e gate Drupal 11+ (**1.155 checks**) PASS. O
+controller mantém seu baseline PHPCS (93 erros/65 avisos). Browser/Runtime
+pendentes.
+
+## 0.1.1-dev.286 — revalidar elegibilidade do remetente em respostas
+
+Respostas em conversas existentes agora recarregam o usuário depois de adquirir
+o lock da thread e antes do submit. Conta inativa ou perda das permissões de
+mensageria/acesso a perfis interrompe o envio com erro genérico; a checagem de
+membership, access e bloqueios permanece na sequência. O fluxo de primeira
+mensagem mantém suas validações próprias.
+
+Validação: Unit Messenger **292/2.346 PASS**; Integration **96/96 PASS**
+(1.141 assertions; 2 depreciações Core/contrib e 7 PHPUnit notices);
+`PrivateMessageFloodKernelTest` está incluído. PHPCS Drupal/DrupalPractice, PHP lint
+e índice de status PASS. Browser e Runtime não executados.
+
+## 0.1.1-dev.284 — isolar falha de fila de amizade
+
+Depois de persistir o aviso obrigatório no site, falhas ao enfileirar o e-mail
+opcional não propagam erro para o pedido ou aceite de amizade. O subscriber
+registra apenas o ID técnico e a classe da exceção; o cron reconcilia estados
+`pending`/`failed`, inclusive em replay da mesma transição.
+
+Validação: `FriendshipNoticeSubscriberTest` **8/98 PASS**; suíte Unit Messenger
+**287/2.337 PASS**; `FriendshipNoticePipelineKernelTest` **1/23 PASS**, com duas
+depreciações de discovery do contrib `message`; PHPCS Drupal/DrupalPractice,
+PHP lint e gate Drupal 11+ (1.155 checks) PASS. Runtime não executado.
+
+## 0.1.1-dev.283 — alinhar marcador visual de não lida
+
+O hook de renderização do Messenger aplica a regra canônica de `UnreadThreadCounter`
+ao marcador `unread-thread` do inbox do Private Message. A diferença do upstream
+no limite de timestamps iguais deixa de produzir um indicador visual divergente;
+conversas realmente não lidas preservam a classe. O módulo contrib não foi
+alterado.
+
+Validação: `PrivateMessageUnreadIndicatorHooksTest` **4/4 PASS** e
+`UnreadThreadCounterTest` **8/27 PASS**; suíte Unit Messenger **286/2.316 PASS**;
+PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel de descoberta do hook,
+Browser e Runtime não executados.
+
+## 0.1.1-dev.282 — distinguir transições de amizade no mesmo segundo
+
+O evento de amizade agora carrega um identificador aleatório imutável por
+transição. O consumidor inclui esse identificador na chave idempotente e no
+registro `Message`; pedidos cancelados e reenviados no mesmo segundo deixam de
+colidir por causa da precisão de `changed`, enquanto o replay do mesmo evento
+continua reutilizando a mesma chave. Nenhuma entidade ou tabela nova foi criada.
+
+Validação: `FriendshipNoticeEventProducerTest` +
+`FriendshipNoticeSubscriberTest` **11/94 PASS**; Unit Messenger **282/2.308
+PASS**; Unit `aculta_user` **129/492 PASS**, com uma depreciação PHPUnit
+preexistente; `FriendshipNoticePipelineKernelTest` **1/23 PASS** no MariaDB
+dedicado, com duas depreciações de discovery do contrib `message`; PHPCS
+Drupal/DrupalPractice e PHP lint PASS. Browser, Runtime e SMTP externo não
+executados.
+
+## 0.1.1-dev.281 — serializar aviso de e-mail e retenção da conversa
+
+O worker de notificação de mensagem privada compartilha o lock por thread usado
+pela retenção. Ele recarrega a thread sob lock, mantém a proteção durante as
+checagens por destinatário e a entrega, e falha de forma retryable se não puder
+obter uma thread persistida e atual. Isso fecha a corrida em que o Cron poderia
+remover a conversa depois da autorização do e-mail e antes do transporte.
+
+Validação: `PrivateMessageNotificationWorkerTest` **13/237 PASS**, Unit
+Messenger **281/2.305 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS.
+Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.280 — revalidar bloqueios antes de criar grupos
+
+O envio de primeira mensagem em grupo agora checa novamente os bloqueios
+bilaterais antes de chamar a API contrib que persiste uma thread. A validação
+final após resolver/travar a conversa permanece, impedindo o envio se o estado
+mudar durante a criação.
+
+Validação: `NewConversationRecipientIdsTest` **7/39 PASS**, Unit Messenger
+**281/2.279 PASS**, PHPCS do teste PASS; `NewConversationForm` mantém baseline
+PHPCS **14 erros/15 avisos**, PHP lint PASS. Kernel, Browser e Runtime não
+executados.
+
+## 0.1.1-dev.279 — revalidar membership ao responder thread
+
+O formulário nativo agora revalida membership e acesso `view` do remetente na
+thread recarregada sob lock, antes de concluir a resposta. A remoção concorrente
+do participante falha com mensagem genérica e libera os locks de envio.
+
+Validação: `PrivateMessageFormValidatorTest` **16/94 PASS**, Unit Messenger
+**280/2.271 PASS**, PHPCS Drupal/DrupalPractice dos arquivos alterados PASS.
+Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.278 — paginar alertas do site por recência
+
+Alertas ativos agora são ordenados pelo campo `created` antes do corte das
+páginas da central; o ID é usado apenas como desempate estável. Isso mantém os
+itens mais recentes na primeira página mesmo quando a ordem dos IDs diverge da
+data de criação.
+
+Validação: `SiteAlertNoticeSorterTest` **1/41 PASS**, testes focais da central
+**5/101 PASS**, Unit Messenger **279/2.254 PASS**, PHPCS Drupal/DrupalPractice
+do sorter e teste e PHP lint PASS. `MessagesController` permanece no baseline
+PHPCS **93 erros/65 avisos**. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.277 — respeitar opt-out do resumo diário nos adapters
+
+O opt-out geral agora impede que avisos de Fórum e adapters de conteúdo entrem
+no resumo diário após a limpeza das pendências. A agenda independente do resumo
+semanal de Mensagens Privadas continua funcionando segundo sua preferência.
+
+Validação: Unit Messenger **278/2.213 PASS**; testes Unit dos adapters
+**73/746 PASS**; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados
+PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.276 — respeitar fuso do site na data do digest semanal
+
+A data inicial administrativa do resumo semanal de Mensagens Privadas agora é
+interpretada à meia-noite no fuso configurado pelo Drupal. Datas inválidas
+falham fechadas e não antecipam a entrega.
+
+Validação: `PrivateMessageDigestProviderTest` **4/71 PASS**, Unit Messenger
+**278/2.213 PASS**, PHPCS Drupal/DrupalPractice dos arquivos alterados PASS.
+Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.275 — caracterizar opt-out de amizade durante retry
+
+O teste agora cobre a preferência de e-mail alterada para site-only depois de uma falha temporária e antes do retry. O worker cancela o e-mail sem incrementar tentativas adicionais; um item de fila duplicado não revive a entrega cancelada. O aviso persistido no site não é alterado pelo worker de e-mail.
+
+Validação: `FriendshipNoticeEmailWorkerTest` **12/241 PASS**, Unit Messenger **276/2.192 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.274 — percorrer mensagens não lidas do fim para o começo
+
+A verificação de cada conversa percorre as referências cronológicas da mensagem mais nova para a mais antiga. Ela termina ao encontrar o timestamp de leitura e retorna assim que encontra uma mensagem recebida após esse limite, evitando examinar o histórico antigo em casos comuns.
+
+Validação: `UnreadThreadCounterTest` **8/27 PASS**, Unit Messenger **275/2.162 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.273 — remover consulta duplicada no contador de mensagens
+
+O contador de conversas não consulta mais todos os IDs apenas para obter a quantidade antes de carregar todas as threads. Usa `getThreadsForUser(FALSE)`, que já retorna a coleção completa permitida pela API do Private Message.
+
+Validação inicial: `UnreadThreadCounterTest` **6/19 PASS**. Validação ampliada pendente.
+
+## 0.1.1-dev.272 — unificar contagem da central de avisos
+
+O badge da aba de Avisos agora conta todas as fontes da central: alertas ativos acessíveis, comunicados não lidos e avisos pessoais do Fórum e adapters. A gaveta e a central usam o mesmo agregador; abrir a aba de Mensagens calcula o total sem construir a lista de avisos.
+
+Validação: `MessengerCountsTest` **4/37 PASS**, Unit Messenger **273/2.154 PASS**, PHP lint PASS, PHPCS dos serviços e teste PASS. Os controllers mantêm seus baselines PHPCS (MessagesController 93/65; AvisosMensagensController 15/12), sem aumento. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.271 — respeitar padrão administrativo do digest privado
+
+Contas sem preferência individual agora recebem o modo padrão `digest` definido pela administração para mensagens privadas, desde que o resumo semanal esteja permitido. Antes, esse padrão era convertido em envio direto, apesar de o formulário administrativo oferecer a opção semanal.
+
+Validação: `AvisoPreferenciasTest` **21/21, 61 assertions PASS**, Unit Messenger **272/2.144 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.256 — fechar fallback de prefetch na leitura de avisos
+
+A classificação de navegação agora avalia `Sec-Purpose` e `Purpose` independentemente. Um cabeçalho novo vazio não esconde o cabeçalho legado que identifica prefetch/prerender; `Sec-Fetch-Site` também é normalizado antes da comparação.
+
+Validação: `MemberInitiatedRequestTest` **3/11 PASS**, Unit Messenger **257/1.991 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.255 — revalidar ações de relacionamento na thread
+
+Os formulários de amizade e bloqueio agora carregam o ID da thread como estado interno do servidor e, antes da ação, recarregam conta/alvo/thread e revalidam conta ativa, permissões, membership de ambas as pessoas e autorização `view`. A ação falha genericamente se o acesso mudou desde a checagem de rota.
+
+Validação: `ConversationRelationshipFormTest` **5/40 PASS**; Unit Messenger **256/1.989 PASS**; PHPCS Drupal/DrupalPractice do teste e gate Drupal 11+ (**1.155 checks**) PASS. O formulário mantém baseline PHPCS **15 erros/23 avisos**, sem aumento. Browser, Kernel e Runtime não executados.
+
+## 0.1.1-dev.254 — revalidar autorização ao limpar histórico
+
+A confirmação de limpeza agora revalida conta autenticada e ativa, membership e `thread->access('view', ..., TRUE)` imediatamente antes de alterar o histórico. A etapa inicial permanece somente confirmatória e não altera mensagens. O teste cobre acesso revogado e ausência de mutação antes da confirmação.
+
+Validação: `ConversationRelationshipFormTest` **3 testes / 27 assertions PASS**; Unit Messenger **254/1.976 PASS**; PHPCS Drupal/DrupalPractice do teste PASS. O formulário alterado ainda tem 15 erros/23 avisos de baseline no PHPCS Drupal (antes: 20/25); Kernel e Runtime não executados.
+
+## 0.1.1-dev.253 — caracterizar elegibilidade dos destinatários de e-mail privado
+
+O teste do worker agora prova que conta inativa, revogação de `use private messaging system` ou de `access user profiles` interrompem o aviso antes da consulta de bloqueios, persistência do registro ou transporte. O worker mantém a revalidação dessas condições em cada entrega.
+
+Validação: `PrivateMessageNotificationWorkerTest` **11 testes / 185 assertions PASS**; Unit Messenger **251/1.949 PASS**; PHPCS Drupal e DrupalPractice PASS. Browser, Kernel e Runtime não foram executados neste incremento.
+
+## 0.1.1-dev.252 — integrar pedidos e aceites à central de avisos
+
+Os eventos de amizade agora aparecem também na central compartilhada sob a origem **Amizades**, com paginação, filtro, agrupamento, contador e estado lido/não lido no `Message` existente. Os textos não expõem nomes de terceiros. Update aditivo 10011 instala o campo de leitura nos registros existentes; a integração não cria inbox nem storage paralelo. Proteção de uninstall agora considera fila e registros de amizade.
+
+Validação: Unit Messenger **247 testes / 1.894 assertions PASS**; manager/adapters focais **42/277 PASS**; PHP lint passou. PHPCS dos arquivos novos/limpos passou; os controllers e `LifecycleHooksTest` mantêm violações preexistentes. Kernel não executado porque `SIMPLETEST_DB` está ausente; update e Runtime não executados.
+
+## 0.1.1-dev.251 — caracterizar os e-mails de pedido e aceite
+
+Os testes do worker agora verificam separadamente o texto genérico de pedido e de aceite de amizade e limitam o contexto enviado ao Mailer a `summary` e `url`, sem identidade de terceiros.
+
+Validação: `FriendshipNoticeEmailWorkerTest` **11 testes / 211 assertions PASS**. O transporte segue mockado; Runtime/SMTP não executados.
+
+## 0.1.1-dev.250 — preservar cancelamento concorrente no enqueue
+
+Se a Queue API recusar uma inclusão enquanto outro processo altera o aviso, a recuperação agora só grava `failed` quando o registro ainda está `pending`/`failed` e não houve tentativa de entrega. Estados terminais, como `cancelled` e `failed_permanent`, são preservados.
+
+Validação: `FriendshipNoticeQueueTest` + `FriendshipNoticeEmailWorkerTest` **14 testes / 255 assertions PASS**; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Runtime e transporte externo não executados.
+
+## 0.1.1-dev.249 — não reabrir avisos de amizade terminais
+
+O worker de e-mail de amizades agora aceita somente registros `pending` ou `failed` recuperáveis. Replays atrasados da fila não enviam novamente registros cancelados por opt-out/conta inelegível, falhas permanentes ou entregas já concluídas; o caminho de retry temporário permanece ativo.
+
+Validação: `FriendshipNoticeEmailWorkerTest` **10 testes / 187 assertions PASS**; PHP lint nos arquivos alterados PASS. Runtime e transporte externo não executados.
+
+## 0.1.1-dev.248 — agrupar mensagens por remetente no resumo semanal
+
+O resumo semanal de Mensagens Privadas agora agrega os avisos por remetente, com quantidade em uma única linha. O manifesto conserva cada ID de origem para reconhecer somente os itens realmente incluídos após retry; novas mensagens recebidas durante o transporte permanecem pendentes. A linha não repete contador/título e nunca inclui o conteúdo da conversa.
+
+Validação: Unit Messenger **235 testes / 1.767 assertions PASS**; PHPCS Drupal/DrupalPractice nos arquivos alterados e diff check PASS. Kernel não executado sem `SIMPLETEST_DB`; Runtime/SMTP não executados.
+
+## 0.1.1-dev.247 — centralizar e-mail privado e resumo semanal sem conteúdo
+
+Preferências de Mensagens Privadas passam a ser próprias do Messenger, com migração incremental da configuração e das escolhas legadas do Private Message; escolhas Messenger existentes são preservadas e a chave individual antiga é removida após cópia. A pessoa escolhe aviso genérico direto, resumo semanal ou sem e-mail. O resumo reutiliza os registros Message existentes, mostra remetente e link para a inbox, nunca o conteúdo da conversa, revalida acesso e bloqueios, respeita data âncora administrativa e intervalo de sete dias por conta. O digest privado não depende do opt-in de resumo diário das demais origens. Sem execução do update no Runtime.
+
+Validação: Unit Messenger **234 testes / 1.766 assertions PASS**; PHPCS Drupal/DrupalPractice nos arquivos alterados, PHP lint, YAML parse e `git diff --check` PASS. `AvisosResumoMailerKernelTest` não executou por ausência de `SIMPLETEST_DB`. Update, Runtime e SMTP permanecem pendentes.
+
+## 0.1.1-dev.246 — paginação independente por origem na central
+
+A visão sem filtro da Conta agora pagina cada grupo separadamente: comunicados, Fórum, alertas do site, LMS, Wiki, Loja e Doações têm cursores próprios. Avançar um grupo preserva as posições dos demais, com filtros de leitura aplicados antes das páginas, ordem recente e separadores por origem mantidos. Offsets recebidos pela URL são validados e limitados; adapters opcionais continuam isolados. A paginação por origem já existente permanece compatível.
+
+Validação: Unit Messenger **229 testes / 1.702 assertions PASS**; `PersonalNoticeAdapterHooksTest`, `PersistentNoticePaginationTest` e `NoticeListFilterTest` **16/153 PASS**; PHPCS Drupal/DrupalPractice sem novos erros ante o baseline dos dois controllers; PHPCS limpo nos arquivos de hook/teste, PHP lint, índice e `git diff --check` PASS. Firefox/Runtime não executado.
+
+## 0.1.1-dev.245 — cancelar e-mail privado pendente após opt-out
+
+Se a preferência mudar para site-only ou o e-mail deixar de estar confirmado enquanto uma entrega privada está pendente, o worker agora atualiza o registro de outbox para `cancelled`. A mensagem continua na inbox do Private Message; o cancelamento evita deixar uma linha pendente sem retry nem transporte. Nenhuma tentativa é contabilizada quando o envio é suprimido.
+
+Validação: Unit Messenger **228 testes / 1.688 assertions PASS**; `PrivateMessageNotificationWorkerTest` **7/128 PASS**; PHPCS Drupal/DrupalPractice, índice de status e `git diff --check` PASS. Sem Runtime ou SMTP.
+
+## 0.1.1-dev.244 — exigir e-mail confirmado para aviso de mensagem privada
+
+O worker de mensagens privadas agora revalida se o destinatário é uma conta ativa, tem acesso atual à thread, possui e-mail válido e confirmado, não está bloqueado e mantém a preferência de entrega direta antes de criar/enviar o aviso. O e-mail continua mínimo e sem conteúdo da conversa. Itens não confirmados não chegam ao Mailer e não consomem tentativa.
+
+Validação: `PrivateMessageNotificationWorkerTest` **6 testes / 111 assertions PASS**, incluindo confirmação e supressão do e-mail não confirmado; Unit Messenger completo **227 testes / 1.671 assertions PASS**; PHPCS Drupal/DrupalPractice, índice de status e diff check PASS. Sem Runtime ou SMTP.
+
+## 0.1.1-dev.243 — preferências comuns para mensagens privadas e amizade
+
+Mensagens privadas e avisos de amizade passam a usar categorias administráveis no núcleo de preferências. A pessoa escolhe entre somente no site e site mais e-mail direto; essas categorias não oferecem digest. O formulário administrativo pode bloquear o envio direto sem remover a opção site-only. Conversas privadas e avisos de amizade permanecem no site independentemente do e-mail. Os workers revalidam consentimento atual e confirmação de e-mail antes do transporte; opt-out cancela sem contar tentativa. A preferência antiga de Private Message continua como fallback para contas sem escolha nova.
+
+Validação: `AvisoPreferenciasTest`, `AvisosPrivacyFormTest`, `MessengerSettingsFormTest`, `PrivateMessageNotificationWorkerTest` e `FriendshipNoticeEmailWorkerTest` **39 testes / 400 assertions PASS**. Transporte mockado; SMTP e Runtime não executados.
+
+## 0.1.1-dev.242 — validar Doações antes de contar tentativa de e-mail
+
+O worker direto de Doações agora revalida conta ativa, e-mail confirmado e preferência antes de resolver os dados do pedido. O aviso só é resolvido após consentimento atual; tentativas aumentam apenas quando o Mailer será chamado. Opt-out e acesso revogado cancelam a entrega sem registrar uma tentativa de transporte.
+
+Validação: `DonationNoticeEmailWorkerTest` **7 testes / 88 assertions PASS**, incluindo opt-out e e-mail não confirmado antes da resolução do pedido; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem alteração de schema; sem Runtime ou SMTP externo.
+
+## 0.1.1-dev.241 — falhar fechado em política de e-mail inválida
+
+Políticas administrativas de categoria só habilitam digest ou envio direto quando configuradas explicitamente como booleano `true`. Uma categoria explicitamente malformada agora permite apenas `off`; ausência da configuração continua compatível com os modos existentes. O rótulo da permissão administrativa passa a mencionar mensagens, avisos e e-mail.
+
+Validação: `AvisoPreferenciasTest`, `AvisosPrivacyFormTest` e `MessengerSettingsFormTest` **24 testes / 129 assertions PASS**; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Não requer alteração de schema nem atualização de dados; Runtime e transporte SMTP não executados.
+
+## 0.1.1-dev.240 — agrupar avisos por origem e ordenar por atualização
+
+A central unificada agora apresenta seções identificadas por origem, separadas visualmente, e mantém a ordem de atualização mais recente disponível dentro de cada seção. Fórum usa `changed` e ID; limpar contadores de leitura ou digest preserva `changed`, para que a entrega não reordene atividade. Adapters Message usam `created` e Alertas do Site usam ID decrescente como ordem estável, pois a entidade não expõe data de criação. Avisos antigos não lidos deixam de ficar acima dos mais recentes; filtros, paginação e agrupamento de eventos relacionados continuam preservados.
+
+Validação: Unit completo do Messenger **221 testes / 1.582 assertions PASS**, incluindo `NoticeOriginGrouperTest`, `NoticeRelatedGrouperTest` e `NoticeListFilterTest` (**9/41**); Kernel MariaDB completo `ForumNoticeIdempotencyKernelTest` **38/893 PASS** (teste focal de ordenação **1/22**); PHPCS Drupal/DrupalPractice e PHP lint dos arquivos novos/alterados PASS; `MessagesController` mantém violações preexistentes, com perfil **95 erros / 65 avisos** (HEAD anterior: 96/65). Foundation **345 checks PASS** e Design Foundations **2.170 checks PASS**. Smoke read-only `drawer-notice-filters.mjs` **8/8 PASS** no Firefox ESR visível, host de teste `aculta.toca.net.br`, viewport 1270 px. Runtime Alpha e demais viewports permanecem pendentes.
+
+## 0.1.1-dev.239 — impedir leitura por prefetch de avisos
+
+As rotas GET de abertura de avisos LMS, Wiki, Loja e Doações agora compartilham a política de requisição iniciada pelo membro usada no Messenger. Prefetch e prerender recebem `204` privado sem redirecionamento; navegações cross-site ainda podem abrir o destino autorizado, mas não marcam o aviso como lido. A navegação normal mantém o redirect e a alteração de leitura.
+
+Validação: testes de requisição/abertura, ServiceProvider, contrato GET-only e acesso do controlador **18 testes / 118 assertions PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS nos arquivos modificados, exceto `MessagesController`, cujo baseline permanece idêntico (**95 erros / 65 avisos**). Sem Runtime ou navegação em navegador.
+
+## 0.1.1-dev.238 — despachar somente o adapter da origem filtrada
+
+A central agora chama somente o adapter que corresponde à origem selecionada. Filtros de Fórum, Comunicados, Alertas e Conta deixam de disparar consultas de LMS, Wiki, Loja e Doações; o contador agregado continua consultando todos os adapters.
+
+Validação: `PersonalNoticeAdapterHooksTest` **9 testes / 78 assertions PASS**; conjunto de filtros/paginação/ações da central **22/180 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e índice de status PASS. Runtime não executado.
+
+## 0.1.1-dev.237 — respeitar o histórico apagado em avisos enfileirados
+
+O worker de e-mail de mensagens privadas agora compara a data da mensagem com o limite individual de limpeza do histórico. Uma mensagem já ocultada para o destinatário não gera aviso tardio, mesmo que mensagens posteriores mantenham a thread acessível.
+
+Validação: `PrivateMessageNotificationWorkerTest` **5 testes / 100 assertions PASS**; PHP lint e PHPCS Drupal/DrupalPractice PASS. Runtime e e-mail externo não executados.
+
+## 0.1.1-dev.236 — evitar hidratar o histórico na retenção
+
+A limpeza de conversas agora obtém IDs das referências `private_messages` da thread sem carregar cada entidade e corpo
+de mensagem. IDs inválidos e repetidos são descartados antes de localizar avisos vinculados; a exclusão continua usando
+o ciclo de vida do Private Message e a mesma transação para manter rollback cruzado.
+
+Validação: `PrivateMessageRetentionHooksTest` **3 testes / 64 assertions PASS**; Kernel MariaDB dedicado
+`PrivateMessageRetentionKernelTest` **3/42 PASS** (10 deprecações de Core/contrib); PHPCS Drupal/DrupalPractice e PHP
+lint PASS. Runtime e limpeza de dados operacionais não executados.
+
+## 0.1.1-dev.235 — rejeitar payload estruturado como primeira mensagem
+
+O formulário de nova conversa agora aceita somente uma string não vazia para a primeira mensagem. Arrays ou outros tipos
+recebem erro de validação antes da resolução de destinatários e da aquisição de locks, evitando que o cast PHP grave
+`Array` como conteúdo. O fluxo nativo de respostas não foi alterado.
+
+Validação: `NewConversationRecipientIdsTest` **4 testes / 14 assertions PASS**; suites focais de conversas privadas
+**24/126 PASS**; PHP lint PASS. PHPCS do teste PASS; `NewConversationForm` mantém o baseline anterior, sem novas
+violações (**16 erros / 15 avisos**). Runtime não executado.
+
+## 0.1.1-dev.234 — esclarecer as opções de digest e envio direto
+
+A tela de privacidade agora informa, para Fórum, Aprendizagem, Wiki, Loja e Doações, que o digest diário exige também
+o opt-in geral, enquanto o envio direto é controlado somente pela preferência da categoria. O aviso no site permanece
+obrigatório. O controle geral foi descrito como opt-in de resumo, não de envio direto.
+
+Validação: `AvisosPrivacyFormTest` **6 testes / 79 assertions PASS**; central/preferências **39/250 PASS**; workers
+diretos por origem **27/362 PASS**; execução combinada **66/612 PASS**. Runtime e SMTP externo não executados.
+
+## 0.1.1-dev.233 — verificar políticas administrativas por origem
+
+`AvisoPreferenciasTest` agora aplica ambas as restrições administrativas (desligar envio direto e desligar resumo)
+uniformemente a Fórum, Aprendizagem, Wiki, Loja e Doações. Para cada categoria, a preferência incompatível do membro
+falha fechada e não pode ser salva; o outro modo permitido continua disponível.
+
+Validação: teste focal **16 testes / 45 assertions PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime e e-mail
+externo não executados.
+
+## 0.1.1-dev.232 — provar idempotência da repetição do digest
+
+O teste do digest agora percorre a falha temporária do Mailer e uma nova tentativa após a janela de transporte: o lote
+permanece pendente, recebe a mesma correlação determinística e é confirmado uma vez após o envio aceito. A cobertura
+fecha a lacuna entre testar apenas a pendência da falha e comprovar a chave idempotente do retry.
+
+Validação: `AvisosResumoProviderPreferenceTest` **6/130 PASS**; `AvisosResumoMailerKernelTest` **4/70 PASS** em
+MariaDB dedicado. Runtime e transporte de e-mail externo não executados.
+
+## 0.1.1-dev.231 — cobrir revogação e bloqueios no aviso de mensagem privada
+
+`PrivateMessageNotificationWorkerTest` agora comprova que a fila não cria aviso de e-mail após perder acesso à thread
+e que bloqueio bilateral suprime a entrega nos dois sentidos. Nos três casos, nem o Mailer nem o Message Notify são
+chamados. Essa cobertura verifica a autorização no momento de processar a fila, além da validação no formulário.
+
+Validação: teste focal **4 testes / 82 assertions PASS**; conjunto Unit do Messenger e adapters LMS/Wiki/Commerce/Doação
+**268 testes / 2.169 assertions PASS**. PHPCS Drupal/DrupalPractice e PHP lint PASS; Runtime e e-mail real não executados.
+
+## 0.1.1-dev.230 — caracterizar revogação nos adapters de Loja e Doação
+
+Os workers Commerce, Wiki e Doação ganharam cobertura explícita para o caso em que a revalidação de origem retorna
+inacessível entre o enqueue e o envio: a cópia de e-mail é cancelada e o Mailer não é chamado. A bateria inclui o
+estado terminal e complementa os Kernels de revogação de acesso LMS e Wiki.
+
+Validação: `CommerceWikiNoticeEmailWorkerSafetyTest` + `DonationNoticeEmailWorkerTest` **17 testes / 222 assertions
+PASS**; conjunto Unit do núcleo Messenger e adapters LMS/Wiki/Commerce/Doação **266 testes / 2.124 assertions PASS**;
+PHPCS Drupal/DrupalPractice e PHP lint PASS. Sem SMTP ou Runtime.
+
+## 0.1.1-dev.229 — encerrar envio LMS quando o acesso é revogado
+
+Quando o worker LMS revalida uma inscrição sem acesso atual, marca a cópia de e-mail como `cancelled`, terminal para
+replays do evento. Antes, `failed` com zero tentativas permitia que o replay reabrisse a fila. O aviso obrigatório no
+site continua persistido e legível segundo as permissões atuais.
+
+Validação: `LearningNoticePersistenceKernelTest` **4 testes / 52 assertions PASS** no MariaDB dedicado; as 2
+deprecações são das annotations `message` e `message_template` do módulo contrib `message`. Não houve envio SMTP nem
+acesso ao Runtime.
+
+## 0.1.1-dev.228 — testar revogação antes do e-mail direto da Wiki
+
+O Kernel agora cobre um aviso editorial enfileirado cuja revisão é publicada antes do processamento da fila. O worker
+revalida a revisão, cancela somente o e-mail e mantém o aviso obrigatório no site. A microfase também auditou a
+idempotência do digest: lock concorrente, correlação estável, recuperação transacional e boot Drupal independente já
+estão cobertos sem exigir uma nova camada de persistência.
+
+Validação: `WikiNoticePersistenceKernelTest` **8 testes / 152 assertions PASS** no MariaDB dedicado; as 2 deprecações
+reportadas são das annotations `message` e `message_template` do módulo contrib `message`. `LearningNoticeDigestIntegrationTest`
+**24 testes / 205 assertions PASS**; `AvisosResumoMailerKernelTest` **4 testes / 70 assertions PASS**. Runtime e SMTP
+externo não executados.
+
+## 0.1.1-dev.227 — evitar carregar mensagens de threads já lidas
+
+`UnreadThreadCounter::isUnread()` agora compara primeiro `updated` com o histórico individual de acesso. Em threads sem
+atividade posterior, retorna como lida sem executar o access handler, que no `private_message` instalado carrega e filtra
+mensagens pelo corte de exclusão pessoal. Threads potencialmente não lidas continuam passando por access e pela inspeção
+de mensagens antes de serem contadas.
+
+Validação: `UnreadThreadCounterTest` **6 testes / 19 assertions PASS**; PHP lint e PHPCS Drupal/DrupalPractice PASS.
+Não altera a contagem nativa nem faz consultas de leitura/escrita no Runtime.
+
+## 0.1.1-dev.226 — cobrir central sem adapters opcionais
+
+O dispatcher da central agora tem teste explícito de instalação sem os serviços opcionais LMS, Wiki, Loja e Doações. A
+lista e o contador preservam seus dados centrais, sem instanciar adapters ausentes nem registrar erro.
+
+Validação: `PersonalNoticeAdapterHooksTest` **8 testes / 73 assertions PASS**; PHP lint e PHPCS Drupal/DrupalPractice PASS.
+Sem Runtime.
+
+## 0.1.1-dev.225 — cobrir troca de digest para envio direto
+
+O teste de preferência do digest agora cobre também a mudança de uma categoria para envio direto. A pendência dessa
+categoria é descartada do resumo, sem chamar o Mailer pelo digest; a notificação do site permanece obrigatória. O mesmo
+cenário também cobre opt-out.
+
+Validação: `AvisosResumoProviderPreferenceTest` **5 testes / 103 assertions PASS**; PHP lint e PHPCS Drupal/DrupalPractice
+PASS. Sem envio de e-mail ou acesso ao Runtime.
+
+## 0.1.1-dev.224 — aplicar confirmação de e-mail a envios diretos integrados
+
+Os workers diretos de LMS, Wiki e Loja agora revalidam `EmailConfirmationPolicy` antes de resolver o aviso ou chamar o
+Mailer. Endereço não confirmado cancela somente a entrega por e-mail; o `Message` que mantém o aviso no site permanece
+intacto. Isso alinha os três adapters à regra já aplicada ao Fórum, Doações e ao digest combinado.
+
+Validação: Unit de LMS/Wiki/Loja **17 testes / 205 assertions PASS**; `WikiNoticeEmailQueueKernelTest` **2/54 PASS** no
+MariaDB dedicado (2 deprecações de discovery `Message`/`message_template` do Core). PHP lint PASS. SMTP externo e Runtime
+não executados.
+
+## 0.1.1-dev.223 — caracterizar retry de digest após falha SMTP temporária
+
+O Kernel integrado ao ACULTA Mailer agora força uma resposta SMTP 421 e depois aceita o retry controlado. O aviso
+permanece pendente após a falha; a nova execução, depois da janela de segurança, reutiliza a correlação, atualiza o
+mesmo Mail Log e confirma o delivery ID uma única vez.
+
+Validação: `AvisosResumoMailerKernelTest` **4 testes / 70 assertions PASS** no MariaDB dedicado, incluindo os cenários
+anteriores de aceite/recuperação e concorrência; teste novo **1/23 PASS**. O conjunto focal de digest anteriormente
+revalidado passou **75/1.244**; com o novo Kernel, cobertura combinada executada nesta sequência: **76 testes / 1.267
+assertions PASS**. SMTP externo e Runtime não executados.
+
+## 0.1.1-dev.222 — coordenar retenção com gravações de conversas
+
+A limpeza por retenção agora compartilha uma trava persistente por thread com os caminhos de envio de respostas e de
+primeira mensagem em conversa existente. Depois de adquirir a trava, a retenção recarrega a thread e revalida sua idade
+antes de excluir; uma conversa que esteja sendo atualizada é preservada para o próximo cron.
+
+Validação: Unit de validação/envio e retenção **20 testes / 150 assertions PASS**; `PrivateMessageRetentionKernelTest`
+**3/42 PASS** no MariaDB dedicado (10 deprecações Core/contrib) e `PrivateMessageFloodKernelTest` **2/21 PASS**.
+Idempotência do digest revalidada em **75 testes / 1.244 assertions PASS** (Unit/Integration e Kernels Messenger/Mailer).
+PHP lint, PHPCS Drupal/DrupalPractice para serviço/testes, validação YAML, índice e gate Portal Drupal 11+ (**1.155
+checks**) PASS. Formulário e controller mantêm ocorrências PHPCS preexistentes fora dos trechos alterados. Nenhuma limpeza
+Runtime ou transporte SMTP executados.
+
+## 0.1.1-dev.221 — restringir métodos das rotas de abertura de avisos
+
+As rotas de abertura dos avisos LMS, Wiki, Loja e Doações agora aceitam somente GET, conforme seus links de navegação. Isso impede que endpoints de leitura sejam chamados por métodos de escrita sem contrato. A revalidação de acesso à origem e a marcação como lido continuam no controller/manager existente.
+
+Validação: `NoticeOpenRouteMethodTest` **1/8 PASS**, PHP lint, PHPCS Drupal/DrupalPractice e validação YAML dos quatro métodos PASS. Roteamento HTTP/Runtime não executados.
+
+## 0.1.1-dev.220 — renderizar token CSRF nos formulários do drawer
+
+Formulários de opções carregados como fragmentos agora geram o token de sessão da rota interna explicitamente. O placeholder lazy do gerador de URLs não era processado na resposta do drawer e fazia a rota protegida rejeitar o POST. A suíte de navegador passou a criar uma conversa em grupo com dois destinatários pela interface; os diagnósticos de fetch registram apenas caminho e presença de token, nunca seu valor.
+
+Validação: suíte Firefox ESR/X11 no Runtime de teste **90/90 PASS**, incluindo POST de limpeza de histórico aceito (**HTTP 200**) e ciclo completo de privacidade/conversa; PHP lint, Node syntax, PHPCS de `setup-accounts.php` e `git diff --check` PASS. PHPCS do formulário reporta violações preexistentes espalhadas pela classe; nenhuma aponta para o método novo. Produção e SMTP não usados.
+
+## 0.1.1-dev.219 — centralizar novos avisos de amizade no Mailer
+
+Novos avisos de pedido e aceite de amizade passam a usar o tipo mínimo `friendship_notice` do ACULTA Mailer e uma
+correlação determinística por registro persistido. O registro `Message` existente permanece como storage e chave de
+idempotência. O marcador `field_aculta_mailer_managed` separa a nova entrega das mensagens de fila anteriores,
+que continuam no Message Notify até a drenagem operacional. O update 10009 instala o campo aditivamente no bundle.
+
+Validação: Unit Messenger **188 testes / 1.319 assertions PASS**; `FriendshipNoticePipelineKernelTest` **1 teste / 16 assertions PASS** no MariaDB dedicado (2 deprecações Core/contrib); PHPCS Drupal/DrupalPractice, PHP lint, índice de status e gate Drupal 11+ (**1.155 checks**) PASS. SMTP e Runtime não executados.
+
+## 0.1.1-dev.215 — tornar idempotentes os e-mails diretos
+
+Os workers de e-mail direto do Fórum, LMS, Wiki, Loja e Doações passam a compartilhar a geração de UUID v5 a partir da
+identidade lógica do aviso e do tipo de e-mail. Retries de um mesmo aviso usam a mesma correlação, ativando o lock e a
+deduplicação persistente do ACULTA Mailer. Antes de migrar um registro legado, o Messenger reconhece o aceite da antiga
+correlação UUID v4 para o mesmo tipo e destinatário, quando ainda presente no Mail Log.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **248/1.882 PASS**; `WikiNoticeEmailQueueKernelTest`
+**2/54 PASS** no MariaDB dedicado (2 deprecações de discovery `Message`/`message_template` do Core/contrib); PHPCS
+Drupal/DrupalPractice, PHP lint, índice (41 componentes), gate Portal Drupal 11+ (**1155 checks**) e
+`AcultaMailerKernelTest` **5/28 PASS**. SMTP e Runtime não executados.
+
+## 0.1.1-dev.214 — preservar página ao atualizar leitura
+
+Ao marcar um aviso como lido ou não lido, o retorno à central preserva o offset da origem selecionada. O formulário aceita
+somente offsets inteiros não negativos e ignora offsets de outras origens ou parâmetros inválidos, mantendo os filtros
+normalizados e a autorização revalidada pelo adapter.
+
+Validação: `NoticeReadStateFormTest` **5/27 PASS**; Unit completo do Messenger **180/1.248 PASS**; PHPCS
+Drupal/DrupalPractice, PHP lint, índice (41 componentes)
+e gate Portal Drupal 11+ (**1155 checks**) PASS. Runtime e navegador não executados.
+
+## 0.1.1-dev.205 — rejeitar payloads de resposta malformados
+
+`drawerReply` deixa de converter valores não textuais em strings (por exemplo, um array enviado como `message[value]`, que
+virava o texto literal `Array`). A rota retorna 400 sem cache para o payload malformado, antes de validar flood ou tocar
+na conversa.
+
+Validação: `MessagesControllerMemberAccessTest` **4 testes / 36 assertions PASS**; PHPCS Drupal/DrupalPractice no teste,
+PHP lint e diff check PASS. O PHPCS do controller reporta violações preexistentes fora do trecho alterado. HTTP funcional
+com sessão e Runtime não executados.
+
+## 0.1.1-dev.204 — rejeitar identidades duplicadas de digest
+
+O núcleo detecta adapters de digest sem identidade ou com identidade estável duplicada. Essas fontes ficam pendentes sem
+participar do lote nem da recuperação, evitando que a confirmação de um snapshot use o provider errado; fontes com
+identidade única continuam entregando normalmente. O contrato da identidade agora exige unicidade no site.
+
+Validação: `LearningNoticeDigestIntegrationTest` **21/21 testes, 162 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint, `git diff --check` e índice de status PASS. Nenhuma mudança de storage. Runtime e transporte externo não
+executados.
+
+## 0.1.1-dev.203 — estabilizar conteúdo do digest entre adapters
+
+O Messenger ordena adapters por identidade estável e as linhas retornadas por cada fonte antes de montar o e-mail. Uma
+mudança na ordem de descoberta dos serviços ou das linhas duplicadas de um provider deixa de alterar o corpo mantendo a
+mesma correlação idempotente. O adapter continua proprietário dos IDs confirmados, sem novo armazenamento.
+
+Validação: `LearningNoticeDigestIntegrationTest` **18/18 testes, 137 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. A suíte emitiu aviso de diretório `sites/simpletest/browser_output` não gravável;
+os testes Unit concluíram normalmente. Runtime e transporte externo não executados.
+
+## 0.1.1-dev.197 — integrar o digest ao Mailer real em Kernel
+
+Um Kernel de integração agora executa `AvisosResumo` e ACULTA Mailer reais no mesmo banco de teste: grava o envio
+aceito no Mail Log, força falha no acknowledgement transacional e recupera o manifesto original. O teste confirma um
+único transporte, destinatário e conteúdo esperados, acknowledgement final e nenhuma segunda linha de Mail Log.
+
+Validação: `AvisosResumoMailerKernelTest` **1/18 PASS** no MariaDB dedicado; Unit Messenger **166/1.138 PASS**;
+Integration Unit **36/300 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. SMTP e Runtime não executados.
+
+## 0.1.1-dev.196 — contar somente novos envios de digest
+
+`AvisosResumo::enviarResumos()` agora distingue novo transporte de recuperação de um digest que o Mailer já aceitou.
+Reconciliações continuam confirmando o manifesto original, mas não são contabilizadas como e-mails enviados nesta execução
+do cron.
+
+Validação: Unit Messenger **166/1.138 PASS**; Integration Unit **36/300 PASS**;
+`ForumNoticeIdempotencyKernelTest` **34/773 PASS** no MariaDB dedicado. PHPCS Drupal/DrupalPractice, PHP lint,
+índice de status e `git diff --check` PASS. Transporte externo e Runtime não executados.
+
+## 0.1.1-dev.195 — carregar revisões da Wiki em lote no contador
+
+O contador não lido consulta UUIDs em lote e carrega as revisões referenciadas por revisão. Mantém a validação da fonte
+atual, revisão padrão, estado editorial, titularidade, permissões do revisor e acesso a cada revisão.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **225/1.697 PASS**; `WikiNoticeManagerTest` **3/45 PASS**; `WikiNoticePersistenceKernelTest` **7/129 PASS** no MariaDB dedicado
+(2 deprecações de discovery Core/contrib e 3 notices PHPUnit preexistentes); PHPCS Drupal/DrupalPractice e PHP lint
+PASS. Runtime não executado.
+
+## 0.1.1-dev.194 — carregar fontes de Doação em lote no contador
+
+O contador de avisos não lidos agrupa os pedidos e pagamentos aprovados referenciados pelas mensagens pendentes. Revalida
+uma vez cada pedido quanto ao tipo, titular e acesso atual, e confirma cada pagamento por estado e vínculo com o pedido.
+
+Validação: `DonationNoticePersistenceKernelTest` **5/80 PASS** no MariaDB dedicado (2 deprecações de discovery Core/contrib e 1 notice PHPUnit preexistentes); Unit Messenger + Integration Unit
+LMS/Wiki/Loja/Doações **224/1.670 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime não executado.
+
+## Revalidação de idempotência do digest — 2026-10-24
+
+`ForumNoticeIdempotencyKernelTest` **34/773 PASS** no MariaDB dedicado;
+quatro cenários focais de correlação, retry, lease e contenção entre processos **4/99 PASS**. Dois workers Drupal completos
+concorrendo pelo mesmo destinatário, Runtime e SMTP real continuam pendentes.
+
+## 0.1.1-dev.193 — carregar pedidos da Loja em lote no contador
+
+O contador de avisos não lidos reúne UUIDs distintos das mensagens elegíveis e carrega os pedidos da Loja em uma única
+consulta. Revalida tipo, cliente, acesso atual e URL de cada pedido, preservando a contagem por aviso e evitando uma
+consulta de origem por mensagem.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **224/1.670 PASS**; PHPCS Drupal/DrupalPractice
+PASS. Runtime não executado.
+
+## 0.1.1-dev.192 — rejeitar contagem negativa de adapter
+
+O dispatcher considera contagem negativa uma falha do provider e não permite que ela diminua o total agregado. O erro é
+isolado à origem e registrado sem dados do usuário.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **223/1.644 PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS.
+
+## 0.1.1-dev.191 — caracterizar o logger do dispatcher opcional
+
+O contrato do ServiceProvider agora prova que o dispatcher é registrado mesmo sem adapters e recebe locator vazio junto
+ao canal `logger.channel.aculta_messenger` esperado pela isolação de falhas.
+
+Validação: `AcultaMessengerServiceProviderTest` **6/36 PASS**; Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações
+**222/1.636 PASS**; PHPCS, PHP lint e `git diff --check` PASS.
+
+## 0.1.1-dev.190 — isolar inicialização lazy de adapters
+
+O isolamento também cobre falhas ao resolver/construir um adapter no service locator, antes da chamada de listagem ou
+contagem. A origem que falha é registrada por ID e as demais continuam contribuindo.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **222/1.634 PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Sem Runtime/browser nesta validação.
+
+## 0.1.1-dev.189 — isolar falhas dos adapters na central
+
+Uma exceção durante a montagem de avisos descarta a contribuição parcial do adapter que falhou e não interrompe outras
+origens. Falhas de contagem também são isoladas. O log registra somente classe do adapter, operação e classe da exceção,
+sem UID ou conteúdo. Resultado vazio é tratado como válido.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **221/1.619 PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Sem Runtime/browser nesta validação.
+
+## 0.1.1-dev.188 — endurecer remoção de inscrições do Fórum
+
+O teste de submit da privacidade agora tenta remover Flag de outro dono, outro tipo de Flag, alvo não-Node e Node fora
+do bundle `aculta_forum_topic`. Só a Flag própria `seguir_topico` de tópico do Fórum pode ser removida.
+
+Validação: `AvisosPrivacyFormTest` **6/61 PASS**; Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **219/1.597
+PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Runtime/browser nesta validação.
+
+## 0.1.1-dev.187 — validar dispatch real dos hooks da central
+
+O teste de contrato agora passa pelo HookCollector, instala o mapa produzido no `ModuleHandler` e executa os hooks via
+`alter()`. Isso cobre descoberta, resolução do listener e agregação de avisos/contadores por adapters opcionais, além
+dos testes diretos do dispatcher.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **219/1.597 PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Sem Runtime ou navegador nesta validação.
+
+## 0.1.1-dev.186 — registrar hooks de adapters na central
+
+O Drupal só descobre hooks PHP em `src/Hook`; os quatro hooks antes armazenados em `src/Integration/*/Hook` não eram
+chamados. Um dispatcher central descoberto pelo HookCollector agrega avisos pessoais e contadores dos adapters LMS,
+Wiki, Loja e Doações quando presentes. O contrato compartilhado agora é `PersonalNoticeAdapterInterface`; os adapters
+continuam opcionais e não adicionam armazenamento.
+
+Validação: Unit Messenger + Integration Unit LMS **197/1.380 PASS**, incluindo execução do HookCollector real e
+adapters múltiplos; PHPCS Drupal/DrupalPractice e PHP lint PASS. Sem Runtime ou navegador nesta validação.
+
+## 0.1.1-dev.185 — preservar o aviso Wiki após opt-out de e-mail
+
+Kernel MariaDB usa Queue API, Message e conta reais para confirmar que o modo de e-mail `off` cancela somente a entrega
+direta, não chama Mailer e preserva o aviso obrigatório no site sem marcá-lo como lido.
+
+Validação: `WikiNoticeEmailQueueKernelTest` **2/54 PASS** no MariaDB dedicado; duas deprecações de annotations do Core
+para `message` e `message_template`. PHPCS/PHP lint PASS. Runtime e SMTP não executados.
+
+## 0.1.1-dev.184 — caracterizar workers de adapters opcionais
+
+Teste de contrato verifica que o hook de filas remove os workers de LMS, Wiki, Loja e Doações quando seus módulos estão
+desabilitados e preserva os workers de integrações ativas e filas não relacionadas.
+
+Validação: `OptionalQueueWorkerDefinitionsTest` **1/1 PASS**. Não executa cron nem altera filas persistidas.
+
+## 0.1.1-dev.183 — exigir categoria válida no digest
+
+O agregador rejeita linhas de providers sem categoria obrigatória antes de aplicar preferências por tipo. Um provider
+malformado não pode contornar o modo de e-mail escolhido para a categoria; sua linha inválida é descartada do canal de
+e-mail sem remover o aviso do site.
+
+Validação: suíte Unit do Messenger + Integration Unit LMS **194/1.358 PASS**; PHPCS Drupal/DrupalPractice e PHP lint
+PASS. Nenhum Runtime ou transporte de e-mail real foi executado.
+
+## 0.1.1-dev.182 — estabilizar a correlação do digest entre adapters
+
+Teste de regressão confirma que o mesmo lote de avisos produz a mesma correlação idempotente quando a ordem de
+registro dos providers opcionais muda. Isso protege a deduplicação contra alterações de composição do container.
+
+Validação: `LearningNoticeDigestIntegrationTest` **16/124 PASS**. Nenhum Runtime ou transporte de e-mail real foi
+executado.
+
+## 0.1.1-dev.181 — inventariar a integração editorial da Revista
+
+O roadmap M5/MAG 0.5-H agora registra os pontos reais do Magazine (`revista`, workflow, `uid`, `co_authors`) e a
+ausência de assinatura/publicador. A transição salva para `published` é o único evento candidato nesta análise; a
+seleção de destinatários aguarda definição editorial. Não foi criado consumer, categoria paralela, inbox ou conversa.
+
+Validação: revisão cruzada dos contratos Magazine/Messenger e do workflow versionado; `RevistaEditorialAccessKernelTest`
+e `RevistaPublicationsTest` **13/506 PASS**; suíte Unit Messenger 158/1.058 PASS e Kernels de persistência
+LMS/Wiki/Loja/Doações 18/289 PASS. O Kernel confirma workflow/access existente, não integração de avisos. Sem Runtime
+e sem entrega de e-mail da Revista.
+
+## 0.1.1-dev.180 — cobrir a política administrativa de e-mail entre categorias
+
+O teste do formulário de privacidade verifica que todas as categorias integradas obedecem à mesma política de modos
+permitidos pelo Messenger. Desabilitar envio direto na administração remove essa opção de cada categoria sem remover o
+opt-out individual, digest ou os avisos obrigatórios no site.
+
+Validação: formulário e serviços de preferência/configuração **12/76 PASS**; suíte Unit inteira do Messenger **158/1.058 PASS**; PHPCS Drupal/DrupalPractice, PHP lint, índice de status e `git diff --check` PASS. O smoke visual e a aplicação da configuração no Runtime continuam pendentes.
+
+## 0.1.1-dev.179 — cobrir idempotência dos digests da Loja e Doação
+
+Os Kernels de Loja e Doação verificam replay do evento, leitura repetida sem consumo e confirmação seletiva por
+`delivery_id`. O cenário de Doação mantém o pedido criado e duas cobranças aprovadas como entregas distintas; confirmar
+uma linha deixa as outras duas disponíveis.
+
+Validação: Kernels Commerce/Donation **8/136 PASS**; Kernels LMS/Wiki/Commerce/Donation **18/289 PASS**; testes de
+resumo combinado Forum/Mailer **58/1.001 PASS**. PHPCS Drupal/DrupalPractice, PHP lint e índice de status PASS.
+Core/contrib emite 2 deprecações de descoberta de Message/Message Template; os Kernels dos quatro adapters registram
+7 notices PHPUnit. SMTP e Runtime não executados.
+
+## 0.1.1-dev.178 — deduplicar replay no digest Wiki
+
+O Kernel Wiki agora reenvia o mesmo `MessengerNoticeEvent` de revisão antes da leitura do digest e prova que a API
+reutiliza o Message persistido. A linha aparece uma vez e mantém seu `delivery_id`, completando a cobertura de replay,
+acknowledgement e revogação do e-mail quando a revisão é publicada antes da entrega.
+
+Validação: `WikiNoticePersistenceKernelTest` **6/106 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Permanecem
+2 deprecações de annotations Core/contrib e 3 notices PHPUnit; cron, SMTP e Runtime não foram executados.
+
+## 0.1.1-dev.177 — validar digest e revogação na Wiki
+
+O Kernel da integração Wiki agora prova o caminho de e-mail em modo digest com Node e Message reais: revisão em estado
+`review` e permissões atuais aparecem como uma linha com `delivery_id`, e o acknowledgement marca somente o registro
+selecionado. Se uma nova revisão for publicada antes do digest, o provider não devolve a linha e a descarta do canal de
+e-mail. O aviso obrigatório no site permanece no Message.
+
+Validação: `WikiNoticePersistenceKernelTest` **6/105 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. O Kernel reporta
+2 deprecações conhecidas de annotations Core/contrib e 3 notices PHPUnit. Cron, SMTP e Runtime não foram executados.
+
+## 0.1.1-dev.176 — cobrir IDOR nas ações por membro
+
+O teste do controller usa os métodos de opções e relação por membro para confirmar que IDs manipulados não abrem ações
+para uma conta externa à thread nem para o próprio usuário. Os métodos respondem com 404 antes de processar ações ou
+carregar formulários.
+
+Validação: `MessagesControllerMemberAccessTest` **1/16 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. A validação
+HTTP com sessão e roteador completo permanece pendente.
+
+## 0.1.1-dev.175 — exercitar autorização Core na resposta de conversa
+
+O Kernel carrega a definição de produção `aculta_messenger.drawer_reply`, constrói a rota pelos access checks do Drupal
+e usa entidades Private Message reais. Confirma que CSRF válido e associação à thread são necessários: membro com token
+passa; token ausente/inválido e pessoa externa com token válido são negados. A rota permanece limitada a POST. O teste
+não executa o roteador HTTP completo nem Runtime.
+
+Validação: `PrivateMessageRouteAccessKernelTest` **1/12 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. O Kernel
+emite 7 deprecações conhecidas de annotations/validators do Core/contrib.
+
+## 0.1.1-dev.174 — provar rollback da retenção em banco real
+
+O Kernel MariaDB agora injeta uma falha ao excluir o aviso Message após a exclusão de thread/mensagens ter começado.
+O rollback confirma que os três registros permanecem no banco. Com a prova de sucesso da dev.173, a suíte cobre os dois
+resultados do ciclo transacional em storages reais, sem executar limpeza no Runtime.
+
+Validação: `PrivateMessageRetentionKernelTest` **2/29 PASS**; PHPCS Drupal/DrupalPractice e PHP lint dos fixtures PASS.
+O Kernel emite 10 deprecações conhecidas de annotations/validators do Core/contrib. Runtime segue pendente.
+
+## 0.1.1-dev.173 — caracterizar retenção em storage real
+
+Adicionado Kernel MariaDB para a retenção de conversas com entidades reais de Private Message e Message. O ciclo do
+Private Message remove thread e mensagens; o Messenger remove os avisos que apontam para mensagens excluídas, mantendo
+threads, mensagens e avisos recentes. Os timestamps antigos são configurados apenas no banco isolado de teste porque
+o campo `changed` do contrib atualiza `updated` ao salvar a thread. Nenhuma limpeza foi executada em dados reais.
+
+Validação: `PrivateMessageRetentionKernelTest` **1/16 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. O Kernel
+emite 10 deprecações conhecidas de annotations/validators do Core/contrib. Rollback em banco real e Runtime seguem
+pendentes.
+
+## 0.1.1-dev.172 — evitar starvation na retenção de conversas
+
+A retenção paginada agora guarda um cursor de ID em State API. A ordenação ascendente avança além de threads que falham e reinicia quando chega ao fim, permitindo que lotes seguintes prossigam e que falhas sejam tentadas novamente no próximo ciclo. Cada thread e seus avisos Message continuam protegidos pela transação existente; nenhuma limpeza foi executada em dados reais.
+
+Validação: `PrivateMessageRetentionHooksTest` 3/70 e Unit Messenger 156/1.036 PASS; PHPCS Drupal/DrupalPractice, PHP lint, índice e gate Drupal 11+ (1.155 checks) PASS. Kernel com storage real/Runtime ainda não executados.
+
+## 0.1.1-dev.171 — validar CSRF Core nos quatro caminhos POST
+
+A cobertura de `CsrfAccessCheck` agora constrói as rotas pelos quatro registros POST do YAML real, substitui seus parâmetros e verifica token ausente, inválido e válido para cada caminho. Mantém explícito que a execução HTTP completa ainda não foi exercitada.
+
+Validação: `PostRouteCsrfRequirementTest` 2/35 e Unit Messenger 155/993 PASS; PHPCS Drupal/DrupalPractice e PHP lint focal, índice e gate Drupal 11+ (1.155 checks) PASS. HTTP/Runtime não executados.
+
+## 0.1.1-dev.168 — exercitar verificação de CSRF do Core
+
+O teste das quatro rotas POST agora também exercita `CsrfAccessCheck` do Drupal: token ausente e inválido são negados; token válido para o caminho com parâmetro de thread é permitido e não cacheável. Isso complementa a validação declarativa do YAML. Request HTTP/Runtime ainda pendentes.
+
+Validação: `PostRouteCsrfRequirementTest` 2/10 PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS.
+
+## 0.1.1-dev.162 — carregar estados de Site Alerts em lote — 2026-10-24
+
+A central filtra os Site Alerts por acesso antes de consultar Flags pessoais. Leitura e dispensa agora vêm de uma única
+chamada `loadIsFlaggedMultiple()` para todas as entidades visíveis, em vez de duas consultas por alerta. A lista de
+cache tags de Flagging permanece ligada à resposta; visitantes anônimos não consultam estado pessoal.
+
+Validação: `NoticeFlagStateLoaderTest` **3/10 PASS**; `AcultaMessengerServiceProviderTest` + loader **7/24 PASS**; suíte Unit Messenger **147/914 PASS**.
+PHPCS dos arquivos novos PASS; `MessagesController` passou de 96 para 95 erros PHPCS preexistentes, com avisos
+inalterados (65). PHP lint, gate Drupal 11+ (1.155 checks), índice de status e `git diff --check` PASS. Runtime visual
+não executado nesta microfase.
+
+## 0.1.1-dev.161 — caracterizar Flood e lock de mensagens no Kernel — 2026-10-24
+
+O novo Kernel usa o Flood de banco do Drupal, contas reais e backends persistentes independentes. Confirma o limite
+configurado após dez submissões registradas e que uma segunda validação não alcança Flood enquanto a primeira mantém
+o lock; depois que a primeira registra e libera o lock, uma nova validação pode prosseguir.
+
+Validação: `PrivateMessageFloodKernelTest` **2/21 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. O teste exercita
+serviços Kernel, sem enviar HTTP, criar mensagens privadas ou validar CSRF da rota.
+
+## 0.1.1-dev.157 — carregar tópicos seguidos em lote — 2026-10-24
+
+A lista de assinaturas e seu cancelamento múltiplo agora carregam os nodes com `loadMultiple()` da Entity API após
+revalidar Flag, tipo e proprietário. Títulos e rotas continuam condicionados ao acesso atual; nodes ausentes ou de bundle
+inesperado são ignorados. Isso evita um load individual por Flag sem adicionar storage ou contornar a API de remoção.
+
+Validação: `AvisosPrivacyFormTest` **5/55 PASS**, incluindo uma única carga em lote para múltiplos tópicos na listagem e
+na remoção; PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime visual ainda pendente.
+
+## 0.1.1-dev.156 — serializar o rate limit de mensagens privadas — 2026-10-24
+
+O formulário nativo mantém um lock persistente por remetente do início da checagem Flood até a persistência da mensagem.
+Isso impede que envios concorrentes observem o mesmo contador antes de cada registro. Bloqueio de lock retorna a mensagem
+genérica de limite; rejeição Flood e falha do backend liberam o lock, assim como o submit após persistência. O contador só
+é registrado no submit já existente. Sem tabela nova ou alteração na política configurada.
+
+Validação: `PrivateMessageFormValidatorTest`, `NewConversationRecipientIdsTest` e `PrivateMessageFormHooksTest`
+**17/72 PASS**, cobrindo contenção, liberação em Flood negado/exceção e registro após persistência; PHPCS Drupal/
+DrupalPractice e PHP lint PASS. Runtime e transporte real não usados.
+
+## 0.1.1-dev.155 — recuperar digests aceitos mesmo sem adapter ativo — 2026-10-24
+
+O cron inclui na descoberta de destinatários os snapshots de digest já aceitos pelo Mailer. Assim, a recuperação verifica a
+correlação mesmo quando não há aviso pendente de outra origem. Se o adapter opcional do manifesto estiver desativado, o
+snapshot é preservado e nenhuma segunda entrega nem confirmação de linhas alheias ocorre; quando o adapter voltar, o
+manifesto pode ser confirmado sem reenviar o e-mail. A consulta usa `user.data` pelo nome exato da chave, sem novo storage.
+
+Validação: Integration Unit de digest 13/100; suíte Messenger Unit + Integration Unit 195/1.353; Kernel MariaDB
+`ForumNoticeIdempotencyKernelTest` **33/745 PASS**, incluindo `user.data` real e adapter indisponível; PHPCS
+Drupal/DrupalPractice, PHP lint, gate Drupal 11+ (1.155 checks), índice e `git diff --check` PASS. Runtime/SMTP não usados.
+
+## 0.1.1-dev.154 — gerenciar tópicos seguidos nas preferências — 2026-10-24
+
+A página de privacidade lista os tópicos seguidos pela pessoa usando a Flag `seguir_topico` e permite parar de seguir
+itens selecionados. Títulos e links só aparecem quando a pessoa ainda pode ver o tópico; itens indisponíveis aparecem
+com rótulo genérico e continuam removíveis. O submit dedicado usa a API Flag, revalida proprietário/tipo/ID e não
+invoca os handlers do formulário de perfil nem altera o acesso ao conteúdo.
+
+Validação: `AvisosPrivacyFormTest` **5/49 PASS**; PHP lint, PHPCS Drupal/DrupalPractice, gate Drupal 11+ (1.155 checks), índice e `git diff --check` PASS. Validação via Symfony YAML não se aplica ao services.yml com `!tagged_iterator`; o container foi coberto pelo gate Drupal. Runtime visual não executado nesta microfase.
+
+## 0.1.1-dev.153 — bloquear digests concorrentes durante transporte — 2026-10-24
+
+Teste de integração reentra em um segundo `AvisosResumo::enviarResumos()` enquanto o primeiro está no transporte. O
+lock persistente do destinatário impede a segunda entrega; o primeiro confirma seu lote e libera o lock.
+
+Validação: `LearningNoticeDigestIntegrationTest` **12/92 PASS**, incluindo a execução concorrente no transporte;
+PHPCS Drupal/DrupalPractice e PHP lint PASS. A contenção multiprocesso do backend segue coberta separadamente pelo
+Kernel; dois boots completos de Drupal em processos concorrentes e transporte lento ainda não foram homologados.
+
+## 0.1.1-dev.152 — identidade do digest como extensão compatível — 2026-10-24
+
+A identidade estável passou para `AvisoDigestProviderIdentityInterface`, subinterface opcional. Providers existentes que
+implementam somente `AvisoDigestProviderInterface` continuam válidos e usam fallback por classe; os quatro adapters
+ACULTA declaram IDs estáveis. O teste cobre entrega por provider legado sem a nova extensão.
+
+Validação: suíte focal Unit/Kernel MariaDB **47 testes / 889 assertions PASS**; PHPCS Drupal/DrupalPractice, PHP lint, YAML, `git diff --check` e índice de status PASS. Runtime/SMTP não usados.
+
+## 0.1.1-dev.151 — provar recuperação após refactor do adapter — 2026-10-24
+
+O Kernel agora simula uma implantação entre o aceite do e-mail e a confirmação: a segunda execução usa outra classe
+PHP com o mesmo ID estável `wiki`, confirma o manifesto original sem reenvio e deixa o aviso posterior pendente.
+
+Validação: `ForumNoticeIdempotencyKernelTest` **32/725 PASS**; PHP lint, PHPCS Drupal/DrupalPractice e diff check PASS.
+Banco MariaDB dedicado de testes; Runtime e transporte real não usados.
+
+## 0.1.1-dev.150 — identidade estável dos adapters no digest — 2026-10-24
+
+Manifestos e correlações do digest agora identificam adapters por chave estável de origem (`lms`, `wiki`, `commerce`,
+`donation`), em vez do nome da classe PHP. Refatorar ou proxyar a implementação não muda a identidade do lote nem
+impede a recuperação de um aceite já registrado. A leitura ainda reconhece o campo `class` de snapshots já persistidos
+antes desta versão, enquanto novos snapshots gravam somente `provider_id`.
+
+Validação: Unit digest e Kernel MariaDB do Fórum/Mailer em conjunto, **46 testes / 886 assertions PASS**; PHPCS Drupal/DrupalPractice, PHP lint, `git diff --check` e índice de status PASS. Runtime/SMTP não usados.
+
+## 0.1.1-dev.147 — estado vazio acessível na central — 2026-10-24
+
+Avisos filtrados sem resultados agora usam a apresentação neutra `messenger-state` com `role="status"`, preservando a
+mensagem orientada aos filtros. A central mantém decisão de vazio e consulta no módulo; tema mantém CSS e apresentação.
+
+Validação: script visual focado no Firefox ESR visível (Runtime de teste): **4/4 verificações PASS**; PHP lint PASS.
+MessagesController permanece no baseline PHPCS documentado (97 erros e 65 avisos preexistentes).
+
+## 0.1.1-dev.146 — manter respostas em threads existentes — 2026-10-24
+
+`Somente amigos` volta a valer somente para a criação de novas conversas. A visualização de threads existentes não
+oculta mais o compositor quando a amizade termina; o bloqueio bilateral continua impedindo respostas. Removido o
+estado visual de amizade que criava um bloqueio adicional fora do contrato.
+
+Validação: suíte Unit Messenger 140 testes/857 assertions PASS, incluindo estado aberto após fim da amizade e bloqueio
+por qualquer lado; testes existentes do formulário de nova conversa 11/39 PASS. PHPCS e PHP lint do serviço/teste
+novos PASS. Runtime e Kernel de interface não executados.
+
+## 0.1.1-dev.145 — reconciliar manifesto aceito do digest — 2026-10-24
+
+Antes de enviar um digest, o Messenger persiste apenas correlação, instante e IDs/contadores da remessa, sem endereço ou
+conteúdo. Se o Mailer registrou o aceite e uma confirmação de origem falhou, o retry confirma o manifesto original
+atomicamente antes de considerar novos itens pendentes. Assim, novos eventos recebidos na janela de recuperação
+permanecem para um resumo posterior e não alteram a correlação do e-mail já entregue. Se um adapter opcional estiver
+indisponível, o manifesto fica retido e não causa reenvio duplicado.
+
+Validação: `ForumNoticeIdempotencyKernelTest` 32/725 PASS, incluindo crescimento do lote após aceite e rollback;
+Unit Messenger 138/848 PASS; Kernel Mailer 5/26 e Unit Mailer 157/317 PASS; índice PASS. Runtime e transporte real
+não testados. O aceite externo anterior ao registro local continua fora da garantia.
+
+## 0.1.1-dev.144 — digest exige idempotência persistida — 2026-10-24
+
+O ACULTA Mailer agora mantém envios com correlação idempotente em estado temporário enquanto o log de aceite estiver
+desativado. Isso preserva os itens de digest para retry e evita tratar um envio não deduplicável como sucesso.
+
+Validação: Kernel do Mailer 5 testes/24 asserções PASS; `AvisosResumoProviderPreferenceTest` 4/63 PASS confirma que
+falha temporária não descarta nem confirma IDs do provider; PHPCS e PHP lint do teste PASS. Kernel do Messenger e
+Integration digest não foram executados neste incremento; Runtime e transporte externo não testados.
+
+## 0.1.1-dev.143 — testar lock do digest entre processos — 2026-10-24
+
+O Kernel MariaDB agora inicia processos PHP independentes contra o mesmo prefixo isolado e comprova o lock persistente do resumo: enquanto um processo mantém o lock, outro não consegue adquiri-lo; após a liberação, um terceiro processo consegue. A verificação usa apenas o banco dedicado de testes e não executa envio nem toca no Runtime.
+
+Validação: `ForumNoticeIdempotencyKernelTest` 32 testes / 723 assertions PASS, incluindo o cenário multiprocesso; PHPCS Drupal/DrupalPractice e PHP lint dos dois arquivos novos/alterados PASS. O teste não simula dois digests completos disputando o transporte, lease expirada, SMTP real ou execução de cron.
+
+## 0.1.1-dev.138 — distinguir gerações do digest do Fórum — 2026-10-24
+
+A correlação do resumo do Fórum agora inclui a geração monotônica do tópico, calculada em uma consulta agrupada ao ledger de eventos já existente. Um evento novo no mesmo tópico e tipo recebe outra correlação mesmo quando a contagem pendente volta a 1; replay do mesmo evento continua usando a geração anterior. Não há tabela nova nem update de schema.
+
+Validação: Kernel MariaDB `ForumNoticeIdempotency` 30/677 PASS, incluindo aprovação do Comment mais antigo depois do novo, com contagem pendente repetida e correlações distintas entre os dois digests. Unit Messenger 133/791 e Integration Messenger 64/672 PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos da implementação PASS. Integration reporta 2 deprecações de annotations Core/contrib e 7 notices PHPUnit. Gate Drupal 11+, índice e `git diff --check` PASS. Sem Runtime, transporte externo ou stress de processos independentes.
+
+A central também ganhou caminhos positivos de leitura/releitura para Wiki e LMS no Kernel: ambos passam pelo `NoticeReadStateManager`, persistem o campo do `Message` real e negam alteração depois da revogação da fonte. Wiki usa revisão de Node real; LMS isola os objetos de matrícula/curso, mantendo manager, dispatcher, usuário e armazenamento `Message` reais. A suíte Integration após estes testes: 64/672 PASS, com 2 deprecações Core/contrib e 7 notices PHPUnit. Não houve Runtime/browser.
+
+## 0.1.1-dev.137 — filtrar leitura antes do limite da central — 2026-10-24
+
+A central agora encaminha os filtros normalizados aos adapters e aplica o estado lido/não lido na consulta antes do limite para Fórum, LMS, Wiki, Loja e Doações. Comunicados persistentes percorrem lotes access-aware até preencher a página de 50 itens correspondentes; alertas do Site Alert continuam usando seu estado nativo. A ordem atual da central foi preservada enquanto a preferência de ordenação permanece em aberto.
+
+Validação: Unit Messenger 133/791, Kernel MariaDB ForumNoticeIdempotency 29/655 e Integration Messenger 62/622 PASS. PHPCS Drupal/DrupalPractice dos arquivos novos/alterados, lint e gate Drupal 11+ (1155 checks) PASS; MessagesController tem baseline preexistente de 98 erros/65 avisos e ficou em 97/65 após a alteração. Integration reporta 2 depreciações Core/contrib e 7 notices PHPUnit. Sem Runtime/navegador.
+
+## 0.1.1-dev.136 — recuperar enqueue de avisos de amizade — 2026-10-24
+
+Avisos de amizade agora possuem bundle aculta_msg_friendship e campos declarados na configuração de instalação; o update aditivo 10007 instala somente configurações ausentes. A fila registra tentativas de enqueue separadas das tentativas de e-mail, marca recusas como failed e o cron recupera registros pendentes/failed há pelo menos dez minutos, com lote de 50 e teto de cinco tentativas. Lock por Message evita enqueue simultâneo. O replay idempotente continua reutilizando o mesmo aviso.
+
+Validação: FriendshipNoticeSubscriberTest 6 testes / 59 assertions, FriendshipNoticeQueueTest 3/50 e FriendshipBundleUpdateTest 1/3 PASS. Update ainda não aplicado no Runtime; falha após a quinta recusa fica visível como failed sem retry automático adicional. Suíte Unit Messenger 130/767, Kernel MariaDB ForumNoticeIdempotency 28/633, PHPCS dos arquivos alterados, PHP lint, parse de YAML, gate Drupal 11+ (1155 checks), PROJECT-STATUS-INDEX e git diff --check PASS. Runtime/update não executados.
+
+## 0.1.1-dev.135 — recuperar fila recusada de amizade — 2026-10-24
+
+O consumer de amizade agora verifica a resposta da Queue API. Se a fila recusar o item ou lançar erro, a mensagem
+persistente passa a `failed` com zero tentativas, o Messenger registra o ID técnico e propaga a falha. O replay do mesmo
+evento, sob a chave idempotente existente, encontra a mensagem e reenvia somente o item da fila, sem criar aviso
+adicional. A falha por interrupção do processo entre salvar a mensagem e criar o item ainda não tem reconciliador
+periódico.
+
+Validação: `FriendshipNoticeSubscriberTest` 7/82 e suíte Unit Messenger 127/737 PASS; PHPCS Drupal/DrupalPractice e
+PHP lint PASS. Regressão do digest no MariaDB: ForumNoticeIdempotency Kernel 28/633 PASS; deduplicação persistida
+do Mailer: AcultaMailer Kernel 3/15 PASS. Sem Kernel específico da fila de amizade ou Runtime nesta microfase.
+
+## 0.1.1-dev.134 — alinhar lease do digest ao transporte — 2026-10-24
+
+O lock persistente por destinatário do digest agora usa lease de 180 segundos, alinhada aos workers de e-mail direto e
+superior ao timeout de socket local conhecido de 60 segundos. Isso reduz a possibilidade de uma segunda execução
+reivindicar o mesmo destinatário enquanto o transporte e a confirmação do lote ainda estão em andamento. Configurações
+de transporte com duração superior a 180 segundos ainda exigem harmonização; lease não substitui teste com processos
+concorrentes.
+
+Validação: Unit Messenger 125/708 e `LearningNoticeDigestIntegrationTest` 9/74 PASS; PHPCS Drupal/DrupalPractice, PHP lint e gate Drupal 11+ PASS. Kernel multiprocesso e Runtime pendentes.
+
+## 0.1.1-dev.133 — distinguir novos lotes de digest — 2026-10-24
+
+A caracterização do resumo agora confirma que a mesma remessa pendente mantém sua correlação no retry após falha de
+confirmação, enquanto um novo lote com `delivery_id` diferente recebe outra correlação. Isso permite ao ACULTA Mailer
+suprimir somente a entrega já aceita, sem confundir eventos posteriores com o mesmo resumo.
+
+Validação: `LearningNoticeDigestIntegrationTest` 9/74 PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS. O Kernel
+MariaDB do digest/Forum mantém cobertura anterior de lock entre instâncias, confirmação transacional e retry; não houve
+prova com processos independentes nem envio por transporte real nesta microfase.
+
+## 0.1.1-dev.132 — tornar retenção de conversas recuperável — 2026-10-24
+
+A exclusão de uma conversa inativa e dos avisos Message que apontam para suas mensagens agora ocorre em uma transação
+na conexão padrão do Drupal. O worker captura os IDs antes do ciclo de exclusão do Private Message, remove primeiro a
+thread e só então apaga os avisos relacionados; falhas revertem a transação e deixam os avisos intactos. O acesso ao
+campo `updated` usa a API de entidade, sem depender de método não declarado pela interface da thread. Nenhuma limpeza
+foi executada em dados reais.
+
+Validação: Unit Messenger 125/708 PASS, incluindo ordem de exclusão e rollback; PHPCS Drupal/DrupalPractice e PHP lint
+nos arquivos alterados PASS. Não houve execução de cron, Kernel de banco real nem homologação Runtime.
+
+## 0.1.1-dev.131 — validar elegibilidade de destinatários de conversa — 2026-10-24
+
+A busca da gaveta e o envio de primeira mensagem agora usam a mesma política: o destinatário precisa estar ativo e ter
+as permissões `use private messaging system` e `access user profiles`. O endpoint de início pelo perfil também revalida
+essas condições; IDs enviados manualmente não contornam a validação. Bloqueios e preferência de amizade continuam sendo
+validados separadamente.
+
+Validação: Unit Messenger 123/681 PASS, incluindo busca, envio com ID manipulado e permissões ausentes; PHPCS Drupal/
+DrupalPractice limpo nos novos testes e em `ConversationPolicy`; PHP lint e gate Drupal 11+ (1155 checks) PASS. PHPCS
+dos arquivos maiores de formulário/controlador continua apontando erros e avisos preexistentes fora das linhas alteradas.
+Sem homologação Runtime.
+
+## 0.1.1-dev.130 — manter filtros únicos nos links da central — 2026-10-24
+
+Ao abrir um aviso e voltar à central, a origem e o estado de leitura selecionados agora substituem parâmetros de filtro
+anteriores na URL, preservando os demais parâmetros, sem acumular `origem` ou `leitura` duplicados.
+
+Validação: `NoticeListFilterTest` 4/7 PASS; suíte Unit Messenger 120/661 PASS; PHP lint e PHPCS Drupal/DrupalPractice nos arquivos alterados PASS.
+
+## 0.1.1-dev.129 — correlação idempotente para retries do digest — 2026-10-24
+
+O Messenger identifica um digest pelo UID, HMAC do destinatário e IDs/tipos/quantidades do lote, sem incluir títulos
+ou texto de usuário na chave. Se o Mailer já registrou a mesma entrega lógica como aceita, um retry retorna sucesso
+sem enviar novamente. O Messenger confirma todos os adapters e o intervalo do resumo dentro de uma transação da
+conexão padrão do Drupal; falha parcial reverte a confirmação inteira e preserva o mesmo lote/correlação para retry.
+
+Validação: teste de retry após falha de confirmação mantém a correlação; Kernel Mailer confirma que correlação aceita
+não é transportada duas vezes; Forum Kernel comprova no MariaDB rollback entre dois storages e retry com a mesma
+correlação. Unit Messenger 120/660, Integration MariaDB 61/616, Forum Kernel 28/633, Mailer Unit 157/317 e
+Mailer Kernel 42/193 PASS. A chave usa HMAC do `hash_salt` para não expor endereços nem IDs em correlações. A proteção depende do log do Mailer
+ativo e persistido; não cobre perda do registro após aceitação no provedor. Integration registra 2 deprecações
+Core/contrib e 7 notices PHPUnit.
+
+## 0.1.1-dev.128 — robustecer destinatários de grupo e retry do digest — 2026-10-24
+
+Quando um provider falha ao montar suas linhas, o resumo ainda entrega as demais origens, confirma somente os itens
+entregues e não atualiza o intervalo global da conta. Assim, a origem com falha pode ser tentada no próximo cron,
+sem aguardar 20 horas nem perder os avisos no site. A entrada de destinatários de conversas em grupo também passa por
+validação estrita de inteiros positivos e remoção de duplicatas, sem coerções de valores malformados.
+
+Validação: Unit Messenger 120/660 e Integration Messenger 60/602 PASS; Integration inclui 2 deprecações de
+annotations Core/contrib e 7 notices PHPUnit. PHPCS Drupal/DrupalPractice do teste novo, PHP lint, índice de status e
+`git diff --check` PASS. PHPCS do formulário completo ainda aponta violações preexistentes fora do trecho alterado.
+
+## 0.1.1-dev.127 — provar isolamento de titularidade na leitura LMS/Wiki — 2026-10-24
+
+Kernels MariaDB persistem avisos LMS e Wiki em `Message` e confirmam que outra conta não consegue alterar seus campos
+nativos de leitura. A negativa ocorre antes de resolver a fonte de conteúdo, exercitando a proteção de titularidade;
+os fluxos positivos de leitura com fonte/permissões reais seguem pendentes para esses dois adapters.
+
+Validação: LMS Kernel 3/30; Wiki Kernel 3/31; Integration Messenger 60/602 PASS. PHPCS Drupal/DrupalPractice e
+PHP lint PASS. A suíte Integration reporta 2 deprecações de annotations Core/contrib e 7 notices PHPUnit.
+
+## 0.1.1-dev.126 — comprovar persistência de leitura dos avisos da Loja — 2026-10-24
+
+Kernel MariaDB cobre `CommerceOrderNoticeManager::setRead()` com Message persistido: marca e desmarca o campo nativo,
+revalida titularidade e acesso ao pedido, e rejeita alteração por outra conta sem modificar o estado. A fixture usa
+`DomainPurposeManager` e `CheckoutSettings` inicializados com dependências Drupal, sem objeto parcialmente inicializado.
+
+Validação: Kernel Comércio 3/40; Integration Messenger 58/586; PHPCS Drupal/DrupalPractice, PHP lint e
+`git diff --check` PASS. A suíte Integration reporta deprecações de annotations Message no Core/contrib e notices
+PHPUnit (2 deprecações e 6 notices na suíte completa). Runtime visual e Kernels LMS/Wiki continuam pendentes.
+
+## 0.1.1-dev.125 — comprovar persistência de leitura de avisos de Doações — 2026-10-24
+
+Kernel MariaDB cobre `DonationNoticeManager::setRead()` com a entidade Message persistida: marca e desmarca o campo
+nativo de leitura, revalida pedido e destinatário, e rejeita outra conta sem alterar o registro. A fixture agora usa
+`DomainPurposeManager` com dependências reais/mockadas, sem reflection em objeto parcialmente inicializado.
+
+Validação: teste Kernel Doações 3/35 (inclui 1/13 para leitura), Integration Messenger 57/569,
+PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Duas deprecações de annotations Message e um notice
+Integration reporta duas deprecações do Core/contrib e cinco notices PHPUnit. Runtime visual e demais adapters continuam pendentes.
+
+## 0.1.1-dev.124 — isolar falhas de providers e destinatários no digest — 2026-10-24
+
+Uma falha na descoberta de destinatários ou na montagem do digest de um adapter não interrompe o cron
+para os demais providers e contas. O Messenger registra somente o tipo da exceção e do provider, sem destinatário,
+conteúdo ou mensagem da exceção. As pendências da origem com falha permanecem recuperáveis. Se o Mailer aceitar o
+e-mail e a confirmação posterior do provider falhar, permanece a janela inevitável de retry duplicado; isso requer
+idempotência/consulta de entrega compartilhada pelo Mailer para ser eliminada.
+
+Validação: `AvisosResumoProviderPreferenceTest` — 3 testes / 41 assertions PASS; suíte Unit Messenger 118/648;
+PHPCS Drupal/DrupalPractice e
+`git diff --check` PASS. Ainda não exercitados Mailer real, múltiplos processos ou Runtime.
+
+## 0.1.1-dev.123 — tornar falha permanente terminal também em replay — 2026-10-24
+
+- Workers diretos LMS, Wiki, Loja e Doações persistem `failed_permanent`; os
+  estados temporários `failed` continuam retryáveis. Itens duplicados e eventos
+  repetidos não reabrem falhas permanentes. O valor foi adicionado ao campo
+  `list_string` compartilhado pelo `update_10006`, idempotente, e à configuração
+  de instalação. O Fórum já usa estado terminal próprio no outbox.
+- Unit 117/637, Integration MariaDB 56/556 e Kernel MariaDB 27/609 PASS;
+  PHPCS Drupal/DrupalPractice PASS. A Integration suite reporta 2 deprecações Core/contrib e 4 notices
+  PHPUnit. Não houve Runtime, SMTP real ou stress multiprocesso.
+
+## 0.1.1-dev.122 — respeitar falhas permanentes nas filas diretas — 2026-10-24
+
+- Workers diretos de Fórum, LMS, Wiki, Loja e Doações encerram como `failed`
+  erros permanentes do Mailer sem consumir retries restantes. Cancelamentos
+  continuam terminais; erros temporários/exceções mantêm retry limitado.
+- Unit Messenger 116/626 e Integration 52/532 PASS; Kernel 27/609 PASS na
+  rodada anterior da mesma frente. PHPCS Drupal/DrupalPractice PASS. Integração
+  mantém 2 deprecações Core/contrib e 4 notices PHPUnit. Sem SMTP real.
+
+## 0.1.1-dev.121 — encerrar digest após falha permanente — 2026-10-24
+
+- Erro permanente retornado pelo ACULTA Mailer encerra a pendência somente no
+  canal de e-mail, assim como cancelamento por política. Contadores obrigatórios
+  de aviso no site permanecem intactos. Falhas temporárias continuam retryable.
+- Unit 115/606, Kernel MariaDB 27/609 e Integration 48/476 PASS; PHPCS
+  Drupal/DrupalPractice PASS. Integração registra 2 deprecações Core/contrib e
+  4 notices PHPUnit. Sem SMTP real ou teste de processos independentes.
+
+## 0.1.1-dev.120 — comprovar retry do digest combinado entre adapters — 2026-10-24
+
+- Teste integrado combina linhas LMS e Wiki num único resumo. Uma falha
+  temporária preserva as duas pendências; no retry bem-sucedido, somente então
+  cada provider confirma seu próprio `delivery_id`.
+- Integrações Messenger: 47 testes / 471 assertions PASS, com duas deprecações
+  de descoberta de entidades Message no Core/contrib e quatro notices PHPUnit.
+  PHPCS Drupal/DrupalPractice do teste PASS. Não usa SMTP nem processos separados.
+
+## 0.1.1-dev.119 — permitir alterar leitura na central — 2026-10-24
+
+- A central de Avisos oferece ações para marcar como lido/não lido mensagens de
+  LMS, Wiki, Loja e Doações. Cada adapter revalida destinatário e acesso e usa
+  seu campo de leitura existente; adapters opcionais ausentes falham fechados.
+  Fórum, comunicados e Site Alert mantêm suas ações nativas. Sem storage novo.
+- Unit direcionado: 11 testes / 63 assertions PASS; PHPCS Drupal/DrupalPractice
+  dos serviços e testes novos PASS. Kernel de persistência e revisão visual no
+  Runtime ainda pendentes. A suíte Kernel regressiva `ForumNoticeIdempotency` passou (26/587), mas não exercita especificamente a persistência do toggle.
+
+## 0.1.1-dev.118 — verificar retry do e-mail Wiki pela fila Drupal — 2026-10-24
+
+- Kernel MariaDB combina `WikiNoticeEmailWorker` com `DatabaseQueue`: exceção do
+  Mailer mantém o item, o claim espera a lease e, expirado o item de teste, a
+  nova tentativa confirma `sent` e remove a fila. A chamada é direta ao worker;
+  o loop do Core Cron e concorrência entre processos ainda não foram testados.
+- Kernels Messenger/adapters: 35 testes / 712 assertions PASS, com 2
+  deprecações de descoberta Message e 4 notices PHPUnit. Unit: 144/888 PASS;
+  PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem SMTP real.
+
+## 0.1.1-dev.117 — caracterizar exceções de privacidade para equipe — 2026-10-24
+
+- Testes Unit garantem que administradores e editores podem iniciar conversas
+  com membros que restringiram novas conversas a amizades e que a exceção não
+  permite contornar um bloqueio bilateral. Unit Messenger + integrações: 144
+  testes / 888 assertions PASS; PHPCS Drupal/DrupalPractice, PHP lint e
+  `git diff --check` PASS. Sem Kernel/Runtime de formulário.
+
+## 0.1.1-dev.116 — uniformizar lease dos workers de e-mail direto — 2026-10-24
+
+- Os workers diretos de Fórum, amizade, mensagens privadas, LMS, Wiki, Loja e
+  Doações usam lease compartilhada de 180 s, acima do timeout de socket PHP
+  local (60 s) e com margem para persistir o resultado antes de outro worker
+  poder enviar a mesma mensagem. O valor evita que locks curtos de 30/60 s
+  expirem enquanto o transporte ainda está bloqueado.
+- Unit Messenger + integrações: 142 testes / 876 assertions PASS; Kernel
+  regressivo dos adapters: 34 testes / 677 assertions PASS (2 deprecações do
+  Core/contrib e 4 notices). PHP lint e `git diff --check` PASS. PHPCS apontou violações preexistentes de comentários
+  na classe de mensagens privadas, sem relação com as linhas alteradas. Sem
+  transporte real, workers concorrentes de SO ou Runtime.
+
+## 0.1.1-dev.115 — testar retry e liberação do lock após exceção — 2026-10-24
+
+- O teste integrado provoca uma exceção no primeiro envio, verifica liberação
+  do lock e confirma que a mesma linha é enviada e reconhecida na tentativa
+  seguinte. Unit Messenger + adapters: 142 testes / 876 assertions PASS;
+  PHPCS Drupal/DrupalPractice e PHP lint PASS. Transporte permanece controlado.
+
+## 0.1.1-dev.114 — cobrir lock do digest entre requisições — 2026-10-24
+
+- Kernel MariaDB usa um segundo `PersistentDatabaseLockBackend` sobre a mesma
+  tabela semaphore durante a chamada ao Mailer. A execução concorrente não envia
+  outro resumo, e o evento novo recebido durante o primeiro envio permanece
+  pendente. ForumNoticeIdempotency: 26 testes / 587 assertions PASS.
+- Ainda não é teste com processos de SO independentes; o stress multiprocesso e
+  o transporte lento/real permanecem pendentes.
+
+## 0.1.1-dev.113 — exigir ID estável nos itens do digest — 2026-10-24
+
+- O Messenger não envia linhas de providers sem `delivery_id` inteiro positivo;
+  descarta a pendência de e-mail inválida para evitar repetição a cada digest.
+  O aviso obrigatório no site continua independente.
+- Unit Messenger + adapters: 142 testes / 867 assertions PASS. PHPCS
+  Drupal/DrupalPractice e `git diff --check` PASS. Kernel não repetido nesta
+  microfase; Runtime e transporte real não testados.
+
+## 0.1.1-dev.112 — manter o digest recuperável após exceção do Mailer — 2026-10-24
+
+- Exceções lançadas pelo transporte não interrompem o restante do cron nem
+  confirmam pendências; o lock por destinatário é liberado e as linhas ficam
+  prontas para retry. O log registra somente a classe da exceção, sem endereço,
+  conteúdo do aviso ou mensagem do transporte.
+- Unit Messenger + adapters: 141 testes / 862 assertions PASS; PHP lint,
+  PHPCS Drupal/DrupalPractice, YAML de serviços e `git diff --check` PASS.
+  Nenhum envio SMTP real ou Runtime.
+
+## 0.1.1-dev.111 — confirmar apenas os itens incluídos no digest — 2026-10-24
+
+- O contrato dos digest providers inclui IDs dos Messages efetivamente incluídos
+  no resumo; após sucesso, cada adapter confirma somente esses IDs e valida
+  proprietário/tipo. Mensagens que chegam durante o transporte permanecem para
+  o próximo digest. Fórum recarrega os agregados dentro do lock por destinatário
+  e desconta o lote entregue sob o mesmo lock de escrita do agregado, evitando
+  perder incrementos concorrentes. Opt-out e revogação limpam somente a
+  pendência de e-mail, preservando os avisos do site.
+- Unit Messenger + adapters: 140 testes / 856 assertions PASS. Kernels
+  Messenger/adapters em MariaDB isolado: 34 testes / 681 assertions PASS,
+  incluindo evento Fórum recebido durante a entrega; 2 deprecações de descoberta
+  de entidades Message no Core/contrib. Runtime e transporte real não testados.
+
+## 0.1.1-dev.110 — filtros de origem e leitura na central — 2026-10-24
+
+- A aba Avisos oferece filtros GET de origem e estado de leitura sobre a lista
+  agregada; links preservam o outro filtro. O Messenger aplica-os depois dos
+  adapters, mantém todos os itens sem filtro na gaveta e informa resultado vazio
+  específico. LMS, Wiki, Loja e Doações marcam origem/leitura no render array.
+- Unit Messenger + adapters: 140 testes / 852 assertions PASS, incluindo 4 testes
+  / 6 assertions do filtro. PHPCS limpo para classes novas; controllers mantêm
+  baseline preexistente sem aumento de violações. PHP lint, YAML e status index
+  PASS. Sem Runtime visual.
+
+## 0.1.1-dev.109 — política administrativa dos modos de e-mail — 2026-10-24
+
+- Configurações do Messenger agora permitem restringir por categoria os modos
+  de resumo diário e envio direto. A opção individual “sem e-mail” permanece
+  disponível e os avisos no site não podem ser desativados. Preferências antigas
+  de modo bloqueado ficam inativas enquanto a política o proíbe e voltam a valer
+  quando o administrador liberar o modo. Unit Messenger + adapters: 136 testes /
+  846 assertions PASS; Kernel ForumNoticeIdempotency: 26 / 581 PASS. Os 12 testes
+  direcionados de preferências/digest somaram 102 assertions. PHPCS Drupal/
+  DrupalPractice, lint PHP, parse de YAML e índice de status PASS. Runtime não
+  alterado; falta smoke administrativo no Runtime.
+
+## 0.1.1-dev.108 — serializar criação dos avisos de amizade — 2026-10-24
+
+- `FriendshipNoticeSubscriber` usa lock pela chave idempotente antes da busca e
+  criação do Message. Replays simultâneos aguardam, adquirem o lock e observam
+  o registro criado pela primeira execução. O lock também é injetado pelo
+  serviço Drupal; Unit do subscriber: 5 testes / 53 assertions.
+- Unit Messenger + adapters: 132 testes / 837 assertions PASS. PHPCS
+  Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime/fila não
+  homologados.
+
+## 0.1.1-dev.107 — serializar persistência dos avisos LMS — 2026-10-24
+
+- `LearningNoticeManager::record()` adquire lock pela tupla destinatário, tipo,
+  origem e versão antes da consulta/criação e do enqueue. Replays de itens
+  pendentes não enfileiram e-mails novamente; falha de enqueue pode ser
+  reprocessada sem criar outro Message.
+- Unit do lock: 1 teste / 8 assertions; Unit Messenger + adapters: 131 / 821
+  PASS. Kernel LMS: 2 / 22 PASS, incluindo enqueue único após replay, com duas
+  deprecações de descoberta de entidades `message` do Core/contrib. PHPCS,
+  PHP lint e `git diff --check` PASS. Runtime e fila operacional não homologados.
+
+## 0.1.1-dev.106 — serializar e-mail de amizade no worker da fila — 2026-10-24
+
+- `FriendshipNoticeEmailWorker` agora adquire lock por aviso antes de carregar o
+  Message. Replays concorrentes leem estado e tentativas atuais, impedindo dois
+  e-mails para o mesmo evento; falhas mantêm o limite de três tentativas.
+- Unit do worker: 5 testes / 61 assertions; Unit Messenger + adapters:
+  130 testes / 813 assertions PASS. PHPCS Drupal/DrupalPractice, PHP lint e
+  `git diff --check` PASS. Runtime e fila operacional não homologados.
+
+## 0.1.1-dev.105 — encerrar digest suspenso pela política administrativa — 2026-10-24
+
+- `AvisosResumo` agora usa o resultado tipado do ACULTA Mailer. Quando a política
+  cancela o envio, remove somente as pendências de e-mail do resumo e preserva
+  os avisos obrigatórios no site; falhas temporárias continuam pendentes para
+  retry. Integração cobre cancelamento, falha temporária e entrega aceita.
+- Unit Messenger + adapters: 129 testes / 806 assertions PASS. Kernel
+  `ForumNoticeIdempotency`: 26 testes / 581 assertions PASS. PHPCS
+  Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Nenhum Runtime,
+  configuração de produção ou transporte real foi alterado.
+
+## 0.1.1-dev.104 — persistir correlação UUID do e-mail direto do Fórum — 2026-10-24
+
+- O outbox do Fórum gera um UUID v4 ao reivindicar pela primeira vez uma
+  tentativa e o preserva para replays. `ForumNoticeEmailWorker` envia esse
+  correlation ID aceito pelo contrato do ACULTA Mailer; exceção do transporte
+  atualiza o estado retryable/terminal conforme o contador do ledger existente.
+- Update aditivo `10005` cria a coluna no ledger atual, sem nova tabela. Unit do
+  worker: 2 testes / 33 assertions; Kernel de update idempotente e correlação
+  estável entre claims: 2 / 39 PASS. Kernel completo ForumNoticeIdempotency:
+  26 testes / 581 assertions; Units Messenger + adapters: 126 / 765 PASS.
+  Runtime não atualizado.
+
+## 0.1.1-dev.103 — encerrar retries de LMS e Doações com estado terminal — 2026-10-24
+
+- Exceções de transporte do Mailer agora consomem tentativas em LMS e Doações.
+  A fila reprocessa falhas somente abaixo do limite; após a última tentativa,
+  o estado fica `failed` terminal. O worker de Doações também encerra itens
+  legados que permaneçam `pending` com o limite já esgotado.
+- Unit Messenger + adapters: 125 testes / 744 assertions PASS. PHPCS
+  Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime, Queue API
+  operacional e transporte real não foram homologados.
+
+## 0.1.1-dev.102 — limitar retries e impedir replay de e-mail direto — 2026-10-24
+
+- Workers LMS, Wiki e Loja agora adquirem o lock antes de carregar o Message;
+  itens duplicados leem o estado persistido atualizado. Estado `sent` e limite
+  de tentativas esgotado encerram o processamento sem novo envio.
+- Loja e Wiki passam a contabilizar exceções do Mailer antes de reencaminhar
+  falhas transitórias; após o limite, o aviso do site permanece e o e-mail fica
+  `failed`. Unit Messenger + integrações: 123 testes / 714 assertions PASS.
+  PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime,
+  SMTP real e concorrência em processos separados não foram testados.
+
+## 0.1.1-dev.101 — serializar o resumo combinado por destinatário — 2026-10-24
+
+- `AvisosResumo` adquire um lock persistente individual antes de verificar a
+  janela de envio; uma execução concorrente ignora o UID já reivindicado. O
+  lock é liberado em `finally`, inclusive quando o Mailer falha. Lease de 120 s
+  reduz duplicação em cron concorrente; não prova exclusão entre servidores
+  após expiração da lease nem garante exactly-once no transporte.
+- Unit de preferência/contenda e integração LMS: 4 testes / 30 assertions
+  PASS. Kernel ForumNoticeIdempotency MariaDB: 25 testes / 560 assertions
+  PASS. PHPCS Drupal/DrupalPractice, PHP lint, `git diff --check` e índice de
+  status PASS. Runtime e transporte real não executados.
+
+## 0.1.1-dev.100 — endurecer valores do envelope de eventos — 2026-10-24
+
+- `MessengerNoticeEvent` agora rejeita caracteres ASCII de controle nos UUIDs
+  de origem, revisões/versões, chaves de idempotência e valores textuais de
+  metadados, além dos limites de tamanho e formato já existentes.
+- Teste Unit cobre LF, CR e NUL nos campos do contrato. Messenger Unit e
+  publishers LMS, Doação, Loja e Wiki: 105 testes / 491 assertions PASS.
+  PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime não
+  executado.
+
+## 0.1.1-dev.99 — integrar eventos de doação ao núcleo — 2026-10-24
+
+- `aculta_messenger` registra o consumer opcional de Doações, persistindo
+  `donation.order_placed` e `donation.payment_approved` em Message compartilhada,
+  com dedupe, central, contador, leitura/revalidação e Mailer direto/digest.
+  Repetição do mesmo pagamento não cria segundo aviso; pagamentos recorrentes
+  distintos geram avisos próprios. A categoria de e-mail `doacao` permite
+  desligado, direto ou resumo, sem desligar avisos do site.
+- Worker direto usa o UUID v4 do Message como correlação exigida pelo Mailer e
+  revalida preferência, conta confirmada e acesso atual antes do envio.
+- Kernel MariaDB de Doações: 2 testes / 22 assertions PASS para ambos eventos,
+  dedupe, múltiplas cobranças e rejeição de pedido inacessível. Kernels Messenger (Forum/Wiki/Donation): 29/605
+PASS; 2 deprecações de discovery Message Core/contrib. Units Messenger 92/455,
+Donation 24/84 e worker direto 2/27 PASS. PHPCS, lint, YAML e status index
+  PASS. Sem operação no Runtime, envio real ou sandbox financeiro.
+
+## 0.1.1-dev.98 — provar transferência persistente de avisos do Fórum — 2026-10-24
+
+- `ForumNoticeIdempotencyKernelTest` agora altera um Comment persistido para o
+  tópico de destino, dispara `ForumCommentSubtreeMovedEvent` pelo subscriber
+  compartilhado e comprova mesclagem do agregado, watermark e dedupe no ledger.
+- Kernel MariaDB: suíte do ledger 25 testes / 560 assertions PASS; cenário
+  focal 1/27; PHPCS Drupal/DrupalPractice PASS. A prova não substitui integração
+  do mover completo nem valida outbox/e-mail.
+
+## 0.1.1-dev.97 — centralizar consumidores de avisos — 2026-10-24
+
+- Consumidores, managers, hooks, rotas de abertura, workers de e-mail e
+  configurações Message para LMS, Wiki e Loja foram movidos para
+  `aculta_messenger`. Os publishers e a seleção de destinatários permanecem
+  nos módulos que possuem os respectivos conteúdos e workflows.
+- O núcleo registra adapters apenas quando encontra serviços dos módulos
+  produtores. O update aditivo `10003` instala defaults centralizados sem
+  sobrescrever configuração existente. Não foi executado no Runtime.
+- Os antigos submódulos `*_messenger` tiveram serviços, rotas, classes, testes e
+  configurações removidos após a migração. Permanecem manifests ocultos sem
+  execução para preservar a identidade das extensões já habilitadas; não há
+  uninstall/alteração de dados no Runtime.
+- Unit integrada: 126 testes / 657 assertions PASS, incluindo provider e rotas
+  de adapters opcionais. Kernels MariaDB de LMS, Wiki e Loja: 6 testes / 64 assertions
+  PASS. PHPCS Drupal/DrupalPractice nos arquivos migrados PASS; PHP lint e
+  `git diff --check` PASS. Runtime recebeu rebuild de cache e smoke HTTP após correção; não homologado
+  como Alpha.
+- Decisão normativa: Messenger centraliza mensagens, avisos e orquestração de
+  e-mail; Mailer permanece dono do transporte e infraestrutura de envio.
+
+## 0.1.1-dev.96 — entrega direta configurável para avisos do Fórum — 2026-10-24
+
+- A preferência de cada categoria do Fórum agora seleciona sem e-mail, resumo
+  diário ou envio direto; os avisos na central continuam obrigatórios. O resumo
+  geral continua controlando o digest, e o ACULTA Mailer aplica as políticas
+  administrativas de entrega.
+- O outbox direto reutiliza o ledger idempotente existente e registra estado,
+  tentativas e lease na mesma tabela por update aditivo. O QueueWorker revalida
+  conta ativa/confirmada, preferência, assinatura, publicação, autoria, Domain
+  e acesso antes de enviar; não cria aviso, entidade ou tabela paralelos.
+- O consumidor da Loja (`aculta_commerce_messenger`) permanece incluído na
+  matriz de adapters junto com LMS, Wiki e Fórum. `store.order_placed` usa
+  Message/central, digest ou envio direto via Mailer e fallback do recibo
+  Commerce conforme contrato do adapter. Unit 6/43 para Loja foi registrado na
+  implementação dev.1; Kernel e Runtime da Loja permanecem pendentes.
+- Unit Messenger: 86 testes / 412 assertions PASS; PHPCS Drupal/DrupalPractice
+  passou após correções; lint dos arquivos PHP do outbox/worker passou. Kernel
+  MariaDB do ledger: 23 testes / 515 assertions, mais o teste do update `10002`
+  em 1 teste / 18 assertions; ambos PASS. Gates de configuração e Runtime seguem
+  pendentes.
+
+## 0.1.1-dev.95 — revalidar preferências de categoria no digest — 2026-10-24
+
+- O digest compartilhado confere o modo atual de cada categoria fornecida por
+  adapters. Se a pessoa mudou de resumo para direto/desativado, pendências da
+  categoria são descartadas sem remover o aviso obrigatório do site.
+- Unit: `AvisosResumoProviderPreferenceTest` verifica opt-out depois da
+  enfileiração; Loja revalida também a categoria antes de expor linhas.
+- Unit Messenger: 82 testes / 386 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint no serviço/teste PASS. Kernel não executado (SIMPLETEST_DB ausente); Runtime recebeu rebuild de cache e smoke HTTP após correção; não homologado
+  como Alpha.
+
+## 0.1.1-dev.93 — usar relógio Drupal na fila de avisos do Fórum — 2026-10-24
+
+- `MessageSubscribeEventWorker` usa `datetime.time` para aplicar o limite de
+  uma semana de tópico sem alias, sem depender do relógio global do PHP. O
+  produtor é consumido pela interface pública, facilitando testes isolados.
+- Resumo diário envia sempre em `pt-br`, conforme o idioma único da plataforma;
+  o idioma preferido do perfil não seleciona outro locale.
+- Unit direcionado: 2 testes / 23 assertions cobrem requeue para item recente e
+  descarte/log de item vencido; suíte Unit Messenger: 81 testes / 379
+  assertions. PHPCS Drupal/DrupalPractice e PHP lint: PASS.
+- Kernel SQLite: 23 testes / 515 assertions PASS, incluindo o resumo combinado
+  pelo Mailer mockado em `pt-br`; essa execução local não substitui validação
+  MariaDB nem Runtime.
+  Nenhum item de fila foi processado no Runtime.
+
+## 0.1.1-dev.85 — adaptar eventos do Fórum ao publisher Messenger — 2026-10-24
+
+- `ForumAvisoHooks` e o worker de revisões de tópico agora publicam eventos
+  mínimos por destinatário via `MessengerNoticePublisherInterface`. O consumer
+  confere origem, propósito e chave canônica, resolve Comment por UUID ou a
+  revisão publicada de Node/ForumPost e encaminha ao agregador `aculta_aviso`.
+- O agregador revalida assinatura e acesso no consumo e registra no ledger
+  transacional existente; não há storage paralelo nem segundo disparo. Autores
+  não recebem aviso da própria revisão de tópico.
+- Kernel MariaDB do ledger/event pipeline: 18 testes / 353 assertions,
+  incluindo publicação e replay de ForumPost pelo EventDispatcher; Unit
+  Messenger: 70 / 334; Unit LMS Messenger: 21 / 83. PHPCS Drupal/DrupalPractice,
+  PHP lint e YAML dos serviços: PASS. Runtime recebeu rebuild de cache e smoke HTTP após correção; não homologado
+  como Alpha.
+
+## 0.1.1-dev.84 — respeitar unfollow antes da entrega — 2026-10-24
+
+- Kernel cobre evento entregue após remoção do acompanhamento: sem aviso e sem
+  chave no ledger para o antigo seguidor. Confirma a resolução atual de
+  destinatários no processamento. MariaDB: 16 testes / 310 assertions.
+- PHPCS Drupal/DrupalPractice, PHP lint e Unit Messenger: PASS. Sem Runtime.
+
+## 0.1.1-dev.83 — caracterizar espera e retry do lock — 2026-10-24
+
+- O Kernel simula lock ocupado no agregado: aquisição falha, o writer espera,
+  retenta, persiste um único aviso e libera o lock. A prova exercita o caminho
+  de retry com LockBackend mock; não simula processos concorrentes. MariaDB:
+  15 testes / 294 assertions. PHPCS Drupal/DrupalPractice e PHP lint: PASS.
+
+## 0.1.1-dev.82 — provar a migração do ledger em lotes — 2026-10-24
+
+- O Kernel de idempotência agora migra 501 chaves legadas em duas chamadas:
+  comprova que o primeiro lote de 500 preserva a tabela antiga e que a última
+  chave é migrada antes da remoção. Kernel MariaDB: 14 testes / 271 assertions.
+- Sem mudança de comportamento de produção; post-update segue não aplicado no
+  Runtime. PHPCS Drupal/DrupalPractice e PHP lint do teste: PASS.
+
+## 0.1.1-dev.81 — serializar e deduplicar todos os avisos do Fórum — 2026-10-24
+
+- O ledger passou a registrar Comment, revisão de `ForumPost` e revisão de
+  tópico com chave única por destinatário/tipo/ID. Eventos em ordem inversa não
+  são descartados; watermarks continuam como máximos históricos.
+- Lock por destinatário/tópico/tipo serializa updates do agregado compartilhado;
+  inserção do evento e incremento do aviso são transacionais. Cron remove chaves
+  após seis meses em lote.
+- Post-update migra em lotes as chaves Comment do dev.80 ao ledger unificado e
+  só remove a tabela antiga após concluir a cópia. Kernel MariaDB: 14 testes /
+  266 assertions, incluindo migração e ordem inversa de revisão de tópico/post.
+  Unit Messenger: 64 / 297; PHPCS Drupal/DrupalPractice: PASS. Sem Runtime.
+
+## 0.1.1-dev.80 — deduplicar aprovação tardia de Comments — 2026-10-24
+
+- O marcador de CID agregado não identificava eventos individuais: uma aprovação
+  tardia com CID menor que outro Comment já publicado era descartada. Criada a
+  tabela mínima `aculta_messenger_forum_comment_notice`, com unicidade por
+  destinatário/Comment, transação junto do incremento e watermark mantido como
+  maior CID histórico. Sem migração de conteúdo.
+- Install schema cobre instalações novas; post-update idempotente instala a
+  tabela em existentes. Cron remove chaves vencidas em lote após seis meses,
+  alinhado à retenção dos avisos. Post-update não foi executado no Runtime.
+- Kernel MariaDB Simpletest: 12 testes / 220 assertions, incluindo CID fora de
+  ordem, replay, watermark e expiração. Unit Messenger: 64 / 297. PHPCS Drupal
+  e DrupalPractice nos arquivos PHP alterados: PASS.
+
+## 0.1.1-dev.79 — publicar envelope mínimo de eventos — 2026-10-24
+
+- Adicionados `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`,
+  publicados pelo EventDispatcher do Drupal, sem criar tabela ou engine de
+  notificações. O envelope valida identificadores, destinatário e metadados
+  planos; consumidores são responsáveis por revalidar acesso, deduplicar e
+  escolher o storage existente.
+- M2 permanece parcial: adapters e consumidores ainda não migraram para o
+  publisher. Unit do contrato: 4 testes / 16 assertions PASS; Unit Messenger
+  completo: 64 / 297; LMS Messenger: 21 / 83.
+
+## 0.1.1-dev.78 — alinhar privacidade e conversas voluntárias — 2026-10-24
+
+- A preferência “somente amigos” volta a restringir apenas a criação de novas
+  conversas; respostas em threads existentes continuam sujeitas aos bloqueios
+  bilaterais e ao acesso nativo do Private Message.
+- Removida a regra de retenção especial `course`, que representava o antigo chat
+  automático de turma. Conversas diretas e grupos voluntários seguem a política
+  configurada sem migração de dados.
+- Documentação normativa substitui chats contextuais e componentes de
+  participação por avisos no site/e-mail; preserva os textos superados como
+  histórico onde aplicável.
+- PHPUnit Unit Messenger: 60 testes / 282 assertions PASS; LMS Messenger: 18 /
+  88 PASS. Testes Kernel não iniciaram por ausência de SIMPLETEST_DB. Runtime
+  não homologado.
+
+## 0.1.1-dev.77 — busca de membros com região viva nomeada
+
+- Prévia de membros agora é uma região `aria-live` com rótulo; seus resultados
+  são links que se percorrem com Tab, não opções selecionáveis de combobox.
+- Runtime e smoke autenticado do drawer permanecem pendentes; nenhum dado ou
+  mensagem foi criado.
+
+## 0.1.1-dev.76 — caracterizar idempotência dos avisos do Fórum — 2026-10-22
+
+- XK-C2: novo teste Kernel `ForumNoticeIdempotencyKernelTest` (8 testes / 148
+  assertions) percorre os eventos reais de primeira publicação de post e de
+  atualização de tópico. Confirma um aviso por destinatário e por revisão,
+  entrega repetida sem novo aviso, contadores intactos, exclusão do autor e de
+  quem perdeu acesso, e isolamento entre respostas e atualizações.
+- Fixture `tests/modules/aculta_messenger_aviso_test` registra a entidade de
+  produção `Aviso` por Reflection, sem habilitar as integrações do Messenger.
+- Nenhum serviço, hook, campo, tipo de aviso ou schema foi alterado; não há
+  mudança de comportamento nem de Runtime. Documentação da caracterização em
+  `docs/MESSENGER-PART-0.1-C2-CHARACTERIZATION.md`.
+
+## 0.1.1-dev.75 — contar aprovação tardia de posts revisionáveis — 2026-10-22
+
+- `ultimo_post` guarda agora o ID da revisão publicada, em vez do ID estável do
+  post. Um post criado antes mas aprovado depois de outro passa a contar no
+  aviso; repetir o mesmo evento continua bloqueado pelo marcador.
+- A integração só registra a transição da primeira publicação, usando o campo
+  imutável `first_published`; retirar e republicar um post não cria outra
+  resposta.
+- Nenhum campo foi adicionado. Testes de persistência e Runtime permanecem
+  pendentes; não houve alteração no Runtime nesta entrega.
+- PHPDoc das classes `AvisoService` e `Aviso` foi alinhado ao padrão Drupal;
+  PHPCS Drupal/DrupalPractice passa nos arquivos dessas classes e no hook de
+  integração. Sem mudança de comportamento.
+
+## 0.1.1-dev.74 — avisos de resposta para posts revisionáveis — 2026-10-22
+
+- Posts do `aculta_forum_post` contam no aviso agregado do tópico seguido ao
+  serem publicados pela primeira vez; edições posteriores não geram nova
+  resposta. Autor, sincronizações e destinatários sem acesso atual são
+  excluídos. Comentários legados mantêm marcador independente
+  (`ultimo_comentario`).
+- Adicionado campo base com post-update. O update não foi executado; validação
+  de persistência e Runtime seguem pendentes.
+
+## 0.1.1-dev.73 — valida transferência de agregados de resposta — 2026-10-21
+
+- Extrai `ForumNoticeAccessPolicyInterface` para permitir cobertura isolada do
+  serviço e testa a mesclagem do agregado completo de respostas: somas dos
+  contadores, maior ID de comentário e exclusão do registro de origem.
+- Unit focal: 1 teste / 13 assertions PASS. Sem alteração de Runtime.
+
+## 0.1.1-dev.69 — aviso persistente de e-mail não confirmado — 2026-10-21
+
+- Modelo de aviso `aculta_msg_email_pendente` (config em `config/sync`): aviso persistente de quem não confirmou o e-mail, no sistema de avisos (entidade `message`). Sem dados pessoais.
+- `EmailPendingAvisoHooks`: garante o aviso ao exibir o aviso de atenção (`aculta_portal_email_notice_alter`) e remove o aviso quando o e-mail é confirmado (`user_update`).
+- `aculta_messenger.info.yml` 0.1.1-dev.69. RUNTIME STATUS: DEFERRED (teste no X11 registrado no roteiro).
+
+## 0.1.1-dev.71 — texto do aviso de e-mail pendente em uma única origem — 2026-10-21
+
+- Título e corpo do aviso vêm do modelo `aculta_msg_email_pendente` (delta 0 e 1). `EmailPendingAviso::title()` e `body()` leem o modelo e devolvem texto puro (sem `<p>` nem Markup).
+- A lista de avisos e a caixa de atenção de Minha conta usam o mesmo ponto (`aculta_portal_email_notice`, alimentado por `EmailPendingAvisoHooks`). Nenhum dos dois guarda cópia do texto.
+- Sem o modelo, nenhum item é listado e a caixa mostra só o rótulo do link.
+- `aculta_messenger.info.yml` 0.1.1-dev.71. Portal: a caixa de Minha conta (`EmailConfirmationNotice`) deixou de ter texto próprio; o marcador de versão do Portal fica para quem fecha a linha do Portal.
+
+## 0.1.1-dev.70 — aviso permanente na lista de avisos; texto padronizado — 2026-10-21
+
+- `EmailPendingAviso` (serviço `aculta_messenger.email_pending_aviso`): cria, lê e remove o aviso de e-mail pendente. O hook e a página de avisos usam o mesmo serviço.
+- A página de avisos (`/avisos-mensagens`, `MessagesController::alertsBuild`) lista o aviso como item persistente (sem "×"), com o estado "Confirmação pendente". O item aponta para o reenvio de confirmação.
+- Texto padronizado com o aviso de atenção de Minha conta: "Enquanto isso, você não pode realizar cursos nem editar a wiki, nem comentar, comprar na loja ou apoiar. Clique aqui para solicitar outro link."
+- Confirmação: o aviso sai pelo ponto `aculta_portal_email_confirmed` (não por `user_update`).
+- `aculta_messenger.info.yml` 0.1.1-dev.70. RUNTIME STATUS: DEFERRED (confirmação real por IMAP pendente; ver CHANGELOG do aculta_user).
+
+## 0.1.1-dev.68 — remoção do notificador de mensagens privadas com corpo — 2026-10-21
+
+- `private_message_notify` estava ativo ao lado do Messenger, combinação que o próprio guard do módulo proíbe (o template padrão expõe o corpo da mensagem privada). Foi desinstalado do Runtime, sem avisos nem tabelas próprias. O código continua no pacote `drupal/private_message`.
+- Documentação de integração e arquitetura atualizada. RUNTIME STATUS: DEFERRED.
+
+## 0.1.1-dev.67 — verificação de amizade e entrega de e-mail — 2026-10-21
+
+- Endurecimento verificado no servidor de testes: pedido a si mesmo e a conta inativa bloqueados; terceiro não aceita nem cancela pedido alheio; solicitante não aceita o próprio pedido; aceite repetido bloqueado; limite de 10 pedidos por hora (o 11º e o 12º bloqueados). Dados de teste removidos.
+- Caminho de falha do e-mail verificado: endereço não entregável gera nova tentativa, marca a entrega como `failed` na terceira tentativa e não repete depois. Nenhum e-mail real foi enviado (domínio `.invalid`).
+- Envio com destinatário real e aviso visível na lista de notificações continuam pendentes. RUNTIME STATUS: DEFERRED.
+
+## 0.1.1-dev.66 — cobrir entrega e retentativas do aviso de amizade — 2026-10-21
+
+- `FriendshipNoticeEmailWorkerTest` confirma envio com URL da conta, marcação
+  `sent`, deduplicação após sucesso e limite de três tentativas quando Message
+  Notify falha. Não há transporte SMTP real nos testes.
+- Teste focal: 4 testes / 54 assertions; Unit Messenger: 55 testes / 257
+  assertions PASS. PHPCS Drupal/DrupalPractice PASS. Smoke autenticado e revisão
+  visual continuam pendentes. Runtime smoke anterior confirmou Message e fila,
+  sem envio de e-mail. RUNTIME STATUS: PARTIAL.
+
+## 0.1.1-dev.65 — cobrir falhas seguras do worker de amizade — 2026-10-21
+
+- `FriendshipNoticeEmailWorkerTest` confirma que payload malformado é ignorado
+  e que ausência da conta/Domain registra `failed` sem chamar Message Notify:
+  2 testes / 11 assertions PASS. Nenhum e-mail é enviado pelo teste.
+- Unit Messenger: 53 testes / 214 assertions PASS. Entrega bem-sucedida,
+  retentativas do transporte e revisão visual autenticada ainda faltam.
+
+## 0.1.1-dev.64 — cobrir transições e deduplicação de amizade — 2026-10-21
+
+- `FriendshipNoticeSubscriberTest` valida que pedidos notificam o destinatário,
+  aceites notificam quem iniciou, transições repetidas não duplicam Message/fila
+  e contas inativas não recebem avisos: 4 testes / 33 assertions PASS.
+- `FriendRequestsFormTest` confirma que a aba de Mensagens mostra ações para
+  pedidos recebidos e revalida o destinatário antes de aceitar: 2/12. Unit
+  Messenger: 51/203 PASS.
+- O smoke Runtime documentado na dev.63 continua limitado à criação do aviso e
+  item de fila; transporte real e revisão visual autenticada permanecem pendentes.
+
+## 0.1.1-dev.63 — eventos de amizade: aviso persistente e e-mail mínimo — 2026-10-21
+
+- Pedido e aceite de amizade geram um aviso persistente (`aculta_msg_friendship`) para quem recebe o aviso, com dedução por amizade, evento e instante da transição. Pedido avisa quem recebeu; aceite avisa quem pediu.
+- E-mail mínimo por fila (`aculta_msg_friendship`), sem nome nem conteúdo: só o link para a conta. Tentativas limitadas e estado de entrega registrado.
+- Consome `aculta_user.friendship_changed` (aculta_user 0.4.0-dev.54); o aculta_user não conhece o Messenger.
+- Verificado no servidor de testes: pedido cria 1 aviso e 1 item de fila; pedido repetido não duplica; aceite cria o aviso para quem pediu; dados de teste removidos. Envio real do e-mail ainda não executado (RUNTIME STATUS: DEFERRED).
+
+## 0.1.1-dev.62 — idioma preferido no resumo diário — 2026-10-21
+
+- Usa o idioma preferido da conta ao construir `MailMessage`; o idioma Drupal
+  `und` não atende ao contrato BCP 47 do Mailer e fazia o envio do resumo falhar.
+- O adapter LMS cobre entrega, reenvio após falha e opt-out pelo serviço real de
+  resumo diário. Runtime e revisão visual continuam DEFERRED.
+
+## 0.1.1-dev.61 — providers de resumo diário por tagged iterator — 2026-10-20
+
+- Permite que módulos forneçam linhas ao resumo existente sem substituir
+  `AvisosResumo`; o cron envia uma mensagem combinada e confirma os itens só
+  depois do envio bem-sucedido.
+- Mantém opt-in global, confirmação de e-mail, janela entre envios e limpeza de
+  pendências após opt-out. `AvisoDigestProviderInterface` é a extensão pública.
+- O adapter LMS publica conclusão neste resumo e preserva Avisos no site.
+  Runtime: DEFERRED.
+
+## 0.1.1-dev.60 — integração de contagem e lista de avisos pessoais — 2026-10-20
+
+- Expõe pontos de alteração para módulos adicionarem avisos pessoais à gaveta
+  multidomínio e ao contador, mantendo `aculta_aviso` como implementação dos
+  avisos do Fórum.
+- `AvisoService` aceita `module_handler` opcional para compatibilidade de
+  construção, e o contador da barra soma a extensão dos módulos integradores.
+- Integração LMS via `aculta_lms_messenger`; Runtime: DEFERRED.
+
+## 0.1.1-dev.59 — subaba Mensagens na aba Pessoas do painel ACULTA — 2026-10-20
+
+- Subaba **Mensagens** em `/painel-administrativo/aculta/mensagens`, dentro da aba Pessoas. Avisos continuam no menu de conteúdo.
+
+## 0.1.1-dev.58 — configuração do chat no painel ACULTA — 2026-10-20
+
+- Limites e limpeza do chat em `/painel-administrativo/aculta/mensagens`, com item na aba ACULTA. Avisos continuam no menu de conteúdo.
+- Caminhos antigos `/painel-administrativo/configuracoes/aculta/...` respondem 404, sem redirecionamento.
+
 # Changelog
 
+## 0.1.1-dev.57 — resumo de avisos pelo aculta_mailer — 2026-10-20
+
+- `AvisosResumo` envia pela API `AcultaMailerInterface` (tipo `avisos_resumo`), sem `plugin.manager.mail`.
+- Texto do resumo em `AvisosResumoMailType` (tag `aculta_mailer.type`); o `hook_mail` saiu de `AvisosResumoHooks`, que mantém o cron.
+- `MailMessage` passou a aceitar listas de linhas escalares (até dois níveis) para o resumo; objetos e entidades continuam recusados.
+- Dependência `aculta_portal:aculta_mailer`. Teste unitário do texto.
+
 Mudanças relevantes do ACULTA Messenger.
+
+## 0.1.1-dev.56 — remover preprocess do Forum contribuído — 2026-10-20
+
+- Removido `ForumTopicCounterHooks`, que alterava `preprocess_forums` e
+  pressupunha as linhas da listagem do módulo Drupal Forum. A descoberta do
+  ACULTA é baseada em Views Core e não consome esse preprocess. Os serviços de
+  aviso e contagem agregada continuam disponíveis para integração própria.
+- Verificação de sintaxe, PHPCS e referências do hook: PASS. Runtime sem
+  mudança. RUNTIME STATUS: DEFERRED.
+
+## 0.1.1-dev.55 — evitar avisos duplicados ao mover comentários — 2026-10-19
+
+- `ForumAvisoHooks::commentUpdate()` usa `CommentInterface::getOriginal()` no
+  lugar da propriedade mágica `$comment->original`, depreciada no Drupal 11.2 e
+  removida no Drupal 12.
+- `ForumAvisoHooksTest` confirma que editar/mover um comentário já publicado
+  não registra aviso duplicado e que aprovar um comentário pendente ainda entra
+  no fluxo de registro. Messenger Unit: 43 testes / 151 assertions PASS, com
+  2 testes / 6 assertions específicos do hook.
+- Runtime `toca`: cache rebuild PASS e service container encontra
+  `ForumAvisoHooks`. `aculta_forum.settings` permanece ausente; o mover continua
+  fechado. Nenhum conteúdo/aviso foi criado e nenhum e-mail foi enviado.
+- RUNTIME STATUS: PARTIAL.
+
+## 0.1.1-dev.54 — testes de política de acesso dos avisos — 2026-10-19
+
+- `ForumNoticeAccessPolicyTest` exercita a checagem com acesso permitido no
+  Domain Fórum, bloqueio para outra atribuição de domínio e negação de Node
+  access. Messenger Unit: 41 testes / 145 assertions PASS. Sem Runtime writes.
+- RUNTIME STATUS: PARTIAL (smoke read-only registrado em dev.53).
+
+## 0.1.1-dev.53 — avisos do Fórum com revalidação de acesso — 2026-10-19
+
+- Seguir tópico usa o bundle público ACULTA `aculta_forum_topic` e comentários
+  `aculta_discussion_post`; removido o consumidor morto que ainda referenciava
+  o bundle do Drupal Forum contribuído.
+- `ForumNoticeAccessPolicy` revalida conta ativa, domínio, publicação e acesso
+  atual antes de criar/mostrar/contar avisos e antes do resumo diário. Comentário
+  histórico e tópico com `field_autor_legado` não geram aviso. Eventos de
+  sincronização são excluídos da fila.
+- A fila registra o ID da revisão; criação, aprovação e cada nova revisão
+  publicada entram uma vez no fluxo. O worker carrega essa revisão específica,
+  confirma que ela e o tópico atual seguem publicados, e a deduplicação existente
+  impede repetir a mesma revisão.
+- Messenger Unit: 38 testes / 116 assertions PASS. PHPCS no novo policy/teste e
+  lint PASS; as classes preexistentes tocadas já tinham violações PHPCS na base.
+  Portal Drupal 11+ (970), fronteira (1371), mapa (154) e `git diff --check`
+  PASS. PHP CLI 8.4.26.
+- Runtime de teste: cache rebuild PASS; container resolve policy, serviço,
+  resumo e worker. A política permitiu 8/8 tópicos publicados para uid 5; a
+  listagem/contagem read-only retornou 0 avisos e 0 tópicos não lidos. Nenhum
+  aviso foi criado nem e-mail enviado; validação autenticada/browser pendente.
+- RUNTIME STATUS: PARTIAL.
 
 ## 0.1.1-dev.48 — Bloquear e Desfazer amizade por pessoa, não por conversa — 2026-10-19
 
@@ -639,3 +3592,516 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
 - `MessagesController::notifications()`: agrega os pedidos recebidos e notificações Message privadas existentes.
 - `MessengerBarHooks::preprocessPage()`: soma pedidos pendentes ao contador privado da barra.
 - `PrivateMessageFormHooks::formAlter()` e `PrivateMessageFormValidator::validateNewConversationPrivacy()`: aplicam a preferência apenas ao criar conversa.
+## 0.1.1-dev.72 — transfere agregados de respostas ao mover comentário — 2026-10-21
+
+- Assina `aculta_forum.comment_subtree_moved` e transfere registros completos `forum_resposta` da origem para o tópico destino. Ao colidir com registro do mesmo usuário/tipo no destino, soma contadores e mantém o maior `ultimo_comentario`. Unit do assinante: 2 testes / 4 assertions PASS.
+- A transferência ocorre na transação do mover; tópicos de destino não publicados, incompatíveis ou inacessíveis não recebem os registros. A decisão funcional aceita que o agregado inclua respostas não movidas.
+- Dependência explícita de `aculta_forum`. Nenhum envio retroativo de e-mail é disparado.
+
+## 0.1.1-dev.77 — busca de membros com região viva nomeada
+
+- Prévia de membros agora é uma região `aria-live` com rótulo; seus resultados
+  são links que se percorrem com Tab, não opções selecionáveis de combobox.
+- Runtime e smoke autenticado do drawer permanecem pendentes; nenhum dado ou
+  mensagem foi criado.
+
+## 0.1.1-dev.86 — cobrir o round-trip dos eventos de Fórum — 2026-10-24
+
+- Kernel passa a exercer Comment e revisão de tópico pelo publisher e consumer
+  compartilhados, validando replay idempotente, agregação em `aculta_aviso` e
+  exclusão do autor. A cobertura do pipeline passa a 20 testes / 458 assertions.
+- Unit Messenger: 70 / 334; Unit LMS Messenger: 21 / 83. Runtime continua sem
+  homologação.
+
+## 0.1.1-dev.87 — adaptar eventos de amizade ao contrato compartilhado — 2026-10-24
+
+- `aculta_user` mantém a propriedade do workflow; o novo producer converte
+  pedido e aceite em `MessengerNoticeEvent`. O consumer revalida a amizade por
+  UUID, status e destinatário, preserva a chave armazenada no `Message` atual e
+  continua enfileirando o e-mail transacional mínimo.
+- Unit Messenger: 72 testes / 345 assertions; PHPCS Drupal/DrupalPractice:
+  PASS. A prova Kernel do pipeline User e Runtime não foram executados.
+
+## 0.1.1-dev.88 — provar revogação no consumo de eventos do Fórum — 2026-10-24
+
+- Kernel cobre acesso revogado depois da publicação do envelope e antes do
+  consumo: o agregador não persiste aviso nem chave no ledger.
+- A fixture instala o schema de Comment antes da configuração que cria seu
+  campo de corpo, removendo a depreciação Core do Drupal 11.2. Kernel MariaDB:
+  22 testes / 489 assertions, sem depreciações. Comparação Kernel confirma que
+  o fluxo direto e o envelope compartilham o agregado existente sem duplicar
+  a linha; Unit Messenger: 72 / 345.
+- PHPCS Drupal/DrupalPractice, PHP lint e YAML dos serviços: PASS. Sem Runtime.
+
+## 0.1.1-dev.89 — provar o resumo combinado do Fórum — 2026-10-24
+
+- Kernel mistura registro direto e evento compartilhado no mesmo agregado e
+  verifica uma linha de resumo com quantidade 2. O ACULTA Mailer é mockado; o
+  reprocessamento não envia outro e-mail.
+- O fixture usa só o idioma padrão `pt-br`. Kernel MariaDB: 23 testes / 515
+  assertions, sem depreciações.
+
+## 0.1.1-dev.90 — corrigir leitura dos avisos no tópico — 2026-10-24
+
+- O Router do Drupal converte o parâmetro canônico `node` em `NodeInterface`
+  antes do subscriber de requisição. `ForumAvisoReadSubscriber` agora aceita a
+  entidade convertida e o ID numérico legado, delegando a revalidação de acesso
+  ao `AvisoService` por um contrato mínimo de leitura.
+- Unit Messenger: 75 testes / 352 assertions; PHPCS Drupal/DrupalPractice e
+  PHP lint nos arquivos alterados: PASS. Runtime recebeu rebuild de cache e smoke HTTP após correção; não homologado
+  como Alpha.
+
+## 0.1.1-dev.91 — aplicar F-D21 no alter de destinatários — 2026-10-24
+
+- O hook aditivo `message_subscribe_get_subscribers` não removia os destinatários
+  padrão do contrib; retornar `[]` apenas não acrescentava outros candidatos.
+  Substituído por `message_subscribe_get_subscribers_alter`, que remove a entrega
+  Message Subscribe somente quando o conteúdo-alvo é tópico ACULTA. Outros
+  contextos preservam os candidatos existentes; os avisos do Fórum seguem pelo
+  envelope compartilhado e `aculta_aviso`.
+- Unit Messenger: 78 testes / 355 assertions, sem depreciações; PHPCS
+  Drupal/DrupalPractice e PHP lint: PASS. Kernel e Runtime não executados nesta
+  revisão.
+
+## 0.1.1-dev.92 — cobrir Comments hospedados em tópicos do Fórum — 2026-10-24
+
+- F-D21 agora também reconhece o contexto de Comment cujo host é um tópico
+  `aculta_forum_topic`. Isso impede que Flags do Node anfitrião adicionem
+  destinatários Message Subscribe quando a Message é enviada sobre um Comment.
+- Unit Messenger: 79 testes / 356 assertions, sem depreciações; PHPCS e PHP
+  lint: PASS. Kernel e Runtime não executados nesta revisão.
+
+## 0.1.1-dev.94 — completar estados de entrega de e-mail — 2026-10-24
+
+- O campo compartilhado Message `field_aculta_msg_delivery` admite `cancelled`
+  para opt-out/restrição administrativa em workers de canal direto. Configuração
+  nova inclui o estado; update `10001` o adiciona de forma aditiva em instalações
+  existentes. Não altera avisos no site nem registros históricos.
+- O adapter Wiki e o LMS usam a preferência central off/resumo/direto; Kernel do
+  update não executado (SIMPLETEST_DB ausente). PHPCS/lint/YAML são registrados
+  no incremento que consome esse estado.
+
+## 0.1.1-dev.139 — reforçar idempotência concorrente do digest — 2026-10-24
+
+O ACULTA Mailer serializa entregas com correlação UUID v5 sob lock persistente compartilhado. Uma segunda execução
+concorrente retorna falha temporária sem chamar o transporte; um retry após aceite registrado volta a ser suprimido.
+O digest continua usando seu lock por destinatário e confirmação transacional dos avisos. A janela abrupta entre aceite
+externo e persistência local permanece limitada pelo contrato do SMTP/provedor.
+
+Validação: `AcultaMailerKernelTest` 4/20 PASS, incluindo lock ocupado por backend persistente separado; digest
+`ForumNoticeIdempotency` permanece coberto por Kernel MariaDB e retry com correlação estável. Sem Runtime, SMTP real ou
+processos independentes.
+
+## 0.1.1-dev.140 — revalidar lease na recuperação do outbox — 2026-10-24
+
+A recuperação cron do e-mail direto do Fórum agora revalida `email_updated` e os estados vencidos no próprio UPDATE,
+evitando que uma linha reclamada por um worker entre a consulta de IDs antigos e a gravação seja rebaixada para
+pendente. O comportamento mantém a fila existente e não adiciona schema.
+
+Validação: teste focal `testOutboxCronRecoversExpiredQueueLeases` 1/23 e Kernel completo
+`ForumNoticeIdempotencyKernelTest` 31/700 PASS; PHPCS Drupal/DrupalPractice, PHP lint e índice de status PASS. Sem
+Runtime ou concorrência real entre processos.
+
+## 0.1.1-dev.141 — contar apenas mensagens privadas persistidas — 2026-10-24
+
+A verificação de flood continua na validação, mas o contador só é registrado depois do salvamento bem-sucedido da
+mensagem. O caminho nativo de resposta registra após os handlers nativos, a criação de conversa em grupo registra após
+salvar mensagem e thread, e a resposta pela gaveta registra após persistir ambos. Assim, rejeições de validações
+posteriores e falhas de persistência não consomem a cota horária.
+
+Validação: Unit focal de privacidade/hooks 12/41 e suíte Unit Messenger 135/794 PASS; PHP lint dos arquivos alterados
+PASS. PHPCS limpo nos validators e teste novo; classes maiores mantêm avisos/erros anteriores não relacionados.
+Kernel de persistência de conversa e Runtime não executados nesta microfase.
+
+
+## 0.1.1-dev.142 — validar versão persistida dos eventos de amizade — 2026-10-24
+
+O adapter do ACULTA User e o consumer do Messenger agora confirmam que `changed` no evento corresponde à versão persistida da amizade. Eventos internos obsoletos ou com versão divergente não são publicados nem criam aviso, preservando a deduplicação da transição original.
+
+Validação: `FriendshipNoticeEventProducerTest` e `FriendshipNoticeSubscriberTest`, 10 testes / 91 assertions PASS; suíte Unit Messenger completa, 137 testes / 820 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Kernel integrado User/Messenger, Runtime e envio de e-mail não executados nesta microfase.
+## 0.1.1-dev.148 — confirmar destinatário no retry do digest — 2026-10-24
+
+A reconciliação do snapshot do digest agora confirma que o Mailer aceitou correlação, tipo e destinatário atuais. O Mailer compara o endereço recebido apenas pelo HMAC armazenado no log. Isso impede que um snapshot incompatível ou corrompido confirme pendências de outra conta; o snapshot continua sem endereço.
+
+Validação: Kernel Mailer com destinatário correto/incorreto; Integration LMS confirma o destinatário recebido na recuperação. Demais gates pendentes nesta microfase.
+
+## 0.1.1-dev.149 — filtrar avisos na gaveta multidomínio — 2026-10-24
+
+A gaveta de avisos agora permite filtrar origem e leitura, preservando a combinação selecionada ao carregar o fragmento. Sem JavaScript, os destinos levam à central da Conta no alias do ambiente. A atualização mantém contagem no ícone correto e estados de carregamento/erro específicos de avisos.
+
+Validação: PHP lint, JS syntax, `NoticeListFilterTest` 5/17 PASS, Firefox ESR/X11 no Runtime de teste: gaveta 6/6 em viewport real 1270 px e 6/6 em viewport real 500 px; central-empty-state 4/4 após migrar o estado vazio para tokens. O pedido de 390 px foi limitado pelo Firefox a 500 px. O primeiro smoke encontrou TypeError no rótulo traduzido e HTTP 500; conversão corrigida e o smoke subsequente passou. MessagesController ficou abaixo do baseline PHPCS (95 erros/65 avisos contra 97/65). Os atributos e tokens do Messenger desta fase foram incluídos no contrato visual; `validate-portal-ui-docs.php` passou de 70 para 62 gaps de outras frentes.
+
+## 0.1.1-dev.158 — caracterizar pipeline Kernel de avisos de amizade — 2026-10-24
+
+O Kernel MariaDB agora percorre o `FriendshipManager` real, despacha os eventos de pedido e aceite, executa o producer e
+subscriber do Messenger, persiste Messages e verifica o encaminhamento à fila. O replay de um pedido pendente permanece
+idempotente. O fixture registra a entidade de amizade pelo hook de teste, sem instalar nem assumir propriedade do
+workflow de `aculta_user`.
+
+Validação: `FriendshipNoticePipelineKernelTest` **1/14 PASS** em MariaDB dedicada; PHPCS Drupal/DrupalPractice e PHP
+lint PASS. PHPUnit reportou duas deprecações do Core/contrib para plugins Message baseados em annotations. Runtime,
+SMTP e transporte real não foram usados.
+
+## 0.1.1-dev.160 — provar lease expirada sem perda de eventos — 2026-10-24
+
+O Kernel MariaDB simula a expiração da lease dentro do transporte, permite que outro backend processe o digest e cria
+um evento após a captura do segundo lote. O worker antigo falha ao renovar a posse e não confirma o próprio contador;
+o terceiro evento permanece pendente. O teste confirma a proteção com persistência real e lock compartilhado no banco.
+
+Validação: `ForumNoticeIdempotencyKernelTest` **34/776 PASS**, `FriendshipNoticePipelineKernelTest` **1/14 PASS** e
+Unit/Integration de digest **18/195 PASS**; PHPCS e PHP lint PASS. O teste usa dois backends no mesmo processo; dois
+boots Drupal concorrentes e transporte SMTP permanecem pendentes.
+
+## 0.1.1-dev.159 — renovar lock antes de confirmar digest — 2026-10-24
+
+Após o transporte, o worker renova a lease do destinatário antes de confirmar ou descartar linhas. Se outro processo
+assumiu o lock expirado, o worker antigo não altera os avisos nem o snapshot; a confirmação é deixada para a execução
+que detém o lock. Isso protege o contador do Fórum e os acknowledgements dos adapters contra uma confirmação concorrente
+por um worker obsoleto.
+
+Validação: `AvisosResumoProviderPreferenceTest` + `LearningNoticeDigestIntegrationTest` **18/195 PASS**, incluindo
+concorrência durante transporte e perda do lock renovado; Kernels MariaDB de idempotência e amizade **34/759 PASS**, incluindo contenção do lock entre processos. Dois workers Drupal completos disputando o
+transporte em processos independentes e suspensão acima da lease seguem pendentes. PHPCS Drupal/DrupalPractice PASS. Duas deprecações de plugins Message via annotations foram reportadas pelo Kernel de
+amizade. Sem Runtime ou SMTP.
+
+## 0.1.1-dev.163 — exigir CSRF de rota nas ações POST — 2026-10-24
+
+As quatro rotas POST-only de resposta e ações de relacionamento agora exigem também o `_csrf_token` do Core. Os formulários
+continuam usando seus tokens/validações próprios; essa camada valida a origem da requisição no roteamento. GET/POST de
+composição não receberam esse requisito, pois precisam permitir navegação GET e já passam pelo Form API no POST.
+
+Validação: `PostRouteCsrfRequirementTest` **1/5 PASS**, PHP lint, PHPCS, gate Drupal 11+ e índice de status PASS. O teste
+verifica o contrato YAML das rotas; POST HTTP integrado e Runtime continuam pendentes.
+
+## 0.1.1-dev.164 — revalidar idempotência do digest — 2026-10-24
+
+Revalidação regressiva conjunta do resumo do Fórum, recuperação de snapshots aceitos e deduplicação persistente do
+ACULTA Mailer. Não foi necessária alteração na lógica de entrega nesta microfase.
+
+Validação: `ForumNoticeIdempotencyKernelTest` **34/776 PASS**; `AcultaMailerKernelTest` **5/28 PASS**;
+`AvisosResumoProviderPreferenceTest` + `LearningNoticeDigestIntegrationTest` **18/195 PASS**. Sem SMTP externo ou Runtime;
+dois ciclos completos do digest em boots Drupal concorrentes continuam pendentes.
+
+## 0.1.1-dev.165 — preservar manifesto durante transporte concorrente — 2026-10-24
+
+Se uma lease expirar enquanto a chamada de transporte ainda está em andamento, outro worker não apaga o snapshot não
+aceito para montar um manifesto maior com nova correlação. Ele aguarda até o fim da janela de 180 s; o worker original
+que perdeu a lease não confirma linhas, e o cron seguinte reconcilia o aceite persistido do Mailer. Se não houve aceite
+ao fim da janela, o retry reconstrói o lote pendente. Isso evita sobreposição de e-mails durante o timeout de transporte
+configurado, preservando o storage existente em `user.data`.
+
+Validação: `ForumNoticeIdempotencyKernelTest` **34/773 PASS**; Unit/Integration de digest **18/195 PASS**; PHPCS e PHP
+lint PASS. O teste injeta uma lease expirada enquanto o transporte está ativo, confirma que o novo worker não envia um
+segundo manifesto e verifica recuperação posterior sem nova entrega.
+
+## 0.1.1-dev.166 — agrupar avisos relacionados na central — 2026-10-24
+
+A lista agrupa avisos Message de LMS, Wiki, Loja e Doações quando compartilham a mesma origem e UUID do conteúdo. O grupo preserva a ordem e mantém links, estado de leitura e formulários de leitura individuais. A chave é um hash transitório de render e é removida antes da saída. Fórum permanece com sua agregação nativa por tópico; armazenamento e deduplicação não mudam.
+
+Validação: `NoticeRelatedGrouperTest` 2/13 PASS; PHPCS Drupal/DrupalPractice dos arquivos novos e adapters tocados PASS; lint PHP focal PASS; smoke visual pendente.
+
+## 0.1.1-dev.167 — deduplicar linhas de digest por delivery ID — 2026-10-24
+
+O Messenger agora remove linhas duplicadas emitidas pelo mesmo provider antes de montar o corpo e o manifesto do digest. Um `delivery_id` representa uma única notificação persistida e aparece/é confirmado uma só vez, mesmo se uma consulta do provider duplicar o registro.
+
+Validação: `LearningNoticeDigestIntegrationTest` 15/118 PASS; suíte LMS Integration Unit + `AvisosResumoProviderPreferenceTest` 38/371 PASS; Kernel MariaDB de recuperação/lease 2/54 PASS; Unit Messenger 150/932 PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS. Sem Mailer real ou Runtime.
+
+## 0.1.1-dev.169 — falhar fechado em categoria de e-mail desconhecida — 2026-10-24
+
+`AvisoPreferencias` agora permite modos somente para o catálogo compartilhado Fórum, LMS, Wiki, Loja e Doações. Categoria desconhecida recebe apenas `off`, não lê nem grava preferência individual e não pode habilitar digest ou envio direto. Avisos no site e os contratos dos produtores válidos não mudam.
+
+Validação: preferências, formulário e digest focalizados 14/149 PASS; Unit Messenger 152/941 PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS. O gate exigiu regenerar o índice após a atualização de versão.
+
+## 0.1.1-dev.170 — reutilizar flags e acesso no contador de Site Alerts — 2026-10-24
+
+O contador do header agora carrega estados pessoais de dispensa em lote, após filtrar alertas pelo acesso. A central compartilha com o contador os alertas visíveis e estados de Flag já consultados, sem refazer a busca, autorização e lookup individual para contar. Critérios de visibilidade, cache tags e comportamento anônimo são preservados.
+
+Validação: `MessengerCountsTest` 3/27 PASS; combinado com `PersistentNoticeAccessTest` 8/38 PASS; Unit Messenger 155/968 e `AcultaMessengerServiceProviderTest` 4/14 PASS; PHPCS dos arquivos novos/serviço, PHP lint, índice e gate Drupal 11+ (1.155 checks) PASS. O PHPCS de `MessagesController` mantém baseline anterior; Runtime/navegador não executados.
+
+## 0.1.1-dev.206 — paginar avisos do Fórum na central da Conta
+
+A central oferece navegação anterior/seguinte quando a origem Fórum está selecionada, permitindo consultar históricos além dos 100 agregados por página. A consulta aplica o estado de leitura antes do limite, ordena com desempate estável e revalida acesso aos tópicos antes de renderizar. Gaveta e origens com adapters próprios mantêm seu fluxo; paginação unificada das demais origens ainda está pendente.
+
+Validação: `ForumNoticeIdempotencyKernelTest` **36 testes / 834 assertions PASS** em MariaDB dedicado, incluindo a cobertura de páginas completas e sem sobreposição. PHP lint e PHPCS Drupal/DrupalPractice nos arquivos sem baseline PASS; controllers mantêm seus baselines preexistentes (MessagesController 95/65; AvisosMensagensController 15/12). `git diff --check` e índice de status PASS. Browser, Runtime e paginação das outras origens não executados.
+
+## 0.1.1-dev.207 — preservar retry quando falha a descoberta de destinatários do digest
+
+Quando `pendingRecipientIds()` de qualquer adapter falha, o digest ainda pode entregar fontes independentes, mas não atualiza o intervalo compartilhado de 20 horas. O snapshot persistido conserva a falha e impede que a recuperação de um envio aceito aplique o intervalo antes de a fonte indisponível voltar. A fixture agora declara identidades estáveis distintas, caracterizando o caso sem colisão artificial de classe.
+
+Validação: `AvisosResumoProviderPreferenceTest` **4/79 PASS**, `LearningNoticeDigestIntegrationTest` **21/162 PASS** e `AvisosResumoMailerKernelTest` **2/31 PASS** em MariaDB dedicado. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Transporte externo e Runtime não executados.
+
+## 0.1.1-dev.208 — manter cooldown aberto durante recovery após falha do adapter
+
+A falha de `pendingRecipientIds()` no cron atual agora também é considerada ao reconciliar um snapshot aceito anteriormente. Assim, a recuperação confirma somente o lote já entregue, remove o snapshot após o acknowledgement e não grava o intervalo compartilhado enquanto uma origem pode continuar sem entregar destinatários pendentes. Uma regressão cobre a falha ocorrida depois de um snapshot antigo com `provider_lookup_failed: false`.
+
+Validação: `LearningNoticeDigestIntegrationTest` **22 testes / 176 assertions PASS**, `AvisosResumoProviderPreferenceTest` **4/79 PASS** e `AvisosResumoMailerKernelTest` **2/31 PASS** em MariaDB dedicado. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Transporte externo e Runtime não executados.
+
+## 0.1.1-dev.209 — paginar adapters da central por origem
+
+O contrato opcional `PaginatedPersonalNoticeAdapterInterface` permite que LMS, Wiki, Loja e Doações entreguem páginas de 100 itens na central quando a pessoa seleciona uma origem. Os queries mantêm filtro de leitura antes do limite e ordenação por criação/ID; cada manager continua dono da revalidação de acesso e `Message`. A paginação usa offset por origem, links acessíveis anterior/seguinte e não altera os limites antigos da gaveta. Fórum continua usando seu próprio pager. Comunicados/Site Alert e paginação da lista sem filtro ficam fora desta microfase.
+
+Validação: dispatch opcional `PersonalNoticeAdapterHooksTest` **6/65 PASS**; Commerce Unit **5/58**, Wiki Unit **3/45**, Kernel LMS **4/47**, Wiki **7/129**, Commerce **4/67** e Doação **5/80 PASS**. PHPCS Drupal/DrupalPractice limpo nos arquivos novos/adapters; controllers mantêm baseline (MessagesController 95/65; AvisosMensagensController 15/12). PHP lint, `git diff --check` e gate Drupal 11+ PASS. Kernels reportam deprecações de annotations Message Core/contrib; visual/Runtime não executados.
+
+Revalidação de idempotência do digest: `LearningNoticeDigestIntegrationTest` **22/176**, `AvisosResumoProviderPreferenceTest` **4/79**, `AvisosResumoMailTypeTest` **2/7** e Kernels Messenger/Mailer **38/865 em conjunto** PASS no MariaDB dedicado. A execução cobriu recuperação do lote aceito e dois workers Drupal independentes; não usou SMTP real nem Runtime.
+
+Auditoria focal dos modos de e-mail — **42 testes / 445 assertions PASS** para preferências pessoais, opções administrativas e workers diretos de Fórum, LMS, Wiki, Loja e Doações. README e configuração agora descrevem a propriedade do Messenger sobre os modos por categoria (`off`, direta, resumo), a obrigatoriedade do aviso no site e a separação da preferência nativa das conversas Private Message. Sem SMTP real ou homologação Runtime.
+
+## 0.1.1-dev.210 — paginar Comunicados e Alertas do Site por origem
+
+A central da Conta pagina os Nodes de comunicado com access e leitura aplicados antes da seleção de até 100 resultados; a ordenação é estável por criação e ID. Alertas do Site mantêm access e dismissal, ordenação estável por ID e filtro de leitura antes do slice. A navegação anterior/seguinte reutiliza `notice_offset`; prévia da gaveta e lista global conservam o contrato existente.
+
+Validação: `PersonalNoticePageStateTest`, `PersonalNoticeAdapterHooksTest` e `NoticeListFilterTest` **15/93 PASS**. PHPCS Drupal/DrupalPractice limpo nos arquivos novos/testes; `MessagesController` mantém baseline **95/65**. PHP lint e `git diff --check` PASS. Browser visual não executado: `DISPLAY` não está definido; Runtime não homologado.
+
+## 0.1.1-dev.211 — detectar a próxima página de avisos persistentes
+
+A paginação de Comunicados agora percorre o próximo aviso elegível após preencher a página para definir `hasNext`.
+Itens inacessíveis e já lidos continuam sem consumir offset ou capacidade. Chamadas sem paginação mantêm o limite anterior.
+
+Validação: `PersistentNoticePaginationTest` **1/44 PASS**; estado da paginação, dispatch de adapters e filtros
+**15/93 PASS**; PHPCS Drupal/DrupalPractice do novo teste, PHP lint e `git diff --check` PASS. O PHPCS do controller
+continua com o baseline existente de **95 erros / 65 avisos**. Runtime e navegador não executados.
+
+## 0.1.1-dev.212 — preservar aceite de digest além da retenção do Mailer
+
+O snapshot do digest registra `accepted_at` assim que o Mailer confirma o transporte. Snapshots legados recebem o mesmo
+marcador quando o Mail Log confirma o aceite. A recuperação passa a usar essa evidência persistida para aguardar adapters
+opcionais sem depender da retenção normal do Mail Log nem reenviar o lote já aceito; os acknowledgements continuam
+limitados aos IDs do manifesto original.
+
+Validação: `LearningNoticeDigestIntegrationTest` **23/186 PASS**, `AvisosResumoProviderPreferenceTest` **4/87 PASS**,
+`AvisosResumoMailerKernelTest` **2/32 PASS**, incluindo recuperação cross-process após remoção do Mail Log, e
+`ForumNoticeIdempotencyKernelTest` **36/834 PASS** no MariaDB dedicado;
+PHPCS Drupal/DrupalPractice, PHP lint, índice de status e gate Drupal 11+ (**1155 checks**) PASS. SMTP externo e Runtime
+não executados.
+
+## 0.1.1-dev.213 — paginar somente avisos ainda acessíveis
+
+A central varre candidatos em ordem estável, mas aplica offset e lookahead depois de revalidar acesso atual para Fórum,
+LMS, Wiki, Loja e Doações. `EligibleNoticePage` unifica a varredura dos adapters Message; o Fórum carrega os tópicos
+de cada lote uma vez. Filtros de leitura continuam no EntityQuery, e avisos inacessíveis não consomem a página nem
+ocultam itens autorizados mais antigos.
+
+Validação: `EligibleNoticePageTest` **2/7 PASS**, `ForumNoticeIdempotencyKernelTest` **37/870 PASS**, conjunto Unit
+focal **48/389 PASS** e Kernels LMS/Wiki/Loja/Doações **22/377 PASS**. PHPCS Drupal/DrupalPractice, PHP lint, índice
+de status e gate Drupal 11+ (**1155 checks**) PASS. Kernels reportaram deprecações de descoberta Message Core/contrib e
+notices PHPUnit existentes. Runtime e navegador não testados.
+
+## 0.1.1-dev.216 — recuperar digest após falha ao gravar aceite
+
+Adicionada regressão para a janela em que o ACULTA Mailer já aceitou o digest, mas o processo falha antes de persistir
+`accepted_at`. No retry, o Messenger consulta a correlação determinística no Mailer, confirma somente os IDs do manifesto
+original e não realiza uma segunda entrega.
+
+Validação: `LearningNoticeDigestIntegrationTest` **24 testes / 205 assertions PASS**; `AvisosResumoMailerKernelTest`
+**2 testes / 32 assertions PASS** com ACULTA Mailer e MariaDB dedicado. Nenhum Runtime ou transporte SMTP real
+foi utilizado.
+
+## 0.1.1-dev.217 — provar recuperação do digest com Mailer real
+
+O Kernel agora usa o ACULTA Mailer e seu Mail Log reais, interrompe o fluxo depois do aceite e antes de `accepted_at`, e
+reexecuta o digest. O retry reconhece a mesma correlação, confirma o manifesto original e mantém apenas um transporte.
+
+Validação: `AvisosResumoMailerKernelTest` **3 testes / 47 assertions PASS** com MariaDB dedicado; PHPCS e PHP lint PASS.
+Runtime e SMTP externo não executados.
+
+## 0.1.1-dev.218 — centralizar novos avisos de Mensagem Privada no Mailer
+
+Novos eventos de mensagem privada marcam sua entrega para o ACULTA Mailer, usam template mínimo sem o corpo privado e
+correlação idempotente por mensagem/destinatário. Registros antigos sem marcador permanecem temporariamente no fluxo
+Message Notify para não presumir se o transporte já aceitou o e-mail. O update 10008 instala o campo de ownership sem
+migrar filas ou apagar dados; a retirada do caminho legado exige evidência operacional de fila drenada.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **253 testes / 1.932 assertions PASS**;
+`PrivateMessageRetentionKernelTest` **2 testes / 29 assertions PASS** no MariaDB dedicado (10 deprecações de discovery e
+assinaturas de Message/Private Message Core/contrib); PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime e e-mail externo
+não executados.
+
+## 0.1.1-dev.247 — migrar preferências de e-mail privado para o Messenger
+
+O Messenger passa a ser a fonte única das preferências de e-mail de Mensagens Privadas. O update incremental copia a política administrativa e as escolhas individuais de `private_message.receive_notification`, preserva valores Messenger existentes e remove cada chave individual antiga após a cópia. O formulário administrativo agora define também o padrão para contas sem preferência (somente site ou site e e-mail); opt-out individual e bloqueio administrativo continuam respeitados. O update não foi executado no Runtime.
+
+Validação desta revisão será registrada após executar a suíte Unit Messenger, PHPCS, lint, schema e índice de status. Sem Runtime, SMTP ou operação de produção.
+
+## 0.1.1-dev.247 — centralizar e-mail privado e resumo semanal sem conteúdo
+
+Preferências de Mensagens Privadas passam a ser próprias do Messenger, com migração incremental da configuração e das escolhas legadas do Private Message; escolhas Messenger existentes são preservadas e a chave individual antiga é removida após cópia. A pessoa escolhe aviso genérico direto, resumo semanal ou sem e-mail. O resumo reutiliza os registros Message existentes, mostra remetente e link para a inbox, nunca o conteúdo da conversa, revalida acesso e bloqueios, respeita data âncora administrativa e intervalo de sete dias por conta. O digest privado não depende do opt-in de resumo diário das demais origens. Sem execução do update no Runtime.
+
+Validação: testes Unit focais do worker, configuração administrativa, elegibilidade semanal e migração de padrão **11 testes / 174 assertions PASS**; PHPCS Drupal/DrupalPractice dos arquivos alterados PASS. A suíte completa, validação de configuração e índice de status ainda serão executados. Sem Runtime/SMTP.
+
+## 0.1.1-dev.257 — impedir leitura por requests de recursos incorporados
+
+A guarda de navegação agora rejeita destinos Fetch Metadata de sub-recursos, como `iframe`, `image`, `script` e `object`, evitando que embeds same-site acionem a leitura de uma conversa. Mantém navegação de documento e Fetch com destino `empty`, usado pela gaveta.
+
+Validação: `MemberInitiatedRequestTest` **4/16 PASS**, Unit Messenger **258/1.996 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.258 — não armazenar redirects personalizados de avisos
+
+Os endpoints de abertura dos avisos de LMS, Wiki, Loja e Doações agora declaram `Cache-Control: private, no-store` também no redirect autorizado após a revalidação do acesso e a atualização de leitura. Os testes verificam o cabeçalho nas quatro origens.
+
+Validação: `NoticeOpenControllerSafetyTest` **5/33 PASS**, Unit Messenger **258/2.000 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.259 — revalidar bloqueios antes de persistir respostas
+
+Após adquirir e recarregar a thread, o envio revalida os bloqueios bilaterais imediatamente antes da submissão. Se o bloqueio tiver sido criado após a primeira validação, a mensagem é rejeitada e os locks de Flood e conversa são liberados. O fluxo de nova conversa também repete a checagem caso resolva uma thread concorrente existente.
+
+Validação: `PrivateMessageFormValidatorTest` **15/77 PASS**, Unit Messenger **259/2.011 PASS** e PHPCS Drupal/DrupalPractice PASS para `PrivateMessageFormValidator` e o teste. `NewConversationForm` mantém baseline PHPCS de **16 erros/15 avisos**, igual ao HEAD anterior; PHP lint dos arquivos alterados PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.260 — exigir sinal explícito para atualizar leitura
+
+Requests que não trazem Fetch Metadata não são mais presumidos como navegação humana. A leitura só pode ser atualizada por Fetch da gaveta (`X-Requested-With: XMLHttpRequest`) ou navegação de documento com ativação explícita (`Sec-Fetch-User: ?1`); destinos de sub-recurso, prefetch e cross-site permanecem bloqueados. Links podem continuar abrindo seu destino, mas sem atualizar leitura quando não há sinal confiável.
+
+Validação: `MemberInitiatedRequestTest` e `NoticeOpenControllerSafetyTest` **10/53 PASS**, Unit Messenger **260/2.015 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.261 — exigir same-origin no Fetch da gaveta
+
+O sinal `X-Requested-With` só autoriza atualização de leitura quando o Fetch Metadata declara `same-origin` (ou o navegador não fornece esse header) e o destino é `empty`. Requests marcados como `same-site` entre origens distintas não são aceitos como ação da gaveta.
+
+Validação: `MemberInitiatedRequestTest` **5/21 PASS**, Unit Messenger **260/2.016 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.262 — buscar membros pela identidade pública
+
+A busca de destinatários usa apelidos dos perfis, resolve o nome pela API `PublicMemberIdentityInterface` do ACULTA User e exclui identidades ausentes. Não consulta mais `users_field_data.name` nem mostra `getDisplayName()` em chips e títulos de nova conversa.
+
+Validação: `NewConversationControllerTest` + `NewConversationRecipientIdsTest` **5/27 PASS**, Unit Messenger **260/2.022 PASS**; `AuthorIdentityResolverTest` **2/9 PASS**, Unit aculta_user **125/448 PASS** com uma depreciação preexistente de PHPUnit. PHPCS dos novos arquivos e lint PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.263 — bloquear navegação iniciada por origem irmã
+
+- Rejeita navegações ativadas com `Sec-Fetch-Site: same-site` antes de alterar estado de leitura; origens irmãs não equivalem à origem exata do site. Navegação explícita da própria origem e abertura por bookmark continuam permitidas.
+- `MemberInitiatedRequestTest` **6/22 PASS**, Unit Messenger **261/2.023 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.264 — revalidar privacidade antes de criar conversa
+
+- A criação consulta primeiro o mapper do Private Message. Threads existentes continuam aceitando respostas; antes de criar uma nova thread, a preferência friend-only e a amizade são revalidadas, impedindo persistir uma thread vazia se a autorização mudou desde a validação inicial.
+- `NewConversationRecipientIdsTest` + `PrivateMessageFormValidatorTest` **21/108 PASS**; Unit Messenger **263/2.039 PASS**; PHP lint PASS. PHPCS mantém os baselines existentes dos arquivos envolvidos. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.265 — alinhar elegibilidade e respostas em threads existentes
+
+- Busca e compose por perfil usam a mesma regra: conta elegível, identidade pública, ausência de bloqueio bilateral e preferência de novas conversas. O mapper identifica threads existentes para que “somente amigos” não impeça respostas; a criação de uma thread nova repete a checagem no submit antes do serviço contrib persistir a thread.
+- `NewConversationControllerTest`, `NewConversationRecipientIdsTest` e `PrivateMessageFormValidatorTest` **24/153 PASS**; Unit Messenger **265/2.072 PASS**; PHP lint PASS. PHPCS mantém os baselines preexistentes. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.266 — ordenar seções da central pela atividade mais recente
+
+A central mantém os avisos agrupados por origem, separa visualmente cada seção e agora ordena as seções e seus itens pela data mais recente disponível. Avisos legados sem data explícita mantêm a ordem estável. A mudança usa os registros existentes, sem novo armazenamento.
+
+Validação: `NoticeOriginGrouperTest` **3/16 PASS**; Unit Messenger **265/2.073 PASS**; PHP lint dos arquivos alterados PASS. PHPCS, Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.267 — ordenar avisos agregados pela atividade recente
+
+O metadado da central passa a representar recência, não criação. Para o Fórum, usa `changed`, que acompanha a última atividade no aviso agregado; as integrações baseadas em `Message` continuam usando a criação do evento individual. Isso mantém a ordenação alinhada às consultas de origem.
+
+Validação: Unit Messenger **265/2.073 PASS** e PHP lint dos arquivos alterados PASS. O Kernel `ForumNoticeIdempotencyKernelTest::testForumNoticeListSortsByRecencyRegardlessOfReadState` não foi executado porque `SIMPLETEST_DB` está ausente; PHPCS, Browser e Runtime também não executados.
+
+## 0.1.1-dev.268 — cobrir as preferências pessoais de e-mail privado
+
+Adicionada cobertura direta ao formulário da conta para os três modos de mensagens privadas (somente site, aviso direto e resumo semanal), restrições administrativas e gravação da preferência no `user.data` do Messenger. O contrato de privacidade continua explícito: e-mail nunca inclui o conteúdo da conversa.
+
+Validação: `CommunicationSettingsFormTest` **3/10 PASS**; Unit Messenger **268/2.083 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.269 — validar composição e acesso do digest privado
+
+O provider semanal agora persiste estado de entrega sem encadear `set()->save()`, compatível com o contrato `FieldableEntityInterface`. O teste cobre agrupamento de várias mensagens por remetente, IDs exatos de entrega, revalidação de acesso ao thread, cancelamento de linhas inacessíveis e ausência de leitura do corpo privado.
+
+Validação: `PrivateMessageDigestProviderTest` **2/50 PASS**; Unit Messenger **269/2.113 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel indisponível (`SIMPLETEST_DB` ausente); Browser e Runtime não executados.
+
+## 0.1.1-dev.270 — manter cancelamentos de e-mail privado terminais
+
+O worker reprocessa somente registros `pending` ou `failed`. Um item cancelado por opt-out/admin, já enviado ou marcado como falha permanente não volta a ser enviado se a preferência mudar antes de um replay atrasado da fila.
+
+Validação: `PrivateMessageNotificationWorkerTest` **13/211 PASS**; Unit Messenger **271/2.139 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+
+## 0.1.1-dev.285 — unificar preferência de e-mail por categoria
+
+O modo selecionado por categoria (sem e-mail, direto ou resumo diário) passa a
+ser a fonte única de entrega. Removido o checkbox global redundante, os gates
+globais de Fórum/Wiki/Loja/Doações e a interface marcador que existia para
+contorná-los. Preferências novas explícitas não dependem de opt-in adicional;
+contas ainda sem modo salvo herdam o valor legado apenas como default, sem
+ativar e-mail para quem não havia optado. O digest semanal de Mensagens
+Privadas permanece independente e com data inicial administrativa. Avisos no
+site permanecem obrigatórios.
+
+Validação: Unit + Integration Unit **363 testes / 3.073 assertions PASS**;
+Kernels Fórum/digest **42/963 PASS** e Wiki/Loja/Doações **17/290 PASS** (2
+deprecações de descoberta de entidades Core/contrib e 7 notices PHPUnit).
+PHPCS Drupal/DrupalPractice, PHP lint, gate Drupal 11+ (**1.155 checks**) e
+índice de status PASS. Runtime e SMTP real não executados.
+
+## 0.1.1-dev.336 — centralizar avisos de conquistas
+
+Concessões de `aculta_badge_award` agora publicam o evento compartilhado do
+Messenger e viram Messages persistentes na central, com filtro por Conquistas,
+estado de leitura e revalidação do prêmio/conta ao listar e alterar leitura.
+Removidos o bloco e o formulário de avisos próprios do Game. Um post-update
+migra os IDs pendentes legados com deduplicação; o transporte de e-mail do Game
+permanece intacto nesta microfase.
+
+Validação: testes focais e gates registrados após a implementação.
+
+## 0.1.1-dev.337 — cobrir ações de leitura de Conquistas
+
+Os testes da central verificam que avisos `aculta_msg_game_award` recebem a
+ação de leitura e que a mutação é delegada ao adapter opcional Game, junto à
+revalidação central de ownership/bundle pelo `loadUnchanged()`.
+
+Validação: `NoticeReadStateManagerTest` + `NoticeReadActionBuilderTest`
+**12 testes / 94 assertions PASS**; Unit Messenger **353/2.819 PASS**;
+PHPCS Drupal/DrupalPractice e `git diff --check` PASS. Kernel/Runtime não
+executados (`SIMPLETEST_DB` indisponível).
+
+## 0.1.1-dev.338 — testar persistência do adapter Game
+
+`GameAchievementNoticeManager` valida concessões pelo contrato Drupal
+`ContentEntityInterface` e confirma a persistência idempotente no bundle
+Message compartilhado, sob lock e vinculada ao destinatário.
+
+Validação: `GameAchievementNoticeManagerTest` **2/32 PASS**; Unit Messenger
+**355/2.851 PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS. Kernel/Runtime não executados (`SIMPLETEST_DB` indisponível).
+## 0.1.1-dev.358 — filtros de origem consistentes na central
+
+A lista de origens suportadas agora alimenta os filtros da gaveta e da página
+da conta pelo mesmo contrato do agrupamento. Revista fica selecionável nos dois
+lugares, e o teste garante que todas as origens permitidas tenham rótulo.
+
+Validação: Unit focal de origem/listagem **14/51 PASS**, PHPCS Drupal/
+DrupalPractice do grouper e teste, PHP lint dos dois controllers e `git diff
+--check` PASS. HTTP, visual e Runtime não executados.
+
+## 0.1.1-dev.359 — cobertura visual das origens Revista e Conquistas
+
+Os scripts Firefox reutilizáveis agora reconhecem todas as origens no teste
+de ordenação dos grupos e verificam que Revista aparece como filtro na central
+da conta. O código funcional dos filtros já foi entregue em Dev.358.
+
+Validação: `node --check` nos dois scripts e `git diff --check` PASS. Firefox
+ESR visual não executado: `DISPLAY` não está definido e há sessões
+Firefox/geckodriver preexistentes em uso possível; não foram encerradas.
+
+## 0.1.1-dev.366 — registrar o adapter Game somente quando disponível
+
+O núcleo agora registra o consumer de conquistas e seus adapters de listagem e
+leitura apenas quando `aculta_game` fornece seu serviço de domínio. Com o módulo
+desabilitado, a central continua inicializando sem dependências opcionais de
+Game.
+
+Validação: `AcultaMessengerServiceProviderTest` **10 testes / 56 assertions
+PASS** e `GameAchievementNoticePersistenceKernelTest` **3 testes / 30
+assertions PASS** em MariaDB dedicado (duas depreciações upstream de
+`message`/`message_template`); suíte Unit do Messenger **370 / 3.980 PASS**.
+PHPCS Drupal/DrupalPractice, PHP lint, gate Drupal 11+ (**1.155 checks**) e
+índice dos 41 componentes PASS. Não foi feito teste de Runtime.
+
+## 0.1.1-dev.368 — paginação estável do contador de conversas
+
+`UnreadThreadCounter` deixou de hidratar toda a caixa de entrada de uma vez.
+Agora consulta membros por EntityQuery em páginas de 100, avançando por ID
+estável. Cada thread mantém a regra existente de leitura individual e passa
+pelo controle de acesso nativo antes da contagem. Isso evita o cursor temporal
+estrito do Private Message, que poderia perder threads empatadas, sem editar
+contrib nem depender de suas tabelas internas.
+
+Validação: Units focais **18/186 PASS**. `PrivateMessageRetentionKernelTest`
+**5/66 PASS** no MariaDB dedicado, incluindo 101 threads com `updated` igual
+atravessando o limite de página; dez depreciações Core/contrib preexistentes.
+Runtime, Alpha e teste visual com volume elevado não executados.
+

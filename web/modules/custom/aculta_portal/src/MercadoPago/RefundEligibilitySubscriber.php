@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\Event\RefundEligibilityEvent;
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Sales\MercadoPagoPaymentPolicy;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,6 +24,7 @@ final class RefundEligibilitySubscriber implements EventSubscriberInterface {
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
     private readonly MercadoPagoPaymentPolicy $politica,
+    private readonly ?CheckoutSettings $settings = NULL,
   ) {}
 
   /**
@@ -45,11 +47,14 @@ final class RefundEligibilitySubscriber implements EventSubscriberInterface {
       $itens[] = $item->bundle();
     }
     $config = $this->configFactory->get('aculta_donation.settings');
+    $texto = static fn(mixed $valor): string => is_string($valor) ? $valor : '';
     if ($this->politica->bloqueiaEstorno(
       $order->bundle(),
       $itens,
-      (string) $config->get('donate_order_type'),
-      (string) $config->get('donate_item_type'),
+      $texto($config->get('donate_order_type')),
+      $texto($config->get('donate_item_type')),
+      [...($this->settings?->lmsOrderTypes() ?? []), $texto($config->get('cart_order_type'))],
+      [$texto($config->get('cart_item_type'))],
     )) {
       $event->deny('Doações e cursos não têm estorno.');
     }

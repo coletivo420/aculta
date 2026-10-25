@@ -1,5 +1,81 @@
 # Execução por fases — ACULTA Game
 
+## Dev.16 — incluir ForumPost na primeira resposta pública
+
+- `BadgeEvaluationHooks` avalia o trigger existente `forum_comment` nos hooks
+  genéricos de insert/update para `aculta_forum_post`. `ForumParticipationPolicy`
+  exige publicação default em tópico Growroom publicado no Domain `forum`,
+  conta proprietária, primeira transição a publicado e conteúdo não
+  sincronizado/não histórico.
+- Mantida a integração de Comment ACULTA vigente até a migração; Forum contrib,
+  LMS, autoria histórica e outros contextos não concedem a conquista. Game não
+  depende de `aculta_forum`; não houve concessão ou alteração Runtime.
+- PHP lint e PHPCS dos arquivos alterados: PASS. Testes automatizados não foram
+  executados nesta etapa; a matriz de aceitação foi atualizada para orientar a
+  validação integrada posterior. RUNTIME STATUS: DEFERRED.
+
+## Dev.14 — manter conquistas públicas isoladas do LMS
+
+- `ForumParticipationPolicyTest::testLmsTopicDoesNotEarnPublicForumParticipation`
+  cobre a fronteira entre participação aprovada no LMS e a conquista pública do
+  Growroom420. A liberação de participação/criação de tópicos pertence à política
+  do `aculta_user`; Game só recebe o trigger de tópicos públicos `aculta_forum_topic`.
+- A versão corrente da policy não precisou de alteração; o teste registra o
+  contrato anti-regressão. Sem fixture, concessão ou alteração no Runtime.
+- PHPUnit Unit: 10 testes/45 assertions PASS. PHPUnit emitiu aviso de que
+  `sites/simpletest/browser_output` não é gravável; este teste Unit não cria
+  saída de navegador. PHPCS Drupal/DrupalPractice e `php -l` PASS; Drupal 11+
+  gate 988 e mapa módulo/tema 153 PASS. O gate de fronteira falhou devido à
+  classe de design `aculta-mailer-scroll` em
+  `aculta_mailer/src/Controller/MailDashboardController.php`, introduzida pelo
+  trabalho concorrente no commit `89514dbe`, fora deste escopo. PHP CLI 8.4.26 permanece abaixo
+  da baseline 8.5. Sem fixture, concessão ou alteração no Runtime.
+  RUNTIME STATUS: DEFERRED.
+
+## Dev.10 — integração inicial com ACULTA Forum
+
+- `BadgeEvaluationHooks` reusa o trigger `forum_comment` para publicação de
+  `aculta_discussion_post` em `field_aculta_discussion` de um Node
+  `aculta_forum_topic` publicado. Atualização repetida de resposta já publicada
+  não é novo marco; pendência só conta quando passa a publicada.
+- Enquanto a retirada segura do Forum contrib não terminou, o par antigo
+  `comment_forum`/`forum` segue temporariamente coberto. Comentário/tópico com
+  `field_autor_legado` e entidades sincronizadas pelo Migrate ficam excluídos.
+- `ForumParticipationPolicy` concentra esse filtro; Game não depende do módulo
+  Forum, não cria storage/event queue e chama a API única `BadgeService`.
+  Nenhum backfill ou concessão histórica foi executado.
+- PHPUnit Unit `ForumParticipationPolicyTest`: 7 testes / 34 assertions — PASS
+  em PHP CLI 8.4.26. PHP 8.5 não está disponível neste checkout.
+- PHP lint e PHPCS Drupal/DrupalPractice: PASS. Gates Drupal 11+ (969), fronteira
+  Portal/tema (1349), mapa módulo/tema (154), slugs (387 rotas, 20 violações
+  contrib já baselined) e `git diff --check`: PASS.
+- Sem instalação/update/importação, conteúdo de teste, backfill ou alteração no
+  Runtime. **RUNTIME STATUS: DEFERRED.**
+
+## Dev.11 — impedir conquistas no Forum contribuído legado
+
+- O caminho temporário `forum`/`comment_forum` da dev.10 é removido. O trigger
+  existente continua premiando somente a resposta atual `aculta_discussion_post`
+  em tópico público `aculta_forum_topic`, quando ela passa a publicada e tem
+  uma conta proprietária válida. Comentário anônimo não recebe badge individual.
+- A remoção do caminho de premiação não apaga conteúdo nem desinstala o módulo;
+  isso permanece sujeito à auditoria e à fase segura do `aculta_forum`.
+- Unit cobre a negativa do bundle contribuído. Nenhuma concessão histórica,
+  importação ou comentário de teste foi executado. Runtime `toca`: cache rebuild,
+  Game habilitado e `BadgeEvaluationHooks` resolvido; consulta read-only observou
+  8 concessões existentes. Sem disparo de evento ou escrita de concessão.
+  RUNTIME STATUS: PARTIAL; evento real aprovado permanece sem homologação.
+
+## Dev.12 — regressão de aprovação tardia
+
+- Adicionado caso que mantém uma resposta pendente inelegível antes da
+  aprovação, torna a primeira publicação elegível e protege contra novo prêmio
+  em edição de resposta já publicada.
+- PHPUnit Unit `ForumParticipationPolicyTest`: 9 testes / 40 assertions PASS;
+  PHPCS do teste PASS. Gates Drupal 11+ (970), fronteira (1382), mapa (154) e
+  `git diff --check` PASS. Runtime não foi alterado; concessões/eventos reais
+  continuam sem homologação. RUNTIME STATUS: DEFERRED.
+
 Autorização de 2026-10-15: implementar por fases e commits na mesma PR #286.
 Esta autorização substitui a restrição anterior de abertura somente documental.
 

@@ -4,10 +4,23 @@
 pelas experiências do site. Não pertence ao LMS: conteúdo pode usar o formatter
 de Media `document` ou o formatter `aculta_pdf_file` em um campo File direto.
 
+Padrões globais ficam em ACULTA → Site → Leitor de PDF
+(`/painel-administrativo/aculta/leitor-pdf`). O painel pertence ao módulo Portal;
+formatters usam esses valores por padrão e podem optar por configuração
+específica do campo. A configuração fica em `aculta_pdf_viewer.settings` e faz
+parte do Config Sync. Rolagem horizontal e página dupla são aplicadas pelo
+wrapper ao viewer PDF.js completo antes de sua inicialização. O canvas ACULTA
+continua em navegação paginada. Em telas móveis, página dupla fica desligada por
+padrão e respeita a opção explícita do painel/formatter.
+
 ## Responsabilidade e limites
 
 - Integra Media/File ao PDF.js oficial local, sem armazenar conteúdo, permissões,
   documentos ou progresso próprios.
+- CSP é observada com `drupal/csp` em Report-Only e endpoint local `drupal/reporting`;
+  Config Sync deixa `enforce` desligado. O candidato só vai a RC após
+  testes/gates e revisão visual pré-deploy; Alpha confere relatórios e enforcement
+  exige decisão posterior. Veja [PV7](docs/ROADMAP.md) e o [ciclo de release](../../../../../../docs/operations/RELEASE-LIFECYCLE.md).
 - O builder incorpora PDFs permanentes em `public://` ou `private://`, somente
   após autorização de Media, campo e File. `private://` usa a rota Core e cache
   de render max-age zero.
@@ -20,10 +33,20 @@ de Media `document` ou o formatter `aculta_pdf_file` em um campo File direto.
   turma, use `private://`; o bundle `document` existente continua público e não
   pode receber arquivos confidenciais.
 - PDF sem viewer conserva o link Core apenas quando `download` access permite.
+- O canvas tem limite de 16 milhões de pixels e 16.384 px por lado. Se uma página
+  muito extensa exigir redução para menos da metade da escala pedida, o leitor
+  informa a limitação e mantém navegação e link autorizado para abrir/baixar.
+- O viewer oferece também um link ao viewer oficial completo do PDF.js, em nova
+  aba e com locale `pt-BR`, como alternativa de exploração de text layer e
+  estrutura marcada. O canvas continua sendo a experiência padrão; o viewer
+  oficial ainda precisa de validação de teclado/leitor de tela e não torna PDFs
+  sem estrutura marcada acessíveis por si só.
 - O bundle Media `document` atual usa `public://`. Não o use para trabalhos de
   estudante ou outro documento que exija isolamento por turma.
-- Não cria rota, controller, hook PHP ou configuração própria. Não chama
-  `hook_file_download`; a entrega privada continua sob Core.
+- O `CspReportRequestGuardSubscriber` limita e valida os corpos CSP antes do
+  controller do Reporting; não altera relatórios válidos. Não cria rota nem
+  controller próprios para o viewer. A entrega de PDFs privados continua sob
+  Core e não chama `hook_file_download`.
 - PDFPreview/ImageMagick gera miniatura fail-soft somente para PDFs públicos;
   serviço e dependências contrib não são requisito para habilitar o viewer.
 - Campos File diretos usam o viewer somente para PDFs permanentes públicos. O
@@ -66,6 +89,14 @@ de Media `document` ou o formatter `aculta_pdf_file` em um campo File direto.
    já existente via CKEditor no Runtime; a criação/upload pela UI como
    `content_editor` ainda não foi verificada. O registro, inclusive dos itens limpos, está em
    [TESTES-NAVEGADOR](../../../../../../docs/portal/TESTES-NAVEGADOR.md).
+6. `viewer-wrapper.html` e `js/pdf-viewer-wrapper.mjs` aplicam os padrões do
+   formatter ao viewer completo pelo evento `webviewerloaded` do PDF.js 6.4.299,
+   antes de `PDFViewerApplication.run()`. Nenhum arquivo da distribuição
+   Composer é alterado. O builder fornece somente URL local após validar o
+   acesso; o wrapper exige PDF same-origin, e o acesso privado continua na rota
+   protegida do Core. Os padrões de download e impressão também são propagados
+   ao viewer completo; quando desativados no formatter, os respectivos botões
+   principal e secundário do PDF.js ficam ocultos e fora da árvore acessível.
 
 ## Hooks e integração Drupal
 
@@ -78,12 +109,13 @@ anexada pelo render array somente quando o builder autoriza e reconhece PDF.
 O display padrão `media.document` seleciona `aculta_pdf_media`; os displays
 `node.document.default` e `node.document.full` selecionam `aculta_pdf_file` em
 Config Sync.
-O módulo exige apenas Core File e Media; PDFPreview e ImageMagick são opcionais
-no runtime. Não depende do módulo geral `aculta_portal`, LMS, PDF contrib, nem de
-configuração ativa importada. O PDF.js é gerenciado pelo Composer do site. O
-contrib `drupal/pdf` não é chamado porque
-seu loader 1.3 usa `pdf.js`/API global, enquanto o pacote escolhido publica ES
-modules `.mjs`.
+O módulo depende do Portal (painel de administração), aculta_image, Core File e
+Media; PDFPreview e ImageMagick são opcionais no runtime. Não depende do LMS nem
+de `drupal/pdf`: o contrib foi removido do Composer em 2026-10-21 porque seu
+formatter legado não era usado e o `aculta_pdf_viewer` já cobre essa função com
+PDF.js ESM. PDFPreview permanece porque o adapter o usa opcionalmente para
+miniaturas públicas. A configuração global é exportável e versionada; o PDF.js
+é gerenciado pelo Composer do site.
 
 ## Testes e validação
 

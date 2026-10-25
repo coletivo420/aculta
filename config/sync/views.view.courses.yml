@@ -11,7 +11,7 @@ dependencies:
 _core:
   default_config_hash: 8G8IYgl3ZlVpyNetip_TMiN1pzHJlDrgm_9Mo_mGuPg
 id: courses
-label: Courses
+label: Cursos
 module: views
 description: 'Public listing of available courses.'
 tag: 'LMS Public'
@@ -24,7 +24,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: Courses
+      title: Cursos
       fields: {  }
       pager:
         type: mini
@@ -108,7 +108,7 @@ display:
       tags: {  }
   page_1:
     id: page_1
-    display_title: Page
+    display_title: Página
     display_plugin: page
     position: 1
     display_options:

@@ -6,7 +6,7 @@ dependencies:
     - aculta_image
     - editor
     - media
-name: 'Usuário ACULTA'
+name: 'Usuário ACULTA (HTML restrito)'
 format: usuario_aculta
 weight: 0
 filters:

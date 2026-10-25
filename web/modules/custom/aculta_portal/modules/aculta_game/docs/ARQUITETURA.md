@@ -1,13 +1,14 @@
 # Arquitetura — ACULTA Game
 
-Status: arquitetura aprovada em evolução. G1–G5.1 têm código; evidências e limites
-em [EXECUCAO.md](EXECUCAO.md). Partes descritas como futuras continuam propostas.
+Status: arquitetura aprovada em evolução. G1–G5.4 têm código; o início de G7
+(integração Forum dev.10) está implementado com Runtime DEFERRED. Evidências e
+limites em [EXECUCAO.md](EXECUCAO.md). Partes futuras continuam propostas.
 
 ## Fontes e responsabilidades
 
 ```mermaid
 flowchart TD
-  F[Forum e Comment: publicação aprovada] --> C[Critérios e elegibilidade]
+  F[ForumPost/Comment: primeira publicação aprovada] --> C[Critérios e elegibilidade]
   W[Wiki: revisão e decisão editorial] --> C
   L[LMS: status e matrícula reais] --> C
   P[Profile e fatos administrativos permitidos] --> C
@@ -53,6 +54,28 @@ Cada gatilho tem um único avaliador ativo. Trocar ownership dos hooks requer
 desativar o caminho antigo e provar paridade no mesmo conjunto de mudanças.
 `aculta_user` e o Portal principal não ganham dependência obrigatória do Game.
 Desabilitar Game não apaga identidade, posts, cursos ou concessões.
+
+### Integração com o Fórum público
+
+O caminho Comment de `0.1.0-dev.10` escuta o bundle atual
+`aculta_discussion_post`, campo `field_aculta_discussion`, hospedado no Node
+`aculta_forum_topic`. Desde `0.1.0-dev.16`, hooks genéricos `entity_insert` e
+`entity_update` também avaliam `aculta_forum_post`, sem importar a classe ou
+declarar dependência do Game ao Fórum. O mesmo trigger `forum_comment` mantém o
+catálogo, a missão e a API única de concessões. Aprovação posterior de post
+pendente conta uma vez; insert/update sincronizados, autoria histórica, tópico
+não publicado ou fora do Domain `forum`, revisão que não é default e edição de
+post já publicado não concedem uma nova conquista.
+
+O par contrib antigo (`comment_forum` em `forum`) não é elegível, mesmo enquanto
+o módulo aguarda a retirada segura documentada em `aculta_forum`. Somente
+Comments ACULTA vigentes e posts revisionáveis públicos podem qualificar.
+`field_autor_legado` e
+`SynchronizableInterface::isSyncing()` também bloqueiam concessões por conteúdo
+histórico/restaurado. Não se reavalia o passado e não se cria cópia dos
+comentários ou contadores no Game. O evento atual é o hook de entidade Drupal;
+não há fila assíncrona nem módulo adapter adicional. A versão dev.11 substitui
+explicitamente o caminho transitório documentado na dev.10.
 
 ## Lacunas observadas no código atual
 

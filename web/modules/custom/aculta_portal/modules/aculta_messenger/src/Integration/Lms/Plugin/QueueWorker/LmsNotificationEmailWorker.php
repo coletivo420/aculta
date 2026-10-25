@@ -1,0 +1,176 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_messenger\Integration\Lms\Plugin\QueueWorker;
+
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Queue\Attribute\QueueWorker;
+use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\message\MessageInterface;
+use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface;
+use Drupal\aculta_messenger\Service\MessengerEmailLock;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
+use Drupal\aculta_messenger\Service\MessengerMailDelivery;
+use Drupal\user\UserInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Sends minimum enrollment and certificate notices through ACULTA Mailer.
+ */
+#[QueueWorker(
+  id: 'aculta_lms_messenger_email',
+  title: new TranslatableMarkup('ACULTA LMS transactional notification'),
+  cron: ['time' => 30],
+)]
+final class LmsNotificationEmailWorker extends QueueWorkerBase implements ContainerFactoryPluginInterface {
+
+  private const MAX_ATTEMPTS = 3;
+
+  private const DELIVERY_FIELD = 'field_aculta_msg_delivery';
+
+  private const ATTEMPTS_FIELD = 'field_aculta_messenger_attempts';
+
+  public function __construct(
+    array $configuration,
+    string $plugin_id,
+    mixed $plugin_definition,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly LearningNoticeManagerInterface $notices,
+    private readonly AvisoPreferenciasInterface $preferences,
+    private readonly EmailConfirmationPolicy $emailPolicy,
+    private readonly AcultaMailerInterface $mailer,
+    private readonly LockBackendInterface $lock,
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_type.manager'),
+      $container->get('aculta_messenger.lms_notice_manager'),
+      $container->get('aculta_messenger.aviso_preferencias'),
+      $container->get('aculta_portal.email_confirmation_policy'),
+      $container->get('aculta_mailer.mailer'),
+      $container->get('lock'),
+    );
+  }
+
+  /**
+   * Processes only a Message ID; all recipient and source state is reloaded.
+   */
+  public function processItem($data): void {
+    if (!is_array($data)) {
+      return;
+    }
+    $messageId = filter_var($data['message_id'] ?? NULL, FILTER_VALIDATE_INT);
+    if ($messageId === FALSE || $messageId < 1) {
+      return;
+    }
+    $lockId = 'aculta_lms_messenger:message:' . $messageId;
+    if (!$this->lock->acquire($lockId, MessengerEmailLock::TIMEOUT)) {
+      throw new \RuntimeException('LMS notification is already being processed.');
+    }
+    try {
+      // Read current state only after locking so duplicate items cannot use a
+      // stale Message loaded while another worker is delivering it.
+      $message = $this->entityTypeManager->getStorage('message')->loadUnchanged($messageId);
+      if (!$message instanceof MessageInterface || $message->bundle() !== 'aculta_msg_lms_notice'
+        || !in_array($message->get(self::DELIVERY_FIELD)->value, ['pending', 'failed'], TRUE)
+        || (int) $message->get(self::ATTEMPTS_FIELD)->value >= self::MAX_ATTEMPTS) {
+        return;
+      }
+      $this->send($message);
+    }
+    finally {
+      $this->lock->release($lockId);
+    }
+  }
+
+  /**
+   * Revalidates current ownership/access before sending a generic email.
+   */
+  private function send(MessageInterface $message): void {
+    $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($message->getOwnerId());
+    if (!$recipient instanceof UserInterface || !$recipient->isActive()
+      || !is_string($recipient->getEmail())
+      || !filter_var($recipient->getEmail(), FILTER_VALIDATE_EMAIL)) {
+      $message->set(self::DELIVERY_FIELD, 'cancelled')->save();
+      return;
+    }
+    if (!$this->emailPolicy->isConfirmed($recipient)) {
+      $message->set(self::DELIVERY_FIELD, 'cancelled')->save();
+      return;
+    }
+    if ($this->preferences->emailMode((int) $recipient->id(), 'aprendizagem') !== AvisoPreferencias::EMAIL_IMMEDIATE) {
+      $message->set(self::DELIVERY_FIELD, 'cancelled')->save();
+      return;
+    }
+    $notice = $this->notices->resolve($message, $recipient);
+    if ($notice === NULL) {
+      // A source that is no longer accessible must not be requeued by replaying
+      // the event. Certificate links stay valid through their stored snapshot.
+      $message->set(self::DELIVERY_FIELD, 'cancelled')->save();
+      return;
+    }
+    $attempts = (int) $message->get(self::ATTEMPTS_FIELD)->value;
+    if ($attempts >= self::MAX_ATTEMPTS) {
+      $message->set(self::DELIVERY_FIELD, 'failed_permanent')->save();
+      return;
+    }
+    $attempts++;
+    $message->set(self::ATTEMPTS_FIELD, $attempts)->set(self::DELIVERY_FIELD, 'pending')->save();
+    $context = [
+      'summary' => (string) $notice['email_summary'],
+      'url' => $notice['url']->toString(),
+    ];
+    try {
+      $result = MessengerMailDelivery::deliver(
+        $this->mailer,
+        'lms_transactional_notice',
+        (string) $recipient->getEmail(),
+        'pt-br',
+        $context,
+        $message->bundle() . ':' . $message->uuid() . ':lms_transactional_notice',
+        (string) $message->uuid(),
+      );
+    }
+    catch (\Throwable) {
+      $message->set(self::DELIVERY_FIELD, $attempts >= self::MAX_ATTEMPTS ? 'failed_permanent' : 'failed')->save();
+      if ($attempts < self::MAX_ATTEMPTS) {
+        throw new \RuntimeException('LMS transactional notification email delivery failed.');
+      }
+      return;
+    }
+    if ($result->cancelled) {
+      $message->set(self::DELIVERY_FIELD, 'cancelled')->save();
+      return;
+    }
+    if (!$result->sent) {
+      if ($result->error === DeliveryError::Permanent) {
+        $message->set(self::DELIVERY_FIELD, 'failed_permanent')->save();
+        return;
+      }
+      $message->set(self::DELIVERY_FIELD, $attempts >= self::MAX_ATTEMPTS ? 'failed_permanent' : 'failed')->save();
+      if ($attempts < self::MAX_ATTEMPTS) {
+        throw new \RuntimeException('LMS transactional notification email delivery failed.');
+      }
+      return;
+    }
+    $message->set(self::DELIVERY_FIELD, 'sent')->save();
+  }
+
+}

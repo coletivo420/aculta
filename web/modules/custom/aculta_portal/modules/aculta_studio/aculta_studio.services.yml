@@ -1,0 +1,64 @@
+services:
+  aculta_studio.marley_tab_manager:
+    class: Drupal\aculta_studio\MarleyTabManager
+    parent: default_plugin_manager
+  aculta_studio.marley_presenter:
+    class: Drupal\aculta_studio\MarleyPresenter
+    arguments: ['@aculta_studio.marley_tab_manager']
+  aculta_studio.marley_controller:
+    class: Drupal\aculta_studio\Controller\MarleyController
+    arguments: ['@aculta_studio.marley_presenter', '@current_user', '@aculta_studio.marley_listing', '@string_translation']
+  aculta_studio.marley_listing:
+    class: Drupal\aculta_studio\MarleyListingBuilder
+    arguments: ['@entity_type.manager', '@date.formatter', '@aculta_portal.domain_purpose', '@current_user', '@string_translation', '@request_stack', '@?aculta_wiki.editorial_queue']
+  aculta_studio.experience_manager:
+    class: Drupal\aculta_studio\Experience\StudioExperienceManager
+    calls:
+      - [addProvider, ['@aculta_studio.experience.conta']]
+      - [addProvider, ['@aculta_studio.experience.perfil']]
+      - [addProvider, ['@aculta_studio.experience.marley']]
+      - [addProvider, ['@aculta_studio.experience.ganjalab']]
+      - [addProvider, ['@aculta_studio.experience.we_sativa']]
+  aculta_studio.experience.marley:
+    class: Drupal\aculta_studio\Experience\MarleyExperienceProvider
+    arguments: ['@aculta_studio.marley_presenter', '@current_user']
+  aculta_studio.hub_controller:
+    class: Drupal\aculta_studio\Controller\StudioHubController
+    arguments: ['@aculta_studio.experience_manager', '@current_user', '@router.route_provider']
+  aculta_studio.experience.conta:
+    class: Drupal\aculta_studio\Experience\AccountExperienceProvider
+    arguments: ['@?aculta_id_cpf.account_document']
+  aculta_studio.profile_access:
+    class: Drupal\aculta_studio\Access\StudioProfileAccess
+    arguments: ['@module_handler']
+  aculta_studio.experience.perfil:
+    class: Drupal\aculta_studio\Experience\ProfileExperienceProvider
+    arguments: ['@module_handler']
+  aculta_studio.account_section_controller:
+    class: Drupal\aculta_studio\Controller\StudioAccountSectionController
+    arguments: ['@class_resolver', '@current_user', '@?aculta_id_cpf.account_document', '@form_builder']
+  aculta_studio.account_controller:
+    class: Drupal\aculta_studio\Controller\AccountController
+    arguments: ['@aculta_studio.experience_manager', '@current_user']
+  aculta_studio.profile_controller:
+    class: Drupal\aculta_studio\Controller\StudioProfileController
+    arguments:
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@?aculta_user.public_profile_link'
+      - '@?aculta_user.account_bio_card'
+      - '@?aculta_user.social_links_card'
+      - '@?aculta_user.author_identity_resolver'
+      - '@?aculta_image.render'
+  aculta_studio.experience.ganjalab:
+    class: Drupal\aculta_studio\Experience\GanjalabExperienceProvider
+    arguments: ['@?aculta_studio.learner_dashboard_composer']
+  aculta_studio.experience.we_sativa:
+    class: Drupal\aculta_studio\Experience\WeSativaExperienceProvider
+    arguments: ['@?aculta_wiki.contributor_workspace', '@current_user']
+  aculta_studio.ganjalab_controller:
+    class: Drupal\aculta_studio\Controller\GanjalabController
+    arguments: ['@aculta_studio.experience_manager', '@current_user']
+  aculta_studio.we_sativa_controller:
+    class: Drupal\aculta_studio\Controller\WeSativaController
+    arguments: ['@aculta_studio.experience_manager', '@current_user']

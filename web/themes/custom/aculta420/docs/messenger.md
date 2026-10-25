@@ -11,6 +11,7 @@ Regra central: **o tema não decide nada do Messenger.** Ele recebe dados pronto
 | Componentes SDC do Messenger | `components/patterns/messenger-*`, `components/content/messenger-*`, `components/feedback/messenger-state`, `components/feedback/unread-badge` |
 | CSS da gaveta, da lista e do menu | `css/components/messenger-drawer.css` (biblioteca `messenger-drawers`) |
 | CSS da bolha de mensagem | `components/content/messenger-item/messenger-item.css` |
+| CSS da gaveta de avisos e filtros | `components/patterns/alerts-trigger/alerts-trigger.css` |
 | CSS dos outros componentes | a pasta de cada componente |
 | JS da gaveta | `js/messenger-drawers.js` (library `messenger-drawers`) |
 | JS dos contadores | `js/counters.js` |
@@ -64,6 +65,8 @@ O módulo marca o elemento com um token semântico. `PortalUiHooks::TOKENS` troc
 | --- | --- | --- |
 | `conversation-action` | `aculta-messenger-options__action` | Botões do menu "Opções" e das janelas |
 | `conversation-notice-action` | `aculta-messenger-notice__action` | Ação do aviso de bloqueio/privacidade |
+| `notice-read-state-form` | `aculta-notice-read-state-form` | Formulário de leitura de aviso na central |
+| `notice-read-state-action` | `aculta-notice-read-state-action` | Botão para marcar aviso lido/não lido |
 | `messenger-back-link` | `aculta-messenger-back-link` | "← Todas as conversas" |
 | `messenger-drawer-conversation` | `aculta-messenger-drawer-conversation` | Contêiner da conversa na gaveta |
 | `messenger-conversation-toolbar` | `aculta-messenger-conversation-toolbar` | Barra da conversa (voltar e Opções) |
@@ -83,6 +86,10 @@ O módulo marca o elemento com um token semântico. `PortalUiHooks::TOKENS` troc
 | `messenger-sender-avatar` | `aculta-messenger-sender__avatar` | Avatar na linha |
 | `notice-read-status` | `aculta-messenger-read-status` | Aviso persistente já lido |
 | `notice-unread-status` | `aculta-messenger-read-status aculta-messenger-read-status--unread` | Aviso persistente não lido |
+| `messenger-state` | `aculta-messenger-state` | Estado de aviso vazio/carregando/erro |
+| `messenger-state-empty` | `aculta-messenger-state--empty` | Vazio filtrado na central/gaveta |
+| `alerts-filters` | `aculta-alerts-filters` | Contêiner dos filtros na gaveta |
+| `alerts-filters-group` | `aculta-alerts-filters__group` | Cada grupo recolhível de origem ou leitura |
 | `notice-admin-item` / `-intro` / `-list` / `-table` | `admin-item` / `aculta-notice-admin-intro` / `admin-list aculta-notice-admin-list` / `aculta-notice-admin-table` | Administração de avisos |
 | `new-conversation-link` | `btn btn-primary aculta-messenger-new-conversation` | Botão "Iniciar nova conversa" |
 | `new-conversation-links` | `d-flex flex-wrap gap-2 mt-2` | Linha de botões do compositor |
@@ -118,14 +125,21 @@ Se um token "não pinta", confira primeiro o elemento que o módulo montou. O er
 
 `js/messenger-drawers.js` é o único arquivo de comportamento da gaveta. Ele usa `once()` e `Drupal.attachBehaviors`, então novo conteúdo carregado por `fetch` ganha comportamento sem recarregar a página.
 
+Ao abrir a gaveta ou navegar dentro dela, o JS apresenta `feedback/messenger-state` no estado `loading`; erro HTTP/rede apresenta a variante `error` com `role="alert"`. A biblioteca `messenger-drawers` carrega o CSS do SDC, pois fragmentos `fetch` não reaplicam anexos de biblioteca da resposta.
+
+Na gaveta de avisos, os filtros nativos `<details>` usam grupos compactos. O módulo fornece os links de fallback da central da Conta e a URL same-origin do fragmento; o JS intercepta somente o fragmento. Ao filtrar, atualiza o contador de avisos (nunca o de mensagens) e usa textos de loading/erro específicos para avisos.
+
 | Atributo | Papel | Comportamento |
 | --- | --- | --- |
 | `data-aculta-drawer-url` | Gaveta (`messenger-trigger`) | URL carregada ao abrir |
 | `data-aculta-drawer-count` | Gaveta | `messages` ou `alerts`: qual contador atualizar |
+| `data-aculta-drawer-filter` | Link de filtro na gaveta de avisos | Intercepta o link para trocar o fragmento; `href` permanece o fallback da central da Conta |
+| `data-aculta-drawer-filter-url` | Link de filtro na gaveta de avisos | URL same-origin do fragmento AJAX, incluindo filtros normalizados |
 | `data-aculta-drawer-back` | "← Todas as conversas" | Volta à lista dentro da gaveta |
 | `data-aculta-conversation-url` | Links e botões | Carrega a visão na gaveta por `fetch` |
 | `data-aculta-conversation-view` | Conversa | Rola até a última mensagem |
 | `data-aculta-drawer-action` | Formulário "Opções" | Envia por `fetch` e substitui a gaveta |
+| `data-aculta-drawer-state` | Estado transitório da gaveta | `loading` ou `error`, gerado pelo tema durante AJAX |
 | `data-aculta-new-conversation` | Busca de membro | Impede Enter de enviar a busca |
 | `data-aculta-new-conversation-form` | Primeira mensagem | Envia por `fetch` |
 | `data-aculta-open-conversation` | Perfil: "Iniciar conversa" | Abre a gaveta na nova conversa |
@@ -139,7 +153,7 @@ Pontos de atenção:
 
 - O JS expõe `drawer.acultaNavigate(url)` no elemento da gaveta. É assim que o perfil abre a nova conversa. Não renomeie sem atualizar `data-aculta-open-conversation`.
 - Os botões da janela de confirmação são `input type=submit` no Form API. O clique é cancelado no JS (`preventDefault`). Sem JS, a janela não abre.
-- O diálogo é um `<dialog>` nativo dentro do formulário. A marcação é montada com `inline_template` no módulo (achado A2 da auditoria); o estilo fica em `messenger-item.css`.
+- O diálogo é aberto por `Drupal.dialog` (jQuery UI) dentro do formulário. A pergunta começa oculta em `data-aculta-dialog`; o tema remove `hidden` ao abrir. Escape fecha apenas o modal: a gaveta intercepta a propagação antes do Bootstrap Offcanvas. O estilo fica em `messenger-drawer.css`.
 
 ## 7. CSS
 
@@ -153,6 +167,7 @@ Pontos de atenção:
 | `components/patterns/messenger-list/messenger-list.css` | Lista | Componente |
 | `components/patterns/messenger-read-status/messenger-read-status.css` | Rótulo de leitura | Componente |
 | `components/patterns/messenger-trigger/messenger-trigger.css` | Gatilho da barra | Componente |
+| `components/patterns/alerts-trigger/alerts-trigger.css` | Gatilho, gaveta e filtros de avisos | Componente |
 
 Regras do projeto para o CSS do Messenger:
 
@@ -175,7 +190,7 @@ específico do Messenger e seus pontos de apresentação.
 | `ThemeHooks` | — | `presentMessengerTrigger(array &$variables)` | `aculta_messenger` → render array `messenger-trigger`. |
 | `ThemeHooks` | `preprocess_private_message_thread` | `preprocessPrivateMessageThread` | Estado de leitura acessível (`messenger-read-status`). |
 | `ThemeHooks` | `preprocess_private_message` | `preprocessPrivateMessage` | Avatar e direção → `messenger-item`. |
-| `PortalUiHooks` | `preprocess_container`, `preprocess_html_tag`, `preprocess_item_list`, `preprocess_input`, `preprocess_form_element`, `preprocess_menu`, … | `preprocess` / `preprocessMenu` | Troca tokens por classes (`TOKENS`). |
+| `InputHooks` / `PortalUiHooks` | `preprocess_input` (`InputHooks` delega a `PortalUiHooks::preprocess()`); `preprocess_container`, `preprocess_html_tag`, `preprocess_item_list`, `preprocess_form_element`, `preprocess_menu`, … | `preprocess` / `preprocessMenu` | Troca tokens por classes (`TOKENS`). |
 | `PortalUiHooks` | `preprocess_details` (ordem última) | `preprocessDetails` | Mapeia a caixa "Opções" depois do acordeão do Bootstrap. |
 
 Ordem de hooks: o módulo `aculta_messenger` prepara as variáveis neutras em
@@ -192,7 +207,7 @@ hook OOP. **Não crie** `template_preprocess_*` legado.
 
 ### Mudar a aparência da janela de confirmação
 
-1. Edite as regras `dialog[data-aculta-dialog]` em `messenger-item.css`.
+1. Edite as regras `[data-aculta-dialog]` em `css/components/messenger-drawer.css`.
 2. Confira os dois casos: bloquear (`data-aculta-dialog="ban"`) e desfazer amizade (`data-aculta-dialog="remove"`).
 
 ### Criar um componente de estado novo
@@ -210,3 +225,7 @@ hook OOP. **Não crie** `template_preprocess_*` legado.
 ## 11. Pendências do tema para o Messenger
 
 Ver `MESSENGER-AUDIT.md`, seção 3: A3 (separar o CSS do painel), A4 (regras mortas), A5 (mapeamento de rotas nativas), A6 (JS de alertas dentro da gaveta), A9 (nome do componente `messenger-item`).
+
+## B4-02: consistência da gaveta AJAX
+
+O JS do tema verifica se a resposta ainda corresponde ao `AbortController` ativo antes de substituir o conteúdo da gaveta. Assim, fechar a gaveta ou navegar para outra conversa não deve permitir que respostas antigas sobrescrevam o estado atual. Testes com AJAX e rede lenta ainda são exigidos no Runtime. Ver [B4-02](theme-ux-0.8-b4-02-ajax-drawer-race.md).

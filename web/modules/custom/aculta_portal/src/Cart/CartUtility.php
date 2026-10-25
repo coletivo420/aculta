@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Cart;
 
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\commerce_cart\CartProviderInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -23,6 +24,7 @@ final class CartUtility {
     private readonly CartProviderInterface $cartProvider,
     private readonly DomainPurposeManager $domainPurposeManager,
     TranslationInterface $translation,
+    private readonly ?CheckoutSettings $settings = NULL,
   ) {
     $this->setStringTranslation($translation);
   }
@@ -41,7 +43,7 @@ final class CartUtility {
 
     foreach ($this->cartProvider->getCarts() as $cart) {
       $cache->addCacheableDependency($cart);
-      $site = CartSite::paraTipo($cart->bundle());
+      $site = in_array($cart->bundle(), $this->settings?->lmsOrderTypes() ?? [], TRUE) ? CartSite::CURSOS : CartSite::paraTipo($cart->bundle());
       $checkout = $site === CartSite::ASSINATURA ? $this->urlDoCheckout($cart) : '';
       foreach ($cart->getItems() as $item) {
         $quantity = (int) $item->getQuantity();

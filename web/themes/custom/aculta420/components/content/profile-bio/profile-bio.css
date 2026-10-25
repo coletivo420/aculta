@@ -1,0 +1,45 @@
+.aculta-profile-bio {
+  min-inline-size: 0;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--aculta-border-default);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+}
+
+.aculta-profile-bio__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-block-end: 1rem;
+}
+
+.aculta-profile-bio__title {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
+.aculta-profile-bio__body {
+  min-inline-size: 0;
+  max-inline-size: 68ch;
+  overflow-wrap: anywhere;
+  line-height: 1.55;
+}
+
+.aculta-profile-bio__body :is(textarea, input) {
+  max-inline-size: 100%;
+}
+
+.aculta-profile-bio__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.aculta-profile-bio :is(a, button):focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}

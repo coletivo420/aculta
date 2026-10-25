@@ -8,6 +8,7 @@
         data-bs-toggle="offcanvas"
         data-bs-target="#aculta-messenger-offcanvas"
         aria-controls="aculta-messenger-offcanvas"
+        aria-expanded="false"
         aria-label="{{ label }}">
   <i class="bi bi-chat-dots" aria-hidden="true"></i>
   <span class="aculta-unread-count" data-aculta-messenger-count data-count="{{ count }}">{{ count > 99 ? '99+' : count }}</span>
@@ -17,6 +18,7 @@
      tabindex="-1"
      id="aculta-messenger-offcanvas"
      aria-labelledby="aculta-messenger-offcanvas-title"
+     data-aculta-utility-drawer
      data-aculta-drawer-count="messages"
      data-aculta-drawer-url="{{ href }}"
      data-aculta-drawer-label="{{ 'Não foi possível carregar as mensagens. Tente novamente.'|t }}">

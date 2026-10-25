@@ -1,8 +1,0 @@
-uuid: f93d16fa-c9b1-4fdb-a398-55d0d34965dc
-langcode: pt-br
-status: true
-dependencies: {  }
-id: aculta-footer-participation
-label: Participação
-description: 'Navegação de contato, participação e privacidade no footer.'
-locked: false

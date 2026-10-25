@@ -9,28 +9,30 @@ use Drupal\profile\Entity\ProfileInterface;
 /**
  * Redes sociais do perfil: Instagram, Facebook e Reddit.
  *
- * Os links ficam no campo field_redes_sociais (link, múltiplo). A rede é reconhecida pelo host do link
+ * Os links ficam no campo field_redes_sociais (link, múltiplo). A rede é
+ * reconhecida pelo host do link.
  * Não há campo novo por rede. O módulo não emite classes de design:
- * o ícone de cada rede é um token (account-social-icon-<rede>) mapeado no ACULTA420.
+ * o ícone usa o token account-social-icon-<rede> do ACULTA420.
  */
-final class SocialNetworks {
+final class SocialNetworks implements SocialNetworksInterface {
 
   /**
-   * Definições: rótulo, tipo de campo e hosts reconhecidos.
+   * Backward-compatible access to the shared network definitions.
    */
-  public const NETWORKS = [
-    'instagram' => ['label' => 'Instagram', 'type' => 'url', 'hosts' => ['instagram.com']],
-    'facebook' => ['label' => 'Facebook', 'type' => 'url', 'hosts' => ['facebook.com', 'fb.com', 'fb.me']],
-    'reddit' => ['label' => 'Reddit', 'type' => 'url', 'hosts' => ['reddit.com', 'redd.it']],
-  ];
+  public const NETWORKS = SocialNetworksInterface::NETWORKS;
 
   /**
    * Chave da rede de um link, ou NULL se não for de uma rede suportada.
    */
   public function keyForUri(string $uri): ?string {
+    $scheme = strtolower((string) parse_url($uri, PHP_URL_SCHEME));
+    if (!in_array($scheme, ['http', 'https'], TRUE)
+      || filter_var($uri, FILTER_VALIDATE_URL) === FALSE) {
+      return NULL;
+    }
     $host = strtolower((string) parse_url($uri, PHP_URL_HOST));
     $host = preg_replace('/^www\./', '', $host) ?? $host;
-    foreach (self::NETWORKS as $key => $definition) {
+    foreach (SocialNetworksInterface::NETWORKS as $key => $definition) {
       foreach ($definition['hosts'] as $allowed) {
         if ($host === $allowed || str_ends_with($host, '.' . $allowed)) {
           return $key;
@@ -44,6 +46,7 @@ final class SocialNetworks {
    * Links das redes do perfil, por chave de rede (primeiro link de cada rede).
    *
    * @return array<string, string>
+   *   Network machine name to URL.
    */
   public function linksOf(ProfileInterface $profile): array {
     $links = [];
@@ -61,12 +64,14 @@ final class SocialNetworks {
   }
 
   /**
-   * Valida e normaliza a entrada de uma rede. Vazio devolve NULL (remover). Entrada inválida lança exceção.
+   * Normaliza a URL de uma rede social suportada.
+   *
+   * Vazio devolve NULL; entrada inválida lança exceção.
    *
    * @throws \InvalidArgumentException
    */
   public function normalize(string $key, string $input): ?string {
-    if (!isset(self::NETWORKS[$key])) {
+    if (!isset(SocialNetworksInterface::NETWORKS[$key])) {
       throw new \InvalidArgumentException('Rede desconhecida.');
     }
     $input = trim($input);
@@ -76,15 +81,20 @@ final class SocialNetworks {
     if (!preg_match('~^https?://~i', $input)) {
       $input = 'https://' . $input;
     }
-    // Um único endereço: recusa dois esquemas colados (ex.: uma URL repetida dentro de outra).
-    if (preg_match('~https?://.*https?://~i', $input) || filter_var($input, FILTER_VALIDATE_URL) === FALSE || $this->keyForUri($input) !== $key) {
-      throw new \InvalidArgumentException(sprintf('Informe um link do %s.', self::NETWORKS[$key]['label']));
+    // Recusa dois esquemas colados, como uma URL dentro de outra.
+    if (preg_match('~https?://.*https?://~i', $input)
+      || filter_var($input, FILTER_VALIDATE_URL) === FALSE
+      || $this->keyForUri($input) !== $key) {
+      throw new \InvalidArgumentException(sprintf(
+        'Informe um link do %s.',
+        SocialNetworksInterface::NETWORKS[$key]['label'],
+      ));
     }
     return $input;
   }
 
   /**
-   * Grava (ou remove, com NULL) o link de uma rede, mantendo os demais itens do campo.
+   * Grava ou remove o link de uma rede, mantendo os demais itens do campo.
    */
   public function setLink(ProfileInterface $profile, string $key, ?string $uri): void {
     $items = [];

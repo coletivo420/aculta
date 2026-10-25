@@ -1,5 +1,5 @@
 {# Supply the label referenced by VVJB 2.0's aria-labelledby, without replacing controls. #}
-{% if view.id() in ['home_editorial_highlights', 'aculta_projects'] %}
+{% if view.id() in ['home_editorial_highlights'] %}
   {{ attach_library('aculta420/editorial-carousel') }}
   <span id="vvjb-index-{{ options.unique_id }}" class="visually-hidden">{{ view.getTitle() }}</span>
 {% endif %}

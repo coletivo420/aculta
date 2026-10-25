@@ -17,3 +17,10 @@ aculta_donation.tab_fluxo:
   route_name: aculta_donation.donation_settings
   base_route: entity.aculta_donation_campaign.collection
   weight: 20
+
+# Aba Doações de Carrinhos e checkouts (Portal): reutiliza o formulário de fluxo, sem duplicar a configuração.
+aculta_donation.checkout_tab:
+  title: 'Doações'
+  route_name: aculta_donation.checkout_tab
+  base_route: aculta_portal.checkout_common
+  weight: 30

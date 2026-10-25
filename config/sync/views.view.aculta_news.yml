@@ -4,14 +4,14 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - node.type.article
+    - node.type.revista
   module:
     - node
     - user
 id: aculta_news
-label: 'Publicações do Revista 420'
+label: 'Publicações do Observatório da Maconha Coletivo 420'
 module: views
-description: 'Lista conteúdos editoriais publicados no Revista 420.'
+description: 'Lista conteúdos editoriais publicados no Observatório da Maconha Coletivo 420.'
 tag: ''
 base_table: node_field_data
 base_field: nid
@@ -22,7 +22,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: 'Publicações do Revista 420'
+      title: 'Publicações do Observatório da Maconha Coletivo 420'
       pager:
         type: none
         options:
@@ -60,7 +60,7 @@ display:
           entity_field: type
           plugin_id: bundle
           value:
-            article: article
+            revista: revista
       style:
         type: default
         options:
@@ -88,7 +88,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      block_description: 'Publicações do Revista 420'
+      block_description: 'Publicações do Observatório da Maconha Coletivo 420'
     cache_metadata:
       max-age: -1
       contexts:

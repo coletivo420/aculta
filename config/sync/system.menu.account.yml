@@ -5,6 +5,6 @@ dependencies: {  }
 _core:
   default_config_hash: M_Bh81osDyUQ4wV0GgU_NdBNqkzM87sLxjaCdFj9mnw
 id: account
-label: 'Conta do usuário'
+label: 'Menu da conta de usuário'
 description: 'Acesso à conta e saída de usuários autenticados; utilizado pela faixa utilitária do site.'
 locked: true

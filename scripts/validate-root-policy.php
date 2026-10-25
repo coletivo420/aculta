@@ -29,9 +29,17 @@ preg_match_all("/getPathInfo\\(\\) === '\\/'/", $subscriber, $rootChecks);
 $assert(!str_contains($subscriber, "pathUrl('shop', '/loja-da-aculta')"), 'Raiz da loja redirecionando para /loja-da-aculta: a decisão é servir conteúdo na raiz.');
 $processor = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/PathProcessor/PurposeFrontPathProcessor.php');
 $assert(str_contains($processor, '_disable_route_normalizer') && str_contains($processor, 'FRONT_ATTRIBUTE'), 'PurposeFrontPathProcessor sem _disable_route_normalizer/FRONT_ATTRIBUTE.');
-foreach (["'support' => '/apoio'", "'wiki' => '/wiki'", "'courses' => '/cursos'", "'shop' => '/loja'","'forum' => '/forum'"] as $entry) {
+foreach ([
+  "'support' => '/apoio'",
+  "'wiki' => '/wiki'",
+  "'courses' => '/cursos'",
+  "'shop' => '/loja'",
+  "'forum' => '/discussoes'",
+] as $entry) {
   $assert(str_contains($processor, $entry), "Mapa FRONT_PATHS sem $entry: a raiz do host não está uniformizada.");
 }
+$frontPolicy = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/Domain/FrontPathPolicy.php');
+$assert(str_contains($frontPolicy, "'forum' => ['/forum']"), 'O caminho antigo /forum deve continuar fechado após a troca da raiz.');
 $assert(!str_contains($subscriber, "pathUrl('main', '/')"), 'Raiz de MAIN redirecionada: a decisão é servir conteúdo.');
 // O redirecionamento de /apoio para / é permitido: só dispara quando o caminho não é a raiz.
 $assert(str_contains($subscriber, "getPathInfo() !== '/'"), 'Redirecionamento para a raiz de SUPPORT sem a guarda de caminho (raiz servida).');

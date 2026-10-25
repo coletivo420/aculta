@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Status;
 
-/** Curated metadata for reusable Portal services shown in administrative Status. */
+/**
+ * Curated metadata for reusable Portal services shown in administrative Status. */
 final class PortalHelperRegistry {
 
   /**
@@ -21,6 +22,22 @@ final class PortalHelperRegistry {
       'label' => 'Definições de conquistas',
       'summary' => 'Preserva o catálogo e as formas de concessão na Config API do User, sem motor de regras executáveis.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_game/docs/EXECUCAO.md',
+    ],
+    'aculta_user.author_identity_resolver' => [
+      'label' => 'Identidade de autoria',
+      'summary' => 'Resolve apelido público e link canônico em view-model mínimo, sem expor entidades ou campos privados.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-API.md',
+    ],
+    'aculta_user.author_card_builder' => [
+      'label' => 'Cartões de autoria',
+      'summary' => 'Prepara identidade, avatar mediado pelo aculta_image e cache para cartões; ações e decisões de acesso permanecem com os consumidores funcionais.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-API.md',
+    ],
+    'aculta_user.author_card_variant_resolver' => [
+      'label' => 'Variantes contextuais de autoria',
+      'summary' => 'Seleciona a variante do cartão pelo host sem conceder acesso ou misturar '
+      . 'Fórum, Revista, LMS e Wiki.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-VARIANTS.md',
     ],
     'aculta_game.mission_progress' => [
       'label' => 'Missões e progresso',
@@ -61,6 +78,16 @@ final class PortalHelperRegistry {
       'label' => 'Exclusão controlada de imagem',
       'summary' => 'Apaga arquivo de imagem somente quando file_usage e entity_usage não apontam para ele; invalida derivados e metadados.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_portal.unused_file_cleaner' => [
+      'label' => 'Coordenação de limpeza de arquivos sem uso',
+      'summary' => 'Revalida File Usage, Entity Usage, referências estruturadas e embeds versionados; delega imagens ao aculta_image.',
+      'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
+    ],
+    'aculta_portal.unused_media_cleaner' => [
+      'label' => 'Coordenação de limpeza de Media órfão',
+      'summary' => 'Revalida referências e remove Media não publicado submetido pelo módulo dono.',
+      'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
     ],
     'aculta_image.cleanup' => [
       'label' => 'Limpeza do ciclo de vida de imagens',
@@ -112,9 +139,9 @@ final class PortalHelperRegistry {
       'summary' => 'Monta a estrutura neutra da área Minha Conta e aplica access/cache aos itens.',
       'docs' => 'docs/portal/ACCOUNT-MENU.md',
     ],
-    'aculta_portal.account_terms_policy' => [
+    'aculta_portal.aculta_user_agreement_policy' => [
       'label' => 'Política de termos da conta',
-      'summary' => 'Consulta e valida o aceite dos termos no fluxo da conta.',
+      'summary' => 'Consulta e valida o aceite ACULTA no ledger do aculta_user.',
       'docs' => 'web/modules/custom/aculta_portal/README.md',
     ],
     'aculta_portal.auth_integration' => [
@@ -140,7 +167,7 @@ final class PortalHelperRegistry {
     'aculta_portal.deployer_status_reader' => [
       'label' => 'Leitura do estado do Deployer',
       'summary' => 'Lê o relatório neutro publicado pelo ACULTA Deployer sem executar sua CLI.',
-      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_deployer/README.md',
+      'docs' => 'docs/architecture/environments.md',
     ],
     'aculta_portal.domain_purpose' => [
       'label' => 'Domain Purpose Manager',
@@ -192,9 +219,9 @@ final class PortalHelperRegistry {
       'summary' => 'Coordena as mensagens transacionais de cadastro pela infraestrutura de e-mail existente.',
       'docs' => 'docs/portal/SOURCE-OF-TRUTH.md',
     ],
-    'aculta_portal.registration_terms' => [
-      'label' => 'Termos do cadastro',
-      'summary' => 'Fornece os termos vigentes do módulo Agreement ao fluxo de cadastro.',
+    'aculta_portal.aculta_user_agreement_registration' => [
+      'label' => 'Aceite de Termos no cadastro',
+      'summary' => 'Registra o aceite dos Termos ACULTA no ledger do aculta_user.',
       'docs' => 'docs/portal/SOURCE-OF-TRUTH.md',
     ],
     'aculta_portal.search_results' => [
@@ -210,7 +237,7 @@ final class PortalHelperRegistry {
     'aculta_portal.secrets_manager' => [
       'label' => 'Referências de credenciais',
       'summary' => 'Lê referências Drupal Key e valores fornecidos pelo ambiente sem expor segredos no Status.',
-    'docs' => 'docs/operations/SECRETS.md',
+      'docs' => 'docs/operations/SECRETS.md',
     ],
     'aculta_portal.turnstile_key_override' => [
       'label' => 'Chaves de ambiente do Turnstile',
@@ -222,13 +249,21 @@ final class PortalHelperRegistry {
       'summary' => 'Verifica configuração, credencial e disponibilidade do desafio anti-bot.',
       'docs' => 'web/modules/custom/aculta_portal/README.md',
     ],
+    'aculta_portal.checkout_configuration_resolver' => ['label' => 'Resolução da configuração de checkout', 'summary' => 'Lê a configuração administrativa de cada contexto de checkout (Loja, LMS, Doações).', 'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md'],
+    'aculta_portal.checkout_context_registry' => ['label' => 'Registro de contextos de checkout', 'summary' => 'Reúne os providers de contexto de checkout por tag, sem dependência circular.', 'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md'],
+    'aculta_portal.checkout_policy_manager' => ['label' => 'Política de checkout', 'summary' => 'Decide disponibilidade do checkout comum e dos fluxos dedicados, e detecta conflitos de tipo de pedido.', 'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md'],
   ];
 
-  /** @param string[] $activeHelperIds IDs coletados das definições ativas do container. */
+  /**
+   * Builds a registry from helper IDs collected from the active container.
+   *
+   * @param string[] $activeHelperIds
+   *   IDs collected from active service definitions.
+   */
   public function __construct(private readonly array $activeHelperIds) {}
 
   /**
-   * Returns rows for registered active helpers, including an explicit missing-metadata state.
+   * Returns active helper rows, including missing-metadata state.
    *
    * @return array<int, array<string, array<string, mixed>>>
    *   Render API table rows.
@@ -249,7 +284,8 @@ final class PortalHelperRegistry {
     return $rows;
   }
 
-  /** Exposes curated definitions to the static gate and unit tests. */
+  /**
+   * Exposes curated definitions to the static gate and unit tests. */
   public static function definitions(): array {
     return self::DEFINITIONS;
   }

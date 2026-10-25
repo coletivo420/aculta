@@ -1,0 +1,28 @@
+uuid: 9d4f6b48-a1d7-4d58-9861-f3a634bec9b3
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - comment.type.lms_answer_comment
+    - field.field.comment.lms_answer_comment.comment_body
+  module:
+    - text
+_core:
+  default_config_hash: fhXLGg9dRj32lzi8VRH1WX6FHPf30d2XumObwod0L1s
+id: comment.lms_answer_comment.default
+targetEntityType: comment
+bundle: lms_answer_comment
+mode: default
+content:
+  comment_body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  langcode: true
+  links: true
+  private_message_link: true
+  search_api_excerpt: true

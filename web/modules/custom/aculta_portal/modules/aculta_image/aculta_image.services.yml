@@ -1,4 +1,10 @@
 services:
+  aculta_image.content_index_provider:
+    class: Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
+    arguments: ['image', 'image']
+    tags:
+      - { name: aculta_index.provider }
+
   aculta_image.catalog:
     class: Drupal\aculta_image\ImageCatalog
     tags:
@@ -29,7 +35,7 @@ services:
       - { name: aculta_portal.helper }
   aculta_image.cleanup:
     class: Drupal\aculta_image\ImageCleanup
-    arguments: ['@database', '@entity_type.manager', '@queue', '@config.factory', '@datetime.time', '@aculta_image.file_remover']
+    arguments: ['@database', '@entity_type.manager', '@queue', '@config.factory', '@datetime.time', '@aculta_image.file_remover', '@?aculta_portal.unused_file_cleaner']
     tags:
       - { name: aculta_portal.helper }
   aculta_image.ingester:

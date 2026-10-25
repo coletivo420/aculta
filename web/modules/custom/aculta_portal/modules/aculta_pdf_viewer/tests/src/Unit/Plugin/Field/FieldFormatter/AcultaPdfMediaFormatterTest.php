@@ -42,7 +42,7 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
 
     $viewer = ['#type' => 'container', '#attributes' => ['data-aculta-pdf-viewer' => 'true']];
     $builder = $this->createMock(PdfViewerBuilderInterface::class);
-    $builder->expects(self::once())->method('build')->with($media, 'field_media_document')->willReturn($viewer);
+    $builder->expects(self::once())->method('build')->with($media, 'field_media_document', self::anything())->willReturn($viewer);
 
     $elements = $this->formatter($builder)->viewElements($items, 'pt-br');
 
@@ -105,7 +105,37 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
     $builder = $this->createMock(PdfViewerBuilderInterface::class);
     $builder->expects(self::once())
       ->method('build')
-      ->with($media, 'field_media_course_document')
+      ->with($media, 'field_media_course_document', self::anything())
+      ->willReturn($viewer);
+
+    self::assertSame($viewer, $this->formatter($builder)->viewElements($items, 'pt-br')[0]);
+  }
+
+  /**
+   * Forum attachments use the protected field mapping from the shared reader.
+   */
+  public function testForumPdfUsesPrivateMediaField(): void {
+    $media = $this->createMock(MediaInterface::class);
+    $media->method('access')->willReturn(AccessResult::allowed());
+    $media->method('getCacheTags')->willReturn(['media:11']);
+    $media->method('getCacheContexts')->willReturn([]);
+    $media->method('getCacheMaxAge')->willReturn(-1);
+    $media->method('bundle')->willReturn('forum_attachment');
+
+    $file = $this->createMock(FileInterface::class);
+    $file->method('access')->with('download', NULL, TRUE)->willReturn(AccessResult::allowed());
+    $file->method('getCacheTags')->willReturn(['file:15']);
+    $file->method('getCacheContexts')->willReturn([]);
+    $file->method('getCacheMaxAge')->willReturn(-1);
+    $file->method('getMimeType')->willReturn('application/pdf');
+    $file->method('getFilename')->willReturn('anexo.pdf');
+
+    $items = $this->fieldItems($media, $file, 'field_media_forum_attachment');
+    $viewer = ['#type' => 'container', '#attributes' => ['data-aculta-pdf-viewer' => 'true']];
+    $builder = $this->createMock(PdfViewerBuilderInterface::class);
+    $builder->expects(self::once())
+      ->method('build')
+      ->with($media, 'field_media_forum_attachment', self::anything())
       ->willReturn($viewer);
 
     self::assertSame($viewer, $this->formatter($builder)->viewElements($items, 'pt-br')[0]);
@@ -132,7 +162,7 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
     $items = $this->fieldItems($media, $file);
 
     $builder = $this->createMock(PdfViewerBuilderInterface::class);
-    $builder->expects(self::once())->method('build')->with($media, 'field_media_document')->willReturn([
+    $builder->expects(self::once())->method('build')->with($media, 'field_media_document', self::anything())->willReturn([
       '#access' => FALSE,
       '#cache' => ['contexts' => ['user.permissions']],
     ]);

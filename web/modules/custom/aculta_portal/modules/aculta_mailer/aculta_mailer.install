@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for ACULTA Mailer.
+ */
+
+declare(strict_types=1);
+
+/** Instala a entidade de registro de envios (aculta_mail_log). */
+function aculta_mailer_update_10001(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('aculta_mail_log'));
+}
+
+/**
+ * Acrescenta o texto completo da falha ao registro de envios (relatório do admin).
+ */
+function aculta_mailer_update_10002(): void {
+  $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('error_message', 'aculta_mail_log', 'aculta_mailer', $fields['error_message']);
+}
+
+/**
+ * Acrescenta o ID da mensagem no provedor ao registro (eventos de webhook sem correlação).
+ */
+function aculta_mailer_update_10003(): void {
+  $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('provider_message_id', 'aculta_mail_log', 'aculta_mailer', $fields['provider_message_id']);
+}
+
+/**
+ * Campo do conteúdo cifrado para reenvio das mensagens com falha.
+ */
+function aculta_mailer_update_10004(): void {
+  $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('payload_cipher', 'aculta_mail_log', 'aculta_mailer', $fields['payload_cipher']);
+}
+
+/**
+ * Prazo do conteúdo cifrado para reenvio (link de uso único: 24 horas).
+ */
+function aculta_mailer_update_10005(): void {
+  $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('payload_expires', 'aculta_mail_log', 'aculta_mailer', $fields['payload_expires']);
+}
+
+/**
+ * Contadores de rastreamento (aberturas e cliques), só com consentimento.
+ */
+function aculta_mailer_update_10006(): void {
+  $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  foreach (['opens', 'clicks', 'first_opened', 'first_clicked'] as $name) {
+    $manager->installFieldStorageDefinition($name, 'aculta_mail_log', 'aculta_mailer', $fields[$name]);
+  }
+}

@@ -36,7 +36,7 @@
 
 ## Configuração (0.3.0-dev.6)
 
-- Tela: Configurações > ACULTA Portal > Consulta de CEP (`/painel-administrativo/configuracoes/aculta/portal/cep`).
+- Tela: Configurações > ACULTA Portal > Consulta de CEP (`/painel-administrativo/aculta/cep`).
 - Banco padrão: primeira fonte consultada. Ordem das demais: peso da tabela (arrastar). Cada fonte pode ser desativada.
 - Fontes: `local` (base de arquivos), `viacep`, `brasilapi`. O código usa `CepSources` e os padrões em `CepSources::DEFAULTS`.
 - O contrib `cep_autocomplete` não tinha opções administrativas; nada foi portado dele.

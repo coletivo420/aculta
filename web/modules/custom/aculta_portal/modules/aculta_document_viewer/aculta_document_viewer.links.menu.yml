@@ -1,0 +1,6 @@
+aculta_document_viewer.settings:
+  title: 'Leitor de PDF'
+  description: 'Definir os padrões globais de apresentação do leitor PDF.js.'
+  route_name: aculta_document_viewer.settings
+  parent: aculta_portal.admin
+  weight: 8

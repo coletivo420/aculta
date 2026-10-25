@@ -1,0 +1,6 @@
+<?php
+
+/**
+ * @file
+ * Users related email confirmation module. Hooks em src/Hook (atributo #[Hook]).
+ */

@@ -33,7 +33,7 @@ O domínio de Conta usa a coleção de configuração `domain.conta_aculta_org`,
 ## C) Contas
 
 - **Admin `piradopirata`**: uid 1, papéis `administrator` e `authenticated`. O e-mail não está confirmado, e a política de checkout (`aculta_portal.access.protected_route`) nega o checkout. Não confirmar e-mail direto no banco sem decisão do responsável.
-- **Usuário de teste `teste.comum`** (uid 5): e-mail `teste.comum@example.invalid` (domínio reservado, não recebe mensagens). Papéis `authenticated` e `email_confirmed`, sem admin. Termos aceitos e confirmação de e-mail registrados. Criado pelo agente do repositório no banco de testes.
+- **Usuário de teste `teste.comum`** (uid 5): e-mail `teste.comum@example.invalid` (domínio reservado, não recebe mensagens). Papéis observados no Runtime de teste em 2026-10-21: `authenticated`, `email_confirmed`, `gerente_loja`, `content_editor`, `lms_teacher` e `estudante`. Sem papel administrativo (`administrator`); as rotas `/painel-administrativo/*` respondem 403 para esta conta. Os papéis extras vieram de testes de LMS e de Revista e são mantidos como estão até decisão de conta (ver DT-K01 no `docs/operations/DEBT-REGISTER.md`). Termos aceitos e confirmação de e-mail registrados. Criado pelo agente do repositório no banco de testes.
 - **Limpeza ao final de cada rodada**: excluir o usuário `teste.comum`, os pedidos de teste (rascunhos e concluídos), perfis de cobrança e endereços criados no teste. Não deixar resíduos. Só executar com o pedido do responsável.
 
 Login de teste sem digitar senha: o agente do repositório gera um link único com `drush uli --uri=<host de conta> --uid=<uid>`. Sessão da Conta vale também para o principal e a loja se o cookie de domínio for compartilhado; confirmar sempre pelo estado da página, não supor.
@@ -508,3 +508,134 @@ Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova co
 - **Persistência:** formulário de legenda no CKEditor salvou “Legenda salva no Firefox visível” em artigo temporário válido. O corpo armazenou `data-aculta-legenda`; ao reabrir a edição, o campo trouxe o mesmo valor. Artigo(s) temporário(s) removido(s) e confirmado(s) no cleanup.
 - **Leitor de tela:** o Orca anunciou o nome e valor do campo de legenda. Em fixture DOM não persistida na página pública, ao focar a imagem o Orca anunciou a legenda “Legenda acessível de teste” e o `alt` “Imagem de teste com texto alternativo”; AT-SPI expôs a legenda e a imagem como elementos filhos do painel/figura. A fixture foi removida e a sessão Firefox fechada.
 - **Limite:** a figura foi fixture DOM temporária com as classes reais do modelo; não foi salva em conteúdo. A configuração de runtime permaneceu inalterada.
+
+## ACULTA Forum — busca visual X11 e comparação com Ubuntu Discourse
+
+### Home e categorias vazias — 2026-10-20
+
+- Runtime `toca`, Drupal 11.4.10, URI de propósito Growroom420 e banco
+  `aculta_runtime`; Firefox ESR 153.4/geckodriver 0.37.1 visível em X11 `:0`.
+- `tests/browser/aculta-forum/forum-index-visual.mjs` fez somente GET em `/` e
+  `/categorias`: 13/13 PASS por tela em 390/768/1024 CSS px e claro/escuro.
+  A home apresentou quatro categorias raiz; `/categorias`, 12. Ambas sem cards
+  de tópicos ou bundle `forum` contrib, sem overflow horizontal.
+- EntityQuery confirmou 0 tópicos públicos, 0 comentários hospedados por esses
+  tópicos e 0 Nodes antigos `forum`; nada foi criado ou removido. Capturas
+  privadas 0600 em
+  `/home/aculta-system-data/private/aculta-forum-index-dev102/visual/captures/`.
+- Comparação com `https://discourse.ubuntu.com/` observou organização por
+  categoria com descrições, volume semanal e tópico/atividade recente. A sessão
+  não aceitou o modal de cookies. A referência visual completa de lista/tópico
+  permanece pendente porque o Growroom de teste precisa ficar sem conteúdo.
+  RUNTIME STATUS: PASS para as páginas vazias; fórum completo PARTIAL.
+
+### Busca pública — 2026-10-20
+
+- Runtime de teste `toca`, sessão Firefox ESR visível no X11 `:0`, anônima e
+  isolada. Drush confirmou Drupal 11.4.10, URI `growroom420`, banco
+  `aculta_runtime` e 0 tópicos/0 comentários antes e depois.
+- `tests/browser/aculta-forum/search-visual.mjs` abriu a busca GET sem gravar
+  conteúdo: 20/20 verificações PASS em viewports CSS exatos de 390, 768 e 1024
+  px, nos modos claro e escuro. Formulário, categoria, estado vazio, CAPTCHA
+  ausente e limites laterais foram verificados. Contraste do botão: 12,40:1 no
+  claro e 12,23:1 no escuro.
+- O offcanvas fechado do carrinho foi encontrado fora do viewport, sem alterar
+  `scrollWidth`; não foi tratado como overflow da busca. Capturas privadas
+  `0600` em `/home/aculta-system-data/private/aculta-forum-search-dev91/visual/captures/`.
+- Esta rodada cobre apenas o estado de busca vazia. Inspeção comparativa das
+  categorias, listas com conteúdo e tópico contra Ubuntu Discourse permanece
+  planejada, pois o Runtime do Fórum está intencionalmente sem conteúdo.
+
+### Painel administrativo central — 2026-10-20
+
+- Runtime `toca`, URI `https://aculta.toca.net.br`, Drupal 11.4.10 / banco
+  `aculta_runtime`; Firefox ESR 153.4/geckodriver 0.37.1 em X11 `:0`, UID 1.
+- `tests/browser/aculta-forum/admin-content-structure.mjs` executou 23/23
+  verificações GET-only: página central HTTP 200, indicadores de categorias e
+  tópicos, separação dos quatro contextos, links no host Growroom e ausência de
+  ferramentas agregadas. Os 12 caminhos estáticos de conteúdo, comentários,
+  filas, configurações e denúncias terminaram em `/painel-administrativo/forum`.
+- Viewports CSS 390, 768 e 1024 px renderizaram sem overflow. Capturas 0600 em
+  `/home/aculta/private/aculta/visual-tests/forum-admin-central-dev120-20261020/`.
+- Nenhum formulário, configuração ou conteúdo foi gravado. As rotas de mover
+  Node/Comment exigem entidades reais; não foram chamadas por HTTP e nenhuma
+  fixture foi criada. A inspeção comparativa completa do Growroom com Ubuntu
+  Discourse continua pendente e separada deste smoke administrativo.
+
+### Abas administrativas do Growroom420 — 2026-10-20
+
+- Runtime de teste `toca`, Drush URI `https://aculta.toca.net.br`, banco
+  `aculta_runtime`, Firefox ESR/geckodriver em X11 `:0`, UID 1.
+- `tests/browser/aculta-forum/admin-content-structure.mjs`: 25/25 verificações
+  GET-only. `/painel-administrativo/forum` apresenta o título Painel
+  Growroom420 e aba Início; não repete atalhos de ferramentas nem conteúdo de
+  arquitetura destinado aos documentos. Abas de primeiro nível, filhos do menu
+  lateral e subabas de estado de Comentários foram verificadas; caminhos
+  canônicos responderam 200 e caminhos antigos redirecionaram ao painel.
+- Viewports CSS 390, 768 e 1024 px sem overflow. Capturas privadas `0600` em
+  `/home/aculta/private/aculta-forum-admin-final-20261020/`. Smoke não enviou
+  formulários nem criou conteúdo. RUNTIME STATUS: PASS para esta navegação.
+
+Aplicar na revisão visual da dev.11 e repetir na homologação rc.1, usando
+Firefox visível na sessão X11 do servidor de teste ou workstation autorizada.
+Confirmar `DISPLAY`, URI de teste e viewport efetivo do navegador; registrar
+resolução CSS aferida, tema claro/escuro, conta/perfil de acesso e data da
+consulta de referência. Não salvar screenshots com dados pessoais ou privados
+no repositório; mantê-las em evidência privada e registrar os caminhos sem
+copiar conteúdo para documentos versionados.
+
+### Roteiro de comparação
+
+1. Abrir `https://discourse.ubuntu.com/` e observar a organização atual da home,
+   categorias, lista e uma discussão. Anotar a data porque o conteúdo e a
+   configuração da referência mudam.
+2. Abrir o Growroom420 de teste nas larguras CSS 1366, 768 e 390 px. Comparar
+   entrada, categorias, subcategorias, lista, tópico, resposta e composição.
+3. Avaliar hierarquia, densidade/ritmo, largura de leitura, alinhamento de
+   atividade/contadores, estados de tópico, navegação e persistência visual do
+   contexto durante leitura. Confirmar autoria `author_forum`/`author_comment`
+   e que nenhum contexto LMS/Wiki ou campo privado aparece publicamente.
+4. Repetir em claro e escuro. Testar tabulação, foco visível, abrir/fechar
+   controles, voltar para a primeira resposta não lida e enviar/validar os
+   formulários com conteúdo efêmero aprovado. Não mover conteúdo real durante a
+   comparação.
+5. Registrar divergências por tela, viewport, severidade e correção. Revisar
+   overflow, contraste, alvos de toque, headings, estados vazios/erro e
+   comportamento sem JavaScript.
+
+O objetivo é aproximar a experiência e composição do fórum de referência com a
+identidade visual ACULTA420; marcas, logos, ilustrações e folhas de estilo do
+Ubuntu/Discourse não são copiadas. Resultado permanece **planejado** até rodar
+esse roteiro com o Firefox X11 e evidência real.
+
+
+## R. Rodada no X11 local (2026-10-21): foto, associado, atividade e login
+
+Ambiente: Chromium com janela visível no display X11 local (`DISPLAY=:0`), controlado pelo protocolo DevTools; conta de
+teste `teste.comum` (uid 5); administração pelo navegador com link único gerado no servidor de testes. Capturas no
+diretório de trabalho do agente (não versionadas). Esta rodada substitui os passos de envio do roteiro N, que ainda citava
+"Salvar" depois do recorte e o limite de 2 MB (o limite atual é o da `UploadPolicy`, 10 MB).
+
+| Passo | Esperado | Resultado |
+| --- | --- | --- |
+| R1 painel e popup no avatar do sistema (P1) | sem "Remover foto"; "Sortear novo avatar" na mesma linha de "Salvar"; campo de envio; sem "Recortar foto"; popup centralizado | OK |
+| R2 sortear só na prévia (P7) | prévia muda; avatar do painel não muda; fechar sem salvar não recarrega e mantém a foto; reabrir mostra a foto atual | OK |
+| R3 envio com recorte automático (N3) | modal "Recortar foto" abre sozinho; sem abas nem "Crop image"; caixa de recorte; altura limitada e rolagem | OK |
+| R4 aplicar recorte (N4/P2) | uma única requisição de recorte; volta ao painel sem reabrir o popup; foto do painel trocada pelo envio | OK |
+| R5 foto personalizada (P3/P5) | "Remover foto" presente; sem "Sortear novo avatar"; sem "Recortar foto" | OK |
+| R6 remover (P4) | volta a avatar do sistema sorteado; popup mostra "Sortear novo avatar" e sem "Remover foto" | OK |
+| R7 associado: pedido (clique real) | "pedido de adesão está em análise" na tela da pessoa | OK |
+| R8 associado: administrador convida | relatório mostra o pedido; convite enviado | OK |
+| R9 associado: pessoa aceita | "Aceitar convite" e "Recusar convite" visíveis; aceite mostra "Você é associado desde" | OK |
+| R10 atividade: abas (Q1/Q2) | cinco abas; Fórum com URL `/atividade/forum` e marcada como atual | OK |
+| R11 conquistas: tooltip (aculta_game) | missão concluída com `title` "Obtida em 16/10/2026" | OK |
+| R12 login com senha errada e certa (O) | senha errada mostra "não reconhecidos" e fica em /entrar; senha certa chega ao painel | OK |
+| R13 erros de JavaScript | nenhum erro de script do site | OK após a correção do CSP (abaixo). Antes dela, o console registrava avisos de `webrtc` (erro de configuração, não de script). Um 403 pontual ao carregar o link de login único não reproduziu em repetições (HTTP 302) |
+
+Correção de configuração de segurança (explicada conforme a regra do projeto): o módulo `csp` tinha a diretiva `webrtc: block`
+nos modos somente relatório e de aplicação (`config/sync/csp.settings.yml` e Runtime). `webrtc` não é diretiva de CSP
+padronizada: os navegadores não a reconhecem e a ignoram, então a linha não protegia nada e gerava aviso de console.
+Foi removida dos dois modos. O cabeçalho deixou de conter `webrtc` (conferido por HTTP), e o console ficou sem erros.
+
+Não executado nesta rodada: inspeção visual humana (aparência final, alinhamento e contraste em tela pequena e grande)
+e recorte com a área de seleção movida pelo usuário (o fluxo verificado aplica o recorte padrão).

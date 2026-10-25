@@ -1,7 +1,8 @@
 <?php
 
 /** Read-only local checks for account ownership, permissions, and migration. */
-if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1', 'default'], TRUE)) {
+$host = \Drupal::request()->getHost();
+if (!in_array($host, ['localhost', '127.0.0.1', 'default'], TRUE) && !str_ends_with($host, 'aculta.toca.net.br')) {
   throw new RuntimeException('This audit is local-only.');
 }
 
@@ -27,36 +28,33 @@ $assert($modules->moduleExists('profile') && $modules->moduleExists('address'), 
 $assert($modules->moduleExists('crop') && $modules->moduleExists('image_widget_crop'), 'Core image crop integration is enabled.');
 $assert($modules->moduleExists('social_auth') && $modules->moduleExists('social_auth_google'), 'Social Auth providers are available.');
 $assert($modules->moduleExists('captcha') && $modules->moduleExists('turnstile'), 'CAPTCHA and Turnstile integration are enabled.');
-$assert($modules->moduleExists('agreement') && $modules->moduleExists('key'), 'Agreement and Key infrastructure are enabled.');
+$assert(!$modules->moduleExists('agreement') && $modules->moduleExists('key'), 'ACULTA User replaces Agreement; Key infrastructure remains enabled.');
 $assert(!$modules->moduleExists('user_registrationpassword'), 'Incompatible user_registrationpassword remains removed.');
 $assert($modules->moduleExists('username_enumeration_prevention'), 'Username Enumeration Prevention remains enabled.');
 $assert(!$modules->moduleExists('honeypot'), 'Honeypot is not enabled.');
 $assert($modules->moduleExists('login_emailusername'), 'The existing Login Email or Username module is enabled.');
-$assert($modules->moduleExists('email_confirmer') && $modules->moduleExists('email_confirmer_user'), 'Email Confirmer and its user integration are enabled.');
-$assert($modules->moduleExists('change_mail_page'), 'Change Mail Page supplies the canonical new-address form.');
-$assert(\Drupal::config('email_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'Email Confirmer intercepts user email changes.');
-// E-mail segue o ambiente: o transporte SMTP2GO do Mailer Plus fica ativo somente quando as credenciais SMTP2GO existem como Key/env deste ambiente.
-$smtp_secrets = \Drupal::service('aculta_portal.secrets_manager');
-$smtp_credentials_present = $smtp_secrets->value('SMTP2GO_USERNAME') !== NULL && $smtp_secrets->value('SMTP2GO_PASSWORD') !== NULL;
-$mail_on = \Drupal::config('mailer_transport.settings')->get('default_transport') === 'smtp2go';
-$assert($mail_on === $smtp_credentials_present, 'SMTP2GO transport is the default exactly when its SMTP2GO credentials exist in this environment.');
-// getRawData(): a configuração ativa, sem os overrides de Key (que trazem o valor do ambiente em runtime).
-$smtp_raw = \Drupal::config('mailer_transport.mailer_transport.smtp2go')->getRawData()['configuration'] ?? [];
-$assert(empty($smtp_raw['user']) && empty($smtp_raw['pass']), 'SMTP2GO credentials are absent from active configuration.');
+$assert($modules->moduleExists('aculta_mail_confirmer') && $modules->moduleExists('aculta_mail_confirmer_user'), 'ACULTA Mail Confirmer and its user integration are enabled.');
+$assert($modules->moduleExists('aculta_user') && !$modules->moduleExists('change_mail_page'), 'ACULTA User supplies the canonical new-address form; the contrib Change Mail Page is retired.');
+$assert(\Drupal::config('aculta_mail_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'ACULTA Mail Confirmer intercepts user email changes.');
+// A camada de envio E-Mails ACULTA controla o envio: o transporte padrão (smtp_hostinger) precisa de usuário e de
+// senha, e a senha tem de estar no arquivo de segredos (nenhuma Key, nenhuma senha no banco de configuração).
+$default_transport = \Drupal::entityTypeManager()->getStorage('aculta_mailer_transport')->load('smtp_hostinger');
+$assert($default_transport !== NULL && $default_transport->get('user') !== '' && $default_transport->get('password_secret') !== '', 'O transporte padrão da camada de envio E-Mails ACULTA tem usuário e nome de senha configurados.');
+$assert($default_transport !== NULL && \Drupal::service('aculta_portal.secrets_manager')->value((string) $default_transport->get('password_secret')) !== NULL, 'A senha do transporte padrão está no arquivo de segredos.');
+// A configuração versionada não guarda senha.
+$smtp_versioned = \Symfony\Component\Yaml\Yaml::parseFile(DRUPAL_ROOT . '/../config/sync/aculta_mailer.transport.smtp_hostinger.yml') ?: [];
+$assert(!array_key_exists('pass', $smtp_versioned) && !array_key_exists('password', $smtp_versioned), 'Mail transport credentials are absent from the versioned configuration.');
 $login_composer = json_decode(file_get_contents(DRUPAL_ROOT . '/../composer.lock'), TRUE, 512, JSON_THROW_ON_ERROR);
 $login_package = array_values(array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/login_emailusername'))[0] ?? NULL;
 $assert(($login_package['version'] ?? NULL) === '3.0.1', 'Login Email or Username remains at the audited 3.0.1 release.');
-$confirmer_package = array_values(array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/email_confirmer'))[0] ?? NULL;
-$change_mail_package = array_values(array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/change_mail_page'))[0] ?? NULL;
-$assert(($confirmer_package['version'] ?? NULL) === '1.0.0', 'Email Confirmer remains on its stable 1.0.0 release.');
-$assert(($change_mail_package['version'] ?? NULL) === '1.0.2', 'Change Mail Page remains on its stable 1.0.2 release.');
+$assert(!array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/email_confirmer'), 'Email Confirmer is incorporated: the contrib package drupal/email_confirmer is no longer in composer.lock.');
+$assert(!array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/change_mail_page'), 'Change Mail Page is incorporated: the contrib package drupal/change_mail_page is no longer in composer.lock.');
 $mail_backend = \Drupal::config('system.mail')->get('interface.default');
-$mail_transport = \Drupal::config('mailer_transport.settings')->get('default_transport');
-$assert($mail_backend === 'symfony_mailer', 'The default mail backend is Mailer Plus (symfony_mailer).');
-$assert($mail_transport === 'smtp2go' && \Drupal::moduleHandler()->moduleExists('mailer_override'), 'Mailer Plus delivers through the SMTP2GO transport with mailer_override enabled.');
+$assert($mail_backend === 'aculta_mailer', 'The default mail backend is camada de envio E-Mails ACULTA (aculta_mailer).');
+$assert(\Drupal::moduleHandler()->moduleExists('aculta_mailer') && !\Drupal::moduleHandler()->moduleExists('mailer_override'), 'camada de envio E-Mails ACULTA is enabled and the contrib mailer_override is removed.');
 $assert(!\Drupal::moduleHandler()->moduleExists('smtp'), 'The legacy smtp module is not enabled (removed in M2).');
 $portal_controller_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Controller/PortalController.php');
-$assert(str_contains($portal_controller_source, "moduleExists('mailer_override')") && str_contains($portal_controller_source, "MAIL_TRANSPORT") && str_contains($portal_controller_source, 'keyHasValue'), 'Security only enables email change when Mailer Plus, the SMTP2GO transport and its Keys are ready.');
+$assert(str_contains($portal_controller_source, "moduleExists('aculta_mailer')") && str_contains($portal_controller_source, "aculta_mailer_transport") && !str_contains($portal_controller_source, 'keyHasValue'), 'Security only enables email change when camada de envio E-Mails ACULTA, the SMTP2GO transport and its Keys are ready.');
 $assert(str_contains($portal_controller_source, "getForm(\$account, 'default')") && !str_contains($portal_controller_source, "getForm(\$account, 'edit')"), 'Portal account forms use the Drupal User entity type supported default form operation.');
 $assert(str_contains($portal_controller_source, "\$parameters->set('user', \$account)") && str_contains($portal_controller_source, "unset(\$form['social_auth'])") && str_contains($portal_controller_source, "\$parameters->remove('user')"), 'The Portal supplies Social Auth’s expected route parameter only while building Core User forms and removes its duplicate account section.');
 $assert(\Drupal::config('system.logging')->get('error_level') === 'hide' && str_contains(file_get_contents(DRUPAL_ROOT . '/../config/sync/system.logging.yml'), 'error_level: hide'), 'Detailed errors are hidden on screen in active and synchronized configuration (hardening: nao exibir erros detalhados).');
@@ -73,12 +71,12 @@ $authenticated_role = \Drupal\user\Entity\Role::load('authenticated');
 foreach ([
   'access administration pages', 'access toolbar', 'administer users',
   'administer account settings', 'administer permissions', 'administer roles',
-  'administer key', 'administer smtp', 'administer social auth',
+  'administer key', 'administer social auth',
   'administer commerce', 'administer payment',
 ] as $forbidden_permission) {
   $assert(!$authenticated_role->hasPermission($forbidden_permission), 'Authenticated role has no administrative permission: ' . $forbidden_permission);
 }
-$assert($authenticated_role->hasPermission('access email confirmation'), 'Authenticated users can open their own private email confirmation links.');
+$assert($authenticated_role->hasPermission('access aculta mail confirmer'), 'Authenticated users can open their own private email confirmation links.');
 
 $account_route_subscriber = \Drupal::service('aculta_portal.account_route_subscriber');
 $account_switcher = \Drupal::service('account_switcher');
@@ -186,7 +184,9 @@ $retired_portal_route_present = FALSE;
 $retired_finance_route_present = FALSE;
 foreach ($all_routes as $route_name => $route_definition) {
   $retired_portal_route_present = $retired_portal_route_present || $route_definition->getPath() === '/minha-conta/perfil';
-  $retired_finance_route_present = $retired_finance_route_present || str_contains((string) $route_name, 'contribution') || str_contains((string) $route_name, 'webhook');
+  // Rotas do módulo de envio (aculta_mailer, F10) são o endpoint de eventos de entrega, não o legado de contribuições.
+  $owned_by_mailer = str_starts_with((string) $route_name, 'aculta_mailer.');
+  $retired_finance_route_present = $retired_finance_route_present || (!$owned_by_mailer && (str_contains((string) $route_name, 'contribution') || str_contains((string) $route_name, 'webhook')));
 }
 $assert(!$retired_portal_route_present, 'The legacy /minha-conta/perfil route is absent rather than redirected.');
 $assert(!$retired_finance_route_present, 'No custom contribution or webhook route remains.');
@@ -207,22 +207,24 @@ $assert(\Drupal::config('core.extension')->get('module.aculta_editorial') === NU
 $assert(\Drupal::config('core.extension')->get('module.aculta_apoio') === NULL, 'Active extension config has no aculta_apoio entry.');
 $assert(!\Drupal::database()->schema()->tableExists('aculta_apoio_webhook'), 'No legacy webhook receipt storage table remains.');
 $assert(!\Drupal::database()->schema()->tableExists('aculta_contribution'), 'No legacy contribution storage table remains.');
-$support_classes = glob(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Support/*/*.php') ?: [];
-$assert(count($support_classes) === 3, 'Support contains only the public/settings forms and current account presenter.');
-$support_config_keys = array_diff(array_keys(\Drupal::config('aculta_portal.support')->getRawData()), ['_core', 'intro']);
-$assert($support_config_keys === [], 'Support settings contain only current editorial text.');
+$support_classes = array_map(static fn(string $file): string => substr($file, strlen(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Support/')), glob(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Support/*/*.php') ?: []);
+sort($support_classes);
+$expected_support_classes = ['Controller/SupportController.php', 'Form/SettingsForm.php', 'Form/SubscriptionActionForm.php', 'Form/SupportForm.php'];
+$assert($support_classes === $expected_support_classes, 'Support contains exactly the approved public, settings and subscription-action forms and the account controller: ' . implode(', ', $support_classes));
+$support_config_keys = array_diff(array_keys(\Drupal::config('aculta_portal.support')->getRawData()), ['_core', 'langcode']);
+sort($support_config_keys);
+$assert($support_config_keys === ['amounts', 'custom_amount', 'intro'], 'Support settings contain exactly the approved keys: editorial intro and the editable donation amounts.');
 
 // These pages configure credentials, anti-bot behavior, OAuth, mail, and legal
 // acceptance. All are administrative routes, never generic access-content.
 foreach ([
   'entity.key.collection',
   'entity.key_config_override.collection',
-  'entity.mailer_transport.collection',
+  'aculta_mailer.settings',
   'social_auth.integrations',
   'social_auth_google.settings_form',
   'captcha_settings',
   'turnstile.admin_settings_form',
-  'entity.agreement.collection',
   'entity.commerce_payment_gateway.collection',
 ] as $sensitive_admin_route) {
   $admin_route = \Drupal::service('router.route_provider')->getRouteByName($sensitive_admin_route);
@@ -251,27 +253,33 @@ $restricted_permissions = [
   'administer CAPTCHA settings',
   'administer social auth',
   'administer social api authentication',
-  'administer smtp module',
   'administer turnstile',
-  'administer agreements',
-  'administer agreement types',
   'administer profile types',
 ];
 $assert((bool) $authenticated_role, 'Authenticated role exists.');
 $assert((bool) $administrator_role, 'Administrator role exists.');
 $assert(array_intersect($restricted_permissions, $authenticated_role->getPermissions()) === [], 'Authenticated role has no restricted platform administration permissions.');
 $assert($administrator_role->isAdmin(), 'Administrator role retains administrative status.');
+// Exceções aprovadas (CHANGELOG 0.4.0-dev.82): o gerente da loja acessa Formas de apoio, e só isso.
+$approved_role_exceptions = ['gerente_loja' => ['administer aculta support settings']];
 foreach (\Drupal\user\Entity\Role::loadMultiple() as $role) {
   if (!$role->isAdmin()) {
-    $assert(array_intersect($restricted_permissions, $role->getPermissions()) === [], 'Non-administrator role has no listed sensitive platform permissions: ' . $role->id());
+    $forbidden = array_diff(array_intersect($restricted_permissions, $role->getPermissions()), $approved_role_exceptions[$role->id()] ?? []);
+    $assert($forbidden === [], 'Non-administrator role has no listed sensitive platform permissions beyond approved exceptions: ' . $role->id());
   }
 }
 
 $profile = \Drupal::entityTypeManager()->getStorage('profile_type')->load('participante');
-$assert((bool) $profile, 'Participant profile type exists.');
-foreach (['field_nickname', 'field_first_name', 'field_last_name', 'field_whatsapp', 'field_city', 'field_state', 'field_address'] as $field_name) {
-  $field = \Drupal\field\Entity\FieldConfig::loadByName('profile', 'participante', $field_name);
-  $assert($field && $field->getThirdPartySetting('profile', 'profile_private') === TRUE, 'Personal data field is private: ' . $field_name);
+// Removido de propósito (commit d29e34bf): a hierarquia de papéis substitui o tipo de perfil participante.
+$assert(!$profile, 'Participant profile type stays removed (commit d29e34bf).');
+// Todo campo de dados pessoais que existir em qualquer tipo de perfil precisa ser privado.
+foreach (array_keys(\Drupal::entityTypeManager()->getStorage('profile_type')->loadMultiple()) as $profile_type) {
+  foreach (['field_nickname', 'field_first_name', 'field_last_name', 'field_whatsapp', 'field_city', 'field_state', 'field_address'] as $field_name) {
+    $field = \Drupal\field\Entity\FieldConfig::loadByName('profile', $profile_type, $field_name);
+    if ($field) {
+      $assert($field->getThirdPartySetting('profile', 'profile_private') === TRUE, "Personal data field is private: $profile_type.$field_name");
+    }
+  }
 }
 $assert(!\Drupal\field\Entity\FieldConfig::loadByName('profile', 'participante', 'field_phone'), 'Legacy participant phone field instance is absent.');
 $assert(!\Drupal\field\Entity\FieldStorageConfig::loadByName('profile', 'field_phone'), 'Legacy participant phone field storage is absent.');
@@ -300,13 +308,12 @@ $expected_forms = [
   'user_register_form',
   'user_pass',
   'webform_submission_aculta_contact_add_form',
-  'webform_submission_aculta_participation_add_form',
 ];
 foreach ($expected_forms as $form_id) {
   $point = \Drupal::entityTypeManager()->getStorage('captcha_point')->load($form_id);
   $assert($point && $point->status() && $point->getCaptchaType() === 'turnstile/Turnstile', 'Turnstile is explicitly enabled on approved public form: ' . $form_id);
 }
-foreach (['node_activity_form', 'node_article_form', 'node_project_form', 'contact_message_personal_form'] as $excluded_form) {
+foreach (['node_activity_form', 'node_revista_form', 'node_project_form', 'contact_message_personal_form'] as $excluded_form) {
   $point = \Drupal::entityTypeManager()->getStorage('captcha_point')->load($excluded_form);
   $assert(!$point || !$point->status(), 'Turnstile is not attached to excluded/internal form: ' . $excluded_form);
 }
@@ -317,7 +324,7 @@ $assert(\Drupal::config('turnstile.settings')->get('keys') === ($turnstile_env =
 $assert(\Drupal::config('turnstile.settings')->get('testing_secret_key') === '', 'No Turnstile test secret is saved in configuration.');
 
 $key_storage = \Drupal::entityTypeManager()->getStorage('key');
-foreach (['turnstile', 'google_oauth_client_id', 'google_oauth_client_secret', 'smtp2go_username', 'smtp2go_password'] as $key_id) {
+foreach (['turnstile', 'google_oauth_client_id', 'google_oauth_client_secret'] as $key_id) {
   $key = $key_storage->load($key_id);
   $assert($key && $key->getKeyProvider()->getPluginId() === 'env', 'Secret/public integration reference is environment-backed: ' . $key_id);
 }
@@ -518,9 +525,9 @@ $canonical_sync_path = realpath(dirname(DRUPAL_ROOT) . DIRECTORY_SEPARATOR . 'co
 $effective_sync_path = realpath(\Drupal\Core\Site\Settings::get('config_sync_directory'));
 $assert($canonical_sync_path !== FALSE && $effective_sync_path === $canonical_sync_path, 'Drupal Configuration Sync points at the repository canonical config/sync directory.');
 $sync_storage = \Drupal::service('config.storage.sync');
-// user_registrationpassword was removed (commit b4b4389); its three objects are no longer in the manifest.
-// M2 do e-mail: smtp.settings saiu; entraram mailer_transport.mailer_transport.smtp2go e mailer_transport.settings (+1 líquido).
-$assert(count($manifest['configs']) === 57, 'The reviewed account manifest contains 57 intentionally selected config objects.');
+// user_registrationpassword and Agreement were removed; their configuration is no longer in the manifest.
+// F15: o contrib de envio (mailer_transport) saiu; as configurações de envio são de aculta_mailer e não entram no manifesto de conta.
+$assert(count($manifest['configs']) === 38, 'The reviewed account manifest contains 38 intentionally selected config objects.');
 $assert(in_array('field.storage.user.user_picture', $manifest['configs'], TRUE), 'Private User picture storage is included in the reviewed manifest.');
 $sort_recursive = static function (array &$data) use (&$sort_recursive): void {
   ksort($data);
@@ -606,8 +613,10 @@ foreach ($manifest['configs'] as $name) {
 }
 $assert(!\Drupal::keyValue('system.schema')->get('aculta_apoio'), 'No stale schema version remains for standalone aculta_apoio.');
 $assert(!\Drupal::keyValue('system.schema')->get('aculta_editorial'), 'No stale schema version remains for consolidated aculta_editorial.');
-$commerce_address = \Drupal\field\Entity\FieldConfig::loadByName('profile', 'customer', 'address');
-$assert((bool) $commerce_address && $commerce_address->getFieldStorageDefinition()->id() === 'profile.address', 'Address storage profile.address remains attached to the Commerce customer profile.');
+// Endereço único (docs/portal/CHECKOUT-BILLING.md): o endereço de cobrança e envio é o field_address do perfil de pessoa.
+// O tipo de perfil customer do Commerce não existe no site; a checagem antiga foi aposentada em 2026-10-20.
+$unified_address = \Drupal\field\Entity\FieldConfig::loadByName('profile', 'associado', 'field_address');
+$assert((bool) $unified_address && $unified_address->getFieldStorageDefinition()->id() === 'profile.field_address', 'Unified address field_address is attached to the person profile (associado).');
 $assert((bool) \Drupal::entityTypeManager()->getStorage('field_storage_config')->load('profile.field_address'), 'Participant portal address uses its separate field_address storage.');
 
 $support_code = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Support', FilesystemIterator::SKIP_DOTS));

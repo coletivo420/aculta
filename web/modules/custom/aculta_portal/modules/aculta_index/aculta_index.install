@@ -1,0 +1,507 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Install and update hooks for ACULTA Content Index.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function aculta_index_schema(): array {
+  return [
+    'aculta_index_generation' => [
+      'description' => 'Rebuild generations and resumable keyset checkpoints.',
+      'fields' => [
+        'generation_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'status' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE, 'default' => 'building'],
+        'cursor_provider' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'cursor_entity_type' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''],
+        'cursor_entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+        'cursor_langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE, 'default' => ''],
+        'cursor_revision' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'provider_fingerprint' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'last_error_code' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'validated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'backfill_completed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'candidate_revision' => ['type' => 'int', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'activated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['generation_id'],
+      'indexes' => [
+        'status_created' => ['status', 'created'],
+      ],
+    ],
+    'aculta_index_state' => [
+      'description' => 'Singleton pointer to the active generation.',
+      'fields' => [
+        'state_id' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 1],
+        'active_generation' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'revision' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['state_id'],
+    ],
+    'aculta_index_entry' => [
+      'description' => 'Minimal, rebuildable projection of selected source entities.',
+      'fields' => [
+        'entry_id' => ['type' => 'serial', 'not null' => TRUE],
+        'generation_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'provider_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'provider_version' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 1],
+        'entity_type' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
+        'entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE],
+        'langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE],
+        'bundle' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'uuid' => ['type' => 'varchar', 'length' => 128, 'not null' => TRUE, 'default' => ''],
+        'label' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+        'domain_id' => ['type' => 'varchar', 'length' => 128, 'not null' => TRUE, 'default' => ''],
+        'owner_uid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE],
+        'published' => ['type' => 'int', 'size' => 'tiny', 'not null' => FALSE],
+        'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'changed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'published_at' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'projection_hash' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'source_sequence' => ['type' => 'int', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['entry_id'],
+      'unique keys' => [
+        'gen_identity' => ['generation_id', 'entity_type', 'entity_id', 'langcode'],
+      ],
+      'indexes' => [
+        'gen_bundle' => ['generation_id', 'entity_type', 'bundle', 'langcode'],
+        'gen_domain_pub' => ['generation_id', 'domain_id', 'published', 'changed'],
+        'gen_entry_id' => ['generation_id', 'entry_id'],
+        'gen_provider' => ['generation_id', 'provider_id'],
+      ],
+    ],
+    'aculta_index_relation' => [
+      'description' => 'Directed, provider-owned relations between source entity identities.',
+      'fields' => [
+        'relation_id' => ['type' => 'serial', 'not null' => TRUE],
+        'generation_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'provider_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'source_entity_type' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
+        'source_entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE],
+        'source_langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE],
+        'relation_type' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'target_entity_type' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
+        'target_entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE],
+        'target_langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE],
+        'relation_hash' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['relation_id'],
+      'unique keys' => [
+        'gen_relation_hash' => ['generation_id', 'relation_hash'],
+      ],
+      'indexes' => [
+        'gen_source' => ['generation_id', 'source_entity_type', 'source_entity_id', 'source_langcode', 'relation_type'],
+        'gen_target' => ['generation_id', 'target_entity_type', 'target_entity_id', 'target_langcode'],
+        'gen_type' => ['generation_id', 'relation_type'],
+      ],
+    ],
+    'aculta_index_work' => [
+      'description' => 'Deduplicated pending work and retry state for source identities.',
+      'fields' => [
+        'work_id' => ['type' => 'serial', 'not null' => TRUE],
+        'provider_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'entity_type' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
+        'entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE],
+        'langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE],
+        'sequence' => ['type' => 'int', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'operation' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE, 'default' => 'project'],
+        'status' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE, 'default' => 'queued'],
+        'attempts' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'available_at' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'last_error_code' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['work_id'],
+      'unique keys' => [
+        'source_identity' => ['provider_id', 'entity_type', 'entity_id', 'langcode'],
+      ],
+      'indexes' => [
+        'status_available' => ['status', 'available_at'],
+        'status_updated' => ['status', 'updated'],
+      ],
+    ],
+    'aculta_index_cursor' => [
+      'description' => 'Opaque, account-bound keyset cursors for Content Index queries.',
+      'fields' => [
+        'token_hash' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'uid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'generation_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'query_hash' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'cursor_changed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'cursor_entry_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'cursor_revision' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'expires' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+        'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      ],
+      'primary key' => ['token_hash'],
+      'indexes' => [
+        'owner_expiry' => ['uid', 'expires'],
+        'expires' => ['expires'],
+      ],
+    ],
+    'aculta_index_audit' => [
+      'description' => 'Singleton checkpoint and aggregate findings for incremental catalog audits.',
+      'fields' => [
+        'audit_id' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 1],
+        'revision' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'status' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE, 'default' => 'idle'],
+        'phase' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE, 'default' => 'entries'],
+        'cursor_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'source_provider_cursor' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'source_entity_type_cursor' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''],
+        'source_entity_id_cursor' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+        'source_entity_max_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+        'entry_max_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'relation_max_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'orphan_entry_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'stale_projection_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'missing_source_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'unverified_source_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'missing_catalog_entry_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'orphan_relation_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'relation_source_missing_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'active_pointer_valid' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0],
+        'active_generation' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'completed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['audit_id'],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_install().
+ */
+function aculta_index_install(): void {
+  \Drupal::database()->insert('aculta_index_state')
+    ->fields([
+      'state_id' => 1,
+      'active_generation' => '',
+      'revision' => 0,
+      'updated' => \Drupal::time()->getRequestTime(),
+    ])
+    ->execute();
+  \Drupal::database()->insert('aculta_index_audit')
+    ->fields([
+      'audit_id' => 1,
+      'status' => 'idle',
+      'phase' => 'entries',
+      'created' => \Drupal::time()->getRequestTime(),
+      'updated' => \Drupal::time()->getRequestTime(),
+    ])
+    ->execute();
+}
+
+/**
+ * Adds a compare-and-swap revision to resumable rebuild checkpoints.
+ */
+function aculta_index_update_10001(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_generation')) {
+    return;
+  }
+  if (!$schema->fieldExists('aculta_index_generation', 'cursor_revision')) {
+    $schema->addField('aculta_index_generation', 'cursor_revision', [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ]);
+  }
+}
+
+/**
+ * Adds the source change sequence used to reject stale projection jobs.
+ */
+function aculta_index_update_10002(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_entry')) {
+    return;
+  }
+  if (!$schema->fieldExists('aculta_index_entry', 'source_sequence')) {
+    $schema->addField('aculta_index_entry', 'source_sequence', [
+      'type' => 'int',
+      'size' => 'big',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ]);
+  }
+}
+
+/**
+ * Adds durable incremental work and failure state.
+ */
+function aculta_index_update_10003(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_work')) {
+    $schema->createTable('aculta_index_work', aculta_index_schema()['aculta_index_work']);
+  }
+}
+
+/**
+ * Adds provider-inventory identity to resumable generations.
+ */
+function aculta_index_update_10004(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_generation')) {
+    return;
+  }
+  if (!$schema->fieldExists('aculta_index_generation', 'provider_fingerprint')) {
+    $schema->addField('aculta_index_generation', 'provider_fingerprint', [
+      'type' => 'varchar',
+      'length' => 64,
+      'not null' => TRUE,
+      'default' => '',
+    ]);
+  }
+}
+
+/**
+ * Adds opaque query cursor storage.
+ */
+function aculta_index_update_10005(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_cursor')) {
+    $schema->createTable('aculta_index_cursor', aculta_index_schema()['aculta_index_cursor']);
+  }
+}
+
+/**
+ * Adds compare-and-swap revision to persisted query cursors.
+ */
+function aculta_index_update_10006(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('aculta_index_cursor') && !$schema->fieldExists('aculta_index_cursor', 'cursor_revision')) {
+    $schema->addField('aculta_index_cursor', 'cursor_revision', [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ]);
+  }
+}
+
+/**
+ * Adds the keyset order index used by bounded query pages.
+ */
+function aculta_index_update_10007(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_entry')) {
+    return;
+  }
+  if (!$schema->indexExists('aculta_index_entry', 'gen_changed')) {
+    $schema->addIndex('aculta_index_entry', 'gen_changed', ['generation_id', 'changed', 'entry_id'], aculta_index_schema()['aculta_index_entry']);
+  }
+}
+
+/**
+ * Records completion of a generation's backfill before validation.
+ */
+function aculta_index_update_10008(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_generation')) {
+    return;
+  }
+  if (!$schema->fieldExists('aculta_index_generation', 'backfill_completed')) {
+    $schema->addField('aculta_index_generation', 'backfill_completed', [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ]);
+  }
+}
+
+/**
+ * Adds the checkpoint used by bounded incremental catalog audits.
+ */
+function aculta_index_update_10009(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_audit')) {
+    $schema->createTable('aculta_index_audit', aculta_index_schema()['aculta_index_audit']);
+  }
+  if (!\Drupal::database()->select('aculta_index_audit', 'audit')->condition('audit_id', 1)->countQuery()->execute()->fetchField()) {
+    \Drupal::database()->insert('aculta_index_audit')
+      ->fields([
+        'audit_id' => 1,
+        'status' => 'idle',
+        'phase' => 'entries',
+        'created' => \Drupal::time()->getRequestTime(),
+        'updated' => \Drupal::time()->getRequestTime(),
+      ])
+      ->execute();
+  }
+}
+
+/**
+ * Records the provider projection version on each catalog entry.
+ */
+function aculta_index_update_10010(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('aculta_index_entry') && !$schema->fieldExists('aculta_index_entry', 'provider_version')) {
+    $schema->addField('aculta_index_entry', 'provider_version', [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 1,
+    ]);
+  }
+}
+
+/**
+ * Replaces the mutable changed sort index with the immutable ID keyset index.
+ */
+function aculta_index_update_10011(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_entry')) {
+    return;
+  }
+  if ($schema->indexExists('aculta_index_entry', 'gen_changed')) {
+    $schema->dropIndex('aculta_index_entry', 'gen_changed');
+  }
+  if (!$schema->indexExists('aculta_index_entry', 'gen_entry_id')) {
+    $schema->addIndex('aculta_index_entry', 'gen_entry_id', ['generation_id', 'entry_id'], aculta_index_schema()['aculta_index_entry']);
+  }
+}
+
+/**
+ * Adds the relation type to the outgoing-source lookup index.
+ */
+function aculta_index_update_10012(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_relation')) {
+    return;
+  }
+  if ($schema->indexExists('aculta_index_relation', 'gen_source')) {
+    $schema->dropIndex('aculta_index_relation', 'gen_source');
+  }
+  $table = aculta_index_schema()['aculta_index_relation'];
+  $schema->addIndex('aculta_index_relation', 'gen_source', $table['indexes']['gen_source'], $table);
+}
+
+/**
+ * Adds the finding counter for stale active-generation provider projections.
+ */
+function aculta_index_update_10013(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('aculta_index_audit') && !$schema->fieldExists('aculta_index_audit', 'stale_projection_count')) {
+    $schema->addField('aculta_index_audit', 'stale_projection_count', [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ]);
+  }
+}
+
+/**
+ * Adds a monotonic revision for safe candidate cache invalidation.
+ */
+function aculta_index_update_10014(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('aculta_index_generation') && !$schema->fieldExists('aculta_index_generation', 'candidate_revision')) {
+    $schema->addField('aculta_index_generation', 'candidate_revision', [
+      'type' => 'int',
+      'size' => 'big',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ]);
+  }
+}
+
+/**
+ * Adds source reconciliation counters to the incremental audit checkpoint.
+ */
+function aculta_index_update_10015(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_audit')) {
+    return;
+  }
+  foreach (['missing_source_count', 'unverified_source_count'] as $field) {
+    if (!$schema->fieldExists('aculta_index_audit', $field)) {
+      $schema->addField('aculta_index_audit', $field, [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ]);
+    }
+  }
+}
+
+/**
+ * Adds keyset state for source-to-catalog reconciliation.
+ */
+function aculta_index_update_10016(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_audit')) {
+    return;
+  }
+  $fields = [
+    'source_provider_cursor' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+    'source_entity_type_cursor' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''],
+    'source_entity_id_cursor' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+    'missing_catalog_entry_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+  ];
+  foreach ($fields as $field => $specification) {
+    if (!$schema->fieldExists('aculta_index_audit', $field)) {
+      $schema->addField('aculta_index_audit', $field, $specification);
+    }
+  }
+}
+
+/**
+ * Adds the captured source ID ceiling for finite audit keyset windows.
+ */
+function aculta_index_update_10017(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_audit')) {
+    return;
+  }
+  if (!$schema->fieldExists('aculta_index_audit', 'source_entity_max_id')) {
+    $schema->addField('aculta_index_audit', 'source_entity_max_id', [
+      'type' => 'varchar',
+      'length' => 255,
+      'not null' => TRUE,
+      'default' => '',
+    ]);
+  }
+  // A running audit has no ceiling for its current source/type cursor. Restart
+  // that derived scan on the next cron/manual batch rather than treating the
+  // empty migration default as an already captured empty window.
+  \Drupal::database()->update('aculta_index_audit')
+    ->fields(['status' => 'idle'])
+    ->condition('status', 'running')
+    ->execute();
+}
+
+/**
+ * Adds optional internal source-owner filtering metadata.
+ */
+function aculta_index_update_10018(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('aculta_index_entry') && !$schema->fieldExists('aculta_index_entry', 'owner_uid')) {
+    $schema->addField('aculta_index_entry', 'owner_uid', [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE,
+    ]);
+  }
+}

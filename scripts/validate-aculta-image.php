@@ -19,7 +19,8 @@
  * - R9: estilos configurados em Views e modos de exibição, validados contra o catálogo.
  * - R10: cópia direta de imagens em mirroring de assets fora do aculta_image.
  *
- * Exceção aprovada (EXCECOES): conquista do aculta_game mantém 2 MB e 4096 px, somente no formulário da conquista.
+ * Exceções de R2: conquista do aculta_game (política contextual aprovada) e validadores Core de documentos no
+ * UserUploadPolicy (PDF/Office, sem imagem). O formulário de documentos continua sob a política central do Portal.
  */
 
 declare(strict_types=1);
@@ -28,13 +29,17 @@ $root = dirname(__DIR__);
 $image = 'web/modules/custom/aculta_portal/modules/aculta_image/';
 $catalogFile = $root . '/' . $image . 'src/ImageCatalog.php';
 
-/** Exceções aprovadas: arquivo => [padrão => motivo]. Só o formulário da conquista. */
+/** Exceções revisadas: arquivo => [padrão => motivo]. */
 $EXCECOES = [
   'web/modules/custom/aculta_portal/modules/aculta_game/src/Form/AchievementDefinitionForm.php' => [
     'FileSizeLimit' => 'Exceção aprovada pelo responsável: a conquista mantém 2 MB próprios.',
     'FileImageDimensions' => 'Exceção aprovada pelo responsável: a conquista mantém 4096 px próprios.',
     'FileExtension' => 'Exceção aprovada pelo responsável: a conquista usa png/jpg/jpeg/webp.',
     'public://conquistas' => 'Exceção aprovada: pasta própria das conquistas.',
+  ],
+  'web/modules/custom/aculta_portal/src/Upload/UserUploadPolicy.php' => [
+    'FileExtension' => 'Validação Core de extensões não-imagem (PDF/Office); uploads de imagem usam aculta_image.UploadPolicy.',
+    'FileSizeLimit' => 'Validação Core de tamanho para documentos; limite global/por consumidor vem da configuração central.',
   ],
 ];
 

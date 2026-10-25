@@ -1,0 +1,20 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - media_gallery
+id: media_gallery.field_gallery_purpose
+field_name: field_gallery_purpose
+entity_type: media_gallery
+type: string
+settings:
+  max_length: 32
+  is_ascii: false
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

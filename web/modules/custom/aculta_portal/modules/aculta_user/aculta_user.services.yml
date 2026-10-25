@@ -1,4 +1,14 @@
 services:
+  Drupal\aculta_user\Hook\ParticipationEditWindowHooks:
+    class: Drupal\aculta_user\Hook\ParticipationEditWindowHooks
+    arguments: ['@aculta_user.participation_edit_window']
+
+  aculta_user.aculta_user_agreement_hooks:
+    class: Drupal\aculta_user\Hook\AcultaUserAgreementHooks
+    arguments: ['@database']
+  aculta_user.aculta_user_agreement_ledger:
+    class: Drupal\aculta_user\Consent\AcultaUserAgreementLedger
+    arguments: ['@database', '@request_stack', '@datetime.time', '@private_key', '@entity_type.manager', '@path_alias.manager', '@event_dispatcher']
   aculta_user.achievement_definitions:
     class: Drupal\aculta_user\Badge\AchievementDefinitions
     arguments: ['@config.factory', '@lock.persistent', '@entity_type.manager', '@file.usage']
@@ -6,15 +16,39 @@ services:
       - { name: aculta_portal.helper }
   aculta_user.friendship_manager:
     class: Drupal\aculta_user\Social\FriendshipManager
-    arguments: ['@entity_type.manager', '@current_user', '@lock.persistent', '@flood']
+    arguments: ['@entity_type.manager', '@current_user', '@lock.persistent', '@flood', '@event_dispatcher']
+  aculta_user.nickname_policy:
+    class: Drupal\aculta_user\Account\NicknamePolicy
+    arguments: ['@entity_type.manager']
   aculta_user.public_profile_policy:
     class: Drupal\aculta_user\PublicProfilePolicy
   aculta_user.public_profile_link:
     class: Drupal\aculta_user\PublicProfileLink
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+  aculta_user.author_identity_resolver:
+    class: Drupal\aculta_user\Identity\AuthorIdentityResolver
+    arguments: ['@entity_type.manager', '@aculta_user.public_profile_link', '@aculta_image.render', '@aculta_user.public_profile_policy', '@aculta_user.social_networks', '@date.formatter']
+    tags:
+      - { name: aculta_portal.helper }
+  Drupal\aculta_user\Identity\PublicMemberIdentityInterface: '@aculta_user.author_identity_resolver'
+  aculta_user.author_card_builder:
+    class: Drupal\aculta_user\Identity\AuthorCardBuilder
+    arguments: ['@aculta_user.author_identity_resolver']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_user.author_card_variant_resolver:
+    class: Drupal\aculta_user\Identity\AuthorCardVariantResolver
+    tags:
+      - { name: aculta_portal.helper }
   aculta_user.participation_rules:
     class: Drupal\aculta_user\ParticipationRules
     arguments: ['@config.factory', '@entity_type.manager']
+  aculta_user.published_participation_lookup:
+    class: Drupal\aculta_user\Participation\PublishedParticipationLookup
+    arguments: [!tagged_iterator aculta_user.published_participation_lookup]
+  aculta_user.participation_edit_window:
+    class: Drupal\aculta_user\ParticipationEditWindow
+    arguments: ['@config.factory', '@datetime.time', !tagged_iterator aculta_user.edit_window_exemption]
   aculta_user.avatar_pool:
     class: Drupal\aculta_user\Avatar\AvatarPool
     arguments: ['@extension.list.module', '@file_system', '@entity_type.manager', '@user.data', '%app.root%']
@@ -47,18 +81,10 @@ services:
     arguments: ['@entity_type.manager']
   aculta_user.report_queue:
     class: Drupal\aculta_user\Moderation\ReportQueue
-    arguments: ['@entity_type.manager']
-  aculta_user.restricted_forum_not_found:
-    class: Drupal\aculta_user\EventSubscriber\RestrictedForumNotFoundSubscriber
-    arguments: ['@current_user', '@aculta_user.restricted_forum_grants']
-    tags:
-      - { name: event_subscriber }
-  aculta_user.restricted_forum_grants:
-    class: Drupal\aculta_user\Forum\RestrictedForumGrants
-    arguments: ['@aculta_user.associado_marker']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
   aculta_user.associado_marker:
     class: Drupal\aculta_user\Associado\AssociadoMarker
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@datetime.time']
   aculta_user.public_profile_not_canonical:
     class: Drupal\aculta_user\EventSubscriber\PublicProfileNotCanonicalSubscriber
     arguments: ['@router.route_provider']
@@ -72,3 +98,8 @@ services:
     arguments: ['@aculta_user.heranca_papeis', '@current_user', '@aculta_portal.email_confirmation_policy']
     tags:
       - { name: event_subscriber }
+
+  # Contrato público para consumidores que precisam revalidar a situação ativa
+  # sem ler a entidade aculta_associado.
+  aculta_user.active_associate:
+    alias: aculta_user.associado_marker

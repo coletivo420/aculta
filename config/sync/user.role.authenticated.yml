@@ -4,21 +4,18 @@ status: true
 dependencies:
   config:
     - filter.format.webform_default
-    - node.type.forum
-    - node.type.aculta_notice
   module:
+    - aculta_donation
+    - aculta_mail_confirmer
     - aculta_portal
     - comment
     - commerce_checkout
     - commerce_order
-    - commerce_payment
     - commerce_product
-    - email_confirmer
     - file
     - filter
     - flag
     - media
-    - node
     - private_message
     - profile
     - social_auth
@@ -30,11 +27,11 @@ label: 'Usuário autenticado'
 weight: 1
 is_admin: false
 permissions:
+  - 'access aculta mail confirmer'
   - 'access aculta portal'
   - 'access checkout'
   - 'access comments'
   - 'access content'
-  - 'access email confirmation'
   - 'access user profiles'
   - 'create authenticated profile'
   - 'delete own files'
@@ -43,10 +40,12 @@ permissions:
   - 'flag aculta_site_alert_dismissed'
   - 'flag salvar_topico'
   - 'flag seguir_topico'
+  - 'flag seguir_publicacao'
   - 'make donation'
   - 'unflag aculta_notice_read'
   - 'unflag salvar_topico'
   - 'unflag seguir_topico'
+  - 'unflag seguir_publicacao'
   - 'update own authenticated profile'
   - 'use private messaging system'
   - 'use text format webform_default'
@@ -54,4 +53,3 @@ permissions:
   - 'view media'
   - 'view own authenticated profile'
   - 'view own commerce_order'
-

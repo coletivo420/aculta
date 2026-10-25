@@ -3,7 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   config:
-    - node.type.forum
+    - node.type.aculta_forum_topic
   module:
     - node
 id: aculta_forum_topic
@@ -17,7 +17,7 @@ selection_criteria:
     context_mapping:
       node: node
     bundles:
-      forum: forum
+      aculta_forum_topic: aculta_forum_topic
 selection_logic: and
 weight: 0
 relationships: {  }

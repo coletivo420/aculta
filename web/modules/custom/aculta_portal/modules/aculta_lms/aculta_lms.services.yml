@@ -1,6 +1,54 @@
 services:
+  # LMS registers this optional Studio compositor only while LMS is enabled.
+  aculta_studio.learner_dashboard_composer:
+    class: Drupal\aculta_studio\Learning\LearnerDashboardComposer
+    arguments: ['@aculta_lms.learning_dashboard', '@current_user', '@date.formatter', '@string_translation']
+  aculta_lms.account_user_loader:
+    class: Drupal\aculta_lms\Account\AccountUserLoader
+    arguments: ['@entity_type.manager']
+  logger.channel.aculta_lms:
+    parent: logger.channel_base
+    arguments: ['aculta_lms']
+  aculta_lms.learning_dashboard:
+    class: Drupal\aculta_lms\LearningDashboardManager
+    arguments: ['@?aculta_portal.account_courses', '@aculta_lms.course_certificate_manager', '@entity_type.manager', '@?lms.training_manager']
+  aculta_lms.student_status_cron_hooks:
+    class: Drupal\aculta_lms\Hook\StudentStatusSnapshotCronHooks
+    arguments: ['@aculta_lms.learning_dashboard', '@entity_type.manager', '@event_dispatcher', '@?aculta_user.aculta_user_agreement_ledger']
+
+  # Alias por classe: o hook de cron recebe o gerenciador por tipo.
+  Drupal\aculta_lms\LearningDashboardManager: '@aculta_lms.learning_dashboard'
+  aculta_lms.class_dashboard_access:
+    class: Drupal\aculta_lms\Access\ClassDashboardAccessCheck
+    arguments: ['@aculta_lms.learning_dashboard', '@current_user']
+  aculta_lms.learning_dashboard_controller:
+    class: Drupal\aculta_lms\Controller\LearningDashboardController
+    arguments: ['@aculta_lms.learning_dashboard', '@aculta_lms.class_activity_deadline_manager', '@entity_type.manager', '@current_user', '@date.formatter', '@string_translation', '@aculta_studio.learner_dashboard_composer']
+  aculta_lms.class_activity_deadline_access:
+    class: Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck
+    arguments: ['@entity_type.manager', '@current_user']
+  aculta_lms.class_activity_deadline_manager:
+    class: Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager
+    arguments: ['@entity_type.manager', '@aculta_lms.class_activity_deadline_access']
+  Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager: '@aculta_lms.class_activity_deadline_manager'
+  aculta_lms.course_certificate_manager:
+    class: Drupal\aculta_lms\Certificate\CourseCertificateManager
+    arguments: ['@entity_type.manager', '@datetime.time', '@database', '@event_dispatcher', '@logger.channel.aculta_lms', '@lock']
+  aculta_lms.certificate_issue_access:
+    class: Drupal\aculta_lms\Access\CertificateIssueAccessCheck
+    arguments: ['@current_user']
+  aculta_lms.certificate_verification_controller:
+    class: Drupal\aculta_lms\Controller\CertificateVerificationController
+    arguments: ['@aculta_lms.course_certificate_manager', '@?plugin.manager.entity_print.print_engine', '@date.formatter', '@string_translation', '@?aculta_lms.certificate_qr_code_provider']
+  aculta_lms.certificate_qr_code_provider:
+    class: Drupal\aculta_lms\Certificate\CertificateQrCodeProvider
+    arguments: ['@?aculta_qrcode.generator', '@?aculta_qrcode.payload_validator', '@?aculta_qrcode.preset_registry', '@?aculta_portal.domain_purpose']
+  aculta_lms.submission_image_validator:
+    class: Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImageValidator
+    arguments: ['@aculta_image.inspector', '@file_system']
   aculta_lms.uploaded_answer_access:
     class: Drupal\aculta_lms\Access\UploadedAnswerAccessCheck
+    arguments: ['@aculta_lms.account_user_loader']
   aculta_lms.uploaded_answer_route_subscriber:
     class: Drupal\aculta_lms\EventSubscriber\UploadedAnswerRouteSubscriber
     tags:
@@ -10,14 +58,18 @@ services:
     arguments: ['@event_dispatcher']
     tags:
       - { name: aculta_portal.helper }
+  Drupal\aculta_lms\Event\CourseCompletionPublisherInterface: '@aculta_lms.course_completion_publisher'
   aculta_lms.course_room_builder:
     class: Drupal\aculta_lms\CourseRoomBuilder
-    arguments: ['@current_user', '@string_translation', '@form_builder']
+    arguments: ['@current_user', '@string_translation', '@form_builder', '@aculta_lms.class_roster_manager']
     tags:
       - { name: aculta_portal.helper }
+  aculta_lms.class_roster_manager:
+    class: Drupal\aculta_lms\ClassRosterManager
+    arguments: ['@entity_type.manager', '@string_translation']
   aculta_lms.course_order_enrollment:
     class: Drupal\aculta_lms\CourseOrderEnrollmentManager
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@aculta_portal.checkout_settings']
     tags:
       - { name: aculta_portal.helper }
       - { name: aculta_portal.implementation }
@@ -27,3 +79,18 @@ services:
     tags:
       - { name: aculta_portal.helper }
       - { name: aculta_portal.implementation }
+  Drupal\aculta_lms\Hook\SubmissionImageHooks:
+    class: Drupal\aculta_lms\Hook\SubmissionImageHooks
+    arguments: ['@string_translation', '@?aculta_portal.user_upload_policy']
+  aculta_lms.checkout_provider:
+    class: Drupal\aculta_lms\Checkout\LmsCheckoutProvider
+    arguments: ['@aculta_portal.order_type_checkout_flows', '@aculta_portal.checkout_settings']
+    tags:
+      - { name: aculta_portal.checkout_provider }
+
+
+  aculta_lms.notice_event_publisher:
+    class: Drupal\aculta_lms\EventSubscriber\LearningNotificationSubscriber
+    arguments: ['@aculta_messenger.lms_notice_manager', '@aculta_messenger.notice_event_publisher', '@logger.channel.aculta_messenger']
+    tags:
+      - { name: event_subscriber }

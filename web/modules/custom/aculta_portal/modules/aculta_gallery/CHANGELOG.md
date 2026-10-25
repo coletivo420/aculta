@@ -1,5 +1,45 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-dev.17 — versão da projeção no fingerprint do Index
+
+- Provider de Gallery declara sua versão de projeção para validação e retomada
+  seguras de rebuilds.
+
+## 0.1.0-dev.16 — acesso do provider no purpose Revista
+
+- O provider de `media_gallery` declara o purpose canônico `magazine`, permitindo revalidar acesso a galerias relacionadas a cursos no mesmo contexto que concede acesso aos membros/educadores autorizados.
+- Cobertura Unit verifica o purpose; sem ativação no Runtime.
+
+## 0.1.0-dev.15 — catálogo de galerias e imagens
+
+- Provider opcional registra `media_gallery` no Content Index e projeta título,
+  idioma, datas e publicação; relações de saída `gallery_image` e
+  `gallery_cover` apontam somente para Media `image`.
+- O Index revalida Entity Access de galeria e imagem; o provider não copia
+  descrição, créditos, direitos, arquivo ou metadados de imagem.
+- Teste unitário do provider passou; Runtime e Kernel não foram executados.
+
+## 0.1.0-dev.14 — renderiza imagens anexadas pelo Fórum
+
+- `aculta_gallery` seleciona View contextual para galerias do Fórum e suporta o Media `forum_attachment` usando `field_media_forum_image`.
+- Slides e miniaturas validam acesso a Media, campo e arquivo, acumulam cacheabilidade e renderizam imagens pelo catálogo `aculta_image`.
+- Runtime e revisão visual ainda não validados; estado Dev.
+
+## Estado atual: Dev — 2026-10-21
+
+`0.1.0-dev.13` registra a reabertura do desenvolvimento para integração global
+de galerias e a integração contextual do Fórum. RC depende de implementação,
+gates, revisão visual e validação pré-deploy completos.
+
+## 0.1.0-dev.13 — galerias disponíveis em todos os purposes — 2026-10-21
+
+Classificação: MINOR (expande o acesso público transversal; integração Forum em andamento).
+
+- Decisão do responsável: galerias `media_gallery` publicadas podem ser abertas em todos os purposes do Portal. Substitui D13, que havia limitado visualização e listagem à Revista.
+- Removidas as restrições de visualização e listagem por purpose; o list builder usa o alias local da galeria, sem direcionar para a Revista.
+- Mapa de caminhos atualizado para `/albuns/{titulo}` em todos os purposes. Acesso runtime ainda não validado; sem deploy.
+- Gates e testes integrados pendentes antes de RC.
+
 ## 0.1.0-rc.4 — diálogo "Criar galeria" sem tamanho no módulo — 2026-10-19
 
 - `CreateGallery` não envia `dialogSettings` (largura, altura e classe). O formulário do diálogo traz `data-portal-ui="gallery-dialog"`, e a largura é do tema (`dialog.css`), conforme `POPUP-PADRAO.md`.

@@ -17,7 +17,7 @@ base_field: id
 display:
   default:
     id: default
-    display_title: Default
+    display_title: Padrão
     display_plugin: default
     position: 0
     display_options:
@@ -148,7 +148,7 @@ display:
           entity_type: lms_activity
           entity_field: type
           plugin_id: field
-          label: 'Activity type'
+          label: 'Tipo de atividade'
           exclude: false
           alter:
             alter_text: false
@@ -365,7 +365,7 @@ display:
           exposed: true
           expose:
             operator_id: ''
-            label: Published
+            label: Publicado
             description: ''
             use_operator: false
             operator: status_op

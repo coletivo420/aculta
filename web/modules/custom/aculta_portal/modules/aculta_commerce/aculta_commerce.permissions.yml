@@ -1,0 +1,4 @@
+access aculta green stash:
+  title: 'Access Green Stash store management'
+  description: 'Enter the Green Stash administration experience. Does not grant access to Commerce entities, transactions, or payments.'
+  restrict access: true

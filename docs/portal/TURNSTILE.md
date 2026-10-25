@@ -57,7 +57,7 @@ lista de código é `Captcha\TurnstileToggle::EXCEPTION_FORM_IDS`; cada item tem
 
 ## Caixa de ativar/desativar
 
-- Caminho: **ACULTA Portal > Turnstile (anti-bot)**, em `/painel-administrativo/configuracoes/aculta/portal/turnstile`. Exige a permissão `administer site configuration`.
+- Caminho: **ACULTA Portal > Turnstile (anti-bot)**, em `/painel-administrativo/aculta/turnstile`. Exige a permissão `administer site configuration`.
 - A fonte da verdade é a própria configuração do CAPTCHA (`captcha.settings` e os pontos Turnstile). Não há configuração própria do Portal.
 - **Ativar** só é aceito se a chave do ambiente existir. A caixa mostra só se ela está configurada, nunca o valor.
 - **Desativar** exige marcar a confirmação do risco. Sem o Turnstile, cadastro, login e recuperação de senha ficam sem proteção contra robôs.

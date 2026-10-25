@@ -1,0 +1,187 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_mailer\Plugin\Mail;
+
+use Drupal\aculta_mailer\Entity\MailTransport;
+use Drupal\aculta_mailer\Api\PublicUrlInterface;
+use Drupal\aculta_mailer\Delivery\MailPayloadRegistry;
+use Drupal\aculta_mailer\Delivery\ProviderMessageRegistry;
+use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
+use Drupal\aculta_mailer\Log\SingleUseLinkMail;
+use Drupal\aculta_mailer\Tracking\MailTracker;
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\aculta_mailer\Mail\LegacyMessageConverter;
+use Drupal\aculta_mailer\Transport\MailTransportSender;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Mail\Attribute\Mail;
+use Drupal\Core\Mail\MailFormatHelper;
+use Drupal\Core\Mail\MailInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Render\RendererInterface;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\aculta_portal\Appearance\ColorModePreference;
+use Drupal\Core\Theme\ThemeInitializationInterface;
+use Drupal\Core\Theme\ThemeManagerInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Plugin de envio do Core pela camada de envio E-Mails ACULTA (F15).
+ *
+ * Backend de `system.mail`; detalhes ambientais no roadmap do Mailer.
+ */
+#[Mail(
+  id: 'aculta_mailer',
+  label: new TranslatableMarkup('Camada de envio E-Mails ACULTA'),
+  description: new TranslatableMarkup('Envia pelos transportes aculta_mailer_transport.'),
+)]
+final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInterface {
+
+  public function __construct(
+    private readonly MailTransportSender $sender,
+    private readonly LegacyMessageConverter $converter,
+    private readonly EntityTypeManagerInterface $entityTypes,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly LoggerInterface $logger,
+    private readonly RendererInterface $renderer,
+    private readonly SmtpFailureRegistry $failures,
+    private readonly ProviderMessageRegistry $providerMessages,
+    private readonly MailPayloadRegistry $payloads,
+    private readonly TimeInterface $time,
+    private readonly MailTracker $tracker,
+    private readonly ?PublicUrlInterface $publicUrls = NULL,
+    private readonly ?ThemeManagerInterface $themeManager = NULL,
+    private readonly ?ThemeInitializationInterface $themeInitialization = NULL,
+    private readonly ?ColorModePreference $colorModes = NULL,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    return new static(
+      $container->get(MailTransportSender::class),
+      $container->get(LegacyMessageConverter::class),
+      $container->get('entity_type.manager'),
+      $container->get('config.factory'),
+      $container->get('logger.channel.aculta_mailer'),
+      $container->get('renderer'),
+      $container->get('aculta_mailer.smtp_failures'),
+      $container->get('aculta_mailer.provider_messages'),
+      $container->get('aculta_mailer.payloads'),
+      $container->get('datetime.time'),
+      $container->get(MailTracker::class),
+      $container->has(PublicUrlInterface::class) ? $container->get(PublicUrlInterface::class) : NULL,
+      $container->get('theme.manager'),
+      $container->get('theme.initialization'),
+      $container->has('aculta_portal.color_mode_preference') ? $container->get('aculta_portal.color_mode_preference') : NULL,
+    );
+  }
+
+  /**
+   * Junta o corpo e converte o HTML em texto, como o envio padrão do Core.
+   */
+  public function format(array $message) {
+    $message['body'] = implode("\n\n", $message['body']);
+    $message['body'] = MailFormatHelper::htmlToText($message['body']);
+    return $message;
+  }
+
+  /**
+   * Envelope HTML pelo hook de tema; o logo é a URL absoluta do servidor.
+   */
+  private function renderHtml(array $message): string {
+    // Modelo HTML restrito (já filtrado pelo renderizador): não escapa de novo.
+    $html = $message['aculta_html_body'] ?? NULL;
+    $body = is_string($html) ? Markup::create($html) : Markup::create(nl2br(Html::escape((string) ($message['body'] ?? '')), FALSE));
+    $build = [
+      '#theme' => 'aculta_mailer_wrap',
+      '#body' => $body,
+      '#subject' => (string) ($message['subject'] ?? ''),
+      '#type' => 'core',
+      '#sub_type' => (string) ($message['key'] ?? ''),
+      '#is_html' => TRUE,
+      '#layout' => !empty($message['aculta_layout']),
+      // Modo de cor do site (mesmo controle da aparência): light, dark ou auto.
+      '#color_mode' => $this->colorModes?->siteDefault() ?? 'auto',
+      '#public_base' => $this->publicUrls !== NULL ? $this->publicUrls->absolute('/') : '',
+    ];
+    return $this->renderInDefaultTheme($build);
+  }
+
+  /**
+   * Renderiza o envelope com o tema padrão do site, não com o tema da página de origem.
+   *
+   * Um envio disparado por página administrativa usaria o tema administrativo, que não tem o envelope ACULTA.
+   */
+  private function renderInDefaultTheme(array $build): string {
+    if ($this->themeManager === NULL || $this->themeInitialization === NULL) {
+      return (string) $this->renderer->renderInIsolation($build);
+    }
+    $previous = $this->themeManager->getActiveTheme();
+    $default = (string) $this->configFactory->get('system.theme')->get('default');
+    $this->themeManager->setActiveTheme($this->themeInitialization->initTheme($default));
+    try {
+      return (string) $this->renderer->renderInIsolation($build);
+    }
+    finally {
+      $this->themeManager->setActiveTheme($previous);
+    }
+  }
+
+  /**
+   * Envia pela entidade de transporte escolhida. Sem corpo nem destinatário no registro de erro.
+   */
+  public function mail(array $message) {
+    $transport = $this->entityTypes->getStorage(MailTransport::ENTITY_TYPE)->load($this->converter->transportId($message));
+    if (!$transport instanceof MailTransport) {
+      $this->logger->error('Transporte da camada de envio ausente: @id.', ['@id' => $this->converter->transportId($message)]);
+      return FALSE;
+    }
+    $from = (string) $this->configFactory->get('system.site')->get('mail');
+    // Imagens do envelope são carregadas do servidor (URL absoluta); nada é anexado nem embutido.
+    $html = $this->renderHtml($message);
+    // Conteúdo para o reenvio, só em memória até o fim da requisição: a falha o leva ao registro, cifrado.
+    // Anexos não entram: os e-mails do sistema não têm anexos.
+    // Link de uso único: o conteúdo guardado não tem link e expira em 24 horas (SingleUseLinkMail).
+    $singleUse = SingleUseLinkMail::applies((string) ($message['module'] ?? ''), (string) ($message['key'] ?? ''));
+    $this->payloads->remember((string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), [
+      'to' => (string) $message['to'],
+      'from' => $from,
+      'subject' => (string) ($message['subject'] ?? ''),
+      'body' => $singleUse ? SingleUseLinkMail::withoutLinks((string) ($message['body'] ?? '')) : (string) ($message['body'] ?? ''),
+      'html' => $singleUse ? SingleUseLinkMail::withoutLinks($html) : $html,
+      'reply-to' => (string) ($message['reply-to'] ?? ''),
+      'headers' => array_filter($message['headers'] ?? [], 'is_scalar'),
+      'expires' => $singleUse ? $this->time->getRequestTime() + SingleUseLinkMail::TTL : NULL,
+    ]);
+    // Rastreamento só para quem consentiu e com o recurso ligado. O conteúdo guardado acima segue sem rastreamento.
+    $sent = $this->tracker->decorate($html, (string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), (string) $message['to']);
+    $result = $this->sender->send($transport, $this->converter->toEmail($message, $from, $sent));
+    if ($result['sent'] && $result['provider_id'] !== NULL) {
+      $this->providerMessages->remember((string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), $result['provider_id']);
+    }
+    if (!$result['sent']) {
+      // Keep the same transient failure details used by the API for classification.
+      $this->failures->remember(
+        (string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''),
+        $result['code'],
+        $result['message'],
+        $result['error_class'] ?? NULL,
+      );
+      // Transport exception text can contain a recipient or provider response.
+      // Persisted diagnostics contain only the exception class and SMTP code.
+      $this->logger->error('Envio pela camada E-Mails ACULTA recusado pelo transporte @id (código @code).', [
+        '@id' => $transport->id(),
+        '@code' => $result['code'] ?? 'desconhecido',
+      ]);
+    }
+    return $result['sent'];
+  }
+
+}

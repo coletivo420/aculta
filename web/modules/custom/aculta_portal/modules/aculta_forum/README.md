@@ -1,91 +1,237 @@
-# ACULTA Fórum — Growroom420
+# ACULTA Forum — Growroom420 e discussões contextuais
 
-Projeto do futuro submódulo opcional `aculta_forum`, integrante do `aculta_portal`.
-Plano aprovado pelo responsável em **2026-10-15**.
+**Estado: candidato RC `0.1.0-rc.2` (2026-10-25).** Todas as fases F-M0–F-M7
+foram fechadas com evidência executada depois da regressão do `0.1.0-rc.1`.
+Gates, defeitos corrigidos, migração/corte local, F-GROUP homologado, rollback
+e portas de Alpha em [docs/RC.md](docs/RC.md).
 
-**Estado do código (2026-10-17).** Este submódulo ainda contém só documentação (sem `.info.yml`,
-rotas ou importadores). A funcionalidade do fórum já existe em outros módulos do Portal:
+Submódulo de `aculta_portal`. O direcionamento vigente, aprovado pelo
+responsável em 2026-10-19, é reconstruir
+as discussões ACULTA com APIs nativas; Forum contrib foi desinstalado do Runtime
+de teste e removido do Composer após a limpeza autorizada. A dev.4 introduziu o módulo executável e
+a Context API; a View pública já serve a raiz do Runtime de teste e `/criar-topico`
+usa Entity Form/Entity Create Access do Core. A ação na listagem aparece somente
+quando a rota permite a criação, e a decisão integra o cache da View. O índice
+oferece filtro hierárquico pelo vocabulário próprio, sem termos inventados.
+O índice `/categorias` apresenta nomes e descrições dos termos do Fórum e se
+liga à página de discussões. A View `aculta_forum_categories` agrupa os cartões
+por categoria-pai, com uma seção “Categoria raiz” para termos de topo. A
+atualização `9003` aplica a View em instalações existentes; títulos de grupo
+são H2 e links de categoria, H3. Firefox/X11 confirma o reflow sem overflow em
+320–1440 CSS px. Após o ajuste do banner global em ACULTA420 0.6.1-dev.3,
+Firefox/X11 capturou `/categorias` em claro e escuro a 390, 768 e 1024 CSS px;
+as capturas inspecionadas confirmam cartões sem sobreposição em 390 px e em
+1024 px escuro. Em 2026-10-23 a suíte X11 reconfirmou 15/15 no servidor de testes
+(390/768/1024, claro/escuro e link de salto) e 8/8 com Olivero no ambiente local,
+sem overflow nem assets do ACULTA420; o script fica em
+`tests/browser/aculta-forum/`. Cada cartão mostra a contagem de tópicos
+publicados e acessíveis à conta; a consulta adiciona `node_access`
+explicitamente porque a relação reversa do Core não propaga a tag. Zoom e
+aparelho real permanecem pendentes.
+`/pesquisar` pesquisa título/corpo de tópicos públicos e assunto/corpo dos
+posts revisionáveis publicados, com categoria em select hierárquico. Os nomes
+vêm da Taxonomy atual e respeitam Entity Access; o filtro usa IDs inteiros
+indexados, sem tipo de campo ou lista paralela. Os resultados de post apontam
+para a resposta dentro do tópico e o processador aplica publicação e grants do
+tópico antes de paginação; salvar o tópico também enfileira seus posts para
+reindexação. A integração de posts ainda exige a matriz
+automatizada de acesso antes de reindexação ou ativação no Runtime.
+Quando não há correspondências, a View orienta a ajustar a busca ou explorar
+as categorias.
+A lista pública invalida a cache tag-based em mudanças de ForumPost para
+atualizar a contagem, a atividade e a ordenação por respostas.
+Fixtures de tópicos do Runtime de teste são inventariadas em
+[TEST-FIXTURES](docs/TEST-FIXTURES.md). `aculta_user`
+já dispõe de um builder neutro de cartões; o ACULTA420 apresenta o SDC
+experimental compartilhado. A integração dos cartões nas discussões atuais e no
+motor novo segue por contexto e fases.
 
-| Parte do fórum | Onde está | Documento |
-| --- | --- | --- |
-| Identidade histórica e memorial (F2) | `aculta_user` (`LegacyAuthor`, `LegacyMemorialController`) | `aculta_user/docs/CLASSES-E-HOOKS.md` |
-| Fóruns restritos e marcador de associado (F9) | `aculta_user` (`RestrictedForumGrants`, `AssociadoMarcador`) | `aculta_user/docs/CLASSES-E-HOOKS.md` |
-| Denúncias e moderação (F5.1) | `aculta_user` (`ReportQueue`) e `aculta_portal` (confirmação de e-mail) | `aculta_user/docs/CLASSES-E-HOOKS.md` |
-| Avisos de resposta e de atualização (F5.2) | `aculta_messenger` (`AvisoService`, `AvisoRetencao`) | `aculta_messenger/docs/AVISOS-E-MENSAGENS.md` |
-| Classes e hooks completos | cada módulo | `aculta_user/docs/CLASSES-E-HOOKS.md`, `aculta_messenger/docs/CLASSES-E-HOOKS.md` |
+## Direção de comunicação e novas fases — F-D41 (2026-10-24)
 
-## Missão
+**O Fórum é um sistema de discussões e conteúdo, não um sistema de chat
+privado.** O novo plano F-M0–F-M7 organiza a consolidação do módulo com a
+plataforma compartilhada `aculta_messenger`, sem reiniciar as implementações
+já entregues nem presumir que a futura API de eventos esteja disponível.
 
-Reconstruir a memória pública recuperável do Growroom e oferecer uma comunidade
-canábica, cultural e antiproibicionista integrada ao Portal. Preservar a autoria
-histórica e permitir novas conversas vinculadas ao acervo, com as ferramentas
-atuais de identidade, mensagens, galerias, conhecimento, loja e cursos.
+- **Tópico público e resposta:** `aculta_forum_topic`,
+  `aculta_forum_post` revisionável e Comments legados em migração;
+  a publicação só gera atividade visível conforme moderação, access e Domain.
+- **Discussão contextual:** Comments de Revista, LMS e Wiki permanecem
+  associados às respectivas entidades, providers e regras de acesso. Não são
+  conversas privadas, nem criam automaticamente threads de Messenger.
+- **Seguir conteúdo:** a Flag `seguir_topico` e a publicação autorizada
+  alimentam avisos pessoais do Messenger (`aculta_aviso`), agregados por
+  usuário/tipo/tópico e com resumo diário por e-mail opt-in. Seguir não
+  concede acesso e não cria grupos de conversa.
+- **Conversar com membro:** ação explícita de perfil/autor que utiliza as
+  conversas normais do Private Message integrado ao Messenger, respeitando
+  os bloqueios e a política de privacidade.
+- **Transporte:** `aculta_mailer`; o Fórum não envia SMTP, não administra
+  inbox e não implementa worker próprio de avisos.
+- **Migração:** manter `aculta_aviso` e watermarks separados para Comment e
+  ForumPost. Comments, primeira publicação de ForumPost e revisão de tópico já
+  usam o publisher ADR-XK-02; completar round-trip Kernel dos três eventos e
+  comparação de digest sem disparo duplo.
 
-## Decisões aprovadas
+As principais pendências do Fórum continuam sendo provas de migração de
+Comments para ForumPosts, anexos/limpeza, Search API/grants e contagens
+access-aware, homologação de telas/fluxos e eventual ativação **autorizada**
+dos fóruns restritos (F-GROUP 0.1–0.7 concluídos tecnicamente, desligados
+por padrão).
 
-- O endereço público passa do prefixo `forum` para **`growroom420.aculta`**. A mudança
-  operacional será provisionada por ambiente pelo Deployer; o purpose interno
-  continua `forum`, evitando reconstruir a política multidomínio.
-- Áreas comunitárias têm leitura pública e postagem por conta cadastrada; as
-  discussões futuras do LMS ficam reservadas a matriculados e equipe autorizada.
-- O acervo histórico fica fechado a novas respostas. A ação **Continuar esta
-  discussão** abre uma conversa atual vinculada ao tópico histórico.
-- Autores recuperados têm contas User bloqueadas e o papel **Usuários legados do
-  fórum**. Cada autor mantém seu nome e a autoria individual de suas publicações.
-- Há **um único memorial coletivo em `/u/lendashistoricas`**, sem página pública
-  individual para legados. Links de autoria desses usuários apontam ao memorial.
-- Um avatar especial identifica as lendas históricas, usando o sistema de avatar
-  existente. As caixas de autoria e os componentes do ACULTA420 são reaproveitados.
-- A loja se integra por discussões e dúvidas; pedidos e atendimento pessoal ficam
-  privados. Galerias reutilizam `aculta_gallery`, conforme sua política vigente.
-- `aculta_game` integra conquistas e missões, sem ranking ou benefícios financeiros.
+**Plano vigente:** [fases F-M0–F-M7](docs/ROADMAP.md).
+**Decisão:** [F-D41](docs/DECISOES.md).
+**Contrato transversal:** [Avisos e notificações](../../../../../../docs/portal/AVISOS-E-NOTIFICACOES.md).
 
-## Fontes de verdade
+## Arquitetura e regras
 
-| Dado | Dono existente | Integração do projeto |
-| --- | --- | --- |
-| Tópico, respostas e estrutura | Forum contrib, Node, Comment e Taxonomy | Experiência, vínculos e apresentação neutra |
-| Autor e estado da conta | User e `aculta_user` | Identidade histórica bloqueada; memorial coletivo |
-| Perfil e avatar | Profile, File/Image e AvatarPool | Metadados históricos e avatar reservado |
-| Amizade e mensagens | `aculta_user` e `aculta_messenger` | Ações permitidas para participantes atuais |
-| Seguir, salvar e sinalizar | Flag | Controles e filas de moderação |
-| Galerias e arquivos | `aculta_gallery`, Media Gallery, Media e File | Recuperação e referências, sem álbum paralelo |
-| Matrícula e progresso | Group e Drupal LMS | Discussões reservadas por contexto de curso |
-| Produto e pedido | Drupal Commerce | Discussão vinculada e URLs corretas |
-| Concessões de conquistas | Base atual `aculta_badge_award`; futuro `aculta_game` | Eventos atuais, excluindo importação histórica |
+- A administração do Growroom fica em `/painel-administrativo/forum`. Os
+  caminhos específicos de ferramentas — listagem, filas, denúncias,
+  configurações e movimentos — redirecionam localmente ao painel e não executam
+  operações. Rotas genéricas Core e configuração compartilhada ficam fora da
+  seção. A ação VBO segue disponível na configuração da View, mas não existe
+  página administrativa do Fórum que a exponha enquanto vigor a decisão F-D38.
 
-## Documentos do projeto
+- Growroom420 hospeda somente tópicos públicos independentes.
+- Publicações, LMS e Wiki usam comentários no contexto da entidade original; não
+  há tópico público automático para publicação ou verbete.
+- LMS tem adapter opcional e acesso revalidado por Group/membership e Entity Access.
+- `aculta_user` é o dono único de identidade e cartões de autor/participante/perfil. Variantes distinguem `author_forum`, `author_comment`, `author_editorial`, `author_lms`, `author_wiki` e `author_growroom_historico`; autoria histórica não passa pelo resolver de User.
+- Nas listagens públicas, a última atividade compara mudança do Node, Comment Core e ForumPost publicado. A identidade User/histórica usa o `aculta_user.author_card_builder` e é carregada em lotes; o nome de login nunca é exibido.
+- ACULTA420 é o dono visual; `aculta_forum` entrega contrato neutro, acesso e cache.
+- Core/contrib permanecem fonte de verdade para Node, Taxonomy, Views, Search
+  API, History, Flag e workflow/revisão. A entidade `aculta_forum_post` passa a
+  guardar novas publicações revisionáveis; os Comments do Fórum seguem como
+  leitura/escrita vigente até a migração e o corte aprovados. Não criar storage
+  paralelo de tópico/categoria.
+- Imagens passam por `aculta_image`; avisos pelo `aculta_messenger`.
+- Media `forum_attachment` só é visualizada no purpose `forum` enquanto houver
+  referência atual acessível anonimamente em Comment, ForumPost ou Gallery
+  vinculada a uma discussão pública; downloads privados revalidam essa regra
+  pelo access da Media e do File.
+- O conteúdo antigo permanece ausente no Runtime de teste; somente as categorias
+  ACULTA novas foram preservadas. A retirada executável do contrib ocorreu em dev.50.
 
-- [Decisões](docs/DECISOES.md): aprovado, proposto e pendente.
-- [Arquitetura](docs/ARQUITETURA.md): fronteiras, acesso, autoria e integrações.
-- [Reconstrução](docs/RECONSTRUCAO.md): Wayback, proveniência e importação.
-- [Pesquisa](docs/PESQUISA.md): soluções modernas e evidência de código existente.
-- [Roadmap](docs/ROADMAP.md): entregas, dependências e critérios de aceite.
-- [Changelog](CHANGELOG.md).
-- [ACULTA Game](../aculta_game/README.md).
+## Documentação
 
-Aplicam-se os [guardrails](../../../../../../docs/portal/GUARDRAILS.md), o
-[padrão Drupal 11+](../../../../../../docs/portal/DRUPAL-11-STANDARDS.md) e o
-[design system](../../../../../../docs/portal/COMPONENT-DESIGN-SYSTEM.md).
+- [Arquitetura](docs/ARQUITETURA.md)
+- [Contextos e API](docs/CONTEXTS.md)
+- [Ownership](docs/OWNERSHIP.md)
+- [Matriz Advanced Forum](docs/ADVANCED-FORUM-PORT.md)
+- [Pesquisa de módulos contrib e critérios para portar código](docs/CONTRIB-PORT-RESEARCH.md)
+- [Experiência e ferramentas Discourse](docs/DISCOURSE-EXPERIENCE.md)
+- [Planejamento de movimentação de tópicos e comentários](docs/MOVE-TOOLS.md)
+- [Administração do Fórum geral](docs/ADMIN-TOOLS.md)
+- [Pesquisa](docs/PESQUISA.md)
+- [Busca pública](docs/SEARCH.md)
+- [Plano de retirada/migração](docs/MIGRATION-REMOVAL.md)
+- [Classes e hooks planejados](docs/CLASSES-AND-HOOKS.md)
+- [Matriz de testes](docs/TEST-MATRIX.md)
+- [Fóruns restritos para associados ativos](docs/RESTRICTED-FORUMS.md)
+- [Decisões](docs/DECISOES.md)
+- [Roadmap](docs/ROADMAP.md)
+- [Reconstrução histórica](docs/RECONSTRUCAO.md) — histórico de pesquisa/importação, não autorização de exclusão.
+- [Changelog](CHANGELOG.md)
 
-## Estado verificável
+O contrato de cartões, privacidade e API fica em
+[`aculta_user/docs/AUTHOR-CARDS.md`](../aculta_user/docs/AUTHOR-CARDS.md). Normas
+comuns: [Drupal 11+](../../../../../../docs/portal/DRUPAL-11-STANDARDS.md),
+[guardrails](../../../../../../docs/portal/GUARDRAILS.md),
+[fronteira módulo-tema](../../../../../../docs/portal/FRONTEIRA-MODULO-TEMA.md),
+[mapa módulo-tema](../../../../../../docs/portal/MAPA-MODULO-TEMA.md),
+[fonte da verdade](../../../../../../docs/portal/SOURCE-OF-TRUTH.md),
+[participação](../../../../../../docs/portal/PAPEIS-PARTICIPACAO.md),
+[LMS](../../../../../../docs/portal/LMS-INTEGRATION-CONTRACTS.md),
+[Wiki](../../../../../../docs/portal/WIKI.md) e
+[notificações](../../../../../../docs/portal/AVISOS-E-NOTIFICACOES.md).
 
-Situação por fase (ver [Roadmap](docs/ROADMAP.md)): F1 executada; F2 com estrutura
-pronta e pendente de dados e da arte do avatar; F5.1 e F5.2 implementadas no
-servidor de testes; F9 parcial (nível de curso depende da F8). F3 depende da lista
-de autores da importação. A próxima fase é a F4.
+## Fóruns restritos para associados ativos — F-GROUP 0.1 a 0.7
 
-F1 executada no servidor de testes em 2026-10-15. O prefixo
-`growroom420.aculta.toca.net.br` resolve para o Homelab, tem certificado TLS
-válido e mantém o purpose `forum`; o hostname anterior responde 404 sem
-redirect. O Deployer mantém `growroom420.aculta.org` como destino de produção,
-sem DNS publicado porque a origem Hostinger ainda não atende o novo hostname.
+A fundação do fórum restrito existe e está **desligada por padrão**: enquanto
+`aculta_forum.settings.restricted_group_type` estiver vazio, nenhum Group é
+consultado e o fórum público mantém o comportamento atual. Um tópico é restrito
+quando relacionado a um Group do tipo configurado, direta ou pela categoria; a
+elegibilidade é a situação `ativo` de `aculta_associado`, lida em `aculta_user`,
+e nunca um papel. Group é consumidor, não dono dessa situação, e os tipos do LMS
+(`lms_course`, `lms_class`) são recusados. O acesso de leitura é revalidado no
+servidor por `entity_access` e por grants de nó no realm
+`aculta_forum_restricted`; ativar exige rebuild de `node_access` e, na role de
+membro do Group, a permissão `view group_node:aculta_forum_topic entity` — sem
+ela o próprio Group nega a leitura. A F-GROUP 0.2 provou em Kernel os grants
+reais, o handler de acesso, a listagem filtrada e o rebuild por tópico; a 0.3
+provou a herança em posts e Comments; a 0.4 publica a Media e a Galeria
+referenciadas por tópico publicado e revalida a conta em `media_access`,
+`entity_access` da galeria e no download privado do File. A ativação usa role
+sincronizada insider (`authenticated`), não individual, e o resultado de acesso
+do tópico restrito não é cacheado. A busca e a contagem filtram os grants antes
+da paginação: anônimo e suspenso veem só o tópico público; o ativo com
+membership vê os dois. O download privado do anexo também foi validado por
+HTTP. Ao mudar a relação de Group, o tópico e seus posts saem do índice
+imediatamente e voltam após a reindexação (fail closed), e o Page Cache da
+busca é invalidado; a matriz também passou com o tema Olivero. O Runtime de
+testes foi validado em janela controlada, com backup, e revertido ao estado
+inicial. Inventário, decisões, matriz de testes, riscos e a próxima fase estão
+em [`docs/RESTRICTED-FORUMS.md`](docs/RESTRICTED-FORUMS.md).
 
-A configuração versionada inclui a View `aculta_forum_topics` com um bloco
-CTools Views de tópicos recentes, colocado somente na página inicial do purpose
-`forum`. O Runtime permanece sem atualização: `RUNTIME STATUS: DEFERRED`.
+## Estado confirmado na auditoria
 
-O inventário CDX completo do prefixo histórico `/board/`, com corte temporal e
-contagens, está em [Reconstrução](docs/RECONSTRUCAO.md); o JSON está em
-armazenamento privado do Homelab e não no Git. A F1 não migrou conteúdo e não
-criou contas, papéis ou avatares. F2 em diante permanecem pendentes.
+Estado de remoção conferido em 2026-10-20: `drupal/forum` não está no Composer,
+em `core.extension.yml` nem em `web/modules/contrib`; Node `forum`, vocabulário
+`forums`, Comment `comment_forum`, tabelas `forum`/`forum_index` e o campo
+`field_discussao` estão ausentes no Runtime de teste. Consulte o [inventário de remoção](docs/MIGRATION-REMOVAL.md) e
+[auditoria de cartões](../aculta_user/docs/AUTHOR-CARDS.md).
+
+## Versão e execução
+
+A dev.5 completou a limpeza e a retirada contrib no Runtime de teste. Os
+Comments contextuais da Revista e as categorias ACULTA são independentes do
+Forum antigo. Um restore point pós-limpeza e pré-uninstall foi criado e validado
+por `gzip -t`; contém zero conteúdo antigo. A configuração versionada foi
+limpa sem importar Config Sync integral, bloqueado pelo drift preexistente. O índice
+público do novo bundle está ativo na raiz do Runtime e `/criar-topico` verifica
+Entity Create Access. Releases Portal, User e tema conservam linhas próprias;
+o roadmap detalha as próximas entregas.
+
+A lista personalizada `/discussoes/nao-lidas` inclui atualizações de tópico,
+Comments e ForumPosts públicos ainda não lidos. `node_new_comments` continua
+responsável pelas contagens de Comments; um filtro e campo próprios incluem
+ForumPosts publicados, contam por recibo History e ligam ao primeiro post não
+lido, preservando sua página no pager da thread. A View é autenticada e não
+compartilha cache entre usuários. A validação integrada de grants, contagem,
+paginação e destino do link permanece pendente.
+
+As páginas públicas de tópicos incluem ForumPosts publicados na contagem,
+ordenação por respostas, filtro “Sem resposta” e timestamp de atividade. Os
+Comments legados continuam representados pelo agregado `comment_entity_statistics`
+do Core. O cartão compara o timestamp do tópico e das duas fontes de resposta e
+resolve a autoria User/histórica de ForumPost pelo `aculta_user`; filtros Node e
+Domain permanecem fixos. Validação integrada pendente.
+
+Na página de discussão, o controle “Não lidas” reconhece a classe `.new` nos
+Comments marcados pelo History e nos ForumPosts comparados no cliente ao recibo
+de leitura do tópico. Ele permanece oculto sem mensagem não lida renderizada;
+usa o mesmo salto de progresso e não mantém contagem, timestamp ou histórico
+paralelo. O marcador de ForumPost só é carregado para contas autenticadas.
+## Administração contextual de comentários
+
+A View `aculta_forum_admin_comments` mantém páginas próprias em
+`/painel-administrativo/forum/comentarios` e nas três subabas de estado:
+`/painel-administrativo/forum/comentarios/publicados`,
+`/painel-administrativo/forum/comentarios/rejeitados` e
+`/painel-administrativo/forum/comentarios/aguardando-moderacao`. Os displays
+exigem `administer comments`, filtram o Comment compartilhado, o campo de
+discussão, o tópico público e o Domain ativo do Growroom. A página central aponta
+apenas para a entrada Comentários; a administração genérica de comentários do
+Core permanece fora desta seção.
+
+Core Comment distingue publicado de não publicado. Para distinguir uma rejeição
+definitiva de uma pendência, o bundle compartilhado usa `field_aculta_rejected`;
+moderadores com a permissão `administer comments` marcam esse campo no formulário
+de edição de comentário; o acesso ao campo é negado aos demais usuários. A fila
+pendente considera não publicados sem a marca; a rejeitada considera não
+publicados com a marca. Publicar um comentário rejeitado tira-o da fila de
+rejeitados. O campo não aparece no display público.
+
+## Posição como subkernel compartilhado
+
+`aculta_forum` possui estrutura própria e contratos reutilizados na Revista, Wiki e LMS. Tópicos gerais ficam exclusivamente no Fórum público; comentários de publicação, discussões de verbetes e de turmas permanecem associados às entidades/contextos de origem, com Group e access revalidados. `aculta_user` centraliza cartões, `aculta_image` processa imagens e `aculta_messenger` fornece avisos; o Studio oferecerá moderação autorizada sem novo storage nem permissão paralela. Veja `docs/architecture/aculta-kernels.md` na raiz.

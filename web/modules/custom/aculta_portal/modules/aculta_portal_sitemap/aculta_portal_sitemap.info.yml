@@ -3,7 +3,7 @@ type: module
 description: 'Integração de sitemap multidomínio da plataforma ACULTA (linha 0.1.x). Opt-in: habilitar sem configuração adicional não altera a geração existente.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
-version: '0.1.1'
+version: '0.1.2'
 dependencies:
   - aculta_portal:aculta_portal
   - simple_sitemap:simple_sitemap

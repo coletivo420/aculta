@@ -1,3 +1,7 @@
+## 0.1.2 — bundle canônico da Revista
+
+- A allowlist de sitemap passa de `article` para `revista`, alinhada à migração editorial concluída.
+
 # Changelog — ACULTA Portal Sitemap
 
 ## 0.1.1 — endereço do sitemap por ambiente (acabamento) — 2026-10-09

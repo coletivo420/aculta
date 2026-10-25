@@ -1,0 +1,32 @@
+uuid: c01acd36-1bba-444f-97ef-9d174faf3b9c
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - aculta_portal
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.remote_video.field_media_oembed_video
+    - media.type.remote_video
+  module:
+    - media_library
+id: media.remote_video.media_library
+targetEntityType: media
+bundle: remote_video
+mode: media_library
+content:
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_media_oembed_video: true
+  name: true
+  path: true
+  status: true
+  uid: true

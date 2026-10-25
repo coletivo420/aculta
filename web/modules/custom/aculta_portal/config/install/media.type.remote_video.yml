@@ -1,0 +1,23 @@
+uuid: 7612e2fd-c763-46a7-bd94-e45a2173b6bd
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - aculta_portal
+  module:
+    - media
+id: remote_video
+label: 'Vídeo remoto'
+description: 'Vídeos incorporados por URL de provedor suportado, como os registros audiovisuais dos projetos. Use somente destinos reais e autorizados.'
+source: 'oembed:video'
+queue_thumbnail_downloads: false
+new_revision: true
+source_configuration:
+  source_field: field_media_oembed_video
+  thumbnails_directory: 'public://oembed_thumbnails/[date:custom:Y-m]'
+  providers:
+    - YouTube
+    - Vimeo
+field_map:
+  title: name

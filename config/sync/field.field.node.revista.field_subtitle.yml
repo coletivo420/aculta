@@ -1,0 +1,19 @@
+uuid: 975b38f8-32b9-4550-9407-8830de2e9f99
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_subtitle
+    - node.type.revista
+id: node.revista.field_subtitle
+field_name: field_subtitle
+entity_type: node
+bundle: revista
+label: Subtítulo
+description: 'Campo editorial administrável: Subtítulo. Preencha somente com informações verificadas.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

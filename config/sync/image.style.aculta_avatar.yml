@@ -8,7 +8,6 @@ dependencies:
     - crop
 name: aculta_avatar
 label: 'Avatar institucional ACULTA'
-pipeline: aculta_derivados
 effects:
   c8fc4c79-9703-45f4-a383-4091db2b120d:
     uuid: c8fc4c79-9703-45f4-a383-4091db2b120d
@@ -25,3 +24,4 @@ effects:
       width: 256
       height: 256
       upscale: false
+pipeline: aculta_derivados

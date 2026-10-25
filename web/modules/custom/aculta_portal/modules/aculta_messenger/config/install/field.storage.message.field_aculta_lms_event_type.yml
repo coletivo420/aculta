@@ -1,0 +1,56 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+    - options
+  enforced:
+    module:
+      - aculta_messenger
+id: message.field_aculta_lms_event_type
+field_name: field_aculta_lms_event_type
+entity_type: message
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: enrollment
+      label: Matrícula
+    -
+      value: certificate
+      label: Certificado
+    -
+      value: completion
+      label: Conclusão de curso
+    -
+      value: evaluation
+      label: Avaliação publicada
+    -
+      value: submission
+      label: Resposta para correção
+    -
+      value: course_release
+      label: Curso publicado
+    -
+      value: lesson_release
+      label: Aula liberada
+    -
+      value: activity_release
+      label: Atividade liberada
+    -
+      value: feedback
+      label: Retorno do educador
+    -
+      value: deadline
+      label: Prazo de atividade
+    -
+      value: deadline_reminder
+      label: Lembrete de prazo
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

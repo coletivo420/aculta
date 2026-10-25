@@ -1,5 +1,27 @@
 # Componentes
 
+## Componentes privados do Meu Perfil — pré-S-R4
+
+Disponíveis em código (tema 0.7.0-dev.1), mas **ainda sem consumidor**:
+`profile-editor`, `profile-identity`, `profile-bio` e `profile-social`.
+São SDCs de apresentação, não modelos de entidade ou formulários.
+O editor organiza `intro/identity/biography/social/actions`; a identidade
+recebe `display_name`, `hint` e slots para `avatar/public_link/actions`;
+bio e redes recebem `title` e slots autorizados de conteúdo/ações.
+O owner ACULTA User decide dados, proteção e cache. Studio adapta
+os render arrays; o tema só apresenta CSS e Twig. Cada SDC tem
+duas stories sem dados de usuários reais, e Unit estático escrito,
+**não executado**. S-R4 fará o wiring com validação Kernel/Firefox.
+
+## Discussões ACULTA — contrato futuro
+
+O tema mantém os templates legados do Drupal Forum durante a migração e passa a
+apresentar comentários compartilhados via `comment--aculta-discussion-post.html.twig`.
+O `aculta_user` prepara o cartão `author_comment`; ACULTA420 controla markup,
+layout responsivo, acessibilidade e tokens light/dark em `discussion.css`. Não há
+consulta de usuário no tema. A lista de seis presets e capacidades está em
+`aculta_forum/docs/ADVANCED-FORUM-PORT.md`.
+
 O catálogo visual e suas regras estão em
 [`component-catalog.md`](component-catalog.md). Os stories ficam junto dos
 SDCs e aparecem na biblioteca protegida do UI Patterns.
@@ -24,7 +46,7 @@ components/
 ├── content/
 │   ├── editorial-card/       (stable)
 │   ├── course_card/          (experimental, replaces LMS card)
-│   └── project-card/         (experimental, 0.3.0)
+│   └── (project-card removido com o tipo projeto)
 └── patterns/
     └── social-links-page/    (experimental, 0.6.0)
 ```
@@ -70,7 +92,7 @@ Estado em 0.4.0. Todos experimentais por política, até consumo estável e vali
 | --- | --- | --- | --- |
 | `aculta420:content-section` | `components/patterns/content-section/` | `block--block-content--type--basic.html.twig` | campos `field_section_title`, `field_section_heading`, `field_section_variant` e o corpo |
 | `aculta420:hero` | `components/patterns/hero/` | `ThemeHooks::preprocessNode()` (página `page` na visualização full) | campos `field_hero_*` do nó |
-| `aculta420:content-grid` | `components/patterns/content-grid/` | `views-view-unformatted--aculta-projects.html.twig` | linhas da view (cada uma com seu presenter) |
+| `aculta420:content-grid` | `components/patterns/content-grid/` | (view de projetos removida com o tipo projeto) | linhas de uma view (cada uma com seu presenter) |
 | `aculta420:carousel` | `components/patterns/carousel/` | `views-view-vvjb.html.twig` | engine VVJB, sem alteração |
 | `aculta420:rail` | `components/patterns/rail/` | `views-view-unformatted--courses-catalog.html.twig` | linhas do catálogo de cursos (card do LMS) |
 
@@ -81,7 +103,7 @@ foi conferido contra o original antes da gravação.
 Pendências da 0.4:
 
 - **Seções editoriais** agora são renderizadas pela hook de tema `aculta_section`, declarada pelo `aculta_portal` (`PortalHooks::theme()`). O `EditorialHooks::entityViewAlter()` entrega título, subtítulo, variante e corpo para blocos `basic`. O template `aculta-section.html.twig` do tema monta o `content-section`; o template do módulo é só um fallback neutro.
-- **Cabeçalho de projetos** é um bloco `basic` ("Cabeçalho — Nossos projetos") posicionado por visibilidade de purpose: `aculta_projects_header_home` em `<front>` e `aculta_projects_header_page` em `/projetos`, ambos com `aculta_domain_purpose = main`. A view de projetos não tem mais cabeçalho próprio. Nenhum ramo por purpose existe no tema.
+- **Cabeçalho de projetos** foi removido com o tipo projeto (2026-10-21). Nenhum ramo por purpose existe no tema.
 - **Cabeçalho por domínio** segue a prática do projeto: o Domain Header é único para todos os domínios. Cada seção de subdomínio é um bloco com visibilidade `aculta_domain_purpose`, configurado por placement; o tema apenas apresenta o bloco. Um novo subdomínio recebe seu próprio placement, sem mudança de código.
 - **Carrossel**: o wrapper foi migrado, mas a view da home está desativada no Runtime, então não foi visto em navegador.
 - **Estruturas internas** (`aculta-areas`, `aculta-callout`, `aculta-page-intro`, `aculta-editorial-link`, `aculta-institutional-note`): **decisão registrada (T1): permanecem como rich text no corpo.** São texto editorial sem schema fixo. Virar SDC exigiria um modelo de conteúdo por bloco, o que é decisão de produto e não entra no saneamento. Revisar só se o responsável pedir.
@@ -89,15 +111,21 @@ Pendências da 0.4:
 
 ## Componentes atuais
 
-### `aculta420:project-card`
+### `aculta420:forum-category`
 
-Status: experimental (0.3.0). Local: `components/content/project-card/`.
+Status: experimental. Local: `components/content/forum-category/`.
 
-Slots: `media` (omitido quando vazio), `category`, `title` (link), `summary`, `cta` (link).
-O presenter `node--project--teaser.html.twig` mantém `<article>`, attributes e links;
-o SDC compõe o pattern `aculta420:card` e mantém os slots e classes semânticas do
-projeto. A mídia continua renderizada pelo Drupal e contida sem recorte. Sem props,
-JavaScript ou consulta de dados.
+No bloco `block_landing`, os slots `parent`, `title` e `description` recebem os
+campos renderizados pela View Core. Na página `/categorias`, a View agrupa as
+linhas pela relação Parent e o slot `parent` fica vazio; `title` inclui o link
+filtrado preparado pela View. O grupo usa H2 e cada link de categoria usa H3.
+Os presenters preservam linhas e attributes, e o SDC apresenta os cartões numa
+grade responsiva. Não carrega entidades, constrói URLs ou decide filtros/acesso;
+isso continua com Drupal Views e o Portal.
+
+### `aculta420:project-card` (removido)
+
+O SDC foi removido em 2026-10-21, quando o tipo de conteúdo projeto foi retirado do Runtime e do código. Não há consumidor restante.
 
 ### `aculta420:course_card`
 
@@ -149,7 +177,6 @@ Criar `aculta420:button` agora criaria uma segunda API parcial.
 Roadmap de cards:
 
 - editorial-card;
-- project-card;
 - course-card;
 - product-card somente quando Commerce possuir catálogo real.
 
@@ -191,11 +218,67 @@ shell `.portal-account`, mantendo a cor semântica original fora dele. Cada
 linha tem menu contextual para limpar o histórico pessoal pelo formulário
 nativo do Private Message.
 
+## Cartão de autoria compartilhado (0.6.0-dev.91)
+
+`content/author-card` apresenta variantes de autoria sem consultar entidades ou
+decidir acesso. O `aculta_user` prepara apelido, link canônico, avatar autorizado
+e cache no theme hook neutro; a imagem passa por `aculta_image`. `author_forum`
+e `author_comment` compartilham o layout inline, enquanto
+`author_forum_stacked` altera apenas a disposição. `author_growroom_historico` é somente
+identificação de acervo, sem link individual ou ação de conta. `author_editorial`
+é consumido pela caixa de autoria da Revista, com designação Autor/Coautor,
+biografia e redes entregues pelo Portal somente quando autorizadas pelo perfil.
+`author_lms` e `author_wiki` aguardam seus consumidores contextuais. Inspeção
+visual integrada e Runtime: DEFERRED.
+
 A home/lista da Wiki usa css/components/wiki.css, arquivo temático de
 responsabilidade própria na biblioteca global. O markup continua preparado pelo
 Portal por tokens data-portal-ui; Views/VVJB continuam fonte dos itens.
 
 Status: experimental, até validação em navegador no servidor de testes.
+
+### Tópico público ACULTA Forum (0.6.0-dev.101)
+
+`node--aculta-forum-topic.html.twig` deriva do template Node Core 11.4.10:
+mantém attributes, title prefix/suffix, título linkado no teaser e conteúdo
+renderizado. O byline padrão (`author_picture`/`author_name`) é omitido porque a
+autoria vem do cartão de `aculta_user`, que aplica a política de privacidade. A
+data segue visível. `forum-index.css` apresenta teasers, categorias e corpo com
+tokens semânticos. O presenter declara `aculta-forum-topic--{view_mode}` porque
+o template override não recebe automaticamente as classes bundle/mode do
+wrapper padrão do Node. O gate da Foundation alinha esses modificadores aos
+seletores teaser/full. Firefox no Runtime de teste confirmou os cartões com
+borda/superfície e categoria em etiqueta; o cartão de autoria continua vindo do
+`aculta_user`. Nenhum conteúdo foi alterado.
+
+O template `views-view-fields--aculta-forum-public-topics.html.twig` preserva
+o teaser renderizado pelo Drupal e apresenta contagem e última atividade. A
+View do Portal prepara os valores com os handlers de estatística do Core; o
+Twig escolhe o rótulo singular/plural. A ordenação usa atividade descendente
+após tópicos fixados. Na lista, `forum-index.css` omite apenas o resumo do corpo
+e a data de publicação redundante com última atividade; reduz avatar e
+metadados autorais dentro do cartão compartilhado. O detalhe completo mantém
+corpo, data e identidade sem alterações. Firefox/X11 verificou a listagem em
+1024 e 500 px e o detalhe em 500 px; capturas privadas e limites restantes
+estão no changelog `0.6.0-dev.109`.
+
+O Portal pode anexar ao campo compartilhado a navegação de progresso das
+mensagens. O tema apresenta os controles neutros `[data-aculta-discussion-progress]`
+em `discussion.css`; não consulta dados nem decide quais comentários são
+visíveis. Em telas estreitas, o status textual fica disponível a leitores de
+tela e os botões mantêm alvos confortáveis. O Firefox/X11 verificou claro e
+escuro em 1250/500 px e teclado do slider com DOM sintético não persistido;
+leitor de tela segue pendente. A barra sticky respeita `--drupal-displace-offset-top`
+e o scroll-padding do cabeçalho; em mobile ela fica no fluxo normal para não
+cobrir a mensagem ativa. Em 320 px, as ações ocupam duas colunas; de 360 px em
+diante, ficam em uma linha. Em mobile, slider e contador têm linhas próprias
+para evitar alvos estreitos. Firefox ESR/X11 e BiDi confirmaram 320/360/390/500/
+1250 px, modos claro/escuro, slider e botão sem overflow. Evidências nos
+changelogs `0.6.0-dev.110` a `0.6.0-dev.115`. Quando History marca um Comment
+renderizado com `.new`, o Portal acrescenta `[data-aculta-discussion-unread]`;
+o tema o apresenta como ação secundária em uma linha separada no mobile e numa
+linha compacta no desktop. O botão continua oculto sem marcador e o tema não
+consulta History. Evidência visual em `0.6.0-dev.116`.
 
 ## Patterns
 
@@ -239,14 +322,14 @@ Não usar UI Suite Bootstrap para substituir ACULTA420.
 
 ## Publicação da Revista (`aculta420:revista-publication`, 0.6.0-dev.21)
 
-Modelo padrão de Notícia e blog. Experimental. Os templates `node--article--full` e `node--blog--full` chamam
+Modelo padrão de publicações da Revista. O template `node--revista--full` chama
 o mesmo componente; o conteúdo vem do Drupal e a apresentação é deste componente.
 
 Classes (documentadas aqui porque são de apresentação, não do módulo):
 
 | Classe | Onde | Função |
 | --- | --- | --- |
-| `node`, `node--type-article` ou `node--type-blog`, `node--view-mode-full` | raiz do nó (`article`) | Classes padrão do Drupal, mantidas para as regras que dependem delas. |
+| `node`, `node--type-revista`, `node--view-mode-full` | raiz do nó | Classes padrão do Drupal para o bundle editorial canônico. |
 | `aculta-revista-article` | raiz do nó | Marca a publicação da Revista no tema. |
 | `aculta-revista-publication` | raiz do componente | Coluna de leitura (68ch), centralizada. |
 | `aculta-revista-publication__meta` | cabeçalho (autor, data, compartilhamento) | Faixa de metadados. |
@@ -256,7 +339,7 @@ Classes (documentadas aqui porque são de apresentação, não do módulo):
 | `aculta-revista-publication__body` | corpo | Texto da publicação. Intertítulos alinhados à esquerda; imagens do corpo centralizadas (`media--type-image`). |
 | `aculta-revista-publication__footer` | rodapé | Sessão, tags, referências e créditos. |
 | `aculta-revista-publication__authors` | caixa de autoria | Recebe `data-portal-ui="article-authors"` do módulo. |
-| `aculta-revista-publication__discussion` | discussão | Recebe `data-portal-ui="discussion"` do módulo. |
+| `aculta-revista-publication__discussion` | discussão | Recebe o render array Core de `field_aculta_discussion` no slot `discussion`; access e estado são preparados pelo Drupal/Portal. |
 
 Regras de apresentação que valem para todas as publicações (`css/components/revista-post.css`): não há ajuste por
 publicação; capa, resumo e corpo ficam na mesma coluna de leitura.
@@ -264,6 +347,56 @@ publicação; capa, resumo e corpo ficam na mesma coluna de leitura.
 ## Contador de não lidos (`aculta-unread-count`)
 
 Classe única para todos os contadores (carrinho, avisos, mensagens, badge de conta e contadores de conteúdo, como o
-do fórum). Arquivo: `css/components/unread-count.css`. O módulo entrega o token `data-portal-ui` (ex.: `forum-topic-unread`),
+do fórum). Arquivo: `css/components/unread-count.css`. O Portal poderá entregar o token `data-portal-ui` (ex.: `forum-topic-unread`) na futura contagem da View ACULTA; não há produtor ativo hoje,
 que `PortalUiHooks` traduz nessa classe. Zero não lidos oculta o contador. A posição fica no gatilho. Contrato completo
 em `docs/portal/CONTADORES.md` (raiz do repositório).
+
+## Auditoria de reutilização GanjaLab420 — 2026-10-22
+
+O planejamento [GanjaLab420 × ACULTA420](../../../../../docs/portal/GANJALAB-CROSS-VISUAL-AUDIT.md) prioriza componentes existentes e variantes. Criar novos SDCs apenas com contrato de dados/slots, primeiro consumidor real, segundo consumidor mapeado, story UI Patterns, acessibilidade, cache/access nos providers e documentação. Padrões transversais candidatos: context-header, context-tabs, empty-state, content-reader, resource-list e status-timeline. Nenhum foi implementado nesta auditoria.
+
+## Planejamento dos componentes transversais — 0.8-B
+
+[Contratos de Context Header, Context Tabs e Feedback](../../../../../docs/portal/GANJALAB-SHARED-UI-PLAN.md) orientam o reuso em LMS, Revista, Wiki, Fórum e Conta. Não criar componentes antes de identificar consumidores reais e avaliar Core/Bootstrap/SDCs existentes; cada novo SDC necessita story, contrato de props/slots e testes mobile/light-dark.
+
+## Critério obrigatório de reuso (revisão 2026-10-22)
+
+O ACULTA420 só compartilha novos padrões de apresentação como **Drupal Core SDC**, preparados para **UI Patterns, UI Patterns Library e UI Styles**. Componentes preexistentes com Twig/Bootstrap puro não são elegíveis à reutilização transversal até sua migração para SDC e testes. Componentes SDC incompletos precisam de alinhamento antes de consumo novo. Conservar interfaces funcionais de terceiros (H5P, PDF.js, Form API) nos donos originais; aplicar SDC à composição visual, sem recodificar players/formulários.
+
+Consultar [roadmap visual transversal](visual-cross-product-roadmap.md) e [matriz operacional B0](theme-ux-0.8-b0-execution-matrix.md) para estados de conformidade e gates. UI Patterns/Styles são usados onde a integração é apropriada; não se requer converter indiscriminadamente todos os displays existentes.
+
+## Novo componente experimental — `aculta420:context-header`
+
+Diretório: `components/patterns/context-header/`. Apresentação contextual abaixo do shell multidomínio; `title` texto simples obrigatório, `eyebrow` e `subtitle` opcionais, slots `breadcrumbs`, `back_link`, `actions`. O Twig renderiza H1 e **exige que o consumer evite emitir outro H1 na mesma página**. Tem stories estáticas educacional/editorial e CSS semântico. Não depende de LMS, Wiki, Group ou Domain. **Não usar em rota de produção antes da revisão B1-02d, prova de consumidores e testes Runtime**. [Contrato visual](theme-ux-0.8-b1-02b-visual-contract.md).
+
+## Context Header — primeiro consumidor Wiki
+
+`node--wiki-entry--full.html.twig` usa `aculta420:context-header` com `title` do label da entidade e `eyebrow` editorial. `aculta420:wiki-entry` tem a prop booleana `show_heading`, default `true`, configurada como `false` apenas na página completa para transferir o H1 sem alterar teasers e outros consumidores. O CSS existente de `.aculta-wiki-article__header` pode exigir adaptação após inspeção visual do Runtime. O component Context Header permanece `experimental` até validações em Drupal e segundo consumidor real.
+
+## Segundo consumidor — GanjaLab420
+
+`LearningDashboardController::student()` passou a renderizar `aculta420:context-header` com título `Meus cursos`, etiqueta GanjaLab420 e subtítulo. `ThemeHooks::preprocessPage()` suprime seletivamente o page-title block nessa rota para evitar H1 concorrente, mantendo o `_title` do Drupal. O tema preserva o shell multidomínio e o LMS mantém a propriedade de acesso/progresso/cache. Ver [homologação pendente](theme-ux-0.8-b1-02e-runtime-validation.md).
+
+## `aculta420:context-tabs` — navegação contextual por rotas
+
+SDC experimental em `components/patterns/context-tabs/`: prop `label` e slot `items` de âncoras access-checked, incluindo `aria-current=page` preparado pelo provider. Twig possui `<nav>`, CSS usa tokens e flex wrap mobile; stories estáticas GanjaLab e Wiki. **Não** confundir com `product-tabs`, que controla painéis Bootstrap internos. Ainda sem consumidores funcionais; ver [plano B2](theme-ux-0.8-b2-context-tabs.md).
+
+## Context Tabs — primeiro consumidor real no código
+
+`StudioController::linkList()` entrega `#theme: item_list` ao slot `items` do SDC `aculta420:context-tabs` somente para áreas e subtabs. Seções mantêm sua sidebar. O componente é apresentação: não modifica navegação Drupal Ajax, URLs, ACL nem Domain Header. Ver [fases e validação pendente](theme-ux-0.8-b2-context-tabs.md).
+
+## Context Tabs — segundo consumidor Wiki
+
+`WikiController::contextNavigation()` prepara links Início/Busca com Url::fromRoute, render arrays e `aria-current=page` e entrega `item_list` ao slot do SDC. Agora Studio e Wiki compartilham a apresentação Core SDC/UI Suite, sem atribuir ao tema URLs, ACL ou AJAX. [Gates B2-05 pendentes](theme-ux-0.8-b2-context-tabs.md).
+
+## `aculta420:empty-state`
+
+Componente neutro em `components/feedback/empty-state/`, com slot `message` para render array traduzido/escapado, slot opcional `actions`, prop `compact` e duas stories. Consumidores de código: Wiki search sem resultados e LMS dashboard sem cursos/certificados. Não determina acesso/erros/query. Não confundir com `messenger-state`/`institutional-notice`. [Auditoria B3](theme-ux-0.8-b3-feedback-audit.md).
+
+## B4 — Utility offcanvas e Minha Conta
+
+`cart-offcanvas` não oferece mais um X puramente visual nos itens: mudanças reais de carrinho pertencem ao Commerce. `alerts-trigger`, `messenger-trigger` e `cart-offcanvas` continuam baseados em Bootstrap offcanvas via SDC, com estilos compartilhados em `css/components/portal-cart.css`. `portal-account.css` apresenta reflow responsivo da navegação/conteúdo da Minha Conta sem alterar sua implementação AJAX. [Auditoria B4](theme-ux-0.8-b4-utility-panels.md). Testar no Drupal antes de homologar.
+
+## B5 — contrato de overlays
+
+Os SDCs `alerts-trigger`, `messenger-trigger` e `cart-offcanvas` expõem `aria-controls` e `aria-expanded`, atualizados pelo tema nos eventos `show.bs.offcanvas` e `hidden.bs.offcanvas`. A apresentação segue SDC/UI Suite; Bootstrap gerencia modal/foco e módulos gerenciam AJAX e dados. Minha Conta não usa offcanvas da barra. [Gates B5](theme-ux-0.8-b5-overlay-catalog.md).

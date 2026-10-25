@@ -9,10 +9,14 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 
-/** Integrates safe ACULTA policies with the native Private Message form. */
+/**
+ * Integrates safe ACULTA policies with the native Private Message form.
+ */
 final class PrivateMessageFormHooks {
 
-  /** Enforces plain text and ACULTA send policies on native PM forms. */
+  /**
+   * Enforces plain text and ACULTA send policies on native PM forms.
+   */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     if (!str_starts_with($formId, 'private_message_add_form')) {
@@ -32,8 +36,8 @@ final class PrivateMessageFormHooks {
         $form['message']['widget'][0]['format']['format']['#value'] = 'plain_text';
         $form['message']['widget'][0]['format']['format']['#default_value'] = 'plain_text';
       }
-      // The native placeholder is the English word "Message"; the site's composer says what to write.
-      // The text_format element copies its #placeholder to the textarea in #process, so set it on the source.
+      // Replace the native English "Message" placeholder with the site's
+      // composer text. The text_format process copies this to its textarea.
       $form['message']['widget'][0]['#placeholder'] = new TranslatableMarkup('Escreva sua mensagem');
       $form['#after_build'][] = 'aculta_messenger.private_message_form_validator:hidePlainTextGuidelines';
       $form['#validate'][] = 'aculta_messenger.private_message_form_validator:enforcePlainTextFormat';
@@ -50,6 +54,7 @@ final class PrivateMessageFormHooks {
     $form['#validate'][] = 'aculta_messenger.private_message_form_validator:validateBlockedRecipients';
     $form['#validate'][] = 'aculta_messenger.private_message_form_validator:validateNewConversationPrivacy';
     $form['#validate'][] = 'aculta_messenger.private_message_form_validator:validateRateLimit';
+    $form['#submit'][] = 'aculta_messenger.private_message_form_validator:registerRateLimit';
   }
 
 }

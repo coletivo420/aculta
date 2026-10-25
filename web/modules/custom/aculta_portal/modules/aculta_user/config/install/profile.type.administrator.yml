@@ -1,0 +1,14 @@
+uuid: 12a809cd-94ef-49ad-88c5-525b9b8a9ced
+langcode: pt-br
+status: true
+dependencies: {  }
+id: administrator
+label: Administrador
+display_label: 'Perfil de administrador'
+multiple: false
+registration: false
+roles:
+  - administrator
+allow_revisions: false
+new_revision: false
+

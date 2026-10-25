@@ -134,4 +134,6 @@ Severidade: **alta** = viola regra do projeto; **média** = dívida que contrari
 4. A6 e A7 (JS de alertas e suíte versionada).
 5. A8 (documentação do submódulo): feito junto com a documentação entregue neste trabalho.
 
-As correções A1 a A7 são código e exigem versão e PR próprios. Este documento não altera código do Messenger.
+As correções A1 a A7 são código e exigem versão própria conforme a política do
+submódulo. Os commits ficam na branch autorizada; PR só quando solicitado. Este
+documento não altera código do Messenger.

@@ -109,8 +109,24 @@ final class SecretsManager {
     if ($variable === NULL) {
       return NULL;
     }
+    // Credenciais já ligadas a uma configuração de Key continuam por ele. Credenciais novas, sem Key, são lidas do
+    // arquivo de credenciais do servidor (ver AGENTS.md: não criar Key para credencial nova).
     $key = $this->keys->getKey((string) $variable['key_id']);
-    $value = $key?->getKeyValue();
+    if ($key !== NULL) {
+      $value = $key->getKeyValue();
+      return is_string($value) && $value !== '' ? $value : NULL;
+    }
+    return $this->fileValue($name);
+  }
+
+  /** Valor de uma variável no arquivo de credenciais do servidor, ou NULL. Nunca registrado. */
+  private function fileValue(string $name): ?string {
+    $store = $this->storePath();
+    if (!is_file($store) || !is_readable($store)) {
+      return NULL;
+    }
+    $parsed = SecretsFormat::parse((string) file_get_contents($store));
+    $value = $parsed[$name] ?? NULL;
     return is_string($value) && $value !== '' ? $value : NULL;
   }
 

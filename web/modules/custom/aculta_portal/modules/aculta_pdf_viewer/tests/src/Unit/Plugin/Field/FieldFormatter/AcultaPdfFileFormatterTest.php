@@ -55,6 +55,7 @@ final class AcultaPdfFileFormatterTest extends UnitTestCase {
           count(array_intersect(['file:456', 'node:123'], $cacheability->getCacheTags())) === 2
         ),
         FALSE,
+        self::anything(),
       )
       ->willReturn($viewer);
 
@@ -171,6 +172,7 @@ final class AcultaPdfFileFormatterTest extends UnitTestCase {
         'public',
         self::isInstanceOf(CacheableMetadata::class),
         FALSE,
+        self::anything(),
       )
       ->willReturn([
         '#access' => FALSE,

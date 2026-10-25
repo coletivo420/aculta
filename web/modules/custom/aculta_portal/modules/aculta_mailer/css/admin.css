@@ -1,0 +1,14 @@
+/*
+ * Tabelas do painel de envios: rolagem horizontal dentro da própria área, sem estourar a página em tela estreita.
+ * Seleção por atributo data-aculta-mailer-table (contrato do módulo); o painel administrativo usa o tema Claro, fora do mapa do ACULTA420.
+ */
+[data-aculta-mailer-table="rolagem"] {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Cabeçalhos com palavras inteiras: a hifenização do tema quebrava "Estado" e "Detalhe" em sílabas. */
+[data-aculta-mailer-table="rolagem"] th {
+  hyphens: none;
+  white-space: nowrap;
+}

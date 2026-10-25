@@ -1,5 +1,6 @@
 {% if variant == 'teaser' %}
   <div class="aculta-wiki-card__inner">
+    {% if has_image %}<div class="aculta-wiki-card__image">{{ image }}</div>{% endif %}
     <h2 class="aculta-wiki-card__title">{{ title }}</h2>
     {% if has_summary %}<div class="aculta-wiki-card__summary">{{ summary }}</div>{% endif %}
     {% if has_categories %}<div class="aculta-wiki-card__categories">{{ categories }}</div>{% endif %}
@@ -10,11 +11,15 @@
       <a class="aculta-wiki-article__tab is-active" href="{{ url }}" aria-current="page">{{ 'Ler'|t }}</a>
       {{ actions }}
     </nav>
+    {% if show_heading is not same as(false) %}
     <header class="aculta-wiki-article__header">
       <p class="aculta-wiki-article__eyebrow">{{ 'Wiki420 · Enciclopédia livre'|t }}</p>
       <h1 class="aculta-wiki-article__title">{{ title }}</h1>
       {% if has_summary %}<div class="aculta-wiki-article__lead">{{ summary }}</div>{% endif %}
     </header>
+    {% elseif has_summary %}
+      <div class="aculta-wiki-article__lead">{{ summary }}</div>
+    {% endif %}
     <div class="aculta-wiki-article__layout">
       <div class="aculta-wiki-article__main">
         <div class="aculta-wiki-article__body">{{ body }}</div>
@@ -28,5 +33,6 @@
         </aside>
       {% endif %}
     </div>
+    {% if discussion %}<div class="aculta-wiki-article__discussion">{{ discussion }}</div>{% endif %}
   </div>
 {% endif %}

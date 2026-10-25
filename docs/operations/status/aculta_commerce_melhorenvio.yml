@@ -1,0 +1,4 @@
+# Status de componente para a tabela do README raiz (gerada).
+state: Dev
+next_phase: 'Concluir auditoria de fontes e cliente OAuth2 sandbox; validar endereços em Kernel antes da cotação Commerce Shipping ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/docs/ROADMAP.md))'
+version_note: '`0.1.0-dev.1` — fundação, adaptadores de endereço e integração com CEP em código; OAuth2, cotação, etiquetas e Runtime pendentes.'

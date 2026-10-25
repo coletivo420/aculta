@@ -1,0 +1,8 @@
+name: 'ACULTA Forum counter test fixture'
+type: module
+description: 'Provides a node grant realm for access-aware category counter Kernel tests.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:node
+  - drupal:user

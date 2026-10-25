@@ -1,0 +1,4 @@
+create aculta forum posts:
+  title: 'Create Forum posts'
+  description: 'Declares the production Forum publish permission for isolated Kernel tests.'
+  restrict access: true

@@ -11,11 +11,12 @@ dependencies:
     - field.field.node.page.field_hero_primary
     - field.field.node.page.field_hero_secondary
     - field.field.node.page.field_hero_slogan
-    - field.field.node.page.field_social_links
     - field.field.node.page.field_hero_title
     - field.field.node.page.field_meta_tags
+    - field.field.node.page.field_social_links
     - node.type.page
   module:
+    - link
     - text
     - user
 id: node.page.full
@@ -36,7 +37,6 @@ content:
     weight: 100
     region: content
 hidden:
-  field_social_links: true
   field_domain_source: true
   field_hero_eyebrow: true
   field_hero_lead: true
@@ -46,3 +46,5 @@ hidden:
   field_hero_title: true
   field_meta_tags: true
   langcode: true
+  search_api_excerpt: true
+  field_social_links: true

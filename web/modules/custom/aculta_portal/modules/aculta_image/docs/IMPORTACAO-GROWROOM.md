@@ -4,7 +4,8 @@ Revisão: 2026-10-19. Escopo: o que já foi preparado no sistema, onde estão os
 e o que falta. Nenhum conteúdo foi importado para o Drupal.
 
 Os números de download abaixo foram medidos em 2026-10-19, após a conclusão do reprocessamento. Para conferir de novo,
-usar somente leitura com `sudo`.
+usar somente leitura com `sudo`. A análise completa do acervo, com riscos para a importação, está em
+[AUDITORIA-GROWROOM-2026-10-19.md](AUDITORIA-GROWROOM-2026-10-19.md).
 
 ## Pré-requisito atendido: `aculta_image` pronto
 
@@ -106,7 +107,102 @@ Estes caminhos ficam fora do Git (`estados/` e armazenamento privado). Pasta de 
 
 Escopo: a decisão vale para a **importação**. O download não exclui esses fóruns; a exclusão é aplicada no mapeamento.
 
+## Plano de importação: regras decididas (2026-10-19)
+
+Estas regras valem quando a importação começar. Nenhuma está em execução.
+
+**Tópicos excluídos que ficam** (decisões do responsável, 2026-10-19):
+- Tema político e social (legalização, marcha, lei, decisões, notícias de política de drogas): mantidos (1.393 tópicos).
+- Casos de uma pessoa específica (preso, cerco, denúncia): mantidos (555 tópicos). Esses tópicos descrevem pessoas
+  identificáveis em processos criminais. Os autores não entram como perfis (ver regra de usuários).
+- Vida interna do fórum (usuário do mês, rifas, eventos): excluídos por padrão (616 tópicos). Não há decisão sobre eles.
+- Outros termos (4.739 tópicos): seleção manual por caixa, em `scratchpad/selecao_outros.html` (sessão de trabalho, fora do
+  Git). Até a seleção, ficam excluídos.
+
+**Conteúdo comercial fora da restauração** (decisão do responsável, 2026-10-19; `scripts/growroom/marcar_comercial.py`):
+- Tópicos de anúncio de loja e vendedor são marcados pelo título: marca "[Growshop]" e verbos de anúncio ("vendo",
+  "vende-se"). Resultado: **641 tópicos** em `comercial-marcados.jsonl`, de 37 títulos distintos, quase todos anúncios de
+  lojas de sementes. Saem da importação.
+- 17 tópicos com termos que também aparecem em notícias ("a venda", "propaganda", "loja") ficam para revisão humana.
+- Limite: a regra só vê o título. Anúncio sem marca nem verbo de venda no título não é detectado. Tentativa pelo texto da
+  página foi descartada: menus e blocos do template aparecem em todas as páginas e marcaram notícias e debates.
+- Nada é apagado do acervo arquivado. A exclusão vale só para a importação.
+- Links e imagens de anúncio de terceiros continuam descartados pelo `mapear_links.py` (anúncios `openx`). Anúncios de
+  lojas dentro das fotos não foram identificados.
+
+**Links para growroom.net** (decisão do responsável, 2026-10-19: link quebrado vai para o modal de conteúdo legado).
+Script versionado: `scripts/growroom/mapear_links.py`. Resultado da última execução, sobre 8.801.010 ocorrências
+em 738.125 alvos distintos:
+
+| Destino | Alvos | Regra |
+| --- | --- | --- |
+| Link interno | 64.750 | página ou recurso com captura válida no acervo: vira link para o conteúdo importado |
+| Imagem do acervo | 7.805 | foto de conteúdo (`uploads/`, galeria) com arquivo válido: entra pelo `aculta_image` |
+| Imagem padrão | 73.717 | foto de conteúdo sem arquivo: usa a imagem padrão "Que pena não conseguimos restaurar essa imagem do antigo growroom" (`scripts/growroom/gerar_imagem_padrao.py`) |
+| Modal de conteúdo legado | 591.305 | link quebrado de página: `data-legado-growroom` abre o modal, em vez de navegar |
+| Descartado | 548 | anúncios de terceiros (`openx`) e recursos do tema antigo (CSS, JS, ícones), que não são conteúdo |
+
+Correção de 2026-10-19: a versão anterior classificava as fotos de `uploads/` e galeria como recursos do tema e as
+descartava (81.522 alvos). Agora são tratadas como conteúdo. Para as fotos sem arquivo, a imagem padrão é usada no lugar
+do modal. As 506.908 ocorrências de foto sem arquivo estão nas páginas de tópico e galeria.
+
+- Dos 591.305 alvos que vão para o modal, 305.967 são links de navegação com token de sessão (`s=`, `do=`, `act=`), que
+  não são conteúdo. Eles também vão para o modal, sem mapeamento individual.
+- Os 92 mil alvos de tópico com variação de página (`showtopic&st=`, `&pid=`) podem ser resolvidos para o tópico importado
+  pelo ID antes de cair no modal. Isso ainda precisa ser implementado no plano.
+- **Teste contra o site vivo: inconclusivo.** Deste servidor, `growroom.net` não resolve por DNS, e o teste retornou
+  erro de rede em todas as 80 amostras. Não é possível afirmar se o site está fora do ar. O teste precisa ser repetido
+  de outra rede.
+- O modal exige alteração no tema ACULTA420, que depende de autorização explícita (AGENTS.md). O texto da história do
+  Growroom também precisa de aprovação do responsável antes de ir ao ar.
+
+## Checklist de prontidão (verificado em 2026-10-19)
+
+Verificação somente leitura: `scripts/growroom/verificar_importacao.py` (resultado em `restauro/verificacao-importacao.json`).
+A verificação completa relê os 8 GB e confere o SHA-256 de cada arquivo.
+
+| Checagem | Resultado |
+| --- | --- |
+| C1 Manifestos: último registro válido aponta para arquivo com SHA-256 igual | OK: 67.315 registros, 0 ausentes, 0 divergentes |
+| C2 Duplicatas: caminhos existem e têm o mesmo conteúdo | OK: 2.151 grupos |
+| C3 Truncados: continuam com 1 MiB e sem marcador final | OK: 228 arquivos |
+| C4 Comerciais: marcados existem entre os tópicos | OK: 658 marcados (641 fora + 17 para revisar) |
+| C5 Links: destinos somam o total; fotos de conteúdo nunca descartadas | OK: 738.125 alvos |
+| C6 Perfis permitidos existem no CDX com captura 200 | OK: 2.173 URLs |
+| C7 Mapeamento salvo bate com o `build_mapping.py` atual | OK: 36.077 tópicos, mesmos fóruns |
+| C8 Nenhum e-mail nos arquivos de mapeamento | OK (após omitir 10 nomes com forma de e-mail do mapa) |
+
+**Bloqueios antes da importação** (decisões que cabem ao responsável; nada disso foi decidido por mim):
+
+1. **Remodelagem do fórum na PR #297**: a importação aguarda essa etapa.
+2. **Seleção dos 4.739 tópicos de "outros termos": recebida** (2026-10-19). 133 tópicos marcados pelo responsável,
+   guardados em `restauro/selecao-manual.json`. 132 estão no acervo e entram no conjunto, mesmo quando o fórum é excluído.
+   O 133º (tópico 44876) foi removido pela regra comercial por causa da palavra "growshop" no título, mas é notícia sobre
+   uma ação policial. A escolha explícita prevalece, e a regra comercial tem esse falso positivo registrado.
+   Os demais tópicos de "outros termos" não marcados continuam excluídos.
+3. **Revisão dos 17 tópicos marcados como "revisar"** (termos de notícia que também aparecem em anúncios).
+4. **Vida interna do fórum (616 tópicos)**: excluídos por padrão, sem decisão.
+5. **Perfis: só quem tem conteúdo no fórum importado** (decisão do responsável, 2026-10-19). A lista de perfis sai do
+   conjunto de importação (`conjunto-importacao.json`): autores com pelo menos um post em tópico que entra. Autores
+   que só aparecem em tópicos comerciais ou em tópicos excluídos não entram. Resultado: 3.924 URLs de perfil.
+   Consequência: os autores dos 555 tópicos de caso individual têm conteúdo mantido, então entram pela mesma regra.
+   Se isso não for o desejado, é preciso dizer.
+6. **Download dos perfis: concluído** (2026-10-19). 3.941 perfis permitidos; 3.940 com captura. Uma lacuna: perfil
+   `v_profile.php?userid=5289` (sem resposta após as retentativas), a ser registrada como não recuperada.
+7. **Três nomes ambíguos** (`Delta-9-thc`, `Pcgrow`, `Prof. Pardal`): sem decisão de qual perfil vale.
+8. **228 fotos truncadas: não recuperadas** (decisão do responsável, 2026-10-19). Entram com a imagem padrão, no lugar do
+   arquivo cortado. Também se aplica aos 298 links de download dessas fotos.
+9. **Modal de conteúdo legado**: depende de autorização para alterar o tema ACULTA420 e da aprovação do texto da história.
+10. **Teste dos links contra o site vivo: fechado.** `growroom.net` não existe mais (informado pelo responsável em
+    2026-10-19). Os links quebrados seguem para o modal, e a verificação ao vivo deixa de ser pendência.
+11. **Ingestão das 7.805 fotos e da imagem padrão** pelo `aculta_image`, com conversão para WebP na importação.
+12. **Resolução dos 92 mil links `showtopic&st=` / `&pid=`** para o tópico importado pelo ID: ainda não implementada.
+
 ## Bloqueio atual
+
+**Importação adiada (decisão do responsável, 2026-10-19):** a importação do Growroom não começa até a remodelagem do
+fórum na PR #297 (`docs/aculta-forum-0.1.0-dev.1`). Ajustes desta etapa seguem como commits nessa branch, sem nova
+PR ou branch. Nenhum conteúdo, usuário ou imagem é importado antes disso.
 
 A F3 (migração piloto) depende da lista de autores aprovada. A F6 (reconstrução em lotes) depende da F3.
 Estado das condições:

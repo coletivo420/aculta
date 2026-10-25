@@ -13,22 +13,31 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * The chat rules: kinds, the administrator's limits, and the defaults when no value is saved.
+ * Tests the private conversation rules and administrator limits.
  */
 #[CoversClass(ConversationPolicy::class)]
 #[Group('aculta_messenger')]
 final class ConversationPolicyTest extends UnitTestCase {
 
+  /**
+   * Creates the conversation policy with test settings.
+   */
   private function policy(array $settings = []): ConversationPolicy {
     return new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => $settings]));
   }
 
+  /**
+   * Tests the kind follows the member count behavior.
+   */
   public function testKindFollowsTheMemberCount(): void {
     $policy = $this->policy();
     $this->assertSame(ConversationPolicy::KIND_DIRECT, $policy->kindOf($this->thread(2)));
     $this->assertSame(ConversationPolicy::KIND_GROUP, $policy->kindOf($this->thread(3)));
   }
 
+  /**
+   * Tests the defaults when nothing is saved behavior.
+   */
   public function testDefaultsWhenNothingIsSaved(): void {
     $policy = $this->policy();
     $account = $this->createMock(AccountInterface::class);
@@ -41,6 +50,9 @@ final class ConversationPolicyTest extends UnitTestCase {
     $this->assertTrue($policy->groupCreationEnabled());
   }
 
+  /**
+   * Tests the the administrators values are used behavior.
+   */
   public function testTheAdministratorsValuesAreUsed(): void {
     $policy = $this->policy([
       'group_max_members' => 25,
@@ -55,26 +67,71 @@ final class ConversationPolicyTest extends UnitTestCase {
     $this->assertSame(30, $policy->sendLimitPerHour());
   }
 
+  /**
+   * Tests the group creation off leaves only one recipient behavior.
+   */
   public function testGroupCreationOffLeavesOnlyOneRecipient(): void {
-    $policy = $this->policy(['group_creation_enabled' => FALSE, 'group_max_members' => 10]);
+    $policy = $this->policy([
+      'group_creation_enabled' => FALSE,
+      'group_max_members' => 10,
+    ]);
     $account = $this->createMock(AccountInterface::class);
     $this->assertSame(1, $policy->maxRecipients(ConversationPolicy::KIND_GROUP, $account));
   }
 
-  public function testCourseChatIsPersistent(): void {
+  /**
+   * Tests the retention policy applies to private conversations behavior.
+   */
+  public function testRetentionPolicyAppliesToPrivateConversations(): void {
     $policy = $this->policy();
-    $this->assertNull($policy->retentionMonths(ConversationPolicy::KIND_COURSE));
-    $this->assertSame(6, $policy->retentionMonths(ConversationPolicy::KIND_DIRECT));
+    $this->assertSame(6, $policy->retentionMonths());
   }
 
+  /**
+   * Tests the values outside the limits are clamped behavior.
+   */
   public function testValuesOutsideTheLimitsAreClamped(): void {
-    $policy = $this->policy(['group_max_members' => 999, 'retention_months' => 0, 'cleanup_batch' => 0, 'send_limit_per_hour' => 99999]);
+    $policy = $this->policy([
+      'group_max_members' => 999,
+      'retention_months' => 0,
+      'cleanup_batch' => 0,
+      'send_limit_per_hour' => 99999,
+    ]);
     $this->assertSame(50, $policy->groupMaxMembers());
     $this->assertSame(1, $policy->retentionMonths());
     $this->assertSame(1, $policy->cleanupBatch());
     $this->assertSame(1000, $policy->sendLimitPerHour());
   }
 
+  /**
+   * A recipient must be active and have both permissions used by the inbox.
+   */
+  public function testRecipientMustBeEligibleForPrivateMessaging(): void {
+    $policy = $this->policy();
+    $state = (object) [
+      'active' => TRUE,
+      'permissions' => ['use private messaging system', 'access user profiles'],
+    ];
+    $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('isActive')->willReturnCallback(static fn(): bool => $state->active);
+    $recipient->method('hasPermission')->willReturnCallback(static fn(string $permission): bool => in_array($permission, $state->permissions, TRUE));
+
+    self::assertTrue($policy->canReceiveMessages($recipient));
+
+    $state->permissions = ['use private messaging system'];
+    self::assertFalse($policy->canReceiveMessages($recipient));
+
+    $state->permissions = ['access user profiles'];
+    self::assertFalse($policy->canReceiveMessages($recipient));
+
+    $state->active = FALSE;
+    $state->permissions = ['use private messaging system', 'access user profiles'];
+    self::assertFalse($policy->canReceiveMessages($recipient));
+  }
+
+  /**
+   * Creates a thread fixture with the requested member count.
+   */
   private function thread(int $members): PrivateMessageThreadInterface {
     $users = [];
     for ($i = 1; $i <= $members; $i++) {

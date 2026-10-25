@@ -1,0 +1,10 @@
+# Origem da expedição (loja, depósito ou local autorizado). Vazia por padrão: as operações bloqueiam até ser preenchida.
+# Mesma estrutura do endereço ACULTA (Drupal Address + StreetNumberField). Editável na administração (fase Green Stash).
+origin:
+  country_code: BR
+  postal_code: ''
+  address_line1: ''
+  address_line2: ''
+  dependent_locality: ''
+  locality: ''
+  administrative_area: ''

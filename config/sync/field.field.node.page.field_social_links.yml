@@ -1,4 +1,4 @@
-uuid: 9e5b8c55-ef34-4f90-b0af-124d6c0cb9b0
+uuid: d3c86dd6-515b-4cae-9a9c-a3b3bdf42ce8
 langcode: pt-br
 status: true
 dependencies:
@@ -15,7 +15,7 @@ label: 'Links oficiais das redes sociais'
 description: 'Adicione cada canal oficial com o nome que será exibido e sua URL completa. Não cadastre perfis sem confirmação institucional.'
 required: false
 translatable: true
-default_value: {  }
+default_value: {}
 default_value_callback: ''
 settings:
   title: 1

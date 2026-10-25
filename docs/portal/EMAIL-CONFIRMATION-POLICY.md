@@ -52,19 +52,14 @@ Esta política não restringe leitura pública da wiki nem páginas instituciona
 2. **Confirmação de cadastro:** confirmar também via link do `email_confirmer` (recomendado), mantendo a verificação
    do Core desligada.
 3. **Escopo:** além de cursos e edição da wiki, há outras ações a bloquear (por exemplo, apoio, comentários)?
-4. **Expiração do link de cadastro:** usar o mesmo `hash_expiration` (24 h) da troca de e-mail, ou outro prazo?
+4. **Expiração do link de cadastro:** resolvida: 24 horas, como os demais links de uso único (ver §6.1).
 
-## 6.1 Validade do link (decisão do responsável)
+## 6.1 Validade do link (decisão do responsável, revista em 2026-10-20)
 
-- O link de confirmação **não expira** (`EmailConfirmationEntity::isExpired()` devolve falso; classe trocada no Portal).
-- A segurança depende do hash de 43 caracteres de uso único, do cancelamento dos pedidos anteriores depois que um
-  novo envio é aceito e do reenvio por formulário POST com proteção CSRF (`aculta_portal.email_resend`). A configuração
-  `hash_expiration` deixa de valer.
-- A implementação de `isExpired()` é global: também afeta o realm `email_confirmer_user`, usado na troca de endereço.
-  Portanto, links de troca de e-mail também não expiram; se um link ou a caixa postal for comprometido, ele poderá
-  confirmar o novo endereço enquanto o token permanecer ativo. Esta fase preserva a política existente e não altera
-  sua validade.
-- Antes desta decisão, a premissa era de 24 horas (ver CHANGELOG do Portal 0.2.0-dev.16).
+- O link de confirmação (cadastro e troca de endereço) **vale 24 horas**, por `SingleUseLinkPolicy`
+  (`AcultaMailConfirmerManager::isExpired()`, com `hash_expiration` = 86400 e a mesma fronteira da política). A validade infinita anterior foi revogada.
+- Um pedido novo substitui o anterior, com novo hash, e cancela o conteúdo guardado do pedido antigo.
+- Regra completa, inventário e gate: [LINKS-DE-USO-UNICO.md](LINKS-DE-USO-UNICO.md).
 
 ## 6.2 Decisões já tomadas
 
@@ -93,7 +88,7 @@ Decisão do responsável (2026-10-09): a resposta do cadastro não revela se o e
 ## 9. Troca de e-mail (decisão 2, 2026-10-12)
 
 **Decisão do responsável:** a troca de e-mail dispara uma nova confirmação do novo endereço, e o papel
-`email_confirmed` permanece na conta. A troca só existe no formulário de Minha Conta (`change_mail_page`); a edição
+`email_confirmed` permanece na conta. A troca só existe no formulário de Minha Conta (`aculta_user`, `ChangemailForm`, aba E-mail da Segurança); a edição
 de conta do Core não oferece o campo de e-mail (`EmailChangeHooks`).
 
 **Como funciona hoje (código e configuração verificados):**
@@ -145,6 +140,12 @@ Notas:
 ## 10. Aplicação no Fórum (2026-10-16)
 
 Decisão registrada como F-D13 em `web/modules/custom/aculta_portal/modules/aculta_forum/docs/DECISOES.md`.
+
+Na reconstrução `aculta_forum`, a política atual de confirmação de e-mail para
+criação/edição/resposta/denúncia deve ser mantida nos providers correspondentes
+de tópicos e Comment. As referências abaixo a `create forum content` e
+`comment_forum` descrevem o código atual; não são nomes definitivos de permissão
+do novo motor. Revisar a tabela de permissões antes da fase dev.4.
 
 | Ação no Fórum | Papel mínimo | Situação |
 |---|---|---|

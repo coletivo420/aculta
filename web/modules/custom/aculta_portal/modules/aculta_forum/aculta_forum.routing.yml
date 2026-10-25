@@ -1,0 +1,171 @@
+aculta_forum.admin:
+  path: '/painel-administrativo/forum'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::overview'
+    _title: 'Painel Growroom420'
+  requirements:
+    _permission: 'access content overview'
+
+aculta_forum.topic_add:
+  path: '/criar-topico'
+  defaults:
+    _entity_form: 'node.default'
+    _title: 'Criar tópico'
+    entity_type_id: node
+    node_type: aculta_forum_topic
+    bundle_parameter: node_type
+  requirements:
+    _entity_create_access: 'node:{node_type}'
+  options:
+    parameters:
+      node_type:
+        type: 'entity:node_type'
+        with_config_overrides: true
+
+aculta_forum.mark_all_read:
+  path: '/discussoes/marcar-tudo-como-lido'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumMarkAllReadForm'
+    _title: 'Marcar discussões como lidas'
+  requirements:
+    _custom_access: 'aculta_forum.read_access:access'
+
+aculta_forum.topic_move:
+  path: '/painel-administrativo/forum/{node}/mover-categoria'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumTopicMoveForm'
+    _title: 'Mover tópico de categoria'
+  requirements:
+    _permission: 'move aculta forum topics'
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+  methods: [GET, HEAD, POST]
+
+aculta_forum.comment_move:
+  path: '/painel-administrativo/forum/comentarios/{comment}/mover'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumCommentMoveForm'
+    _title: 'Mover comentário do fórum'
+  requirements:
+    _permission: 'move aculta forum comments'
+  options:
+    parameters:
+      comment:
+        type: 'entity:comment'
+  methods: [GET, HEAD, POST]
+
+aculta_forum.settings:
+  path: '/painel-administrativo/forum/configuracoes'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumSettingsForm'
+    _title: 'Configurações do Fórum'
+  requirements:
+    _permission: 'administer aculta forum settings'
+  methods: [GET, HEAD, POST]
+
+aculta_forum.attachment_dialog:
+  path: '/forum/anexos/adicionar/{filter_format}'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumAttachmentUploadDialogForm'
+    _title: 'Adicionar anexo à discussão'
+  requirements:
+    _permission: 'post comments'
+    _custom_access: 'aculta_forum.attachment_upload_access:access'
+  options:
+    parameters:
+      filter_format:
+        type: 'entity:filter_format'
+  methods: [GET, HEAD, POST]
+
+aculta_forum.gallery_dialog:
+  path: '/forum/galerias/adicionar/{filter_format}'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumGalleryUploadDialogForm'
+    _title: 'Criar galeria de imagens'
+  requirements:
+    _permission: 'post comments'
+    _custom_access: 'aculta_forum.attachment_upload_access:access'
+  options:
+    parameters:
+      filter_format:
+        type: 'entity:filter_format'
+  methods: [GET, HEAD, POST]
+
+aculta_forum.post_moderation_queue:
+  path: '/painel-administrativo/forum/publicacoes-revisionaveis'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\ForumPostModerationQueueController::queue'
+    _title: 'Publicações aguardando moderação'
+  requirements:
+    _permission: 'administer aculta forum posts'
+    _custom_access: 'aculta_forum.post_moderation_access:queueAccess'
+  options:
+    _admin_route: TRUE
+  methods: [GET, HEAD]
+
+aculta_forum.post_moderate:
+  path: '/painel-administrativo/forum/publicacao/revisao/{revision_id}'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\ForumPostModerationFormController::form'
+    _title: 'Revisar publicação do Fórum'
+  requirements:
+    _permission: 'administer aculta forum posts'
+    _custom_access: 'aculta_forum.post_moderation_access:reviewRevision'
+    revision_id: '\d+'
+  options:
+    _admin_route: TRUE
+  methods: [GET, HEAD, POST]
+
+aculta_forum.post_revision_history:
+  path: '/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisoes'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\ForumPostRevisionHistoryController::history'
+    _title: 'Histórico de revisões da publicação'
+  requirements:
+    _permission: 'administer aculta forum posts'
+    _custom_access: 'aculta_forum.post_moderation_access:revisionHistory'
+    aculta_forum_post: '\d+'
+  options:
+    _admin_route: TRUE
+    parameters:
+      aculta_forum_post:
+        type: 'entity:aculta_forum_post'
+  methods: [GET, HEAD]
+
+aculta_forum.post_revision_compare:
+  path: '/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisoes/comparar/{left_revision}/{right_revision}'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\ForumPostRevisionComparisonController::compare'
+    _title: 'Comparar revisões da publicação'
+  requirements:
+    _permission: 'administer aculta forum posts'
+    _custom_access: 'aculta_forum.post_moderation_access:compareRevisions'
+    aculta_forum_post: '\d+'
+    left_revision: '\d+'
+    right_revision: '\d+'
+  options:
+    _admin_route: TRUE
+    parameters:
+      aculta_forum_post:
+        type: 'entity:aculta_forum_post'
+  methods: [GET, HEAD]
+
+aculta_forum.post_create:
+  path: '/publicacao/nova'
+  defaults:
+    _controller: 'aculta_forum.post_submission_controller:form'
+    _title: 'Responder à discussão'
+  requirements:
+    _custom_access: 'aculta_forum.post_submission_access:access'
+  methods: [GET, HEAD, POST]
+
+aculta_forum.post_edit:
+  path: '/publicacao/editar'
+  defaults:
+    _controller: 'aculta_forum.post_edit_controller:edit'
+    _title: 'Editar publicação'
+  requirements:
+    _custom_access: 'aculta_forum.post_public_edit_access:access'
+  methods: [GET, HEAD, POST]

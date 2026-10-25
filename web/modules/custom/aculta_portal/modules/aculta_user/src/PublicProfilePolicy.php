@@ -9,7 +9,7 @@ namespace Drupal\aculta_user;
  *
  * Regras do responsável (2026-10-13, plano docs/portal/ACULTA-USER-PLAN.md, seção B2):
  * - o apelido é público por padrão; o perfil inteiro pode ser tornado privado;
- * - foto, bio, e-mail e redes sociais só aparecem se a própria pessoa escolher exibi-los;
+ * - em perfil público, foto, bio, e-mail e redes sociais só aparecem se a própria pessoa escolher exibi-los;
  * - cidade, UF, nome completo, WhatsApp, endereço, CPF e RG nunca são públicos;
  * - badges entram na fase U4 e ainda não têm dado nem campo.
  *
@@ -62,9 +62,9 @@ final class PublicProfilePolicy {
       return ['apelido' => TRUE, 'foto' => TRUE];
     }
 
-    // A foto sempre aparece no perfil público; bio, e-mail e redes dependem da escolha da pessoa.
-    $items = ['apelido' => TRUE, 'foto' => TRUE];
-    foreach (['bio' => 'exibir_bio', 'email' => 'exibir_email', 'redes' => 'exibir_redes'] as $item => $flag) {
+    // Foto, bio, e-mail e redes seguem opt-in no perfil público.
+    $items = ['apelido' => TRUE];
+    foreach (['foto' => 'exibir_foto', 'bio' => 'exibir_bio', 'email' => 'exibir_email', 'redes' => 'exibir_redes'] as $item => $flag) {
       if (!empty($perfil[$flag])) {
         $items[$item] = TRUE;
       }

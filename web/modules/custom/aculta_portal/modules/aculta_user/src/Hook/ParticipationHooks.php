@@ -14,8 +14,9 @@ use Drupal\comment\CommentInterface;
 /**
  * Moderação do primeiro comentário e limite para criar tópico (seções E6 e E7).
  *
- * Regra única, derivada de contagens: enquanto a conta não tem comentário publicado no Fórum, cada comentário novo
- * vai para a fila. Quando o primeiro é aprovado, os seguintes são publicados na hora.
+ * Regra derivada de contagens: até haver comentário publicado, os comentários
+ * novos vão para a fila. Após a primeira aprovação, os seguintes são
+ * publicados.
  */
 final class ParticipationHooks {
 
@@ -29,15 +30,18 @@ final class ParticipationHooks {
    */
   #[Hook('comment_presave')]
   public function commentPresave(CommentInterface $comment): void {
-    if ($comment->bundle() !== ParticipationRules::COMMENT_TYPE || !$comment->isNew()) {
+    if (!$comment->isNew()) {
       return;
     }
-    $settings = $this->rules->settings();
-    if (!$settings['primeiro_comentario_moderado'] || $comment->getOwner() === NULL) {
+    $isDiscussionComment = $this->rules->isNonLmsDiscussionComment($comment);
+    if (!$isDiscussionComment) {
+      return;
+    }
+    if ($comment->getOwner() === NULL) {
       return;
     }
     $owner = $comment->getOwner();
-    if ($this->rules->isExempt($owner) || $this->rules->publishedCount((int) $owner->id()) > 0) {
+    if (!$this->rules->requiresFirstDiscussionModeration($owner)) {
       return;
     }
     $comment->setUnpublished();
@@ -46,12 +50,17 @@ final class ParticipationHooks {
   /**
    * Implements hook_entity_create_access().
    *
-   * Tópico de Fórum exige comentários publicados (limite configurável). Bloqueia a criação enquanto o primeiro
-   * comentário aguarda aprovação, se a regra de bloqueio estiver ligada.
+   * Tópico de Fórum exige comentários publicados (limite configurável).
+   * Também bloqueia a criação enquanto há comentário não LMS pendente, se
+   * essa regra estiver ligada.
    */
   #[Hook('entity_create_access')]
   public function entityCreateAccess(AccountInterface $account, array $context, ?string $entity_bundle): ?AccessResult {
-    if (($context['entity_type_id'] ?? NULL) !== 'node' || $entity_bundle !== ParticipationRules::TOPIC_TYPE) {
+    $isPublicDiscussionTopic = $entity_bundle === 'aculta_forum_topic';
+    if (($context['entity_type_id'] ?? NULL) !== 'node') {
+      return NULL;
+    }
+    if (!$isPublicDiscussionTopic) {
       return NULL;
     }
     if ($this->rules->isExempt($account)) {
@@ -59,19 +68,35 @@ final class ParticipationHooks {
     }
     $settings = $this->rules->settings();
     $uid = (int) $account->id();
-    $result = AccessResult::neutral()->addCacheContexts(['user'])->addCacheTags(['comment_list']);
+    $result = AccessResult::neutral()
+      ->addCacheContexts(['user', 'user.roles'])
+      ->addCacheTags(['comment_list', ...$this->rules->settingsCacheTags()]);
 
-    if ($settings['bloqueio_ate_aprovacao'] && $this->rules->firstCommentPending($uid)) {
-      return AccessResult::forbidden('Seu primeiro comentário aguarda moderação.')->addCacheContexts(['user'])->addCacheTags(['comment_list']);
+    $firstCommentPending = $this->rules->firstDiscussionCommentPending($uid);
+    if ($settings['bloqueio_ate_aprovacao'] && $firstCommentPending) {
+      return $this->forbidden(
+        'Seu primeiro comentário aguarda moderação.',
+      );
     }
     if ($settings['topico_limite_ativo']) {
-      $published = $this->rules->publishedCount($uid);
+      $published = $this->rules->publishedPublicForumCommentCount($uid);
       $minimum = (int) $settings['topico_comentarios_minimos'];
       if ($published < $minimum) {
-        return AccessResult::forbidden('Você pode criar tópicos a partir de ' . $minimum . ' comentários publicados. Você tem ' . $published . '.')->addCacheContexts(['user'])->addCacheTags(['comment_list']);
+        return $this->forbidden(
+          'Você pode criar tópicos a partir de ' . $minimum . ' comentários publicados. Você tem ' . $published . '.',
+        );
       }
     }
     return $result;
+  }
+
+  /**
+   * Creates a user-specific denial invalidated by comment and settings changes.
+   */
+  private function forbidden(string $reason): AccessResult {
+    return AccessResult::forbidden($reason)
+      ->addCacheContexts(['user', 'user.roles'])
+      ->addCacheTags(['comment_list', ...$this->rules->settingsCacheTags()]);
   }
 
 }

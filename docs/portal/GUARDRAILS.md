@@ -47,14 +47,24 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 
 ## Fórum (`forum`)
 
-- Não criar entidade Topic, Reply, tabela de fórum ou tabela de comentários. Usar Forum,
-  Node e Comment nativos.
-- Não criar `ForumController` só para reconstruir a listagem nativa. Mapear rotas nativas antes
-  de escrever subscriber.
+- O ACULTA Forum novo é a implementação vigente: tópicos públicos independentes são Nodes;
+  categorias usam Taxonomy e navegação/listagem usa Views. Posts públicos revisionáveis
+  coexistem com Comments durante a migração aprovada; Comments contextuais de Publicações,
+  LMS e Wiki permanecem sob seus contratos. Não criar storage paralelo de tópico/categoria.
+- `drupal/forum` foi retirado do Composer e do Runtime de teste na limpeza aprovada. Conteúdo e
+  configuração legados foram inventariados/limpos conforme
+  `aculta_forum/docs/MIGRATION-REMOVAL.md`; não reintroduzir o contrib nem presumir presença
+  de dados antigos. Operações em Runtime continuam sujeitas ao preflight e à política de
+  recuperação deste AGENTS.md.
+- Publicações, LMS e Wiki discutem na própria entidade/contexto autorizado; não criar tópico
+  público automático para publicação, atividade, turma ou verbete. O provider LMS é opcional e
+  revalida Group/membership; a Wiki aguarda sua reimplementação.
+- Reutilizar Node, Taxonomy, Views, Comment e demais APIs Core/contrib quando seus contratos
+  se aplicarem; extensões do Portal devem seguir o roadmap atual do `aculta_forum`.
 - Acesso direto a um tópico em host incorreto é bloqueado pela política multidomínio.
 - Acompanhar tópico e favoritos usam Flag, não storage custom.
-- Moderação reutiliza permissões, Comment, Node, Views e ferramentas administrativas. O Portal
-  Admin pode ser hub de acesso e resumo, mas não um segundo CRUD de moderação.
+- Moderação reutiliza permissões, Comment/ForumPost, Node, Views e ferramentas administrativas.
+  O Portal Admin pode ser hub de acesso e resumo, mas não um segundo CRUD de moderação.
 - Conta agrega participação sem duplicar comentários.
 
 ## Revista (`magazine`)
@@ -232,16 +242,16 @@ Decisão do responsável (2026-10-14). Vale para toda criação e moderação de
 
 Motivo: poucos papéis na criação de conteúdo. Um papel por função evita combinações de permissões difíceis de auditar.
 
-## Modelo visual: Notícia e Editorial são iguais
+## Modelo editorial único da Revista
 
-Regra do responsável (2026-10-14). Vale para toda alteração de exibição dos conteúdos publicados.
+Decisão do responsável (2026-10-21). Vale para toda alteração de exibição das publicações.
 
-- **Notícia (`article`) e Editorial (`blog`) têm o mesmo modelo visual.** As visualizações padrão, teaser e completa têm os mesmos campos, a mesma ordem e as mesmas configurações de exibição.
-- Mudança visual em um dos dois tipos vale para o outro na mesma entrega. Não criar exceção de layout por tipo.
-- **Única diferença permitida de formulário:** o Editorial passa pelo fluxo de moderação (estado de moderação), que é funcional. Não há outra diferença registrada.
-- Gate: `php scripts/validate-content-visual-parity.php` (deve ser PASS em toda mudança de exibição de Notícia ou Editorial).
+- A Revista usa somente o bundle Node `revista`; `article` e `blog` foram aposentados.
+- Formatos como notícia, blog/opinião, entrevista e reportagem são classificações editoriais, não tipos de conteúdo.
+- Formulário e visualizações padrão, teaser e completa pertencem ao bundle `revista` e seguem os campos do Config Sync.
+- Gate: `php scripts/validate-content-visual-parity.php` verifica o bundle canônico e seus displays/formulário em toda mudança editorial.
 
-Motivo: o leitor percebe a mesma página com dois layouts diferentes quando os tipos divergem, e a manutenção dobra.
+Motivo: um bundle mantém criação, workflow, SEO, comentários e apresentação sob a mesma fonte de verdade.
 
 ## Papéis e hierarquia
 

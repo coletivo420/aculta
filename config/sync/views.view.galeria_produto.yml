@@ -30,10 +30,10 @@ display:
           items_per_page: 0
       access:
         type: none
-        options: {}
+        options: {  }
       cache:
         type: tag
-        options: {}
+        options: {  }
       sorts:
         mid:
           id: mid
@@ -73,7 +73,7 @@ display:
           group: 1
           expose:
             operator_limit_selection: false
-            operator_list: {}
+            operator_list: {  }
         bundle:
           id: bundle
           table: media_field_data
@@ -87,14 +87,13 @@ display:
         type: views_vvjs
         options:
           grouping: {  }
-          hero_slideshow: false
-          enable_css: true
-          arrows: arrows-sides
           time_in_seconds: 0
           navigation: none
           animation: none
-          transition_type: crossfade-classic
-          transition_duration: 400
+          arrows: arrows-sides
+          hero_slideshow: false
+          available_breakpoints: '768'
+          enable_css: true
           show_total_slides: false
           show_slide_progress: false
           show_play_pause: false
@@ -103,7 +102,8 @@ display:
           enable_keyboard: true
           enable_looping: false
           start_index: 1
-          available_breakpoints: '768'
+          transition_type: crossfade-classic
+          transition_duration: 400
           scrollable_dots_width: 0
       row:
         type: 'entity:media'
@@ -111,5 +111,5 @@ display:
           view_mode: produto_galeria
       query:
         type: views_query
-        options: {}
+        options: {  }
       css_class: aculta-galeria-produto

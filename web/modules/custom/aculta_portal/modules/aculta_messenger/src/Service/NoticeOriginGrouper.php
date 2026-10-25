@@ -1,0 +1,178 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_messenger\Service;
+
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Template\Attribute;
+
+/**
+ * Groups the central notice list by origin and the latest notice in each group.
+ */
+final class NoticeOriginGrouper {
+
+  /**
+   * Human-readable labels in the stable order used by the central filters.
+   *
+   * @var array<string, string>
+   */
+  private const LABELS = [
+    'comunicado' => 'Comunicados',
+    'forum' => 'Fórum',
+    'alerta' => 'Alertas do site',
+    'amizade' => 'Amizades',
+    'aprendizagem' => 'Aprendizagem',
+    'wiki' => 'Wiki',
+    'revista' => 'Revista',
+    'loja' => 'Loja',
+    'doacao' => 'Doações',
+    'conquistas' => 'Conquistas',
+    'conta' => 'Conta',
+    'outros' => 'Outros avisos',
+  ];
+
+  /**
+   * Returns the translated filter labels for every supported notice origin.
+   *
+   * @return array<string, \Drupal\Core\StringTranslation\TranslatableMarkup>
+   *   Labels keyed by the stable origin ID.
+   */
+  public static function originOptions(): array {
+    $options = [];
+    foreach (NoticeListFilter::ORIGINS as $origin) {
+      $options[$origin] = self::label($origin);
+    }
+    return $options;
+  }
+
+  /**
+   * Groups notice rows into labeled sections with separators between origins.
+   *
+   * Recency timestamps determine item and origin section order, newest first.
+   * Rows from older integrations without timestamp metadata retain stable
+   * order after timestamped rows.
+   *
+   * @param array $items
+   *   Notice render arrays with optional `data-aculta-notice-origin` metadata.
+   *
+   * @return array
+   *   Renderable origin sections, with each source's related notices grouped
+   *   inside its own section.
+   */
+  public static function group(array $items): array {
+    $groups = [];
+    foreach ($items as $item) {
+      $attributes = is_array($item) ? ($item['#attributes'] ?? []) : [];
+      $origin = is_array($attributes) ? ($attributes['data-aculta-notice-origin'] ?? NULL) : NULL;
+      if (!is_string($origin) || !isset(self::LABELS[$origin]) || $origin === 'outros') {
+        $origin = 'outros';
+      }
+      $groups[$origin][] = $item;
+    }
+
+    $origins = array_keys($groups);
+    $stableOrder = array_flip(array_keys(self::LABELS));
+    usort($origins, static function (string $a, string $b) use ($groups, $stableOrder): int {
+      $aCreated = self::latestTimestamp($groups[$a]);
+      $bCreated = self::latestTimestamp($groups[$b]);
+      return ($bCreated <=> $aCreated) ?: (($stableOrder[$a] ?? PHP_INT_MAX) <=> ($stableOrder[$b] ?? PHP_INT_MAX));
+    });
+
+    $result = [];
+    foreach ($origins as $origin) {
+      $groups[$origin] = self::sortByRecency($groups[$origin]);
+      $section = [
+        '#type' => 'container',
+        '#attributes' => [
+          'data-portal-ui' => 'notice-origin-section',
+          'data-aculta-notice-origin-section' => $origin,
+        ],
+      ];
+      if ($result !== []) {
+        $section['separator'] = [
+          '#type' => 'html_tag',
+          '#tag' => 'hr',
+          '#attributes' => [
+            'data-portal-ui' => 'notice-origin-separator',
+            'aria-hidden' => 'true',
+          ],
+        ];
+      }
+      $section['heading'] = [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'h3',
+        '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-origin-heading']),
+        '#value' => self::label($origin),
+      ];
+      $section['items'] = [
+        '#theme' => 'item_list',
+        '#items' => NoticeRelatedGrouper::group($groups[$origin]),
+        '#attributes' => ['data-portal-ui' => 'notice-origin-items'],
+      ];
+      $result[] = $section;
+    }
+
+    return $result;
+  }
+
+  /**
+   * Finds the newest timestamp in one section; zero means legacy/unknown.
+   */
+  private static function latestTimestamp(array $items): int {
+    $latest = 0;
+    foreach ($items as $item) {
+      $latest = max($latest, self::recencyTimestamp($item));
+    }
+    return $latest;
+  }
+
+  /**
+   * Sorts newest first and keeps input order for tied timestamps.
+   */
+  private static function sortByRecency(array $items): array {
+    $indexed = [];
+    foreach (array_values($items) as $index => $item) {
+      $indexed[] = [
+        'item' => $item,
+        'created' => self::recencyTimestamp($item),
+        'index' => $index,
+      ];
+    }
+    usort($indexed, static fn(array $a, array $b): int =>
+      ($b['created'] <=> $a['created']) ?: ($a['index'] <=> $b['index']));
+    return array_column($indexed, 'item');
+  }
+
+  /**
+   * Reads recency only from the array metadata shape emitted by adapters.
+   */
+  private static function recencyTimestamp(mixed $item): int {
+    if (!is_array($item) || !is_array($item['#attributes'] ?? NULL)) {
+      return 0;
+    }
+    $created = $item['#attributes']['data-aculta-notice-recency'] ?? 0;
+    return is_numeric($created) ? (int) $created : 0;
+  }
+
+  /**
+   * Creates a translatable label from a fixed origin allowlist.
+   */
+  private static function label(string $origin): TranslatableMarkup {
+    return match ($origin) {
+      'comunicado' => new TranslatableMarkup('Comunicados'),
+      'forum' => new TranslatableMarkup('Fórum'),
+      'alerta' => new TranslatableMarkup('Alertas do site'),
+      'amizade' => new TranslatableMarkup('Amizades'),
+      'aprendizagem' => new TranslatableMarkup('Aprendizagem'),
+      'wiki' => new TranslatableMarkup('Wiki'),
+      'revista' => new TranslatableMarkup('Revista'),
+      'loja' => new TranslatableMarkup('Loja'),
+      'doacao' => new TranslatableMarkup('Doações'),
+      'conquistas' => new TranslatableMarkup('Conquistas'),
+      'conta' => new TranslatableMarkup('Conta'),
+      default => new TranslatableMarkup('Outros avisos'),
+    };
+  }
+
+}

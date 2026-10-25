@@ -1,0 +1,14 @@
+# Aba Estatísticas, dentro da aba ACULTA (decisão de 2026-10-20). O painel fica em
+# /painel-administrativo/aculta/estatisticas. A retenção é subaba do painel.
+aculta_statistics.dashboard:
+  title: Estatísticas
+  description: Métricas agregadas do ACULTA por área, com exportação em CSV.
+  route_name: aculta_statistics.dashboard
+  parent: aculta_portal.admin
+  weight: 12
+aculta_statistics.retention:
+  title: Retenção
+  description: Prazo de retenção por métrica, com confirmação antes de excluir dados.
+  route_name: aculta_statistics.retention
+  parent: aculta_statistics.dashboard
+  weight: 0

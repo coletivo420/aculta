@@ -1,0 +1,7 @@
+name: 'ACULTA Index Magazine access test'
+type: module
+description: 'Provides a focused Kernel harness for the production Magazine Index provider.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:node

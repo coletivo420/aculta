@@ -1,0 +1,45 @@
+.aculta-profile-editor {
+  display: grid;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  min-inline-size: 0;
+  max-inline-size: 76rem;
+  margin-inline: auto;
+  color: var(--aculta-text-primary);
+}
+
+.aculta-profile-editor__intro {
+  max-inline-size: 75ch;
+  color: var(--aculta-text-secondary);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.aculta-profile-editor__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+  align-items: start;
+  min-inline-size: 0;
+}
+
+.aculta-profile-editor__grid > * { min-inline-size: 0; }
+
+.aculta-profile-editor__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.aculta-profile-editor__actions :is(a, button):focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}
+
+@media (min-width: 48rem) {
+  .aculta-profile-editor__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .aculta-profile-editor__identity { grid-column: 1 / -1; }
+}

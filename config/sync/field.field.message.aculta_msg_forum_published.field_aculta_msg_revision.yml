@@ -1,0 +1,28 @@
+uuid: 303ef535-3bac-4d97-ba72-6c84be3caecf
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_msg_revision
+    - message.template.aculta_msg_forum_published
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: 4biEN6najuGsb3VDhnwZ2dTq3FBHDCY72ry-zpbHEEU
+id: message.aculta_msg_forum_published.field_aculta_msg_revision
+field_name: field_aculta_msg_revision
+entity_type: message
+bundle: aculta_msg_forum_published
+label: 'Revisão de origem'
+description: 'Revisão que originou o aviso, usada para deduplicação.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

@@ -1,3 +1,10 @@
+## 0.3.0-dev.1 — módulo oficial de CPF/CNPJ — 2026-10-23
+
+- Decisão de 2026-10-23: `aculta_id_cpf` é a implementação oficial e permanente de identidade fiscal. Machine name, campos, storage, Key IDs, variáveis de ambiente e separador HMAC `aculta_id_cpf:v1` não mudam.
+- Nome do módulo passa a ser ACULTA CPF ID; removido o texto de migração para `aculta_associado_id`; `hidden` removido.
+- `aculta_portal` passa a resolver somente `aculta_id_cpf.account_document` (sem preferência nem fallback ao submódulo associado).
+- Define a política de identidade fiscal compartilhada entre Loja e LMS em `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`. Implementação do checkout pendente.
+
 # Changelog
 
 ## 0.2.0-dev.2 — unicidade por fingerprint e migração do índice — 2026-10-12

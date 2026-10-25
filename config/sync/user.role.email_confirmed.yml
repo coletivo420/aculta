@@ -4,34 +4,53 @@ status: true
 dependencies:
   config:
     - filter.format.usuario_aculta
+    - filter.format.forum
+    - filter.format.wiki
+    - node.type.aculta_forum_topic
+    - node.type.wiki_entry
+    - workflows.workflow.wiki_editorial
+    - workflows.workflow.aculta_forum_post
   module:
+    - aculta_forum
+    - aculta_user
     - captcha
+    - comment
+    - content_moderation
+    - aculta_wiki
+    - filter
+    - flag
+    - node
+    - profile
+    - system
 id: email_confirmed
 label: 'E-mail confirmado'
-weight: 9
+weight: -8
 is_admin: false
 permissions:
   - 'access content'
+  - 'create aculta forum posts'
+  - 'create aculta_forum_topic content'
   - 'create email_confirmed profile'
-  - 'create forum content'
   - 'create wiki_entry content'
-  - 'delete own forum content'
-  - 'edit own forum content'
+  - 'delete own aculta_forum_topic content'
+  - 'edit own aculta_forum_topic content'
   - 'edit own wiki_entry content'
-  - 'flag sinalizar_comentario'
-  - 'flag sinalizar_topico'
   - 'post comments'
+  - 'report aculta forum content'
   - 'skip CAPTCHA'
-  - 'unflag sinalizar_comentario'
-  - 'unflag sinalizar_topico'
+  - 'submit wiki proposals'
   - 'update own email_confirmed profile'
+  - 'use aculta_forum_post transition create_draft'
+  - 'use aculta_forum_post transition edit_published'
+  - 'use aculta_forum_post transition submit_for_review'
+  - 'use text format forum'
   - 'use text format usuario_aculta'
   - 'use text format wiki'
   - 'use wiki_editorial transition create_new_draft'
   - 'use wiki_editorial transition draft_to_review'
   - 'use wiki_editorial transition review_to_draft'
-  - 'view aculta restricted forum email confirmed'
   - 'view latest version'
   - 'view own email_confirmed profile'
+  - 'view own wiki proposals'
   - 'view own unpublished content'
   - 'view wiki_entry revisions'

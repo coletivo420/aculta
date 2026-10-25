@@ -1,0 +1,13 @@
+uuid: 7f5a3398-a2ba-49ff-ab10-d0da1d36ad93
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_product
+_core:
+  default_config_hash: 6gfQWDjHFkJsE2C2ayhUL7x1jBGPgOhr3SGF15Kxy-w
+id: commerce_unpublish_product
+label: 'Despublicar produto'
+type: commerce_product
+plugin: commerce_unpublish_product
+configuration: {  }

@@ -13,7 +13,7 @@ estilo próprio. A marcação que o módulo entrega usa o token neutro `data-por
 
 | Camada | Responsabilidade | Onde |
 |---|---|---|
-| Módulo (dado) | Calcula o número de não lidos de cada pessoa e entrega o valor e o token | ex.: `aculta_messenger` (`AvisoService`, `ForumTopicCounterHooks`) |
+| Módulo (dado) | Calcula o número de não lidos de cada pessoa e entrega o valor e o token | ex.: `aculta_messenger` (`AvisoService`, `MessengerBarHooks`) |
 | Tema (apresentação) | Mapeia o token para `aculta-unread-count` e define a aparência | `src/Hook/PortalUiHooks.php`, `css/components/unread-count.css` |
 | Gatilho (posição) | Posiciona o contador sobre o ícone, quando ele fica sobre um ícone | `components/patterns/*-trigger/*.css` |
 | Script (atualização) | Atualiza o número sem recarregar, pelos atributos `data-aculta-*` | `js/counters.js`, `js/messenger-drawers.js` |
@@ -36,7 +36,7 @@ O módulo nunca emite classe de design (regra da fronteira módulo/tema, `valida
 | Avisos (barra) | Alertas + comunicados + avisos da pessoa (`MessengerBarHooks`) | `aculta-unread-count`, `data-aculta-alerts-count` | Padronizado |
 | Mensagens (barra) | Conversas não lidas (`alerts-trigger` de mensagens) | `aculta-unread-count`, `data-aculta-messenger-count` | Padronizado |
 | Badge de conta (menu) | Itens não lidos por seção da conta (`unread-badge`) | `aculta-unread-count` | Padronizado |
-| Fórum (tópico seguido) | Avisos não lidos da pessoa por tópico (`ForumTopicCounterHooks`) | `data-portal-ui="forum-topic-unread"` → `aculta-unread-count` | Padronizado |
+| Fórum (tópico seguido) | Avisos não lidos por tópico, via `AvisoService` | `forum-topic-unread` → `aculta-unread-count` | **Planejado**: o produtor `preprocess_forums` foi removido com o Forum contrib; a nova View ACULTA ainda não fornece essa contagem por linha. |
 | LMS (aulas, cursos) | — | — | **Pendente**: ainda não há dado de não lidos do LMS. Quando houver, usa o mesmo token. |
 
 ## 5. Regras de integração (para novos contadores)

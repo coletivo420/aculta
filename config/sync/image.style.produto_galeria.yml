@@ -4,7 +4,6 @@ status: true
 dependencies: {  }
 name: produto_galeria
 label: 'Produto: galeria (720x900)'
-pipeline: aculta_derivados
 effects:
   fa09cc12-2fd1-48a2-89fe-9cfac0ba24cf:
     uuid: fa09cc12-2fd1-48a2-89fe-9cfac0ba24cf
@@ -14,4 +13,4 @@ effects:
       width: 960
       height: 1200
       upscale: false
-
+pipeline: aculta_derivados

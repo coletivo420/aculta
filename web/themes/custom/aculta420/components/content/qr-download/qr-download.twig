@@ -1,0 +1,18 @@
+{#
+/**
+ * @file
+ * Lista de downloads de um código QR, por formato.
+ *
+ * @ingroup themeable
+ */
+#}
+<section class="qr-download">
+  <h2 class="qr-download__title">{{ title }}</h2>
+  <ul class="qr-download__list">
+    {% for format in formats %}
+      <li class="qr-download__item">
+        <a class="qr-download__link" href="{{ format.url }}" download>{{ format.label }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+</section>

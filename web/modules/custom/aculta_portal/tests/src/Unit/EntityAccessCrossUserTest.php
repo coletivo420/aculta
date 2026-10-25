@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit;
 
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Hook\EntityHooks;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
+use Drupal\user\UserDataInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -30,7 +34,12 @@ final class EntityAccessCrossUserTest extends UnitTestCase {
     // DomainPurposeManager is final and is not reached for user entities; it is
     // built without its constructor so the Domain branch stays untouched.
     $domain = (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor();
-    return new EntityHooks($domain, $routeMatch, new RequestStack(), new \Drupal\aculta_portal\Account\EmailConfirmationPolicy($this->createMock(\Drupal\user\UserDataInterface::class), $this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class)));
+    $emailConfirmation = new EmailConfirmationPolicy(
+      $this->createMock(UserDataInterface::class),
+      $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(ModuleHandlerInterface::class),
+    );
+    return new EntityHooks($domain, $routeMatch, new RequestStack(), $emailConfirmation);
   }
 
   private function userEntity(int $uid): EntityInterface {

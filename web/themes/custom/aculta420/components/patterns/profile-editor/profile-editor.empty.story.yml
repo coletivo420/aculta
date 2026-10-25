@@ -1,0 +1,6 @@
+name: Editor de perfil sem cartões opcionais
+description: 'Fixture: ausência de biografia, redes e ações não produz placeholders automáticos.'
+component: aculta420:profile-editor
+slots:
+  intro:
+    markup: '<p>Configure seu perfil quando desejar.</p>'

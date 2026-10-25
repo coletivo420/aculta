@@ -1,0 +1,7 @@
+name: 'ACULTA Index Forum provider test'
+type: module
+description: 'Provides Forum entity test hooks for isolated Index Kernel coverage.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:node

@@ -27,13 +27,25 @@ $expected = [
   'mercadopago_test_access_token' => ['MERCADOPAGO_TEST_ACCESS_TOKEN', FALSE],
   'mercadopago_test_buyer_password' => ['MERCADOPAGO_TEST_BUYER_PASSWORD', FALSE],
   'mercadopago_webhook_secret' => ['MERCADOPAGO_WEBHOOK_SECRET', FALSE],
-  'smtp2go_username' => ['SMTP2GO_USERNAME', FALSE],
-  'smtp2go_password' => ['SMTP2GO_PASSWORD', FALSE],
   'turnstile' => ['TURNSTILE_KEYS_JSON', TRUE],
   'turnstile_test' => ['TURNSTILE_TEST_KEYS_JSON', TRUE],
   // Chaves de aplicação em texto puro (docs/operations/SECRETS.md e config/secrets-contract.json).
   'aculta_document_encryption_key' => ['ACULTA_DOCUMENT_ENCRYPTION_KEY', FALSE],
   'aculta_id_cpf_fingerprint' => ['ACULTA_ID_CPF_FINGERPRINT_KEY', FALSE],
+];
+
+// Credenciais de envio ficam no arquivo de segredos do servidor, sem Key (regra de segredos do AGENTS.md).
+$file_secrets = [
+  'ga4_property_id' => 'GA4_PROPERTY_ID',
+  'ga4_service_account_json' => 'GA4_SERVICE_ACCOUNT_JSON',
+  'gsc_site_url' => 'GSC_SITE_URL',
+  'smtp2go_username' => 'SMTP2GO_USERNAME',
+  'smtp2go_password' => 'SMTP2GO_PASSWORD',
+  'brevo_api_key' => 'BREVO_API_KEY',
+  'brevo_webhook_token' => 'BREVO_WEBHOOK_TOKEN',
+  'mailer_payload_key' => 'MAILER_PAYLOAD_KEY',
+  'imap_password' => 'IMAP_PASSWORD',
+  'smtp_password' => 'SMTP_PASSWORD',
 ];
 
 $key_files = glob($root . '/config/sync/key.key.*.yml') ?: [];
@@ -64,12 +76,15 @@ foreach ($contract['variables'] as $variable) {
   $environments = (array) ($variable['environments'] ?? []);
   $assert($environments !== [] && array_diff($environments, ['production', 'test']) === [], 'Contract environments are production or test: ' . $name);
   $assert(array_diff((array) ($variable['required_in'] ?? []), $environments) === [], 'Contract required_in is a subset of environments: ' . $name);
-  $assert(isset($expected[(string) ($variable['key_id'] ?? '')]) && $expected[$variable['key_id']][0] === $name, 'Contract variable matches the approved Key and name: ' . $name);
+  $key_id = (string) ($variable['key_id'] ?? '');
+  $is_key = isset($expected[$key_id]) && $expected[$key_id][0] === $name;
+  $is_file_secret = isset($file_secrets[$key_id]) && $file_secrets[$key_id] === $name;
+  $assert($is_key || $is_file_secret, 'Contract variable matches the approved Key or file secret and name: ' . $name);
 }
 sort($contract_names);
-$expected_names = array_map(static fn(array $pair): string => $pair[0], array_values($expected));
+$expected_names = array_merge(array_map(static fn(array $pair): string => $pair[0], array_values($expected)), array_values($file_secrets));
 sort($expected_names);
-$assert($contract_names === $expected_names, 'Contract variables and approved Keys are the same set.');
+$assert($contract_names === $expected_names, 'Contract variables are the approved Keys plus the file secrets, and nothing else.');
 
 $google_sync = $parse($root . '/config/sync/social_auth_google.settings.yml');
 $assert(trim((string) ($google_sync['client_id'] ?? '')) === '', 'Google OAuth client ID is empty in sync.');
@@ -93,6 +108,9 @@ $loader = file_get_contents($loader_path);
 $assert(is_string($loader), 'Portable secrets loader is readable.');
 foreach (array_keys($expected) as $id) {
   $assert(str_contains($loader, $expected[$id][0]), 'Loader allowlist includes contract variable: ' . $expected[$id][0]);
+}
+foreach ($file_secrets as $name) {
+  $assert(str_contains($loader, "'" . $name . "'"), 'Loader allowlist includes file secret: ' . $name);
 }
 $assert(str_contains($loader, 'Unknown ACULTA secret variable'), 'Loader rejects unknown names.');
 $assert(str_contains($loader, 'getenv($name)') && str_contains($loader, 'putenv($name .'), 'Loader preserves native environment precedence.');

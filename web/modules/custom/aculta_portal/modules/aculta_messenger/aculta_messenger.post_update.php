@@ -5,6 +5,44 @@
  * Post-update functions for ACULTA Messenger.
  */
 
+use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
+use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
+use Drupal\Core\Database\IntegrityConstraintViolationException;
+
+/**
+ * Moves Private Message email preferences into Messenger ownership.
+ */
+function aculta_messenger_post_update_private_message_email_preferences(array &$sandbox): string {
+  /** @var \Drupal\aculta_messenger\Aviso\PrivateMessageEmailPreferenceMigration $migration */
+  $migration = \Drupal::service('aculta_messenger.private_message_email_preference_migration');
+  if (!isset($sandbox['last_uid'])) {
+    $migration->migrateAdministrativeDefaults();
+    $sandbox['last_uid'] = 0;
+  }
+
+  $has_more = $migration->migrateUserBatch($sandbox['last_uid']);
+  if ($has_more) {
+    $sandbox['#finished'] = 0;
+    return 'Migrating Private Message email preferences to ACULTA Messenger.';
+  }
+
+  $sandbox['#finished'] = 1;
+  return 'Migrated Private Message email preferences to ACULTA Messenger.';
+}
+
+/**
+ * Migrates global digest choices to per-origin Messenger email preferences.
+ */
+function aculta_messenger_post_update_shared_email_preferences(array &$sandbox): string {
+  /** @var \Drupal\aculta_messenger\Aviso\SharedEmailPreferenceMigration $migration */
+  $migration = \Drupal::service('aculta_messenger.shared_email_preference_migration');
+  $sandbox['last_uid'] ??= 0;
+  $count = $migration->migrateBatch($sandbox['last_uid']);
+  $sandbox['#finished'] = $count < 500 ? 1 : 0;
+  return 'Migrated ' . $count . ' legacy shared-notice email preferences.';
+}
+
 /**
  * Adds the per-member dismissal Flag for temporary Site Alerts.
  */
@@ -44,7 +82,7 @@ function aculta_messenger_post_update_site_alert_dismissal_flag(array &$sandbox)
 }
 
 /**
- * Adds the per-member read Flag for temporary Site Alerts (rótulo Lido / Não lido).
+ * Adds the per-member read Flag for temporary Site Alerts.
  */
 function aculta_messenger_post_update_site_alert_read_flag(array &$sandbox): string {
   $storage = \Drupal::entityTypeManager()->getStorage('flag');
@@ -79,4 +117,119 @@ function aculta_messenger_post_update_site_alert_read_flag(array &$sandbox): str
   ])->save();
 
   return 'Added the per-user read Flag for Site Alerts.';
+}
+
+/**
+ * Adds the response-notice watermark for revisionable Forum posts.
+ */
+function aculta_messenger_post_update_forum_post_watermark(array &$sandbox): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if ($manager->getFieldStorageDefinition('ultimo_post', 'aculta_aviso') !== NULL) {
+    return 'The revisionable Forum post notice watermark was already installed.';
+  }
+
+  $entity_type = \Drupal::entityTypeManager()->getDefinition('aculta_aviso');
+  $field = Aviso::baseFieldDefinitions($entity_type)['ultimo_post'];
+  $manager->installFieldStorageDefinition(
+    'ultimo_post',
+    'aculta_aviso',
+    'aculta_messenger',
+    $field,
+  );
+
+  return 'Added the revisionable Forum post notice watermark.';
+}
+
+/**
+ * Adds the idempotency ledger for legacy Forum Comment notices.
+ */
+function aculta_messenger_post_update_forum_comment_notice_ledger(array &$sandbox): string {
+  $table = ForumCommentNoticeSchema::TABLE;
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists($table)) {
+    return 'The Forum Comment notice idempotency ledger already exists.';
+  }
+
+  $schema->createTable($table, ForumCommentNoticeSchema::definition());
+
+  return 'Added the Forum Comment notice idempotency ledger.';
+}
+
+/**
+ * Migrates the Comment-only event ledger to the unified Forum event ledger.
+ */
+function aculta_messenger_post_update_forum_notice_event_ledger(array &$sandbox): string {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $new_table = ForumNoticeEventSchema::TABLE;
+  $legacy_table = ForumCommentNoticeSchema::TABLE;
+
+  if (!$schema->tableExists($new_table)) {
+    $schema->createTable($new_table, ForumNoticeEventSchema::definition());
+  }
+  if (!$schema->tableExists($legacy_table)) {
+    $sandbox['#finished'] = 1;
+    return 'The legacy Comment event ledger is absent; the unified ledger is ready.';
+  }
+
+  if (!isset($sandbox['max_id'])) {
+    $sandbox['max_id'] = (int) $database->select($legacy_table, 'event')
+      ->fields('event', ['id'])
+      ->orderBy('id', 'DESC')
+      ->range(0, 1)
+      ->execute()
+      ->fetchField();
+    $sandbox['last_id'] = 0;
+    if ($sandbox['max_id'] === 0) {
+      $schema->dropTable($legacy_table);
+      $sandbox['#finished'] = 1;
+      return 'Removed the empty legacy Comment event ledger.';
+    }
+  }
+
+  $events = $database->select($legacy_table, 'event')
+    ->fields('event', ['id', 'uid', 'cid', 'nid', 'created'])
+    ->condition('id', $sandbox['last_id'], '>')
+    ->orderBy('id', 'ASC')
+    ->range(0, 500)
+    ->execute();
+  $count = 0;
+  foreach ($events as $event) {
+    try {
+      $database->insert($new_table)
+        ->fields([
+          'uid' => (int) $event->uid,
+          'event_type' => 'comment',
+          'event_id' => (int) $event->cid,
+          'nid' => (int) $event->nid,
+          'created' => (int) $event->created,
+        ])
+        ->execute();
+    }
+    catch (IntegrityConstraintViolationException) {
+      // A repeated post-update batch is safe: event keys are unique.
+    }
+    $sandbox['last_id'] = (int) $event->id;
+    $count++;
+  }
+
+  $sandbox['#finished'] = min(1, $sandbox['last_id'] / $sandbox['max_id']);
+  if ($sandbox['last_id'] >= $sandbox['max_id']) {
+    $schema->dropTable($legacy_table);
+    $sandbox['#finished'] = 1;
+  }
+
+  return sprintf('Migrated %d legacy Forum Comment event keys.', $count);
+}
+
+/**
+ * Migrates pending ACULTA Game award notices to the shared Messenger center.
+ */
+function aculta_messenger_post_update_game_achievement_notices(array &$sandbox): string {
+  /** @var \Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeMigration $migration */
+  $migration = \Drupal::service('aculta_messenger.game_achievement_notice_migration');
+  $sandbox['last_uid'] ??= 0;
+  $count = $migration->migrateBatch($sandbox['last_uid'], 100);
+  $sandbox['#finished'] = $count < 100 ? 1 : 0;
+  return 'Migrated ' . $count . ' accounts with pending achievement notices.';
 }

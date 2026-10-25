@@ -1,0 +1,9 @@
+name: 'ACULTA Index Wiki access integration test'
+type: module
+description: 'Registers the production Wiki provider and Portal entity access policy for Index Kernel coverage.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:node
+  - drupal:user
+

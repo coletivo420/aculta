@@ -1,0 +1,15 @@
+uuid: 8e7dedae-8979-4739-9518-8bca755e613d
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - aculta_forum
+_core:
+  default_config_hash: jierWRIxW46qLQ02ecSBebSVzH1exeJh0BgAH6bG5OU
+name: 'Categorias do ACULTA Forum'
+vid: aculta_forum_categories
+description: 'Categorias e subcategorias públicas do Growroom420.'
+weight: 0
+new_revision: false
+

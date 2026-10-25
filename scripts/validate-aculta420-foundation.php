@@ -9,6 +9,19 @@ declare(strict_types=1);
 use Symfony\Component\Yaml\Yaml;
 
 $root = dirname(__DIR__);
+
+// O gate lê o Runtime pela API do Drupal. Chamado com php direto (sem Drupal), delega ao Drush (scr) e repassa
+// a saída e o código de saída, para que `php scripts/validate-aculta420-foundation.php` funcione como os demais gates.
+if (!class_exists(\Drupal::class)) {
+  $drush = $root . '/vendor/drush/drush/drush.php';
+  if (!is_file($drush)) {
+    fwrite(STDERR, "ACULTA420 FOUNDATION FAIL: Drush não instalado (vendor/drush/drush/drush.php ausente).\n");
+    exit(1);
+  }
+  passthru(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($drush) . ' scr ' . escapeshellarg(__FILE__), $codigo);
+  exit($codigo);
+}
+
 $themeRoot = $root . '/web/themes/custom/aculta420';
 $checks = [];
 
@@ -36,7 +49,27 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.90', 'Theme metadata marks the current version 0.6.0-dev.90.');
+$assert(($info['version'] ?? NULL) === '0.7.0-dev.3', 'Theme metadata marks the current version 0.7.0-dev.3.');
+$discussionCss = file_get_contents($themeRoot . '/css/components/discussion.css');
+$assert(
+  str_contains($discussionCss, '[data-aculta-discussion-announcement]')
+  && str_contains($discussionCss, 'clip-path: inset(50%)'),
+  'Discussion announcements are visually hidden by the theme while remaining available to assistive technology.',
+);
+$forumTopicPresenter = file_get_contents($themeRoot . '/templates/node--aculta-forum-topic.html.twig');
+$forumTopicStyles = file_get_contents($themeRoot . '/css/components/forum-index.css');
+$assert(
+  str_contains($forumTopicPresenter, "'aculta-forum-topic--' ~ view_mode")
+    && str_contains($forumTopicStyles, '.aculta-forum-topic--teaser')
+    && str_contains($forumTopicStyles, '.aculta-forum-topic--full'),
+  'Forum topic view-mode classes emitted by Twig have matching teaser and full styles.',
+);
+$assert(
+  str_contains($forumTopicStyles, '.aculta-forum-topic-list-row__topic .field--name-body')
+    && str_contains($forumTopicStyles, '.aculta-forum-topic-list-row__topic .aculta-author-card__joined')
+    && str_contains($forumTopicStyles, 'grid-template-columns: minmax(0, 1fr) minmax(11rem, 13rem)'),
+  'Forum topic list keeps its compact presentation inside Views rows only.',
+);
 $wikiPresenters = [
   file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
   file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),
@@ -182,23 +215,41 @@ $assert($emptyUuidGuard !== FALSE && $uuidLookup !== FALSE && $emptyUuidGuard < 
 
 $syncCoreExtension = Yaml::parseFile($root . '/config/sync/core.extension.yml');
 $syncSystemTheme = Yaml::parseFile($root . '/config/sync/system.theme.yml');
+$adminTheme = (string) \Drupal::config('system.theme')->get('admin');
 $assert(isset($syncCoreExtension['theme']['aculta420']), 'Config sync enables ACULTA420.');
 $assert(!isset($syncCoreExtension['theme']['aculta']), 'Config sync contains no legacy theme provider.');
 $assert(($syncSystemTheme['default'] ?? NULL) === 'aculta420', 'Config sync selects ACULTA420 as default.');
+$assert(($syncSystemTheme['admin'] ?? NULL) === $adminTheme, 'Config sync and Runtime agree on the administrative theme.');
 
 $configStorage = \Drupal::service('config.storage');
 $blockContentStorage = \Drupal::entityTypeManager()->getStorage('block_content');
 $validateBlockPlacement = static function (array $data, string $configName) use (
   $assert,
-  $info,
+  $themeHandler,
+  $adminTheme,
   $blockContentStorage,
 ): void {
+  $paths = preg_split('/\R/', trim((string) ($data['visibility']['request_path']['pages'] ?? ''))) ?: [];
+  $paths = array_values(array_filter(array_map('trim', $paths), static fn (string $path): bool => $path !== ''));
+  $adminOnly = $paths !== [];
+  foreach ($paths as $path) {
+    if (str_starts_with($path, '!')
+      || (!str_starts_with($path, '/admin/') && !str_starts_with($path, '/painel-administrativo/'))) {
+      $adminOnly = FALSE;
+      break;
+    }
+  }
+  $expectedTheme = $adminOnly ? $adminTheme : 'aculta420';
+  $placementTheme = (string) ($data['theme'] ?? '');
   $assert(
-    ($data['theme'] ?? NULL) === 'aculta420',
-    'ACULTA block placement uses the current provider: ' . $configName,
+    $placementTheme === $expectedTheme,
+    'ACULTA block placement uses its public or admin theme according to path visibility: ' . $configName,
   );
 
-  $regions = $info['regions'] ?? [];
+  $placementInfo = $themeHandler->themeExists($placementTheme)
+    ? $themeHandler->getTheme($placementTheme)->info
+    : [];
+  $regions = $placementInfo['regions'] ?? [];
   $assert(
     isset($regions[$data['region'] ?? '']),
     'ACULTA block placement uses a declared theme region: ' . $configName,
@@ -259,15 +310,18 @@ $expectedTemplates = [
   'aculta-portal-photo-editor.html.twig',
   'aculta-portal-shell.html.twig',
   'aculta-section.html.twig',
+  'aculta-user-author-card.html.twig',
   'content/off-canvas-page-wrapper.html.twig',
   'navigation/breadcrumb.html.twig',
   'node--editorial-highlight.html.twig',
-  'node--project--teaser.html.twig',
+  // ACULTA Forum topic uses the aculta_user card and omits Core's unfiltered user picture/byline.
+  'node--aculta-forum-topic.html.twig',
+  // Shared discussion comment presenter added in 0.6.0-dev.96.
+  'comment--aculta-discussion-post.html.twig',
   // Caixa do Google com logo do tema e estado "Conectado" (f96bb4d, já no main; a allowlist não foi atualizada na época).
   'login-with.html.twig',
-  // Modelo padrão da Revista (0.6.0-dev.21): Notícia e blog chamam o mesmo componente revista-publication.
-  'node--article--full.html.twig',
-  'node--blog--full.html.twig',
+  // Modelo canônico da Revista reutiliza o componente editorial compartilhado.
+  'node--revista--full.html.twig',
   // Site Alert keeps native scheduling/access and delegates presentation to the theme SDC.
   'site-alert.html.twig',
   // Private Message thread wrapper exposes only its native rendered content and supplied read state.
@@ -275,23 +329,31 @@ $expectedTemplates = [
   // Wiki article and teaser presenters intentionally omit submitted-byline metadata.
   'node--wiki-entry--full.html.twig',
   'node--wiki-entry--teaser.html.twig',
-  // Página pública LINKS (0.6.0-dev.11): presenter neutro e configuração do Portal.
+  // Página pública LINKS e micropáginas usam presenters neutros e SDCs do tema.
   'node--social-links.html.twig',
-  // Fórum em cartões (0.6.0-dev.62) e tópico do Fórum (0.6.0-dev.63): índice, resposta e tópico.
-  'forum-list.html.twig',
-  'comment--comment-forum.html.twig',
-  'node--forum--full.html.twig',
+  'aculta-links-page.html.twig',
+  'aculta-links-landing.html.twig',
+  // A View Growroom fornece os campos renderizados ao tema.
+  'views-view-fields--aculta-forum-public-topics.html.twig',
+  // Categories View fields are reassembled through the Forum category SDC.
+  'views-view-fields--aculta-forum-categories--page-categories.html.twig',
+  // The landing-page category block reuses the same neutral fields and SDC.
+  'views-view-fields--aculta-forum-categories--block-landing.html.twig',
+  // The categories page uses a grid wrapper while preserving each row's attributes.
+  'views-view-unformatted--aculta-forum-categories--page-categories.html.twig',
   'page.html.twig',
   'portal-cart-status.html.twig',
   'portal-cart-panel.html.twig',
   'portal-payment-notice.html.twig',
   'portal-search-trigger.html.twig',
-  'views-view-unformatted--aculta-projects.html.twig',
   'views-view-unformatted--courses-catalog.html.twig',
   'views-view-vvjb.html.twig',
   // Álbumes: os campos e a View permanecem Drupal; o tema compõe o SDC card overlay.
   'views-view-fields--aculta-albuns.html.twig',
   'views/views-view-table.html.twig',
+  // Envelope HTML dos e-mails do aculta_mailer: cores dos tokens, claro e escuro inline (clientes de e-mail não carregam tokens.css).
+  'aculta-mailer-wrap.html.twig',
+  'portal-component.html.twig',
 ];
 $actualTemplates = [];
 $templateRoot = $themeRoot . '/templates';
@@ -307,16 +369,20 @@ $sdc = \Drupal::service('plugin.manager.sdc');
 $assert($sdc->hasDefinition('aculta420:card'), 'Drupal discovers aculta420:card.');
 $assert($sdc->hasDefinition('aculta420:figure'), 'Drupal discovers aculta420:figure.');
 $assert($sdc->hasDefinition('aculta420:quote'), 'Drupal discovers aculta420:quote.');
+$assert($sdc->hasDefinition('aculta420:forum-category'), 'Drupal discovers aculta420:forum-category.');
 $cardMetadata = Yaml::parseFile($themeRoot . '/components/patterns/card/card.component.yml');
 $assert(isset($cardMetadata['variants']['overlay']), 'The composed card exposes the overlay presentation.');
 $assert(is_file($themeRoot . '/templates/views-view-fields--aculta-albuns.html.twig'), 'Album View fields use the theme card presenter.');
+$assert(
+  is_file($themeRoot . '/templates/views-view-fields--aculta-forum-categories--page-categories.html.twig')
+    && is_file($themeRoot . '/templates/views-view-fields--aculta-forum-categories--block-landing.html.twig')
+    && is_file($themeRoot . '/templates/views-view-unformatted--aculta-forum-categories--page-categories.html.twig'),
+  'Forum category View keeps the reviewed page and landing SDC presenters and responsive page wrapper.',
+);
 $assert($sdc->hasDefinition('aculta420:editorial-card'), 'Drupal discovers aculta420:editorial-card.');
 $componentMetadata = Yaml::parseFile($themeRoot . '/components/content/editorial-card/editorial-card.component.yml');
 $assert(($componentMetadata['status'] ?? NULL) === 'stable', 'Editorial card keeps its documented stable status.');
 $assert(isset($componentMetadata['slots']) && is_array($componentMetadata['slots']), 'Editorial card exposes renderable content as slots.');
-$projectMetadata = Yaml::parseFile($themeRoot . '/components/content/project-card/project-card.component.yml');
-$assert(($projectMetadata['status'] ?? NULL) === 'experimental', 'Project card is experimental until it proves its contract (0.3.0).');
-$assert($sdc->hasDefinition('aculta420:project-card'), 'Drupal discovers aculta420:project-card.');
 $wikiMetadata = Yaml::parseFile($themeRoot . '/components/patterns/wiki-entry/wiki-entry.component.yml');
 $assert(($wikiMetadata['status'] ?? NULL) === 'experimental', 'Wiki entry pattern remains experimental pending runtime and visual validation.');
 $assert($sdc->hasDefinition('aculta420:wiki-entry'), 'Drupal discovers aculta420:wiki-entry.');

@@ -128,6 +128,134 @@ Core/contrib e nenhuma falha. O Kernel validou o formulário de configuração
 após serialização, e o acesso próprio/global do plugin de Views está coberto
 em Unit.
 
+Execução adicional em 2026-10-20: `aculta_forum_lms` Unit passou com 14 testes e
+147 assertions; Kernel passou com 2 testes e 74 assertions. Foram emitidas 38
+depreciações de Core/contrib/LMS, sem falha. PHP CLI disponível no Homelab é
+8.4.26, abaixo do alvo PHP 8.5; resultado não substitui validação nessa versão.
+No Runtime de teste, ativação do adapter, importação parcial de cinco
+configurações de permissões e smoke HTTP foram confirmados; o Runtime usa
+`aculta_runtime`, nunca o banco dedicado desta suíte. RUNTIME STATUS: PARTIAL;
+ver o changelog do adapter para limites de configuração e acesso.
+
+Execução adicional em 2026-10-20: adapter LMS Unit passou com 18 testes e 184
+assertions; Kernel passou com 2 testes e 102 assertions, incluindo autorização
+contextual de Comments e as três filas Views com Group/status isolados. Foram
+emitidas 40 depreciações de Core/contrib/LMS. PHP CLI 8.4.26, abaixo do alvo
+8.5. O hook OOP foi exercitado diretamente na fixture, e a View foi executada
+na MariaDB de teste. Rotas HTTP e View ainda não foram atualizadas no Runtime.
+RUNTIME STATUS: DEFERRED.
+
+Execução adicional em 2026-10-21: suíte Kernel completa do `aculta_lms` passou
+com 19 testes e 584 assertions no banco dedicado; 90 depreciações vieram de
+Core/contrib. A suíte Unit passou com 48 testes / 260 assertions e 8
+depreciações PHPUnit. A fixture do teste de instalação agora instala schema e
+usuário para validar o access de conta ativa via `AccountUserLoader`. PHP CLI
+8.4.26; PHP 8.5 permanece não validado.
+
+Execução adicional em 2026-10-21: regressão combinada `aculta_lms` e
+`aculta_lms_messenger` passou com 21 testes / 646 assertions Kernel no MariaDB
+dedicado e 72 testes / 368 assertions Unit. A Unit inclui os cinco casos novos
+de entitlement Commerce. Foram reportadas 92 depreciações de
+Core/contrib e 8 depreciações PHPUnit; não houve falhas. PHP CLI 8.4.26; PHP
+8.5 continua não validado.
+
+Após adicionar a recusa de PDF revogado, `CertificateLifecycleTest` passou com
+3 testes / 97 assertions e a suíte Kernel combinada permaneceu em 21 testes,
+agora com 646 assertions; a execução completa acima já inclui essa alteração.
+
+Execução adicional em 2026-10-21 após a correção da matrícula F7: regressão
+combinada `aculta_lms` + `aculta_lms_messenger` passou com 72 testes / 368
+assertions Unit e 21 testes / 646 assertions Kernel no MariaDB dedicado. Foram
+reportadas 8 depreciações PHPUnit e 92 de Core/contrib. PHPCS, Gate Drupal 11+
+(1010 checks), índice do projeto (29 componentes), imagem e slugs passaram. O
+Runtime `cursos` confirmou pedido gratuito concluído, origem da membership e
+papel global estudante; fixtures, aviso e item de e-mail temporários foram
+removidos por APIs Drupal. PHP CLI 8.4.26; PHP 8.5 não validado.
+
+Após ampliar a cobertura de estados de compra F7 em 2026-10-21, Unit LMS/Messenger
+passou com 72 testes / 368 assertions; Kernel permanece 21 / 646. O novo teste
+Unit valida pedido grátis concluído, pedido incompleto e balanços de pagamentos
+concluídos, parcialmente estornados e estornados, sem invocar gateway remoto.
+
+Após ampliar em 2026-10-21 a matriz de autorização do painel F16, o Kernel focal
+de turma passou com 1 teste / 43 assertions: educador com grant `grade students`
+no Group acessa os agregados e estudante não os recebe. Regressão Kernel
+combinada reexecutada: 21 testes / 646 assertions PASS, com 92 depreciações
+upstream.
+
+Após acrescentar a política de remoção manual de memberships de compra, Unit
+LMS/Messenger passou com 77 testes / 400 assertions; `EnrollmentFormHooksTest`
+passou com 5 testes / 32 assertions. A cobertura distingue matrícula manual,
+pedido pago, reembolso parcial/total, pedido gratuito concluído e origem
+inválida. Não há chamadas a gateway.
+
+Após ampliar em 2026-10-21 o contrato de privacidade pública F11,
+`CertificateLifecycleTest` passou com 3 testes / 102 assertions; a regressão
+Kernel LMS/Messenger passou com 21 testes / 651 assertions e 92 depreciações
+upstream. A renderização por código confirma nome, curso, horas e estado, sem
+email ou motivo interno de revogação.
+
+Após proteger emissão e formulário F11 contra referências de estudante/curso
+ausentes, `CertificateLifecycleTest` passou com 4 testes / 126 assertions. A
+regressão Kernel `aculta_lms` + `aculta_lms_messenger` passou com 22 testes /
+675 assertions; 92 depreciações vieram de Core/contrib. Unit LMS passou com 61
+testes / 334 assertions e 8 depreciações PHPUnit. PHP CLI 8.4.26; PHP 8.5
+continua não validado.
+
+Em 2026-10-21, a cobertura de cache F16 foi ampliada para o acesso do painel de
+educadores: `ClassActivityDeadlineTest` passou com 1 teste / 52 assertions e a
+regressão Kernel LMS/Messenger com 23 testes / 725 assertions. Ambas as
+negativas armazenadas (painel e prazo) são invalidadas ao criar a relação
+curso→turma; 95 depreciações de Core/contrib. PHP 8.4.26; PHP 8.5 não validado.
+
+Em 2026-10-21, `ClassDashboardKernelTest` passou com 1 teste / 46 assertions:
+remover a relação curso→turma invalida o grant de acesso do educador já
+armazenado. Kernel combinado LMS/Messenger: 23 testes / 728 assertions PASS.
+
+Em 2026-10-21, a política F7 de remoção foi ampliada para proteger uma
+membership manual quando existe compra ativa para a mesma turma. Unit LMS /
+Messenger: 86 testes / 460 assertions; `EnrollmentFormHooksTest`: 7/49;
+`CourseOrderEnrollmentManagerTest`: 6/25; `AcultaLmsInstallTest`: 4/40. A
+regressão Kernel LMS/Messenger passou com 23 testes / 730 assertions; 95
+depreciações vieram de Core/contrib.
+
+Em 2026-10-21, `ClassActivityDeadlineTest` passou com 1 teste / 49 assertions:
+ao criar o vínculo curso→turma, o cache tag Group invalida a negativa de acesso
+previamente armazenada. A regressão Kernel LMS/Messenger passou com 23 testes /
+722 assertions; 95 depreciações vieram de Core/contrib. PHP CLI 8.4.26; PHP 8.5
+continua não validado.
+
+Em 2026-10-21, `LmsActivityDiscussionResolverKernelTest` passou com 1 teste /
+36 assertions. A fixture real confirma a relação atividade→aula→curso, acesso
+do estudante via Group e exclusão do tópico relacionado quando ele pertence a
+outro curso. A suíte Kernel de `aculta_forum_lms` passou com 3 testes / 168
+assertions e 46 depreciações upstream; Unit passou com 22 testes / 256
+assertions. PHP CLI 8.4.26; PHP 8.5 não validado.
+
+Em 2026-10-21, as suítes completas `aculta_lms_h5p` passaram com 37 testes /
+337 assertions (Unit 23/67; Kernel 14/270; 43 depreciações Core/contrib). A
+regressão completa `aculta_forum_lms` passou com 29 testes / 496 assertions,
+incluindo vínculo H5P–Fórum persistido no Kernel; 47 depreciações Core/contrib.
+`PortalUiHooksTest` passou com 5 testes / 26 assertions. Gate Drupal 11+
+(1007 checks), Foundation ACULTA420 (368), Design Foundations (2132), SDC
+schemas (593), Shell Contract (11), imagem e slugs passaram. PHP CLI 8.4.26;
+PHP 8.5 não validado.
+
+Após adicionar referências de Media `course_document` às atividades H5P, a
+suíte Unit passou com 23 testes / 67 assertions e a Kernel com 14 testes / 341
+assertions no MariaDB dedicado; 43 depreciações de Core/Group/Views. O Kernel
+confirma o campo de referência multivalorado. O update `8006` foi aplicado no
+Runtime de teste depois de confirmar zero conteúdos H5P e zero Media
+`course_document`; nenhuma entidade existente foi alterada. O smoke visual
+autenticado ainda depende de fixtures temporárias. PHP CLI 8.4.26; PHP 8.5 não
+validado.
+
+Na regressão integrada, após habilitar Core Media na fixture do adapter
+H5P–Fórum,
+Forum LMS Unit passou com 25 testes / 292 assertions e Kernel passou com 4
+testes / 205 assertions; 47 depreciações upstream. A suíte confirma que a nova
+definição de campo do H5P pode ser descoberta junto ao resolver de discussões.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

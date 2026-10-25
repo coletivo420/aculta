@@ -1,0 +1,30 @@
+uuid: 917d2a8d-e019-483b-a194-ec8a935ccbd3
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_h5p_content
+    - node.type.aculta_lms_topic
+  module:
+    - aculta_forum_lms
+    - aculta_lms_h5p
+    - node
+id: node.aculta_lms_topic.field_h5p_content
+field_name: field_h5p_content
+entity_type: node
+bundle: aculta_lms_topic
+label: Conteúdo H5P
+description: 'Associe esta discussão a um conteúdo H5P do mesmo curso ou turma.'
+required: false
+translatable: false
+default_value: { }
+default_value_callback: ''
+settings:
+  handler: 'aculta_forum_lms:course_h5p_content'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

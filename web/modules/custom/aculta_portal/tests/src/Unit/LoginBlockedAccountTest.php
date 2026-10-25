@@ -5,9 +5,19 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_portal\Unit;
 
 use Drupal\aculta_portal\Form\PortalFormCallbacks;
+use Drupal\aculta_user\Consent\AcultaUserAgreementLedger;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\Core\Database\StatementInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormInterface;
+use Drupal\Core\PrivateKey;
+use Drupal\path_alias\AliasManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\Form\UserLoginForm;
@@ -40,20 +50,54 @@ final class LoginBlockedAccountTest extends UnitTestCase {
       $flood,
       $configs,
       new \Drupal\aculta_portal\Email\EmailConfirmationRequester(
-        $this->createMock(\Drupal\email_confirmer\EmailConfirmerManagerInterface::class),
+        $this->createMock(\Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface::class),
         $this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class),
         $this->createMock(\Drupal\Core\Flood\FloodInterface::class),
         $this->createMock(\Drupal\Core\Lock\LockBackendInterface::class),
         $this->createMock(\Drupal\Core\Logger\LoggerChannelInterface::class),
+        $this->createMock(\Drupal\aculta_mailer\Api\AcultaMailerInterface::class),
+        $this->createMock(\Drupal\Core\Config\ConfigFactoryInterface::class),
+        new \Drupal\Component\Uuid\Php(),
+        $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class),
       ),
-      new \Drupal\aculta_portal\Account\RegistrationTerms(
-        $this->createMock(\Drupal\agreement\AgreementHandlerInterface::class),
-        $this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class),
+      new \Drupal\aculta_portal\Account\AcultaUserAgreementRegistration(
+        $this->acceptedTermsLedger(),
       ),
       new \Drupal\aculta_portal\Account\RegistrationMailPolicy(
         $this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class),
-        $this->createMock(\Drupal\Core\Mail\MailManagerInterface::class),
+        $this->createMock(\Drupal\aculta_mailer\Api\AcultaMailerInterface::class),
+        $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class),
+        $this->createMock(\Drupal\Component\Uuid\UuidInterface::class),
       ),
+    );
+  }
+
+  /**
+   * Um ledger real cuja consulta informa o aceite mais recente como "accepted".
+   *
+   * O ledger é final e não pode ser duplicado por mock; a consulta ao banco é
+   * substituída pela infraestrutura mockada.
+   */
+  private function acceptedTermsLedger(): AcultaUserAgreementLedger {
+    $select = $this->createMock(SelectInterface::class);
+    $select->method('fields')->willReturnSelf();
+    $select->method('condition')->willReturnSelf();
+    $select->method('orderBy')->willReturnSelf();
+    $select->method('range')->willReturnSelf();
+    $statement = $this->createMock(StatementInterface::class);
+    $statement->method('fetchField')->willReturn('accepted');
+    $select->method('execute')->willReturn($statement);
+    $database = $this->createMock(Connection::class);
+    $database->method('select')->willReturn($select);
+
+    return new AcultaUserAgreementLedger(
+      $database,
+      new RequestStack(),
+      $this->createMock(TimeInterface::class),
+      $this->createMock(PrivateKey::class),
+      $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(AliasManagerInterface::class),
+      $this->createMock(EventDispatcherInterface::class),
     );
   }
 

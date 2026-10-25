@@ -1,0 +1,6 @@
+revista-form:
+  js:
+    js/revista-form.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

@@ -1,0 +1,14 @@
+uuid: 392cf4f3-208f-4a97-9cc8-e3132b7bfe4a
+langcode: pt-br
+status: true
+dependencies: {  }
+id: email_confirmed
+label: 'E-mail confirmado'
+display_label: 'Perfil de e-mail confirmado'
+multiple: false
+registration: false
+roles:
+  - email_confirmed
+allow_revisions: false
+new_revision: false
+

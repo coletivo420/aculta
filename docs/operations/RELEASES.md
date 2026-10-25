@@ -1,6 +1,6 @@
 # Releases e versionamento
 
-Data da revisão: 2026-10-07.
+Data da revisão: 2026-10-20. Ciclo vigente: [Dev → RC → Alpha](RELEASE-LIFECYCLE.md).
 
 ## Versionamento
 
@@ -29,9 +29,18 @@ Branches devem ser curtas e nascer da `main` atual.
 O tema marca a versão dentro do código (`aculta420.info.yml`, `CHANGELOG.md` e roadmap). Subversões
 `-dev.N` são marcadas por mudança principal validada. O procedimento completo está em
 [`web/themes/custom/aculta420/docs/versioning.md`](../../web/themes/custom/aculta420/docs/versioning.md).
+Mudanças no modelo de entrega também atualizam o roadmap central, roadmaps
+afetados e as regras de versão (Portal/tema), preservando marcadores históricos.
 
 Mudanças do `aculta_portal` entram no `CHANGELOG.md` do módulo, citando a versão do tema
 em que foram entregues. A versão do Portal é marcada em `aculta_portal.info.yml`.
+
+## Estados dos componentes
+
+O ciclo de estados Dev, RC e Alpha está definido em
+[`RELEASE-LIFECYCLE.md`](RELEASE-LIFECYCLE.md). `preRC` não é mais um estado
+vigente. Validação visual aplicável acontece antes de RC; validação do servidor
+de desenvolvimento acontece em Alpha depois do deploy autorizado.
 
 ## Caminhos e textos únicos até a 1.0
 
@@ -145,7 +154,9 @@ Ordem geral:
 
 Produção não recebe testes destrutivos.
 
-**Produção (decisão do responsável):** a entrega em produção não é requisito de fase, PR, release, RC nem pendência do agente. O responsável decide quando o projeto vai para produção, no fim de todo o projeto. Merge em `main` atualiza o código do repositório e não publica nada no Hostinger. As verificações de produção (`robots --env=production`, `sitemap --env=production`) são ensaios, não ações de deploy.
+**Produção (decisão do responsável):** a entrega em produção não é automática e
+depende de decisão explícita. Deploy em Alpha significa somente servidor de
+desenvolvimento; não publica em produção. Merge em `main` não é deploy.
 
 ## Pós-deploy
 

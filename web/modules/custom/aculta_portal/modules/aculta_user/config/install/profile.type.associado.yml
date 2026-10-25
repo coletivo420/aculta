@@ -1,0 +1,13 @@
+uuid: 333ebc76-500a-48e0-88c4-f328621cf259
+langcode: pt-br
+status: true
+dependencies: {  }
+id: associado
+label: Associado
+display_label: 'Perfil de associado'
+multiple: true
+registration: false
+roles: {  }
+allow_revisions: false
+new_revision: false
+

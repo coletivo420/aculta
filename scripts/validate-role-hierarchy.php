@@ -4,11 +4,12 @@
  * @file
  * Gate: hierarquia de papéis (role_inheritance) e checagens por nome de papel.
  *
- * Decisão do responsável (2026-10-17): cadeia unilateral authenticated < email_confirmed < estudante < associado <
- * lms_teacher < content_editor < gerente_loja < administrator. A herança é transitiva; administrator herda de todos.
+ * Decisão do responsável (2026-10-21): estudante e associado são categorias, não papéis. Cadeia de papéis: authenticated <
+ * email_confirmed < lms_teacher < content_editor < gerente_loja < administrator. Associado mantém situação e data de adesão; ver
+ * docs/ASSOCIADO.md em aculta_user). A herança é transitiva; administrator herda de todos.
  *
  * Verifica no config/sync (sem Runtime):
- * - a cadeia de herança exatamente como decidida (email_confirmed, estudante, associado, lms_teacher,
+ * - a cadeia de herança exatamente como decidida (email_confirmed, lms_teacher,
  *   content_editor, gerente_loja);
  * - o mapa não tem ciclo nem autorreferência;
  * - administrator herda de todos os demais papéis de negócio;
@@ -33,9 +34,7 @@ $errors = [];
 /** Herança decidida: papel => papéis dos quais herda (conjunto exato). */
 $decidida = [
   'email_confirmed' => ['authenticated'],
-  'estudante' => ['email_confirmed'],
-  'associado' => ['estudante'],
-  'lms_teacher' => ['associado'],
+  'lms_teacher' => ['email_confirmed'],
   'content_editor' => ['lms_teacher'],
   'gerente_loja' => ['content_editor'],
 ];
@@ -46,7 +45,16 @@ $decidida = [
 const LINHA_DE_BASE_HASROLE = 15;
 const LINHA_DE_BASE_IN_ARRAY_PAPEL = 4;
 
-$mapa = Yaml::parseFile($root . '/config/sync/role_inheritance.settings.yml')['role_map'] ?? [];
+// Mapa derivado da cadeia decidida (aculta_portal.role_hierarchy): cada papel herda o próximo da cadeia, e o
+// administrador herda toda a cadeia. O módulo contrib role_inheritance saiu; a herança é do aculta_user.
+$cadeia = Yaml::parseFile($root . '/config/sync/aculta_portal.role_hierarchy.yml')['cadeia'] ?? [];
+$mapa = [];
+foreach ($cadeia as $i => $papel) {
+  if (isset($cadeia[$i + 1])) {
+    $mapa[$papel] = [$cadeia[$i + 1]];
+  }
+}
+$mapa['administrator'] = $cadeia;
 
 foreach ($decidida as $papel => $esperado) {
   $atual = $mapa[$papel] ?? [];
@@ -70,7 +78,7 @@ foreach (array_keys($decidida) as $papel) {
 }
 
 // Contagem em código customizado (PHP de módulos e tema), excluindo testes.
-$papeis = '(administrator|gerente_loja|lms_teacher|estudante|associado|email_confirmed|wiki_contributor|content_editor|lms_admin)';
+$papeis = '(administrator|gerente_loja|lms_teacher|associado|email_confirmed|wiki_contributor|content_editor|lms_admin)';
 $hasRole = 0;
 $inArray = 0;
 $dirs = [$root . '/web/modules/custom', $root . '/web/themes/custom/aculta420/src'];

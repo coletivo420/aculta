@@ -1,19 +1,24 @@
 <?php
 
 /**
- * Preparação da suíte de navegador do Messenger. Somente no runtime de teste (aculta.toca.net.br).
+ * @file
+ * Preparação da suíte de navegador do Messenger no Runtime de teste.
  *
- * Idempotente: cria as contas de teste que faltam (teste.b e teste.c, com senha aleatória que nunca é mostrada),
- * e recria a conversa em grupo de teste.comum, teste.b e teste.c com uma mensagem. A conversa one-to-one entre
- * as contas é zerada pela própria suíte. Nenhum segredo é impresso.
+ * Idempotente: cria as contas de teste que faltam (senhas não são mostradas) e
+ * recria a conversa fixture teste.comum/teste.b/teste.c. Remove somente a
+ * thread teste.b/teste.c/teste.d para que a suíte a crie pela interface. A
+ * conversa um-a-um teste.b/teste.c é zerada pela suíte.
+ * Nenhum segredo é impresso.
  *
- * Uso: php vendor/drush/drush/drush.php scr tests/browser/aculta-messenger/setup-accounts.php
+ * Use: php vendor/drush/drush/drush.php scr
+ * tests/browser/aculta-messenger/setup-accounts.php
  */
 
+use Drupal\Core\Database\Database;
 use Drupal\private_message\Entity\PrivateMessage;
 
-// Refuses to run anywhere but the test runtime: this script creates accounts and writes messages. Checked before any write.
-$database = \Drupal\Core\Database\Database::getConnection()->getConnectionOptions();
+// This script creates accounts and messages. Check the database before writes.
+$database = Database::getConnection()->getConnectionOptions();
 if (($database['database'] ?? '') !== 'aculta_runtime') {
   throw new \RuntimeException('Refused: the messenger suite prepares only the test runtime database (aculta_runtime).');
 }
@@ -23,6 +28,7 @@ $accounts = [
   'teste.comum' => ['mail' => 'teste.comum@teste.invalid', 'roles' => ['email_confirmed']],
   'teste.b' => ['mail' => 'teste.b@teste.invalid', 'roles' => ['email_confirmed']],
   'teste.c' => ['mail' => 'teste.c@teste.invalid', 'roles' => ['email_confirmed']],
+  'teste.d' => ['mail' => 'teste.d@teste.invalid', 'roles' => ['email_confirmed']],
 ];
 
 $uids = [];
@@ -47,15 +53,29 @@ foreach ($accounts as $name => $spec) {
   $uids[$name] = (int) $user->id();
 }
 
-// The group thread: rebuilt on every run, so the menu's "Limpar histórico" starts from a known state.
 $service = \Drupal::service('private_message.service');
 $threads = \Drupal::entityTypeManager()->getStorage('private_message_thread');
+
+// Reset only the UI-created group; the fixture group stays independent.
+$uiGroup = [];
+foreach (['teste.b', 'teste.c', 'teste.d'] as $name) {
+  $uiGroup[] = $storage->load($uids[$name]);
+}
+$uiGroupId = \Drupal::service('private_message.mapper')->getThreadIdForMembers($uiGroup);
+if ($uiGroupId) {
+  $old = $threads->load($uiGroupId);
+  $messages = $old->get('private_messages')->referencedEntities();
+  $old->delete();
+  \Drupal::entityTypeManager()->getStorage('private_message')->delete($messages);
+}
+
+// Rebuild the fixture group so "Limpar histórico" starts from a known state.
 $group = [];
 foreach (['teste.comum', 'teste.b', 'teste.c'] as $name) {
   $group[] = $storage->load($uids[$name]);
 }
-// The mapper finds the thread of exactly these members (an entity query on two values of one multi-value field
-// matches nothing).
+// The mapper finds the exact member set; entity queries on a multivalue field
+// cannot express this with one condition per UID.
 $existing = \Drupal::service('private_message.mapper')->getThreadIdForMembers($group);
 if ($existing) {
   $old = $threads->load($existing);

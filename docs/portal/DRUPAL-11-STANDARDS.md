@@ -66,7 +66,7 @@ Desde Drupal 11.3, callbacks de Form API podem ser resolvidos pelo `CallableReso
 Preferir:
 
 ```php
-$form['#validate'][] = 'aculta_portal.form_callbacks:validateActivity';
+$form['#validate'][] = 'aculta_activity.form_callbacks:validateActivity';
 ```
 
 Regras:

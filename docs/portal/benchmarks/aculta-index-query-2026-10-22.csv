@@ -1,0 +1,10 @@
+run,entries,batch_size,insert_ms,insert_rows_per_second,candidate_samples,cold_page_p50_ms,cold_page_p95_ms,warm_page_p50_ms,warm_page_p95_ms,peak_memory_bytes,explain_type,explain_possible_keys,explain_key,explain_rows_estimate,explain_extra,entries_allocated_bytes,relations_allocated_bytes
+1,10000,500,729.095,13716,30,5.293,12.143,6.312,7.52,96993280,index,"gen_identity,gen_bundle,gen_domain_pub,gen_entry_id,gen_provider",PRIMARY,492,Using where,10551296,40304640
+1,100000,500,6109.209,16369,30,4.5,6.734,2.916,3.712,96993280,index,"gen_identity,gen_bundle,gen_domain_pub,gen_entry_id,gen_provider",PRIMARY,280,Using where,66387968,97042432
+1,1000000,500,61643.522,16222,30,4.015,6.922,2.547,3.357,96993280,index,"gen_identity,gen_bundle,gen_domain_pub,gen_entry_id,gen_provider",PRIMARY,308,Using where,637239296,117293056
+2,10000,500,848.726,11782,30,5.916,7.223,5.835,8.061,96993280,index,"gen_identity,gen_bundle,gen_domain_pub,gen_entry_id,gen_provider",PRIMARY,492,Using where,10551296,103481344
+2,100000,500,6006.057,16650,30,4.905,8.594,3.075,3.941,96993280,index,"gen_identity,gen_bundle,gen_domain_pub,gen_entry_id,gen_provider",PRIMARY,280,Using where,66387968,35880960
+2,1000000,500,61853.762,16167,30,4.567,13.605,2.882,7.576,96993280,index,"gen_identity,gen_bundle,gen_domain_pub,gen_entry_id,gen_provider",PRIMARY,284,Using where,638304256,102547456
+3,10000,500,655.847,15247,30,5.909,9.953,5.616,8.692,96993280,index,"gen_identity,gen_bundle,gen_domain_pub,gen_entry_id,gen_provider",PRIMARY,479,Using where,10551296,103596032
+3,100000,500,6046.153,16539,30,4.671,7.045,3.005,5.425,96993280,index,"gen_identity,gen_bundle,gen_domain_pub,gen_entry_id,gen_provider",PRIMARY,280,Using where,66387968,38027264
+3,1000000,500,75195.327,13299,30,4.282,5.865,3.843,7.822,96993280,index,"gen_identity,gen_bundle,gen_domain_pub,gen_entry_id,gen_provider",PRIMARY,284,Using where,600489984,99303424

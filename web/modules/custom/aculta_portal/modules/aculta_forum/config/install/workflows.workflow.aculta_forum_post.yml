@@ -1,0 +1,75 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - content_moderation
+    - aculta_forum
+id: aculta_forum_post
+label: 'Moderação das discussões públicas ACULTA'
+type: content_moderation
+type_settings:
+  states:
+    draft:
+      label: Rascunho
+      weight: 0
+      published: false
+      default_revision: false
+    review:
+      label: 'Aguardando moderação'
+      weight: 1
+      published: false
+      default_revision: false
+    published:
+      label: Publicado
+      weight: 2
+      published: true
+      default_revision: true
+    rejected:
+      label: Rejeitado
+      weight: 3
+      published: false
+      default_revision: true
+  transitions:
+    create_draft:
+      label: 'Salvar rascunho'
+      from:
+        - draft
+        - published
+        - rejected
+      to: draft
+      weight: 0
+    submit_for_review:
+      label: 'Enviar para moderação'
+      from:
+        - draft
+        - rejected
+      to: review
+      weight: 1
+    approve:
+      label: Aprovar
+      from:
+        - review
+      to: published
+      weight: 2
+    reject:
+      label: Rejeitar
+      from:
+        - review
+      to: rejected
+      weight: 3
+    edit_published:
+      label: 'Salvar edição publicada'
+      from:
+        - published
+      to: published
+      weight: 4
+    withdraw:
+      label: 'Retirar da publicação'
+      from:
+        - published
+      to: review
+      weight: 5
+  entity_types:
+    aculta_forum_post:
+      - aculta_forum_post
+  default_moderation_state: draft

@@ -63,7 +63,7 @@ if ($example = Webform::load('contact')) {
 foreach (\Drupal::entityTypeManager()->getStorage('path_alias')->loadByProperties(['alias' => '/contato', 'langcode' => 'pt-br']) as $alias) {
   $alias->setPath('/webform/aculta_contact')->save();
 }
-foreach (['main_contact', 'aculta-footer-participation_contact'] as $key) {
+foreach (['main_contact'] as $key) {
   $link = \Drupal\menu_link_content\Entity\MenuLinkContent::load($state['menus'][$key]);
   $link->set('link', ['uri' => 'entity:webform/aculta_contact'])->save();
 }

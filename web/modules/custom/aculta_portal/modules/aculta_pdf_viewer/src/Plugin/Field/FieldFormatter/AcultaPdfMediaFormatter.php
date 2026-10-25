@@ -27,6 +27,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 final class AcultaPdfMediaFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
+  use PdfViewerFormatterSettingsTrait;
+
   public function __construct(
     $plugin_id,
     $plugin_definition,
@@ -98,7 +100,7 @@ final class AcultaPdfMediaFormatter extends FormatterBase implements ContainerFa
       $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
       $viewer_field = DocumentFieldMap::fieldForBundle($media->bundle());
       if ($mime === 'application/pdf' && $extension === 'pdf' && $viewer_field === $items->getName()) {
-        $viewer = $this->viewerBuilder->build($media, $viewer_field);
+        $viewer = $this->viewerBuilder->build($media, $viewer_field, $this->getViewerSettings());
         if (!isset($viewer['#access']) || $viewer['#access'] !== FALSE) {
           $elements[$delta] = $viewer;
           continue;

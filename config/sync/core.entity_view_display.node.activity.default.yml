@@ -22,7 +22,6 @@ dependencies:
     - field.field.node.activity.field_online_url
     - field.field.node.activity.field_organizer
     - field.field.node.activity.field_place_name
-    - field.field.node.activity.field_project
     - field.field.node.activity.field_registration_url
     - field.field.node.activity.field_summary
     - node.type.activity
@@ -152,5 +151,4 @@ hidden:
   field_meta_tags: true
   field_modality: true
   field_organizer: true
-  field_project: true
   langcode: true

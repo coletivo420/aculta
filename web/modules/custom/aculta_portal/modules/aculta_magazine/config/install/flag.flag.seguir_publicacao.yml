@@ -1,0 +1,29 @@
+uuid: b55313b3-11d6-46cc-bb3c-b59c9af8b541
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+id: seguir_publicacao
+label: 'Seguir publicação'
+bundles:
+  - revista
+entity_type: node
+global: false
+flag_short: 'Seguir publicação'
+flag_long: ''
+flag_message: ''
+unflag_short: 'Seguindo publicação'
+unflag_long: ''
+unflag_message: ''
+unflag_denied_text: ''
+weight: 0
+flag_type: 'entity:node'
+link_type: reload
+flagTypeConfig:
+  show_in_links: {  }
+  show_as_field: true
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions: {  }
+linkTypeConfig: {  }

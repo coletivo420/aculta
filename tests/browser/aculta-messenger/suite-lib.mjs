@@ -1,4 +1,4 @@
-// Biblioteca da suíte de navegador do Messenger: Firefox headless pelo geckodriver (protocolo W3C WebDriver).
+// Biblioteca da suíte de navegador do Messenger: Firefox ESR visível pelo geckodriver (protocolo W3C WebDriver).
 // Sem dependências: usa fetch e child_process do Node 22.
 //
 // Variáveis de ambiente:
@@ -10,6 +10,10 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
+
+if (process.env.DISPLAY !== ':0') {
+  throw new Error('A suíte do Messenger exige Firefox ESR visível em DISPLAY=:0.');
+}
 
 export const PROJECT = fileURLToPath(new URL('../../../', import.meta.url));
 export const BASE = process.env.SUITE_BASE || 'https://aculta.toca.net.br';
@@ -35,7 +39,7 @@ async function wd(method, path, body) {
 
 // One-time login link for an account of the test runtime (the Drush user login command, no password is stored).
 export function oneTimeLogin(name) {
-  return execFileSync('php', ['vendor/drush/drush/drush.php', 'uli', `--name=${name}`, `--uri=${LOGIN_URI}`], { cwd: PROJECT }).toString().trim().split('\n').pop();
+  return execFileSync('php', ['vendor/drush/drush/drush.php', 'uli', '--no-browser', `--name=${name}`, `--uri=${LOGIN_URI}`], { cwd: PROJECT, timeout: 30_000 }).toString().trim().split('\n').pop();
 }
 
 // Runs PHP on the test runtime (Drush php:eval). The code is written by the suite, never taken from a page.
@@ -48,20 +52,25 @@ export function setup() {
 }
 
 export class Browser {
-  constructor() { this.sid = null; this.width = 1280; this.height = 800; }
+  constructor() { this.sid = null; this.width = 1280; this.height = 800; this.openOptionsLabel = null; }
 
-  async open(name, { width = 1280, height = 800 } = {}) {
+  async open(name, { width = 1280, height = 800, javascript = true } = {}) {
     await this.close();
     this.width = width; this.height = height;
     const host = new URL(BASE).hostname;
-    const { sessionId } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, 'moz:firefoxOptions': { args: ['-headless'], prefs: { 'network.dns.localDomains': `${host},conta.${host}` } } } } });
+    const { sessionId } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, 'moz:firefoxOptions': { prefs: { 'network.dns.localDomains': `${host},conta.${host}`, 'javascript.enabled': javascript } } } } });
     this.sid = sessionId;
     await wd('POST', this.p('/window/rect'), { width, height });
     await wd('POST', this.p('/url'), { url: oneTimeLogin(name) });
     await sleep(2000);
     await wd('POST', this.p('/url'), { url: BASE + '/' });
     await sleep(1800);
-    await this.exec(`window.__errs = []; window.addEventListener('error', (e) => window.__errs.push(String(e.message))); window.addEventListener('unhandledrejection', (e) => window.__errs.push('REJ ' + String(e.reason))); window.__f = []; const __of = window.fetch; window.fetch = (...a) => __of(...a).then((r) => { window.__f.push(String(a[1] && a[1].method || 'GET') + ' ' + r.status + ' ' + String(a[0]).slice(-40) + ' keys=' + (a[1] && a[1].body && a[1].body.keys ? [...a[1].body.keys()].join(',') : '-')); return r; }); return 1;`);
+    const loginState = await this.exec(`const u = new URL(location.href); return JSON.stringify({ host: u.host, path: u.pathname, messengerTrigger: !!document.querySelector('.aculta-messenger-trigger'), loginForm: !!document.querySelector('form.user-login-form'), testAccountVisible: document.body.innerText.includes(${JSON.stringify(name)}) });`);
+    console.log(`Browser session ${name}: ${loginState}`);
+    if (!await this.waitFor(`document.querySelector('.aculta-messenger-trigger')`, `Messenger access for ${name}`, 10000)) {
+      throw new Error(`A conta de teste ${name} não iniciou sessão com acesso ao Messenger.`);
+    }
+    await this.exec(`window.__errs = []; window.addEventListener('error', (e) => window.__errs.push(String(e.message))); window.addEventListener('unhandledrejection', (e) => window.__errs.push('REJ ' + String(e.reason))); window.__f = []; const __of = window.fetch; window.fetch = (...a) => __of(...a).then((r) => { const u = new URL(String(a[0]), location.href); window.__f.push(String(a[1] && a[1].method || 'GET') + ' ' + r.status + ' ' + u.pathname + ' token=' + u.searchParams.has('token') + ' keys=' + (a[1] && a[1].body && a[1].body.keys ? [...a[1].body.keys()].join(',') : '-')); return r; }); return 1;`);
     return this;
   }
 
@@ -105,11 +114,19 @@ export class Browser {
     const ok = await this.waitFor(`${this.C}.querySelector('a[data-aculta-conversation-url][data-aculta-thread-id="${threadId}"]')`, 'thread row');
     if (!ok) return false;
     await this.exec(`${this.C}.querySelector('a[data-aculta-conversation-url][data-aculta-thread-id="${threadId}"]').click(); return 1;`);
-    return this.waitFor(`${this.C}.querySelector('.aculta-messenger-conversation-toolbar')`, 'toolbar');
+    return this.waitFor(`${this.C}.querySelector('[data-aculta-conversation-view][data-aculta-thread-id="${threadId}"]')`, `thread ${threadId}`);
   }
 
   async clickByText(selector, text) {
     return this.exec(`const el = [...${this.C}.querySelectorAll(${JSON.stringify(selector)})].find((x) => x.textContent.trim() === ${JSON.stringify(text)} || x.value === ${JSON.stringify(text)}); if (!el) return 0; el.click(); return 1;`);
+  }
+
+  // Clicks a visible element through the WebDriver element endpoint.
+  async clickSelector(selector) {
+    const element = await wd('POST', this.p('/element'), { using: 'css selector', value: selector });
+    const id = element['element-6066-11e4-a52e-4f735466cecf'] || element.ELEMENT;
+    if (!id) throw new Error(`WebDriver did not return an element for ${selector}.`);
+    await wd('POST', this.p(`/element/${id}/click`), {});
   }
 
   async waitText(text, timeoutMs = 15000) {
@@ -122,13 +139,21 @@ export class Browser {
 
   // The items of the open menu, as "button:Label" or "link:Label".
   async panelItems() {
-    return this.exec(`return JSON.stringify([...${this.C}.querySelectorAll('.aculta-messenger-options__panel a, .aculta-messenger-options__panel input[type=submit]:not([data-aculta-dialog-close])')].filter((e) => e.offsetParent !== null || e.closest('dialog') === null).map(e => (e.tagName === 'A' ? 'link:' : 'button:') + (e.value || e.textContent.trim())));`).then(JSON.parse);
+    const menu = this.openOptionsLabel === null
+      ? `${this.C}.querySelector('.aculta-messenger-options[open]')`
+      : `[...${this.C}.querySelectorAll('.aculta-messenger-options[open]')].find((item) => item.querySelector('.aculta-messenger-options__summary')?.textContent.trim() === ${JSON.stringify(this.openOptionsLabel)})`;
+    return this.exec(`const menu = ${menu}; return JSON.stringify([...(menu?.querySelectorAll('.aculta-messenger-options__panel a, .aculta-messenger-options__panel input[type=submit]:not([data-aculta-dialog-close])') || [])].filter((e) => e.getClientRects().length > 0).map(e => (e.tagName === 'A' ? 'link:' : 'button:') + (e.value || e.textContent.trim())));`).then(JSON.parse);
   }
 
   // Opens the "Opções" menu, unless it is already open (a result keeps it open).
-  async openOptions() {
-    await this.exec(`const d = ${this.C}.querySelector('.aculta-messenger-options details'); if (d && !d.open) { ${this.C}.querySelector('.aculta-messenger-options__summary').click(); } return 1;`);
-    return this.waitFor(`${this.C}.querySelector('.aculta-messenger-options details[open]')`, 'options open');
+  async openOptions(memberName = null) {
+    this.openOptionsLabel = memberName;
+    const find = memberName === null
+      ? `${this.C}.querySelector('.aculta-messenger-options')`
+      : `[...${this.C}.querySelectorAll('.aculta-messenger-options')].find((item) => item.querySelector('.aculta-messenger-options__summary')?.textContent.trim() === ${JSON.stringify(memberName)})`;
+    await this.exec(`const d = ${find}; if (d && !d.open) { d.querySelector('.aculta-messenger-options__summary').click(); } return 1;`);
+    const ready = memberName === null ? `!!(d && d.open)` : `!!(d && d.open && d.querySelector('.aculta-messenger-options__panel form[data-aculta-drawer-action]'))`;
+    return this.waitFor(`(() => { const d = ${find}; return ${ready}; })()`, memberName === null ? 'options open' : `options open for ${memberName}`);
   }
 
   async notice() {
@@ -145,13 +170,14 @@ export class Browser {
     await wd('POST', this.p(`/element/${Object.values(el)[0]}/value`), { text });
   }
 
+  // Sends one real keyboard action through W3C WebDriver (for example, Escape: \uE00C).
+  async pressKey(key) {
+    await wd('POST', this.p('/actions'), { actions: [{ type: 'key', id: 'messenger-keyboard', actions: [{ type: 'keyDown', value: key }, { type: 'keyUp', value: key }] }] });
+  }
+
   async clearAndType(selector, text) {
     await this.exec(`const i = document.querySelector(${JSON.stringify(selector)}); if (i) { i.focus(); i.value = ''; i.dispatchEvent(new Event('input', { bubbles: true })); } return 1;`);
     await this.typeIn(selector, text);
   }
 
-  // The confirmation dialog of an action ("ban" or "remove") is open.
-  async dialogOpen(name) {
-    return this.exec(`const d = document.querySelector('dialog[data-aculta-dialog="${name}"]'); return !!(d && d.open);`);
-  }
 }

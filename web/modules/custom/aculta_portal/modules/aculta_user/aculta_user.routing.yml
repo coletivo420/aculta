@@ -18,8 +18,18 @@ aculta_user.configuracoes_privacidade:
   requirements:
     _permission: 'access aculta portal'
 
+aculta_user.aculta_user_agreement_audit:
+  path: '/painel-administrativo/aculta/termos/aceites'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AcultaUserAgreementAuditController::listing'
+    _title: 'Evidências de aceite e consentimento'
+  requirements:
+    _permission: 'administer aculta user agreements'
+  options:
+    _admin_route: true
+
 aculta_user.participacao_settings:
-  path: '/painel-administrativo/configuracoes/aculta/portal/participacao'
+  path: '/painel-administrativo/aculta/participacao'
   defaults:
     _form: '\Drupal\aculta_user\Form\ParticipationSettingsForm'
     _title: 'Regras de participação'
@@ -144,14 +154,15 @@ aculta_user.denuncias_forum:
     _title: 'Denúncias do Fórum'
   requirements:
     _permission: 'moderar denuncias do forum'
+  methods: [GET, HEAD, POST]
   options:
     _admin_route: true
 
-aculta_user.associado_marcar:
-  path: '/painel-administrativo/associados/{user}/marcar'
+aculta_user.associado_situacao:
+  path: '/painel-administrativo/associados/{user}/situacao'
   defaults:
-    _form: '\Drupal\aculta_user\Form\AssociadoMarkForm'
-    _title: 'Marca de associado'
+    _form: '\Drupal\aculta_user\Form\AssociadoSituacaoForm'
+    _title: 'Situação de associado'
   requirements:
     _permission: 'administer aculta associados'
     user: '\d+'
@@ -160,3 +171,15 @@ aculta_user.associado_marcar:
     parameters:
       user:
         type: entity:user
+
+aculta_user.associado_pedido:
+  path: '/associado'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AssociadoRequestForm'
+    _title: 'Associado'
+  requirements:
+    _permission: 'access aculta portal'
+  options:
+    _aculta_domain_purpose: 'account'
+
+# Caminhos legados da troca de e-mail (antes do contrib change_mail_page): levam à aba E-mail da Segurança.

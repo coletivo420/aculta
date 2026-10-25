@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.25';
+  public const VERSION = '0.1.27';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -33,6 +33,8 @@ final class Cli {
       'transition' => $this->transition($options),
       'domains' => $this->domains(),
       'cookies' => $this->cookies(),
+      'webhooks' => $this->webhooks(),
+      'provision' => $this->provision($options),
       'verify' => $this->verify($options),
       'robots' => $this->robots($options),
       'sitemap' => $this->sitemap($options),
@@ -821,6 +823,198 @@ final class Cli {
   /** @return array<string, mixed> */
   /** Confere, somente leitura, a tabela domain_transition contra os registros de domínio em config/sync. */
   /**
+   * Confere (somente leitura) os webhooks de external_webhooks: URL por ambiente, segredo no contrato e estado do cadastro.
+   *
+   * Não chama o provedor e não lê valores de segredo. O cadastro é feito no deploy, conforme docs/USO.md.
+   */
+  private function webhooks(): int {
+    $config = $this->json($this->toolRoot . '/config/deploy.json');
+    $environments = $config['environments'] ?? [];
+    $hooks = $config['external_webhooks'] ?? null;
+    if (!is_array($hooks) || $hooks === []) {
+      $this->err('webhooks: external_webhooks ausente ou vazio em config/deploy.json');
+      return 1;
+    }
+    $contract = $this->json($this->repoRoot . '/config/secrets-contract.json')['variables'] ?? [];
+    $code = 0;
+    foreach ($hooks as $name => $hook) {
+      if (!is_array($hook) || !isset($hook['path'], $hook['auth']['secret'])) {
+        continue;
+      }
+      $secret = (string) $hook['auth']['secret'];
+      $variable = null;
+      foreach ($contract as $item) {
+        if (($item['name'] ?? null) === $secret) {
+          $variable = $item;
+        }
+      }
+      foreach ($hook['environments'] ?? [] as $env => $spec) {
+        $site = $environments[$env]['site'] ?? null;
+        if ($site === null) {
+          $this->err("webhooks: $name: ambiente $env sem environments.$env.site");
+          $code = 1;
+          continue;
+        }
+        $url = rtrim($site, '/') . $hook['path'];
+        $required = $variable !== null && in_array($env, (array) ($variable['required_in'] ?? []), true);
+        $inContract = $variable !== null && in_array($env, (array) ($variable['environments'] ?? []), true);
+        if (!$inContract) {
+          $this->err("webhooks: $name/$env: segredo $secret não declarado para o ambiente $env no contrato");
+          $code = 1;
+          continue;
+        }
+        $state = $spec['status'] ?? 'indefinido';
+        $this->say(sprintf('%s/%s: %s, %s; segredo %s (%s); estado: %s', $name, $env, $hook['type'] ?? '-', $url, $secret, $required ? 'obrigatório' : 'opcional', $state));
+        if ($state === 'pendente') {
+          $this->say("  ação no deploy: " . ($spec['action'] ?? '(sem ação declarada)'));
+        }
+        if ($env === 'production' && $state === 'pendente' && !$required) {
+          $this->err("webhooks: $name/production: segredo $secret deve ser obrigatório em produção (required_in) para o cadastro do deploy");
+          $code = 1;
+        }
+      }
+    }
+    return $code;
+  }
+
+  /**
+   * Provisiona segredos e o webhook do Brevo de um ambiente. Dry-run por padrão; --apply executa.
+   *
+   * Idempotente: gera só o que falta, nunca sobrescreve segredo existente, cadastra o webhook só se não houver, e troca o
+   * token do webhook existente somente quando o token foi gerado agora. Produção exige --confirm-production.
+   * Valores de segredo nunca são impressos.
+   */
+  private function provision(array $o): int {
+    $env = (string) ($o['env'] ?? '');
+    $secrets = (string) ($o['secrets'] ?? '');
+    $apply = !empty($o['apply']);
+    $config = $this->json($this->toolRoot . '/config/deploy.json');
+    $site = $config['environments'][$env]['site'] ?? NULL;
+    $hook = $config['external_webhooks']['brevo_transactional'] ?? NULL;
+    if ($site === NULL || !is_array($hook)) {
+      $this->err('provision: ambiente desconhecido ou webhook não declarado em external_webhooks');
+      return 1;
+    }
+    if ($secrets === '' || !is_file($secrets)) {
+      $this->err('provision: informe --secrets=CAMINHO do arquivo de segredos do ambiente');
+      return 1;
+    }
+    if ($apply && $env === 'production' && empty($o['confirm-production'])) {
+      $this->err('provision: produção exige --confirm-production além de --apply');
+      return 1;
+    }
+    $url = rtrim((string) $site, '/') . $hook['path'];
+    $contract = $this->json($this->repoRoot . '/config/secrets-contract.json')['variables'] ?? [];
+    $required = [];
+    foreach (\AcultaDeployer\Provision::GENERATED as $name => $format) {
+      foreach ($contract as $item) {
+        if (($item['name'] ?? NULL) === $name && in_array($env, (array) ($item['required_in'] ?? []), true)) {
+          $required[] = $name;
+        }
+      }
+    }
+    $missing = \AcultaDeployer\Provision::missing(\AcultaDeployer\Provision::namesIn($secrets), $required);
+    $apiKey = \AcultaDeployer\Provision::valueOf($secrets, 'BREVO_API_KEY');
+    if ($apiKey === NULL || $apiKey === '') {
+      $this->err('provision: BREVO_API_KEY ausente no arquivo de segredos');
+      return 1;
+    }
+    $list = $this->brevoCall('GET', '/v3/webhooks?type=transactional', $apiKey);
+    if ($list['http'] !== 200) {
+      $this->err('provision: não foi possível listar os webhooks do Brevo (HTTP ' . $list['http'] . ')');
+      return 1;
+    }
+    $found = NULL;
+    foreach ($list['body']['webhooks'] ?? [] as $hookRow) {
+      if (($hookRow['url'] ?? NULL) === $url) {
+        $found = $hookRow;
+      }
+    }
+    $testId = isset($o['remove-test']) && is_numeric($o['remove-test']) ? (int) $o['remove-test'] : NULL;
+    $tokenChanged = in_array('BREVO_WEBHOOK_TOKEN', $missing, true);
+    foreach (\AcultaDeployer\Provision::plan($missing, $found, $tokenChanged, $testId) as $action) {
+      $this->say(($apply ? 'executar: ' : 'plano: ') . $action);
+    }
+    if (!$apply) {
+      return 0;
+    }
+
+    $values = [];
+    foreach ($missing as $name) {
+      $values[$name] = \AcultaDeployer\Provision::generate($name);
+    }
+    if ($values !== []) {
+      \AcultaDeployer\Provision::append($secrets, $values);
+      $this->say('ok: segredos gravados: ' . implode(', ', array_keys($values)));
+    }
+    $token = \AcultaDeployer\Provision::valueOf($secrets, 'BREVO_WEBHOOK_TOKEN');
+    $auth = ['type' => 'bearer', 'token' => (string) $token];
+    if ($found === NULL) {
+      $created = $this->brevoCall('POST', '/v3/webhooks', $apiKey, [
+        'url' => $url,
+        'description' => (string) ($hook['purpose'] ?? 'ACULTA Mailer'),
+        'type' => 'transactional',
+        'events' => $hook['events'],
+        'auth' => $auth,
+      ]);
+      if ($created['http'] !== 201) {
+        $this->err('provision: falha ao cadastrar o webhook (HTTP ' . $created['http'] . ')');
+        return 1;
+      }
+      $this->say('ok: webhook cadastrado, id ' . ($created['body']['id'] ?? '?') . '. Atualize registration_id em deploy.json.');
+    }
+    elseif ($tokenChanged) {
+      $updated = $this->brevoCall('PUT', '/v3/webhooks/' . $found['id'], $apiKey, [
+        'url' => $url,
+        'description' => (string) ($hook['purpose'] ?? 'ACULTA Mailer'),
+        'events' => $hook['events'],
+        'auth' => $auth,
+      ]);
+      if ($updated['http'] >= 300) {
+        $this->err('provision: falha ao atualizar o token do webhook (HTTP ' . $updated['http'] . ')');
+        return 1;
+      }
+      $this->say('ok: token do webhook ' . $found['id'] . ' atualizado.');
+    }
+    if ($testId !== NULL) {
+      $deleted = $this->brevoCall('DELETE', '/v3/webhooks/' . $testId, $apiKey);
+      if ($deleted['http'] !== 204) {
+        $this->err('provision: falha ao remover o cadastro de teste ' . $testId . ' (HTTP ' . $deleted['http'] . ')');
+        return 1;
+      }
+      $this->say('ok: cadastro de teste ' . $testId . ' removido.');
+    }
+    return 0;
+  }
+
+  /**
+   * Chamada à API do Brevo. A chave segue só em cabeçalho, em memória.
+   *
+   * @return array{http: int, body: array}
+   */
+  private function brevoCall(string $method, string $path, string $apiKey, ?array $payload = NULL): array {
+    $handle = curl_init('https://api.brevo.com' . $path);
+    $headers = ['api-key: ' . $apiKey, 'accept: application/json'];
+    if ($payload !== NULL) {
+      $headers[] = 'content-type: application/json';
+    }
+    curl_setopt_array($handle, [
+      CURLOPT_RETURNTRANSFER => TRUE,
+      CURLOPT_CUSTOMREQUEST => $method,
+      CURLOPT_HTTPHEADER => $headers,
+      CURLOPT_TIMEOUT => 30,
+    ]);
+    if ($payload !== NULL) {
+      curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode($payload));
+    }
+    $raw = curl_exec($handle);
+    $http = (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
+    curl_close($handle);
+    $body = is_string($raw) ? json_decode($raw, TRUE) : NULL;
+    return ['http' => $http, 'body' => is_array($body) ? $body : []];
+  }
+
+  /**
    * Confere (somente leitura) o cookie de sessão de cada ambiente contra os arquivos de serviços.
    */
   private function cookies(): int {
@@ -936,6 +1130,9 @@ Uso:
   aculta-deployer hostinger-layout --domain-root=DIR [--apply]
   aculta-deployer robots [--env=production|test]  GET somente leitura: X-Robots-Tag, caminhos privados e robots.txt (Sitemap)
   aculta-deployer environment [show] | environment set --to=production|test  define o ambiente do site (e o endereço) lido pelo Portal
+  aculta-deployer provision --env=production|test --secrets=CAMINHO [--apply] [--confirm-production] [--remove-test=ID]
+                                       gera segredos que faltam, cadastra ou atualiza o webhook do Brevo; dry-run sem --apply
+  aculta-deployer webhooks              leitura: confere os webhooks de external_webhooks (URL por ambiente, segredo no contrato e estado do cadastro)
   aculta-deployer cookies               leitura: confere o cookie de sessão por ambiente (session_cookie) contra services.*.yml
   aculta-deployer domains              GET/leitura: confere a tabela domain_transition (teste → produção) contra config/sync
   aculta-deployer report [--out=PATH]  relatório neutro para o painel do Portal (sem valores)

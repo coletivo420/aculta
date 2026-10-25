@@ -1,0 +1,2717 @@
+## Fechamento das fases — 2026-10-25
+
+- Unit do Fórum 184/1.332; Unit do Messenger 261/2.023.
+- Kernel do Fórum 150/2.863 no MariaDB (42 depreciações de Core/contrib).
+- Functional 6/6, 33 asserções, em site novo com o perfil standard:
+  negação anônima, telas autenticadas, criação de tópico pelo formulário, lock
+  da limpeza e desinstalação sem rota/configuração.
+- `tests/browser/aculta-forum/follow-and-notices.py` 13/13: seguir e deixar de
+  seguir, aviso único com contador, leitura pela rota canônica, filtro de não
+  lidos, teclado, 500 CSS px e nenhuma conversa privada.
+- `fgroup-runtime.py`: ativo com membership lê o tópico restrito; suspenso
+  recebe 403.
+- F-GROUP local: `provision`, `measure` (anônimo, ativo sem membership,
+  suspenso e comum negados; ativo com membership liberado), `search` sob
+  grants e `teardown` com `node_access` de volta a `all` (26 linhas).
+- Migração e corte locais: posts 2/2, Comments legados removidos
+  (`comments=0`, `posts=5`) e avisos estáveis (3→3); backup
+  `aculta-local-pre-cut-20261025.sql.gz`.
+
+## Pré-deploy de 2026-10-24 — gates e acessibilidade (candidato retirado)
+
+- Unit do Fórum 184/1.333 (inclui `ForumServiceDefinitionsTest` e
+  `RestrictedForumGroupResolverTest`); Kernel 150/2.862 no MariaDB
+  `aculta_simpletest`; PHPCS 0 erros e 1 aviso aceito (`version` no
+  `info.yml`).
+- Revisão de código corrigiu cinco achados: aridade do serviço do histórico,
+  consulta de Groups por plugin, publicação/acesso em denúncias, progresso do
+  "marcar tudo como lido" e alias do Comment na fila de moderação. Dois
+  achados de manutenção ficaram em DT-F01/DT-F02.
+- `accessibility-readonly.py` (Firefox ESR/X11, local simulado): 49/49 em
+  ACULTA420 e 49/49 em Olivero. Verifica `h1` único, hierarquia, nome
+  acessível, `alt`, texto de links, IDs únicos e foco por teclado no conteúdo
+  principal das páginas: início, categorias, pesquisar, painel, configurações
+  e mover tópico.
+- `/categorias` em Olivero passa a renderizar o título do grupo como `h2`
+  (`hook_theme` do módulo); o salto h1 → h3 do template genérico do Core não
+  ocorre mais.
+- Detalhe e limites: [`RC.md`](RC.md).
+
+## Anexo e mover comentário — pré-visualização autenticada, 2026-10-24
+
+- `synthetic-preview-and-move.py` (Firefox ESR/X11, local): 4/4 — imagem
+  sintética renderizada com `alt` no tópico despublicado e formulário de mover
+  comentário com destinos/confirmação/submit. Cria e apaga todo o conteúdo
+  sintético e restaura `comment_move_enabled`; estado final verificado com zero
+  entidades e setting=0.
+- Sem submissão de formulário e sem e-mail; uid 1 no dump local.
+
+## Painel autenticado — leitura somente no navegador, 2026-10-24
+
+- `tests/browser/aculta-forum/authenticated-readonly.py` (Firefox ESR/X11,
+  local simulado): 12/12 verificações — login, painel com as quatro entradas,
+  fila de revisões, mover tópico com opções/confirmação, configurações e
+  reflow 1024/390. GET-only; sem erro visível do Fórum.
+- uid 1 por limitação do dump local (único com mover tópico e configurações);
+  regras de acesso de não-superusuário seguem provadas em Kernel.
+- Kernel do Fórum 149/2.841; Unit 181/1.019; PHPCS limpo.
+
+## Anexo no editor — criação de Media e recusas, 2026-10-24
+
+- `ForumAttachmentUploadDialogFormKernelTest` (2 testes / 34 asserções,
+  MariaDB): PDF válido cria uma Media `forum_attachment` despublicada com
+  arquivo permanente; resposta AJAX com UUID, tipo media e display de embed.
+  Dois arquivos, fid inexistente, extensão inválida e imagem sem alt são
+  recusados sem criar Media.
+- Não coberto: imagem raster válida e pré-visualização no navegador.
+- Suíte Kernel do Fórum 149/2.841; PHPCS limpo.
+
+## Mover tópico — rota canônica e formulário, 2026-10-24
+
+- A rota `aculta_forum.topic_move` foi restaurada apontando ao
+  `ForumTopicMoveForm` (antes o link da entidade apontava para rota removida).
+- Defeito corrigido: a categoria atual aparecia como destino por comparação
+  string × int; agora é excluída.
+- Kernel `ForumTopicMoverKernelTest` (4/112): opções, `topic_id`, confirmação
+  obrigatória, cancelar no painel e erro sem consentimento.
+- Unit 181/1.019; Kernel do Fórum 147/2.807; PHPCS limpo.
+
+## Aviso de resposta — Runtime local, 2026-10-24
+
+- Resposta de uid 15 em tópico seguido pelo uid 1: um `aculta_aviso`
+  `forum_resposta` com `contador_site=1`, `contador_email=1` e
+  `ultimo_comentario` correto; item de e-mail só enfileirado e removido sem
+  cron, sem envio.
+- Limpeza verificada: zero Comments sintéticos, zero flaggings novos e avisos no
+  baseline. Updates pendentes do Messenger aplicados; três defeitos de update
+  corrigidos (formato de `allowed_values` e nome de campo com 39 caracteres).
+- Ambiente local simulado; digest/e-mail e concorrência seguem não executados.
+
+## Migração — History preservado, 2026-10-24
+
+- `ForumCommentMigrationBatchKernelTest` (5 testes / 165 asserções, MariaDB):
+  recibo de leitura por Node (`history` uid/nid/timestamp) permanece idêntico
+  após importar raiz e resposta; dois posts criados. Recibo é por Node, não por
+  Comment, então não há duplicação nem remoção na conversão.
+- Suíte Kernel do Fórum 150/2.862; PHPCS limpo.
+
+## Migração de Comments — equivalência de árvore aninhada, 2026-10-24
+
+- `ForumCommentMigrationBatchKernelTest` (4 testes / 144 asserções, MariaDB):
+  raiz, filha e neta preservam assunto, corpo, autoria, posição (`cid`), datas,
+  publicação, estado de moderação e `first_published`; mapa com um post por
+  Comment; pais ligados em cadeia; replay idempotente. Dados sintéticos.
+- Suíte Kernel do Fórum 146/2.779; PHPCS limpo.
+
+## Anexo no editor — acesso e correção de tipo, 2026-10-24
+
+- Defeito real: import de `Drupal\user\AccountInterface` (inexistente)
+  fazia o acesso ao diálogo falhar com `TypeError`; corrigido para
+  `Drupal\Core\Session\AccountInterface`.
+- `ForumAttachmentUploadAccessKernelTest` (2 testes / 14 asserções, MariaDB):
+  membro com formato `forum` no purpose `forum` liberado; anônimo, outro
+  formato e `main` não liberados; contextos de domínio e autenticação presentes.
+- Smoke de carregamento de todas as classes de `src/` em PHP 8.4: OK.
+- Suíte Kernel do Fórum 145/2.717; PHPCS limpo.
+
+## Seleção de revisões — correção de carregamento e validação, 2026-10-24
+
+- Defeito real: propriedade `readonly $routeMatch` colidia com `FormBase` e a
+  classe não carregava em PHP 8.4; renomeada para `$forumRouteMatch`.
+- `ForumPostRevisionSelectionFormKernelTest` (4 testes / 61 asserções, MariaDB):
+  padrões, envio ordenado, recusa de valor não numérico, revisões iguais, revisão
+  de outra publicação e post ausente na rota.
+- Suíte Kernel do Fórum 143/2.703; PHPCS limpo.
+
+## Revisão visual local — ACULTA420 e Olivero, 2026-10-24
+
+- `tests/browser/aculta-forum/categorias-visual.py`: `/categorias` no Growroom
+  local simulado, 9/9 em ACULTA420 e 9/9 em Olivero; 12 categorias e 12
+  contadores, zero erros visíveis, zero overflow em 1024 e 500 CSS px.
+- `tests/browser/aculta-cpf-checkout/olivero-smoke.py`: índice de Discussões
+  sem erro visível nos dois temas; tema restaurado para ACULTA420.
+- Ambiente local (`127.0.0.1` com hosts no perfil do Firefox), não o servidor
+  de testes.
+
+## Configuração de tópicos — rota placeholder removida, 2026-10-24
+
+- `ForumTopicDisplayConfigTest` (Unit, suíte 181/1.014): afirma que
+  `aculta_forum.topic_move` não existe mais, preservando as provas da rota
+  canônica de mover comentário e das abas do painel.
+- PHPCS limpo.
+
+## Opções do Fórum — padrões e limites, 2026-10-24
+
+- `ForumSettingsFormKernelTest` (2 testes / 8 asserções, MariaDB): mover
+  comentários desligado por padrão, prazo de edição com padrão 10 e mínimo zero;
+  o envio grava o valor e converte negativos em zero.
+- Suíte Kernel do Fórum 139/2.642; PHPCS limpo.
+
+## Comparação de revisões — somente diferenças, 2026-10-24
+
+- `ForumPostRevisionComparisonControllerKernelTest` (2 testes / 31 asserções,
+  MariaDB): a tabela mostra apenas o assunto alterado e omite o texto igual,
+  com contexto de domínio no cache; revisão repetida, inexistente ou de outra
+  publicação resultam em não encontrado.
+- Suíte Kernel do Fórum 137/2.634; PHPCS limpo.
+
+## Histórico de revisões — ordem e operações, 2026-10-24
+
+- `ForumPostRevisionHistoryControllerKernelTest` (1 teste / 30 asserções,
+  MariaDB): revisões listadas da mais nova para a mais antiga, com estado,
+  assunto, revisão atual versus histórica; a mais nova liga a comparação com a
+  anterior e a mais antiga não oferece operação; sem revisão anterior à página
+  não há formulário de seleção.
+- Suíte Kernel do Fórum 135/2.603; PHPCS limpo.
+
+## Formulário de moderação — revisão exata, 2026-10-24
+
+- `ForumPostModerationFormControllerKernelTest` (2 testes / 28 asserções,
+  MariaDB): o identificador de revisão da rota chega ao form builder mesmo
+  quando não é a revisão padrão; revisão inexistente resulta em não encontrado
+  sem construir o formulário.
+- Suíte Kernel do Fórum 134/2.573; PHPCS limpo.
+
+## Formulário público de edição — autoria e purpose, 2026-10-24
+
+- `ForumPostEditControllerKernelTest` (2 testes / 32 asserções, MariaDB): a
+  autora recebe o modo `public_submission` para a própria publicação publicada
+  no purpose `forum`; UUID ausente ou desconhecido, publicação de outra pessoa,
+  fora do purpose e publicação despublicada resultam em não encontrado.
+- Suíte Kernel do Fórum 132/2.545; PHPCS limpo.
+
+## Fila de moderação — filtro de purpose e estado, 2026-10-24
+
+- `ForumPostModerationQueueControllerKernelTest` (2 testes / 39 asserções,
+  MariaDB): somente revisões em `review` de tópicos publicados no purpose
+  `forum` e visíveis ao moderador entram na fila; publicações do purpose
+  `main` e já publicadas são ignoradas; a linha liga revisão e histórico; sem
+  revisões a tabela fica vazia com a mensagem de fila limpa.
+- Suíte Kernel do Fórum 130/2.513; PHPCS limpo.
+
+## Controlador de publicação — construção do rascunho, 2026-10-24
+
+- `ForumPostSubmissionControllerKernelTest` (2 testes / 41 asserções, MariaDB):
+  tópico ausente ou desconhecido e resposta pai desconhecida resultam em
+  `NotFoundHttpException`; tópico válido com pai publicado no purpose `forum`
+  entrega ao form builder um rascunho com autor, tópico, pai e
+  `moderation_state = draft`.
+- Suíte Kernel do Fórum 128/2.474; PHPCS limpo.
+
+## Histórico e comparação de revisões — acesso, 2026-10-24
+
+- `ForumPostRevisionAccessKernelTest` (3 testes / 39 asserções, MariaDB):
+  histórico apenas no purpose `main` com tópico publicado acessível; comparação
+  exige duas revisões distintas do mesmo post e recusa repetida, inexistente ou
+  de outro post.
+- Suíte Kernel do Fórum 126/2.433; PHPCS limpo.
+
+## Marcar tudo como lido — estado vazio, 2026-10-24
+
+- `ForumMarkAllReadFormKernelTest` (2 testes / 19 asserções, MariaDB): sem
+  tópicos acessíveis o formulário informa e redireciona para o domínio do
+  Fórum; fora do purpose `forum` a contagem elegível é zero.
+- Suíte Kernel do Fórum 123/2.394; PHPCS limpo.
+
+## Thread revisionável no tópico público, 2026-10-24
+
+- `ForumPostThreadHooksKernelTest` (2 testes / 26 asserções, MariaDB): o modo
+  `full` no purpose `forum` recebe `aculta_forum_revisionable_posts` com a
+  thread; `teaser` e o purpose `main` não recebem.
+- Suíte Kernel do Fórum 121/2.375; PHPCS limpo.
+
+## Resultado de busca — link ancorado no tópico, 2026-10-24
+
+- `ForumPostSearchTopicLinkFormatterKernelTest` (2 testes / 28 asserções,
+  MariaDB): post publicado no purpose `forum` gera link com página e âncora
+  `forum-post-{id}`; post despublicado renderiza `#access` falso; fora do
+  purpose o elemento é omitido.
+- Suíte Kernel do Fórum 119/2.349; PHPCS limpo.
+
+## Formulário público de publicação — acesso, 2026-10-24
+
+- `ForumPostSubmissionAccessKernelTest` (4 testes / 55 asserções, MariaDB):
+  anônimo, tópico ausente, UUID desconhecido e purpose fora do Fórum não são
+  liberados; membro com `create aculta forum posts` pode enviar no purpose
+  `forum`; resposta exige pai publicado e do mesmo tópico.
+- O fixture `aculta_forum_post_test` delega `entity_access` aos hooks de
+  produção; a suíte Kernel do Fórum passou 117/2.321.
+- PHPCS limpo.
+
+## Fila de moderação apenas no purpose main, 2026-10-24
+
+- `ForumPostModerationAccessKernelTest` (1 teste / 9 asserções, MariaDB):
+  `queueAccess()` é liberado em `main`, não é liberado em `forum`, e o purpose
+  anterior é restaurado após `runInPurpose`.
+- Suíte Kernel do Fórum 113/2.266; PHPCS limpo.
+
+## Kernels monolíngues em pt-br, 2026-10-24
+
+- `PublicForumSearchAccessKernelTest`, `PublicForumListingAccessKernelTest` e
+  `ForumCategoryCounterAccessKernelTest` definem o idioma padrão Drupal como
+  `pt-br`; registros `node_access` usam o mesmo langcode. O item indexado do
+  Search API termina em `:pt-br`.
+- `ForumCommentMoverKernelTest` usa `pt-br` como padrão e verifica preservação
+  do idioma e corpo do Comment ao mover. Foi removido o cenário que provisionava
+  uma tradução `fr`; nenhum teste normal de Kernel instala outro idioma.
+- Execução local com SQLite: busca 2/27 (2 depreciações Search API); listagem
+  2/26; contador 4/73; mover 19/388 (19 depreciações Drupal/contrib). PHPCS
+  Drupal/DrupalPractice nos quatro arquivos: PASS. Não é homologação MariaDB ou
+  Runtime.
+
+## Filtro de não lidas — comportamento fail-closed, 2026-10-24
+
+- `ForumUnreadContentFilterTest` (2 testes / 8 asserções): anônimo recebe
+  `1 = 0`; membro recebe as condições de History, tópico, Comment e ForumPost
+  com os limites de leitura.
+- `ForumTopicDisplayConfigTest` passa a afirmar a ausência dos aliases legados
+  removidos na limpeza de rotas.
+- Suíte Unit do Fórum 182/1.019; PHPCS limpo.
+
+## Busca pública sob grants, 2026-10-24
+
+- `PublicForumSearchAccessKernelTest` (2 testes / 27 asserções, MariaDB alvo
+  do `search_api_db`): indexados um tópico público e um restrito; o anônimo
+  recebe total 1 sem o restrito e o membro total 2 com o item restrito. O
+  processor `content_access` filtra antes da contagem/paginação.
+- Usa `search_api_db` com conexão `default:default`; nenhum servidor real é
+  tocado.
+- Suíte Kernel do Fórum 112/2.260; PHPCS limpo.
+
+## Atividade pública só na primeira publicação, 2026-10-24
+
+- Unit `ForumActivityEventHooksTest` (10 testes / 18 asserções): tópico e
+  Comment pendentes não emitem; a aprovação emite uma vez; edição publicada
+  não repete; outros bundles não entram.
+- Kernel `ForumPostActivityEventKernelTest` (3 testes / 42 asserções, MariaDB):
+  post pendente só conta na aprovação; inserção publicada conta uma vez;
+  revisão não padrão e conteúdo sincronizado não contam.
+- Suítes: Unit do Fórum 180/1.018; Kernel 110/2.233; PHPCS limpo.
+
+## Snapshot de gates estáticos do módulo, 2026-10-24
+
+- Unit do Fórum 174/1.008; Unit de fóruns restritos 61/172; Kernel 107/2.191.
+- PHPCS Drupal/DrupalPractice do módulo inteiro limpo (corrigidos dois
+  comentários de método em `RestrictedForumMembershipHooks` e
+  `RestrictedForumRelationshipHooks`).
+- SDC schemas PASS (41 componentes, 588 verificações); design foundations PASS.
+- Fronteira módulo×tema: nenhuma falha de `aculta_forum`; restam dívidas
+  preexistentes em `aculta_wiki`/`aculta_studio`.
+- Status index PASS. Runtime, e-mail e navegador autenticado continuam como
+  gates separados.
+
+## Listagem pública sob grants antes da paginação, 2026-10-24
+
+- `PublicForumListingAccessKernelTest` (2 testes / 26 asserções, MariaDB):
+  View baseada em nodes com pager de uma linha. Anônimo: total 1, só o tópico
+  público. Membro: total 2 e a segunda página mostra o restrito. O node access
+  filtra antes da paginação e o total reflete o grant.
+- Usa o fixture de grant `aculta_forum_counter_test`; sem custom plugins do
+  Fórum, prova o comportamento da View pública.
+- Suíte Kernel do Fórum 106/2.164; PHPCS limpo.
+
+## Lote da migração de Comments — mapa persistente, 2026-10-24
+
+- `ForumCommentMigrationBatchKernelTest` (1 teste / 26 asserções, MariaDB):
+  `MigrateExecutable` com source/destination de produção e map SQL. Duas
+  Comments geram dois posts; a reexecução não duplica; uma Comment nova é
+  importada na execução seguinte no mesmo map.
+- Correção no destino `ForumCommentPost`: declara `aculta_forum_post` em
+  `getEntityTypeId()`, pois o trait do Migrate só infere o tipo de IDs
+  `entity:*`. Sem isso, o map falhava ao chamar `getIds()`.
+- Resolução pai/filho via `migration_lookup`, dry-run/rollback e equivalência
+  completa continuam pendentes.
+- Suíte Kernel do Fórum 101/2.060; PHPCS limpo.
+
+## Leitura de ForumPosts — recibo do History, 2026-10-23
+
+- `ForumPostUnreadManagerKernelTest` (7 testes / 95 asserções, MariaDB):
+  anônimo sem dados; posts após o recibo ou o limite do History são não lidos;
+  posts anteriores ao recibo são lidos; a página do primeiro não lido usa a
+  contagem de posts que o precedem; recibo após o último post zera a pendência.
+- `ForumUnreadPosts` gera o link de duas não lidas para a primeira publicação,
+  com página/âncora, e não renderiza quando não há pendência.
+- A View `/discussoes/nao-lidas` e o Runtime continuam pendentes.
+- Suíte Kernel do Fórum 98/2.007 antes desta adição; arquivo 7/95; PHPCS
+  limpo.
+
+## Agregação de ForumPosts na listagem — serviço, 2026-10-23
+
+- `ForumPublicPostStatisticsKernelTest` (4 testes / 64 asserções, MariaDB):
+  só posts publicados entram na contagem; a última atividade é o maior
+  `changed`; empate resolve o maior ID; tópico sem post retorna zero e tópicos
+  não pedidos ficam fora do resultado. O campo `PublicForumReplyCount` soma
+  Comments e posts publicados no mesmo tópico (2 + 2 = 4) e ignora rascunho.
+- A apresentação na View/tema e o Runtime continuam pendentes.
+- Suíte Kernel do Fórum 93/1.939; PHPCS limpo.
+
+## Denúncia importada no ForumPost — contexto, 2026-10-23
+
+- `ForumFlaggingMigrationContextKernelTest` (7 testes / 131 asserções, MariaDB):
+  a denúncia com a identidade da origem é salva no post mapeado e o `presave`
+  deixa de ser autorizado depois; dono/timestamp divergentes, origem fora do
+  Domain `forum`, post de outro tópico, denúncia duplicada, escopo global, timestamp zero,
+  origem com outra Flag, denúncia anônima sem sessão e Comment sem post
+  mapeado são recusados.
+- `MigrateLookupInterface` é simulado; o map real e o lote não são exercitados.
+- Suíte Kernel do Fórum 89/1.875; PHPCS limpo.
+
+## Destino da migração de Comments — recusas e criação, 2026-10-23
+
+- `ForumCommentMigrationDestinationKernelTest` (9 testes / 216 asserções,
+  MariaDB): `import()` recusa linha sem conta/autoria histórica, tradução
+  padrão ausente, rejeição com publicação, corpo vazio, formato diferente de
+  `forum`, embed sem UUID e embed de Media inexistente.
+- Uma linha válida cria o ForumPost publicado com tópico, thread, timestamps,
+  autoria e `moderation_state`, e adiciona a tradução `pt-br` com valores
+  próprios. Reimportar com o ID de destino atualiza o post sem duplicar; trocar
+  o idioma padrão é recusado e o conteúdo permanece; atualizar a resposta com
+  o ID da raiz grava `parent` sem alterar a raiz.
+- O destino é instanciado com os serviços reais e uma migration simulada; o
+  map de migração e o lote não são exercitados.
+- Fixture: `aculta_forum_post_test` restaura o handler de Content Moderation
+  para paridade com a descoberta de produção.
+- Suíte Kernel do Fórum 81/1.723; PHPCS limpo.
+
+## Fonte da migração de Comments — prova, 2026-10-23
+
+- `ForumCommentMigrationSourceKernelTest` (6 testes / 88 asserções, MariaDB):
+  Comment elegível gera uma linha com `topic_id`, `uid`, `created`/`changed`,
+  `parent_cid`, `first_published`, marcadores de rejeição e autoria histórica e
+  todas as traduções em `translations`; resposta mantém o `parent_cid`.
+- Lote de dois sobre cinco Comments retorna cada linha uma vez, em ordem de
+  CID, provando o keyset entre lotes.
+- A fonte de denúncias devolve só Flaggings de Comments elegíveis, preservando
+  `fid`, `cid`, `uid`, `session_id` e `global`; tópico fora do Domain é excluído.
+- Tópico fora do Domain `forum`, tópico de outro bundle e Comment de outro
+  contexto não geram linhas. O plugin é instanciado diretamente, sem executar a
+  migration nem tocar dados.
+- Suíte Kernel do Fórum 82/1.744; PHPCS limpo.
+
+## Trigger ForumPost do Game — política real, 2026-10-23
+
+- `ForumPostParticipationPolicyKernelTest` (8 testes / 100 asserções, MariaDB):
+  publicação inicial no Domain `forum` é elegível; rascunho, revisão não default,
+  Domain fora do Fórum, entidade sincronizada, original já publicado, autoria
+  histórica no post ou no tópico e post sem tópico não são.
+- Usa o fixture `aculta_forum_post_test` e o `DomainPurposeManager` real, sem
+  tocar conquistas, configuração ou Runtime. A concessão no Runtime continua
+  pendente; o hook `forumPostSave` não tem teste próprio porque `BadgeService`
+  é final.
+- Suíte Kernel do Fórum 67/1.436.
+
+## Contador de tópicos access-aware — implementação, 2026-10-23
+
+- `ForumCategoryCounterAccessKernelTest` (4 testes / 73 asserções, MariaDB):
+  a View agregada sem tag conta o restrito; com `node_access`, o anônimo vê só
+  a pública e o membro vê as duas; o campo renderiza "1 tópico", "Nenhum
+  tópico" e "@count tópicos" conforme o plural do português.
+- Config: `aculta_forum_categories` (instalação e sync) com o campo
+  `aculta_forum_category_topic_count` na página e contexto
+  `user.node_grants:view`; o campo é schema-válido ao salvar a View.
+- Runtime local: 12 cartões com "Nenhum tópico" (banco sem tópicos);
+  `categorias-visual.py` 9/9 com ACULTA420 e 9/9 com Olivero, sem erros nem
+  overflow. Tópicos restritos reais no Runtime continuam pendentes.
+- Remover o grant do tópico restrito faz a consulta de produção do contador
+  deixar de contar a categoria na execução seguinte; reinserir o grant a
+  devolve. O fixture corrige o nome da permissão e o membro não é uid 1.
+- Suíte Kernel do Fórum 102/2.079; PHPCS limpo.
+
+## Contadores access-aware nas categorias — prova, 2026-10-23
+
+- `ForumCategoryCounterAccessKernelTest` (2 testes / 36 asserções, MariaDB):
+  View de taxonomy com `reverse__node__field_aculta_categories`, `COUNT`
+  agregado e grants reais. Sem a tag `node_access`, o anônimo conta pública e
+  restrita; com a tag adicionada pelo alter, o anônimo conta só a pública e o
+  membro conta as duas.
+- Fixture `aculta_forum_counter_test` fornece o realm de grant e o alter
+  condicionado por state; não usa conteúdo real.
+- Suíte Kernel do Fórum 58/1.318; PHPCS limpo.
+
+## Revisão visual de `/categorias` — X11 e Olivero, 2026-10-23
+
+- `forum-index-visual.mjs`, servidor de testes, Firefox ESR/X11: 15/15.
+  390/768/1024 CSS px, claro/escuro, 12 categorias, zero tópicos na listagem
+  pública, link de salto com foco e destino corretos, `scrollWidth` igual ao
+  viewport e nenhum cartão fora do enquadramento.
+- `categorias-visual.py`, ambiente local com Olivero: 8/8. H1 "Categorias",
+  12 linhas e 12 links `?categoria=`, seis assets do Olivero e nenhum do
+  ACULTA420, sem mensagens de erro e sem overflow em 1024 px e na menor janela
+  aceita pelo Firefox. Tema restaurado para `aculta420`; capturas e
+  `results.json` ficam fora do checkout.
+- Limitações: sem BiDi neste script, a largura estreita é a janela mínima do
+  Firefox; zoom e aparelho real permanecem pendentes. A grade visual do
+  ACULTA420 não é avaliada pelo caso Olivero.
+
+## Limpeza de anexos pela API compartilhada — revisões, referências e falha, 2026-10-23
+
+- `ForumAttachmentPublicationKernelTest` (13 testes / 373 asserções, MariaDB):
+  Media embutida só na revisão antiga de ForumPost fica retida enquanto a
+  revisão existir e é removida com o post; Media embutida em outro tipo de
+  conteúdo é retida pelo `FileReferenceInspector` compartilhado; Media órfão
+  excluído com File ainda usado por outro anexo preserva o arquivo e não
+  incrementa a contagem; falha simulada em `hook_entity_predelete` mantém Media
+  e File, não conta remoção e recupera no lote seguinte. Despublicar o tópico
+  hospedeiro nega a Media na checagem seguinte; republicar devolve o acesso.
+  Fora do purpose `forum` o anexo e a galeria são negados; dentro dele, mídia e
+  galeria não publicadas voltam à política do dono.
+- A construção usa `ForumAttachmentCleanup` de produção sobre
+  `UnusedMediaCleaner`/`UnusedFileCleaner`; nenhuma regra de exclusão foi
+  duplicada.
+- Auditoria: nenhum `delete()` de Media/File em `aculta_forum/src` fora do
+  serviço de limpeza; `aculta_image.ImageCleanup` delega ao
+  `aculta_portal.unused_file_cleaner` quando o serviço está disponível.
+- Suíte Kernel do Fórum 56/1.282; Unit 174/1.008; PHPCS limpo. Concorrência
+  real na limpeza e validação no Runtime permanecem pendentes.
+
+## F-GROUP 0.7 — download, índice atrasado, cache e Olivero, 2026-10-23
+
+- Download HTTP do arquivo privado: anônimo 403, ativo com membership 200
+  (15 bytes do conteúdo), suspenso 403. Arquivo em `private://fgroup-teste.pdf`
+  (a raiz privada é gravável; `forum/anexos` é do usuário do PHP-FPM).
+- Índice atrasado: `RestrictedForumGrantRebuilder` usa `getItemId()`,
+  `trackItemsInserted()` e `server->deleteItems()`. Público antes de reindexar
+  2/2; restrito antes de reindexar 1/1 (item ausente, fail closed);
+  `remaining` com o tópico; após reindexar anônimo 1 e membro 2.
+- Cache da busca: público MISS→HIT com o título; após restringir e reindexar,
+  MISS sem o título e HIT seguinte sem ele.
+- Olivero: anônimo 403 no restrito e busca só pública; membro 200 e busca com
+  os dois; suspenso 403 e busca só pública; tema restaurado para aculta420.
+- Testes: Unit 174/1.008, Kernel 52/1.170, rebuilder 6/21; PHPCS limpo.
+- Teardown: tema aculta420, `restricted_group_type` vazio, `realm=all:21`,
+  zero tópicos/contas/Media/galerias/Files e zero itens no índice.
+
+## F-GROUP 0.6 — busca e contagem sob grants, 2026-10-23
+
+- Unit `ForumPostSearchAccessTest`: 4 testes / 11 asserções OK. Cobre o grant
+  público, o grant restrito do membro, o abort sem `access content` e o bypass.
+- Runtime: dois tópicos indexados no `aculta_forum` (`aculta_database`).
+  Consulta `keys=fgroup`, `range(0,1)` e `search_api_access_account` dentro do
+  purpose `forum`: anônimo total 1/página pública; ativo com membership total
+  2/página 1; ativo sem, suspenso e comum total 1. O total é filtrado antes da
+  paginação.
+- View `/pesquisar?keys=fgroup`: anônimo 200 só com o público; membro com os
+  dois; suspenso só com o público.
+- Em CLI, fora do purpose, o `ForumSearchQuerySubscriber` aplica
+  `forum_search_domain = __forum_scope_denied__`; a medição roda em
+  `runInPurpose('forum', ...)`.
+- Teardown: itens desindexados (`indexed_total=0`, tabela base vazia);
+  `restricted_group_type` vazio e `realm=all:21`.
+- Suíte Unit total: 173 testes / 1.003 asserções OK. PHPCS do Unit e do script
+  sem erros.
+
+## F-GROUP 0.5 — cache, regressão pública e galeria, 2026-10-23
+
+- Revisão de consumidores: `UnusedMediaCleaner` recusa Media publicada,
+  `ForumAttachmentCleanup` só remove `status=0`, listagens administrativas
+  exigem permissão e o Index revalida Entity Access. O formato `forum` só
+  embute `forum_attachment`; PDF/documento revalidam Media e File.
+- Galeria: `ForumGalleryPublication` publica pela referência ativa e
+  `ForumAttachmentAccessHooks::entityAccess()` decide por conta. Kernel novo:
+  galeria publicada, anônimo negado, membro liberado.
+- Correção de cache: `RestrictedForumAccessPolicy::result()` usa
+  `setCacheMaxAge(0)`; sem isso o `cache.access` mantinha o 403 após reativar.
+- Correção de role: a fixture e a ativação usam role sincronizada insider
+  (`authenticated`); a role individual se perdia quando o sync recriava a
+  membership.
+- Runtime: restrito 539 com `aculta_forum_restricted:69`; público 540 com
+  `all:0`. Acesso e listagem só para o ativo com membership; público para
+  todos. Home anônima só com o público.
+- Cache: 403 anônimo MISS→HIT sem título; home anônima HIT só com o público;
+  autenticados `UNCACHEABLE`. Suspender: 200→403; reativar: 403→200, sem
+  `drush cr` entre as etapas.
+- Galeria no Runtime: publicada, referência anônima falsa, `view` só para o
+  ativo com membership.
+- Anexo: Media e `file->access('download')` liberados só ao membro; arquivo
+  físico não gravado (`file_exists: false`), download HTTP pendente.
+- Estado final: `restricted_group_type` vazio, `realm=all:21`, zero tópicos,
+  contas, galerias, Media e Files da fixture.
+
+## F-GROUP 0.4 — anexos e Runtime controlado, 2026-10-23
+
+- Kernel `ForumAttachmentPublicationKernelTest`: 7 testes / 201 asserções OK.
+  Novo caso prova a opção B: referência em host não legível anonimamente
+  publica a Media, o anônimo é negado e a conta autorizada é liberada.
+- Suíte Kernel do Fórum: 51 testes / 1.140 asserções OK. Unit: 169 / 992 OK.
+  PHPCS Drupal/DrupalPractice limpo nos arquivos alterados.
+- Runtime de testes (`toca`, `aculta_runtime`, Drupal 11.4.10): backup
+  validado (`gzip -t`, SHA-256 `72714d90…`), fixture provisionada, ativação
+  com rebuild e `drush cr`, medição e reversão completa.
+- Por conta: anônimo, ativo sem membership, suspenso com membership e comum
+  recebem FALSE/vazio em `node->access('view')` e na query `node_access`;
+  ativo com membership recebe TRUE e o único NID da listagem.
+- HTTP anônimo: `/node/<nid>` → 403 sem título; home → 200 sem o título.
+- Firefox ESR/X11 com perfis isolados: ativo com membership vê título e
+  listagem; suspenso com membership recebe 403, sem título e ausente da
+  listagem. Capturas privadas fora do checkout.
+- Anexo antes de B: Media despublicada e negada a todos (fail closed). Depois
+  de B: Media publicada, `media->access('view')` e
+  `file->access('download')` liberados só ao ativo com membership; arquivo
+  físico em `private://` exercitado.
+- Estado final: `restricted_group_type` vazio, `realm=all:21`, zero tópicos,
+  zero contas `fgroup_teste_*`, Group type ausente, nenhum arquivo da fixture.
+- Pendente: busca/contagem, cache de página e regressão do fórum público no
+  Runtime.
+
+## F-GROUP 0.3 — auditoria de herança de acesso, 2026-10-23
+
+- Unit `ForumPostAccessHooksTest`: 4 testes / 84 asserções OK. Novo caso
+  `testRestrictedTopicAccessPropagatesToPost` prova que `view` e `update` do
+  post são negados quando `$topic->access()` é `forbidden` (tópico restrito sem
+  associado ativo com membership), inclusive para o dono.
+- Auditoria de código: `CommentAccessControlHandler` revalida o host
+  (`getCommentedEntity()->access('view')`), então o Comment de tópico restrito
+  também é negado. `ForumAttachmentPublication::isPublicComment/isPublicPost`
+  avaliam o host como anônimo, logo um anexo de tópico restrito deixa de ser
+  referência pública e a Media é negada — fail closed, sem vazamento, mas ainda
+  sem acesso para o associado ativo.
+- Nenhuma alteração de produção nesta microfase; a correção dos anexos para a
+  conta atual fica na F-GROUP 0.4.
+
+## F-GROUP 0.2 — grants reais do tópico restrito em Kernel, 2026-10-23
+
+- Banco isolado `aculta_simpletest`, via `SIMPLETEST_DB` de
+  `secrets/simpletest-db.env`; nenhum Runtime foi tocado.
+- `RestrictedForumNodeAccessRebuildKernelTest` (4 testes / 92 asserções, OK)
+  registra os hooks de produção no fixture `aculta_forum_restricted_test` e
+  exercita o caminho real: `NodeAccessRebuild`, `node_access`,
+  `NodeAccessControlHandler::access()` e query com tag `node_access`.
+- Casos cobertos: grant `realm=aculta_forum_restricted` por gid no tópico
+  relacionado e `all:0` no tópico público; ativo com membership lê; ativo sem
+  membership, suspenso com membership antiga e anônimo não leem; listagem
+  filtrada por conta; `rebuildForTopic()` acompanha inclusão e remoção da
+  relação.
+- Descoberta de ativação: o módulo Group proíbe a leitura de conteúdo agrupado
+  sem `view group_node:aculta_forum_topic entity` na role de membro. O teste
+  concede a permissão; a ausência dela foi reproduzida e documentada em
+  `RESTRICTED-FORUMS.md`.
+- Suíte Kernel completa do Fórum: 50 testes / 1.112 asserções, OK. PHPCS
+  Drupal/DrupalPractice limpo nos arquivos novos. Deprecations reportadas são
+  de Core/Group, não do Fórum.
+
+## aculta_forum_lms 0.1.0-dev.40 — citação de Comment LMS
+
+- Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
+  `https://conta.aculta.toca.net.br`). Fixture temporária: Curso 58, Turma 59,
+  estudante membro de ambos, Educador (`lms_teacher`) membro só do Curso,
+  tópico 532 em `Open`, Comment publicado 122 e pendente 123.
+- Cobre `DISCOURSE-EXPERIENCE.md` linha 147: a ação de citação só existe para
+  Comment publicado, legível e respondível no contexto da Turma.
+
+| Ator / rota | GET | POST |
+| --- | --- | --- |
+| Estudante — tópico 532 | 200; só o Comment 122 tem `Citar` (`quote=122`); pendente 123 sem link | — |
+| Estudante — citação do 122 | 200; textarea com bloco citado e autoria | 303 para `#comment-124`, `pid` 122, `status: 0` (moderação da Turma) |
+| Estudante — citação do 123 (pendente) | 403 | — |
+| Forasteiro autenticado — tópico, citação e POST | 403 | 403 |
+| Educador do Curso fora da Turma — tópico e citação | 403 | — |
+
+- O texto publicado não aparece em nenhuma resposta 403 do forasteiro. Estado
+  final: 0 tópicos LMS e 0 Comments de discussão no Runtime.
+- Causa do prefill vazio corrigida em `aculta_forum` dev.232: no alter o
+  `text_format` ainda não foi processado e `#default_value` é `NULL` para
+  resposta nova, então `isset()` retornava falso.
+
+## aculta_forum_lms 0.1.0-dev.39 — aprovar/rejeitar LMS pela entity_operations
+
+- Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
+  `https://conta.aculta.toca.net.br`), GET e POST HTTP com os links de
+  `hook_entity_operation`. Fixture temporária com Curso, Turma, estudante
+  membro, Educador com `lms_teacher` e membership no curso, tópico em `Open` e
+  Comment pendente (`cid` 121, `status: 0`).
+- Cobre a confirmação POST, a revalidação de status e a negação de acesso das
+  dev.109–111.
+
+| Ator / rota | GET | POST |
+| --- | --- | --- |
+| Educador — confirmação de aprovação, antes de aprovar | 200 | 200 sem `confirm` (erro de obrigatório, estado inalterado); 303 com `confirm=1` |
+| Educador — confirmação de aprovação, depois de aprovado | 403 | — |
+| Educador — confirmação de rejeição, depois de aprovado | 200 | 303 com `confirm=1` |
+| Educador — confirmação de rejeição, depois de rejeitado | 403 | — |
+| Estudante — confirmações e fila pendente | 403 | — |
+| Anônimo — confirmações e fila pendente | 403 | — |
+
+- Estado observado: aprovação grava `status: 1` e `field_aculta_rejected: 0`
+  e move o Comment da fila pendente para a de publicados; o estudante passa a
+  ver o texto. Rejeição grava `status: 0` e `field_aculta_rejected: 1` e move
+  o Comment para a fila de rejeitados; o estudante deixa de ver o texto. As
+  duas transições redirecionam com 303 para a fila pendente.
+- POST sem o checkbox `confirm` retorna 200 com "O campo Confirmo aprovar
+  este comentário. é obrigatório." e não altera o Comment.
+- Cleanup via Entity API removeu Comment, Node, relationships, memberships,
+  Groups e os dois usuários; sessões apagadas. Pós-condição: 1 curso
+  preexistente, 0 tópicos LMS, 0 Comments e 0 usuários `t10.*`. Recibos
+  privados em `/home/aculta/private/aculta/forum-lms-t10-20261022/`.
+- RUNTIME STATUS: PASS para aprovação, rejeição, confirmação obrigatória e
+  negação de acesso.
+
+## aculta_forum_lms 0.1.0-dev.38 — formulário de Comment LMS do estudante
+
+- Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
+  `https://conta.aculta.toca.net.br`), GET e POST HTTP. Fixture temporária com
+  Curso e Turma, estudante membro das duas, outsider sem membership, e um
+  tópico `aculta_lms_topic` com `field_aculta_discussion` em `Open`.
+- Fecha o DEFERRED de Runtime da dev.98.
+
+| Ator / rota | GET | POST |
+| --- | --- | --- |
+| Estudante membro — formulário de resposta | 200 | 303 → `/node/530#comment-120` |
+| Outsider — formulário de resposta | 403 | 403, nenhum Comment |
+| Anônimo — formulário de resposta | 403 | — |
+
+- O Comment do estudante é persistido no tópico e nasce despublicado
+  (`status: 0`), entrando na fila de moderação LMS. Causa: o Core
+  `CommentForm` despublica gravações de contas sem `skip comment approval`, e
+  o papel `email_confirmed` tem `post comments` e `skip CAPTCHA`, mas não
+  aquela permissão. O formulário não traz CAPTCHA.
+- O estudante não vê o texto da tentativa do outsider. Cleanup via Entity API
+  removeu Comment, Node, relationships, memberships, Groups e os dois
+  usuários; sessões apagadas. Pós-condição: 1 curso preexistente, 0 tópicos
+  LMS, 0 Comments e 0 usuários `t9.*`. Recibo privado em
+  `/home/aculta/private/aculta/forum-lms-t9-20261022/smoke-result.json`.
+- RUNTIME STATUS: PASS para envio do estudante membro e negação do outsider.
+
+## aculta_forum_lms 0.1.0-dev.37 — fila LMS nega Educador de outro curso
+
+- Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
+  `https://conta.aculta.toca.net.br`), somente GET: fixture temporária com
+  Curso A, Turma A dentro dele, Curso B, um estudante membro da turma, um
+  Educador do Curso A e um Educador do Curso B, mais um tópico da turma com um
+  Comment pendente real.
+- Educador do Curso A: overview 200 e lista a Turma A; fila pendente 200 com o
+  Comment e os dois links de moderação; filas publicada/rejeitada 200 sem o
+  Comment pendente; confirmações de aprovar/rejeitar 200 por GET; tópico
+  privado 200.
+- Educador do Curso B: overview 200 sem a Turma A; fila pendente, publicada,
+  rejeitada, ambas as confirmações e o tópico privado retornam 403. A negação
+  vem de `educatorAccess()` (`grade students` no curso pai), não do papel
+  global `lms_teacher`.
+- Anônimo: overview, fila pendente e confirmação retornam 403. Estudante da
+  turma: fila pendente e confirmação retornam 403.
+- Nenhum POST foi submetido; as confirmações foram apenas abertas por GET.
+  Cleanup via Entity API removeu Comment, Node, relationships, memberships,
+  Groups e os três usuários; sessões desses uids apagadas. Pós-condição: 1
+  curso preexistente, 0 tópicos LMS, 0 Comments e 0 usuários `t8.*`. Recibo
+  privado em
+  `/home/aculta/private/aculta/forum-lms-t8-20261022/smoke-result.json`.
+- RUNTIME STATUS: PASS para leitura da fila, visibilidade das ações e negação
+  do Educador de outro curso; transições seguem cobertas por Kernel/dev.114.
+
+## aculta_forum_lms 0.1.0-dev.36 — propagação da moderação LMS
+
+- `LmsModerationPropagationKernelTest` usa a `ParticipationRules` e o
+  `ParticipationHooks` reais (schema de `aculta_user_test`) sobre um tópico
+  público, um blog e um tópico LMS com o mesmo `field_aculta_discussion`.
+- Comment LMS é publicado mesmo com a moderação inicial ativa. Com um Comment
+  não LMS pendente, a criação de `aculta_forum_topic` fica forbidden; o
+  Comment LMS publicado conta como participação aprovada, limpa
+  `firstDiscussionCommentPending` e libera o bloqueio (neutral). O próximo
+  Comment não LMS já nasce publicado.
+- Comment LMS pendente não libera o bloqueio: não conta como participação
+  publicada, o resultado continua forbidden e a consulta de pendências não LMS
+  ignora esse registro. As decisões levam as tags `comment_list` e
+  `config:aculta_user.settings` e os contextos `user`/`user.roles`.
+
+| Cenário | Resultado |
+| --- | --- |
+| Comment não LMS pendente | Criação de tópico forbidden pelo bloqueio temporário |
+| Publicar Comment LMS | Publicado sem moderação; participação aprovada; criação neutral |
+| Próximo Comment não LMS | Publicado, sem nova moderação |
+| Comment LMS pendente | Não conta como aprovação; bloqueio permanece forbidden |
+| Query de pendências não LMS | Ignora o Comment LMS pendente |
+
+- Teste: 2 testes / 46 asserções PASS, sem depreciações. PHPCS limpo. Nenhuma
+  configuração foi alterada e o Runtime não recebeu fixture.
+
+## aculta_forum_lms 0.1.0-dev.35 — campo de discussão fechado
+
+- `LmsClosedDiscussionFieldKernelTest` usa um tópico de turma com estudante
+  membro e resolve o `LmsDiscussionContextProvider` real antes e depois de
+  cada gravação do status Comment no Node, relendo o tópico do storage para
+  observar o estado persistido.
+- A escrita é liberada quando `field_aculta_discussion` está `Open`, negada
+  quando o campo é `Closed` e liberada de novo ao reabrir. A leitura continua
+  permitida com o campo fechado; outsider lê e escreve negado em todos os
+  estados.
+- `field_aculta_rejected` é o marcador de Comment da moderação, não o portão
+  de escrita: o teste publica um Comment rejeitado e a escrita do estudante
+  permanece permitida.
+
+| Cenário | Resultado |
+| --- | --- |
+| Campo aberto | Leitura e escrita do estudante permitidas; moderação forbidden |
+| Fechar o campo | Status `Closed` persistido; escrita forbidden; leitura permitida |
+| Reabrir o campo | Status `Open` persistido; escrita permitida de novo |
+| Cache da negação | Tag `node:<id>` e contexto `user.permissions` presentes |
+| Outsider | Leitura e escrita forbidden em todos os estados |
+| Comment com `field_aculta_rejected` | Não fecha o tópico; escrita segue permitida |
+| Fechar com Comment rejeitado | Escrita forbidden pelo status do campo |
+
+- Teste: 2 testes / 76 asserções PASS; 40 depreciações de Core/contrib
+  (preexistentes). PHPCS limpo. Nenhuma configuração foi alterada e o Runtime
+  não recebeu fixture.
+
+## aculta_forum_lms 0.1.0-dev.34 — ciclo de vida do módulo
+
+- `LmsModuleLifecycleKernelTest` ativa, desativa e reativa `aculta_forum_lms`
+  pelo `ModuleInstaller` real, sobre os mesmos pré-requisitos da dev.33. A
+  linha de base dos nomes de configuração é capturada antes de qualquer config
+  do adaptador, então a ativação deve acrescentar exatamente os YAML de
+  `config/install` e a desativação deve voltar a ela.
+- O config opcional de H5P (só o `field.field.node.aculta_lms_topic.field_h5p_content`)
+  é escrito do export durante a instalação e apagado em `finally`: simula o
+  `aculta_lms_h5p` ativo sem virar configuração do adaptador nem entrar na
+  linha de base.
+- A desativação remove antes as duas relações Group do adaptador e limpa os
+  caches de bundle e campos, por causa do defeito do Group 3.3.5 registrado em
+  `ROADMAP.md`; o restante da configuração continua saindo pelo
+  `ModuleInstaller`, preservando o sentido das asserções de resíduo.
+
+| Cenário | Resultado |
+| --- | --- |
+| Ativação | Lista = linha de base + exatamente os YAML de `config/install`; `uuid` preservado; bundle, campo, View e serviço presentes |
+| `aculta_forum_lms.settings` | Igual ao export após remover só o `_core` gravado pelo `ConfigInstaller` |
+| Desativação | Lista volta à linha de base; configs do adaptador vazios; bundle, campo e relações ausentes; serviço fora do container; `core.extension` sem o módulo |
+| Configuração de outro módulo | `lms_classes.settings` inalterado pela desativação |
+| Reativação | Snapshot do adaptador idêntico ao da primeira ativação, sem nomes duplicados |
+
+- Teste: 3 testes / 375 asserções PASS; 37 depreciações de Core/contrib
+  (ViewsConfigUpdater sobre YAML de módulos contrib, preexistentes). PHPCS
+  limpo. Nenhuma configuração foi exportada ou alterada e o Runtime não recebeu
+  fixture.
+
+## aculta_forum_lms 0.1.0-dev.33 — papéis e Config Sync
+
+- `LmsRolePermissionsConfigSyncKernelTest` importa os quatro papéis Group
+  exportados pelo caminho real de Config Sync,
+  `GroupRoleStorage::importCreate()`, com as dependências de módulo
+  (`aculta_document_viewer_group`, `aculta_forum_lms`) satisfeitas e stubs de
+  serviço fornecidos pela fixture. O recálculo de dependências e a ordenação
+  de permissões do `preSave()` não se aplicam ao modo de sincronização, então
+  o teste compara o YAML exportado com o storage linha a linha.
+- Papéis verificados: `group.role.lms_course-teacher`,
+  `group.role.lms_course-member`, `group.role.lms_course-course_creator` e
+  `group.role.lms_class-member`. Todos guardam `global_role` e relação Group
+  declarados e nenhum recebe `administer comments`; `grade students` fica só
+  com Educador e criador do curso.
+- `lms_classes.settings` confere exatamente com `config/sync` e com o padrão de
+  instalação do contrib nas chaves que o export não controla. Com Groups
+  reais, o mapeamento `view group_node:aculta_lms_topic entity` →
+  `grade students` dá ao Educador a permissão de tópico na turma; estudante da
+  turma recebe pelo papel de turma; estudante só do curso e terceiro não
+  recebem.
+
+| Cenário | Resultado |
+| --- | --- |
+| Importar os quatro papéis por `importCreate()` | UUID, status, permissões e dependências iguais ao export |
+| Educador do curso na turma | `grade students` no curso e permissão de tópico na turma |
+| Estudante membro do curso e da turma | sem `grade students`; permissão de tópico pelo papel de turma |
+| Estudante só do curso / terceiro | sem `grade students` e sem permissão de tópico na turma |
+| `lms_classes.settings` | idêntico ao export; sem permissão além do mapeamento |
+
+- Teste: 5 testes / 258 asserções PASS; 40 depreciações de Core/contrib (38
+  preexistentes mais duas fontes dos módulos extras habilitados). Nenhuma
+  configuração foi exportada ou alterada e o Runtime não recebeu fixture.
+
+## aculta_forum_lms 0.1.0-dev.32 — matriz de publicação e rejeição
+
+- `LmsCommentModerationMatrixKernelTest` cruza os três atores do curso com as
+  duas decisões de moderação e prova que apenas o Educador contextual altera
+  o estado do Comment.
+- Educador: membro do curso com o papel atribuído pelo mapeamento global
+  `lms_teacher`, herda `grade students` e enxerga a permissão de tópico na
+  turma. Estudante: membro do curso e da turma, sem moderação. Terceiro:
+  autenticado e também com o papel global `lms_teacher`, mas sem membership;
+  o papel global sozinho não concede nada.
+- A matriz é exercitada por `LmsForumModerationManager::commentModerationAccess()`,
+  pela operação devolvida por `LmsCommentModerationOperationsHooks::entityOperation()`
+  e por `applyModerationDecision()`, sempre reconferindo o estado persistido com
+  `loadUnchanged()`.
+
+| Ator | Aprovar pendente | Rejeitar publicado | Operações | Estado após a chamada negada |
+| --- | --- | --- | --- | --- |
+| Educador do curso | Permitido; Comment publicado, `field_aculta_rejected` = 0 | Permitido; Comment despublicado, `field_aculta_rejected` = 1 | Approve + reject (peso 20/21) | — |
+| Estudante do curso/turma | Negado; `applyModerationDecision()` FALSE | Negado; `applyModerationDecision()` FALSE | Nenhuma | Continua pendente (0/0); continua publicado (1, rejeitado 0) |
+| Terceiro com `lms_teacher` global | Negado; `applyModerationDecision()` FALSE | Negado; `applyModerationDecision()` FALSE | Nenhuma | Continua pendente (0/0); continua publicado (1, rejeitado 0) |
+
+- Teste: 1 teste / 61 asserções PASS; 40 depreciações de Core/contrib, as já
+  registradas. Nenhuma entidade de configuração foi exportada ou alterada e o
+  Runtime de teste não recebeu fixture nesta etapa.
+
+## dev.231 — acesso à Media e download privado por purpose
+
+- Revisão do Core 11.4.10 confirmou que `view media` permite Media publicada e
+  que download privado revalida as entidades/campos referenciadores. Como os
+  anexos do Fórum são Media compartilhadas, `media_access` agora exige purpose
+  `forum` e referência atual acessível anonimamente por Comment, ForumPost ou
+  Gallery; o resultado não fica cacheado entre requests para cobrir rebuild de
+  grants sem save da Media.
+- Ainda requer validação HTTP no Runtime: visualização canônica da Media e URL
+  privada em `forum`, 404 canônico e download negado em outros purposes, post
+  pendente/retirado, mudança de grants sem salvar a Media, e papéis
+  anônimo/autenticado/moderador.
+- Runtime de teste `toca`, Drupal 11.4.10, banco `aculta_runtime`, purpose
+  `forum`: rebuild de cache concluiu e registrou
+  `ForumAttachmentAccessHooks::mediaAccess` em `media_access`. A consulta
+  EntityQuery encontrou 0 Media `forum_attachment` (0 publicadas); por isso
+  não foi possível validar os caminhos HTTP sem criar fixture. Nenhum conteúdo
+  foi criado ou alterado.
+- O `FileUrlGenerator` do Runtime gerou `/system/files/forum/anexos/exemplo.pdf`
+  para o URI ilustrativo `private://forum/anexos/exemplo.pdf`; isso confirma a
+  forma da rota, sem confirmar a existência ou o acesso a um arquivo.
+
+## dev.194 — saída segura em falhas do auditor migratório
+
+- O comando não inclui mais a mensagem da exceção na saída de terminal. O
+  resumo da falha não contém identificadores; o log registra apenas a classe
+  da exceção, sem mensagem ou stack trace.
+- Sem execução do comando nem alteração Runtime nesta etapa.
+
+## dev.193 — idade configurada para Files temporários
+
+- A limpeza do Fórum lê `system.file:temporary_maximum_age`, usa o timestamp
+  `changed` como o cron de File Core e não remove temporários quando a idade é
+  zero. Retenção de uma hora continua exclusiva de Media/Galleries órfãos.
+- Sem teste Kernel ou alteração Runtime nesta etapa.
+
+## dev.192 — preservar tipo de imagem validado na origem
+
+- O fluxo usa o controle submetido e validado por `UserUploadPolicy::isValidImage`
+  como marcador de imagem no Media. A apresentação reconhece a referência ao
+  mesmo File sem depender exclusivamente de `getMimeType()`.
+- Sem upload autenticado ou revisão visual nesta etapa.
+
+## dev.191 — revalidação dos metadados da galeria no callback
+
+- A validação Form API e o callback AJAX exigem título não vazio de até 255
+  caracteres e uma descrição não vazia de até 512 caracteres por imagem. O
+  callback mantém as mesmas guardas antes da criação das entidades.
+- Sem upload autenticado, revisão visual ou fixture Runtime nesta etapa.
+
+## dev.190 — revalidação de arquivo no callback de anexo
+
+- O callback AJAX repete as guardas de cardinalidade, existência, política
+  central e texto alternativo antes da criação do Media. Arquivo removido ou
+  alterado após a validação do formulário retorna erro no diálogo sem criar
+  entidade.
+- Sem upload autenticado ou fixture Runtime nesta entrega.
+
+## dev.189 — limite do texto alternativo no servidor
+
+- O formulário de anexo valida tamanho Unicode de até 512 caracteres além do
+  campo HTML `maxlength`; uma requisição que contorne o navegador é rejeitada
+  antes da criação de Media.
+- Sem alteração Runtime ou upload autenticado nesta entrega.
+
+## dev.188 — formulários conforme a política efetiva de imagem
+
+- Inspeção do construtor compartilhado confirmou que ele omite o controle de
+  imagem quando a allowlist do consumidor não contém extensão raster. O
+  formulário de anexo agora só mostra o campo alt quando o controle existe; a
+  galeria explica a política sem oferecer criação vazia.
+- Sem alteração no Runtime ou smoke autenticado nesta entrega.
+
+## dev.187 — limite por descrição da imagem
+
+- O código do Drupal Core 11.4 limita `ImageWidget` a 512 caracteres no campo
+  `alt`. O diálogo da galeria informa e valida o mesmo limite por linha usando
+  `Unicode::strlen`, antes de criar Media.
+- Sem upload autenticado ou fixture Runtime nesta etapa.
+
+## dev.186 — descrição alternativa por imagem na galeria
+
+- O campo alt requerido da Media deixa de receber texto genérico. O diálogo
+  exige exatamente uma descrição não vazia por arquivo e associa cada linha ao
+  File na ordem original do upload; o callback verifica novamente existência e
+  política antes de criar Media. O limite por descrição foi alinhado ao Core em
+  dev.187.
+- Ainda sem upload autenticado, revisão visual ou fixture Runtime desta entrega.
+
+## dev.185 — texto alternativo no anexo de imagem
+
+- Inspeção estática confirmou que o campo de imagem da Media exige `alt`, mas o
+  diálogo preenchia esse valor com o nome do arquivo. O formulário agora coleta
+  descrição da pessoa autora e rejeita imagem sem descrição no servidor; PDF e
+  Office não dependem do campo.
+- Ainda sem upload autenticado, revisão visual ou fixture Runtime desta entrega.
+
+## dev.184 — submissão, edição e moderação revisionáveis
+
+- Runtime `toca`, Drupal 11.4.10, com contas temporárias: GET autenticado do
+  formulário público HTTP 200, sem campos de workflow, status, tópico ou autoria
+  enviados pelo participante; POST com CSRF criou um post em `review` (303).
+- A conta `content_editor` encontrou o post na fila em `main`, aprovou a revisão
+  (303); Entity API confirmou revisão default 5 `published` e a fila não exibiu
+  novamente a pendência aprovada. A página pública do tópico HTTP 200 exibiu o
+  corpo publicado.
+- O autor editou o post publicado; revisão default 6 ficou `published`, com
+  autoria e mensagem de revisão corretas. GET de resposta ao post publicado
+  mostrou o contexto pai (HTTP 200).
+- Exercício direto pelo callable isolou três erros que causavam HTTP 500:
+  propriedade readonly `$messenger` em conflito com `FormBase`, import de
+  `TimeInterface` de namespace inexistente no Core, e `isAllowed()` chamado no
+  booleano retornado por `access()` sem `return_as_object=TRUE`.
+- O Runtime não tinha o form mode nem display `public_submission`; fallback
+  ocultava campos sem reproduzir o contrato do Sync. Os dois objetos foram
+  importados individualmente da configuração do módulo e exportados em
+  `config/sync`. Sem `cim` global.
+- Fixtures e contas foram removidas; Entity API confirmou zero tópicos, posts,
+  Comments dedicados e anexos e 10 usuários. O aceite temporário foi removido
+  pelo hook de exclusão da conta e a única métrica diária criada foi restaurada
+  por `AggregateStorage`. Sem e-mail enviado.
+
+## dev.183 — resolver controllers de submissão e edição
+
+- No Core 11.4.10, as rotas com `Class::method` tentavam instanciar os
+  controllers via `ControllerBase::create()`; o autowiring por tipo não encontra
+  serviços com IDs próprios, como `aculta_forum.discussion_context_resolver`.
+  Submissão e edição agora chamam serviços públicos explícitos por
+  `service:method`, mantendo os argumentos DI definidos no YAML.
+- `callable_resolver` foi exercitado sobre as rotas de controller do Fórum:
+  14 resolvidas, zero falhas. Smokes autenticados de GET em
+  `/publicacao/nova?topico={uuid}` ainda retornaram HTTP 500 sem corpo e sem
+  novo registro no watchdog; a causa permanece aberta e o formulário não está
+  validado.
+- Fixture removida por UUID/IDs conferidos. Runtime: 0 tópicos, posts,
+  Comments dedicados e anexos; 10 usuários (baseline). Nenhuma publicação foi
+  criada.
+
+## dev.182 — renderização de post e tentativa de preview DOCX
+
+- Fonte instalada/Core 11.4.10 confirmou que `viewMultiple()` devolve um array
+  com pré-render no array pai; a extração de um filho perdia a montagem da
+  entidade. `ForumPostThreadBuilder` agora usa `view()` para cada post. O tipo
+  de usuário do serviço foi corrigido para `Drupal\Core\Session\AccountInterface`.
+- Runtime de teste `toca`, Drupal 11.4.10, purpose `forum`: após importação
+  parcial do campo contextual Gallery e dos displays de post/Media, as duas
+  galerias preexistentes mantiveram 63 e 34 imagens e o campo novo vazio. A
+  fixture pública confirmou acesso anônimo a tópico, post, Media e File; a rota
+  do tópico respondeu 200 e o markup DOCX incluiu controles e fallback.
+- Firefox ESR headless: sem overflow nos viewports efetivos 500, 768, 1024 e
+  1428 CSS px. O mínimo do Firefox impediu validar os pedidos de 320/390 px.
+  A primeira fixture, criada pelo Drush com proprietário diferente do PHP-FPM,
+  recebeu `FileException: File must be readable`. Na revalidação com proprietário
+  `aculta`, `/system/files?file=...` e `/system/files/{filepath}` responderam
+  HTTP 200. Firefox exibiu o cartão/controles e o fallback, sem confirmar a
+  renderização DOCX; preview privado segue não validado no Runtime.
+- Fixture removida na mesma sessão (Node 524, ForumPost 1, Media 243, File 586).
+  Entity API confirmou 0 tópicos, 0 posts, 0 Comments dedicados e 0 anexos; as
+  galerias 11/18 e suas 97 imagens permaneceram. A URL da fixture retornou 404.
+  Capturas headless em
+  `/home/aculta/private/aculta/visual-tests/forum-office-dev182-6d9f7c9a/`.
+
+## dev.12 — manter a prévia DOCX no iframe isolado
+
+- Um pacote OOXML completo no Runtime de teste (tópico 526, post 3, Media 245,
+  File 588) retornou HTTP 200 por query e path Core. Firefox ESR informou
+  `data-aculta-docx-status="done"`, preservou um iframe com sandbox e exibiu
+  visualmente título e texto do DOCX. A captura foi revista com a barra de
+  consentimento fechada; viewport efetivo 1354 CSS px, sem overflow horizontal.
+- A inspeção visual detectou que o `mountDocxViewer()` removia o iframe também
+  após receber `done`, descartando o conteúdo. Em dev.12, o iframe permanece no
+  sucesso e continua sendo removido em erro, timeout ou biblioteca indisponível.
+- Fixture limpa após validar UUIDs e relações pela Entity API; tópicos, posts,
+  Comments dedicados e anexos voltaram a zero. Galerias 11/18 preservaram 63 e
+  34 imagens. URL do tópico e rota do File removidos retornaram HTTP 404.
+- A matriz de 320/375/390/768/1024/1440 CSS px, zoom, tema escuro e planilhas
+  continua pendente; este smoke valida somente um DOCX em Firefox no viewport
+  registrado.
+
+## dev.181 — descoberta do preview local de Office
+
+- Runtime confirmado em `toca`, Drupal 11.4.10, banco `aculta_runtime`, purpose
+  `forum`. `aculta_forum`, `aculta_document_viewer` e `aculta_gallery` estão
+  habilitados. Importação parcial criou treze objetos: sete de Media/anexo,
+  formato/editor `forum`, workflow, Flag e displays padrão. Rebuild descobriu
+  formatter e builders DOCX/planilha.
+- Os conjuntos de permissões Forum de `email_confirmed` e `content_editor` foram
+  alinhados às entradas do Sync via Role API, sem importar os papéis completos.
+  O primeiro não tem transições de aprovar/rejeitar/retirar; o segundo tem as
+  seis transições previstas. O Runtime tinha três contas `email_confirmed` e
+  uma `content_editor`.
+- O bundle legado dedicado tem zero Comments. O único campo `comment_body` foi
+  sincronizado parcialmente para permitir apenas o formato `forum`, conforme o
+  CKEditor e o Sync; não houve alteração de outros bundles de comentário.
+- `aculta_portal.user_upload` foi criado pelo import parcial do Sync; a aba
+  Fórum herda a política global. O serviço efetivo continua com os mesmos nove
+  formatos e 10 MiB, e o objeto ativo coincide com o Sync.
+- Kernels de `ForumAttachmentPublicationKernelTest`,
+  `ForumPostWorkflowKernelTest` e `UserUploadPolicyKernelTest` passaram em
+  `aculta_simpletest`: 13 testes / 304 assertions, com 15 depreciações de
+  Core/contrib. A suíte de anexos instala a definição `ForumPost` usando o
+  fixture de teste existente; nenhuma fixture de conteúdo foi criada no Runtime.
+- Há zero `ForumPost` e zero Media `forum_attachment`; submissão/moderação pelo
+  navegador, preview privado, fallback e layout seguem sem validação visual.
+  Nenhuma importação global foi feita.
+
+## Revisão visual — listas públicas de atividade (2026-10-21)
+
+- Firefox ESR/X11 anônimo no Runtime de teste: `/discussoes/novas`,
+  `/discussoes/sem-resposta` e `/discussoes/mais-comentadas` responderam HTTP
+  200 e mostraram H1 único, região principal e mensagem de lista vazia.
+- Viewports CSS 390/768/1024: 12/12 verificações de estrutura e enquadramento
+  PASS com WebDriver BiDi. Foram capturadas as três rotas em claro e escuro nos
+  três tamanhos; inspeção manual representativa em 390 px/claro e 1024 px/escuro.
+- Escuro forçado no DOM; consentimento permaneceu sem escolha. Capturas `0600`
+  e `results.json` privados em
+  `/home/aculta/private/aculta/visual-tests/forum-lists-dev132-20261021/`.
+  GET-only, sem formulário submetido ou mutação do Runtime. Como as listas
+  estavam vazias, renderização de linhas com tópicos e leitor de tela não foram
+  avaliados.
+
+## dev.131 — foco de teclado no conteúdo principal
+
+- `forum-index-visual.mjs` envia Tab e Enter por ações WebDriver na raiz e em
+  `/categorias`. Verifica que o primeiro Tab revela visualmente o link
+  `#main-content`, e Enter coloca o foco em `<main id="main-content" tabindex="-1">`.
+- Firefox ESR/X11: raiz 15/15, `/categorias` 15/15; quatro verificações de
+  teclado PASS, 390/768/1024 CSS px sem overflow em claro/escuro (escuro forçado
+  localmente no DOM). Captura do link focado a 390 px e capturas
+  `0600` em `/home/aculta/private/aculta/visual-tests/forum-rc-dev131-keyboard-home-20261021/`
+  e `/home/aculta/private/aculta/visual-tests/forum-rc-dev131-keyboard-categories-20261021/`.
+  GET-only, sem submissão ou mutação do Runtime.
+
+## dev.130 — imagem inline preservada no movimento
+
+- `ForumCommentMoverKernelTest::testMovePreservesInlineEditorImageUsage` usa o
+  hook `editor_file_reference` do Core em um `comment_body` no formato
+  `usuario_aculta`, move o Comment e confirma a associação do arquivo ao mesmo
+  CID. Suíte Kernel: 19 testes / 386 assertions PASS, 19 depreciações Core e
+  contrib; MariaDB `aculta_simpletest`. Runtime não alterado.
+
+### Revisão visual pré-RC — 2026-10-21
+
+- `forum-index-visual.mjs`: raiz e `/categorias`, Firefox ESR/X11 anônimo,
+  13/13 verificações por rota (26/26), 390/768/1024 CSS px em claro/escuro.
+- H1 e região principal únicos, quatro categorias na raiz, doze em
+  `/categorias`, sem tópicos/fixtures, sem bundle contrib legado e sem overflow.
+  Capturas `0600` nos dois diretórios privados listados em `docs/ROADMAP.md`.
+- GET-only; sem consentimento escolhido, submit ou escrita no Runtime. Leitor de
+  tela, tópico real, comentários e composer continuam fora desta revisão.
+
+## dev.129 — contrato de anexos em comentários
+
+- `ForumTopicDisplayConfigTest` confere que o campo compartilhado dos
+  comentários permite o formato `usuario_aculta`, o filtro Media Embed aceita
+  o bundle público `document`, e a toolbar inclui `drupalMedia`.
+- O mesmo teste confirma upload inline do CKEditor em `public://inline-images/`
+  e alinhamento do máximo com `aculta_image.UploadPolicy::MAX_BYTES`. Não há
+  upload direto de documentos habilitado nem alteração Runtime nesta etapa.
+
+## dev.128 — PHPCS nos docblocks do produtor de eventos
+
+- Ajuste somente de comentários; o comportamento permanece o da dev.127.
+- `ForumActivityEventHooksTest`: resultado funcional mantém a evidência da
+  dev.127 (4 casos). PHPCS Drupal/DrupalPractice PASS após este ajuste.
+
+## dev.127 — produtor de eventos para estatísticas
+
+- `ForumActivityEventHooksTest`: 4 testes cobrem evento de tópico, evento de
+  comentário e exclusão de contextos não públicos do Fórum. Suíte Unit completa:
+  94 testes / 650 assertions PASS.
+- Suíte Kernel completa do módulo, executada em `aculta_simpletest`: 26 testes /
+  528 assertions PASS; 19 depreciações de Core/contrib instalados.
+- Integração dos eventos no Runtime com tópico e comentário reais e decisão de
+  apresentar agregados no painel seguem pendentes. A integração H5P contextual
+  tem evidência separada em `aculta_lms_h5p/CHANGELOG.md`.
+
+## dev.126 — permalink canônico após mover comentário
+
+- `ForumCommentMoverKernelTest`: 18 testes / 368 assertions; rota Core do
+  comentário e fragmento por CID permanecem válidos após mover a árvore.
+- `ForumTopicDisplayConfigTest`: 19 testes / 283 assertions; comparação YAML
+  ignora ordem de mapas, preservando a ordem das listas. O Runtime não foi
+  alterado; links antigos com fragmento no tópico de origem não podem ser
+  redirecionados pelo servidor. RUNTIME STATUS: DEFERRED.
+
+## dev.125 — mover comentário pela aba Comentários
+
+- Forum Unit `ForumTopicDisplayConfigTest`: 19 testes/283 assertions PASS.
+- Runtime de teste `toca`, Drupal 11.4.10, URI
+  `https://aculta.toca.net.br`, DB `aculta_runtime`; fórum inicialmente vazio,
+  12 categorias, 3 avisos, configuração `aculta_forum.settings` ausente e UID 1
+  autorizado. `drush cr` PASS.
+- Firefox ESR/X11 autenticado, 10/10: formulário canônico carregou e não teve
+  overflow em 390/768 CSS px; contagem de 4 descendentes, destino e token CSRF
+  corretos; POST pela Form API completou o movimento. Entity API confirmou os
+  quatro CIDs no destino, pais/threads, autoria, textos, estados pendentes e
+  rejeitado preservados; Flagging e fila de denúncias continuaram associados ao
+  comentário. Evidência visual revisada manualmente.
+- `finally` removeu os dois Nodes, quatro Comments e Flagging de fixture e
+  removeu apenas a configuração temporária criada para o teste. Estado final:
+  0 tópicos novos e legados, 0 Comments novos e legados, 12 categorias, 3 avisos,
+  fila Messenger 0, fila de denúncias sem fixture; configuração voltou a ausente.
+  Capturas privadas `0600` em
+  `/home/aculta/private/aculta-forum-comment-move-dev125-20261020/`.
+  RUNTIME STATUS: PASS no fluxo e viewports exercitados; publicação/aprovação,
+  concorrência HTTP, anexos, permalink e aviso aos seguidores seguem na matriz
+  geral de movimento.
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 19 testes/283 assertions PASS;
+  Kernel `ForumCommentMoverKernelTest`: 18 testes/366 assertions PASS, com 19
+  depreciações de Core/contrib. PHPCS, `node --check`, Portal 996, mapa 154,
+  fronteira 1598, slugs 381 (20 violações contrib baselined) e diff check PASS.
+  CLI PHP 8.4.26, abaixo do alvo 8.5.
+
+## dev.124 — rota canônica de mover comentário na área Comentários
+
+- `ForumTopicDisplayConfigTest`: 19 testes/283 assertions PASS. Confirma rota
+  plural ligada ao `ForumCommentMoveForm`, conversão `entity:comment`, permissão
+  dedicada e redirect do caminho singular antigo; PHPCS Drupal/DrupalPractice e
+  `git diff --check` PASS.
+- Runtime Homelab: hostname `toca`, URI `https://aculta.toca.net.br`, Drupal
+  11.4.10 e banco `aculta_runtime`. Antes do rebuild, `aculta_forum.settings`
+  estava ausente, mantendo o mover fechado. `drush cr` PASS e RouteProvider
+  confirma o caminho plural, handler Form API, permissão, conversor de Comment
+  e redirect singular. Nenhuma configuração ou entidade foi alterada. Não há
+  Comment de Fórum para renderizar o formulário com entidade real; submissão e
+  movimento continuam DEFERRED. RUNTIME STATUS: PARTIAL.
+
+## dev.123 — homologar movimento de tópicos em lote no Runtime
+
+- Firefox ESR/X11 autenticado no Runtime de teste (Drupal 11.4.10,
+  `https://aculta.toca.net.br`, banco `aculta_runtime`): 13/13 verificações.
+  Seleção AJAX correspondeu exatamente aos NIDs de duas fixtures; configuração
+  e confirmação exibiram ambos os títulos; Batch API concluiu sem erro e a View
+  informou duas movimentações. As entidades mantiveram NID, UUID, título,
+  autor, status não publicado, Domain e estado do campo Comment; a categoria
+  mudou e a revisão avançou.
+- `finally` removeu apenas as duas fixtures pelos NIDs/UUIDs registrados.
+  Entity API confirmou baseline restaurado: 0 tópicos públicos/legados,
+  0 comentários compartilhados/legados, 12 categorias intactas e fila
+  Messenger 0. Nenhuma alteração estrutural/configuracional no Runtime.
+- Evidências privadas `0600` em
+  `/home/aculta/private/aculta-forum-bulk-dev123-retry-20261020/`.
+  RUNTIME STATUS: PASS para o movimento em lote no escopo exercitado.
+
+## dev.122 — painel Growroom420 e abas administrativas
+
+- PHPUnit Unit direcionado: 21 testes/309 assertions PASS; PHPCS direcionado,
+  `node --check`, `git diff --check`, Drupal 11+ (992), mapa módulo/tema (154),
+  fronteira módulo/tema (1593) e slugs públicos (381 rotas; 20 violações
+  contrib já baselined) PASS.
+- Runtime de teste `toca`: Drush confirmou Drupal 11.4.10, URI
+  `https://aculta.toca.net.br` e banco `aculta_runtime`; `drush cr` PASS.
+  Firefox ESR/X11 autenticado, smoke GET-only: 25/25. Painel Growroom420 é a
+  aba Início; as ferramentas aparecem nas abas nativas e menu lateral; filas
+  publicadas/pendentes/rejeitadas aparecem no segundo nível de Comentários.
+  Contextos documentados não são renderizados no painel. Rotas canônicas e
+  redirects legados retornam como esperado; viewports 390/768/1024 sem overflow.
+- Evidências privadas `0600` em
+  `/home/aculta/private/aculta-forum-admin-final-20261020/`. Nenhum formulário
+  enviado nem conteúdo criado. Entity API confirmou 0 tópicos e 0 comentários
+  do Fórum. RUNTIME STATUS: PASS para navegação administrativa validada;
+  produção não acessada.
+
+## dev.118 — movimentação de tópicos em lote
+
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: configurações install/Sync da View
+  iguais, plugin VBO, processamento por lote de 10, Action própria e seleção
+  limitada a 50.
+- Kernel `ForumTopicMoverKernelTest`: dois tópicos movidos para a mesma categoria
+  pela Action; identidade, alias, Comment/CID e estatísticas permanecem; a Action
+  nega tópico com `field_autor_legado`, mesmo para a conta administrativa.
+- PHPCS direcionado e `git diff --check` PASS. VBO 4.4.9 foi instalado no
+  Runtime `aculta_runtime` (URI explícita `https://aculta.toca.net.br`); somente
+  a View de tópicos foi importada parcialmente e `drush cr` passou. RouteProvider
+  resolveu `view.aculta_forum_admin_topics.page_forum`; o display executou,
+  encontrou o handler VBO e a Action, com zero resultados. GET anônimo recebeu
+  403 na lista e no painel central, conforme access. A instalação tentou baixar
+  a tradução pt-br, mas o download falhou e o stream `translations://` não estava
+  gravável; isso não impediu instalação/configuração e strings podem aparecer no
+  idioma fallback. Backup da View e fonte parcial ficam fora do Git, com
+  permissões restritas, em
+  `/home/aculta/private/aculta/operations/forum-vbo-dev118-20261020/`. Firefox/X11
+  autenticado como UID 1: 5/7 verificações — ULI, View, seleção real dos dois
+  tópicos e Action habilitada passaram; a configuração VBO abriu com os títulos,
+  mas a checagem de resumo/seletores não reconheceu o markup e a confirmação não
+  foi submetida. Portanto, o Batch API e a movimentação Runtime continuam sem
+  validação. As fixtures exatas NIDs 476 e 477 foram removidas e o tempstore
+  ficou vazio. Verificação final via Entity API: 0 tópicos públicos, 0 tópicos
+  legados, 0 Comments compartilhados/legados e fila Messenger inalterada em 0.
+  RUNTIME STATUS: PARTIAL.
+
+## dev.117 — painel central e Conteúdo do Fórum geral
+
+- Unit da suíte `aculta_forum`: 90 testes/601 assertions PASS, incluindo `ForumTopicDisplayConfigTest` e `ForumAdminOverviewControllerTest`. PHPCS Drupal/DrupalPractice, `node --check`, Drupal 11+ gate (988), mapa módulo/tema (153), public slugs (377/20 violações contrib baselined), packages e `git diff --check` PASS. O gate módulo/tema falha por uma dependência de tema em `aculta_mailer/src/Form/MailBrandForm.php`, introduzida no commit compartilhado `ac2e580e`; não pertence ao escopo do Fórum e foi preservada. PHP CLI 8.4.26 está abaixo da baseline 8.5.
+- Configuração install e sync da View agora usa `admin/forum/conteudo`. No Runtime `toca`, Drush confirmou `aculta_runtime` com URI explícita `https://aculta.toca.net.br`; `http://default` sem URI permanece o erro esperado/documentado. Backup da View anterior em `/home/aculta/private/aculta/visual-tests/forum-admin-dev117-20261020/views.view.aculta_forum_admin_topics-before.yml`; somente o path foi alterado e `drush cr` PASS.
+- Firefox ESR/X11 autenticado: 34/34. `/painel-administrativo/forum` é uma página de entrada mínima e não agrega links/telas; navegação lateral abre Conteúdo e Configurações em seus caminhos próprios. Filas, Revista e layouts de 390/768 px confirmados; sete paths antigos de Fórum sob Conteúdo redirecionam ao painel. `/painel-administrativo/conteudo` permanece sem tópico do Fórum. Capturas privadas `0600` em `/home/aculta/private/aculta/visual-tests/forum-admin-dev117-20261020/`.
+- Mover tópico por Form API: 7/7 PASS em duas execuções. Fixtures não publicadas NIDs 464 e 465 receberam nova revisão preservando NID/UUID/autor/estado e foram apagadas. Pós-teste: 0 tópicos, 0 Comments compartilhados/legados, 12 categorias e fila Messenger 0. Capturas e recibos privados em `/home/aculta/private/aculta/visual-tests/forum-topic-move-dev117-20261020/`.
+- A primeira rodada encontrou que o redirect genérico não atendia paths com vários segmentos; os seis paths descendentes foram definidos explicitamente e a rodada final passou. RUNTIME STATUS: PASS no escopo. Produção não acessada.
+
+## dev.116 — configuração específica do Growroom420
+
+- Unit `ForumTopicDisplayConfigTest`: 19 testes/246 assertions PASS; PHPCS
+  Drupal/DrupalPractice, PHP lint e `node --check` PASS. PHP CLI 8.4.26 está
+  abaixo da baseline 8.5. Gates Drupal 11+,
+  mapa módulo/tema, slugs, packages e `git diff --check` PASS.
+- `ForumSettingsForm` usa `ConfigFormBase` e `#config_target` Core; rota exige
+  `administer aculta forum settings` (`restrict access`) e o papel
+  `content_editor` não recebe a permissão. Install e Config Sync permanecem
+  equivalentes com `comment_move_enabled: false`.
+- Runtime `toca`: hostname, checkout, branch, URI e banco conferidos; `drush cr`
+  PASS. Firefox ESR/X11 autenticado: 31/31; rota e formulário 200, menu inclui
+  Configurações do Fórum, checkbox desmarcado e POST Form API mantém `false`;
+  acesso anônimo retorna 403. `aculta_forum.settings` estava ausente; o smoke
+  criou somente `comment_move_enabled: false`, verificou o resultado e removeu o
+  item para restaurar exatamente a ausência inicial. EntityQuery final: 0 Nodes
+  `aculta_forum_topic`, 0 Comments `aculta_discussion_post`.
+- Capturas privadas 0600 em
+  `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev116-20261020/`.
+  RUNTIME STATUS: PASS para rota, access e gravação do estado seguro; habilitar
+  o movimento de comentários deliberadamente não foi testado.
+
+# Matriz de testes por fase
+
+## dev.115 — painel administrativo próprio do Fórum geral
+
+- Config Sync e instalação: tópico em `admin/forum`; comentários agregados e
+  filas em `admin/forum/comentarios/...`; local tasks deixam de usar
+  `system.admin_content`. Rotas mover tópico/comentário também passam à seção.
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 18 testes/236 assertions PASS;
+  PHPCS PASS. Drupal 11+ 988, slugs 377 (20 violações contrib baselined), mapa
+  módulo/tema 153 e packages 27 PASS.
+- Runtime `toca`, URI `https://aculta.toca.net.br`: somente cinco paths de Views
+  atualizados por `drush config:set`, seguido por `drush cr` PASS. RouteProvider
+  retorna os paths novos; MenuLinkManager constrói as cinco URLs da árvore; as
+  três tarefas de estado aparecem no nível secundário. `access_manager` permite
+  os destinos como UID 1. Requisições anônimas para tópicos, filas, ferramentas
+  Core, denúncias e regra compartilhada retornam 403; os dois caminhos antigos
+  `/painel-administrativo/conteudo/forum` e todas as seis rotas descendentes
+  (mover tópico, mover comentário, consulta agregada e as três filas) retornam
+  404. Nenhuma rota do Fórum aparece mais como tarefa local de Conteúdo.
+- Firefox ESR 153.4/geckodriver 0.37.1 em X11 `:0`, UID 1 de teste, somente
+  GET: 27/27 verificações PASS. `/painel-administrativo/conteudo` responde 200,
+  sem link para a rota antiga nem tópicos do Fórum na tabela; a seção própria e
+  as quatro páginas de comentários respondem 200; sete paths antigos sob
+  Conteúdo respondem 404. A área Revista permanece 200 em seu path atual, e o
+  antigo `/painel-administrativo/revista/comentarios` é 404. Capturas 0600 em
+  `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev115-20261020/`.
+- Viewport CSS 390 px: a fila vazia renderiza e mantém apenas o excesso conhecido
+  de 3 px da tabela responsiva do admin; 768 px não tem overflow. Consultas finais:
+  0 tópicos `aculta_forum_topic`, 0 Comments `aculta_discussion_post`. Nenhuma
+  entidade/conteúdo foi criada ou alterada. As filas vazias não cobrem operações
+  sobre Comments reais e a navegação visual para gestão de categorias ainda não
+  foi exercitada. RUNTIME STATUS: PARTIAL.
+
+## dev.114 — transições de moderação LMS e cache do container
+
+- Runtime de teste, Educador autenticado: as confirmações Form API de
+  aprovação e rejeição foram submetidas. Ambas retornaram HTTP 200; a primeira
+  publicou o Comment e limpou o marcador de rejeição, a segunda deixou-o
+  unpublished e marcou rejeição. Cada Comment apareceu apenas na fila de seu
+  estado.
+- Nenhum aviso público do Fórum foi criado para ação LMS. Anônimo recebeu 403
+  na fila e no tópico privado. Recibo privado: 12/12 verificações PASS.
+- `drush cr --uri=https://aculta.toca.net.br` PASS; o serviço
+  `aculta_forum_lms.moderation_controller` resolvia antes e continuou resolvendo
+  após o rebuild; rotas de overview/fila estão presentes. A quebra atribuída
+  ao controller não se reproduziu nesta checagem. Verificação adicional após a limpeza:
+  1 Group de curso preexistente, 0 Nodes `aculta_lms_topic`, 0 Comments
+  `aculta_discussion_post`, 0 Groups da fixture; anônimo recebe 403 no overview.
+- RUNTIME STATUS: PASS para cache/container e transições cobertas. Nenhuma
+  alteração de Runtime fora do rebuild e dos fixtures temporários já removidos.
+
+## dev.113 — fila LMS com Comment e ações
+
+- Runtime de teste, Educador autenticado: fixture em Group próprio; fila
+  pendente exibiu o Comment e ambos os links de moderação. Confirmações de
+  aprovação/rejeição responderam HTTP 200 por GET, sem submissão. Fila
+  publicada/rejeitada excluiu o Comment pendente. Anônimo recebeu 403 para fila
+  e tópico privado.
+- Cleanup via Entity API removeu Comment, Node, relationship, membership e
+  Group; sessão ULI destruída. Pós-condição: 1 curso preexistente, 0 tópicos LMS,
+  0 Comments e nenhum usuário de teste novo. Recibo privado em
+  `/home/aculta/private/aculta/forum-lms-dev113/smoke-result.json`.
+- Transições HTTP não foram submetidas; Kernel cobre o efeito de aprovar/rejeitar.
+  RUNTIME STATUS: PARTIAL.
+
+## dev.112 — montagem da fila pelo controller LMS
+
+- `LmsClassEducatorPermissionKernelTest` instancia o controller com o
+  `ViewExecutableFactory` real e chama `comments()` contra a View instalada.
+  Verifica display `lms_pending`, argumento Group e cache tag do contexto.
+- O arquivo direcionado: 1 teste/110 assertions PASS; suíte Kernel completa do
+  adapter: 2 testes/127 assertions PASS, 40 depreciações Core/contrib/LMS. PHP
+  CLI 8.4.26 está abaixo da baseline 8.5. Nenhuma alteração no Runtime. Smoke
+  HTTP vazio e autenticado permanece na evidência dev.111; ainda não há prova
+  Runtime das linhas/operações com Comment.
+
+## dev.111 — conversores Core de entidade na rota LMS
+
+- Kernel `LmsClassEducatorPermissionKernelTest`: a definição de rota com
+  `entity:group`/`entity:comment` passa IDs pelo `ParamConverterManager`; a
+  `RouteMatch` recebe entidades carregadas, e o `CustomAccessCheck` chama o
+  callback de serviço com Educador permitido, estudante negado e Group diferente
+  sem acesso. Suíte Kernel LMS: 2 testes/122 assertions PASS, 40 depreciações.
+- Unit LMS: 18/190 PASS. PHPCS Drupal/DrupalPractice, lint PHP e `git diff
+  --check` PASS. Homelab: `drush cr` PASS; o serviço controller resolve pelo
+  container e as três rotas ficam ativas. Smoke autenticado GET-only com uid 1,
+  Educador do Group: overview e filas publicadas/rejeitadas/pendentes HTTP 200;
+  sessão específica criada pelo ULI foi removida. Anônimo recebe 403; `/`
+  responde 200. Sem fixtures ou alteração de configuração/conteúdo. Renderização
+  de linhas e ações pendente; RUNTIME STATUS: PARTIAL.
+
+## dev.110 — argumentos da rota contextual de moderação
+
+- Kernel `LmsClassEducatorPermissionKernelTest`: suíte LMS 2 testes/118
+  assertions PASS. O Core `CustomAccessCheck` chama o manager configurado com
+  Group e Comment convertidos, decisão escalar e conta Educador; estudante é
+  negado e Group permitido, mas diferente do dono do tópico, não recebe acesso.
+- Runtime não foi alterado. Unit permanece 18/190 PASS. RUNTIME STATUS:
+  DEFERRED para esta subfase.
+
+## dev.109 — moderação de comentários LMS
+
+- Adapter Unit: 18 testes/190 assertions PASS. Kernel MariaDB: 2 testes/112
+  assertions PASS; cobre ações por estado, Educador versus estudante, Group
+  divergente e aprovação/rejeição com persistência recarregada. O Kernel reporta
+  40 depreciações Core/contrib/LMS.
+- PHPCS Drupal/DrupalPractice, `php -l` dos arquivos PHP alterados e
+  `git diff --check` PASS. Gates Portal Drupal 11+ (988), fronteira (1556), mapa
+  módulo/tema (153), slugs (377 rotas; 20 violações baseline DT-P20) e packages
+  (27) PASS.
+- Runtime `toca`: atualização parcial de um único View adicionou a coluna Core
+  `entity_operations`; descrições corrigidas para LMS; `drush cr` PASS. `/`
+  retornou 200, painel de moderação anônimo 403 e rota de ação com IDs
+  inexistentes 404. Nenhuma conta Educador/Comment de teste foi usada.
+- RUNTIME STATUS: PARTIAL; fila e operações ainda precisam de smoke autenticado
+  com conteúdo LMS autorizado. O cache foi reconstruído depois da correção do
+  conflito de propriedade que impedia compilar o container do adapter.
+
+## dev.103 — categorias vazias em Firefox/X11
+
+- `forum-index-visual.mjs` visita somente `/` e `/categorias` no host de teste
+  Growroom420. Firefox ESR 153.4/geckodriver 0.37.1 em `DISPLAY=:0`; 13/13
+  verificações PASS em cada página para 390, 768 e 1024 CSS px nos temas claro
+  e escuro. Verifica região principal, heading, categorias, ausência de tópicos
+  e de bundle contrib, enquadramento dos cards e ausência de overflow horizontal.
+- Drush confirmou URI de teste e `aculta_runtime`; EntityQuery após a rodada:
+  0 Nodes `aculta_forum_topic`, 0 Comments desses tópicos e 0 Nodes de bundle
+  legado `forum`. O script é GET-only, sem formulário enviado ou dados gravados.
+- O Ubuntu Discourse foi observado em sessão separada e sem aceitar cookies.
+  A página de referência apresenta categorias com descrição, atividade/volume
+  semanal e tópico recente; o Growroom vazio mostra quatro categorias raiz na
+  home, 12 cards no índice e estado vazio na lista. O ACULTA mantém sua paleta,
+  marca e navegação próprias; comparação de atividade, linhas de tópicos e
+  detalhes fica pendente enquanto o Runtime deve permanecer sem conteúdo.
+- Capturas privadas e `results.json` (diretórios 0700, arquivos 0600):
+  `/home/aculta-system-data/private/aculta-forum-index-dev102/visual/captures/`.
+  Sem alteração de configuração ou conteúdo. RUNTIME STATUS: PASS para as duas
+  listagens sem conteúdo; experiência de fórum completo PARTIAL/DEFERRED.
+- Revalidação em 2026-10-20 com Firefox ESR 153.4/geckodriver 0.37.1 e sessão
+  X11 própria, GET-only em `/categorias`: 13/13 verificações PASS, 12 termos,
+  zero tópicos, sem overflow em 390/768/1024 CSS px nos modos claro/escuro.
+  Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-index-smoke-dev111-20261020/`.
+
+## dev.91 — busca pública em Firefox/X11
+
+- `search-visual.mjs` usa Firefox ESR/geckodriver em `DISPLAY=:0`, WebDriver
+  BiDi para viewports CSS exatos e apenas GET. Confere título, formulário,
+  filtro, ausência de CAPTCHA, estado vazio, bounds e contraste; salva capturas
+  `0600` fora do checkout. Não envia busca por POST nem altera conteúdo.
+- No Runtime `toca`, `/pesquisar?keys=forumvisualtest` respondeu como página
+  vazia: 20/20 verificações PASS em 390/768/1024 CSS px. Modos claro e escuro:
+  contraste do botão 12,40:1 e 12,23:1. Formulário cabe no viewport; largura
+  do documento coincide com o viewport. O offcanvas fechado aparece como
+  elemento fixo fora da tela, mas não alarga o documento.
+- Capturas e `results.json` privados:
+  `/home/aculta-system-data/private/aculta-forum-search-dev91/visual/captures/`.
+  Contagem Runtime antes/depois: 0 tópicos e 0 Comments. A comparação X11 de
+  categorias, listas com resultados e tópicos com Ubuntu Discourse permanece
+  pendente; esta rota só tem estado vazio.
+- RUNTIME STATUS: PASS para busca vazia; PARTIAL para experiência completa do
+  fórum.
+
+## dev.90 — busca textual, categoria e relevância
+
+- `ForumCategorySearchKernelTest` combina `keys` com o ID da categoria e prova
+  que somente os dois tópicos textualmente correspondentes naquela categoria
+  aparecem. Um tópico com a busca apenas no corpo e outros com correspondência
+  no título validam o boost e a relevância padrão.
+- A classe direcionada e a suíte Kernel completa passaram no MariaDB dedicado:
+  26 testes / 513 assertions; 19 depreciações pertencem a Core/contrib.
+- Nenhum dado foi criado no Runtime. Resultado de busca com conteúdo real fica
+  pendente porque o Growroom420 de teste deve permanecer limpo.
+- RUNTIME STATUS: DEFERRED.
+
+## dev.89 — busca sem correspondências
+
+- A View expõe mensagem neutra de estado vazio com link para `/categorias`;
+  Unit verifica plugin de área, texto e caminho, além da paridade entre
+  `config/install` e Config Sync: 1 teste / 18 assertions PASS.
+- Runtime `toca`: backup privado da View ativa, importação parcial só desse
+  objeto e cache rebuild PASS. Busca GET com `keys` e categoria respondeu 200;
+  mensagem e link apareceram, CAPTCHA ausente, 0 tópicos/Comments. Nenhum
+  conteúdo foi criado ou removido.
+- Firefox ESR/X11 anônimo em 1024 px: painel vazio, texto e link cabem no
+  conteúdo; formulário mantém alinhamento. Captura privada em
+  `/home/aculta-system-data/private/aculta-forum-search-dev89/visual/captures/`
+  (modo 0600). Mobile, claro/escuro e acessibilidade completa pendentes.
+- RUNTIME STATUS: PASS para estado vazio; busca com resultados reais continua
+  PARTIAL porque não há itens no índice.
+- Regressão Unit completa do Forum: 87 testes / 556 assertions PASS. Portal
+  Drupal 11+ (979), fronteira (1478), mapa (152), slugs (378), caminhos/textos,
+  SDC (535), Design Foundations (2100 e 157 fixtures) e Shell Contract (11)
+  PASS. Foundation aceita a versão .119, mas falha pela diferença na allowlist
+  Twig: `email-wrap.html.twig` da linha Mailer ainda não está listado; o gate e
+  os arquivos Mailer ficaram fora do escopo.
+
+## dev.88 — integração do filtro de categoria com Search API DB
+
+- `ForumCategorySearchKernelTest` cria índice Search API DB e conteúdo Node/
+  Taxonomy somente no MariaDB dedicado. Indexa três tópicos em raiz, filha e
+  categoria paralela; condição `forum_category = TID filha` retorna somente o
+  tópico associado. Resultado: 1 teste / 17 assertions PASS.
+- Foram reportadas duas depreciações no Search API instalado (`TaskStorageSchema`
+  e `EntityDatasourceInterface`); nenhuma origem é código ACULTA. O teste usa
+  `secrets/simpletest-db.env` sem imprimir a URL e nunca conecta ao Runtime.
+- Suíte Kernel completa: 25 testes / 495 assertions PASS, com 19 depreciações
+  de Core/contrib. Unit completa: 87 / 553 PASS. A View não declara `sorts`;
+  `QueryInterface` instalado define relevância decrescente como padrão.
+- Runtime permanece com 0 tópicos e 0 Comments. Busca real com resultados e
+  ordenação continuam pendentes para fechar a subfase de descoberta.
+- RUNTIME STATUS: DEFERRED.
+
+## dev.87 — filtro de categorias e formulário de busca somente leitura
+
+- Search API instalado no Drupal 11.4.10 rejeitou `entity:taxonomy_term`
+  (`The "entity:taxonomy_term" plugin does not exist.`). O índice voltou ao
+  campo inteiro `field_aculta_categories:target_id`; o rótulo de termo é
+  montado via Taxonomy/Entity Access no formulário da View. A View continua
+  filtrando pelo mesmo ID indexado.
+- Uma importação parcial experimental dos objetos Search API/View foi revertida
+  a partir de backup privado. O endpoint `/pesquisar` recuperou HTTP 200; nenhum
+  conteúdo foi criado, atualizado ou apagado. Runtime permanece com a
+  configuração estável anterior até a importação da View validada.
+- O hook final remove Turnstile somente das Views de listagem pública e da
+  busca GET `/pesquisar`; o HTML anônimo não contém widget/campo CAPTCHA.
+  Formulários de criação e mutação permanecem sujeitos à política global.
+- Runtime `toca`: backup privado da View ativa e importação parcial somente de
+  `views.view.aculta_forum_search`; rebuild PASS. Busca sem filtro e
+  `?keys=teste&categoria=76` retornam HTTP 200. O select mostra 12 categorias
+  hierárquicas atuais. Nenhum conteúdo criado/removido; 0 tópicos e 0 Comments.
+- Firefox ESR/X11 anônimo: 1024 px confirmou campos, descrições e botão sem
+  sobreposição após correção em `aculta420` 0.6.0-dev.118. Captura inicial
+  mostrou colisão da ajuda do filtro com o botão; a captura posterior confirma
+  correção. Responsive Design Mode abriu em 320×480 CSS px e mostrou fluxo
+  vertical sem CAPTCHA, mas a captura ficou parcial abaixo da área visível;
+  inspeção completa em 390/320×844, claro/escuro e acessibilidade pendentes.
+  Capturas privadas em `/home/aculta-system-data/private/aculta-forum-search-dev87/visual/captures/`
+  com modo 0600; perfil isolado encerrado após a inspeção.
+- Unit da suíte completa: 87 testes / 553 assertions PASS. Gates Portal Drupal
+  11+ (979), fronteira (1477), mapa (152), slugs (378), SDC (535), Design
+  Foundations (2100), fixtures (157), Shell Contract (11), equivalência
+  install/sync e diff-check PASS. `validate-aculta420-foundation.php` falhou
+  antes do fim por diferença na allowlist de templates Twig: falta nela
+  `email-wrap.html.twig`, presente no tema pela implementação paralela do
+  Mailer 0.6.0-dev.117. O gate reconhece a versão .118; a allowlist não foi
+  alterada para manter o escopo separado. `validate-unique-paths-texts.php`
+  PASS. Shell Contract (11) executado via Drush, com bootstrap Drupal.
+- RUNTIME STATUS: PARTIAL; Search API tem 0 itens indexados, portanto o filtro
+  ainda não pôde ser validado contra resultados com conteúdo real.
+
+## dev.86 — busca pública contextual
+
+- Unit da query e do purpose, equivalência de instalação/Config Sync e rota:
+  5 testes / 17 assertions PASS. Suíte Unit completa do Forum: 87 / 527 PASS.
+- Runtime de teste `toca`: Search API 1.41 com backend `aculta_database`, índice
+  `aculta_forum` ativo e 0 itens indexados; `/pesquisar` e consulta vazia
+  responderam HTTP 200. Antes da importação, havia 0 tópicos e 0 Comments; não
+  foram criados fixtures.
+- Firefox/X11: captura em 1024 px confirma título, abas e formulário. A página
+  anônima também apresenta o Turnstile global definido pela
+  [política de CAPTCHA](../../../../../../../docs/integrations/CAPTCHA.md) e uma
+  mensagem visual de validação; a busca não foi submetida. A causa da
+  mensagem não foi isolada, portanto o formulário e a validação visual ficam
+  PARTIAL. Captura privada `private/visual-tests/aculta-forum-search-dev86/`
+  (`0600`). Nenhuma conclusão mobile ou de acessibilidade integral.
+- Gates Drupal 11+ (975), fronteira (1467), mapa (152), slugs (378), caminhos,
+  PHP lint, PHPCS dos novos arquivos e `git diff --check`: PASS. O PHPCS do
+  arquivo Portal preexistente `DomainRouteSubscriber.php` aponta dívida
+  anterior em comentários/linhas não alteradas; o gate Drupal 11+ passa.
+- RUNTIME STATUS: PARTIAL.
+
+## dev.85 — formulário de mover tópico nega autoria histórica
+
+- O Kernel usa uma conta com `administer nodes` e `move aculta forum topics`
+  contra um Node histórico com `field_autor_legado`. Serviço e formulário
+  negam a operação, e a categoria original fica inalterada.
+- `ForumTopicMoverKernelTest`: 3 testes / 71 assertions PASS no MariaDB
+  dedicado; 5 depreciações Core/Domain contrib. Lint, PHPCS, Drupal 11+ (975),
+  fronteira (1451), mapa (152) e `git diff --check` PASS. Runtime não alterado;
+  RUNTIME STATUS: DEFERRED. A suíte Kernel completa passou na dev.84 antes
+  deste caso.
+
+## dev.84 — negar Form API quando falta acesso ao tópico
+
+- Conta tem `move aculta forum comments`, mas não `access content`. O Kernel
+  chama `ForumCommentMoveForm::buildForm()` e exige `AccessDeniedHttpException`
+  antes de destinos; confirma que o Comment fica no tópico original.
+- Kernel completo: 24 testes / 476 assertions PASS no MariaDB dedicado, 19
+  depreciações Core/contrib; Unit Forum: 82 testes / 500 assertions PASS.
+- PHP lint, PHPCS, Drupal 11+ (975 checks), fronteira módulo/tema (1451), mapa
+  (152) e `git diff --check`: PASS. Runtime não alterado; RUNTIME STATUS:
+  DEFERRED.
+- Regressão dos consumidores: `aculta_game` Unit 10/46 PASS;
+  `aculta_user` Unit 55/189 PASS, com uma depreciação do PHPUnit. Esses
+  módulos não tiveram arquivos alterados.
+
+## dev.83 — permissão de mover não substitui acesso ao tópico fonte
+
+- Kernel concede `move aculta forum comments` e `access comments`, mas nega
+  `access content`. A conta não pode ver a fonte ou listar destinos; chamada
+  direta de mover é recusada sem alterar o host.
+- `ForumCommentMoverKernelTest`: 18 testes / 365 assertions PASS no MariaDB
+  dedicado; 19 depreciações Core/contrib. PHP CLI 8.4.26 abaixo da baseline
+  8.5. Runtime não alterado; RUNTIME STATUS: DEFERRED.
+- Lint, PHPCS, Drupal 11+ (975 checks), fronteira módulo/tema (1450 checks),
+  mapa (152 checks) e `git diff --check`: PASS.
+- Regressão completa após a alteração: Forum Unit 82 testes / 500 assertions
+  PASS; Forum Kernel 24 testes / 475 assertions PASS no MariaDB dedicado. As
+  19 depreciações reportadas são de Core/contrib instalados.
+
+## dev.82 — negar movimentação sem permissão dedicada
+
+- Kernel cria comentário publicado e destino público elegível. A conta de
+  fixture recebe acesso de leitura, mas não `move aculta forum comments`.
+  Confirma access negado, nenhuma opção de destino e negação da chamada direta,
+  mantendo o comentário no Node de origem.
+- Classe completa `ForumCommentMoverKernelTest`: 17 testes / 348 assertions
+  PASS no MariaDB dedicado; 19 depreciações de Core/contrib. PHP CLI 8.4.26,
+  abaixo da baseline 8.5. Runtime não alterado; RUNTIME STATUS: DEFERRED.
+- Lint, PHPCS, Drupal 11+ (975 checks), fronteira módulo/tema (1450 checks),
+  mapa (152 checks) e `git diff --check`: PASS.
+
+## dev.81 — rejeitar destino fechado ou de outro purpose
+
+- Kernel cria tópico destino fechado e tópico Node associado ao Domain `main`;
+  ambos são recusados antes de alterar a relação do Comment publicado. A
+  origem continua hospedeira após cada tentativa.
+- Classe completa `ForumCommentMoverKernelTest`: 16 testes / 331 assertions
+  PASS no MariaDB dedicado; 19 depreciações Core/contrib. PHP 8.4.26 abaixo da
+  baseline 8.5. Runtime não foi alterado; RUNTIME STATUS: DEFERRED.
+- Revalidação visual/HTTP administrativa X11: 19/19 PASS. Aba Fórum e as três
+  filas retornam 200 autenticadas; Revista segue em sua área consolidada e rota
+  antiga retorna 404; sem erro 500. 768 px sem overflow; 390 px apresenta os
+  mesmos 3 px de excesso limitados à tabela. Somente GET; sem mutações. Capturas
+  privadas em `/home/piradopirata/private/aculta/visual-tests/forum-admin-recheck-dev81-20261020/`.
+
+## dev.80 — preservar traduções em comentário movido
+
+- Kernel MariaDB configura `comment_body` como traduzível, cria tradução `fr`
+  para um Comment `aculta_discussion_post` publicado e move a mesma entidade.
+  Depois do movimento, idioma original e tradução preservam assunto, corpo e
+  estado publicado, e o host é o destino.
+- Classe completa `ForumCommentMoverKernelTest`: 15 testes / 315 assertions
+  PASS; 19 depreciações Core/contrib. PHP 8.4.26 está abaixo da baseline 8.5.
+  Runtime não foi alterado; RUNTIME STATUS: DEFERRED.
+
+## dev.79 — leitura por tópico após mover comentário
+
+- Kernel MariaDB usa History oficial e usuário autenticado de fixture. Uma
+  resposta publicada conta como nova na origem antes do movimento; depois conta
+  como nova no destino. As duas linhas de leitura `uid/nid/timestamp` continuam
+  iguais, provando que o movimento não edita recibos pessoais.
+- `ForumCommentMoverKernelTest`: 14 testes / 292 assertions PASS; 19
+  depreciações preexistentes Core/contrib observadas. Execução em PHP CLI
+  8.4.26, inferior à baseline 8.5. Runtime não foi alterado. RUNTIME STATUS:
+  DEFERRED.
+
+## dev.78 — preservar Flag de denúncia e fila ACULTA User
+
+- Smoke X11 autenticado moveu uma árvore de quatro Comments e verificou que a
+  Flagging `sinalizar_comentario` permaneceu no mesmo CID, com owner uid 5; a
+  fila `aculta_user.report_queue` continuou listando o comentário denunciado.
+  Os estados pendente/rejeitado, `pid`, `thread` e destino também permaneceram
+  corretos. 10/10 verificações em 390×844, 768×1024 e 1024×768 CSS px.
+- A configuração ativa da Flag foi previamente comparada ao Config Sync e
+  alinhada por importação parcial de um único objeto, depois de backup privado.
+  Antes da criação e após cleanup, a contagem de Flagging era zero. Cleanup
+  excluiu a Flagging de fixture antes dos Comments e tópicos; Fórum vazio, fila
+  Messenger 0, 12 categorias, 3 avisos e config temporária ausente.
+- Capturas e `results.json` privados em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-flags-dev78-20261020/`.
+  O smoke não alterou o PHP do Runtime.
+- O roteiro evita executar `drush cr` durante o caso por não alterar definições
+  de rota ou serviços. Revalidação posterior, após commits independentes do
+  Mailer, executou `drush cr` com PASS e confirmou a rota de edição do modelo e
+  as quatro páginas administrativas do Fórum. A raiz responde 200; filas dão
+  403 a anônimo. RUNTIME STATUS: PARTIAL pelo escopo funcional restante.
+
+## dev.77 — moderação pendente/rejeitada em subárvore
+
+- A fixture mantém quatro Comments não publicados em árvore ramificada: raiz
+  pendente, resposta direta com `field_aculta_rejected = TRUE`, resposta
+  aninhada pendente e segundo ramo pendente. Move via Form API/CSRF autenticado
+  e confere CID, autor, texto, status, campo de rejeição, `pid`, `thread` e
+  tópico destino.
+- 10/10 PASS em 390×844, 768×1024 e 1024×768 CSS px, sem overflow. O campo
+  rejeitado continua reservado a quem tem permissão de moderação. Capturas
+  privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-mixed-dev77-20261020/`.
+- Cleanup reverso: zero tópicos/Comments, fila Messenger 0, 12 categorias, 3
+  avisos e configuração de mover ausente. Nenhum Comment publicado foi criado;
+  aprovação pelo workflow e efeitos de `aculta_game`/aviso para conteúdo
+  publicado seguem sem validação. RUNTIME STATUS: PARTIAL.
+
+## dev.76 — isolamento dos efeitos de publicação das fixtures
+
+- Leitura via Drupal API encontrou 24 itens na fila
+  `aculta_messenger_message_subscribe_event`. Os 24 tinham como alvo Nodes que
+  já não existiam; nenhuma entidade Fórum estava presente. O worker Core
+  processou exatamente 24 itens, sem alterar avisos.
+- O roteiro X11 exige fila vazia antes de criar fixtures, marca os Nodes de QA
+  como sincronizando apenas durante o insert e compara a fila ao baseline após
+  remover comentários/tópicos. Esse marcador evita o evento de anúncio de tópico
+  e avaliação de conquistas em dados sintéticos; o teste do mover segue sendo
+  uma submissão real autenticada do Form API.
+- Repetição de árvore ramificada: 10/10 PASS. Estado final verificado via
+  Drush/Entity API: fila 0, tópicos/Comments ACULTA e legados 0, 12 categorias,
+  3 avisos e `aculta_forum.settings` ausente. Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-branch-dev76-20261020/`.
+  RUNTIME STATUS: PARTIAL.
+
+## dev.75 — mover subárvore ramificada em Runtime/X11
+
+- O roteiro cria dois tópicos e quatro Comments pendentes: raiz, duas respostas
+  diretas e uma resposta aninhada no primeiro ramo. Autenticado como uid 1,
+  envia o Form API com CSRF e verifica CIDs, autores, textos, status, relações
+  `pid` e posições `thread`; origem termina com zero e destino com quatro.
+- Firefox ESR 153.4/geckodriver 0.37.1: 10/10 PASS; formulário/fila em
+  390×844, 768×1024 e 1024×768 CSS px, sem overflow horizontal. Capturas
+  privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-branch-dev75-20261020/`.
+- Cleanup em ordem reversa removeu os quatro Comments e os dois Nodes e apagou a
+  configuração temporária. Estado final: 0 tópicos/Comments ACULTA/legados,
+  12 categorias, 3 avisos e settings do mover ausentes. RUNTIME STATUS: PARTIAL.
+- Limites: todas as respostas estavam pendentes. Não cobre status mistos,
+  History, flags, Search API, anexos `aculta_image`, aviso com seguidores ou
+  concorrência HTTP. Unit/Kernel permanecem conforme os resultados anteriores;
+  esta subfase mudou apenas roteiro e documentação, não o PHP do Runtime.
+
+## dev.74 — mover subárvore em Runtime/X11
+
+- O roteiro cria duas discussões de teste e três Comments pendentes (raiz,
+  resposta e resposta aninhada), autentica uid 1, confirma o token CSRF e move a
+  árvore pelo Form API. Todos os CIDs, autores, textos, estados, `pid`,
+  prefixos de `thread` e destino foram conferidos; origem ficou com zero e
+  destino com três Comments.
+- Firefox ESR 153.4/geckodriver 0.37.1: 10/10 PASS. Formulário e fila foram
+  verificados em 390×844, 768×1024 e 1024×768 CSS px; sem overflow horizontal.
+  Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-subtree-dev74-20261020/`.
+- Cleanup em ordem reversa removeu os três Comments e os dois Nodes; configuração
+  temporária foi apagada. Estado final: 0 tópicos/Comments ACULTA ou legados,
+  12 categorias, 3 avisos e settings do mover ausentes. Runtime continua
+  fail-closed. RUNTIME STATUS: PARTIAL.
+- Limites: árvore linear com três itens, todos pendentes. Não cobre ramificação,
+  estados mistos, History, flags, Search API, imagens `aculta_image`, avisos com
+  seguidores ou concorrência HTTP. A suíte Unit/Kernel registrada na dev.73
+  continua sendo a cobertura transacional automatizada; esta subfase não alterou
+  PHP de Runtime.
+
+## dev.73 — formulário real para mover comentário
+
+- Pré-condições Runtime confirmadas: `hostname=toca`, branch da PR #297, Drupal
+  11.4.10, URI MAIN derivado do Deployer e banco `aculta_runtime`. Antes do
+  teste havia 0 tópicos ACULTA/legados, 0 Comments ACULTA/legados, 0 Comments
+  no campo compartilhado, 12 categorias e 3 avisos. O gate de mutação exige
+  variável explícita, X11 e diretório de saída privado fora do checkout.
+- O Runtime não tinha as instâncias `field_autor_legado` nos bundles de Node e
+  Comment ACULTA, embora os storage configs e o tipo `aculta_legado_autor`
+  existissem. Os dois field configs ausentes foram comparados ao Config Sync e
+  instalados por importação parcial limitada a esses arquivos, após registro do
+  estado anterior; config status dos alvos ficou sem drift.
+- O roteiro ativou temporariamente `comment_move_enabled`, criou 2 tópicos e 1
+  Comment pendente de teste, autenticou uid 1 via ULI, abriu o formulário em
+  MAIN, conferiu o token CSRF e submeteu a confirmação Form API. 10/10 PASS em
+  390, 768 e 1024 CSS px, sem overflow horizontal:
+  formulário/destino, singular “1 comentário”, POST sem erro, CID/autor/texto/
+  estado pendente/thread preservados e host alterado ao destino (origem 0,
+  destino 1 antes da limpeza).
+- PHPUnit Unit completo: 82/500 PASS. Kernel `ForumCommentMoverKernelTest`:
+  13/272 PASS no MariaDB `aculta_simpletest`; 19 depreciações de Core/contrib.
+  PHPCS Drupal/DrupalPractice e gates Portal 975, fronteira 1419 e mapa 152 PASS.
+  PHP CLI 8.4.26 está abaixo da baseline 8.5.
+- Capturas privadas do formulário/resultado em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-move-dev73-20261020/`.
+  O `finally` removeu o Comment e os dois Nodes via Entity API, apagou o config
+  temporário, invalidou caches e reconferiu o estado: 0 tópicos/Comments
+  ACULTA/legados, 12 categorias, 3 avisos, instâncias legadas alinhadas e
+  `aculta_forum.settings` ausente (fail-closed). RUNTIME STATUS: PARTIAL.
+- Cobertura desta rodada é só a raiz de um Comment pendente; não cobre subárvore
+  real, aprovação, flags/History, Search API, arquivos processados pelo
+  `aculta_image`, entrega de notificação ou concorrência entre requests.
+
+## dev.72 — PHPCS do contrato de contexto
+
+- PHPUnit Unit completo do Fórum: 82 testes / 500 assertions PASS.
+- PHPCS Drupal/DrupalPractice PASS em `src/Context`, o provider público e os
+  testes unitários do resolver/provider. `php -l` nos arquivos de contexto
+  alterados e `git diff --check` PASS.
+- Ajustes limitados a docblocks, posição de `use` e remoção da variável
+  ignorada no fixture de mocks; Runtime DEFERRED.
+
+## dev.71 — fila administrativa responsiva
+
+- A suíte X11 abre a fila aguardando moderação em viewports CSS de 390×844 e
+  768×1024, valida o carregamento e mede overflow do documento e da área `<main>`;
+  também salva screenshots com permissões privadas.
+- Firefox ESR 153.4/geckodriver 0.37.1 no X11 autenticado: 19/19 verificações
+  PASS, inclusive carregamento das abas e rótulos. Em 768 px não houve overflow;
+  em 390 px a tabela responsiva estende-se 3 px e os elementos excedentes ficam
+  restritos a `table/thead/tr/th/tbody/td`. A captura foi inspecionada; nenhum
+  conteúdo/configuração foi alterado. Filas vazias limitam revisão de linhas
+  reais em telas estreitas. Evidências privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev71-20261020/`.
+  RUNTIME STATUS: PARTIAL.
+
+## dev.70 — rótulos pt-BR das filas de moderação
+
+- A configuração de instalação e Config Sync deve ter colunas `changed` e
+  `operations` como “Atualizado” e “Operações”, e texto vazio “Não há comentários
+  disponíveis.”; Unit verifica os valores e a paridade.
+- `admin-content-structure.mjs`: Firefox ESR 153.4/geckodriver 0.37.1 em X11,
+  autenticado no MAIN de teste; 15/15 verificações PASS nas quatro filas. Confirma
+  “Atualizado”, “Operações” e “Não há comentários disponíveis.”. Capturas
+  privadas em `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev70-20261020/`.
+- View ativa atualizada após backup privado e alinhada ao Config Sync. Fórum
+  permanece com 0 tópicos e 0 Comments; filas sem linhas não comprovam
+  isolamento cruzado com dados reais. RUNTIME STATUS: PARTIAL.
+
+## dev.69 — smoke X11 de organização administrativa
+
+- `node tests/browser/aculta-forum/admin-content-structure.mjs` gera link ULI
+  temporário para uid 1 no host MAIN de teste (resolvido pelo Deployer), abre
+  Firefox visível e navega somente por GET. Não salva conteúdo/configuração.
+- Verifica Conteúdo geral, entrada Fórum, abas publicados/rejeitados/aguardando
+  moderação, Conteúdo da Revista unificado e 404 do caminho Revista legado;
+  grava capturas `0600` e `results.json` fora do checkout.
+- Preflight: `hostname=toca`, branch da PR #297, Drupal 11.4.10, URI MAIN de
+  teste, banco `aculta_runtime`; zero tópicos ACULTA Forum e zero Comments do
+  campo compartilhado. Firefox ESR 153.4/geckodriver 0.37.1 em X11, uid 1
+  autenticado com ULI temporário pelo host ACCOUNT e sessão confirmada no MAIN.
+- 11/11 PASS: Conteúdo geral/aba Fórum 200; links de publicados/rejeitados/
+  aguardando presentes; `/painel-administrativo/conteudo/forum/comentarios` e
+  as três filas de estado 200; Revista consolidada 200; rota antiga de
+  comentários da Revista 404. Capturas `0600` fora do checkout em
+  `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev69-20261020/`.
+- Somente GETs e link temporário; nenhum Node/Comment foi criado. Como os dados
+  do Fórum estão vazios, não foi possível confirmar exclusão de conteúdo cruzado
+  nas linhas de resultado. RUNTIME STATUS: PARTIAL.
+
+## dev.68 — teclado e estados de limite
+
+- A suíte usa WebDriver Actions para enviar Enter à ação Próxima e ArrowRight ao
+  slider, além de conferir o estado inicial, `aria-valuetext`, live announcement
+  e retorno Início/Fim. A interação de teclado usa eventos do navegador, não
+  `dispatchEvent` sintético para as teclas.
+- Firefox ESR 153.4/geckodriver 0.37.1, Runtime `toca`: Enter enviou o foco a
+  Próxima e anunciou “Mensagem 2 de 6”; ArrowRight no slider alterou o índice e
+  `aria-valuetext` para “Mensagem 3 de 6”, com live region `off`; Fim/Início
+  atualizaram o índice e disabled dos botões de borda. A suíte completa passou
+  25/25 em 320/360/390/500/900 CSS px. Sem gravação. Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-progress-dev68-20261020/`.
+- O resultado de overflow global permanece limitado pelo baseline do offcanvas
+  de carrinho descrito em dev.67; esta entrega não o altera. Leitor de tela e
+  History real autenticado continuam pendentes. RUNTIME STATUS: PARTIAL.
+
+## dev.67 — suíte visual X11 reproduzível
+
+- `node tests/browser/aculta-forum/progress-visual.mjs` usa Firefox não headless
+  em uma sessão X11, URL pública `SUITE_PAGE` e saída privada `SUITE_OUT` fora
+  do checkout. Host é comparado aos hosts de teste do Deployer. O WebDriver
+  BiDi ajusta o viewport CSS, independente do tamanho mínimo da janela X11; essa
+  capacidade está na [especificação W3C WebDriver BiDi](https://www.w3.org/TR/webdriver-bidi/)
+  e no [MDN browsingContext.setViewport](https://developer.mozilla.org/en-US/docs/Web/WebDriver/Reference/BiDi/Modules/browsingContext/setViewport).
+- O cenário cria seis mensagens exclusivamente no DOM dentro do campo de
+  discussão já renderizado; verifica controles, ausência/presença de `.new`,
+  anúncio “Mensagem 4 de 6”, remoção do marcador, viewport, overflow, alvos de
+  toque e capturas claro/escuro. Não autentica nem envia formulários.
+- Firefox ESR 153.4/geckodriver 0.37.1 no Runtime `toca`, página pública de
+  publicação: 20/20 verificações PASS em 320/360/390/500/900 CSS px; `.new`,
+  anúncio, alvo móvel de 44 px e claro/escuro confirmados. Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-progress-dev67-20261020/`.
+- O DOM/body da página base já mede 509 px entre viewport 320–500 px; inspeção
+  identificou o `#aculta-cart-offcanvas` fixo e fechado além do limite. Os
+  controles do Fórum não ampliam essa largura. É um achado preexistente do
+  carrinho, fora do escopo deste commit; portanto o teste não afirma ausência de
+  overflow global. Nenhum dado foi salvo. History autenticado real e leitor de
+  tela permanecem pendentes. RUNTIME STATUS: PARTIAL.
+
+## dev.66 — primeira resposta não lida pelo History instalado
+
+- O Runtime carrega `drupal/history` 1.0.0 de `web/modules/contrib/history`.
+  O `comment-new-indicator.js` instalado acrescenta classe `.new` ao `.js-comment`
+  depois de comparar o timestamp com o History do usuário. A documentação Core
+  registra que o marcador é personalizado no cliente e que o History JS API
+  coordena esses indicadores; fontes: [HistoryHooks::commentView](https://api.drupal.org/api/drupal/core%21modules%21history%21src%21Hook%21HistoryHooks.php/function/HistoryHooks%3A%3AcommentView/11.x)
+  e [New History JS API](https://www.drupal.org/node/2086767).
+- Firefox ESR 153.4/X11/BiDi no Runtime de teste, sessão anônima isolada e página
+  da Revista. Seis mensagens sintéticas somente no DOM: sem `.new`, o botão
+  ficou oculto; adicionar `.new` ao quarto comentário mostrou “Não lidas”; clicar
+  navegou e anunciou “Mensagem 4 de 6” em `aria-live=polite`; remover a classe
+  ocultou novamente o botão. Capturas em
+  `/home/aculta/private/aculta/visual-tests/forum-progress-20261020/`.
+- 320/360/390/500/1250 CSS px: a barra manteve largura do viewport, slider amplo,
+  status visível no mobile e alvo de ação de 44 px; o botão não quebrou no
+  desktop. Claro/escuro inspecionados. Nenhum Node/Comment foi gravado. Não houve
+  usuário autenticado nem marcador History de comentário real; essa homologação,
+  integração de leitor de tela e AT continuam pendentes. RUNTIME STATUS: PARTIAL.
+
+## dev.65 — anúncio explícito durante movimento de leitura
+
+- Firefox ESR 153.4/X11 e WebDriver BiDi no Runtime de teste, sessão anônima
+  isolada. Seis mensagens foram inseridas apenas no DOM da publicação e o
+  viewport CSS foi 390 × 844 px. A navegação chegou visualmente à mensagem 3/6
+  antes do teste de Enter, por efeito esperado do IntersectionObserver.
+- Enter em Próxima pediu a mensagem 4/6. Após 250 ms, o indicador visual já
+  acompanhava a rolagem em 6/6, mas o texto de anúncio permaneceu estável em
+  4/6 com `aria-live=polite`. Após 1,2 s, o anúncio voltou a `off` e sincronizou
+  silenciosamente em 6/6. Isso evita cancelar o anúncio explícito sem narrar
+  cada mensagem atravessada pela rolagem suave.
+- DOM sintético removido e sessão isolada encerrada; nenhum Comment persistido.
+  `node --check` PASS. Leitor de tela real/AT não testado. RUNTIME STATUS: PARTIAL.
+
+## dev.64 — anúncio acessível sem ruído de rolagem
+
+- A região visual e a mensagem dentro de `role=status` seguem a posição. A live
+  region alterna para `aria-live=off` em atualizações do IntersectionObserver e
+  do slider, e para `polite` em ações de botão. `aria-valuetext` acompanha o
+  slider. CSS do tema oculta visualmente a região (1×1 px, `clip-path`) sem
+  classes de design no módulo.
+- Firefox ESR 153.4/Geckodriver no Runtime `toca`, URL pública de publicação
+  com `field_aculta_discussion`: seis Comments foram acrescentados apenas no
+  DOM. Próxima definiu `polite` e anunciou “Mensagem 2 de 6”; rolar até a quinta
+  atualizou texto visível/acessível e `aria-valuetext` para 5/6, em `off`;
+  operar o slider atualizou para 3/6, ainda em `off`; Próxima definiu `polite`
+  e anunciou 4/6. O anúncio mediu 1×1 px e `clip-path: inset(50%)`. Fixtures
+  DOM removidas e sessão isolada fechada; nenhum dado foi salvo.
+- BiDi `browsingContext.setViewport` confirmou 390 × 844 CSS px: a janela mediu
+  390 px, documento/corpo 378 px, navegação `static`, status 5/6 e região em
+  `aria-live=off`; sem overflow horizontal.
+  Revalidação Firefox ESR 153.4/X11 no Runtime de teste, sessão anônima
+  isolada: seis mensagens sintéticas foram inseridas apenas no DOM da publicação;
+  nada foi gravado. BiDi aplicou viewport CSS exato em 320/360/390/500/1250 px.
+  Após corrigir rótulos comprimidos em 320 px e avanço lateral em 390 px no tema
+  0.6.0-dev.114, e dar ao slider largura própria e contador visível em 0.6.0-dev.115,
+  barra e controles ficaram no container; documento e corpo mantiveram a largura
+  do viewport. Claro/escuro inspecionados; botão anunciou
+  “Mensagem 3 de 6”, slider mostrou “Mensagem 5 de 6” com `aria-live=off` e
+  `aria-valuetext` sincronizado. Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-progress-20261020/`.
+- Forum Unit 82/497, `node --check`, Portal Drupal 11+ 975, fronteira 1419,
+  mapa 152, UI docs 280 tokens/97 atributos, SDC 535, Design Foundations 2097
+  e Foundation Runtime 366 PASS. `drush cr` PASS. PHP CLI 8.4.26 abaixo da
+  baseline 8.5. Leitor de tela real/AT não foi testado. RUNTIME STATUS: PARTIAL.
+- Base normativa consultada: [W3C ARIA22](https://www.w3.org/WAI/WCAG22/Techniques/aria/ARIA22.html)
+  reconhece `role=status` como live region `polite`; [MDN aria-live](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live)
+  descreve anúncio de mudanças e priorização não intrusiva.
+
+## dev.63 — navegação de progresso compartilhada
+
+- `DiscussionProgressHooksTest`: verifica anexação do atributo e biblioteca
+  somente ao campo em renderização completa, preservando teaser, campo ausente,
+  campo explicitamente oculto e entidades que não são Nodes.
+- A biblioteca consulta apenas `article.js-comment[id]` dentro do campo já
+  renderizado; os controles são criados com DOM APIs e texto traduzível, sem
+  HTML de usuário. Sem biblioteca, a navegação linear permanece disponível.
+- Unit do hook 3/13 e suíte Forum 82/497 PASS; PHPCS e `node --check` PASS.
+  Drupal 11+ 975, fronteira 1419, mapa 152, atributos 280 tokens/96
+  atributos, SDC 535, Design Foundations 2097, Foundation 365 e Shell 11 PASS.
+- Runtime `toca`: Drush status confirmou Drupal 11.4.10/DB `aculta_runtime`;
+  cache rebuild PASS. A publicação pública retornou 200, recebeu o marcador e
+  o JS agregado contém o behavior.
+- Firefox ESR 153.4/X11, sessão anônima isolada: seis Comments sintéticos foram
+  inseridos somente no DOM, dentro do campo real da publicação. Quatro
+  controles apareceram; Avançar e ArrowRight no slider atualizaram para
+  “Mensagem 2 de 6 nesta página”. Claro e escuro foram inspecionados (modo
+  escuro ativado só no DOM); viewport 500 px mediu 500 px no documento/corpo,
+  sem overflow. Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-progress-20261020/`.
+- Não foram criados ou salvos Nodes/Comments. Claro/escuro e teclado do slider
+  PASS nas larguras X11 1250/500; 390 px, Comments reais, navegação completa por
+  teclado e leitor de tela/AT ficam pendentes.
+- Rolagem manual inicialmente mostrou a barra sticky parcialmente sob o
+  cabeçalho. Após tema dev.111, Firefox/X11 escuro a 500 px confirmou a barra
+  completa com topo 56 px (12 px após o cabeçalho de 44 px), status 4/6 pela
+  rolagem e sem overflow; captura `progress-500-dark.png`.
+- WebDriver BiDi aplicou viewport CSS exato de 390 × 844. Antes da correção, a
+  barra tinha 306 px no campo de 330 px, documento/corpo em 390 px e cobria texto
+  ao rolar. Tema dev.112 foi revalidado: `position: static`, status 5/6 pela
+  rolagem, nenhuma interseção com a mensagem ativa, documento/corpo em 390 px.
+  Captura privada `progress-390.png`.
+  Runtime global PARTIAL.
+
+### Revalidação dos movers no Runtime de teste — 2026-10-20
+
+- `ForumCommentMoverKernelTest` e `ForumTopicMoverKernelTest`: execução conjunta
+  PASS, 16 testes/341 assertions em `aculta_simpletest`; 19 depreciações de
+  Core/contrib. Forum Unit: 82 testes/497 assertions PASS.
+- Portal Drupal 11+ 975, fronteira 1419, mapa módulo/tema 152 e ACULTA420
+  Design Foundations 2097 PASS. PHP CLI 8.4.26 está abaixo da baseline 8.5.
+- Preflight confirmou `hostname=toca`, branch da PR #297 e Drush no Drupal
+  11.4.10, banco `aculta_runtime`, URI
+  `https://growroom420.aculta.toca.net.br`. A rota de movimento está
+  registrada e exige `move aculta forum comments`; a configuração está ausente
+  (`NULL`) e permanece fail-closed. GET anônimo com Comment inexistente: 404;
+  raiz do Fórum: 200; consultas Entity API read-only: 0 tópicos e 0 Comments.
+- Nenhuma conta foi autenticada, opção alterada, entidade criada ou conteúdo
+  salvo no Runtime. A validação de navegação autenticada/CSRF e a execução do
+  formulário com Comment real continuam pendentes; não habilitar a função até
+  essa homologação e a revisão dos efeitos de History, permalink e avisos.
+  RUNTIME STATUS: PARTIAL.
+
+## dev.62 — filas pendente/rejeitada do Fórum
+
+- A consulta da View usava `getTableInfo('node_field_data')`, mas o Core 11.4
+  indexa a tabela do relacionamento como `node_field_data_comment_field_data`.
+  O hook fail-closed acrescentava `1 = 0`, ocultando também comentários válidos.
+  O código agora resolve o alias no relacionamento `node` já construído pela
+  View e confirma que aponta para `node_field_data`; ausência ou divergência
+  ainda fecha a fila.
+- PHPUnit Unit direcionado: `ForumHistoricModerationQueueHooksTest`, 5 testes /
+  18 assertions PASS; suíte Unit do Fórum, 79 testes/484 assertions PASS.
+  PHPUnit Kernel `PublicDiscussionModerationKernelTest`,
+  7 testes / 84 assertions PASS. PHP CLI 8.4.26, abaixo da baseline 8.5.
+- Runtime `toca`: View `page_pending` retornou apenas o Comment 56, associado
+  ao tópico temporário do Fórum; o Comment 57 da publicação não apareceu. Os
+  dois Comments estavam pendentes. Nodes 425/426 e Comments 56/57 foram
+  removidos via Entity API no `finally` da execução. Estado final: 0 tópicos
+  públicos e 0 Comments compartilhados, preservando os dados baseline.
+- A conta `teste.comum` não prova a política de primeiro comentário: seu papel
+  `content_editor` a isenta. A política foi validada pelo Kernel; nenhuma conta
+  real foi usada como fixture. A execução da rota HTTP autenticada e a inspeção
+  visual das três abas permanecem pendentes. RUNTIME STATUS: PASS para a query
+  e isolamento; PARTIAL para a homologação completa.
+
+### Complemento visual X11 da thread — referência Ubuntu Discourse
+
+- Firefox ESR X11 comparou uma discussão ACULTA com a categoria e um tópico
+  público do Ubuntu Discourse. O alias `/topico/qa-visual-inspecao-discussao`
+  respondeu 200; a captura da thread mediu 1270 px de viewport, e outra janela
+  estreita mediu 500 px, com `documentWidth` e `bodyWidth` iguais a 500 e a
+  resposta ainda visível. Nenhum overflow horizontal foi observado.
+- A página ACULTA mostra título e autoria/categoria do tópico, seguidos por
+  cada comentário em painel com autor, corpo e permalink. No exemplo Discourse,
+  o autor também ocupa uma coluna lateral, com timeline vertical, posição do
+  leitor na discussão e navegação contextual persistente. A inspeção ACULTA
+  sugere priorizar timeline/progresso e navegação de thread; ações de resposta
+  autenticada não foram avaliadas neste fluxo anônimo.
+- Fixture NID 431/CID 61 e a repetição NID 432/CID 62 foram removidas via
+  Entity API. As respostas publicadas usaram temporariamente `setSyncing(TRUE)`
+  para que o ACULTA Game não concedesse uma conquista de teste irreversível;
+  esse mecanismo não foi usado para validar a política de moderação. O teste
+  anônimo pendente também foi removido. Estado final do Runtime: 0 tópicos e 0
+  Comments compartilhados, 24 History (baseline) e 2 flaggings globais
+  preservadas. Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-thread-20261020/`.
+- A comparação ainda não cobre thread extensa, ação autenticada, leitor de tela
+  nem largura CSS exata de 390 px nessa página. RUNTIME STATUS: PARTIAL.
+
+## dev.61 — Batch Core no purpose Fórum
+
+- O endpoint progressivo Batch do Core permanece no purpose `main`, conforme a
+  política central de rotas administrativas. O callback `markBatch()` executa
+  a query de acesso e gravação do History com `runInPurpose('forum')`, após
+  validar a identidade autenticada capturada no formulário. O formulário
+  retorna à raiz pública absoluta do purpose Fórum.
+- PHPUnit Unit passou 78 testes/481 assertions; Kernel passou 1 teste/12
+  assertions. O Kernel inicia em `main`, confirma
+  elegibilidade zero fora do Fórum, conta 1 dentro do Fórum, executa o callback
+  enquanto o purpose inicial é `main`, e confirma restauração do contexto.
+- X11 Firefox autenticado como `teste.comum` confirmou a tela de confirmação, o
+  Batch processando e a mensagem “Foram marcadas 1 discussões como lidas.”; a
+  navegação retornou à raiz Growroom420. History só continha uid 5/NID 417 para
+  o fixture durante a prova. Depois, Node/alias e History da fixture foram
+  removidos; Runtime terminou com 0 tópicos, 0 Comments compartilhados, 24
+  History (baseline) e duas flaggings globais preservadas. Raiz e categorias
+  retornaram 200. Captura privada `result-final-dev61.png` em
+  `/home/aculta/private/aculta/visual-tests/forum-read-batch-20261020/`.
+- Cinco deprecações no Kernel vieram do Domain contrib instalado. Execução em
+  PHP CLI 8.4.26 (baseline do projeto 8.5). PHPCS, Portal 975, fronteira 1415 e
+  mapa 152 PASS. RUNTIME STATUS: PASS no escopo.
+
+## dev.60 — descoberta visual no X11
+
+### Complemento visual mobile e modo escuro — 2026-10-20
+
+- Firefox ESR no X11 Responsive Design Mode confirmou viewport CSS real de
+  390 × 670 px. Raiz, `/discussoes/novas`, `/discussoes/sem-resposta` e
+  `/discussoes/mais-comentadas` retornaram HTTP 200; `document.documentElement`
+  e `body` mediram 390 px de largura em todas. Um tópico temporário apareceu
+  nas listas esperadas. O filtro e as tabs quebraram em linhas; título, autor e
+  categoria permaneceram legíveis sem overflow horizontal.
+- `data-bs-theme="dark"` foi aplicado somente ao DOM local do teste: fundo
+  `rgb(23, 21, 19)`, texto `rgb(244, 239, 232)`, largura 390 px. Nenhuma
+  preferência foi salva na conta nem no Runtime.
+- Comparação no mesmo viewport com Ubuntu Discourse `Support and Help`
+  (`/c/support-and-help/306`): header compacto, navegação por menu, chips de
+  categoria em múltiplas linhas e contagem na linha do tópico. ACULTA mantém o
+  header institucional, filtro select, tabs em duas linhas e card com autoria e
+  categoria. Inspeção visual não indicou corte ou overflow; diferenças de
+  hierarquia e densidade ficam para refinamento posterior. O diálogo de cookies
+  foi fechado no DOM local da referência sem registrar consentimento.
+- Fixture exata NID 418/UUID `7438e2b4-9fa5-4b65-a532-7588a08a5456` e alias
+  removidos via Entity API após conferir proprietário, bundle, categoria e
+  purpose. Estado final: 0 tópicos, 0 Comments compartilhados, 24 History e
+  duas flaggings preexistentes. Capturas privadas mode 0600 em
+  `/home/aculta/private/aculta/visual-tests/forum-mobile-20261020/`.
+- Navegação real por teclado em Firefox/X11 percorreu 16 tabs, partindo do link
+  “Pular para o conteúdo principal” até um link de categoria visível. O
+  elemento final manteve `:focus-visible` e contorno sólido de 2 px verde; a
+  navegação avançou sem ficar presa. Leitor de tela e comparação integral das
+  páginas internas do Discourse continuam pendentes. RUNTIME STATUS: PARTIAL.
+
+- Firefox ESR isolado, visitante anônimo, X11 `DISPLAY=:0`, Runtime Drupal
+  11.4.10. As rotas `/discussoes/novas`, `/discussoes/sem-resposta` e
+  `/discussoes/mais-comentadas` responderam HTTP 200.
+- Três tópicos QA (`aculta_forum_topic`) e cinco Comments publicados tinham
+  contagens 0/2/3. Render/View e HTML confirmaram ordem decrescente por criação
+  em “novas” (3 → 2 → 0), filtro exclusivo de zero respostas em “sem resposta”
+  e ordem por quantidade em “mais comentadas” (3 → 2 → 0). Não houve abertura
+  dos detalhes, evitando novas linhas History.
+- Em 1024 × 739 px, cards mostraram título, autor, categoria, contagem e última
+  atividade. A janela visual estreita atingiu 500 px (mínimo disponível nessa
+  janela; não é aferição CSS exata de 390 px): tabs quebraram em duas linhas e
+  os controles/card permaneceram visíveis sem corte aparente. Capturas privadas
+  (modo 0600): `/home/aculta/private/aculta/visual-tests/forum-discovery-20261020/`
+  (`novas-1024.png`, `sem-resposta-1024.png`, `mais-comentadas-1024.png`,
+  `mais-comentadas-500.png`).
+- Cleanup confirmou os três NIDs/UUIDs e os cinco Comments, removeu comentários
+  e Nodes via Entity API e aliases/History relacionados. Cache rebuild PASS;
+  estado final 0 tópicos, 0 Comments, 24 History (baseline) e duas flaggings de
+  avisos preservadas. Todas as três rotas seguem 200 vazias. Modo escuro,
+  acessibilidade e comparação completa de referência não executados.
+  RUNTIME STATUS: PARTIAL.
+
+## dev.59 — leitura em lote com limpeza exata
+
+- Runtime `toca`, Drupal 11.4.10, banco `aculta_runtime`: preflight confirmou
+  0 tópicos e 0 Comments compartilhados. Fixture NID 410, autor uid 5 e domínio
+  `forum_aculta_org`, foi a única discussão elegível; `countEligibleTopics()`
+  retornou 1. `ForumReadMarker::markBatch()` gravou History para o par exato
+  uid 5/NID 410. O registro, tópico e alias foram removidos após confirmar a
+  identidade da fixture.
+- Cache rebuild PASS; HTTP da raiz e `/categorias` 200. Estado final:
+  0 tópicos, 0 Comments compartilhados, 24 History globais (baseline antes do
+  teste) e as 2 flaggings existentes de avisos de site preservadas. A rota de
+  confirmação e a execução do Core Batch pelo navegador permanecem pendentes.
+  RUNTIME STATUS: PARTIAL.
+
+## dev.58 — ocultar ações Flag nos cartões teaser
+
+- `ForumTopicDisplayConfigTest`: 18 testes/224 assertions PASS. PHPCS
+  Drupal/DrupalPractice, Portal 11+ (975), fronteira módulo/tema (1415) e mapa
+  (152) PASS. PHPUnit executou em PHP CLI 8.4.26, abaixo da baseline 8.5; o
+  aviso preexistente de `sites/simpletest/browser_output` não gravável persiste.
+- Runtime `toca`, Drupal 11.4.10, banco `aculta_runtime`: backup privado da
+  configuração anterior, importação parcial somente de
+  `core.entity_view_display.node.aculta_forum_topic.teaser`, cache rebuild e
+  `config:status` do alvo sem drift PASS. Render API sob uid 5 confirmou
+  `teaser_follow=no_save=no` e `full_follow=yes_save=yes`.
+- Firefox/X11 autenticado: a lista `/discussoes/nao-lidas` deixou de exibir
+  seguir/salvar no teaser e preservou “Respostas novas: 2”; o detalhe do mesmo
+  tópico manteve os dois controles. A fixture NID 409 tinha exatamente dois
+  Comments; a exclusão pela Entity API removeu também alias e History. Estado
+  final: 0 tópicos, 0 Comments, 0 flags do Fórum, 0 History da fixture e alias
+  retorna 404. A raiz e `/categorias` retornam 200; não autenticado em não
+  lidos retorna 403. RUNTIME STATUS: PASS para esta correção.
+
+## dev.57 — ações nativas de seguir/salvar no tópico
+
+- `ForumTopicDisplayConfigTest`: 18/221 PASS; PHPCS Drupal/DrupalPractice,
+  igualdade entre Config Sync e `config/install`, Portal 11+ (975), fronteira
+  (1415), mapa (152), SDC (535) e Design Foundations (2097) PASS.
+- PHPUnit executou em PHP CLI 8.4.26, abaixo da baseline 8.5; aparece o aviso
+  preexistente de `sites/simpletest/browser_output` não gravável. A suíte Unit
+  não usa esse diretório.
+- Runtime `toca`: snapshot recuperável da configuração anterior em
+  `/home/aculta/private/aculta/runtime-config-backups/forum-dev57-20261020/`
+  (SHA-256 `e51d5b2128c0904c3b4052afc6745a9c2b3f9dd13109398132a33d2f4f132f58`);
+  importação parcial processou só `core.entity_view_display.node.aculta_forum_topic.full`,
+  cache rebuild PASS e alvo sem diferenças do Config Sync. O render da página
+  completa sob uid 5 incluiu ambos os links; `flag.link_builder` gerou âncoras
+  para as permissões de seguir/salvar. Comparação de render com uid 5 e
+  `AnonymousUserSession` mostrou ambos os controles somente para uid 5, sem
+  exposição anônima. Firefox/X11 autenticado em 1024 px confirmou os dois
+  controles. Cada ação foi ativada e revertida pela interface; contagens
+  persistidas foram `seguir_topico 0 → 1 → 0` e `salvar_topico 0 → 1 → 0`.
+  A fixture exata foi removida sem Comments ou flags restantes. Estado final:
+  0 tópicos, 0 Comments compartilhados e 0 flags de seguir/salvar; as duas
+  flags de avisos de site (read/dismiss) foram preservadas. Firefox Responsive
+  Design Mode autenticado a 390 × 670 px mostrou ambos os botões lado a lado,
+  sem transbordamento horizontal visível. Modo escuro forçado localmente no DOM
+  foi inspecionado em 1024 px e os controles permaneceram legíveis; isso não
+  valida a preferência persistida do Runtime. Raiz e `/categorias` HTTP 200.
+  RUNTIME STATUS: PARTIAL.
+
+## dev.56 — remover referência residual ao bundle Forum contrib nas Flags
+
+- `ForumTopicDisplayConfigTest`: 17 testes/215 assertions PASS; PHPCS
+  Drupal/DrupalPractice e parse dos quatro YAML (Config Sync + `config/install`)
+  PASS. O teste garante que `seguir_topico` e `salvar_topico` se aplicam somente
+  ao bundle `aculta_forum_topic`.
+- Runtime `toca`: Drupal 11.4.10, `aculta_runtime`. Antes da mudança, as duas
+  Flags tinham 0 flaggings. Backups privados das duas configs anteriores em
+  `/home/aculta/private/aculta/runtime-config-backups/forum-dev56-20261020/`;
+  SHA-256 `seguir_topico` `bc23cdd7732261694f8245a891a30c2acc2355cc63b11c5feb85884db412d982`,
+  `salvar_topico` `9859233e45071e7e1e94ee70b3584eaf54b68dc0c8d26eb66e2ed8fe9df62e9d`.
+  Importação parcial processou apenas os dois objetos; cache rebuild e ausência
+  de diferenças dos alvos PASS. Depois, ambas continuam com 0 flaggings; Fórum
+  está em 0 tópicos e 0 Comments; raiz e `/categorias` HTTP 200. Nenhum dado foi
+  removido. RUNTIME STATUS: PASS para esta limpeza.
+
+## dev.55 — cacheabilidade do texto de citação
+
+- `ForumQuoteHooksTest`: 6/18 PASS; suíte direcionada Builder + Hooks + display
+  config: 26/240 PASS. PHPCS Drupal/DrupalPractice PASS. Caso específico
+  confirma que contexts, tags e max-age de `TextProcessed` do Core são
+  propagados ao formulário.
+- Runtime `toca`: cache rebuild e resolução de `ForumQuoteHooks`, `quote_builder`
+  e `discussion_context_resolver` PASS. Firefox/X11 conferiu listas em 1024,
+  768 e 390 px e detalhe de tópico em 390 px; título, cartão de autor, corpo e
+  categoria renderizaram sem overflow horizontal observado. Três tópicos QA
+  temporários foram criados via Entity API para as capturas e removidos após
+  verificar identidade por NID/UUID/título e ausência de Comments associados.
+  Estado final: 0 tópicos, 0 Comments, fila de inscrição Messenger vazia e
+  aliases das fixtures removidos. As capturas privadas ficam em
+  `/home/aculta/private/aculta/visual-tests/forum-dev53-20261020/`.
+- O fluxo autenticado de citação e o formulário de resposta não foram enviados
+  no Runtime; seguem cobertos parcialmente por Unit e aguardam sessão QA
+  confirmada. RUNTIME STATUS: PARTIAL.
+
+## dev.54 — agrupamento visual de categorias por hierarquia
+
+- A captura X11 1024 px mostrou filhos antes das categorias raiz. Config da
+  View agora ordena pelo nome da relação `parent`, depois peso e nome; Unit
+  `ForumTopicDisplayConfigTest`: 17/217 PASS. PHPCS, Portal 11+ (975), fronteira
+  (1415), mapa (152), pacotes (26), slugs (378), imagem e diff-check PASS.
+- Runtime `toca`: cópia privada da configuração anterior em
+  `/home/aculta/private/aculta/runtime-config-backups/forum-dev54-20261020/`,
+  importação parcial somente da View e cache rebuild PASS. Execução real lista
+  4 categorias raiz antes de 8 filhas agrupadas; `/categorias` HTTP 200 e 0
+  tópicos/Comments. Nenhum conteúdo criado/alterado. `config:status` ainda
+  marca a View como `Different` apenas por ordem de chaves em `display` e em
+  `block_landing.display_options`; comparação normalizada entre active e Sync
+  confirma os mesmos valores, incluindo o sort novo.
+- Firefox/X11: capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-dev53-20261020/` para 1024,
+  768 e Responsive Design Mode 320 px (`categories-grouped-1024.png`,
+  `categories-grouped-768.png`, `categories-responsive-mode.png`); raízes
+  primeiro, filhos agrupados e sem overflow horizontal visível. A sessão de
+  390 px fora do modo Responsive já está registrada na rodada dev.52. Tópicos e
+  sessão autenticada seguem sem fixture.
+  RUNTIME STATUS: PARTIAL.
+
+## dev.53 — citação contextual de comentário
+
+- PHPUnit Unit `ForumQuoteBuilderTest` e `ForumQuoteHooksTest`: 9 testes / 18
+  assertions PASS. `ForumTopicDisplayConfigTest` executado junto: suíte
+  direcionada total 26/233 PASS. PHPCS Drupal/DrupalPractice nos quatro arquivos
+  PHP PASS. Cobertura do fluxo: escape e limite de texto, origem inacessível,
+  ação ligada à rota Core e pré-preenchimento apenas do comentário pai esperado.
+- Runtime `toca`, Drupal 11.4.10, banco `aculta_runtime`: cache rebuild e
+  resolução de `aculta_forum.quote_builder`/`discussion_context_resolver` PASS;
+  raiz e `/categorias` HTTP 200. Consultas finais confirmaram 0 Nodes
+  `aculta_forum_topic` e 0 Comments `aculta_discussion_post`. Link e formulário
+  com entidade real não foram exercitados para conservar o Runtime vazio.
+  RUNTIME STATUS: PARTIAL.
+
+## dev.51 — denúncia contextual e proteção do acervo Growroom
+
+- Forum Unit `HistoricForumFlagAccessHooksTest` e
+  `ForumHistoricModerationQueueHooksTest`: 14 testes/58 assertions PASS;
+  cobre permissão dedicada, tópico atual, autorias históricas no tópico/Comment,
+  host histórico, destinos fora do Fórum, save direto com permissão, alvo
+  inexistente/tipo inválido e as filas pendente/rejeitado.
+- User Unit `ReportQueueTest`: 3 testes/14 assertions PASS; fila inclui tópico
+  atual e exclui tópico histórico e Comment hospedado em outro contexto.
+- Suítes Unit completas: Fórum 68/440 PASS; User 55/189 PASS
+  com uma depreciação PHPUnit preexistente em `AuthorCardVariantResolverTest`.
+  As duas classes novas são 14/58; `ReportQueueTest` 3/14.
+- PHP lint, YAML de Config Sync/permissões, PHPCS Drupal nos seis arquivos PHP,
+  `git diff --check`, Portal Drupal 11+ (971), fronteira (1402), mapa (152),
+  pacotes próprios (25), política de papéis e hierarquia PASS. PHPUnit usa PHP
+  8.4.26 e emite aviso de diretório
+  `browser_output` não gravável, sem uso pelo conjunto Unit.
+- Runtime de teste (`toca`, Drupal 11.4.10, banco `aculta_runtime`, PHP CLI
+  8.4.26): cópia privada de recuperação de `user.role.email_confirmed` criada
+  em `/home/aculta/private/aculta/runtime-config-backups/forum-dev51-20261020/`;
+  importação `config:import --partial` processou somente esse YAML. Removidos os
+  quatro grants genéricos `flag/unflag sinalizar_{topico,comentario}`, concedida
+  `report aculta forum content` e declaradas as dependências `aculta_forum` e
+  `aculta_user`. Cache rebuild PASS; Drush confirmou módulo e permissão
+  descobertos. A configuração alvo não aparece como divergente no
+  `config:status`. Após cache rebuild, a montagem da View `page_pending` incluiu
+  predicado `1 = 0`: o campo de autoria histórica ainda não está disponível no
+  Runtime, portanto a fila falhou fechada. Raízes públicas do Fórum e do purpose
+  main responderam HTTP 200. Sem conteúdo do Fórum e sem sessão de participante,
+  ação Flag e fila com dados não foram exercitadas end-to-end. RUNTIME STATUS:
+  PARTIAL.
+
+## Integração de comentários Revista/Fórum — Runtime de teste, 2026-10-19
+
+- Firefox autenticado confirmou o formatter Core de `field_aculta_discussion`
+  dentro do slot de discussão do SDC `revista-publication`. O formulário foi
+  renderizado, mas a conta QA recebeu o bloqueio esperado porque o marcador
+  canônico de confirmação de e-mail está ausente. Não alteramos usuário,
+  confirmação, permissões nem configuração para contornar a política.
+- Criados via Entity API, apenas para leitura das Views, um tópico temporário e
+  dois Comments pendentes: um em `aculta_forum_topic`, outro em artigo. Como
+  resultado, `aculta_forum_admin_comments.page_pending` retornou somente o CID
+  do Fórum; `page_published` e `page_rejected` não retornaram esse CID; o bloco
+  `aculta_magazine_admin_comments.block_comments` retornou somente o CID da
+  Revista. Firefox autenticado confirmou os itens em suas respectivas áreas
+  administrativas e não na outra. Requests anônimos às duas páginas públicas
+  não mostraram nenhum dos textos pendentes.
+- Removidos os dois Comments e o tópico de teste via Entity API. Conferência
+  final no Runtime: 0 Nodes `aculta_forum_topic`, 0 Comments
+  `aculta_discussion_post`, 0 Comments na publicação testada e filas Messenger
+  sem itens. Nenhum conteúdo legado, publicação, usuário ou curso foi alterado.
+- Resultado: separação de Views e exibição anônima **PASS**; montagem visual do
+  campo **PASS**; envio autenticado pelo formulário **DEFERRED** pela política
+  de confirmação e ausência de uma conta QA confirmada. RUNTIME STATUS: PARTIAL.
+- A correção de slot e as evidências dos gates estão em
+  `web/themes/custom/aculta420/CHANGELOG.md` (`0.6.0-dev.102`).
+
+## Evidência dev.30 — primeira resposta não lida
+
+- `ForumTopicDisplayConfigTest` verifica que somente a View
+  `/discussoes/nao-lidas` habilita `node_new_comments`, liga à primeira resposta,
+  esconde zeros e mantém cache desativado por conta. Forum Unit: 47 testes / 340
+  assertions PASS; Kernel MariaDB: 4/75 PASS. PHPCS, Portal 11+ (970), fronteira
+  (1368), mapa (154) e slugs (387) PASS. Cinco deprecações Kernel vêm do Domain
+  contrib; esse Kernel cobre access/History adjacente, não renderização do campo
+  novo; três avisos PHPUnit são anteriores a esta alteração.
+- Runtime: import parcial da View com snapshot de recuperação e `config:status`
+  sem diferenças. O handler History instalado resolve e a View retorna 8 itens
+  após troca de conta por Drush; anônimo recebe 403. Nenhum tópico tem resposta
+  aprovada no Runtime, então contagem positiva/fragmento não foi exercitado.
+  Renderização CLI repetiu `Missing text format: basic_html` nas fixtures; HTTP
+  autenticado e inspeção visual permanecem pendentes.
+
+## Evidência dev.29 — marcar todas as discussões públicas como lidas
+
+- PHPUnit Unit do Fórum: 47 testes / 335 assertions PASS; o teste novo verifica
+  que a rota permite somente a conta autenticada no purpose `forum`.
+- PHPUnit Kernel em MariaDB `aculta_simpletest`: 4 testes / 75 assertions
+  PASS. O `ForumReadMarkerKernelTest` limita o conjunto a tópico publicado,
+  acessível e do Domain Fórum e confirma que somente o History da conta atual
+  recebe o registro. Cinco deprecações observadas vêm do Domain contrib 3.0.1.
+- Runtime `toca`: `drush cr`, resolução de rota e callbacks DI do Batch,
+  construção do formulário, service container e HTTP anônimo 403 — PASS. A
+  submissão autenticada não foi executada, evitando gravar History de uma conta
+  real. RUNTIME STATUS: PARTIAL.
+- PHPCS, lint, gate Drupal 11+ (970), fronteira (1368), mapa (154), slugs (387)
+  e `git diff --check` — PASS.
+
+## Evidência não marcada — agregado de respostas públicas
+
+- `ForumTopicMoverKernelTest` valida Comment e `comment_entity_statistics` em
+  MariaDB dedicado: resposta publicada conta como 1, resposta pendente mantém
+  o contador em 1 e mover a categoria preserva o mesmo agregado no Node. 2
+  testes / 48 assertions PASS.
+- Runtime de teste continua sem respostas aprovadas; portanto, a ordenação
+  `/discussoes/mais-comentadas` com contagens distintas ainda aguarda fixture
+  deliberada em homologação. Nenhum conteúdo de Runtime foi criado.
+
+## Evidência não marcada — contagem e atividade na listagem pública
+
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 13 testes / 137 assertions PASS.
+- No Runtime `toca` (Drupal 11.4.10, `aculta_runtime`, URI
+  `https://growroom420.aculta.toca.net.br`), import parcial da View e cache
+  rebuild; na primeira homologação a query retornou 8 tópicos com contagem 0,
+  e HTTP 200 apresentou `0 respostas` nas oito linhas. Os oito fixtures foram
+  removidos posteriormente por solicitação do responsável; o smoke após limpeza
+  confirmou HTTP 200 e ausência de `[TESTE]` nas listagens. Nenhum Comment foi
+  criado.
+- O sort Core `comment_ces_last_updated` lançou `TypeError` em 11.4.10; a
+  configuração foi revertida e a rota voltou HTTP 200. O sort virtual
+  `PublicForumLastActivity` então executou: Views reconhece o plugin do ACULTA,
+  SQL contém `GREATEST(node.changed, last_comment_timestamp) DESC`, 8 resultados,
+  campo Core `last_updated` renderizado e HTML HTTP 200 com `0 respostas` e
+  “Última atividade” em todas as linhas. Estado atual depois da limpeza: 0
+  tópicos; a contagem/ordenação com dados segue aguardando fixture deliberada.
+- Caso positivo e invalidação após moderação continuam DEFERRED. Render direto
+  por Drush registrou `Missing text format: basic_html` nos teasers; drift a
+  investigar separadamente. Inspeção visual também pendente. RUNTIME STATUS:
+  PARTIAL.
+  RUNTIME STATUS: PARTIAL.
+- Rollback seguro ao estado funcional anterior (contador sem data/sort) em
+  `/home/aculta/private/aculta/forum-activity-20261019/views.view.aculta_forum_public_topics.yml`.
+
+## Evidência dev.28 — índice público de categorias
+
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 13 testes / 123 assertions PASS;
+  install e Config Sync das Views de categorias e tópicos são equivalentes.
+- YAML parse, `git diff --check` e gates Drupal 11+, fronteira Portal/tema,
+  mapa módulo/tema e slugs PASS.
+- Runtime de teste `toca`, Drupal 11.4.10, banco `aculta_runtime`, URI explícita
+  `https://growroom420.aculta.toca.net.br`: importação parcial somente das duas
+  Views alteradas e cache rebuild. `/` e `/categorias` responderam HTTP 200;
+  a View retornou os 12 termos existentes, com descrições, e os links entre os
+  índices apareceram no HTML. A página não encaminha para Views genéricas de
+  Taxonomy. Config Sync não apresenta diferenças para essas Views. Nenhum termo,
+  Node ou Comment foi criado, alterado ou excluído.
+- RUNTIME STATUS: PASS para rotas, View e navegação HTTP. Inspeção visual e
+  apresentação hierárquica permanecem pendentes para a fase ACULTA420.
+
+## Evidência inicial dev.10 — tópicos não lidos
+
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 14 testes / 157 assertions PASS;
+  a View de não lidos mantém os filtros da listagem pública, exige role
+  `authenticated`, usa o filter/field plugin de History e desativa cache
+  compartilhado.
+- Composer: `drupal/history:^1.0` foi declarado diretamente para sobreviver à
+  retirada futura de `drupal/forum`, sua dependência anterior. Composer validate
+  e audit reportam nenhum advisory conhecido; o projeto History declara que não
+  está coberto pela política de avisos do Drupal.org. Acompanhamento de releases
+  permanece obrigatório.
+- Runtime `toca`: Views data confirmou o plugin instalado e a query SQL juntou
+  History pelo uid atual. A conta uid 5 passou no plugin de acesso e encontrou
+  7 discussões novas/atualizadas; o anônimo recebeu HTTP 403 em
+  `/discussoes/nao-lidas`. `/discussoes` é caminho interno bloqueado (404).
+  Nenhum Node, Comment ou registro de leitura foi alterado.
+- Renderização direta da View pelo Drush emitiu `Missing text format:
+  basic_html` nos teasers das fixtures; mesmo formato já é usado pela listagem
+  pública e requer investigação própria. HTTP com sessão autenticada e
+  inspeção visual pendentes. RUNTIME STATUS: PARTIAL.
+
+## Evidência inicial dev.10 — telas de descoberta
+
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 15 testes / 184 assertions PASS;
+  PHPCS PASS. A View compartilha os filtros da lista pública e a tela sem
+  resposta usa `comment_entity_statistics.comment_count = 0`; a tela popular
+  ordena pelo agregado Core e por atividade.
+- `PublicForumExposedFormHooksTest`: 3 testes / 11 assertions PASS. A exceção
+  ao CAPTCHA cobre somente os quatro filtros GET da View pública; formulários
+  de escrita não são alterados.
+- Suite Unit completa do Fórum: 46 testes / 332 assertions PASS; inclui
+  `ForumTopicMoveHooksTest` (wiring do mover para o service ID). Uma
+  depreciação preexistente de metadata PHPUnit fica em
+  `DiscussionModerationHooksTest`.
+- Runtime `toca`: após importar somente a View pública e reconstruir caches,
+  `/discussoes/novas`, `/discussoes/sem-resposta` e
+  `/discussoes/mais-comentadas` retornaram HTTP 200 e exibiram tópicos `[TESTE]`.
+  Cada query encontrou 8 itens; todos 8 aparecem sem resposta porque há 0
+  comentários públicos. Config Sync ficou sem diferença para a View.
+- O cache rebuild inicial revelou wiring inválido de `ForumTopicMoveHooks`;
+  a injeção explícita do service ID foi adicionada e o rebuild subsequente
+  passou. Nenhum Node, Comment ou registro de leitura foi alterado.
+- Ainda não foi validada uma ordenação com comentários positivos nem a
+  visualização autenticada em browser. RUNTIME STATUS: PARTIAL.
+
+Esta matriz separa plano das evidências já executadas. Na `0.1.0-dev.4`, a
+Context API pública e configuração nativa foram exercitadas no Runtime de teste.
+Na dev.5, um teste Kernel prova storage Comment compartilhado em três bundles
+Node e Unit cobre access/cache do provider editorial. As field instances da
+Revista estão aplicadas no Runtime de teste; HTTP/browser e envio de Comment
+continuam pendentes.
+
+| Camada | Casos mínimos | Evidência |
+| --- | --- | --- |
+| Instalação/configuração | install profile limpo, dependências, IDs e nomes <=32, field Comment nos bundles Node permitidos | Kernel/install tests; validação de config. |
+| Context API | resolver cada contexto, provider ausente/desabilitado, host inválido e URLs canônicas | Unit + Kernel. |
+| Comment | tipo compartilhado (ou variantes justificadas), host bundles e field settings, thread, revisão, publicação, permalink/ancora, formulário | Kernel + Functional. |
+| Formulário/display de tópico público | title/body/categoria editáveis; status de comentário e autoria histórica não editáveis; full apresenta discussão compartilhada; teaser omite thread | Unit verifica contrato YAML e equivalência Config Sync/config install. Na homologação, 12 termos e 8 tópicos `[TESTE]` foram usados para validar navegação; os tópicos foram removidos depois. Estado atual do Runtime: 12 termos, 0 tópicos e 0 Comments; histórico e IDs em `TEST-FIXTURES.md`. Os oito aliases responderam HTTP 200 antes da limpeza e HTTP 404 depois, sem redirect. |
+| Ação de criação no índice | link aparece apenas se a rota Core autoriza; variação por usuário/permissões e contexto `forum`; ausência em outros displays/domínios | Unit `PublicForumTopicCreateActionHooksTest`: 5 testes/19 assertions PASS. Runtime anônimo: raiz 200, link omitido, rota 403. Conta autorizada, navegador e apresentação integral pendentes. |
+| Acesso ao formulário de tópico | `email_confirmed` cria e gerencia somente tópico próprio; sem permissões `edit any`/`delete any`; access real da entidade | Unit `ForumTopicDisplayConfigTest`: 7 testes/47 assertions PASS. Runtime `toca`: uid 5 autorizado na rota; formulário Core renderizado em memória, sem submissão; contagens seguem 0 tópicos/Comments. Browser e envio funcional DEFERRED. |
+| Respostas no tópico público | Field Comment compartilhado aberto, formulário inline Core, anônimo bloqueado e permissão `post comments` | Unit `ForumTopicDisplayConfigTest` verifica equivalência install/Sync e contrato de field/role. Runtime `toca`: status Open, uid 5 tem permissão, 0 tópicos/Comments. Render e envio vinculados a tópico salvo DEFERRED para preservar acervo limpo. |
+| Contagem de respostas em tópicos próprios | Conta somente tópicos publicados da pessoa e usa Comment Core `comment_count`; comentários pendentes ficam fora do total | Kernel `ActivityControllerKernelTest`: 1 teste/12 assertions PASS no MariaDB `aculta_simpletest`; `view('forum')` lista apenas o Node da conta atual, mostra 2 publicados, exclui 1 pendente e restaura o Domain de conta depois do access de Fórum. Cinco depreciações do Domain contrib. Runtime `toca`: rota `/atividade/forum` autenticada exibiu somente o tópico próprio, com “2 comentários”; 2 publicados e 1 pendente foram confirmados no estado Core, pendente não entrou na contagem. Firefox/X11 1024 e Responsive Design Mode 390 × 670 px sem overflow horizontal visível. Outra fixture de uid 1 não apareceu. Dois Nodes e três Comments temporários removidos; estado final 0 tópicos/Comments. RUNTIME STATUS: PARTIAL. |
+| Navegação por categoria | filtro Views nativo na referência Taxonomy, hierárquico, escopo fixo no vocabulário novo e query args em cache | Unit `ForumTopicDisplayConfigTest` cobre filtro e hierarquia. Runtime `toca`: 12 termos e 0 tópicos após limpeza dos fixtures; antes da limpeza o filtro `categoria=77` mostrou o tópico esperado. O CAPTCHA global foi removido apenas da View GET de leitura, que antes abortava a listagem; formulário de criação anônimo permanece 403. Inspeção visual com a lista vazia pendente. |
+| Acesso público | anônimo/membro/editor; publicação, conteúdo fechado, flags e permissões | Kernel + Functional/browser. |
+| Publicação | comentários no Node editorial, conteúdo unpublished, canonical, âncora, sem Node forum gerado | Kernel + Functional; anti-regressão Magazine. |
+| Moderação inicial | Primeiro comentário e pendências em qualquer Node com `field_aculta_discussion`; LMS sem moderação, e comentário LMS publicado libera o bloqueio temporário de tópico | Kernel `PublicDiscussionModerationKernelTest` PASS; Runtime editorial PARTIAL (field/form renderizados sem envio). |
+| Moderação por contexto/estado | Fórum mostra abas Publicados, Rejeitados e Aguardando moderação; Revista tem sua própria listagem; Wiki/LMS aguardam adapters; filas não se misturam | Unit Forum: `ForumTopicDisplayConfigTest` + `DiscussionModerationHooksTest`, 37 testes/218 assertions PASS. Runtime `toca`: Views retornaram cada estado do Fórum e a fila Magazine trouxe somente os seus comentários; API de tarefas locais confirmou as três abas sob Fórum. Render API público mostrou somente publicados no tópico e na publicação. Os seis registros `[QA 20261019]` foram removidos; contagem final 0 nos dois destinos. Browser autenticado DEFERRED. RUNTIME STATUS: PARTIAL. |
+| LMS | duas turmas isoladas, usuário em A e não B, role global estudante sem membership; papéis e mapeamento de turma; moderação por Educador com acesso contextual atual e negação para educador sem membership/acesso | Kernel: isolamento (6 testes/205 asserções), matriz de publicação/rejeição (1 teste/61 asserções) e papéis/Config Sync (5 testes/258 asserções), todos PASS; Functional, Route/View/Search/Cache e teste de navegador pendentes. |
+| Wiki | uma thread por verbete, comentário não altera revisão, acesso de edição distinto | Contract tests nesta fase; integração real só após Wiki. |
+| Busca/Views | filtro de contexto fixo, access query, títulos/trechos/contagens/facets e paginação sem vazamento | Kernel/Functional, index rebuild no ambiente de teste. |
+| Contagem de respostas em tópicos | zero e plural; bundle fixo `aculta_forum_topic` com seu campo único de discussão; estados de moderação conforme agregação Core; cache/invalidação | Kernel `ForumTopicMoverKernelTest`: 3 testes/69 assertions PASS em `aculta_simpletest`; aprovação incrementa `comment_count`, despublicação e exclusão o decrementam, pendentes não entram e mover categoria preserva total. `PublicTopicCommentCountViewKernelTest`: 1/11 PASS; Views Core ordena três tópicos por respostas publicadas e mantém primeiro o tópico sem resposta quando outro tópico tem apenas pendente. Cinco depreciações do Domain contrib no Kernel do mover. Runtime `toca`: View pública executada com tópico de QA, Core e campo da View retornaram 2 para respostas publicadas; 1 resposta pendente ficou fora. Firefox/X11 raiz do Fórum 1024 px mostrou “2 respostas” e atividade. Fixture com 3 Comments foi excluída; Runtime voltou a 0 tópicos/Comments. Comparação de ordenação com múltiplos tópicos e invalidação visual após moderação permanecem pendentes. RUNTIME STATUS: PARTIAL. |
+| Cache | tags/context/max-age em variações por usuário/permissão/Group/membership, revogação e conteúdo despublicado | Kernel + Functional; inspeção de cache. |
+| Notificações | dedupe, agrupamento, opt-in e confirmação, revalidação de acesso na fila, retirada/revogação, zero conteúdo sensível | Unit/Kernel do produtor e messenger + Functional. |
+| Autoria | conta privada, apelido alterado, foto/privacidade, usuário bloqueado, autor legado, dados ausentes | Unit/Kernel + browser e cache. |
+| Atividade de comentários do Fórum em Minha Conta | Query inclui apenas `aculta_discussion_post` publicado em `field_aculta_discussion` de `aculta_forum_topic`; Revista, pendentes e contextos privados não entram; links usam Domain Fórum + âncora; Entity Access revalidado | Kernel `PublicDiscussionModerationKernelTest`: 6 testes/73 assertions PASS para query/contexto/estado. Runtime `toca`, uid 5 e busca total sem dados compatíveis: render retornou lista vazia, sem mutação; caminho com link/card e browser seguem pendentes. |
+| Autoria de tópico novo | User usa `author_forum`; referência histórica usa `author_growroom_historico`; nenhuma conversão para conta; somente `full`/`teaser` | Unit `PublicForumTopicAuthorHooksTest` e `AuthorIdentityTest`: 6 testes/23 assertions PASS. Runtime: hook registrado; node `unsaved` em memória renderizou `author_forum`, contagem permaneceu 0. Tópico persistido/browser pendentes. |
+| Imagens/anexos | ingestão obrigatória aculta_image, uso/referências, anexo privado, substituição e limpeza | Gate `validate-aculta-image.php`, Kernel + testes de acesso. |
+| Moderação | criar, editar, sinalizar, aprovar, ocultar, despublicar, bloquear, auditoria | Unit/Kernel/Functional por papel. |
+| Integração Game | primeira resposta publicada em `aculta_discussion_post`/`aculta_forum_topic`; aprovação tardia uma vez; outras entidades, sincronização e `field_autor_legado` excluídos | `aculta_game` Unit `BadgeEvaluationHooksTest` cobre contrato de bundle/field e casos negativos. Concessão real/cache/commit externo e Runtime seguem pendentes. |
+| Mover tópico individual entre categorias | permissão específica e Entity Access no purpose público; categoria do vocabulário correto; confirmação; submissão adulterada; preservação de NID/UUID/alias/Comments/flags; nova revisão; autoria histórica negada mesmo para admin | Unit `ForumTopicMoverTest`: 4 testes/31 assertions PASS. Kernel `ForumTopicMoverKernelTest`: 2 testes/44 assertions PASS em MariaDB `aculta_simpletest`; comprova mesmo NID/UUID, nova revisão, alias e Comment/CID preservados e bloqueio histórico mesmo com permissões de administrador. Functional e Runtime autenticado pendentes; nenhuma fixture do Runtime foi movida. |
+| Mover comentário e subárvore para outro tópico público | autorização, dois endpoints no purpose Fórum, tópico aberto, legado imutável, estados publicados/pendentes/rejeitados, thread profunda e ramificada, identidade/datas, estatísticas de origem/destino, cache, gate desabilitado por default e rollback | `ForumCommentMoverKernelTest`: 18/368 PASS em MariaDB `aculta_simpletest`, cobrindo árvore, estados, rollback, locks, flagging, Search API, file usage, History, tradução e permalink canônico (rota e fragmento após movimento, dev.126); 19 depreciações Core/contrib. Runtime `toca` dev.73–78: raiz, árvore linear e ramificada pendente/rejeitada via Form API/CSRF; preserva CID/autor/texto/estado/pid/thread, denúncia Flag e fila ACULTA User; X11 10/10 em 390/768/1024 CSS px. Fixtures removidas; Fórum e denúncias zerados, fila Messenger 0, 12 termos e 3 avisos baseline. `comment_move_enabled` continua ausente. PHPCS e gates Drupal11+ PASS; PHP CLI 8.4.26 abaixo da baseline 8.5. Pendentes: aprovação/workflow no Runtime, aviso com seguidores, anexos reais pela política `aculta_image`, âncoras antigas diretamente no tópico de origem (fragmentos não chegam ao servidor), busca funcional, concorrência HTTP e smoke de cache completo. RUNTIME STATUS: PARTIAL. |
+| Outras ferramentas de movimento | reorganizar Taxonomy; mover tópicos em lote via VBO; split/merge; verificar revisões/URLs/arquivos/flags/estatísticas/cache/busca/notificações e recuperação | Lote de tópicos implementado em dev.118 com confirmação, limite e Access por item; Runtime ativado e View/Action descobertas, mas execução autenticada pendente. VBO não substitui o serviço individual. Reorganização de Taxonomy, lote de Comments, split e merge continuam planejados. |
+| Acervo Growroom restaurado | autoria por `field_autor_legado`; edição/exclusão/aprovação negadas a qualquer papel; tópico fechado; bulk admin e IDs adulterados rejeitados | Unit `ForumModerationHooksTest`; Kernel/Functional de importação e access pendentes. Não confundir com Nodes `forum` do módulo contrib, cuja retirada é separada. |
+| UX/acessibilidade | mobile, teclado, foco, leitor de tela, light/dark, reduced motion e fallback sem JS | Firefox/browser, auditoria manual e automatizada existente. |
+| Revisão visual de referência | Entrada, categorias, listagem, tópico e composição; comparação com Ubuntu Discourse em desktop/768/390 px; claro/escuro; ritmo, densidade, navegação, foco e overflow | Rodada X11 parcial registrada nesta matriz; não reutilizar marca/ativos/CSS da referência. |
+| Performance | listagens, thread grande, Views, Query counts e contagens/cache | profiling comparável; limites definidos na fase de benchmark. |
+| Remoção/migração | dry run, inventário, exclusão escopada, uninstall, composer remove, rollback/restauro e ausência de residuais | prova somente no Runtime de teste e ponto de recuperação revisado. |
+
+## Evidência dev6 — autorização de moderação por e-mail confirmado
+
+- PHPUnit Unit `ForumModerationHooksTest`: 5 testes / 21 assertions — PASS.
+- Cobertura: editor confirmado pode editar/excluir tópico de outra pessoa;
+  editor sem marcador confirmado é negado mesmo com papel `email_confirmed`;
+  autoria própria segue o access handler normal; bundle alheio não é afetado;
+  bypass administrativo permanece.
+- PHPCS Drupal/DrupalPractice, lint PHP, gate Drupal 11+ (969), pacotes próprios
+  (22), fronteira módulo/tema (1.304), mapa (154) e `git diff --check` — PASS.
+- Runtime de teste: DEFERRED. Nenhuma permissão, configuração ou conteúdo foi
+  aplicado no Runtime. A listagem Views/CTools e o fluxo de moderação ainda
+  precisam de validação integrada.
+
+## Evidência dev.8 — acervo Growroom restaurável em modo somente leitura
+
+- PHPUnit Unit `ForumModerationHooksTest`: 10 testes / 53 assertions — PASS.
+- Cobre tópico histórico imutável mesmo para administrador, comentários do
+  tópico, fechamento do Comment field no presave, filtragem da fila
+  administrativa e rejeição de IDs forjados.
+- A identificação usa `field_autor_legado`, não os bundles `forum` ou
+  `comment_forum` da implementação contrib a retirar.
+- Storage e field instances são instaláveis/sincronizados; importação e Runtime
+  ficam DEFERRED. Nenhum conteúdo ou configuração persistente foi alterado.
+
+## Evidência dev.5 — política de aprovação inicial compartilhada
+
+- PHPUnit Kernel `PublicDiscussionModerationKernelTest`: 5 testes / 63
+  assertions — PASS em MariaDB `aculta_simpletest` (PHP CLI 8.4.26).
+- Cobertura: comentários LMS permanecem publicados sem moderação; uma publicação
+  LMS conta como aprovada para contextos não LMS e libera o bloqueio temporário;
+  política administrativa desligável; campo compartilhado em Wiki/outros Nodes;
+  comentário não LMS pendente bloqueia criação de tópico quando configurado.
+- `phpcs --standard=Drupal` nos arquivos PHP alterados: PASS. Gate Drupal 11+:
+  969 checks — PASS. `git diff --check` — PASS.
+- As decisões de acesso incluem a tag `config:aculta_user.settings` e os
+  contextos `user`/`user.roles`; mudanças nas opções ou papéis não deixam
+  resultados incompatíveis em cache.
+- Runtime editorial e instalação/atualização de configuração continuam
+  DEFERRED. Nenhum conteúdo ou configuração persistente foi alterado.
+
+## Evidência `0.1.0-dev.4` (2026-10-19)
+
+- Unit aculta_forum: resolver/provider, 7 testes e 25 assertions — executado.
+- Unit Portal `ContentPurposeResolver`: 2 testes/2 assertions para o bundle novo e o legado — PASS.
+- Gate Drupal 11+: 969 checks; fronteira módulo/tema: 1.290 verificações;
+  mapa: 154 checks; pacotes de módulos próprios: 21 checks — PASS.
+- No servidor `toca`, host de teste `growroom420.aculta.toca.net.br`, Drupal
+  11.4.10: módulo instalado, serviço `DiscussionContextResolver` resolvido,
+  campos `body`, `field_aculta_categories` e `field_aculta_discussion` presentes,
+  zero Nodes do novo bundle. Config Sync não mostra divergência nos objetos
+  novos. Nenhum tópico/resposta de usuário foi criado.
+- PHP CLI do servidor reporta 8.4.26; o gate de versão de PHP 8.5 permanece
+  pendente de validação pelo PHP-FPM/runtime web.
+- Nenhum provider de Publicação/LMS/Wiki, acesso de escrita/moderação, Views,
+  UX ou navegação pública foi homologado nesta subfase.
+
+## Evidência dev.5 — provider editorial e Comment multi-bundle
+
+- PHPUnit Unit `aculta_forum`: 12 testes / 52 assertions — PASS (PHP CLI 8.4.26).
+- PHPUnit Kernel `SharedDiscussionFieldKernelTest`: 1 teste / 18 assertions —
+  PASS usando exclusivamente MariaDB `aculta_simpletest`; o mesmo storage
+  `field_aculta_discussion` e Comment type podem ser anexados a `article`,
+  `blog` e `aculta_forum_topic`.
+- Unit cobre leitura via Entity/Field Access, permissões nativas `post comments`
+  e `administer comments`, campo fechado, negação de access, stable ID e cache.
+- O Kernel prova a capacidade do Core com a configuração equivalente; não instala
+  `aculta_forum`, não cria conteúdo e não substitui teste Functional/Runtime dos
+  fields reais da Magazine.
+- Runtime de teste: cache rebuild e smoke de DI confirmaram os dois providers; o
+  provider editorial não atende Article enquanto o field ainda não existe.
+  Nenhuma importação, field editorial ou conteúdo foi criado. RUNTIME STATUS:
+  PARTIAL para o registro do serviço; integração editorial segue pendente.
+
+## Evidência dev.10 — formulário e displays do tópico público
+
+- PHPUnit Unit do `aculta_forum`: 15 testes / 67 assertions — PASS.
+- PHPCS Drupal/DrupalPractice no teste novo, PHP lint, YAML parse, gates Portal
+  Drupal 11+, fronteira módulo/tema, mapa módulo/tema e `git diff --check` —
+  resultados registrados no commit desta entrega.
+- No servidor de teste `toca`, Drupal 11.4.10, URI explícita
+  `https://growroom420.aculta.toca.net.br`, banco `aculta_runtime`: importação
+  parcial incluiu somente os displays Form, Full e Teaser. O `config:status`
+  por prefixo confirmou os três sem divergências.
+- Smoke Form API usou Node em memória: título, corpo e categoria aparecem como
+  entradas; o Core inclui `revision_log` no grupo padrão de revisão. O status
+  Comment é `Open`. Nenhum formulário foi salvo.
+- Contagens posteriores: 0 `aculta_forum_topic`, 0 `aculta_discussion_post`,
+  30 Nodes legados `forum` e 0 Comments `comment_forum`. Nenhum conteúdo foi
+  criado, alterado ou excluído.
+- RUNTIME STATUS: PARTIAL. Fluxo persistido de criação/resposta, acesso
+  integrado, apresentação no navegador e UX ainda aguardam a fase funcional.
+
+## Evidência dev.11 — View pública isolada por domínio
+
+- PHPUnit Unit `aculta_forum`: 21 testes / 102 assertions — PASS.
+- PHPCS Drupal/DrupalPractice, PHP lint, YAML parse, Drupal 11+ (969), pacotes
+  (22), fronteira (1.323), mapa (154) e `git diff --check` — PASS.
+- No Runtime `aculta_runtime`, importação parcial incluiu a field instance de
+  Domain Source, a View nova e os três displays atualizados. A field instance
+  já existente no Runtime tinha outro UUID, então o Drush a substituiu durante
+  a sincronização; antes da operação havia zero
+  Nodes `aculta_forum_topic` e zero linhas dessa bundle em
+  `node__field_domain_source`. Os 30 Nodes legados e seus valores de domínio
+  permaneceram intactos. O restante da configuração não foi importado.
+- Após cache rebuild, os hooks OOP foram encontrados pelo ModuleHandler; smoke
+  sem salvar Node atribuiu `forum_aculta_org`. A View carregou/executou e retornou
+  zero itens, conforme o acervo novo vazio. As cinco configurações alvo ficaram
+  sem divergência no `config:status` por prefixo.
+- RUNTIME STATUS: PARTIAL. A View não foi colocada, não há tópico persistido e
+  browser/UX seguem pendentes.
+- A View nova tem Page display interno `/discussoes` e serve a raiz do purpose forum; o caminho direto e o antigo `/forum` permanecem fechados. O bloco do acervo contrib continua sem colocação na raiz.
+
+## Evidência dev.12 — índice na raiz do Growroom420
+
+- URI Drush: `https://growroom420.aculta.toca.net.br`; banco `aculta_runtime`.
+- Importação parcial de apenas `views.view.aculta_forum_public_topics`; cache rebuild. A rota `view.aculta_forum_public_topics.page_discussions` resolve `/discussoes` com purpose `forum`; a View executa com zero linhas.
+- HTTP: raiz `/` retorna 200 com título “Discussões do Growroom420”; `/discussoes` e o antigo `/forum` retornam 404.
+- Nenhum Node, Comment ou arquivo criado/alterado/apagado. RUNTIME STATUS: PARTIAL; sem criação/resposta persistida e sem inspeção visual.
+
+## Evidência dev.13 — criação por formulário Core
+
+- Rota `aculta_forum.topic_add` resolve `/criar-topico`, `node.default`, bundle `aculta_forum_topic` e `_entity_create_access: node:{node_type}`; `DomainRouteSubscriber` classifica a rota no purpose `forum`.
+- Drush no Runtime confirmou URI do fórum e banco `aculta_runtime`. HTTP anônimo no fórum retornou 403; a mesma URL no purpose principal retornou 404. Conta de teste sem a permissão de criação também foi negada.
+- Nenhum formulário foi submetido, nenhum Node/Comment salvo. RUNTIME STATUS: PARTIAL; fluxo autorizado e inspeção visual pendentes.
+
+## Evidência dev.9 Magazine — comentários diretos no Runtime de teste
+
+- Importação parcial de quatro objetos: fields `field_aculta_discussion` em
+  `article`/`blog` e displays full dos dois bundles. Sem importação integral,
+  update de banco ou gravação em Nodes/Comments.
+- Runtime `https://revista420.aculta.toca.net.br`, Drupal 11.4.10, banco
+  `aculta_runtime`: 14 publicações publicadas; campo existe, component
+  `comment_default` presente e status do campo de amostra `Open` (2). A build do
+  Node usa pré-render do Core. Com o usuário de teste uid 5, permissionado a
+  `post comments`, o formatter renderizou o campo e o formulário em memória.
+  Nenhum formulário foi enviado; saída HTTP/browser ainda não verificada.
+- Após a operação: 0 `aculta_discussion_post`, 30 Nodes legados `forum`, 0
+  `comment_forum` e 0 `aculta_forum_topic`. Os 12 Nodes vinculados às publicações
+  permanecem intocados; os campos `field_discussao` continuam guardando os
+  vínculos durante a transição.
+- RUNTIME STATUS: PARTIAL. Nenhum comentário enviado; acessibilidade, moderação
+  efetiva e UI em navegador pendentes.
+
+Gates aplicáveis seguem `scripts/validate-aculta-portal-drupal11.php`, fronteira
+módulo/tema, mapa módulo-tema, slugs, rotas, endereços, imagem, hierarquia de
+papéis e gates relacionados ao código tocado. O gate final será recalibrado na
+fase funcional; não assumir que uma lista estática substitui teste real.
+
+Fase RC executará a cobertura integrada: Unit, Kernel, Functional, Domain matrix,
+cache/access, browser/mobile, acessibilidade, desempenho, busca, notificações,
+instalação/update/uninstall e rollback. Runtime permanece DEFERRED até validação
+real no servidor de teste.
+
+## Fórum dev.21 / Portal dev.190 — paginação pública
+
+- Unit `ForumTopicDisplayConfigTest`: 9 testes / 62 assertions PASS; install e
+  Config Sync equivalentes; pager Core completo com 20 itens e seletor de
+  quantidade fechado.
+- Runtime `toca`: config ativa confirma `type: full`, `items_per_page: 20`; raiz
+  HTTP 200 mostra as 8 fixtures; filtro `?categoria=77` HTTP 200 mostra o tópico
+  esperado. Nenhum conteúdo foi gravado. Navegação entre páginas (mais de 20
+  tópicos) e apresentação visual dos controles ainda não exercitadas.
+- Gates Drupal 11+ 969, fronteira 1334, mapa 154, slugs 387 e PHPCS PASS.
+  RUNTIME STATUS: PARTIAL.
+
+## Fórum dev.22 / Magazine dev.12 / Portal dev.191 — organização administrativa por contexto
+
+- PHPUnit Unit Forum + Magazine: 12 testes / 96 assertions — PASS. Verifica
+  escopo de bundle/campo, permissões, caminhos, bloco da Revista e equivalência
+  entre configuração de instalação e Config Sync.
+- PHP lint e PHPCS Drupal/DrupalPractice nos testes novos — PASS. Gate Portal
+  Drupal 11+: 969 checks; fronteira: 1.336; mapa: 154; slugs: 387; ACULTA420
+  Foundation via Drush: 355; SDC: 516; design: 2.078 — PASS. `git diff
+  --check` — PASS.
+- Runtime `toca`, Drupal 11.4.10, PHP CLI 8.4.26, banco `aculta_runtime`:
+  importação parcial incluiu View de comentários públicos, Views de conteúdo e
+  comentários da Revista e bloco editorial na região `content` do tema Claro,
+  condicionado ao purpose `main` e à URL administrativa. Cache reconstruído.
+- Drush confirmou os caminhos de Fórum e Revista; as Views carregam/executam
+  sem erro. Conta uid 5 tem acesso às Views por permissões efetivas; visitante
+  anônimo recebe HTTP 403 nos endpoints. Renderização HTTP com sessão editorial
+  e exibição do bloco no navegador ainda pendentes.
+- Nenhum Node, Comment, arquivo, revisão editorial ou dado de usuário foi
+  criado, alterado ou removido. Discussões LMS/Wiki permanecem sem rotas
+  executáveis até seus adapters provarem access contextual. RUNTIME STATUS:
+  PARTIAL.
+
+## Correção Portal dev.184 — raiz e cache de rotas
+
+- A inspeção de `Drupal\Core\Routing\RouteProvider::getRouteCollectionForRequest()` confirmou que o cache conserva caminho, query e rotas, sem os atributos do Request marcados pelo path processor.
+- Após `drush cr` no Runtime `aculta_runtime`, HTTP direto em `/` e com query de diagnóstico retornou 200; `/discussoes` retornou 404. Nenhum Node, Comment ou termo foi criado. RUNTIME STATUS: PARTIAL; criação e apresentação visual ainda pendentes.
+
+## Fórum dev.16 / Portal dev.185 — estado vazio da View pública
+
+- Unit `ForumTopicDisplayConfigTest`: 6/42 PASS. Sync e configuração de instalação equivalentes; mensagem usa Views Core `text_custom` e não tokeniza conteúdo.
+- Runtime `toca`: importação parcial apenas de `views.view.aculta_forum_public_topics`. Após cache rebuild, raiz HTTP 200 mostrou título, seletor de categoria e texto vazio; rota interna `/discussoes` retornou 404. Tópicos e comentários compartilhados continuam em zero.
+- RUNTIME STATUS: PARTIAL; listagem vazia conferida por HTTP, navegador e tópico persistido seguem pendentes.
+
+## Revisão visual X11 — Ubuntu Discourse e ACULTA Forum — 2026-10-20
+
+- Sessão gráfica X11 ativa, Firefox visível, Runtime de teste `toca`; comparação
+  visual da entrada Ubuntu em 1024 px com a raiz ACULTA. Depois da implementação
+  dev.52, entrada ACULTA e categorias foram inspecionadas em 1024, 768 e 390 px
+  no modo claro; o escuro foi forçado somente no DOM local do navegador e
+  inspecionado em 1024 e 390 px, sem alterar a configuração do Runtime.
+  Capturas privadas em `/home/aculta/private/aculta/visual-tests/forum-dev11-20261020/`,
+  todas `0600`: `ubuntu-home-1024.png`, `aculta-home-before-categories-1024.png`,
+  `aculta-home-categories-activity-1024.png`, `aculta-home-categories-activity-768.png`,
+  `aculta-home-categories-activity-390-top.png` e
+  `aculta-home-categories-activity-390-lower.png`, `aculta-home-dark-1024.png`,
+  `aculta-home-dark-390-top.png`, `aculta-home-dark-390-lower.png` e as capturas
+  de foco `aculta-home-dark-keyboard-skip-1024.png`,
+  `aculta-home-dark-keyboard-logo-1024.png` e
+  `aculta-home-dark-keyboard-search-1024.png`.
+- Em 1024 px, categorias principais e atividade aparecem lado a lado; em 768 e
+  390 px, a lista ocupa primeiro a largura e as categorias aparecem depois.
+  `/categorias` mantém todos os 12 termos e refluíu de três colunas a 1024, duas
+  a 768 e uma a 390. Não foi observado overflow horizontal; as abas da entrada
+  quebram em duas linhas a 390 px.
+- Drupal 11.4.10, Runtime `aculta_runtime`, URI
+  `https://growroom420.aculta.toca.net.br`: importação parcial da View de
+  categorias e do bloco da entrada, com backup recuperável em
+  `/home/aculta/private/aculta/config-reconcile/forum-landing-20261020/`;
+  `drush cr` PASS. Entrada e `/categorias` HTTP 200. O bloco aparece no purpose
+  `forum` e está ausente na raiz purpose `main`. A View da entrada retorna 4
+  categorias principais; a página `/categorias` mantém 12 termos. Contagem
+  final: 0 `aculta_forum_topic` e 0 `aculta_discussion_post`.
+- `ForumTopicDisplayConfigTest`: 17 testes/215 assertions PASS; PHP/YAML e
+  `git diff --check` PASS. Foundation 364 via Drush, SDC 535, Design
+  Foundations 2097, Portal 975, fronteira 1411 e mapa 152 PASS.
+- Escopo visual **PARTIAL**: modo claro/escuro está inspecionado nos tamanhos
+  descritos. Em X11, Tab percorreu o atalho "Pular para o conteúdo principal",
+  marca e busca, com indicador de foco amarelo visível no modo escuro em 1024 px.
+  Leitores de tela, navegação completa por teclado, lista com tópicos publicados,
+  tópico, respostas e composer não foram avaliados. O
+  Runtime permaneceu sem fixtures. Nenhuma conclusão de aprovação visual
+  integral ou acessibilidade foi feita. RUNTIME STATUS: PARTIAL.
+
+## Fórum dev.120 / Portal dev.223 / User dev.47 — painel administrativo canônico
+
+- Forum + User Unit: 155 testes / 831 assertions PASS. `ForumTopicMoverKernelTest`
+  passou com 3 testes / 84 assertions; 5 depreciações vieram do módulo Domain
+  contrib. PHPCS Drupal/DrupalPractice direcionado PASS. Gate Drupal 11+: 988;
+  mapa módulo/tema: 154; slugs: 381; `git diff --check` PASS.
+- Runtime de teste confirmado (`toca`, Drupal 11.4.10, PHP CLI 8.4.26,
+  `aculta_runtime`, URI `https://aculta.toca.net.br`). Backup privado dos dois
+  YAMLs das Views criado antes da importação parcial. Foram importados somente
+  `views.view.aculta_forum_admin_topics` e
+  `views.view.aculta_forum_admin_comments`; `drush cr` PASS. Ambas preservam o
+  display `default`; RouteProvider resolve as rotas de conteúdo, comentários,
+  filas, configurações e denúncias para redirects. HTTP anônimo recebeu 403 nos
+  oito caminhos centrais. ULI pelo purpose conta autenticou uid 1; a página
+  central respondeu 200 e os sete redirects GET retornaram 302 para ela. Logout
+  via `/sair` encerrou a sessão; após logout a página voltou a 403.
+- Firefox ESR 153.4/geckodriver 0.37.1, X11 `:0`, UID 1, GET-only: 20/20
+  verificações PASS. Os 12 caminhos estáticos específicos de ferramentas
+  testados terminaram no painel canônico; `/painel-administrativo/forum` não
+  agrega links de ferramentas. Viewports CSS 390/768/1024 renderizaram sem
+  overflow horizontal. Capturas privadas 0600 em
+  `/home/aculta/private/aculta/visual-tests/forum-admin-central-dev120-20261020/`.
+  Rotas de movimentação com conversores Node/Comment não foram chamadas por
+  HTTP nesta rodada, pois não existem entidades de teste e nenhuma fixture foi
+  criada. Permanecem cobertas por RouteProvider e testes Kernel.
+- EntityQuery antes/depois: zero `aculta_forum_topic` e zero
+  `aculta_discussion_post`. Nenhuma entidade de conteúdo foi criada, alterada ou
+  removida nem configuração foi submetida. RUNTIME STATUS: PARTIAL; a inspeção
+  visual do painel e redirects está PASS, mas a validação HTTP positiva das
+  rotas dinâmicas e a homologação visual integral do Fórum seguem pendentes.
+| 0.1.0-dev.132 | Transferência de aviso ao mover subtree | Kernel 19/391 verifica evento para árvore publicada e ausência para árvore somente pendente; Unit Messenger 2/4 verifica condição e IDs entregues ao serviço. Persistência/mesclagem do serviço ainda carece de teste; Runtime não alterado. |

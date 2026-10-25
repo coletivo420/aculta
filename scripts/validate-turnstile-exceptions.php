@@ -59,7 +59,7 @@ foreach ($exceptions as $formId) {
 }
 
 // Formulários protegidos continuam com o desafio ativo.
-$protected = ['user_login_form', 'user_register_form', 'user_pass', 'webform_submission_aculta_contact_add_form', 'webform_submission_aculta_participation_add_form'];
+$protected = ['user_login_form', 'user_register_form', 'user_pass', 'webform_submission_aculta_contact_add_form'];
 foreach ($protected as $formId) {
   $file = "config/sync/captcha.captcha_point.{$formId}.yml";
   $yaml = $read($file);

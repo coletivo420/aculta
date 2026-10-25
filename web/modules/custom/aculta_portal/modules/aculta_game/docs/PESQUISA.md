@@ -120,3 +120,29 @@ uniforme para a ACULTA; medir critérios e participação no próprio contexto.
 Proposta: progresso compreensível, critérios visíveis e reconhecimento cultural;
 avaliar qualidade, acessibilidade, privacidade e esforço de moderação. Publicidade
 de conquistas não torna obrigatório publicar suas evidências.
+
+## Aplicação específica a fóruns
+
+Pesquisa complementar consultada em 2026-10-19:
+
+O guia do [Discourse sobre badges](https://meta.discourse.org/t/understanding-and-using-badges/32540)
+trata badges como reconhecimento de marcos e aprendizagem pela participação.
+Isso é uma referência de produto; o ACULTA não copia trust levels, pontos,
+leaderboards ou o mecanismo de concessão do Discourse.
+
+Estudos de discussões online relatam que mecânicas como badges/pontos podem
+aumentar contribuições em determinados contextos, mas volume e qualidade não
+mudam necessariamente juntos: [Hew et al. (2016)](https://www.sciencedirect.com/science/article/pii/S0360131515300592)
+descrevem dois experimentos de fóruns educacionais com resultados de contexto
+específico; [Pradana et al.](https://scholar.ui.ac.id/en/publications/influence-of-gamification-on-student-engagement-in-online-discuss/)
+avaliam badges de instrutor versus badges automáticos num desenho pré/pós de
+curta duração. Esses desenhos não comprovam efeito duradouro, nem permitem
+prever resultados no Growroom420.
+
+Decisão de aplicação: começar pelo reconhecimento não competitivo da primeira
+resposta publicada no Fórum atual, através do catálogo/concessão já existente.
+Planejar contadores de comentários aprovados para orientar descoberta e
+atividade, sem convertê-los automaticamente em pontos ou ranking. Critérios
+futuros devem valorizar contribuição comunitária útil, evitar spam/pressão por
+frequência e avaliar sinais de qualidade, moderação e diversidade junto ao
+volume. Importação histórica e conteúdo privado não são elegíveis.

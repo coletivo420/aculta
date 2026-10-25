@@ -1,0 +1,6 @@
+administer aculta links:
+  title: 'Administrar o ACULTA Links'
+  restrict access: true
+
+manage own aculta links:
+  title: 'Gerenciar os próprios links reutilizáveis'

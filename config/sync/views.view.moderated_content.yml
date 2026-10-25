@@ -20,7 +20,7 @@ base_field: vid
 display:
   default:
     id: default
-    display_title: Default
+    display_title: Padrão
     display_plugin: default
     position: 0
     display_options:
@@ -36,7 +36,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: field
-          label: Title
+          label: Curso
           exclude: false
           alter:
             alter_text: false
@@ -369,7 +369,7 @@ display:
           admin_label: ''
           entity_type: node
           plugin_id: entity_operations
-          label: Operations
+          label: Operações
           exclude: false
           alter:
             alter_text: false
@@ -520,7 +520,7 @@ display:
           exposed: true
           expose:
             operator_id: title_op
-            label: Title
+            label: Curso
             description: ''
             use_operator: false
             operator: title_op

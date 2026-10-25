@@ -5,58 +5,37 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\flag\FlagServiceInterface;
-use Drupal\message\MessageInterface;
-use Drupal\message_subscribe\Subscribers\DeliveryCandidate;
+use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
 
-/** Adapts Message Subscribe to the existing Portuguese forum follow flag. */
+/**
+ * Enforces the Forum's notice-only subscriber policy.
+ */
 final class MessageSubscribeHooks {
 
-  private const TEMPLATE = 'aculta_msg_forum_published';
-
-  private const SOURCE_FIELD = 'field_aculta_msg_node';
-
-  public function __construct(
-    private readonly FlagServiceInterface $flagService,
-  ) {}
-
   /**
-   * Returns users following this forum topic through `seguir_topico`.
+   * Prevents Message Subscribe delivery for Forum topics and their Comments.
    *
-   * Message Subscribe applies account status and entity view access after this
-   * hook, then adds configured native notifiers.
+   * The contrib subscriber hook combines recipients from all implementations;
+   * returning an empty array from that hook does not suppress its Flag
+   * recipients. The alter hook is required to enforce the Forum policy.
    *
-   * @return \Drupal\message_subscribe\Subscribers\DeliveryCandidate[]
-   *   Candidates keyed by account ID.
+   * @param array $uids
+   *   Message Subscribe delivery candidates, keyed by recipient UID.
+   * @param array $values
+   *   Context from Message Subscribe, including the target entity.
    */
-  #[Hook('message_subscribe_get_subscribers')]
-  public function getSubscribers(MessageInterface $message, array $subscribeOptions = [], array $context = []): array {
-    // Notificações do fórum são avisos, não mensagens (F-D21). A entrega por mensagem foi desligada.
-    return [];
-    if ($message->bundle() !== self::TEMPLATE || !$message->hasField(self::SOURCE_FIELD)) {
-      return [];
+  #[Hook('message_subscribe_get_subscribers_alter')]
+  public function suppressForumDelivery(array &$uids, array $values): void {
+    $entity = $values['entity'] ?? NULL;
+    $is_forum_topic = $entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic';
+    if (!$is_forum_topic && $entity instanceof CommentInterface) {
+      $host = $entity->getCommentedEntity();
+      $is_forum_topic = $host instanceof NodeInterface && $host->bundle() === 'aculta_forum_topic';
     }
-
-    $node = $message->get(self::SOURCE_FIELD)->entity;
-    if (!$node instanceof NodeInterface || $node->bundle() !== 'forum') {
-      return [];
+    if ($is_forum_topic) {
+      $uids = [];
     }
-
-    $flag = $this->flagService->getFlagById('seguir_topico');
-    if ($flag === NULL) {
-      return [];
-    }
-
-    $candidates = [];
-    foreach ($this->flagService->getEntityFlaggings($flag, $node) as $flagging) {
-      $uid = (int) $flagging->getOwnerId();
-      if ($uid > 0) {
-        $candidates[$uid] = new DeliveryCandidate(['seguir_topico'], [], $uid);
-      }
-    }
-
-    return $candidates;
   }
 
 }

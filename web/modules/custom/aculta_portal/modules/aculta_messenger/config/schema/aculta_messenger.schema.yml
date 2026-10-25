@@ -1,6 +1,6 @@
 aculta_messenger.settings:
   type: config_object
-  label: 'ACULTA Messenger: controles do chat'
+  label: 'ACULTA Messenger: controles de comunicação'
   mapping:
     group_creation_enabled:
       type: boolean
@@ -17,3 +17,67 @@ aculta_messenger.settings:
     send_limit_per_hour:
       type: integer
       label: 'Mensagens por hora por conta'
+    email_modes:
+      type: mapping
+      label: 'Modos de e-mail permitidos por categoria'
+      mapping:
+        forum_resposta:
+          type: aculta_messenger.email_modes
+          label: 'Respostas do Fórum'
+        forum_atualizacao:
+          type: aculta_messenger.email_modes
+          label: 'Atualizações do Fórum'
+        aprendizagem:
+          type: aculta_messenger.email_modes
+          label: 'Aprendizagem'
+        wiki:
+          type: aculta_messenger.email_modes
+          label: 'Wiki'
+        revista:
+          type: aculta_messenger.email_modes
+          label: 'Revista'
+        loja:
+          type: aculta_messenger.email_modes
+          label: 'Loja'
+        doacao:
+          type: aculta_messenger.email_modes
+          label: 'Doações'
+        mensagens_privadas:
+          type: aculta_messenger.email_modes
+          label: 'Mensagens privadas'
+        amizade:
+          type: aculta_messenger.email_modes
+          label: 'Amizades'
+    magazine_events:
+      type: mapping
+      label: 'Eventos da Revista enviados ao Messenger'
+      mapping:
+        published:
+          type: boolean
+          label: 'Publicação inicial'
+        updated:
+          type: boolean
+          label: 'Nova revisão publicada'
+        review_submitted:
+          type: boolean
+          label: 'Envio para revisão editorial'
+        review_returned:
+          type: boolean
+          label: 'Devolução para ajustes'
+    private_message_digest_anchor:
+      type: string
+      label: 'Data inicial do digest semanal de mensagens privadas'
+
+aculta_messenger.email_modes:
+  type: mapping
+  label: 'Modos de entrega permitidos'
+  mapping:
+    digest:
+      type: boolean
+      label: 'Resumo por e-mail'
+    immediate:
+      type: boolean
+      label: 'Envio direto'
+    default_mode:
+      type: string
+      label: 'Modo padrão para contas sem preferência'

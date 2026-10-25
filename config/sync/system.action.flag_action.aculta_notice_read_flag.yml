@@ -1,0 +1,15 @@
+uuid: cae02c17-fd4d-4b0d-b293-75c6ce9e135d
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - flag.flag.aculta_notice_read
+  module:
+    - flag
+id: flag_action.aculta_notice_read_flag
+label: 'Marcar como lido'
+type: node
+plugin: 'flag_action:aculta_notice_read_flag'
+configuration:
+  flag_id: aculta_notice_read
+  flag_action: flag

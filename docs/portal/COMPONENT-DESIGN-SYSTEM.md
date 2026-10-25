@@ -211,7 +211,11 @@ Candidatos:
 - reply metadata;
 - follow/status action quando Flag existir.
 
-A fonte continua Forum/Node/Comment/Taxonomy.
+A fonte instalada hoje é Forum/Node/Comment/Taxonomy. O alvo aprovado em
+`aculta_forum` substitui Forum contrib pelo motor contextual Node/Comment/
+Taxonomy/Views/Search API; discussões de Revista, LMS e Wiki ficam em seus Nodes.
+`aculta_user` prepara Author Cards e ACULTA420 apenas apresenta. Ver
+`aculta_forum/docs/OWNERSHIP.md` e `aculta_user/docs/AUTHOR-CARDS.md`.
 
 ### Loja/Apoio
 

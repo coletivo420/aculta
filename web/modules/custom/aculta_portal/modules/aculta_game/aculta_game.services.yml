@@ -1,7 +1,11 @@
 services:
+  aculta_game.forum_participation_policy:
+    class: Drupal\aculta_game\ForumParticipationPolicy
+    arguments: ['@aculta_portal.domain_purpose']
+
   aculta_game.mission_progress:
     class: Drupal\aculta_game\MissionProgress
-    arguments: ['@config.factory', '@aculta_user.badge_service', '@entity_type.manager']
+    arguments: ['@config.factory', '@aculta_user.badge_service', '@entity_type.manager', '@date.formatter']
     tags:
       - { name: aculta_portal.helper }
   aculta_game.achievement_presentation:
@@ -9,3 +13,9 @@ services:
     arguments: ['@entity_type.manager', '@aculta_user.badge_service', '@user.data', '@cache_tags.invalidator', '@extension.list.module']
     tags:
       - { name: aculta_portal.helper }
+
+  aculta_game.achievement_earned_mail_type:
+    class: Drupal\aculta_game\Mail\AchievementEarnedMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }

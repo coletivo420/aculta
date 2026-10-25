@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
+use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\domain\DomainInterface;
@@ -40,6 +41,8 @@ final class TokenHooks {
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'aculta_mail_confirmer')]
+    private readonly AcultaMailConfirmerManagerInterface $confirmationManager,
   ) {}
 
   /** Declares institutional and editorial tokens. */
@@ -115,13 +118,13 @@ final class TokenHooks {
    */
   #[Hook('tokens_alter')]
   public function alterEmailConfirmationUrl(array &$replacements, array $context, BubbleableMetadata $metadata): void {
-    if (($context['type'] ?? NULL) !== 'email-confirmer' || !isset($context['data']['email_confirmer_confirmation'])) {
+    if (($context['type'] ?? NULL) !== 'aculta-mail-confirmer' || !isset($context['data']['aculta_mail_confirmer'])) {
       return;
     }
-    $confirmation = $context['data']['email_confirmer_confirmation'];
-    $url = $this->domainPurposeManager->routeUrl('account', 'entity.email_confirmer_confirmation.response_form', [
-      'email_confirmer_confirmation' => $confirmation->uuid(),
-      'hash' => $confirmation->getHash(),
+    $confirmation = $context['data']['aculta_mail_confirmer'];
+    $url = $this->domainPurposeManager->routeUrl('account', 'entity.aculta_mail_confirmer.response_form', [
+      'aculta_mail_confirmer' => $confirmation->uuid(),
+      'hash' => $this->confirmationManager->getHash($confirmation),
     ]);
     foreach ($context['tokens'] ?? [] as $name => $original) {
       if ($name === 'confirmation-url' && $url !== NULL && isset($replacements[$original])) {
@@ -176,7 +179,7 @@ final class TokenHooks {
 
       foreach ($tokens as $name => $original) {
         if ($name === 'url') {
-          // Endereço principal do ambiente (aculta_deployer); o campo do bloco guarda o endereço de produção.
+          // Endereço principal do ambiente (mapeamento de endereços por ambiente); o campo do bloco guarda o endereço de produção.
           $result[$original] = DeployerEnvironment::siteUrl(dirname($this->appRoot)) ?? (string) ($block->get('field_site')->uri ?? '');
         }
         elseif (isset($fields[$name]) && $block->hasField($fields[$name])) {

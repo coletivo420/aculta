@@ -1,0 +1,10 @@
+name: Formatos para download
+description: Links de demonstração sem arquivos reais.
+component: aculta420:qr-download
+props:
+  title: Formatos de exemplo
+  formats:
+    - label: SVG de exemplo
+      url: '#exemplo-svg'
+    - label: PNG de exemplo
+      url: '#exemplo-png'

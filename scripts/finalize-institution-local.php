@@ -16,7 +16,6 @@ $short['work'] = [
   'Desenvolvemos ações orientadas pelo cuidado, pela autonomia, pela informação e pela promoção da saúde em atividades culturais e comunitárias.',
   'Participamos de espaços de diálogo e construção coletiva relacionados a direitos humanos, cidadania e políticas públicas.',
 ];
-$short['projects']['podplant420']['summary'] = 'Projeto audiovisual dedicado a conversas sobre cultura, direitos, sociedade, cuidado e participação popular.';
 $short['knowledge'] = ['Produzir cultura também significa produzir conhecimento. Entrevistas, publicações e projetos audiovisuais aproximam diferentes experiências e saberes.', 'Nossa comunicação cria espaços de escuta e diálogo sobre cultura, saúde, direitos e sociedade.'];
 $short['care'] = ['A redução de danos integra nossa atuação social por meio de informação, autonomia e cuidado em atividades culturais e comunitárias.', 'Também participamos de debates sobre direitos humanos e políticas públicas, sempre com respeito à dignidade das pessoas.'];
 $short['research'] = ['Experiências construídas em nossos projetos também dialogam com pesquisa, educação popular e produção de conhecimento.', 'Práticas culturais comunitárias podem fortalecer vínculos, redes de cuidado e participação social.'];
@@ -35,10 +34,6 @@ $headings = ['CULTURA E ARTE', 'COMUNICAÇÃO E FORMAÇÃO', 'CUIDADO E REDUÇÃ
 $areas = '';
 foreach ($short['work'] as $i => $text) $areas .= '<section><h3>' . $headings[$i] . '</h3><p>' . $text . '</p></section>';
 $saveBody($work, preg_replace('/<div class="aculta-areas">.*?<\/div>/us', '<div class="aculta-areas">' . $areas . '</div>', $work->body->value, 1));
-$pod = Node::load($state['nodes']['podplant420']);
-$body = $pod->body->first()->getValue();
-$body['summary'] = '<p>' . $short['projects']['podplant420']['summary'] . '</p>';
-$pod->set('body', $body)->setNewRevision(TRUE); $pod->save();
 $highlights = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['type' => 'editorial_highlight']);
 $copy = ['INFORMAÇÃO TAMBÉM É CULTURA' => $short['knowledge'], 'CUIDADO, INFORMAÇÃO E DIREITOS' => $short['care'], 'CULTURA, CUIDADO E PRODUÇÃO DE CONHECIMENTO' => $short['research']];
 foreach ($highlights as $node) if (isset($copy[$node->label()])) { $node->set('field_summary', $copy[$node->label()][0])->set('field_complement', $copy[$node->label()][1])->setNewRevision(TRUE); $node->save(); }
@@ -69,7 +64,6 @@ $official->set('field_org_description', 'Lutando por um futuro livre da proibiç
 FieldConfig::loadByName('block_content', 'aculta_institution', 'field_org_description')->setLabel('Slogan institucional')->setDescription('Slogan oficial exibido na identificação institucional do rodapé.')->save();
 // Preserve the superseded page as an unpublished revision; /contato is the existing Webform.
 if (!empty($state['nodes']['contact'])) { $oldContact = Node::load($state['nodes']['contact']); $oldContact->setUnpublished()->setNewRevision(TRUE); $oldContact->save(); }
-\Drupal::configFactory()->getEditable('system.site')->set('mail', '4e20coletivo@gmail.com')->save();
 $description = 'Associação sem fins lucrativos de Goiânia que desenvolve projetos de cultura, comunicação, cuidado, direitos e participação social.';
 \Drupal::configFactory()->getEditable('metatag.metatag_defaults.front')->set('tags.description', $description)->set('tags.og_description', $description)->save();
 // Node-level metatags override defaults, so keep both sources consistent.

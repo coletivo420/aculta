@@ -1,0 +1,481 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_messenger\Integration\Commerce\Unit;
+
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
+use Drupal\aculta_mailer\Delivery\SendResult;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
+use Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManagerInterface;
+use Drupal\aculta_messenger\Integration\Commerce\Plugin\QueueWorker\CommerceOrderNoticeEmailWorker;
+use Drupal\aculta_messenger\Integration\Wiki\Plugin\QueueWorker\WikiNoticeEmailWorker;
+use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
+use Drupal\message\MessageInterface;
+use Drupal\Tests\UnitTestCase;
+use Drupal\user\UserInterface;
+use Drupal\user\UserDataInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\DependencyInjection\Container;
+
+/**
+ * Covers queue replay and retry bounds for Commerce and Wiki email workers.
+ */
+#[CoversClass(CommerceOrderNoticeEmailWorker::class)]
+#[CoversClass(WikiNoticeEmailWorker::class)]
+#[Group('aculta_messenger')]
+final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
+
+  /**
+   * A duplicate Commerce item re-reads sent state after it gets the lock.
+   */
+  public function testCommerceReplayReloadsSentMessageAfterLock(): void {
+    $this->assertReplayIsSkippedAfterLock('commerce', 'aculta_msg_commerce_order_notice');
+  }
+
+  /**
+   * A duplicate Wiki item re-reads sent state after it gets the lock.
+   */
+  public function testWikiReplayReloadsSentMessageAfterLock(): void {
+    $this->assertReplayIsSkippedAfterLock('wiki', 'aculta_msg_wiki_notice');
+  }
+
+  /**
+   * Permanent Commerce failures stay terminal when a duplicate item replays.
+   */
+  public function testCommercePermanentFailureReplayIsSkippedAfterLock(): void {
+    $this->assertReplayIsSkippedAfterLock('commerce', 'aculta_msg_commerce_order_notice', 'failed_permanent');
+  }
+
+  /**
+   * Permanent Wiki failures stay terminal when a duplicate item replays.
+   */
+  public function testWikiPermanentFailureReplayIsSkippedAfterLock(): void {
+    $this->assertReplayIsSkippedAfterLock('wiki', 'aculta_msg_wiki_notice', 'failed_permanent');
+  }
+
+  /**
+   * Unconfirmed accounts do not receive direct Commerce notice emails. */
+  public function testCommerceUnconfirmedEmailCancelsDelivery(): void {
+    $this->assertUnconfirmedEmailCancelsDelivery('commerce', 'aculta_msg_commerce_order_notice');
+  }
+
+  /**
+   * Unconfirmed accounts do not receive direct Wiki notice emails. */
+  public function testWikiUnconfirmedEmailCancelsDelivery(): void {
+    $this->assertUnconfirmedEmailCancelsDelivery('wiki', 'aculta_msg_wiki_notice');
+  }
+
+  /**
+   * Invalid addresses cancel before Commerce or Wiki source resolution.
+   */
+  public function testInvalidEmailCancelsBeforeResolvingSource(): void {
+    foreach ([
+      ['commerce', 'aculta_msg_commerce_order_notice'],
+      ['wiki', 'aculta_msg_wiki_notice'],
+    ] as [$adapter, $bundle]) {
+      $message = $this->message($bundle, 'pending', 0);
+      $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'cancelled')->willReturnSelf();
+      $message->expects(self::once())->method('save')->willReturn(1);
+      $user = $this->createMock(UserInterface::class);
+      $user->method('id')->willReturn('27');
+      $user->method('isActive')->willReturn(TRUE);
+      $user->method('getEmail')->willReturn('invalid-address');
+      $messageStorage = $this->createMock(EntityStorageInterface::class);
+      $messageStorage->method('loadUnchanged')->with(101)->willReturn($message);
+      $userStorage = $this->createMock(EntityStorageInterface::class);
+      $userStorage->method('loadUnchanged')->with(27)->willReturn($user);
+      $entities = $this->createMock(EntityTypeManagerInterface::class);
+      $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+        'message' => $messageStorage,
+        'user' => $userStorage,
+        default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+      });
+      $manager = $this->createAdapterManager($adapter);
+      $manager->expects(self::never())->method('resolve');
+      $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+      $preferences->expects(self::never())->method('emailMode');
+      $mailer = $this->createMock(AcultaMailerInterface::class);
+      $mailer->expects(self::never())->method('deliver');
+      $userData = $this->createMock(UserDataInterface::class);
+      $userData->expects(self::never())->method('get');
+      $emailPolicy = new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class));
+
+      $this->worker($adapter, $entities, $manager, $mailer, $this->lock(), $preferences, $emailPolicy)
+        ->processItem(['message_id' => 101]);
+    }
+  }
+
+  /**
+   * A revoked source suppresses both direct e-mail adapters.
+   */
+  public function testCommerceAndWikiAccessRevocationCancelsDirectEmail(): void {
+    foreach ([
+      ['commerce', 'aculta_msg_commerce_order_notice'],
+      ['wiki', 'aculta_msg_wiki_notice'],
+    ] as [$adapter, $bundle]) {
+      $message = $this->message($bundle, 'pending', 0);
+      $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'cancelled')->willReturnSelf();
+      $message->expects(self::once())->method('save')->willReturn(1);
+      $user = $this->createMock(UserInterface::class);
+      $user->method('id')->willReturn('27');
+      $user->method('isActive')->willReturn(TRUE);
+      $user->method('getEmail')->willReturn('member@example.invalid');
+      $messageStorage = $this->createMock(EntityStorageInterface::class);
+      $messageStorage->method('loadUnchanged')->with(101)->willReturn($message);
+      $userStorage = $this->createMock(EntityStorageInterface::class);
+      $userStorage->method('loadUnchanged')->with(27)->willReturn($user);
+      $entities = $this->createMock(EntityTypeManagerInterface::class);
+      $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+        'message' => $messageStorage,
+        'user' => $userStorage,
+        default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+      });
+      $manager = $this->createAdapterManager($adapter);
+      $manager->expects(self::once())->method('resolve')->with($message, $user)->willReturn(NULL);
+      $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+      $preferences->method('emailMode')->with(27, $adapter === 'commerce' ? 'loja' : 'wiki')
+        ->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+      $mailer = $this->createMock(AcultaMailerInterface::class);
+      $mailer->expects(self::never())->method('deliver');
+
+      $this->withUrlAssembler(function () use ($adapter, $entities, $manager, $preferences, $mailer): void {
+        $this->worker($adapter, $entities, $manager, $mailer, $this->lock(), $preferences)
+          ->processItem(['message_id' => 101]);
+      });
+    }
+  }
+
+  /**
+   * A queued direct message stays on-site while unconfirmed email is cancelled.
+   */
+  private function assertUnconfirmedEmailCancelsDelivery(string $adapter, string $bundle): void {
+    $message = $this->message($bundle, 'pending', 0);
+    $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'cancelled')->willReturnSelf();
+    $message->expects(self::once())->method('save')->willReturn(1);
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('loadUnchanged')->with(101)->willReturn($message);
+    $user = $this->createMock(UserInterface::class);
+    $user->method('id')->willReturn('27');
+    $user->method('isActive')->willReturn(TRUE);
+    $user->method('getEmail')->willReturn('member@example.invalid');
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($user);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'message' => $messageStorage,
+      'user' => $userStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+    $manager = $this->createAdapterManager($adapter);
+    $manager->expects(self::never())->method('resolve');
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->expects(self::never())->method('emailMode');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::once())->method('get')->with('aculta_portal', 27, 'email_confirmed')->willReturn(FALSE);
+    $policy = new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class));
+    $lock = $this->lock();
+
+    $this->worker($adapter, $entities, $manager, $mailer, $lock, $preferences, $policy)
+      ->processItem(['message_id' => 101]);
+  }
+
+  /**
+   * Mailer exceptions count toward the bounded Commerce retry limit.
+   */
+  public function testCommerceMailerExceptionConsumesOneAttempt(): void {
+    $this->assertMailerExceptionConsumesAttempt('commerce', 'aculta_msg_commerce_order_notice');
+  }
+
+  /**
+   * Mailer exceptions count toward the bounded Wiki retry limit.
+   */
+  public function testWikiMailerExceptionConsumesOneAttempt(): void {
+    $this->assertMailerExceptionConsumesAttempt('wiki', 'aculta_msg_wiki_notice');
+  }
+
+  /**
+   * The final transient Commerce and Wiki failures are terminal.
+   */
+  public function testExhaustedTransientFailuresBecomePermanent(): void {
+    foreach ([
+      ['commerce', 'aculta_msg_commerce_order_notice'],
+      ['wiki', 'aculta_msg_wiki_notice'],
+    ] as [$adapter, $bundle]) {
+      $this->assertMailerExceptionConsumesAttempt($adapter, $bundle, 4);
+    }
+  }
+
+  /**
+   * Permanent Commerce failures become terminal without a retry.
+   */
+  public function testCommercePermanentMailerFailureIsTerminal(): void {
+    $this->assertPermanentMailerFailureIsTerminal('commerce', 'aculta_msg_commerce_order_notice');
+  }
+
+  /**
+   * Permanent Wiki failures become terminal without a retry.
+   */
+  public function testWikiPermanentMailerFailureIsTerminal(): void {
+    $this->assertPermanentMailerFailureIsTerminal('wiki', 'aculta_msg_wiki_notice');
+  }
+
+  /**
+   * Checks a stale duplicate queue item against the persisted state.
+   */
+  private function assertReplayIsSkippedAfterLock(string $adapter, string $bundle, string $delivery = 'sent'): void {
+    $message = $this->message($bundle, $delivery, 1);
+    $locked = FALSE;
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())->method('acquire')->willReturnCallback(static function () use (&$locked): bool {
+      $locked = TRUE;
+      return TRUE;
+    });
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('loadUnchanged')->with(101)->willReturnCallback(static function () use (&$locked, $message): MessageInterface {
+      self::assertTrue($locked, 'The current Message state is loaded only after acquiring the lock.');
+      return $message;
+    });
+    $entities = $this->entityManager($storage);
+    $manager = $this->createAdapterManager($adapter);
+    $manager->expects(self::never())->method('resolve');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+
+    $this->worker($adapter, $entities, $manager, $mailer, $lock)->processItem(['message_id' => 101]);
+  }
+
+  /**
+   * Checks the persisted attempt counter when Mailer throws.
+   */
+  private function assertMailerExceptionConsumesAttempt(string $adapter, string $bundle, int $startingAttempts = 0): void {
+    $message = $this->message($bundle, 'pending', $startingAttempts);
+    $state = ['field_aculta_msg_delivery' => 'pending', 'field_aculta_messenger_attempts' => $startingAttempts];
+    $message->expects(self::exactly(3))->method('set')->willReturnCallback(static function (string $field, mixed $value) use (&$state, $message): MessageInterface {
+      $state[$field] = $value;
+      return $message;
+    });
+    $message->expects(self::exactly(2))->method('save')->willReturn(1);
+    $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('id')->willReturn('27');
+    $recipient->method('isActive')->willReturn(TRUE);
+    $recipient->method('getEmail')->willReturn('member@example.invalid');
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('loadUnchanged')->with(101)->willReturn($message);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($recipient);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'message' => $messageStorage,
+      'user' => $userStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+    $manager = $this->createAdapterManager($adapter);
+    $manager->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
+      'email_summary' => 'Aviso disponível.',
+      'url' => Url::fromUri('https://aculta.example/aviso'),
+    ]);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with(27, $adapter === 'commerce' ? 'loja' : 'wiki')
+      ->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())->method('deliver')->willThrowException(new \RuntimeException('Transport failure'));
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->method('acquire')->willReturn(TRUE);
+
+    $this->withUrlAssembler(function () use ($adapter, $entities, $manager, $preferences, $mailer, $lock, $startingAttempts): void {
+      if ($startingAttempts < 4) {
+        try {
+          $this->worker($adapter, $entities, $manager, $mailer, $lock, $preferences)->processItem(['message_id' => 101]);
+          self::fail('A transient Mailer exception before the final attempt must be retried.');
+        }
+        catch (\RuntimeException $exception) {
+          $expected = $adapter === 'commerce'
+            ? 'Commerce order notice email delivery failed.'
+            : 'Wiki notice email delivery failed.';
+          self::assertSame($expected, $exception->getMessage());
+        }
+      }
+      else {
+        $this->worker($adapter, $entities, $manager, $mailer, $lock, $preferences)->processItem(['message_id' => 101]);
+      }
+    });
+    self::assertSame($startingAttempts + 1, $state['field_aculta_messenger_attempts']);
+    self::assertSame($startingAttempts >= 4 ? 'failed_permanent' : 'failed', $state['field_aculta_msg_delivery']);
+  }
+
+  /**
+   * Checks a permanent Mailer result is not retried by the queue worker.
+   */
+  private function assertPermanentMailerFailureIsTerminal(string $adapter, string $bundle): void {
+    $message = $this->message($bundle, 'pending', 0);
+    $state = ['field_aculta_msg_delivery' => 'pending', 'field_aculta_messenger_attempts' => 0];
+    $message->expects(self::exactly(3))->method('set')->willReturnCallback(static function (string $field, mixed $value) use (&$state, $message): MessageInterface {
+      $state[$field] = $value;
+      return $message;
+    });
+    $message->expects(self::exactly(2))->method('save')->willReturn(1);
+    $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('id')->willReturn('27');
+    $recipient->method('isActive')->willReturn(TRUE);
+    $recipient->method('getEmail')->willReturn('member@example.invalid');
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('loadUnchanged')->with(101)->willReturn($message);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($recipient);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'message' => $messageStorage,
+      'user' => $userStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+    $manager = $this->createAdapterManager($adapter);
+    $manager->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
+      'email_summary' => 'Aviso disponível.',
+      'url' => Url::fromUri('https://aculta.example/aviso'),
+    ]);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with(27, $adapter === 'commerce' ? 'loja' : 'wiki')
+      ->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())->method('deliver')
+      ->willReturn(SendResult::failed(DeliveryError::Permanent, 550));
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->method('acquire')->willReturn(TRUE);
+
+    $this->withUrlAssembler(function () use ($adapter, $entities, $manager, $mailer, $lock, $preferences): void {
+      $this->worker($adapter, $entities, $manager, $mailer, $lock, $preferences)
+        ->processItem(['message_id' => 101]);
+    });
+    self::assertSame(1, $state['field_aculta_messenger_attempts']);
+    self::assertSame('failed_permanent', $state['field_aculta_msg_delivery']);
+  }
+
+  /**
+   * Creates the adapter-specific worker dependencies.
+   *
+   * @param string $adapter
+   *   Either `commerce` or `wiki`.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entities
+   *   Mocked entity manager.
+   * @param \Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManagerInterface|\Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface $manager
+   *   Mocked adapter manager.
+   * @param \Drupal\aculta_mailer\Api\AcultaMailerInterface $mailer
+   *   Mocked Mailer service.
+   * @param \Drupal\Core\Lock\LockBackendInterface $lock
+   *   Mocked lock backend.
+   * @param \Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface|null $preferences
+   *   Optional preference mock.
+   * @param \Drupal\aculta_portal\Account\EmailConfirmationPolicy|null $emailPolicy
+   *   Account confirmation policy. Defaults to a confirmed test account.
+   */
+  private function worker(
+    string $adapter,
+    EntityTypeManagerInterface $entities,
+    CommerceOrderNoticeManagerInterface|WikiNoticeManagerInterface $manager,
+    AcultaMailerInterface $mailer,
+    LockBackendInterface $lock,
+    ?AvisoPreferenciasInterface $preferences = NULL,
+    ?EmailConfirmationPolicy $emailPolicy = NULL,
+  ): CommerceOrderNoticeEmailWorker|WikiNoticeEmailWorker {
+    $preferences ??= $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $emailPolicy ??= $this->emailPolicy(TRUE);
+    return $adapter === 'commerce'
+      ? new CommerceOrderNoticeEmailWorker([], 'test', [], $entities, $manager, $preferences, $emailPolicy, $mailer, $lock)
+      : new WikiNoticeEmailWorker([], 'test', [], $entities, $manager, $preferences, $emailPolicy, $mailer, $lock);
+  }
+
+  /**
+   * Creates the account confirmation policy with a controlled state. */
+  private function emailPolicy(bool $confirmed): EmailConfirmationPolicy {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturn($confirmed);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    return new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class));
+  }
+
+  /**
+   * Creates an available lock backend. */
+  private function lock(): LockBackendInterface {
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->method('acquire')->willReturn(TRUE);
+    return $lock;
+  }
+
+  /**
+   * Creates the matching typed adapter manager mock.
+   */
+  private function createAdapterManager(string $adapter): CommerceOrderNoticeManagerInterface|WikiNoticeManagerInterface {
+    return $adapter === 'commerce'
+      ? $this->createMock(CommerceOrderNoticeManagerInterface::class)
+      : $this->createMock(WikiNoticeManagerInterface::class);
+  }
+
+  /**
+   * Creates a Message fixture with delivery state and attempts.
+   */
+  private function message(string $bundle, string $delivery, int $attempts): MessageInterface {
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('bundle')->willReturn($bundle);
+    $message->method('id')->willReturn('101');
+    $message->method('getOwnerId')->willReturn(27);
+    $message->method('uuid')->willReturn('01234567-89ab-4cde-8fab-0123456789ab');
+    $message->method('get')->willReturnCallback(fn(string $field): FieldItemListInterface => $this->field(match ($field) {
+      'field_aculta_msg_delivery' => $delivery,
+      'field_aculta_messenger_attempts' => $attempts,
+      default => throw new \InvalidArgumentException('Unexpected field: ' . $field),
+    }));
+    $message->method('set')->willReturnSelf();
+    return $message;
+  }
+
+  /**
+   * Creates an entity manager using the supplied Message storage.
+   */
+  private function entityManager(EntityStorageInterface $messageStorage): EntityTypeManagerInterface {
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('message')->willReturn($messageStorage);
+    return $entities;
+  }
+
+  /**
+   * Creates a field item list exposing a scalar value.
+   */
+  private function field(mixed $value): FieldItemListInterface {
+    $field = $this->createMock(FieldItemListInterface::class);
+    $field->method('__get')->with('value')->willReturn($value);
+    return $field;
+  }
+
+  /**
+   * Provides the global URL assembler required by Url::toString().
+   */
+  private function withUrlAssembler(callable $callback): void {
+    $assembler = $this->createMock(UnroutedUrlAssemblerInterface::class);
+    $assembler->method('assemble')->willReturn('https://aculta.example/aviso');
+    $container = new Container();
+    $container->set('unrouted_url_assembler', $assembler);
+    \Drupal::setContainer($container);
+    try {
+      $callback();
+    }
+    finally {
+      \Drupal::unsetContainer();
+    }
+  }
+
+}

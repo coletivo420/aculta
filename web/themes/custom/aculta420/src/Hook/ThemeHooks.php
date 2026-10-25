@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420\Hook;
 
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -24,7 +25,9 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  */
 final class ThemeHooks implements TrustedCallbackInterface {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public static function trustedCallbacks(): array {
     return ['deferProductSlideImage'];
   }
@@ -236,7 +239,6 @@ final class ThemeHooks implements TrustedCallbackInterface {
         'page',
         'article',
         'activity',
-        'project',
         'editorial_highlight',
         'document',
       ], TRUE)) {
@@ -300,6 +302,14 @@ final class ThemeHooks implements TrustedCallbackInterface {
     $wikiEntryPage = $routeName === 'entity.node.canonical'
       && $routeNode instanceof NodeInterface
       && $routeNode->bundle() === 'wiki_entry';
+    // Wiki controller/form pages render their own Context Header h1.
+    $wikiContextPage = in_array($routeName, [
+      'aculta_wiki.contribution_intent',
+      'aculta_wiki.proposal_status',
+      'aculta_wiki.proposal_decide',
+      'aculta_studio.we_sativa',
+      'aculta_studio.we_sativa_start',
+    ], TRUE);
     $variables['institutional_home'] = $this->pathMatcher->isFrontPage();
     $brandMedia = $variables['domain_presentation']['regions']['brand_media'] ?? NULL;
     $variables['aculta_domain_brand_media'] = is_array($brandMedia) ? $this->brandMediaRender($brandMedia) : [];
@@ -345,8 +355,10 @@ final class ThemeHooks implements TrustedCallbackInterface {
 
       $destination = $destinations[$pluginId] ?? NULL;
       if ($destination !== NULL) {
-        // The Wiki entry presenter owns the document H1; avoid a duplicate page title.
-        if ($wikiEntryPage && $destination === 'aculta_page_title') {
+        // Wiki entry and student dashboard Context Header SDCs own their H1.
+        // Suppress only their redundant page-title block; preserve route titles.
+        if (($wikiEntryPage || $wikiContextPage || $routeName === 'aculta_lms.student_dashboard')
+          && $destination === 'aculta_page_title') {
           unset($variables['page']['header'][$key]);
           continue;
         }
@@ -392,7 +404,9 @@ final class ThemeHooks implements TrustedCallbackInterface {
     ];
   }
 
-  /** Maps the Portal's neutral Messenger action to its theme SDC. */
+  /**
+   * Maps the Portal's neutral Messenger action to its theme SDC.
+   */
   private function presentMessengerTrigger(array &$variables): void {
     $messenger = $variables['aculta_messenger'] ?? NULL;
     if (!is_array($messenger) || !is_string($messenger['url'] ?? NULL)) {
@@ -412,7 +426,9 @@ final class ThemeHooks implements TrustedCallbackInterface {
     unset($variables['aculta_messenger']);
   }
 
-  /** Maps the Portal's neutral alert action to the theme's SDC. */
+  /**
+   * Maps the Portal's neutral alert action to the theme's SDC.
+   */
   private function presentAlertsTrigger(array &$variables): void {
     $alerts = $variables['aculta_alerts'] ?? NULL;
     if (!is_array($alerts) || !is_string($alerts['url'] ?? NULL)) {
@@ -432,7 +448,9 @@ final class ThemeHooks implements TrustedCallbackInterface {
     unset($variables['aculta_alerts']);
   }
 
-  /** Exposes Private Message's native per-thread read state to accessible UI. */
+  /**
+   * Exposes Private Message's native per-thread read state to accessible UI.
+   */
   #[Hook('preprocess_private_message_thread')]
   public function preprocessPrivateMessageThread(array &$variables): void {
     $status = $variables['aculta_messenger_read_status'] ?? NULL;
@@ -446,7 +464,9 @@ final class ThemeHooks implements TrustedCallbackInterface {
     ];
   }
 
-  /** Wraps the native Private Message entity output in the theme's message item SDC. */
+  /**
+   * Wraps the native Private Message entity output in the theme's message item SDC.
+   */
   #[Hook('preprocess_private_message')]
   public function preprocessPrivateMessage(array &$variables): void {
     if (!is_array($variables['content'] ?? NULL)) {
@@ -518,7 +538,7 @@ final class ThemeHooks implements TrustedCallbackInterface {
       default => 'light',
     };
     $attributes = $variables['html_attributes'] ?? NULL;
-    if ($attributes instanceof \Drupal\Core\Template\Attribute) {
+    if ($attributes instanceof Attribute) {
       $attributes->removeAttribute('data-bs-theme');
       if ($themeMode !== NULL) {
         $attributes->setAttribute('data-bs-theme', $themeMode);

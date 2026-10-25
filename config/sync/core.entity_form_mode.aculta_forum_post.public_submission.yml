@@ -1,0 +1,11 @@
+uuid: 719dcf3d-efe3-4fa2-ad17-86e976b738fb
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_forum
+id: aculta_forum_post.public_submission
+label: 'Envio público'
+description: null
+targetEntityType: aculta_forum_post
+cache: true

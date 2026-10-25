@@ -4,8 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - node.type.article
-    - node.type.blog
+    - node.type.revista
   module:
     - node
     - taxonomy
@@ -100,8 +99,7 @@ display:
           entity_field: type
           plugin_id: bundle
           value:
-            article: article
-            blog: blog
+            revista: revista
         name:
           id: name
           table: taxonomy_term_field_data
@@ -152,8 +150,7 @@ display:
           entity_field: type
           plugin_id: bundle
           value:
-            article: article
-            blog: blog
+            revista: revista
         name:
           id: name
           table: taxonomy_term_field_data
@@ -204,8 +201,7 @@ display:
           entity_field: type
           plugin_id: bundle
           value:
-            article: article
-            blog: blog
+            revista: revista
         name:
           id: name
           table: taxonomy_term_field_data
@@ -256,8 +252,7 @@ display:
           entity_field: type
           plugin_id: bundle
           value:
-            article: article
-            blog: blog
+            revista: revista
         name:
           id: name
           table: taxonomy_term_field_data
@@ -308,8 +303,7 @@ display:
           entity_field: type
           plugin_id: bundle
           value:
-            article: article
-            blog: blog
+            revista: revista
       defaults:
         title: false
         filters: false
@@ -348,8 +342,7 @@ display:
           entity_field: type
           plugin_id: bundle
           value:
-            article: article
-            blog: blog
+            revista: revista
         name:
           id: name
           table: taxonomy_term_field_data

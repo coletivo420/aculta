@@ -1,0 +1,20 @@
+uuid: ba74bc32-997c-4a25-9ff9-cf0ff8cd79a5
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - media_gallery
+    - node
+id: node.field_editorial_gallery
+field_name: field_editorial_gallery
+entity_type: node
+type: entity_reference
+settings:
+  target_type: media_gallery
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,6 @@
+name: Busca Wiki sem resultados
+description: 'Fixture estática, sem dados ou acesso do backend.'
+component: aculta420:empty-state
+slots:
+  message:
+    markup: '<p>Nenhum verbete publicado corresponde a essa busca.</p>'

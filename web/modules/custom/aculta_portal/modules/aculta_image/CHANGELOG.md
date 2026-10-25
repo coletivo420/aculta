@@ -1,5 +1,29 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.31 — limpeza delegada ao coordenador Portal
+
+- `ImageCleanup` usa `aculta_portal.unused_file_cleaner` quando disponível, mantendo fallback para instalação sem o Kernel Portal; não há dependência de módulo circular.
+- `FileRemoverInterface` formaliza o limite de propriedade: a remoção física de imagem e a invalidação de derivados continuam aqui.
+
+## 0.1.0-dev.30 — provider de mídia do Content Index
+
+- Registra o provider mínimo de `media:image` no módulo dono; arquivos, URLs e metadados de imagem não são copiados.
+
+
+## 0.1.0-dev.29 — permite perfil contextual de upload de imagem
+
+- `UploadPolicy::validators()` recebe limite e extensões opcionais para fluxos
+  contextuais; qualquer extensão deve continuar no catálogo central ACULTA.
+  Sem argumentos, o comportamento segue png/gif/jpg/jpeg/webp e 10 MB.
+- `ImageUploadIngestor` aplica o mesmo perfil ao validar e entregar o arquivo ao
+  Managed File API. Cobertura Unit de padrão, ampliação de tamanho e recusa de
+  extensão fora do catálogo.
+
+## 0.1.0-dev.28 — campo histórico de produto alinhado à política de imagem — 2026-10-20
+
+- O campo legado `commerce_product.produto_loja.field_imagens` declara `aculta_image:policy: default`, mantendo a configuração histórica dentro da política única de imagens.
+- Evidência: `php scripts/validate-aculta-image.php` PASS; no Runtime de teste, `aculta_image` estava habilitado e o campo não tinha `third_party_settings`. A política `default` foi aplicada apenas ao campo `commerce_product.produto_loja.field_imagens` com Drush; `config:status` deixou de listar esse campo como divergente. Nenhuma importação global foi executada. RUNTIME STATUS: APLICADO no Homelab; produção DEFERRED.
+
 ## 0.1.0-dev.27 — imagem do texto marcada por atributos de dados — 2026-10-19
 
 - Filtro `ImagemModelo` emite `data-aculta-imagem`, `data-aculta-imagem-modelo`, `data-aculta-imagem-alinhamento` e `data-aculta-imagem-legenda` no lugar das classes `aculta-imagem*`. O tema (`revista-post.css`) seleciona por esses atributos.

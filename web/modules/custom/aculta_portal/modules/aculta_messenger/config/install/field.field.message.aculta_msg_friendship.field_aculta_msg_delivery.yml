@@ -1,0 +1,24 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_msg_delivery
+    - message.template.aculta_msg_friendship
+  module:
+    - options
+  enforced:
+    module:
+      - aculta_messenger
+field_name: field_aculta_msg_delivery
+entity_type: message
+bundle: aculta_msg_friendship
+label: 'Situação do envio'
+description: 'Estado técnico da entrega do aviso por e-mail.'
+required: true
+translatable: false
+default_value:
+  -
+    value: pending
+default_value_callback: ''
+settings: {}
+field_type: list_string

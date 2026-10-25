@@ -1,6 +1,6 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-18. Versão: 0.1.0-dev.25. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-20. Versão registrada nesta passagem: 0.1.0-dev.27. Classificação: **Dev**; pendências operacionais e de integração continuam abertas. `preRC` foi aposentado. O ciclo vigente é Dev → RC (tudo pronto, inclusive revisão visual pré-deploy) → deploy/validação Alpha no servidor de desenvolvimento → produção. Leia este documento antes de qualquer alteração no submódulo.
 
 Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas configurações exportadas de Views e modos de exibição. O `aculta_gallery` também usa VVJS no álbum e na galeria de produto; a sequência do álbum filtra mídia pela permissão `view` e agrega cacheabilidade do álbum, Media, File e `AccessResult`. Ver [arquitetura da Gallery](../../aculta_gallery/docs/ARQUITETURA.md) e o changelog do submódulo.
 
@@ -30,7 +30,7 @@ Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas con
 
 ## 2. Git e working tree
 
-- Branch: `chore/messenger-pendencias`, publicado em `origin` (o remoto mudou de nome para `coletivo420/aculta`; o `origin` local ainda aponta para `coletivo420/aculta-site` e o push funciona).
+- Branch: `chore/messenger-pendencias`, publicado em `origin` (o repositório mudou de nome para `coletivo420/aculta` em 2026-10-22; o `origin` local foi atualizado para `git@github.com:coletivo420/aculta.git`).
 - **Observação de processo:** o responsável decidiu que não haverá um branch por tarefa. A tarefa de imagem continua no branch atual e deve ser registrada em um commit atômico próprio, sem incluir alterações de outras frentes. Não criar ou trocar de branch para esta entrega.
 - Commits desta frente (do mais antigo ao mais novo, a partir de `b5260eef`):
 
@@ -62,7 +62,7 @@ Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas con
 ## 3. Verificação rápida (Homelab, sem alterar nada)
 
 ```sh
-cd /home/piradopirata/projetos/aculta-site
+cd /home/piradopirata/projetos/aculta
 php scripts/validate-aculta-image.php                       # esperado: PASS
 php -l web/modules/custom/aculta_portal/modules/aculta_image/src/Plugin/CKEditor5Plugin/ImageModel.php
 node --check web/modules/custom/aculta_portal/modules/aculta_image/js/ckeditor5/aculta-image-model.js
@@ -70,7 +70,7 @@ php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_po
 # esperado: OK (14 tests). O aviso "browser_output is not a writable directory" é esperado e não afeta o resultado.
 ```
 
-Ambiente: checkout de teste em `/home/piradopirata/projetos/aculta-site`, branch `chore/messenger-pendencias`, host `toca`. Runtime `https://aculta.toca.net.br`, Drupal 11.4.10 / Drush 13.8.0. `config:status` foi consultado antes da importação. As mudanças de imagem foram aplicadas parcialmente e o cache reconstruído; não foi feita importação total.
+Ambiente: checkout de teste em `/home/piradopirata/projetos/aculta`, branch `chore/messenger-pendencias`, host `toca`. Runtime `https://aculta.toca.net.br`, Drupal 11.4.10 / Drush 13.8.0. `config:status` foi consultado antes da importação. As mudanças de imagem foram aplicadas parcialmente e o cache reconstruído; não foi feita importação total.
 
 ## 4. Estado do Runtime
 
@@ -134,7 +134,7 @@ O schema do submódulo permanece em `aculta_image_update_10003`. O `updb` aplica
 1. Adicionar uma capa a um curso quando a edição de cursos estiver disponível pela frente de contas/permissões; conferir a imagem no cartão via Firefox.
 2. Revisar a dependência inválida `filter.format.0` antes de futuras importações parciais do Config Sync.
 3. R8 concluída: auditoria estática não encontrou consumidores `legado_*`; os IDs de estilos usados nas configurações nativas do Config Sync estão no catálogo. O gate passou e o registro de dívida foi atualizado.
-4. A confirmação dos binários na Hostinger segue pendente (RC). A mesclagem da galeria foi concluída; arquivos redundantes continuam na quarentena até 2026-11-15.
+4. A confirmação dos binários necessários para produção e as pendências da integração/importação Growroom são trabalho funcional/operacional. Fechar essas pendências, gates/testes e a revisão visual pré-deploy antes de classificar como RC. Depois, Alpha valida o deploy no servidor de desenvolvimento e só então ocorre a migração a produção. A mesclagem da galeria foi concluída; arquivos redundantes continuam na quarentena até 2026-11-15.
 
 ## 7. Regras que valem nesta frente (resumo; a regra completa está no AGENTS)
 

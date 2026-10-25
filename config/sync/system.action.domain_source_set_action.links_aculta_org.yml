@@ -1,0 +1,14 @@
+uuid: 09c3bbd9-6323-494b-887b-b75096cf3c48
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - domain.record.links_aculta_org
+  module:
+    - domain_source
+id: domain_source_set_action.links_aculta_org
+label: 'Set content domain source value to the ACULTA - Redes sociais domain'
+type: node
+plugin: domain_source_set_action
+configuration:
+  domain_id: links_aculta_org

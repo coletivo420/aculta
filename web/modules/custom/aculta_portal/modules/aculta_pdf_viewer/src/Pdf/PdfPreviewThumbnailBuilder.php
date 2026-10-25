@@ -6,6 +6,7 @@ namespace Drupal\aculta_pdf_viewer\Pdf;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\aculta_image\GeneratedImageFileManager;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_image\ImageInspector;
@@ -14,7 +15,6 @@ use Drupal\file\FileInterface;
 use Drupal\imagemagick\ImagemagickExecManagerInterface;
 use Drupal\pdfpreview\PDFPreviewGenerator;
 use Psr\Log\LoggerInterface;
-use Throwable;
 
 /**
  * Generates PDFPreview derivatives only for eligible public files.
@@ -33,6 +33,7 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
     private readonly GeneratedImageFileManager $generatedImageFileManager,
     private readonly ImageRenderer $imageRenderer,
     private readonly ImageInspector $imageInspector,
+    private readonly FileSystemInterface $fileSystem,
     private readonly LoggerInterface $logger,
     private readonly ?ImagemagickExecManagerInterface $imagemagickExecManager,
   ) {}
@@ -50,12 +51,13 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
       || strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)) !== 'pdf'
       || $file->getSize() <= 0
       || $file->getSize() > self::MAX_SOURCE_BYTES
+      || !$this->isReadableSourceWithinLimit($file)
       || !$this->isSafeConfiguration()) {
       return NULL;
     }
 
     try {
-      // Avoid waiting on an unavailable binary and cap work for the web request.
+      // Avoid unavailable binaries and cap work during the web request.
       $this->imagemagickExecManager->setTimeout(self::PROCESS_TIMEOUT_SECONDS);
       try {
         $preview_uri = $this->previewGenerator->getPDFPreview($file);
@@ -92,13 +94,27 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
       $cacheability->applyTo($build);
       return $build;
     }
-    catch (Throwable $exception) {
+    catch (\Throwable $exception) {
       $this->logger->warning('PDF thumbnail generation failed for File entity {fid}; the reader and download fallback remain available.', [
         'fid' => $file->id(),
         'exception' => $exception,
       ]);
       return NULL;
     }
+  }
+
+  /**
+   * Avoids invoking PDFPreview/ImageMagick for a missing or oversized source.
+   */
+  private function isReadableSourceWithinLimit(File $file): bool {
+    $realpath = $this->fileSystem->realpath($file->getFileUri());
+    if (!is_string($realpath) || !is_file($realpath) || !is_readable($realpath)) {
+      return FALSE;
+    }
+
+    clearstatcache(TRUE, $realpath);
+    $actual_size = filesize($realpath);
+    return is_int($actual_size) && $actual_size > 0 && $actual_size <= self::MAX_SOURCE_BYTES;
   }
 
   /**

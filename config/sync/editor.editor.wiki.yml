@@ -6,7 +6,6 @@ dependencies:
     - filter.format.wiki
   module:
     - ckeditor5
-    - media
 format: wiki
 editor: ckeditor5
 settings:
@@ -25,6 +24,11 @@ settings:
       - drupalMedia
       - sourceEditing
   plugins:
+    ckeditor5_codeBlock:
+      languages:
+        -
+          label: 'Texto puro'
+          language: plaintext
     ckeditor5_heading:
       enabled_headings:
         - heading2
@@ -32,10 +36,6 @@ settings:
         - heading4
         - heading5
         - heading6
-    ckeditor5_codeBlock:
-      languages:
-        - label: 'Texto puro'
-          language: plaintext
     ckeditor5_list:
       properties:
         reversed: true

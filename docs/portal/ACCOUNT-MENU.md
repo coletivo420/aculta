@@ -1,10 +1,74 @@
 # Menu da Minha conta
 
+## S-R3-B2 — dados privados e apelido público separados
+
+- `/studio/conta/dados` usa o Profile Form API do Portal e apenas nome cadastral/WhatsApp; não exibe o apelido comunitário.
+- `/studio/perfil/apelido` usa formulário independente do User e escreve apenas o mesmo `field_nickname`; submissão volta ao Perfil Studio.
+- `/dados` e a apresentação da Minha Conta original `/conta-legada` permanecem, inclusive shell, menus, AJAX, handlers e campos anteriores.
+- Testes Unit novos escritos e não executados; Kernel/Functional, domínio, cache e compatibilidade sem JavaScript/Firefox ainda aguardam evidências.
+
+## S-R3-A — comparação do mesmo formulário em duas interfaces
+
+A Minha Conta original continua em `/conta-legada` com a navegação e
+JavaScript intocados. A raiz `/` do Domain ACCOUNT serve o hub do Studio. A experiência Studio independente `/studio/conta` oferece
+edição de endereço, e-mail/segurança, senha e conexões em suas rotas,
+chamando os **mesmos métodos e Form API** do Portal.
+`PortalHooks` aplica a política única de Número/S-N e país BR tanto
+em `/dados/endereco` quanto em `/studio/conta/endereco`.
+O redirect pós-gravação volta à origem correspondente.
+
+A edição de dados cadastrais continua em `/dados` até o formulário
+do apelido público ser isolado. Nenhum comportamento atual do legado
+foi retirado. PHPUnit/Runtime ainda pendentes.
+[Contrato](../architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+
+## Garantia de preservação — Minha Conta legada (decisão 2026-10-24)
+
+**Esta interface não será retirada ao final da migração.**
+A rota pública da Minha Conta original é **`/conta-legada`**
+(`aculta_portal.dashboard`). A raiz `/` do Domain ACCOUNT serve o hub do
+ACULTA Studio (`aculta_studio.hub`, caminho interno `/studio`). O caminho
+`/minha-conta` não é mais rota e responde **404**, sem redirect.
+Manter shell, menu desktop/mobile, `account-navigation.js`,
+formulários, segurança, dados e integração existentes.
+
+A nova **Minha Conta Studio** é `/studio/conta`; **Meu Perfil Studio**
+é `/studio/perfil`, separado da Conta. As páginas antigas continuam
+funcionais para comparação, inclusive depois de aprovar o Studio.
+Regras e fases:
+[Conta e Perfil separados](../architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+Qualquer indicação antiga abaixo de remoção do shell/menu legado
+foi revogada.
+
+
 Data da revisão: 2026-10-14. Versões: `0.2.0-dev.26` a `0.2.0-dev.39`; extensão de seções no Portal `0.4.0-dev.15`.
 
-A visão geral é a raiz do Domain ACCOUNT (`/`). O caminho técnico `/minha-conta` não é público e responde 404; nenhum link o usa (`docs/integrations/AUTHENTICATION.md`).
+A visão geral original fica em `/conta-legada`. A raiz do Domain ACCOUNT (`/`) é o hub do Studio. O caminho `/minha-conta` responde 404; nenhum link o usa (`docs/integrations/AUTHENTICATION.md`).
 
-O menu lateral da conta (`/` para a visão geral, `/dados`, `/seguranca`, `/conexoes`, `/meus-cursos`, `/meu-apoio`, `/configuracoes`) tem duas apresentações. As duas usam as mesmas rotas, a mesma ordem e o mesmo item ativo.
+O menu lateral da conta (`/conta-legada` para a visão geral, `/dados`, `/seguranca`, `/conexoes`, `/meus-cursos`, `/meu-apoio`, `/configuracoes`) tem duas apresentações. As duas usam as mesmas rotas, a mesma ordem e o mesmo item ativo.
+
+## Migração planejada para o ACULTA Studio — P0 (2026-10-24)
+
+A direção aprovada para uma entrega futura é tornar `/studio` o hub,
+oferecer `Meu Espaço` em `/studio/pessoal` e unificar a navegação global
+com submenus contextuais. Meu Perfil será **editado** no Studio, mas seu
+endereço público `/u/{apelido}` continuará no purpose `main`.
+[Contrato e roadmap P0–P7](../architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
+
+**P1-A criou apenas uma entrada independente em `/studio/pessoal` com links
+para as páginas atuais da Conta, sem migrar formulários ou shell e sem
+homologação Runtime.** O comportamento descrito nas seções seguintes permanece
+**atual** e não deve ser retirado até haver equivalência de forms, acesso,
+AJAX e navegação. O Portal continuará dono de dados, endereço
+e segurança. Um formulário renderizado no Studio não pode ser envolvido
+simultaneamente por `aculta_portal_shell` e shell Studio.
+
+Durante a transição, a Minha Conta original fica em `/conta-legada`; a
+raiz `/` é o hub do Studio. `/minha-conta` não é rota e responde 404,
+protegido pelo `validate-aculta-portal-conta-root.php`. Não introduzir redirects de POST
+nem reescrever `account-navigation.js` para operar como navegação
+universal antes de caracterizar uploads, senha, OAuth, CSRF e estados AJAX.
+O menu antigo somente será retirado na P7 após homologação P6.
 
 ## Desktop (a partir de 768px)
 
@@ -55,19 +119,19 @@ Sanfona nativa (`details`/`summary`, sem JavaScript de abertura):
 - A carga autenticada (com login) não foi verificada pela automação: precisa de conferência no celular.
 - Formulários dentro dos painéis dependem dos comportamentos do Drupal (`attachBehaviors`). Qualquer formulário que não funcionar deve ser reportado.
 
-## Por que a visão geral só existe na raiz
+## Por que a raiz é o hub do Studio
 
-Uma única URL pública por destino evita conteúdo duplicado, links antigos que chegam a um caminho técnico e a dependência de o usuário lembrar um nome interno. O mesmo princípio vale para `/apoio`, que é servido somente em `/` no host SUPPORT.
+Uma única URL pública por destino evita conteúdo duplicado e links antigos que chegam a um caminho técnico. A raiz do ACCOUNT segue o mesmo padrão de `/apoio`, servido em `/` no host SUPPORT: o caminho interno `/studio` não é público (404 direto), e o anônimo na raiz vai ao login.
 
-O caminho `/minha-conta` continua existindo só como identificador da rota `aculta_portal.dashboard`. Ele não é público: a guarda em `DomainPurposeRequestSubscriber::onRequestBeforeRouter` responde 404 para qualquer requisição cujo caminho original não seja `/`.
+A Minha Conta original tem URL própria, `/conta-legada`, porque ela não é a raiz. O caminho `/minha-conta` não é mais rota; `DomainPurposeRequestSubscriber::onRequestBeforeRouter` mantém o 404 explícito para ele.
 
 ## Barreira anti-regressão
 
 - Gate: `php scripts/validate-aculta-portal-conta-root.php` (1142 verificações). Reprova:
   - um segundo uso do caminho interno no roteamento;
-  - a remoção da guarda da visão geral;
-  - um link literal a `/minha-conta` em código, template, JS, CSS, scripts ou configuração exportada (exceto `front` do Domain ACCOUNT, que é resolução interna);
+  - a remoção da guarda do hub na raiz;
+  - um link literal a `/minha-conta` em código, template, JS, CSS, scripts ou configuração exportada (exceto `front` do Domain ACCOUNT, que é `/studio`, resolução interna);
   - o reenvio de confirmação fora de `/confirmar-email/reenviar`;
   - divergência entre `aculta_portal.info.yml` e o topo do `CHANGELOG.md`.
 - Sonda privada do `aculta_deployer` (`deploy.json`, `private_probes`): a sonda de `/conta-interna` foi removida em 0.3.0-dev.13, junto com o caminho. A proteção principal é o gate acima.
-- Verificação HTTP no servidor de testes, depois do deploy: `https://conta.aculta.toca.net.br/` deve servir a conta; `https://conta.aculta.toca.net.br/minha-conta` deve responder 404.
+- Verificação HTTP no servidor de testes, depois do deploy: `https://conta.aculta.toca.net.br/` anônimo redireciona ao login; logado, serve o hub do Studio; `https://conta.aculta.toca.net.br/conta-legada` anônimo redireciona ao login; logado, serve a Minha Conta original; `/minha-conta` e `/studio` respondem 404.

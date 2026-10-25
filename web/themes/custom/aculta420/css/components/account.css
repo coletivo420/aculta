@@ -17,7 +17,11 @@
   padding: 1rem;
   background: var(--aculta-surface-muted);
   border-inline-start: 3px solid var(--aculta-border-accent);
+  overflow-wrap: anywhere;
 }
+.aculta-security-pending > h4 { margin-block: 0 0.5rem; }
+.aculta-security-pending > p { margin-block: 0 0.5rem; }
+.aculta-security-pending > p:last-child { margin-block-end: 0; }
 .aculta-account-edit-notice {
   max-width: 48rem;
   margin-block-end: 1rem;
@@ -33,3 +37,15 @@
   text-underline-offset: 0.2em;
 }
 :is(.aculta-security-password-form, [data-portal-ui="security-password-form"]) { max-width: 40rem; }
+
+/* Aviso de atenção de e-mail não confirmado em "Minha conta" (caixa de atenção com os tokens de estado de atenção). */
+.aculta-email-notice {
+  margin-block-end: 1.5rem;
+  padding: 1rem 1.25rem;
+  color: var(--aculta-status-warning-text);
+  background-color: var(--aculta-status-warning-surface);
+  border-inline-start: 0.25rem solid var(--aculta-status-warning-border);
+  border-radius: var(--bs-border-radius);
+}
+.aculta-email-notice p { margin-block: 0; }
+.aculta-email-notice a { color: inherit; text-underline-offset: 0.2em; }

@@ -2,6 +2,11 @@
 // composer.json. Query versioning prevents a year-long cache from pairing a
 // stale API module with a freshly fetched worker (or the reverse).
 const PDFJS_VERSION = '6.4.299';
+// Keep a single page canvas below common browser surface limits and avoid
+// allocating hundreds of megabytes for unusually large PDF page dimensions.
+const MAX_CANVAS_PIXELS = 16_000_000;
+const MAX_CANVAS_DIMENSION = 16_384;
+const MIN_SAFE_SCALE_RATIO = 0.5;
 
 const initialized = new WeakSet();
 
@@ -26,6 +31,12 @@ async function initialize(viewer) {
   const searchPrevious = viewer.querySelector('[data-aculta-pdf-control="search-previous"]');
   const searchNext = viewer.querySelector('[data-aculta-pdf-control="search-next"]');
   const searchStatus = viewer.querySelector('[data-aculta-pdf-control="search-status"]');
+  const outline = viewer.querySelector('[data-aculta-pdf-control="outline"]');
+  const outlineItems = viewer.querySelector('[data-aculta-pdf-control="outline-items"]');
+  const outlineStatus = viewer.querySelector('[data-aculta-pdf-control="outline-status"]');
+  const pageThumbnails = viewer.querySelector('[data-aculta-pdf-control="page-thumbnails"]');
+  const pageThumbnailItems = viewer.querySelector('[data-aculta-pdf-control="page-thumbnail-items"]');
+  const pageThumbnailStatus = viewer.querySelector('[data-aculta-pdf-control="page-thumbnail-status"]');
   if (!url || !url.startsWith('/') || url.startsWith('//') || !canvas || !status) {
     return;
   }
@@ -35,12 +46,100 @@ async function initialize(viewer) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = `/libraries/pdf.js/build/pdf.worker.mjs?v=${PDFJS_VERSION}`;
     const pdf = await pdfjsLib.getDocument({ url }).promise;
     let pageNumber = 1;
-    let zoom = 1;
+    const fitToWidth = viewer.dataset.acultaPdfDefaultZoom === 'fit-width';
+    const initialZoom = fitToWidth ? 1 : viewer.dataset.acultaPdfDefaultZoom === '125' ? 1.25 : 1;
+    let zoom = initialZoom;
+    let rotation = 0;
     let renderSequence = 0;
     let renderTask;
     let searchSequence = 0;
     let matchingPages = [];
     let matchingPageIndex = -1;
+
+    if (pageThumbnails && pageThumbnailItems && pageThumbnailStatus) {
+      let generated = false;
+      pageThumbnails.addEventListener('toggle', async () => {
+        if (!pageThumbnails.open || generated) return;
+        generated = true;
+        const pageLimit = Math.min(pdf.numPages, 100);
+        for (let pageNumber = 1; pageNumber <= pageLimit; pageNumber += 1) {
+          pageThumbnailStatus.textContent = `Preparando miniatura ${pageNumber} de ${pageLimit}…`;
+          const item = document.createElement('li');
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'btn btn-outline-secondary d-inline-flex flex-column align-items-center';
+          button.setAttribute('aria-label', `Abrir página ${pageNumber}`);
+          const thumbnail = document.createElement('canvas');
+          thumbnail.setAttribute('aria-hidden', 'true');
+          const label = document.createElement('span');
+          label.textContent = `Página ${pageNumber}`;
+          button.append(thumbnail, label);
+          button.addEventListener('click', () => goToPage(pageNumber));
+          item.append(button);
+          pageThumbnailItems.append(item);
+          try {
+            const page = await pdf.getPage(pageNumber);
+            const base = page.getViewport({ scale: 1 });
+            const scale = Math.min(0.16, 256 / Math.max(base.width, base.height), Math.sqrt(65_536 / (base.width * base.height)));
+            const viewport = page.getViewport({ scale });
+            thumbnail.width = Math.max(1, Math.ceil(viewport.width));
+            thumbnail.height = Math.max(1, Math.ceil(viewport.height));
+            const thumbnailContext = thumbnail.getContext('2d');
+            if (!thumbnailContext) throw new Error('Canvas context unavailable');
+            await page.render({ canvasContext: thumbnailContext, viewport }).promise;
+          }
+          catch {
+            item.remove();
+          }
+        }
+        pageThumbnailStatus.textContent = pdf.numPages > pageLimit
+          ? `Mostrando ${pageLimit} de ${pdf.numPages} páginas para limitar memória e processamento.`
+          : `${pageLimit} miniaturas prontas.`;
+      }, { once: false });
+    }
+
+    if (outline && outlineItems && outlineStatus) {
+      const entries = await pdf.getOutline();
+      if (entries?.length) {
+        outlineStatus.textContent = '';
+        let entryCount = 0;
+        const appendEntries = (parent, items, depth = 0) => {
+          if (depth > 20 || entryCount >= 500) return;
+          for (const entry of items) {
+            if (entryCount >= 500) break;
+            entryCount += 1;
+            const item = document.createElement('li');
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = entry.title || `Seção ${entryCount}`;
+            button.addEventListener('click', async () => {
+              try {
+                let destination = entry.dest;
+                if (typeof destination === 'string') destination = await pdf.getDestination(destination);
+                if (!Array.isArray(destination) || !destination[0]) return;
+                const pageIndex = await pdf.getPageIndex(destination[0]);
+                goToPage(pageIndex + 1);
+              }
+              catch {
+                outlineStatus.textContent = 'Não foi possível abrir esta seção do contorno.';
+              }
+            });
+            item.append(button);
+            if (Array.isArray(entry.items) && entry.items.length) {
+              const nested = document.createElement('ul');
+              item.append(nested);
+              appendEntries(nested, entry.items, depth + 1);
+            }
+            parent.append(item);
+          }
+        };
+        appendEntries(outlineItems, entries);
+        if (entryCount >= 500) outlineStatus.textContent = 'Contorno truncado após 500 itens.';
+      }
+      else {
+        outline.hidden = true;
+      }
+    }
 
     const render = async () => {
       const sequence = ++renderSequence;
@@ -64,13 +163,38 @@ async function initialize(viewer) {
       if (sequence !== renderSequence) {
         return;
       }
-      const baseViewport = page.getViewport({ scale: 1 });
+      const baseViewport = page.getViewport({ scale: 1, rotation });
       const availableWidth = Math.max(240, (viewer.clientWidth || 800) - 32);
       const fitScale = Math.min(1.5, availableWidth / baseViewport.width);
-      const viewport = page.getViewport({ scale: Math.max(0.5, Math.min(3, fitScale * zoom)) });
+      const requestedScale = Math.min(3, fitToWidth ? fitScale * zoom : zoom);
+      const maxScaleByArea = Math.sqrt(MAX_CANVAS_PIXELS / (baseViewport.width * baseViewport.height));
+      const maxScaleByDimension = (MAX_CANVAS_DIMENSION - 1) / Math.max(baseViewport.width, baseViewport.height);
+      let renderScale = Math.min(requestedScale, maxScaleByArea, maxScaleByDimension);
+      let viewport = page.getViewport({ scale: renderScale, rotation });
+      let canvasWidth = Math.ceil(viewport.width);
+      let canvasHeight = Math.ceil(viewport.height);
+      // Rounding both sides up can exceed the pixel budget by a few thousand
+      // pixels even when the floating-point viewport is exactly at the limit.
+      while (canvasWidth * canvasHeight > MAX_CANVAS_PIXELS) {
+        renderScale *= Math.sqrt(MAX_CANVAS_PIXELS / (canvasWidth * canvasHeight)) * 0.999;
+        viewport = page.getViewport({ scale: renderScale, rotation });
+        canvasWidth = Math.ceil(viewport.width);
+        canvasHeight = Math.ceil(viewport.height);
+      }
+      const effectiveZoom = fitToWidth ? renderScale / fitScale : renderScale;
+      if (effectiveZoom < zoom * MIN_SAFE_SCALE_RATIO) {
+        canvas.hidden = true;
+        status.textContent = 'Esta página excede o limite seguro de visualização. Use o link para abrir ou baixar o PDF.';
+        previous.disabled = pageNumber <= 1;
+        next.disabled = pageNumber >= pdf.numPages;
+        zoomStatus.textContent = `${Math.round(effectiveZoom * 100)}%`;
+        zoomOut.disabled = zoom <= 0.5;
+        zoomIn.disabled = zoom >= 2.5;
+        return;
+      }
       const context = canvas.getContext('2d');
-      canvas.width = Math.ceil(viewport.width);
-      canvas.height = Math.ceil(viewport.height);
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
       const task = page.render({ canvasContext: context, viewport });
       renderTask = task;
       try {
@@ -90,7 +214,7 @@ async function initialize(viewer) {
       status.textContent = `Página ${pageNumber} de ${pdf.numPages}`;
       previous.disabled = pageNumber <= 1;
       next.disabled = pageNumber >= pdf.numPages;
-      zoomStatus.textContent = `${Math.round(zoom * 100)}%`;
+      zoomStatus.textContent = `${Math.round(effectiveZoom * 100)}%`;
       zoomOut.disabled = zoom <= 0.5;
       zoomIn.disabled = zoom >= 2.5;
     };
@@ -117,9 +241,15 @@ async function initialize(viewer) {
       });
     });
     zoomReset.addEventListener('click', () => {
-      zoom = 1;
+        zoom = initialZoom;
       render().catch(() => {
         status.textContent = 'Não foi possível restaurar o zoom do PDF.';
+      });
+    });
+    viewer.querySelector('[data-aculta-pdf-control="rotate"]')?.addEventListener('click', () => {
+      rotation = (rotation + 90) % 360;
+      render().catch(() => {
+        status.textContent = 'Não foi possível girar a página do PDF.';
       });
     });
 

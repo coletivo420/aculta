@@ -2,14 +2,15 @@ uuid: 750de249-3417-4a43-997b-a1a073abb22c
 langcode: pt-br
 status: true
 dependencies:
+  enforced:
+    module:
+      - aculta_portal
   config:
     - field.field.media.remote_video.field_media_oembed_video
     - media.type.remote_video
   module:
     - media
     - path
-_core:
-  default_config_hash: pM8mGlwfpvfG_y5tZn0lGAXFLXz2_yKkL7MvWZsRqdA
 id: media.remote_video.default
 targetEntityType: media
 bundle: remote_video

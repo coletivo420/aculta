@@ -6,6 +6,29 @@ Este documento fixa a direção do shell público. A 0.1.0 preserva a arquitetur
 e o shell existente; 0.2-A prepara tokens; as etapas 0.2-B a 0.2-F entregam o
 contrato e a validação visual progressivamente.
 
+## Nova frente visual planejada — ACULTA Studio / Meu Espaço (2026-10-24)
+
+O Studio evoluirá para hub pessoal em `/studio` com experiência
+`/studio/pessoal` e **navegação única**: nível global de experiências,
+seções contextuais e tela de tarefa. É **alvo futuro**, não mudança
+concluída do tema, das rotas ou do Runtime.
+
+**Regra visual:** preservar Institution Bar + Domain Header; abaixo deles,
+uma só moldura de Studio. O `AccountShellBuilder`/`aculta_portal_shell`
+não deve ser renderizado dentro do shell Studio. O tema conserva
+responsabilidade por SDC/UI Suite, Bootstrap Icons, reflow, foco, estados,
+modo claro/escuro e apresentação de render arrays neutros. ACL, Profile,
+Form API, rotas, autorização e Domain permanecem com os módulos funcionais.
+
+Mobile terá acesso a todas as experiências e subáreas, sem duplicação
+de navegação ou dependência exclusiva de JavaScript. Fallback full-page,
+`aria-live`, histórico, formulários seguros e ausência de overflow
+precisam de teste antes do corte da navegação anterior.
+
+[Contrato e roadmap STUDIO-P0–P7](../../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
+A política de shell público já implementada, descrita abaixo, permanece
+vigente e não deve ser reescrita pela nova frente.
+
 ## Hierarquia
 
 ```text
@@ -252,3 +275,9 @@ para Offcanvas quando necessário; não criar menu lateral custom em JavaScript.
 - não acoplar light/dark a markup específico;
 - não criar segunda engine de navegação quando Bootstrap já oferece Collapse/Offcanvas;
 - não implementar o redesign completo dentro da Foundation 0.1.0.
+
+## Regra global obrigatória — preservação do cabeçalho multidomínio (2026-10-22)
+
+A **Institution Bar** e o **Domain Header existentes** formam o shell permanente de **todas** as áreas e rotas públicas/autorizadas do portal ACULTA: GanjaLab, GanjaLab420, Revista, Wiki, Fórum, Galeria, Cursos, Loja, Minha Conta e demais purposes. Nenhum novo layout, SDC, rota, aplicação AJAX, fullscreen de página ou interface educacional pode substituir, ocultar indevidamente, duplicar ou criar um cabeçalho global concorrente. **Exceções técnicas genuínas** (por exemplo, visualizador fullscreen nativo do navegador, PDF ou iframe de terceiros) devem ser explicitadas e revisadas, sem reescrever o shell da página.
+
+São permitidos refinamentos de responsividade, tipografia, espaçamento, menus, contraste, acessibilidade e light/dark, mantendo as responsabilidades atuais Portal → DomainPurposeManager → ACULTA420. O componente transversal futuro `context-header` é **somente cabeçalho interno do conteúdo**, abaixo do shell; nunca é substituto de Institution Bar/Domain Header. Gate de revisão: verificar a presença e continuidade do shell em desktop/mobile, routes AJAX/no-JS, domínios e modos de cor.

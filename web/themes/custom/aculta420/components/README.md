@@ -15,6 +15,19 @@ components/
 
 O Drupal Core permite subdiretórios arbitrários dentro de `components/`.
 
+## 0.7.0-dev.1 — SDCs de Meu Perfil (pré-S-R4)
+
+- `patterns/profile-editor`: layout do editor, com slots `intro`, `identity`, `biography`, `social` e `actions`.
+- `content/profile-identity`: nome privado textual, avatar autorizado, dica, ações e link público opcional. Distinto de `author-card`, dedicado à autoria pública.
+- `content/profile-bio`: recebe bio/formulário somente leitura e ações do User pelos slots `body` e `actions`.
+- `content/profile-social`: recebe os itens normalizados pelo User nos slots `items` e `actions`.
+
+Cada componente é experimental, possui schema, Twig, CSS e duas stories
+estáticas. Não consulta entidades, decide acesso, cria links ou altera Form
+API. O Studio dev.21 passou a consumir os quatro SDCs via
+`#type: component` e slots do Core; descoberta de SDC,
+render real e responsividade ainda exigem homologação.
+
 ## 0.1.0
 
 Disponível:
@@ -22,6 +35,7 @@ Disponível:
 - `content/editorial-card` -> `aculta420:editorial-card`.
 - `content/course_card` -> `aculta420:course_card`, substituto SDC compatível para `lms:course_card`.
 - `content/messenger-item`, `content/messenger-compose`, `content/messenger-notification` e `content/institutional-notice` -> componentes experimentais da central; `messenger-item` recebe avatar renderizado, direção de envio e corpo nativo como slots/props neutros.
+- `content/author-card` -> apresentação experimental compartilhada de autoria; recebe nome/link, flag explícita de avatar presente, avatar autorizado renderizado pelo `aculta_user` e dados editoriais opt-in, sem carregar entidade ou decidir acesso. `author_forum_stacked` altera só o layout; autoria histórica não recebe perfil ou ações de conta.
 - `patterns/messenger-list` -> moldura de listas do Private Message/Message.
 - `feedback/unread-badge` e `feedback/messenger-state` -> contagem e estados da central.
 - `patterns/card` -> cartão composto reutilizável com slots de mídia, cabeçalho, conteúdo e rodapé; variantes vertical e horizontal usam Bootstrap e tokens ACULTA420.

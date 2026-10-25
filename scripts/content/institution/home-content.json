@@ -28,19 +28,6 @@
       }
     },
     {
-      "uuid": "2a3a1cc7-802b-45ce-a137-7775527b15c6",
-      "info": "Home — Participação",
-      "body": {
-        "value": "<div class=\"aculta-prose\"><p>A Associação é feita por pessoas que acreditam na cultura, na informação, no cuidado e na participação como instrumentos de transformação social.</p><p>Acompanhe os projetos, participe dos encontros e contribua com essa construção coletiva.</p><div class=\"aculta-actions\"><a href=\"/atividades\" class=\"btn btn-primary\">CONHEÇA NOSSAS ATIVIDADES</a><a href=\"/contato\" class=\"btn btn-outline-primary\">ENTRE EM CONTATO</a></div></div>",
-        "format": "full_html"
-      },
-      "fields": {
-        "field_section_title": "CULTURA SE CONSTRÓI COLETIVAMENTE",
-        "field_section_heading": null,
-        "field_section_variant": "participation"
-      }
-    },
-    {
       "uuid": "45934cbe-7d04-444c-bdb4-aada64bc80dd",
       "info": "Home — Cultura, cuidado e conhecimento",
       "body": {

@@ -1,0 +1,24 @@
+uuid: 2a59ee48-4996-4974-9233-d53c2843b274
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+id: message.field_aculta_messenger_source_fr
+field_name: field_aculta_messenger_source_fr
+entity_type: message
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {}
+persist_with_no_fields: false
+custom_storage: false

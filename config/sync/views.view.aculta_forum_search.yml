@@ -1,0 +1,230 @@
+uuid: acd6f841-ef2d-43e8-a8e1-4a17d6feeb71
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - core.entity_view_mode.aculta_forum_post.forum_search_result
+    - search_api.index.aculta_forum
+  module:
+    - aculta_forum
+    - node
+    - search_api
+    - user
+id: aculta_forum_search
+label: 'Pesquisar discussões do Growroom420'
+module: views
+description: 'Busca pública de tópicos e posts do Fórum com categoria selecionável e contexto Domain fixo.'
+tag: forum
+base_table: search_api_index_aculta_forum
+base_field: search_api_id
+display:
+  default:
+    id: default
+    display_title: Padrão
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Pesquisar discussões'
+      pager:
+        type: full
+        options:
+          offset: 0
+          items_per_page: 20
+          total_pages: null
+          id: 0
+          tags:
+            next: Próxima
+            previous: Anterior
+            first: Primeira
+            last: Última
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Itens por página'
+            items_per_page_options: '10, 20, 40'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- Todos -'
+            offset: false
+            offset_label: Deslocamento
+          quantity: 9
+      exposed_form:
+        type: input_required
+        options:
+          submit_button: Pesquisar
+          reset_button: false
+          reset_button_label: Limpar
+          exposed_sorts_label: Ordenar
+          expose_sort_order: false
+          sort_asc_label: Crescente
+          sort_desc_label: Decrescente
+          text_input_required: 'Digite ao menos três caracteres para pesquisar.'
+          text_input_required_format: plain_text
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: search_api_none
+        options: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: 'Estado vazio da busca pública'
+          plugin_id: text_custom
+          empty: true
+          content: '<p>Nenhuma discussão corresponde à sua busca. Tente outros termos ou <a href="/categorias">explore as categorias</a>.</p>'
+          tokenize: false
+      sorts: {  }
+      arguments: {  }
+      filters:
+        search_api_fulltext:
+          id: search_api_fulltext
+          table: search_api_index_aculta_forum
+          field: search_api_fulltext
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api_fulltext
+          operator: and
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: search_op
+            label: Pesquisar
+            description: 'Pesquise por assunto ou texto do tópico.'
+            use_operator: false
+            operator: search_op
+            identifier: keys
+            required: true
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          parse_mode: terms
+          min_length: 3
+          fields: {  }
+        type:
+          id: forum_search_type
+          table: search_api_index_aculta_forum
+          field: forum_search_type
+          relationship: none
+          admin_label: 'Isolar tópicos e posts públicos do Fórum'
+          plugin_id: aculta_forum_search_type
+          operator: IN
+          value:
+            - aculta_forum_topic
+            - aculta_forum_post
+          group: 1
+          exposed: false
+          is_grouped: false
+        forum_category:
+          id: forum_category
+          table: search_api_index_aculta_forum
+          field: forum_search_category
+          relationship: none
+          group_type: group
+          admin_label: 'Categoria pública do Fórum'
+          plugin_id: search_api_numeric
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: forum_category_op
+            label: Categoria
+            description: 'Filtre os resultados por categoria pública do Growroom420.'
+            use_operator: false
+            operator: forum_category_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: categoria
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: Categoria
+            description: ''
+            identifier: categoria
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      style:
+        type: default
+      row:
+        type: search_api
+        options:
+          view_modes:
+            'entity:node':
+              ':default': teaser
+            'entity:aculta_forum_post':
+              ':default': forum_search_result
+      query:
+        type: search_api_query
+        options: {  }
+      relationships: {  }
+      header:
+        result:
+          id: result
+          table: views
+          field: result
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: result
+          empty: false
+          content: 'Exibindo resultados @start–@end de @total'
+      footer: {  }
+      display_extenders: {  }
+    cache_metadata:
+      max-age: 0
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+      tags: {  }
+      cacheable: false
+  page_search:
+    id: page_search
+    display_title: Página
+    display_plugin: page
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: pesquisar
+    cache_metadata:
+      max-age: 0
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+      tags: {  }
+      cacheable: false

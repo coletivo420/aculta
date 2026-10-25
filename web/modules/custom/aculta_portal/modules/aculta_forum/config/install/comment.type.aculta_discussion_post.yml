@@ -1,0 +1,11 @@
+uuid: ff2f9759-5632-4815-a4d2-788895045882
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - aculta_forum
+id: aculta_discussion_post
+label: 'Resposta de discussão ACULTA'
+target_entity_type_id: node
+description: 'Resposta associada ao contexto da entidade Drupal hospedeira.'

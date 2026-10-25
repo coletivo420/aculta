@@ -1,0 +1,22 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+template: aculta_msg_friendship
+label: 'Aviso de amizade ACULTA'
+description: 'Aviso mínimo de pedido ou aceite de amizade, sem dados pessoais de terceiros.'
+text:
+  - value: 'Atualização de amizade na ACULTA'
+    format: plain_text
+  - value: 'Você recebeu uma atualização de amizade. Acesse sua conta para conferir: @account_url'
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {}

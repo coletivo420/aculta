@@ -54,8 +54,6 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | --- | --- | --- | --- | --- |
 | `google_oauth_client_id` | `GOOGLE_OAUTH_CLIENT_ID` | Produção e testes | Não, identificador público | plain |
 | `google_oauth_client_secret` | `GOOGLE_OAUTH_CLIENT_SECRET` | Produção e testes | Sim | plain |
-| `smtp2go_username` | `SMTP2GO_USERNAME` | Produção e testes | Sim, credencial | plain |
-| `smtp2go_password` | `SMTP2GO_PASSWORD` | Produção e testes | Sim | plain |
 | `mercadopago_production_public_key` | `MERCADOPAGO_PRODUCTION_PUBLIC_KEY` | Produção | Não, uso no frontend | plain |
 | `mercadopago_production_access_token` | `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` | Produção | Sim | plain |
 | `mercadopago_webhook_secret` | `MERCADOPAGO_WEBHOOK_SECRET` | Produção e testes (aplicação; obrigatória em produção) | Sim | plain |
@@ -64,11 +62,24 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `mercadopago_test_access_token` | `MERCADOPAGO_TEST_ACCESS_TOKEN` | Testes | Sim | plain |
 | `mercadopago_test_buyer_password` | `MERCADOPAGO_TEST_BUYER_PASSWORD` | Testes | Sim, senha do comprador de teste | plain |
 | `turnstile_test` | `TURNSTILE_TEST_KEYS_JSON` | Testes | Sim, contém secret | Base64 |
-| `aculta_id_cpf_fingerprint` | `ACULTA_ID_CPF_FINGERPRINT_KEY` | Produção e testes (provisionamento pendente em produção) | Sim, chave HMAC do índice CPF/CNPJ (mínimo de 32 bytes; ID legado mantido pelo `aculta_associado_id`) | plain |
+| `aculta_id_cpf_fingerprint` | `ACULTA_ID_CPF_FINGERPRINT_KEY` | Produção e testes (provisionamento pendente em produção) | Sim, chave HMAC do índice CPF/CNPJ (mínimo de 32 bytes; ID mantido pelo `aculta_id_cpf``) | plain |
 | `aculta_document_encryption_key` | `ACULTA_DOCUMENT_ENCRYPTION_KEY` | Produção e testes (provisionamento pendente em produção) | Sim, chave de cifra de documentos de associados/CPF/CNPJ (64 caracteres hexadecimais) | plain |
+| `smtp2go_username` | `SMTP2GO_USERNAME` | Produção e testes (obrigatória nos dois) | Sim | plain |
+| `smtp2go_password` | `SMTP2GO_PASSWORD` | Produção e testes (obrigatória nos dois) | Sim | plain |
+| `brevo_api_key` | `BREVO_API_KEY` | Produção e testes | Sim, chave da API do Brevo (envio e webhook) | plain |
+| `brevo_webhook_token` | `BREVO_WEBHOOK_TOKEN` | Produção e testes (obrigatória nos dois; produção pendente no deploy do RC) | Sim, token de portador do webhook do Brevo; um valor por ambiente | plain |
+| `ga4_property_id` | `GA4_PROPERTY_ID` | Produção e testes (opcional; sem ela, o GA4 fica desligado) | Não, identificador da propriedade | plain |
+| `ga4_service_account_json` | `GA4_SERVICE_ACCOUNT_JSON` | Produção e testes (opcional; sem ela, o GA4 fica desligado) | Sim, chave da conta de serviço | Base64 |
+| `gsc_site_url` | `GSC_SITE_URL` | Produção e testes (opcional; sem ela, o Search Console fica desligado) | Não, propriedade do Search Console (`sc-domain:` ou URL com prefixo) | plain |
+| `mailer_payload_key` | `MAILER_PAYLOAD_KEY` | Testes (produção pendente no deploy do RC) | Sim, chave de 32 bytes (base64) que cifra o conteúdo das mensagens com falha guardadas para reenvio | plain |
+| `imap_password` | `IMAP_PASSWORD` | Produção e testes | Sim, senha da caixa de monitoramento de retorno | plain |
+| `smtp_password` | `SMTP_PASSWORD` | Produção e testes | Sim, senha do envio SMTP do domínio | plain |
 
 Os ambientes vêm do contrato (`environments` em `config/secrets-contract.json`). Variáveis
 compartilhadas aparecem nas duas seções do painel. Mercado Pago: ver [MERCADOPAGO.md](../integrations/MERCADOPAGO.md).
+O allowlist do loader do Runtime também deve reconhecer cada variável do contrato,
+inclusive as credenciais opcionais; o gate `validate-secrets-contract.php`
+verifica essa correspondência.
 
 ## Regra ao incluir uma variável
 
@@ -249,7 +260,7 @@ tema ou hardcoding caminho Homelab/Hostinger no Portal.
 
 ## Credenciais do ambiente (painel, aculta_portal 0.2.0-dev.11)
 
-Página `/painel-administrativo/configuracoes/aculta/segredos` (permissão `administer aculta secrets`, restrita):
+Página `/painel-administrativo/aculta/segredos` (permissão `administer aculta secrets`, restrita):
 
 1. Mostra duas seções fixas: **Ambiente de Produção** e **Ambiente de Testes**. Cada uma lista as variáveis do
    contrato daquele ambiente (variáveis compartilhadas aparecem nas duas), a Key, se é obrigatória naquele ambiente

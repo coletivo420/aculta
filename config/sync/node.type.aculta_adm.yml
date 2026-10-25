@@ -1,0 +1,12 @@
+uuid: 9037d167-b93c-46f4-ae0c-fcb47bf7b489
+langcode: pt-br
+status: true
+dependencies: {  }
+name: 'ACULTA administração (HTML completo)'
+type: aculta_adm
+description: 'Conteúdo sem restrições de HTML. Uso restrito à administração.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true
+

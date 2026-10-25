@@ -1,0 +1,1111 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_messenger\Integration\Lms\Unit;
+
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Transaction;
+use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Site\Settings;
+use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\flag\FlagServiceInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
+use Drupal\aculta_mailer\Delivery\SendResult;
+use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
+use Drupal\aculta_messenger\Aviso\AvisosResumo;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
+use Drupal\user\UserDataInterface;
+use Drupal\user\UserInterface;
+use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+/**
+ * Verifies LMS digest providers participate in the shared Messenger delivery.
+ */
+#[CoversClass(AvisosResumo::class)]
+#[Group('aculta_messenger')]
+final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
+
+  /**
+   * Confirms successful delivery acknowledges LMS digest rows.
+   */
+  public function testSuccessfulDigestDeliveryAcknowledgesLmsRows(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->with($this->callback(static fn (MailMessage $message): bool => $message->langcode === 'pt-br'))
+      ->willReturn(SendResult::sent());
+    $summary = $this->createSummary($provider, $mailer, TRUE);
+
+    $this->assertSame(1, $summary->enviarResumos());
+    $this->assertSame([27], $provider->marked);
+    $this->assertSame([[501]], $provider->markedDeliveryIds, 'Only entries included in the delivered email are acknowledged.');
+    $this->assertSame([], $provider->discarded);
+  }
+
+  /**
+   * Duplicate provider deliveries are rendered and acknowledged once.
+   */
+  public function testDuplicateDeliveryIdsAreIncludedOnlyOnce(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $provider->additionalRows[] = [
+      'tipo' => 'aprendizagem',
+      'titulo' => 'Atividade no curso',
+      'quantidade' => 1,
+      'delivery_id' => 501,
+    ];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->with($this->callback(static fn (MailMessage $message): bool => substr_count($message->context['resumo'], 'Atividade no curso') === 1))
+      ->willReturn(SendResult::sent());
+    $summary = $this->createSummary($provider, $mailer, TRUE);
+
+    $this->assertSame(1, $summary->enviarResumos());
+    $this->assertSame([[501]], $provider->markedDeliveryIds);
+  }
+
+  /**
+   * Adapter registration order does not change a digest retry's content.
+   */
+  public function testDigestContentIsStableWhenProviderOrderChanges(): void {
+    $provider = static function (string $id, array $rows): AvisoDigestProviderIdentityInterface {
+      return new class($id, $rows) implements AvisoDigestProviderIdentityInterface {
+
+        public function __construct(
+          private readonly string $id,
+          private readonly array $rows,
+        ) {}
+
+        /** {@inheritdoc} */
+        public function digestProviderId(): string {
+          return $this->id;
+        }
+
+        /** {@inheritdoc} */
+        public function pendingRecipientIds(): array {
+          return [27];
+        }
+
+        /** {@inheritdoc} */
+        public function digestRowsFor(int $uid): array {
+          return $this->rows;
+        }
+
+        /** {@inheritdoc} */
+        public function markDigestSent(int $uid, array $deliveryIds): void {}
+
+        /** {@inheritdoc} */
+        public function discardDigest(int $uid): void {}
+
+      };
+    };
+    $deliveries = [];
+    foreach ([FALSE, TRUE] as $reverseRows) {
+      $lmsRows = [
+        ['tipo' => 'aprendizagem', 'titulo' => 'Atividade disponível', 'quantidade' => 1, 'delivery_id' => 501],
+        ['tipo' => 'aprendizagem', 'titulo' => 'Z atividade duplicada', 'quantidade' => 1, 'delivery_id' => 501],
+      ];
+      if ($reverseRows) {
+        $lmsRows = array_reverse($lmsRows);
+      }
+      $lms = $provider('lms', $lmsRows);
+      $wiki = $provider('wiki', [[
+        'tipo' => 'wiki',
+        'titulo' => 'Revisão publicada',
+        'quantidade' => 1,
+        'delivery_id' => 802,
+      ],
+      ]);
+      $providers = $reverseRows ? [$lms, $wiki] : [$wiki, $lms];
+      $mailer = $this->createMock(AcultaMailerInterface::class);
+      $mailer->expects($this->once())->method('deliver')->willReturnCallback(
+        static function (MailMessage $message) use (&$deliveries): SendResult {
+          $deliveries[] = [$message->correlationId, $message->context['resumo']];
+          return SendResult::sent();
+        },
+      );
+      $this->assertSame(1, $this->createSummary($providers, $mailer, TRUE)->enviarResumos());
+    }
+
+    $this->assertSame($deliveries[0], $deliveries[1], 'A service discovery reorder must preserve both digest body and idempotency correlation.');
+    $this->assertSame(
+      ['Atividade disponível', 'wiki em "Revisão publicada": 1'],
+      array_map('trim', explode("\n", $deliveries[0][1])),
+    );
+  }
+
+  /**
+   * Providers with colliding identities cannot acknowledge each other's rows.
+   */
+  public function testDuplicateProviderIdentityIsExcludedWithoutBlockingOthers(): void {
+    $firstDuplicate = new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501, 'Atividade LMS', 'shared');
+    $secondDuplicate = new TestLearningDigestProvider([27], TRUE, 'loja', 601, 'Pedido Loja', 'shared');
+    $independent = new TestLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão publicada', 'wiki');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->with($this->callback(static fn(MailMessage $message): bool => $message->context['resumo'] === 'wiki em "Revisão publicada": 1'))
+      ->willReturn(SendResult::sent());
+    $summary = $this->createSummary([$firstDuplicate, $secondDuplicate, $independent], $mailer, TRUE);
+
+    $this->assertSame(1, $summary->enviarResumos());
+    $this->assertSame([], $firstDuplicate->markedDeliveryIds);
+    $this->assertSame([], $secondDuplicate->markedDeliveryIds);
+    $this->assertSame([[802]], $independent->markedDeliveryIds);
+  }
+
+  /**
+   * A failed email must leave LMS digest rows available for a later run.
+   */
+  public function testFailedDigestDeliveryKeepsLmsRowsPending(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->willReturn(SendResult::failed(DeliveryError::Temporary, 450));
+    $summary = $this->createSummary($provider, $mailer, TRUE);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $provider->marked);
+    $this->assertSame([], $provider->discarded);
+  }
+
+  /**
+   * A thrown transport exception keeps digest rows retryable.
+   */
+  public function testTransportExceptionKeepsLmsRowsPending(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $attempt = 0;
+    $mailer->expects($this->exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function () use (&$attempt): SendResult {
+        if (++$attempt === 1) {
+          throw new \RuntimeException('Synthetic transport failure.');
+        }
+        return SendResult::sent();
+      });
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->exactly(3))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturn(TRUE);
+    $lock->expects($this->exactly(2))->method('release')->with('aculta_messenger.avisos_resumo.27');
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturnOnConsecutiveCalls(1_800_000_000, 1_800_000_181, 1_800_000_181);
+    $summary = $this->createSummary($provider, $mailer, TRUE, $lock, NULL, NULL, $time);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame(1, $summary->enviarResumos(), 'The same pending rows are retried after the failed transport attempt.');
+    $this->assertSame([27], $provider->marked);
+    $this->assertSame([[501]], $provider->markedDeliveryIds);
+    $this->assertSame([], $provider->discarded);
+  }
+
+  /**
+   * Combines adapters and retries without early acknowledgements.
+   */
+  public function testCombinedAdaptersRetryWithoutAcknowledgingAnyRowsEarly(): void {
+    $lmsProvider = new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501, 'Atividade disponível');
+    $wikiProvider = new TestLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão publicada', 'wiki');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $capturedRows = [];
+    $correlations = [];
+    $mailer->expects($this->exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$capturedRows, &$correlations): SendResult {
+        $capturedRows[] = $message->context['resumo'];
+        $correlations[] = $message->correlationId;
+        return count($capturedRows) === 1
+          ? SendResult::failed(DeliveryError::Temporary, 450)
+          : SendResult::sent();
+      });
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturnOnConsecutiveCalls(1_800_000_000, 1_800_000_181, 1_800_000_181);
+    $summary = $this->createSummary([$lmsProvider, $wikiProvider], $mailer, TRUE, NULL, NULL, NULL, $time);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $lmsProvider->marked);
+    $this->assertSame([], $wikiProvider->marked);
+    $this->assertSame(1, $summary->enviarResumos());
+    $rows = array_map('trim', explode("\n", $capturedRows[1]));
+    $this->assertSame(['Atividade disponível', 'wiki em "Revisão publicada": 1'], $rows);
+    $this->assertSame([], $lmsProvider->discarded);
+    $this->assertSame([], $wikiProvider->discarded);
+    $this->assertSame([[501]], $lmsProvider->markedDeliveryIds);
+    $this->assertSame([[802]], $wikiProvider->markedDeliveryIds);
+    $this->assertSame($correlations[0], $correlations[1], 'The same pending batch reuses its idempotency correlation.');
+  }
+
+  /**
+   * Reuses correlation after accepted mail and failed provider acknowledgement.
+   */
+  public function testAcceptedDigestAcknowledgementRetryKeepsCorrelation(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $provider->failAcknowledgeAttempts = 1;
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return SendResult::sent();
+      });
+    $mailer->expects($this->never())->method('wasAcceptedCorrelation');
+    $failedTransaction = new TestLearningDigestTransaction();
+    $successfulTransaction = new TestLearningDigestTransaction();
+    $database = $this->createMock(Connection::class);
+    $database->expects($this->exactly(2))->method('startTransaction')->willReturnOnConsecutiveCalls($failedTransaction, $successfulTransaction);
+    $summary = $this->createSummary($provider, $mailer, TRUE, NULL, $database);
+
+    $this->assertSame(0, $summary->enviarResumos(), 'The accepted e-mail is not acknowledged when provider persistence fails.');
+    $provider->additionalRows[] = [
+      'tipo' => 'aprendizagem',
+      'titulo' => 'Aviso posterior',
+      'quantidade' => 1,
+      'delivery_id' => 502,
+    ];
+    $this->assertSame(0, $summary->enviarResumos(), 'The accepted batch is reconciled without another delivery or new-send count.');
+    $this->assertTrue($failedTransaction->rolledBack);
+    $this->assertFalse($failedTransaction->committed);
+    $this->assertTrue($successfulTransaction->committed);
+    $this->assertFalse($successfulTransaction->rolledBack);
+    $this->assertCount(1, $correlations, 'A Mailer-accepted batch is reconciled without a second delivery attempt.');
+    $this->assertSame([27], $provider->marked);
+    $this->assertSame([[501]], $provider->markedDeliveryIds, 'A later digest row is not acknowledged as part of the already accepted batch.');
+  }
+
+  /**
+   * Recovers acceptance when persisting its marker fails after transport.
+   */
+  public function testAcceptedDigestRecoveryAfterAcceptanceMarkerWriteFailure(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $snapshot = NULL;
+    $failAcceptedMarker = TRUE;
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use (&$snapshot): mixed {
+      if ($key === 'avisos_resumo_em_andamento') {
+        return $uid === NULL
+          ? ($snapshot === NULL ? [] : [27 => $snapshot])
+          : $snapshot;
+      }
+      return match ($key) {
+        'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_DIGEST,
+        'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+        'email_confirmed' => TRUE,
+        'avisos_resumo_ultimo' => 0,
+        default => NULL,
+      };
+    });
+    $userData->method('set')->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use (&$snapshot, &$failAcceptedMarker): void {
+      if ($key === 'avisos_resumo_em_andamento') {
+        if (isset($value['accepted_at']) && $failAcceptedMarker) {
+          $failAcceptedMarker = FALSE;
+          throw new \RuntimeException('Simulated persistence interruption after transport acceptance.');
+        }
+        $snapshot = $value;
+      }
+    });
+    $userData->method('delete')->willReturnCallback(static function (string $module, int $uid, string $key) use (&$snapshot): void {
+      if ($key === 'avisos_resumo_em_andamento') {
+        $snapshot = NULL;
+      }
+    });
+
+    $correlationId = NULL;
+    $recoveredCorrelationId = NULL;
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlationId): SendResult {
+        $correlationId = $message->correlationId;
+        return SendResult::sent();
+      });
+    $mailer->expects(self::once())
+      ->method('wasAcceptedCorrelation')
+      ->with(self::callback(static fn(string $value): bool => $value !== ''), AvisosResumo::CHAVE_MAIL, 'student@example.test')
+      ->willReturnCallback(static function (string $value) use (&$recoveredCorrelationId): bool {
+        $recoveredCorrelationId = $value;
+        return TRUE;
+      });
+    $transaction = new TestLearningDigestTransaction();
+    $database = $this->createMock(Connection::class);
+    $database->expects(self::once())->method('startTransaction')->willReturn($transaction);
+    $summary = $this->createSummary($provider, $mailer, TRUE, NULL, $database, $userData);
+
+    self::assertSame(0, $summary->enviarResumos(), 'A crash-equivalent marker failure does not count a completed digest run.');
+    self::assertNotNull($snapshot, 'The pre-transport manifest remains available for recovery.');
+    self::assertArrayNotHasKey('accepted_at', $snapshot, 'The simulated failure occurs before acceptance evidence is written.');
+    self::assertSame('lms', $snapshot['providers'][0]['provider_id'] ?? NULL);
+    self::assertSame([501], $snapshot['providers'][0]['delivery_ids'] ?? NULL);
+    self::assertSame(0, $summary->enviarResumos(), 'Retry consults Mailer acceptance and reconciles without sending again.');
+    self::assertNotEmpty($correlationId);
+    self::assertSame($correlationId, $recoveredCorrelationId);
+    self::assertSame([[501]], $provider->markedDeliveryIds);
+    self::assertNull($snapshot, 'Successful recovery removes the exact in-progress snapshot.');
+    self::assertTrue($transaction->committed);
+    self::assertFalse($transaction->rolledBack);
+  }
+
+  /**
+   * An accepted batch waits for its optional provider to return before ack.
+   */
+  public function testAcceptedDigestWithUnavailableProviderKeepsRecoverySnapshot(): void {
+    $snapshot = [
+      'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
+      'created' => 1_800_000_000,
+      'provider_lookup_failed' => FALSE,
+      'forum' => [],
+      'providers' => [
+        [
+          'provider_id' => 'wiki',
+          'delivery_ids' => [802],
+        ],
+      ],
+    ];
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($snapshot): mixed {
+      if ($uid === NULL && $key === 'avisos_resumo_em_andamento') {
+        return [27 => $snapshot];
+      }
+      return match ($key) {
+        'avisos_resumo_em_andamento' => $snapshot,
+        'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_DIGEST,
+        'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+        'email_confirmed' => TRUE,
+        default => NULL,
+      };
+    });
+    $userData->expects($this->never())->method('delete');
+    $userData->expects($this->once())
+      ->method('set')
+      ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento', self::callback(static fn(array $value): bool => is_int($value['accepted_at'] ?? NULL)));
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $mailer->expects($this->once())
+      ->method('wasAcceptedCorrelation')
+      ->with($snapshot['correlation_id'], AvisosResumo::CHAVE_MAIL, 'student@example.test')
+      ->willReturn(TRUE);
+    // A different active source can still trigger recovery for this account.
+    $activeProvider = new TestLearningDigestProvider([27]);
+    $summary = $this->createSummary($activeProvider, $mailer, TRUE, NULL, NULL, $userData);
+
+    $this->assertSame(0, $summary->enviarResumos(), 'A previously accepted email is reconciled without another transport attempt or a new-send count.');
+    $this->assertSame([], $activeProvider->marked, 'No unrelated provider rows are acknowledged as part of the unavailable adapter batch.');
+  }
+
+  /**
+   * A persisted accepted marker survives expiration of the Mailer log.
+   */
+  public function testAcceptedDigestRecoverySurvivesMailerLogRetention(): void {
+    $snapshot = [
+      'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
+      'created' => 1_800_000_000,
+      'accepted_at' => 1_800_000_001,
+      'provider_lookup_failed' => FALSE,
+      'forum' => [],
+      'providers' => [[
+        'provider_id' => 'wiki',
+        'delivery_ids' => [802],
+      ],
+      ],
+    ];
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($snapshot): mixed {
+      if ($uid === NULL && $key === 'avisos_resumo_em_andamento') {
+        return [27 => $snapshot];
+      }
+      return match ($key) {
+        'avisos_resumo_em_andamento' => $snapshot,
+        'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_DIGEST,
+        'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+        'email_confirmed' => TRUE,
+        default => NULL,
+      };
+    });
+    $userData->expects(self::never())->method('delete');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('wasAcceptedCorrelation');
+    $mailer->expects(self::never())->method('deliver');
+    $activeProvider = new TestLearningDigestProvider([27]);
+    $summary = $this->createSummary($activeProvider, $mailer, TRUE, NULL, NULL, $userData);
+
+    self::assertSame(0, $summary->enviarResumos(), 'The persisted acceptance marker prevents a duplicate send after the Mailer log expires.');
+    self::assertSame([], $activeProvider->markedDeliveryIds, 'Rows from the unavailable adapter remain unacknowledged.');
+  }
+
+  /**
+   * A current recipient lookup failure must suppress cooldown on recovery.
+   */
+  public function testAcceptedDigestRecoveryKeepsCooldownOpenAfterRecipientLookupFailure(): void {
+    $snapshot = [
+      'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
+      'created' => 1_800_000_000,
+      'provider_lookup_failed' => FALSE,
+      'forum' => [],
+      'providers' => [],
+    ];
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($snapshot): mixed {
+      if ($uid === NULL && $key === 'avisos_resumo_em_andamento') {
+        return [27 => $snapshot];
+      }
+      return $key === 'avisos_resumo_em_andamento' ? $snapshot : NULL;
+    });
+    $userData->expects($this->once())
+      ->method('set')
+      ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento', self::callback(static fn(array $value): bool => $value['accepted_at'] === 1_800_000_000));
+    $userData->expects($this->once())
+      ->method('delete')
+      ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento');
+
+    $provider = $this->createMock(AvisoDigestProviderIdentityInterface::class);
+    $provider->method('digestProviderId')->willReturn('unavailable');
+    $provider->expects($this->once())
+      ->method('pendingRecipientIds')
+      ->willThrowException(new \RuntimeException('Recipient lookup unavailable'));
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $mailer->expects($this->once())
+      ->method('wasAcceptedCorrelation')
+      ->with($snapshot['correlation_id'], AvisosResumo::CHAVE_MAIL, 'student@example.test')
+      ->willReturn(TRUE);
+    $transaction = new TestLearningDigestTransaction();
+    $database = $this->createMock(Connection::class);
+    $database->expects($this->once())->method('startTransaction')->willReturn($transaction);
+    $summary = $this->createSummary([$provider], $mailer, TRUE, NULL, $database, $userData);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertTrue($transaction->committed);
+    $this->assertFalse($transaction->rolledBack);
+  }
+
+  /**
+   * Legacy snapshots stay pending if a class maps to multiple adapters.
+   */
+  public function testLegacySnapshotDoesNotGuessBetweenProvidersOfTheSameClass(): void {
+    $snapshot = [
+      'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
+      'created' => 1_800_000_000,
+      'provider_lookup_failed' => FALSE,
+      'forum' => [],
+      'providers' => [
+        [
+          'class' => TestLearningDigestProvider::class,
+          'delivery_ids' => [802],
+        ],
+      ],
+    ];
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($snapshot): mixed {
+      if ($uid === NULL && $key === 'avisos_resumo_em_andamento') {
+        return [27 => $snapshot];
+      }
+      return match ($key) {
+        'avisos_resumo_em_andamento' => $snapshot,
+        'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_DIGEST,
+        'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+        'email_confirmed' => TRUE,
+        default => NULL,
+      };
+    });
+    $userData->expects($this->never())->method('delete');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $mailer->expects($this->once())
+      ->method('wasAcceptedCorrelation')
+      ->with($snapshot['correlation_id'], AvisosResumo::CHAVE_MAIL, 'student@example.test')
+      ->willReturn(TRUE);
+    $first = new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501, 'Atividade LMS', 'lms');
+    $second = new TestLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão Wiki', 'wiki');
+    $summary = $this->createSummary([$first, $second], $mailer, TRUE, NULL, NULL, $userData);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $first->markedDeliveryIds);
+    $this->assertSame([], $second->markedDeliveryIds);
+  }
+
+  /**
+   * An accepted snapshot with a duplicate stable ID remains unacknowledged.
+   */
+  public function testAcceptedSnapshotWaitsForDuplicateIdentityToBeResolved(): void {
+    $snapshot = [
+      'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
+      'created' => 1_800_000_000,
+      'provider_lookup_failed' => FALSE,
+      'forum' => [],
+      'providers' => [[
+        'provider_id' => 'shared',
+        'delivery_ids' => [802],
+      ],
+      ],
+    ];
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($snapshot): mixed {
+      if ($uid === NULL && $key === 'avisos_resumo_em_andamento') {
+        return [27 => $snapshot];
+      }
+      return match ($key) {
+        'avisos_resumo_em_andamento' => $snapshot,
+        'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_DIGEST,
+        'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_DIGEST,
+        'email_confirmed' => TRUE,
+        default => NULL,
+      };
+    });
+    $userData->expects($this->never())->method('delete');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $mailer->expects($this->once())
+      ->method('wasAcceptedCorrelation')
+      ->with($snapshot['correlation_id'], AvisosResumo::CHAVE_MAIL, 'student@example.test')
+      ->willReturn(TRUE);
+    $first = new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501, 'Atividade LMS', 'shared');
+    $second = new TestLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão Wiki', 'shared');
+    $summary = $this->createSummary([$first, $second], $mailer, TRUE, NULL, NULL, $userData);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $first->markedDeliveryIds);
+    $this->assertSame([], $second->markedDeliveryIds);
+  }
+
+  /**
+   * A different batch receives a different correlation.
+   */
+  public function testDistinctDigestBatchGetsDistinctCorrelation(): void {
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return SendResult::sent();
+      });
+    $first = $this->createSummary(new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501), $mailer, TRUE);
+    $second = $this->createSummary(new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 502), $mailer, TRUE);
+
+    $this->assertSame(1, $first->enviarResumos());
+    $this->assertSame(1, $second->enviarResumos());
+    $this->assertNotSame($correlations[0], $correlations[1], 'A new delivery ID must not be suppressed as an already accepted digest.');
+  }
+
+  /**
+   * Provider registration order does not change the same batch identity.
+   */
+  public function testProviderOrderDoesNotChangeDigestCorrelation(): void {
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return SendResult::sent();
+      });
+    $lmsProvider = new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501);
+    $wikiProvider = new TestWikiLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão da Wiki');
+
+    self::assertSame(1, $this->createSummary([$lmsProvider, $wikiProvider], $mailer, TRUE)->enviarResumos());
+    self::assertSame(1, $this->createSummary([$wikiProvider, $lmsProvider], $mailer, TRUE)->enviarResumos());
+
+    self::assertSame($correlations[0], $correlations[1], 'The sorted delivery manifest keeps correlation stable when optional adapters are registered in another order.');
+  }
+
+  /**
+   * Provider refactors retain the correlation of an otherwise identical batch.
+   */
+  public function testDigestCorrelationUsesStableProviderIdInsteadOfPhpClass(): void {
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return SendResult::sent();
+      });
+    $beforeRefactor = $this->createSummary(new TestLearningDigestProvider([27]), $mailer, TRUE);
+    $afterRefactor = $this->createSummary(new RefactoredTestLearningDigestProvider([27]), $mailer, TRUE);
+
+    $this->assertSame(1, $beforeRefactor->enviarResumos());
+    $this->assertSame(1, $afterRefactor->enviarResumos());
+    $this->assertSame($correlations[0], $correlations[1], 'A PHP class rename does not create a new digest identity.');
+  }
+
+  /**
+   * Existing providers keep working without the optional identity contract.
+   */
+  public function testLegacyDigestProviderWithoutIdentityStillDelivers(): void {
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())->method('deliver')->willReturn(SendResult::sent());
+    $summary = $this->createSummary(new LegacyTestLearningDigestProvider([27]), $mailer, TRUE);
+
+    $this->assertSame(1, $summary->enviarResumos());
+  }
+
+  /**
+   * A competing full digest run cannot enter while delivery is in progress.
+   */
+  public function testConcurrentDigestRunDuringTransportDoesNotDuplicateDelivery(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $acquireAttempts = 0;
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->exactly(3))
+      ->method('acquire')
+      ->willReturnCallback(static function () use (&$acquireAttempts): bool {
+        return match (++$acquireAttempts) {
+          1 => TRUE,
+          2 => FALSE,
+          3 => TRUE,
+        };
+      });
+    $lock->expects($this->once())
+      ->method('release')
+      ->with('aculta_messenger.avisos_resumo.27');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $competingSummary = $this->createSummary($provider, $mailer, TRUE, $lock);
+    $competingResult = NULL;
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->willReturnCallback(static function () use ($competingSummary, &$competingResult): SendResult {
+        $competingResult = $competingSummary->enviarResumos();
+        return SendResult::sent();
+      });
+    $summary = $this->createSummary($provider, $mailer, TRUE, $lock);
+
+    $this->assertSame(1, $summary->enviarResumos());
+    $this->assertSame(0, $competingResult, 'A competing run skips the locked recipient while the first transport is active.');
+    $this->assertSame([[501]], $provider->markedDeliveryIds);
+  }
+
+  /**
+   * Does not acknowledge an accepted digest after losing its renewed lock.
+   */
+  public function testLostDigestLockDefersAcknowledgement(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->exactly(2))
+      ->method('acquire')
+      ->with('aculta_messenger.avisos_resumo.27', 180.0)
+      ->willReturnOnConsecutiveCalls(TRUE, FALSE);
+    $lock->expects($this->once())
+      ->method('release')
+      ->with('aculta_messenger.avisos_resumo.27');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->willReturn(SendResult::sent());
+    $summary = $this->createSummary($provider, $mailer, TRUE, $lock);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $provider->markedDeliveryIds, 'A stale lock owner cannot acknowledge records handled by another digest worker.');
+  }
+
+  /**
+   * A definitive failure discards only the e-mail copy of a digest entry.
+   */
+  public function testPermanentMailerFailureDiscardsProviderEmailRows(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->willReturn(SendResult::failed(DeliveryError::Permanent, 550));
+    $summary = $this->createSummary($provider, $mailer, TRUE);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $provider->marked);
+    $this->assertSame([27], $provider->discarded);
+  }
+
+  /**
+   * A provider row without a stable delivery ID is not sent repeatedly.
+   */
+  public function testRowsWithoutDeliveryIdsAreNotSent(): void {
+    $provider = new TestLearningDigestProvider([27], FALSE);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $summary = $this->createSummary($provider, $mailer, TRUE);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $provider->marked);
+    $this->assertSame([27], $provider->discarded, 'An invalid provider row is discarded instead of being sent repeatedly.');
+  }
+
+  /**
+   * A row without its required category cannot bypass email preferences.
+   */
+  public function testRowsWithoutCategoryAreNotSent(): void {
+    $provider = new MalformedTestLearningDigestProvider([27]);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $summary = $this->createSummary($provider, $mailer, TRUE);
+
+    self::assertSame(0, $summary->enviarResumos());
+    self::assertSame([], $provider->markedDeliveryIds);
+    self::assertSame([27], $provider->discarded, 'Malformed rows are discarded without sending email outside category policy.');
+  }
+
+  /**
+   * Opt-out discards email rows without attempting to send a digest.
+   */
+  public function testOptOutDiscardsLmsRowsWithoutSending(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $summary = $this->createSummary($provider, $mailer, FALSE);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $provider->marked);
+    $this->assertSame([27], $provider->discarded);
+  }
+
+  /**
+   * An explicit category digest works without the legacy global opt-in.
+   */
+  public function testIndependentWeeklyDigestIsNotDisabledByDailyOptOut(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())->method('deliver')->willReturn(SendResult::sent());
+    $summary = $this->createSummary($provider, $mailer, FALSE, categoryMode: AvisoPreferencias::EMAIL_DIGEST);
+
+    self::assertSame(1, $summary->enviarResumos());
+    self::assertSame([[501]], $provider->markedDeliveryIds);
+    self::assertSame([], $provider->discarded);
+  }
+
+  /**
+   * Builds the real Messenger digest service with an LMS provider.
+   */
+  private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL, ?Connection $database = NULL, ?UserDataInterface $userDataOverride = NULL, ?TimeInterface $time = NULL, ?string $categoryMode = NULL): AvisosResumo {
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('sort')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
+    $query->method('execute')->willReturn([]);
+    $noticeStorage = $this->createMock(EntityStorageInterface::class);
+    $noticeStorage->method('getQuery')->willReturn($query);
+    $noticeStorage->method('loadMultiple')->willReturn([]);
+    $account = $this->createMock(UserInterface::class);
+    $account->method('isActive')->willReturn(TRUE);
+    $account->method('id')->willReturn('27');
+    $account->method('getEmail')->willReturn('student@example.test');
+    $account->method('getPreferredLangcode')->willReturn('pt-br');
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('loadUnchanged')->with(27)->willReturn($account);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->willReturnCallback(static fn (string $type): EntityStorageInterface => $type === 'user' ? $userStorage : $noticeStorage);
+
+    $data = [];
+    $userData = $userDataOverride ?? $this->createMock(UserDataInterface::class);
+    if ($userDataOverride === NULL) {
+      $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($optIn, $categoryMode, &$data): mixed {
+        if ($uid === NULL) {
+          return [];
+        }
+        if (array_key_exists($key, $data[$module][$uid] ?? [])) {
+          return $data[$module][$uid][$key];
+        }
+        return match ($key) {
+          'avisos_email_mode_aprendizagem' => $categoryMode ?? ($optIn ? AvisoPreferencias::EMAIL_DIGEST : AvisoPreferencias::EMAIL_OFF),
+          'avisos_email_mode_wiki' => $optIn ? AvisoPreferencias::EMAIL_DIGEST : AvisoPreferencias::EMAIL_OFF,
+          'email_confirmed' => TRUE,
+          'avisos_resumo_ultimo' => 0,
+          default => NULL,
+        };
+      });
+      $userData->method('set')->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use (&$data): void {
+        $data[$module][$uid][$key] = $value;
+      });
+      $userData->method('delete')->willReturnCallback(static function (string $module, int $uid, string $key) use (&$data): void {
+        unset($data[$module][$uid][$key]);
+      });
+    }
+    $emailPolicy = new EmailConfirmationPolicy(
+      $userData,
+      $entityTypeManager,
+      $this->createMock(ModuleHandlerInterface::class),
+    );
+
+    return new AvisosResumo(
+      $entityTypeManager,
+      new AvisoPreferencias($userData),
+      $mailer,
+      $emailPolicy,
+      $userData,
+      $time ?? $this->createConfiguredMock(TimeInterface::class, ['getRequestTime' => 1_800_000_000]),
+      new AvisoService(
+        $entityTypeManager,
+        $this->createMock(FlagServiceInterface::class),
+        new ForumNoticeAccessPolicy(
+          $entityTypeManager,
+          new DomainPurposeManager(
+            $entityTypeManager,
+            $this->createMock(DomainNegotiatorInterface::class),
+            $this->createMock(ConfigFactoryInterface::class),
+            new RequestStack(),
+          ),
+        ),
+      ),
+      new Settings(['hash_salt' => 'unit-test-hash-salt']),
+      $database ?? $this->createDatabaseConnection(),
+      $lock ?? $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
+      is_array($provider) ? $provider : [$provider],
+    );
+  }
+
+  /**
+   * Creates a connection for tests without rollback assertions.
+   */
+  private function createDatabaseConnection(): Connection {
+    $database = $this->createMock(Connection::class);
+    $database->method('startTransaction')->willReturn(new TestLearningDigestTransaction());
+    return $database;
+  }
+
+}
+
+/**
+ * Minimal digest provider standing in for the LMS Message-backed provider.
+ */
+class TestLearningDigestProvider implements AvisoDigestProviderIdentityInterface {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return $this->providerId;
+  }
+
+  /**
+   * Number of acknowledgement attempts to fail before recording state.
+   */
+  public int $failAcknowledgeAttempts = 0;
+
+  /**
+   * Digest rows that arrive after the currently accepted batch was assembled.
+   *
+   * @var array<array{tipo: string, titulo: string, quantidade: int, delivery_id: int}>
+   */
+  public array $additionalRows = [];
+
+  /**
+   * Recipients whose entries were acknowledged after successful delivery.
+   *
+   * @var int[]
+   */
+  public array $marked = [];
+
+  /**
+   * Message IDs acknowledged after successful delivery.
+   *
+   * @var int[][]
+   */
+  public array $markedDeliveryIds = [];
+
+  /**
+   * Recipients whose entries were discarded after opting out.
+   *
+   * @var int[]
+   */
+  public array $discarded = [];
+
+  /**
+   * Constructs provider with pending recipients.
+   *
+   * @param int[] $recipients
+   *   Accounts with pending digest rows.
+   * @param bool $includeDeliveryId
+   *   Whether to return the required stable delivery ID.
+   * @param string $type
+   *   Notice category for this provider.
+   * @param int $deliveryId
+   *   Stable ID for the returned digest row.
+   * @param string $title
+   *   Plain text summary for the returned row.
+   * @param string $providerId
+   *   Stable source identity used in persisted recovery snapshots.
+   */
+  public function __construct(
+    private readonly array $recipients,
+    private readonly bool $includeDeliveryId = TRUE,
+    private readonly string $type = 'aprendizagem',
+    private readonly int $deliveryId = 501,
+    private readonly string $title = 'Atividade no curso',
+    private readonly string $providerId = 'lms',
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function pendingRecipientIds(): array {
+    return $this->recipients;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestRowsFor(int $uid): array {
+    $row = ['tipo' => $this->type, 'titulo' => $this->title, 'quantidade' => 1];
+    if ($this->includeDeliveryId) {
+      $row['delivery_id'] = $this->deliveryId;
+    }
+    return [$row, ...$this->additionalRows];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function markDigestSent(int $uid, array $deliveryIds): void {
+    if ($this->failAcknowledgeAttempts > 0) {
+      $this->failAcknowledgeAttempts--;
+      throw new \RuntimeException('Synthetic provider acknowledgement failure.');
+    }
+    $this->marked[] = $uid;
+    $this->markedDeliveryIds[] = $deliveryIds;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigest(int $uid): void {
+    $this->discarded[] = $uid;
+  }
+
+}
+
+/**
+ * Simulates a class refactor while preserving the LMS digest provider identity.
+ */
+final class RefactoredTestLearningDigestProvider extends TestLearningDigestProvider {}
+
+/**
+ * Wiki test provider with an identity distinct from the LMS provider.
+ */
+final class TestWikiLearningDigestProvider extends TestLearningDigestProvider {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return 'wiki';
+  }
+
+}
+
+/**
+ * Simulates a provider violating the required category field contract.
+ */
+final class MalformedTestLearningDigestProvider extends TestLearningDigestProvider {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestRowsFor(int $uid): array {
+    return [[
+      'titulo' => 'Aviso sem categoria',
+      'quantidade' => 1,
+      'delivery_id' => 901,
+    ],
+    ];
+  }
+
+}
+
+/**
+ * Existing third-party style provider that has not adopted stable identities.
+ */
+final class LegacyTestLearningDigestProvider implements AvisoDigestProviderInterface {
+
+  /**
+   * Provider used to delegate the existing digest contract methods.
+   */
+  private readonly TestLearningDigestProvider $provider;
+
+  public function __construct(array $recipients) {
+    $this->provider = new TestLearningDigestProvider($recipients);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function pendingRecipientIds(): array {
+    return $this->provider->pendingRecipientIds();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestRowsFor(int $uid): array {
+    return $this->provider->digestRowsFor($uid);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function markDigestSent(int $uid, array $deliveryIds): void {
+    $this->provider->markDigestSent($uid, $deliveryIds);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigest(int $uid): void {
+    $this->provider->discardDigest($uid);
+  }
+
+}
+
+/**
+ * Transaction double that records explicit commit and rollback calls.
+ */
+final class TestLearningDigestTransaction extends Transaction {
+
+  /**
+   * Whether the transaction committed.
+   */
+  public bool $committed = FALSE;
+
+  /**
+   * Whether the transaction rolled back.
+   */
+  public bool $rolledBack = FALSE;
+
+  /**
+   * Creates the transaction double without opening a database transaction.
+   */
+  public function __construct() {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function commitOrRelease(): void {
+    $this->committed = TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function rollBack(): void {
+    $this->rolledBack = TRUE;
+  }
+
+  /**
+   * No database resources are held by this test double.
+   */
+  public function __destruct() {}
+
+}

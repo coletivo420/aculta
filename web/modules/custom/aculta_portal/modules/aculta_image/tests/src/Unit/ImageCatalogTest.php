@@ -37,4 +37,14 @@ class ImageCatalogTest extends UnitTestCase {
     $this->assertArrayNotHasKey('FileImageDimensions', $validadores);
   }
 
+  /** Política contextual pode ampliar tamanho, mas não as extensões de imagem. */
+  public function testPoliticaContextualMantemCatalogoCentral(): void {
+    $validadores = (new UploadPolicy())->validators(20 * 1024 * 1024, 'png webp');
+    $this->assertSame('png webp', $validadores['FileExtension']['extensions']);
+    $this->assertSame(20 * 1024 * 1024, $validadores['FileSizeLimit']['fileLimit']);
+
+    $this->expectException(\InvalidArgumentException::class);
+    (new UploadPolicy())->validators(20 * 1024 * 1024, 'png svg');
+  }
+
 }

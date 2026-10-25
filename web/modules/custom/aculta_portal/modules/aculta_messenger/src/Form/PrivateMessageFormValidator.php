@@ -5,22 +5,39 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Form;
 
 use Drupal\Core\Flood\FloodInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\UserDataInterface;
+use Drupal\user\UserInterface;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
+use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 
-/** Applies block and send-frequency rules to the native Private Message form. */
+/**
+ * Applies block and send-frequency rules to the native Private Message form. */
 final class PrivateMessageFormValidator {
 
   private const EVENT = 'aculta_messenger.private_message_send';
 
 
   private const WINDOW = 3600;
+
+  private const RATE_LIMIT_LOCK_LEASE_SECONDS = 180.0;
+
+  /**
+   * Lock held from flood validation until the native submit persists the send.
+   */
+  private ?string $rateLimitLockName = NULL;
+
+  /**
+   * Thread lock held until the submitted message is persisted.
+   */
+  private ?int $conversationLockThreadId = NULL;
 
   public function __construct(
     private readonly FloodInterface $flood,
@@ -29,10 +46,14 @@ final class PrivateMessageFormValidator {
     private readonly PrivateMessageBanManagerInterface $banManager,
     private readonly FriendshipManagerInterface $friendshipManager,
     private readonly UserDataInterface $userData,
+    private readonly LockBackendInterface $lock,
     private readonly ConversationPolicy $policy,
+    private readonly ConversationWriteLock $conversationWriteLock,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  /** Rejects recipients who have blocked the current sender. */
+  /**
+   * Rejects recipients who have blocked the current sender. */
   public function validateBlockedRecipients(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()) {
       return;
@@ -45,9 +66,10 @@ final class PrivateMessageFormValidator {
 
     foreach ($thread->getMembersId() as $memberId) {
       $memberId = (int) $memberId;
-      // A block by the sender stops the sending. The conversation stays listed; "Opções" unblocks.
+      // A sender block prevents sending; the conversation remains listed so
+      // the member can unblock through its options.
       if ($memberId !== (int) $this->currentUser->id() && $this->banManager->isBanned($memberId)) {
-        $formState->setErrorByName('members', $this->translation->translate('Você bloqueou este membro. Desbloqueie-o nas opções da conversa para enviar mensagens.'));
+        $formState->setErrorByName('members', $this->translation->translate('Você bloqueou este membro. Desbloqueie-o nas opções da conversa.'));
         return;
       }
       if ($memberId !== (int) $this->currentUser->id()
@@ -56,20 +78,15 @@ final class PrivateMessageFormValidator {
         $formState->setErrorByName('members', $this->translation->translate('Não foi possível enviar a mensagem para esse destinatário.'));
         return;
       }
-      // "Só amigos" also stops sending in conversations that already exist; staff keep sending, as before.
-      if ($memberId !== (int) $this->currentUser->id()
-        && !$this->currentUser->hasRole('administrator') && !$this->currentUser->hasRole('content_editor')
-        && $this->userData->get('aculta_messenger', $memberId, 'message_privacy') === 'friends'
-        && !$this->friendshipManager->areFriendsWith($memberId)) {
-        $formState->setErrorByName('members', $this->translation->translate('Essa pessoa só recebe mensagens de amigos.'));
-        return;
-      }
     }
   }
 
-  /** Restricts new threads according to the target member's preference. */
+  /**
+   * Restricts new threads according to the target member's preference. */
   public function validateNewConversationPrivacy(array &$form, FormStateInterface $formState): void {
-    if ($formState->hasAnyErrors() || $formState->get('thread') !== NULL) {
+    if ($formState->hasAnyErrors()
+      || $formState->get('thread') !== NULL
+      || $formState->get('existing_conversation') === TRUE) {
       return;
     }
 
@@ -78,10 +95,19 @@ final class PrivateMessageFormValidator {
       return;
     }
 
+    if (!$this->canStartNewConversation($thread)) {
+      $formState->setErrorByName('members', $this->translation->translate('Não foi possível iniciar uma conversa com este destinatário.'));
+    }
+  }
+
+  /**
+   * Checks recipient privacy without changing Form API validation state.
+   */
+  public function canStartNewConversation(PrivateMessageThreadInterface $thread): bool {
     // Staff roles may start new conversations despite the target preference.
-    // The preceding native block validation always remains in force.
+    // The preceding block validation always remains in force.
     if ($this->currentUser->hasRole('administrator') || $this->currentUser->hasRole('content_editor')) {
-      return;
+      return TRUE;
     }
 
     foreach ($thread->getMembersId() as $memberId) {
@@ -91,18 +117,20 @@ final class PrivateMessageFormValidator {
       }
       $preference = $this->userData->get('aculta_messenger', $recipientId, 'message_privacy');
       if ($preference === 'friends' && !$this->friendshipManager->areFriendsWith($recipientId)) {
-        $formState->setErrorByName('members', $this->translation->translate('Não foi possível iniciar uma conversa com este destinatário.'));
-        return;
+        return FALSE;
       }
     }
+    return TRUE;
   }
 
-  /** Forces the native long-text field to persist using Drupal's plain format. */
+  /**
+   * Forces the native long-text field to persist using Drupal's plain format. */
   public function enforcePlainTextFormat(array &$form, FormStateInterface $formState): void {
     $formState->setValue(['message', 0, 'format'], 'plain_text');
   }
 
-  /** Hides text-format controls and generic guidelines from the chat composer. */
+  /**
+   * Hides text-format controls and generic guidelines from the chat composer. */
   public function hidePlainTextGuidelines(array $form, FormStateInterface $formState): array {
     if (isset($form['message']['widget'][0]['format'])) {
       $form['message']['widget'][0]['format']['#access'] = FALSE;
@@ -111,10 +139,11 @@ final class PrivateMessageFormValidator {
   }
 
   /**
-   * Validates and registers one message submission in the Core flood backend.
+   * Validates one message submission against the Core flood backend.
    *
-   * Invalid submissions are not counted. Ten valid submissions are allowed
-   * per account in a rolling one-hour window; the next submission is rejected.
+   * Ten valid submissions are allowed per account in a rolling one-hour
+   * window; the next submission is rejected. Registration happens only after
+   * the message is persisted.
    */
   public function validateRateLimit(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()) {
@@ -122,12 +151,170 @@ final class PrivateMessageFormValidator {
     }
 
     $identifier = 'uid:' . $this->currentUser->id();
-    if (!$this->flood->isAllowed(self::EVENT, $this->policy->sendLimitPerHour(), self::WINDOW, $identifier)) {
+    $lockName = 'aculta_messenger.private_message_flood.' . $this->currentUser->id();
+    if ($this->rateLimitLockName === NULL) {
+      if (!$this->lock->acquire($lockName, self::RATE_LIMIT_LOCK_LEASE_SECONDS)) {
+        $formState->setErrorByName('message', $this->translation->translate('Você atingiu o limite temporário de envio de mensagens. Tente novamente mais tarde.'));
+        return;
+      }
+      $this->rateLimitLockName = $lockName;
+    }
+    try {
+      $allowed = $this->flood->isAllowed(self::EVENT, $this->policy->sendLimitPerHour(), self::WINDOW, $identifier);
+    }
+    catch (\Throwable $exception) {
+      $this->releaseRateLimitLock();
+      throw $exception;
+    }
+    if (!$allowed) {
+      $this->releaseRateLimitLock();
       $formState->setErrorByName('message', $this->translation->translate('Você atingiu o limite temporário de envio de mensagens. Tente novamente mais tarde.'));
       return;
     }
 
-    $this->flood->register(self::EVENT, self::WINDOW, $identifier);
+    $thread = $formState->get('thread');
+    if ($thread instanceof PrivateMessageThreadInterface && (int) $thread->id() > 0) {
+      $freshThread = $this->acquireThreadWriteLock($thread, $formState);
+      if ($freshThread instanceof PrivateMessageThreadInterface && !$formState->hasAnyErrors()) {
+        try {
+          $sender = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $this->currentUser->id());
+          if (!$sender instanceof UserInterface || !$this->policy->canReceiveMessages($sender)) {
+            $formState->setErrorByName('message', $this->translation->translate('Não foi possível enviar uma mensagem para essa conversa.'));
+          }
+          // Thread access was checked while building the form. Revalidate the
+          // sender's membership and view access on the locked, fresh entity so
+          // a concurrent removal cannot submit to a stale thread object.
+          if (!$formState->hasAnyErrors()) {
+            $this->validateFreshThreadAccess($freshThread, $sender, $formState);
+          }
+          // Block state may have changed after the first validation. Recheck
+          // against the freshly loaded thread immediately before submission.
+          if (!$formState->hasAnyErrors()) {
+            $this->validateBlockedRecipients($form, $formState);
+          }
+        }
+        catch (\Throwable $exception) {
+          $this->releaseSubmissionLocks();
+          throw $exception;
+        }
+        if ($formState->hasAnyErrors()) {
+          $this->releaseSubmissionLocks();
+        }
+      }
+    }
+
+  }
+
+  /**
+   * Requires the sender to retain view access to the freshly loaded thread.
+   */
+  public function validateFreshThreadAccess(
+    PrivateMessageThreadInterface $thread,
+    UserInterface $sender,
+    FormStateInterface $formState,
+  ): void {
+    if (!$this->hasFreshThreadAccess($thread, $sender)) {
+      $formState->setErrorByName(
+        'message',
+        $this->translation->translate('Não foi possível enviar uma mensagem para essa conversa.'),
+      );
+    }
+  }
+
+  /**
+   * Checks access to a reloaded thread at the persistence boundary.
+   *
+   * The contrib access handler denies viewing an empty thread until its first
+   * message is attached. A new conversation may allow that one empty state
+   * after the sender's identity, permission, and membership are revalidated.
+   */
+  public function hasFreshThreadAccess(
+    PrivateMessageThreadInterface $thread,
+    UserInterface $sender,
+    bool $allowNewEmptyThread = FALSE,
+  ): bool {
+    if ((int) $sender->id() !== (int) $this->currentUser->id()
+      || !$sender->isActive()
+      || !$sender->hasPermission('use private messaging system')
+      || !$thread->isMember($sender->id())) {
+      return FALSE;
+    }
+
+    if ($allowNewEmptyThread
+      && $thread->hasField('private_messages')
+      && $thread->get('private_messages')->isEmpty()) {
+      return TRUE;
+    }
+
+    return $thread->access('view', $sender, TRUE)->isAllowed();
+  }
+
+  /**
+   * Locks and refreshes an existing conversation before a new message is saved.
+   *
+   * Called by the custom first-message workflow after it resolves an existing
+   * thread; native replies acquire the same lock in validateRateLimit().
+   *
+   * @return \Drupal\private_message\Entity\PrivateMessageThreadInterface|null
+   *   Fresh thread when locked, or NULL when another operation owns it or it
+   *   was deleted before the lock could be acquired.
+   */
+  public function acquireThreadWriteLock(
+    PrivateMessageThreadInterface $thread,
+    FormStateInterface $formState,
+  ): ?PrivateMessageThreadInterface {
+    $threadId = (int) $thread->id();
+    if ($threadId < 1) {
+      return $thread;
+    }
+    if ($this->conversationLockThreadId === $threadId) {
+      return $thread;
+    }
+
+    $freshThread = $this->conversationWriteLock->acquire($thread);
+    if (!$freshThread instanceof PrivateMessageThreadInterface) {
+      $this->releaseRateLimitLock();
+      $formState->setErrorByName('message', $this->translation->translate('Esta conversa está sendo atualizada. Tente novamente.'));
+      return NULL;
+    }
+
+    $this->conversationLockThreadId = $threadId;
+    $formState->set('thread', $freshThread);
+    return $freshThread;
+  }
+
+  /**
+   * Registers a successfully persisted message in the Core flood backend.
+   */
+  public function registerRateLimit(array &$form, FormStateInterface $formState): void {
+    $identifier = 'uid:' . $this->currentUser->id();
+    try {
+      $this->flood->register(self::EVENT, self::WINDOW, $identifier);
+    }
+    finally {
+      $this->releaseRateLimitLock();
+    }
+  }
+
+  /**
+   * Releases submission locks when persistence fails before the Flood callback.
+   */
+  public function releaseSubmissionLocks(): void {
+    $this->releaseRateLimitLock();
+  }
+
+  /**
+   * Releases this request's flood lock, if validation acquired it.
+   */
+  private function releaseRateLimitLock(): void {
+    if ($this->conversationLockThreadId !== NULL) {
+      $this->conversationWriteLock->release($this->conversationLockThreadId);
+      $this->conversationLockThreadId = NULL;
+    }
+    if ($this->rateLimitLockName !== NULL) {
+      $this->lock->release($this->rateLimitLockName);
+      $this->rateLimitLockName = NULL;
+    }
   }
 
 }

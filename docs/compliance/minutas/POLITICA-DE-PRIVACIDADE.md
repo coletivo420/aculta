@@ -1,0 +1,129 @@
+# Política de Privacidade — minuta
+
+> **Minuta, não publicada.** Cópia para leitura e revisão, gerada de `scripts/institution/politica-de-privacidade.html` (fonte única do texto publicado). Não edite este arquivo: altere o HTML e rode `python3 -I scripts/compliance/render-minutas.py`. Os trechos entre colchetes são pendências de decisão ou de revisão jurídica.
+
+**Atualizada em 22/10/2026 — versão 0.4 (minuta).** Esta política explica como o site institucional da Associação Cultural Antiproibicionista trata dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).
+
+## Quem trata os dados
+
+**Associação Cultural Antiproibicionista**, CNPJ 68.238.467/0001-08, Avenida Cristóvão Colombo, 736, Quadra 205, Lote 27, Sala 3, Jardim Novo Mundo, Goiânia - GO, CEP 74705-130, telefone (62) 9282-0666. É a controladora dos dados tratados neste site.
+
+Para assuntos de privacidade, direitos e dúvidas, escreva para [faleconosco@aculta.org](mailto:faleconosco@aculta.org). Encarregado pelo tratamento de dados (pessoa jurídica): [razão social a designar pela Associação], atendido pelo mesmo canal.
+
+## Pagamentos e dados de pagamento
+
+O site não processa pagamentos. Todos os apoios, doações e compras do checkout são processados pelo **Mercado Pago**, em seu próprio ambiente. Dados de cartão ou de conta bancária nunca passam pelo site e não são armazenados por ele. O site guarda apenas as referências, valores e estados necessários à administração do apoio ou da compra, incluindo o estado das assinaturas (doação mensal) e das tentativas de cobrança. Doações, apoios, assinaturas e cursos não têm estorno, conforme os Termos de Uso.
+
+## CPF e CNPJ de associados e de estudantes
+
+O CPF (ou CNPJ, para pessoa jurídica) é coletado quando é necessário à condição de associado ou à participação em cursos, e quando o Mercado Pago o exige para concluir um pagamento; nesse caso, ele é enviado ao Mercado Pago. Dentro do site, o número é armazenado de forma cifrada. Para evitar duplicidade de cadastros, o site guarda também uma impressão digital pseudonimizada do documento, que não permite recuperar o número, mas identifica quando ele já foi cadastrado. Essa impressão digital continua sendo dado pessoal.
+
+## Bases legais por uso do site
+
+Cada uso tem uma base legal da LGPD (art. 7º). Quando o uso revela opinião política ou filiação a organização de caráter político, como acontece com temas de política de drogas, aplica-se o regime de dados sensíveis (art. 11), e a base é o consentimento específico da pessoa, salvo outra hipótese do próprio art. 11.
+
+- **Conta e perfil privado** (conta, apelido, dados de contato, foto): execução de contrato (art. 7º, V). Dados do perfil público, só com consentimento (art. 7º, I), revogável na conta.
+- **Associação** (condição de associado, CPF ou CNPJ): execução de contrato e obrigação legal (art. 7º, II e V). O CPF pode ser solicitado ao associado; quando o pagamento exige, é enviado ao Mercado Pago.
+- **Cursos (LMS)** (matrícula, progresso, avaliações, certificados): execução de contrato (art. 7º, V) e cumprimento de obrigação legal quando houver exigência de registro acadêmico.
+- **Apoios, doações e compras** (domínios de apoio e de loja, checkout): execução de contrato (art. 7º, V) e obrigação fiscal e contábil (art. 7º, II). Os pagamentos são processados pelo Mercado Pago.
+- **Fórum, Growroom420 e revista** (autoria de tópicos e artigos, apelido, comentários): consentimento ao publicar (art. 7º, I), que a pessoa pode retirar removendo a publicação. Conteúdo que revele opinião política é tratado como dado sensível, com consentimento específico (art. 11, I).
+- **Wiki**, quando ativa: consentimento na contribuição (art. 7º, I), e interesse legítimo na curadoria editorial (art. 7º, IX). A busca do site indexa apenas verbetes publicados e não guarda os termos digitados. Quando um verbete entra em revisão, um aviso por e-mail vai somente às caixas editoriais cadastradas pela Associação, com título, estado e link de edição, sem o nome de quem editou; esse recurso fica desligado por padrão.
+- **Conquistas e reconhecimento**: consentimento (art. 7º, I), revogável na conta.
+- **Formulários de Contato e Faça Parte**: atendimento de manifestação solicitada pela própria pessoa (art. 7º, I e V). O Faça Parte não gera inscrição em lista de marketing.
+- **Mensagens transacionais** (confirmação, recuperação de senha, avisos da conta): execução de contrato (art. 7º, V) e legítimo interesse em segurança (art. 7º, IX). Não há mensagens de marketing.
+- **Segurança, prevenção de fraude e antirrobô**: legítimo interesse (art. 7º, IX).
+- **Consulta de CEP**: execução de contrato (art. 7º, V), somente o CEP.
+
+O inventário interno da Associação relaciona cada módulo do site a essas bases.
+
+## Acompanhamento do progresso nos cursos
+
+Para cursos da ACULTA, registramos a situação de cada aluno em cada curso (não iniciado, em andamento, aguardando avaliação, aprovado ou reprovado), por dia, para acompanhar a turma e o próprio progresso. Os dados são a identificação da conta, o curso e a situação; não registramos respostas, textos enviados nem notas por atividade nesta função. Quem vê: o aluno, sobre o próprio dado, e a equipe com permissão para avaliar a turma; nunca em página pública. Os registros ficam por 90 dias contados do dia do registro e são apagados na exclusão da conta. A base é o aceite dos Termos de Uso e desta Política. [Função desligada até a publicação desta política.]
+
+## Acesso a arquivos de mídia
+
+Registramos, por arquivo, quantas vezes um arquivo privado de mídia foi aberto, sem identificar quem o abriu. O registro serve para saber quais materiais são usados e fica por 90 dias. Este tratamento faz parte do aceite dos Termos de Uso e desta Política.
+
+## Exclusão da conta
+
+Ao excluir a conta, apagamos os dados pessoais que a ligam às funções descritas nesta política, no prazo de até 90 dias. Os dados de evidência do aceite (data, versão do texto e identificadores) e os dados que a lei exige guardar, como os fiscais e contábeis, são mantidos pelo prazo legal.
+
+## Conta e autenticação
+
+Ao criar uma conta, o site guarda nome de usuário, e-mail, estado da conta e um hash protegido da senha, nunca a senha em texto aberto. Criar uma conta não torna a pessoa associada à Associação.
+
+## Confirmação de e-mail e acesso por link
+
+Os links de confirmação de e-mail, de recuperação de senha e de acesso enviados por e-mail são de uso único e valem 24 horas. Depois desse prazo, o link deixa de funcionar. Um pedido novo substitui o anterior.
+
+## Dados pessoais e foto de perfil
+
+O perfil privado pode conter apelido, nome, sobrenome, WhatsApp, cidade, UF, data de nascimento e endereço opcional. A foto de perfil fica em área privada. Esses dados não formam um perfil público nem um diretório de participantes, salvo se a pessoa optar por tornar seu perfil público. O endereço não é necessário para navegar ou demonstrar interesse em participar.
+
+## Conexão opcional com o Google
+
+Quando a conexão Google estiver configurada e a pessoa optar por usá-la, o serviço de autenticação recebe do Google os dados básicos necessários para autenticar e vincular a conta. O site não solicita acesso a Gmail, Drive, Agenda, Contatos ou outros serviços Google. A conexão pode ser removida na seção Conexões, desde que exista outra forma de acesso à conta.
+
+## Formulários
+
+Os formulários de Contato e Faça Parte guardam os dados enviados para que a Associação responda ou trate a manifestação de interesse. O Faça Parte não cria conta, não efetiva associação e não inscreve a pessoa em lista de marketing. O acesso às submissões é restrito às pessoas autorizadas.
+
+## Proteção contra envios automatizados
+
+Os formulários públicos podem usar mecanismos antiabuso. Quando o Cloudflare Turnstile estiver ativo, a validação envia à Cloudflare o token de desafio e os dados técnicos necessários à verificação, que podem incluir o endereço IP. O conteúdo da mensagem do formulário não é enviado à Cloudflare.
+
+## Mensagens por e-mail
+
+O site envia mensagens transacionais, como confirmação de cadastro, recuperação de senha, aviso de conta já existente e respostas a formulários. Para isso usa prestadores técnicos de envio: a hospedagem do domínio, para envio por SMTP; o Brevo, para envio por API e para os eventos de entrega; e o SMTP2GO, como contingência quando os demais falham.
+
+Para cada envio, o registro interno guarda: tipo da mensagem, data, estado (aceito, entregue, devolvido, com falha), transporte usado, número de tentativas e um código de erro, quando houver. O endereço do destinatário não é guardado em claro: o registro guarda apenas um identificador criptográfico, que serve para correlacionar envios sem revelar o endereço.
+
+O conteúdo de uma mensagem (assunto e corpo) não é guardado após o envio bem-sucedido. Se o envio falhar, o conteúdo fica guardado de forma cifrada, somente para permitir o reenvio pela administração. Para links de uso único, esse conteúdo é apagado em até 24 horas; para as demais mensagens, ele segue o prazo de retenção do registro, e é apagado assim que a mensagem for aceita ou entregue.
+
+O provedor informa à Associação eventos de entrega (entregue, devolvido, reclamação de spam) para cada mensagem. O site também recebe, em uma caixa de monitoramento, avisos de devolução e relatórios de autenticação de e-mail (DMARC), que podem conter endereços de servidores de e-mail.
+
+## Rastreamento de aberturas e cliques (opcional)
+
+O site pode registrar aberturas e cliques em e-mails da conta, mas apenas para quem der consentimento específico, separado dos Termos de Uso e desta Política. A tela de consentimento ainda não está disponível neste site. Sem esse consentimento, nenhum e-mail é rastreado. O recurso fica desligado por padrão. Quando ligado, registra somente contadores de aberturas e cliques e as datas da primeira abertura e do primeiro clique, sem endereço IP nem dados do navegador. A pessoa poderá revogar o consentimento a qualquer momento, e a revogação vale para os próximos e-mails. As aberturas podem ser superestimadas quando o serviço de e-mail carrega imagens antes da leitura.
+
+## Cookies e fontes externas
+
+O site usa cookies estritamente necessários à sessão, à autenticação, à segurança e ao funcionamento dos formulários. A interface carrega as fontes Inter e Oswald do Google Fonts; ao solicitar esses arquivos, o navegador se conecta ao serviço de fontes do Google. Não há analytics, pixels publicitários nem marketing comportamental.
+
+## Consulta de CEP
+
+Ao preencher um endereço, o site pode consultar o CEP informado no serviço público ViaCEP. Essa consulta envia somente o CEP.
+
+## Prazos de retenção
+
+- Registro de envios (tipo, estado, transporte, tentativas, código e identificador do destinatário): 90 dias, por padrão, configurável pela administração entre 30 dias e 1 ano.
+- Conteúdo de mensagem com falha, guardado para reenvio: até a aceitação ou entrega, ou pelo prazo de 24 horas para links de uso único, o que ocorrer primeiro; nas demais, pelo prazo do registro.
+- Dados de conta e perfil: enquanto a conta existir, e pelo período exigido por obrigações legais aplicáveis.
+- Dados de pagamento e de associação: pelo período exigido por obrigações fiscais, contábeis e de registro.
+- Situação do aluno por curso e dia, e contagem de abertura de arquivos de mídia: 90 dias contados do registro.
+
+## Compartilhamento e transferência internacional
+
+Os dados são acessados por pessoas autorizadas e compartilhados apenas com os prestadores técnicos citados nesta política, na medida necessária às funcionalidades efetivamente ativadas: Mercado Pago (pagamentos), Brevo, Hostinger e SMTP2GO (envio de e-mails), Cloudflare (antirrobô, quando ativo), Google (fontes e, se optar, conexão de conta) e ViaCEP (consulta de CEP).
+
+Os servidores que hospedam o site e o banco de dados ficam no Brasil. Alguns prestadores podem tratar dados fora do Brasil, como o Brevo, o Cloudflare e o Google, com as garantias previstas na LGPD (art. 33) e as cláusulas contratuais de cada prestador. [Verificar, com cada prestador, o país de tratamento dos dados antes da publicação.]
+
+## Segurança
+
+Adotamos medidas técnicas e administrativas para proteger os dados contra acessos não autorizados e situações acidentais ou ilícitas, incluindo cifragem de documentos e de conteúdo de mensagens, chaves de cifra fora do repositório, controle de acesso por papel e registro de operações.
+
+## Direitos da pessoa titular
+
+Você pode solicitar, a qualquer momento: confirmação de que tratamos seus dados; acesso; correção de dados incompletos, inexatos ou desatualizados; anonimização, bloqueio ou eliminação de dados desnecessários ou tratados em desconformidade; portabilidade; informação sobre compartilhamentos; informação sobre a possibilidade de não consentir e as consequências disso; e revogação do consentimento. Para exercer seus direitos, escreva para [faleconosco@aculta.org](mailto:faleconosco@aculta.org). Podemos pedir informações para confirmar sua identidade antes de atender ao pedido.
+
+## Incidentes de segurança
+
+Em caso de incidente que possa causar risco ou dano relevante aos titulares, a Associação comunicará a Autoridade Nacional de Proteção de Dados e as pessoas afetadas, nos termos do art. 48 da LGPD.
+
+## Atualizações desta política
+
+Esta política pode ser atualizada. A data no topo indica a versão vigente. Alterações relevantes serão divulgadas no site.
+
+## Versão
+
+Versão 0.4 (minuta), 22/10/2026. Substitui a versão 0.3 de 20/10/2026. Acrescenta o estado das assinaturas e a regra de não estorno, o acompanhamento do progresso nos cursos, o acesso a arquivos de mídia e a exclusão da conta. Recomenda-se revisão jurídica antes da publicação em produção.

@@ -1,0 +1,13 @@
+uuid: 5f5d4b0c-1463-4b56-91e3-711b5218d40e
+langcode: pt-br
+status: true
+dependencies: {  }
+plugin: smtp
+host: smtp.hostinger.com
+port: 465
+user: naoresponda@aculta.org
+password_secret: SMTP_PASSWORD
+verify_peer: true
+id: smtp_hostinger
+label: 'Hostinger (SMTP)'
+

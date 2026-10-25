@@ -1,0 +1,13 @@
+uuid: 30f7e6e7-a935-41a4-80cd-1ad62cc7eae2
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - flag
+_core:
+  default_config_hash: Z9dGFmjyQgZjDwdsI-Mmgd2tZkUsjYi7cOSUPqjXPtw
+id: flag_delete_flagging
+label: 'Delete flagging'
+type: flagging
+plugin: flag_delete_flagging
+configuration: {  }

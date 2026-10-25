@@ -2,14 +2,14 @@
 /** Local transaction test; outgoing mail is captured by Core, never delivered. */
 use Drupal\webform\Entity\WebformSubmission;
 use Drupal\webform\WebformSubmissionForm;
-if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) throw new RuntimeException('Local only.');
-// PENDING (exit 2): the contact form is protected by Turnstile, which rejects
-// scripted submissions by design. This test cannot run without an approved
-// test-only CAPTCHA exception. Exit code 2 means pending, not passed.
-// Remove this block only when that exception is decided and documented.
-fwrite(STDERR, "PENDING: contact submission test needs a decided CAPTCHA exception (Turnstile).\n");
-exit(2);
+$host = \Drupal::request()->getHost();
+if (!in_array($host, ['localhost', '127.0.0.1'], TRUE) && !str_ends_with($host, 'aculta.toca.net.br')) throw new RuntimeException('Local or test host only.');
+// CAPTCHA: no ambiente de teste o Turnstile usa a chave de teste (TurnstileKeyOverride, TURNSTILE_TEST_KEYS_JSON).
+// Decisão do responsável (2026-10-20). O token fictício é o da documentação do Cloudflare para a chave de teste e
+// vai na requisição, não nos dados. O envio roda em transação revertida e com o coletor de e-mail (sem envio externo).
+\Drupal::request()->request->set('cf-turnstile-response', 'XXXX.DUMMY.TOKEN.XXXX');
 $transaction = \Drupal::database()->startTransaction();
+$originalMailInterface = \Drupal::config('system.mail')->get('interface');
 $initial = count(\Drupal::state()->get('system.test_mail_collector', []));
 try {
   \Drupal::configFactory()->getEditable('system.mail')->set('interface', ['default' => 'test_mail_collector', 'webform' => 'test_mail_collector'])->save();
@@ -22,7 +22,8 @@ try {
   echo "Four-field submission validated and saved; notification captured locally, no external mail: OK\n";
 } finally {
   $transaction->rollBack();
-  \Drupal::configFactory()->reset('system.mail');
+  // Restaura a configuração original: reset() só limpa o cache e não desfaz o save feito acima.
+  \Drupal::configFactory()->getEditable('system.mail')->set('interface', $originalMailInterface)->save();
   \Drupal::entityTypeManager()->getStorage('webform_submission')->resetCache();
   \Drupal\Core\Cache\Cache::invalidateTags(['config:system.mail', 'webform_submission_list']);
 }

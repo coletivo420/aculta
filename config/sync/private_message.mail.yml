@@ -1,0 +1,19 @@
+message_notification:
+  subject: 'Private message at [site:name]'
+  body: |-
+    [user:display-name],
+
+    You have received a private message at [site:name] from [private_message:author_name]
+
+    The message is as follows:
+
+    [private_message:message]
+
+    You can view the entire thread and reply to this message at:
+
+    [private_message_thread:url]
+
+
+    Thank you,
+
+    --  [site:name]

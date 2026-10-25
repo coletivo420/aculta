@@ -1,0 +1,51 @@
+/* Banner de consentimento (componente consent-banner). Superfície e texto de tokens, com contraste nos dois modos. */
+.aculta-consent {
+  position: static;
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+  margin-block-start: 1rem;
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+  border-top: 1px solid var(--aculta-border-strong);
+}
+
+.aculta-consent[hidden] {
+  display: none;
+}
+
+.aculta-consent__title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.aculta-consent__text {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.aculta-consent__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.aculta-consent__link {
+  color: var(--aculta-text-primary);
+  text-decoration: underline;
+}
+
+.aculta-consent button:focus-visible,
+.aculta-consent__link:focus-visible {
+  outline: 2px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+  .aculta-consent {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding-inline: 2rem;
+  }
+}

@@ -1,0 +1,158 @@
+# Changelog — aculta_lms_resources
+
+## 0.1.0-dev.16 — revalidar acesso e relações do Index em MariaDB
+
+- Repetido `LmsCourseContentIndexAccessKernelTest` no MariaDB dedicado:
+  4 testes / 208 assertions, sem falhas; PHPUnit reportou 53 depreciações
+  upstream. O harness cobre estudante (`takeAccess()`), educador (permissão
+  contextual), terceiro negado, Domain canônico `courses` e relações de leitura,
+  galeria e documento com providers/YAMLs owner e plugin Group fixture.
+- O teste comprova o fluxo da API do Index com entidades e Group reais; não
+  comprova boot completo de `aculta_lms_resources` nem homologação Runtime.
+
+## 0.1.0-dev.15 — pacote da fixture alinhado ao Portal
+
+- O módulo fixture do Kernel usa `package: ACULTA Portal`, inclusive nos
+  testes, conforme o contrato de componentes próprios. A mudança é de metadado;
+  não altera a policy nem as relações de curso.
+- Gates estáticos: componentes próprios 59 checks PASS; Drupal 11+ 1.151
+  checks PASS; índice de status gerado e diff check PASS.
+
+## 0.1.0-dev.14 — validar relação outgoing Curso→Documento no Kernel
+
+- A classe Kernel agora cobre provider LMS, rebuild, relação `course_document`
+  e consulta outgoing com Entity Access: estudante membro recebe o documento
+  privado e usuário externo não o descobre.
+- A fixture usa a declaração/tags YAML do provider de documentos owner e plugin
+  Group isolado; corrige os dois argumentos do serviço LMS no harness.
+- MariaDB: classe Kernel completa 4 testes / 210 assertions; 53 depreciações
+  Core/contrib. Boot completo dos módulos owner e Runtime não foram verificados.
+
+## 0.1.0-dev.13 — projetar documentos vinculados ao curso
+
+- O provider LMS projeta `course_document` a partir do plugin Group
+  `aculta_pdf_viewer_group:course_document`, quando registrado. O owner PDF e
+  o provider Media mantêm controle do bundle e de seu acesso; o provider LMS
+  mantém a relação outgoing `course_document`.
+- A versão de projeção passa a 2 quando a capacidade está disponível e fica em
+  1 sem o plugin, alterando o fingerprint para exigir rebuild.
+- Unit: 5 testes / 31 assertions PASS, incluindo relação opcional e filtro de
+  bundle; PHPCS Drupal e `php -l` PASS. O Kernel LMS da projeção pela API
+  outgoing continua pendente: o harness não descobre o plugin Group owner, e
+  habilitar o módulo completo aciona uma referência de serviço ausente no
+  Portal. O Kernel de acesso existente para `course_document` permanece como
+  evidência separada do filtro e da policy do destino.
+
+
+## 0.1.0-dev.12 — consulta Index de galerias vinculadas ao curso
+
+- O Kernel consulta `course_gallery` por meio dos providers LMS e Gallery cujas
+  definições e tags são carregadas dos YAMLs owner. Estudante com `take course`
+  e educador com `grade students` encontram a galeria vinculada; terceiro é
+  negado.
+- O teste também prova Entity Access no purpose canônico `magazine`, troca do
+  Domain do curso para `courses`, restauração do contexto original e limpeza do
+  cache de acesso que poderia reter uma decisão negativa anterior.
+- MariaDB dedicado: suíte Kernel completa 3 testes / 152 assertions PASS, com
+  52 depreciações de Core/contrib. O hook owner `GalleryCourseAccessHooks` é
+  delegado por módulo de teste; boot completo de Gallery/LMS e Runtime seguem
+  pendentes.
+
+## 0.1.0-dev.11 — consulta LMS curso→recursos no Content Index
+
+- O Kernel monta a declaração de produção do provider pelo YAML owner, ativa
+  uma geração real do Index e consulta a relação outgoing `course_reading`.
+- Estudante com `takeAccess()` e educador com `grade students` recebem somente
+  o recurso publicado; terceiro sem acesso ao curso e leitura em rascunho não
+  são expostos. Os providers de curso e Revista são compilados de seus YAMLs
+  owner e registrados no container do Index.
+- MariaDB: 2 testes / 85 assertions PASS, com 48 depreciações de Core/contrib.
+  Unit: 12 testes / 57 assertions PASS, com 10 depreciações do PHPUnit.
+- A integração real revelou e corrigiu os timestamps `created`/`changed` de
+  Group: são convertidos para inteiro antes de criar a projeção.
+- O Kernel não inicializa a cadeia completa dos módulos owner; o acesso editorial
+  do destino continua coberto pelos testes específicos de Magazine.
+
+## 0.1.0-dev.10 — confirmar policy LMS em SQLite
+
+- Repetido `LmsCourseContentIndexAccessKernelTest` em SQLite: 1 teste / 33
+  assertions PASS, com 47 depreciações upstream. A cobertura já existente
+  verifica Entity Access do Group, estudante por `takeAccess()`, educador por
+  permissão contextual, terceiro negado e troca/restauração do Domain.
+- Essa cobertura não executa a consulta outgoing de relações do Index nem
+  habilita o módulo owner completo.
+
+## 0.1.0-dev.9 — regressão Unit/Kernel da integração Index
+
+- Suíte Unit completa: 12 testes / 57 assertions PASS, incluindo o contrato de
+  serviço tagueado (1/4).
+- Kernel Group/Entity Access com Domains persistidos e negotiator real: 1 teste /
+  33 assertions PASS, com 47 depreciações upstream.
+
+## 0.1.0-dev.8 — negotiator Domain real no teste de acesso
+
+- O Kernel cria os Domains canônicos persistidos e delega a fixture de
+  `DomainNegotiatorInterface` ao serviço `domain.negotiator` real para verificar
+  a troca para `courses` e restauração do contexto anterior.
+- Kernel MariaDB: 1 teste / 33 assertions PASS, 47 depreciações upstream. O
+  provider ainda é montado diretamente neste teste; o contrato YAML/tag tem
+  cobertura Unit separada (1/4), sem ativar o módulo real no Kernel.
+
+## 0.1.0-dev.7 — contrato de registro por tag
+
+- Teste Unit lê `aculta_lms_resources.services.yml`, instancia o provider pela
+  definição declarada e compila um registry com `TaggedIteratorArgument` real.
+  Confirma ID e ownership de `group:lms_course` (1 teste / 4 assertions).
+- A integração do service file com o container Drupal de um Kernel que habilite
+  o módulo ainda não foi provada; o teste deliberadamente não ativa a cadeia de
+  dependências do Portal/Gallery/LMS.
+
+## 0.1.0-dev.6 — fixtures de Domain persistidos
+
+- O Kernel de acesso do provider agora cria e consulta entidades Domain reais
+  (`aculta_org` e `cursos_aculta_org`) para comprovar a troca/restauração do
+  purpose `courses`; negociação continua isolada por mock.
+- `php -l` e PHPCS Drupal passaram. Kernel não foi reexecutado nesta sessão
+  porque `SIMPLETEST_DB` não está configurada; a evidência 1/36 de dev.5
+  corresponde à versão anterior do fixture.
+
+## 0.1.0-dev.5 — policy do provider validada com Group real
+
+- Kernel exerce o provider sobre `Group:lms_course`: estudante autorizado por
+  `takeAccess()`, educador por `grade students` contextual e terceiro negado.
+- `ContentIndexAccessFilter` revalida Entity Access e executa o provider no
+  purpose `courses`; o fixture Domain verifica a troca e restauração do contexto.
+- Kernel: 1 teste / 36 assertions PASS, com 42 deprecações upstream. O provider
+  ainda é montado diretamente; descoberta da tag/DI do módulo segue pendente.
+
+## 0.1.0-dev.4 — versão da projeção no fingerprint do Index
+
+- Provider de cursos declara sua versão de projeção para impedir retomada de
+  rebuild com semântica de relações desatualizada.
+
+## 0.1.0-dev.3 — provider de cursos e recursos para o Content Index
+
+- Registra `Group:lms_course` e relações explícitas para leituras da Revista/Wiki
+  e galerias. O provider exige Entity Access e `takeAccess()` ou permissão
+  contextual de educador; não projeta aulas, progresso, membros, respostas,
+  notas ou certificados.
+- Os alvos continuam sendo revalidados pelos providers e Entity Access dos
+  módulos de origem. Kernel/Runtime ainda pendentes.
+
+## 0.1.0-dev.2 — acesso pedagógico às galerias — 2026-10-21
+
+- Educadores com permissão contextual podem selecionar somente galerias
+  publicadas. O acesso à galeria publicada é concedido a membros ativos e
+  educadores apenas quando ela está vinculada ao curso; as permissões gerais da
+  Gallery permanecem iguais.
+- Cobertura Unit: 8 testes e 39 assertions. Instalação, smoke autenticado no
+  Runtime e revisão visual continuam pendentes.
+
+## 0.1.0-dev.1 — referências editoriais por curso — 2026-10-21
+
+- Adiciona referências de curso para artigos, blogs, verbetes Wiki e galerias
+  existentes e renderiza links sob acesso e purpose da entidade de origem.
+- Unit: 3 testes / 15 assertions PASS. Kernel MariaDB: 2 testes / 46 assertions
+  PASS, com uma depreciação upstream do Domain. PHP CLI 8.4.26; PHP 8.5,
+  instalação e smoke autenticado no Runtime, seleção administrativa de galerias
+  e revisão visual permanecem pendentes.

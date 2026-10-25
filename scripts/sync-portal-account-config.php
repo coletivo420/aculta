@@ -13,8 +13,6 @@ if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1', 'default
 
 $names = [
   'aculta_portal.support',
-  'agreement.agreement.aculta_account_terms',
-  'agreement.agreement.default',
   'captcha.settings',
   'core.extension',
   'core.entity_form_display.profile.participante.default',
@@ -26,13 +24,9 @@ $names = [
   'image.style.aculta_avatar',
   'key.key.google_oauth_client_id',
   'key.key.google_oauth_client_secret',
-  'key.key.smtp2go_password',
-  'key.key.smtp2go_username',
   'key.key.turnstile',
   'key.config_override.google_client_id',
   'key.config_override.google_client_secret',
-  'key.config_override.mailer_smtp2go_password',
-  'key.config_override.mailer_smtp2go_username',
   'profile.type.participante',
   'social_auth.settings',
   'mailer_transport.mailer_transport.smtp2go',

@@ -10,38 +10,56 @@ aculta_portal.support_settings:
   route_name: aculta_portal.support_settings
   parent: aculta_portal.admin
   weight: 1
-aculta_portal.social_links_settings:
-  title: Redes sociais e botões
-  description: Configurar os canais sociais e botões públicos da página LINKS.
-  route_name: aculta_portal.social_links_settings
-  parent: aculta_portal.admin
-  weight: 2
+# Aba ACULTA no painel: todas as configurações do ACULTA ficam aqui (decisão de 2026-10-20). Cada módulo declara os
+# próprios itens com parent: aculta_portal.admin (ou, para o e-mail, parent: aculta_mailer.dashboard).
 aculta_portal.admin:
-  title: ACULTA Portal
-  description: Configurações e relatórios administrativos do módulo ACULTA Portal.
+  title: ACULTA
+  description: Configurações e relatórios do ACULTA Portal, do e-mail e dos módulos integrados.
   route_name: aculta_portal.admin
-  parent: system.admin_config
-  weight: 5
+  parent: system.admin
+  weight: 45
+aculta_portal.user_upload_settings:
+  title: 'Envio de arquivos por usuários'
+  description: 'Extensões e tamanho máximo usados pelos formulários de upload do Portal.'
+  route_name: aculta_portal.user_upload_settings
+  parent: aculta_portal.admin
+  weight: 8
+aculta_portal.appearance_settings:
+  title: Aparência do site
+  description: Cores, logo e opções visuais do site público.
+  route_name: aculta_portal.appearance_settings
+  parent: aculta_portal.admin
+  weight: 0
 aculta_portal.requirements:
   title: Status
   description: Status, versão mínima e versão instalada das integrações do Portal.
   route_name: aculta_portal.requirements
   parent: aculta_portal.admin
   weight: 2
+aculta_portal.turnstile_settings:
+  title: Turnstile
+  description: Chaves e pontos de proteção anti-bot dos formulários.
+  route_name: aculta_portal.turnstile_settings
+  parent: aculta_portal.admin
+  weight: 3
+aculta_portal.secrets_import:
+  title: Credenciais
+  description: Credenciais de integração do ambiente (valores nunca são exibidos).
+  route_name: aculta_portal.secrets_import
+  parent: aculta_portal.admin
+  weight: 6
+aculta_portal.deployer_status:
+  title: Implantação
+  description: Estado do aculta_deployer e do ambiente de implantação.
+  route_name: aculta_portal.deployer_status
+  parent: aculta_portal.admin
+  weight: 7
 aculta_portal.footer_support:
   title: Apoie
   description: Conheça as formas de apoio institucional disponíveis.
   route_name: aculta_portal.support_form
-  menu_name: aculta-footer-participation
+  menu_name: aculta-footer-institution
   weight: -10
-aculta_portal.footer_participation:
-  title: Faça Parte
-  description: Envie uma manifestação de interesse em participar das iniciativas da Associação.
-  route_name: entity.webform.canonical
-  route_parameters:
-    webform: aculta_participation
-  menu_name: aculta-footer-participation
-  weight: -5
 # Administração de contas em Configurações > Pessoas (migradas das abas de Pessoas).
 aculta_portal.config_papeis_e_perfis:
   title: 'Papéis e perfis'
@@ -77,3 +95,9 @@ aculta_portal.config_flood_unblock:
   route_name: flood_control.unblock_form
   parent: user.admin_index
   weight: 14
+aculta_portal.checkout_common:
+  title: Carrinhos e checkouts
+  description: 'Checkout comum, Loja, LMS e Doações: modalidades, tipos de pedido e diagnóstico.'
+  route_name: aculta_portal.checkout_common
+  parent: aculta_portal.admin
+  weight: 8

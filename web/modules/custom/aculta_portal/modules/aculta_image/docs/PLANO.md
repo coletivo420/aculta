@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status em 2026-10-18: versão **0.1.0-dev.26**. Gate `scripts/validate-aculta-image.php` em PASS (inclui R10 para cópia direta em árvores de assets). A suíte unitária do submódulo agora possui 17 casos.
+**Ciclo vigente:** [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Status em 2026-10-20: versão **0.1.0-dev.28**. O campo histórico `commerce_product.produto_loja.field_imagens` foi alinhado à política `aculta_image` e o gate passou. A mesma política foi aplicada somente a esse campo no Runtime de teste; nenhuma importação global foi feita. A classificação permanece **Dev**: há bloqueios operacionais/integração. `preRC` foi aposentado; concluir pendências, gates/testes e revisão visual aplicável antes de RC. Alpha é deploy/validação no servidor de desenvolvimento; produção ocorre depois da aprovação Alpha.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -21,6 +21,17 @@ e entregar a marcação por `aculta_image.render`. Derivados sem referência sã
 exclusão de arquivo. O resultado era dívida espalhada e arquivos apagados sem verificação de uso.
 
 ## 2. Estado por fase
+
+### Integração inicial com limpeza coordenada pelo Portal — 2026-10-22
+
+O Portal implementou `aculta_portal.unused_file_cleaner` para verificar
+referências comuns e coordenar remoção de File. `ImageCleanup` o utiliza quando
+disponível, sem declarar dependência do Portal e mantendo fallback standalone.
+`FileRemoverInterface` formaliza a fronteira: o `aculta_image` continua dono da
+remoção física de imagens, invalidação de derivados e metadados internos. A
+integração ainda requer homologação de quarentena, retenção e todos os fluxos de
+limpeza; migrar consumidores gradualmente e nunca apagar arquivos por SQL/API
+paralela.
 
 | Fase | Estado | Observação |
 | --- | --- | --- |
@@ -93,7 +104,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 | **R7 — Fórum e LMS** | Fórum usa `usuario_aculta`; LMS recebe campo `capa_curso` com política `aculta_image` e finalidade `destaque` nos cartões | Campo de capa, limite de 10 MB e Views configurados no Runtime; Firefox confirmou o derivado 1280×720 num teste temporário, removido depois. Catálogos respondem 200 | F3/F6 do Fórum e LMS |
 | **R8 — Migração e dívida** | auditoria de consumidores e estilos legados | nenhuma ocorrência `legado_*`; referências de estilos em configurações nativas correspondem a `ImageCatalog::STYLES`; gate PASS; resultado registrado em `DEBT-REGISTER` | feito em 2026-10-16 |
 | **R9 — Configuração de imagens** | Views e modos de exibição usam estilos presentes no catálogo | gate verifica IDs `image_style` e estilos PhotoSwipe em `views.view.*` e `core.entity_view_display.*`; PASS em 2026-10-18 | feito |
-| **RC — Validação de ambientes** | Homelab e Hostinger: `shell_exec`, ImageMagick e Ghostscript confirmados no painel | relatório de ambientes | responsável |
+| **Preparação de RC — validações de ambiente e integração** | Confirmar binários necessários para produção e fechar as pendências de importação/integração Growroom | Evidência, checklist, gates/testes e revisão visual pré-deploy concluídos antes de RC; Alpha valida o deploy no servidor de desenvolvimento e produção vem após aprovação | responsável e conclusão das fases do Fórum |
 
 Fora deste ciclo: bloqueio automático de duplicatas durante o upload. O relatório continua sugerindo revisão administrativa.
 

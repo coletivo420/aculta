@@ -41,12 +41,12 @@ dos módulos que integra.
 | Wiki | Node wiki_entry | Core Node | landing/participação | WIKI/ACCOUNT | Não |
 | Categorias Wiki | Taxonomy | Core Taxonomy | navegação | WIKI | Não |
 | Revisões Wiki | Node revisions/Diff | Core + Diff | atividade/links | WIKI/ACCOUNT | Não |
-| Fórum | Forum topic Node | Forum + Node | integração/domain/painel | FORUM/ACCOUNT | Não |
-| Respostas Fórum | Comment | Core Comment | participação/moderação | FORUM/ACCOUNT | Não |
-| Estrutura Fórum | Taxonomy | Forum + Taxonomy | navegação/domain | FORUM | Não |
-| Busca | índice Search API | Search API + Views | composição/domain | WIKI/FORUM | Não |
+| Fórum público (código atual) | Forum topic Node | Drupal Forum 1.1.3 + Node | integração/domain/painel; reconstrução em `aculta_forum` | FORUM/ACCOUNT | Não |
+| Respostas/discussões contextuais (alvo) | Comment no Node hospedeiro | Core Comment + futuro `aculta_forum` | policy por contexto, access/cache e apresentação | FORUM/MAGAZINE/COURSES/WIKI | Não |
+| Categorias Fórum (atual → alvo) | Taxonomy | Forum contrib atual → `aculta_forum` com Core Taxonomy | navegação/domain; substituição faseada | FORUM | Não |
+| Busca | índice Search API | Search API + Views + adapter de contexto futuro | composição/domain; nunca expor LMS privado | WIKI/FORUM/MAGAZINE/COURSES conforme access | Não |
 | Favoritos/seguir | Flag entities | Flag | controles/resumos | ACCOUNT/FORUM | Não |
-| Notificação de comentários | Comment Notify | Comment Notify | preferências/links | ACCOUNT/FORUM | Não |
+| Notificação de discussão | eventos e serviços existentes do Messenger | `aculta_messenger` | agrupamento, preferências e entrega após revalidar access | ACCOUNT/FORUM/MAGAZINE/COURSES/WIKI conforme contexto | Não |
 | Revista/editorial | Nodes/Taxonomy/Media | Core + Views | integração de links/SEO | MAGAZINE | Não |
 | Loja | Commerce Product/Order/Payment | Commerce | integração/domain/conta | SHOP/ACCOUNT | Não |
 | Analytics | Google Analytics | Google Tag/GA4 | eventos aprovados, sem PII | públicos | Não |
@@ -60,11 +60,14 @@ dos módulos que integra.
 
 ### Projetos aprovados para evolução — 2026-10-15
 
-O [ACULTA Fórum/Growroom420](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
-integra os mesmos Forum/Node/Comment/Taxonomy. A marca e o prefixo público mudam
-para `growroom420` na fase operacional, preservando o purpose `forum`. Autores
-históricos mantêm Users individuais bloqueados; o destino público de todos é
-o memorial coletivo `/u/lendashistoricas`, sem páginas individuais.
+O [ACULTA Forum/Growroom420](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
+tem reconstrução aprovada (`0.1.0-dev.1`): Node/Comment/Taxonomy/Views/Search API
+em quatro contextos, com retirada controlada do Drupal Forum. O código atual
+ainda usa Forum contrib; consulte
+[`MIGRATION-REMOVAL.md`](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/MIGRATION-REMOVAL.md)
+antes de afirmar substituição concluída. O purpose `forum` permanece. Autoria
+histórica segue a entidade `aculta_legado_autor`, sem User ativo, com destino
+coletivo `/u/lendashistoricas`.
 
 O [ACULTA Game](../../web/modules/custom/aculta_portal/modules/aculta_game/README.md)
 tem como fonte inicial de concessões a entidade existente `aculta_badge_award`,

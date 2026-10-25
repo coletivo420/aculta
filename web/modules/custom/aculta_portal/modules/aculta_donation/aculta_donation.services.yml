@@ -1,4 +1,14 @@
 services:
+  Drupal\aculta_donation\Hook\DonationNoticeEventPublisher:
+    class: Drupal\aculta_donation\Hook\DonationNoticeEventPublisher
+    arguments: ['@entity_type.manager', '@aculta_messenger.notice_event_publisher', '@datetime.time', '@logger.channel.aculta_donation']
+    tags:
+      - { name: event_subscriber }
+  aculta_donation.notice_event_publisher: '@Drupal\aculta_donation\Hook\DonationNoticeEventPublisher'
+  logger.channel.aculta_donation:
+    parent: logger.channel_base
+    arguments: ['aculta_donation']
+
   aculta_donation.campaigns:
     class: Drupal\aculta_donation\Campaign\DonationCampaignSelector
     arguments: ['@entity_type.manager', '@config.factory']
@@ -7,12 +17,6 @@ services:
     class: Drupal\aculta_donation\NewOrder
     arguments: ['@commerce_store.current_store', '@current_user', '@request_stack', '@entity_type.manager']
 
-  aculta_donation.route_subscriber:
-    class: Drupal\aculta_donation\EventSubscriber\CartCheckoutRouteSubscriber
-    arguments: ['@config.factory']
-    tags:
-      - { name: event_subscriber }
-
   aculta_donation.refund_access:
     class: Drupal\aculta_donation\Access\DonationRefundAccess
 
@@ -20,3 +24,9 @@ services:
     class: Drupal\aculta_donation\EventSubscriber\DonationRefundRouteSubscriber
     tags:
       - { name: event_subscriber }
+
+  aculta_donation.checkout_provider:
+    class: Drupal\aculta_donation\Checkout\DonationCheckoutProvider
+    arguments: ['@config.factory', '@aculta_portal.order_type_checkout_flows']
+    tags:
+      - { name: aculta_portal.checkout_provider }

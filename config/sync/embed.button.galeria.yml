@@ -1,0 +1,18 @@
+uuid: ddfd132b-f84e-4ec2-8423-dec19befdd09
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - entity_embed
+    - media_gallery
+label: Galeria
+id: galeria
+type_id: entity
+type_settings:
+  entity_type: media_gallery
+  bundles:
+    media_gallery: media_gallery
+  display_plugins:
+    'entity_reference:entity_reference_entity_view': 'entity_reference:entity_reference_entity_view'
+icon: {  }
+icon_uuid: null

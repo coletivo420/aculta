@@ -1,0 +1,43 @@
+.aculta-profile-social {
+  min-inline-size: 0;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--aculta-border-default);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+}
+
+.aculta-profile-social__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-block-end: 1rem;
+}
+
+.aculta-profile-social__title {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
+.aculta-profile-social__items {
+  display: grid;
+  gap: 0.625rem;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.aculta-profile-social__items a { overflow-wrap: anywhere; }
+
+.aculta-profile-social__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.aculta-profile-social :is(a, button):focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}

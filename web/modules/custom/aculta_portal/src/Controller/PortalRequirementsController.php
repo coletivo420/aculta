@@ -11,6 +11,7 @@ use Drupal\aculta_portal\Deployer\DeployerStatusReader;
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\aculta_portal\Status\PortalHelperRegistry;
 use Drupal\aculta_portal\Status\PortalImplementationRegistry;
+use Drupal\aculta_portal\Status\PhpExtensionRequirements;
 use Drupal\aculta_portal_cep\Status\CepStatusReport;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -86,20 +87,6 @@ final class PortalRequirementsController extends ControllerBase {
       'purpose' => 'Autenticação Drupal com username ou e-mail no mesmo campo.',
     ],
     [
-      'name' => 'Change Mail Page',
-      'modules' => ['change_mail_page'],
-      'package' => 'drupal/change_mail_page',
-      'minimum' => '^1.0.2',
-      'purpose' => 'Formulário de solicitação de alteração do e-mail.',
-    ],
-    [
-      'name' => 'Email Confirmer',
-      'modules' => ['email_confirmer', 'email_confirmer_user'],
-      'package' => 'drupal/email_confirmer',
-      'minimum' => '^1.0',
-      'purpose' => 'Confirmação do novo e-mail antes de atualizar Drupal User.',
-    ],
-    [
       'name' => 'Social API / Social Auth',
       'modules' => ['social_api', 'social_auth'],
       'package' => 'drupal/social_auth',
@@ -156,19 +143,12 @@ final class PortalRequirementsController extends ControllerBase {
       'warning' => 'Chaves reais e homologação externa permanecem adiadas.',
     ],
     [
-      'name' => 'Mailer Plus',
-      'modules' => ['symfony_mailer', 'mailer_override'],
-      'package' => 'drupal/symfony_mailer',
-      'minimum' => '^2.0',
-      'purpose' => 'Transporte de e-mail transacional pelo SMTP2GO, com o envio do Core e do Webform pelo Mailer Plus.',
+      'name' => 'camada de envio E-Mails ACULTA',
+      'modules' => ['aculta_mailer'],
+      'package' => 'módulo do projeto (aculta_portal/aculta_mailer)',
+      'minimum' => '0.1.0',
+      'purpose' => 'Envio de e-mail do site e do Webform pelos transportes aculta_mailer_transport (SMTP Hostinger, SMTP2GO e Brevo).',
       'warning' => 'Entrega em produção depende do RC e do provisionamento das credenciais SMTP2GO.',
-    ],
-    [
-      'name' => 'Agreement',
-      'modules' => ['agreement'],
-      'package' => 'drupal/agreement',
-      'minimum' => '^3.0',
-      'purpose' => 'Registro do aceite dos termos no fluxo de conta.',
     ],
     [
       'name' => 'Metatag / Schema Metatag',
@@ -184,7 +164,31 @@ final class PortalRequirementsController extends ControllerBase {
       'modules' => ['webform'],
       'package' => 'drupal/webform',
       'minimum' => '^6.3',
-      'purpose' => 'Formulários institucionais relacionados, como Faça Parte.',
+      'purpose' => 'Formulários institucionais publicados.',
+    ],
+  ];
+
+  /** Composer packages used by custom modules that need explicit attribution. */
+  private const PHP_EXTENSION_MODULE_REQUIREMENTS = [
+    [
+      'name' => 'ACULTA Image',
+      'modules' => ['aculta_image'],
+      'packages' => [
+        'drupal/entity_usage',
+        'drupal/media_duplicates',
+        'drupal/imageapi_optimize',
+        'drupal/imageapi_optimize_binaries',
+      ],
+    ],
+    [
+      'name' => 'ACULTA PDF Viewer',
+      'modules' => ['aculta_pdf_viewer'],
+      'packages' => [
+        'drupal/pdfpreview',
+        'drupal/imagemagick',
+        'drupal/csp',
+        'drupal/reporting',
+      ],
     ],
   ];
 
@@ -196,7 +200,6 @@ final class PortalRequirementsController extends ControllerBase {
       ['aculta_portal.turnstile_settings', $this->t('Turnstile (anti-bot)'), $this->t('Ativar ou desativar o desafio Turnstile em cadastro, login, recuperação de senha e contato. Só ativa com a chave configurada no ambiente.')],
       ['aculta_portal_cep.settings', $this->t('Consulta de CEP'), $this->t('Banco de dados padrão e ordem das fontes de consulta de CEP (base local, ViaCEP e BrasilAPI), com a ativação de cada uma.')],
       ['aculta_portal.support_settings', $this->t('Configurações do Apoio'), $this->t('Edite o texto institucional exibido na página pública Apoie.')],
-      ['aculta_portal.social_links_settings', $this->t('Redes sociais'), $this->t('Configure os links oficiais de Instagram, YouTube e Facebook exibidos na página LINKS.')],
       ['aculta_portal.deployer_status', $this->t('ACULTA Deployer: status'), $this->t('Relatório de fronteiras, correções de deploy abertas e credenciais por ambiente. Somente leitura.')],
       ['aculta_portal.secrets_import', $this->t('Credenciais do ambiente'), $this->t('Cadastrar e conferir as credenciais do ambiente. Valores salvos ficam mascarados e podem ser revelados pelo botão de olho.')],
       ['entity.simple_sitemap.collection', $this->t('Sitemaps: variantes'), $this->t('Variantes de sitemap por purpose (MAIN, SUPPORT, WIKI, MAGAZINE, COURSES) e o índice em /sitemap.xml.')],
@@ -259,6 +262,7 @@ final class PortalRequirementsController extends ControllerBase {
         '#empty' => $this->t('Nenhum requisito foi encontrado.'),
         '#attributes' => ['data-portal-ui' => 'requirements'],
       ],
+      'php_extensions' => $this->buildPhpExtensionSection(),
       'note' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'notice-warning'],
@@ -276,6 +280,66 @@ final class PortalRequirementsController extends ControllerBase {
     $build['#attached']['library'][] = 'system/admin';
     $build['#attached']['library'][] = 'aculta_portal/requirements-report';
     return $build;
+  }
+
+  /** Reports the runtime PHP extensions required by the integrated modules. */
+  private function buildPhpExtensionSection(): array {
+    $lockFile = dirname($this->appRoot) . '/composer.lock';
+    $decoded = is_readable($lockFile) ? json_decode((string) file_get_contents($lockFile), TRUE) : NULL;
+    $lockAvailable = is_array($decoded['packages'] ?? NULL);
+    $packages = $lockAvailable ? $decoded['packages'] : [];
+    $extensionRows = PhpExtensionRequirements::build(
+      array_merge(
+        self::MODULE_REQUIREMENTS,
+        self::PHP_EXTENSION_MODULE_REQUIREMENTS,
+        [[
+          'name' => 'Dependências de runtime do site (varredura global)',
+          'modules' => [],
+          'scan_all' => TRUE,
+        ]],
+      ),
+      $packages,
+      get_loaded_extensions(),
+    );
+    $rows = [];
+    foreach ($extensionRows as $extension) {
+      $status = $extension['loaded'] ? 'ok' : 'error';
+      $rows[] = [
+        'extension' => ['data' => ['#plain_text' => $extension['extension']]],
+        'integrations' => ['data' => ['#plain_text' => implode(', ', $extension['integrations'])]],
+        'modules' => ['data' => ['#plain_text' => $extension['modules'] === [] ? '—' : implode(', ', $extension['modules'])]],
+        'packages' => ['data' => ['#plain_text' => implode(', ', $extension['packages'])]],
+        'status' => [
+          'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($extension['loaded']
+            ? $this->t('OK — carregada neste PHP.')
+            : $this->t('Erro — ausente ou desativada neste PHP.'))],
+          'data-portal-ui' => 'requirements-status status-' . $status,
+        ],
+      ];
+    }
+
+    return [
+      '#type' => 'details',
+      '#title' => $this->t('Extensões PHP necessárias'),
+      '#open' => TRUE,
+      'description' => ['#plain_text' => $this->t('Requisitos ext-* declarados no composer.lock pelos pacotes dos módulos integrados e suas dependências transitivas. O status verifica se a extensão está carregada no PHP que atende esta página; requisitos opcionais (suggest) e dependências de desenvolvimento não entram na lista.')],
+      'table' => [
+        '#type' => 'table',
+        '#header' => [
+          $this->t('Extensão PHP'),
+          $this->t('Integração'),
+          $this->t('Módulos Drupal'),
+          $this->t('Pacote que declara o requisito'),
+          $this->t('Status'),
+        ],
+        '#rows' => $rows,
+        '#empty' => $lockAvailable
+          ? $this->t('Não foi encontrado requisito ext-* nos pacotes registrados para as integrações.')
+          : $this->t('Não foi possível ler o composer.lock; os requisitos de extensões PHP são desconhecidos.'),
+        '#attributes' => ['data-portal-ui' => 'requirements-php-extensions'],
+      ],
+      '#cache' => ['contexts' => ['user.permissions'], 'max-age' => 0],
+    ];
   }
 
   /**

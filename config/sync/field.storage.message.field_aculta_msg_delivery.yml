@@ -1,0 +1,35 @@
+uuid: 61dedeb3-9a7c-4b9a-ae4b-efb8736d3c71
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+    - options
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: IYTlgvl7IoWM_42TbuQC2NuPFuzi9Hd3vQ-Xf2F50Gs
+id: message.field_aculta_msg_delivery
+field_name: field_aculta_msg_delivery
+entity_type: message
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: pending
+      label: Pendente
+    -
+      value: sent
+      label: Enviado
+    -
+      value: failed
+      label: Falhou
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

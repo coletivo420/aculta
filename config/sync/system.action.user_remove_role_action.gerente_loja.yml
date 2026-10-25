@@ -1,0 +1,14 @@
+uuid: da97d8af-e7ac-401a-9045-67c454265bcf
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - user.role.gerente_loja
+  module:
+    - user
+id: user_remove_role_action.gerente_loja
+label: 'Remover o papel Gerente de Loja dos usuários selecionados'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: gerente_loja

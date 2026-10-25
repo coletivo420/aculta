@@ -13,9 +13,21 @@ Wiki420, Fórum, projetos e documentos institucionais que referenciem Media.
   esses resultados antes de criar render arrays.
 - PDF.js oficial fixado no Composer lê o arquivo no browser. Para `private://`,
   o File URL Generator aponta à rota privada do Core, que revalida o acesso ao
-  File e às entidades/campos referenciadores a cada requisição.
+  File e às entidades/campos que referenciam diretamente esse File a cada
+  requisição. Isso não percorre automaticamente referências Media → embed em
+  texto → Comment → tópico/host; cada contexto que dependa dessa cadeia precisa
+  proteger o acesso da própria Media e sincronizar seu estado de publicação.
 - O viewer não cria rotas, armazenamento, permissões, dados de LMS ou política
   de autorização independente.
+- O canvas renderiza a página como imagem: `aria-label` identifica a página, mas
+  não expõe o texto nem a estrutura semântica do PDF. O link Core para o arquivo
+  original permanece disponível como alternativa de leitura; a acessibilidade
+  nessa alternativa depende da marcação do próprio PDF e do leitor do navegador.
+  Portanto, controles acessíveis do viewer não significam conformidade WCAG do
+  conteúdo do documento. Uma camada textual/estrutural exige avaliação própria:
+  o upstream PDF.js registra limitações de teclado e estrutura acessível no
+  text layer ([#15635](https://github.com/mozilla/pdf.js/issues/15635),
+  [#20114](https://github.com/mozilla/pdf.js/issues/20114)).
 - Formatos que embutem Media usam o filtro `media_embed` do Core depois dos
   filtros de HTML; a Wiki permite somente o bundle público `document`. O
   render continua passando pelo display Media e pela checagem Core de acesso.
@@ -43,7 +55,9 @@ Serviço `aculta_pdf_viewer.builder`, com DI de `file_url_generator`,
    `private://`, MIME e extensão PDF.
 4. Para arquivos privados, limita o cache do render a max-age zero. A entrega
    de bytes permanece na rota Core `system.private_file_download`; não há rota,
-   token ou política paralela no submódulo.
+  token ou política paralela no submódulo. A autorização Core caminha pelos
+  usos diretos do File; ela não infere que uma Media foi embutida em Comment ou
+  que o tópico contextual continua visível.
 5. Opcionalmente inclui miniatura da primeira página somente para arquivo
    público. Se binário, policy,
    formato, tamanho ou conversão falhar, segue com o leitor sem miniatura.
@@ -137,6 +151,50 @@ JavaScript behavior do Drupal, não um hook PHP. Não há `hook_*`, subscriber,
 controller nem classe de formulário neste módulo; não existe arquivo
 `aculta_pdf_viewer.module`.
 
+### Investigação de text layer acessível
+
+O PDF.js instalado é 6.4.299. Seu `TextLayer` público cria spans posicionados
+para seleção e busca, mas a integração do viewer oficial também usa
+`TextLayerBuilder`, `TextAccessibilityManager` e `StructTreeLayerBuilder` para
+gerenciar foco, mapeamento de seleção e estrutura marcada. Esses builders fazem
+parte da implementação interna do viewer, não de um contrato público isolado
+do pacote `pdf.mjs`; adicionar apenas spans sobre o canvas não reproduziria o
+contrato completo. O viewer distribuído já inclui esses componentes, folha de
+estilo própria e locale pt-BR.
+
+O formatter agora oferece um link secundário para o viewer oficial completo na
+mesma origem, com a URL do PDF já aprovada pelo builder e locale `pt-BR`. O
+canvas custom permanece padrão. Essa integração reduz código customizado e
+acompanha a implementação upstream, mas não certifica WCAG nem torna acessível
+um PDF sem marcação estrutural. Ainda é necessário exercitar PDFs marcados e não
+marcados, teclado, leitores de tela e CSP Report-Only. Nenhuma camada de
+texto/estrutura própria foi implementada.
+
+Em 2026-10-20, a verificação manual com Orca e Firefox ESR na sessão gráfica
+ativa confirmou que o leitor de tela reconhece o documento web e landmarks de
+página (`Page 1`, `Page 2` etc.). A tentativa de leitura contínua não anunciou
+o corpo textual do PDF; portanto, a evidência não confirma que o texto seja
+consumível pelo leitor de tela. Não classificar o viewer como acessível com
+base apenas no nome/landmark da página ou na existência de `.textLayer` no DOM.
+Repetir a avaliação com foco/caret e navegação estrutural no viewer oficial e
+com ao menos um PDF marcado, antes do RC. Orca e Firefox foram encerrados após
+o teste; a sessão desktop existente permaneceu ativa.
+
+### Traduções pt-BR disponíveis
+
+Os arquivos `.po` locais presentes em
+`web/sites/default/files/translations/` foram lidos pelo parser gettext do
+Drupal Core: Core 11.4.10 e os 12 arquivos contrib disponíveis têm pelo menos
+uma tradução e todas as entradas `msgid` não vazias têm `msgstr` não vazio. O
+locale inclui `pt_BR` e regras plurais. Isso verifica apenas os arquivos locais
+encontrados; não prova cobertura de todas as strings dos módulos instalados,
+nem substitui atualização/verificação pelo serviço de traduções.
+
+O pacote PDF.js inclui `web/libraries/pdf.js/web/locale/pt-BR/viewer.ftl`.
+Como o viewer custom atual não carrega a interface do viewer oficial, esse locale
+não é aplicado automaticamente aos controles do ACULTA, que permanecem com
+strings próprias em português.
+
 ## Configuração e dependências
 
 - `.info.yml` declara Core 11.3+, File e Media. Não depende do módulo geral
@@ -152,8 +210,9 @@ controller nem classe de formulário neste módulo; não existe arquivo
 - `core.extension.yml` o ativa na Config Sync para que o formatter seja
   conhecido ao importar o display. Esta mudança versionada não executa a
   importação no Runtime.
-- `drupal/pdf` 1.3 permanece instalado no Composer, mas o formatter dele usa o
-  loader `.js`/API global e não é chamado. O PDF.js `.mjs` é o viewer real.
+- `drupal/pdf` 1.3 foi removido do Composer em 2026-10-21: estava desativado,
+  sem configuração nem consumidores. O PDF.js `.mjs` do `aculta_pdf_viewer`
+  fornece a leitura; PDFPreview continua opcional para miniaturas.
 - Nenhuma chamada a hook `file_download` foi adicionada. Core continua sendo o
   responsável por entregar downloads privados.
 
@@ -222,7 +281,7 @@ controller nem classe de formulário neste módulo; não existe arquivo
 - [Drupal FileAccessControlHandler](https://api.drupal.org/api/drupal/core%21modules%21file%21src%21FileAccessControlHandler.php/main)
 - [Drupal FileDownloadController](https://api.drupal.org/api/drupal/core%21modules%21system%21src%21FileDownloadController.php/function/FileDownloadController%3A%3Adownload/main) e [hook_file_download](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21File%21file.api.php/function/hook_file_download/main)
 - [Drupal MediaAccessControlHandler](https://api.drupal.org/api/drupal/core%21modules%21media%21src%21MediaAccessControlHandler.php/main)
-- [PDF 1.3](https://www.drupal.org/project/pdf/releases) e [PDFPreview 1.2](https://www.drupal.org/project/pdfpreview/releases)
+- Auditoria histórica do [PDF 1.3 removido](https://www.drupal.org/project/pdf/releases) e integração ainda ativa do [PDFPreview 1.2](https://www.drupal.org/project/pdfpreview/releases)
 - [PDF.js 6.4.299](https://github.com/mozilla/pdf.js/releases/tag/v6.4.299)
 - [Drupal 3D Flipbook 11.0.2](https://www.drupal.org/project/flipbook/releases/11.0.2)
 

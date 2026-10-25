@@ -1,0 +1,21 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_don_event
+    - message.template.aculta_msg_donation_notice
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_donation_notice.field_aculta_don_event
+field_name: field_aculta_don_event
+entity_type: message
+bundle: aculta_msg_donation_notice
+label: 'Tipo do evento'
+description: ''
+required: true
+translatable: false
+default_value: { }
+default_value_callback: ''
+settings: { }
+field_type: string

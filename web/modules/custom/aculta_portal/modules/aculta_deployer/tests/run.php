@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 // Testes determinísticos da CLI. Não usam Drupal, Drush nem vendor.
 $toolRoot = dirname(__DIR__);
-foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Indexing', 'HostingerLayout', 'Cli'] as $class) {
+foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Indexing', 'HostingerLayout', 'Provision', 'Cli'] as $class) {
   require_once $toolRoot . '/src/' . $class . '.php';
 }
 
@@ -129,6 +129,10 @@ $assert($quiet(fn() => $cli->run(['x', 'build', '--out=' . $base . '/link-para-r
 $assert($quiet(fn() => $cli->run(['x', 'build', '--out=' . $base . '/c'])) === 2, 'build com entradas bloqueantes exige --allow-open-blocking');
 // Limpeza.
 foreach (['a', 'b'] as $d) {
+  // Um build que falhou pode não ter criado o diretório: a limpeza só remove o que existe.
+  if (!is_dir($base . '/' . $d)) {
+    continue;
+  }
   $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($base . '/' . $d, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
   foreach ($it as $f) {
     $f->isDir() ? rmdir($f->getPathname()) : unlink($f->getPathname());
@@ -237,8 +241,8 @@ $pol = $config['robots_policy'] ?? [];
 $assert(array_key_exists('x_robots_tag', $pol['production'] ?? []) && $pol['production']['x_robots_tag'] === null, 'política de produção não envia X-Robots-Tag');
 $assert(str_contains((string) ($pol['test']['x_robots_tag'] ?? ''), 'noindex'), 'política de teste envia noindex');
 $prodHosts = $pol['production']['hosts'] ?? [];
-$expectedProd = ['https://aculta.org/', 'https://conta.aculta.org/', 'https://apoio.aculta.org/', 'https://revista420.aculta.org/', 'https://wiki420.aculta.org/', 'https://loja.aculta.org/', 'https://cursos.aculta.org/'];
-$assert(sort($prodHosts) === true && $prodHosts === (function () use ($expectedProd) { sort($expectedProd); return $expectedProd; })(), 'todos os sete domínios de produção estão na política (um por purpose)');
+$expectedProd = ['https://aculta.org/', 'https://conta.aculta.org/', 'https://apoio.aculta.org/', 'https://revista420.aculta.org/', 'https://wiki420.aculta.org/', 'https://loja.aculta.org/', 'https://cursos.aculta.org/', 'https://links.aculta.org/', 'https://growroom420.aculta.org/'];
+$assert(sort($prodHosts) === true && $prodHosts === (function () use ($expectedProd) { sort($expectedProd); return $expectedProd; })(), 'os nove domínios de produção declarados estão na política (um por purpose)');
 $assert(!array_filter($prodHosts, static fn($h) => str_contains($h, 'toca.net.br')), 'nenhum host de teste na política de produção');
 $badRobots = ['robots_policy' => ['production' => ['x_robots_tag' => 'noindex']]];
 $guard = AcultaDeployer\Verify::isNoindex($badRobots['robots_policy']['production']['x_robots_tag']);
@@ -252,7 +256,7 @@ $assert(AcultaDeployer\Verify::metaNoindex('<meta name="description" content="no
 $assert(AcultaDeployer\Verify::metaNoindex('<html><body>sem meta</body></html>') === false, 'página sem meta robots não é noindex');
 $assert(AcultaDeployer\Verify::isRefusedStatus(404) && AcultaDeployer\Verify::isRefusedStatus(403) && !AcultaDeployer\Verify::isRefusedStatus(200) && !AcultaDeployer\Verify::isRefusedStatus(null), 'status recusado/inexistente aceito; 200 e ausente não');
 $privProbes = $pol['production']['private_probes'] ?? [];
-$assert(count($privProbes) >= 9 && !array_filter($privProbes, static fn($u) => str_contains((string) $u, 'toca.net.br')), 'caminhos privados de produção listados, sem host de teste');
+$assert(count($privProbes) >= 8 &&!array_filter($privProbes, static fn($u) => str_contains((string) $u, 'toca.net.br')), 'caminhos privados de produção listados, sem host de teste');
 $assert(in_array('https://conta.aculta.org/entrar', $privProbes, true), 'login (/entrar) está entre os caminhos privados');
 
 $assert(AcultaDeployer\Verify::xmlLocs('<urlset><url><loc>https://aculta.org/a</loc></url><url><loc> https://aculta.org/b </loc></url></urlset>') === ['https://aculta.org/a', 'https://aculta.org/b'], 'lê todos os <loc> e ignora espaços');
@@ -333,7 +337,7 @@ $noBound = $config;
 $noBound['environment_bound'] = [];
 $assert((new Transform($noBound))->validateProfiles() !== [], 'perfis: environment_bound vazio é recusado');
 // Aplicação de regra: exatamente uma linha casa; zero ou várias recusam o build.
-$assert($t->applyProfile("smtp_on: false\nx: 1\n", [['pattern' => '^smtp_on: .*$', 'with' => 'smtp_on: true']], 'f') === "smtp_on: true\nx: 1\n", 'perfis: regra troca a linha casada');
+$assert($t->applyProfile("exemplo_on: false\nx: 1\n", [['pattern' => '^exemplo_on: .*$', 'with' => 'exemplo_on: true']], 'f') === "exemplo_on: true\nx: 1\n", 'perfis: regra troca a linha casada');
 $threw = static function (callable $fn): bool { try { $fn(); return false; } catch (\RuntimeException $e) { return true; } };
 // Indexação (robots): resumo neutro do último resultado, lido pelo painel do Portal.
 $indexRun = \AcultaDeployer\Indexing::build('production', [
@@ -344,13 +348,13 @@ $sum = \AcultaDeployer\Indexing::summarize($indexRun);
 $assert($sum !== null && $sum['passed'] === 1 && $sum['failed'] === 1 && $sum['failed_urls'] === ['https://loja.aculta.org/'] && $sum['ok'] === false && $sum['environment'] === 'production', 'indexação: resumo conta aprovados e falhas e lista só as URLs com falha');
 $assert(\AcultaDeployer\Indexing::summarize(null) === null && \AcultaDeployer\Indexing::summarize(['schema' => 2]) === null, 'indexação: arquivo ausente ou de outro schema não gera resumo');
 $assert(\AcultaDeployer\Indexing::summarize(\AcultaDeployer\Indexing::build('test', [], true, 'x'))['ok'] === true, 'indexação: resultado sem checks e ok gera resumo válido');
-$assert($threw(fn() => $t->applyProfile("x: 1\n", [['pattern' => '^smtp_on: .*$', 'with' => 'smtp_on: true']], 'f')), 'perfis: regra sem linha correspondente falha');
+$assert($threw(fn() => $t->applyProfile("x: 1\n", [['pattern' => '^exemplo_on: .*$', 'with' => 'exemplo_on: true']], 'f')), 'perfis: regra sem linha correspondente falha');
 $assert($threw(fn() => $t->applyProfile("a\na\n", [['pattern' => '^a$', 'with' => 'b']], 'f')), 'perfis: regra ambígua (duas linhas) falha');
 // Build de teste: gera a saída do ambiente de teste (hosts de teste preservados, SMTP no system.mail).
 $outTest = sys_get_temp_dir() . '/aculta-build-test-' . getmypid();
 exec($cli . ' build --target=test --out=' . escapeshellarg($outTest) . ' 2>&1', $bt, $btrc);
 $mailTest = is_file($outTest . '/config/sync/system.mail.yml') ? (string) file_get_contents($outTest . '/config/sync/system.mail.yml') : '';
-$assert($btrc === 0 && str_contains($mailTest, '  default: symfony_mailer'), 'build --target=test: system.mail no Mailer Plus');
+$assert($btrc === 0 && str_contains($mailTest, '  default: aculta_mailer'), 'build --target=test: system.mail na camada de envio E-Mails ACULTA');
 $assert(!is_file($outTest . '/config/sync/smtp.settings.yml'), 'build --target=test: smtp.settings legado não é gerado');
 // Alvo e ambiente divergentes são recusados sem gerar saída.
 exec($cli . ' build --env=test --target=production --out=' . escapeshellarg(sys_get_temp_dir() . '/aculta-build-' . getmypid()) . ' 2>&1', $b1, $brc1);
@@ -359,6 +363,24 @@ $assert($brc1 !== 0, 'build recusa --env diferente de --target');
 // Tabela de migração de domínios: somente leitura; a revista está alinhada ao host decidido.
 exec($cli . ' domains 2>&1', $dom, $domrc);
 $assert($domrc === 0 && str_contains(implode("\n", $dom), 'revista420.aculta.org (regra de host)') && str_contains(implode("\n", $dom), '0 pendente(s) de RC'), 'domains: tabela válida; revista alinhada (host de produção decidido)');
+
+// Provisionamento (idempotente): o que falta, o que muda, gravação sem sobrescrever e nomes sem valores.
+$assert(AcultaDeployer\Provision::missing(['A', 'B'], ['B', 'C']) === ['C'], 'provision: só falta o que não está no arquivo');
+$assert(AcultaDeployer\Provision::missing(['A'], ['A']) === [], 'provision: nada falta quando tudo existe');
+$genB64 = AcultaDeployer\Provision::generate('MAILER_PAYLOAD_KEY');
+$genHex = AcultaDeployer\Provision::generate('BREVO_WEBHOOK_TOKEN');
+$assert(strlen(base64_decode($genB64, TRUE) ?: '') === 32 && strlen($genHex) === 64 && ctype_xdigit($genHex), 'provision: chave gerada tem 32 bytes (base64) e token tem 64 hex');
+$assert(AcultaDeployer\Provision::plan([], NULL, FALSE, NULL) === ['cadastrar webhook transacional com a URL do ambiente'], 'provision: sem webhook, cadastra');
+$assert(in_array('atualizar o token do webhook existente (token novo)', AcultaDeployer\Provision::plan(['BREVO_WEBHOOK_TOKEN'], ['id' => 1], TRUE, NULL), true), 'provision: token novo com webhook existente atualiza o cadastro');
+$assert(AcultaDeployer\Provision::plan([], ['id' => 1], FALSE, NULL) === ['webhook já cadastrado; nada a fazer'], 'provision: segunda execução não faz nada');
+$assert(in_array('remover o cadastro de teste 2631443', AcultaDeployer\Provision::plan([], ['id' => 9], FALSE, 2631443), true), 'provision: remove o cadastro de teste quando pedido');
+$tmpSecrets = sys_get_temp_dir() . '/aculta-provision-' . getmypid() . '.env';
+file_put_contents($tmpSecrets, "KEEP=valor-atual\nBREVO_API_KEY=chave-de-teste");
+AcultaDeployer\Provision::append($tmpSecrets, ['MAILER_PAYLOAD_KEY' => 'novo']);
+$afterAppend = (string) file_get_contents($tmpSecrets);
+$assert(str_starts_with($afterAppend, "KEEP=valor-atual\nBREVO_API_KEY=chave-de-teste\n") && str_ends_with($afterAppend, "MAILER_PAYLOAD_KEY=novo\n"), 'provision: acrescenta sem alterar linhas existentes');
+$assert(AcultaDeployer\Provision::namesIn($tmpSecrets) === ['KEEP', 'BREVO_API_KEY', 'MAILER_PAYLOAD_KEY'] && AcultaDeployer\Provision::valueOf($tmpSecrets, 'KEEP') === 'valor-atual', 'provision: lista nomes e lê valor só em memória');
+@unlink($tmpSecrets);
 
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);

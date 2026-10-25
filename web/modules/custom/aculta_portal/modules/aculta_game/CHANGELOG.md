@@ -1,4 +1,89 @@
+## Não lançado — validação automatizada do trigger ForumPost — 2026-10-23
+
+- `Drupal\Tests\aculta_forum\Kernel\ForumPostParticipationPolicyKernelTest`
+  (8 testes / 100 asserções, MariaDB) prova `isEligiblePost()` com entidades
+  reais: publicação inicial no Domain `forum` é elegível; rascunho, revisão não
+  default, Domain fora do Fórum, entidade sincronizada, original já publicado,
+  autoria histórica no post ou no tópico e post sem tópico não são.
+- O teste usa o fixture `aculta_forum_post_test` e o `DomainPurposeManager`
+  real; nenhuma conquista, configuração ou Runtime foi alterado.
+- O hook `forumPostSave` continua sem teste próprio porque `BadgeService` é
+  final; a concessão idempotente do serviço é coberta pelo próprio módulo.
+
+## 0.1.0-dev.16 — incluir a primeira publicação de ForumPost no trigger atual
+
+- Hooks genéricos de insert/update concedem o trigger existente `forum_comment`
+  quando um `aculta_forum_post` de conta ativa passa a publicado na revisão
+  default de tópico Growroom publicado no Domain `forum`. Edições publicadas, sincronização,
+  autoria histórica e respostas de outros contextos não se qualificam.
+- O Game continua opcional e não declara dependência de `aculta_forum`; não há
+  nova conquista, backfill ou alteração Runtime. Testes automatizados não foram
+  executados nesta etapa.
+
+## 0.1.0-dev.15 — data de obtenção nas missões concluídas — 2026-10-21
+
+- Conquista obtida mostra "Concluída em DATA" e tooltip "Obtida em DATA" (atributo `title`), em `MissionProgress`.
+- Administração e concessão de conquistas continuam só para o administrador (`administer aculta game`, sem papel concedido).
+- `aculta_game.info.yml` 0.1.0-dev.15. RUNTIME STATUS: DEFERRED (inspeção visual pendente).
+
 # Changelog — ACULTA Game
+
+## 0.1.0-dev.14 — excluir tópicos LMS da conquista pública de Fórum
+
+- `ForumParticipationPolicyTest` prova que uma resposta hospedada por
+  `aculta_lms_topic` não gera a conquista `primeiro_comentario_forum` do
+  Growroom420. O gatilho segue restrito a tópicos públicos ACULTA.
+- Participação LMS aprovada continua válida para a política do `aculta_user`
+  que desbloqueia a criação de tópicos; isso não a converte em participação
+  pública para fins de conquista. Sem mudança na política de moderação LMS ou
+  em concessões existentes.
+- PHPUnit Unit: 10 testes/45 assertions PASS; PHPCS e `php -l` PASS. Drupal 11+
+  gate 988 e mapa módulo/tema 153 PASS. O gate de fronteira falha por uma
+  classe de design `aculta-mailer-scroll` em
+  `aculta_mailer/src/Controller/MailDashboardController.php`, parte do trabalho
+  concorrente no commit `89514dbe`, fora desta alteração. PHP CLI 8.4.26 está
+  abaixo da baseline 8.5. RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.13 — avisos de conquista pelo aculta_mailer — 2026-10-20
+
+- `AchievementEmailWorker` envia pela API `AcultaMailerInterface` (tipo `achievement_earned`), sem `plugin.manager.mail`.
+- Texto do aviso em `AchievementEarnedMailType` (tag `aculta_mailer.type`); `AchievementMailHooks` saiu para não duplicar o corpo.
+- Dependência `aculta_portal:aculta_mailer`. Testes unitários do texto.
+
+## 0.1.0-dev.12 — fixar concessão após aprovação de comentário — 2026-10-19
+
+- `ForumParticipationPolicyTest` comprova que um comentário pendente não é
+  elegível antes da aprovação, passa a ser elegível quando sua primeira
+  publicação é aprovada e não se qualifica novamente em edições posteriores.
+- Nenhum hook, regra de concessão, conta, conquista ou Runtime foi alterado.
+
+## 0.1.0-dev.11 — excluir Forum contrib das conquistas — 2026-10-19
+
+- O trigger `forum_comment` só aceita `aculta_discussion_post` hospedado em
+  Node `aculta_forum_topic` publicado. Comentários do bundle legado
+  `comment_forum` em `forum` e comentários sem conta deixam de gerar conquistas
+  contemporâneas.
+- O caminho transitório registrado em dev.10 fica substituído; `field_autor_legado`
+  e entidades em sincronização permanecem excluídos. Sem backfill ou novo storage.
+- `ForumParticipationPolicyTest` cobre a rejeição explícita do bundle legado.
+  Unit 8 testes / 35 assertions PASS; PHPCS novo e Portal 970, boundary 1374,
+  mapa 154 e `git diff --check` PASS. Runtime `toca`: Game habilitado, hook
+  resolvido após cache rebuild; leitura encontrou 8 concessões já existentes.
+  Nenhum evento foi disparado e nenhuma concessão foi escrita. RUNTIME STATUS:
+  PARTIAL.
+
+## 0.1.0-dev.10 — integração com o Fórum ACULTA — 2026-10-19
+
+- O trigger existente `forum_comment` reconhece respostas publicadas em
+  `aculta_discussion_post` hospedadas por `aculta_forum_topic`, incluindo
+  aprovação posterior sem conceder em edições subsequentes.
+- Até a remoção segura do Forum contrib, o par de bundles antigo permanece
+  temporariamente elegível; `field_autor_legado` e entidades em sincronização
+  nunca geram concessões contemporâneas.
+- Nenhum critério, ID de conquista, concessão existente ou storage mudou; não há
+  backfill e o Runtime permanece DEFERRED.
+- Teste Unit direcionado cobre Forum novo, aprovação pendente, outros contextos,
+  acervo histórico e caminho transitório do módulo contrib.
 
 ## 0.1.0-dev.9 — G5.4: ilustrações antiproibicionistas — 2026-10-15
 

@@ -1,273 +1,135 @@
 # Arquitetura do ACULTA Messenger
 
-Documento de referência arquitetural. Dono: `aculta_messenger` no ACULTA
-Portal. Revisão: 2026-10-15.
+**Fonte normativa principal.** Revisão: 2026-10-25. O inventário de rotas e classes implementadas está em [MESSENGER.md](../../../../../../docs/portal/MESSENGER.md); o plano de entrega é [ROADMAP.md](ROADMAP.md).
 
-> Estado atual do projeto (rotas, serviços, hooks, classes e contratos com o
-> tema) está em [`docs/portal/MESSENGER.md`](../../../../../../docs/portal/MESSENGER.md).
-> A separação entre módulo, submódulo e tema está em
-> [`docs/portal/MESSENGER-AUDIT.md`](../../../../../../docs/portal/MESSENGER-AUDIT.md).
-> As seções deste arquivo descrevem as decisões de cada subfase.
+## Decisão e limites
 
-## Fronteira
+`aculta_messenger` é o ponto central de mensagens privadas, avisos no site e coordenação de e-mail: mantém consumidores/adapters, agregação, deduplicação, preferências, políticas de entrega, filas e apresentação segura. Os módulos proprietários publicam eventos e escolhem destinatários conforme suas regras. O `aculta_mailer` continua responsável pelo transporte SMTP/Mail, templates, remetente, cabeçalhos/rodapés, logs e métricas; o Messenger não duplica essa infraestrutura. Mensagens humanas continuam nas entidades e APIs do `private_message`; eventos persistentes usam Message/Message Notify, Flags e `aculta_aviso` nos casos em que esses storages já são a fonte apropriada. Site Alert mantém alertas temporários. Não há migração geral para nova entidade de notificação.
 
-```text
-Drupal Core + módulos contrib (dados, APIs, access, entrega)
-                         ↓
-              aculta_portal/aculta_messenger
-             integração, URLs, access, cache
-                         ↓
-               contrato neutro renderizável
-                         ↓
-                     ACULTA420
-```
+Seguir conteúdo expressa somente a intenção de receber avisos no site e, conforme políticas/preferências, por e-mail. Não cria conversa, não inclui seguidores em threads e não amplia acesso ao conteúdo. Fórum, Wiki, Revista, cursos e outros conteúdos não possuem chats exclusivos nem automáticos. Uma ação “Iniciar conversa” deve abrir o fluxo normal de mensagens privadas e aplicar todas as políticas compartilhadas.
 
-O módulo agrega as fontes existentes; não cria uma segunda fonte de verdade.
-ACULTA420 recebe apenas dados e render arrays já autorizados. O tema não decide
-destinatários, permissões, domínio, armazenamento ou política de notificação.
+## Ownership
 
-## Fontes de verdade
-
-Preferências de comunicação ficam no ACCOUNT. O opt-out de e-mail reutiliza
-`private_message.receive_notification` em Core `user.data`; nenhum estado de
-preferência duplicado é introduzido. Bloqueios e assinaturas mantêm o modelo
-nativo por membro e por tópico.
-
-| Capacidade | Fonte de verdade | Papel do Messenger | Storage próprio |
-| --- | --- | --- | --- |
-| Conversa e mensagens privadas | Private Message | Integração de UX, ligações e eventual presenter | Não |
-| Evento/notificação registrada | Message, quando o caso exigir Message entity | Define tipos de eventos aprovados e coordena geração | Não |
-| Entrega de evento | Message Notify + Drupal Mail | Define conteúdo mínimo, preferências e destinatário permitido | Não |
-| Assinatura | Message Subscribe + Flag | Seleciona eventos suportados e filtra por access | Não |
-| Alerta temporário | Site Alert | Entrada e apresentação do alerta | Não |
-| Comunicado editorial persistente | Node `aculta_notice`, workflow `editorial`, campos de público/validade e Flag `aculta_notice_read` | Segmentação por papéis e leitura individual | Não |
-| Preferência de usuário | Configuração/field/entity nativa a confirmar no upstream | Orquestra a UX sem cópia paralela | Não até prova de lacuna |
-| Identidade e papel | User + Profile + Group | Aplicação de política sem replicar identidade/associação | Não |
-| Host e propósito | Domain + `DomainPurposeManager` | Resolver rotas canônicas e aplicar política de propósito | Não |
-
-## Contratos de propósito
-
-| Propósito | Responsabilidade |
+| Componente | Responsabilidade |
 | --- | --- |
-| `account` | Central de conversas, avisos pessoais e notificações do membro |
-| `main` | Administração de alertas/comunicados; não é uma caixa postal alternativa |
-| Demais purposes existentes | Podem produzir eventos autorizados ou apontar para `account`; não hospedam inbox |
+| `aculta_messenger` | Núcleo central de mensagens privadas, avisos, consumers/adapters LMS/Wiki/Fórum/Loja/Doações/Revista/Game, agregação, deduplicação, preferências e orquestração dos canais. |
+| `aculta_user` | Identidade, contas, amizades, preferências de identidade e elegibilidade dos relacionamentos. |
+| `aculta_mailer` | Transporte, templates, cabeçalhos/rodapés, remetente, logs e métricas de e-mail. |
+| `aculta_forum`, `aculta_lms`, `aculta_wiki`, `aculta_commerce` | Conteúdo e workflows; publishers e seleção de destinatários segundo regras proprietárias. Não implementam consumers, armazenamento de avisos, filas de entrega ou transporte de e-mail. |
+| `aculta_messenger` (integrações) | Persistência nos storages existentes, central, contagem, workers, abertura segura e regras uniformes de canal. Integrações opcionais só são registradas quando seu produtor está ativo. |
+| Revista e demais módulos | Conteúdo e workflows próprios; publicam pelo contrato compartilhado quando houver caso real. |
+| `aculta420` | SDC, Twig, CSS, comportamento visual, responsividade e acessibilidade; sem autorização, destinatários ou persistência. |
 
-As rotas novas da central devem declarar ownership `account` com a opção de
-rota do Portal e URLs absolutas/cross-purpose devem ser produzidas por
-`DomainPurposeManager`. GET/HEAD pode navegar para outro purpose conforme a
-política; POST/PUT/PATCH/DELETE nunca são redirecionados nem replayados entre
-hosts. Redirect deliberado entre purposes usa `TrustedRedirectResponse` e URL
-resolvida pelo serviço. Nenhuma rota pública usa slug inglês/técnico; rotas de
-ação preservam a exceção de rota técnica documentada pelo projeto.
+## Política comum de canais
 
-## Eventos e públicos iniciais
+Fórum, LMS, Loja, Wiki e Doações seguem o mesmo contrato: o aviso na central do site é
+obrigatório; a pessoa pode escolher e-mail desativado, entrega direta ou resumo
+/ digest. Administradores do Messenger restringem por categoria quais modos
+direto e resumo podem ser escolhidos e definem o padrão para contas sem escolha
+individual; preferências salvas continuam prevalecendo. O opt-out individual
+permanece sempre disponível. ACULTA Mailer pode suspender um tipo ou transporte, mas não define a
+preferência nem a cadência do aviso. Opt-out de e-mail nunca remove o aviso no
+site. Preferências aplicam-se por categoria/evento, e a entrega revalida política e acesso no
+momento do envio. A sequência de integração é LMS → Wiki → Fórum → Loja → Doações, sem
+duplicar o transporte nem manter fluxos de e-mail legados após migração.
 
-| Evento | Público elegível | Canal | Regra |
-| --- | --- | --- | --- |
-| Nova mensagem privada | Participantes autorizados não remetentes | Inbox e aviso por e-mail, se habilitado | E-mail não inclui corpo; link seguro para a central |
-| Comunicado publicado | Membros que possuem ao menos um papel selecionado no Node | Central; e-mail conforme preferência/política | Node access reavaliado na listagem; avisos iniciados/expirados respeitam validade |
-| Evento de entidade assinada | Assinantes ativos com acesso atual ao contexto | Message Notify quando configurado | Revogação de access suprime entrega |
-| Site Alert ativo | Visitantes conforme regra nativa | Bloco/componente global de apresentação | Início, término e severidade vêm da entidade Site Alert |
+O catálogo de categorias de e-mail é fechado no Messenger: respostas e atualizações do
+Fórum, `aprendizagem`, `wiki`, `loja` e `doacao`. Categoria não registrada retorna somente
+opt-out (`off`) e não pode persistir preferência. Um produtor novo precisa entrar no
+contrato e nos testes antes de poder solicitar envio de e-mail.
 
-Para mensagem privada, a referência ao Message e o lock por par evento/
-destinatário definem a idempotência inicial; Queue API processa o evento depois
-de salvar a thread. Mensagem, status e número de tentativas usam a entidade
-Message. Não há fila ou tabela própria. Uma notificação não revela a existência
-de usuário, conversa ou conteúdo a público não autorizado.
+O digest combina as origens por destinatário sob lock. Sua correlação UUID v5 usa uma
+chave HMACada com `hash_salt` e o manifesto de IDs/tipos/quantidades, sem incluir títulos
+ou conteúdo. Após o Mailer aceitar o e-mail, o reconhecimento de todos os adapters e a
+gravação do intervalo rodam numa transação da conexão padrão Drupal; uma falha reverte
+todo o lote. O Mailer suprime retries cuja correlação, tipo e destinatário já constem como
+aceitos no Mail Log ativo. Antes do envio, o Messenger persiste em `user.data` somente a
+correlação, instante e IDs/contadores do lote. Se uma confirmação falhar após o aceite, o
+retry consulta a correlação e confirma exatamente o manifesto salvo antes de processar
+eventos novos; o snapshot não guarda destinatário nem conteúdo. Um `accepted_at` persistido
+no snapshot registra a prova de aceite e permite concluir a recuperação mesmo após a
+expiração normal do Mail Log; snapshots antigos recebem esse marcador quando o Mailer ainda
+confirma o aceite. Se o adapter opcional estiver indisponível, o lote aceito permanece
+retido até ele voltar, sem novo envio duplicado. A pequena janela entre aceite externo e a
+persistência local da prova continua dependente da retenção do Mail Log e não cria
+atomicidade entre o transporte externo e o banco Drupal.
 
-Para Message Subscribe, o escopo inicial é publicação de Node `forum` seguido
-pela flag existente `seguir_topico`. O evento registra Node/revisão para
-deduplicação, e Message Subscribe revalida status e acesso atual do Node no
-dispatch. URLs usam o purpose `forum`; conteúdo sem alias português não é
-incluído no aviso. A entrega usa o notifier configurado e o e-mail já instalado.
-Como `gnode` não está habilitado, atividades Group não participam do escopo.
+E-mails diretos de avisos do Fórum, LMS, Wiki, Loja e Doações usam correlação UUID v5
+determinística a partir da identidade da fonte e do tipo de e-mail. O retry mantém a mesma
+correlação, permitindo que o ACULTA Mailer serialize chamadas concorrentes e suprima um
+aceite já registrado. Durante a migração, o Messenger consulta o UUID v4 usado pelos
+workers antigos e conclui como enviado quando encontra o aceite legado para o mesmo tipo e
+destinatário. Essa compatibilidade depende da retenção configurada do Mail Log; o intervalo
+entre aceite externo e persistência do estado da entidade continua não transacional.
 
-Site Alert permanece a fonte dos avisos temporários; sua instância de bloco
-nativa ocupa `highlighted` e usa o intervalo de atualização próprio. Por ser
-sitewide e não oferecer escopo Domain, é apresentada nos purposes do ACULTA420.
-Comunicados persistentes usam o bundle `aculta_notice`, workflow `editorial`,
-validade opcional e segmentação por papéis do usuário. Um hook de access nega
-visualização fora do público/intervalo. A flag `aculta_notice_read` registra
-estado individual sem tabela paralela. O sino de membros soma avisos
-persistentes não lidos e Site Alerts ativos; visitantes veem a contagem de Site
-Alerts ativos.
+Novos avisos por e-mail de Mensagem Privada também usam um tipo registrado no Mailer,
+conteúdo genérico sem corpo da conversa e correlação UUID v5 por mensagem de origem e
+destinatário. O evento de fila marca a entrega como gerenciada pelo Mailer; a entidade
+Message guarda esse ownership para que replays legados não a processem pelo caminho antigo.
+Itens previamente enfileirados sem o marcador continuam temporariamente em Message Notify,
+pois o caminho antigo não deixou correlação verificável para distinguir aceite de falha.
+Depois que a fila legada for drenada em ambiente operacional, a chamada de Message Notify
+e seu caminho de compatibilidade no Messenger serão removidos em uma atualização posterior.
+O pacote contrib continuará instalado enquanto Private Message/Message Subscribe o exigirem.
+Leitura somente em 2026-10-25: `updatedb:status` ainda lista as atualizações 10008–10011
+e os post-updates de preferências privada e compartilhada; nenhum update foi aplicado.
+Os campos de ownership, digest privado e leitura de amizade não estão disponíveis no
+Runtime até a atualização. Na mesma leitura, a fila
+`aculta_msg_friendship` continha 124 itens legados de um único campo
+(`message_id`), enquanto `aculta_msg_private_notification` não tinha itens.
+Nenhum item foi reivindicado, processado ou alterado. Portanto, o caminho
+compatível de amizade permanece até a fila ser drenada; não reencaminhar esses
+itens pelo Mailer, pois o aceite legado não tem correlação verificável.
 
-O Portal compõe o shell da conta e oferece alters genéricos de seção/subrota.
-Messenger participa como módulo opcional, enquanto rotas privadas nativas são
-classificadas para ACCOUNT. O contador vem do serviço Private Message; a lista
-de notificações usa Message com UID da sessão e cache privado. Avisos
-institucionais persistentes aparecem no mesmo modal, mas são armazenados como
-Nodes e não no Site Alert.
+Pedidos e aceites de amizade seguem o mesmo ownership central: o `aculta_user` mantém
+entidade e workflow, enquanto o Messenger persiste o aviso no bundle `Message` existente e
+envia novos e-mails pelo tipo `friendship_notice` do ACULTA Mailer. O campo
+`field_aculta_mailer_managed` tem nome compatível com o limite de campo do Drupal e separa
+itens novos de fila dos itens antigos. Update 10009 instala o campo somente no bundle de
+amizade. Consulta Drush somente leitura ao Runtime de teste em 2026-10-25 encontrou 124
+itens legados pendentes nessa fila; nenhum item foi processado ou alterado, portanto o
+caminho compatível deve permanecer até a drenagem operacional ser confirmada.
 
-## Inventário técnico upstream
+Cada evento de transição transporta um identificador aleatório imutável além do timestamp
+`changed`. O timestamp tem precisão de segundos e, sozinho, não distingue um pedido
+cancelado e reenviado dentro do mesmo segundo. A chave idempotente combina origem, tipo de
+transição, versão da fonte, identificador do evento e destinatário; reprocessar o mesmo
+objeto conserva a chave, enquanto uma nova transição recebe outra.
 
-O inventário verificado no código instalado (Core 11.4.10) está em
-[INTEGRATIONS.md](INTEGRATIONS.md). Em síntese, Private Message tem entidades
-de mensagem/thread/ban e serviços de thread, bloqueio e contagem não lida;
-Message tem entidades `message` e `message_template`; Message Notify oferece
-`message_notify.sender`; Message Subscribe consulta Flag por
-`message_subscribe.subscribers`; Site Alert tem entidade própria e serviço de
-alertas ativos.
+Os mesmos registros `aculta_msg_friendship` são adaptados pelo Messenger à central do site,
+com origem **Amizades**, estado de leitura individual e contador integrado. Pedido e aceite
+permanecem eventos de `aculta_user`; a apresentação na central não expõe nomes nem conteúdo
+de terceiros. Avisos no site continuam obrigatórios independentemente da preferência de e-mail.
 
-Private Message exige na rota da inbox `use private messaging system` e
-`access user profiles` em conjunto. A entidade `private_message_ban` provê
-bloqueio upstream; denúncia segue sem definição de produto. `message_subscribe`
-tem queue opcional e opção de revalidar access da entidade. Site Alert inclui
-cache context `active_site_alerts`; validar o bubbling quando a UI for
-integrada.
+## Fontes de verdade e armazenamento
 
-`private_message_notify` é submódulo opcional do pacote Private Message e
-reutiliza `message_notify.sender`, mas seu template padrão inclui o corpo
-privado. O Messenger impede a ativação simultânea enquanto esse template não
-for substituído por uma configuração que respeite a política ACULTA.
+| Dado | Fonte existente | Regra |
+| --- | --- | --- |
+| Threads, mensagens, participantes e leitura | Private Message | Preservar acesso por thread, bloqueios e estado nativo. |
+| Amizades | `aculta_user` | Messenger consulta a API; não replica o grafo social. |
+| Conquistas | `aculta_user` (`BadgeAward`) | O Game concede; Messenger persiste o aviso no bundle Message comum e valida titularidade e revogação ao listar ou alterar leitura. Avisos ainda pendentes no `user.data` legado são migrados por post-update. |
+| Assinaturas | Flag/Message Subscribe ou mecanismo proprietário já adotado pelo produtor | Assinatura nunca concede acesso. A política F-D21 do Fórum permanece ativa; não reativar entrega duplicada de publicação via Message Subscribe. |
+| Avisos por conteúdo do Fórum | `aculta_aviso` e contratos existentes | Manter histórico, agregação e marcadores; adaptar gradualmente. |
+| Outros avisos persistentes | Message/Message Notify/Flag conforme o fluxo existente | Sem inbox paralela ou tabela de notificações redundante. |
+| Alertas temporários | Site Alert | Agendamento e visibilidade seguem o mecanismo nativo. |
+| E-mail | ACULTA Mailer / Drupal Mail | Produtores não enviam SMTP. Aplicar preferências, consentimento e template mínimo. |
 
-`hook_private_message_new_message` é o evento público do Private Message;
-Message Subscribe fornece hooks de seleção e alteração de candidatos e
-mensagens. Escolher handlers/hooks OOP somente após revisar assinaturas no
-Core e upstream instalados.
+## Contrato de evento e segurança
 
-## Decisões arquiteturais
+A API pública `MessengerNoticePublisherInterface` despacha `MessengerNoticeEvent` para consumidores registrados no EventDispatcher do Drupal. O envelope leva tipo, módulo/origem, entidade e UUID, revisão/versão opaca, UID do destinatário, propósito, instante, chave idempotente e metadados flat limitados. A validação rejeita chaves de payload sensível, dados aninhados, campos excessivos e caracteres de controle em UUID, revisão, chave idempotente e valores textuais de metadados. Nunca incluir corpo de mensagem privada, resposta/nota de avaliação, e-mail ou payload sensível. O produtor seleciona destinatários elegíveis; o consumidor revalida access antes de persistir/entregar/abrir e deduplica no storage existente. O envelope não define persistência. O Fórum já adapta Comments, ForumPosts e revisões de tópico; o LMS usa o mesmo contrato para os quatro eventos já integrados; a Doação publica pedido criado e cada pagamento aprovado separadamente; a Revista publica eventos públicos e transições editoriais. Os demais fluxos migram gradualmente após prova comparativa.
 
-### ADR-MSG-008 — pedidos de amizade e privacidade de novas conversas
+O Messenger revalida Entity Access, publicação, Domain/Purpose, membership e bloqueios no momento de entrega e ao abrir conteúdo. Deduplicação/retry não pode gerar segunda notificação. Opt-out de e-mail não remove aviso necessário no site. Falhas são registradas sem dados pessoais. Adapters opcionais ausentes não podem derrubar a central. O adapter Revista verifica template Message, field storage e instâncias antes de consultar; enquanto a configuração padrão estiver ausente em um site existente, listagens, contador e digest retornam vazios sem consultar campos inexistentes.
 
-**Decisão:** `aculta_user` é dono do workflow de amizade e expõe seu serviço
-para o `aculta_messenger`. Nenhum módulo instalado oferece o contrato completo
-de pedido, aceite, recusa, notificação e autorização exigido. O estado explícito
-será uma entidade Drupal de `aculta_user`; eventos poderão ser Messages
-entregues por Message Notify. Não instalar o projeto Friendship, que declara
-não estar coberto pela política de segurança Drupal, nem reutilizar User
-Relationships, voltado a Drupal 7. A implementação de Friendship é referência
-de casos de uso, com modelo refeito para DI, Entity API, access control e
-Form API/POST; Flag permanece para leitura/assinatura, sem virar grafo social.
+Rotas de membro pertencem ao purpose `account`; administração usa `main`. URLs cross-purpose passam por `DomainPurposeManager`. Métodos mutáveis não atravessam host. Twig, SDC e JavaScript recebem somente dados/render arrays já autorizados.
 
-**Política:** `todos` é o padrão retrocompatível. `somente amigos` afeta apenas
-a criação de uma nova thread; respostas a threads existentes continuam
-permitidas, inclusive se a preferência mudar ou a amizade terminar. O
-destinatário deve ser conta ativa, não pode ser o remetente e não pode bloquear
-o remetente; bloqueio bilateral nativo do Private Message é sempre respeitado.
-Administradores e editores de conteúdo podem ignorar a preferência de novas
-conversas, nunca os bloqueios. Essa exceção não concede permissão Drupal nem
-acesso a threads. Regras são aplicadas no servidor no submit e não dependem da
-visibilidade de links.
+## Estado existente, objetivo e conclusão
 
-**Motivo:** a separação preserva ownership: `aculta_user` governa perfil e
-relacionamentos entre contas; `aculta_messenger` integra comunicação. A
-preferência individual no User Data evita configuração paralela; a entidade
-permite queries, estados e acesso explícitos, sem confundir pedido pendente
-com amizade aceita. Mensagens e notificações continuam nas fontes existentes.
+**Existente (inventário estático):** Private Message, Message/Message Notify, Flags, Site Alert, `aculta_aviso`, preferências e workers atuais. Fórum, LMS, Wiki, Loja, Doações e Revista publicam eventos nos fluxos registrados; consumidores, workers, persistência/configuração Message e abertura segura pertencem ao núcleo Messenger. A Doação emite dois fatos distintos: pedido criado (que pode aguardar pagamento) e cada pagamento aprovado (incluindo cada cobrança recorrente). O pedido não é apresentado como recibo. Os antigos submódulos `*_messenger` não contêm mais código executável; manifests ocultos remanescentes servem apenas como identidade de compatibilidade até desinstalação operacional autorizada, sem manter fluxos legados.
 
-**Consequências:** novas entidades e ações exigem validação de permissão,
-cacheabilidade por usuário, proteção contra IDOR, serialização de transições
-concorrentes e testes de isolamento. Notificações não são fonte do estado da
-amizade. A implementação deve manter nome de bundle e campos abaixo de 32
-caracteres.
+**Objetivo:** API mínima comum e migração progressiva de produtores reais, mantendo storage e comportamento válidos; experiência integrada de avisos e conversas com permissões e preferências consistentes.
 
-### ADR-MSG-001 — Contrib como fonte de verdade
+**Concluído nesta revisão:** decisão normativa unificada; contratos de chat contextual removidos do planejamento; validador restringe “só amigos” apenas à criação de conversa; adapters LMS, Wiki, Loja, Doações e Revista consolidados no núcleo Messenger e publishers mantidos nos módulos proprietários. Doação publica pedido criado e pagamento aprovado separadamente, uma vez por pagamento; o Messenger persiste ambos na entidade Message compartilhada, preserva o aviso obrigatório no site e permite e-mail off/direto/digest. Revista inclui publicação/atualização e transições editoriais com acesso revalidado; o adapter aguarda com segurança quando o template/campos ainda não foram instalados. O publisher/event envelope não cria storage paralelo. Migração aditiva de configuração instalada é provida por update; atualizações 10008–10012 ainda não foram aplicadas no Runtime. Testes e demais fases só são considerados concluídos quando executados e registrados no roadmap/changelog. Homologação Runtime exige ambiente e autorização próprios.
 
-**Decisão:** não criar engine, storage ou preferências duplicadas no Portal.
+## Histórico
 
-**Motivo:** conversas, mensagens, flags e alertas já possuem módulos
-especializados. Um espelho divergiria em autorização, exclusão e retenção.
-Integração custom só entra quando o upstream não fornece o contrato exigido e
-a lacuna for demonstrada por código/teste.
-
-### ADR-MSG-002 — Conta única para comunicação
-
-**Decisão:** toda caixa postal fica no purpose `account`; administração fica em
-`main`.
-
-**Motivo:** a separação de host não pode criar caixas inconsistentes nem
-permitir acesso administrativo em purpose público. Domain determina URL e
-ownership; não se infere purpose do hostname no módulo ou tema.
-
-### ADR-MSG-003 — Notificação mínima
-
-**Decisão:** e-mail de mensagem privada comunica o evento e leva a link seguro;
-corpo/conteúdo privado não vai por e-mail como padrão.
-
-**Motivo:** e-mail pode ser encaminhado, copiado por provedores e persistido em
-caixas compartilhadas. A leitura do conteúdo continua protegida pelo access
-online.
-
-### ADR-MSG-004 — Site Alert é temporário; Node é editorial
-
-**Decisão:** Site Alert guarda alertas transitórios. Comunicados com revisão,
-autoria, publicação, validade e histórico usam Node/Views/workflow se a
-segmentação for verificável.
-
-**Motivo:** não duplicar o armazenamento Site Alert nem forçar seu modelo
-temporário a funcionar como arquivo editorial.
-
-### ADR-MSG-005 — Limite de envio usa Flood do Core
-
-**Decisão:** limitar o formulário nativo do Private Message com o serviço Flood
-do Drupal: dez envios válidos por usuário em uma janela de uma hora.
-
-**Motivo:** o Core já fornece contagem com expiração e limpeza por cron. Uma
-tabela custom adicionaria dados operacionais e manutenção sem necessidade. O
-limite é aplicado como callback Form API após validações de destinatários e
-bloqueio, preservando o submit nativo.
-
-### ADR-MSG-006 — Aviso privado em fila e sem corpo
-
-**Decisão:** registrar o evento como Message, enfileirar somente o ID da
-mensagem privada e resolver thread, access, bloqueio e destinatário durante o
-processamento. A entrega usa `message_notify.sender` com template ACULTA que
-contém somente um link para a página central do purpose `account`.
-
-**Motivo:** o hook upstream ocorre antes de salvar uma thread nova, e o
-notificador opcional do Private Message inclui o corpo privado no template
-padrão. A fila processa depois do salvamento; o campo de referência no Message
-mantém uma chave de deduplicação por mensagem e destinatário. O link usa a raiz
-da conta enquanto as rotas portuguesas da caixa postal não existem. Drupal
-Queue processa com semântica de pelo menos uma vez, então a entidade persistida
-impede recriar o evento e limita tentativas de entrega.
-
-### ADR-MSG-007 — Apresentação ACULTA420 sem acoplamento funcional
-
-**Decisão:** o Messenger e o Portal entregam render arrays com access/cache e
-valores neutros. O tema mapeia rotas/entidades já resolvidas para os SDCs
-`messenger-list`, `messenger-item`, `messenger-compose`,
-`messenger-notification`, `institutional-notice`, `unread-badge` e
-`messenger-state`.
-
-**Motivo:** SDC é a camada visual; não deve consultar storage, Domain ou
-permissões, nem substituir Form API. Slots recebem render arrays, preservando
-cacheability e os formulários Private Message. A severidade de Site Alert é
-passada pela saída nativa e estilizada com tokens semânticos. O Portal envia a
-contagem de não lidas como número no contrato neutro do shell; o tema decide sua
-forma visual.
-
-## Caixa de conversas e dispensa de avisos (0.1.1)
-
-Ao abrir a gaveta, o controller chama `PrivateMessageServiceInterface::updateLastCheckTime()`;
-isso reaproveita o estado nativo do módulo e faz o contador refletir zero após a
-consulta da inbox. A lista continua usando view mode `inbox` da entidade de
-thread. Cada link abre a rota canônica da thread em diálogo AJAX Drupal, cujo
-view mode completo fornece o histórico e o formulário nativo de resposta.
-
-`PrivateMessagePresentationHooks::preprocessPrivateMessage()` fornece avatar
-User API (compact, respeitando field access/cache) e booleano neutro de direção.
-O `ThemeHooks::preprocessPrivateMessage()` mapeia esses valores ao SDC
-`messenger-item`, que exibe balões; persistência, validação e envio continuam no
-Private Message. `aculta_site_alert_dismissed` e `aculta_notice_read` são Flags
-não globais por usuário, para que o X dispense só na conta que o acionou e a
-contagem do badge seja recalculada na próxima consulta.
-# Avisos e estado de leitura
-
-Avisos temporários ficam no Site Alert e continuam com agenda, severidade e
-visibilidade de origem. Comunicados persistentes usam Node (`aculta_notice`),
-workflow editorial, público por papéis Drupal e validade opcional. O Flag
-`aculta_notice_read` guarda a leitura por usuário. Conversas usam o estado
-nativo por thread de Private Message; nenhuma tabela paralela de recibos é
-criada. As mensagens são lidas e enviadas na gaveta da barra multidomínio (ver
-`docs/portal/MESSENGER.md`); a gaveta é carregada por rotas same-origin, e a
-navegação canônica para mensagens continua no ACCOUNT.
-
-
-## Amizades e preferência de novas conversas (0.1.1)
-
-O ownership do relacionamento fica em `aculta_user`; a entidade `aculta_friendship` guarda um registro por par com uma chave string canônica única, direção solicitante/destinatário e estado. A API `FriendshipManagerInterface` serializa transições com o lock persistente do Core e verifica participante/estado em cada mutação.
-
-O Messenger consome essa API em três pontos: ações de perfil, pedidos recebidos em Notificações/contador, e validação de destinatários ao criar nova thread. `user.data` (`aculta_messenger/message_privacy`) guarda a preferência individual sem schema duplicado. Admin/editor ignoram somente essa preferência; a verificação nativa de bloqueio corre antes e continua obrigatória. Threads existentes não são afetadas.
+ADRs e detalhes anteriores foram preservados em [ARCHITECTURE-HISTORY.md](ARCHITECTURE-HISTORY.md). Propostas antigas de `ConversationContext`, `ConversationMembership`, `ParticipationLedger`, chat automático de Fórum/curso/Wiki e relatórios baseados nesses chats estão **substituídas** por esta decisão. Preservam-se ADRs, changelogs e evidências como registro histórico; não devem orientar implementação futura.

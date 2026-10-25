@@ -1,5 +1,13 @@
 # Decisões arquiteturais ACULTA420
 
+## D-012 — Mobile First
+
+O tema evolui em fases para uma base mobile-first compartilhada, com Bootstrap,
+SDC, tokens e fronteiras existentes. O ACULTA Studio é o primeiro consumidor
+piloto. A decisão global, critérios e preferência do seletor nativo de área
+estão em [`ADR-012`](../../../../../docs/decisions/ADR-012-aculta420-mobile-first.md);
+evidências iniciais em [`mobile-first-audit.md`](mobile-first-audit.md).
+
 ## D-001 — novo provider em 0.1.0
 
 O antigo tema `aculta` é base histórica. A fundação atual usa:

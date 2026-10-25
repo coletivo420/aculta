@@ -1,11 +1,162 @@
 # ACULTA Messenger
 
-Módulo de integração do ACULTA Portal para conversas privadas, eventos de
-mensagem, assinaturas e avisos institucionais. A fonte de verdade de cada
+Versão de desenvolvimento atual: **0.1.1-dev.384**. O roadmap e o changelog
+registram o estado de cada incremento e as verificações executadas.
+
+Infraestrutura unificada do ACULTA Portal para avisos do site, notificações, assinaturas, e-mail integrado e conversas privadas voluntárias entre membros. A fonte de verdade de cada
 capacidade permanece no módulo Drupal que a fornece; este submódulo compõe a
-experiência e aplica os contratos de acesso e Domain do Portal.
+experiência e aplica os contratos de acesso e Domain do Portal. A decisão
+normativa está em [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); notificações
+por conteúdo nunca criam conversas nem alteram participantes. O núcleo
+`aculta_messenger` também hospeda todos os consumidores e adapters de avisos
+para LMS, Wiki, Fórum e Loja; módulos de domínio publicam eventos e selecionam
+destinatários conforme suas regras.
+
+Na dev.262, a busca de destinatários usa o apelido público resolvido pelo
+ACULTA User; não revela o nome interno da conta e omite usuários sem identidade
+pública. Na dev.66, a cobertura do e-mail mínimo de amizade inclui sucesso, URL da conta,
+deduplicação e três tentativas limitadas em falha. Os testes não usam SMTP real;
+smoke autenticado e revisão visual permanecem pendentes.
+
+## Integração planejada com Meu Espaço no Studio (STUDIO-P0)
+
+Quando `/studio/pessoal` existir, Studio poderá apresentar **somente
+atalhos, resumos e contadores autorizados** da central de Avisos e
+Mensagens, e acesso às preferências de comunicação. As fontes de verdade
+permanecem no `aculta_messenger`: tipos Message, `aculta_aviso`,
+Private Message, conversas voluntárias, deduplicação, bloqueios, leitura,
+retenção e canais; e-mail é transportado por `aculta_mailer`.
+
+**Proibido:** criar inbox do Studio, copiar estado de leitura, fazer envio
+direto, mudar destinatários ou criar thread ao exibir participação pessoal.
+O Studio não deverá deduzir permissão para conversar a partir do acesso ao
+perfil público. Preferências de contato e visibilidade são revalidadas
+pelas políticas User/Messenger.
+
+**Estado:** integração futura, sem código alterado. Fonte:
+[Hub/Meu Espaço e marcos STUDIO-P0–P7](../../../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
+O roadmap próprio Messenger M0–M7 mantém prioridade, versões e
+contratos independentes.
+
+## Centralização de mensagens, avisos e e-mail
+
+Fórum, LMS, Wiki e Loja usam um único núcleo de comunicação.
+`aculta_messenger` é dono das conversas privadas compartilhadas, consumers e
+adapters, persistência dos avisos nos storages existentes, agregação/contagem,
+preferências, deduplicação, abertura segura, filas/workers e orquestração de
+e-mail direto ou digest. O aviso no site é obrigatório; o membro pode escolher
+e-mail desligado, direto ou resumo/digest, sempre sujeito às políticas
+administrativas.
+
+Administradores controlam em **Configurações do Messenger** quais modos de
+resumo diário e envio direto ficam disponíveis para cada categoria de conteúdo
+(Fórum, aprendizagem, Wiki, Loja, Doações e Revista). Em mensagens privadas, a pessoa
+escolhe somente no site, aviso direto ou digest semanal; o digest tem data inicial
+administrável e intervalo de sete dias por conta. Em amizades, escolhe somente
+no site ou aviso direto, sem digest. A administração pode desativar esses modos
+de e-mail. A opção sem e-mail não pode ser removida e os avisos/conversas no
+site continuam disponíveis. Uma preferência individual temporariamente
+bloqueada pela política administrativa passa a valer novamente se o modo voltar
+a ser permitido.
+
+O modo escolhido em cada categoria é a única preferência de entrega para aquele
+canal: o resumo diário ou semanal ativa o digest sem um segundo opt-in. Contas
+sem uma preferência nova herdam o opt-in global legado apenas como valor inicial
+(digest para quem havia optado, somente no site para os demais); uma escolha
+explícita por categoria sempre prevalece. A chave antiga não é mais gravada nem
+usada como bloqueio de envio.
+
+Na aba Avisos da central da conta, filtros GET permitem selecionar origem
+(Comunicados, Fórum, Alertas, Amizades, Aprendizagem, Wiki, Loja, Doações, Revista ou Conta) e
+estado de leitura. A seleção roda no Messenger depois que os adapters contribuem;
+os links mantêm os filtros ao abrir um item e retornar. O fragmento padrão da
+gaveta continua sem filtros.
+
+Os módulos de domínio mantêm conteúdos, workflows e publishers de eventos. O
+Messenger aplica o contrato compartilhado e revalida acesso.
+`aculta_mailer` mantém transporte, templates, remetente, cabeçalhos/rodapés,
+logs e métricas de envio. Não se mantém entrega paralela nos antigos
+submódulos `*_messenger`; seu código executável foi removido após a migração.
+O recibo Commerce permanece para convidados e como fallback.
+Para mensagens privadas, o Messenger oferece e-mail genérico direto ou digest
+semanal, sem conteúdo da conversa; preferências antigas são migradas por
+post-update e o Messenger passa a ser sua fonte normativa.
 
 ## ACULTA Messenger 0.1.1
+
+A versão anterior deste resumo era `0.1.1-dev.351`. O núcleo oferece
+`MessengerNoticeEvent` e `MessengerNoticePublisherInterface`, consumers para
+Fórum, LMS, Wiki, Loja, Doações, Revista e conquistas do Game, agregação da central e entrega por e-mail
+direto ou digest sem substituir os storages existentes. O Fórum preserva
+`aculta_aviso`; os demais adapters revalidam a fonte de verdade e o acesso no
+momento de abrir e entregar. Preferências individuais são limitadas pela
+política administrativa, e avisos no site continuam obrigatórios.
+
+Validação automatizada mais recente, em 2026-10-25: Unit Messenger **360 testes /
+3.937 assertions PASS**; digest/preferências **11/1.207 PASS** e conjunto amplo
+de preferências, formulários, digest e workers de e-mail **75/835 PASS**;
+central — agrupamento, filtros e paginação — **21/65 PASS**; segurança de envio
+e validação de origem — **41/246 PASS**. `AvisosResumoMailerKernelTest` **4/70
+PASS** e `PrivateMessageRetentionKernelTest` **4/55 PASS** no MariaDB dedicado
+(10 depreciações upstream de Core/contrib no Kernel de retenção). Unit de
+retenção **3/76 PASS**. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
+PASS; Runtime e SMTP externo não utilizados.
+
+BrowserTestBase isolado instalou o Messenger (**1 teste / 4 assertions PASS**,
+Dev.384); houve 189 depreciações upstream de Core/contrib. A alegação anterior
+de HTTP 200 em `/user/login` foi retirada porque a resposta tinha corpo vazio.
+O teste não comprova sessão autenticada, fluxo de envio, Runtime ou SMTP.
+
+A retenção de conversas usa cursor persistido para não deixar falhas antigas
+barrar lotes seguintes. Unit cobre paginação e rollback; o Kernel MariaDB cria
+threads, mensagens privadas e avisos Message reais, removendo apenas dados com
+mais de seis meses e preservando uma conversa recente. Também prova rollback
+transacional real quando a exclusão do aviso falha. A limpeza de avisos agora
+consulta IDs de origem e apaga entidades em lotes de 500, mantendo SQL e memória
+limitados em conversas longas; o Kernel cobre 501 mensagens/avisos. Runtime não
+foi usado e nenhuma limpeza foi executada em dados reais.
+
+Dev.215 centraliza a criação de correlações UUID v5 para e-mails diretos do Fórum,
+LMS, Wiki, Loja e Doações. Retries reutilizam a mesma identidade e o ACULTA Mailer
+deduplica aceite persistido; durante a migração, o Messenger também reconhece o
+aceite legado associado ao UUID v4 original quando ainda está no Mail Log.
+
+O Kernel de rotas também usa a definição de produção da resposta pela gaveta e o
+AccessManager/Core para confirmar CSRF e autorização por associação à thread:
+membro com token válido passa; token ausente/inválido e pessoa externa são
+negados. A rota segue POST-only. Essa prova não executa o roteador HTTP nem o
+Runtime.
+
+As ações por membro também são testadas contra parâmetros adulterados: o
+controller oculta as opções e ações de relação quando o alvo é o próprio
+usuário ou não pertence à thread (`MessagesControllerMemberAccessTest`).
+
+O Kernel Wiki também cobre digest com revisão real: replay do mesmo evento
+reutiliza o Message persistido sem duplicar a entrega, a revisão elegível entra
+e é confirmada pelo `delivery_id`; se for publicada antes da entrega, a linha
+não é enviada e a pendência é descartada. O Kernel cobre esse fluxo em banco
+isolado, sem execução de cron, SMTP ou Runtime.
+
+Os Kernels de Loja e Doações agora verificam também a estabilidade do digest:
+replay de evento não cria outra entrega, leituras repetidas não consomem linhas,
+cada cobrança aprovada continua distinta e o acknowledgement por `delivery_id`
+confirma somente os itens selecionados. O conjunto Loja/Doações passou com
+8/136; foram registrados avisos de depreciação do Core Message/Message Template.
+
+O formulário de privacidade testa a mesma restrição administrativa de modos para
+Fórum, Aprendizagem, Wiki, Loja e Doações: a opção direta pode ser removida sem
+remover `off`, digest ou os avisos obrigatórios no site. `AvisosPrivacyFormTest`
+e os testes de preferência/configuração passaram em conjunto (12/76).
+
+MAG 0.5-H foi inventariada e a integração da Revista está em
+`0.1.1-dev.360`: publicação/atualização e transições de envio/devolução
+editorial, acompanhamento por Flag, consumer Message e categoria `revista`
+estão implementados. Estado e evidências estão em
+[ROADMAP.md](docs/ROADMAP.md) e `aculta_magazine/docs/ARCHITECTURE.md` §11.
+
+O worker de atualização de tópicos usa o relógio injetável do Drupal no prazo
+de espera por alias; o resumo diário sempre usa `pt-br`, idioma único da
+plataforma, independentemente da preferência por conta.
 
 A subfase 0.1.1 implementa pedidos/aceites de amizade e uma preferência de
 privacidade para novas conversas. Consulte [INTEGRATIONS.md](docs/INTEGRATIONS.md)
@@ -29,9 +180,18 @@ Mensagens são conversas entre pessoas. Avisos são comunicações do sistema. A
 - Private Message mantém conversas, mensagens, participantes e suas regras de
   acesso.
 - Message mantém eventos persistentes configurados como tipos de mensagem.
-- Message Notify entrega mensagens por notificadores existentes e pela
-  infraestrutura de e-mail do Drupal.
-- Message Subscribe e Flag mantêm assinaturas; assinar nunca concede acesso. Para tópicos de fórum, a entrega por mensagem foi desligada (F-D21); ver `docs/AVISOS-E-MENSAGENS.md`.
+- Avisos novos de Mensagem Privada usam o tipo registrado no ACULTA Mailer e
+  correlação determinística. O worker mantém temporariamente Message Notify
+  somente para itens antigos sem o marcador de migração.
+- Novos avisos de amizade também usam ACULTA Mailer. Itens antigos que já estão
+  na fila de amizade continuam pelo transporte legado até sua drenagem; não são
+  retransmitidos pelo Mailer sem uma correlação de aceite verificável.
+- O adapter LMS central adiciona avisos educacionais à lista/contador global;
+  digest e e-mail direto usam preferências comuns. O produtor no `aculta_lms`
+  não implementa persistência ou entrega.
+- O resumo diário cria `MailMessage` em `pt-br`, o único idioma da plataforma.
+  Preferências de idioma por conta não alteram o idioma de entrega.
+- Flag `seguir_topico` mantém as assinaturas; assinar nunca concede acesso. O alter de destinatários aplica F-D21 a tópicos do ACULTA Fórum e Comments hospedados neles, sem afetar outros contextos; avisos seguem pelo fluxo compartilhado (`docs/AVISOS-E-MENSAGENS.md`).
 - Site Alert mantém alertas temporários globais.
 - Comunicados persistentes são Nodes `aculta_notice`, segmentados por papéis
   Drupal existentes, moderados pelo workflow editorial e com validade opcional.
@@ -64,16 +224,23 @@ Composer. O inventário e os limites da inspeção estão em
 O PHP CLI disponível nesta execução é 8.4.26. O projeto pede PHP 8.5; esta
 máquina não comprova validação em PHP 8.5. Compatibilidade de cada dependência
 com PHP 8.5 também não é declarada até examinar código e metadados instalados.
-O transporte de e-mail já instalado é o caminho de entrega previsto: Drupal Mail
-com Symfony Mailer/Mailer Plus. O Messenger não adiciona SMTP ou outro
-transportador.
+O ACULTA Mailer transporta os avisos novos; o Messenger não adiciona SMTP nem
+outro transportador. Message Notify permanece temporariamente no caminho de
+compatibilidade dos itens legados de amizade até a drenagem documentada em
+[ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Domain Purpose
 
-Preferências de e-mail ficam em `/configuracoes/email` (Notificações por e-mail), na área ACCOUNT. O opt-out de
-e-mail reutiliza `private_message.receive_notification`; a entrega passa pela
-ferramenta de e-mail já instalada. Bloqueios e assinaturas usam os controles
-nativos por membro e por tópico.
+Todas as preferências de e-mail ficam em `/configuracoes/email` (Notificações
+por e-mail), na área ACCOUNT, independentemente da permissão de iniciar
+conversas. O Messenger guarda modos por categoria em `user.data`: Fórum
+(respostas e atualizações), Aprendizagem, Wiki, Loja, Doações, Mensagens
+Privadas e Amizades. A pessoa pode escolher sem e-mail, envio direto ou resumo
+diário/semanal conforme a categoria; a administração pode remover modalidades
+por categoria, sem desligar avisos obrigatórios no site. O corpo das mensagens
+privadas nunca é enviado por e-mail. Bloqueios e assinaturas reutilizam os
+mecanismos próprios de cada capacidade; deixar de seguir tópicos continua nas
+configurações de Privacidade.
 
 `account` é o único purpose da caixa postal e da experiência do membro.
 `main` é o único purpose administrativo, inclusive para manutenção de Site
@@ -92,19 +259,16 @@ cross-purpose usam `DomainPurposeManager`; mutações não atravessam hosts.
 
 ## Estado da implementação
 
-O módulo e os cinco módulos upstream estão selecionados em `core.extension`
-para a próxima importação de Config Sync; a ativação no runtime não foi feita.
-O formulário nativo
-usa Flood para limitar envios; novos eventos são processados em fila e entregues
-como Message Notify usando o mailer instalado, com um template que não expõe o
-corpo privado. Inbox, threads, criação/resposta, contagem de não lidas,
-bloqueio e access continuam pertencendo ao Private Message. As permissões
-`use private messaging system` e `access user profiles` não aparecem na
-configuração exportada de papéis; nenhuma concessão é feita pelo submódulo. A
-política dos papéis precisa ser aplicada por configuração administrativa
-revisada antes da ativação da experiência para membros. Homelab, fallback sem
-JavaScript, isolamento real, instalação do bundle editorial e acessibilidade
-do modal ainda não foram verificados.
+O módulo e os módulos upstream estão selecionados em `core.extension` para a
+próxima importação de Config Sync; ativação no Runtime não foi feita. O código
+mantém inbox, threads, criação/resposta, contagem, bloqueios e access no Private
+Message, usa Flood/Queue API e o Mailer instalado, sem incluir corpo privado em
+e-mail. Os testes Unit/Kernel de autorização, CSRF, Flood, amizades, avisos e
+digest estão registrados em [ROADMAP.md](docs/ROADMAP.md) e [SECURITY.md](docs/SECURITY.md).
+As permissões `use private messaging system` e `access user profiles` não são
+concedidas pelo submódulo; a política de papéis precisa ser revisada antes da
+ativação para membros. Requisição HTTP completa com sessão, smoke visual atual,
+Runtime e transporte SMTP permanecem pendentes.
 
 Para assinaturas, dev.5 reutiliza a flag Drupal `seguir_topico` dos tópicos
 `forum`. A publicação de tópico não gera mais mensagem: Message Subscribe não entrega para `forum`
@@ -140,4 +304,6 @@ bloqueios nativos do Private Message conservam suas regras.
 Administradores e editores de conteúdo podem iniciar novas conversas apesar
 da preferência, mas continuam sujeitos ao bloqueio. Ver
 [integrações](docs/INTEGRATIONS.md), [segurança](docs/SECURITY.md) e
-[roadmap](docs/ROADMAP.md). RUNTIME STATUS: DEFERRED.
+[roadmap](docs/ROADMAP.md). O smoke Runtime documentado em dev.63 confirmou a
+criação do aviso Message e enqueue para pedido/aceite; entrega real de e-mail e
+revisão visual autenticada permanecem pendentes.

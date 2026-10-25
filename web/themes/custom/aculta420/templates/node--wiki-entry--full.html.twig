@@ -2,10 +2,12 @@
 <article{{ attributes.addClass('aculta-wiki-entry') }}>
   {{ title_prefix }}
   {{ title_suffix }}
+  {{ include('aculta420:context-header', { title: node.label, eyebrow: 'Wiki420 · Enciclopédia livre'|t }, with_context = false) }}
   {{ include('aculta420:wiki-entry', {
     variant: 'article',
+    show_heading: false,
     url: url,
-    title: label,
+    title: node.label,
     has_summary: not node.field_wiki_summary.isEmpty and content.field_wiki_summary['#access']|default(true),
     has_image: not node.field_wiki_image.isEmpty and content.field_wiki_image['#access']|default(true),
     has_categories: not node.field_wiki_categories.isEmpty and content.field_wiki_categories['#access']|default(true),
@@ -17,6 +19,7 @@
     body: content.body,
     related: content.field_wiki_related,
     references: content.field_wiki_references,
+    discussion: content.field_aculta_discussion,
     actions: content.links
   }, with_context = false) }}
 </article>

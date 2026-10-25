@@ -1,0 +1,15 @@
+uuid: d24c4436-6a05-40b3-896a-ac06b71ef04e
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - flag.flag.aculta_notice_read
+  module:
+    - flag
+id: flag_action.aculta_notice_read_unflag
+label: 'Marcar como não lido'
+type: node
+plugin: 'flag_action:aculta_notice_read_unflag'
+configuration:
+  flag_id: aculta_notice_read
+  flag_action: unflag

@@ -31,6 +31,60 @@ aculta_portal.settings:
       type: uri
       label: 'Endereço da conta Mercado Pago (caixa de pagamentos em Meus pedidos; vazio oculta o link)'
 
+aculta_portal.user_upload:
+  type: config_object
+  label: 'Política central de envio de arquivos por usuários'
+  mapping:
+    allowed_extensions:
+      type: string
+      label: 'Extensões permitidas'
+    max_size_mb:
+      type: integer
+      label: 'Tamanho máximo por arquivo em megabytes'
+    consumers:
+      type: mapping
+      label: 'Políticas específicas dos consumidores'
+      mapping:
+        forum:
+          type: mapping
+          label: 'Política de upload do Fórum'
+          mapping:
+            inherit_global:
+              type: boolean
+              label: 'Usar a política global'
+            allowed_extensions:
+              type: string
+              label: 'Extensões permitidas'
+            max_size_mb:
+              type: integer
+              label: 'Tamanho máximo por arquivo em megabytes'
+        lms:
+          type: mapping
+          label: 'Política de upload das respostas do LMS'
+          mapping:
+            inherit_global:
+              type: boolean
+              label: 'Usar a política global'
+            allowed_extensions:
+              type: string
+              label: 'Extensões permitidas'
+            max_size_mb:
+              type: integer
+              label: 'Tamanho máximo por arquivo em megabytes'
+        wiki:
+          type: mapping
+          label: 'Política de upload da imagem de destaque da Wiki'
+          mapping:
+            inherit_global:
+              type: boolean
+              label: 'Usar a política global'
+            allowed_extensions:
+              type: string
+              label: 'Extensões permitidas'
+            max_size_mb:
+              type: integer
+              label: 'Tamanho máximo por arquivo em megabytes'
+
 aculta_portal.appearance:
   type: config_object
   label: 'Modo de cor padrão do ACULTA Portal'
@@ -38,6 +92,7 @@ aculta_portal.appearance:
     default_mode:
       type: string
       label: 'Modo de cor padrão (light, dark ou auto)'
+# Legacy config retained as a rollback source while aculta_links dual-writes.
 aculta_portal.social_links:
   type: config_object
   label: 'Redes sociais públicas da ACULTA'
@@ -89,3 +144,17 @@ aculta_portal.role_hierarchy:
       label: 'Papéis da cadeia, do mais alto ao mais baixo'
       sequence:
         type: string
+
+aculta_portal.checkout_settings:
+  type: config_object
+  label: 'Configurações de checkout do ACULTA Portal'
+  mapping:
+    common_checkout_enabled:
+      type: boolean
+      label: 'Checkout comum do Commerce habilitado'
+    shop_order_type:
+      type: string
+      label: 'Tipo de pedido da Loja'
+    lms_order_type:
+      type: string
+      label: 'Tipo de pedido do LMS'

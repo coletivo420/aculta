@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Email Confirmer install file.
+ */
+
+/**
+ * Implements hook_update_N().
+ *
+ * Clears the "aculta_mail_confirmer_requests" queue of old requests.
+ */
+function aculta_mail_confirmer_update_9101(&$sandbox) {
+  \Drupal::queue('aculta_mail_confirmer_requests')->deleteQueue();
+}

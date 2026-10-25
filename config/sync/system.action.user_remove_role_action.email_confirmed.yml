@@ -1,0 +1,14 @@
+uuid: e820859b-e471-4eb3-99e3-b7b816a05f3c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - user.role.email_confirmed
+  module:
+    - user
+id: user_remove_role_action.email_confirmed
+label: 'Remove the E-mail confirmado role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: email_confirmed

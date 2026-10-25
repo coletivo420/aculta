@@ -3,5 +3,11 @@
 /* Rodapé da gaveta de avisos: botão "Ver todos os avisos" sempre abaixo da lista (como o rodapé do carrinho). */
 /* A lista rola dentro da gaveta; o rodapé fica fora da rolagem, sempre visível. */
 .aculta-alerts-offcanvas .aculta-utility-offcanvas__body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.aculta-alerts-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.aculta-alerts-filters__group { flex: 1 1 9rem; min-width: 0; }
+.aculta-alerts-filters__group > summary { min-height: 2.75rem; padding: 0.5rem 0.75rem; border: 1px solid var(--aculta-border-subtle); border-radius: 0.35rem; cursor: pointer; }
+.aculta-alerts-filters__group > summary:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
+.aculta-alerts-filters__group .item-list { display: flex; flex-wrap: wrap; gap: 0.25rem 0.75rem; padding-block: 0.5rem; }
+.aculta-alerts-filters__group .item-list > li { padding-block: 0.25rem; border: 0; }
 .aculta-alerts-offcanvas__footer { flex: 0 0 auto; padding: 0.75rem 1rem; border-top: 1px solid var(--aculta-border-subtle); }
 .aculta-alerts-offcanvas__action { display: block; width: 100%; text-align: center; }

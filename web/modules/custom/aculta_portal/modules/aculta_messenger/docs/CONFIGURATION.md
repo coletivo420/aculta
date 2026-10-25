@@ -1,7 +1,7 @@
 # Configuração e operação
 
 Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
-2026-10-14.
+2026-10-25.
 
 ## Princípios
 
@@ -12,10 +12,11 @@ Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
 - Config exportável pode conter nomes, tipos e políticas, nunca tokens, senha,
   credencial SMTP ou segredo. Segredos, se uma integração futura realmente
   exigir, seguem Drupal Key provider `env` e o contrato de secrets do ACULTA.
-- A entrega usa a ferramenta de e-mail já instalada: Message Notify chama o
-  serviço de mail do Drupal, que usa o Symfony Mailer/Mailer Plus existente.
-  Não configurar SMTP ou outro transporte novo nem adicionar dependência para
-  isso.
+- A entrega nova usa `aculta_mailer.mailer`, que mantém o transporte e os
+  templates de e-mail ACULTA. Não configurar SMTP ou outro transporte novo nem
+  adicionar dependência para isso. A fila antiga de amizade permanece
+  temporariamente em Message Notify até ser drenada; o caminho não deve ser
+  removido nem os itens reenfileirados pelo Mailer antes dessa confirmação.
 - Administração de Site Alert e comunicados permanece em `main`.
 - A central pessoal e suas configurações ficam em `account`.
 
@@ -24,8 +25,9 @@ Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
 `aculta_messenger.info.yml` declara dependências no ACULTA Portal, nos cinco
 módulos integrados e nos módulos Core necessários ao bundle de aviso. A
 integração privada usa callback Form API, Flood e Queue API do Core,
-configuração Message exportável e o serviço existente
-`message_notify.sender`. As rotas são da central; o módulo acrescenta o tipo
+configuração Message exportável e o serviço `aculta_mailer.mailer` para novas
+entregas. `message_notify.sender` só permanece para itens legados de amizade
+ainda na fila. As rotas são da central; o módulo acrescenta o tipo
 de Node, uma decisão de node access e as permissões de Flag limitadas a
 `aculta_notice_read`. `composer.json` e `composer.lock` adicionam somente os
 cinco pacotes; versões em
@@ -69,12 +71,45 @@ publicados e visíveis com links nativos lido/não lido do Flag.
 
 ## Checklist para implantação futura
 
-Preferências de e-mail em `/configuracoes/email` reutilizam `user.data` do Core e a
-chave `private_message.receive_notification`, já consumida pelo Private Message
-e pelo worker Messenger. A aba aparece para contas com acesso a mensagens e com
-avisos habilitados na configuração nativa. Não há opção/storage para restringir
-globalmente remetentes ou controlar todas as assinaturas: bloqueio é por membro
-na interface nativa e seguir tópico usa a flag existente.
+Todas as preferências de e-mail ficam na página de conta `/configuracoes/email`,
+propriedade do Messenger e armazenada em `user.data` sob `aculta_messenger`.
+Isso inclui Fórum, Aprendizagem, Wiki, Loja, Doações, Mensagens Privadas e
+Amizades; o formulário permanece disponível a membros sem permissão para
+iniciar conversas. As categorias de conteúdo oferecem sem e-mail, entrega
+direta ou resumo diário; a administração pode desabilitar cada modalidade em
+`aculta_messenger.settings:email_modes` e definir o padrão de entrega para
+contas que ainda não salvaram uma preferência. Escolhas individuais explícitas
+continuam prevalecendo. Um padrão administrativo inválido ou incompatível com
+as modalidades habilitadas é tratado como `off` (somente no site). Mensagens
+Privadas oferecem sem
+e-mail, aviso direto ou resumo semanal, sem incluir o corpo da conversa;
+Amizades oferecem somente no site ou e-mail direto. Os avisos no site e a
+inbox permanecem disponíveis independentemente dessas escolhas. O formulário
+de Privacidade continua responsável pela visibilidade do perfil e por deixar
+de seguir tópicos. O post-update
+`aculta_messenger_post_update_shared_email_preferences` migra o opt-in global
+legado e as exceções antigas do Fórum para modos individuais, preserva escolhas
+Messenger existentes e remove as chaves antigas após a cópia. Depois da
+migração, contas sem preferência seguem o padrão administrativo de cada
+categoria; a configuração inicial mantém avisos de conteúdo somente no site.
+Em Mensagens Privadas, a pessoa escolhe envio direto a cada mensagem, resumo
+semanal ou sem e-mail; a administração pode habilitar os modos, definir o
+padrão para contas sem preferência e definir a data inicial global do digest
+semanal. Amizade permite somente entrega no
+site ou e-mail direto. Os avisos de Mensagens Privadas contêm somente o nome do
+remetente e link para a inbox; nunca incluem o corpo da mensagem. Cada conta
+recebe os resumos seguintes após sete dias. A data inicial é considerada à
+meia-noite no fuso horário configurado em `system.date:timezone.default`; uma
+data administrativa inválida não habilita a entrega. O update
+`aculta_messenger_post_update_private_message_email_preferences` copia as
+preferências administrativas e individuais do Private Message para
+`aculta_messenger`; preserva uma escolha Messenger já existente e remove a chave
+individual antiga somente depois da cópia. O update é incremental e não foi
+executado no Runtime. Após sua execução, o Messenger é a fonte única dessas
+preferências. Avisos no site e conversas na inbox permanecem disponíveis
+independentemente do opt-out.
+O ACULTA Mailer é o transporte comum; produtores e adapters do Messenger não
+configuram SMTP.
 
 1. Comparar configuração exportada dos cinco módulos e aprovar os componentes
    necessários; não fazer import/export automático.

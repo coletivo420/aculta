@@ -81,7 +81,7 @@ manter o design em um só lugar.
   `SearchUtility`/`SearchPreviewController`/`SearchPageController`/`SearchPopupForm` (busca, prévia, popup, dicas),
   `SecretsController` e `SecretsForm*` (tela de segredos), `PortalRequirementsController` e `DeployerStatusController`
   (relatórios), `SupportForm`, `RegistrationController`, `PortalHooks` e `FormHooks` (login, aviso de e-mail),
-  `StreetNumberField` (Número e S/N), `AccountTermsAcceptForm`, `DomainPresentationBuilder` (imagem da marca),
+  `StreetNumberField` (Número e S/N), `AcultaUserAgreementAcceptForm`, `DomainPresentationBuilder` (imagem da marca),
   breadcrumb do AJAX (`AccountAjaxMainContentRenderer`, agora `item_list` com tokens) e o gatilho da busca (template
   `portal-search-trigger` com ícone no tema).
 - JS: o breadcrumb da conta é selecionado por `[data-portal-breadcrumb]` (antes `ol.breadcrumb`, classe do tema).
@@ -127,6 +127,13 @@ Política: toda ferramenta do `aculta_user` funciona com outro tema. O módulo e
 | Marcação neutra com `data-portal-ui` (tokens semânticos) | `aculta_user` | `account-view-profile`, `public-profile-link-instagram` |
 | Classes, bordas, cores, tamanhos e ícones | ACULTA420 | `PortalUiHooks::TOKENS`, `css/components/public-profile.css`, `portal-account.css` |
 
+Cartão de autoria usa contrato neutro próprio: `aculta_user` registra o hook
+`aculta_user_author_card` com campos preparados e cacheáveis; o template do
+ACULTA420 compõe o SDC `aculta420:author-card`. O módulo não conhece o SDC nem
+emite classes de design. Ações chegam como render arrays montados por um
+consumidor que já avaliou acesso; imagem e visibilidade seguem `aculta_image` e
+`PublicProfilePolicy`.
+
 Sem o ACULTA420, os elementos continuam funcionando: links com `href` válido, textos e foto. Só a aparência volta ao padrão do tema ativo. Não há classes de design (`btn`, `bi-*`, `portal-*`) no módulo; o gate `validate-module-theme-boundary.php` confere.
 
 ## ACULTA Messenger (auditoria de ownership, 2026-10-14)
@@ -166,9 +173,10 @@ agrupados por camada. Esta seção registra a delimitação e o resultado; não 
 
 | Camada | Arquivos desta branch | Dono | Regra verificada |
 | --- | --- | --- | --- |
-| Tema `aculta420` | `templates/node--article--full`, `templates/node--blog--full`, `components/patterns/revista-publication`, `css/components/revista-post.css`, marcadores de versão | ACULTA420 | Só apresentação. Consome render arrays prontos do módulo; sem `Drupal::`, sem domínio, host ou purpose; cores por token. |
-| Submódulo `aculta_magazine` | `Forum/PublicationTypeConverter`, `Forum/ForumTopicSync` (`silently()`), `Hook/ForumTopicHooks` (`comment_links_alter`), `Presentation/PostPresentation` (contexto `theme`), `services.yml`, docs, CHANGELOG | Portal (função) | Serviços com injeção de dependência; sem classe de design nem referência ao tema; o contexto `theme` é dependência de cache, não estilo. |
-| Submódulo `aculta_user` | `Hook/DiscussionHooks` (texto da contagem, `t()`) | Portal (função) | Só texto e marcação com `data-portal-ui`. |
+| Tema `aculta420` | `templates/node--revista--full`, `components/patterns/revista-publication`, `templates/comment--aculta-discussion-post`, `css/components/revista-post.css`, `css/components/discussion.css` | ACULTA420 | Só apresentação do bundle canônico. overrides de `article`/`blog` foram removidos; o slot `discussion` recebe `content.field_aculta_discussion` preparado pelo Drupal. Sem `Drupal::`, domínio, host ou decisão de access no tema. |
+| Submódulo `aculta_magazine` | Bundle `revista`, Comment direto, workflow editorial e registro histórico da migração `article`/`blog` | Portal (função) | `aculta_forum` fornece contexto de comentário sem criar tópico público; Galeria é incorporada como entidade existente; migrador removido após execução; access/cache permanecem nos donos. |
+| Submódulo `aculta_forum` | Discussion Context API, Node/Comment/Taxonomy/Views, Search API público restrito a `aculta_forum_topic`, ferramentas de moderação/movimento e regras de access/cache | Portal (função) | Runtime é dono de contexto, índice, query, acesso e cache; ACULTA420 apresenta Views e comentários pelos componentes existentes; nunca possui cartão de autoria nem SDC do tema; LMS entra por adapter opcional. |
+| Submódulo `aculta_user` | Atual: `DiscussionCommentAuthorHooks`, Author Card API, `PublicProfilePolicy`, `PublicProfileLink`, AvatarPool, LegacyAuthor; hooks de `forum`/`comment_forum` permanecem apenas durante a retirada | Portal (identidade/acesso/dados) | `aculta_forum` e os Comments da Revista consomem cartões, sem builder nem consulta privada própria; ACULTA420 apresenta. Ver `aculta_user/docs/AUTHOR-CARDS.md`. |
 | Scripts de conteúdo | `scripts/content/editorial/*` (importação e JSON das notícias) | Projeto (ferramenta operacional) | Fora de `src/`. Usa `\Drupal::` no mesmo padrão dos scripts de conteúdo existentes (`link-project-art.php`). |
 | Documentação | `docs/portal/ACULTA-USER-PLAN.md` (E3.1), `aculta_magazine/docs/README.md`, esta seção | Projeto | Descreve o comportamento implementado e marca as regras propostas. |
 

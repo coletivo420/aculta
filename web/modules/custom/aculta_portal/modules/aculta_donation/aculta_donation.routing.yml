@@ -33,9 +33,18 @@ aculta_donation.donation.quick:
     no_cache: true
 
 aculta_donation.donation_settings:
-  path: '/painel-administrativo/configuracoes/aculta/doacoes/fluxo'
+  path: '/painel-administrativo/aculta/doacoes/fluxo'
   defaults:
     _title: 'Fluxo de doação'
     _form: 'Drupal\aculta_donation\Form\DonationSettingsForm'
   requirements:
     _permission: 'administer commerce_order_type'
+aculta_donation.checkout_tab:
+  path: '/painel-administrativo/aculta/checkout/doacoes'
+  defaults:
+    _title: 'Checkout de Doações'
+    _form: 'Drupal\aculta_donation\Form\DonationSettingsForm'
+  requirements:
+    _permission: 'administer commerce_order_type'
+  options:
+    _admin_route: true

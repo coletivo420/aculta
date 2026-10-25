@@ -1,13 +1,14 @@
 name: Portal ACULTA
 type: module
-description: 'Integra módulos de conta, conteúdo, aprendizagem e H5P por turma, Views com blocos ajustáveis via CTools, leitura compartilhada de PDF por Media e campos File, contratos de propósito, slugs públicos canônicos e sanitização nativa de nomes de upload (filename_sanitization).'
+description: 'Integra conta, conteúdo, aprendizagem e discussões; upload seguro e modal compartilhado por política global e de domínio, histórico e descoberta do Fórum, operações administrativas em lote com acesso revalidado, autoria contextual via aculta_user, Views/CTools, PDF, contratos de propósito, slugs públicos canônicos, sanitização nativa de nomes de upload e status de extensões PHP.'
 package: 'ACULTA Portal'
-version: '0.4.0-dev.161'
+version: '0.4.1-dev.32'
 core_version_requirement: ^11.3
 dependencies:
   - ctools:ctools
   - ctools:ctools_views
   - aculta_portal:aculta_image
+  - aculta_portal:aculta_mailer
   - profile:profile
   - drupal:views
   - vvjs:vvjs
@@ -19,13 +20,14 @@ dependencies:
   - aculta_portal:aculta_portal_cep
   - drupal:user
   - login_emailusername:login_emailusername
-  - change_mail_page:change_mail_page
-  - email_confirmer:email_confirmer
-  - email_confirmer:email_confirmer_user
+  - aculta_portal:aculta_mail_confirmer
+  - aculta_portal:aculta_mail_confirmer_user
   - social_auth:social_auth
   - group:group
   - lms:lms
   - commerce:commerce
+  - commerce:commerce_cart
+  - commerce:commerce_store
   - commerce:commerce_order
   - commerce:commerce_payment
   - commerce_shipping:commerce_shipping
@@ -37,5 +39,13 @@ dependencies:
   - drupal:datetime
   - drupal:options
   - drupal:media
+  - drupal:path
   - metatag:metatag
   - schema_metatag:schema_metatag
+  - schema_metatag:schema_article
+  - schema_metatag:schema_event
+  - schema_metatag:schema_image_object
+  - schema_metatag:schema_organization
+  - schema_metatag:schema_product
+  - schema_metatag:schema_web_site
+  - schema_metatag:schema_web_page

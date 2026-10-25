@@ -1,0 +1,29 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.message.mail_subject
+    - message.template.aculta_msg_wiki_notice
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_wiki_notice.mail_subject
+targetEntityType: message
+bundle: aculta_msg_wiki_notice
+mode: mail_subject
+content:
+  partial_0:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_aculta_wiki_digest_sent: true
+  field_aculta_wiki_event_version: true
+  field_aculta_wiki_event_type: true
+  field_aculta_wiki_source_uuid: true
+  field_aculta_wiki_read: true
+  field_aculta_wiki_msg_delivery: true
+  field_aculta_messenger_attempts: true
+  partial_1: true
+  search_api_excerpt: true

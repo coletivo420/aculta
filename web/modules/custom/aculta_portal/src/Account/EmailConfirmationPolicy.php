@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Account;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\UserDataInterface;
 
@@ -27,6 +28,7 @@ final class EmailConfirmationPolicy {
   public function __construct(
     private readonly UserDataInterface $userData,
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ModuleHandlerInterface $moduleHandler,
   ) {}
 
   /** Verdadeiro quando o e-mail do usuário foi confirmado. Anônimo nunca é confirmado. */
@@ -43,6 +45,8 @@ final class EmailConfirmationPolicy {
     if ($uid > 0) {
       $this->userData->set(self::MODULE, $uid, self::KEY, TRUE);
       $this->grantRole($uid);
+      // Avisa os módulos (ex.: aculta_messenger remove o aviso persistente de e-mail pendente). Não depende de save.
+      $this->moduleHandler->invokeAll('aculta_portal_email_confirmed', [$uid]);
     }
   }
 

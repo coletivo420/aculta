@@ -1,7 +1,0 @@
-uuid: 8b8ae92d-fc42-477d-b6b9-72f89225be8e
-langcode: pt-br
-status: true
-dependencies: {  }
-formId: webform_submission_aculta_participation_add_form
-captchaType: turnstile/Turnstile
-label: webform_submission_aculta_participation_add_form

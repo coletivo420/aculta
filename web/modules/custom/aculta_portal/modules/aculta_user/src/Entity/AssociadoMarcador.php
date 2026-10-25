@@ -11,10 +11,12 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Marcador de associado (decisão de 2026-10-16).
+ * Situação de associado (decisão do responsável, 2026-10-21).
  *
- * Marcador puro: não é papel e não concede acesso a nada no site. Fica em tabela própria, separada da identidade
- * User e dos papéis. Serve a relatórios e páginas da associação.
+ * Associado é uma situação, não um papel: não concede acesso a nada no site por si. Cada conta tem no máximo uma linha
+ * com a situação atual (pendente, ativo, suspenso ou desligado), a data de adesão (primeira ativação) e quem alterou
+ * por último, com o motivo. Pedido de adesão cria a linha como pendente; só o administrador concede, suspende ou
+ * desliga. Fica em tabela própria, separada da identidade User e dos papéis.
  */
 #[ContentEntityType(
   id: 'aculta_associado',
@@ -38,11 +40,21 @@ final class AssociadoMarcador extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Conta'))
       ->setSetting('target_type', 'user')
       ->setRequired(TRUE);
+    $fields['situacao'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Situação'))
+      ->setSetting('max_length', 16)
+      ->setRequired(TRUE)
+      ->setDefaultValue('pendente');
+    $fields['data_adesao'] = BaseFieldDefinition::create('timestamp')
+      ->setLabel(new TranslatableMarkup('Data de adesão (primeira ativação)'));
     $fields['concedido_por'] = BaseFieldDefinition::create('integer')
-      ->setLabel(new TranslatableMarkup('Marcado por (uid)'))
-      ->setRequired(TRUE);
+      ->setLabel(new TranslatableMarkup('Última alteração por (uid)'));
+    $fields['motivo'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(new TranslatableMarkup('Motivo da última alteração'));
     $fields['created'] = BaseFieldDefinition::create('created')
-      ->setLabel(new TranslatableMarkup('Marcado em'));
+      ->setLabel(new TranslatableMarkup('Pedido ou marca criado em'));
+    $fields['changed'] = BaseFieldDefinition::create('changed')
+      ->setLabel(new TranslatableMarkup('Alterado em'));
     return $fields;
   }
 

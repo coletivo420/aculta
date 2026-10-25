@@ -54,6 +54,14 @@ Não existem `css/style.css` ou `css/responsive.css` genéricos/catch-all. Regra
 da responsabilidade que a possui; se nenhuma responsabilidade existente servir,
 criar uma unidade nomeada e documentada em vez de recriar um arquivo residual.
 
+A estratégia responsiva do tema é mobile-first: iniciar pela largura mínima,
+ampliar por necessidade do conteúdo e auditar a intenção das regras existentes.
+Não converter `max-width` para `min-width` mecanicamente. Usar os breakpoints do
+Bootstrap 5.3.8 como referência, manter reflow em 320 CSS px e limitar a rolagem
+bidimensional ao componente que precisa dela. Evidências e prioridades estão em
+[`mobile-first-audit.md`](mobile-first-audit.md); contrato arquitetural em
+[`ADR-012`](../../../../../docs/decisions/ADR-012-aculta420-mobile-first.md).
+
 Mover CSS para SDC somente quando ownership exclusivo estiver provado.
 
 ## JavaScript
@@ -81,11 +89,17 @@ Core/Bootstrap5/contrib:
 | `navigation/breadcrumb.html.twig` | apresentar o título atual preparado pelo Portal |
 | `block--block-content--type--aculta-institution.html.twig` | view modes institucionais específicos |
 | `node--editorial-highlight.html.twig` | presenter do SDC `editorial-card` |
-| `node--project--teaser.html.twig` | teaser de projeto existente até o Card System v1 |
 | `views-view-vvjb.html.twig` | delta de integração/acessibilidade e library contextual do VVJB |
+| `views-view-fields--aculta-forum-categories--page-categories.html.twig` | compõe o termo e a descrição Taxonomy no SDC `forum-category`; a relação Parent é um campo oculto usado pelo agrupamento Core; o link do termo é H3 |
+| `views-view-unformatted--aculta-forum-categories--page-categories.html.twig` | adiciona a grade responsiva preservando `row.attributes`, o título H2 do agrupamento e o conteúdo da linha Core |
 
 Novo override exige comparação com o template upstream da versão instalada e
 uma justificativa documental. Override sem delta real deve ser removido.
+Os dois overrides do índice de categorias foram comparados a
+`web/core/modules/views/templates/views-view-fields.html.twig` e
+`views-view-unformatted.html.twig`: o primeiro só remonta os três campos
+renderizados em um SDC; o segundo mantém o loop, atributos por linha e título
+Core, acrescentando apenas o wrapper de grade necessário ao layout do índice.
 
 ## Twig
 

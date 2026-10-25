@@ -33,6 +33,8 @@ $assert = static function (bool $ok, string $message) use (&$failures, &$checks)
 $allowedThemeReferences = [
   // Verificação de ambiente: o relatório de requisitos mostra se o tema está instalado. Não é dependência visual.
   'src/Controller/PortalRequirementsController.php',
+  // Teste de integração: instala o ACULTA420 para renderizar os componentes neutros reais (não é código de produção).
+  'modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php',
 ];
 
 /** Cliquet: marcação de apresentação (classes Bootstrap/utilitárias) dentro de atributos de classe do módulo. */
@@ -141,8 +143,12 @@ foreach ($files($module . '/js', ['js']) as $path) {
 //     que o tema também estiliza). Lê só o conteúdo de 'class' => [...] e de addClass(...).
 // draggable e role-weight: contrato de comportamento do tabledrag do Core (web/core/misc/tabledrag.js), não design.
 // h5p-content e h5p-editor: contrato do H5P core (vendor/h5p/h5p-core/js/h5p.js:93 e vendor/h5p/h5p-editor/scripts/h5peditor-editor.js:173),
-// que localiza as instâncias por essas classes. Não são classes de design; o tema não as renomeia.
-$allowedClasses = ['use-ajax', 'is-active', 'draggable', 'role-weight', 'h5p-content', 'h5p-editor'];
+// que localiza as instâncias por essas classes. h5p-iframe-wrapper e h5p-iframe seguem o contrato de integração
+// H5P e são consumidas pelo Core JS/CSS (vendor/h5p/h5p-core/js/h5p.js:381 e styles/h5p.css:161,189).
+// Não são classes de design; o tema não as renomeia.
+// Diff contrib consome estas classes de integração (css/diff.single-column.css,
+// css/diff.double-column.css e css/diff.colors.css); não são classes de design ACULTA.
+$allowedClasses = ['use-ajax', 'is-active', 'draggable', 'role-weight', 'h5p-content', 'h5p-editor', 'h5p-iframe-wrapper', 'h5p-iframe', 'field-name', 'diff', 'diff-responsive-table'];
 // Dívida conhecida fora do Messenger, registrada em docs/operations/DEBT-REGISTER.md (DT-BOUNDARY-GALLERY): a galeria
 // de fotos monta a classe do PhotoSwipe. Sai desta lista quando o token data-portal-ui for criado.
 $knownDebt = ['modules/aculta_gallery/src/Hook/GalleryViewHooks.php: photoswipe-gallery'];
@@ -207,11 +213,14 @@ foreach ($used as $token => $where) {
   $assert(array_key_exists($token, $known), "Token de design \"$token\" usado em $where não existe no mapa do tema (PortalUiHooks::TOKENS).");
 }
 
-// 11. A regra permanente está escrita no AGENTS.md, no README do módulo e na doc do tema (não se perde em edição).
+// 11. A regra permanente deve estar no AGENTS.md ou nos contratos canônicos que ele referencia.
 $rule = 'Código no Aculta Portal, Design no ACULTA420.';
-foreach ([$root . '/AGENTS.md', $module . '/README.md', $theme . '/docs/design-system.md'] as $doc) {
-  $assert(str_contains((string) file_get_contents($doc), $rule), 'Regra "' . $rule . '" ausente em ' . substr($doc, strlen($root) + 1) . '.');
+$ruleDocs = [$root . '/AGENTS.md', $root . '/docs/portal/FRONTEIRA-MODULO-TEMA.md', $theme . '/docs/design-system.md'];
+$rulePresent = FALSE;
+foreach ($ruleDocs as $doc) {
+  $rulePresent = $rulePresent || str_contains((string) file_get_contents($doc), $rule);
 }
+$assert($rulePresent, 'Regra "' . $rule . '" ausente em AGENTS.md e nos contratos canônicos de fronteira.');
 
 // 12b. Assets do tema precisam ser legíveis pelo servidor web (modo 0644): arquivo 0600 responde 403 no Apache.
 foreach ($files($theme . '/assets', ['svg', 'png', 'jpg', 'jpeg', 'webp', 'gif']) as $asset) {
@@ -232,7 +241,7 @@ $routes = (string) file_get_contents($module . '/src/EventSubscriber/DomainRoute
 $assert(!preg_match("/'entity\.commerce_payment_method\.(add_form|edit_form|delete_form|set_default)' => \['\/pagamentos/", $routes), 'DomainRouteSubscriber ainda define rota de meios de pagamento (/pagamentos/novo, editar, excluir, padrão).');
 $assert(!str_contains((string) file_get_contents($module . '/src/AccountShellBuilder.php'), 'commerce_payment_method'), 'AccountShellBuilder ainda lista "Meus pagamentos" (commerce_payment_method).');
 $assert(!str_contains((string) file_get_contents($root . '/config/sync/user.role.authenticated.yml'), 'commerce_payment_method'), 'Papel autenticado ainda tem permissão de meios de pagamento (config/sync/user.role.authenticated.yml).');
-$assert(str_contains($routes, 'PaymentMethodsRedirectController::redirectToOrders'), '/pagamentos deve redirecionar 301 para /pedidos (PaymentMethodsRedirectController).');
+$assert(!str_contains($routes, 'PaymentMethodsRedirectController'), 'Alias /pagamentos foi removido (e75437129): não deve haver PaymentMethodsRedirectController; a política é sem aliases temporários.');
 
 if ($failures !== []) {
   foreach ($failures as $failure) {

@@ -6,17 +6,17 @@ namespace Drupal\aculta_messenger\Service;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\site_alert\GetAlertsInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * The single definition of the alert and persistent-notice counts shown in the Messenger surfaces.
+ * Defines the alert and persistent-notice counts shown in Messenger surfaces.
  *
- * The header bar, the alerts preview and the account notices all call these methods, so the numbers
- * cannot drift apart. Node access and the read state are applied in queries, not by loading every notice.
+ * The header bar, alert preview and account notices share these methods. Node
+ * access and read state are applied in queries instead of loading every notice.
  */
 final class MessengerCounts {
 
@@ -24,27 +24,50 @@ final class MessengerCounts {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FlagServiceInterface $flagService,
     private readonly GetAlertsInterface $siteAlerts,
+    private readonly NoticeFlagStateLoader $flagStateLoader,
     private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
   ) {}
 
   /**
-   * Counts the active Site Alerts this account may see and has not dismissed.
+   * Counts active Site Alerts this account may see and has not read/dismissed.
    *
-   * Every alert and access result is added to $cacheability, so the caller's render array is invalidated
-   * when an alert or its access changes.
+   * Alert entities and access results are added to cacheability so the render
+   * array is invalidated when an alert or its access changes.
    */
-  public function visibleActiveAlertCount(AccountInterface $account, CacheableMetadata $cacheability): int {
+  public function visibleActiveAlertCount(
+    AccountInterface $account,
+    CacheableMetadata $cacheability,
+    ?array $visibleAlerts = NULL,
+    ?array $flagStates = NULL,
+  ): int {
     $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
-    $count = 0;
-    foreach ($this->siteAlerts->getActiveAlerts() as $alert) {
-      $cacheability->addCacheableDependency($alert);
-      $access = $alert->access('view', $account, TRUE);
-      $cacheability->addCacheableDependency($access);
-      if (!$access->isAllowed()) {
-        continue;
+    $readFlag = $account->isAuthenticated()
+      ? $this->flagService->getFlagById('aculta_site_alert_read')
+      : NULL;
+    if ($visibleAlerts === NULL) {
+      $visibleAlerts = [];
+      foreach ($this->siteAlerts->getActiveAlerts() as $alert) {
+        $cacheability->addCacheableDependency($alert);
+        $access = $alert->access('view', $account, TRUE);
+        $cacheability->addCacheableDependency($access);
+        if ($access->isAllowed()) {
+          $visibleAlerts[] = $alert;
+        }
       }
+    }
+    if ($flagStates === NULL && $account->isAuthenticated()
+      && ($dismissalFlag instanceof FlagInterface || $readFlag instanceof FlagInterface)) {
+      $flagStates = $this->flagStateLoader->loadForAccount($visibleAlerts, $account);
+    }
+    $flagStates ??= [];
+    $count = 0;
+    foreach ($visibleAlerts as $alert) {
       // Dispensa pertence a contas; não consultar Flag para uid 0 sem sessão.
-      if ($account->isAuthenticated() && $dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $account) !== NULL) {
+      if ($account->isAuthenticated()
+        && (($dismissalFlag instanceof FlagInterface
+            && isset($flagStates[$alert->id()][$dismissalFlag->id()]))
+          || ($readFlag instanceof FlagInterface
+            && isset($flagStates[$alert->id()][$readFlag->id()])))) {
         continue;
       }
       $count++;
@@ -53,10 +76,27 @@ final class MessengerCounts {
   }
 
   /**
-   * Counts the visible, published persistent notices this account has not marked as read.
+   * Counts all unread items represented by the unified notice center.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Account whose currently accessible items are counted.
+   * @param int $personalNoticeCount
+   *   Accessible unread Forum and adapter notices.
+   * @param int|null $activeAlertCount
+   *   Optional count already calculated for the current alert list.
+   */
+  public function totalUnreadNoticeCount(AccountInterface $account, int $personalNoticeCount, ?int $activeAlertCount = NULL): int {
+    $activeAlertCount ??= $this->visibleActiveAlertCount($account, new CacheableMetadata());
+    return max(0, $activeAlertCount)
+      + $this->unreadPersistentNoticeCount($account)
+      + max(0, $personalNoticeCount);
+  }
+
+  /**
+   * Counts visible, published persistent notices not marked as read.
    */
   public function unreadPersistentNoticeCount(AccountInterface $account): int {
-    // A visitor cannot dismiss a notice (there is no flagging for uid 0), so it has no unread notice to count.
+    // No flaggings exist for uid 0, so anonymous visitors have no unread count.
     if (!$account->isAuthenticated()) {
       return 0;
     }

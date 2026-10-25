@@ -8,6 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\aculta_portal\Email\EmailConfirmationRequester;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -34,8 +35,9 @@ final class PortalFormCallbacks {
     private readonly UserFloodControlInterface $floodControl,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EmailConfirmationRequester $confirmationRequester,
-    private readonly \Drupal\aculta_portal\Account\RegistrationTerms $registrationTerms,
+    private readonly \Drupal\aculta_portal\Account\AcultaUserAgreementRegistration $userAgreementRegistration,
     private readonly \Drupal\aculta_portal\Account\RegistrationMailPolicy $registrationMail,
+    private readonly ?RouteMatchInterface $routeMatch = NULL,
   ) {}
 
   /** Mensagem única do cadastro, igual com e-mail novo ou já cadastrado (DT-P06). */
@@ -66,13 +68,13 @@ final class PortalFormCallbacks {
   }
 
   /** Registra o aceite dos termos do cadastro (checkbox obrigatório no formulário). */
-  public function acceptRegistrationTerms(array &$form, FormStateInterface $formState): void {
+  public function recordAcultaUserAgreementAcceptance(array &$form, FormStateInterface $formState): void {
     if ($this->registrationAlreadyUsed($formState)) {
       return;
     }
     $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
     if ($account instanceof \Drupal\user\UserInterface) {
-      $this->registrationTerms->record($account);
+      $this->userAgreementRegistration->record($account);
     }
   }
 
@@ -124,46 +126,6 @@ final class PortalFormCallbacks {
       return;
     }
     $formObject->validateAuthentication($form, $formState);
-  }
-
-  /** Validates conditional Activity fields. */
-  public function validateActivity(array &$form, FormStateInterface $formState): void {
-    $node = $formState->getFormObject()->buildEntity($form, $formState);
-    $mode = $node->get('field_modality')->value;
-
-    if (in_array($mode, ['presencial', 'hibrido'], TRUE)
-      && $node->get('field_place_name')->isEmpty()) {
-      $formState->setErrorByName(
-        'field_place_name',
-        $this->translation->translate('Informe o local da atividade presencial.'),
-      );
-    }
-
-    if (in_array($mode, ['online', 'hibrido'], TRUE)
-      && $node->get('field_online_url')->isEmpty()) {
-      $formState->setErrorByName(
-        'field_online_url',
-        $this->translation->translate('Informe o endereço online da atividade.'),
-      );
-    }
-
-    if (!$node->get('field_event_end')->isEmpty()
-      && $node->get('field_event_end')->value < $node->get('field_event_start')->value) {
-      $formState->setErrorByName(
-        'field_event_end',
-        $this->translation->translate('O término deve ocorrer após o início.'),
-      );
-    }
-  }
-
-
-  /** Replaces Change Mail Page's premature success claim. */
-  public function changeMailConfirmationMessage(array &$form, FormStateInterface $formState): void {
-    $this->messenger->deleteByType('status');
-    $this->messenger->addStatus($this->translation->translate(
-      'A solicitação foi registrada. Seu e-mail atual permanece ativo até a confirmação do novo endereço.',
-    ));
-    $formState->setRedirect('aculta_portal.security');
   }
 
   /** Valida a senha escolhida no cadastro e guarda-a no form state para gravar depois do salvamento. */
@@ -264,9 +226,26 @@ final class PortalFormCallbacks {
     $formState->setRedirect('aculta_portal.dashboard');
   }
 
-  /** Returns an Address submission to the nested Portal route. */
+  /**
+   * Returns an Address submission to its original editing context.
+   *
+   * The saved Commerce Profile is identical in Portal and Studio; only the
+   * post-submit destination differs. The existing Portal flow is unchanged.
+   */
   public function addressRedirect(array &$form, FormStateInterface $formState): void {
-    $formState->setRedirect('aculta_portal.my_data_address');
+    $route = $this->routeMatch?->getRouteName() === 'aculta_studio.account_address'
+      ? 'aculta_studio.account_address'
+      : 'aculta_portal.my_data_address';
+    $formState->setRedirect($route);
+  }
+
+  /**
+   * Returns private data submissions to Studio without changing legacy flow.
+   */
+  public function accountDataRedirect(array &$form, FormStateInterface $formState): void {
+    if ($this->routeMatch?->getRouteName() === 'aculta_studio.account_data') {
+      $formState->setRedirect('aculta_studio.account_data');
+    }
   }
 
   /** Synchronizes Commerce address names with the participant profile. */

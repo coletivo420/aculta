@@ -1,0 +1,494 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_lms\Kernel;
+
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Form\FormState;
+use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Session\UserSession;
+use Drupal\Core\Url;
+use Drupal\aculta_lms\Certificate\CourseCertificateManager;
+use Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface;
+use Drupal\aculta_lms\Certificate\CertificateQrCodeProviderInterface;
+use Drupal\aculta_lms\Controller\CertificateVerificationController;
+use Drupal\aculta_lms\Entity\CourseCertificate;
+use Drupal\aculta_lms\Form\CourseCertificateIssueForm;
+use Drupal\aculta_lms\Form\CourseCertificateRevokeForm;
+use Drupal\aculta_lms\Hook\CertificateEntityViewHooks;
+use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
+use Drupal\aculta_qrcode\Value\QrCodeFormat;
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupRole;
+use Drupal\group\PermissionScopeInterface;
+use Drupal\KernelTests\KernelTestBase;
+use Drupal\lms\Entity\CourseStatus;
+use Drupal\lms\Entity\CourseStatusInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\user\Entity\User;
+use PHPUnit\Framework\Attributes\Group as TestGroup;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+
+/**
+ * Covers certificate issuance and state changes using real LMS entities.
+ */
+#[TestGroup('aculta_lms')]
+#[RunTestsInSeparateProcesses]
+final class CertificateLifecycleTest extends KernelTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = [
+    'system', 'user', 'file', 'field', 'filter', 'image', 'media', 'options', 'text', 'entity_print',
+    'entity_usage', 'aculta_image', 'flexible_permissions', 'group', 'views', 'lms',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->installConfig(['group', 'lms']);
+    $this->installEntitySchema('action');
+    $this->installEntitySchema('user');
+    $this->installSchema('user', ['users_data']);
+    $this->installSchema('entity_usage', ['entity_usage']);
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
+    $this->installEntitySchema('lms_course_status');
+    $this->installEntitySchema('aculta_lms_certificate');
+
+    $storage = FieldStorageConfig::create([
+      'field_name' => 'field_course_hours',
+      'entity_type' => 'group',
+      'type' => 'integer',
+    ]);
+    $storage->save();
+    FieldConfig::create([
+      'field_storage' => $storage,
+      'bundle' => 'lms_course',
+      'label' => 'Carga horária',
+      'settings' => [
+        'min' => 1,
+        'max' => NULL,
+        'prefix' => '',
+        'suffix' => '',
+      ],
+    ])->save();
+  }
+
+  /**
+   * Tests issuance, reissuance, revocation, and retained history.
+   */
+  public function testEligibilityReissueAndRevocationKeepHistory(): void {
+    $student = User::create(['name' => 'certificate-student', 'mail' => 'certificate@example.test', 'status' => 1]);
+    $student->save();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso imutável',
+      'uid' => $student->id(),
+      'field_course_hours' => 14,
+    ]);
+    $course->save();
+    $course_without_workload = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso sem horas válidas',
+      'uid' => $student->id(),
+      'field_course_hours' => 0,
+    ]);
+    self::assertGreaterThan(0, count($course_without_workload->get('field_course_hours')->validate()));
+    $status = CourseStatus::create([
+      CourseStatusInterface::COURSE_FIELD => $course->id(),
+      'uid' => $student->id(),
+      'status' => CourseStatusInterface::STATUS_PASSED,
+      'finished' => 1_700_000_000,
+    ]);
+    $status->save();
+    $issuer = new UserSession(['uid' => 1, 'permissions' => ['administer lms']]);
+    $manager = $this->container->get('aculta_lms.course_certificate_manager');
+
+    $first = $manager->issue($status, $issuer);
+    self::assertSame('active', $first->get('state')->value);
+    self::assertSame('certificate-student', $first->get('certificate_name')->value);
+    self::assertSame('Curso imutável', $first->get('course_title')->value);
+    self::assertSame(14, (int) $first->get('course_hours')->value);
+    self::assertSame(1, (int) $first->get('sequence')->value);
+
+    $firstId = (int) $first->id();
+    $second = $manager->issue($status, $issuer);
+    $storage = $this->container->get('entity_type.manager')->getStorage('aculta_lms_certificate');
+    $storage->resetCache();
+    $first = $storage->load($firstId);
+    self::assertSame('revoked', $first->get('state')->value);
+    self::assertSame('Substituído por nova emissão', $first->get('revocation_reason')->value);
+    self::assertSame((int) $first->id(), (int) $second->get('supersedes_id')->value);
+    self::assertSame(2, (int) $second->get('sequence')->value);
+    $firstCode = (string) $first->get('verification_code')->value;
+    $secondCode = (string) $second->get('verification_code')->value;
+    self::assertMatchesRegularExpression('/^[A-Za-z0-9_-]{43}$/D', $firstCode);
+    self::assertMatchesRegularExpression('/^[A-Za-z0-9_-]{43}$/D', $secondCode);
+    self::assertNotSame($firstCode, $secondCode, 'A reissued certificate receives a new opaque verification code.');
+    self::assertSame('active', $manager->loadByCode($secondCode)->get('state')->value);
+    self::assertNull($manager->loadByCode(str_repeat('A', 39)), 'Codes below the supported format are rejected before lookup.');
+    self::assertNull($manager->loadByCode(str_repeat('A', 65)), 'Codes above the supported format are rejected before lookup.');
+    self::assertFalse($second->access('view', $issuer, TRUE)->isAllowed(), 'Generic entity routes must not bypass opaque-code verification.');
+    self::assertFalse(
+      $this->container->get('entity_type.manager')
+        ->getAccessControlHandler('aculta_lms_certificate')
+        ->createAccess(NULL, $issuer, [], TRUE)
+        ->isAllowed(),
+      'Certificate snapshots cannot be created through generic entity routes.',
+    );
+
+    $verification = new CertificateVerificationController(
+      $manager,
+      NULL,
+      $this->container->get('date.formatter'),
+      $this->container->get('string_translation'),
+    );
+    $certificate_build = [];
+    $certificate_view_hook = new CertificateEntityViewHooks($this->createMock(DateFormatterInterface::class));
+    $certificate_view_hook->entityView(
+      $certificate_build,
+      $second,
+      $this->createMock(EntityViewDisplayInterface::class),
+      'default',
+    );
+    self::assertSame(0, $certificate_build['#cache']['max-age']);
+    self::assertContains('aculta_lms_certificate:' . $second->id(), $certificate_build['#cache']['tags']);
+    $public = $verification->verify((string) $second->get('verification_code')->value);
+    self::assertSame('certificate-student', $public['name']['#plain_text']);
+    self::assertSame('Curso imutável', $public['course']['#plain_text']);
+    self::assertSame('14 horas', (string) $public['hours']['#plain_text']);
+    self::assertSame('Certificado válido', (string) $public['status']['#plain_text']);
+    self::assertArrayNotHasKey('email', $public);
+    self::assertArrayNotHasKey('uid', $public);
+    self::assertArrayNotHasKey('revocation_reason', $public);
+    self::assertStringNotContainsString('certificate@example.test', serialize($public));
+    self::assertArrayHasKey('pdf', $public);
+    self::assertSame(0, $public['#cache']['max-age']);
+    self::assertContains('aculta_lms_certificate:' . $second->id(), $public['#cache']['tags']);
+
+    $qrCodes = $this->createMock(CertificateQrCodeProviderInterface::class);
+    $qrCodes->expects(self::once())
+      ->method('generate')
+      ->with($secondCode, QrCodeFormat::Svg)
+      ->willReturn('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+    $qrController = new CertificateVerificationController(
+      $manager,
+      NULL,
+      $this->container->get('date.formatter'),
+      $this->container->get('string_translation'),
+      $qrCodes,
+    );
+    $qrResponse = $qrController->qr($secondCode);
+    self::assertSame(200, $qrResponse->getStatusCode());
+    self::assertSame('image/svg+xml; charset=utf-8', $qrResponse->headers->get('Content-Type'));
+    self::assertSame('max-age=0, no-store, private', $qrResponse->headers->get('Cache-Control'));
+    self::assertSame('nosniff', $qrResponse->headers->get('X-Content-Type-Options'));
+    self::assertSame("default-src 'none'; sandbox", $qrResponse->headers->get('Content-Security-Policy'));
+    self::assertSame('<svg xmlns="http://www.w3.org/2000/svg"></svg>', $qrResponse->getContent());
+
+    $student->block();
+    $student->save();
+    $after_block = $verification->verify((string) $second->get('verification_code')->value);
+    self::assertSame('Certificado válido', (string) $after_block['status']['#plain_text'], 'Disabling the student account does not invalidate an immutable issued certificate.');
+    self::assertSame('certificate-student', $after_block['name']['#plain_text']);
+
+    $manager->revoke($second, $issuer, 'Correção solicitada pela equipe');
+    self::assertSame('revoked', $manager->loadByCode($second->get('verification_code')->value)->get('state')->value);
+    self::assertSame('Correção solicitada pela equipe', $second->get('revocation_reason')->value);
+    $revoked = $verification->verify((string) $second->get('verification_code')->value);
+    self::assertSame('Certificado revogado', (string) $revoked['status']['#plain_text']);
+    self::assertArrayNotHasKey('pdf', $revoked);
+    self::assertArrayNotHasKey('revocation_reason', $revoked);
+
+    $print_engines = $this->createMock(EntityPrintPluginManagerInterface::class);
+    $print_engines->expects(self::never())->method('createInstance');
+    $revoked_qr_codes = $this->createMock(CertificateQrCodeProviderInterface::class);
+    $revoked_qr_codes->expects(self::never())->method('generate');
+    $pdf_controller = new CertificateVerificationController(
+      $manager,
+      $print_engines,
+      $this->container->get('date.formatter'),
+      $this->container->get('string_translation'),
+      $revoked_qr_codes,
+    );
+    try {
+      $pdf_controller->pdf($secondCode);
+      self::fail('A revoked certificate must not be downloadable as PDF.');
+    }
+    catch (NotFoundHttpException $exception) {
+      self::assertSame(404, $exception->getStatusCode());
+    }
+    self::assertCount(2, $manager->loadForStudent((int) $student->id()));
+  }
+
+  /**
+   * Tests that ineligible statuses and unauthorized issuers are rejected.
+   */
+  public function testNonPassingStatusAndUnauthorizedIssuerAreRejected(): void {
+    $student = User::create(['name' => 'certificate-student', 'mail' => 'certificate@example.test', 'status' => 1]);
+    $student->save();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso',
+      'uid' => $student->id(),
+      'field_course_hours' => 8,
+    ]);
+    $course->save();
+    $status = CourseStatus::create([
+      CourseStatusInterface::COURSE_FIELD => $course->id(),
+      'uid' => $student->id(),
+      'status' => CourseStatusInterface::STATUS_PROGRESS,
+      'finished' => 0,
+    ]);
+    $status->save();
+    $manager = $this->container->get('aculta_lms.course_certificate_manager');
+
+    try {
+      $manager->issue($status, new UserSession(['uid' => 999, 'permissions' => []]));
+      self::fail('An incomplete status and unauthorized issuer must be rejected.');
+    }
+    catch (UnprocessableEntityHttpException $exception) {
+      self::assertStringContainsString('finished, approved', $exception->getMessage());
+    }
+
+    $status->setStatus(CourseStatusInterface::STATUS_PASSED);
+    $status->setFinished(1_700_000_000)->save();
+    try {
+      $manager->issue($status, new UserSession(['uid' => 999, 'permissions' => []]));
+      self::fail('An unauthorized issuer must be rejected.');
+    }
+    catch (AccessDeniedHttpException) {
+      self::assertCount(0, $manager->loadForStudent((int) $student->id()));
+    }
+  }
+
+  /**
+   * Tests stale references fail cleanly instead of calling typed getters.
+   */
+  public function testMissingCourseOrStudentReferenceIsRejected(): void {
+    $student = User::create(['name' => 'certificate-student', 'mail' => 'certificate@example.test', 'status' => 1]);
+    $student->save();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso',
+      'uid' => $student->id(),
+      'field_course_hours' => 8,
+    ]);
+    $course->save();
+    $status = CourseStatus::create([
+      CourseStatusInterface::COURSE_FIELD => $course->id(),
+      'uid' => $student->id(),
+      'status' => CourseStatusInterface::STATUS_PASSED,
+      'finished' => 1_700_000_000,
+    ]);
+    $status->save();
+    $manager = $this->container->get('aculta_lms.course_certificate_manager');
+    $issuer = new UserSession(['uid' => 1, 'permissions' => ['administer lms']]);
+
+    $status->set('uid', 999_999)->save();
+    $routeMatch = $this->createMock(CurrentRouteMatch::class);
+    $routeMatch->method('getParameter')->with('group')->willReturn($course);
+    $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('hasPermission')->with('administer lms')->willReturn(TRUE);
+    $form = new CourseCertificateIssueForm(
+      $this->container->get('entity_type.manager'),
+      $manager,
+      $routeMatch,
+      $account,
+      $this->container->get('date.formatter'),
+    );
+    $form->setStringTranslation($this->container->get('string_translation'));
+    $form->setMessenger($this->container->get('messenger'));
+    $build = $form->buildForm([], new FormState());
+    self::assertSame([], $build['course_status']['#options'], 'The educator form skips statuses whose student reference was removed.');
+
+    foreach ([
+      'student reference' => ['uid', 999_999],
+      'course reference' => [CourseStatusInterface::COURSE_FIELD, 999_999],
+    ] as $reference => [$field, $targetId]) {
+      $status->set($field, $targetId)->save();
+      try {
+        $manager->issue($status, $issuer);
+        self::fail(sprintf('A missing %s must not issue a certificate.', $reference));
+      }
+      catch (UnprocessableEntityHttpException $exception) {
+        self::assertSame(422, $exception->getStatusCode());
+        self::assertStringContainsString('course or student is unavailable', $exception->getMessage());
+      }
+      $status->set($field, $field === 'uid' ? $student->id() : $course->id())->save();
+    }
+
+    self::assertCount(0, $manager->loadForStudent((int) $student->id()));
+  }
+
+  /**
+   * Tests the educator forms issue and revoke through the certificate manager.
+   */
+  public function testEducatorFormsIssueAndRevokeCertificate(): void {
+    $student = User::create(['name' => 'certificate-student', 'mail' => 'certificate@example.test', 'status' => 1]);
+    $student->save();
+    $educator = User::create(['name' => 'certificate-educator', 'mail' => 'educator@example.test', 'status' => 1]);
+    $educator->save();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso com formulários',
+      'uid' => $student->id(),
+      'field_course_hours' => 8,
+    ]);
+    $course->save();
+    GroupRole::create([
+      'id' => 'lms_course-certificate_teacher',
+      'label' => 'Educador de certificados',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['grade students'],
+    ])->save();
+    $course->addMember($educator, ['group_roles' => ['lms_course-certificate_teacher']]);
+    $status = CourseStatus::create([
+      CourseStatusInterface::COURSE_FIELD => $course->id(),
+      'uid' => $student->id(),
+      'status' => CourseStatusInterface::STATUS_PASSED,
+      'finished' => 1_700_000_000,
+    ]);
+    $status->save();
+    $manager = $this->createMock(CourseCertificateManagerInterface::class);
+    $account = $this->container->get('current_user');
+    $account->setAccount($educator);
+    self::assertFalse($account->hasPermission('administer lms'));
+    self::assertTrue($course->hasPermission('grade students', $account));
+    $certificate = $this->container->get('entity_type.manager')->getStorage('aculta_lms_certificate')->create([
+      'uid' => $student->id(),
+      'course_id' => $course->id(),
+      'course_status_uuid' => $status->uuid(),
+      'certificate_name' => $student->getDisplayName(),
+      'course_title' => $course->label(),
+      'course_hours' => 8,
+      'completed' => $status->getFinished(),
+      'issued' => 1_700_000_100,
+      'sequence' => 1,
+      'supersedes_id' => 0,
+      'verification_code' => str_repeat('A', 43),
+      'template_version' => '1',
+      'state' => 'active',
+      'revoked' => 0,
+      'revocation_reason' => '',
+    ]);
+    $manager->expects(self::once())
+      ->method('issue')
+      ->willReturn($certificate);
+    $manager->expects(self::once())
+      ->method('revoke')
+      ->with($certificate, $account, 'Correção solicitada pela equipe')
+      ->willReturnCallback(static function (CourseCertificate $issued): void {
+        $issued->set('state', 'revoked');
+        $issued->set('revocation_reason', 'Correção solicitada pela equipe');
+      });
+
+    $issueRoute = $this->createMock(CurrentRouteMatch::class);
+    $issueRoute->method('getParameter')->with('group')->willReturn($course);
+    $dateFormatter = $this->createMock(DateFormatterInterface::class);
+    $dateFormatter->method('format')->willReturn('21/10/2026');
+    $issueForm = new CourseCertificateIssueForm(
+      $this->container->get('entity_type.manager'),
+      $manager,
+      $issueRoute,
+      $account,
+      $dateFormatter,
+    );
+    $issueForm->setStringTranslation($this->container->get('string_translation'));
+    $issueForm->setMessenger($this->container->get('messenger'));
+    $issueOptions = $issueForm->buildForm([], new FormState());
+    self::assertArrayHasKey((string) $status->id(), $issueOptions['course_status']['#options']);
+    $issueState = new FormState();
+    $issueState->setValue('course_status', $status->id());
+    $issueBuild = [];
+    $issueForm->submitForm($issueBuild, $issueState);
+
+    self::assertSame('active', $certificate->get('state')->value);
+    $issueRedirect = $issueState->getRedirect();
+    self::assertInstanceOf(Url::class, $issueRedirect);
+    self::assertSame('aculta_lms.certificate_verify', $issueRedirect->getRouteName());
+    self::assertSame($certificate->get('verification_code')->value, $issueRedirect->getRouteParameters()['codigo']);
+
+    $revokeRoute = $this->createMock(CurrentRouteMatch::class);
+    $revokeRoute->method('getParameter')->willReturnMap([
+      ['group', $course],
+      ['certificate', $certificate],
+    ]);
+    $revokeForm = new CourseCertificateRevokeForm($revokeRoute, $manager, $account);
+    $revokeForm->setStringTranslation($this->container->get('string_translation'));
+    $revokeForm->setMessenger($this->container->get('messenger'));
+    $revokeState = new FormState();
+    $revokeState->setValue('reason', 'Correção solicitada pela equipe');
+    $revokeBuild = [];
+    $revokeForm->submitForm($revokeBuild, $revokeState);
+
+    self::assertSame('revoked', $certificate->get('state')->value);
+    self::assertSame('Correção solicitada pela equipe', $certificate->get('revocation_reason')->value);
+    $revokeRedirect = $revokeState->getRedirect();
+    self::assertInstanceOf(Url::class, $revokeRedirect);
+    self::assertSame('aculta_lms.certificate_issue', $revokeRedirect->getRouteName());
+    self::assertSame($course->id(), $revokeRedirect->getRouteParameters()['group']);
+  }
+
+  /**
+   * Tests a concurrent certificate issue request cannot start a second write.
+   */
+  public function testConcurrentIssueIsRejectedByStatusLock(): void {
+    $student = User::create(['name' => 'certificate-student', 'mail' => 'certificate@example.test', 'status' => 1]);
+    $student->save();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso',
+      'uid' => $student->id(),
+      'field_course_hours' => 8,
+    ]);
+    $course->save();
+    $status = CourseStatus::create([
+      CourseStatusInterface::COURSE_FIELD => $course->id(),
+      'uid' => $student->id(),
+      'status' => CourseStatusInterface::STATUS_PASSED,
+      'finished' => 1_700_000_000,
+    ]);
+    $status->save();
+
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())
+      ->method('acquire')
+      ->with('aculta_lms_certificate_issue:' . $status->uuid(), 60.0)
+      ->willReturn(FALSE);
+    $lock->expects(self::never())->method('release');
+    $manager = new CourseCertificateManager(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('datetime.time'),
+      $this->container->get('database'),
+      $this->container->get('event_dispatcher'),
+      $this->container->get('logger.channel.aculta_lms'),
+      $lock,
+    );
+
+    try {
+      $manager->issue($status, new UserSession(['uid' => 1, 'permissions' => ['administer lms']]));
+      self::fail('A concurrent issue must not create a second active certificate.');
+    }
+    catch (ConflictHttpException) {
+      self::assertCount(0, $manager->loadForStudent((int) $student->id()));
+    }
+  }
+
+}

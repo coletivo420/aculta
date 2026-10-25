@@ -1,0 +1,29 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+state: Dev
+version_note: "0.1.0-dev.23 — PHPCS limpo, testes de Conta por rota, rotas verificadas no runtime de teste; navegador S-R4/S-R5 e dependência módulo→tema pendentes."
+next_phase: 'Executar lint/PHPCS, PHPUnit Unit+Kernel+Functional, descoberta SDC, gates, duas contas, privacidade e avatar; Firefox ESR visível em 320-1440px, no-JS/AJAX, domínio ACCOUNT, comparação /studio/perfil e /conta-legada. Handoff: web/modules/custom/aculta_portal/modules/aculta_studio/docs/HANDOFF-S-R4-S-R5-2026-10-25.md. Sem merge/deploy.'
+
+# 2026-10-24: P1-B em codigo: bridge Marley e preview /studio/inicio;
+# a home /studio continua legado Marley, sem Runtime homologado.
+# 2026-10-24: STUDIO-P0 documental — proposta de Hub `/studio` e experiencia
+# pessoal `/studio/pessoal`, menu unificado, editor de perfil privado e perfil
+# publico `/u/{apelido}` preservado em main. P1-A codigo adicionado (nao homologado);
+# preservar o estado de testes/Runtime acima e o trabalho de Marley/Ganjalab.
+# Documento: docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md.
+# 2026-10-22: Replanejamento documental STUDIO 0.1-C2-R.
+# G420-C2: SDC composto no código, não homologado em Runtime; G420-C2-T
+# depende de fixtures LMS, contratos UI Suite, browser, cache e Domain.
+# A identidade vigente é ACULTA Studio Marley (marley) e ACULTA Studio
+# Ganjalab (ganjalab); ver contrato em docs/portal/ACULTA-STUDIO-IDENTITY.md.
+# Ver web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md.
+
+# 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
+# Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
+# Gate: scripts/validate-no-temporary-route-aliases.php.
+
+# 2026-10-25: S-R5 instrumentada com matriz funcional/visual e teste Firefox ESR
+# somente leitura em tests/browser/aculta-studio/parity-s-r5.mjs.
+# Sem homologacao de S-R4 ou S-R5: execucao Drush, PHPUnit e Firefox pendente
+# no Homelab. Versao/estado/next_phase continuam os mesmos, pois nao houve
+# validacao nem nova feature runtime. Detalhes: docs/S-R5-MATRIZ-COMPARACAO.md
+# do submodulo aculta_studio. Sem merge/deploy.

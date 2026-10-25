@@ -1,4 +1,35 @@
+## 0.1.0-dev.24 — aba Doações em Carrinhos e checkouts (P-CART E) — 2026-10-22
+
+- Rota `/painel-administrativo/aculta/checkout/doacoes` e tarefa local "Doações" reutilizam o `DonationSettingsForm` (mesma validação, mesma config `aculta_donation.settings` e mesma permissão); `donate|cart|both` inalterados. A tela antiga em `doacoes/fluxo` continua. RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.23 — decisão de rotas globais passa ao Portal (P-CART D) — 2026-10-22
+
+- Removidos `CartCheckoutRouteSubscriber`, seu serviço `aculta_donation.route_subscriber` e `CartCheckoutSubscriberTest` (cobertura mantida em `CartCheckoutRoutesCharacterizationTest`, agora contra o subscriber do Portal). `DonationCheckoutProvider` passa a declarar `gatesCommonCheckout`.
+- `donation_route`, `DonationSettingsForm` e os modos `donate|cart|both` inalterados. Rollback: `git revert` do commit. RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.22 — provider de checkout do Portal (P-CART C) — 2026-10-22
+
+- `DonationCheckoutProvider` (tag `aculta_portal.checkout_provider`) expõe ao Portal, somente para leitura, o modo (`donate`→dedicado, `cart`→comum, `both`→ambos; ausente ou inválido → `donate`), os tipos de pedido e os checkout flows. `CartCheckoutRouteSubscriber`, `DonationSettingsForm` e `donation_route` permanecem como estavam; o legado só sai na P-CART D, após a equivalência.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.21 — fluxo e campanhas de doação no painel ACULTA — 2026-10-20
+
+- Fluxo em `/painel-administrativo/aculta/doacoes/fluxo` e campanhas em `/painel-administrativo/aculta/doacoes/campanhas`, com itens na aba ACULTA.
+- Caminhos antigos `/painel-administrativo/configuracoes/aculta/...` respondem 404, sem redirecionamento.
+
 # Changelog — aculta_donation
+
+## 0.1.0-dev.25 — publicar avisos financeiros no Messenger — 2026-10-24
+
+- `DonationNoticeEventPublisher` publica o pedido criado e cada pagamento
+  aprovado como eventos separados no contrato central; recorrência produz um
+  evento por cobrança aprovada. Publicação requer conta ativa e pedido/item de
+  Doação reconhecidos. O evento de pedido não afirma que houve pagamento.
+- Recibo nativo de Commerce é suprimido para conta registrada apenas após a
+  publicação do aviso central; convidados e falha de publicação preservam o
+  recibo Commerce como fallback. Nenhum envio SMTP foi adicionado ao módulo.
+- Unit da ponte: 3 testes / 21 assertions PASS, incluindo exclusão de
+  pagamento pendente. Runtime e sandbox financeiro não executados; versão Dev.
 
 ## 0.1.0-dev.20 — limite superior do valor da doação rápida — 2026-10-19
 

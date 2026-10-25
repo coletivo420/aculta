@@ -4,7 +4,6 @@ status: true
 dependencies: {  }
 name: aculta_card_1x
 label: 'Cartão de projeto 1x (256)'
-pipeline: aculta_derivados
 effects:
   70146bb5-e001-4287-90de-4ecffd567677:
     uuid: 70146bb5-e001-4287-90de-4ecffd567677
@@ -14,3 +13,4 @@ effects:
       width: 256
       height: 256
       upscale: false
+pipeline: aculta_derivados

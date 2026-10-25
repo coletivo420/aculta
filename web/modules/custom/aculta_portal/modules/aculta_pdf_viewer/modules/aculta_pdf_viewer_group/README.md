@@ -1,5 +1,31 @@
 # ACULTA PDF Viewer — Group
 
+## Limpeza futura de documentos associados a turmas
+
+No planejamento IDX 0.1-R, este submódulo deve fornecer ao Portal as
+referências Media↔Group antes da limpeza de um documento. A remoção respeitará
+outras turmas, conteúdos e acesso atual; o submódulo não excluirá File/Media
+diretamente. Ver [política compartilhada do Portal](../../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+
+## Content Index
+
+O serviço opcional `course_document_content_index_provider` registra o bundle
+`course_document` no ACULTA Content Index com nome, UUID, idioma, datas e estado
+de publicação. Entity Access continua aplicado pelo Group no consumidor; o
+provider declara o purpose canônico `courses` para a revalidação transversal.
+Nenhum ID de arquivo, URI, URL ou conteúdo do documento é copiado. O serviço
+tagged não torna `aculta_index` uma dependência obrigatória do módulo.
+
+O boot/DI desse provider foi validado pelo teste transversal
+`ContentIndexOwnerIntegrationKernelTest` do Index (dev.161, 1 teste / 8
+assertions, 83 depreciações Core/contrib). No dev.162, o mesmo harness também
+descobriu a definição real do plugin, criou o relationship type e persistiu
+uma relação usando Group e Media reais (1 teste / 33 assertions; 239
+depreciações Core/contrib). Isso prova descoberta e persistência da relação; o
+teste focal de consulta/acesso do LMS permanece responsável por provar a policy
+de curso, e homologação Runtime segue pendente. O harness é do `aculta_index`
+no Portal; não transfere ownership ao LMS nem ao PDF Viewer Group.
+
 Integra opcionalmente Media `document` ao Group para que documentos vinculados
 a uma turma recebam controle de acesso do grupo. O submódulo depende do
 `aculta_pdf_viewer`, Media e Group; o leitor global continua funcionando sem
@@ -30,9 +56,12 @@ mesmo quando a caixa de status é submetida. Habilite o submódulo antes de
 importar a relação Group do Config Sync; importar o pacote completo de
 configuração continua sendo uma operação separada e revisada. Isso não migra arquivos nem altera
 o bundle institucional `document`. O Kernel verifica o endpoint privado do Core
-para membro, não membro, remoção da relação Group e revogação de membership. A
-homologação dessas condições no Runtime continua necessária antes do aceite
-final da PV5.
+para membro, não membro, remoção da relação Group e revogação de membership. Essa
+matriz também foi homologada no Runtime de teste em 2026-10-17: Firefox
+renderizou o documento para membro (HTTP 200); não membro e anônimo receberam
+HTTP 403. Remover a relação ou a membership negou a URL conhecida (HTTP 403);
+restaurar cada vínculo devolveu HTTP 200. A Media e o arquivo de teste foram
+removidos. Não importar toda a configuração como parte desta validação.
 
 ## Hooks e classes
 

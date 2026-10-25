@@ -1,0 +1,25 @@
+aculta_portal.user_upload:
+  type: config_object
+  label: 'Portal user upload policy'
+  mapping:
+    allowed_extensions:
+      type: string
+      label: 'Allowed extensions'
+    max_size_mb:
+      type: integer
+      label: 'Maximum size in megabytes'
+    consumers:
+      type: sequence
+      label: 'Consumer policies'
+      sequence:
+        type: mapping
+        mapping:
+          inherit_global:
+            type: boolean
+            label: 'Inherit the global policy'
+          allowed_extensions:
+            type: string
+            label: 'Allowed extensions'
+          max_size_mb:
+            type: integer
+            label: 'Maximum size in megabytes'

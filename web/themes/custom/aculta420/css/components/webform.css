@@ -1,0 +1,88 @@
+/*
+ * Webform no Bootstrap 5.
+ *
+ * Portado do webform_bootstrap 3.x (deprecado no Webform 6.3): somente as regras
+ * que não estão cobertas pelo Bootstrap 5 e pelo próprio tema. Seletores de
+ * Bootstrap 3 (.panel, .well, .form-inline) não são portados.
+ */
+
+/* Título de composto (radios e checkboxes) sem a moldura do legend. */
+.form-composite legend {
+  font-size: 1em;
+  font-weight: 700;
+  border: 0;
+  margin: 0;
+}
+
+/* Título inline de elementos e de composto (configuração "título ao lado"). */
+.webform-element--title-inline > div { display: inline; }
+.webform-element--title-inline .form-control,
+.webform-element--title-inline .form-select {
+  display: inline;
+  width: inherit;
+}
+.form-composite.webform-fieldset--title-inline legend {
+  float: left;
+  width: auto;
+  font-size: 1em;
+  font-weight: 700;
+  border: 0;
+  margin: 10px 0.5em 10px 0;
+}
+
+/* Likert: texto de ajuda e descrição alternam em telas estreitas. */
+@media (max-width: 768px) {
+  .webform-likert-help.hidden { display: inline !important; }
+  .webform-likert-description.hidden { display: block !important; }
+}
+
+/* Confirmação em modal ocupa quase toda a largura em telas pequenas. */
+@media only screen and (max-width: 650px) {
+  .webform-confirmation-modal { width: 90% !important; }
+}
+
+/*
+ * Botões de imagem (input[type=image]) do Webform.
+ * O clique é identificado pelo Form API pelas coordenadas, por isso o elemento
+ * continua sendo imagem. Ícones de adicionar e remover: InputHooks.
+ */
+input[type="image"] { cursor: pointer; }
+input[type="image"]:focus-visible {
+  outline: 2px solid var(--aculta-interactive-active-bg);
+  outline-offset: 2px;
+}
+/* O input recebe form-control do tema base: largura e altura são do ícone, não do campo. */
+.webform-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  padding: 0.375rem;
+  border-radius: var(--bs-border-radius);
+}
+
+/*
+ * webform_multiple: tabela de itens com ações de linha.
+ * Estrutura gerada por WebformMultiple (classes webform-multiple-table--*).
+ */
+.webform-multiple-table-responsive { overflow-x: auto; }
+.webform-multiple-table--handle { cursor: move; }
+.webform-multiple-table--operations {
+  width: 1%;
+  white-space: nowrap;
+}
+.webform-multiple-table--operations-two .image-button + .image-button { margin-inline-start: 0.25rem; }
+.webform-multiple-table--no-items-message {
+  color: var(--aculta-text-muted);
+  font-style: italic;
+}
+.webform-multiple-add {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}

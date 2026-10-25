@@ -98,14 +98,13 @@ display:
         type: views_vvjs
         options:
           grouping: {  }
-          hero_slideshow: false
-          enable_css: true
-          arrows: arrows-sides
           time_in_seconds: 3000
           navigation: none
           animation: none
-          transition_type: crossfade-classic
-          transition_duration: 400
+          arrows: arrows-sides
+          hero_slideshow: false
+          available_breakpoints: '768'
+          enable_css: true
           show_total_slides: true
           show_slide_progress: false
           show_play_pause: true
@@ -114,7 +113,8 @@ display:
           enable_keyboard: true
           enable_looping: true
           start_index: 1
-          available_breakpoints: '768'
+          transition_type: crossfade-classic
+          transition_duration: 400
           scrollable_dots_width: 0
       row:
         type: fields
@@ -155,4 +155,3 @@ display:
         - url
       tags:
         - 'config:field.storage.media.field_media_image'
-

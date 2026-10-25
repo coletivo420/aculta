@@ -122,3 +122,41 @@
 [id^="portal-cart-status-"]:empty {
   min-height: 3.5rem;
 }
+
+/* Shared utility drawers: fluid width and scrollable bodies on narrow/mobile screens. */
+.aculta-utility-offcanvas {
+  --bs-offcanvas-width: min(26.25rem, 100vw);
+  max-height: 100dvh;
+  min-height: 0;
+}
+.aculta-utility-offcanvas .offcanvas-header,
+.aculta-utility-offcanvas .offcanvas-body { min-width: 0; }
+.aculta-utility-offcanvas .offcanvas-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.aculta-utility-offcanvas :is(a, button):focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+.aculta-utility-offcanvas :is(.offcanvas-footer, [class$="__footer"]) {
+  flex: 0 0 auto;
+  padding: .75rem 1rem;
+  border-block-start: 1px solid var(--aculta-border-subtle);
+  background: var(--aculta-surface-raised);
+}
+.aculta-cart-offcanvas__caixa {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  align-items: baseline;
+  padding: .75rem;
+  margin-block: .5rem;
+  border: 1px solid var(--aculta-border-default);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-surface-muted);
+}
+@media (max-width: 35rem) {
+  .aculta-utility-offcanvas { --bs-offcanvas-width: 100vw; }
+}

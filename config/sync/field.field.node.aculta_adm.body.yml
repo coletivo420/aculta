@@ -1,0 +1,27 @@
+uuid: 91683c42-6e4d-44bd-9236-6525bdb965e6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - filter.format.full_html
+    - node.type.aculta_adm
+  module:
+    - text
+id: node.aculta_adm.body
+field_name: body
+entity_type: node
+bundle: aculta_adm
+label: Body
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+  allowed_formats:
+    full_html: full_html
+field_type: text_with_summary
+

@@ -4,6 +4,9 @@ status: true
 dependencies:
   config:
     - group.type.lms_course
+    - group.relationship_type.lms_course-3abb8caf7f7d526ecedee
+  module:
+    - aculta_forum_lms
 id: lms_course-course_creator
 label: 'Criador do curso'
 weight: 22
@@ -18,6 +21,7 @@ permissions:
   - 'revert group revisions'
   - 'view all group revisions'
   - 'view any unpublished group'
+  - 'view group_node:aculta_lms_topic entity'
   - 'view group'
   - 'view group revisions'
   - 'view latest group version'

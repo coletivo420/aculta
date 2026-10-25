@@ -1,0 +1,25 @@
+uuid: 527d13e9-decf-49fc-a97b-f68f1d6ea645
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_domain_source
+    - node.type.aculta_notice
+id: node.aculta_notice.field_domain_source
+field_name: field_domain_source
+entity_type: node
+bundle: aculta_notice
+label: 'Domain Source'
+description: 'Select the canonical domain for this content.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:domain'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: weight
+      direction: ASC
+field_type: entity_reference

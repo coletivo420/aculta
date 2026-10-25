@@ -1,3 +1,112 @@
+## 0.4.0-dev.145 — declarar a versão do componente — 2026-10-22
+
+- O módulo não declarava `version` em `aculta_lms_h5p.info.yml`; o índice de status o exibia como "versão não declarada".
+- Método: a última versão numerada deste changelog era `0.4.0-dev.144` (2026-10-18, instalação privada de bibliotecas H5P). As seções seguintes, de 2026-10-18 a 2026-10-21, registram entregas agrupadas por tema e não foram numeradas. Declara-se o próximo incremento da linha, `0.4.0-dev.145`, sem renumerar as seções históricas e sem contar cada seção como uma mudança principal; as próximas marcações seguem a partir de `0.4.0-dev.146`.
+- O marcador histórico `0.4.0-dev.144` foi preservado, conforme a política de não reescrever versões registradas.
+- Documento apenas: nenhum código, serviço, hook, configuração, dependência ou Runtime foi alterado.
+
+## Padronização do namespace H5P ACULTA — 2026-10-21
+
+- Classes, interfaces, controladores, hooks, formulários, plugins, seletores e arquivos PHP próprios do H5P agora usam `aculta_H5P` no identificador; as pastas/namespaces internos também seguem o prefixo. A integração PHP do Fórum segue a mesma regra.
+- O plugin de entidade e os campos de referência passam a usar `aculta_h5p_content`. O update `8007` descarta conteúdos, tentativas e vínculos H5P legados e recria a entidade sob o ID novo, conforme decisão do responsável; as tabelas e contratos de protocolo exigidos pelo H5P continuam com seus nomes upstream.
+- Interfaces e classes globais definidas pelo H5P permanecem intactas porque são contratos externos implementados pelo adaptador ACULTA.
+- Os nomes próprios restantes `AssetFileStorage` e `FinishedEvent` foram padronizados para `aculta_H5PAssetFileStorage` e `aculta_H5PFinishedEvent`; a descoberta Kernel verifica o serviço e o evento renomeados.
+- Update `8007` aplicado no Runtime `aculta_runtime` em 2026-10-21 após dump íntegro e inventário: zero conteúdos/refs/tentativas legados. A primeira execução revelou que o Entity Reference não recalcula a definição após remover o tipo antigo; o hook foi ajustado para atualizar a configuração e a definição instalada via APIs Core. A segunda execução completou; entidade `aculta_h5p_content` e destino do Fórum confirmados.
+- Smoke HTTP pós-update: catálogo `/` em `cursos` 200; painéis H5P anônimo 403 esperado; nenhum 500 nas rotas verificadas.
+
+## F15 — reprodução iframe interna e publicação de assets — 2026-10-21
+
+- O formatter prefere `div` quando a biblioteca oferece esse modo e reproduz
+  bibliotecas `iframe`-only usando o inicializador interno `about:blank` do H5P
+  Core, ainda dentro da página do curso já autorizada. Não restaura a rota
+  pública de incorporação removida.
+- O iframe tem ID e `data-content-id` no formato esperado pelo H5P Core, título
+  acessível, tela cheia habilitada e os mesmos assets, token e controles de
+  cache da reprodução em `div`.
+- A cópia de assets Composer saiu de `library_info_build` e acontece somente
+  na instalação/update `8008`. A resolução do wrapper `assets://` usa o caminho
+  configurado pelo Core e `FileSystemInterface` para gravar arquivos, sem
+  depender da permissão reportada pelo wrapper oculto durante cada requisição.
+- Kernel H5P: 15 testes / 383 asserções; Unit H5P: 24 / 73. O Kernel renderiza
+  uma biblioteca iframe-only e valida a autorização de curso, marcação,
+  título acessível, fullscreen, bibliotecas anexadas e cache por usuário.
+  Foram reportadas 44 depreciações do Core/Group/Views instalados. PHP CLI
+  8.4.26; PHP 8.5 não validado.
+- Rebuild de cache no Runtime de teste deixou as rotas principais e de cursos
+  respondendo HTTP 200; o cache antigo que apontava `field_h5p_content` para a
+  entidade removida foi invalidado. O host principal e o host `cursos` retornam
+  HTTP 200.
+- O Kernel comprova que somente Media `course_document` relacionada à turma é
+  enviada ao `aculta_pdf_viewer.builder`; H5P e o PDF Viewer compartilham a
+  mesma Media e o mesmo arquivo privado.
+- Smoke autenticado de estudante no Runtime: `H5PIntegration.core` e os assets
+  do Core/biblioteca carregaram no iframe; o PDF.js apresentou um PDF privado
+  em canvas. O estudante viu o texto do H5P no iframe e o texto do PDF no
+  canvas. Curso, atividade, Media, relação, arquivo e dados de tentativa
+  temporários foram removidos após o smoke.
+- A discussão H5P–Fórum passou no Kernel (1 teste / 37 asserções) e nos testes
+  Unit dedicados (3 / 15). A revisão visual autenticada em Firefox no X11
+  (framebuffer 1024×768; monitores físicos desconectados) confirmou o tópico
+  correto sob o player, access permitido ao estudante e abertura do Node em
+  `cursos` (HTTP 200). O curso, a atividade e o tópico temporários foram
+  removidos. Após mapear `lms-h5p-course-documents` no ACULTA420, novo smoke X11
+  confirmou a classe `mt-3` no wrapper do PDF junto da atividade e do Fórum.
+- Validação final das suítes completas em 2026-10-21: H5P Unit 24 testes / 73
+  asserções e Kernel 15 / 383 (44 depreciações upstream); `aculta_forum_lms`
+  Unit 25 / 292 e Kernel 4 / 205 (47 depreciações upstream). Após padronizar
+  as classes PHP próprias para `aculta_H5P`, Kernel confirmou a resolução dos
+  serviços e evento renomeados. Cache reconstruído no Runtime de teste:
+  `field_h5p_content` aponta para `aculta_h5p_content`; host principal e host
+  `cursos` responderam HTTP 200. PHP CLI 8.4.26; PHP 8.5 não validado.
+
+## F15 — associação de PDFs existentes a atividades — 2026-10-21
+
+- Educadores selecionam, no editor da atividade, documentos `course_document`
+  já relacionados ao mesmo curso. O H5P guarda referências Media; os arquivos
+  privados não são copiados nem recebem uma segunda relação de propriedade.
+- Na exibição, o formatter confirma novamente a relação Media↔Group e chama o
+  serviço `aculta_pdf_viewer.builder`, que revalida acesso à Media, ao campo e
+  ao arquivo privado. Metadados de cache do curso, relações e documentos são
+  propagados; viewer privado mantém cache max-age zero.
+- Campo de referência instalado por update `aculta_lms_h5p_update_8006`; aplicado
+  no Runtime de teste após confirmar zero conteúdos H5P e zero Media
+  `course_document`. A tabela foi criada sem alterar entidades existentes.
+  Kernel H5P: 14 testes / 341 assertions; inclui persistência e recarga da
+  referência Media no H5P Content.
+  PASS em MariaDB dedicado; Unit H5P: 23 testes / 67 assertions PASS. As 43
+  depreciações Kernel são de Core/Group/Views. PHP CLI 8.4.26; PHP 8.5 não
+  validado. No Runtime, a tabela de referência está instalada; sem conteúdo
+  H5P e documentos de curso, ainda não foi possível revisar seleção/renderização
+  visual autenticada.
+- RUNTIME STATUS: PARTIAL; criar fixture temporária de curso, atividade e PDF,
+  validar os acessos e remover os dados de smoke antes de RC.
+
+## F15 — persistência privada de tentativas H5P — 2026-10-21
+
+- O Kernel agora confirma que o estado de uma tentativa H5P continua disponível
+  para a mesma conta após troca de sessão e permanece invisível a outro
+  estudante, mesmo quando ambos têm matrícula ativa no mesmo curso.
+- Suítes completas H5P: Unit 23 testes / 67 assertions e Kernel 14 testes /
+  270 assertions PASS no MariaDB dedicado. As 43 depreciações Kernel vêm de
+  Core/Group/Views instalados. PHP CLI 8.4.26; PHP 8.5 não validado.
+- Revisão visual X11 do painel administrativo no Runtime de teste passou. O
+  painel foi simplificado para evitar repetir links já apresentados nas abas e
+  recebeu título curto. O Runtime tem zero conteúdos H5P, então não há player
+  disponível para inspeção visual; também não há tópicos H5P do Fórum para um
+  smoke de conteúdo real.
+- A integração de discussões com `aculta_forum_lms` está coberta pelos testes
+  próprios do adapter e por `LmsH5PDiscussionResolverKernelTest`: 1 teste / 36
+  assertions PASS no MariaDB dedicado. O Kernel persiste H5P, curso, turma,
+  tópicos e memberships reais; verifica isolamento por conteúdo/curso/turma,
+  acesso ao tópico, parâmetro de Group no autocomplete e composição do player.
+  As 45 depreciações são de Core/contrib. Validação visual de tópico sob um
+  player permanece condicionada à existência de atividade e tópico de teste.
+- Corrige a rota do painel estudante para `/atividades-interativas`: o
+  subscriber da Conta remove `/minha-conta` de caminhos antigos, e o endereço
+  anterior terminava em 404. Kernel confirma o caminho canônico; no Runtime de
+  teste o endereço novo agora alcança a checagem de papel (403 anônimo) e o
+  caminho legado redireciona para ele (301).
+
 ## Navegação multidomínio — 2026-10-19
 
 - Remove os atalhos "Atividades interativas" e "Atividades dos cursos" do menu de conta usado pela barra multidomínio. As rotas dos painéis H5P de estudante e educador permanecem disponíveis no contexto do LMS.

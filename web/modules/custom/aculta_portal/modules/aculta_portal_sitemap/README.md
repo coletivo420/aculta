@@ -48,4 +48,4 @@ ADR-009 em `docs/decisions/`).
 
 ## Próximas etapas
 
-- Deploy: somente no RC de todos os módulos, temas e subtemas.
+- Deploy: o candidato completo precisa estar em RC antes do deploy/validação Alpha; após aprovação Alpha, segue para produção conforme [ciclo vigente](../../../../../../docs/operations/RELEASE-LIFECYCLE.md).

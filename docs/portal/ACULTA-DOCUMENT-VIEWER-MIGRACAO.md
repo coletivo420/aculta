@@ -1,0 +1,409 @@
+# ACULTA Document Viewer — inventário e migração (0.1.0-dev.1)
+
+> Fase 0.1.0-dev.1: auditoria e baseline. Nenhum código, configuração ou dado foi alterado.
+> Este documento é o mapa origem/destino da migração de `aculta_pdf_viewer` para `aculta_document_viewer`.
+
+## Decisões do responsável (2026-10-21)
+
+| Tema | Decisão |
+| --- | --- |
+| Numeração do novo módulo | Recomeça em `0.1.0-dev.1`. O histórico do módulo antigo (`0.1.0-dev.39`) fica preservado no CHANGELOG de origem e é referenciado no novo. |
+| Plugin ID do Group (`aculta_pdf_viewer_group:course_document`) | Migra junto na fase `0.1.0-dev.3`, somente após a estratégia de `0.1.0-dev.2` ser comprovada. |
+| Tema ACULTA420 | Alterações autorizadas desde o início da frente (ver `docs/portal/MAPA-MODULO-TEMA.md`). |
+
+## Estado inicial do repositório
+
+- Host: `toca` (Homelab). Runtime confirmado: `aculta_runtime` (Drush `status`), URI `http://default`, esperado neste ambiente.
+- Branch: `docs/aculta-forum-0.1.0-dev.1`. HEAD antes desta fase: `b995e17c`.
+- Worktree com alterações de outras frentes (Fórum, Gallery, configuração de Forum/Gallery e `aculta_pdf_viewer` em `src/Pdf/DocumentFieldMap.php`, `src/Pdf/PdfViewerBuilder.php` e dois testes Unit). Esses arquivos **não fazem parte** desta frente e não são commitados aqui.
+
+## Distinção de camadas
+
+1. **Código:** módulo `aculta_pdf_viewer` (`0.1.0-dev.39`) e submódulo `aculta_pdf_viewer_group` (`0.1.0-dev.4`), ambos em `web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/`.
+2. **Configuração exportada (`config/sync/`):** 14 arquivos referenciam o módulo ou o submódulo (ver mapa abaixo).
+3. **Configuração ativa (banco do Runtime):** `core.extension` mantém `aculta_pdf_viewer: 0` e `aculta_pdf_viewer_group: 0`; `aculta_pdf_viewer.settings` existe; `key_value` (`system.schema`) registra `aculta_pdf_viewer` e `aculta_pdf_viewer_group`.
+4. **Dados de conteúdo:** 2 entidades Media do bundle `document` (IDs 234 e 237, nomeadas como fixtures temporárias de homologação), 0 entidades `course_document`, 1 relação de Group do tipo `group_membership` e nenhuma relação `aculta_pdf_viewer_group:course_document`. Nenhum dado foi removido.
+5. **Integrações ainda em desenvolvimento:** PV7 (CSP em Report-Only, acessibilidade ampliada) segue em `Dev`, conforme `docs/operations/status/aculta_pdf_viewer.yml`.
+
+## Mapa de consumidores (origem → destino)
+
+| Origem | Destino previsto | Tipo | Fase |
+| --- | --- | --- | --- |
+| `aculta_pdf_viewer` (módulo) | `aculta_document_viewer` | machine name, namespace `Drupal\aculta_pdf_viewer`, diretório | 0.1.0-dev.3 |
+| `aculta_pdf_viewer_group` (submódulo) | `aculta_document_viewer_group` | machine name, namespace, plugin Group | 0.1.0-dev.3 |
+| `aculta_pdf_viewer.settings` | `aculta_document_viewer.settings` | config ativa e exportada | 0.1.0-dev.2 (estratégia) / 0.1.0-dev.3 |
+| `aculta_pdf_viewer.schema.yml` | `aculta_document_viewer.schema.yml` | schema | 0.1.0-dev.3 |
+| `aculta_pdf_viewer.routing.yml` (`/painel-administrativo/aculta/leitor-pdf`) | `/painel-administrativo/aculta/leitor-documentos` | rota admin, com alias temporário | 0.1.0-dev.3 |
+| `aculta_pdf_viewer.links.menu.yml` / `links.task.yml` | links do novo módulo | menu administrativo | 0.1.0-dev.3 |
+| Formatter `aculta_pdf_media` (`AcultaPdfMediaFormatter`) | mesmo ID, provider novo | plugin Field Formatter | 0.1.0-dev.3 (ID preservado) |
+| Formatter `aculta_pdf_file` (`AcultaPdfFileFormatter`) | mesmo ID, provider novo | plugin Field Formatter | 0.1.0-dev.3 (ID preservado) |
+| Library `aculta_pdf_viewer/viewer` (`js/pdf-viewer.mjs`) | `aculta_document_viewer/pdf` | library Drupal | 0.1.0-dev.3 |
+| Plugin Group `aculta_pdf_viewer_group:course_document` | `aculta_document_viewer_group:course_document` | plugin Group (relação) | 0.1.0-dev.3, após dev.2 |
+| Config `group.role.lms_course-member/teacher` | permissões `… aculta_document_viewer_group:course_document …` | permissões de papel | 0.1.0-dev.3 |
+| Config `group.relationship_type.lms_course-af8ec2205541224f9d8c4` | `content_plugin` novo | relação Group | 0.1.0-dev.3 |
+| Config `media.type.course_document` e campos `field_media_course_document` | dependência de provider atualizada | Media privada de turma | 0.1.0-dev.3 |
+| Config `core.entity_view_display.media.document.default` / `.node.document.default` / `.node.document.full` | formatter e dependência | displays públicos | 0.1.0-dev.3 |
+| Config `core.entity_view_display.media.course_document.default` | formatter e dependência | display privado | 0.1.0-dev.3 |
+| `core.extension` | `aculta_document_viewer: 0` e `aculta_document_viewer_group: 0` | registro de módulo | 0.1.0-dev.2/dev.3 |
+
+### Consumidores de código (dependências `info.yml`)
+
+| Módulo | Dependência atual | Ação |
+| --- | --- | --- |
+| `aculta_forum` | `aculta_portal:aculta_pdf_viewer` | atualizar para `aculta_document_viewer` (fase dev.3). Arquivo está modificado por outra frente: editar só a linha necessária, em commit separado. |
+| `aculta_lms` | `aculta_portal:aculta_pdf_viewer_group` | atualizar (dev.3). |
+| `aculta_lms_h5p` | `aculta_pdf_viewer:aculta_pdf_viewer` e `aculta_pdf_viewer_group:aculta_pdf_viewer_group` | atualizar (dev.3). |
+
+### Referências não-código
+
+- `docs/architecture/ROUTES-SITEMAP.md` (rota admin): outra frente tem alteração não commitada nesse arquivo. Atualizar em commit próprio, sem incluir a alteração alheia.
+- `docs/portal/PDF-VIEWER-INTEGRATION.md`, `docs/portal/ROADMAP.md`, `docs/portal/IMPLEMENTATIONS.md`, `docs/portal/MAPA-MODULO-TEMA.md`, `docs/modules/LMS-GROUP.md`, `docs/modules/LMS-COMPATIBILITY.md`, `docs/compliance/LGPD-INVENTARIO.md`, `docs/operations/BANCO-DE-TESTE.md`, `docs/portal/SECURITY-ACCESS-FILES-MATRIX.md`.
+- Tema: `web/themes/custom/aculta420/css/components/pdf-viewer.css`, `docs/design-system.md` e `CHANGELOG.md` (ACULTA420).
+- Status: `docs/operations/status/aculta_pdf_viewer.yml` e `aculta_pdf_viewer_group.yml` (novo componente exige novo arquivo de status).
+
+## Configuração exportada que referencia o módulo
+
+`config/sync/` (14 arquivos citam `aculta_pdf_viewer` ou `aculta_pdf_viewer_group`):
+
+- `core.extension.yml` — registro de módulo.
+- `core.entity_view_display.media.document.default.yml`, `core.entity_view_display.node.document.default.yml`, `core.entity_view_display.node.document.full.yml` — displays que usam `aculta_pdf_media` / `aculta_pdf_file`.
+- `core.entity_view_display.media.course_document.default.yml` e `core.entity_form_display.media.course_document.default.yml` — displays da Media privada de turma.
+- `media.type.course_document.yml`, `field.field.media.course_document.field_media_course_document.yml`, `field.storage.media.field_media_course_document.yml` — dependência de provider.
+- `group.role.lms_course-member.yml`, `group.role.lms_course-teacher.yml` — permissões com `aculta_pdf_viewer_group:course_document`.
+- `group.relationship_type.lms_course-af8ec2205541224f9d8c4.yml` — `content_plugin: 'aculta_pdf_viewer_group:course_document'`.
+
+Os displays `*.node.document.*` e `media.document` são públicos. O bundle `course_document` é privado de turma. Ambos devem manter a separação já descrita no roadmap PV5.
+
+## Estado do banco do Runtime (somente leitura)
+
+| Item | Valor observado |
+| --- | --- |
+| `core.extension` | `aculta_pdf_viewer: 0`, `aculta_pdf_viewer_group: 0`, `csp: 0`, `pdfpreview: 0`, `reporting: 0` |
+| Config ativa `aculta_pdf_viewer.settings` | presente |
+| Config ativa com `aculta_pdf_viewer` | 12 registros (displays, Group, Media, `core.extension`) |
+| Config ativa com `aculta_pdf_viewer_group` | incluída nos 12 acima |
+| Config ativa com `aculta_pdf_media` / `aculta_pdf_file` | 4 displays (`media.course_document`, `media.document`, `node.document.default`, `node.document.full`) |
+| Entidades Media `document` | 2 (IDs 234 e 237, nomes `TEMP HOMOLOGACAO PDF VIEWER 20261017` e `TEMP PV6 PDF aculta-pv6-pv7-20261017`) |
+| Entidades Media `course_document` | 0 |
+| Relações Group | 1 (`group_membership`); nenhuma `course_document` |
+| Tabelas `group*` | presentes (`group_relationship`, `groups`, etc.) |
+
+**Atenção:** os dois Media de homologação devem ser preservados. Não apagar nem alterar sem autorização explícita.
+
+**Divergência de configuração (`drush config:status`):** há diferenças em `core.entity_view_mode.node.pdf`, `group.*` (`lms_course` displays e campos de Group) e `system.action.entity_print_pdf_download_action`. Não pertencem diretamente ao viewer e não são tratadas aqui. Devem ser registradas como dívida antes de `config:import`.
+
+## Baseline de testes (Dev, sem alterações)
+
+Árvore de trabalho com alterações alheias já presentes; os testes refletem esse estado.
+
+| Suite | Resultado | Observação |
+| --- | --- | --- |
+| PHPUnit Unit (`aculta_pdf_viewer/tests/src/Unit`) | **28 testes, 217 asserções, OK** | Aviso de diretório não gravável para HTML output (`sites/simpletest/browser_output`), sem falha. |
+| PHPUnit Kernel (`aculta_pdf_viewer/tests/src/Kernel`) com `aculta_simpletest` | **5 testes, 5 erros, 12 deprecações** | Ver causas abaixo. |
+
+Causas dos erros Kernel, pré-existentes e não relacionadas à migração:
+
+1. `AcultaPdfMediaEmbedTest` (4 testes): `aculta_portal.aculta_user_agreement_registration` depende do serviço `aculta_user.aculta_user_agreement_ledger`, que não existe no container de teste. Indica dependência entre módulos não habilitada nesse teste ou serviço ausente no estado atual da árvore.
+2. `AcultaPdfViewerInstallTest` (1 teste): `aculta_lms` tem configuração com dependência não satisfeita (`views.view.courses_admin` → `system.menu.admin`) durante a instalação de teste.
+
+Esses erros são dívida já existente. Não serão corrigidos nesta fase para produzir PASS, conforme a regra do plano.
+
+## Procedimento de rollback (estrutural)
+
+Esta fase não altera o Runtime. Para as fases seguintes, o rollback é:
+
+1. Backup do banco do Runtime antes de qualquer `drush updb` ou `config:import` (`drush sql:dump` fora do repositório, em local sem Git).
+2. Backup de `config/sync/` e do diretório do módulo (commit anterior à fase).
+3. Reversão por restauração coordenada: código no commit anterior, banco restaurado no mesmo ponto, `drush cr`.
+4. Validar `core.extension` e a presença de `aculta_pdf_viewer` antes de reabilitar qualquer tráfego.
+
+A estratégia específica de migração de identidade (`dev.2`) detalha o procedimento e precisa ser testada em cópia do banco antes de aplicar no Runtime.
+
+## Riscos identificados
+
+1. **Plugin ID do Group** aparece em permissões de papel e em `group.relationship_type`. Alterá-lo sem migração das relações pode quebrar acesso de turmas (fase dev.3).
+2. **`core.extension` com o módulo antigo instalado:** renomear a pasta sem compatibilidade provoca módulo ausente. A camada de compatibilidade precisa existir até a conclusão da migração (fase dev.2).
+3. **Dependências de outros módulos** (`aculta_forum`, `aculta_lms`, `aculta_lms_h5p`) referenciam os nomes antigos. Precisam ser atualizadas na mesma fase que a renomeação, sem sobrescrever alterações alheias.
+4. **Configuração divergente** no Runtime (ver seção anterior) pode impedir `config:import` limpo.
+5. **Testes Kernel já falham** (ver baseline). Qualquer validação de migração depende de corrigir ou isolar essas causas antes.
+6. **Worktree compartilhado**: alterações de outras frentes em `aculta_pdf_viewer/src/Pdf/` e em arquivos de `docs/architecture/ROUTES-SITEMAP.md` e `config/sync/` precisam ficar fora dos commits desta frente.
+7. **Dados de homologação** (Media 234 e 237): devem ser preservados nas migrações e usados como caso de teste.
+
+## 0.1.0-dev.2 — Estratégia de migração (evidência)
+
+### Ambiente de teste
+
+- Backup do Runtime: `sql:dump` em `scratchpad` da sessão (fora do repositório, 53 MB, não versionado).
+- Cópia do banco do Runtime **não foi criada**: o usuário `aculta_runtime` não tem `CREATE DATABASE` (grants: `aculta_runtime.*` e `aculta_id_cpf_test.*`). Os testes de migração rodam no banco `aculta_simpletest`, previsto em `docs/operations/BANCO-DE-TESTE.md`, com fixtures próprias. Não houve operação no Runtime.
+
+### Mecanismo do Core (confirmado no código instalado, Drupal 11.4.10)
+
+- `EntityDisplayBase::onDependencyRemoval()` (`web/core/lib/Drupal/Core/Entity/EntityDisplayBase.php:456`) remove componentes cujo renderer tem provider na lista de módulos removidos.
+- `ConfigManager::uninstall()` (`web/core/lib/Drupal/Core/Config/ConfigManager.php:203`) reprocessa todas as configurações dependentes do módulo.
+
+### Spike (`tests/src/Kernel/DocumentMigrationSpikeTest.php`, fixtures em `tests/modules/`)
+
+Resultado da execução real, 3 testes, 20 asserções, OK:
+
+| Cenário | Resultado observado |
+| --- | --- |
+| Novo módulo expõe **o mesmo formatter ID** do antigo | O provider **continua sendo o antigo**. Os dois não podem coexistir com o mesmo ID. |
+| Desinstalar o antigo **sem migrar** o display | O componente **não some**: volta ao formatter padrão do tipo (`string`). Num display público de PDF, a falha seria **silenciosa**. |
+| Trocar o tipo do componente para um ID **novo** antes de desinstalar o antigo | O componente permanece com o ID novo e a dependência deixa de citar o módulo antigo. |
+
+### Consequência para a decisão de IDs
+
+O plano pede que `aculta_pdf_media` e `aculta_pdf_file` sejam preservados. Com base no spike:
+
+- **Preservar os IDs não é seguro** na desinstalação: o módulo antigo precisa sair para o novo assumir o ID, e nesse intervalo o display cai no formatter padrão.
+- **Caminho proposto (B):** o novo módulo registra IDs próprios; uma `hook_update_N` troca o tipo dos componentes em `core.entity_view_display.*` (`media.document`, `media.course_document`, `node.document.default` e `node.document.full`) e recalcula as dependências; só depois o módulo antigo é desinstalado. O teste acima comprova o efeito no Core.
+- **Alternativa (C):** manter o módulo antigo instalado apenas como provedor dos IDs antigos (estado B prolongado). Preserva os IDs, mas mantém código legado e uma dívida explícita.
+
+**Decisão necessária do responsável antes da 0.1.0-dev.3:** aprovar B (recomendado) ou C. Isso altera o requisito do plano de preservar os IDs de formatter.
+
+### Ordem obrigatória (com B)
+
+1. Backup: `sql:dump` do Runtime, cópia de `config/sync/` e commit de referência.
+2. Instalar o novo módulo (código e IDs próprios), sem remover o antigo.
+3. `hook_update_N` do novo módulo: trocar `type` dos componentes, reescrever `dependencies.module`, migrar relações Group (`group.relationship_type` e permissões de papel) e atualizar `system.schema`.
+4. Verificações anteriores e posteriores: `core.extension`, componentes por display, dependências, relações Group e contagem de Media. Mesmo critério de homologação do plano.
+5. Desinstalar o módulo antigo apenas depois de a verificação posterior passar.
+6. Rollback: restaurar o código no commit de referência, restaurar o banco do backup no mesmo ponto e `drush cr`.
+
+### Pendências que continuam bloqueadas
+
+- A troca do plugin ID de Group (`aculta_pdf_viewer_group:course_document`) segue a mesma lógica de provider. Não foi testada ainda; deve entrar no spike antes da dev.3.
+- O spike cobre o formatter. Não cobre `group.relationship_type`, permissões de papel nem `media.type.course_document`.
+- Os 5 erros Kernel da baseline (ver acima) continuam pré-existentes e não afetam o spike, que roda com módulos mínimos.
+
+### Decisão adotada
+
+Adotada a opção **B** (IDs próprios, troca de componentes antes da desinstalação), por ser a única das duas que a evidência do spike sustenta. A decisão deve ser confirmada pelo responsável antes do Runtime ser alterado.
+
+## Roadmap revisado (plano consolidado)
+
+Incorpora planilhas ao escopo, com o nome definitivo `aculta_document_viewer`.
+
+| Versão | Fase | Entrega | Estado |
+| --- | --- | --- | --- |
+| 0.1.0-dev.1 | Auditoria | Inventário e contratos | Concluída (`25ed3109`) |
+| 0.1.0-dev.2 | Migração | Estratégia segura e spike | Concluída como evidência (`c23bc37d`, `7f031487`) |
+| 0.1.0-dev.3 | Identidade | Módulo instalado e compatível com PDF | Executada em estado B: código (`4b170d06`), configuração (`740a0c32`) e Runtime; módulo antigo permanece |
+| 0.1.0-dev.4 | DOCX | docx-preview local | Vendoring concluído (`2b7f6a90`); renderização em navegador pendente |
+| 0.1.0-dev.5 | Integração DOCX | Media/File e visualização autorizada | Validação (`3649a742`), spike (`2c2e1b9c`), renderizador isolado (`bd43fdba`) e formatter integrado com teste no Runtime (`c8bef68c`). Pendente: ativar o formatter nos displays de produção (decisão do responsável) |
+| 0.1.0-dev.6 | Tabulator | Tabulator + SheetJS locais e leitor inicial | Leitor testado no navegador e no Runtime (XLSX e ODS). Pendentes: isolamento (dev.10), estilo ACULTA420 (dev.8) |
+| 0.1.0-dev.7 | Planilhas | XLSX, XLS, ODS, CSV e múltiplas abas | XLS, ODS e CSV implementados; pt-BR; modo Tabela (`15908959`). Runtime testado com XLSX e ODS; CSV fora do campo de documentos do Runtime |
+| 0.1.0-dev.8 | Interface unificada | Título, tipo, barra de zoom e tela cheia, status acessível, cabeçalho e modos com ACULTA420 | Módulo 0.1.0-dev.7 e tema 0.6.0-dev.145; Runtime testado com DOCX e XLSX (zoom, tela cheia por clique real, título escapado). Pendente: revisão em Firefox e viewports, e o PDF segue com a barra própria |
+| 0.1.0-dev.9 | Integração transversal | Consumidores de documento: displays, editores, Group e Views | Matriz verificada no Runtime (abaixo). Ativação de DOCX e planilhas nos consumidores públicos e no LMS depende de decisão do responsável; teste de revogação de Group bloqueado pelo ambiente de teste |
+| 0.1.0-dev.10 | Segurança e desempenho | Arquivos maliciosos, isolamento, limites e CSV | Parser de planilhas isolado em iframe sandbox e limites no servidor e no cliente (módulo 0.1.0-dev.8, `04cab735`). Pendentes: isolamento do DOCX já existe; CSP real com referência externa e testes de DOCX malicioso não exercitados no Runtime |
+| 0.1.0-rc.1 | Homologação | Migração, regressão, acessibilidade | Não iniciada |
+| 0.1.0 | Estável | Implantação após aprovação | — |
+
+O PDF.js, suas configurações, o visualizador completo, as miniaturas PDFPreview e os contratos Group existentes são preservados.
+
+### Execução da 0.1.0-dev.3 (estado B)
+
+Resolvido o bloqueio anterior: o módulo novo foi criado a partir do conteúdo commitado (`HEAD`), sem mover o diretório do antigo. Os quatro arquivos da outra frente não foram tocados.
+
+- Runtime: backups antes (`sql:dump` em scratchpad, dois arquivos). `pm:install` de `aculta_document_viewer` e `aculta_document_viewer_group`.
+- Displays `media.document`, `media.course_document`, `node.document` (default/full) migrados para os formatters novos. Verificado: nenhum display com formatter antigo.
+- Relação `lms_course`, permissões de `lms_course-member`/`teacher`, dependência imposta da Media `course_document` apontam para o submódulo novo. Verificado após a gravação.
+- `config/sync` espelha o estado ativo (sem divergência nos objetos migrados).
+- Módulo antigo permanece instalado. Desinstalá-lo exige antes ajustar `aculta_forum`, `aculta_lms` e `aculta_lms_h5p` (dependências `info.yml`); `aculta_forum.info.yml` tem alterações de outra frente.
+
+Riscos abertos da estado B:
+1. Hooks e serviços duplicados enquanto os dois módulos coexistem: `entity_presave` do submódulo Group e o guard de CSP. Ambos são idempotentes.
+2. Falha de outra frente no Runtime: `ForumAttachmentPublicationHooks::__construct()` recebe `Hook\ForumGalleryPublication`, mas o serviço instancia `Attachment\ForumGalleryPublication`. Qualquer operação de entidade que dispare esse hook quebra. Não é desta frente; está registrada aqui para o dono.
+3. Smoke de render: o campo da Media de teste 234 é montado pelo formatter novo (`data-aculta-pdf-viewer`). O render de entidade completo volta vazio porque o site não tem a view mode `media.default`; isso é pré-existente.
+
+### Bloqueio anterior (resolvido)
+
+1. **Arquivos de outra frente:** `aculta_pdf_viewer/src/Pdf/DocumentFieldMap.php`, `src/Pdf/PdfViewerBuilder.php` e dois testes Unit têm alterações não commitadas. Renomear o diretório moveria esse trabalho. Pela regra do projeto, isso não é feito sem o dono.
+2. **Runtime:** o Runtime lê o próprio checkout. Renomear o diretório sem executar a migração deixa `core.extension` apontando para um módulo ausente. A migração no Runtime é operação persistente e exige autorização explícita.
+
+### Verificação de Tabulator e SheetJS (registro npm, 2026-10-21)
+
+**Tabulator** (`tabulator-tables`, licença MIT):
+- Último da linha 6.5: **6.5.3** (`sha512-nJ2QaqZzQvd9B4rf4LBnRxfb6sSqA/BX2OsXnSJ2d8k21oXDSTtFtOUrDap04a/6BDGivC/MByCxy43ugadJIg==`).
+- Última versão geral no npm: 6.7.0. Usar 6.5.3 respeita o plano, que fixa a linha 6.5.
+
+**SheetJS** (pacote npm `xlsx`, licença Apache-2.0):
+- A última versão publicada no npm é **0.18.5** (`sha512-dmg3LCjBPHZnQp5/F/+nnTa+miPJxUXB6vtk42YjBBKayDNagxGEeIdWApkYPOf3Z3pm3k62Knjzp7lMeTEtFQ==`).
+- As versões mais novas do SheetJS CE não estão no npm; são distribuídas pelo site da SheetJS. Não confirmei aqui o conteúdo nem os avisos de segurança dessas versões.
+- Não confirmei nesta sessão os avisos de segurança da linha 0.18.x. Antes de interpretar arquivos de usuário, é preciso verificar os advisories e escolher a versão. Isso é uma decisão pendente.
+
+## Próximas etapas
+
+- **0.1.0-dev.3:** renomeação, após (a) o dono da frente de `aculta_pdf_viewer` commitar ou separar os arquivos alterados e (b) autorização para migração no Runtime.
+- **0.1.0-dev.4 (fechamento):** renderizar um DOCX público de teste no navegador, com `renderAltChunks: false`, e registrar o resultado.
+- **0.1.0-dev.6 (leitor):** integrar Tabulator Spreadsheet e SheetJS (ver manifestos em `web/libraries/tabulator` e `web/libraries/sheetjs`).
+
+## 0.1.0-dev.5 — spike de isolamento do DOCX (evidência)
+
+Medido no Chromium 155 com a sessão X11 do sistema (`DISPLAY=:0`, janela visível, depuração remota
+via CDP). Servidor de teste local em 127.0.0.1, sem o Runtime. Cada caso rodou duas vezes; os
+resultados foram idênticos.
+
+| Caso | Sandbox | Renderizou | Script do `altChunk` executou | Acesso ao DOM do pai | Requisição a rastreador externo |
+| --- | --- | --- | --- | --- | --- |
+| DOCX válido | `allow-scripts` | sim | — | `SecurityError` | — |
+| DOCX com `altChunk` (HTML com script) | `allow-scripts` | sim | não | `SecurityError` | — |
+| DOCX com imagem externa | `allow-scripts` | sim | — | `SecurityError` | nenhuma |
+| DOCX com `altChunk` (controle) | `allow-scripts allow-same-origin` | sim | não (renderAltChunks: false) | **alcançado** (`parent.document.title` lido) | — |
+
+Leituras:
+
+- Sem `allow-same-origin`, a página filha fica isolada: não acessa o DOM do pai e não dispara violação de CSP.
+- Com `allow-same-origin` o isolamento acaba: o conteúdo lê o DOM do pai. Isso confirma que essa combinação não serve.
+- A ausência de requisição externa não prova bloqueio por CSP. O docx-preview não busca relações externas; o CSP da página filha (`connect-src 'none'`, `img-src blob: data:`) está aplicado, mas não foi exercitado.
+- Não há evidência de que o `altChunk` não execute quando `renderAltChunks` estiver ligado; o caso não foi testado com ele ligado.
+
+Decisão para o viewer (proposta, a ser implementada):
+
+1. Renderização em `<iframe sandbox="allow-scripts">`, sem `allow-same-origin`, apontando para uma página estática do próprio módulo (`docx-frame.html`), com CSP em `<meta>`: `default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src blob: data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'`.
+2. O bootstrap da página filha é arquivo externo (`docx-frame.js`). Script inline é bloqueado pelo CSP, o que é o comportamento desejado.
+3. O pai busca os bytes do DOCX pela URL autorizada (Media/File com as checagens do Drupal) e envia um `ArrayBuffer` com `postMessage`. Só aceita `ready` e `done` de `ev.source === iframe.contentWindow`.
+4. O pai nunca lê o conteúdo da filha; só o status. O conteúdo fica no iframe.
+5. `renderAltChunks: false`, `experimental: false`, e `renderAsync` como única API.
+6. O validador `DocxPackageValidator` roda antes do envio dos bytes ao iframe.
+
+Reprodução: os fixtures e os scripts ficam fora do repositório, no scratchpad da sessão (`isolation/`). O harness é `cdp-run.mjs` (Node 22, CDP na porta de depuração do Chromium).
+
+Pendências dessa fase:
+- Implementar `docx-frame.html` e `docx-frame.js` no módulo, com teste de navegador no próprio Drupal (Runtime, Media real, acesso anônimo e autorizado).
+- Testar o caso `renderAltChunks` ligado, para confirmar que o script não executa.
+- Testar CSP real (não só `<meta>`) com `img-src` de referência externa (requisição bloqueada).
+- Confirmar no Drupal que a URL do arquivo privado passa pela rota do Core com a autorização do Media.
+
+
+## 0.1.0-dev.5 — formatter DOCX e teste no Runtime (evidência)
+
+- Formatter `aculta_document_docx_media` em `DocxMediaFormatter`, com as mesmas checagens do formatter PDF (entidade hospedeira, campo, download). Vale para Media e para campos `file` de nós.
+- `DocxViewerBuilder` valida o pacote OOXML, aceita só `public://` e `private://`, e gera a URL pelo Core.
+- Runtime testado na sessão X11 (Chromium, `https://aculta.toca.net.br`, resolvido localmente para o Runtime):
+  - DOCX válido: iframe `sandbox="allow-scripts"`, DOCX renderizado, pai sem acesso ao DOM do iframe, link de download presente.
+  - DOCX corrompido: sem leitor, link do Core mantido, HTTP 200.
+  - Nó privado não publicado: página 403 para anônimo; arquivo privado 404, igual a um caminho inexistente (sem vazar existência).
+- Displays `node.document` foram trocados para o formatter DOCX só para o teste, e restaurados ao formatter PDF. Verificado na configuração persistida e no `config:status`.
+- Fixtures criados para o teste (nós 506–508, arquivos 564–567 e pastas `aculta-dev5-teste`) foram removidos. Nenhum resto no ambiente.
+- Não feito: ativar o formatter DOCX nos displays de produção (`media.document`, `node.document`). Isso muda a apresentação pública e depende de decisão do responsável; o dev.8 cuida da apresentação ACULTA420.
+- Não testado: CSP real com referência externa (o docx-preview não busca relações externas), `altChunk` com `renderAltChunks` ligado no Runtime e o caso de acesso autorizado com usuário logado (exige conta de teste conforme o procedimento de `teste.comum`).
+
+
+## 0.1.0-dev.6 — leitor de planilhas (evidência)
+
+- Formatter `aculta_document_spreadsheet_media` (XLSX), builder e biblioteca `spreadsheet` no módulo, versão 0.1.0-dev.5 (`6d0fd28c`).
+- Medição no Chromium da sessão X11 com arquivo de teste de três abas: abas listadas; primeira linha tratada como dado; fórmula exibida pelo valor em cache (`6`); HTML de célula exibido como texto, sem `<img>` criado e sem execução de script; coordenadas preservadas (aba com início em B3).
+- Data: o fixture foi gerado num fuso UTC-3 e grava 20/10/2026 21h. O leitor mostra o que o arquivo guarda (`10/20/26`). Não é defeito do leitor, mas a exibição precisa seguir a localização pt-BR no dev.7.
+- Não testado no Runtime: criação de nó e arquivo falham desde o início desta etapa por `ForumPublicationTimeHooks` (classe nova sem commit na frente do Fórum, sem argumentos de construtor). Nada foi gravado no Runtime.
+- Pendentes: XLS, ODS e CSV (dev.7); isolamento do SheetJS (dev.10); recorte de módulos do Tabulator (`TabulatorFull` hoje).
+
+
+## 0.1.0-dev.7 — planilhas XLS, ODS e CSV, pt-BR e modo Tabela (evidência)
+
+- Módulo versão 0.1.0-dev.6 (`15908959`), com validação por formato e formatação pt-BR.
+- Browser (Chromium na sessão X11, fixtures gerados com SheetJS 0.20.3): XLS e ODS com valores em pt-BR, percentual, data, booleanos, erro e cabeçalhos no modo Tabela; CSV lido como texto (`25.6%` continua `25.6%`).
+- Runtime: XLSX de três abas e ODS, pelo formatter de planilha no modo full de `node.document`. Display restaurado ao PDF; fixtures removidos.
+- Limites: CSV não passa na validação de extensão do campo de documentos do Runtime, então não foi testado lá; o botão de modo e o seletor ainda não têm estilo ACULTA420; o SheetJS roda sem isolamento (dev.10).
+
+
+## 0.1.0-dev.8 — interface unificada (evidência)
+
+- Módulo `aculta_document_viewer` 0.1.0-dev.7: cabeçalho (tipo e título escapados), barra com zoom em passos fixos, tela cheia e status acessível (`DocumentViewerChrome` e `js/document-chrome.mjs`). Os leitores DOCX e planilhas usam a mesma barra. O PDF não foi alterado.
+- Módulo sem classes de design: a marcação usa `data-aculta-document-part` e `data-aculta-document-control`, estilizados pelo tema em `css/components/document-viewer.css`, tema 0.6.0-dev.145.
+- Gates: fronteira módulo-tema e mapa módulo-tema sem falha nesse módulo; atributos documentados em `TOKENS-E-ATRIBUTOS.md`; gate de fundação do tema atualizado (369 checks). Design foundations falha em três checks do envelope de e-mail do Mailer, já registrados antes desta etapa.
+- Testes: Unit 53/53 OK. Runtime (Chromium X11): DOCX e XLSX públicos com título contendo HTML; título como texto; zoom 100% para 115%; tela cheia por clique real; status oculto ao concluir; modos Planilha e Tabela presentes. Fixtures e display restaurados.
+- Pendente: revisão visual em Firefox e em 390/768/1024 px; o PDF segue com a barra própria, conforme o plano.
+
+
+## 0.1.0-dev.9 — integração transversal (matriz verificada)
+
+Verificação somente de leitura no Runtime (configuração ativa e exportada). Nenhum consumidor foi alterado.
+
+| Consumidor | Estado hoje | Viewer DOCX/planilha | Decisão ou bloqueio |
+| --- | --- | --- | --- |
+| `node.document` (default e full) | formatter PDF (`aculta_document_pdf_file`) | disponível, não ativo | ativar é exposição pública; decisão do responsável |
+| `node.document` (teaser) | `file_default` (link) | não aplicável | correto para resumo; sem mudança |
+| `media.document` (default) | formatter PDF (`aculta_document_pdf_media`) | disponível, não ativo | mesma decisão do `node.document` |
+| `media.course_document` (LMS, privado) | formatter PDF; campo aceita **só PDF** | não aceito no upload | aceitar DOCX/XLSX em turma é decisão de produto e de upload |
+| `media.forum_attachment` (Fórum) | extensões não limitadas no campo; política no Fórum | fora do escopo desta frente | pertence à frente do Fórum |
+| Editores CKEditor (`wiki`, `revista_editorial`, `usuario_aculta`, `email_html`, `webform_default`) | nenhum tem `media_embed` ativo | sem embed de documentos | embed de DOCX/XLSX depende de ativar o plugin, decisão do responsável |
+| Views de documentos | sem Views de planilha/DOCX | não aplicável | sem consumidor real; nenhuma Views criada |
+| Group (`course_document`, relação `lms_course`) | configuração migrada (`740a0c32`) | sem mudança de acesso | o teste `CourseDocumentAccessTest` (revogação de membership) não roda no ambiente de teste: falha com `aculta_user.aculta_user_agreement_ledger` ausente, a mesma causa da baseline |
+
+Conclusão: a integração técnica está pronta para os consumidores, mas nenhum consumidor público ou de turma recebe DOCX ou planilhas sem uma decisão do responsável. A revogação de acesso de turma não foi verificada nesta etapa; fica como pendência explícita, com a causa.
+
+
+## 0.1.0-dev.10 — segurança do leitor de planilhas (evidência)
+
+- SheetJS saiu da página principal: roda em `js/sheet-frame.js`, em iframe `sandbox="allow-scripts"` sem `allow-same-origin`, com CSP em `<meta>`. O pai (`sheet-reader.mjs`) só recebe matrizes de texto.
+- Limites: 2000 linhas e 100 colunas por aba, 20 abas, 500 caracteres por célula, no iframe e de novo no pai.
+- ODS com limites de descompactação e teste de ZIP bomb; XLSX já tinha limites pelo validador OOXML.
+- Sonda de isolamento durante a leitura (Chromium X11): iframe com `sandbox="allow-scripts"`; página sem acesso ao documento do iframe; célula com `<img ...>` chega como texto; nenhum elemento `img` criado.
+- Runtime (XLSX de três abas no modo full de `node.document`): `status: ok`, abas, modo Tabela com cabeçalhos corretos. Display restaurado; fixtures removidos.
+- Testes de DOCX malicioso no Runtime (Chromium X11, fixtures temporários removidos depois):
+  - DOCX com `altChunk` (HTML com script que tenta alterar `parent.document.title`): **recusado na validação** (`forbidden_part`); sem leitor, link do Core, título do pai intacto, nenhuma flag no pai, nenhum script na página. O log registra a recusa.
+  - DOCX com referência externa: renderizado no iframe `sandbox="allow-scripts"` com status `done`; título do pai intacto. Nenhuma requisição externa, porque o docx-preview não busca relações externas; esse caminho não exercita o CSP.
+  - DOCX corrompido: recusado, sem leitor, link mantido.
+- CSP real (política do `docx-frame.html` de produção, copiada byte a byte com uma sonda, no navegador X11): `fetch` externo bloqueado (`connect-src`, `TypeError`); imagem externa bloqueada (`img-src`); as duas violações foram reportadas; o rastreador não recebeu nenhuma requisição. Feito num servidor local com a mesma política, não no Runtime.
+- Ressalva: a sonda de CSP não roda no Runtime, porque o arquivo de produção não foi alterado. A política foi comparada com `diff` para garantir que é a mesma.
+- Ruído conhecido: o CSP do site registra mensagens `info` de estilo inline em todas as páginas; não é do leitor.
+
+
+## 0.1.0-rc.1 — homologação (registro)
+
+Estado: **candidato em homologação, RC não declarado**. Faltam a revisão de código (AGENTS.md exige) e a revisão visual em Firefox antes de declarar RC. O estado do módulo continua `Dev` no índice de status.
+
+### Testes
+
+| Item | Resultado | Classificação |
+| --- | --- | --- |
+| PHP lint (34 arquivos do módulo) | sem erros | verificado |
+| `node --check` dos JS do leitor | sem erros | verificado |
+| Unit do módulo `aculta_document_viewer` | 54 testes, 229 asserções, OK | verificado |
+| Unit de baseline `aculta_pdf_viewer` | 28 testes, 217 asserções, OK | verificado |
+| Kernel do módulo e do submódulo Group | 5 erros (serviço `aculta_user.aculta_user_agreement_ledger` ausente) | dívida preexistente, mesma causa da baseline |
+| Runtime: DOCX, XLSX, ODS, XLS, CSV (fixtures e medição) | valores, abas, Tabela e fallback corretos | verificado (CSV só em fixture local, o campo de documentos do Runtime não aceita CSV) |
+| DOCX malicioso no Runtime (altChunk, externo, corrompido) | ver registro do dev.10 | verificado |
+| CSP real (sonda com a política de produção, servidor local) | fetch e imagem externos bloqueados | verificado fora do Runtime |
+| Viewport 390 e 768 px, claro e escuro (Runtime) | sem rolagem horizontal, alvos de 44 px, grade e abas com tokens | verificado (Chromium X11; Firefox pendente) |
+
+### Gates
+
+| Gate | Resultado | Classificação |
+| --- | --- | --- |
+| Índice de status (`validate-project-status-index`) | PASS após criar os status do módulo e do submódulo Group | corrigido nesta etapa (falha introduzida pelo módulo novo) |
+| Foundation do tema (`validate-aculta420-foundation`) | 369 checks PASS | verificado |
+| Design foundations do tema | 3 falhas no envelope de e-mail do Mailer | dívida preexistente de outra frente |
+| Mapa módulo-tema | 2 falhas: `aculta_editor`, `aculta_lms_resources` | dívida preexistente de outras frentes; nenhuma do leitor |
+| Fronteira módulo-tema | 1 falha: `aculta_mailer` | dívida preexistente de outra frente |
+| Pacotes próprios | 3 falhas em fixtures de outros módulos de teste | dívida preexistente; os fixtures do spike foram corrigidos |
+| Atributos documentados (`validate-portal-ui-docs`) | 13 falhas, nenhuma dos atributos do leitor | dívida preexistente de outras frentes |
+| Drupal 11+ do Portal (`validate-aculta-portal-drupal11`) | falhava só pelo índice de status | corrigido pelo status do módulo |
+| Endereços de ambiente | 26 ocorrências em `aculta_statistics` e `aculta_qrcode` | dívida preexistente; nenhuma no leitor |
+| `.htaccess` (diretiva `.mjs`) | 2 falhas: a regra existe no `HEAD`, mas foi removida na árvore de trabalho por uma alteração não commitada de outra frente | **risco de release**: não é desta frente, e não foi revertido |
+| `aculta_image` | PASS | verificado |
+| Slugs públicos | PASS | verificado |
+
+### Riscos para o RC
+
+1. A árvore de trabalho não tem a regra `AddType application/javascript .mjs` do `.htaccess`. O `HEAD` tem. Sem ela, os módulos ES do PDF.js e do leitor saem com MIME errado em produção. O dono da alteração precisa commitar ou restaurar antes de qualquer deploy.
+2. O índice compartilhado tinha arquivos staged da frente do Fórum. Durante esta etapa, um commit meu levou esses arquivos por engano; desfiz esse commit local antes do push e recomitei só os meus caminhos. Os seis arquivos do Fórum continuam staged, sob responsabilidade do dono.
+3. Revisão de código e revisão visual em Firefox pendentes.
+4. Alpha (deploy no servidor de desenvolvimento) e produção dependem de autorização do responsável.
+
+### Próximos passos para declarar RC
+
+1. Revisão de código do módulo e do tema (`0.1.0-dev.8` e `0.6.0-dev.146`).
+2. Revisão visual em Firefox, com as capturas de 390, 768 e 1024 px nos modos claro e escuro.
+3. Resolver o `.htaccess` com o dono da alteração, e rodar `validate-htaccess-directives` na árvore de trabalho.
+4. Depois disso, declarar RC no índice de status e no roadmap, e pedir autorização para o Alpha.
+
+
+### RC1 — revisão visual em Firefox (executada)
+
+- Navegador: Firefox ESR (headless, perfil de teste isolado, sem o perfil do usuário), por WebDriver BiDi, com espera pela renderização. Página de planilha publicada no Runtime, modo claro (o site não tem modo escuro por preferência do sistema; o escuro é `data-bs-theme`, não medido em Firefox).
+- Medições (`script.evaluate` na própria página): 390 px, `scrollWidth` 378 e sem rolagem horizontal; 768 px, `scrollWidth` 768; 1024 px, `scrollWidth` 1012. Nenhuma das três larguras tem rolagem horizontal da página.
+- Capturas: barra com zoom, tela cheia, Planilha e Tabela; grade com rolagem interna no celular; abas legíveis; cartão com tipo e título escapados.
+- Achado de cópia (não alterado): o rótulo "Documento PDF" acima do leitor vem do rótulo do campo `field_document` no display `node.document`, usado para todos os tipos de arquivo. Trocar esse rótulo é decisão de conteúdo e de configuração, não do leitor.
+- Fixtures do Runtime removidos e display restaurado ao formatter PDF.

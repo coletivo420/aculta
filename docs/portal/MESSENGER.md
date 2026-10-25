@@ -1,9 +1,11 @@
 # ACULTA Messenger: documentação do projeto
 
-Versões de referência: `aculta_messenger` 0.1.1-dev.30, `aculta_portal` 0.4.0-dev.31, tema `aculta420` 0.6.0-dev.52.
+Versões verificadas nesta revisão: `aculta_messenger` 0.1.1-dev.219, `aculta_portal` 0.4.1-dev.29, `aculta_user` 0.4.0-dev.73, tema `aculta420` 0.6.1-dev.12.
 Auditoria de fronteiras: [`MESSENGER-AUDIT.md`](MESSENGER-AUDIT.md).
 Guia do tema: [`web/themes/custom/aculta420/docs/messenger.md`](../../web/themes/custom/aculta420/docs/messenger.md).
-Documentos anteriores do submódulo (em parte desatualizados, ver auditoria A8): `web/modules/custom/aculta_portal/modules/aculta_messenger/docs/`.
+Implementação, contratos e roadmap atuais do submódulo: `web/modules/custom/aculta_portal/modules/aculta_messenger/docs/`.
+
+A decisão normativa atual é [`aculta_messenger/docs/ARCHITECTURE.md`](../../web/modules/custom/aculta_portal/modules/aculta_messenger/docs/ARCHITECTURE.md): `aculta_messenger` centraliza mensagens privadas, avisos e a orquestração de e-mail; Mailer mantém transporte/templates/logs, enquanto os módulos de domínio publicam eventos e escolhem destinatários. Seguir conteúdo gera avisos conforme acesso e preferências, nunca conversas ou participação em threads. Tipos de conversa contextuais anteriores foram substituídos e preservados no [registro histórico](MESSENGER-CONVERSATION-KINDS-HISTORICAL.md).
 
 ## 1. Visão geral
 
@@ -13,7 +15,8 @@ A mesma caixa "Opções" aparece no perfil público `/u/…`.
 
 Princípios:
 
-- **Fonte de verdade no Core/contrib:** conversas, mensagens, bloqueios e notificações são do `private_message`, `message`, `message_notify` e `message_subscribe`. Amizade é do `aculta_user`.
+- **Ownership compartilhado:** `private_message` mantém conversas, mensagens e bloqueios; `aculta_user` mantém amizades; Messenger coordena avisos, integrações, preferências e canais. As entidades `Message`, `aculta_aviso`, Flags e Site Alert continuam como storages existentes conforme cada fluxo. `message_notify` permanece temporariamente para itens legados de fila ainda não drenados; Message Subscribe não entrega avisos de tópicos do Fórum.
+- Pedidos e aceites de amizade também aparecem na central de Avisos sob a origem **Amizades**. O estado lido/não lido fica no `Message` existente e é sempre independente da preferência de e-mail; o resumo não expõe nomes de terceiros.
 - **Submódulo compõe a experiência:** regras de envio, validação, rotas da gaveta e contadores.
 - **Tema apresenta:** SDC, CSS, JS de comportamento visual. Não tem regra de negócio.
 
@@ -23,10 +26,10 @@ Princípios:
 | --- | --- | --- |
 | Core/contrib | `private_message`, `message*`, `flag`, `site_alert` | Threads, mensagens, bloqueio (`private_message.ban_manager`), notificações, avisos, leitura. |
 | `aculta_user` | `web/modules/custom/aculta_portal/modules/aculta_user/` | `FriendshipManager`, `aculta_friendship`, página `/u/`, hook `aculta_user_public_profile_actions`. |
-| `aculta_messenger` | `web/modules/custom/aculta_portal/modules/aculta_messenger/` | Rotas, controladores, formulários, serviços, validação, hooks, contadores, avisos administrativos. |
+| `aculta_messenger` | `web/modules/custom/aculta_portal/modules/aculta_messenger/` | Núcleo de avisos, notificações e conversas privadas; consumidores/adapters de LMS, Wiki, Fórum, Loja e Doações; preferências, entrega, central e contratos públicos. A integração Magazine está em inventário e não ativa consumer antes da definição da audiência. |
 | `aculta420` | `web/themes/custom/aculta420/` | SDC `messenger-*`, `messenger-drawers.js`, `counters.js`, tokens `data-portal-ui`, CSS do painel. |
 
-Dependências declaradas do submódulo: `aculta_portal:aculta_portal`, `aculta_portal:aculta_user`, `private_message`, `message`, `message_notify`, `message_subscribe`.
+Dependências declaradas do submódulo incluem `aculta_portal:aculta_user`, `aculta_portal:aculta_mailer`, `aculta_portal:aculta_forum`, `private_message`, `message`, `message_notify`, `message_subscribe`, `flag` e `site_alert`.
 
 ## 3. Fluxos
 
@@ -102,7 +105,7 @@ Uma conversa com mais de duas pessoas não tem amizade nem bloqueio para o menu:
 | `aculta_messenger.new_conversation` | `/mensagens/nova` | GET | `NewConversationController::start` | Nova conversa: busca |
 | `aculta_messenger.new_conversation_search` | `/mensagens/nova/buscar` | GET | `NewConversationController::search` | Nova conversa: resultados |
 | `aculta_messenger.new_conversation_compose` | `/mensagens/nova/{user}/painel` | GET, POST | `NewConversationController::compose` | Nova conversa: primeira mensagem |
-| `aculta_messenger.communication_settings` | `/configuracoes/email` | GET | `CommunicationSettingsForm` | Preferências de e-mail |
+| `aculta_messenger.communication_settings` | `/configuracoes/email` | GET | `CommunicationSettingsForm` | Preferências por origem: Fórum, LMS, Wiki, Loja, Doações, Mensagens Privadas e Amizades; exige conta autenticada com `access aculta portal`, sem exigir permissão de chat |
 | `aculta_messenger.admin_notices` | `/painel-administrativo/avisos` | GET | `NoticeAdminController::overview` | Administração |
 | `aculta_messenger.admin_temporary_notices` | `/painel-administrativo/avisos/temporarios` | GET | `NoticeAdminController::temporary` | Administração |
 | `aculta_messenger.admin_persistent_notices` | `/painel-administrativo/avisos/persistentes` | GET | `NoticeAdminController::persistent` | Administração |
@@ -120,9 +123,8 @@ Todos usam `#[Hook]`. Não há hook procedural nem arquivo `.module` no submódu
 | --- | --- | --- | --- |
 | `LifecycleHooks` | `module_preinstall` | `preventPrivateBodyNotifierConflict` | Impede ativar o notificador do Core com o template de corpo privado. |
 | `LifecycleHooks` | `module_preuninstall` | `protectNotificationData` | Impede remover campos ou configuração que registros de notificação ainda usam; a limpeza é explícita. |
-| `MessageSubscribeEventHooks` | `entity_insert` | `entityInsert` | Enfileira o tópico de fórum publicado na criação. |
-| `MessageSubscribeEventHooks` | `entity_update` | `entityUpdate` | Enfileira o tópico de fórum quando ele passa a publicado. |
-| `MessageSubscribeHooks` | `message_subscribe_get_subscribers` | `getSubscribers` | Retorna quem segue o tópico (`seguir_topico`); o Message Subscribe aplica status e acesso depois. |
+| `MessageSubscribeEventHooks` | `entity_insert` / `entity_update` | `entityInsert` / `entityUpdate` | Enfileira publicação ou revisão de tópico para o producer central de avisos; não cria conversa. |
+| `MessageSubscribeHooks` | `message_subscribe_get_subscribers_alter` | `suppressForumDelivery` | Suprime a entrega direta do Message Subscribe para tópicos e comentários do Fórum; `seguir_topico` alimenta o fluxo central de avisos. |
 | `MessengerBarHooks` | `preprocess_page` | `preprocessPage` | Entrega `aculta_messenger` (URL e contagem) ao tema, só para contas que podem enviar mensagens. |
 | `MessengerBarHooks` | `page_attachments` | `pageAttachments` | Anexa o script da busca de nova conversa a todas as páginas, porque é carregado por `fetch`. |
 | `MessengerBarHooks` | `preprocess_private_message_thread` | `preprocessPrivateMessageThread` | Estado de leitura por membro, como valor neutro para o tema. |
@@ -257,16 +259,15 @@ Os testes de navegador criam dados. Remover contas e conversas de teste pela API
 
 | Tipo | Onde | Como |
 | --- | --- | --- |
-| Unitários (PHPUnit) | `aculta_messenger/tests/src/Unit/` (6 classes, 22 testes) | `php vendor/bin/phpunit -c web/core --testsuite unit web/modules/custom/aculta_portal/modules/aculta_messenger/tests` |
+| Unitários (PHPUnit) | `aculta_messenger/tests/src/Unit/` (57 arquivos de teste) | `php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit` |
 | Gates | `scripts/validate-module-theme-boundary.php`, `validate-turnstile-exceptions.php`, `validate-public-slugs.php`, `validate-aculta-portal-drupal11.php`, `validate-aculta420-foundation.php` (Drush: `drush scr`) | Ver `docs/portal/GUARDRAILS.md` |
-| Navegador | Suíte de 52 verificações (fora do repositório, ver auditoria A7). Resultados em `docs/portal/TESTES-NAVEGADOR.md`, seção U. | Runtime de teste (`aculta.toca.net.br`) |
+| Navegador | `tests/browser/aculta-messenger/`; suíte completa registrada 76/76 e smoke da central 4/4. | Firefox ESR visível (`DISPLAY=:0`) no Runtime de teste (`*.aculta.toca.net.br`) |
 
 ## 10. Pendências conhecidas
 
-- Tipos de conversa, grupos de até 10 pessoas, fórum, LMS e retenção do curso: ver [`MESSENGER-CONVERSATION-KINDS.md`](MESSENGER-CONVERSATION-KINDS.md). A criação de grupo pela gaveta ainda não existe (fase B).
-
-- Auditoria: A1 a A9 em [`MESSENGER-AUDIT.md`](MESSENGER-AUDIT.md).
-- Conversas em grupo sem "Limpar histórico".
-- Aviso de bloqueio do Private Message em inglês (configuração não exportada; decisão pendente).
-- Não testado em dispositivos de toque reais nem com leitor de tela.
-- A suíte de 52 verificações não foi reexecutada após as últimas mudanças de confirmação (ver changelogs `0.1.1-dev.30` e `0.6.0-dev.52`).
+- A lista global ainda não tem uma paginação cronológica única. Cada origem implementa paginação própria após revalidar acesso. A decisão entre manter os paginadores por origem ou construir uma sequência global está em avaliação; ver [roadmap M6](../../web/modules/custom/aculta_portal/modules/aculta_messenger/docs/ROADMAP.md).
+- A dependência do caminho Message Notify para registros antigos de e-mail de amizade e Mensagem Privada só será removida depois da drenagem operacional das filas, verificada no Runtime. Nenhuma fila real foi limpa ou alterada nesta revisão.
+- O aviso de bloqueio do Private Message ainda usa texto em inglês (configuração não exportada; pendente).
+- Não há validação em dispositivos de toque reais nem com leitor de tela.
+- Os testes visuais registrados não substituem uma homologação completa do Runtime após as próximas alterações da central.
+- A regra vigente para conversas está em [`MESSENGER-CONVERSATION-KINDS.md`](MESSENGER-CONVERSATION-KINDS.md): conversas individuais e grupos voluntários pelo mesmo sistema; Fórum, LMS, Wiki e outros conteúdos não criam chats ou threads automáticos.

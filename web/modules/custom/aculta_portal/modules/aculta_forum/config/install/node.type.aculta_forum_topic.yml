@@ -1,0 +1,14 @@
+uuid: 4dbe2e48-f4a0-451c-ac3e-1386d1b03c9f
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - aculta_forum
+name: 'Tópico do ACULTA Forum'
+type: aculta_forum_topic
+description: 'Discussão pública independente do Growroom420.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

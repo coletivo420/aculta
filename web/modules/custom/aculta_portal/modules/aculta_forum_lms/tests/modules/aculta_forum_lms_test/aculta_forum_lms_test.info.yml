@@ -1,0 +1,5 @@
+name: 'ACULTA Forum LMS test fixture'
+type: module
+description: 'Registers the adapter settings schema for Kernel tests that do not enable the full module.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3

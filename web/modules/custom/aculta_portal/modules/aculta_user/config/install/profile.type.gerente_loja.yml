@@ -1,0 +1,14 @@
+uuid: 7b6b2ecc-6f66-4b1c-8496-c9c850f9dfd5
+langcode: pt-br
+status: true
+dependencies: {  }
+id: gerente_loja
+label: 'Gerente de Loja'
+display_label: 'Perfil de gerente de loja'
+multiple: false
+registration: false
+roles:
+  - gerente_loja
+allow_revisions: false
+new_revision: false
+

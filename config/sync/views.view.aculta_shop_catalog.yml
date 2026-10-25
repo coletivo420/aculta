@@ -26,10 +26,10 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 12
           offset: 0
-          id: 0
+          items_per_page: 12
           total_pages: null
+          id: 0
           tags:
             next: Próximos
             previous: Anteriores
@@ -110,12 +110,31 @@ display:
         - 'languages:language_interface'
         - user.permissions
       tags: {  }
+  block_catalog:
+    id: block_catalog
+    display_title: Bloco
+    display_plugin: block
+    position: 2
+    display_options:
+      title: 'Produtos da loja'
+      display_extenders: {  }
+      block_description: 'Catálogo de produtos da loja'
+      allow:
+        items_per_page: true
+        pager: pager
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - user.permissions
+      tags: {  }
   page_catalog:
     id: page_catalog
     display_title: Página
     display_plugin: page
     position: 1
     display_options:
+      display_extenders: {  }
       path: produtos
       menu:
         type: none
@@ -126,25 +145,6 @@ display:
         menu_name: main
         parent: ''
         context: '0'
-      display_extenders: {  }
-    cache_metadata:
-      max-age: -1
-      contexts:
-        - 'languages:language_interface'
-        - user.permissions
-      tags: {  }
-  block_catalog:
-    id: block_catalog
-    display_title: Bloco
-    display_plugin: block
-    position: 2
-    display_options:
-      title: 'Produtos da loja'
-      allow:
-        items_per_page: true
-        pager: pager
-      block_description: 'Catálogo de produtos da loja'
-      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:

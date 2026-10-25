@@ -1,0 +1,15 @@
+uuid: 39f4bd2d-c229-42d5-94d8-22e446731344
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - flag.flag.salvar_topico
+  module:
+    - flag
+id: flag_action.salvar_topico_flag
+label: 'Salvar tópico'
+type: node
+plugin: 'flag_action:salvar_topico_flag'
+configuration:
+  flag_id: salvar_topico
+  flag_action: flag
