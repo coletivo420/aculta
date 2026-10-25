@@ -47,16 +47,18 @@ administrativas.
 
 Administradores controlam em **Configurações do Messenger** quais modos de
 resumo diário e envio direto ficam disponíveis para cada categoria de conteúdo
-(Fórum, aprendizagem, Wiki, Loja e Doações). Para mensagens privadas e amizade,
-a pessoa pode escolher entre somente no site e e-mail direto; essas categorias
-não usam digest. A administração pode desativar o e-mail direto. A opção sem
-e-mail não pode ser removida e os avisos/conversas no site continuam disponíveis.
-Uma preferência individual temporariamente bloqueada pela política administrativa
-passa a valer novamente se o modo voltar a ser permitido.
+(Fórum, aprendizagem, Wiki, Loja e Doações). Em mensagens privadas, a pessoa
+escolhe somente no site, aviso direto ou digest semanal; o digest tem data inicial
+administrável e intervalo de sete dias por conta. Em amizades, escolhe somente
+no site ou aviso direto, sem digest. A administração pode desativar esses modos
+de e-mail. A opção sem e-mail não pode ser removida e os avisos/conversas no
+site continuam disponíveis. Uma preferência individual temporariamente
+bloqueada pela política administrativa passa a valer novamente se o modo voltar
+a ser permitido.
 
 O modo escolhido em cada categoria é a única preferência de entrega para aquele
-canal: resumo diário ativa o digest sem um segundo opt-in. Contas sem uma
-preferência nova herdam o opt-in global legado apenas como valor inicial
+canal: o resumo diário ou semanal ativa o digest sem um segundo opt-in. Contas
+sem uma preferência nova herdam o opt-in global legado apenas como valor inicial
 (digest para quem havia optado, somente no site para os demais); uma escolha
 explícita por categoria sempre prevalece. A chave antiga não é mais gravada nem
 usada como bloqueio de envio.
@@ -79,7 +81,7 @@ post-update e o Messenger passa a ser sua fonte normativa.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento atual é `0.1.1-dev.340`. O núcleo oferece
+A versão em desenvolvimento atual é `0.1.1-dev.345`. O núcleo oferece
 `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`, consumers para
 Fórum, LMS, Wiki, Loja, Doações e conquistas do Game, agregação da central e entrega por e-mail
 direto ou digest sem substituir os storages existentes. O Fórum preserva
@@ -87,17 +89,16 @@ direto ou digest sem substituir os storages existentes. O Fórum preserva
 momento de abrir e entregar. Preferências individuais são limitadas pela
 política administrativa, e avisos no site continuam obrigatórios.
 
-Validação automatizada anterior registrada em Dev.335: Unit Messenger **346 testes / 2.780
-assertions PASS**; `AvisosResumoMailTypeTest` **3/8 PASS**. Os focais de
-preferências e formulários passaram **54 testes / 451 assertions**; a suíte
-específica de avisos de amizade passou **35 testes / 483 assertions** (inclui o
-worker de e-mail). PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check`
-passaram. A suíte de integração MariaDB registrada
-anteriormente passou **98 testes / 1.173 assertions**, com 2 deprecações de
-annotations do Core/contrib e 7 notices de PHPUnit. O validador do índice global
-falhou porque o README raiz gerado já estava desatualizado; não regravei a tabela
-compartilhada. Kernel recente, SMTP real, testes visuais e homologação no Runtime
-não foram executados nesta microfase.
+Validação automatizada em 2026-10-25: Unit Messenger **356 testes / 2.866
+assertions PASS**; focais de preferências, formulários, digest privado e worker
+de mensagens **63 testes / 594 assertions PASS**; Kernel de migração de
+preferências e digest combinado **5 testes / 85 assertions PASS** no MariaDB
+dedicado, sem SMTP real. A Loja passou Integration Unit **18/227** e Kernel
+**4/75** (2 deprecações upstream `@EntityType`, 3 notices PHPUnit). PHPCS
+Drupal/DrupalPractice, PHP lint e `git diff --check` passaram. Runtime não foi
+utilizado. O validador do índice global apontou que o README raiz gerado está
+desatualizado; ele não foi regenerado para preservar alterações de outros
+componentes.
 
 A retenção de conversas usa cursor persistido para não deixar falhas antigas
 barrar lotes seguintes. Unit cobre paginação e rollback; o Kernel MariaDB cria
