@@ -36,12 +36,10 @@ final class MessengerModuleInstallTest extends BrowserTestBase {
   }
 
   /**
-   * The target module and its dependencies install and serve a real route.
+   * The target module and its dependencies install in an isolated site.
    */
-  public function testModuleInstallsAndServesLoginRoute(): void {
+  public function testModuleAndDependenciesInstall(): void {
     self::assertTrue($this->container->get('module_handler')->moduleExists('aculta_messenger'));
-    $this->drupalGet('/user/login');
-    $this->assertSession()->statusCodeEquals(200);
   }
 
 }

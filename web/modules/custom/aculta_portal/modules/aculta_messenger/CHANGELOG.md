@@ -11,6 +11,28 @@ Core/contrib durante a instalação, sem falha. Isto comprova instalação e uma
 rota HTTP no site temporário; não homologa Runtime, sessão autenticada, envio de
 mensagem, visual nem e-mail externo.
 
+## 0.1.1-dev.384 — corrigir o escopo da evidência BrowserTest
+
+A revisão do resultado Dev.383 encontrou que o HTTP de `/user/login` retornava
+status 200 com corpo vazio no harness utilizado; isso não comprova uma rota
+Drupal servida e não pode ser contado como homologação HTTP. O teste foi
+reduzido ao que demonstrou: `aculta_messenger` e suas dependências instalam no
+site BrowserTestBase isolado. A rota, sessão autenticada e envio permanecem
+pendentes até corrigir o servidor/browser de teste.
+
+Validação corrigida: **1 teste / 4 assertions PASS** para instalação e módulo
+habilitado; 189 depreciações Core/contrib, sem falhas. PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. O servidor estático foi usado somente como
+URL-base de disponibilidade e não recebeu tráfego funcional da aplicação.
+
+## 0.1.1-dev.383 — instalação funcional isolada do Messenger (evidência corrigida em Dev.384)
+
+`MessengerModuleInstallTest` instalou `aculta_messenger` e suas dependências em
+BrowserTestBase. A alegação inicial de que `/user/login` respondeu por HTTP foi
+retirada em Dev.384: o corpo retornado era vazio, portanto o teste não provou
+que a rota Drupal foi servida. A evidência válida limita-se à instalação do
+módulo; sessão autenticada e entrega seguem sem homologação.
+
 ## 0.1.1-dev.382 — Kernels dos consumers de domínio
 
 Os Kernels de integração LMS, Wiki, Commerce/Loja, Doações, Revista e Game
