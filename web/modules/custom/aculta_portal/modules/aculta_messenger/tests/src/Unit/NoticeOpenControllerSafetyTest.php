@@ -40,6 +40,7 @@ final class NoticeOpenControllerSafetyTest extends UnitTestCase {
     $lms->expects(self::once())->method('markRead')->with($message);
     $lmsResponse = (new LearningNoticeOpenController($lms, $account, $request))->open($message);
     self::assertSame(302, $lmsResponse->getStatusCode());
+    self::assertSame('no-store, private', $lmsResponse->headers->get('Cache-Control'));
 
     $wiki = $this->createMock(WikiNoticeManagerInterface::class);
     $wiki->method('resolve')->willReturn(['url' => $this->targetUrl()]);
@@ -49,6 +50,7 @@ final class NoticeOpenControllerSafetyTest extends UnitTestCase {
     $wikiMessage->expects(self::once())->method('save')->willReturn(1);
     $wikiResponse = (new WikiNoticeOpenController($wiki, $account, $request))->open($wikiMessage);
     self::assertSame(302, $wikiResponse->getStatusCode());
+    self::assertSame('no-store, private', $wikiResponse->headers->get('Cache-Control'));
 
     $commerce = $this->createMock(CommerceOrderNoticeManagerInterface::class);
     $commerce->method('resolve')->willReturn(['url' => $this->targetUrl()]);
@@ -58,12 +60,14 @@ final class NoticeOpenControllerSafetyTest extends UnitTestCase {
     $commerceMessage->expects(self::once())->method('save')->willReturn(1);
     $commerceResponse = (new CommerceOrderNoticeOpenController($commerce, $account, $request))->open($commerceMessage);
     self::assertSame(302, $commerceResponse->getStatusCode());
+    self::assertSame('no-store, private', $commerceResponse->headers->get('Cache-Control'));
 
     $donation = $this->createMock(DonationNoticeManagerInterface::class);
     $donation->method('resolve')->willReturn(['url' => $this->targetUrl()]);
     $donation->expects(self::once())->method('markRead')->with(self::anything(), $account)->willReturn(TRUE);
     $donationResponse = (new DonationNoticeOpenController($donation, $account, $request))->open($this->ownedMessage());
     self::assertSame(302, $donationResponse->getStatusCode());
+    self::assertSame('no-store, private', $donationResponse->headers->get('Cache-Control'));
   }
 
   /**

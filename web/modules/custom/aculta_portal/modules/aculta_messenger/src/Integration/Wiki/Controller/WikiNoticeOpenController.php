@@ -38,7 +38,9 @@ final class WikiNoticeOpenController {
       && !(bool) $message->get('field_aculta_wiki_read')->value) {
       $message->set('field_aculta_wiki_read', 1)->save();
     }
-    return new TrustedRedirectResponse($resolved['url']->toString());
+    return new TrustedRedirectResponse($resolved['url']->toString(), Response::HTTP_FOUND, [
+      'Cache-Control' => 'private, no-store',
+    ]);
   }
 
 }

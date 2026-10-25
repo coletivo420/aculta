@@ -38,7 +38,9 @@ final class DonationNoticeOpenController {
       && !$this->notices->markRead($message, $this->currentUser)) {
       throw new NotFoundHttpException();
     }
-    return new TrustedRedirectResponse($resolved['url']->toString());
+    return new TrustedRedirectResponse($resolved['url']->toString(), Response::HTTP_FOUND, [
+      'Cache-Control' => 'private, no-store',
+    ]);
   }
 
 }

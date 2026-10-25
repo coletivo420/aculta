@@ -2502,3 +2502,9 @@ A guarda de navegação agora rejeita destinos Fetch Metadata de sub-recursos, c
 
 Validação: `MemberInitiatedRequestTest` **4/16 PASS**, Unit Messenger **258/1.996 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
 
+## 0.1.1-dev.258 — não armazenar redirects personalizados de avisos
+
+Os endpoints de abertura dos avisos de LMS, Wiki, Loja e Doações agora declaram `Cache-Control: private, no-store` também no redirect autorizado após a revalidação do acesso e a atualização de leitura. Os testes verificam o cabeçalho nas quatro origens.
+
+Validação: `NoticeOpenControllerSafetyTest` **5/33 PASS**, Unit Messenger **258/2.000 PASS**, PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel, Browser e Runtime não executados.
+

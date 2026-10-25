@@ -42,7 +42,9 @@ final class LearningNoticeOpenController {
     if (MemberInitiatedRequest::isMemberInitiated($request)) {
       $this->notices->markRead($message);
     }
-    return new TrustedRedirectResponse($target['url']->toString());
+    return new TrustedRedirectResponse($target['url']->toString(), Response::HTTP_FOUND, [
+      'Cache-Control' => 'private, no-store',
+    ]);
   }
 
 }
