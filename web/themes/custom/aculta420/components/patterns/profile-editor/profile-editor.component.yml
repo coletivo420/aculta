@@ -1,0 +1,28 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Editor de meu perfil
+status: experimental
+group: Identity
+description: 'Estrutura visual privada do Meu Perfil Studio. Studio fornece os slots autorizados; nenhuma entidade, política de privacidade ou Form API é resolvida pelo tema.'
+props:
+  type: object
+  properties: {}
+slots:
+  intro:
+    title: Introdução
+    description: 'Texto e orientações privadas renderizados pelo Studio.'
+  identity:
+    title: Identidade
+    description: 'SDC de identidade ou render array autorizado da própria conta.'
+  biography:
+    title: Biografia
+    description: 'Caixa de bio fornecida pelo ACULTA User, sem formulários duplicados.'
+  social:
+    title: Redes sociais
+    description: 'Caixa de redes fornecida pelo ACULTA User, com visibilidade resolvida no owner.'
+  actions:
+    title: Ações adicionais
+    description: 'Links e formulários com acesso previamente decidido pelo módulo dono.'
+assets:
+  css:
+    component:
+      profile-editor.css: {}

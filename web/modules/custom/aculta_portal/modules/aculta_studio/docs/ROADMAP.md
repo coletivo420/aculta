@@ -1,6 +1,39 @@
 # ACULTA Studio — Roadmap multi-experiência
 
 
+## Pré-S-R4 — SDCs do tema ACULTA420 (0.7.0-dev.1)
+
+O tema contém agora os SDCs experimentais `profile-editor`,
+`profile-identity`, `profile-bio` e `profile-social`, com
+8 stories estáticas e teste de contrato escrito. Não há integração
+funcional na experiência Meu Perfil ainda: ACULTA User, Form API,
+privacidade e dados permanecem intactos. A S-R4 integra os slots
+com render arrays autorizados e testa PHP, Kernel, cache,
+Firefox ESR/X11, mobile e modos claro/escuro. Não declarar homologado.
+
+## S-R3-B3 — pedidos, apoio e preferências privados (Studio dev.20)
+
+- **Código entregue na PR #297:** três rotas canônicas `/studio/conta/{pedidos,apoio,preferencias}` com autenticação, permissão e purpose ACCOUNT. A navegação própria do Studio agora aponta a esses destinos; a Conta antiga em `/conta-legada` e as rotas originárias continuam disponíveis.
+- **Ownership:** `PortalController::orders()` mantém o filtro e o link de pedido Commerce, `SupportController::mySupport()` mantém histórico e Form API de assinatura recorrente sem duplicação, e `AppearanceForm` mantém escrita e invalidação de cache via Core Form API. Os links secundários de preferências ainda seguem `SettingsTabs` no owner; são intencionalmente preservados para outras preferências não integradas.
+- **Testes Unit escritos, não executados:** rota única, purpose/account, permissão e no-cache, navegação com/sem documentos, delegação dos métodos de pedidos e suporte, ações de assinatura, acesso negado, Form API de aparência com seus tabs. Não declarar gates PASS sem execução.
+- **Gates antes de S-R5/RC:** instalar/check-out correto; PHP lint e PHPCS, `phpunit` Unit/Kernel/Functional, `validate-module-theme-boundary.php`, `validate-aculta-portal-drupal11.php`, `validate-project-status-index.php`, `validate-no-temporary-route-aliases.php`, teste de duas contas com Commerce e assinaturas, pagamento, ação de assinatura em POST/CSRF, preferência persistida e invalidada, login anônimo, Domain ACCOUNT, cache de usuário, AJAX/no-JS e Firefox ESR/X11 em 320 px e Olivero.
+- **Limitação externa ainda aberta:** garantir unicidade transacional de CPF/CNPJ em B1; completar homologação B1/B2 sem mexer no legado. Próximo: fase S-R4 (SDC e edição de Perfil) e S-R5 (aceite Conta/Perfil com comparação visual), condicionadas a gates proporcionais.
+
+## S-R3-B1 — revisão (Studio dev.19, Portal dev.31)
+
+- Código: acesso direto sem `aculta_id_cpf.account_document` retorna 404; com owner indisponível, formulário Portal mostra indisponibilidade, sem link na Conta Studio.
+- Unit novos escritos, não executados: owner ausente/temporariamente indisponível, autorização, máscara e somente leitura, validação genérica, URL segura de checkout e retorno por origem. Não criar outro armazenamento.
+- Limite identificado: fingerprint HMAC evita colisões sequenciais, **não garante unicidade em gravações simultâneas**. Estratégia transacional e Kernel MariaDB pertencem ao owner.
+- Gates pendentes: PHP lint, PHPUnit, Kernel/Functional, routes/Domain/aliases, CSRF, HTML sem vazamento, privacidade, Firefox ESR/X11, no-JS, checkout e comparação com `/dados/outros-dados` e `/conta-legada`. Não homologar como RC.
+- Após validar B1/B2, avançar a S-R3-B3 (pedidos/apoio/preferências), conservando o legado.
+
+## S-R3-B2 — separação de cadastro e apelido (Studio dev.18 / Portal dev.30 / User dev.74)
+
+- **Código entregue na PR #297:** `/studio/conta/dados` compõe Profile Form API somente com nome e WhatsApp privado. `/studio/perfil/apelido` entrega editor isolado do campo original `field_nickname` com as regras da ACULTA User. Não cria schema, alias nem editor de dados privados no Perfil.
+- `/conta-legada` permanece Minha Conta original; `/dados` legado preserva o formulário misto para comparação e `/` continua hub do Studio.
+- **Sem execução de testes novos:** PHPUnit Unit, Kernel/Functional, lint, PHPCS, validadores de rotas, Domain, aliases, cache, CSRF, sessão anônima/autenticada, CPF/CNPJ opcional, checkout, segurança/OAuth, CEP/Número/S-N, nickname inválido/duplicado/concorrente, no-JS, Firefox ESR/X11 e HTTP dependem de checkout e Runtime autorizados.
+- **Próxima fase S-R3-B3 após gates:** incluir pedidos, apoio e preferências na composição de Conta com owners originais; preparar S-R5 comparação funcional e visual da interface permanente.
+
 ## S-R3-B1 — Documentos da Conta, implementação dev.17
 
 - **Feito no código:** `/studio/conta/documentos` via o mesmo

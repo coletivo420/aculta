@@ -74,14 +74,15 @@ final class AccountExperienceProviderTest extends UnitTestCase {
     $routes = array_map(static fn (array $link): string =>
       $link['#url']->getRouteName(), $build['sections']['#items']);
     self::assertSame([
-      'aculta_portal.my_data',
+      'aculta_studio.account_data',
       'aculta_studio.account_address',
       'aculta_studio.account_documents',
       'aculta_studio.account_security',
       'aculta_studio.account_password',
       'aculta_studio.account_connections',
-      'aculta_portal.support_my',
-      'aculta_portal.account_settings',
+      'aculta_studio.account_orders',
+      'aculta_studio.account_support',
+      'aculta_studio.account_preferences',
       'aculta_portal.dashboard',
     ], $routes);
     self::assertContains('user', $build['#cache']['contexts']);

@@ -56,7 +56,8 @@ final class StudioProfileControllerTest extends UnitTestCase {
     self::assertSame('studio-profile-editor', $page['#attributes']['data-portal-ui']);
     self::assertSame('Membro de teste', $page['identity']['name']['#plain_text']);
     self::assertSame('item_list', $page['actions']['#theme']);
-    self::assertCount(0, $page['actions']['#items']);
+    self::assertCount(1, $page['actions']['#items']);
+    self::assertSame('aculta_studio.profile_nickname', $page['actions']['#items'][0]['#url']->getRouteName());
     self::assertArrayNotHasKey('bio', $page);
     self::assertArrayNotHasKey('social', $page);
     self::assertSame(0, $page['#cache']['max-age']);
@@ -72,8 +73,8 @@ final class StudioProfileControllerTest extends UnitTestCase {
       ->willReturn(Url::fromUri('https://main.example/u/membro-de-teste'));
 
     $page = $this->controller(TRUE, TRUE, TRUE, $link)->page();
-    self::assertCount(1, $page['actions']['#items']);
-    $public = $page['actions']['#items'][0];
+    self::assertCount(2, $page['actions']['#items']);
+    $public = $page['actions']['#items'][1];
     self::assertSame('https://main.example/u/membro-de-teste',
       $public['#url']->getUri());
     self::assertSame('studio-profile-public-link',

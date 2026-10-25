@@ -46,10 +46,33 @@ final class AccountOtherDataStudioReturnTest extends UnitTestCase {
   }
 
   /**
+   * A legitimate checkout return stays ahead of both editing contexts.
+   */
+  public function testCheckoutDestinationTakesPriority(): void {
+    foreach (['aculta_studio.account_documents', 'aculta_portal.my_data_other'] as $route) {
+      $form = $this->form($route, '/checkout/19/order_information');
+      self::assertSame('base:checkout/19/order_information', $this->returnUrl($form)->getUri());
+    }
+  }
+
+  /**
+   * External or protocol-relative destinations never leave the account host.
+   */
+  public function testUnsafeCheckoutDestinationsAreIgnored(): void {
+    foreach (['https://example.org/checkout/19', '//example.org/checkout/19', '/other/19'] as $destination) {
+      $form = $this->form('aculta_studio.account_documents', $destination);
+      self::assertSame('aculta_studio.account_documents', $this->returnRouteName($form));
+    }
+  }
+
+  /**
    * Instantiates the original owner form with only its real dependencies.
    */
-  private function form(string $routeName): AccountOtherDataForm {
+  private function form(string $routeName, string $destination = ''): AccountOtherDataForm {
     $request = Request::create('/example');
+    if ($destination !== '') {
+      $request->query->set('destination', $destination);
+    }
     $request->attributes->set('_route', $routeName);
     $stack = new RequestStack();
     $stack->push($request);
@@ -67,8 +90,11 @@ final class AccountOtherDataStudioReturnTest extends UnitTestCase {
    * Inspects the private routing decision without executing persistence.
    */
   private function returnRouteName(AccountOtherDataForm $form): string {
-    $result = (new \ReflectionMethod(AccountOtherDataForm::class, 'returnUrl'))->invoke($form);
-    return $result->getRouteName();
+    return $this->returnUrl($form)->getRouteName();
+  }
+
+  private function returnUrl(AccountOtherDataForm $form): \Drupal\Core\Url {
+    return (new \ReflectionMethod(AccountOtherDataForm::class, 'returnUrl'))->invoke($form);
   }
 
 }

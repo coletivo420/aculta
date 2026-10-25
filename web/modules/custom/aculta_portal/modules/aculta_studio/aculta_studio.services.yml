@@ -36,7 +36,7 @@ services:
     arguments: ['@module_handler']
   aculta_studio.account_section_controller:
     class: Drupal\aculta_studio\Controller\StudioAccountSectionController
-    arguments: ['@class_resolver', '@current_user', '@?aculta_id_cpf.account_document']
+    arguments: ['@class_resolver', '@current_user', '@?aculta_id_cpf.account_document', '@form_builder']
   aculta_studio.account_controller:
     class: Drupal\aculta_studio\Controller\AccountController
     arguments: ['@aculta_studio.experience_manager', '@current_user']

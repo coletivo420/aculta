@@ -15,6 +15,18 @@ components/
 
 O Drupal Core permite subdiretórios arbitrários dentro de `components/`.
 
+## 0.7.0-dev.1 — SDCs de Meu Perfil (pré-S-R4)
+
+- `patterns/profile-editor`: layout do editor, com slots `intro`, `identity`, `biography`, `social` e `actions`.
+- `content/profile-identity`: nome privado textual, avatar autorizado, dica, ações e link público opcional. Distinto de `author-card`, dedicado à autoria pública.
+- `content/profile-bio`: recebe bio/formulário somente leitura e ações do User pelos slots `body` e `actions`.
+- `content/profile-social`: recebe os itens normalizados pelo User nos slots `items` e `actions`.
+
+Cada componente é experimental, possui schema, Twig, CSS e duas stories
+estáticas. Não consulta entidades, decide acesso, cria links ou altera Form
+API. Nenhum consumidor Studio foi migrado; a integração pertence à S-R4.
+Requer verificação de descoberta SDC, render real e responsividade.
+
 ## 0.1.0
 
 Disponível:

@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.4.0-dev.74 — PublicMemberIdentityInterface expõe somente o apelido aprovado pela policy, sem fallback ao nome interno da conta; AuthorIdentityResolverTest 2/9 e Unit aculta_user 125/448 PASS (uma depreciação PHPUnit preexistente)."
-next_phase: Revisão autenticada, privacidade/termos e gates antes de RC; validar Runtime em Alpha ([documentação](web/modules/custom/aculta_portal/modules/aculta_user/README.md))
+version_note: "0.4.0-dev.74 — editor independente de apelido no Studio/Profile e PublicMemberIdentityInterface para consumidores públicos; policy de unicidade centralizada. AuthorIdentityResolverTest 2/9 e Unit User 125/448 PASS (uma depreciação PHPUnit preexistente); Units do formulário escritos no remoto, validação a executar após integração."
+next_phase: Validar edição, concorrência, privacidade, slugs e acesso em PHPUnit/Kernel/Runtime; revisão autenticada, privacidade/termos e gates antes de RC; validar Runtime em Alpha ([documentação](web/modules/custom/aculta_portal/modules/aculta_user/README.md))
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.

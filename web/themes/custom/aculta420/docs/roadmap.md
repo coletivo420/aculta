@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| **0.7.0-dev.1** | Pré-S-R4: quatro SDCs experimentais para Meu Perfil | Código, 8 stories e Unit estático escritos; sem execução de Kernel/Firefox/Runtime | `profile-editor`, `profile-identity`, `profile-bio`, `profile-social`. O Studio mantém seu renderer atual até S-R4. |
 | 0.6.1-dev.13 | Separadores visuais entre grupos de avisos por origem | Messenger Unit 221/1.582, ThemeHooks Unit 1/1, Kernel 38/891, Foundation 345, Design Foundations 2170 e smoke Firefox ESR 8/8 PASS no Runtime de teste (1270 px); Alpha e demais viewports pendentes | Tema apresenta cabeçalhos/separadores do contrato de origem sem alterar autorização, ordem ou persistência |
 | 0.6.1-dev.7 | Schema de settings e renderização SDC da home Wiki no Kernel | Kernel Wiki 1/96; Runtime e browser pendentes | `aculta420.settings` reconhece as nove opções `b5_*` dos defaults; instalação e render pelo tema passam |
 | 0.6.1-dev.6 | Tokens visuais do workspace WE SATIVA e retorno aos trabalhos | PHPUnit Unit de PortalUiHooks; browser WE SATIVA pendente | Layout usa `d-grid/gap-4`, ação de criação `btn-primary`, retorno `btn-outline-primary`; não cria SDC paralelo |

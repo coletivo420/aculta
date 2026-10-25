@@ -515,6 +515,7 @@ final class PortalHooks {
     }
 
     $path = $this->currentPath->getPath();
+    $isStudioDataRoute = $this->routeMatch->getRouteName() === 'aculta_studio.account_data';
     // Portal and Studio edit the same canonical Commerce customer address.
     // Recognize both route IDs; legacy form scope and behavior stay unchanged.
     $isAddressRoute = in_array($this->routeMatch->getRouteName(), [
@@ -524,11 +525,10 @@ final class PortalHooks {
     // /dados/endereco é tratado pelo bloco de endereço logo abaixo (país padrão, número e S/N). Este bloco de papel
     // retorna antes e não pode engolir essa página: o tipo authenticated também é tipo de papel.
     if ($entity->getEntityTypeId() === 'profile' && PerfilDoPapel::ehTipoDePapel($entity) && !$isAddressRoute) {
-      if ($path === '/dados') {
+      if ($path === '/dados' || $isStudioDataRoute) {
         // Keep this tab limited to personal basics, even if older active
         // Profile display configuration still contains address components.
         $allowed = [
-          'field_nickname',
           'field_first_name',
           'field_last_name',
           'field_whatsapp',
@@ -537,6 +537,10 @@ final class PortalHooks {
           'form_token',
           'form_id',
         ];
+        // The legacy /dados keeps its public nickname control unchanged.
+        if (!$isStudioDataRoute) {
+          array_unshift($allowed, 'field_nickname');
+        }
         foreach (array_keys($form) as $key) {
           if (!str_starts_with((string) $key, '#') && !in_array($key, $allowed, TRUE)) {
             unset($form[$key]);
@@ -548,8 +552,11 @@ final class PortalHooks {
           unset($form[$field]);
         }
       }
-      if ($path === '/dados' && isset($form['actions']['submit'])) {
+      if (($path === '/dados' || $isStudioDataRoute) && isset($form['actions']['submit'])) {
         $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:syncCustomerAddressNames';
+        if ($isStudioDataRoute) {
+          $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:accountDataRedirect';
+        }
       }
       return;
     }

@@ -1,7 +1,35 @@
 # ACULTA Studio (`aculta_studio`)
 
 
-## Situação vigente — S-R3-B1, Studio dev.17
+## Situação vigente — S-R3-B3, Studio dev.20 (código, sem homologação)
+
+Minha Conta Studio inclui agora as páginas privadas `/studio/conta/pedidos`, `/studio/conta/apoio` e `/studio/conta/preferencias`, além de cadastro, endereço, documentos opcionais e segurança. Os três destinos são exclusivos do purpose ACCOUNT e reusam os owners do Portal:
+
+- **Pedidos:** `PortalController::orders()`, Commerce e política existente de pedidos próprios; detalhe do pedido e Mercado Pago permanecem com seus fluxos.
+- **Meu apoio:** `SupportController::mySupport()`, com dados de apoio vinculados à própria conta e ações de assinatura nas rotas originais do Portal.
+- **Preferências:** `AppearanceForm` original via Core Form API, com gravação de `ColorModePreference` do Portal, seus próprios links de configurações e o contexto de POST da rota Studio.
+
+O Studio somente envolve os render arrays e aplica navegação contextual; não duplica entity, workflow, form, tabela ou shell, nem altera o Perfil público. As rotas originais `/meu-apoio` e `/configuracoes` e o legado permanente `/conta-legada` continuam disponíveis; o hub ACCOUNT fica em `/` (`/studio` técnico bloqueado diretamente).
+
+**Unit novos escritos mas não executados**; PHPUnit/Kernel/Functional, PHP lint, PHPCS, gates, Domain, cache, HTTP autenticado/anônimo, checkout, duas contas, Firefox ESR/X11, 320 px, Olivero e no-JS permanecem pendentes. Sem RC, merge ou deploy.
+
+## Histórico — auditoria S-R3-B1, Studio dev.19
+
+A rota privada `/studio/conta/documentos` mantém o mesmo `AccountOtherDataForm` e serviço opcional `aculta_id_cpf` do Portal. Sem serviço, acesso direto agora retorna 404 após autorização. Quando o serviço existe mas `isAvailable()` é falso, a página mantém o aviso seguro do owner sem apresentar input gravável e a navegação omite Documentos. Checkout permitido continua prioritário ao retorno para a origem.
+
+Foram escritos testes Unit complementares, **não executados**; Kernel/Functional, Firefox, CSRF/no-JS e Runtime continuam pendentes. A consulta de fingerprint HMAC do owner não assegura unicidade transacional entre gravações concorrentes. A experiência B2 e a Conta legada em `/conta-legada` permanecem intactas.
+
+## Histórico — S-R3-B2, Studio dev.18
+
+O Hub do ACULTA Studio responde em `/` no domínio ACCOUNT; `/studio` é somente caminho interno (404 direto). **Minha Conta original é permanente em `/conta-legada`.** Esta etapa separa o uso do mesmo Profile, sem armazenamento duplicado:
+
+- **`/studio/conta/dados`**: formulário cadastral privado do Portal com nome e WhatsApp, excluindo `field_nickname` apenas no Studio; `/dados` do legado preserva todos os campos atuais.
+- **`/studio/perfil/apelido`**: formulário isolado do ACULTA User, único responsável pela validação de nickname, gravando `Profile.field_nickname`. Sem CPF/CNPJ, endereço, senha ou e-mail de conta.
+- Editores existentes de endereço, documentos opcionais, segurança, OAuth, bio, privacidade e redes foram mantidos, assim como checkout e shell legados.
+
+Os testes Unit novos constam no Git, **mas não foram executados**. Gates PHP, Kernel/Functional, HTTP, cache, CSRF/no-JS, Firefox ESR e Runtime seguem obrigatórios. Documentação abaixo de dev.17 é histórica.
+
+## Situação anterior — S-R3-B1, Studio dev.17
 
 A raiz **`/` do Domain ACCOUNT serve o hub ACULTA Studio**,
 `/studio` é caminho técnico interno não público, e

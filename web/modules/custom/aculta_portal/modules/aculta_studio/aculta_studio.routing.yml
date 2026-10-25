@@ -11,10 +11,22 @@ aculta_studio.account:
   options:
     _aculta_domain_purpose: account
 
+# S-R3-B2: Portal Profile Form API narrowed by route to private account fields.
+aculta_studio.account_data:
+  path: /studio/conta/dados
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:data'
+    _title: 'Dados cadastrais'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
 # Only the community profile is edited here; private account data is separate.
 # S-R3-A: Portal-owned private sections inside the Studio shell.
-# The complete basics form still includes public nickname in the legacy UI,
-# so it stays in Portal until the field is properly separated in S-R4.
+# Legacy /dados keeps its form. Studio account form excludes public nickname.
 aculta_studio.account_address:
   path: /studio/conta/endereco
   defaults:
@@ -77,6 +89,44 @@ aculta_studio.account_connections:
     _aculta_domain_purpose: account
     no_cache: true
 
+# S-R3-B3: keep Commerce orders, support history and appearance Form API
+# with their Portal owners, composed under Studio without a second shell.
+aculta_studio.account_orders:
+  path: /studio/conta/pedidos
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:orders'
+    _title: 'Meus pedidos'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.account_support:
+  path: /studio/conta/apoio
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:support'
+    _title: 'Meu apoio'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.account_preferences:
+  path: /studio/conta/preferencias
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:preferences'
+    _title: 'Preferências da conta'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
 aculta_studio.profile:
   path: /studio/perfil
   defaults:
@@ -86,6 +136,18 @@ aculta_studio.profile:
     _custom_access: 'aculta_studio.profile_access:access'
   options:
     _aculta_domain_purpose: account
+
+# ACULTA User owns the standalone public-nickname Form API.
+aculta_studio.profile_nickname:
+  path: /studio/perfil/apelido
+  defaults:
+    _form: '\Drupal\aculta_user\Form\NicknameForm'
+    _title: 'Editar apelido público'
+  requirements:
+    _custom_access: 'aculta_studio.profile_access:access'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
 
 aculta_studio.profile_privacy:
   path: /studio/perfil/privacidade

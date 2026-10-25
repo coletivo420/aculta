@@ -1,3 +1,15 @@
+## 0.4.1-dev.31 — caracterização de documentos S-R3-B1 (2026-10-25)
+
+- Novos testes Unit para AccountOtherDataForm: owner ausente, chave indisponível, campo cifrado com leitura mascarada e desabilitada, ausência de fingerprint, erro de decifração não revelado, entrada Form API, validação genérica e dado canônico no FormState.
+- Teste de returnUrl cobre prioridade de checkout, bloqueio de destinos externos e retorno separado Studio/legado; expectativa de URL base alinhada ao Drupal 11.
+- Código runtime do Portal inalterado. **Testes não executados**; Kernel/Functional/Runtime ainda necessários.
+
+## 0.4.1-dev.30 — S-R3-B2: dados cadastrais sem apelido em Studio (2026-10-25)
+
+- `PortalHooks::formAlter` separa por route ID: `/studio/conta/dados` reutiliza `PortalController::myData()` e Profile Form API para nome e WhatsApp privados, sem `field_nickname`. O legado `/dados` conserva o formulário anterior.
+- `PortalFormCallbacks::accountDataRedirect()` conserva o retorno na Conta Studio, enquanto a sincronização de nomes com Commerce continua no mesmo owner. Nenhum schema, checkout ou shell foi removido.
+- Testes Unit de roteamento/delegação escritos, mas não executados; lint, gates, Kernel, Functional, Runtime e Firefox ESR/X11 pendentes.
+
 ## 0.4.1-dev.29 — retorno contextual do documento CPF/CNPJ no Studio (2026-10-24)
 
 - `AccountOtherDataForm` continua usando o mesmo

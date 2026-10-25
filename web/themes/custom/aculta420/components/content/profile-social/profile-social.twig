@@ -1,0 +1,7 @@
+<section{{ attributes.addClass('aculta-profile-social') }} aria-label="{{ title }}">
+  <div class="aculta-profile-social__header">
+    <h2 class="aculta-profile-social__title">{{ title }}</h2>
+    {% if actions %}<div class="aculta-profile-social__actions">{{ actions }}</div>{% endif %}
+  </div>
+  {% if items %}<div class="aculta-profile-social__items">{{ items }}</div>{% endif %}
+</section>

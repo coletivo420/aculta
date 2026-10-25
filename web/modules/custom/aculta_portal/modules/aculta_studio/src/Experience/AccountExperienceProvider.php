@@ -78,8 +78,8 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     $items = [
       [
         '#type' => 'link',
-        '#title' => new TranslatableMarkup('Informações cadastrais (formulário original)'),
-        '#url' => Url::fromRoute('aculta_portal.my_data'),
+        '#title' => new TranslatableMarkup('Informações cadastrais'),
+        '#url' => Url::fromRoute('aculta_studio.account_data'),
       ],
       [
         '#type' => 'link',
@@ -114,13 +114,18 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
       ],
       [
         '#type' => 'link',
+        '#title' => new TranslatableMarkup('Meus pedidos'),
+        '#url' => Url::fromRoute('aculta_studio.account_orders'),
+      ],
+      [
+        '#type' => 'link',
         '#title' => new TranslatableMarkup('Meu apoio'),
-        '#url' => Url::fromRoute('aculta_portal.support_my'),
+        '#url' => Url::fromRoute('aculta_studio.account_support'),
       ],
       [
         '#type' => 'link',
         '#title' => new TranslatableMarkup('Preferências da conta'),
-        '#url' => Url::fromRoute('aculta_portal.account_settings'),
+        '#url' => Url::fromRoute('aculta_studio.account_preferences'),
       ],
       [
         '#type' => 'link',

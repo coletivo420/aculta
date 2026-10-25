@@ -1,3 +1,24 @@
+## 0.1.0-dev.20 — S-R3-B3: pedidos, apoio e preferências na Conta Studio (2026-10-25)
+
+- Três rotas canônicas exclusivas do ACCOUNT: `/studio/conta/pedidos`, `/studio/conta/apoio`, `/studio/conta/preferencias`. Todas exigem login, permissão `access aculta portal` e `no_cache`.
+- Os pedidos delegam a `PortalController::orders()` e preservam filtro por `uid`, exclusão de rascunhos Commerce, pagamento e URL de detalhe com Entity Access original. Apoio delega a `SupportController::mySupport()`, mantendo regras de assinatura, ações originais e host SUPPORT para novas doações. Preferências executam o `AppearanceForm` original via `form_builder` no contexto Studio, sem recriar armazenamento, POST ou regras de modo de cor; abas internas do Portal ainda apontam às preferências proprietárias originais.
+- O Studio controla só navegação contextual e composição. O `AccountExperienceProvider` abre essas três rotas, preservando `/conta-legada`, `/meu-apoio`, `/configuracoes`, checkout e actions de assinatura. Nenhum alias ou redirect temporário e nenhuma mudança em User/Perfil.
+- Testes Unit de rotas, navegação, delegação do owner, links de assinatura intactos, Form API, 403 e 404 foram atualizados/escritos, mas **não executados** nesta rodada. PHP lint/PHPCS, PHPUnit, Kernel/Functional, gate de aliases/status, Runtime, duas contas, CSRF/no-JS e Firefox ESR/X11 seguem pendentes. Não houve merge/deploy.
+
+## 0.1.0-dev.19 — revisão S-R3-B1: editor CPF/CNPJ opcional (2026-10-25)
+
+- Rota /studio/conta/documentos agora verifica a ausência do owner após autorização e retorna 404 antes de resolver o Portal. Quando o serviço está instalado mas indisponível, mantém a mensagem segura do Form API original e oculta o link.
+- Testes Unit novos para 404/403, disponibilidade, formulários mascarados e destinos checkout/Studio/legado, sem duplicar dados, schema ou shell.
+- Auditoria: AccountDocumentStore verifica duplicidade por HMAC antes do save; ainda não há unicidade transacional sob concorrência. Esse limite é do módulo aculta_id_cpf.
+- **Não executado:** PHPUnit, lint, gates, Kernel/Functional, HTTP, Firefox ESR/X11 e Runtime. Sem merge/deploy. Minha Conta legada /conta-legada continua permanente.
+
+## 0.1.0-dev.18 — S-R3-B2: Minha Conta e Meu Perfil editam campos separados (2026-10-25)
+
+- Nova `/studio/conta/dados`: formulário Portal/Profile original, limitado por route ID a dados cadastrais privados, sem apelido.
+- Nova `/studio/perfil/apelido`: editor proprietário `aculta_user\Form\NicknameForm` sobre o `field_nickname` do mesmo Profile, com validação e unicidade pelo ACULTA User.
+- Navegação e testes Unit ajustados; sem aliases, storage paralelo, alteração no checkout, mudança do hub `/` nem remoção da Minha Conta original `/conta-legada`.
+- Revisão estática realizada no GitHub. Testes de PHPUnit, PHPCS/lint, Kernel/Functional, gates, HTTP e Firefox ESR/X11 **não executados**; nenhuma homologação ou deploy.
+
 ## 0.1.0-dev.17 — S-R3-B1: Documentos privados na Minha Conta Studio (2026-10-24)
 
 - Nova rota canônica `/studio/conta/documentos` (purpose `account`,

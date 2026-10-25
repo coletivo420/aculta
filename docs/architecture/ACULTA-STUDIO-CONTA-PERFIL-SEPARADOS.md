@@ -46,6 +46,39 @@ funcionalmente, inclusive depois de aprovado o Studio.
 - Nenhum alias transitório para `/studio/pessoal` será instalado:
   atualizar consumidores e testes diretamente para os nomes finais.
 
+## SDCs preparatórios, antes da S-R4
+
+O ACULTA420 `0.7.0-dev.1` contém quatro SDCs experimentais para
+Meu Perfil privado: `profile-editor`, `profile-identity`,
+`profile-bio`, `profile-social`. O tema é apenas visual:
+o ACULTA User mantém dados, regras de publicidade, edição e avatar;
+Studio fará a composição após validar os contratos. O cartão
+`author-card` permanece separado para autoria contextual.
+Foram registrados oito stories e testes Unit, **não executados**.
+Nenhuma mudança foi feita no comportamento atual, no perfil público,
+nos formulários ou na Conta legada.
+
+## S-R3-B3 — pedidos, apoio e preferências (Studio dev.20, não homologado)
+
+As novas rotas `/studio/conta/pedidos`, `/studio/conta/apoio` e `/studio/conta/preferencias` são privadas, exigem login/permissão Portal no Domain ACCOUNT e possuem `no_cache`. O Studio não cria outra lógica de Commerce, de assinaturas ou de preferências: resolve `PortalController::orders()` e `SupportController::mySupport()` via o class resolver e constrói `AppearanceForm` pelo Form API Core, preservando o POST na página atual e as tabs de configurações do Portal. A seção de pedidos mantém filtro por uid; apoio usa o histórico e as ações do owner; preferências usam `ColorModePreference` sem criar outro campo.
+
+O portal original em `/conta-legada` e suas rotas `/meu-apoio`, `/configuracoes`, pedidos/checkout e assinatura continuam intactos. Links das configurações adicionais vêm de `SettingsTabs` do Portal e podem encaminhar às respectivas páginas originais. Conta e Perfil não são misturados e nenhuma nova entidade, alias, redirect ou tabela foi introduzida.
+
+Testes Unit novos escritos, **não executados**. Kernel/Functional, acesso entre contas, validação das ações de assinatura, persistência real do formulário, cache, segurança CSRF, Domain ACCOUNT, comparação visual e Firefox ESR/X11 permanecem pendentes. A lacuna conhecida B1 de unicidade concorrente não foi modificada.
+
+## S-R3-B1 — auditoria de documentos (dev.19/31, sem homologação)
+
+A integração reutiliza o Form API do Portal, o serviço opcional de CPF/CNPJ e os campos existentes, sem publicar documentos no Perfil. Ausência total do serviço causa 404 no editor Studio após autorização; indisponibilidade de chaves em owner instalado mantém somente a explicação genérica do formulário original, enquanto o link some do menu. Retornos por checkout válido, Studio e legado conservam o contexto.
+
+A verificação HMAC em `AccountDocumentStore` antecede o save e não garante unicidade transacional entre requisições concorrentes. Esse limite permanece no owner e depende de decisão separada sobre garantia forte. Testes Unit de acesso, máscara e destinos adicionados, **não executados**; faltam Kernel/Functional, PHP lint, HTTP, Firefox/Runtime, cache, CSRF e no-JS. A Conta original `/conta-legada` e o incremento B2 permanecem.
+
+## S-R3-B2 — cadastro separado de apelido (dev.18/30/74, código não homologado)
+
+- `/studio/conta/dados` delega o **mesmo Profile Form API de `PortalController::myData()`** ao Portal e usa seu `form_alter` por rota para apresentar nome e WhatsApp privados, sem `field_nickname`. Em `/dados` o formulário legado fica misto, inalterado.
+- `/studio/perfil/apelido` é um Form API independente do owner `aculta_user`; edita somente `Profile.field_nickname` da conta atual. `NicknamePolicy` reutiliza a consulta de colisões entre perfis de papel, compartilhada com `AccountCreationHooks`, e `AccountNames` mantém validação/slug/reservados. Não há segundo campo ou alias da rota pública.
+- Salvar retorna ao contexto da experiência; `/u/{apelido}` continua gerado por `PublicProfileLink` no MAIN e condicionado a `PublicProfilePolicy`. `/conta-legada` permanece permanente; `/` ainda é o hub do Studio.
+- Testes Unit escritos, **não executados**. Segurança HTTP, duplicidade concorrente, privacidade, perfil obrigatório, cache, integração com legado, sem JavaScript, checkout, Kernel/Functional e Firefox ESR/Runtime ainda não homologados. Menções anteriores a apelido pendente são históricas.
+
 ## S-R3-B1 — Documentos privados no Studio (dev.17)
 
 - `/studio/conta/documentos` reaproveita o mesmo

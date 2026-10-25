@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.17 — S-R3-B1: Documentos na Conta Studio reutilizam Form API Portal + owner opcional aculta_id_cpf; retorno contextual, testes novos escritos (não executados). Hub em / ACCOUNT, legado em /conta-legada permanente."
-next_phase: 'Primeiro executar PHPUnit Unit atualizado, Kernel/Functional, gate de aliases e smoke da raiz Studio / vs /conta-legada. Testar CPF/CNPJ com módulo ativo/ausente, chave indisponível, duplicidade, formulário no-JS e retorno de checkout. Depois S-R3-B2: separar cadastro privado e apelido público sem quebrar o formulário legado; comparação visual funcional antes do aceite.'
+version_note: "0.1.0-dev.20 — S-R3-B3: pedidos/apoio/preferências em rotas próprias do Studio, com Commerce, Support e AppearanceForm originais. Unit escritos, não executados."
+next_phase: 'Validar S-R3-B1/B2/B3 em PHP lint/PHPCS, PHPUnit Unit/Kernel/Functional, gates de Domain/rotas/status, HTTP/CSRF, máscara CPF/CNPJ, duas contas Commerce, doações/assinaturas e persistência das preferências; Firefox ESR/X11 no Studio e /conta-legada, incluindo 320px e Olivero. Depois S-R4/S-R5 com SDC e aceite visual.'
 
 # 2026-10-24: P1-B em codigo: bridge Marley e preview /studio/inicio;
 # a home /studio continua legado Marley, sem Runtime homologado.

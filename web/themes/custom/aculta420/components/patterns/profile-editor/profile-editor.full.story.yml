@@ -1,0 +1,14 @@
+name: Editor de perfil com áreas
+description: 'Fixture estática da composição: três cartões e links seguros. Nenhum dado de usuário é carregado.'
+component: aculta420:profile-editor
+slots:
+  intro:
+    markup: '<p>Gerencie as informações visíveis na comunidade.</p>'
+  identity:
+    markup: '<section class="card card-body"><h2>Perfil de demonstração</h2><p>Identidade e avatar próprios.</p></section>'
+  biography:
+    markup: '<section class="card card-body"><h2>Biografia</h2><p>Apresentação da pessoa na comunidade.</p></section>'
+  social:
+    markup: '<section class="card card-body"><h2>Redes sociais</h2><p>Instagram e outras redes.</p></section>'
+  actions:
+    markup: '<a class="btn btn-outline-primary" href="#perfil">Voltar ao perfil</a>'

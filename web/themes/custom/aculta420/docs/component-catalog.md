@@ -56,3 +56,18 @@ O SDC experimental `aculta420:context-header` possui duas stories no repositóri
 ## Context Tabs — novo componente experimental
 
 `aculta420:context-tabs` acrescenta um SDC e duas stories estáticas para navegação contextual de GanjaLab e Wiki. **Inventário nominal esperado:** 40 SDCs, 62 arquivos story, sujeito à confirmação da árvore do HEAD. Renderização UI Patterns Library, UI Styles e consumidores reais permanecem pendentes. [Plano B2](theme-ux-0.8-b2-context-tabs.md).
+
+## Quatro SDCs de Meu Perfil — pré-S-R4 (0.7.0-dev.1)
+
+O tema ganhou `profile-editor`, `profile-identity`, `profile-bio`
+e `profile-social` (todos experimentais), com **8 stories estáticas**:
+`profile-editor.full/empty`, `profile-identity.avatar/fallback`,
+`profile-bio.filled/empty`, `profile-social.filled/empty`, todas
+no padrão `<nome>.<variante>.story.yml` do catálogo. Há teste Unit
+estático de schema/slots/assets/fixtures e ausência de lógica
+de dados no Twig, escrito mas não executado.
+
+As contagens históricas anteriores permanecem vinculadas à data de
+inventário e **não** são totais verificados da branch atual. Os
+SDCs novos ainda não possuem consumidor, nem validação no UI Patterns
+Library ou Firefox. O catálogo jamais deve usar dados privados reais.

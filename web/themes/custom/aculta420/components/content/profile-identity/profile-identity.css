@@ -1,0 +1,87 @@
+.aculta-profile-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-inline-size: 0;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--aculta-border-default);
+  border-inline-start: 3px solid var(--aculta-border-accent);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+}
+
+.aculta-profile-identity__main {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-inline-size: 0;
+}
+
+.aculta-profile-identity__avatar {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  flex: 0 0 4.5rem;
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
+  border: 1px solid var(--aculta-border-default);
+  border-radius: 50%;
+  background: var(--aculta-surface-muted);
+}
+
+.aculta-profile-identity__avatar img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.aculta-profile-identity__avatar--initial {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--aculta-text-primary);
+}
+
+.aculta-profile-identity__details { min-inline-size: 0; }
+
+.aculta-profile-identity__name {
+  margin: 0;
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.aculta-profile-identity__hint {
+  margin: 0.4rem 0 0;
+  color: var(--aculta-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.aculta-profile-identity__public-link { margin-block-start: 0.65rem; }
+
+.aculta-profile-identity__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  min-inline-size: 0;
+}
+
+.aculta-profile-identity :is(a, button):focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}
+
+@media (min-width: 48rem) {
+  .aculta-profile-identity {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 22rem) {
+  .aculta-profile-identity__main { align-items: flex-start; }
+  .aculta-profile-identity__avatar { flex-basis: 3.5rem; inline-size: 3.5rem; block-size: 3.5rem; }
+}

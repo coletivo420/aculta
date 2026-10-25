@@ -2,6 +2,18 @@
 
 **MAG 0.5-R · 2026-10-22 · Planejamento, sem alteração funcional ou homologação.**
 
+### Minha Conta e Meu Perfil — alcance da composição Studio (dev.20)
+
+S-R3-B3 acrescentou `/studio/conta/pedidos`, `/studio/conta/apoio` e
+`/studio/conta/preferencias` como seções próprias do Studio, apoiadas nos
+controllers/Form API do Portal (Commerce, Support e AppearanceForm). Nada é
+migrado, duplicado nem transferido para Marley; Conta e Perfil permanecem
+experiências independentes, com a Conta original permanente em
+`/conta-legada` e hub em `/` de ACCOUNT. Unit atualizados no Git mas
+não executados; Runtime/Firefox ESR, acesso, rotas, checkout e comparação
+visual continuam pendentes conforme o roadmap do Studio. Este adendo não
+altera o escopo editorial de Magazine/Marley.
+
 ### WE SATIVA no ACULTA Studio (provider inicial / Wiki dev.76)
 
 A tela inicial V03 está implementada em `/studio/we-sativa/inicio` (Studio dev.6

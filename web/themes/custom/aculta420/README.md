@@ -4,6 +4,15 @@ Tema público e sistema de componentes da plataforma Drupal da ACULTA. Implement
 a apresentação; não é fonte de verdade de identidade, autenticação, Commerce,
 LMS, Domains, conteúdo ou persistência.
 
+## Meu Perfil — preparação visual 0.7.0-dev.1
+
+Quatro SDCs experimentais para o editor privado (`profile-editor`,
+`profile-identity`, `profile-bio`, `profile-social`) foram criados
+com schema, Twig, CSS e duas stories por componente. Nenhum foi ligado
+aos formulários ou render arrays do Studio; sua integração funcional
+é a etapa posterior S-R4, com gates de acesso, cache e navegador
+ainda pendentes.
+
 ## Fronteira de arquitetura
 
 ```text

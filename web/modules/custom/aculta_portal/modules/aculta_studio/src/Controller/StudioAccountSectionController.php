@@ -5,20 +5,23 @@ declare(strict_types=1);
 namespace Drupal\aculta_studio\Controller;
 
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
+use Drupal\aculta_portal\Appearance\AppearanceForm;
 use Drupal\aculta_portal\Controller\PortalController;
+use Drupal\aculta_portal\Support\Controller\SupportController;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Displays Portal-owned account sections without introducing a second shell.
  *
  * Address normalization, security and OAuth first-password
  * handling are delegated to the unchanged original Portal controller.
- * The mixed basics form remains on the legacy account until nickname is
- * separated from private fields; this composer does not render it.
+ * The basics form is scoped by PortalHooks; the legacy /dados form stays intact.
  * Studio owns only the route and the contextual navigation presentation.
  */
 final class StudioAccountSectionController {
@@ -27,7 +30,20 @@ final class StudioAccountSectionController {
     private readonly ClassResolverInterface $resolver,
     private readonly AccountInterface $account,
     private readonly ?AccountDocumentInterface $documents = NULL,
+    private readonly ?FormBuilderInterface $forms = NULL,
   ) {}
+
+  /**
+   * Portal-owned private account data through the existing Profile Form API.
+   *
+   * The Portal form-alter removes only the nickname from this Studio route.
+   *
+   * @return array<string, mixed>
+   *   Account data form in the Studio shell.
+   */
+  public function data(): array {
+    return $this->build('myData', 'dados');
+  }
 
   /**
    * Owner's existing canonical Commerce address Form API.
@@ -82,27 +98,86 @@ final class StudioAccountSectionController {
   }
 
   /**
-   * Composes the owner content without the legacy account navigation.
+   * Owner-filtered Commerce orders, including the existing payment notice.
+   */
+  public function orders(): array {
+    return $this->build('orders', 'pedidos');
+  }
+
+  /**
+   * Existing Portal support history and subscription action links.
+   */
+  public function support(): array {
+    return $this->buildOwner(SupportController::class, 'mySupport', 'apoio');
+  }
+
+  /**
+   * Reuses the original account appearance Form API and its owner tabs.
    *
-   * @return array<string, mixed>
-   *   A private render array.
+   * The form is built on this route, so a successful POST stays in Studio.
+   * Its owner-specific settings tabs remain available; they are not an
+   * embedded AccountShellBuilder or a duplicate of the Studio navigation.
+   */
+  public function preferences(): array {
+    $this->requireAccountAccess();
+    if ($this->forms === NULL) {
+      throw new \LogicException('The account form builder is unavailable.');
+    }
+    return $this->compose($this->forms->getForm(AppearanceForm::class), 'preferencias');
+  }
+
+  /**
+   * Delegates the existing Portal account content without an extra shell.
    */
   private function build(string $method, string $section): array {
-    if (!$this->account->isAuthenticated() || !$this->account->hasPermission('access aculta portal')) {
-      throw new AccessDeniedHttpException();
+    return $this->buildOwner(PortalController::class, $method, $section);
+  }
+
+  /**
+   * Invokes only explicitly selected owner methods; never accepts user input.
+   *
+   * @return array<string, mixed>
+   *   Owner render array in the Studio shell.
+   */
+  private function buildOwner(string $ownerClass, string $method, string $section): array {
+    $this->requireAccountAccess();
+    // Optional document capability must not be resolved when absent.
+    // An installed owner can still report its safe read-only state.
+    if ($method === 'otherData' && $this->documents === NULL) {
+      throw new NotFoundHttpException();
     }
 
-    $portal = $this->resolver->getInstanceFromDefinition(PortalController::class);
-    // These five methods are explicit owner entry points. Do not
-    // dynamically route user input to an arbitrary Portal method.
-    $content = $portal->{$method}();
-    // Their legacy inner tabs point at original account routes. Remove only
-    // this presentation, not forms/handlers, to avoid duplicate navigation.
+    $owner = $this->resolver->getInstanceFromDefinition($ownerClass);
+    $content = $owner->{$method}();
+    // Remove legacy account-section tabs only; preserve owner Form API,
+    // Commerce payment links, subscription actions and render metadata.
     unset($content['tabs'], $content['content']['tabs']);
     if (isset($content['content']['section']['tabs'])) {
       unset($content['content']['section']['tabs']);
     }
 
+    return $this->compose($content, $section);
+  }
+
+  /**
+   * Both the route and the controller enforce an authenticated account.
+   */
+  private function requireAccountAccess(): void {
+    if (!$this->account->isAuthenticated() || !$this->account->hasPermission('access aculta portal')) {
+      throw new AccessDeniedHttpException();
+    }
+  }
+
+  /**
+   * Adds Studio navigation while retaining all owner render/cache metadata.
+   *
+   * @param array<string, mixed> $content
+   *   The existing owner render array or built Form API.
+   *
+   * @return array<string, mixed>
+   *   A private render array.
+   */
+  private function compose(array $content, string $section): array {
     return [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'studio-account-section'],
@@ -123,12 +198,15 @@ final class StudioAccountSectionController {
    */
   private function navigation(string $section): array {
     $destinations = [
-      'dados' => ['Dados cadastrais (Conta original)', 'aculta_portal.my_data'],
+      'dados' => ['Dados cadastrais', 'aculta_studio.account_data'],
       'endereco' => ['Endereço', 'aculta_studio.account_address'],
       'documentos' => ['Documentos', 'aculta_studio.account_documents'],
       'seguranca' => ['E-mail e segurança', 'aculta_studio.account_security'],
       'senha' => ['Senha', 'aculta_studio.account_password'],
       'conexoes' => ['Contas conectadas', 'aculta_studio.account_connections'],
+      'pedidos' => ['Meus pedidos', 'aculta_studio.account_orders'],
+      'apoio' => ['Meu apoio', 'aculta_studio.account_support'],
+      'preferencias' => ['Preferências da conta', 'aculta_studio.account_preferences'],
     ];
 
     if (!$this->documents?->isAvailable()) {

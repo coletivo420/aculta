@@ -124,6 +124,12 @@ Quando a fase fecha:
   arquivar o que for único fora do repositório antes de excluir a branch.
 - PR que muda a versão marcada precisa manter `info.yml`, `CHANGELOG.md`, roadmap e gate coerentes.
 
+## Preparação visual pré-S-R4
+
+Quatro SDCs novos, todos experimentais, foram classificados como
+MINOR pré-1.0: `0.7.0-dev.1`. Versão de código, sem alegar validação
+ou promoção `stable`. O consumo e o aceite serão feitos na S-R4.
+
 ## Histórico de marcações
 
 Marcações já feitas, por linha:
