@@ -79,17 +79,21 @@ post-update e o Messenger passa a ser sua fonte normativa.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento atual `0.1.1-dev.285` inclui o envelope mínimo `MessengerNoticeEvent` e
-`MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
-eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
-agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
-de `ForumPost` e revisão de tópico pelo publisher; o consumer preserva
-`aculta_aviso` e revalida assinatura/acesso antes do registro. A prévia de busca
-de membros mantém as sugestões como links normais alcançáveis por Tab.
-O resumo diário mantém lock persistente por destinatário e snapshot sem PII. Dev.198/202 comprovam disputa entre dois boots Drupal e recuperação do lote aceito após reinício, sem segundo transporte; a revalidação de 2026-10-24 passou os Kernels Messenger/Mailer **38/865**. Dev.200 corrige o limite inicial da central da Conta. Dev.206 pagina Fórum; Dev.209 pagina LMS, Wiki, Loja e Doações; Dev.210 completa paginação filtrada de Comunicados e Alertas do Site. Dev.246 completa a visão global da Conta com offsets independentes por origem; paginadores/adapters passaram 16/153 e Unit Messenger 229/1.702. Ainda falta smoke visual específico desses controles de página na central atual; SMTP real e homologação no Runtime continuam pendentes. Novos avisos de amizade também usam o ACULTA Mailer com correlação determinística e conteúdo mínimo; filas antigas preservam temporariamente Message Notify através de um marcador de ownership no registro `Message`.
-O Kernel de integração exercita Messenger e ACULTA Mailer reais com transporte
-controlado: retry após falha de acknowledgement mantém um Mail Log e não envia
-o mesmo resumo novamente.
+A versão em desenvolvimento atual é `0.1.1-dev.313`. O núcleo oferece
+`MessengerNoticeEvent` e `MessengerNoticePublisherInterface`, consumers para
+Fórum, LMS, Wiki, Loja e Doações, agregação da central e entrega por e-mail
+direto ou digest sem substituir os storages existentes. O Fórum preserva
+`aculta_aviso`; os demais adapters revalidam a fonte de verdade e o acesso no
+momento de abrir e entregar. Preferências individuais são limitadas pela
+política administrativa, e avisos no site continuam obrigatórios.
+
+Validação automatizada recente: Unit Messenger **316 testes / 2.569
+assertions PASS**; Integration (incluindo Kernels MariaDB) **98 testes / 1.173
+assertions PASS**, com 2 deprecações de annotations do Core/contrib e 7 notices
+de PHPUnit; testes focados de preferências **54/619 PASS**. O formulário de
+primeira mensagem passa PHPCS Drupal/DrupalPractice. Testes visuais não foram
+executados nesta sessão: `DISPLAY` não estava definido e Firefox/geckodriver já
+tinham sessões ativas. SMTP real e homologação no Runtime continuam pendentes.
 
 A retenção de conversas usa cursor persistido para não deixar falhas antigas
 barrar lotes seguintes. Unit cobre paginação e rollback; o Kernel MariaDB cria
