@@ -46,7 +46,29 @@ funcionalmente, inclusive depois de aprovado o Studio.
 - Nenhum alias transitório para `/studio/pessoal` será instalado:
   atualizar consumidores e testes diretamente para os nomes finais.
 
-## SDCs preparatórios, antes da S-R4
+## S-R4 — integração funcional de Meu Perfil em SDCs (Studio dev.21)
+
+O Studio usa o `#type: component` do Drupal Core para apresentar
+`profile-editor`, `profile-identity`, `profile-bio` e
+`profile-social` com dados e links em slots. As políticas e dados
+permanecem em ACULTA User: `AuthorIdentityResolver` prepara o
+apelido, `PublicProfileLink` decide se existe perfil público,
+e os cartões existentes mantêm biografia e redes, com caches e
+estados de edição originais. No editor do próprio titular, a
+foto privada pode ser vista pelo `aculta_image`, independentemente
+da decisão de publicá-la; isso não muda a policy pública.
+
+Edição de apelido, bio, privacidade e redes continua nas mesmas
+rotas Form API do User, com foto AJAX/modal original. Studio não
+cria novas entidades/campos e não toca no cadastro privado da Conta,
+na interface legada permanente `/conta-legada` ou no perfil público
+MAIN `/u/{apelido}`.
+
+Testes Unit escritos, **não executados**, assim como PHPUnit
+Kernel/Functional, descoberta de componentes, Runtime, Firefox ESR,
+privacidade entre contas e reflow/contraste.
+
+## Histórico — SDCs preparatórios, antes da S-R4
 
 O ACULTA420 `0.7.0-dev.1` contém quatro SDCs experimentais para
 Meu Perfil privado: `profile-editor`, `profile-identity`,

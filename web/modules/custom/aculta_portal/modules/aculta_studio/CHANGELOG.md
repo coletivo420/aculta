@@ -1,3 +1,10 @@
+## 0.1.0-dev.21 — S-R4: Meu Perfil integrado aos SDCs (2026-10-25)
+
+- `/studio/perfil` renderiza `aculta420:profile-editor`, `profile-identity`, `profile-bio` e `profile-social` via `#type: component` e slots do Drupal Core. Os quatro SDCs pertencem ao ACULTA420 (`0.7.0-dev.1`) e não decidem acesso ou armazenamento.
+- O ACULTA User continua responsável por nickname/identidade via `AuthorIdentityResolver`, renderização dos cartões `AccountBioCard` e `SocialLinksCard`, links canônicos e `PublicProfileLink`. O avatar do próprio usuário passa pelo `aculta_image.render` mesmo quando oculto publicamente, após verificar autenticação e identidade do titular. O perfil público permanece filtrado por sua policy.
+- O Studio preserva os valores read-only, estados não informados e cache tags dos cartões do User. Remove apenas botões modais originais na composição Studio, colocando links das rotas Form API dedicadas em slots de ações. A foto usa o modal AJAX existente; os outros editores continuam URLs normais. O legado em `/conta-legada` e os formulários originais não foram modificados.
+- Testes Unit de composição, ACL, UID, slots, links, cache, cards de redes e biografia foram escritos, **não executados**. Pendem PHPUnit, lint, Kernel/Functional, SDC discovery/UI Patterns, no-JS, AJAX foto, duas contas, cache, Firefox ESR/X11 e Runtime. Não afirmar homologação, RC ou deploy.
+
 ## 0.1.0-dev.20 — S-R3-B3: pedidos, apoio e preferências na Conta Studio (2026-10-25)
 
 - Três rotas canônicas exclusivas do ACCOUNT: `/studio/conta/pedidos`, `/studio/conta/apoio`, `/studio/conta/preferencias`. Todas exigem login, permissão `access aculta portal` e `no_cache`.

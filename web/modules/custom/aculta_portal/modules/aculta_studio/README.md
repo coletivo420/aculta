@@ -1,7 +1,23 @@
 # ACULTA Studio (`aculta_studio`)
 
 
-## Situação vigente — S-R3-B3, Studio dev.20 (código, sem homologação)
+## Situação vigente — S-R4, Studio dev.21
+
+A tela `/studio/perfil` consome os quatro componentes experimentais
+`aculta420:profile-editor`, `profile-identity`, `profile-bio` e
+`profile-social` via render arrays `#type: component` e slots Core.
+O ACULTA User mantém a identidade, os valores de bio e redes, privacidade,
+links canônicos e Form API. O `aculta_image` produz a foto do próprio
+titular apenas no contexto privado. Os botões de edição originais não
+são duplicados: o Studio usa suas rotas Form API, mantendo o modal
+de foto original. Nenhum dado de Minha Conta migrou para Meu Perfil.
+
+A Conta legada continua em `/conta-legada`; `/` no ACCOUNT serve
+o hub. Os testes Unit foram atualizados, **não executados**.
+PHPUnit/Kernel/Functional, SDC discovery, UI Patterns, cache, no-JS,
+Firefox ESR/X11 e Runtime permanecem pendentes antes de S-R5.
+
+## Histórico — S-R3-B3, Studio dev.20 (código, sem homologação)
 
 Minha Conta Studio inclui agora as páginas privadas `/studio/conta/pedidos`, `/studio/conta/apoio` e `/studio/conta/preferencias`, além de cadastro, endereço, documentos opcionais e segurança. Os três destinos são exclusivos do purpose ACCOUNT e reusam os owners do Portal:
 
