@@ -565,7 +565,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
   }
 
   /**
-   * Proves two independent Drupal boots serialize a digest for one recipient.
+   * Proves independent Drupal boots serialize one recipient's digest.
    */
   public function testIndependentDrupalWorkersDoNotSendConcurrentDigests(): void {
     if (!function_exists('proc_open')) {
@@ -630,49 +630,60 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     putenv('ACULTA_DIGEST_RECIPIENT_UID=' . $uid);
     putenv('ACULTA_DIGEST_SHARED_TEST_PREFIX=' . $database->getPrefix());
 
-    $pipes = [];
-    $process = NULL;
+    $workers = [];
     try {
       $workerFixture = 'web/modules/custom/aculta_portal/modules/aculta_messenger/tests/fixtures/DigestCompetingWorkerKernelTest.php';
-      $process = proc_open([
+      $workerCommand = [
         PHP_BINARY,
         $projectRoot . '/vendor/bin/phpunit',
         '-c',
         $projectRoot . '/web/core/phpunit.xml.dist',
         $projectRoot . '/' . $workerFixture,
-      ], [
-        0 => ['pipe', 'r'],
-        1 => ['pipe', 'w'],
-        2 => ['pipe', 'w'],
-      ], $pipes, $projectRoot);
-      self::assertIsResource($process);
-      fclose($pipes[0]);
-      stream_set_blocking($pipes[1], FALSE);
-      stream_set_blocking($pipes[2], FALSE);
+      ];
+      $workerCount = 3;
+      putenv('ACULTA_DIGEST_COMPETITOR_COUNT=' . $workerCount);
+      for ($workerId = 1; $workerId <= $workerCount; $workerId++) {
+        $pipes = [];
+        $environment = getenv();
+        $environment['ACULTA_DIGEST_COMPETITOR_ID'] = (string) $workerId;
+        $process = proc_open($workerCommand, [
+          0 => ['pipe', 'r'],
+          1 => ['pipe', 'w'],
+          2 => ['pipe', 'w'],
+        ], $pipes, $projectRoot, $environment);
+        self::assertIsResource($process);
+        fclose($pipes[0]);
+        stream_set_blocking($pipes[1], FALSE);
+        stream_set_blocking($pipes[2], FALSE);
+        $workers[$workerId] = ['process' => $process, 'pipes' => $pipes];
+      }
 
       $sentCount = $summary->enviarResumos();
-      [$stdout, $stderr, $exitCode] = $this->collectWorkerProcess($process, $pipes);
-      $process = NULL;
-      self::assertSame(0, $exitCode, 'The competing Drupal worker failed: ' . trim($stderr . "\n" . $stdout));
+      foreach ($workers as $workerId => &$worker) {
+        [$stdout, $stderr, $exitCode] = $this->collectWorkerProcess($worker['process'], $worker['pipes']);
+        $worker['process'] = NULL;
+        self::assertSame(0, $exitCode, sprintf('Competing Drupal worker %d failed: %s', $workerId, trim($stderr . "\n" . $stdout)));
+        self::assertSame('locked', trim((string) file_get_contents($barrierDirectory . '/competitor-done-' . $workerId)));
+      }
+      unset($worker);
       self::assertSame(1, $sentCount, 'The first worker did not complete delivery.');
-      self::assertSame('locked', trim((string) file_get_contents($barrierDirectory . '/competitor-done')));
       self::assertSame([[502]], $provider->acknowledged);
       self::assertCount(1, $this->collectedMails());
       self::assertCount(1, $this->container->get('entity_type.manager')->getStorage('aculta_mail_log')
         ->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
     }
     finally {
-      if (is_resource($process)) {
-        if (!is_file($barrierDirectory . '/competitor-done')) {
-          file_put_contents($barrierDirectory . '/competitor-done', 'abort', LOCK_EX);
-        }
-        proc_terminate($process);
-        foreach ($pipes as $pipe) {
-          if (is_resource($pipe)) {
-            fclose($pipe);
+      foreach ($workers as $workerId => $worker) {
+        if (is_resource($worker['process'])) {
+          file_put_contents($barrierDirectory . '/competitor-done-' . $workerId, 'abort', LOCK_EX);
+          proc_terminate($worker['process']);
+          foreach ($worker['pipes'] as $pipe) {
+            if (is_resource($pipe)) {
+              fclose($pipe);
+            }
           }
+          proc_close($worker['process']);
         }
-        proc_close($process);
       }
       if ($originalBarrier === FALSE) {
         putenv('ACULTA_DIGEST_BARRIER_DIR');
@@ -682,7 +693,9 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       }
       putenv('ACULTA_DIGEST_RECIPIENT_UID');
       putenv('ACULTA_DIGEST_SHARED_TEST_PREFIX');
-      foreach (['transport-started', 'competitor-done'] as $filename) {
+      putenv('ACULTA_DIGEST_COMPETITOR_COUNT');
+      putenv('ACULTA_DIGEST_COMPETITOR_ID');
+      foreach (['transport-started', 'competitor-done-1', 'competitor-done-2', 'competitor-done-3'] as $filename) {
         @unlink($barrierDirectory . '/' . $filename);
       }
       @rmdir($barrierDirectory);

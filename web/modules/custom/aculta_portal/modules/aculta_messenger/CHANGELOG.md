@@ -1,3 +1,14 @@
+## 0.1.1-dev.356 — contenção do digest sob concorrência múltipla
+
+O teste de Kernel agora inicia três boots Drupal independentes enquanto o
+worker titular mantém a entrega do digest aberta. Todos os concorrentes são
+rejeitados pelo lock do destinatário e o transporte registra uma única entrega.
+
+Validação: `AvisosResumoMailerKernelTest` **5/95 PASS**; Kernel do Messenger
+**55/1.166 PASS** no MariaDB dedicado (10 depreciações upstream e 4 notices
+PHPUnit); PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime, Alpha e SMTP
+externo não utilizados.
+
 ## 0.1.1-dev.355 — recuperar digest após encerramento abrupto do worker
 
 Kernel MariaDB agora mata um processo Drupal independente depois que o ACULTA

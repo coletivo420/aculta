@@ -28,22 +28,32 @@ final class DigestBlockingTestMailer extends TestMailCollector {
     }
 
     $started = $barrierDirectory . '/transport-started';
-    $competitor = $barrierDirectory . '/competitor-done';
+    $competitorCount = max(1, (int) getenv('ACULTA_DIGEST_COMPETITOR_COUNT'));
     if (file_put_contents($started, 'started', LOCK_EX) === FALSE) {
       throw new \RuntimeException('Could not signal the digest transport start.');
     }
 
     $deadline = microtime(TRUE) + 35;
-    while (!is_file($competitor)) {
+    do {
+      $allLocked = TRUE;
+      for ($workerId = 1; $workerId <= $competitorCount; $workerId++) {
+        $signal = $barrierDirectory . '/competitor-done-' . $workerId;
+        if (!is_file($signal)) {
+          $allLocked = FALSE;
+          break;
+        }
+        if (trim((string) file_get_contents($signal)) !== 'locked') {
+          return FALSE;
+        }
+      }
+      if ($allLocked) {
+        break;
+      }
       if (microtime(TRUE) >= $deadline) {
         throw new \RuntimeException('Timed out waiting for the competing Drupal digest worker.');
       }
       usleep(10_000);
-    }
-
-    if (trim((string) file_get_contents($competitor)) !== 'locked') {
-      return FALSE;
-    }
+    } while (TRUE);
     return parent::mail($message);
   }
 

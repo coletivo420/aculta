@@ -60,7 +60,8 @@ final class DigestCompetingWorkerKernelTest extends KernelTestBase {
   public function testCompetingWorkerSkipsLockedDigest(): void {
     $barrierDirectory = getenv('ACULTA_DIGEST_BARRIER_DIR');
     $uid = (int) getenv('ACULTA_DIGEST_RECIPIENT_UID');
-    if (!is_string($barrierDirectory) || $barrierDirectory === '' || $uid < 1) {
+    $workerId = (int) getenv('ACULTA_DIGEST_COMPETITOR_ID');
+    if (!is_string($barrierDirectory) || $barrierDirectory === '' || $uid < 1 || $workerId < 1) {
       throw new \RuntimeException('The digest worker fixture arguments are incomplete.');
     }
 
@@ -105,12 +106,12 @@ final class DigestCompetingWorkerKernelTest extends KernelTestBase {
 
     try {
       self::assertSame(0, $summary->enviarResumos());
-      if (file_put_contents($barrierDirectory . '/competitor-done', 'locked', LOCK_EX) === FALSE) {
+      if (file_put_contents($barrierDirectory . '/competitor-done-' . $workerId, 'locked', LOCK_EX) === FALSE) {
         throw new \RuntimeException('Could not signal that the digest lock rejected this worker.');
       }
     }
     catch (\Throwable $exception) {
-      file_put_contents($barrierDirectory . '/competitor-done', 'error', LOCK_EX);
+      file_put_contents($barrierDirectory . '/competitor-done-' . $workerId, 'error', LOCK_EX);
       throw $exception;
     }
   }
