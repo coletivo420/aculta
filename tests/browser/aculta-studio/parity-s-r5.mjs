@@ -264,18 +264,30 @@ try {
         check(`${owner}: nunca incluir bio do outro titular no HTML`, !ownHtml.includes(SENTINELS[1-i]));
       } else check(`${owner}: isolamento com duas sentinelas`, null, 'SR5_BIO_SENTINELA_A/B ausentes');
       const publicPage = await inspect(browser, MAIN + '/u/' + SLUGS[i]);
-      const publicHtml = await browser.source();
       check(`${owner}: perfil público em MAIN`, publicPage.origin === MAIN && publicPage.pathname === '/u/' + SLUGS[i]);
-      if (PUBLIC[i] === 'no') {
-        check(`${owner}: perfil privado não mostra bio`, !publicPage.publicBio);
-        check(`${owner}: perfil privado não mostra links de contato`, !publicPage.publicLinks);
+
+      // Auditoria de divulgação pública em sessão inteiramente anônima.
+      // Não usar HTML do titular logado: elementos globais podem conter
+      // informações privadas legítimas visíveis somente ao próprio titular.
+      const guest = await firefox();
+      try {
+        const guestPage = await inspect(guest, MAIN + '/u/' + SLUGS[i]);
+        const guestHtml = await guest.source();
+        check(`${owner}: MAIN acessível como visitante`,
+          guestPage.origin === MAIN && guestPage.pathname === '/u/' + SLUGS[i]);
+        if (PUBLIC[i] === 'no') {
+          check(`${owner}: perfil privado sem bio anônima`, !guestPage.publicBio);
+          check(`${owner}: perfil privado sem links de contato anônimos`, !guestPage.publicLinks);
+          if (SENTINELS.every(Boolean) && SENTINELS[0] !== SENTINELS[1]) {
+            check(`${owner}: bio privada não vaza no HTML anônimo`, !guestHtml.includes(SENTINELS[i]));
+          } else check(`${owner}: bio privada não vaza no MAIN`, null, 'sentinelas ausentes');
+        }
         if (SENTINELS.every(Boolean) && SENTINELS[0] !== SENTINELS[1]) {
-          check(`${owner}: bio privada não vaza no HTML MAIN`, !publicHtml.includes(SENTINELS[i]));
-        } else check(`${owner}: bio privada não vaza no MAIN`, null, 'sentinelas ausentes');
-      }
-      if (SENTINELS.every(Boolean) && SENTINELS[0] !== SENTINELS[1]) {
-        check(`${owner}: bio do outro titular nunca aparece no HTML MAIN`, !publicHtml.includes(SENTINELS[1-i]));
-      } else check(`${owner}: isolamento MAIN entre contas`, null, 'sentinelas ausentes');
+          check(`${owner}: nenhuma bio da outra conta no MAIN anônimo`, !guestHtml.includes(SENTINELS[1-i]));
+        } else check(`${owner}: isolamento MAIN entre contas`, null, 'sentinelas ausentes');
+        await resize(guest, 390);
+        await guest.screenshot(`${owner}-perfil-main-anonimo-390`);
+      } finally { await guest.close(); }
       // E-mail no perfil público é opt-in do ACULTA User: NÃO proibir
       // indiscriminadamente; validar configuração do owner e fixture.
       for (const width of [320,375,390,768,1024,1440]) {
