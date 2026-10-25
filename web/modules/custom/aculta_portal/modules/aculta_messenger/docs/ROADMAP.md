@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.301 — a submissão da configuração administrativa de e-mail tem cobertura para modalidades permitidas por categoria, padrão de Mensagens Privadas limitado às opções autorizadas e data inicial do digest semanal. A gravação de políticas de e-mail não controla nem desativa avisos obrigatórios no site. `MessengerSettingsFormTest` **2/16 PASS**; sem mudança funcional, SMTP ou Runtime.
 - Dev.300 — o dispatcher central de leitura rejeita mensagens pertencentes a outra conta antes de resolver adapters opcionais; os adapters ainda revalidam autorização de origem antes de persistir. Manager/formulário/Amizades **16/121 PASS**, PHPCS e PHP lint PASS.
 - Dev.299 — a contagem unificada exclui Alertas do site já lidos ou dispensados; a lista usa as Flags carregadas em lote sem buscar a Flag de leitura item a item. Focais de contagem/acesso **13/65 PASS**, PHP lint e PHPCS do serviço/teste PASS; `MessagesController` mantém baseline **93/65**. Sem Browser/Runtime.
 - Dev.298 — formulários de leitura na lista global preservam `notice_offsets` por origem após marcar lido/não lido; os offsets aceitos usam a mesma allowlist e limite de 100 páginas da listagem. Testes focais centrais **18/111 PASS**, PHP lint e PHPCS dos arquivos novos/limpos PASS; controllers sem aumento sobre baseline PHPCS confirmado (108 erros / 77 avisos combinados). Sem Browser/Runtime.

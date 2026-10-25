@@ -1,3 +1,13 @@
+## 0.1.1-dev.301 — cobrir gravação administrativa das políticas de e-mail
+
+O formulário administrativo agora tem teste de submissão para as políticas
+por categoria, padrão permitido para avisos de mensagens privadas e data
+inicial do digest semanal. A cobertura confirma que desabilitar modalidades
+de e-mail não altera a persistência dos avisos obrigatórios no site.
+
+Validação: `MessengerSettingsFormTest` **2 testes / 16 assertions PASS**.
+Sem alteração funcional, SMTP ou Runtime.
+
 ## 0.1.1-dev.300 — rejeitar avisos de outra conta na fronteira central
 
 `NoticeReadStateManager` agora compara o proprietário da entidade `Message`
