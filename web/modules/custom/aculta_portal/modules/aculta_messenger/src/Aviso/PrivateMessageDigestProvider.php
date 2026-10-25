@@ -57,13 +57,17 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
         continue;
       }
       $uid = (int) $message->getOwnerId();
-      if ($uid > 0) {
-        $messagesByRecipient[$uid] = TRUE;
-      }
+      // Keep malformed/orphan rows in the grouped set as well so UID 0 can be
+      // discarded below instead of leaving its email records pending forever.
+      $messagesByRecipient[$uid] = TRUE;
     }
 
     $recipients = [];
     foreach (array_keys($messagesByRecipient) as $uid) {
+      if ($uid < 1) {
+        $this->discardDigest($uid);
+        continue;
+      }
       $mode = $this->preferences->emailMode($uid, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES);
       if ($mode === AvisoPreferencias::EMAIL_DIGEST && $this->digestIsDue($uid)) {
         $recipients[$uid] = TRUE;
