@@ -1,8 +1,8 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit:** `af3a05f27` (`docs(growroom): set test runtime import as target`), enviado por push normal a `origin/chore/aculta-m0-integridade`. Commit anterior `d3357b474` corrigiu a suíte Kernel parcial LMS para 29/835.
-**Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P, gate Domain administrativo e suíte Kernel parcial LMS têm evidências PASS. M-0 continua parcial por instalação/importação de acervo em ambiente efêmero ainda não exercida, divergência ativa dos grants Wiki e Config Sync por purpose. Melhor Envio foi confirmado como extensão fora do Sync. Messenger tem preferências ativas sem contrato canônico decidido e updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
+**Último checkpoint remoto verificado antes desta atualização:** `c26f27c76` (`docs(game): record ForumPost award hook coverage`), enviado por push normal a `origin/chore/aculta-m0-integridade`.
+**Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P, gate Domain administrativo e suíte Kernel parcial LMS têm evidências PASS. M-0 continua parcial por instalação/importação de acervo em ambiente efêmero ainda não exercida, divergência ativa dos grants Wiki e Config Sync por purpose. Melhor Envio foi confirmado como extensão fora do Sync. Os defaults estruturais de Messenger foram versionados conforme decisão do responsável; overrides ativos e updates operacionais ainda exigem preflight. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
 **Domain/purpose:** em 2026-10-26, `DomainPurposeManager::getCurrentPurpose()` resolveu os nove hosts MAIN, ACCOUNT, SUPPORT, MAGAZINE, WIKI, SHOP, COURSES, FORUM e LINKS ao purpose correspondente (9/9 PASS). As seis coleções Domain ativas têm nomes idênticos ao Sync; cinco também coincidem em conteúdo. O front da Conta foi corrigido no Sync de `/studio` para `/minha-conta`, conforme Runtime e contrato; o acesso HTTP direto ao path segue 404. Na coleção `domain.revista420_aculta_org`, o Runtime ainda diverge em `system.site.name` e em `metatag.metatag_defaults.front` (`tags.title`, `tags.og_title`); o Sync mantém o contrato editorial `Revista 420`. Nenhum valor ativo foi alterado. Entity Access por purpose não está homologado.
@@ -13,17 +13,17 @@
 2. Editor/CKEditor: 17 IDs e nove configs reconciliados; delta de módulos permanece só `aculta_lms_messenger`, shell que requer uninstall controlado. Importação isolada e Browser seguem pendentes.
 3. Wiki: leitura de `wiki420` confirmou os quatro grants de proposta ausentes dos papéis ativos `email_confirmed` e `content_editor`, apesar do Sync correto; Entity Access falha fechado. Só aplicar depois de autorização de escrita, com rollback dos dois roles.
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
-5. Próxima unidade independente: projetar exportação do acervo Growroom e importador Drupal idempotente usando fixtures sintéticas e banco efêmero, sem dados privados no Git. O Runtime de testes é o destino desejado, mas a importação persistente aguarda prévia, backup/restauração e validação isolada. Revisão das nove configurações Messenger divergentes continua condicionada ao contrato de preferências pendente; não exportar globalmente.
-6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente das oito frentes concluiu seu trabalho; comparação por caminhos confirmou que todos os incrementos já estão na PR sob SHAs equivalentes. Não fazer cherry-pick duplicado; nenhum desses diretórios foi alterado neste turno.
-7. Manter a branch/PR #298 como único destino; sem merge, deploy ou escrita Runtime. Import persistente no ambiente de testes somente após pipeline, prévia e rollback reproduzíveis. Último checkpoint remoto: `af3a05f27`.
+5. Próxima unidade independente: projetar exportação do acervo Growroom e importador Drupal idempotente usando fixtures sintéticas e banco efêmero, sem dados privados no Git. O Runtime de testes é o destino desejado, mas a importação persistente aguarda prévia, backup/restauração e rollback. Os 616 tópicos de vida interna e 17 itens marcados `revisar` ficam excluídos por padrão; inclusão exige seleção manual (F-D46).
+6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente dessas frentes concluiu seu trabalho; comparação por caminhos confirmou que os incrementos estão na PR. O agente 3 entregou commits do Index em worktree própria; revisar diffs e evidências antes do cherry-pick individual. Não editar o Index antes da integração coordenada.
+7. Manter a branch/PR #298 como único destino; sem merge, deploy ou escrita Runtime. Import persistente no ambiente de testes somente após pipeline, prévia e rollback reproduzíveis. Último checkpoint remoto: `c26f27c76`.
 
 ## M-0 — revalidação de Config Sync Messenger (2026-10-26)
 
 - `drush status` read-only confirmou novamente Drupal 11.4.10/PHP 8.4.27 e conexão MAIN `aculta_runtime` no checkout compartilhado `/home/piradopirata/projetos/aculta/web`; nenhum comando de escrita foi executado.
 - Comparação focal entre a configuração ativa e o `config/sync` desta branch imprimiu somente nomes/caminhos divergentes (sem valores): `aculta_messenger.settings` tem 12 caminhos sob `email_modes`; os metadados `description` de `field_aculta_messenger_attempts` e `label`/`description` de `field_aculta_messenger_source_fr` também diferem. Config Sync possui cinco controles estruturais enquanto o default instalável define ainda políticas de e-mail, eventos da Revista e âncora de digest.
-- Não foi inferido que as políticas ativas sejam defaults ou customização operacional. A decisão sobre a fonte canônica de `email_modes`/`magazine_events` foi solicitada ao responsável; nenhuma configuração foi alterada. Os metadados dos campos ficam em revisão separada e não justificam importação global. A pergunta interativa sobre essa política continua aberta.
+- Naquele checkpoint, a decisão sobre a fonte canônica de `email_modes`/`magazine_events` ainda estava pendente e nenhuma configuração ativa foi alterada. Depois, o responsável aprovou versionar defaults estruturais e preservar overrides ambientais; a implementação seletiva está registrada na seção M-1 de Config Sync abaixo. A pergunta não está mais aberta; os valores ativos continuam fora de uma importação global.
 - Inspeção estrutural read-only de capturas privadas confirmou formatos distintos: IPS4 usa blocos `post_block`/`post_body`/`entry-content`; no THW antigo, o permalink aparece como query `postid=` em `<a href>` dentro de uma tabela sem classes semânticas (linha com duas células e ancestrais `table/tr/td/font`). `postid` não é atributo HTML; a anotação anterior foi corrigida. Os scripts atuais não exportam corpos/posts; ainda é necessário um parser versionado com fixtures sintéticas e saída privada antes de qualquer importação. Nenhum conteúdo ou dado pessoal foi impresso.
-- A amostra estrutural não foi convertida em código de importação. A decisão sobre 616 tópicos internos e 17 títulos comerciais em revisão foi solicitada; a preparação independente pode prosseguir, mas não define seleção nem escreve no Drupal.
+- A amostra estrutural não foi convertida em código de importação. Naquele checkpoint, a seleção dos 616 tópicos internos e 17 títulos comerciais em revisão ainda aguardava decisão; o responsável definiu depois exclusão padrão com seleção manual explícita (F-D46). O código de importação continua pendente e nenhum conteúdo foi gravado no Drupal.
 - No HEAD `dc5561f23`, `php scripts/validate-project-status-index.php` passou (41 componentes) e `php scripts/validate-own-module-packages.php` passou (41 verificações). Foram executados no worktree da PR; os resultados não implicam aprovação dos demais gates nem homologação Runtime.
 
 ## M-4 — fechar o harness Kernel focal de Doações (2026-10-26)
@@ -38,7 +38,7 @@
 
 - Runtime MAIN foi consultado somente por Drush read-only. No arquivo ativo, `aculta_messenger.settings.email_modes` existe e difere dos defaults instaláveis em 15 caminhos; o Sync não contém essa árvore. `magazine_events` e `private_message_digest_anchor` existem nos defaults, mas não estão nem no ativo nem no Sync.
 - `updatedb:status` listou cinco hooks (10008–10012) e três post-updates pendentes; entre eles `private_message_email_preferences`, que migra preferências legadas para Messenger. Nenhum update foi executado. Essa migração e as diferenças operacionais tornam inseguro exportar defaults ou copiar o ativo para o Sync sem decidir a fonte canônica.
-- Metadados de `field_aculta_messenger_attempts` e `field_aculta_messenger_source_fr` no ativo correspondem aos defaults instaláveis; somente o Sync estava diferente. Os dois arquivos Sync foram corrigidos seletivamente sem alterar campos, mensagens ou preferências ativas. `aculta_messenger` avançou `.400` → `.401`; decisão sobre políticas de e-mail/config split permanece aberta.
+- Metadados de `field_aculta_messenger_attempts` e `field_aculta_messenger_source_fr` no ativo correspondem aos defaults instaláveis; somente o Sync estava diferente. Os dois arquivos Sync foram corrigidos seletivamente sem alterar campos, mensagens ou preferências ativas. `aculta_messenger` avançou `.400` → `.401`; posteriormente, o responsável decidiu versionar defaults estruturais de `email_modes`/`magazine_events` e manter overrides ambientais. Essa decisão não autoriza importar os valores ativos globalmente.
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
@@ -83,7 +83,7 @@
 
 - `AccountDocumentStore` agora descarta a exceção SQL encadeada ao converter a violação da chave única em erro genérico. A mensagem subjacente do driver pode carregar o fingerprint duplicado; a API de domínio não a expõe a handlers/logs que recebam a `LogicException`.
 - Novo `AccountDocumentStoreUniqueConflictTest` simula o erro de persistência pós-preflight e confirma mensagem genérica sem causa anterior: Unit do módulo 48/116 PASS; Kernel da restrição SQL/update 10002 2/5 PASS em MariaDB isolado. PHPCS e lint dos dois arquivos alterados PASS.
-- Manifesto e status avançaram para `0.3.0-dev.3`; Runtime permanece sem `updatedb`. Próximo: exercitar update com perfis legados representativos e integração real Profile/Form API em Kernel.
+- Manifesto e status avançaram para `0.3.0-dev.3`; Runtime permanece sem `updatedb`. A política de `email_modes`/`magazine_events` foi decidida depois: defaults estruturais versionados no Sync, preservando overrides ambientais; nenhuma importação global foi executada. Próximo: exercitar update com perfis legados representativos e integração real Profile/Form API em Kernel.
 
 ## M-0.2 — Config Sync / Runtime (2026-10-26)
 
@@ -677,6 +677,12 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - `NicknameRegistryKernelTest::testFailedProfileSaveRollsBackNicknameSynchronization` executa a sincronização sob transação, injeta uma falha simulada depois do presave e verifica a claim anterior, ausência da nova claim e persistência antiga de ambos Profiles. Resultado agregado MariaDB: **8 testes / 65 assertions PASS**, com 11 depreciações Core/contrib. PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
 - `aculta_user` avançou `0.4.0-dev.84` → `0.4.0-dev.85`. Update 10013 não executado no Runtime; validar instalação limpa/rebuild com conflito e sem conflito em ambiente efêmero permanece pendente.
+
+## M-1 — preflight da projeção de apelidos (2026-10-26)
+
+- A solução escolhida mantém Profile como fonte de verdade e usa `aculta_user_nickname` como índice derivado transacional `UID → slug`, com slug único, liberação no rename e sincronização entre Profiles do mesmo UID. A disputa concorrente e rollback da gravação têm evidência Kernel/MariaDB registrada no status `aculta_user`.
+- Drush read-only em MAIN confirmou 26 Profiles de papel: 15 UIDs com apelido, 11 sem apelido, zero divergências de apelido entre Profiles do mesmo UID e zero slugs ocupados por UIDs distintos. Saída apenas agregada; nenhum valor de apelido foi impresso. Runtime não recebeu escrita.
+- Continua pendente validar instalação limpa e executar o update 10013 em banco efêmero com dados sintéticos, incluindo caso sem conflito e conflito que bloqueia antes de substituir claims existentes. A pergunta sobre a política de conflito de mesmo UID está pendente; enquanto isso, o comportamento permanece fail-closed.
 
 ## Growroom — seleção padrão e teste sintético dos filtros (2026-10-26)
 
