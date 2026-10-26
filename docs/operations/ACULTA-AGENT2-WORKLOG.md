@@ -158,3 +158,12 @@ Não iniciadas as auditorias profundas das frentes 4 a 8 nesta execução.
 - **QR Code, lote e formatter:** não implementados. O lote depende de decisão de formato de saída (zip ou
   múltiplos arquivos). O formatter depende de decisão de tipo de campo.
 - **Kernel de sitemap e melhorenvio:** não existem.
+
+## Kernel de links e de outros módulos (execução em SQLite isolado)
+
+| Módulo | Resultado | Observação |
+|---|---|---|
+| `aculta_links` | 7 testes, 1 erro, 1 falha, 7 deprecações | Erro de rota (`aculta_qrcode.preview_controller`) veio de edição concorrente durante a execução: reexecutado com o código estável, o erro não reaparece |
+| `aculta_links`, falha real | `testDashboardPublicationFilterQueriesOnlySelectedItems`: esperado 1 item, obtido 0 | **Aberta.** Diagnóstico: a consulta do painel (`ids=[]`) roda com o usuário 1, não com o dono do rascunho, mesmo após `setAccount()`. Construir o controller explicitamente não mudou nada. Outros testes da suíte que usam `setAccount()` passam. Causa não identificada; próximo passo: afirmar `current_user` logo após `setAccount()` e verificar a permissão `manage own aculta links` do papel `links_filter_owner` |
+| `aculta_activity` | 3 testes PASS, 5 deprecações | Deprecações do Kernel não classificadas (não são metadados de docblock) |
+| `aculta_editor` | 7 testes PASS, 3 deprecações | Idem |
