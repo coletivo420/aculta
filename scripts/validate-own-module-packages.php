@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Static gate for the package label of our own modules (docs/portal/COMPONENTES-PROPRIOS.md).
  *
  * Checks that every custom module (type: module under web/modules/custom, at any depth) declares
