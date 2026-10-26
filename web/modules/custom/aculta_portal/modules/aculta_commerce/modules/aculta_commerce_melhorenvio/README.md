@@ -84,7 +84,7 @@ Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CO
 ## Testes
 
 - Unit: 74 testes / 181 assertions em `tests/src/Unit/`, executados e aprovados.
-- Kernel de wiring: 9 testes / 45 assertions aprovados em banco isolado, sem rede. Unit: 74 testes / 181 assertions aprovados. Functional e homologação visual permanecem pendentes. Ver a matriz em `docs/ROADMAP.md` e as dívidas em `docs/operations/DEBT-REGISTER.md`.
+- Kernel de wiring reexecutado na PR: 9 testes / 44 assertions em banco isolado, sem rede (88 depreciações de Core/contrib). Unit reexecutada na PR: 73 testes / 179 assertions. A execução do agente registrou 9/45 e 74/181; a diferença de contagem permanece em reconciliação. Functional e homologação visual permanecem pendentes. Ver a matriz em `docs/ROADMAP.md` e as dívidas em `docs/operations/DEBT-REGISTER.md`.
 
 ## Segurança e LGPD
 

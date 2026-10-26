@@ -737,3 +737,12 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - Revisão do commit `fd0c2199b` confirmou que `SocialAuthCallbackRouteSubscriber` implementa a regra documentada de retorno OAuth em `/integracoes/{network}/retorno`; a contagem anterior de 14 no gate estava desatualizada.
 - `validate-aculta-portal-drupal11.php` agora fixa 15 subscribers e verifica a presença do serviço, classe e caminho canônico. Resultado reexecutado com Composer autoload disponível: **PASS (1.164 checks)**; índice derivado: **PASS (41 componentes)**; PHP lint e `git diff --check` PASS.
+
+
+## Reexecução final do adaptador Melhor Envio na PR #298 (2026-10-26)
+
+- Cherry-pick `e74396c00` corrigiu o harness com a cadeia real do Studio/Messenger e removeu classes do tema do controller. Commit publicado como `355c352f5`.
+- Kernel `MelhorEnvioWiringKernelTest` reexecutado nesta PR no MariaDB de testes: **9 testes / 44 assertions PASS**, sem rede externa; 88 depreciações de Core/contrib.
+- Unit reexecutada nesta PR: **73 testes / 179 assertions PASS**. O agente registrou 74/181 em sua execução; mantive ambas as evidências e deixei a diferença explicitamente pendente, sem escolher um resultado silenciosamente.
+- PHPCS nos dois arquivos de código alterados: **0 errors**, com 12 avisos de linha longa preexistentes; PHP lint e `git diff --check` PASS. A fronteira módulo–tema continua falhando apenas em `aculta_links`, responsabilidade do agente 2.
+- Nenhuma chamada externa, gravação ou operação de Runtime foi realizada nesta verificação.
