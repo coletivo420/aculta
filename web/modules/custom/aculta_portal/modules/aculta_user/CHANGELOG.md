@@ -1,3 +1,9 @@
+## 0.4.0-dev.84 — validar concorrência da claim SQL em MariaDB
+
+- O Kernel usa dois processos independentes; ambos confirmam que o slug está livre antes de liberar as inserções. A chave única MariaDB aceita uma claim e rejeita a concorrente.
+- O harness carrega explicitamente as classes da branch testada e o Core/MariaDB real, sem depender do código do checkout compartilhado. Resultado: 7 testes / 55 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint da fixture PASS.
+- Rollback em falha de save e instalação efêmera do update 10013 continuam pendentes. Runtime não foi alterado.
+
 ## 0.4.0-dev.83 — índice SQL de slugs públicos por UID
 
 - `aculta_user_nickname` é uma projeção derivada com UID como chave primária e slug canônico único. Profile permanece fonte de verdade; presave reivindica o slug dentro da transação de save, sincroniza Profiles de papel do mesmo UID e libera o slug anterior no rename. `#N` e `-N` convergem para a mesma chave.

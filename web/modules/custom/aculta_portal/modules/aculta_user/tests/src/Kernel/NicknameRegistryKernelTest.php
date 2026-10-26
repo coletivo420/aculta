@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_user\Kernel;
 
 use Drupal\aculta_user\Account\NicknameClaimConflictException;
 use Drupal\aculta_user\Account\NicknameRegistry;
+use Drupal\Core\Database\Database;
 use Drupal\Core\Database\IntegrityConstraintViolationException;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -41,6 +42,9 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
+    $loader->addPsr4('Drupal\\aculta_user\\', dirname(__DIR__, 3) . '/src', TRUE);
+    $loader->addPsr4('Drupal\\aculta_portal\\', dirname(__DIR__, 5) . '/src', TRUE);
     $this->installEntitySchema('user');
     $this->installEntitySchema('profile');
     $this->installSchema('user', ['users_data']);
@@ -96,6 +100,74 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
     $this->container->get('database')->insert('aculta_user_nickname')
       ->fields(['uid' => 11, 'slug' => 'slug-publico'])
       ->execute();
+  }
+
+  /**
+   * Two independent processes cannot commit the same slug for different UIDs.
+   */
+  public function testConcurrentClaimsCannotShareSlug(): void {
+    $database = $this->container->get('database');
+    if (!function_exists('proc_open') || $database->driver() !== 'mysql') {
+      self::markTestSkipped('The process race test requires proc_open and the MariaDB/MySQL driver.');
+    }
+    $processes = [];
+    for ($uid = 10; $uid <= 11; $uid++) {
+      $pipes = [];
+      $process = proc_open(
+        [PHP_BINARY, __DIR__ . '/fixtures/nickname-claim-writer.php'],
+        [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
+        $pipes,
+        NULL,
+        [],
+      );
+      if (!is_resource($process)) {
+        self::fail('Unable to start an isolated nickname claim writer.');
+      }
+      $payload = [
+        'autoload' => dirname(DRUPAL_ROOT) . '/vendor/autoload.php',
+        'core' => DRUPAL_ROOT,
+        'connection' => Database::getConnectionInfo('default')['default'],
+        'uid' => $uid,
+        'slug' => 'concorrente',
+      ];
+      fwrite($pipes[0], json_encode($payload, JSON_THROW_ON_ERROR) . "\n");
+      fflush($pipes[0]);
+      $processes[] = ['process' => $process, 'pipes' => $pipes];
+    }
+
+    foreach ($processes as $process) {
+      stream_set_timeout($process['pipes'][1], 10);
+      $ready = fgets($process['pipes'][1]);
+      if ($ready !== "READY\n") {
+        $error = stream_get_contents($process['pipes'][2]);
+        self::fail('Nickname claim writer failed before its barrier: ' . trim((string) $error));
+      }
+    }
+    $outcomes = [];
+    foreach ($processes as $process) {
+      fwrite($process['pipes'][0], "GO\n");
+      fflush($process['pipes'][0]);
+    }
+    foreach ($processes as $process) {
+      stream_set_timeout($process['pipes'][1], 10);
+      self::assertSame("CHECKED\n", fgets($process['pipes'][1]));
+    }
+    foreach ($processes as $process) {
+      fwrite($process['pipes'][0], "COMMIT\n");
+      fflush($process['pipes'][0]);
+    }
+    foreach ($processes as $process) {
+      stream_set_timeout($process['pipes'][1], 10);
+      $outcomes[] = trim((string) fgets($process['pipes'][1]));
+      fclose($process['pipes'][0]);
+      fclose($process['pipes'][1]);
+      fclose($process['pipes'][2]);
+      self::assertSame(0, proc_close($process['process']));
+    }
+    sort($outcomes);
+
+    self::assertSame(['CLAIMED', 'CONFLICT'], $outcomes);
+    self::assertContains($this->registry()->uidForSlug('concorrente'), [10, 11]);
   }
 
   /**

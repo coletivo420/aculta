@@ -645,3 +645,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - `aculta_user` dev.83 adiciona tabela owner-managed `uid PRIMARY KEY, slug UNIQUE`, hook Profile transacional, sincronização de Profiles por UID, liberação imediata ao renomear, leitura de slug pela rota pública e update/rebuild 10013 validado antes de substituir o índice. Rebuild bloqueia conflitos e publica somente contagens agregadas. Runtime não foi alterado.
 - User Unit completo: 140 testes / 543 assertions PASS (uma depreciação PHPUnit); PHPCS Drupal/DrupalPractice, PHP lint, gates de pacote/status, fronteira módulo/tema, Drupal 11+, aliases, slugs, endereços e dependências Config Sync PASS.
 - Kernel `NicknameRegistryKernelTest`: 6 testes / 44 assertions PASS em SQLite `:memory:` e 6 / 44 PASS em MariaDB dedicado. Cobertos claims, rename/liberação imediata, chave SQL única, rebuild idempotente/conflitos e sync no mesmo UID. O fixture foi ajustado para habilitar `filter` após o primeiro erro de setup. Falta cenário de dois escritores simultâneos em processos separados e rollback transacional de falha no save. Update 10013 não foi executado em Runtime.
+
+
+## M-1 — corrida concorrente da claim de apelido (2026-10-26)
+
+- O Kernel `NicknameRegistryKernelTest` foi ajustado para carregar explicitamente os fontes do módulo no worktree isolado e evitar resolver classes de uma versão antiga do checkout compartilhado. Fixture de processo carrega o Core e o driver MariaDB instalados; não usa SQLite.
+- O teste abre dois processos, ambos leem que o slug está livre, e só então libera as inserções concorrentes. Resultado MariaDB dedicado: **7 testes / 55 assertions PASS**, incluindo exatamente uma claim vencedora e uma rejeitada pela constraint. PHPCS Drupal/DrupalPractice, PHP lint dos dois arquivos e `git diff --check` PASS. As 11 depreciações reportadas vêm de Core/contrib já carregados pelo Kernel.
+- `aculta_user` avançou `0.4.0-dev.83` → `0.4.0-dev.84`. O update 10013 não foi aplicado a Runtime; rollback de falha de save e instalação efêmera do update permanecem pendentes.
+- A primeira invocação antes do ajuste do harness falhou porque a branch carregava classes ausentes no checkout principal e o subprocesso procurava Core no caminho errado; não é contada como resultado de produto.
