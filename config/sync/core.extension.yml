@@ -11,6 +11,7 @@ module:
   aculta_gallery: 0
   aculta_game: 0
   aculta_id_cpf: 0
+  aculta_index: 0
   aculta_image: 0
   aculta_lms: 0
   aculta_lms_h5p: 0
