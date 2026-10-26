@@ -31,7 +31,8 @@
 - `DonationPortKernelTest` foi reproduzido inicialmente com 4 erros de setup/0 assertions: o teste instalava `aculta_donation` sem o Messenger exigido pelo contrato. Instalar o módulo Messenger inteiro expôs sua closure transitiva e não é necessário para este escopo focal.
 - O fixture agora injeta, no container de teste, as implementações reais `MessengerNoticePublisher` e `OrderTypeCheckoutFlows`; também resolve `DonationNoticeEventPublisher` e `DonationCheckoutProvider` reais. A configuração completa do módulo não é instalada porque instancia panes externos ao cenário e requer serviços de recorrência; a suite cobre discovery dos plugins/blocos, criação do pedido de valor inicial zero e negação de estorno.
 - Kernel com código da branch e MariaDB dedicado: 5 testes / 193 assertions PASS, com 88 depreciações upstream. PHPCS Drupal/DrupalPractice e PHP lint do teste PASS. Nenhum stub de produto, acesso Runtime, SMTP ou operação financeira externa.
-- `aculta_donation` avançou `0.1.0-dev.25` → `.26`; README, CHANGELOG, status e matriz atualizados. Continua Dev; Runtime/ sandbox financeiro, revisão integral e RC pendentes.
+- `aculta_donation` avançou `0.1.0-dev.25` → `.26`; README, CHANGELOG, status e matriz atualizados. Continua Dev; Runtime, sandbox financeiro, revisão integral e RC pendentes.
+- A suíte Unit completa do submódulo foi executada no root isolado com código da branch: 24 testes / 84 assertions PASS, sem depreciações. O Kernel 5/193 também foi reexecutado antes da atualização de versão e passou com 88 depreciações upstream.
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 

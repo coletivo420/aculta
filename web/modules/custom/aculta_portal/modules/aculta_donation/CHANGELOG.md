@@ -23,7 +23,7 @@
 
 - `DonationPortKernelTest` deixa de instalar toda a configuração de Doações, que traz panes de checkout fora do cenário e exige serviços de recorrência não carregados pelo fixture.
 - O harness registra as implementações reais `MessengerNoticePublisher` e `OrderTypeCheckoutFlows`, resolve o publisher de eventos de Doações e o provider de checkout, e mantém as verificações de plugins, criação do pedido e acesso de estorno.
-- MariaDB isolado: 5 testes / 193 assertions PASS; 88 depreciações Core/contrib/PHPUnit registradas. Sem stub de produto, Runtime, SMTP ou integração financeira externa.
+- Unit: 24 testes / 84 assertions PASS. MariaDB isolado: 5 testes / 193 assertions PASS; 88 depreciações Core/contrib/PHPUnit registradas. Sem stub de produto, Runtime, SMTP ou integração financeira externa.
 
 ## 0.1.0-dev.25 — publicar avisos financeiros no Messenger — 2026-10-24
 
