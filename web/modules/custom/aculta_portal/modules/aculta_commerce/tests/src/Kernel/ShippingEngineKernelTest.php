@@ -21,6 +21,10 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 /**
  * Validates the ACULTA shipping entity model and rate calculation.
  *
+ * The full dependency closure of aculta_commerce is enabled because the
+ * module is a Portal submodule and its services reference Portal, Messenger
+ * and Studio services at container compile time.
+ *
  * @group aculta_commerce
  */
 #[RunTestsInSeparateProcesses]
@@ -31,6 +35,109 @@ final class ShippingEngineKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'aculta_commerce',
+    'aculta_document_viewer',
+    'aculta_forum',
+    'aculta_gallery',
+    'aculta_image',
+    'aculta_mail_confirmer',
+    'aculta_mail_confirmer_user',
+    'aculta_mailer',
+    'aculta_messenger',
+    'aculta_pagamentos_mercadopago',
+    'aculta_pdf_viewer',
+    'aculta_portal',
+    'aculta_portal_cep',
+    'aculta_studio',
+    'aculta_user',
+    'address',
+    'block',
+    'ckeditor5',
+    'comment',
+    'commerce',
+    'commerce_cart',
+    'commerce_checkout',
+    'commerce_number_pattern',
+    'commerce_order',
+    'commerce_payment',
+    'commerce_price',
+    'commerce_product',
+    'commerce_store',
+    'content_moderation',
+    'csp',
+    'ctools',
+    'ctools_views',
+    'datetime',
+    'datetime_range',
+    'diff',
+    'domain',
+    'domain_alias',
+    'domain_config',
+    'domain_source',
+    'editor',
+    'embed',
+    'entity',
+    'entity_embed',
+    'entity_reference_revisions',
+    'entity_usage',
+    'field',
+    'file',
+    'filter',
+    'flag',
+    'flexible_permissions',
+    'group',
+    'history',
+    'image',
+    'inline_entity_form',
+    'key',
+    'language',
+    'link',
+    'lms',
+    'login_emailusername',
+    'media',
+    'media_duplicates',
+    'media_gallery',
+    'media_library',
+    'menu_link_content',
+    'menu_ui',
+    'message',
+    'message_notify',
+    'message_subscribe',
+    'metatag',
+    'migrate',
+    'node',
+    'options',
+    'path',
+    'path_alias',
+    'pathauto',
+    'photoswipe',
+    'physical',
+    'private_message',
+    'profile',
+    'reporting',
+    'schema_article',
+    'schema_event',
+    'schema_image_object',
+    'schema_metatag',
+    'schema_organization',
+    'schema_product',
+    'schema_web_page',
+    'schema_web_site',
+    'search_api',
+    'search_api_db',
+    'site_alert',
+    'social_api',
+    'social_auth',
+    'state_machine',
+    'system',
+    'taxonomy',
+    'text',
+    'token',
+    'user',
+    'views',
+    'views_bulk_operations',
+    'vvj_core',
+    'vvjs',
+    'workflows',
   ];
 
   /**
@@ -57,8 +164,55 @@ final class ShippingEngineKernelTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
-    $this->markTestSkipped('O harness de Kernel do projeto não compila os serviços de aculta_commerce sem instalar a cadeia completa de 212 módulos do site (mesma limitação registrada para DonationPortKernelTest). A instalação limpa e o cálculo de tarifas serão comprovados no banco descartável da fase COM-SHIP-E.');
     parent::setUp();
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('commerce_store');
+    $this->installEntitySchema('commerce_order');
+    $this->installEntitySchema('profile');
+    $this->installEntitySchema('aculta_shipment');
+    $this->installEntitySchema('aculta_shipping_method');
+    $this->installConfig(['commerce_store', 'commerce_order', 'profile', 'aculta_commerce']);
+
+    $this->shipmentManager = $this->container->get('aculta_commerce.shipment_manager');
+
+    $this->store = Store::create([
+      'type' => 'online',
+      'name' => 'Loja de teste',
+      'mail' => 'loja@example.com',
+      'address' => [
+        'country_code' => 'BR',
+        'administrative_area' => 'GO',
+        'locality' => 'Goiânia',
+        'postal_code' => '74000000',
+        'address_line1' => 'Rua da Loja, 1',
+      ],
+      'default_currency' => 'BRL',
+      'billing_countries' => ['BR'],
+    ]);
+    $this->store->save();
+
+    $this->order = Order::create([
+      'type' => 'default',
+      'store_id' => $this->store->id(),
+      'uid' => 0,
+      'currency_code' => 'BRL',
+      'email' => 'cliente@example.com',
+    ]);
+    $this->order->save();
+
+    $this->profile = Profile::create([
+      'type' => 'customer',
+      'uid' => 0,
+      'address' => [
+        'country_code' => 'BR',
+        'administrative_area' => 'SP',
+        'locality' => 'São Paulo',
+        'dependent_locality' => 'Centro',
+        'postal_code' => '01001000',
+        'address_line1' => 'Rua A, 1',
+      ],
+    ]);
+    $this->profile->save();
   }
 
   /**
@@ -107,32 +261,21 @@ final class ShippingEngineKernelTest extends KernelTestBase {
   }
 
   /**
-   * The entity types and their storage are installed.
+   * Covers entity installation, plugin discovery and rate calculation.
    */
-  public function testEntityTypesInstalled(): void {
+  public function testShippingEngine(): void {
     $entity_type_manager = $this->container->get('entity_type.manager');
     $this->assertTrue($entity_type_manager->hasDefinition('aculta_shipment'));
     $this->assertTrue($entity_type_manager->hasDefinition('aculta_shipping_method'));
     $this->assertTrue($entity_type_manager->hasDefinition('aculta_shipment_type'));
     $this->assertSame('default', $entity_type_manager->getStorage('aculta_shipment_type')->load('default')->id());
-  }
 
-  /**
-   * The plugin manager discovers the ACULTA flat rate plugin.
-   */
-  public function testShippingMethodPluginDiscovery(): void {
     $definitions = $this->container->get('plugin.manager.aculta_shipping_method')->getDefinitions();
     $this->assertArrayHasKey('aculta_flat_rate', $definitions);
     $this->assertArrayHasKey('aculta_flat_rate_per_item', $definitions);
-  }
 
-  /**
-   * A shipment with items gets its weight and a trusted rate.
-   */
-  public function testRateCalculationAndApplication(): void {
     $this->createMethod($this->store->id());
     $shipment = $this->createShipment();
-
     $this->assertSame('2', $shipment->getTotalQuantity());
     $this->assertSame('0.5', $shipment->getWeight()->getNumber());
     $this->assertSame(WeightUnit::KILOGRAM, $shipment->getWeight()->getUnit());
@@ -154,6 +297,7 @@ final class ShippingEngineKernelTest extends KernelTestBase {
    */
   public function testMethodFromAnotherStoreIsNotEligible(): void {
     $other_store = Store::create([
+      'type' => 'online',
       'name' => 'Outra loja',
       'mail' => 'outra@example.com',
       'address' => [

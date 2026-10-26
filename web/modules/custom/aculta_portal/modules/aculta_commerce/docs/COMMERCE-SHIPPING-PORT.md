@@ -123,6 +123,7 @@ testes; o `site:install` recria suas tabelas. Nenhum banco de runtime foi usado.
 
 | Verificação | Resultado |
 | --- | --- |
+| Kernel `ShippingEngineKernelTest` | PASS; 4 testes / 82 asserções com o fechamento de 104 módulos e schema estrito |
 | Instalação `standard` + `aculta_commerce` | PASS; entidades, tipos e plugin manager disponíveis |
 | Config/install do tipo de remessa `default` | PASS |
 | Trait `aculta_purchasable_entity_shippable` | PASS; campo `weight` criado e usado |
@@ -147,4 +148,4 @@ tabelas com prefixo) após os testes.
 - `docs/portal/CHECKOUT-BILLING.md`
 - `docs/decisions/ADR-013-portal-multi-cart-checkout.md`
 
-**Estado de implantação:** motor próprio implementado na branch, com entidades, plugins, empacotamento, cálculo, seleção revalidada, processors de pedido, pane de checkout e leitura de remessas no Green Stash; Unit e instalação limpa em banco descartável validados, incluindo o rehearsal de desinstalação do contrib. **Pendente para a PR #298:** conciliar a branch (90 commits atrás do servidor de testes), adaptar o plugin atual do Melhor Envio ao contrato ACULTA, remover `drupal/commerce_shipping` do Composer, aplicar o Config Sync e a migração de campo no Runtime com snapshot, e homologar o checkout físico/não enviável com Firefox ESR. Ver a matriz em [`SHIPPING-PORT-MATRIX.md`](SHIPPING-PORT-MATRIX.md).
+**Estado de implantação:** motor próprio implementado na branch, com entidades, plugins, empacotamento, cálculo, seleção revalidada, processors de pedido, pane de checkout e leitura de remessas no Green Stash; Unit (49/230) e Kernel (4/82, fechamento de 104 módulos) passam, e a instalação limpa em banco descartável foi validada, incluindo o rehearsal de desinstalação do contrib. **Pendente para a PR #298:** adaptar o plugin atual do Melhor Envio ao contrato ACULTA, remover `drupal/commerce_shipping` do Composer, aplicar o Config Sync e a migração de campo no Runtime com snapshot, e homologar o checkout físico/não enviável com Firefox ESR. Ver a matriz em [`SHIPPING-PORT-MATRIX.md`](SHIPPING-PORT-MATRIX.md).
