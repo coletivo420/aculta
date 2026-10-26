@@ -260,3 +260,13 @@ necessário), mais os serviços que o `aculta_portal` usa sem declarar em `depen
 
 **Ressalva:** os testes de sitemap que geram URLs de conteúdo continuam sem cobertura, porque exigem nós e domínios
 cadastrados.
+
+## Auditorias restantes (frentes 5 e 8) e mobile-first de links
+
+| Item | Verificação | Resultado |
+|---|---|---|
+| Frente 8, segurança de HTML | Formatos exportados (`config/sync/filter.format.*.yml`): nenhum `allowed_html` libera `script`, `iframe`, `object`, `embed`, `style` ou `on*`. Nenhum papel comum recebe `full_html` | Verificado. Teste de política: 16 PASS (`ce0a6c310`) |
+| Frente 8, achado | `usuario_aculta` libera `img src` para usuários com e-mail confirmado. O Drupal recusa `data:` em `src` por padrão | Aceito. Registrado |
+| Frente 5, contraste | `QrCodePreset` recusa combinação abaixo de 4,5:1 (razão WCAG para texto normal) | Verificado, com teste em `QrCodePresetTest` |
+| Frente 6, mobile-first | Templates de links e CSS responsivo | **Não verificado visualmente**: exige site em execução |
+| Frente 5, revisão visual de prévia e lote | Idem | **Não verificado visualmente**: exige site em execução |
