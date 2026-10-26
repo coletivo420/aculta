@@ -1,8 +1,8 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit funcional verificado:** `9f25493ed`; commits documentais posteriores foram publicados até `6d35b2619`, com branch local/remota sincronizadas no último checkpoint.
-**Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 85 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
+**Último commit estável e publicado:** `369c773c1` (`fix(cep): isolate cache entries by provider`); branch local e `origin/chore/aculta-m0-integridade` sincronizadas após fetch em 2026-10-26.
+**Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
 **Domain/purpose:** em 2026-10-26, `DomainPurposeManager::getCurrentPurpose()` resolveu os nove hosts MAIN, ACCOUNT, SUPPORT, MAGAZINE, WIKI, SHOP, COURSES, FORUM e LINKS ao purpose correspondente (9/9 PASS). As seis coleções Domain ativas têm nomes idênticos ao Sync; cinco também coincidem em conteúdo. O front da Conta foi corrigido no Sync de `/studio` para `/minha-conta`, conforme Runtime e contrato; o acesso HTTP direto ao path segue 404. Na coleção `domain.revista420_aculta_org`, o Runtime ainda diverge em `system.site.name` e em `metatag.metatag_defaults.front` (`tags.title`, `tags.og_title`); o Sync mantém o contrato editorial `Revista 420`. Nenhum valor ativo foi alterado. Entity Access por purpose não está homologado.
@@ -13,9 +13,9 @@
 2. Editor/CKEditor: 17 IDs e nove configs reconciliados; delta de módulos permanece só `aculta_lms_messenger`, shell que requer uninstall controlado. Importação isolada e Browser seguem pendentes.
 3. Wiki: leitura de `wiki420` confirmou os quatro grants de proposta ausentes dos papéis ativos `email_confirmed` e `content_editor`, apesar do Sync correto; Entity Access falha fechado. Só aplicar depois de autorização de escrita, com rollback dos dois roles.
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
-5. Próxima unidade: revisar individualmente as 15 configurações Messenger presentes no Sync mas divergentes do Runtime e decidir quais são drift, customização operacional ou defaults obsoletos; não exportar globalmente nem alterar anchor/preferências sem classificação.
-6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente 2 concluiu a tarefa focal e seus commits foram integrados; não há alteração pendente nos oito diretórios nesta retomada.
-7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último commit estável: `9f25493ed` (`fix(messenger): sync terminal delivery states`).
+5. Próxima unidade: revisar individualmente as 9 configurações Messenger presentes no Sync mas divergentes do Runtime e decidir quais são drift, customização operacional ou defaults obsoletos; não exportar globalmente nem alterar anchor/preferências sem classificação.
+6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente das oito frentes concluiu seu trabalho; comparação por caminhos confirmou que todos os incrementos já estão na PR sob SHAs equivalentes. Não fazer cherry-pick duplicado; nenhum desses diretórios foi alterado neste turno.
+7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último commit estável: `369c773c1` (`fix(cep): isolate cache entries by provider`).
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
