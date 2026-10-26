@@ -4,6 +4,13 @@ Esta pasta guarda os scripts de teste visual do projeto — navegador, captura d
 tela e medição de renderização — para que outras sessões reaproveitem o que já
 existe em vez de reescrever a descoberta de seletores e o fluxo.
 
+## Ambiente de execução
+
+- Os testes visuais X11 rodam com `DISPLAY=:0` contra o servidor de testes `aculta.toca.net.br`, cujo docroot
+  `/home/aculta/public_html` é o checkout `/home/piradopirata/projetos/aculta`.
+- O código testado é o do commit que está nesse checkout. Confira antes com `git rev-parse --short HEAD` no checkout.
+- Trocar o commit desse checkout exige autorização do responsável, backup de alterações não commitadas e `drush cr`.
+
 ## Regra
 
 Todo script de teste visual que um agente criar deve ser salvo **no

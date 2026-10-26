@@ -19,3 +19,12 @@ ausência de rolagem horizontal em 1280, 390 e 320 px.
   diálogo, sem enviar formulário.
 - **Não cobre:** revelar (o olho mostra o valor real do servidor de testes), gravar e apagar de fato. Essas ações
   pedem credenciais sintéticas, em rodada própria.
+
+## Histórico de execução
+
+- 2026-10-26, checkout do servidor de testes em `c1e210934`: `painel-visual.py` 16/16 PASS (1280, 390 e 320 px);
+  `popups-visual.py` 7/7 PASS. Conta `qa_segredos` (uid 205).
+- Correção do seletor da tabela: o módulo marca o contêiner com `data-portal-ui="secrets-table-scroll"`, e não com a
+  classe. O script procurava a classe e acusava falso "não encontrado" (`excesso=None`). O seletor agora usa o atributo,
+  como o CSS e o teste Unit `SecretsTabsTest` já fazem.
+

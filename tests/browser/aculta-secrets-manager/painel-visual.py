@@ -92,7 +92,7 @@ def main():
             set_width(d, width)
             overflow = d.js("return document.documentElement.scrollWidth - window.innerWidth")
             check(f"sem rolagem horizontal da página em {width}px", overflow <= 0, f"excesso={overflow}")
-            wrap = d.js("""const w = document.querySelector('#credenciais-test .secrets-table-scroll');
+            wrap = d.js("""const w = document.querySelector('#credenciais-test [data-portal-ui~="secrets-table-scroll"]');
               return w ? Math.round(w.getBoundingClientRect().right) - window.innerWidth : null;""")
             check(f"tabela dentro da largura da janela em {width}px", wrap is not None and wrap <= 1, f"excesso={wrap}")
             # Oculta só para a captura o off-canvas do menu administrativo (Claro), que cobre o painel em

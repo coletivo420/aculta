@@ -7,6 +7,12 @@ Drupal 11.3+, PHP conforme `docs/architecture/environments.md`; Drupal root `web
 ## Regras sempre ativas
 - Atue apenas no escopo e na branch/PR autorizados; preserve trabalho paralelo. Sem nova PR, merge, deploy ou mudanças de produção sem autorização.
 - Antes de operar no Runtime, identifique host, diretório, branch, URI e banco com Drush; consulte `docs/architecture/environments.md`. Inspecione impacto/reversão antes de operações persistentes; nunca execute ações destrutivas sem autorização.
+- **Ambiente local do servidor de testes:** quando `hostname` for `toca` e `drush status` confirmar `aculta_runtime`, a sessão já está no servidor de testes. Use o checkout local e o Drush local (URI `http://default` é esperado). Gates somente leitura (`drush scr` de `validate-aculta420-foundation.php`, `validate-aculta420-shell-contract.php` etc.) são permitidos contra `aculta_runtime`. Não é permitido `updatedb`, `config:import` nem escrita persistente sem autorização. Não ler `aculta_runtime` como motivo para bloquear o trabalho: bloqueie só operações de escrita.
+- Testes Kernel usam sempre o banco dedicado `SIMPLETEST_DB` (`aculta_simpletest`), nunca `aculta_runtime`.
+- Worktrees ficam em `/home/piradopirata/worktrees/` (ext4). Não usar `/mnt/disco1` para worktree ou dependências: é NTFS (`ntfs3`) e causa erros de permissão e de cópia.
+- **Servidor de testes e docroot:** o docroot `/home/aculta/public_html` é o checkout `/home/piradopirata/projetos/aculta` (o `web/` dele). Os testes visuais X11 (`DISPLAY=:0`) rodam contra esse checkout. Ele deve estar no commit da PR sob teste (`git -C /home/piradopirata/projetos/aculta rev-parse --short HEAD`). Antes de trocar o commit desse checkout, guarde alterações não commitadas (patch em pasta de backup e `git stash`) e crie uma branch de backup do HEAD anterior. Não trocar sem autorização do responsável. Após trocar, rode `drush cr` (o Twig e o CSS compilados só mudam após rebuild de cache).
+- **Worktrees de integração** (ex.: `/home/piradopirata/worktrees/integracao-fronteira`) servem para desenvolvimento e revisão. Não são o docroot de teste visual.
+- **X11 disponível:** `DISPLAY=:0` com Firefox ESR visível e geckodriver, conforme a seção de testes de navegador abaixo. Use-o para testes visuais no servidor de testes; não use Chromium headless.
 - Não exponha segredos ou dados pessoais. Respeite acesso, cacheability, DI, APIs Drupal 11+ e código instalado.
 - Faça commits focados; execute gates pertinentes e relate somente testes efetivamente realizados. Respeite versionamento/status dos componentes.
 - Integração externa (Melhor Envio, Mercado Pago, Google e futuras): abra a plataforma em popup (`aculta_portal/integration-popup`, atributo `data-aculta-popup`) e responda o retorno com `Drupal\aculta_portal\Integration\PopupReturnPage`, que fecha o popup e leva a janela de origem ao destino. O resultado vai para as mensagens do Drupal (`messenger`), exibidas pelo tema no destino. Não devolva texto puro nem tela própria. Rotas de autorização e retorno levam `no_cache`. Webhook de serviço responde só com o código HTTP. Detalhes: `docs/architecture/integracoes-externas.md`.
@@ -50,6 +56,13 @@ Modelo fixo **por sessão** escolhido no CLI, não neste arquivo. Busque trechos
 - Para saídas extensas, use `python3 scripts/agent-output.py --lines 60 -- COMANDO` (consulte `docs/operations/AGENT-OUTPUT.md`); preserve e verifique o código de saída. Logs locais podem conter dados sensíveis.
 - Instruções locais em `web/modules/custom/aculta_portal/AGENTS.md` e submódulos prevalecem no próprio escopo; não carregue regras de componentes alheios.
 - Exclua `vendor/`, `web/core/`, `web/modules/contrib/`, `node_modules/`, caches e artefatos gerados das buscas **por padrão**, mas inclua o código instalado de Core/contrib quando necessário para verificar APIs e compatibilidade.
+
+## Worktrees de agentes
+- Todo worktree de agente é criado em **`/home/piradopirata/worktrees/<frente>-<sufixo>`** (ext4). Não use `/mnt/disco1` nem `/tmp`.
+- Motivo: `/mnt/disco1` é NTFS (`ntfs3`, `fmask=0022`) — `cp -a` não preserva permissões nem bit de execução e emite "Operação sem suporte" em todos os arquivos; `/tmp` é tmpfs (≈3,9 GB, quase sempre cheio). Permissão errada já invalidou execuções antes.
+- Copie `vendor/`, `web/core/` e `web/modules/contrib/` como **cópias físicas** (`cp -a`), nunca symlink para outro checkout. Confira `du -sh` e dono `piradopirata` antes de rodar scripts; `php vendor/bin/drush` dispensa o bit de execução.
+- Um worktree por frente/branch. Consulte `git worktree list` antes de criar; não reutilize, limpe nem remova o worktree ou a base de teste de outro agente.
+- Ao terminar, remova apenas o próprio worktree (`git worktree remove <path>`) e publique a branch remota antes de descartá-lo.
 
 ## DeepSeek: bloqueio de pico
 - Se o provedor da sessão for DeepSeek, **não execute chamadas diretas à API**: use o proxy local de `scripts/deepseek-offpeak.py` conforme `docs/operations/DEEPSEEK-OFFPEAK.md`. No pico, o trabalho segue com o Claude padrão (lançador `claude-deepseek`, que escolhe o provedor pelo horário); não chame a API DeepSeek diretamente e não contorne o HTTP 429. A instrução não substitui o bloqueio de rede nem a configuração do endpoint no CLI.

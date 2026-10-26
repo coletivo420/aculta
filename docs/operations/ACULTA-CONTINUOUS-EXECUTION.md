@@ -797,3 +797,16 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Divergência anterior, fora deste escopo: `validate-project-status-index.php` já falha na base `c1e210934` (`aculta_links` 0.4.0-dev.32 vs manifest 0.4.0-dev.33; `aculta_secrets_manager` 0.1.0-dev.1 vs 0.1.0-dev.3; `aculta420` 0.7.0-dev.3 vs 0.7.0-dev.4). Correção pertence à frente 2 e não foi feita aqui.
 - Provisionamento: `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` em teste e produção; `MELHORENVIO_PRODUCTION_CLIENT_ID` e `MELHORENVIO_PRODUCTION_CLIENT_SECRET` em produção. Trocar a chave invalida os tokens guardados.
 - Pendente: rotação de chave e migração automatizada; checkout e browser no servidor de testes.
+## Troca do checkout do servidor de testes para a PR integrada — 2026-10-26
+
+- Docroot de teste: `/home/aculta/public_html` é o checkout `/home/piradopirata/projetos/aculta` (o `web/` dele). Os testes X11 (`DISPLAY=:0`) rodam contra esse checkout.
+- Autorização: mensagem do responsável do projeto na sessão de 2026-10-26, citada literalmente: "Autorizo 3, pode trocar, documente a troca na documentação e istruções de agentes". O Agente Web não autorizou a troca. O checkout saiu de `8499180a6` (detached) e foi para `c1e210934` (PR integrada, detached).
+- Preservação antes da troca: branch `backup/checkout-antes-pr-8499180a6` no HEAD anterior; alteração não commitada de `docs/operations/ACULTA-MODULES-CLOSEOUT.md` guardada em `git stash` e em patch em `/home/piradopirata/worktrees/backup-checkout-20261026-1730/`; `package.json` e `package-lock.json` (não rastreados) copiados para a mesma pasta. Os não rastreados `node_modules/` e `web/modules/custom/aculta_portal/src/Plugin/Field/` foram mantidos no lugar.
+- Após a troca: `drush cr` (rebuild de cache). Drush conecta em `aculta_runtime`; nenhuma atualização de banco ou configuração foi feita.
+- Ressalva: `vendor/`, `web/core/` e `web/modules/contrib/` continuam os do checkout anterior (lock diferente da PR, que remove `commerce_shipping`).
+- Testes visuais X11 (Firefox ESR, `DISPLAY=:0`):
+  - Micropágina de links: 2/2 PASS (1280 px e 390 px).
+  - Painel de segredos `/painel-administrativo/aculta/segredos`: `painel-visual.py` 16/16 PASS; `popups-visual.py` 7/7 PASS.
+- Dados de teste: a micropágina `pagina-teste-mobile` foi criada por Drush (com link e item marcados `TESTE VISUAL`) e removida ao final; nenhum resíduo.
+- Correção de teste: seletor da tabela de `painel-visual.py` passou a usar o atributo `data-portal-ui`, como o módulo já marca (antes acusava falso negativo).
+- Pendência: o teste do painel não cobre foco visível em todas as abas; manter em rodada própria se for exigido.

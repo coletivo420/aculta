@@ -49,8 +49,8 @@ function aculta_lms_resources_install(): void {
       'weight' => 21,
       'region' => 'content',
     ]);
-    $view_display->setHidden('field_lms_readings', TRUE);
-    $view_display->setHidden('field_lms_galleries', TRUE);
+    $view_display->removeComponent('field_lms_readings');
+    $view_display->removeComponent('field_lms_galleries');
     $view_display->save();
   }
 
@@ -83,7 +83,7 @@ function aculta_lms_resources_ensure_video_displays(): void {
 
   $view_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load('group.lms_course.default');
   if ($view_display instanceof EntityViewDisplayInterface) {
-    $view_display->setHidden('field_lms_videos', TRUE);
+    $view_display->removeComponent('field_lms_videos');
     $view_display->save();
   }
 }
@@ -122,4 +122,3 @@ function aculta_lms_resources_update_8001(): void {
 
   aculta_lms_resources_ensure_video_displays();
 }
-
