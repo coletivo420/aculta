@@ -301,3 +301,13 @@ cadastrados.
 - `/redes-sociais` responde 404 no servidor de teste: rota ainda não publicada.
 - Pendente: prévia e lote com administrador logado (precisa de sessão de teste) e layout das micropáginas
   `/pagina/{slug}` (precisa de um slug publicado).
+
+## Verificação do QR Code no servidor de teste e correção do 500
+
+- **Defeito real corrigido:** a coleção administrativa de códigos QR respondia 500 para o administrador logado. O link do título na listagem era um array de render sem `data`; a tabela o tratava como atributos e o `Url` virava valor de atributo. Correção em `QrCodeListBuilder` (`748a55549`), com Kernel de regressão.
+- **Verificação logada no Firefox X11** (`tests/browser/aculta-qrcode/verifica_qrcode_logado.py`): **5/5 PASS**. Coleção 200; prévia válida 200 em SVG; URL insegura 422; lote válido 200 em ZIP; lote inexistente 404.
+- **Verificação anônima no Firefox X11** (`verifica_qrcode.py`): **7/7 PASS**. Rotas administrativas do QR Code respondem 403 para anônimo.
+- **Ambiente:** o checkout servido (`public_html`) está em modo destacado no commit `748a55549` da branch. O estado original era `docs/aculta-forum-0.1.0-dev.1` em `2efc99ba0`, com as alterações rastreadas guardadas no stash `agent2-preserve-before-branch-switch`. Os três stashes anteriores não foram tocados.
+- **Dados de teste removidos** do banco servido após a verificação: usuário `qr_teste_agente`, papel `qr_teste_agente` e o código QR de teste.
+- **Regra de banco de teste:** os Kernels devem rodar no MariaDB `aculta_simpletest` (`secrets/simpletest-db.env`), não em SQLite. O Kernel de QR Code foi refeito no MariaDB: **17 PASS**.
+- **Pendente:** refazer no MariaDB os Kernels de links, activity, editor, sitemap e Melhor Envio, que até aqui rodaram em SQLite.
