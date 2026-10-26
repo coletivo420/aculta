@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Commerce\MercadoPago;
 
-use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionNotificationService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionNotificationService;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use MercadoPago\Exceptions\InvalidWebhookSignatureException;
 use MercadoPago\Webhook\WebhookSignatureValidator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/** Validates modern Mercado Pago webhook requests before Commerce receives them. */
+/**
+ * Validates modern Mercado Pago webhook requests before Commerce receives them. */
 final class WebhookGuard {
 
   public function __construct(
@@ -130,7 +131,9 @@ final class WebhookGuard {
     return NULL;
   }
 
-  /** Extracts all supported data.id representations for conflict detection. */
+  /**
+   * Extracts all supported data.id representations for conflict detection. */
+
   /**
    * Processa um tópico de assinatura já validado. 200 quando consumido; 500 para o Mercado Pago reenviar.
    */
@@ -142,12 +145,19 @@ final class WebhookGuard {
       $this->assinaturas->processar($tipo, $id);
     }
     catch (\Throwable $e) {
-      $this->log?->error('Falha ao processar notificação @tipo @id: @erro', ['@tipo' => $tipo, '@id' => $id, '@erro' => $e->getMessage()]);
+      $this->log?->error('Falha ao processar notificação @tipo @id: @erro', [
+        '@tipo' => $tipo,
+        '@id' => $id,
+        '@erro' => $e->getMessage(),
+      ]);
       return new Response('', Response::HTTP_INTERNAL_SERVER_ERROR);
     }
     return new Response('', Response::HTTP_OK);
   }
 
+  /**
+   * Performs the operation.
+   */
   private function extractDataIds(array $sources): array {
     $ids = [];
     foreach ($sources as $source) {
@@ -177,7 +187,8 @@ final class WebhookGuard {
     return $ids;
   }
 
-  /** Extracts webhook event types from query, form, and JSON representations. */
+  /**
+   * Extracts webhook event types from query, form, and JSON representations. */
   private function extractTypes(array $sources): array {
     $types = [];
     foreach ($sources as $source) {
@@ -192,7 +203,8 @@ final class WebhookGuard {
     return $types;
   }
 
-  /** Returns a trimmed scalar string without coercing arrays or objects. */
+  /**
+   * Returns a trimmed scalar string without coercing arrays or objects. */
   private function scalarString(mixed $value): ?string {
     if (!is_string($value) && !is_int($value)) {
       return NULL;

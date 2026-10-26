@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\MercadoPago;
+namespace Drupal\aculta_pagamentos_mercadopago\MercadoPago;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\commerce_order\Entity\OrderInterface;

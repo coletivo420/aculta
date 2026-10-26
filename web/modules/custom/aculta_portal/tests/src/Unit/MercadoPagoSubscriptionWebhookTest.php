@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_portal\Unit;
 
 use Drupal\aculta_portal\Commerce\MercadoPago\WebhookGuard;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionNotificationService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionNotificationService;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -34,17 +34,26 @@ final class MercadoPagoSubscriptionWebhookTest extends UnitTestCase {
     ], $corpo);
   }
 
+  /**
+   * Tests expected behavior.
+   */
   private function logger(): LoggerChannelInterface {
     return $this->createMock(LoggerChannelInterface::class);
   }
 
-  public function testAssinaturaValidaEncaminhaOTopicoEDevolve200(): void {
+  /**
+   * Tests expected behavior.
+   */
+  public function testValidSubscriptionWebhookDispatchesTopicAndReturns200(): void {
     $servico = $this->createMock(MercadoPagoSubscriptionNotificationService::class);
     $servico->expects($this->once())->method('processar')->with('subscription_preapproval', 'abc123');
     $resposta = (new WebhookGuard($servico, $this->logger()))->validateAndNormalize($this->requisicao('subscription_preapproval', 'abc123'), TRUE, self::SEGREDO);
     $this->assertSame(200, $resposta->getStatusCode());
   }
 
+  /**
+   * Tests expected behavior.
+   */
   public function testAssinaturaInvalidaEhRecusadaSemProcessar(): void {
     $servico = $this->createMock(MercadoPagoSubscriptionNotificationService::class);
     $servico->expects($this->never())->method('processar');
@@ -52,13 +61,19 @@ final class MercadoPagoSubscriptionWebhookTest extends UnitTestCase {
     $this->assertSame(401, $resposta->getStatusCode());
   }
 
-  public function testFalhaDoServicoDevolve500ParaORetry(): void {
+  /**
+   * Tests expected behavior.
+   */
+  public function testServiceFailureReturns500ForRetry(): void {
     $servico = $this->createMock(MercadoPagoSubscriptionNotificationService::class);
     $servico->method('processar')->willThrowException(new \RuntimeException('falha simulada'));
     $resposta = (new WebhookGuard($servico, $this->logger()))->validateAndNormalize($this->requisicao('subscription_authorized_payment', 'cob-9'), TRUE, self::SEGREDO);
     $this->assertSame(500, $resposta->getStatusCode());
   }
 
+  /**
+   * Tests expected behavior.
+   */
   public function testSemServicoTopicoDeAssinaturaContinuaSendoReconhecido(): void {
     $resposta = (new WebhookGuard())->validateAndNormalize($this->requisicao('subscription_preapproval_plan', 'plan-1'), TRUE, self::SEGREDO);
     $this->assertSame(200, $resposta->getStatusCode());

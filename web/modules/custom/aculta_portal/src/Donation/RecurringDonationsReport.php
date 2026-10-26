@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Donation;
 
-use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce_order\Entity\OrderInterface;
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -19,7 +19,8 @@ use Drupal\Core\Url;
  */
 final class RecurringDonationsReport {
 
-  /** Quantidade máxima de pedidos listados (os mais recentes). Acima disso, o resumo continua completo. */
+  /**
+   * Quantidade máxima de pedidos listados (os mais recentes). Acima disso, o resumo continua completo. */
   public const LIMITE_LISTA = 100;
 
   public function __construct(
@@ -103,6 +104,7 @@ final class RecurringDonationsReport {
    * Quantidade de cobranças aprovadas do pedido e a data (timestamp) da última.
    *
    * @return array{0: int, 1: int}
+   *   Count of approved charges and timestamp of the latest charge.
    */
   private function cobrancas(OrderInterface $pedido): array {
     $contagem = 0;

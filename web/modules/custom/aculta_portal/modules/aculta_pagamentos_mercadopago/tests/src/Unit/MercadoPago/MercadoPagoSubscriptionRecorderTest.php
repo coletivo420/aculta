@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_portal\Unit\MercadoPago;
+namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\MercadoPago;
 
-use Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
@@ -17,12 +17,11 @@ use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Gravação das notificações de assinatura de doação no pedido (aprovação, idempotência e cancelamento).
  */
-#[Group('aculta_portal')]
+#[Group('aculta_pagamentos_mercadopago')]
 final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
 
   /**
@@ -70,12 +69,18 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     return [$servico, $pedido, $pagamentos, $item];
   }
 
+  /**
+   * Tests expected behavior.
+   */
   private function gateway(): PaymentGatewayInterface {
     $gateway = $this->createMock(PaymentGatewayInterface::class);
     $gateway->method('id')->willReturn('mercado_pago');
     return $gateway;
   }
 
+  /**
+   * Tests expected behavior.
+   */
   private function cobrancaAprovada(): array {
     return [
       'id' => 'cob-1',
@@ -85,7 +90,10 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     ];
   }
 
-  public function testCobrancaAprovadaGravaPagamentoEMarcaPedidoComoAtivo(): void {
+  /**
+   * Tests expected behavior.
+   */
+  public function testApprovedChargeCreatesPaymentAndMarksOrderActive(): void {
     [$servico, $pedido, $pagamentos, $item] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], []);
     $pagamento = $this->createMock(PaymentInterface::class);
     $pagamento->expects($this->once())->method('save');
@@ -98,6 +106,9 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $servico->cobranca($this->gateway(), $this->cobrancaAprovada());
   }
 
+  /**
+   * Tests expected behavior.
+   */
   public function testPagamentoNaoAprovadoNaoGravaNada(): void {
     // `processed` sem pagamento aprovado (parcela que esgotou as tentativas) não é receita.
     [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], []);
@@ -112,6 +123,9 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     ]);
   }
 
+  /**
+   * Tests expected behavior.
+   */
   public function testMesmoPagamentoNotificadoDuasVezesGravaUmaVez(): void {
     [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'completed', [], [$this->createMock(PaymentInterface::class)]);
     $pagamentos->expects($this->never())->method('create');
@@ -121,7 +135,10 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $servico->cobranca($this->gateway(), $this->cobrancaAprovada());
   }
 
-  public function testCancelamentoDaAssinaturaCancelaOPedidoQuandoOWorkflowPermite(): void {
+  /**
+   * Tests expected behavior.
+   */
+  public function testCancellationUpdatesOrderWhenWorkflowAllows(): void {
     [$servico, $pedido, , $item] = $this->contexto('assinatura', 'completed', ['cancel'], []);
     $pedido->expects($this->once())->method('setData')->with(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, 'cancelled');
     $pedido->expects($this->once())->method('save');
@@ -130,13 +147,19 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $servico->assinatura((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'cancelled']);
   }
 
-  public function testPedidoDeOutroTipoNaoERegistrado(): void {
+  /**
+   * Tests expected behavior.
+   */
+  public function testDifferentOrderTypeIsIgnored(): void {
     [$servico, $pedido] = $this->contexto('doacao', 'draft', [], []);
     $pedido->expects($this->never())->method('save');
 
     $servico->assinatura((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
   }
 
+  /**
+   * Tests expected behavior.
+   */
   public function testSituacaoDaCobrancaMapeiaCadaStatusDocumentado(): void {
     $this->assertSame(MercadoPagoSubscriptionRecorder::COBRANCA_PAGA, MercadoPagoSubscriptionRecorder::situacaoCobranca('processed', TRUE));
     $this->assertSame(MercadoPagoSubscriptionRecorder::COBRANCA_NAO_COBRADA, MercadoPagoSubscriptionRecorder::situacaoCobranca('processed', FALSE));
@@ -146,7 +169,10 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $this->assertSame(MercadoPagoSubscriptionRecorder::COBRANCA_DESCONHECIDA, MercadoPagoSubscriptionRecorder::situacaoCobranca('qualquer', FALSE));
   }
 
-  public function testCobrancaRecusadaGravaASituacaoSemCriarPagamento(): void {
+  /**
+   * Tests expected behavior.
+   */
+  public function testRejectedChargeStoresStatusWithoutPayment(): void {
     [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], []);
     $pedido->expects($this->once())->method('setData')
       ->with(MercadoPagoSubscriptionRecorder::CHAVE_COBRANCA, MercadoPagoSubscriptionRecorder::COBRANCA_RECUSADA);
@@ -161,7 +187,10 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     ]);
   }
 
-  public function testCobrancaAprovadaGravaASituacaoComoPaga(): void {
+  /**
+   * Tests expected behavior.
+   */
+  public function testApprovedChargeStoresPaidStatus(): void {
     [$servico, $pedido, $pagamentos, $item] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], []);
     $pedido->expects($this->once())->method('setData')
       ->with(MercadoPagoSubscriptionRecorder::CHAVE_COBRANCA, MercadoPagoSubscriptionRecorder::COBRANCA_PAGA);

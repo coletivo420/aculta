@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Support\Form;
 
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
@@ -38,7 +38,7 @@ final class SubscriptionActionForm extends ConfirmFormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_portal.mercado_pago.subscription_recorder'),
+      $container->get('aculta_pagamentos_mercadopago.subscription_recorder'),
       $container->get('entity_type.manager'),
       $container->get('current_user'),
     );

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_portal\Unit\MercadoPago;
+namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\MercadoPago;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoPaymentService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoPaymentService;
 use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * Atualização e cancelamento de pagamento, com o cliente do SDK substituído por um duplo.
  */
-#[Group('aculta_portal')]
+#[Group('aculta_pagamentos_mercadopago')]
 final class MercadoPagoPaymentServiceTest extends UnitTestCase {
 
   /**

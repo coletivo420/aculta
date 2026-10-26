@@ -1,3 +1,9 @@
+## 0.1.0-dev.11 — serviços de pagamento e recorrência no módulo próprio
+
+- Serviços de pagamento, recorrência, gravação de assinaturas e notificações passam a ser declarados pelo módulo; IDs renomeados para `aculta_pagamentos_mercadopago.*`, sem alias.
+- Canal de log passa a `aculta_pagamentos_mercadopago`. Os valores persistidos e regras da integração permanecem iguais.
+- Testes do checkpoint executados; resultado final será registrado após validação.
+
 ## 0.1.0-dev.10 — extração das regras puras e fábrica do SDK
 
 - Move `MercadoPagoApiException`, `RecurrenceRequestBuilder`, `MercadoPagoClientFactory` e `MercadoPagoPaymentPolicy` para o módulo Mercado Pago; seus três testes também passam a pertencer ao módulo.

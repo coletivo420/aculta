@@ -4,32 +4,40 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Support\Controller;
 
-use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Presents support records owned by Commerce to the current account. */
+/**
+ * Presents support records owned by Commerce to the current account. */
 final class SupportController extends ControllerBase {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
     private readonly AccountInterface $account,
-    private readonly \Drupal\aculta_portal\Domain\DomainPurposeManager $domainPurposeManager,
+    private readonly DomainPurposeManager $domainPurposeManager,
     private readonly MercadoPagoSubscriptionRecorder $assinaturas,
   ) {}
 
+  /**
+   * Performs the operation.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('aculta_portal.domain_purpose'),
-      $container->get('aculta_portal.mercado_pago.subscription_recorder'),
+      $container->get('aculta_pagamentos_mercadopago.subscription_recorder'),
     );
   }
 
+  /**
+   * Performs the operation.
+   */
   public function mySupport(): array {
     // Orders are owner-scoped by the authenticated account; uid 0 would match
     // every guest checkout, so anonymous never reaches the storage lookup

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_portal\Unit;
+namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionNotificationService;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionNotificationService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -26,7 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * Consulta de cobrança recorrente (GET /authorized_payments/{id}) com cliente HTTP substituído.
  */
-#[Group('aculta_portal')]
+#[Group('aculta_pagamentos_mercadopago')]
 final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase {
 
   /**
@@ -48,7 +48,7 @@ final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase 
    * @param array<int, array{request: \Psr\Http\Message\RequestInterface}> $historico
    *   Recebe as requisições feitas pelo serviço.
    *
-   * @return \Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionNotificationService
+   * @return \Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionNotificationService
    *   Serviço configurado com o cliente HTTP simulado.
    */
   private function servico(array $respostas, array &$historico): MercadoPagoSubscriptionNotificationService {

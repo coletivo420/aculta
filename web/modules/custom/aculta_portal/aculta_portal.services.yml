@@ -273,18 +273,12 @@ services:
       - { name: config.factory.override, priority: 100 }
       - { name: aculta_portal.implementation }
 
-  aculta_portal.mercado_pago.subscription_notifications:
-    class: Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionNotificationService
-    arguments: ['@entity_type.manager', '@aculta_portal.mercado_pago.client_factory', '@aculta_portal.mercado_pago.recurrence_service', '@http_client', '@aculta_portal.mercado_pago.logger', '@aculta_portal.mercado_pago.subscription_recorder']
   aculta_portal.recurring_donations_report:
     class: Drupal\aculta_portal\Donation\RecurringDonationsReport
-    arguments: ['@entity_type.manager', '@aculta_portal.mercado_pago.subscription_recorder', '@commerce_price.currency_formatter']
-  aculta_portal.mercado_pago.subscription_recorder:
-    class: Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder
-    arguments: ['@entity_type.manager', '@aculta_portal.mercado_pago.recurrence_service', '@aculta_portal.mercado_pago.logger', '@datetime.time']
+    arguments: ['@entity_type.manager', '@aculta_pagamentos_mercadopago.subscription_recorder', '@commerce_price.currency_formatter']
   aculta_portal.mercado_pago_webhook_guard:
     class: Drupal\aculta_portal\Commerce\MercadoPago\WebhookGuard
-    arguments: ['@aculta_portal.mercado_pago.subscription_notifications', '@aculta_portal.mercado_pago.logger']
+    arguments: ['@aculta_pagamentos_mercadopago.subscription_notifications', '@aculta_pagamentos_mercadopago.logger']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.mercado_pago_webhook_subscriber:
@@ -369,27 +363,11 @@ services:
   aculta_portal.sales_orders_table_builder:
     class: Drupal\aculta_portal\Sales\SalesOrdersTableBuilder
     arguments: ['@entity_type.manager', '@aculta_portal.sales_report_query', '@commerce_price.currency_formatter', '@date.formatter', '@current_user', '@string_translation']
-  aculta_portal.mercado_pago.logger:
-    class: Drupal\Core\Logger\LoggerChannelInterface
-    factory: ['@logger.factory', 'get']
-    arguments: ['aculta_portal']
-  aculta_portal.mercado_pago.client_factory:
-    class: Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory
-  aculta_portal.mercado_pago.recurrence_request_builder:
-    class: Drupal\aculta_pagamentos_mercadopago\MercadoPago\RecurrenceRequestBuilder
-  aculta_portal.mercado_pago.payment_policy:
-    class: Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy
   aculta_portal.mercado_pago.refund_eligibility_subscriber:
     class: Drupal\aculta_portal\MercadoPago\RefundEligibilitySubscriber
-    arguments: ['@config.factory', '@aculta_portal.mercado_pago.payment_policy', '@aculta_portal.checkout_settings']
+    arguments: ['@config.factory', '@aculta_pagamentos_mercadopago.payment_policy', '@aculta_portal.checkout_settings']
     tags:
       - { name: event_subscriber }
-  aculta_portal.mercado_pago.payment_service:
-    class: Drupal\aculta_portal\MercadoPago\MercadoPagoPaymentService
-    arguments: ['@aculta_portal.mercado_pago.client_factory', '@aculta_portal.mercado_pago.payment_policy', '@aculta_portal.mercado_pago.logger']
-  aculta_portal.mercado_pago.recurrence_service:
-    class: Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService
-    arguments: ['@aculta_portal.mercado_pago.client_factory', '@aculta_portal.mercado_pago.recurrence_request_builder', '@aculta_portal.mercado_pago.logger']
 
   aculta_portal.secret_provider_adapter:
     class: Drupal\aculta_portal\Secrets\SecretProviderAdapter

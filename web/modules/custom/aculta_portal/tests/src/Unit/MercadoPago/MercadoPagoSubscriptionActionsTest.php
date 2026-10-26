@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_portal\Unit\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Component\Datetime\TimeInterface;

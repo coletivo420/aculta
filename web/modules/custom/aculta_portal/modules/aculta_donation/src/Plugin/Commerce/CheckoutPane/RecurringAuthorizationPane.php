@@ -6,8 +6,8 @@ namespace Drupal\aculta_donation\Plugin\Commerce\CheckoutPane;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce\Response\NeedsRedirectException;
 use Drupal\commerce_checkout\Attribute\CommerceCheckoutPane;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowInterface;
@@ -67,9 +67,9 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
       $plugin_definition,
       $checkout_flow,
       $container->get('entity_type.manager'),
-      $container->get('aculta_portal.mercado_pago.recurrence_service'),
+      $container->get('aculta_pagamentos_mercadopago.recurrence_service'),
       $container->get('aculta_portal.domain_purpose'),
-      $container->get('aculta_portal.mercado_pago.logger'),
+      $container->get('aculta_pagamentos_mercadopago.logger'),
       $container->get('messenger'),
     );
   }

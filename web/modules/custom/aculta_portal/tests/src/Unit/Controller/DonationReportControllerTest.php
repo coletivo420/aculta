@@ -7,8 +7,8 @@ namespace Drupal\Tests\aculta_portal\Unit\Controller;
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\aculta_portal\Controller\DonationReportController;
 use Drupal\aculta_portal\Donation\RecurringDonationsReport;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\aculta_portal\Sales\SalesReportFilters;
 use Drupal\aculta_portal\Sales\SalesOrdersTableBuilder;
 use Drupal\aculta_portal\Sales\SalesReportQuery;
@@ -30,6 +30,9 @@ use Symfony\Component\HttpFoundation\Request;
 #[Group('aculta_portal')]
 final class DonationReportControllerTest extends UnitTestCase {
 
+  /**
+   * Tests expected behavior.
+   */
   private function controller(SalesReportQuery $consultas): DonationReportController {
     $config = $this->createMock(ImmutableConfig::class);
     $config->method('get')->with('timezone.default')->willReturn('America/Sao_Paulo');
@@ -66,7 +69,10 @@ final class DonationReportControllerTest extends UnitTestCase {
     return new DonationReportController($consultas, $configs, $formatador, $pedidos, $recorrentes, $traducao);
   }
 
-  public function testConsultaSoDoEscopoDeDoacaoEFormataAsLinhas(): void {
+  /**
+   * Tests expected behavior.
+   */
+  public function testDonationScopeFiltersAndFormatsRows(): void {
     $consultas = $this->createMock(SalesReportQuery::class);
     $consultas->expects($this->once())
       ->method('porPeriodo')
@@ -75,12 +81,19 @@ final class DonationReportControllerTest extends UnitTestCase {
         ['periodo' => '2026-10', 'pedidos' => 2, 'total' => '60.00', 'moeda' => 'BRL'],
       ]);
 
-    $render = $this->controller($consultas)->report(Request::create('/painel-administrativo/loja/doacoes', 'GET', ['de' => '2026-10-01', 'ate' => '2026-10-16']));
+    $render = $this->controller($consultas)->report(Request::create(
+      '/painel-administrativo/loja/doacoes',
+      'GET',
+      ['de' => '2026-10-01', 'ate' => '2026-10-16'],
+    ));
 
     $this->assertSame([['2026-10', 2, '60,00 BRL', 'BRL']], $render['resumo']['conteudo']['#rows']);
     $this->assertArrayHasKey('#empty', $render['resumo']['conteudo']);
   }
 
+  /**
+   * Tests expected behavior.
+   */
   public function testSemDoacoesMostraTabelaVazia(): void {
     $consultas = $this->createMock(SalesReportQuery::class);
     $consultas->method('porPeriodo')->willReturn([]);

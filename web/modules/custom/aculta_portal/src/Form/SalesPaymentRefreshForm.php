@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Form;
 
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoPaymentService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoPaymentService;
 use Drupal\aculta_portal\Sales\SalesPaymentAccess;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
@@ -32,7 +32,7 @@ final class SalesPaymentRefreshForm extends FormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_portal.mercado_pago.payment_service'),
+      $container->get('aculta_pagamentos_mercadopago.payment_service'),
       $container->get('current_user'),
       $container->get('entity_type.manager'),
     );

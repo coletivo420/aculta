@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_portal\Unit\MercadoPago;
+namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\RecurrenceRequestBuilder;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * Planos e assinaturas: payload enviado e status aceito, com o cliente do SDK substituído por um duplo.
  */
-#[Group('aculta_portal')]
+#[Group('aculta_pagamentos_mercadopago')]
 final class MercadoPagoRecurrenceServiceTest extends UnitTestCase {
 
   /**
