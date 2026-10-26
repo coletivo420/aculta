@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit estável e publicado:** `369c773c1` (`fix(cep): isolate cache entries by provider`); branch local e `origin/chore/aculta-m0-integridade` sincronizadas após fetch em 2026-10-26.
+**Último commit estável e publicado:** `f64b8a127` (`fix(commerce): enforce Green Stash create access results`); branch local e `origin/chore/aculta-m0-integridade` sincronizadas após fetch em 2026-10-26.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
@@ -15,7 +15,7 @@
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
 5. Próxima unidade: revisar individualmente as 9 configurações Messenger presentes no Sync mas divergentes do Runtime e decidir quais são drift, customização operacional ou defaults obsoletos; não exportar globalmente nem alterar anchor/preferências sem classificação.
 6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente das oito frentes concluiu seu trabalho; comparação por caminhos confirmou que todos os incrementos já estão na PR sob SHAs equivalentes. Não fazer cherry-pick duplicado; nenhum desses diretórios foi alterado neste turno.
-7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último commit estável: `369c773c1` (`fix(cep): isolate cache entries by provider`).
+7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último commit estável: `f64b8a127` (`fix(commerce): enforce Green Stash create access results`).
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
@@ -321,3 +321,17 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Revisão do contrato de fontes configuráveis mostrou que a chave de cache externa usava somente CEP. ViaCEP poderia preencher a chave que depois seria consultada ao selecionar BrasilAPI (ou vice-versa), ignorando a fonte selecionada.
 - A chave agora inclui o ID do provedor. Unit focal `CepLookupServiceTest`: 10/43 PASS; caso novo comprova lookup e cache da BrasilAPI sem chamar ViaCEP. PHP lint, PHPCS Drupal/DrupalPractice focal e `git diff --check` PASS.
 - `aculta_portal_cep` avançou `0.3.0-dev.10` → `.11`; atualização refletida no CHANGELOG, README/contrato de cache, status e índice gerado. Sem chamadas externas reais ou alteração no Runtime.
+
+
+## M-1 — evidência de unicidade do apelido (2026-10-26)
+
+- Leitura somente leitura no MAIN confirmou 14 valores atuais em `profile__field_nickname`, sem valor nulo/vazio nem colisões por `LOWER(TRIM(value))`; a coluna usa collation `utf8mb4_general_ci` e não possui índice único. Nenhum nome/UID foi listado.
+- A política atual exclui perfis do próprio UID nas verificações de colisão; o contrato permite manter o mesmo apelido em múltiplos bundles Profile da mesma pessoa. O Runtime consultado não tem hoje UID com múltiplas linhas de apelido, mas isso não define o contrato futuro.
+- Garantia por índice único do valor seria transacional, mas também proibiria duplicar o mesmo apelido entre bundles do mesmo usuário. Uma chave composta (UID + slug canônico) não cabe nos dados atuais do field table sem novo índice/storage. A implementação fica sem alteração até decisão sobre esse contrato; teste/fix de escrita concorrente será definido em seguida.
+
+
+## M-4 — corrigir AccessResult na criação Green Stash (2026-10-26)
+
+- Revisão de `GreenStashProductCreateForm::assertCreateAccess()` encontrou uso de objetos `AccessResultInterface` como booleanos nos checks de acesso à experiência e `commerce_product.createAccess()`. Objetos de resultado negado são truthy, então os checks não interrompiam a criação.
+- Ambos os resultados agora exigem `isAllowed()`. `GreenStashProductCreateAccessTest` prova que negação da experiência para antes do handler Commerce e negação de `createAccess()` para antes de resolver a loja. Suíte Unit Commerce completa: 31 testes / 192 assertions PASS; 11 depreciações PHPUnit. PHPCS Drupal/DrupalPractice e PHP lint nos dois arquivos PHP alterados PASS.
+- Commerce avançou `0.1.0-dev.8` → `.9`; CHANGELOG, README, status e matriz atualizados. Nenhuma chamada ao Runtime ou persistência externa.
