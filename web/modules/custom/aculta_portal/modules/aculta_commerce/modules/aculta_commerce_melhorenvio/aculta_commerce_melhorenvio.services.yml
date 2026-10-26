@@ -17,3 +17,23 @@ services:
   aculta_commerce_melhorenvio.shipment_address_binder:
     class: Drupal\aculta_commerce_melhorenvio\Address\ShipmentAddressBinder
     autowire: true
+
+  # Configurações do Melhor Envio: ambiente, URL de retorno, escopos e nomes das chaves do Drupal Key.
+  aculta_commerce_melhorenvio.config:
+    class: Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioConfig
+    autowire: true
+
+  # Armazenamento de tokens OAuth2 por ambiente (State API, sem exportação de configuração).
+  aculta_commerce_melhorenvio.token_store:
+    class: Drupal\aculta_commerce_melhorenvio\Http\StateMelhorEnvioTokenStore
+    arguments: ['@state']
+
+  # Cliente HTTP OAuth2 do Melhor Envio. Único ponto de chamada à API.
+  aculta_commerce_melhorenvio.client:
+    class: Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClient
+    arguments:
+      - '@http_client'
+      - '@aculta_commerce_melhorenvio.config'
+      - '@aculta_commerce_melhorenvio.token_store'
+      - '@key.repository'
+      - '@logger.factory'

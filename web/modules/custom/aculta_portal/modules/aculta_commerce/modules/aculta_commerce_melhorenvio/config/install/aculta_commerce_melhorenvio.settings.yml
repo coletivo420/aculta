@@ -8,3 +8,19 @@ origin:
   dependent_locality: ''
   locality: ''
   administrative_area: ''
+# Ambiente ativo: sandbox ou production. Valor inválido cai no sandbox.
+environment: sandbox
+# URL de retorno cadastrada no app do Melhor Envio. Vazia até o cadastro do app.
+redirect_uri: ''
+# Escopos OAuth2 separados por espaço. Vazio até a confirmação dos escopos oficiais (ME-PEND-01).
+scopes: ''
+# E-mail de contato exigido no User-Agent da API. Vazio bloqueia as chamadas.
+contact_email: ''
+# Apenas NOMES de chaves do Drupal Key. Os valores ficam no Key (banco criptografado em produção), nunca aqui.
+keys:
+  sandbox:
+    client_id: ''
+    client_secret: ''
+  production:
+    client_id: ''
+    client_secret: ''
