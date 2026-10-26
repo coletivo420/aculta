@@ -436,3 +436,10 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - Causa provável: duas tentativas de autorização na sessão. Os dois retornos com "acesso negado" vêm do `state` obsoleto, não de falha no sandbox.
 - Ação: refazer a autorização uma única vez, pela mesma aba, e concluir o consentimento nela.
 - Melhoria opcional, não aplicada: reaproveitar um `state` pendente em vez de sobrescrevê-lo, para tolerar duas abas.
+
+## Escopos do sandbox: `user-read` não existe (causa do invalid_scope)
+
+- O log do retorno mostrou `error=invalid_scope` (09:16). O estado já era válido; o erro era o escopo pedido.
+- Testado no endpoint de autorização do sandbox (sem login): `user-read` é inválido (resposta não-JSON). Válidos: `shipping-calculate`, `cart-read`, `shipping-checkout`, `shipping-tracking`, `orders-read`, `users-read`.
+- Configuração no servidor de teste: `scopes` = `shipping-calculate users-read`.
+- Pendente: nova autorização para validar `/api/v2/me` (com `users-read`) e a cotação.
