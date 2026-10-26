@@ -249,9 +249,9 @@ final class LinkPagePublicController {
         '#type' => 'link',
         '#title' => $item->get('title')->value,
         '#url' => $url,
-        '#attributes' => $url->isExternal()
+        '#attributes' => ($url->isExternal()
           ? ['rel' => 'noopener noreferrer', 'target' => '_blank']
-          : [],
+          : []) + ['class' => ['aculta-links-page__link']],
       ];
     }
 
@@ -262,6 +262,7 @@ final class LinkPagePublicController {
     ];
 
     return [
+      '#attached' => ['library' => ['aculta_links/micropagina']],
       '#theme' => 'aculta_links_page',
       '#title' => $page->label(),
       '#description' => (string) $page->get('description')->value,
