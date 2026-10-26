@@ -1,3 +1,15 @@
+## 0.1.1-dev.398 — ocultar o estado técnico de amizade no e-mail
+
+Os displays de e-mail de amizade no Config Sync agora declaram o campo
+`field_aculta_friendship_event` como dependência e o mantêm oculto. A proteção
+coincide com o Runtime MAIN read-only e com `config/install`; antes, o Sync
+podia renderizar `requested`/`accepted` no assunto ou corpo do aviso, apesar do
+template genérico. Nenhum template ou mensagem Runtime foi alterado.
+
+Testes Unit de amizade e entrega: 35/644 PASS. Gate de dependências Config
+Extension, YAML dos dois displays, índice de status, pacote próprio e diff check
+PASS. PHPCS não aplicável (nenhum PHP foi alterado).
+
 ## 0.1.1-dev.397 — reconciliar estados persistentes de entrega no Config Sync
 
 O campo compartilhado `field_aculta_msg_delivery` agora exporta também os
