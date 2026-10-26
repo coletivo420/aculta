@@ -10,6 +10,7 @@ Confirmação de endereço de e-mail do ACULTA. Código incorporado do módulo c
 - Caminhos públicos do módulo: `/aculta-mail-confirmer/responder/{confirmação}/{hash}` (resposta) e
   `/aculta-mail-confirmer/reenviar/{confirmação}` (reenvio). No domínio de Conta, o Portal publica
   `/confirmar-email/...`.
+- O reenvio exige token CSRF e acesso `update` à confirmação. Pedidos privados de cadastro e troca de e-mail só podem ser acionados pelo titular ou por quem administra confirmações.
 - Configuração em `/painel-administrativo/aculta/confirmacao-de-email`.
 - Tokens `[aculta-mail-confirmer:confirmation-url]` e `[aculta-mail-confirmer:confirmation-mail]`.
 - Limpeza periódica (cron) dos pedidos mais antigos que `confirmation_lifetime`.

@@ -606,3 +606,9 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 ## M-1 — revalidar o Confirmador com transporte de teste (2026-10-26)
 
 - `AcultaMailConfirmerKernelTest` foi reexecutado no MariaDB dedicado: 5 testes / 38 assertions PASS. A suíte usa o mail collector do Core e confirma estados pendente/confirmado/cancelado/expirado, hash inválido, texto aprovado de e-mail e fila de reenvio sob cooldown; nenhuma mensagem foi entregue externamente.
+
+## M-1 — proteger a rota de reenvio de confirmação privada (2026-10-26)
+
+- A rota `/aculta-mail-confirmer/reenviar/{confirmation}` tinha apenas `_permission: access aculta mail confirmer`, sem invocar o handler de acesso da entidade. Isso permitia à permissão genérica acionar IDs que não pertencem à conta. A rota agora exige `_entity_access: confirmation.update` e continua exigindo `_csrf_token`; o handler de confirmações privadas limita ao proprietário ou administrador.
+- Kernel lê a definição YAML da rota, cria a Route/RouteMatch e executa o checker genérico de Entity Access com entidades reais: titular permitido e outra conta negada. Confirmador 6 testes/45 assertions e User Change 2/15 PASS no MariaDB dedicado; PHPCS Drupal/DrupalPractice, PHP lint, YAML, `validate-no-temporary-route-aliases.php`, status index (41), packages (41) e diff check PASS.
+- `aculta_mail_confirmer` avançou `0.1.0-dev.3` → `.4`; README, CHANGELOG, status, closeout e índice sincronizados. Nenhum SMTP externo ou Runtime foi usado.

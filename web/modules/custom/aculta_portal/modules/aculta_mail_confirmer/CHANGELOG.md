@@ -1,5 +1,10 @@
 # Changelog — ACULTA Mail Confirmer
 
+## 0.1.0-dev.4 — proteger a rota de reenvio pela autorização da entidade — 2026-10-26
+
+- A rota `/aculta-mail-confirmer/reenviar/{confirmation}` agora usa o access checker do Entity API para exigir `update` na confirmação, além do token CSRF. Confirmações privadas são restritas ao UID proprietário, conforme o handler existente; o endpoint deixou de depender somente da permissão genérica `access aculta mail confirmer`.
+- Kernel constrói o requisito da rota versionada e o executa pelo `EntityAccessCheck` do Drupal: titular permitido, outra conta negada. Suíte Confirmador: 6 testes / 45 assertions; User Change: 2 / 15 PASS. Sem SMTP externo ou escrita no Runtime.
+
 ## 0.1.0-dev.3 — alinhar documentação à política de acesso — 2026-10-26
 
 - Atualizados os contratos: conta sem confirmação permanece ativa e pode entrar; operações protegidas pelo Portal exigem marca de confirmação. Confirmação de cadastro marca o e-mail, mas não inicia sessão; a confirmação de troca de endereço pode iniciar sessão somente para visitante anônimo e usuário ativo.

@@ -25,7 +25,8 @@ entity.aculta_mail_confirmer.resend:
     _controller: '\Drupal\aculta_mail_confirmer\Controller\AcultaMailConfirmerController::resendConfirmation'
     _title: 'Resend confirmation email'
   requirements:
-    _permission: 'access aculta mail confirmer'
+    # Resolve the entity from the custom `confirmation` route parameter.
+    _entity_access: 'confirmation.update'
     _csrf_token: 'TRUE'
     confirmation: \d+
   options:
