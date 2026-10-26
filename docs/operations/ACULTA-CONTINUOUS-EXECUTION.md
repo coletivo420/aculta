@@ -1,8 +1,8 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit estável antes deste checkpoint:** `c173af894`; branch `origin/chore/aculta-m0-integridade` sincronizada no mesmo SHA.
-**Estado:** PARTIAL — PHPCS PR-wide, H5P e gate Domain administrativo têm evidências PASS; a classe Kernel Editor também passou com 8/127. M-0 continua bloqueada pela reconciliação segura das extensões/configuração do Editor, pelo drift ativo de metadados da Revista e pela aplicação operacional dos grants Wiki já versionados. M-1–M-5 seguem em execução; nenhum componente foi promovido nesta continuação.
+**Último commit estável:** `028b35231`; branch remota sincronizada nesse SHA antes da atualização desta matriz.
+**Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. Os commits delegados foram incorporados e os focais revisados; Portal Search API DB foi corrigido. M-0 continua bloqueada pela reconciliação segura do Editor, pelo drift ativo de metadados da Revista e pelos grants Wiki ausentes no Runtime; Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
 **Domain/purpose:** em 2026-10-26, `DomainPurposeManager::getCurrentPurpose()` resolveu os nove hosts MAIN, ACCOUNT, SUPPORT, MAGAZINE, WIKI, SHOP, COURSES, FORUM e LINKS ao purpose correspondente (9/9 PASS). As seis coleções Domain ativas têm nomes idênticos ao Sync; cinco também coincidem em conteúdo. O front da Conta foi corrigido no Sync de `/studio` para `/minha-conta`, conforme Runtime e contrato; o acesso HTTP direto ao path segue 404. Na coleção `domain.revista420_aculta_org`, o Runtime ainda diverge em `system.site.name` e em `metatag.metatag_defaults.front` (`tags.title`, `tags.og_title`); o Sync mantém o contrato editorial `Revista 420`. Nenhum valor ativo foi alterado. Entity Access por purpose não está homologado.
@@ -13,8 +13,9 @@
 2. Reconciliar as 17 extensões ativas do Editor/CKEditor e suas configurações (8 templates ativos e settings do Plugin Pack); o shell `aculta_lms_messenger` permanece intencionalmente fora de novas instalações até uninstall autorizado. Google Tag foi reconciliado com defaults sem coleta. Não importar configuração no Runtime.
 3. Mapear os grants Wiki ativos versus exportados e corrigir divergências somente em código/configuração versionados e testes isolados; não alterar permissões persistentes.
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
-5. Continuar incrementos centrais de Portal, User, CPF, CEP, Commerce, LMS, Messenger, Statistics e Index; incorporar trabalho dos oito componentes delegados somente por revisão e cherry-pick.
-6. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime.
+5. Corrigir o harness Functional de Statistics no teste de login sem enfraquecer a autorização; resolver a fronteira de serviço Portal/User do ledger de aceite sem dependência circular; continuar incrementos centrais de User, CPF, CEP, Commerce, LMS, Messenger e Index.
+6. Manter os resultados delegados nos oito componentes atualizados na matriz; desenvolvimento nesses diretórios segue com o agente 2 até coordenação.
+7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime.
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
