@@ -193,19 +193,29 @@ def c10_autores_origem(topicos):
 
 
 def c9_conjunto(topicos):
-    """Conjunto de importação: só tópicos baixados, nenhum comercial e exceções só de fórum excluído."""
-    conjunto = json.load(open(caminho("conjunto-importacao.json"), encoding="utf-8"))
-    comerciais = bm.comerciais_forte()
+    """Conjunto: tópicos baixados e comerciais/revisões apenas com seleção explícita."""
+    with open(caminho("conjunto-importacao.json"), encoding="utf-8") as fh:
+        conjunto = json.load(fh)
+    comerciais = bm.comerciais_marcados()
     fora_do_acervo = sum(1 for c in conjunto if c["url"] not in topicos)
-    # Comercial só entra por escolha explícita (seleção manual), nunca pela regra automática.
-    comerciais_dentro = sum(1 for c in conjunto
-                            if c["url"] in comerciais and bm.thread_id(c["url"]) not in bm.SELECAO_MANUAL)
+    # Anúncios e casos em revisão exigem escolha explícita, nunca inclusão automática.
+    comerciais_dentro = sum(
+        1 for c in conjunto
+        if bm.comercial_requer_selecao_manual(
+            comerciais.get(c["url"]), bm.thread_id(c["url"]) in bm.SELECAO_MANUAL
+        )
+    )
+    comerciais_revisar_dentro = sum(
+        1 for c in conjunto if comerciais.get(c["url"]) == "revisar"
+    )
     def forum_valor(valor):
         return valor if valor.startswith("thw:") else int(valor)
 
     excecao_sem_exclusao = sum(1 for c in conjunto
                                if c["motivo"] == "excecao_tematica" and not bm.excluido(forum_valor(c["forum"])))
-    return {"tópicos": len(conjunto), "fora_do_acervo": fora_do_acervo, "comerciais_dentro": comerciais_dentro,
+    return {"tópicos": len(conjunto), "fora_do_acervo": fora_do_acervo,
+            "comerciais_marcados_sem_selecao": comerciais_dentro,
+            "marcados_revisar_selecionados": comerciais_revisar_dentro,
             "excecao_sem_exclusao": excecao_sem_exclusao,
             "ok": fora_do_acervo == 0 and comerciais_dentro == 0 and excecao_sem_exclusao == 0}
 

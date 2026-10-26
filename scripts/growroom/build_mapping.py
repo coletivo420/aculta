@@ -201,12 +201,17 @@ def titulo_da_captura(local: str) -> str:
     return re.sub(r"\s+", " ", htmllib.unescape(m.group(1))).split(" - ")[0].strip() if m else ""
 
 
-def comerciais_forte() -> set:
-    """URLs marcadas como comerciais de anúncio (marcar_comercial.py). Saem da importação."""
+def comerciais_marcados() -> dict[str, str]:
+    """URLs marcadas pelo classificador e seu nível, sem expor títulos ou dados do acervo."""
     if not os.path.isfile(COMERCIAIS_ARQUIVO):
-        return set()
+        return {}
     with open(COMERCIAIS_ARQUIVO, encoding="utf-8") as fh:
-        return {r["url"] for r in map(json.loads, filter(str.strip, fh)) if r["nivel"] == "comercial_forte"}
+        return {r["url"]: r["nivel"] for r in map(json.loads, filter(str.strip, fh))}
+
+
+def comercial_requer_selecao_manual(nivel: str | None, selecionado: bool) -> bool:
+    """Bloqueia anúncios e casos em revisão até constarem na seleção aprovada."""
+    return nivel in {"comercial_forte", "revisar"} and not selecionado
 
 
 def excluido(forum) -> bool:
@@ -274,7 +279,7 @@ def main():
     autores_sem_origem = defaultdict(lambda: {"nomes": Counter(), "topicos": set()})
     sem_forum = 0
     omitidos_email = set()
-    comerciais = comerciais_forte()
+    comerciais = comerciais_marcados()
     comerciais_fora = 0
     conjunto = []
     for url, capturas in topicos.items():
@@ -287,8 +292,8 @@ def main():
         forum_de[url] = com_forum[-1][0]
         excecao = False
         selecionado = thread_id(url) in SELECAO_MANUAL
-        if url in comerciais and not selecionado:
-            # Escolha explícita do responsável prevalece sobre a marcação automática por título.
+        if comercial_requer_selecao_manual(comerciais.get(url), selecionado):
+            # Anúncios e casos em revisão só entram após seleção manual explícita.
             comerciais_fora += 1
             continue
         if excluido(forum_de[url]) and not selecionado:

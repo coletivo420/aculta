@@ -230,3 +230,12 @@ A política de seleção registrada acima continua sendo a fonte de escopo: fór
 - Decisões de seleção ainda pendentes: revisão dos 17 tópicos marcados como “revisar” e vida interna (616 tópicos excluídos por padrão). Três associações de URL de perfil permanecem ambíguas, mas não são necessárias para criar as autorias legadas; não mesclar IDs IPS4 distintos. Não ampliar a seleção ao criar o importador.
 
 F-D43–F-D45 constam em [DECISOES do Fórum](../../aculta_forum/docs/DECISOES.md). A preparação não autoriza importação em produção, escrita no Runtime compartilhado, nem alteração dos critérios ainda pendentes.
+
+### Correção da seleção e verificação integral — 2026-10-26
+
+O registro numérico acima foi supersedido após a auditoria identificar que `build_mapping.py` excluía automaticamente apenas `comercial_forte`; os marcadores `revisar` não exigiam decisão manual, apesar de a triagem documentar revisão humana. O gerador agora exige seleção manual explícita para ambos os níveis. O gate C9 valida a mesma regra e possui testes para casos bloqueados e selecionados. A seleção aprovada não foi ampliada.
+
+- Regeneração privada de `mapeamento/` e `conjunto-importacao.json`: 36.751 tópicos capturados; 36.078 com fórum identificado; 31.585 no conjunto após o filtro corrigido; 651 marcados comerciais/revisão fora do conjunto. As 17 marcações `revisar` não estão selecionadas. O conjunto contém 28.134 tópicos de fóruns incluídos e 1.946 exceções temáticas.
+- `verificar_importacao.py --rapido` e verificação completa passaram C1–C10. Na completa: 68.666 registros de captura, zero arquivo ausente ou SHA divergente; 2.151 grupos duplicados sem problema; 228 capturas truncadas verificadas sem problema; C9 sem marcadores não aprovados, conteúdo fora do acervo ou exceções indevidas; C10 validou 9.607 autorias sem ID duplicado/inválido/pendente, tópico ausente/fora da seleção ou rótulo de e-mail.
+- Testes sintéticos: `python3 -m unittest tests.scripts.test_growroom_origin_ids` — 13 testes PASS; `py_compile` e `git diff --check` PASS. Os arquivos do acervo e mapas permanecem em storage privado, sem corpus ou nomes adicionados ao Git. Runtime consultado segue sem autores legados importados; esta execução não gravou Drupal.
+- Próxima etapa segura: produzir exportação versionada a partir do conjunto aprovado e validar serialização/importação idempotente em banco efêmero. A importação no Runtime de testes ainda depende de prévia, destino isolado, backup restaurável, rollback e validação completa em banco efêmero; produção continua fora do escopo.

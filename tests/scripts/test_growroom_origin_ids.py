@@ -108,6 +108,59 @@ class LegacyAuthorOriginIdTest(unittest.TestCase):
             MAPPING.registros_autor_origem(source),
         )
 
+    def test_commercial_marks_require_manual_selection(self):
+        for level in ("comercial_forte", "revisar"):
+            with self.subTest(level=level):
+                self.assertTrue(MAPPING.comercial_requer_selecao_manual(level, False))
+                self.assertFalse(MAPPING.comercial_requer_selecao_manual(level, True))
+        self.assertFalse(MAPPING.comercial_requer_selecao_manual(None, False))
+
+    def test_c9_rejects_unselected_review_mark(self):
+        with tempfile.TemporaryDirectory() as directory:
+            previous_root = VERIFY.R
+            previous_marks = VERIFY.bm.COMERCIAIS_ARQUIVO
+            previous_selection = VERIFY.bm.SELECAO_MANUAL
+            try:
+                VERIFY.R = directory
+                VERIFY.bm.COMERCIAIS_ARQUIVO = str(Path(directory) / "commercial.jsonl")
+                VERIFY.bm.SELECAO_MANUAL = set()
+                (Path(directory) / "conjunto-importacao.json").write_text(
+                    json.dumps([{"url": "https://archive.test/topic/12-review", "forum": "8",
+                                 "motivo": "incluido"}]), encoding="utf-8")
+                Path(VERIFY.bm.COMERCIAIS_ARQUIVO).write_text(
+                    json.dumps({"url": "https://archive.test/topic/12-review", "nivel": "revisar"}) + "\n",
+                    encoding="utf-8")
+                result = VERIFY.c9_conjunto({"https://archive.test/topic/12-review": []})
+                self.assertFalse(result["ok"])
+                self.assertEqual(1, result["comerciais_marcados_sem_selecao"])
+            finally:
+                VERIFY.R = previous_root
+                VERIFY.bm.COMERCIAIS_ARQUIVO = previous_marks
+                VERIFY.bm.SELECAO_MANUAL = previous_selection
+
+    def test_c9_accepts_manually_selected_review_mark(self):
+        with tempfile.TemporaryDirectory() as directory:
+            previous_root = VERIFY.R
+            previous_marks = VERIFY.bm.COMERCIAIS_ARQUIVO
+            previous_selection = VERIFY.bm.SELECAO_MANUAL
+            try:
+                VERIFY.R = directory
+                VERIFY.bm.COMERCIAIS_ARQUIVO = str(Path(directory) / "commercial.jsonl")
+                VERIFY.bm.SELECAO_MANUAL = {12}
+                (Path(directory) / "conjunto-importacao.json").write_text(
+                    json.dumps([{"url": "https://archive.test/topic/12-review", "forum": "8",
+                                 "motivo": "incluido"}]), encoding="utf-8")
+                Path(VERIFY.bm.COMERCIAIS_ARQUIVO).write_text(
+                    json.dumps({"url": "https://archive.test/topic/12-review", "nivel": "revisar"}) + "\n",
+                    encoding="utf-8")
+                result = VERIFY.c9_conjunto({"https://archive.test/topic/12-review": []})
+                self.assertTrue(result["ok"])
+                self.assertEqual(0, result["comerciais_marcados_sem_selecao"])
+            finally:
+                VERIFY.R = previous_root
+                VERIFY.bm.COMERCIAIS_ARQUIVO = previous_marks
+                VERIFY.bm.SELECAO_MANUAL = previous_selection
+
 
 if __name__ == "__main__":
     unittest.main()
