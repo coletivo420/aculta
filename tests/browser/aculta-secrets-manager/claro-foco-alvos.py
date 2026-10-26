@@ -6,7 +6,7 @@ Login: link de uso único gerado pelo Drush no subprocesso; nunca impresso nem s
 Variáveis: SECRETS_UID (padrão 205, conta qa_segredos), SUITE_OUT (capturas e log).
 Limites: só lê a página e percorre o foco com Tab. Não clica em revelar, alterar nem apagar,
 e não grava nada. Mede o foco visível pelo estilo computado (outline ou box-shadow).
-Cor esperada do ícone de apagar: vermelho de erro do ACULTA (#b3261e). Se a cor computada for
+Cor aceita do ícone de apagar: vermelho de erro (#b3261e do ACULTA ou #dc2323 do Claro). Se a cor computada for
 outra, o script reporta a cor e a origem provável (variável CSS ausente no Claro).
 """
 
@@ -33,7 +33,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 WIDTHS = [1280, 390, 320]
 TAB = ""
 MIN_TARGET = 44
-DANGER_RGB = "rgb(179, 38, 30)"
+DANGER_RGBS = {"rgb(179, 38, 30)", "rgb(220, 35, 35)"}  # ACULTA #b3261e ou --color-maximumred do Claro #dc2323
 results = []
 
 
@@ -133,8 +133,8 @@ def main():
             clear = [t for t in targets(d) if t["ui"] and "secret-value-clear" in t["ui"]]
             if clear:
                 color = clear[0]["color"]
-                check(f"{width}px: ícone de apagar vermelho", color == DANGER_RGB,
-                      f"cor computada={color}; esperado={DANGER_RGB}")
+                check(f"{width}px: ícone de apagar vermelho", color in DANGER_RGBS,
+                      f"cor computada={color}; aceitas={sorted(DANGER_RGBS)}")
             shot = d.req("GET", f"/session/{d.session}/screenshot")
             (OUT / f"claro-{width}.png").write_bytes(base64.b64decode(shot))
             print(f"  elementos focados em {width}px: {sorted(n for n in names if n)}")
