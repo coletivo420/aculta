@@ -200,3 +200,18 @@ Não iniciadas as auditorias profundas das frentes 4 a 8 nesta execução.
 
 - **Fronteira do deployer:** causada pelo menu do Portal (`aculta_portal.links.menu.yml`). Não há correção dentro do submódulo sem enfraquecer a regra de fronteira, o que não faço.
 - **Melhor Envio, autorização e token:** só o sandbox com credenciais autorizadas confirma `authorize`, `oauth/token` e `expires_in`.
+
+## Auditorias profundas: escrita, concorrência e cadastro
+
+| Frente | Auditoria | Resultado | Commit |
+|---|---|---|---|
+| Deployer, escrita | Relatórios do build (`deploy-policy`, `deploy-report`, `transition-plan`) eram gravados direto. Agora passam por `writeAtomic` (temporário e `rename`). Teste confirma JSON válido e nenhum temporário sobrando | Corrigido | `f64c584d1` |
+| Deployer, concorrência | Registro sem controle de versão: duas gravações concorrentes perdiam atualizações. Controle otimista sob `.lock`, com 3 testes | Corrigido (já no commit `9936b17ac`) | `9936b17ac` |
+| Deployer, temporários | Gravação de `environment.json` e `status.json` já atômica; build recusa diretório de saída não vazio | Verificado | — |
+| Patcher, cadastro | Regras de pacote, versão exata e diff extraídas para `PatchFormRules` (classe pura) e testadas: 8 casos inválidos e 1 válido. Faixas de versão são recusadas | Corrigido e testado | `2736df9fc` |
+| Patcher, segurança administrativa | Permissão `administer aculta patches` com `restrict access`; exclusão por `EntityDeleteForm` com confirmação; diff nunca é executado; auditoria de criação, alteração e exclusão no canal `aculta_patcher` | Verificado | `fdc3c7b11` |
+
+### Bloqueios externos (não resolvíveis dentro do escopo)
+
+- **Fronteira do deployer:** a descrição do menu do Portal cita a ferramenta. Arquivo do Portal, fora da lista autorizada. Mudança exata no worklog para o agente principal.
+- **Melhor Envio, autorização e token:** dependem do sandbox e de credenciais autorizadas.
