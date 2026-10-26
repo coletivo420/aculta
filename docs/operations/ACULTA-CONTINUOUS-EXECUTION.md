@@ -757,3 +757,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - A revisão visual Firefox ESR e HTTP autenticado vieram da branch de origem e não foram reexecutados nesta integração. Functional, instalação limpa e rollback continuam pendentes; componente permanece Dev e não elegível a RC.
 - Um comando PHPUnit padrão carregou a implementação fiscal do checkout compartilhado e falhou em dois casos gratuitos de LMS; descartado como teste da PR. Runner com namespaces do worktree foi usado e passou 384/1.008, incluindo os mesmos casos.
 
+
+
+## Integração de Index e LMS Resources na PR #298 — 2026-10-26
+
+- Branch `feat/aculta-index-fechamento` verificada em `98f3937e54`: 27 commits; 14 patches já equivalentes e 13 exclusivos integrados. Index avançou para `0.1.0-dev.176`, LMS Resources para `0.1.0-dev.18`; `aculta_index_file` leva o inventário a 42 módulos + tema (43 componentes).
+- Testes reexecutados na PR: Unit 17/155; Kernel bridge Statistics 3/55, LMS course/video 5/259 e Index Rebuilder 21/295 PASS (46 testes / 764 assertions). O índice de status e gate de pacotes passaram com 43 componentes.
+- `aculta_index_file` é opt-in, não entrou no Config Sync nem foi habilitado no Runtime. O update LMS `8001` está versionado e não foi executado. Nenhuma gravação Runtime ocorreu.
+- O worktree Index da origem foi preservado. Instalação/update limpa, Browser, catálogo representativo/grants e PHPCS/lint focal pós-integração continuam pendentes; ambos os módulos seguem Dev.

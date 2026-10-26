@@ -1,6 +1,6 @@
 # Changelog — ACULTA Content Index
 
-## 0.1.0-dev.176 (proposto; manifesto em dev.175 até a integração) — revalidar acesso por página e endurecer integridade/cursors (2026-10-26)
+## 0.1.0-dev.176 — revalidar acesso por página e endurecer integridade/cursors (2026-10-26)
 
 - `ContentIndexAccessFilter` limpa os handlers de Entity Access dos tipos
   candidatos no início de cada página. O cache interno do Core não é

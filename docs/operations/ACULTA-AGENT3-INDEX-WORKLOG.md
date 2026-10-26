@@ -469,3 +469,13 @@ O status global continua `Dev` e a decisão é do agente 1. Proposta para
 
 Todos estão publicados em `origin/feat/aculta-index-fechamento`. Nenhum merge,
 PR nova, force push, deploy ou alteração da branch da PR #298.
+
+
+## Integração seletiva na PR #298 — 2026-10-26
+
+- Branch fonte `feat/aculta-index-fechamento` (`98f3937e54`): 27 commits. Os 14 patches equivalentes já estavam na PR; 13 commits patch-únicos foram integrados, sem cherry-pick duplicado.
+- Commits da PR incluem `8082d7d1e` (cache Entity Access por página), `bdf326a7b` (integridade durante descarte), `45a787012` (provider File opt-in), `b5473905d` (campo e relação `course_video`), testes e documentação associados.
+- Reexecução na PR com docroot isolado: Unit Index/File/LMS 17/155 PASS; Kernel Statistics bridge 3/55, LMS course/video access 5/259 e Rebuilder 21/295 PASS. Total focal: 46 testes / 764 assertions. MariaDB `aculta_simpletest`; nenhum dado Runtime alterado.
+- O primeiro runner tentou carregar extensões do checkout compartilhado em `/home` e não descobriu `aculta_index_file`; o docroot isolado corrigiu a causa e passou. Falha inicial classificada como harness, não produto.
+- `aculta_index_file` segue opt-in, fora do Config Sync e não habilitado no Runtime. `field_lms_videos` e update `8001` foram versionados; update não executado no Runtime.
+- Kernel agregado 119/2.019 e observação read-only do Runtime 145/110 foram registrados na branch fonte, não reexecutados nesta integração. Index permanece Dev; faltam grants/Domain dos owners, carga representativa, PHPCS Drupal/DrupalPractice e PHP lint nos dez arquivos PHP tocados: PASS e evidência Functional/Browser.

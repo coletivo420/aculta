@@ -1,6 +1,6 @@
 # Changelog — aculta_lms_resources
 
-## 0.1.0-dev.18 (proposto; manifesto em dev.17 até a integração) — vídeos remotos no curso
+## 0.1.0-dev.18 — vídeos remotos no curso
 
 - Novo campo `field_lms_videos` em `group:lms_course`, limitado ao bundle
   `media:remote_video` do Portal. Novas instalações recebem por

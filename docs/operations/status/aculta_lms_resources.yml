@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.17
+version: 0.1.0-dev.18
 state: Dev
-next_phase: 'F15: boot completo dos módulos owner, instalar campos no Runtime de teste e fazer smoke autenticado/visual ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
-progress_note: "Provider LMS consulta aculta_document_viewer_group:course_document; boot completo dos owners e Runtime permanecem pendentes."
+next_phase: 'Validar instalação limpa/update 8001 e o contrato course_video em Functional/Runtime isolado; não aplicar updates ao Runtime compartilhado ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
+progress_note: "Provider LMS consulta aculta_document_viewer_group:course_document e projeta course_video por field_lms_videos para Media remote_video; Unit focal e Kernel 5/259 PASS na PR. Campo de instalação e update 8001 versionados; update, acesso visual e boot completo dos owners não foram executados no Runtime."
