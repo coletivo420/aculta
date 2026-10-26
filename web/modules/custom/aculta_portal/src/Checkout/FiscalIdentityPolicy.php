@@ -6,6 +6,9 @@ namespace Drupal\aculta_portal\Checkout;
 
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_order\Entity\OrderItemInterface;
+use Drupal\commerce_price\Price;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -36,7 +39,7 @@ final class FiscalIdentityPolicy {
   ) {}
 
   /**
-   * Tipos comerciais que exigem identidade fiscal: Loja e cursos.
+   * Tipos de pedido comercial avaliados pela política fiscal: Loja e LMS.
    *
    * @return list<string>
    *   IDs dos tipos de pedido.
@@ -47,9 +50,39 @@ final class FiscalIdentityPolicy {
 
   /**
    * Indica se o pedido exige identidade fiscal.
+   *
+   * Loja sempre exige. No LMS, apenas cursos com preço base maior que zero
+   * exigem; pedidos sem composição reconhecível continuam fail-closed.
    */
   public function requiresDocument(OrderInterface $order): bool {
-    return in_array($order->bundle(), $this->commercialOrderTypes(), TRUE);
+    if ($order->bundle() === $this->settings->shopOrderType()) {
+      return TRUE;
+    }
+    if (!in_array($order->bundle(), $this->settings->lmsOrderTypes(), TRUE)) {
+      return FALSE;
+    }
+
+    // LMS orders are used for both paid and free enrollments. Decide from the
+    // base price of each purchased course variation, not the adjusted order
+    // total: a promotion must not turn a paid course into a free enrollment.
+    $items = $order->getItems();
+    if ($items === []) {
+      return TRUE;
+    }
+    foreach ($items as $item) {
+      if (!$item instanceof OrderItemInterface) {
+        return TRUE;
+      }
+      $variation = $item->getPurchasedEntity();
+      if (!$variation instanceof ProductVariationInterface || $variation->bundle() !== 'curso') {
+        return TRUE;
+      }
+      $price = $variation->getPrice();
+      if (!$price instanceof Price || !$price->isZero()) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
   /**

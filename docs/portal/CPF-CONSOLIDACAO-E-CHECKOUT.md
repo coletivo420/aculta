@@ -214,7 +214,7 @@ Aplicar `drush config:import` no runtime alvo, somente com autorização:
 - O flow `commerce_checkout.commerce_checkout_flow.curso` será **removido** do ativo. Nenhum pedido guarda o ID do flow, mas pedidos em checkout de curso que estejam na etapa de login ou de revisão precisam ser conferidos depois da importação.
 - O tipo `curso` passa a usar o flow `default`.
 - O flow `default` passa a exigir login e a incluir o pane `aculta_fiscal_identity` na etapa de revisão. Compras da Loja sem CPF/CNPJ válido deixam de ser concluídas.
-- Cursos gratuitos que passam pelo checkout também passam a exigir CPF/CNPJ, como decidido.
+- Registro histórico da política de 2026-10-23, **substituído** pela atualização de 2026-10-26 ao final deste documento: cursos gratuitos não exigem CPF/CNPJ.
 
 ## 9.2 Por que o import completo não foi feito
 
@@ -377,3 +377,15 @@ O que o teste prova é que o tema carrega e renderiza as páginas sem erro. Há 
     - **PASS — pane de identidade fiscal na Loja:** pedido 113 em `revisao` recusa vazio e inválido, permanecendo no passo, e conclui com documento válido; o pedido 114 mostra o documento mascarado e sem campo de edição. Evidências em 9.6.
     - **LMS:** `cursos.aculta.toca.net.br/group/1` é página informativa do grupo, sem preço, matrícula ou entrada de checkout; não há fluxo de compra no LMS para percorrer o pane fiscal. Coerente com a ADR-013 e coberto no nível Kernel.
     - **PASS — tema Olivero (ambiente local):** Portal, Fórum e Revista renderizam com Olivero, 6 assets do tema e nenhum de `aculta420`, sem mensagens de erro; a view do Fórum renderiza completa. Feito no ambiente local, não no servidor de testes, com restauração de `aculta420` ao final. Limitação de conteúdo registrada em 9.6.
+
+
+## Atualização de política — matrícula gratuita no LMS (2026-10-26)
+
+A regra histórica da seção 9 que estendia a exigência fiscal a cursos gratuitos
+foi substituída pelo contrato transversal vigente: Loja e cursos pagos exigem
+CPF/CNPJ; participação gratuita no LMS não exige. `FiscalIdentityPolicy` decide
+pelo preço base da variação de curso (`0.00` dispensa), não pelo total ajustado
+do pedido, para preservar a exigência quando um curso pago recebe desconto.
+Pedidos LMS vazios ou com item/composição não reconhecida permanecem
+fail-closed. A alteração está em `aculta_portal` 0.4.1-dev.35 e não altera dados
+existentes nem configuração ativa.

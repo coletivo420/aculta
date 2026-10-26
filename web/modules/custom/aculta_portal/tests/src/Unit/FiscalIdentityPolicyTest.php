@@ -9,6 +9,9 @@ use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Checkout\FiscalIdentityPolicy;
 use Drupal\aculta_portal\Checkout\FiscalIdentityStatus;
 use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_order\Entity\OrderItemInterface;
+use Drupal\commerce_price\Price;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Tests\UnitTestCase;
@@ -38,10 +41,23 @@ final class FiscalIdentityPolicyTest extends UnitTestCase {
   /**
    * Cria um pedido simulado de um tipo.
    */
-  private function order(string $bundle): OrderInterface {
+  private function order(string $bundle, array $items = []): OrderInterface {
     $order = $this->createMock(OrderInterface::class);
     $order->method('bundle')->willReturn($bundle);
+    $order->method('getItems')->willReturn($items);
     return $order;
+  }
+
+  /**
+   * Cria um item de pedido com variação de curso e preço base.
+   */
+  private function courseItem(?Price $price, string $variationBundle = 'curso'): OrderItemInterface {
+    $variation = $this->createMock(ProductVariationInterface::class);
+    $variation->method('bundle')->willReturn($variationBundle);
+    $variation->method('getPrice')->willReturn($price);
+    $item = $this->createMock(OrderItemInterface::class);
+    $item->method('getPurchasedEntity')->willReturn($variation);
+    return $item;
   }
 
   /**
@@ -78,6 +94,35 @@ final class FiscalIdentityPolicyTest extends UnitTestCase {
     $this->assertSame(['loja', 'aula', 'curso'], $policy->commercialOrderTypes());
     $this->assertTrue($policy->requiresDocument($this->order('aula')));
     $this->assertFalse($policy->requiresDocument($this->order('default')));
+  }
+
+  /**
+   * Curso gratuito não exige documento, mesmo usando o tipo de pedido LMS.
+   */
+  public function testFreeLmsCourseDoesNotRequireDocument(): void {
+    $order = $this->order('curso', [$this->courseItem(new Price('0.00', 'BRL'))]);
+    $this->assertFalse((new FiscalIdentityPolicy($this->settings()))->requiresDocument($order));
+  }
+
+  /**
+   * Preço base pago continua exigindo documento independente de descontos.
+   */
+  public function testPaidLmsCourseRequiresDocument(): void {
+    $policy = new FiscalIdentityPolicy($this->settings());
+    $freeOrder = $this->order('curso', [$this->courseItem(new Price('0.00', 'BRL'))]);
+    $paidOrder = $this->order('curso', [$this->courseItem(new Price('125.00', 'BRL'))]);
+    $this->assertFalse($policy->requiresDocument($freeOrder));
+    $this->assertTrue($policy->requiresDocument($paidOrder));
+  }
+
+  /**
+   * Composição ausente ou ambígua permanece sujeita à exigência fiscal.
+   */
+  public function testUnknownLmsOrderCompositionRequiresDocument(): void {
+    $policy = new FiscalIdentityPolicy($this->settings());
+    $this->assertTrue($policy->requiresDocument($this->order('curso')));
+    $this->assertTrue($policy->requiresDocument($this->order('curso', [$this->courseItem(NULL)])));
+    $this->assertTrue($policy->requiresDocument($this->order('curso', [$this->courseItem(new Price('0.00', 'BRL'), 'produto')])));
   }
 
   /**

@@ -1,3 +1,17 @@
+## 0.4.1-dev.35 — checkout LMS dispensa identidade fiscal para curso gratuito (2026-10-26)
+
+- `FiscalIdentityPolicy` mantém a exigência da Loja e dos cursos pagos do LMS;
+  pedidos LMS só dispensam CPF/CNPJ quando todos os itens são variações `curso`
+  reconhecidas com preço base zero. O preço base evita que desconto/cupom
+  transforme um curso pago em matrícula gratuita. Pedido vazio ou composição
+  ambígua exige documento (fail-closed).
+- `FiscalIdentityPolicyTest`: 13 testes / 30 assertions PASS;
+  FiscalIdentityPaneKernelTest: 12 testes / 343 assertions PASS em MariaDB
+  dedicado (72 depreciações upstream). PHPCS Drupal/DrupalPractice e PHP lint
+  dos arquivos alterados PASS.
+- Esta decisão implementa a política vigente do projeto: matrícula gratuita não
+  exige documento fiscal; não altera pedidos nem configuração do Runtime.
+
 ## 0.4.1-dev.34 — cobrir o inspetor global de referências
 
 - FileReferenceInspectorTest cobre referências estruturadas e embeds em texto nas revisões anteriores, além de retorno fail-closed quando a consulta de um campo falha.

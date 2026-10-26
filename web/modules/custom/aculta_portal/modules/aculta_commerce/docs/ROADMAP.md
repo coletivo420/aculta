@@ -97,7 +97,7 @@ A arquitetura normativa é o ADR-013 revisado: **a interface de abas Comum | Loj
 - O checkout comercial da Loja exige CPF/CNPJ válido para concluir a compra. Política compartilhada com o LMS; o documento vem de `aculta_id_cpf`, nunca é copiado para o pedido.
 - Flow e pane compartilhados com o LMS; tipo de pedido `default` mantido.
 - Doações ficam fora da exigência padrão.
-- Pendente: implementação (I-D) e testes. Ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`.
+- Implementação e testes da política central estão no `aculta_portal`; a Loja exige documento e cursos gratuitos do LMS são dispensados conforme decisão vigente. Ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`.
 
 ## Verificação pós-auditoria C-0.1-C1 (2026-10-22)
 
