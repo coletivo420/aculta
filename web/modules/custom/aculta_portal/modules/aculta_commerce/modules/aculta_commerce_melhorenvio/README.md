@@ -1,6 +1,6 @@
 # ACULTA Commerce Melhor Envio
 
-Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão `0.1.0-dev.1`.
+Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão `0.1.0-dev.2`.
 
 Status: **fundação**, **endereço único** (ME-ADDRESS 0.1) e **consulta de CEP compartilhada** (ME-CEP 0.1). Ainda não há
 cotação de frete, contratação, etiqueta, rastreamento nem chamadas à API do Melhor Envio. Ver [ROADMAP](docs/ROADMAP.md).
@@ -62,8 +62,8 @@ Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CO
 
 ## Testes
 
-- Unit: 29 testes em `tests/src/Unit/` (adaptador de CEP 7, mapper 17, binder 5). Executados e aprovados.
-- Kernel e Functional: pendentes. Ver a matriz em `docs/ROADMAP.md` e as dívidas em `docs/operations/DEBT-REGISTER.md`.
+- Unit: 30 testes em `tests/src/Unit/` (adaptador de CEP 7, mapper 17, binder 5 e compilação do alias de serviço 1). Executados e aprovados.
+- Kernel e Functional: a instalação funcional do Statistics expôs o alias ausente do mapper; correção e regressão Unit estão em `0.1.0-dev.2`, mas a Functional ainda aguarda reexecução no harness isolado. Ver a matriz em `docs/ROADMAP.md` e as dívidas em `docs/operations/DEBT-REGISTER.md`.
 
 ## Segurança e LGPD
 
