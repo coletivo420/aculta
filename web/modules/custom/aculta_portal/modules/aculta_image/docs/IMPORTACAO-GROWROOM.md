@@ -72,7 +72,7 @@ Estes caminhos ficam fora do Git (`estados/` e armazenamento privado). Pasta de 
   não entregou o conteúdo. Ficam registradas como lacuna, sem arquivo.
 - **Perfis permitidos:** 2.171 de 2.173 URLs baixadas. 2 sem arquivo (ver lacunas de HTML).
 
-## Mapeamento tópico → fórum → usuário (2026-10-19)
+## Mapeamento tópico → fórum → autoria histórica (2026-10-19)
 
 - **Templates:** o acervo mistura o IPB (template antigo) e o IPS 4 (template atual). O mapeamento lê os dois.
 - **Fórum do tópico:** IPB: `<link rel='up' href='.../forum/<id>-...'>`. IPS 4: último `forum/<id>-` dentro das
@@ -86,15 +86,14 @@ Estes caminhos ficam fora do Git (`estados/` e armazenamento privado). Pasta de 
 - **Autores:** 6.096 nos tópicos importados; 737 com ID exato (IPS 4); 1.850 casados com perfil; 6 ambíguos; 4.240 sem
   perfil no índice CDX.
 
-## Regra de usuários (decisão do responsável, 2026-10-16)
+## Regra histórica de usuários — substituída por F-D17/F-D44
 
-- Serão importados **somente** os usuários que comentaram nos fóruns e tópicos que estão na importação.
-- Não serão importados usuários que aparecem apenas em fóruns excluídos (Avisos, Multimídia Cannábica, Cannabis Medicinal e Notícias) ou em tópicos desses fóruns.
-- Usuário que comentou em um tópico importado e em um excluído entra, pelo primeiro caso.
-- Perfis fora desse conjunto não entram na importação e não foram baixados.
-- **Pendente de decisão:** 6 nomes ambíguos (IDs de perfil diferentes para o mesmo nome, por exemplo `Pot Head`, `Pcgrow`,
-  `Prof. Pardal`, `Delta-9-thc`). Nenhum deles entrou em `perfis-permitidos.json`. O responsável decide se entram
-  e como (qual ID).
+O texto de 2026-10-16 abaixo foi superado. Autores do acervo não são contas User nem Profile: cada autoria importada
+usa `aculta_legado_autor`, não ganha rota individual e aponta ao memorial coletivo `/u/lendashistoricas`. O nome
+individual é mantido como autoria do conteúdo; `-gr` aparece apenas nos cartões de autoria do Fórum. IDs IPS4/THW
+servem como origem estável; na ausência deles, aplica-se a chave determinística de nome aprovada em F-D45. Perfis
+capturados não são necessários para criar identidades ou rotas individuais de autor legado. Associações de URLs de
+perfil que continuam ambíguas não bloqueiam esse modelo e não devem unir IDs de origem distintos.
 
 ## Fóruns fora da importação (decisão do responsável, 2026-10-16)
 
@@ -115,7 +114,8 @@ Estas regras valem quando a importação começar. Nenhuma está em execução.
 - Tema político e social (legalização, marcha, lei, decisões, notícias de política de drogas): mantidos (1.393 tópicos).
 - Casos de uma pessoa específica (preso, cerco, denúncia): mantidos (555 tópicos). Esses tópicos descrevem pessoas
   identificáveis em processos criminais. Os autores não entram como perfis (ver regra de usuários).
-- Vida interna do fórum (usuário do mês, rifas, eventos): excluídos por padrão (616 tópicos). Não há decisão sobre eles.
+- Vida interna do fórum (usuário do mês, rifas, eventos): os 616 tópicos identificados ficam excluídos por padrão.
+  Inclusão exige seleção manual explícita (F-D46).
 - Outros termos (4.739 tópicos): seleção manual por caixa, em `scratchpad/selecao_outros.html` (sessão de trabalho, fora do
   Git). Até a seleção, ficam excluídos.
 
@@ -123,7 +123,7 @@ Estas regras valem quando a importação começar. Nenhuma está em execução.
 - Tópicos de anúncio de loja e vendedor são marcados pelo título: marca "[Growshop]" e verbos de anúncio ("vendo",
   "vende-se"). Resultado: **641 tópicos** em `comercial-marcados.jsonl`, de 37 títulos distintos, quase todos anúncios de
   lojas de sementes. Saem da importação.
-- 17 tópicos com termos que também aparecem em notícias ("a venda", "propaganda", "loja") ficam para revisão humana.
+- Os 17 tópicos marcados `revisar` ficam excluídos por padrão. Inclusão exige seleção manual explícita (F-D46).
 - Limite: a regra só vê o título. Anúncio sem marca nem verbo de venda no título não é detectado. Tentativa pelo texto da
   página foi descartada: menus e blocos do template aparecem em todas as páginas e marcaram notícias e debates.
 - Nada é apagado do acervo arquivado. A exclusão vale só para a importação.
@@ -172,47 +172,35 @@ A verificação completa relê os 8 GB e confere o SHA-256 de cada arquivo.
 | C7 Mapeamento salvo bate com o `build_mapping.py` atual | OK: 36.077 tópicos, mesmos fóruns |
 | C8 Nenhum e-mail nos arquivos de mapeamento | OK (após omitir 10 nomes com forma de e-mail do mapa) |
 
-**Bloqueios antes da importação** (decisões que cabem ao responsável; nada disso foi decidido por mim):
+**Estado das decisões e pré-requisitos operacionais** (histórico revisado em 2026-10-26):
 
-1. **Remodelagem do fórum na PR #297**: a importação aguarda essa etapa.
+1. **Remodelagem do Fórum:** integrada na PR #297; não é mais bloqueio.
 2. **Seleção dos 4.739 tópicos de "outros termos": recebida** (2026-10-19). 133 tópicos marcados pelo responsável,
    guardados em `restauro/selecao-manual.json`. 132 estão no acervo e entram no conjunto, mesmo quando o fórum é excluído.
    O 133º (tópico 44876) foi removido pela regra comercial por causa da palavra "growshop" no título, mas é notícia sobre
    uma ação policial. A escolha explícita prevalece, e a regra comercial tem esse falso positivo registrado.
    Os demais tópicos de "outros termos" não marcados continuam excluídos.
-3. **Revisão dos 17 tópicos marcados como "revisar"** (termos de notícia que também aparecem em anúncios).
-4. **Vida interna do fórum (616 tópicos)**: excluídos por padrão, sem decisão.
-5. **Perfis: só quem tem conteúdo no fórum importado** (decisão do responsável, 2026-10-19). A lista de perfis sai do
-   conjunto de importação (`conjunto-importacao.json`): autores com pelo menos um post em tópico que entra. Autores
-   que só aparecem em tópicos comerciais ou em tópicos excluídos não entram. Resultado: 3.924 URLs de perfil.
-   Consequência: os autores dos 555 tópicos de caso individual têm conteúdo mantido, então entram pela mesma regra.
-   Se isso não for o desejado, é preciso dizer.
-6. **Download dos perfis: concluído** (2026-10-19). 3.941 perfis permitidos; 3.940 com captura. Uma lacuna: perfil
-   `v_profile.php?userid=5289` (sem resposta após as retentativas), a ser registrada como não recuperada.
-7. **Três nomes ambíguos** (`Delta-9-thc`, `Pcgrow`, `Prof. Pardal`): sem decisão de qual perfil vale.
-8. **228 fotos truncadas: não recuperadas** (decisão do responsável, 2026-10-19). Entram com a imagem padrão, no lugar do
+3. **Tópicos `revisar` (17 no levantamento atual) e vida interna (616):** exclusão padrão decidida; inclusão somente por seleção manual explícita (F-D46).
+4. **Autoria:** não são importados Users/Profiles. Autores dos itens aprovados viram entidades `aculta_legado_autor` com IDs estáveis (F-D17/F-D44/F-D45); nenhuma URL de perfil individual é criada.
+5. **Capturas de perfis:** não são necessárias para a autoria legada. Lacunas e ambiguidades são históricas e não impedem
+   a criação de `aculta_legado_autor`; não criam contas ou perfis públicos.
+6. **228 fotos truncadas:** entram com a imagem padrão, no lugar do
    arquivo cortado. Também se aplica aos 298 links de download dessas fotos.
-9. **Modal de conteúdo legado**: depende de autorização para alterar o tema ACULTA420 e da aprovação do texto da história.
-10. **Teste dos links contra o site vivo: fechado.** `growroom.net` não existe mais (informado pelo responsável em
+7. **Modal de conteúdo legado**: depende de autorização para alterar o tema ACULTA420 e da aprovação do texto da história.
+8. **Teste dos links contra o site vivo: fechado.** `growroom.net` não existe mais (informado pelo responsável em
     2026-10-19). Os links quebrados seguem para o modal, e a verificação ao vivo deixa de ser pendência.
-11. **Ingestão das 7.805 fotos e da imagem padrão** pelo `aculta_image`, com conversão para WebP na importação.
-12. **Resolução dos 92 mil links `showtopic&st=` / `&pid=`** para o tópico importado pelo ID: ainda não implementada.
+9. **Ingestão das fotos e imagem padrão** pelo `aculta_image`, com conversão para WebP: precisa ser coberta pelo exportador/importador e validada isoladamente.
+10. **Resolução dos links `showtopic&st=` / `&pid=`** para o tópico importado pelo ID: ainda precisa ser implementada no pipeline.
 
-## Bloqueio atual
+## Histórico do bloqueio inicial
 
-**Importação adiada (decisão do responsável, 2026-10-19):** a importação do Growroom não começa até a remodelagem do
-fórum na PR #297 (`docs/aculta-forum-0.1.0-dev.1`). Ajustes desta etapa seguem como commits nessa branch, sem nova
-PR ou branch. Nenhum conteúdo, usuário ou imagem é importado antes disso.
+**Registro histórico supersedido:** a importação foi adiada em 2026-10-19 até a remodelagem do Fórum na PR #297.
+Essa remodelagem foi integrada e a decisão de destino foi atualizada em F-D43. O texto histórico não é um bloqueio
+vigente; a preparação para o Runtime de testes continua sujeita aos pré-requisitos abaixo.
 
-A F3 (migração piloto) depende da lista de autores aprovada. A F6 (reconstrução em lotes) depende da F3.
-Estado das condições:
-
-1. Downloads de `restauro/assets` e `restauro/html`: **concluídos**, com lacunas documentadas acima.
-2. Scripts de download e mapeamento: **versionados** em `scripts/growroom/`.
-3. Lista de autores: **extraída**; **aprovação pendente** (ambíguos e confirmação da regra pelo responsável).
-
-Quando a aprovação for dada, a importação segue a sequência do roteiro do Fórum (estrutura, usuários
-legados, tópicos, comentários, arquivos e reconciliação), usando somente os caminhos acima.
+A F3 (migração piloto) e a F6 (reconstrução em lotes) pertenciam ao ciclo anterior. Os estados e a sequência descritos
+naquela decisão foram substituídos por F-D43–F-D46 e pelo preparo atual abaixo. A importação deve criar autoria em
+`aculta_legado_autor`, nunca contas ou Profiles; o pipeline precisa ser idempotente e reversível em ambiente isolado.
 
 ## Decisão atual e preparo de importação em testes — 2026-10-26
 
@@ -227,9 +215,9 @@ A política de seleção registrada acima continua sendo a fonte de escopo: fór
 - Testes sintéticos da chave e do gate C10: 10/10 PASS. O manifesto no storage privado foi regenerado em 2026-10-26; `verificar_importacao.py --rapido` passou C1–C10: 68.666 registros de captura sem arquivo ausente no modo rápido; duplicatas, truncados e links sem problemas; mapeamento de 36.078 tópicos consistente; 31.599 selecionados sem tópicos fora do acervo, inclusão comercial ou exceções indevidas; C10 validou as 9.608 identidades, sem ID duplicado/inválido/pendente e sem tópicos ausentes/fora da seleção. C1/C3 rápidos conferem existência/tamanho, não recalculam hashes nem verificam marcador final JPEG. A checagem completa de integridade dos arquivos permanece necessária antes de importar.
 - Próxima etapa para preparar o Runtime de testes: exportar conteúdo de posts e assets com escopo/razão de seleção e hashes, sem copiar corpus ou PII ao Git. Depois construir o importador Drupal idempotente com dry-run, lotes retomáveis, reconciliação e rollback, validando primeiro em banco efêmero. O trabalho deve terminar com um plano executável para preencher o ambiente de testes, não com a decisão de deixá-lo vazio.
 - Antes de importar no Runtime de testes: gerar prévia quantitativa e de amostras sem dados pessoais nos logs; confirmar backup verificável e destino isolado; documentar rollback por restore point; validar a sequência completa em banco efêmero e comparar contagens/hash. A operação persistente fica bloqueada até essa revisão operacional específica. O Homelab documentado usa `/home/aculta/public_html -> web` no checkout compartilhado; o worktree `/tmp/aculta-m0-integridade` não é servido por esse symlink. Smoke/browser desta branch deve usar docroot e banco efêmeros, nunca presumir que `public_html` executa o código desta branch.
-- Decisões de seleção ainda pendentes: revisão dos 17 tópicos marcados como “revisar” e vida interna (616 tópicos excluídos por padrão). Três associações de URL de perfil permanecem ambíguas, mas não são necessárias para criar as autorias legadas; não mesclar IDs IPS4 distintos. Não ampliar a seleção ao criar o importador.
+- Decisão vigente: os 17 itens `revisar` e os 616 itens de vida interna ficam excluídos por padrão; só seleção manual explícita os inclui. A autoria não depende de perfis capturados. Não ampliar o conjunto aprovado ao criar o importador.
 
-F-D43–F-D45 constam em [DECISOES do Fórum](../../aculta_forum/docs/DECISOES.md). A preparação não autoriza importação em produção, escrita no Runtime compartilhado, nem alteração dos critérios ainda pendentes.
+F-D43–F-D46 constam em [DECISOES do Fórum](../../aculta_forum/docs/DECISOES.md). A preparação não autoriza importação em produção, escrita no Runtime compartilhado, nem alteração do conjunto aprovado.
 
 ### Correção da seleção e verificação integral — 2026-10-26
 

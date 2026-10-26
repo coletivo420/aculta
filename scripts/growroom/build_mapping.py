@@ -57,9 +57,6 @@ def _selecao_manual() -> set:
         return set(json.load(fh)["topicos"])
 
 
-SELECAO_MANUAL = _selecao_manual()
-
-
 def thread_id(url: str):
     """Número do tópico (IPB/IPS: /topic/N-slug). Variações de página e âncora têm o mesmo número."""
     m = re.search(r"/topic/(\d+)", url)
@@ -221,6 +218,15 @@ def excluido(forum) -> bool:
     return forum in EXCLUIDOS
 
 
+def topico_incluivel(forum, titulo: str, nivel_comercial: str | None, selecionado: bool) -> bool:
+    """Aplica os filtros padrão; somente seleção explícita reabre itens excluídos."""
+    if comercial_requer_selecao_manual(nivel_comercial, selecionado):
+        return False
+    if not excluido(forum):
+        return True
+    return selecionado or categoria_titulo(titulo) in EXCECOES_TEMATICAS
+
+
 def _texto(bruto: str) -> str:
     return re.sub(r"<[^>]+>", "", re.sub(r"\s+", " ", htmllib.unescape(bruto))).strip()
 
@@ -270,6 +276,7 @@ def perfis_cdx():
 def main():
     aplicar = "--aplicar" in sys.argv
     so_mapeamento = "--so-mapeamento" in sys.argv
+    selecao_manual = _selecao_manual()
     topicos = topicos_baixados()
     forum_de = {}
     autores_de = defaultdict(set)
@@ -291,15 +298,14 @@ def main():
             continue
         forum_de[url] = com_forum[-1][0]
         excecao = False
-        selecionado = thread_id(url) in SELECAO_MANUAL
-        if comercial_requer_selecao_manual(comerciais.get(url), selecionado):
-            # Anúncios e casos em revisão só entram após seleção manual explícita.
-            comerciais_fora += 1
+        selecionado = thread_id(url) in selecao_manual
+        titulo = titulo_da_captura(capturas[-1])
+        if not topico_incluivel(forum_de[url], titulo, comerciais.get(url), selecionado):
+            if comercial_requer_selecao_manual(comerciais.get(url), selecionado):
+                comerciais_fora += 1
             continue
         if excluido(forum_de[url]) and not selecionado:
-            if categoria_titulo(titulo_da_captura(capturas[-1])) not in EXCECOES_TEMATICAS:
-                continue
-            excecao = True
+            excecao = categoria_titulo(titulo) in EXCECOES_TEMATICAS
         liberado = excecao or selecionado
         if selecionado and excluido(forum_de[url]):
             motivo = "selecao_manual"

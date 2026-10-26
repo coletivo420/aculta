@@ -197,12 +197,13 @@ def c9_conjunto(topicos):
     with open(caminho("conjunto-importacao.json"), encoding="utf-8") as fh:
         conjunto = json.load(fh)
     comerciais = bm.comerciais_marcados()
+    selecao_manual = bm._selecao_manual()
     fora_do_acervo = sum(1 for c in conjunto if c["url"] not in topicos)
     # Anúncios e casos em revisão exigem escolha explícita, nunca inclusão automática.
     comerciais_dentro = sum(
         1 for c in conjunto
         if bm.comercial_requer_selecao_manual(
-            comerciais.get(c["url"]), bm.thread_id(c["url"]) in bm.SELECAO_MANUAL
+            comerciais.get(c["url"]), bm.thread_id(c["url"]) in selecao_manual
         )
     )
     comerciais_revisar_dentro = sum(

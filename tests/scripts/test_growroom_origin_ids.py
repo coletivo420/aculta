@@ -115,15 +115,27 @@ class LegacyAuthorOriginIdTest(unittest.TestCase):
                 self.assertFalse(MAPPING.comercial_requer_selecao_manual(level, True))
         self.assertFalse(MAPPING.comercial_requer_selecao_manual(None, False))
 
+    def test_internal_life_topic_in_excluded_forum_is_excluded_by_default(self):
+        self.assertFalse(MAPPING.topico_incluivel(48, "Usuário do mês", None, False))
+
+    def test_internal_life_topic_requires_explicit_selection(self):
+        self.assertTrue(MAPPING.topico_incluivel(48, "Usuário do mês", None, True))
+
+    def test_thematic_exception_in_excluded_forum_remains_included(self):
+        self.assertTrue(MAPPING.topico_incluivel(48, "Debate sobre legalização", None, False))
+
+    def test_review_marked_topic_remains_excluded_without_selection(self):
+        self.assertFalse(MAPPING.topico_incluivel(48, "Debate local", "revisar", False))
+
     def test_c9_rejects_unselected_review_mark(self):
         with tempfile.TemporaryDirectory() as directory:
             previous_root = VERIFY.R
             previous_marks = VERIFY.bm.COMERCIAIS_ARQUIVO
-            previous_selection = VERIFY.bm.SELECAO_MANUAL
+            previous_selection = VERIFY.bm._selecao_manual
             try:
                 VERIFY.R = directory
                 VERIFY.bm.COMERCIAIS_ARQUIVO = str(Path(directory) / "commercial.jsonl")
-                VERIFY.bm.SELECAO_MANUAL = set()
+                VERIFY.bm._selecao_manual = lambda: set()
                 (Path(directory) / "conjunto-importacao.json").write_text(
                     json.dumps([{"url": "https://archive.test/topic/12-review", "forum": "8",
                                  "motivo": "incluido"}]), encoding="utf-8")
@@ -136,17 +148,17 @@ class LegacyAuthorOriginIdTest(unittest.TestCase):
             finally:
                 VERIFY.R = previous_root
                 VERIFY.bm.COMERCIAIS_ARQUIVO = previous_marks
-                VERIFY.bm.SELECAO_MANUAL = previous_selection
+                VERIFY.bm._selecao_manual = previous_selection
 
     def test_c9_accepts_manually_selected_review_mark(self):
         with tempfile.TemporaryDirectory() as directory:
             previous_root = VERIFY.R
             previous_marks = VERIFY.bm.COMERCIAIS_ARQUIVO
-            previous_selection = VERIFY.bm.SELECAO_MANUAL
+            previous_selection = VERIFY.bm._selecao_manual
             try:
                 VERIFY.R = directory
                 VERIFY.bm.COMERCIAIS_ARQUIVO = str(Path(directory) / "commercial.jsonl")
-                VERIFY.bm.SELECAO_MANUAL = {12}
+                VERIFY.bm._selecao_manual = lambda: {12}
                 (Path(directory) / "conjunto-importacao.json").write_text(
                     json.dumps([{"url": "https://archive.test/topic/12-review", "forum": "8",
                                  "motivo": "incluido"}]), encoding="utf-8")
@@ -159,7 +171,7 @@ class LegacyAuthorOriginIdTest(unittest.TestCase):
             finally:
                 VERIFY.R = previous_root
                 VERIFY.bm.COMERCIAIS_ARQUIVO = previous_marks
-                VERIFY.bm.SELECAO_MANUAL = previous_selection
+                VERIFY.bm._selecao_manual = previous_selection
 
 
 if __name__ == "__main__":

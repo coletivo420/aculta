@@ -677,3 +677,9 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - `NicknameRegistryKernelTest::testFailedProfileSaveRollsBackNicknameSynchronization` executa a sincronização sob transação, injeta uma falha simulada depois do presave e verifica a claim anterior, ausência da nova claim e persistência antiga de ambos Profiles. Resultado agregado MariaDB: **8 testes / 65 assertions PASS**, com 11 depreciações Core/contrib. PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
 - `aculta_user` avançou `0.4.0-dev.84` → `0.4.0-dev.85`. Update 10013 não executado no Runtime; validar instalação limpa/rebuild com conflito e sem conflito em ambiente efêmero permanece pendente.
+
+## Growroom — seleção padrão e teste sintético dos filtros (2026-10-26)
+
+- Decisão do responsável registrada como F-D46: os 616 tópicos de vida interna e os 17 marcados `revisar` ficam fora por padrão; inclusão exige seleção manual explícita. O acervo de origem não é alterado.
+- `build_mapping.py` extraiu a decisão para `topico_incluivel()`; testes sintéticos cobrem exclusão da vida interna, reentrada por seleção explícita, exceções temáticas e bloqueio padrão de `revisar`. Documentação do Fórum e do plano Growroom foi reconciliada com F-D17/F-D43–F-D46; autores são entidades `aculta_legado_autor`, sem User/Profile/rota própria.
+- O exportador de conteúdo/assets, importador Drupal idempotente, validação em banco efêmero e prévia/rollback ainda faltam. Nenhum acervo privado foi lido nesta unidade; nenhuma entidade ou arquivo Runtime foi criado.
