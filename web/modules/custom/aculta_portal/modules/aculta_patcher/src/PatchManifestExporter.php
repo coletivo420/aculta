@@ -20,6 +20,7 @@ final class PatchManifestExporter {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly string $appRoot,
     private readonly FileSystemInterface $fileSystem,
+    private readonly PatchDiffValidator $diffValidator = new PatchDiffValidator(),
   ) {}
 
   /**
@@ -61,12 +62,7 @@ final class PatchManifestExporter {
       if (($lockedVersions[$package] ?? NULL) !== $version) {
         throw new \RuntimeException(sprintf('O patch %s exige %s %s; o composer.lock contém %s.', $id, $package, $version, $lockedVersions[$package] ?? 'pacote ausente'));
       }
-      if (strlen($diff) > 262144 || !str_contains($diff, '--- ') || !str_contains($diff, '+++ ') || !preg_match('/^@@/m', $diff)) {
-        throw new \RuntimeException(sprintf('O conteúdo do patch %s não é um unified diff válido ou excede 256 KiB.', $id));
-      }
-      if (preg_match('~^(?:---|\+\+\+)\s+(?!(?:/dev/null)(?:\s|$))(?:/|[A-Za-z]:[\\\\/])|^(?:---|\+\+\+)\s+.*(?:^|/)\.\.(?:/|$)~m', $diff)) {
-        throw new \RuntimeException(sprintf('O patch %s aponta para um caminho fora do pacote.', $id));
-      }
+      $this->diffValidator->assertValid($id, $diff);
 
       $installPath = class_exists(InstalledVersions::class)
         ? InstalledVersions::getInstallPath($package)
