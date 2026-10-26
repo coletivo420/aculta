@@ -86,4 +86,9 @@ Observação: a conta criada recebeu, além de `administrator`, os papéis `cont
 `gerente_loja`, que não foram pedidos. Confirmar a origem (hook de atribuição automática) antes de reutilizar a conta.
 
 Verificação por HTTP no servidor de testes (sem navegador): aba de produção sem botões, aba de testes ativa
-com botões, nenhum valor real no HTML, cabeçalhos `no-store`. Revisão visual no Firefox continua pendente.
+com botões, nenhum valor real no HTML, cabeçalhos `no-store`.
+
+Revisão no Firefox ESR (DISPLAY=:0), servidor de testes: `tests/browser/aculta-secrets-manager/painel-visual.py`,
+16 verificações passaram: duas abas, aba do ambiente ativo selecionada, botões só na aba de testes, troca de aba sem
+alterar o texto do ambiente, teclado (setas e Home), sem rolagem horizontal da página e tabela dentro da janela em
+1280, 390 e 320 px. Ainda não coberto: tema Olivero e os fluxos de popup (revelar, alterar, apagar) no navegador.
