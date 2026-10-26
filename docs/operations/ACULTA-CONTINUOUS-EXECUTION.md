@@ -771,5 +771,15 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - Relatório verificável: [`ACULTA-BRANCH-RECONCILIATION-2026-10.md`](ACULTA-BRANCH-RECONCILIATION-2026-10.md).
 - Removidas do remoto após equivalência e ownership verificados: `feat/aculta-frentes-independentes`, `feat/aculta-commerce-shipping-port`, `feat/aculta-me-conciliacao`, `feat/aculta-index-fechamento` e `agent/aculta-secrets-manager`. As branches locais/worktrees foram mantidos.
-- `feat/aculta-melhorenvio-integracao` permanece no remoto: o agente confirmou alteração local não publicada em `MelhorEnvioWiringKernelTest.php`. `main` e `chore/aculta-m0-integridade` permanecem protegidas.
+- `feat/aculta-melhorenvio-integracao` foi removida do remoto após a equivalência ser confirmada e as alterações locais do Kernel serem incorporadas em `cedd5cebd`. O worktree e a branch locais foram preservados; `main` e a branch da PR permanecem protegidas.
 - PR #298 após integração do Index, versão/status dos componentes e limpeza: HEAD remoto confirmado `9dfbd31bed190ad6c00416201655688c2cfe16a4`; suíte de gates estáticos de status/pacotes/Config Extension Dependencies passa com 43 componentes.
+
+
+## Fechamento de `feat/aculta-melhorenvio-integracao` e documentação de Shipping — 2026-10-26
+
+- Comparei a ponta remota `da55ae5c7209f4483d27839b4a02b9130bac6c90` à PR por `git cherry` e revisão de patches. Cherry-picks publicados na PR: `7e7d04f78` (precisão monetária), `f212258dc` (testes do cliente/webhook e pendências), `22870f814` (evidência de HMAC e retries). O commit `dc460b02d` foi substituído por roadmap/status verificados porque registrava versões e estado antigos.
+- Dois métodos de teste OAuth que estavam apenas como diff local em `MelhorEnvioWiringKernelTest.php` foram revistos e integrados em `cedd5cebd`: callback com state válido sem código e replay de state. A suíte completa passou na PR: Kernel **11 testes / 57 assertions PASS**, MariaDB dedicado, sem rede; Unit **85 / 204 PASS**. PHP lint passou nos quatro arquivos PHP afetados. PHPCS Drupal/DrupalPractice: zero erros, com avisos residuais de linha longa.
+- Excluí apenas a ref remota `feat/aculta-melhorenvio-integracao`; `git push --delete`, fetch e `git ls-remote` confirmaram ausência. O worktree `/mnt/disco1/tmp/aculta-melhorenvio-int` e a branch local foram preservados, incluindo seu estado de trabalho.
+- Alinhei manifesto e versão para `0.1.0-dev.4`; README/CHANGELOG/roadmap/pendências do adaptador, status YAML, matriz de fechamento, README/CHANGELOG/roadmap Commerce, matriz do porte, relatório de branches e este log. Atualizei as contagens e removi a afirmação de que o Kernel do Melhor Envio falha no setup.
+- O provider usa o motor do `aculta_commerce`; não foi criada dependência de `commerce_shipping`. O adaptador segue fora do Config Sync. Nenhuma configuração foi importada, nenhuma escrita foi feita no Runtime e nenhuma chamada externa ou contratação de envio foi executada. Ambos os projetos permanecem Dev; checkout Functional/Browser e validação sandbox estão pendentes.
+- Próximo passo: homologar o checkout e a seleção de frete no servidor de testes com Firefox ESR e sandbox sem contratar etiqueta, conforme os roadmaps Commerce e Melhor Envio.
