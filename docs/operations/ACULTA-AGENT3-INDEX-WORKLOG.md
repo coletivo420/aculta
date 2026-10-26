@@ -227,7 +227,8 @@ desinstalação foi executado no Runtime.
 | PHP lint (módulo) | PASS |
 | PHPCS Drupal/DrupalPractice (arquivos alterados) | PASS |
 | Unit `aculta_index` | 51 testes / 282 assertions PASS; 14 depreciações PHPUnit |
-| Kernel `aculta_index` (MariaDB) | 114 testes / 1.890 assertions PASS; 276 depreciações Core/contrib e 55 PHPUnit |
+| Kernel `aculta_index` (MariaDB) | 116 testes / 1.916 assertions PASS; 276 depreciações Core/contrib e 55 PHPUnit |
+| PHPCS do módulo (`src` + `tests`) | PASS |
 | Benchmark Fórum opt-in | 1 teste / 395 assertions PASS |
 | Runtime leitura | PASS (métricas acima) |
 
@@ -268,8 +269,12 @@ O status global continua `Dev` e a decisão é do agente 1. Proposta para
 - `9426e80bd` — fix(index): ignore rows awaiting discard in integrity checks
 - `40a4e26b8` — fix(index): recompute entity access for every candidate page
 - `fcf006fca` — fix(index): bind cursors to the provider inventory
-- Commit documental desta atualização: ver `git log` da branch
-  `feat/aculta-index-fechamento` (o SHA é registrado no relatório final).
+- `fbeb677e7` — docs(index): publish closing validation, provider matrix and benchmark
+- `e94e0fe0c` — test(index): cover Statistics bridge order, cursor and zero totals
+- `7dcad8547` — test(index): drop unused database variable from bridge test
+- `44fec1247` — test(index): drop unused translation variable
+- Commit documental do worklog: HEAD final da branch
+  `feat/aculta-index-fechamento` (registrado no relatório de entrega).
 
 Todos estão publicados em `origin/feat/aculta-index-fechamento`. Nenhum merge,
 PR nova, force push, deploy ou alteração da branch da PR #298.
