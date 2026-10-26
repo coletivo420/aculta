@@ -2,7 +2,7 @@
 
 **Branch:** `chore/aculta-m0-integridade`  
 **HEAD retomado:** `d55c4301e7ffde6022fd6c7b3651df1de927e619`  
-**HEAD estável:** `6f324fbde` (CPF privacy fix and evidence updates are currently uncommitted)
+**HEAD estável:** `72fff2a3f` (Config Sync dependency repair and audit notes are uncommitted)
 **Estado:** PARTIAL — H5P, Portal Unit/Kernel e auditorias focais CPF/User/CEP concluídos; auditoria M-0 e frentes M-1 a M-5 em andamento.
 **Runtime:** `toca`, Drupal 11.4.10, PHP 8.4.27, URI padrão `http://default`, banco `aculta_runtime`. Consultas somente leitura; nenhum write foi executado.
 
@@ -57,6 +57,13 @@
 - `AccountDocumentStore` agora descarta a exceção SQL encadeada ao converter a violação da chave única em erro genérico. A mensagem subjacente do driver pode carregar o fingerprint duplicado; a API de domínio não a expõe a handlers/logs que recebam a `LogicException`.
 - Novo `AccountDocumentStoreUniqueConflictTest` simula o erro de persistência pós-preflight e confirma mensagem genérica sem causa anterior: Unit do módulo 48/116 PASS; Kernel da restrição SQL/update 10002 2/5 PASS em MariaDB isolado. PHPCS e lint dos dois arquivos alterados PASS.
 - Manifesto e status avançaram para `0.3.0-dev.3`; Runtime permanece sem `updatedb`. Próximo: exercitar update com perfis legados representativos e integração real Profile/Form API em Kernel.
+
+## M-0.2 — Config Sync / Runtime (2026-10-26)
+
+- Read-only Drush por `https://aculta.toca.net.br` confirmou Document Viewer, Document Viewer Group, Entity Print e LMS Resources ativos e listados no `core.extension` ativo.
+- O `core.extension.yml` exportado omitia essas quatro extensões apesar de dependências em manifests/config. Entradas adicionadas no repositório; `php scripts/validate-config-extension-dependencies.php` PASS (1.558 referências, 1.425 arquivos) para dependências de configuração e manifests próprios habilitados.
+- Delta restante ativo versus Sync: 218 módulos ativos, 198 versionados; 20 ausentes são `aculta_editor`, `aculta_index`, `aculta_lms_messenger`, `google_tag` e 16 módulos CKEditor Plugin Pack. A intenção de habilitação desses componentes não está documentada por propósito; uma importação pode desabilitá-los. Classificado como bloqueador de reconciliação. Sem `cim` ou write no Runtime.
+- A comparação ativa também mostra `aculta_editor` habilitado no Runtime enquanto ausente do export; tarefa encaminhada ao agente 2 por ser módulo sob seu ownership. `validate-module-theme-map.php` passou com 196 checks após completar sete linhas documentais ausentes, incluindo os seis custom modules e o provider contrib Entity Print.
 
 ## Restrições / deferred
 
