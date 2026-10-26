@@ -60,7 +60,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
       'aculta_portal',
       'aculta_lms',
       'aculta_lms_resources',
-      'aculta_pdf_viewer_group',
+      'aculta_document_viewer_group',
       'aculta_forum',
       'aculta_wiki',
       'aculta_statistics',
@@ -103,7 +103,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     self::assertSame('oembed:video', $remoteVideoType->getSource()->getPluginId());
     self::assertNotNull(FieldConfig::loadByName('media', 'remote_video', 'field_media_oembed_video'));
 
-    $this->assertPdfGroupRelationPluginCanAttachCourseDocument();
+    $this->assertDocumentViewerGroupRelationPluginCanAttachCourseDocument();
   }
 
   /**
@@ -425,9 +425,9 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
   }
 
   /**
-   * Exercises the PDF owner's real Group relation plugin with persisted data.
+   * Exercises the document owner's Group relation plugin with persisted data.
    */
-  private function assertPdfGroupRelationPluginCanAttachCourseDocument(): void {
+  private function assertDocumentViewerGroupRelationPluginCanAttachCourseDocument(): void {
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',

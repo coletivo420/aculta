@@ -65,6 +65,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('path_alias');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
+    $this->installEntitySchema('flagging');
     $this->installEntitySchema('domain');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('file');
@@ -90,6 +91,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     $this->installSchema('node', ['node_access']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installSchema('history', ['history']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',

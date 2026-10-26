@@ -49,6 +49,7 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'domain',
+    'aculta_document_viewer_group',
     'aculta_index',
     'aculta_index_course_document_access_test',
   ];
@@ -68,7 +69,7 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
     // Use the exact owner declaration while keeping the Portal dependency
     // chain out of this focused authorization harness.
     $serviceMap = Yaml::parseFile(
-      dirname(__DIR__, 8) . '/modules/custom/aculta_portal/modules/aculta_document_viewer/modules/aculta_document_viewer_group/aculta_document_viewer_group.services.yml',
+      dirname(__DIR__, 5) . '/modules/aculta_document_viewer/modules/aculta_document_viewer_group/aculta_document_viewer_group.services.yml',
       Yaml::PARSE_CUSTOM_TAGS,
     )['services'];
     $service = $serviceMap['aculta_document_viewer_group.course_document_content_index_provider'];
