@@ -1,3 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.74
 state: Dev
 next_phase: 'Dev.74: logs/estado/alertas evitam texto arbitrário SMTP/IMAP; novos Mail Logs armazenam classe e código. Unit 161/331 e Kernel 46/214 PASS; PHPCS sem erros, gate Drupal 11+ 1.155 checks e índice PASS. Entradas históricas podem conter respostas brutas até retenção normal; nenhuma limpeza foi executada. Próximo: validar o confirmador incorporado (aculta_mail_confirmer) em navegador antes de RC1 ([roadmap](web/modules/custom/aculta_portal/modules/aculta_mailer/docs/ROADMAP.md)); Runtime e SMTP externos pendentes.'

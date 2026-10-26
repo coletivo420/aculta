@@ -1,3 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.2
 state: Dev
-next_phase: 'Teste de revogação de membership bloqueado no ambiente de teste (aculta_user.aculta_user_agreement_ledger ausente em Kernel); integração Group dos documentos de turma com migração do plugin já aplicada no Runtime ([README](web/modules/custom/aculta_portal/modules/aculta_document_viewer/modules/aculta_document_viewer_group/README.md))'
+progress_note: "Provider course_document do Content Index pertence ao owner da relação; configuração do bundle Media segue temporariamente no PDF Group."
+next_phase: 'Teste de revogação de membership bloqueado no ambiente de teste (aculta_user.aculta_user_agreement_ledger ausente em Kernel); integração Group dos documentos de turma configurada em sync; instalação por ambiente ainda precisa confirmação ([README](web/modules/custom/aculta_portal/modules/aculta_document_viewer/modules/aculta_document_viewer_group/README.md))'

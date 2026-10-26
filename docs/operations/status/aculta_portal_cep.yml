@@ -1,3 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.3.0-dev.10
 state: Dev
 next_phase: Homologar fontes/ordenação e fallback de CEP no Runtime ([contrato](docs/portal/ACCOUNT-ADDRESS.md))

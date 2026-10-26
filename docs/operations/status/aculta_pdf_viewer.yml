@@ -1,3 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.40
 state: Dev
 next_phase: 'PV7: revisar Kernel e leitura acessível antes de RC; PDF contrib legado removido, PDFPreview permanece para miniaturas ([roadmap](web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/docs/ROADMAP.md))'

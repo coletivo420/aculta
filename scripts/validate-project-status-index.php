@@ -5,8 +5,8 @@
  * Gera e valida a tabela PROJECT-STATUS-INDEX do README raiz.
  *
  * Fonte da tabela: um arquivo de status por componente em docs/operations/status/<machine>.yml
- * (campos: state, next_phase e, quando a versão do manifest não basta, version_note). A versão
- * vem do manifest do componente. Assim cada componente altera só o próprio arquivo, e a tabela
+ * (campos: state, version, next_phase e progress_note opcional). O campo version precisa
+ * coincidir com o manifest; progress_note contém somente o resumo de progresso. Assim cada componente altera só o próprio arquivo, e a tabela
  * do README raiz é gerada, sem conflito entre trabalhos paralelos.
  *
  * Uso:
@@ -95,7 +95,12 @@ foreach ($order as $machine) {
     continue;
   }
   $data = $statuses[$machine];
+  if (array_key_exists('version_note', $data)) {
+    $errors[] = "$machine: version_note está obsoleto; use progress_note e mantenha version igual ao manifest.";
+  }
   $state = (string) ($data['state'] ?? '');
+  $statusVersion = trim((string) ($data['version'] ?? ''));
+  $manifestVersionValue = $manifestVersion($manifests[$machine]);
   $next = trim((string) ($data['next_phase'] ?? ''));
   if (!in_array($state, ['Dev', 'RC'], TRUE)) {
     $errors[] = "$machine: state precisa ser Dev ou RC (preRC está aposentado).";
@@ -103,10 +108,15 @@ foreach ($order as $machine) {
   if ($next === '') {
     $errors[] = "$machine: next_phase é obrigatório.";
   }
-  $version = $data['version_note'] ?? $manifestVersion($manifests[$machine]);
-  if ($version === NULL || $version === '') {
-    $errors[] = "$machine: sem versão no manifest; informe version_note.";
-    $version = 'versão não declarada';
+  if ($manifestVersionValue === NULL || $manifestVersionValue === '') {
+    $errors[] = "$machine: versão ausente no manifest.";
+    $manifestVersionValue = 'versão não declarada';
+  }
+  if ($statusVersion === '') {
+    $errors[] = "$machine: campo version obrigatório no status.";
+  }
+  elseif ($statusVersion !== $manifestVersionValue) {
+    $errors[] = "$machine: status version '$statusVersion' diverge do manifest '$manifestVersionValue'.";
   }
   $readmeRel = substr(dirname($manifests[$machine]) . '/README.md', strlen($root) + 1);
   if (!is_file($root . '/' . $readmeRel)) {
@@ -118,17 +128,14 @@ foreach ($order as $machine) {
       $errors[] = "$machine: link local ausente em next_phase: $link.";
     }
   }
-  $cell = '`' . ($version === 'versão não declarada' ? '' : $version) . '`';
-  if ($version === 'versão não declarada' || isset($data['version_note'])) {
-    $cell = (string) ($data['version_note'] ?? 'versão não declarada');
-  }
-  $rows[] = sprintf('| [`%s`](%s) | %s | %s | %s |', $machine, $readmeRel, $cell, str_replace('|', '\\|', $next), $state);
+  $note = trim((string) ($data['progress_note'] ?? ''));
+  $rows[] = sprintf('| [`%s`](%s) | `%s` | %s | %s | %s |', $machine, $readmeRel, $manifestVersionValue, str_replace('|', '\\|', $note), str_replace('|', '\\|', $next), $state);
 }
 
 // 4. Tabela gerada e conferência com o README.
 $table = implode("\n", array_merge([
-  '| Componente | Última versão declarada | Próxima fase registrada | Estado |',
-  '| --- | --- | --- | --- |',
+  '| Componente | Versão do manifesto | Progresso registrado | Próxima fase | Estado |',
+  '| --- | --- | --- | --- | --- |',
 ], $rows));
 
 $start = strpos($readme, $begin) + strlen($begin);

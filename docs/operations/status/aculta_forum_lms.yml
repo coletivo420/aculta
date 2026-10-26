@@ -1,3 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.29
 state: Dev
 next_phase: 'F15: smoke e revisão visual autenticados do vínculo H5P–Fórum ainda dependem de conteúdo/tópico no Runtime; avançar notificações e integrações Gallery, Magazine e Wiki ([CHANGELOG](web/modules/custom/aculta_portal/modules/aculta_forum_lms/CHANGELOG.md))'

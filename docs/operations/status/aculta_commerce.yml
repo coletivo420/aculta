@@ -1,3 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.4
 state: Dev
 next_phase: 'Homologar checkout comercial compartilhado e Green Stash com loja única, grants e contratos de produto em Kernel/Runtime ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/ROADMAP.md))'

@@ -1,3 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.1-dev.396
 state: Dev
 next_phase: "Dev.396: Dev.395 corrigiu a posse por processo das leases do digest; Dev.396 remove texto bruto SMTP/IMAP de logs, estado, alertas e novos Mail Logs, que guardam somente classe/código. Unit Mailer 161/331 e Kernel 46/214 PASS, gate Drupal 11+ 1.155 checks e índice PASS. Logs históricos podem reter texto até sua retenção; nenhuma limpeza Runtime foi executada. Próximo: smoke Firefox visual da central/mensagens quando DISPLAY e /tmp permitirem; throughput sustentado, Runtime mutável, updates 10008–10012, Alpha e SMTP externo pendentes."

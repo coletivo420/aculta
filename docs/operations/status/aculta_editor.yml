@@ -1,3 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.5
 state: Dev
 next_phase: 'Formatos unificados, Editorial com filtro e tipo aculta_adm com HTML completo. Próximo: restringir a criação de aculta_adm à administração e validar o tipo no navegador ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))'

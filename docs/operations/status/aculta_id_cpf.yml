@@ -1,3 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.3.0-dev.1
 state: Dev
 next_phase: Módulo oficial de CPF/CNPJ; consolidar contratos e unicidade transacional ([plano](docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md))

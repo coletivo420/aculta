@@ -33,11 +33,15 @@ foreach ($iterator as $file) {
 sort($infos);
 
 foreach ($infos as $info) {
+  $relative = substr(dirname($info), strlen($root) + 1);
+  // Modules under tests/modules are discovery fixtures, not product packages.
+  if (preg_match('#(?:^|/)tests/modules(?:/|$)#', $relative)) {
+    continue;
+  }
   $data = Yaml::parseFile($info);
   if (($data['type'] ?? '') !== 'module') {
     continue;
   }
-  $relative = substr(dirname($info), strlen($root) + 1);
   $package = (string) ($data['package'] ?? '');
   $checks++;
   if ($package !== OWN_PACKAGE) {
