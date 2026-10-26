@@ -5,6 +5,13 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
+use Drupal\aculta_lms\Access\ClassDashboardAccessCheck;
+use Drupal\aculta_lms\Certificate\CourseCertificateManager;
+use Drupal\aculta_lms\Controller\LearningDashboardController;
+use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
+use Drupal\aculta_lms\LearningDashboardManager;
+use Drupal\aculta_studio\Learning\LearnerDashboardComposer;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\KernelTests\KernelTestBase;
@@ -27,9 +34,22 @@ final class ClassDashboardKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc} */
   protected static $modules = [
-    'system', 'user', 'file', 'image', 'media', 'entity_usage', 'aculta_image',
-    'field', 'filter', 'flexible_permissions', 'group', 'views', 'options',
-    'text', 'lms', 'lms_classes', 'aculta_lms',
+    'system',
+    'user',
+    'file',
+    'image',
+    'media',
+    'entity_usage',
+    'aculta_image',
+    'field',
+    'filter',
+    'flexible_permissions',
+    'group',
+    'views',
+    'options',
+    'text',
+    'lms',
+    'lms_classes',
   ];
 
   /**
@@ -37,6 +57,12 @@ final class ClassDashboardKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    // The focus is Group authorization, not Portal's unrelated route/config
+    // install chain. Load the actual production classes used by this test.
+    $lms_root = dirname(__DIR__, 3);
+    $portal_root = dirname($lms_root, 2);
+    $this->classLoader->addPsr4('Drupal\\aculta_lms\\', $lms_root . '/src');
+    $this->classLoader->addPsr4('Drupal\\aculta_studio\\', $portal_root . '/modules/aculta_studio/src');
     $this->installConfig(['group', 'lms', 'lms_classes']);
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
@@ -93,7 +119,20 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $this->createStatus($course, $outsiderFailed, CourseStatusInterface::STATUS_FAILED);
     self::assertTrue($course->hasPermission('grade students', $teacher));
 
-    $manager = $this->container->get('aculta_lms.learning_dashboard');
+    $entityTypeManager = $this->container->get('entity_type.manager');
+    $manager = new LearningDashboardManager(
+      NULL,
+      new CourseCertificateManager(
+        $entityTypeManager,
+        $this->container->get('datetime.time'),
+        $this->container->get('database'),
+        $this->container->get('event_dispatcher'),
+        $this->container->get('logger.factory')->get('aculta_lms'),
+        $this->container->get('lock'),
+      ),
+      $entityTypeManager,
+      $this->container->get('lms.training_manager'),
+    );
     $educatorAccess = $manager->classDashboardAccess($class, $educator);
     self::assertTrue($educatorAccess->isAllowed());
     $cache = $this->container->get('cache.default');
@@ -121,7 +160,7 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     self::assertContains('user.group_permissions', $metrics['cache']->getCacheContexts());
 
     $this->container->get('current_user')->setAccount($educator);
-    $routeAccess = $this->container->get('aculta_lms.class_dashboard_access');
+    $routeAccess = new ClassDashboardAccessCheck($manager, $this->container->get('current_user'));
     self::assertTrue($routeAccess->access($course, $class)->isAllowed());
     $unrelatedCourse = Group::create([
       'type' => 'lms_course',
@@ -130,12 +169,25 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     ]);
     $unrelatedCourse->save();
     self::assertFalse($routeAccess->access($unrelatedCourse, $class)->isAllowed(), 'The dashboard route cannot pair a class with another course.');
-    $build = $this->container->get('aculta_lms.learning_dashboard_controller')->class($class, $course);
+    $currentUser = $this->container->get('current_user');
+    $dateFormatter = $this->container->get('date.formatter');
+    $translation = $this->container->get('string_translation');
+    $deadlineAccess = new ClassActivityDeadlineAccessCheck($entityTypeManager, $currentUser);
+    $controller = new LearningDashboardController(
+      $manager,
+      new ClassActivityDeadlineManager($entityTypeManager, $deadlineAccess),
+      $entityTypeManager,
+      $currentUser,
+      $dateFormatter,
+      $translation,
+      new LearnerDashboardComposer($manager, $currentUser, $dateFormatter, $translation),
+    );
+    $build = $controller->class($class, $course);
     self::assertSame(0, $build['#cache']['max-age']);
     self::assertContains('user', $build['#cache']['contexts']);
     self::assertContains('group_relationship_list:plugin:group_membership:group:' . $class->id(), $build['#cache']['tags']);
 
-    $classCourseRelationships = $this->container->get('entity_type.manager')->getStorage('group_relationship')->loadByProperties([
+    $classCourseRelationships = $entityTypeManager->getStorage('group_relationship')->loadByProperties([
       'entity_id' => $class->id(),
       'plugin_id' => 'lms_classes',
     ]);

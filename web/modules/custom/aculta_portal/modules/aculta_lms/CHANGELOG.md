@@ -1,3 +1,9 @@
+## 0.1.0-dev.90 — Kernel focal do painel de turma com contratos reais — 2026-10-26
+
+- `ClassDashboardKernelTest` não habilita a instalação inteira do Portal, pois isso carregava configuração e serviços de Commerce/Domain não usados pelo caso. O fixture Kernel mantém Group, LMS e `lms_classes` reais, registra os namespaces de código reais e instancia `LearningDashboardManager`, `ClassDashboardAccessCheck`, `LearningDashboardController`, prazo e compositor de Studio reais. Não há serviço fictício nem alteração no produto.
+- O teste passou: 1 teste / 48 assertions, verificando educador, estudante, vínculo turma→curso, escopo de membros, cache tags/contextos e invalidação ao remover relacionamento. PHPCS e PHP lint PASS. 39 depreciações foram reportadas por Core/contrib/Group/LMS.
+- Isso fecha a falha de setup deste caso focal, sem validar a compilação/inicialização limpa de toda a cadeia de serviços Portal/Messenger/Studio. Kernel agregado reexecutado: 29 testes / 98 assertions, 22 erros de setup; todos os 22 harnesses que instalam `aculta_lms` sem Portal falham pelo mesmo serviço obrigatório `aculta_portal.checkout_settings`. Nenhuma assertion funcional falhou nos testes que executaram. Runtime não foi alterado.
+
 ## 0.1.0-dev.89 — regressão da suíte Kernel agregada — 2026-10-26
 
 - Unit LMS: 87 testes / 447 assertions PASS (8 depreciações PHPUnit).

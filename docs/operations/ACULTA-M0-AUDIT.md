@@ -99,6 +99,12 @@ A seta `A → B` significa “B consome contrato/serviço fornecido por A”.
 - User Unit 132/504 PASS (1 depreciação PHPUnit); Kernel 25/361 PASS (5 depreciações Core/contrib); teste focal de hook 3/12 incluído nas Units; PHP lint/PHPCS dos arquivos alterados PASS. Não houve alteração Runtime.
 - Limite conhecido: a consulta é preflight, sem constraint transacional no armazenamento existente. Não se afirma unicidade sob concorrência; testar/desenhar uma garantia sem storage paralelo é próxima ação do User.
 
+## LMS — painel de turma em fixture Kernel focal (2026-10-26)
+
+- `ClassDashboardKernelTest` inicialmente não compilava porque habilitava `aculta_lms` sem a dependência Portal que a configuração de rota/serviço requer. Habilitar Portal/Studio integralmente revelou uma closure ampla e config irrelevante (Commerce/Domain), além de schemas adicionais não usados pelo contrato testado.
+- O harness agora mantém os módulos reais Group, LMS e `lms_classes`; registra os namespaces dos módulos para instanciar diretamente classes reais `LearningDashboardManager`, access check, controller, prazo e compositor Studio. Não instala o Portal, não cria serviço fictício e não remove assertions do contrato de membership/autorização.
+- Kernel focal PASS: 1 teste / 48 assertions; 39 depreciações Core/contrib/Group/LMS. PHPCS/PHP lint PASS. Kernel agregado reexecutado: 29 testes / 98 assertions, 22 erros de setup e nenhuma assertion failure; todos os 22 harnesses que compilam `aculta_lms` sem Portal falham por `aculta_portal.checkout_settings` ausente. O teste focal não homologa a compilação dos serviços nem instalação limpa da cadeia inteira Portal/Messenger/Studio.
+
 
 ## Document Viewer Group — Kernel de acesso (2026-10-26)
 
