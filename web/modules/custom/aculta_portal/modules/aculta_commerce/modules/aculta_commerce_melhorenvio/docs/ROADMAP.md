@@ -21,7 +21,9 @@ Versão atual: `0.1.0-dev.1`. Plano de referência: `docs/operations/` e `docs/p
 | ME-CEP 0.1-T | Testes unitários do serviço e do adaptador | Unit concluídos; Kernel pendente (DT-CEP-01) |
 | ME-0.1-A | Auditoria de Melhor Envio Shipping, CodeSpar e API oficial | Pendente (fontes baixadas, inventário a documentar) |
 | ME-0.1-B | Fundação do submódulo (manifesto, serviços, permissões) | Parcial: manifesto, serviço do adaptador e README |
-| ME-0.1-C | Cliente REST OAuth2, sandbox, tokens em Key | Pendente |
+| ME-0.1-C | Cliente REST OAuth2, sandbox, tokens e credenciais em Key/State | Parcial: cliente, configuração, armazenamento e 19 testes Unit. Falta validar endpoints no sandbox (ME-PEND-01) e Kernel |
+| ME-PEND-01 | Confirmar no sandbox: caminhos authorize, oauth/token e cotação, `expires_in`, escopos e formato de `Authorization` | Pendente (sem credenciais; documentação pública não traz os caminhos) |
+| ME-PEND-02 | Criptografia em repouso dos tokens (hoje State API) conforme política de produção | Pendente (decisão de arquitetura) |
 | ME-0.2-A | Plugin Commerce Shipping e cotação | Pendente (bloqueada por ME-0.1-C) |
 | ME-0.2-B | Integração ao checkout existente | Pendente |
 | ME-0.3-A a ME-0.7-A | Envios, compra autorizada, etiquetas, impressão, rastreamento, Green Stash, MCP, Statistics e Messenger | Pendente |
@@ -44,6 +46,7 @@ Versão atual: `0.1.0-dev.1`. Plano de referência: `docs/operations/` e `docs/p
 
 ## Limitações de runtime
 
-- Sem credenciais do Melhor Envio neste ambiente. Sandbox e produção não foram testados.
+- Sem credenciais do Melhor Envio neste ambiente. Sandbox e produção não foram testados. Nenhuma chamada real foi feita.
+- Os testes do cliente não usam rede. Caminhos de API não confirmados ficam isolados em `MelhorEnvioEndpoints` (ME-PEND-01).
 - Testes Kernel e Functional precisam de instalação de teste isolada. Não rodam sobre o banco de desenvolvimento.
 - PHPStan não está configurado no repositório. Não há gate de PHPStan a executar.

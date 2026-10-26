@@ -1,13 +1,21 @@
 # Changelog — ACULTA Commerce Melhor Envio
 
-## 0.1.0-dev.3 — contrato do provider no motor próprio — 2026-10-26
+## 0.1.0-dev.1 (em andamento)
 
-- O submódulo declara dependência de `aculta_commerce` e passa a documentar o provider no motor de envios próprio, não no `commerce_shipping`.
-- Contrato em `docs/MELHOR-ENVIO-CONTRACT.md`: atributo `AcultaShippingMethod`, interface/base do `aculta_commerce`, tarifas próprias e falha fechada.
-- O plugin de cotação atual da linha principal do site ainda não foi transportado para esta branch; cotação externa não homologada.
+### Adicionado
 
-## 0.1.0-dev.2 — alias do mapper para o binder — 2026-10-26
+- Cliente HTTP OAuth2 do Melhor Envio (`Http\MelhorEnvioClient`): `authorization_code`, renovação de token, timeouts,
+  espaçamento mínimo entre requisições e retentativas apenas em operações idempotentes.
+- Ambientes `sandbox` e `production` com tokens separados (`StateMelhorEnvioTokenStore`).
+- Configuração `MelhorEnvioConfig` com nomes de chaves do Drupal Key por ambiente. Nenhum valor de credencial no código
+  nem na configuração exportada.
+- Exceção `MelhorEnvioException` com categorias de erro e mensagens fixas.
+- Dependência explícita do módulo `key`.
+- 19 testes Unit do cliente, sem rede (`MockHandler`).
 
-- O container resolve `MelhorEnvioAddressMapper` no construtor de `ShipmentAddressBinder` pelo alias da classe para o service ID documentado `aculta_commerce_melhorenvio.address_mapper`.
-- Adicionado teste Unit que compila as definições reais de serviço com o autowiring Symfony.
-- Reexecução da Functional Statistics no docroot isolado ainda pendente; não houve escrita no Runtime.
+### Pendente
+
+- Caminhos de autorização, token e cotação não confirmados na documentação pública (ME-PEND-01). Validar no sandbox.
+- Campo `expires_in` e formato do cabeçalho `Authorization` a confirmar no sandbox.
+- Criptografia em repouso dos tokens (ME-PEND-02).
+- Kernel e Functional.
