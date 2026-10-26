@@ -37,3 +37,17 @@ A seta `A → B` significa “B consome contrato/serviço fornecido por A”.
 - PDF Group (bundle/config Media) + Document Viewer Group (relação Group) → LMS Resources/H5P/Forum.
 - Content owners → Content Index → Statistics e consumidores do catálogo.
 
+
+## Testes proporcionais e limitações observadas
+
+- Unit Wiki: 20 testes / 104 assertions PASS.
+- Kernel Index — acesso ao documento de curso: 1 / 28 PASS.
+- Kernel LMS — acesso ao índice de conteúdo: 4 / 208 PASS.
+- Kernel Index — integração dos owners: 2 / 88 PASS.
+- Unit Content Index service map: 1 / 3 PASS.
+- Composer validate: PASS com avisos de constraints exatas já existentes.
+- YAML parse: PASS (49 arquivos alterados/não versionados inspecionados).
+- PHP lint: PASS (30 arquivos PHP alterados na execução).
+- PHPCS Drupal/DrupalPractice: FAIL em arquivos tocados que já contêm violações legadas de nomenclatura, estrutura de comentários e `unserialize()` sem lista de classes; o gate não foi enfraquecido. O script `validate-own-module-packages.php` foi corrigido para 0 erros (restam avisos de linhas longas/constante global).
+- Kernel H5P: FAIL no setup (3 erros, 0 assertions): a instalação de config do LMS tenta resolver `aculta_studio.ganjalab_controller`, ausente no harness focado. Nenhuma assertion funcional foi aprovada por esse teste. Próxima ação: construir fixture de instalação focal ou bootar dependências reais do LMS/Studio em teste isolado.
+- `validate-admin-domain-policy.php` foi tentado sem bootstrap Drupal e terminou com `Class "Drupal" not found`; não contar como PASS. Outros gates dependentes de bootstrap e testes Browser/visual não foram executados nesta fase.
