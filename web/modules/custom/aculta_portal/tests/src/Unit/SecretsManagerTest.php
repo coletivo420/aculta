@@ -195,6 +195,26 @@ final class SecretsManagerTest extends UnitTestCase {
     @unlink($production);
   }
 
+  public function testValueForKeyIdUsesContractMapping(): void {
+    file_put_contents($this->store(), "BREVO_API_KEY=valor-contratual\n");
+    $this->assertSame('valor-contratual', $this->manager()->valueForKeyId('brevo_api_key'));
+    $this->assertNull($this->manager()->valueForKeyId('not_a_contract_key'));
+  }
+
+  public function testValueForDuplicateKeyIdFailsClosed(): void {
+    $contractPath = $this->base . '/config/secrets-contract.json';
+    $contract = json_decode((string) file_get_contents($contractPath), TRUE);
+    $contract['variables'][] = [
+      'name' => 'OUTRA_VARIAVEL',
+      'key_id' => 'brevo_api_key',
+      'environments' => ['test'],
+      'required_in' => [],
+    ];
+    file_put_contents($contractPath, json_encode($contract));
+    file_put_contents($this->store(), "BREVO_API_KEY=valor-contratual\n");
+    $this->assertNull($this->manager()->valueForKeyId('brevo_api_key'));
+  }
+
   private function managerWith(string $environment, string $store, KeyRepositoryInterface $keys): SecretsManager {
     $logger = $this->createMock(LoggerChannelInterface::class);
     $factory = $this->createMock(LoggerChannelFactoryInterface::class);

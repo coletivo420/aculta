@@ -37,8 +37,8 @@ O registro por item, com nomes dos testes e requisitos externos, está em [PENDE
   codificação do HMAC do webhook; base64 aparece no exemplo documentado, hexadecimal é aceito pelo código sem evidência.
 - A seleção e persistência da tarifa, checkout, pedidos pagos, criação de etiqueta e rastreamento não foram validados
   no navegador nem em operação sandbox nesta execução.
-- Os tokens permanecem no State API sem criptografia em repouso; qualquer mudança deve seguir o contrato central de
-  segredos e incluir rotação/migração compatível.
+- Tokens cifrados em repouso no State API desde 0.1.0-dev.5 (`encrypted_v1`), com chave do contrato central
+  (`aculta_melhorenvio_token_encryption`). Rotação de chave exige migração dos registros; ainda não automatizada.
 - Não há migração de remessas legadas. O motor de Shipping pertence a `aculta_commerce`; `commerce_shipping` não é
   dependência funcional deste adaptador.
 - O módulo continua em Dev. Não há evidência suficiente para RC.
