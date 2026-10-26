@@ -150,3 +150,24 @@ versão de código do snapshot. Não improvisar SQL nem desfazer apenas partes.
 2. Corrigir o YAML do submódulo Mercado Pago no checkout servido (owner da extração).
 3. Executar este procedimento, registrar tempos/tamanho/sha256 e os nomes de tabelas
    divergentes, se houver.
+
+## Ordem obrigatória do cutover do frete
+
+O cutover do frete (`feat/aculta-commerce-cutover`) remove o `commerce_shipping` do Composer. A ordem abaixo é obrigatória. **Nunca o contrário.**
+
+1. **`drush updatedb` com o vendor atual**, que ainda tem `commerce_shipping`. Roda `aculta_commerce_update_8001` (instala as entidades do motor) e os post-updates de migração (`migrate_shipping_methods`, `retarget_shipments`).
+2. **Conferir a migração.** Métodos do contrib têm cópia no motor (`blockersForUninstall()` vazio). O campo `commerce_order.shipments` aponta para `aculta_shipment`. Nenhum pedido foi apagado (contagem antes e depois).
+3. **Desinstalar o contrib, passo explícito**, depois da conferência: `drush pm:uninstall commerce_shipping`. Não é post-update, de propósito: é destrutiva e exige o operador acompanhando.
+4. **Só então `composer install`** com o `composer.lock` da PR, que já não tem `commerce_shipping`.
+
+Se o passo 1 ou 2 falhar, pare antes do passo 3. O contrib continua instalado e o site segue como estava.
+
+## Limpeza local de branches, worktrees e stashes (2026-10-26)
+
+- Branches locais integrados na PR e de minha autoria foram apagados, com `git branch -d` ou `-D` justificado (ancestral da PR e `git cherry` vazio).
+- Worktrees limpos e integrados foram removidos: `frente3-merge-teste` e `aculta-frete-simulador-e0`.
+- `/mnt/disco1/tmp/aculta-fronteira-links-secrets`: o worktree deixou de estar registrado no git, mas a remoção parou no meio ("Diretório não vazio"). Restam 7.532 arquivos (376 MB) no diretório. A amostra confere com o commit `c1e210934`, contido na PR. **Não apagar sem decisão**: a remoção pode ter deixado dependências não rastreadas.
+- Não removido: `/mnt/disco1/tmp/aculta-token-cipher` (18 alterações pendentes; regra de parar).
+- Preservados: `backup/checkout-antes-pr-8499180a6` (bundle verificado em `/home/piradopirata/worktrees/backup-bundles/checkout-antes-pr-8499180a6.bundle`; a branch fica até o fim da janela de updates); stashes de Fórum, Messenger e mailer, com patch em `/home/piradopirata/worktrees/backup-stashes-20261026/`; `stash@{0}` da fase B, só sai depois que o Local 2 confirmar a recuperação.
+- Não tocados: branches e worktrees de agentes (`agent/*`), do Local 2 (`feat/aculta-secrets-claro`) e do Local 3 (`docs/aculta-mp-extracao-b0`, `docs/aculta-runtime-snapshot-ensaio`, `feat/aculta-messenger-update-ensaio`, `feat/aculta-user-update-ensaio`).
+- Classificação dos 101 commits do backup: ver `ACULTA-CONTINUOUS-EXECUTION.md`.
