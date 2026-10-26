@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit publicado:** `6f7203aa0` (`fix(portal): exempt free LMS courses from fiscal identity`), push normal confirmado para `origin/chore/aculta-m0-integridade`; árvore limpa após checkpoint.
+**Último commit funcional:** `6229a8b33` (`fix(user): coordinate avatar cleanup through Portal`). Commit documental `86a11e699` registra análise de apelido e preflight read-only; o README derivado será sincronizado neste checkpoint. Todos os commits foram enviados por push normal para `origin/chore/aculta-m0-integridade`.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
