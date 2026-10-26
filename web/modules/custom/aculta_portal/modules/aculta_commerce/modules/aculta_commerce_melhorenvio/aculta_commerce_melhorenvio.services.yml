@@ -14,9 +14,11 @@ services:
     alias: aculta_commerce_melhorenvio.address_mapper
 
   # Par origem/destino para cotação, contratação e etiqueta. Origem vem de configuração; destino do perfil de envio.
+  # Argumentos explícitos: o mapper é recebido pelo id do serviço. Autowire por classe falha quando o mapper não tem alias
+  # pela classe, e o container não compilava com o módulo habilitado.
   aculta_commerce_melhorenvio.shipment_address_binder:
     class: Drupal\aculta_commerce_melhorenvio\Address\ShipmentAddressBinder
-    autowire: true
+    arguments: ['@aculta_commerce_melhorenvio.address_mapper', '@config.factory']
 
   # Configurações do Melhor Envio: ambiente, URL de retorno, escopos e nomes das chaves do Drupal Key.
   aculta_commerce_melhorenvio.config:
