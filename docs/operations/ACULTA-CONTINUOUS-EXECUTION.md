@@ -190,3 +190,9 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - Unit do Game passou 11 testes / 51 assertions. Kernel `GameAchievementNoticePersistenceKernelTest` no Messenger passou 3/30 no MariaDB dedicado: revalida fonte contra concessões revogadas, migra fila legada uma vez e conserva o cursor/fila quando publisher falha. Duas depreciações de `@EntityType` vêm de Message/Message Template no Core/contrib.
 - Documentação identifica o corte de ownership dev.17 (Game publica, Messenger persiste/lê, Mailer transporta), mas corrige uma lacuna: o Kernel Fórum testa elegibilidade do `ForumParticipationPolicy`, não a chamada de concessão no `BadgeEvaluationHooks::forumPostSave`. Essa cobertura direta permanece próxima tarefa; nenhuma conquista foi concedida no Runtime. README, CHANGELOG, execução, status e matriz foram reconciliados, sem mexer na feature ou subir versão.
+
+
+## M-3 — reconciliar estado do Magazine (2026-10-26)
+
+- Auditoria encontrou status estruturado obsoleto: dizia não haver publisher/inscrições ou evento implementado, contradizendo manifesto dev.10, README e changelog. A árvore contém publishers para publicação/republicação/atualização e transições editoriais; `seguir_publicacao` é Flag, não storage paralelo de Messenger. Autores/coautores elegíveis recebem os avisos conforme contrato; envio para revisão/resultados já estão descritos na dev.10.
+- Retestes no runner isolado: Magazine Unit 24/96 PASS (3 depreciações PHPUnit) e Kernel 12/500 PASS no MariaDB dedicado. Runtime e SMTP não testados. Status, matriz e changelog agora distinguem implementação, teste e homologação pendente.
