@@ -337,7 +337,7 @@ torna dados existentes ilegíveis e quebra correspondências. O painel não rota
   conferir o estado e revogar a antiga. Chaves de cifra/fingerprint: somente com migração planejada.
 - **Recuperação:** credencial apagada por engano: regravar pelo painel no mesmo ambiente. Nunca copiar
   a credencial de outro ambiente.
-- **Revelação:** pelo botão de olho (popup aberto por clique, GET com token CSRF `_csrf_token`, sem cache, registrada no log com
+- **Revelação, alteração e remoção:** popups abertos por clique (GET com token CSRF `_csrf_token`); a gravação e a remoção passam pelo formulário, com token de formulário. Revelação sem cache e registrada no log com
   nome e usuário, sem o valor).
 
 ### Migração do Portal para o submódulo

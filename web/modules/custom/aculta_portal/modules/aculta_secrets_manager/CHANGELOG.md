@@ -12,4 +12,5 @@
 - Escopo por ambiente no backend: `value()`, `save()` e `clear()` recusam credencial fora do ambiente
   ativo (no núcleo, em `aculta_portal`). Controller nega mostrar, editar e apagar fora do escopo (403).
 - `Cache-Control: no-store, private` e `Pragma: no-cache` nas rotas do painel.
+- Token CSRF (`_csrf_token`) nas rotas de revelar, alterar e apagar.
 - Testes unitários: abas, escopo, cabeçalhos.
