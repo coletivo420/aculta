@@ -342,3 +342,8 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - Testes Unit: 54 PASS no módulo (6 novos, do validador de `state`).
 - Pendente, por decisão do responsável: a URL de retorno (`redirect_uri`). Opções propostas: `https://aculta.toca.net.br/painel-administrativo/melhorenvio/retorno` ou o host de conta. Precisa ser cadastrada no aplicativo do Melhor Envio e colocada em `redirect_uri` na configuração do módulo. A rota não foi publicada no servidor de teste.
 - Continua pendente: validação de `authorize`, `oauth/token` e `expires_in` no sandbox (ME-PEND-01).
+
+## Decisão tomada sem resposta do responsável (registrada para revisão)
+
+- URL de retorno adotada para o servidor de teste: `https://aculta.toca.net.br/painel-administrativo/melhorenvio/retorno`. Escolhida por ser o host do servidor de teste onde a rota fica. Não foi gravada em `config/sync` nem em `config/install`, porque é específica do ambiente; a produção tem outro valor. Para usar, cadastre esta URL no aplicativo sandbox do Melhor Envio e configure `redirect_uri` no ambiente de teste.
+- Continua pendente, sem alternativa dentro deste ambiente: validação de `authorize`, `oauth/token` e `expires_in` (ME-PEND-01), que depende de credencial de sandbox.
