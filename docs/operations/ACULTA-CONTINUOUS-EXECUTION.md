@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit funcional:** `5c804a1af` (`fix(user): persist validated normalized nickname`), enviado por push normal a `origin/chore/aculta-m0-integridade`. Nesta sessão há incrementos de documentação/configuração e teste do Confirmador ainda não commitados. O scan PHP comparado a `origin/main` examinou 78 arquivos: 0 erros PHPCS e 49 warnings; arquivos do módulo H5P fora deste incremento mantêm violações legadas.
+**Último commit:** `35da56a09` (`docs(mail-confirmer): align confirmation and login policy`), enviado por push normal a `origin/chore/aculta-m0-integridade`. O scan PHP comparado a `origin/main` examinou 78 arquivos: 0 erros PHPCS e 49 warnings; arquivos do módulo H5P fora deste incremento mantêm violações legadas.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
@@ -436,3 +436,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Corrigidos textos errados “bloqueio de login” e “hash sem expiração” em manifestos, READMEs, changelogs, política, mapa módulo–tema e relatório de incorporação. O hash usa TTL de 24 h (`hash_expiration: 86400`). Histórico do comportamento do contrib foi preservado e marcado como substituído pelo contrato ACULTA.
 - Testes no runner isolado: Confirmador + troca 7 testes/53 assertions PASS (uma depreciação Core/contrib); `LoginBlockedAccountTest` + `LoginValidatorSwapTest` 9/22 PASS; `EmailConfirmationPolicyKernelTest` 3/16 PASS, agora afirmando que o usuário sem marca permanece ativo. Nenhum SMTP externo, Browser/Runtime ou operação persistente foi usado.
 - `aculta_mail_confirmer` e submódulo avançam para `0.1.0-dev.3`; Browser autenticado para confirmação/troca e capacidades restritas permanece pendente. A prova automatizada é parcial e não substitui homologação.
+
+
+## Checkpoint M-1 — confirmação de e-mail e próxima análise de perfil (2026-10-26)
+
+- Commit `35da56a09` reconciliou o contrato do Confirmador: conta ativa pode autenticar antes da confirmação, ações específicas continuam restritas e o token expira em 24 h. Inclui texto de formulário e asserção Kernel; PHPCS Drupal/DrupalPractice e lint focais passaram; `EmailConfirmationPolicyKernelTest` passou 3/16. Índice de status (41) e pacotes próprios (41) passaram.
+- Kernel foi executado com as credenciais dedicadas em `/home/aculta/secrets/simpletest-db.env`. Uma tentativa anterior com credencial genérica falhou no setup; não conta como resultado de produto. Nenhuma operação Runtime persistente, SMTP externo ou Browser foi realizada.
+- A decisão do responsável foi que rotas públicas de perfil legado sempre levam sufixo `-gr`. O escopo ainda aguarda definição porque `PerfilDoPapel::TIPOS` contém bundles por papel, enquanto a documentação identifica autores históricos Growroom como entidades distintas sem conta Drupal; as antigas rotas `/user/{uid}` e `/identidade/{user}` são privadas. Não alterar slug/lookup até o escopo ser definido.
+- Drush status read-only no URI MAIN reconfirmou Drupal 11.4.10, DB `aculta_runtime` e root compartilhado `/home/piradopirata/projetos/aculta/web`.
