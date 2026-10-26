@@ -126,3 +126,8 @@ Consulta read-only do Runtime MAIN confirmou 218 módulos ativos. Comparados à 
 
 O Core instala módulos pelo delta `core.extension` e usa a própria storage de Sync como fonte de defaults durante a importação; por isso módulos e seus nove objetos foram versionados juntos. Gates: Config Extension Dependencies PASS (1.589 checks/1.434 arquivos), status index PASS (41) e own packages PASS (41). Kernel Editor 8/127 continua como evidência focal; instalação limpa/importação e Browser permanecem DEFERRED. A informação histórica abaixo sobre 17 IDs e templates pendentes fica supersedida por esta atualização.
 
+
+
+## Atualização — varredura de nomes Config Sync (2026-10-26)
+
+A comparação read-only geral do MAIN encontrou 85 configs ativos ausentes do Sync e uma config Sync ausente da storage ativa (`flag.flag.seguir_publicacao`). Entre os ativos, 28 defaults Messenger são iguais aos instalados, 32 diferem dos defaults e 15 configs que já existem no Sync divergem do Runtime; não foi feito export global. Foi corrigido de forma focal `field.storage.message.field_aculta_msg_delivery`: Sync tinha três valores, enquanto config/install, Runtime e workers comprovam também `failed_permanent` e `cancelled`. A mudança aditiva consta na dev.397; importação Runtime permanece bloqueada. A lista geral contém também resíduos de Olivero, CAPTCHA, Entity Print e campos/profile; cada grupo precisa de classificação pelo proprietário antes de edição.

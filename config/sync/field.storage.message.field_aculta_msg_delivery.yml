@@ -25,6 +25,12 @@ settings:
     -
       value: failed
       label: Falhou
+    -
+      value: failed_permanent
+      label: Falha permanente
+    -
+      value: cancelled
+      label: Cancelado
   allowed_values_function: ''
 module: options
 locked: false

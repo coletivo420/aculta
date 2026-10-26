@@ -1,3 +1,15 @@
+## 0.1.1-dev.397 — reconciliar estados persistentes de entrega no Config Sync
+
+O campo compartilhado `field_aculta_msg_delivery` agora exporta também os
+estados terminais `failed_permanent` e `cancelled`, já usados pelos workers e
+presentes no default do Messenger e no Runtime de teste. A comparação read-only
+confirmou os cinco estados ativos; o Sync anterior listava somente os três
+estados intermediários. Nenhum dado de fila ou configuração ativa foi alterado.
+
+Validado por comparação do default instalado, do Sync e da storage ativa;
+YAML, dependências Config Extension, índice de status e pacote próprio PASS.
+O ensaio de importação não foi executado no Runtime.
+
 ## 0.1.1-dev.396 — remover texto bruto de exceções dos logs operacionais
 
 A revisão M7 identificou logs que copiavam respostas de transporte e exceções
