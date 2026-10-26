@@ -329,6 +329,10 @@ Depreciações são de Core/contrib e PHPUnit; nenhuma falha própria.
   execução isolada deste worktree passou 118/2.001 em MariaDB; a diferença é o
   `web/core` local e o autoload do vendor apontando para o worktree, conforme a
   seção de ambiente.
+- Verificação final: o cherry-pick dos quatro commits `c80b9fa64`,
+  `90d50c6cc`, `25e0a5958` e `e6937ef18` sobre `e3c34b675` aplicou limpo em
+  uma branch temporária local, sem conflitos. Eles permanecem pendentes de
+  integração no momento desta verificação.
 - Nenhuma operação Runtime foi executada por nenhum dos lados.
 
 ## Pendências e bloqueios
