@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-dev.5 — cor do ícone de apagar no Claro — 2026-10-26
+
+- A cor de erro do botão de apagar cai, quando `--aculta-status-error-text` não existe, em
+  `--color-maximumred` do Claro (`web/core/themes/claro/css/base/variables.css`, linha 18, `#dc2323`). Antes o fallback
+  era `--color-danger`, que não existe no Claro, e o ícone ficava com a cor do texto.
+- Verificado no servidor de testes com Firefox ESR em 1280, 390 e 320 px (`claro-foco-alvos.py`).
+
 ## 0.1.0-dev.4 — estilos mínimos do painel no Claro — 2026-10-26
 
 - O CSS administrativo de segredos fica no submódulo e usa pares de classe e `data-portal-ui`, porque as rotas `_admin_route` são renderizadas no tema Claro.
