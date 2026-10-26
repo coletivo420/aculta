@@ -1,13 +1,11 @@
 # ACULTA Editor
 
 Submódulo opcional do `aculta_portal`. Reúne os modelos editoriais (templates do CKEditor 5 Plugin Pack) e a
-configuração de formatos de texto do ACULTA. O Portal não depende dele para inicializar.
+configuração de formatos de texto do ACULTA. Desabilitado, o Portal não depende dele.
 
-Versão: `0.1.0-dev.5` (estado Dev). Auditoria e decisões: [`docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md`](../../../../../docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md).
-
-## Configuração e Runtime
-
-Verificação somente leitura em 2026-10-26: `aculta_editor` está ativo no Runtime de testes (`https://aculta.toca.net.br`), mas não consta em `config/sync/core.extension.yml`. Esta divergência impede considerar a ativação reconciliada para instalação/implantação reproduzível. A matriz exportada também não contém os oito templates de instalação do módulo; revisar a propriedade e a exportação desses itens junto com o proprietário do Config Sync. Nenhuma configuração global foi alterada nesta auditoria.
+Versão: `0.1.0-dev.5` (estado Dev, igual ao `info.yml`). Papéis e formatos conferidos na auditoria do agente executor 2:
+`content_editor` tem `revista_editorial` e `wiki`; `email_confirmed` tem `usuario_aculta`, `wiki` e `forum`; `authenticated`
+só tem `webform_default`. Nenhum papel comum recebe `full_html`. Auditoria e decisões: [`docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md`](../../../../../docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md).
 
 ## Formatos de texto (unificados)
 
@@ -17,7 +15,7 @@ Os formatos antigos recebem as funções do ACULTA; os excedentes foram removido
 | --- | --- | --- |
 | `plain_text` | **Aculta Básico (texto puro)** | sem editor (texto) |
 | `usuario_aculta` | **Usuário ACULTA (HTML restrito)** | CKEditor 5 |
-| `revista_editorial` | **Aculta Editorial** (HTML permitido por allowlist e filtro `filter_html`) | CKEditor 5 |
+| `revista_editorial` | **Aculta Editorial** (HTML com filtro de edição) | CKEditor 5 |
 | `email_html` | **Aculta Email (e-mails)**, usado pelo `aculta_mailer` | CKEditor 5 |
 | `wiki` | **Aculta Wiki (somente Wiki)** | CKEditor 5 |
 | `webform_default` | formato do sistema do Webform (não alterar) | CKEditor 5 |
@@ -29,8 +27,8 @@ Removidos: `aculta_basico`, `aculta_editorial`, `aculta_institucional`, `aculta_
 
 - **Tipo `aculta_adm` (ACULTA administração):** corpo em `full_html` (HTML completo do Core), sem restrição de tags. É o
   único lugar com HTML sem filtro. Fica restrito à administração pela permissão de criação do tipo.
-- **Editorial** (`revista_editorial`) usa `filter_html` com allowlist de edição, conforme a configuração exportada.
-  `full_html` é um formato separado e não deve ser tratado como seguro para conteúdo editorial comum.
+- **Editorial** (`revista_editorial`) passou a ter filtro de HTML (lista de tags de edição, a mesma validada no
+  navegador), por decisão do responsável.
 
 ## Modelos (templates)
 
