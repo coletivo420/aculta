@@ -103,7 +103,8 @@ Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CO
 | `/integracoes/melhorenvio/webhook` | POST | público (`_access: TRUE`) | recebe as notificações de etiqueta; autenticidade pelo `X-ME-Signature` |
 
 Webhook: a assinatura é HMAC-SHA256 do corpo bruto, com o segredo do aplicativo (`keys.<ambiente>.client_secret`, lido do
-Drupal Key). A codificação do hash não é documentada: o código aceita base64 e hexadecimal. Respostas: 503 sem segredo
+Drupal Key). A documentação oficial não diz a codificação do hash; o exemplo publicado é base64 (termina em `=`). O código
+aceita base64 e hexadecimal; hexadecimal não tem evidência de uso e precisa ser confirmado com um webhook real do sandbox. Respostas: 503 sem segredo
 configurado, 403 com assinatura inválida, 400 com corpo fora do formato, 204 quando o evento é aceito.
 
 Eventos aceitos (`order.*`): created, pending, released, generated, received, posted, delivered, cancelled,

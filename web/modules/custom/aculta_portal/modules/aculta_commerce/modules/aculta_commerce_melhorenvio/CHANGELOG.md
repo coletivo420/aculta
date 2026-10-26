@@ -1,5 +1,23 @@
 # Changelog — ACULTA Commerce Melhor Envio
 
+## 0.1.0-dev.4 (em andamento)
+
+### Corrigido
+
+- Valores monetários da cotação são lidos como texto decimal, sem `float`. Valores com até duas casas são preservados;
+  precisão além de centavos é recusada em vez de arredondada. Testes Unit: 75 testes / 183 assertions.
+
+### Verificado, sem alteração de código
+
+- Kernel de wiring no MariaDB dedicado com `commerce_shipping` ausente: 9 testes / 45 assertions. Restam 129
+  deprecações de Core e contrib, sem falha.
+- Retentativas: a cotação (`POST /api/v2/me/shipment/calculate`) é enviada como idempotente. Não há no repositório
+  prova contratual disso; a compra (`/shipment/checkout`), a geração e o cancelamento não são idempotentes e não são
+  repetidos.
+- Webhook: a documentação oficial confirma HMAC-SHA256 do corpo com o segredo do aplicativo, mas não diz a codificação.
+  O exemplo publicado tem 44 caracteres terminados em `=`, o que indica base64; hex nunca apareceu como evidência.
+  Pendente: confirmar com um webhook real do sandbox.
+
 ## 0.1.0-dev.3
 
 ### Alterado
