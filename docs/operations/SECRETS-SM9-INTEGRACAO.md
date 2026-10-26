@@ -68,3 +68,22 @@ Matriz de consumidores: `docs/operations/SECRETS.md` (seção "Painel por ambien
 - Revisão visual no Firefox ESR (DISPLAY=:0), larguras de celular, teclado, com Olivero e ACULTA420.
 - Suíte dos módulos consumidores sem regressão.
 - Revisão de código e de segurança concluída.
+
+## Conta de teste para o painel (procedimento)
+
+Procedimento seguido em 2026-10-26, conforme `docs/operations/TESTE-COMUM.md` e `docs/operations/TEST-DATA.md`:
+
+1. A senha fica em arquivo local de permissão 600 fora do Git (`~/.config/aculta-homelab/`). Nunca é
+   impressa nem colada em documento, commit ou saída de comando.
+2. A conta é criada por script do Drush guardado fora do repositório, com e-mail no domínio reservado
+   `@example.invalid` e papel `administrator`, que é o único com `administer aculta secrets`.
+3. O login é feito por link de uso único (`drush uli --uid=<uid> --uri=https://conta.aculta.toca.net.br`).
+   Esse link redireciona para o formulário de troca de senha, mas a sessão já fica ativa. Confirmado pelo
+   acesso ao painel no host principal.
+4. Ao final da rodada, remover ou desativar a conta de teste conforme `TEST-DATA.md`.
+
+Observação: a conta criada recebeu, além de `administrator`, os papéis `content_editor`, `lms_teacher` e
+`gerente_loja`, que não foram pedidos. Confirmar a origem (hook de atribuição automática) antes de reutilizar a conta.
+
+Verificação por HTTP no servidor de testes (sem navegador): aba de produção sem botões, aba de testes ativa
+com botões, nenhum valor real no HTML, cabeçalhos `no-store`. Revisão visual no Firefox continua pendente.
