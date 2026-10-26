@@ -146,7 +146,7 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 ## M-5 — regressão Statistics — 2026-10-26
 
-- Statistics Unit: 108 testes / 438 assertions PASS. Kernel no MariaDB dedicado: 47/319 PASS. Functional dashboard e Browser não executados.
+- Statistics Unit: 108 testes / 438 assertions PASS. Kernel no MariaDB dedicado: 47/319 PASS. Functional `StatisticsDashboardFunctionalTest` invocado; 2 testes skipped porque `SIMPLETEST_BASE_URL` não está configurado. Browser visual segue pendente.
 - Revalidado Runtime com `drush status` antes da consulta: Drupal 11.4.10, URI MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`; `pm:list` confirmou `aculta_statistics` Enabled. Consultas somente leitura; nenhuma credencial externa foi usada.
 - README, changelog, status e matriz atualizados: removida afirmação obsoleta de que ativação no Runtime estava pendente. Consultas reais GA4/Search Console e homologação visual continuam pendentes.
 

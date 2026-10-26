@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.9.0-dev.9
 state: Dev
-progress_note: "Runtime MAIN Enabled confirmado por Drush read-only em 2026-10-26; Unit 108/438 e Kernel 47/319 PASS. Functional dashboard, revisão visual e consulta real a GA4/Search Console aguardam validação/credenciais."
+progress_note: "Runtime MAIN Enabled confirmado por Drush read-only em 2026-10-26; Unit 108/438 e Kernel 47/319 PASS. Functional dashboard foi invocado, mas 2 casos foram pulados sem SIMPLETEST_BASE_URL. Revisão visual e consultas reais GA4/Search Console aguardam validação/credenciais."
 next_phase: 'Fases 0.6 (clientes GA4 e Search Console no código, desligados sem credencial), 0.7 (mídia), 0.8 (painel) e 0.9 (auditoria) no código; pendentes: provisionar credenciais e validar consultas reais ([roadmap](web/modules/custom/aculta_portal/modules/aculta_statistics/docs/ROADMAP.md))'
