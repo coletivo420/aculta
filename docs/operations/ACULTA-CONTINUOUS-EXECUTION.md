@@ -585,3 +585,15 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - Após corrigir os links relativos das gavetas, o PHPCS Drupal apontou PHPDoc e comentários longos preexistentes nos dois arquivos tocados. Os docblocks e comentários foram regularizados sem alteração funcional. Drupal e DrupalPractice passaram sem erros ou avisos nos arquivos; `PersistentNoticeAccessTest` passou com 5 testes / 11 assertions e PHP lint/diff check passaram.
 - Commits `8b5e31043` (estilo) e `b7c806859` (links relativos) publicados em `origin/chore/aculta-m0-integridade`. Runtime não foi alterado.
+
+## M-4 — corrigir injeção do endereço Melhor Envio (2026-10-26)
+
+- O erro reproduzido ao compilar o container para Statistics vinha de um alias ausente: `ShipmentAddressBinder` solicita `MelhorEnvioAddressMapper` por tipo, mas o serviço de produção tinha apenas o ID `aculta_commerce_melhorenvio.address_mapper`. O owner adicionou alias de classe para o ID existente e teste que compila o YAML de serviços real; sem serviço fictício e sem mudança de Config Sync.
+- Commit do owner `0f6e61ad5` foi revisado e incorporado como `4ae4229e4`. Na branch integrada, a suíte Unit completa Melhor Envio passou: 30 testes / 79 assertions; o teste novo de autowiring passou 1/1; PHP lint e PHPCS Drupal/DrupalPractice do novo teste passaram. Nenhuma chamada externa ou escrita Runtime.
+- A Functional Statistics ainda não foi reexecutada depois do alias; o status permanece pendente até testar o harness isolado e todas as rotas/assertions. OAuth, cotação, contratação e etiqueta permanecem fora do incremento funcional executado.
+
+## M-1 — rejeitar CEPs com caracteres contaminados (2026-10-26)
+
+- `CepLookupService::normalize()` anteriormente removia qualquer caractere não numérico e aceitava entradas como `abc01310100xyz`. Agora aceita oito dígitos contínuos ou a forma com hífen/espaços prevista e rejeita letras/separadores extras; o teste cobre essas regressões.
+- `CepLookupServiceTest`: 10 testes / 45 assertions PASS; gate `validate-account-address.php`, PHP lint, PHPCS Drupal/DrupalPractice focal, status index (41), packages (41) e diff check PASS. `aculta_portal_cep` avançou `0.3.0-dev.11` → `.12`; README, CHANGELOG, status, índice e closeout foram sincronizados. Sem consulta externa ou alteração Runtime.
+- Commit `66e9d4d06` foi publicado em `origin/chore/aculta-m0-integridade`.
