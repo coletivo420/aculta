@@ -347,3 +347,9 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 
 - URL de retorno adotada para o servidor de teste: `https://aculta.toca.net.br/painel-administrativo/melhorenvio/retorno`. Escolhida por ser o host do servidor de teste onde a rota fica. Não foi gravada em `config/sync` nem em `config/install`, porque é específica do ambiente; a produção tem outro valor. Para usar, cadastre esta URL no aplicativo sandbox do Melhor Envio e configure `redirect_uri` no ambiente de teste.
 - Continua pendente, sem alternativa dentro deste ambiente: validação de `authorize`, `oauth/token` e `expires_in` (ME-PEND-01), que depende de credencial de sandbox.
+
+## Caminhos das rotas do Melhor Envio (decisão do responsável)
+
+- O responsável pediu caminho parecido com o do Mercado Pago, e não o prefixo de painel. O Mercado Pago do projeto não tem endereço OAuth: a rota de retorno dele é `/commerce-mercado-pago/checkout-return`.
+- Adotado: autorização em `/commerce-melhor-envio/autorizar` e retorno em `/commerce-melhor-envio/oauth-retorno`.
+- URL de retorno a cadastrar no aplicativo sandbox do Melhor Envio: `https://aculta.toca.net.br/commerce-melhor-envio/oauth-retorno`.
