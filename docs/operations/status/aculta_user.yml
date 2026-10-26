@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.4.0-dev.82
 state: Dev
-progress_note: "Dev.82: apelidos -gr continuam bloqueados; colisão automática pode exibir nome#N com slug nome-N, e a edição manual pode informar #N sem geração automática desde que o slug esteja livre. Correções de código em validação, criação OAuth e lookup de rota em teste; gates desta mudança pendentes. Responsável selecionou índice SQL derivado slug→UID, preservando Profile como fonte. Sem Runtime write."
+progress_note: "Dev.82: apelidos -gr continuam bloqueados; colisão automática pode exibir nome#N com slug nome-N, e a edição manual pode informar #N sem geração automática desde que o slug esteja livre. Correções de código em validação, criação OAuth e lookup de rota em teste; suíte Unit 139/536 PASS (1 depreciação), PHPCS/lint focais PASS. Responsável selecionou índice SQL derivado slug→UID, preservando Profile como fonte. Sem Runtime write."
 next_phase: Testar e fechar o contrato #N→-N, então implementar o índice derivado slug→UID com projeção reconstruível e unicidade SQL; testar renomeação/liberação imediata e concorrência em MariaDB isolado. Homologação/updates Runtime ficam pendentes de autorização.
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
