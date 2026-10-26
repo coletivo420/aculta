@@ -1,0 +1,4 @@
+administer melhorenvio:
+  title: 'Administrar integração Melhor Envio'
+  description: 'Autorizar a conexão OAuth2 com o Melhor Envio.'
+  restrict access: true

@@ -1,0 +1,17 @@
+aculta_commerce_melhorenvio.oauth_authorize:
+  path: '/painel-administrativo/melhorenvio/autorizar'
+  defaults:
+    _controller: 'aculta_commerce_melhorenvio.oauth_controller:authorize'
+    _title: 'Autorizar Melhor Envio'
+  requirements:
+    _permission: 'administer melhorenvio'
+  methods: [GET]
+
+aculta_commerce_melhorenvio.oauth_callback:
+  path: '/painel-administrativo/melhorenvio/retorno'
+  defaults:
+    _controller: 'aculta_commerce_melhorenvio.oauth_controller:callback'
+    _title: 'Retorno do Melhor Envio'
+  requirements:
+    _permission: 'administer melhorenvio'
+  methods: [GET]

@@ -335,3 +335,10 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - Resultado depois da correção: **2/2 PASS** no Firefox X11 (`tests/browser/aculta-links/verifica_micropagina.py`).
 - Kernel de links no MariaDB depois da correção: 7 PASS.
 - Fora do escopo: o cromo do tema (barra institucional e rodapé), que é do ACULTA420.
+
+## Rota de retorno OAuth2 do Melhor Envio (sem credencial)
+
+- Implementada: `GET /painel-administrativo/melhorenvio/autorizar` gera um `state` aleatório, guarda na sessão e redireciona para a autorização. `GET /painel-administrativo/melhorenvio/retorno` só troca o código se o `state` devolvido bater com o da sessão (comparação em tempo constante, uso único). Permissão `administer melhorenvio`.
+- Testes Unit: 54 PASS no módulo (6 novos, do validador de `state`).
+- Pendente, por decisão do responsável: a URL de retorno (`redirect_uri`). Opções propostas: `https://aculta.toca.net.br/painel-administrativo/melhorenvio/retorno` ou o host de conta. Precisa ser cadastrada no aplicativo do Melhor Envio e colocada em `redirect_uri` na configuração do módulo. A rota não foi publicada no servidor de teste.
+- Continua pendente: validação de `authorize`, `oauth/token` e `expires_in` no sandbox (ME-PEND-01).
