@@ -187,3 +187,16 @@ Não iniciadas as auditorias profundas das frentes 4 a 8 nesta execução.
 - **Melhor Envio:** validar `authorize`, `oauth/token` e `expires_in` no sandbox com credenciais autorizadas.
 - **QR Code, sucesso do lote e do formatter:** teste de integração com `aculta_portal` habilitado (domínio `links`).
 - **Patcher, exportador:** teste com pacote instalado pelo Composer.
+
+## Rodada de integração (patcher e QR Code)
+
+| Item | Resultado | Commit |
+|---|---|---|
+| Patcher: teste de integração do exportador | Resolvedor de pacote injetável (padrão: Composer). Teste com projeto temporário, `composer.lock`, pacote instalado e `git apply` real. **26 PASS** no módulo | `e8002f61a` |
+| QR Code: caminho de sucesso do lote (Kernel) | Interface `QrCodePublicUrlInterface` extraída do resolvedor. Kernel injeta URL fixa pelo container. **15 PASS** na suíte | `5b6b1acdf` |
+| QR Code: formatter `aculta_qr_svg` (Kernel) | Campo `entity_reference` real, renderização como `<img>` com `data:`. **1 PASS**, sem avisos | `d386e55ee` |
+
+### Bloqueios que continuam (fora do escopo autorizado ou dependentes de ambiente)
+
+- **Fronteira do deployer:** causada pelo menu do Portal (`aculta_portal.links.menu.yml`). Não há correção dentro do submódulo sem enfraquecer a regra de fronteira, o que não faço.
+- **Melhor Envio, autorização e token:** só o sandbox com credenciais autorizadas confirma `authorize`, `oauth/token` e `expires_in`.
