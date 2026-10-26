@@ -53,3 +53,10 @@ A seta `A → B` significa “B consome contrato/serviço fornecido por A”.
 - PHPCS Drupal/DrupalPractice: FAIL em arquivos tocados que já contêm violações legadas de nomenclatura, estrutura de comentários e `unserialize()` sem lista de classes; o gate não foi enfraquecido. O script `validate-own-module-packages.php` foi corrigido para 0 erros (restam avisos de linhas longas/constante global).
 - Kernel H5P focal: PASS (3 testes/134 assertions) em bootstrap isolado com código da branch; usa o plugin real `aculta_document_viewer_group:course_document` e verifica membros, educador, estudante, não membro, referência e revogação. A tentativa anterior que instalava a configuração LMS completa falhava antes das assertions por ausência de `aculta_studio.ganjalab_controller`; a fixture foi reduzida ao contrato do teste sem serviço de produto fictício. Persistem 41 deprecações upstream.
 - `validate-admin-domain-policy.php` foi tentado sem bootstrap Drupal e terminou com `Class "Drupal" not found`; não contar como PASS. Outros gates dependentes de bootstrap e testes Browser/visual não foram executados nesta fase.
+
+## Evidência Portal adicionada em 2026-10-25
+
+- `AccountOtherDataStudioReturnTest`: harness Unit agora inicializa `path.validator` para o caminho de validação usado por `Url::fromUserInput()` e restaura o container Drupal pré-existente no `tearDown()`.
+- Suíte Unit completa do Portal: 350 testes / 878 assertions PASS, seis depreciações PHPUnit.
+- Suíte Kernel completa do Portal em MariaDB de testes isolado: 53 testes / 831 assertions PASS, 90 depreciações Core/contrib. Nenhuma gravação no Runtime.
+- Isso melhora a evidência automatizada do Portal; Functionals, Browser/X11 e comparação de configuração ativa por purpose continuam pendentes.

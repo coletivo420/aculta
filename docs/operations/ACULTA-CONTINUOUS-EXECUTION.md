@@ -2,16 +2,16 @@
 
 **Branch:** `chore/aculta-m0-integridade`  
 **HEAD retomado:** `d55c4301e7ffde6022fd6c7b3651df1de927e619`  
-**HEAD estável:** `18ef3a432`
-**Estado:** PARTIAL — P0 H5P concluído; auditoria M-0 e frentes M-1 a M-5 em andamento.
+**HEAD estável:** `d82181d74` (Portal evidence/test-harness changes are currently uncommitted)
+**Estado:** PARTIAL — H5P, Portal Unit/Kernel e auditorias focais CPF/User/CEP concluídos; auditoria M-0 e frentes M-1 a M-5 em andamento.
 **Runtime:** `toca`, Drupal 11.4.10, PHP 8.4.27, URI padrão `http://default`, banco `aculta_runtime`. Consultas somente leitura; nenhum write foi executado.
 
 ## Ponto de retomada
 
-1. Prosseguir PHPCS pelos arquivos tocados restantes; formatter, widget e teste focal H5P agora passam sem renomear classes H5P persistidas.
-2. Prosseguir M-1: auditar `aculta_user`, Portal e CEP; testar consentimento, identidade pública e integração de checkout em banco isolado.
-3. Executar os gates administrativos e de configuração com bootstrap e URIs explícitas.
-4. Completar inventário Runtime read-only, Config Sync e auditoria individual dos demais componentes.
+1. Commits pendentes: corrigir o harness `AccountOtherDataStudioReturnTest`, documentar Portal Unit 350/878 e Kernel 53/831 e publicar o resultado.
+2. Prosseguir M-1 por Mailer, Confirmador e Messenger; auditar consentimento, identidade pública e integração de checkout em ambiente isolado.
+3. Executar os gates administrativos e de configuração com bootstrap e URIs explícitas contra o checkout candidato quando viável.
+4. Completar inventário Runtime read-only, Config Sync e auditoria individual dos demais componentes, preservando os oito módulos do agente 2.
 
 ## Evidência desta retomada
 
@@ -26,6 +26,7 @@
 - CPF/CNPJ (`aculta_id_cpf`): `AccountDocumentStore` agora possui restrição SQL única em `profile__field_documento_indice`; update `10002` verifica duplicatas com contagem agregada e falha sem imprimir fingerprints; o hook de instalação aplica o contrato em instalações novas. Unit 47/107, runner de domínio 248 checks e Kernel MariaDB 2/5 PASS. `updatedb` não foi executado no Runtime.
 - `aculta_user` revalidado sem alterações de código: Unit 129/492 PASS (uma depreciação PHPUnit); Kernel 25/361 PASS (cinco depreciações de Core/contrib). Homologação visual e Runtime permanecem pendentes.
 - CEP/Endereço (`aculta_portal_cep`): Unit 9/36 PASS; `scripts/validate-account-address.php` PASS; serviço único é consumido pelo endpoint e pelos adaptadores PHP do Melhor Envio, sem persistência de endereço. O módulo está habilitado em MAIN (read-only). PHPCS do baseline inalterado: 105 erros/36 warnings em 12 arquivos, não introduzidos por esta PR; homologação Browser/X11 ainda pendente.
+- Portal: suíte Unit completa 350/878 PASS (6 depreciações PHPUnit) e Kernel com MariaDB isolado 53/831 PASS (90 depreciações Drupal/Core/contrib). O harness de `AccountOtherDataStudioReturnTest` injeta `path.validator` e restaura o container global anterior; código funcional inalterado. Runtime foi somente leitura; rotas por purpose e homologação visual pendentes.
 - Runtime inventory read-only por `moduleHandler` em URI MAIN: 35/40 módulos habilitados; cinco desabilitados (`aculta_activity`, `aculta_deployer`, `aculta_commerce_melhorenvio`, `aculta_commerce_messenger`, `aculta_wiki_messenger`). `updatedb:status` mostra 5 hooks e 3 post-updates pendentes de `aculta_messenger`; não executados por falta de autorização para escrita. Outros purposes compartilham o estado global de módulos, mas Config Domain ainda não foi comparada por host.
 
 ## Status por frente
@@ -36,7 +37,13 @@
 | P0 H5P | PASS focal | Kernel isolado 3/134; suíte integral do módulo não repetida nesta etapa |
 | P0 admin Domain | PASS no checkout compartilhado | 3498 checks; repetir/validar contra a branch quando runner bootstrapped estiver disponível |
 | M-0 inventário individual | Parcial | Inventário 41 itens preservado; faltam Runtime/Config Sync completo e evidência por componente |
-| M-1 a M-5 | Em execução | Auditar User, Portal e CEP; a garantia fiscal de unicidade está em código, aguardando validação isolada do update e autorização para Runtime |
+| M-1 a M-5 | Em execução | Avançar em Mailer/Confirmador/Messenger; CPF update aguarda validação isolada e autorização para Runtime; auditorias User/Portal/CEP e homologações visuais continuam parciais |
+
+## Atualização após HEAD `d82181d74`
+
+- Portal Unit e Kernel completos passaram conforme evidência acima; o Kernel usou `/tmp/aculta-m0-kernel-test-root` e `/home/aculta/secrets/simpletest-db.env` sem expor credenciais e sem tocar Runtime.
+- Resultado contínuo segue PARTIAL: depreciações upstream, Browser/Functional e auditoria Config Sync/Domain por purpose permanecem pendentes.
+- Próxima unidade: revisar Mailer/Confirmador/Messenger e identificar teste focal executável sem enviar e-mail nem processar fila real.
 
 ## Restrições / deferred
 

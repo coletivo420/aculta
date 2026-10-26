@@ -5,7 +5,17 @@ Core e de módulos contrib para as experiências de conta, conteúdo, Commerce,
 aprendizagem e domínios. Core/contrib continuam donos das entidades e regras que
 já fornecem.
 
-## Situação vigente — S-R3-B2, Portal dev.30 (2026-10-25)
+## Situação vigente — Portal `0.4.1-dev.32` (2026-10-25)
+
+Os testes Unit do Portal foram executados nesta revisão: 350 testes / 878
+assertions PASS (6 depreciações PHPUnit). A suíte Kernel passou com 53 testes /
+831 assertions (90 depreciações Drupal/Core/contrib), usando MariaDB isolado.
+O teste de retorno Studio/legado inicializa e restaura o container Drupal
+global, conforme exigido por `Url::fromUserInput()` no teste Unit. Essa evidência
+não equivale a homologação de rotas no Runtime, revisão visual nem RC.
+
+O código funcional mais recente permanece o registrado em 0.4.1-dev.32; esta
+execução corrigiu o harness e atualizou a evidência, sem mudança de runtime.
 
 Minha Conta Studio `/studio/conta/dados` reutiliza o Form API de Profile
 do Portal para os dados cadastrais privados (nome e WhatsApp), excluindo
@@ -18,9 +28,7 @@ A interface legada em **`/conta-legada` é permanente**: `/dados`
 continua com seu formulário misto e todos os serviços de endereço,
 autenticação, e-mail, CPF/CNPJ, pedidos, checkout e menus intactos.
 A raiz `/` no ACCOUNT serve o hub do Studio; `/studio` direto e
-`/minha-conta` respondem 404. Código entregue, testes novos
-escritos **sem execução**; aguardam lint, PHPUnit, Kernel/Functional,
-Firefox ESR/X11 e Runtime. Contrato atual:
+`/minha-conta` respondem 404. Contrato atual:
 [Conta e Perfil separados](../../../../docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
 
 ## Histórico — Evolução planejada: Conta e Perfil no ACULTA Studio (2026-10-24)

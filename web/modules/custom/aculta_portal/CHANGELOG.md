@@ -1,3 +1,13 @@
+### Validação das suítes Portal — 2026-10-25 (sem alteração runtime)
+
+- `AccountOtherDataStudioReturnTest` fornece `path.validator` para o caminho
+  Drupal real de `Url::fromUserInput()` e restaura o container global anterior
+  ao terminar; não altera o comportamento runtime do Portal.
+- Portal Unit: 350 testes / 878 assertions PASS; seis depreciações PHPUnit.
+  Portal Kernel em MariaDB isolado: 53 testes / 831 assertions PASS; 90
+  depreciações de Drupal/Core/contrib. Runtime, Functional/browser e RC seguem
+  pendentes.
+
 ## 0.4.1-dev.32 — limpeza global ignora tipos sem armazenamento instalado (2026-10-25)
 
 - `FileReferenceInspector` deixa de tratar como `Unverifiable` os tipos de
