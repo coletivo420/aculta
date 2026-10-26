@@ -184,17 +184,23 @@ compartilhada de perfil/endereço usada por Doação e Melhor Envio, não domín
 `MercadoPagoApiException`, `MercadoPagoRecurrenceService`, `MercadoPagoSubscriptionRecorder` e os service
 ids `aculta_portal.mercado_pago.recurrence_service` e `aculta_portal.mercado_pago.logger`.
 
-Recomendação: **não** fazer `aculta_donation` depender do MP. O painel é específico de MP, mas a Doação
-deve continuar agnóstica a gateway. Duas saídas:
+Decisão do responsável (18:11): `aculta_donation` depende do MP por desenho. `RecurringAuthorizationPane`
+permanece em `aculta_donation`, usa diretamente as classes e os service IDs
+`aculta_pagamentos_mercadopago.*`, sem interface intermediária, e o info.yml declara
+`aculta_portal:aculta_pagamentos_mercadopago`. A cadeia fica Doação → MP → Portal, sem ciclo.
 
-1. **Mover o painel para o MP** (recomendado se ele não tiver uso fora do MP): o MP já depende do Portal e
-   pode depender de `aculta_donation`; a descoberta de CheckoutPane é por atributo, não por dependência.
-2. **Inverter por interface no Portal** (`RecurrenceInterface` + exceção neutra): a Doação fica igual e o
-   MP implementa.
+### aculta_lms
 
-Se o responsável preferir o caminho mais curto, `aculta_donation` pode declarar
-`aculta_portal:aculta_pagamentos_mercadopago`; isso não cria ciclo (Doação → MP → Portal), mas acopla a
-Doação ao gateway. Não é a recomendação.
+Decisão do responsável (18:12): `aculta_lms` também depende do MP por desenho. O info.yml declara
+`aculta_portal:aculta_pagamentos_mercadopago`; a cadeia fica LMS → MP → Portal. A ligação é funcional
+(checkout de curso pago e regra de curso sem estorno); nenhum código do LMS muda nesta fase.
+
+Inventário verificado em `d74a677`: `aculta_lms_resources`, `aculta_lms_h5p`, `aculta_forum_lms` e
+`aculta_lms_messenger` não referenciam classes, serviços ou configuração MP. Não adicionar dependências
+nesses módulos sem revisão.
+
+A regra `MercadoPagoPaymentPolicy::bloqueiaEstorno` continua cobrindo doações, assinaturas e cursos sem
+estorno. Os 22 casos existentes são preservados sem mudança de comportamento.
 
 ### Scripts
 
@@ -242,8 +248,8 @@ Testes de outros submódulos que apenas listam `aculta_pagamentos_mercadopago` c
 | 2 | Mover os serviços de pagamento/assinatura (`PaymentService`, `RecurrenceService`, `SubscriptionRecorder`, `SubscriptionNotificationService`) + `services.yml` com IDs novos | Unit `MercadoPagoPaymentServiceTest`, `MercadoPagoRecurrenceServiceTest`, `MercadoPagoSubscriptionRecorderTest`, `MercadoPagoSubscriptionNotificationServiceTest` |
 | 3 | Mover credenciais, override de ambiente, webhook (`Credentials`, `EnvironmentOverride`, `WebhookGuard`, `WebhookEventSubscriber`) e testes | `MercadoPagoCredentialsTest`, `MercadoPagoWebhookFailClosedTest`, `MercadoPagoSubscriptionWebhookTest`; script de segurança |
 | 4 | Mover `RefundEligibilitySubscriber` e os ramos MP dos hooks (`EntitySaveHooks`, `EntityHooks`, `FormHooks`); manter `ProfileAddressAliasHooks` no Portal | Unit `RefundEligibilitySubscriberTest`; teste de acesso/form do gateway (criar se não houver) |
-| 5 | Inverter consumidores do Portal com interfaces (`SubscriptionStatusInterface`, `PaymentOperationsInterface`, `RefundPolicyInterface`, exceção neutra); ajustar Doação (mover o painel ou interface) | `DonationReportControllerTest` + testes de Doação; Unit dos formulários de venda |
-| 6 | Remover `aculta_portal:aculta_pagamentos_mercadopago` de `aculta_portal.info.yml` | `drush pm:list`/instalação sem ciclo; Kernel de wiring dos submódulos |
+| 5 | Inverter consumidores do Portal com interfaces (`SubscriptionStatusInterface`, `PaymentOperationsInterface`, `RefundPolicyInterface`, exceção neutra); manter `RecurringAuthorizationPane` na Doação com dependência direta do MP; declarar dependências diretas Doação/LMS → MP | `DonationReportControllerTest`, testes de Doação e LMS; Unit dos formulários de venda; instalação limpa confirma Doação e LMS puxando MP |
+| 6 | Remover `aculta_portal:aculta_pagamentos_mercadopago` de `aculta_portal.info.yml` | Instalações limpas descartáveis: Portal sem MP; Doação habilitada puxa MP; LMS habilitado puxa MP. Kernels LMS, incluindo 5/259 de course/video, passam com MP no harness; Kernel de wiring dos submódulos |
 | 7 | Atualizar scripts, status YAML, CHANGELOGs e versões; regenerar a tabela do README pelo dono | `validate-aculta-portal-drupal11.php`, `validate-portal-commerce-security.php`, `validate-project-status-index.php --write` (dono do README) |
 
 Cada passo deve deixar a árvore verde: PHP lint, PHPCS Drupal/DrupalPractice e os testes citados. Os
@@ -286,14 +292,13 @@ passos 1-4 são movimentação mecânica; o passo 5 é o único com desenho novo
 9. Nenhum alias de serviço ou rota temporário.
 10. Deploy no servidor de testes com smoke de webhook e checkout; produção só na janela de RC.
 
-## Decisões que dependem do responsável
+## Decisões aprovadas pelo responsável
 
-1. **IDs de serviço:** renomear para `aculta_pagamentos_mercadopago.*` (recomendado) ou manter os atuais.
-2. **Painel `RecurringAuthorizationPane`:** mover para o MP (recomendado) ou inverter por interface no
-   Portal. A Doação não deve declarar dependência do MP.
-3. **Hooks MP:** mover os ramos de `EntitySaveHooks`/`EntityHooks`/`FormHooks` para o MP (recomendado) ou
-   manter no Portal com `moduleExists`.
-4. **Namespaces:** manter os sufixos atuais sob o MP ou achatar o segmento `MercadoPago` (mais churn).
-5. **Log channel:** renomear para `aculta_pagamentos_mercadopago` ou manter `aculta_portal`.
-6. **Versões:** `aculta_pagamentos_mercadopago` sobe de `0.1.0-dev.9`; `aculta_portal` sobe só se o
-   contrato público mudar (interfaces novas).
+1. **Service IDs MP:** `aculta_pagamentos_mercadopago.*`, sem aliases. O Portal consome os contratos pelos IDs neutros `aculta_portal.payment_provider.*`, opcionais quando o provedor não está instalado.
+2. **Painel `RecurringAuthorizationPane`:** permanece em `aculta_donation`, com dependência direta do MP e uso de classes/IDs do próprio módulo.
+3. **Dependências:** Doação e LMS declaram `aculta_portal:aculta_pagamentos_mercadopago`; Portal não depende do MP. `aculta_lms_resources`, `aculta_lms_h5p`, `aculta_forum_lms` e `aculta_lms_messenger` não usam MP.
+4. **Hooks MP:** os ramos de `EntitySaveHooks`/`EntityHooks`/`FormHooks` ficam nos hooks OOP do MP.
+5. **Namespaces:** sufixos atuais mantidos sob `Drupal\aculta_pagamentos_mercadopago\`.
+6. **Canal de log:** `aculta_pagamentos_mercadopago`.
+7. **Operações:** exceções da API são embrulhadas em `PaymentOperationException`; a UI recebe mensagem segura e o detalhe cru fica somente no log.
+8. **Versões:** MP parte de `0.1.0-dev.9`; Portal sobe por contratos públicos novos; Doação e LMS sobem ao mudar seus manifests.

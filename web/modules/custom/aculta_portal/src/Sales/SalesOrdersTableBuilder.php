@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Sales;
 
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
+use Drupal\aculta_portal\Contract\RefundPolicyInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -41,6 +42,7 @@ class SalesOrdersTableBuilder {
     private readonly DateFormatterInterface $dateFormatter,
     private readonly AccountInterface $usuario,
     TranslationInterface $stringTranslation,
+    private readonly ?RefundPolicyInterface $refundPolicy = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -49,6 +51,7 @@ class SalesOrdersTableBuilder {
    * Tabela paginada de pedidos com itens do escopo informado.
    *
    * @return array<string, mixed>
+   *   Render array da tabela e da paginação.
    */
   public function construir(SalesReportFilters $filtros, string $escopo, int $pagina, string $rotaAtual, array $queryAtual): array {
     $pagina = max(0, $pagina);
@@ -100,6 +103,7 @@ class SalesOrdersTableBuilder {
    * Pagamentos do pedido, com estado, status remoto e ações permitidas.
    *
    * @return array<int, array<string, mixed>>
+   *   Render arrays dos pagamentos.
    */
   private function pagamentos(OrderInterface $pedido, bool $podeAgir): array {
     $saida = [];
@@ -135,6 +139,7 @@ class SalesOrdersTableBuilder {
    * Links de ação do pagamento. Cancelar só aparece para pagamento pendente em authorization.
    *
    * @return array<int, array<string, mixed>>
+   *   Render arrays dos pagamentos.
    */
   private function acoes(OrderInterface $pedido, PaymentInterface $pagamento): array {
     $links = [];
@@ -143,7 +148,7 @@ class SalesOrdersTableBuilder {
       $links[] = $this->link($this->t('Cancelar'), Url::fromRoute('aculta_portal.relatorio_vendas_pagamento_cancelar', ['commerce_payment' => $pagamento->id()]), 'sales-action-danger');
     }
     // Doações não podem ser estornadas (decisão do responsável): o link só aparece para pedido sem item de doação.
-    if (in_array($pagamento->getState()->getId(), MercadoPagoPaymentPolicy::ESTORNAVEIS, TRUE) && !$this->pedidoTemDoacao($pedido)) {
+    if ($this->refundPolicy?->isRefundable($pagamento->getState()->getId()) && !$this->pedidoTemDoacao($pedido)) {
       $links[] = $this->link($this->t('Estornar'), Url::fromRoute('entity.commerce_payment.operation_form', [
         'commerce_order' => $pedido->id(),
         'commerce_payment' => $pagamento->id(),
@@ -153,7 +158,14 @@ class SalesOrdersTableBuilder {
     return $links;
   }
 
-  /** Indica se o pedido tem item de doação (o Portal não depende do submódulo aculta_donation). */
+  /**
+   * Indica se o pedido tem item de doação.
+   *
+   * O Portal não depende do submódulo aculta_donation.
+   *
+   * @return bool
+   *   TRUE quando há item de doação.
+   */
   private function pedidoTemDoacao(OrderInterface $pedido): bool {
     foreach ($pedido->getItems() as $item) {
       if ($item->bundle() === SalesReportQuery::TIPO_DOACAO) {
@@ -167,6 +179,7 @@ class SalesOrdersTableBuilder {
    * Link com token de ação. Botão ou cor são decididos pelo tema.
    *
    * @return array<string, mixed>
+   *   Render array do link.
    */
   private function link(mixed $texto, Url $url, string $token): array {
     $link = Link::fromTextAndUrl($texto, $url)->toRenderable();
@@ -191,6 +204,7 @@ class SalesOrdersTableBuilder {
    * Tipos dos itens do pedido (para o escopo).
    *
    * @return string[]
+   *   Bundles dos itens do pedido.
    */
   private function tiposDosItens(OrderInterface $pedido): array {
     return array_map(static fn ($item): string => (string) $item->bundle(), $pedido->getItems());

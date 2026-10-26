@@ -45,6 +45,9 @@ final class DonationReportController implements ContainerInjectionInterface {
     $this->stringTranslation = $stringTranslation;
   }
 
+  /**
+   * Creates the donation report controller from the service container.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.sales_report_query'),
@@ -90,7 +93,7 @@ final class DonationReportController implements ContainerInjectionInterface {
       '#empty' => $this->t('Nenhuma doação concluída no intervalo.'),
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
-    return [
+    $saida = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'sales-panel'],
       'resumo' => [
@@ -115,7 +118,10 @@ final class DonationReportController implements ContainerInjectionInterface {
         ],
         'conteudo' => $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_DOACAO, $this->paginaAtual($request), 'aculta_portal.relatorio_doacoes', $this->filtrosDaUrl($request)),
       ],
-      'recorrentes' => [
+    ];
+    $recorrentes = $this->recorrentes->construir();
+    if ($recorrentes !== []) {
+      $saida['recorrentes'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'sales-section'],
         'titulo' => [
@@ -124,11 +130,15 @@ final class DonationReportController implements ContainerInjectionInterface {
           '#attributes' => ['data-portal-ui' => 'sales-heading'],
           '#value' => $this->t('Doações recorrentes'),
         ],
-        'conteudo' => $this->recorrentes->construir(),
-      ],
-    ];
+        'conteudo' => $recorrentes,
+      ];
+    }
+    return $saida;
   }
 
+  /**
+   * Gets the requested page number from the query string.
+   */
   private function paginaAtual(Request $request): int {
     return max(0, (int) $request->query->get('pagina', 0));
   }
@@ -137,6 +147,7 @@ final class DonationReportController implements ContainerInjectionInterface {
    * Filtros da URL repassados à paginação (sem o parâmetro de página).
    *
    * @return array<string, string>
+   *   Filtros escalares da URL.
    */
   private function filtrosDaUrl(Request $request): array {
     return array_filter($request->query->all(), static fn ($valor, $chave): bool => $chave !== 'pagina' && is_scalar($valor), ARRAY_FILTER_USE_BOTH);

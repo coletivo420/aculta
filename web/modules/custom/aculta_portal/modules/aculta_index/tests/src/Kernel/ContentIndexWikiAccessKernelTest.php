@@ -88,6 +88,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       ])->save();
     }
     $this->installSchema('user', ['users_data']);
+    $this->installSchema('aculta_user', ['aculta_user_nickname']);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('comment', ['comment_entity_statistics']);

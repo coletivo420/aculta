@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Form;
 
-use Drupal\aculta_portal\MercadoPago\MercadoPagoApiException;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoPaymentService;
+use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
+use Drupal\aculta_portal\Exception\PaymentOperationException;
 use Drupal\aculta_portal\Sales\SalesPaymentAccess;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
@@ -23,51 +23,77 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class SalesPaymentCancelForm extends ConfirmFormBase {
 
   public function __construct(
-    private readonly MercadoPagoPaymentService $pagamentos,
+    private readonly ?PaymentOperationsInterface $pagamentos,
     private readonly AccountInterface $usuario,
     private readonly EntityTypeManagerInterface $entidades,
   ) {}
 
+  /**
+   * Performs the create operation.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_portal.mercado_pago.payment_service'),
+      $container->has('aculta_portal.payment_provider.payment_operations')
+        ? $container->get('aculta_portal.payment_provider.payment_operations')
+        : NULL,
       $container->get('current_user'),
       $container->get('entity_type.manager'),
     );
   }
 
+  /**
+   * Performs the get form id operation.
+   */
   public function getFormId(): string {
     return 'aculta_portal_sales_payment_cancel';
   }
 
+  /**
+   * Performs the get question operation.
+   */
   public function getQuestion(): string {
     return (string) $this->t('Cancelar este pagamento pendente no Mercado Pago?');
   }
 
+  /**
+   * Performs the get description operation.
+   */
   public function getDescription(): string {
     return (string) $this->t('Só funciona enquanto o pagamento está pendente, em processo ou autorizado. Pagamento aprovado precisa de estorno.');
   }
 
+  /**
+   * Performs the get cancel url operation.
+   */
   public function getCancelUrl(): Url {
     return Url::fromRoute('aculta_portal.relatorio_vendas');
   }
 
+  /**
+   * Performs the build form operation.
+   */
   public function buildForm(array $form, FormStateInterface $form_state, ?PaymentInterface $commerce_payment = NULL): array {
+    if ($this->pagamentos === NULL) {
+      throw new AccessDeniedHttpException();
+    }
     $this->autorizar($commerce_payment);
     $form_state->set('pagamento_id', (int) $commerce_payment->id());
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   * Performs the submit form operation.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $pagamento = $this->entidades->getStorage('commerce_payment')->load((int) $form_state->get('pagamento_id'));
     if (!$pagamento instanceof PaymentInterface) {
       throw new AccessDeniedHttpException();
     }
     try {
-      $this->pagamentos->cancelar($pagamento);
+      $this->pagamentos?->cancel($pagamento);
       $this->messenger()->addStatus($this->t('Pagamento cancelado no Mercado Pago.'));
     }
-    catch (\DomainException | MercadoPagoApiException $e) {
+    catch (\DomainException | PaymentOperationException $e) {
       $this->messenger()->addError($e->getMessage());
     }
     $form_state->setRedirect('aculta_portal.relatorio_vendas');

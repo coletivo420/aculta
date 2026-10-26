@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
+use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
 use Drupal\aculta_studio\Controller\GanjalabController;
 use Drupal\aculta_lms\CourseOrderEnrollmentManagerInterface;
 use Drupal\aculta_lms\Controller\LearningDashboardController;
@@ -69,6 +70,10 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
     $container = \Drupal::getContainer();
     $this->assertTrue($container->get('module_handler')->moduleExists('aculta_lms'));
+    $this->assertInstanceOf(
+      PaymentOperationsInterface::class,
+      $container->get('aculta_portal.payment_provider.payment_operations'),
+    );
     $this->assertTrue($container->get('module_handler')->hasImplementations('form_lms_answer_form_alter', ['aculta_lms']));
     $this->assertTrue($container->get('module_handler')->hasImplementations('commerce_order_insert', ['aculta_lms']));
     $this->assertTrue($container->get('module_handler')->hasImplementations('commerce_order_update', ['aculta_lms']));

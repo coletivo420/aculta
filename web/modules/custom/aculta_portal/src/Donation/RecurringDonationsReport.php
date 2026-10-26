@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Donation;
 
-use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_portal\Contract\SubscriptionStatusInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -19,12 +19,14 @@ use Drupal\Core\Url;
  */
 final class RecurringDonationsReport {
 
-  /** Quantidade máxima de pedidos listados (os mais recentes). Acima disso, o resumo continua completo. */
+  /**
+   * Quantidade máxima de pedidos listados (os mais recentes). Acima disso, o resumo continua completo.
+   */
   public const LIMITE_LISTA = 100;
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entidades,
-    private readonly MercadoPagoSubscriptionRecorder $assinaturas,
+    private readonly ?SubscriptionStatusInterface $assinaturas,
     private readonly CurrencyFormatterInterface $moedas,
   ) {}
 
@@ -32,8 +34,11 @@ final class RecurringDonationsReport {
    * Tabela-resumo e lista de doações recorrentes, como render array.
    */
   public function construir(): array {
+    if ($this->assinaturas === NULL) {
+      return [];
+    }
     $ids = $this->entidades->getStorage('commerce_order')->getQuery()
-      ->condition('type', MercadoPagoSubscriptionRecorder::TIPO_PEDIDO)
+      ->condition('type', $this->assinaturas->subscriptionOrderType())
       // Painel administrativo: a rota exige a permissão do relatório; a lista não depende do acesso da conta.
       ->accessCheck(FALSE)
       ->sort('order_id', 'DESC')
@@ -46,7 +51,7 @@ final class RecurringDonationsReport {
       if (!$pedido instanceof OrderInterface) {
         continue;
       }
-      $status = $this->assinaturas->statusDoPedido($pedido) ?: MercadoPagoSubscriptionRecorder::STATUS_PENDENTE;
+      $status = $this->assinaturas->statusForOrder($pedido) ?: $this->assinaturas->pendingStatus();
       $resumo[$status] = ($resumo[$status] ?? 0) + 1;
       [$cobrancas, $ultima] = $this->cobrancas($pedido);
       $total = $pedido->getTotalPrice();
@@ -60,18 +65,18 @@ final class RecurringDonationsReport {
         ],
         gmdate('d/m/Y', $pedido->getPlacedTime() ?: $pedido->getCreatedTime()),
         $total ? $this->moedas->format($total->getNumber(), $total->getCurrencyCode()) : new TranslatableMarkup('A confirmar'),
-        MercadoPagoSubscriptionRecorder::rotulo($status),
+        $this->assinaturas->statusLabel($status),
         (string) $cobrancas,
         $ultima ? gmdate('d/m/Y', $ultima) : new TranslatableMarkup('Nenhuma ainda'),
-        ($situacaoCobranca = $this->assinaturas->situacaoDaUltimaCobranca($pedido)) === ''
+        ($situacaoCobranca = $this->assinaturas->latestChargeStatus($pedido)) === ''
           ? new TranslatableMarkup('Nenhuma ainda')
-          : MercadoPagoSubscriptionRecorder::rotuloCobranca($situacaoCobranca),
+          : $this->assinaturas->chargeStatusLabel($situacaoCobranca),
       ];
     }
 
     $linhasResumo = [];
-    foreach (MercadoPagoSubscriptionRecorder::STATUS_ORDEM as $status) {
-      $linhasResumo[] = [MercadoPagoSubscriptionRecorder::rotulo($status), $resumo[$status] ?? 0];
+    foreach ($this->assinaturas->orderedStatuses() as $status) {
+      $linhasResumo[] = [$this->assinaturas->statusLabel($status), $resumo[$status] ?? 0];
     }
 
     return [
@@ -100,9 +105,10 @@ final class RecurringDonationsReport {
   }
 
   /**
-   * Quantidade de cobranças aprovadas do pedido e a data (timestamp) da última.
+   * Returns the count and timestamp of the latest approved charge.
    *
    * @return array{0: int, 1: int}
+   *   Approved charge count and latest timestamp.
    */
   private function cobrancas(OrderInterface $pedido): array {
     $contagem = 0;
