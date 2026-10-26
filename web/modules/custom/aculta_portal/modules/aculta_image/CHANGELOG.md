@@ -1,5 +1,10 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.33 — coordenar também a quarentena pelo Portal
+
+- ImageQuarantine agora usa aculta_portal.unused_file_cleaner para conferir referências antes de mover e para repetir a verificação antes de excluir entradas vencidas. Sem o coordenador, a quarentena falha fechada.
+- Testes Unit cobrem retenção quando Core File Usage encontra referência e quando o coordenador não está disponível; nenhum arquivo é movido ou excluído.
+
 ## 0.1.0-dev.32 — cobrir exclusão fail-closed por referências
 
 - `FileRemoverFailClosedTest` prova que uso reportado pelo File API ou por Entity Usage impede a exclusão; erro ao consultar Entity Usage propaga antes de qualquer acesso à storage de arquivos. Nenhum arquivo real é apagado.

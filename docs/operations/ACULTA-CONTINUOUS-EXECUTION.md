@@ -354,3 +354,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Adicionado `FileRemoverFailClosedTest` para confirmar que referências File API e Entity Usage bloqueiam exclusão; falha na consulta Entity Usage propaga antes de acessar a storage de arquivos. O teste não opera sobre arquivos reais.
 - Teste focal: 3/23 PASS; suíte Unit Image: 25/103 PASS (9 depreciações PHPUnit); PHPCS Drupal/DrupalPractice e PHP lint PASS. `aculta_image` avançou `0.1.0-dev.31` → `.32`; README, CHANGELOG, status e matriz reconciliados.
 - A auditoria não executou `ImageCleanup` em Runtime nem alterou arquivo/conteúdo; limpeza real continua fora do escopo desta missão.
+
+## M-2 — Image: quarentena usa coordenador global — 2026-10-26
+
+- A auditoria confirmou que ImageQuarantine fazia a verificação local somente em File API Usage e Entity Usage e removia diretamente pelo FileRemover, sem a inspeção Portal de referências em campos/revisões/texto formatado.
+- ImageQuarantine agora só move um arquivo depois de UnusedFileCleaner avaliar o estado como Available e só apaga item vencido via removeIfUnused; sem o serviço coordenador, falha fechada. Image continua proprietário da remoção física pelo contrato já existente. Nenhuma operação de arquivo foi executada.
+- ImageQuarantineOwnershipTest: 2 testes/8 assertions PASS; suíte Unit Image: 27/111 PASS (9 depreciações PHPUnit); UnusedFileCleaner Portal: 5/22 PASS (1 depreciação). PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Gate aculta_image PASS (25 estilos), pacotes próprios PASS (41), dependências Config Extension PASS (1590/1437), fronteira módulo-tema PASS (2889).
+- PHPUnit foi executado com bootstrap temporário que prioriza classes do worktree porque vendor/core são compartilhados e o autoloader padrão seleciona cópias do checkout principal. Um primeiro run sem essa priorização carregou a assinatura antiga de ImageQuarantine; esse erro de harness não foi contado. Bootstrap temporário está em /tmp, fora do repositório.
+- Manifesto, README, changelog, plano e status de Image atualizados para dev.33. Estado permanece Dev; Kernel/install-clean e homologação operacional ainda pendentes. Nenhuma alteração no Runtime.

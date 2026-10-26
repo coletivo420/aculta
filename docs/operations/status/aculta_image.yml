@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.32
+version: 0.1.0-dev.33
 state: Dev
-next_phase: Validar a delegação opcional do `ImageCleanup` ao serviço comum no Kernel e conferir que quarentena, retenção e remoção de derivados mantêm paridade; confirmar binários necessários para produção e avançar integração Growroom ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
-progress_note: "Dev.32: `FileRemoverFailClosedTest` cobre referência reportada pelo File API, referência Entity Usage e falha da consulta sem prosseguir para storage de arquivos; Unit FileRemoverFailClosedTest 3/23 PASS; suíte Unit do módulo 25/103 PASS (9 depreciações PHPUnit); PHPCS e PHP lint do teste PASS. README reconciliado ao manifesto. Runtime e arquivos reais não foram alterados."
+next_phase: Validar em Kernel a delegação de limpeza normal e quarentena pelo Portal, confirmar binários necessários para produção e avançar integração Growroom ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
+progress_note: "Dev.33: ImageQuarantineOwnershipTest 2/8 PASS cobre retenção quando Core File Usage encontra referência e quando o coordenador do Portal não está disponível; suíte Unit Image 27/111 PASS (9 depreciações); UnusedFileCleaner 5/22 PASS (1 depreciação); PHPCS Drupal/DrupalPractice e PHP lint alterados PASS. Nenhum arquivo real foi movido ou excluído."

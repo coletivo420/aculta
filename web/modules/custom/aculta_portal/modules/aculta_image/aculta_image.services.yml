@@ -65,7 +65,7 @@ services:
       - { name: aculta_portal.helper }
   aculta_image.quarantine:
     class: Drupal\aculta_image\Quarantine\ImageQuarantine
-    arguments: ['@database', '@file.repository', '@file_system', '@file.usage', '@aculta_image.file_remover', '@datetime.time', '@entity_type.manager']
+    arguments: ['@database', '@file.repository', '@file_system', '@?aculta_portal.unused_file_cleaner', '@datetime.time', '@entity_type.manager']
     tags:
       - { name: aculta_portal.helper }
   aculta_image.compressor:
