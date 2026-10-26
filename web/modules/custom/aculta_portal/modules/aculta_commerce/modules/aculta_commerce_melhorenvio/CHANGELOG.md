@@ -18,6 +18,9 @@
 - Hook `update_8001` converte nomes legados de variáveis em Key IDs e não altera nada quando não há nomes legados.
 - Hook `update_8002` cifra os registros legados uma vez, pula os já cifrados e falha se a chave não estiver disponível
   (a atualização fica pendente, sem perda de dados).
+- Registro legado malformado é apagado e contado à parte (`malformed`), sem exceção, para forçar nova autorização.
+  Só a chave de cifragem ausente interrompe a migração. Coberto por
+  `testMigrationDeletesMalformedRecordAndCountsItWithoutException` e `testMigrationWithoutKeyFailsAndWritesNothing`.
 
 ### Verificado
 

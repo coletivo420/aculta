@@ -43,6 +43,10 @@ function aculta_commerce_melhorenvio_update_8001(): string {
  * Encrypts OAuth token records previously stored as plaintext in State API.
  */
 function aculta_commerce_melhorenvio_update_8002(): string {
-  $migrated = \Drupal::service('aculta_commerce_melhorenvio.token_store')->migrateLegacyTokens();
-  return sprintf('Encrypted %d legacy Melhor Envio token record(s).', $migrated);
+  $result = \Drupal::service('aculta_commerce_melhorenvio.token_store')->migrateLegacyTokens();
+  return sprintf(
+    'Encrypted %d legacy Melhor Envio token record(s); removed %d malformed record(s) (reauthorization required).',
+    $result['migrated'],
+    $result['malformed'],
+  );
 }

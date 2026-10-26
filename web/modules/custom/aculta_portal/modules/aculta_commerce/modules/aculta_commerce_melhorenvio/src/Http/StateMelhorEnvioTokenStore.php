@@ -38,8 +38,9 @@ final class StateMelhorEnvioTokenStore implements MelhorEnvioTokenStoreInterface
       return $this->decode($this->cipher->decrypt($stored['payload']));
     }
     catch (\RuntimeException) {
-      // Falha fechada: chave ausente, valor adulterado ou formato inválido equivalem a "sem tokens".
-      // O usuário precisa autorizar de novo. Nenhum texto puro é devolvido nem registrado.
+      // Falha fechada: chave ausente, valor adulterado ou formato inválido
+      // equivalem a "sem tokens". O usuário autoriza de novo.
+      // Nada em texto puro é devolvido nem registrado.
       return NULL;
     }
   }
@@ -61,30 +62,43 @@ final class StateMelhorEnvioTokenStore implements MelhorEnvioTokenStoreInterface
   }
 
   /**
-   * Encrypts legacy plaintext State records after the key has been provisioned.
+   * Cifra registros legados em texto puro.
    *
-   * @return int
-   *   Number of environment records migrated.
+   * Registro malformado é apagado (força nova autorização) e contado à parte.
+   * Só chave ausente interrompe a migração, sem gravar nada.
+   *
+   * @return array{migrated: int, malformed: int}
+   *   Registros cifrados e registros malformados apagados.
    *
    * @throws \RuntimeException
-   *   When a legacy record is malformed or the encryption key is unavailable.
+   *   Quando a chave de cifragem não está disponível.
    */
-  public function migrateLegacyTokens(): int {
+  public function migrateLegacyTokens(): array {
     $migrated = 0;
+    $malformed = 0;
     foreach (MelhorEnvioEnvironment::cases() as $environment) {
       $key = self::PREFIX . $environment->value;
       $stored = $this->state->get($key);
       if (!is_array($stored) || ($stored['format'] ?? NULL) === 'encrypted_v1') {
         continue;
       }
-      $json = json_encode($this->normalize($stored), JSON_THROW_ON_ERROR);
+      try {
+        $tokens = $this->normalize($stored);
+      }
+      catch (\RuntimeException) {
+        // Malformado: apagado sem ler os valores. O usuário autoriza de novo.
+        $this->state->delete($key);
+        $malformed++;
+        continue;
+      }
+      $json = json_encode($tokens, JSON_THROW_ON_ERROR);
       $this->state->set($key, [
         'format' => 'encrypted_v1',
         'payload' => $this->cipher->encrypt($json),
       ]);
       $migrated++;
     }
-    return $migrated;
+    return ['migrated' => $migrated, 'malformed' => $malformed];
   }
 
   /**

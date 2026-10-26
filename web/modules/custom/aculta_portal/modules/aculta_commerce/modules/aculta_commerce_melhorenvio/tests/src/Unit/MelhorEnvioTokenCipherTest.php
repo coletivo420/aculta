@@ -171,8 +171,42 @@ class MelhorEnvioTokenCipherTest extends UnitTestCase {
   }
 
   /**
-   * Cifra real sobre SecretsManager real, com a chave vinda de um Key simulado.
+   * Malformado: apagado e contado à parte, sem exceção. O válido é cifrado.
    */
+  public function testMigrationDeletesMalformedRecordAndCountsItWithoutException(): void {
+    $state = $this->createMock(StateInterface::class);
+    $state->method('get')->willReturnCallback(static fn (string $key): mixed => match ($key) {
+      'aculta_commerce_melhorenvio.tokens.sandbox' =>
+        ['access_token' => 'token-ficticio-acesso'],
+      'aculta_commerce_melhorenvio.tokens.production' => self::TOKENS,
+      default => NULL,
+    });
+    $state->expects($this->once())->method('set')->with(
+      'aculta_commerce_melhorenvio.tokens.production',
+      $this->callback(static fn (array $v): bool => ($v['format'] ?? NULL) === 'encrypted_v1'),
+    );
+
+    $store = new StateMelhorEnvioTokenStore($state, $this->cipher(str_repeat('ab', 32)));
+
+    $this->assertSame(['migrated' => 1, 'malformed' => 1], $store->migrateLegacyTokens());
+  }
+
+  /**
+   * Sem a chave de cifragem a migração falha e não grava nem apaga nada.
+   */
+  public function testMigrationWithoutKeyFailsAndWritesNothing(): void {
+    $state = $this->createMock(StateInterface::class);
+    $state->method('get')->willReturnCallback(static fn (string $key): mixed =>
+      $key === 'aculta_commerce_melhorenvio.tokens.sandbox'
+        ? self::TOKENS : NULL);
+    $state->expects($this->never())->method('set');
+    $state->expects($this->never())->method('delete');
+
+    $store = new StateMelhorEnvioTokenStore($state, $this->cipher(NULL));
+
+    $this->expectException(\RuntimeException::class);
+    $store->migrateLegacyTokens();
+  }
 
   /**
    * Cifra real sobre SecretsManager real, com a chave vinda de um Key simulado.

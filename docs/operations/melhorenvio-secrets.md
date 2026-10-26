@@ -33,6 +33,16 @@ Só nomes. Os valores ficam no ambiente do servidor, nunca no repositório, na c
 
 Trocar a chave de cifragem invalida os tokens guardados: o usuário precisa autorizar o Melhor Envio de novo.
 
+### Ordem de implantação (obrigatória)
+
+1. Provisionar `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` no ambiente do servidor, antes de qualquer `drush updatedb`.
+   A chave é gerada no próprio servidor com `openssl rand -hex 32` e não é registrada em repositório, configuração ou
+   log.
+2. Só então rodar `drush updatedb`. O `update_8002` cifra os tokens legados. Sem a chave, ele falha e a atualização
+   fica pendente; nenhum token é apagado nem gravado em texto puro.
+3. Registros legados malformados são apagados pelo `update_8002` e contados à parte. O resultado do hook informa
+   quantos foram cifrados e quantos foram removidos. Quem teve o registro removido autoriza o Melhor Envio de novo.
+
 Tokens de acesso e de renovação não são chaves de configuração: ficam no armazenamento de tokens do módulo
 (State API), por ambiente, e expiram. Nunca entram em `secrets/`, no código ou na configuração.
 
