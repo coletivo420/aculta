@@ -2,7 +2,7 @@
 
 **Branch:** `chore/aculta-m0-integridade`  
 **HEAD retomado:** `d55c4301e7ffde6022fd6c7b3651df1de927e619`  
-**HEAD estável:** `d82181d74` (Portal evidence/test-harness changes are currently uncommitted)
+**HEAD estável:** `d8de30c27` (communication audit updates are currently uncommitted)
 **Estado:** PARTIAL — H5P, Portal Unit/Kernel e auditorias focais CPF/User/CEP concluídos; auditoria M-0 e frentes M-1 a M-5 em andamento.
 **Runtime:** `toca`, Drupal 11.4.10, PHP 8.4.27, URI padrão `http://default`, banco `aculta_runtime`. Consultas somente leitura; nenhum write foi executado.
 
@@ -43,7 +43,14 @@
 
 - Portal Unit e Kernel completos passaram conforme evidência acima; o Kernel usou `/tmp/aculta-m0-kernel-test-root` e `/home/aculta/secrets/simpletest-db.env` sem expor credenciais e sem tocar Runtime.
 - Resultado contínuo segue PARTIAL: depreciações upstream, Browser/Functional e auditoria Config Sync/Domain por purpose permanecem pendentes.
-- Próxima unidade: revisar Mailer/Confirmador/Messenger e identificar teste focal executável sem enviar e-mail nem processar fila real.
+- Próxima unidade: continuar os contratos de Messenger e confirmar no Runtime read-only os states pendentes de updates; identificar Browser smoke somente quando houver sessão/superfície segura.
+
+## M-1 — Mailer, Messenger e Confirmador (2026-10-26)
+
+- O runner padrão resolve `web/core` e `vendor` para o checkout compartilhado. Para validar esta branch, todas as suítes foram reexecutadas usando `/tmp/aculta-m0-kernel-test-root/web/core/phpunit-m0.xml` e seu autoloader explícito para os módulos do worktree. Unit Portal: 350/878 PASS (seis depreciações PHPUnit); Unit Mailer: 162/343 PASS; Unit Messenger: 382/4.186 PASS.
+- Kernel combinado de `aculta_mailer`, `aculta_messenger`, `aculta_mail_confirmer` e `aculta_mail_confirmer_user`: 112 testes / 1.504 assertions PASS em MariaDB isolado, com módulos da branch. Foram reportadas 11 depreciações e quatro notices upstream/PHPUnit.
+- README do Messenger estava defasado em `.384` diante do manifesto/status `.396`; versão e totais Unit foram reconciliados. Contagens históricas dos snapshots antigos continuam identificadas como históricas.
+- Status e matriz de fechamento registram evidência combinada; confirmação/troca de e-mail em Browser, Runtime mutável e envio SMTP continuam pendentes. Nenhuma fila ou mensagem externa foi processada.
 
 ## Restrições / deferred
 

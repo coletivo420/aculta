@@ -2,12 +2,12 @@
 
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Todo escopo, testes, gates e revisão visual aplicável devem estar concluídos para RC; Alpha valida o deploy no servidor de desenvolvimento antes da migração a produção.
 
-Status atualizado em 2026-10-20. Cada fase vira commit(s) atômico(s) na branch autorizada; PR só quando solicitada.
+Status atualizado em 2026-10-25 (`0.1.0-dev.74`). Unit Mailer reexecutada no HEAD: 162 testes / 343 assertions PASS. A suíte Kernel combinada de Mailer, Messenger e Confirmador passou 112 testes / 1.504 assertions no MariaDB isolado, sem SMTP ou Runtime. Cada fase vira commit(s) atômico(s) na branch autorizada; PR só quando solicitada.
 Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser declaradas validadas sem evidência.
 
 Para correlações idempotentes, o serviço de entrega usa o serviço Drupal `lock` com proprietário por processo antes da consulta ao log e do transporte. Não usar `lock.persistent` em leases temporárias: seu identificador compartilhado permitia a renovação por um processo obsoleto após expiração/substituição. Contenção retorna falha temporária para retry. A proteção de repetição após aceite continua condicionada ao registro Mailer, e a janela após aceite externo antes da gravação local não pode ser fechada pelo lock Drupal.
 
-**Dev.74 — privacidade de diagnósticos:** logs operacionais omitem texto arbitrário de exceções SMTP/IMAP, registrando transporte/código ou classe da exceção. O estado IMAP e sua tela administrativa também guardam/exibem somente a classe. Novas falhas persistem somente classe/código no Mail Log e nos alertas; estados e logger não guardam texto arbitrário. Entradas históricas anteriores podem reter respostas brutas até sua retenção normal; nenhum update de limpeza foi criado ou executado. Testes `MailMonitorTest` 6/18, `MailSettingsKernelTest` 2/5, Unit 161/331 e Kernel 46/214 PASS no MariaDB dedicado; PHPCS sem erros, gate Drupal 11+ (1.155 checks) e índice PASS. Runtime e SMTP externo não usados.
+**Dev.74 — privacidade de diagnósticos:** logs operacionais omitem texto arbitrário de exceções SMTP/IMAP, registrando transporte/código ou classe da exceção. O estado IMAP e sua tela administrativa também guardam/exibem somente a classe. Novas falhas persistem somente classe/código no Mail Log e nos alertas; estados e logger não guardam texto arbitrário. Entradas históricas anteriores podem reter respostas brutas até sua retenção normal; nenhum update de limpeza foi criado ou executado. Testes `MailMonitorTest` 6/18, `MailSettingsKernelTest` 2/5, Unit 162/343 e Kernel 46/214 PASS no MariaDB dedicado; PHPCS sem erros, gate Drupal 11+ (1.155 checks) e índice PASS. Runtime e SMTP externo não usados.
 
 | Fase | Entrega | Estado |
 |---|---|---|

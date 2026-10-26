@@ -2,3 +2,4 @@
 version: 0.1.0-dev.2
 state: Dev
 next_phase: Validar confirmação, troca de e-mail e login bloqueado no navegador; depois revisão visual antes de RC
+progress_note: "Kernel em suíte isolada combinada de comunicação: 112 testes / 1504 assertions PASS (inclui Mailer, Messenger, Confirmador e troca de e-mail da conta); 11 depreciações e 4 notices."
