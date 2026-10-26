@@ -24,10 +24,10 @@
   auditoria ~46,2 ms; consulta fria 5,7–6,8 ms; aquecida p50/p95
   4,7–5,0 / 5,8–6,2 ms; pico 82,5 MiB. Fixture pequena/média, sem SLO.
 - Evidência: Unit 51/282; Kernel 118/2.001 PASS; benchmark Fórum em 100
-  candidatos, membro 371/407 ms e visitante 178/220 ms p50/p95, sem regressão
-  frente ao baseline de 2026-10-23; Runtime local read-only 145 entradas / 110
-  relações, fila vazia e auditoria válida. Sem SLO e sem operação persistente
-  no Runtime.
+  candidatos, duas amostras: membro 371–494 / 407–550 ms e visitante
+  178–243 / 220–290 ms p50/p95; a variação não isola a mudança; Runtime local
+  read-only 145 entradas / 110 relações, fila vazia e auditoria válida. Sem SLO
+  e sem operação persistente no Runtime.
 - Documentação: worklog do Agente 3, relatórios de benchmark e matriz de
   providers.
 

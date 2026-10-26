@@ -47,8 +47,8 @@ providers, além de conta, filtros e geração. A integridade ignora relações
 transitórias de gerações `discarding`, que a limpeza remove em lotes separados.
 `start` serializa rebuilds pela linha de estado e recusa uma segunda geração
 `building`. Unit 51/282 e Kernel MariaDB 118/2.001 PASS; benchmark Fórum em 100
-candidatos: membro 371/407 ms e visitante 178/220 ms p50/p95, uma execução
-sintética sem SLO e sem regressão mensurável. A fixture representativa mista
+candidatos: duas amostras, membro 371–494 / 407–550 ms e visitante
+178–243 / 220–290 ms p50/p95; a variação não isola a mudança e não define SLO. A fixture representativa mista
 (28 entradas de conteúdo, 14 de alvo, 30 relações, dois idiomas, dois domínios,
 estados, atualização e exclusão) passou em duas execuções com rebuild
 402–429 ms, auditoria ~46 ms, consulta aquecida p50/p95 4,7–5,0 / 5,8–6,2 ms e

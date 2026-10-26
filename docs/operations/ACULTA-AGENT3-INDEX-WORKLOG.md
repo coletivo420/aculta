@@ -209,20 +209,19 @@ Observações de homologação:
 ## Performance representativa (IDX-6)
 
 Benchmark de acesso do Fórum repetido nesta sessão (fixture sintética, 100
-tópicos, Group real, Domain Fórum, 5 aquecimentos + 30 medições por conta/página):
+tópicos, Group real, Domain Fórum, 5 aquecimentos + 30 medições por conta/página).
+Duas execuções válidas no tamanho 100:
 
-| Candidatos | Membro p50/p95 (ms) | Visitante p50/p95 (ms) |
-| ---: | ---: | ---: |
-| 1 | 3,958 / 5,216 | 2,222 / 2,869 |
-| 12 | 55,035 / 78,601 | 25,792 / 34,457 |
-| 25 | 90,626 / 118,283 | 43,162 / 66,945 |
-| 50 | 193,460 / 291,482 | 91,892 / 263,097 |
-| 100 | 371,114 / 406,681 | 178,307 / 220,385 |
+| Conta | Baseline 2026-10-23 | Run 1 | Run 2 |
+| --- | ---: | ---: | ---: |
+| Membro p50/p95 (ms) | 386 / 567 | 371 / 407 | 494 / 550 |
+| Visitante p50/p95 (ms) | 182 / 293 | 178 / 220 | 243 / 290 |
 
-Baseline de 2026-10-23 no tamanho 100: membro 386/567 ms e visitante
-182/293 ms. A limpeza adicional de cache de acesso não degradou a medição
-(p95 menor nesta amostra). É uma execução única, sintética, sem SLO; não
-estabelece desempenho de produção. CSV:
+A run 2 tem p50 maior e p95 menor que a baseline; a run 1 é menor nas duas. Não
+há evidência suficiente para declarar melhoria causal nem regressão além do
+ruído; a carga concorrente no banco de teste não foi isolada. O custo do reset
+por página é proporcional ao número de tipos (até três aqui) e precisa de
+telemetria em Alpha. Amostras sintéticas, sem SLO. CSV com as duas execuções:
 `docs/portal/benchmarks/aculta-index-forum-access-2026-10-26.csv`.
 
 ## Runtime — somente leitura (IDX-7)
