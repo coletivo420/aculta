@@ -33,6 +33,8 @@ final class ContentIndexGenerationManager {
    * discard or validate the existing build first; otherwise two catalogs would
    * receive incremental writes and duplicate the backfill work. The singleton
    * state row serializes concurrent starts with activation and scheduling.
+   * Validation or discard racing this check can produce a retryable refusal;
+   * it never creates a second building generation.
    *
    * @throws \LogicException
    *   When the state pointer is missing or another generation is building.
