@@ -44,3 +44,6 @@ acesso a credenciais de outro ambiente e não faz requisição de leitura de val
 - Kernel Routes reexecutado na PR: 1 teste / 4 assertions PASS em `aculta_simpletest` com autoloader do worktree; a suíte iniciou e removeu somente tabelas temporárias do prefixo de teste.
 - PHPCS Drupal/DrupalPractice e PHP lint de todos os PHP do submódulo: PASS após correções de estilo na integração.
 - Functional: pendente; o Kernel focal passa, mas não substitui instalação, rotas autenticadas e fluxo de sessão.
+
+
+Dívida de fronteira módulo–tema: `css/secrets-tabs.css` permanece no submódulo nesta fase; planejar sua migração para o tema em etapa própria.

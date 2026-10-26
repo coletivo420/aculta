@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-dev.2 — tokens de apresentação das abas — 2026-10-26
+
+- Classes visuais das abas e da rolagem de tabela passam pelo contrato Portal–tema, preservando as mesmas classes no ACULTA420.
+- Dívida: mover `css/secrets-tabs.css` do submódulo para o tema em fase posterior.
+- Gate de fronteira, schema SDC, foundations, PHP lint, PHPCS e testes Unit combinados (20/106) e Kernel combinados (8/231): PASS. Firefox ESR: DEFERRED (`DISPLAY` indisponível); validação de instalação via Drush: DEFERRED (docroot isolado sem `settings.php`, Runtime fora do escopo).
+
+
 ## 0.1.0-dev.1
 
 - Extraída a UI administrativa de `aculta_portal` para este submódulo: controller, formulários de

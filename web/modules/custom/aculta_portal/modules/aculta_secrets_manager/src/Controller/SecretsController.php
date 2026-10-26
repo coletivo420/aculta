@@ -67,7 +67,6 @@ final class SecretsController {
           'aria-controls' => 'credenciais-' . $environment,
           'aria-selected' => $is_active ? 'true' : 'false',
           'tabindex' => $is_active ? '0' : '-1',
-          'class' => ['secrets-tabs__tab'],
           'data-portal-ui' => 'secrets-tab',
         ],
       ];
@@ -101,13 +100,13 @@ final class SecretsController {
       ],
       'tabs' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'secrets-tabs', 'class' => ['secrets-tabs']],
+        '#attributes' => ['data-portal-ui' => 'secrets-tabs'],
         'list' => [
           '#type' => 'container',
           '#attributes' => [
             'role' => 'tablist',
             'aria-label' => (string) $this->t('Ambientes das credenciais'),
-            'class' => ['secrets-tabs__list'],
+            'data-portal-ui' => 'secrets-tabs-list',
           ],
         ] + $buttons,
       ] + $panels,
@@ -261,7 +260,7 @@ final class SecretsController {
         'id' => 'credenciais-' . $environment,
         'role' => 'tabpanel',
         'aria-labelledby' => $tab_id,
-        'class' => ['secrets-tabs__panel'],
+        'data-portal-ui' => 'secrets-tabs-panel',
       ],
       'title' => [
         '#theme' => 'aculta_portal_element',
@@ -270,7 +269,7 @@ final class SecretsController {
       ],
       'table_wrapper' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['secrets-table-scroll']],
+        '#attributes' => ['data-portal-ui' => 'secrets-table-scroll'],
         'table' => [
           '#type' => 'table',
           '#header' => [
