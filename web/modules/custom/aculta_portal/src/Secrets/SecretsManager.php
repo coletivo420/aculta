@@ -217,6 +217,11 @@ final class SecretsManager {
       if (strlen($value) > self::MAX_VALUE_BYTES || preg_match('/[\r\n]/', $value) === 1) {
         return $fail('Valor inválido para ' . $name . ': uma linha, até ' . self::MAX_VALUE_BYTES . ' bytes.');
       }
+      // O loader pré-Drupal lê o arquivo com parse_ini_file (INI_SCANNER_RAW): ";" corta o valor, aspas são
+      // removidas e espaços nas pontas somem. Recusar esses valores evita gravar um segredo que carrega diferente.
+      if (preg_match('/[;"]/', $value) === 1 || $value !== trim($value)) {
+        return $fail('Valor inválido para ' . $name . ': não use ";", aspas nem espaços nas pontas. O carregamento do arquivo não preserva esses caracteres.');
+      }
       $changes[$name] = $value;
     }
     return $this->persist($changes, []);

@@ -71,6 +71,17 @@ final class SecretsManagerTest extends UnitTestCase {
     $this->assertFileDoesNotExist($this->store());
   }
 
+  public function testSaveRefusesValuesTheLoaderWouldAlter(): void {
+    // parse_ini_file (INI_SCANNER_RAW) corta em ";", remove aspas e tira espaços das pontas.
+    foreach (['a;b', '"quoted"', ' espaco ', 'fim '] as $value) {
+      $result = $this->manager()->save(['BREVO_API_KEY' => $value]);
+      $this->assertFalse($result['ok'], "valor recusado: $value");
+    }
+    $this->assertFileDoesNotExist($this->store());
+    // Caracteres que o loader preserva continuam aceitos.
+    $this->assertTrue($this->manager()->save(['BREVO_API_KEY' => 'abc#def=123'])['ok']);
+  }
+
   public function testDatabaseStorageRefusesToWriteFile(): void {
     $manager = $this->manager('database');
     $this->assertFalse($manager->canSaveHere());
