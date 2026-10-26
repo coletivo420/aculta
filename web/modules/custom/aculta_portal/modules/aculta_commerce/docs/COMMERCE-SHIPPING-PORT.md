@@ -115,6 +115,30 @@ Execução somente leitura em `https://loja.aculta.toca.net.br`:
 - **Não incluído nesta branch:** plugin de cotação do Melhor Envio (vive na linha principal do site; contrato em `docs/MELHOR-ENVIO-CONTRACT.md`), promoções de remessa, tipo de imposto de envio, e-mails de confirmação de remessa, formulários administrativos nativos e etiquetas/rastreamento externo.
 - **Pendente para integração na PR #298:** conciliar com a linha principal do site (90 commits à frente), remover `drupal/commerce_shipping` do Composer, importar o Config Sync no banco descartável, executar instalação limpa/desinstalação do contrib, e homologar o checkout físico e não enviável com Firefox ESR visível.
 
+## Validação em banco descartável (COM-SHIP-E/T)
+
+Executada em 2026-10-26 em `sites/shipport` (removido ao final), sobre o banco
+dedicado `aculta_simpletest` com prefixo `shipport_`. O banco é exclusivo de
+testes; o `site:install` recria suas tabelas. Nenhum banco de runtime foi usado.
+
+| Verificação | Resultado |
+| --- | --- |
+| Instalação `standard` + `aculta_commerce` | PASS; entidades, tipos e plugin manager disponíveis |
+| Config/install do tipo de remessa `default` | PASS |
+| Trait `aculta_purchasable_entity_shippable` | PASS; campo `weight` criado e usado |
+| Campo `shipments` no tipo de pedido | PASS após `third_party_settings.aculta_commerce.shipment_type` |
+| Empacotamento de 2 itens de 0,3 kg | PASS; 1 remessa de 0,6 kg |
+| Tarifa fixa própria | PASS; 12,34 BRL calculada, aplicada e persistida |
+| Total do pedido | PASS; 112,34 BRL com ajuste `shipping:12,34` |
+| Pedido digital (sem weight) | PASS; `isShippable` falso, zero remessas e zero ajuste de frete |
+| Pane `aculta_shipping_information` | PASS; plugin descoberto |
+| Migração: contrib instalado primeiro, campo reapontado para `aculta_shipment`, contrib desinstalado | PASS; tarifa 19,90 BRL e total 139,90 BRL após a remoção; `commerce_shipping` ausente |
+| Instalação do contrib com o field storage ACULTA já existente | Falha esperada `PreExistingConfigException`; o cutover é atualização de config + desinstalação, não coexistência de instalação |
+
+O campo `field.storage.commerce_order.shipments` é obrigatório: removê-lo apaga
+a tabela de dados do campo. O setup descartável foi apagado (diretório e
+tabelas com prefixo) após os testes.
+
 ## Referências
 
 - https://www.drupal.org/project/commerce_shipping/releases/3.0.5

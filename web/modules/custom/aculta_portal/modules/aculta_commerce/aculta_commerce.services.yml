@@ -36,6 +36,16 @@ services:
       - { name: event_subscriber }
 
   # Shipping engine ported from commerce_shipping 3.0.5 (GPL-2.0-or-later).
+  aculta_commerce.shipping_plugin_types_subscriber:
+    class: Drupal\aculta_commerce\EventSubscriber\ShippingPluginTypesSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  aculta_commerce.shipping_profile_subscriber:
+    class: Drupal\aculta_commerce\EventSubscriber\ShippingProfileSubscriber
+    tags:
+      - { name: event_subscriber }
+
   logger.channel.aculta_commerce_shipping:
     parent: logger.channel_base
     arguments: ['aculta_commerce_shipping']

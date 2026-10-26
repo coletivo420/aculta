@@ -11,9 +11,7 @@
 
 use Drupal\aculta_commerce\Entity\Shipment;
 use Drupal\commerce\PurchasableEntityInterface;
-use Drupal\commerce_store\Entity\Store;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
 
 /**
  * Implements hook_commerce_entity_trait_info_alter().
@@ -29,27 +27,6 @@ function aculta_commerce_commerce_entity_trait_info_alter(array &$definitions): 
   }
   $definitions['aculta_purchasable_entity_shippable']['entity_types'] = $entity_type_ids;
   $definitions['aculta_purchasable_entity_dimensions']['entity_types'] = $entity_type_ids;
-}
-
-/**
- * Implements hook_entity_base_field_info().
- */
-function aculta_commerce_entity_base_field_info(EntityTypeInterface $entity_type): array {
-  if ($entity_type->id() !== 'commerce_store') {
-    return [];
-  }
-  $fields['shipping_countries'] = BaseFieldDefinition::create('list_string')
-    ->setLabel(t('Supported shipping countries'))
-    ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
-    ->setSetting('allowed_values_function', [Store::class, 'getAvailableCountries'])
-    ->setDisplayOptions('form', [
-      'type' => 'options_select',
-      'weight' => 4,
-    ])
-    ->setDisplayConfigurable('view', TRUE)
-    ->setDisplayConfigurable('form', TRUE);
-
-  return $fields;
 }
 
 /**
