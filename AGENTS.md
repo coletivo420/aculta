@@ -36,6 +36,7 @@ Drupal 11.3+, PHP conforme `docs/architecture/environments.md`; Drupal root `web
 
 ## Consulte apenas quando aplicável
 - **Índice de regras por escopo:** `docs/operations/AGENT-POLICY-INDEX.md`. Consulte somente o documento local pertinente. `docs/operations/AGENT-GUARDRAILS-FULL.md` é arquivo histórico para auditoria, não contexto padrão.
+- **Aceite e consentimento:** existe um único formulário de aceite e o ledger registra somente os termos. Não crie formulários/checkboxes ou tipos adicionais sem decisão do responsável. Consulte `docs/portal/ACEITE-UNICO.md` e rode `php scripts/validate-single-acceptance.php` quando alterar fluxos de dados pessoais ou consentimento.
 - Portal: `docs/portal/GUARDRAILS.md`, `docs/portal/DRUPAL-11-STANDARDS.md` e documentação local.
 - Rotas/domínios: `docs/architecture/ROUTES-SITEMAP.md` e contratos vinculados.
 - Status/releases: `docs/operations/RELEASE-LIFECYCLE.md`; índice gerado, nunca editado manualmente (`php scripts/validate-project-status-index.php`).

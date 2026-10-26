@@ -77,3 +77,6 @@ A seta `A → B` significa “B consome contrato/serviço fornecido por A”.
 - Unit do módulo: 51 testes / 262 assertions PASS. A suíte Kernel full anterior falhava por paths do checkout compartilhado, dependência de plugin owner ausente no harness e schemas `flagging`/`history` faltantes. Esses pontos foram corrigidos nos testes para usar caminhos da branch, inicializar o owner `aculta_document_viewer_group` e instalar schema necessário. Após as correções, os Kernel focais passaram: Media 5/101 e Group/owner/Wiki 10/361; há 272 depreciações upstream/Core. A suíte completa está em execução para confirmação agregada.
 
 - Atualização 2026-10-26: gate Domain administrativo executado com Drush e URI explícito `https://aculta.toca.net.br`: PASS (3.498 checks). Consulta de status confirmou somente leitura no Runtime `aculta_runtime`; não houve alteração persistente.
+
+- Acceptance guardrail: `validate-single-acceptance.php` identified the missing root AGENTS pointer; corrected the instruction to reference `docs/portal/ACEITE-UNICO.md`. Single Acceptance and Single-use Links gates now pass.
+- PHPCS scope review: the global status/package scripts and WikiController test edited in this continuation now pass focused PHPCS. PR-wide findings remain in delegated Deployer/Editor PHP and are being corrected by their owner; do not classify the aggregate as PASS until re-run.

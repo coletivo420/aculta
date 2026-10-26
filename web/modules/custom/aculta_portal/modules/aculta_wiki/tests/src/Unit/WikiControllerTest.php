@@ -197,7 +197,7 @@ final class WikiControllerTest extends UnitTestCase {
   }
 
   /**
-   * The route title block owns the heading, so the controller does not add a second one.
+   * The route title block owns the heading; do not duplicate it here.
    */
   public function testHomeDoesNotDuplicateRouteHeading(): void {
     $nodeAccess = $this->createMock(EntityAccessControlHandlerInterface::class);

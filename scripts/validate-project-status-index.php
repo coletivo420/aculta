@@ -4,14 +4,17 @@
  * @file
  * Gera e valida a tabela PROJECT-STATUS-INDEX do README raiz.
  *
- * Fonte da tabela: um arquivo de status por componente em docs/operations/status/<machine>.yml
- * (campos: state, version, next_phase e progress_note opcional). O campo version precisa
- * coincidir com o manifest; progress_note contém somente o resumo de progresso. Assim cada componente altera só o próprio arquivo, e a tabela
- * do README raiz é gerada, sem conflito entre trabalhos paralelos.
+ * Fonte da tabela: um arquivo por componente em
+ * docs/operations/status/<machine>.yml. Campos: state, version, next_phase e
+ * progress_note opcional. Version deve coincidir com o manifest; progress_note
+ * contém somente o resumo de progresso. O README raiz é gerado para evitar
+ * conflitos entre componentes.
  *
  * Uso:
- *   php scripts/validate-project-status-index.php          valida (falha se a tabela estiver desatualizada)
- *   php scripts/validate-project-status-index.php --write  regenera a tabela do README raiz
+ *   php scripts/validate-project-status-index.php
+ *     Valida e falha se a tabela estiver desatualizada.
+ *   php scripts/validate-project-status-index.php --write
+ *     Regenera a tabela do README raiz.
  */
 
 declare(strict_types=1);
