@@ -3900,3 +3900,8 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 - X11 Firefox: fixture representativa do shell de upload com CSS real do ACULTA420 em 390, 768 e 1024 px; largura, rolagem e rótulo acessível PASS. Isso não substitui inspeção do modal servido por Drupal no Runtime, que permanece DEFERRED.
 - Validação: Kernel central 5/83, Kernel do Fórum 6/148, ACULTA420 `PortalUiHooksTest` 6/29, PHPCS e PHP lint PASS; gates `aculta_image` e `aculta_gallery` PASS. `validate-aculta-portal-drupal11` permanece bloqueado pelo índice global de status (faltam status de `aculta_document_viewer` e `aculta_document_viewer_group`; README gerado também desatualizado por frentes concorrentes). Nenhuma mudança de Runtime ou deploy.
 
+## 0.4.1-dev.33 — declarar backend exigido pela configuração Search API — 2026-10-26
+
+- O manifesto do Portal agora declara `search_api:search_api_db`, requerido pela configuração instalável `search_api.server.aculta_database` que o próprio Portal fornece. A dependência transitiva ativa Search API e seu backend de banco em instalações limpas; não houve alteração no serviço, índice ou runtime existente.
+- O Functional do Statistics reproduziu inicialmente a falha de instalação por dependência ausente. Após declarar Search API DB, a instalação limpa avançou até a compilação de serviços e expôs o contrato Portal→User: o Portal registra serviços que consomem o ledger `aculta_user`, embora User dependa do Portal e não possa ser dependência obrigatória inversa. Instalar ambos na fixture deixa a instalação seguir; a interação de login do BrowserTest ainda falha antes das assertions do painel e permanece DEFERRED para correção do harness/contrato.
+

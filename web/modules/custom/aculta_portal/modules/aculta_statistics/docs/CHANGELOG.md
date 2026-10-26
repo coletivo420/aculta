@@ -647,3 +647,8 @@ até o módulo ser ativado.
 - Ativação no Runtime de teste (`updb`) e schema instalado lá.
 - Banner de consentimento para visitante anônimo (tema ACULTA420), autorizado mas não iniciado.
 - Painel de consulta de métricas (dashboards são 0.8.0).
+## Teste funcional — tentativa isolada (2026-10-26)
+
+- A instalação limpa do Functional identificou a dependência omitida `aculta_portal → search_api:search_api_db`; corrigida no manifesto Portal `.33` porque ele próprio instala `search_api.server.aculta_database`.
+- Com `aculta_user` e um Domain MAIN incluídos na fixture, o teste instalou a cadeia e fez 11 assertions antes de falhar no helper de login de BrowserTestBase. O resultado Functional é FAIL no harness; o painel não recebeu assertions positivas e segue inconclusivo.
+

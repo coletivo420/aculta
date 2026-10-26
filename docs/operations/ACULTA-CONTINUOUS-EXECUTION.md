@@ -201,6 +201,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - O README raiz foi regenerado pelo gerador de status após os novos status estruturados; essa alteração gerada ainda precisa ser incluída no próximo commit. PHPCS aqui cobre somente arquivos PHP alterados pelos commits incorporados, não o baseline integral dos módulos delegados.
 - Próxima tarefa sob ownership central: revisar o resultado do Kernel H5P já registrado em 15/388 com Unit 24/73, retomar o harness LMS/Portal sem serviço fictício, então avançar os contratos centrais independentes (Portal, User, CPF, CEP, Messenger, Commerce, LMS, Statistics e Index). P0-H5P e gate Domain já têm resultados PASS documentados; M-0 global continua PARTIAL por Config Sync/Runtime, autorização e homologações pendentes.
 
+## M-5 — dependência da instalação limpa Statistics/Portal (2026-10-26)
+
+- Functional Statistics reproduzido no MariaDB dedicado: falha com 2 erros/0 assertions ao instalar o dependency closure real porque `aculta_portal/config/install/search_api.server.aculta_database.yml` requer `search_api_db`, mas o manifesto Portal não o requeria. O Core e as extensões Search API/Search API DB estão disponíveis no código; `search_api_db` declara Search API como dependência transitiva.
+- Corrigido o contrato no proprietário: Portal `.33` declara `search_api:search_api_db`. Runner de Functional em raiz efêmera, com Composer autoload e `index.php` apontando ao test root, passou da instalação do Search API; a cadeia Portal exige `aculta_user` na mesma instalação devido aos serviços de consentimento, apesar de User depender de Portal. Com User + fixture Domain MAIN, houve 2 testes/11 assertions e 2 falhas no helper de login antes das verificações do dashboard; isso permanece FAIL/deferred, sem classificar o dashboard como defeituoso. O router usado inicialmente sem `index.php` também produziu 404 de ambiente; corrigido no runner local. Sem operação Runtime.
+
 
 ## M-3 — reconciliar estado do Magazine (2026-10-26)
 

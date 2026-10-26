@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.1-dev.32
+version: 0.4.1-dev.33
 state: Dev
 next_phase: 'Executar testes B1/B2 de Form API CPF/CNPJ, checkout, cache e legado; homologar no Kernel domínio/grants dos providers do Content Index incluindo Activity; avançar relações allowlisted dos vídeos embutidos em Revista, Wiki, Fórum e LMS; homologar as APIs de limpeza compartilhada de Media/File, depois implementar prévia e execução explícita de posts com backup ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [limpeza](docs/portal/CONTENT-CLEANUP-POLICY.md), [roadmap Portal](docs/portal/ROADMAP.md))'
-progress_note: "Portal Unit 350/878 e Kernel MariaDB isolado 53/831 PASS; 6 depreciações PHPUnit e 90 Core/contrib. DomainPurpose resolveu 9/9 hosts; seis coleções Domain têm nomes de configuração iguais entre ativo e Sync. Corrigido o front da Conta no Sync para /minha-conta; permanece drift editorial ativo na Revista. Runtime inalterado; Functional, browser e Entity Access por purpose pendentes."
+progress_note: "Manifesto declara search_api:search_api_db, exigido por search_api.server.aculta_database em config/install; a instalação limpa passou essa dependência. Serviços do Portal também consomem o ledger de aculta_user; por causa da dependência circular User→Portal, a fixture precisa incluir ambos. Functional avançou até requisições e acesso anônimo, mas o login Browser falhou antes das assertions do painel. Unit 350/878 e Kernel 53/831 são evidência histórica. Sem Runtime write; DomainPurpose 9/9, drift Revista e Entity Access por purpose pendentes."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
