@@ -3,6 +3,15 @@
 Status: **0.1.0-dev.1. Não é RC.** Esta página registra o que foi validado, o que falta e o plano de
 implantação. Nenhum valor real aparece aqui.
 
+
+## Reexecução na PR #298 — 2026-10-26
+
+- Unidade integrada: Unit Portal + Secrets 384 testes / 1.008 assertions PASS; consumidores Mailer, Statistics, CPF, Mercado Pago e Melhor Envio 403 / 1.100 PASS. Runner com autoloader explícito do worktree, necessário porque `vendor`/Core do worktree apontam ao checkout compartilhado.
+- `SecretsRoutesKernelTest`: 1 teste / 4 assertions PASS em MariaDB `aculta_simpletest`, sem escrita no Runtime.
+- PHPCS Drupal/DrupalPractice e PHP lint de `aculta_secrets_manager/src` e `tests` PASS. `validate-secrets-contract.php` e aliases de rota PASS. Gate admin Domain: 3.504 checks PASS via Drush na URI MAIN, somente leitura; esse gate observa o Runtime ativo, não demonstra deploy da branch.
+- Drush read-only na URI MAIN reportou `aculta_secrets_manager` Enabled em `0.1.0-dev.1`. Nenhuma gravação no Runtime ocorreu.
+- Os testes Firefox ESR (16 verificações de tela, 7 de popups) e HTTP autenticado (9 verificações) registrados abaixo foram executados na branch de origem. Não foram reexecutados na integração atual. Functional com sessão descartável, instalação limpa e rollback permanecem pendentes.
+
 ## SM-5: armazenamento e bootstrap
 
 Preservado sem alteração de código:

@@ -38,8 +38,9 @@ acesso a credenciais de outro ambiente e não faz requisição de leitura de val
 
 ## Testes
 
-- Unit: `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_secrets_manager/tests/src/Unit`
-  (11 testes: abas, ausência de valores e ações fora do ambiente, negação de revelar/editar/apagar
-  fora do escopo, cabeçalho no-store).
-- Kernel (rotas e permissões): `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_secrets_manager/tests/src/Kernel`, com `SIMPLETEST_DB` do banco de teste dedicado (`docs/operations/BANCO-DE-TESTE.md`). Passa com deprecações de contrib.
-- Functional: pendente. Um Kernel isolado não sobe, porque `aculta_portal` exige a pilha ACULTA inteira (ver ROADMAP).
+- Unit reexecutado na PR com autoloader que prioriza os módulos do worktree: 12 testes / 41 assertions PASS.
+  Cobre abas, ausência de valores e ações fora do ambiente, negação de revelar/editar/apagar fora do escopo,
+  escape, log sem valor e cabeçalho no-store.
+- Kernel Routes reexecutado na PR: 1 teste / 4 assertions PASS em `aculta_simpletest` com autoloader do worktree; a suíte iniciou e removeu somente tabelas temporárias do prefixo de teste.
+- PHPCS Drupal/DrupalPractice e PHP lint de todos os PHP do submódulo: PASS após correções de estilo na integração.
+- Functional: pendente; o Kernel focal passa, mas não substitui instalação, rotas autenticadas e fluxo de sessão.

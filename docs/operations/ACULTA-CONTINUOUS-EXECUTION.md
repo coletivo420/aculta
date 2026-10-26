@@ -746,3 +746,14 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - As contagens 9/44 e 73/179 vieram de execuções inválidas cujo `web/core` symlinkado resolveu o bootstrap para `/home/piradopirata/projetos/aculta`; não são falhas nem divergências do código e foram substituídas pelos resultados com root correto.
 - PHPCS nos dois arquivos de código alterados: **0 errors**, com 12 avisos de linha longa preexistentes; PHP lint e `git diff --check` PASS. A fronteira módulo–tema continua falhando apenas em `aculta_links`, responsabilidade do agente 2.
 - Nenhuma chamada externa, gravação ou operação de Runtime foi realizada nesta verificação.
+
+
+## Reconciliar aculta_secrets_manager na PR #298 — 2026-10-26
+
+- Integrados os 15 commits da branch `agent/aculta-secrets-manager` no conteúdo da PR. O commit `chore(claude): desativa coautoria` também foi incluído; nenhum commit da frente ficou exclusivo.
+- Reexecução na PR com autoloader que prioriza os módulos do worktree: Unit Portal + Secrets 384/1.008 PASS; consumidores Mailer, Statistics, CPF, Mercado Pago e Melhor Envio 403/1.100 PASS; `SecretsRoutesKernelTest` 1/4 PASS em MariaDB dedicado. PHPCS Drupal/DrupalPractice e lint do submódulo PASS.
+- Gate de contrato de segredos PASS; aliases PASS; admin Domain PASS em 3.504 checks via Drush na URI MAIN read-only. O Runtime MAIN reporta módulo Enabled `0.1.0-dev.1`; nenhuma gravação foi executada.
+- PHPCS detectou inicialmente 66 erros e 20 avisos nos arquivos integrados; PHPCBF e correções manuais resolveram todos sem mudar comportamento. PHPCS final passou com zero findings.
+- A revisão visual Firefox ESR e HTTP autenticado vieram da branch de origem e não foram reexecutados nesta integração. Functional, instalação limpa e rollback continuam pendentes; componente permanece Dev e não elegível a RC.
+- Um comando PHPUnit padrão carregou a implementação fiscal do checkout compartilhado e falhou em dois casos gratuitos de LMS; descartado como teste da PR. Runner com namespaces do worktree foi usado e passou 384/1.008, incluindo os mesmos casos.
+
