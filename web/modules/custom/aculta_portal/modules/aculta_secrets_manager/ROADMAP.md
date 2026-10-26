@@ -11,7 +11,9 @@
 - Testes Kernel e Functional (instalação, rotas, permissões, CSRF, AJAX dos popups, teclado, mobile).
   Um Kernel isolado do submódulo não sobe: `aculta_portal` exige a pilha ACULTA inteira (commerce, LMS,
   aculta_user e outros) no contêiner. Só é viável com o site instalado; executar no servidor de testes
-  com autorização.
+  com autorização. Tentativa com o banco de teste dedicado (docs/operations/BANCO-DE-TESTE.md): o
+  banco e a conexão funcionam, mas o contêiner do Portal ainda pede serviços de commerce_price e de outras
+  dependências; o Kernel do submódulo fica pendente até fechar essa lista.
 - Decisão do responsável: manter a permissão `administer aculta secrets` única nesta versão. Separar em
   consultar, gerenciar e revelar fica para uma versão futura, com atualização de perfis e sem concessão
   automática.
