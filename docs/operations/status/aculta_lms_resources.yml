@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.18
+version: 0.1.0-dev.19
 state: Dev
-next_phase: 'Validar instalação limpa/update 8001 e o contrato course_video em Functional/Runtime isolado; não aplicar updates ao Runtime compartilhado ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
-progress_note: "Provider LMS consulta aculta_document_viewer_group:course_document e projeta course_video por field_lms_videos para Media remote_video; Unit focal e Kernel 5/259 PASS na PR. Campo de instalação e update 8001 versionados; update, acesso visual e boot completo dos owners não foram executados no Runtime."
+next_phase: 'Validar o contrato course_video em Functional/Runtime isolado e o acesso visual; boot completo dos owners permanece pendente. Não aplicar updates ao Runtime compartilhado ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
+progress_note: "Provider LMS consulta aculta_document_viewer_group:course_document e projeta course_video por field_lms_videos para Media remote_video. Local 3 validou instalação limpa e update 8001 em site descartável (prefixo idx3_): campo criado por config/install e por update sobre schema 8000, form com componente e view oculto, 3 cursos fictícios preservados e reexecução sem pendências; PHPCS 0 erros. Correções: group do plugin de seleção (uasort(null) quebrava a instalação) e removeComponent no lugar de setHidden (API inexistente no Drupal 11.3). Runtime, acesso visual e boot completo dos owners não foram executados."
