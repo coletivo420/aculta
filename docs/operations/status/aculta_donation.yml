@@ -2,3 +2,4 @@
 version: 0.1.0-dev.25
 state: Dev
 next_phase: Validar os avisos financeiros em sandbox controlada e Runtime autorizado; cada cobrança recorrente confirmada emite aviso próprio ([README](web/modules/custom/aculta_portal/modules/aculta_donation/README.md))
+progress_note: "DonationPortKernelTest foi reproduzido no MariaDB dedicado: 4 erros de setup/0 assertions; inclusão temporária de aculta_messenger real avança até a dependência private_message.service ausente. Nenhum stub de produto ou write Runtime; harness ainda requer closure completa."

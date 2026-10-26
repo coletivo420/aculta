@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit funcional publicado:** `2989e4934` (`fix(image): route quarantine through shared file cleaner`); branch local e `origin/chore/aculta-m0-integridade` sincronizadas após fetch em 2026-10-26.
+**Último commit funcional publicado:** `25776ef21` (`test(portal): cover global file reference inspection`); branch local e `origin/chore/aculta-m0-integridade` sincronizadas após fetch em 2026-10-26.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
@@ -15,7 +15,7 @@
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
 5. Próxima unidade: revisar individualmente as 9 configurações Messenger presentes no Sync mas divergentes do Runtime e decidir quais são drift, customização operacional ou defaults obsoletos; não exportar globalmente nem alterar anchor/preferências sem classificação.
 6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente das oito frentes concluiu seu trabalho; comparação por caminhos confirmou que todos os incrementos já estão na PR sob SHAs equivalentes. Não fazer cherry-pick duplicado; nenhum desses diretórios foi alterado neste turno.
-7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último commit funcional: `2989e4934` (`fix(image): route quarantine through shared file cleaner`).
+7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último commit funcional: `25776ef21` (`test(portal): cover global file reference inspection`).
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
@@ -142,7 +142,7 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - LMS Unit: 87 testes / 447 assertions PASS; 8 depreciações PHPUnit. Commerce Unit: 21/125 PASS; Donation Unit: 24/84 PASS; Mercado Pago Unit: 11/22 PASS.
 - Mercado Pago Kernel: 1/50 PASS após as alterações. Corrigida assinatura nullable de `refundPayment()` para `?Price`; annotation do gateway convertida para `CommercePaymentGateway` attribute com metadata equivalente; teste declara processo separado. O total caiu de 78 para 75 depreciações; as três próprias (annotation, nullability e processo do Kernel) foram removidas. PHPCS Drupal+DrupalPractice baseline da classe: 24 erros/52 avisos antes, 22/52 depois; teste Kernel 0 erros/1 aviso. Versão dev.8.
-- Donation Kernel: 4 erros de setup/0 assertions porque o harness não inicializa o fechamento de dependências Messenger → Portal → Image; ampliar apenas para Messenger resultou em serviço privado de Message ausente e incluir módulos listados de forma parcial expôs dependência Image ausente. Alterações experimentais do harness foram descartadas. Resultado DEFERRED para fechar a cadeia Kernel real; nenhum stub de serviço ou alteração Runtime.
+- Donation Kernel: quatro testes / zero assertions seguem DEFERRED por erro de compilação. Reprodução atual: sem aculta_messenger, a compilação acusa ausência de aculta_messenger.notice_event_publisher; com o módulo real habilitado, avança e acusa a dependência real private_message.service ausente. São etapas da closure de módulos do harness, não defeitos nos testes de autorização; nenhum stub de produto foi criado e nenhum Runtime foi alterado.
 - Commerce README/status atualizados para dev.5 com a suíte corrente e limitação do Kernel. Nenhum checkout/pagamento, fila real, credencial ou integração externa utilizado.
 - Runtime permanece somente leitura. M-4 não promoveu módulos a RC: faltam Kernel funcional de Doações, validação de checkout/estorno e homologação visual/sandbox autorizada.
 
@@ -341,7 +341,7 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - Gates reexecutados no HEAD `9e707b6df`: status 41 componentes, packages 41, Config Extension 1.590/1.437 arquivos, fronteira módulo–tema 2.887 verificações, Drupal 11+ 1.160, slugs 396 rotas, aliases 25 arquivos, endereços 4.254 arquivos, contrato de segredos, papéis (53 permissões editoriais), hierarquia, aceite único, links de 24h, Profile Links 1.835 arquivos, mapa Domain front 16 checks, cross-domain 18, admin Domain 3.498 e payment Domain 44 — PASS. Scripts que usam Drupal foram executados por `drush php:script` com `--root=web` e `--uri=https://aculta.toca.net.br`; invocação PHP direta não é válida para esses gates.
 - `validate-portal-commerce-security.php` não foi executado contra o Runtime: inspeção do script confirmou que ele altera temporariamente o status do gateway de pagamento via Config API. Fica DEFERRED até haver Runtime efêmero/isolado com restauração garantida.
-- `DonationPortKernelTest` foi executado no banco dedicado `aculta_simpletest`: **4 setup errors / 0 assertions**. A compilação falha porque o `$modules` do harness não carrega `aculta_messenger`, requerido pelo serviço real `aculta_messenger.notice_event_publisher`; PHPUnit reporta cinco depreciações Core/contrib adicionais. Não houve escrita no Runtime. Investigar bootstrap real da cadeia ou dividir teste para manter contratos reais; nenhum serviço de produto foi falsificado.
+- DonationPortKernelTest no MariaDB dedicado aculta_simpletest: 4 setup errors / 0 assertions; cinco depreciações Core/contrib. Após um experimento temporário que incluiu aculta_messenger real, a falha avançou para private_message.service ausente. O harness ainda precisa carregar a closure de dependências real; alteração de experimento revertida.
 
 ## M-4 — negar AccessResult no formulário Green Stash (2026-10-26)
 
