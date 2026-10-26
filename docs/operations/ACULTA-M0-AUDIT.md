@@ -70,6 +70,10 @@ A seta `A → B` significa “B consome contrato/serviço fornecido por A”.
 - Varredura de 1.425 configurações versionadas: toda dependência `dependencies.module` tem provider no `core.extension`. Varredura dos manifestos dos módulos ACULTA habilitados também passou.
 - Comparação read-only de `core.extension` ativa (218 extensões) versus Sync (199): permanecem 19 módulos ativos não listados no export — `aculta_editor`, `aculta_lms_messenger`, `google_tag` e 16 módulos `ckeditor5_plugin_pack*`. O baseline de drift já inclui `core.extension`, mas não explica a intenção por extensão. Nenhum deles foi removido ou adicionado nesta correção; a importação pode alterar habilitação, então a decisão continua pendente e nenhum `cim` foi executado.
 
+- Revisão read-only do ownership de Editor: manifesto e README declaram `aculta_editor` e suas 16 dependências CKEditor obrigatórias; Runtime MAIN confirma todas ativas. O owner confirmou que Auto Image é exceção intencional e Premium/WProofreader ficam desabilitados. Oito templates em `config/install` não têm equivalentes em `config/sync`.
+- Drupal 11 `ConfigImporter::createExtensionChangelist()` agenda instalação de extensões presentes apenas no source `core.extension`; `ConfigImporter::processExtension()` configura a instalação para usar a própria storage de Sync. Como os oito templates do Editor não estão exportados, adicionar agora os 17 módulos ao `core.extension` pode instalar as extensões sem esses defaults. O resultado exige reconciliar os templates e testar instalação/import em banco efêmero antes de alterar Sync. Nenhum arquivo do Editor ou Runtime foi alterado.
+- A investigação do Editor restringe o delta global: as 17 extensões do Editor têm owner/necessidade identificados; permanecem separadas `google_tag` (intenção de ambiente não registrada) e `aculta_lms_messenger` (shell legado que requer uninstall controlado). Ainda não é seguro preparar `cim` nem classificar todo delta como resolvido.
+
 
 ## Content Index — verificação read-only e Kernel focal (2026-10-26)
 
