@@ -244,4 +244,26 @@ privilégios do MariaDB, documentando cada uso (não foi necessário).
 Acesso restrito ao usuário `aculta_simpletest` e aos administradores do MariaDB; não
 exportar, não copiar para outro host e não versionar. Nenhuma credencial foi impressa.
 
+## Complemento — pendências com o código do PR head (2026-10-26 19:26)
+
+Repetição somente do `drush updatedb:status` contra a cópia restaurada em
+`aculta_simpletest`, com settings descartável recriado e apagado ao final, usando o código
+do HEAD da PR `origin/chore/aculta-m0-integridade` @
+`bc7e4880db4f1cec9760cb6d095df1d1d9a0c33b` (Drupal 11.4.10). Nenhum update foi executado;
+a cópia restaurada não foi alterada nem apagada.
+
+| Módulo | Pendências |
+|---|---|
+| `aculta_commerce_melhorenvio` | `8001`, `8002` |
+| `aculta_id_cpf` | `10002` |
+| `aculta_lms_resources` | `8001` |
+| `aculta_messenger` | `10008`, `10009`, `10010`, `10011`, `10012` e post-updates `game_achievement_notices`, `private_message_email_preferences`, `shared_email_preferences` |
+| `aculta_user` | `10013` |
+
+As pendências esperadas do Melhor Envio (`8001`/`8002`) e do LMS Resources (`8001`)
+aparecem. Há uma adicional fora do escopo desta frente: `aculta_id_cpf 10002` (owner do
+módulo `aculta_id_cpf`). O settings descartável foi removido; nenhuma credencial ficou em
+log.
+
+
 
