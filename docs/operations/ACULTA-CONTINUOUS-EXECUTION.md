@@ -612,3 +612,7 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - A rota `/aculta-mail-confirmer/reenviar/{confirmation}` tinha apenas `_permission: access aculta mail confirmer`, sem invocar o handler de acesso da entidade. Isso permitia à permissão genérica acionar IDs que não pertencem à conta. A rota agora exige `_entity_access: confirmation.update` e continua exigindo `_csrf_token`; o handler de confirmações privadas limita ao proprietário ou administrador.
 - Kernel lê a definição YAML da rota, cria a Route/RouteMatch e executa o checker genérico de Entity Access com entidades reais: titular permitido e outra conta negada. Confirmador 6 testes/45 assertions e User Change 2/15 PASS no MariaDB dedicado; PHPCS Drupal/DrupalPractice, PHP lint, YAML, `validate-no-temporary-route-aliases.php`, status index (41), packages (41) e diff check PASS.
 - `aculta_mail_confirmer` avançou `0.1.0-dev.3` → `.4`; README, CHANGELOG, status, closeout e índice sincronizados. Nenhum SMTP externo ou Runtime foi usado.
+
+## M-1 — revalidar CPF/CNPJ com autoload da branch (2026-10-26)
+
+- Uma primeira Unit executada com bootstrap genérico carregou classes pelo checkout compartilhado e apresentou erro no teste de colisão SQL; não foi classificada como falha do produto. Novo bootstrap efêmero priorizou os namespaces Portal/CPF da PR e manteve Core 11.4.10 e contrib instalados: Unit CPF 48 testes / 116 assertions PASS e Kernel CPF 3 / 8 PASS em MariaDB dedicado. Nenhuma alteração de código, atualização 10002 ou Runtime write.
