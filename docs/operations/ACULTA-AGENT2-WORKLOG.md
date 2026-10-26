@@ -26,12 +26,28 @@ Worktree: `/tmp/aculta-frentes-independentes`. Nenhum commit foi feito no worktr
 | `71f85bb0a` | test(melhorenvio): cover OAuth2 client without network |
 | (este documento e a docs do módulo) | docs(melhorenvio): atualizar README, roadmap e CHANGELOG |
 
-## Frentes 2 a 8 — não iniciadas nesta execução
+## Frente 2 — `aculta_deployer`
+
+| Campo | Registro |
+|---|---|
+| Fase | Auditoria e correção de configuração. Hardening de escrita atômica e concorrência ainda não auditado |
+| HEAD | `3f4222b2a` |
+| Implementado | `deploy.json`: removida entrada órfã de `environment_bound`; regra de identidade para `aculta_mailer.brand` nos perfis `production` e `test`. CHANGELOG com entrada "Não lançado" |
+| Testes | `tests/run.php`: 108 PASS antes, 3 de 4 falhas resolvidas. **1 FAIL restante**: "fronteiras atuais passam" |
+| Builds (ensaio, fora do repositório) | `build --target=test`: rc 0, 1436 arquivos, `system.mail` com `aculta_mailer`. `build --target=production --allow-open-blocking`: 1420 arquivos, 16 removidos, nenhum host de teste restante |
+| Check | Reprova por fronteira (abaixo) e pela entrada DEP-0003 bloqueante no registro |
+| Bloqueadores | (1) `aculta_portal/aculta_portal.links.menu.yml` referencia `aculta_deployer`. A regra de fronteira proíbe e o arquivo é do Portal, fora do escopo desta frente. Afrouxar a regra seria esconder a falha. (2) DEP-0003 bloqueante: decisão de deploy do responsável. Build de produção fica recusado até lá, como previsto |
+| Integração central | Remover ou isolar a referência ao deployer no menu do Portal (`aculta_portal.deployer_status`), ou aceitar a exceção de fronteira em `config/boundary.json` por decisão do responsável |
+| Não feito | Testes de escrita atômica, concorrência, symlink inseguro e preservação de binários: não auditados nesta execução |
+| Estado | Dev. Não candidata a RC |
+
+Commit: `3f4222b2a` fix(deployer): align deploy profiles with environment-bound files.
+
+## Frentes 3 a 8 — não iniciadas nesta execução
 
 | Frente | Módulo | Estado |
 |---|---|---|
-| 2 | `aculta_deployer` | Pendente. Não auditado nesta execução |
-| 3 | `aculta_patcher` | Pendente |
+| 3 | `aculta_patcher` | Pendente
 | 4 | `aculta_portal_sitemap` | Pendente |
 | 5 | `aculta_qrcode` | Pendente |
 | 6 | `aculta_links` | Pendente |
