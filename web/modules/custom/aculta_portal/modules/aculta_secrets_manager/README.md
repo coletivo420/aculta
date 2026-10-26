@@ -46,6 +46,4 @@ acesso a credenciais de outro ambiente e não faz requisição de leitura de val
 - Functional: pendente; o Kernel focal passa, mas não substitui instalação, rotas autenticadas e fluxo de sessão.
 
 
-Dívida de fronteira módulo–tema: `css/secrets-tabs.css` permanece no submódulo nesta fase; planejar sua migração para o tema em etapa própria.
-
-Dívida no Claro: os tokens preexistentes `secrets-section` e `secret-value*` ainda dependem do hook do ACULTA420 e não recebem as classes de apresentação no tema administrativo Claro.
+Exceção de fronteira: UI administrativa renderizada no Claro mantém CSS mínimo no próprio submódulo, com seletores de classe e `data-portal-ui`. O tema administrativo não executa os hooks do ACULTA420.

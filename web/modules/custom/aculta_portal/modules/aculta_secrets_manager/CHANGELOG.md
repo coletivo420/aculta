@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0-dev.4 — estilos mínimos do painel no Claro — 2026-10-26
+
+- O CSS administrativo de segredos fica no submódulo e usa pares de classe e `data-portal-ui`, porque as rotas `_admin_route` são renderizadas no tema Claro.
+- Ações de revelar, alterar e apagar têm alvo mínimo de 44 × 44 px e foco visível; cores usam tokens com fallback para `currentColor`.
+- As regras de `.aculta-secret-value*` saem de `portal-requirements-report.css`; `aculta-portal-secrets-section` não tinha regra nessa folha.
+- Fronteira (3034), SDC (628), Design Foundations (2227), PHP lint, checagem sem cores literais e `git diff --check`: PASS. Unit: 13 testes / 56 asserções PASS; Kernel existente: 1 teste / 4 asserções PASS (62 depreciações upstream). PHPCS de `SecretsTabsTest.php`: PASS.
+- PHPCS do script Foundation registra 3 erros / 16 avisos preexistentes; a mudança neste arquivo só atualiza a asserção de versão e sua mensagem.
+- Render com Claro no Kernel: DEFERRED (theme registry exige plugin de campo `state` ausente no harness). Firefox visual: DEFERRED ao Local 1, com viewport 1280/390/320 px e foco por Tab nas abas e ações eye/edit/clear.
+
 ## 0.1.0-dev.3 — fallback CSS no tema administrativo Claro — 2026-10-26
 
 - Seletores semânticos das abas e da rolagem de tabela preservam o estilo quando o ACULTA420 não está ativo; valores visuais não mudam.
