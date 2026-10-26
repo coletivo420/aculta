@@ -10,7 +10,7 @@
 ## Ponto de retomada
 
 1. Definir harnesses Kernel para LMS e Doações que exercitem classes reais sem serviço de produto fictício; os harnesses agregados ainda falham no setup por não carregar a cadeia Portal completa.
-2. Reconciliar as 17 extensões ativas do Editor/CKEditor e suas configurações (8 templates ativos e settings do Plugin Pack); o shell `aculta_lms_messenger` permanece intencionalmente fora de novas instalações até uninstall autorizado. Google Tag foi reconciliado com defaults sem coleta. Não importar configuração no Runtime.
+2. Reconciliar o Editor/CKEditor no Sync foi concluído: 17 IDs ativos e 9 configurações agora estão versionados; o delta global ativo-versus-Sync restante é o shell `aculta_lms_messenger`, cuja retirada exige uninstall controlado/autorizado. Testar instalação/importação em banco efêmero; não importar configuração no Runtime.
 3. Mapear os grants Wiki ativos versus exportados e corrigir divergências somente em código/configuração versionados e testes isolados; não alterar permissões persistentes.
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
 5. Corrigir o harness Functional de Statistics no teste de login sem enfraquecer a autorização; resolver a fronteira de serviço Portal/User do ledger de aceite sem dependência circular; continuar incrementos centrais de User, CPF, CEP, Commerce, LMS, Messenger e Index.
@@ -267,3 +267,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Novo teste focal chama o hook real em duas passagens (insert/update), com `ForumParticipationPolicy`, `DomainPurposeManager`, `BadgeService`, `AchievementDefinitions` e `BadgeCatalog` reais; entidades, config e storage são doubles Unit. O ID de Domain usado é o canônico `forum_aculta_org`. O serviço faz uma única gravação do badge existente após segunda passagem idempotente.
 - Unit Game completa: 12 testes / 73 assertions PASS. PHPCS Drupal/DrupalPractice e PHP lint dos dois arquivos novos PASS. Status YAML, README, CHANGELOG e índice de 41 componentes foram reconciliados.
 - Limite: não equivale a Kernel com `ForumPost` real, nem homologa privacidade de perfil, visual, Runtime ou concessões persistentes. Nenhuma configuração ou dado Runtime foi alterado; módulo continua Dev `0.1.0-dev.17`.
+
+## M-0 — reconciliação Config Sync do Editor (2026-10-26)
+
+- Antes da mudança, Drush status foi confirmado read-only no host de testes `toca`, banco `aculta_runtime`, Drupal 11.4.10/PHP 8.4.27; as consultas usaram URI MAIN explícita. Nenhuma escrita ocorreu.
+- Ativo versus `config/sync` da PR: 218 extensões ativas e 200 no Sync; após o ajuste, 217 IDs coincidem e o único ID ausente do Sync é `aculta_lms_messenger`, shell legado cuja desinstalação requer janela/autorização. Não se removeu o shell nem se alterou Runtime.
+- As 17 extensões ativas de Editor/CKEditor foram adicionadas ao `core.extension.yml`. Os oito templates têm conteúdo igual aos `config/install` locais (campos de conteúdo normalizados; UUID/hash runtime ignorados); o nono objeto `ckeditor5_plugin_pack.settings` confere com seu default contrib versionado. Os 9 objetos ativos de `editor.*`, `filter.*` e `ckeditor5_plugin_pack*` agora existem no Sync. Arquivos de módulos/contrib não foram alterados.
+- Core `ConfigImporter::processExtension()` redireciona `ConfigInstaller` para a fonte Sync; por isso os defaults foram versionados junto com as extensões. O import não foi executado no Runtime. `validate-config-extension-dependencies.php` PASS, 1.589 checks/1.434 arquivos; índice 41 e pacotes 41 PASS.
+- Permanece DEFERRED: ensaiar o ciclo de instalação/importação em banco efêmero e fazer Browser autenticado dos formatos/templates. `full_html` continua permitido somente a `administrator`. O shell Messenger requer desinstalação controlada e rollback antes de qualquer retirada.
