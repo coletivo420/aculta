@@ -451,3 +451,10 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - `GET /api/v2/me` respondeu **200**. `POST /api/v2/me/shipment/calculate` respondeu **200** com cotações (campos `id`, `name`, `price`, `delivery_time`).
 - Escopos efetivos: `shipping-calculate users-read`. `user-read` foi recusado pelo sandbox.
 - Pendente de verificação visual: alerta de sucesso exibido pelo tema na página inicial (teste solicitado ao responsável).
+
+## Erro recorrente de "autorização não confirmada": causa real era cache
+
+- Causa: `TrustedRedirectResponse` é cacheável por padrão. O cache dinâmico do Drupal guardou o redirecionamento de `/autorizar` (09:25:57, sem expiração) e passou a servir o mesmo `state` a cada acesso, sem executar o controlador. O retorno recusava o `state` já consumido.
+- Evidência: entradas `oauth_authorize` em `cache_dynamic_page_cache` com `expire=-1`; nenhum registro de "autorização iniciada" após 09:25.
+- O diagnóstico anterior (aba antiga ou sandbox devolvendo `state` velho) estava errado. O responsável tinha apontado cache.
+- Correção (`fc097f924`): `no_cache` nas rotas de autorizar e retorno, `max-age` 0 e `Cache-Control: no-store` na resposta. Teste Kernel de regressão (dois acessos, `state` diferentes, resposta não cacheável). Cache reconstruído no servidor de teste; nenhuma entrada dessas rotas volta ao cache.
