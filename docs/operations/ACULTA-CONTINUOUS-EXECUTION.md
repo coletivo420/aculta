@@ -856,3 +856,21 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 **Pendência bloqueante de implantação:** `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` **não está provisionada** no servidor de testes (nome ausente em `secrets/aculta.secrets.env` e no ambiente do shell, verificado sem imprimir valores). Nenhum `drush updatedb` pode rodar até a provisão. O `update_8002` falharia sem a chave, e a atualização ficaria pendente sem perda de dados.
 
 **Ressalva de status:** `validate-project-status-index.php` segue FAIL por `aculta_links` (0.4.0-dev.32 contra manifest 0.4.0-dev.33), fora desta entrega. A tabela do README raiz também está desatualizada.
+
+## Correções de cor, status e exclusão de refs; estado do Melhor Envio no servidor de testes — 2026-10-26
+
+- **Cor do apagar no Claro:** o fallback `--color-danger` não existe no tema Claro. Trocado por `--color-maximumred`, definida em `web/core/themes/claro/css/base/variables.css` (linha 18, `var(--color-red-500)` = `#dc2323`, linha 67). A cadeia `var(--aculta-status-error-text, var(--color-maximumred, currentColor))` é mantida, sem cor literal. `SecretsTabsTest` não fixa nomes de cor, então não precisou de mudança.
+- **Verificação Firefox no Claro** (`claro-foco-alvos.py`, checkout servido em `c0beca205`): **28/28 PASS** em 1280, 390 e 320 px. Cor do apagar `rgb(220, 35, 35)` nas três larguras.
+- **Módulo `aculta_secrets_manager` 0.1.0-dev.5**, com CHANGELOG e status YAML atualizados.
+- **Status de `aculta_links`:** `docs/operations/status/aculta_links.yml` alinhado a `0.4.0-dev.33` (igual ao `info.yml`). Índice regenerado com `php scripts/validate-project-status-index.php --write`: **PASS, 43 componentes**. A regeneração também sincronizou linhas de outros componentes com versões que já estavam nos seus status YAML (`aculta_lms_resources` 0.1.0-dev.19; `aculta_secrets_manager`, `aculta420`).
+- **Exclusão de refs remotas** (após `git cherry` vazio e ancestralidade confirmada, com confirmação do coordenador de que Local 2 está na fase B e Local 3 no Messenger): `feat/aculta-secrets-claro` e `docs/aculta-mp-extracao-b0` excluídas. Antes, `feat/aculta-index-validacao` e `feat/melhorenvio-token-cipher` já tinham sido excluídas nesta execução.
+- **Arquivos reservados ao Local 2 (fase B):** não editados nesta rodada. Foram tocados só arquivos de segredos, status, README e docs.
+- **Servidor de testes e checkout:** o checkout servido foi para `c0beca205` (mesma autorização e mesmo procedimento de backup registrados antes: branch `backup/checkout-antes-c0beca2`, sem alterações rastreadas). `drush cr` executado.
+
+### Melhor Envio no servidor de testes (estado registrado, sem ação)
+
+- **Código servido:** a cifragem dos tokens (`encrypted_v1`) já está em `c0beca205`, portanto em execução no servidor de testes.
+- **Consequência verificada no código:** registro legado em texto puro não é lido. `StateMelhorEnvioTokenStore::load()` devolve `NULL` (falha fechada), então o Melhor Envio aparece sem autorização até o `update_8002` cifrar o registro. Não há leitura de texto puro.
+- **Gravação de novos tokens:** `save()` lança exceção sem a chave de cifragem. Uma nova autorização OAuth falha até a chave ser provisionada. Nada é gravado em texto puro.
+- **Pendência bloqueante, sem ação nesta execução:** `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` **não provisionada** no servidor de testes, e `drush updatedb` **não rodado**. Os dois exigem autorização explícita do responsável. Não foram executados.
+- **Ordem para quando for autorizado:** provisionar a chave no ambiente do servidor, depois `drush updatedb`, que roda o `update_8002`.
