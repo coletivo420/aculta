@@ -1,0 +1,5 @@
+services:
+  aculta_index_file.file_provider:
+    class: Drupal\aculta_index_file\ContentIndex\FileContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }
