@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_statistics\Functional;
 
+use Drupal\domain\Entity\Domain;
 use Drupal\Tests\BrowserTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -45,6 +46,15 @@ final class StatisticsDashboardFunctionalTest extends BrowserTestBase {
       );
     }
     parent::setUp();
+
+    Domain::create([
+      'id' => 'aculta_org',
+      'hostname' => '127.0.0.1',
+      'name' => 'ACULTA MAIN functional test',
+      'scheme' => 'http',
+      'status' => TRUE,
+      'is_default' => TRUE,
+    ])->save();
   }
 
   /**
