@@ -1,8 +1,8 @@
-# ACULTA Commerce — 0.1.0-dev.3
+# ACULTA Commerce — 0.1.0-dev.5
 
 Submódulo de integração comercial da **loja**, em estado Dev. O provider de configuração do checkout e a experiência Green Stash estão em código. A orquestração de checkout pertence ao `aculta_portal`, conforme ADR-013. As seções abaixo registram a evolução por fase; afirmações sobre ausência de serviços ou rotas descrevem a fundação histórica. A cadeia completa de Green Stash ainda exige homologação no Runtime.
 
-Na conciliação dev.3, Unit Commerce 20/116 (9 depreciações PHPUnit), Melhor Envio 29/78 e CEP 9/36 passaram. O gate de endereço passou; o gate global módulo/tema mantém cinco violações anteriores em Studio, LMS e Wiki, sem violações restantes em Commerce. Nenhum fluxo de pagamento ou serviço externo foi executado nesta validação.
+Na conciliação dev.3, Unit Commerce 20/116 (9 depreciações PHPUnit), Melhor Envio 29/78 e CEP 9/36 passaram. No HEAD dev.5 da PR, Unit Commerce passou com 21 testes / 125 assertions; o Kernel de Doações não inicia porque o harness não carrega toda a cadeia de serviços Messenger/Portal/Image, sem assertions funcionais. Nenhum fluxo de pagamento ou serviço externo foi executado. O gate de endereço passou; a fronteira módulo/tema não identifica violações próprias de Commerce.
 
 ## Integração de avisos da Loja — contrato vigente
 

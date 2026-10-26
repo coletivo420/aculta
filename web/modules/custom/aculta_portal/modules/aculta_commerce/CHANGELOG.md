@@ -1,3 +1,8 @@
+## 0.1.0-dev.5 — regressão focal da fundação comercial (2026-10-26)
+
+- Unit Commerce no HEAD da PR: 21 testes / 125 assertions PASS. Nenhum checkout, pagamento ou serviço externo executado.
+- Kernel `DonationPortKernelTest` permanece falhando no setup do harness: a cadeia Messenger → Portal → Image e contrib requer serviços/módulos adicionais; 0 assertions funcionais. Não foi criado serviço fictício nem aplicada alteração de produto.
+
 ## 0.1.0-dev.4 — publicar evento de pedido no Messenger (2026-10-24)
 
 - `aculta_commerce` publica `store.order_placed`; o consumer e a entrega
