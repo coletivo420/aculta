@@ -2,7 +2,7 @@
 
 - `aculta_user_nickname` é uma projeção derivada com UID como chave primária e slug canônico único. Profile permanece fonte de verdade; presave reivindica o slug dentro da transação de save, sincroniza Profiles de papel do mesmo UID e libera o slug anterior no rename. `#N` e `-N` convergem para a mesma chave.
 - O update 10013 cria a tabela e valida/reconstrói as claims; conflitos entre UIDs, entre Profiles do mesmo UID ou valores inválidos bloqueiam o rebuild antes de substituir dados. A rota pública resolve UID pelo índice e busca o Profile principal; claims são liberadas após exclusão do último Profile de papel.
-- User Unit: 140 testes / 543 assertions PASS (1 depreciação PHPUnit); PHPCS Drupal/DrupalPractice e lint focais PASS. Kernel `NicknameRegistryKernelTest` ainda não passou: a primeira tentativa falhou no setup porque o fixture não habilitava `filter`; o fixture foi corrigido, mas a repetição aguarda o MariaDB compartilhado que está em uso pelo teste do agente Index. Update 10013 não executado no Runtime.
+- User Unit: 140 testes / 543 assertions PASS (1 depreciação PHPUnit); PHPCS Drupal/DrupalPractice e lint focais PASS. Kernel `NicknameRegistryKernelTest`: 6 testes / 44 assertions PASS em SQLite `:memory:` isolado. A primeira tentativa MariaDB falhou no setup por fixture sem `filter`; o fixture foi corrigido, mas a repetição MariaDB aguarda o banco compartilhado que está em uso pelo agente Index. SQLite não substitui a evidência MariaDB. Update 10013 não executado no Runtime.
 
 ## 0.4.0-dev.82 — colisões OAuth e slug separado do nome exibido
 
