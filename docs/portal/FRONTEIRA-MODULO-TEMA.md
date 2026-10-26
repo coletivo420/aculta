@@ -191,7 +191,7 @@ agrupados por camada. Esta seção registra a delimitação e o resultado; não 
 - Linhas acrescentadas no tema com classe de módulo, referência a `aculta_portal`, hex/rgb ou host fixo: 0.
 - `validate-aculta420-design-foundations`: PASS (1736 verificações). `validate-aculta420-shell-contract`: PASS (11). `validate-aculta420-sdc-schemas`: PASS (14 componentes).
 - `validate-aculta-portal-drupal11`: PASS (696). `validate-portal-ui-docs`: PASS (167 tokens). `validate-portal-popup-rule`: PASS.
-- `validate-public-slugs`: PASS. `validate-environment-addresses`: PASS. `validate-admin-domain-policy`: PASS (2781). `validate-payment-domain-policy`: PASS (49).
+- `validate-public-slugs`: PASS. `validate-environment-addresses`: PASS. `validate-admin-domain-policy`: PASS (3.498 checks em 2026-10-26 via `drush php:script`; execução direta por PHP CLI não inicializa Drupal). `validate-payment-domain-policy`: PASS (49).
 
 ### Falhas que já existiam (não causadas por esta branch)
 

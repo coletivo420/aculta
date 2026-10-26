@@ -13,13 +13,13 @@ Data: 2026-10-25 a 2026-10-26. Base remota consultada: `805fb7c510baeccac22f1298
 | M0-007 | — | `aculta_forum`/Document Viewer e relação Group consultados antes desta auditoria poderiam divergir em config exportada/runtime | HEAD atual e leitura do Runtime indicaram módulos e plugin alinhados; nenhuma discrepância atual reproduzida | Não reproduzido no estado atual |
 | M0-008 | Alta | O inventário Runtime anterior não listava cada extensão de forma verificável | Consulta read-only em URI MAIN confirmou 35/40 módulos habilitados e cinco desabilitados; tema default `aculta420`; `aculta_messenger` tem 5 hook updates e 3 post-updates pendentes. Nenhuma operação persistente foi executada | Parcial; matriz registra estado global da instalação. Revisão de configuração Domain e Config Sync por purpose ainda pendente |
 | M0-009 | Alta | Cobertura de políticas Domain/Entity Access, config ativa/exportada, rotas, hooks, entidades e testes não foi completada para todos os módulos | Matriz individual registra verificações focais e limites; continuar por ondas antes de RC | Parcial; auditorias por componente ainda pendentes |
-| M0-010 | Alta | `core.extension.yml` não listava módulos exigidos por dependências de componentes/configuração ativa: Document Viewer, Document Viewer Group, Entity Print e LMS Resources | Adicionadas as quatro extensões ao Config Sync. Runtime MAIN read-only confirmou os quatro habilitados; 1.425 YAMLs de configuração agora têm providers presentes no Config Sync | Correção versionada; não importada no Runtime. Ainda há 20 módulos ativos fora do export e diferença global pendente de decisão/ownership |
+| M0-010 | Alta | `core.extension.yml` não listava módulos exigidos por dependências de componentes/configuração ativa: Document Viewer, Document Viewer Group, Entity Print e LMS Resources | Adicionadas as quatro extensões ao Config Sync. Runtime MAIN read-only confirmou os quatro habilitados; 1.425 YAMLs de configuração agora têm providers presentes no Config Sync | Correção versionada; não importada no Runtime. Ainda há 19 módulos ativos fora do export e diferença global pendente de decisão/ownership |
 
 ## Gates globais executados
 
 - `validate-project-status-index.php`: PASS (41 componentes).
 - `validate-own-module-packages.php`: PASS (41 checks).
-- `validate-config-extension-dependencies.php`: PASS (1.558 referências de dependência em 1.425 arquivos YAML; manifests próprios habilitados e `dependencies.module` versionadas resolvem no `core.extension.yml`). O delta de 20 módulos ativos sem export permanece fora desse gate e bloqueia importação até decisão por componente.
+- `validate-config-extension-dependencies.php`: PASS (1.558 referências de dependência em 1.425 arquivos YAML; manifests próprios habilitados e `dependencies.module` versionadas resolvem no `core.extension.yml`). O delta de 19 módulos ativos sem export permanece fora desse gate e bloqueia importação até decisão por componente.
 - `validate-module-theme-map.php`: PASS (196 checks) após adicionar as linhas ausentes do mapa para seis submódulos e registrar `entity_print`; o gate anterior falhava em sete omissões de documentação.
 - `validate-module-theme-boundary.php`: PASS (2880 verificações).
 - `validate-aculta-portal-drupal11.php`: PASS (1160 checks).
@@ -55,7 +55,7 @@ A seta `A → B` significa “B consome contrato/serviço fornecido por A”.
 - PHP lint: PASS (30 arquivos PHP alterados na execução).
 - PHPCS Drupal/DrupalPractice: FAIL em arquivos tocados que já contêm violações legadas de nomenclatura, estrutura de comentários e `unserialize()` sem lista de classes; o gate não foi enfraquecido. O script `validate-own-module-packages.php` foi corrigido para 0 erros (restam avisos de linhas longas/constante global).
 - Kernel H5P focal: PASS (3 testes/134 assertions) em bootstrap isolado com código da branch; usa o plugin real `aculta_document_viewer_group:course_document` e verifica membros, educador, estudante, não membro, referência e revogação. A tentativa anterior que instalava a configuração LMS completa falhava antes das assertions por ausência de `aculta_studio.ganjalab_controller`; a fixture foi reduzida ao contrato do teste sem serviço de produto fictício. Persistem 41 deprecações upstream.
-- `validate-admin-domain-policy.php` foi tentado sem bootstrap Drupal e terminou com `Class "Drupal" not found`; não contar como PASS. Outros gates dependentes de bootstrap e testes Browser/visual não foram executados nesta fase.
+- `validate-admin-domain-policy.php`: execução direta em PHP CLI falhou por ausência do bootstrap Drupal; execução correta via `drush php:script` no Runtime identificado passou com 3.498 checks, em modo read-only. Browser/visual e outros gates dependentes de bootstrap continuam pendentes quando aplicáveis.
 
 ## Evidência Portal adicionada em 2026-10-25
 
@@ -68,4 +68,12 @@ A seta `A → B` significa “B consome contrato/serviço fornecido por A”.
 
 - `core.extension.yml` não listava `aculta_document_viewer`, `aculta_document_viewer_group`, `entity_print` e `aculta_lms_resources`, embora manifests/config exportados os exijam e todos estejam ativos no Runtime MAIN. As quatro entradas foram adicionadas, sem executar importação.
 - Varredura de 1.425 configurações versionadas: toda dependência `dependencies.module` tem provider no `core.extension`. Varredura dos manifestos dos módulos ACULTA habilitados também passou.
-- Comparação read-only de `core.extension` ativa (218 extensões) versus Sync (198): permanecem 20 módulos ativos não listados no export — `aculta_editor`, `aculta_index`, `aculta_lms_messenger`, `google_tag` e 16 módulos `ckeditor5_plugin_pack*`. O baseline de drift já inclui `core.extension`, mas não explica a intenção por extensão. Nenhum deles foi removido ou adicionado nesta correção; a importação pode alterar habilitação, então a decisão continua pendente e nenhum `cim` foi executado.
+- Comparação read-only de `core.extension` ativa (218 extensões) versus Sync (199): permanecem 19 módulos ativos não listados no export — `aculta_editor`, `aculta_lms_messenger`, `google_tag` e 16 módulos `ckeditor5_plugin_pack*`. O baseline de drift já inclui `core.extension`, mas não explica a intenção por extensão. Nenhum deles foi removido ou adicionado nesta correção; a importação pode alterar habilitação, então a decisão continua pendente e nenhum `cim` foi executado.
+
+
+## Content Index — verificação read-only e Kernel focal (2026-10-26)
+
+- Drush read-only em MAIN confirmou `aculta_index` habilitado, geração ativa válida, 145 entradas e 110 relações; queue sem itens e auditoria completa sem achados. A entrada foi adicionada a `config/sync/core.extension.yml`; não houve importação, rebuild ou escrita no Runtime.
+- Unit do módulo: 51 testes / 262 assertions PASS. A suíte Kernel full anterior falhava por paths do checkout compartilhado, dependência de plugin owner ausente no harness e schemas `flagging`/`history` faltantes. Esses pontos foram corrigidos nos testes para usar caminhos da branch, inicializar o owner `aculta_document_viewer_group` e instalar schema necessário. Após as correções, os Kernel focais passaram: Media 5/101 e Group/owner/Wiki 10/361; há 272 depreciações upstream/Core. A suíte completa está em execução para confirmação agregada.
+
+- Atualização 2026-10-26: gate Domain administrativo executado com Drush e URI explícito `https://aculta.toca.net.br`: PASS (3.498 checks). Consulta de status confirmou somente leitura no Runtime `aculta_runtime`; não houve alteração persistente.
