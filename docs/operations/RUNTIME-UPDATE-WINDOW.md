@@ -4,7 +4,7 @@ Data: 2026-10-26. Autorização do responsável para copiar o `aculta_runtime` a
 descartável: **18:32**. Janela operacional: até 20h. Este documento cobre o ensaio de
 snapshot/restauração; **não é a janela** e nada foi executado no Runtime.
 
-## Estado do ensaio: BLOQUEADO no passo 2
+## Estado do ensaio: CONCLUÍDO na retomada de 19:15 (o bloqueio inicial fica registrado abaixo)
 
 | Passo | Situação |
 |---|---|
@@ -171,3 +171,118 @@ Se o passo 1 ou 2 falhar, pare antes do passo 3. O contrib continua instalado e 
 - Preservados: `backup/checkout-antes-pr-8499180a6` (bundle verificado em `/home/piradopirata/worktrees/backup-bundles/checkout-antes-pr-8499180a6.bundle`; a branch fica até o fim da janela de updates); stashes de Fórum, Messenger e mailer, com patch em `/home/piradopirata/worktrees/backup-stashes-20261026/`; `stash@{0}` da fase B, só sai depois que o Local 2 confirmar a recuperação.
 - Não tocados: branches e worktrees de agentes (`agent/*`), do Local 2 (`feat/aculta-secrets-claro`) e do Local 3 (`docs/aculta-mp-extracao-b0`, `docs/aculta-runtime-snapshot-ensaio`, `feat/aculta-messenger-update-ensaio`, `feat/aculta-user-update-ensaio`).
 - Classificação dos 101 commits do backup: ver `ACULTA-CONTINUOUS-EXECUTION.md`.
+## Retomada 2 — 2026-10-26 19:09 (bloqueio de credencial)
+
+O responsável informou que o banco descartável e o usuário de restauração **já existem**;
+portanto o `CREATE DATABASE` não deveria ser tentado. A busca por credencial foi refeita
+**só por nomes**, sem abrir valores:
+
+- `secrets/`: `aculta-runtime-db.php`, `aculta.secrets.env`, `simpletest-db.env`,
+  `teste_comum.env`, entre outros. Nenhuma chave de restauração/ensaio/cutover.
+- `web/sites/default/`: `settings.php`, `settings.local.php`, `aculta.secrets.php`,
+  `services.local.yml`. `aculta.secrets.php` carrega variáveis de ambiente; nenhuma chave
+  de banco de restauração.
+- `/home/aculta/secrets/`: o mesmo conjunto de `secrets/`.
+- Nomes de variáveis de ambiente do processo: nada de banco/restauração.
+- Busca por nome de arquivo (`*restore*`, `*restaur*`, `*cutover*`, `*ensaio*`): nenhum
+  arquivo de credencial de restauração.
+
+O único usuário acessível com credencial local é o do Runtime. Com ele, somente leitura:
+
+- `SHOW DATABASES` → `aculta_runtime`, `aculta_id_cpf_test`, `information_schema`.
+- `SHOW GRANTS` → `ALL` em `aculta_runtime.*` e em `aculta_id_cpf_test.*`.
+- Contagem de tabelas: `aculta_runtime` = 588; `aculta_id_cpf_test` = 0 (vazio).
+
+`aculta_id_cpf_test` é o único banco não-Runtime/não-simpletest visível, está vazio e o
+usuário do Runtime tem `ALL` nele — mas o nome sugere banco de testes de outro módulo.
+**Não foi usado sem confirmação.** Nenhum dump, restauração ou boot foi executado; o
+option-file temporário e o diretório de backup foram removidos.
+
+### Indicação necessária do responsável
+
+1. `aculta_id_cpf_test` é o banco descartável declarado para este ensaio?
+2. O usuário de restauração é o próprio `aculta_runtime` (com `ALL` nesse banco) ou há uma
+   credencial separada, em qual arquivo/chave?
+3. Confirmado o par banco/usuário, o ensaio prossegue nos passos 2–6 deste documento,
+   incluindo a prova de boot com settings descartável fora do checkout servido.
+
+## Retomada 3 — execução autorizada (2026-10-26, 19:11–19:27)
+
+Decisões do responsável às 19:11: destino = `aculta_simpletest`; remoção das 14 tabelas
+sem prefixo autorizada; `sudo` permitido no ambiente local apenas para corrigir
+privilégios do MariaDB, documentando cada uso (não foi necessário).
+
+### Pré-escrita e tabelas sem prefixo
+
+- `pgrep -af phpunit`: Kernel do Local 1 em execução (PIDs `261010`/`261033`), com prefixo.
+  Não interrompido; os testes seguem com o próprio prefixo.
+- Às 19:13, `aculta_simpletest` tinha **0 tabelas** (`SHOW TABLES` vazio). As 14 tabelas
+  sem prefixo do incidente **não estavam presentes**; nenhum `DROP TABLE` foi executado.
+  Nada com prefixo foi tocado.
+
+### Dump
+
+- Usuário do Runtime, somente leitura, com option-file 600 temporário (sem eco).
+- `mysqldump --single-transaction --routines --triggers --hex-blob aculta_runtime`.
+- Diretório `/home/piradopirata/worktrees/backup-runtime-ensaio-20261026/` (700).
+- **Duração: 5 s. Tamanho: 96.156.440 bytes (≈91,7 MiB).**
+- **sha256: `58072497778eef66c95b8446968ea34a4caabfeb1381abc866c19ad81404e10a`.**
+- O dump foi apagado após a comparação; só o arquivo de sha256 permanece no diretório até
+  a limpeza final.
+
+### Restauração
+
+- Usuário do `aculta_simpletest`, sem prefixo, com option-file 600 temporário.
+- **Duração: 16 s.** Nenhum ajuste de privilégio foi necessário; `sudo` não foi usado.
+- O banco restaurado **não foi esvaziado**: fica para o ensaio do cutover do frete
+  (Local 1).
+
+### Comparação
+
+- 588 tabelas canônicas do Runtime comparadas por `COUNT(*)` com o restaurado:
+  **588 linhas de cada lado, zero divergências**.
+- Na hora da medição o banco também tinha tabelas **prefixadas** do Kernel do Local 1 em
+  execução (632 no total); elas não fazem parte da prova e não foram tocadas.
+
+### Prova de boot (somente leitura)
+
+- Settings descartável fora do checkout servido, apontando ao `aculta_simpletest` sem
+  prefixo, com o código do worktree limpo (`3c810a78a`, Drupal 11.4.10).
+- `drush status`: `Database : Connected`, `Drupal version : 11.4.10`.
+- `drush updatedb:status`: mesmo conjunto de pendências do Runtime — Messenger
+  `10008`–`10012` e os três post-updates (`private_message_email_preferences`,
+  `shared_email_preferences`, `game_achievement_notices`), além de `aculta_user 10013`.
+- O settings descartável foi removido; nenhuma credencial ficou em log.
+
+### Aviso obrigatório
+
+> **`aculta_simpletest` contém cópia do Runtime (dados pessoais) sem prefixo desde 19:16;
+> é proibido rodar `site:install` sem `--db-prefix`; apagar a cópia ao fim do ensaio do
+> cutover.**
+
+Acesso restrito ao usuário `aculta_simpletest` e aos administradores do MariaDB; não
+exportar, não copiar para outro host e não versionar. Nenhuma credencial foi impressa.
+
+## Complemento — pendências com o código do PR head (2026-10-26 19:26)
+
+Repetição somente do `drush updatedb:status` contra a cópia restaurada em
+`aculta_simpletest`, com settings descartável recriado e apagado ao final, usando o código
+do HEAD da PR `origin/chore/aculta-m0-integridade` @
+`bc7e4880db4f1cec9760cb6d095df1d1d9a0c33b` (Drupal 11.4.10). Nenhum update foi executado;
+a cópia restaurada não foi alterada nem apagada.
+
+| Módulo | Pendências |
+|---|---|
+| `aculta_commerce_melhorenvio` | `8001`, `8002` |
+| `aculta_id_cpf` | `10002` |
+| `aculta_lms_resources` | `8001` |
+| `aculta_messenger` | `10008`, `10009`, `10010`, `10011`, `10012` e post-updates `game_achievement_notices`, `private_message_email_preferences`, `shared_email_preferences` |
+| `aculta_user` | `10013` |
+
+As pendências esperadas do Melhor Envio (`8001`/`8002`) e do LMS Resources (`8001`)
+aparecem. Há uma adicional fora do escopo desta frente: `aculta_id_cpf 10002` (owner do
+módulo `aculta_id_cpf`). O settings descartável foi removido; nenhuma credencial ficou em
+log.
+
+
+
