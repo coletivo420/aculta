@@ -326,3 +326,12 @@ Os resultados anteriores de Kernel foram obtidos em SQLite, o que contraria `doc
 | `aculta_commerce_melhorenvio` | **3 PASS** | 66 deprecações de contrib e de core (closure completa) |
 
 Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os módulos do checkout principal, e `domain_config` a partir de `vendor/drupal/domain`. Esses links ficam fora do git.
+
+## Mobile-first das micropáginas (links)
+
+- Pré-requisito: micropágina de teste criada no servidor de teste por Drush (`pagina-teste-mobile`, um item de botão) e removida ao final.
+- Primeira medição: 200 e sem rolagem horizontal, mas o botão do item tinha 20 px de altura (abaixo do mínimo de 44 px) em 390 px e em 1280 px. Achado real.
+- Correção (`cfa192096`): classe no link do item e biblioteca `aculta_links/micropagina` com altura e largura mínimas de 44 px. Cores e tipografia continuam com o tema.
+- Resultado depois da correção: **2/2 PASS** no Firefox X11 (`tests/browser/aculta-links/verifica_micropagina.py`).
+- Kernel de links no MariaDB depois da correção: 7 PASS.
+- Fora do escopo: o cromo do tema (barra institucional e rodapé), que é do ACULTA420.
