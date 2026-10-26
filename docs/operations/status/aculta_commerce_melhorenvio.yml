@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada).
 version: 0.1.0-dev.3
 state: Dev
-next_phase: 'Executar Kernel integrado com o motor aculta_commerce e completar falhas/idempotência do provider, mantendo o submódulo fora do Config Sync conforme decisão do responsável ([contrato](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/MELHOR-ENVIO-CONTRACT.md))'
-progress_note: 'Provider adaptado para o plugin manager, ShipmentInterface e ShippingRate do motor aculta_commerce; Unit Melhor Envio 74/181 PASS e PHPCS dos arquivos alterados PASS. O Kernel integrado e testes Functional continuam pendentes; manter fora do Config Sync por decisão do responsável.'
+next_phase: 'Corrigir o harness Kernel para carregar aculta_studio (serviço exigido pelo Green Stash), remover commerce_shipping da lista de módulos do teste e reexecutar as 9 verificações de wiring sem rede ([contrato](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/MELHOR-ENVIO-CONTRACT.md))'
+progress_note: 'Provider usa plugin manager, ShipmentInterface e ShippingRate do motor aculta_commerce; Unit 74/181 PASS. Instalação limpa habilitou o módulo sem commerce_shipping e descobriu aculta_melhorenvio. Kernel de wiring reexecutado: 9 erros de setup/0 assertions porque o harness omite aculta_studio, necessário ao serviço aculta_commerce.green_stash_controller; corrigir e reexecutar. Runtime read-only indica módulo habilitado no ambiente compartilhado; nenhuma chamada externa foi feita. Manter fora do Config Sync por decisão do responsável.'

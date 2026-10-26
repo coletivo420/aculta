@@ -1,6 +1,6 @@
 # COM-SHIP — Porte do Commerce Shipping para `aculta_commerce`
 
-**Estado:** motor próprio implementado e validado em banco descartável na branch `feat/aculta-commerce-shipping-port`; o Runtime de testes ainda executa o contrib até o cutover coordenado na PR #298. **Decisão atualizada em 2026-10-26:** dados legados de pedidos, remessas e configurações antigas de Shipping **não precisam ser migrados ou preservados no banco de desenvolvimento/testes expressamente descartável**. Não eliminar dados da produção nem contas, endereços, identificadores fiscais, produtos ou sistemas independentes. **Decisão:** funcionalidades de Shipping próprias em `aculta_commerce`, sem novo submódulo; jamais editar `web/modules/contrib/`.
+**Estado em 2026-10-26:** motor próprio integrado na PR #298, Unit/Kernel reexecutados e instalação limpa do motor/provider comprovada em `aculta_simpletest`. O Runtime compartilhado continua no código/config legado e não foi alterado nesta rodada. **Decisão atualizada em 2026-10-26:** dados legados de pedidos, remessas e configurações antigas de Shipping **não precisam ser migrados ou preservados no banco de desenvolvimento/testes expressamente descartável**. Não eliminar dados da produção nem contas, endereços, identificadores fiscais, produtos ou sistemas independentes. **Decisão:** funcionalidades de Shipping próprias em `aculta_commerce`, sem novo submódulo; jamais editar `web/modules/contrib/`.
 
 **Base auditada:** PR #298 em 2026-10-26; `composer.lock` fixa `drupal/commerce_shipping` **3.0.5**. Código-fonte a portar no Homelab: `web/modules/contrib/commerce_shipping/` da instalação efetiva, não exemplos de 8.x-2.x. Obter referência upstream da mesma versão e registrar hash, arquivos, atribuições e alterações; respeitar a licença GPL e preservar avisos de copyright/licença.
 
@@ -28,7 +28,9 @@ Antes de alterar fretes, comprovar o conjunto: pedido e seus tipos/traits; SKU f
 
 Não criar segundo endereço, perfil, pedido, carrinho, preço em float, chave de API em config exportável ou entidades paralelas desnecessárias.
 
-## Estratégia em gates, sem quebra de dados
+## Plano inicial COM-SHIP (histórico; etapas de porte supersedidas)
+
+As etapas COM-SHIP-0 a COM-SHIP-5 abaixo registram a estratégia original. O porte, motor próprio, Composer/Config Sync versionado e instalação limpa do motor foram executados na PR; use “Estado após integração PR #298” e a tabela de validação adiante como situação vigente. O reset de dados só foi realizado no site/prefixo descartável `shipport_`, não no Runtime compartilhado.
 
 ### COM-SHIP-0 — baseline operacional somente leitura
 
@@ -53,12 +55,7 @@ Como a base de teste pode começar limpa, não é obrigatório manter IDs, tabel
 
 **Somente no banco novo de teste**, configurar explicitamente pelo menos um método de frete fixo ou retirada real de prova (com valor e loja conhecidos), para demonstrar checkout sem API externa; testar indisponibilidade quando nenhum método existir. O método configurado não pode ser silenciosamente aplicado a produção. Melhor Envio continua um provider separado que dependerá de credenciais e cotação real, e sua falta não deve produzir frete grátis.
 
-Código inicial na branch:
-- `src/Shipping/ShippingQuote.php` e `ShippingQuoteSelector.php`: modelos imutáveis e seleção de quotes confiáveis (base de código proprietário, **não** engine portado).
-- `tests/src/Unit/Shipping/ShippingQuoteSelectorTest.php`: testes ainda não executados no Homelab.
-- `tests/scripts/shipping_sync_preflight.php`: inventário read-only de Sync.
-- `tests/scripts/shipping_runtime_preflight.php`: inventário read-only de Runtime bootstrapped.
-- `docs/SHIPPING-RESET-TEST-ONLY.md`: reset seguro e requisitos de isolamento.
+Registro histórico da base inicial da branch antes do porte. `ShippingQuote`/`ShippingQuoteSelector` foram integrados ao motor, cobertos pela suíte Unit atual; os scripts de preflight permanecem disponíveis e o runbook de reset define os limites do ambiente descartável.
 
 ### COM-SHIP-3 — checkout próprio da Loja
 
@@ -74,7 +71,7 @@ O descarte **é permitido somente no ambiente de desenvolvimento/teste explicita
 
 O procedimento de reset deverá usar APIs/rotinas Drupal ou uninstall controlado, **jamais SQL ad hoc que ignore Entity API**, em banco isolado. Evitar efeitos externos de hooks (avisos, métricas, webhooks, pagamento). O runbook em `docs/SHIPPING-RESET-TEST-ONLY.md` determina dry-run, backup, bloqueio de escrita concorrente, apagamento e provas. **A autorização de descarte de legado não é autorização para apagar dados na produção ou Runtime compartilhado não verificado.**
 
-Remover a dependência `drupal/commerce_shipping` de Composer/Config Sync **somente depois** que o motor próprio compilar, instalar, registrar entidades/plugins, renderizar o checkout, calcular tarifas autorizadas e passar em testes. Não desinstalar um contrib requerido enquanto o pane do Portal ainda deriva de `ShippingInformation`. Config Sync e Composer globais pertencem à integração coordenada pelo agente principal.
+Diretriz histórica já atendida no código da PR: Composer e Config Sync versionados não dependem de `commerce_shipping`, e o pane pertence a `aculta_commerce`. O Runtime compartilhado ainda tem o contrib instalado; não desinstalar até o código da branch estar aplicado e o cutover específico ter backup, inventário, teste de pedidos e rollback.
 
 ### COM-SHIP-5 — shipping real e Green Stash
 
@@ -86,9 +83,9 @@ Unit, Kernel MariaDB, Functional, Browser Firefox ESR visível, PHPCS Drupal/Dru
 
 Testar instalação limpa, reset de legado e rollback por snapshot em clones **isolados**. **Não** exigir migração de pedidos ou remessas históricos. Registrar evidências exatas. Só recomendar RC após fechar todo o ciclo.
 
-## Próxima ação obrigatória do executor local
+## Estado após integração PR #298
 
-**Não optar pela edição temporária no contrib.** Recuperar a fonte 3.0.5 realmente instalada e executar COM-SHIP-0 e COM-SHIP-1 primeiro; iniciar portes COM-SHIP-2 sem colisões. Trabalhar em worktree isolado da PR #298, respeitar alterações dos outros agentes, commits focados, README/CHANGELOG/status/roadmap atualizados, não abrir outra PR, não fazer merge/deploy nem gravar no Runtime sem autorização.
+O motor está no `aculta_commerce`; os commits do porte foram conciliados e o teste `ShippingEngineKernelTest` já não contém skip. O Composer não inclui `drupal/commerce_shipping`; Config Sync e teste focal usam IDs ACULTA. A instalação limpa em prefixo descartável foi feita nesta branch e removida ao final. O Runtime `aculta_runtime` permanece sem alteração: read-only confirmou o contrib habilitado e `field.storage.commerce_order.shipments` apontando para `commerce_shipment`. O código desta PR ainda não foi aplicado ao checkout servido; portanto não se declara cutover operacional do Runtime, homologação visual ou RC. Próximos gates: corrigir o harness Kernel de Melhor Envio sob seu proprietário, testar o fluxo de checkout em Firefox ESR quando a versão estiver servida em ambiente de teste e executar o cutover no Runtime de testes com rollback documentado.
 
 ## Resultado do diagnóstico COM-SHIP-A (2026-10-26, servidor de testes)
 
@@ -113,9 +110,9 @@ Execução somente leitura em `https://loja.aculta.toca.net.br`:
 - Green Stash `/estudio/loja/envios` com leitura de remessas e transições confirmadas do workflow, sem interface nativa.
 - Config Sync substituído onde o contrib era referenciado; atribuições GPL registradas nos arquivos portados.
 - **Não incluído nesta branch:** plugin de cotação do Melhor Envio (vive na linha principal do site; contrato em `docs/MELHOR-ENVIO-CONTRACT.md`), promoções de remessa, tipo de imposto de envio, e-mails de confirmação de remessa, formulários administrativos nativos e etiquetas/rastreamento externo.
-- **Pendente para integração na PR #298:** conciliar com a linha principal do site (90 commits à frente), remover `drupal/commerce_shipping` do Composer, importar o Config Sync no banco descartável, executar instalação limpa/desinstalação do contrib, e homologar o checkout físico e não enviável com Firefox ESR visível.
+- **Integração na PR #298 concluída:** porte, provider existente, remoção do pacote contrib e instalação limpa do motor foram verificados. Permanecem pendentes o harness Kernel do provider Melhor Envio, homologação do checkout no navegador e a aplicação do cutover ao Runtime compartilhado (não alterado nesta sessão).
 
-## Validação em banco descartável (COM-SHIP-E/T)
+## Validação em banco descartável (COM-SHIP-E/T; executada e reexecutada)
 
 Executada em 2026-10-26 em `sites/shipport` (removido ao final), sobre o banco
 dedicado `aculta_simpletest` com prefixo `shipport_`. O banco é exclusivo de
@@ -129,7 +126,7 @@ testes; o `site:install` recria suas tabelas. Nenhum banco de runtime foi usado.
 | Leitor do Green Stash (Kernel) | PASS; sem `administer aculta shipments` a lista fica vazia; com a permissão lista estado e transições |
 | Pane de checkout (Kernel) | PASS; tarifa válida aceita, tarifa adulterada rejeitada e valor persistido vem do servidor |
 | Provider externo com falha (mock) | PASS; a tarifa da transportadora que lança exceção é ignorada, nunca convertida em zero |
-| Instalação `standard` + `aculta_commerce` | PASS; entidades, tipos e plugin manager disponíveis |
+| Instalação limpa `standard` + `aculta_commerce` + provider Melhor Envio | PASS nesta PR; sem `commerce_shipping`, entidades próprias registradas, dois plugins core e plugin Melhor Envio descobertos; `drush cr` PASS e nenhum update pendente |
 | Config/install do tipo de remessa `default` | PASS |
 | Trait `aculta_purchasable_entity_shippable` | PASS; campo `weight` criado e usado |
 | Campo `shipments` no tipo de pedido | PASS após `third_party_settings.aculta_commerce.shipment_type` |
@@ -141,9 +138,7 @@ testes; o `site:install` recria suas tabelas. Nenhum banco de runtime foi usado.
 | Migração: contrib instalado primeiro, campo reapontado para `aculta_shipment`, contrib desinstalado | PASS; tarifa 19,90 BRL e total 139,90 BRL após a remoção; `commerce_shipping` ausente |
 | Instalação do contrib com o field storage ACULTA já existente | Falha esperada `PreExistingConfigException`; o cutover é atualização de config + desinstalação, não coexistência de instalação |
 
-O campo `field.storage.commerce_order.shipments` é obrigatório: removê-lo apaga
-a tabela de dados do campo. O setup descartável foi apagado (diretório e
-tabelas com prefixo) após os testes.
+O field storage `field.storage.commerce_order.shipments` é necessário e não deve ser removido no Runtime. O site descartável `sites/shipport` e suas 299 tabelas prefixadas foram removidos ao final via Drupal Schema API; `aculta_simpletest` ficou vazio. A limpeza não tocou `aculta_runtime`.
 
 ## Referências
 
@@ -153,4 +148,4 @@ tabelas com prefixo) após os testes.
 - `docs/portal/CHECKOUT-BILLING.md`
 - `docs/decisions/ADR-013-portal-multi-cart-checkout.md`
 
-**Estado de implantação:** motor próprio implementado na branch, com entidades, plugins, empacotamento, cálculo, seleção revalidada, processors de pedido, pane de checkout e leitura/transições de remessas no Green Stash; Unit (55/272) e Kernel (7/237, fechamento de 104 módulos) passam, e a instalação limpa em banco descartável foi validada, incluindo o rehearsal de desinstalação do contrib. `drupal/commerce_shipping` foi removido de `composer.json`/`composer.lock` e `drupal/physical` passou a ser exigido explicitamente. O provider Melhor Envio foi integrado na PR #298 e usa o contrato ACULTA; esta branch isolada não contém os arquivos atuais do submódulo. **Pendente para a PR #298:** executar `composer install` no deploy/cutover, aplicar o Config Sync e a migração de campo no Runtime com snapshot, e homologar o checkout físico/não enviável com Firefox ESR. Ver a matriz em [`SHIPPING-PORT-MATRIX.md`](SHIPPING-PORT-MATRIX.md).
+**Estado desta PR após a integração:** motor próprio e provider Melhor Envio presentes; Unit Commerce 55/272, Kernel Shipping 7/237, Unit Melhor Envio 74/181 e instalação limpa de ambos sem o módulo contrib PASS. Kernel de wiring do Melhor Envio falha no setup (9 erros/0 assertions) por omitir `aculta_studio` em `$modules`; nenhum serviço externo foi chamado. Composer e Config Sync versionados usam o motor próprio. O site de teste compartilhado permanece em estado legado (`commerce_shipping` ativo; field target `commerce_shipment`) e não foi alterado durante esta auditoria. Próximas ações: corrigir o harness do owner Melhor Envio, aplicar a branch/cutover ao Runtime conforme autorização vigente, validar Domain/checkout e homologar visualmente com Firefox ESR. O status do módulo permanece Dev. Ver [`SHIPPING-PORT-MATRIX.md`](SHIPPING-PORT-MATRIX.md).

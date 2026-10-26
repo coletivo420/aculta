@@ -1,8 +1,10 @@
 # ACULTA Commerce — 0.1.0-dev.10
 
-Submódulo proprietário das integrações da loja, em estado Dev. O motor de envios ACULTA foi incorporado a este módulo: entidades próprias de remessa e método, plugins e cálculo de tarifas, empacotamento, seleção de quote revalidada no servidor, processors de pedido, pane de checkout e leitura de remessas no Green Stash. O Config Sync versionado usa os IDs ACULTA e não habilita `commerce_shipping`; nenhuma importação foi executada no Runtime. O pacote Composer `drupal/commerce_shipping` continua instalado nesta branch.
+Submódulo proprietário das integrações da loja, em estado Dev. O motor de envios ACULTA está integrado aqui, sem módulo adicional ou alteração em contrib. O Config Sync versionado aponta para `aculta_shipment`, os plugins próprios e o pane `aculta_shipping_information`; `drupal/commerce_shipping` foi removido de `composer.json`/`composer.lock` e `drupal/physical` é dependência explícita.
 
-A integração não está pronta para cutover: o provider Melhor Envio ainda não consome o contrato novo, o preflight de configuração ativa não foi repetido, e o checkout não foi homologado. Nesta branch, Unit Commerce passou com 49 testes/230 assertions; PHPCS e PHP lint dos arquivos novos do motor passaram. O Kernel de shipping reportou 6 casos skipped antes do setup (0 assertions), portanto não valida a instalação. Os commits de origem registram um rehearsal em banco descartável, mas ele não foi repetido durante esta conciliação. Nenhum Runtime, pedido, envio, pagamento ou serviço externo foi alterado.
+**Evidência reexecutada nesta PR (2026-10-26):** Unit Commerce 55 testes/272 asserções PASS; `ShippingEngineKernelTest` 7/237 PASS; Unit Melhor Envio 74/181 PASS; instalação limpa Standard + `aculta_commerce` + `aculta_commerce_melhorenvio` em prefixo descartável PASS, com provider descoberto e `commerce_shipping` ausente; `drush cr` e `updatedb:status` PASS. O harness Kernel do Melhor Envio continua com 9 erros de setup por não incluir o módulo `aculta_studio` requerido pelo serviço do Green Stash; nenhuma assertion funcional foi executada nessa classe. PHPCS, PHP lint, Composer validate, gate de pacotes e índice de status PASS.
+
+O Runtime compartilhado de testes foi consultado somente para leitura: `commerce_shipping` ainda está habilitado e seu field target ativo continua `commerce_shipment`. Nenhuma alteração foi aplicada a esse Runtime nem houve pedido, frete, pagamento ou chamada externa. O cutover operacional desse Runtime permanece pendente de aplicar o código da PR ao ambiente e executar a sequência segura; este README distingue essa pendência da instalação limpa isolada já verificada. Checkout visual e homologação funcional em navegador permanecem pendentes; módulo segue Dev.
 
 ## COM-SHIP — escopo e segurança
 
@@ -52,11 +54,11 @@ O `aculta_commerce` fornece o contexto e as configurações de checkout da **Loj
 
 ## Green Stash — fundação 0.1.0-D
 
-Permissão restrita `access aculta green stash`, serviço `aculta_commerce.green_stash_access` e teste de caracterização implementados. **Ainda não há rota, provider Studio, controller nem acesso a entidades**: o gate de entrada não concede operações de Commerce. Ver [plano D](docs/GREEN-STASH-0.1.0-D.md). Não habilitar em produção sem `drush cr`, PHPUnit, validação de permissões e homologação de dependências.
+Registro histórico da fundação 0.1.0-D: naquele ponto havia somente permissão e serviço de acesso, sem rotas ou operações. A experiência evoluiu nas fases abaixo e no código atual; este parágrafo preserva o estado da fase original, não descreve o estado presente.
 
 ## Green Stash — ponto de entrada Studio D-A/D-B
 
-Criado provider independente `green_stash` e rota `/green-stash` (purpose `account`) protegida por `access aculta green stash`. O registro no `StudioExperienceManager` ocorre pelo hook de container do próprio Commerce, sem fazer Studio depender de Commerce. O conteúdo é **exclusivamente informativo** até a fase de integração de dados com autorização por entidade/store. Ainda não homologado no servidor. Ver [documentação D](docs/GREEN-STASH-0.1.0-D.md).
+Registro histórico da fase D-A/D-B: o provider e rota então eram somente informativos. A composição atual usa `AcultaCommerceServiceProvider` e rotas `/estudio/loja`; consultar o contrato COM-SHIP e o roadmap para o estado vigente.
 
 ## Green Stash — navegação inicial GS-0.2-A/B
 
