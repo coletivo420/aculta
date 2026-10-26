@@ -133,7 +133,6 @@ final class ContentIndexStatisticsBridgeKernelTest extends KernelTestBase {
     $this->completeQueuedWork();
     $this->container->get('aculta_index.generation_manager')->activate($generationId);
 
-    $database = $this->container->get('database');
     $statisticsStorage = $this->container->get('aculta_statistics.storage');
     $this->assertInstanceOf(DailyAggregateStorage::class, $statisticsStorage);
     $statisticsStorage->record('wiki.entries.read', (string) $node->id(), 7);
