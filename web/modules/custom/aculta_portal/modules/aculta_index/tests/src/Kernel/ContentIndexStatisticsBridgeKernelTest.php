@@ -193,6 +193,66 @@ final class ContentIndexStatisticsBridgeKernelTest extends KernelTestBase {
   }
 
   /**
+   * The bridge preserves Index order/cursor and reports zero for no metrics.
+   */
+  public function testBridgePreservesOrderCursorAndZeroTotals(): void {
+    $nodes = [];
+    for ($index = 1; $index <= 3; $index++) {
+      $nodes[$index] = Node::create([
+        'type' => 'wiki_entry',
+        'title' => 'Bridge cursor entry ' . $index,
+        'status' => 1,
+      ]);
+      $nodes[$index]->save();
+    }
+
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $complete = FALSE;
+    for ($batch = 0; $batch < 100 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
+    }
+    $this->assertTrue($complete, 'The fixture rebuild should complete from the booted provider inventory.');
+    $rebuilder->validate($generationId);
+    $this->completeQueuedWork();
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $statisticsStorage = $this->container->get('aculta_statistics.storage');
+    $statisticsStorage->record('wiki.entries.read', (string) $nodes[1]->id(), 5);
+    Role::create(['id' => 'bridge_cursor_reader', 'label' => 'Bridge cursor reader'])
+      ->grantPermission('access content')
+      ->grantPermission('view content-level statistics')
+      ->save();
+    User::create(['name' => 'statistics-bridge-cursor-root', 'status' => 1])->save();
+    $reader = User::create(['name' => 'statistics-bridge-cursor-reader', 'status' => 1]);
+    $reader->addRole('bridge_cursor_reader');
+    $reader->save();
+
+    $bridge = $this->container->get('aculta_index.statistics_bridge');
+    $filters = ['entity_type' => 'node', 'bundle' => 'wiki_entry', 'published' => TRUE];
+    $day = $statisticsStorage->currentDay();
+    $first = $bridge->aggregateForQuery($filters, 'wiki.entries.read', $day, $day, $reader, NULL, 2);
+    $this->assertTrue($first->available);
+    $this->assertSame([(string) $nodes[3]->id(), (string) $nodes[2]->id()], array_map(
+      static fn ($entity): string => (string) $entity->id(),
+      $first->entities,
+    ));
+    $this->assertSame([
+      (string) $nodes[3]->id() => 0,
+      (string) $nodes[2]->id() => 0,
+    ], $first->totals);
+    $this->assertNotNull($first->nextCursor);
+
+    $second = $bridge->aggregateForQuery($filters, 'wiki.entries.read', $day, $day, $reader, $first->nextCursor, 2);
+    $this->assertSame([(string) $nodes[1]->id()], array_map(
+      static fn ($entity): string => (string) $entity->id(),
+      $second->entities,
+    ));
+    $this->assertSame([(string) $nodes[1]->id() => 5], $second->totals);
+    $this->assertNull($second->nextCursor);
+  }
+
+  /**
    * Completes queued backfill events so the test generation can be activated.
    */
   private function completeQueuedWork(): void {
