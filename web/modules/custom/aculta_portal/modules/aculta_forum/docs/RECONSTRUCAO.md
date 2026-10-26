@@ -101,21 +101,29 @@ não usar `estados/` como pasta de trabalho nem modificar backups imutáveis.
 
 ## Importação via Drupal
 
-Usar Migrate API e mapas source ID → destination ID. Sequência prevista:
+Usar Migrate API e mapas source ID → destination ID. O modelo de autoria
+vigente (F-D17/F-D44/F-D45) não cria Users, Profiles ou rotas individuais.
+Sequência prevista para o formato ACULTA atual:
 
-1. Estrutura Taxonomy e papel legado sem permissões adicionais.
-2. User bloqueado e metadados históricos com destino público coletivo.
-3. Tópicos Forum e abertura.
-4. Comments com autor, relação e data.
-5. Arquivos, Media, álbuns e referências internas recuperáveis.
-6. Reconciliação de links, fechamento das discussões históricas e cobertura.
+1. Estrutura Taxonomy/bundles e validação da configuração necessária.
+2. Entidades `aculta_legado_autor` com IDs de origem estáveis e nome de exibição.
+3. Tópicos nos bundles ACULTA, com mapeamento estável da origem para o destino.
+4. Aberturas e respostas como `aculta_forum_post`, com tópico, autoria legada,
+   parent, ordem e datas recuperadas.
+5. Arquivos, Media, álbuns e referências internas recuperáveis pelas APIs
+   proprietárias, incluindo `aculta_image`.
+6. Reconciliação de links, imutabilidade das discussões históricas e relatório
+   de cobertura/lacunas.
 
 Migrate Tools é candidato para execução/status dos lotes; Migrate Plus pode
 fornecer leitores de arquivos normalizados. A decisão de dependência precisa
 demonstrar a necessidade e passar pelo Composer na fase correspondente.
 
 Importação é contexto próprio: impedir concessões do Game, notificações,
-amizade, criação indevida de perfil comum/avatar aleatório e reabertura de login.
+amizade, criação indevida de perfil comum/avatar aleatório e criação/reabertura
+de login. A autoria mantém `uid=0` e referência `legacy_author` para uma entidade
+`aculta_legado_autor`; cartões no conteúdo do Fórum exibem `-gr`, e todos os
+links de autoria apontam ao memorial coletivo.
 Não importar funções históricas de moderação como permissões atuais.
 
 O importador deve ser repetível e retomar sem duplicar registros. Não mesclar

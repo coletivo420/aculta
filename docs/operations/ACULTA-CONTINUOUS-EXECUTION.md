@@ -683,3 +683,8 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Decisão do responsável registrada como F-D46: os 616 tópicos de vida interna e os 17 marcados `revisar` ficam fora por padrão; inclusão exige seleção manual explícita. O acervo de origem não é alterado.
 - `build_mapping.py` extraiu a decisão para `topico_incluivel()`; testes sintéticos cobrem exclusão da vida interna, reentrada por seleção explícita, exceções temáticas e bloqueio padrão de `revisar`. Documentação do Fórum e do plano Growroom foi reconciliada com F-D17/F-D43–F-D46; autores são entidades `aculta_legado_autor`, sem User/Profile/rota própria.
 - O exportador de conteúdo/assets, importador Drupal idempotente, validação em banco efêmero e prévia/rollback ainda faltam. Nenhum acervo privado foi lido nesta unidade; nenhuma entidade ou arquivo Runtime foi criado.
+
+## Growroom — alinhar sequência ao ownership atual (2026-10-26)
+
+- `aculta_forum/docs/RECONSTRUCAO.md` agora descreve a sequência Drupal vigente: `aculta_legado_autor` sem Users/Profiles, tópicos ACULTA, aberturas/respostas em `aculta_forum_post`, arquivos por APIs proprietárias, reconciliação e relatório. A lista antiga de Users/Comments foi substituída sem alterar o acervo nem alegar que o importador já existe.
+- Validação desta documentação: `git diff --check` PASS. Próxima etapa funcional continua sendo especificar/implementar o exportador e importador idempotente para o ambiente efêmero.
