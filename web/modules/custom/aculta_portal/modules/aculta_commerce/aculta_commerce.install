@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * @file
+ * Atualizações do cutover do frete para o motor próprio do aculta_commerce.
+ *
+ * Ordem (Drupal executa updates numerados antes de post-updates; post-updates em ordem alfabética do nome):
+ * 1. aculta_commerce_update_8001: instala as entidades do motor.
+ * 2. aculta_commerce_post_update_migrate_shipping_methods: copia métodos do contrib para o motor.
+ * 3. aculta_commerce_post_update_retarget_shipments: reaponta o campo de remessas e apaga remessas legadas.
+ * 4. aculta_commerce_post_update_uninstall_commerce_shipping: desinstala o contrib só sem bloqueios.
+ *
+ * Nenhuma etapa apaga pedidos. Todas são idempotentes.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Instala as entidades do motor de frete (idempotente).
+ */
+function aculta_commerce_update_8001(): string {
+  $instalados = \Drupal::service('aculta_commerce.legacy_shipping_cutover')->installEngineEntities();
+  return $instalados === []
+    ? 'Entidades do motor já instaladas.'
+    : 'Entidades instaladas: ' . implode(', ', $instalados) . '.';
+}
+
+/**
+ * Copia métodos commerce_shipping_method para aculta_shipping_method (FlatRate → aculta_flat_rate).
+ */
+function aculta_commerce_post_update_migrate_shipping_methods(array &$sandbox): string {
+  $r = \Drupal::service('aculta_commerce.legacy_shipping_cutover')->migrateMethods();
+  $nao = $r['nao_mapeados'] === [] ? '' : ' Não mapeados (mantidos): ' . implode(', ', array_unique($r['nao_mapeados'])) . '.';
+  return sprintf('Métodos migrados: %d; já existentes: %d.%s', $r['migrados'], $r['ja_existentes'], $nao);
+}
+
+/**
+ * Reaponta commerce_order.shipments para aculta_shipment. Pedidos são preservados.
+ */
+function aculta_commerce_post_update_retarget_shipments(array &$sandbox): string {
+  $r = \Drupal::service('aculta_commerce.legacy_shipping_cutover')->retargetShipments();
+  return sprintf('Pedidos com referência legada ajustados: %d; remessas legadas apagadas: %d; destino: %s.',
+    $r['pedidos_ajustados'], $r['remessas_apagadas'], $r['destino']);
+}
+
+/**
+ * Desinstala commerce_shipping quando não restam métodos, remessas ou campos dependentes.
+ */
+function aculta_commerce_post_update_uninstall_commerce_shipping(array &$sandbox): string {
+  $service = \Drupal::service('aculta_commerce.legacy_shipping_cutover');
+  $bloqueios = $service->blockersForUninstall();
+  if ($bloqueios !== []) {
+    return 'Desinstalação do commerce_shipping bloqueada: ' . implode('; ', $bloqueios) . '.';
+  }
+  return $service->uninstallLegacyIfSafe()
+    ? 'commerce_shipping desinstalado.'
+    : 'commerce_shipping já ausente ou sem ação.';
+}

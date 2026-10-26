@@ -88,3 +88,7 @@ services:
     arguments: ['@aculta_commerce.shipping_order_manager']
     tags:
       - { name: commerce_order.order_processor, priority: -100 }
+
+  aculta_commerce.legacy_shipping_cutover:
+    class: Drupal\aculta_commerce\Shipping\Cutover\LegacyShippingCutover
+    arguments: ['@entity_type.manager', '@module_handler', '@module_installer', '@entity.definition_update_manager']
