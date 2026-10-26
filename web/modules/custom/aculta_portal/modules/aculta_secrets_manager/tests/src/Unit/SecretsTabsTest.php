@@ -126,23 +126,34 @@ final class SecretsTabsTest extends UnitTestCase {
   }
 
   /**
-   * Keeps every class-based tab style available to Claro.
-   *
-   * The ACULTA420 theme hook is not active on administrative routes.
+   * Keeps panel styles available when Claro does not run the ACULTA420 hook.
    */
-  public function testClaroAdminTabCssHasSemanticAttributeSelectors(): void {
+  public function testClaroAdminPanelCssPairsEveryTokenWithItsClass(): void {
     $css = file_get_contents(dirname(__DIR__, 3) . '/css/secrets-tabs.css');
     $this->assertIsString($css);
     $pairs = [
-      '/\.secrets-tabs__list\s*,\s*\[data-portal-ui~=\"secrets-tabs-list\"\]/',
-      '/\.secrets-tabs__tab\s*,\s*\[data-portal-ui~=\"secrets-tab\"\]/',
-      '/\.secrets-tabs__tab\[aria-selected=\"true\"\]\s*,\s*\[data-portal-ui~=\"secrets-tab\"\]\[aria-selected=\"true\"\]/',
-      '/\.secrets-tabs__tab:focus-visible\s*,\s*\[data-portal-ui~=\"secrets-tab\"\]:focus-visible/',
-      '/\.secrets-table-scroll\s*,\s*\[data-portal-ui~=\"secrets-table-scroll\"\]/',
+      'secrets-section' => 'aculta-portal-secrets-section',
+      'secret-value' => 'aculta-secret-value',
+      'secret-value-text' => 'aculta-secret-value__text',
+      'secret-value-eye' => 'aculta-secret-value__eye',
+      'secret-value-edit' => 'aculta-secret-value__edit',
+      'secret-value-clear' => 'aculta-secret-value__clear',
+      'secrets-tab' => 'secrets-tabs__tab',
     ];
-    foreach ($pairs as $pattern) {
-      $this->assertMatchesRegularExpression($pattern, $css);
+    foreach ($pairs as $token => $class) {
+      $pattern = '/\.' . preg_quote($class, '/') . '\s*,\s*\[data-portal-ui~="' . preg_quote($token, '/') . '"\]/';
+      $this->assertMatchesRegularExpression($pattern, $css, $token);
     }
+    foreach (['secret-value-eye', 'secret-value-edit', 'secret-value-clear', 'secrets-tab'] as $token) {
+      $this->assertMatchesRegularExpression(
+        '/\[data-portal-ui~="' . preg_quote($token, '/') . '"\]:focus-visible/',
+        $css,
+        $token,
+      );
+    }
+    $this->assertStringContainsString('min-inline-size: 44px', $css);
+    $this->assertStringContainsString('min-block-size: 44px', $css);
+    $this->assertDoesNotMatchRegularExpression('/#[0-9a-f]{3,8}\b|rgba?\(/i', $css);
   }
 
   /**

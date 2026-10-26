@@ -16,3 +16,8 @@
 - Revisão visual no Firefox ESR (DISPLAY=:0) em largura de celular, com Olivero e ACULTA420.
 - Procedimento de rotação e recuperação (ver docs/operations/SECRETS.md).
 - Guia de migração Portal → submódulo para instalações existentes.
+
+
+## Decisão de fronteira
+
+UI administrativa renderizada no Claro mantém CSS mínimo no próprio submódulo, com seletores de classe e `data-portal-ui`. O CSS de abas e segredos não será migrado para o tema; classes equivalentes permanecem para o ACULTA420.
