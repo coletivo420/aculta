@@ -829,3 +829,30 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Sequência: o Local 3 faz o inventário B0; a fase B1 é executada depois da revisão. Após B1, o Local 3 reexecuta os 9 testes.
 - Tentativa descartada: teste de boot com e sem o submódulo, com lista mínima de módulos. Falhou por dependência de serviço não declarada (`aculta_image.file_remover`), problema de declaração já existente no Portal. Não foi commitado.
 - Ref remota `feat/aculta-fronteira-links-secrets`: excluída após confirmação do coordenador (Local 2 em `feat/aculta-secrets-claro`); `git cherry` vazio e ref ancestral da PR, verificados antes da exclusão.
+
+## Integração de três entregas aprovadas e verificação do Claro — 2026-10-26
+
+**Merges, nesta ordem, sobre `d74a6779d` (PR #298):**
+
+- `9751b494f`: `feat/melhorenvio-token-cipher` @ `0c95bc711` (cifragem dos tokens, migração 8002 com malformado apagado e chave ausente interrompendo).
+  - Testes: Unit cipher 11/19 PASS; Unit `SecretsManagerTest` 15/48 PASS; Kernel `MelhorEnvioWiringKernelTest` 15/69 PASS (130 deprecações); `validate-secrets-contract` PASS.
+- `dfd3421ef`: `feat/aculta-secrets-claro` @ `f4474d5d4` (sem conflito).
+  - Gates: `validate-module-theme-boundary` PASS (3036); `validate-aculta420-sdc-schemas` PASS (45 componentes, 628 checagens); `validate-aculta420-design-foundations` PASS; Foundation via Drush PASS (345); shell-contract via Drush PASS (11).
+  - Testes: Unit `aculta_secrets_manager` 13/56 PASS; `SecretsManagerTest` 15/48 PASS; Kernel `aculta_secrets_manager` 1/4 PASS (62 deprecações).
+- `78f5bb199`: merge de `docs/aculta-mp-extracao-b0` @ `bc1458284`, só docs (`docs/portal/MERCADOPAGO-EXTRACAO.md`).
+- Commit `bcac5eab0`: versões dos status de `aculta_secrets_manager` (0.1.0-dev.4) e `aculta420` (0.7.0-dev.5), com nota de integração.
+
+**Verificação Firefox no Claro, checkout servido em `78f5bb199`** (backup da branch `backup/checkout-antes-78f5bb1` no HEAD `c1e210934`; sem alterações rastreadas; `drush cr`):
+
+- `claro-foco-alvos.py`: 25/28 PASS em 1280, 390 e 320 px.
+- Foco por Tab alcança revelar, alterar e apagar, com foco visível. A aba recebe foco. Alvos de toque ≥ 44 px.
+- **Falha:** cor do ícone de apagar `rgb(35, 36, 41)`, esperado `rgb(179, 38, 30)`. Causa verificada: `--aculta-status-error-text` e `--color-danger` estão vazias na raiz do documento do Claro. Correção para o Local 2: definir o token de erro na página do Claro. Não corrigido aqui.
+
+**Exclusão de refs remotas:**
+
+- Excluídas: `feat/aculta-index-validacao` (ancestral da PR; Local 3 encerrado) e `feat/melhorenvio-token-cipher` (integrada nesta execução). Verificadas com `git cherry` vazio antes da exclusão.
+- Mantidas: `feat/aculta-secrets-claro` (Local 2) e `docs/aculta-mp-extracao-b0` (Local 3, em revisão de B1). `git cherry` vazio nas duas, mas o encerramento dos donos não está confirmado.
+
+**Pendência bloqueante de implantação:** `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` **não está provisionada** no servidor de testes (nome ausente em `secrets/aculta.secrets.env` e no ambiente do shell, verificado sem imprimir valores). Nenhum `drush updatedb` pode rodar até a provisão. O `update_8002` falharia sem a chave, e a atualização ficaria pendente sem perda de dados.
+
+**Ressalva de status:** `validate-project-status-index.php` segue FAIL por `aculta_links` (0.4.0-dev.32 contra manifest 0.4.0-dev.33), fora desta entrega. A tabela do README raiz também está desatualizada.
