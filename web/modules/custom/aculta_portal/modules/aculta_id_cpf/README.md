@@ -1,7 +1,7 @@
 # ACULTA CPF e CNPJ
 
 Submódulo opcional do `aculta_portal`, baseline Drupal **11.3+** e PHP **8.4**.
-Versão atual: **0.3.0-dev.2**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
+Versão atual: **0.3.0-dev.3**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
 e um índice de unicidade (fingerprint HMAC).
 
 **RUNTIME STATUS: DEFERRED** — a rodada local em PHP 8.4 passou; o servidor
@@ -115,16 +115,21 @@ vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal
 php scripts/validate-aculta-portal-drupal11.php
 ```
 
-O Kernel atual verifica a restrição única no banco. Cobertura ponta a ponta de
-`AccountDocumentStore` com entidades Profile/formulários ainda falta. Evidência
+Na validação M-1 com o autoloader isolado da branch: Unit 48 testes / 116
+assertions PASS; Kernel MariaDB 2 testes / 5 assertions PASS. O Kernel prova
+idempotência do update `10002`, bloqueio SQL de fingerprints duplicados e aborto
+seguro quando já existem grupos repetidos. O novo Unit também comprova que a
+colisão concorrente no `AccountDocumentStore` retorna a mensagem genérica sem
+preservar como exceção encadeada o detalhe do banco/fingerprint. PHPCS e PHP lint
+dos arquivos alterados PASS. Nenhum update foi aplicado no Runtime. Testes
+integrados com Profile/Form API e homologação Runtime ainda faltam. Evidência
 histórica da implementação removida está em
 [ACULTA-ASSOCIADO-ID.md](../../../../../../docs/modules/ACULTA-ASSOCIADO-ID.md).
 
 ## Próximas entregas
 
 1. Executar `10002` em banco isolado com dados representativos, inclusive conflito e rollback.
-2. Testes de Kernel para `AccountDocumentStore` (duplicidade, perfil despublicado,
-   atualização `aculta_id_cpf_update_10001`), ainda não cobertos.
+2. Testes de Kernel integrados de `AccountDocumentStore` com entidades Profile e formulário (duplicidade, perfil despublicado e atualização `aculta_id_cpf_update_10001`).
 3. Integrar login por CPF ao pipeline existente, preservando flood, confirmação,
    CAPTCHA, Social Auth e respostas genéricas.
 4. Avaliar integração Webform somente após proteção de rascunhos, tokens,

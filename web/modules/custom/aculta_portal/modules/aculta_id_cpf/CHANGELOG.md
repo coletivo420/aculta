@@ -14,6 +14,12 @@
 
 # Changelog
 
+## 0.3.0-dev.3 — proteger diagnóstico de colisão concorrente — 2026-10-26
+
+- Uma violação da chave única de fingerprint continua retornando `Document already registered.`, sem encadear a exceção SQL que pode conter o fingerprint no detalhe do banco. Falhas de armazenamento sem essa chave continuam sendo propagadas.
+- `AccountDocumentStoreUniqueConflictTest` simula a corrida após a consulta prévia e confirma a mensagem genérica sem exceção anterior; Unit 48/116 e Kernel MariaDB 2/5 PASS. PHPCS Drupal/DrupalPractice e PHP lint dos arquivos modificados PASS.
+- O Runtime não foi atualizado. Atualização `10002`, integração Profile/Form API e homologação permanecem pendentes.
+
 ## 0.2.0-dev.2 — unicidade por fingerprint e migração do índice — 2026-10-12
 
 Classificação: MINOR, capacidade opcional em desenvolvimento.

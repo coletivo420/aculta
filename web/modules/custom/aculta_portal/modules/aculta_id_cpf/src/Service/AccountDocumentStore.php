@@ -140,8 +140,8 @@ final class AccountDocumentStore implements AccountDocumentInterface {
     catch (EntityStorageException $exception) {
       if ($this->isDocumentIndexConflict($exception)) {
         // The unique database key closes the race between the preflight query
-        // and the save without revealing which account owns the document.
-        throw new \LogicException('Document already registered.', 0, $exception);
+        // and the save without revealing or propagating its fingerprint value.
+        throw new \LogicException('Document already registered.');
       }
       throw $exception;
     }
