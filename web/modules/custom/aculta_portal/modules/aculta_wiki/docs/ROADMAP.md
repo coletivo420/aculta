@@ -4,7 +4,7 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.117**. No Runtime de teste,
+Linha do projeto `aculta_wiki`: **0.1.0-dev.118**. No Runtime de teste,
 `aculta_wiki`, `aculta_studio` e `aculta_index` estão ativos. `drush cr` e o
 update autorizado 10001 foram aplicados; as rotas WE SATIVA existem e as quatro
 tabelas da entidade de proposta foram instaladas. Em dev.117 o Index foi
@@ -15,6 +15,14 @@ Modo escuro confirmado e restaurado. Leitor de tela, WCAG 2.2 AA completa e zoom
 real do navegador seguem pendentes, assim como a divergência RBAC das permissões
 de proposta no Runtime. `/wiki` é caminho interno da raiz Wiki e responde 404
 quando chamado diretamente.
+
+## Auditoria M-0 — RBAC de propostas
+
+Dev.118 adiciona teste focal de Config Sync (1 teste / 8 assertions) para os
+quatro grants distribuídos entre `email_confirmed` e `content_editor`. O Runtime
+Wiki consultado read-only continua sem esses grants; as propostas seguem
+indisponíveis e o acesso falha fechado. Importar/alterar roles ativos permanece
+pendente de autorização operacional e revisão do diff.
 
 ## Integração vigente Wiki ↔ Messenger — avisos editoriais
 

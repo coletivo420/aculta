@@ -31,6 +31,11 @@ exposição de propostas por essa divergência. Nenhuma configuração ativa foi
 alterada. A reconciliação continua bloqueada até autorização de operação de
 configuração e revisão pós-apply; ver o registro M-0.
 
+Dev.118 adiciona `WikiProposalRolePermissionsConfigTest` (1 teste / 8
+assertions) para impedir que uma alteração futura remova os grants necessários
+dos dois papéis versionados. O teste protege o Config Sync e não representa
+homologação dos grants ativos no Runtime.
+
 ## Estado atual
 
 - Contrato Wiki→Messenger v1 documentado em
