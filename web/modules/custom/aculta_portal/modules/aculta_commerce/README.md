@@ -1,8 +1,8 @@
-# ACULTA Commerce — 0.1.0-dev.5
+# ACULTA Commerce — 0.1.0-dev.6
 
 Submódulo de integração comercial da **loja**, em estado Dev. O provider de configuração do checkout e a experiência Green Stash estão em código. A orquestração de checkout pertence ao `aculta_portal`, conforme ADR-013. As seções abaixo registram a evolução por fase; afirmações sobre ausência de serviços ou rotas descrevem a fundação histórica. A cadeia completa de Green Stash ainda exige homologação no Runtime.
 
-Na conciliação dev.3, Unit Commerce 20/116 (9 depreciações PHPUnit), Melhor Envio 29/78 e CEP 9/36 passaram. No HEAD dev.5 da PR, Unit Commerce passou com 21 testes / 125 assertions; o Kernel de Doações não inicia porque o harness não carrega toda a cadeia de serviços Messenger/Portal/Image, sem assertions funcionais. Nenhum fluxo de pagamento ou serviço externo foi executado. O gate de endereço passou; a fronteira módulo/tema não identifica violações próprias de Commerce.
+Na conciliação dev.3, Unit Commerce 20/116 (9 depreciações PHPUnit), Melhor Envio 29/78 e CEP 9/36 passaram. No HEAD dev.6 da PR, Unit Commerce passou com 25 testes / 160 assertions (9 depreciações PHPUnit). `GreenStashProductAccessTest` agora cobre negação de entidade, autorização positiva de produto e loja, produto de outra loja, store sem permissão `update` e configuração ambígua. PHPCS Drupal/DrupalPractice e PHP lint do teste passam. O Kernel de Doações continua sem iniciar porque o harness não carrega toda a cadeia Messenger/Portal/Image, sem assertions funcionais. Nenhum fluxo de pagamento ou serviço externo foi executado. O gate de endereço passou; a fronteira módulo/tema não identifica violações próprias de Commerce.
 
 ## Integração de avisos da Loja — contrato vigente
 
@@ -40,11 +40,11 @@ Validar compatibilidade das dependências do manifesto com os módulos instalado
 
 ## Integração com a carteira/carrinhos do Portal
 
-`aculta_commerce` fornece o contexto **Loja** ao gerenciador transversal do Portal; o Portal administra as abas **Comum | Loja | LMS | Doações**, seleciona modalidade de checkout por carrinho/pedido e preserva o checkout específico de cada módulo. A aba Comum não significa fusão física de pedidos. O Green Stash permanece a experiência Studio de administração da loja. Ver [roadmap](docs/ROADMAP.md) e [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md). Integração ainda **não implementada**.
+`aculta_commerce` fornece o contexto **Loja** ao gerenciador transversal do Portal por `ShopCheckoutProvider`; o Portal administra as abas **Comum | Loja | LMS | Doações**, seleciona modalidade de checkout por carrinho/pedido e preserva o checkout específico de cada módulo. A aba Comum não significa fusão física de pedidos. O Green Stash é a experiência Studio de administração da loja. A integração está implementada no código e possui testes Unit; checkout completo, Runtime e homologação ainda estão pendentes. Ver [roadmap](docs/ROADMAP.md) e [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
 
 ## RETIFICAÇÃO ADR-013 — Abas de administração, não de compra
 
-O `aculta_commerce` fornecerá configuração do checkout da **Loja** à orquestração administrativa do `aculta_portal`. **Comum | Loja | LMS | Doações** são exclusivamente abas internas administrativas; não criar uma interface de carrinho público. O carrinho da barra multidomínio e o seletor de checkout atuais são preservados. Green Stash continua gestão da loja no Studio. O Mercado Pago continua gateway transversal. Ver [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
+O `aculta_commerce` fornece o contexto e as configurações de checkout da **Loja** à orquestração administrativa do `aculta_portal`. **Comum | Loja | LMS | Doações** são exclusivamente abas internas administrativas; não criar uma interface de carrinho público. O carrinho da barra multidomínio e o seletor de checkout atuais são preservados. Green Stash continua gestão da loja no Studio. O Mercado Pago continua gateway transversal. Ver [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
 
 ## Green Stash — fundação 0.1.0-D
 
@@ -56,15 +56,15 @@ Criado provider independente `green_stash` e rota `/green-stash` (purpose `accou
 
 ## Green Stash — navegação inicial GS-0.2-A/B
 
-Criada navegação progressiva com nove áreas: Visão geral, Produtos, Pedidos, Estoque, Envios, Promoções, Clientes, Relatórios e Configurações, acessíveis via `/green-stash/{section}` no purpose `account`, sem operações de negócio. A permissão `access aculta green stash` protege as rotas e a verificação do Studio permanece no controller. Renderização básica de estado vazio, **sem componentes SDC definitivos ou operações comerciais ativas**. Consultar [proposta mobile-first](docs/GREEN-STASH-UX-MOBILE-FIRST.md).
+Na entrega inicial foi criada navegação progressiva com nove áreas acessíveis no purpose `account`; naquela fase eram estados vazios, sem operações de negócio. A permissão `access aculta green stash` protege as rotas e a verificação do Studio permanece no controller. Hoje Produtos possui catálogo, detalhe e cadastro de rascunho; as outras áreas continuam estados preparatórios, sem ações comerciais. Consultar [proposta mobile-first](docs/GREEN-STASH-UX-MOBILE-FIRST.md).
 
 ## Rotas PT-BR do Green Stash
 
-Entrada canônica `/estudio/loja`; páginas internas `/estudio/loja/{secao}` com slugs `visao-geral`, `produtos`, `pedidos`, `estoque`, `envios`, `promocoes`, `clientes`, `relatorios` e `configuracoes`. Identificadores internos Drupal continuam estáveis. Registro no Studio pelo `AcultaCommerceServiceProvider`, não por hook container. **A área ainda mostra somente estado de preparação**, sem listas ou ações financeiras. Validar container, roteamento e permissões no homelab.
+Entrada canônica `/estudio/loja`; páginas internas `/estudio/loja/{secao}` com slugs `visao-geral`, `produtos`, `pedidos`, `estoque`, `envios`, `promocoes`, `clientes`, `relatorios` e `configuracoes`. Identificadores internos Drupal continuam estáveis. Registro no Studio pelo `AcultaCommerceServiceProvider`, não por hook container. A seção Produtos lista, detalha e cria rascunhos; as outras áreas ainda são preparatórias. Container, roteamento, permissões e catálogo precisam de homologação no Runtime.
 
 ## Catálogo inicial com busca (GS-0.2-C.2)
 
-A rota `/estudio/loja/produtos` agora aceita parâmetros GET `busca` (título, até 100 caracteres) e `antes` (cursor numérico de paginação), apresenta até 20 produtos autorizados e só gera links nativos Commerce de edição. O leitor aplica acesso da entidade e permissão na loja, sem divulgar totais privados. A interface ainda é provisória e **não substitui** os componentes SDC/UI Suite planejados para o ACULTA420. Testes de integração e homologação permanecem pendentes.
+A fase inicial aceitou `busca` e `antes`, mostrava até 20 produtos autorizados e ainda apontava para edição nativa. Esse link foi removido na fase seguinte; a rota atual abre o detalhe Green Stash, sem formulário nativo. O leitor aplica acesso da entidade e permissão na loja, sem divulgar totais privados. A interface ainda é provisória e **não substitui** os componentes SDC/UI Suite planejados para o ACULTA420. Testes Functional e homologação permanecem pendentes.
 
 ## Contrato obrigatório de edição Green Stash
 
@@ -72,7 +72,7 @@ O Green Stash substitui a interface operacional nativa Commerce para a loja. Pro
 
 ## GS-EDITOR-0.2 — Detalhe sem painel administrativo
 
-A listagem de produtos agora abre `/estudio/loja/produtos/{produto}`. O controller próprio exibe detalhes mínimos em modo leitura e verifica acessos à entidade, store e experiência Studio. Nenhum link abre o formulário nativo Commerce. A criação e edição próprias ainda são próximas fases; esta tela **não permite alterar produtos**. Ver o [roadmap](docs/ROADMAP.md).
+A listagem de produtos abre `/estudio/loja/produtos/{produto}`. O controller próprio exibe detalhes mínimos em modo leitura e verifica acessos à entidade, store e experiência Studio. Nenhum link abre o formulário nativo Commerce. A criação própria de rascunho foi implementada em GS-EDITOR-0.3-A; a edição, variações, preço, imagens e estoque continuam pendentes. Ver o [roadmap](docs/ROADMAP.md).
 
 ## GS-EDITOR-0.3-A — Novo produto sem painel administrativo
 

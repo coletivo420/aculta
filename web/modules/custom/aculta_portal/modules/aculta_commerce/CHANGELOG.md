@@ -1,3 +1,8 @@
+## 0.1.0-dev.6 — fechar testes de acesso do Green Stash (2026-10-26)
+
+- `GreenStashProductAccessTest` agora cobre o caso permitido com `ProductInterface`/`StoreInterface` reais do Commerce e bloqueia produto ligado a outra loja, store sem permissão `update` ou configuração ambígua. Entity Access view/update e `store.access('update')` permanecem obrigatórios.
+- Unit Commerce: 25 testes / 160 assertions PASS (9 depreciações PHPUnit). PHPCS Drupal/DrupalPractice e PHP lint do teste PASS. Nenhum dado, configuração ativa ou fluxo financeiro foi alterado; Functional/Browser e homologação Runtime continuam pendentes.
+
 ## 0.1.0-dev.5 — regressão focal da fundação comercial (2026-10-26)
 
 - Unit Commerce no HEAD da PR: 21 testes / 125 assertions PASS. Nenhum checkout, pagamento ou serviço externo executado.
