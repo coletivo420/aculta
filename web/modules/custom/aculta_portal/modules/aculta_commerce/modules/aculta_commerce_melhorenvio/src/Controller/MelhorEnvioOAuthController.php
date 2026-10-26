@@ -7,7 +7,7 @@ namespace Drupal\aculta_commerce_melhorenvio\Controller;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClient;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException;
 use Drupal\aculta_commerce_melhorenvio\Http\OAuthState;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -37,7 +37,8 @@ final class MelhorEnvioOAuthController {
     $state = $this->state->issue();
     $request->getSession()->set(self::SESSION_KEY, $state);
     try {
-      return new RedirectResponse($this->client->authorizationUrl($state));
+      // Destino externo: o Drupal recusa RedirectResponse comum para host externo.
+      return new TrustedRedirectResponse($this->client->authorizationUrl($state));
     }
     catch (MelhorEnvioException) {
       return new Response(
