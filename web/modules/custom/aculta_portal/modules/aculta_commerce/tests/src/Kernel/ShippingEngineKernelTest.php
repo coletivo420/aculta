@@ -21,6 +21,7 @@ use Drupal\commerce_product\Entity\ProductVariation;
 use Drupal\commerce_product\Entity\ProductVariationType;
 use Drupal\commerce_store\Entity\Store;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\physical\Weight;
 use Drupal\physical\WeightUnit;
@@ -323,6 +324,28 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $shipment->save();
     $this->assertSame('shipped', $shipment->getState()->getId());
     $this->assertSame([], $shipment->getState()->getTransitions());
+  }
+
+  /**
+   * The Green Stash reader requires shipment administration and lists actions.
+   */
+  public function testGreenStashShipmentReaderPermission(): void {
+    $this->createMethod($this->store->id());
+    $this->createShipment();
+    $reader = $this->container->get('aculta_commerce.green_stash_shipment_reader');
+
+    $denied = $this->createMock(AccountInterface::class);
+    $denied->method('hasPermission')->willReturn(FALSE);
+    $this->assertSame([], $reader->page($denied)['items']);
+
+    $allowed = $this->createMock(AccountInterface::class);
+    $allowed->method('hasPermission')->willReturnCallback(
+      static fn(string $permission): bool => $permission === 'administer aculta shipments',
+    );
+    $page = $reader->page($allowed);
+    $this->assertCount(1, $page['items']);
+    $this->assertSame('draft', $page['items'][0]['state']);
+    $this->assertArrayHasKey('finalize', $page['items'][0]['transitions']);
   }
 
   /**

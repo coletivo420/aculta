@@ -165,6 +165,16 @@ interface ShipmentInterface extends ContentEntityInterface, EntityChangedInterfa
   public function getState(): StateItemInterface;
 
   /**
+   * Gets the shipment creation timestamp.
+   */
+  public function getCreatedTime(): int;
+
+  /**
+   * Sets the shipment creation timestamp.
+   */
+  public function setCreatedTime(int $timestamp): static;
+
+  /**
    * Gets data attached to the shipment.
    */
   public function getData(string $key, mixed $default = NULL): mixed;

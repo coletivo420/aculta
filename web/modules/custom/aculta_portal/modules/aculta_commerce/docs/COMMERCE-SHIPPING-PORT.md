@@ -123,7 +123,8 @@ testes; o `site:install` recria suas tabelas. Nenhum banco de runtime foi usado.
 
 | Verificação | Resultado |
 | --- | --- |
-| Kernel `ShippingEngineKernelTest` | PASS; 6 testes / 207 asserções com o fechamento de 104 módulos, schema estrito, transições, provider externo mock e pane de checkout |
+| Kernel `ShippingEngineKernelTest` | PASS; 7 testes / 237 asserções com o fechamento de 104 módulos, schema estrito, transições, provider externo mock, leitor do Green Stash e pane de checkout |
+| Leitor do Green Stash (Kernel) | PASS; sem `administer aculta shipments` a lista fica vazia; com a permissão lista estado e transições |
 | Pane de checkout (Kernel) | PASS; tarifa válida aceita, tarifa adulterada rejeitada e valor persistido vem do servidor |
 | Provider externo com falha (mock) | PASS; a tarifa da transportadora que lança exceção é ignorada, nunca convertida em zero |
 | Instalação `standard` + `aculta_commerce` | PASS; entidades, tipos e plugin manager disponíveis |
@@ -150,4 +151,4 @@ tabelas com prefixo) após os testes.
 - `docs/portal/CHECKOUT-BILLING.md`
 - `docs/decisions/ADR-013-portal-multi-cart-checkout.md`
 
-**Estado de implantação:** motor próprio implementado na branch, com entidades, plugins, empacotamento, cálculo, seleção revalidada, processors de pedido, pane de checkout e leitura/transições de remessas no Green Stash; Unit (51/238) e Kernel (6/207, fechamento de 104 módulos) passam, e a instalação limpa em banco descartável foi validada, incluindo o rehearsal de desinstalação do contrib. `drupal/commerce_shipping` foi removido de `composer.json`/`composer.lock` e `drupal/physical` passou a ser exigido explicitamente. O provider Melhor Envio foi integrado na PR #298 e usa o contrato ACULTA; esta branch isolada não contém os arquivos atuais do submódulo. **Pendente para a PR #298:** executar `composer install` no deploy/cutover, aplicar o Config Sync e a migração de campo no Runtime com snapshot, e homologar o checkout físico/não enviável com Firefox ESR. Ver a matriz em [`SHIPPING-PORT-MATRIX.md`](SHIPPING-PORT-MATRIX.md).
+**Estado de implantação:** motor próprio implementado na branch, com entidades, plugins, empacotamento, cálculo, seleção revalidada, processors de pedido, pane de checkout e leitura/transições de remessas no Green Stash; Unit (51/238) e Kernel (7/237, fechamento de 104 módulos) passam, e a instalação limpa em banco descartável foi validada, incluindo o rehearsal de desinstalação do contrib. `drupal/commerce_shipping` foi removido de `composer.json`/`composer.lock` e `drupal/physical` passou a ser exigido explicitamente. O provider Melhor Envio foi integrado na PR #298 e usa o contrato ACULTA; esta branch isolada não contém os arquivos atuais do submódulo. **Pendente para a PR #298:** executar `composer install` no deploy/cutover, aplicar o Config Sync e a migração de campo no Runtime com snapshot, e homologar o checkout físico/não enviável com Firefox ESR. Ver a matriz em [`SHIPPING-PORT-MATRIX.md`](SHIPPING-PORT-MATRIX.md).
