@@ -34,11 +34,11 @@ decisão exige ADR separada. Nenhuma credencial foi migrada, rotacionada ou copi
 | 19: escrita atômica | Unit (existente) | `SecretsManagerTest` |
 | 3, 21, 22, 23: troca de aba sem alterar ambiente, AJAX, teclado, mobile | **Pendente** (browser) | — |
 | 18, 20: arquivo inseguro, falha parcial | Parcial (regras existentes do loader) | — |
-| 24: loader pré-Drupal | **Pendente** (Kernel/Functional) | — |
+| 24: loader pré-Drupal | **Pendente** (Functional) | — |
 | 25: consumidores sem regressão | **Pendente** (suíte dos módulos consumidores) | — |
 
-Kernel e Functional: o banco de teste dedicado (`docs/operations/BANCO-DE-TESTE.md`) funciona, mas o
-contêiner do `aculta_portal` exige a pilha ACULTA inteira. Pendente.
+Kernel de rotas e permissões: passa no banco de teste dedicado (`docs/operations/BANCO-DE-TESTE.md`), com a
+lista de módulos do `aculta_portal` mais `language`, `locale`, `text` e a pilha de commerce/LMS. Functional: pendente.
 
 ## SM-8/SM-9: plano de implantação
 
