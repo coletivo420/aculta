@@ -80,3 +80,10 @@ A seta `A → B` significa “B consome contrato/serviço fornecido por A”.
 
 - Acceptance guardrail: `validate-single-acceptance.php` identified the missing root AGENTS pointer; corrected the instruction to reference `docs/portal/ACEITE-UNICO.md`. Single Acceptance and Single-use Links gates now pass.
 - PHPCS scope review: the global status/package scripts and WikiController test edited in this continuation now pass focused PHPCS. PR-wide findings remain in delegated Deployer/Editor PHP and are being corrected by their owner; do not classify the aggregate as PASS until re-run.
+
+
+## Wiki — RBAC de propostas no Runtime (2026-10-26)
+
+- `status` Drush identificou Drupal 11.4.10, DB `aculta_runtime`, URI Wiki `https://wiki420.aculta.toca.net.br`; consulta de permissões foi read-only. Runtime: `email_confirmed` não tem `submit wiki proposals` nem `view own wiki proposals`; `content_editor` não tem `view any wiki proposals` nem `moderate wiki proposals`.
+- A configuração versionada `user.role.email_confirmed.yml` e `user.role.content_editor.yml` contém os quatro grants. É uma divergência ativa-versus-Sync que bloqueia envio e fila de propostas no Runtime. A ausência desses grants mantém o fluxo negado; os handlers exigem Entity Access e permissões explícitas. O teste `testProposalSubmissionUsesPrivateRevisionedEntityAndAccess` passou em MariaDB isolado: 1 teste / 216 assertions; 256 depreciações Core/contrib e duas PHPUnit. Não foi observado vazamento de propostas.
+- Não corrigido no Runtime: qualquer `cim` ou mudança de grants ativos é operação persistente sem autorização. Próxima ação: autorização operacional para reconciliar somente esses papéis, prévia de diff de permissões e plano de rollback com export dos papéis ativos; validar envio/fila após apply em URI Wiki. Alternativa segura até lá: manter propostas indisponíveis no Runtime, sem fallback de autorização.

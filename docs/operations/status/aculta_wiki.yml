@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.117
 state: Dev
-progress_note: "publisher de domínio no aculta_wiki; consumer, Message, central e canais centralizados no aculta_messenger. Unit integrada 126/657 e Kernel LMS/Wiki/Loja 6/64 PASS; Runtime smoke sem Alpha. Fluxos de entrega legados removidos.\""
+progress_note: "M-0 2026-10-26: Wiki proposal Kernel `testProposalSubmissionUsesPrivateRevisionedEntityAndAccess` 1/216 PASS. Read-only `wiki420.aculta.toca.net.br` confirmou que `email_confirmed` não tem submit/view own e `content_editor` não tem view any/moderate proposals; `config/sync` contém os grants. Propostas continuam sem grants no Runtime; handler fail-closed. Nenhuma alteração ativa; reclassificado como bloqueador de homologação/config. Publishers Wiki→Messenger existentes; eventos e entrega centralizados no Messenger."
 next_phase: 'Dev.116 centraliza o resultado editorial no Messenger e remove o e-mail direto legado (Kernel focal 1/216; Units 82/448 PASS); classe Kernel completa 28/1.602 com 2 falhas independentes de fixture de limpeza de imagem. Verificar fila Mailer histórica e decidir semântica das caixas editoriais compartilhadas ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
