@@ -105,6 +105,12 @@ A seta `A → B` significa “B consome contrato/serviço fornecido por A”.
 - A auditoria dos pontos de escrita confirmou que o cadastro usa `AccountCreationHooks`/`NicknamePolicy`, `/studio/perfil/apelido` usa `NicknameForm`/`NicknamePolicy`, mas `/dados` mantém o widget `Profile.field_nickname` diretamente via `PortalHooks::formAlter` e não chamava a política compartilhada.
 - `ProfileNicknameValidationHooks` agora aplica a gramática de `AccountNames` e a consulta de colisão em formulários Profile de papéis que expõem o campo. Um valor legado inalterado é aceito para permitir editar outros dados. Portal continua sem depender de User e o armazenamento permanece único.
 - User Unit 132/504 PASS (1 depreciação PHPUnit); Kernel 25/361 PASS (5 depreciações Core/contrib); teste focal de hook 3/12 incluído nas Units; PHP lint/PHPCS dos arquivos alterados PASS. Não houve alteração Runtime.
+
+## Revalidação do inventário de módulos por Runtime (2026-10-26)
+
+- `php vendor/drush/drush/drush.php status --uri=https://growroom420.aculta.toca.net.br` confirmou host Homelab `toca`, Drupal 11.4.10, banco `aculta_runtime` e root compartilhado `/home/piradopirata/projetos/aculta/web`. A consulta de `moduleHandler()->moduleExists()` nos 40 componentes encontrou 36 habilitados e quatro desabilitados: Activity, Deployer e os adaptadores `aculta_commerce_messenger`/`aculta_wiki_messenger`. O shell `aculta_lms_messenger` está habilitado.
+- `aculta_commerce_melhorenvio` está habilitado nesta leitura de 2026-10-26, embora o snapshot MAIN de 2026-10-25 o registrasse desabilitado. Como habilitação é global à instalação, a causa temporal da diferença não foi determinada; não houve instalação, alteração ou escrita para investigá-la.
+- Contagem read-only já registrada nesta URI: 5 tópicos, 5 posts e zero entidades `aculta_legado_autor`. O acervo Growroom ainda não foi importado no Runtime; o mapa de preparação fica fora do checkout em storage privado. Nenhuma operação persistente foi executada.
 - Limite conhecido: a consulta é preflight, sem constraint transacional no armazenamento existente. Não se afirma unicidade sob concorrência; testar/desenhar uma garantia sem storage paralelo é próxima ação do User.
 
 ## LMS — painel de turma em fixture Kernel focal (2026-10-26)
