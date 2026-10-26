@@ -49,6 +49,14 @@ final class ContentIndexAccessFilter {
       throw new \InvalidArgumentException(sprintf('At most %d Content Index candidates may be access-checked per call.', self::MAX_CANDIDATES));
     }
 
+    // Core's in-request Entity Access cache is keyed by entity, operation,
+    // language and account, but it is not invalidated when a source entity,
+    // Group membership or grant changes. A long-running consumer (worker,
+    // Drush command or multi-page request) would otherwise keep an old ALLOW
+    // decision after access was revoked. Revalidation means recomputing the
+    // decision for the entity types present in this page.
+    $this->resetAccessCachesForCandidateTypes($candidates);
+
     $cacheability = new CacheableMetadata();
     $allowed = [];
     $chunks = array_chunk($candidates, self::MAX_CANDIDATES);
@@ -171,6 +179,27 @@ final class ContentIndexAccessFilter {
     }
 
     return new ContentIndexAccessResult($allowed, $cacheability);
+  }
+
+  /**
+   * Clears in-request access results for the candidate entity types.
+   *
+   * @param list<array{entity_type: string, entity_id: string, langcode: string}> $candidates
+   *   Candidate identities about to be authorized.
+   */
+  private function resetAccessCachesForCandidateTypes(array $candidates): void {
+    $reset = [];
+    foreach ($candidates as $candidate) {
+      $entityTypeId = $candidate['entity_type'] ?? NULL;
+      if (!is_string($entityTypeId) || isset($reset[$entityTypeId])
+        || !$this->entityTypeManager->hasDefinition($entityTypeId)) {
+        continue;
+      }
+      $reset[$entityTypeId] = TRUE;
+      if ($this->entityTypeManager->getDefinition($entityTypeId)->entityClassImplements(ContentEntityInterface::class)) {
+        $this->entityTypeManager->getAccessControlHandler($entityTypeId)->resetCache();
+      }
+    }
   }
 
   /**

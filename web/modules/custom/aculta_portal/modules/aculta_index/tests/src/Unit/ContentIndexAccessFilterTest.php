@@ -172,12 +172,13 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $entityType->method('getListCacheTags')->willReturn(['node_list']);
     $entityType->method('entityClassImplements')->with(ContentEntityInterface::class)->willReturn(TRUE);
     $accessHandler = $this->createMock(EntityAccessControlHandlerInterface::class);
-    $accessHandler->expects(self::exactly(2))->method('resetCache');
+    // Once before the page, then before and after the canonical purpose group.
+    $accessHandler->expects(self::exactly(3))->method('resetCache');
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->method('getDefinitions')->willReturn(['node' => $entityType]);
     $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
     $manager->method('getDefinition')->with('node')->willReturn($entityType);
-    $manager->expects(self::exactly(2))->method('getAccessControlHandler')->with('node')->willReturn($accessHandler);
+    $manager->expects(self::exactly(3))->method('getAccessControlHandler')->with('node')->willReturn($accessHandler);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
     $domainStorage->expects(self::once())->method('load')->with('forum_aculta_org')->willReturn($forumDomain);
     $manager->method('getStorage')->willReturnCallback(static fn (string $type) => $type === 'domain' ? $domainStorage : $storage);

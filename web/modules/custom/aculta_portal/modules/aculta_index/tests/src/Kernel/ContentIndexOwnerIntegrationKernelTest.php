@@ -251,6 +251,11 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
       'field_wiki_image' => ['target_id' => $privateImage->id()],
     ]);
     $privateImageSource->save();
+    // The real Wiki owner publishes the lead image when its entry is published.
+    // Unpublish it again so this fixture keeps a genuinely private Media target
+    // for the access-filter assertions below.
+    $privateImage->setUnpublished()->save();
+    self::assertFalse($privateImage->access('view', $reader, TRUE)->isAllowed(), 'The private image must remain denied after the Wiki owner sync.');
 
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame(4, $registry->get('wiki')->getProjectionVersion());
