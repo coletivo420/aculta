@@ -1,3 +1,10 @@
+## 0.7.0-dev.5 — CSS administrativo de segredos movido ao submódulo — 2026-10-26
+
+- Remove de `portal-requirements-report.css` apenas as regras `.aculta-secret-value*`; o submódulo as fornece para Claro e ACULTA420.
+- A exceção para UI administrativa no Claro está registrada na fronteira módulo–tema. Nenhum outro estilo desta folha foi alterado.
+- Fronteira (3034), SDC (628) e Design Foundations (2227): PASS; PHP lint e `git diff --check`: PASS. PHPCS do script Foundation mantém violações preexistentes (3 erros / 16 avisos), fora da linha alterada.
+- Firefox visual Claro: DEFERRED ao Local 1 (1280/390/320 px; foco por Tab).
+
 ## 0.7.0-dev.4 — tokens de Links e Secrets Manager — 2026-10-26
 
 - Mapeia tokens semânticos de links públicos e abas de credenciais às mesmas classes visuais atuais.
