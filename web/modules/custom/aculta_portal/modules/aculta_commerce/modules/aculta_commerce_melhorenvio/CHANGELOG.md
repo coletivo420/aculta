@@ -1,5 +1,13 @@
 # Changelog — ACULTA Commerce Melhor Envio
 
+## 0.1.0-dev.3
+
+### Alterado
+
+- Provider de frete integrado ao plugin manager, à remessa e às tarifas do motor proprietário `aculta_commerce`; removida a dependência funcional de `commerce_shipping` no manifesto.
+- Teste de wiring atualizado para verificar o plugin ACULTA. A suíte Unit completa passou: 74 testes / 181 assertions; PHPCS Drupal/DrupalPractice dos arquivos alterados passou.
+- O teste Kernel integrado ainda precisa ser executado em docroot de teste que carregue os fontes desta branch. O módulo permanece fora do Config Sync conforme decisão operacional; nenhum Runtime foi alterado.
+
 ## 0.1.0-dev.1 (em andamento)
 
 ### Adicionado

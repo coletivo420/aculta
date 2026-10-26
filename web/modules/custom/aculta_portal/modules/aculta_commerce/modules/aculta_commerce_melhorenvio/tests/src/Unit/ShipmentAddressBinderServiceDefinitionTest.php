@@ -12,6 +12,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -22,9 +23,9 @@ use Symfony\Component\Yaml\Yaml;
 final class ShipmentAddressBinderServiceDefinitionTest extends TestCase {
 
   /**
-   * The service YAML aliases the mapper class to the documented service ID.
+   * The service YAML injects its mapper alias and config factory explicitly.
    */
-  public function testShipmentAddressBinderAutowiresMapperAlias(): void {
+  public function testShipmentAddressBinderUsesExplicitMapperAndConfigFactory(): void {
     $modulePath = dirname(__DIR__, 3);
     $container = new ContainerBuilder();
     $services = Yaml::parseFile($modulePath . '/aculta_commerce_melhorenvio.services.yml')['services'];
@@ -35,6 +36,14 @@ final class ShipmentAddressBinderServiceDefinitionTest extends TestCase {
       }
       $definition = new Definition($service['class']);
       $definition->setAutowired($service['autowire'] ?? FALSE);
+      if (isset($service['arguments'])) {
+        $definition->setArguments(array_map(
+          static fn(mixed $argument): mixed => is_string($argument) && str_starts_with($argument, '@')
+            ? new Reference(substr($argument, 1))
+            : $argument,
+          $service['arguments'],
+        ));
+      }
       if ($serviceId === 'aculta_commerce_melhorenvio.shipment_address_binder') {
         $definition->setPublic(TRUE);
       }

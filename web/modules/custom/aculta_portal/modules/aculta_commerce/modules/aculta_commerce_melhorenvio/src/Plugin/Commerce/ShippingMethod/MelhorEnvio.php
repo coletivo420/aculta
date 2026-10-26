@@ -18,8 +18,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Método de envio com cotação em tempo real no Melhor Envio.
  *
- * Serviços: IDs confirmados na especificação e no sandbox. Origem na configuração do módulo; destino no perfil de
- * envio da remessa. Contratação e etiqueta ficam para as próximas fases (ME-0.3).
+ * Serviços: IDs confirmados na especificação e no sandbox. A origem vem da
+ * configuração; o destino, do perfil de envio da remessa. Contratação e
+ * etiqueta ficam para as próximas fases (ME-0.3).
  */
 #[AcultaShippingMethod(
   id: 'aculta_melhorenvio',

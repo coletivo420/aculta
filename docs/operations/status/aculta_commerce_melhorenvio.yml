@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada).
 version: 0.1.0-dev.3
 state: Dev
-next_phase: 'Adaptar o provider atual ao contrato de cotação de aculta_commerce, testar falhas e idempotência com mocks e manter o submódulo fora do Config Sync conforme decisão do responsável ([contrato](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/MELHOR-ENVIO-CONTRACT.md))'
-progress_note: 'Manifesto agora depende do motor de envios aculta_commerce e continua fora do Config Sync conforme decisão do responsável. O provider atual ainda não foi adaptado ao novo contrato; cotação, etiquetas, OAuth2 e testes Functional continuam pendentes.'
+next_phase: 'Executar Kernel integrado com o motor aculta_commerce e completar falhas/idempotência do provider, mantendo o submódulo fora do Config Sync conforme decisão do responsável ([contrato](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/MELHOR-ENVIO-CONTRACT.md))'
+progress_note: 'Provider adaptado para o plugin manager, ShipmentInterface e ShippingRate do motor aculta_commerce; Unit Melhor Envio 74/181 PASS e PHPCS dos arquivos alterados PASS. O Kernel integrado e testes Functional continuam pendentes; manter fora do Config Sync por decisão do responsável.'
