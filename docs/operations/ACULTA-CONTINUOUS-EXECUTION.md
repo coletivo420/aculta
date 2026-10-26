@@ -671,3 +671,9 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - `aculta_portal_cep` avançou `0.3.0-dev.12` → `0.3.0-dev.13`; README do proprietário não precisava de alteração. Sem Runtime write. Browser visual permanece DEFERRED: o script existente salva o endereço da conta e requer identidade descartável em ambiente isolado.
 
 - Smoke Firefox ESR visível (`DISPLAY=:0`): `https://example.com/` carregou; `https://conta.aculta.toca.net.br/entrar` retornou erro WebDriver. Consulta read-only do resolver local e `curl` confirmou que o hostname não resolve (curl exit 6); sem sessão autenticada ou escrita. Isso não é reprovação do módulo nem aprovação visual; Browser fica DEFERRED por DNS indisponível e falta de identidade descartável.
+
+
+## M-1 — rollback da projeção de apelidos (2026-10-26)
+
+- `NicknameRegistryKernelTest::testFailedProfileSaveRollsBackNicknameSynchronization` executa a sincronização sob transação, injeta uma falha simulada depois do presave e verifica a claim anterior, ausência da nova claim e persistência antiga de ambos Profiles. Resultado agregado MariaDB: **8 testes / 65 assertions PASS**, com 11 depreciações Core/contrib. PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
+- `aculta_user` avançou `0.4.0-dev.84` → `0.4.0-dev.85`. Update 10013 não executado no Runtime; validar instalação limpa/rebuild com conflito e sem conflito em ambiente efêmero permanece pendente.

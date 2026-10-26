@@ -247,6 +247,35 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
   }
 
   /**
+   * Reverting a failed Profile save also reverts nickname synchronization.
+   */
+  public function testFailedProfileSaveRollsBackNicknameSynchronization(): void {
+    $account = $this->account('rollback');
+    $first = $this->profile((int) $account->id(), 'authenticated', 'antes');
+    $second = $this->profile((int) $account->id(), 'administrator', 'antes');
+    $registry = $this->registry();
+    $registry->claim((int) $account->id(), 'antes');
+
+    $database = $this->container->get('database');
+    $transaction = $database->startTransaction();
+    try {
+      $first->set('field_nickname', 'depois');
+      $registry->synchronizeProfile($first);
+      throw new \RuntimeException('Simulated Profile storage failure.');
+    }
+    catch (\RuntimeException $exception) {
+      self::assertSame('Simulated Profile storage failure.', $exception->getMessage());
+      $transaction->rollBack();
+    }
+
+    self::assertSame((int) $account->id(), $registry->uidForSlug('antes'));
+    self::assertNull($registry->uidForSlug('depois'));
+    $storage = $this->container->get('entity_type.manager')->getStorage('profile');
+    self::assertSame('antes', $storage->loadUnchanged($first->id())->get('field_nickname')->value);
+    self::assertSame('antes', $storage->loadUnchanged($second->id())->get('field_nickname')->value);
+  }
+
+  /**
    * Creates a registry using the test database and entity manager.
    */
   private function registry(): NicknameRegistry {

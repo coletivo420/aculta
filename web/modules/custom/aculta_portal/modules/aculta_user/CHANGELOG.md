@@ -1,3 +1,9 @@
+## 0.4.0-dev.85 — testar rollback da projeção de apelidos
+
+- O Kernel simula falha de persistência depois de executar a sincronização do apelido e reverte a transação. A claim anterior permanece; a nova claim e a atualização do Profile irmão são desfeitas.
+- `NicknameRegistryKernelTest`: 8 testes / 65 assertions PASS em MariaDB dedicado, incluindo a corrida concorrente em dois processos. PHPCS Drupal/DrupalPractice e PHP lint PASS.
+- Nenhum update foi executado no Runtime; instalação efêmera e validação do update 10013 permanecem pendentes.
+
 ## 0.4.0-dev.84 — validar concorrência da claim SQL em MariaDB
 
 - O Kernel usa dois processos independentes; ambos confirmam que o slug está livre antes de liberar as inserções. A chave única MariaDB aceita uma claim e rejeita a concorrente.

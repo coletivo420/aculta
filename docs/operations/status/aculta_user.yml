@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-dev.84
+version: 0.4.0-dev.85
 state: Dev
-progress_note: "Dev.84: projeção SQL uid→slug, rebuild 10013 e hooks transacionais implementados. Kernel MariaDB 7/55 PASS, incluindo dois processos que confirmam slug livre antes de disputar a chave única; PHPCS e lint da fixture PASS. Falta testar rollback de falha no save e update 10013 isolado. Sem update Runtime."
-next_phase: Cobrir rollback de falha no save e validar update 10013 em instalação efêmera. Runtime existente exige autorização operacional.
+progress_note: "Dev.85: Kernel MariaDB 8/65 PASS; inclui disputa SQL entre dois processos e rollback da claim/sincronização de Profiles em falha simulada após a operação de presave. PHPCS e lint focal PASS. Falta validar instalação/update 10013 em ambiente efêmero. Sem update Runtime."
+next_phase: Validar instalação limpa e update 10013 em ambiente efêmero, incluindo dados de conflito e rollback. Runtime existente exige autorização operacional.
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
