@@ -1,3 +1,8 @@
+## 0.4.0-dev.79 — identifica autoria histórica do Growroom no Fórum
+
+- `AuthorCardBuilder::buildLegacy()` acrescenta o marcador `-gr` ao nome exibido no cartão de autoria histórica do Fórum. O perfil legado não recebe rota individual `/u/`; o memorial coletivo `/u/lendashistoricas` mantém o nome original sem sufixo. Nenhuma entidade ou conta é criada.
+- Unit focal: 1 teste / 1 assertion PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Sem importação de acervo ou alteração no Runtime.
+
 ## 0.4.0-dev.78 — persistir o apelido aparado no Profile legado
 
 - O validador de `/dados` e outros forms Profile já comparava `trim(apelido)`, mas deixava o valor original no Form API. Espaços externos podiam ser gravados mesmo que a identidade pública use o texto aparado. O hook agora substitui o valor do widget pela forma aparada depois de formato e colisão aprovados.

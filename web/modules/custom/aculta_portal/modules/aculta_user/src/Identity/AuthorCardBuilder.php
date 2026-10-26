@@ -24,7 +24,7 @@ final class AuthorCardBuilder {
     $build = [
       '#theme' => 'aculta_user_author_card',
       '#variant' => 'author_growroom_historico',
-      '#display_name' => (string) $author->label(),
+      '#display_name' => LegacyAuthorDisplayName::forForum((string) $author->label()),
       '#profile_url' => NULL,
       '#avatar' => NULL,
       '#has_avatar' => FALSE,

@@ -1,3 +1,5 @@
+Em dev.79, os cartões de autoria histórica exibidos no Fórum acrescentam `-gr` ao nome para identificar a origem Growroom. Autores legados não têm perfil público individual nem rota `/u/`; o memorial coletivo `/u/lendashistoricas` mantém os nomes sem sufixo. Unit focal 1/1, PHPCS e lint alterados PASS; nenhuma importação ou escrita no Runtime.
+
 # ACULTA User (`aculta_user`)
 
 Em dev.78, os forms Profile legados gravam o apelido aparado que foi validado, mantendo-o coerente com a rota pública. User Unit 134/518 e Kernel 25/361 PASS; PHPCS/lint dos arquivos alterados PASS. A concorrência entre cadastros continua pendente.
