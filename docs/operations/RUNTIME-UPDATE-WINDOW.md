@@ -286,3 +286,17 @@ log.
 
 
 
+
+## Regra de armazenamento da cópia do Runtime (2026-10-26)
+
+- **A cópia do Runtime fica em `aculta_runtime_copia`**, banco exclusivo, com dados pessoais e acesso restrito ao usuário do ensaio. Nenhum outro banco guarda cópia.
+- **`aculta_simpletest` NUNCA guarda cópia do Runtime.** `drush site:install` apaga todas as tabelas do banco, com ou sem prefixo. Em 19:24 um `site:install` (Local 2) apagou a cópia restaurada ali.
+- Antes de qualquer `site:install` ou `drush` que altere o schema, conferir qual banco o settings aponta e se há cópia.
+
+### Estado do ensaio em 2026-10-26 (registrado)
+
+- A cópia restaurada às 19:23 em `aculta_simpletest` foi substituída pelo `site:install` das 19:24. Perdida.
+- Dump guardado em `/home/piradopirata/worktrees/ensaio-cutover-private/runtime-dump-1923.sql` (96 MB). **sha256 `31d5350b20caaa171f53b316d1a757276eff1c34929b7c64d3c679a9add8c1d1`, diferente do sha256 `58072497778eef66c95b8446968ea34a4caabfeb1381abc866c19ad81404e10a` informado pelo Local 3.** Não importado até explicar a diferença (dumps de horários diferentes).
+- `aculta_runtime_copia`: **não criado.** O acesso administrativo ao MariaDB não foi concedido nesta sessão (a autorização de `sudo mysql` não permitiu escrever a credencial administrativa). Pendente de decisão do responsável.
+- Durante a restauração, o `updatedb` de teste já havia criado 18 tabelas novas no banco da cópia (entidades do motor e tabelas de módulos), somadas às 588 do Runtime (606 no total).
+- **Ensaio geral congelado** até a fase B ser aprovada e integrada.
