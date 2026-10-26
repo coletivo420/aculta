@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.25
+version: 0.1.0-dev.26
 state: Dev
 next_phase: Validar os avisos financeiros em sandbox controlada e Runtime autorizado; cada cobrança recorrente confirmada emite aviso próprio ([README](web/modules/custom/aculta_portal/modules/aculta_donation/README.md))
-progress_note: "DonationPortKernelTest foi reproduzido no MariaDB dedicado: 4 erros de setup/0 assertions; inclusão temporária de aculta_messenger real avança até a dependência private_message.service ausente. Nenhum stub de produto ou write Runtime; harness ainda requer closure completa."
+progress_note: "DonationPortKernelTest: MariaDB isolado, 5 testes/193 assertions PASS com as implementações reais MessengerNoticePublisher e OrderTypeCheckoutFlows registradas no harness; 88 depreciações upstream. Plugins, criação do pedido, e contrato de checkout/event publisher cobertos; acesso de estorno mantido. Runtime e sandbox financeiro continuam pendentes."

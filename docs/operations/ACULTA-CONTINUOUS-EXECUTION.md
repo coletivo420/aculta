@@ -26,6 +26,13 @@
 - A amostra estrutural não foi convertida em código de importação. A decisão sobre 616 tópicos internos e 17 títulos comerciais em revisão foi solicitada; a preparação independente pode prosseguir, mas não define seleção nem escreve no Drupal.
 - No HEAD `dc5561f23`, `php scripts/validate-project-status-index.php` passou (41 componentes) e `php scripts/validate-own-module-packages.php` passou (41 verificações). Foram executados no worktree da PR; os resultados não implicam aprovação dos demais gates nem homologação Runtime.
 
+## M-4 — fechar o harness Kernel focal de Doações (2026-10-26)
+
+- `DonationPortKernelTest` foi reproduzido inicialmente com 4 erros de setup/0 assertions: o teste instalava `aculta_donation` sem o Messenger exigido pelo contrato. Instalar o módulo Messenger inteiro expôs sua closure transitiva e não é necessário para este escopo focal.
+- O fixture agora injeta, no container de teste, as implementações reais `MessengerNoticePublisher` e `OrderTypeCheckoutFlows`; também resolve `DonationNoticeEventPublisher` e `DonationCheckoutProvider` reais. A configuração completa do módulo não é instalada porque instancia panes externos ao cenário e requer serviços de recorrência; a suite cobre discovery dos plugins/blocos, criação do pedido de valor inicial zero e negação de estorno.
+- Kernel com código da branch e MariaDB dedicado: 5 testes / 193 assertions PASS, com 88 depreciações upstream. PHPCS Drupal/DrupalPractice e PHP lint do teste PASS. Nenhum stub de produto, acesso Runtime, SMTP ou operação financeira externa.
+- `aculta_donation` avançou `0.1.0-dev.25` → `.26`; README, CHANGELOG, status e matriz atualizados. Continua Dev; Runtime/ sandbox financeiro, revisão integral e RC pendentes.
+
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
 - `6daa7542f test(h5p): repair course access kernel contract`: formatter de acesso e test harness usam o plugin Group real. PHPCS Drupal/DrupalPractice, PHP lint e diff check passam nos dois arquivos H5P alterados.

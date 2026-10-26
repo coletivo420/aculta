@@ -1,6 +1,6 @@
 # ACULTA Doações (`aculta_donation`)
 
-Submódulo do `aculta_portal` (versão 0.1.0-dev.25). Reúne a doação do site: campanhas com prazo, fluxo de pedido e checkout
+Submódulo do `aculta_portal` (versão 0.1.0-dev.26). Reúne a doação do site: campanhas com prazo, fluxo de pedido e checkout
 (port próprio do `commerce_donation_flow`, que saiu do Composer), blocos, painéis e configuração.
 
 ## O que entrega
