@@ -275,3 +275,10 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - As 17 extensões ativas de Editor/CKEditor foram adicionadas ao `core.extension.yml`. Os oito templates têm conteúdo igual aos `config/install` locais (campos de conteúdo normalizados; UUID/hash runtime ignorados); o nono objeto `ckeditor5_plugin_pack.settings` confere com seu default contrib versionado. Os 9 objetos ativos de `editor.*`, `filter.*` e `ckeditor5_plugin_pack*` agora existem no Sync. Arquivos de módulos/contrib não foram alterados.
 - Core `ConfigImporter::processExtension()` redireciona `ConfigInstaller` para a fonte Sync; por isso os defaults foram versionados junto com as extensões. O import não foi executado no Runtime. `validate-config-extension-dependencies.php` PASS, 1.589 checks/1.434 arquivos; índice 41 e pacotes 41 PASS.
 - Permanece DEFERRED: ensaiar o ciclo de instalação/importação em banco efêmero e fazer Browser autenticado dos formatos/templates. `full_html` continua permitido somente a `administrator`. O shell Messenger requer desinstalação controlada e rollback antes de qualquer retirada.
+
+
+## M-0 — verificação read-only de grants Wiki (2026-10-26)
+
+- Consultados os papéis ativos em `wiki420.aculta.toca.net.br` por Drush (`config` read-only): os quatro grants de proposta (`submit wiki proposals`, `view own wiki proposals`, `view any wiki proposals`, `moderate wiki proposals`) estão ausentes dos papéis `email_confirmed` e `content_editor`; os YAML versionados declaram os grants esperados.
+- O `WikiProposalAccessControlHandler` retorna acesso negado quando faltam grants; o efeito observado é indisponibilidade das propostas para contribuintes e editores, sem evidência de exposição indevida. Kernel focal existente de submissão/revisão privada: 1/216 PASS.
+- Nenhuma permissão Runtime foi alterada. Corrigir o drift requer operação persistente/importação e revisão do diff por purpose, portanto permanece DEFERRED até autorização operacional; depois, repetir verificação por papéis e fluxos em ambiente isolado.
