@@ -19,7 +19,10 @@ use PHPUnit\Framework\Attributes\Group;
 class ShippingCutoverKernelTest extends KernelTestBase {
 
   /**
-   * @var string[] */
+   * Módulos do site de teste (mesma base do teste de motor).
+   *
+   * @var string[]
+   */
   protected static $modules = [
     'aculta_commerce',
     'aculta_document_viewer',
@@ -129,7 +132,7 @@ class ShippingCutoverKernelTest extends KernelTestBase {
   ];
 
   /**
-   *
+   * Instala o schema do motor e do contrib, como no estado do Runtime antes do cutover.
    */
   protected function setUp(): void {
     parent::setUp();
@@ -142,6 +145,7 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
+    $this->installEntitySchema('path_alias');
     $this->installConfig(['commerce_order', 'commerce_store', 'commerce_shipping']);
   }
 

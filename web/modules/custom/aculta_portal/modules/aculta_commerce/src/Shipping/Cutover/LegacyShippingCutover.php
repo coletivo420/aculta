@@ -38,7 +38,8 @@ final class LegacyShippingCutover {
   /**
    * Instala as entidades do motor que ainda não existem no banco. Idempotente.
    *
-   * @return string[] IDs instalados nesta chamada.
+   * @return string[]
+   *   IDs instalados nesta chamada.
    */
   public function installEngineEntities(): array {
     $instalados = [];
@@ -57,7 +58,8 @@ final class LegacyShippingCutover {
   /**
    * Copia cada método do contrib para o motor próprio, sem apagar o original.
    *
-   * @return array{migrados: int, ja_existentes: int, nao_mapeados: string[]}
+   * @return array{migrados:
+   *   int, ja_existentes: int, nao_mapeados: string[]}
    */
   public function migrateMethods(): array {
     $resultado = ['migrados' => 0, 'ja_existentes' => 0, 'nao_mapeados' => []];
@@ -109,7 +111,8 @@ final class LegacyShippingCutover {
    *
    * Os pedidos são preservados (só a referência de remessa é removida). Remessas legadas são apagadas.
    *
-   * @return array{pedidos_ajustados: int, remessas_apagadas: int, destino: string}
+   * @return array{pedidos_ajustados:
+   *   int, remessas_apagadas: int, destino: string}
    */
   public function retargetShipments(): array {
     $resultado = ['pedidos_ajustados' => 0, 'remessas_apagadas' => 0, 'destino' => 'aculta_shipment'];
@@ -145,7 +148,8 @@ final class LegacyShippingCutover {
   /**
    * Diz se é seguro desinstalar o contrib: nenhum método, remessa ou referência de campo depende dele.
    *
-   * @return string[] Motivos de bloqueio. Vazio quando a desinstalação é segura.
+   * @return string[]
+   *   Motivos de bloqueio. Vazio quando a desinstalação é segura.
    */
   public function blockersForUninstall(): array {
     $motivos = [];

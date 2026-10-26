@@ -3,11 +3,12 @@
 - `aculta_commerce.install`: `update_8001` instala as entidades do motor (`aculta_shipping_method`, `aculta_shipment`, `aculta_shipment_type`) de forma idempotente.
 - Post-update `migrate_shipping_methods`: copia `commerce_shipping_method` com plugin `flat_rate` para `aculta_flat_rate` (e `flat_rate_per_item` para `aculta_flat_rate_per_item`), preservando `rate_label`, `rate_description`, `rate_amount`, lojas, status, peso e condições. O original não é apagado. `services` do contrib não tem equivalente e não é copiado.
 - Post-update `retarget_shipments`: remove do pedido só a referência a remessas do contrib, reaponta `commerce_order.shipments` para `aculta_shipment` e apaga remessas legadas. Pedidos não são apagados.
-- Post-update `uninstall_commerce_shipping`: desinstala o contrib só quando não há método sem cópia, remessa do contrib nem campo apontando para ele. Os métodos do contrib já copiados são removidos antes do uninstall.
+- A desinstalação do `commerce_shipping` **não é post-update**. É passo explícito da janela de update: `blockersForUninstall()` vazio, e então `drush pm:uninstall commerce_shipping` (ver RUNTIME-UPDATE-WINDOW.md). Motivo: é destrutiva e precisa de conferência humana.
 - Serviço `aculta_commerce.legacy_shipping_cutover` (`src/Shipping/Cutover/LegacyShippingCutover.php`) concentra a lógica, com DI.
-- Kernel `ShippingCutoverKernelTest` (4 testes / 104 asserções PASS): migração FlatRate com valores preservados, idempotência, pedidos preservados e bloqueio do uninstall antes da cópia e liberação depois do reapontamento.
+- Kernel `ShippingCutoverKernelTest` (4 testes / 112 asserções PASS): migração FlatRate com valores preservados, idempotência, pedidos preservados e bloqueio do uninstall antes da cópia e liberação depois do reapontamento.
 - Não provado no Kernel: a desinstalação do contrib e o reapontamento de remessas com campo instalado. Ficam para o ensaio no banco restaurado do snapshot.
-- PHPCS: 6 erros e 14 avisos restantes nos arquivos novos (comprimento de linha e `@return`). Pendente de limpeza.
+- PHPCS: 0 erros; restam avisos de comprimento de linha nos arquivos novos.
+- Não provado no Kernel: reapontamento com o campo instalado e com dados. O harness não comporta salvar pedido com referência a remessa legada (falha de transação dentro do `save()` do pedido). A prova fica para o banco restaurado do snapshot (Local 3).
 
 ## 0.1.0-dev.10 — motor de envios próprio no `aculta_commerce` (2026-10-26)
 

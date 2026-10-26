@@ -8,7 +8,11 @@
  * 1. aculta_commerce_update_8001: instala as entidades do motor.
  * 2. aculta_commerce_post_update_migrate_shipping_methods: copia métodos do contrib para o motor.
  * 3. aculta_commerce_post_update_retarget_shipments: reaponta o campo de remessas e apaga remessas legadas.
- * 4. aculta_commerce_post_update_uninstall_commerce_shipping: desinstala o contrib só sem bloqueios.
+ *
+ * A desinstalação do commerce_shipping NÃO é um post-update. É passo explícito da janela de update, depois de
+ * confirmar os bloqueios (ver RUNTIME-UPDATE-WINDOW.md): drush php:eval com blockersForUninstall() e, sem bloqueios,
+ * drush pm:uninstall commerce_shipping. Motivo: é destrutiva, e um post-update que a executa sem o operador
+ * acompanhar não permite conferir os bloqueios antes.
  *
  * Nenhuma etapa apaga pedidos. Todas são idempotentes.
  */
@@ -41,18 +45,4 @@ function aculta_commerce_post_update_retarget_shipments(array &$sandbox): string
   $r = \Drupal::service('aculta_commerce.legacy_shipping_cutover')->retargetShipments();
   return sprintf('Pedidos com referência legada ajustados: %d; remessas legadas apagadas: %d; destino: %s.',
     $r['pedidos_ajustados'], $r['remessas_apagadas'], $r['destino']);
-}
-
-/**
- * Desinstala commerce_shipping quando não restam métodos, remessas ou campos dependentes.
- */
-function aculta_commerce_post_update_uninstall_commerce_shipping(array &$sandbox): string {
-  $service = \Drupal::service('aculta_commerce.legacy_shipping_cutover');
-  $bloqueios = $service->blockersForUninstall();
-  if ($bloqueios !== []) {
-    return 'Desinstalação do commerce_shipping bloqueada: ' . implode('; ', $bloqueios) . '.';
-  }
-  return $service->uninstallLegacyIfSafe()
-    ? 'commerce_shipping desinstalado.'
-    : 'commerce_shipping já ausente ou sem ação.';
 }
