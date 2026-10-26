@@ -196,10 +196,15 @@ $check(
 // 0.4.0-dev.90 adds AdministrativeRouteSubscriber (every /painel-administrativo route uses the administrative theme; runs last).
 // 0.4.0-dev.145 moves CepLookupRateLimitSubscriber to the aculta_portal_cep submodule (its own services.yml), so the Portal registers twelve.
 // 0.4.0-dev.153 adds RefundEligibilitySubscriber (nega estorno de doação e de curso no gateway Mercado Pago), so the Portal registers thirteen.
-// ADR-013 (P-CART D) adds CommerceCheckoutRouteSubscriber (rotas globais do Commerce), so the Portal registers fourteen.
+// ADR-013 (P-CART D) adds CommerceCheckoutRouteSubscriber (rotas globais do Commerce).
+// The external integration contract adds SocialAuthCallbackRouteSubscriber for
+// /integracoes/{network}/retorno, bringing the Portal total to fifteen.
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 14,
-  'Portal must register exactly fourteen canonical event_subscriber tags (CEP rate limiter in aculta_portal_cep; refund eligibility subscriber for Mercado Pago).',
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 15
+    && str_contains($services, 'aculta_portal.social_auth_callback_route_subscriber:')
+    && str_contains($services, 'Drupal\\aculta_portal\\EventSubscriber\\SocialAuthCallbackRouteSubscriber')
+    && str_contains($read($srcRoot . '/EventSubscriber/SocialAuthCallbackRouteSubscriber.php'), "'/integracoes/{network}/retorno'"),
+  'Portal must register exactly fifteen canonical subscribers, including the canonical Social Auth callback route; CEP rate limiting remains owned by aculta_portal_cep.',
 );
 
 $legacyProceduralFunctions = [];

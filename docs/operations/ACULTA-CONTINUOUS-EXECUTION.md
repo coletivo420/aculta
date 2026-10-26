@@ -732,3 +732,8 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Próxima tarefa: revisar e corrigir o harness Kernel Melhor Envio no worktree do agente 2; em paralelo, preparar uma janela coordenada para aplicar a branch ao servidor de testes e executar cutover com verificação e rollback, preservando pedidos LMS/Doações.
 
 - Gates globais repetidos nesta revisão: Config Extension Dependencies **PASS (1.578 checks/1.425 YAMLs)**; status e pacote **41/41 PASS**; aliases **26 arquivos PASS**; Admin Domain **PASS (3.504 checks)** e Payment Domain **PASS (44 checks)** quando executados por Drush com bootstrap no Runtime de testes. `validate-module-theme-boundary` **FAIL (1/3.022)** em classes de apresentação no `aculta_commerce_melhorenvio` e `aculta_links` (encaminhar ao owner Agent 2). `validate-aculta-portal-drupal11` **FAIL** porque o contrato do gate espera 14 tags `event_subscriber` no Portal (owner Portal; fora do porte). A chamada direta de gates dependentes de Drupal via PHP CLI não é resultado válido; o gate de Portal Commerce Security não foi reexecutado porque seu registro documenta efeitos temporários no gateway.
+
+## Gate Portal — subscribers de rotas (2026-10-26)
+
+- Revisão do commit `fd0c2199b` confirmou que `SocialAuthCallbackRouteSubscriber` implementa a regra documentada de retorno OAuth em `/integracoes/{network}/retorno`; a contagem anterior de 14 no gate estava desatualizada.
+- `validate-aculta-portal-drupal11.php` agora fixa 15 subscribers e verifica a presença do serviço, classe e caminho canônico. Resultado reexecutado com Composer autoload disponível: **PASS (1.164 checks)**; índice derivado: **PASS (41 componentes)**; PHP lint e `git diff --check` PASS.
