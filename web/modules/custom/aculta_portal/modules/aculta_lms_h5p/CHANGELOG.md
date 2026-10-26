@@ -1,3 +1,10 @@
+## 0.4.0-dev.147 — alinhar formatter e teste à relação Group proprietária — 2026-10-25
+
+- O formatter consulta e invalida cache pela relação `aculta_document_viewer_group:course_document`; usa o ID da entidade no relacionamento, sem carregar a entidade apenas para comparar o vínculo.
+- O Kernel focal instala a relação Group real e testa persistência, acesso, conteúdo de curso e restauração dos serviços do widget após serialização. O harness deixa de instalar a configuração LMS não pertinente ao cenário.
+- Verificação: Kernel isolado, 3 testes/134 assertions; PHPCS Drupal/DrupalPractice nos arquivos alterados; PHP lint e `git diff --check` passaram. Permanecem 41 deprecações provenientes de Core/contrib.
+- Não houve operação no Runtime nem migração de armazenamento/plugin. `aculta_pdf_viewer_group` continua necessário à configuração do bundle Media.
+
 ## 0.4.0-dev.145 — declarar a versão do componente — 2026-10-22
 
 - O módulo não declarava `version` em `aculta_lms_h5p.info.yml`; o índice de status o exibia como "versão não declarada".
