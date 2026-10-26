@@ -4,36 +4,41 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Avatar;
 
-use Drupal\aculta_image\FileRemover;
+use Drupal\aculta_portal\Cleanup\FileCleanupStatus;
+use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * Limpeza de assets temporários de avatar (chamada pelo cron do aculta_user).
+ * Limpa assets de avatar pelo cron do aculta_user.
  *
  * Remove:
- * 1. uploads temporários de foto (status 0) em pictures/ ou temporary://, com mais de uma hora, que não foram salvos;
- * 2. cópias do acervo (public://pictures/acervo/) que nenhuma conta usa mais (troca de avatar, remoção de foto).
+ * Inclui uploads de foto sem salvar após uma hora e cópias do acervo que
+ * nenhuma conta usa mais após troca ou remoção de avatar.
  *
- * Nunca remove arquivo em uso por alguma conta, nem foto enviada pela pessoa que ainda está no perfil.
+ * Toda remoção passa pela verificação global de referências do Portal.
  */
 final class AvatarAssetCleanup {
 
-  /** Idade mínima de um upload temporário para ser apagado (segundos). */
+  /**
+   * Idade mínima de um upload temporário para ser apagado (segundos).
+   */
   public const TEMP_MAX_AGE = 3600;
 
-  /** Idade mínima de uma foto personalizada sem uso para ser apagada (segundos). */
+  /**
+   * Idade mínima de uma foto personalizada sem uso para ser apagada (segundos).
+   */
   public const PERSONAL_MIN_AGE = 86400;
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly TimeInterface $time,
-    private readonly FileUsageInterface $fileUsage,
-    private readonly FileRemover $fileRemover,
+    private readonly UnusedFileCleaner $unusedFileCleaner,
   ) {}
 
-  /** Executa a limpeza. Retorna a quantidade de arquivos removidos por tipo. */
+  /**
+   * Executa a limpeza e retorna exclusões confirmadas por tipo.
+   */
   public function run(): array {
     $fileStorage = $this->entityTypeManager->getStorage('file');
     $now = (int) $this->time->getRequestTime();
@@ -45,8 +50,9 @@ final class AvatarAssetCleanup {
       ->execute();
     foreach ($fileStorage->loadMultiple($temp) as $file) {
       if ($this->isPictureUri($file->getFileUri())) {
-        $this->fileRemover->delete($file, 'upload temporário de avatar não salvo');
-        $removed['temporarios']++;
+        if ($this->unusedFileCleaner->removeIfUnused($file, TRUE) === FileCleanupStatus::Deleted) {
+          $removed['temporarios']++;
+        }
       }
     }
 
@@ -55,11 +61,13 @@ final class AvatarAssetCleanup {
       ->execute();
     foreach ($fileStorage->loadMultiple($acervo) as $file) {
       if (!$this->isInUse((int) $file->id())) {
-        $this->fileRemover->delete($file, 'cópia do acervo sem conta que a use');
-        $removed['acervo_orfao']++;
+        if ($this->unusedFileCleaner->removeIfUnused($file) === FileCleanupStatus::Deleted) {
+          $removed['acervo_orfao']++;
+        }
       }
     }
-    // Foto personalizada sem conta e sem registro de uso (ex.: recorte ou upload abandonado depois de salvo).
+    // Foto personalizada sem conta ou registro de uso, como recorte ou upload
+    // abandonado depois de salvo.
     $personal = $fileStorage->getQuery()->accessCheck(FALSE)
       ->condition('status', 1)
       ->condition('uri', 'public://pictures/%', 'LIKE')
@@ -67,8 +75,8 @@ final class AvatarAssetCleanup {
       ->condition('changed', $now - self::PERSONAL_MIN_AGE, '<')
       ->execute();
     foreach ($fileStorage->loadMultiple($personal) as $file) {
-      if (!$this->isInUse((int) $file->id()) && $this->fileUsage->listUsage($file) === []) {
-        $this->fileRemover->delete($file, 'foto pessoal sem uso');
+      if (!$this->isInUse((int) $file->id())
+        && $this->unusedFileCleaner->removeIfUnused($file) === FileCleanupStatus::Deleted) {
         $removed['pessoais_orfas']++;
       }
     }
@@ -77,7 +85,8 @@ final class AvatarAssetCleanup {
     $cropStorage = $this->entityTypeManager->getStorage('crop');
     foreach ($cropStorage->loadMultiple() as $crop) {
       $uri = $crop->hasField('uri') ? (string) $crop->get('uri')->value : '';
-      if ($uri !== '' && str_starts_with($uri, 'public://pictures/') && !$this->entityTypeManager->getStorage('file')->loadByProperties(['uri' => $uri])) {
+      if ($uri !== '' && str_starts_with($uri, 'public://pictures/')
+        && !$this->entityTypeManager->getStorage('file')->loadByProperties(['uri' => $uri])) {
         $crop->delete();
         $removed['recortes_orfaos']++;
       }
@@ -85,11 +94,16 @@ final class AvatarAssetCleanup {
     return $removed;
   }
 
+  /**
+   * Determines whether a URI belongs to the avatar image area.
+   */
   private function isPictureUri(string $uri): bool {
     return str_starts_with($uri, 'public://pictures/') || str_starts_with($uri, 'temporary://');
   }
 
-  /** Verdadeiro se alguma conta ainda referencia o arquivo como foto. */
+  /**
+   * Verifies whether any account references the file as its picture.
+   */
   private function isInUse(int $fid): bool {
     return $this->entityTypeManager->getStorage('user')->getQuery()->accessCheck(FALSE)
       ->condition('user_picture.target_id', $fid)

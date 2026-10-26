@@ -1,3 +1,9 @@
+## 0.4.0-dev.77 — limpeza de avatar coordenada pelo Portal
+
+- `AvatarAssetCleanup` delega remoções de uploads temporários e avatares órfãos a `aculta_portal.unused_file_cleaner`, que verifica File Usage, Entity Usage, referências estruturadas e embeds antes de solicitar remoção física ao Image. Sem autorização clara, o arquivo permanece.
+- Os contadores reportam somente exclusões confirmadas (`Deleted`). A retenção de uma hora para temporários e a política de avatares órfãos permanecem.
+- `AvatarAssetCleanupCoordinatorTest` exercita o coordenador real com dependências simuladas: Portal inspeciona referências antes da exclusão. User Unit completa: 133 testes / 512 assertions PASS (1 depreciação PHPUnit); Kernel: 25/361 PASS (5 depreciações contrib). PHPCS e lint alterados PASS.
+
 ## 0.4.0-dev.76 — alinhar validação do apelido no formulário Profile legado
 
 - `ProfileNicknameValidationHooks` aplica `AccountNames` e `NicknamePolicy` aos formulários Profile de papéis que expõem `field_nickname`, incluindo `/dados`, que o Portal mantém por compatibilidade. Um apelido legado inalterado não bloqueia a edição de outros dados.

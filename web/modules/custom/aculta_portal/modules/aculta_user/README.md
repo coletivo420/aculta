@@ -1,5 +1,7 @@
 # ACULTA User (`aculta_user`)
 
+Em dev.77, a limpeza de avatar delega exclusões ao coordenador global do Portal; sem referências verificavelmente ausentes, o arquivo fica retido. User Unit 133/512 e Kernel 25/361 PASS (1 depreciação PHPUnit na Unit, 5 depreciações contrib no Kernel); PHPCS/lint alterados PASS.
+
 Em dev.76, o User aplica a validação compartilhada de apelido também aos
 formulários Profile legados de papéis, incluindo `/dados`, usando
 `AccountNames` e `NicknamePolicy`. Valores existentes inalterados são aceitos
@@ -12,7 +14,7 @@ com teste de concorrência isolado.
 Em dev.75, `FriendshipChangedEvent` transporta um identificador imutável por
 transição para consumidores distinguirem mudanças que ocorram no mesmo segundo;
 o ACULTA User continua sem dependência do Messenger. User Unit 132/504 e Kernel
-25/361 passaram nesta retomada; 1 depreciação PHPUnit e 5 de Core/contrib.
+25/361 passaram no corte anterior; 1 depreciação PHPUnit e 5 de Core/contrib.
 PHP lint e PHPCS dos novos arquivos também passaram. O Kernel completo da
 integração de avisos passou com duas depreciações do Core/contrib `message`.
 

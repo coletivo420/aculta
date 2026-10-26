@@ -393,3 +393,10 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - `ImageCleanup` ainda chamava `FileRemover` diretamente quando `aculta_portal.unused_file_cleaner` estava indisponível, divergindo do contrato em `aculta_image/docs/PLANO.md`. Removido o fallback: agora retorna `Unverifiable`, não deleta e não remove o item da fila; o lease expira e permite tentativa posterior. Dependência direta de `FileRemover` removida do serviço/construtor. Quarentena já exigia coordenador.
 - Novo `ImageCleanupCoordinatorTest` verifica ausência de exclusão física e retenção da fila sem Portal: Unit Image completa 28/118 PASS (9 depreciações PHPUnit); PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS; `validate-aculta-image.php` PASS (25 estilos catalogados, zero usos externos).
 - Manifesto/status avançaram para Image `0.1.0-dev.34`; README/changelog/AGENTS, matriz e execução atualizados. Nenhum arquivo real foi limpo e nenhum Runtime foi alterado. Próxima ação: completar Kernel/instalação limpa e seguir consumers de cleanup do Portal.
+
+
+## M-1/M-2 — limpeza de avatar integrada ao coordenador (2026-10-26)
+
+- `AvatarAssetCleanup` do User excluía temporários e avatares órfãos diretamente via `FileRemover`, após checagem local de `user_picture`/File Usage; isso não cobria referências estruturadas e embeds globais. Migrado para `aculta_portal.unused_file_cleaner`, preservando a retenção e retornando contadores apenas para status `Deleted`. O User já requer Portal; não foi criada dependência circular nem storage paralelo.
+- `AvatarAssetCleanupCoordinatorTest` usa UnusedFileCleaner real, com banco, File Usage e ReferenceInspector simulados: 1 teste/8 assertions PASS. User Unit completo: 133/512 PASS (1 depreciação PHPUnit). Nenhum arquivo real ou Runtime alterado.
+- User avançou `0.4.0-dev.77`; status, README, CHANGELOG e matriz atualizados. PHPCS Drupal/DrupalPractice e PHP lint nos dois arquivos User PASS; User Kernel completo 25/361 PASS (5 depreciações contrib); YAML PASS; index 41, pacotes 41, Config Extension 1.590, User Roles, Drupal 11+ 1.160 e fronteira módulo-tema 2.891 PASS. Próxima ação: commit e push normal.
