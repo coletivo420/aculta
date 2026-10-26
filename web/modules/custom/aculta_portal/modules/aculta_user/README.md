@@ -171,3 +171,6 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../docs/architecture/ACULT
 ACULTA Studio presents account-oriented user experiences. aculta_user stays the owner of identity, profiles, roles and first-participation policy; the GanjaLab/WE SATIVA user experience belongs to aculta_studio, not a second implementation in User.
 
 [Contrato e roadmap transversal](../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
+
+
+A análise da unicidade concorrente do apelido está em [NICKNAME-UNIQUENESS.md](docs/NICKNAME-UNIQUENESS.md). O campo Field API atual não contém UID e a política permite perfis legados do mesmo UID com o mesmo apelido; uma unique key simples seria mais restritiva que o contrato. A preflight do Homelab em 2026-10-26 encontrou 14 linhas ativas/14 perfis, sem duplicatas agregadas e sem índice único; isso não elimina a corrida. Próxima etapa: provar lock por apelido no ciclo completo de persistência com processos concorrentes em MariaDB isolado.

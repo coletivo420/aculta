@@ -1,0 +1,31 @@
+# Unicidade transacional do apelido
+
+## Estado da análise — 2026-10-26
+
+`NicknamePolicy` consulta os campos `field_nickname` dos perfis de papel e exclui todos os perfis do mesmo UID durante uma edição. Isso permite que uma conta tenha o mesmo apelido em perfis antigos e atuais enquanto muda de categoria. A consulta é um preflight; duas contas diferentes ainda podem vencer a consulta simultaneamente e gravar o mesmo apelido.
+
+A tabela Field API `profile__field_nickname` não contém `uid`. Uma chave SQL única simples sobre `field_nickname_value` impediria também perfis distintos do mesmo usuário de compartilhar o apelido. O campo é translatable e revisionável, então a garantia depende ainda da semântica de linhas atuais, idiomas, perfis legados e de futuras alterações de schema. Não foi criada uma constraint direta porque ela não representa exatamente o contrato vigente.
+
+## Preflight read-only do Homelab
+
+Antes das consultas, Drush confirmou Drupal 11.4.10/PHP 8.4.27, host `toca`, URI MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web` e configuração em `/home/piradopirata/projetos/aculta/config/sync`.
+
+Consultas agregadas, sem selecionar ou imprimir apelidos:
+
+- `profile__field_nickname`: 14 linhas ativas em 14 entidades; nenhuma linha `deleted`.
+- Nenhum grupo duplicado case-insensitive entre entidades de diferentes UIDs.
+- Nenhuma duplicação do mesmo apelido entre perfis de um mesmo UID.
+- A tabela não possui índice único sobre o valor.
+
+Esse snapshot não comprova ausência de duplicatas em outros ambientes nem resolve a corrida entre gravações. Nenhuma escrita ou atualização foi executada.
+
+## Opções para fechar a corrida
+
+1. **Lock por apelido no ciclo de persistência do Profile:** um hook central adquire lock distribuído pelo apelido normalizado, reconsulta sob lock excluindo o UID atual, mantém o lock até insert/update e libera no post-save. Deve tratar falhas antes do post-save por expiração curta e retornar erro genérico em conflito. Não cria armazenamento paralelo, mas precisa cobrir todos os caminhos de escrita.
+2. **Índice derivado de apelidos por UID:** tabela owner-managed que reserva cada apelido normalizado para um UID, permitindo vários perfis da mesma conta. Hooks transacionais mantêm a projeção; conflito de outra conta é rejeitado. Exige rebuild idempotente e auditoria de duplicatas antes da criação.
+
+A próxima etapa é prototipar a opção de lock primeiro em Kernel/MariaDB com dois processos concorrentes e cobertura de insert, rename, perfis legados do mesmo UID, falha de persistência e liberação/expiração do lock. Se algum caminho de gravação não puder ser coberto de forma confiável, avaliar o índice derivado como alternativa. Não executar update em Runtime até aprovação operacional específica.
+
+## Reversão
+
+A opção de lock não altera schema nem dados; rollback é reverter o commit e remover o hook/testes. Para o índice derivado, interromper a escrita antes do rebuild, preservar backup da tabela e confirmar consistência dos UIDs; rollback deve remover hooks e projeção somente depois de comparar novamente com `field_nickname`. Nenhum plano autoriza alterar o Runtime atual.
