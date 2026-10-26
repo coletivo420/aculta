@@ -1,3 +1,5 @@
+> **Decisão superveniente (26/10/2026):** o núcleo do Commerce Shipping deve ser portado/refatorado para o próprio `aculta_commerce`, sem novo submódulo e sem editar o contrib. As recomendações históricas abaixo de manter Commerce Shipping como base obrigatória e de apenas criar adaptadores sobre ele permanecem como contexto histórico, mas **não regem o destino arquitetural**. A execução segura e seus gates estão em [COMMERCE-SHIPPING-PORT.md](COMMERCE-SHIPPING-PORT.md). Enquanto a substituição não estiver validada e migrada, preservar o contrib instalado para não quebrar checkout, entidades ou remessas.
+
 # Commerce — Pesquisa frete brasileiro, estoque e operação de loja
 
 Data: 2026-10-22. **Planejamento e fontes revisadas, sem instalar módulos.** Proteger carrinho na barra multidomínio, checkout atual e consolidação do Portal.
