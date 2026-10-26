@@ -221,3 +221,85 @@ dependência do `commerce_shipping` no checkout.
    `Drupal\aculta_commerce\Shipping\Estimate\*`.
 7. **E3:** continua condicionada ao cutover do frete para o `aculta_commerce`; o porte não
    importa `commerce_shipping`.
+
+## 8. Ajustes após a revisão do E0 (2026-10-26)
+
+### 8.1 Validade da cotação (`valid_until`) — E1
+
+**Estado atual, verificado no código:** `ShippingQuote` (`src/Shipping/ShippingQuote.php`) já tem o campo
+`validUntil` (inteiro Unix, ou `NULL`) e o método `canUse()` que o confere. Porém **nada atribui o campo**: não há
+nenhuma construção de `ShippingQuote` no motor que o preencha, e o `QuoteResponseParser` do Melhor Envio não lê
+validade da resposta da API. Consequência: toda cotação positiva hoje tem `validUntil = NULL` e é tratada como
+válida sem prazo. Isso é o defeito a corrigir em E1.
+
+**Especificação:**
+
+- Campo: `ShippingQuote::$validUntil`, inteiro Unix em segundos. Continua opcional no construtor, mas **a fábrica de
+  cotações sempre o preenche** para cotação positiva.
+- **Default quando ausente ou não informado pelo provedor:** `emitted_at + 600` (10 minutos), onde `emitted_at` é o
+  instante em que a cotação foi obtida (início da chamada bem-sucedida, não o instante da resposta).
+- **Origem por provedor:**
+  - Melhor Envio: a API não informa validade. `valid_until = emitted_at + 600`. O parser não deve inventar outro prazo.
+  - Motor próprio (flat rate, flat rate por item): o preço depende só da configuração do método. `valid_until =
+    emitted_at + 600`, e a alteração de configuração de qualquer método invalida o cache por tag, sem esperar o prazo.
+- `canUse()` passa a exigir `validUntil` preenchido em cotação positiva. Cotação com `NULL` é rejeitada como inválida,
+  nunca aceita como eterna.
+- A entrada no cache e no tempstore expira em `min(10 min, valid_until)`. Cotação vencida nunca é servida nem
+  revalidada sem recálculo.
+
+### 8.2 Seleção até o checkout — armazenamento sem escrita no pedido
+
+- **Armazenamento:** `tempstore.private`, coleção `aculta_commerce.shipping_estimate`. A chave é
+  `hash(store_id + cart_id + session_id)`. Para anônimo, o owner do tempstore é o uid 0 (compartilhado), então o
+  `session_id` na chave é obrigatório. Para autenticado, o owner já é o uid, e o `session_id` continua na chave para
+  isolar sessões.
+- **Conteúdo gravado** (nunca o CEP em claro):
+  `method_id`, `service_id`, `amount` (decimal como string), `currency`, `valid_until`, `emitted_at`,
+  `items_hash` (purchased entity + quantidade + variação), `postal_code_hash` e `country_code`.
+- **Expiração:** `set()` com expiração igual a `valid_until`. A entrada é apagada na troca de carrinho, no
+  esvaziamento do carrinho e ao concluir o pedido.
+- **Sem escrita no pedido durante a simulação.** A gravação do método escolhido no pedido continua acontecendo só no
+  passo de envio do checkout, como hoje.
+- **Pane `aculta_shipping_information`:**
+  1. Lê a entrada do tempstore.
+  2. Se `items_hash`, `postal_code_hash` e `country_code` batem com o carrinho atual e `valid_until > agora`, pré-seleciona
+     o método e exibe o valor gravado.
+  3. Se algo não bate ou expirou, recalcula com `ShippingEstimateService` e exibe o **novo** valor.
+  4. Se o valor mudou em relação ao exibido na gaveta ou ao já selecionado, o pane mostra a mudança e **bloqueia o
+     avanço para o pagamento** até o cliente confirmar. O valor do checkout é o autoritativo.
+
+### 8.3 Chave do cache e o que altera o preço
+
+A chave do cache de cotação inclui, além de país, CEP normalizado, itens, métodos e moeda:
+
+- **Loja** (`store_id`).
+- **Contexto de preço do cliente:** o conjunto de papéis/grupos do usuário que o resolvedor de preço considera. Para
+  anônimo, o conjunto vazio.
+- **Promoções aplicadas ao carrinho:** o conjunto ordenado de IDs de promoção aplicadas. **Hoje o conjunto é sempre
+  vazio**: nenhum módulo de promoção ou cupom está habilitado (verificado; `commerce_promotion` não está ativo e não há
+  referência a `PromotionOffer` ou cupom no código do ACULTA).
+- **Declaração:** promoções **não atuam sobre o frete** nesta versão. Se um módulo de promoção com oferta de frete
+  for habilitado, esta especificação precisa ser revisada antes, porque a chave deve passar a incluir o hash das
+  promoções aplicadas. Sem essa revisão, a garantia de valor exato não vale para esse caso.
+
+### 8.4 Limite de flood por IP — antes de ligar para anônimos
+
+- **Servidor de testes:** verificado nesta revisão. O Apache responde direto, sem header `cf-ray` (Cloudflare) na
+  resposta, e `settings.php` mantém `reverse_proxy` desligado. Nesse desenho, `REMOTE_ADDR` é o IP do cliente. **Ainda
+  assim, antes de ligar o limite, confirmar com duas origens de rede diferentes que o IP observado muda por cliente.**
+- **Produção:** **não verificado.** Antes de ligar o limite para anônimos, confirmar a topologia (proxy, balanceador,
+  CDN). Se houver proxy: definir `$settings['reverse_proxy'] = TRUE` e `$settings['reverse_proxy_addresses']` com
+  **somente** os IPs dos proxies confiáveis; sem isso, todos os anônimos compartilham um IP e o limite global bloqueia
+  todo mundo, ou `X-Forwarded-For` pode ser forjado por cliente.
+- Critério de aceite de E2: duas origens geram contadores independentes de flood.
+
+### 8.5 Pré-preenchimento do CEP (opcional)
+
+- Opcional, fora do escopo de E1. Quando o endereço de entrega ainda não tem CEP, o pane pode pré-preencher o campo
+  com o CEP do endereço de cobrança ou do último endereço do próprio cliente, usando `aculta_portal_cep` para
+  normalização. Nunca preencher a partir de dado de outro cliente nem de cookie não autenticado.
+
+### 8.6 Decisão pendente do responsável
+
+- **"Exibido + revalidado" (8.2) ou "persistido no carrinho":** **pendente**. Registrar aqui a decisão quando ela vier.
+  Até lá, a especificação acima assume "exibido + revalidado", sem persistir a cotação no carrinho.
