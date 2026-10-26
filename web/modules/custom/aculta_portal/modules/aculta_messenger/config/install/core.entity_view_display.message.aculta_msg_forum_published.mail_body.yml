@@ -22,6 +22,9 @@ content:
     settings: {}
     third_party_settings: {}
 hidden:
+  entity_print_view_word_docx: true
+  entity_print_view_pdf: true
+  entity_print_view_epub: true
   field_aculta_msg_node: true
   field_aculta_msg_revision: true
   field_aculta_msg_delivery: true

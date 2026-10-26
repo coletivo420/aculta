@@ -1,3 +1,16 @@
+## 0.1.1-dev.399 — ocultar controles Entity Print em avisos
+
+Os defaults e o Config Sync ocultam os campos extras EPUB, PDF e DOCX do
+Entity Print nos sete displays de e-mail de avisos e no display de avisos
+públicos. A instalação de Entity Print no Runtime MAIN os mantinha ocultos, mas
+os defaults/Sync não. A reconciliação evita que reimportar esses displays os
+tornasse visíveis; o evento de amizade também continua oculto.
+
+Teste de contrato de display: **2/68 PASS**; focais de amizade/entrega:
+**37/712 PASS**. PHPCS Drupal/DrupalPractice e PHP lint do teste PASS; gates
+Config Extension, YAML, índice, pacotes e diff check PASS. Nenhum Runtime ou
+dado de Entity Print foi alterado.
+
 ## 0.1.1-dev.398 — ocultar o estado técnico de amizade no e-mail
 
 Os displays de e-mail de amizade no Config Sync agora declaram o campo
