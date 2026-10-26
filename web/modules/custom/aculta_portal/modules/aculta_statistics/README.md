@@ -6,7 +6,7 @@ Central de métricas da plataforma ACULTA: catálogo, agregados diários, reten�
 configurável por métrica e consulta. Não substitui os dados de origem. Pedidos
 ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mail.
 
-**Estado:** módulo ativo no código. Ativação no Runtime de teste pendente.
+**Estado:** ativo no Runtime MAIN, confirmado por Drush em 2026-10-26. Consultas GA4/Search Console com credenciais e homologação visual permanecem pendentes.
 
 ## O que existe
 
@@ -51,6 +51,6 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
 
 ## Testes
 
-- Unit: `tests/src/Unit/` (catálogo, retenção, gravador, janela e variação do GSC, controlador da Wiki, pedido pago). 36 casos.
-- Kernel: `tests/src/Kernel/` (storage, cron, formulário de retenção, banner, beacon da Wiki). 14 casos, executados
-  contra `aculta_simpletest`.
+- Unit: `tests/src/Unit/` (catálogo, retenção, gravador, janela e variação do GSC, controlador da Wiki, pedido pago). 108 testes / 438 assertions PASS em 2026-10-26.
+- Kernel: `tests/src/Kernel/` (storage, cron, formulário de retenção, banner, beacon da Wiki). 47 testes / 319 assertions PASS em 2026-10-26, executados contra `aculta_simpletest`.
+- Functional `StatisticsDashboardFunctionalTest` e revisão visual não executados nesta validação.

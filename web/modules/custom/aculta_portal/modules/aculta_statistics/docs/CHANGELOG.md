@@ -9,6 +9,7 @@
   Entity Access do conteúdo. Relatórios gerais, métricas internas/restritas não
   são liberados por essa concessão.
 - A alteração está apenas em Config Sync; não foi importada no Runtime.
+- Regressão executada em 2026-10-26: Unit 108/438 e Kernel 47/319 PASS. Drush read-only confirmou módulo Enabled no MAIN; funcional/browser e consultas com credenciais externas seguem pendentes.
 
 ## 0.9.0-dev.8 — permissão granular para métricas públicas por conteúdo
 
