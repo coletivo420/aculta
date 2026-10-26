@@ -421,3 +421,8 @@ A fotografia atual da branch aponta **41 metadados SDC e 65 stories** (substitui
 ## Dependências Studio — replanejamento 2026-10-22
 
 O Studio passou a priorizar **GANJALAB E-0.1**, interface editorial sob `conta.aculta.*/studio/ganjalab`. O ACULTA420 responde exclusivamente pelos componentes Core SDC/UI Suite, tokens, reflow mobile-first e coerência light/dark. Usar `context-header`, `context-tabs`, `card`, `content-grid` e `empty-state` existentes como candidatos ao reuso, **sem declarar a integração homologada**. Os gates G420-C2-T (LMS estudante) estão condicionados a fixtures e desenvolvimento paralelo de LMS/tema; não criar componentes exclusivos GanjaLab420 para substituir contratos genéricos. Para editor GanjaLab E-D: auditar slots/contexto, estados de Form API, 320–1440px, teclado/foco/no-JS, preservar o cabeçalho multidomínio e mesma geometria claro/escuro. Interface Studio orquestrada no módulo; aparência e stories no tema. Ver `web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md`.
+
+## 0.7.0-dev.4
+
+- Tokens de apresentação de Links e Secrets Manager registrados; CSS desses submódulos permanece como dívida para migração em etapa própria.
+- Status da validação dos gates e navegador: pendente nesta branch.

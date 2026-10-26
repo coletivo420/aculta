@@ -1,3 +1,9 @@
+## 0.7.0-dev.4 — tokens de Links e Secrets Manager — 2026-10-26
+
+- Mapeia tokens semânticos de links públicos e abas de credenciais às mesmas classes visuais atuais.
+- Validação: fronteira 3034, SDC 628 e Foundations 2227 checks PASS; lint PASS; PHPCS sem erros (29 avisos preexistentes de linhas longas); Unit 20/106 e Kernel 8/231 PASS, com 64 depreciações upstream. `git diff --check` PASS.
+- Foundation via Drush: DEFERRED (docroot isolado sem `settings.php`; Runtime fora do escopo). Firefox ESR: DEFERRED (`DISPLAY` indisponível; worktree não servido).
+
 ## 0.7.0-dev.3 — PHPCS do tema e tokens de Portal (2026-10-25)
 
 - PHPCS Drupal e DrupalPractice limpo em `src` e `tests` do tema. Blocos de documentação malformados foram corrigidos e os métodos sem descrição receberam texto real.
