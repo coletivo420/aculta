@@ -56,6 +56,35 @@ Commit: `3f4222b2a` fix(deployer): align deploy profiles with environment-bound 
 
 A revisão transversal (seção 12 da missão) depende das oito frentes e não foi feita.
 
+## Frente 3 — `aculta_patcher`
+
+| Campo | Registro |
+|---|---|
+| Fase | Validação de diff extraída e testada. Exportador ainda não coberto por teste de integração |
+| HEAD | `04221b6e3` |
+| Implementado | `PatchDiffValidator` (classe pura): limite de 256 KiB, cabeçalhos `---`/`+++`, hunk `@@`, caminhos absolutos, letra de unidade e `..`. `PatchManifestExporter` passa a usá-la, com as mesmas mensagens |
+| Testes | Unit: **15 PASS**, 27 asserções (`PatchDiffValidatorTest`) |
+| Bloqueadores | Nenhum técnico. Pendente: testes do exportador com `composer.lock` e pacote temporário (exige refatorar a resolução de `Composer\InstalledVersions`) |
+| Observação | O exportador aceita diff que já está aplicado (validação reversa). É intencional: vendor pode estar com o patch após `composer install` |
+| Não feito | Cadastro, edição, exclusão controlada, auditoria e segurança administrativa não auditados nesta execução |
+| Commits | `0427ffb34` refactor(patcher): extrair validação de diff; `04221b6e3` test(patcher): cobrir validação |
+| Estado | Dev |
+
+## Levantamento das frentes 4 a 8 (sem alterações)
+
+| Frente | Módulo | Arquivos src | Testes Unit | Resultado Unit |
+|---|---|---|---|---|
+| 4 | `aculta_portal_sitemap` | 1 | nenhum diretório | Sem suíte. Auditoria pendente |
+| 5 | `aculta_qrcode` | 17 | 4 arquivos (incl. Kernel 1) | **27 PASS**, 44 asserções |
+| 6 | `aculta_links` | 35 | 6 arquivos (incl. Kernel 1) | **8 PASS**, 65 asserções, **9 deprecações** não detalhadas |
+| 7 | `aculta_activity` | 3 | 4 arquivos (incl. Kernel 1) | **6 PASS**, 19 asserções, **4 deprecações** não detalhadas |
+| 8 | `aculta_editor` | 0 | nenhum Unit (1 Kernel) | Sem suíte Unit. Kernel não executado (exige banco) |
+
+Pendências desse levantamento: identificar a origem das deprecações de `aculta_links` e `aculta_activity`; criar a
+suíte Unit do sitemap; Kernel e Functional de todos (exigem instalação de teste isolada, não executadas).
+
+Não iniciadas as auditorias profundas das frentes 4 a 8 nesta execução.
+
 ## Notas de ambiente
 
 - Os testes Unit rodam com `vendor/` e `web/core/` do checkout principal. O worktree recebe cópia real de `web/core`
