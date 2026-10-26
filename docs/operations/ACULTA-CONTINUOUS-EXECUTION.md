@@ -260,3 +260,10 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Document Viewer: Unit 42/225 PASS e PHPCS sem erros (um aviso de linha longa preexistente). Kernel no MariaDB dedicado: 5 erros de setup/0 assertions. Portal requer `aculta_user.aculta_user_agreement_ledger`, mas o harness não habilita User; habilitá-lo experimentalmente revelou `path_alias` e dependência `system.menu.admin` em configuração LMS. A fixture experimental foi removida; não foi criado serviço fictício, e a instalação limpa permanece DEFERRED.
 - Mercado Pago: Unit 11/22 PASS; Kernel 1/50 PASS, 75 depreciações Core/contrib. PHPDoc documenta os parâmetros reais e a exceção de `createPaymentMethod`; removida variável de iteração sem uso. Nenhuma transação ou chamada externa executada.
 - PHP lint dos seis arquivos PASS. Nenhuma operação Runtime ocorreu. Os resultados antigos de PHPCS listados acima neste documento são históricos e ficam supersedidos por esta medição.
+
+## M-3 — teste direto do gatilho Game/ForumPost (2026-10-26)
+
+- A lacuna do status `aculta_game` foi reproduzida: o Kernel do Fórum cobria apenas `ForumParticipationPolicy::isEligiblePost()`, sem invocar `BadgeEvaluationHooks::forumPostSave()`.
+- Novo teste focal chama o hook real em duas passagens (insert/update), com `ForumParticipationPolicy`, `DomainPurposeManager`, `BadgeService`, `AchievementDefinitions` e `BadgeCatalog` reais; entidades, config e storage são doubles Unit. O ID de Domain usado é o canônico `forum_aculta_org`. O serviço faz uma única gravação do badge existente após segunda passagem idempotente.
+- Unit Game completa: 12 testes / 73 assertions PASS. PHPCS Drupal/DrupalPractice e PHP lint dos dois arquivos novos PASS. Status YAML, README, CHANGELOG e índice de 41 componentes foram reconciliados.
+- Limite: não equivale a Kernel com `ForumPost` real, nem homologa privacidade de perfil, visual, Runtime ou concessões persistentes. Nenhuma configuração ou dado Runtime foi alterado; módulo continua Dev `0.1.0-dev.17`.

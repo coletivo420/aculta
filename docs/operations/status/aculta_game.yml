@@ -2,8 +2,9 @@
 version: 0.1.0-dev.17
 state: Dev
 progress_note: >-
-  Unit Game 11/51 PASS; Kernel Game/Messenger 3/30 PASS para revalidação e
-  migração de avisos. Policy ForumPost tem Kernel de elegibilidade no módulo
-  Fórum, mas BadgeEvaluationHooks::forumPostSave ainda não tem teste direto.
-  Sem concessão ou update no Runtime.
-next_phase: 'Testar diretamente o hook de concessão ForumPost e a chamada idempotente ao BadgeService; homologar acesso/perfil público e migração no Runtime somente após autorização ([roadmap](web/modules/custom/aculta_portal/modules/aculta_game/docs/ROADMAP.md))'
+  Unit Game 12/73 PASS; Kernel Game/Messenger 3/30 PASS para revalidação e
+  migração de avisos. BadgeEvaluationHooks::forumPostSave é testado com policy
+  e BadgeService reais e storage simulado: insert/update elegível grava uma vez.
+  O teste não substitui Kernel com ForumPost real. Sem concessão ou update no
+  Runtime.
+next_phase: 'Adicionar Kernel com ForumPost real, validar perfil/acessibilidade e homologar migração no Runtime somente após autorização ([roadmap](web/modules/custom/aculta_portal/modules/aculta_game/docs/ROADMAP.md))'

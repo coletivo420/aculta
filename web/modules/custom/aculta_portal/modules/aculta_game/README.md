@@ -4,10 +4,12 @@ Versão atual: `0.1.0-dev.17` — primeira publicação de Comment ACULTA vigent
 de `ForumPost` público pode conceder uma vez a conquista existente; migração,
 sincronização, autoria histórica e outros contextos permanecem inelegíveis.
 Os avisos de conquista usam o publisher/centro central do Messenger, sem storage
-paralelo no Game. Unit Game passou 11/51; o Kernel Game/Messenger passou 3/30
-para revalidação e migração de avisos. O hook de concessão `ForumPost` ainda
-precisa de teste integrado direto; a policy de elegibilidade sozinha não prova
-que a conquista foi gravada.
+paralelo no Game. Unit Game passou 12 testes / 73 assertions; o Kernel
+Game/Messenger passou 3/30 para revalidação e migração de avisos.
+`BadgeEvaluationHooks::forumPostSave` tem teste focal que executa o hook, a
+policy e o `BadgeService` reais contra um ForumPost-shaped test double e
+confirma uma única gravação em insert/update. Kernel com entidade ForumPost
+real e homologação Runtime continuam pendentes.
 
 Submódulo opcional `aculta_game`, integrante do `aculta_portal`.
 Decisões de produto registradas em **2026-10-15**. G1 fornece a extensão instalável;
