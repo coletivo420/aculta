@@ -68,7 +68,7 @@ final class ProfileNicknameValidationHooks {
     }
 
     if (!AccountNames::isValid($nickname)) {
-      $form_state->setErrorByName('field_nickname', $this->translation->translate('Use um apelido de 3 a 40 caracteres, com letras sem acento, números ou hífen, que não seja reservado.'));
+      $form_state->setErrorByName('field_nickname', $this->translation->translate('Use um apelido de 3 a 40 caracteres, com letras sem acento, números ou hífen; um sufixo numérico como #2 pode ser usado. O nome não pode ser reservado.'));
       return;
     }
     if ($this->nicknamePolicy->isTaken($nickname, (int) $profile->getOwnerId())) {

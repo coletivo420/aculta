@@ -2,7 +2,7 @@ Em dev.80, os cartões de autoria histórica exibidos no Fórum acrescentam `-gr
 
 # ACULTA User (`aculta_user`)
 
-Em dev.81, `-gr` é reservado ao nome de exibição de autoria Growroom no Fórum e não pode ser usado como sufixo de apelido de conta. Autores Growroom permanecem sem User/Profile ou rota `/u/`; referências internas seguem por UID.
+Em dev.82, a colisão automática de apelidos pode exibir `nome#2`, com slug canônico `/u/nome-2`. O formato terminal `#N` também pode ser informado manualmente; o formulário só valida disponibilidade e não escolhe sufixo pelo usuário. `nome-2` e `nome#2` compartilham o mesmo slug. Em dev.81, `-gr` foi reservado à autoria Growroom no Fórum; autores legados continuam sem User/Profile ou rota individual, e referências internas seguem por UID.
 
 Em dev.78, os forms Profile legados gravam o apelido aparado que foi validado, mantendo-o coerente com a rota pública. User Unit 134/518 e Kernel 25/361 PASS; PHPCS/lint dos arquivos alterados PASS. A concorrência entre cadastros continua pendente.
 

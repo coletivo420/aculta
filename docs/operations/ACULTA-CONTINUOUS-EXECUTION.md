@@ -631,3 +631,10 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Decisão do responsável: o apelido é identidade por UID; UIDs distintos não compartilham apelido; perfis por papel do mesmo UID exibem o mesmo apelido; renomear libera o anterior imediatamente; referências internas permanecem por UID; nenhum apelido de conta pode terminar em `-gr`.
 - `AccountNames::isValid()` e `publicRouteSlug()` agora recusam `-gr` em qualquer caixa. O marcador continua apenas nos adapters de autoria de conteúdo do Fórum; autores Growroom não recebem User/Profile nem rota própria. `aculta_user` avançou `.80` → `.81`. User Unit 136/523 PASS (uma depreciação); PHPCS Drupal/DrupalPractice e PHP lint focais PASS. O Kernel foi encerrado antes de concluir porque o banco SimpleTest estava em uso pelo agente do Index; portanto Kernel fica pendente.
 - A garantia concorrente foi separada: o responsável escolheu índice SQL derivado slug→UID, preservando Profile como fonte de verdade; implementação e testes concorrentes ainda não estão feitos. Não houve alteração Runtime.
+
+
+## M-1 — convenção de apelido automático e slug público (2026-10-26)
+
+- O responsável confirmou que colisões automatizadas podem exibir `nome#2` com slug `/u/nome-2`. Também esclareceu que `#N` pode ser digitado manualmente, desde que o slug esteja disponível; o formulário valida e rejeita colisão, sem gerar sufixo em nome do usuário. O mapeamento só reconhece sufixo numérico final (`#2` ou maior), nunca deixa `#` literal na rota. `nome#2` e `nome-2` ocupam o mesmo identificador público.
+- `AccountNames`, `NicknamePolicy`, geração inicial de Profile e lookup da rota foram alinhados; OAuth recupera a parte local do e-mail quando o Social Auth precisou numerar o username. Os nomes Growroom `-gr` seguem proibidos para conta.
+- NicknameSuffixPolicy, NicknamePolicy e NicknameForm: 8 testes / 61 assertions PASS. PHPCS Drupal/DrupalPractice e PHP lint dos arquivos tocados PASS. O runtime não foi alterado. A projeção SQL escolhida para concorrência, sincronização de Profiles de um UID e Kernel/MariaDB seguem pendentes; não alegar unicidade concorrente até essa fase.

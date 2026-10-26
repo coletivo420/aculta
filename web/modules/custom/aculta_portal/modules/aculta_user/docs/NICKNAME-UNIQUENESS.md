@@ -7,6 +7,7 @@
 - Apelido identifica uma conta/UID: UIDs distintos não podem compartilhar o apelido atual; perfis de papéis do mesmo UID exibem o mesmo apelido.
 - Ao trocar o apelido, o anterior fica livre para outra conta imediatamente. Não se criam aliases/redirects de perfil; referências internas usam UID.
 - `-gr` não é permitido como sufixo de apelido de conta. O marcador é apenas nome de exibição dos autores Growroom em conteúdo do Fórum; o acervo legado não cria User/Profile nem rota individual.
+- Colisões de nome automático podem gerar `nome#2`, cujo slug público é `nome-2`. A pessoa também pode informar `#N` manualmente se o slug correspondente estiver livre; formulários não acrescentam sufixos automaticamente. `nome-2` e `nome#2` são a mesma identidade pública.
 
 `NicknamePolicy` consulta os campos `field_nickname` dos perfis de papel e exclui todos os perfis do mesmo UID durante uma edição. Isso permite que uma conta tenha o mesmo apelido em perfis antigos e atuais enquanto muda de categoria. A consulta é um preflight; duas contas diferentes ainda podem vencer a consulta simultaneamente e gravar o mesmo apelido.
 
@@ -34,7 +35,7 @@ Esse snapshot não comprova ausência de duplicatas em outros ambientes nem reso
 
 O responsável selecionou a opção 2. Profile permanece a fonte de verdade e `aculta_user` manterá uma projeção owner-managed por UID com `uid` único e slug normalizado único. Perfis de papéis do mesmo UID compartilham a reivindicação; ao renomear, a atualização do novo slug e a liberação do anterior ocorrem no mesmo caminho transacional. A projeção pode ser reconstruída a partir de Profiles; não guarda histórico nem cria aliases/redirects. Referências internas continuam usando UID.
 
-A implementação deve falhar fechada se o rebuild encontrar apelidos diferentes entre Profiles ativos do mesmo UID, colisões entre UIDs ou apelidos atuais terminados em `-gr`; reportar apenas contagens agregadas, sem expor apelidos. Cobertura Kernel/MariaDB precisa incluir dois processos concorrentes, insert, rename e claim do slug antigo, Profiles múltiplos do mesmo UID, falha de persistência/rollback, rebuild idempotente e conflito preexistente. Não executar update no Runtime sem autorização operacional específica.
+A projeção deve indexar o slug canônico (`#N` e `-N` convergem para `-N`) e falhar fechada se o rebuild encontrar apelidos diferentes entre Profiles ativos do mesmo UID, colisões entre UIDs ou apelidos atuais terminados em `-gr`; reportar apenas contagens agregadas, sem expor apelidos. Cobertura Kernel/MariaDB precisa incluir dois processos concorrentes, insert, rename e claim do slug antigo, Profiles múltiplos do mesmo UID, falha de persistência/rollback, rebuild idempotente e conflito preexistente. Não executar update no Runtime sem autorização operacional específica.
 
 ## Reversão
 

@@ -1,3 +1,9 @@
+## 0.4.0-dev.82 — colisões OAuth e slug separado do nome exibido
+
+- Colisões de apelidos geradas na criação automática usam apresentação `nome#2` e slug público `nome-2`. A forma com `#N` também pode ser digitada manualmente, desde que o slug esteja livre; formulários apenas validam e rejeitam conflito, sem autoajuste.
+- A rota `/u/{apelido}` resolve o slug canônico para a forma exibida. Apelidos manuais `nome-2` e `nome#2` disputam o mesmo identificador público. O usuário interno continua com UID como referência.
+- Unit focal NicknameSuffixPolicy, NicknamePolicy e NicknameForm: 8 testes / 61 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos tocados PASS. Nenhuma atualização do Runtime foi executada.
+
 ## 0.4.0-dev.79 — marcador Growroom no cartão de autoria
 
 - A primeira implementação aplicou `-gr` no builder genérico. Foi substituída em dev.80 após identificar consumidores de comentários compartilhados fora do Fórum; a versão vigente limita o sufixo aos adapters de conteúdo Fórum.

@@ -12,7 +12,8 @@ use Drupal\aculta_portal\Routing\PublicRouteSlug;
  * O nome da conta vira o apelido inicial; OAuth usa a parte local do e-mail.
  * O apelido mantém a capitalização; o slug público fica em minúsculas.
  * Slugs aceitam de 3 a 40 letras ASCII, números ou hífens e não podem ser
- * reservados nem terminar com o marcador legado `-gr`.
+ * reservados nem terminar com o marcador legado `-gr`. O sufixo de exibição
+ * `#N` é convertido para `-N` no slug canônico.
  */
 final class AccountNames {
 
@@ -44,11 +45,35 @@ final class AccountNames {
    * Indica se o apelido atende às regras de formato e não é reservado.
    */
   public static function isValid(string $apelido): bool {
-    // O slug é minúsculo; o apelido armazenado mantém sua capitalização.
-    $slug = PublicRouteSlug::normalize($apelido);
-    return (bool) preg_match('/^[a-z0-9][a-z0-9-]{' . (self::MIN - 1) . ',' . (self::MAX - 1) . '}$/', $slug)
+    if (self::hasHashSuffix($apelido)) {
+      return self::isHashSuffixNickname($apelido);
+    }
+    $slug = self::routeSlugFromDisplay($apelido);
+    return $slug !== NULL
+      && (bool) preg_match('/^[a-z0-9][a-z0-9-]{' . (self::MIN - 1) . ',' . (self::MAX - 1) . '}$/', $slug)
       && !str_ends_with($slug, '-gr')
       && !in_array($slug, self::RESERVED, TRUE);
+  }
+
+  /**
+   * Indicates whether a display nickname uses the supported terminal `#N`.
+   */
+  public static function isHashSuffixNickname(string $apelido): bool {
+    if (!preg_match('/^(.+)#((?:[2-9]|[1-9][0-9]+))$/', $apelido, $matches)) {
+      return FALSE;
+    }
+    $base = $matches[1];
+    $number = $matches[2];
+    $slug = PublicRouteSlug::normalize($base . '-' . $number);
+    return self::isValid($base) && self::isCanonicalSlugValid($slug);
+  }
+
+  /**
+   * Builds a collision label without exceeding the public slug limit.
+   */
+  public static function withAutomaticSuffix(string $base, int $number): string {
+    $suffix = '#' . $number;
+    return mb_substr($base, 0, self::MAX - strlen($suffix)) . $suffix;
   }
 
   /**
@@ -58,8 +83,34 @@ final class AccountNames {
    * inválidos retornam NULL, sem causar erro durante o render.
    */
   public static function publicRouteSlug(string $apelido): ?string {
-    $slug = PublicRouteSlug::normalize($apelido);
-    return self::isValid($slug) ? $slug : NULL;
+    return self::isValid($apelido) ? self::routeSlugFromDisplay($apelido) : NULL;
+  }
+
+  /**
+   * Determines whether a display value ends in the supported `#N` form.
+   */
+  private static function hasHashSuffix(string $value): bool {
+    return preg_match('/^.+#(?:[2-9]|[1-9][0-9]+)$/', $value) === 1;
+  }
+
+  /**
+   * Converts a display value to its canonical lowercase route slug.
+   */
+  private static function routeSlugFromDisplay(string $value): ?string {
+    if (preg_match('/^(.+)#((?:[2-9]|[1-9][0-9]+))$/', $value, $matches)) {
+      return PublicRouteSlug::normalize($matches[1] . '-' . $matches[2]);
+    }
+    return PublicRouteSlug::normalize($value);
+  }
+
+  /**
+   * Validates the canonical public slug grammar and reserved names.
+   */
+  private static function isCanonicalSlugValid(string $slug): bool {
+    return strlen($slug) <= self::MAX
+      && (bool) preg_match('/^[a-z0-9][a-z0-9-]{' . (self::MIN - 1) . ',' . (self::MAX - 1) . '}$/', $slug)
+      && !str_ends_with($slug, '-gr')
+      && !in_array($slug, self::RESERVED, TRUE);
   }
 
   /**
