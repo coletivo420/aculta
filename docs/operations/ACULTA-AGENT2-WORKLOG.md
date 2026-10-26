@@ -353,3 +353,11 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - O responsável pediu caminho parecido com o do Mercado Pago, e não o prefixo de painel. O Mercado Pago do projeto não tem endereço OAuth: a rota de retorno dele é `/commerce-mercado-pago/checkout-return`.
 - Adotado: autorização em `/commerce-melhor-envio/autorizar` e retorno em `/commerce-melhor-envio/oauth-retorno`.
 - URL de retorno a cadastrar no aplicativo sandbox do Melhor Envio: `https://aculta.toca.net.br/commerce-melhor-envio/oauth-retorno`.
+
+## Webhook do Melhor Envio (criado)
+
+- Rota: `POST /integracoes/melhorenvio/webhook`, pública, validada pelo cabeçalho `X-ME-Signature` (HMAC-SHA256 do corpo com o segredo do aplicativo).
+- Arquivos: `src/Webhook/MelhorEnvioWebhookSignature.php`, `src/Webhook/MelhorEnvioWebhookEvent.php`, `src/Controller/MelhorEnvioWebhookController.php`, `tests/src/Unit/MelhorEnvioWebhookTest.php`, registro em `routing.yml` e `services.yml`, README do módulo.
+- Testes Unit do módulo: 66 PASS. PHPCS sem erros nos arquivos novos.
+- Não verificado: codificação real da assinatura e eventos reais no sandbox (exigem credencial). A codificação não está documentada, por isso aceito base64 e hexadecimal.
+- Não publicado no servidor de teste, e não cadastrado no aplicativo do Melhor Envio.

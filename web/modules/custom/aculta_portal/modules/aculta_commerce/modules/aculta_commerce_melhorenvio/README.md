@@ -94,3 +94,22 @@ Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CO
 - Tokens OAuth2 ficam no State API, separados por ambiente. Credenciais ficam no Drupal Key.
 - O CEP é o único dado do endereço enviado à consulta externa, como já acontecia com o endpoint AJAX.
 - O mapper e o binder não fazem HTTP nem gravação.
+
+## Rotas e webhook (padrão `/integracoes/<nome>/`)
+
+| Caminho | Método | Acesso | Função |
+|---|---|---|---|
+| `/integracoes/melhorenvio/autorizar` | GET | permissão `administer melhorenvio` | inicia a autorização OAuth2 (gera `state`) |
+| `/integracoes/melhorenvio/retorno` | GET | permissão `administer melhorenvio` | recebe o retorno OAuth2, valida `state` e troca o código |
+| `/integracoes/melhorenvio/webhook` | POST | público (`_access: TRUE`) | recebe as notificações de etiqueta; autenticidade pelo `X-ME-Signature` |
+
+Webhook: a assinatura é HMAC-SHA256 do corpo bruto, com o segredo do aplicativo (`keys.<ambiente>.client_secret`, lido do
+Drupal Key). A codificação do hash não é documentada: o código aceita base64 e hexadecimal. Respostas: 503 sem segredo
+configurado, 403 com assinatura inválida, 400 com corpo fora do formato, 204 quando o evento é aceito.
+
+Eventos aceitos (`order.*`): created, pending, released, generated, received, posted, delivered, cancelled,
+undelivered, paused, suspended. Só evento, id da etiqueta e status vão para o log.
+
+Cadastro no Melhor Envio: "Integrações" → "Área Dev." → "Seus aplicativos" → "Novo Webhook", com a URL
+`https://aculta.toca.net.br/integracoes/melhorenvio/webhook` (teste) ou o host de produção. A documentação diz que o webhook
+só recebe etiquetas geradas pelo mesmo aplicativo, e que há 5 tentativas com intervalo de 15 minutos.

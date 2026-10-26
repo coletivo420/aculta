@@ -15,3 +15,13 @@ aculta_commerce_melhorenvio.oauth_callback:
   requirements:
     _permission: 'administer melhorenvio'
   methods: [GET]
+
+# Webhook público: o Melhor Envio chama esta URL de fora, sem sessão. A autenticidade vem da assinatura X-ME-Signature.
+aculta_commerce_melhorenvio.webhook:
+  path: '/integracoes/melhorenvio/webhook'
+  defaults:
+    _controller: 'aculta_commerce_melhorenvio.webhook_controller:receive'
+    _title: 'Webhook do Melhor Envio'
+  requirements:
+    _access: 'TRUE'
+  methods: [POST]
