@@ -35,7 +35,7 @@ decisão exige ADR separada. Nenhuma credencial foi migrada, rotacionada ou copi
 | 3, 21, 22, 23: troca de aba sem alterar ambiente, AJAX, teclado, mobile | **Pendente** (browser) | — |
 | 18, 20: arquivo inseguro, falha parcial | Parcial (regras existentes do loader) | — |
 | 24: loader pré-Drupal | **Pendente** (Functional) | — |
-| 25: consumidores sem regressão | **Pendente** (suíte dos módulos consumidores) | — |
+| 25: consumidores sem regressão | Unit das suítes consumidoras: mailer (162), estatística (108), id_cpf (47), Mercado Pago (11), Melhor Envio (73), todas OK. Portal: 366 testes, 1 erro fora do escopo (`AccountOtherDataStudioReturnTest`, de outro trabalho, sem segredos) | `SecretsRevealTest` (SM-4, revelação com valor fictício) |
 
 Kernel de rotas e permissões: passa no banco de teste dedicado (`docs/operations/BANCO-DE-TESTE.md`), com a
 lista de módulos do `aculta_portal` mais `language`, `locale`, `text` e a pilha de commerce/LMS. Functional: pendente.
@@ -93,4 +93,4 @@ Revisão no Firefox ESR (DISPLAY=:0), servidor de testes: `tests/browser/aculta-
 alterar o texto do ambiente, teclado (setas e Home), sem rolagem horizontal da página e tabela dentro da janela em
 1280, 390 e 320 px. Com o tema Olivero ativo (troca temporária, restaurada ao final): 16 de 16 verificações visuais e 7 de 7 de popups (alterar e apagar abrem e fecham sem gravar).
 
-Verificação HTTP com sessão real no servidor de testes (`tests/browser/aculta-secrets-manager/painel-http.py`), com aculta420 e com Olivero: 9 de 9. Substitui o SecretsPanelFunctionalTest, que dependia de site temporário sem cookie compartilhado nem domínios de produção. Não cobre revelar com valor real (o olho mostra o valor do servidor de testes).
+Verificação HTTP com sessão real no servidor de testes (`tests/browser/aculta-secrets-manager/painel-http.py`), com aculta420 e com Olivero: 9 de 9. Substitui o SecretsPanelFunctionalTest, que dependia de site temporário sem cookie compartilhado nem domínios de produção. O caminho de sucesso da revelação (escape do valor, `no-store`, log só com o nome) é coberto por `SecretsRevealTest`, com valor fictício. Não se revela valor real no servidor de testes.
