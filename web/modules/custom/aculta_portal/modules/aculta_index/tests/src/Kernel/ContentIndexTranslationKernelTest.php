@@ -92,7 +92,7 @@ final class ContentIndexTranslationKernelTest extends KernelTestBase {
       'langcode' => 'en',
     ]);
     $node->save();
-    $translation = $node->addTranslation('pt-br', [
+    $node->addTranslation('pt-br', [
       'title' => 'Título em português',
       'status' => TRUE,
     ]);
