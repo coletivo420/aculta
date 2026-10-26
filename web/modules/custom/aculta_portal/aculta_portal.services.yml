@@ -257,6 +257,12 @@ services:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }
 
+  # Retorno OAuth das redes sociais no padrão /integracoes/<nome>/retorno (regra do projeto).
+  aculta_portal.social_auth_callback_route_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\SocialAuthCallbackRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+
   aculta_portal.domain_purpose_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\DomainPurposeRequestSubscriber
     arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks', '@current_user', '@router.route_provider', '@aculta_portal.content_purpose_resolver']

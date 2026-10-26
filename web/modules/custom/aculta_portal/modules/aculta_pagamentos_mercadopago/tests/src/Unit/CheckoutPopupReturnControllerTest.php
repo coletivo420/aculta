@@ -18,7 +18,7 @@ class CheckoutPopupReturnControllerTest extends UnitTestCase {
    * Returns the redirect target that the page script would navigate to.
    */
   private function redirectFor(string $value): string {
-    $request = Request::create('/commerce-mercado-pago/checkout-return', 'GET', ['redirect' => $value]);
+    $request = Request::create('/integracoes/mercadopago/checkout-retorno', 'GET', ['redirect' => $value]);
     $html = (new CheckoutPopupReturnController())->returnPage($request)->getContent();
     $this->assertMatchesRegularExpression('/var redirect = ("(?:[^"\\\\]|\\\\.)*");/', $html);
     preg_match('/var redirect = ("(?:[^"\\\\]|\\\\.)*");/', $html, $matches);
@@ -55,7 +55,7 @@ class CheckoutPopupReturnControllerTest extends UnitTestCase {
    * A value that closes the script element stays inside the JS string.
    */
   public function testScriptBreakoutIsEncoded(): void {
-    $request = Request::create('/commerce-mercado-pago/checkout-return', 'GET', ['redirect' => '/</script><script>alert(1)</script>']);
+    $request = Request::create('/integracoes/mercadopago/checkout-retorno', 'GET', ['redirect' => '/</script><script>alert(1)</script>']);
     $html = (new CheckoutPopupReturnController())->returnPage($request)->getContent();
     $this->assertStringNotContainsString('</script><script>alert(1)', $html);
     $this->assertStringContainsString('</script', $html);
