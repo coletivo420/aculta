@@ -298,6 +298,10 @@ final class AcultaShippingInformation extends CheckoutPaneBase {
         return $profile;
       }
     }
+    $billing_profile = $this->order->getBillingProfile();
+    if ($billing_profile instanceof ProfileInterface) {
+      return $billing_profile;
+    }
     return $this->shippingOrderManager->createProfile($this->order);
   }
 

@@ -123,7 +123,9 @@ testes; o `site:install` recria suas tabelas. Nenhum banco de runtime foi usado.
 
 | Verificação | Resultado |
 | --- | --- |
-| Kernel `ShippingEngineKernelTest` | PASS; 4 testes / 90 asserções com o fechamento de 104 módulos, schema estrito e transições draft→ready→shipped |
+| Kernel `ShippingEngineKernelTest` | PASS; 6 testes / 207 asserções com o fechamento de 104 módulos, schema estrito, transições, provider externo mock e pane de checkout |
+| Pane de checkout (Kernel) | PASS; tarifa válida aceita, tarifa adulterada rejeitada e valor persistido vem do servidor |
+| Provider externo com falha (mock) | PASS; a tarifa da transportadora que lança exceção é ignorada, nunca convertida em zero |
 | Instalação `standard` + `aculta_commerce` | PASS; entidades, tipos e plugin manager disponíveis |
 | Config/install do tipo de remessa `default` | PASS |
 | Trait `aculta_purchasable_entity_shippable` | PASS; campo `weight` criado e usado |
