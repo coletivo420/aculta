@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.4.0-dev.75
 state: Dev
-progress_note: "FriendshipChangedEvent inclui transitionId imutável por transição, sem dependência do Messenger. Unit User 129/492 PASS (uma depreciação PHPUnit preexistente); Kernel Messenger 1/23 PASS (duas depreciações message); PHPCS/PHP lint PASS. Runtime pendente.\""
-next_phase: Validar edição, concorrência, privacidade, slugs e acesso em PHPUnit/Kernel/Runtime; revisão autenticada, privacidade/termos e gates antes de RC; validar Runtime em Alpha ([documentação](web/modules/custom/aculta_portal/modules/aculta_user/README.md))
+progress_note: "FriendshipChangedEvent inclui transitionId imutável por transição, sem dependência do Messenger. Unit User 129/492 PASS (uma depreciação PHPUnit preexistente); Kernel User 25/361 PASS (cinco depreciações Core/contrib); Kernel Messenger 1/23 PASS (duas depreciações message); PHPCS/PHP lint PASS. Runtime pendente."
+next_phase: Auditar todos os caminhos de escrita de field_nickname e a unicidade sob concorrência; revalidar cache/privacidade do perfil público por papel, depois homologar revisão autenticada e Runtime ([documentação](web/modules/custom/aculta_portal/modules/aculta_user/README.md))
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.

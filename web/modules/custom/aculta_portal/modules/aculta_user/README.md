@@ -4,6 +4,9 @@ Em dev.75, `FriendshipChangedEvent` transporta um identificador imutável por
 transição para consumidores distinguirem mudanças que ocorram no mesmo segundo;
 o ACULTA User continua sem dependência do Messenger. O Kernel completo da
 integração de avisos passou com duas depreciações do Core/contrib `message`.
+Na PR #298, User Unit foi reexecutado: 129 testes/492 assertions; User Kernel
+25 testes/361 assertions. Ambos passaram; uma depreciação PHPUnit e cinco de
+Core/contrib foram reportadas, sem falhas.
 
 Em dev.74, a API `PublicMemberIdentityInterface` expõe somente o apelido aprovado
 pela política pública para consumidores como a busca de conversas do Messenger;
