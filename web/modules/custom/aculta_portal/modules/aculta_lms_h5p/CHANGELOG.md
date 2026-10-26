@@ -1,3 +1,10 @@
+## 0.4.0-dev.148 — conformidade de estilo no widget — 2026-10-25
+
+- Corrige as violações Drupal/DrupalPractice do widget H5P: comentários e PHPDoc, indentação, nomenclatura de arrays e variável local que ocultava o parâmetro `$element`.
+- Mantém os identificadores históricos `aculta_H5P*`; as exceções PHPCS são pontuais e justificadas por descoberta de plugins e cache do Form API.
+- Verificação: PHPCS do formatter, widget e Kernel focal; PHP lint; Kernel focal 3 testes/134 assertions. Permanecem 41 deprecações de Core/contrib.
+- Não altera configuração ou dados no Runtime.
+
 ## 0.4.0-dev.147 — alinhar formatter e teste à relação Group proprietária — 2026-10-25
 
 - O formatter consulta e invalida cache pela relação `aculta_document_viewer_group:course_document`; usa o ID da entidade no relacionamento, sem carregar a entidade apenas para comparar o vínculo.

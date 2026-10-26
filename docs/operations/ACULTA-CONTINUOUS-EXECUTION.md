@@ -8,7 +8,7 @@
 
 ## Ponto de retomada
 
-1. Corrigir/registrar PHPCS legado restante em `aculta_lms_h5p` sem renomear classes H5P persistidas.
+1. Prosseguir PHPCS pelos arquivos tocados restantes; formatter, widget e teste focal H5P agora passam sem renomear classes H5P persistidas.
 2. Prosseguir M-1: auditar CPF/CNPJ e garantia de unicidade sem migração Runtime.
 3. Executar os gates administrativos e de configuração com bootstrap e URIs explícitas.
 4. Completar inventário Runtime read-only, Config Sync e auditoria individual dos demais componentes.
@@ -17,7 +17,7 @@
 
 - `6daa7542f test(h5p): repair course access kernel contract`: formatter de acesso e test harness usam o plugin Group real. PHPCS Drupal/DrupalPractice, PHP lint e diff check passam nos dois arquivos H5P alterados.
 - Kernel isolado H5P: 3 testes/134 assertions PASS; 41 deprecações Core/contrib. Foram validados Group membership, educador, estudante, usuário sem vínculo, referência de recurso e revogação; nenhum serviço de produto fictício foi adicionado.
-- PHPCS histórico no widget H5P permanece com violações preexistentes, inclusive classes `aculta_H5P*`, documentadas pelo fork. Nenhuma renomeação incompatível foi feita.
+- PHPCS Drupal/DrupalPractice passou nos três arquivos H5P alterados após corrigir o widget e documentar duas exceções pontuais para os nomes de classe `aculta_H5P*`, preservados por contrato de plugin/cache.
 - Gate Domain administrativo: `php vendor/drush/drush/drush.php --uri=http://aculta.toca.net.br php:script scripts/validate-admin-domain-policy.php` PASS (3498 checks). O bootstrap usou o checkout compartilhado `main`; isso valida o Runtime/código atual, não o diff da PR.
 - Commits do agente 2 revisados e cherry-picked: `6483dddbe` Deployer profile scope, `81b03581a` teste Kernel de filtro editorial e `85db52888` reconciliação documental dos módulos sob seu ownership.
 - Deployer suite: PASS após tornar neutra a descrição de menu do Portal que acoplava nome de módulo opcional; builds de ensaio continuaram em `/tmp`, e `DEP-0003` permanece bloqueador operacional de páginas públicas do host de teste.

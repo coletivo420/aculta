@@ -1,5 +1,4 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
 namespace Drupal\aculta_lms_h5p\Plugin\Field\FieldWidget;
 
@@ -22,14 +21,22 @@ use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorUtilities;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Plugin implementation of the H5P editor widget. */
+/**
+ * Plugin implementation of the H5P editor widget.
+ */
 #[FieldWidget(
   id: 'h5p_editor',
   label: new TranslatableMarkup('Editor H5P'),
   field_types: ['h5p'],
 )]
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital,Drupal.NamingConventions.ValidClassName.NoUnderscores -- The historical H5P class identifier is part of plugin and form-cache contracts.
 class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * Counts editor instances on a single page.
+   *
+   * @var int
+   */
   protected static $counter = 0;
 
   public function __construct(
@@ -53,6 +60,9 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $plugin_id,
@@ -74,9 +84,10 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $parentElement = parent::formElement($items, $delta, $element, $form, $form_state);
-    $element = &$parentElement['h5p_content'];
-    if (empty($element['id'])) {
-      return $parentElement; // No content id, use parent element
+    $widgetElement = &$parentElement['h5p_content'];
+    if (empty($widgetElement['id'])) {
+      // No content ID is available, so return the parent element.
+      return $parentElement;
     }
 
     $course = $items->getEntity();
@@ -92,10 +103,8 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
       ];
     }
 
-    $field_name = $items->getName();
-
     if ($h5p_content_id) {
-      // Load H5P Content entity
+      // Load H5P Content entity.
       $h5p_content = aculta_H5PContent::load($h5p_content_id);
 
       $parentElement['h5p_content_id'] = [
@@ -113,11 +122,11 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
         }
       }
     }
-    $element['course_id'] = [
+    $widgetElement['course_id'] = [
       '#type' => 'value',
       '#value' => (int) $course->id(),
     ];
-    $element['course_documents'] = [
+    $widgetElement['course_documents'] = [
       '#type' => 'select',
       '#title' => $this->t('PDFs de apoio desta atividade'),
       '#description' => $this->t(
@@ -130,7 +139,7 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
       '#weight' => 35,
     ];
 
-    $element['parameters'] = [
+    $widgetElement['parameters'] = [
       '#type' => 'hidden',
       '#default_value' => empty($h5p_content) ? '' : $h5p_content->getEditorJSON(),
       '#attributes' => [
@@ -139,7 +148,7 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
       '#element_validate' => [[$this, 'validateParameters']],
     ];
 
-    $element['library'] = [
+    $widgetElement['library'] = [
       '#type' => 'hidden',
       '#default_value' => empty($h5p_content) ? '' : $h5p_content->getLibraryString(),
       '#attributes' => [
@@ -151,28 +160,28 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
     ];
     self::$counter++;
 
-    // Add editor element
-    $element['editor_title'] = [
+    // Add editor element.
+    $widgetElement['editor_title'] = [
       '#type' => 'item',
       '#title' => $this->t('Tipo de atividade'),
       '#markup' => '',
     ];
-    // A classe h5p-editor é o contrato do editor do H5P core (h5peditor-editor.js), não de design.
-    $element['editor'] = [
+    // A classe h5p-editor é o contrato do editor H5P Core, não de design.
+    $widgetElement['editor'] = [
       '#type' => 'container',
       '#attributes' => array_filter([
         'class' => ['h5p-editor'],
-        'data-parametersid' => $element['parameters']['#attributes']['id'],
-        'data-libraryid' => $element['library']['#attributes']['id'],
+        'data-parametersid' => $widgetElement['parameters']['#attributes']['id'],
+        'data-libraryid' => $widgetElement['library']['#attributes']['id'],
         'data-content-id' => empty($h5p_content) ? NULL : $h5p_content_id,
       ], static fn($value) => $value !== NULL),
       'waiting' => ['#plain_text' => $this->t('Aguardando o JavaScript...')],
       '#attached' => [
         'drupalSettings' => [
           'h5p' => [
-              'H5PIntegration' => aculta_H5PDrupal::getGenericaculta_H5PIntegrationSettings($course)
+            'H5PIntegration' => aculta_H5PDrupal::getGenericaculta_H5PIntegrationSettings($course),
           ],
-              'h5peditor' => $this->editorUtilities->getEditorSettings($course),
+          'h5peditor' => $this->editorUtilities->getEditorSettings($course),
         ],
         'library' => [
           'aculta_lms_h5p/h5p.editor',
@@ -184,7 +193,7 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
   }
 
   /**
-   * Validate the h5p file upload
+   * Validates the H5P library selected for upload.
    */
   public function validate($element, FormStateInterface $form_state) {
     $value = (string) ($element['#value'] ?? '');
@@ -210,15 +219,17 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
       return;
     }
 
-    // Prevent saving an outdated content type after its replacement is installed.
+    // Prevent saving outdated content after a replacement is installed.
     $core = aculta_H5PDrupal::getInstance('core');
     if ($core->h5pF->libraryHasUpgrade($library)) {
-      // We do not allow storing old content due to security concerns
+      // Do not store outdated content types because of security concerns.
       $form_state->setError($element, $this->t('Não foi possível salvar: atualize o tipo de atividade antes.'));
     }
   }
 
-  /** Validates submitted editor data before it reaches the H5P storage layer. */
+  /**
+   * Validates submitted editor data before it reaches the H5P storage layer.
+   */
   public function validateParameters(array &$element, FormStateInterface $form_state): void {
     $value = (string) ($element['#value'] ?? '');
     $valueParents = $element['#parents'];
@@ -270,7 +281,9 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
     $form_state->setValueForElement($element, json_encode($parameters, JSON_THROW_ON_ERROR));
   }
 
-  /** Returns whether the submitted Group and content ID are editable here. */
+  /**
+   * Returns whether the submitted Group and content ID are editable here.
+   */
   private function courseHasEditorAccess(FormStateInterface $form_state, int $contentId): bool {
     $formObject = $form_state->getFormObject();
     if (!$formObject instanceof EntityFormInterface) {
@@ -282,7 +295,9 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
       && $this->courseAccess->editorAccess((int) $course->id(), $contentId, $this->currentUser)->isAllowed();
   }
 
-  /** Reads this delta's original H5P ID from the entity being edited. */
+  /**
+   * Reads this delta's original H5P ID from the entity being edited.
+   */
   private function contentIdForElement(FormStateInterface $form_state, array $element): int {
     $formObject = $form_state->getFormObject();
     if (!$formObject instanceof EntityFormInterface) {
@@ -305,16 +320,15 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
     return 0;
   }
 
-  /** Lists existing course_document Media related to this Group. */
+  /**
+   * Lists existing course_document Media related to this Group.
+   */
   private function courseDocumentOptions(CourseInterface $course): array {
     if (!$this->currentUser->hasPermission('view media')) {
       return [];
     }
     $options = [];
-    foreach (
-      $course->getRelatedEntities('aculta_document_viewer_group:course_document')
-      as $media
-    ) {
+    foreach ($course->getRelatedEntities('aculta_document_viewer_group:course_document') as $media) {
       if ($media->getEntityTypeId() === 'media'
         && $media->bundle() === 'course_document'
         && $media->access('view', $this->currentUser)) {
@@ -325,26 +339,29 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
   }
 
   /**
-   * Help message out each value from the submitted form
+   * Cleans the submitted form values and saves the H5P content.
    *
    * @param array $value
-   * @param integer $delta
-   * @param boolean $do_new_revision
+   *   The normalized values submitted by the H5P editor.
+   * @param int $delta
+   *   The field delta being saved.
+   * @param bool $do_new_revision
+   *   Whether a new revision is being created.
    */
   protected function massageFormValue(array $value, $delta, $do_new_revision) {
-    // Prepare default messaged return values
+    // Prepare default return values.
     $return_value = [
       'h5p_content_revisioning_handled' => TRUE,
       'h5p_content_id' => $value['id'],
       'h5p_content_new_translation' => $value['new_translation'],
     ];
 
-    // Skip saving content if no library is selector, or clearing content
+    // Skip saving content if no library is selected or content was cleared.
     if (!$value['library'] || $value['clear_content']) {
       $return_value['h5p_content_id'] = NULL;
 
       if ($value['id'] && !$do_new_revision && !$value['new_translation']) {
-        // Not a new revision or translation, delete existing content
+        // Delete existing content when this is not a revision or translation.
         aculta_H5PItem::deleteaculta_H5PContent($value['id']);
       }
 
@@ -353,17 +370,18 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
       return $return_value;
     }
 
-    // Load existing content
+    // Load existing content.
     $h5p_content = $value['id'] ? aculta_H5PContent::load($value['id']) : NULL;
     $old_library = empty($h5p_content) ? NULL : $h5p_content->getLibrary(TRUE);
     $old_params = empty($h5p_content) ? NULL : $h5p_content->getParameters();
     if (empty($h5p_content)) {
-      $value['id'] = NULL; // Invalid, content has been deleted
+      // The prior content was deleted, so create a new record.
+      $value['id'] = NULL;
     }
 
     $params = json_decode($value['parameters']);
 
-    // Prepare content values
+    // Prepare content values.
     $core = aculta_H5PDrupal::getInstance('core');
     $content = [
       'library' => $this->editorUtilities->getLibraryProperty($value['library']),
@@ -375,7 +393,7 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
       $content['id'] = $value['id'];
     }
 
-    // Save the new content
+    // Save the new content.
     $return_value['h5p_content_id'] = $core->saveContent($content);
 
     $h5pEntity = aculta_H5PContent::load($return_value['h5p_content_id']);
@@ -399,13 +417,12 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
       $h5pEntity->save();
     }
 
-    // If we had existing content and did a new revision we need to make a copy
-    // of the content folder from the old revision
+    // Copy the content folder when creating a revision or translation.
     if ($value['id'] && ($do_new_revision || $value['new_translation'])) {
       $core->fs->cloneContent($value['id'], $return_value['h5p_content_id']);
     }
 
-    // Keep new files, delete files from old parameters
+    // Keep new files and delete files from old parameters.
     $editor = $this->editorUtilities->getEditor();
     $editor->processParameters(
       $return_value['h5p_content_id'],
@@ -418,7 +435,9 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
     return $return_value;
   }
 
-  /** Retrieves the Group being edited for validating submitted references. */
+  /**
+   * Retrieves the Group being edited for validating submitted references.
+   */
   private function courseForSave(int $courseId): ?CourseInterface {
     $course = $courseId
       ? $this->entityTypeManager->getStorage('group')->load($courseId)
