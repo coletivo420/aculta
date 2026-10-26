@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_editor\Kernel;
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\UserSession;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\user\Entity\Role;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\Yaml\Yaml;
@@ -102,6 +105,59 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
     foreach (self::FORMATS as $id) {
       $this->assertNotNull(FilterFormat::load($id), "Formato $id existe.");
     }
+  }
+
+  /**
+   * Full HTML is usable only by the administrator role in Config Sync.
+   */
+  public function testFullHtmlIsRestrictedToAdministratorRole(): void {
+    $format = FilterFormat::create([
+      'format' => 'full_html',
+      'name' => 'Full HTML',
+      'filters' => [],
+    ]);
+    $format->save();
+
+    $role_files = glob(dirname(__DIR__, 9) . '/config/sync/user.role.*.yml');
+    $this->assertNotEmpty($role_files, 'Configured user roles are available.');
+    $allowed_roles = [];
+    $test_uid = 2;
+
+    foreach ($role_files as $role_file) {
+      $role_config = Yaml::parseFile($role_file);
+      $role_id = $role_config['id'];
+      $role_values = [
+        'id' => $role_id,
+        'label' => $role_config['label'],
+        'weight' => $role_config['weight'] ?? 0,
+        'is_admin' => $role_config['is_admin'] ?? FALSE,
+        'permissions' => $role_config['permissions'] ?? [],
+      ];
+      $role = Role::load($role_id) ?: Role::create($role_values);
+      foreach ($role_values as $key => $value) {
+        $role->set($key, $value);
+      }
+      $role->save();
+      $this->assertNotContains('use text format full_html', $role->getPermissions(), "$role_id does not receive full_html in Config Sync.");
+
+      // Use a unique non-superuser ID so entity access result caching cannot
+      // reuse a prior role's result for another account.
+      $uid = $role_id === AccountInterface::ANONYMOUS_ROLE ? 0 : $test_uid++;
+      $account = new UserSession(['uid' => $uid, 'roles' => [$role_id]]);
+      $this->assertSame($role_id === 'administrator', $role->isAdmin(), "$role_id has the expected administrator status.");
+      $this->assertSame($role_id === 'administrator', $account->hasPermission('use text format full_html'), "$role_id has the expected full_html permission.");
+      $allowed = $format->access('use', $account, TRUE)->isAllowed();
+      if ($allowed) {
+        $allowed_roles[] = $role_id;
+      }
+      $this->assertSame(
+        $role_id === 'administrator',
+        $allowed,
+        sprintf('Role %s has the expected full_html access.', $role_id),
+      );
+    }
+
+    $this->assertSame(['administrator'], $allowed_roles);
   }
 
   /**
