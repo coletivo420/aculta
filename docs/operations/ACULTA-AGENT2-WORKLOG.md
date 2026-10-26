@@ -311,3 +311,18 @@ cadastrados.
 - **Dados de teste removidos** do banco servido após a verificação: usuário `qr_teste_agente`, papel `qr_teste_agente` e o código QR de teste.
 - **Regra de banco de teste:** os Kernels devem rodar no MariaDB `aculta_simpletest` (`secrets/simpletest-db.env`), não em SQLite. O Kernel de QR Code foi refeito no MariaDB: **17 PASS**.
 - **Pendente:** refazer no MariaDB os Kernels de links, activity, editor, sitemap e Melhor Envio, que até aqui rodaram em SQLite.
+
+## Kernels refeitos no MariaDB de teste (regra do projeto)
+
+Os resultados anteriores de Kernel foram obtidos em SQLite, o que contraria `docs/operations/BANCO-DE-TESTE.md`. Todos foram refeitos com `SIMPLETEST_DB` do MariaDB `aculta_simpletest`:
+
+| Módulo | Resultado (MariaDB) | Observação |
+|---|---|---|
+| `aculta_qrcode` | **17 PASS** | inclui a regressão da listagem (`748a55549`) |
+| `aculta_links` | **7 PASS** | 7 deprecações de contrib (`token`) |
+| `aculta_activity` | **3 PASS** | 5 deprecações de contrib (`domain`) e de core |
+| `aculta_editor` | **7 PASS** | 3 deprecações de contrib (`ckeditor5_plugin_pack`) e de core |
+| `aculta_portal_sitemap` | **2 PASS** | 50 deprecações de contrib e de core (closure completa) |
+| `aculta_commerce_melhorenvio` | **3 PASS** | 66 deprecações de contrib e de core (closure completa) |
+
+Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os módulos do checkout principal, e `domain_config` a partir de `vendor/drupal/domain`. Esses links ficam fora do git.
