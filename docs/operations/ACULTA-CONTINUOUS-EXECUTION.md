@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit funcional publicado:** `8ddea48a1` (`fix(cpf): fail closed on unindexed profile documents`); há incremento fiscal do Portal em validação local, ainda não commitado. Branch e remote devem ser reconciliadas no próximo checkpoint.
+**Último commit publicado:** `6f7203aa0` (`fix(portal): exempt free LMS courses from fiscal identity`), push normal confirmado para `origin/chore/aculta-m0-integridade`; árvore limpa após checkpoint.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
@@ -385,4 +385,4 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Corrigida a política compartilhada: Loja exige documento; LMS exige para variações `curso` de preço base maior que zero. Todos os itens precisam ser reconhecidos como cursos gratuitos para dispensar; pedido vazio, item ausente ou composição ambígua permanece fail-closed. Descontos não tornam curso pago gratuito para esta regra.
 - `FiscalIdentityPolicyTest`: 13 testes / 30 assertions PASS. `FiscalIdentityPaneKernelTest`: 12 testes / 343 assertions PASS em MariaDB dedicado (72 depreciações upstream). PHPCS Drupal/DrupalPractice e PHP lint dos dois arquivos PHP PASS. Uma invocação anterior do Kernel sem `SIMPLETEST_DB` terminou em setup (12 errors/0 assertions); repetição com o ambiente isolado passou.
 - Atualizados manifesto `aculta_portal` 0.4.1-dev.35, README, changelog, contratos CPF/checkout, roadmaps Commerce/LMS, status e matriz. README raiz regenerado; índice 41 componentes PASS. Nenhuma operação Runtime/checkout foi executada.
-- Próxima ação: revisar diff, fazer commit próprio e push normal; depois retomar decisão do harness Portal/User para LMS/Doações e auditar o próximo contrato central independente.
+- Próxima ação: revisar diff, retomar decisão do harness Portal/User para LMS/Doações e auditar o próximo contrato central independente.
