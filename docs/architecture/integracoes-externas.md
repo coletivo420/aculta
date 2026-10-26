@@ -22,19 +22,21 @@ Regras:
 
 Ambiente de teste: host `https://aculta.toca.net.br`. Produção: `https://aculta.org`, com o mesmo caminho.
 
-## Resposta ao usuário no retorno de integrações
+## Padrão de ida e retorno de integrações (popup)
 
 Regra do projeto, para Melhor Envio, Mercado Pago, Google e qualquer integração futura:
 
-- Retornos de navegador (autorização, retorno de login, retorno de pagamento) **não** devolvem texto puro nem tela própria. O resultado vai para as **mensagens do Drupal** (`messenger`: `addStatus` para sucesso, `addError` para falha), e a resposta redireciona para a página inicial, onde o tema exibe o bloco de mensagens (`aculta_messages`, região `highlighted`).
+- **Ida:** a plataforma externa abre num popup. Link com `data-aculta-popup="<nome-da-janela>"` e a biblioteca `aculta_portal/integration-popup`. Se o navegador bloquear o popup, o link segue na mesma aba. Não usar `noopener`: o retorno precisa de `window.opener`.
+- **Retorno:** a rota de retorno grava o resultado nas **mensagens do Drupal** (`messenger`: `addStatus` para sucesso, `addError` para falha) e responde com `Drupal\aculta_portal\Integration\PopupReturnPage::response($request, $destino)`. Essa página manda a janela de origem ao destino e fecha o popup; sem popup, a própria aba vai ao destino. O tema exibe a mensagem no destino.
+- **Destino:** caminho do próprio site (de preferência a página da integração, que mostra o estado atualizado). Qualquer outro valor cai na página inicial.
+- **Cache:** rotas de autorização e de retorno têm `options: no_cache: TRUE`. Redirecionamento externo com `TrustedRedirectResponse` precisa de `max-age` 0, porque essa classe é cacheável por padrão e o cache serviria um `state` já consumido.
 - Textos de mensagem passam por `t()` e não expõem tokens, códigos ou detalhes técnicos. Detalhes vão para o log do canal da integração, com hash em vez do valor.
-- Respostas de **serviço** (webhooks chamados pela plataforma externa) respondem só com o código HTTP adequado e corpo vazio ou mínimo, pois não há usuário para ler a página.
-- Nova integração segue este padrão desde o início; retorno que ainda não segue a regra deve ser registrado como pendência, não copiado.
+- **Webhooks de serviço** (chamados pela plataforma externa) respondem só com o código HTTP adequado e corpo vazio ou mínimo.
 
 Situação atual:
 
-| Integração | Retorno de navegador | Situação |
-| --- | --- | --- |
-| Melhor Envio | `/integracoes/melhorenvio/retorno` e `/autorizar` | Conforme (mensagens do Drupal + redirecionamento). |
-| Google | `/integracoes/google/retorno` (Social Auth) | Mensagens do próprio Social Auth; verificar se o texto é o do Drupal. Pendente de revisão. |
-| Mercado Pago | `/integracoes/mercadopago/checkout-retorno` | Página de popup que fecha a janela e avisa a origem. Fora da regra até decisão do responsável, por envolver o fluxo de pagamento. |
+| Integração | Ida | Retorno | Situação |
+| --- | --- | --- | --- |
+| Melhor Envio | `/admin/commerce/config/melhorenvio` (botão em popup) → `/integracoes/melhorenvio/autorizar` | `/integracoes/melhorenvio/retorno` | Conforme. |
+| Mercado Pago | Popup do Checkout Pro (`checkout_popup.js`, próprio do módulo) | `/integracoes/mercadopago/checkout-retorno` | Retorno usa `PopupReturnPage`. A ida ainda usa o script próprio; migrar para `integration-popup` é pendência. As mensagens do pagamento vêm do retorno do Commerce. |
+| Google | Link de login do Social Auth | `/integracoes/google/retorno` (Social Auth) | Pendente de revisão: verificar se a ida pode ser popup e se as mensagens são as do Drupal. |
