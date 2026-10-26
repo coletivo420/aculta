@@ -28,6 +28,9 @@ Observações:
   aparece antes da configuração. Para renovar, use o botão de redefinição ao lado da assinatura.
 - A validação da `x-signature` é feita pelo SDK oficial (`mercadopago/dx-php`, ver `WebhookGuard`): manifesto
   `id:{data.id};request-id:{x-request-id};ts:{ts};` assinado com HMAC-SHA256 pela chave da aplicação.
+- A URL de notificação gerada pelo Checkout Pro não inclui `source_news=ipn`: esse parâmetro força o canal IPN
+  legado, cuja assinatura não pode ser validada. O Portal aceita Webhooks modernos assinados, rejeita payload IPN
+  (`topic`/`id`) e só então adapta o pagamento à interface do Commerce.
 - A página de notificações pede URLs de recebimento distintas para teste e produção. Cada URL é usada com as
   credenciais correspondentes ao seu ambiente.
 

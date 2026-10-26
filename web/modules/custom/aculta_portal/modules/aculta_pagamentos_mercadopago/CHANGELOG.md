@@ -64,3 +64,15 @@
 - Documentação e licença do upstream preservadas (`README.original-commerce_mercado_pago.md`, `LICENSE.txt`).
 - Ainda não habilitado nem referenciado pelo `aculta_portal`: a troca de dependência e a remoção do contrib vêm nas entregas seguintes.
 - RUNTIME STATUS: DEFERRED (não instalado no Runtime de teste).
+## 0.1.0-dev.9 — usar Webhooks assinados no checkout — 2026-10-26
+
+- O formulário de checkout deixou de adicionar `source_news=ipn` à
+  `notification_url`. Esse parâmetro força o canal IPN legado, não validável
+  por assinatura; o guard central do Portal aceita somente Webhooks modernos
+  assinados, valida `x-signature` e normaliza o payload antes do Commerce.
+- PHPCS e testes Unit do guard do Portal verificam os contratos de assinatura,
+  normalização e recusa fail-closed de IPN. Nenhuma credencial, chamada externa,
+  pagamento ou Runtime foi utilizado.
+- PHP lint PASS. PHPCS Drupal e DrupalPractice no `RedirectCheckoutForm`: zero
+  erros; seis avisos antigos de linhas acima de 80 caracteres permanecem.
+

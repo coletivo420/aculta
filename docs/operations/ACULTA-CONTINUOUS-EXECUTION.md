@@ -539,6 +539,12 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - O config ativo `aculta_commerce_melhorenvio.settings` contém caminhos adicionais (`contact_email`, `environment`, `keys`, `redirect_uri`, `scopes`) que não existem no schema/default versionado desta branch. Valores não foram lidos nem registrados; só `origin.country_code` foi identificado como não vazio na seção de origem. Nenhum conteúdo operacional foi exportado.
 - Decisão do responsável: manter Melhor Envio fora do Sync. Nenhum arquivo `core.extension` ou config do módulo foi alterado. Isso não autoriza desinstalar a extensão ativa; qualquer `cim` futuro exige preview explícito da remoção da extensão/config e rollback aprovado. A comparação funcional de código/schema fica encaminhada ao owner sem edição do diretório.
 
+## M-4 — compatibilizar Mercado Pago com Webhooks assinados (2026-10-26)
+
+- Auditoria cruzada reproduziu contradição: `RedirectCheckoutForm` acrescentava `source_news=ipn` à URL, enquanto o `WebhookGuard` do Portal aceita notificações Webhook assinadas e rejeita payload IPN legado (`topic`/`id`). A documentação oficial identifica esse parâmetro como seleção exclusiva de IPN, que não permite validar origem por assinatura.
+- Removido `source_news=ipn`; o endpoint de Commerce passa a receber Webhooks modernos para validação/normalização pelo Portal antes de `onNotify()`. Unit `MercadoPagoWebhookFailClosedTest` + `MercadoPagoSubscriptionWebhookTest`: 13 testes / 19 assertions PASS, incluindo assinatura correta, assinatura forjada, recusa de IPN e adaptação das notificações suportadas. Nenhuma chamada de rede, credencial, pagamento ou Runtime.
+- `aculta_pagamentos_mercadopago` avançou `0.1.0-dev.8` → `.9`; README, CHANGELOG, status e matriz reconciliados. PHP lint PASS; PHPCS Drupal/DrupalPractice no formulário: zero erros e seis avisos antigos de linhas longas. Sandbox externo, checkout, estorno e homologação visual permanecem pendentes.
+
 ## M-4 — corrigir setup da suíte Kernel LMS (2026-10-26)
 
 - Kernel agregado inicialmente reproduziu erros de setup: testes parciais ativavam LMS sem sua closure, primeiro faltava `aculta_portal.checkout_settings`, depois a relação obrigatória com Messenger e a rota referenciada `aculta_studio.ganjalab_controller`. Nenhuma assertion de segurança havia falhado; a causa era a composição incompleta do container de teste.
