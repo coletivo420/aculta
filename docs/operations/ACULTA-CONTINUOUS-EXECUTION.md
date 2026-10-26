@@ -955,3 +955,28 @@ Conclusão: nenhum commit do backup contém código exclusivo fora da PR. Os doi
 - **Decidido pelo responsável:** o frete do simulador é **exibido e revalidado no checkout**. Nada é persistido no carrinho nem no pedido antes do checkout. A cotação fica só no tempstore da sessão, com expiração pelo `valid_until`.
 - Consequência: o pane `aculta_shipping_information` revalida a cotação no checkout e mostra a mudança de valor antes do pagamento.
 - `FRETE-SIMULADOR.md` seção 8.6 atualizada de "pendente" para "decidido".
+
+## Conciliação local (Homelab) e cutover do frete — 2026-10-26
+
+| Item | Classificação | Ação |
+|---|---|---|
+| Branches locais integrados na PR, de minha autoria (`docs/*` de 8.6, 670, incidentes, E0, Kernel do Index; `integra/*`; `fix/secrets-claro-cor-apagar`; `feat/aculta-index-validacao`) | (i) integrado | `git branch -d`, ou `-D` com verificação de ancestral da PR e `git cherry` vazio (dois casos) |
+| `feat/aculta-fronteira-links-secrets` | (i) integrado | branch local apagada; worktree removido incompleto (ver abaixo) |
+| Worktrees `frente3-merge-teste` e `aculta-frete-simulador-e0` | (i) integrado, limpo | `git worktree remove` sem `--force` |
+| `/mnt/disco1/tmp/aculta-fronteira-links-secrets` | (i) integrado, mas remoção incompleta | **Parado.** 7.532 arquivos (376 MB) restam no diretório. Decisão pendente |
+| `/mnt/disco1/tmp/aculta-token-cipher` | (iv) alterações pendentes | **Parado** (18 alterações; regra de parar). Não removido |
+| `backup/checkout-antes-pr-8499180a6` | (iii) backup | Bundle verificado; branch mantida até o fim da janela de updates |
+| Stashes de Fórum, Messenger, mailer (`stash@{2..9}`) | (iii) backup | Patch salvo em `backup-stashes-20261026/`; nenhum drop nesta rodada |
+| `stash@{0}` (fase B do checkout servido) | (iv) conteúdo exclusivo do Local 2 | Mantido até o Local 2 confirmar a recuperação |
+| Branches `agent/*`, `feat/aculta-secrets-claro`, `docs/aculta-mp-extracao-b0`, `docs/aculta-runtime-snapshot-ensaio`, `feat/aculta-messenger/user-update-ensaio` | (ii) ativo de outro agente | Não tocados |
+| `d4c11717f` (backup, c) | (c) exclusivo | Descartado: README obsoleto, já classificado |
+| `1b782798b` (backup, c) | (c) exclusivo | Incorporado em `SECRETS-SM9-INTEGRACAO.md` (verificação HTTP 9/9), por commit de docs |
+
+**Cutover do frete (`feat/aculta-commerce-cutover` @ `975761aff`, publicado para revisão, sem PR):**
+- `update_8001` instala as entidades do motor (idempotente).
+- `post_update_migrate_shipping_methods` copia FlatRate para `aculta_flat_rate` (e `flat_rate_per_item`), preservando valores, lojas, status e peso; o original não é apagado.
+- `post_update_retarget_shipments` remove só a referência de remessa do pedido, apaga remessas legadas e reaponta o campo. Pedidos não são apagados.
+- A desinstalação do `commerce_shipping` é **passo explícito da janela**, não post-update: `blockersForUninstall()` vazio e depois `drush pm:uninstall commerce_shipping`.
+- Kernel: 4 testes e 112 asserções PASS. PHPCS: 0 erros nos arquivos novos.
+- **Não provado no Kernel:** reapontamento com campo instalado e com dados. O harness falha ao salvar pedido com remessa legada. A prova fica para o ensaio no banco restaurado do snapshot (Local 3).
+- Ordem obrigatória documentada em `RUNTIME-UPDATE-WINDOW.md`: updatedb com o vendor atual → conferir → `drush pm:uninstall` → só então `composer install` com o lock da PR.
