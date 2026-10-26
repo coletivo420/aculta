@@ -8,4 +8,5 @@ dependencies:
   - aculta_portal:aculta_portal
   - aculta_portal:aculta_commerce
   - aculta_portal_cep:aculta_portal_cep
+  - commerce_shipping:commerce_shipping
   - key:key

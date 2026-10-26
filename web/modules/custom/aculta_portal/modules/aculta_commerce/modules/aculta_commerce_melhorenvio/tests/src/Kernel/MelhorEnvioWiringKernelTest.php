@@ -7,6 +7,12 @@ namespace Drupal\Tests\aculta_commerce_melhorenvio\Kernel;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClient;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioEnvironment;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException;
+use Drupal\aculta_commerce_melhorenvio\Quote\QuotePackage;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\key\Entity\Key;
 use Drupal\KernelTests\KernelTestBase;
@@ -218,6 +224,54 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     self::assertStringContainsString('data-aculta-popup="melhorenvio_autorizacao"', $html);
     self::assertStringContainsString('/integracoes/melhorenvio/autorizar', $html);
     self::assertSame(0, $build['#cache']['max-age']);
+  }
+
+  /**
+   * O método de envio do Melhor Envio é descoberto pelo Commerce Shipping, com os serviços confirmados.
+   */
+  public function testShippingMethodPluginIsDiscovered(): void {
+    $definition = $this->container->get('plugin.manager.commerce_shipping_method')->getDefinition('aculta_melhorenvio');
+    self::assertSame(['1', '2', '3', '4', '17'], array_map('strval', array_keys($definition['services'])));
+  }
+
+  /**
+   * Cotação de ponta a ponta com HTTP simulado pela resposta real do sandbox; endereço inválido não chama a API.
+   */
+  public function testQuoterEndToEndWithSandboxFixture(): void {
+    $history = [];
+    $mock = new MockHandler([
+      new GuzzleResponse(200, ['Content-Type' => 'application/json'], (string) file_get_contents(dirname(__DIR__, 2) . '/fixtures/quote-sandbox.json')),
+    ]);
+    $stack = HandlerStack::create($mock);
+    $stack->push(Middleware::history($history));
+    $this->container->set('http_client', new GuzzleClient(['handler' => $stack]));
+    $this->container->get('aculta_commerce_melhorenvio.token_store')->save(MelhorEnvioEnvironment::Sandbox, [
+      'access_token' => 'token-fixture',
+      'refresh_token' => 'refresh-fixture',
+      'expires_at' => time() + 3600,
+    ]);
+    $this->config('aculta_commerce_melhorenvio.settings')
+      ->set('origin.country_code', 'BR')
+      ->set('origin.postal_code', '74003-010')
+      ->save();
+
+    $quoter = $this->container->get('aculta_commerce_melhorenvio.quoter');
+    $package = new QuotePackage(16, 12, 24, 0.8, 120);
+
+    self::assertSame([], $quoter->quote(['country_code' => 'BR', 'postal_code' => '123'], $package));
+    self::assertCount(0, $history);
+
+    $options = $quoter->quote(['country_code' => 'BR', 'postal_code' => '01310-100'], $package);
+    self::assertSame(['1', '2'], array_map(static fn($o) => $o->serviceId, $options));
+    self::assertCount(1, $history);
+    $request = $history[0]['request'];
+    self::assertSame('POST', $request->getMethod());
+    self::assertSame('/api/v2/me/shipment/calculate', $request->getUri()->getPath());
+    self::assertSame('Bearer token-fixture', $request->getHeaderLine('Authorization'));
+    $body = json_decode((string) $request->getBody(), TRUE);
+    self::assertSame('74003010', $body['from']['postal_code']);
+    self::assertSame('01310100', $body['to']['postal_code']);
+    self::assertSame(120.0, (float) $body['products'][0]['insurance_value']);
   }
 
   /**

@@ -70,3 +70,22 @@ services:
       - '@aculta_commerce_melhorenvio.webhook_signature'
       - '@logger.factory'
       - '@aculta_portal.secrets_manager'
+
+  # Cotação de frete (ME-0.2-A): payload, leitura da resposta, serviço e conversão em tarifas do Commerce.
+  aculta_commerce_melhorenvio.quote_request_builder:
+    class: Drupal\aculta_commerce_melhorenvio\Quote\QuoteRequestBuilder
+
+  aculta_commerce_melhorenvio.quote_response_parser:
+    class: Drupal\aculta_commerce_melhorenvio\Quote\QuoteResponseParser
+
+  aculta_commerce_melhorenvio.quoter:
+    class: Drupal\aculta_commerce_melhorenvio\Quote\MelhorEnvioQuoter
+    arguments:
+      - '@aculta_commerce_melhorenvio.client'
+      - '@aculta_commerce_melhorenvio.shipment_address_binder'
+      - '@aculta_commerce_melhorenvio.quote_request_builder'
+      - '@aculta_commerce_melhorenvio.quote_response_parser'
+      - '@logger.factory'
+
+  aculta_commerce_melhorenvio.quote_rate_factory:
+    class: Drupal\aculta_commerce_melhorenvio\Quote\QuoteRateFactory

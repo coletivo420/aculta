@@ -24,8 +24,8 @@ Versão atual: `0.1.0-dev.1`. Plano de referência: `docs/operations/` e `docs/p
 | ME-0.1-C | Cliente REST OAuth2, sandbox, tokens e credenciais em Key/State | Concluída: cliente, rotas de autorização e retorno, webhook, testes Unit e Kernel; validado no sandbox |
 | ME-PEND-01 | Confirmar no sandbox: caminhos authorize, oauth/token e cotação, `expires_in`, escopos e formato de `Authorization` | Concluída (2026-10-26): caminhos confirmados, `expires_in` 30 dias, escopos `shipping-calculate users-read`, `Bearer` |
 | ME-PEND-02 | Criptografia em repouso dos tokens (hoje State API) conforme política de produção | Pendente (decisão de arquitetura) |
-| ME-0.2-A | Plugin Commerce Shipping e cotação | Em andamento |
-| ME-0.2-B | Integração ao checkout existente | Pendente |
+| ME-0.2-A | Plugin Commerce Shipping e cotação | Concluída no código: método `aculta_melhorenvio`, cotação (`products`), serviços com erro descartados, testes Unit (fixture real do sandbox) e Kernel. Falta CEP de origem na configuração |
+| ME-0.2-B | Integração ao checkout existente | Pendente: definir CEP de origem, criar o método de envio na loja e testar o checkout (ACULTA420 e Olivero) |
 | ME-0.3-A a ME-0.7-A | Envios, compra autorizada, etiquetas, impressão, rastreamento, Green Stash, MCP, Statistics e Messenger | Pendente |
 | ME-0.8-T | Testes completos no homelab | Pendente |
 

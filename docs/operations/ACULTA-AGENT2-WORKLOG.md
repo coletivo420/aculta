@@ -458,3 +458,11 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - Evidência: entradas `oauth_authorize` em `cache_dynamic_page_cache` com `expire=-1`; nenhum registro de "autorização iniciada" após 09:25.
 - O diagnóstico anterior (aba antiga ou sandbox devolvendo `state` velho) estava errado. O responsável tinha apontado cache.
 - Correção (`fc097f924`): `no_cache` nas rotas de autorizar e retorno, `max-age` 0 e `Cache-Control: no-store` na resposta. Teste Kernel de regressão (dois acessos, `state` diferentes, resposta não cacheável). Cache reconstruído no servidor de teste; nenhuma entrada dessas rotas volta ao cache.
+
+## Melhor Envio: popup como padrão e cotação (ME-0.2-A)
+
+- Padrão de integrações: ida em popup (`aculta_portal/integration-popup`) e retorno com `PopupReturnPage` (fecha o popup e leva a janela de origem ao destino; mensagens do Drupal). Mercado Pago passou a usar a página comum sem mudar o comportamento (testes do retorno inalterados e verdes). Regra em `AGENTS.md` e `docs/architecture/integracoes-externas.md`.
+- Página de estado do Melhor Envio em `/painel-administrativo/comercio/config/melhorenvio`, com botão de conexão em popup.
+- Escopos padrão `shipping-calculate users-read` na instalação.
+- ME-0.2-A: método de envio `aculta_melhorenvio` (Commerce Shipping 3.0.5), cotação no formato `products` da especificação, serviços com `error` descartados, preço `custom_price`, prazo em dias úteis. Fixture real do sandbox em `tests/fixtures/quote-sandbox.json` (sem dados pessoais). Testes: 73 Unit, 9 Kernel (MariaDB).
+- Pendente (ME-0.2-B): CEP de origem da loja na configuração e criação do método de envio no servidor de teste; teste de checkout com ACULTA420 e Olivero.
