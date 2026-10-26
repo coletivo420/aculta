@@ -2,4 +2,4 @@
 version: 0.1.0-dev.32
 state: Dev
 next_phase: Validar a delegação opcional do `ImageCleanup` ao serviço comum no Kernel e conferir que quarentena, retenção e remoção de derivados mantêm paridade; confirmar binários necessários para produção e avançar integração Growroom ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
-progress_note: "Dev.32: `FileRemoverFailClosedTest` cobre referência reportada pelo File API, referência Entity Usage e falha da consulta sem prosseguir para storage de arquivos; Unit 3/23 PASS, PHPCS e PHP lint do teste PASS. README reconciliado ao manifesto. Runtime e arquivos reais não foram alterados."
+progress_note: "Dev.32: `FileRemoverFailClosedTest` cobre referência reportada pelo File API, referência Entity Usage e falha da consulta sem prosseguir para storage de arquivos; Unit FileRemoverFailClosedTest 3/23 PASS; suíte Unit do módulo 25/103 PASS (9 depreciações PHPUnit); PHPCS e PHP lint do teste PASS. README reconciliado ao manifesto. Runtime e arquivos reais não foram alterados."
