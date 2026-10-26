@@ -1,6 +1,6 @@
 # COM-SHIP — Porte do Commerce Shipping para `aculta_commerce`
 
-**Estado:** Dev / migração não iniciada em Runtime. **Decisão:** funcionalidades de Shipping próprias em `aculta_commerce`, sem novo submódulo; jamais editar `web/modules/contrib/`.
+**Estado:** Dev / migração não iniciada em Runtime. **Decisão atualizada em 2026-10-26:** dados legados de pedidos, remessas e configurações antigas de Shipping **não precisam ser migrados ou preservados no banco de desenvolvimento/testes expressamente descartável**. Não eliminar dados da produção nem contas, endereços, identificadores fiscais, produtos ou sistemas independentes. **Decisão:** funcionalidades de Shipping próprias em `aculta_commerce`, sem novo submódulo; jamais editar `web/modules/contrib/`.
 
 **Base auditada:** PR #298 em 2026-10-26; `composer.lock` fixa `drupal/commerce_shipping` **3.0.5**. Código-fonte a portar no Homelab: `web/modules/contrib/commerce_shipping/` da instalação efetiva, não exemplos de 8.x-2.x. Obter referência upstream da mesma versão e registrar hash, arquivos, atribuições e alterações; respeitar a licença GPL e preservar avisos de copyright/licença.
 
@@ -53,11 +53,15 @@ Mover o ownership funcional do pane de envio de `aculta_portal` para `aculta_com
 
 O checkout **não** pode concluir uma remessa tarifada sem serviço válido e autorizado, nem apresentar tarifa inventada para suprimir a mensagem.
 
-### COM-SHIP-4 — transportar dados/configuração e desativar contrib
+### COM-SHIP-4 — reset limpo, sem migrar legado
 
-Projetar a migração real antes de executar: `commerce_shipment` e IDs/revisões, references em pedidos, `commerce_shipping_method`, plugin IDs, field storages, configs/shipping flow/workflow, Views, access, testes de reentrância, `hook_update_N` e rollback testado. Definir decisão sobre manter IDs físicos/dados/entidades versus cópia com reindexação; não escolher sem caracterização de dependências e banco.
+**Decisão substitutiva do responsável:** não portar dados históricos de pedidos, remessas, métodos, cotações ou configurações antigas de frete. Implementar instalação limpa do novo motor em `aculta_commerce` e novos pedidos de teste. Não escrever migrations de preservação de IDs ou histórico de Shipping. Não criar tabelas de compatibilidade legada.
 
-**Bloqueio:** não desinstalar `commerce_shipping` no Runtime até migração não destrutiva, com prova dos pedidos e remessas históricos. Desinstalação pode remover dados/configurações. Config Sync global e Composer são integrados pelo agente principal com testes e autorização.
+O descarte **é permitido somente no ambiente de desenvolvimento/teste explicitamente descartável e conferido**, após inventário, snapshot/backup privado, checagem de URI/DB/root e plano de restauração. O executor local deve classificar as entidades e vínculos antes de apagar. Como o pedido `default` pode participar do carrinho consolidado, não presumir que representa exclusivamente a Loja. Para zerar todos os pedidos de Commerce no ambiente de teste, certificar que LMS/Doações não precisem daqueles pedidos e que não haja transação externa em andamento. Não apagar clientes, profiles, CPF/CNPJ, termos, produtos, uma única Store, inscrições LMS ou outros registros de domínio por associação casual.
+
+O procedimento de reset deverá usar APIs/rotinas Drupal ou uninstall controlado, **jamais SQL ad hoc que ignore Entity API**, em banco isolado. Evitar efeitos externos de hooks (avisos, métricas, webhooks, pagamento). O runbook em `docs/SHIPPING-RESET-TEST-ONLY.md` determina dry-run, backup, bloqueio de escrita concorrente, apagamento e provas. **A autorização de descarte de legado não é autorização para apagar dados na produção ou Runtime compartilhado não verificado.**
+
+Remover a dependência `drupal/commerce_shipping` de Composer/Config Sync **somente depois** que o motor próprio compilar, instalar, registrar entidades/plugins, renderizar o checkout, calcular tarifas autorizadas e passar em testes. Não desinstalar um contrib requerido enquanto o pane do Portal ainda deriva de `ShippingInformation`. Config Sync e Composer globais pertencem à integração coordenada pelo agente principal.
 
 ### COM-SHIP-5 — shipping real e Green Stash
 
@@ -67,7 +71,7 @@ No core `aculta_commerce` oferecer cálculo de frete, métodos elegíveis, escol
 
 Unit, Kernel MariaDB, Functional, Browser Firefox ESR visível, PHPCS Drupal/DrupalPractice, lint, gates próprios, Admin Domain, propósito Shop, Entity Access e aprovação visual SDC. Incluir pedidos físicos/mistos, múltiplas variações, checkout agregado e sem frete (LMS/Doações), revisão de cálculo por CEP/itens, atualização/removal de método, logs, erros da API, idempotência e concorrência.
 
-Testar instalação limpa, atualização de instalação já populada e rollback em clones **isolados**. Registrar evidências exatas. Só recomendar RC após fechar todo o ciclo.
+Testar instalação limpa, reset de legado e rollback por snapshot em clones **isolados**. **Não** exigir migração de pedidos ou remessas históricos. Registrar evidências exatas. Só recomendar RC após fechar todo o ciclo.
 
 ## Próxima ação obrigatória do executor local
 
@@ -81,4 +85,4 @@ Testar instalação limpa, atualização de instalação já populada e rollback
 - `docs/portal/CHECKOUT-BILLING.md`
 - `docs/decisions/ADR-013-portal-multi-cart-checkout.md`
 
-**Estado de implantação:** não implementado. Este documento é contrato de execução e inventário preliminar, não substitui o porte real, testes ou correção confirmada do checkout.
+**Estado de implantação:** contrato de quotes e diagnóstico de Sync/Runtime inicializados na branch de trabalho. Código portado do upstream, plugin efetivo, reset e checkout funcional **ainda não implementados**. Este documento é contrato de execução e inventário preliminar, não substitui o porte real, testes ou correção confirmada do checkout.
