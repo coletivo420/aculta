@@ -9,6 +9,16 @@
         "--header",
         "Authorization: Bearer ${MELHORENVIO_MCP_TOKEN}"
       ]
+    },
+    "mercadopago": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.mercadopago.com/mcp",
+        "--header",
+        "Authorization: Bearer ${MERCADOPAGO_MCP_TOKEN}"
+      ]
     }
   }
 }
