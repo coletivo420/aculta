@@ -602,3 +602,7 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - O teste de wiring corrigido foi integrado; a primeira repetição com Core físico duplicado no docroot voltou a falhar antes de assertions por dupla declaração de `system_hook_info()`. A tentativa seguinte usou o Core compartilhado read-only, mas o PHPUnit ficou sem avançar por mais de 40 segundos após exibir o cabeçalho; servidor e runner foram encerrados. Não houve resultado funcional. A documentação de Statistics e a matriz agora distinguem o erro de serviço resolvido do bloqueio atual do harness, e não registram PASS.
 - Não houve uso de Firefox ou validação visual. Banco dedicado isolado apenas; nenhum Runtime, dado de produção ou configuração persistente tocados.
+
+## M-1 — revalidar o Confirmador com transporte de teste (2026-10-26)
+
+- `AcultaMailConfirmerKernelTest` foi reexecutado no MariaDB dedicado: 5 testes / 38 assertions PASS. A suíte usa o mail collector do Core e confirma estados pendente/confirmado/cancelado/expirado, hash inválido, texto aprovado de e-mail e fila de reenvio sob cooldown; nenhuma mensagem foi entregue externamente.
