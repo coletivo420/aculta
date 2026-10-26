@@ -17,6 +17,14 @@
 6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente das oito frentes concluiu seu trabalho; comparação por caminhos confirmou que todos os incrementos já estão na PR sob SHAs equivalentes. Não fazer cherry-pick duplicado; nenhum desses diretórios foi alterado neste turno.
 7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último checkpoint remoto: `3fc9ecd84` (`docs(aculta): record commerce payment kernel regressions`).
 
+## M-0 — revalidação de Config Sync Messenger (2026-10-26)
+
+- `drush status` read-only confirmou novamente Drupal 11.4.10/PHP 8.4.27 e conexão MAIN `aculta_runtime` no checkout compartilhado `/home/piradopirata/projetos/aculta/web`; nenhum comando de escrita foi executado.
+- Comparação focal entre a configuração ativa e o `config/sync` desta branch imprimiu somente nomes/caminhos divergentes (sem valores): `aculta_messenger.settings` tem 12 caminhos sob `email_modes`; os metadados `description` de `field_aculta_messenger_attempts` e `label`/`description` de `field_aculta_messenger_source_fr` também diferem. Config Sync possui cinco controles estruturais enquanto o default instalável define ainda políticas de e-mail, eventos da Revista e âncora de digest.
+- Não foi inferido que as políticas ativas sejam defaults ou customização operacional. A decisão sobre a fonte canônica de `email_modes`/`magazine_events` foi solicitada ao responsável; nenhuma configuração foi alterada. Os metadados dos campos ficam em revisão separada e não justificam importação global.
+- Inspeção estrutural read-only de capturas privadas confirmou formatos distintos: IPS4 usa blocos `post_block`/`post_body`/`entry-content`; tópicos THW antigos são tabelas HTML com atributo `postid`. Os scripts atuais não exportam corpos/posts; ainda é necessário um parser versionado com fixtures sintéticas e saída privada antes de qualquer importação. Nenhum conteúdo ou dado pessoal foi impresso.
+- A amostra estrutural não foi convertida em código de importação. A decisão sobre 616 tópicos internos e 17 títulos comerciais em revisão foi solicitada; a preparação independente pode prosseguir, mas não define seleção nem escreve no Drupal.
+
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
 - `6daa7542f test(h5p): repair course access kernel contract`: formatter de acesso e test harness usam o plugin Group real. PHPCS Drupal/DrupalPractice, PHP lint e diff check passam nos dois arquivos H5P alterados.
