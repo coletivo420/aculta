@@ -167,3 +167,23 @@ Não iniciadas as auditorias profundas das frentes 4 a 8 nesta execução.
 | `aculta_links`, falha real | `testDashboardPublicationFilterQueriesOnlySelectedItems`: esperado 1 item, obtido 0 | **Aberta.** Diagnóstico: a consulta do painel (`ids=[]`) roda com o usuário 1, não com o dono do rascunho, mesmo após `setAccount()`. Construir o controller explicitamente não mudou nada. Outros testes da suíte que usam `setAccount()` passam. Causa não identificada; próximo passo: afirmar `current_user` logo após `setAccount()` e verificar a permissão `manage own aculta links` do papel `links_filter_owner` |
 | `aculta_activity` | 3 testes PASS, 5 deprecações | Deprecações do Kernel não classificadas (não são metadados de docblock) |
 | `aculta_editor` | 7 testes PASS, 3 deprecações | Idem |
+
+## Rodada de fechamento: pendências executáveis
+
+| Item | Resultado | Commit |
+|---|---|---|
+| Falha aberta `testDashboardPublicationFilterQueriesOnlySelectedItems` (links) | **Causa confirmada**: `condition('status', FALSE)` não casa com o valor `0` gravado no banco de teste. O dono, o usuário corrente, a permissão e o rascunho estavam corretos. Corrigido com inteiro explícito (`1`/`0`). Suíte Kernel de links: **7 PASS** | `7cc1c4b05` |
+| Deprecações do Kernel de links (7) | Origem: módulo contrib `token` (`token.install`, `token_requirements` sem atributo `#[LegacyRequirementsHook]`). Não é código nosso | — |
+| Deprecações do Kernel de activity (5) | Origem: contrib `domain` (assinatura de `Action::execute`) e uma anotação de plugin de contrib. Não é código nosso | — |
+| Deprecações do Kernel de editor (3) | Origem: contrib `ckeditor5_plugin_pack` (`module_implements_alter`, `requirements` e `@EntityType`). Não é código nosso | — |
+| Caminho do Melhor Envio para cotação | Comentário da comunidade no fórum oficial cita `{{url}}/api/v2/me/shipment/calculate` como rota atual e desaconselha `ecommerce/calculate`. Registrado como fonte secundária, a validar no sandbox. Autorização e token seguem sem confirmação | `9a7304b7f` |
+| QR Code: lote | `GET .../codigos-qr/lote?ids=..&formato=..` gera ZIP com um arquivo por código; até 50 códigos; id inexistente derruba o lote inteiro (404). Validação em `QrCodeBatchPlanner` | `8b665bd53` |
+| QR Code: formatter de campo | Plugin `aculta_qr_svg` para `entity_reference`: SVG como `data:` URI em `<img>`. Falha de geração omite o item | `8b665bd53` |
+| QR Code: Kernel | **14 PASS**. O lote é testado no caminho de falha segura (sem URL pública, 503). O caminho de sucesso depende do `aculta_portal` (domínio do purpose `links`) e fica para integração | (teste no próximo commit) |
+| Deployer: fronteira | Continua reprovando. A causa é o texto do menu do Portal (`aculta_portal.links.menu.yml`), arquivo fora da lista autorizada. Mudança exata para o agente principal: trocar a descrição por "Estado da implantação e do ambiente de deploy." | — |
+
+### Pendências que continuam dependendo de decisão ou de ambiente
+
+- **Melhor Envio:** validar `authorize`, `oauth/token` e `expires_in` no sandbox com credenciais autorizadas.
+- **QR Code, sucesso do lote e do formatter:** teste de integração com `aculta_portal` habilitado (domínio `links`).
+- **Patcher, exportador:** teste com pacote instalado pelo Composer.
