@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests cursor behavior when selective access exhausts a bounded scan.
@@ -24,7 +25,8 @@ final class GreenStashProductReaderPaginationTest extends UnitTestCase {
   /**
    * Continues past 500 products the operator cannot manage.
    */
-  public function testScanBudgetExposesContinuationCursor(): void {
+  #[DataProvider('continuationResults')]
+  public function testScanBudgetOnlyExposesRealContinuation(bool $hasOlderProduct): void {
     $batchIds = [];
     for ($start = 1000; $start > 500; $start -= 100) {
       $batchIds[] = range($start, $start - 99);
@@ -34,9 +36,13 @@ final class GreenStashProductReaderPaginationTest extends UnitTestCase {
     $productQuery->method('condition')->willReturnSelf();
     $productQuery->method('sort')->willReturnSelf();
     $productQuery->method('range')->willReturnSelf();
-    $productQuery->expects(self::exactly(6))
+    $executeResults = [...$batchIds, $hasOlderProduct ? [500] : []];
+    if ($hasOlderProduct) {
+      $executeResults[] = [500];
+    }
+    $productQuery->expects(self::exactly(count($executeResults)))
       ->method('execute')
-      ->willReturnOnConsecutiveCalls(...[...$batchIds, [500]]);
+      ->willReturnOnConsecutiveCalls(...$executeResults);
 
     $store = $this->createMock(StoreInterface::class);
     $store->method('id')->willReturn('1');
@@ -79,11 +85,26 @@ final class GreenStashProductReaderPaginationTest extends UnitTestCase {
 
     $firstPage = $reader->page($account);
     self::assertSame([], $firstPage['items']);
-    self::assertSame(501, $firstPage['next']);
+    self::assertSame($hasOlderProduct ? 501 : NULL, $firstPage['next']);
 
-    $secondPage = $reader->page($account, $firstPage['next']);
-    self::assertSame([$products['500']], $secondPage['items']);
-    self::assertNull($secondPage['next']);
+    if ($hasOlderProduct) {
+      $secondPage = $reader->page($account, $firstPage['next']);
+      self::assertSame([$products['500']], $secondPage['items']);
+      self::assertNull($secondPage['next']);
+    }
+  }
+
+  /**
+   * Supplies scan-budget cases with and without remaining entities.
+   *
+   * @return array<string, array{bool}>
+   *   Whether an older entity exists after the bounded scan.
+   */
+  public static function continuationResults(): array {
+    return [
+      'older product exists' => [TRUE],
+      'no older product' => [FALSE],
+    ];
   }
 
 }

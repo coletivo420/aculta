@@ -100,10 +100,21 @@ final class GreenStashProductReader {
         break;
       }
       if ($round === 4) {
-        // Keep pagination moving when the scan budget contained only filtered
-        // products, or did not find another manageable product in time.
-        $hasMore = TRUE;
-        $nextCursor = $cursor;
+        // Confirm that a continuation exists before exposing a cursor. The
+        // one-ID probe avoids an empty next page at an exact batch boundary.
+        $probe = $storage->getQuery()
+          ->accessCheck(TRUE)
+          ->condition('type', 'produto_loja')
+          ->sort('product_id', 'DESC')
+          ->range(0, 1);
+        $probe->condition('product_id', $cursor, '<');
+        if ($search !== '') {
+          $probe->condition('title', $search, 'CONTAINS');
+        }
+        if ($probe->execute() !== []) {
+          $hasMore = TRUE;
+          $nextCursor = $cursor;
+        }
       }
     }
 

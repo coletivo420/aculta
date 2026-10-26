@@ -1,8 +1,8 @@
-# ACULTA Commerce — 0.1.0-dev.7
+# ACULTA Commerce — 0.1.0-dev.8
 
 Submódulo de integração comercial da **loja**, em estado Dev. O provider de configuração do checkout e a experiência Green Stash estão em código. A orquestração de checkout pertence ao `aculta_portal`, conforme ADR-013. As seções abaixo registram a evolução por fase; afirmações sobre ausência de serviços ou rotas descrevem a fundação histórica. A cadeia completa de Green Stash ainda exige homologação no Runtime.
 
-Na conciliação dev.3, Unit Commerce 20/116 (9 depreciações PHPUnit), Melhor Envio 29/78 e CEP 9/36 passaram. No HEAD dev.7 da PR, Unit Commerce passou com 26 testes / 168 assertions (10 depreciações PHPUnit). `GreenStashProductAccessTest` cobre acesso de entidade e loja; `GreenStashProductReaderPaginationTest` comprova a continuação após cinco lotes filtrados. PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados passam. O Kernel de Doações continua sem iniciar porque o harness não carrega toda a cadeia Messenger/Portal/Image, sem assertions funcionais. Nenhum fluxo de pagamento ou serviço externo foi executado. O gate de endereço passou; a fronteira módulo/tema não identifica violações próprias de Commerce.
+Na conciliação dev.3, Unit Commerce 20/116 (9 depreciações PHPUnit), Melhor Envio 29/78 e CEP 9/36 passaram. No HEAD dev.8 da PR, Unit Commerce passou com 27 testes / 171 assertions (10 depreciações PHPUnit). `GreenStashProductAccessTest` cobre acesso de entidade e loja; `GreenStashProductReaderPaginationTest` comprova continuação após cinco lotes filtrados e ausência de cursor quando não há mais produto. PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados passam. O Kernel de Doações continua sem iniciar porque o harness não carrega toda a cadeia Messenger/Portal/Image, sem assertions funcionais. Nenhum fluxo de pagamento ou serviço externo foi executado. O gate de endereço passou; a fronteira módulo/tema não identifica violações próprias de Commerce.
 
 ## Integração de avisos da Loja — contrato vigente
 

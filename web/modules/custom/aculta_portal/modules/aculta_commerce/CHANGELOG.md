@@ -17,6 +17,16 @@
 
 # Changelog — aculta_commerce
 
+## 0.1.0-dev.8 — confirmar continuação do catálogo (2026-10-26)
+
+- Ao atingir o orçamento de varredura, o catálogo faz uma consulta limitada a
+  um ID para confirmar se há continuação. Isso mantém o cursor quando produtos
+  mais antigos ainda existem e evita um próximo link vazio quando os resultados
+  terminam exatamente no limite.
+- Unit Commerce: 27 testes / 171 assertions PASS (10 depreciações PHPUnit).
+  PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS nos arquivos
+  alterados. Nenhum Runtime ou dado persistente foi alterado.
+
 ## 0.1.0-dev.7 — preservar cursor após varredura seletiva (2026-10-26)
 
 - O catálogo Green Stash agora emite um cursor de continuação quando o limite
