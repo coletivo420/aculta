@@ -39,6 +39,7 @@ acesso a credenciais de outro ambiente e não faz requisição de leitura de val
 ## Testes
 
 - Unit: `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_secrets_manager/tests/src/Unit`
-  (7 testes: abas, ausência de valores e ações fora do ambiente, negação de revelar/editar/apagar
+  (11 testes: abas, ausência de valores e ações fora do ambiente, negação de revelar/editar/apagar
   fora do escopo, cabeçalho no-store).
-- Kernel e Functional: não executados nesta versão. Ver docs/operations/SECRETS-SM9-INTEGRACAO.md. Um Kernel isolado não sobe, porque `aculta_portal` exige a pilha ACULTA inteira (ver ROADMAP).
+- Kernel (rotas e permissões): `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_secrets_manager/tests/src/Kernel`, com `SIMPLETEST_DB` do banco de teste dedicado (`docs/operations/BANCO-DE-TESTE.md`). Passa com deprecações de contrib.
+- Functional: pendente. Um Kernel isolado não sobe, porque `aculta_portal` exige a pilha ACULTA inteira (ver ROADMAP).
