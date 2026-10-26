@@ -886,6 +886,10 @@ final class ContentIndexIntegrityChecker {
         . ' AND relation.source_entity_id = entry.entity_id'
         . ' AND relation.source_langcode = entry.langcode',
     );
+    $discarding = $this->discardingGenerationIds();
+    if ($discarding !== []) {
+      $query->condition('relation.generation_id', $discarding, 'NOT IN');
+    }
     $rows = $query->condition('relation.relation_id', $after, '>')
       ->condition('relation.relation_id', $maximum, '<=')
       ->orderBy('relation.relation_id')
@@ -998,8 +1002,32 @@ final class ContentIndexIntegrityChecker {
         . ' AND relation.source_entity_id = entry.entity_id'
         . ' AND relation.source_langcode = entry.langcode',
     );
+    $discarding = $this->discardingGenerationIds();
+    if ($discarding !== []) {
+      $query->condition('relation.generation_id', $discarding, 'NOT IN');
+    }
     return (int) $query->condition('entry.entry_id', NULL, 'IS NULL')
       ->countQuery()->execute()->fetchField();
+  }
+
+  /**
+   * Returns generations whose derived rows are being removed in batches.
+   *
+   * Cleanup deletes bounded relation and entry pages in separate batches. A
+   * relation from one batch can therefore reference an entry removed in an
+   * earlier batch of the same discarding generation. That transient state is
+   * cleanup progress, not a catalog inconsistency, so integrity checks and
+   * rebuild validation must not count it.
+   *
+   * @return list<string>
+   *   Generation IDs currently in the discarding state.
+   */
+  private function discardingGenerationIds(): array {
+    return array_map('strval', $this->database->select('aculta_index_generation', 'generation')
+      ->fields('generation', ['generation_id'])
+      ->condition('status', 'discarding')
+      ->execute()
+      ->fetchCol());
   }
 
 }

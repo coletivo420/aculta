@@ -1372,6 +1372,80 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Rows of a generation awaiting discard do not break integrity checks.
+   *
+   * Cleanup removes relation and entry pages in bounded batches. Between two
+   * batches a relation can reference an entry already removed from the same
+   * discarding generation; that is cleanup progress, not a catalog finding, and
+   * must not invalidate a concurrent rebuild validation.
+   */
+  public function testIntegrityChecksIgnoreRowsAwaitingDiscard(): void {
+    $database = $this->container->get('database');
+    $database->insert('aculta_index_generation')
+      ->fields([
+        'generation_id' => 'discard-active',
+        'status' => 'active',
+        'provider_fingerprint' => '',
+        'validated' => 1,
+        'activated' => 1,
+        'created' => 1,
+        'updated' => 1,
+      ])
+      ->execute();
+    $database->update('aculta_index_state')
+      ->fields(['active_generation' => 'discard-active', 'revision' => 1])
+      ->condition('state_id', 1)
+      ->execute();
+    $database->insert('aculta_index_generation')
+      ->fields([
+        'generation_id' => 'discard-pending',
+        'status' => 'discarding',
+        'provider_fingerprint' => '',
+        'created' => 2,
+        'updated' => 2,
+      ])
+      ->execute();
+    $database->insert('aculta_index_relation')
+      ->fields([
+        'generation_id' => 'discard-pending',
+        'provider_id' => 'fixture',
+        'source_entity_type' => 'node',
+        'source_entity_id' => 'removed-in-earlier-batch',
+        'source_langcode' => 'pt-br',
+        'relation_type' => 'related_entry',
+        'target_entity_type' => 'node',
+        'target_entity_id' => 'still-present',
+        'target_langcode' => 'und',
+        'relation_hash' => str_repeat('d', 64),
+        'updated' => 2,
+      ])
+      ->execute();
+
+    $checker = $this->container->get('aculta_index.integrity_checker');
+    $check = $checker->check();
+    self::assertSame(0, $check['relation_source_missing_count']);
+    self::assertTrue($check['valid']);
+
+    $checker->startAudit();
+    $state = $checker->getAuditState();
+    while ($state['status'] === 'running') {
+      $state = $checker->processAuditBatch(200);
+    }
+    self::assertSame('complete', $state['status']);
+    self::assertSame(0, (int) $state['relation_source_missing_count']);
+    self::assertTrue($state['valid']);
+
+    // A retained rollback generation remains a fully consistent catalog.
+    $database->update('aculta_index_generation')
+      ->fields(['status' => 'retained'])
+      ->condition('generation_id', 'discard-pending')
+      ->execute();
+    $check = $checker->check();
+    self::assertSame(1, $check['relation_source_missing_count']);
+    self::assertFalse($check['valid']);
+  }
+
+  /**
    * Audit diagnostics contain timings and counts, not content identities.
    */
   public function testIntegrityAuditLogsSafeBatchDiagnostics(): void {
