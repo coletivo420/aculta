@@ -2,6 +2,7 @@
 
 - Unit LMS: 87 testes / 447 assertions PASS (8 depreciações PHPUnit).
 - Kernel LMS agregado: 29 testes, 50 assertions e 23 erros de setup. Os harnesses que compilam serviços `aculta_lms` sem a dependência obrigatória Portal falham por `aculta_portal.checkout_settings` ausente; não se trata de assertions funcionais. Alguns focais executados anteriormente continuam registrados abaixo. A cadeia de instalação limpa Portal/Messenger/Studio permanece sem verificação agregada.
+- Reproduzido isoladamente no worktree `ClassDashboardKernelTest`: 1 erro/0 assertions na compilação do container pela mesma ausência de `aculta_portal.checkout_settings`; a falha é do harness incompleto, sem evidência de defeito funcional no dashboard.
 
 ## 0.1.0-dev.88 — publicar avisos pelo kernel Messenger (2026-10-24)
 
