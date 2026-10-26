@@ -375,3 +375,11 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - Configurado no Drupal Key do servidor de teste como `me_sb_client_secret` (`keys.sandbox.client_secret`).
 - Webhook `POST /integracoes/melhorenvio/webhook`: sem assinatura → 403; assinatura válida do aplicativo → 204.
 - Pendente: o `client_id` do aplicativo sandbox. Sem ele, `authorize` não monta a URL de autorização (o fluxo OAuth fica bloqueado), e ME-PEND-01 continua aberto.
+
+## Token de acesso informado pelo responsável (rejeitado pelo sandbox)
+
+- Token guardado em `secrets/melhorenvio-sandbox.env` (fora do git, modo 640). Valor não registrado aqui. Validade do próprio token: até 2027-10-26.
+- Testado no sandbox (`https://sandbox.melhorenvio.com.br`): `POST /api/v2/me/shipment/calculate` e `GET /api/v2/me` responderam **401**. A rota de cotação não pôde ser validada, porque a autenticação falha antes.
+- Não testado em produção: o projeto exige decidir o ambiente pelo modo configurado, e o token não informa qual é o seu. Confirmar com o responsável se o token é de sandbox ou de produção.
+- Removido do armazenamento de tokens do servidor de teste, para não ficar uma credencial que falha aparentando estar configurada.
+- Pendente: um token de sandbox válido, ou o `client_id` do aplicativo sandbox para o fluxo OAuth (ME-PEND-01).
