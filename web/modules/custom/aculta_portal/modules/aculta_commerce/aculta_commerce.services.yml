@@ -12,12 +12,15 @@ services:
     arguments: ['@aculta_commerce.green_stash_access']
   aculta_commerce.green_stash_controller:
     class: Drupal\aculta_commerce\Controller\GreenStashController
-    arguments: ['@aculta_studio.experience_manager', '@current_user', '@aculta_commerce.green_stash_navigation', '@aculta_commerce.green_stash_product_reader', '@request_stack']
+    arguments: ['@aculta_studio.experience_manager', '@current_user', '@aculta_commerce.green_stash_navigation', '@aculta_commerce.green_stash_product_reader', '@aculta_commerce.green_stash_shipment_reader', '@request_stack']
   aculta_commerce.green_stash_navigation:
     class: Drupal\aculta_commerce\Navigation\GreenStashNavigation
   aculta_commerce.green_stash_product_reader:
     class: Drupal\aculta_commerce\Catalog\GreenStashProductReader
     arguments: ['@entity_type.manager', '@aculta_commerce.green_stash_store_resolver']
+  aculta_commerce.green_stash_shipment_reader:
+    class: Drupal\aculta_commerce\Catalog\GreenStashShipmentReader
+    arguments: ['@entity_type.manager']
   aculta_commerce.green_stash_product_controller:
     class: Drupal\aculta_commerce\Controller\GreenStashProductController
     arguments: ['@aculta_studio.experience_manager', '@current_user', '@aculta_commerce.green_stash_navigation', '@aculta_commerce.green_stash_product_reader', '@entity_type.manager']
@@ -31,3 +34,47 @@ services:
     arguments: ['@aculta_portal.checkout_settings', '@entity_type.manager', '@aculta_messenger.notice_event_publisher', '@datetime.time', '@logger.channel.aculta_messenger']
     tags:
       - { name: event_subscriber }
+
+  # Shipping engine ported from commerce_shipping 3.0.5 (GPL-2.0-or-later).
+  logger.channel.aculta_commerce_shipping:
+    parent: logger.channel_base
+    arguments: ['aculta_commerce_shipping']
+
+  aculta_commerce.package_type_manager:
+    class: Drupal\aculta_commerce\Shipping\PackageTypeManager
+
+  plugin.manager.aculta_shipping_method:
+    class: Drupal\aculta_commerce\ShippingMethodManager
+    parent: default_plugin_manager
+
+  aculta_commerce.packer_manager:
+    class: Drupal\aculta_commerce\Shipping\PackerManager
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: service_collector, call: addPacker, tag: aculta_commerce.packer }
+
+  aculta_commerce.default_packer:
+    class: Drupal\aculta_commerce\Shipping\DefaultPacker
+    arguments: ['@entity_type.manager', '@string_translation']
+    tags:
+      - { name: aculta_commerce.packer, priority: -100 }
+
+  aculta_commerce.shipment_manager:
+    class: Drupal\aculta_commerce\Shipping\ShipmentManager
+    arguments: ['@entity_type.manager', '@logger.channel.aculta_commerce_shipping']
+
+  aculta_commerce.shipping_order_manager:
+    class: Drupal\aculta_commerce\Shipping\ShippingOrderManager
+    arguments: ['@entity_type.manager', '@entity_type.bundle.info', '@aculta_commerce.packer_manager']
+
+  aculta_commerce.shipping_early_order_processor:
+    class: Drupal\aculta_commerce\Shipping\EarlyOrderProcessor
+    arguments: ['@entity_type.manager', '@aculta_commerce.shipping_order_manager', '@aculta_commerce.shipment_manager']
+    tags:
+      - { name: commerce_order.order_processor, priority: 200 }
+
+  aculta_commerce.shipping_late_order_processor:
+    class: Drupal\aculta_commerce\Shipping\LateOrderProcessor
+    arguments: ['@aculta_commerce.shipping_order_manager']
+    tags:
+      - { name: commerce_order.order_processor, priority: -100 }

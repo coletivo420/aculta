@@ -14,6 +14,8 @@ namespace Drupal\aculta_commerce\Shipping;
 final readonly class ShippingQuote {
 
   /**
+   * Constructs an immutable shipping quote.
+   *
    * @param string $methodId
    *   Stable internal shipping method ID.
    * @param string $serviceId

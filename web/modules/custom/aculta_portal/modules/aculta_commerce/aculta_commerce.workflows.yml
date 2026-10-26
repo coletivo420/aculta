@@ -1,0 +1,26 @@
+aculta_shipment_default:
+  id: aculta_shipment_default
+  group: aculta_shipment
+  label: 'Padrão'
+  states:
+    draft:
+      label: 'Rascunho'
+    ready:
+      label: 'Pronta'
+    shipped:
+      label: 'Enviada'
+    canceled:
+      label: 'Cancelada'
+  transitions:
+    finalize:
+      label: 'Finalizar remessa'
+      from: [draft]
+      to: ready
+    ship:
+      label: 'Enviar remessa'
+      from: [ready]
+      to: shipped
+    cancel:
+      label: 'Cancelar remessa'
+      from: [draft, ready]
+      to: canceled

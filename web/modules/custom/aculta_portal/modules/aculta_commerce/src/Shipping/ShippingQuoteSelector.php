@@ -52,6 +52,12 @@ final class ShippingQuoteSelector {
    *
    * @param array<ShippingQuote> $quotes
    *   Trusted provider quotes.
+   * @param string $currency
+   *   Order currency.
+   * @param int $now
+   *   Unix timestamp supplied by the caller for deterministic tests.
+   * @param string $selectedId
+   *   The stable quote ID selected by the customer.
    *
    * @return \Drupal\aculta_commerce\Shipping\ShippingQuote|null
    *   Selected quote or NULL, never a fabricated zero-cost choice.
