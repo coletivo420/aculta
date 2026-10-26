@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.9
+version: 0.1.0-dev.10
 state: Dev
 progress_note: >-
   Unit Commerce 31/192 PASS (11 depreciações PHPUnit); publisher do Messenger
@@ -7,6 +7,5 @@ progress_note: >-
   compartilhada falhar; GreenStashProductAccessTest
   cobre acesso por entidade e loja. GreenStashProductCreateAccessTest confirma que AccessResult negado no Studio ou Commerce interrompe a criação. GreenStashProductReaderPaginationTest verifica
   continuação após 500 resultados filtrados e ausência de cursor sem mais resultados.
-  PHP lint e PHPCS Drupal/DrupalPractice dos arquivos alterados PASS.
-  Kernel de Doações, Functional, Browser e homologação de checkout pendentes.
+  Motor próprio de envios foi incorporado em aculta_commerce; Unit do módulo 49/230 PASS, incluindo 18/38 dos contratos de cotação. Kernel de shipping marcou 6 casos como skipped antes do setup (0 assertions), portanto instalação de entidades/checkout não está comprovada por essa suíte. PHPCS focal do motor e PHP lint passam; erros antigos em BillingAddressPane continuam fora desta correção. Sync versionado aponta para entidades e pane ACULTA, mas não foi importado no Runtime. Commerce Shipping permanece no Composer e a configuração ativa precisa de preflight antes de qualquer cutover. Kernel de Doações, Functional, Browser e homologação do checkout pendentes.
 next_phase: 'Homologar checkout comercial compartilhado e Green Stash com loja única, grants e contratos de produto em Kernel/Runtime ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/ROADMAP.md))'

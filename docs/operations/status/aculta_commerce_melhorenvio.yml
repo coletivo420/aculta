@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada).
-version: 0.1.0-dev.2
+version: 0.1.0-dev.3
 state: Dev
-next_phase: 'Concluir auditoria de fontes e cliente OAuth2 sandbox; validar endereços em Kernel antes da cotação Commerce Shipping ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/docs/ROADMAP.md))'
-progress_note: 'Alias do mapper para o binder corrigido; Unit focal de DI passa. Functional cross-module ainda aguarda reexecução; OAuth2, cotação, etiquetas e Runtime pendentes.'
+next_phase: 'Adaptar o provider atual ao contrato de cotação de aculta_commerce, testar falhas e idempotência com mocks e manter o submódulo fora do Config Sync conforme decisão do responsável ([contrato](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/MELHOR-ENVIO-CONTRACT.md))'
+progress_note: 'Manifesto agora depende do motor de envios aculta_commerce e continua fora do Config Sync conforme decisão do responsável. O provider atual ainda não foi adaptado ao novo contrato; cotação, etiquetas, OAuth2 e testes Functional continuam pendentes.'
