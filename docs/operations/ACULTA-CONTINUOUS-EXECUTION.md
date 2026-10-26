@@ -1,16 +1,16 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit estável antes deste checkpoint:** `6cfa8fe72cf238f4ca15dc96dcc9119afc4cdb20`; branch remota sincronizada e worktree limpo.
+**Último commit estável antes deste checkpoint:** `e63a194aa78ef00fe5fab161dfc736e47e7771b3`; branch remota sincronizada e worktree limpo.
 **Estado:** PARTIAL — PHPCS PR-wide, H5P, gate Domain administrativo, User/Portal/CPF focal, Index e Statistics têm evidências registradas PASS. M-0 continua bloqueada pela diferença de `core.extension`, Config Domain por purpose e RBAC Wiki; M-1–M-5 seguem em execução e sem promoção RC.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
 ## Ponto de retomada
 
 1. Definir harnesses Kernel para LMS e Doações que exercitem classes reais sem serviço de produto fictício; os harnesses agregados ainda falham no setup por não carregar a cadeia Portal completa.
-2. Reconciliar o delta ativo/Sync de 19 extensões após revisão dos templates instaláveis do Editor e dos módulos CKEditor/Google Tag; não importar configuração no Runtime.
+2. Reconciliar as 17 extensões ativas do Editor/CKEditor e suas configurações (8 templates ativos e settings do Plugin Pack); o shell `aculta_lms_messenger` permanece intencionalmente fora de novas instalações até uninstall autorizado. Google Tag foi reconciliado com defaults sem coleta. Não importar configuração no Runtime.
 3. Mapear os grants Wiki ativos versus exportados e corrigir divergências somente em código/configuração versionados e testes isolados; não alterar permissões persistentes.
-4. Planejar os cinco hooks e três post-updates pendentes do Messenger com inspeção read-only, backup recuperável e rollback antes de qualquer execução autorizada.
+4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
 5. Continuar incrementos centrais de Portal, User, CPF, CEP, Commerce, LMS, Messenger, Statistics e Index; incorporar trabalho dos oito componentes delegados somente por revisão e cherry-pick.
 6. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime.
 
@@ -174,10 +174,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 ## M-1 — fila de updates Messenger no Runtime (2026-10-26)
 
-- Reconfirmado antes da consulta: host `toca`, checkout compartilhado em `/home/piradopirata/projetos/aculta`, branch de trabalho separada em `/tmp/aculta-m0-integridade`; Drush read-only conectou Drupal 11.4.10, URI MAIN, banco `aculta_runtime`. Nenhuma operação de escrita ocorreu.
+- Reconfirmado em consulta read-only: host `toca`, checkout Runtime `/home/piradopirata/projetos/aculta` (branch compartilhada `docs/aculta-forum-0.1.0-dev.1`; branch da PR separada em `/tmp/aculta-m0-integridade`); Drush conectou Drupal 11.4.10, URI MAIN, banco `aculta_runtime`. Nenhuma operação de escrita ocorreu.
 - `updatedb:status` mostra hooks 10008–10012 (marcador de entrega privada, marcador de amizade, estado de digest, estado de leitura de amizade e bundle de aviso de conquista) e post-updates `private_message_email_preferences`, `shared_email_preferences` e `game_achievement_notices` pendentes.
 - A suíte Kernel combinada de Messenger/Mailer/Confirmador passou 112/1.504 na MariaDB isolada; testes focais de migração de preferências e de conquistas existem. Isso valida código e fixtures, não o conteúdo real de dados pendentes no Runtime.
 - Estado operacional **DEFERRED**: não executar `updatedb`. Próxima ação requer snapshot/backup recuperável, inventário privado somente leitura das contagens/estados afetados, plano de rollback e autorização específica; filas externas/e-mail permanecem sem processamento.
+- Em 2026-10-26, contagem agregada read-only encontrou cinco filas legadas de conquistas em cinco contas e zero linhas nas quatro chaves antigas de preferências consultadas. Sem UID ou valores individuais. O plano de preflight, execução isolada, janela e rollback integral está em [`ACULTA-MESSENGER-UPDATE-PLAN.md`](ACULTA-MESSENGER-UPDATE-PLAN.md); a atualização no Runtime permanece bloqueada por autorização operacional.
 
 ## M-4 — cobertura de acesso da Loja (2026-10-26)
 
