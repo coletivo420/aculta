@@ -580,3 +580,8 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - O primeiro ensaio BrowserKit serviu por engano a raiz do worktree, que não inclui `web/core`, e retornou 500; foi descartado como harness inválido. O teste foi repetido com Drupal 11.4.10 físico em docroot efêmero, código da PR por symlinks e banco `aculta_simpletest`; esse ambiente não usa o checkout `public_html` nem o Runtime.
 - Ambos os métodos do `StatisticsDashboardFunctionalTest` falham durante compilação do container, antes de assertions: `aculta_commerce_melhorenvio.shipment_address_binder` injeta `MelhorEnvioAddressMapper`, mas o submódulo só registra o serviço `aculta_commerce_melhorenvio.address_mapper`. Evidência enviada ao owner Melhor Envio; não modifiquei diretórios de ownership delegado. Statistics permanece sem PASS Functional; README/status/matriz/CHANGELOG atualizados. Server PHP local encerrado, sem arquivo criado no `sites/simpletest` compartilhado e sem Runtime write.
+
+## M-1 — fechar PHPCS nos arquivos alterados do Messenger (2026-10-26)
+
+- Após corrigir os links relativos das gavetas, o PHPCS Drupal apontou PHPDoc e comentários longos preexistentes nos dois arquivos tocados. Os docblocks e comentários foram regularizados sem alteração funcional. Drupal e DrupalPractice passaram sem erros ou avisos nos arquivos; `PersistentNoticeAccessTest` passou com 5 testes / 11 assertions e PHP lint/diff check passaram.
+- Commits `8b5e31043` (estilo) e `b7c806859` (links relativos) publicados em `origin/chore/aculta-m0-integridade`. Runtime não foi alterado.
