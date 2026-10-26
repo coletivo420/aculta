@@ -1,3 +1,8 @@
+## 0.4.1-dev.38 — dependência opcional do Mercado Pago
+
+- Portal deixa de depender do módulo Mercado Pago. Doação e LMS mantêm a dependência direta declarada; o Portal resolve somente contratos opcionais `aculta_portal.payment_provider.*`.
+- Os metadados de Doação/LMS declaram a dependência direta do MP; a prova de instalação limpa segue pendente, pois o Drush não aplicou o prefixo isolado esperado e a execução foi interrompida.
+
 ## 0.4.1-dev.37 — contratos neutros para provedores de pagamento
 
 - Portal define interfaces de status de assinatura, ações de assinatura, operações de pagamento e política de estorno; os serviços opcionais usam IDs `aculta_portal.payment_provider.*` registrados pelo módulo provedor. Sem o provedor, relatórios/ações correspondentes desaparecem ou negam acesso.
