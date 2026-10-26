@@ -215,3 +215,14 @@ Não iniciadas as auditorias profundas das frentes 4 a 8 nesta execução.
 
 - **Fronteira do deployer:** a descrição do menu do Portal cita a ferramenta. Arquivo do Portal, fora da lista autorizada. Mudança exata no worklog para o agente principal.
 - **Melhor Envio, autorização e token:** dependem do sandbox e de credenciais autorizadas.
+
+## Kernel de sitemap e Melhor Envio: tentativa e bloqueio
+
+- Tentado: Kernel de cabeamento (plugin `aculta_purpose_node`, tipo `aculta_purpose`, cliente OAuth2 com credenciais
+  do Drupal Key) habilitando `aculta_portal`.
+- Bloqueio: `aculta_portal` declara dependências de um site inteiro (commerce, lms, group, social_auth, domain_config,
+  aculta_image, aculta_mailer, entre outros), e cada uma expõe serviços obrigatórios de outra. A rodada reexpôs uma dependência
+  por vez (`file.usage`, `aculta_image.file_remover`). Um Kernel com `aculta_portal` exige uma instalação de teste completa.
+- Ação: os dois arquivos de teste foram removidos, para não deixar testes quebrados no repositório.
+- Ambiente: o contrib de `web/modules/contrib` do worktree foi exposto por links individuais, e `domain_config` veio de
+  `vendor/drupal/domain/domain_config`. Isso é só do worktree, e não entra no git.
