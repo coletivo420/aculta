@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.3.0-dev.10
+version: 0.3.0-dev.11
 state: Dev
-progress_note: "Módulo habilitado no Homelab MAIN (consulta read-only); Unit CepLookupService 9/36 PASS e `validate-account-address.php` PASS. PHPCS Drupal/DrupalPractice no baseline do módulo: 105 erros e 36 warnings em 12 arquivos, sem diferenças frente a origin/main."
+progress_note: "Dev.11: cache HTTP agora varia por provedor e CEP; Unit CepLookupService 10/43 PASS, incluindo teste de cache isolado por BrasilAPI; PHP lint e PHPCS Drupal/DrupalPractice nos arquivos alterados PASS. Módulo habilitado no Homelab MAIN (consulta read-only); `validate-account-address.php` PASS. PHPCS no módulo ainda acusa 144 erros e 28 warnings em 11 arquivos não modificados; os dois arquivos deste incremento passam."
 next_phase: Homologar em Firefox ESR no Runtime o formulário de endereço e validar fontes/fallback sem alterar configuração compartilhada; tratar PHPCS legado em lote focalizado ([contrato](docs/portal/ACCOUNT-ADDRESS.md))

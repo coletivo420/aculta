@@ -1,3 +1,8 @@
+## 0.3.0-dev.11 — isolar cache por provedor
+
+- A chave do cache externo agora inclui ViaCEP ou BrasilAPI além do CEP. A ordem/configuração de fontes não pode reutilizar conteúdo identificado como produzido por outro provedor.
+- Unit `CepLookupServiceTest`: 10 testes / 43 assertions PASS, incluindo consulta e gravação isoladas para BrasilAPI; PHPCS Drupal/DrupalPractice e PHP lint nos arquivos alterados PASS. Nenhuma alteração no Runtime.
+
 ## 0.3.0-dev.10 — subaba CEP na aba Pessoas do painel ACULTA — 2026-10-20
 
 - Subaba **CEP** em `/painel-administrativo/aculta/cep`, dentro da aba Pessoas.

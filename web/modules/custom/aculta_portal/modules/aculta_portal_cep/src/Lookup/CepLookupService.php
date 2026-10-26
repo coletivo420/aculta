@@ -11,13 +11,13 @@ use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Consulta de CEP reutilizável: base local, ViaCEP e BrasilAPI, nesta ordem configurada (CepSources).
+ * Consulta de CEP reutilizável com as fontes configuradas em CepSources.
  *
- * É a única implementação da consulta. O endpoint AJAX (CepLookupController) e os módulos PHP (como o Melhor Envio)
- * chamam este serviço. Nenhum deles faz requisição HTTP à rota AJAX.
+ * É a única implementação da consulta. O endpoint AJAX e os módulos PHP chamam
+ * este serviço, sem fazer requisições HTTP à rota AJAX.
  *
- * Devolve o mesmo formato de Drupal Address: postal_code, address_line1, dependent_locality, locality e
- * administrative_area. Não guarda endereço: o resultado é só uma sugestão para quem chamou.
+ * Devolve campos compatíveis com Drupal Address e não persiste endereço: o
+ * resultado é uma sugestão para quem chamou.
  */
 final class CepLookupService implements CepLookupInterface {
 
@@ -37,7 +37,9 @@ final class CepLookupService implements CepLookupInterface {
   ) {}
 
   /**
-   * Normaliza um CEP (com ou sem máscara) para 8 dígitos. NULL quando não tem exatamente 8 dígitos.
+   * Normaliza um CEP com ou sem máscara para oito dígitos.
+   *
+   * Retorna NULL se o valor não tiver exatamente oito dígitos.
    */
   public function normalize(string $cep): ?string {
     $digits = preg_replace('/\D+/', '', $cep) ?? '';
@@ -45,16 +47,17 @@ final class CepLookupService implements CepLookupInterface {
   }
 
   /**
-   * Endereço do CEP na primeira fonte ativa que o encontrar. NULL quando nenhuma acha ou o CEP é inválido.
+   * Retorna o endereço da primeira fonte ativa que encontrar o CEP.
    *
    * @return array<string, string>|null
+   *   Endereço encontrado ou NULL se inválido/não localizado.
    */
   public function lookup(string $cep): ?array {
     $cep = $this->normalize($cep);
     if ($cep === NULL) {
       return NULL;
     }
-    // Fontes na ordem da configuração (CepSources): a padrão primeiro, depois as demais.
+    // A fonte padrão vem primeiro, seguida pelas demais na ordem configurada.
     foreach ($this->sources->ordered() as $source) {
       $address = $source === 'local' ? $this->local->lookup($cep) : $this->external($source, $cep);
       if ($address !== NULL) {
@@ -64,9 +67,13 @@ final class CepLookupService implements CepLookupInterface {
     return NULL;
   }
 
-  /** Consulta externa (ViaCEP ou BrasilAPI) com cache por CEP. Só resultado positivo é guardado. */
+  /**
+   * Consulta uma fonte externa e guarda somente resultados positivos.
+   *
+   * O cache varia por fonte para evitar reutilização entre provedores.
+   */
   private function external(string $source, string $cep): ?array {
-    $cacheId = 'aculta_portal:cep:' . $cep;
+    $cacheId = 'aculta_portal:cep:' . $source . ':' . $cep;
     if ($cached = $this->cache->get($cacheId)) {
       return $cached->data;
     }
@@ -77,11 +84,21 @@ final class CepLookupService implements CepLookupInterface {
     return $address;
   }
 
-  /** ViaCEP, com uma nova tentativa curta. NULL quando falha ou não encontra. */
+  /**
+   * Consulta o ViaCEP, com uma nova tentativa curta.
+   *
+   * @return array<string, string>|null
+   *   Endereço encontrado ou NULL em caso de falha.
+   */
   private function fromViaCep(string $cep): ?array {
     for ($attempt = 0; $attempt < 2; $attempt++) {
       try {
-        $raw = json_decode((string) $this->http->request('GET', sprintf(self::VIACEP, $cep), ['timeout' => 5, 'http_errors' => FALSE])->getBody(), TRUE);
+        $response = $this->http->request(
+          'GET',
+          sprintf(self::VIACEP, $cep),
+          ['timeout' => 5, 'http_errors' => FALSE],
+        );
+        $raw = json_decode((string) $response->getBody(), TRUE);
         if (is_array($raw) && empty($raw['erro'])) {
           return $this->mapped($cep, $raw['logradouro'] ?? '', $raw['bairro'] ?? '', $raw['localidade'] ?? '', $raw['uf'] ?? '');
         }
@@ -96,10 +113,20 @@ final class CepLookupService implements CepLookupInterface {
     return NULL;
   }
 
-  /** BrasilAPI (CEP v2). NULL quando falha ou não encontra. */
+  /**
+   * Consulta a BrasilAPI (CEP v2).
+   *
+   * @return array<string, string>|null
+   *   Endereço encontrado ou NULL em caso de falha.
+   */
   private function fromBrasilApi(string $cep): ?array {
     try {
-      $raw = json_decode((string) $this->http->request('GET', sprintf(self::BRASILAPI, $cep), ['timeout' => 5, 'http_errors' => FALSE])->getBody(), TRUE);
+      $response = $this->http->request(
+        'GET',
+        sprintf(self::BRASILAPI, $cep),
+        ['timeout' => 5, 'http_errors' => FALSE],
+      );
+      $raw = json_decode((string) $response->getBody(), TRUE);
       if (is_array($raw) && !empty($raw['cep'])) {
         return $this->mapped($cep, $raw['street'] ?? '', $raw['neighborhood'] ?? '', $raw['city'] ?? '', $raw['state'] ?? '');
       }
@@ -110,7 +137,12 @@ final class CepLookupService implements CepLookupInterface {
     return NULL;
   }
 
-  /** @return array<string, string> */
+  /**
+   * Converte os campos da resposta externa para o formato do módulo.
+   *
+   * @return array<string, string>
+   *   Campos compatíveis com Drupal Address.
+   */
   private function mapped(string $cep, string $street, string $district, string $city, string $state): array {
     return [
       'postal_code' => $cep,

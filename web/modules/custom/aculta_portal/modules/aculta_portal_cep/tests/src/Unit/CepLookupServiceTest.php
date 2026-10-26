@@ -20,7 +20,7 @@ use PHPUnit\Framework\Attributes\Group;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Consulta compartilhada de CEP: normalização, ordem das fontes, cache, fallback e falhas.
+ * Testa normalização, fontes, cache, fallback e falhas da consulta de CEP.
  */
 #[CoversClass(CepLookupService::class)]
 #[Group('aculta_portal_cep')]
@@ -28,11 +28,23 @@ class CepLookupServiceTest extends UnitTestCase {
 
   private const SP_LINE = "01310100\tAvenida Paulista\tBela Vista\tSão Paulo\tSP\t3550308\n";
 
+  /**
+   * Diretório temporário com um shard local de teste.
+   *
+   * @var string
+   */
   private string $dir;
 
-  /** URLs externas consultadas, para provar que nada vai à rota AJAX. */
+  /**
+   * URLs externas chamadas pelo cliente HTTP simulado.
+   *
+   * @var array
+   */
   private array $httpCalls = [];
 
+  /**
+   * Cria o shard usado pelos testes de consulta local.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->dir = sys_get_temp_dir() . '/aculta_portal_cep_test_' . bin2hex(random_bytes(4));
@@ -41,6 +53,9 @@ class CepLookupServiceTest extends UnitTestCase {
     file_put_contents($this->dir . '/013.tsv', self::SP_LINE);
   }
 
+  /**
+   * Remove os arquivos temporários dos testes.
+   */
   protected function tearDown(): void {
     foreach (glob($this->dir . '/*') ?: [] as $file) {
       unlink($file);
@@ -49,6 +64,9 @@ class CepLookupServiceTest extends UnitTestCase {
     parent::tearDown();
   }
 
+  /**
+   * Aceita CEPs formatados e rejeita valores com comprimento inválido.
+   */
   public function testNormalizeAcceptsMaskAndRejectsWrongLength(): void {
     $service = $this->service();
     $this->assertSame('01310100', $service->normalize('01310-100'));
@@ -58,11 +76,17 @@ class CepLookupServiceTest extends UnitTestCase {
     $this->assertNull($service->normalize('abcdefgh'));
   }
 
+  /**
+   * Não chama fontes quando o CEP é inválido.
+   */
   public function testInvalidCepReturnsNullWithoutAnySource(): void {
     $this->assertNull($this->service()->lookup('123'));
     $this->assertSame([], $this->httpCalls);
   }
 
+  /**
+   * Usa o resultado local sem consultar fontes externas.
+   */
   public function testLocalBaseHitDoesNotCallExternalSources(): void {
     $address = $this->service()->lookup('01310-100');
 
@@ -76,12 +100,20 @@ class CepLookupServiceTest extends UnitTestCase {
     $this->assertSame([], $this->httpCalls);
   }
 
+  /**
+   * Consulta o ViaCEP quando a base local não encontra o CEP.
+   */
   public function testFallsBackToViaCepWhenLocalMisses(): void {
     $cache = $this->cacheMock(expectSet: TRUE);
     $service = $this->service(
       cache: $cache,
       http: $this->httpReturning([
-        'viacep.com.br' => ['logradouro' => 'Rua Nova', 'bairro' => 'Centro', 'localidade' => 'Campinas', 'uf' => 'SP'],
+        'viacep.com.br' => [
+          'logradouro' => 'Rua Nova',
+          'bairro' => 'Centro',
+          'localidade' => 'Campinas',
+          'uf' => 'SP',
+        ],
       ]),
     );
 
@@ -92,12 +124,21 @@ class CepLookupServiceTest extends UnitTestCase {
     $this->assertSame(['https://viacep.com.br/ws/13010999/json/'], $this->httpCalls);
   }
 
+  /**
+   * Consulta a BrasilAPI depois de um retorno de não encontrado do ViaCEP.
+   */
   public function testFallsBackToBrasilApiWhenViaCepDoesNotFind(): void {
     $service = $this->service(
-      cache: $this->cacheMock(expectSet: TRUE),
+      cache: $this->cacheMock(expectSet: TRUE, source: 'brasilapi'),
       http: $this->httpReturning([
         'viacep.com.br' => ['erro' => TRUE],
-        'brasilapi.com.br' => ['cep' => '13010999', 'street' => 'Rua B', 'neighborhood' => 'Bairro B', 'city' => 'Campinas', 'state' => 'SP'],
+        'brasilapi.com.br' => [
+          'cep' => '13010999',
+          'street' => 'Rua B',
+          'neighborhood' => 'Bairro B',
+          'city' => 'Campinas',
+          'state' => 'SP',
+        ],
       ]),
     );
 
@@ -110,6 +151,9 @@ class CepLookupServiceTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Não consulta provedores externos desabilitados.
+   */
   public function testDisabledExternalSourceIsNotCalled(): void {
     $service = $this->service(sources: [
       'local' => ['enabled' => TRUE, 'weight' => 0],
@@ -121,10 +165,13 @@ class CepLookupServiceTest extends UnitTestCase {
     $this->assertSame([], $this->httpCalls);
   }
 
+  /**
+   * Reutiliza um resultado armazenado para o mesmo provedor e CEP.
+   */
   public function testCachedExternalResultAvoidsNewRequest(): void {
     $cached = (object) ['data' => ['postal_code' => '13010999', 'address_line1' => 'Do cache']];
     $cache = $this->createMock(CacheBackendInterface::class);
-    $cache->method('get')->with('aculta_portal:cep:13010999')->willReturn($cached);
+    $cache->method('get')->with('aculta_portal:cep:viacep:13010999')->willReturn($cached);
     $cache->expects($this->never())->method('set');
 
     $address = $this->service(cache: $cache)->lookup('13010999');
@@ -133,6 +180,39 @@ class CepLookupServiceTest extends UnitTestCase {
     $this->assertSame([], $this->httpCalls);
   }
 
+  /**
+   * Tests that one provider cannot read another provider's cache entry.
+   */
+  public function testExternalCacheIsScopedToSelectedProvider(): void {
+    $cache = $this->createMock(CacheBackendInterface::class);
+    $cache->expects($this->once())
+      ->method('get')
+      ->with('aculta_portal:cep:brasilapi:13010999')
+      ->willReturn(FALSE);
+    $cache->expects($this->once())
+      ->method('set')
+      ->with('aculta_portal:cep:brasilapi:13010999', $this->anything(), $this->anything());
+    $service = $this->service(
+      cache: $cache,
+      http: $this->httpReturning([
+        'brasilapi.com.br' => ['cep' => '13010999', 'city' => 'Campinas', 'state' => 'SP'],
+      ]),
+      sources: [
+        'local' => ['enabled' => FALSE, 'weight' => 0],
+        'viacep' => ['enabled' => FALSE, 'weight' => 1],
+        'brasilapi' => ['enabled' => TRUE, 'weight' => 2],
+      ],
+    );
+
+    $address = $service->lookup('13010999');
+
+    $this->assertSame('Campinas', $address['locality']);
+    $this->assertSame(['https://brasilapi.com.br/api/cep/v2/13010999'], $this->httpCalls);
+  }
+
+  /**
+   * Trata falhas de rede como consulta sem resultado.
+   */
   public function testExternalFailureIsNullNotException(): void {
     $http = $this->createMock(ClientInterface::class);
     $http->method('request')->willThrowException(new \RuntimeException('timeout'));
@@ -140,6 +220,9 @@ class CepLookupServiceTest extends UnitTestCase {
     $this->assertNull($this->service(http: $http)->lookup('13010999'));
   }
 
+  /**
+   * Não armazena em cache um CEP não encontrado.
+   */
   public function testNotFoundIsNotCachedAsPositive(): void {
     $cache = $this->cacheMock(expectSet: FALSE);
     $service = $this->service(
@@ -151,7 +234,17 @@ class CepLookupServiceTest extends UnitTestCase {
   }
 
   /**
+   * Cria o serviço com dependências simuladas.
+   *
+   * @param \Drupal\Core\Cache\CacheBackendInterface|null $cache
+   *   Backend de cache opcional.
+   * @param \GuzzleHttp\ClientInterface|null $http
+   *   Cliente HTTP opcional.
    * @param array<string, array<string, mixed>> $sources
+   *   Configuração das fontes CEP.
+   *
+   * @return \Drupal\aculta_portal_cep\Lookup\CepLookupService
+   *   Serviço configurado para o teste.
    */
   private function service(?CacheBackendInterface $cache = NULL, ?ClientInterface $http = NULL, array $sources = []): CepLookupService {
     $sources += [
@@ -183,13 +276,21 @@ class CepLookupServiceTest extends UnitTestCase {
   }
 
   /**
-   * Cache que devolve miss e, se esperado, aceita uma gravação.
+   * Cria mock de cache que devolve miss e valida gravações esperadas.
+   *
+   * @param bool $expectSet
+   *   Se o teste espera gravar resultado.
+   * @param string $source
+   *   Provedor que deve compor a chave armazenada.
+   *
+   * @return \Drupal\Core\Cache\CacheBackendInterface
+   *   Cache simulado.
    */
-  private function cacheMock(bool $expectSet): CacheBackendInterface {
+  private function cacheMock(bool $expectSet, string $source = 'viacep'): CacheBackendInterface {
     $cache = $this->createMock(CacheBackendInterface::class);
     $cache->method('get')->willReturn(FALSE);
     if ($expectSet) {
-      $cache->expects($this->once())->method('set')->with('aculta_portal:cep:13010999', $this->anything(), $this->anything());
+      $cache->expects($this->once())->method('set')->with('aculta_portal:cep:' . $source . ':13010999', $this->anything(), $this->anything());
     }
     else {
       $cache->expects($this->never())->method('set');
@@ -198,9 +299,13 @@ class CepLookupServiceTest extends UnitTestCase {
   }
 
   /**
-   * Cliente HTTP que responde por host, registrando as URLs chamadas.
+   * Cria cliente HTTP simulado que responde por host e registra as URLs.
    *
    * @param array<string, array<string, mixed>> $responses
+   *   Respostas JSON associadas ao host solicitado.
+   *
+   * @return \GuzzleHttp\ClientInterface
+   *   Cliente simulado.
    */
   private function httpReturning(array $responses): ClientInterface {
     $http = $this->createMock(ClientInterface::class);
@@ -218,6 +323,9 @@ class CepLookupServiceTest extends UnitTestCase {
     return $http;
   }
 
+  /**
+   * Cria cliente HTTP que não retorna respostas externas.
+   */
   private function recordingHttp(): ClientInterface {
     return $this->httpReturning([]);
   }
