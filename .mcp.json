@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "melhorenvio": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://docs.melhorenvio.com.br/mcp",
+        "--header",
+        "Authorization: Bearer ${MELHORENVIO_MCP_TOKEN}"
+      ]
+    }
+  }
+}

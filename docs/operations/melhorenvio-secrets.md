@@ -36,3 +36,10 @@ de teste. `keys.production.*` recebe os de produção. Só os nomes ficam na con
 - Pendente, de quem cadastra: chave de sandbox (client_id e client_secret do aplicativo de teste).
 - Pendente, do deployer: provisionar as chaves de produção no banco criptografado, fora deste ciclo de teste.
 - Pendente, do agente principal: incorporar esta separação à tabela central de `docs/operations/SECRETS.md`.
+
+## Servidor MCP da documentação do Melhor Envio
+
+- O `.mcp.json` da raiz configura o servidor `melhorenvio` (`https://docs.melhorenvio.com.br/mcp`, via `npx mcp-remote`).
+- O token não vai para o repositório. O arquivo lê `${MELHORENVIO_MCP_TOKEN}` do ambiente de quem executa o Claude Code. Defina a variável no shell antes de iniciar a sessão.
+- Sem a variável, o servidor não conecta; o restante do projeto não depende dele.
+- Este nome não faz parte do contrato de segredos do servidor. Incluí-lo lá exige decisão separada.
