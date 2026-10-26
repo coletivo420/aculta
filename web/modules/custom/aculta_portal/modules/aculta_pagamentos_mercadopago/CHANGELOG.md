@@ -1,5 +1,11 @@
 # Changelog — aculta_pagamentos_mercadopago
 
+## 0.1.0-dev.8 — compatibilidade explícita com retorno parcial — 2026-10-26
+
+- A assinatura de `refundPayment()` declara `?Price`, conforme a interface do Commerce instalada, sem alterar o comportamento do gateway.
+- Metadata do gateway migrada da annotation deprecada para `CommercePaymentGateway` attribute, preservando o plugin ID, modos, formulário e tipos de cartão.
+- O teste Kernel usa processo isolado conforme Drupal 11.3. Após a migração, Kernel: 1 teste / 50 assertions PASS, 75 depreciações Core/contrib; a annotation própria não aparece mais.
+
 ## 0.1.0-dev.7 — popup de retorno rejeita controles no destino — 2026-10-19
 
 - `CheckoutPopupReturnController` rejeita controles e espaços no destino, porque o navegador remove tabs e quebras de linha dentro de URLs (`/\t/host` vira `//host`). Casos novos no teste Unit.

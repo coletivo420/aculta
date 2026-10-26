@@ -6,6 +6,7 @@ use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 use Drupal\commerce_payment\Exception\PaymentGatewayException;
+use Drupal\commerce_payment\Attribute\CommercePaymentGateway;
 use Drupal\commerce_payment\PaymentMethodStorageInterface;
 use Drupal\commerce_payment\PaymentStorageInterface;
 use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\OffsitePaymentGatewayBase;
@@ -16,6 +17,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Render\Element\Checkboxes;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use GuzzleHttp\Exception\BadResponseException;
 use MercadoPago\Client\MerchantOrder\MerchantOrderClient;
 use MercadoPago\Client\Payment\PaymentClient;
@@ -30,25 +32,22 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Provides the Mercado Pago Checkout payment gateway.
- *
- * @CommercePaymentGateway(
- *   id = "aculta_mercadopago_checkout_pro",
- *   label = @Translation("Mercado Pago CheckoutPro"),
- *   display_label = @Translation("Mercado Pago"),
- *   modes = {
- *     "test" = @Translation("Sandbox - Test account"),
- *     "stage" = @Translation("Stage - Production account & Test credentials"),
- *     "live" = @Translation("Live - Production account & Production credentials"),
- *   },
- *   forms = {
- *     "offsite-payment" = "Drupal\aculta_pagamentos_mercadopago\PluginForm\Checkout\RedirectCheckoutForm",
- *   },
- *   payment_method_types = {"aculta_mercadopago_checkout_pro"},
- *   credit_card_types = {
- *      "amex", "mastercard", "visa",
- *   },
- * )
  */
+#[CommercePaymentGateway(
+  id: 'aculta_mercadopago_checkout_pro',
+  label: new TranslatableMarkup('Mercado Pago CheckoutPro'),
+  display_label: new TranslatableMarkup('Mercado Pago'),
+  modes: [
+    'test' => new TranslatableMarkup('Sandbox - Test account'),
+    'stage' => new TranslatableMarkup('Stage - Production account & Test credentials'),
+    'live' => new TranslatableMarkup('Live - Production account & Production credentials'),
+  ],
+  forms: [
+    'offsite-payment' => 'Drupal\\aculta_pagamentos_mercadopago\\PluginForm\\Checkout\\RedirectCheckoutForm',
+  ],
+  payment_method_types: ['aculta_mercadopago_checkout_pro'],
+  credit_card_types: ['amex', 'mastercard', 'visa'],
+)]
 class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsInterface {
 
   /**
@@ -914,7 +913,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   /**
    * {@inheritdoc}
    */
-  public function refundPayment(PaymentInterface $payment, Price $amount = NULL): void {
+  public function refundPayment(PaymentInterface $payment, ?Price $amount = NULL): void {
     $this->assertPaymentState($payment, ['completed', 'partially_refunded']);
     if (!$this->canRefundPayment($payment)) {
       throw new PaymentGatewayException('Refund is not allowed for this payment.');

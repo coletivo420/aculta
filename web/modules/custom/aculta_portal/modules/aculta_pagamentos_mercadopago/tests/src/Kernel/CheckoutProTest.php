@@ -5,12 +5,14 @@ namespace Drupal\Tests\aculta_pagamentos_mercadopago\Kernel;
 use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_payment\Entity\PaymentGateway;
 use Drupal\Tests\commerce_order\Kernel\OrderKernelTestBase;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Kernel tests for the Mercado Pago Checkout Pro payment gateway plugin.
  *
  * @group aculta_pagamentos_mercadopago
  */
+#[RunTestsInSeparateProcesses]
 class CheckoutProTest extends OrderKernelTestBase {
 
   /**
