@@ -344,11 +344,6 @@ services:
   aculta_portal.sales_orders_table_builder:
     class: Drupal\aculta_portal\Sales\SalesOrdersTableBuilder
     arguments: ['@entity_type.manager', '@aculta_portal.sales_report_query', '@commerce_price.currency_formatter', '@date.formatter', '@current_user', '@string_translation']
-  aculta_portal.mercado_pago.refund_eligibility_subscriber:
-    class: Drupal\aculta_portal\MercadoPago\RefundEligibilitySubscriber
-    arguments: ['@config.factory', '@aculta_pagamentos_mercadopago.payment_policy', '@aculta_portal.checkout_settings']
-    tags:
-      - { name: event_subscriber }
 
   aculta_portal.secret_provider_adapter:
     class: Drupal\aculta_portal\Secrets\SecretProviderAdapter

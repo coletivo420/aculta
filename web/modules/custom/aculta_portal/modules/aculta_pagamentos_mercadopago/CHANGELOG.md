@@ -1,3 +1,10 @@
+## 0.1.0-dev.13 — hooks de administração e elegibilidade no módulo próprio
+
+- `RefundEligibilitySubscriber` e os ramos de presave, acesso e formulário do gateway passam ao módulo MP; os serviços não dependem mais de `CheckoutSettings` do Portal.
+- A regra `bloqueiaEstorno` e seus casos permanecem inalterados.
+- Unit do MP: 111 testes / 231 assertions PASS (inclui os 22 casos contratuais informados e os novos testes de acesso/form); PHP lint: 43 arquivos PASS; PHPCS Drupal/DrupalPractice: zero erros e zero avisos nos arquivos alterados; services.yml parseados; `git diff --check` PASS.
+- `validate-portal-commerce-security.php` segue adiado até site descartável; não foi executado no Runtime.
+
 ## 0.1.0-dev.12 — credenciais e webhook no módulo próprio
 
 - Credenciais/override de ambiente e guarda/subscriber do webhook passam ao módulo próprio; IDs de serviço renomeados sem aliases.

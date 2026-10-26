@@ -10,7 +10,6 @@ use Drupal\Component\Utility\Html;
 use Drupal\aculta_portal\Cart\AddToCartAjax;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\commerce_payment\Form\PaymentGatewayForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\CurrentRouteMatch;
@@ -158,44 +157,6 @@ final class FormHooks {
       }
     }
 
-    if (!$formObject instanceof PaymentGatewayForm
-      || $formObject->getEntity()->id() !== 'mercado_pago'
-      || !isset($form['configuration']['form'])) {
-      return;
-    }
-
-    $configurationForm = &$form['configuration']['form'];
-    // Os tokens de teste e produção são campos de senha sem valor exibido.
-    // MercadoPagoEnvironmentOverride lê esse valor do ambiente.
-    foreach ([
-      ['credentials_test', 'access_token_test'],
-      ['credentials_prod', 'access_token_prod'],
-    ] as [$fieldset, $key]) {
-      if (isset($configurationForm[$fieldset][$key])) {
-        $configurationForm[$fieldset][$key]['#type'] = 'password';
-        $configurationForm[$fieldset][$key]['#default_value'] = '';
-        unset($configurationForm[$fieldset][$key]['#value']);
-        $configurationForm[$fieldset][$key]['#attributes']['autocomplete'] = 'new-password';
-      }
-    }
-    // Stage e Client ID/Client Secret não são usados. Desabilite esses campos
-    // para não exportar credenciais.
-    foreach ([
-      ['credentials_stage', 'public_key_stage'],
-      ['credentials_stage', 'access_token_stage'],
-      [NULL, 'client_id'],
-      [NULL, 'client_secret'],
-    ] as [$fieldset, $key]) {
-      $element = &$configurationForm;
-      if ($fieldset !== NULL) {
-        $element = &$configurationForm[$fieldset];
-      }
-      if (isset($element[$key])) {
-        $element[$key]['#disabled'] = TRUE;
-        $element[$key]['#default_value'] = '';
-        unset($element[$key]['#value']);
-      }
-    }
   }
 
   /**

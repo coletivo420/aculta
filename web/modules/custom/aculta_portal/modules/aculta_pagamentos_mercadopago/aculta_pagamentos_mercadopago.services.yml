@@ -38,3 +38,8 @@ services:
     tags:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }
+  aculta_pagamentos_mercadopago.refund_eligibility_subscriber:
+    class: Drupal\aculta_pagamentos_mercadopago\MercadoPago\RefundEligibilitySubscriber
+    arguments: ['@config.factory', '@aculta_pagamentos_mercadopago.payment_policy']
+    tags:
+      - { name: event_subscriber }

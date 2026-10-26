@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\Hook;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -28,14 +29,15 @@ final class EntityHooks {
     #[Autowire(service: 'request_stack')]
     private readonly RequestStack $requestStack,
     #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
-    private readonly \Drupal\aculta_portal\Account\EmailConfirmationPolicy $emailPolicy,
+    private readonly EmailConfirmationPolicy $emailPolicy,
   ) {}
 
   /**
    * Removes the "Ver" operation of users from entity operation lists.
    *
-   * O perfil público de identidade (/identidade/{usuário}) existe só no purpose ACCOUNT. Nas listas
-   * administrativas ele levava a 404 em MAIN. A edição continua disponível na mesma linha.
+   * O perfil público de identidade existe só no purpose ACCOUNT. Nas listas
+   * administrativas ele levava a 404 em MAIN. A edição continua disponível
+   * na mesma linha.
    */
   #[Hook('entity_operation_alter')]
   public function entityOperationAlter(array &$operations, EntityInterface $entity): void {
@@ -53,7 +55,8 @@ final class EntityHooks {
     $operation,
     AccountInterface $account,
   ): AccessResultInterface {
-    // Política de confirmação de e-mail: escrita na wiki e em comentários exige e-mail confirmado.
+    // Escrita na wiki e em comentários exige e-mail confirmado quando a
+    // confirmação de e-mail está ativa.
     if (in_array($operation, ['update', 'delete'], TRUE) && !$account->isAnonymous() && !$this->emailPolicy->isConfirmed($account)
       && (($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'wiki_entry')
         || ($entity->getEntityTypeId() === 'taxonomy_term' && $entity->bundle() === 'wiki_category')
@@ -97,15 +100,7 @@ final class EntityHooks {
         ->setCacheMaxAge(0);
     }
 
-    if ($entity->getEntityTypeId() !== 'commerce_payment_gateway'
-      || $entity->id() !== 'mercado_pago'
-      || $operation !== 'update') {
-      return AccessResult::neutral();
-    }
-
-    return AccessResult::forbidden(
-      'This gateway is managed through reviewed configuration and environment values; editing it here could persist credentials.',
-    );
+    return AccessResult::neutral();
   }
 
 }

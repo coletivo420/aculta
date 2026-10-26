@@ -2,29 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\MercadoPago;
+namespace Drupal\aculta_pagamentos_mercadopago\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\Event\RefundEligibilityEvent;
-use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Nega o estorno de doações e de cursos no gateway Mercado Pago.
- *
- * Doação é reconhecida pelo tipo de pedido e de item configurados em aculta_donation. Curso é reconhecido
- * pelo tipo de pedido e de item "curso" (inscrição em turma).
+ * Nega o estorno de doações, assinaturas e cursos no gateway Mercado Pago.
  */
 final class RefundEligibilitySubscriber implements EventSubscriberInterface {
 
-  /**
-   * Constructs the subscriber.
-   */
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
     private readonly MercadoPagoPaymentPolicy $politica,
-    private readonly ?CheckoutSettings $settings = NULL,
   ) {}
 
   /**
@@ -46,15 +38,18 @@ final class RefundEligibilitySubscriber implements EventSubscriberInterface {
     foreach ($order->getItems() as $item) {
       $itens[] = $item->bundle();
     }
-    $config = $this->configFactory->get('aculta_donation.settings');
+    $donation = $this->configFactory->get('aculta_donation.settings');
+    $checkout = $this->configFactory->get('aculta_portal.checkout_settings');
     $texto = static fn(mixed $valor): string => is_string($valor) ? $valor : '';
+    $lmsOrderType = $texto($checkout->get('lms_order_type'));
+    $lmsOrderType = $lmsOrderType !== '' ? $lmsOrderType : 'curso';
     if ($this->politica->bloqueiaEstorno(
       $order->bundle(),
       $itens,
-      $texto($config->get('donate_order_type')),
-      $texto($config->get('donate_item_type')),
-      [...($this->settings?->lmsOrderTypes() ?? []), $texto($config->get('cart_order_type'))],
-      [$texto($config->get('cart_item_type'))],
+      $texto($donation->get('donate_order_type')),
+      $texto($donation->get('donate_item_type')),
+      array_values(array_unique([$lmsOrderType, 'curso', $texto($donation->get('cart_order_type'))])),
+      [$texto($donation->get('cart_item_type'))],
     )) {
       $event->deny('Doações e cursos não têm estorno.');
     }

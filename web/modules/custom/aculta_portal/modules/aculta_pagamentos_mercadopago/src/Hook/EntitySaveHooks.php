@@ -2,21 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Hook;
+namespace Drupal\aculta_pagamentos_mercadopago\Hook;
 
 use Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\MercadoPagoCredentials;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**
- * Entity lifecycle guards owned by the Portal.
+ * Mercado Pago entity lifecycle guards.
  */
 final class EntitySaveHooks {
 
   /**
    * Keeps the Mercado Pago gateway fail-closed on save.
-   *
-   * Enabling it requires credentials for the declared environment.
    */
   #[Hook('entity_presave')]
   public function entityPresave(EntityInterface $entity): void {

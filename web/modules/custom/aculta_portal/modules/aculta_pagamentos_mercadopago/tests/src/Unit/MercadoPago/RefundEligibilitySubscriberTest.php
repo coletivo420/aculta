@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_portal\Unit\MercadoPago;
+namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\Event\RefundEligibilityEvent;
-use Drupal\aculta_portal\Checkout\CheckoutSettings;
-use Drupal\aculta_portal\MercadoPago\RefundEligibilitySubscriber;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\RefundEligibilitySubscriber;
 use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\Entity\OrderItemInterface;
@@ -16,15 +15,23 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Estorno negado para doação e curso, inclusive para o tipo de pedido de curso configurado (P-CART E).
+ * Nega estornos para doações e cursos.
+ *
+ * Inclui o tipo de pedido de curso configurado (P-CART E).
  */
-#[Group('aculta_portal')]
+#[Group('aculta_pagamentos_mercadopago')]
 final class RefundEligibilitySubscriberTest extends UnitTestCase {
 
   /**
    * Performs the allowed operation.
    */
-  private function allowed(string $orderType, array $itemTypes, array $checkout = [], bool $withSettings = TRUE, array $donation = []): bool {
+  private function allowed(
+    string $orderType,
+    array $itemTypes,
+    array $checkout = [],
+    bool $withSettings = TRUE,
+    array $donation = [],
+  ): bool {
     $items = array_map(function (string $type): OrderItemInterface {
       $item = $this->createMock(OrderItemInterface::class);
       $item->method('bundle')->willReturn($type);
@@ -37,9 +44,9 @@ final class RefundEligibilitySubscriberTest extends UnitTestCase {
     $payment->method('getOrder')->willReturn($order);
     $factory = $this->getConfigFactoryStub([
       'aculta_donation.settings' => $donation + ['donate_order_type' => 'doacao', 'donate_item_type' => 'donation'],
-      CheckoutSettings::CONFIG => $checkout,
+      'aculta_portal.checkout_settings' => $withSettings ? $checkout : [],
     ]);
-    $subscriber = new RefundEligibilitySubscriber($factory, new MercadoPagoPaymentPolicy(), $withSettings ? new CheckoutSettings($factory) : NULL);
+    $subscriber = new RefundEligibilitySubscriber($factory, new MercadoPagoPaymentPolicy());
     $event = new RefundEligibilityEvent($payment);
     $subscriber->onRefundEligibility($event);
     return $event->isAllowed();
@@ -73,10 +80,11 @@ final class RefundEligibilitySubscriberTest extends UnitTestCase {
   }
 
   /**
-   * Tests the tipo de pedido de curso configurado tambem nao tem estorno behavior.
+   * Tests that the configured course order type also has no refund.
    */
   public function testTipoDePedidoDeCursoConfiguradoTambemNaoTemEstorno(): void {
-    // Itens que não são `curso` escapariam da lista de bloqueio fixa; o tipo configurado fecha essa brecha.
+    // Itens que não são `curso` escapariam da lista de bloqueio fixa; o tipo
+    // configurado fecha essa brecha.
     $this->assertFalse($this->allowed('aula', ['default'], ['lms_order_type' => 'aula']));
   }
 
@@ -84,7 +92,7 @@ final class RefundEligibilitySubscriberTest extends UnitTestCase {
    * Tests the sem configurar o mesmo tipo nao e bloqueado por engano behavior.
    */
   public function testUnconfiguredMatchingTypeIsNotBlocked(): void {
-    $this->assertTrue($this->allowed('aula', ['default'], []));
+    $this->assertTrue($this->allowed('aula', ['default']));
   }
 
   /**
