@@ -14,6 +14,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\state_machine\WorkflowManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,6 +29,11 @@ abstract class ShippingMethodBase extends PluginBase implements ContainerFactory
    * The package type manager.
    */
   protected PackageTypeManager $packageTypeManager;
+
+  /**
+   * The workflow manager.
+   */
+  protected WorkflowManagerInterface $workflowManager;
 
   /**
    * The shipping services.
@@ -51,9 +57,11 @@ abstract class ShippingMethodBase extends PluginBase implements ContainerFactory
     $plugin_id,
     $plugin_definition,
     PackageTypeManager $package_type_manager,
+    WorkflowManagerInterface $workflow_manager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->packageTypeManager = $package_type_manager;
+    $this->workflowManager = $workflow_manager;
     foreach ($this->pluginDefinition['services'] as $id => $label) {
       $this->services[$id] = new ShippingService($id, (string) $label);
     }
@@ -69,6 +77,7 @@ abstract class ShippingMethodBase extends PluginBase implements ContainerFactory
       $plugin_id,
       $plugin_definition,
       $container->get('aculta_commerce.package_type_manager'),
+      $container->get('plugin.manager.workflow'),
     );
   }
 
@@ -114,7 +123,14 @@ abstract class ShippingMethodBase extends PluginBase implements ContainerFactory
    * {@inheritdoc}
    */
   public function getWorkflowId(): string {
-    return (string) ($this->configuration['workflow'] ?? $this->pluginDefinition['workflow']);
+    $workflow_id = (string) ($this->configuration['workflow'] ?? '');
+    // Legacy method configuration may still point at the contributed
+    // "shipment_default" workflow. Fall back to the ACULTA workflow instead of
+    // saving a shipment with an unknown state machine.
+    if ($workflow_id === '' || !$this->workflowManager->hasDefinition($workflow_id)) {
+      return (string) $this->pluginDefinition['workflow'];
+    }
+    return $workflow_id;
   }
 
   /**

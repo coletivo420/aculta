@@ -8,6 +8,7 @@ use Drupal\aculta_commerce\Entity\ShipmentInterface;
 use Drupal\aculta_commerce\Plugin\Commerce\ShippingMethod\FlatRate;
 use Drupal\aculta_commerce\Shipping\PackageTypeManager;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\state_machine\WorkflowManagerInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -29,11 +30,22 @@ final class FlatRatePluginTest extends UnitTestCase {
       'class' => FlatRate::class,
       'provider' => 'aculta_commerce',
     ];
-    $plugin = new FlatRate($configuration, 'aculta_flat_rate', $definition, new PackageTypeManager());
+    $plugin = new FlatRate($configuration, 'aculta_flat_rate', $definition, new PackageTypeManager(), $this->workflowManager());
     $parent = $this->createMock(EntityInterface::class);
     $parent->method('id')->willReturn(7);
     $plugin->setParentEntity($parent);
     return $plugin;
+  }
+
+  /**
+   * Builds a workflow manager that knows only the ACULTA workflow.
+   */
+  private function workflowManager(): WorkflowManagerInterface {
+    $workflow_manager = $this->createMock(WorkflowManagerInterface::class);
+    $workflow_manager->method('hasDefinition')->willReturnCallback(
+      static fn(string $id): bool => $id === 'aculta_shipment_default',
+    );
+    return $workflow_manager;
   }
 
   /**
@@ -81,6 +93,18 @@ final class FlatRatePluginTest extends UnitTestCase {
     $shipment->expects($this->once())->method('setOriginalAmount');
     $shipment->expects($this->once())->method('setAmount');
     $plugin->selectRate($shipment, $rate);
+  }
+
+  /**
+   * Legacy method configuration falls back to the ACULTA workflow.
+   */
+  public function testLegacyWorkflowFallsBack(): void {
+    $plugin = $this->plugin([
+      'rate_label' => 'Envio padrão',
+      'rate_amount' => ['number' => '12.34', 'currency_code' => 'BRL'],
+      'workflow' => 'shipment_default',
+    ]);
+    $this->assertSame('aculta_shipment_default', $plugin->getWorkflowId());
   }
 
   /**
