@@ -401,3 +401,11 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - URL de autorização: `https://sandbox.melhorenvio.com.br/oauth/authorize` com o `client_id` 13216 e o retorno `https://aculta.toca.net.br/integracoes/melhorenvio/retorno`.
 - Token de teste: **401** no sandbox (`/api/v2/me/shipment/calculate` e `/api/v2/me`). Não testado em produção. O token parece ser de outra aplicação ou ambiente; confirmar com o responsável.
 - Pendente: token de sandbox aceito pelo sandbox (ME-PEND-01: `authorize`, `oauth/token`, `expires_in`).
+
+## ME-PEND-01: resultado da validação no sandbox (token de aplicativo e autorização)
+
+- `POST https://sandbox.melhorenvio.com.br/oauth/token` com `grant_type=client_credentials` e o `client_id` 13216 respondeu **200** com `Bearer` e `expires_in` 3600. O escopo `shipping-calculate` é aceito; `user-read` é recusado com `invalid_scope`.
+- O token de aplicativo não serve às rotas da conta: `GET /api/v2/me` e `POST /api/v2/me/shipment/calculate` respondem **401** (`Unauthenticated.`). Essas rotas dependem de um token de usuário, obtido pelo fluxo `authorization_code`. Esse token não é salvo no armazenamento do módulo.
+- `GET /oauth/authorize` sem `redirect_uri` responde `Unauthenticated.`, ou seja, o endpoint existe e exige usuário logado. Com `redirect_uri=https://aculta.toca.net.br/integracoes/melhorenvio/retorno` responde `invalid_client` (`Client authentication failed`). Com `redirect_uri=http://127.0.0.1/retorno` responde 403 em HTML, sem diagnóstico.
+- Conclusão: o `redirect_uri` de retorno não confere com o cadastrado no aplicativo sandbox 13216. Confirmar no painel do sandbox a URL exata cadastrada (esquema, host e caminho).
+- Pendente para fechar ME-PEND-01: (1) URL de retorno idêntica no painel do sandbox; (2) login de usuário do sandbox para concluir o consentimento e receber o `code`; (3) troca do `code` em `/oauth/token` e registro de `expires_in` do token de usuário.
