@@ -1,5 +1,21 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.19 — correções da validação pós-integração
+
+- `PublishedGallerySelection` passa a declarar `group: 'aculta_lms_resources'`,
+  alinhado ao prefixo do id usado no handler do campo. A divergência fazia
+  `SelectionPluginManager::getPluginId()` receber `null` e quebrar a instalação
+  limpa com `uasort(null)`.
+- O install e o update `8001` ocultam componentes com `removeComponent()`.
+  `setHidden()` não existe no Drupal 11.3, inclusive em
+  `LayoutBuilderEntityViewDisplay`, classe usada em todo view display quando
+  `layout_builder` está ativo.
+- Validação (execução de 17:09 a 17:29): instalação limpa e update `8001` em
+  site descartável (perfil `standard`, prefixo `idx3_`, MariaDB de teste).
+  Campo criado por `config/install` e pelo update sobre schema 8000; três
+  cursos fictícios preservados; reexecução sem pendências. PHP lint 85
+  arquivos e PHPCS 0 erros (3 avisos de `version` em `info.yml`).
+
 ## 0.1.0-dev.18 — vídeos remotos no curso
 
 - Novo campo `field_lms_videos` em `group:lms_course`, limitado ao bundle

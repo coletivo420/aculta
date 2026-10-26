@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 #[EntityReferenceSelection(
   id: 'aculta_lms_resources:published_gallery',
   label: new TranslatableMarkup('Galerias publicadas da Revista'),
-  group: 'default',
+  group: 'aculta_lms_resources',
   weight: 10,
   entity_types: ['media_gallery'],
 )]
