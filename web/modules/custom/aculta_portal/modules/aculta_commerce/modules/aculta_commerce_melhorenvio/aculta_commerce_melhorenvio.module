@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Telas do módulo Melhor Envio: retorno da autorização OAuth.
+ */
+
+/**
+ * Implements hook_theme().
+ *
+ * Dados neutros: o módulo entrega o estado e o texto; a apresentação fica no template do próprio módulo.
+ */
+function aculta_commerce_melhorenvio_theme(): array {
+  return [
+    'aculta_commerce_melhorenvio_retorno' => [
+      'variables' => [
+        'status' => 'success',
+        'title' => '',
+        'message' => '',
+        'action_url' => '/',
+        'action_label' => 'Voltar ao site',
+      ],
+    ],
+  ];
+}

@@ -9,6 +9,7 @@ use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException;
 use Drupal\aculta_commerce_melhorenvio\Http\OAuthState;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
+use Drupal\Core\Url;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,7 +65,7 @@ final class MelhorEnvioOAuthController {
   /**
    * Recebe o retorno do Melhor Envio. Só troca o código se o `state` for o emitido para esta sessão.
    */
-  public function callback(Request $request): Response {
+  public function callback(Request $request): array {
     $session = $request->getSession();
     $expected = $session->get(self::SESSION_KEY);
     // O state é de uso único: sai da sessão antes de qualquer outra verificação.
@@ -85,17 +86,36 @@ final class MelhorEnvioOAuthController {
       $this->client->exchangeAuthorizationCode($code);
     }
     catch (MelhorEnvioException) {
-      return new Response(
-        'Não foi possível concluir a autorização com o Melhor Envio. Tente novamente.',
-        Response::HTTP_BAD_GATEWAY,
-        ['Content-Type' => 'text/plain; charset=UTF-8'],
+      return $this->resultPage(
+        'error',
+        'Não foi possível autorizar',
+        'O Melhor Envio não concluiu a autorização. Aguarde um instante e tente novamente.',
       );
     }
-    return new Response(
-      'Conexão com o Melhor Envio autorizada.',
-      Response::HTTP_OK,
-      ['Content-Type' => 'text/plain; charset=UTF-8', 'Cache-Control' => 'private, no-store'],
+    return $this->resultPage(
+      'success',
+      'Conexão autorizada',
+      'O site já está conectado ao Melhor Envio. Você pode fechar esta página ou voltar ao site.',
     );
+  }
+
+  /**
+   * Monta a tela de resultado com o template do módulo e o estilo do próprio módulo.
+   *
+   * @return array<string, mixed>
+   *   Render array da tela.
+   */
+  private function resultPage(string $status, string $title, string $message): array {
+    return [
+      '#theme' => 'aculta_commerce_melhorenvio_retorno',
+      '#status' => $status,
+      '#title' => $title,
+      '#message' => $message,
+      '#action_url' => Url::fromRoute('<front>')->toString(),
+      '#action_label' => 'Voltar ao site',
+      '#attached' => ['library' => ['aculta_commerce_melhorenvio/retorno']],
+      '#cache' => ['max-age' => 0],
+    ];
   }
 
 }
