@@ -8,22 +8,34 @@ use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClient;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException;
 use Drupal\aculta_commerce_melhorenvio\Http\OAuthState;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Fluxo OAuth2 do Melhor Envio: inicia a autorização e recebe o retorno com validação do `state`.
+ *
+ * Respostas para o navegador usam as mensagens do Drupal (alertas exibidos pelo tema) e redirecionam para a página
+ * inicial. Nenhuma resposta de texto puro vai ao usuário.
  */
 final class MelhorEnvioOAuthController {
+
+  use StringTranslationTrait;
 
   /**
    * Chave da sessão que guarda o `state` emitido.
    */
   private const SESSION_KEY = 'aculta_commerce_melhorenvio.oauth_state';
+
+  /**
+   * Canal de log do módulo.
+   */
+  private readonly LoggerInterface $logger;
 
   /**
    * Cria o controlador.
@@ -32,14 +44,10 @@ final class MelhorEnvioOAuthController {
     private readonly MelhorEnvioClient $client,
     private readonly OAuthState $state,
     LoggerChannelFactoryInterface $loggerFactory,
+    private readonly MessengerInterface $messenger,
   ) {
     $this->logger = $loggerFactory->get('aculta_commerce_melhorenvio');
   }
-
-  /**
-   * Canal de log do módulo.
-   */
-  private readonly LoggerInterface $logger;
 
   /**
    * Gera um `state`, guarda na sessão e redireciona para a tela de autorização do Melhor Envio.
@@ -54,18 +62,15 @@ final class MelhorEnvioOAuthController {
       return new TrustedRedirectResponse($this->client->authorizationUrl($state));
     }
     catch (MelhorEnvioException) {
-      return new Response(
-        'A integração com o Melhor Envio não está configurada para este ambiente.',
-        Response::HTTP_SERVICE_UNAVAILABLE,
-        ['Content-Type' => 'text/plain; charset=UTF-8'],
-      );
+      $this->messenger->addError($this->t('A integração com o Melhor Envio não está configurada para este ambiente.'));
+      return $this->redirectToFront();
     }
   }
 
   /**
    * Recebe o retorno do Melhor Envio. Só troca o código se o `state` for o emitido para esta sessão.
    */
-  public function callback(Request $request): array {
+  public function callback(Request $request): Response {
     $session = $request->getSession();
     $expected = $session->get(self::SESSION_KEY);
     // O state é de uso único: sai da sessão antes de qualquer outra verificação.
@@ -75,47 +80,33 @@ final class MelhorEnvioOAuthController {
       'received' => $received === '' ? '(vazio)' : substr(hash('sha256', $received), 0, 12),
       'pending' => is_string($expected) && $expected !== '' ? substr(hash('sha256', $expected), 0, 12) : 'nenhum',
     ]);
-    if (!$this->state->matches(is_string($expected) ? $expected : NULL, (string) $request->query->get('state', ''))) {
-      throw new AccessDeniedHttpException('Retorno de autorização inválido.');
+    if (!$this->state->matches(is_string($expected) ? $expected : NULL, $received)) {
+      $this->messenger->addError($this->t('A autorização do Melhor Envio não pôde ser confirmada. Inicie a conexão de novo a partir do site.'));
+      return $this->redirectToFront();
     }
     $code = (string) $request->query->get('code', '');
     if ($code === '') {
-      throw new AccessDeniedHttpException('Código de autorização ausente.');
+      $this->messenger->addError($this->t('O Melhor Envio não devolveu o código de autorização. Tente de novo.'));
+      return $this->redirectToFront();
     }
     try {
       $this->client->exchangeAuthorizationCode($code);
     }
     catch (MelhorEnvioException) {
-      return $this->resultPage(
-        'error',
-        'Não foi possível autorizar',
-        'O Melhor Envio não concluiu a autorização. Aguarde um instante e tente novamente.',
-      );
+      $this->messenger->addError($this->t('Não foi possível concluir a autorização com o Melhor Envio. Aguarde um instante e tente novamente.'));
+      return $this->redirectToFront();
     }
-    return $this->resultPage(
-      'success',
-      'Conexão autorizada',
-      'O site já está conectado ao Melhor Envio. Você pode fechar esta página ou voltar ao site.',
-    );
+    $this->messenger->addStatus($this->t('Conexão com o Melhor Envio autorizada.'));
+    return $this->redirectToFront();
   }
 
   /**
-   * Monta a tela de resultado com o template do módulo e o estilo do próprio módulo.
-   *
-   * @return array<string, mixed>
-   *   Render array da tela.
+   * Redireciona para a página inicial, onde o tema exibe as mensagens do Drupal.
    */
-  private function resultPage(string $status, string $title, string $message): array {
-    return [
-      '#theme' => 'aculta_commerce_melhorenvio_retorno',
-      '#status' => $status,
-      '#title' => $title,
-      '#message' => $message,
-      '#action_url' => Url::fromRoute('<front>')->toString(),
-      '#action_label' => 'Voltar ao site',
-      '#attached' => ['library' => ['aculta_commerce_melhorenvio/retorno']],
-      '#cache' => ['max-age' => 0],
-    ];
+  private function redirectToFront(): RedirectResponse {
+    $response = new RedirectResponse(Url::fromRoute('<front>')->toString());
+    $response->headers->set('Cache-Control', 'private, no-store');
+    return $response;
   }
 
 }
