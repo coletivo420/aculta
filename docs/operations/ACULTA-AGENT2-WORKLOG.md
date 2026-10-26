@@ -242,3 +242,21 @@ Não iniciadas as auditorias profundas das frentes 4 a 8 nesta execução.
 | Frente 7, metatag | JSON-LD expõe só campos públicos do evento (local, modalidade, URL, editoriais). Nenhum campo de contato privado | Verificado |
 | Frente 7, Index | Provider projeta título, uuid, idioma, domínio, status, datas e dono; sem corpo | Verificado |
 | Frente 7, Kernel | 3 PASS (activity) | Já executado |
+
+## Kernel de sitemap e Melhor Envio: resolvido por lista de módulos completa
+
+| Módulo | Resultado | Commit |
+|---|---|---|
+| `aculta_portal_sitemap` | Kernel de cabeamento: plugin `aculta_purpose_node` descoberto e entidade `simple_sitemap_type` registrada. **2 PASS** | `bee2ed803` |
+| `aculta_commerce_melhorenvio` | Kernel do cliente OAuth2 no container real. **3 PASS**, sem rede | (commit seguinte) |
+
+**Defeito real encontrado no caminho:** `aculta_commerce_melhorenvio.shipment_address_binder` usava autowire por classe
+para o mapper, sem alias pela classe. O container não compilava com o módulo habilitado. Corrigido com argumentos
+explícitos (`bee2ed803`).
+
+**Como foi resolvido:** a lista de módulos foi gerada pelo fechamento transitivo dos `info.yml` (67 módulos, incluindo o core
+necessário), mais os serviços que o `aculta_portal` usa sem declarar em `dependencies` (`aculta_user`, `config`, `system`,
+`file`). As deprecações (50 e 66) vêm de contrib e core e não foram classificadas uma a uma.
+
+**Ressalva:** os testes de sitemap que geram URLs de conteúdo continuam sem cobertura, porque exigem nós e domínios
+cadastrados.
