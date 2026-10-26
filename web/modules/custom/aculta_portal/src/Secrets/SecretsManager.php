@@ -62,6 +62,12 @@ final class SecretsManager {
     return $this->storageMode() === 'file';
   }
 
+  /** Ambientes do contrato, na ordem das abas do painel. */
+  public const ENVIRONMENTS = ['production', 'test'];
+
+  /** Estado de credenciais de outro ambiente: o servidor atual não consulta nem afirma nada sobre elas. */
+  public const STATE_ELSEWHERE = 'managed_elsewhere';
+
   /** @return array<string, mixed> */
   public function contract(): array {
     $file = dirname($this->appRoot) . '/config/secrets-contract.json';
@@ -70,23 +76,65 @@ final class SecretsManager {
   }
 
   /**
-   * Estado por variável do contrato. Não retorna valores.
-   *
-   * @return array<string, array{key_id: string, required: bool, present: bool}>
+   * Verdadeiro quando a credencial pertence ao ambiente ativo. É o único critério de leitura e escrita:
+   * uma credencial de outro ambiente nunca é resolvida nem gravada neste servidor, mesmo com o mesmo nome.
    */
-  public function status(): array {
-    $contract = $this->contract();
-    $required = SecretsFormat::requiredNames($contract, $this->environment());
+  public function inActiveScope(string $name): bool {
+    $variable = $this->variable($name);
+    return $variable !== NULL && in_array($this->environment(), (array) ($variable['environments'] ?? []), TRUE);
+  }
+
+  /**
+   * Metadados públicos de um ambiente (nome, Key e obrigatoriedade). Não consulta valores nem fontes.
+   *
+   * @return array<string, array{key_id: string, required: bool}>
+   */
+  public function listForEnvironment(string $environment): array {
     $rows = [];
-    foreach ($contract['variables'] ?? [] as $variable) {
-      $name = (string) $variable['name'];
-      $rows[$name] = [
+    foreach ($this->contract()['variables'] ?? [] as $variable) {
+      if (!in_array($environment, (array) ($variable['environments'] ?? []), TRUE)) {
+        continue;
+      }
+      $rows[(string) $variable['name']] = [
         'key_id' => (string) ($variable['key_id'] ?? ''),
-        'required' => in_array($name, $required, TRUE),
-        'present' => $this->value($name) !== NULL,
+        'required' => in_array($environment, (array) ($variable['required_in'] ?? []), TRUE),
       ];
     }
     return $rows;
+  }
+
+  /**
+   * Estado de um ambiente. Estado real só para o ambiente ativo; para os demais, state é
+   * STATE_ELSEWHERE e present é NULL, sem leitura de nenhuma fonte.
+   *
+   * @return array<string, array{key_id: string, required: bool, state: string, present: ?bool}>
+   */
+  public function statusForEnvironment(string $environment): array {
+    $active = $environment === $this->environment();
+    $rows = [];
+    foreach ($this->listForEnvironment($environment) as $name => $meta) {
+      if (!$active) {
+        $rows[$name] = $meta + ['state' => self::STATE_ELSEWHERE, 'present' => NULL];
+        continue;
+      }
+      $present = $this->value($name) !== NULL;
+      $state = match (TRUE) {
+        $present => 'configured',
+        $meta['required'] => 'missing_required',
+        default => 'missing_optional',
+      };
+      $rows[$name] = $meta + ['state' => $state, 'present' => $present];
+    }
+    return $rows;
+  }
+
+  /**
+   * Estado das credenciais do ambiente ativo. Não retorna valores.
+   *
+   * @return array<string, array{key_id: string, required: bool, state: string, present: ?bool}>
+   */
+  public function status(): array {
+    return $this->statusForEnvironment($this->environment());
   }
 
   /** @return string[] obrigatórias no ambiente sem valor. */
@@ -105,6 +153,10 @@ final class SecretsManager {
    * Uso restrito: a página de revelação e a máscara. Nunca registrar nem persistir o retorno.
    */
   public function value(string $name): ?string {
+    // Escopo do backend: credencial de outro ambiente não é resolvida aqui, mesmo que exista nesta instalação.
+    if (!$this->inActiveScope($name)) {
+      return NULL;
+    }
     $variable = $this->variable($name);
     if ($variable === NULL) {
       return NULL;
@@ -156,6 +208,9 @@ final class SecretsManager {
       if (!in_array($name, $allowed, TRUE)) {
         return $fail('Variável fora do contrato: ' . $name . '.');
       }
+      if (!$this->inActiveScope($name)) {
+        return $fail('Variável de outro ambiente, não gravada aqui: ' . $name . '.');
+      }
       if ($value === '') {
         continue;
       }
@@ -178,6 +233,9 @@ final class SecretsManager {
     }
     if (!in_array($name, SecretsFormat::allowedNames($this->contract()), TRUE)) {
       return ['ok' => FALSE, 'message' => 'Variável fora do contrato: ' . $name . '.', 'updated' => []];
+    }
+    if (!$this->inActiveScope($name)) {
+      return ['ok' => FALSE, 'message' => 'Variável de outro ambiente, não apagada aqui: ' . $name . '.', 'updated' => []];
     }
     return $this->persist([], [$name]);
   }

@@ -13,11 +13,15 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * "Credenciais do ambiente": uma seção para o ambiente de produção e outra para o de testes.
- * A troca de ambiente continua a cargo do ACULTA Deployer; o painel só mostra as duas seções.
+ * "Credenciais do ambiente": duas abas independentes, Produção e Testes.
+ *
+ * A aba é só uma preferência de visualização. O ambiente de execução vem do ACULTA Deployer e nunca
+ * muda com a aba. A aba do ambiente ativo mostra estado e ações; a do outro ambiente mostra só os
+ * metadados públicos do contrato, sem consultar valores nem a existência real da credencial.
  *
  * Olho (popup com o valor completo, sob demanda), lápis (popup para alterar) e lixeira (popup para
  * apagar). O valor só aparece dentro do popup, nunca no HTML da página.
@@ -25,8 +29,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class SecretsController {
 
   use StringTranslationTrait;
-
-  private const SECTIONS = ['production', 'test'];
 
   public function __construct(
     private readonly SecretsManager $secrets,
@@ -39,12 +41,33 @@ final class SecretsController {
 
   /** @return array<string, mixed> */
   public function page(): array {
-    $contract = $this->secrets->contract();
-    $status = $this->secrets->status();
+    $active = $this->secrets->environment();
+    $buttons = [];
+    $panels = [];
+    foreach (SecretsManager::ENVIRONMENTS as $environment) {
+      $is_active = $environment === $active;
+      $tab_id = 'credenciais-tab-' . $environment;
+      $buttons[$environment] = [
+        '#type' => 'html_tag',
+        '#tag' => 'button',
+        '#value' => $this->tabLabel($environment),
+        '#attributes' => [
+          'type' => 'button',
+          'role' => 'tab',
+          'id' => $tab_id,
+          'aria-controls' => 'credenciais-' . $environment,
+          'aria-selected' => $is_active ? 'true' : 'false',
+          'tabindex' => $is_active ? '0' : '-1',
+          'class' => ['secrets-tabs__tab'],
+          'data-portal-ui' => 'secrets-tab',
+        ],
+      ];
+      $panels['section_' . $environment] = $this->section($environment, $is_active, $tab_id);
+    }
     $page = [
       '#attached' => [
         // dialog.ajax: o lápis abre o popup por link use-ajax com data-dialog-type="modal".
-        'library' => ['aculta_portal/requirements-report', 'core/drupal.dialog.ajax'],
+        'library' => ['aculta_portal/requirements-report', 'aculta_portal/secrets-tabs', 'core/drupal.dialog.ajax'],
       ],
       'legend' => [
         '#type' => 'container',
@@ -53,11 +76,20 @@ final class SecretsController {
         'attention' => ['#plain_text' => (string) $this->t('⚠ Atenção: variável opcional sem valor.')],
         'error' => ['#plain_text' => (string) $this->t('✖ Erro: variável obrigatória sem valor.')],
       ],
-      'environment' => ['#markup' => '<p>' . $this->t('Ambiente atual declarado pelo ACULTA Deployer: @env.', ['@env' => $this->secrets->environment()]) . '</p>'],
+      'environment' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'secrets-environment'],
+        'text' => ['#markup' => '<p>' . $this->t('Ambiente operacional deste servidor, declarado pelo ACULTA Deployer: @env. As abas só organizam a visualização e não alteram esse ambiente.', ['@env' => $active]) . '</p>'],
+      ],
+      'tabs' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'secrets-tabs', 'class' => ['secrets-tabs']],
+        'list' => [
+          '#type' => 'container',
+          '#attributes' => ['role' => 'tablist', 'aria-label' => (string) $this->t('Ambientes das credenciais'), 'class' => ['secrets-tabs__list']],
+        ] + $buttons,
+      ] + $panels,
     ];
-    foreach (self::SECTIONS as $environment) {
-      $page['section_' . $environment] = $this->section($environment, $contract, $status);
-    }
     if (!$this->secrets->canSaveHere()) {
       $page['storage_notice'] = [
         '#type' => 'container',
@@ -70,11 +102,12 @@ final class SecretsController {
 
   /**
    * Popup com o valor completo de uma credencial. Resposta do próprio popup (não fica no HTML da página),
-   * sem cache e registrada no log com o nome e o usuário.
+   * sem cache e registrada no log com o nome e o usuário. Negada para credenciais de outro ambiente.
    *
    * @return array<string, mixed>
    */
   public function show(string $name): array {
+    $this->assertInActiveScope($name);
     $value = $this->secrets->value($name);
     if ($value === NULL) {
       throw new NotFoundHttpException();
@@ -89,75 +122,113 @@ final class SecretsController {
     ];
   }
 
-  /** Popup de alteração de uma credencial (rota com link use-ajax modal). */
+  /** Popup de alteração de uma credencial do ambiente ativo (rota com link use-ajax modal). */
   public function edit(string $name): array {
+    $this->assertInActiveScope($name);
     return $this->formBuilder->getForm(SecretEditForm::class, $name);
   }
 
-  /** Popup de confirmação para apagar o valor de uma credencial. */
+  /** Popup de confirmação para apagar o valor de uma credencial do ambiente ativo. */
   public function clear(string $name): array {
+    $this->assertInActiveScope($name);
     return $this->formBuilder->getForm(SecretClearForm::class, $name);
   }
 
+  /** Rótulo de cada aba. */
+  private function tabLabel(string $environment): string {
+    return (string) ($environment === 'production'
+      ? $this->t('Ambiente de Produção')
+      : $this->t('Ambiente de Testes'));
+  }
+
+  /** Recusa, no backend, qualquer ação sobre credencial que não pertence ao ambiente ativo. */
+  private function assertInActiveScope(string $name): void {
+    if (!$this->secrets->inActiveScope($name)) {
+      throw new AccessDeniedHttpException('Credencial de outro ambiente.');
+    }
+  }
+
   /**
-   * Seção de um ambiente: as variáveis do contrato que pertencem a ele. Variáveis compartilhadas
-   * aparecem nas duas seções. "Obrigatória" segue o ambiente da seção.
+   * Painel de um ambiente. Só o ambiente ativo recebe estado real e ações; os demais recebem apenas
+   * os metadados do contrato, com a indicação de que o estado é gerenciado no ambiente correspondente.
    *
-   * @param array<string, mixed> $contract
-   * @param array<string, array{key_id: string, required: bool, present: bool}> $status
    * @return array<string, mixed>
    */
-  private function section(string $environment, array $contract, array $status): array {
-    $label = $environment === 'production'
-      ? $this->t('Ambiente de Produção')
-      : $this->t('Ambiente de Testes');
-    $required = SecretsFormat::requiredNames($contract, $environment);
+  private function section(string $environment, bool $is_active, string $tab_id): array {
+    $shared = $this->sharedNames();
     $rows = [];
-    foreach ($contract['variables'] ?? [] as $variable) {
-      $name = (string) $variable['name'];
-      $environments = (array) ($variable['environments'] ?? []);
-      if (!in_array($environment, $environments, TRUE)) {
-        continue;
-      }
-      $present = $status[$name]['present'] ?? FALSE;
-      $is_required = in_array($name, $required, TRUE);
-      $state = $present ? 'ok' : ($is_required ? 'error' : 'attention');
-      $label_state = match ($state) {
-        'ok' => $this->t('✔ OK — preenchida'),
-        'attention' => $this->t('⚠ Atenção — opcional sem valor'),
-        default => $this->t('✖ Erro — obrigatória sem valor'),
-      };
+    foreach ($this->secrets->statusForEnvironment($environment) as $name => $row) {
       $name_cell = ['#plain_text' => $name];
-      if (count($environments) > 1) {
+      if (isset($shared[$name])) {
         $name_cell = [
           '#type' => 'container',
           'name' => ['#plain_text' => $name],
           'shared' => ['#markup' => '<br><small>' . $this->t('compartilhada entre os ambientes') . '</small>'],
         ];
       }
+      if ($is_active) {
+        $state = $row['state'];
+        $state_class = $state === 'configured' ? 'ok' : ($state === 'missing_optional' ? 'attention' : 'error');
+        $label_state = match ($state) {
+          'configured' => $this->t('✔ OK — preenchida'),
+          'missing_optional' => $this->t('⚠ Atenção — opcional sem valor'),
+          default => $this->t('✖ Erro — obrigatória sem valor'),
+        };
+        $value_cell = $this->valueCell($name, (bool) $row['present'], $environment);
+      }
+      else {
+        $state_class = 'elsewhere';
+        $label_state = $this->t('Gerenciado no ambiente correspondente.');
+        $value_cell = ['#plain_text' => $this->t('Não consultado neste servidor')];
+      }
       $rows[] = [
         ['data' => $name_cell],
-        ['data' => ['#plain_text' => (string) $variable['key_id']]],
-        ['data' => ['#plain_text' => $is_required ? $this->t('Sim') : $this->t('Não')]],
-        ['data' => $this->valueCell($name, $present, $environment)],
+        ['data' => ['#plain_text' => $row['key_id']]],
+        ['data' => ['#plain_text' => $row['required'] ? $this->t('Sim') : $this->t('Não')]],
+        ['data' => $value_cell],
         [
           'data' => ['#plain_text' => $label_state],
-          'data-portal-ui' => 'requirements-status status-' . $state,
+          'data-portal-ui' => 'requirements-status status-' . $state_class,
         ],
       ];
     }
     return [
       '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'secrets-section', 'id' => 'credenciais-' . $environment],
-      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $label],
-      'table' => [
-        '#type' => 'table',
-        '#header' => [$this->t('Variável'), $this->t('Key'), $this->t('Obrigatória'), $this->t('Valor salvo'), $this->t('Estado')],
-        '#rows' => $rows,
-        '#empty' => $this->t('Nenhuma variável deste ambiente no contrato.'),
-        '#attributes' => ['data-portal-ui' => 'requirements'],
+      '#attributes' => [
+        'data-portal-ui' => 'secrets-section',
+        'id' => 'credenciais-' . $environment,
+        'role' => 'tabpanel',
+        'aria-labelledby' => $tab_id,
+        'class' => ['secrets-tabs__panel'],
+      ],
+      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->tabLabel($environment)],
+      'table_wrapper' => [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['secrets-table-scroll']],
+        'table' => [
+          '#type' => 'table',
+          '#header' => [$this->t('Variável'), $this->t('Key'), $this->t('Obrigatória'), $this->t('Valor salvo'), $this->t('Estado')],
+          '#rows' => $rows,
+          '#empty' => $this->t('Nenhuma variável deste ambiente no contrato.'),
+          '#attributes' => ['data-portal-ui' => 'requirements'],
+        ],
       ],
     ];
+  }
+
+  /**
+   * Nomes declarados em mais de um ambiente (rótulo "compartilhada"). Lido do contrato, sem valores.
+   *
+   * @return array<string, true>
+   */
+  private function sharedNames(): array {
+    $shared = [];
+    foreach ($this->secrets->contract()['variables'] ?? [] as $variable) {
+      if (count((array) ($variable['environments'] ?? [])) > 1) {
+        $shared[(string) $variable['name']] = TRUE;
+      }
+    }
+    return $shared;
   }
 
   /**
