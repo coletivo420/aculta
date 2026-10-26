@@ -17,7 +17,17 @@ Este documento registra a inventariação (R0), as decisões do responsável e a
 | LMS, acesso gratuito / matrícula sem checkout comercial | Não exigido | Nenhuma alteração na política de matrículas |
 | Doações (`aculta_donation`) | Não obrigatório | Checkout de doação preservado |
 
-Demais decisões: o módulo oficial mantém o machine name `aculta_id_cpf`; o campo `profile.participante.field_documento` e o índice `field_documento_indice` não mudam; chaves, key IDs e separador HMAC (`aculta_id_cpf:v1`) permanecem como estão; o documento não é alterável diretamente após o primeiro cadastro válido; o checkout não sobrescreve o documento cadastrado; alterações excepcionais serão administrativas, autorizadas e auditadas (fase futura).
+Demais decisões: o módulo oficial mantém o machine name `aculta_id_cpf`; o campo `profile.associado.field_documento` e o índice `field_documento_indice` não mudam; chaves, key IDs e separador HMAC (`aculta_id_cpf:v1`) permanecem como estão; o documento não é alterável diretamente após o primeiro cadastro válido; o checkout não sobrescreve o documento cadastrado; alterações excepcionais serão administrativas, autorizadas e auditadas (fase futura).
+
+### Addendo de 2026-10-26 — bundle e atualização de unicidade
+
+O nome do bundle participante foi aposentado em 2026-10-17; o proprietário atual
+é profile.associado, como usado pelo AccountDocumentStore e pela configuração
+ativa. O Runtime MAIN foi consultado somente para leitura: schema CPF 10001,
+um documento associado com fingerprint, nenhum documento sem índice, nenhuma
+duplicidade e ainda sem índice SQL único. A branch da PR contém o update 10002
+que cria essa restrição depois de conferir cobertura e unicidade. Nenhum update
+foi executado.
 
 ## 2. Inventário R0 — `aculta_id_cpf` × `aculta_associado_id`
 
@@ -171,7 +181,7 @@ Dependências: R2 e R3 antes de I-D; I-B antes de I-C e I-D; I-D e LMS antes de 
 ## 8. Roadmap do `aculta_id_cpf` (R5)
 
 - **CPF 0.2-A — Consolidação arquitetural:** módulo único; contratos de serviço; dependências saneadas; documentação atualizada. *Situação: R0–R2 concluídos; remoção do associado bloqueada.*
-- **CPF 0.2-B — Integridade e concorrência:** implementada em código `aculta_id_cpf_update_10002`, com índice único no armazenamento ativo de `field_documento_indice`; Kernel MariaDB verifica duplicata no banco e aborta diante de grupo legado sem expor fingerprints (2 testes/3 assertions). *Ativação no Runtime e validação de conflitos reais seguem pendentes de autorização operacional; sem isso, ambientes anteriores ao update continuam usando apenas a checagem prévia.*
+- **CPF 0.2-B — Integridade e concorrência:** implementada em código `aculta_id_cpf_update_10002`, com índice único no armazenamento ativo de `field_documento_indice`; Kernel MariaDB verifica idempotência, bloqueio de duplicata, recusa documento sem fingerprint e aborta diante de grupo legado sem expor fingerprints (3 testes/8 assertions). *Ativação no Runtime e validação de conflitos reais seguem pendentes de autorização operacional; sem isso, ambientes anteriores ao update continuam usando apenas a checagem prévia.*
 - **CPF 0.2-C — Integração de conta:** formulários do Portal; Profile/User; máscaras e mensagens genéricas; proteção contra exposição de PII; validação de acesso.
 - **CPF 0.2-D — Login por CPF:** estudo somente. Preservar autenticação Core, CAPTCHA, flood control, confirmação de e-mail e Social Auth. Sem implementação antes de contrato de segurança.
 - **CPF 0.2-E — Integrações futuras:** Commerce e LMS (ver CPF-CHECKOUT-0.2-I); Webform com controles de acesso e exportação; serviços internos autorizados; auditoria e retenção.

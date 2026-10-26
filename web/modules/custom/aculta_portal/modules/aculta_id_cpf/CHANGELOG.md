@@ -14,6 +14,12 @@
 
 # Changelog
 
+## 0.3.0-dev.4 — impedir unicidade falsa com documentos sem fingerprint — 2026-10-26
+
+- O update 10002 agora verifica que todo documento não vazio do bundle Profile associado possui fingerprint antes de criar a restrição SQL. Se faltar índice ou tabela de origem, a operação falha fechada com contagem agregada e sem imprimir valores.
+- Runner de domínio 248 checks, Unit 48/116 e Kernel MariaDB 3/8 PASS. O Kernel cobre sucesso/idempotência, fingerprints duplicados e recusa de documento sem fingerprint; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS.
+- Runtime consultado em modo somente leitura: 1 documento associado, 1 fingerprint, zero não indexados, zero grupos duplicados e ainda sem índice SQL; nenhum update foi executado.
+
 ## 0.3.0-dev.3 — proteger diagnóstico de colisão concorrente — 2026-10-26
 
 - Uma violação da chave única de fingerprint continua retornando `Document already registered.`, sem encadear a exceção SQL que pode conter o fingerprint no detalhe do banco. Falhas de armazenamento sem essa chave continuam sendo propagadas.

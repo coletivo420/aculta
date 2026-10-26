@@ -369,3 +369,12 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Suíte Unit completa do Portal: 353 testes / 914 assertions PASS, seis depreciações PHPUnit; teste focal novo 3/36 PASS; PHPCS Drupal/DrupalPractice e PHP lint do teste PASS.
 - Gates após bump documental de Portal 0.4.1-dev.34: índice 41 PASS, pacotes próprios 41 PASS, Config Extension 1590 checks/1437 YAML PASS, Drupal 11+ 1160 PASS. Runtime permaneceu inalterado.
 - A verificação encontrou cobertura direta ausente do FileReferenceInspector, não um defeito de produto reproduzido. Instalação limpa e Functional continuam pendentes conforme status anterior.
+
+
+## M-1 — CPF/CNPJ: cobertura completa do update de unicidade — 2026-10-26
+
+- A inspeção read-only do Runtime MAIN foi precedida por Drush status (Drupal 11.4.10, root compartilhado /home/piradopirata/projetos/aculta/web, banco aculta_runtime). O código ativo em /home/aculta é aculta_id_cpf 0.3.0-dev.1, com schema 10001; a branch da PR tem update 10002 e não foi executada no Runtime.
+- Consulta agregada sem selecionar dados pessoais: Profile.associado tem 1 documento cifrado e 1 fingerprint, zero documentos sem índice, zero grupos duplicados e nenhum índice SQL único. Config ativa não possui bundle participante; campo atual é associado.
+- O update 10002 agora falha fechado se faltar documento de origem ou fingerprint de algum documento ativo associado; só cria a restrição depois de cobertura e duplicatas serem verificadas. A checagem não exibe CPF, ciphertext ou fingerprint.
+- Kernel MariaDB isolado: 3 testes / 8 assertions PASS (idempotência, rejeição de grupos duplicados e de documento sem fingerprint); Unit: 48/116 PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS.
+- Manifesto/README/CHANGELOG/status/matriz reconciliados para 0.3.0-dev.4 e bundle associado. O update não foi aplicado; permanece dependente de ensaio com dados sintéticos, plano de rollback e autorização operacional.

@@ -1,11 +1,13 @@
 # ACULTA CPF e CNPJ
 
 Submódulo opcional do `aculta_portal`, baseline Drupal **11.3+** e PHP **8.4**.
-Versão atual: **0.3.0-dev.3**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
+Versão atual: **0.3.0-dev.4**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
 e um índice de unicidade (fingerprint HMAC).
 
-**RUNTIME STATUS: DEFERRED** — a rodada local em PHP 8.4 passou; o servidor
-remoto `*.aculta.toca.net.br` continua pendente.
+**Runtime:** Homelab MAIN ativo, consultado somente para leitura em 2026-10-26.
+O checkout Runtime ainda usa 0.3.0-dev.1 e registra schema 10001; há um documento
+associado com fingerprint, nenhum documento sem índice e nenhum grupo duplicado.
+A chave SQL única ainda não existe. O update 10002 desta branch não foi aplicado.
 
 ## Disponível
 
@@ -40,17 +42,17 @@ da chave invalida os fingerprints existentes; rotação futura exige recalcular
 todos os índices de forma controlada. O serviço falha fechado se a chave estiver
 ausente ou for menor que 32 bytes.
 
-O campo HMAC continua na fonte de verdade do perfil; a atualização `10002`
-adiciona um índice único ao armazenamento ativo do campo para impedir duplicatas
-mesmo sob gravações concorrentes. A atualização verifica grupos duplicados
-preexistentes e aborta sem expor fingerprints. O Runtime não foi atualizado nesta
-entrega. Não usar o fingerprint como autorização nem como anonimização.
+O campo HMAC continua na fonte de verdade do perfil associado; a atualização
+10002 verifica que cada documento ativo possui fingerprint e não há grupos
+duplicados antes de adicionar o índice SQL único, fechando a corrida entre
+gravações. Se houver documento sem índice, a atualização falha fechada com
+contagem agregada. Não usar o fingerprint como autorização nem como anonimização.
 
 ## Decisão sobre campos e formulários
 
 O módulo não implementa plugins de campo, widgets, elementos Form API,
 máscaras JavaScript nem integração Webform. `AccountDocumentStore` já persiste
-documento cifrado e fingerprint no perfil participante; o Portal é proprietário
+documento cifrado e fingerprint no perfil associado; o Portal é proprietário
 dos formulários e chama o serviço de validação/canonicalização:
 
 ```php
@@ -69,7 +71,7 @@ fora do módulo; o perfil permanece privado e a gravação única passa pelo sto
 
 - `DocumentCipher`: cifra libsodium com a Key `aculta_document_encryption_key`
   (variável `ACULTA_DOCUMENT_ENCRYPTION_KEY`, 64 caracteres hexadecimais).
-- `AccountDocumentStore` grava em `profile.participante.field_documento` (cifrado)
+- `AccountDocumentStore` grava em `profile.associado.field_documento` (cifrado)
   e `field_documento_indice` (fingerprint HMAC com a Key `aculta_id_cpf_fingerprint`,
   variável `ACULTA_ID_CPF_FINGERPRINT_KEY`, mínimo de 32 bytes).
 - Antes de gravar, recusa o mesmo documento em outra conta com mensagem genérica.
@@ -77,17 +79,19 @@ fora do módulo; o perfil permanece privado e a gravação única passa pelo sto
 - Exibição ao titular: 5 caracteres e `*` no restante (ex.: `974.12*.***-**`).
 - Sem Key de cifra ou de fingerprint, a gravação e a aba ficam indisponíveis
   (falha fechada); a leitura de valores já gravados também exige a cifra.
-- Atualização `aculta_id_cpf_update_10001`: cria o campo de índice e indexa os
-  documentos gravados antes dele; para se houver duplicidade entre contas.
+- Update histórico 10001: foi criado quando o bundle ainda se chamava participante;
+  o bundle atual é associado, com os campos versionados no Config Sync.
 
 ## Garantia de unicidade e migração
 
 A consulta prévia preserva a mensagem genérica; o índice único no campo ativo
-fecha a corrida no armazenamento SQL. `aculta_id_cpf_update_10002` cria o
-índice após verificar conflitos existentes e é idempotente. A implantação dessa
-atualização permanece pendente para Runtime existente: inventariar apenas a
-contagem de conflitos, inspecionar plano/rollback e obter autorização operacional
-antes de executá-la. Não registrar CPF/CNPJ ou fingerprint em logs.
+fecha a corrida no armazenamento SQL. O update 10002 verifica que todo documento
+ativo no bundle associado possui fingerprint, verifica grupos duplicados e então
+cria o índice SQL único; a operação é idempotente. No Runtime MAIN, a leitura de
+2026-10-26 encontrou um documento indexado, nenhum faltante, nenhuma duplicidade
+e ainda sem índice SQL único. A atualização permanece pendente: inspecionar
+plano/rollback e obter autorização operacional antes de executá-la. Não registrar
+CPF/CNPJ ou fingerprint em logs.
 
 ### Ativação e rollback
 
@@ -116,7 +120,7 @@ php scripts/validate-aculta-portal-drupal11.php
 ```
 
 Na validação M-1 com o autoloader isolado da branch: Unit 48 testes / 116
-assertions PASS; Kernel MariaDB 2 testes / 5 assertions PASS. O Kernel prova
+assertions PASS; Kernel MariaDB 3 testes / 8 assertions PASS. O Kernel prova
 idempotência do update `10002`, bloqueio SQL de fingerprints duplicados e aborto
 seguro quando já existem grupos repetidos. O novo Unit também comprova que a
 colisão concorrente no `AccountDocumentStore` retorna a mensagem genérica sem
