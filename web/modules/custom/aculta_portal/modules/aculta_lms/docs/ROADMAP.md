@@ -74,4 +74,4 @@ O provider `Group:lms_course` vive em `aculta_lms_resources`, junto das referên
 - Cursos pagos que passam pelo checkout comercial exigem CPF/CNPJ válido para concluir o pedido. Cursos gratuitos não exigem identidade fiscal, conforme o contrato transversal vigente. Política compartilhada com a Loja, sem duplicar validação nem o campo (fonte: `/dados/outros-dados`, `aculta_id_cpf`).
 - Flow e pane de checkout compartilhados com a Loja; tipo de pedido `curso` e matrícula inalterados.
 - Matrícula continua dependendo do pagamento concluído. CPF/CNPJ cadastrado não libera matrícula.
-- Pendente: implementação (I-D-LMS) e testes de regressão. Ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`.
+- Política central implementada em `aculta_portal`; Unit da política e Kernel do pane passaram. Regressão de UX do checkout gratuito em Functional/Browser isolado e homologação Runtime ainda pendentes. Ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`.
