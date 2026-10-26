@@ -1,3 +1,9 @@
+## 0.3.0-dev.13 — PHPCS Drupal do PHP
+
+- PHPDocs, descrições e formatação de estruturas nos dez arquivos PHP do módulo foram ajustados sem alterar os contratos do serviço de lookup. O comando PHPCS deve restringir as extensões a PHP; incluir `js/cep-address.js` no padrão PHP aplica regras incorretas ao JavaScript.
+- PHPCS Drupal/DrupalPractice (PHP): PASS em todo o módulo; PHP lint PASS. `CepLookupServiceTest`: 10 testes / 45 assertions PASS; `scripts/validate-account-address.php`: PASS (24 verificações).
+- Não houve alteração no Runtime. Homologação Browser que salva endereço permanece dependente de conta descartável em ambiente isolado.
+
 ## 0.3.0-dev.11 — isolar cache por provedor
 
 - A chave do cache externo agora inclui ViaCEP ou BrasilAPI além do CEP. A ordem/configuração de fontes não pode reutilizar conteúdo identificado como produzido por outro provedor.

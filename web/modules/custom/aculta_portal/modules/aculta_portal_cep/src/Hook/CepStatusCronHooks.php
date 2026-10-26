@@ -8,7 +8,11 @@ use Drupal\aculta_portal_cep\Status\CepApiProbe;
 use Drupal\Core\Hook\Attribute\Hook;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Verifica as APIs de CEP no cron, para o status do Portal ter um resultado recente. */
+/**
+ * Runs scheduled checks for the configured CEP APIs.
+ *
+ * The Portal status display reads the results saved by this hook.
+ */
 final class CepStatusCronHooks {
 
   public function __construct(
@@ -16,9 +20,12 @@ final class CepStatusCronHooks {
     private readonly CepApiProbe $probe,
   ) {}
 
+  /**
+   * Runs the provider check when its interval has elapsed.
+   */
   #[Hook('cron')]
   public function cron(): void {
-    // Diária: o probe só consulta as APIs quando a última verificação tem mais de um dia.
+    // The probe only calls APIs when the last check is over one day old.
     $this->probe->checkIfDue();
   }
 

@@ -7,28 +7,30 @@ namespace Drupal\aculta_portal_cep\Local;
 use Drupal\Core\File\FileSystemInterface;
 
 /**
- * Base local de CEPs em arquivos (sem banco de dados), dividida por prefixo.
+ * Reads and imports the local file-based CEP database.
  *
- * Cada CEP vai para o arquivo do seu prefixo (os três primeiros dígitos), em `private://aculta_portal_cep/shards/`.
- * Cada linha é um registro, separado por TAB: cep, logradouro, bairro, cidade, UF, código IBGE. Os arquivos ficam fora
- * do Git e são gerados pelo comando `aculta-portal-cep:import`.
+ * Records are stored in private://aculta_portal_cep/shards, split by the first
+ * three digits. Each TSV line has CEP, street, district, city, state, and IBGE
+ * code fields. The import command generates files outside Git.
  *
- * Origem dos dados: base de CEPs do DNE dos Correios, usada sob risco de licença aceito pelo responsável (2026-10-18).
- * Ver docs/portal/CEP-LOCAL.md.
+ * The repository documentation records the accepted data-license risk.
  */
 final class CepLocalStore {
 
   public const DIRECTORY = 'private://aculta_portal_cep/shards';
 
-  /** Versão da base local: data da importação, quantidade de CEPs e origem. Lido pelo status do Portal. */
+  /**
+   * Manifest containing the import date, record count, and source filename.
+   */
   public const MANIFEST = 'private://aculta_portal_cep/manifest.json';
 
   public function __construct(private readonly FileSystemInterface $fileSystem) {}
 
   /**
-   * Endereço do CEP na base local, no mesmo formato da consulta externa. NULL quando não existe ou não há base.
+   * Looks up a CEP in the local database.
    *
    * @return array<string, string>|null
+   *   Address fields, or NULL when the CEP is not present.
    */
   public function lookup(string $cep): ?array {
     $cep = preg_replace('/\D+/', '', $cep) ?? '';
@@ -57,9 +59,10 @@ final class CepLocalStore {
   }
 
   /**
-   * Grava a base a partir de um TSV ordenado por CEP. Retorna a quantidade de registros gravados.
+   * Imports a CEP-sorted TSV and returns the number of records written.
    *
-   * @throws \RuntimeException Quando o arquivo de origem não pode ser lido ou tem linha inválida.
+   * @throws \RuntimeException
+   *   When the source file cannot be read or contains an invalid line.
    */
   public function importTsv(string $source): int {
     $handle = fopen($source, 'rb');
@@ -97,7 +100,16 @@ final class CepLocalStore {
     return $count;
   }
 
-  /** Grava a versão da base local (data da importação, quantidade e arquivo de origem). */
+  /**
+   * Writes the local database manifest.
+   *
+   * @param string $version
+   *   Import date in Y-m-d format.
+   * @param int $records
+   *   Number of records imported.
+   * @param string $source
+   *   Source filename.
+   */
   public function writeManifest(string $version, int $records, string $source): void {
     $manifest = ['version' => $version, 'records' => $records, 'source' => $source];
     $this->fileSystem->prepareDirectory(dirname(self::MANIFEST), FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
@@ -106,9 +118,10 @@ final class CepLocalStore {
   }
 
   /**
-   * Torna a base legível pelos processos PHP-FPM do site. A base é dado público (DNE dos Correios) e fica em
-   * private://, fora da web. Sem isso, o status do Portal vê a pasta como vazia quando roda com outro usuário
-   * (com file_chmod_directory 02770 e file_chmod_file 0660 do settings.local.php, só o dono e o grupo leem).
+   * Makes imported public data readable by the web processes.
+   *
+   * Files remain under private://, outside the web root. This also allows the
+   * Portal status check to read files created by another local user.
    */
   private function makeReadable(): void {
     $directory = $this->fileSystem->realpath(self::DIRECTORY);
@@ -129,9 +142,10 @@ final class CepLocalStore {
   }
 
   /**
-   * Versão registrada da base local (['version' => 'Y-m-d', 'records' => int, 'source' => string]), ou NULL.
+   * Reads the local database manifest.
    *
-   * @return array<string, mixed>|null
+   * @return array{version: string, records?: int, source?: string}|null
+   *   Manifest data, or NULL when no valid manifest is available.
    */
   public function manifest(): ?array {
     $path = $this->fileSystem->realpath(self::MANIFEST);
@@ -142,18 +156,33 @@ final class CepLocalStore {
     return is_array($data) && isset($data['version']) ? $data : NULL;
   }
 
-  /** Quantidade de arquivos de prefixo (shards) presentes na base local. */
+  /**
+   * Counts prefix files in the local database.
+   */
   public function shardCount(): int {
     $path = $this->fileSystem->realpath(self::DIRECTORY);
     return $path === FALSE ? 0 : count(glob($path . '/*.tsv') ?: []);
   }
 
+  /**
+   * Writes one prefix file, replacing its previous contents.
+   */
   private function writeShard(string $prefix, string $content): void {
     $uri = self::DIRECTORY . '/' . $prefix . '.tsv';
     $this->fileSystem->saveData($content, $uri, FileSystemInterface::EXISTS_REPLACE);
   }
 
-  /** @return array<string, string> */
+  /**
+   * Maps a TSV record to Drupal Address keys.
+   *
+   * @param string $cep
+   *   Eight-digit CEP.
+   * @param string $line
+   *   Tab-separated record.
+   *
+   * @return array<string, string>
+   *   Address field values.
+   */
   private function mapped(string $cep, string $line): array {
     [, $street, $district, $city, $state] = array_pad(explode("\t", $line), 6, '');
     return [

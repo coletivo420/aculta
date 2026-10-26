@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.3.0-dev.12
+version: 0.3.0-dev.13
 state: Dev
-progress_note: "Dev.12: CepLookupServiceTest reexecutado no autoloader isolado da branch: 10 testes/45 assertions PASS; validate-account-address.php PASS. PHPCS Drupal/DrupalPractice do módulo: 144 erros/28 warnings em 11 arquivos (inclui 72 erros no JS), baseline legado; fontes PHP: 72/28 em 10 arquivos. Script Browser/X11 submete e salva o endereço da conta, por isso exige usuário descartável em ambiente isolado; nenhuma gravação Runtime foi feita."
-next_phase: Executar o script Firefox ESR com conta descartável em ambiente isolado e verificar fontes/fallback; tratar PHPCS legado em alterações focais ([contrato](docs/portal/ACCOUNT-ADDRESS.md))
+progress_note: "Dev.13: PHPCS Drupal/DrupalPractice em todo o PHP do módulo PASS; 10 arquivos corrigidos sem mudança de contratos. CepLookupServiceTest 10/45 PASS; validate-account-address.php PASS (24 verificações). Script Browser/X11 submete e salva endereço, logo requer conta descartável em ambiente isolado; nenhuma gravação Runtime foi feita."
+next_phase: Executar o script Firefox ESR com conta descartável em ambiente isolado e verificar fontes/fallback; manter PHPCS com extensões PHP explícitas; homologar Browser com conta descartável ([contrato](docs/portal/ACCOUNT-ADDRESS.md))

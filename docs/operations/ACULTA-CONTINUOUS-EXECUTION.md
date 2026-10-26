@@ -661,3 +661,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - PHPCS Drupal/DrupalPractice do módulo inteiro continua **FAIL**, 144 erros/28 warnings em 11 arquivos (inclui 72 erros no JS); a varredura só de `src`/`tests` encontra 72/28 em 10 arquivos. Nenhum arquivo do módulo foi alterado por esta verificação; não reduzi cobertura nem reformatei baseline legado.
 - O script Browser/X11 existente usa login por link único e submete o formulário, gravando endereço na conta. Como não foi confirmado um usuário descartável em banco/Runtime isolado, a homologação visual fica DEFERRED. Nenhuma mudança ou gravação no Runtime.
 - Uma tentativa inicial de chamar `tests/run.php` no módulo CEP foi inválida: esse arquivo não existe nesse componente; não é contabilizada como teste.
+
+
+## M-1 — conformidade PHP do CEP (2026-10-26)
+
+- Os dez arquivos PHP de `aculta_portal_cep` foram revisados após a varredura PHPCS identificar PHPDocs ausentes/incompletos e formatação de arrays. A alteração preserva os contratos e a lógica; a descrição do formulário foi encurtada para caber no padrão sem fragmentar texto traduzível.
+- PHPCS Drupal/DrupalPractice com extensões PHP explícitas: **PASS**, sem erros ou warnings em todo o módulo. PHP lint: PASS. `CepLookupServiceTest`: **10/45 PASS** no autoloader do worktree. `validate-account-address.php`: **PASS, 24 checks**.
+- Correção da medição anterior: a varredura genérica que percorreu o módulo inteiro incluiu `cep-address.js` como PHP e gerou falsos erros (72 ocorrências); não é um resultado válido de PHPCS PHP. O arquivo JS continua coberto pelo gate funcional de endereço.
+- `aculta_portal_cep` avançou `0.3.0-dev.12` → `0.3.0-dev.13`; README do proprietário não precisava de alteração. Sem Runtime write. Browser visual permanece DEFERRED: o script existente salva o endereço da conta e requer identidade descartável em ambiente isolado.
