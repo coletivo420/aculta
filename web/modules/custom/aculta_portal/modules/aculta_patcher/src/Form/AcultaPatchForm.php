@@ -7,6 +7,7 @@ namespace Drupal\aculta_patcher\Form;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\aculta_patcher\Entity\AcultaPatch;
+use Drupal\aculta_patcher\PatchDiffValidator;
 
 /** Formulário administrativo de registro de patch. */
 final class AcultaPatchForm extends EntityForm {
@@ -97,7 +98,7 @@ final class AcultaPatchForm extends EntityForm {
     if (!str_contains($diff, '--- ') || !str_contains($diff, '+++ ') || !preg_match('/^@@/m', $diff)) {
       $form_state->setErrorByName('patch', $this->t('O conteúdo precisa ser um unified diff com arquivos e ao menos um bloco de alteração.'));
     }
-    if (preg_match('~^(?:---|\+\+\+)\s+(?!(?:/dev/null)(?:\s|$))(?:/|[A-Za-z]:[\\\\/])|^(?:---|\+\+\+)\s+.*(?:^|/)\.\.(?:/|$)~m', $diff)) {
+    if ((new PatchDiffValidator())->escapesPackage($diff)) {
       $form_state->setErrorByName('patch', $this->t('O diff não pode apontar para caminhos absolutos ou sair do pacote.'));
     }
   }
