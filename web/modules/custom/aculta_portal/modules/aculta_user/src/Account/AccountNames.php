@@ -59,7 +59,7 @@ final class AccountNames {
    * Indicates whether a display nickname uses the supported terminal `#N`.
    */
   public static function isHashSuffixNickname(string $apelido): bool {
-    if (!preg_match('/^(.+)#((?:[2-9]|[1-9][0-9]+))$/', $apelido, $matches)) {
+    if (!preg_match('/^(.+)#([1-9][0-9]*)$/', $apelido, $matches)) {
       return FALSE;
     }
     $base = $matches[1];
@@ -90,14 +90,14 @@ final class AccountNames {
    * Determines whether a display value ends in the supported `#N` form.
    */
   private static function hasHashSuffix(string $value): bool {
-    return preg_match('/^.+#(?:[2-9]|[1-9][0-9]+)$/', $value) === 1;
+    return preg_match('/^.+#[1-9][0-9]*$/', $value) === 1;
   }
 
   /**
    * Converts a display value to its canonical lowercase route slug.
    */
   private static function routeSlugFromDisplay(string $value): ?string {
-    if (preg_match('/^(.+)#((?:[2-9]|[1-9][0-9]+))$/', $value, $matches)) {
+    if (preg_match('/^(.+)#([1-9][0-9]*)$/', $value, $matches)) {
       return PublicRouteSlug::normalize($matches[1] . '-' . $matches[2]);
     }
     return PublicRouteSlug::normalize($value);

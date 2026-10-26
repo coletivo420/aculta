@@ -40,3 +40,11 @@ A projeção deve indexar o slug canônico (`#N` e `-N` convergem para `-N`) e f
 ## Reversão
 
 A opção de lock não altera schema nem dados; rollback é reverter o commit e remover o hook/testes. Para o índice derivado, interromper a escrita antes do rebuild, preservar backup da tabela e confirmar consistência dos UIDs; rollback deve remover hooks e projeção somente depois de comparar novamente com `field_nickname`. Nenhum plano autoriza alterar o Runtime atual.
+
+
+### Implementação em código — dev.83
+
+- Schema owner-managed: `aculta_user_nickname(uid PRIMARY KEY, slug UNIQUE)`. O campo de Profile continua sendo a fonte; a tabela guarda somente a claim atual por UID. Não guarda aliases ou histórico.
+- `ProfileNicknameRegistryHooks` chama `NicknameRegistry` no `entity_presave`/`entity_delete`. O Core SQL content storage envolve os hooks e a escrita de Profile na mesma transação. Um rename atualiza a linha por UID, sincroniza todos os Profiles de papel e deixa o slug anterior disponível na mesma transação. A chave SQL única resolve corridas entre UIDs; o preflight de Form API dá mensagem amigável antes do save.
+- `PublicProfileController` resolve o slug na tabela, depois carrega o usuário e o Profile principal. Referências internas seguem por UID. `aculta_user_update_10013()` cria a tabela se necessário e executa rebuild idempotente. A validação é feita antes de limpar/repopular a projeção; em conflito, somente contagens agregadas são reportadas e os registros existentes não são substituídos.
+- O Kernel `NicknameRegistryKernelTest` cobre claims, liberação após rename, índice SQL, rebuild idempotente, mesmo UID com vários Profiles, conflitos e sincronização. Ainda sem resultado: a execução inicial parou no setup por serviço `FilterFormatRepositoryInterface` ausente; o fixture agora inclui `filter`, mas a repetição aguarda liberação do MariaDB em uso pelo agente do Index. Nenhum update foi executado em Runtime.

@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-dev.82
+version: 0.4.0-dev.83
 state: Dev
-progress_note: "Dev.82: apelidos -gr continuam bloqueados; colisão automática pode exibir nome#N com slug nome-N, e a edição manual pode informar #N sem geração automática desde que o slug esteja livre. Correções de código em validação, criação OAuth e lookup de rota em teste; suíte Unit 140/542 PASS (1 depreciação), PHPCS/lint focais PASS. Responsável selecionou índice SQL derivado slug→UID, preservando Profile como fonte. Sem Runtime write."
-next_phase: Testar e fechar o contrato #N→-N, então implementar o índice derivado slug→UID com projeção reconstruível e unicidade SQL; testar renomeação/liberação imediata e concorrência em MariaDB isolado. Homologação/updates Runtime ficam pendentes de autorização.
+progress_note: "Dev.83: sufixo -gr segue bloqueado; #N exibe e #N manual é aceito quando o slug está livre. Projeção SQL uid→slug, rebuild 10013 e hooks de sincronização implementados em código. User Unit 140/543 PASS (1 depreciação); PHPCS/lint focais PASS. Kernel ainda não teve resultado: primeira execução foi setup incompleto sem filter, fixture corrigido, repetição espera liberação do MariaDB pelo agente Index. Sem update Runtime."
+next_phase: Reexecutar NicknameRegistryKernelTest quando o MariaDB estiver livre; corrigir falhas do produto, cobrir escritor concorrente em processos distintos e revisar rollback. Executar update 10013 somente em ambiente isolado; Runtime existente exige autorização.
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.

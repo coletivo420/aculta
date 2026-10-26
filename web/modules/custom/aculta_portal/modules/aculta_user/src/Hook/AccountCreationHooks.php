@@ -94,11 +94,11 @@ final class AccountCreationHooks {
   private function unique(string $apelido, int $uid): string {
     $candidate = $apelido;
     $base = $apelido;
-    if (AccountNames::isHashSuffixNickname($apelido) && preg_match('/^(.+)#((?:[2-9]|[1-9][0-9]+))$/', $apelido, $matches)) {
+    if (AccountNames::isHashSuffixNickname($apelido) && preg_match('/^(.+)#([1-9][0-9]*)$/', $apelido, $matches)) {
       $base = $matches[1];
     }
     $i = 2;
-    while (!(AccountNames::isValid($candidate) || AccountNames::isHashSuffixNickname($candidate)) || $this->nicknamePolicy->isTaken($candidate)) {
+    while (!AccountNames::isValid($candidate) || $this->nicknamePolicy->isTaken($candidate)) {
       $candidate = AccountNames::withAutomaticSuffix($base, $i++);
       if ($i > 50) {
         return 'pessoa-' . $uid;

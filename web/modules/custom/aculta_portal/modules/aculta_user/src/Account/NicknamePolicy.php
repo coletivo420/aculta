@@ -17,6 +17,7 @@ final class NicknamePolicy {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
+    private readonly ?NicknameRegistry $registry = NULL,
   ) {}
 
   /**
@@ -25,12 +26,16 @@ final class NicknamePolicy {
    * The current account's role profiles are excluded during an edit.
    */
   public function isTaken(string $nickname, ?int $excludeUid = NULL): bool {
+    $slug = AccountNames::publicRouteSlug($nickname);
+    if ($slug !== NULL && $this->registry?->isClaimedByOther($slug, $excludeUid)) {
+      return TRUE;
+    }
     $candidates = [$nickname];
     if (AccountNames::isHashSuffixNickname($nickname)
-      && preg_match('/^(.+)#((?:[2-9]|[1-9][0-9]+))$/', $nickname, $matches)) {
+      && preg_match('/^(.+)#([1-9][0-9]*)$/', $nickname, $matches)) {
       $candidates[] = $matches[1] . '-' . $matches[2];
     }
-    elseif (preg_match('/^(.+)-((?:[2-9]|[1-9][0-9]+))$/', $nickname, $matches)) {
+    elseif (preg_match('/^(.+)-([1-9][0-9]*)$/', $nickname, $matches)) {
       $generated = $matches[1] . '#' . $matches[2];
       if (AccountNames::isHashSuffixNickname($generated)) {
         $candidates[] = $generated;

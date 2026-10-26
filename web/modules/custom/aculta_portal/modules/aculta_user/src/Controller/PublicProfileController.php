@@ -12,6 +12,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_user\Account\AccountNames;
+use Drupal\aculta_user\Account\NicknameRegistry;
 use Drupal\aculta_user\Avatar\AvatarPool;
 use Drupal\aculta_user\Form\FriendshipActionForm;
 use Drupal\aculta_user\PublicProfilePolicy;
@@ -50,6 +51,7 @@ final class PublicProfileController extends ControllerBase {
     private readonly ModuleHandlerInterface $modules,
     private readonly AvatarPool $avatarPool,
     private readonly ImageRenderer $imageRenderer,
+    private readonly NicknameRegistry $nicknameRegistry,
   ) {}
 
   /**
@@ -67,6 +69,7 @@ final class PublicProfileController extends ControllerBase {
       $container->get('module_handler'),
       $container->get('aculta_user.avatar_pool'),
       $container->get('aculta_image.render'),
+      $container->get('aculta_user.nickname_registry'),
     );
   }
 
@@ -236,30 +239,20 @@ final class PublicProfileController extends ControllerBase {
    * Carrega o perfil participante cujo apelido é o informado.
    */
   private function loadByNickname(string $apelido): ?ProfileInterface {
-    $storage = $this->entityTypeManagerService->getStorage('profile');
-    $candidates = [$apelido];
-    if (preg_match('/^(.+)-((?:[2-9]|[1-9][0-9]+))$/', $apelido, $matches)) {
-      $generated = $matches[1] . '#' . $matches[2];
-      if (AccountNames::isHashSuffixNickname($generated)) {
-        $candidates[] = $generated;
-      }
-    }
-    $ids = [];
-    foreach ($candidates as $candidate) {
-      $ids = $storage->getQuery()
-        ->accessCheck(FALSE)
-        ->condition('type', PerfilDoPapel::TIPOS, 'IN')
-        ->condition('field_nickname', $candidate)
-        ->range(0, 1)
-        ->execute();
-      if ($ids !== []) {
-        break;
-      }
-    }
-    if ($ids === []) {
+    $slug = AccountNames::publicRouteSlug($apelido);
+    if ($slug === NULL) {
       return NULL;
     }
-    $profile = $storage->load(reset($ids));
+    $uid = $this->nicknameRegistry->uidForSlug($slug);
+    if ($uid === NULL) {
+      return NULL;
+    }
+    $account = $this->entityTypeManagerService->getStorage('user')->load($uid);
+    if ($account === NULL) {
+      return NULL;
+    }
+    $storage = $this->entityTypeManagerService->getStorage('profile');
+    $profile = PerfilDoPapel::principal($storage, $account);
     return $profile instanceof ProfileInterface ? $profile : NULL;
   }
 

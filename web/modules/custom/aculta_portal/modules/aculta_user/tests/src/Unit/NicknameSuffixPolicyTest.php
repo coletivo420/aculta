@@ -32,7 +32,8 @@ final class NicknameSuffixPolicyTest extends UnitTestCase {
     $this->assertSame('nome-2', AccountNames::publicRouteSlug('nome#2'));
     $this->assertTrue(AccountNames::isValid('nome#10'));
     $this->assertSame('nome-10', AccountNames::publicRouteSlug('nome#10'));
-    $this->assertFalse(AccountNames::isValid('nome#1'));
+    $this->assertTrue(AccountNames::isValid('nome#1'));
+    $this->assertSame('nome-1', AccountNames::publicRouteSlug('nome#1'));
     $this->assertFalse(AccountNames::isValid('nome#texto'));
     $this->assertFalse(AccountNames::isValid('nome-gr#2'));
   }
