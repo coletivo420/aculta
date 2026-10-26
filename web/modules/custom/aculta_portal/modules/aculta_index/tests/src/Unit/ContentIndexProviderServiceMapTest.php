@@ -111,7 +111,7 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
       'wiki' => ['node' => ['wiki_entry']],
       'wiki_category' => ['taxonomy_term' => ['wiki_category']],
     ], $this->providerMap($registry));
-    self::assertSame(2, $registry->get('lms_course')->getProjectionVersion(), 'The service map compiles without the optional PDF Group plugin and includes the owner projection version.');
+    self::assertSame(3, $registry->get('lms_course')->getProjectionVersion(), 'The service map compiles without the optional PDF Group plugin and includes the owner projection version with course_video.');
   }
 
   /**
