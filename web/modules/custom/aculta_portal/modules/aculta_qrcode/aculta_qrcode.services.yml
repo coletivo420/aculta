@@ -27,3 +27,7 @@ services:
   aculta_qrcode.download_controller:
     class: Drupal\aculta_qrcode\Controller\QrCodeDownloadController
     arguments: ['@aculta_qrcode.exporter']
+
+  aculta_qrcode.preview_controller:
+    class: Drupal\aculta_qrcode\Controller\QrCodePreviewController
+    arguments: ['@aculta_qrcode.payload_validator', '@aculta_qrcode.preset_registry', '@aculta_qrcode.generator']
