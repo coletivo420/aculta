@@ -194,6 +194,13 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Unit do Game passou 11 testes / 51 assertions. Kernel `GameAchievementNoticePersistenceKernelTest` no Messenger passou 3/30 no MariaDB dedicado: revalida fonte contra concessões revogadas, migra fila legada uma vez e conserva o cursor/fila quando publisher falha. Duas depreciações de `@EntityType` vêm de Message/Message Template no Core/contrib.
 - Documentação identifica o corte de ownership dev.17 (Game publica, Messenger persiste/lê, Mailer transporta), mas corrige uma lacuna: o Kernel Fórum testa elegibilidade do `ForumParticipationPolicy`, não a chamada de concessão no `BadgeEvaluationHooks::forumPostSave`. Essa cobertura direta permanece próxima tarefa; nenhuma conquista foi concedida no Runtime. README, CHANGELOG, execução, status e matriz foram reconciliados, sem mexer na feature ou subir versão.
 
+## Retomada PR #298 — integração dos commits delegados (2026-10-26)
+
+- Branch local `chore/aculta-m0-integridade`; commits revisados e cherry-picked do agente 2: `5c1b86fe0` (Sitemap README), `50e83290b` (Patcher impede symlink escape), `4deedb366` (status Sitemap/QR/Links/Deployer), `e38f48a1e` (limpeza segura de fixtures Deployer). Nenhum merge ou operação de Runtime ocorreu.
+- Revisão focal própria: `vendor/bin/phpcs --standard=Drupal,DrupalPractice` nos três PHP alterados (Patcher exporter/test e runner Deployer) PASS; runner Sitemap PASS (13 verificações); gates Patcher 2 testes/9 assertions PASS, índice 41 componentes PASS após regenerar README, pacotes 41 PASS e Config Extension Dependencies 1.560 checks/1.426 arquivos PASS. O runner Deployer do agente concluiu PASS sem avisos; suíte combinada dos quatro componentes reportada pelo agente: 91 testes/566 assertions PASS. Esta execução não repetiu a suíte combinada.
+- O README raiz foi regenerado pelo gerador de status após os novos status estruturados; essa alteração gerada ainda precisa ser incluída no próximo commit. PHPCS aqui cobre somente arquivos PHP alterados pelos commits incorporados, não o baseline integral dos módulos delegados.
+- Próxima tarefa sob ownership central: revisar o resultado do Kernel H5P já registrado em 15/388 com Unit 24/73, retomar o harness LMS/Portal sem serviço fictício, então avançar os contratos centrais independentes (Portal, User, CPF, CEP, Messenger, Commerce, LMS, Statistics e Index). P0-H5P e gate Domain já têm resultados PASS documentados; M-0 global continua PARTIAL por Config Sync/Runtime, autorização e homologações pendentes.
+
 
 ## M-3 — reconciliar estado do Magazine (2026-10-26)
 
