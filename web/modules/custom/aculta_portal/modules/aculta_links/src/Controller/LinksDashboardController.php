@@ -175,7 +175,8 @@ final class LinksDashboardController {
       ->sort('changed', 'DESC')
       ->pager(50, $pager_element);
     if ($filter !== 'todos') {
-      $query->condition('status', $filter === 'publicados');
+      // Inteiro explícito: FALSE não casa com o valor 0 gravado em alguns bancos (o rascunho some do painel).
+      $query->condition('status', $filter === 'publicados' ? 1 : 0);
     }
     if (!$admin) {
       $query->condition($owner_key, $this->currentUser->id());
