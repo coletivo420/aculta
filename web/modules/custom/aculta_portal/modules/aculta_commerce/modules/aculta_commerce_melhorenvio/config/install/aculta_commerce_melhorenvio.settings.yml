@@ -12,8 +12,9 @@ origin:
 environment: sandbox
 # URL de retorno cadastrada no app do Melhor Envio. Vazia até o cadastro do app.
 redirect_uri: ''
-# Escopos OAuth2 separados por espaço. Vazio até a confirmação dos escopos oficiais (ME-PEND-01).
-scopes: ''
+# Escopos OAuth2 separados por espaço. Validados no sandbox (ME-PEND-01): cotação e leitura da conta.
+# `user-read` não existe e faz a autorização falhar com invalid_scope; o nome correto é `users-read`.
+scopes: 'shipping-calculate users-read'
 # E-mail de contato exigido no User-Agent da API. Vazio bloqueia as chamadas.
 contact_email: ''
 # Apenas NOMES de chaves do Drupal Key. Os valores ficam no Key (banco criptografado em produção), nunca aqui.
