@@ -765,3 +765,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Testes reexecutados na PR: Unit 17/155; Kernel bridge Statistics 3/55, LMS course/video 5/259 e Index Rebuilder 21/295 PASS (46 testes / 764 assertions). O índice de status e gate de pacotes passaram com 43 componentes.
 - `aculta_index_file` é opt-in, não entrou no Config Sync nem foi habilitado no Runtime. O update LMS `8001` está versionado e não foi executado. Nenhuma gravação Runtime ocorreu.
 - O worktree Index da origem foi preservado. Instalação/update limpa, Browser, catálogo representativo/grants e PHPCS/lint focal pós-integração continuam pendentes; ambos os módulos seguem Dev.
+
+
+## Conciliação e limpeza remota de branches — 2026-10-26
+
+- Relatório verificável: [`ACULTA-BRANCH-RECONCILIATION-2026-10.md`](ACULTA-BRANCH-RECONCILIATION-2026-10.md).
+- Removidas do remoto após equivalência e ownership verificados: `feat/aculta-frentes-independentes`, `feat/aculta-commerce-shipping-port`, `feat/aculta-me-conciliacao`, `feat/aculta-index-fechamento` e `agent/aculta-secrets-manager`. As branches locais/worktrees foram mantidos.
+- `feat/aculta-melhorenvio-integracao` permanece no remoto: o agente confirmou alteração local não publicada em `MelhorEnvioWiringKernelTest.php`. `main` e `chore/aculta-m0-integridade` permanecem protegidas.
+- PR #298 após integração do Index, versão/status dos componentes e limpeza: HEAD remoto confirmado `9dfbd31bed190ad6c00416201655688c2cfe16a4`; suíte de gates estáticos de status/pacotes/Config Extension Dependencies passa com 43 componentes.
