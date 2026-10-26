@@ -2,4 +2,4 @@
 version: 0.1.0-dev.1
 state: Dev
 next_phase: 'Habilitar o submódulo no Config Sync e no Runtime somente quando a métrica media.files.requests for consumida; validar com Files permanentes e a permissão administer aculta_statistics, com rebuild autorizado e rollback.'
-progress_note: 'Provider file:file opt-in para o bridge Statistics: indexa somente arquivos permanentes, sem nome/URI/MIME/tamanho; Unit 2/21 e bridge 3/55 PASS. Local 3 habilitou o submódulo apenas em site descartável (prefixo idx3_) para validar a instalação; PHPCS 0 erros. Não habilitado no Runtime; Config Sync, ativação e regeneração da tabela do README raiz pertencem ao agente de integração.'
+progress_note: 'Provider file:file opt-in para o bridge Statistics: indexa somente arquivos permanentes, sem nome/URI/MIME/tamanho; Unit 2/21 e bridge 3/55 PASS. Local 3 habilitou o submódulo apenas em site descartável (prefixo idx3_; execução de 17:09 a 17:29) para validar a instalação; PHPCS 0 erros. Não habilitado no Runtime; Config Sync, ativação e regeneração da tabela do README raiz pertencem ao agente de integração.'
