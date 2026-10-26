@@ -389,3 +389,15 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - As chaves enviadas (segredo e token) foram classificadas como de produção, e não de teste. Removidas do servidor de teste e de `secrets/`. Webhook volta a 503.
 - Contrato: `docs/operations/melhorenvio-secrets.md`. Teste usa `secrets/aculta.secrets.env` com Key IDs `melhorenvio_sandbox_*`. Produção fica no banco, provisionada pelo `aculta_deployer`.
 - Pendente: chaves de sandbox, do cadastro de teste. Quando chegarem, entram em `secrets/aculta.secrets.env` com os nomes do contrato.
+
+## Melhor Envio no servidor de teste: estado após a configuração das chaves de sandbox
+
+- Chaves do aplicativo de teste (ID 13216 e segredo) e token de teste guardados em `secrets/aculta.secrets.env` (sudo autorizado; valores não registrados aqui).
+- Contrato compartilhado (`config/secrets-contract.json`) acrescido das três variáveis do sandbox (somente teste, sem obrigatoriedade). Autorizado pelo responsável.
+- Bootstrap (`web/sites/default/aculta.secrets.php`) e validador (`scripts/validate-secrets-contract.php`) alinhados ao contrato. Validador passa.
+- Módulo lê as credenciais pelo nome do contrato quando não há Key (`SecretsManager`), no cliente e no webhook. Testes do módulo: 66 PASS.
+- Servidor de teste em `e8ee5dab0`. Sites respondem 200.
+- Webhook `POST /integracoes/melhorenvio/webhook`: sem assinatura 403; assinado com o segredo de teste 204.
+- URL de autorização: `https://sandbox.melhorenvio.com.br/oauth/authorize` com o `client_id` 13216 e o retorno `https://aculta.toca.net.br/integracoes/melhorenvio/retorno`.
+- Token de teste: **401** no sandbox (`/api/v2/me/shipment/calculate` e `/api/v2/me`). Não testado em produção. O token parece ser de outra aplicação ou ambiente; confirmar com o responsável.
+- Pendente: token de sandbox aceito pelo sandbox (ME-PEND-01: `authorize`, `oauth/token`, `expires_in`).
