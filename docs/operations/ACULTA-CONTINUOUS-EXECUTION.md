@@ -893,3 +893,14 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - **Não feito:** `drush updatedb` (proibido), autorização OAuth e qualquer alteração em tokens de State. Credenciais sandbox do Melhor Envio seguem pendentes.
 - **Rollback:** restaurar o backup (exige escrita concedida ao dono) e `drush cr`.
 - **Efeito:** trocar a chave invalida os tokens cifrados; reautorização obrigatória. Registros legados só são cifrados quando o `update_8002` rodar.
+
+## Inventário de `secrets/`, decisões do responsável e integração do ensaio do `user` — 2026-10-26
+
+- **Integração do ensaio do `user`:** merge de `feat/aculta-user-update-ensaio` @ `3c810a78a`. Só documentação (o commit toca apenas `docs/`; o resultado contra a PR altera uma linha de status de `aculta_user`). Sem código, sem Runtime, sem banco.
+- **Exclusão das refs de ensaio:** `feat/aculta-messenger-update-ensaio` e `feat/aculta-user-update-ensaio` **não excluídas**. Exigem confirmação do Local 3, que não foi obtida nesta execução.
+- **Barreira do Mercado Pago (somente leitura):** ambiente resolvido pelo deployer `test`; modo configurado `test`; modo efetivo do gateway `test`; variáveis resolvidas `MERCADOPAGO_TEST_PUBLIC_KEY` e `MERCADOPAGO_TEST_ACCESS_TOKEN`; credenciais de runtime presentes. Nenhum valor foi exibido. Nenhum sinal de resolução para `PRODUCTION`.
+- **Permissões em `secrets/`:** `chmod 600` não aplicado (zeraria a máscara da ACL e cortaria `www-data`, `toca` e `aculta`, com processos ativos). Aplicado `674` → `670` em `credenciais_de_teste_mercadolivre` e `system`. Dono, conteúdo e ACL preservados. Estado final: `670 piradopirata:piradopirata` nos três arquivos (incluindo `producao-ssh.env`, já em `670`).
+- **Verificação após a mudança:** `drush status` com bootstrap OK; loader lê a chave (comprimento 64, hex); painel de segredos 16/16 PASS no Firefox.
+- **Decisões do responsável (18:32):** credenciais de produção do Mercado Pago permanecem no `secrets/aculta.secrets.env` do servidor de testes, como exceção explícita à regra "teste nunca usa chave de produção". Credencial SSH de produção (`producao-ssh.env`) permanece, sem rotação. Registrado em `SECRETS.md` e em `melhorenvio-secrets.md`.
+- **Regra de escrita em `secrets/`:** somente como o dono do arquivo (`sudo -u aculta`), sem ACL de escrita concedida ao usuário de trabalho.
+- **Incidente da provisão (18:25):** a ACL de escrita fez o modo ficar `660`, e o loader recusou o arquivo. Duração: alguns minutos, entre a gravação às 18:25:32 e a restauração. Modo final `640`, ACL original. **Acesso ao site na janela não verificado**: logs do Apache não legíveis pelo usuário de trabalho. Confirmação pendente pelos logs.
