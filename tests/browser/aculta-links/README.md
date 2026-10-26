@@ -42,3 +42,6 @@ Código de saída: `0` se tudo passou; `1` se alguma verificação falhou.
 - Antes da correção: falha, com 1 alvo de 20 px ("Botão de teste") em 390 px e em 1280 px. Motivo: o link do item
   não tinha classe nem estilo de área de toque (`cfa192096` corrige, com a biblioteca `aculta_links/micropagina`).
 - Depois da correção: 2/2 PASS.
+- 2026-10-26, checkout do servidor de testes em `c1e210934` (docroot `/home/aculta/public_html`): 2/2 PASS em 1280 px e
+  390 px (HTTP 200, sem rolagem horizontal, nenhum alvo menor que 44 px). Página sintética `pagina-teste-mobile`, com um
+  link e um item marcados como `TESTE VISUAL`, criada por Drush para a rodada e removida ao final.
