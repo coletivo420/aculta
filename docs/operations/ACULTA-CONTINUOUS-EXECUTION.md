@@ -1,9 +1,11 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit estável antes deste checkpoint:** `e63a194aa78ef00fe5fab161dfc736e47e7771b3`; branch remota sincronizada e worktree limpo.
+**Último commit estável antes deste checkpoint:** `f69305f7c32842f1913265afa70fefa9cd97d1aa`; branch remota sincronizada e worktree limpo.
 **Estado:** PARTIAL — PHPCS PR-wide, H5P, gate Domain administrativo, User/Portal/CPF focal, Index e Statistics têm evidências registradas PASS. M-0 continua bloqueada pela diferença de `core.extension`, Config Domain por purpose e RBAC Wiki; M-1–M-5 seguem em execução e sem promoção RC.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
+
+**Domain/purpose:** em 2026-10-26, `DomainPurposeManager::getCurrentPurpose()` resolveu os nove hosts MAIN, ACCOUNT, SUPPORT, MAGAZINE, WIKI, SHOP, COURSES, FORUM e LINKS ao purpose correspondente (9/9 PASS). Overrides Domain Config e Entity Access por purpose continuam pendentes.
 
 ## Ponto de retomada
 
