@@ -54,7 +54,10 @@ final class GreenStashProductReaderPaginationTest extends UnitTestCase {
       $product = $this->createMock(ProductInterface::class);
       $product->method('id')->willReturn((string) $id);
       $product->method('bundle')->willReturn('produto_loja');
-      $product->method('access')->willReturn($id === 500);
+      $product->method('access')->willReturnCallback(
+        static fn (string $operation, AccountInterface $actualAccount): bool =>
+          $operation === 'view' || $id === 500,
+      );
       if ($id === 500) {
         $product->method('getStores')->willReturn([$store]);
       }
