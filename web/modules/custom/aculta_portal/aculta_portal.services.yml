@@ -266,28 +266,9 @@ services:
     tags:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }
-  aculta_portal.mercado_pago_environment_override:
-    class: Drupal\aculta_portal\Commerce\MercadoPago\MercadoPagoEnvironmentOverride
-    arguments: ['%app.root%']
-    tags:
-      - { name: config.factory.override, priority: 100 }
-      - { name: aculta_portal.implementation }
-
   aculta_portal.recurring_donations_report:
     class: Drupal\aculta_portal\Donation\RecurringDonationsReport
     arguments: ['@entity_type.manager', '@aculta_pagamentos_mercadopago.subscription_recorder', '@commerce_price.currency_formatter']
-  aculta_portal.mercado_pago_webhook_guard:
-    class: Drupal\aculta_portal\Commerce\MercadoPago\WebhookGuard
-    arguments: ['@aculta_pagamentos_mercadopago.subscription_notifications', '@aculta_pagamentos_mercadopago.logger']
-    tags:
-      - { name: aculta_portal.helper }
-  aculta_portal.mercado_pago_webhook_subscriber:
-    class: Drupal\aculta_portal\Commerce\MercadoPago\WebhookEventSubscriber
-    arguments: ['@entity_type.manager', '@key.repository', '@aculta_portal.mercado_pago_webhook_guard']
-    tags:
-      - { name: event_subscriber }
-      - { name: aculta_portal.implementation }
-
   aculta_portal.account_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber
     arguments: ['@current_user', '@aculta_portal.domain_purpose']

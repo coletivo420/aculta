@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Commerce\MercadoPago;
+namespace Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago;
 
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -11,7 +11,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-/** Guards only the native Commerce notification route for Mercado Pago. */
+/**
+ * Guards only the native Commerce notification route for Mercado Pago. */
 final class WebhookEventSubscriber implements EventSubscriberInterface {
 
   private const ROUTE = 'commerce_payment.notify';
@@ -36,7 +37,8 @@ final class WebhookEventSubscriber implements EventSubscriberInterface {
     return [KernelEvents::REQUEST => ['onKernelRequest', 29]];
   }
 
-  /** Validates and adapts the request before Commerce calls the gateway. */
+  /**
+   * Validates and adapts the request before Commerce calls the gateway. */
   public function onKernelRequest(RequestEvent $event): void {
     if (!$event->isMainRequest()) {
       return;
@@ -67,7 +69,8 @@ final class WebhookEventSubscriber implements EventSubscriberInterface {
     }
   }
 
-  /** Reads the webhook signing secret only through its environment-backed Key. */
+  /**
+   * Reads the webhook signing secret only through its environment-backed Key. */
   private function getEnvironmentSecret(): ?string {
     $key = $this->keyRepository->getKey(self::KEY_ID);
     if (!$key || $key->getKeyProvider()->getPluginId() !== 'env') {

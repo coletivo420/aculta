@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Commerce\MercadoPago;
+namespace Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago;
 
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
 
 /**
  * Credenciais do Mercado Pago por ambiente, lidas do ambiente do processo.
  *
- * O ambiente vem do ACULTA Deployer (var/deployer/environment.json); aqui não há troca de ambiente.
+ * O ACULTA Deployer declara o ambiente em var/deployer/environment.json;
+ * esta classe não o altera.
  * - Ambiente de testes: modo `test` do gateway, com as credenciais de teste.
- * - Ambiente de produção: modo `live` do gateway, com as credenciais de produção.
+ * - Ambiente de produção: modo `live` do gateway e credenciais de produção.
  *
- * Os valores ficam fora da configuração exportada. Campo ausente vira campo vazio no gateway,
- * que falha fechado (ver EntitySaveHooks). Client ID e Client Secret não são usados pela integração
- * Checkout Pro (só existem no formulário de configuração do módulo), por isso não entram aqui.
+ * Os valores ficam fora da configuração exportada. Campo ausente deixa o
+ * gateway vazio e fail-closed (EntitySaveHooks). Client IDs só existem no
+ * formulário de configuração; Checkout Pro não os usa.
  */
 final class MercadoPagoCredentials {
 
@@ -38,7 +39,8 @@ final class MercadoPagoCredentials {
     ],
   ];
 
-  /** Ambiente que o ACULTA Deployer declarou (produção quando não há declaração). */
+  /**
+   * Ambiente que o ACULTA Deployer declarou (produção quando não há declaração). */
   public static function currentEnvironment(string $projectRoot): string {
     return DeployerEnvironment::current($projectRoot, 'production');
   }
@@ -47,6 +49,7 @@ final class MercadoPagoCredentials {
    * Campos do gateway para o ambiente, sem valores vazios.
    *
    * @return array<string, string>
+   *   Gateway fields containing only available credential values.
    */
   public static function configuration(string $environment): array {
     $spec = self::spec($environment);
@@ -64,18 +67,31 @@ final class MercadoPagoCredentials {
     return $fields;
   }
 
-  /** Verdadeiro quando o ambiente tem Public Key e Access Token para o modo dele. */
+  /**
+   * Verifies the runtime credential pair for the selected environment.
+   *
+   * @return bool
+   *   TRUE when both credentials are available.
+   */
   public static function hasRuntimeCredentials(string $environment): bool {
     $spec = self::spec($environment);
     return self::read($spec['public_key_variable']) !== NULL
       && self::read($spec['access_token_variable']) !== NULL;
   }
 
-  /** @return array{mode: string, public_key_variable: string, access_token_variable: string, public_key_field: string, access_token_field: string} */
+  /**
+   * Returns credential configuration for an environment.
+   *
+   * @return array{mode: string, public_key_variable: string, access_token_variable: string, public_key_field: string, access_token_field: string}
+   *   Configuration keys for the selected environment.
+   */
   private static function spec(string $environment): array {
     return self::ENVIRONMENTS[$environment] ?? self::ENVIRONMENTS['production'];
   }
 
+  /**
+   * Reads an optional environment variable without returning empty values.
+   */
   private static function read(string $name): ?string {
     $value = getenv($name);
     return $value === FALSE || $value === '' ? NULL : $value;

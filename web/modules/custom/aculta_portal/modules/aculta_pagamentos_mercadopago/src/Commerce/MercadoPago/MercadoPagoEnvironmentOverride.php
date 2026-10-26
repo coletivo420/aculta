@@ -2,18 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Commerce\MercadoPago;
+namespace Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 
 /**
- * Supplies the Mercado Pago gateway fields for the current environment at runtime.
+ * Supplies the Mercado Pago gateway fields for the active environment.
  *
- * The contrib gateway stores credentials in its configuration entity by default. This override
- * keeps those values out of active/exported config and selects test or production fields from the
- * environment declared by the ACULTA Deployer.
+ * Gateway config stores no credentials; this override selects active fields.
+ * using the environment declared by the ACULTA Deployer.
  */
 final class MercadoPagoEnvironmentOverride implements ConfigFactoryOverrideInterface {
 

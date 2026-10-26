@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_portal\Unit;
+namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\Commerce;
 
-use Drupal\aculta_portal\Commerce\MercadoPago\WebhookGuard;
+use Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\WebhookGuard;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionNotificationService;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Tests\UnitTestCase;
@@ -12,15 +12,17 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Webhook de assinatura: assinatura HMAC válida encaminha o tópico; assinatura inválida é recusada.
+ * Webhook HMAC de assinatura válida encaminha o tópico; inválida é recusada.
  */
-#[Group('aculta_portal')]
+#[Group('aculta_pagamentos_mercadopago')]
 final class MercadoPagoSubscriptionWebhookTest extends UnitTestCase {
 
   private const SEGREDO = 'segredo-de-teste-nao-real';
 
   /**
-   * Requisição assinada pelo mesmo algoritmo do SDK: manifesto id/request-id/ts, HMAC-SHA256.
+   * Requisição assinada pelo algoritmo do SDK.
+   *
+   * O manifesto usa id, request-id e ts com HMAC-SHA256.
    */
   private function requisicao(string $tipo, string $id, ?string $assinaturaErrada = NULL): Request {
     $ts = (string) time();

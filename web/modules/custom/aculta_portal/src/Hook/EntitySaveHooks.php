@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
-use Drupal\aculta_portal\Commerce\MercadoPago\MercadoPagoCredentials;
+use Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\MercadoPagoCredentials;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
@@ -14,8 +14,9 @@ use Drupal\Core\Hook\Attribute\Hook;
 final class EntitySaveHooks {
 
   /**
-   * Keeps the Mercado Pago gateway fail-closed on save: enabling it requires the Public Key and
-   * Access Token of the environment declared by the ACULTA Deployer.
+   * Keeps the Mercado Pago gateway fail-closed on save.
+   *
+   * Enabling it requires credentials for the declared environment.
    */
   #[Hook('entity_presave')]
   public function entityPresave(EntityInterface $entity): void {

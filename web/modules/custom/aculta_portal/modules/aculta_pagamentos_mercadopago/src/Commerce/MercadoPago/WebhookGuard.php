@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Commerce\MercadoPago;
+namespace Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionNotificationService;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -90,7 +90,7 @@ final class WebhookGuard {
     $tipo = $types[0];
     $assinatura = in_array($tipo, MercadoPagoSubscriptionNotificationService::TIPOS, TRUE);
 
-    // Pagamentos usam ID inteiro (contrib legado). Assinaturas usam IDs alfanuméricos do Mercado Pago.
+    // Pagamentos legados usam ID inteiro; assinaturas usam ID alfanumérico.
     if ($assinatura) {
       if (preg_match('/^[A-Za-z0-9_-]{1,64}$/', $data_id) !== 1) {
         return new Response('', Response::HTTP_BAD_REQUEST);
@@ -135,7 +135,7 @@ final class WebhookGuard {
    * Extracts all supported data.id representations for conflict detection. */
 
   /**
-   * Processa um tópico de assinatura já validado. 200 quando consumido; 500 para o Mercado Pago reenviar.
+   * Processa tópico de assinatura validado. 200 consome; 500 solicita reenvio.
    */
   private function processarAssinatura(string $tipo, string $id): Response {
     if ($this->assinaturas === NULL) {
