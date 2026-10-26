@@ -34,8 +34,8 @@ ADR-009 em `docs/decisions/`).
 - Tipo de sitemap `aculta_purpose`; variantes `main` e `support`, com o purpose nas
   configurações de terceiros de cada variante.
 - Endpoints pilotos: `/sitemaps/{main,support,magazine,wiki,courses}/sitemap.xml`.
-- O sitemap institucional `default` (`/sitemap.xml`) não foi alterado.
-- **Não promovido:** o índice central e a troca de `/sitemap.xml` pertencem à fase G.
+- A variante institucional anterior `default` foi desabilitada; a rota `/sitemap.xml` serve o índice central desde a fase G.
+- **Estado histórico:** a fase G promoveu o índice central e a troca de `/sitemap.xml`; os bullets desta seção registram a configuração e as verificações daquele ciclo. A ressalva antiga de que a fase G ainda não estava promovida foi removida por estar superada.
 - **Habilitação atual:** somente leitura em 2026-10-26 confirmou o módulo ativo no Runtime de testes e em
   `config/sync/core.extension.yml`; as seis variantes e o tipo `aculta_purpose` também estão versionados.
   A frase histórica desta seção sobre configuração não exportada descrevia o estágio piloto e não o estado atual.
