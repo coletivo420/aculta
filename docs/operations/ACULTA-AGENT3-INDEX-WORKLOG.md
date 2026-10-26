@@ -122,6 +122,18 @@ Contratos observados:
   focais). Relatório:
   [`ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md`](../portal/benchmarks/ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md).
 
+### 7. Correções da revisão focada (`c80b9fa64`, `90d50c6cc`, `25e0a5958`)
+
+- A revisão independente apontou que o reset de cache por tipo candidato não
+  cobria checagens aninhadas de tipos ausentes da página. O filtro agora limpa
+  todos os handlers de conteúdo a cada chamada; o teste Unit inclui um tipo
+  não-candidato para provar o reset.
+- A exclusão de gerações `discarding` passou de uma consulta separada para uma
+  subquery `NOT IN` na mesma instrução do count/auditoria, eliminando a janela
+  de transição entre a leitura dos IDs e a contagem.
+- A recusa de `start` quando validação/descarte concorre é retryável e foi
+  documentada; a invariante de uma única geração `building` permanece.
+
 ## Homologação de providers (IDX-2)
 
 Providers descobertos no container local (11 providers, 13 tuplas):
@@ -164,6 +176,41 @@ Observações de homologação:
 - Lacuna documentada: `media.files.requests` (Statistics, dimensão `file:file`)
   não tem provider `file:file` no Index; a métrica não é alcançável pelo bridge
   até existir provider desse tipo. Consumidores devem usar o Statistics direto.
+
+## Achados fora do escopo (revisão de 2026-10-26)
+
+A primeira revisão independente foi executada no checkout principal, não no
+worktree, e apontou defeitos em outros módulos. Nenhum foi alterado ou
+reproduzido pelo Agente 3; ficam para triagem dos owners. O escopo desta frente
+continua sendo `aculta_index`.
+
+| Severidade | Arquivo:linha | Achado |
+| --- | --- | --- |
+| high | `aculta_document_viewer/js/pdf-viewer.mjs:229` | Listeners em controles removidos por `#access`; `querySelector` nulo impede a renderização do PDF. |
+| high | `aculta_commerce_melhorenvio/src/Http/MelhorEnvioClient.php:391` | Fallback de `SecretsManager` usa o Key ID em vez do nome do contrato; OAuth e webhooks podem responder não configurado/503. |
+| high | `aculta_lms_h5p/src/Plugin/Field/FieldFormatter/aculta_H5PDefaultFormatter.php:250` | `getEntity()` sem checagem de nulo em relação Group obsoleta; erro fatal na página do curso. |
+| medium | `aculta_user/src/Hook/ProfileNicknameValidationHooks.php:1` | Validador do apelido legado removido, mas o campo continua exposto em `/dados`; apelidos inválidos/duplicados. |
+| medium (plausível) | `aculta_commerce/src/Catalog/GreenStashProductReader.php:96` | Sonda de continuação perdida; produtos gerenciáveis após os primeiros 500 podem ficar ocultos. |
+| low | `aculta_user/src/Avatar/AvatarAssetCleanup.php:48` | Contadores sobem mesmo quando `FileRemover::delete()` retorna FALSE. |
+| low | `aculta_patcher/src/PatchDiffValidator.php:40` | `escapesPackage()` não cobre `--- ../foo`; validação inconsistente com o exportador. |
+| low (plausível) | `aculta_deployer/config/deploy.json:301` | Regra de rodapé virou identidade no-op para satisfazer `validateProfiles`. |
+| low | `aculta_portal/src/Hook/FormHooks.php:195` e `aculta_commerce/.../GreenStashProductReader.php:24` | Docblocks órfãos/duplicados. |
+
+Caminhos relativos a `web/modules/custom/aculta_portal/modules/`;
+`aculta_commerce_melhorenvio` está em `aculta_commerce/modules/`.
+
+## Revisão de código
+
+Revisão independente focada no diff do `aculta_index`, no worktree isolado:
+
+- Nenhum bypass de autorização, deadlock ou regressão de paginação confirmado.
+- Achados plausíveis: reset de cache sem tipos aninhados (medium; corrigido em
+  `c80b9fa64`), janela entre a leitura de gerações em descarte e o count (low;
+  corrigido em `90d50c6cc`) e recusa retryável de `start` concorrente com
+  validação/descarte (low; documentado em `25e0a5958`).
+- Cobertura: o Unit passou a incluir um tipo não presente na página; a
+  serialização real de `start` em duas conexões não é exercitada pelo Kernel de
+  conexão única e fica registrada como lacuna de teste.
 
 ## Segurança (IDX-3)
 
@@ -253,8 +300,9 @@ desinstalação foi executado no Runtime.
 | --- | --- |
 | PHP lint (módulo) | PASS |
 | PHPCS Drupal/DrupalPractice (arquivos alterados) | PASS |
-| Unit `aculta_index` | 51 testes / 282 assertions PASS; 14 depreciações PHPUnit |
+| Unit `aculta_index` | 51 testes / 265 assertions PASS; 14 depreciações PHPUnit |
 | Kernel `aculta_index` (MariaDB) | 118 testes / 2.001 assertions PASS; 276 depreciações Core/contrib e 56 PHPUnit |
+| Revisão de código focada | Concluída; achados corrigidos/documentados |
 | PHPCS do módulo (`src` + `tests`) | PASS |
 | Gate Drupal 11+ | PASS (1.160 checks) |
 | Índice de status do projeto | PASS (41 componentes) |
@@ -265,10 +313,28 @@ desinstalação foi executado no Runtime.
 
 Depreciações são de Core/contrib e PHPUnit; nenhuma falha própria.
 
+## Integração com o agente principal
+
+- Em 2026-10-26 o agente principal revisou e integrou os 13 commits publicados
+  até `44de71674` em `chore/aculta-m0-integridade`, como cherry-picks com SHAs
+  próprios. Antes das correções da revisão, o diff do módulo e da documentação
+  entre a integração e esta branch estava vazio.
+- O status integrado (`docs/operations/status/aculta_index.yml`, commit
+  `e3c34b675`) permanece `0.1.0-dev.175`/Dev e registra cinco arquivos não
+  commitados. Esses arquivos foram publicados em `c80b9fa64`, `90d50c6cc` e
+  `25e0a5958`; a nota do status está desatualizada e a reexecução da integração
+  cabe ao agente principal.
+- O agente principal relatou Kernel integral na integração excedendo timeout em
+  63/118, sem resultado conclusivo, por bootstrap compartilhado de Core. A
+  execução isolada deste worktree passou 118/2.001 em MariaDB; a diferença é o
+  `web/core` local e o autoload do vendor apontando para o worktree, conforme a
+  seção de ambiente.
+- Nenhuma operação Runtime foi executada por nenhum dos lados.
+
 ## Pendências e bloqueios
 
-- Carga representativa com relações reais e perfis de acesso ainda não existe;
-  os benchmarks continuam sintéticos.
+- Carga representativa com conteúdo real dos owners ainda não existe; a fixture
+  sintética cobre diversidade, mas os benchmarks continuam sintéticos.
 - Homologação operacional de grants/Domain/Group com conteúdo real e telemetria
   antes de SLO continua pendente.
 - Rebuild/ativação sobre catálogo não vazio no Runtime exige autorização,
@@ -277,10 +343,10 @@ Depreciações são de Core/contrib e PHPUnit; nenhuma falha própria.
 - Métrica `media.files.requests` não tem provider `file:file` no Index.
 - Cursor continua vinculado à geração; não é reutilizável após troca de geração
   (testado).
-- A guarda contra duas gerações `building` foi implementada e testada; um
-  rebuild abandonado precisa ser descartado antes de iniciar outro.
 - A fixture representativa é sintética e pequena/média. Conteúdo real dos
   owners, com Group/Media/Domain reais em volume, continua pendente.
+- Operação: um rebuild abandonado em `building` precisa ser descartado antes de
+  outro `start`; a guarda está implementada e testada.
 
 ## Proposta de status (não aplicada)
 
@@ -290,8 +356,9 @@ O status global continua `Dev` e a decisão é do agente 1. Proposta para
 - `version: 0.1.0-dev.176`.
 - `state: Dev`.
 - Registrar: correções de integridade, revalidação de acesso por página, cursor
-  vinculado ao inventário, Kernel 114/1.890, Unit 51/282, benchmark pós-correção
-  e Runtime local read-only (145/110).
+  vinculado ao inventário, guarda de rebuild concorrente, fixture representativa
+  sintética, revisão de código concluída, Kernel 118/2.001, Unit 51/265, duas
+  amostras de benchmark e Runtime local read-only (145/110).
 - Manter como pendentes: grants operacionais, carga representativa, execução
   sobre catálogo no Runtime e relações de vídeo.
 
@@ -308,6 +375,11 @@ O status global continua `Dev` e a decisão é do agente 1. Proposta para
 - `8b5d41a8a` — fix(index): serialize rebuild starts behind the state fence
 - `0db86be20` — test(index): add representative mixed-catalog fixture
 - `a62f7ea1b` — docs(index): record rebuild fence and representative fixture
+- `03c5cac27` — docs(index): record two representative benchmark samples
+- `44de71674` — docs(index): record two Forum access samples and caveats
+- `c80b9fa64` — fix(index): clear nested entity access handlers on every page
+- `90d50c6cc` — fix(index): make discard exclusion atomic in integrity queries
+- `25e0a5958` — docs(index): note retryable rebuild start refusal
 - Commit documental do worklog: HEAD final da branch
   `feat/aculta-index-fechamento` (registrado no relatório de entrega).
 
