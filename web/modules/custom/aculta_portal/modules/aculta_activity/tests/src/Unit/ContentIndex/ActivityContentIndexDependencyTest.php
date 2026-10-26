@@ -6,12 +6,12 @@ namespace Drupal\Tests\aculta_activity\Unit\ContentIndex;
 
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\Yaml\Yaml;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Keeps the Activity adapter optional when the Content Index is disabled.
- *
- * @group aculta_activity
  */
+#[Group('aculta_activity')]
 final class ActivityContentIndexDependencyTest extends UnitTestCase {
 
   /**

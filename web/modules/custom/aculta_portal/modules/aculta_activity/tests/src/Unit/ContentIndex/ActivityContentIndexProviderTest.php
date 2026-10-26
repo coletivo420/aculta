@@ -9,12 +9,12 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests minimal Activity projection and access context.
- *
- * @group aculta_activity
  */
+#[Group('aculta_activity')]
 final class ActivityContentIndexProviderTest extends UnitTestCase {
 
   /**

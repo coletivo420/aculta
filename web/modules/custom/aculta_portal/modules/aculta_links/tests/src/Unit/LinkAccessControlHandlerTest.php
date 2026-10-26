@@ -11,18 +11,21 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\EntityOwnerInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
- * @coversDefaultClass \Drupal\aculta_links\Access\LinkAccessControlHandler
- * @group aculta_links
+ * Testes de LinkAccessControlHandlerTest.
  */
+#[CoversMethod(\Drupal\aculta_links\Access\LinkAccessControlHandler::class, 'checkAccess')]
+#[CoversMethod(\Drupal\aculta_links\Access\LinkAccessControlHandler::class, 'checkCreateAccess')]
+#[CoversClass(\Drupal\aculta_links\Access\LinkAccessControlHandler::class)]
+#[Group('aculta_links')]
 final class LinkAccessControlHandlerTest extends UnitTestCase {
 
   /**
    * Tests owner, other-user, administrator, and create access decisions.
-   *
-   * @covers ::checkAccess
-   * @covers ::checkCreateAccess
    */
   public function testAccessIsPrivateAndPermissionGated(): void {
     $handler = new TestableLinkAccessControlHandler($this->createMock(EntityTypeInterface::class));

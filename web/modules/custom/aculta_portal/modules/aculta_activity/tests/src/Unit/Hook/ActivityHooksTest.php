@@ -9,13 +9,20 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
 
-/** @coversDefaultClass \Drupal\aculta_activity\Hook\ActivityHooks */
+#[CoversMethod(\Drupal\aculta_activity\Hook\ActivityHooks::class, 'formNodeFormAlter')]
 #[\PHPUnit\Framework\Attributes\CoversClass(ActivityHooks::class)]
 #[\PHPUnit\Framework\Attributes\Group('aculta_activity')]
+/**
+ * Formulário de atividade: agrupamento e callback de dono.
+ */
 final class ActivityHooksTest extends UnitTestCase {
 
-  /** @covers ::formNodeFormAlter */
+  /**
+   * Verifica testActivityFormIsGroupedAndUsesOwnerCallback.
+   */
   public function testActivityFormIsGroupedAndUsesOwnerCallback(): void {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('activity');
@@ -23,6 +30,9 @@ final class ActivityHooksTest extends UnitTestCase {
 
       public function __construct(private readonly NodeInterface $node) {}
 
+      /**
+       * Devolve a entidade de teste.
+       */
       public function getEntity(): NodeInterface {
         return $this->node;
       }
@@ -53,7 +63,9 @@ final class ActivityHooksTest extends UnitTestCase {
     self::assertSame(['aculta_activity.form_callbacks:validateActivity'], $form['#validate']);
   }
 
-  /** @covers ::formNodeFormAlter */
+  /**
+   * Verifica testOtherBundlesAreUnaffected.
+   */
   public function testOtherBundlesAreUnaffected(): void {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('revista');
@@ -61,6 +73,9 @@ final class ActivityHooksTest extends UnitTestCase {
 
       public function __construct(private readonly NodeInterface $node) {}
 
+      /**
+       * Devolve a entidade de teste.
+       */
       public function getEntity(): NodeInterface {
         return $this->node;
       }
