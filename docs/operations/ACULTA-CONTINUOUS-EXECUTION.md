@@ -621,3 +621,7 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - No HEAD após as correções de Messenger, Melhor Envio, CEP, Confirmador e documentação Statistics: status index 41 PASS; pacotes 41 PASS; fronteira módulo/tema 2.897 PASS; Drupal 11+ 1.160 PASS; aliases transitórios 25 arquivos PASS; slugs públicos 44 rotas/0 violações PASS; endereços 4.266 arquivos PASS; Config Extension Dependencies 1.590 checks/1.437 configs PASS.
 - Esse checkpoint não encerra M-0: comparações completas de Config Sync/Runtime, RBAC Wiki, Functional Statistics, Browser e homologações por propósito continuam abertas. Módulos permanecem Dev quando suas evidências RC não estão completas.
+
+## M-2 — revalidar a política de referências File/Media (2026-10-26)
+
+- Com bootstrap PSR-4 explícito da branch, a suíte Unit de `aculta_portal/tests/src/Unit/Cleanup` passou 11 testes / 67 assertions (2 depreciações PHPUnit) e `FileReferenceInspectorKernelTest` passou 2 / 19 no MariaDB dedicado. A verificação cobre referências estruturadas em revisões antigas e UUID de File em rich text. Não foi chamada rotina de exclusão; Runtime permaneceu somente leitura.
