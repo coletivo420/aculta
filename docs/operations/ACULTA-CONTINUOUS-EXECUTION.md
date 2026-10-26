@@ -15,7 +15,7 @@
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
 5. Próxima unidade: revisar individualmente as 9 configurações Messenger presentes no Sync mas divergentes do Runtime e decidir quais são drift, customização operacional ou defaults obsoletos; não exportar globalmente nem alterar anchor/preferências sem classificação.
 6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente das oito frentes concluiu seu trabalho; comparação por caminhos confirmou que todos os incrementos já estão na PR sob SHAs equivalentes. Não fazer cherry-pick duplicado; nenhum desses diretórios foi alterado neste turno.
-7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último commit funcional: `25776ef21` (`test(portal): cover global file reference inspection`).
+7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último checkpoint remoto: `2901b16d4` (`docs(aculta): record confirmation policy checkpoint`).
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
@@ -444,3 +444,10 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Kernel foi executado com as credenciais dedicadas em `/home/aculta/secrets/simpletest-db.env`. Uma tentativa anterior com credencial genérica falhou no setup; não conta como resultado de produto. Nenhuma operação Runtime persistente, SMTP externo ou Browser foi realizada.
 - A decisão do responsável foi que rotas públicas de perfil legado sempre levam sufixo `-gr`. O escopo ainda aguarda definição porque `PerfilDoPapel::TIPOS` contém bundles por papel, enquanto a documentação identifica autores históricos Growroom como entidades distintas sem conta Drupal; as antigas rotas `/user/{uid}` e `/identidade/{user}` são privadas. Não alterar slug/lookup até o escopo ser definido.
 - Drush status read-only no URI MAIN reconfirmou Drupal 11.4.10, DB `aculta_runtime` e root compartilhado `/home/piradopirata/projetos/aculta/web`.
+
+
+## Regressão de gates e investigação do Kernel Document Viewer (2026-10-26)
+
+- Na HEAD `2901b16d4`, a varredura PHPCS Drupal/DrupalPractice dos PHPs da PR continua em 0 erros e 49 avisos, concentrados em um aviso preexistente do PDF Viewer e 48 no CheckoutPro de Mercado Pago. Fronteira módulo–tema (2.892), Drupal 11+ (1.160), aliases (25), slugs (396; 17 violações contrib baseline), endereços (4.260), status (41) e próprios packages (41) passaram.
+- Kernel completo `aculta_document_viewer` reproduz 5 erros de setup/0 assertions: o Portal ativa serviços que exigem `aculta_user` e a cadeia declarada pelo Portal; o harness atual não habilita essa closure. Tentativa focal com `aculta_user` e seus módulos-base reduziu o primeiro erro, mas expôs `key.repository` ausente. Não foi mantida alteração de harness, não foi criado serviço fictício e nenhuma instalação Runtime ocorreu. A instalação isolada completa deve carregar a closure real de 72 módulos declarada transitivamente, ou o harness precisa ser redesenhado com contratos reais mínimos; classificar como falha de setup, sem alegar defeito funcional do viewer.
+- O worktree de missão foi restaurado sem alterações após a investigação. Próximo passo para esse Kernel: avaliar a viabilidade de instalar a closure Portal real em test root efêmero; manter Unit 42/225 PASS como evidência separada, sem promover o componente.
