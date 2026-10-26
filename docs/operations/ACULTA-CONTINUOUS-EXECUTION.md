@@ -616,3 +616,8 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 ## M-1 — revalidar CPF/CNPJ com autoload da branch (2026-10-26)
 
 - Uma primeira Unit executada com bootstrap genérico carregou classes pelo checkout compartilhado e apresentou erro no teste de colisão SQL; não foi classificada como falha do produto. Novo bootstrap efêmero priorizou os namespaces Portal/CPF da PR e manteve Core 11.4.10 e contrib instalados: Unit CPF 48 testes / 116 assertions PASS e Kernel CPF 3 / 8 PASS em MariaDB dedicado. Nenhuma alteração de código, atualização 10002 ou Runtime write.
+
+## Checkpoint de integridade pós-correções (2026-10-26)
+
+- No HEAD após as correções de Messenger, Melhor Envio, CEP, Confirmador e documentação Statistics: status index 41 PASS; pacotes 41 PASS; fronteira módulo/tema 2.897 PASS; Drupal 11+ 1.160 PASS; aliases transitórios 25 arquivos PASS; slugs públicos 44 rotas/0 violações PASS; endereços 4.266 arquivos PASS; Config Extension Dependencies 1.590 checks/1.437 configs PASS.
+- Esse checkpoint não encerra M-0: comparações completas de Config Sync/Runtime, RBAC Wiki, Functional Statistics, Browser e homologações por propósito continuam abertas. Módulos permanecem Dev quando suas evidências RC não estão completas.
