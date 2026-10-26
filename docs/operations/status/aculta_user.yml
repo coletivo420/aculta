@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.4.0-dev.83
 state: Dev
-progress_note: "Dev.83: sufixo -gr segue bloqueado; #N exibe e #N manual é aceito quando o slug está livre. Projeção SQL uid→slug, rebuild 10013 e hooks de sincronização implementados em código. User Unit 140/543 PASS (1 depreciação); PHPCS/lint focais PASS. Kernel SQLite isolado 6/44 PASS; primeira tentativa MariaDB foi setup incompleto sem filter, fixture corrigido, repetição espera liberação do MariaDB pelo agente Index. Sem update Runtime."
-next_phase: Reexecutar NicknameRegistryKernelTest quando o MariaDB estiver livre; corrigir falhas do produto, cobrir escritor concorrente em processos distintos e revisar rollback. Executar update 10013 somente em ambiente isolado; Runtime existente exige autorização.
+progress_note: "Dev.83: sufixo -gr segue bloqueado; #N exibe e #N manual é aceito quando o slug está livre. Projeção SQL uid→slug, rebuild 10013 e hooks de sincronização implementados em código. User Unit 140/543 PASS (1 depreciação); PHPCS/lint focais PASS. Kernel SQLite 6/44 e MariaDB 6/44 PASS; teste de concorrência entre processos ainda falta. Sem update Runtime."
+next_phase: Adicionar teste de dois escritores concorrentes em processos separados no MariaDB e revisar rollback. Executar update 10013 somente em ambiente isolado; Runtime existente exige autorização.
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
