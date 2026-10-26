@@ -23,9 +23,13 @@
   um ID para confirmar se há continuação. Isso mantém o cursor quando produtos
   mais antigos ainda existem e evita um próximo link vazio quando os resultados
   terminam exatamente no limite.
-- Unit Commerce: 27 testes / 171 assertions PASS (10 depreciações PHPUnit).
+- Unit Commerce: 29 testes / 183 assertions PASS (10 depreciações PHPUnit).
   PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS nos arquivos
   alterados. Nenhum Runtime ou dado persistente foi alterado.
+- A regressão de paginação foi ajustada para testar 500 candidatos não
+  gerenciáveis e um ID mais antigo realmente fora dos lotes. A classe do
+  publisher agora também verifica pedido de visitante e fallback do recibo
+  Commerce quando o Messenger falha.
 
 ## 0.1.0-dev.7 — preservar cursor após varredura seletiva (2026-10-26)
 

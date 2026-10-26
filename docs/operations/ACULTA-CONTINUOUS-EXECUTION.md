@@ -221,6 +221,12 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - `aculta_commerce` avançou `0.1.0-dev.6` → `0.1.0-dev.8`; README, changelog, status, índice raiz e matriz de fechamento reconciliados. Nenhum Runtime, pedido, pagamento ou serviço externo foi alterado. Kernel de Doações e homologações Green Stash continuam pendentes.
 - Próxima tarefa: retomar o fechamento seguro do harness Kernel LMS/Doações ou avançar outra lacuna testável de Commerce/Portal; manter o módulo em Dev até Kernel integrado, Functional e homologações comerciais estarem concluídos.
 
+## M-4 — regressões do publisher e cursor Commerce (2026-10-26)
+
+- Reexecutar a Unit Commerce com o autoloader explícito do worktree (o PHPUnit padrão usa Core/vendor compartilhados e carregava código Commerce do checkout comum). A regressão de paginação tinha fixture incoerente: o candidato gerenciável estava dentro do lote varrido e o probe apontava para outro ID. Ajustados os IDs para 500 candidatos inacessíveis seguidos de um produto mais antigo; nenhum código de produção foi alterado.
+- `CommerceOrderNoticePublisherTest` agora confirma que pedidos de visitantes mantêm o recibo nativo e que falha ao publicar no Messenger não marca `skip_order_receipt`; o logger recebe apenas a classe da exceção, nunca seu texto. PHP lint/PHPCS nos dois testes PASS; suíte Unit Commerce 29 testes / 183 assertions PASS, 10 depreciações PHPUnit.
+- Nenhum pedido, pagamento, fila, Runtime ou serviço externo foi alterado. Commerce continua Dev até Kernel/Functional, checkout e homologações de loja única.
+
 ## M-0 — Config Domain e acesso `full_html` (2026-10-26)
 
 - O Runtime MAIN foi consultado read-only, com host/URI e banco confirmados. `DomainPurposeManager::getCurrentPurpose()` resolveu os nove hosts dos purposes (9/9). As seis coleções Domain têm os mesmos nomes de configuração ativos/exportados; cinco coleções tinham conteúdo idêntico. A home de Conta estava divergente (`/studio` no Sync, `/minha-conta` no Runtime e contrato) e foi corrigida no Sync. Na Revista, permanecem três campos ativos divergentes (`system.site.name`, `metatag.front.tags.title`, `og_title`); o Sync mantém `Revista 420`, coerente com o contrato de apresentação. Nenhum valor da Revista foi sobrescrito e nenhum `cim` ocorreu.

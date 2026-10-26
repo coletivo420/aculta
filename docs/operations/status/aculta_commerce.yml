@@ -2,7 +2,9 @@
 version: 0.1.0-dev.8
 state: Dev
 progress_note: >-
-  Unit Commerce 27/171 PASS (10 depreciações PHPUnit); GreenStashProductAccessTest
+  Unit Commerce 29/183 PASS (10 depreciações PHPUnit); publisher do Messenger
+  cobre pedido de visitante e mantém recibo Commerce como fallback se a publicação
+  compartilhada falhar; GreenStashProductAccessTest
   cobre acesso por entidade e loja. GreenStashProductReaderPaginationTest verifica
   continuação após 500 resultados filtrados e ausência de cursor sem mais resultados.
   PHP lint e PHPCS Drupal/DrupalPractice dos arquivos alterados PASS.

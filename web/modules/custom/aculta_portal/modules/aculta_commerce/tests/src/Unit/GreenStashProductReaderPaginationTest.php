@@ -28,7 +28,7 @@ final class GreenStashProductReaderPaginationTest extends UnitTestCase {
   #[DataProvider('continuationResults')]
   public function testScanBudgetOnlyExposesRealContinuation(bool $hasOlderProduct): void {
     $batchIds = [];
-    for ($start = 1000; $start > 500; $start -= 100) {
+    for ($start = 1001; $start > 501; $start -= 100) {
       $batchIds[] = range($start, $start - 99);
     }
     $productQuery = $this->createMock(QueryInterface::class);
@@ -36,9 +36,9 @@ final class GreenStashProductReaderPaginationTest extends UnitTestCase {
     $productQuery->method('condition')->willReturnSelf();
     $productQuery->method('sort')->willReturnSelf();
     $productQuery->method('range')->willReturnSelf();
-    $executeResults = [...$batchIds, $hasOlderProduct ? [500] : []];
+    $executeResults = [...$batchIds, $hasOlderProduct ? [501] : []];
     if ($hasOlderProduct) {
-      $executeResults[] = [500];
+      $executeResults[] = [501];
     }
     $productQuery->expects(self::exactly(count($executeResults)))
       ->method('execute')
@@ -56,15 +56,15 @@ final class GreenStashProductReaderPaginationTest extends UnitTestCase {
     $storeStorage->method('load')->with(1)->willReturn($store);
 
     $products = [];
-    foreach (range(1000, 500) as $id) {
+    foreach (range(1001, 501) as $id) {
       $product = $this->createMock(ProductInterface::class);
       $product->method('id')->willReturn((string) $id);
       $product->method('bundle')->willReturn('produto_loja');
       $product->method('access')->willReturnCallback(
         static fn (string $operation, AccountInterface $actualAccount): bool =>
-          $operation === 'view' || $id === 500,
+          $operation === 'view' || $id === 501,
       );
-      if ($id === 500) {
+      if ($id === 501) {
         $product->method('getStores')->willReturn([$store]);
       }
       $products[(string) $id] = $product;
@@ -85,11 +85,11 @@ final class GreenStashProductReaderPaginationTest extends UnitTestCase {
 
     $firstPage = $reader->page($account);
     self::assertSame([], $firstPage['items']);
-    self::assertSame($hasOlderProduct ? 501 : NULL, $firstPage['next']);
+    self::assertSame($hasOlderProduct ? 502 : NULL, $firstPage['next']);
 
     if ($hasOlderProduct) {
       $secondPage = $reader->page($account, $firstPage['next']);
-      self::assertSame([$products['500']], $secondPage['items']);
+      self::assertSame([$products['501']], $secondPage['items']);
       self::assertNull($secondPage['next']);
     }
   }
