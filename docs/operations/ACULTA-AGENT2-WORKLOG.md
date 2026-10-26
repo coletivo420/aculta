@@ -288,3 +288,16 @@ cadastrados.
 2. Lote: `/painel-administrativo/aculta/codigos-qr/lote?ids=<id1>,<id2>&formato=svg` baixa um ZIP com `qr-<codigo>.svg` por código; id inexistente retorna 404 e nada é entregue.
 3. Formatter `aculta_qr_svg` em um campo de referência: a imagem aparece como `<img>` com `data:` e sem `<svg>` inline.
 4. Links em viewport de celular (360 px): páginas `/pagina/{slug}` sem rolagem horizontal, botões com área de toque adequada, prévia `/pagina/{slug}/previa` acessível só pelo dono.
+
+## Verificação visual no Firefox X11 (servidor de teste)
+
+- Correção à entrada anterior: o servidor de teste responde (`aculta.toca.net.br`, `links.aculta.toca.net.br`,
+  `conta.aculta.toca.net.br`). Eu tinha afirmado que não havia site rodando, o que estava errado.
+- Script: `tests/browser/aculta-qrcode/verifica_qrcode.py`, com README. Resultado: **5 de 7 PASS**.
+- Falhas reais, reportadas: `/painel-administrativo/aculta/codigos-qr/previa` e `.../lote` respondem **404** para
+  anônimo, porque o servidor de teste serve o checkout principal, sem essas rotas. Não é defeito de segurança: a
+  rota simplesmente não existe ali. Esperado após a publicação desta branch no servidor de teste (então o anônimo
+  deve receber 403).
+- `/redes-sociais` responde 404 no servidor de teste: rota ainda não publicada.
+- Pendente: prévia e lote com administrador logado (precisa de sessão de teste) e layout das micropáginas
+  `/pagina/{slug}` (precisa de um slug publicado).
