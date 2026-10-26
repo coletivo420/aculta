@@ -1,11 +1,11 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit estável antes deste checkpoint:** `f69305f7c32842f1913265afa70fefa9cd97d1aa`; branch remota sincronizada e worktree limpo.
+**Último commit estável antes deste checkpoint:** `261b52bc6` (cherry-pick do teste Editor revisado); branch remota sincronizada até `87b4f4e87` antes das alterações locais deste checkpoint.
 **Estado:** PARTIAL — PHPCS PR-wide, H5P, gate Domain administrativo, User/Portal/CPF focal, Index e Statistics têm evidências registradas PASS. M-0 continua bloqueada pela diferença de `core.extension`, Config Domain por purpose e RBAC Wiki; M-1–M-5 seguem em execução e sem promoção RC.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
-**Domain/purpose:** em 2026-10-26, `DomainPurposeManager::getCurrentPurpose()` resolveu os nove hosts MAIN, ACCOUNT, SUPPORT, MAGAZINE, WIKI, SHOP, COURSES, FORUM e LINKS ao purpose correspondente (9/9 PASS). Overrides Domain Config e Entity Access por purpose continuam pendentes.
+**Domain/purpose:** em 2026-10-26, `DomainPurposeManager::getCurrentPurpose()` resolveu os nove hosts MAIN, ACCOUNT, SUPPORT, MAGAZINE, WIKI, SHOP, COURSES, FORUM e LINKS ao purpose correspondente (9/9 PASS). As seis coleções Domain ativas têm nomes idênticos ao Sync; cinco também coincidem em conteúdo. O front da Conta foi corrigido no Sync de `/studio` para `/minha-conta`, conforme Runtime e contrato; o acesso HTTP direto ao path segue 404. Revista permanece com drift ativo em `system.site.name`, `metatag.front.tags.title` e `og_title`; o Sync fica com o título específico `Revista 420`. Entity Access por purpose não está homologado.
 
 ## Ponto de retomada
 
@@ -220,3 +220,9 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Nova regressão `GreenStashProductReaderPaginationTest` atravessa 500 produtos visíveis sem permissão de atualização e recupera o produto mais antigo gerenciável na página seguinte. O teste também verifica que um probe de um ID não emite cursor quando a sequência termina no limite: 2/11 PASS. Unit Commerce completa: 27/171 PASS (10 depreciações PHPUnit). PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` dos arquivos alterados PASS; índices e gates globais descritos abaixo passaram.
 - `aculta_commerce` avançou `0.1.0-dev.6` → `0.1.0-dev.8`; README, changelog, status, índice raiz e matriz de fechamento reconciliados. Nenhum Runtime, pedido, pagamento ou serviço externo foi alterado. Kernel de Doações e homologações Green Stash continuam pendentes.
 - Próxima tarefa: retomar o fechamento seguro do harness Kernel LMS/Doações ou avançar outra lacuna testável de Commerce/Portal; manter o módulo em Dev até Kernel integrado, Functional e homologações comerciais estarem concluídos.
+
+## M-0 — Config Domain e acesso `full_html` (2026-10-26)
+
+- O Runtime MAIN foi consultado read-only, com host/URI e banco confirmados. `DomainPurposeManager::getCurrentPurpose()` resolveu os nove hosts dos purposes (9/9). As seis coleções Domain têm os mesmos nomes de configuração ativos/exportados; cinco coleções tinham conteúdo idêntico. A home de Conta estava divergente (`/studio` no Sync, `/minha-conta` no Runtime e contrato) e foi corrigida no Sync. Na Revista, permanecem três campos ativos divergentes (`system.site.name`, `metatag.front.tags.title`, `og_title`); o Sync mantém `Revista 420`, coerente com o contrato de apresentação. Nenhum valor da Revista foi sobrescrito e nenhum `cim` ocorreu.
+- `validate-domain-front-paths.php` PASS (16), `validate-public-slugs.php` PASS (395, 17 baseline contrib), aliases PASS (25), dependências Config Extension PASS (1.559/1.426), índice status PASS. `validate-domain-presentation-contract.php` direto no PHP falhou sem bootstrap; reexecutado corretamente via Drush no MAIN: PASS (162). A falha direta foi harness, não produto.
+- Commit delegado Editor `80dfe0549` revisado: adiciona apenas um teste Kernel de autorização. Cherry-pick local `261b52bc6`; Kernel Editor 8/127 PASS, PHPCS Drupal/DrupalPractice e lint PASS, três depreciações contrib. No Runtime, apenas `administrator` tem `use text format full_html`; o Kernel confirma os papéis de Config Sync e acesso efetivo ao FilterFormat. Nenhuma permissão Runtime alterada.

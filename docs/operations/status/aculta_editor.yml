@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.5
 state: Dev
-progress_note: 'Runtime de testes somente leitura (2026-10-26): módulo ativo, mas ausente em config/sync/core.extension.yml; templates de instalação também não aparecem em Config Sync. Divergência global encaminhada ao proprietário de Config Sync.'
-next_phase: 'Reconciliar a ativação e os templates de configuração; restringir criação de aculta_adm à administração e validar acesso/sanitização no navegador ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))'
+progress_note: 'Runtime read-only: Editor e 16 dependências ativos; 8 templates e settings do Plugin Pack ativos fora do Sync. Seis editor configs e oito formatos já estão no Sync. `full_html` é permitido somente ao administrator no Runtime e no novo Kernel 8/127; PHPCS passa. CMI segue sem ensaio.'
+next_phase: 'Reconciliar os 17 módulos e nove configurações ativas após ensaio de importação isolado; executar Browser de acesso/sanitização e manter aculta_adm restrito à administração ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))'

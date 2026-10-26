@@ -2,4 +2,4 @@
 version: 0.1.0-dev.14
 state: Dev
 next_phase: 'Validar em Kernel o provider `media:document` sem interferir nas prévias Office; ampliar validação no Runtime para DOCX, planilhas e viewports menores. Depois concluir homologação RC e revisão visual pré-RC dos consumidores ([roadmap](web/modules/custom/aculta_portal/modules/aculta_document_viewer/docs/ROADMAP.md))'
-progress_note: "provider mínimo de Media document para o Content Index)\""
+progress_note: 'Provider de Media document registrado para o Content Index; DOCX, planilhas, viewports menores, Runtime e revisão visual ainda aguardam validação.'
