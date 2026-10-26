@@ -36,7 +36,7 @@ final readonly class ShippingQuote {
     public ?int $validUntil = NULL,
   ) {
     foreach ([$methodId, $serviceId] as $id) {
-      if (preg_match('/\A[A-Za-z0-9_.:-]{1,128}\z/D', $id) !== 1) {
+      if (preg_match('/\A[A-Za-z0-9_.-]{1,128}\z/D', $id) !== 1) {
         throw new \InvalidArgumentException('Invalid shipping method or service ID.');
       }
     }
