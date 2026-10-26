@@ -171,7 +171,7 @@ Dependências: R2 e R3 antes de I-D; I-B antes de I-C e I-D; I-D e LMS antes de 
 ## 8. Roadmap do `aculta_id_cpf` (R5)
 
 - **CPF 0.2-A — Consolidação arquitetural:** módulo único; contratos de serviço; dependências saneadas; documentação atualizada. *Situação: R0–R2 concluídos; remoção do associado bloqueada.*
-- **CPF 0.2-B — Integridade e concorrência:** unicidade transacional; avaliar índice único; testes de gravações concorrentes e documentos duplicados. *O HMAC atual não garante unicidade sob concorrência (ver README do módulo).*
+- **CPF 0.2-B — Integridade e concorrência:** implementada em código `aculta_id_cpf_update_10002`, com índice único no armazenamento ativo de `field_documento_indice`; Kernel MariaDB verifica duplicata no banco e aborta diante de grupo legado sem expor fingerprints (2 testes/3 assertions). *Ativação no Runtime e validação de conflitos reais seguem pendentes de autorização operacional; sem isso, ambientes anteriores ao update continuam usando apenas a checagem prévia.*
 - **CPF 0.2-C — Integração de conta:** formulários do Portal; Profile/User; máscaras e mensagens genéricas; proteção contra exposição de PII; validação de acesso.
 - **CPF 0.2-D — Login por CPF:** estudo somente. Preservar autenticação Core, CAPTCHA, flood control, confirmação de e-mail e Social Auth. Sem implementação antes de contrato de segurança.
 - **CPF 0.2-E — Integrações futuras:** Commerce e LMS (ver CPF-CHECKOUT-0.2-I); Webform com controles de acesso e exportação; serviços internos autorizados; auditoria e retenção.

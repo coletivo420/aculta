@@ -1,7 +1,7 @@
 # ACULTA CPF e CNPJ
 
 Submódulo opcional do `aculta_portal`, baseline Drupal **11.3+** e PHP **8.4**.
-Versão atual: **0.2.0-dev.2**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
+Versão atual: **0.3.0-dev.2**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
 e um índice de unicidade (fingerprint HMAC).
 
 **RUNTIME STATUS: DEFERRED** — a rodada local em PHP 8.4 passou; o servidor
@@ -40,19 +40,18 @@ da chave invalida os fingerprints existentes; rotação futura exige recalcular
 todos os índices de forma controlada. O serviço falha fechado se a chave estiver
 ausente ou for menor que 32 bytes.
 
-O HMAC não implementa armazenamento, restrição única no banco nem coordenação de
-gravações concorrentes. A integração manual no `aculta_portal` deverá armazenar
-o fingerprint junto à fonte de verdade Profile/User e estabelecer uma garantia
-de unicidade transacional antes de afirmar que documentos duplicados são
-impedidos. Não usar o fingerprint como autorização nem como anonimização.
+O campo HMAC continua na fonte de verdade do perfil; a atualização `10002`
+adiciona um índice único ao armazenamento ativo do campo para impedir duplicatas
+mesmo sob gravações concorrentes. A atualização verifica grupos duplicados
+preexistentes e aborta sem expor fingerprints. O Runtime não foi atualizado nesta
+entrega. Não usar o fingerprint como autorização nem como anonimização.
 
 ## Decisão sobre campos e formulários
 
-O módulo **não implementa plugins de campo, widgets, elementos Form API,
-máscaras JavaScript, formulários de conta ou integração Webform nesta etapa**.
-Os campos de Pessoa Física e Pessoa Jurídica serão implementados manualmente no
-`aculta_portal`, conforme a estrutura e as telas existentes. Essa implementação
-poderá injetar `aculta_id_cpf.validator` e chamar:
+O módulo não implementa plugins de campo, widgets, elementos Form API,
+máscaras JavaScript nem integração Webform. `AccountDocumentStore` já persiste
+documento cifrado e fingerprint no perfil participante; o Portal é proprietário
+dos formulários e chama o serviço de validação/canonicalização:
 
 ```php
 use Drupal\aculta_id_cpf\Enum\DocumentType;
@@ -63,9 +62,8 @@ $canonical = $validator->canonicalize($input, DocumentType::CPF);
 Para CNPJ, use `DocumentType::CNPJ`. `canonicalize()` devolve string canônica
 ou lança `InvalidArgumentException`; trate a exceção para mostrar erro sem
 registrar o valor submetido. A aceitação de pontuação completa ou valor sem
-pontuação é aplicada no serviço. Máscara durante a digitação, widget/formatter
-do campo, armazenamento, unicidade e controle de acesso pertencem às próximas
-entregas do Portal e devem ser definidos antes de coletar documentos reais.
+pontuação é aplicada no serviço. Máscara durante a digitação e widgets continuam
+fora do módulo; o perfil permanece privado e a gravação única passa pelo store.
 
 ## Persistência (0.2.0-dev.2)
 
@@ -82,14 +80,29 @@ entregas do Portal e devem ser definidos antes de coletar documentos reais.
 - Atualização `aculta_id_cpf_update_10001`: cria o campo de índice e indexa os
   documentos gravados antes dele; para se houver duplicidade entre contas.
 
-## Limite conhecido: unicidade não é transacional
+## Garantia de unicidade e migração
 
-A verificação de unicidade é uma consulta antes da gravação. Sob gravações
-simultâneas, duas contas podem passar pela verificação ao mesmo tempo. Campo de
-entidade do Drupal não oferece índice único; a garantia forte exige decisão
-sobre tabela com índice único (armazenamento paralelo) ou outra estratégia. Até
-essa decisão, não afirmar que documentos duplicados são impedidos em qualquer
-condição de concorrência.
+A consulta prévia preserva a mensagem genérica; o índice único no campo ativo
+fecha a corrida no armazenamento SQL. `aculta_id_cpf_update_10002` cria o
+índice após verificar conflitos existentes e é idempotente. A implantação dessa
+atualização permanece pendente para Runtime existente: inventariar apenas a
+contagem de conflitos, inspecionar plano/rollback e obter autorização operacional
+antes de executá-la. Não registrar CPF/CNPJ ou fingerprint em logs.
+
+### Ativação e rollback
+
+1. Em banco isolado, executar o update `10002` com conjunto sem duplicatas e com
+   duplicatas sintéticas; confirmar que a falha informa somente a contagem de
+   grupos e que a repetição após corrigir os dados conclui.
+2. Antes de uma ativação autorizada, criar snapshot consistente do banco e
+   registrar apenas a contagem agregada de fingerprints repetidos. O update não
+   é executado se houver conflito.
+3. Se houver falha após o DDL e antes de liberar gravações, remover o índice
+   `aculta_id_cpf_documento_unique` com a API de schema e restaurar o snapshot se
+   qualquer escrita tiver ocorrido. Não apagar ou reconstruir campos/perfis.
+4. Após ativar gravações, rollback exige snapshot coordenado e plano para as
+   gravações posteriores; não remover o índice isoladamente enquanto houver
+   dados escritos sob o novo contrato.
 
 ## Testes
 
@@ -98,16 +111,18 @@ Na raiz do repositório:
 ```sh
 php web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Unit
+vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel
 php scripts/validate-aculta-portal-drupal11.php
 ```
 
-Testes de máscara e Kernel/Form API foram retirados junto com a implementação
-de campos. Evidência e limites conhecidos estão em
+O Kernel atual verifica a restrição única no banco. Cobertura ponta a ponta de
+`AccountDocumentStore` com entidades Profile/formulários ainda falta. Evidência
+histórica da implementação removida está em
 [ACULTA-ASSOCIADO-ID.md](../../../../../../docs/modules/ACULTA-ASSOCIADO-ID.md).
 
 ## Próximas entregas
 
-1. Decidir a garantia transacional de unicidade (ver "Limite conhecido").
+1. Executar `10002` em banco isolado com dados representativos, inclusive conflito e rollback.
 2. Testes de Kernel para `AccountDocumentStore` (duplicidade, perfil despublicado,
    atualização `aculta_id_cpf_update_10001`), ainda não cobertos.
 3. Integrar login por CPF ao pipeline existente, preservando flood, confirmação,

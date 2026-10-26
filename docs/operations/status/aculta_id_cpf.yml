@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.3.0-dev.1
+version: 0.3.0-dev.2
 state: Dev
-next_phase: Módulo oficial de CPF/CNPJ; consolidar contratos e unicidade transacional ([plano](docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md))
+next_phase: Validar a atualização 10002 em banco isolado com dados legados duplicados/sãos; executar a atualização no Runtime somente com autorização operacional e plano de rollback ([README](web/modules/custom/aculta_portal/modules/aculta_id_cpf/README.md))

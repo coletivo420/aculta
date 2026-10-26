@@ -1,3 +1,10 @@
+## 0.3.0-dev.2 — restrição transacional de unicidade — 2026-10-25
+
+- `aculta_id_cpf_update_10002` adiciona um índice único ao campo de fingerprint no armazenamento ativo do Profile. A restrição SQL fecha a condição de corrida após a consulta de preflight.
+- O update detecta grupos duplicados antes do DDL e aborta com contagem agregada, sem revelar fingerprints ou documentos. O hook de instalação aplica o mesmo contrato em instalações novas.
+- `AccountDocumentStore` transforma a violação específica do índice em erro genérico, preservando falhas de armazenamento não relacionadas.
+- Kernel MariaDB chama `10002` duas vezes para confirmar idempotência, rejeita duplicata no banco e bloqueia atualização quando já há conflito (2 testes/5 assertions). Nenhuma atualização foi aplicada no Runtime.
+
 ## 0.3.0-dev.1 — módulo oficial de CPF/CNPJ — 2026-10-23
 
 - Decisão de 2026-10-23: `aculta_id_cpf` é a implementação oficial e permanente de identidade fiscal. Machine name, campos, storage, Key IDs, variáveis de ambiente e separador HMAC `aculta_id_cpf:v1` não mudam.
