@@ -15,12 +15,20 @@
   separados; a inconsistência transitória não deve invalidar rebuild/auditoria.
 - O harness Wiki deriva o número de lotes do registry bootado (9 providers, 11
   tuplas) em vez do limite fixo de 10.
-- Evidência: Unit 51/282; Kernel 114/1.890 PASS; benchmark Fórum em 100
+- `ContentIndexGenerationManager::start()` bloqueia a linha singleton de estado
+  e recusa uma segunda geração `building`; um rebuild abandonado precisa ser
+  descartado antes de iniciar outro.
+- Novo Kernel representativo com dois providers sintéticos, dois idiomas, dois
+  domínios, estados editoriais, relações, atualização, exclusão, cursor e
+  resíduo de provider desregistrado. Medição opt-in: rebuild 402,275 ms;
+  auditoria 46,191 ms; consulta fria 5,652 ms; aquecida p50/p95 4,672/5,768 ms;
+  pico 82,5 MiB. Fixture pequena/média, sem SLO.
+- Evidência: Unit 51/282; Kernel 118/2.001 PASS; benchmark Fórum em 100
   candidatos, membro 371/407 ms e visitante 178/220 ms p50/p95, sem regressão
   frente ao baseline de 2026-10-23; Runtime local read-only 145 entradas / 110
   relações, fila vazia e auditoria válida. Sem SLO e sem operação persistente
   no Runtime.
-- Documentação: worklog do Agente 3, relatório de benchmark e matriz de
+- Documentação: worklog do Agente 3, relatórios de benchmark e matriz de
   providers.
 
 ## 0.1.0-dev.175 — enumerar tipo registrado sem schema instalado (2026-10-25)

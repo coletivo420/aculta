@@ -94,6 +94,33 @@ Contratos observados:
   mudança é recusado e a página nova não retorna linhas da versão antiga.
 - Evidência: Query 7/88 PASS.
 
+### 5. Serialização de rebuilds concorrentes (`8b5d41a8a`)
+
+- Risco documentado: duas chamadas de `start` criavam duas gerações `building`,
+  ambas recebendo escritas incrementais e duplicando backfill.
+- Correção: `ContentIndexGenerationManager::start()` bloqueia a linha singleton
+  de estado (`FOR UPDATE`), recusa uma segunda geração em construção e exige
+  concluir, validar ou descartar a existente. A mesma linha serializa com a
+  ativação e o fence de agendamento.
+- Teste: segunda chamada lança `LogicException`; após `discard`/`discard-batch`
+  um novo build inicia. Schema 1/10 PASS; suíte completa 118/2.001 PASS.
+
+### 6. Fixture representativa mista (`0db86be20`)
+
+- Novo módulo de teste `aculta_index_representative_test` com dois providers
+  sintéticos sobre Node (`representative_content` e `representative_target`) e
+  um Kernel que usa Entity API e `content_translation` reais.
+- Diversidade: 28 entradas de conteúdo + 14 de alvo, 30 relações, dois idiomas,
+  dois domínios, publicados/rascunhos, atualização, exclusão e resíduo de
+  provider desregistrado. Consulta de conteúdo, cursor, relação, acesso negado
+  a rascunho e auditoria completa sem achados.
+- Medição opt-in (uma execução): rebuild 402,275 ms; auditoria 46,191 ms;
+  consulta fria 5,652 ms; aquecida p50/p95 4,672/5,768 ms; pico 82,5 MiB.
+- Limitações: fixture sintética pequena/média, sem SLO, sem EXPLAIN e sem
+  owners reais nesta classe específica (os owners seguem cobertos nos Kernels
+  focais). Relatório:
+  [`ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md`](../portal/benchmarks/ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md).
+
 ## Homologação de providers (IDX-2)
 
 Providers descobertos no container local (11 providers, 13 tuplas):
@@ -227,7 +254,7 @@ desinstalação foi executado no Runtime.
 | PHP lint (módulo) | PASS |
 | PHPCS Drupal/DrupalPractice (arquivos alterados) | PASS |
 | Unit `aculta_index` | 51 testes / 282 assertions PASS; 14 depreciações PHPUnit |
-| Kernel `aculta_index` (MariaDB) | 116 testes / 1.916 assertions PASS; 276 depreciações Core/contrib e 55 PHPUnit |
+| Kernel `aculta_index` (MariaDB) | 118 testes / 2.001 assertions PASS; 276 depreciações Core/contrib e 56 PHPUnit |
 | PHPCS do módulo (`src` + `tests`) | PASS |
 | Benchmark Fórum opt-in | 1 teste / 395 assertions PASS |
 | Runtime leitura | PASS (métricas acima) |
@@ -246,9 +273,10 @@ Depreciações são de Core/contrib e PHPUnit; nenhuma falha própria.
 - Métrica `media.files.requests` não tem provider `file:file` no Index.
 - Cursor continua vinculado à geração; não é reutilizável após troca de geração
   (testado).
-- Não há guarda explícita contra duas gerações `building` simultâneas; é um risco
-  operacional documentado, não uma violação de exposição. O agente 1 pode
-  decidir por uma recusa em `start`.
+- A guarda contra duas gerações `building` foi implementada e testada; um
+  rebuild abandonado precisa ser descartado antes de iniciar outro.
+- A fixture representativa é sintética e pequena/média. Conteúdo real dos
+  owners, com Group/Media/Domain reais em volume, continua pendente.
 
 ## Proposta de status (não aplicada)
 
@@ -273,6 +301,8 @@ O status global continua `Dev` e a decisão é do agente 1. Proposta para
 - `e94e0fe0c` — test(index): cover Statistics bridge order, cursor and zero totals
 - `7dcad8547` — test(index): drop unused database variable from bridge test
 - `44fec1247` — test(index): drop unused translation variable
+- `8b5d41a8a` — fix(index): serialize rebuild starts behind the state fence
+- `0db86be20` — test(index): add representative mixed-catalog fixture
 - Commit documental do worklog: HEAD final da branch
   `feat/aculta-index-fechamento` (registrado no relatório de entrega).
 

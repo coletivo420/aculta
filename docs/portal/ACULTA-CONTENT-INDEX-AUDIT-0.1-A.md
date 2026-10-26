@@ -190,3 +190,10 @@ Achados de integração:
   dentro da geração `discarding`; a integridade passou a ignorar essa condição,
   sem poupar gerações ativas ou retidas.
 - Relações editoriais de vídeo continuam adiadas por decisão do responsável.
+- Rebuilds concorrentes agora são recusados: `start` bloqueia a linha singleton
+  de estado e exige concluir, validar ou descartar a geração `building` antes de
+  abrir outra.
+- A fixture representativa mista (dois bundles, dois idiomas, dois domínios,
+  estados, 30 relações, atualização/exclusão e resíduo de provider) passou com
+  rebuild 402 ms, auditoria 46 ms e consulta aquecida p50/p95 4,7/5,8 ms. É
+  sintética, pequena/média e sem SLO.

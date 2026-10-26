@@ -45,13 +45,19 @@ limpeza, um consumidor de longa duração podia reutilizar um ALLOW após
 revogação. Cursors de conteúdo e de relação agora incluem o fingerprint dos
 providers, além de conta, filtros e geração. A integridade ignora relações
 transitórias de gerações `discarding`, que a limpeza remove em lotes separados.
-Unit 51/282 e Kernel MariaDB 114/1.890 PASS; benchmark Fórum em 100 candidatos:
-membro 371/407 ms e visitante 178/220 ms p50/p95, uma execução sintética sem
-SLO e sem regressão mensurável. Runtime local somente leitura: 145 entradas,
-110 relações, uma geração ativa válida, fila vazia e auditoria sem achados.
-Detalhes em [worklog do Agente 3](../operations/ACULTA-AGENT3-INDEX-WORKLOG.md)
-e no [benchmark de acesso](benchmarks/ACULTA-CONTENT-INDEX-ACCESS-2026-10-26.md).
-Grants operacionais, carga representativa e execução sobre catálogo no Runtime
+`start` serializa rebuilds pela linha de estado e recusa uma segunda geração
+`building`. Unit 51/282 e Kernel MariaDB 118/2.001 PASS; benchmark Fórum em 100
+candidatos: membro 371/407 ms e visitante 178/220 ms p50/p95, uma execução
+sintética sem SLO e sem regressão mensurável. A fixture representativa mista
+(28 entradas de conteúdo, 14 de alvo, 30 relações, dois idiomas, dois domínios,
+estados, atualização e exclusão) passou com rebuild 402 ms, auditoria 46 ms,
+consulta aquecida p50/p95 4,7/5,8 ms e pico 82,5 MiB. Runtime local somente
+leitura: 145 entradas, 110 relações, uma geração ativa válida, fila vazia e
+auditoria sem achados. Detalhes em
+[worklog do Agente 3](../operations/ACULTA-AGENT3-INDEX-WORKLOG.md),
+[benchmark de acesso](benchmarks/ACULTA-CONTENT-INDEX-ACCESS-2026-10-26.md) e
+[fixture representativa](benchmarks/ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md).
+Grants operacionais, carga real dos owners e execução sobre catálogo no Runtime
 continuam pendentes.
 
 ## Propósito e propriedade
