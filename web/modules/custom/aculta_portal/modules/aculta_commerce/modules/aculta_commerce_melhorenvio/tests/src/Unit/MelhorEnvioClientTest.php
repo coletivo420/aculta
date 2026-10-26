@@ -364,6 +364,46 @@ class MelhorEnvioClientTest extends UnitTestCase {
   }
 
   /**
+   * Cotação recusada com 403 vira `forbidden` e não é repetida, mesmo sendo idempotente.
+   */
+  public function testQuoteForbiddenIsNotRetried(): void {
+    $client = $this->build([$this->json(['message' => 'negado'], 403)], [], $this->validTokens());
+    $this->expectCategory(fn () => $client->request('POST', '/api/v2/me/shipment/calculate', ['from' => ['postal_code' => '01001000']], TRUE), 'forbidden');
+    $this->assertCount(1, $this->history);
+  }
+
+  /**
+   * Cotação sem nenhuma tarifa (resposta `[]`) é sucesso sem opções, não erro.
+   */
+  public function testQuoteEmptyResponseIsEmptyList(): void {
+    $client = $this->build([$this->json([])], [], $this->validTokens());
+    $this->assertSame([], $client->request('POST', '/api/v2/me/shipment/calculate', ['from' => ['postal_code' => '01001000']], TRUE));
+  }
+
+  /**
+   * Cotação com 503 persistente é repetida o limite de tentativas e depois informada como erro de servidor.
+   */
+  public function testQuoteServerErrorIsRetriedThenReported(): void {
+    $client = $this->build([
+      $this->json(['message' => 'indisponível'], 503),
+      $this->json(['message' => 'indisponível'], 503),
+      $this->json(['message' => 'indisponível'], 503),
+    ], [], $this->validTokens());
+    $this->expectCategory(fn () => $client->request('POST', '/api/v2/me/shipment/calculate', ['from' => ['postal_code' => '01001000']], TRUE), 'server');
+    $this->assertCount(3, $this->history);
+  }
+
+  /**
+   * Timeout de rede na cotação é repetido como operação idempotente e informado como `network`, sem vazar o token.
+   */
+  public function testQuoteTimeoutIsNetworkAndSanitized(): void {
+    $error = fn () => new ConnectException('timeout com AT-1', new Request('POST', 'https://sandbox.melhorenvio.com.br/api/v2/me/shipment/calculate'));
+    $client = $this->build([$error(), $error(), $error()], [], $this->validTokens());
+    $exception = $this->expectCategory(fn () => $client->request('POST', '/api/v2/me/shipment/calculate', ['from' => ['postal_code' => '01001000']], TRUE), 'network');
+    $this->assertStringNotContainsString('AT-1', $exception->getMessage());
+  }
+
+  /**
    * Sem token, a requisição falha como unauthenticated sem chamar a rede.
    */
   public function testMissingTokenIsUnauthenticatedWithoutHttpCall(): void {
