@@ -928,3 +928,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Decisão explícita: `credenciais_de_teste_mercadolivre`, `system` e `producao-ssh.env` permanecem em **670**. Não aplicar 640.
 - A regra de escrita em `secrets/` (somente como o dono, via `sudo -u aculta`) é procedimento dos agentes, não restrição de permissão.
 - Registrado também em `docs/operations/SECRETS.md`.
+
+## Encerramento do E0 do simulador de frete — 2026-10-26
+
+- **E0 encerrado.** Estudo aprovado com ajustes e integrado na PR por merge de `docs/aculta-frete-simulador-e0` @ `488268aca` (só documentação: `FRETE-SIMULADOR.md`, seção 8). Sem código.
+- **Ref remota `docs/aculta-frete-simulador-e0` excluída** depois de `git cherry` vazio e ancestralidade confirmada.
+- **E1 depende do cutover do frete.** O porte assume o motor próprio (`ShippingOrderManager`, `ShipmentManager`, `plugin.manager.aculta_shipping_method`) e não pode importar `commerce_shipping`. Enquanto o checkout usar o contrib, o simulador fica atrás de feature flag. O cutover está em `feat/aculta-commerce-cutover` (`c8f1f8bbf`), ainda sem ensaio no banco restaurado.
+- **Critério de aceite da E1 (8.7):** `canUse()` exige `validUntil`, e o default `emitido + 600 s` é preenchido em `aculta_flat_rate`, `aculta_flat_rate_per_item` e `aculta_melhorenvio` no mesmo commit, com teste Kernel de cotação no checkout para cada provedor.
+- **Decisão pendente 8.6:** "exibido + revalidado" versus "persistido no carrinho". Até a decisão, a especificação assume "exibido + revalidado", sem persistir a cotação no carrinho.
