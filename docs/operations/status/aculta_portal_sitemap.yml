@@ -1,4 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.2
 state: Dev
+progress_note: 'Runtime MAIN ativo; runner estático passou com 13 verificações em 2026-10-26; homologação HTTP/externa não foi executada nesta auditoria.'
 next_phase: Fechar decisões de indexação e validação externa; concluir requisitos antes de RC, depois deploy Alpha e produção ([README](web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/README.md))

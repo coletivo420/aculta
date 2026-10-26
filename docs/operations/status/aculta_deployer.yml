@@ -2,4 +2,4 @@
 version: 0.1.25
 state: Dev
 next_phase: Corrigir pendências incluindo `session_cookie`; toda preparação/gates prontos antes de RC; deploy Alpha e produção depois ([plano](web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md))
-progress_note: CLI `0.1.27`
+progress_note: 'CLI `0.1.27`; runner focal passou em 2026-10-26; módulo desabilitado no Runtime MAIN. A saída mostra avisos de limpeza de fixtures temporárias, sem falhas de assertions.'
