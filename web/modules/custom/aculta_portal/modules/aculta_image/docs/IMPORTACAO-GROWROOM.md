@@ -213,3 +213,19 @@ Estado das condições:
 
 Quando a aprovação for dada, a importação segue a sequência do roteiro do Fórum (estrutura, usuários
 legados, tópicos, comentários, arquivos e reconciliação), usando somente os caminhos acima.
+
+## Decisão atual e preparo de importação em testes — 2026-10-26
+
+Este adendo substitui os bloqueios históricos que apontavam a remodelagem da PR #297 como pré-requisito e a decisão de manter o Runtime de testes vazio como estado final. A remodelagem foi integrada. O responsável determinou preparar o acervo curado para importação no ambiente de testes; produção permanece excluída. Esta decisão não significa que o conteúdo já foi importado. Nenhuma entidade, arquivo, configuração ou dado persistente do Runtime foi alterado nesta execução.
+
+A política de seleção registrada acima continua sendo a fonte de escopo: fóruns excluídos, exceções temáticas, seleção manual, conteúdo comercial e lacunas devem continuar identificados. A decisão mais recente também resolve a identidade histórica: autores são entidades `aculta_legado_autor`, sem User/Profile ou rota individual. O memorial coletivo `/u/lendashistoricas` mantém os nomes sem sufixo; somente os cartões de autoria do conteúdo do Fórum exibem `-gr` (F-D44).
+
+### Estado técnico e próximo preparo
+
+- `build_mapping.py` foi executado em modo somente leitura em 2026-10-26: 36.751 tópicos baixados; 36.078 com fórum identificado; 31.599 tópicos selecionados no conjunto e 634 comerciais removidos. A saída resumida não fornece decomposição que reconcilie todos os subtotais, então não se infere equivalência entre categorias. O conjunto tem 7.943 rótulos de autoria; 741 IDs IPS4 exatos; três identidades ambíguas; 3.618 sem perfil identificado; 3.941 URLs permitidas. Dez rótulos em forma de e-mail foram omitidos do mapa. São contagens de mapeamento, não prova de integridade do corpus nem resultado de importação.
+- A inspeção do código versionado encontrou apenas download, mapeamento e verificação (`scripts/growroom/`); não encontrou um exportador final de importação nem um importador Drupal que gere tópicos/posts/arquivos idempotentemente. O mapa atual de autoria agrupa por nome e não preserva os IDs estáveis necessários ao `origem_id` de `aculta_legado_autor`. Portanto, ainda não está pronto para aplicar o acervo.
+- Próxima etapa: implementar um exportador versionado, sem copiar corpus ou PII ao Git, que preserve IDs de origem, escopo/razão de seleção, referências de tópicos/autores e hashes dos assets. Validar esse contrato com fixtures sintéticas e testes de idempotência antes de construir o importador Drupal. O importador deve oferecer dry-run, lotes retomáveis, reconciliação e recusa de registros sem identidade estável.
+- Antes de importar no Runtime de testes: gerar prévia quantitativa e de amostras sem dados pessoais nos logs; confirmar backup verificável e destino isolado; documentar rollback por restore point; validar a sequência completa em banco efêmero e comparar contagens/hash. A operação persistente fica bloqueada até essa revisão operacional específica.
+- Bloqueios de seleção ainda registrados: revisão dos 17 tópicos marcados, vida interna (616 tópicos por padrão excluídos) e três nomes ambíguos. Não presumir aprovação nem ampliar a seleção ao criar o pipeline.
+
+F-D43 e F-D44 constam em [DECISOES do Fórum](../../aculta_forum/docs/DECISOES.md). A preparação não autoriza importação em produção, escrita no Runtime compartilhado, nem alteração dos critérios ainda pendentes.
