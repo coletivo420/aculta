@@ -2,14 +2,14 @@
 
 **Branch:** `chore/aculta-m0-integridade`  
 **HEAD retomado:** `d55c4301e7ffde6022fd6c7b3651df1de927e619`  
-**HEAD estável:** `85db52888`
+**HEAD estável:** `86cdbb0fe`
 **Estado:** PARTIAL — P0 H5P concluído; auditoria M-0 e frentes M-1 a M-5 em andamento.
 **Runtime:** `toca`, Drupal 11.4.10, PHP 8.4.27, URI padrão `http://default`, banco `aculta_runtime`. Consultas somente leitura; nenhum write foi executado.
 
 ## Ponto de retomada
 
 1. Prosseguir PHPCS pelos arquivos tocados restantes; formatter, widget e teste focal H5P agora passam sem renomear classes H5P persistidas.
-2. Prosseguir M-1: auditar CPF/CNPJ e garantia de unicidade sem migração Runtime.
+2. Prosseguir M-1: auditar `aculta_user`, Portal e CEP; testar consentimento, identidade pública e integração de checkout em banco isolado.
 3. Executar os gates administrativos e de configuração com bootstrap e URIs explícitas.
 4. Completar inventário Runtime read-only, Config Sync e auditoria individual dos demais componentes.
 
@@ -33,7 +33,7 @@
 | P0 H5P | PASS focal | Kernel isolado 3/134; suíte integral do módulo não repetida nesta etapa |
 | P0 admin Domain | PASS no checkout compartilhado | 3498 checks; repetir/validar contra a branch quando runner bootstrapped estiver disponível |
 | M-0 inventário individual | Parcial | Inventário 41 itens preservado; faltam Runtime/Config Sync completo e evidência por componente |
-| M-1 a M-5 | Em execução | Começar CPF/User/Portal enquanto módulos do agente 2 são validados e revisados |
+| M-1 a M-5 | Em execução | Auditar User, Portal e CEP; a garantia fiscal de unicidade está em código, aguardando validação isolada do update e autorização para Runtime |
 
 ## Restrições / deferred
 
