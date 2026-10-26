@@ -47,6 +47,19 @@ Portar apenas a partir da fonte **3.0.5 exata**, sob `src/Shipping/`, `src/Entit
 
 Implementar primeiro código não destrutivo e tests. Não registrar tipos de entidade, IDs e plugins que colidam com `commerce_shipping` quando ambos estiverem ativos. Não remover a dependência antes de provar a substituição e plano de migração.
 
+### Modelo-alvo e IDs canônicos (a confirmar contra o upstream 3.0.5)
+
+Como a base de teste pode começar limpa, não é obrigatório manter IDs, tabelas e plugin IDs legados. Preferir nomes próprios que não colidam com o contrib durante o porte incremental, por exemplo `aculta_shipment`, `aculta_shipping_method` e pane `aculta_shipping_information`. Antes de fixá-los, auditar EntityType definitions, fields, traits, workflows, Checkout e qualquer consumidor que invoque `commerce_shipment` diretamente. Não cadastrar simultaneamente entidades/traits duplicadas sob o mesmo machine name. Portar também o trait `purchasable_entity_shippable` sob contrato canônico próprio antes de desinstalar o contrib, corrigindo o Config Sync e quaisquer plugins de variações físicas.
+
+**Somente no banco novo de teste**, configurar explicitamente pelo menos um método de frete fixo ou retirada real de prova (com valor e loja conhecidos), para demonstrar checkout sem API externa; testar indisponibilidade quando nenhum método existir. O método configurado não pode ser silenciosamente aplicado a produção. Melhor Envio continua um provider separado que dependerá de credenciais e cotação real, e sua falta não deve produzir frete grátis.
+
+Código inicial na branch:
+- `src/Shipping/ShippingQuote.php` e `ShippingQuoteSelector.php`: modelos imutáveis e seleção de quotes confiáveis (base de código proprietário, **não** engine portado).
+- `tests/src/Unit/Shipping/ShippingQuoteSelectorTest.php`: testes ainda não executados no Homelab.
+- `tests/scripts/shipping_sync_preflight.php`: inventário read-only de Sync.
+- `tests/scripts/shipping_runtime_preflight.php`: inventário read-only de Runtime bootstrapped.
+- `docs/SHIPPING-RESET-TEST-ONLY.md`: reset seguro e requisitos de isolamento.
+
 ### COM-SHIP-3 — checkout próprio da Loja
 
 Mover o ownership funcional do pane de envio de `aculta_portal` para `aculta_commerce` por alteração coordenada. Integrar com endereço único do Portal, número/S-N/bairro, Profile e preço `Price` (BRL). Preservar `CartConsolidator`, Loja única, fluxos distintos de LMS e Doações, Mercado Pago e cabeçalho multidomínio.
