@@ -1,17 +1,17 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**HEAD-base verificado antes deste checkpoint:** `ab4269764`; branch remota sincronizada e worktree limpo.
-**Estado:** PARTIAL — PHPCS PR-wide, H5P, gate Domain administrativo, User/Portal/CPF focal, Index e Statistics têm evidências atuais PASS. M-0 continua bloqueada pela diferença de `core.extension`, Config Domain por purpose e RBAC Wiki; M-1–M-5 seguem em execução e sem promoção RC nesta retomada.
+**Último commit estável antes deste checkpoint:** `6cfa8fe72cf238f4ca15dc96dcc9119afc4cdb20`; branch remota sincronizada e worktree limpo.
+**Estado:** PARTIAL — PHPCS PR-wide, H5P, gate Domain administrativo, User/Portal/CPF focal, Index e Statistics têm evidências registradas PASS. M-0 continua bloqueada pela diferença de `core.extension`, Config Domain por purpose e RBAC Wiki; M-1–M-5 seguem em execução e sem promoção RC.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
 ## Ponto de retomada
 
-1. Resolver a cadeia real de dependências nos Kernel LMS e Doações; falta resposta à escolha entre carregar dependências reais completas ou isolar os testes com contratos reais.
-2. Aguardar a decisão sobre Config Sync do Editor: 17 módulos ativos têm owner, mas oito templates `config/install` sem cópia em Sync exigem reconciliação e ensaio isolado antes de editar a lista.
-3. Prosseguir com auditorias/contratos centrais de Commerce, LMS e Messenger, incluindo `updatedb:status` apenas read-only; não executar hooks pendentes no Runtime.
-4. Manter os grants Wiki em estado fail-closed; preparar só a prévia/rollback até autorização para mudança persistente.
-5. Respeitar os oito diretórios delegados ao agente 2; incorporar commits do agente somente por revisão e cherry-pick.
+1. Definir harnesses Kernel para LMS e Doações que exercitem classes reais sem serviço de produto fictício; os harnesses agregados ainda falham no setup por não carregar a cadeia Portal completa.
+2. Reconciliar o delta ativo/Sync de 19 extensões após revisão dos templates instaláveis do Editor e dos módulos CKEditor/Google Tag; não importar configuração no Runtime.
+3. Mapear os grants Wiki ativos versus exportados e corrigir divergências somente em código/configuração versionados e testes isolados; não alterar permissões persistentes.
+4. Planejar os cinco hooks e três post-updates pendentes do Messenger com inspeção read-only, backup recuperável e rollback antes de qualquer execução autorizada.
+5. Continuar incrementos centrais de Portal, User, CPF, CEP, Commerce, LMS, Messenger, Statistics e Index; incorporar trabalho dos oito componentes delegados somente por revisão e cherry-pick.
 6. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime.
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
