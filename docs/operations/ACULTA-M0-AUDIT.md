@@ -11,8 +11,8 @@ Data: 2026-10-25. Base remota consultada: `805fb7c510baeccac22f12986743245219ce3
 | M0-005 | Média | Fallbacks e Wiki search form continham classes/tokens da apresentação; Wiki referenciava diretamente tema ACULTA420 | Removidos fallbacks/classes diretas; Wiki passa estado genérico por opção de rota, tema consome a opção; fronteira documentada | Corrigido; gate módulo–tema PASS (2880 checks) |
 | M0-006 | Baixa | Exemplos/fixtures Messenger e Wiki usavam domínios de ambiente | Substituídos por `example.com` reservado a exemplos/testes | Corrigido; endereços PASS (4239 arquivos) |
 | M0-007 | — | `aculta_forum`/Document Viewer e relação Group consultados antes desta auditoria poderiam divergir em config exportada/runtime | HEAD atual e leitura do Runtime indicaram módulos e plugin alinhados; nenhuma discrepância atual reproduzida | Não reproduzido no estado atual |
-| M0-008 | Alta | Runtime habilitava 35 módulos próprios conforme leitura realizada, mas inventário por módulo/ambiente e instalação limpa não foram registrados de forma confiável nesta execução | Nenhuma operação persistente executada. Registrar `drush status` antes de qualquer uso e mapear cada extensão por URI/ambiente | Pendente; exige nova auditoria read-only por ambiente |
-| M0-009 | Alta | Cobertura de políticas Domain/Entity Access, config ativa/exportada, rotas, hooks, entidades e testes não foi completada para todos os módulos | Matriz individual registra campos não verificados como pendentes; concluir por ondas antes de RC | Pendente; dividir por M-1–M-5 |
+| M0-008 | Alta | O inventário Runtime anterior não listava cada extensão de forma verificável | Consulta read-only em URI MAIN confirmou 35/40 módulos habilitados e cinco desabilitados; tema default `aculta420`; `aculta_messenger` tem 5 hook updates e 3 post-updates pendentes. Nenhuma operação persistente foi executada | Parcial; matriz registra estado global da instalação. Revisão de configuração Domain e Config Sync por purpose ainda pendente |
+| M0-009 | Alta | Cobertura de políticas Domain/Entity Access, config ativa/exportada, rotas, hooks, entidades e testes não foi completada para todos os módulos | Matriz individual registra verificações focais e limites; continuar por ondas antes de RC | Parcial; auditorias por componente ainda pendentes |
 
 ## Gates globais executados
 
@@ -26,6 +26,8 @@ Data: 2026-10-25. Base remota consultada: `805fb7c510baeccac22f12986743245219ce3
 - `git diff --check`: PASS.
 
 Runtime foi consultado somente em leitura; não houve `cim`, `updatedb`, instalação/desinstalação, limpeza, mudança de permissões, nem mutação de entidades.
+
+Inventário Runtime de 2026-10-25 foi executado em `http://aculta.toca.net.br` com o Drush do checkout compartilhado: `moduleHandler()->moduleExists()` confirmou 35/40 módulos habilitados e cinco disponíveis desabilitados (`aculta_activity`, `aculta_deployer`, `aculta_commerce_melhorenvio`, `aculta_commerce_messenger`, `aculta_wiki_messenger`). `aculta_messenger` tem cinco hook updates (10008–10012) e três post-updates pendentes em `updatedb:status`; nenhum foi aplicado. A leitura não verifica Config Domain em cada purpose nem código da branch M-0; esses itens permanecem na matriz.
 
 ## Dependências de fechamento — direção
 
