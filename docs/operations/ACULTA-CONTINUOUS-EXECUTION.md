@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit:** `80aff8803` (`docs(user): record Growroom author contract evidence`), enviado por push normal a `origin/chore/aculta-m0-integridade`. O scan PHP comparado a `origin/main` examinou 78 arquivos: 0 erros PHPCS e 49 warnings; arquivos do módulo H5P fora deste incremento mantêm violações legadas.
+**Último commit:** `83c6f1856` (`feat(growroom): export stable legacy author manifest`), enviado por push normal a `origin/chore/aculta-m0-integridade`. O scan PHP comparado a `origin/main` examinou 78 arquivos: 0 erros PHPCS e 49 warnings; arquivos do módulo H5P fora deste incremento mantêm violações legadas.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
@@ -15,7 +15,7 @@
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
 5. Próxima unidade: revisar individualmente as 9 configurações Messenger presentes no Sync mas divergentes do Runtime e decidir quais são drift, customização operacional ou defaults obsoletos; não exportar globalmente nem alterar anchor/preferências sem classificação.
 6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente das oito frentes concluiu seu trabalho; comparação por caminhos confirmou que todos os incrementos já estão na PR sob SHAs equivalentes. Não fazer cherry-pick duplicado; nenhum desses diretórios foi alterado neste turno.
-7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último checkpoint remoto: `80aff8803` (`docs(user): record Growroom author contract evidence`).
+7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último checkpoint remoto: `83c6f1856` (`feat(growroom): export stable legacy author manifest`).
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
@@ -468,7 +468,7 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Regressão dev.80: suíte Unit completa User 135 testes/519 assertions PASS, uma depreciação PHPUnit. O Kernel isolado anterior não existe mais em `/tmp`, portanto não foi repetido; nenhum Runtime foi usado.
 
 
-## M-3 — manifesto estável de autoria Growroom (2026-10-26)
+## M-3 — manifesto estável de autoria Growroom (2026-10-26; commit `83c6f1856`)
 
 - Decisão F-D45: autores sem ID de origem recebem chave `nome-<sha256>` do nome normalizado; IDs IPS4/THW são prioritários. Homônimos normalizados serão agrupados. Autoria sem nome utilizável fica com estado `revisar`, não pode ser importada.
 - `scripts/growroom/build_mapping.py --so-mapeamento` regenerou os mapas no storage privado Homelab, fora do Git e do Drupal Runtime. `autor-origem.json`: 9.608 registros (741 IPS4, 2.751 THW, 6.116 por nome), sem pendências; 211.388 referências a tópicos. Dez e-mails continuam omitidos.
