@@ -503,7 +503,7 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - Commerce Unit: 31 testes / 192 assertions PASS; 11 depreciações PHPUnit. Mercado Pago Unit: 11/22 PASS. Nenhum pagamento, sandbox externo ou credencial foi usado.
 - Kernel da branch, MariaDB `aculta_simpletest`: `CheckoutProTest` 1/50 PASS, com 76 depreciações Core/contrib e 2 PHPUnit. Um primeiro runner carregou código do checkout compartilhado e foi descartado; a execução válida usou o caminho absoluto do worktree e autoloader prioritário da PR.
-- `DonationPortKernelTest`: reproduz 4 erros de setup / 0 assertions porque a fixture não instala `aculta_messenger`; o publisher real `aculta_donation` depende do serviço compartilhado ausente `aculta_messenger.notice_event_publisher`. Não foi adicionado serviço fictício nem alterado o módulo; próximo passo é fechar a closure real Messenger/Portal/Image no harness, sem baixar a segurança do teste. Nenhum Runtime ou integração financeira externa foi acionada.
+- Registro histórico supersedido: uma tentativa anterior do `DonationPortKernelTest` tinha 4 erros de setup / 0 assertions sem publisher; na dev.26 o harness passou a registrar as implementações reais `MessengerNoticePublisher` e `OrderTypeCheckoutFlows` sem instalar configuração/closure irrelevante. Resultado atual documentado pelo proprietário: 5 testes / 193 assertions PASS em MariaDB isolado, 88 depreciações upstream. Sem Runtime ou integração financeira externa.
 
 ## M-2 — validar referências físicas em revisões e rich text (2026-10-26)
 
