@@ -949,3 +949,9 @@ Método: `git cherry -v origin/chore/aculta-m0-integridade backup/checkout-antes
   - `1b782798b` — `docs(secrets): resultados com Olivero e verificação HTTP com sessão real`. Arquivo: `docs/operations/SECRETS-SM9-INTEGRACAO.md`. Presença no conteúdo: 66%. Os resultados foram reexecutados depois e estão registrados nesta execução, mas o documento de reconciliação não os cita como substituídos.
 
 Conclusão: nenhum commit do backup contém código exclusivo fora da PR. Os dois (c) são registros de documentação, que não entraram nos documentos atuais.
+
+## Decisão 8.6 do simulador de frete (19:03) — 2026-10-26
+
+- **Decidido pelo responsável:** o frete do simulador é **exibido e revalidado no checkout**. Nada é persistido no carrinho nem no pedido antes do checkout. A cotação fica só no tempstore da sessão, com expiração pelo `valid_until`.
+- Consequência: o pane `aculta_shipping_information` revalida a cotação no checkout e mostra a mudança de valor antes do pagamento.
+- `FRETE-SIMULADOR.md` seção 8.6 atualizada de "pendente" para "decidido".

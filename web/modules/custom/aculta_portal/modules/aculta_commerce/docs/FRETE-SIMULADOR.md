@@ -299,10 +299,12 @@ A chave do cache de cotação inclui, além de país, CEP normalizado, itens, m�
   com o CEP do endereço de cobrança ou do último endereço do próprio cliente, usando `aculta_portal_cep` para
   normalização. Nunca preencher a partir de dado de outro cliente nem de cookie não autenticado.
 
-### 8.6 Decisão pendente do responsável
+### 8.6 Decisão do responsável: frete exibido e revalidado (19:03)
 
-- **"Exibido + revalidado" (8.2) ou "persistido no carrinho":** **pendente**. Registrar aqui a decisão quando ela vier.
-  Até lá, a especificação acima assume "exibido + revalidado", sem persistir a cotação no carrinho.
+- **Decidido:** o frete do simulador é **exibido e revalidado no checkout**. **Nada é persistido no carrinho nem no
+  pedido antes do checkout.** A cotação fica só no tempstore da sessão (8.2), com expiração pelo `valid_until`.
+- Consequência: o pane `aculta_shipping_information` revalida a cotação exibida no checkout (8.2, itens 2 a 4).
+  A mudança de valor é mostrada antes do pagamento. Não há cotação gravada no carrinho para ser reaproveitada.
 
 ### 8.7 Critério de aceite adicional da E1
 
