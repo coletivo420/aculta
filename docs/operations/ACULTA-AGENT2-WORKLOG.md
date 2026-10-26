@@ -133,3 +133,28 @@ Não iniciadas as auditorias profundas das frentes 4 a 8 nesta execução.
 - Frentes 2 e 3: auditoria de escrita atômica, concorrência e symlinks (deployer) e de cadastro, exclusão e auditoria (patcher).
 - Dívida PHPCS de `aculta_deployer` e `src/Address` do Melhor Envio.
 - Deprecações PHPUnit de `aculta_links` e `aculta_activity`.
+
+## Rodada de execução complementar (correções seguras)
+
+| Item | Resultado | Commit |
+|---|---|---|
+| Kernel `aculta_qrcode` em SQLite isolado (`SIMPLETEST_DB=sqlite://...` no scratchpad, não no Runtime) | **11 PASS**, 84 asserções | — |
+| Kernel `aculta_links`, `aculta_activity`, `aculta_editor` | Em execução na mesma configuração; resultado a registrar | — |
+| Deprecações PHPUnit de links (9) e activity (4) | Origem: `@group`, `@covers` e `@coversDefaultClass` em docblock, deprecados no PHPUnit 11. Migrado para atributos. **Zero deprecações** após a correção | `5ae71f491` |
+| Deployer: gravação do registro sobre estado antigo | **Defeito real**: perda de atualização e id duplicado sob concorrência. Corrigido com controle otimista sob `.lock`. 3 testes novos PASS | `9936b17ac` |
+| Patcher: auditoria de cadastro, alteração e exclusão | Não existia. Adicionada trilha no canal `aculta_patcher` (hooks em `aculta_patcher.module`) e classe pura `PatchAuditMessage` com 4 testes. Formulário passa a usar `PatchDiffValidator` | `fdc3c7b11` |
+| QR Code: prévia administrativa | Rota `/codigos-qr/previa`, validação de URL, SVG privado. 6 testes Unit. Colisão com `/codigos-qr/{id}` a confirmar em Kernel | `13cad334d` |
+| Patcher: exclusão controlada | Já existia: `EntityDeleteForm` com permissão `administer aculta patches`. Confirmada na auditoria | — |
+| Deployer: escrita atômica | Registro e relatórios usam temporário + `rename`. Build recusa saída existente não vazia e resolve symlinks do ancestral. Confirmado por leitura e testes existentes | — |
+
+### Pendências ainda sem execução (e por quê)
+
+- **Fronteira do deployer:** a causa é a descrição do menu do Portal, `aculta_portal.links.menu.yml`, que contém a
+  frase "Estado do aculta_deployer…". Fora dos diretórios autorizados. Mudança exata para o agente principal:
+  trocar a descrição por "Estado da implantação e do ambiente de deploy." Até lá, `boundaries` reprova.
+- **Melhor Envio:** caminhos de API dependem de confirmação no sandbox (ME-PEND-01). Sem credenciais.
+- **Patcher, exportador:** teste de integração exige pacote instalado pelo Composer (`InstalledVersions`). Sem isso,
+  a parte de integridade do exportador fica sem teste automatizado.
+- **QR Code, lote e formatter:** não implementados. O lote depende de decisão de formato de saída (zip ou
+  múltiplos arquivos). O formatter depende de decisão de tipo de campo.
+- **Kernel de sitemap e melhorenvio:** não existem.
