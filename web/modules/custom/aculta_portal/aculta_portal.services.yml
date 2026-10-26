@@ -147,9 +147,6 @@ services:
     arguments: ['@key.repository', '@settings', '@logger.factory', '%app.root%']
     tags:
       - { name: aculta_portal.helper }
-  aculta_portal.secrets_controller:
-    class: Drupal\aculta_portal\Secrets\SecretsController
-    arguments: ['@aculta_portal.secrets_manager', '@form_builder', '@current_user', '@string_translation']
   aculta_portal.auth_integration:
     class: Drupal\aculta_portal\Auth\AuthIntegrationManager
     arguments: ['@config.factory']

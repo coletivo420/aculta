@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Secrets;
+namespace Drupal\aculta_secrets_manager\Controller;
 
 use Drupal\Core\Template\Attribute;
-use Drupal\aculta_portal\Secrets\Form\SecretClearForm;
-use Drupal\aculta_portal\Secrets\Form\SecretEditForm;
+use Drupal\aculta_secrets_manager\Form\SecretClearForm;
+use Drupal\aculta_secrets_manager\Form\SecretEditForm;
+use Drupal\aculta_portal\Secrets\SecretsManager;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Session\AccountInterface;
@@ -67,7 +68,7 @@ final class SecretsController {
     $page = [
       '#attached' => [
         // dialog.ajax: o lápis abre o popup por link use-ajax com data-dialog-type="modal".
-        'library' => ['aculta_portal/requirements-report', 'aculta_portal/secrets-tabs', 'core/drupal.dialog.ajax'],
+        'library' => ['aculta_portal/requirements-report', 'aculta_secrets_manager/secrets-tabs', 'core/drupal.dialog.ajax'],
       ],
       'legend' => [
         '#type' => 'container',

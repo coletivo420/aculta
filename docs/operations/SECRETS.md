@@ -283,3 +283,67 @@ administradores e fica registrada.
 
 ## Usuário de teste teste.comum
 A senha do usuário de teste do site fica em `secrets/teste_comum.env`. Não alterar sem decisão do responsável. Procedimento e guardrail: `docs/operations/TESTE-COMUM.md` e `scripts/guard-teste-comum.sh`.
+
+## Painel por ambiente (aba não é ambiente)
+
+O painel `/painel-administrativo/aculta/segredos` (submódulo `aculta_secrets_manager`) tem duas abas:
+Produção e Testes. **A aba não é ambiente de execução.** O ambiente vem do ACULTA Deployer
+(`var/deployer/environment.json`). Trocar de aba não altera o ambiente nem libera acesso.
+
+Estados possíveis de uma credencial:
+
+| Estado | Onde aparece | O que o servidor sabe |
+| --- | --- | --- |
+| Configurada | aba do ambiente ativo | Valor presente (mascarado; revelação por ação explícita) |
+| Obrigatória ausente | aba do ambiente ativo | Ausente; erro |
+| Opcional ausente | aba do ambiente ativo | Ausente; atenção |
+| Gerenciada no ambiente correspondente | aba do outro ambiente | Nada: não consulta valor nem existência |
+| Somente leitura | consumidores | Lida pelo `aculta_portal.secrets_manager`, sem painel de edição |
+| Gerenciamento autorizado | aba do ambiente ativo, com `administer aculta secrets` | Pode gravar, alterar e apagar no próprio ambiente |
+
+Nunca há fallback entre ambientes: credencial ausente no ambiente ativo gera indisponibilidade
+controlada, nunca leitura da instalação do outro ambiente.
+
+### Matriz de consumidores (chave → quem lê)
+
+| Credencial (Key) | Ambientes | Consumidor no código |
+| --- | --- | --- |
+| `google_oauth_client_id` / `_secret` | prod, test | `aculta_portal.install` (OAuth) |
+| `smtp2go_username` | prod, test | `aculta_mailer` (`MailTransport`) |
+| `smtp_password` / `imap_password` | prod, test | `aculta_mailer` (`MailTransport`, `MailMonitor`) |
+| `brevo_api_key` | prod, test | `aculta_mailer` (`BrevoSecretTransportFactory`), `aculta_deployer` |
+| `brevo_webhook_token` | prod, test | `aculta_mailer` (`BrevoWebhook`), `aculta_deployer` |
+| `mailer_payload_key` | prod, test | `aculta_mailer` (`MailPayloadCipher`), `aculta_deployer` |
+| `mercadopago_production_*` | prod | `MercadoPagoCredentials` |
+| `mercadopago_test_*` | test | `MercadoPagoCredentials` |
+| `mercadopago_webhook_secret` | prod, test | `WebhookEventSubscriber` |
+| `turnstile` / `turnstile_test` | prod / test | `TurnstileKeyOverride`, `TurnstileToggle` |
+| `aculta_document_encryption_key` | prod, test | `aculta_id_cpf` (`DocumentCipher`) |
+| `aculta_id_cpf_fingerprint` | prod, test | `aculta_id_cpf` (`DocumentFingerprint`) |
+| `ga4_property_id` / `ga4_service_account_json` | prod, test | `aculta_statistics` (`Ga4Settings`, `SecretsGa4Settings`) |
+| `gsc_site_url` | prod, test | `aculta_statistics` (`SecretsSearchConsoleSettings`) |
+| `melhorenvio_sandbox_*` | test | `aculta_commerce_melhorenvio` (sandbox) |
+
+Consumidores que não aparecem por nome de chave leem pelo `aculta_portal.secrets_manager` ou pelo
+provider de Key (`SecretProviderAdapter`), e recebem só o valor do ambiente ativo.
+
+**Chaves de cifra e fingerprint de CPF/CNPJ** (`aculta_document_encryption_key`,
+`aculta_id_cpf_fingerprint`) não devem ser trocadas sem migração planejada: uma troca sem migração
+torna dados existentes ilegíveis e quebra correspondências. O painel não rotaciona nem regenera essas chaves.
+
+### Procedimentos (resumo)
+
+- **Rotação:** gerar a nova credencial no provedor, gravar pelo painel no ambiente correspondente,
+  conferir o estado e revogar a antiga. Chaves de cifra/fingerprint: somente com migração planejada.
+- **Recuperação:** credencial apagada por engano: regravar pelo painel no mesmo ambiente. Nunca copiar
+  a credencial de outro ambiente.
+- **Revelação:** pelo botão de olho (popup aberto por clique, GET com token CSRF `_csrf_token`, sem cache, registrada no log com
+  nome e usuário, sem o valor).
+
+### Migração do Portal para o submódulo
+
+1. Deploy do código com `aculta_secrets_manager` presente.
+2. Habilitar o submódulo no ambiente alvo (`drush en aculta_secrets_manager`), depois do deploy.
+3. Conferir `/painel-administrativo/aculta/segredos` (abas, estado, sem valores).
+4. Rollback: desabilitar o submódulo. Os links do Portal para as rotas `aculta_portal.secrets_*`
+   falham até o submódulo ser reabilitado; por isso ele deve ficar habilitado junto com o Portal.

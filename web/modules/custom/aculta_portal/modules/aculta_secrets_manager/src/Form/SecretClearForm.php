@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Secrets\Form;
+namespace Drupal\aculta_secrets_manager\Form;
 
 use Drupal\aculta_portal\Secrets\SecretsManager;
 use Drupal\Core\Ajax\AjaxResponse;
