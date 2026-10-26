@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Hook;
 
+use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -12,7 +13,6 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Url;
@@ -24,7 +24,9 @@ use Drupal\site_alert\GetAlertsInterface;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Supplies the neutral, per-member Messenger action to the global shell. */
+/**
+ * Supplies the neutral, per-member Messenger action to the global shell.
+ */
 final class MessengerBarHooks {
 
   public function __construct(
@@ -47,13 +49,16 @@ final class MessengerBarHooks {
     #[Autowire(service: 'aculta_messenger.counts')]
     private readonly MessengerCounts $counts,
     #[Autowire(service: 'aculta_messenger.aviso_service')]
-    private readonly \Drupal\aculta_messenger\Aviso\AvisoService $avisos,
+    private readonly AvisoService $avisos,
   ) {}
 
-  /** Adds a same-origin popup endpoint only for accounts allowed to message. */
+  /**
+   * Adds the Messenger controls for the current account.
+   */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
-    // Avisos são só para contas: visitante não vê o ícone nem a contagem (decisão do responsável, 2026-10-17).
+    // Avisos são só para contas; visitante não vê o ícone nem a contagem.
+    // Decisão do responsável, 2026-10-17.
     // A mensagem privada também é só para contas.
     if (isset($variables['page']) && is_array($variables['page']) && !$this->currentUser->isAuthenticated()) {
       $variables['aculta_alerts'] = [];
@@ -72,7 +77,8 @@ final class MessengerBarHooks {
       $alertUrl = Url::fromRoute('aculta_messenger.alerts_preview')->toString(TRUE);
       $alertCount = $this->counts->visibleActiveAlertCount($this->currentUser, $alertCacheability);
       $alertCacheability->addCacheTags($this->entityTypeManager->getDefinition('flagging')->getListCacheTags());
-      // Ícone de avisos: alertas + comunicados não lidos + avisos por pessoa não lidos (um por tópico, agrupado).
+      // Ícone de avisos: alertas, comunicados e avisos por pessoa não lidos.
+      // Avisos por pessoa são agrupados por tópico.
       $unreadNoticeCount = $this->currentUser->isAuthenticated()
         ? $alertCount + $this->counts->unreadPersistentNoticeCount($this->currentUser) + $this->avisos->naoLidosTotal((int) $this->currentUser->id())
         : $alertCount;
@@ -80,7 +86,7 @@ final class MessengerBarHooks {
         'url' => $alertUrl->getGeneratedUrl(),
         'count' => $unreadNoticeCount,
         'count_kind' => $this->currentUser->isAuthenticated() ? 'attention' : 'active',
-        // Botão "Ver todos os avisos" no rodapé da gaveta: só para a própria pessoa (a aba da conta exige login).
+        // Só a própria pessoa acessa a aba da conta; ela exige login.
         // Caminho relativo preserva o host atual.
         'all_url' => $this->currentUser->isAuthenticated()
           ? Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'])->toString()
@@ -101,7 +107,7 @@ final class MessengerBarHooks {
     $variables['aculta_messenger'] = [
       'url' => $url->getGeneratedUrl(),
       'unread_count' => $this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests()),
-      // Botão "Ver todas as mensagens" no rodapé da gaveta: aba Mensagens da conta, no purpose account.
+      // A aba Mensagens da conta fica no purpose account.
       'all_url' => Url::fromRoute('aculta_messenger.avisos', ['aba' => 'mensagens'])->toString(),
     ];
 
@@ -115,8 +121,7 @@ final class MessengerBarHooks {
   }
 
   /**
-   * The drawer's new-conversation search is loaded by fetch, so its script must already be on the page.
-   * Attaching it through page_attachments reaches every page, not only the region render array.
+   * Attaches the new-conversation search script to authenticated pages.
    */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
@@ -129,7 +134,9 @@ final class MessengerBarHooks {
     $attachments['#cache']['contexts'][] = 'user.permissions';
   }
 
-  /** Supplies the per-member native thread state as a presentation-neutral value. */
+  /**
+   * Supplies the current member's native thread state as a neutral value.
+   */
   #[Hook('preprocess_private_message_thread')]
   public function preprocessPrivateMessageThread(array &$variables): void {
     if (($variables['view_mode'] ?? $variables['elements']['#view_mode'] ?? NULL) !== 'inbox') {
@@ -144,7 +151,9 @@ final class MessengerBarHooks {
     $variables['elements']['#cache']['max-age'] = 0;
   }
 
-  /** Applies publication window and role audience to persistent notices. */
+  /**
+   * Applies publication windows and role audiences to persistent notices.
+   */
   #[Hook('node_access')]
   public function nodeAccess(NodeInterface $node, string $op, AccountInterface $account): AccessResult {
     if ($node->bundle() !== 'aculta_notice' || $op !== 'view') {
