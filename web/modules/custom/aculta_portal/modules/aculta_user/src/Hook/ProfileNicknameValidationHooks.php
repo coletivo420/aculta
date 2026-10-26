@@ -73,6 +73,15 @@ final class ProfileNicknameValidationHooks {
     }
     if ($this->nicknamePolicy->isTaken($nickname, (int) $profile->getOwnerId())) {
       $form_state->setErrorByName('field_nickname', $this->translation->translate('Este apelido já está em uso.'));
+      return;
+    }
+
+    if (is_array($submitted) && isset($submitted[0]) && is_array($submitted[0])) {
+      $submitted[0]['value'] = $nickname;
+      $form_state->setValue('field_nickname', $submitted);
+    }
+    elseif (is_string($submitted)) {
+      $form_state->setValue('field_nickname', $nickname);
     }
   }
 

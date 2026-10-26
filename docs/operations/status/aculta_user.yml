@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-dev.77
+version: 0.4.0-dev.78
 state: Dev
-progress_note: "Dev.77: AvatarAssetCleanup delega exclusão ao `aculta_portal.unused_file_cleaner`, e só conta exclusões Deleted. AvatarAssetCleanupCoordinatorTest usa o coordenador real com referências simuladas; User Unit 133/512 PASS (1 depreciação PHPUnit); Kernel completo 25/361 PASS (5 depreciações contrib). PHPCS/PHP lint PASS; perfil/apelido permanece coberto. Nickname preflight MAIN read-only: 14 linhas ativas/14 perfis, sem duplicatas agregadas e sem índice único; constraint simples seria mais restritiva que a política pois a coluna não guarda UID e perfis legados do mesmo UID são excluídos da consulta. Lock transacional ainda não testado; cache/privacidade por papel e Runtime pendentes."
+progress_note: "Dev.78: ProfileNicknameValidationHooks grava a forma aparada do apelido que validou; evita divergência entre campo Profile legado e slug público. Unit 134/518 PASS (1 depreciação PHPUnit), Kernel 25/361 PASS (5 depreciações contrib), PHPCS/PHP lint alterados PASS. AvatarAssetCleanup usa coordenador Portal. Nickname preflight MAIN read-only: 14 linhas ativas/14 perfis, sem duplicatas e sem índice único; lock/constraint concorrente ainda não implementado. Cache/privacidade e Runtime pendentes."
 next_phase: Prototipar lock distribuído por apelido em Kernel MariaDB com dois processos; comparar índice derivado por UID somente se algum caminho de persistência não puder ser coberto; auditar escrita administrativa e concorrência, revalidar cache/privacidade do perfil público por papel, depois homologar revisão autenticada e Runtime ([documentação](web/modules/custom/aculta_portal/modules/aculta_user/README.md))
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.

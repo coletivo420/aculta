@@ -87,6 +87,30 @@ final class ProfileNicknameValidationHooksTest extends UnitTestCase {
   }
 
   /**
+   * Trims a valid nickname before the Profile widget copies it to the entity.
+   */
+  public function testTrimsNicknameSubmittedWithWhitespace(): void {
+    $profile = $this->createMock(ProfileInterface::class);
+    $profile->method('bundle')->willReturn('authenticated');
+    $profile->method('getOwnerId')->willReturn(7);
+    $original = $this->createMock(FieldItemListInterface::class);
+    $original->method('getValue')->willReturn([['value' => 'OldName']]);
+    $profile->method('get')->with('field_nickname')->willReturn($original);
+    $form_object = $this->createMock(EntityFormInterface::class);
+    $form_object->method('getEntity')->willReturn($profile);
+    $state = $this->createMock(FormStateInterface::class);
+    $state->method('getFormObject')->willReturn($form_object);
+    $state->method('getValue')->with('field_nickname')->willReturn([['value' => '  Pirata  ']]);
+    $state->expects(self::once())
+      ->method('setValue')
+      ->with('field_nickname', [['value' => 'Pirata']]);
+    $state->expects(self::never())->method('setErrorByName');
+
+    $form = [];
+    $this->hooks($this->policy(0))->validateNickname($form, $state);
+  }
+
+  /**
    * Builds the hook with test translation and an optional query result.
    */
   private function hooks(?NicknamePolicy $policy = NULL): ProfileNicknameValidationHooks {

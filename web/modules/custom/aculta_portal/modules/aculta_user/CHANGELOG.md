@@ -1,3 +1,9 @@
+## 0.4.0-dev.78 — persistir o apelido aparado no Profile legado
+
+- O validador de `/dados` e outros forms Profile já comparava `trim(apelido)`, mas deixava o valor original no Form API. Espaços externos podiam ser gravados mesmo que a identidade pública use o texto aparado. O hook agora substitui o valor do widget pela forma aparada depois de formato e colisão aprovados.
+- User Unit: 134 testes / 518 assertions PASS (1 depreciação PHPUnit); Kernel completo 25/361 PASS (5 depreciações Domain/Core/contrib); teste focal de validação 4/18 PASS. PHPCS e lint dos arquivos alterados PASS. Sem alteração Runtime.
+- A concorrência entre cadastros continua sem constraint de armazenamento e segue como pendência independente.
+
 ## 0.4.0-dev.77 — limpeza de avatar coordenada pelo Portal
 
 - `AvatarAssetCleanup` delega remoções de uploads temporários e avatares órfãos a `aculta_portal.unused_file_cleaner`, que verifica File Usage, Entity Usage, referências estruturadas e embeds antes de solicitar remoção física ao Image. Sem autorização clara, o arquivo permanece.
