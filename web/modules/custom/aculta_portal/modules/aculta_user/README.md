@@ -1,12 +1,20 @@
 # ACULTA User (`aculta_user`)
 
+Em dev.76, o User aplica a validação compartilhada de apelido também aos
+formulários Profile legados de papéis, incluindo `/dados`, usando
+`AccountNames` e `NicknamePolicy`. Valores existentes inalterados são aceitos
+para que uma edição de outros campos não seja bloqueada. Isso elimina o
+bypass de validação encontrado no formulário legado; não oferece ainda uma
+garantia transacional contra duas gravações concorrentes. Essa garantia exige
+um mecanismo de armazenamento/lock que preserve o modelo atual e será tratada
+com teste de concorrência isolado.
+
 Em dev.75, `FriendshipChangedEvent` transporta um identificador imutável por
 transição para consumidores distinguirem mudanças que ocorram no mesmo segundo;
-o ACULTA User continua sem dependência do Messenger. O Kernel completo da
+o ACULTA User continua sem dependência do Messenger. User Unit 132/504 e Kernel
+25/361 passaram nesta retomada; 1 depreciação PHPUnit e 5 de Core/contrib.
+PHP lint e PHPCS dos novos arquivos também passaram. O Kernel completo da
 integração de avisos passou com duas depreciações do Core/contrib `message`.
-Na PR #298, User Unit foi reexecutado: 129 testes/492 assertions; User Kernel
-25 testes/361 assertions. Ambos passaram; uma depreciação PHPUnit e cinco de
-Core/contrib foram reportadas, sem falhas.
 
 Em dev.74, a API `PublicMemberIdentityInterface` expõe somente o apelido aprovado
 pela política pública para consumidores como a busca de conversas do Messenger;

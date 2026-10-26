@@ -1,3 +1,9 @@
+## 0.4.0-dev.76 — alinhar validação do apelido no formulário Profile legado
+
+- `ProfileNicknameValidationHooks` aplica `AccountNames` e `NicknamePolicy` aos formulários Profile de papéis que expõem `field_nickname`, incluindo `/dados`, que o Portal mantém por compatibilidade. Um apelido legado inalterado não bloqueia a edição de outros dados.
+- O serviço continua responsável pela verificação compartilhada; o Portal não ganhou uma regra paralela nem uma dependência circular.
+- Unit User: 132 testes / 504 assertions PASS (1 depreciação PHPUnit). Kernel User: 25 testes / 361 assertions PASS (5 depreciações Core/contrib). PHP lint e PHPCS Drupal/DrupalPractice nos arquivos novos PASS. A verificação continua sujeita a corrida entre gravações simultâneas; garantia transacional no armazenamento permanece pendente de desenho e teste isolado.
+
 ## 0.4.0-dev.75 — identificar cada transição de amizade
 
 `FriendshipChangedEvent` recebe um `transitionId` aleatório e imutável por

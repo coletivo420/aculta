@@ -92,6 +92,13 @@ A seta `A → B` significa “B consome contrato/serviço fornecido por A”.
 - A configuração versionada `user.role.email_confirmed.yml` e `user.role.content_editor.yml` contém os quatro grants. É uma divergência ativa-versus-Sync que bloqueia envio e fila de propostas no Runtime. A ausência desses grants mantém o fluxo negado; os handlers exigem Entity Access e permissões explícitas. O teste `testProposalSubmissionUsesPrivateRevisionedEntityAndAccess` passou em MariaDB isolado: 1 teste / 216 assertions; 256 depreciações Core/contrib e duas PHPUnit. Não foi observado vazamento de propostas.
 - Não corrigido no Runtime: qualquer `cim` ou mudança de grants ativos é operação persistente sem autorização. Próxima ação: autorização operacional para reconciliar somente esses papéis, prévia de diff de permissões e plano de rollback com export dos papéis ativos; validar envio/fila após apply em URI Wiki. Alternativa segura até lá: manter propostas indisponíveis no Runtime, sem fallback de autorização.
 
+## User — validação de apelido no formulário legado (2026-10-26)
+
+- A auditoria dos pontos de escrita confirmou que o cadastro usa `AccountCreationHooks`/`NicknamePolicy`, `/studio/perfil/apelido` usa `NicknameForm`/`NicknamePolicy`, mas `/dados` mantém o widget `Profile.field_nickname` diretamente via `PortalHooks::formAlter` e não chamava a política compartilhada.
+- `ProfileNicknameValidationHooks` agora aplica a gramática de `AccountNames` e a consulta de colisão em formulários Profile de papéis que expõem o campo. Um valor legado inalterado é aceito para permitir editar outros dados. Portal continua sem depender de User e o armazenamento permanece único.
+- User Unit 132/504 PASS (1 depreciação PHPUnit); Kernel 25/361 PASS (5 depreciações Core/contrib); teste focal de hook 3/12 incluído nas Units; PHP lint/PHPCS dos arquivos alterados PASS. Não houve alteração Runtime.
+- Limite conhecido: a consulta é preflight, sem constraint transacional no armazenamento existente. Não se afirma unicidade sob concorrência; testar/desenhar uma garantia sem storage paralelo é próxima ação do User.
+
 
 ## Document Viewer Group — Kernel de acesso (2026-10-26)
 
