@@ -34,6 +34,12 @@
 - `aculta_donation` avançou `0.1.0-dev.25` → `.26`; README, CHANGELOG, status e matriz atualizados. Continua Dev; Runtime, sandbox financeiro, revisão integral e RC pendentes.
 - A suíte Unit completa do submódulo foi executada no root isolado com código da branch: 24 testes / 84 assertions PASS, sem depreciações. O Kernel 5/193 também foi reexecutado antes da atualização de versão e passou com 88 depreciações upstream.
 
+## M-1 — reclassificar Config Sync operacional do Messenger (2026-10-26)
+
+- Runtime MAIN foi consultado somente por Drush read-only. No arquivo ativo, `aculta_messenger.settings.email_modes` existe e difere dos defaults instaláveis em 15 caminhos; o Sync não contém essa árvore. `magazine_events` e `private_message_digest_anchor` existem nos defaults, mas não estão nem no ativo nem no Sync.
+- `updatedb:status` listou cinco hooks (10008–10012) e três post-updates pendentes; entre eles `private_message_email_preferences`, que migra preferências legadas para Messenger. Nenhum update foi executado. Essa migração e as diferenças operacionais tornam inseguro exportar defaults ou copiar o ativo para o Sync sem decidir a fonte canônica.
+- Metadados de `field_aculta_messenger_attempts` e `field_aculta_messenger_source_fr` no ativo correspondem aos defaults instaláveis; somente o Sync estava diferente. Os dois arquivos Sync foram corrigidos seletivamente sem alterar campos, mensagens ou preferências ativas. `aculta_messenger` avançou `.400` → `.401`; decisão sobre políticas de e-mail/config split permanece aberta.
+
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
 - `6daa7542f test(h5p): repair course access kernel contract`: formatter de acesso e test harness usam o plugin Group real. PHPCS Drupal/DrupalPractice, PHP lint e diff check passam nos dois arquivos H5P alterados.

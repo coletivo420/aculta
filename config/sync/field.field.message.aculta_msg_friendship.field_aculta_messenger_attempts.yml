@@ -13,7 +13,7 @@ field_name: field_aculta_messenger_attempts
 entity_type: message
 bundle: aculta_msg_friendship
 label: 'Tentativas de entrega'
-description: 'Contagem limitada de tentativas para o envio do aviso.'
+description: 'Contagem limitada de tentativas de envio do e-mail.'
 required: true
 translatable: false
 default_value:

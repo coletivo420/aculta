@@ -1,3 +1,8 @@
+## 0.1.1-dev.401 — alinhar metadados Sync de amizade com defaults e Runtime
+
+- Config Sync atualiza a descrição de `field_aculta_messenger_attempts` e o rótulo/descrição de `field_aculta_messenger_source_fr` para os valores dos defaults instaláveis. A leitura read-only confirmou que esses metadados também correspondem ao Runtime MAIN.
+- Nenhum valor de mensagem, preferência, modo de e-mail ou dado do Runtime foi alterado. A matriz operacional `email_modes` permanece bloqueada para decisão porque o Runtime difere dos defaults e o Sync ainda não contém essa árvore.
+
 ## 0.1.1-dev.400 — corrigir e versionar o contador de tentativas
 
 `field_aculta_enqueue_attempts` agora usa `unsigned`/`size` na configuração de
@@ -4154,4 +4159,5 @@ Validação: Units focais **18/186 PASS**. `PrivateMessageRetentionKernelTest`
 **5/66 PASS** no MariaDB dedicado, incluindo 101 threads com `updated` igual
 atravessando o limite de página; dez depreciações Core/contrib preexistentes.
 Runtime, Alpha e teste visual com volume elevado não executados.
+
 
