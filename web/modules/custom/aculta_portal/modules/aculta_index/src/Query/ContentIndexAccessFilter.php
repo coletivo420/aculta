@@ -53,9 +53,11 @@ final class ContentIndexAccessFilter {
     // language and account, but it is not invalidated when a source entity,
     // Group membership or grant changes. A long-running consumer (worker,
     // Drush command or multi-page request) would otherwise keep an old ALLOW
-    // decision after access was revoked. Revalidation means recomputing the
-    // decision for the entity types present in this page.
-    $this->resetAccessCachesForCandidateTypes($candidates);
+    // decision after access was revoked. A candidate's handler can also nest
+    // checks on related entity types that are not in this page (for example a
+    // ForumPost checking its host topic), so every content entity handler must
+    // be cleared before the page is revalidated.
+    $this->resetContentEntityAccessCaches();
 
     $cacheability = new CacheableMetadata();
     $allowed = [];
@@ -182,28 +184,7 @@ final class ContentIndexAccessFilter {
   }
 
   /**
-   * Clears in-request access results for the candidate entity types.
-   *
-   * @param list<array{entity_type: string, entity_id: string, langcode: string}> $candidates
-   *   Candidate identities about to be authorized.
-   */
-  private function resetAccessCachesForCandidateTypes(array $candidates): void {
-    $reset = [];
-    foreach ($candidates as $candidate) {
-      $entityTypeId = $candidate['entity_type'] ?? NULL;
-      if (!is_string($entityTypeId) || isset($reset[$entityTypeId])
-        || !$this->entityTypeManager->hasDefinition($entityTypeId)) {
-        continue;
-      }
-      $reset[$entityTypeId] = TRUE;
-      if ($this->entityTypeManager->getDefinition($entityTypeId)->entityClassImplements(ContentEntityInterface::class)) {
-        $this->entityTypeManager->getAccessControlHandler($entityTypeId)->resetCache();
-      }
-    }
-  }
-
-  /**
-   * Clears in-request access results that can depend on Domain.
+   * Clears every content entity access cache that can depend on Domain.
    *
    * Content Index access checks can change the active Domain around a source
    * entity check. Drupal's local Entity Access cache does not include cache

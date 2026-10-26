@@ -174,11 +174,19 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $accessHandler = $this->createMock(EntityAccessControlHandlerInterface::class);
     // Once before the page, then before and after the canonical purpose group.
     $accessHandler->expects(self::exactly(3))->method('resetCache');
+    // A handler can nest checks on a type absent from this page. It must also
+    // be cleared before the page so a stale nested decision cannot survive.
+    $commentType = $this->createMock(EntityTypeInterface::class);
+    $commentType->method('entityClassImplements')->with(ContentEntityInterface::class)->willReturn(TRUE);
+    $commentHandler = $this->createMock(EntityAccessControlHandlerInterface::class);
+    $commentHandler->expects(self::exactly(3))->method('resetCache');
     $manager = $this->createMock(EntityTypeManagerInterface::class);
-    $manager->method('getDefinitions')->willReturn(['node' => $entityType]);
+    $manager->method('getDefinitions')->willReturn(['node' => $entityType, 'comment' => $commentType]);
     $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
     $manager->method('getDefinition')->with('node')->willReturn($entityType);
-    $manager->expects(self::exactly(3))->method('getAccessControlHandler')->with('node')->willReturn($accessHandler);
+    $manager->expects(self::exactly(6))
+      ->method('getAccessControlHandler')
+      ->willReturnCallback(static fn (string $entityTypeId) => $entityTypeId === 'comment' ? $commentHandler : $accessHandler);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
     $domainStorage->expects(self::once())->method('load')->with('forum_aculta_org')->willReturn($forumDomain);
     $manager->method('getStorage')->willReturnCallback(static fn (string $type) => $type === 'domain' ? $domainStorage : $storage);
@@ -462,6 +470,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $entityType = $this->createMock(EntityTypeInterface::class);
     $entityType->method('getListCacheTags')->willReturn(['node_list']);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getDefinitions')->willReturn(['node' => $entityType]);
     $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
     $manager->method('getDefinition')->with('node')->willReturn($entityType);
     $manager->method('getStorage')->with('node')->willReturn($storage);
@@ -478,6 +487,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $entityType = $this->createMock(EntityTypeInterface::class);
     $entityType->method('getListCacheTags')->willReturn([$type . '_list']);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getDefinitions')->willReturn([$type => $entityType]);
     $manager->method('hasDefinition')->with($type)->willReturn(TRUE);
     $manager->method('getDefinition')->with($type)->willReturn($entityType);
     $manager->method('getStorage')->with($type)->willReturn($storage);
