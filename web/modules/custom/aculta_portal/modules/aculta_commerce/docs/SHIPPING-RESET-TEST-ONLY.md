@@ -48,6 +48,31 @@ vendor/bin/phpunit -c web/core/phpunit.xml.dist \
 
 Executar com o root/flags PHPUnit padronizados do projeto; não declarar PASS antes de rodar.
 
+## Cutover validado para o motor próprio (2026-10-26)
+
+Sequência executada em banco descartável com prefixo, sem tocar no runtime:
+
+1. Instalar `commerce_shipping` primeiro (estado legado).
+2. Habilitar `aculta_commerce`. Se o `config/install` do field storage ACULTA
+   estiver presente, a instalação falha com `PreExistingConfigException`; no
+   runtime o módulo já está instalado, então esse passo não é reexecutado.
+3. Definir `third_party_settings.aculta_commerce.shipment_type` no tipo de
+   pedido e remover o equivalente `commerce_shipping`.
+4. Reapontar `field.storage.commerce_order.shipments` para `aculta_shipment`.
+   **Salvar em modo sync** (`setSyncing(TRUE)`) para evitar o hook do core que
+   tenta atualizar um `field_config` inexistente em campos de bundle. O config
+   import normal também está em modo sync.
+5. Limpar caches e confirmar que o pedido tem o campo `shipments`.
+6. Desinstalar `commerce_shipping`; as entidades e o field storage ACULTA
+   permanecem porque não dependem mais do contrib.
+7. Configurar um método próprio de tarifa fixa no banco descartável e comprovar
+   cálculo, seleção, total do pedido e pedido não enviável.
+
+Resultado: após a desinstalação, um pedido físico recebeu tarifa própria,
+o total incluiu o frete e um pedido digital permaneceu sem remessa e sem
+ajuste de frete. O diretório do site e as tabelas com prefixo foram removidos
+ao final.
+
 ## Critério de conclusão
 
 - Legacy reset/snapshot demonstrados apenas no banco descartável escolhido;

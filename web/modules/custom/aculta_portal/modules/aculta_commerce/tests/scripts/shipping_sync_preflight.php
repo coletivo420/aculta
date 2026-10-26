@@ -37,12 +37,16 @@ $shippingCheckout = $read($config . '/commerce_checkout.commerce_checkout_flow.s
 $shipment = $read($config . '/commerce_shipping.commerce_shipment_type.default.yml');
 
 $variations = [];
+$variationsAculta = [];
 foreach (glob($config . '/commerce_product.commerce_product_variation_type.*.yml') ?: [] as $file) {
   $variation = $read($file);
   $id = (string) ($variation['id'] ?? basename($file));
-  $variations[$id] = in_array('purchasable_entity_shippable', (array) ($variation['traits'] ?? []), TRUE);
+  $traits = (array) ($variation['traits'] ?? []);
+  $variations[$id] = in_array('purchasable_entity_shippable', $traits, TRUE);
+  $variationsAculta[$id] = in_array('aculta_purchasable_entity_shippable', $traits, TRUE);
 }
 ksort($variations);
+ksort($variationsAculta);
 
 $result = [
   'scope' => 'versioned_config_only',
@@ -52,10 +56,15 @@ $result = [
   'shipping_methods_versioned' => count($shippingMethods),
   'shipping_method_config_files' => array_map('basename', $shippingMethods),
   'default_order_type_traits' => array_values((array) ($order['traits'] ?? [])),
+  'default_order_type_shipment_type_aculta' => $order['third_party_settings']['aculta_commerce']['shipment_type'] ?? NULL,
+  'default_order_type_shipment_type_commerce_shipping' => $order['third_party_settings']['commerce_shipping']['shipment_type'] ?? NULL,
   'shipment_type_default_present' => $shipment !== [],
+  'aculta_shipment_type_versioned' => is_file($config . '/aculta_commerce.aculta_shipment_type.default.yml'),
+  'shipments_field_storage_target' => $read($config . '/field.storage.commerce_order.shipments.yml')['settings']['target_type'] ?? NULL,
   'checkout_default_shipping_pane' => isset($defaultCheckout['configuration']['panes']['aculta_shipping_information']),
   'checkout_shipping_contrib_pane' => isset($shippingCheckout['configuration']['panes']['shipping_information']),
   'variation_types_shippable' => $variations,
+  'variation_types_aculta_shippable' => $variationsAculta,
   'required_runtime_checks' => [
     'enabled_modules',
     'active_shipping_methods_and_store_assignment',
