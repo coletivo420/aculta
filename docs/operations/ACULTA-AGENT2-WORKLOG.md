@@ -226,3 +226,19 @@ Não iniciadas as auditorias profundas das frentes 4 a 8 nesta execução.
 - Ação: os dois arquivos de teste foram removidos, para não deixar testes quebrados no repositório.
 - Ambiente: o contrib de `web/modules/contrib` do worktree foi exposto por links individuais, e `domain_config` veio de
   `vendor/drupal/domain/domain_config`. Isso é só do worktree, e não entra no git.
+
+## Auditoria profunda das frentes 6 (links) e 7 (activity)
+
+| Ponto da missão | Verificação | Resultado |
+|---|---|---|
+| Acesso público (anônimo) | Rotas `/pagina/{slug}`, `/redirecionar/{codigo}` e QR; `/pagina/{slug}/previa` e `/codigo-qr.svg` sem `_access` na rota, com checagem de entidade no controller | Preview exige `update`, QR exige `view`; demais respondem 404. Sem vazamento. Ressalva: a rota de prévia não declara `_access`, então depende do controller |
+| Slugs | `UniqueField` no campo; regex `[a-z0-9]+(-[a-z0-9]+)*` na rota | Verificado |
+| Publicação | Consultas públicas filtram `status = 1` e destino publicado | Verificado. Padronizado para inteiro, Kernel 7 PASS |
+| Cache | Página pública com tags, contextos `user` e `url.site`; prévia com `max-age = 0` | Verificado |
+| Paginação | Painel com `pager(50)` | Verificado |
+| Privacidade | Nenhum IP, user-agent ou referer em `src`; estatística via `aculta_statistics` agregada | Verificado |
+| URLs canônicas e purpose | `canonicalPathUrl('links', ...)` no QR e nas rotas com `_aculta_domain_purpose: links` | Verificado por leitura |
+| Mobile-first e renderização visual | Requer site em execução | **Não executado** (sem runtime) |
+| Frente 7, metatag | JSON-LD expõe só campos públicos do evento (local, modalidade, URL, editoriais). Nenhum campo de contato privado | Verificado |
+| Frente 7, Index | Provider projeta título, uuid, idioma, domínio, status, datas e dono; sem corpo | Verificado |
+| Frente 7, Kernel | 3 PASS (activity) | Já executado |
