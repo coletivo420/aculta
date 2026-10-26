@@ -1,3 +1,16 @@
+## 0.1.1-dev.400 — corrigir e versionar o contador de tentativas
+
+`field_aculta_enqueue_attempts` agora usa `unsigned`/`size` na configuração de
+storage Integer; os limites de instância não ficam mais no nível de storage.
+Os objetos `field.storage` e `field.field` foram adicionados ao Sync após
+comparação read-only que confirmou o mesmo schema no Runtime MAIN. O update
+10009 já instala esses defaults em sites existentes e permanece pendente no
+Runtime consultado.
+
+`MessengerMailDisplayConfigTest` **3/80 PASS**; conjunto focal de amizade e
+entrega **38/724 PASS**; PHP lint/PHPCS Drupal+DrupalPractice e gates YAML,
+Config Extension, status, pacotes e diff check PASS. Sem alteração de dados.
+
 ## 0.1.1-dev.399 — ocultar controles Entity Print em avisos
 
 Os defaults e o Config Sync ocultam os campos extras EPUB, PDF e DOCX do

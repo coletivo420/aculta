@@ -1,6 +1,6 @@
 # ACULTA Messenger
 
-Versão de desenvolvimento atual: **0.1.1-dev.399**. O roadmap e o changelog
+Versão de desenvolvimento atual: **0.1.1-dev.400**. O roadmap e o changelog
 registram o estado de cada incremento e as verificações executadas.
 
 Infraestrutura unificada do ACULTA Portal para avisos do site, notificações, assinaturas, e-mail integrado e conversas privadas voluntárias entre membros. A fonte de verdade de cada
@@ -92,7 +92,7 @@ direto ou digest sem substituir os storages existentes. O Fórum preserva
 momento de abrir e entregar. Preferências individuais são limitadas pela
 política administrativa, e avisos no site continuam obrigatórios.
 
-Validação automatizada reexecutada no HEAD `0.1.1-dev.399`, em 2026-10-25:
+Validação automatizada reexecutada no HEAD `0.1.1-dev.400`, em 2026-10-25:
 Unit Messenger **382 testes / 4.186 assertions PASS**; digest/preferências **11/1.207 PASS** e conjunto amplo
 de preferências, formulários, digest e workers de e-mail **75/835 PASS**;
 central — agrupamento, filtros e paginação — **21/65 PASS**; segurança de envio

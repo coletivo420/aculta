@@ -1,0 +1,25 @@
+uuid: 79784131-98ea-477c-a2ff-d4287e410855
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: kow5M21nzF_BWDS6Qh-ThxX1dLaEL-9ihjtf_llqsZM
+id: message.field_aculta_enqueue_attempts
+field_name: field_aculta_enqueue_attempts
+entity_type: message
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

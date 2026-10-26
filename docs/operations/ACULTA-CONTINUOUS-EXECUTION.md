@@ -289,7 +289,7 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - A comparação read-only de 1.435 arquivos Sync e 129 defaults Messenger encontrou o campo `field_aculta_msg_delivery` com três valores no Sync, mas cinco (`pending`, `sent`, `failed`, `failed_permanent`, `cancelled`) no default e no Runtime ativo. Os workers já persistem os dois estados terminais.
 - Atualizado somente o Config Sync do campo para incluir `failed_permanent` e `cancelled`; nenhuma fila, mensagem, configuração Runtime ou update hook foi executado. Messenger avançou `0.1.1-dev.396` → `.397`; README/status/matriz foram reconciliados.
 - Validação de escopo: três testes Unit dos workers passaram 32/608; comparação da configuração ativa/default, YAML, dependências Config Extension (1.589/1.435), status index (41), pacote próprio (41) e `git diff --check` PASS. A importação fica DEFERRED, embora a alteração seja aditiva e reflita os valores já ativos.
-- Auditoria global encontrou 28 configs ativos iguais aos defaults e ausentes do Sync; 32 configs ativos sem Sync com diferenças frente aos defaults; 9 configs presentes no Sync com conteúdo diferente do Runtime. Não houve export global; essas famílias exigem avaliação individual. `flag.flag.seguir_publicacao` existe no Sync e não está ativo. Omitidos/antigos do tema Olivero e integrações contrib requerem classificação por owner.
+- Auditoria global encontrou 28 configs ativos iguais aos defaults e ausentes do Sync; 30 configs ativos sem Sync com diferenças frente aos defaults; 9 configs presentes no Sync com conteúdo diferente do Runtime. Não houve export global; essas famílias exigem avaliação individual. `flag.flag.seguir_publicacao` existe no Sync e não está ativo. Omitidos/antigos do tema Olivero e integrações contrib requerem classificação por owner.
 
 
 ## M-1 — ocultar evento técnico nos avisos de amizade (2026-10-26)
@@ -305,4 +305,12 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Runtime MAIN read-only confirma `entity_print` ativo e os campos extras EPUB/PDF/DOCX ocultos nos sete displays de avisos/e-mails. Defaults Messenger e Sync não os ocultavam.
 - Corrigi os sete `config/install` e sete arquivos Sync para manter os três controles ocultos; teste Unit novo compara ambos os conjuntos e também verifica o evento de amizade oculto e sua dependência. `MessengerMailDisplayConfigTest` 2/68 PASS; conjunto focal de amizade/entrega 37/712 PASS; PHPCS/PHP lint do teste PASS.
 - Nenhum usuário, mensagem, configuração ativa ou saída Entity Print foi alterado. Messenger avançou `.398` → `.399`; status, changelog, README, índice e matriz reconciliados.
-- Reclassificação determinística ativa/default/Sync: 9 configs Messenger ainda divergentes (settings, templates e campos do evento de amizade); Config Sync global agora tem 83 nomes ativos ausentes e um nome exportado inativo.
+- Reclassificação determinística ativa/default/Sync: 9 configs Messenger ainda divergentes (settings, templates e campos do evento de amizade); Config Sync global agora tem 81 nomes ativos ausentes e um nome exportado inativo.
+
+
+## M-1 — schema e Config Sync do contador de tentativas (2026-10-26)
+
+- Auditoria de `field_aculta_enqueue_attempts` encontrou propriedades de instância (`min`, `max`, `prefix`, `suffix`) no YAML de field storage Integer. Drupal espera `unsigned` e `size` no storage; `field.field` conserva settings da instância. O `FieldStorageConfig` ativo no MAIN já havia normalizado o storage para `unsigned: false`, `size: normal`.
+- Corrigi o default instalável e versionei seletivamente no Sync os dois objetos ativos (storage e field instance), preservando UUID/dependencies exportados; nenhum conteúdo de Message foi lido ou alterado. Update 10009 continua pendente e é idempotente pela instalação de defaults ausentes.
+- Testes focal: `MessengerMailDisplayConfigTest` 3/80 e suite amizade/entrega 38/724 PASS; PHPCS Drupal/DrupalPractice, PHP lint, YAML, Config Extension Dependencies, status, pacotes e diff check PASS.
+- Inventário global atualizado: 81 configs ativos ausentes do Sync, uma config exportada inativa; Messenger tem 30 defaults ativos fora do Sync que divergem em conteúdo e 9 configs versionadas com diferenças ativas. A transição `string`→`list_string` de `field_aculta_friendship_event` continua sem mudança até decisão e plano de migração.

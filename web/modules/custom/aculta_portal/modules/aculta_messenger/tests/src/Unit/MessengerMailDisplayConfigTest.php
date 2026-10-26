@@ -47,6 +47,30 @@ final class MessengerMailDisplayConfigTest extends TestCase {
   }
 
   /**
+   * Tests that enqueue attempts use valid Integer storage settings.
+   */
+  public function testEnqueueAttemptsIntegerConfigUsesStorageAndInstanceSettings(): void {
+    $module_root = dirname(__DIR__, 3);
+    $project_root = dirname($module_root, 6);
+    foreach ([
+      $module_root . '/config/install',
+      $project_root . '/config/sync',
+    ] as $directory) {
+      $storage_path = $directory . '/field.storage.message.field_aculta_enqueue_attempts.yml';
+      self::assertFileExists($storage_path);
+      $storage = Yaml::parseFile($storage_path);
+      self::assertSame('integer', $storage['type']);
+      self::assertSame(['unsigned' => FALSE, 'size' => 'normal'], $storage['settings']);
+
+      $field_path = $directory . '/field.field.message.aculta_msg_friendship.field_aculta_enqueue_attempts.yml';
+      self::assertFileExists($field_path);
+      $field = Yaml::parseFile($field_path);
+      self::assertSame('integer', $field['field_type']);
+      self::assertSame('field.storage.message.field_aculta_enqueue_attempts', $field['dependencies']['config'][0]);
+    }
+  }
+
+  /**
    * Tests that the friendship event is hidden from both email displays.
    */
   public function testFriendshipEventIsNotRenderedInEmail(): void {
