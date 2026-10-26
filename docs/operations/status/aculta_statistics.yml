@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.9.0-dev.9
 state: Dev
-progress_note: "Runtime MAIN Enabled read-only. Unit 108/438 e Kernel 47/319 PASS. Functional em docroot efêmero Core 11.4.10 e banco aculta_simpletest: 2 erros no setup/0 assertions por serviço quebrado em aculta_commerce_melhorenvio.shipment_address_binder (owner Melhor Envio); não é PASS nem falha atribuída ao painel. Primeira execução inválida serviu worktree sem Core e foi descartada. Sem Runtime write; revisão visual e GA4/Search Console pendentes."
+progress_note: "Runtime MAIN Enabled read-only. Unit 108/438 e Kernel 47/319 PASS. O wiring do mapper Melhor Envio foi corrigido em dev.2, mas Functional ainda não produz assertions: docroot com Core duplicado falha declarando system_hook_info; tentativa usando Core compartilhado fica sem avançar. DEFERRED por harness, não erro do painel. Sem Runtime write; revisão visual e GA4/Search Console pendentes."
 next_phase: 'Fases 0.6 (clientes GA4 e Search Console no código, desligados sem credencial), 0.7 (mídia), 0.8 (painel) e 0.9 (auditoria) no código; pendentes: provisionar credenciais e validar consultas reais ([roadmap](web/modules/custom/aculta_portal/modules/aculta_statistics/docs/ROADMAP.md))'

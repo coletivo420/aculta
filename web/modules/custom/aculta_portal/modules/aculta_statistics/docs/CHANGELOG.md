@@ -662,3 +662,8 @@ até o módulo ser ativado.
 - A instalação limpa do Functional identificou a dependência omitida `aculta_portal → search_api:search_api_db`; corrigida no manifesto Portal `.33` porque ele próprio instala `search_api.server.aculta_database`.
 - Com `aculta_user` e um Domain MAIN incluídos na fixture, o teste instalou a cadeia e fez 11 assertions antes de falhar no helper de login de BrowserTestBase. O resultado Functional é FAIL no harness; o painel não recebeu assertions positivas e segue inconclusivo.
 
+## Functional BrowserKit — reexecução após wiring Melhor Envio — 2026-10-26
+
+- O alias de `MelhorEnvioAddressMapper` foi integrado em `aculta_commerce_melhorenvio 0.1.0-dev.2`, removendo o erro de definição de serviço originalmente observado. Na reexecução no docroot efêmero, o harness com Core duplicado falhou por declaração dupla de `system_hook_info()`; a tentativa com Core compartilhado não avançou além do cabeçalho do PHPUnit e foi encerrada. A Functional continua sem resultado/asserções pós-fix e fica DEFERRED, não PASS.
+- Nenhuma operação no Runtime; o harness precisa ser reconstruído com um único Core resolvido para servidor e PHPUnit.
+

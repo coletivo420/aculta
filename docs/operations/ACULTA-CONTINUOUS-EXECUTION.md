@@ -597,3 +597,8 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - `CepLookupService::normalize()` anteriormente removia qualquer caractere não numérico e aceitava entradas como `abc01310100xyz`. Agora aceita oito dígitos contínuos ou a forma com hífen/espaços prevista e rejeita letras/separadores extras; o teste cobre essas regressões.
 - `CepLookupServiceTest`: 10 testes / 45 assertions PASS; gate `validate-account-address.php`, PHP lint, PHPCS Drupal/DrupalPractice focal, status index (41), packages (41) e diff check PASS. `aculta_portal_cep` avançou `0.3.0-dev.11` → `.12`; README, CHANGELOG, status, índice e closeout foram sincronizados. Sem consulta externa ou alteração Runtime.
 - Commit `66e9d4d06` foi publicado em `origin/chore/aculta-m0-integridade`.
+
+## M-5 — reexecutar Functional Statistics após alias do Melhor Envio (2026-10-26)
+
+- O teste de wiring corrigido foi integrado; a primeira repetição com Core físico duplicado no docroot voltou a falhar antes de assertions por dupla declaração de `system_hook_info()`. A tentativa seguinte usou o Core compartilhado read-only, mas o PHPUnit ficou sem avançar por mais de 40 segundos após exibir o cabeçalho; servidor e runner foram encerrados. Não houve resultado funcional. A documentação de Statistics e a matriz agora distinguem o erro de serviço resolvido do bloqueio atual do harness, e não registram PASS.
+- Não houve uso de Firefox ou validação visual. Banco dedicado isolado apenas; nenhum Runtime, dado de produção ou configuração persistente tocados.
