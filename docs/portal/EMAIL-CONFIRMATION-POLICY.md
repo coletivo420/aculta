@@ -25,12 +25,12 @@ Enquanto o e-mail não estiver confirmado, a área "Minha conta" exibe um aviso 
 Um e-mail é confirmado quando o usuário abre o link de confirmação enviado ao endereço. O estado deve ser gravado
 pelo Portal (flag por usuário, por exemplo em `user.data` do módulo `aculta_portal`), e não inferido de outro campo.
 
-## 4. Mecanismo técnico (a decidir)
+## 4. Mecanismo técnico atual
 
-- Hoje o Core bloqueia a conta até a verificação quando `user.settings:verify_mail` está ligado. Isso impede o login
-  de quem não confirmou, o que contradiz a regra 1. Para cumprir a regra, a verificação passa a ser feita pelo Portal:
-  `verify_mail` desligado, conta ativa, flag de "não confirmado" e confirmação pelo `email_confirmer` (realm próprio de
-  cadastro).
+- `user.settings:verify_mail` está desligado no Config Sync. O cadastro cria a conta ativa, registra a confirmação
+  pendente e envia o link; a pessoa pode entrar, mas segue sem as permissões/ações condicionadas à confirmação.
+- `EmailConfirmationPolicy` guarda a marca por UID em `user.data`, concede o papel `email_confirmed` após confirmação
+  e a herança condicional de papéis e as verificações do Portal usam essa fonte de verdade.
 - O reenvio usa a rota de reenvio do `email_confirmer`, com o intervalo de `resendrequest_delay` (900 s) para evitar abuso.
 - O link de confirmação é gerado sempre no host da conta (como na troca de e-mail).
 
@@ -72,8 +72,10 @@ Esta política não restringe leitura pública da wiki nem páginas instituciona
 
 - Nenhum endereço de e-mail nem valor de link é gravado em log além do necessário para diagnóstico (nome e usuário).
 - O reenvio é limitado pelo intervalo de `resendrequest_delay`.
-- A confirmação segue o hash de 43 caracteres de uso único e sem expiração; o login automático na confirmação está
-  registrado em `docs/portal/` como risco aceito (ver CHANGELOG do Portal 0.2.0-dev.14).
+- A confirmação usa hash HMAC de 43 caracteres e expira após 24 horas (`hash_expiration` = 86400); é de uso único
+  porque o estado confirmado impede nova transição. A confirmação de cadastro marca o endereço, mas não inicia
+  sessão. A confirmação de troca de endereço pode iniciar sessão somente se o visitante estiver anônimo e a conta
+  ativa. O login comum de conta não confirmada é permitido; não é um bloqueio do Confirmador.
 
 ## 8. Cadastro com e-mail já cadastrado (0.2.0-dev.22, DT-P06)
 
@@ -81,7 +83,8 @@ Decisão do responsável (2026-10-09): a resposta do cadastro não revela se o e
 
 - **Mensagem única** para e-mail novo e já cadastrado: "Sua solicitação foi recebida. Se este endereço tiver uma confirmação ou aviso disponível, verifique a caixa de entrada e a pasta de spam. Se nenhuma mensagem chegar, tente novamente mais tarde." Mesmo destino (página inicial).
 - **Com e-mail já cadastrado:** nenhuma conta é criada, ninguém é logado, e o dono da conta recebe um e-mail (`registration_existing_mail`) com o link para entrar, o link para recuperar a senha e a orientação de que não é preciso fazer nada se não foi ele.
-- **Com e-mail novo:** o cadastro segue como antes (conta bloqueada até a confirmação), só com a mensagem única.
+- **Com e-mail novo:** a conta permanece ativa, recebe o pedido de confirmação e pode entrar com as capacidades
+  restritas pela seção 1; a resposta do cadastro continua sendo a mensagem única.
 - **Implementação:** o erro "already taken" do Core sai do formulário (`validateRegistrationMail`); o botão usa `saveRegistration` no lugar de `::save`; a busca e o aviso ficam em `RegistrationMailPolicy`; o texto do aviso está no hook `mail` do módulo. Callbacks que gravam dados ignoram o caso de e-mail existente.
 - **Limites:** (1) o tempo de resposta difere quando o aviso é enviado na mesma requisição; (2) o aviso pode ser usado para incomodar um endereço alheio, por isso o CAPTCHA do cadastro continua obrigatório (ver `TURNSTILE.md`); (3) o aviso não é enfileirado; (4) o aviso depende do SMTP, ainda não validado em produção (DT-P05).
 

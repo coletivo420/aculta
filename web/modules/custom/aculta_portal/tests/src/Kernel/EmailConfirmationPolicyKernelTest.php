@@ -12,16 +12,27 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Login risk (S2 / DT-P03): confirmação de e-mail concede o papel que pula o CAPTCHA. O papel é irreversível (ver EmailConfirmedRoleGuard).
+ * Verifies account activation and role grants for email confirmation.
  */
 #[Group('aculta_portal')]
 #[RunTestsInSeparateProcesses]
 final class EmailConfirmationPolicyKernelTest extends KernelTestBase {
 
+  /**
+   * Kernel extensions needed to test the User entity and data store.
+   *
+   * @var string[]
+   */
   protected static $modules = ['system', 'user'];
 
+  /**
+   * The policy instance under test.
+   */
   private EmailConfirmationPolicy $policy;
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
@@ -34,13 +45,20 @@ final class EmailConfirmationPolicyKernelTest extends KernelTestBase {
     );
   }
 
+  /**
+   * A new account is active even when the email has not been confirmed.
+   */
   public function testNewAccountIsNotConfirmedAndHasNoRole(): void {
     $account = User::create(['name' => 'nova', 'mail' => 'nova@example.invalid', 'status' => 1]);
     $account->save();
+    $this->assertTrue($account->isActive(), 'A falta de confirmação não bloqueia o login da conta ativa.');
     $this->assertFalse($this->policy->isConfirmed($account));
     $this->assertFalse($account->hasRole(EmailConfirmationPolicy::ROLE));
   }
 
+  /**
+   * Confirmation grants the role and repeating it is idempotent.
+   */
   public function testConfirmationGrantsRoleAndIsIrreversible(): void {
     $account = User::create(['name' => 'confirmada', 'mail' => 'confirmada@example.invalid', 'status' => 1]);
     $account->save();
@@ -54,6 +72,9 @@ final class EmailConfirmationPolicyKernelTest extends KernelTestBase {
     $this->assertTrue(User::load($account->id())->hasRole(EmailConfirmationPolicy::ROLE));
   }
 
+  /**
+   * Anonymous UID zero cannot be marked as confirmed.
+   */
   public function testAnonymousUidIsIgnored(): void {
     $this->policy->markConfirmed(0);
     $anonymous = User::create(['uid' => 0, 'name' => '', 'status' => 0]);

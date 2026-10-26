@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.2
+version: 0.1.0-dev.3
 state: Dev
-next_phase: Validar confirmação, troca de e-mail e login bloqueado no navegador; depois revisão visual antes de RC
-progress_note: "Kernel em suíte isolada combinada de comunicação: 112 testes / 1504 assertions PASS (inclui Mailer, Messenger, Confirmador e troca de e-mail da conta); 11 depreciações e 4 notices."
+next_phase: Validar no navegador confirmação, troca de e-mail e capacidades restritas pela política; conta ativa não confirmada deve continuar com login permitido
+progress_note: "Dev.3: policy e documentação corrigidas para login permitido em conta ativa sem confirmação; sete Kernel de Confirmador/troca de e-mail e 53 assertions PASS no MariaDB dedicado (1 depreciação token_requirements de Core/contrib). Browser autenticado, SMTP real e Runtime permanecem pendentes."
