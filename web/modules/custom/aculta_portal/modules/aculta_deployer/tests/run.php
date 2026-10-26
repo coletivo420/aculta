@@ -184,16 +184,23 @@ $assert($quiet(fn() => $cli->run([
 $assert($quiet(fn() => $cli->run(['x', 'build', '--out=' . $base . '/link-para-repo/saida', '--allow-open-blocking'])) === 1, 'build recusa saída por link simbólico para o repositório');
 $assert($quiet(fn() => $cli->run(['x', 'build', '--out=' . $base . '/c'])) === 2, 'build com entradas bloqueantes exige --allow-open-blocking');
 // Limpeza.
+$removeTree = static function (string $path) use (&$removeTree): void {
+  if (is_link($path) || !is_dir($path)) {
+    if (file_exists($path) || is_link($path)) {
+      unlink($path);
+    }
+    return;
+  }
+  foreach (array_diff(scandir($path), ['.', '..']) as $entry) {
+    $removeTree($path . DIRECTORY_SEPARATOR . $entry);
+  }
+  rmdir($path);
+};
 foreach (['a', 'b'] as $d) {
   // Limpa somente os diretórios que o build chegou a criar.
-  if (!is_dir($base . '/' . $d)) {
-    continue;
+  if (is_dir($base . '/' . $d)) {
+    $removeTree($base . '/' . $d);
   }
-  $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($base . '/' . $d, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
-  foreach ($it as $f) {
-    $f->isDir() ? rmdir($f->getPathname()) : unlink($f->getPathname());
-  }
-  rmdir($base . '/' . $d);
 }
 @unlink($base . '/link-para-repo');
 @rmdir($base);
