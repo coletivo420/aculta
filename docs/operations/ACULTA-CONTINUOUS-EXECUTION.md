@@ -936,3 +936,16 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - **E1 depende do cutover do frete.** O porte assume o motor próprio (`ShippingOrderManager`, `ShipmentManager`, `plugin.manager.aculta_shipping_method`) e não pode importar `commerce_shipping`. Enquanto o checkout usar o contrib, o simulador fica atrás de feature flag. O cutover está em `feat/aculta-commerce-cutover` (`c8f1f8bbf`), ainda sem ensaio no banco restaurado.
 - **Critério de aceite da E1 (8.7):** `canUse()` exige `validUntil`, e o default `emitido + 600 s` é preenchido em `aculta_flat_rate`, `aculta_flat_rate_per_item` e `aculta_melhorenvio` no mesmo commit, com teste Kernel de cotação no checkout para cada provedor.
 - **Decisão pendente 8.6:** "exibido + revalidado" versus "persistido no carrinho". Até a decisão, a especificação assume "exibido + revalidado", sem persistir a cotação no carrinho.
+
+## Classificação dos 101 commits do backup `backup/checkout-antes-pr-8499180a6` — 2026-10-26
+
+Método: `git cherry -v origin/chore/aculta-m0-integridade backup/checkout-antes-pr-8499180a6`. Para cada commit com `+`, comparou-se, linha a linha, o conteúdo adicionado com o arquivo atual da PR, e conferiu-se o documento `ACULTA-BRANCH-RECONCILIATION-2026-10.md` quanto a substituições declaradas (SHAs existentes no repositório).
+
+- **Total:** 101. **Equivalentes (`-`):** 82. **Sem equivalente por patch-id (`+`):** 19.
+- **(a) Equivalentes:** 14 (o conteúdo já está na PR, com ≥ 90% das linhas ou lógica presente com texto adaptado; ex.: `f812ff495`, `8cb2fa6aa` (92%), `41edddefe`, `140ac2003`).
+- **(b) Substituídos ou adaptados, documentados:** 3. `ff92ca0aa` → `698499396` e `9603a5649` (documento de reconciliação); `0945a7001` → `ba3116cb6` (documento); `8cb2fa6aa` → `a91600359` (documento).
+- **(c) Exclusivos, sem equivalente nem substituição documentada:** 2, ambos só documentação, sem código faltando:
+  - `d4c11717f` — `docs(melhorenvio): atualizar README, roadmap e CHANGELOG`. Arquivos: `docs/operations/ACULTA-AGENT2-WORKLOG.md`; `aculta_commerce_melhorenvio/CHANGELOG.md`, `README.md` e `docs/ROADMAP.md`. Presença no conteúdo: 84%.
+  - `1b782798b` — `docs(secrets): resultados com Olivero e verificação HTTP com sessão real`. Arquivo: `docs/operations/SECRETS-SM9-INTEGRACAO.md`. Presença no conteúdo: 66%. Os resultados foram reexecutados depois e estão registrados nesta execução, mas o documento de reconciliação não os cita como substituídos.
+
+Conclusão: nenhum commit do backup contém código exclusivo fora da PR. Os dois (c) são registros de documentação, que não entraram nos documentos atuais.
