@@ -41,9 +41,11 @@ class ShipmentManager implements ShipmentManagerInterface {
         $rates = $shipping_method_plugin->calculateRates($shipment);
       }
       catch (\Throwable $exception) {
-        $this->logger->error('Shipping rate calculation failed for method @id: @message', [
+        // Log only the method ID and exception class: provider messages may
+        // contain address data or credentials.
+        $this->logger->error('Shipping rate calculation failed for method @id (@class).', [
           '@id' => $shipping_method->id(),
-          '@message' => $exception->getMessage(),
+          '@class' => get_class($exception),
         ]);
         continue;
       }

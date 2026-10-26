@@ -171,7 +171,6 @@ final class AcultaShippingInformation extends CheckoutPaneBase {
 
     $address_hash = $this->addressHash($profile);
     $pane_form['shipments'] = ['#type' => 'container'];
-    $pane_form['#tree'] = TRUE;
     foreach ($shipments as $index => $shipment) {
       $shipment->setShippingProfile($profile);
       // Invalidate a previously selected rate when the address changed.
@@ -202,6 +201,7 @@ final class AcultaShippingInformation extends CheckoutPaneBase {
       }
       $pane_form['shipments'][$index]['shipping_method'] = [
         '#type' => 'radios',
+        '#parents' => array_merge($pane_form['#parents'], ['shipments', $index, 'shipping_method']),
         '#title' => $shipment->getTitle(),
         '#options' => $options,
         '#default_value' => $default_id,
