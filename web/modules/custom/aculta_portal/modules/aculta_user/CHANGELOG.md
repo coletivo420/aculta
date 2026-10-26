@@ -1,6 +1,11 @@
-## 0.4.0-dev.79 — identifica autoria histórica do Growroom no Fórum
+## 0.4.0-dev.79 — marcador Growroom no cartão de autoria
 
-- `AuthorCardBuilder::buildLegacy()` acrescenta o marcador `-gr` ao nome exibido no cartão de autoria histórica do Fórum. O perfil legado não recebe rota individual `/u/`; o memorial coletivo `/u/lendashistoricas` mantém o nome original sem sufixo. Nenhuma entidade ou conta é criada.
+- A primeira implementação aplicou `-gr` no builder genérico. Foi substituída em dev.80 após identificar consumidores de comentários compartilhados fora do Fórum; a versão vigente limita o sufixo aos adapters de conteúdo Fórum.
+- Teste focal do formatador: 1/1 PASS; PHPCS e lint focais PASS na implementação dev.79.
+
+## 0.4.0-dev.80 — restringe marcador Growroom aos adapters do Fórum
+
+- `AuthorCardBuilder::buildLegacyForum()` acrescenta o marcador `-gr` para tópicos, posts e comentários do Fórum; o método genérico `buildLegacy()` mantém o nome sem alteração nos demais contextos. O perfil legado não recebe rota individual `/u/`; o memorial coletivo `/u/lendashistoricas` mantém o nome original sem sufixo. Nenhuma entidade ou conta é criada.
 - Unit focal: 1 teste / 1 assertion PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Sem importação de acervo ou alteração no Runtime.
 
 ## 0.4.0-dev.78 — persistir o apelido aparado no Profile legado
