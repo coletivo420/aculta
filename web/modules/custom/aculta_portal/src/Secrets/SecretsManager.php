@@ -109,8 +109,8 @@ final class SecretsManager {
     if ($variable === NULL) {
       return NULL;
     }
-    // Credenciais já ligadas a uma configuração de Key continuam por ele. Credenciais novas, sem Key, são lidas do
-    // arquivo de credenciais do servidor (ver AGENTS.md: não criar Key para credencial nova).
+    // Drupal Key é a interface única para integrações (docs/operations/SECRETS.md): uma credencial com Key (provedor
+    // env) é lida por ele. Sem Key, o valor vem do arquivo de credenciais do servidor, como fallback.
     $key = $this->keys->getKey((string) $variable['key_id']);
     if ($key !== NULL) {
       $value = $key->getKeyValue();
