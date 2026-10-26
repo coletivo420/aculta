@@ -90,6 +90,31 @@ Testar instalação limpa, reset de legado e rollback por snapshot em clones **i
 
 **Não optar pela edição temporária no contrib.** Recuperar a fonte 3.0.5 realmente instalada e executar COM-SHIP-0 e COM-SHIP-1 primeiro; iniciar portes COM-SHIP-2 sem colisões. Trabalhar em worktree isolado da PR #298, respeitar alterações dos outros agentes, commits focados, README/CHANGELOG/status/roadmap atualizados, não abrir outra PR, não fazer merge/deploy nem gravar no Runtime sem autorização.
 
+## Resultado do diagnóstico COM-SHIP-A (2026-10-26, servidor de testes)
+
+Execução somente leitura em `https://loja.aculta.toca.net.br`:
+
+- `aculta_commerce`, `commerce_shipping` e `aculta_commerce_melhorenvio` habilitados.
+- Entidades do contrib presentes: `commerce_shipping_method`, `commerce_shipment`, `commerce_order`.
+- **2 métodos ativos**, ambos da loja 1: `flat_rate` (“Envio”, peso 0, sem condições, valor configurado **0,00 BRL**) e `aculta_melhorenvio` (“Melhor Envio”, peso 1, sem condições).
+- 1 remessa no banco; o único pedido `default` está em rascunho, com item `camiseta_tamanho`, campo `shipments` presente e perfil de cobrança `authenticated` com `address` e `field_address` válidos (BR/SP, CEP de 9 caracteres).
+- A remessa do pedido está sem método, serviço e valor, com peso `0.000000g`.
+- O cálculo real por `ShipmentManager::calculateRates()` retornou **4 tarifas**: flat `0,00 BRL` e Melhor Envio `18,19`, `23,04` e `51,97 BRL`.
+- Log do Melhor Envio às 09:56: “Cotação não enviada: origem: postal_code_invalid”; o método Melhor Envio foi criado às 10:15 e o pedido às 10:31.
+
+**Conclusão:** a mensagem “There are no shipping rates available for this address.” **não se reproduz** no estado atual. Não há prova para atribuí-la ao contrib. Fatores registrados: (a) os métodos existem apenas no banco, não no Config Sync; (b) a tarifa fixa está configurada em 0,00, o que é um problema de configuração comercial; (c) houve falha de CEP de origem do Melhor Envio antes da criação do método; (d) havia divergência entre config ativa e Sync (rótulo do tipo de pedido, `third_party_settings` ausente no Sync e widget `aculta_shipping_rate` presente só na config ativa, vindo de arquivo não versionado). O pane novo elimina a reutilização de tarifas vazias em form state ao recalcular a cada montagem.
+
+## Implementação entregue na branch (COM-SHIP-B a H)
+
+- Núcleo próprio em `src/Shipping/`, `src/Entity/`, `src/Plugin/Commerce/ShippingMethod/`, `src/Plugin/Commerce/EntityTrait/`, `src/Plugin/Commerce/CheckoutPane/` e `src/Catalog/`.
+- Entidades `aculta_shipment`, `aculta_shipping_method` e `aculta_shipment_type`; IDs, tabelas, campos e plugins sem colisão com o contrib.
+- Campo `shipments` do pedido e trait de variação com IDs ACULTA; workflow próprio.
+- Checkout pane `aculta_shipping_information` no `aculta_commerce`; o pane antigo do Portal foi removido.
+- Green Stash `/estudio/loja/envios` com leitura de remessas.
+- Config Sync substituído onde o contrib era referenciado; atribuições GPL registradas nos arquivos portados.
+- **Não incluído nesta branch:** plugin de cotação do Melhor Envio (vive na linha principal do site; contrato em `docs/MELHOR-ENVIO-CONTRACT.md`), promoções de remessa, tipo de imposto de envio, e-mails de confirmação de remessa, formulários administrativos nativos e etiquetas/rastreamento externo.
+- **Pendente para integração na PR #298:** conciliar com a linha principal do site (90 commits à frente), remover `drupal/commerce_shipping` do Composer, importar o Config Sync no banco descartável, executar instalação limpa/desinstalação do contrib, e homologar o checkout físico e não enviável com Firefox ESR visível.
+
 ## Referências
 
 - https://www.drupal.org/project/commerce_shipping/releases/3.0.5

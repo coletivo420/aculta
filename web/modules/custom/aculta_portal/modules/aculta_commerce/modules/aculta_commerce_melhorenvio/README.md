@@ -1,15 +1,17 @@
 # ACULTA Commerce Melhor Envio
 
-Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão `0.1.0-dev.2`.
+Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão `0.1.0-dev.3`.
 
-Status: **fundação**, **endereço único** (ME-ADDRESS 0.1) e **consulta de CEP compartilhada** (ME-CEP 0.1). Ainda não há
-cotação de frete, contratação, etiqueta, rastreamento nem chamadas à API do Melhor Envio. Ver [ROADMAP](docs/ROADMAP.md).
+Status: **fundação**, **endereço único** (ME-ADDRESS 0.1) e **consulta de CEP compartilhada** (ME-CEP 0.1). A cotação
+de frete do provider precisa implementar o motor próprio do `aculta_commerce`; o contrato está em
+[`docs/MELHOR-ENVIO-CONTRACT.md`](../docs/MELHOR-ENVIO-CONTRACT.md). O plugin da linha principal do site ainda não foi
+transportado para esta branch, e a cotação externa **não está homologada**.
 
 ## Responsabilidades
 
 - Transformar o endereço do ACULTA em dados logísticos para o Melhor Envio (cotação, contratação, etiqueta).
 - Usar a consulta de CEP do Portal (`aculta_portal_cep`). Não existe segundo sistema de consulta.
-- Futuro: método de envio do Drupal Commerce Shipping, cotação, contratação e etiquetas (fases ME-0.2 em diante).
+- Futuro: método de envio do motor ACULTA (`AcultaShippingMethod`), cotação, contratação e etiquetas (fases ME-0.2 em diante).
 
 Fora de escopo, por regra de arquitetura:
 
