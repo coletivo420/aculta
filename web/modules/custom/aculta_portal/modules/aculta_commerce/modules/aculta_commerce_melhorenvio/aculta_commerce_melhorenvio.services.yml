@@ -50,7 +50,7 @@ services:
   # Rotas de autorização e de retorno do Melhor Envio.
   aculta_commerce_melhorenvio.oauth_controller:
     class: Drupal\aculta_commerce_melhorenvio\Controller\MelhorEnvioOAuthController
-    arguments: ['@aculta_commerce_melhorenvio.client', '@aculta_commerce_melhorenvio.oauth_state']
+    arguments: ['@aculta_commerce_melhorenvio.client', '@aculta_commerce_melhorenvio.oauth_state', '@logger.factory']
 
   # Validação HMAC-SHA256 do cabeçalho X-ME-Signature do webhook.
   aculta_commerce_melhorenvio.webhook_signature:
