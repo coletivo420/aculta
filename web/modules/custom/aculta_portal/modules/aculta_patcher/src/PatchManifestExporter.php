@@ -21,7 +21,20 @@ final class PatchManifestExporter {
     private readonly string $appRoot,
     private readonly FileSystemInterface $fileSystem,
     private readonly PatchDiffValidator $diffValidator = new PatchDiffValidator(),
+    private readonly ?\Closure $packagePathResolver = NULL,
   ) {}
+
+  /**
+   * Resolves an installed package through an injected resolver or Composer.
+   */
+  private function resolvePackagePath(string $package): ?string {
+    if ($this->packagePathResolver !== NULL) {
+      return ($this->packagePathResolver)($package);
+    }
+    return class_exists(InstalledVersions::class)
+      ? InstalledVersions::getInstallPath($package)
+      : NULL;
+  }
 
   /**
    * Validates active patches, then writes a Composer Patches v2 manifest.
@@ -64,9 +77,7 @@ final class PatchManifestExporter {
       }
       $this->diffValidator->assertValid($id, $diff);
 
-      $installPath = class_exists(InstalledVersions::class)
-        ? InstalledVersions::getInstallPath($package)
-        : NULL;
+      $installPath = $this->resolvePackagePath($package);
       $realPackagePath = is_string($installPath) ? realpath($installPath) : FALSE;
       $realProjectRoot = realpath($projectRoot);
       if ($realPackagePath === FALSE || $realProjectRoot === FALSE || !str_starts_with($realPackagePath, $realProjectRoot . DIRECTORY_SEPARATOR)) {
