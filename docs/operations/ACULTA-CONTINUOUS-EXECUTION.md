@@ -510,3 +510,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Unit focais existentes de `UnusedFileCleaner`/`UnusedMediaCleaner`: 8 testes / 31 assertions PASS, com duas depreciações PHPUnit.
 - Novo `FileReferenceInspectorKernelTest` usa Node, File e campos reais em MariaDB isolado: 2 testes / 19 assertions PASS. O Entity Query com `allRevisions()` encontrou um arquivo que só permanece em revisão antiga; a consulta UUID encontrou outro referenciado por campo text_long. Nenhuma exclusão foi invocada.
 - PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. `aculta_portal` avançou `.35` → `.36`, com README, changelog, status, índice e matriz atualizados. Group/Media compartilhada, tradução/revisão multilingue e validação operacional do cleaner permanecem em auditoria; Runtime continua somente leitura.
+
+
+## M-5 — revalidação Functional de Statistics (2026-10-26)
+
+- Fixture da `StatisticsDashboardFunctionalTest` agora explicita `aculta_user`, `search_api` e `search_api_db`: Portal contém serviços obrigatórios do ledger User e instala a entidade Search API cujo backend requer os dois providers. A suíte conseguiu instalar a closure no banco isolado.
+- BrowserKit: 2 erros / 0 assertions nas requests; a raiz efêmera retorna falha ao localizar `core/core.services.yml`, reproduzida mesmo reiniciando o servidor PHP com `DRUPAL_ROOT` absoluto. Selenium/Firefox visível iniciou a instalação, mas não é driver compatível com as assertions de status HTTP do `BrowserTestBase`; terminou em 2 falhas / 7 assertions e erro de login. Nenhum resultado é PASS funcional ou revisão visual.
+- PHP lint e PHPCS Drupal/DrupalPractice do teste PASS após corrigir estilo legado. Nenhum produto, Runtime ou dado persistente foi alterado.
+- Próxima ação: corrigir o document root/router do runner efêmero (ou portar a verificação HTTP para harness suportado) sem reduzir as assertions de 403/200/404/CSV; então reexecutar a classe completa. Statistics permanece Dev.
