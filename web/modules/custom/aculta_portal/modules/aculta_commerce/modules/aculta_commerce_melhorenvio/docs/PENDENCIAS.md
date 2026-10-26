@@ -31,7 +31,7 @@
 | OAuth: retorno sem código | Concluído e testado | `testCallbackWithValidStateButNoCodeIsRejectedWithoutExchange`; state consumido e nenhum token gravado | Nada no contrato atual |
 | OAuth: redirects não cacheáveis | Concluído (Unit) | `testOauthRoutesAreNeverCached`, `testEachAuthorizeIssuesFreshUncacheableRedirect` | Nada |
 | Credenciais OAuth | Implementado no código; teste focal pendente | Drupal Key tem precedência; `aculta_portal.secrets_manager` fornece fallback por ID contratual | Acrescentar regressão para o fallback e confirmar configuração por ambiente no servidor de teste |
-| Armazenamento de tokens | Parcial | `MelhorEnvioTokenStoreInterface` com implementação `StateMelhorEnvioTokenStore`; State API não cifra valores em repouso | Decisão e implementação de proteção em repouso, rotação e compatibilidade dos tokens existentes |
+| Armazenamento de tokens | Concluído (cifragem em repouso, 0.1.0-dev.5) | `MelhorEnvioTokenCipherTest` (9), `testUpdate8002*` e `testUpdate8001*` no Kernel de wiring | Rotação de chave e migração automatizada ficam para uma fase própria; provisionar `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` em cada ambiente |
 | Checkout funcional (tarifas, seleção, total, recálculo) | Pendente | Nenhum teste de checkout nesta branch | Kernel de checkout e homologação de navegador |
 | Testes de navegador (Firefox ESR, 320/390 px) | Pendente | Não executado | Ambiente de teste com a sessão X11 e o servidor de testes |
 | Logística (etiqueta, rastreio, cancelamento) | Pendente por desenho | Fora do escopo desta entrega; operações que geram custo continuam sem implementação | Fases futuras, com mocks até autorização específica |

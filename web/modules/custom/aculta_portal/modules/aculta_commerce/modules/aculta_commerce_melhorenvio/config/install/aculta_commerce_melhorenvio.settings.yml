@@ -17,11 +17,11 @@ redirect_uri: ''
 scopes: 'shipping-calculate users-read'
 # E-mail de contato exigido no User-Agent da API. Vazio bloqueia as chamadas.
 contact_email: ''
-# Apenas NOMES de chaves do Drupal Key. Os valores ficam no Key (banco criptografado em produção), nunca aqui.
+# IDs do contrato central de segredos. Os valores não ficam nesta configuração.
 keys:
   sandbox:
-    client_id: ''
-    client_secret: ''
+    client_id: 'melhorenvio_sandbox_client_id'
+    client_secret: 'melhorenvio_sandbox_client_secret'
   production:
-    client_id: ''
-    client_secret: ''
+    client_id: 'melhorenvio_production_client_id'
+    client_secret: 'melhorenvio_production_client_secret'

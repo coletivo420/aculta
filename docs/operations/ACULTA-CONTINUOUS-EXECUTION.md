@@ -785,6 +785,18 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Próximo passo: homologar o checkout e a seleção de frete no servidor de testes com Firefox ESR e sandbox sem contratar etiqueta, conforme os roadmaps Commerce e Melhor Envio.
 - Limpeza local após o fechamento: removidos os artefatos próprios `aculta-me-kernel-root` (cópia isolada de Core/vendor, ~248 MB), `aculta-me-kernel-lite`, `aculta-me-kernel-out` e `aculta-me-callback-tests.patch` de `/mnt/disco1/tmp`. O worktree fonte `/mnt/disco1/tmp/aculta-melhorenvio-int` e diretórios temporários sem ownership confirmado foram preservados; nenhum Runtime ou dado de projeto foi afetado.
 
+## Cifragem em repouso dos tokens Melhor Envio (0.1.0-dev.5) — 2026-10-26
+
+- Base: `origin/chore/aculta-m0-integridade` em `c1e210934`, que já inclui a frente 2 (`feat/aculta-fronteira-links-secrets`). A cifragem foi reaplicada sobre essa base; não foi feito push nesta execução.
+- Tokens OAuth passam a ser gravados no State API como `encrypted_v1`, com `MelhorEnvioTokenCipher` (libsodium `secretbox`, nonce novo por gravação). A chave vem do contrato central pelo Key ID `aculta_melhorenvio_token_encryption` (`ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY`, 64 caracteres hex, gerada com `openssl rand -hex 32`).
+- Tipo de Key: `authentication` com valor hex, e não `encryption`. Motivo: o tipo `encryption` do módulo Key valida o tamanho em bytes brutos (32), enquanto o valor precisa ser lido igual pelo provedor `env` e pelo fallback de arquivo, que não decodifica base64.
+- Falha fechada: chave ausente, adulteração ou formato inválido devolvem "sem tokens" (reautorização). Nenhum texto puro é devolvido nem gravado.
+- `update_8001` normaliza nomes legados em Key IDs e não altera nada sem nomes legados. `update_8002` cifra registros legados uma vez, é idempotente e falha se a chave faltar (atualização pendente).
+- `SecretsManager::valueForKeyId()` resolve valores pelo Key ID estável; ID ambíguo falha fechado.
+- Verificação: Unit cipher 9/13 PASS; Unit `SecretsManagerTest` 15/48 PASS; Kernel `MelhorEnvioWiringKernelTest` 15/69 PASS em `aculta_simpletest` com 130 deprecações; `validate-secrets-contract.php` PASS; `validate-module-theme-boundary.php` PASS; PHPCS sem erros nem avisos nos arquivos novos.
+- Divergência anterior, fora deste escopo: `validate-project-status-index.php` já falha na base `c1e210934` (`aculta_links` 0.4.0-dev.32 vs manifest 0.4.0-dev.33; `aculta_secrets_manager` 0.1.0-dev.1 vs 0.1.0-dev.3; `aculta420` 0.7.0-dev.3 vs 0.7.0-dev.4). Correção pertence à frente 2 e não foi feita aqui.
+- Provisionamento: `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` em teste e produção; `MELHORENVIO_PRODUCTION_CLIENT_ID` e `MELHORENVIO_PRODUCTION_CLIENT_SECRET` em produção. Trocar a chave invalida os tokens guardados.
+- Pendente: rotação de chave e migração automatizada; checkout e browser no servidor de testes.
 ## Troca do checkout do servidor de testes para a PR integrada — 2026-10-26
 
 - Docroot de teste: `/home/aculta/public_html` é o checkout `/home/piradopirata/projetos/aculta` (o `web/` dele). Os testes X11 (`DISPLAY=:0`) rodam contra esse checkout.
