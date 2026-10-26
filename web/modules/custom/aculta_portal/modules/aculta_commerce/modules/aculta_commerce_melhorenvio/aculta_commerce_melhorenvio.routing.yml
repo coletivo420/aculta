@@ -1,3 +1,5 @@
+# Autorização e retorno nunca entram em cache: cada acesso gera um state novo e de uso único. Em cache, o Drupal
+# servia o redirecionamento antigo, com o state já consumido, sem executar o controlador.
 aculta_commerce_melhorenvio.oauth_authorize:
   path: '/integracoes/melhorenvio/autorizar'
   defaults:
@@ -5,6 +7,8 @@ aculta_commerce_melhorenvio.oauth_authorize:
     _title: 'Autorizar Melhor Envio'
   requirements:
     _permission: 'administer melhorenvio'
+  options:
+    no_cache: TRUE
   methods: [GET]
 
 aculta_commerce_melhorenvio.oauth_callback:
@@ -14,6 +18,8 @@ aculta_commerce_melhorenvio.oauth_callback:
     _title: 'Retorno do Melhor Envio'
   requirements:
     _permission: 'administer melhorenvio'
+  options:
+    no_cache: TRUE
   methods: [GET]
 
 # Webhook público: o Melhor Envio chama esta URL de fora, sem sessão. A autenticidade vem da assinatura X-ME-Signature.

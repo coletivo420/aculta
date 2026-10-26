@@ -6,10 +6,15 @@ namespace Drupal\Tests\aculta_commerce_melhorenvio\Kernel;
 
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClient;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\key\Entity\Key;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Cabeamento do cliente OAuth2 no container real: credenciais do Drupal Key, configuração e tokens em State.
@@ -144,6 +149,39 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
   public function testSecretNeverLeaksIntoAuthorizationUrl(): void {
     $url = $this->container->get('aculta_commerce_melhorenvio.client')->authorizationUrl('s');
     self::assertStringNotContainsString('SECRET-SANDBOX-FIXTURE', $url);
+  }
+
+  /**
+   * Autorização e retorno ficam fora do cache de página e do cache dinâmico.
+   */
+  public function testOauthRoutesAreNeverCached(): void {
+    $path = $this->container->get('extension.list.module')->getPath('aculta_commerce_melhorenvio');
+    $routes = Yaml::parseFile(DRUPAL_ROOT . '/' . $path . '/aculta_commerce_melhorenvio.routing.yml');
+    foreach (['aculta_commerce_melhorenvio.oauth_authorize', 'aculta_commerce_melhorenvio.oauth_callback'] as $name) {
+      self::assertTrue((bool) ($routes[$name]['options']['no_cache'] ?? FALSE), $name);
+    }
+  }
+
+  /**
+   * Cada acesso a autorizar gera um state novo, e o redirecionamento não pode ser cacheado.
+   *
+   * Regressão: o cache dinâmico guardava o primeiro redirecionamento e servia o state já consumido.
+   */
+  public function testEachAuthorizeIssuesFreshUncacheableRedirect(): void {
+    $controller = $this->container->get('aculta_commerce_melhorenvio.oauth_controller');
+    $states = [];
+    foreach ([1, 2] as $attempt) {
+      $request = Request::create('/integracoes/melhorenvio/autorizar');
+      $request->setSession(new Session(new MockArraySessionStorage()));
+      $response = $controller->authorize($request);
+      self::assertInstanceOf(TrustedRedirectResponse::class, $response, 'Tentativa ' . $attempt);
+      self::assertSame(0, $response->getCacheableMetadata()->getCacheMaxAge(), 'Tentativa ' . $attempt);
+      self::assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
+      parse_str((string) parse_url($response->getTargetUrl(), PHP_URL_QUERY), $query);
+      self::assertSame($request->getSession()->get('aculta_commerce_melhorenvio.oauth_state'), $query['state']);
+      $states[] = $query['state'];
+    }
+    self::assertNotSame($states[0], $states[1]);
   }
 
   /**

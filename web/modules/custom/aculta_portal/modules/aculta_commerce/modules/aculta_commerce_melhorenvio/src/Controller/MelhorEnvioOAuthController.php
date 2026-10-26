@@ -59,7 +59,11 @@ final class MelhorEnvioOAuthController {
     $this->logger->notice('Autorização do Melhor Envio iniciada: state {hash}.', ['hash' => substr(hash('sha256', $state), 0, 12)]);
     try {
       // Destino externo: o Drupal recusa RedirectResponse comum para host externo.
-      return new TrustedRedirectResponse($this->client->authorizationUrl($state));
+      $response = new TrustedRedirectResponse($this->client->authorizationUrl($state));
+      // TrustedRedirectResponse é cacheável por padrão; o state é de uso único e não pode ser reaproveitado.
+      $response->getCacheableMetadata()->setCacheMaxAge(0);
+      $response->headers->set('Cache-Control', 'private, no-store');
+      return $response;
     }
     catch (MelhorEnvioException) {
       $this->messenger->addError($this->t('A integração com o Melhor Envio não está configurada para este ambiente.'));
