@@ -171,6 +171,25 @@ final class SecretsManager {
     return $this->fileValue($name);
   }
 
+  /**
+   * Resolve um valor do contrato pelo Key ID estável. Permite que consumidores guardem o Key ID em
+   * configuração enquanto o contrato define o mapeamento para o nome da variável de ambiente.
+   * Key ID ambíguo ou inexistente retorna NULL (falha fechada).
+   */
+  public function valueForKeyId(string $keyId): ?string {
+    $matchedName = NULL;
+    foreach ($this->contract()['variables'] ?? [] as $variable) {
+      if (($variable['key_id'] ?? NULL) !== $keyId) {
+        continue;
+      }
+      if ($matchedName !== NULL) {
+        return NULL;
+      }
+      $matchedName = (string) ($variable['name'] ?? '');
+    }
+    return $matchedName !== NULL && $matchedName !== '' ? $this->value($matchedName) : NULL;
+  }
+
   /** Valor de uma variável no arquivo de credenciais do servidor, ou NULL. Nunca registrado. */
   private function fileValue(string $name): ?string {
     $store = $this->storePath();

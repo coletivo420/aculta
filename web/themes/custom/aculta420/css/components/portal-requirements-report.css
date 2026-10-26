@@ -1,27 +1,3 @@
-.aculta-secret-value {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.aculta-secret-value__edit,
-.aculta-secret-value__clear {
-  text-decoration: none;
-  font-size: 1.1rem;
-}
-
-/* Apagar valor é sempre vermelho (ação destrutiva), também em foco e hover. */
-.aculta-secret-value__clear,
-.aculta-secret-value__clear:link,
-.aculta-secret-value__clear:visited {
-  color: var(--aculta-status-error-text);
-}
-
-.aculta-secret-value__clear:hover,
-.aculta-secret-value__clear:focus-visible {
-  color: var(--aculta-status-error-text);
-}
-
 .aculta-portal-requirements__status--ok {
   color: var(--aculta-status-ok-text);
   background-color: var(--aculta-status-ok-surface);

@@ -164,6 +164,7 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
       'key_provider' => 'config',
       'key_provider_settings' => ['key_value' => 'SECRET-SANDBOX-FIXTURE'],
     ])->save();
+    $this->createEncryptionKeyFixture();
     $this->config('aculta_commerce_melhorenvio.settings')
       ->set('environment', 'sandbox')
       ->set('redirect_uri', 'https://aculta.example.test/melhorenvio/callback')
@@ -171,6 +172,92 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
       ->set('keys.sandbox.client_id', 'me_sb_id')
       ->set('keys.sandbox.client_secret', 'me_sb_secret')
       ->save();
+  }
+
+  /**
+   * Cria a Key de cifragem de fixture (32 bytes em hex). Em produção ela vem do ambiente, pelo contrato.
+   */
+  private function createEncryptionKeyFixture(): void {
+    Key::create([
+      'id' => 'aculta_melhorenvio_token_encryption',
+      'label' => 'Fixture: cifragem de tokens Melhor Envio',
+      'key_type' => 'authentication',
+      'key_provider' => 'config',
+      'key_provider_settings' => ['key_value' => str_repeat('ab', 32)],
+    ])->save();
+  }
+
+  /**
+   * Hook 8001 sem nomes legados: não altera a configuração (sem perda).
+   */
+  public function testUpdate8001LeavesCurrentKeyIdsUntouched(): void {
+    require_once __DIR__ . '/../../../aculta_commerce_melhorenvio.install';
+    $before = $this->config('aculta_commerce_melhorenvio.settings')->get('keys');
+    self::assertStringContainsString('Normalized 0', aculta_commerce_melhorenvio_update_8001());
+    self::assertSame($before, $this->config('aculta_commerce_melhorenvio.settings')->get('keys'));
+  }
+
+  /**
+   * Hook 8001 converte nomes legados em Key IDs uma vez, e a segunda execução não altera nada.
+   */
+  public function testUpdate8001ConvertsLegacyNamesOnceAndIsIdempotent(): void {
+    require_once __DIR__ . '/../../../aculta_commerce_melhorenvio.install';
+    $this->config('aculta_commerce_melhorenvio.settings')
+      ->set('keys.sandbox.client_id', 'MELHORENVIO_SANDBOX_CLIENT_ID')
+      ->set('keys.sandbox.client_secret', 'MELHORENVIO_SANDBOX_CLIENT_SECRET')
+      ->save();
+    self::assertStringContainsString('Normalized 2', aculta_commerce_melhorenvio_update_8001());
+    $keys = $this->config('aculta_commerce_melhorenvio.settings')->get('keys');
+    self::assertSame('melhorenvio_sandbox_client_id', $keys['sandbox']['client_id']);
+    self::assertSame('melhorenvio_sandbox_client_secret', $keys['sandbox']['client_secret']);
+    self::assertStringContainsString('Normalized 0', aculta_commerce_melhorenvio_update_8001());
+  }
+
+  /**
+   * Hook 8002 sem chave de cifragem: falha, e o registro em texto puro permanece para a próxima tentativa.
+   */
+  public function testUpdate8002FailsClosedWithoutKeyAndKeepsLegacyRecord(): void {
+    require_once __DIR__ . '/../../../aculta_commerce_melhorenvio.install';
+    $state = $this->container->get('state');
+    $legacy = [
+      'access_token' => 'token-ficticio-acesso',
+      'refresh_token' => 'token-ficticio-renovacao',
+      'expires_at' => 1900000000,
+    ];
+    $state->set('aculta_commerce_melhorenvio.tokens.sandbox', $legacy);
+    // Chave de cifragem ausente: esvazia o valor na configuração (sem save da entidade) e limpa o cache de Keys.
+    $this->config('key.key.aculta_melhorenvio_token_encryption')->set('key_provider_settings.key_value', '')->save();
+    \Drupal::entityTypeManager()->getStorage('key')->resetCache();
+
+    try {
+      aculta_commerce_melhorenvio_update_8002();
+      self::fail('A migração sem chave de cifragem deveria falhar.');
+    }
+    catch (\RuntimeException) {
+      // Esperado: a atualização fica pendente.
+    }
+    self::assertSame($legacy, $state->get('aculta_commerce_melhorenvio.tokens.sandbox'));
+  }
+
+  /**
+   * Hook 8002 cifra o registro legado uma vez; a segunda execução pula o que já está cifrado.
+   */
+  public function testUpdate8002EncryptsLegacyRecordOnceAndStoreReadsIt(): void {
+    require_once __DIR__ . '/../../../aculta_commerce_melhorenvio.install';
+    $state = $this->container->get('state');
+    $legacy = [
+      'access_token' => 'token-ficticio-acesso',
+      'refresh_token' => 'token-ficticio-renovacao',
+      'expires_at' => 1900000000,
+    ];
+    $state->set('aculta_commerce_melhorenvio.tokens.sandbox', $legacy);
+
+    self::assertStringContainsString('Encrypted 1', aculta_commerce_melhorenvio_update_8002());
+    $stored = $state->get('aculta_commerce_melhorenvio.tokens.sandbox');
+    self::assertSame('encrypted_v1', $stored['format']);
+    self::assertStringNotContainsString('token-ficticio', (string) $stored['payload']);
+    self::assertSame($legacy, $this->container->get('aculta_commerce_melhorenvio.token_store')->load(MelhorEnvioEnvironment::Sandbox));
+    self::assertStringContainsString('Encrypted 0', aculta_commerce_melhorenvio_update_8002());
   }
 
   /**

@@ -21,6 +21,12 @@ Regra permanente (AGENTS.md, seção "Código no Aculta Portal, Design no ACULTA
 - Contrato entre os dois: `data-portal-account-*`, `data-portal-cart-status*`, `data-aculta-*` e nomes de campo do
   Drupal. O tema sobrescreve templates pelo nome; o módulo não sabe qual tema está ativo.
 
+## Exceção: UI administrativa no tema Claro
+
+UI administrativa renderizada no Claro mantém CSS mínimo no próprio submódulo, com seletores de classe e `data-portal-ui`. As rotas `_admin_route` usam o tema administrativo e não executam os hooks do ACULTA420; a biblioteca do submódulo precisa conservar layout e foco nesses contextos. O mapa `PortalUiHooks::TOKENS` continua sendo mantido para o ACULTA420. Essa exceção não autoriza lógica de domínio, acesso ou dados no CSS.
+
+Para o painel de segredos, `css/secrets-tabs.css` contém os seletores emparelhados para abas e valores de credenciais. A folha do ACULTA420 não duplica essas regras.
+
 ## Por que
 
 Se o módulo carrega aparência, trocar o tema deixa a conta sem layout ou exige editar código do módulo. Se o tema tem

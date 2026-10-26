@@ -1,5 +1,38 @@
 # Changelog — ACULTA Commerce Melhor Envio
 
+## 0.1.0-dev.5 (em andamento)
+
+### Alterado
+
+- Tokens OAuth do Melhor Envio são cifrados em repouso no State API (`encrypted_v1`), com
+  `MelhorEnvioTokenCipher` (libsodium `secretbox`). A chave vem do contrato central de segredos pelo Key ID
+  `aculta_melhorenvio_token_encryption` (variável `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY`, 64 caracteres hex).
+- `SecretsManager::valueForKeyId()` resolve um valor pelo Key ID estável; Key ID ambíguo ou inexistente falha fechado.
+- Credenciais de produção (`melhorenvio_production_client_id` e `_client_secret`) ganham Key versionada com provedor
+  `env`, como o sandbox.
+
+### Corrigido
+
+- Falha de decifração, chave ausente ou formato inválido equivalem a "sem tokens": o usuário precisa autorizar de novo.
+  Nenhum texto puro é devolvido nem gravado.
+- Hook `update_8001` converte nomes legados de variáveis em Key IDs e não altera nada quando não há nomes legados.
+- Hook `update_8002` cifra os registros legados uma vez, pula os já cifrados e falha se a chave não estiver disponível
+  (a atualização fica pendente, sem perda de dados).
+- Registro legado malformado é apagado e contado à parte (`malformed`), sem exceção, para forçar nova autorização.
+  Só a chave de cifragem ausente interrompe a migração. Coberto por
+  `testMigrationDeletesMalformedRecordAndCountsItWithoutException` e `testMigrationWithoutKeyFailsAndWritesNothing`.
+
+### Verificado
+
+- Unit do cipher: 9 testes / 13 asserções OK (ida e volta, nonce novo, chave errada, chave ausente, chave malformada,
+  adulteração, store sem chave).
+- Unit `SecretsManagerTest`: 15 testes / 48 asserções OK (inclui `valueForKeyId`).
+- Kernel `MelhorEnvioWiringKernelTest` em `aculta_simpletest`: 15 testes / 69 asserções OK, com 130 deprecações do
+  Drupal/Core.
+- `validate-secrets-contract.php` e `validate-module-theme-boundary.php`: PASS.
+- PHPCS dos arquivos novos (cipher e seu teste): sem erros nem avisos. Nos arquivos já existentes, o débito anterior
+  foi mantido.
+
 ## 0.1.0-dev.4 (em andamento)
 
 ### Corrigido

@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.3
+version: 0.7.0-dev.5
 state: Dev
 progress_note: >-
-  PHPCS limpo, tokens de Portal e avisos do Messenger por data-portal-ui; Kernel do tema 10/10 e SDCs de Meu Perfil verificados; validador de fronteira pendente (page_attachments). Consumidor Studio dev.23.
+  Versão 0.7.0-dev.5 após integração do Claro (2026-10-26): boundary PASS, SDC 45 componentes PASS, design foundations PASS, Foundation 345 PASS e shell-contract 11 PASS via Drush. PHPCS limpo, tokens de Portal e avisos do Messenger por data-portal-ui; Kernel do tema 10/10 e SDCs de Meu Perfil verificados; validador de fronteira pendente (page_attachments). Consumidor Studio dev.23.
 next_phase: 'Validar schema, Unit, Kernel SDC, UI Patterns, Foundation e Firefox ESR/X11: 320/390/768/1024/1440, foco, zoom, claro/escuro e Olivero; pendências de Revista/QR/WE SATIVA permanecem antes de RC.'

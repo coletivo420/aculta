@@ -25,10 +25,14 @@ services:
     class: Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioConfig
     autowire: true
 
-  # Armazenamento de tokens OAuth2 por ambiente (State API, sem exportação de configuração).
+  aculta_commerce_melhorenvio.token_cipher:
+    class: Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioTokenCipher
+    arguments: ['@aculta_portal.secrets_manager']
+
+  # Tokens OAuth2 cifrados no State API, sem exportação de configuração.
   aculta_commerce_melhorenvio.token_store:
     class: Drupal\aculta_commerce_melhorenvio\Http\StateMelhorEnvioTokenStore
-    arguments: ['@state']
+    arguments: ['@state', '@aculta_commerce_melhorenvio.token_cipher']
 
   # Cliente HTTP OAuth2 do Melhor Envio. Único ponto de chamada à API.
   aculta_commerce_melhorenvio.client:

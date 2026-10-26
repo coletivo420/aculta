@@ -426,3 +426,9 @@ O Studio passou a priorizar **GANJALAB E-0.1**, interface editorial sob `conta.a
 
 - Tokens de apresentação de Links e Secrets Manager registrados; CSS desses submódulos permanece como dívida para migração em etapa própria.
 - Status da validação dos gates e navegador: pendente nesta branch.
+
+
+## 0.7.0-dev.5
+
+- Exceção documentada: UI administrativa renderizada no Claro mantém CSS mínimo no próprio submódulo, com seletores de classe e `data-portal-ui`.
+- Removidas apenas as regras `.aculta-secret-value*` da folha do tema; o mapa de tokens permanece.

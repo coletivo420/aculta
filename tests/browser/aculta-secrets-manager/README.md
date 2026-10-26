@@ -28,3 +28,17 @@ ausência de rolagem horizontal em 1280, 390 e 320 px.
   classe. O script procurava a classe e acusava falso "não encontrado" (`excesso=None`). O seletor agora usa o atributo,
   como o CSS e o teste Unit `SecretsTabsTest` já fazem.
 
+
+## Foco por teclado, alvos e cor do ícone de apagar (Claro): `claro-foco-alvos.py`
+
+- **Ambiente:** servidor de testes (`*.aculta.toca.net.br`), tema Claro. Firefox ESR visível em `DISPLAY=:0`.
+- **Execução:** `DISPLAY=:0 SECRETS_UID=205 python3 tests/browser/aculta-secrets-manager/claro-foco-alvos.py`
+- **Cobre:** Tab alcança revelar, alterar e apagar em 1280, 390 e 320 px, com foco visível (estilo computado);
+  abas recebem foco; alvos de toque ≥ 44 px; cor computada do ícone de apagar (esperado `rgb(179, 38, 30)`).
+- **Não cobre:** clicar em revelar, alterar ou apagar; gravar ou apagar credenciais.
+- **Resultado de 2026-10-26, checkout em `78f5bb199`:** 25/28 PASS. Falha única: a cor do ícone de apagar em 1280,
+  390 e 320 px. A cor computada é `rgb(35, 36, 41)`, a cor do texto. As variáveis `--aculta-status-error-text` e
+  `--color-danger` estão **vazias** na raiz do documento do Claro. A regra CSS cai para `currentColor`. Correção
+  pertence ao Local 2 (definir o token de erro para a página do Claro).
+- Nota de método: a varredura de Tab recarrega a página em cada largura. Sem recarregar, o foco da largura anterior
+  ficava no fim do documento e a varredura seguinte não registrava elementos.
