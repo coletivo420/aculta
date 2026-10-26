@@ -46,7 +46,8 @@ final class QrCodeListBuilder extends EntityListBuilder {
       )->toRenderable();
     }
     return [
-      'title' => $entity->toLink($entity->label())->toRenderable(),
+      // Dentro de 'data': sem isso, o array do link é lido como atributos da célula e o Url vira valor de atributo (500).
+      'title' => ['data' => $entity->toLink($entity->label())->toRenderable()],
       'code' => $entity->getCode(),
       'target' => $entity->getTargetUrl(),
       'state' => $entity->isPublished() ? $this->t('Ativo') : $this->t('Desativado'),
