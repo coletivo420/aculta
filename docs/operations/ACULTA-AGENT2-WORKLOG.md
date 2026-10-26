@@ -428,3 +428,11 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - Ação: `scopes` = `shipping-calculate user-read` no servidor de teste (configuração do banco, não exportada). A URL de autorização passou a enviar esses escopos.
 - Nomes dos escopos não aparecem na documentação do MCP nem na busca web. Confirmar no painel do aplicativo sandbox que esses dois escopos estão habilitados. Se o consentimento recusar algum, ajustar pela lista do painel.
 - Pendente: nova autorização no servidor de teste, depois revalidar `/api/v2/me` e a cotação.
+
+## Retorno OAuth com "acesso negado" (diagnóstico)
+
+- Log do servidor de teste: `/autorizar` foi chamado duas vezes em 7 s (08:58:32 e 08:58:39). Cada chamada gera um `state` novo e sobrescreve o anterior na sessão.
+- Os dois retornos (09:03 e 09:09) trouxeram o `state` da primeira chamada. O primeiro retorno remove o `state` da sessão antes de comparar (uso único), por isso o segundo também falha. Nenhuma sessão guarda `oauth_state` agora.
+- Causa provável: duas tentativas de autorização na sessão. Os dois retornos com "acesso negado" vêm do `state` obsoleto, não de falha no sandbox.
+- Ação: refazer a autorização uma única vez, pela mesma aba, e concluir o consentimento nela.
+- Melhoria opcional, não aplicada: reaproveitar um `state` pendente em vez de sobrescrevê-lo, para tolerar duas abas.
