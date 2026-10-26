@@ -1,3 +1,5 @@
+**Nova decisão — frete próprio (26/10/2026).** O porte das funcionalidades do Commerce Shipping 3.0.5 será executado **dentro do `aculta_commerce`**, sem novo submódulo e sem editar `contrib`. A substituição do módulo instalado exige migração não destrutiva de entidades, remessas, métodos, checkout e configuração; ainda não foi concluída. Consulte [plano COM-SHIP](docs/COMMERCE-SHIPPING-PORT.md). O diagnóstico de Config Sync pode ser executado em modo somente leitura por `php web/modules/custom/aculta_portal/modules/aculta_commerce/tests/scripts/shipping_sync_preflight.php`. A ausência de método versionado não comprova ausência no Runtime.
+
 # ACULTA Commerce — 0.1.0-dev.9
 
 Submódulo de integração comercial da **loja**, em estado Dev. O provider de configuração do checkout e a experiência Green Stash estão em código. A orquestração de checkout pertence ao `aculta_portal`, conforme ADR-013. As seções abaixo registram a evolução por fase; afirmações sobre ausência de serviços ou rotas descrevem a fundação histórica. A cadeia completa de Green Stash ainda exige homologação no Runtime.
