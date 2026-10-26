@@ -24,6 +24,7 @@
 - Não foi inferido que as políticas ativas sejam defaults ou customização operacional. A decisão sobre a fonte canônica de `email_modes`/`magazine_events` foi solicitada ao responsável; nenhuma configuração foi alterada. Os metadados dos campos ficam em revisão separada e não justificam importação global.
 - Inspeção estrutural read-only de capturas privadas confirmou formatos distintos: IPS4 usa blocos `post_block`/`post_body`/`entry-content`; tópicos THW antigos são tabelas HTML com atributo `postid`. Os scripts atuais não exportam corpos/posts; ainda é necessário um parser versionado com fixtures sintéticas e saída privada antes de qualquer importação. Nenhum conteúdo ou dado pessoal foi impresso.
 - A amostra estrutural não foi convertida em código de importação. A decisão sobre 616 tópicos internos e 17 títulos comerciais em revisão foi solicitada; a preparação independente pode prosseguir, mas não define seleção nem escreve no Drupal.
+- No HEAD `dc5561f23`, `php scripts/validate-project-status-index.php` passou (41 componentes) e `php scripts/validate-own-module-packages.php` passou (41 verificações). Foram executados no worktree da PR; os resultados não implicam aprovação dos demais gates nem homologação Runtime.
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
