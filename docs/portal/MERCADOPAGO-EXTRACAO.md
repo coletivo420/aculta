@@ -292,16 +292,13 @@ passos 1-4 são movimentação mecânica; o passo 5 é o único com desenho novo
 9. Nenhum alias de serviço ou rota temporário.
 10. Deploy no servidor de testes com smoke de webhook e checkout; produção só na janela de RC.
 
-## Decisões que dependem do responsável
+## Decisões aprovadas pelo responsável
 
-1. **IDs de serviço:** renomear para `aculta_pagamentos_mercadopago.*` (recomendado) ou manter os atuais.
-2. **Painel `RecurringAuthorizationPane`:** fica em `aculta_donation`, que declara dependência direta do
-   MP e usa seus namespaces/service IDs sem interface intermediária (decisão do responsável, 18:11).
-3. **Dependência de LMS:** `aculta_lms` declara dependência direta do MP; os demais quatro módulos LMS
-   verificados não usam MP (decisão do responsável, 18:12).
-4. **Hooks MP:** mover os ramos de `EntitySaveHooks`/`EntityHooks`/`FormHooks` para o MP (recomendado) ou
-   manter no Portal com `moduleExists`.
-5. **Namespaces:** manter os sufixos atuais sob o MP ou achatar o segmento `MercadoPago` (mais churn).
-6. **Log channel:** renomear para `aculta_pagamentos_mercadopago` ou manter `aculta_portal`.
-7. **Versões:** `aculta_pagamentos_mercadopago` sobe de `0.1.0-dev.9`; `aculta_portal` sobe só se o
-   contrato público mudar (interfaces novas).
+1. **Service IDs MP:** `aculta_pagamentos_mercadopago.*`, sem aliases. O Portal consome os contratos pelos IDs neutros `aculta_portal.payment_provider.*`, opcionais quando o provedor não está instalado.
+2. **Painel `RecurringAuthorizationPane`:** permanece em `aculta_donation`, com dependência direta do MP e uso de classes/IDs do próprio módulo.
+3. **Dependências:** Doação e LMS declaram `aculta_portal:aculta_pagamentos_mercadopago`; Portal não depende do MP. `aculta_lms_resources`, `aculta_lms_h5p`, `aculta_forum_lms` e `aculta_lms_messenger` não usam MP.
+4. **Hooks MP:** os ramos de `EntitySaveHooks`/`EntityHooks`/`FormHooks` ficam nos hooks OOP do MP.
+5. **Namespaces:** sufixos atuais mantidos sob `Drupal\aculta_pagamentos_mercadopago\`.
+6. **Canal de log:** `aculta_pagamentos_mercadopago`.
+7. **Operações:** exceções da API são embrulhadas em `PaymentOperationException`; a UI recebe mensagem segura e o detalhe cru fica somente no log.
+8. **Versões:** MP parte de `0.1.0-dev.9`; Portal sobe por contratos públicos novos; Doação e LMS sobem ao mudar seus manifests.

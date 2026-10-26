@@ -18,6 +18,8 @@ require_once $root . '/web/modules/custom/aculta_portal/src/Status/PortalHelperR
 require_once $root . '/web/modules/custom/aculta_portal/src/Status/PortalImplementationRegistry.php';
 $moduleRoot = $root . '/web/modules/custom/aculta_portal';
 $srcRoot = $moduleRoot . '/src';
+$mpModuleRoot = $moduleRoot . '/modules/aculta_pagamentos_mercadopago';
+$mpSrcRoot = $mpModuleRoot . '/src';
 $activityRoot = $moduleRoot . '/modules/aculta_activity';
 $failures = [];
 $checks = 0;
@@ -198,9 +200,9 @@ $check(
 // 0.4.0-dev.153 adds RefundEligibilitySubscriber (nega estorno de doação e de curso no gateway Mercado Pago), so the Portal registers thirteen.
 // ADR-013 (P-CART D) adds CommerceCheckoutRouteSubscriber (rotas globais do Commerce).
 // The external integration contract adds SocialAuthCallbackRouteSubscriber for
-// /integracoes/{network}/retorno, bringing the Portal total to fifteen.
+// /integracoes/{network}/retorno. Mercado Pago owns its webhook subscriber.
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 15
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 13
     && str_contains($services, 'aculta_portal.social_auth_callback_route_subscriber:')
     && str_contains($services, 'Drupal\\aculta_portal\\EventSubscriber\\SocialAuthCallbackRouteSubscriber')
     && str_contains($read($srcRoot . '/EventSubscriber/SocialAuthCallbackRouteSubscriber.php'), "'/integracoes/{network}/retorno'"),
@@ -324,12 +326,12 @@ $check(
     && str_contains($editorialHooksSource, "'wiki'"),
   'P2-R editorial/CEP/Domain behavior invariants must remain present.',
 );
-$entitySaveHooks = $srcRoot . '/Hook/EntitySaveHooks.php';
+$entitySaveHooks = $mpSrcRoot . '/Hook/EntitySaveHooks.php';
 $entitySaveHooksSource = $read($entitySaveHooks);
 $check(is_file($entitySaveHooks), 'P4.3 EntitySaveHooks class must exist.');
 $check(
-  substr_count($hookRuntimeSources, "#[Hook('entity_presave')]") === 1,
-  'P4.3 entity_presave must be implemented exactly once as an OOP hook.',
+  substr_count($hookRuntimeSources, "#[Hook('entity_presave')]") === 0,
+  'P4.3 Portal must not retain the Mercado Pago entity_presave hook.',
 );
 $check(
   preg_match(
@@ -404,8 +406,6 @@ foreach ([
   'AccountRouteSubscriber::isValidCorePasswordResetRequest',
   "['route', 'user']",
   'setCacheMaxAge(0)',
-  "'commerce_payment_gateway'",
-  "'mercado_pago'",
 ] as $invariant) {
   $check(
     str_contains($entityHooksSource, $invariant),
@@ -458,11 +458,7 @@ $check(
 );
 foreach ([
   "'user_form'",
-  'PaymentGatewayForm',
   "'commerce_donation_pane'",
-  "'credentials_test'",
-  "'access_token_test'",
-  "'client_secret'",
   "'aculta_portal.form_callbacks:securityPasswordAfterBuild'",
   "'aculta_portal.form_callbacks:securityPasswordRedirect'",
   "'aculta_portal.form_callbacks:validateDonationAmount'",
@@ -475,12 +471,34 @@ foreach ([
 
 // Module-wide totals: owning class + the pre-existing PortalHooks concern. form_alter ganha AccountAddressHooks: o
 // formulário de endereço único (loja e perfis de equipe), ver docs/portal/ACCOUNT-ADDRESS.md.
-foreach (['form_alter' => 3, 'metatags_alter' => 2, 'entity_access' => 1, 'entity_presave' => 1] as $hookName => $expected) {
+foreach (['form_alter' => 3, 'metatags_alter' => 2, 'entity_access' => 1, 'entity_presave' => 0] as $hookName => $expected) {
   $check(
     substr_count($hookRuntimeSources, "#[Hook('" . $hookName . "')]") === $expected,
     'Hook implementation count drifted for ' . $hookName . ' (expected ' . $expected . ').',
   );
 }
+
+$mpHookRuntimeSources = '';
+foreach (glob($mpSrcRoot . '/Hook/*.php') ?: [] as $hookFile) {
+  $mpHookRuntimeSources .= $read($hookFile);
+}
+foreach (['form_alter' => 1, 'entity_access' => 1, 'entity_presave' => 1] as $hookName => $expected) {
+  $check(
+    substr_count($mpHookRuntimeSources, "#[Hook('" . $hookName . "')]") === $expected,
+    'Mercado Pago module hook count drifted for ' . $hookName . ' (expected ' . $expected . ').',
+  );
+}
+$mpPaymentGatewayEntityHooks = $read($mpSrcRoot . '/Hook/PaymentGatewayEntityHooks.php');
+$mpPaymentGatewayFormHooks = $read($mpSrcRoot . '/Hook/PaymentGatewayFormHooks.php');
+$check(
+  str_contains($mpPaymentGatewayEntityHooks, "'commerce_payment_gateway'")
+    && str_contains($mpPaymentGatewayEntityHooks, "'mercado_pago'")
+    && str_contains($mpPaymentGatewayFormHooks, 'PaymentGatewayForm')
+    && str_contains($mpPaymentGatewayFormHooks, "'credentials_test'")
+    && str_contains($mpPaymentGatewayFormHooks, "'access_token_test'")
+    && str_contains($mpPaymentGatewayFormHooks, "'client_secret'"),
+  'Mercado Pago module hooks must retain gateway access and credential masking protections.',
+);
 
 $p4HookSources = [
   'form_alter' => $formHooksSource ?? '',
@@ -823,7 +841,7 @@ foreach ([
   'src/EventSubscriber/AccountRouteSubscriber.php',
   'modules/aculta_portal_cep/src/EventSubscriber/CepLookupRateLimitSubscriber.php',
   'src/EventSubscriber/DomainPurposeRequestSubscriber.php',
-  'src/Commerce/MercadoPago/WebhookEventSubscriber.php',
+  'modules/aculta_pagamentos_mercadopago/src/Commerce/MercadoPago/WebhookEventSubscriber.php',
 ] as $requestListener) {
   $check(
     str_contains($read($moduleRoot . '/' . $requestListener), 'isMainRequest()'),

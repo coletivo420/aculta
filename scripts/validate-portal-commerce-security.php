@@ -16,6 +16,7 @@ $assert = static function (bool $condition, string $message) use (&$checks): voi
 
 $modules = \Drupal::moduleHandler();
 $assert($modules->moduleExists('aculta_portal'), 'aculta_portal is enabled.');
+$assert($modules->moduleExists('aculta_pagamentos_mercadopago'), 'The project-owned Mercado Pago module is enabled.');
 $assert(!$modules->moduleExists('aculta_apoio'), 'Former standalone aculta_apoio is not enabled.');
 $assert(!$modules->moduleExists('aculta_editorial'), 'Consolidated aculta_editorial is not enabled.');
 $assert(!is_dir(DRUPAL_ROOT . '/modules/custom/aculta_editorial'), 'Consolidated aculta_editorial directory has been removed.');
@@ -452,7 +453,7 @@ $previous_mp = [];
 foreach ($mp_variables as $variable) {
   $previous_mp[$variable] = getenv($variable);
 }
-$mp_environment = \Drupal\aculta_portal\Commerce\MercadoPago\MercadoPagoCredentials::currentEnvironment(dirname(\Drupal::root()));
+$mp_environment = \Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\MercadoPagoCredentials::currentEnvironment(dirname(\Drupal::root()));
 $mp_token_field = $mp_environment === 'test' ? 'access_token_test' : 'access_token_prod';
 $gateway_storage = \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway');
 $fake_public_key = 'TEST_MP_PUBLIC_' . bin2hex(random_bytes(12));
@@ -462,7 +463,7 @@ putenv('MERCADOPAGO_TEST_PUBLIC_KEY=' . $fake_public_key);
 putenv('MERCADOPAGO_TEST_ACCESS_TOKEN=' . $fake_access_token);
 putenv('MERCADOPAGO_PRODUCTION_PUBLIC_KEY=' . $fake_public_key);
 putenv('MERCADOPAGO_PRODUCTION_ACCESS_TOKEN=' . $fake_access_token);
-$mp_override = \Drupal::service('aculta_portal.mercado_pago_environment_override')->loadOverrides(['commerce_payment.commerce_payment_gateway.mercado_pago']);
+$mp_override = \Drupal::service('aculta_pagamentos_mercadopago.environment_override')->loadOverrides(['commerce_payment.commerce_payment_gateway.mercado_pago']);
 $assert(($mp_override['commerce_payment.commerce_payment_gateway.mercado_pago']['configuration'][$mp_token_field] ?? '') === $fake_access_token, 'Runtime credentials map to the gateway plugin in memory for the declared environment.');
 \Drupal::configFactory()->reset('commerce_payment.commerce_payment_gateway.mercado_pago');
 $gateway_storage->resetCache(['mercado_pago']);
@@ -688,7 +689,7 @@ $make_webhook_request = static function (array $query_values, array $body_values
   }
   return $request;
 };
-$webhook_guard = \Drupal::service('aculta_portal.mercado_pago_webhook_guard');
+$webhook_guard = \Drupal::service('aculta_pagamentos_mercadopago.webhook_guard');
 $valid_signature = $sign_test_webhook($webhook_data_id, $webhook_request_id, $fake_webhook_secret);
 
 $valid_request = $make_webhook_request(
@@ -725,7 +726,7 @@ $assert($webhook_guard->validateAndNormalize($make_webhook_request(['data.id' =>
 $assert($webhook_guard->validateAndNormalize($make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], ['type' => 'payment', 'data' => ['id' => $webhook_data_id]], $valid_signature, $webhook_request_id), TRUE, NULL)?->getStatusCode() === 503, 'A missing environment secret fails closed.');
 $assert($webhook_guard->validateAndNormalize($make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], ['type' => 'payment', 'data' => ['id' => $webhook_data_id]], $valid_signature, $webhook_request_id, 'GET'), TRUE, $fake_webhook_secret)?->getStatusCode() === 405, 'GET is rejected on the payment notification route.');
 
-$subscriber = \Drupal::service('aculta_portal.mercado_pago_webhook_subscriber');
+$subscriber = \Drupal::service('aculta_pagamentos_mercadopago.webhook_subscriber');
 $kernel = \Drupal::service('http_kernel');
 $other_gateway_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], ['type' => 'payment', 'data' => ['id' => $webhook_data_id]], NULL, NULL);
 $other_gateway_request->attributes->set('_route', 'commerce_payment.notify');
@@ -773,8 +774,8 @@ finally {
 
 $assert($sync_storage->read('key.key.mercadopago_webhook_secret')['key_provider_settings']['env_variable'] === 'MERCADOPAGO_WEBHOOK_SECRET', 'Webhook secret Key export contains only the environment variable contract.');
 $assert($sync_storage->read('key.key.mercadopago_webhook_secret')['key_provider'] === 'env', 'Webhook signing secret is never configured with a value provider.');
-$webhook_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Commerce/MercadoPago/WebhookGuard.php')
-  . file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Commerce/MercadoPago/WebhookEventSubscriber.php');
+$webhook_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Commerce/MercadoPago/WebhookGuard.php')
+  . file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Commerce/MercadoPago/WebhookEventSubscriber.php');
 foreach (['PreferenceClient', 'PaymentClient', 'MerchantOrderClient', 'PaymentRefundClient', 'http_client_factory', 'GuzzleHttp\\Client'] as $forbidden_webhook_client) {
   $assert(!str_contains($webhook_source, $forbidden_webhook_client), 'Webhook guard has no custom payment/API client dependency: ' . $forbidden_webhook_client);
 }
