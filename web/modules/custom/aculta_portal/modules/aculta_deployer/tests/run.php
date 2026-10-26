@@ -148,6 +148,33 @@ $assert((new Registry($corrupt))->entries()[0]['id'] === 'DEP-0001', 'registro g
 array_map('unlink', glob($tmpDir . '/*') ?: []);
 @rmdir($tmpDir);
 
+// Fase 2b: concorrência do registro. Duas instâncias leram o mesmo estado; a segunda não pode sobrescrever a primeira.
+$raceDir = sys_get_temp_dir() . '/aculta-deployer-race-' . getmypid();
+@mkdir($raceDir);
+$raceFile = $raceDir . '/reg.json';
+file_put_contents($raceFile, json_encode(['schema' => 1, 'entries' => []]));
+$record = static fn(string $page): array => ['kind' => 'other', 'page' => $page, 'current' => 'c', 'expected_production' => 'e', 'reason' => 'r', 'owner' => 'o'];
+$first = new Registry($raceFile);
+$second = new Registry($raceFile);
+$first->add($record('pagina-1'));
+$first->save();
+$refused = FALSE;
+try {
+  $second->add($record('pagina-2'));
+}
+catch (\RuntimeException $e) {
+  $refused = str_contains($e->getMessage(), 'alterado por outro processo');
+}
+$assert($refused, 'registro: gravação sobre estado antigo é recusada');
+$afterRace = (new Registry($raceFile))->entries();
+$assert(count($afterRace) === 1 && $afterRace[0]['page'] === 'pagina-1', 'registro: a gravação recusada não apaga a entrada do primeiro processo');
+$third = new Registry($raceFile);
+$third->add($record('pagina-2'));
+$third->save();
+$assert(count((new Registry($raceFile))->entries()) === 2, 'registro: depois de reler, a gravação é aceita');
+array_map('unlink', glob($raceDir . '/*') ?: []);
+@rmdir($raceDir);
+
 // Fase 2: cobertura e segurança do build em diretórios temporários.
 $base = sys_get_temp_dir() . '/aculta-deployer-p2-' . getmypid();
 @mkdir($base);
