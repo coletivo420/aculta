@@ -33,7 +33,7 @@ final class PrivateMessageNoticeMailType implements MailTypeInterface {
       ],
       'url' => [
         'label' => (string) $this->translation->translate('Link para abrir a caixa de mensagens'),
-        'sample' => 'https://aculta.org/minha-conta/mensagens',
+        'sample' => 'https://example.com/minha-conta/mensagens',
       ],
     ];
   }
