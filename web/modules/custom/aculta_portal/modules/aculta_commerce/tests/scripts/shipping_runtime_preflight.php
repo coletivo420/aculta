@@ -39,6 +39,7 @@ $inventory = [
   'shipping_method_status_unknown_count' => NULL,
   'shipment_count' => NULL,
   'order_types' => [],
+  'order_counts_by_type' => [],
   'checkout_panes' => [],
   'variation_types_shippable' => [],
 ];
@@ -73,7 +74,15 @@ if ($entities->hasDefinition('commerce_shipment')) {
 
 foreach ($configs->listAll('commerce_order.commerce_order_type.') as $name) {
   $config = $configs->get($name);
-  $inventory['order_types'][(string) $config->get('id')] = [
+  $id = (string) $config->get('id');
+  if ($entities->hasDefinition('commerce_order')) {
+    $inventory['order_counts_by_type'][$id] = (int) $entities->getStorage('commerce_order')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('type', $id)
+      ->count()
+      ->execute();
+  }
+  $inventory['order_types'][$id] = [
     'traits' => array_values((array) $config->get('traits')),
     'workflow' => $config->get('workflow'),
   ];
@@ -95,6 +104,7 @@ foreach ($configs->listAll('commerce_product.commerce_product_variation_type.') 
 }
 
 ksort($inventory['order_types']);
+ksort($inventory['order_counts_by_type']);
 ksort($inventory['checkout_panes']);
 ksort($inventory['variation_types_shippable']);
 
