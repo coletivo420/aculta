@@ -333,6 +333,9 @@ $assert($t->validateProfiles() === [], 'perfis: deploy.json atual cobre todos os
 $broken = $config;
 $broken['profiles']['test']['rules'] = array_values(array_filter($config['profiles']['test']['rules'], static fn(array $r): bool => $r['file'] !== 'config/sync/system.site.yml'));
 $assert(count(array_filter((new Transform($broken))->validateProfiles(), static fn(string $e): bool => str_contains($e, 'system.site.yml'))) === 1, 'perfis: arquivo sem regra no perfil de teste é recusado');
+$outOfScope = $config;
+$outOfScope['environment_bound'] = [['file' => 'web/modules/custom/example/src/Command.php']];
+$assert((new Transform($outOfScope))->validateProfiles() === [], 'perfis: arquivo fora do escopo não exige regra de transformação');
 $noBound = $config;
 $noBound['environment_bound'] = [];
 $assert((new Transform($noBound))->validateProfiles() !== [], 'perfis: environment_bound vazio é recusado');

@@ -84,6 +84,11 @@ final class Transform {
         $covered[$rule['file']] = true;
       }
       foreach ($bound as $file) {
+        // Arquivos fora do escopo são observados por outras políticas, mas não
+        // passam pela transformação de perfis durante o build.
+        if (!$this->inScope($file)) {
+          continue;
+        }
         // Na produção, o arquivo removido pela lista drop não é gerado: não precisa de regra.
         if ($env === 'production' && $this->isDropped($file)) {
           continue;
