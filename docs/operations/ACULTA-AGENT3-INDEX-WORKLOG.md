@@ -461,6 +461,9 @@ O status global continua `Dev` e a decisão é do agente 1. Proposta para
 - `3fa562e01` — test(index): cover file metric through the statistics bridge
 - `2f664cca9` — feat(lms): allow remote video references on courses
 - `6d35bd40a` — test(lms): cover course_video access through the content index
+- `d00d2a193` — test(lms): update builder fixture to the revista bundle
+- `9d547ef21` — docs(lms): publish video contract and course_video evidence
+- `bccd4618c` — docs(index): publish file metric, video contract and runtime homologation
 - Commit documental do worklog: HEAD final da branch
   `feat/aculta-index-fechamento` (registrado no relatório de entrega).
 
