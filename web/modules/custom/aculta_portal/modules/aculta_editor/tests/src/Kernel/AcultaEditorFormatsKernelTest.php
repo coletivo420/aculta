@@ -63,8 +63,9 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
     $this->installConfig(['system', 'filter', 'editor', 'ckeditor5', 'ckeditor5_plugin_pack_templates', 'aculta_editor', 'node']);
     $this->installEntitySchema('node');
     $this->installEntitySchema('node_type');
-    // Os formatos do site vêm de config/sync; a Kernel cria só o filtro de HTML de cada um.
-    FilterFormat::create(['format' => 'revista_editorial', 'name' => 'Aculta Editorial (HTML completo)'])->save();
+    // Os formatos do site vêm de config/sync; a Kernel instala os filtros reais
+    // usados pelos formatos restritos, inclusive o Editorial.
+    $this->createFilterFormat('revista_editorial', 'Aculta Editorial');
     $this->createFilterFormat('usuario_aculta', 'Usuário ACULTA (HTML restrito)');
     $this->createFilterFormat('wiki', 'Aculta Wiki (somente Wiki)');
     $this->createFilterFormat('email_html', 'Aculta Email (e-mails)');
@@ -118,10 +119,15 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
   }
 
   /**
-   * O Editorial é HTML completo por decisão do responsável: não tem filtro de HTML.
+   * O Editorial usa o filtro HTML de edição configurado no Config Sync.
    */
-  public function testEditorialIsFullHtmlByDecision(): void {
-    $this->assertFalse(FilterFormat::load('revista_editorial')->filters('filter_html')->status);
+  public function testEditorialUsesRestrictedHtmlFilter(): void {
+    $format = FilterFormat::load('revista_editorial');
+    $this->assertTrue($format->filters('filter_html')->status);
+    $output = $this->filter('revista_editorial', '<script>alert(1)</script><p onclick="x()">Texto</p>');
+    $this->assertStringNotContainsString('<script', $output);
+    $this->assertStringNotContainsString('onclick', $output);
+    $this->assertStringContainsString('<p>Texto</p>', $output);
   }
 
   /**
