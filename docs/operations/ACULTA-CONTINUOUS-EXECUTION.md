@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit estável e publicado:** `9e707b6df` (`docs(aculta): record Green Stash access fix`); branch local e `origin/chore/aculta-m0-integridade` sincronizadas após fetch em 2026-10-26.
+**Último commit estável e publicado:** `d1dbe1c5d` (`docs(aculta): record M-0 gates and donation harness finding`); branch local e `origin/chore/aculta-m0-integridade` sincronizadas após fetch em 2026-10-26.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
@@ -15,7 +15,7 @@
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
 5. Próxima unidade: revisar individualmente as 9 configurações Messenger presentes no Sync mas divergentes do Runtime e decidir quais são drift, customização operacional ou defaults obsoletos; não exportar globalmente nem alterar anchor/preferências sem classificação.
 6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente das oito frentes concluiu seu trabalho; comparação por caminhos confirmou que todos os incrementos já estão na PR sob SHAs equivalentes. Não fazer cherry-pick duplicado; nenhum desses diretórios foi alterado neste turno.
-7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último commit estável: `9e707b6df` (`docs(aculta): record Green Stash access fix`).
+7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último commit estável: `d1dbe1c5d` (`docs(aculta): record M-0 gates and donation harness finding`).
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
@@ -347,3 +347,10 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - `GreenStashProductCreateForm` avaliava `AccessResultInterface` como booleano nos gates da experiência e do Commerce; resultado negado continuava truthy. Corrigido para `isAllowed()` em ambos os checks e adicionados dois testes que asseguram parada antes do handler/lookup subsequente.
 - Unit Commerce completa: 31/192 PASS, com 11 depreciações PHPUnit; PHPCS e PHP lint focais PASS. `aculta_commerce` dev.8 → dev.9. Sem Runtime ou pagamentos externos.
+
+
+## M-2 — cobertura fail-closed do FileRemover (2026-10-26)
+
+- Adicionado `FileRemoverFailClosedTest` para confirmar que referências File API e Entity Usage bloqueiam exclusão; falha na consulta Entity Usage propaga antes de acessar a storage de arquivos. O teste não opera sobre arquivos reais.
+- Unit focal: 3/23 PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS. `aculta_image` avançou `0.1.0-dev.31` → `.32`; README, CHANGELOG, status e matriz reconciliados.
+- A auditoria não executou `ImageCleanup` em Runtime nem alterou arquivo/conteúdo; limpeza real continua fora do escopo desta missão.

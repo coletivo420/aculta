@@ -1,5 +1,11 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.32 — cobrir exclusão fail-closed por referências
+
+- `FileRemoverFailClosedTest` prova que uso reportado pelo File API ou por Entity Usage impede a exclusão; erro ao consultar Entity Usage propaga antes de qualquer acesso à storage de arquivos. Nenhum arquivo real é apagado.
+- Teste Unit focal: 3 testes / 23 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint do teste PASS.
+- README reconciliado à versão `0.1.0-dev.32`; status Dev mantido. Sem alteração no Runtime.
+
 ## 0.1.0-dev.31 — limpeza delegada ao coordenador Portal
 
 - `ImageCleanup` usa `aculta_portal.unused_file_cleaner` quando disponível, mantendo fallback para instalação sem o Kernel Portal; não há dependência de módulo circular.
