@@ -474,3 +474,10 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - `scripts/growroom/build_mapping.py --so-mapeamento` regenerou os mapas no storage privado Homelab, fora do Git e do Drupal Runtime. `autor-origem.json`: 9.608 registros (741 IPS4, 2.751 THW, 6.116 por nome), sem pendências; 211.388 referências a tópicos. Dez e-mails continuam omitidos.
 - `verificar_importacao.py --rapido`: C1–C10 PASS; C10 validou IDs, nomes e URLs em tópicos selecionados; C8 sem e-mails. C1/C3 em modo rápido verificaram existência/tamanho, não hashes/marcador final. A integridade completa dos bytes do acervo não foi recalculada.
 - Testes sintéticos `python3 -m unittest tests/scripts/test_growroom_origin_ids.py`: 10 testes PASS; `py_compile` PASS. Nenhum importador Drupal de posts/assets existe ainda. Próxima unidade: projetar exportação versionada dos posts/arquivos, seguida por importação idempotente em banco efêmero; importação no Runtime não ocorreu.
+
+
+## M-4 — regressão focal Commerce, Doações e Mercado Pago (2026-10-26)
+
+- Commerce Unit: 31 testes / 192 assertions PASS; 11 depreciações PHPUnit. Mercado Pago Unit: 11/22 PASS. Nenhum pagamento, sandbox externo ou credencial foi usado.
+- Kernel da branch, MariaDB `aculta_simpletest`: `CheckoutProTest` 1/50 PASS, com 76 depreciações Core/contrib e 2 PHPUnit. Um primeiro runner carregou código do checkout compartilhado e foi descartado; a execução válida usou o caminho absoluto do worktree e autoloader prioritário da PR.
+- `DonationPortKernelTest`: reproduz 4 erros de setup / 0 assertions porque a fixture não instala `aculta_messenger`; o publisher real `aculta_donation` depende do serviço compartilhado ausente `aculta_messenger.notice_event_publisher`. Não foi adicionado serviço fictício nem alterado o módulo; próximo passo é fechar a closure real Messenger/Portal/Image no harness, sem baixar a segurança do teste. Nenhum Runtime ou integração financeira externa foi acionada.
