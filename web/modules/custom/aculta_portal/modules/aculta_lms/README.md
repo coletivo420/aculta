@@ -1,10 +1,12 @@
 # ACULTA LMS
 
-`ClassDashboardKernelTest` usa Group/LMS reais e instancia as classes de domínio
-e apresentação reais (`LearningDashboardManager`, access check, controller e
-compositor Studio) em fixture focal. A instalação da cadeia inteira Portal/
-Messenger/Studio não é validada por esse caso; seus outros harnesses permanecem
-registrados no changelog. Nenhum serviço fictício foi adicionado ao produto.
+Os Kernels LMS agregados passam com 29 testes / 835 assertions no banco
+dedicado. `AcultaLmsDependencyHarnessTrait` registra somente as classes reais
+de Portal, Messenger, LMS e Studio necessárias para compilar os cenários
+focais; ele não instala toda a configuração desses módulos. A suíte não
+substitui um teste de instalação limpa da closure completa. Uma depreciação
+reportada pertence ao contrib `webform_score`. Nenhum serviço fictício foi
+adicionado ao produto e Runtime não foi alterado.
 
 Submódulo opcional de integração educacional do Portal. Drupal LMS e Group são
 as fontes de verdade; `aculta_lms` não cria matrícula, resposta, nota,

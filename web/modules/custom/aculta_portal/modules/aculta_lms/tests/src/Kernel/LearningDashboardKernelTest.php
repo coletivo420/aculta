@@ -24,6 +24,7 @@ use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -33,13 +34,23 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[RunTestsInSeparateProcesses]
 final class LearningDashboardKernelTest extends KernelTestBase {
 
+  use AcultaLmsDependencyHarnessTrait;
+
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'file', 'field', 'filter', 'image', 'media', 'options', 'entity_print',
+    'system', 'domain', 'user', 'file', 'field', 'filter', 'image', 'media', 'options', 'entity_print',
     'entity_usage', 'aculta_image', 'flexible_permissions', 'group', 'views', 'text', 'lms', 'aculta_lms',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerLmsDependencyServices($container);
+  }
 
   /**
    * {@inheritdoc}

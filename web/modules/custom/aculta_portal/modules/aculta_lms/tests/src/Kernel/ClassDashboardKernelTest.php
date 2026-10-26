@@ -22,6 +22,7 @@ use Drupal\user\UserInterface;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Verifies LMS class dashboard counts remain scoped to current class members. */
@@ -29,12 +30,14 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class ClassDashboardKernelTest extends KernelTestBase {
 
+  use AcultaLmsDependencyHarnessTrait;
+
   use UserCreationTrait;
 
   /**
    * {@inheritdoc} */
   protected static $modules = [
-    'system',
+    'system', 'domain',
     'user',
     'file',
     'image',
@@ -51,6 +54,14 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     'lms',
     'lms_classes',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerLmsDependencyServices($container);
+  }
 
   /**
    * {@inheritdoc}

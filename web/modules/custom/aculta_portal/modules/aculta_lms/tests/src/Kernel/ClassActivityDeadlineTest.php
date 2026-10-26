@@ -23,6 +23,7 @@ use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Tests class-specific activity deadlines with real Group entities.
@@ -31,13 +32,15 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class ClassActivityDeadlineTest extends KernelTestBase {
 
+  use AcultaLmsDependencyHarnessTrait;
+
   use UserCreationTrait;
 
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system',
+    'system', 'domain',
     'datetime',
     'user',
     'file',
@@ -59,6 +62,14 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     'user',
     'aculta_lms',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerLmsDependencyServices($container);
+  }
 
   /**
    * {@inheritdoc}

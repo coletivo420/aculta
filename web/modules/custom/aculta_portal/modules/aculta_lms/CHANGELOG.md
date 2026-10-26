@@ -1,3 +1,17 @@
+## 0.1.0-dev.91 — fechar setup dos Kernels LMS com contratos reais — 2026-10-26
+
+- Os harnesses Kernel que habilitam ou instalam `aculta_lms` agora compartilham
+  definições de teste das classes reais necessárias de Portal, Messenger e
+  Studio. O recorte não instala configuração alheia ao cenário nem adiciona
+  serviços fictícios ao produto. `AcultaLmsInstallTest` também verifica o
+  serviço real `CheckoutSettings`, o tipo padrão `curso` e o controller
+  Ganjalab referenciado pela rota.
+- Kernel agregado: 29 testes / 835 assertions PASS no MariaDB dedicado; uma
+  depreciação vem de `webform_score` contrib. PHPCS Drupal/DrupalPractice e
+  PHP lint dos arquivos alterados PASS. Isso remove os erros de setup dos
+  harnesses LMS, mas não equivale a instalar a closure completa Portal/
+  Messenger/Studio com toda sua configuração. Runtime não foi alterado.
+
 ## 0.1.0-dev.90 — Kernel focal do painel de turma com contratos reais — 2026-10-26
 
 - `ClassDashboardKernelTest` não habilita a instalação inteira do Portal, pois isso carregava configuração e serviços de Commerce/Domain não usados pelo caso. O fixture Kernel mantém Group, LMS e `lms_classes` reais, registra os namespaces de código reais e instancia `LearningDashboardManager`, `ClassDashboardAccessCheck`, `LearningDashboardController`, prazo e compositor de Studio reais. Não há serviço fictício nem alteração no produto.
