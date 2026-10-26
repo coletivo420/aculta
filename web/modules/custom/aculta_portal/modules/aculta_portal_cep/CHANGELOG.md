@@ -92,3 +92,8 @@
 - Não portado: `viacep.js` e o `ViaCepClient` do contrib (código morto ou conflitante; ver README).
 - O `aculta_portal` passa a depender deste submódulo no lugar do `cep_autocomplete`.
 - RUNTIME STATUS: pendente (ver a entrega do aculta_portal).
+## 0.3.0-dev.12 — restringir a gramática de entrada do CEP — 2026-10-26
+
+- O normalizador não descarta mais caracteres arbitrários para formar um CEP. Aceita oito dígitos em sequência ou com o hífen/whitespace previsto e rejeita letras e separadores repetidos.
+- Regressão Unit adicionada para entradas contaminadas; validações focais registradas no status do componente. Sem chamadas externas ou escrita no Runtime.
+

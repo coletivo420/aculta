@@ -74,6 +74,8 @@ class CepLookupServiceTest extends UnitTestCase {
     $this->assertNull($service->normalize('0131'));
     $this->assertNull($service->normalize(''));
     $this->assertNull($service->normalize('abcdefgh'));
+    $this->assertNull($service->normalize('abc01310100xyz'));
+    $this->assertNull($service->normalize('01310--100'));
   }
 
   /**

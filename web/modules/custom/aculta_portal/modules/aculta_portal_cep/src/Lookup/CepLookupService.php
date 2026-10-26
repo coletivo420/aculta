@@ -42,8 +42,10 @@ final class CepLookupService implements CepLookupInterface {
    * Retorna NULL se o valor não tiver exatamente oito dígitos.
    */
   public function normalize(string $cep): ?string {
-    $digits = preg_replace('/\D+/', '', $cep) ?? '';
-    return strlen($digits) === 8 ? $digits : NULL;
+    if (!preg_match('/^[ \t]*(\d{5})[ \t]*-?[ \t]*(\d{3})[ \t]*$/D', $cep, $matches)) {
+      return NULL;
+    }
+    return $matches[1] . $matches[2];
   }
 
   /**
