@@ -10,6 +10,21 @@ DEFERRED (2 erros/0 assertions); sem Runtime write.
 
 # Changelog — ACULTA Statistics
 
+## Auditoria focal — 2026-10-26
+
+- O serviço `aculta_statistics.ga4_logger` passou a declarar
+  `Drupal\Core\Logger\LoggerChannelInterface`, tipo exigido pelos clientes
+  GA4/Search Console e devolvido por `logger.factory`. A auditoria de serviços
+  confirmou classe, aridade e tipos dos demais serviços.
+- PHPCS Drupal/DrupalPractice: 0 erros e 614 avisos de comprimento de linha
+  (sobretudo em documentação). Foram corrigidos 79 erros de estilo em `src`,
+  `tests`, `install` e neste changelog; nenhuma mudança de comportamento.
+- Unit: 108 testes / 438 assertions PASS em worktree isolado, PHP 8.4.27.
+  PHP lint: 95/95 arquivos. Kernel e Functional não foram reexecutados nesta
+  rodada.
+- Nenhuma operação no Runtime, nenhum push. O estado do Runtime não foi
+  verificado nesta auditoria.
+
 ## 0.9.0-dev.9 — permissão de métricas públicas para editores
 
 - O papel `content_editor` recebe `view content-level statistics` em
@@ -666,4 +681,3 @@ até o módulo ser ativado.
 
 - O alias de `MelhorEnvioAddressMapper` foi integrado em `aculta_commerce_melhorenvio 0.1.0-dev.2`, removendo o erro de definição de serviço originalmente observado. Na reexecução no docroot efêmero, o harness com Core duplicado falhou por declaração dupla de `system_hook_info()`; a tentativa com Core compartilhado não avançou além do cabeçalho do PHPUnit e foi encerrada. A Functional continua sem resultado/asserções pós-fix e fica DEFERRED, não PASS.
 - Nenhuma operação no Runtime; o harness precisa ser reconstruído com um único Core resolvido para servidor e PHPUnit.
-

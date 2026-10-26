@@ -50,7 +50,7 @@ final class WikiRevisionReport {
    *   total_revisions: int,
    *   total_drafts: int,
    *   limit: int|null
-   * }
+   *   }
    *   Verbete e contagens, além dos totais de todo o histórico (não só do
    *   recorte exibido).
    */

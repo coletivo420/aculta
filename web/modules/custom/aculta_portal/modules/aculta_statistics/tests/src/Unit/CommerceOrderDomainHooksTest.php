@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_statistics\Unit;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Drupal\aculta_statistics\Domain\PurposeResolverInterface;
 use Drupal\aculta_statistics\Hook\CommerceOrderDomainHooks;
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -70,7 +71,7 @@ final class CommerceOrderDomainHooksTest extends TestCase {
   /**
    * Pedido de teste com novidade e dado informados.
    */
-  private function order(bool $isNew, mixed $data): OrderInterface&\PHPUnit\Framework\MockObject\MockObject {
+  private function order(bool $isNew, mixed $data): OrderInterface&MockObject {
     $order = $this->createMock(OrderInterface::class);
     $order->method('isNew')->willReturn($isNew);
     $order->method('getData')->willReturn($data);

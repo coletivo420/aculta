@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_statistics\Connector\Ga4;
 
+use Google\Service\AnalyticsData\Metric;
+use Google\Service\AnalyticsData\Dimension;
+use Google\Service\AnalyticsData\DateRange;
+use Google\Service\AnalyticsData\RunReportRequest;
+use Google\Service\AnalyticsData;
+use Google\Client;
 use Drupal\Core\Logger\LoggerChannelInterface;
 
 /**
@@ -28,6 +34,12 @@ final class GoogleGa4ReportClient implements Ga4ReportClient {
   private $runner;
 
   /**
+   * Constrói o cliente do GA4.
+   *
+   * @param \Drupal\aculta_statistics\Connector\Ga4\Ga4Settings $settings
+   *   Configuração da propriedade e da credencial.
+   * @param \Drupal\Core\Logger\LoggerChannelInterface $logger
+   *   Canal de log do módulo.
    * @param callable(string, array): array|null $runner
    *   Substituto da chamada à API (teste). NULL usa a biblioteca oficial.
    */
@@ -77,6 +89,7 @@ final class GoogleGa4ReportClient implements Ga4ReportClient {
    *   Linhas com `date` (AAAAMMDD), `sessions` e `activeUsers` como texto ou número.
    *
    * @return array<string, array{sessions: int, activeUsers: int}>
+   *   Série por dia.
    */
   public function normalize(array $rows): array {
     $out = [];
@@ -98,32 +111,35 @@ final class GoogleGa4ReportClient implements Ga4ReportClient {
   /**
    * Chamada real à Analytics Data API (runReport) com a biblioteca oficial. Devolve linhas simples.
    *
+   * @param string $propertyId
+   *   ID da propriedade GA4.
    * @param array<string, mixed> $request
    *   Corpo do pedido (intervalo, dimensões e métricas).
    *
    * @return array<int, array<string, string>>
+   *   Linhas normalizadas da API.
    */
   private function callApi(string $propertyId, array $request): array {
-    $client = new \Google\Client();
+    $client = new Client();
     $client->setAuthConfig($this->settings->serviceAccount());
     $client->addScope(self::SCOPE);
-    $service = new \Google\Service\AnalyticsData($client);
+    $service = new AnalyticsData($client);
 
-    $body = new \Google\Service\AnalyticsData\RunReportRequest();
-    $range = new \Google\Service\AnalyticsData\DateRange();
+    $body = new RunReportRequest();
+    $range = new DateRange();
     $range->setStartDate($request['dateRanges'][0]['startDate']);
     $range->setEndDate($request['dateRanges'][0]['endDate']);
     $body->setDateRanges([$range]);
     // Os setters da biblioteca não devolvem o objeto: cada dimensão e métrica é criada e nomeada em separado.
     $dimensions = [];
     foreach ($request['dimensions'] as $name) {
-      $dimension = new \Google\Service\AnalyticsData\Dimension();
+      $dimension = new Dimension();
       $dimension->setName($name);
       $dimensions[] = $dimension;
     }
     $metrics = [];
     foreach ($request['metrics'] as $name) {
-      $metric = new \Google\Service\AnalyticsData\Metric();
+      $metric = new Metric();
       $metric->setName($name);
       $metrics[] = $metric;
     }

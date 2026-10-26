@@ -86,17 +86,30 @@ final class GoogleGa4ReportClientTest extends TestCase {
   /**
    * Configuração de teste que devolve propriedade e credencial informadas.
    *
+   * @param string|null $property
+   *   ID da propriedade GA4.
    * @param array<string, mixed>|null $account
+   *   Chave da conta de serviço ou NULL.
    */
   private function settings(?string $property, ?array $account): Ga4Settings {
     return new class($property, $account) implements Ga4Settings {
+
       public function __construct(private readonly ?string $property, private readonly ?array $account) {}
+
+      /**
+       * Devolve a propriedade configurada.
+       */
       public function propertyId(): ?string {
         return $this->property;
       }
+
+      /**
+       * Devolve a conta de serviço configurada.
+       */
       public function serviceAccount(): ?array {
         return $this->account;
       }
+
     };
   }
 

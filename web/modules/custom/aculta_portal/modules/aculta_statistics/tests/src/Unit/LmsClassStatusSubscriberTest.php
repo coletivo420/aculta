@@ -29,7 +29,12 @@ final class LmsClassStatusSubscriberTest extends TestCase {
       ['5/9|students' => 12, '5/9|passed' => 3, '5/9|failed' => 0],
     );
 
-    $event = new class {
+    $event = new class() {
+      /**
+       * Linhas do snapshot.
+       *
+       * @var array<int, array<string, mixed>>
+       */
       public array $rows = [
         ['course' => 5, 'class' => 9, 'situation' => 'students', 'count' => 12],
         ['course' => 5, 'class' => 9, 'situation' => 'passed', 'count' => 3],

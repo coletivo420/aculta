@@ -31,7 +31,12 @@ final class StudentDataSubscribersTest extends TestCase {
       ['5/42|in_progress' => 1, '5/43|passed' => 1],
     );
 
-    $event = new class {
+    $event = new class() {
+      /**
+       * Linhas do snapshot.
+       *
+       * @var array<int, array<string, mixed>>
+       */
       public array $rows = [
         ['course' => 5, 'uid' => 42, 'situation' => 'in_progress'],
         ['course' => 5, 'uid' => 43, 'situation' => 'passed'],
@@ -48,11 +53,21 @@ final class StudentDataSubscribersTest extends TestCase {
     $storage->expects($this->exactly(2))->method('purgeStudent')->with('lms.student.status', 42);
 
     $subscriber = new StudentDataPurgeSubscriber($storage);
-    $subscriber->onAccountDeleted(new class {
+    $subscriber->onAccountDeleted(new class() {
+      /**
+       * UID da conta.
+       */
       public int $uid = 42;
     });
-    $subscriber->onConsentRevoked(new class {
+    $subscriber->onConsentRevoked(new class() {
+      /**
+       * UID da conta.
+       */
       public int $uid = 42;
+
+      /**
+       * Tipo de aceite revogado.
+       */
       public string $agreementType = 'aculta_user_agreement_terms';
     });
   }

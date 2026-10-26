@@ -18,6 +18,7 @@ interface SearchConsoleSettings {
    * Chave da conta de serviço (mesma do GA4), ou NULL. Nunca registrar o retorno.
    *
    * @return array<string, mixed>|null
+   *   Chave da conta de serviço decodificada ou NULL.
    */
   public function serviceAccount(): ?array;
 

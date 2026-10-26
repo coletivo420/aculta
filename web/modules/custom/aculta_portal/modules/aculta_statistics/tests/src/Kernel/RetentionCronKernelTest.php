@@ -75,7 +75,13 @@ final class RetentionCronKernelTest extends KernelTestBase {
     $storage = $this->container->get('aculta_statistics.storage');
     $today = $storage->currentDay();
     $this->container->get('database')->insert(DailyAggregateStorage::TABLE)
-      ->fields(['metric' => 'wiki.entries.read', 'dimension' => '1', 'day' => $today - 4000, 'total' => 7, 'updated' => 0])
+      ->fields([
+        'metric' => 'wiki.entries.read',
+        'dimension' => '1',
+        'day' => $today - 4000,
+        'total' => 7,
+        'updated' => 0,
+      ])
       ->execute();
 
     $this->container->get(StatisticsCronHooks::class)->cron();

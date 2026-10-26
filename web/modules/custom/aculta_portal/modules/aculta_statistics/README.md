@@ -6,7 +6,7 @@ Central de métricas da plataforma ACULTA: catálogo, agregados diários, reten�
 configurável por métrica e consulta. Não substitui os dados de origem. Pedidos
 ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mail.
 
-**Estado:** ativo no Runtime MAIN, confirmado por Drush em 2026-10-26. Consultas GA4/Search Console com credenciais e homologação visual permanecem pendentes.
+**Estado:** módulo ativo no código; o estado do Runtime não foi verificado nesta auditoria. Consultas GA4/Search Console com credenciais e homologação visual permanecem pendentes.
 
 ## O que existe
 
@@ -51,6 +51,7 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
 
 ## Testes
 
-- Unit: `tests/src/Unit/` (catálogo, retenção, gravador, janela e variação do GSC, controlador da Wiki, pedido pago). 108 testes / 438 assertions PASS em 2026-10-26.
-- Kernel: `tests/src/Kernel/` (storage, cron, formulário de retenção, banner, beacon da Wiki). 47 testes / 319 assertions PASS em 2026-10-26, executados contra `aculta_simpletest`.
+- Unit: `tests/src/Unit/` (catálogo, retenção, gravador, janela e variação do GSC, controlador da Wiki, pedido pago). 108 testes / 438 assertions PASS na auditoria de 2026-10-26 (PHP 8.4.27).
+- Kernel: `tests/src/Kernel/` (storage, cron, formulário de retenção, banner, beacon da Wiki). Última execução registrada: 47 testes / 319 assertions PASS contra `aculta_simpletest`; não reexecutado nesta auditoria.
+- Gates da auditoria de 2026-10-26: PHP lint 95/95; PHPCS Drupal/DrupalPractice com 0 erros e 614 avisos de comprimento de linha (sobretudo em documentação).
 - `StatisticsDashboardFunctionalTest`: o alias do mapper foi corrigido pelo owner Melhor Envio em `0.1.0-dev.2`, mas a nova tentativa ainda não produziu resultado funcional: com Core duplicado no docroot, o processo servidor tentou declarar `system_hook_info()` a partir de dois caminhos; com o Core compartilhado read-only, o runner ficou sem avançar além do cabeçalho do PHPUnit e foi encerrado. A classe permanece DEFERRED (nenhuma assertion após a correção do wiring); não atribuir esta falha de harness ao painel. Sem escrita no Runtime; revisão visual pendente.
