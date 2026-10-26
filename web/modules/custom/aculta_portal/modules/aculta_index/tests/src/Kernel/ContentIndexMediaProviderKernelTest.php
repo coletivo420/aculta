@@ -71,8 +71,8 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
         'id' => 'aculta_document_viewer.content_index_provider',
       ],
       [
-        'file' => '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/aculta_pdf_viewer_group.services.yml',
-        'id' => 'aculta_pdf_viewer_group.course_document_content_index_provider',
+        'file' => '/modules/custom/aculta_portal/modules/aculta_document_viewer/modules/aculta_document_viewer_group/aculta_document_viewer_group.services.yml',
+        'id' => 'aculta_document_viewer_group.course_document_content_index_provider',
       ],
       [
         'file' => '/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.services.yml',

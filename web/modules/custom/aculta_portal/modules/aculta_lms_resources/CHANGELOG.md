@@ -1,5 +1,15 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.17 — consumir a relação Group do Document Viewer
+
+- O provider LMS procura `aculta_document_viewer_group:course_document`, que
+  é o plugin da relação versionada para `lms_course`.
+- O provider do Content Index fica sob o módulo proprietário da relação; o
+  PDF Group mantém temporariamente a configuração instalada do bundle Media.
+- Unit/Kernel usam o ID canônico. Nenhuma configuração ou entidade Runtime foi
+  alterada.
+
+
 ## 0.1.0-dev.16 — revalidar acesso e relações do Index em MariaDB
 
 - Repetido `LmsCourseContentIndexAccessKernelTest` no MariaDB dedicado:

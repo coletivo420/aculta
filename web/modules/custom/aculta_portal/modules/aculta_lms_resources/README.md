@@ -16,7 +16,7 @@ concede visualização aos membros ativos e educadores do curso somente enquanto
 estiver vinculada a ele; a política geral de acesso da Gallery não é ampliada.
 
 O provider do Content Index projeta somente `Group:lms_course` e relações
-explícitas `course_reading` (`revista`/`wiki_entry`), `course_gallery` e `course_document`, esta última quando o plugin PDF Group opcional está registrado.
+explícitas `course_reading` (`revista`/`wiki_entry`), `course_gallery` e `course_document`, esta última quando o plugin `aculta_document_viewer_group:course_document` está registrado.
 Consultas revalidam Entity Access sob o purpose `courses` e exigem também
 `takeAccess()` ou a permissão contextual de educador (`administer members` ou
 `grade students`). Aulas, progresso, matrículas, respostas, notas e certificados
@@ -45,7 +45,7 @@ container e as tags; não instala configuração/schema dos módulos nem substit
 os testes focados de acesso com Group e Domain. Runtime continua pendente.
 
 No dev.162, o mesmo harness criou GroupType, Group e Media reais, resolveu a
-definição `aculta_pdf_viewer_group:course_document` registrada pelo owner e
+definição `aculta_document_viewer_group:course_document` registrada pelo owner e
 persistiu a relação curso→documento (1 teste / 33 assertions; 239 depreciações
 Core/contrib). O harness pertence ao `aculta_index` no Portal; o LMS não
 hospeda nem possui o Index. A policy LMS segue coberta nos testes focais; o

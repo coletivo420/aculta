@@ -151,17 +151,17 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     }
     $container->setDefinition('aculta_gallery.content_index_provider', $galleryDefinition);
 
-    $pdfServices = Yaml::parseFile(
-      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/aculta_pdf_viewer_group.services.yml',
+    $documentServices = Yaml::parseFile(
+      dirname(__DIR__, 8) . '/modules/custom/aculta_portal/modules/aculta_document_viewer/modules/aculta_document_viewer_group/aculta_document_viewer_group.services.yml',
       Yaml::PARSE_CUSTOM_TAGS,
     )['services'];
-    $pdfService = $pdfServices['aculta_pdf_viewer_group.course_document_content_index_provider'];
-    $pdfDefinition = (new Definition($pdfService['class'], $pdfService['arguments'] ?? []))
+    $documentService = $documentServices['aculta_document_viewer_group.course_document_content_index_provider'];
+    $documentDefinition = (new Definition($documentService['class'], $documentService['arguments'] ?? []))
       ->setPublic(TRUE);
-    foreach ($pdfService['tags'] ?? [] as $tag) {
-      $pdfDefinition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    foreach ($documentService['tags'] ?? [] as $tag) {
+      $documentDefinition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
     }
-    $container->setDefinition('aculta_pdf_viewer_group.course_document_content_index_provider', $pdfDefinition);
+    $container->setDefinition('aculta_document_viewer_group.course_document_content_index_provider', $documentDefinition);
   }
 
   /**
@@ -506,8 +506,8 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
       'permissions' => [
         'take course',
         'view group',
-        'view aculta_pdf_viewer_group:course_document entity',
-        'view any unpublished aculta_pdf_viewer_group:course_document entity',
+        'view aculta_document_viewer_group:course_document entity',
+        'view any unpublished aculta_document_viewer_group:course_document entity',
       ],
     ])->save();
     $course->addMember($student, ['group_roles' => ['lms_course-index_document_student']]);
@@ -518,7 +518,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
       'status' => FALSE,
     ]);
     $document->save();
-    $course->addRelationship($document, 'aculta_pdf_viewer_group:course_document')->save();
+    $course->addRelationship($document, 'aculta_document_viewer_group:course_document')->save();
 
     $generationId = $this->buildCourseResourceGeneration();
     $registry = $this->container->get('aculta_index.provider_registry');
@@ -615,11 +615,11 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('group_relationship_type');
     self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $storage);
-    $id = $storage->getRelationshipTypeId('lms_course', 'aculta_pdf_viewer_group:course_document');
+    $id = $storage->getRelationshipTypeId('lms_course', 'aculta_document_viewer_group:course_document');
     if (!$storage->load($id)) {
       $groupType = GroupType::load('lms_course');
       self::assertInstanceOf(GroupType::class, $groupType);
-      $storage->createFromPlugin($groupType, 'aculta_pdf_viewer_group:course_document')->save();
+      $storage->createFromPlugin($groupType, 'aculta_document_viewer_group:course_document')->save();
     }
   }
 

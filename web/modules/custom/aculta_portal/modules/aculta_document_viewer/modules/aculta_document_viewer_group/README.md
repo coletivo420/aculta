@@ -16,7 +16,7 @@ o Group precisa descobrir o plugin depois que o submódulo está habilitado; a
 instalação automática da config opcional ocorre cedo demais e falha ao resolver
 o plugin. `MediaDocumentDeriver` publica a relação somente para Media
 `course_document`.
-Esse bundle é instalado com o submódulo e seu field storage usa `private://`;
+O bundle de curso permanece configurado pelo módulo legado PDF Group até uma migração de propriedade; esse submódulo registra a relação Group e o provider do Content Index. Não remover a configuração do bundle antes de um plano de migração. Esse bundle é instalado com o submódulo e seu field storage usa `private://`;
 o bundle `document` público existente não é alterado. `CourseDocumentHooks`
 força Media de turma a permanecer não publicada: membros recebem permissões
 Group específicas de leitura (inclusive de conteúdo não publicado), enquanto

@@ -8,7 +8,7 @@ Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá
 **Boot/DI combinado (dev.164):** `ContentIndexOwnerIntegrationKernelTest` carrega
 roots owners independentes para validar seus adapters no container do Index.
 Além do registry/tag real, agora persiste uma relação com o plugin Group real
-`aculta_pdf_viewer_group:course_document` (MariaDB: 1/33; 239 depreciações
+`aculta_document_viewer_group:course_document` (MariaDB: 1/33; 239 depreciações
 Core/contrib) e resolve o aggregator real do Statistics pela interface do
 Portal (1/36; 239 depreciações Core/contrib), e reconhece o provider
 `taxonomy_term:wiki_category` da Wiki. O boot de teste não é a arquitetura de

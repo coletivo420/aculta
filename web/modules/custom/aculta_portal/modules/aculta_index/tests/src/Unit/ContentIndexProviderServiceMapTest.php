@@ -39,7 +39,7 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
       'aculta_image/aculta_image.services.yml',
       'aculta_lms_resources/aculta_lms_resources.services.yml',
       'aculta_magazine/aculta_magazine.services.yml',
-      'aculta_pdf_viewer/modules/aculta_pdf_viewer_group/aculta_pdf_viewer_group.services.yml',
+      'aculta_document_viewer/modules/aculta_document_viewer_group/aculta_document_viewer_group.services.yml',
       'aculta_wiki/aculta_wiki.services.yml',
     ];
     $container = new ContainerBuilder();

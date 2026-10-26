@@ -238,12 +238,12 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       ->getStorage('group_relationship_type');
     $relationshipTypeId = $relationshipTypes->getRelationshipTypeId(
       'lms_course',
-      'aculta_pdf_viewer_group:course_document',
+      'aculta_document_viewer_group:course_document',
     );
     if (!$relationshipTypes->load($relationshipTypeId)) {
       $relationshipTypes->createFromPlugin(
         GroupType::load('lms_course'),
-        'aculta_pdf_viewer_group:course_document',
+        'aculta_document_viewer_group:course_document',
       )->save();
     }
 
@@ -331,7 +331,7 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     $unlinkedCourseDocument->save();
     $relationship = $course->addRelationship(
       $courseDocument,
-      'aculta_pdf_viewer_group:course_document',
+      'aculta_document_viewer_group:course_document',
     );
     $relationship->save();
     $content->set('course_documents', [

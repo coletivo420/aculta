@@ -45,7 +45,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return $this->relationTypeManager->hasDefinition('aculta_pdf_viewer_group:course_document') ? 3 : 2;
+    return $this->relationTypeManager->hasDefinition('aculta_document_viewer_group:course_document') ? 3 : 2;
   }
 
   /**
@@ -179,7 +179,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    *   Relations to append.
    */
   private function appendDocumentRelations(CourseInterface $course, array &$relations): void {
-    $pluginId = 'aculta_pdf_viewer_group:course_document';
+    $pluginId = 'aculta_document_viewer_group:course_document';
     if (!$this->relationTypeManager->hasDefinition($pluginId)) {
       return;
     }

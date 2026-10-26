@@ -227,7 +227,7 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
         $documents = [];
         $cacheability->addCacheableDependency($course);
         $relationshipListTag = 'group_relationship_list:plugin:'
-          . 'aculta_pdf_viewer_group:course_document:group:' . $course->id();
+          . 'aculta_document_viewer_group:course_document:group:' . $course->id();
         $cacheability->addCacheTags([
           $relationshipListTag,
         ]);
@@ -243,7 +243,7 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
           }
           $belongsToCourse = FALSE;
           foreach (
-            $course->getRelationships('aculta_pdf_viewer_group:course_document')
+            $course->getRelationships('aculta_document_viewer_group:course_document')
             as $relationship
           ) {
             $cacheability->addCacheableDependency($relationship);
