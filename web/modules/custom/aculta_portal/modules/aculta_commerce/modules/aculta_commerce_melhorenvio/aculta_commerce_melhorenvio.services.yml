@@ -52,6 +52,11 @@ services:
     class: Drupal\aculta_commerce_melhorenvio\Controller\MelhorEnvioOAuthController
     arguments: ['@aculta_commerce_melhorenvio.client', '@aculta_commerce_melhorenvio.oauth_state', '@logger.factory', '@messenger']
 
+  # Página de administração com o estado da conexão.
+  aculta_commerce_melhorenvio.status_controller:
+    class: Drupal\aculta_commerce_melhorenvio\Controller\MelhorEnvioStatusController
+    arguments: ['@aculta_commerce_melhorenvio.config', '@aculta_commerce_melhorenvio.token_store', '@date.formatter', '@datetime.time']
+
   # Validação HMAC-SHA256 do cabeçalho X-ME-Signature do webhook.
   aculta_commerce_melhorenvio.webhook_signature:
     class: Drupal\aculta_commerce_melhorenvio\Webhook\MelhorEnvioWebhookSignature

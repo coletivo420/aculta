@@ -1,3 +1,16 @@
+# Estado da conexão e botão de conectar (abre a autorização em popup). Sem cache: mostra o token atual.
+aculta_commerce_melhorenvio.status:
+  path: '/admin/commerce/config/melhorenvio'
+  defaults:
+    _controller: 'aculta_commerce_melhorenvio.status_controller:page'
+    _title: 'Melhor Envio'
+  requirements:
+    _permission: 'administer melhorenvio'
+  options:
+    _admin_route: TRUE
+    no_cache: TRUE
+  methods: [GET]
+
 # Autorização e retorno nunca entram em cache: cada acesso gera um state novo e de uso único. Em cache, o Drupal
 # servia o redirecionamento antigo, com o state já consumido, sem executar o controlador.
 aculta_commerce_melhorenvio.oauth_authorize:

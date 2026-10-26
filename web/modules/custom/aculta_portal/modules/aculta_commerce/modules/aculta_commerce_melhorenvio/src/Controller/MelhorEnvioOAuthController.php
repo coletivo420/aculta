@@ -7,21 +7,21 @@ namespace Drupal\aculta_commerce_melhorenvio\Controller;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClient;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException;
 use Drupal\aculta_commerce_melhorenvio\Http\OAuthState;
+use Drupal\aculta_portal\Integration\PopupReturnPage;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Fluxo OAuth2 do Melhor Envio: inicia a autorização e recebe o retorno com validação do `state`.
  *
- * Respostas para o navegador usam as mensagens do Drupal (alertas exibidos pelo tema) e redirecionam para a página
- * inicial. Nenhuma resposta de texto puro vai ao usuário.
+ * Respostas para o navegador gravam o resultado nas mensagens do Drupal (alertas exibidos pelo tema) e usam a página
+ * padrão de retorno (PopupReturnPage): fecha o popup e leva a janela de origem à página de estado da conexão.
  */
 final class MelhorEnvioOAuthController {
 
@@ -67,7 +67,7 @@ final class MelhorEnvioOAuthController {
     }
     catch (MelhorEnvioException) {
       $this->messenger->addError($this->t('A integração com o Melhor Envio não está configurada para este ambiente.'));
-      return $this->redirectToFront();
+      return $this->returnPage($request);
     }
   }
 
@@ -86,31 +86,31 @@ final class MelhorEnvioOAuthController {
     ]);
     if (!$this->state->matches(is_string($expected) ? $expected : NULL, $received)) {
       $this->messenger->addError($this->t('A autorização do Melhor Envio não pôde ser confirmada. Inicie a conexão de novo a partir do site.'));
-      return $this->redirectToFront();
+      return $this->returnPage($request);
     }
     $code = (string) $request->query->get('code', '');
     if ($code === '') {
       $this->messenger->addError($this->t('O Melhor Envio não devolveu o código de autorização. Tente de novo.'));
-      return $this->redirectToFront();
+      return $this->returnPage($request);
     }
     try {
       $this->client->exchangeAuthorizationCode($code);
     }
     catch (MelhorEnvioException) {
       $this->messenger->addError($this->t('Não foi possível concluir a autorização com o Melhor Envio. Aguarde um instante e tente novamente.'));
-      return $this->redirectToFront();
+      return $this->returnPage($request);
     }
     $this->messenger->addStatus($this->t('Conexão com o Melhor Envio autorizada.'));
-    return $this->redirectToFront();
+    return $this->returnPage($request);
   }
 
   /**
-   * Redireciona para a página inicial, onde o tema exibe as mensagens do Drupal.
+   * Página padrão de retorno: fecha o popup e leva a janela de origem à página de estado, onde o tema exibe a mensagem.
+   *
+   * Sem popup, a própria aba vai para a página de estado.
    */
-  private function redirectToFront(): RedirectResponse {
-    $response = new RedirectResponse(Url::fromRoute('<front>')->toString());
-    $response->headers->set('Cache-Control', 'private, no-store');
-    return $response;
+  private function returnPage(Request $request): Response {
+    return PopupReturnPage::response($request, Url::fromRoute('aculta_commerce_melhorenvio.status')->toString());
   }
 
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_commerce_melhorenvio\Kernel;
 
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClient;
+use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioEnvironment;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\key\Entity\Key;
@@ -95,6 +96,7 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     'social_auth',
     'state_machine',
     'taxonomy',
+    'text',
     'token',
     'user',
     'views',
@@ -157,7 +159,7 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
   public function testOauthRoutesAreNeverCached(): void {
     $path = $this->container->get('extension.list.module')->getPath('aculta_commerce_melhorenvio');
     $routes = Yaml::parseFile(DRUPAL_ROOT . '/' . $path . '/aculta_commerce_melhorenvio.routing.yml');
-    foreach (['aculta_commerce_melhorenvio.oauth_authorize', 'aculta_commerce_melhorenvio.oauth_callback'] as $name) {
+    foreach (['aculta_commerce_melhorenvio.status', 'aculta_commerce_melhorenvio.oauth_authorize', 'aculta_commerce_melhorenvio.oauth_callback'] as $name) {
       self::assertTrue((bool) ($routes[$name]['options']['no_cache'] ?? FALSE), $name);
     }
   }
@@ -182,6 +184,40 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
       $states[] = $query['state'];
     }
     self::assertNotSame($states[0], $states[1]);
+  }
+
+  /**
+   * Retorno com state que não está pendente: mensagem de erro do Drupal e página padrão de popup, sem troca de código.
+   */
+  public function testCallbackWithUnknownStateUsesPopupReturnAndMessage(): void {
+    $this->installEntitySchema('path_alias');
+    $this->container->get('router.builder')->rebuild();
+    $request = Request::create('https://aculta.example.test/integracoes/melhorenvio/retorno', 'GET', ['state' => 'antigo', 'code' => 'x']);
+    $request->setSession(new Session(new MockArraySessionStorage()));
+    $response = $this->container->get('aculta_commerce_melhorenvio.oauth_controller')->callback($request);
+    self::assertSame(200, $response->getStatusCode());
+    self::assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
+    $html = (string) $response->getContent();
+    self::assertStringContainsString('window.opener.location.href = redirect', $html);
+    self::assertStringContainsString('/admin/commerce/config/melhorenvio', $html);
+    $errors = $this->container->get('messenger')->messagesByType('error');
+    self::assertCount(1, $errors);
+    self::assertNull($this->container->get('aculta_commerce_melhorenvio.token_store')->load(MelhorEnvioEnvironment::Sandbox));
+  }
+
+  /**
+   * A página de estado mostra o ambiente, a conexão e o botão que abre a autorização em popup.
+   */
+  public function testStatusPageOffersPopupConnect(): void {
+    $this->installEntitySchema('path_alias');
+    $this->container->get('router.builder')->rebuild();
+    $build = $this->container->get('aculta_commerce_melhorenvio.status_controller')->page();
+    $html = (string) $this->container->get('renderer')->renderInIsolation($build);
+    self::assertStringContainsString('Sandbox (testes)', $html);
+    self::assertStringContainsString('Não conectada', $html);
+    self::assertStringContainsString('data-aculta-popup="melhorenvio_autorizacao"', $html);
+    self::assertStringContainsString('/integracoes/melhorenvio/autorizar', $html);
+    self::assertSame(0, $build['#cache']['max-age']);
   }
 
   /**
