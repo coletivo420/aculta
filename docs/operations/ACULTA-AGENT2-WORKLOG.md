@@ -409,3 +409,13 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - `GET /oauth/authorize` sem `redirect_uri` responde `Unauthenticated.`, ou seja, o endpoint existe e exige usuário logado. Com `redirect_uri=https://aculta.toca.net.br/integracoes/melhorenvio/retorno` responde `invalid_client` (`Client authentication failed`). Com `redirect_uri=http://127.0.0.1/retorno` responde 403 em HTML, sem diagnóstico.
 - Conclusão: o `redirect_uri` de retorno não confere com o cadastrado no aplicativo sandbox 13216. Confirmar no painel do sandbox a URL exata cadastrada (esquema, host e caminho).
 - Pendente para fechar ME-PEND-01: (1) URL de retorno idêntica no painel do sandbox; (2) login de usuário do sandbox para concluir o consentimento e receber o `code`; (3) troca do `code` em `/oauth/token` e registro de `expires_in` do token de usuário.
+
+## Servidor MCP do Melhor Envio: conectado, e confirmações da documentação (ME-PEND-01)
+
+- Servidor `melhorenvio` configurado no `.mcp.json` e autorizado pelo responsável. Ele expõe a documentação da API (`list-endpoints`, `get-endpoint`, `search-endpoints`). A conexão exige `MELHORENVIO_MCP_TOKEN` no ambiente de quem inicia o Claude Code.
+- Confirmado pela especificação do sandbox: `POST /oauth/token` e `POST /api/v2/me/shipment/calculate`.
+- Confirmado no exemplo de resposta de `/oauth/token`: `expires_in` 2592000 segundos (30 dias), com `refresh_token`. O exemplo é ilustrativo; o valor real vem da resposta.
+- Confirmado: `User-Agent` obrigatório com o nome do aplicativo e um contato. O cliente já envia `Aplicação (contato)`.
+- Confirmado: `redirect_uri` deve ser estática e igual à cadastrada no painel. A troca do código envia `grant_type`, `client_id`, `client_secret`, `redirect_uri` e `code`. A renovação envia `refresh_token`. O cliente já faz as duas coisas.
+- Não encontrado na especificação: `/oauth/authorize` (é uma página, não um endpoint de API). Continua não confirmado por fonte oficial; o teste real no sandbox é a validação.
+- Pendente: o responsável completar a autorização no servidor de teste, para validar o `expires_in` real e a cotação com o token de usuário.
