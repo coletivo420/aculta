@@ -61,6 +61,10 @@ final class GreenStashShipmentReader {
     foreach ($shipments as $shipment) {
       $order = $shipment->getOrder();
       $amount = $shipment->getAmount();
+      $transitions = [];
+      foreach ($shipment->getState()->getTransitions() as $transition_id => $transition) {
+        $transitions[$transition_id] = (string) $transition->getLabel();
+      }
       $items[] = [
         'id' => (int) $shipment->id(),
         'order_number' => $order?->getOrderNumber() ?: '—',
@@ -70,6 +74,7 @@ final class GreenStashShipmentReader {
         'currency' => $amount ? $amount->getCurrencyCode() : NULL,
         'tracking_code' => $shipment->getTrackingCode() ?: NULL,
         'created' => (int) $shipment->getCreatedTime(),
+        'transitions' => $transitions,
       ];
     }
 

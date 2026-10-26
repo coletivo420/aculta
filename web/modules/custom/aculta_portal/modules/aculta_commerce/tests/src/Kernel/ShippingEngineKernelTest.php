@@ -290,6 +290,20 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $this->assertSame('12.34', $shipment->getAmount()->getNumber());
     $this->assertSame('Envio de teste', $shipment->getShippingServiceLabel());
     $this->assertSame('custom_box', $shipment->get('package_type')->value);
+
+    // The shipment workflow starts in draft and exposes only valid transitions.
+    $this->assertSame('draft', $shipment->getState()->getId());
+    $this->assertArrayHasKey('finalize', $shipment->getState()->getTransitions());
+    $shipment->getState()->applyTransitionById('finalize');
+    $shipment->save();
+    $this->assertSame('ready', $shipment->getState()->getId());
+    $this->assertArrayHasKey('ship', $shipment->getState()->getTransitions());
+    $this->assertArrayHasKey('cancel', $shipment->getState()->getTransitions());
+    $this->assertArrayNotHasKey('finalize', $shipment->getState()->getTransitions());
+    $shipment->getState()->applyTransitionById('ship');
+    $shipment->save();
+    $this->assertSame('shipped', $shipment->getState()->getId());
+    $this->assertSame([], $shipment->getState()->getTransitions());
   }
 
   /**

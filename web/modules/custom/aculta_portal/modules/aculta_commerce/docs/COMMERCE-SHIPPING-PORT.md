@@ -110,7 +110,7 @@ Execução somente leitura em `https://loja.aculta.toca.net.br`:
 - Entidades `aculta_shipment`, `aculta_shipping_method` e `aculta_shipment_type`; IDs, tabelas, campos e plugins sem colisão com o contrib.
 - Campo `shipments` do pedido e trait de variação com IDs ACULTA; workflow próprio.
 - Checkout pane `aculta_shipping_information` no `aculta_commerce`; o pane antigo do Portal foi removido.
-- Green Stash `/estudio/loja/envios` com leitura de remessas.
+- Green Stash `/estudio/loja/envios` com leitura de remessas e transições confirmadas do workflow, sem interface nativa.
 - Config Sync substituído onde o contrib era referenciado; atribuições GPL registradas nos arquivos portados.
 - **Não incluído nesta branch:** plugin de cotação do Melhor Envio (vive na linha principal do site; contrato em `docs/MELHOR-ENVIO-CONTRACT.md`), promoções de remessa, tipo de imposto de envio, e-mails de confirmação de remessa, formulários administrativos nativos e etiquetas/rastreamento externo.
 - **Pendente para integração na PR #298:** conciliar com a linha principal do site (90 commits à frente), remover `drupal/commerce_shipping` do Composer, importar o Config Sync no banco descartável, executar instalação limpa/desinstalação do contrib, e homologar o checkout físico e não enviável com Firefox ESR visível.
@@ -123,7 +123,7 @@ testes; o `site:install` recria suas tabelas. Nenhum banco de runtime foi usado.
 
 | Verificação | Resultado |
 | --- | --- |
-| Kernel `ShippingEngineKernelTest` | PASS; 4 testes / 82 asserções com o fechamento de 104 módulos e schema estrito |
+| Kernel `ShippingEngineKernelTest` | PASS; 4 testes / 90 asserções com o fechamento de 104 módulos, schema estrito e transições draft→ready→shipped |
 | Instalação `standard` + `aculta_commerce` | PASS; entidades, tipos e plugin manager disponíveis |
 | Config/install do tipo de remessa `default` | PASS |
 | Trait `aculta_purchasable_entity_shippable` | PASS; campo `weight` criado e usado |
