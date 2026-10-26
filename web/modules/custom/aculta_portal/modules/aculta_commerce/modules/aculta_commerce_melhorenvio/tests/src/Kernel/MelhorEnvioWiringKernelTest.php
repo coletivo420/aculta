@@ -39,6 +39,7 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
   protected static $modules = [
     'system',
     'aculta_commerce_melhorenvio',
+    'aculta_commerce',
     'aculta_image',
     'aculta_mail_confirmer',
     'aculta_mail_confirmer_user',
@@ -227,10 +228,10 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
   }
 
   /**
-   * O método de envio do Melhor Envio é descoberto pelo Commerce Shipping, com os serviços confirmados.
+   * O método de envio do Melhor Envio é descoberto pelo motor ACULTA, com os serviços confirmados.
    */
   public function testShippingMethodPluginIsDiscovered(): void {
-    $definition = $this->container->get('plugin.manager.commerce_shipping_method')->getDefinition('aculta_melhorenvio');
+    $definition = $this->container->get('plugin.manager.aculta_shipping_method')->getDefinition('aculta_melhorenvio');
     self::assertSame(['1', '2', '3', '4', '17'], array_map('strval', array_keys($definition['services'])));
   }
 

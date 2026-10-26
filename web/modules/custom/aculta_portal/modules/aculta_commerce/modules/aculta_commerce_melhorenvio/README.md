@@ -81,7 +81,7 @@ Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CO
 
 - `aculta_portal` (`StreetNumberField`, perfis e formulário de endereço).
 - `aculta_portal_cep` (`CepLookupInterface`, serviço `aculta_portal_cep.lookup`).
-- Previsto para ME-0.2-A: `commerce_shipping` e `aculta_commerce`.
+- Motor de frete: `aculta_commerce`, proprietário dos métodos, remessas e tarifas.
 
 ## Testes
 

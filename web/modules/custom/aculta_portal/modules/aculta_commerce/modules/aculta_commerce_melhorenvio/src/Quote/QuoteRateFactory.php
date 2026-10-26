@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Drupal\aculta_commerce_melhorenvio\Quote;
 
 use Drupal\commerce_price\Price;
-use Drupal\commerce_shipping\ShippingRate;
-use Drupal\commerce_shipping\ShippingService;
+use Drupal\aculta_commerce\Shipping\ShippingRate;
+use Drupal\aculta_commerce\Shipping\ShippingService;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Converte opções cotadas em tarifas do Commerce Shipping.
+ * Converte opções cotadas em tarifas do motor de frete ACULTA.
  */
 final class QuoteRateFactory {
 
@@ -24,7 +24,7 @@ final class QuoteRateFactory {
    * @param list<string> $allowedServices
    *   IDs de serviço habilitados no método. Vazio permite todos.
    *
-   * @return list<\Drupal\commerce_shipping\ShippingRate>
+   * @return list<\Drupal\aculta_commerce\Shipping\ShippingRate>
    *   Tarifas.
    */
   public function rates(array $options, string $shippingMethodId, array $allowedServices): array {

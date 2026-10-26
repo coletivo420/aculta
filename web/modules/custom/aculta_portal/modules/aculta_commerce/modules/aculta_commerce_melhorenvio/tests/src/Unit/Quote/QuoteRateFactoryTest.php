@@ -11,7 +11,7 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Conversão de opções cotadas em tarifas do Commerce Shipping.
+ * Conversão de opções cotadas em tarifas do motor ACULTA.
  */
 #[Group('aculta_commerce_melhorenvio')]
 final class QuoteRateFactoryTest extends UnitTestCase {
@@ -39,6 +39,7 @@ final class QuoteRateFactoryTest extends UnitTestCase {
 
     $rates = (new QuoteRateFactory())->rates(self::options(), 'me', []);
     self::assertCount(2, $rates);
+    self::assertSame('Drupal\\aculta_commerce\\Shipping\\ShippingRate', get_class($rates[0]));
     self::assertSame('me--1', $rates[0]->getId());
     self::assertSame('1', $rates[0]->getService()->getId());
     self::assertSame('PAC (Correios)', (string) $rates[0]->getService()->getLabel());
@@ -46,7 +47,7 @@ final class QuoteRateFactoryTest extends UnitTestCase {
     self::assertSame('BRL', $rates[0]->getAmount()->getCurrencyCode());
     self::assertSame('Entrega em até 7 dias úteis', (string) $rates[0]->getDescription());
     self::assertSame('', (string) $rates[1]->getDescription());
-    self::assertSame(['melhorenvio_service_id' => '1'], $rates[0]->getData());
+    self::assertSame('1', $rates[0]->getData('melhorenvio_service_id'));
   }
 
   /**
