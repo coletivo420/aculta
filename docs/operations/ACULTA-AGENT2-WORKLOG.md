@@ -383,3 +383,9 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - Não testado em produção: o projeto exige decidir o ambiente pelo modo configurado, e o token não informa qual é o seu. Confirmar com o responsável se o token é de sandbox ou de produção.
 - Removido do armazenamento de tokens do servidor de teste, para não ficar uma credencial que falha aparentando estar configurada.
 - Pendente: um token de sandbox válido, ou o `client_id` do aplicativo sandbox para o fluxo OAuth (ME-PEND-01).
+
+## Separação de chaves do Melhor Envio (teste x produção)
+
+- As chaves enviadas (segredo e token) foram classificadas como de produção, e não de teste. Removidas do servidor de teste e de `secrets/`. Webhook volta a 503.
+- Contrato: `docs/operations/melhorenvio-secrets.md`. Teste usa `secrets/aculta.secrets.env` com Key IDs `melhorenvio_sandbox_*`. Produção fica no banco, provisionada pelo `aculta_deployer`.
+- Pendente: chaves de sandbox, do cadastro de teste. Quando chegarem, entram em `secrets/aculta.secrets.env` com os nomes do contrato.
