@@ -1,3 +1,15 @@
+## 0.1.0-dev.34 — toda limpeza delega ao coordenador global (2026-10-26)
+
+- `ImageCleanup` não chama mais `FileRemover` diretamente quando o coordenador
+  do Portal está ausente. O resultado fica `Unverifiable`, a exclusão física é
+  bloqueada e a fila preserva o item para nova tentativa após expirar o lease.
+- A dependência direta de `FileRemover` foi removida do construtor/serviço; o
+  Portal continua dono da avaliação global de referências e Image da remoção
+  física quando autorizada.
+- `ImageCleanupCoordinatorTest` garante que sem o coordenador nenhum arquivo é
+  removido e o item permanece na fila. Suíte Unit total: 28 testes / 118
+  assertions PASS (9 depreciações PHPUnit); PHPCS, lint e gate próprio PASS.
+
 # Changelog — aculta_image
 
 ## 0.1.0-dev.33 — coordenar também a quarentena pelo Portal

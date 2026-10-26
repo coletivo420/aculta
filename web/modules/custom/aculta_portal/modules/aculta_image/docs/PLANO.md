@@ -152,9 +152,11 @@ pelos estilos), `media_dupe_detect`, `duplicate_images`, `media_dedupe` (ver a t
 
 Imagens candidatas do inventário continuam na quarentena privada por 30 dias, com restauração e nova checagem antes
 da exclusão. Há uma exceção operacional para ciclo de vida normal: quando uma entidade substitui ou remove um campo de
-imagem, o FID anterior entra na fila e pode ser excluído pelo `FileRemover` se `file_usage` e `entity_usage` estiverem
-vazios no momento da execução. Revisões e outras entidades mantêm a imagem. Temporários de imagem sem referência são
-removidos depois de `system.file:temporary_maximum_age` (seis horas no Runtime), em lotes de 100. Arquivos do tema
+imagem, o FID anterior entra na fila. O Portal verifica File Usage, Entity Usage, referências estruturadas e embeds; só
+solicita ao `FileRemover` do Image a exclusão física quando todas as verificações forem claras. Revisões e outras
+entidades mantêm a imagem; consultas não verificáveis preservam o item para nova tentativa após o lease. Sem o
+coordenador Portal, a limpeza falha fechada. Temporários de imagem passam pela mesma checagem após
+`system.file:temporary_maximum_age` (seis horas no Runtime), em lotes de 100. Arquivos do tema
 continuam fora da limpeza de Media. O administrador pode executar a mesma rotina em `/painel-administrativo/imagens/limpeza`.
 
 ## 11. Assets estáticos de dependências Composer

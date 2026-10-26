@@ -26,7 +26,6 @@ final class ImageCleanup {
     private readonly QueueFactory $queueFactory,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly TimeInterface $time,
-    private readonly FileRemover $fileRemover,
     private readonly ?UnusedFileCleaner $unusedFileCleaner = NULL,
   ) {}
 
@@ -83,10 +82,19 @@ final class ImageCleanup {
     while ($processed < $limit && ($item = $queue->claimItem(60)) !== FALSE) {
       $processed++;
       $file = $this->loadImage((int) ($item->data['fid'] ?? 0));
-      if ($file !== NULL && $this->removeFile($file)) {
+      if ($file === NULL) {
+        $queue->deleteItem($item);
+        continue;
+      }
+      $status = $this->removeFile($file);
+      if ($status === FileCleanupStatus::Deleted) {
         $deleted++;
       }
-      $queue->deleteItem($item);
+      // Keep unverifiable candidates claimed only until the lease expires so
+      // they can be retried after the global coordinator becomes available.
+      elseif ($status !== FileCleanupStatus::Unverifiable) {
+        $queue->deleteItem($item);
+      }
     }
 
     $remaining = max(0, $limit - $processed);
@@ -223,12 +231,13 @@ final class ImageCleanup {
   }
 
   /**
-   * Delegates to Portal cleanup when available, preserving standalone use. */
-  private function removeFile(FileInterface $file, bool $allowTemporary = FALSE): bool {
-    if ($this->unusedFileCleaner !== NULL) {
-      return $this->unusedFileCleaner->removeIfUnused($file, $allowTemporary) === FileCleanupStatus::Deleted;
+   * Delegates physical deletion to the Portal reference coordinator.
+   */
+  private function removeFile(FileInterface $file, bool $allowTemporary = FALSE): FileCleanupStatus {
+    if ($this->unusedFileCleaner === NULL) {
+      return FileCleanupStatus::Unverifiable;
     }
-    return $this->fileRemover->delete($file, 'imagem substituída ou removida de entidade');
+    return $this->unusedFileCleaner->removeIfUnused($file, $allowTemporary);
   }
 
 }

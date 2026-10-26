@@ -386,3 +386,10 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - `FiscalIdentityPolicyTest`: 13 testes / 30 assertions PASS. `FiscalIdentityPaneKernelTest`: 12 testes / 343 assertions PASS em MariaDB dedicado (72 depreciações upstream). PHPCS Drupal/DrupalPractice e PHP lint dos dois arquivos PHP PASS. Uma invocação anterior do Kernel sem `SIMPLETEST_DB` terminou em setup (12 errors/0 assertions); repetição com o ambiente isolado passou.
 - Atualizados manifesto `aculta_portal` 0.4.1-dev.35, README, changelog, contratos CPF/checkout, roadmaps Commerce/LMS, status e matriz. README raiz regenerado; índice 41 componentes PASS. Nenhuma operação Runtime/checkout foi executada.
 - Próxima ação: revisar diff, retomar decisão do harness Portal/User para LMS/Doações e auditar o próximo contrato central independente.
+
+
+## M-2 — limpeza de imagem sempre coordenada pelo Portal (2026-10-26)
+
+- `ImageCleanup` ainda chamava `FileRemover` diretamente quando `aculta_portal.unused_file_cleaner` estava indisponível, divergindo do contrato em `aculta_image/docs/PLANO.md`. Removido o fallback: agora retorna `Unverifiable`, não deleta e não remove o item da fila; o lease expira e permite tentativa posterior. Dependência direta de `FileRemover` removida do serviço/construtor. Quarentena já exigia coordenador.
+- Novo `ImageCleanupCoordinatorTest` verifica ausência de exclusão física e retenção da fila sem Portal: Unit Image completa 28/118 PASS (9 depreciações PHPUnit); PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS; `validate-aculta-image.php` PASS (25 estilos catalogados, zero usos externos).
+- Manifesto/status avançaram para Image `0.1.0-dev.34`; README/changelog/AGENTS, matriz e execução atualizados. Nenhum arquivo real foi limpo e nenhum Runtime foi alterado. Próxima ação: completar Kernel/instalação limpa e seguir consumers de cleanup do Portal.
