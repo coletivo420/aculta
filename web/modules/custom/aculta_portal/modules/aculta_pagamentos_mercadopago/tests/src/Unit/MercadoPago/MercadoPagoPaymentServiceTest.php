@@ -102,7 +102,7 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
     $pagamento = $this->pagamento('authorization');
     $pagamento->expects($this->once())->method('setState')->with('completed');
     $pagamento->expects($this->once())->method('save');
-    $status = $this->servico($this->cliente((object) ['status' => 'approved', 'transaction_amount_refunded' => 0]))->atualizar($pagamento);
+    $status = $this->servico($this->cliente((object) ['status' => 'approved', 'transaction_amount_refunded' => 0]))->refresh($pagamento);
     $this->assertSame('approved', $status);
   }
 
@@ -126,7 +126,7 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
     $pagamento->expects($this->once())->method('setState')->with('authorization_voided');
     $registro = NULL;
     $cliente = $this->cliente((object) ['status' => 'pending'], $registro);
-    $this->servico($cliente)->cancelar($pagamento);
+    $this->servico($cliente)->cancel($pagamento);
     $this->assertTrue($registro->cancelado);
   }
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Form;
 
-use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
-use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoPaymentService;
+use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
+use Drupal\aculta_portal\Exception\PaymentOperationException;
 use Drupal\aculta_portal\Sales\SalesPaymentAccess;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class SalesPaymentCancelForm extends ConfirmFormBase {
 
   public function __construct(
-    private readonly MercadoPagoPaymentService $pagamentos,
+    private readonly ?PaymentOperationsInterface $pagamentos,
     private readonly AccountInterface $usuario,
     private readonly EntityTypeManagerInterface $entidades,
   ) {}
@@ -33,7 +33,9 @@ final class SalesPaymentCancelForm extends ConfirmFormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_pagamentos_mercadopago.payment_service'),
+      $container->has('aculta_portal.payment_provider.payment_operations')
+        ? $container->get('aculta_portal.payment_provider.payment_operations')
+        : NULL,
       $container->get('current_user'),
       $container->get('entity_type.manager'),
     );
@@ -71,6 +73,9 @@ final class SalesPaymentCancelForm extends ConfirmFormBase {
    * Performs the build form operation.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?PaymentInterface $commerce_payment = NULL): array {
+    if ($this->pagamentos === NULL) {
+      throw new AccessDeniedHttpException();
+    }
     $this->autorizar($commerce_payment);
     $form_state->set('pagamento_id', (int) $commerce_payment->id());
     return parent::buildForm($form, $form_state);
@@ -85,10 +90,10 @@ final class SalesPaymentCancelForm extends ConfirmFormBase {
       throw new AccessDeniedHttpException();
     }
     try {
-      $this->pagamentos->cancelar($pagamento);
+      $this->pagamentos?->cancel($pagamento);
       $this->messenger()->addStatus($this->t('Pagamento cancelado no Mercado Pago.'));
     }
-    catch (\DomainException | MercadoPagoApiException $e) {
+    catch (\DomainException | PaymentOperationException $e) {
       $this->messenger()->addError($e->getMessage());
     }
     $form_state->setRedirect('aculta_portal.relatorio_vendas');

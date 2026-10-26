@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_pagamentos_mercadopago\MercadoPago;
 
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\aculta_portal\Contract\SubscriptionOperationsInterface;
+use Drupal\aculta_portal\Contract\SubscriptionStatusInterface;
+use Drupal\aculta_portal\Exception\PaymentOperationException;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\commerce_price\Price;
@@ -32,7 +35,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * alteração (`paused`, `authorized`, `cancelled`) vêm do plano de integração (docs/portal/MERCADO-PAGO-PLANO.md); a
  * referência da API não pôde ser lida na sessão, então a confirmação com o sandbox fica pendente.
  */
-final class MercadoPagoSubscriptionRecorder {
+final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterface, SubscriptionOperationsInterface {
 
   /**
    * Chave em `data` do pedido com o id da assinatura no Mercado Pago. */
@@ -108,6 +111,89 @@ final class MercadoPagoSubscriptionRecorder {
       self::STATUS_CANCELADA => new TranslatableMarkup('Cancelada'),
       default => new TranslatableMarkup('Situação não informada'),
     };
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function subscriptionOrderType(): string {
+    return self::TIPO_PEDIDO;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function pendingStatus(): string {
+    return self::STATUS_PENDENTE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function orderedStatuses(): array {
+    return self::STATUS_ORDEM;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function statusForOrder(OrderInterface $order): string {
+    return $this->statusDoPedido($order);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function latestChargeStatus(OrderInterface $order): string {
+    return $this->situacaoDaUltimaCobranca($order);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function statusLabel(string $status): TranslatableMarkup {
+    return self::rotulo($status);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function chargeStatusLabel(string $status): TranslatableMarkup {
+    return self::rotuloCobranca($status);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function availableActions(): array {
+    return [
+      'pausar' => new TranslatableMarkup('Pausar'),
+      'reativar' => new TranslatableMarkup('Reativar'),
+      'cancelar' => new TranslatableMarkup('Cancelar assinatura'),
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function canChange(OrderInterface $order, string $action): bool {
+    return $this->podeAlterar($order, $action);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function change(PaymentGatewayInterface $gateway, OrderInterface $order, string $action): void {
+    try {
+      $this->alterar($gateway, $order, $action);
+    }
+    catch (MercadoPagoApiException $exception) {
+      $this->logger->error('Falha de API ao alterar assinatura do pedido @order: @message', [
+        '@order' => $order->id(),
+        '@message' => $exception->getPrevious()?->getMessage() ?? $exception->getMessage(),
+      ]);
+      throw new PaymentOperationException($exception->getMessage(), 0, $exception);
+    }
   }
 
   /**

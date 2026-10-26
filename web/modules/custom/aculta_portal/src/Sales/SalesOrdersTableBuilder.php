@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Sales;
 
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
-use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
+use Drupal\aculta_portal\Contract\RefundPolicyInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -42,6 +42,7 @@ class SalesOrdersTableBuilder {
     private readonly DateFormatterInterface $dateFormatter,
     private readonly AccountInterface $usuario,
     TranslationInterface $stringTranslation,
+    private readonly ?RefundPolicyInterface $refundPolicy = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -147,7 +148,7 @@ class SalesOrdersTableBuilder {
       $links[] = $this->link($this->t('Cancelar'), Url::fromRoute('aculta_portal.relatorio_vendas_pagamento_cancelar', ['commerce_payment' => $pagamento->id()]), 'sales-action-danger');
     }
     // Doações não podem ser estornadas (decisão do responsável): o link só aparece para pedido sem item de doação.
-    if (in_array($pagamento->getState()->getId(), MercadoPagoPaymentPolicy::ESTORNAVEIS, TRUE) && !$this->pedidoTemDoacao($pedido)) {
+    if ($this->refundPolicy?->isRefundable($pagamento->getState()->getId()) && !$this->pedidoTemDoacao($pedido)) {
       $links[] = $this->link($this->t('Estornar'), Url::fromRoute('entity.commerce_payment.operation_form', [
         'commerce_order' => $pedido->id(),
         'commerce_payment' => $pagamento->id(),

@@ -13,10 +13,10 @@ use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 interface SubscriptionOperationsInterface {
 
   /**
-   * Returns the action names currently supported by the provider.
+   * Returns supported action identifiers and their translated labels.
    *
-   * @return list<string>
-   *   Supported action identifiers.
+   * @return array<string, \Drupal\Core\StringTranslation\TranslatableMarkup>
+   *   Keys are action identifiers (`pausar`, `reativar`, `cancelar`).
    */
   public function availableActions(): array;
 

@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_portal\Unit\MercadoPago;
+namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_portal\Exception\PaymentOperationException;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Component\Datetime\TimeInterface;
@@ -20,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * Ações do doador sobre a assinatura (pausar, reativar, cancelar) e a regra de status permitido.
  */
-#[Group('aculta_portal')]
+#[Group('aculta_pagamentos_mercadopago')]
 final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
 
   /**
@@ -150,6 +151,39 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
 
     $this->expectException(MercadoPagoApiException::class);
     $this->servico($recorrencia)->alterar($this->gateway(), $pedido, 'pausar');
+  }
+
+  /**
+   * Tests that provider API details stay out of the neutral exception shown to users.
+   */
+  public function testProviderFailureIsWrappedWithSafeMessage(): void {
+    $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->method('alterarStatusAssinatura')->willThrowException(
+      new MercadoPagoApiException('Mensagem segura', 500, new \RuntimeException('RAW API DETAIL')),
+    );
+    $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', []);
+    $logger = $this->createMock(LoggerChannelInterface::class);
+    $logger->expects($this->once())
+      ->method('error')
+      ->with($this->stringContains('Falha de API'), $this->callback(
+        static fn (array $context): bool => $context['@message'] === 'RAW API DETAIL',
+      ));
+    $service = new MercadoPagoSubscriptionRecorder(
+      $this->createMock(EntityTypeManagerInterface::class),
+      $recorrencia,
+      $logger,
+      $this->createMock(TimeInterface::class),
+    );
+
+    try {
+      $service->change($this->gateway(), $pedido, 'pausar');
+      $this->fail('Expected the neutral provider exception.');
+    }
+    catch (PaymentOperationException $exception) {
+      $this->assertSame('Mensagem segura', $exception->getMessage());
+      $this->assertSame('Mensagem segura', $exception->getPrevious()?->getMessage());
+      $this->assertSame('RAW API DETAIL', $exception->getPrevious()?->getPrevious()?->getMessage());
+    }
   }
 
 }

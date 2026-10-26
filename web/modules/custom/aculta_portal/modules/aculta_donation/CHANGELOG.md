@@ -1,3 +1,8 @@
+## 0.1.0-dev.27 — dependência declarada do provedor de pagamento
+
+- `aculta_donation` declara dependência direta de `aculta_portal:aculta_pagamentos_mercadopago`; `RecurringAuthorizationPane` permanece na Doação e continua consumindo classes e serviços MP diretamente.
+- Unit: 24 testes / 84 assertions PASS. Kernel MariaDB dedicado: 5 testes / 195 assertions PASS, com 88 depreciações Core/contrib.
+
 ## 0.1.0-dev.24 — aba Doações em Carrinhos e checkouts (P-CART E) — 2026-10-22
 
 - Rota `/painel-administrativo/aculta/checkout/doacoes` e tarefa local "Doações" reutilizam o `DonationSettingsForm` (mesma validação, mesma config `aculta_donation.settings` e mesma permissão); `donate|cart|both` inalterados. A tela antiga em `doacoes/fluxo` continua. RUNTIME STATUS: DEFERRED.

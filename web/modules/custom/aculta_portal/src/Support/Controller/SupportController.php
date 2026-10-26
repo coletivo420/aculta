@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Support\Controller;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_portal\Contract\SubscriptionOperationsInterface;
+use Drupal\aculta_portal\Contract\SubscriptionStatusInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -20,7 +21,8 @@ final class SupportController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
     private readonly AccountInterface $account,
     private readonly DomainPurposeManager $domainPurposeManager,
-    private readonly MercadoPagoSubscriptionRecorder $assinaturas,
+    private readonly ?SubscriptionStatusInterface $assinaturas,
+    private readonly ?SubscriptionOperationsInterface $operacoesAssinatura,
   ) {}
 
   /**
@@ -31,7 +33,12 @@ final class SupportController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('aculta_portal.domain_purpose'),
-      $container->get('aculta_pagamentos_mercadopago.subscription_recorder'),
+      $container->has('aculta_portal.payment_provider.subscription_status')
+        ? $container->get('aculta_portal.payment_provider.subscription_status')
+        : NULL,
+      $container->has('aculta_portal.payment_provider.subscription_operations')
+        ? $container->get('aculta_portal.payment_provider.subscription_operations')
+        : NULL,
     );
   }
 
@@ -62,21 +69,25 @@ final class SupportController extends ControllerBase {
 
       $total = $order->getTotalPrice();
       $acoes = [];
-      if ($order->bundle() === MercadoPagoSubscriptionRecorder::TIPO_PEDIDO) {
+      if ($this->assinaturas !== NULL
+        && $this->operacoesAssinatura !== NULL
+        && $order->bundle() === $this->assinaturas->subscriptionOrderType()) {
         // Doação mensal: a situação é a da assinatura no Mercado Pago, e o doador pode pausar, reativar ou cancelar.
-        $status = MercadoPagoSubscriptionRecorder::rotulo($this->assinaturas->statusDoPedido($order) ?: MercadoPagoSubscriptionRecorder::STATUS_PENDENTE);
-        $cobranca = $this->assinaturas->situacaoDaUltimaCobranca($order);
+        $status = $this->assinaturas->statusLabel(
+          $this->assinaturas->statusForOrder($order) ?: $this->assinaturas->pendingStatus(),
+        );
+        $cobranca = $this->assinaturas->latestChargeStatus($order);
         if ($cobranca !== '') {
           $status = $this->t('@situacao. Última cobrança: @cobranca', [
             '@situacao' => $status,
-            '@cobranca' => MercadoPagoSubscriptionRecorder::rotuloCobranca($cobranca),
+            '@cobranca' => $this->assinaturas->chargeStatusLabel($cobranca),
           ]);
         }
-        foreach (array_keys(MercadoPagoSubscriptionRecorder::ACOES) as $acao) {
-          if ($this->assinaturas->podeAlterar($order, $acao)) {
+        foreach ($this->operacoesAssinatura->availableActions() as $acao => $label) {
+          if ($this->operacoesAssinatura->canChange($order, $acao)) {
             $acoes[] = [
               '#type' => 'link',
-              '#title' => $this->acaoRotulo($acao),
+              '#title' => $label,
               '#url' => Url::fromRoute('aculta_portal.support_subscription_action', [
                 'commerce_order' => $order->id(),
                 'acao' => $acao,
@@ -122,17 +133,6 @@ final class SupportController extends ControllerBase {
       ],
       '#cache' => ['contexts' => ['user', 'user.permissions'], 'max-age' => 0],
     ];
-  }
-
-  /**
-   * Rótulo do link de ação da assinatura.
-   */
-  private function acaoRotulo(string $acao): string {
-    return (string) match ($acao) {
-      'pausar' => $this->t('Pausar'),
-      'reativar' => $this->t('Reativar'),
-      default => $this->t('Cancelar assinatura'),
-    };
   }
 
 }

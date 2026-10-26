@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_pagamentos_mercadopago\Sales;
 
+use Drupal\aculta_portal\Contract\RefundPolicyInterface;
+
 /**
  * Regras de cancelamento e de sincronização de pagamentos do Mercado Pago.
  *
@@ -11,7 +13,7 @@ namespace Drupal\aculta_pagamentos_mercadopago\Sales;
  * Mercado Pago (query-results e criação de cancelamento: cancelável apenas em pending, in_process e authorized).
  * Os estados locais são os do workflow payment_default do Commerce.
  */
-final class MercadoPagoPaymentPolicy {
+final class MercadoPagoPaymentPolicy implements RefundPolicyInterface {
 
   /**
    * Status remotos em que o Mercado Pago aceita cancelar o pagamento.
@@ -76,6 +78,13 @@ final class MercadoPagoPaymentPolicy {
     );
     $itensSemEstorno = array_filter([self::TIPO_CURSO, $tipoItemDoacao, ...$tiposItemExtras], static fn (string $t): bool => $t !== '');
     return in_array($tipoPedido, $pedidosSemEstorno, TRUE) || array_intersect($tiposItens, $itensSemEstorno) !== [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isRefundable(string $paymentState): bool {
+    return $this->podeEstornar($paymentState);
   }
 
   /**

@@ -1,3 +1,9 @@
+## 0.1.0-dev.14 — contratos neutros para operações do provedor
+
+- Serviços MP implementam as interfaces neutras do Portal e exportam `aculta_portal.payment_provider.subscription_status`, `.subscription_operations`, `.payment_operations` e `.refund_policy`; os IDs proprietários continuam internos.
+- Falhas de API são embrulhadas em `PaymentOperationException` com mensagem segura para a interface. A mensagem crua da API é enviada somente ao log.
+- Unit MP: 118 testes / 260 assertions PASS, incluindo estorno, ações de assinatura e proteção de mensagens.
+
 ## 0.1.0-dev.13 — hooks de administração e elegibilidade no módulo próprio
 
 - `RefundEligibilitySubscriber` e os ramos de presave, acesso e formulário do gateway passam ao módulo MP; os serviços não dependem mais de `CheckoutSettings` do Portal.

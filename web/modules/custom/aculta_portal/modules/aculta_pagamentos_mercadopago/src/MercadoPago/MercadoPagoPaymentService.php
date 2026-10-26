@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_pagamentos_mercadopago\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
+use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
+use Drupal\aculta_portal\Exception\PaymentOperationException;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\commerce_price\Price;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -18,7 +20,7 @@ use MercadoPago\Exceptions\MPApiException;
  * (refundPayment). Este serviço cobre o que o Commerce não oferece: consultar o status atual, cancelar
  * pagamento pendente e espelhar no pagamento local o que o Mercado Pago informa.
  */
-final class MercadoPagoPaymentService {
+final class MercadoPagoPaymentService implements PaymentOperationsInterface {
 
   public function __construct(
     private readonly MercadoPagoClientFactory $clientes,
@@ -96,6 +98,41 @@ final class MercadoPagoPaymentService {
     $this->logger->notice('Pagamento @id cancelado no Mercado Pago (status anterior @status).', [
       '@id' => $pagamento->getRemoteId(),
       '@status' => $status,
+    ]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function refresh(PaymentInterface $payment): string {
+    try {
+      return $this->atualizar($payment);
+    }
+    catch (MercadoPagoApiException $exception) {
+      $this->logProviderFailure($exception);
+      throw new PaymentOperationException($exception->getMessage(), 0, $exception);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function cancel(PaymentInterface $payment): void {
+    try {
+      $this->cancelar($payment);
+    }
+    catch (MercadoPagoApiException $exception) {
+      $this->logProviderFailure($exception);
+      throw new PaymentOperationException($exception->getMessage(), 0, $exception);
+    }
+  }
+
+  /**
+   * Logs the provider response detail while keeping it out of the user-facing exception.
+   */
+  private function logProviderFailure(MercadoPagoApiException $exception): void {
+    $this->logger->error('Mercado Pago API failure during payment operation: @message', [
+      '@message' => $exception->getPrevious()?->getMessage() ?? $exception->getMessage(),
     ]);
   }
 

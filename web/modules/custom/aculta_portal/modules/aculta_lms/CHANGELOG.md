@@ -1,3 +1,8 @@
+## 0.1.0-dev.92 — dependência declarada do provedor de pagamento
+
+- `aculta_lms` declara dependência direta de `aculta_portal:aculta_pagamentos_mercadopago`; nenhum código do LMS mudou. Os quatro módulos LMS relacionados verificados não usam APIs do MP.
+- Unit: 87 testes / 447 assertions PASS (8 depreciações PHPUnit). Kernel MariaDB dedicado: 29 testes / 836 assertions PASS, com 98 depreciações Core/contrib. O harness usa classes reais MP e os contratos neutros.
+
 ## 0.1.0-dev.91 — fechar setup dos Kernels LMS com contratos reais — 2026-10-26
 
 - Os harnesses Kernel que habilitam ou instalam `aculta_lms` agora compartilham

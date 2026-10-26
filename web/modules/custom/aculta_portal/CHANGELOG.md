@@ -1,3 +1,9 @@
+## 0.4.1-dev.37 — contratos neutros para provedores de pagamento
+
+- Portal define interfaces de status de assinatura, ações de assinatura, operações de pagamento e política de estorno; os serviços opcionais usam IDs `aculta_portal.payment_provider.*` registrados pelo módulo provedor. Sem o provedor, relatórios/ações correspondentes desaparecem ou negam acesso.
+- Consumidores do Portal deixaram de referenciar classes e IDs de serviço do Mercado Pago. `SalesPaymentCancelForm` e `SalesPaymentRefreshForm` usam a exceção neutra; nenhum detalhe cru da API chega à UI.
+- Unit Portal: 272 testes / 748 assertions PASS (6 depreciações PHPUnit). Formulários opcionais: 3/3 assertions.
+
 ## 0.4.1-dev.36 — comprovar referências de arquivo em revisões e rich text (2026-10-26)
 
 - Novo `FileReferenceInspectorKernelTest` usa Entity API e MariaDB isolado para provar que o Portal detecta um File referenciado somente por revisão histórica e outro UUID de File embutido em campo de texto. Não executa remoção.

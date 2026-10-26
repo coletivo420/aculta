@@ -43,3 +43,11 @@ services:
     arguments: ['@config.factory', '@aculta_pagamentos_mercadopago.payment_policy']
     tags:
       - { name: event_subscriber }
+  aculta_portal.payment_provider.subscription_status:
+    alias: aculta_pagamentos_mercadopago.subscription_recorder
+  aculta_portal.payment_provider.subscription_operations:
+    alias: aculta_pagamentos_mercadopago.subscription_recorder
+  aculta_portal.payment_provider.payment_operations:
+    alias: aculta_pagamentos_mercadopago.payment_service
+  aculta_portal.payment_provider.refund_policy:
+    alias: aculta_pagamentos_mercadopago.payment_policy
