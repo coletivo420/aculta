@@ -4,7 +4,7 @@ Data: 2026-10-26. Autorização do responsável para copiar o `aculta_runtime` a
 descartável: **18:32**. Janela operacional: até 20h. Este documento cobre o ensaio de
 snapshot/restauração; **não é a janela** e nada foi executado no Runtime.
 
-## Estado do ensaio: BLOQUEADO no passo 2
+## Estado do ensaio: CONCLUÍDO na retomada de 19:15 (o bloqueio inicial fica registrado abaixo)
 
 | Passo | Situação |
 |---|---|
@@ -186,4 +186,62 @@ option-file temporário e o diretório de backup foram removidos.
    credencial separada, em qual arquivo/chave?
 3. Confirmado o par banco/usuário, o ensaio prossegue nos passos 2–6 deste documento,
    incluindo a prova de boot com settings descartável fora do checkout servido.
+
+## Retomada 3 — execução autorizada (2026-10-26, 19:11–19:27)
+
+Decisões do responsável às 19:11: destino = `aculta_simpletest`; remoção das 14 tabelas
+sem prefixo autorizada; `sudo` permitido no ambiente local apenas para corrigir
+privilégios do MariaDB, documentando cada uso (não foi necessário).
+
+### Pré-escrita e tabelas sem prefixo
+
+- `pgrep -af phpunit`: Kernel do Local 1 em execução (PIDs `261010`/`261033`), com prefixo.
+  Não interrompido; os testes seguem com o próprio prefixo.
+- Às 19:13, `aculta_simpletest` tinha **0 tabelas** (`SHOW TABLES` vazio). As 14 tabelas
+  sem prefixo do incidente **não estavam presentes**; nenhum `DROP TABLE` foi executado.
+  Nada com prefixo foi tocado.
+
+### Dump
+
+- Usuário do Runtime, somente leitura, com option-file 600 temporário (sem eco).
+- `mysqldump --single-transaction --routines --triggers --hex-blob aculta_runtime`.
+- Diretório `/home/piradopirata/worktrees/backup-runtime-ensaio-20261026/` (700).
+- **Duração: 5 s. Tamanho: 96.156.440 bytes (≈91,7 MiB).**
+- **sha256: `58072497778eef66c95b8446968ea34a4caabfeb1381abc866c19ad81404e10a`.**
+- O dump foi apagado após a comparação; só o arquivo de sha256 permanece no diretório até
+  a limpeza final.
+
+### Restauração
+
+- Usuário do `aculta_simpletest`, sem prefixo, com option-file 600 temporário.
+- **Duração: 16 s.** Nenhum ajuste de privilégio foi necessário; `sudo` não foi usado.
+- O banco restaurado **não foi esvaziado**: fica para o ensaio do cutover do frete
+  (Local 1).
+
+### Comparação
+
+- 588 tabelas canônicas do Runtime comparadas por `COUNT(*)` com o restaurado:
+  **588 linhas de cada lado, zero divergências**.
+- Na hora da medição o banco também tinha tabelas **prefixadas** do Kernel do Local 1 em
+  execução (632 no total); elas não fazem parte da prova e não foram tocadas.
+
+### Prova de boot (somente leitura)
+
+- Settings descartável fora do checkout servido, apontando ao `aculta_simpletest` sem
+  prefixo, com o código do worktree limpo (`3c810a78a`, Drupal 11.4.10).
+- `drush status`: `Database : Connected`, `Drupal version : 11.4.10`.
+- `drush updatedb:status`: mesmo conjunto de pendências do Runtime — Messenger
+  `10008`–`10012` e os três post-updates (`private_message_email_preferences`,
+  `shared_email_preferences`, `game_achievement_notices`), além de `aculta_user 10013`.
+- O settings descartável foi removido; nenhuma credencial ficou em log.
+
+### Aviso obrigatório
+
+> **`aculta_simpletest` contém cópia do Runtime (dados pessoais) sem prefixo desde 19:16;
+> é proibido rodar `site:install` sem `--db-prefix`; apagar a cópia ao fim do ensaio do
+> cutover.**
+
+Acesso restrito ao usuário `aculta_simpletest` e aos administradores do MariaDB; não
+exportar, não copiar para outro host e não versionar. Nenhuma credencial foi impressa.
+
 
