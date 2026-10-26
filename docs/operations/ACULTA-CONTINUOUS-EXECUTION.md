@@ -216,7 +216,7 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 ## M-3/M-5 — auditoria de ACULTA Game (2026-10-26)
 
 - Unit do Game passou 11 testes / 51 assertions. Kernel `GameAchievementNoticePersistenceKernelTest` no Messenger passou 3/30 no MariaDB dedicado: revalida fonte contra concessões revogadas, migra fila legada uma vez e conserva o cursor/fila quando publisher falha. Duas depreciações de `@EntityType` vêm de Message/Message Template no Core/contrib.
-- Documentação identifica o corte de ownership dev.17 (Game publica, Messenger persiste/lê, Mailer transporta), mas corrige uma lacuna: o Kernel Fórum testa elegibilidade do `ForumParticipationPolicy`, não a chamada de concessão no `BadgeEvaluationHooks::forumPostSave`. Essa cobertura direta permanece próxima tarefa; nenhuma conquista foi concedida no Runtime. README, CHANGELOG, execução, status e matriz foram reconciliados, sem mexer na feature ou subir versão.
+- Documentação identifica o corte de ownership dev.17 (Game publica, Messenger persiste/lê, Mailer transporta). A nota histórica de que faltava teste de chamada ao hook foi superada pelo commit `0e9e0bbcb`: `BadgeEvaluationHooksTest` agora invoca `forumPostSave` e comprova uma concessão única em insert/update com policy e BadgeService reais e storage simulado. Reexecução atual da Unit Game: **12 testes / 73 assertions PASS**. Kernel com ForumPost real e concessão Runtime permanecem pendentes; nenhuma conquista foi concedida no Runtime.
 
 ## Retomada PR #298 — integração dos commits delegados (2026-10-26)
 
