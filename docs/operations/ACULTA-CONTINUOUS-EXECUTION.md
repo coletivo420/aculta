@@ -914,3 +914,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - **Restauração:** `git stash push` apenas nos arquivos tracked modificados (sem `-u`, sem reset de histórico); YAML não rastreado removido do checkout depois da cópia verificada; `drush cr`; `drush status` com bootstrap OK; HTTP 200 nas duas URIs. Arquivos pré-existentes e não relacionados (`node_modules/`, `package*.json`, `Plugin/Field/`) não foram tocados.
 - **Estado final:** `HEAD` `c0beca205`, árvore limpa nos tracked. O trabalho da fase B que estava no checkout servido **não está mais servido**: está no stash e no backup, para o Local 2 decidir como reaplicar em branch.
 - **Pendências:** confirmar com o Local 2 a autoria e se a extração deve ser retomada em branch; não reaplicar no checkout servido sem revisão. Confirmar, pelos logs (não legíveis neste usuário), se houve erro de container na janela.
+
+## Incidente de exposição de senha do Runtime e decisão de não rotacionar — 2026-10-26
+
+- **O que aconteceu:** durante a inspeção de `secrets/aculta-runtime-db.php`, um `grep` casou a linha inteira e a senha do usuário MariaDB `aculta_runtime` apareceu na saída da sessão do Local 3 (por volta de 18:3x). O valor não foi copiado para commit, documento ou log de aplicação, e o arquivo não é versionado.
+- **Decisão explícita do responsável (18:38):** a senha **não será trocada**. A rotação foi retirada dos pré-requisitos da janela de update do Runtime.
+- **Regra mantida:** leitura de credenciais somente por PHP, com option-file de modo 600, sem impressão de valores. Nenhum comando de inspeção pode usar `grep` sobre arquivos de credenciais.
+- **Registro:** `docs/operations/RUNTIME-UPDATE-WINDOW.md` atualizado (item de incidente, pré-requisitos e retomada). O snapshot-ensaio (`docs/aculta-runtime-snapshot-ensaio`, `24d2e0a0e`) foi integrado como documentação, sem código e sem alteração de banco.
+- **Pendência:** o responsável provisiona o banco descartável (sem `aculta_simpletest`) antes de qualquer ensaio de restauração.

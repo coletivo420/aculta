@@ -28,10 +28,10 @@ Diretório de backup criado em `/home/piradopirata/worktrees/` com modo 700 e op
 
 Durante a inspeção do arquivo `secrets/aculta-runtime-db.php`, um `grep` casou a linha
 inteira e o valor da senha apareceu na saída da sessão. O valor não foi copiado para
-documento, commit ou log de aplicação, e o arquivo não foi versionado. **Recomenda-se
-rotacionar a senha do usuário `aculta_runtime`** e reexecutar este ensaio com a nova
-credencial. Daqui em diante, a leitura é sempre por PHP para um option-file 600, sem
-imprimir valores.
+documento, commit ou log de aplicação, e o arquivo não foi versionado. **Decisão
+explícita do responsável (18:38): a senha do usuário `aculta_runtime` NÃO será trocada.**
+Este ensaio não depende de rotação. Daqui em diante, a leitura é sempre por PHP para um
+option-file 600, sem imprimir valores.
 
 ## Bloqueio de leitura no Runtime (independente do privilégio)
 
@@ -59,7 +59,6 @@ a correção; a última leitura válida (antes da falha) mostrava:
    um usuário que tenha `ALL` **somente nesse banco**, ou `GRANT CREATE` ao usuário de
    ensaio. Não usar `aculta_simpletest`.
 2. Checkout servido com YAML válido, para que `updatedb:status` volte a responder.
-3. Senha do Runtime rotacionada, se o responsável assim decidir.
 
 ## Procedimento (comandos sem credenciais)
 
@@ -147,7 +146,7 @@ versão de código do snapshot. Não improvisar SQL nem desfazer apenas partes.
 ## Retomada
 
 1. Responsável provisiona o banco descartável/usuário com `CREATE` (sem usar
-   `aculta_simpletest`) e decide sobre a rotação da senha do Runtime.
+   `aculta_simpletest`). A senha do Runtime não é rotacionada (decisão de 18:38).
 2. Corrigir o YAML do submódulo Mercado Pago no checkout servido (owner da extração).
 3. Executar este procedimento, registrar tempos/tamanho/sha256 e os nomes de tabelas
    divergentes, se houver.
