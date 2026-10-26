@@ -290,16 +290,17 @@
     {
       "file": "config/sync/metatag.metatag_defaults.node__revista.yml",
       "reason": "dados estruturados (JSON-LD) com a identidade institucional de produção; não muda por ambiente"
-    },
-    {
-      "file": "web/modules/custom/aculta_portal/modules/aculta_magazine/src/Drush/Commands/PublicationBundleMigrationCommand.php",
-      "reason": "trava de ambiente do comando de migração: só executa no host de teste da Revista"
     }
   ],
   "profiles": {
     "production": {
       "description": "Transição para produção no build de produção (aculta-deployer build --target production).",
       "rules": [
+        {
+          "file": "config/sync/aculta_mailer.brand.aculta.yml",
+          "pattern": "^footer: ",
+          "with": "footer: "
+        },
         {
           "file": "config/sync/system.site.yml",
           "pattern": "^mail: .*$",
@@ -425,6 +426,11 @@
     "test": {
       "description": "Configuração do servidor de testes (aculta-deployer build --target test). Remetente de teste.",
       "rules": [
+        {
+          "file": "config/sync/aculta_mailer.brand.aculta.yml",
+          "pattern": "^footer: ",
+          "with": "footer: "
+        },
         {
           "file": "config/sync/system.site.yml",
           "pattern": "^mail: .*$",
