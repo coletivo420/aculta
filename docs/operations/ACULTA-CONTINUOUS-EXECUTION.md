@@ -1,17 +1,18 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**HEAD verificado:** `13f368c7d8ef501712c9bef063f9c6d65f262a16` (remoto sincronizado antes desta atualização documental; worktree sem alterações alheias)
-**Estado:** PARTIAL — oito commits desde o HEAD `0d016520e`; M-4 pagamentos/H5P e M-5 Statistics avançaram. M-0 continua bloqueada por drift de Sync e RBAC Wiki; frentes M-1–M-5 não estão encerradas.
+**HEAD-base verificado antes deste checkpoint:** `ab4269764`; branch remota sincronizada e worktree limpo.
+**Estado:** PARTIAL — PHPCS PR-wide, H5P, gate Domain administrativo, User/Portal/CPF focal, Index e Statistics têm evidências atuais PASS. M-0 continua bloqueada pela diferença de `core.extension`, Config Domain por purpose e RBAC Wiki; M-1–M-5 seguem em execução e sem promoção RC nesta retomada.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
 ## Ponto de retomada
 
-1. M-4: resolver a cadeia real de dependências nos Kernels LMS e Doações; consultar a resposta pendente sobre carregar as dependências reais completas ou manter fixtures com classes reais.
-2. Continuar auditoria por componente dos módulos centrais: Messenger, Portal, User/CPF/CEP, Commerce/LMS, Statistics e Index; não repetir as suítes já aprovadas sem mudança relevante.
-3. Para M-0: registrar evidência atual de Config Sync/Runtimes por purpose, tratar os 19 módulos ativos ausentes do Sync e preservar o bloqueio read-only dos grants Wiki até autorização.
-4. O agente 2 concluiu suas tarefas anteriores; verificar novos commits/worktrees antes de incorporar qualquer avanço e nunca modificar seus oito diretórios delegados sem coordenação.
-5. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime.
+1. Resolver a cadeia real de dependências nos Kernel LMS e Doações; falta resposta à escolha entre carregar dependências reais completas ou isolar os testes com contratos reais.
+2. Aguardar a decisão sobre Config Sync do Editor: 17 módulos ativos têm owner, mas oito templates `config/install` sem cópia em Sync exigem reconciliação e ensaio isolado antes de editar a lista.
+3. Prosseguir com auditorias/contratos centrais de Commerce, LMS e Messenger, incluindo `updatedb:status` apenas read-only; não executar hooks pendentes no Runtime.
+4. Manter os grants Wiki em estado fail-closed; preparar só a prévia/rollback até autorização para mudança persistente.
+5. Respeitar os oito diretórios delegados ao agente 2; incorporar commits do agente somente por revisão e cherry-pick.
+6. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime.
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
@@ -33,11 +34,11 @@
 
 | Frente | Estado | Próxima ação |
 |---|---|---|
-| P0 PHPCS | Parcial | Arquivos H5P alterados passam; widget legado conserva violações preexistentes e precisa de correção focal após analisar contratos |
-| P0 H5P | PASS focal | Kernel isolado 3/134; suíte integral do módulo não repetida nesta etapa |
-| P0 admin Domain | PASS no checkout compartilhado | 3498 checks; repetir/validar contra a branch quando runner bootstrapped estiver disponível |
+| P0 PHPCS | PASS no conjunto PR-wide | Drupal + DrupalPractice, 0 erros/0 avisos nos PHP alterados; não confundir com baseline não alterado |
+| P0 H5P | PASS | Kernel H5P 15/388 e Unit 24/73 em runner isolado; sem stub de serviço do produto |
+| P0 admin Domain | PASS no Runtime read-only | 3.498 checks via Drush com URI explícito; não valida diffs não implantados da branch |
 | M-0 inventário individual | Parcial | Inventário 41 itens preservado; faltam Runtime/Config Sync completo e evidência por componente |
-| M-1 a M-5 | Em execução | Avançar em Mailer/Confirmador/Messenger; CPF update aguarda validação isolada e autorização para Runtime; auditorias User/Portal/CEP e homologações visuais continuam parciais |
+| M-1 a M-5 | Em execução | CPF Unit 48/116 e Kernel 2/5, FiscalIdentityPolicy 10/24; avançar em contratos Messenger/Commerce/LMS. Integração Profile/Form API, functional/browser e homologações por propósito continuam parciais |
 
 ## Atualização após HEAD `d82181d74`
 
