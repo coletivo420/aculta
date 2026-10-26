@@ -8,6 +8,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\key\KeyRepositoryInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
+use Drupal\aculta_portal\Secrets\SecretsManager;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -89,6 +90,8 @@ final class MelhorEnvioClient {
    *   Intervalo mínimo entre requisições, em milissegundos. Zero desativa.
    * @param \Closure|null $sleeper
    *   Recebe microssegundos a aguardar. NULL usa usleep(); os testes passam uma função vazia.
+   * @param \Drupal\aculta_portal\Secrets\SecretsManager|null $secrets
+   *   Credenciais sem Key, lidas do arquivo de credenciais do servidor pelo nome do contrato. NULL desativa o fallback.
    */
   public function __construct(
     private readonly ClientInterface $http,
@@ -98,6 +101,7 @@ final class MelhorEnvioClient {
     LoggerChannelFactoryInterface $loggerFactory,
     private readonly int $minIntervalMs = 200,
     private readonly ?\Closure $sleeper = NULL,
+    private readonly ?SecretsManager $secrets = NULL,
   ) {
     $this->logger = $loggerFactory->get('aculta_commerce_melhorenvio');
   }
@@ -382,6 +386,10 @@ final class MelhorEnvioClient {
     foreach (['client_id', 'client_secret'] as $name) {
       $key = $ids[$name] !== '' ? $this->keys->getKey($ids[$name]) : NULL;
       $value = $key?->getKeyValue() ?? '';
+      // Sem Key: o valor vem do arquivo de credenciais do servidor, pelo nome do contrato (SecretsManager).
+      if ($value === '' && $this->secrets !== NULL && $ids[$name] !== '') {
+        $value = (string) $this->secrets->value($ids[$name]);
+      }
       if ($value === '') {
         throw new MelhorEnvioException('not_configured', self::MESSAGES['not_configured']);
       }

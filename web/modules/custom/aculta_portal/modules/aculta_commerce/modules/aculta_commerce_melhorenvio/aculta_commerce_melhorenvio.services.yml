@@ -39,6 +39,9 @@ services:
       - '@aculta_commerce_melhorenvio.token_store'
       - '@key.repository'
       - '@logger.factory'
+      - 200
+      - ~
+      - '@aculta_portal.secrets_manager'
 
   # Geração e conferência do parâmetro `state` do OAuth2 (proteção contra CSRF no retorno).
   aculta_commerce_melhorenvio.oauth_state:

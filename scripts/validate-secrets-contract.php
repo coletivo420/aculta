@@ -46,6 +46,9 @@ $file_secrets = [
   'mailer_payload_key' => 'MAILER_PAYLOAD_KEY',
   'imap_password' => 'IMAP_PASSWORD',
   'smtp_password' => 'SMTP_PASSWORD',
+  'melhorenvio_sandbox_client_id' => 'MELHORENVIO_SANDBOX_CLIENT_ID',
+  'melhorenvio_sandbox_client_secret' => 'MELHORENVIO_SANDBOX_CLIENT_SECRET',
+  'melhorenvio_sandbox_access_token' => 'MELHORENVIO_SANDBOX_ACCESS_TOKEN',
 ];
 
 $key_files = glob($root . '/config/sync/key.key.*.yml') ?: [];
