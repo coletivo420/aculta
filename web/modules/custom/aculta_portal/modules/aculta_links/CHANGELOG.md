@@ -1,5 +1,11 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.32 — remoção do tipo de conteúdo `project` — 2026-10-25
+
+- Classifica no manifesto a remoção já registrada abaixo: tipo, campos, displays, views e referências de `project` foram retirados do código e do Config Sync.
+- O relato de exclusão dos cinco nós é histórico do Runtime de teste (2026-10-21), não uma operação desta alteração.
+- A versão do componente sobe após a mudança não versionada anterior; a auditoria desta etapa não executou migração nem alteração no Runtime.
+
 ## Sem versão — remoção do tipo de conteúdo projeto (2026-10-21)
 
 - Removido o tipo `project` do código e da configuração: campos, displays, view `aculta_projects`, blocos de cabeçalho, pathauto, metatag, captcha, permissão de criação e bundle de busca.

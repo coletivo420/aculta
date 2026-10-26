@@ -3,9 +3,10 @@
 Submódulo do `aculta_portal` que integra o sitemap multidomínio da plataforma (linha 0.1.x,
 ADR-009 em `docs/decisions/`).
 
-## Estado (0.1.1: sitemap multidomínio completo no servidor de testes)
+## Estado atual (0.1.2)
 
-- Endereço por ambiente: a `base_url` segue o site definido pelo ACULTA Deployer (`var/deployer/environment.json`).
+- A allowlist editorial inclui o bundle canônico `revista`.
+- Endereço por ambiente: o runtime segue o endereço definido pelo ACULTA Deployer (`var/deployer/environment.json`), por override em `settings.local.php`; o Config Sync mantém a URL de produção.
 
 ## Detalhes da microfase 0.1.0-G (índice central e promoção de /sitemap.xml)
 
