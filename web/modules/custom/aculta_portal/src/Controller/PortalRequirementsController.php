@@ -122,7 +122,7 @@ final class PortalRequirementsController extends ControllerBase {
       'modules' => ['aculta_pagamentos_mercadopago'],
       'package' => 'mercadopago/dx-php',
       'minimum' => '^3',
-      'purpose' => 'SDK oficial e gateway Checkout Pro próprio do Portal (submódulo aculta_pagamentos_mercadopago). Chaves de produção dependem de decisão do responsável.',
+      'purpose' => 'SDK oficial e gateway Checkout Pro do módulo independente aculta_pagamentos_mercadopago. Chaves de produção dependem de decisão do responsável.',
       'warning' => 'Porte próprio do gateway, sem cobertura da Drupal Security Advisory Policy do upstream.',
     ],
     [
