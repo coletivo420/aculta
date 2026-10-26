@@ -1,3 +1,9 @@
+## 0.4.0-dev.33 — token de apresentação da micropágina — 2026-10-26
+
+- A classe visual do link público passa pelo token `links-page-link` do contrato Portal–tema, preservando a mesma classe no ACULTA420.
+- Dívida: mover `css/micropagina.css` do submódulo para o tema em fase posterior.
+- Gate de fronteira, schema SDC, foundations, PHP lint, PHPCS e testes Unit combinados (20/106) e Kernel combinados (8/231): PASS. Firefox ESR: DEFERRED (`DISPLAY` indisponível); validação de instalação via Drush: DEFERRED (docroot isolado sem `settings.php`, Runtime fora do escopo).
+
 # Changelog — ACULTA Links
 
 ## 0.4.0-dev.32 — remoção do tipo de conteúdo `project` — 2026-10-25

@@ -251,7 +251,7 @@ final class LinkPagePublicController {
         '#url' => $url,
         '#attributes' => ($url->isExternal()
           ? ['rel' => 'noopener noreferrer', 'target' => '_blank']
-          : []) + ['class' => ['aculta-links-page__link']],
+          : []) + ['data-portal-ui' => 'links-page-link'],
       ];
     }
 
