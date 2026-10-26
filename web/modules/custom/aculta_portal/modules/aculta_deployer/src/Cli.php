@@ -615,8 +615,8 @@ final class Cli {
       $this->err('build: ' . $e->getMessage() . ' (saída removida)');
       return 1;
     }
-    file_put_contents($outAbs . '/deploy-policy.json', json_encode(['robots' => $robots], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
-    file_put_contents($outAbs . '/deploy-report.json', json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+    $this->writeAtomic($outAbs . '/deploy-policy.json', json_encode(['robots' => $robots], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+    $this->writeAtomic($outAbs . '/deploy-report.json', json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
     $this->say(sprintf('build (%s): %d arquivos gravados, %d removidos, %d binários preservados, %d substituições de host, %d regras de perfil em %s',
       $target, count($report['files']), count($report['dropped']), count($report['skipped_binary']), $report['replacements'], $report['profile_rules'], $out));
     return 0;
@@ -668,7 +668,7 @@ final class Cli {
       ],
       'not_done' => 'nenhum Runtime foi alterado por este comando',
     ];
-    file_put_contents($outAbs . '/transition-plan.json', json_encode($plan, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+    $this->writeAtomic($outAbs . '/transition-plan.json', json_encode($plan, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
     $this->say(sprintf('transition (%s): %d arquivo(s) de config/sync mudam; plano em %s/transition-plan.json', $target, count($changed), $out));
     foreach ($changed as $rel) {
       $this->say("  $rel");
@@ -698,6 +698,20 @@ final class Cli {
     } catch (\RuntimeException $e) {
       $this->err('hostinger-layout: ' . $e->getMessage());
       return 1;
+    }
+  }
+
+  /**
+   * Grava um arquivo de forma atômica: temporário no mesmo diretório, depois rename.
+   *
+   * Se a gravação falhar, nenhum arquivo parcial nem temporário fica no lugar do destino.
+   */
+  private function writeAtomic(string $target, string $content): void {
+    $temp = dirname($target) . '/.' . basename($target) . '-' . bin2hex(random_bytes(6)) . '.tmp';
+    $written = file_put_contents($temp, $content, LOCK_EX);
+    if ($written !== strlen($content) || !rename($temp, $target)) {
+      @unlink($temp);
+      throw new \RuntimeException('Não foi possível gravar ' . basename($target) . '.');
     }
   }
 
