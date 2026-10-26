@@ -570,3 +570,8 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - A revisão de F-D44 encontrou `PublicForumLastActivityAuthorHooks` usando `buildLegacy()` enquanto cartões de tópicos e posts usam `buildLegacyForum()`. Corrigido para exibir `-gr` também no cartão da última atividade. Autores históricos continuam sem User/Profile e sem rota individual; `/u/lendashistoricas` mantém os nomes sem sufixo.
 - A omissão contradiz o contrato de apresentação do candidato RC.2, portanto o status foi reclassificado para Dev `0.1.0-dev.323`; RC.2 permanece histórico. README, CHANGELOG, roadmap, checklist RC, status, matriz e índice raiz atualizados. `LegacyAuthorDisplayNameTest` 1/1 PASS; PHPCS Drupal/DrupalPractice, PHP lint, índice de 41, pacote de 41 e diff check PASS. Não houve migration, Runtime write ou revisão visual.
 - Próxima verificação: teste renderizado/Firefox ESR com fixture de autoria histórica em ambiente local isolado; em paralelo, completar o importador idempotente e ensaio efêmero Growroom antes de qualquer importação no Homelab.
+
+## M-0 — retirar exceções contrib resolvidas do gate de slugs (2026-10-26)
+
+- Reexecução no HEAD `e6ecf899` indicou que as 17 rotas contrib listadas na baseline DT-P20 deixaram de violar a política; o gate exige que cada correção seja removida da lista. As 17 entradas foram eliminadas sem alterar regras/rotas contrib.
+- `validate-public-slugs.php`: PASS, 44 rotas, zero violações contrib na baseline. `validate-environment-addresses.php`: PASS, 4.265 arquivos. Status (41) e pacotes (41) também PASS; diff check PASS. Esse resultado substitui os snapshots históricos que ainda listavam 17 exceções.

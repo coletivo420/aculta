@@ -22,12 +22,6 @@ $root = dirname(__DIR__);
 // Ceiling for contributed public routes (DT-P20). It may only shrink: a route leaves this list when it is
 // fixed, and a new violation outside this list fails the gate.
 $contribBaseline = [
-  'lms.course.start', 'lms.course.reset_test', 'lms.group.results', 'lms.group.self_results',
-  'lms.answer.details', 'entity.lms_answer.edit_form', 'entity.group.join', 'entity.group.leave',
-  'entity.group.revision_delete_form', 'social_auth.network.redirect', 'social_auth.network.callback',
-  'social_auth.user.profiles',
-  'entity.webform_submission.user', 'profile.user_page.single', 'profile.user_page.multiple',
-  'profile.user_page.add_form', 'diff.revisions_diff',
 ];
 
 $forbidden = ['course', 'courses_', 'group', 'node', 'user', 'lesson', 'activity', 'answer', 'taxonomy', 'comment', 'forum_', 'block', 'views'];
