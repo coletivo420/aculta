@@ -1,5 +1,20 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.18 (proposto; manifesto em dev.17 até a integração) — vídeos remotos no curso
+
+- Novo campo `field_lms_videos` em `group:lms_course`, limitado ao bundle
+  `media:remote_video` do Portal. Novas instalações recebem por
+  `config/install`; sites existentes recebem pelo update `8001`, que também
+  adiciona o componente ao formulário e o oculta na visualização.
+- O provider do Content Index emite a relação explícita `course_video` para
+  `media:remote_video`. A versão de projeção passa a 4 com o plugin PDF Group
+  ou 3 sem ele, forçando rebuild do catálogo.
+- O Media continua sob o Portal: URL oEmbed, corpo, miniatura e Entity Access
+  não são copiados; o Index apenas revalida o alvo.
+- Evidência: Unit do módulo 13/70; Kernel LMS 5/259; Index Unit 51/265 e Kernel
+  119/2.019 PASS. A configuração Sync e o update no Runtime ficam para o agente
+  responsável pela integração.
+
 ## 0.1.0-dev.17 — consumir a relação Group do Document Viewer
 
 - O provider LMS procura `aculta_document_viewer_group:course_document`, que

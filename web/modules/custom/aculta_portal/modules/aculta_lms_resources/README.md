@@ -16,22 +16,24 @@ concede visualização aos membros ativos e educadores do curso somente enquanto
 estiver vinculada a ele; a política geral de acesso da Gallery não é ampliada.
 
 O provider do Content Index projeta somente `Group:lms_course` e relações
-explícitas `course_reading` (`revista`/`wiki_entry`), `course_gallery` e `course_document`, esta última quando o plugin `aculta_document_viewer_group:course_document` está registrado.
-Consultas revalidam Entity Access sob o purpose `courses` e exigem também
-`takeAccess()` ou a permissão contextual de educador (`administer members` ou
-`grade students`). Aulas, progresso, matrículas, respostas, notas e certificados
-continuam exclusivamente no LMS.
+explícitas `course_reading` (`revista`/`wiki_entry`), `course_gallery`,
+`course_document` (quando o plugin
+`aculta_document_viewer_group:course_document` está registrado) e `course_video`
+(`media:remote_video`). Consultas revalidam Entity Access sob o purpose
+`courses` e exigem também `takeAccess()` ou a permissão contextual de educador
+(`administer members` ou `grade students`). Aulas, progresso, matrículas,
+respostas, notas e certificados continuam exclusivamente no LMS.
 
 O Media oEmbed compartilhado `remote_video` pertence ao `aculta_portal` e pode
-ser consultado pelo Index como entidade autorizada. Por decisão do responsável,
-relações de vídeo ficam adiadas até fechar formatos editoriais e contratos de
-acesso dos consumidores. O provider LMS ainda não declara relação com vídeo.
-Na configuração revisada, `Group:lms_course` não tem
-campo direto de Media, `field_description` não seleciona formato de texto e o
-campo `lms_activity.no_answer.field_content` aceita apenas `plain_text`; a fonte
-pedagógica que armazenará embeds precisa ser identificada antes de criar curso→
-vídeo ou atividade→vídeo. Não copiar URL oEmbed, corpo, progresso ou dados de
-estudante para o catálogo.
+ser consultado pelo Index como entidade autorizada. O curso referencia vídeos
+pelo campo explícito `field_lms_videos`, limitado ao bundle `remote_video`;
+novas instalações recebem a configuração de `config/install` e sites existentes
+recebem o campo pelo update `8001`. O provider LMS emite `course_video` e a
+versão de projeção sobe para 4 com o plugin PDF Group ou 3 sem ele. O Media e
+sua Entity Access continuam no Portal; não copiar URL oEmbed, corpo, miniatura,
+progresso ou dados de estudante para o catálogo. O contrato completo das
+relações editoriais de vídeo está em
+[ACULTA-CONTENT-INDEX-VIDEO-RELATIONS](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md).
 
 ## Estado
 
