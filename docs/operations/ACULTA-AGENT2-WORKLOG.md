@@ -443,3 +443,11 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - Testado no endpoint de autorização do sandbox (sem login): `user-read` é inválido (resposta não-JSON). Válidos: `shipping-calculate`, `cart-read`, `shipping-checkout`, `shipping-tracking`, `orders-read`, `users-read`.
 - Configuração no servidor de teste: `scopes` = `shipping-calculate users-read`.
 - Pendente: nova autorização para validar `/api/v2/me` (com `users-read`) e a cotação.
+
+## ME-PEND-01 fechada: autorização de sandbox com token de usuário
+
+- Autorização concluída no sandbox (tentativa das 09:18, `state` conferido com o pendente).
+- Token de usuário gravado no servidor de teste, validade de 30 dias (2592000 s, confirmado).
+- `GET /api/v2/me` respondeu **200**. `POST /api/v2/me/shipment/calculate` respondeu **200** com cotações (campos `id`, `name`, `price`, `delivery_time`).
+- Escopos efetivos: `shipping-calculate users-read`. `user-read` foi recusado pelo sandbox.
+- Pendente de verificação visual: alerta de sucesso exibido pelo tema na página inicial (teste solicitado ao responsável).
