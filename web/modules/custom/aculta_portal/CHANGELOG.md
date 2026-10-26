@@ -1,3 +1,9 @@
+## 0.4.1-dev.36 — comprovar referências de arquivo em revisões e rich text (2026-10-26)
+
+- Novo `FileReferenceInspectorKernelTest` usa Entity API e MariaDB isolado para provar que o Portal detecta um File referenciado somente por revisão histórica e outro UUID de File embutido em campo de texto. Não executa remoção.
+- Kernel: 2 testes / 19 assertions PASS. Unit focais de `UnusedFileCleaner` e `UnusedMediaCleaner`: 8 testes / 31 assertions PASS (duas depreciações PHPUnit).
+- Não houve exclusão de File/Media nem acesso ao Runtime. A validação operacional do cleanup segue pendente.
+
 ## 0.4.1-dev.35 — checkout LMS dispensa identidade fiscal para curso gratuito (2026-10-26)
 
 - `FiscalIdentityPolicy` mantém a exigência da Loja e dos cursos pagos do LMS;

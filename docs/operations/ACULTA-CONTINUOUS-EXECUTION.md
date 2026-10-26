@@ -504,3 +504,9 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Commerce Unit: 31 testes / 192 assertions PASS; 11 depreciações PHPUnit. Mercado Pago Unit: 11/22 PASS. Nenhum pagamento, sandbox externo ou credencial foi usado.
 - Kernel da branch, MariaDB `aculta_simpletest`: `CheckoutProTest` 1/50 PASS, com 76 depreciações Core/contrib e 2 PHPUnit. Um primeiro runner carregou código do checkout compartilhado e foi descartado; a execução válida usou o caminho absoluto do worktree e autoloader prioritário da PR.
 - `DonationPortKernelTest`: reproduz 4 erros de setup / 0 assertions porque a fixture não instala `aculta_messenger`; o publisher real `aculta_donation` depende do serviço compartilhado ausente `aculta_messenger.notice_event_publisher`. Não foi adicionado serviço fictício nem alterado o módulo; próximo passo é fechar a closure real Messenger/Portal/Image no harness, sem baixar a segurança do teste. Nenhum Runtime ou integração financeira externa foi acionada.
+
+## M-2 — validar referências físicas em revisões e rich text (2026-10-26)
+
+- Unit focais existentes de `UnusedFileCleaner`/`UnusedMediaCleaner`: 8 testes / 31 assertions PASS, com duas depreciações PHPUnit.
+- Novo `FileReferenceInspectorKernelTest` usa Node, File e campos reais em MariaDB isolado: 2 testes / 19 assertions PASS. O Entity Query com `allRevisions()` encontrou um arquivo que só permanece em revisão antiga; a consulta UUID encontrou outro referenciado por campo text_long. Nenhuma exclusão foi invocada.
+- PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. `aculta_portal` avançou `.35` → `.36`, com README, changelog, status, índice e matriz atualizados. Group/Media compartilhada, tradução/revisão multilingue e validação operacional do cleaner permanecem em auditoria; Runtime continua somente leitura.
