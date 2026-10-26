@@ -151,3 +151,39 @@ versão de código do snapshot. Não improvisar SQL nem desfazer apenas partes.
 2. Corrigir o YAML do submódulo Mercado Pago no checkout servido (owner da extração).
 3. Executar este procedimento, registrar tempos/tamanho/sha256 e os nomes de tabelas
    divergentes, se houver.
+
+## Retomada 2 — 2026-10-26 19:09 (bloqueio de credencial)
+
+O responsável informou que o banco descartável e o usuário de restauração **já existem**;
+portanto o `CREATE DATABASE` não deveria ser tentado. A busca por credencial foi refeita
+**só por nomes**, sem abrir valores:
+
+- `secrets/`: `aculta-runtime-db.php`, `aculta.secrets.env`, `simpletest-db.env`,
+  `teste_comum.env`, entre outros. Nenhuma chave de restauração/ensaio/cutover.
+- `web/sites/default/`: `settings.php`, `settings.local.php`, `aculta.secrets.php`,
+  `services.local.yml`. `aculta.secrets.php` carrega variáveis de ambiente; nenhuma chave
+  de banco de restauração.
+- `/home/aculta/secrets/`: o mesmo conjunto de `secrets/`.
+- Nomes de variáveis de ambiente do processo: nada de banco/restauração.
+- Busca por nome de arquivo (`*restore*`, `*restaur*`, `*cutover*`, `*ensaio*`): nenhum
+  arquivo de credencial de restauração.
+
+O único usuário acessível com credencial local é o do Runtime. Com ele, somente leitura:
+
+- `SHOW DATABASES` → `aculta_runtime`, `aculta_id_cpf_test`, `information_schema`.
+- `SHOW GRANTS` → `ALL` em `aculta_runtime.*` e em `aculta_id_cpf_test.*`.
+- Contagem de tabelas: `aculta_runtime` = 588; `aculta_id_cpf_test` = 0 (vazio).
+
+`aculta_id_cpf_test` é o único banco não-Runtime/não-simpletest visível, está vazio e o
+usuário do Runtime tem `ALL` nele — mas o nome sugere banco de testes de outro módulo.
+**Não foi usado sem confirmação.** Nenhum dump, restauração ou boot foi executado; o
+option-file temporário e o diretório de backup foram removidos.
+
+### Indicação necessária do responsável
+
+1. `aculta_id_cpf_test` é o banco descartável declarado para este ensaio?
+2. O usuário de restauração é o próprio `aculta_runtime` (com `ALL` nesse banco) ou há uma
+   credencial separada, em qual arquivo/chave?
+3. Confirmado o par banco/usuário, o ensaio prossegue nos passos 2–6 deste documento,
+   incluindo a prova de boot com settings descartável fora do checkout servido.
+
