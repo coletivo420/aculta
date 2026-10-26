@@ -1,9 +1,10 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-**Estado: candidato RC `0.1.0-rc.2` (2026-10-25).** Todas as fases F-M0–F-M7
-foram fechadas com evidência executada depois da regressão do `0.1.0-rc.1`.
-Gates, defeitos corrigidos, migração/corte local, F-GROUP homologado, rollback
-e portas de Alpha em [docs/RC.md](docs/RC.md).
+**Estado: Dev `0.1.0-dev.323`.** O registro `0.1.0-rc.2` é histórico e foi
+reclassificado após a revisão de autoria Growroom encontrar um cartão de última
+atividade sem o sufixo `-gr` exigido no conteúdo do Fórum. A correção está em
+validação; não há candidato RC vigente. O memorial coletivo `/u/lendashistoricas`
+continua sem sufixo e sem perfis individuais.
 
 Submódulo de `aculta_portal`. O direcionamento vigente, aprovado pelo
 responsável em 2026-10-19, é reconstruir

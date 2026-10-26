@@ -1,4 +1,10 @@
-# Candidato RC — `aculta_forum 0.1.0-rc.2`
+# Registro histórico — `aculta_forum 0.1.0-rc.2`
+
+> **Não é um candidato vigente.** Em 2026-10-26 o componente retornou a Dev
+> (`0.1.0-dev.323`) após a auditoria F-D44 encontrar uma omissão funcional no
+> cartão de autoria da última atividade. O changelog registra a correção; novos
+> gates e revisão visual ainda são necessários antes de outro RC. Este documento
+> preserva apenas as evidências anteriores ao deploy.
 
 Data: 2026-10-25. Branch: `docs/aculta-forum-0.1.0-dev.1`.
 Fluxo: [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md).

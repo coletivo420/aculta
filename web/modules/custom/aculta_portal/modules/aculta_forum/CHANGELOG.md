@@ -1,3 +1,14 @@
+## `0.1.0-dev.323` — aplicar `-gr` no cartão da última atividade
+
+`PublicForumLastActivityAuthorHooks` agora usa o builder de autoria histórica
+específico do Fórum. Omissão encontrada na revisão F-D44: cartões de tópico e
+comentário já exibiam `-gr`, mas o autor da última atividade não. O memorial
+coletivo permanece sem sufixo e não são criadas rotas individuais.
+
+O RC.2 anterior passa a histórico; o componente retorna a Dev até repetir os
+testes pertinentes e concluir a validação visual/acessível aplicável. Nenhuma
+migração ou alteração de Runtime foi executada.
+
 ## `0.1.0-rc.2` — candidato RC após fechar todas as fases — 2026-10-25
 
 - O candidato é declarado só depois do fechamento de F-M0–F-M7: Unit 184/1.332,
