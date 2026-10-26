@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.2
 state: Dev
-progress_note: "Provider course_document do Content Index pertence ao owner da relação; configuração do bundle Media segue temporariamente no PDF Group."
-next_phase: 'Teste de revogação de membership bloqueado no ambiente de teste (aculta_user.aculta_user_agreement_ledger ausente em Kernel); integração Group dos documentos de turma configurada em sync; instalação por ambiente ainda precisa confirmação ([README](web/modules/custom/aculta_portal/modules/aculta_document_viewer/modules/aculta_document_viewer_group/README.md))'
+progress_note: "Kernel MariaDB do acesso a documentos de turma passou 1/48 após carregar a closure real, o bundle course_document do contrato Sync e schemas requeridos pelos hooks Portal/User/Commerce. Membership, relação, não membro e revogação revalidados; 144 depreciações upstream. Sem escrita Runtime. Bundle Media permanece legado no PDF Group; migration de ownership ainda bloqueada."
+next_phase: 'Homologar instalação/Config Sync por purpose em ambiente isolado e planejar migração de ownership do bundle Media legado no PDF Group; instalação por ambiente ainda precisa confirmação ([README](web/modules/custom/aculta_portal/modules/aculta_document_viewer/modules/aculta_document_viewer_group/README.md))'

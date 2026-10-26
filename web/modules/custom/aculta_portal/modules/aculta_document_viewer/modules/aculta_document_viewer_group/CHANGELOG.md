@@ -7,4 +7,5 @@
   `lms_course`. A dependência explícita do Portal cobre a classe do provider.
 - A configuração instalada de Media/File permanece no submódulo PDF Group;
   sua transferência é uma migração separada e não foi aplicada.
+- O Kernel de acesso privado agora resolve a closure real dos módulos e instala o bundle/field de teste conforme o contrato Config Sync; MariaDB 1/48 PASS (144 depreciações Core/contrib).
 - Não houve importação de configuração, atualização ou alteração do Runtime.

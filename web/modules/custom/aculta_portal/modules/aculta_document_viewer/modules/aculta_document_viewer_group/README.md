@@ -37,6 +37,16 @@ HTTP 403. Remover a relação ou a membership negou a URL conhecida (HTTP 403);
 restaurar cada vínculo devolveu HTTP 200. A Media e o arquivo de teste foram
 removidos. Não importar toda a configuração como parte desta validação.
 
+## Evidência Kernel atualizada (2026-10-26)
+
+`CourseDocumentAccessTest` passou em MariaDB dedicado (1 teste / 48 assertions;
+144 depreciações Core/contrib). O harness carrega a closure real de dependências
+do manifesto, o serviço Portal/User real e schemas acionados pelos hooks. Cria
+em isolamento a Media Type `course_document` e o field privado equivalentes ao
+contrato exportado; não instala Config Sync no Runtime. A classe verifica membro,
+relação removida, não membro e revogação de membership contra o endpoint privado
+do Core. O fixture de Group e o arquivo privado são efêmeros ao teste.
+
 ## Hooks e classes
 
 O módulo implementa somente o hook OOP `#[Hook('entity_presave')]` em
