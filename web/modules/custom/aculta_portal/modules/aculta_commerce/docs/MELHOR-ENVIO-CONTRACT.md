@@ -34,6 +34,12 @@ checkout mostra indisponibilidade e não permite concluir uma remessa tarifada.
 
 ## Estado nesta branch
 
+O contrato foi comprovado com o provider de teste `aculta_test_mock_carrier`
+(`tests/modules/aculta_commerce_shipping_test`): uma transportadora que lança
+exceção é ignorada e não vira tarifa zero, e uma tarifa válida é mesclada às
+demais. O plugin real do Melhor Envio ainda não está nesta branch (vive na
+linha principal do site) e a adaptação continua pendente.
+
 A branch do porte não contém o plugin de cotação atual do Melhor Envio (ele vive
 na linha principal do site). A adaptação do arquivo atual é pequena e deve ser
 feita na conciliação da PR #298:
