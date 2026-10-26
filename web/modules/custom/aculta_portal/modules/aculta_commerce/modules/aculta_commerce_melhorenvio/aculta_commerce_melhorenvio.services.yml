@@ -64,3 +64,4 @@ services:
       - '@key.repository'
       - '@aculta_commerce_melhorenvio.webhook_signature'
       - '@logger.factory'
+      - '@aculta_portal.secrets_manager'

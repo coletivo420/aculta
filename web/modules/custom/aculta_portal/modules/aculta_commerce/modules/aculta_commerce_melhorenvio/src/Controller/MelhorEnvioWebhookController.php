@@ -9,6 +9,7 @@ use Drupal\aculta_commerce_melhorenvio\Webhook\MelhorEnvioWebhookEvent;
 use Drupal\aculta_commerce_melhorenvio\Webhook\MelhorEnvioWebhookSignature;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\key\KeyRepositoryInterface;
+use Drupal\aculta_portal\Secrets\SecretsManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +35,7 @@ final class MelhorEnvioWebhookController {
     private readonly KeyRepositoryInterface $keys,
     private readonly MelhorEnvioWebhookSignature $signature,
     LoggerChannelFactoryInterface $loggerFactory,
+    private readonly ?SecretsManager $secrets = NULL,
   ) {
     $this->logger = $loggerFactory->get('aculta_commerce_melhorenvio');
   }
@@ -71,6 +73,10 @@ final class MelhorEnvioWebhookController {
     $id = $this->config->keyIds($this->config->environment())['client_secret'];
     $key = $id !== '' ? $this->keys->getKey($id) : NULL;
     $value = $key?->getKeyValue() ?? '';
+    // Sem Key, o segredo vem do arquivo de credenciais do servidor, pelo nome do contrato.
+    if ($value === '' && $this->secrets !== NULL && $id !== '') {
+      $value = (string) $this->secrets->value($id);
+    }
     return $value === '' ? NULL : $value;
   }
 
