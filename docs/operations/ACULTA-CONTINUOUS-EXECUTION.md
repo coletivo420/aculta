@@ -653,3 +653,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - O teste abre dois processos, ambos leem que o slug está livre, e só então libera as inserções concorrentes. Resultado MariaDB dedicado: **7 testes / 55 assertions PASS**, incluindo exatamente uma claim vencedora e uma rejeitada pela constraint. PHPCS Drupal/DrupalPractice, PHP lint dos dois arquivos e `git diff --check` PASS. As 11 depreciações reportadas vêm de Core/contrib já carregados pelo Kernel.
 - `aculta_user` avançou `0.4.0-dev.83` → `0.4.0-dev.84`. O update 10013 não foi aplicado a Runtime; rollback de falha de save e instalação efêmera do update permanecem pendentes.
 - A primeira invocação antes do ajuste do harness falhou porque a branch carregava classes ausentes no checkout principal e o subprocesso procurava Core no caminho errado; não é contada como resultado de produto.
+
+
+## M-1 — revalidação do lookup de CEP (2026-10-26)
+
+- O autoloader PHPUnit foi montado para apontar o namespace `Drupal\aculta_portal_cep` aos fontes do worktree. `CepLookupServiceTest`: **10 testes / 45 assertions PASS** em PHP 8.4.27; `scripts/validate-account-address.php`: **PASS** (23 checks).
+- PHPCS Drupal/DrupalPractice do módulo inteiro continua **FAIL**, 144 erros/28 warnings em 11 arquivos (inclui 72 erros no JS); a varredura só de `src`/`tests` encontra 72/28 em 10 arquivos. Nenhum arquivo do módulo foi alterado por esta verificação; não reduzi cobertura nem reformatei baseline legado.
+- O script Browser/X11 existente usa login por link único e submete o formulário, gravando endereço na conta. Como não foi confirmado um usuário descartável em banco/Runtime isolado, a homologação visual fica DEFERRED. Nenhuma mudança ou gravação no Runtime.
+- Uma tentativa inicial de chamar `tests/run.php` no módulo CEP foi inválida: esse arquivo não existe nesse componente; não é contabilizada como teste.

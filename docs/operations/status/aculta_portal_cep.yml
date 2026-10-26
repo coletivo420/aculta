@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.3.0-dev.12
 state: Dev
-progress_note: "Dev.12: normalizador aceita somente CEP de oito dígitos, com máscara opcional, e rejeita letras/separadores extras; regressão Unit focal e gates do endereço verificados. runtime e homologação visual seguem sem alteração nesta entrega."
-next_phase: Homologar em Firefox ESR no Runtime o formulário de endereço e validar fontes/fallback sem alterar configuração compartilhada; tratar PHPCS legado em lote focalizado ([contrato](docs/portal/ACCOUNT-ADDRESS.md))
+progress_note: "Dev.12: CepLookupServiceTest reexecutado no autoloader isolado da branch: 10 testes/45 assertions PASS; validate-account-address.php PASS. PHPCS Drupal/DrupalPractice do módulo: 144 erros/28 warnings em 11 arquivos (inclui 72 erros no JS), baseline legado; fontes PHP: 72/28 em 10 arquivos. Script Browser/X11 submete e salva o endereço da conta, por isso exige usuário descartável em ambiente isolado; nenhuma gravação Runtime foi feita."
+next_phase: Executar o script Firefox ESR com conta descartável em ambiente isolado e verificar fontes/fallback; tratar PHPCS legado em alterações focais ([contrato](docs/portal/ACCOUNT-ADDRESS.md))
