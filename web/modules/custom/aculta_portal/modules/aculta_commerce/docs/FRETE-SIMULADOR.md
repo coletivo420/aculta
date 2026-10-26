@@ -26,7 +26,7 @@ o porte precisa trocar essas peças pelas equivalentes do `aculta_commerce`.
 | `src/EventSubscriber/OrderSubscriber.php` | Bloqueia `Order::save()` durante estimativa | evento de pedido do Commerce | Hook/guarda no nosso motor (sem depender de `commerce_shipping`) |
 | `src/EventSubscriber/ShipmentSubscriber.php` | Bloqueia `Shipment::save()` durante estimativa | evento de Shipment do Commerce | Guarda no `ShipmentManager`/`LateOrderProcessor` do nosso motor |
 | `src/CommerceCartEstimateServiceProvider.php` | Troca a classe do late processor do `commerce_shipping` no container | `ServiceProviderBase` | **Não portar**: o nosso motor já é dono do late processor |
-| `src/Plugin/views/area/CartEstimate.php` | Área de Views com formulário país/CEP, AJAX e resultado | `views`, `address_country`, Order/Shipping managers do contrib | Substituir por bloco + render element (recomendado) ou área de Views própria no `aculta_commerce` |
+| `src/Plugin/views/area/CartEstimate.php` | Área de Views com formulário país/CEP, AJAX e resultado | `views`, `address_country`, Order/Shipping managers do contrib | Substituir por render element + SDC no `aculta420`; não portar a área de Views |
 | `src/Event/CartEstimateEvents.php`, `SelectShippingRateEvent.php` | Permite escolher o rate aplicado | `event_dispatcher` | `ShippingEstimateEvents::SELECT_QUOTE`, disparado pelo nosso selector |
 | `src/Exception/CartEstimateException.php` | Falha ao empacotar | — | `ShippingEstimateException` |
 | `src/Exception/NoApplicableShippingRatesException.php` | Sem rates | — | Mesma hierarquia; a UI traduz para “frete indisponível” |
@@ -34,7 +34,7 @@ o porte precisa trocar essas peças pelas equivalentes do `aculta_commerce`.
 | `commerce_cart_estimate.module` | `views_data_alter`, `hook_theme`, preprocess do resumo | Views | Sem equivalente: o resumo é calculado no serviço e renderizado pelo SDC |
 | `templates/commerce-cart-estimate-summary.html.twig` | Resumo de totais do contrib | `commerce_order/total_summary` | SDC `shipping-estimate` no `aculta420` |
 | `css/commerce_cart_estimate.form.css`, `libraries.yml` | Estilo e biblioteca | — | CSS do SDC; sem biblioteca do contrib |
-| `config/schema/...schema.yml` | Opções da área de Views (rótulos, container) | Views area | Config schema do bloco/render element, se configurável |
+| `config/schema/...schema.yml` | Opções da área de Views (rótulos, container) | Views area | Config schema do render element/SDC, se configurável |
 | `tests/src/Kernel/EstimatorTest.php` | Prova empacotamento/rates | Kernel do contrib | Novo Kernel test do serviço no `aculta_commerce` |
 | `tests/modules/commerce_cart_estimate_test` | Subscriber de seleção de rate | evento | Fixture do nosso teste de evento |
 
@@ -109,9 +109,10 @@ classes de shipping. O tema só consome props.
 ]
 ```
 
-- **Carrinho completo:** bloco/render element no cabeçalho da view `commerce_cart_form`
-  (ou no topo do painel do carrinho), substituindo a área de Views do contrib. Mantém os
-  rótulos configuráveis do contrib (título, descrição, rótulo do botão, botão limpar).
+- **Carrinho completo:** SDC `shipping-estimate` renderizado no topo do painel do carrinho,
+  substituindo a área de Views do contrib. O Portal entrega props neutros; o tema aplica
+  UI Styles/variantes. Mantém os rótulos configuráveis do contrib (título, descrição,
+  rótulo do botão, botão limpar) como props.
 - **Carrinho lateral (`cart-offcanvas`):** novo slot/prop `shipping_estimate` no SDC
   existente. O Portal renderiza o mesmo render element; o JS do componente só troca o
   conteúdo do slot e os totais, sem re-renderizar a gaveta inteira.
@@ -124,6 +125,11 @@ mobile-first, sem dependência de jQuery. O JS é mínimo e usa `#ajax` do Form 
 (mesma origem, token/CSRF do Drupal), não `fetch` artesanal. Sem JS, o submit recarrega a
 página com o resultado. Estados de carregamento com `aria-live` e sem deslocamento de
 layout.
+
+O componente expõe variantes — `full` no carrinho completo, `compact` na gaveta e
+`inline` no produto — e o tema pode registrar estilos **UI Styles** (`ui_styles`,
+`ui_styles_ui_patterns`, já no `core.extension.yml`) para espaçamento e tipografia, sem
+CSS por instância. A estrutura de props é a mesma nas três variantes.
 
 ## 4. Proteção
 
@@ -174,7 +180,7 @@ O contrib é **GPL-2.0-or-later**. No porte:
 | Fase | Entrega | Critérios de aceite e testes |
 |---|---|---|
 | **E1** | Serviço de estimativa sem efeito colateral + adaptador para o motor atual; feature flag desligada | Unit: entrada inválida, perfil não salvo, sem `save()` de pedido/remessa, seleção só da lista confiável. Kernel: empacotamento com 1–3 itens e cotação de `FlatRate`; falha → `unavailable`. Nenhum write em `commerce_order`/shipment. |
-| **E2** | Render element + SDC `shipping-estimate`; três pontos de entrada; AJAX same-origin; cache e flood | Kernel/render: props neutros, estados `ok`/`unavailable`/`rate_limited`. Browser (Firefox ESR, `DISPLAY=:0`) no servidor de testes: produto, gaveta e carrinho completo em mobile e desktop; sem JS o submit funciona; nenhum CEP em log. Teste de flood: 11ª chamada anônima no minuto → 429. |
+| **E2** | Render element + SDC `shipping-estimate`; três pontos de entrada; AJAX same-origin; cache e flood | Kernel/render: props neutros, estados `ok`/`unavailable`/`rate_limited`. Browser (Firefox ESR, `DISPLAY=:0`) no servidor de testes: produto, gaveta e carrinho completo em mobile e desktop; sem JS o submit funciona; nenhum CEP em log. Teste de flood: 11ª chamada anônima no minuto → 429. **Conferir no checkout que o frete exibido é o valor revalidado no servidor** (a estimativa é só visual). |
 | **E3** | Cotação real do Melhor Envio com cache/timeout; medição de latência e taxa de cache | Teste com sandbox: cache hit não chama a API; timeout → `unavailable` em ≤20 s; nenhuma remessa/etiqueta criada; cotação nunca persiste token. Medir p50/p95 com cache frio/quente e documentar. |
 
 **Dependência do cutover do frete:** o porte assume o nosso motor (`ShippingOrderManager`,
@@ -184,18 +190,19 @@ atrás de feature flag e a cotação do checkout continua sendo a fonte de verda
 entra em produção depois do cutover do frete para o `aculta_commerce` e da remoção da
 dependência do `commerce_shipping` no checkout.
 
-## Decisões que dependem do responsável
+## Decisões confirmadas (2026-10-26)
 
-1. **Ponto de entrada do carrinho completo:** bloco + render element (recomendado) ou
-   portar a área de Views do contrib.
-2. **Exibir frete nos totais do carrinho lateral/produto:** somente visualização, sem
-   persistir ajuste (recomendado) — confirmar que o checkout mostra o valor revalidado.
-3. **TTL e limites:** 10 min positivo / 60 s negativo; 10/min anônimo e 30/min autenticado
-   por IP/sessão — confirmar ou ajustar.
-4. **CAPTCHA:** manter sem CAPTCHA por padrão (recomendado), com flood como primeira
-   barreira.
-5. **Anônimos:** permitir estimativa para visitantes com limite de flood (recomendado) ou
-   exigir sessão autenticada.
-6. **Nomes:** `aculta_commerce.shipping_estimate*` e namespace
-   `Drupal\aculta_commerce\Shipping\Estimate\*`; confirmar antes da E1.
-7. **Início da E3:** depende do cutover do frete; confirmar a ordem com o responsável.
+1. **Carrinho completo:** usar **SDCs e UI Styles** no `aculta420`; o Portal entrega props
+   neutros. Não portar a área de Views do contrib, não criar bloco legado.
+2. **Frete nos totais:** exibição apenas visual; o **checkout mostra o valor revalidado no
+   servidor**. A E2 deve comparar o estimado com o total do checkout e registrar a
+   diferença, se houver.
+3. **TTL e limites:** confirmados — 10 min positivo, 60 s negativo; 10/min anônimo e
+   30/min autenticado por IP/sessão, via `flood`.
+4. **CAPTCHA:** sem CAPTCHA. Flood e cache são a primeira barreira; reavaliar só com
+   abuso comprovado.
+5. **Anônimos:** permitidos, com o limite de flood acima.
+6. **Nomes:** confirmados — `aculta_commerce.shipping_estimate*` e namespace
+   `Drupal\aculta_commerce\Shipping\Estimate\*`.
+7. **E3:** continua condicionada ao cutover do frete para o `aculta_commerce`; o porte não
+   importa `commerce_shipping`.
