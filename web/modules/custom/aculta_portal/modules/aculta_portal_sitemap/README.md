@@ -5,7 +5,7 @@ ADR-009 em `docs/decisions/`).
 
 ## Estado (0.1.2: sitemap multidomínio completo no servidor de testes)
 
-Versão do `info.yml` e do CHANGELOG: `0.1.2`. Verificação estática: `php tests/run.php`. Não há suíte Unit ou Kernel.
+Versão do `info.yml` e do CHANGELOG: `0.1.2`. Verificações executadas: `php tests/run.php`, suíte Unit e Kernel. O Kernel valida descoberta do plugin e registro da entidade do Simple XML Sitemap em MariaDB dedicado; a execução atual passou (2 testes, 3 assertions), com depreciações em Core/contrib.
 
 - Endereço por ambiente: a `base_url` segue o site definido pelo ACULTA Deployer (`var/deployer/environment.json`).
 

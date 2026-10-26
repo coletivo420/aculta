@@ -1,3 +1,8 @@
+## Não lançado — harness Kernel sem Commerce Shipping contrib
+
+- Removida `commerce_shipping` da lista de módulos do `SitemapWiringKernelTest`, pois o pacote contrib foi removido e o projeto usa o motor próprio do Commerce.
+- Reexecutado o Kernel da branch em MariaDB dedicado `aculta_simpletest`: 2 testes e 3 assertions PASS; 46 depreciações reportadas por Core/contrib. Nenhuma chamada externa ou escrita no Runtime.
+
 ## Não lançado — auditoria e testes de política (agente executor 2)
 
 - Teste Unit `IndexingPolicyTest` (5 testes): SHOP, FORUM e ACCOUNT fora dos purposes indexáveis; raízes e caminhos

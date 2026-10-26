@@ -40,7 +40,6 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     'commerce_order',
     'commerce_payment',
     'commerce_price',
-    'commerce_shipping',
     'commerce_store',
     'ctools',
     'ctools_views',
