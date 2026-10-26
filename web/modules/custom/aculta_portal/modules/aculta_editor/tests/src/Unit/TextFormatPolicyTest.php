@@ -20,8 +20,12 @@ use Symfony\Component\Yaml\Yaml;
 #[Group('aculta_editor')]
 class TextFormatPolicyTest extends UnitTestCase {
 
-  /** Tags que nunca podem aparecer numa lista allowed_html. */
-  private const FORBIDDEN_TAGS = ['script', 'iframe', 'object', 'embed', 'style', 'frame', 'frameset', 'applet', 'meta', 'base'];
+  /**
+   * Tags que nunca podem aparecer numa lista allowed_html.
+   */
+  private const FORBIDDEN_TAGS = [
+    'script', 'iframe', 'object', 'embed', 'style', 'frame', 'frameset', 'applet', 'meta', 'base',
+  ];
 
   /**
    * Formatos exportados com allowed_html, indexados pelo nome do arquivo.
@@ -67,7 +71,9 @@ class TextFormatPolicyTest extends UnitTestCase {
   }
 
   /**
-   * allowed_html do formato, ou NULL quando o formato não tem filtro de HTML.
+   * Lista allowed_html do formato.
+   *
+   * Devolve NULL quando o formato não tem filtro de HTML.
    */
   private static function allowedHtml(string $file): ?string {
     $data = Yaml::parseFile($file);
