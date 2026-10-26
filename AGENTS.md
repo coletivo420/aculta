@@ -9,6 +9,7 @@ Drupal 11.3+, PHP conforme `docs/architecture/environments.md`; Drupal root `web
 - Antes de operar no Runtime, identifique host, diretório, branch, URI e banco com Drush; consulte `docs/architecture/environments.md`. Inspecione impacto/reversão antes de operações persistentes; nunca execute ações destrutivas sem autorização.
 - Não exponha segredos ou dados pessoais. Respeite acesso, cacheability, DI, APIs Drupal 11+ e código instalado.
 - Faça commits focados; execute gates pertinentes e relate somente testes efetivamente realizados. Respeite versionamento/status dos componentes.
+- Retorno de integração externa (Melhor Envio, Mercado Pago, Google e futuras): o resultado vai para as mensagens do Drupal (`messenger`) e a resposta redireciona para a página inicial, onde o tema exibe os alertas. Não devolva texto puro nem tela própria ao navegador. Webhook de serviço responde só com o código HTTP. Regra e situação atual: `docs/architecture/integracoes-externas.md`.
 
 ## Política global de URLs durante o desenvolvimento
 
