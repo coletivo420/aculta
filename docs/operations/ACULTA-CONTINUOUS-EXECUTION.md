@@ -1,8 +1,8 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**HEAD verificado:** `ab756a5a22682edfb6e40ce15fde5340277b7208` (remoto sincronizado, worktree limpo em 2026-10-26)
-**Estado:** PARTIAL — sete commits desde o HEAD `0d016520e`; M-4 pagamentos/H5P e M-5 Statistics avançaram. M-0 continua bloqueada por drift de Sync e RBAC Wiki; frentes M-1–M-5 não estão encerradas.
+**HEAD verificado:** `13f368c7d8ef501712c9bef063f9c6d65f262a16` (remoto sincronizado antes desta atualização documental; worktree sem alterações alheias)
+**Estado:** PARTIAL — oito commits desde o HEAD `0d016520e`; M-4 pagamentos/H5P e M-5 Statistics avançaram. M-0 continua bloqueada por drift de Sync e RBAC Wiki; frentes M-1–M-5 não estão encerradas.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
 ## Ponto de retomada
@@ -149,6 +149,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Statistics Unit: 108 testes / 438 assertions PASS. Kernel no MariaDB dedicado: 47/319 PASS. Functional `StatisticsDashboardFunctionalTest` executado contra server local e banco dedicado; 2 erros, 0 assertions porque BrowserTestBase tentou criar `sites/simpletest/<id>/settings.php` sob o checkout compartilhado, resolvido pelo Core symlinkado. Não houve acesso ao Runtime; o server foi encerrado e os paths temporários confirmados ausentes. Browser visual segue pendente.
 - Revalidado Runtime com `drush status` antes da consulta: Drupal 11.4.10, URI MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`; `pm:list` confirmou `aculta_statistics` Enabled. Consultas somente leitura; nenhuma credencial externa foi usada.
 - README, changelog, status e matriz atualizados: removida afirmação obsoleta de que ativação no Runtime estava pendente. Consultas reais GA4/Search Console e homologação visual continuam pendentes.
+
+## M-0 — status por purpose — 2026-10-26
+
+- `drush status --uri` read-only consultado em MAIN, ACCOUNT, SUPPORT, MAGAZINE, WIKI, SHOP, COURSES, FORUM e LINKS. Todos usam o mesmo `sites/default`, DB `aculta_runtime`, Drupal root e `config/sync`; portanto module enablement é global, não uma lista diferente por host.
+- Isso não comprova equivalência dos overrides Domain Config por purpose. A auditoria de configuração ativa por host continua pendente; nenhum `cim`, update ou write ocorreu.
 
 ## M-4 — fechamento Kernel H5P — 2026-10-26
 
