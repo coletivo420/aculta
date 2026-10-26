@@ -30,7 +30,6 @@ dependencies:
   - commerce:commerce_store
   - commerce:commerce_order
   - commerce:commerce_payment
-  - commerce_shipping:commerce_shipping
   - physical:physical
   - aculta_portal:aculta_pagamentos_mercadopago
   - key:key

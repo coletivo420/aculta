@@ -3,8 +3,8 @@ langcode: pt-br
 status: true
 dependencies:
   module:
+    - aculta_commerce
     - commerce_order
-    - commerce_shipping
 _core:
   default_config_hash: PjkWHbMsVohw3etcReBO_npTr5OW2YRgA894DFeVnJU
 id: commerce_order.shipments
@@ -12,7 +12,7 @@ field_name: shipments
 entity_type: commerce_order
 type: entity_reference
 settings:
-  target_type: commerce_shipment
+  target_type: aculta_shipment
 module: core
 locked: true
 cardinality: -1

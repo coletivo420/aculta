@@ -3,6 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   module:
+    - aculta_commerce
     - aculta_portal
 _core:
   default_config_hash: 50QUbDL5hfMj6JF3n2JcOsPZtzq8PyU9UR0iXIpVThA
