@@ -874,3 +874,10 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - **Gravação de novos tokens:** `save()` lança exceção sem a chave de cifragem. Uma nova autorização OAuth falha até a chave ser provisionada. Nada é gravado em texto puro.
 - **Pendência bloqueante, sem ação nesta execução:** `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` **não provisionada** no servidor de testes, e `drush updatedb` **não rodado**. Os dois exigem autorização explícita do responsável. Não foram executados.
 - **Ordem para quando for autorizado:** provisionar a chave no ambiente do servidor, depois `drush updatedb`, que roda o `update_8002`.
+
+## Integração do ensaio parcial dos updates do Messenger — 2026-10-26
+
+- Integrado por merge `feat/aculta-messenger-update-ensaio` @ `4f8694853` (só documentação: `docs/operations/ACULTA-MESSENGER-UPDATE-PLAN.md` e `docs/operations/status/aculta_messenger.yml`). Aprovado pelo Agente Web como ensaio parcial. Sem código, sem Runtime e sem alteração de banco.
+- **Janela de updates do Messenger no Runtime exige snapshot integral de `aculta_runtime` antes.** Os post-updates de preferências removem chaves legadas de `users_data` e criam `avisos_email_mode_*`. A reversão exige restaurar o snapshot integral, sem rollback parcial e sem reversão por SQL improvisada. Antes da janela: snapshot consistente, restauração provada em banco isolado e cron/workers parados. O ensaio local não substitui o snapshot.
+- **O ensaio fiel ao código antigo depende da fase B.** Enquanto a fase B não termina, o ensaio parcial não reproduz o estado de código anterior, por isso não serve de prova de rollback nem de janela.
+- Exclusão de `feat/aculta-messenger-update-ensaio`: pendente de confirmação com o Local 3, que não foi obtida nesta execução.
