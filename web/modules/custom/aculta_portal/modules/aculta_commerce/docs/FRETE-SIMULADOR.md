@@ -303,3 +303,12 @@ A chave do cache de cotação inclui, além de país, CEP normalizado, itens, m�
 
 - **"Exibido + revalidado" (8.2) ou "persistido no carrinho":** **pendente**. Registrar aqui a decisão quando ela vier.
   Até lá, a especificação acima assume "exibido + revalidado", sem persistir a cotação no carrinho.
+
+### 8.7 Critério de aceite adicional da E1
+
+- `canUse()` passa a exigir `validUntil` preenchido, e o default de 10 minutos (`emitido + 600 s`) é preenchido em
+  **todos** os provedores — `aculta_flat_rate`, `aculta_flat_rate_per_item` e `aculta_melhorenvio` —, tudo no **mesmo
+  commit**. Não é aceito commit que torne `canUse()` obrigatório sem preencher o default em algum provedor.
+- Teste Kernel prova que o checkout cota com cada um dos três provedores depois da mudança (cotação positiva com
+  `valid_until` preenchido, e seleção no pane).
+- Com isso, o E0 está encerrado. A E1 começa depois da integração desta branch na PR.
