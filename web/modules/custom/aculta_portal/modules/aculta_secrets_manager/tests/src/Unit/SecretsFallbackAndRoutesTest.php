@@ -13,13 +13,19 @@ use Drupal\Tests\UnitTestCase;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Sem fallback entre ambientes (cenários 5 e 6) e rotas do painel com permissão e CSRF (cenários 12 a 14).
+ * Tests environment isolation and access requirements for panel routes.
  */
 #[\PHPUnit\Framework\Attributes\Group('aculta_secrets_manager')]
 final class SecretsFallbackAndRoutesTest extends UnitTestCase {
 
+  /**
+   * Temporary directory for credential files.
+   */
   private string $base;
 
+  /**
+   * Creates a temporary credential directory.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->base = sys_get_temp_dir() . '/aculta-fallback-' . bin2hex(random_bytes(6));
@@ -28,11 +34,19 @@ final class SecretsFallbackAndRoutesTest extends UnitTestCase {
     mkdir($this->base . '/secrets', 0700, TRUE);
     file_put_contents($this->base . '/config/secrets-contract.json', json_encode([
       'variables' => [
-        ['name' => 'GOOGLE_OAUTH_CLIENT_ID', 'key_id' => 'g_id', 'environments' => ['production', 'test'], 'required_in' => ['production', 'test']],
+        [
+          'name' => 'GOOGLE_OAUTH_CLIENT_ID',
+          'key_id' => 'g_id',
+          'environments' => ['production', 'test'],
+          'required_in' => ['production', 'test'],
+        ],
       ],
     ]));
   }
 
+  /**
+   * Removes the temporary credential directory.
+   */
   protected function tearDown(): void {
     foreach (glob($this->base . '/secrets/*') ?: [] as $f) {
       @unlink($f);
@@ -45,6 +59,9 @@ final class SecretsFallbackAndRoutesTest extends UnitTestCase {
     parent::tearDown();
   }
 
+  /**
+   * Keeps test credentials isolated from production credentials.
+   */
   public function testTestEnvironmentDoesNotFallBackToProductionValue(): void {
     $production = $this->base . '/secrets/producao.env';
     file_put_contents($production, "GOOGLE_OAUTH_CLIENT_ID=valor-producao\n");
@@ -53,6 +70,9 @@ final class SecretsFallbackAndRoutesTest extends UnitTestCase {
     @unlink($production);
   }
 
+  /**
+   * Keeps production credentials isolated from test credentials.
+   */
   public function testProductionEnvironmentDoesNotFallBackToTestValue(): void {
     $test = $this->base . '/secrets/teste.env';
     file_put_contents($test, "GOOGLE_OAUTH_CLIENT_ID=valor-teste\n");
@@ -61,6 +81,9 @@ final class SecretsFallbackAndRoutesTest extends UnitTestCase {
     @unlink($test);
   }
 
+  /**
+   * Requires permission on every panel route.
+   */
   public function testEveryPanelRouteRequiresPermissionAndIsNotAnonymous(): void {
     $routes = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_secrets_manager.routing.yml');
     $this->assertCount(4, $routes);
@@ -70,6 +93,9 @@ final class SecretsFallbackAndRoutesTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Requires CSRF tokens for reveal and write routes.
+   */
   public function testRevealAndWriteRoutesRequireCsrfToken(): void {
     $routes = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_secrets_manager.routing.yml');
     foreach (['aculta_portal.secrets_show', 'aculta_portal.secrets_edit', 'aculta_portal.secrets_clear'] as $name) {
@@ -77,6 +103,9 @@ final class SecretsFallbackAndRoutesTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Creates a manager scoped to one environment.
+   */
   private function manager(string $environment, string $store): SecretsManager {
     $keys = $this->createMock(KeyRepositoryInterface::class);
     $logger = $this->createMock(LoggerChannelInterface::class);

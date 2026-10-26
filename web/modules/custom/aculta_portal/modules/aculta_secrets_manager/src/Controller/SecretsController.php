@@ -18,19 +18,22 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * "Credenciais do ambiente": duas abas independentes, Produção e Testes.
+ * Two independent tabs for production and test environment credentials.
  *
- * A aba é só uma preferência de visualização. O ambiente de execução vem do ACULTA Deployer e nunca
- * muda com a aba. A aba do ambiente ativo mostra estado e ações; a do outro ambiente mostra só os
- * metadados públicos do contrato, sem consultar valores nem a existência real da credencial.
+ * The tab is a display preference only. The runtime environment comes from
+ * ACULTA Deployer and never changes with the selected tab. The active
+ * environment shows status and actions; the other shows public contract
+ * metadata without querying credential values or their presence.
  *
- * Olho (popup com o valor completo, sob demanda), lápis (popup para alterar) e lixeira (popup para
- * apagar). O valor só aparece dentro do popup, nunca no HTML da página.
+ * The value is shown only on explicit reveal and never in the page HTML.
  */
 final class SecretsController {
 
   use StringTranslationTrait;
 
+  /**
+   * Constructs the panel controller.
+   */
   public function __construct(
     private readonly SecretsManager $secrets,
     private readonly FormBuilderInterface $formBuilder,
@@ -40,7 +43,12 @@ final class SecretsController {
     $this->setStringTranslation($translation);
   }
 
-  /** @return array<string, mixed> */
+  /**
+   * Builds the credentials panel render array.
+   *
+   * @return array<string, mixed>
+   *   The render array for both environment tabs.
+   */
   public function page(): array {
     $active = $this->secrets->environment();
     $buttons = [];
@@ -67,8 +75,12 @@ final class SecretsController {
     }
     $page = [
       '#attached' => [
-        // dialog.ajax: o lápis abre o popup por link use-ajax com data-dialog-type="modal".
-        'library' => ['aculta_portal/requirements-report', 'aculta_secrets_manager/secrets-tabs', 'core/drupal.dialog.ajax'],
+        // Dialog AJAX handles the use-ajax modal links.
+        'library' => [
+          'aculta_portal/requirements-report',
+          'aculta_secrets_manager/secrets-tabs',
+          'core/drupal.dialog.ajax',
+        ],
       ],
       'legend' => [
         '#type' => 'container',
@@ -80,14 +92,23 @@ final class SecretsController {
       'environment' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'secrets-environment'],
-        'text' => ['#markup' => '<p>' . $this->t('Ambiente operacional deste servidor, declarado pelo ACULTA Deployer: @env. As abas só organizam a visualização e não alteram esse ambiente.', ['@env' => $active]) . '</p>'],
+        'text' => [
+          '#markup' => '<p>' . $this->t(
+            'Ambiente operacional deste servidor, declarado pelo ACULTA Deployer: @env. As abas só organizam a visualização e não alteram esse ambiente.',
+            ['@env' => $active],
+          ) . '</p>',
+        ],
       ],
       'tabs' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'secrets-tabs', 'class' => ['secrets-tabs']],
         'list' => [
           '#type' => 'container',
-          '#attributes' => ['role' => 'tablist', 'aria-label' => (string) $this->t('Ambientes das credenciais'), 'class' => ['secrets-tabs__list']],
+          '#attributes' => [
+            'role' => 'tablist',
+            'aria-label' => (string) $this->t('Ambientes das credenciais'),
+            'class' => ['secrets-tabs__list'],
+          ],
         ] + $buttons,
       ] + $panels,
     ];
@@ -95,17 +116,24 @@ final class SecretsController {
       $page['storage_notice'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'notice-warning'],
-        'text' => ['#plain_text' => (string) $this->t('⚠ Atenção: neste ambiente as credenciais são armazenadas no banco de dados, criptografadas. O provisionamento é feito pelo ACULTA Deployer após o deploy; o formulário não grava aqui.')],
+        'text' => [
+          '#plain_text' => (string) $this->t(
+            '⚠ Atenção: neste ambiente as credenciais são armazenadas no banco de dados, criptografadas. O provisionamento é feito pelo ACULTA Deployer após o deploy; o formulário não grava aqui.',
+          ),
+        ],
       ];
     }
     return $page;
   }
 
   /**
-   * Popup com o valor completo de uma credencial. Resposta do próprio popup (não fica no HTML da página),
-   * sem cache e registrada no log com o nome e o usuário. Negada para credenciais de outro ambiente.
+   * Shows a credential value in a non-cacheable popup.
+   *
+   * The value is logged only by credential name and user. Requests for a
+   * credential outside the active environment are denied.
    *
    * @return array<string, mixed>
+   *   A render array containing the escaped credential value.
    */
   public function show(string $name): array {
     $this->assertInActiveScope($name);
@@ -118,31 +146,61 @@ final class SecretsController {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'secret-dialog'],
       '#cache' => ['max-age' => 0, 'contexts' => ['user']],
-      'value' => ['#type' => 'container', 'label' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $this->t('Valor de @name:', ['@name' => $name])], 'text' => ['#theme' => 'aculta_portal_element', '#tag' => 'pre', '#element_attributes' => new Attribute(['data-portal-ui' => 'secret-popup-value']), '#value' => Markup::create(htmlspecialchars($value, ENT_QUOTES))]],
-      'help' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#element_attributes' => new Attribute(['data-portal-ui' => 'secret-popup-hint']), '#value' => $this->t('Feche este popup quando terminar.')],
+      'value' => [
+        '#type' => 'container',
+        'label' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'p',
+          '#value' => $this->t('Valor de @name:', ['@name' => $name]),
+        ],
+        'text' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'pre',
+          '#element_attributes' => new Attribute([
+            'data-portal-ui' => 'secret-popup-value',
+          ]),
+          '#value' => Markup::create(htmlspecialchars($value, ENT_QUOTES)),
+        ],
+      ],
+      'help' => [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'p',
+        '#element_attributes' => new Attribute([
+          'data-portal-ui' => 'secret-popup-hint',
+        ]),
+        '#value' => $this->t('Feche este popup quando terminar.'),
+      ],
     ];
   }
 
-  /** Popup de alteração de uma credencial do ambiente ativo (rota com link use-ajax modal). */
+  /**
+   * Builds the edit form for an active-environment credential.
+   */
   public function edit(string $name): array {
     $this->assertInActiveScope($name);
     return $this->formBuilder->getForm(SecretEditForm::class, $name);
   }
 
-  /** Popup de confirmação para apagar o valor de uma credencial do ambiente ativo. */
+  /**
+   * Builds a confirmation form to clear an active-environment credential.
+   */
   public function clear(string $name): array {
     $this->assertInActiveScope($name);
     return $this->formBuilder->getForm(SecretClearForm::class, $name);
   }
 
-  /** Rótulo de cada aba. */
+  /**
+   * Returns the display label for an environment tab.
+   */
   private function tabLabel(string $environment): string {
     return (string) ($environment === 'production'
       ? $this->t('Ambiente de Produção')
       : $this->t('Ambiente de Testes'));
   }
 
-  /** Recusa, no backend, qualquer ação sobre credencial que não pertence ao ambiente ativo. */
+  /**
+   * Denies actions for credentials outside the active environment.
+   */
   private function assertInActiveScope(string $name): void {
     if (!$this->secrets->inActiveScope($name)) {
       throw new AccessDeniedHttpException('Credencial de outro ambiente.');
@@ -150,10 +208,13 @@ final class SecretsController {
   }
 
   /**
-   * Painel de um ambiente. Só o ambiente ativo recebe estado real e ações; os demais recebem apenas
-   * os metadados do contrato, com a indicação de que o estado é gerenciado no ambiente correspondente.
+   * Builds a panel for one credential environment.
+   *
+   * Only the active environment receives live status and actions. Other
+   * environments show contract metadata only.
    *
    * @return array<string, mixed>
+   *   The environment panel render array.
    */
   private function section(string $environment, bool $is_active, string $tab_id): array {
     $shared = $this->sharedNames();
@@ -202,13 +263,23 @@ final class SecretsController {
         'aria-labelledby' => $tab_id,
         'class' => ['secrets-tabs__panel'],
       ],
-      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->tabLabel($environment)],
+      'title' => [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'h2',
+        '#value' => $this->tabLabel($environment),
+      ],
       'table_wrapper' => [
         '#type' => 'container',
         '#attributes' => ['class' => ['secrets-table-scroll']],
         'table' => [
           '#type' => 'table',
-          '#header' => [$this->t('Variável'), $this->t('Key'), $this->t('Obrigatória'), $this->t('Valor salvo'), $this->t('Estado')],
+          '#header' => [
+            $this->t('Variável'),
+            $this->t('Key'),
+            $this->t('Obrigatória'),
+            $this->t('Valor salvo'),
+            $this->t('Estado'),
+          ],
           '#rows' => $rows,
           '#empty' => $this->t('Nenhuma variável deste ambiente no contrato.'),
           '#attributes' => ['data-portal-ui' => 'requirements'],
@@ -218,9 +289,12 @@ final class SecretsController {
   }
 
   /**
-   * Nomes declarados em mais de um ambiente (rótulo "compartilhada"). Lido do contrato, sem valores.
+   * Gets credential names shared across environments.
+   *
+   * The public contract metadata is read without resolving any values.
    *
    * @return array<string, true>
+   *   A set of credential names present in multiple environments.
    */
   private function sharedNames(): array {
     $shared = [];
@@ -233,10 +307,13 @@ final class SecretsController {
   }
 
   /**
-   * Célula do valor: máscara, botão de olho e lápis. O valor completo não entra no HTML; o olho pede
-   * ao servidor (rota com token) só quando acionado. O lápis aparece só onde a gravação é possível.
+   * Builds the masked value and credential action render elements.
+   *
+   * The full value is loaded only for the active environment and is not placed
+   * in the initial HTML. Edit actions require write access.
    *
    * @return array<string, mixed>
+   *   Render elements for the value and allowed actions.
    */
   private function valueCell(string $name, bool $present, string $environment): array {
     $cell = [
@@ -246,22 +323,40 @@ final class SecretsController {
     if ($present) {
       $value = $this->secrets->value($name);
       $masked = $value === NULL ? '—' : SecretsManager::mask($value);
-      // A rota tem _csrf_token: o gerador de URL já acrescenta ?token=. Não concatenar outro.
-      $cell['masked'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'secret-value-text']), '#value' => Markup::create(htmlspecialchars($masked, ENT_QUOTES))];
+      // The route adds its CSRF token to the generated URL.
+      $cell['masked'] = [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'span',
+        '#element_attributes' => new Attribute([
+          'data-portal-ui' => 'secret-value-text',
+        ]),
+        '#value' => Markup::create(htmlspecialchars($masked, ENT_QUOTES)),
+      ];
       $cell['eye'] = [
         '#type' => 'link',
         '#title' => '👁',
         '#url' => Url::fromRoute('aculta_portal.secrets_show', ['name' => $name]),
         '#attributes' => [
-          'class' => ['use-ajax'], 'data-portal-ui' => 'secret-value-eye',
+          'class' => ['use-ajax'],
+          'data-portal-ui' => 'secret-value-eye',
           'data-dialog-type' => 'modal',
-          'aria-label' => (string) $this->t('Mostrar valor de @name (@environment)', ['@name' => $name, '@environment' => $environment]),
+          'aria-label' => (string) $this->t(
+            'Mostrar valor de @name (@environment)',
+            ['@name' => $name, '@environment' => $environment],
+          ),
           'title' => (string) $this->t('Mostrar valor'),
         ],
       ];
     }
     else {
-      $cell['masked'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'secret-value-text']), '#value' => '—'];
+      $cell['masked'] = [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'span',
+        '#element_attributes' => new Attribute([
+          'data-portal-ui' => 'secret-value-text',
+        ]),
+        '#value' => '—',
+      ];
     }
     if ($this->secrets->canSaveHere()) {
       $cell['edit'] = [
@@ -269,9 +364,13 @@ final class SecretsController {
         '#title' => '✎',
         '#url' => Url::fromRoute('aculta_portal.secrets_edit', ['name' => $name]),
         '#attributes' => [
-          'class' => ['use-ajax'], 'data-portal-ui' => 'secret-value-edit',
+          'class' => ['use-ajax'],
+          'data-portal-ui' => 'secret-value-edit',
           'data-dialog-type' => 'modal',
-          'aria-label' => (string) $this->t('Alterar valor de @name (@environment)', ['@name' => $name, '@environment' => $environment]),
+          'aria-label' => (string) $this->t(
+            'Alterar valor de @name (@environment)',
+            ['@name' => $name, '@environment' => $environment],
+          ),
           'title' => (string) $this->t('Alterar valor'),
         ],
       ];
@@ -282,9 +381,13 @@ final class SecretsController {
         '#title' => '🗑',
         '#url' => Url::fromRoute('aculta_portal.secrets_clear', ['name' => $name]),
         '#attributes' => [
-          'class' => ['use-ajax'], 'data-portal-ui' => 'secret-value-clear',
+          'class' => ['use-ajax'],
+          'data-portal-ui' => 'secret-value-clear',
           'data-dialog-type' => 'modal',
-          'aria-label' => (string) $this->t('Apagar valor de @name (@environment)', ['@name' => $name, '@environment' => $environment]),
+          'aria-label' => (string) $this->t(
+            'Apagar valor de @name (@environment)',
+            ['@name' => $name, '@environment' => $environment],
+          ),
           'title' => (string) $this->t('Apagar valor'),
         ],
       ];

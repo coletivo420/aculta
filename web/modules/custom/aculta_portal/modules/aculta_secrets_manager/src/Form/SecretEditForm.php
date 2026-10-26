@@ -16,8 +16,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Popup para alterar o valor de uma credencial. Grava só essa variável; as demais permanecem.
- * O valor digitado não é mostrado de volta e não é registrado no log (só o nome).
+ * Edits the value of one credential in a popup.
+ *
+ * Other variables remain unchanged. The submitted value is not echoed or
+ * logged; only the variable name is recorded.
  */
 final class SecretEditForm extends FormBase implements ContainerInjectionInterface {
 
@@ -25,16 +27,25 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
     private readonly SecretsManager $secrets,
   ) {}
 
+  /**
+   * Creates the form from the service container.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.secrets_manager'),
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_secret_edit_form';
   }
 
+  /**
+   * Builds the credential edit form.
+   */
   public function buildForm(array $form, FormStateInterface $form_state, string $name = ''): array {
     $form['#attributes']['data-portal-ui'] = 'secret-dialog';
     $status = $this->secrets->status();
@@ -72,6 +83,9 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $name = (string) $form_state->get('name');
     $result = $this->secrets->save([$name => (string) $form_state->getValue('value')]);
@@ -83,7 +97,8 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
     }
   }
 
-  /** Com erro de validação, devolve o próprio popup; sem erro, fecha e volta à página de credenciais. */
+  /**
+   * Com erro de validação, devolve o próprio popup; sem erro, fecha e volta à página de credenciais. */
   public function ajaxSubmit(array $form, FormStateInterface $form_state): array|AjaxResponse {
     if ($form_state->hasAnyErrors()) {
       return $form;

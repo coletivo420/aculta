@@ -9,11 +9,15 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Impede que respostas do painel de credenciais sejam guardadas por cache HTTP ou intermediários.
+ * Prevents credential panel responses from being cached by HTTP intermediaries.
  */
 final class SecretsResponseSubscriber implements EventSubscriberInterface {
 
-  /** Rotas do painel e dos popups de credenciais. */
+  /**
+   * Credential panel and popup route names.
+   *
+   * @var string[]
+   */
   public const ROUTES = [
     'aculta_portal.secrets_import',
     'aculta_portal.secrets_show',
@@ -21,10 +25,16 @@ final class SecretsResponseSubscriber implements EventSubscriberInterface {
     'aculta_portal.secrets_clear',
   ];
 
+  /**
+   * {@inheritdoc}
+   */
   public static function getSubscribedEvents(): array {
     return [KernelEvents::RESPONSE => ['onResponse', -10]];
   }
 
+  /**
+   * Sets no-store headers on credential panel responses.
+   */
   public function onResponse(ResponseEvent $event): void {
     if (!$event->isMainRequest()) {
       return;

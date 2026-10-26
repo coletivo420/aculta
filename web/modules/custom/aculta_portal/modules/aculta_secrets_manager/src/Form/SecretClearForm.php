@@ -16,8 +16,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Confirmação para apagar o valor de uma credencial. A variável sai do arquivo de credenciais deste
- * ambiente; as demais permanecem. Só o nome vai ao log.
+ * Confirms removal of a credential value.
+ *
+ * The variable is removed from this environment's credentials file. Other
+ * variables remain, and only the variable name is logged.
  */
 final class SecretClearForm extends FormBase implements ContainerInjectionInterface {
 
@@ -25,16 +27,25 @@ final class SecretClearForm extends FormBase implements ContainerInjectionInterf
     private readonly SecretsManager $secrets,
   ) {}
 
+  /**
+   * Creates the form from the service container.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.secrets_manager'),
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_secret_clear_form';
   }
 
+  /**
+   * Builds the credential removal confirmation form.
+   */
   public function buildForm(array $form, FormStateInterface $form_state, string $name = ''): array {
     $form['#attributes']['data-portal-ui'] = 'secret-dialog';
     $status = $this->secrets->status();
@@ -65,6 +76,9 @@ final class SecretClearForm extends FormBase implements ContainerInjectionInterf
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $name = (string) $form_state->get('name');
     $result = $this->secrets->clear($name);
@@ -76,7 +90,8 @@ final class SecretClearForm extends FormBase implements ContainerInjectionInterf
     }
   }
 
-  /** Com erro, devolve a própria confirmação; sem erro, fecha e volta à página de credenciais. */
+  /**
+   * Com erro, devolve a própria confirmação; sem erro, fecha e volta à página de credenciais. */
   public function ajaxSubmit(array $form, FormStateInterface $form_state): array|AjaxResponse {
     if ($form_state->hasAnyErrors()) {
       return $form;

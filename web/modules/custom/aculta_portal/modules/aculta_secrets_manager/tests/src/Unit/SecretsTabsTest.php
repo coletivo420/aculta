@@ -16,13 +16,19 @@ use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
- * Abas Produção/Testes: aba ativa, ausência de ações e de valores na aba do outro ambiente.
+ * Tests tabs and access isolation between environments.
  */
 #[\PHPUnit\Framework\Attributes\Group('aculta_secrets_manager')]
 final class SecretsTabsTest extends UnitTestCase {
 
+  /**
+   * Temporary directory for credential files.
+   */
   private string $base;
 
+  /**
+   * Creates a temporary credential directory.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->base = sys_get_temp_dir() . '/aculta-tabs-' . bin2hex(random_bytes(6));
@@ -31,13 +37,31 @@ final class SecretsTabsTest extends UnitTestCase {
     mkdir($this->base . '/secrets', 0700, TRUE);
     file_put_contents($this->base . '/config/secrets-contract.json', json_encode([
       'variables' => [
-        ['name' => 'GOOGLE_OAUTH_CLIENT_ID', 'key_id' => 'g_id', 'environments' => ['production', 'test'], 'required_in' => ['production', 'test']],
-        ['name' => 'TURNSTILE_KEYS_JSON', 'key_id' => 'turnstile', 'environments' => ['production'], 'required_in' => ['production']],
-        ['name' => 'EXEMPLO_SENHA', 'key_id' => 'smtp_pw', 'environments' => ['test'], 'required_in' => []],
+        [
+          'name' => 'GOOGLE_OAUTH_CLIENT_ID',
+          'key_id' => 'g_id',
+          'environments' => ['production', 'test'],
+          'required_in' => ['production', 'test'],
+        ],
+        [
+          'name' => 'TURNSTILE_KEYS_JSON',
+          'key_id' => 'turnstile',
+          'environments' => ['production'],
+          'required_in' => ['production'],
+        ],
+        [
+          'name' => 'EXEMPLO_SENHA',
+          'key_id' => 'smtp_pw',
+          'environments' => ['test'],
+          'required_in' => [],
+        ],
       ],
     ]));
   }
 
+  /**
+   * Removes the temporary credential directory.
+   */
   protected function tearDown(): void {
     foreach (glob($this->base . '/secrets/*') ?: [] as $f) {
       @unlink($f);
@@ -50,6 +74,9 @@ final class SecretsTabsTest extends UnitTestCase {
     parent::tearDown();
   }
 
+  /**
+   * Activates the tab for the current server environment.
+   */
   public function testActiveEnvironmentOpensItsOwnTab(): void {
     $page = $this->controller('test', "TURNSTILE_KEYS_JSON=segredo-ficticio\n")->page();
     $buttons = $page['tabs']['list'];
@@ -57,6 +84,9 @@ final class SecretsTabsTest extends UnitTestCase {
     $this->assertSame('false', $buttons['production']['#attributes']['aria-selected']);
   }
 
+  /**
+   * Omits values and actions for the inactive environment.
+   */
   public function testOtherEnvironmentPanelHasNoValuesOrActions(): void {
     $page = $this->controller('test', "TURNSTILE_KEYS_JSON=segredo-ficticio\n")->page();
     $rows = $page['tabs']['section_production']['table_wrapper']['table']['#rows'];
@@ -68,24 +98,36 @@ final class SecretsTabsTest extends UnitTestCase {
     $this->assertStringNotContainsString('segredo-ficticio', serialize($page));
   }
 
+  /**
+   * Denies credential actions outside the current environment.
+   */
   public function testOutOfScopeCredentialCannotBeRevealedEditedOrCleared(): void {
     $controller = $this->controller('test', "TURNSTILE_KEYS_JSON=segredo-ficticio\n");
     $this->expectException(AccessDeniedHttpException::class);
     $controller->show('TURNSTILE_KEYS_JSON');
   }
 
+  /**
+   * Denies editing a credential outside the current environment.
+   */
   public function testOutOfScopeEditIsDenied(): void {
     $controller = $this->controller('test', '');
     $this->expectException(AccessDeniedHttpException::class);
     $controller->edit('TURNSTILE_KEYS_JSON');
   }
 
+  /**
+   * Denies clearing a credential outside the current environment.
+   */
   public function testOutOfScopeClearIsDenied(): void {
     $controller = $this->controller('test', '');
     $this->expectException(AccessDeniedHttpException::class);
     $controller->clear('TURNSTILE_KEYS_JSON');
   }
 
+  /**
+   * Creates a controller scoped to one environment.
+   */
   private function controller(string $environment, string $store): SecretsController {
     file_put_contents($this->base . '/secrets/aculta.secrets.env', $store);
     $keys = $this->createMock(KeyRepositoryInterface::class);
@@ -95,7 +137,7 @@ final class SecretsTabsTest extends UnitTestCase {
     $settings = new Settings([
       'aculta_secrets_file' => $this->base . '/secrets/aculta.secrets.env',
       'aculta_secrets_environment' => $environment,
-      // database: a página não gera links de gravação, o que dispensa o container em teste unitário.
+      // Database storage does not require a container for the test panel links.
       'aculta_secrets_storage' => 'database',
     ]);
     $manager = new SecretsManager($keys, $settings, $factory, $this->base . '/web');

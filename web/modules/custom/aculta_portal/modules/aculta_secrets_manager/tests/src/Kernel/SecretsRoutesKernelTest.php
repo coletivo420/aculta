@@ -7,13 +7,17 @@ namespace Drupal\Tests\aculta_secrets_manager\Kernel;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
- * Rotas e permissões do painel de credenciais, com o submódulo instalado.
+ * Verifies panel routes and permissions with the submodule installed.
  */
 #[\PHPUnit\Framework\Attributes\Group('aculta_secrets_manager')]
 #[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class SecretsRoutesKernelTest extends KernelTestBase {
 
-  /** @var string[] */
+  /**
+   * Modules enabled for the kernel test.
+   *
+   * @var string[]
+   */
   protected static $modules = [
     'system',
     'user',
@@ -78,6 +82,9 @@ final class SecretsRoutesKernelTest extends KernelTestBase {
     'schema_web_page',
   ];
 
+  /**
+   * Tests route permission requirements and CSRF protection.
+   */
   public function testPanelRoutesRequirePermissionAndCsrfForReveal(): void {
     $provider = $this->container->get('router.route_provider');
     $show = $provider->getRouteByName('aculta_portal.secrets_show');

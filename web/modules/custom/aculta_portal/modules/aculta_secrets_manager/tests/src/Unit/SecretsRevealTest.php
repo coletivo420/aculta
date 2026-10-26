@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_secrets_manager\Unit;
 
+use Drupal\Core\Render\Markup;
 use Drupal\aculta_portal\Secrets\SecretsManager;
 use Drupal\aculta_secrets_manager\Controller\SecretsController;
 use Drupal\Core\Form\FormBuilderInterface;
@@ -22,8 +23,14 @@ final class SecretsRevealTest extends UnitTestCase {
 
   private const FAKE = 'valor<ficticio>&"123';
 
+  /**
+   * Temporary directory for credential files.
+   */
   private string $base;
 
+  /**
+   * Creates a temporary credential directory.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->base = sys_get_temp_dir() . '/aculta-reveal-' . bin2hex(random_bytes(6));
@@ -32,12 +39,20 @@ final class SecretsRevealTest extends UnitTestCase {
     mkdir($this->base . '/secrets', 0700, TRUE);
     file_put_contents($this->base . '/config/secrets-contract.json', json_encode([
       'variables' => [
-        ['name' => 'BREVO_API_KEY', 'key_id' => 'brevo_api_key', 'environments' => ['production', 'test'], 'required_in' => []],
+        [
+          'name' => 'BREVO_API_KEY',
+          'key_id' => 'brevo_api_key',
+          'environments' => ['production', 'test'],
+          'required_in' => [],
+        ],
       ],
     ]));
     file_put_contents($this->base . '/secrets/aculta.secrets.env', "BREVO_API_KEY=" . self::FAKE . "\n");
   }
 
+  /**
+   * Removes the temporary credential directory.
+   */
   protected function tearDown(): void {
     @unlink($this->base . '/secrets/aculta.secrets.env');
     @unlink($this->base . '/config/secrets-contract.json');
@@ -48,6 +63,9 @@ final class SecretsRevealTest extends UnitTestCase {
     parent::tearDown();
   }
 
+  /**
+   * Escapes revealed values and records no credential value in logs.
+   */
   public function testRevealShowsEscapedValueNoCacheAndLogsOnlyName(): void {
     $logger = $this->createMock(LoggerChannelInterface::class);
     $logger->expects($this->once())->method('notice')->with(
@@ -68,7 +86,7 @@ final class SecretsRevealTest extends UnitTestCase {
 
     $build = $controller->show('BREVO_API_KEY');
     $this->assertSame(['max-age' => 0, 'contexts' => ['user']], $build['#cache']);
-    $html = (string) \Drupal\Core\Render\Markup::create(htmlspecialchars(self::FAKE, ENT_QUOTES));
+    $html = (string) Markup::create(htmlspecialchars(self::FAKE, ENT_QUOTES));
     $this->assertSame($html, (string) $build['value']['text']['#value']);
     $this->assertStringContainsString('&lt;ficticio&gt;', (string) $build['value']['text']['#value']);
     $this->assertStringNotContainsString('<ficticio>', (string) $build['value']['text']['#value']);
