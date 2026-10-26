@@ -28,25 +28,63 @@ final class ContentIndexGenerationManager {
 
   /**
    * Starts a rebuild generation and returns its opaque ID.
+   *
+   * Only one generation may build at a time. A second caller must finish,
+   * discard or validate the existing build first; otherwise two catalogs would
+   * receive incremental writes and duplicate the backfill work. The singleton
+   * state row serializes concurrent starts with activation and scheduling.
+   *
+   * @throws \LogicException
+   *   When the state pointer is missing or another generation is building.
    */
   public function start(?string $providerFingerprint = NULL): string {
     $providerFingerprint ??= $this->providers->fingerprint();
     if ($providerFingerprint !== NULL && preg_match('/^[a-f0-9]{64}$/', $providerFingerprint) !== 1) {
       throw new \InvalidArgumentException('Provider inventory fingerprint must be a SHA-256 hex digest.');
     }
-    $id = $this->uuid->generate();
-    $now = $this->time->getRequestTime();
-    $this->database->insert('aculta_index_generation')
-      ->fields([
-        'generation_id' => $id,
-        'status' => 'building',
-        'provider_fingerprint' => $providerFingerprint ?? '',
-        'created' => $now,
-        'updated' => $now,
-      ])
-      ->execute();
 
-    return $id;
+    $transaction = $this->database->startTransaction();
+    try {
+      $state = $this->database->select('aculta_index_state', 'state')
+        ->fields('state', ['state_id'])
+        ->condition('state_id', 1)
+        ->forUpdate()
+        ->execute()
+        ->fetchField();
+      if ($state === FALSE) {
+        throw new \LogicException('The ACULTA Content Index state pointer is missing.');
+      }
+      $building = $this->database->select('aculta_index_generation', 'generation')
+        ->fields('generation', ['generation_id'])
+        ->condition('status', 'building')
+        ->range(0, 1)
+        ->execute()
+        ->fetchField();
+      if ($building !== FALSE) {
+        throw new \LogicException(sprintf(
+          'Generation %s is still building; finish, validate or discard it before starting another rebuild.',
+          $building,
+        ));
+      }
+
+      $id = $this->uuid->generate();
+      $now = $this->time->getRequestTime();
+      $this->database->insert('aculta_index_generation')
+        ->fields([
+          'generation_id' => $id,
+          'status' => 'building',
+          'provider_fingerprint' => $providerFingerprint ?? '',
+          'created' => $now,
+          'updated' => $now,
+        ])
+        ->execute();
+      unset($transaction);
+      return $id;
+    }
+    catch (\Throwable $exception) {
+      $transaction->rollBack();
+      throw $exception;
+    }
   }
 
   /**

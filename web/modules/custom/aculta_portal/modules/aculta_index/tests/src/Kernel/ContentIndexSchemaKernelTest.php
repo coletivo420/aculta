@@ -550,6 +550,34 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * A second rebuild cannot start while another generation is building.
+   */
+  public function testStartRefusesSecondBuildingGeneration(): void {
+    $manager = $this->container->get('aculta_index.generation_manager');
+    $first = $manager->start();
+    self::assertSame('building', $this->generationStatus($first));
+
+    try {
+      $manager->start();
+      $this->fail('A second generation must not start while one is building.');
+    }
+    catch (\LogicException $exception) {
+      $this->assertStringContainsString('is still building', $exception->getMessage());
+    }
+    self::assertSame(1, (int) $this->container->get('database')->select('aculta_index_generation')
+      ->condition('status', 'building')
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+
+    $manager->discardBuilding($first);
+    $manager->discardBatch($first);
+    $second = $manager->start();
+    self::assertNotSame($first, $second);
+    self::assertSame('building', $this->generationStatus($second));
+  }
+
+  /**
    * Tests generations activate only after validation and can be rolled back.
    */
   public function testGenerationLifecycleAndRollback(): void {
