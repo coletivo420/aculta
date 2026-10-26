@@ -255,6 +255,51 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
   }
 
   /**
+   * Retorno com state pendente mas sem código: erro de mensagem, nenhuma troca e o state sai da sessão.
+   */
+  public function testCallbackWithValidStateButNoCodeIsRejectedWithoutExchange(): void {
+    $this->installEntitySchema('path_alias');
+    $this->container->get('router.builder')->rebuild();
+    $session = new Session(new MockArraySessionStorage());
+    $session->set('aculta_commerce_melhorenvio.oauth_state', 'estado-pendente');
+    $request = Request::create(
+      'https://aculta.example.test/integracoes/melhorenvio/retorno',
+      'GET',
+      ['state' => 'estado-pendente'],
+    );
+    $request->setSession($session);
+    $response = $this->container->get('aculta_commerce_melhorenvio.oauth_controller')->callback($request);
+    self::assertSame(200, $response->getStatusCode());
+    self::assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
+    $errors = $this->container->get('messenger')->messagesByType('error');
+    self::assertCount(1, $errors);
+    self::assertStringContainsString('não devolveu o código', (string) $errors[0]);
+    self::assertNull($this->container->get('aculta_commerce_melhorenvio.token_store')->load(MelhorEnvioEnvironment::Sandbox));
+    self::assertNull($session->get('aculta_commerce_melhorenvio.oauth_state'));
+  }
+
+  /**
+   * Replay: o mesmo state usado uma vez não é aceito de novo, mesmo na mesma sessão.
+   */
+  public function testStateIsSingleUseOnReplay(): void {
+    $this->installEntitySchema('path_alias');
+    $this->container->get('router.builder')->rebuild();
+    $session = new Session(new MockArraySessionStorage());
+    $session->set('aculta_commerce_melhorenvio.oauth_state', 'estado-unico');
+    $controller = $this->container->get('aculta_commerce_melhorenvio.oauth_controller');
+    $query = ['state' => 'estado-unico'];
+    $first = Request::create('https://aculta.example.test/integracoes/melhorenvio/retorno', 'GET', $query);
+    $first->setSession($session);
+    $controller->callback($first);
+    $second = Request::create('https://aculta.example.test/integracoes/melhorenvio/retorno', 'GET', $query);
+    $second->setSession($session);
+    $controller->callback($second);
+    $errors = $this->container->get('messenger')->messagesByType('error');
+    self::assertCount(2, $errors);
+    self::assertStringContainsString('não pôde ser confirmada', (string) $errors[1]);
+  }
+
+  /**
    * A página de estado mostra o ambiente, a conexão e o botão que abre a autorização em popup.
    */
   public function testStatusPageOffersPopupConnect(): void {

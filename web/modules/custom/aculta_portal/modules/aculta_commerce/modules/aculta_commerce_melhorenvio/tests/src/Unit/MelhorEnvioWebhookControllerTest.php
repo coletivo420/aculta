@@ -137,8 +137,9 @@ class MelhorEnvioWebhookControllerTest extends UnitTestCase {
   }
 
   /**
-   * Reenvio do mesmo evento (replay ou nova tentativa do Melhor Envio) é aceito de novo sem efeito colateral: o
-   * controlador não guarda estado, então o reprocessamento é seguro.
+   * Reenvio do mesmo evento é aceito sem efeito colateral.
+   *
+   * O controlador não guarda estado e pode receber novas tentativas do provedor.
    */
   public function testRepeatedEventIsAcceptedAgainWithoutState(): void {
     $controller = $this->controller(self::SECRET);
