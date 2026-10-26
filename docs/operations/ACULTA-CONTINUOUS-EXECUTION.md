@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit funcional:** `291bf3db3` (`fix(h5p): delegate managed file removal to Portal`), enviado por push normal a `origin/chore/aculta-m0-integridade`; o próximo incremento funcional em andamento é User dev.78. O scan PHP comparado a `origin/main` examinou 78 arquivos: 0 erros PHPCS e 49 warnings; arquivos do módulo H5P fora deste incremento mantêm violações legadas.
+**Último commit funcional:** `5c804a1af` (`fix(user): persist validated normalized nickname`), enviado por push normal a `origin/chore/aculta-m0-integridade`. O scan PHP comparado a `origin/main` examinou 78 arquivos: 0 erros PHPCS e 49 warnings; arquivos do módulo H5P fora deste incremento mantêm violações legadas.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
