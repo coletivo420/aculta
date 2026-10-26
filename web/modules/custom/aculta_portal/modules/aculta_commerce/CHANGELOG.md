@@ -17,6 +17,16 @@
 
 # Changelog — aculta_commerce
 
+## 0.1.0-dev.7 — preservar cursor após varredura seletiva (2026-10-26)
+
+- O catálogo Green Stash agora emite um cursor de continuação quando o limite
+  de cinco lotes é atingido após filtrar produtos que o operador não pode
+  gerenciar. Produtos mais antigos não ficam ocultos por uma página final sem
+  cursor; o acesso continua validado por Entity Access e pela loja.
+- Regressão Unit: Commerce 26 testes / 168 assertions PASS (10 depreciações
+  PHPUnit). PHPCS Drupal/DrupalPractice e PHP lint nos arquivos alterados PASS.
+- Nenhum dado, configuração ativa, pedido ou serviço externo foi alterado.
+
 ## 0.1.0-dev.3 — alinhar fixture após conciliação do branch (2026-10-23)
 
 - O teste de negação por Entity Access fornece o resolvedor de loja única

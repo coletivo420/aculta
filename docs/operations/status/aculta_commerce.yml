@@ -1,9 +1,10 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.6
+version: 0.1.0-dev.7
 state: Dev
 progress_note: >-
-  Unit Commerce 25/160 PASS (9 depreciações PHPUnit); GreenStashProductAccessTest
-  cobre autorização de entidade, loja única, associação a outra loja, store sem update e
-  configuração ambígua. PHP lint e PHPCS Drupal/DrupalPractice do teste PASS.
+  Unit Commerce 26/168 PASS (10 depreciações PHPUnit); GreenStashProductAccessTest
+  cobre acesso por entidade e loja. GreenStashProductReaderPaginationTest verifica
+  continuação após 500 resultados filtrados. PHP lint e PHPCS Drupal/DrupalPractice
+  dos arquivos alterados PASS.
   Kernel de Doações, Functional, Browser e homologação de checkout pendentes.
 next_phase: 'Homologar checkout comercial compartilhado e Green Stash com loja única, grants e contratos de produto em Kernel/Runtime ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/ROADMAP.md))'

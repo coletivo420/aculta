@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_commerce\Catalog;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_commerce\Store\GreenStashStoreResolver;
 
@@ -22,12 +23,9 @@ final class GreenStashProductReader {
   ) {}
 
   /**
-   * @return array{items: array, next: ?int}
-   */
-  /**
    * Only expose a store product when both entity and store permit management.
    */
-  public function canManage(\Drupal\Core\Entity\EntityInterface $product, AccountInterface $account): bool {
+  public function canManage(EntityInterface $product, AccountInterface $account): bool {
     if ($product->bundle() !== 'produto_loja'
       || !$product->access('view', $account)
       || !$product->access('update', $account)
@@ -46,6 +44,12 @@ final class GreenStashProductReader {
     return FALSE;
   }
 
+  /**
+   * Returns a bounded cursor page of products the account may manage.
+   *
+   * @return array{items: array, next: ?int}
+   *   The manageable products and continuation cursor, if one remains.
+   */
   public function page(AccountInterface $account, int $before = 0, string $search = '', int $limit = 20): array {
     $limit = max(1, min(20, $limit));
     $search = trim($search);
@@ -57,8 +61,10 @@ final class GreenStashProductReader {
     $cursor = $before;
     $hasMore = FALSE;
     $lastEmitted = NULL;
+    $nextCursor = NULL;
 
-    // Bounded rounds prevent an unbounded request when access filters are selective.
+    // Bounded rounds prevent an unbounded request when access filters are
+    // selective.
     for ($round = 0; $round < 5; $round++) {
       $query = $storage->getQuery()
         ->accessCheck(TRUE)
@@ -82,6 +88,8 @@ final class GreenStashProductReader {
         }
         if (count($items) === $limit) {
           $hasMore = TRUE;
+          // Resume before the lookahead product so the next page includes it.
+          $nextCursor = $lastEmitted;
           break 2;
         }
         $items[] = $product;
@@ -91,9 +99,15 @@ final class GreenStashProductReader {
       if (count($ids) < 100) {
         break;
       }
+      if ($round === 4) {
+        // Keep pagination moving when the scan budget contained only filtered
+        // products, or did not find another manageable product in time.
+        $hasMore = TRUE;
+        $nextCursor = $cursor;
+      }
     }
 
-    return ['items' => $items, 'next' => $hasMore ? $lastEmitted : NULL];
+    return ['items' => $items, 'next' => $hasMore ? $nextCursor : NULL];
   }
 
 }
