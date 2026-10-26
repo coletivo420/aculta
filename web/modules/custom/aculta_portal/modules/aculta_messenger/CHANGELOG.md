@@ -1,3 +1,10 @@
+## 0.1.1-dev.403 — versionar defaults estruturais de comunicação
+
+Config Sync agora contém os defaults instaláveis de `email_modes` e
+`magazine_events`. A data inicial do digest permanece operacional e fora do
+Sync. A documentação define overrides por ambiente e exige conferir diferenças
+ativas antes de qualquer importação. Nenhuma configuração ativa foi importada.
+
 ## 0.1.1-dev.402 — manter relativos os links da gaveta de avisos
 
 Os botões “Ver todos os avisos” e “Ver todas as mensagens” agora geram caminhos
