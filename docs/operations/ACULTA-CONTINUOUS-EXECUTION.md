@@ -798,3 +798,22 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Dados de teste: a micropágina `pagina-teste-mobile` foi criada por Drush (com link e item marcados `TESTE VISUAL`) e removida ao final; nenhum resíduo.
 - Correção de teste: seletor da tabela de `painel-visual.py` passou a usar o atributo `data-portal-ui`, como o módulo já marca (antes acusava falso negativo).
 - Pendência: o teste do painel não cobre foco visível em todas as abas; manter em rodada própria se for exigido.
+
+## Kernel integral do Index e decisão B do ciclo Portal ↔ Mercado Pago — 2026-10-26
+
+- **Kernel integral de `aculta_index`** no commit `c1e210934` (antes da frente 3), banco dedicado `aculta_simpletest`: 119 testes, 1685 asserções, **110 PASS, 0 SKIPPED, 0 F, 9 E**, com 56 deprecações PHPUnit e 39 de Drupal/Core.
+- Os 9 erros são todos `LogicException: Circular module dependency detected at aculta_portal`:
+  - `ContentIndexOwnerIntegrationKernelTest::testOwnerAdaptersAreDiscoveredByThePortalIndex`
+  - `ContentIndexOwnerIntegrationKernelTest::testRealWikiOwnerBootstrapRevalidatesEntityAccess`
+  - `ContentIndexWikiAccessKernelTest::testRealModulesDiscoverWikiAndMediaProviders`
+  - `ContentIndexWikiAccessKernelTest::testPendingRevisionDoesNotReplacePublishedDefaultProjection`
+  - `ContentIndexWikiAccessKernelTest::testWikiIncrementalUpdateDeleteAndProviderFingerprint`
+  - `ContentIndexWikiAccessKernelTest::testAccessFilterFailsClosedWhenWikiDomainIsMissing`
+  - `ContentIndexWikiAccessKernelTest::testFilterUsesWikiEntityAccessInCanonicalDomain`
+  - `ContentIndexWikiAccessKernelTest::testRelatedEntriesRevalidateSourceAndTargetsInWikiDomain`
+  - `ContentIndexWikiAccessKernelTest::testCategoryAndImageRelationsRevalidateTargetAccess`
+- Não são erro de permissão nem de exec; não vêm do NTFS.
+- **Decisão do responsável: opção B.** Extrair a integração do Mercado Pago para o submódulo, em fase própria. A linha 34 de `aculta_portal.info.yml` **não** foi alterada nesta execução. Causa verificada: o Portal usa o submódulo em tempo de execução (`MercadoPagoClientFactory` referencia `CheckoutPro`; `RefundEligibilitySubscriber` usa `RefundEligibilityEvent::NAME` em `getSubscribedEvents()`, chamado pelo dispatcher do Kernel), então a opção A (remover a linha e tornar os consumidores opcionais) não seria segura sem a extração.
+- Sequência: o Local 3 faz o inventário B0; a fase B1 é executada depois da revisão. Após B1, o Local 3 reexecuta os 9 testes.
+- Tentativa descartada: teste de boot com e sem o submódulo, com lista mínima de módulos. Falhou por dependência de serviço não declarada (`aculta_image.file_remover`), problema de declaração já existente no Portal. Não foi commitado.
+- Ref remota `feat/aculta-fronteira-links-secrets`: excluída após confirmação do coordenador (Local 2 em `feat/aculta-secrets-claro`); `git cherry` vazio e ref ancestral da PR, verificados antes da exclusão.
