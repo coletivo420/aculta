@@ -1,9 +1,13 @@
 # ACULTA Editor
 
 Submódulo opcional do `aculta_portal`. Reúne os modelos editoriais (templates do CKEditor 5 Plugin Pack) e a
-configuração de formatos de texto do ACULTA. Desabilitado, o Portal não depende dele.
+configuração de formatos de texto do ACULTA. O Portal não depende dele para inicializar.
 
 Versão: `0.1.0-dev.5` (estado Dev). Auditoria e decisões: [`docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md`](../../../../../docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md).
+
+## Configuração e Runtime
+
+Verificação somente leitura em 2026-10-26: `aculta_editor` está ativo no Runtime de testes (`https://aculta.toca.net.br`), mas não consta em `config/sync/core.extension.yml`. Esta divergência impede considerar a ativação reconciliada para instalação/implantação reproduzível. A matriz exportada também não contém os oito templates de instalação do módulo; revisar a propriedade e a exportação desses itens junto com o proprietário do Config Sync. Nenhuma configuração global foi alterada nesta auditoria.
 
 ## Formatos de texto (unificados)
 

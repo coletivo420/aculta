@@ -36,8 +36,9 @@ ADR-009 em `docs/decisions/`).
 - Endpoints pilotos: `/sitemaps/{main,support,magazine,wiki,courses}/sitemap.xml`.
 - O sitemap institucional `default` (`/sitemap.xml`) não foi alterado.
 - **Não promovido:** o índice central e a troca de `/sitemap.xml` pertencem à fase G.
-- **Habilitação:** o módulo está habilitado no runtime de desenvolvimento para o piloto. A
-  habilitação e as variantes não foram exportadas para `config/sync` (ato de deploy, a decidir).
+- **Habilitação atual:** somente leitura em 2026-10-26 confirmou o módulo ativo no Runtime de testes e em
+  `config/sync/core.extension.yml`; as seis variantes e o tipo `aculta_purpose` também estão versionados.
+  A frase histórica desta seção sobre configuração não exportada descrevia o estágio piloto e não o estado atual.
 
 ## Dependências
 

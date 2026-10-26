@@ -1,4 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.5
 state: Dev
-next_phase: 'Formatos unificados, Editorial com filtro e tipo aculta_adm com HTML completo. Próximo: restringir a criação de aculta_adm à administração e validar o tipo no navegador ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))'
+progress_note: 'Runtime de testes somente leitura (2026-10-26): módulo ativo, mas ausente em config/sync/core.extension.yml; templates de instalação também não aparecem em Config Sync. Divergência global encaminhada ao proprietário de Config Sync.'
+next_phase: 'Reconciliar a ativação e os templates de configuração; restringir criação de aculta_adm à administração e validar acesso/sanitização no navegador ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))'
