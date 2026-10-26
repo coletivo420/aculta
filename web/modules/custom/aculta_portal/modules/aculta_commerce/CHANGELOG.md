@@ -1,3 +1,8 @@
+## 0.1.0-dev.9 — respeitar AccessResult ao criar produto no Green Stash
+
+- O formulário avaliava os objetos `AccessResultInterface` como booleanos. Como esses objetos são truthy mesmo quando negados, os checks de acesso à experiência Studio e `commerce_product.createAccess()` não interrompiam a criação. Agora ambos exigem `isAllowed()`.
+- `GreenStashProductCreateAccessTest` cobre os dois caminhos negados e garante que a negação pare antes de consultar a loja. Unit Commerce: 31 testes / 192 assertions PASS (11 depreciações PHPUnit); PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Sem operação no Runtime.
+
 ## 0.1.0-dev.6 — fechar testes de acesso do Green Stash (2026-10-26)
 
 - `GreenStashProductAccessTest` agora cobre o caso permitido com `ProductInterface`/`StoreInterface` reais do Commerce e bloqueia produto ligado a outra loja, store sem permissão `update` ou configuração ambígua. Entity Access view/update e `store.access('update')` permanecem obrigatórios.
