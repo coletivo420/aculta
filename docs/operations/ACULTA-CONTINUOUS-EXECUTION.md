@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit:** `83c6f1856` (`feat(growroom): export stable legacy author manifest`), enviado por push normal a `origin/chore/aculta-m0-integridade`. O scan PHP comparado a `origin/main` examinou 78 arquivos: 0 erros PHPCS e 49 warnings; arquivos do módulo H5P fora deste incremento mantêm violações legadas.
+**Último commit:** `3fc9ecd84` (`docs(aculta): record commerce payment kernel regressions`), enviado por push normal a `origin/chore/aculta-m0-integridade`. O scan PHP comparado a `origin/main` examinou 78 arquivos: 0 erros PHPCS e 49 warnings; arquivos do módulo H5P fora deste incremento mantêm violações legadas.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
@@ -15,7 +15,7 @@
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
 5. Próxima unidade: revisar individualmente as 9 configurações Messenger presentes no Sync mas divergentes do Runtime e decidir quais são drift, customização operacional ou defaults obsoletos; não exportar globalmente nem alterar anchor/preferências sem classificação.
 6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente das oito frentes concluiu seu trabalho; comparação por caminhos confirmou que todos os incrementos já estão na PR sob SHAs equivalentes. Não fazer cherry-pick duplicado; nenhum desses diretórios foi alterado neste turno.
-7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último checkpoint remoto: `83c6f1856` (`feat(growroom): export stable legacy author manifest`).
+7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último checkpoint remoto: `3fc9ecd84` (`docs(aculta): record commerce payment kernel regressions`).
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
