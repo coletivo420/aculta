@@ -361,3 +361,10 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - Testes Unit do módulo: 66 PASS. PHPCS sem erros nos arquivos novos.
 - Não verificado: codificação real da assinatura e eventos reais no sandbox (exigem credencial). A codificação não está documentada, por isso aceito base64 e hexadecimal.
 - Não publicado no servidor de teste, e não cadastrado no aplicativo do Melhor Envio.
+
+## Webhook respondendo no servidor de teste
+
+- Módulo `aculta_commerce_melhorenvio` habilitado no servidor de teste (`drush pm:install`), a pedido do responsável, com cache reconstruído.
+- Checkout servido em `698492870`, em modo destacado (estado original preservado no stash `agent2-preserve-before-branch-switch`).
+- `POST /integracoes/melhorenvio/webhook` sem assinatura: **503** "Webhook do Melhor Envio não configurado neste ambiente." O 503 vem antes da checagem de assinatura, porque o segredo do aplicativo ainda não está no Drupal Key.
+- Pendente: configurar o segredo do aplicativo sandbox (Drupal Key, `keys.sandbox.client_secret`) para testar 403 (assinatura inválida), 400 (corpo inválido) e 204 (evento aceito).
