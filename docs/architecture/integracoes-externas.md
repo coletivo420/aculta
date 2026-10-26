@@ -37,6 +37,6 @@ Situação atual:
 
 | Integração | Ida | Retorno | Situação |
 | --- | --- | --- | --- |
-| Melhor Envio | `/admin/commerce/config/melhorenvio` (botão em popup) → `/integracoes/melhorenvio/autorizar` | `/integracoes/melhorenvio/retorno` | Conforme. |
+| Melhor Envio | `/painel-administrativo/comercio/config/melhorenvio` (rota `/admin/commerce/config/melhorenvio`; botão em popup) → `/integracoes/melhorenvio/autorizar` | `/integracoes/melhorenvio/retorno` | Conforme. |
 | Mercado Pago | Popup do Checkout Pro (`checkout_popup.js`, próprio do módulo) | `/integracoes/mercadopago/checkout-retorno` | Retorno usa `PopupReturnPage`. A ida ainda usa o script próprio; migrar para `integration-popup` é pendência. As mensagens do pagamento vêm do retorno do Commerce. |
 | Google | Link de login do Social Auth | `/integracoes/google/retorno` (Social Auth) | Pendente de revisão: verificar se a ida pode ser popup e se as mensagens são as do Drupal. |

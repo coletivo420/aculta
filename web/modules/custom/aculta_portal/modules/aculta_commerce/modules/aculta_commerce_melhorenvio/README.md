@@ -99,7 +99,7 @@ Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CO
 
 | Caminho | Método | Acesso | Função |
 |---|---|---|---|
-| `/admin/commerce/config/melhorenvio` | GET | permissão `administer melhorenvio` | estado da conexão e botão que abre a autorização em popup |
+| `/painel-administrativo/comercio/config/melhorenvio` (rota declarada `/admin/commerce/config/melhorenvio`) | GET | permissão `administer melhorenvio` | estado da conexão e botão que abre a autorização em popup |
 | `/integracoes/melhorenvio/autorizar` | GET | permissão `administer melhorenvio` | inicia a autorização OAuth2 (gera `state` novo; sem cache) |
 | `/integracoes/melhorenvio/retorno` | GET | permissão `administer melhorenvio` | valida `state`, troca o código, grava a mensagem do Drupal e responde com a página padrão de popup (`PopupReturnPage`), que leva à página de estado |
 | `/integracoes/melhorenvio/webhook` | POST | público (`_access: TRUE`) | recebe as notificações de etiqueta; autenticidade pelo `X-ME-Signature` |
