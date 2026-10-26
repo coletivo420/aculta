@@ -51,5 +51,12 @@ Modelo fixo **por sessão** escolhido no CLI, não neste arquivo. Busque trechos
 - Instruções locais em `web/modules/custom/aculta_portal/AGENTS.md` e submódulos prevalecem no próprio escopo; não carregue regras de componentes alheios.
 - Exclua `vendor/`, `web/core/`, `web/modules/contrib/`, `node_modules/`, caches e artefatos gerados das buscas **por padrão**, mas inclua o código instalado de Core/contrib quando necessário para verificar APIs e compatibilidade.
 
+## Worktrees de agentes
+- Todo worktree de agente é criado em **`/home/piradopirata/worktrees/<frente>-<sufixo>`** (ext4). Não use `/mnt/disco1` nem `/tmp`.
+- Motivo: `/mnt/disco1` é NTFS (`ntfs3`, `fmask=0022`) — `cp -a` não preserva permissões nem bit de execução e emite "Operação sem suporte" em todos os arquivos; `/tmp` é tmpfs (≈3,9 GB, quase sempre cheio). Permissão errada já invalidou execuções antes.
+- Copie `vendor/`, `web/core/` e `web/modules/contrib/` como **cópias físicas** (`cp -a`), nunca symlink para outro checkout. Confira `du -sh` e dono `piradopirata` antes de rodar scripts; `php vendor/bin/drush` dispensa o bit de execução.
+- Um worktree por frente/branch. Consulte `git worktree list` antes de criar; não reutilize, limpe nem remova o worktree ou a base de teste de outro agente.
+- Ao terminar, remova apenas o próprio worktree (`git worktree remove <path>`) e publique a branch remota antes de descartá-lo.
+
 ## DeepSeek: bloqueio de pico
 - Se o provedor da sessão for DeepSeek, **não execute chamadas diretas à API**: use o proxy local de `scripts/deepseek-offpeak.py` conforme `docs/operations/DEEPSEEK-OFFPEAK.md`. No pico, o trabalho segue com o Claude padrão (lançador `claude-deepseek`, que escolhe o provedor pelo horário); não chame a API DeepSeek diretamente e não contorne o HTTP 429. A instrução não substitui o bloqueio de rede nem a configuração do endpoint no CLI.
