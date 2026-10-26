@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit funcional:** `6229a8b33` (`fix(user): coordinate avatar cleanup through Portal`). Os commits posteriores registram a análise de apelido e H5P; conferir o HEAD Git para a confirmação exata do checkpoint. Todos os commits anteriores foram enviados por push normal para `origin/chore/aculta-m0-integridade`.
+**Último commit funcional:** `291bf3db3` (`fix(h5p): delegate managed file removal to Portal`), enviado por push normal a `origin/chore/aculta-m0-integridade`. O scan PHP comparado a `origin/main` examinou 78 arquivos: 0 erros PHPCS e 49 warnings; arquivos do módulo H5P fora deste incremento mantêm violações legadas.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
@@ -415,3 +415,9 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Unit H5P completo: 25 testes / 81 assertions PASS. Kernel completo em MariaDB dedicado: 15 testes / 388 assertions PASS, 41 depreciações Core/contrib. O harness registra classes de limpeza reais do Portal e do Image sem instalar o Portal inteiro, mantendo os Kernel focais isolados. PHPCS focal e lint PASS.
 - PHPCS sobre todo `aculta_lms_h5p/src` e `tests` continua FAIL por erros preexistentes em múltiplas classes portadas, PHPDoc e estilo; nenhum desses arquivos alheios ao incremento foi formatado. Nenhuma operação de limpeza ou Runtime ocorreu.
 - Manifesto/status H5P avançaram para `0.4.0-dev.150`. Próximo: fechar os gates focais e seguir a auditoria de componentes centrais independentes.
+
+
+## M-0 — varredura PHPCS das alterações da PR (2026-10-26)
+
+- `git diff origin/main...HEAD -- '*.php'` selecionou 78 arquivos PHP; PHPCS Drupal/DrupalPractice terminou com zero erros e 49 warnings. Os warnings listados estão nos arquivos tocados de Document Viewer e Mercado Pago (linhas extensas e traduções dinâmicas), sem falhas bloqueantes de erro; a revisão de causa permanece ligada aos módulos owners. A varredura não equivale a PHPCS limpo de todo o código legado de cada módulo.
+- Os sete PHPs tocados no incremento H5P também passaram PHPCS sem erros nem warnings. Nenhum warning foi suprimido ou gate enfraquecido.
