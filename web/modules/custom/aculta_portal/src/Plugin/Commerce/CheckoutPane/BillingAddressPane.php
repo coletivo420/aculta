@@ -156,7 +156,7 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     return $customer ? $this->syncBillingCopy($customer) : $this->order->getBillingProfile();
   }
 
-  /** Copia o endereço do perfil do cliente para o perfil de cobrança do pedido e salva o pedido se houve troca. */
+  /** Copia o endereço do perfil do cliente para o perfil de cobrança (salvo se trocou); o pedido só é ligado em memória. */
   private function syncBillingCopy(ProfileInterface $customer): ProfileInterface {
     $storage = $this->entityTypeManager->getStorage('profile');
     $billing = $this->order->getBillingProfile() ?? $storage->create(['type' => 'authenticated', 'uid' => 0]);
@@ -165,9 +165,11 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       $billing->set('field_address', $address);
       $billing->save();
     }
+    // Só liga o perfil ao pedido em memória. Não grava o pedido aqui: o pane é montado mais de uma vez na mesma
+    // requisição, com cópias diferentes do pedido, e a segunda gravação falha com OrderVersionMismatchException
+    // antes do cálculo de frete. O Commerce grava o pedido no envio do checkout.
     if ($this->order->getBillingProfile()?->id() !== $billing->id()) {
       $this->order->setBillingProfile($billing);
-      $this->order->save();
     }
     return $billing;
   }
