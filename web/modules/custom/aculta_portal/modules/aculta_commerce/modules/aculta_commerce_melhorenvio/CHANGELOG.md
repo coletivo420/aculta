@@ -5,9 +5,9 @@
 ### Alterado
 
 - Provider de frete integrado ao plugin manager, à remessa e às tarifas do motor proprietário `aculta_commerce`; removida a dependência funcional de `commerce_shipping` no manifesto.
-- O teste Kernel de wiring carrega a cadeia real de módulos incluindo Studio e Messenger, sem `commerce_shipping`, e passou nesta branch: 9 testes / 45 assertions, sem rede externa. Na reexecução sobre a PR #298 foram 9 testes / 44 assertions; a diferença está registrada para reconciliação.
+- O teste Kernel de wiring carrega a cadeia real de módulos incluindo Studio e Messenger, sem `commerce_shipping`, e passou nesta branch: 9 testes / 45 assertions, sem rede externa. Reexecutado na PR #298 com Core/vendor físicos do worktree: 9 testes / 45 assertions; a tentativa anterior com Core symlinkado ao checkout compartilhado foi descartada como bootstrap inválido.
 - A página de status usa o contrato neutro `PortalLinkElement` e o token `data-portal-ui="button-primary"`, sem classes visuais do tema dentro do módulo.
-- A suíte Unit passou na execução do agente: 74 testes / 181 assertions; reexecutada na PR #298: 73 testes / 179 assertions, diferença registrada para reconciliação. PHPCS Drupal/DrupalPractice não encontrou erros nos arquivos verificados; permanecem avisos de linhas acima de 80 colunas, incluindo comentários preexistentes.
+- A suíte Unit passou: 74 testes / 181 assertions com root isolado da PR. A tentativa anterior com Core symlinkado ao checkout compartilhado foi descartada como bootstrap inválido. PHPCS Drupal/DrupalPractice não encontrou erros nos arquivos verificados; permanecem avisos de linhas acima de 80 colunas, incluindo comentários preexistentes.
 - O teste Kernel foi executado em banco isolado. O módulo permanece fora do Config Sync conforme decisão operacional; nenhum Runtime compartilhado foi alterado. Homologação visual e integração real no sandbox continuam pendentes.
 
 ## 0.1.0-dev.1 (em andamento)
