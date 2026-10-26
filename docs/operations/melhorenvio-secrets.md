@@ -58,9 +58,20 @@ de teste. `keys.production.*` recebe os de produção. Só os nomes ficam na con
 - **Efeito:** trocar a chave invalida os tokens cifrados; o usuário precisa autorizar o Melhor Envio de novo. Enquanto `drush updatedb` não rodar, registros legados em texto puro não são lidos (falha fechada, reautorização).
 - Credenciais sandbox do Melhor Envio continuam pendentes.
 
-- Teste: credenciais reais de produção que tinham sido colocadas no servidor de teste foram removidas. `secrets/` não
-  contém nenhuma credencial do Melhor Envio. Webhook responde 503 até a chave de sandbox ser provisionada.
-- Pendente, de quem cadastra: chave de sandbox (client_id e client_secret do aplicativo de teste).
+- Inventário de 2026-10-26 (somente leitura, sem valores): `secrets/aculta.secrets.env` contém as três variáveis do
+  sandbox do Melhor Envio: `MELHORENVIO_SANDBOX_CLIENT_ID`, `MELHORENVIO_SANDBOX_CLIENT_SECRET` e
+  `MELHORENVIO_SANDBOX_ACCESS_TOKEN`. As três estão no contrato (ambiente `test`), na allowlist de
+  `web/sites/default/aculta.secrets.php` e resolvem pelo Drupal (`valueForKeyId`): presentes, com comprimento > 0.
+  A afirmação anterior de que `secrets/` não tinha credencial do Melhor Envio estava errada e foi corrigida.
+- Origem das credenciais sandbox: **a confirmar pelo responsável.** O arquivo não declara a origem; o nome indica
+  sandbox, mas não há prova no próprio arquivo.
+- Produção no servidor de teste: `aculta.secrets.env` também tem `MERCADOPAGO_PRODUCTION_PUBLIC_KEY`,
+  `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` e `MERCADOPAGO_WEBHOOK_SECRET` (este último nos dois ambientes). O contrato
+  reserva as chaves de Mercado Pago de produção ao ambiente `production`. **Decisão pendente do responsável:**
+  retirar do servidor de teste ou aceitar explicitamente. Não alterado nesta execução.
+- Melhor Envio: a Key de produção (`melhorenvio_production_client_id` e `_client_secret`) não está no arquivo, como
+  esperado. A Key de sandbox está. O estado do webhook (que respondia 503 sem chave de sandbox) não foi reverificado
+  nesta execução.
 - Pendente, do deployer: provisionar as chaves de produção no banco criptografado, fora deste ciclo de teste.
 - Pendente, do agente principal: incorporar esta separação à tabela central de `docs/operations/SECRETS.md`.
 
