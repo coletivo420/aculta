@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 final class aculta_H5PHookDiscoveryTest extends KernelTestBase {
 
   /** {@inheritdoc} */
-  protected static $modules = ['system', 'user', 'file', 'views', 'aculta_image', 'aculta_lms', 'aculta_lms_h5p'];
+  protected static $modules = ['system', 'user', 'file', 'views', 'aculta_image', 'aculta_lms_h5p'];
 
   /** Tests hook collection and service construction. */
   public function testH5PHooksAndServicesAreRegistered(): void {

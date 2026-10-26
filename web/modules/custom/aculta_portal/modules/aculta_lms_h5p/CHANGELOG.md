@@ -1,3 +1,9 @@
+## 0.4.0-dev.149 — fixtures Kernel isolam dependências LMS alheias ao cenário — 2026-10-26
+
+- Os Kernel de descoberta de hooks e instalação de pacote não habilitam mais `aculta_lms`, cujos serviços dependem de `aculta_portal.checkout_settings`; os cenários testam apenas descoberta/storage H5P. A integração Course Access permanece separada e valida Group, membership, revogação e serialização.
+- Suítes no MariaDB dedicado: Kernel 15 testes / 388 assertions PASS (41 depreciações Core/contrib); Unit 24 / 73 PASS. Kernel focal de acesso: 3 / 134 PASS.
+- Os arquivos de teste mantêm violações PHPCS históricas ligadas aos nomes `aculta_H5P*`, PHPDoc e convenções do porte; nenhuma exclusão foi adicionada e os nomes/classes não foram alterados.
+
 ## 0.4.0-dev.148 — conformidade de estilo no widget — 2026-10-25
 
 - Corrige as violações Drupal/DrupalPractice do widget H5P: comentários e PHPDoc, indentação, nomenclatura de arrays e variável local que ocultava o parâmetro `$element`.

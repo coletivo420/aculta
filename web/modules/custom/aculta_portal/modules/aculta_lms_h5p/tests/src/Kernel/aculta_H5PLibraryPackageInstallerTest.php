@@ -18,7 +18,7 @@ final class aculta_H5PLibraryPackageInstallerTest extends KernelTestBase {
   /** {@inheritdoc} */
   protected static $modules = [
     'system', 'user', 'field', 'options', 'file', 'image', 'media', 'views',
-    'entity_usage', 'aculta_image', 'aculta_lms', 'aculta_lms_h5p',
+    'entity_usage', 'aculta_image', 'aculta_lms_h5p',
   ];
 
   /** {@inheritdoc} */
