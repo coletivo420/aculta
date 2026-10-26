@@ -1,3 +1,13 @@
+## Functional BrowserKit — diagnóstico do container isolado — 2026-10-26
+
+A execução com Core 11.4.10 físico em docroot temporário corrigiu o harness
+anterior que servia uma raiz sem Core. A instalação agora falha antes das
+assertions ao compilar `aculta_commerce_melhorenvio.shipment_address_binder`: o
+argumento `MelhorEnvioAddressMapper` não resolve o serviço existente
+`aculta_commerce_melhorenvio.address_mapper`. O problema foi encaminhado ao
+proprietário do submódulo e não é atribuído ao painel. Functional segue
+DEFERRED (2 erros/0 assertions); sem Runtime write.
+
 # Changelog — ACULTA Statistics
 
 ## 0.9.0-dev.9 — permissão de métricas públicas para editores

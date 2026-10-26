@@ -575,3 +575,8 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - Reexecução no HEAD `e6ecf899` indicou que as 17 rotas contrib listadas na baseline DT-P20 deixaram de violar a política; o gate exige que cada correção seja removida da lista. As 17 entradas foram eliminadas sem alterar regras/rotas contrib.
 - `validate-public-slugs.php`: PASS, 44 rotas, zero violações contrib na baseline. `validate-environment-addresses.php`: PASS, 4.265 arquivos. Status (41) e pacotes (41) também PASS; diff check PASS. Esse resultado substitui os snapshots históricos que ainda listavam 17 exceções.
+
+## M-5 — isolar o bloqueio Functional de Statistics (2026-10-26)
+
+- O primeiro ensaio BrowserKit serviu por engano a raiz do worktree, que não inclui `web/core`, e retornou 500; foi descartado como harness inválido. O teste foi repetido com Drupal 11.4.10 físico em docroot efêmero, código da PR por symlinks e banco `aculta_simpletest`; esse ambiente não usa o checkout `public_html` nem o Runtime.
+- Ambos os métodos do `StatisticsDashboardFunctionalTest` falham durante compilação do container, antes de assertions: `aculta_commerce_melhorenvio.shipment_address_binder` injeta `MelhorEnvioAddressMapper`, mas o submódulo só registra o serviço `aculta_commerce_melhorenvio.address_mapper`. Evidência enviada ao owner Melhor Envio; não modifiquei diretórios de ownership delegado. Statistics permanece sem PASS Functional; README/status/matriz/CHANGELOG atualizados. Server PHP local encerrado, sem arquivo criado no `sites/simpletest` compartilhado e sem Runtime write.
