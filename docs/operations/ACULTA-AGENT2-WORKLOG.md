@@ -270,3 +270,21 @@ cadastrados.
 | Frente 5, contraste | `QrCodePreset` recusa combinação abaixo de 4,5:1 (razão WCAG para texto normal) | Verificado, com teste em `QrCodePresetTest` |
 | Frente 6, mobile-first | Templates de links e CSS responsivo | **Não verificado visualmente**: exige site em execução |
 | Frente 5, revisão visual de prévia e lote | Idem | **Não verificado visualmente**: exige site em execução |
+
+## Fronteira do deployer fechada (autorização explícita do responsável)
+
+- Edição autorizada: `aculta_portal.links.menu.yml`, descrição do item `aculta_portal.deployer_status`. O texto deixou de citar a ferramenta: "Estado da implantação e do ambiente de deploy."
+- Resultado: `aculta-deployer boundaries` PASS; `tests/run.php` do deployer PASS (todos os testes).
+- Nenhuma mudança de comportamento: é só o texto exibido no menu.
+
+## Pendências após as decisões do responsável
+
+- Melhor Envio: sem credenciais de sandbox nesta rodada. Caminhos `authorize`, `oauth/token` e `expires_in` seguem em ME-PEND-01.
+- Revisão visual (prévia e lote do QR Code; mobile-first de links): decisão do responsável de executar no ambiente de testes do projeto. Checklist a seguir.
+
+### Checklist para a revisão visual no ambiente de testes
+
+1. Prévia: `/painel-administrativo/aculta/codigos-qr/previa?url=https://exemplo.org` retorna SVG com cabeçalhos `no-store` e CSP `sandbox`; URL `javascript:` retorna 422.
+2. Lote: `/painel-administrativo/aculta/codigos-qr/lote?ids=<id1>,<id2>&formato=svg` baixa um ZIP com `qr-<codigo>.svg` por código; id inexistente retorna 404 e nada é entregue.
+3. Formatter `aculta_qr_svg` em um campo de referência: a imagem aparece como `<img>` com `data:` e sem `<svg>` inline.
+4. Links em viewport de celular (360 px): páginas `/pagina/{slug}` sem rolagem horizontal, botões com área de toque adequada, prévia `/pagina/{slug}/previa` acessível só pelo dono.

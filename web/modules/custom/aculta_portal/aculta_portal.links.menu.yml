@@ -50,7 +50,7 @@ aculta_portal.secrets_import:
   weight: 6
 aculta_portal.deployer_status:
   title: Implantação
-  description: Estado do serviço e do ambiente de implantação.
+  description: Estado da implantação e do ambiente de deploy.
   route_name: aculta_portal.deployer_status
   parent: aculta_portal.admin
   weight: 7
