@@ -3,10 +3,11 @@
 Submódulo do `aculta_portal` que integra o sitemap multidomínio da plataforma (linha 0.1.x,
 ADR-009 em `docs/decisions/`).
 
-## Estado atual (0.1.2)
+## Estado (0.1.2: sitemap multidomínio completo no servidor de testes)
 
-- A allowlist editorial inclui o bundle canônico `revista`.
-- Endereço por ambiente: o runtime segue o endereço definido pelo ACULTA Deployer (`var/deployer/environment.json`), por override em `settings.local.php`; o Config Sync mantém a URL de produção.
+Versão do `info.yml` e do CHANGELOG: `0.1.2`. Verificação estática: `php tests/run.php`. Não há suíte Unit ou Kernel.
+
+- Endereço por ambiente: a `base_url` segue o site definido pelo ACULTA Deployer (`var/deployer/environment.json`).
 
 ## Detalhes da microfase 0.1.0-G (índice central e promoção de /sitemap.xml)
 
@@ -16,8 +17,8 @@ ADR-009 em `docs/decisions/`).
 - Variante `default` (sitemap institucional anterior) desabilitada. `/sitemaps/default/sitemap.xml` responde 404.
 - Paridade com o sitemap institucional anterior: home do MAIN (`https://aculta.org/`) e `/contato`
   (webform) entram no MAIN. Antes da G, a home do MAIN faltava.
-- Config exportada para `config/sync`: variantes, tipo `aculta_purpose`, `default_variant` e
-  `aculta_portal_sitemap` em `core.extension`.
+- Config exportada para `config/sync`: variantes, tipo `aculta_purpose` e `default_variant`. O módulo consta em
+  `core.extension` com valor `0` (desabilitado): a habilitação é ato de deploy e não está exportada.
 - A `base_url` do `simple_sitemap` é `https://aculta.org` também no servidor de testes. O índice de testes
   aponta para produção; o servidor de testes é noindex.
 
@@ -34,11 +35,10 @@ ADR-009 em `docs/decisions/`).
 - Tipo de sitemap `aculta_purpose`; variantes `main` e `support`, com o purpose nas
   configurações de terceiros de cada variante.
 - Endpoints pilotos: `/sitemaps/{main,support,magazine,wiki,courses}/sitemap.xml`.
-- A variante institucional anterior `default` foi desabilitada; a rota `/sitemap.xml` serve o índice central desde a fase G.
-- **Estado histórico:** a fase G promoveu o índice central e a troca de `/sitemap.xml`; os bullets desta seção registram a configuração e as verificações daquele ciclo. A ressalva antiga de que a fase G ainda não estava promovida foi removida por estar superada.
-- **Habilitação atual:** somente leitura em 2026-10-26 confirmou o módulo ativo no Runtime de testes e em
-  `config/sync/core.extension.yml`; as seis variantes e o tipo `aculta_purpose` também estão versionados.
-  A frase histórica desta seção sobre configuração não exportada descrevia o estágio piloto e não o estado atual.
+- O sitemap institucional `default` (`/sitemap.xml`) não foi alterado.
+- **Não promovido:** o índice central e a troca de `/sitemap.xml` pertencem à fase G.
+- **Habilitação:** o módulo está habilitado no runtime de desenvolvimento para o piloto. A
+  habilitação e as variantes não foram exportadas para `config/sync` (ato de deploy, a decidir).
 
 ## Dependências
 
