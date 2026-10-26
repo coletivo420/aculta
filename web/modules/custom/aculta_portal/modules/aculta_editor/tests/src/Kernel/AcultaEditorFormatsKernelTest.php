@@ -13,6 +13,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Formatos unificados do Portal: funções, editores, sanitização e templates.
@@ -60,7 +61,15 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
-    $this->installConfig(['system', 'filter', 'editor', 'ckeditor5', 'ckeditor5_plugin_pack_templates', 'aculta_editor', 'node']);
+    $this->installConfig([
+      'system',
+      'filter',
+      'editor',
+      'ckeditor5',
+      'ckeditor5_plugin_pack_templates',
+      'aculta_editor',
+      'node',
+    ]);
     $this->installEntitySchema('node');
     $this->installEntitySchema('node_type');
     // Os formatos do site vêm de config/sync; a Kernel instala os filtros reais
@@ -72,11 +81,11 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
   }
 
   /**
-   * Cria um formato com os filtros e o HTML permitido declarados em config/sync.
+   * Cria o formato com filtros e HTML permitidos do Config Sync.
    */
   private function createFilterFormat(string $id, string $label): void {
     $file = dirname(__DIR__, 9) . '/config/sync/filter.format.' . $id . '.yml';
-    $data = \Symfony\Component\Yaml\Yaml::parseFile($file);
+    $data = Yaml::parseFile($file);
     $filters = [];
     foreach (['filter_html', 'filter_htmlcorrector', 'media_embed'] as $name) {
       if (isset($data['filters'][$name])) {
