@@ -70,6 +70,8 @@ final class ShippingQuoteSelectorTest extends UnitTestCase {
   }
 
   /**
+   * Provides invalid amounts.
+   *
    * @return array<string, array{string}>
    *   Invalid amount samples.
    */
