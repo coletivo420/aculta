@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit funcional:** `6229a8b33` (`fix(user): coordinate avatar cleanup through Portal`). Commit documental `86a11e699` registra análise de apelido e preflight read-only; o README derivado será sincronizado neste checkpoint. Todos os commits foram enviados por push normal para `origin/chore/aculta-m0-integridade`.
+**Último commit funcional:** `6229a8b33` (`fix(user): coordinate avatar cleanup through Portal`). Os commits posteriores registram a análise de apelido e H5P; conferir o HEAD Git para a confirmação exata do checkpoint. Todos os commits anteriores foram enviados por push normal para `origin/chore/aculta-m0-integridade`.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
@@ -407,3 +407,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Drush status read-only reconfirmou Host `toca`, MAIN `https://aculta.toca.net.br`, DB `aculta_runtime`, Drupal 11.4.10/PHP 8.4.27 e root `/home/piradopirata/projetos/aculta/web`. Consultas agregadas à `profile__field_nickname` não leram valores pessoais: 14 linhas ativas/14 perfis, zero linhas deletadas, nenhum grupo duplicado entre UIDs ou repetição entre perfis do mesmo UID, sem índice único. Nenhum write ocorreu.
 - Não aplicar unique key simples: a tabela Field API não contém UID e `NicknamePolicy` exclui perfis do mesmo UID, permitindo apelidos repetidos entre perfis legados da mesma conta. A opção priorizada para protótipo é lock distribuído por apelido normalizado em hooks de persistência, com reconsulta protegida; fallback é índice derivado por UID se algum caminho não puder ser coberto. Evidência, riscos, teste concorrente e rollback estão em `aculta_user/docs/NICKNAME-UNIQUENESS.md`.
 - Status M-1 segue PARTIAL; próxima tarefa é protótipo Kernel/MariaDB com dois processos concorrentes, sem execução no Runtime.
+
+
+## M-4 — remoção H5P integrada à limpeza global (2026-10-26)
+
+- `aculta_H5PManagedFileStorage` removia assets depois apenas dos marcadores H5P/Image; agora entrega assets de imagem e não-imagem a `aculta_portal.unused_file_cleaner` após liberar os próprios markers. Status diferente de `Deleted` falha fechado, preservando os arquivos que ainda tenham referência.
+- Unit H5P completo: 25 testes / 81 assertions PASS. Kernel completo em MariaDB dedicado: 15 testes / 388 assertions PASS, 41 depreciações Core/contrib. O harness registra classes de limpeza reais do Portal e do Image sem instalar o Portal inteiro, mantendo os Kernel focais isolados. PHPCS focal e lint PASS.
+- PHPCS sobre todo `aculta_lms_h5p/src` e `tests` continua FAIL por erros preexistentes em múltiplas classes portadas, PHPDoc e estilo; nenhum desses arquivos alheios ao incremento foi formatado. Nenhuma operação de limpeza ou Runtime ocorreu.
+- Manifesto/status H5P avançaram para `0.4.0-dev.150`. Próximo: fechar os gates focais e seguir a auditoria de componentes centrais independentes.

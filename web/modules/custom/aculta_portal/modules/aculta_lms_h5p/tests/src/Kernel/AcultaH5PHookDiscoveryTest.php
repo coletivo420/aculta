@@ -11,6 +11,7 @@ use Drupal\aculta_lms_h5p\Event\aculta_H5PFinishedEvent;
 use Drupal\aculta_lms_h5p\aculta_H5PAssetFileStorage;
 use Drupal\aculta_lms_h5p\Hook\aculta_H5PLibraryHooks;
 use Drupal\KernelTests\KernelTestBase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -19,9 +20,19 @@ use Symfony\Component\HttpFoundation\Request;
 #[RunTestsInSeparateProcesses]
 final class AcultaH5PHookDiscoveryTest extends KernelTestBase {
 
+  use PortalCleanupKernelServicesTrait;
+
   /**
    * {@inheritdoc} */
   protected static $modules = ['system', 'user', 'file', 'views', 'aculta_image', 'aculta_lms_h5p'];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerPortalCleanupServices($container);
+  }
 
   /**
    * Tests hook collection and service construction. */

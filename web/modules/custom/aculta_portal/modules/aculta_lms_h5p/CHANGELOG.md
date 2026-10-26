@@ -1,3 +1,10 @@
+## 0.4.0-dev.150 — delegar remoção de assets H5P ao coordenador global — 2026-10-26
+
+- `removeLibraryFiles()` e `removeContentFile()` liberam referências do H5P e da Image e pedem ao `aculta_portal.unused_file_cleaner` a decisão/exclusão final. Arquivos H5P não-imagem também passam pelo proprietário central de referências e remoção; uma referência remanescente mantém o arquivo e falha fechado.
+- A suíte Kernel registra o `UnusedFileCleaner` e o `FileReferenceInspector` reais nos harnesses H5P isolados, sem habilitar a cadeia extensa do Portal. A cobertura Unit confirma que referência global impede o FileRemover e preserva o asset.
+- Verificações no PHP 8.4.27: H5P Unit 25 testes/81 assertions PASS; Kernel 15/388 PASS com 41 depreciações Core/contrib; PHPCS dos arquivos modificados PASS. PHPCS sobre o módulo inteiro segue falhando em arquivos legados não alterados (incluindo nomenclatura H5P histórica, PHPDoc e estilo); não houve reformatamento amplo.
+- Nenhuma limpeza real ou operação Runtime foi executada.
+
 ## Revisão PHPCS M-0 (2026-10-26)
 
 - Testes Kernel renomeados conforme convenção Drupal; quatro round-trips locais

@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\Request;
 // phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital,Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the historical H5P test class identifier used by the fork.
 final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
 
+  use PortalCleanupKernelServicesTrait;
   use UserCreationTrait;
 
   /**
@@ -74,6 +75,7 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
    * {@inheritdoc} */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
+    $this->registerPortalCleanupServices($container);
     $container->register('stream_wrapper.private', PrivateStream::class)
       ->addTag('stream_wrapper', ['scheme' => 'private']);
   }

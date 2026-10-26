@@ -20,6 +20,7 @@ use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorDrupalAjax;
 use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorDrupalStorage;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\KernelTests\KernelTestBase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -29,6 +30,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 #[RunTestsInSeparateProcesses]
 final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
 
+  use PortalCleanupKernelServicesTrait;
   use UserCreationTrait;
 
   /**
@@ -46,6 +48,14 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
     mkdir($this->siteDirectory . '/private', 0775, TRUE);
     $this->setSetting('file_public_path', $this->siteDirectory . '/files');
     $this->setSetting('file_private_path', $this->siteDirectory . '/private');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerPortalCleanupServices($container);
   }
 
   /**
