@@ -38,24 +38,29 @@ secundária; as asserções de correção são o gate principal.
 - Uma consulta fria após invalidar o cache de candidatos; 5 aquecimentos e 30
   medições aquecidas.
 - Métricas opt-in (`ACULTA_INDEX_REPRESENTATIVE_BENCHMARK=1`) gravadas fora do
-  repositório e copiadas para
-  [`aculta-index-representative-2026-10-26.json`](aculta-index-representative-2026-10-26.json).
+  repositório. Duas execuções foram preservadas:
+  [`run 1`](aculta-index-representative-2026-10-26.json) e
+  [`run 2`](aculta-index-representative-2026-10-26-run2.json).
 
 ## Resultados
 
-| Métrica | Valor |
-| --- | ---: |
-| Entradas construídas (`representative_content`) | 28 |
-| Entradas construídas (`representative_target`) | 14 |
-| Relações construídas | 30 |
-| Entradas após atualização/exclusão (content) | 27 |
-| Relações após exclusão | 29 |
-| Página publicada após resíduo | 19 |
-| Rebuild | 402,275 ms |
-| Auditoria | 46,191 ms |
-| Consulta fria | 5,652 ms |
-| Consulta aquecida p50 / p95 | 4,672 / 5,768 ms |
-| Pico de memória | 86.507.520 bytes (82,5 MiB) |
+| Métrica | Run 1 | Run 2 |
+| --- | ---: | ---: |
+| Entradas construídas (`representative_content`) | 28 | 28 |
+| Entradas construídas (`representative_target`) | 14 | 14 |
+| Relações construídas | 30 | 30 |
+| Entradas após atualização/exclusão (content) | 27 | 27 |
+| Relações após exclusão | 29 | 29 |
+| Página publicada após resíduo | 19 | 19 |
+| Rebuild | 402,275 ms | 428,791 ms |
+| Auditoria | 46,191 ms | 46,181 ms |
+| Consulta fria | 5,652 ms | 6,781 ms |
+| Consulta aquecida p50 | 4,672 ms | 5,029 ms |
+| Consulta aquecida p95 | 5,768 ms | 6,173 ms |
+| Pico de memória | 82,5 MiB | 82,5 MiB |
+
+As duas execuções são amostras diagnósticas; a variação entre elas não deve ser
+atribuída a uma mudança específica, e nenhuma das duas estabelece SLO.
 
 ## Limitações
 

@@ -114,8 +114,9 @@ Contratos observados:
   dois domínios, publicados/rascunhos, atualização, exclusão e resíduo de
   provider desregistrado. Consulta de conteúdo, cursor, relação, acesso negado
   a rascunho e auditoria completa sem achados.
-- Medição opt-in (uma execução): rebuild 402,275 ms; auditoria 46,191 ms;
-  consulta fria 5,652 ms; aquecida p50/p95 4,672/5,768 ms; pico 82,5 MiB.
+- Medição opt-in em duas execuções: rebuild 402–429 ms; auditoria ~46,2 ms;
+  consulta fria 5,7–6,8 ms; aquecida p50/p95 4,7–5,0 / 5,8–6,2 ms; pico
+  82,5 MiB.
 - Limitações: fixture sintética pequena/média, sem SLO, sem EXPLAIN e sem
   owners reais nesta classe específica (os owners seguem cobertos nos Kernels
   focais). Relatório:
@@ -256,7 +257,11 @@ desinstalação foi executado no Runtime.
 | Unit `aculta_index` | 51 testes / 282 assertions PASS; 14 depreciações PHPUnit |
 | Kernel `aculta_index` (MariaDB) | 118 testes / 2.001 assertions PASS; 276 depreciações Core/contrib e 56 PHPUnit |
 | PHPCS do módulo (`src` + `tests`) | PASS |
+| Gate Drupal 11+ | PASS (1.160 checks) |
+| Índice de status do projeto | PASS (41 componentes) |
+| Simulação de merge com a integração atual | PASS, sem conflitos |
 | Benchmark Fórum opt-in | 1 teste / 395 assertions PASS |
+| Fixture representativa (com medição opt-in) | 1 teste / 75 assertions PASS |
 | Runtime leitura | PASS (métricas acima) |
 
 Depreciações são de Core/contrib e PHPUnit; nenhuma falha própria.
@@ -303,6 +308,7 @@ O status global continua `Dev` e a decisão é do agente 1. Proposta para
 - `44fec1247` — test(index): drop unused translation variable
 - `8b5d41a8a` — fix(index): serialize rebuild starts behind the state fence
 - `0db86be20` — test(index): add representative mixed-catalog fixture
+- `a62f7ea1b` — docs(index): record rebuild fence and representative fixture
 - Commit documental do worklog: HEAD final da branch
   `feat/aculta-index-fechamento` (registrado no relatório de entrega).
 

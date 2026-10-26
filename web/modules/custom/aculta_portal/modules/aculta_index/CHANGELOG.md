@@ -20,9 +20,9 @@
   descartado antes de iniciar outro.
 - Novo Kernel representativo com dois providers sintéticos, dois idiomas, dois
   domínios, estados editoriais, relações, atualização, exclusão, cursor e
-  resíduo de provider desregistrado. Medição opt-in: rebuild 402,275 ms;
-  auditoria 46,191 ms; consulta fria 5,652 ms; aquecida p50/p95 4,672/5,768 ms;
-  pico 82,5 MiB. Fixture pequena/média, sem SLO.
+  resíduo de provider desregistrado. Duas execuções opt-in: rebuild 402–429 ms;
+  auditoria ~46,2 ms; consulta fria 5,7–6,8 ms; aquecida p50/p95
+  4,7–5,0 / 5,8–6,2 ms; pico 82,5 MiB. Fixture pequena/média, sem SLO.
 - Evidência: Unit 51/282; Kernel 118/2.001 PASS; benchmark Fórum em 100
   candidatos, membro 371/407 ms e visitante 178/220 ms p50/p95, sem regressão
   frente ao baseline de 2026-10-23; Runtime local read-only 145 entradas / 110

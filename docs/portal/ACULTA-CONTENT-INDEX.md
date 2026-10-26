@@ -50,8 +50,9 @@ transitórias de gerações `discarding`, que a limpeza remove em lotes separado
 candidatos: membro 371/407 ms e visitante 178/220 ms p50/p95, uma execução
 sintética sem SLO e sem regressão mensurável. A fixture representativa mista
 (28 entradas de conteúdo, 14 de alvo, 30 relações, dois idiomas, dois domínios,
-estados, atualização e exclusão) passou com rebuild 402 ms, auditoria 46 ms,
-consulta aquecida p50/p95 4,7/5,8 ms e pico 82,5 MiB. Runtime local somente
+estados, atualização e exclusão) passou em duas execuções com rebuild
+402–429 ms, auditoria ~46 ms, consulta aquecida p50/p95 4,7–5,0 / 5,8–6,2 ms e
+pico 82,5 MiB. Runtime local somente
 leitura: 145 entradas, 110 relações, uma geração ativa válida, fila vazia e
 auditoria sem achados. Detalhes em
 [worklog do Agente 3](../operations/ACULTA-AGENT3-INDEX-WORKLOG.md),
