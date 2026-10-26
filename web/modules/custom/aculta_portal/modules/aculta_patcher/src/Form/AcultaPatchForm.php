@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\aculta_patcher\Entity\AcultaPatch;
 use Drupal\aculta_patcher\PatchDiffValidator;
+use Drupal\aculta_patcher\PatchFormRules;
 
 /** Formulário administrativo de registro de patch. */
 final class AcultaPatchForm extends EntityForm {
@@ -83,23 +84,20 @@ final class AcultaPatchForm extends EntityForm {
 
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
-    $package = trim((string) $form_state->getValue('package'));
-    if (!preg_match('/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/', $package)) {
-      $form_state->setErrorByName('package', $this->t('Informe um nome de pacote Composer válido.'));
-    }
-    $version = trim((string) $form_state->getValue('version'));
-    if (!preg_match('/^[A-Za-z0-9.+_-]+$/', $version)) {
-      $form_state->setErrorByName('version', $this->t('Informe uma versão exata do pacote, sem faixa de versões.'));
-    }
-    $diff = trim((string) $form_state->getValue('patch'));
-    if (strlen($diff) > self::MAX_PATCH_BYTES) {
-      $form_state->setErrorByName('patch', $this->t('O diff excede o limite de 256 KiB.'));
-    }
-    if (!str_contains($diff, '--- ') || !str_contains($diff, '+++ ') || !preg_match('/^@@/m', $diff)) {
-      $form_state->setErrorByName('patch', $this->t('O conteúdo precisa ser um unified diff com arquivos e ao menos um bloco de alteração.'));
-    }
-    if ((new PatchDiffValidator())->escapesPackage($diff)) {
-      $form_state->setErrorByName('patch', $this->t('O diff não pode apontar para caminhos absolutos ou sair do pacote.'));
+    $messages = [
+      'package_invalid' => $this->t('Informe um nome de pacote Composer válido.'),
+      'version_not_exact' => $this->t('Informe uma versão exata do pacote, sem faixa de versões.'),
+      'patch_too_large' => $this->t('O diff excede o limite de 256 KiB.'),
+      'patch_not_unified' => $this->t('O conteúdo precisa ser um unified diff com arquivos e ao menos um bloco de alteração.'),
+      'patch_path_escapes' => $this->t('O diff não pode apontar para caminhos absolutos ou sair do pacote.'),
+    ];
+    $errors = (new PatchFormRules())->errors(
+      (string) $form_state->getValue('package'),
+      (string) $form_state->getValue('version'),
+      (string) $form_state->getValue('patch'),
+    );
+    foreach ($errors as $field => $code) {
+      $form_state->setErrorByName($field, $messages[$code]);
     }
   }
 
