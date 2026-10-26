@@ -10,6 +10,15 @@ aculta_qrcode.redirect:
   options:
     _aculta_domain_purpose: links
 
+aculta_qrcode.batch:
+  path: '/painel-administrativo/aculta/codigos-qr/lote'
+  defaults:
+    _controller: 'aculta_qrcode.batch_controller:batch'
+    _title: 'Exportar códigos QR em lote'
+  requirements:
+    _permission: 'administer aculta qr codes'
+  methods: [GET]
+
 aculta_qrcode.preview:
   path: '/painel-administrativo/aculta/codigos-qr/previa'
   defaults:
