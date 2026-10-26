@@ -7,10 +7,13 @@ namespace Drupal\aculta_commerce_melhorenvio\Http;
 /**
  * Caminhos da API do Melhor Envio usados pelo cliente.
  *
- * ATENÇÃO: os três caminhos abaixo NÃO estão confirmados na documentação pública consultada
- * (docs.melhorenvio.com.br, páginas de introdução e autenticação). Mantidos isolados aqui para
- * que a correção seja uma troca de constante. Validar no sandbox antes de qualquer uso real
- * (pendência ME-PEND-01). Nenhum deles deve ser chamado em produção antes dessa validação.
+ * Estado de confirmação (pendência ME-PEND-01):
+ * - QUOTE (`/api/v2/me/shipment/calculate`): citado como rota atual da documentação em comentário
+ *   do fórum oficial (docs.melhorenvio.com.br/discuss/60e5f0d3903031006c9ffef3). Não é resposta
+ *   de suporte, e a referência de cotação não foi lida. Validar no sandbox antes do uso real.
+ * - AUTHORIZE e TOKEN: não confirmados na documentação pública consultada. Validar no sandbox.
+ * Mantidos isolados aqui para que a correção seja uma troca de constante. Nenhum deles deve ser
+ * chamado em produção antes da validação.
  *
  * O campo `expires_in` da resposta de token segue o padrão OAuth2 (RFC 6749) e também precisa ser
  * confirmado no sandbox.
