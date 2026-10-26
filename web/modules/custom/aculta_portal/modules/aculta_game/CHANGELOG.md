@@ -1,4 +1,10 @@
-## Não lançado — validação automatizada do trigger ForumPost — 2026-10-23
+## 0.1.0-dev.17 — centralizar avisos de conquista no Messenger (2026-10-25)
+
+- O Game publica eventos de conquista pelo contrato do Messenger; persistência, leitura e migração da central pertencem ao `aculta_messenger`. O fluxo de e-mail continua separado por `aculta_mailer`; removida a central/queue paralela que ficava no Game.
+- Unit Game: 11 testes / 51 assertions PASS. `GameAchievementNoticePersistenceKernelTest` no Messenger: 3 testes / 30 assertions PASS, incluindo revalidação de concessão, migração idempotente e retry sem apagar fila quando o publisher falha. Dois avisos de depreciação vêm das annotations `@EntityType` de Message/Message Template no Core/contrib de teste.
+- O hook `BadgeEvaluationHooks::forumPostSave` ainda não tem teste de integração direta. O Kernel do Fórum cobre a elegibilidade da policy, não prova que o hook concedeu exatamente uma vez. Runtime e concessões não foram alterados.
+
+## Evidência de integração — policy de elegibilidade ForumPost — 2026-10-23
 
 - `Drupal\Tests\aculta_forum\Kernel\ForumPostParticipationPolicyKernelTest`
   (8 testes / 100 asserções, MariaDB) prova `isEligiblePost()` com entidades

@@ -1,4 +1,9 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.17
 state: Dev
-next_phase: 'Trigger ForumPost validado em Kernel (publicação, rascunho, revisão default, Domain forum, sync e autoria histórica); próximas evidências: homologar a concessão no Runtime, concluir G2/G3/G7 e as integrações de participação antes de RC ([roadmap](web/modules/custom/aculta_portal/modules/aculta_game/docs/ROADMAP.md))'
+progress_note: >-
+  Unit Game 11/51 PASS; Kernel Game/Messenger 3/30 PASS para revalidação e
+  migração de avisos. Policy ForumPost tem Kernel de elegibilidade no módulo
+  Fórum, mas BadgeEvaluationHooks::forumPostSave ainda não tem teste direto.
+  Sem concessão ou update no Runtime.
+next_phase: 'Testar diretamente o hook de concessão ForumPost e a chamada idempotente ao BadgeService; homologar acesso/perfil público e migração no Runtime somente após autorização ([roadmap](web/modules/custom/aculta_portal/modules/aculta_game/docs/ROADMAP.md))'
