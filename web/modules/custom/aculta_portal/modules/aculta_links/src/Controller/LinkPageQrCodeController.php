@@ -32,7 +32,7 @@ final class LinkPageQrCodeController {
     $ids = $storage->getQuery()
       ->accessCheck(TRUE)
       ->condition('slug', $slug)
-      ->condition('status', TRUE)
+      ->condition('status', 1)
       ->range(0, 2)
       ->execute();
     if (count($ids) !== 1) {

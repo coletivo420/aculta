@@ -32,7 +32,7 @@ final class LinkShortCodeQrCodeController {
     $ids = $storage->getQuery()
       ->accessCheck(TRUE)
       ->condition('short_code', $codigo)
-      ->condition('status', TRUE)
+      ->condition('status', 1)
       ->range(0, 2)
       ->execute();
     if (count($ids) !== 1) {
