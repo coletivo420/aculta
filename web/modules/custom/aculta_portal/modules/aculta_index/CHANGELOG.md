@@ -1,5 +1,28 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.176 (proposto; manifesto em dev.175 até a integração) — revalidar acesso por página e endurecer integridade/cursors (2026-10-26)
+
+- `ContentIndexAccessFilter` limpa os handlers de Entity Access dos tipos
+  candidatos no início de cada página. O cache interno do Core não é
+  invalidado por save, Group ou grant; sem isso, um consumidor de longa duração
+  podia reutilizar um ALLOW após revogação. O reset por purpose canônico
+  continua antes/depois de cada grupo.
+- Cursors de conteúdo e de relação incluem o fingerprint dos providers no hash,
+  além de conta, filtros e geração. Mudança de versão/bundle recusa o token
+  emitido sob o inventário anterior.
+- `ContentIndexIntegrityChecker` ignora relações de gerações `discarding` nas
+  verificações de fonte ausente. A limpeza remove relações e entradas em lotes
+  separados; a inconsistência transitória não deve invalidar rebuild/auditoria.
+- O harness Wiki deriva o número de lotes do registry bootado (9 providers, 11
+  tuplas) em vez do limite fixo de 10.
+- Evidência: Unit 51/282; Kernel 114/1.890 PASS; benchmark Fórum em 100
+  candidatos, membro 371/407 ms e visitante 178/220 ms p50/p95, sem regressão
+  frente ao baseline de 2026-10-23; Runtime local read-only 145 entradas / 110
+  relações, fila vazia e auditoria válida. Sem SLO e sem operação persistente
+  no Runtime.
+- Documentação: worklog do Agente 3, relatório de benchmark e matriz de
+  providers.
+
 ## 0.1.0-dev.175 — enumerar tipo registrado sem schema instalado (2026-10-25)
 
 - `ContentIndexEntityEnumerator` considera vazio um tipo de entidade cuja

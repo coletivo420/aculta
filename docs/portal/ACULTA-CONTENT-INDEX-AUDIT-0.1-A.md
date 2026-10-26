@@ -140,3 +140,53 @@ O Kernel Gallery consulta `gallery_image` pela API outgoing após rebuild, com p
 ## Regressão Unit dos adapters (2026-10-23)
 
 Resultados verificados sem banco: Index 39/204, Activity 4/13, Fórum 3/14, Gallery 2/13, LMS Resources 13/70, Magazine 24/96, Wiki 57/258 e contratos compartilhados do Portal 2/8. Todas passaram; conjunto com 37 depreciações PHPUnit/upstream. Isso não substitui Kernel, boot completo dos owners nem Runtime.
+
+## Homologação de providers e autorização (2026-10-26)
+
+Revisão do Agente 3 no worktree `feat/aculta-index-fechamento`, sem alterar
+módulos owner. O container local descobre 11 providers e 13 tuplas
+provider/tipo.
+
+| Provider | Versão | Tipos/bundles | Purpose canônico | Relações allowlisted | Evidência principal |
+| --- | ---: | --- | --- | --- | --- |
+| `magazine` | 2 | `node:revista` | `magazine` | `related_activity`, `editorial_image`, `editorial_gallery` | Kernel Magazine CRUD e acesso |
+| `wiki` | 4 | `node:wiki_entry` | `wiki` | `related_entry`, `wiki_category`, `wiki_image` | Kernel Wiki real + Index |
+| `wiki_category` | 1 | `taxonomy_term:wiki_category` | `wiki` | — | Kernel Wiki/Index |
+| `forum` | 2 | `node:aculta_forum_topic`, `aculta_forum_post:aculta_forum_post`, `comment:aculta_discussion_post` | `forum` | `forum_topic`, `forum_parent_post`, `forum_comment_parent` | Kernel grants/Group/Domain |
+| `forum_attachment` | 2 | `media:forum_attachment` | `forum` | — | Kernel Media |
+| `gallery` | 2 | `media_gallery:media_gallery` | `magazine` | `gallery_image`, `gallery_cover` | Kernel Gallery |
+| `image` | 2 | `media:image` | request atual | — | Kernel Media |
+| `document` | 2 | `media:document` | request atual | — | Kernel Media |
+| `course_document` | 2 | `media:course_document` | `courses` | — | Kernel Group/curso |
+| `remote_video` | 2 | `media:remote_video` | request atual | — | Kernel Media/Portal |
+| `lms_course` | 3 com plugin / 2 sem | `group:lms_course` | `courses` | `course_reading`, `course_gallery`, `course_document` | Kernel LMS + `takeAccess` |
+
+Matriz de autorização exercitada:
+
+- **Entity Access** é revalidado em cada entidade e página; o filtro limpa o
+  cache interno do Core por tipo candidato e por troca de Domain.
+- **Purpose** é aplicado por grupo; ausência do Domain ou do purpose falha
+  fechado. Group/grants são exercitados com memberships reais para Fórum,
+  Gallery, LMS e `course_document`.
+- **Relações** revalidam origem e até 100 alvos; alvo despublicado/sem acesso é
+  omitido, e a origem sem acesso encerra a consulta.
+- **Cursors** são opacos e vinculados a conta, filtros, geração e fingerprint de
+  providers.
+- **Privacidade:** nenhum provider projeta corpo, arquivo, URI, URL oEmbed,
+  e-mail, CPF/CNPJ, telefone, endereço ou token. `owner_uid` é a única
+  referência pessoal, é interno e não retorna no DTO; Wiki o omite.
+
+Achados de integração:
+
+- O hook real `WikiEntryImageHooks` publica a Media de `field_wiki_image`
+  quando o verbete está publicado. O Index deve revalidar o estado atual, não
+  tratar a publicação da projeção como definitiva; a fixture do Kernel ajusta
+  explicitamente o estado depois do hook.
+- Não há provider `file:file`; `media.files.requests` (Statistics) não é
+  alcançável pelo bridge até existir um owner para esse tipo.
+- O harness Wiki bootava 9 providers/11 tuplas com limite fixo de 10 lotes;
+  agora deriva o limite do registry.
+- A limpeza de geração em lotes pode deixar uma relação transitória sem fonte
+  dentro da geração `discarding`; a integridade passou a ignorar essa condição,
+  sem poupar gerações ativas ou retidas.
+- Relações editoriais de vídeo continuam adiadas por decisão do responsável.

@@ -6,7 +6,7 @@
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 **Schema IDX 0.1-C:** [modelo inicial e gates pendentes](ACULTA-CONTENT-INDEX-SCHEMA-0.1-C.md).
 **Benchmarks IDX 0.1-G/R:** [matriz, operações e evidências](ACULTA-CONTENT-INDEX-BENCHMARK.md).
-**Bridge de Statistics:** [contrato opcional e estratégia de correlação](ACULTA-CONTENT-INDEX-STATISTICS-BRIDGE.md). Uma página incompatível com a métrica selecionada é rejeitada integralmente; não há totais parciais nem descarte silencioso de itens.
+**Bridge de Statistics:** [contrato opcional e estratégia de correlação](ACULTA-CONTENT-INDEX-STATISTICS-BRIDGE.md). Uma página incompatível com a métrica selecionada é rejeitada integralmente; não há totais parciais nem descarte silencioso de itens. Não existe provider `file:file`, portanto `media.files.requests` não é alcançável pelo bridge nesta versão.
 
 **Validação dev.152 (2026-10-23):** suíte Kernel completa MariaDB 102/1.518, sem falhas (39 depreciações Core/contrib; 54 PHPUnit). Os benchmarks 10k, 100k e 1M passaram; em 1M, rebuild 2.137,817 s, auditoria 724,020 s, pico 214,5 MiB e zero divergências. As 2.001 páginas usaram descoberta `base_table`. Medição sintética única, sem SLO. Ver [relatório de escala](benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
 
@@ -37,6 +37,22 @@
 **Validação dev.165 (2026-10-23):** o Portal agora instala e mantém como owner o bundle `media:remote_video` (`oembed:video`) e registra seu provider mínimo no Index. Service-map: 1/3; boot/DI owner com o tipo Media e o campo de origem: 1/46 (239 depreciações Core/contrib); Kernel Media: 5/101, incluindo CRUD pela fila e confirmação de que a URL não entra na projeção. A configuração da Media Library fica opcional quando o módulo Core correspondente está habilitado. Entity Access de vídeo é revalidado no contexto da consulta; o provider não força um purpose de consumidor. A configuração editorial da Revista já permite `remote_video`; `filter.format.forum` permite apenas `forum_attachment` e `filter.format.wiki` apenas `document`. Não foi identificado ainda um campo/relação de curso LMS para Media. **Decisão do responsável:** adiar todas as relações de vídeo até fechar os formatos editoriais e os contratos de acesso dos consumidores; nenhum adapter de relação será implementado antes dessa definição. Não indexar corpo nem URL oEmbed.
 
 **Runtime de teste (2026-10-23):** no host `toca`, URI `aculta.toca.net.br`, Drupal 11.4.10/Drush 13.8.0 e banco `aculta_runtime`, confirmei o Index desinstalado e zero tabelas antes da operação. A ativação temporária criou apenas o schema inicial: zero entradas, relações, jobs ou gerações; `audit status` e `queue status` responderam e o help de `aculta-index:rebuild` foi resolvido. Desinstalei em seguida; o módulo voltou a Disabled e a consulta final encontrou zero tabelas `aculta_index`. Não executei rebuild sobre conteúdo original. Isso valida instalação/descoberta dos comandos e rollback do schema vazio; a operação sobre catálogo com conteúdo segue pendente.
+
+**Validação de 2026-10-26 (proposta dev.176):** o `ContentIndexAccessFilter` passou a limpar
+o cache interno de Entity Access dos tipos candidatos no início de cada página.
+O Core não invalida esse cache em `save()`, mudança de Group ou grant; sem a
+limpeza, um consumidor de longa duração podia reutilizar um ALLOW após
+revogação. Cursors de conteúdo e de relação agora incluem o fingerprint dos
+providers, além de conta, filtros e geração. A integridade ignora relações
+transitórias de gerações `discarding`, que a limpeza remove em lotes separados.
+Unit 51/282 e Kernel MariaDB 114/1.890 PASS; benchmark Fórum em 100 candidatos:
+membro 371/407 ms e visitante 178/220 ms p50/p95, uma execução sintética sem
+SLO e sem regressão mensurável. Runtime local somente leitura: 145 entradas,
+110 relações, uma geração ativa válida, fila vazia e auditoria sem achados.
+Detalhes em [worklog do Agente 3](../operations/ACULTA-AGENT3-INDEX-WORKLOG.md)
+e no [benchmark de acesso](benchmarks/ACULTA-CONTENT-INDEX-ACCESS-2026-10-26.md).
+Grants operacionais, carga representativa e execução sobre catálogo no Runtime
+continuam pendentes.
 
 ## Propósito e propriedade
 
