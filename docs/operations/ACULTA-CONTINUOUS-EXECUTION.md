@@ -625,3 +625,9 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 ## M-2 — revalidar a política de referências File/Media (2026-10-26)
 
 - Com bootstrap PSR-4 explícito da branch, a suíte Unit de `aculta_portal/tests/src/Unit/Cleanup` passou 11 testes / 67 assertions (2 depreciações PHPUnit) e `FileReferenceInspectorKernelTest` passou 2 / 19 no MariaDB dedicado. A verificação cobre referências estruturadas em revisões antigas e UUID de File em rich text. Não foi chamada rotina de exclusão; Runtime permaneceu somente leitura.
+
+## M-1 — reservar `-gr` para cartões históricos de Fórum (2026-10-26)
+
+- Decisão do responsável: o apelido é identidade por UID; UIDs distintos não compartilham apelido; perfis por papel do mesmo UID exibem o mesmo apelido; renomear libera o anterior imediatamente; referências internas permanecem por UID; nenhum apelido de conta pode terminar em `-gr`.
+- `AccountNames::isValid()` e `publicRouteSlug()` agora recusam `-gr` em qualquer caixa. O marcador continua apenas nos adapters de autoria de conteúdo do Fórum; autores Growroom não recebem User/Profile nem rota própria. `aculta_user` avançou `.80` → `.81`. User Unit 136/523 PASS (uma depreciação); PHPCS Drupal/DrupalPractice e PHP lint focais PASS. O Kernel foi encerrado antes de concluir porque o banco SimpleTest estava em uso pelo agente do Index; portanto Kernel fica pendente.
+- A garantia concorrente foi separada: o responsável escolheu índice SQL derivado slug→UID, preservando Profile como fonte de verdade; implementação e testes concorrentes ainda não estão feitos. Não houve alteração Runtime.

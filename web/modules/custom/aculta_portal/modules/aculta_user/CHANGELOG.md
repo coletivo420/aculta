@@ -895,3 +895,8 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
 
 Validação: `AuthorIdentityResolverTest` **2/9 PASS**, suíte Unit aculta_user **125/448 PASS**. A suíte mantém uma depreciação do PHPUnit em `AuthorCardVariantResolverTest`, fora deste incremento; PHPCS dos novos arquivos PASS.
 
+## 0.4.0-dev.81 — reservar `-gr` para autoria histórica de Fórum — 2026-10-26
+
+- A validação de apelidos de contas rejeita slugs terminados em `-gr`, sem diferenciar maiúsculas/minúsculas. O marcador continua sendo aplicado somente ao nome de exibição dos autores Growroom nos cartões do Fórum; autores importados não ganham User/Profile nem rota individual.
+- Unit focal protege a regra e aceita nomes que apenas começam com `gr`. Referências internas de autoria continuam por UID; nenhuma tabela de aliases ou histórico de URL foi criada.
+

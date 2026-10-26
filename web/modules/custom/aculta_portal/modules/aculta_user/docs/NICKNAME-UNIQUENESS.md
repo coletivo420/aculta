@@ -2,6 +2,12 @@
 
 ## Estado da análise — 2026-10-26
 
+### Política confirmada pelo responsável
+
+- Apelido identifica uma conta/UID: UIDs distintos não podem compartilhar o apelido atual; perfis de papéis do mesmo UID exibem o mesmo apelido.
+- Ao trocar o apelido, o anterior fica livre para outra conta imediatamente. Não se criam aliases/redirects de perfil; referências internas usam UID.
+- `-gr` não é permitido como sufixo de apelido de conta. O marcador é apenas nome de exibição dos autores Growroom em conteúdo do Fórum; o acervo legado não cria User/Profile nem rota individual.
+
 `NicknamePolicy` consulta os campos `field_nickname` dos perfis de papel e exclui todos os perfis do mesmo UID durante uma edição. Isso permite que uma conta tenha o mesmo apelido em perfis antigos e atuais enquanto muda de categoria. A consulta é um preflight; duas contas diferentes ainda podem vencer a consulta simultaneamente e gravar o mesmo apelido.
 
 A tabela Field API `profile__field_nickname` não contém `uid`. Uma chave SQL única simples sobre `field_nickname_value` impediria também perfis distintos do mesmo usuário de compartilhar o apelido. O campo é translatable e revisionável, então a garantia depende ainda da semântica de linhas atuais, idiomas, perfis legados e de futuras alterações de schema. Não foi criada uma constraint direta porque ela não representa exatamente o contrato vigente.
@@ -24,7 +30,11 @@ Esse snapshot não comprova ausência de duplicatas em outros ambientes nem reso
 1. **Lock por apelido no ciclo de persistência do Profile:** um hook central adquire lock distribuído pelo apelido normalizado, reconsulta sob lock excluindo o UID atual, mantém o lock até insert/update e libera no post-save. Deve tratar falhas antes do post-save por expiração curta e retornar erro genérico em conflito. Não cria armazenamento paralelo, mas precisa cobrir todos os caminhos de escrita.
 2. **Índice derivado de apelidos por UID:** tabela owner-managed que reserva cada apelido normalizado para um UID, permitindo vários perfis da mesma conta. Hooks transacionais mantêm a projeção; conflito de outra conta é rejeitado. Exige rebuild idempotente e auditoria de duplicatas antes da criação.
 
-A próxima etapa é prototipar a opção de lock primeiro em Kernel/MariaDB com dois processos concorrentes e cobertura de insert, rename, perfis legados do mesmo UID, falha de persistência e liberação/expiração do lock. Se algum caminho de gravação não puder ser coberto de forma confiável, avaliar o índice derivado como alternativa. Não executar update em Runtime até aprovação operacional específica.
+### Arquitetura selecionada pelo responsável
+
+O responsável selecionou a opção 2. Profile permanece a fonte de verdade e `aculta_user` manterá uma projeção owner-managed por UID com `uid` único e slug normalizado único. Perfis de papéis do mesmo UID compartilham a reivindicação; ao renomear, a atualização do novo slug e a liberação do anterior ocorrem no mesmo caminho transacional. A projeção pode ser reconstruída a partir de Profiles; não guarda histórico nem cria aliases/redirects. Referências internas continuam usando UID.
+
+A implementação deve falhar fechada se o rebuild encontrar apelidos diferentes entre Profiles ativos do mesmo UID, colisões entre UIDs ou apelidos atuais terminados em `-gr`; reportar apenas contagens agregadas, sem expor apelidos. Cobertura Kernel/MariaDB precisa incluir dois processos concorrentes, insert, rename e claim do slug antigo, Profiles múltiplos do mesmo UID, falha de persistência/rollback, rebuild idempotente e conflito preexistente. Não executar update no Runtime sem autorização operacional específica.
 
 ## Reversão
 
