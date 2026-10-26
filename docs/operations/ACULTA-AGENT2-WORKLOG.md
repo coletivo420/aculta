@@ -419,3 +419,12 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - Confirmado: `redirect_uri` deve ser estática e igual à cadastrada no painel. A troca do código envia `grant_type`, `client_id`, `client_secret`, `redirect_uri` e `code`. A renovação envia `refresh_token`. O cliente já faz as duas coisas.
 - Não encontrado na especificação: `/oauth/authorize` (é uma página, não um endpoint de API). Continua não confirmado por fonte oficial; o teste real no sandbox é a validação.
 - Pendente: o responsável completar a autorização no servidor de teste, para validar o `expires_in` real e a cotação com o token de usuário.
+
+## Token de usuário do sandbox: validação e escopos (ME-PEND-01)
+
+- Token de usuário gravado no servidor de teste após a autorização. `expires_at` menos o horário da checagem é exatamente 2592000 s: `expires_in` de 30 dias confirmado.
+- `GET /api/v2/me` e `POST /api/v2/me/shipment/calculate` com esse token responderam **403** ("This action is unauthorized."). Não é 401: o token é aceito, mas não tem permissão.
+- Causa: a configuração `scopes` estava vazia, então a autorização saiu sem escopos.
+- Ação: `scopes` = `shipping-calculate user-read` no servidor de teste (configuração do banco, não exportada). A URL de autorização passou a enviar esses escopos.
+- Nomes dos escopos não aparecem na documentação do MCP nem na busca web. Confirmar no painel do aplicativo sandbox que esses dois escopos estão habilitados. Se o consentimento recusar algum, ajustar pela lista do painel.
+- Pendente: nova autorização no servidor de teste, depois revalidar `/api/v2/me` e a cotação.
