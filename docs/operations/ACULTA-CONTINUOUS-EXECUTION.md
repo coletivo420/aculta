@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit:** `db389cd5e` (`fix(user): scope Growroom suffix to forum authorship`), enviado por push normal a `origin/chore/aculta-m0-integridade`. O scan PHP comparado a `origin/main` examinou 78 arquivos: 0 erros PHPCS e 49 warnings; arquivos do módulo H5P fora deste incremento mantêm violações legadas.
+**Último commit:** `80aff8803` (`docs(user): record Growroom author contract evidence`), enviado por push normal a `origin/chore/aculta-m0-integridade`. O scan PHP comparado a `origin/main` examinou 78 arquivos: 0 erros PHPCS e 49 warnings; arquivos do módulo H5P fora deste incremento mantêm violações legadas.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
@@ -15,7 +15,7 @@
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
 5. Próxima unidade: revisar individualmente as 9 configurações Messenger presentes no Sync mas divergentes do Runtime e decidir quais são drift, customização operacional ou defaults obsoletos; não exportar globalmente nem alterar anchor/preferências sem classificação.
 6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente das oito frentes concluiu seu trabalho; comparação por caminhos confirmou que todos os incrementos já estão na PR sob SHAs equivalentes. Não fazer cherry-pick duplicado; nenhum desses diretórios foi alterado neste turno.
-7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último checkpoint remoto: `db389cd5e` (`fix(user): scope Growroom suffix to forum authorship`).
+7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último checkpoint remoto: `80aff8803` (`docs(user): record Growroom author contract evidence`).
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
@@ -442,7 +442,7 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 - Commit `35da56a09` reconciliou o contrato do Confirmador: conta ativa pode autenticar antes da confirmação, ações específicas continuam restritas e o token expira em 24 h. Inclui texto de formulário e asserção Kernel; PHPCS Drupal/DrupalPractice e lint focais passaram; `EmailConfirmationPolicyKernelTest` passou 3/16. Índice de status (41) e pacotes próprios (41) passaram.
 - Kernel foi executado com as credenciais dedicadas em `/home/aculta/secrets/simpletest-db.env`. Uma tentativa anterior com credencial genérica falhou no setup; não conta como resultado de produto. Nenhuma operação Runtime persistente, SMTP externo ou Browser foi realizada.
-- A decisão do responsável foi que rotas públicas de perfil legado sempre levam sufixo `-gr`. O escopo ainda aguarda definição porque `PerfilDoPapel::TIPOS` contém bundles por papel, enquanto a documentação identifica autores históricos Growroom como entidades distintas sem conta Drupal; as antigas rotas `/user/{uid}` e `/identidade/{user}` são privadas. Não alterar slug/lookup até o escopo ser definido.
+- **Registro histórico substituído por F-D44 em 2026-10-26:** a hipótese inicial de sufixar rotas de perfil legado foi rejeitada. Autores Growroom não possuem perfil individual/rota `/u/`; apenas cartões de autoria em conteúdo do Fórum exibem `-gr`. Perfis por papel, rotas privadas `/user/{uid}` e `/identidade/{user}` permanecem fora dessa regra.
 - Drush status read-only no URI MAIN reconfirmou Drupal 11.4.10, DB `aculta_runtime` e root compartilhado `/home/piradopirata/projetos/aculta/web`.
 
 
@@ -462,7 +462,15 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 ## M-1 — autoria histórica Growroom (2026-10-26)
 
 - Decisão do responsável: autores importados do Growroom não recebem User/Profile nem página individual `/u/`; `/u/lendashistoricas` é o memorial coletivo e exibe nomes sem sufixo. `-gr` é reservado ao nome de exibição do cartão histórico no conteúdo do Fórum.
-- `aculta_user 0.4.0-dev.80`: `AuthorCardBuilder::buildLegacyForum()` aplica o marcador apenas nos adapters Fórum; o método genérico mantém o nome e comentários de contextos não-Fórum não recebem `-gr`; `#profile_url` continua `NULL`. Unit User completa 135/519 PASS (uma depreciação PHPUnit); PHPCS Drupal/DrupalPractice e PHP lint nos arquivos alterados PASS. Sem alteração Runtime. Commit `4521ad073` publicado em `origin/chore/aculta-m0-integridade`.
+- `aculta_user 0.4.0-dev.80`: `AuthorCardBuilder::buildLegacyForum()` aplica o marcador apenas nos adapters Fórum; o método genérico mantém o nome e comentários de contextos não-Fórum não recebem `-gr`; `#profile_url` continua `NULL`. Unit User completa 135/519 PASS (uma depreciação PHPUnit); PHPCS Drupal/DrupalPractice e PHP lint nos arquivos alterados PASS. Sem alteração Runtime. Código em `db389cd5e`; evidência e documentação atualizadas em `80aff8803`, ambos publicados em `origin/chore/aculta-m0-integridade`.
 - F-D43/F-D44 foram registrados. A revisão de consumidor encontrou que o builder genérico também atende Comments compartilhados; dev.80 restringe o sufixo aos adapters de Fórum. O documento de importação agora substitui como desatualizado o bloqueio da remodelagem #297 e a decisão de manter o acervo ausente como estado final. O mapeamento dry-run atual não é importação; o repositório ainda não contém um exportador final/importador Drupal idempotente e o mapa não mantém IDs estáveis de autoria. Próxima tarefa: desenhar/testar exportador versionado com fixtures sintéticas, preservando IDs e hashes, sem copiar dados privados ao Git. Importação persistente no Runtime fica DEFERRED até pipeline, banco efêmero, prévia, backup e rollback.
 
 - Regressão dev.80: suíte Unit completa User 135 testes/519 assertions PASS, uma depreciação PHPUnit. O Kernel isolado anterior não existe mais em `/tmp`, portanto não foi repetido; nenhum Runtime foi usado.
+
+
+## M-3 — manifesto estável de autoria Growroom (2026-10-26)
+
+- Decisão F-D45: autores sem ID de origem recebem chave `nome-<sha256>` do nome normalizado; IDs IPS4/THW são prioritários. Homônimos normalizados serão agrupados. Autoria sem nome utilizável fica com estado `revisar`, não pode ser importada.
+- `scripts/growroom/build_mapping.py --so-mapeamento` regenerou os mapas no storage privado Homelab, fora do Git e do Drupal Runtime. `autor-origem.json`: 9.608 registros (741 IPS4, 2.751 THW, 6.116 por nome), sem pendências; 211.388 referências a tópicos. Dez e-mails continuam omitidos.
+- `verificar_importacao.py --rapido`: C1–C10 PASS; C10 validou IDs, nomes e URLs em tópicos selecionados; C8 sem e-mails. C1/C3 em modo rápido verificaram existência/tamanho, não hashes/marcador final. A integridade completa dos bytes do acervo não foi recalculada.
+- Testes sintéticos `python3 -m unittest tests/scripts/test_growroom_origin_ids.py`: 10 testes PASS; `py_compile` PASS. Nenhum importador Drupal de posts/assets existe ainda. Próxima unidade: projetar exportação versionada dos posts/arquivos, seguida por importação idempotente em banco efêmero; importação no Runtime não ocorreu.

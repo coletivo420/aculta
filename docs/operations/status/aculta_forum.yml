@@ -13,7 +13,7 @@ next_phase: >-
   de e-mail/digest, ativação do F-GROUP no servidor de testes e em produção,
   aparelho físico e concorrência real. Checklist em
   [docs/RC.md](web/modules/custom/aculta_portal/modules/aculta_forum/docs/RC.md).
-progress_note: "fases F-M0–F-M7 fechadas; Unit 184/1.332; Unit Messenger 261/2.023; Kernel 150/2.863; Functional 6/6; PHPCS 0 erros; navegador 13/13 e acessibilidade 49/49 nos dois temas; instalação limpa, migração/corte local e F-GROUP homologados)\""
+progress_note: "Candidato de código RC.2 conforme evidência anterior; F-D43–F-D45 alteraram o alvo do acervo de teste. Manifesto privado de autoria C10 PASS; importador de conteúdo/assets, banco efêmero e homologação do acervo pendentes. Sem importação ou alteração do Runtime nesta execução."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; gate: scripts/validate-no-temporary-route-aliases.php.

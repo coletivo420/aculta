@@ -1,4 +1,4 @@
-"""Mapeamento tópico -> fórum e autor -> perfil, a partir do que já foi baixado do Wayback (somente leitura por padrão).
+"""Mapeia tópico -> fórum, autoria -> perfil e autoria estável para LegacyAuthor.
 
 Regra (docs/IMPORTACAO-GROWROOM.md): importar só usuários que comentaram em tópicos de fóruns importados.
 Dois templates do Growroom são lidos (o arquivo mistura os dois):
@@ -11,10 +11,12 @@ Dois templates do Growroom são lidos (o arquivo mistura os dois):
 - Perfil: casamento pelo ID exato (IPS 4) ou pelo nome (slug) com as URLs de perfil do índice CDX.
   Nomes com IDs diferentes ficam em relatório. Variações http/https/www do mesmo ID entram juntas.
 Uso: sudo -n python3 -B build_mapping.py [--aplicar]
-  --aplicar grava perfis-permitidos.json (usado pelo wayback_fetch.py) e o mapeamento em restauro/mapeamento/.
-  --so-mapeamento grava só restauro/mapeamento/ (não altera a fila de perfis).
+  --aplicar grava perfis-permitidos.json (usado pelo wayback_fetch.py) e os mapas em restauro/mapeamento/.
+  --so-mapeamento grava mapas em restauro/mapeamento/ (não altera a fila de perfis).
+  autor-origem.json preserva IDs IPS4/THW; quando a origem não expõe ID, usa hash do nome normalizado.
 """
 import html as htmllib
+import hashlib
 import json
 import os
 import re
@@ -70,6 +72,61 @@ RE_THW_AUTOR = re.compile(r'v_profile\.php\?userid=(\d+)"\s*>\s*<img[^>]*alt="Ve
 def slug(nome: str) -> str:
     s = unicodedata.normalize("NFKD", htmllib.unescape(nome)).encode("ascii", "ignore").decode().lower()
     return re.sub(r"[^a-z0-9]+", "-", s).strip("-")
+
+
+def legacy_author_origin_id(nome: str, ips_id: str | None = None, thw_uid: str | None = None) -> str:
+    """Build a stable LegacyAuthor origin ID without inventing User accounts.
+
+    Prefer source-platform IDs. When the old IPB-era page provides only a
+    display name, key it by the normalized name as approved for the archive.
+    """
+    if ips_id is not None and thw_uid is not None:
+        raise ValueError("A autoria não pode ter dois IDs de plataformas diferentes.")
+    if ips_id is not None or thw_uid is not None:
+        platform, source_id = ("ips4", ips_id) if ips_id is not None else ("thw", thw_uid)
+        if source_id is None or not source_id.isascii() or not source_id.isdigit() or len(source_id) > 59:
+            raise ValueError("O ID de origem deve conter somente até 59 dígitos ASCII.")
+        return f"{platform}-{source_id}"
+
+    normalized_name = slug(nome)
+    if not normalized_name or EMAIL_NOME.search(nome):
+        raise ValueError("Autoria sem ID exige nome normalizável e não pode conter e-mail.")
+    digest = hashlib.sha256(normalized_name.encode("ascii")).hexdigest()
+    # LegacyAuthor.origem_id accepts 64 ASCII characters at most.
+    return f"nome-{digest[:59]}"
+
+
+def registros_autor_origem(autores_origem: dict, sem_origem: dict | None = None) -> list[dict]:
+    """Return deterministic author rows, retaining unresolved names for review."""
+    registros = []
+    for origem_id, dados in sorted(autores_origem.items()):
+        nomes = dados["nomes"]
+        nome = min(nomes, key=lambda candidato: (-nomes[candidato], candidato))
+        registros.append({
+            "origem_id": origem_id,
+            "nome": nome,
+            "nomes_observados": sorted(nomes),
+            "topicos": sorted(dados["topicos"]),
+            "estado": "pronto",
+        })
+    for dados in (sem_origem or {}).values():
+        nomes = dados["nomes"]
+        nome = min(nomes, key=lambda candidato: (-nomes[candidato], candidato))
+        registros.append({
+            "origem_id": None,
+            "nome": nome,
+            "nomes_observados": sorted(nomes),
+            "topicos": sorted(dados["topicos"]),
+            "estado": "revisar",
+        })
+    return sorted(
+        registros,
+        key=lambda registro: (
+            registro["origem_id"] is None,
+            registro["origem_id"] or "",
+            registro["nome"],
+        ),
+    )
 
 
 _CHARSET_CABECALHO = None
@@ -213,6 +270,8 @@ def main():
     autores_de = defaultdict(set)
     ids_ips = defaultdict(set)  # nome -> IDs de perfil exatos (IPS 4)
     ids_thw = defaultdict(set)  # nome -> userids exatos (THWboard)
+    autores_origem = defaultdict(lambda: {"nomes": Counter(), "topicos": set()})
+    autores_sem_origem = defaultdict(lambda: {"nomes": Counter(), "topicos": set()})
     sem_forum = 0
     omitidos_email = set()
     comerciais = comerciais_forte()
@@ -251,6 +310,14 @@ def main():
                     omitidos_email.add(nome)
                     continue
                 autores_de[nome].add(url)
+                try:
+                    origem_id = legacy_author_origin_id(nome, perfil, uid)
+                except ValueError:
+                    autores_sem_origem[nome]["nomes"][nome] += 1
+                    autores_sem_origem[nome]["topicos"].add(url)
+                    continue
+                autores_origem[origem_id]["nomes"][nome] += 1
+                autores_origem[origem_id]["topicos"].add(url)
                 if perfil:
                     ids_ips[nome].add(perfil)
                 if uid:
@@ -280,7 +347,8 @@ def main():
     print(f"autores de tópicos importados: {len(autores_de)}; com ID exato (IPS 4): {len(ids_ips)}; "
           f"casados: {len(casados)}; ambíguos (IDs diferentes): {len(ambiguos)}; sem perfil: {len(sem)}; "
           f"URLs de perfil permitidas: {len(permitidos)}")
-    print("ambíguos (até 5):", ambiguos[:5])
+    print(f"nomes ambíguos entre IDs de perfil: {len(ambiguos)}")
+    print(f"autorias sem origem exportável: {len(autores_sem_origem)}")
     print(f"nomes com forma de e-mail omitidos do mapa: {len(omitidos_email)}")
     print(f"conjunto de importação: {len(conjunto)} tópicos "
           f"({sum(1 for c in conjunto if c['motivo'] == 'forum_importado')} de fóruns importados, "
@@ -296,6 +364,9 @@ def main():
             json.dump(forum_de, fh, ensure_ascii=False, indent=0)
         with open(os.path.join(SAIDA, "autor-topicos.json"), "w", encoding="utf-8") as fh:
             json.dump({k: sorted(v) for k, v in autores_de.items()}, fh, ensure_ascii=False, indent=0)
+        registros_autor = registros_autor_origem(autores_origem, autores_sem_origem)
+        with open(os.path.join(SAIDA, "autor-origem.json"), "w", encoding="utf-8") as fh:
+            json.dump(registros_autor, fh, ensure_ascii=False, indent=0)
         with open(os.path.join(BASE, "conjunto-importacao.json"), "w", encoding="utf-8") as fh:
             json.dump(conjunto, fh, ensure_ascii=False, indent=0)
         print("gravado:", "perfis-permitidos.json e " if aplicar else "", "mapeamento/", sep="")

@@ -9,7 +9,8 @@ Checagens:
 - C5 links: destinos somam o total de alvos; imagens de conteúdo nunca vão para descartar.
 - C6 perfis: URLs de perfil permitidas existem no CDX com status 200 e text/html.
 - C7 mapeamento: arquivos de mapeamento batem com a versão atual do build_mapping (mesmos tópicos).
-- C8 dados pessoais: arquivos de importação não contêm e-mail.
+- C8 dados pessoais: mapas não contêm e-mail.
+- C10 autorias: IDs de origem únicos/válidos, nomes presentes e tópicos existentes.
 
 Uso: sudo -n python3 -B -I verificar_importacao.py [--rapido]
   --rapido pula a leitura completa dos arquivos (C1 e C3 só checam existência e tamanho).
@@ -151,10 +152,44 @@ def c7_mapeamento(topicos):
 
 def c8_pii():
     achados = collections.Counter()
-    for nome in ("mapeamento/autor-topicos.json", "mapeamento/topico-forum.json", "perfis-permitidos.json"):
+    for nome in (
+        "mapeamento/autor-topicos.json",
+        "mapeamento/autor-origem.json",
+        "mapeamento/topico-forum.json",
+        "perfis-permitidos.json",
+    ):
         with open(caminho(nome), "rb") as fh:
             achados[nome] = len(EMAIL.findall(fh.read()))
     return {"emails_encontrados": dict(achados), "ok": sum(achados.values()) == 0}
+
+
+def c10_autores_origem(topicos):
+    caminho_manifesto = caminho("mapeamento/autor-origem.json")
+    if not os.path.isfile(caminho_manifesto):
+        return {"registros": 0, "manifesto_ausente": True, "ok": False}
+    with open(caminho_manifesto, encoding="utf-8") as fh:
+        registros = json.load(fh)
+    with open(caminho("conjunto-importacao.json"), encoding="utf-8") as fh:
+        selecionados = {registro["url"] for registro in json.load(fh)}
+    ids = [r.get("origem_id") for r in registros if isinstance(r.get("origem_id"), str)]
+    duplicados = len(ids) - len(set(ids))
+    pendentes = sum(1 for r in registros if r.get("estado") != "pronto" or not r.get("origem_id"))
+    invalidos = sum(1 for source_id in ids
+                    if not bm.re.fullmatch(r"(?:ips4-[0-9]{1,59}|thw-[0-9]{1,59}|nome-[a-f0-9]{59})", source_id))
+    sem_nome = sum(
+        1 for r in registros
+        if not isinstance(r.get("nome"), str)
+        or not r["nome"].strip()
+        or len(r["nome"]) > 255
+        or any(ord(caractere) < 32 or ord(caractere) == 127 for caractere in r["nome"])
+    )
+    topicos_ausentes = sum(1 for r in registros for url in r.get("topicos", []) if url not in topicos)
+    fora_selecao = sum(1 for r in registros for url in r.get("topicos", []) if url not in selecionados)
+    emails = sum(1 for r in registros if EMAIL.search(r.get("nome", "").encode("utf-8")))
+    return {"registros": len(registros), "ids_duplicados": duplicados, "ids_invalidos": invalidos,
+            "pendentes_revisao": pendentes, "sem_nome": sem_nome, "topicos_ausentes": topicos_ausentes,
+            "fora_selecao": fora_selecao, "emails": emails,
+            "ok": duplicados == invalidos == pendentes == sem_nome == topicos_ausentes == fora_selecao == emails == 0}
 
 
 def c9_conjunto(topicos):
@@ -188,6 +223,7 @@ def main():
         "C7_mapeamento": c7_mapeamento(topicos),
         "C8_dados_pessoais": c8_pii(),
         "C9_conjunto": c9_conjunto(topicos),
+        "C10_autores_origem": c10_autores_origem(topicos),
     }
     resultado["_modo"] = "rapido" if RAPIDO else "completo"
     resultado["_segundos"] = round(time.time() - inicio)
