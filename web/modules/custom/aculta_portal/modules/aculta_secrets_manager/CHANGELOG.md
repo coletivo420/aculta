@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-dev.3 — fallback CSS no tema administrativo Claro — 2026-10-26
+
+- Seletores semânticos das abas e da rolagem de tabela preservam o estilo quando o ACULTA420 não está ativo; valores visuais não mudam.
+- Tokens preexistentes `secrets-section` e `secret-value*` continuam sem classes no Claro; estilos correspondentes permanecem como dívida para uma etapa própria.
+- Gate de fronteira e testes Unit/Kernel existentes registrados após execução nesta revisão. O render do painel com Claro no Kernel foi tentado, mas o harness para no theme registry por falta do plugin de campo `state`; mantida a checagem CSS estática e o render foi marcado DEFERRED.
+
+
 ## 0.1.0-dev.2 — tokens de apresentação das abas — 2026-10-26
 
 - Classes visuais das abas e da rolagem de tabela passam pelo contrato Portal–tema, preservando as mesmas classes no ACULTA420.

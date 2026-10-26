@@ -47,3 +47,5 @@ acesso a credenciais de outro ambiente e não faz requisição de leitura de val
 
 
 Dívida de fronteira módulo–tema: `css/secrets-tabs.css` permanece no submódulo nesta fase; planejar sua migração para o tema em etapa própria.
+
+Dívida no Claro: os tokens preexistentes `secrets-section` e `secret-value*` ainda dependem do hook do ACULTA420 e não recebem as classes de apresentação no tema administrativo Claro.

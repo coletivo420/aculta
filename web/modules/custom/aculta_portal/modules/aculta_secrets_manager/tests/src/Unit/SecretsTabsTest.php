@@ -126,6 +126,26 @@ final class SecretsTabsTest extends UnitTestCase {
   }
 
   /**
+   * Keeps every class-based tab style available to Claro.
+   *
+   * The ACULTA420 theme hook is not active on administrative routes.
+   */
+  public function testClaroAdminTabCssHasSemanticAttributeSelectors(): void {
+    $css = file_get_contents(dirname(__DIR__, 3) . '/css/secrets-tabs.css');
+    $this->assertIsString($css);
+    $pairs = [
+      '/\.secrets-tabs__list\s*,\s*\[data-portal-ui~=\"secrets-tabs-list\"\]/',
+      '/\.secrets-tabs__tab\s*,\s*\[data-portal-ui~=\"secrets-tab\"\]/',
+      '/\.secrets-tabs__tab\[aria-selected=\"true\"\]\s*,\s*\[data-portal-ui~=\"secrets-tab\"\]\[aria-selected=\"true\"\]/',
+      '/\.secrets-tabs__tab:focus-visible\s*,\s*\[data-portal-ui~=\"secrets-tab\"\]:focus-visible/',
+      '/\.secrets-table-scroll\s*,\s*\[data-portal-ui~=\"secrets-table-scroll\"\]/',
+    ];
+    foreach ($pairs as $pattern) {
+      $this->assertMatchesRegularExpression($pattern, $css);
+    }
+  }
+
+  /**
    * Creates a controller scoped to one environment.
    */
   private function controller(string $environment, string $store): SecretsController {
