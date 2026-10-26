@@ -137,13 +137,18 @@ pode ser selecionado nesses formatos.
 
 ## JavaScript e carregamento
 
-`js/pdf-viewer.mjs` é carregado pela biblioteca `aculta_document_viewer/viewer`,
-anexada somente ao render array autorizado. Importa `pdf.mjs` e configura
+`js/pdf-viewer.mjs` do owner `aculta_pdf_viewer` é carregado pela biblioteca
+compartilhada `aculta_pdf_viewer/viewer`, anexada somente ao render array
+autorizado do formatter Document Viewer. Importa `pdf.mjs` e configura
 `pdf.worker.mjs` da distribuição Mozilla local em `web/libraries/pdf.js`.
 Carrega o PDF no canvas, oferece navegação anterior/próxima, zoom, busca de
 texto por página e tela cheia. A busca usa `getTextContent()` do PDF.js; os
 resultados navegam até a página correspondente, sem criar armazenamento,
 anotação ou estado persistente. Erro de leitura mantém o link autorizado.
+
+`aculta_document_viewer` depende de `aculta_pdf_viewer`; as cópias byte-a-byte
+idênticas do script, wrapper e CSS foram removidas. Seu builder mantém opções e
+políticas próprias de Media/File antes de anexar a biblioteca compartilhada.
 
 O arquivo registra `Drupal.behaviors.acultaPdfViewer.attach(context)` para
 renderizações Drupal e também faz bootstrap em `DOMContentLoaded`. Isso é um

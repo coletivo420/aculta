@@ -24,7 +24,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
   /**
    * Local wrapper that applies per-document defaults to the pinned PDF.js UI.
    */
-  private const VIEWER_WRAPPER_PATH = '/modules/custom/aculta_portal/modules/aculta_document_viewer/viewer-wrapper.html';
+  private const VIEWER_WRAPPER_PATH = '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/viewer-wrapper.html';
 
   public function __construct(
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
@@ -367,7 +367,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
           'data-aculta-pdf-control' => 'full-viewer',
         ],
       ],
-      '#attached' => ['library' => ['aculta_document_viewer/viewer']],
+      '#attached' => ['library' => ['aculta_pdf_viewer/viewer']],
     ];
     if (empty($settings['show_download'])) {
       $build['download']['#access'] = FALSE;

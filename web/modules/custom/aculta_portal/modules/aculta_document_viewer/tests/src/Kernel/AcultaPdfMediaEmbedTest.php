@@ -281,7 +281,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $this->assertStringContainsString('data-aculta-pdf-control="zoom-reset"', $processed);
     $this->assertStringContainsString('data-aculta-pdf-control="search-input"', $processed);
     $this->assertStringContainsString('data-aculta-pdf-control="fullscreen"', $processed);
-    $this->assertContains('aculta_document_viewer/viewer', $result->getAttachments()['library'] ?? []);
+    $this->assertContains('aculta_pdf_viewer/viewer', $result->getAttachments()['library'] ?? []);
     $this->assertContains('media:' . $media->id(), $result->getCacheTags());
   }
 
