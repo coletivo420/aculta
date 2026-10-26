@@ -91,4 +91,6 @@ com botões, nenhum valor real no HTML, cabeçalhos `no-store`.
 Revisão no Firefox ESR (DISPLAY=:0), servidor de testes: `tests/browser/aculta-secrets-manager/painel-visual.py`,
 16 verificações passaram: duas abas, aba do ambiente ativo selecionada, botões só na aba de testes, troca de aba sem
 alterar o texto do ambiente, teclado (setas e Home), sem rolagem horizontal da página e tabela dentro da janela em
-1280, 390 e 320 px. Ainda não coberto: tema Olivero e os fluxos de popup (revelar, alterar, apagar) no navegador.
+1280, 390 e 320 px. Com o tema Olivero ativo (troca temporária, restaurada ao final): 16 de 16 verificações visuais e 7 de 7 de popups (alterar e apagar abrem e fecham sem gravar).
+
+Verificação HTTP com sessão real no servidor de testes (`tests/browser/aculta-secrets-manager/painel-http.py`), com aculta420 e com Olivero: 9 de 9. Substitui o SecretsPanelFunctionalTest, que dependia de site temporário sem cookie compartilhado nem domínios de produção. Não cobre revelar com valor real (o olho mostra o valor do servidor de testes).
