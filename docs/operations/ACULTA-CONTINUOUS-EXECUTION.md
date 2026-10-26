@@ -1,7 +1,7 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit funcional publicado:** `624345349` (`test(image): cover fail-closed file removal`); branch local e `origin/chore/aculta-m0-integridade` sincronizadas após fetch em 2026-10-26.
+**Último commit funcional publicado:** `2989e4934` (`fix(image): route quarantine through shared file cleaner`); branch local e `origin/chore/aculta-m0-integridade` sincronizadas após fetch em 2026-10-26.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. M-0 segue bloqueada por instalação/importação isolada ainda não exercida, divergências ativas de permissões Wiki e Config Sync por purpose. Editor/CKEditor e o campo de estado de entrega Messenger foram reconciliados no Sync; 81 configs ativos adicionais seguem fora do Sync e uma config exportada está inativa. Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
@@ -15,7 +15,7 @@
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
 5. Próxima unidade: revisar individualmente as 9 configurações Messenger presentes no Sync mas divergentes do Runtime e decidir quais são drift, customização operacional ou defaults obsoletos; não exportar globalmente nem alterar anchor/preferências sem classificação.
 6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente das oito frentes concluiu seu trabalho; comparação por caminhos confirmou que todos os incrementos já estão na PR sob SHAs equivalentes. Não fazer cherry-pick duplicado; nenhum desses diretórios foi alterado neste turno.
-7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último commit funcional: `624345349` (`test(image): cover fail-closed file removal`).
+7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime. Último commit funcional: `2989e4934` (`fix(image): route quarantine through shared file cleaner`).
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
 
@@ -362,3 +362,10 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - ImageQuarantineOwnershipTest: 2 testes/8 assertions PASS; suíte Unit Image: 27/111 PASS (9 depreciações PHPUnit); UnusedFileCleaner Portal: 5/22 PASS (1 depreciação). PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Gate aculta_image PASS (25 estilos), pacotes próprios PASS (41), dependências Config Extension PASS (1590/1437), fronteira módulo-tema PASS (2889).
 - PHPUnit foi executado com bootstrap temporário que prioriza classes do worktree porque vendor/core são compartilhados e o autoloader padrão seleciona cópias do checkout principal. Um primeiro run sem essa priorização carregou a assinatura antiga de ImageQuarantine; esse erro de harness não foi contado. Bootstrap temporário está em /tmp, fora do repositório.
 - Manifesto, README, changelog, plano e status de Image atualizados para dev.33. Estado permanece Dev; Kernel/install-clean e homologação operacional ainda pendentes. Nenhuma alteração no Runtime.
+
+## M-1 — Portal: caracterizar inspetor global de referências — 2026-10-26
+
+- FileReferenceInspectorTest cobre campos de referência estruturada, embeds em texto formatado, pesquisa em todas as revisões de entidades revisionáveis e falha fechada como Unverifiable quando uma query não pode ser concluída.
+- Suíte Unit completa do Portal: 353 testes / 914 assertions PASS, seis depreciações PHPUnit; teste focal novo 3/36 PASS; PHPCS Drupal/DrupalPractice e PHP lint do teste PASS.
+- Gates após bump documental de Portal 0.4.1-dev.34: índice 41 PASS, pacotes próprios 41 PASS, Config Extension 1590 checks/1437 YAML PASS, Drupal 11+ 1160 PASS. Runtime permaneceu inalterado.
+- A verificação encontrou cobertura direta ausente do FileReferenceInspector, não um defeito de produto reproduzido. Instalação limpa e Functional continuam pendentes conforme status anterior.

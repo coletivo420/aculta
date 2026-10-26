@@ -5,10 +5,10 @@ Core e de módulos contrib para as experiências de conta, conteúdo, Commerce,
 aprendizagem e domínios. Core/contrib continuam donos das entidades e regras que
 já fornecem.
 
-## Situação vigente — Portal `0.4.1-dev.33` (2026-10-26)
+## Situação vigente — Portal `0.4.1-dev.34` (2026-10-26)
 
-Os testes Unit do Portal foram executados nesta revisão: 350 testes / 878
-assertions PASS (6 depreciações PHPUnit). A suíte Kernel passou com 53 testes /
+Os testes Unit do Portal foram executados nesta revisão: 353 testes / 914
+assertions PASS (6 depreciações PHPUnit). A suíte Kernel (execução anterior) passou com 53 testes /
 831 assertions (90 depreciações Drupal/Core/contrib), usando MariaDB isolado.
 O teste de retorno Studio/legado inicializa e restaura o container Drupal
 global, conforme exigido por `Url::fromUserInput()` no teste Unit. Essa evidência

@@ -1,3 +1,8 @@
+## 0.4.1-dev.34 — cobrir o inspetor global de referências
+
+- FileReferenceInspectorTest cobre referências estruturadas e embeds em texto nas revisões anteriores, além de retorno fail-closed quando a consulta de um campo falha.
+- Suíte Unit Portal: 353 testes / 914 assertions PASS; seis depreciações PHPUnit. Sem alterações de código de Runtime ou escrita no banco.
+
 ### Validação das suítes Portal — 2026-10-25 (sem alteração runtime)
 
 - `AccountOtherDataStudioReturnTest` fornece `path.validator` para o caminho
