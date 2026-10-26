@@ -551,3 +551,10 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - `AcultaLmsDependencyHarnessTrait` fornece somente definições para classes reais de Portal, Messenger, LMS e Studio com os argumentos do wiring de produção. Não cria classes fictícias nem instala configuração alheia aos cenários. `AcultaLmsInstallTest` também verifica a classe real CheckoutSettings, o padrão `curso` e o controller de rota real.
 - Kernel LMS agregado no MariaDB dedicado: 29 testes / 835 assertions PASS. PHPCS Drupal e DrupalPractice, PHP lint dos arquivos alterados e `git diff --check` PASS. Uma depreciação upstream vem de `webform_score` contrib. Isso não prova a instalação limpa com a configuração completa da closure.
 - `aculta_lms` avançou para `0.1.0-dev.91`; README, CHANGELOG, status e matriz de fechamento atualizados. Runtime permaneceu somente leitura.
+
+## M-1 — corrigir os links do rodapé de avisos (2026-10-26)
+
+- `MessengerBarHooks` gerava `all_url` das gavetas de avisos e mensagens com `canonicalRouteUrl('account', ...)`, que força URL absoluta pelo hostname de produção. Ambos agora usam `Url::fromRoute()` sem a opção `absolute`, preservando caminho relativo e retirando a dependência do hook em `DomainPurposeManager`.
+- Messenger avançou `.401` → `.402`; README, CHANGELOG, status, matriz de fechamento e índice raiz foram sincronizados. `PersistentNoticeAccessTest`: 5 testes / 11 assertions PASS com autoloader prioritário do worktree. PHP lint, DrupalPractice, índice de 41 componentes, pacote de 41 componentes e `git diff --check` PASS.
+- PHPCS Drupal nos dois arquivos alterados ainda aponta erros antigos de PHPDoc/comentários/uso não relacionado e warnings de linhas longas; o teste focal passou. Nenhuma validação foi declarada para a interface no navegador. Não houve operação Runtime.
+- Próxima ação: retomar Config Sync do Messenger com a decisão de versionar defaults estruturais e preservar overrides ambientais; provar o mecanismo de override sem importar configuração no Runtime.

@@ -109,12 +109,6 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
           ),
         ),
       ),
-      new DomainPurposeManager(
-        $this->createMock(EntityTypeManagerInterface::class),
-        $this->createMock(DomainNegotiatorInterface::class),
-        $this->createMock(ConfigFactoryInterface::class),
-        new RequestStack(),
-      ),
     );
   }
 

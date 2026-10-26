@@ -1,3 +1,9 @@
+## 0.1.1-dev.402 — manter relativos os links da gaveta de avisos
+
+Os botões “Ver todos os avisos” e “Ver todas as mensagens” agora geram caminhos
+relativos por route ID. Eles deixam de apontar para o hostname canônico
+`aculta.org`, preservando a política de URLs relativas do projeto.
+
 ## 0.1.1-dev.401 — alinhar metadados Sync de amizade com defaults e Runtime
 
 - Config Sync atualiza a descrição de `field_aculta_messenger_attempts` e o rótulo/descrição de `field_aculta_messenger_source_fr` para os valores dos defaults instaláveis. A leitura read-only confirmou que esses metadados também correspondem ao Runtime MAIN.
