@@ -83,7 +83,14 @@ Invariantes obrigatórias:
   persistido, nenhum e-mail, fila ou token;
 - perfil temporário não salvo;
 - falha de empacotamento/cotação → resultado vazio + estado `unavailable`, nunca frete zero;
-- o valor exibido **não** é o valor cobrado: o checkout revalida a cotação no servidor.
+- o valor exibido é **o valor exato a ser cobrado** enquanto a cotação estiver válida:
+  mesmo caminho de preço do checkout (mesmos plugins, mesma moeda, mesma data de cálculo
+  e os mesmos ajustes), sem arredondamento próprio nem faixa aproximada;
+- a cotação carrega `valid_until`; uma cotação expirada não é exibida como válida — é
+  recalculada antes de aparecer;
+- o checkout revalida a mesma cotação (ID do método/serviço, valor e validade). Se ela
+  expirou ou mudou, recalcula e mostra o novo valor **antes do pagamento**; o valor do
+  checkout é o autoritativo.
 
 ## 3. Três pontos de entrada e contrato neutro Portal → tema
 
@@ -120,6 +127,11 @@ classes de shipping. O tema só consome props.
   de compra. A variação/quantidade vêm do formulário do Commerce; o CEP é digitado no
   simulador.
 
+A seleção do cliente (método/serviço, valor exato e validade) acompanha o pedido até o
+checkout, que revalida a mesma cotação no servidor. Não é um ajuste persistido no carrinho:
+enquanto a cotação vale, o valor cobrado é o mesmo do simulador; se expirar, o checkout
+recalcula e mostra o novo valor antes do pagamento.
+
 SDC novo no `aculta420`: `components/patterns/shipping-estimate/` com props acima, CSS
 mobile-first, sem dependência de jQuery. O JS é mínimo e usa `#ajax` do Form API
 (mesma origem, token/CSRF do Drupal), não `fetch` artesanal. Sem JS, o submit recarrega a
@@ -135,8 +147,9 @@ CSS por instância. A estrutura de props é a mesma nas três variantes.
 
 - **Cache obrigatório** por chave `hash(país + CEP normalizado + itens + métodos + moeda)`.
   TTL sugerido: 10 minutos para cotação positiva, 60 segundos para “indisponível”
-  (cache negativo curto). Backend de cache do Drupal, com tags dos métodos/config.
-  O CEP não aparece em claro na chave, em log ou em HTML de debug.
+  (cache negativo curto). O TTL efetivo é o **menor** entre 10 minutos e o `valid_until`
+  da cotação: nunca servir cotação vencida. Backend de cache do Drupal, com tags dos
+  métodos/config. O CEP não aparece em claro na chave, em log ou em HTML de debug.
 - **Limite por sessão/IP** para anônimos: usar `flood` com evento neutro (ex.:
   `aculta_frete_estimativa`), 10 tentativas/minuto por IP e 30/minuto para autenticados.
   Ao estourar, responder `429` e “frete indisponível”; não revelar limite exato.
@@ -154,7 +167,8 @@ CSS por instância. A estrutura de props é a mesma nas três variantes.
   timeout total 20 s, até 3 tentativas apenas em operações idempotentes, retry em
   429/500/502/503/504).
 - O simulador **adiciona cache obrigatório** em cima do quoter: chave com destino
-  (país/CEP/UF calculados), pacote (peso/dimensões/valor declarado) e serviços; TTL 10 min.
+  (país/CEP/UF calculados), pacote (peso/dimensões/valor declarado) e serviços. O TTL é
+  de 10 min, limitado ao `valid_until` da cotação — cotação vencida não é servida.
   Sem cache, cada tecla ou submit consumiria cota da API.
 - Falha, timeout ou lista vazia → `unavailable` (“frete indisponível”). **Nunca** inventar
   frete zero e **nunca** contratar etiqueta, criar remessa, gerar pagamento ou escrever
@@ -180,7 +194,7 @@ O contrib é **GPL-2.0-or-later**. No porte:
 | Fase | Entrega | Critérios de aceite e testes |
 |---|---|---|
 | **E1** | Serviço de estimativa sem efeito colateral + adaptador para o motor atual; feature flag desligada | Unit: entrada inválida, perfil não salvo, sem `save()` de pedido/remessa, seleção só da lista confiável. Kernel: empacotamento com 1–3 itens e cotação de `FlatRate`; falha → `unavailable`. Nenhum write em `commerce_order`/shipment. |
-| **E2** | Render element + SDC `shipping-estimate`; três pontos de entrada; AJAX same-origin; cache e flood | Kernel/render: props neutros, estados `ok`/`unavailable`/`rate_limited`. Browser (Firefox ESR, `DISPLAY=:0`) no servidor de testes: produto, gaveta e carrinho completo em mobile e desktop; sem JS o submit funciona; nenhum CEP em log. Teste de flood: 11ª chamada anônima no minuto → 429. **Conferir no checkout que o frete exibido é o valor revalidado no servidor** (a estimativa é só visual). |
+| **E2** | Render element + SDC `shipping-estimate`; três pontos de entrada; AJAX same-origin; cache e flood | Kernel/render: props neutros, estados `ok`/`unavailable`/`rate_limited`. Browser (Firefox ESR, `DISPLAY=:0`) no servidor de testes: produto, gaveta e carrinho completo em mobile e desktop; sem JS o submit funciona; nenhum CEP em log. Teste de flood: 11ª chamada anônima no minuto → 429. **O frete exibido deve ser idêntico ao total do checkout para o mesmo CEP/ itens enquanto a cotação for válida**; divergência só é aceitável após expiração/revalidação, e o checkout deve mostrar o novo valor antes do pagamento. |
 | **E3** | Cotação real do Melhor Envio com cache/timeout; medição de latência e taxa de cache | Teste com sandbox: cache hit não chama a API; timeout → `unavailable` em ≤20 s; nenhuma remessa/etiqueta criada; cotação nunca persiste token. Medir p50/p95 com cache frio/quente e documentar. |
 
 **Dependência do cutover do frete:** o porte assume o nosso motor (`ShippingOrderManager`,
@@ -194,9 +208,10 @@ dependência do `commerce_shipping` no checkout.
 
 1. **Carrinho completo:** usar **SDCs e UI Styles** no `aculta420`; o Portal entrega props
    neutros. Não portar a área de Views do contrib, não criar bloco legado.
-2. **Frete nos totais:** exibição apenas visual; o **checkout mostra o valor revalidado no
-   servidor**. A E2 deve comparar o estimado com o total do checkout e registrar a
-   diferença, se houver.
+2. **Frete preciso:** o valor exibido é o **exato a ser cobrado** enquanto a cotação for
+   válida, calculado pelo mesmo caminho do checkout. O checkout revalida a mesma cotação;
+   se ela expirou ou mudou, recalcula e mostra o novo valor antes do pagamento. A E2
+   compara **igualdade exata** entre o frete exibido e o total do checkout.
 3. **TTL e limites:** confirmados — 10 min positivo, 60 s negativo; 10/min anônimo e
    30/min autenticado por IP/sessão, via `flood`.
 4. **CAPTCHA:** sem CAPTCHA. Flood e cache são a primeira barreira; reavaliar só com
