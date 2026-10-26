@@ -77,3 +77,35 @@ do banco antes de reabrir o site; depois confirmar a versão de código e
 
 O código e os testes estão preparados, mas a operação real continua **DEFERRED**
 até existir autorização específica, snapshot verificável e ensaio de restauração.
+
+## Ensaio local em banco isolado (2026-10-26)
+
+- Site descartável `msg3_` no MariaDB de teste, perfil `standard`, schema do Messenger retrocedido
+  a 10007.
+- Pendências repetidas: hooks `10008`–`10012` e post-updates `private_message_email_preferences`,
+  `shared_email_preferences` e `game_achievement_notices`.
+- Dados sintéticos: três contas com `private_message.receive_notification`, `avisos_resumo_email`,
+  `avisos_resumo_forum_resposta`/`_atualizacao` e fila `game_achievement_notice_queue`.
+- Resultado: o `updatedb` concluiu os oito itens; as chaves legadas foram removidas e
+  `avisos_email_mode_*` foram criadas por conta; a fila de conquistas foi consumida; o
+  `updatedb:status` seguinte não tinha pendências.
+- Desvio registrado: a instalação no commit anterior ao 10008 (`e9abaa366`) falha com
+  `PreExistingConfigException` no ciclo Portal↔MP. Por isso o ensaio instalou o código atual
+  (`d74a6779`) e retrocedeu o schema a 10007; os cinco hooks são `installDefaultConfig` e foram
+  executados de forma idempotente.
+- Limitações: não foi criado award de conquista válido — o caminho de publicação foi coberto apenas
+  pela revalidação negativa (award inexistente), e os testes Kernel de conquista seguem como
+  evidência do caminho positivo. O tempo de execução não foi medido porque `/usr/bin/time` não
+  existe no host.
+- Limpeza: 287 tabelas `msg3_` removidas pela Schema API (0 restantes); settings e diretório privado
+  descartáveis removidos; nenhuma credencial em log.
+
+## Rollback do ensaio e da janela
+
+- Os hooks 10008–10012 só instalam config default; reverter é apagar a config nova ou restaurar o
+  snapshot. Os post-updates de preferências removem chaves legadas de `users_data` e criam
+  `avisos_email_mode_*`; a reversão exige restaurar o snapshot integral (não há cópia das chaves
+  antigas depois da execução). A migração de conquistas consome a fila `game_achievement_notice_queue`
+  e publica Messages; também não é reversível por SQL.
+- Portanto, antes da janela: snapshot consistente de `aculta_runtime`, restauração provada em banco
+  isolado e cron/workers parados. O ensaio local não substitui o snapshot.
