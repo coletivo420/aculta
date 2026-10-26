@@ -1,5 +1,9 @@
 # Matriz do porte — `commerce_shipping` 3.0.5 → `aculta_commerce`
 
+> Estado em 2026-10-26: esta matriz registra a análise/atribuição do porte concluído. O provider Melhor Envio já foi
+> integrado em `aculta_commerce_melhorenvio`; veja os resultados e pendências atuais no [roadmap Commerce](ROADMAP.md)
+> e no [roadmap do adaptador](../modules/aculta_commerce_melhorenvio/docs/ROADMAP.md).
+
 **Fonte:** `web/modules/contrib/commerce_shipping/` da instalação fixada em
 `composer.lock` (`drupal/commerce_shipping` 3.0.5). **Licença:** GPL-2.0-or-later.
 Cada arquivo portado mantém um cabeçalho de atribuição com a adaptação realizada.
@@ -66,6 +70,6 @@ submódulo e sem editar o contrib.
 
 ## Integração externa
 
-- **Melhor Envio:** contrato em [`MELHOR-ENVIO-CONTRACT.md`](MELHOR-ENVIO-CONTRACT.md). O plugin da linha principal do site ainda precisa ser adaptado; cotação externa não homologada.
+- **Melhor Envio:** provider integrado ao motor ACULTA e testes Unit/Kernel aprovados na PR; cotação externa e checkout ainda não homologados. Contrato em [`MELHOR-ENVIO-CONTRACT.md`](MELHOR-ENVIO-CONTRACT.md).
 - **Mercado Pago:** inalterado; continua gateway transversal.
 - **LMS/Doações:** tipos de pedido e variações sem o trait de envio; validado que não recebem remessa nem ajuste de frete.

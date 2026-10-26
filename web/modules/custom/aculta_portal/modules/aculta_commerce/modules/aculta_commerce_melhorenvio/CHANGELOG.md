@@ -5,12 +5,19 @@
 ### Corrigido
 
 - Valores monetários da cotação são lidos como texto decimal, sem `float`. Valores com até duas casas são preservados;
-  precisão além de centavos é recusada em vez de arredondada. Testes Unit: 75 testes / 183 assertions.
+  precisão além de centavos é recusada em vez de arredondada. Coberto por `testMoneyStaysExactAndRejectsSubCentPrecision`.
+- O cliente e o controller do webhook ganharam regressões de 403, resposta vazia, 5xx, timeout, assinatura, corpo
+  inválido, segredo ausente e repetição. A suíte Unit reexecutada na PR: 85 testes / 204 assertions PASS.
+- Kernel OAuth cobre retorno sem código e replay de `state`; a classe completa reexecutada na PR: 11 testes / 57
+  assertions PASS em MariaDB dedicado, sem rede externa.
+- PHPCS Drupal/DrupalPractice nos quatro arquivos PHP tocados pela integração: zero erros; avisos apenas de linhas longas.
+- O adaptador resolve credenciais primeiro pelo Drupal Key e usa `aculta_portal.secrets_manager` como fallback. Nenhum
+  valor foi colocado no Config Sync.
 
 ### Verificado, sem alteração de código
 
-- Kernel de wiring no MariaDB dedicado com `commerce_shipping` ausente: 9 testes / 45 assertions. Restam 129
-  deprecações de Core e contrib, sem falha.
+- Kernel de wiring no MariaDB dedicado com `commerce_shipping` ausente: resultado desta integração é 11 testes / 57
+  assertions PASS; a evidência anterior de 9 / 45 é substituída.
 - Retentativas: a cotação (`POST /api/v2/me/shipment/calculate`) é enviada como idempotente. Não há no repositório
   prova contratual disso; a compra (`/shipment/checkout`), a geração e o cancelamento não são idempotentes e não são
   repetidos.

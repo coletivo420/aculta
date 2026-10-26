@@ -1,52 +1,56 @@
 # Roadmap — ACULTA Commerce Melhor Envio
 
-Versão atual: `0.1.0-dev.1`. Plano de referência: `docs/operations/` e `docs/portal/CEP-SHARED-LOOKUP-0.1.md`.
+Versão do manifesto: `0.1.0-dev.4`. Este componente é um adaptador de transportadora; o motor, métodos, tarifas, pedidos e
+remessas são propriedade de `aculta_commerce`. O submódulo permanece fora do Config Sync conforme decisão operacional.
 
-## Dependências explícitas
+## Estado comprovado
 
-- **Serviço central de CEP (ME-CEP 0.1): concluído.** O adaptador usa `aculta_portal_cep.lookup`. Não há fallback de
-  consulta de CEP no submódulo.
-- Não iniciar ME-0.2-A (cálculo de frete) sem o adaptador de CEP e seus testes em verde.
-- **Endereço único do ACULTA (ME-ADDRESS 0.1): concluído na parte de código e Unit.** Contrato e matriz de campos em
-  `docs/ADDRESS-CONTRACT.md`. O Melhor Envio não tem formulário de endereço. Pendências de Kernel e de dados reais estão
-  em DT-ME-02 a DT-ME-06 no registro central.
+- O cliente OAuth2, o armazenamento de tokens por ambiente e o webhook estão implementados. Credenciais são resolvidas
+  primeiro pelo Drupal Key e depois pelo serviço central `aculta_portal.secrets_manager`.
+- A cotação usa o motor ACULTA e preserva valores decimais sem conversão por `float`; precisão além de centavos é
+  rejeitada. Cobertura automatizada: Unit 85 testes / 204 assertions e Kernel 11 testes / 57 assertions, ambos PASS na
+  PR #298, sem chamadas externas.
+- Os testes cobrem erros HTTP, ausência de credenciais, assinatura do webhook, resposta sem código OAuth e replay do
+  state. Eles não comprovam comportamento real do fornecedor nem checkout funcional.
+- PHPCS Drupal/DrupalPractice não reporta erros nos arquivos alterados; restam avisos de linhas longas.
 
 ## Fases
 
-| Fase | Escopo | Estado |
+| Fase | Escopo | Estado e evidência | Próxima ação |
+|---|---|---|---|
+| ME-CEP | Lookup de CEP e adaptador de endereço | Código e testes Unit existentes; contrato compartilhado é do `aculta_portal_cep` | Manter regressões ao testar checkout |
+| ME-0.1 | OAuth2, credenciais, tokens e webhook | Código e testes Unit/Kernel PASS; sem validação externa nesta execução | Confirmar caminhos, `expires_in` e codificação HMAC em teste autorizado |
+| ME-0.2-A | Plugin de cotação para o motor ACULTA | Implementado e coberto por fixture/mocks; instalação/wiring Kernel PASS | Validar configuração e uma cotação no servidor de testes com sandbox, sem contratar envio |
+| ME-0.2-B | Tarifas no checkout Green Stash | Pendente; o Kernel deste adaptador não valida o fluxo integral de checkout | Testar mudança de endereço/itens, seleção da tarifa, total e recálculo |
+| ME-0.3 | Compra de envio e criação de etiqueta | Não implementado/homologado | Definir contrato com `aculta_commerce`; somente mocks até autorização externa |
+| ME-0.4 | PDF/impressão de etiqueta | Pendente | Implementar depois da compra segura de envio |
+| ME-0.5 | Rastreamento, cancelamento e eventos | Webhook recebe e valida, mas apenas registra eventos; processamento de remessa pendente | Vincular evento à remessa com idempotência e autorização |
+| ME-0.6 | Integração Green Stash e UI operacional | Pendente | Definir o fluxo no Studio com o proprietário Commerce |
+| ME-0.7 | Statistics e Messenger | Pendente | Definir contratos com os módulos proprietários antes de integrar |
+| ME-0.8 | Homologação | Functional, Firefox ESR e Runtime de teste não homologados nesta rodada | Executar no servidor de teste após preparar configuração sandbox |
+
+## Pendências e limites
+
+O registro por item, com nomes dos testes e requisitos externos, está em [PENDENCIAS.md](PENDENCIAS.md). Em resumo:
+
+- Nenhum teste desta integração chamou a API. A documentação oficial não comprova a idempotência da cotação nem a
+  codificação do HMAC do webhook; base64 aparece no exemplo documentado, hexadecimal é aceito pelo código sem evidência.
+- A seleção e persistência da tarifa, checkout, pedidos pagos, criação de etiqueta e rastreamento não foram validados
+  no navegador nem em operação sandbox nesta execução.
+- Os tokens permanecem no State API sem criptografia em repouso; qualquer mudança deve seguir o contrato central de
+  segredos e incluir rotação/migração compatível.
+- Não há migração de remessas legadas. O motor de Shipping pertence a `aculta_commerce`; `commerce_shipping` não é
+  dependência funcional deste adaptador.
+- O módulo continua em Dev. Não há evidência suficiente para RC.
+
+## Matriz de testes
+
+| Camada | Evidência atual | Falta |
 |---|---|---|
-| ME-CEP 0.1-A | Auditoria do `aculta_portal_cep` e contratos | Concluída (`docs/portal/CEP-SHARED-LOOKUP-0.1.md`) |
-| ME-CEP 0.1-B | Serviço PHP `aculta_portal_cep.lookup`, Controller delegando | Concluída |
-| ME-CEP 0.1-C | Adaptador de endereço do Melhor Envio | Concluída |
-| ME-CEP 0.1-T | Testes unitários do serviço e do adaptador | Unit concluídos; Kernel pendente (DT-CEP-01) |
-| ME-0.1-A | Auditoria de Melhor Envio Shipping, CodeSpar e API oficial | Pendente (fontes baixadas, inventário a documentar) |
-| ME-0.1-B | Fundação do submódulo (manifesto, serviços, permissões) | Parcial: manifesto, serviço do adaptador e README |
-| ME-0.1-C | Cliente REST OAuth2, sandbox, tokens e credenciais em Key/State | Concluída: cliente, rotas de autorização e retorno, webhook, testes Unit e Kernel; validado no sandbox |
-| ME-PEND-01 | Confirmar no sandbox: caminhos authorize, oauth/token e cotação, `expires_in`, escopos e formato de `Authorization` | Concluída (2026-10-26): caminhos confirmados, `expires_in` 30 dias, escopos `shipping-calculate users-read`, `Bearer` |
-| ME-PEND-02 | Criptografia em repouso dos tokens (hoje State API) conforme política de produção | Pendente (decisão de arquitetura) |
-| ME-0.2-A | Plugin Commerce Shipping e cotação | Concluída no código: método `aculta_melhorenvio`, cotação (`products`), serviços com erro descartados, testes Unit (fixture real do sandbox) e Kernel. Falta CEP de origem na configuração |
-| ME-0.2-B | Integração ao checkout existente | Pendente: definir CEP de origem, criar o método de envio na loja e testar o checkout (ACULTA420 e Olivero) |
-| ME-0.3-A a ME-0.7-A | Envios, compra autorizada, etiquetas, impressão, rastreamento, Green Stash, MCP, Statistics e Messenger | Pendente |
-| ME-0.8-T | Testes completos no homelab | Pendente |
+| Unit | `tests/src/Unit/`: 85 / 204 PASS | Manter ao alterar os contratos |
+| Kernel | `MelhorEnvioWiringKernelTest`: 11 / 57 PASS, MariaDB dedicado | Kernel de checkout e de sincronização com remessas |
+| PHPCS / lint | Zero erros PHPCS; PHP lint PASS nos arquivos alterados | Corrigir avisos de linha longa somente junto a alterações pertinentes |
+| Functional | Não executado para o checkout | Rotas, permissões e fluxo de compra em instalação isolada |
+| Browser | Não executado nesta integração | Firefox ESR visível, desktop/mobile e acessibilidade |
+| Sandbox | Não executado nesta integração | Validação autorizada sem compra de etiqueta ou custo real |
 
-## Matriz de testes do adaptador
-
-| Caso | Teste | Estado |
-|---|---|---|
-| CEP válido e completo, sem consulta | `testCompleteAddressDoesNotLookUp` | Unit OK |
-| CEP inválido | `testInvalidPostalCodeDoesNotLookUp`, `testMissingPostalCodeIsInvalid` | Unit OK |
-| CEP com máscara | `testMaskedPostalCodeIsNormalized` | Unit OK |
-| Sugestão só nos campos vazios | `testSuggestionFillsOnlyMissingFields` | Unit OK |
-| CEP não encontrado | `testNotFoundReturnsNoSuggestion` | Unit OK |
-| Falha de consulta não interrompe | `testLookupFailureIsUnavailableNotFatal` | Unit OK |
-| Consulta local, ViaCEP, BrasilAPI, fonte desabilitada, cache, falha externa | `CepLookupServiceTest` | Unit OK |
-| Endpoint AJAX sem requisição interna | Kernel | Pendente (DT-CEP-01) |
-| Gate de conta | `scripts/validate-account-address.php` | PASS |
-| Checkout e Mercado Pago sem regressão | Kernel e Functional no homelab | Pendente (DT-CEP-01) |
-
-## Limitações de runtime
-
-- Sandbox validado no servidor de teste com o aplicativo de teste. Produção não foi testada.
-- Os testes do cliente não usam rede. Os caminhos da API ficam isolados em `MelhorEnvioEndpoints`.
-- Testes Kernel e Functional precisam de instalação de teste isolada. Não rodam sobre o banco de desenvolvimento.
-- PHPStan não está configurado no repositório. Não há gate de PHPStan a executar.
