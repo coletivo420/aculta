@@ -1,3 +1,10 @@
+## Dev — preparação COM-SHIP (branch isolada, 2026-10-26)
+
+- Diretriz do responsável: substituir Commerce Shipping 3.0.5 por código próprio **dentro de `aculta_commerce`**, sem editar contrib ou criar submódulo de Shipping; legado de pedidos/remessas/métodos pode ser descartado apenas em ambiente de desenvolvimento/teste descartável com inventário e backup.
+- Criados `ShippingQuote` e `ShippingQuoteSelector` (valores como strings decimais, sem float, sem tarifa fictícia, recusa de quotes expiradas, moedas divergentes e duplicatas); testes Unit preparados, ainda não executados no Homelab.
+- Adicionados diagnósticos somente leitura de Config Sync e Runtime e runbook de reset limpo.
+- O porte do upstream, alteração de entidades/checkout, alteração de Config Sync, exclusão de dados e testes integrados ainda **não foram executados**; continuar Dev.
+
 ## 0.1.0-dev.9 — respeitar AccessResult ao criar produto no Green Stash
 
 - O formulário avaliava os objetos `AccessResultInterface` como booleanos. Como esses objetos são truthy mesmo quando negados, os checks de acesso à experiência Studio e `commerce_product.createAccess()` não interrompiam a criação. Agora ambos exigem `isAllowed()`.
