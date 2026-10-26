@@ -1,8 +1,8 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**Último commit estável:** `028b35231`; branch remota sincronizada nesse SHA antes da atualização desta matriz.
-**Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P e gate Domain administrativo têm evidências PASS. Os commits delegados foram incorporados e os focais revisados; Portal Search API DB foi corrigido. M-0 continua bloqueada pela reconciliação segura do Editor, pelo drift ativo de metadados da Revista e pelos grants Wiki ausentes no Runtime; Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
+**Base desta retomada:** `cccca20a9`; branch local e remota coincidiam antes do incremento atual.
+**Estado:** PARTIAL — H5P Kernel e gate Domain administrativo têm evidências PASS. PHPCS agora registra zero erros e 49 avisos nos seis arquivos verificados, abaixo do baseline `origin/main` (143 erros/54 avisos); os avisos remanescentes são linhas longas preexistentes e traduções dinâmicas, sem finding novo. M-0 segue bloqueada por reconciliações de Config Sync/Runtime e homologações por propósito; Messenger tem updates operacionais pendentes. M-1–M-5 seguem em execução; nenhum componente foi promovido.
 **Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
 **Domain/purpose:** em 2026-10-26, `DomainPurposeManager::getCurrentPurpose()` resolveu os nove hosts MAIN, ACCOUNT, SUPPORT, MAGAZINE, WIKI, SHOP, COURSES, FORUM e LINKS ao purpose correspondente (9/9 PASS). As seis coleções Domain ativas têm nomes idênticos ao Sync; cinco também coincidem em conteúdo. O front da Conta foi corrigido no Sync de `/studio` para `/minha-conta`, conforme Runtime e contrato; o acesso HTTP direto ao path segue 404. Na coleção `domain.revista420_aculta_org`, o Runtime ainda diverge em `system.site.name` e em `metatag.metatag_defaults.front` (`tags.title`, `tags.og_title`); o Sync mantém o contrato editorial `Revista 420`. Nenhum valor ativo foi alterado. Entity Access por purpose não está homologado.
@@ -14,7 +14,7 @@
 3. Mapear os grants Wiki ativos versus exportados e corrigir divergências somente em código/configuração versionados e testes isolados; não alterar permissões persistentes.
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
 5. Corrigir o harness Functional de Statistics no teste de login sem enfraquecer a autorização; resolver a fronteira de serviço Portal/User do ledger de aceite sem dependência circular; continuar incrementos centrais de User, CPF, CEP, Commerce, LMS, Messenger e Index.
-6. Manter os resultados delegados nos oito componentes atualizados na matriz; desenvolvimento nesses diretórios segue com o agente 2 até coordenação.
+6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente 2 concluiu a tarefa focal e seus commits foram integrados; não há alteração pendente nos oito diretórios nesta retomada.
 7. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime.
 
 ## Evidência histórica preservada — revalidar antes de tomar decisão
@@ -37,7 +37,7 @@
 
 | Frente | Estado | Próxima ação |
 |---|---|---|
-| P0 PHPCS | PASS no conjunto PR-wide | Drupal + DrupalPractice, 0 erros/0 avisos nos PHP alterados; não confundir com baseline não alterado |
+| P0 PHPCS | PASS para erros; avisos baseline permanecem | Seis PHP focais: `origin/main` 143 erros/54 avisos; após correção, 0 erros/49 avisos. Avisos restantes são linhas longas antigas e chamadas de tradução dinâmica. Não se afirma que o repositório inteiro esteja sem avisos. |
 | P0 H5P | PASS | Kernel H5P 15/388 e Unit 24/73 em runner isolado; sem stub de serviço do produto |
 | P0 admin Domain | PASS no Runtime read-only | 3.498 checks via Drush com URI explícito; não valida diffs não implantados da branch |
 | M-0 inventário individual | Parcial | Inventário 41 itens preservado; faltam Runtime/Config Sync completo e evidência por componente |
@@ -252,3 +252,11 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Comparação byte-a-byte confirmou cópias idênticas de `pdf-viewer.mjs`, `pdf-viewer-wrapper.mjs`, `viewer-wrapper.html` e CSS nos módulos PDF e Document Viewer. Document Viewer passou a depender do módulo PDF e anexar sua biblioteca canônica; seu builder, configuração e verificações de Media/File continuam próprios. Os quatro assets duplicados foram removidos sem alterar o arquivo upstream PDF.js.
 - Unit Document Viewer: 42/225 PASS. Kernel da branch foi executado em MariaDB isolado: 5 erros antes de assertions ao instalar a closure obrigatória Portal, por dependências `search_api.server.aculta_database` (`search_api_db`, `search_api`) e `views.view.courses_admin` (`system.menu.admin`) ausentes no harness. Resultado DEFERRED, sem declarar instalação limpa aprovada. PHP lint, dependências Config Extension (1.560/1.426), pacote próprio (41), índice status (41) e diff check PASS. PHPCS completo ainda reporta baseline em linhas não alteradas (builder 31/1, Kernel 4 FQN); nenhuma violação recai nas linhas modificadas.
 - Runtime não foi alterado. Próxima ação é corrigir o harness de instalação limpa com closure Drupal real e confirmar a integração de formatter/Media Embed; manter Browser/Office e homologações Runtime pendentes.
+
+## P0 — PHPCS e regressões focalizadas (2026-10-26)
+
+- No HEAD `cccca20a9`, o scan inicial dos seis PHP com findings registrou 143 erros/54 avisos; comparação dos findings com `origin/main` confirmou zero erros/avisos novos. PHPCBF e correções focais removeram todos os erros e cinco avisos: PHPCS atual tem 0 erros/49 avisos. Os avisos restantes são linhas longas preexistentes no builder PDF e no gateway, além de traduções dinâmicas do Mercado Pago; nenhuma limpeza ampla de formatação foi feita.
+- H5P: nomes dos testes alinhados à convenção Drupal; os quatro round-trips dos formulários passam `allowed_classes` com somente a classe concreta de Form API, preservando a cobertura de restauração de dependências. Unit 24/73 PASS; Kernel completo 15/388 PASS, 41 depreciações Core/contrib.
+- Document Viewer: Unit 42/225 PASS e PHPCS sem erros (um aviso de linha longa preexistente). Kernel no MariaDB dedicado: 5 erros de setup/0 assertions. Portal requer `aculta_user.aculta_user_agreement_ledger`, mas o harness não habilita User; habilitá-lo experimentalmente revelou `path_alias` e dependência `system.menu.admin` em configuração LMS. A fixture experimental foi removida; não foi criado serviço fictício, e a instalação limpa permanece DEFERRED.
+- Mercado Pago: Unit 11/22 PASS; Kernel 1/50 PASS, 75 depreciações Core/contrib. PHPDoc documenta os parâmetros reais e a exceção de `createPaymentMethod`; removida variável de iteração sem uso. Nenhuma transação ou chamada externa executada.
+- PHP lint dos seis arquivos PASS. Nenhuma operação Runtime ocorreu. Os resultados antigos de PHPCS listados acima neste documento são históricos e ficam supersedidos por esta medição.

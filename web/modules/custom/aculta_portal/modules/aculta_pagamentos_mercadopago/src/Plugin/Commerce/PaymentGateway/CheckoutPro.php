@@ -2,20 +2,19 @@
 
 namespace Drupal\aculta_pagamentos_mercadopago\Plugin\Commerce\PaymentGateway;
 
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 use Drupal\commerce_payment\Exception\PaymentGatewayException;
 use Drupal\commerce_payment\Attribute\CommercePaymentGateway;
 use Drupal\commerce_payment\PaymentMethodStorageInterface;
-use Drupal\commerce_payment\PaymentStorageInterface;
 use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\OffsitePaymentGatewayBase;
 use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\SupportsRefundsInterface;
 use Drupal\aculta_pagamentos_mercadopago\Event\RefundEligibilityEvent;
 use Drupal\commerce_price\Price;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Render\Element\Checkboxes;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use GuzzleHttp\Exception\BadResponseException;
@@ -27,8 +26,6 @@ use MercadoPago\MercadoPagoConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Provides the Mercado Pago Checkout payment gateway.
@@ -115,6 +112,11 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * Other dependencies are assigned in PaymentGatewayBase::create().
    *
    * @param array<string, mixed> $configuration
+   *   The plugin configuration.
+   * @param string $plugin_id
+   *   The plugin ID.
+   * @param array<string, mixed> $plugin_definition
+   *   The plugin definition.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -129,7 +131,14 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   /**
    * {@inheritdoc}
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container.
    * @param array<string, mixed> $configuration
+   *   The plugin configuration.
+   * @param string $plugin_id
+   *   The plugin ID.
+   * @param array<string, mixed> $plugin_definition
+   *   The plugin definition.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
@@ -156,6 +165,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * are written to the log.
    *
    * @return bool
+   *   Whether debug logging is enabled.
    */
   protected function isDebugLoggingEnabled(): bool {
     return !empty($this->configuration['debug_logging']);
@@ -203,6 +213,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   Default configuration merged with the parent gateway defaults.
    */
   public function defaultConfiguration(): array {
     return [
@@ -228,7 +239,12 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   The current form definition.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   *
    * @return array<string, mixed>
+   *   The configuration form elements.
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildConfigurationForm($form, $form_state);
@@ -443,7 +459,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
 
     $selected_method_ids = [];
     if (!empty($wrapper_values['payment_method']) && is_array($wrapper_values['payment_method'])) {
-      foreach ($wrapper_values['payment_method'] as $key => $type_data) {
+      foreach ($wrapper_values['payment_method'] as $type_data) {
         if (!is_array($type_data)) {
           continue;
         }
@@ -680,6 +696,9 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    *
    * @param array &$form
    *   The form array (modified by reference). Callers pass generic array from Form API.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   *
    * @phpstan-ignore-next-line missingType.iterableValue (Form API passes untyped array)
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
@@ -761,6 +780,9 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    *
    * @param array &$form
    *   The form array (modified by reference). Callers pass generic array from Form API.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   *
    * @phpstan-ignore-next-line missingType.iterableValue (Form API passes untyped array)
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
@@ -954,7 +976,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       $logger->error($exception->getResponse()->getBody()->getContents());
       throw new PaymentGatewayException('An error occurred while refunding the payment.');
     }
-    catch (\MercadoPago\Exceptions\MPApiException $e) {
+    catch (MPApiException $e) {
       if ($this->isDebugLoggingEnabled()) {
         $this->loggerFactory->get('Mercado Pago debug')->debug('Refund error: <pre>@data</pre>', [
           '@data' => $e->getApiResponse()->getContent(),
@@ -1406,10 +1428,13 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   /**
    * {@inheritdoc}
    *
+   * @param \Drupal\commerce_payment\Entity\PaymentMethodInterface $payment_method
+   *   The payment method to create, which is unsupported for offsite checkout.
    * @param array<string, mixed> $payment_details
+   *   Additional payment details, which are unsupported for offsite checkout.
    *
-   * @return \Drupal\commerce_payment\Entity\PaymentMethodInterface
-   *   Never returns; always throws.
+   * @throws \Drupal\commerce_payment\Exception\PaymentGatewayException
+   *   Always, because Checkout Pro creates payment methods during the offsite flow.
    */
   public function createPaymentMethod(PaymentMethodInterface $payment_method, array $payment_details): PaymentMethodInterface {
     // Checkout Pro is offsite-only; payment methods are created during onReturn/onNotify.
@@ -1432,7 +1457,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * @return \Drupal\profile\Entity\ProfileInterface
    *   The customer profile.
    */
-  protected function buildCustomerProfile(OrderInterface $order): \Drupal\profile\Entity\ProfileInterface {
+  protected function buildCustomerProfile(OrderInterface $order): ProfileInterface {
     /** @var \Drupal\profile\Entity\ProfileInterface $profile */
     $profile = $this->entityTypeManager->getStorage('profile')->create([
       'uid' => $order->getCustomerId(),

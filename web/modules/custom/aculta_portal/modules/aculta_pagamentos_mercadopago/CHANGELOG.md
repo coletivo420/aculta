@@ -1,5 +1,14 @@
 # Changelog — aculta_pagamentos_mercadopago
 
+## Revisão PHPCS M-0 (2026-10-26)
+
+- PHPDoc de `CheckoutPro` atualizado para refletir os parâmetros existentes;
+  removida a variável de iteração sem uso, sem alterar a seleção de métodos.
+- PHPCS Drupal/DrupalPractice no arquivo: zero erros; permanecem avisos antigos
+  de linhas longas e tradução dinâmica. Unit: 11 testes / 22 assertions PASS;
+  Kernel: 1 teste / 50 assertions PASS, com depreciações Core/contrib.
+- PHP lint PASS. Nenhum pagamento, credencial ou serviço externo foi utilizado.
+
 ## 0.1.0-dev.8 — compatibilidade explícita com retorno parcial — 2026-10-26
 
 - A assinatura de `refundPayment()` declara `?Price`, conforme a interface do Commerce instalada, sem alterar o comportamento do gateway.

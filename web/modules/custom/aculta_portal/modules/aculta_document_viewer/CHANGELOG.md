@@ -1,5 +1,15 @@
 # Changelog — aculta_document_viewer
 
+## Revisão PHPCS M-0 (2026-10-26)
+
+- Corrigida a indentação de arrays em `PdfViewerBuilder` e adicionados imports
+  explícitos no teste de Media Embed; não houve mudança de comportamento.
+- Unit: 42 testes / 225 assertions PASS. Kernel: 5 erros de setup / 0
+  assertions devido à cadeia Portal/User e configuração de menu ausentes no
+  harness; continua sem aprovação de instalação limpa. PHP lint PASS.
+- PHPCS nos seis arquivos do incremento conjunto: zero erros; um aviso de
+  linha longa preexistente neste módulo. Nenhuma alteração Runtime.
+
 ## 0.1.0-dev.15 — reutilizar o motor PDF compartilhado (2026-10-26)
 
 - `aculta_document_viewer` declara dependência de `aculta_pdf_viewer` e anexa

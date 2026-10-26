@@ -4,24 +4,42 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms_h5p\Kernel;
 
+use Drupal\aculta_lms_h5p\Controller\aculta_H5PEditorAjaxController;
+use Drupal\aculta_lms_h5p\Controller\aculta_H5PLibraryAdmin;
+use Drupal\aculta_lms_h5p\Controller\aculta_H5PContentUpgrade;
+use Symfony\Component\HttpFoundation\Request;
+use Drupal\aculta_lms_h5p\Controller\aculta_H5PAJAX;
+use Drupal\aculta_lms_h5p\Form\aculta_H5PAdminSettingsForm;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\file\Entity\File;
+use Drupal\aculta_lms_h5p\Form\aculta_H5PLibraryUploadForm;
+use Drupal\Core\Form\FormState;
+use Drupal\aculta_lms_h5p\Form\aculta_H5PContentUpgradeForm;
+use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorUtilities;
+use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorDrupalAjax;
+use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorDrupalStorage;
+use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-/** Exercises package validation and managed library storage end to end. */
+/**
+ * Exercises package validation and managed library storage end to end. */
 #[RunTestsInSeparateProcesses]
-final class aculta_H5PLibraryPackageInstallerTest extends KernelTestBase {
+final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
 
   use UserCreationTrait;
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected static $modules = [
     'system', 'user', 'field', 'options', 'file', 'image', 'media', 'views',
     'entity_usage', 'aculta_image', 'aculta_lms_h5p',
   ];
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected function setUpFilesystem(): void {
     mkdir($this->siteDirectory, 0775, TRUE);
     mkdir($this->siteDirectory . '/files', 0775, TRUE);
@@ -30,7 +48,8 @@ final class aculta_H5PLibraryPackageInstallerTest extends KernelTestBase {
     $this->setSetting('file_private_path', $this->siteDirectory . '/private');
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected function setUp(): void {
     parent::setUp();
     $this->installConfig(['system', 'user', 'file', 'image']);
@@ -64,7 +83,8 @@ final class aculta_H5PLibraryPackageInstallerTest extends KernelTestBase {
     );
   }
 
-  /** Verifies Composer assets mirror through the configured Drupal assets path. */
+  /**
+   * Verifies Composer assets mirror through the configured Drupal assets path. */
   public function testComposerAssetsAreMirroredToAssetsDirectory(): void {
     $this->container->get('aculta_lms_h5p.asset_file_manager')->mirrorAssets();
 
@@ -74,7 +94,8 @@ final class aculta_H5PLibraryPackageInstallerTest extends KernelTestBase {
     self::assertGreaterThan(0, filesize($assetPath));
   }
 
-  /** Verifies a valid package installs private, managed library files. */
+  /**
+   * Verifies a valid package installs private, managed library files. */
   public function testInstallsValidatedLibrariesAndTracksManagedAssets(): void {
     $package = $this->createPackage([
       'H5P.Test-1.0/library.json' => json_encode([
@@ -120,7 +141,7 @@ final class aculta_H5PLibraryPackageInstallerTest extends KernelTestBase {
         ->fields('l', ['library_id'])
         ->condition('machine_name', 'H5P.Test')
         ->execute()->fetchField();
-      \Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal::getInstance('core')->deleteLibrary($libraryId);
+      aculta_H5PDrupal::getInstance('core')->deleteLibrary($libraryId);
       self::assertSame(0, (int) $this->container->get('database')->select('h5p_libraries', 'l')
         ->condition('library_id', $libraryId)
         ->countQuery()->execute()->fetchField());
@@ -133,7 +154,8 @@ final class aculta_H5PLibraryPackageInstallerTest extends KernelTestBase {
     }
   }
 
-  /** Checks a package without library metadata fails without database writes. */
+  /**
+   * Checks a package without library metadata fails without database writes. */
   public function testRejectsPackageWithoutLibraries(): void {
     $package = $this->createPackage(['readme.txt' => 'Not a library.']);
     try {
@@ -151,7 +173,8 @@ final class aculta_H5PLibraryPackageInstallerTest extends KernelTestBase {
     }
   }
 
-  /** Confirms invalid late assets are rejected before any library is saved. */
+  /**
+   * Confirms invalid late assets are rejected before any library is saved. */
   public function testPreflightsEveryAssetBeforePersistingPackageLibraries(): void {
     $package = $this->createPackage([
       'H5P.Bad-1.0/library.json' => json_encode([
@@ -182,7 +205,8 @@ final class aculta_H5PLibraryPackageInstallerTest extends KernelTestBase {
     }
   }
 
-  /** Verifies progress endpoints expose only the methods required by H5P. */
+  /**
+   * Verifies progress endpoints expose only the methods required by H5P. */
   public function testProgressRoutesRestrictHttpMethods(): void {
     $provider = $this->container->get('router.route_provider');
     self::assertSame(['POST'], $provider->getRouteByName('aculta_lms_h5p.ajax.set_finished')->getMethods());
@@ -194,65 +218,77 @@ final class aculta_H5PLibraryPackageInstallerTest extends KernelTestBase {
     self::assertSame(['POST'], $rebuildRoute->getMethods());
     self::assertSame('TRUE', $rebuildRoute->getRequirement('_csrf_token'));
     self::assertInstanceOf(
-      \Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorDrupalStorage::class,
+      aculta_H5PEditorDrupalStorage::class,
       $this->container->get('aculta_lms_h5p.editor_storage'),
     );
     $editorStorage = $this->container->get('aculta_lms_h5p.editor_storage');
     self::assertSame(['en'], $editorStorage->getAvailableLanguages('H5P.Missing', 1, 0));
     $editorAjax = $this->container->get('aculta_lms_h5p.editor_ajax');
-    self::assertInstanceOf(\Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorDrupalAjax::class, $editorAjax);
+    self::assertInstanceOf(aculta_H5PEditorDrupalAjax::class, $editorAjax);
     self::assertSame([], $editorAjax->getTranslations(['H5P.Missing 1.0'], 'pt-br'));
     $editorUtilities = $this->container->get('aculta_lms_h5p.editor_utilities');
-    self::assertInstanceOf(\Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorUtilities::class, $editorUtilities);
+    self::assertInstanceOf(aculta_H5PEditorUtilities::class, $editorUtilities);
     self::assertSame(
-      ['name' => 'H5P.Missing', 'machineName' => 'H5P.Missing', 'majorVersion' => '1', 'minorVersion' => '0', 'libraryId' => FALSE],
+      [
+        'name' => 'H5P.Missing',
+        'machineName' => 'H5P.Missing',
+        'majorVersion' => '1',
+        'minorVersion' => '0',
+        'libraryId' => FALSE,
+      ],
       $editorUtilities->getLibraryProperty('H5P.Missing 1.0'),
     );
-    self::assertTrue(class_exists(\Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorUtilities::class));
-    $settings = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\aculta_H5PContentUpgradeForm::class);
-    $settings = unserialize(serialize($settings));
-    $missing = $settings->buildForm([], new \Drupal\Core\Form\FormState(), 999);
+    self::assertTrue(class_exists(aculta_H5PEditorUtilities::class));
+    $settings = $this->container->get('class_resolver')->getInstanceFromDefinition(aculta_H5PContentUpgradeForm::class);
+    // Trusted round trip: Form API restores the injected dependencies.
+    $settings = unserialize(serialize($settings), ['allowed_classes' => [aculta_H5PContentUpgradeForm::class]]);
+    $missing = $settings->buildForm([], new FormState(), 999);
     self::assertSame('Biblioteca não encontrada.', (string) $missing['#markup']);
   }
 
-  /** Verifies package uploads follow the configured private storage location. */
+  /**
+   * Verifies package uploads follow the configured private storage location. */
   public function testLibraryUploadFormUsesConfiguredPrivateDirectory(): void {
-    $form = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\aculta_H5PLibraryUploadForm::class);
-    $built = $form->buildForm([], new \Drupal\Core\Form\FormState());
+    $form = $this->container->get('class_resolver')->getInstanceFromDefinition(aculta_H5PLibraryUploadForm::class);
+    $built = $form->buildForm([], new FormState());
     self::assertSame('private://h5p-kernel-test/packages', $built['package']['#upload_location']);
     self::assertSame(['extensions' => 'h5p'], $built['package']['#upload_validators']['FileExtension']);
   }
 
-  /** Ensures upload form dependencies are restored across Form API rebuilds. */
+  /**
+   * Ensures upload form dependencies are restored across Form API rebuilds. */
   public function testLibraryUploadFormDependenciesSurviveSerialization(): void {
-    $form = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\aculta_H5PLibraryUploadForm::class);
-    $form = unserialize(serialize($form));
+    $form = $this->container->get('class_resolver')->getInstanceFromDefinition(aculta_H5PLibraryUploadForm::class);
+    // Only this locally serialized form class may be restored.
+    $form = unserialize(serialize($form), ['allowed_classes' => [aculta_H5PLibraryUploadForm::class]]);
 
-    $file = \Drupal\file\Entity\File::create([
+    $file = File::create([
       'uri' => 'private://h5p-kernel-test/packages/smoke.h5p',
       'filename' => 'smoke.h5p',
       'status' => 0,
     ]);
     $file->save();
-    $form_state = new \Drupal\Core\Form\FormState();
+    $form_state = new FormState();
     $form_state->setValue('package', [$file->id()]);
-    $form = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\aculta_H5PLibraryUploadForm::class);
-    $form = unserialize(serialize($form));
+    $form = $this->container->get('class_resolver')->getInstanceFromDefinition(aculta_H5PLibraryUploadForm::class);
+    // Only this locally serialized form class may be restored.
+    $form = unserialize(serialize($form), ['allowed_classes' => [aculta_H5PLibraryUploadForm::class]]);
     $form_array = [];
     $form->validateForm($form_array, $form_state);
 
     self::assertSame([], $form_state->getErrors());
-    self::assertSame('private://h5p-kernel-test/packages', $form->buildForm([], new \Drupal\Core\Form\FormState())['package']['#upload_location']);
+    self::assertSame('private://h5p-kernel-test/packages', $form->buildForm([], new FormState())['package']['#upload_location']);
   }
 
-  /** Verifies H5P image references use aculta_image and clean up safely. */
+  /**
+   * Verifies H5P image references use aculta_image and clean up safely. */
   public function testManagedH5pImageLifecycleUsesAcultaImage(): void {
     $temporaryPath = tempnam(sys_get_temp_dir(), 'h5p-image-');
     self::assertNotFalse($temporaryPath);
     file_put_contents($temporaryPath, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/lXcAAAAASUVORK5CYII=', TRUE));
     $upload = new UploadedFile($temporaryPath, 'activity.png', 'image/png', UPLOAD_ERR_OK, TRUE);
     $destination = 'private://h5p-kernel-test/content/42/images';
-    self::assertTrue($this->container->get('file_system')->prepareDirectory($destination, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY | \Drupal\Core\File\FileSystemInterface::MODIFY_PERMISSIONS));
+    self::assertTrue($this->container->get('file_system')->prepareDirectory($destination, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS));
 
     try {
       $result = $this->container->get('aculta_image.upload_ingester')->upload(
@@ -284,38 +320,43 @@ final class aculta_H5PLibraryPackageInstallerTest extends KernelTestBase {
     }
   }
 
-  /** Verifies the H5P settings form builds its option fieldset and labels. */
-  public function testH5PSettingsFormBuildsTranslatedOptions(): void {
-    $form = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\aculta_H5PAdminSettingsForm::class);
-    $form = unserialize(serialize($form));
-    $built = $form->buildForm([], new \Drupal\Core\Form\FormState());
+  /**
+   * Verifies the H5P settings form builds its option fieldset and labels. */
+  public function testSettingsFormBuildsTranslatedOptions(): void {
+    $form = $this->container->get('class_resolver')->getInstanceFromDefinition(aculta_H5PAdminSettingsForm::class);
+    // Only this locally serialized form class may be restored.
+    $form = unserialize(serialize($form), ['allowed_classes' => [aculta_H5PAdminSettingsForm::class]]);
+    $built = $form->buildForm([], new FormState());
     self::assertSame('fieldset', $built['h5p_display_options']['#type']);
     self::assertSame('Opções de exibição', (string) $built['h5p_display_options']['#title']);
     self::assertSame('Diretório privado dos arquivos H5P', (string) $built['h5p_default_path']['#title']);
   }
 
-  /** Verifies failed progress requests cannot be cached by browser or proxy. */
+  /**
+   * Verifies failed progress requests cannot be cached by browser or proxy. */
   public function testProgressResponsesArePrivateAndNotCacheable(): void {
-    $controller = \Drupal\aculta_lms_h5p\Controller\aculta_H5PAJAX::create($this->container);
-    $finished = $controller->setFinished(1, \Symfony\Component\HttpFoundation\Request::create('/', 'POST'));
+    $controller = aculta_H5PAJAX::create($this->container);
+    $finished = $controller->setFinished(1, Request::create('/', 'POST'));
     self::assertSame(403, $finished->getStatusCode());
     self::assertStringContainsString('private', $finished->headers->get('Cache-Control'));
     self::assertStringContainsString('no-store', $finished->headers->get('Cache-Control'));
     self::assertSame('nosniff', $finished->headers->get('X-Content-Type-Options'));
-    $state = $controller->contentUserData(1, 0, 'state', 0, \Symfony\Component\HttpFoundation\Request::create('/', 'GET'));
+    $state = $controller->contentUserData(1, 0, 'state', 0, Request::create('/', 'GET'));
     self::assertSame(403, $state->getStatusCode());
     self::assertStringContainsString('private', $state->headers->get('Cache-Control'));
     self::assertStringContainsString('no-store', $state->headers->get('Cache-Control'));
   }
 
-  /** Ensures the routed H5P controllers can be constructed with Drupal 11 DI. */
+  /**
+   * Ensures the routed H5P controllers can be constructed with Drupal 11 DI. */
   public function testDatabaseControllersUseContainerInjection(): void {
-    self::assertInstanceOf(\Drupal\aculta_lms_h5p\Controller\aculta_H5PContentUpgrade::class, \Drupal\aculta_lms_h5p\Controller\aculta_H5PContentUpgrade::create($this->container));
-    self::assertInstanceOf(\Drupal\aculta_lms_h5p\Controller\aculta_H5PLibraryAdmin::class, \Drupal\aculta_lms_h5p\Controller\aculta_H5PLibraryAdmin::create($this->container));
-    self::assertInstanceOf(\Drupal\aculta_lms_h5p\Controller\aculta_H5PEditorAjaxController::class, \Drupal\aculta_lms_h5p\Controller\aculta_H5PEditorAjaxController::create($this->container));
+    self::assertInstanceOf(aculta_H5PContentUpgrade::class, aculta_H5PContentUpgrade::create($this->container));
+    self::assertInstanceOf(aculta_H5PLibraryAdmin::class, aculta_H5PLibraryAdmin::create($this->container));
+    self::assertInstanceOf(aculta_H5PEditorAjaxController::class, aculta_H5PEditorAjaxController::create($this->container));
   }
 
-  /** Creates a temporary ZIP package with the requested entries. */
+  /**
+   * Creates a temporary ZIP package with the requested entries. */
   private function createPackage(array $entries): string {
     $path = $this->siteDirectory . '/library-' . bin2hex(random_bytes(6)) . '.h5p';
     $zip = new \ZipArchive();

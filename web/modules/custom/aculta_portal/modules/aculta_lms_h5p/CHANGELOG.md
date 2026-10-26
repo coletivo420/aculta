@@ -1,3 +1,12 @@
+## Revisão PHPCS M-0 (2026-10-26)
+
+- Testes Kernel renomeados conforme convenção Drupal; quatro round-trips locais
+  de Form API limitam `unserialize()` à classe concreta do formulário, mantendo
+  a restauração dos serviços testada sem aceitar classes arbitrárias.
+- Kernel completo: 15 testes / 388 assertions PASS; Unit: 24 / 73 PASS.
+- PHPCS nos dois testes: zero erros e zero avisos. Nenhuma API H5P de produto
+  ou classe persistida foi renomeada; nenhuma alteração Runtime.
+
 ## 0.4.0-dev.149 — fixtures Kernel isolam dependências LMS alheias ao cenário — 2026-10-26
 
 - Os Kernel de descoberta de hooks e instalação de pacote não habilitam mais `aculta_lms`, cujos serviços dependem de `aculta_portal.checkout_settings`; os cenários testam apenas descoberta/storage H5P. A integração Course Access permanece separada e valida Group, membership, revogação e serialização.
