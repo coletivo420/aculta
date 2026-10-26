@@ -34,12 +34,7 @@ final class ComponentFallbackHooks {
 
     $build = [
       '#type' => 'container',
-      '#attributes' => [
-        'class' => [
-          'aculta-component-fallback',
-          'aculta-component-fallback--' . str_replace('_', '-', $name),
-        ],
-      ],
+      '#attributes' => [],
     ];
 
     switch ($name) {
@@ -85,7 +80,6 @@ final class ComponentFallbackHooks {
         break;
 
       case 'context-tabs':
-        $build['#attributes']['class'][] = 'aculta-context-tabs';
         if (!empty($props['label'])) {
           $build['#attributes']['aria-label'] = $props['label'];
         }
@@ -95,7 +89,6 @@ final class ComponentFallbackHooks {
         break;
 
       case 'content-grid':
-        $build['#attributes']['class'][] = 'aculta-content-grid';
         if (!empty($slots['items'])) {
           $build['items'] = $slots['items'];
         }

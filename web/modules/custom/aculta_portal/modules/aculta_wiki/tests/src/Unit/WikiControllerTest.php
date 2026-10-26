@@ -23,8 +23,6 @@ use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\Core\Theme\ActiveTheme;
-use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -113,7 +111,7 @@ final class WikiControllerTest extends UnitTestCase {
   /**
    * Builds the controller with a stub translator and the given Domain.
    */
-  private function controller(?DomainInterface $domain, ?EntityStorageInterface $nodeStorage = NULL, ?EntityAccessControlHandlerInterface $nodeAccess = NULL, ?AccountInterface $account = NULL, ?Connection $database = NULL, ?WikiSearchFormBuilderInterface $searchForm = NULL, ?ThemeManagerInterface $themeManager = NULL): WikiController {
+  private function controller(?DomainInterface $domain, ?EntityStorageInterface $nodeStorage = NULL, ?EntityAccessControlHandlerInterface $nodeAccess = NULL, ?AccountInterface $account = NULL, ?Connection $database = NULL, ?WikiSearchFormBuilderInterface $searchForm = NULL): WikiController {
     $translation = $this->createMock(TranslationInterface::class);
     $translation->method('translateString')
       ->willReturnCallback(static fn ($markup) => $markup->getUntranslatedString());
@@ -134,7 +132,6 @@ final class WikiControllerTest extends UnitTestCase {
       $this->createMock(DateFormatterInterface::class),
       $account ?? $this->createMock(AccountInterface::class),
       $renderer,
-      $themeManager,
       $searchForm,
     );
 
@@ -200,21 +197,13 @@ final class WikiControllerTest extends UnitTestCase {
   }
 
   /**
-   * The controller h1 is only rendered on the ACULTA420 home.
+   * The route title block owns the heading, so the controller does not add a second one.
    */
-  public function testHomeOwnsHeadingOnlyForAculta420(): void {
+  public function testHomeDoesNotDuplicateRouteHeading(): void {
     $nodeAccess = $this->createMock(EntityAccessControlHandlerInterface::class);
     $nodeAccess->method('createAccess')->willReturn(AccessResult::allowed());
 
     $build = $this->controller(NULL, NULL, $nodeAccess)->home();
-    $this->assertArrayHasKey('title', $build['intro']);
-
-    $activeTheme = $this->createMock(ActiveTheme::class);
-    $activeTheme->method('getName')->willReturn('olivero');
-    $themeManager = $this->createMock(ThemeManagerInterface::class);
-    $themeManager->method('getActiveTheme')->willReturn($activeTheme);
-
-    $build = $this->controller(NULL, NULL, $nodeAccess, themeManager: $themeManager)->home();
     $this->assertArrayNotHasKey('title', $build['intro']);
   }
 

@@ -311,6 +311,7 @@ final class ThemeHooks implements TrustedCallbackInterface {
       'aculta_studio.we_sativa_start',
     ], TRUE);
     $variables['institutional_home'] = $this->pathMatcher->isFrontPage();
+    $variables['aculta_show_page_title_on_front'] = $this->routeMatch->getRouteObject()?->getOption('_aculta_show_page_title_on_front') === TRUE;
     $brandMedia = $variables['domain_presentation']['regions']['brand_media'] ?? NULL;
     $variables['aculta_domain_brand_media'] = is_array($brandMedia) ? $this->brandMediaRender($brandMedia) : [];
     // The text fallback is only built when there is no brand media; otherwise the

@@ -56,6 +56,10 @@ manter o design em um só lugar.
 - **Fluxos com outro tema:** Olivero como tema padrão no servidor de testes. Ver `docs/portal/TESTES-NAVEGADOR.md`, seção L.
 - **Navegador com captura de tela:** não executado nesta rodada (sem ferramenta de navegador disponível no ambiente).
 
+## Título de página em uma home de propósito
+
+Quando uma rota é a página inicial de um Domain e o tema normalmente omite o bloco de título nessa posição, o módulo pode declarar a opção neutra `_aculta_show_page_title_on_front: true`. O ACULTA420 lê essa opção genérica da rota e mostra o título Drupal. O módulo mantém o título semântico no contrato de rota e não consulta o nome do tema nem emite um segundo `h1`.
+
 ## Mecanismo (como o módulo entrega design sem classes)
 
 - O módulo marca o elemento com `data-portal-ui="token [token2]"`. O token é um nome semântico (ex.: `account-avatar`,

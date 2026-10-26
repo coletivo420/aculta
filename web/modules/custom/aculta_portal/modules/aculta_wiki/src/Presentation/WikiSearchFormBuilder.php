@@ -50,7 +50,6 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
         '#maxlength' => SearchPageController::MAX_CHARS,
         '#required' => TRUE,
         '#attributes' => [
-          'class' => ['aculta-search-preview-input'],
           'autocomplete' => 'off',
           'data-portal-ui' => 'search-preview-input',
           'data-preview-url' => Url::fromRoute('aculta_portal.wiki_search_preview')->toString(),

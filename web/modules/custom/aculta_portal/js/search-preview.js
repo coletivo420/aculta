@@ -28,7 +28,7 @@
 
   Drupal.behaviors.acultaSearchPreview = {
     attach(context) {
-      once('aculta-search-preview', 'input.aculta-search-preview-input', context).forEach((input) => {
+      once('aculta-search-preview', 'input[data-portal-ui~="search-preview-input"]', context).forEach((input) => {
         const form = input.form;
         const boxId = input.dataset.previewTarget || 'aculta-search-preview';
         const box = Array.from(form.querySelectorAll('[id]')).find((element) => element.id === boxId);
