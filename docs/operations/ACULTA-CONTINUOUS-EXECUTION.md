@@ -922,3 +922,9 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - **Regra mantida:** leitura de credenciais somente por PHP, com option-file de modo 600, sem impressão de valores. Nenhum comando de inspeção pode usar `grep` sobre arquivos de credenciais.
 - **Registro:** `docs/operations/RUNTIME-UPDATE-WINDOW.md` atualizado (item de incidente, pré-requisitos e retomada). O snapshot-ensaio (`docs/aculta-runtime-snapshot-ensaio`, `24d2e0a0e`) foi integrado como documentação, sem código e sem alteração de banco.
 - **Pendência:** o responsável provisiona o banco descartável (sem `aculta_simpletest`) antes de qualquer ensaio de restauração.
+
+## Decisão do responsável sobre o modo de `secrets/` (18:39) — 2026-10-26
+
+- Decisão explícita: `credenciais_de_teste_mercadolivre`, `system` e `producao-ssh.env` permanecem em **670**. Não aplicar 640.
+- A regra de escrita em `secrets/` (somente como o dono, via `sudo -u aculta`) é procedimento dos agentes, não restrição de permissão.
+- Registrado também em `docs/operations/SECRETS.md`.
