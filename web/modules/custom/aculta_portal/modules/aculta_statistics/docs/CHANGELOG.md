@@ -16,14 +16,13 @@ DEFERRED (2 erros/0 assertions); sem Runtime write.
   `Drupal\Core\Logger\LoggerChannelInterface`, tipo exigido pelos clientes
   GA4/Search Console e devolvido por `logger.factory`. A auditoria de serviços
   confirmou classe, aridade e tipos dos demais serviços.
-- PHPCS Drupal/DrupalPractice: 0 erros e 614 avisos de comprimento de linha
+- PHPCS Drupal/DrupalPractice: 0 erros e 190 avisos de comprimento de linha (PHPCS retorna exit 1 por warnings)
   (sobretudo em documentação). Foram corrigidos 79 erros de estilo em `src`,
   `tests`, `install` e neste changelog; nenhuma mudança de comportamento.
 - Unit: 108 testes / 438 assertions PASS em worktree isolado, PHP 8.4.27.
-  PHP lint: 95/95 arquivos. Kernel e Functional não foram reexecutados nesta
-  rodada.
-- Nenhuma operação no Runtime, nenhum push. O estado do Runtime não foi
-  verificado nesta auditoria.
+  PHP lint: 95/95 arquivos. Kernel `StatisticsDashboardKernelTest` foi tentado e falhou antes das assertions (7 erros/0 assertions) por Core duplicado entre worktree e checkout compartilhado; Functional segue DEFERRED.
+- Nenhuma gravação foi feita no Runtime nesta auditoria. A verificação de
+  instalação ativa ficou fora do escopo desta rodada.
 
 ## 0.9.0-dev.9 — permissão de métricas públicas para editores
 
