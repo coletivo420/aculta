@@ -881,3 +881,15 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - **Janela de updates do Messenger no Runtime exige snapshot integral de `aculta_runtime` antes.** Os post-updates de preferências removem chaves legadas de `users_data` e criam `avisos_email_mode_*`. A reversão exige restaurar o snapshot integral, sem rollback parcial e sem reversão por SQL improvisada. Antes da janela: snapshot consistente, restauração provada em banco isolado e cron/workers parados. O ensaio local não substitui o snapshot.
 - **O ensaio fiel ao código antigo depende da fase B.** Enquanto a fase B não termina, o ensaio parcial não reproduz o estado de código anterior, por isso não serve de prova de rollback nem de janela.
 - Exclusão de `feat/aculta-messenger-update-ensaio`: pendente de confirmação com o Local 3, que não foi obtida nesta execução.
+
+## Provisão de `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` no servidor de testes — 2026-10-26
+
+- **Autorização:** responsável, mensagem de 18:23 (apenas a chave; `updatedb` proibido). Acesso de escrita concedido pela mensagem seguinte ("Conceder acesso de escrita rodando sudo"), com `sudo setfacl` sobre o arquivo.
+- **Estado de partida:** arquivo `secrets/aculta.secrets.env`, dono `aculta:aculta`, modo 640, ACL com leitura para `piradopirata` e `toca`. Variável ausente (contagem 0). Carregado por `web/sites/default/aculta.secrets.php`.
+- **Backup:** `/home/piradopirata/worktrees/backup-secrets-20261026-1830/aculta.secrets.env`, fora do Git e do docroot, modo 600. Dono `piradopirata`, porque não se preserva `aculta` sem ser root; conteúdo idêntico (cmp).
+- **Gravação:** uma linha acrescentada com `printf ... "$(openssl rand -hex 32)" >>`. O valor não foi exibido, não entrou em log e não ficou no histórico. Arquivo terminava em quebra de linha.
+- **Incidente e correção:** após a escrita, a máscara da ACL deixou o modo 660 e o loader recusou o arquivo ("permissões muito amplas"). Corrigido: ACL do meu usuário removida, máscara `r--`, e leitura `piradopirata:r--` restaurada. Estado final igual ao original: `aculta:aculta 640`, ACL `user:piradopirata:r--`, `user:toca:r--`, `mask::r--`.
+- **Verificação:** Drush, `SecretsManager::valueForKeyId('aculta_melhorenvio_token_encryption')`: comprimento 64, hexadecimal PASS. Web: aba Testes do painel de segredos mostra a linha como "preenchida", status OK (sem valor).
+- **Não feito:** `drush updatedb` (proibido), autorização OAuth e qualquer alteração em tokens de State. Credenciais sandbox do Melhor Envio seguem pendentes.
+- **Rollback:** restaurar o backup (exige escrita concedida ao dono) e `drush cr`.
+- **Efeito:** trocar a chave invalida os tokens cifrados; reautorização obrigatória. Registros legados só são cifrados quando o `update_8002` rodar.

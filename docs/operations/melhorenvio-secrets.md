@@ -53,6 +53,11 @@ de teste. `keys.production.*` recebe os de produção. Só os nomes ficam na con
 
 ## Estado
 
+- **Chave de cifragem provisionada no servidor de testes (2026-10-26).** `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` gravada em `secrets/aculta.secrets.env`, uma linha, gerada no próprio servidor. Autorizada pelo responsável (mensagem de 18:23: apenas a chave; `updatedb` segue proibido). Backup do arquivo original, fora do Git e do docroot, em `/home/piradopirata/worktrees/backup-secrets-20261026-1830/` (modo 600). Verificação: via Drush, comprimento 64 e formato hexadecimal PASS (valor não exibido). Via web: a linha aparece na aba Testes como "preenchida", status OK. Durante a gravação, o modo do arquivo ficou 660 por causa da máscara da ACL e o loader recusou o arquivo; restaurado para 640, com a ACL original.
+- **Rollback:** restaurar o backup (com acesso de escrita concedido ao dono) e rodar `drush cr`.
+- **Efeito:** trocar a chave invalida os tokens cifrados; o usuário precisa autorizar o Melhor Envio de novo. Enquanto `drush updatedb` não rodar, registros legados em texto puro não são lidos (falha fechada, reautorização).
+- Credenciais sandbox do Melhor Envio continuam pendentes.
+
 - Teste: credenciais reais de produção que tinham sido colocadas no servidor de teste foram removidas. `secrets/` não
   contém nenhuma credencial do Melhor Envio. Webhook responde 503 até a chave de sandbox ser provisionada.
 - Pendente, de quem cadastra: chave de sandbox (client_id e client_secret do aplicativo de teste).
