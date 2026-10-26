@@ -5,8 +5,10 @@
 ### Alterado
 
 - Provider de frete integrado ao plugin manager, à remessa e às tarifas do motor proprietário `aculta_commerce`; removida a dependência funcional de `commerce_shipping` no manifesto.
-- Teste de wiring atualizado para verificar o plugin ACULTA. A suíte Unit completa passou: 74 testes / 181 assertions; PHPCS Drupal/DrupalPractice dos arquivos alterados passou.
-- O teste Kernel integrado ainda precisa ser executado em docroot de teste que carregue os fontes desta branch. O módulo permanece fora do Config Sync conforme decisão operacional; nenhum Runtime foi alterado.
+- O teste Kernel de wiring carrega a cadeia real de módulos incluindo Studio e Messenger, sem `commerce_shipping`, e passou nesta branch: 9 testes / 45 assertions, sem rede externa.
+- A página de status usa o contrato neutro `PortalLinkElement` e o token `data-portal-ui="button-primary"`, sem classes visuais do tema dentro do módulo.
+- A suíte Unit completa passou: 74 testes / 181 assertions. PHPCS Drupal/DrupalPractice não encontrou erros nos arquivos verificados; permanecem avisos de linhas acima de 80 colunas, incluindo comentários preexistentes.
+- O teste Kernel foi executado em banco isolado. O módulo permanece fora do Config Sync conforme decisão operacional; nenhum Runtime compartilhado foi alterado. Homologação visual e integração real no sandbox continuam pendentes.
 
 ## 0.1.0-dev.1 (em andamento)
 

@@ -1,17 +1,15 @@
 # ACULTA Commerce Melhor Envio
 
-Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão `0.1.0-dev.1`.
+Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão declarada no manifesto (`0.1.0-dev.3`). O motor de frete e o armazenamento de métodos, tarifas e remessas pertencem ao `aculta_commerce`; este módulo fornece o adaptador Melhor Envio.
 
-Status: **fundação**, **endereço único** (ME-ADDRESS 0.1), **consulta de CEP compartilhada** (ME-CEP 0.1) e **cliente
-HTTP OAuth2** (ME-0.1-C, somente código e Unit). Ainda não há cotação de frete, contratação, etiqueta, rastreamento. Os
-caminhos de API de autorização, token e cotação **não estão confirmados** (ME-PEND-01) e não foram usados em rede. Ver
+Status: OAuth2, configuração por ambiente/Drupal Key, cliente HTTP, cotação simulada e integração com o plugin manager do motor ACULTA estão cobertos por testes Unit e Kernel sem rede externa. Contratação de etiquetas e rastreamento não foram homologados; caminhos e respostas reais da API ainda exigem validação autorizada no sandbox. Ver
 [ROADMAP](docs/ROADMAP.md) e [CHANGELOG](CHANGELOG.md).
 
 ## Responsabilidades
 
 - Transformar o endereço do ACULTA em dados logísticos para o Melhor Envio (cotação, contratação, etiqueta).
 - Usar a consulta de CEP do Portal (`aculta_portal_cep`). Não existe segundo sistema de consulta.
-- Futuro: método de envio do Drupal Commerce Shipping, cotação, contratação e etiquetas (fases ME-0.2 em diante).
+- Adaptar os serviços elegíveis do Melhor Envio ao motor de frete proprietário do `aculta_commerce`; contratação e etiquetas permanecem etapas futuras.
 
 Fora de escopo, por regra de arquitetura:
 
@@ -85,8 +83,8 @@ Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CO
 
 ## Testes
 
-- Unit: 48 testes em `tests/src/Unit/` (adaptador de CEP 7, mapper 17, binder 5, cliente OAuth2 19). Executados e aprovados.
-- Kernel e Functional: pendentes. Ver a matriz em `docs/ROADMAP.md` e as dívidas em `docs/operations/DEBT-REGISTER.md`.
+- Unit: 74 testes / 181 assertions em `tests/src/Unit/`, executados e aprovados.
+- Kernel de wiring: 9 testes / 45 assertions aprovados em banco isolado, sem rede. Unit: 74 testes / 181 assertions aprovados. Functional e homologação visual permanecem pendentes. Ver a matriz em `docs/ROADMAP.md` e as dívidas em `docs/operations/DEBT-REGISTER.md`.
 
 ## Segurança e LGPD
 

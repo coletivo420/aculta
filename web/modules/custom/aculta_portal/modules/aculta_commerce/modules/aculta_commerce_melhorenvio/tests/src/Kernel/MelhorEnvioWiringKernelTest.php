@@ -37,59 +37,87 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system',
-    'aculta_commerce_melhorenvio',
     'aculta_commerce',
+    'aculta_commerce_melhorenvio',
+    'aculta_document_viewer',
+    'aculta_forum',
+    'aculta_gallery',
     'aculta_image',
     'aculta_mail_confirmer',
     'aculta_mail_confirmer_user',
     'aculta_mailer',
+    'aculta_messenger',
     'aculta_pagamentos_mercadopago',
+    'aculta_pdf_viewer',
     'aculta_portal',
-    'aculta_user',
-    'config',
     'aculta_portal_cep',
-    'aculta_portal_sitemap',
+    'aculta_studio',
+    'aculta_user',
     'address',
     'block',
+    'ckeditor5',
+    'comment',
     'commerce',
     'commerce_cart',
+    'commerce_checkout',
     'commerce_number_pattern',
     'commerce_order',
     'commerce_payment',
     'commerce_price',
-    'commerce_shipping',
+    'commerce_product',
     'commerce_store',
+    'content_moderation',
+    'csp',
     'ctools',
     'ctools_views',
     'datetime',
+    'datetime_range',
+    'diff',
     'domain',
     'domain_alias',
     'domain_config',
     'domain_source',
+    'editor',
+    'embed',
     'entity',
+    'entity_embed',
     'entity_reference_revisions',
     'entity_usage',
     'field',
     'file',
     'filter',
+    'flag',
     'flexible_permissions',
     'group',
+    'history',
     'image',
     'inline_entity_form',
     'key',
     'language',
+    'link',
     'lms',
     'login_emailusername',
     'media',
     'media_duplicates',
+    'media_gallery',
+    'media_library',
+    'menu_link_content',
+    'menu_ui',
+    'message',
+    'message_notify',
+    'message_subscribe',
     'metatag',
+    'migrate',
     'node',
     'options',
     'path',
     'path_alias',
+    'pathauto',
+    'photoswipe',
     'physical',
+    'private_message',
     'profile',
+    'reporting',
     'schema_article',
     'schema_event',
     'schema_image_object',
@@ -98,17 +126,22 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     'schema_product',
     'schema_web_page',
     'schema_web_site',
-    'simple_sitemap',
+    'search_api',
+    'search_api_db',
+    'site_alert',
     'social_api',
     'social_auth',
     'state_machine',
+    'system',
     'taxonomy',
     'text',
     'token',
     'user',
     'views',
+    'views_bulk_operations',
     'vvj_core',
     'vvjs',
+    'workflows',
   ];
 
   /**
@@ -166,7 +199,12 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
   public function testOauthRoutesAreNeverCached(): void {
     $path = $this->container->get('extension.list.module')->getPath('aculta_commerce_melhorenvio');
     $routes = Yaml::parseFile(DRUPAL_ROOT . '/' . $path . '/aculta_commerce_melhorenvio.routing.yml');
-    foreach (['aculta_commerce_melhorenvio.status', 'aculta_commerce_melhorenvio.oauth_authorize', 'aculta_commerce_melhorenvio.oauth_callback'] as $name) {
+    $oauthRoutes = [
+      'aculta_commerce_melhorenvio.status',
+      'aculta_commerce_melhorenvio.oauth_authorize',
+      'aculta_commerce_melhorenvio.oauth_callback',
+    ];
+    foreach ($oauthRoutes as $name) {
       self::assertTrue((bool) ($routes[$name]['options']['no_cache'] ?? FALSE), $name);
     }
   }
@@ -199,7 +237,11 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
   public function testCallbackWithUnknownStateUsesPopupReturnAndMessage(): void {
     $this->installEntitySchema('path_alias');
     $this->container->get('router.builder')->rebuild();
-    $request = Request::create('https://aculta.example.test/integracoes/melhorenvio/retorno', 'GET', ['state' => 'antigo', 'code' => 'x']);
+    $request = Request::create(
+      'https://aculta.example.test/integracoes/melhorenvio/retorno',
+      'GET',
+      ['state' => 'antigo', 'code' => 'x'],
+    );
     $request->setSession(new Session(new MockArraySessionStorage()));
     $response = $this->container->get('aculta_commerce_melhorenvio.oauth_controller')->callback($request);
     self::assertSame(200, $response->getStatusCode());
@@ -223,6 +265,7 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     self::assertStringContainsString('Sandbox (testes)', $html);
     self::assertStringContainsString('Não conectada', $html);
     self::assertStringContainsString('data-aculta-popup="melhorenvio_autorizacao"', $html);
+    self::assertStringContainsString('data-portal-ui="button-primary"', $html);
     self::assertStringContainsString('/integracoes/melhorenvio/autorizar', $html);
     self::assertSame(0, $build['#cache']['max-age']);
   }
