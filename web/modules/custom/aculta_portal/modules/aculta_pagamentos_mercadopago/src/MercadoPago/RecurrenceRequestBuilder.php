@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\MercadoPago;
+namespace Drupal\aculta_pagamentos_mercadopago\MercadoPago;
 
 /**
  * Monta e valida os payloads de planos e assinaturas (preapproval) do Mercado Pago.
@@ -32,8 +32,10 @@ final class RecurrenceRequestBuilder {
    * Payload de criação de plano de assinatura.
    *
    * @param array{motivo: string, valor: string, moeda: string, frequencia: int, back_url: string} $dados
+   *   Dados do plano.
    *
    * @return array<string, mixed>
+   *   Payload validado para o SDK.
    */
   public function plano(array $dados): array {
     $this->motivo($dados['motivo'] ?? '');
@@ -51,8 +53,10 @@ final class RecurrenceRequestBuilder {
    * obrigatórios e a assinatura é independente.
    *
    * @param array{email: string, back_url: string, referencia: string, plano_id?: ?string, motivo?: string, valor?: string, moeda?: string, frequencia?: int} $dados
+   *   Dados da assinatura.
    *
    * @return array<string, mixed>
+   *   Payload validado para o SDK.
    */
   public function assinatura(array $dados): array {
     $email = (string) ($dados['email'] ?? '');
@@ -87,6 +91,7 @@ final class RecurrenceRequestBuilder {
    * Payload de alteração de status de uma assinatura existente.
    *
    * @return array{status: string}
+   *   Payload com o status solicitado.
    */
   public function statusAssinatura(string $status): array {
     if (!in_array($status, self::STATUS_ALTERAVEIS, TRUE)) {
@@ -98,7 +103,11 @@ final class RecurrenceRequestBuilder {
   /**
    * Bloco auto_recurring: frequência mensal, valor decimal e moeda.
    *
+   * @param array<string, mixed> $dados
+   *   Dados de recorrência.
+   *
    * @return array{frequency: int, frequency_type: string, transaction_amount: float, currency_id: string}
+   *   Bloco recorrente validado para o SDK.
    */
   private function recorrencia(array $dados): array {
     $frequencia = (int) ($dados['frequencia'] ?? 0);
@@ -121,6 +130,9 @@ final class RecurrenceRequestBuilder {
     ];
   }
 
+  /**
+   * Performs the motivo operation.
+   */
   private function motivo(string $motivo): void {
     if (trim($motivo) === '') {
       throw new \InvalidArgumentException('Motivo da assinatura é obrigatório.');

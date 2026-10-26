@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\MercadoPago;
 
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\RecurrenceRequestBuilder;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -30,9 +33,13 @@ class MercadoPagoRecurrenceService {
   /**
    * Cria um plano de assinatura. Retorna o id do plano e o link de inscrição (init_point).
    *
+   * @param \Drupal\commerce_payment\Entity\PaymentGatewayInterface $gateway
+   *   Gateway com credenciais do ambiente ativo.
    * @param array{motivo: string, valor: string, moeda: string, frequencia: int, back_url: string} $dados
+   *   Dados validados para o plano.
    *
    * @return array{id: string, init_point: ?string}
+   *   Identificador do plano e URL de autorização.
    */
   public function criarPlano(PaymentGatewayInterface $gateway, array $dados): array {
     $payload = $this->montagem->plano($dados);
@@ -53,9 +60,13 @@ class MercadoPagoRecurrenceService {
    *
    * O e-mail do pagador vai no payload e não é registrado em log.
    *
+   * @param \Drupal\commerce_payment\Entity\PaymentGatewayInterface $gateway
+   *   Gateway com credenciais do ambiente ativo.
    * @param array{email: string, back_url: string, referencia: string, plano_id?: ?string, motivo?: string, valor?: string, moeda?: string, frequencia?: int} $dados
+   *   Dados validados para a assinatura.
    *
    * @return array{id: string, init_point: ?string, status: ?string}
+   *   Identificador, URL de autorização e status remoto.
    */
   public function criarAssinatura(PaymentGatewayInterface $gateway, array $dados): array {
     $payload = $this->montagem->assinatura($dados);
@@ -87,16 +98,23 @@ class MercadoPagoRecurrenceService {
   /**
    * Executa a chamada ao SDK e traduz falhas em exceção segura.
    *
-   * @template T
-   * @param callable(): T $chamada
-   * @return T
+   * @param string $operacao
+   *   Nome da operação para o registro de erro.
+   * @param callable(): mixed $chamada
+   *   Chamada ao SDK.
+   *
+   * @return mixed
+   *   Resultado da chamada ao SDK.
    */
   private function executar(string $operacao, callable $chamada): mixed {
     try {
       return $chamada();
     }
     catch (MPApiException $e) {
-      $this->logger->error('Falha ao @operacao no Mercado Pago (HTTP @codigo).', ['@operacao' => $operacao, '@codigo' => $e->getStatusCode()]);
+      $this->logger->error('Falha ao @operacao no Mercado Pago (HTTP @codigo).', [
+        '@operacao' => $operacao,
+        '@codigo' => $e->getStatusCode(),
+      ]);
       throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago não respondeu como esperado. Tente de novo em instantes.'), $e->getStatusCode(), $e);
     }
   }

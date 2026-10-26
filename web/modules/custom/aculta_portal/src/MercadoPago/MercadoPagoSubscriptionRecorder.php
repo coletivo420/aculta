@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\MercadoPago;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\commerce_price\Price;
@@ -33,23 +34,33 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  */
 final class MercadoPagoSubscriptionRecorder {
 
-  /** Chave em `data` do pedido com o id da assinatura no Mercado Pago. */
+  /**
+   * Chave em `data` do pedido com o id da assinatura no Mercado Pago. */
   public const CHAVE_ASSINATURA = 'mp_preapproval_id';
 
-  /** Chave em `data` do pedido com o último status da assinatura informado pelo Mercado Pago. */
+  /**
+   * Chave em `data` do pedido com o último status da assinatura informado pelo Mercado Pago. */
   public const CHAVE_STATUS = 'mp_status';
 
-  /** Tipo de pedido de assinatura de doação. */
+  /**
+   * Tipo de pedido de assinatura de doação. */
   public const TIPO_PEDIDO = 'assinatura';
 
-  /** Status de assinatura (preapproval) conhecidos. */
+  /**
+   * Status de assinatura (preapproval) conhecidos. */
   public const STATUS_PENDENTE = 'pending';
   public const STATUS_ATIVA = 'authorized';
   public const STATUS_PAUSADA = 'paused';
   public const STATUS_CANCELADA = 'cancelled';
 
-  /** Ordem de exibição dos status no painel. */
-  public const STATUS_ORDEM = [self::STATUS_PENDENTE, self::STATUS_ATIVA, self::STATUS_PAUSADA, self::STATUS_CANCELADA];
+  /**
+   * Ordem de exibição dos status no painel. */
+  public const STATUS_ORDEM = [
+    self::STATUS_PENDENTE,
+    self::STATUS_ATIVA,
+    self::STATUS_PAUSADA,
+    self::STATUS_CANCELADA,
+  ];
 
   /**
    * Ações do doador: status de origem permitidos e status de destino no Mercado Pago.
@@ -57,13 +68,18 @@ final class MercadoPagoSubscriptionRecorder {
   public const ACOES = [
     'pausar' => ['de' => [self::STATUS_ATIVA], 'para' => self::STATUS_PAUSADA],
     'reativar' => ['de' => [self::STATUS_PAUSADA], 'para' => self::STATUS_ATIVA],
-    'cancelar' => ['de' => [self::STATUS_PENDENTE, self::STATUS_ATIVA, self::STATUS_PAUSADA], 'para' => self::STATUS_CANCELADA],
+    'cancelar' => [
+      'de' => [self::STATUS_PENDENTE, self::STATUS_ATIVA, self::STATUS_PAUSADA],
+      'para' => self::STATUS_CANCELADA,
+    ],
   ];
 
-  /** Status de cobrança (authorized_payments) conhecidos; os demais são registrados como desconhecidos. */
+  /**
+   * Status de cobrança (authorized_payments) conhecidos; os demais são registrados como desconhecidos. */
   public const STATUS_COBRANCA = ['processed', 'recycling', 'waiting for gateway', 'scheduled'];
 
-  /** Chave em `data` do pedido com a situação da última cobrança (ver situacaoCobranca). */
+  /**
+   * Chave em `data` do pedido com a situação da última cobrança (ver situacaoCobranca). */
   public const CHAVE_COBRANCA = 'mp_cobranca_situacao';
 
   public const COBRANCA_PAGA = 'paga';
@@ -116,7 +132,7 @@ final class MercadoPagoSubscriptionRecorder {
    *
    * @throws \InvalidArgumentException
    *   Ação ou situação não permitida.
-   * @throws \Drupal\aculta_portal\MercadoPago\MercadoPagoApiException
+   * @throws \Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException
    *   Falha do Mercado Pago (nada é gravado no pedido).
    */
   public function alterar(PaymentGatewayInterface $gateway, OrderInterface $pedido, string $acao): void {
@@ -130,7 +146,10 @@ final class MercadoPagoSubscriptionRecorder {
       $this->transicionar($pedido, 'cancel');
     }
     $pedido->save();
-    $this->logger->notice('Assinatura de doação do pedido @pedido: ação @acao.', ['@pedido' => $pedido->id(), '@acao' => $acao]);
+    $this->logger->notice('Assinatura de doação do pedido @pedido: ação @acao.', [
+      '@pedido' => $pedido->id(),
+      '@acao' => $acao,
+    ]);
   }
 
   /**
@@ -146,8 +165,16 @@ final class MercadoPagoSubscriptionRecorder {
       return;
     }
     $status = (string) ($assinatura->status ?? '');
-    if (!in_array($status, [self::STATUS_PENDENTE, self::STATUS_ATIVA, self::STATUS_PAUSADA, self::STATUS_CANCELADA], TRUE)) {
-      $this->logger->warning('Assinatura @id com status desconhecido: @status.', ['@id' => (string) ($assinatura->id ?? ''), '@status' => $status]);
+    if (!in_array($status, [
+      self::STATUS_PENDENTE,
+      self::STATUS_ATIVA,
+      self::STATUS_PAUSADA,
+      self::STATUS_CANCELADA,
+    ], TRUE)) {
+      $this->logger->warning('Assinatura @id com status desconhecido: @status.', [
+        '@id' => (string) ($assinatura->id ?? ''),
+        '@status' => $status,
+      ]);
     }
     $pedido->setData(self::CHAVE_STATUS, $status);
     if ($status === self::STATUS_CANCELADA) {
@@ -196,9 +223,12 @@ final class MercadoPagoSubscriptionRecorder {
   }
 
   /**
-   * Grava a cobrança (tópico subscription_authorized_payment): a situação fica no pedido; só cobrança com pagamento
-   * aprovado vira pagamento, uma vez.
+   * Grava uma cobrança autorizada no pedido.
    *
+   * A situação da cobrança é persistida, mas somente pagamento aprovado vira pagamento do Commerce.
+   *
+   * @param \Drupal\commerce_payment\Entity\PaymentGatewayInterface $gateway
+   *   Gateway com credenciais do ambiente ativo.
    * @param array<string, mixed> $cobranca
    *   Resposta de GET /authorized_payments/{id}.
    */
@@ -208,12 +238,17 @@ final class MercadoPagoSubscriptionRecorder {
     $remoto = (string) ($pagamento['id'] ?? '');
     $aprovado = ($pagamento['status'] ?? '') === 'approved' && $remoto !== '';
     if (!$aprovado && !in_array($status, self::STATUS_COBRANCA, TRUE)) {
-      $this->logger->warning('Cobrança @id com status desconhecido: @status.', ['@id' => (string) ($cobranca['id'] ?? ''), '@status' => $status]);
+      $this->logger->warning('Cobrança @id com status desconhecido: @status.', [
+        '@id' => (string) ($cobranca['id'] ?? ''),
+        '@status' => $status,
+      ]);
     }
     $assinatura = $this->recorrencia->obterAssinatura($gateway, (string) ($cobranca['preapproval_id'] ?? ''));
     $pedido = $this->pedido((string) ($assinatura->external_reference ?? ''));
     if ($pedido === NULL) {
-      $this->logger->warning('Cobrança @id sem pedido de doação correspondente.', ['@id' => (string) ($cobranca['id'] ?? '')]);
+      $this->logger->warning('Cobrança @id sem pedido de doação correspondente.', [
+        '@id' => (string) ($cobranca['id'] ?? ''),
+      ]);
       return;
     }
     $pedido->setData(self::CHAVE_COBRANCA, self::situacaoCobranca($status, $aprovado));
@@ -265,6 +300,9 @@ final class MercadoPagoSubscriptionRecorder {
     }
   }
 
+  /**
+   * Performs the pagamento existe operation.
+   */
   private function pagamentoExiste(OrderInterface $pedido, string $remoto): bool {
     return $this->entidades('commerce_payment')->loadByProperties([
       'order_id' => $pedido->id(),
@@ -272,7 +310,10 @@ final class MercadoPagoSubscriptionRecorder {
     ]) !== [];
   }
 
-  private function entidades(string $tipo): \Drupal\Core\Entity\EntityStorageInterface {
+  /**
+   * Performs the entidades operation.
+   */
+  private function entidades(string $tipo): EntityStorageInterface {
     return $this->entityTypeManager->getStorage($tipo);
   }
 

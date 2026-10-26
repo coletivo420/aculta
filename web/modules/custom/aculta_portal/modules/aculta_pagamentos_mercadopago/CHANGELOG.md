@@ -1,3 +1,9 @@
+## 0.1.0-dev.10 — extração das regras puras e fábrica do SDK
+
+- Move `MercadoPagoApiException`, `RecurrenceRequestBuilder`, `MercadoPagoClientFactory` e `MercadoPagoPaymentPolicy` para o módulo Mercado Pago; seus três testes também passam a pertencer ao módulo.
+- Mantidos IDs de serviço atuais até o passo 2; comportamento e valores persistidos não mudam.
+- Verificações do checkpoint registradas após execução.
+
 # Changelog — aculta_pagamentos_mercadopago
 
 ## Regressão PR #298 — 2026-10-26

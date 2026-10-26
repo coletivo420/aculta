@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_donation\Plugin\Commerce\CheckoutPane;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoApiException;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce\Response\NeedsRedirectException;
@@ -39,7 +39,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 final class RecurringAuthorizationPane extends CheckoutPaneBase {
 
-  /** Gateway do Mercado Pago (o mesmo do pagamento avulso). */
+  /**
+   * Gateway do Mercado Pago (o mesmo do pagamento avulso). */
   private const GATEWAY = 'mercado_pago';
 
   public function __construct(

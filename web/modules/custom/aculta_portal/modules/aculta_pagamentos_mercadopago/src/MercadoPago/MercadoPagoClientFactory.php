@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\MercadoPago;
+namespace Drupal\aculta_pagamentos_mercadopago\MercadoPago;
 
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\aculta_pagamentos_mercadopago\Plugin\Commerce\PaymentGateway\CheckoutPro;
@@ -31,7 +31,7 @@ use MercadoPago\MercadoPagoConfig;
 /**
  * Entrega os clientes do SDK do Mercado Pago com as credenciais do gateway do ambiente.
  *
- * Todos os 20 clientes concretos do SDK 3.x (dx-php) estão mapeados em CLIENTES. O token vem do próprio
+ * @todo s os 20 clientes concretos do SDK 3.x (dx-php) estão mapeados em CLIENTES. O token vem do próprio
  * gateway (aculta_pagamentos_mercadopago), no modo ativo (test, stage ou prod), e nunca de constante no código.
  * O SDK guarda o token de forma estática; a fábrica o redefine a cada criação, então o cliente sempre usa
  * as credenciais do gateway recebido.
@@ -96,6 +96,7 @@ class MercadoPagoClientFactory {
    * Usado pelo relatório de status e pelo teste que confirma que o SDK instalado tem todos os clientes.
    *
    * @return array<string, bool>
+   *   Presença de cada classe do SDK instalada.
    */
   public function inventario(): array {
     return array_map(static fn (string $classe): bool => class_exists($classe), self::CLIENTES);

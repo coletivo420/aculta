@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_portal\Unit\MercadoPago;
 use Drupal\aculta_pagamentos_mercadopago\Event\RefundEligibilityEvent;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\MercadoPago\RefundEligibilitySubscriber;
-use Drupal\aculta_portal\Sales\MercadoPagoPaymentPolicy;
+use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
@@ -21,6 +21,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_portal')]
 final class RefundEligibilitySubscriberTest extends UnitTestCase {
 
+  /**
+   * Performs the allowed operation.
+   */
   private function allowed(string $orderType, array $itemTypes, array $checkout = [], bool $withSettings = TRUE, array $donation = []): bool {
     $items = array_map(function (string $type): OrderItemInterface {
       $item = $this->createMock(OrderItemInterface::class);
@@ -42,11 +45,17 @@ final class RefundEligibilitySubscriberTest extends UnitTestCase {
     return $event->isAllowed();
   }
 
+  /**
+   * Tests the nega curso e doacao como antes behavior.
+   */
   #[DataProvider('negados')]
-  public function testNegaCursoEDoacaoComoAntes(string $orderType, array $itemTypes): void {
+  public function testRejectsCourseAndDonationRefunds(string $orderType, array $itemTypes): void {
     $this->assertFalse($this->allowed($orderType, $itemTypes));
   }
 
+  /**
+   * Performs the negados operation.
+   */
   public static function negados(): array {
     return [
       'pedido curso' => ['curso', ['curso']],
@@ -56,26 +65,44 @@ final class RefundEligibilitySubscriberTest extends UnitTestCase {
     ];
   }
 
+  /**
+   * Tests the pedido da loja segue estornavel behavior.
+   */
   public function testPedidoDaLojaSegueEstornavel(): void {
     $this->assertTrue($this->allowed('default', ['default']));
   }
 
+  /**
+   * Tests the tipo de pedido de curso configurado tambem nao tem estorno behavior.
+   */
   public function testTipoDePedidoDeCursoConfiguradoTambemNaoTemEstorno(): void {
     // Itens que não são `curso` escapariam da lista de bloqueio fixa; o tipo configurado fecha essa brecha.
     $this->assertFalse($this->allowed('aula', ['default'], ['lms_order_type' => 'aula']));
   }
 
-  public function testSemConfigurarOMesmoTipoNaoEBloqueadoPorEngano(): void {
+  /**
+   * Tests the sem configurar o mesmo tipo nao e bloqueado por engano behavior.
+   */
+  public function testUnconfiguredMatchingTypeIsNotBlocked(): void {
     $this->assertTrue($this->allowed('aula', ['default'], []));
   }
 
+  /**
+   * Tests the doacao pelo carrinho nao tem estorno behavior.
+   */
   public function testDoacaoPeloCarrinhoNaoTemEstorno(): void {
     $this->assertFalse($this->allowed('doacao_carrinho', ['default'], [], TRUE, ['cart_order_type' => 'doacao_carrinho']));
     $this->assertFalse($this->allowed('default', ['item_doacao_carrinho'], [], TRUE, ['cart_item_type' => 'item_doacao_carrinho']));
   }
 
-  public function testCarrinhoDeDoacaoNaoConfiguradoNaoBloqueiaALoja(): void {
-    $this->assertTrue($this->allowed('default', ['default'], [], TRUE, ['cart_order_type' => NULL, 'cart_item_type' => NULL]));
+  /**
+   * Tests the carrinho de doacao nao configurado nao bloqueia a loja behavior.
+   */
+  public function testUnconfiguredDonationCartDoesNotBlockStore(): void {
+    $this->assertTrue($this->allowed('default', ['default'], [], TRUE, [
+      'cart_order_type' => NULL,
+      'cart_item_type' => NULL,
+    ]));
   }
 
 }

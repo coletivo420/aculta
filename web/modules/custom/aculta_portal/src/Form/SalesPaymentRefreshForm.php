@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Form;
 
-use Drupal\aculta_portal\MercadoPago\MercadoPagoApiException;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_portal\MercadoPago\MercadoPagoPaymentService;
 use Drupal\aculta_portal\Sales\SalesPaymentAccess;
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -27,6 +27,9 @@ final class SalesPaymentRefreshForm extends FormBase {
     private readonly EntityTypeManagerInterface $entidades,
   ) {}
 
+  /**
+   * Performs the create operation.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.mercado_pago.payment_service'),
@@ -35,10 +38,16 @@ final class SalesPaymentRefreshForm extends FormBase {
     );
   }
 
+  /**
+   * Performs the get form id operation.
+   */
   public function getFormId(): string {
     return 'aculta_portal_sales_payment_refresh';
   }
 
+  /**
+   * Performs the build form operation.
+   */
   public function buildForm(array $form, FormStateInterface $form_state, ?PaymentInterface $commerce_payment = NULL): array {
     $this->autorizar($commerce_payment);
     $form_state->set('pagamento_id', (int) $commerce_payment->id());
@@ -48,6 +57,9 @@ final class SalesPaymentRefreshForm extends FormBase {
     return $form;
   }
 
+  /**
+   * Performs the submit form operation.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $pagamento = $this->carregar((int) $form_state->get('pagamento_id'));
     try {
@@ -74,6 +86,9 @@ final class SalesPaymentRefreshForm extends FormBase {
     }
   }
 
+  /**
+   * Performs the carregar operation.
+   */
   private function carregar(int $id): PaymentInterface {
     $pagamento = $this->entidades->getStorage('commerce_payment')->load($id);
     if (!$pagamento instanceof PaymentInterface) {

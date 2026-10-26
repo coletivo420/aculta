@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit;
 
-use Drupal\aculta_portal\MercadoPago\MercadoPagoApiException;
-use Drupal\aculta_portal\MercadoPago\MercadoPagoClientFactory;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
 use Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionNotificationService;
 use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
@@ -29,6 +29,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 #[Group('aculta_portal')]
 final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase {
 
+  /**
+   * Sets up the test fixture.
+   */
   protected function setUp(): void {
     parent::setUp();
     // Mensagens traduzidas (TranslatableMarkup) precisam de um container com tradução.
@@ -38,8 +41,15 @@ final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase 
   }
 
   /**
+   * Cria o serviço com respostas HTTP controladas pelo teste.
+   *
    * @param array<int, \GuzzleHttp\Psr7\Response|\Throwable> $respostas
+   *   Respostas enfileiradas para o cliente HTTP simulado.
    * @param array<int, array{request: \Psr\Http\Message\RequestInterface}> $historico
+   *   Recebe as requisições feitas pelo serviço.
+   *
+   * @return \Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionNotificationService
+   *   Serviço configurado com o cliente HTTP simulado.
    */
   private function servico(array $respostas, array &$historico): MercadoPagoSubscriptionNotificationService {
     $pilha = HandlerStack::create(new MockHandler($respostas));
@@ -70,7 +80,10 @@ final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase 
     );
   }
 
-  public function testCobrancaConsultaOEndpointComOTokenDoGateway(): void {
+  /**
+   * Tests the cobranca consulta o endpoint com o token do gateway behavior.
+   */
+  public function testChargeQueriesEndpointWithGatewayToken(): void {
     $historico = [];
     $servico = $this->servico([new Response(200, [], json_encode(['status' => 'approved']))], $historico);
     $servico->processar('subscription_authorized_payment', 'cob-42');
@@ -82,6 +95,9 @@ final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase 
     $this->assertSame('Bearer token-de-teste-nao-real', $requisicao->getHeaderLine('Authorization'));
   }
 
+  /**
+   * Tests the resposta de erro vira excecao segura behavior.
+   */
   public function testRespostaDeErroViraExcecaoSegura(): void {
     $historico = [];
     $servico = $this->servico([new Response(404, [], '{"message":"not found"}')], $historico);
@@ -89,6 +105,9 @@ final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase 
     $servico->processar('subscription_authorized_payment', 'cob-x');
   }
 
+  /**
+   * Tests the topico desconhecido eh recusado behavior.
+   */
   public function testTopicoDesconhecidoEhRecusado(): void {
     $historico = [];
     $servico = $this->servico([], $historico);

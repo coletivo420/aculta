@@ -6,7 +6,7 @@ namespace Drupal\aculta_portal\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\Event\RefundEligibilityEvent;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
-use Drupal\aculta_portal\Sales\MercadoPagoPaymentPolicy;
+use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

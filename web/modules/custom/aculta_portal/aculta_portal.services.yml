@@ -374,11 +374,11 @@ services:
     factory: ['@logger.factory', 'get']
     arguments: ['aculta_portal']
   aculta_portal.mercado_pago.client_factory:
-    class: Drupal\aculta_portal\MercadoPago\MercadoPagoClientFactory
+    class: Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory
   aculta_portal.mercado_pago.recurrence_request_builder:
-    class: Drupal\aculta_portal\MercadoPago\RecurrenceRequestBuilder
+    class: Drupal\aculta_pagamentos_mercadopago\MercadoPago\RecurrenceRequestBuilder
   aculta_portal.mercado_pago.payment_policy:
-    class: Drupal\aculta_portal\Sales\MercadoPagoPaymentPolicy
+    class: Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy
   aculta_portal.mercado_pago.refund_eligibility_subscriber:
     class: Drupal\aculta_portal\MercadoPago\RefundEligibilitySubscriber
     arguments: ['@config.factory', '@aculta_portal.mercado_pago.payment_policy', '@aculta_portal.checkout_settings']

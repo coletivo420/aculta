@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\MercadoPago;
 
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -45,7 +47,7 @@ class MercadoPagoSubscriptionNotificationService {
   /**
    * Processa uma notificação de assinatura. Falhas são lançadas para o chamador responder com erro e o Mercado Pago reenviar.
    *
-   * @throws \Drupal\aculta_portal\MercadoPago\MercadoPagoApiException
+   * @throws \Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException
    */
   public function processar(string $tipo, string $id): void {
     if (!in_array($tipo, self::TIPOS, TRUE)) {
@@ -59,17 +61,32 @@ class MercadoPagoSubscriptionNotificationService {
     };
   }
 
+  /**
+   * Performs the assinatura operation.
+   */
   private function assinatura(PaymentGatewayInterface $gateway, string $id): void {
     $assinatura = $this->recorrencia->obterAssinatura($gateway, $id);
-    $this->logger->notice('Notificação de assinatura @id: status @status.', ['@id' => $id, '@status' => (string) ($assinatura->status ?? '')]);
+    $this->logger->notice('Notificação de assinatura @id: status @status.', [
+      '@id' => $id,
+      '@status' => (string) ($assinatura->status ?? ''),
+    ]);
     $this->gravador->assinatura($assinatura);
   }
 
+  /**
+   * Performs the plano operation.
+   */
   private function plano(PaymentGatewayInterface $gateway, string $id): void {
     $plano = $this->recorrencia->obterPlano($gateway, $id);
-    $this->logger->notice('Notificação de plano de assinatura @id: status @status.', ['@id' => $id, '@status' => (string) ($plano->status ?? '')]);
+    $this->logger->notice('Notificação de plano de assinatura @id: status @status.', [
+      '@id' => $id,
+      '@status' => (string) ($plano->status ?? ''),
+    ]);
   }
 
+  /**
+   * Performs the cobranca operation.
+   */
   private function cobranca(PaymentGatewayInterface $gateway, string $id): void {
     $token = $this->clientes->tokenAtivo($gateway);
     try {
@@ -84,14 +101,23 @@ class MercadoPagoSubscriptionNotificationService {
     }
     $codigo = $resposta->getStatusCode();
     if ($codigo !== 200) {
-      $this->logger->error('Consulta de cobrança recorrente @id falhou (HTTP @codigo).', ['@id' => $id, '@codigo' => $codigo]);
+      $this->logger->error('Consulta de cobrança recorrente @id falhou (HTTP @codigo).', [
+        '@id' => $id,
+        '@codigo' => $codigo,
+      ]);
       throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago não respondeu como esperado.'), $codigo);
     }
     $dados = json_decode((string) $resposta->getBody(), TRUE);
-    $this->logger->notice('Notificação de cobrança recorrente @id: status @status.', ['@id' => $id, '@status' => (string) ($dados['status'] ?? '')]);
+    $this->logger->notice('Notificação de cobrança recorrente @id: status @status.', [
+      '@id' => $id,
+      '@status' => (string) ($dados['status'] ?? ''),
+    ]);
     $this->gravador->cobranca($gateway, is_array($dados) ? $dados : []);
   }
 
+  /**
+   * Performs the gateway operation.
+   */
   private function gateway(): PaymentGatewayInterface {
     $gateway = $this->entityTypeManager->getStorage('commerce_payment_gateway')->load('mercado_pago');
     if (!$gateway instanceof PaymentGatewayInterface) {

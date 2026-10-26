@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Sales;
 
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
+use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -49,6 +50,7 @@ class SalesOrdersTableBuilder {
    * Tabela paginada de pedidos com itens do escopo informado.
    *
    * @return array<string, mixed>
+   *   Render array da tabela e da paginação.
    */
   public function construir(SalesReportFilters $filtros, string $escopo, int $pagina, string $rotaAtual, array $queryAtual): array {
     $pagina = max(0, $pagina);
@@ -100,6 +102,7 @@ class SalesOrdersTableBuilder {
    * Pagamentos do pedido, com estado, status remoto e ações permitidas.
    *
    * @return array<int, array<string, mixed>>
+   *   Render arrays dos pagamentos.
    */
   private function pagamentos(OrderInterface $pedido, bool $podeAgir): array {
     $saida = [];
@@ -135,6 +138,7 @@ class SalesOrdersTableBuilder {
    * Links de ação do pagamento. Cancelar só aparece para pagamento pendente em authorization.
    *
    * @return array<int, array<string, mixed>>
+   *   Render arrays dos pagamentos.
    */
   private function acoes(OrderInterface $pedido, PaymentInterface $pagamento): array {
     $links = [];
@@ -153,7 +157,14 @@ class SalesOrdersTableBuilder {
     return $links;
   }
 
-  /** Indica se o pedido tem item de doação (o Portal não depende do submódulo aculta_donation). */
+  /**
+   * Indica se o pedido tem item de doação.
+   *
+   * O Portal não depende do submódulo aculta_donation.
+   *
+   * @return bool
+   *   TRUE quando há item de doação.
+   */
   private function pedidoTemDoacao(OrderInterface $pedido): bool {
     foreach ($pedido->getItems() as $item) {
       if ($item->bundle() === SalesReportQuery::TIPO_DOACAO) {
@@ -167,6 +178,7 @@ class SalesOrdersTableBuilder {
    * Link com token de ação. Botão ou cor são decididos pelo tema.
    *
    * @return array<string, mixed>
+   *   Render array do link.
    */
   private function link(mixed $texto, Url $url, string $token): array {
     $link = Link::fromTextAndUrl($texto, $url)->toRenderable();
@@ -191,6 +203,7 @@ class SalesOrdersTableBuilder {
    * Tipos dos itens do pedido (para o escopo).
    *
    * @return string[]
+   *   Bundles dos itens do pedido.
    */
   private function tiposDosItens(OrderInterface $pedido): array {
     return array_map(static fn ($item): string => (string) $item->bundle(), $pedido->getItems());

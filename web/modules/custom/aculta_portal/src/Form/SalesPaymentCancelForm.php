@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Form;
 
-use Drupal\aculta_portal\MercadoPago\MercadoPagoApiException;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_portal\MercadoPago\MercadoPagoPaymentService;
 use Drupal\aculta_portal\Sales\SalesPaymentAccess;
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -28,6 +28,9 @@ final class SalesPaymentCancelForm extends ConfirmFormBase {
     private readonly EntityTypeManagerInterface $entidades,
   ) {}
 
+  /**
+   * Performs the create operation.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.mercado_pago.payment_service'),
@@ -36,28 +39,46 @@ final class SalesPaymentCancelForm extends ConfirmFormBase {
     );
   }
 
+  /**
+   * Performs the get form id operation.
+   */
   public function getFormId(): string {
     return 'aculta_portal_sales_payment_cancel';
   }
 
+  /**
+   * Performs the get question operation.
+   */
   public function getQuestion(): string {
     return (string) $this->t('Cancelar este pagamento pendente no Mercado Pago?');
   }
 
+  /**
+   * Performs the get description operation.
+   */
   public function getDescription(): string {
     return (string) $this->t('Só funciona enquanto o pagamento está pendente, em processo ou autorizado. Pagamento aprovado precisa de estorno.');
   }
 
+  /**
+   * Performs the get cancel url operation.
+   */
   public function getCancelUrl(): Url {
     return Url::fromRoute('aculta_portal.relatorio_vendas');
   }
 
+  /**
+   * Performs the build form operation.
+   */
   public function buildForm(array $form, FormStateInterface $form_state, ?PaymentInterface $commerce_payment = NULL): array {
     $this->autorizar($commerce_payment);
     $form_state->set('pagamento_id', (int) $commerce_payment->id());
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   * Performs the submit form operation.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $pagamento = $this->entidades->getStorage('commerce_payment')->load((int) $form_state->get('pagamento_id'));
     if (!$pagamento instanceof PaymentInterface) {

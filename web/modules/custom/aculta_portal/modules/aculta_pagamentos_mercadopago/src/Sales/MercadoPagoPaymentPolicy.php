@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Sales;
+namespace Drupal\aculta_pagamentos_mercadopago\Sales;
 
 /**
  * Regras de cancelamento e de sincronização de pagamentos do Mercado Pago.
@@ -61,12 +61,20 @@ final class MercadoPagoPaymentPolicy {
    * @param string[] $tiposItemExtras
    *   Outros tipos de item sem estorno: doação pelo carrinho (cart_item_type).
    *
-   * Local único da regra "doações, assinaturas e cursos não têm estorno". Assinatura e curso são fixos; o restante
-   * vem da configuração e só acrescenta bloqueio.
+   *   Local único da regra "doações, assinaturas e cursos não têm estorno". Assinatura e curso são fixos; o restante
+   *   vem da configuração e só acrescenta bloqueio.
    */
   public function bloqueiaEstorno(string $tipoPedido, array $tiposItens, string $tipoPedidoDoacao, string $tipoItemDoacao, array $tiposPedidoExtras = [], array $tiposItemExtras = []): bool {
-    $pedidosSemEstorno = array_filter([self::TIPO_CURSO, self::TIPO_ASSINATURA, $tipoPedidoDoacao, ...$tiposPedidoExtras], static fn(string $t): bool => $t !== '');
-    $itensSemEstorno = array_filter([self::TIPO_CURSO, $tipoItemDoacao, ...$tiposItemExtras], static fn(string $t): bool => $t !== '');
+    $pedidosSemEstorno = array_filter(
+      [
+        self::TIPO_CURSO,
+        self::TIPO_ASSINATURA,
+        $tipoPedidoDoacao,
+        ...$tiposPedidoExtras,
+      ],
+      static fn (string $t): bool => $t !== '',
+    );
+    $itensSemEstorno = array_filter([self::TIPO_CURSO, $tipoItemDoacao, ...$tiposItemExtras], static fn (string $t): bool => $t !== '');
     return in_array($tipoPedido, $pedidosSemEstorno, TRUE) || array_intersect($tiposItens, $itensSemEstorno) !== [];
   }
 

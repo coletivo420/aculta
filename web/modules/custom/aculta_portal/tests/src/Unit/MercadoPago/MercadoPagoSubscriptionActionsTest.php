@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit\MercadoPago;
 
-use Drupal\aculta_portal\MercadoPago\MercadoPagoApiException;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -26,8 +26,19 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
   /**
    * Pedido de assinatura com status e id da assinatura guardados em `data`.
    *
+   * @param string $tipo
+   *   Tipo de pedido.
+   * @param string $statusMp
+   *   Estado da assinatura no Mercado Pago.
+   * @param string $assinatura
+   *   Identificador da assinatura.
    * @param string[] $transicoes
    *   Transições permitidas pelo workflow a partir do estado atual.
+   * @param \PHPUnit\Framework\MockObject\MockObject|null $item
+   *   Recebe o mock do estado do pedido.
+   *
+   * @return \PHPUnit\Framework\MockObject\MockObject
+   *   Pedido simulado para o teste.
    */
   private function pedido(string $tipo, string $statusMp, string $assinatura, array $transicoes, ?MockObject &$item = NULL): MockObject {
     $item = $this->createMock(StateItemInterface::class);
@@ -45,6 +56,9 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     return $pedido;
   }
 
+  /**
+   * Performs the servico operation.
+   */
   private function servico(MockObject $recorrencia): MercadoPagoSubscriptionRecorder {
     return new MercadoPagoSubscriptionRecorder(
       $this->createMock(EntityTypeManagerInterface::class),
@@ -54,11 +68,17 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Performs the gateway operation.
+   */
   private function gateway(): PaymentGatewayInterface {
     return $this->createMock(PaymentGatewayInterface::class);
   }
 
-  public function testPausarUmaAssinaturaAtivaChamaOMercadoPagoEAtualizaOPedido(): void {
+  /**
+   * Tests the pausar uma assinatura ativa chama o mercado pago e atualiza o pedido behavior.
+   */
+  public function testPauseActiveSubscriptionCallsGatewayAndUpdatesOrder(): void {
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('alterarStatusAssinatura')
       ->with($this->anything(), 'pre-9', 'paused')
@@ -70,6 +90,9 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $this->servico($recorrencia)->alterar($this->gateway(), $pedido, 'pausar');
   }
 
+  /**
+   * Tests the reativar uma assinatura pausada volta para ativa behavior.
+   */
   public function testReativarUmaAssinaturaPausadaVoltaParaAtiva(): void {
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('alterarStatusAssinatura')->with($this->anything(), 'pre-9', 'authorized')
@@ -79,7 +102,10 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $this->servico($recorrencia)->alterar($this->gateway(), $pedido, 'reativar');
   }
 
-  public function testCancelarUmaAssinaturaAtivaCancelaOPedido(): void {
+  /**
+   * Tests the cancelar uma assinatura ativa cancela o pedido behavior.
+   */
+  public function testCancelActiveSubscriptionAndOrder(): void {
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('alterarStatusAssinatura')->with($this->anything(), 'pre-9', 'cancelled')
       ->willReturn((object) ['status' => 'cancelled']);
@@ -89,6 +115,9 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $this->servico($recorrencia)->alterar($this->gateway(), $pedido, 'cancelar');
   }
 
+  /**
+   * Tests the acao fora do status permitido nao chega ao mercado pago behavior.
+   */
   public function testAcaoForaDoStatusPermitidoNaoChegaAoMercadoPago(): void {
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->never())->method('alterarStatusAssinatura');
@@ -99,6 +128,9 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $this->servico($recorrencia)->alterar($this->gateway(), $pedido, 'pausar');
   }
 
+  /**
+   * Tests the pedido de doacao avulsa nao tem acoes de assinatura behavior.
+   */
   public function testPedidoDeDoacaoAvulsaNaoTemAcoesDeAssinatura(): void {
     $servico = $this->servico($this->createMock(MercadoPagoRecurrenceService::class));
     $pedido = $this->pedido('doacao', 'authorized', 'pre-9', []);
@@ -106,7 +138,10 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $this->assertFalse($servico->podeAlterar($pedido, 'pausar'));
   }
 
-  public function testFalhaDoMercadoPagoNaoAlteraOPedido(): void {
+  /**
+   * Tests the falha do mercado pago nao altera o pedido behavior.
+   */
+  public function testGatewayFailureDoesNotChangeOrder(): void {
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->method('alterarStatusAssinatura')->willThrowException(new MercadoPagoApiException('falha', 500));
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
