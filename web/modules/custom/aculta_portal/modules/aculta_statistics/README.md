@@ -53,4 +53,4 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
 
 - Unit: `tests/src/Unit/` (catálogo, retenção, gravador, janela e variação do GSC, controlador da Wiki, pedido pago). 108 testes / 438 assertions PASS em 2026-10-26.
 - Kernel: `tests/src/Kernel/` (storage, cron, formulário de retenção, banner, beacon da Wiki). 47 testes / 319 assertions PASS em 2026-10-26, executados contra `aculta_simpletest`.
-- `StatisticsDashboardFunctionalTest` foi invocado, mas os 2 testes foram pulados sem `SIMPLETEST_BASE_URL`; a experiência visual não foi validada.
+- `StatisticsDashboardFunctionalTest` foi invocado em server local com MariaDB dedicado; ambos falharam antes das assertions ao abrir `settings.php`, pois o Core symlinkado resolve `DRUPAL_ROOT` ao checkout compartilhado. Isso não valida nem reprova o dashboard. Revisão visual segue pendente.

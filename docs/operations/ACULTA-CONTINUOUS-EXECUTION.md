@@ -1,19 +1,19 @@
 # Execução contínua ACULTA — PR #298
 
 **Branch:** `chore/aculta-m0-integridade`  
-**HEAD retomado:** `d55c4301e7ffde6022fd6c7b3651df1de927e619`  
-**HEAD estável:** `72fff2a3f` (Config Sync dependency repair and audit notes are uncommitted)
-**Estado:** PARTIAL — H5P, Portal Unit/Kernel e auditorias focais CPF/User/CEP concluídos; auditoria M-0 e frentes M-1 a M-5 em andamento.
-**Runtime:** `toca`, Drupal 11.4.10, PHP 8.4.27, URI padrão `http://default`, banco `aculta_runtime`. Consultas somente leitura; nenhum write foi executado.
+**HEAD verificado:** `ab756a5a22682edfb6e40ce15fde5340277b7208` (remoto sincronizado, worktree limpo em 2026-10-26)
+**Estado:** PARTIAL — sete commits desde o HEAD `0d016520e`; M-4 pagamentos/H5P e M-5 Statistics avançaram. M-0 continua bloqueada por drift de Sync e RBAC Wiki; frentes M-1–M-5 não estão encerradas.
+**Runtime:** Drush read-only confirmou Drupal 11.4.10/PHP 8.4.27 no MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`. Nenhum write foi executado.
 
 ## Ponto de retomada
 
-1. Commits pendentes: corrigir o harness `AccountOtherDataStudioReturnTest`, documentar Portal Unit 350/878 e Kernel 53/831 e publicar o resultado.
-2. Prosseguir M-1 por Mailer, Confirmador e Messenger; auditar consentimento, identidade pública e integração de checkout em ambiente isolado.
-3. Executar os gates administrativos e de configuração com bootstrap e URIs explícitas contra o checkout candidato quando viável.
-4. Completar inventário Runtime read-only, Config Sync e auditoria individual dos demais componentes, preservando os oito módulos do agente 2.
+1. M-4: resolver a cadeia real de dependências nos Kernels LMS e Doações; consultar a resposta pendente sobre carregar as dependências reais completas ou manter fixtures com classes reais.
+2. Continuar auditoria por componente dos módulos centrais: Messenger, Portal, User/CPF/CEP, Commerce/LMS, Statistics e Index; não repetir as suítes já aprovadas sem mudança relevante.
+3. Para M-0: registrar evidência atual de Config Sync/Runtimes por purpose, tratar os 19 módulos ativos ausentes do Sync e preservar o bloqueio read-only dos grants Wiki até autorização.
+4. O agente 2 concluiu suas tarefas anteriores; verificar novos commits/worktrees antes de incorporar qualquer avanço e nunca modificar seus oito diretórios delegados sem coordenação.
+5. Manter a branch/PR #298 como único destino; sem merge, deploy, import ou escrita Runtime.
 
-## Evidência desta retomada
+## Evidência histórica preservada — revalidar antes de tomar decisão
 
 - `6daa7542f test(h5p): repair course access kernel contract`: formatter de acesso e test harness usam o plugin Group real. PHPCS Drupal/DrupalPractice, PHP lint e diff check passam nos dois arquivos H5P alterados.
 - Kernel isolado H5P: 3 testes/134 assertions PASS; 41 deprecações Core/contrib. Foram validados Group membership, educador, estudante, usuário sem vínculo, referência de recurso e revogação; nenhum serviço de produto fictício foi adicionado.
@@ -146,7 +146,7 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 
 ## M-5 — regressão Statistics — 2026-10-26
 
-- Statistics Unit: 108 testes / 438 assertions PASS. Kernel no MariaDB dedicado: 47/319 PASS. Functional `StatisticsDashboardFunctionalTest` invocado; 2 testes skipped porque `SIMPLETEST_BASE_URL` não está configurado. Browser visual segue pendente.
+- Statistics Unit: 108 testes / 438 assertions PASS. Kernel no MariaDB dedicado: 47/319 PASS. Functional `StatisticsDashboardFunctionalTest` executado contra server local e banco dedicado; 2 erros, 0 assertions porque BrowserTestBase tentou criar `sites/simpletest/<id>/settings.php` sob o checkout compartilhado, resolvido pelo Core symlinkado. Não houve acesso ao Runtime; o server foi encerrado e os paths temporários confirmados ausentes. Browser visual segue pendente.
 - Revalidado Runtime com `drush status` antes da consulta: Drupal 11.4.10, URI MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web`; `pm:list` confirmou `aculta_statistics` Enabled. Consultas somente leitura; nenhuma credencial externa foi usada.
 - README, changelog, status e matriz atualizados: removida afirmação obsoleta de que ativação no Runtime estava pendente. Consultas reais GA4/Search Console e homologação visual continuam pendentes.
 

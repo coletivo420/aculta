@@ -9,7 +9,7 @@
   Entity Access do conteúdo. Relatórios gerais, métricas internas/restritas não
   são liberados por essa concessão.
 - A alteração está apenas em Config Sync; não foi importada no Runtime.
-- Regressão executada em 2026-10-26: Unit 108/438 e Kernel 47/319 PASS. Drush read-only confirmou módulo Enabled no MAIN. Functional dashboard foi invocado, mas 2 casos foram pulados sem `SIMPLETEST_BASE_URL`; revisão visual e consultas com credenciais externas seguem pendentes.
+- Regressão executada em 2026-10-26: Unit 108/438 e Kernel 47/319 PASS. Drush read-only confirmou módulo Enabled no MAIN. Functional dashboard foi invocado com server local e banco dedicado, mas os 2 casos falharam antes de assertions ao abrir `settings.php`: o Core symlinkado resolve `DRUPAL_ROOT` ao checkout compartilhado. Revisão visual e consultas com credenciais externas seguem pendentes.
 
 ## 0.9.0-dev.8 — permissão granular para métricas públicas por conteúdo
 
