@@ -368,3 +368,10 @@ Nota de ambiente: o worktree precisa de `web/modules/contrib` com links para os 
 - Checkout servido em `698492870`, em modo destacado (estado original preservado no stash `agent2-preserve-before-branch-switch`).
 - `POST /integracoes/melhorenvio/webhook` sem assinatura: **503** "Webhook do Melhor Envio não configurado neste ambiente." O 503 vem antes da checagem de assinatura, porque o segredo do aplicativo ainda não está no Drupal Key.
 - Pendente: configurar o segredo do aplicativo sandbox (Drupal Key, `keys.sandbox.client_secret`) para testar 403 (assinatura inválida), 400 (corpo inválido) e 204 (evento aceito).
+
+## Segredo do aplicativo sandbox configurado
+
+- Segredo do aplicativo de teste guardado em `secrets/melhorenvio-sandbox.env` (fora do git, pela regra `/secrets/`, modo 640). Valor não registrado aqui.
+- Configurado no Drupal Key do servidor de teste como `me_sb_client_secret` (`keys.sandbox.client_secret`).
+- Webhook `POST /integracoes/melhorenvio/webhook`: sem assinatura → 403; assinatura válida do aplicativo → 204.
+- Pendente: o `client_id` do aplicativo sandbox. Sem ele, `authorize` não monta a URL de autorização (o fluxo OAuth fica bloqueado), e ME-PEND-01 continua aberto.
