@@ -52,8 +52,12 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
     $filters = $this->normalizeFilters($filters);
     // Include sort semantics in the cursor binding so cursors issued by older
     // versions cannot be resumed against the immutable-ID keyset.
+    // Bind the cursor to the provider inventory too: a provider version or
+    // bundle change alters which catalog rows are current, so a token issued
+    // under the previous contract must not continue the traversal.
     $queryHash = hash('sha256', json_encode([
       'filters' => $filters,
+      'provider_fingerprint' => $this->providers->fingerprint(),
       'sort' => 'entry_id_desc_v1',
     ], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
     $generationId = $this->generations->getActiveGeneration();

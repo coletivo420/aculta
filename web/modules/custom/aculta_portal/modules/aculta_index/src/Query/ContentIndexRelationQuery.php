@@ -97,8 +97,11 @@ final class ContentIndexRelationQuery {
       'relation_type' => $relationType,
       'target_langcode' => $this->languageManager->getDefaultLanguage()->getId(),
     ];
+    // A provider version or bundle change alters current relation targets, so
+    // a token issued under the previous inventory cannot continue this walk.
     $queryHash = hash('sha256', json_encode([
       'identity' => $queryIdentity,
+      'provider_fingerprint' => $this->providers->fingerprint(),
       'sort' => 'target_entry_id_desc_v1',
     ], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
     $uid = (int) $account->id();

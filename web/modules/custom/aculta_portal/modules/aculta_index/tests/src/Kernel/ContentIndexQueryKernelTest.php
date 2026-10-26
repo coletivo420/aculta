@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_index\Kernel;
 
+use Drupal\aculta_index_test\ContentIndex\SampleContentProvider;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -183,6 +184,39 @@ final class ContentIndexQueryKernelTest extends KernelTestBase {
 
     $freshPage = $query->query($filters, $reader, NULL, 2);
     self::assertCount(2, $freshPage->entities);
+  }
+
+  /**
+   * A cursor is bound to the provider inventory that produced its candidates.
+   */
+  public function testCursorIsRejectedWhenProviderInventoryChanges(): void {
+    User::create(['name' => 'content-index-inventory-root-fixture', 'status' => 1])->save();
+    $reader = User::create(['name' => 'content-index-inventory-reader', 'status' => 1]);
+    $reader->save();
+    for ($index = 1; $index <= 3; $index++) {
+      Node::create([
+        'type' => 'sample_content',
+        'title' => 'Inventory fixture ' . $index,
+        'status' => TRUE,
+      ])->save();
+    }
+    $this->buildAndActivateGeneration();
+
+    $query = $this->container->get('aculta_index.query');
+    $filters = ['entity_type' => 'node', 'bundle' => 'sample_content'];
+    $firstPage = $query->query($filters, $reader, NULL, 2);
+    self::assertNotNull($firstPage->nextCursor);
+
+    SampleContentProvider::$projectionVersion = 2;
+    try {
+      $query->query($filters, $reader, $firstPage->nextCursor, 2);
+      self::fail('A cursor bound to the previous provider inventory must not be resumed.');
+    }
+    catch (\InvalidArgumentException) {
+      // Expected: the catalog must be rebuilt for the new projection version.
+    }
+    $stalePage = $query->query($filters, $reader, NULL, 2);
+    self::assertSame([], $stalePage->entities, 'Rows from the previous projection version are not current candidates.');
   }
 
   /**
