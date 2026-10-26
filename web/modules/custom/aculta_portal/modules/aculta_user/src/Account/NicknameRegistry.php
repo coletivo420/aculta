@@ -193,15 +193,14 @@ final class NicknameRegistry {
   /**
    * Rebuilds the derived index after validating existing Profiles.
    *
-   * @return array{uids: int, profiles: int}
+   * @return array{uids: int, profiles: int, same_uid_conflicts: int, reconciled_profiles: int}
    *   Aggregate counts only; no nickname or personal data is returned.
    */
   public function rebuild(): array {
-    $uids = [];
-    $uidNicknames = [];
+    $profilesByUid = [];
+    $nicknameCandidates = [];
     $slugOwners = [];
     $profileCount = 0;
-    $uidConflicts = 0;
     $slugConflicts = 0;
     $invalid = 0;
     $storage = $this->entityTypeManager->getStorage('profile');
@@ -220,12 +219,10 @@ final class NicknameRegistry {
         $invalid++;
         continue;
       }
+      $profilesByUid[$uid][] = $profile;
       $nickname = trim((string) $profile->get('field_nickname')->value);
-      if (isset($uidNicknames[$uid]) && $uidNicknames[$uid] !== $nickname) {
-        $uidConflicts++;
-        continue;
-      }
-      $uidNicknames[$uid] = $nickname;
+      // Empty values do not vote against an explicit nickname. If every
+      // Profile for this UID is empty, the UID has no public nickname claim.
       if ($nickname === '') {
         continue;
       }
@@ -234,28 +231,48 @@ final class NicknameRegistry {
         $invalid++;
         continue;
       }
-      if (isset($uids[$uid]) && ($uids[$uid] !== $slug || $uidNicknames[$uid] !== $nickname)) {
-        $uidConflicts++;
-        continue;
+      $nicknameCandidates[$uid][] = [
+        'nickname' => $nickname,
+        'slug' => $slug,
+        'changed' => (int) $profile->getChangedTime(),
+        'id' => (int) $profile->id(),
+      ];
+    }
+
+    $uids = [];
+    $canonicalNicknames = [];
+    $sameUidConflicts = 0;
+    foreach ($nicknameCandidates as $uid => $candidates) {
+      $distinctNicknames = array_unique(array_column($candidates, 'nickname'));
+      if (count($distinctNicknames) > 1) {
+        $sameUidConflicts++;
       }
-      if (isset($slugOwners[$slug]) && $slugOwners[$slug] !== $uid) {
+      // Latest changed timestamp wins. Profile ID is a stable tie-breaker
+      // because changed timestamps have one-second precision.
+      usort($candidates, static function (array $left, array $right): int {
+        return ($right['changed'] <=> $left['changed']) ?: ($right['id'] <=> $left['id']);
+      });
+      $winner = $candidates[0];
+      $slug = $winner['slug'];
+      if (isset($slugOwners[$slug]) && $slugOwners[$slug] !== (int) $uid) {
         $slugConflicts++;
         continue;
       }
       $uids[$uid] = $slug;
-      $uidNicknames[$uid] = $nickname;
-      $slugOwners[$slug] = $uid;
+      $canonicalNicknames[$uid] = $winner['nickname'];
+      $slugOwners[$slug] = (int) $uid;
     }
 
-    if ($invalid > 0 || $uidConflicts > 0 || $slugConflicts > 0) {
+    if ($invalid > 0 || $slugConflicts > 0) {
       throw new \RuntimeException(sprintf(
         'Nickname index rebuild blocked: invalid=%d, same-UID conflicts=%d, cross-UID conflicts=%d.',
         $invalid,
-        $uidConflicts,
+        $sameUidConflicts,
         $slugConflicts,
       ));
     }
 
+    $reconciledProfiles = 0;
     $transaction = $this->database->startTransaction();
     try {
       $this->database->delete('aculta_user_nickname')->execute();
@@ -264,6 +281,22 @@ final class NicknameRegistry {
           ->fields(['uid' => $uid, 'slug' => $slug])
           ->execute();
       }
+      foreach ($canonicalNicknames as $uid => $nickname) {
+        $this->synchronizing[(int) $uid] = TRUE;
+        try {
+          foreach ($profilesByUid[$uid] as $profile) {
+            if (trim((string) $profile->get('field_nickname')->value) === $nickname) {
+              continue;
+            }
+            $profile->set('field_nickname', $nickname);
+            $profile->save();
+            $reconciledProfiles++;
+          }
+        }
+        finally {
+          unset($this->synchronizing[(int) $uid]);
+        }
+      }
       $transaction->commitOrRelease();
     }
     catch (\Throwable $exception) {
@@ -271,7 +304,12 @@ final class NicknameRegistry {
       throw $exception;
     }
 
-    return ['uids' => count($uids), 'profiles' => $profileCount];
+    return [
+      'uids' => count($uids),
+      'profiles' => $profileCount,
+      'same_uid_conflicts' => $sameUidConflicts,
+      'reconciled_profiles' => $reconciledProfiles,
+    ];
   }
 
 }

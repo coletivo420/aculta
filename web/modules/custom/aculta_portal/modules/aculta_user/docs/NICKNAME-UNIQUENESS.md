@@ -13,7 +13,7 @@
 
 A tabela Field API `profile__field_nickname` não contém `uid`. Uma chave SQL única simples sobre `field_nickname_value` impediria também perfis distintos do mesmo usuário de compartilhar o apelido. O campo é translatable e revisionável, então a garantia depende ainda da semântica de linhas atuais, idiomas, perfis legados e de futuras alterações de schema. Não foi criada uma constraint direta porque ela não representa exatamente o contrato vigente.
 
-## Preflight read-only do Homelab
+## Preflight read-only do Homelab — snapshot inicial
 
 Antes das consultas, Drush confirmou Drupal 11.4.10/PHP 8.4.27, host `toca`, URI MAIN `https://aculta.toca.net.br`, banco `aculta_runtime`, root `/home/piradopirata/projetos/aculta/web` e configuração em `/home/piradopirata/projetos/aculta/config/sync`.
 
@@ -21,10 +21,12 @@ Consultas agregadas, sem selecionar ou imprimir apelidos:
 
 - `profile__field_nickname`: 14 linhas ativas em 14 entidades; nenhuma linha `deleted`.
 - Nenhum grupo duplicado case-insensitive entre entidades de diferentes UIDs.
-- Nenhuma duplicação do mesmo apelido entre perfis de um mesmo UID.
+- Nenhuma divergência de apelidos entre perfis de um mesmo UID.
 - A tabela não possui índice único sobre o valor.
 
 Esse snapshot não comprova ausência de duplicatas em outros ambientes nem resolve a corrida entre gravações. Nenhuma escrita ou atualização foi executada.
+
+Nova consulta agregada em 2026-10-26 encontrou 26 Profiles de papel: 15 UIDs com apelido, 11 Profiles sem apelido, zero divergências de apelido entre Profiles do mesmo UID e zero slugs reivindicados por UIDs distintos. Nenhum valor de apelido foi selecionado ou impresso; o Runtime permaneceu somente leitura.
 
 ## Opções para fechar a corrida
 
@@ -35,16 +37,19 @@ Esse snapshot não comprova ausência de duplicatas em outros ambientes nem reso
 
 O responsável selecionou a opção 2. Profile permanece a fonte de verdade e `aculta_user` mantém uma projeção owner-managed por UID com `uid` único e slug normalizado único. Perfis de papéis do mesmo UID compartilham a reivindicação; ao renomear, a atualização do novo slug e a liberação do anterior ocorrem no mesmo caminho transacional. A projeção pode ser reconstruída a partir de Profiles; não guarda histórico nem cria aliases/redirects. Referências internas continuam usando UID.
 
-A projeção deve indexar o slug canônico (`#N` e `-N` convergem para `-N`) e falhar fechada se o rebuild encontrar apelidos diferentes entre Profiles ativos do mesmo UID, colisões entre UIDs ou apelidos atuais terminados em `-gr`; reportar apenas contagens agregadas, sem expor apelidos. Cobertura Kernel/MariaDB: dois processos confirmam slug livre antes de inserir; uma claim vence e a outra é rejeitada. Também há cobertura de rename/liberação, Profiles múltiplos do UID, rebuild idempotente, conflitos e rollback da projeção/sincronização após falha simulada depois do presave (8 testes/65 assertions no total). Falta validar o update 10013 em instalação efêmera. Não executar update no Runtime sem autorização operacional específica.
+Se Profiles de papel do mesmo UID divergirem, o apelido não vazio do Profile com maior `changed` vence e é propagado aos demais Profiles do UID. Um empate de timestamp usa o maior ID como desempate estável. Profiles vazios não votam contra um apelido explícito; se todos estiverem vazios, o UID não recebe claim. Colisões entre UIDs e apelidos inválidos continuam bloqueando o rebuild antes de substituir claims. Mensagens do update reportam contagens agregadas, nunca apelidos.
+
+Cobertura Kernel/MariaDB: dois processos confirmam slug livre antes de inserir; uma claim vence e a outra é rejeitada. Também há cobertura de rename/liberação, rebuild idempotente, conflitos cross-UID, reconciliação de mesmo UID e rollback da projeção/sincronização após falha simulada (10 testes/88 assertions no total). O update 10013 foi executado em teste Kernel isolado para criação do schema, reconciliação e preservação de claims em conflito cross-UID. Instalação efêmera completa ainda pendente. Nenhum update foi executado no Runtime.
 
 ## Reversão
 
 A opção de lock não altera schema nem dados; rollback é reverter o commit e remover o hook/testes. Para o índice derivado, interromper a escrita antes do rebuild, preservar backup da tabela e confirmar consistência dos UIDs; rollback deve remover hooks e projeção somente depois de comparar novamente com `field_nickname`. Nenhum plano autoriza alterar o Runtime atual.
 
 
-### Implementação em código — dev.83
+### Implementação em código — dev.83, revisada em dev.86
 
 - Schema owner-managed: `aculta_user_nickname(uid PRIMARY KEY, slug UNIQUE)`. O campo de Profile continua sendo a fonte; a tabela guarda somente a claim atual por UID. Não guarda aliases ou histórico.
 - `ProfileNicknameRegistryHooks` chama `NicknameRegistry` no `entity_presave`/`entity_delete`. O Core SQL content storage envolve os hooks e a escrita de Profile na mesma transação. Um rename atualiza a linha por UID, sincroniza todos os Profiles de papel e deixa o slug anterior disponível na mesma transação. A chave SQL única resolve corridas entre UIDs; o preflight de Form API dá mensagem amigável antes do save.
-- `PublicProfileController` resolve o slug na tabela, depois carrega o usuário e o Profile principal. Referências internas seguem por UID. `aculta_user_update_10013()` cria a tabela se necessário e executa rebuild idempotente. A validação é feita antes de limpar/repopular a projeção; em conflito, somente contagens agregadas são reportadas e os registros existentes não são substituídos.
-- O Kernel `NicknameRegistryKernelTest` passou **8 testes / 65 assertions** em MariaDB dedicado. Inclui dois processos que observam a ausência do slug antes de inserir e disputam a constraint; uma inserção vence e outra recebe conflito. Também cobre rename/liberação imediata, chave SQL única, rebuild idempotente e fail-closed, Profiles do mesmo UID e sincronização transacional. A cobertura SQLite histórica não substitui MariaDB. Falta validar o update 10013 em instalação efêmera com dados sem e com conflito. Nenhum update foi executado em Runtime.
+- `PublicProfileController` resolve o slug na tabela, depois carrega o usuário e o Profile principal. Referências internas seguem por UID. `aculta_user_update_10013()` cria a tabela se necessário e executa rebuild idempotente. A validação cross-UID e de valores inválidos ocorre antes de limpar/repopular a projeção, preservando claims existentes em caso de falha.
+- Política atual (dev.86): em divergência do mesmo UID, o Profile não vazio mais recentemente alterado vence e seu valor é sincronizado nos demais Profiles; empate de timestamp usa o maior ID como desempate. O resultado do update contém apenas quantidades agregadas.
+- O Kernel `NicknameRegistryKernelTest` passou **10 testes / 88 assertions** em MariaDB dedicado. Inclui dois processos que observam a ausência do slug antes de inserir e disputam a constraint; uma inserção vence e outra recebe conflito. Também cobre rename/liberação, rebuild idempotente, reconciliação de mesmo UID, criação pelo update hook e preservação das claims em conflito cross-UID. A instalação efêmera completa continua pendente; nenhum update foi executado no Runtime.

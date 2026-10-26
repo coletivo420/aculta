@@ -179,9 +179,19 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
     $this->profile((int) $account->id(), 'administrator', 'nome#2');
     $registry = $this->registry();
 
-    self::assertSame(['uids' => 1, 'profiles' => 2], $registry->rebuild());
+    self::assertSame([
+      'uids' => 1,
+      'profiles' => 2,
+      'same_uid_conflicts' => 0,
+      'reconciled_profiles' => 0,
+    ], $registry->rebuild());
     self::assertSame((int) $account->id(), $registry->uidForSlug('nome-2'));
-    self::assertSame(['uids' => 1, 'profiles' => 2], $registry->rebuild());
+    self::assertSame([
+      'uids' => 1,
+      'profiles' => 2,
+      'same_uid_conflicts' => 0,
+      'reconciled_profiles' => 0,
+    ], $registry->rebuild());
   }
 
   /**
@@ -206,20 +216,81 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
   }
 
   /**
-   * Rebuild refuses role Profiles of one UID that disagree on display nickname.
+   * The latest changed role Profile determines the shared UID nickname.
    */
-  public function testRebuildFailsClosedOnSameUidMismatch(): void {
+  public function testRebuildUsesMostRecentlyChangedProfileForSameUid(): void {
     $account = $this->account('different');
-    $this->profile((int) $account->id(), 'authenticated', 'primeiro');
-    $this->profile((int) $account->id(), 'administrator', 'segundo');
+    $older = $this->profile((int) $account->id(), 'authenticated', 'primeiro');
+    $newer = $this->profile((int) $account->id(), 'administrator', 'segundo');
+    $older->set('changed', 100)->save();
+    $newer->set('changed', 200)->save();
+
+    $registry = $this->registry();
+    self::assertSame([
+      'uids' => 1,
+      'profiles' => 2,
+      'same_uid_conflicts' => 1,
+      'reconciled_profiles' => 1,
+    ], $registry->rebuild());
+    self::assertSame((int) $account->id(), $registry->uidForSlug('segundo'));
+
+    $storage = $this->container->get('entity_type.manager')->getStorage('profile');
+    self::assertSame('segundo', $storage->loadUnchanged($older->id())->get('field_nickname')->value);
+    self::assertSame('segundo', $storage->loadUnchanged($newer->id())->get('field_nickname')->value);
+    self::assertSame([
+      'uids' => 1,
+      'profiles' => 2,
+      'same_uid_conflicts' => 0,
+      'reconciled_profiles' => 0,
+    ], $registry->rebuild());
+  }
+
+  /**
+   * Update 10013 creates the index and reports aggregate reconciliation counts.
+   */
+  public function testUpdateHookCreatesAndReconcilesNicknameIndex(): void {
+    $account = $this->account('update-hook');
+    $older = $this->profile((int) $account->id(), 'authenticated', 'anterior');
+    $newer = $this->profile((int) $account->id(), 'administrator', 'atual');
+    $older->set('changed', 100)->save();
+    $newer->set('changed', 200)->save();
+
+    $database = $this->container->get('database');
+    $database->schema()->dropTable('aculta_user_nickname');
+    $this->container->set('aculta_user.nickname_registry', $this->registry());
+    $result = aculta_user_update_10013();
+
+    self::assertTrue($database->schema()->tableExists('aculta_user_nickname'));
+    self::assertSame((int) $account->id(), $this->registry()->uidForSlug('atual'));
+    self::assertNull($this->registry()->uidForSlug('anterior'));
+    self::assertStringContainsString('1 same-UID conflicts', $result);
+    $storage = $this->container->get('entity_type.manager')->getStorage('profile');
+    self::assertSame('atual', $storage->loadUnchanged($older->id())->get('field_nickname')->value);
+    self::assertSame('atual', $storage->loadUnchanged($newer->id())->get('field_nickname')->value);
+  }
+
+  /**
+   * Update 10013 preserves existing claims when different UIDs collide.
+   */
+  public function testUpdateHookKeepsExistingClaimsOnCrossUidConflict(): void {
+    $registry = $this->registry();
+    $registry->claim(99, 'claim-existente');
+    $first = $this->account('conflict-first');
+    $second = $this->account('conflict-second');
+    $this->profile((int) $first->id(), 'authenticated', 'duplicado');
+    $this->profile((int) $second->id(), 'administrator', 'duplicado');
+    $this->container->set('aculta_user.nickname_registry', $registry);
 
     try {
-      $this->registry()->rebuild();
-      self::fail('Rebuild must reject divergent role Profile nicknames for one UID.');
+      aculta_user_update_10013();
+      self::fail('Update 10013 must stop before replacing claims owned by distinct UIDs.');
     }
     catch (\RuntimeException $exception) {
-      self::assertStringContainsString('same-UID conflicts=1', $exception->getMessage());
+      self::assertStringContainsString('cross-UID conflicts=1', $exception->getMessage());
     }
+
+    self::assertSame(99, $registry->uidForSlug('claim-existente'));
+    self::assertNull($registry->uidForSlug('duplicado'));
   }
 
   /**

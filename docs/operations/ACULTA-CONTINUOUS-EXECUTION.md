@@ -15,7 +15,7 @@
 4. Manter bloqueados os cinco hooks e três post-updates pendentes do Messenger até a janela/autorização; o plano read-only registra cinco filas de conquista sem dados pessoais e snapshot/rollback integral em `ACULTA-MESSENGER-UPDATE-PLAN.md`.
 5. Próxima unidade independente: projetar exportação do acervo Growroom e importador Drupal idempotente usando fixtures sintéticas e banco efêmero, sem dados privados no Git. O Runtime de testes é o destino desejado, mas a importação persistente aguarda prévia, backup/restauração e rollback. Os 616 tópicos de vida interna e 17 itens marcados `revisar` ficam excluídos por padrão; inclusão exige seleção manual (F-D46).
 6. Manter os resultados delegados nos oito componentes atualizados na matriz. O agente dessas frentes concluiu seu trabalho; comparação por caminhos confirmou que os incrementos estão na PR. O agente 3 entregou commits do Index em worktree própria; revisar diffs e evidências antes do cherry-pick individual. Não editar o Index antes da integração coordenada.
-7. Manter a branch/PR #298 como único destino; sem merge, deploy ou escrita Runtime. Import persistente no ambiente de testes somente após pipeline, prévia e rollback reproduzíveis. Último checkpoint remoto: `c26f27c76`.
+7. Manter a branch/PR #298 como único destino; sem merge, deploy ou escrita Runtime. Import persistente no ambiente de testes somente após pipeline, prévia e rollback reproduzíveis. Último checkpoint remoto: `6898024b9`.
 
 ## M-0 — revalidação de Config Sync Messenger (2026-10-26)
 
@@ -673,16 +673,17 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - Smoke Firefox ESR visível (`DISPLAY=:0`): `https://example.com/` carregou; `https://conta.aculta.toca.net.br/entrar` retornou erro WebDriver. Consulta read-only do resolver local e `curl` confirmou que o hostname não resolve (curl exit 6); sem sessão autenticada ou escrita. Isso não é reprovação do módulo nem aprovação visual; Browser fica DEFERRED por DNS indisponível e falta de identidade descartável.
 
 
-## M-1 — rollback da projeção de apelidos (2026-10-26)
+## M-1 — reconciliação da projeção de apelidos (2026-10-26)
 
-- `NicknameRegistryKernelTest::testFailedProfileSaveRollsBackNicknameSynchronization` executa a sincronização sob transação, injeta uma falha simulada depois do presave e verifica a claim anterior, ausência da nova claim e persistência antiga de ambos Profiles. Resultado agregado MariaDB: **8 testes / 65 assertions PASS**, com 11 depreciações Core/contrib. PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
-- `aculta_user` avançou `0.4.0-dev.84` → `0.4.0-dev.85`. Update 10013 não executado no Runtime; validar instalação limpa/rebuild com conflito e sem conflito em ambiente efêmero permanece pendente.
+- O responsável definiu que, em divergência entre Profiles do mesmo UID, vence o não vazio mais recentemente alterado e seu apelido é copiado para os demais; empate de `changed` usa maior ID como desempate estável. Perfis sem apelido não apagam valor explícito. Colisão entre UIDs continua bloqueando antes de substituir o índice.
+- `NicknameRegistryKernelTest`: **10 testes / 88 assertions PASS** em MariaDB dedicado. Inclui a corrida entre dois processos, rollback de save, criação do schema/update 10013, sincronização do apelido mais recente e preservação de claim existente quando UIDs diferentes colidem. User Unit: **140 testes / 543 assertions PASS**; PHPCS Drupal/DrupalPractice e lint focais PASS.
+- Read-only MAIN: 26 Profiles de papel, 15 UIDs com apelido, 11 vazios; zero conflitos entre Profiles do mesmo UID e zero slugs duplicados entre UIDs. O update não foi executado no Runtime. Instalação efêmera completa com dataset sintético continua pendente. `aculta_user` avançou para `0.4.0-dev.86`.
 
 ## M-1 — preflight da projeção de apelidos (2026-10-26)
 
 - A solução escolhida mantém Profile como fonte de verdade e usa `aculta_user_nickname` como índice derivado transacional `UID → slug`, com slug único, liberação no rename e sincronização entre Profiles do mesmo UID. A disputa concorrente e rollback da gravação têm evidência Kernel/MariaDB registrada no status `aculta_user`.
 - Drush read-only em MAIN confirmou 26 Profiles de papel: 15 UIDs com apelido, 11 sem apelido, zero divergências de apelido entre Profiles do mesmo UID e zero slugs ocupados por UIDs distintos. Saída apenas agregada; nenhum valor de apelido foi impresso. Runtime não recebeu escrita.
-- Continua pendente validar instalação limpa e executar o update 10013 em banco efêmero com dados sintéticos, incluindo caso sem conflito e conflito que bloqueia antes de substituir claims existentes. A pergunta sobre a política de conflito de mesmo UID está pendente; enquanto isso, o comportamento permanece fail-closed.
+- A política para divergência de mesmo UID foi respondida: vence o Profile não vazio mais recentemente alterado e todos os Profiles de papel recebem esse valor no rebuild. O Kernel/MariaDB cobre a chamada do update 10013 com reconciliação e preservação de claims em colisão cross-UID; nenhum update foi executado no Runtime. Instalação efêmera completa continua pendente.
 
 ## Growroom — seleção padrão e teste sintético dos filtros (2026-10-26)
 

@@ -1,3 +1,10 @@
+## 0.4.0-dev.86 — reconciliar Profiles com apelidos divergentes
+
+- No rebuild do índice 10013, o apelido não vazio do Profile com maior `changed` define o valor canônico por UID; timestamp empatado usa o maior ID como desempate determinístico. Profiles de papel do UID são sincronizados dentro da mesma transação. Apelidos vazios não substituem um apelido explícito.
+- Colisões de slug entre UIDs e apelidos inválidos continuam bloqueando o rebuild antes de alterar claims; a migração reporta somente contagens agregadas. A saída do update inclui total de UIDs, Profiles reconciliados e conflitos de mesmo UID.
+- User Unit: 140 testes / 543 assertions PASS. `NicknameRegistryKernelTest`: 10 testes / 88 assertions PASS em MariaDB dedicado; inclui criação do índice pelo update 10013, reconciliação do apelido mais recente e preservação de claims existentes no conflito entre UIDs. PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
+- Leitura agregada MAIN encontrou 26 Profiles de papel, 15 UIDs com apelido, 11 sem apelido e nenhum conflito de mesmo UID ou slug entre UIDs. O update não foi executado no Runtime; instalação efêmera completa continua pendente.
+
 ## 0.4.0-dev.85 — testar rollback da projeção de apelidos
 
 - O Kernel simula falha de persistência depois de executar a sincronização do apelido e reverte a transação. A claim anterior permanece; a nova claim e a atualização do Profile irmão são desfeitas.
