@@ -1,3 +1,8 @@
+## 0.1.0-dev.42 — refletir ajustes do pedido na preferência (2026-10-27)
+
+- Preferências Checkout Pro agora usam totais de linha ajustados do Commerce, incluem ajustes gerais e alocam descontos gerais sem preços negativos; o frete permanece separado. O gateway bloqueia a chamada remota se o total do pagamento não corresponder ao pedido ou se o merchandise não puder ser representado com segurança.
+- Unit MP: 192 testes / 783 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint focais PASS. Descontos e ajustes ainda precisam de confirmação visual no sandbox.
+
 ## 0.1.0-dev.41 — validar vínculo em conciliação de pagamento (2026-10-27)
 
 - `MercadoPagoPaymentService` agora exige que `external_reference` da consulta remota corresponda ao ID do pedido Commerce antes de reconciliar ou cancelar. IDs remotos válidos atribuídos a outro pedido falham fechados.

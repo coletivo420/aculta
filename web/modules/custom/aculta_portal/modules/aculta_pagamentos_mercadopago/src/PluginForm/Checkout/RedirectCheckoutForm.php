@@ -171,18 +171,23 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       ],
     ];
 
-    $items = [];
+    $preference_lines = [];
     foreach ($order->getItems() as $order_item) {
       $unit_price = $order_item->getUnitPrice();
       if ($unit_price === NULL) {
-        continue;
+        $this->messenger->addError($this->t('An order item is missing its price. Please contact the administrator.'));
+        return $form;
       }
       $item = [
         'title' => $order_item->getTitle(),
         'quantity' => (int) $order_item->getQuantity(),
-        'unit_price' => (float) $unit_price->getNumber(),
         'currency_id' => $unit_price->getCurrencyCode(),
       ];
+      $adjusted_total = $order_item->getAdjustedTotalPrice();
+      if ($adjusted_total === NULL) {
+        $this->messenger->addError($this->t('An order item total could not be calculated. Please contact the administrator.'));
+        return $form;
+      }
       $purchased = $order_item->getPurchasedEntity();
       if ($purchased !== NULL) {
         if (method_exists($purchased, 'getSku')) {
@@ -231,7 +236,7 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
           }
         }
       }
-      $items[] = $item;
+      $preference_lines[] = ['item' => $item, 'amount' => $adjusted_total];
     }
 
     $notification_url = Url::fromRoute('commerce_payment.notify', [
@@ -292,6 +297,11 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       $this->messenger->addError($this->t('Order total is missing.'));
       return $form;
     }
+    $payment_amount = $payment->getAmount();
+    if ($payment_amount === NULL || !$payment_amount->equals($order_total)) {
+      $this->messenger->addError($this->t('Payment amount does not match the order total. Please contact the administrator.'));
+      return $form;
+    }
     $currency_code = $order_total->getCurrencyCode();
     $shipping_amount = new Price('0', $currency_code);
 
@@ -308,6 +318,17 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       'mode' => 'not_specified',
       'cost' => (float) $shipping_amount->getNumber(),
     ];
+
+    try {
+      $request['items'] = MercadoPagoPreferenceItems::build(
+        $preference_lines,
+        $order_total->subtract($shipping_amount),
+      );
+    }
+    catch (\InvalidArgumentException) {
+      $this->messenger->addError($this->t('The order total could not be represented safely for payment. Please contact the administrator.'));
+      return $form;
+    }
 
     try {
       $preference = $this->createPreference($payment_gateway, $request, (string) $order_id);
@@ -337,11 +358,6 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
 
     $public_key = $payment_gateway_plugin->getPublicKey();
 
-    $payment_amount = $payment->getAmount();
-    if ($payment_amount === NULL) {
-      $this->messenger->addError($this->t('Payment amount is missing.'));
-      return $form;
-    }
     $redirect_url = $preference->init_point ?? '';
     if ($redirect_url === '') {
       $this->messenger->addError($this->t('Mercado Pago redirect URL is missing.'));
