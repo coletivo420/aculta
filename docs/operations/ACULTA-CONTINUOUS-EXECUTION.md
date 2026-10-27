@@ -1201,3 +1201,12 @@ Com commits sem equivalente na PR (mantidas, todas com worktree em uso, exceto a
 Remotas mantidas (commits sem equivalente na PR): `origin/docs/aculta-runtime-snapshot-ensaio` (2),
 `origin/feat/aculta-commerce-cutover` (8), `origin/feat/aculta-user-10013-contagem` (2),
 `origin/fix/alinhamento-sync-runtime` (11), `origin/fix/validador-seguranca-allowlist` (3).
+
+## Exclusão da remota origin/fix/barra-multidominio-alinhamento — 2026-10-27
+
+- Head da PR usado como referência: `bc17fff3e5419eeec9adf37448979f79b964e08d`.
+- Critério: (a) `git merge-base --is-ancestor origin/fix/barra-multidominio-alinhamento <head>`
+  → ancestral: sim (o commit era `650f473dc`).
+- Comando: `git push origin --delete fix/barra-multidominio-alinhamento` (sem force).
+- Verificação: `git ls-remote --heads origin | grep -c fix/barra-multidominio-alinhamento` → `0`.
+- Não houve remoção de worktree nem alteração de arquivos nesta etapa.
