@@ -6,6 +6,7 @@ namespace Drupal\aculta_commerce\Shipping\Cutover;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\ModuleInstallerInterface;
@@ -148,42 +149,147 @@ final class LegacyShippingCutover {
   }
 
   /**
-   * Remove do pedido as referências a remessas do contrib e reaponta o campo para o motor próprio.
+   * Campos de remessa copiados do contrib para aculta_shipment. Itens e ajustes não têm equivalente direto e não são copiados.
+   */
+  public const SHIPMENT_FIELDS = [
+    'order_id', 'package_type', 'shipping_service', 'service_label', 'shipping_profile', 'title',
+    'weight', 'original_amount', 'amount', 'tracking_code', 'state', 'data', 'shipped',
+  ];
+
+  /**
+   * Reaponta commerce_order.shipments para aculta_shipment preservando a referência de cada pedido.
    *
-   * Os pedidos são preservados (só a referência de remessa é removida). Remessas legadas são apagadas.
+   * Cada remessa do contrib é copiada para aculta_shipment; o pedido passa a apontar para a cópia; só então a
+   * original é apagada. Depois, storage e campo do pedido recalculam dependências, para que a desinstalação
+   * do contrib não os apague. Idempotente.
    *
    * @return array{pedidos_ajustados:
-   *   int, remessas_apagadas: int, destino: string}
+   *   int, remessas_copiadas: int, remessas_apagadas: int, destino: string}
    */
   public function retargetShipments(): array {
-    $resultado = ['pedidos_ajustados' => 0, 'remessas_apagadas' => 0, 'destino' => 'aculta_shipment'];
+    $resultado = [
+      'pedidos_ajustados' => 0,
+      'remessas_copiadas' => 0,
+      'remessas_apagadas' => 0,
+      'destino' => 'aculta_shipment',
+    ];
     $campo = $this->entityTypeManager->getStorage('field_storage_config')->load('commerce_order.shipments');
     if ($campo === NULL) {
       return $resultado;
     }
-    $alvoAtual = $campo->getSetting('target_type');
-    if ($alvoAtual === 'aculta_shipment') {
+    if ($campo->getSetting('target_type') === 'aculta_shipment') {
+      $this->atualizarDependenciasDoCampo($campo);
+      $this->migrarTiposDePedido();
       return $resultado;
     }
 
     if ($this->moduleHandler->moduleExists('commerce_shipping')) {
+      $legadas = $this->entityTypeManager->getStorage('commerce_shipment');
+      $destino = $this->entityTypeManager->getStorage('aculta_shipment');
+      $mapa = [];
+      $remessas = $legadas->loadMultiple();
+      foreach ($remessas as $legada) {
+        $nova = $destino->create(['type' => 'default']);
+        foreach (self::SHIPMENT_FIELDS as $nome) {
+          if ($legada->hasField($nome) && !$legada->get($nome)->isEmpty()) {
+            $nova->set($nome, $legada->get($nome)->getValue());
+          }
+        }
+        $nova->set('shipping_method', $this->metodoNovoDe($legada));
+        $nova->save();
+        $mapa[$legada->id()] = $nova->id();
+        $resultado['remessas_copiadas']++;
+      }
+
       $pedidos = $this->entityTypeManager->getStorage('commerce_order');
       $ids = $pedidos->getQuery()->condition('shipments.target_id', NULL, 'IS NOT NULL')->accessCheck(FALSE)->execute();
       foreach ($pedidos->loadMultiple($ids) as $pedido) {
-        $pedido->set('shipments', []);
+        $novas = [];
+        foreach ($pedido->get('shipments') as $item) {
+          if (isset($mapa[$item->target_id])) {
+            $novas[] = ['target_id' => $mapa[$item->target_id]];
+          }
+        }
+        $pedido->set('shipments', $novas);
         $pedido->save();
         $resultado['pedidos_ajustados']++;
       }
-      $legadas = $this->entityTypeManager->getStorage('commerce_shipment');
-      $remessas = $legadas->loadMultiple();
+
       $legadas->delete($remessas);
       $resultado['remessas_apagadas'] = count($remessas);
     }
 
     $campo->setSetting('target_type', 'aculta_shipment');
-    $campo->setSyncing(TRUE);
-    $campo->save();
+    $this->atualizarDependenciasDoCampo($campo);
+    $this->migrarTiposDePedido();
     return $resultado;
+  }
+
+  /**
+   * Passa o tipo de remessa dos tipos de pedido do contrib para o motor.
+   *
+   * O campo commerce_order.shipments é anexado ao pedido pelo tipo de pedido: com a configuração do contrib, ele
+   * sumiria do pedido depois do uninstall. O motor anexa o campo pela configuração aculta_commerce.shipment_type.
+   * A configuração do contrib é retirada: ao salvar, o tipo de pedido deixa de depender do contrib.
+   */
+  private function migrarTiposDePedido(): void {
+    $tipos = $this->entityTypeManager->getStorage('commerce_order_type')->loadMultiple();
+    foreach ($tipos as $tipo) {
+      $legado = $tipo->getThirdPartySetting('commerce_shipping', 'shipment_type');
+      if (empty($legado)) {
+        continue;
+      }
+      $novo = $this->entityTypeManager->getStorage('aculta_shipment_type')->load($legado) ? $legado : 'default';
+      if (empty($tipo->getThirdPartySetting('aculta_commerce', 'shipment_type'))) {
+        $tipo->setThirdPartySetting('aculta_commerce', 'shipment_type', $novo);
+      }
+      $tipo->unsetThirdPartySetting('commerce_shipping', 'shipment_type');
+      $tipo->save();
+    }
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+
+  /**
+   * Devolve o método do motor equivalente ao método do contrib de uma remessa, ou NULL se não há.
+   */
+  private function metodoNovoDe(EntityInterface $remessaLegada): ?int {
+    $metodoLegado = $remessaLegada->get('shipping_method')->entity;
+    if ($metodoLegado === NULL) {
+      return NULL;
+    }
+    $plugin = $metodoLegado->get('plugin')->first()?->getValue() ?? [];
+    $idNovo = self::PLUGIN_MAP[$plugin['target_plugin_id'] ?? ''] ?? NULL;
+    if ($idNovo === NULL) {
+      return NULL;
+    }
+    $ids = $this->entityTypeManager->getStorage('aculta_shipping_method')->getQuery()
+      ->condition('name', (string) $metodoLegado->label())
+      ->condition('plugin.target_plugin_id', $idNovo)
+      ->accessCheck(FALSE)
+      ->range(0, 1)
+      ->execute();
+    return $ids ? (int) reset($ids) : NULL;
+  }
+
+  /**
+   * Recalcula as dependências do storage e dos campos commerce_order.shipments, sem depender do contrib.
+   *
+   * O salvamento com setSyncing() não recalcula dependências: sem esta etapa, o storage continuava dependendo de
+   * commerce_shipping e o uninstall o apagava junto com a tabela do campo.
+   */
+  private function atualizarDependenciasDoCampo(EntityInterface $storage): void {
+    $entidades = [$storage];
+    foreach ($this->entityTypeManager->getStorage('field_config')->loadByProperties([
+      'entity_type' => 'commerce_order',
+      'field_name' => 'shipments',
+    ]) as $campoPedido) {
+      $entidades[] = $campoPedido;
+    }
+    foreach ($entidades as $entidade) {
+      $entidade->calculateDependencies();
+      $entidade->setSyncing(TRUE);
+      $entidade->save();
+    }
   }
 
   /**
@@ -222,6 +328,11 @@ final class LegacyShippingCutover {
     $campo = $this->entityTypeManager->getStorage('field_storage_config')->load('commerce_order.shipments');
     if ($campo !== NULL && $campo->getSetting('target_type') !== 'aculta_shipment') {
       $motivos[] = 'campo commerce_order.shipments ainda aponta para o contrib';
+    }
+    foreach ($this->entityTypeManager->getStorage('commerce_order_type')->loadMultiple() as $tipo) {
+      if (!empty($tipo->getThirdPartySetting('commerce_shipping', 'shipment_type'))) {
+        $motivos[] = 'tipo de pedido ainda usa commerce_shipping: ' . $tipo->id();
+      }
     }
     return $motivos;
   }

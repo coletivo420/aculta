@@ -39,12 +39,13 @@ function aculta_commerce_post_update_migrate_shipping_methods(array &$sandbox): 
 }
 
 /**
- * Reaponta commerce_order.shipments para aculta_shipment. Pedidos são preservados.
+ * Reaponta commerce_order.shipments para aculta_shipment. Cada remessa é copiada antes de a original sair, e o pedido
+ * passa a apontar para a cópia.
  */
 function aculta_commerce_post_update_retarget_shipments(array &$sandbox): string {
   $r = \Drupal::service('aculta_commerce.legacy_shipping_cutover')->retargetShipments();
-  return sprintf('Pedidos com referência legada ajustados: %d; remessas legadas apagadas: %d; destino: %s.',
-    $r['pedidos_ajustados'], $r['remessas_apagadas'], $r['destino']);
+  return sprintf('Remessas copiadas: %d; pedidos reapontados: %d; remessas legadas apagadas: %d; destino: %s.',
+    $r['remessas_copiadas'], $r['pedidos_ajustados'], $r['remessas_apagadas'], $r['destino']);
 }
 
 /**

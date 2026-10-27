@@ -272,6 +272,70 @@ class ShippingCutoverKernelTest extends KernelTestBase {
   }
 
   /**
+   * Remessa referenciada sobrevive ao uninstall do contrib.
+   *
+   * Após o retarget e o uninstall, o campo existe, aponta para o motor e o pedido mantém a referência à cópia da
+   * remessa em aculta_shipment.
+   */
+  public function testRemessaReferenciadaSobreviveAoUninstall(): void {
+    // A desinstalação do contrib consulta comentários e a visão de remessas: os schemas precisam existir aqui.
+    $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installEntitySchema('flagging');
+    $this->installSchema('user', ['users_data']);
+    $this->installConfig(['comment', 'language']);
+    // Estado do Runtime: o tipo de pedido liga o campo pela configuração do contrib.
+    \Drupal::entityTypeManager()->getStorage('commerce_order_type')->load('default')
+      ->setThirdPartySetting('commerce_shipping', 'shipment_type', 'default')
+      ->save();
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+    $dados = $this->criarLegado();
+    $pedido = $dados['pedido'];
+    $legada = \Drupal::entityTypeManager()->getStorage('commerce_shipment')->create([
+      'type' => 'default',
+      'order_id' => $pedido->id(),
+      'shipping_method' => $dados['metodo']->id(),
+      'title' => 'Remessa teste',
+      'shipping_service' => 'default',
+      'amount' => ['number' => '12.50', 'currency_code' => 'BRL'],
+    ]);
+    $legada->save();
+    $pedido->set('shipments', [$legada]);
+    $pedido->save();
+
+    $service = \Drupal::service('aculta_commerce.legacy_shipping_cutover');
+    $service->installEngineEntities();
+    $service->migrateMethods();
+    $resultado = $service->retargetShipments();
+    $this->assertSame(1, $resultado['remessas_copiadas']);
+    $this->assertSame(1, $resultado['pedidos_ajustados']);
+
+    $pedido = Order::load($pedido->id());
+    $referencias = $pedido->get('shipments')->referencedEntities();
+    $this->assertCount(1, $referencias, 'o pedido mantém a referência à remessa');
+    $copia = reset($referencias);
+    $this->assertSame('aculta_shipment', $copia->getEntityTypeId());
+    $this->assertSame('Remessa teste', $copia->get('title')->value);
+    $this->assertSame([], $service->blockersForUninstall());
+
+    $this->assertTrue($service->uninstallLegacyIfSafe(), 'desinstalação liberada sem bloqueios');
+    $this->assertFalse($this->container->get('module_handler')->moduleExists('commerce_shipping'));
+
+    $campo = \Drupal::entityTypeManager()->getStorage('field_storage_config')->load('commerce_order.shipments');
+    $this->assertNotNull($campo, 'o storage do campo sobrevive ao uninstall');
+    $this->assertSame('aculta_shipment', $campo->getSetting('target_type'));
+    $this->assertNotContains('commerce_shipping', $campo->getDependencies()['module'] ?? []);
+    $definicao = \Drupal::service('entity_field.manager')->getFieldDefinitions('commerce_order', 'default')['shipments'] ?? NULL;
+    $this->assertNotNull($definicao, 'o campo continua anexado ao tipo de pedido, agora pelo motor');
+    $this->assertSame('aculta_shipment', $definicao->getSetting('target_type'));
+
+    $pedido = Order::load($pedido->id());
+    $referencias = $pedido->get('shipments')->referencedEntities();
+    $this->assertCount(1, $referencias, 'a referência do pedido é preservada após o uninstall');
+    $this->assertSame($copia->id(), reset($referencias)->id());
+  }
+
+  /**
    * Método legado do Melhor Envio (plugin aculta_melhorenvio) migra com default_package_type e services.
    */
   public function testMigratesLegacyMelhorEnvioMethodKeepingItsConfig(): void {
