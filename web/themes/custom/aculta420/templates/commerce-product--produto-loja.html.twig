@@ -51,6 +51,9 @@
           price: price,
           purchase: product.variations,
         }, with_context = false) }}
+        {% if shipping_calculator %}
+          {{ include('aculta420:shipping-calculator', shipping_calculator, with_context = false) }}
+        {% endif %}
       </div>
     </div>
 

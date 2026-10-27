@@ -110,6 +110,10 @@ services:
       - '@datetime.time'
       - '@logger.factory'
 
+  # Alias pela classe: o hook de encaixe do produto recebe o simulador por autowire.
+  Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulator:
+    alias: aculta_commerce_melhorenvio.shipping_simulator
+
   # Endpoint JSON do componente shipping-calculator. Limite por IP usa o serviço de flood do Drupal.
   aculta_commerce_melhorenvio.simulate_controller:
     class: Drupal\aculta_commerce_melhorenvio\Controller\ShippingSimulatorController

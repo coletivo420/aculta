@@ -26,7 +26,7 @@ use Psr\Log\LoggerInterface;
  * Só resultados de API bem-sucedidos vão para o cache, por CEP e pacote, e a tag de configuração invalida o cache ao
  * mudar a origem. Falhas nunca são guardadas.
  */
-final class ShippingSimulator {
+class ShippingSimulator {
 
   /**
    * Tempo de vida do cache de cotação, em segundos.
@@ -104,6 +104,17 @@ final class ShippingSimulator {
       : new ShippingSimulation(ShippingSimulation::STATE_AVAILABLE, NULL, $options);
     $this->cache->set($key, $result, $this->time->getRequestTime() + self::CACHE_TTL, [self::CACHE_TAG, 'config:' . self::SETTINGS]);
     return $result;
+  }
+
+  /**
+   * Disponibilidade para exibir ao visitante sem CEP: configuração e pacote. Não chama a API.
+   *
+   * O produto ainda não tem peso nem dimensões cadastrados, então não há pacote real: a disponibilidade é indisponível
+   * (sem pacote) mesmo com origem e credencial. Quando o cadastro existir, esta verificação passa a olhar o pacote do
+   * produto ou do carrinho.
+   */
+  public function availabilityReason(): ?string {
+    return $this->configurationReason() ?? ShippingSimulation::REASON_NO_PACKAGE;
   }
 
   /**
