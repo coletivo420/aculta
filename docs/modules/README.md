@@ -10,6 +10,7 @@ esta página não replica listas de versões ou de módulos habilitados.
 ## Documentação transversal
 
 - [Autenticação e identidade](AUTHENTICATION.md)
+- [Avatar e identidade de autoria](../architecture/avatar.md)
 - [Conta, AJAX e Views](ACCOUNT-UI.md)
 - [Commerce, apoio e pagamentos](COMMERCE.md)
 - [Domains, URLs e SEO](DOMAIN-SEO.md)

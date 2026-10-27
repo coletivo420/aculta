@@ -7,7 +7,7 @@ dados pertencem a `aculta_user`, o layout ao ACULTA420.
 | Elemento histórico | Tratamento ACULTA | Limite |
 | --- | --- | --- |
 | Nome de usuário / nome público | Reusar apelido resolvido pela policy e `PublicProfileLink` | Perfil privado continua conforme policy; sem link forçado. |
-| Avatar/foto | Reusar `user_picture` e `aculta_image` | Não expor imagem privada; autoria legada usa avatar do acervo com origem anotada. |
+| Avatar/foto | Reusar `AvatarResolver` (foto liberada pela policy → acervo) e `aculta_image` | Não expor imagem privada. Autoria legada não tem User nem avatar: o cartão mostra nome e origem. |
 | Online e último acesso | Excluir por padrão | O dado histórico derivava de atividade recente da conta; não é necessário e pode revelar hábitos/presença. Só decisão explícita pode reintroduzir com policy adequada. |
 | Título/role do participante | Mostrar só função de contexto aprovada (por exemplo, educador na discussão daquele curso) | Nunca despejar roles globais/permissões. |
 | Data de entrada/registro | `author_forum`/`author_forum_stacked` mostram somente o ano de criação da conta, com o rótulo “Conta ACULTA desde”; somente para perfil público | Perfis privados não revelam data. `author_growroom_historico` não recebe data: o acervo não informa ingresso original confiável. Cache depende da conta/perfil; UTC evita variação de fuso. |

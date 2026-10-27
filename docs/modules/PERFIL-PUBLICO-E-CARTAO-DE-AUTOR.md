@@ -1,7 +1,8 @@
 # Perfil público, cartão de autor e painel da Minha conta
 
-Submódulo: `aculta_portal/modules/aculta_user` (0.4.0-dev.2). Tema: ACULTA420.
-Decisões e status: `docs/portal/ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md`. Plano: `docs/portal/ACULTA-USER-PLAN.md`.
+Submódulo: `aculta_portal/modules/aculta_user`. Tema: ACULTA420.
+Regra de avatar e identidade: [`architecture/avatar.md`](../architecture/avatar.md).
+Decisões históricas: `docs/portal/ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md`; plano original: `docs/portal/ACULTA-USER-PLAN.md`.
 
 ## 1. Regra de separação (tema x módulo)
 
@@ -18,17 +19,17 @@ Sem o ACULTA420, links, textos e fotos continuam funcionando.
 ## 2. Privacidade (fonte única: `PublicProfilePolicy`)
 
 - **Padrão:** todo perfil é público (`field_perfil_publico`, valor padrão 1, em `config/sync`).
-- **Autores e editores são sempre públicos:** papéis `content_editor` e `wiki_editor`. O controle de privacidade
+- **Autores e editores são sempre públicos:** papel `content_editor` (não há papel Drupal separado `wiki_editor` na configuração atual). O controle de privacidade
   fica bloqueado, com o motivo exibido (`isObrigatorioPublico`).
 - **Perfil privado:** mostra somente foto e apelido, na página pública.
-- **Foto:** sempre aparece no perfil público (não há opção de ocultar; o campo `field_exibir_foto` ficou sem uso).
+- **Foto:** no perfil público é opt-in (`field_exibir_foto`, padrão desligado); no perfil privado, a política mostra foto e apelido. Sem foto, o avatar do acervo.
 - **Itens separados:** bio (`field_exibir_bio`), redes sociais (`field_exibir_redes`) e e-mail (`field_exibir_email`).
   Cada um só aparece se a pessoa escolheu exibi-lo, individualmente.
 - **Nunca públicos:** CPF, RG, endereço, WhatsApp, data de nascimento, cidade e UF.
 
 ## 3. Página pública `/u/<apelido>` (purpose `main`)
 
-Cabeçalho com foto (ou inicial do apelido), apelido (H2), bio, e as redes em botões com ícone e rótulo
+Cabeçalho com foto ou avatar do acervo (nunca a inicial do nome), apelido (H2), bio, e as redes em botões com ícone e rótulo
 (Instagram, Facebook, Reddit) e o e-mail como botão `mailto:` com rótulo "E-mail".
 Rota declarada com `_aculta_domain_purpose: main`: em outros hosts responde 404.
 Perfil privado: somente foto e apelido.
@@ -63,8 +64,10 @@ Ordem no topo: botão **Ver Perfil** (à direita, após o título), depois o cab
 
 ## 6. Avatares
 
-Todo avatar (estilo `aculta_avatar`) tem proporção 1:1, não encolhe com o contêiner e não é esticado
-(`base.css`). Verificado em visão geral, perfil público, cartão de autor e modal de foto.
+Todo avatar (estilo `aculta_avatar`) tem proporção 1:1, não encolhe com o contêiner e não é
+esticado (`base.css`). A apresentação usa a foto liberada pela policy ou o avatar do acervo
+(`AvatarResolver`); a inicial do nome nunca é usada. Ver
+[`architecture/avatar.md`](../architecture/avatar.md).
 
 ## 7. Links de perfil
 
@@ -74,10 +77,9 @@ o perfil. Regra e gate em `docs/portal/GUARDRAILS.md` (seção "Links de perfil"
 ## 7b. Verificação
 
 - Gates: `validate-aculta-portal-drupal11`, `validate-module-theme-boundary`, `validate-public-slugs`,
-  `validate-environment-addresses`, `validate-aculta420-design-foundations`.
-- Navegador (Chromium headless, conta de teste): modal da bio (Limpar não envia nem fecha; Salvar grava e fecha),
-  modal de redes (gravar, limpar, link inválido), botão Ver Perfil, perfil privado, cartão de autor com ícones
-  e bio, medidas de avatar sem distorção.
+  `validate-environment-addresses`, `validate-aculta420-design-foundations`, `validate-aculta-user-photo`.
+- Navegador: Firefox ESR visível em `DISPLAY=:0`, conforme `docs/operations/NAVEGADOR-TESTES.md`, com
+  ACULTA420 e Olivero. O roteiro de avatar fica em `tests/browser/aculta-avatar/`.
 - Pendente: inspeção visual humana das telas acima.
 
 ## 8. Configurações (abas)
@@ -98,13 +100,13 @@ O link "Sortear novo avatar" leva token CSRF válido: requisição com o link do
 
 ## 10. Pendências
 
-- Tipo de publicação "blog" da Revista e mapeamento de chamada/resumo (decisão do responsável).
-- Inspeção visual humana das telas (painel, perfil público, cartão de autor, abas).
-- Versão do `aculta_portal` (módulo pai) não marcada nesta entrega; o `aculta_user` está em 0.4.0-dev.2 (versão atual em `aculta_user.info.yml`).
+Registro único: [`operations/DEBT-REGISTER.md`](../operations/DEBT-REGISTER.md). Nesta frente:
+reimportação da foto do Google sob demanda, importação dos avatares do Growroom legado e verificação
+visual do roster/feedback do LMS quando houver turma no Runtime.
 
-## Exceção registrada: autoria nos verbetes da Wiki (2026-10-20)
+## Exceção registrada: autoria nos verbetes da Wiki (2026-10-27)
 
 - O AGENTS diz que a autoria de verbete publicado é pública, e o tipo `wiki_entry` está com `display_submitted: true`.
-- Mesmo assim, os templates `node--wiki-entry--full` e `node--wiki-entry--teaser` do ACULTA420 **não exibem** a autoria (decisão de apresentação anterior, mantida).
-- Decisão do responsável em 2026-10-20: manter a apresentação oculta e registrar a exceção. Para exibir a autoria, o tema precisa de autorização explícita e nova versão; a identidade continua vindo do `aculta_user`.
+- Mesmo assim, os templates `node--wiki-entry--full` e `node--wiki-entry--teaser` do ACULTA420 **não exibem** a autoria.
+- Decisão do responsável em 2026-10-27: manter a apresentação oculta; a autoria aparece somente na discussão do verbete, pelo cartão `author_wiki` dos comentários. Para exibir a autoria na entrada, o tema precisa de autorização explícita e nova versão; a identidade continua vindo do `aculta_user`.
 - O gate `validate-aculta-portal-drupal11.php` verifica a configuração (`display_submitted: true`), não o template. A diferença entre configuração e apresentação fica registrada aqui.

@@ -1,7 +1,7 @@
 # Cartões de identidade e autoria
 
-Status: cartões de `author_forum` integrados a tópicos, respostas Comment e posts
-revisionáveis do Fórum na linha `aculta_user 0.4.0-dev.64`. O slot de autoria da Revista agora consome o mesmo builder
+Contrato vigente: cartões de `author_forum` integrados a tópicos, respostas Comment e posts
+revisionáveis do Fórum. O slot de autoria da Revista consome o mesmo builder
 com a variante `author_editorial`; `aculta_user` possui políticas,
 links, perfil, avatar e memória histórica. `AuthorIdentityResolver`,
 `AuthorIdentity` e `AuthorCardBuilder` compõem identidade, avatar cacheável e

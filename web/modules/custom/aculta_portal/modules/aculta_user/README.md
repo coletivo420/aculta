@@ -103,6 +103,7 @@ de foto foi migrado. Referências:
 - A pessoa pode consultar e alterar o consentimento opcional de rastreamento de e-mail em `/configuracoes/rastreamento-de-e-mail`. A captura de IP depende da configuração correta de proxy confiável em cada ambiente.
 - A auditoria administrativa é somente leitura em `/painel-administrativo/aculta/termos/aceites`, protegida por `administer aculta user agreements`; apresenta IP/User-Agent e o estado da cadeia HMAC. O acesso não concede operações para alterar ou excluir eventos.
 
+- [Avatar e identidade de autoria](../../../../../../docs/architecture/avatar.md)
 - [Classes e hooks](docs/CLASSES-E-HOOKS.md)
 - [Hierarquia de funções](docs/HIERARQUIA-DE-FUNCOES.md)
 - [Amizades](docs/AMIZADES.md)

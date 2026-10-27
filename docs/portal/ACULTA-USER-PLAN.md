@@ -6,6 +6,8 @@ Status: **plano de 2026-10-13, com implementação já iniciada**. O submódulo 
 
 Escopo: avatar, perfil público e autoria, integração com Wiki, Fórum e revista, funções sociais e gamificação, dentro de `web/modules/custom/aculta_portal/modules/aculta_user/`.
 
+Regras vigentes de avatar e identidade: [`architecture/avatar.md`](../architecture/avatar.md). O inventário e as propostas da seção 5.A são o registro de 2026-10-13 e não descrevem o estado atual.
+
 **Evolução aprovada em 2026-10-15:** o planejamento do Fórum passa a ser mantido
 no [projeto ACULTA Fórum/Growroom](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
 e o de conquistas/missões no [projeto ACULTA Game](../../web/modules/custom/aculta_portal/modules/aculta_game/README.md).
@@ -28,7 +30,7 @@ Não apagar hooks ou configurações legadas sem a fase de migração descrita e
 
 | Capacidade | Onde está | Situação |
 | --- | --- | --- |
-| Foto de perfil | Core `user_picture` (`config/sync/field.field.user.user.user_picture.yml`), estilo `aculta_avatar`, crop (`crop`, `image_widget_crop`) | Existe. Editor de foto na Minha conta (`PortalController`). Sem avatar padrão nem fallback público. |
+| Foto de perfil | Core `user_picture` (`config/sync/field.field.user.user.user_picture.yml`), estilo `aculta_avatar`, crop (`crop`, `image_widget_crop`) | Existe. Editor de foto na Minha conta (`PortalController`). Avatar padrão implementado: foto → acervo, nunca inicial (ver [`architecture/avatar.md`](../architecture/avatar.md)). |
 | Apelido e dados do participante | Profile `participante` com `field_nickname`, nome, cidade, UF e WhatsApp (`config/sync/field.field.profile.participante.*`) | Existe. Não é público. `field_nickname` não é único nem é slug. |
 | Conexões sociais | `social_auth` e `social_auth_google`; rota `/conexoes` | Existe. |
 | Fórum | `forum` 1.1.3, `flag` 5.1.1, flags `seguir_topico` e `salvar_topico` (`0.2.0-dev.57`) | Adotado. Sem página "Atividade". |
@@ -110,7 +112,7 @@ Serviços previstos (nomes provisórios):
 
 ### A. Avatar
 
-**Regra do responsável (2026-10-13):** quem não tem foto recebe um avatar aleatório do acervo do módulo. Isso vale para quem não enviou foto e para quem entrou por OAuth sem foto importada. Em Minha conta > Visão geral, a pessoa pode trocar o avatar do acervo por outro sorteado ("rotacionar").
+**Estado atual:** a regra vigente é foto liberada pela policy → avatar do acervo; a inicial nunca é usada e o acervo é o último fallback obrigatório. Ver [`architecture/avatar.md`](../architecture/avatar.md). O texto abaixo é o plano original de 2026-10-13.
 
 **Inventário atual dos assets** (`web/modules/custom/aculta_portal/assets/avatars/`, versionado no Git, 112 arquivos):
 
@@ -134,8 +136,8 @@ Serviços previstos (nomes provisórios):
 - Sorteio aleatório na primeira vez que a conta fica sem foto (e na troca), com `random_int` sobre as entradas ativas e existentes. Sem garantia de unicidade entre contas, a não ser que seja pedido.
 - Persistência: o avatar sorteado precisa virar uma escolha estável da conta (não sortear a cada página). Como não criar storage paralelo, a escolha vai para o próprio `user_picture`: o acervo é copiado para o campo como arquivo gerenciado (`file_managed`, com origem marcada) ou, se o Core não der conta da marcação, a escolha fica em `user.data` do próprio módulo (decisão a confirmar no Homelab em U0).
 - Quem enviou foto própria nunca perde a foto: o sorteio só ocorre sem foto. A "rotação" só troca entre avatares do acervo; ela não apaga foto enviada sem confirmação.
-- OAuth: hoje o `aculta_portal` não importa a foto do provedor (não há referência a `picture` em `SocialAuth*Subscriber`). Decisão: importar ou não a foto do Google, e, se importar, aplicar o acervo quando o provedor não trouxer foto.
-- Fallback sem foto e sem acervo ativo: inicial, como hoje (`account-avatar-empty`).
+- OAuth: a foto do Google é importada na criação da conta como foto personalizada; reimportação sob demanda continua pendente (`docs/integrations/GOOGLE.md`). Sem foto, vale o acervo.
+- Fallback: avatar do acervo. A inicial nunca é usada e não existe estado "sem acervo" em produção; o gate de foto cobre o catálogo.
 - Estilo: `aculta_avatar` (1:1, 256 px, crop `aculta_avatar_1x1`). O acervo já está 1:1, então o crop automático não deve cortar as artes; validar com `image_style` antes de publicar.
 - Apresentação: o presenter entrega o caminho do arquivo e o `alt` do acervo; o tema desenha. Nenhuma classe de design no módulo.
 - Gravatar: não usar (ver decisão 7).
@@ -171,7 +173,7 @@ Serviços previstos (nomes provisórios):
 **Pedido do responsável (2026-10-13):** a pessoa pode tornar o perfil privado em Minha conta > Configurações.
 
 - **Padrão (decisão 2, respondida nesta sessão): todos os perfis são públicos por padrão** (campo `field_perfil_publico` com valor padrão 1, em `config/sync/field.field.profile.participante.field_perfil_publico.yml`). A pessoa pode tornar o perfil privado. Foto, bio, e-mail e redes sociais são privados por padrão e só aparecem se a pessoa escolher exibi-los. Esta regra substitui o padrão privado anterior.
-- **Autores e editores são obrigatoriamente públicos** (regra do responsável, 2026-10-13): perfis com o papel `content_editor` (Editor de conteúdo) ou `wiki_editor` (Editor da Wiki420) não podem ser privados. O controle fica bloqueado, com o motivo exibido. Implementação: `PublicProfilePolicy::PAPEIS_PUBLICO_OBRIGATORIO` e `isObrigatorioPublico()`, usados pelo formulário de privacidade, pela página pública e pela caixa de autores da Revista.
+- **Autores e editores são obrigatoriamente públicos** (regra do responsável, 2026-10-13): perfis com o papel `content_editor` (Editor de conteúdo) não podem ser privados; não há papel Drupal separado `wiki_editor` na configuração atual. O controle fica bloqueado, com o motivo exibido. Implementação: `PublicProfilePolicy::PAPEIS_PUBLICO_OBRIGATORIO` e `isObrigatorioPublico()`, usados pelo formulário de privacidade, pela página pública e pela caixa de autores da Revista.
 - **Lugar:** o formulário fica em `/configuracoes/perfil` (submódulo `aculta_user`, `ProfileVisibilityForm`). Campo `field_perfil_publico` no perfil `participante`, booleano, padrão verdadeiro. Ligar ou desligar tem efeito imediato. Vínculo a partir de `/configuracoes` pendente.
 - **Com perfil privado:**
   - `/u/<apelido>` mostra somente foto e apelido (decisão 40 substituída em 2026-10-13: o perfil privado não responde 404).

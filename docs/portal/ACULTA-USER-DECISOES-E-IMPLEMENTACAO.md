@@ -4,6 +4,11 @@ Registro das decisões tomadas pelo responsável durante o desenvolvimento do su
 uma no código. O plano de produto continua em `docs/portal/ACULTA-USER-PLAN.md`; este arquivo acompanha o que foi
 decidido depois e o que existe de fato.
 
+> **Documento histórico.** As regras vigentes de avatar e identidade de autoria estão em
+> [`architecture/avatar.md`](../architecture/avatar.md); o estado da foto está em
+> [`FOTO-PERFIL.md`](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/FOTO-PERFIL.md).
+> Onde este registro divergir do código ou desses contratos, prevalecem o código e os documentos normativos.
+
 Status: **Implementado** (código commitado e verificado por HTTP/CLI), **Implementado sem verificação visual** (código
 commitado, sem teste em navegador: a ferramenta de navegador não estava disponível), **Em andamento** (código não
 commitado ou não ligado), **Pendente** (decidido ou perguntado, sem código).
@@ -24,7 +29,7 @@ commitado ou não ligado), **Pendente** (decidido ou perguntado, sem código).
 | Foto, bio, e-mail, redes sociais e badges só aparecem se a pessoa escolher exibir (privados por padrão) | Implementado (foto, bio, e-mail, redes); badges pendente (U4) | `field_exibir_*` |
 | Cidade e UF nunca são públicas | Implementado | `PublicProfilePolicy` (lista fechada de itens) |
 | Todos os perfis são públicos por padrão (campo `field_perfil_publico` com valor padrão 1, exportado em `config/sync`) | Implementado; verificado (perfis novos nascem públicos) | `field.field.profile.participante.field_perfil_publico.yml` |
-| Autores e editores (`content_editor`, `wiki_editor`) são obrigatoriamente públicos: controle bloqueado com o motivo | Implementado; verificado (único editor com flag público) | `PublicProfilePolicy::isObrigatorioPublico`, `ProfileVisibilityForm` |
+| Autores e editores (`content_editor`) são obrigatoriamente públicos: controle bloqueado com o motivo | Implementado; verificado (único editor com flag público) | `PublicProfilePolicy::isObrigatorioPublico`, `ProfileVisibilityForm` |
 | Perfil privado mostra somente foto e apelido (substitui o 404 da decisão 40) | Implementado; verificado por HTTP | `PublicProfilePolicy::publicItems`, `PublicProfileController` |
 | Rota pública `/u/<apelido>` só no propósito `main` | Implementado | `PublicProfileController` |
 | Caminho `/u/<apelido>` é exceção de slug registrada | Implementado | `FRIENDLY-PORTUGUESE-SLUGS.md` |

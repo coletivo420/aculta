@@ -313,7 +313,7 @@ ledger.
 ### Regra do avatar e reimportação (2026-10-27)
 
 - Sem foto, a conta usa o avatar do acervo. O acervo é componente obrigatório do site e a inicial do nome nunca é
-  exibida; a ordem completa está em
+  exibida; a regra transversal está em [`architecture/avatar.md`](../architecture/avatar.md) e o detalhe do módulo em
   `web/modules/custom/aculta_portal/modules/aculta_user/docs/AVATAR-PADRAO.md`.
 - A foto do Google é importada somente na criação da conta. Reimportar a foto do Google a qualquer momento é
   pendência registrada (não implementada): o vínculo fica em `social_auth` (`user_id`, `plugin_id`,

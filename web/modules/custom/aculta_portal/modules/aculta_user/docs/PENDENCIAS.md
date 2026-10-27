@@ -4,8 +4,10 @@ Data de referência: 2026-10-21. Registro operacional da frente aberta; a decis�
 
 ## Concluído no módulo
 
-- Foto de perfil: regras por estado, sorteio só na prévia, remoção, recorte e importação OAuth como foto personalizada
-  (`FOTO-PERFIL.md`, INV-FOTO-1 a 9, gate `validate-aculta-user-photo.php`).
+- Foto de perfil: regras por estado, sorteio só na prévia, remoção, recorte e importação OAuth como foto personalizada;
+  sem foto, avatar do acervo (a inicial nunca é usada). Ver `FOTO-PERFIL.md`, `AVATAR-PADRAO.md` e
+  [architecture/avatar.md](../../../../../../../docs/architecture/avatar.md); gate `validate-aculta-user-photo.php`
+  (INV-FOTO-1 a 10).
 - Atividade em abas no padrão de Meus Dados e Segurança (`ActivityController`, 0.3.0-dev.8).
 - Mapa de rotas: rotas do módulo registradas em `docs/architecture/ROUTES-SITEMAP.md` (perfil, bio, redes, memorial,
   associados, avatar e endpoints AJAX/POST).

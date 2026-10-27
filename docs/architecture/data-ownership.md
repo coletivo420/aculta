@@ -7,6 +7,8 @@
 | Endereço | Address/Profile customer | integração |
 | CEP | CEP Autocomplete + Address | UX/acessibilidade |
 | OAuth | Social Auth | conexões |
+| Avatar (catálogo, escolha, fallback) | `aculta_user` (`AvatarPool`, `AvatarResolver`) + `aculta_image` (estilos) | apresentação |
+| Identidade de autoria e cartões | `aculta_user` (`AuthorIdentityResolver`, `AuthorCardBuilder`) | composição |
 | Pedidos/pagamentos | Commerce | apresentação |
 | Apoio | Commerce Donation Flow | experiência |
 | Loja | Commerce Product/Order/Payment | integração |

@@ -10,6 +10,7 @@ O arquivo `docs/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histórico de 
 | Mailer | `web/modules/custom/aculta_portal/modules/aculta_mailer/AGENTS.md` |
 | Studio | `web/modules/custom/aculta_portal/modules/aculta_studio/AGENTS.md` |
 | Usuários | `web/modules/custom/aculta_portal/modules/aculta_user/AGENTS.md` |
+| Avatar e identidade de autoria | `docs/architecture/avatar.md`; detalhe do módulo em `web/modules/custom/aculta_portal/modules/aculta_user/docs/AVATAR-PADRAO.md` |
 | Tema | `web/themes/custom/aculta420/AGENTS.md` |
 | Runtime e Git | `docs/operations/AGENT-OPERATIONS.md` |
 | Rotas e domínios | `docs/architecture/AGENT-ROUTES.md` |

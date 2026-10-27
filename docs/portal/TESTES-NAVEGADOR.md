@@ -214,6 +214,10 @@ Não encerrar a rodada sem registrar o resultado de cada passo. Nenhum dado de c
 
 ## P. Foto de perfil: regras por estado (aculta_user, 2026-10-13)
 
+> Desde 2026-10-22, todo teste de navegador usa Firefox ESR visível em `DISPLAY=:0`, conforme
+> `docs/operations/NAVEGADOR-TESTES.md`; as menções a Chromium nesta seção são registro histórico.
+
+
 Regras e tabela de estados em `web/modules/custom/aculta_portal/modules/aculta_user/docs/FOTO-PERFIL.md`. Gate estático:
 `php scripts/validate-aculta-user-photo.php`. Executar este roteiro após qualquer alteração na foto.
 

@@ -7,6 +7,12 @@
 
 Estas regras foram realocadas do arquivo histórico de instruções; aplique somente no escopo correspondente. O `AGENTS.md` raiz continua obrigatório.
 
+## Avatar e identidade de autoria (regra permanente)
+
+- Ordem única: foto liberada pela política pública → avatar do acervo; a inicial nunca é usada e o acervo é o fallback obrigatório.
+- Não crie fallback de inicial nem leia `user_picture`/Profile diretamente para montar avatar ou cartão; use `AvatarResolver` ou `AuthorCardBuilder`.
+- Regra, classes, hooks e consumidores: [docs/architecture/avatar.md](../../../../../../docs/architecture/avatar.md).
+
 ## Separação de Pessoas e Configurações > Pessoas (decisão do responsável, 2026-10-17)
 
 - `/painel-administrativo/pessoas`: administração de usuários individuais (lista, cadastro, edição, perfis e OAuth/Social auth).

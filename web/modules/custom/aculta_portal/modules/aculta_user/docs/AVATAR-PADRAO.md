@@ -1,152 +1,100 @@
-# Avatar padrão e caixas de usuário — auditoria (Fase 0)
+# Avatar padrão no `aculta_user`
 
-Status: auditoria somente de leitura, feita sobre `main` (commit 805fb7c) na branch
-`feat/avatar-padrao`. Nenhuma alteração de código. Verificação visual no servidor de
-testes: DEFERRED (não executada nesta fase).
+Dono: `aculta_user`. Revisão: 2026-10-27. Regra transversal e inventário de
+classes/hooks em
+[`docs/architecture/avatar.md`](../../../../../../../docs/architecture/avatar.md).
+Estado da foto e invariantes do editor em
+[`FOTO-PERFIL.md`](FOTO-PERFIL.md).
 
-## Regra alvo (decisão do responsável)
+## Regra
 
-Sem foto, todo o site se comporta como Conta/perfil:
+1. **Foto** da conta, quando a política pública a libera;
+2. **Avatar ilustrativo do acervo**, que é o padrão e o último fallback
+   obrigatório;
+3. `NULL` apenas no contrato defensivo de teste. O site não tem estado "sem
+   acervo" em produção.
 
-1. foto, quando a política pública permitir;
-2. avatar ilustrativo do acervo (`AvatarPool::fallbackEntry`);
-3. nenhum avatar: NULL. A inicial do nome não é usada (decisão de 2026-10-27); o
-   acervo é componente obrigatório e o fallback de quem não tem foto.
+**A inicial do nome nunca é usada** em nenhum ponto. Não crie monograma,
+`slice(0, 1)`, `account-avatar-empty` nem fallback equivalente. O acervo é
+componente obrigatório e sua remoção exige decisão do responsável e passa pelo
+gate de foto.
 
-## Comportamento atual por ponto de exibição
+## Componentes no módulo
 
-| Ponto | Fonte | Variante / componente | Foto | Acervo | Inicial | Situação |
-| --- | --- | --- | --- | --- | --- | --- |
-| Conta / perfil público (`/u/{apelido}`) | `PublicProfileController::avatar` | `profile-identity` | sim | sim | sim | **referência** |
-| Campo `user_picture` (display default e compact) | config `core.entity_view_display.user.user.*` | estilo `aculta_avatar` | sim | não | não | parcial: sem fallback |
-| Cartão de autor (qualquer contexto) | `AuthorIdentityResolver` → `AuthorCardBuilder` | `author-card` | sim | **não** | sim | **divergente** |
-| Revista: autores do artigo | `ArticleAuthorsHooks` → `AuthorCardBuilder` | `author_editorial` | sim | não | sim | **divergente** |
-| Fórum: tópico (autor) | `PublicForumTopicAuthorHooks` | `author_forum` | sim | não | sim | **divergente** |
-| Fórum: comentário / post | `DiscussionCommentAuthorHooks` | `author_forum` / `author_comment` | sim | não | sim | **divergente** |
-| Fórum: última atividade | `PublicForumLastActivityAuthorHooks` | `author_forum` | sim | não | sim | **divergente** |
-| Fórum: co-autores do tópico | campo `co_authors` nas displays `aculta_forum_topic` | — | não verificado | não verificado | não verificado | a verificar na Fase 1 |
-| LMS: comentários de discussão | `DiscussionCommentAuthorHooks` → `AuthorCardVariantResolver` | `author_lms` | sim | não | sim | **divergente** |
-| LMS: feedback do educador (comentário em resposta) | display `comment.lms_answer_comment` | — | não verificado | — | — | a verificar na Fase 1 |
-| LMS: roster da turma (`ClassRosterManager::build`) | nomes em `item_list` | — | **não há** | — | — | **lacuna** (nome apenas) |
-| LMS: participantes da sala (`CourseRoomBuilder`, `participant_rosters`) | rosters | — | **não há** | — | — | **lacuna** (nome apenas) |
-| LMS: alunos do curso (view `lms_course_students`) | view | — | a verificar | — | — | a verificar na Fase 3 |
-| Wiki: entrada (`node--wiki-entry--full` / `--teaser`) | template | — | **não há** autor exibido | — | — | **conforme** (decisão 2026-10-27: autor só na discussão) |
-| Wiki: comentários | `DiscussionCommentAuthorHooks` com `author_wiki` | `author_wiki` | sim | não | sim | **divergente** |
-| Mensagens privadas | `PrivateMessagePresentationHooks`, `messenger-item` | — | a verificar | — | — | a verificar na Fase 4 |
-| Growroom histórico (`legacy_author`) | `AuthorCardBuilder::buildLegacy` | `author_growroom_historico` | não (sem User) | não | não | conforme: rótulo de origem |
+| Componente | Papel |
+| --- | --- |
+| `Avatar\AvatarResolver` (`aculta_user.avatar_resolver`) | Regra única de apresentação: foto quando `$showPhoto` e `user_picture` existem; senão `AvatarPool::fallbackEntry($uid)` com `previewUrl`; senão `NULL` defensivo. Não decide policy. |
+| `Avatar\AvatarPool` (`aculta_user.avatar_pool`) | Catálogo versionado `assets/avatars/meta/avatars.json`. Atribui uma cópia do acervo a `user_picture` (`public://pictures/acervo/`, `user.data.avatar_id`), guarda escolha pendente (`user.data.sorteio_pendente`), faz `reroll`/`applyPending` e fornece `fallbackEntry`/`previewUrl` para apresentação sem foto. |
+| `Avatar\AvatarAssetCleanup` + `Hook\AvatarCronHooks` | Limpeza de uploads temporários, cópias do acervo sem conta e recortes órfãos. |
+| `Hook\AccountCreationHooks` | Conta nova: foto OAuth vira permanente; sem foto, atribui acervo (`assignPresave`); cria o Profile de papel. |
+| `Hook\PictureReplacementHooks` | Remover a foto personalizada devolve a conta ao acervo; apaga a foto antiga se ninguém mais a usa; nunca apaga cópia do acervo. |
+| `Controller\AvatarRerollController` | AJAX de "Sortear novo avatar": grava só a escolha pendente e troca a prévia no modal. |
+| `Form\UserPictureForm`, `Form\AvatarCropForm`, `Form\PhotoEditorGuard`, `Hook\PhotoEditorHooks`, `Hook\PhotoFlowPageHooks`, `js/photo-flow.js` | Popup de foto, estados acervo x foto pessoal, recorte do arquivo recém-enviado e fluxo sem JavaScript. A tabela de estados está em `FOTO-PERFIL.md`. |
+| `PublicProfilePolicy` + `Controller\PublicProfileController` | Visibilidade campo a campo e `/u/{apelido}`; a foto é opt-in no perfil público e aparece no perfil privado conforme a policy. |
+| `Identity\AuthorIdentityResolver` | `resolve()` para identidade pública; `resolveFallback()` para quem não tem perfil público (nome de exibição + acervo, sem link/foto/bio/redes); `publicDisplayName()` para consumidores que só podem ver o apelido. |
+| `Identity\AuthorCardBuilder` (`aculta_user.author_card_builder`) | `build()` devolve `NULL` sem identidade pública; `buildFallback()` monta nome + acervo para contextos que já mostram o nome; `buildLegacy*()` monta a autoria histórica Growroom. |
+| `Identity\AuthorCardVariantResolver` | Mapeia o host do Comment para `author_forum`, `author_comment`, `author_lms` ou `author_wiki`; bundle desconhecido não herda cartão. |
+| `Hook\AuthorCardThemeHooks` | Declara `aculta_user_author_card` e mantém render neutro sem o tema. |
+| `Hook\AuthorCardViewsDataHooks` + `Plugin\views\field\AuthorCard` | Campo virtual `aculta_user_author_card` em `users_field_data`; renderiza por `uid` e evita cartão vazio quando o cache da query não traz `_entity`. |
 
-## Diagnóstico
+## Persistência do avatar
 
-- **Divergência principal**: o `AuthorIdentityResolver` só usa a foto. Sem foto,
-  o cartão cai na inicial, enquanto Conta/perfil mostra o acervo. Corrigir isso num
-  serviço único em `aculta_user` resolve todos os cartões de uma vez.
-- **Estilo `aculta_avatar`** (256×256, crop 1×1) é o que já vale para foto. O
-  `aculta_avatar_pequeno` (96×96) ainda não é usado nos cartões.
-- **Lacunas de exibição**: roster e sala do LMS mostram só nomes; a wiki não mostra
-  autor. Esses pontos precisam de consumidor novo, não só de ajuste.
-- **Privacidade**: a foto só entra quando a política pública permite. O acervo
-  ilustrativo não é dado pessoal, então pode aparecer como fallback para qualquer
-  conta, como já faz Conta/perfil.
-- **Sem alteração de config** nesta fase: nenhuma view ou display foi criada.
+Há dois caminhos, ambos com a mesma regra visual:
 
-## Pontos a verificar nas próximas fases
+- **Conta/editor:** o acervo é copiado para `public://pictures/acervo/` e
+  gravado em `user_picture`; `user.data.avatar_id` guarda a entrada sorteada.
+  Sortear troca a escolha; remover a foto pessoal volta ao acervo.
+- **Apresentação pública sem foto:** `AvatarResolver` renderiza uma entrada
+  estável do catálogo (`fallbackEntry($uid)` + `previewUrl`) sem gravar em
+  `user_picture`. É o fallback de cartões, perfil, roster, feedback e mensagens.
 
-- co-autores do tópico de fórum (`co_authors`): renderiza avatar? (Fase 1)
-- feedback do educador no LMS: qual display e se mostra autor. (Fase 1)
-- mensagens privadas: foto e fallback no `messenger-item`. (Fase 4)
-- lista de alunos do curso (`lms_course_students`): avatar nas colunas. (Fase 3)
-- wiki: confirmado em 2026-10-27 que a entrada não exibe autor; a autoria aparece
-  somente na discussão do verbete, pelo cartão `author_wiki`. (Fase 4)
+Não use `user_picture` diretamente em consumidores. Use o resolver ou o builder.
 
-## Próxima fase
+## Consumidores
 
-Fase 1: serviço único de avatar em `aculta_user`, com a ordem foto → acervo
-(o acervo é o fallback obrigatório; a inicial não é usada), consumido por
-`AuthorIdentityResolver`, `AuthorCardBuilder` e `PublicProfileController`.
+- **Conta/perfil:** `PublicProfileController`.
+- **Fórum:** `DiscussionCommentAuthorHooks`, `PublicForumTopicAuthorHooks`,
+  `PublicForumLastActivityAuthorHooks`.
+- **Revista:** `aculta_magazine` `ArticleAuthorsHooks` (`author_editorial`).
+- **Wiki:** a entrada não exibe autor; a discussão usa `author_wiki` por
+  `DiscussionCommentAuthorHooks`.
+- **LMS:** `ClassRosterManager` usa `buildFallback()` para quem não tem perfil
+  público; `EducatorFeedbackAuthorCardHooks` usa `EducatorFeedbackPolicy` para
+  só rotular educador como "Educador(a)".
+- **Mensagens:** `aculta_messenger` `PrivateMessagePresentationHooks` usa o
+  resolver para o remetente.
+- **Views:** `views.view.perfis_publicos` (`/membros`) usa o campo
+  `aculta_user_author_card` (`profile_compact`, `sm`).
 
-Gates aplicáveis: `validate-aculta-portal-drupal11.php`, `validate-aculta-user-photo.php`.
+## Privacidade
 
-## Fase 1 — implementada (aculta_user 0.4.0-dev.76)
+- Foto pública é opt-in (`field_exibir_foto`); perfil privado mostra foto e
+  apelido; `content_editor` é obrigatoriamente público.
+- Nunca públicos: CPF, RG, endereço, WhatsApp, data de nascimento, cidade, UF e
+  nome de login como identidade pública.
+- O avatar do acervo é imagem institucional, não dado pessoal; por isso pode
+  aparecer sem opt-in.
+- O cartão não recebe entidade Drupal, e-mail privado, documentos ou relações
+  LMS; recebe strings/render arrays autorizados e cacheáveis.
 
-- `Avatar\AvatarResolver` (serviço `aculta_user.avatar_resolver`) é a regra única:
-  foto liberada pela policy → acervo ilustrativo (`AvatarPool::fallbackEntry`) → NULL.
-  A inicial não é usada em nenhum chamador; o acervo é o fallback obrigatório.
-- `Identity\AuthorIdentityResolver` usa o resolver: cartões de autor de fórum,
-  revista, LMS, wiki e comentários passam a mostrar o acervo quando não há foto.
-- `Controller\PublicProfileController` usa o mesmo resolver em Conta/perfil. O marcador
-  `data-portal-ui="public-profile-avatar-image"` foi mantido para o tema.
-- O construtor de `AuthorIdentityResolver` ganhou o último argumento opcional
-  (`AvatarResolver`), para não quebrar os testes existentes.
+## Verificação
 
-Pendências das Fases 2 a 5: SDC `author-card` único com UI Styles, Views de perfil,
-aplicação por sessão (roster e sala do LMS sem avatar hoje, wiki sem autor) e verificação visual.
-`LegacyMemorialController` mantém seu bloco próprio de avatar (memorial coletivo, fora desta regra).
+- Gate `php scripts/validate-aculta-user-photo.php`: INV-FOTO-1 a 10, incluindo
+  catálogo válido e ao menos uma entrada ativa com arquivo.
+- Unit: `AvatarResolverTest`, `AuthorIdentityTest`,
+  `PublicForumTopicAuthorHooksTest`, `AuthorCardVariantResolverTest`.
+- Kernel: `ClassRosterVisibilityTest` e testes de participação/visibilidade.
+- Navegador: `tests/browser/aculta-avatar/` (Firefox ESR em `DISPLAY=:0`, com
+  ACULTA420 e Olivero). Roster e feedback do LMS exigem turma; sem turma no
+  Runtime, a verificação visual fica DEFERRED; o Kernel cobre o roster.
+- Regressão de foto: `FOTO-PERFIL.md` e a seção P de `TESTES-NAVEGADOR.md`.
 
-## Regra consolidada (decisão do responsável, 2026-10-27)
+## Decisões de 2026-10-27
 
-Ordem pública do avatar, em todo o site:
-
-1. **Foto** da conta, quando a política pública a libera. Inclui a foto personalizada
-   enviada pela pessoa, a foto importada do Google no cadastro e, no futuro, a foto
-   importada do Growroom para contas legadas.
-2. **Avatar do acervo** (`AvatarPool::fallbackEntry`) quando não há foto. O acervo é
-   **componente obrigatório do site** e o **último fallback**; não existe estado
-   "sem acervo" em produção.
-
-**Nunca se mostra a inicial do nome.** A remoção da foto personalizada devolve a
-conta ao acervo (`PictureReplacementHooks` + `AvatarPool::reroll`). A foto do acervo
-não tem "Remover" (ver `FOTO-PERFIL.md`).
-
-### Decisões de 2026-10-27 sobre os pontos pendentes
-
-- **Wiki — autoria da entrada:** a entrada (`node--wiki-entry--full` e `--teaser`)
-  não exibe autor. O autor aparece somente na discussão do verbete, pelo cartão
-  `author_wiki` dos comentários.
-- **Roster da turma:** quem não tem perfil público continua na lista, com o nome
-  de exibição e o avatar do acervo (`AuthorCardBuilder::buildFallback`). Ninguém
-  é removido da turma por falta de perfil público.
-- **Feedback do educador:** `lms_answer_comment` pode ser escrito pelo aluno dono
-  da resposta e por educadores do curso. Só o educador recebe o rótulo
-  "Educador(a)" e dispara a notificação; o critério é o mesmo na apresentação e
-  no evento (`EducatorFeedbackPolicy::isEducator`: autor diferente do dono da
-  resposta e permissão `grade students` no curso). O comentário do aluno aparece
-  como cartão comum, sem o rótulo.
-
-### Pendências registradas, fora desta tarefa
-
-- **Google a qualquer momento:** hoje a foto do Google é importada somente na criação
-  da conta. A importação sob demanda (reimportar a foto do Google depois) fica pendente
-  e deve ser documentada em `docs/integrations/GOOGLE.md`.
-- **Growroom legado:** os avatares das contas legadas do Growroom serão importados como
-  foto personalizada. A auditoria de 2026-10-19 não incluía avatar; esta decisão a
-  substitui para esse campo. O mapeamento conta→arquivo e a migração continuam
-  pendentes de decisão operacional.
-- **Acervo obrigatório:** o gate `scripts/validate-aculta-user-photo.php` cobre a
-  presença do catálogo e de ao menos uma entrada ativa com arquivo; o acervo é o
-  último fallback e qualquer remoção do componente exige decisão do responsável.
-
-## Verificação desta tarefa (2026-10-27)
-
-- Gates: Portal 1112 checks, foto INV-FOTO-1 a 10, SDC 632, design foundations,
-  browser validators 21, Foundation 345 e shell-contract 11: PASS.
-- PHPUnit Unit do `aculta_user`: 142 testes / 552 assertions PASS (1 depreciação
-  PHPUnit); Unit do `aculta_lms`: 88 testes / 453 assertions PASS (8 depreciações
-  PHPUnit). Kernel `ClassRosterVisibilityTest`: 1 teste / 33 assertions PASS
-  (37 depreciações upstream), agora verificando o cartão de fallback do roster.
-- Navegador (worktree em 127.0.0.1:8080, Firefox ESR em `DISPLAY=:0`):
-  `/membros` com 15 cartões e 0 iniciais; `/u/coletivo420` com avatar do acervo e
-  0 iniciais; Conta (`/dados`), Mensagens (`/avisos-mensagens/mensagens`),
-  Revista, Cursos e Wiki com ACULTA420 e Olivero. O cartão funciona sem o tema
-  pelo fallback neutro do módulo.
-- Follow-up de 2026-10-27 (decisões desta seção): o roster não foi verificado em
-  navegador porque o Runtime não tem turma; o feedback do LMS também não, pela
-  mesma falta de turma. O Kernel cobre a visibilidade do roster e o fallback
-  nome + acervo (sem o pool no harness). A entrada da Wiki foi conferida nos
-  templates: não há autor; a discussão usa `author_wiki`.
-- DEFERRED: Fórum (não há alias local `growroom420.aculta.test:8080`), roster,
-  sala e feedback do LMS (o Runtime só tem um curso, sem turma) e comentários da
-  Wiki (não há comentários publicados). O Kernel cobre a visibilidade do roster.
-- Runtime: snapshot do `aculta_runtime` antes da escrita (SHA-256 `eb9e55f7…`,
-  56 MB); update 10013 aplicado; view importada e exportada; sem alteração de
-  dados de conteúdo.
-
+- A inicial do nome nunca é usada; o acervo é o último fallback.
+- A entrada da Wiki não exibe autor; a autoria aparece só na discussão.
+- O roster mantém quem não tem perfil público com nome + acervo.
+- `lms_answer_comment` pode ser do aluno dono da resposta ou de educador; só o
+  educador recebe o rótulo e notifica.
+- Google: foto importada na criação; reimportação sob demanda pendente.
+  Growroom: importação dos avatares legados pendente.

@@ -1,7 +1,9 @@
 # Estilos de imagem do ACULTA (catálogo, uso e pesquisa)
 
-Revisão: 2026-10-17. Fonte de verdade dos nomes: `src/ImageCatalog.php`. Os arquivos de estilo ficam em
+Revisão: 2026-10-27. Fonte de verdade dos nomes: `src/ImageCatalog.php`. Os arquivos de estilo ficam em
 `config/sync/image.style.*.yml` e todos os estilos usam o pipeline `aculta_derivados` (compressão sem perda).
+A escolha de qual imagem mostrar (foto → acervo) pertence ao `aculta_user` (`AvatarResolver`); este módulo
+define estilos e renderização. Ver [`architecture/avatar.md`](../../../../../../../docs/architecture/avatar.md).
 
 ## Pesquisa de referência
 
@@ -27,7 +29,7 @@ de estilos automático enquanto a issue #3523451 estiver aberta.
 
 | Finalidade | Estilo | Dimensões | Recorte | Quem usa |
 | --- | --- | --- | --- | --- |
-| `avatar` | `aculta_avatar` | 256 × 256 | quadrado | painel da conta, perfil público, memorial, Magazine (autoria) |
+| `avatar` | `aculta_avatar` | 256 × 256 | quadrado | painel da conta, perfil público, cartões de autoria, roster e feedback do LMS, mensagens e memorial |
 | `avatar_pequeno` | `aculta_avatar_pequeno` | 96 × 96 | quadrado | **novo**: disponível; uso recomendado em respostas e listas (ver pendências) |
 | `card` / `card_2x` | `aculta_card_1x` / `aculta_card_2x` | 256 / 512 | quadrado | card de projeto (teaser); 2x montado por `ImageStyleHooks` |
 | `card_16x9` | `aculta_card_16x9` | 640 × 360 | 16:9 | **novo**: cards editoriais em proporção 16:9 |

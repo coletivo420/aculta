@@ -37,11 +37,17 @@ resultado de access antes de serem usados.
 ## Serviços conceituais
 
 - `AuthorIdentityResolver` (`aculta_user.author_identity_resolver`): resolve User,
-  perfil principal, apelido e URL pública opcional.
+  perfil principal, apelido e URL pública opcional. `resolveFallback()` atende
+  contas sem perfil público com nome de exibição + acervo, sem link/foto/bio/redes.
+- `AvatarResolver` (`aculta_user.avatar_resolver`): foto liberada pela policy →
+  avatar do acervo; a inicial nunca é usada. O `AuthorIdentityResolver` usa esse
+  serviço para o avatar dos cartões.
 - `PublicMemberIdentityInterface` (`Drupal\aculta_user\Identity\PublicMemberIdentityInterface`): expõe só o apelido permitido pela política pública, ou `NULL` sem identidade. Consumidores não devem usar o nome interno da conta como fallback público.
 - `AuthorIdentity`: contrato escalar cacheável de saída, sem regra de negócio.
 - `AuthorCardBuilder` (`aculta_user.author_card_builder`): cria o render array
   neutro `aculta_user_author_card` para o contrato de apresentação do tema.
+  `build()` devolve `NULL` sem identidade pública; `buildFallback()` monta nome +
+  acervo para contextos que já mostram o nome (roster e feedback do LMS).
 - `AuthorCardVariantResolver` (`aculta_user.author_card_variant_resolver`):
   escolhe a variante contextual para Comment a partir do bundle da entidade
   hospedeira; recusa contextos desconhecidos e não decide access.

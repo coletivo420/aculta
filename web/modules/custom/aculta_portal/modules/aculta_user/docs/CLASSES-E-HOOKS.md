@@ -7,7 +7,7 @@ Identidade, perfil, avatar, amizade, associados (marcador), autoria histórica (
 > Alguns guards permanecem somente até uninstall do contrib e retirada de
 > consumidores; ver [MIGRATION-REMOVAL.md](../../aculta_forum/docs/MIGRATION-REMOVAL.md).
 
-Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a primeira frase do próprio docblock; a regra e o motivo completos ficam no código. Quando uma classe mudar, atualize esta tabela na mesma entrega.
+Atualizado a partir do código em 2026-10-27 (`src/`). Cada classe aparece com a primeira frase do próprio docblock; a regra e o motivo completos ficam no código. Quando uma classe mudar, atualize esta tabela na mesma entrega.
 
 ## Hooks (`#[Hook]`)
 
@@ -28,6 +28,8 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `form_user_form_alter` | `PhotoEditorHooks::formUserFormAlter` | `src/Hook/PhotoEditorHooks.php` |
 | `module_preuninstall` | `FriendshipLifecycleHooks::protectFriendshipData` | `src/Hook/FriendshipLifecycleHooks.php` |
 | `entity_view` | `PublicForumTopicAuthorHooks::entityView` | `src/Hook/PublicForumTopicAuthorHooks.php` |
+| `entity_view` (Comment) | `DiscussionCommentAuthorHooks::entityView` | `src/Hook/DiscussionCommentAuthorHooks.php` |
+| `views_data_alter` | `AuthorCardViewsDataHooks::viewsDataAlter` | `src/Hook/AuthorCardViewsDataHooks.php` |
 | `page_attachments` | `PhotoFlowPageHooks::pageAttachments` | `src/Hook/PhotoFlowPageHooks.php` |
 | `user_delete` | `FriendshipLifecycleHooks::removeRelationshipsForDeletedMember` | `src/Hook/FriendshipLifecycleHooks.php` |
 | `user_insert` | `AccountCreationHooks::userInsert` | `src/Hook/AccountCreationHooks.php` |
@@ -63,7 +65,8 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
 | `AvatarAssetCleanup` | `src/Avatar/AvatarAssetCleanup.php` | Limpeza de assets temporários de avatar (chamada pelo cron do aculta_user). |
-| `AvatarPool` | `src/Avatar/AvatarPool.php` | Sorteia um avatar do acervo do Portal para quem não tem foto (decisão 12: o arquivo vai para user_picture). |
+| `AvatarPool` | `src/Avatar/AvatarPool.php` | Catálogo do acervo: atribui uma cópia a `user_picture` na criação/remoção/reroll (`user.data.avatar_id`), controla a escolha pendente do modal e fornece `fallbackEntry`/`previewUrl` para apresentação sem foto. |
+| `AvatarResolver` | `src/Avatar/AvatarResolver.php` | Regra única de apresentação: foto quando a policy libera e existe `user_picture`; senão acervo (`fallbackEntry`/`previewUrl`); senão `NULL` defensivo. Nunca usa a inicial. |
 
 ### `Badge`
 
@@ -138,9 +141,9 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
 | `AuthorIdentity` | `src/Identity/AuthorIdentity.php` | View-model escalar mínimo com cache tags/contexts da identidade pública. |
-| `AuthorIdentityResolver` | `src/Identity/AuthorIdentityResolver.php` | Resolve identidade pública, variante editorial com fallback de nome e dados editoriais autorizados sem expor a entidade. |
+| `AuthorIdentityResolver` | `src/Identity/AuthorIdentityResolver.php` | Resolve identidade pública, variante editorial com fallback de nome, dados editoriais autorizados e `resolveFallback()` (nome de exibição + acervo) para quem não tem perfil público. |
 | `PublicMemberIdentityInterface` | `src/Identity/PublicMemberIdentityInterface.php` | Expõe só apelido permitido pela política pública; consumidores não usam o nome interno da conta como fallback. |
-| `AuthorCardBuilder` | `src/Identity/AuthorCardBuilder.php` | Gera render array neutro de cartão, com cache e ações fornecidas por consumidor autorizado. |
+| `AuthorCardBuilder` | `src/Identity/AuthorCardBuilder.php` | Gera render array neutro de cartão; `build()` omite sem identidade pública, `buildFallback()` monta nome + acervo para roster/feedback e `buildLegacy*()` monta a autoria histórica. |
 | `AuthorCardVariantResolver` | `src/Identity/AuthorCardVariantResolver.php` | Resolve variant de Comment pelo bundle canônico do host (`revista`, Fórum, LMS ou Wiki); contextos desconhecidos não herdam cartão. |
 | `AuthorCardThemeHooks` | `src/Hook/AuthorCardThemeHooks.php` | Declara hook neutro do cartão e mantém fallback sem estilo. |
 
@@ -161,7 +164,7 @@ e o resolver de variantes. Fórum e respostas usam `author_forum`; Revista usa
 | `ParticipationHooks` | `src/Hook/ParticipationHooks.php` | Modera comentários iniciais nos contextos públicos compartilhados, exclui LMS, bloqueia novos Nodes do bundle legado e aplica limite configurável de criação de tópico. |
 | `PhotoEditorHooks` | `src/Hook/PhotoEditorHooks.php` | Editor de foto do painel (ponto de extensão aculta_portal_photo_editor e formulário do painel). |
 | `PhotoFlowPageHooks` | `src/Hook/PhotoFlowPageHooks.php` | Anexa o fluxo do popup de foto (aculta_user/photo-flow) na página do painel e informa a foto salva ao script. |
-| `PictureReplacementHooks` | `src/Hook/PictureReplacementHooks.php` | Apaga a foto anterior enviada pela pessoa quando ela troca ou remove a foto (economia de disco). |
+| `PictureReplacementHooks` | `src/Hook/PictureReplacementHooks.php` | Apaga a foto anterior enviada pela pessoa quando ela troca ou remove (economia de disco); ao remover a foto pessoal, devolve a conta ao acervo. Nunca apaga cópia do acervo. |
 | `SettingsTabsHooks` | `src/Hook/SettingsTabsHooks.php` | Aba "Privacidade" em Minha conta > Configurações (o Portal monta as abas e chama o alter). |
 
 ### `Legacy`
@@ -186,6 +189,12 @@ e o resolver de variantes. Fórum e respostas usam `author_forum`; Revista usa
 | `SocialLinksCard` | `src/Social/SocialLinksCard.php` | Caixa "Redes sociais" da Minha conta, embaixo da bio: uma linha por rede, com ícone, valor atual e lápis. |
 | `SocialNetworks` | `src/Social/SocialNetworks.php` | Redes sociais do perfil: Instagram, Facebook e Reddit. |
 | `SocialNetworksInterface` | `src/Social/SocialNetworksInterface.php` | Contrato de leitura das redes; as URLs existentes são revalidadas por esquema e host permitido. |
+
+### `Plugin`
+
+| Classe | Arquivo | Responsabilidade |
+| --- | --- | --- |
+| `AuthorCard` | `src/Plugin/views/field/AuthorCard.php` | Campo de Views `aculta_user_author_card`: renderiza o cartão por linha, carrega a conta pelo `uid` quando o cache da query não traz `_entity` e aceita variante/tamanho. |
 
 ### `src`
 

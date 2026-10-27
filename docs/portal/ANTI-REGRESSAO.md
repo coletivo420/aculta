@@ -35,11 +35,12 @@ invariante verificável. Para as camadas de regra de arquitetura e ownership, ve
 | INV-FOTO-2 | Foto | "Sortear outro avatar" só existe com foto do acervo. | Gate + HTTP | Seção P1, P3 |
 | INV-FOTO-3 | Foto | Sem link "Recortar foto"; o recorte abre só logo após o envio (`photo-flow.js`). | Gate | Seção P2, P5 |
 | INV-FOTO-4 | Foto | Recorte só do arquivo recém-enviado (temporário, do próprio usuário); foto salva recusada. | Gate + HTTP | Seção P5 |
-| INV-FOTO-5 | Foto | Uma única caixa de recorte no modal (achatamento limpa o `#pre_render`). | Gate + Chromium | Seção N / P2 |
-| INV-FOTO-6 | Foto | Aplicar recorte troca a foto da conta e recarrega o painel; sem reabrir o popup (sem loop). | Gate + Chromium | Seção P2 |
+| INV-FOTO-5 | Foto | Uma única caixa de recorte no modal (achatamento limpa o `#pre_render`). | Gate + Firefox ESR | Seção N / P2 |
+| INV-FOTO-6 | Foto | Aplicar recorte troca a foto da conta e recarrega o painel; sem reabrir o popup (sem loop). | Gate + Firefox ESR | Seção P2 |
 | INV-FOTO-7 | Foto | Popup sem nome/link da foto atual; "Remover foto" só em foto personalizada e sorteia do acervo. | Gate + HTTP | Seção P4 |
-| INV-FOTO-8 | Foto | Sortear só troca a prévia do modal (escolha pendente); a foto muda ao salvar; abrir/fechar sem salvar descarta a escolha. | Gate + Chromium | Seção P7 |
+| INV-FOTO-8 | Foto | Sortear só troca a prévia do modal (escolha pendente); a foto muda ao salvar; abrir/fechar sem salvar descarta a escolha. | Gate + Firefox ESR | Seção P7 |
 | INV-FOTO-9 | Foto | Foto importada por OAuth é personalizada (permanente, fora do acervo). | Gate + teste de criação de conta | docs/integrations/GOOGLE.md |
+| INV-FOTO-10 | Foto | O catálogo do acervo é válido e tem ao menos uma entrada ativa com arquivo; não existe estado "sem acervo" em produção. | Gate `validate-aculta-user-photo.php` | FOTO-PERFIL / architecture/avatar |
 | INV-TS-1 | Turnstile | `/entrar` (user_login_form), cadastro, recuperação de senha e formulários de contato/participação continuam com o desafio. | Gate `validate-turnstile-exceptions.php` | docs/portal/TURNSTILE.md |
 | INV-TS-2 | Turnstile | O popup "Entrar" (`aculta_login_popup_form`) não tem desafio, e o flood control do Core continua ativo. | Gate + revisão | TESTES-NAVEGADOR seção R |
 | INV-TS-3 | Turnstile | Carrinho, checkout e cadastro pelo fluxo de compra não recebem desafio (EXCEPTION_FORM_IDS). | Gate | docs/portal/TURNSTILE.md, seção Exceções |
