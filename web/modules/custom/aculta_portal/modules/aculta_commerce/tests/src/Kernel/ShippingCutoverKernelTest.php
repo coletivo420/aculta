@@ -316,7 +316,7 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     $service->migrateMethods();
     $resultado = $service->retargetShipments();
     $this->assertSame(1, $resultado['remessas_copiadas']);
-    $this->assertSame(1, $resultado['pedidos_ajustados']);
+    $this->assertSame(1, $resultado['referencias_reapontadas']);
 
     $pedido = Order::load($pedido->id());
     $referencias = $pedido->get('shipments')->referencedEntities();

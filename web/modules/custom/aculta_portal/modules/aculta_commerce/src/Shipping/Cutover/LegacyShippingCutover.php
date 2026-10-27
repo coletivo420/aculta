@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_commerce\Shipping\Cutover;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -43,6 +44,7 @@ final class LegacyShippingCutover {
     private readonly EntityDefinitionUpdateManagerInterface $entityDefinitionUpdateManager,
     private readonly PluginManagerInterface $widgetManager,
     private readonly PluginManagerInterface $formatterManager,
+    private readonly Connection $database,
   ) {}
 
   /**
@@ -163,12 +165,12 @@ final class LegacyShippingCutover {
    * original é apagada. Depois, storage e campo do pedido recalculam dependências, para que a desinstalação
    * do contrib não os apague. Idempotente.
    *
-   * @return array{pedidos_ajustados:
+   * @return array{referencias_reapontadas:
    *   int, remessas_copiadas: int, remessas_apagadas: int, destino: string}
    */
   public function retargetShipments(): array {
     $resultado = [
-      'pedidos_ajustados' => 0,
+      'referencias_reapontadas' => 0,
       'remessas_copiadas' => 0,
       'remessas_apagadas' => 0,
       'destino' => 'aculta_shipment',
@@ -203,32 +205,55 @@ final class LegacyShippingCutover {
 
     }
 
-    // Storage e tipo de pedido vão para o motor antes de qualquer pedido ser salvo. Com o alvo antigo, o processador
-    // de pedido do contrib (LateOrderProcessor) lê referencedEntities() como commerce_shipment e descarta o id novo,
-    // que não existe ali. Por isso a ordem importa.
+    // Storage e tipo de pedido vão para o motor antes do reapontamento: a partir daí o pedido é lido pelo campo do motor.
     $campo->setSetting('target_type', 'aculta_shipment');
     $this->atualizarDependenciasDoCampo($campo);
     $this->migrarTiposDePedido();
 
     if ($remessas !== []) {
-      $pedidos = $this->entityTypeManager->getStorage('commerce_order');
-      $ids = $pedidos->getQuery()->condition('shipments.target_id', NULL, 'IS NOT NULL')->accessCheck(FALSE)->execute();
-      foreach ($pedidos->loadMultiple($ids) as $pedido) {
-        $novas = [];
-        foreach ($pedido->get('shipments') as $item) {
-          if (isset($mapa[$item->target_id])) {
-            $novas[] = ['target_id' => $mapa[$item->target_id]];
-          }
-        }
-        $pedido->set('shipments', $novas);
-        $pedido->save();
-        $resultado['pedidos_ajustados']++;
-      }
-
+      $resultado['referencias_reapontadas'] = $this->reapontarReferencias($mapa);
+      $this->entityTypeManager->getStorage('commerce_order')->resetCache();
       $this->entityTypeManager->getStorage('commerce_shipment')->delete($remessas);
       $resultado['remessas_apagadas'] = count($remessas);
     }
     return $resultado;
+  }
+
+  /**
+   * Troca, nas tabelas do campo, o id da remessa legada pelo id da cópia no motor.
+   *
+   * Feito em SQL e não por save() do pedido: salvar dispara o recálculo de remessas do contrib, que ainda está
+   * instalado nesta etapa e falha sem o tipo de remessa do tipo de pedido. Cobre a tabela atual e a de revisão.
+   *
+   * @param array<int, int> $mapa
+   *   Id legado => id novo.
+   *
+   * @return int
+   *   Linhas reapontadas na tabela atual.
+   */
+  private function reapontarReferencias(array $mapa): int {
+    if ($mapa === []) {
+      return 0;
+    }
+    // Uma só passada com CASE: trocas em sequência poderiam reapontar a mesma linha duas vezes.
+    $casos = '';
+    foreach ($mapa as $antigo => $novo) {
+      $casos .= ' WHEN ' . (int) $antigo . ' THEN ' . (int) $novo;
+    }
+    $total = 0;
+    foreach (['commerce_order__shipments', 'commerce_order_revision__shipments'] as $tabela) {
+      if (!$this->database->schema()->tableExists($tabela)) {
+        continue;
+      }
+      $linhas = $this->database->update($tabela)
+        ->expression('shipments_target_id', 'CASE shipments_target_id' . $casos . ' END')
+        ->condition('shipments_target_id', array_map('intval', array_keys($mapa)), 'IN')
+        ->execute();
+      if ($tabela === 'commerce_order__shipments') {
+        $total = $linhas;
+      }
+    }
+    return $total;
   }
 
   /**
