@@ -137,8 +137,14 @@ class MelhorEnvioTokenCipherTest extends UnitTestCase {
   public function testTamperedPayloadFailsAuthentication(): void {
     $cipher = $this->cipher(str_repeat('ab', 32));
     $payload = $cipher->encrypt('segredo');
-    $suffix = str_ends_with($payload, 'A=') ? 'B=' : 'A=';
-    $tampered = substr($payload, 0, -2) . $suffix;
+    // Adultera um bit do ciphertext decodificado, não caracteres base64: no fim do texto há bits de preenchimento que
+    // não mudam os bytes decodificados. Trocar os dois últimos caracteres passava sem exceção em cerca de 5% das
+    // execuções (medido: 104 de 2000 adulterações não detectadas).
+    $prefix = substr($payload, 0, strpos($payload, ':') + 1);
+    $raw = base64_decode(substr($payload, strlen($prefix)), TRUE);
+    $this->assertIsString($raw);
+    $raw[strlen($raw) - 1] = chr(ord($raw[strlen($raw) - 1]) ^ 0x01);
+    $tampered = $prefix . base64_encode($raw);
 
     $this->expectException(\RuntimeException::class);
     $cipher->decrypt($tampered);
