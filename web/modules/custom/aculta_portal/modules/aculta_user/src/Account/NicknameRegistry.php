@@ -193,7 +193,8 @@ final class NicknameRegistry {
   /**
    * Rebuilds the derived index after validating existing Profiles.
    *
-   * @return array{uids: int, profiles: int, same_uid_conflicts: int, reconciled_profiles: int}
+   * @return array{uids: int, profiles: int, same_uid_conflicts: int,
+   *   reconciled_profiles: int}
    *   Aggregate counts only; no nickname or personal data is returned.
    */
   public function rebuild(): array {
@@ -202,7 +203,8 @@ final class NicknameRegistry {
     $slugOwners = [];
     $profileCount = 0;
     $slugConflicts = 0;
-    // Contagens de perfis que não reivindicam índice. Nenhum deles é gravado.
+    // Contagens de perfis que não reivindicam índice. Nenhum deles é
+    // gravado.
     $ignoredNoOwner = 0;
     $ignoredEmpty = 0;
     $orphanWithNickname = 0;
@@ -223,7 +225,8 @@ final class NicknameRegistry {
         ? trim((string) $profile->get('field_nickname')->value)
         : '';
       // Perfil sem dono não reivindica índice e não bloqueia o rebuild.
-      // Com apelido preenchido, é contado à parte para investigação posterior.
+      // Com apelido preenchido, é contado à parte para investigação
+      // posterior.
       if ($uid <= 0) {
         $nickname === '' ? $ignoredNoOwner++ : $orphanWithNickname++;
         continue;
@@ -277,7 +280,8 @@ final class NicknameRegistry {
       $slugOwners[$slug] = (int) $uid;
     }
 
-    // Bloqueia só por conflito real entre UIDs. Falha de banco ou transação propaga como exceção.
+    // Bloqueia só por conflito real entre UIDs. Falha de banco ou transação
+    // propaga como exceção.
     if ($slugConflicts > 0) {
       throw new \RuntimeException(sprintf(
         'Nickname index rebuild blocked: cross-UID conflicts=%d.',

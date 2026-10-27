@@ -371,7 +371,9 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
    */
 
   /**
-   * Perfil sem dono e vazio é ignorado: não bloqueia o rebuild nem reivindica índice.
+   * Perfil sem dono e vazio é ignorado sem bloquear o rebuild.
+   *
+   * Também não reivindica índice.
    */
   public function testRebuildIgnoresOwnerlessEmptyProfileWithoutBlocking(): void {
     $account = $this->account('dono-ok');
@@ -387,7 +389,9 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
   }
 
   /**
-   * Perfil sem dono com apelido não reivindica índice, é contado à parte e não bloqueia.
+   * Perfil sem dono com apelido não reivindica índice e não bloqueia.
+   *
+   * É contado à parte.
    */
   public function testRebuildCountsOwnerlessProfileWithNicknameWithoutClaim(): void {
     $account = $this->account('dono-ok-2');
