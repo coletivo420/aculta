@@ -20,6 +20,15 @@ use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
 use Drupal\aculta_studio\Controller\GanjalabController;
 use Drupal\aculta_studio\Experience\GanjalabExperienceProvider;
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
+use Drupal\aculta_image\ImageRenderer;
+use Drupal\aculta_user\Identity\AuthorCardBuilder;
+use Drupal\aculta_user\Identity\AuthorIdentityResolver;
+use Drupal\aculta_user\PublicProfileLinkInterface;
+use Drupal\aculta_user\PublicProfilePolicy;
+use Drupal\aculta_user\Social\SocialNetworksInterface;
+use Drupal\profile\ProfileStorageInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannel;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -46,7 +55,9 @@ trait AcultaLmsDependencyHarnessTrait {
     $container->register('aculta_pagamentos_mercadopago.payment_service', MercadoPagoPaymentService::class)
       ->addArgument(new Reference('aculta_pagamentos_mercadopago.client_factory'))
       ->addArgument(new Reference('aculta_pagamentos_mercadopago.payment_policy'))
-      ->addArgument(new Reference('aculta_pagamentos_mercadopago.logger'));
+      ->addArgument(new Reference('aculta_pagamentos_mercadopago.logger'))
+      ->addArgument(new Reference('entity_type.manager'))
+      ->addArgument(new Reference('lock'));
     $container->register('aculta_pagamentos_mercadopago.recurrence_service', MercadoPagoRecurrenceService::class)
       ->addArgument(new Reference('aculta_pagamentos_mercadopago.client_factory'))
       ->addArgument(new Reference('aculta_pagamentos_mercadopago.recurrence_request_builder'))
@@ -55,7 +66,8 @@ trait AcultaLmsDependencyHarnessTrait {
       ->addArgument(new Reference('entity_type.manager'))
       ->addArgument(new Reference('aculta_pagamentos_mercadopago.recurrence_service'))
       ->addArgument(new Reference('aculta_pagamentos_mercadopago.logger'))
-      ->addArgument(new Reference('datetime.time'));
+      ->addArgument(new Reference('datetime.time'))
+      ->addArgument(new Reference('lock'));
     $container->setAlias('aculta_portal.payment_provider.subscription_status', 'aculta_pagamentos_mercadopago.subscription_recorder');
     $container->setAlias('aculta_portal.payment_provider.subscription_operations', 'aculta_pagamentos_mercadopago.subscription_recorder');
     $container->setAlias('aculta_portal.payment_provider.payment_operations', 'aculta_pagamentos_mercadopago.payment_service');
@@ -97,6 +109,29 @@ trait AcultaLmsDependencyHarnessTrait {
     $container->register('aculta_studio.ganjalab_controller', GanjalabController::class)
       ->addArgument(new Reference('aculta_studio.experience_manager'))
       ->addArgument(new Reference('current_user'));
+    $this->registerAuthorCardBuilder($container);
+  }
+
+  /**
+   * Registers the real author card builder.
+   *
+   * Partial kernels do not install the full aculta_user configuration graph.
+   */
+  protected function registerAuthorCardBuilder(ContainerBuilder $container): void {
+    $profile_storage = $this->createMock(ProfileStorageInterface::class);
+    $profile_storage->method('loadByUser')->willReturn(NULL);
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->method('getStorage')->with('profile')->willReturn($profile_storage);
+    $resolver = new AuthorIdentityResolver(
+      $entity_type_manager,
+      $this->createMock(PublicProfileLinkInterface::class),
+      (new \ReflectionClass(ImageRenderer::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(PublicProfilePolicy::class))->newInstanceWithoutConstructor(),
+      $this->createMock(SocialNetworksInterface::class),
+      $this->createMock(DateFormatterInterface::class),
+    );
+    $container->register('aculta_user.author_card_builder', AuthorCardBuilder::class)
+      ->addArgument($resolver);
   }
 
 }

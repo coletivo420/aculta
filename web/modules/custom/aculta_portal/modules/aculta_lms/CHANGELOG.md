@@ -968,3 +968,8 @@ Submódulo opcional, publisher DI e evento imutável de conclusão aprovada do
 Drupal LMS. Testes Unit (2/2) e Kernel de instalação (1/1) PASS. Nenhuma
 persistência, rota, configuração ou integração Messenger ativa é criada.
 RUNTIME STATUS: DEFERRED; o submódulo não foi habilitado no Runtime.
+## 0.1.0-dev.95 — corrigir harness Kernel compartilhado (2026-10-27)
+
+- O harness LMS registra a cadeia real `AuthorCardBuilder` para os Kernels parciais e injeta os cinco argumentos do serviço compartilhado de pagamento. Isso elimina erros de container anteriores às asserções sem adicionar serviços fictícios ao produto.
+- `AcultaLmsInstallTest`: 4 testes / 49 assertions PASS; `ClassRosterVisibilityTest`: 1/33 PASS; Unit LMS: 88/453 PASS. As depreciações observadas vêm de Core/contrib.
+

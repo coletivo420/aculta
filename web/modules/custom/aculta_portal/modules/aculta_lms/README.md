@@ -48,7 +48,10 @@ válidos preservam a membership, e vínculos manuais sem origem não são altera
 `CourseOrderEnrollmentManagerTest`: 9 testes / 47 assertions; Unit LMS/Messenger:
 89/482 PASS.
 `AcultaLmsInstallTest` também verifica que insert e update de pedido estão
-registrados como hooks de reconciliação; Kernel focal: 4/42 PASS.
+registrados como hooks de reconciliação; Kernel focal: 4/49 PASS. O harness
+compartilhado injeta a cadeia real do `AuthorCardBuilder` e todos os argumentos
+dos serviços de pagamento sem instalar a configuração completa de módulos
+alheios.
 
 ## F11 — emissão e revogação por educadores
 
