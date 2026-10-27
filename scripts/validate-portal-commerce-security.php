@@ -504,10 +504,12 @@ $assert(!str_contains($admin_form_html, $fake_access_token), 'Gateway admin HTML
 $assert(($gateway_storage->loadMultipleOverrideFree(['mercado_pago'])['mercado_pago']->getPluginConfiguration()[$mp_token_field] ?? '') === '', 'Fake runtime credentials were not persisted.');
 $gateway = \Drupal\commerce_payment\Entity\PaymentGateway::load('mercado_pago');
 $assert((bool) $gateway, 'The Mercado Pago gateway config entity exists.');
-// Regra de ambiente do deployer: o gateway fica ligado somente quando o ambiente tem o access token (variável de ambiente).
-$mp_token_env = $mp_environment === 'test' ? 'MERCADOPAGO_TEST_ACCESS_TOKEN' : 'MERCADOPAGO_PRODUCTION_ACCESS_TOKEN';
-$mp_credential_present = (string) getenv($mp_token_env) !== '';
-$assert($gateway->status() === $mp_credential_present, 'The Mercado Pago gateway is enabled exactly when this environment has its access token.');
+// O modo persistido do gateway tem de corresponder ao ambiente declarado em var/deployer/environment.json. O estado
+// ligado/desligado não é fixado aqui: cada banco guarda o seu. Lê-se o storage bruto, sem a sobreposição do deployer,
+// que já traz o modo do ambiente e tornaria a checagem trivial.
+$mp_expected_mode = $mp_environment === 'test' ? 'test' : 'live';
+$mp_persisted_mode = (\Drupal::service('config.storage')->read('commerce_payment.commerce_payment_gateway.mercado_pago')['configuration']['mode'] ?? NULL);
+$assert($mp_persisted_mode === $mp_expected_mode, 'The Mercado Pago gateway mode matches the environment declared in var/deployer/environment.json.');
 $assert($gateway->getPluginId() === 'aculta_mercadopago_checkout_pro', 'The gateway uses the installed Mercado Pago Checkout Pro plugin.');
 $assert(count($gateway->getConditions()) === 3, 'The gateway is constrained by Store, order type, and currency.');
 // Configuração persistida (sem os overrides de ambiente, que trazem a credencial em runtime).
