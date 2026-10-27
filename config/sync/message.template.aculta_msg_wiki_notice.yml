@@ -1,0 +1,27 @@
+uuid: af5b7a1f-9ceb-4c45-af9d-0dd8c0bc4879
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.plain_text
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: 26njUujHb5D5ZTqVpAqRgkWuBJ9TzF0KCO5zfICJnBA
+template: aculta_msg_wiki_notice
+label: 'Aviso editorial da Wiki ACULTA'
+description: 'Aviso editorial mínimo sem conteúdo privado.'
+text:
+  -
+    value: 'Atualização editorial da Wiki ACULTA'
+    format: plain_text
+  -
+    value: '@summary Acesse: @url'
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {  }
