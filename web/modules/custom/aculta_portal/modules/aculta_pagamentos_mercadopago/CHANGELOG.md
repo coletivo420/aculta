@@ -240,3 +240,8 @@
 - PHP lint PASS. PHPCS Drupal e DrupalPractice no `RedirectCheckoutForm`: zero
   erros; seis avisos antigos de linhas acima de 80 caracteres permanecem.
 
+## 0.1.0-dev.37 — distinguir implementação de recorrência e homologação (2026-10-27)
+
+- Documentação agora registra o vínculo recorrente com o pedido como implementado e coberto por Unit/Kernel; mantém a homologação ponta a ponta do comprador sandbox como pendente (DT-MP-02/DT-MP-03).
+- Unit MP: 183 testes / 712 assertions PASS. Revisão documental e `git diff --check`.
+

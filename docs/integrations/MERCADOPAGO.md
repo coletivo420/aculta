@@ -119,5 +119,5 @@ Como usar: abrir `https://www.mercadopago.com.br/` em Firefox ESR visível, clic
   (a rota de `commerce_payment.notify` é reescrita pelo Portal). Cadastrar esse endereço no painel do Mercado Pago
   para os tópicos `payment`, `subscription_preapproval`, `subscription_preapproval_plan` e `subscription_authorized_payment`.
   Produção usa o endereço equivalente do domínio de produção, declarado pelo `aculta_deployer`.
-- Assinatura de doação recorrente: pendente o vínculo com o pedido (DT-MP-02) e o e-mail do comprador de teste (DT-MP-03).
+- Assinatura de doação recorrente: o código vincula a assinatura ao pedido sob lock e valida a referência antes de reutilizar; a homologação ponta a ponta continua pendente da autorização do comprador sandbox (DT-MP-02/DT-MP-03).
 - Registro das dívidas desta integração: `docs/operations/DEBT-REGISTER.md`, seção "Mercado Pago".
