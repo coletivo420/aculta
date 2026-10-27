@@ -8,6 +8,7 @@
 - `drush cr` PASS; HTTP no checkout: MAIN `/` 200; SHOP `/` 200; webhook POST sem assinatura 503. Firefox ESR/geckodriver visível em `DISPLAY=:0`: smoke MAIN, SHOP e APOIO 3/3.
 - O smoke visual é de páginas públicas e não exercita pagamento. Kernel não executado porque `SIMPLETEST_DB` não está configurada nesta sessão; credenciais externas e arquivos de segredos não foram lidos. Homologação sandbox continua pendente.
 - Snapshot, `updatedb` e `config:import`: não executados. O índice global agora passa após os status Commerce/User e README terem sido reconciliados em commits próprios. Nenhum pagamento ou credencial foi acionado.
+- Commit `a7a158490` publicado por fast-forward em `origin/chore/aculta-m0-integridade` após fetch e confirmação de ancestralidade; checkout de teste destacado no mesmo HEAD. Sem troca de árvore e sem gatilho de banco adicional.
 
 **Branch:** `chore/aculta-m0-integridade`  
 **Último checkpoint remoto verificado antes desta atualização:** `c26f27c76` (`docs(game): record ForumPost award hook coverage`), enviado por push normal a `origin/chore/aculta-m0-integridade`.
