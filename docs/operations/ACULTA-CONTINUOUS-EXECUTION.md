@@ -1226,3 +1226,69 @@ Nenhuma remota passou pelo critério: **nenhuma excluída nesta etapa**. `origin
 | origin/fix/validador-seguranca-allowlist | 3 | f9eef8472 test(security): remove segunda checagem de estado fixo do gateway MP |
 
 Verificação: `git ls-remote --heads origin` lista as branches remotas mantidas e `chore/aculta-m0-integridade`.
+
+## Publicação do candidato a9bfe7820 e limpeza de branches — 2026-10-27
+
+### Publicação
+
+- Head antes: `6b28136d3`. Publicado: `a9bfe7820` (fast-forward, sem force). `6b28136d3` é ancestral de `a9bfe7820`.
+- Checkout servido: `a9bfe7820`.
+- Descrição da PR 298: seção "Estado do candidato publicado (a9bfe7820)" acrescentada, sem alterar o conteúdo existente. Atualização via API REST, porque `gh pr edit` falhou com rc 1 por aviso de Projects clássicos.
+- Conflitos de cherry-pick: somente em `docs/operations/RUNTIME-UPDATE-WINDOW.md`, resolvidos mantendo os dois lados (3 ocorrências).
+
+### Gates no candidato a9bfe7820
+
+Vermelhos (pendentes de decisão do responsável):
+
+- `validate-portal-commerce-security.php` (via `drush scr`): `No test or real Commerce orders remain.`, rc 1. Pedidos reais ou de teste no Runtime de teste: `doacao` 14 rascunhos; `default` 1 rascunho; 1 pedido sem flow.
+- phpcs (Drupal, DrupalPractice) nos 6 PHP alterados: 112 erros e 23 avisos no validador de segurança; avisos em `LegacyShippingCutover.php` (24), `ShippingCutoverKernelTest.php` (16), `ShippingMethodBase.php` (1), `NicknameRegistry.php` (1), `NicknameRegistryKernelTest.php` (2). Não corrigido.
+
+Verdes:
+
+- `git diff --check 6b28136d3..a9bfe7820`: limpo.
+- `php -l` nos 6 PHP alterados: sem erros.
+- `messenger-counter.test.js`: `PASS: 6 atualizações de contador e rótulo`.
+- PHPUnit `UtilityBarRenderTest` (configuração do core): `OK (1 test, 41 assertions)`.
+- `validate-aculta420-sdc-schemas.php`: `PASS (45 components, 23 include calls, 628 checks)`.
+- `validate-aculta420-design-foundations.php`: rc 0; teste: `PASS (157 expected outcomes)`.
+- `validate-browser-validators.php`: `PASS (21 checks)`.
+- `validate-module-theme-boundary.php`: `PASS (3060 verificações)`.
+- `validate-aculta420-foundation.php`: `345 ACULTA420 Foundation checks passed.`
+- `validate-aculta420-shell-contract.php`: `PASS (11 checks)`; teste: `PASS (19 fixtures)`.
+
+Não executados:
+
+- Testes Kernel alterados (`ShippingCutoverKernelTest`, `NicknameRegistryKernelTest`): sem `SIMPLETEST_DB` no ambiente. A credencial fica em `secrets/`, que não foi lida.
+
+### Gatilho de banco: não executado
+
+- `drush updatedb:status` (somente leitura): 20 pendências, incluindo `aculta_commerce_melhorenvio` 8001/8002, `aculta_id_cpf` 10002, `aculta_lms_resources` 8001, Messenger 10008 a 10012, `aculta_user` 10013 e post-updates de remessas e de Messenger.
+- `drush config:status` (somente leitura): 209 itens. 100 só no banco, 76 diferentes, 33 só no `config/sync`. Um `config:import` apagaria itens presentes só no banco; não foi feito.
+- Snapshot, `updatedb`, `config:import`, `pm:uninstall` e `DROP`: não executados.
+- Escrita de cache: `drush cr` no checkout servido, em etapa anterior e autorizada.
+
+### Verificação do conteúdo das branches remotas no head publicado
+
+Critério: ancestral do head, ou arquivos alterados pela branch idênticos no head. Para `RUNTIME-UPDATE-WINDOW.md`, os títulos de seção da branch precisam existir no head.
+
+| Remota | Ancestral | Arquivos da branch | Resultado |
+|---|---|---|---|
+| origin/docs/aculta-runtime-snapshot-ensaio | não | 1 (doc) | 12 títulos presentes: contida |
+| origin/feat/aculta-commerce-cutover | não | 7 (código) | idênticos: contida |
+| origin/feat/aculta-user-10013-contagem | não | 6 | 5 idênticos; doc com 14 títulos presentes: contida |
+| origin/fix/validador-seguranca-allowlist | não | 1 | idêntico: contida |
+| origin/fix/alinhamento-sync-runtime | não | 10 | 9 idênticos; doc com título "## Estado do ensaio: BLOQUEADO no passo 2" ausente no head: **MANTIDA** |
+
+### Exclusões
+
+- **Remotas excluídas** (`git push origin --delete`, sem force): `docs/aculta-runtime-snapshot-ensaio`, `feat/aculta-commerce-cutover`, `feat/aculta-user-10013-contagem`, `fix/validador-seguranca-allowlist`.
+- **Remotas mantidas:** `fix/alinhamento-sync-runtime` (título ausente no head, arquivo `RUNTIME-UPDATE-WINDOW.md`).
+- **Locais excluídas:** nenhuma. As ancestrais do head e as branches da lista têm worktree, e a regra manda não removê-las. A única sem worktree e não contida, `backup/checkout-antes-pr-8499180a6`, fica.
+- **Locais mantidas com worktree em uso (ancestrais do head):** `agent/aculta-me-precision-tests`, `agent/aculta-melhorenvio-a6`, `agent/aculta-mercadopago-closeout`, `agent/index-a6`, `analise-integracao`, `feat/aculta-document-viewer-fechamento`, `feat/aculta-mp-extracao`, `feat/melhorenvio-token-cipher`.
+- **Locais mantidas com worktree em uso (não contidas):** `agent/aculta-magazine-a2`, `agent/aculta-magazine-completion-20261026`, `agent/aculta-melhorenvio-kernel`, `agent/aculta-secrets-manager`, `agent/melhorenvio-service-fix`, `agent/statistics-focal`, `docs/aculta-runtime-snapshot-ensaio`, `docs/barra-multidominio-janelas`, `ensaio/geral-local`, `feat/aculta-commerce-cutover`, `feat/aculta-commerce-shipping-port`, `feat/aculta-frentes-independentes`, `feat/aculta-me-conciliacao`, `feat/aculta-melhorenvio-integracao`, `feat/aculta-user-10013-contagem`, `fix/alinhamento-sync-runtime`, `fix/validador-seguranca-allowlist`.
+- Worktrees: nenhuma removida nesta etapa. Esta registro usa uma worktree temporária, removida ao final.
+
+### Contagem final
+
+- `git branch -r`: 4 linhas (`origin/HEAD`, `origin/chore/aculta-m0-integridade`, `origin/fix/alinhamento-sync-runtime`, `origin/main`).
+- `git branch`: 28 branches locais, mais a linha de `HEAD` destacado do checkout servido.
