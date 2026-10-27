@@ -106,6 +106,45 @@ final class MelhorEnvioOriginForm extends ConfigFormBase {
       '#size' => 2,
       '#maxlength' => 2,
     ];
+
+    $package = (array) $this->config(self::SETTINGS)->get('package');
+    $form['package'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Pacote padrão de envio'),
+      '#description' => $this->t('Medidas e peso reais da embalagem usada no envio. Sem esses valores o frete fica indisponível: nenhuma medida é presumida.'),
+    ];
+    $form['package']['width'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Largura (cm)'),
+      '#default_value' => $package['width'] ?? 0,
+      '#min' => 0,
+      '#step' => 1,
+      '#required' => TRUE,
+    ];
+    $form['package']['height'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Altura (cm)'),
+      '#default_value' => $package['height'] ?? 0,
+      '#min' => 0,
+      '#step' => 1,
+      '#required' => TRUE,
+    ];
+    $form['package']['length'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Comprimento (cm)'),
+      '#default_value' => $package['length'] ?? 0,
+      '#min' => 0,
+      '#step' => 1,
+      '#required' => TRUE,
+    ];
+    $form['package']['weight'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Peso (kg)'),
+      '#default_value' => $package['weight'] ?? 0,
+      '#min' => 0,
+      '#step' => 0.001,
+      '#required' => TRUE,
+    ];
     return parent::buildForm($form, $form_state);
   }
 
@@ -122,6 +161,16 @@ final class MelhorEnvioOriginForm extends ConfigFormBase {
     if ($uf !== '' && preg_match('/^[A-Za-z]{2}$/', $uf) !== 1) {
       $form_state->setErrorByName('administrative_area', $this->t('UF com duas letras, ou vazia.'));
     }
+    foreach (['width', 'height', 'length'] as $dimension) {
+      $value = $form_state->getValue($dimension);
+      if (!is_numeric($value) || (int) $value != $value || (int) $value < 1) {
+        $form_state->setErrorByName($dimension, $this->t('Informe um número inteiro de centímetros, maior que zero.'));
+      }
+    }
+    $weight = $form_state->getValue('weight');
+    if (!is_numeric($weight) || (float) $weight <= 0) {
+      $form_state->setErrorByName('weight', $this->t('Informe o peso em quilos, maior que zero.'));
+    }
   }
 
   /**
@@ -137,9 +186,15 @@ final class MelhorEnvioOriginForm extends ConfigFormBase {
       'locality' => trim((string) $form_state->getValue('locality')),
       'administrative_area' => strtoupper(trim((string) $form_state->getValue('administrative_area'))),
     ];
-    $this->config(self::SETTINGS)->set('origin', $origin)->save();
+    $package = [
+      'width' => (int) $form_state->getValue('width'),
+      'height' => (int) $form_state->getValue('height'),
+      'length' => (int) $form_state->getValue('length'),
+      'weight' => round((float) $form_state->getValue('weight'), 3),
+    ];
+    $this->config(self::SETTINGS)->set('origin', $origin)->set('package', $package)->save();
     parent::submitForm($form, $form_state);
-    $this->messenger()->addStatus($this->t('Origem da expedição salva.'));
+    $this->messenger()->addStatus($this->t('Origem e pacote padrão salvos.'));
   }
 
 }

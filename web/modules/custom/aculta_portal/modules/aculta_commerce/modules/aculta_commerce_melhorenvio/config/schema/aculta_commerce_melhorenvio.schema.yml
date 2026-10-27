@@ -27,6 +27,22 @@ aculta_commerce_melhorenvio.settings:
         administrative_area:
           type: string
           label: 'UF'
+    package:
+      type: mapping
+      label: 'Pacote padrão da cotação'
+      mapping:
+        width:
+          type: integer
+          label: 'Largura (cm)'
+        height:
+          type: integer
+          label: 'Altura (cm)'
+        length:
+          type: integer
+          label: 'Comprimento (cm)'
+        weight:
+          type: float
+          label: 'Peso (kg)'
     environment:
       type: string
       label: 'Ambiente do Melhor Envio (sandbox ou production)'

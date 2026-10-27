@@ -69,9 +69,9 @@ class ShippingSimulator {
    * @param string $postalCode
    *   CEP digitado pelo visitante, com ou sem máscara.
    * @param \Drupal\aculta_commerce_melhorenvio\Quote\QuotePackage|null $package
-   *   Pacote real da remessa. NULL enquanto o cadastro não tiver dimensões: o simulador fica indisponível.
+   *   Pacote da remessa. NULL usa o pacote padrão cadastrado na configuração; sem ele, o simulador fica indisponível.
    */
-  public function simulate(string $postalCode, ?QuotePackage $package): ShippingSimulation {
+  public function simulate(string $postalCode, ?QuotePackage $package = NULL): ShippingSimulation {
     $destination = $this->cep->normalize($postalCode);
     if ($destination === NULL) {
       return ShippingSimulation::unavailable(ShippingSimulation::REASON_INVALID_POSTAL_CODE);
@@ -80,6 +80,7 @@ class ShippingSimulator {
     if ($reason !== NULL) {
       return ShippingSimulation::unavailable($reason);
     }
+    $package ??= $this->packageFor();
     if ($package === NULL) {
       return ShippingSimulation::unavailable(ShippingSimulation::REASON_NO_PACKAGE);
     }
@@ -91,7 +92,8 @@ class ShippingSimulator {
     }
 
     try {
-      $options = $this->quoter->attempt(['postal_code' => $destination], $package);
+      // País explícito: a regra de cotação do mapeador recusa destino sem BR.
+      $options = $this->quoter->attempt(['country_code' => 'BR', 'postal_code' => $destination], $package);
     }
     catch (MelhorEnvioException $e) {
       // Categoria e status apenas: sem CEP, sem corpo de resposta e sem token.
@@ -107,14 +109,38 @@ class ShippingSimulator {
   }
 
   /**
-   * Disponibilidade para exibir ao visitante sem CEP: configuração e pacote. Não chama a API.
-   *
-   * O produto ainda não tem peso nem dimensões cadastrados, então não há pacote real: a disponibilidade é indisponível
-   * (sem pacote) mesmo com origem e credencial. Quando o cadastro existir, esta verificação passa a olhar o pacote do
-   * produto ou do carrinho.
+   * Disponibilidade para exibir ao visitante sem CEP: configuração e pacote padrão. Não chama a API.
    */
   public function availabilityReason(): ?string {
-    return $this->configurationReason() ?? ShippingSimulation::REASON_NO_PACKAGE;
+    if ($this->configurationReason() !== NULL) {
+      return $this->configurationReason();
+    }
+    return $this->packageFor() === NULL ? ShippingSimulation::REASON_NO_PACKAGE : NULL;
+  }
+
+  /**
+   * Pacote padrão da configuração, ou NULL quando algum valor não foi cadastrado (zero ou ausente). Não usa valor padrão
+   * inventado: sem medidas reais, não há cotação.
+   */
+  public function packageFor(): ?QuotePackage {
+    $package = $this->configs->get(self::SETTINGS)->get('package');
+    if (!is_array($package)) {
+      return NULL;
+    }
+    $width = (int) ($package['width'] ?? 0);
+    $height = (int) ($package['height'] ?? 0);
+    $length = (int) ($package['length'] ?? 0);
+    $weight = (float) ($package['weight'] ?? 0);
+    if ($width <= 0 || $height <= 0 || $length <= 0 || $weight <= 0) {
+      return NULL;
+    }
+    return new QuotePackage(
+      widthCm: (float) $width,
+      heightCm: (float) $height,
+      lengthCm: (float) $length,
+      weightKg: $weight,
+      insuranceValue: 0.0,
+    );
   }
 
   /**

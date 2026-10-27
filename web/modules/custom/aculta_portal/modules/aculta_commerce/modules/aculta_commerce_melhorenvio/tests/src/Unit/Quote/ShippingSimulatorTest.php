@@ -40,9 +40,9 @@ final class ShippingSimulatorTest extends UnitTestCase {
    * @param bool $credentials
    *   Se o cliente tem as chaves do ambiente.
    */
-  private function simulator(?array $origin, bool $credentials, MelhorEnvioQuoter $quoter): ShippingSimulator {
+  private function simulator(?array $origin, bool $credentials, MelhorEnvioQuoter $quoter, ?array $package = NULL): ShippingSimulator {
     $config = $this->createMock(ImmutableConfig::class);
-    $config->method('get')->with('origin')->willReturn($origin);
+    $config->method('get')->willReturnMap([['origin', $origin], ['package', $package]]);
     $configs = $this->createMock(ConfigFactoryInterface::class);
     $configs->method('get')->with('aculta_commerce_melhorenvio.settings')->willReturn($config);
 
@@ -200,6 +200,45 @@ final class ShippingSimulatorTest extends UnitTestCase {
     $this->assertSame('Cálculo de frete indisponível no momento.', ShippingSimulation::unavailable(ShippingSimulation::REASON_NO_ORIGIN)->message());
     $this->assertSame('Cálculo de frete indisponível no momento.', ShippingSimulation::unavailable(ShippingSimulation::REASON_NO_PACKAGE)->message());
     $this->assertSame('Cálculo de frete indisponível no momento.', ShippingSimulation::unavailable(ShippingSimulation::REASON_NO_CREDENTIALS)->message());
+  }
+
+  /**
+   * Pacote padrão só existe com as quatro medidas maiores que zero. Zero ou ausência não vira medida presumida.
+   */
+  public function testPackageForRequiresAllMeasures(): void {
+    $quoter = $this->quoter();
+    $complete = ['width' => 11, 'height' => 2, 'length' => 16, 'weight' => 0.3];
+    $package = $this->simulator(self::ORIGIN, TRUE, $quoter, $complete)->packageFor();
+    $this->assertNotNull($package);
+    $this->assertSame(11.0, $package->widthCm);
+    $this->assertSame(0.3, $package->weightKg);
+    $this->assertSame(0.0, $package->insuranceValue);
+
+    $zeroed = ['width' => 0, 'height' => 2, 'length' => 16, 'weight' => 0.3];
+    $this->assertNull($this->simulator(self::ORIGIN, TRUE, $quoter, $zeroed)->packageFor());
+    $this->assertNull($this->simulator(self::ORIGIN, TRUE, $quoter, NULL)->packageFor());
+  }
+
+  /**
+   * Sem pacote cadastrado, a disponibilidade é indisponível mesmo com origem e credencial.
+   */
+  public function testAvailabilityNeedsConfiguredPackage(): void {
+    $quoter = $this->quoter();
+    $this->assertSame(ShippingSimulation::REASON_NO_PACKAGE, $this->simulator(self::ORIGIN, TRUE, $quoter)->availabilityReason());
+    $complete = ['width' => 11, 'height' => 2, 'length' => 16, 'weight' => 0.3];
+    $this->assertNull($this->simulator(self::ORIGIN, TRUE, $quoter, $complete)->availabilityReason());
+  }
+
+  /**
+   * O destino enviado ao cotador leva o país BR: sem ele, o mapeador recusa o endereço antes da API.
+   */
+  public function testDestinationCarriesCountryForQuote(): void {
+    $quoter = $this->quoter();
+    $quoter->expects($this->once())->method('attempt')
+      ->with(['country_code' => 'BR', 'postal_code' => '01310100'], $this->anything())
+      ->willReturn([]);
+    $result = $this->simulator(self::ORIGIN, TRUE, $quoter)->simulate('01310-100', $this->package());
+    $this->assertSame(ShippingSimulation::STATE_EMPTY, $result->state);
   }
 
 }
