@@ -133,6 +133,12 @@ services:
     class: Drupal\aculta_mailer\Monitor\MailMonitor
     arguments: ['@config.factory', '@state', '@datetime.time', '@logger.channel.aculta_mailer', '@Drupal\aculta_mailer\Webhook\DeliveryEventApplier', '@Drupal\aculta_mailer\Monitor\BounceParser', '@Drupal\aculta_mailer\Monitor\DmarcReportParser', '@?Drupal\aculta_mailer\Transport\SecretProviderInterface', '@Drupal\aculta_mailer\Alert\MailAlerts', '@Drupal\aculta_mailer\Policy\QuotaSignal']
 
+  Drupal\aculta_mailer\Type\SimplifiedAccountConfirmationMailType:
+    class: Drupal\aculta_mailer\Type\SimplifiedAccountConfirmationMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+
   Drupal\aculta_mailer\Type\AdminAlertMailType:
     class: Drupal\aculta_mailer\Type\AdminAlertMailType
     arguments: ['@string_translation']
