@@ -126,3 +126,12 @@ a vir do carrinho:
   sozinha (PAC R$ 23,04, SEDEX R$ 51,97, Mini Envios R$ 18,19).
 - Limites: o produto de doação de teste é do tipo padrão, não passa pelo fluxo real de doação (pedido do tipo `doacao`).
   O LMS não tem formulário de compra na página da loja e não foi verificado no navegador.
+
+### Doação real verificada no navegador (2026-10-27)
+
+- Fluxo real: `apoio.aculta.toca.net.br/apoiar/10/agora` cria o pedido de doação (tipo `doacao`) e leva à revisão.
+- Gaveta com a camiseta (com CEP) e a doação real no mesmo navegador: separadores "Apoio" (doação, R$ 10,00) e "Loja"
+  (camiseta, R$ 30,00). O frete continua o da camiseta sozinha (PAC R$ 23,04, SEDEX R$ 51,97, Mini Envios R$ 18,19).
+  A doação não entra no cálculo.
+- LMS: não verificado. O servidor de testes não tem curso publicado com grupo e vínculo ao produto de LMS. O produto de
+  teste sozinho não é comprável. Para verificar, seria preciso criar um curso completo, o que exige nova autorização.
