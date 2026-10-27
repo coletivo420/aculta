@@ -368,3 +368,25 @@ as adicionadas. Por isso a exclusão foi do conjunto inteiro de `b2lms_*`, não 
 - Resultado: `aculta_install_b2` com 0 tabelas.
 - `aculta_runtime` (588) e `aculta_runtime_copia` (598) conferidos e inalterados.
 - A cópia de `aculta_simpletest` (0 tabelas) não foi restaurada, por decisão do responsável.
+
+### Correção do registro anterior (2026-10-27)
+
+(a) A exclusão das tabelas de `aculta_install_b2` foi autorizada pelo responsável.
+(b) A ordem previa backup das tabelas antes da exclusão; o backup não foi feito.
+(c) Não havia lista confiável das 272 tabelas originais. As 278 tabelas tinham `create_time`
+entre 19:37:01 e 19:38:43, posterior ao registro de 19:30, e não era possível separá-las.
+
+### Instalação de `aculta_install_b2` a partir do config/sync: NÃO executada
+
+- Alvo confirmado: `SELECT DATABASE()` = `aculta_install_b2`; contagem de tabelas = 0.
+- Não foi rodado `site:install`. A configuração de banco usada nas instalações anteriores
+  do `aculta_install_b2` não foi localizada fora de `secrets/`: nenhum `settings.php` nas
+  worktrees referencia esse banco. Não foi lido `secrets/`.
+- `config/sync` presente (1304 arquivos, `system.site.yml` incluído). `config:status`,
+  `validate-aculta-portal-drupal11.php` e as contagens pós-instalação não se aplicam: não
+  houve instalação.
+- Contagens conferidas após a tentativa: `aculta_runtime` = 588; `aculta_runtime_copia` = 598.
+  Sem alteração.
+
+Para desbloquear: o responsável indica a configuração de banco do `aculta_install_b2` (arquivo
+e chave, sem valores) ou autoriza a leitura de `secrets/` apenas para esse fim.
