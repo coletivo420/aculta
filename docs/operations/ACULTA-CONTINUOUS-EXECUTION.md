@@ -1392,3 +1392,8 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 
 - `CheckoutProTest` passou a salvar `mercado_pago` com `status: true` em modo `test`. Chaves sintéticas existem somente no processo do teste; `EntitySaveHooks` as remove antes da persistência, verificado pelas assertions.
 - Kernel `CheckoutProTest`: 1 teste / 53 assertions PASS em `aculta_simpletest`, 77 depreciações upstream; PHPCS Drupal/DrupalPractice e PHP lint PASS. Nenhuma chamada ao SDK ou serviço externo.
+
+## Terminologia de Webhooks Mercado Pago — 2026-10-27
+
+- `CheckoutPro` descreve os callbacks modernos assinados como Webhooks; IPN só é citado ao explicar a recusa do protocolo legado.
+- Unit MP 156/502, PHPCS Drupal/DrupalPractice nos PHP alterados e PHP lint PASS. Nenhuma chamada externa.

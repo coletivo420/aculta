@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.22
+version: 0.1.0-dev.23
 state: Dev
-progress_note: "Dev.22: gateway salvo ativo no Kernel em modo test com chaves sintéticas apagadas antes da persistência. Logs de preferência e recorrência sanitizados. Unit 156/502, Kernel 1/53, PHPCS Drupal/Practice e lint PASS; 77 depreciações upstream. Firefox chegou ao checkout Drupal sem CAPTCHA, mas login MP sandbox respondeu HTTP 403. Sem preferência ou cobrança; cotação de frete e sandbox financeiro pendentes."
+progress_note: "Dev.23: gateway salvo ativo no Kernel em modo test com chaves sintéticas apagadas antes da persistência. Logs sanitizados e terminologia atualizada para Webhooks assinados (IPN só aparece na rejeição do legado). Unit 156/502, Kernel 1/53, PHPCS Drupal/Practice e lint PASS; 77 depreciações upstream. Login MP sandbox respondeu HTTP 403. Sem preferência ou cobrança; cotação de frete e sandbox financeiro pendentes."
 next_phase: Prosseguir do login Drupal ao Checkout Pro com conta de teste, concluir fluxo do comprador sandbox e homologar aprovação, pendência, rejeição, cancelamento e webhook ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))

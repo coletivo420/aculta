@@ -1,3 +1,8 @@
+## 0.1.0-dev.23 — linguagem de webhook moderno (2026-10-27)
+
+- Checkout Pro não descreve os callbacks assinados como IPN. Logs, descrição de configuração e comentários passam a identificá-los como Webhooks; IPN legado continua citado somente ao explicar sua recusa.
+- PHP lint, PHPCS Drupal/DrupalPractice e suíte Unit MP 156/502 PASS.
+
 ## 0.1.0-dev.22 — gateway ativo no teste Kernel (2026-10-27)
 
 - `CheckoutProTest` salva o gateway ativo em modo de teste, usando chaves sintéticas somente no processo de teste. Confirma que o hook limpa ambas antes de persistir e que o plugin continua selecionando o modo `test`; nenhuma chamada de API é feita.

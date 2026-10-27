@@ -176,7 +176,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   /**
    * Whether extra debug logging is enabled for this gateway.
    *
-   * When true, "Mercado Pago debug" logs (request payloads, IPN data, etc.)
+   * When true, "Mercado Pago debug" logs (request payloads, webhook data, etc.)
    * are written to the log.
    *
    * @return bool
@@ -410,7 +410,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     $form['debug_logging'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable extra debug logging'),
-      '#description' => $this->t('When enabled, detailed Mercado Pago debug messages (e.g. request payloads, IPN data) are written to the log. Useful for integration troubleshooting; leave disabled in production to reduce log volume.'),
+      '#description' => $this->t('When enabled, detailed Mercado Pago debug messages (e.g. request payloads and webhook data) are written to the log. Useful for integration troubleshooting; leave disabled in production to reduce log volume.'),
       '#default_value' => $this->configuration['debug_logging'],
     ];
 
@@ -1354,7 +1354,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     }
     try {
 
-      // If payment was already saved with IPN method (OnNotify)
+      // If payment was already saved from a signed webhook (OnNotify)
       // no need to save the payment again.
       $payment_ids = $payment_storage->getQuery()
         ->condition('order_id', $order->id())
@@ -1365,7 +1365,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         ->execute();
 
       if (count($payment_ids) > 0) {
-        $logger->info("Payment already saved with IPN notifications");
+        $logger->info('Payment already saved from a signed webhook.');
         return;
       }
       // If OnNotify method failed for some reason
