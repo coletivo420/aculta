@@ -1,3 +1,8 @@
+## 0.1.0-dev.44 — corrigir payload e diagnóstico da preferência (2026-10-27)
+
+- O payload de Checkout Pro não referencia mais a variável de itens removida pelo normalizador. O diagnóstico de debug agora ocorre somente após calcular itens ajustados e frete, e continua removendo dados do pagador.
+- Unit MP: 192 testes / 783 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
+
 ## 0.1.0-dev.43 — provar ajustes de linha no Commerce Kernel (2026-10-27)
 
 - Kernel usa um `OrderItem` real com desconto aplicado e verifica o valor ajustado que o Checkout Pro enviará. A regressão usa exclusivamente `aculta_simpletest` e importa BRL no schema descartável.

@@ -269,7 +269,7 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
     }
 
     $request = [
-      'items' => $items,
+      'items' => [],
       'payer' => $payer,
       'notification_url' => $notification_url->toString(),
       'external_reference' => (string) $order_id,
@@ -286,11 +286,6 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       ],
     ];
     $request = self::applyPreferenceDefaults($request);
-
-    if (!empty($configuration['debug_logging'])) {
-      $debug_request = self::sanitizePreferenceDebugRequest($request);
-      $this->loggerFactory->get('Mercado Pago debug')->debug('Request sent: <pre>' . print_r($debug_request, TRUE) . '</pre>');
-    }
 
     $order_total = $order->getTotalPrice();
     if ($order_total === NULL) {
@@ -328,6 +323,11 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
     catch (\InvalidArgumentException) {
       $this->messenger->addError($this->t('The order total could not be represented safely for payment. Please contact the administrator.'));
       return $form;
+    }
+
+    if (!empty($configuration['debug_logging'])) {
+      $debug_request = self::sanitizePreferenceDebugRequest($request);
+      $this->loggerFactory->get('Mercado Pago debug')->debug('Request sent: <pre>' . print_r($debug_request, TRUE) . '</pre>');
     }
 
     try {
