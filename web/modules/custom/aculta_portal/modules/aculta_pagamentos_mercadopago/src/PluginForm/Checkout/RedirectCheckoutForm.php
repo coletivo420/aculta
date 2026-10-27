@@ -3,6 +3,8 @@
 namespace Drupal\aculta_pagamentos_mercadopago\PluginForm\Checkout;
 
 use Drupal\aculta_pagamentos_mercadopago\Plugin\Commerce\PaymentGateway\CheckoutPro;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
+use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\commerce_payment\PluginForm\PaymentOffsiteForm as BasePaymentOffsiteForm;
 use Drupal\commerce_price\Price;
 use Drupal\address\Plugin\Field\FieldType\AddressItem;
@@ -17,9 +19,8 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\file\FileInterface;
-use MercadoPago\Client\Preference\PreferenceClient;
+use MercadoPago\Client\Common\RequestOptions;
 use MercadoPago\Exceptions\MPApiException;
-use MercadoPago\MercadoPagoConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -64,6 +65,11 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
   protected $loggerFactory;
 
   /**
+   * Factory configured with the active gateway's environment credentials.
+   */
+  protected ?MercadoPagoClientFactory $clientFactory = NULL;
+
+  /**
    * Constructs the offsite payment form.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -74,12 +80,15 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
    *   The file URL generator.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger channel factory.
+   * @param \Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory|null $client_factory
+   *   The Mercado Pago client factory.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, MessengerInterface $messenger, FileUrlGeneratorInterface $file_url_generator, LoggerChannelFactoryInterface $logger_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, MessengerInterface $messenger, FileUrlGeneratorInterface $file_url_generator, LoggerChannelFactoryInterface $logger_factory, ?MercadoPagoClientFactory $client_factory = NULL) {
     $this->configFactory = $config_factory;
     $this->messenger = $messenger;
     $this->fileUrlGenerator = $file_url_generator;
     $this->loggerFactory = $logger_factory;
+    $this->clientFactory = $client_factory;
   }
 
   /**
@@ -92,7 +101,8 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       $container->get('config.factory'),
       $container->get('messenger'),
       $container->get('file_url_generator'),
-      $container->get('logger.factory')
+      $container->get('logger.factory'),
+      $container->get('aculta_pagamentos_mercadopago.client_factory'),
     );
   }
 
@@ -133,9 +143,6 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       $this->messenger->addError($this->t('Mercado Pago is not configured. Please contact the administrator.'));
       return $form;
     }
-    MercadoPagoConfig::setAccessToken($access_token);
-    MercadoPagoConfig::setIntegratorId(CheckoutPro::INTEGRATOR_ID);
-
     $order_id = $payment->getOrderId();
     $order = $payment->getOrder();
     if ($order === NULL) {
@@ -303,8 +310,7 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
     ];
 
     try {
-      $preferenceClient = new PreferenceClient();
-      $preference = $preferenceClient->create($request);
+      $preference = $this->createPreference($payment_gateway, $request, (string) $order_id);
     }
     catch (MPApiException $e) {
       $this->logPreferenceFailure($e->getStatusCode());
@@ -378,6 +384,33 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       $data,
       'post'
     );
+  }
+
+  /**
+   * Creates a preference with an order-and-payload idempotency key.
+   *
+   * Re-rendering or retrying the same checkout request uses the same provider
+   * key. A materially changed order payload receives a different key.
+   *
+   * @param \Drupal\commerce_payment\Entity\PaymentGatewayInterface $gateway
+   *   The Commerce gateway providing the active environment credentials.
+   * @param array<string, mixed> $request
+   *   The validated preference payload.
+   * @param string $order_id
+   *   The Commerce order ID.
+   *
+   * @return object
+   *   Mercado Pago preference resource.
+   */
+  protected function createPreference(PaymentGatewayInterface $gateway, array $request, string $order_id): object {
+    if ($this->clientFactory === NULL) {
+      throw new \RuntimeException('Mercado Pago client factory is unavailable.');
+    }
+    $payload = json_encode($request, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    $idempotency_key = 'aculta-checkout-' . hash('sha256', $order_id . '|' . $payload);
+    $options = new RequestOptions(NULL, NULL, ['x-idempotency-key' => $idempotency_key]);
+    $client = $this->clientFactory->criar('preferencias', $gateway);
+    return $client->create($request, $options);
   }
 
   /**

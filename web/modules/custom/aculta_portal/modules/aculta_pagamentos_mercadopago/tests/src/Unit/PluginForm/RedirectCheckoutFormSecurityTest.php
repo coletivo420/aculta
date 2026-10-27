@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\PluginForm;
 
 use Drupal\aculta_pagamentos_mercadopago\PluginForm\Checkout\RedirectCheckoutForm;
 use Drupal\aculta_pagamentos_mercadopago\Plugin\Commerce\PaymentGateway\CheckoutPro;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -17,6 +18,7 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Tests\UnitTestCase;
+use MercadoPago\Client\Common\RequestOptions;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -35,6 +37,56 @@ final class RedirectCheckoutFormSecurityTest extends UnitTestCase {
     $this->assertFalse($request['binary_mode']);
     $this->assertSame('approved', $request['auto_return']);
     $this->assertSame('42', $request['external_reference']);
+  }
+
+  /**
+   * Reuses the provider idempotency key for the same order and request only.
+   */
+  public function testPreferenceCreationUsesStableOrderAndPayloadKey(): void {
+    $keys = [];
+    $requests = [];
+    $client = new class($keys, $requests) {
+
+      public function __construct(private array &$keys, private array &$requests) {}
+
+      /** Captures only the synthetic payload and idempotency key. */
+      public function create(array $request, RequestOptions $options): object {
+        $headers = $options->getCustomHeaders() ?? [];
+        $this->keys[] = $headers['x-idempotency-key'] ?? '';
+        $this->requests[] = $request;
+        return (object) ['id' => 'preference-test'];
+      }
+
+    };
+    $gateway = $this->createMock(PaymentGatewayInterface::class);
+    $factory = $this->createMock(MercadoPagoClientFactory::class);
+    $factory->expects($this->exactly(4))
+      ->method('criar')
+      ->with('preferencias', $gateway)
+      ->willReturn($client);
+    $form = (new \ReflectionClass(RedirectCheckoutForm::class))->newInstanceWithoutConstructor();
+    (new \ReflectionProperty(RedirectCheckoutForm::class, 'clientFactory'))->setValue($form, $factory);
+    $method = new \ReflectionMethod(RedirectCheckoutForm::class, 'createPreference');
+    $request = ['external_reference' => '42', 'items' => [['id' => 'sample', 'unit_price' => 10.0]]];
+
+    $first = $method->invoke($form, $gateway, $request, '42');
+    $retry = $method->invoke($form, $gateway, $request, '42');
+    $changed_request = [
+      'external_reference' => '42',
+      'items' => [['id' => 'sample', 'unit_price' => 12.0]],
+    ];
+    $changed = $method->invoke($form, $gateway, $changed_request, '42');
+    $other_order = $method->invoke($form, $gateway, $request, '43');
+
+    $this->assertSame('preference-test', $first->id);
+    $this->assertSame('preference-test', $retry->id);
+    $this->assertSame('preference-test', $changed->id);
+    $this->assertSame('preference-test', $other_order->id);
+    $this->assertNotSame('', $keys[0]);
+    $this->assertSame($keys[0], $keys[1]);
+    $this->assertNotSame($keys[0], $keys[2]);
+    $this->assertNotSame($keys[0], $keys[3]);
+    $this->assertSame($request, $requests[0]);
   }
 
   /**

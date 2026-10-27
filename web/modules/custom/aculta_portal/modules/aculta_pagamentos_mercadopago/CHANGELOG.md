@@ -1,7 +1,22 @@
+## 0.1.0-dev.40 — tornar idempotente a criação de preferências (2026-10-27)
+
+- `RedirectCheckoutForm` cria preferências pelo `MercadoPagoClientFactory` e envia uma chave `X-Idempotency-Key` determinística por pedido e payload. Retry idêntico mantém a chave; payload ou pedido diferente recebe outra chave.
+- Unit MP: 187 testes / 766 PASS; PHPCS Drupal/DrupalPractice e PHP lint focais PASS. A aceitação de retries pelo endpoint de Preferências ainda requer homologação sandbox.
+
 ## 0.1.0-dev.39 — reconciliar rejeição e cancelamento via Webhook (2026-10-27)
 
 - `CheckoutPro::onNotify()` agora registra os status remotos `cancelled` e `rejected` como `authorization_voided` no pagamento Commerce existente, sob o lock por ID remoto. Evento terminal sem pagamento local é reconhecido sem criar pagamento.
 - Regressões Unit cobrem ambos os estados e a ausência de duplicação. Unit MP: 186 testes / 748 assertions PASS; Kernel CheckoutPro: 1/56 PASS (77 depreciações upstream); PHPCS e PHP lint focais PASS.
+
+## 0.1.0-dev.38 — normalizar falhas de transporte na Merchant Order (2026-10-27)
+
+- O retorno converte falhas ao consultar a Merchant Order em exceção segura do gateway; detalhes do provedor/transporte não escapam à resposta.
+- Unit MP: 184 testes / 718 assertions PASS; Kernel CheckoutPro: 1/56 PASS; PHPCS e PHP lint focais PASS.
+
+## 0.1.0-dev.37 — distinguir implementação de recorrência e homologação (2026-10-27)
+
+- Documentação registra o vínculo recorrente com o pedido como implementado e coberto por Unit/Kernel; mantém a homologação do comprador sandbox pendente (DT-MP-02/DT-MP-03).
+- Unit MP: 183 testes / 712 assertions PASS. Revisão documental e `git diff --check`.
 
 ## 0.1.0-dev.36 — homologar preferência sandbox e tela de comprador (2026-10-27)
 
@@ -245,13 +260,4 @@
 - PHP lint PASS. PHPCS Drupal e DrupalPractice no `RedirectCheckoutForm`: zero
   erros; seis avisos antigos de linhas acima de 80 caracteres permanecem.
 
-## 0.1.0-dev.37 — distinguir implementação de recorrência e homologação (2026-10-27)
-
-- Documentação agora registra o vínculo recorrente com o pedido como implementado e coberto por Unit/Kernel; mantém a homologação ponta a ponta do comprador sandbox como pendente (DT-MP-02/DT-MP-03).
-- Unit MP: 183 testes / 712 assertions PASS. Revisão documental e `git diff --check`.
-
-## 0.1.0-dev.38 — normalizar falhas de transporte na Merchant Order (2026-10-27)
-
-- O retorno agora converte qualquer falha ao consultar a Merchant Order em exceção segura do gateway; detalhes do provedor/transporte não escapam para a resposta.
-- Regressão cobre exceção de transporte genérica. Unit MP: 184 testes / 718 assertions PASS; Kernel CheckoutPro: 1/56 PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS.
 
