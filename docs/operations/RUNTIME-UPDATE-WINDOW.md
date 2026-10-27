@@ -330,3 +330,15 @@ Código: PR `6e3d93d8b` + `feat/aculta-user-10013-contagem` (`fc2abf903`) + `fea
 - **Checkout no Firefox até o passo de envio:** **DEFERRED**. Servir a cópia exige apontar o docroot do servidor de teste, o que toca o checkout servido.
 - **Tempos:** `updatedb` total 55 s. O log não traz horário individual por etapa.
 - **Rollback:** dump `31d5350b…` em `/home/piradopirata/worktrees/ensaio-cutover-private/`, reimportável em 16 s em `aculta_runtime_copia`.
+
+## Ensaio geral, rodada 2, na cópia (2026-10-27)
+
+Código: PR `e9850297d` + `feat/aculta-user-10013-contagem` (`46dffd76b`) + `feat/aculta-commerce-cutover` (`1e41a5bef`), merges locais no worktree do ensaio. Cópia reimportada do dump `31d5350b…` (14 s; 606 tabelas antes, 588 depois).
+
+- **`drush updatedb -y`:** exit 0, 53 s, 16 updates concluídos, sem falha. Inclui os post-updates do Messenger e do cutover.
+- **10013:** indexados 15 UIDs de 26 perfis; ignorados sem dono 10; ignorados vazios 1; órfãos com apelido 0; formato inválido 0; 1 perfil reconciliado no mesmo UID (comportamento já existente).
+- **Cutover:** métodos migrados 2 (`Envio` → `aculta_flat_rate`; `Melhor Envio` → `aculta_melhorenvio`, com `default_package_type` e `services` copiados). Remessas legadas apagadas 1; pedido ajustado 1, salvo sem erro de transação; campo → `aculta_shipment`.
+- **Pós-checagens:** `commerce_order__shipments` 0; `commerce_shipment` 0; token sandbox do Melhor Envio em `encrypted_v1`; índice único de CPF presente; índice de apelidos com 15 linhas. `blockersForUninstall()` vazio.
+- **`drush pm:uninstall commerce_shipping`: NÃO CONCLUÍDO.** Primeira tentativa recusada pelo Drupal (existem métodos `commerce_shipping_method`). Após remover os 2 métodos do contrib na cópia (já migrados), a segunda tentativa falhou ao atualizar a configuração `core.entity_form_display.commerce_shipment.default.checkout`, que usa o widget `aculta_shipping_rate`, inexistente no código. **Decisão pendente:** o que fazer com essa configuração antes da desinstalação. O mesmo ocorreria no Runtime.
+- **`validate-portal-commerce-security.php` (via drush, apontando para a cópia): FALHOU** no assert "No custom contribution or webhook route remains". Os alvos são `aculta_commerce_melhorenvio.webhook` (webhook de etiqueta do Melhor Envio) e `aculta_wiki.contribution_intent` (funcionalidade da wiki), ambos do código da PR. A regra está defasada: precisa de lista de exceções, decisão dos donos dos módulos.
+- **Simulação local 127.0.0.1 no Firefox: NÃO EXECUTADA** nesta rodada. Faltam um produto físico e um carrinho de teste na cópia, e a configuração de `trusted_host_patterns` para 127.0.0.1.
