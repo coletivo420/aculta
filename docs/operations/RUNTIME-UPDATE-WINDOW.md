@@ -350,7 +350,7 @@ Código: PR `e9850297d` + `feat/aculta-user-10013-contagem` (`46dffd76b`) + `fea
 
 ## aculta_user_update_10013: contagem corrigida (2026-10-26)
 
-- O 10013 **não grava em perfis**: não normaliza apelidos e não altera `field_nickname` de nenhum perfil. Só reconstrói o índice `aculta_user_nickname` a partir dos perfis válidos e conta o restante.
+- O 10013 **não normaliza apelidos**. Reconstrói o índice `aculta_user_nickname` a partir dos perfis válidos e conta o restante. A reconciliação de apelidos divergentes do mesmo UID (comportamento já existente) grava o valor canônico em perfis com conflito: no ensaio, **1 perfil** foi reconciliado.
 - Perfis **sem dono** (uid ≤ 0) e **vazios** são ignorados sem bloquear. Perfis sem dono com apelido não reivindicam índice e são contados à parte (`orphan_with_nickname`).
 - Investigação posterior: os perfis sem dono encontrados na cópia do Runtime (10, todos vazios) precisam de decisão fora deste ensaio (manter, marcar ou remover).
 - Bloqueio apenas por conflito real entre UIDs. Falha de banco ou transação aborta sem índice parcial.
