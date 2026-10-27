@@ -1,5 +1,27 @@
 # Changelog — ACULTA Commerce Melhor Envio
 
+## 0.1.0-dev.6 — Não validado — simulador de frete por CEP (ME-0.1-A e ME-0.1-C)
+
+### Adicionado
+
+- Auditoria da API e decisões em `docs/SHIPPING-SIMULATOR-AUDIT.md` e `docs/DECISOES-FRETE.md`.
+- `MelhorEnvioClientInterface` (contrato do cliente REST) e `hasCredentials()`, que confere as chaves sem chamar a API.
+- `ShippingSimulator`: estados disponível, indisponível (sem origem, sem credencial, sem pacote, CEP inválido ou falha) e sem opções; cache de 5 min para respostas bem-sucedidas.
+- `ShippingQuoteStore`: último cálculo do visitante na sessão por 15 min, lido pelo produto e pelos carrinhos.
+- `CartRefreshSubscriber`: recalcula o frete guardado ao adicionar, alterar quantidade ou remover item, em todos os carrinhos (eventos do `CartManager`).
+- Rota `/frete/simular` (JSON, com limite por IP) e formulário administrativo da origem em `/integracoes/melhorenvio/configuracao/origem`.
+- Encaixes: página do produto e carrinho completo (via `ShippingCalculatorHooks`).
+
+### Alterado
+
+- Páginas administrativas da integração em `/integracoes/melhorenvio/configuracao` (antes no caminho reescrito pelo `rename_admin_paths`).
+- `MelhorEnvioQuoter::attempt()` informa a falha ao chamador; `quote()` mantém o contrato anterior.
+
+### Validação
+
+- Testes unitários: 119 testes, 306 asserções. Sem chamada à API: a origem está configurada no servidor de testes, mas não há pacote, então o simulador responde indisponível.
+- Não validado no navegador nem com cotação real. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.5 (em andamento)
 
 ### Alterado

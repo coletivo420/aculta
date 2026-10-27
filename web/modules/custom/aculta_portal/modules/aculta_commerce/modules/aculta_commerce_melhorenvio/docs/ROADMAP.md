@@ -1,6 +1,6 @@
 # Roadmap — ACULTA Commerce Melhor Envio
 
-Versão do manifesto: `0.1.0-dev.4`. Este componente é um adaptador de transportadora; o motor, métodos, tarifas, pedidos e
+Versão do manifesto: `0.1.0-dev.6`. Este componente é um adaptador de transportadora; o motor, métodos, tarifas, pedidos e
 remessas são propriedade de `aculta_commerce`. O submódulo permanece fora do Config Sync conforme decisão operacional.
 
 ## Estado comprovado
@@ -20,6 +20,7 @@ remessas são propriedade de `aculta_commerce`. O submódulo permanece fora do C
 |---|---|---|---|
 | ME-CEP | Lookup de CEP e adaptador de endereço | Código e testes Unit existentes; contrato compartilhado é do `aculta_portal_cep` | Manter regressões ao testar checkout |
 | ME-0.1 | OAuth2, credenciais, tokens e webhook | Código e testes Unit/Kernel PASS; sem validação externa nesta execução | Confirmar caminhos, `expires_in` e codificação HMAC em teste autorizado |
+| ME-0.1-C | Simulador de frete: cliente com interface, estados explícitos, endpoint, origem em formulário, encaixes e recálculo no carrinho | Unit 119 PASS; não validado no navegador nem com cotação real | Pacote por produto (peso e dimensões) e origem real no servidor de testes; RUNTIME STATUS: DEFERRED |
 | ME-0.2-A | Plugin de cotação para o motor ACULTA | Implementado e coberto por fixture/mocks; instalação/wiring Kernel PASS | Validar configuração e uma cotação no servidor de testes com sandbox, sem contratar envio |
 | ME-0.2-B | Tarifas no checkout Green Stash | Pendente; o Kernel deste adaptador não valida o fluxo integral de checkout | Testar mudança de endereço/itens, seleção da tarifa, total e recálculo |
 | ME-0.3 | Compra de envio e criação de etiqueta | Não implementado/homologado | Definir contrato com `aculta_commerce`; somente mocks até autorização externa |

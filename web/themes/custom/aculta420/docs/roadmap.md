@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| **0.7.0-dev.7** | Calculadora de frete (ME-0.1-C): componentes `shipping-calculator` e `shipping-summary`, encaixes no produto e nos carrinhos | Gates de SDC, design foundations, browser validators e Foundation PASS; navegador e Runtime não validados | Estado vem do Commerce; carrinho lateral só lê o último cálculo; recálculo ao mudar quantidade é do módulo `aculta_commerce_melhorenvio` (`docs/DECISOES-FRETE.md`). |
 | **0.7.0-dev.6** | Avatar padrão: `author-card` com tamanhos `sm`, `md`, `lg` e repasse do tamanho pelo campo de Views `aculta_user_author_card`; cartão sem imagem removido (a inicial não é usada) | Design foundations e browser validators PASS; view ainda não criada no Runtime; SDC schemas sem vendor | Fases 2 e 3 do avatar; view e visual pendentes |
 | **0.7.0-dev.2** | Kernel de descoberta e renderização do Meu Perfil SDC | Teste Kernel escrito, **não executado** | Quatro SDCs em composição, escape/ausência de public link, slots/metadata; aguarda Drupal instalado, PHPUnit/Firefox ESR. |
 | **0.7.0-dev.1** | Pré-S-R4: quatro SDCs experimentais para Meu Perfil | Código, 8 stories e Unit estático escritos; sem execução de Kernel/Firefox/Runtime | `profile-editor`, `profile-identity`, `profile-bio`, `profile-social`. O Studio mantém seu renderer atual até S-R4. |

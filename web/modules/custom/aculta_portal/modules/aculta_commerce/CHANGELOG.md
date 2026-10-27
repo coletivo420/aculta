@@ -1,3 +1,9 @@
+## 0.1.0-dev.15 — Não validado — simulador de frete no submódulo Melhor Envio — 2026-10-27
+
+- Submódulo `aculta_commerce_melhorenvio` 0.1.0-dev.6: simulador de frete por CEP com estados explícitos, carrinho guardado na sessão e recálculo ao mudar o carrinho (ver `modules/aculta_commerce_melhorenvio/CHANGELOG.md`).
+- Nenhuma mudança de schema, de configuração do motor ou de atualização de banco nesta versão.
+- Não validado no navegador nem com cotação real. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.11 — cutover do frete para o motor próprio (código, sem Runtime) — 2026-10-26
 
 - Post-update `remove_orphan_shipment_displays`: remove displays de formulário e visualização de `commerce_shipment` que usam plugin inexistente (ex.: widget `aculta_shipping_rate`), antes da desinstalação do `commerce_shipping`. Lista só IDs de configuração.
