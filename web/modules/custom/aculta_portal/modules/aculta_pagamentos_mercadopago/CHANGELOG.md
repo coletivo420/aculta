@@ -1,3 +1,8 @@
+## 0.1.0-dev.25 — regressão de checkout sem credencial (2026-10-27)
+
+- `RedirectCheckoutForm` é exercitado com gateway ativo e token ausente: exibe aviso neutro e encerra antes de ler o pedido ou criar preferência no Mercado Pago.
+- Evidência da regressão focal: Unit 3 testes / 15 assertions PASS; suíte completa 158 testes / 511 assertions PASS.
+
 ## 0.1.0-dev.24 — gateway ativo sem persistir credenciais (2026-10-27)
 
 - O Mercado Pago permanece ativo em todos os ambientes. O hook pré-save limpa os campos de credenciais, sem bloquear a gravação/importação da configuração ativa quando variáveis do ambiente estão ausentes.
