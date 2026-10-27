@@ -78,6 +78,23 @@ final class AuthorCardBuilder {
       return NULL;
     }
 
+    return $this->card($identity, $actions, $designation, $size);
+  }
+
+  /**
+   * Builds the agreed fallback for an account without a public profile.
+   *
+   * The host must already have decided to show the account's display name,
+   * such as the LMS class roster. The avatar is always the acervo one.
+   */
+  public function buildFallback(UserInterface $account, string $size = 'sm', ?string $designation = NULL): array {
+    return $this->card($this->identityResolver->resolveFallback($account), [], $designation, $size);
+  }
+
+  /**
+   * Renders a resolved identity into the theme-neutral card contract.
+   */
+  private function card(AuthorIdentity $identity, array $actions, ?string $designation, string $size): array {
     $data = $identity->toArray();
     $build = [
       '#theme' => 'aculta_user_author_card',

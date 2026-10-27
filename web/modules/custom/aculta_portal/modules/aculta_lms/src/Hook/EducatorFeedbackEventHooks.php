@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Hook;
 
+use Drupal\aculta_lms\EducatorFeedbackPolicy;
+use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
-use Drupal\lms\Entity\AnswerInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\Entity\LessonStatusInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Publishes minimal events when educators publish answer feedback. */
@@ -20,6 +18,8 @@ final class EducatorFeedbackEventHooks {
 
   public function __construct(
     private readonly EventDispatcherInterface $eventDispatcher,
+    #[Autowire(service: 'aculta_lms.educator_feedback_policy')]
+    private readonly EducatorFeedbackPolicy $policy,
   ) {}
 
   /**
@@ -48,37 +48,13 @@ final class EducatorFeedbackEventHooks {
   /**
    * Dispatches an event only for educator-authored feedback on an answer. */
   private function publish(CommentInterface $comment): void {
-    $answer = $comment->getCommentedEntity();
-    $educator = $comment->getOwner();
-    if (!$answer instanceof AnswerInterface || !$educator || $answer->getUserId() === $educator->id()) {
-      return;
-    }
-    $course = $this->courseForAnswer($answer);
-    if (!$course instanceof CourseInterface || !$course->hasPermission('grade students', $educator)) {
+    if (!$this->policy->isEducator($comment)) {
       return;
     }
     $this->eventDispatcher->dispatch(new EducatorFeedbackPublishedEvent(
       (string) $comment->uuid(),
       bin2hex(random_bytes(16)),
     ));
-  }
-
-  /**
-   * Resolves the current course without typed getters on stale LMS references.
-   */
-  private function courseForAnswer(AnswerInterface $answer): ?CourseInterface {
-    $lessonStatus = $answer->get('lesson_status')->entity;
-    if (!$lessonStatus instanceof LessonStatusInterface) {
-      return NULL;
-    }
-    $courseStatus = $lessonStatus->get('course_status')->entity;
-    if (!$courseStatus instanceof CourseStatusInterface) {
-      return NULL;
-    }
-    $course = $courseStatus->get(CourseStatusInterface::COURSE_FIELD)->entity;
-    return $course instanceof CourseInterface && $course->bundle() === 'lms_course'
-      ? $course
-      : NULL;
   }
 
 }

@@ -30,7 +30,7 @@ Sem foto, todo o site se comporta como Conta/perfil:
 | LMS: roster da turma (`ClassRosterManager::build`) | nomes em `item_list` | — | **não há** | — | — | **lacuna** (nome apenas) |
 | LMS: participantes da sala (`CourseRoomBuilder`, `participant_rosters`) | rosters | — | **não há** | — | — | **lacuna** (nome apenas) |
 | LMS: alunos do curso (view `lms_course_students`) | view | — | a verificar | — | — | a verificar na Fase 3 |
-| Wiki: entrada (`node--wiki-entry--full` / `--teaser`) | template | — | **não há** autor exibido | — | — | **lacuna** (nenhum autor) |
+| Wiki: entrada (`node--wiki-entry--full` / `--teaser`) | template | — | **não há** autor exibido | — | — | **conforme** (decisão 2026-10-27: autor só na discussão) |
 | Wiki: comentários | `DiscussionCommentAuthorHooks` com `author_wiki` | `author_wiki` | sim | não | sim | **divergente** |
 | Mensagens privadas | `PrivateMessagePresentationHooks`, `messenger-item` | — | a verificar | — | — | a verificar na Fase 4 |
 | Growroom histórico (`legacy_author`) | `AuthorCardBuilder::buildLegacy` | `author_growroom_historico` | não (sem User) | não | não | conforme: rótulo de origem |
@@ -55,7 +55,8 @@ Sem foto, todo o site se comporta como Conta/perfil:
 - feedback do educador no LMS: qual display e se mostra autor. (Fase 1)
 - mensagens privadas: foto e fallback no `messenger-item`. (Fase 4)
 - lista de alunos do curso (`lms_course_students`): avatar nas colunas. (Fase 3)
-- wiki: confirmar que nenhuma entrada exibe autor. (Fase 4)
+- wiki: confirmado em 2026-10-27 que a entrada não exibe autor; a autoria aparece
+  somente na discussão do verbete, pelo cartão `author_wiki`. (Fase 4)
 
 ## Próxima fase
 
@@ -96,6 +97,21 @@ Ordem pública do avatar, em todo o site:
 conta ao acervo (`PictureReplacementHooks` + `AvatarPool::reroll`). A foto do acervo
 não tem "Remover" (ver `FOTO-PERFIL.md`).
 
+### Decisões de 2026-10-27 sobre os pontos pendentes
+
+- **Wiki — autoria da entrada:** a entrada (`node--wiki-entry--full` e `--teaser`)
+  não exibe autor. O autor aparece somente na discussão do verbete, pelo cartão
+  `author_wiki` dos comentários.
+- **Roster da turma:** quem não tem perfil público continua na lista, com o nome
+  de exibição e o avatar do acervo (`AuthorCardBuilder::buildFallback`). Ninguém
+  é removido da turma por falta de perfil público.
+- **Feedback do educador:** `lms_answer_comment` pode ser escrito pelo aluno dono
+  da resposta e por educadores do curso. Só o educador recebe o rótulo
+  "Educador(a)" e dispara a notificação; o critério é o mesmo na apresentação e
+  no evento (`EducatorFeedbackPolicy::isEducator`: autor diferente do dono da
+  resposta e permissão `grade students` no curso). O comentário do aluno aparece
+  como cartão comum, sem o rótulo.
+
 ### Pendências registradas, fora desta tarefa
 
 - **Google a qualquer momento:** hoje a foto do Google é importada somente na criação
@@ -113,14 +129,20 @@ não tem "Remover" (ver `FOTO-PERFIL.md`).
 
 - Gates: Portal 1112 checks, foto INV-FOTO-1 a 10, SDC 632, design foundations,
   browser validators 21, Foundation 345 e shell-contract 11: PASS.
-- PHPUnit Unit do `aculta_user`: 141 testes / 546 assertions PASS (1 depreciação
-  PHPUnit). Kernel `ClassRosterVisibilityTest`: 1 teste / 30 assertions PASS
-  (37 depreciações upstream).
+- PHPUnit Unit do `aculta_user`: 142 testes / 552 assertions PASS (1 depreciação
+  PHPUnit); Unit do `aculta_lms`: 88 testes / 453 assertions PASS (8 depreciações
+  PHPUnit). Kernel `ClassRosterVisibilityTest`: 1 teste / 33 assertions PASS
+  (37 depreciações upstream), agora verificando o cartão de fallback do roster.
 - Navegador (worktree em 127.0.0.1:8080, Firefox ESR em `DISPLAY=:0`):
   `/membros` com 15 cartões e 0 iniciais; `/u/coletivo420` com avatar do acervo e
   0 iniciais; Conta (`/dados`), Mensagens (`/avisos-mensagens/mensagens`),
   Revista, Cursos e Wiki com ACULTA420 e Olivero. O cartão funciona sem o tema
   pelo fallback neutro do módulo.
+- Follow-up de 2026-10-27 (decisões desta seção): o roster não foi verificado em
+  navegador porque o Runtime não tem turma; o feedback do LMS também não, pela
+  mesma falta de turma. O Kernel cobre a visibilidade do roster e o fallback
+  nome + acervo (sem o pool no harness). A entrada da Wiki foi conferida nos
+  templates: não há autor; a discussão usa `author_wiki`.
 - DEFERRED: Fórum (não há alias local `growroom420.aculta.test:8080`), roster,
   sala e feedback do LMS (o Runtime só tem um curso, sem turma) e comentários da
   Wiki (não há comentários publicados). O Kernel cobre a visibilidade do roster.

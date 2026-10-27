@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
+use Drupal\aculta_lms\EducatorFeedbackPolicy;
 use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
 use Drupal\aculta_lms\Hook\EducatorFeedbackEventHooks;
 use Drupal\comment\CommentInterface;
@@ -56,7 +57,7 @@ final class EducatorFeedbackEventHooksTest extends UnitTestCase {
         && preg_match('/^[a-f0-9]{32}$/', $event->publicationVersion) === 1
       ));
 
-    (new EducatorFeedbackEventHooks($dispatcher))->entityInsert($comment);
+    (new EducatorFeedbackEventHooks($dispatcher, new EducatorFeedbackPolicy()))->entityInsert($comment);
   }
 
   /**
@@ -77,7 +78,7 @@ final class EducatorFeedbackEventHooksTest extends UnitTestCase {
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
     $dispatcher->expects($this->never())->method('dispatch');
 
-    (new EducatorFeedbackEventHooks($dispatcher))->entityInsert($comment);
+    (new EducatorFeedbackEventHooks($dispatcher, new EducatorFeedbackPolicy()))->entityInsert($comment);
   }
 
   /**
@@ -95,7 +96,33 @@ final class EducatorFeedbackEventHooksTest extends UnitTestCase {
 
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
     $dispatcher->expects($this->never())->method('dispatch');
-    (new EducatorFeedbackEventHooks($dispatcher))->entityInsert($comment);
+    (new EducatorFeedbackEventHooks($dispatcher, new EducatorFeedbackPolicy()))->entityInsert($comment);
+  }
+
+  /**
+   * A course member without grading permission is not an educator. */
+  public function testCommentWithoutGradePermissionDoesNotPublishFeedbackEvent(): void {
+    $member = $this->createMock(UserInterface::class);
+    $member->method('id')->willReturn('22');
+    $course = $this->createMock(CourseInterface::class);
+    $course->method('bundle')->willReturn('lms_course');
+    $course->method('hasPermission')->with('grade students', $member)->willReturn(FALSE);
+    $courseStatus = $this->createMock(CourseStatusInterface::class);
+    $courseStatus->method('get')->with(CourseStatusInterface::COURSE_FIELD)->willReturn($this->referenceField($course));
+    $lessonStatus = $this->createMock(LessonStatusInterface::class);
+    $lessonStatus->method('get')->with('course_status')->willReturn($this->referenceField($courseStatus));
+    $answer = $this->createMock(AnswerInterface::class);
+    $answer->method('getUserId')->willReturn('21');
+    $answer->method('get')->with('lesson_status')->willReturn($this->referenceField($lessonStatus));
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('bundle')->willReturn('lms_answer_comment');
+    $comment->method('isPublished')->willReturn(TRUE);
+    $comment->method('getCommentedEntity')->willReturn($answer);
+    $comment->method('getOwner')->willReturn($member);
+
+    $dispatcher = $this->createMock(EventDispatcherInterface::class);
+    $dispatcher->expects($this->never())->method('dispatch');
+    (new EducatorFeedbackEventHooks($dispatcher, new EducatorFeedbackPolicy()))->entityInsert($comment);
   }
 
   /**
