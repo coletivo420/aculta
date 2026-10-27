@@ -1,3 +1,15 @@
+## 0.4.0-dev.77 — campo de Views para cartões de perfil público (Fase 3)
+
+- Novo campo de Views `aculta_user_author_card`: renderiza o cartão de autor de cada
+  conta com perfil público explícito (`field_perfil_publico`). Opções: variante e
+  tamanho `sm`, `md`, `lg`.
+- `AuthorCardBuilder::build()` aceita `$size` (padrão `md`), repassado ao tema.
+- A view "Perfis públicos" não foi criada nem exportada: especificação em
+  `docs/VIEWS-PERFIL.md`, para o Runtime.
+
+Validação: PHP lint PASS nos arquivos alterados. PHPUnit e Runtime não executados
+(sem `vendor/`). RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.76 — avatar padrão único nos cartões e no perfil
 
 `AvatarResolver` passa a ser a única regra de avatar público: foto liberada pela

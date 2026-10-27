@@ -1,3 +1,9 @@
+## 0.7.0-dev.5 — cartão de perfil passa o tamanho ao SDC (Fase 3)
+
+- `aculta-user-author-card` repassa `size` ao SDC `author-card`; o padrão continua `md`.
+- Sem mudança visual para os cartões existentes.
+- Validação: design foundations e browser validators PASS. RUNTIME STATUS: DEFERRED.
+
 ## 0.7.0-dev.4 — author-card com tamanhos (Fase 2 do avatar padrão)
 
 - `author-card` ganha a prop `size` (`sm`, `md`, `lg`; padrão `md`) para listas densas e destaques. O tamanho é contrato do SDC, não estilo de display: UI Styles continua restrito às famílias semânticas (superfície, texto, borda, elevação).

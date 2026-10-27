@@ -27,6 +27,7 @@ final class AuthorCardThemeHooks {
       'aculta_user_author_card' => [
         'variables' => [
           'variant' => 'author_minimal',
+          'size' => 'md',
           'display_name' => NULL,
           'profile_url' => NULL,
           'avatar' => NULL,
