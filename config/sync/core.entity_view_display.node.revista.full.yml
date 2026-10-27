@@ -23,7 +23,6 @@ dependencies:
     - node.type.revista
   module:
     - comment
-    - flag
     - link
     - text
     - user
