@@ -1,3 +1,10 @@
+## 0.1.0-dev.89 — avatar padrão nas turmas e no feedback do educador (Fase 4)
+
+- Roster da turma e participantes da sala mostram cartão de autor (`profile_compact`, tamanho `sm`)
+  com a mesma regra de avatar do site. Sem identidade pública, o nome de exibição continua na lista.
+- Feedback do educador em resposta (`lms_answer_comment`) mostra o cartão com o papel "Educador(a)".
+- Validação: PHP lint PASS. PHPUnit e Runtime não executados (sem `vendor/`). RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.88 — publicar avisos pelo kernel Messenger (2026-10-24)
 
 - O producer de eventos LMS foi movido para o módulo dono dos cursos e

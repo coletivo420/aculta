@@ -13,6 +13,7 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\lms_classes\ClassHelper;
+use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\user\UserInterface;
 
 /**
@@ -25,6 +26,7 @@ class ClassRosterManager {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     TranslationInterface $stringTranslation,
+    private readonly AuthorCardBuilder $cardBuilder,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -55,7 +57,7 @@ class ClassRosterManager {
         continue;
       }
 
-      $memberNames = [];
+      $members = [];
       $viewerIsStudent = FALSE;
       foreach ($this->membershipsForClass($class) as $membership) {
         $cacheability->addCacheableDependency($membership);
@@ -70,14 +72,20 @@ class ClassRosterManager {
         if ((string) $student->id() === (string) $viewer->id()) {
           $viewerIsStudent = TRUE;
         }
-        $memberNames[] = (string) $student->getDisplayName();
+        $members[] = $student;
       }
 
       if (!$viewerIsStudent) {
         continue;
       }
-      natcasesort($memberNames);
-      $items = array_map(static fn (string $name): array => ['#plain_text' => $name], array_values($memberNames));
+      usort($members, static fn (UserInterface $a, UserInterface $b): int => strnatcasecmp((string) $a->getDisplayName(), (string) $b->getDisplayName()));
+      // Cartão de autor com avatar (acervo ou foto liberada). Sem identidade pública,
+      // mantém o nome de exibição como antes, para não remover o aluno da lista.
+      $items = [];
+      foreach ($members as $member) {
+        $items[] = $this->cardBuilder->build($member, 'profile_compact', [], NULL, 'sm')
+          ?? ['#plain_text' => (string) $member->getDisplayName()];
+      }
       $classLists[] = [
         'title' => [
           '#type' => 'html_tag',

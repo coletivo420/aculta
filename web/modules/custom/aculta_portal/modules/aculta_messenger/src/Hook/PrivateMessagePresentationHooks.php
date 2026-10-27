@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Hook;
 
+use Drupal\aculta_user\Avatar\AvatarResolver;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\private_message\Entity\PrivateMessageInterface;
@@ -15,6 +17,8 @@ final class PrivateMessagePresentationHooks {
   public function __construct(
     #[Autowire(service: 'current_user')]
     private readonly AccountInterface $currentUser,
+    #[Autowire(service: 'aculta_user.avatar_resolver')]
+    private readonly AvatarResolver $avatars,
   ) {}
 
   /** Adds the sender avatar and direction state without changing message data. */
@@ -35,17 +39,20 @@ final class PrivateMessagePresentationHooks {
       return;
     }
 
-    // Render only the native picture field. A missing user view mode can fall
-    // back to profile actions with unset labels in some site configurations.
-    if (!$sender->hasField('user_picture') || $sender->get('user_picture')->isEmpty()) {
-      return;
-    }
-    $variables['aculta_messenger_sender_avatar'] = $sender->get('user_picture')->view('default');
-    $variables['aculta_messenger_sender_avatar']['#cache']['contexts'][] = 'user';
-    $variables['aculta_messenger_sender_avatar']['#cache']['tags'] = array_merge(
-      $variables['aculta_messenger_sender_avatar']['#cache']['tags'] ?? [],
-      $access->getCacheTags(),
-    );
+    // Mesma regra do avatar público: foto, depois acervo ilustrativo, depois inicial.
+    $name = (string) $sender->getDisplayName();
+    $cacheability = (new CacheableMetadata())
+      ->addCacheableDependency($sender)
+      ->addCacheContexts(['user'])
+      ->addCacheTags($access->getCacheTags());
+    $avatar = $this->avatars->build($sender, $name, TRUE, $cacheability);
+    $avatar ??= [
+      '#type' => 'html_tag',
+      '#tag' => 'span',
+      '#value' => mb_strtoupper(mb_substr($name, 0, 1)),
+    ];
+    $cacheability->applyTo($avatar);
+    $variables['aculta_messenger_sender_avatar'] = $avatar;
   }
 
 }

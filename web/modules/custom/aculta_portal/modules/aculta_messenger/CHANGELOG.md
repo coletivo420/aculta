@@ -1,3 +1,9 @@
+## 0.1.1-dev.397 — avatar padrão no remetente da mensagem (Fase 4)
+
+- O avatar do remetente segue a regra única: foto, depois acervo ilustrativo, depois inicial.
+  Antes, sem foto não havia nada na mensagem.
+- Validação: PHP lint PASS. PHPUnit e Runtime não executados (sem `vendor/`). RUNTIME STATUS: DEFERRED.
+
 ## 0.1.1-dev.396 — remover texto bruto de exceções dos logs operacionais
 
 A revisão M7 identificou logs que copiavam respostas de transporte e exceções

@@ -89,7 +89,7 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
     $otherClass->addMember($otherStudent, ['group_roles' => ['lms_class-member']]);
     $otherClass->set('field_roster_visible', TRUE)->save();
 
-    $manager = new ClassRosterManager($this->container->get('entity_type.manager'), $this->container->get('string_translation'));
+    $manager = new ClassRosterManager($this->container->get('entity_type.manager'), $this->container->get('string_translation'), $this->container->get('aculta_user.author_card_builder'));
     self::assertFalse((bool) $class->get('field_roster_visible')->value, 'A new class hides the roster by default.');
     $hidden = $manager->build($course, $viewer);
     self::assertArrayNotHasKey('classes', $hidden, 'Roster visibility defaults to hidden.');
