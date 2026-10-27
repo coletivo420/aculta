@@ -1,3 +1,8 @@
+## 0.1.0-dev.33 — corrigir dependências documentadas (2026-10-27)
+
+- README agora corresponde ao `info.yml`: o submódulo depende do `aculta_portal`; o módulo base não depende deste gateway. Loja, LMS e doações seguem consumidores do contrato compartilhado.
+- Revisão documental; índice do projeto e diff verificados.
+
 ## 0.1.0-dev.32 — alinhar o contrato de pagamentos pendentes (2026-10-27)
 
 - Roadmap corrigido para descrever o workflow próprio `aculta_mercadopago_payment`, a confirmação por API via retorno/Webhook assinado e a recusa de IPN legado. O texto antigo afirmava `authorization` e IPN como fluxo vigente.

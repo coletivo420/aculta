@@ -29,8 +29,8 @@ O único método de pagamento do Portal é `aculta_mercadopago_checkout_pro` (ti
 ## Dependências
 
 - `commerce:commerce_payment`, `address:address` (estrutura do endereço de cobrança) e `key:key` (segredos).
+- `aculta_portal:aculta_portal` (contratos e rotas compartilhados). O módulo base `aculta_portal` não depende deste submódulo; Loja, LMS e doações consomem o gateway compartilhado por seus contratos próprios.
 - Pacote Composer: `mercadopago/dx-php`.
-- Não depende do `aculta_portal`. O `aculta_portal` depende deste submódulo.
 
 ## Credenciais
 
