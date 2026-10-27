@@ -980,3 +980,49 @@ Conclusão: nenhum commit do backup contém código exclusivo fora da PR. Os doi
 - Kernel: 4 testes e 112 asserções PASS. PHPCS: 0 erros nos arquivos novos.
 - **Não provado no Kernel:** reapontamento com campo instalado e com dados. O harness falha ao salvar pedido com remessa legada. A prova fica para o ensaio no banco restaurado do snapshot (Local 3).
 - Ordem obrigatória documentada em `RUNTIME-UPDATE-WINDOW.md`: updatedb com o vendor atual → conferir → `drush pm:uninstall` → só então `composer install` com o lock da PR.
+
+## Limpeza de branches e estado da PR — 2026-10-27
+
+### Estado da PR
+
+- Head de `chore/aculta-m0-integridade` antes deste registro: `37e6cc4fbe837a04973daf4a690bee0a3aca1503`.
+- `650f473dc122a3474970a80422eb53501c24c133`: **não é ancestral** do head da PR.
+- `b9d3ed39d0d1026143a3a48b14cb3950068f81a6`: **não é ancestral** do head da PR.
+- Conclusão: a integração desses commits **ainda não aconteceu**. Nada foi integrado nesta etapa.
+
+### Branches locais excluídas (13)
+
+Critério: `git merge-base --is-ancestor` ou `git cherry` sem linhas `+`, e exclusão com `git branch -d`
+(nunca `-D`). Remotas não foram tocadas nesta etapa.
+
+agent/aculta-status-cleanup, backup/checkout-antes-78f5bb1, backup/checkout-antes-c0beca2,
+backup/pre-sync-aculta-runtime-788154eef, docs/aculta-forum-0.1.0-dev.1, docs/ensaio-geral-resultado,
+docs/ensaio-geral-rodada-2, docs/incorpora-1b782798b, docs/integra-bancos-5b5a18f,
+docs/integra-snapshot-30c5450, docs/ordem-cutover-e-limpeza, docs/regra-copia-runtime, integra/fase-b-mp.
+
+### Branches recusadas pelo `-d` (não forçadas)
+
+- **Worktree em uso** (o `-d` recusa; as worktrees pertencem a outras frentes e não foram removidas):
+  agent/aculta-magazine-a2, agent/aculta-magazine-completion-20261026, agent/aculta-me-precision-tests,
+  agent/aculta-melhorenvio-a6, agent/aculta-melhorenvio-kernel, agent/aculta-mercadopago-closeout,
+  agent/index-a6, agent/statistics-focal, agent/melhorenvio-service-fix, docs/aculta-mp-extracao-b0,
+  feat/aculta-document-viewer-fechamento, feat/aculta-index-fechamento, feat/aculta-messenger-update-ensaio,
+  feat/aculta-mp-extracao, feat/aculta-secrets-claro, feat/aculta-user-update-ensaio,
+  feat/melhorenvio-token-cipher, feat/melhorenvio-token-cipher-c1e2109.
+- **"not fully merged"** (o `-d` compara com o HEAD atual, destacado em `c0beca205`; a reavaliar com o
+  head da PR): agent/aculta-m0-phpcs, agent/aculta-m0-phpcs-current, agent/aculta-m0-side-modules,
+  agent/aculta-m0-status-audit, agent/aculta-status-current2, backup/pre-xk-c1-sync-20261022.
+
+### Branches remotas mantidas (commits sem equivalente na PR)
+
+docs/aculta-runtime-snapshot-ensaio (2), feat/aculta-commerce-cutover (8), feat/aculta-user-10013-contagem (2),
+fix/alinhamento-sync-runtime (11), fix/barra-multidominio-alinhamento (1), fix/validador-seguranca-allowlist (3).
+Remota excluída nesta rodada (critério a, ancestral da PR): `feat/aculta-mp-extracao`.
+
+### Relatado pelo responsável (NÃO verificado pelo agente)
+
+- Escrita de teste no Runtime: aviso sintético enviado à teste.c (mensagem 515, conversa 314), feito pelo
+  procedimento de usuários de teste.
+- Erro 500 no perfil do teste.d por ausência de `aculta_user_nickname` no Runtime; pendente da janela de updatedb.
+
+Nenhum desses dois itens foi executado ou observado pelo agente nesta execução.
