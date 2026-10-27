@@ -1,0 +1,6 @@
+name: Aguardando CEP
+description: Campo vazio, sem resultado. Estado inicial quando a cotação está disponível para o CEP digitado.
+component: aculta420:shipping-calculator
+props:
+  id: 'frete-padrao'
+  state: idle

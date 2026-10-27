@@ -1,0 +1,7 @@
+name: Sem opções
+description: A API respondeu, mas não há serviço de entrega para o CEP.
+component: aculta420:shipping-calculator
+props:
+  id: 'frete-sem-opcoes'
+  state: empty
+  message: 'Nenhuma opção de entrega para este CEP.'

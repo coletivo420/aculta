@@ -1,0 +1,20 @@
+name: Disponível
+description: Cotação com opções de entrega, preço em reais e prazo em dias úteis.
+component: aculta420:shipping-calculator
+props:
+  id: 'frete-disponivel'
+  state: available
+  postal_code: '01310-100'
+  options:
+    - name: 'PAC (Correios)'
+      company: 'Correios'
+      price: 'R$ 37,79'
+      days: 9
+    - name: 'SEDEX (Correios)'
+      company: 'Correios'
+      price: 'R$ 46,23'
+      days: 4
+    - name: '.Package (Jadlog)'
+      company: 'Jadlog'
+      price: 'R$ 18,60'
+      days: 6

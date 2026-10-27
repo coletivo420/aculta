@@ -1,0 +1,38 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Calculadora de frete
+status: experimental
+group: Content
+description: 'Simulador de frete por CEP (campo, botão, link "Não sei meu CEP" e resultado). O estado vem do Commerce (aculta_commerce_melhorenvio); o tema só apresenta. Sem estado disponível, o campo aparece e a cotação fica indisponível.'
+props:
+  type: object
+  properties:
+    id:
+      type: string
+      description: 'Prefixo de id único na página (ex.: produto, carrinho). Obrigatório quando há mais de uma calculadora.'
+      default: 'aculta-frete'
+    state:
+      type: string
+      description: 'Estado da cotação: idle (aguardando CEP), available (com opções), unavailable (indisponível) ou empty (sem opções).'
+      enum: ['idle', 'available', 'unavailable', 'empty']
+      default: 'idle'
+    message:
+      type: string
+      description: 'Mensagem ao visitante para os estados unavailable e empty. Texto vem do Commerce.'
+      default: ''
+    options:
+      type: array
+      description: 'Opções disponíveis: name, company, price (ex.: R$ 37,79) e days (dias úteis, opcional).'
+      default: []
+    postal_code:
+      type: string
+      description: 'CEP já informado, mantido no campo.'
+      default: ''
+    endpoint:
+      type: string
+      description: 'Caminho do simulador (JSON). Padrão do módulo: /frete/simular.'
+      default: '/frete/simular'
+    help_url:
+      type: string
+      description: 'Link "Não sei meu CEP". Abre em nova aba.'
+      default: 'https://buscacepinter.correios.com.br/app/endereco/index.php'
+slots: {}

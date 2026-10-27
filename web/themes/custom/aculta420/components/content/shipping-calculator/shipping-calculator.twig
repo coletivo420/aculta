@@ -1,0 +1,34 @@
+{#
+  Simulador de frete por CEP. O estado (idle, available, unavailable, empty) e a mensagem chegam do Commerce; o tema
+  só apresenta. Sem JavaScript, o campo aparece e o resultado do estado inicial também.
+#}
+<section class="aculta-shipping-calculator" aria-labelledby="{{ id }}-titulo" data-aculta-shipping-calculator data-endpoint="{{ endpoint }}">
+  <h3 class="aculta-shipping-calculator__titulo h6" id="{{ id }}-titulo">Calcular frete</h3>
+
+  <form class="aculta-shipping-calculator__form" action="{{ endpoint }}" method="get" novalidate>
+    <label class="aculta-shipping-calculator__rotulo" for="{{ id }}-cep">Digite seu CEP</label>
+    <div class="input-group aculta-shipping-calculator__campo">
+      <input class="form-control" type="text" id="{{ id }}-cep" name="cep" value="{{ postal_code }}" inputmode="numeric" autocomplete="postal-code" maxlength="9" required>
+      <button class="btn btn-primary" type="submit">Calcular</button>
+    </div>
+    <a class="aculta-shipping-calculator__ajuda" href="{{ help_url }}" target="_blank" rel="noopener noreferrer">Não sei meu CEP</a>
+  </form>
+
+  <div class="aculta-shipping-calculator__resultado" aria-live="polite" data-aculta-shipping-resultado>
+    {% if state == 'available' and options %}
+      <ul class="aculta-shipping-calculator__opcoes list-unstyled">
+        {% for option in options %}
+          <li class="aculta-shipping-calculator__opcao">
+            <span class="aculta-shipping-calculator__servico">{{ option.name }}</span>
+            <span class="aculta-shipping-calculator__preco">{{ option.price }}</span>
+            {% if option.days %}
+              <span class="aculta-shipping-calculator__prazo">{{ option.days }} {{ option.days == 1 ? 'dia útil' : 'dias úteis' }}</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% elseif state in ['unavailable', 'empty'] and message %}
+      <p class="aculta-shipping-calculator__aviso aculta-shipping-calculator__aviso--{{ state }}">{{ message }}</p>
+    {% endif %}
+  </div>
+</section>

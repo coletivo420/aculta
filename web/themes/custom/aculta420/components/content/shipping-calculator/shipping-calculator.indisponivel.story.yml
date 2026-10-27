@@ -1,0 +1,7 @@
+name: Indisponível
+description: Cotação indisponível (origem, credencial ou pacote ainda não configurados, CEP inválido ou falha). Mensagem genérica.
+component: aculta420:shipping-calculator
+props:
+  id: 'frete-indisponivel'
+  state: unavailable
+  message: 'Cálculo de frete indisponível no momento.'
