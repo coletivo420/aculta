@@ -1405,3 +1405,11 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - Snapshot anterior à escrita: `/home/piradopirata/aculta-backups/aculta-runtime-before-cart-cleanup-20261027-153416/runtime.sql`, 93.332.258 bytes, modo `0600`, diretório modo `0700`; SHA-256 `82f517076f078f0c12f625f85b3b47662aef6a0c3899eba30ee9a46b2dea9edd`.
 - Ação autorizada: `commerce_cart.cart_manager->emptyCart()` em 9 pedidos de rascunho; removeu 9 itens, mantendo os pedidos vazios. Nenhum pagamento, pedido não-carrinho ou estado de pagamento foi alterado.
 - Verificação posterior: 9 carrinhos, 0 carrinhos com itens, 0 itens, 0 pagamentos associados; 9 pedidos totais e 0 pedidos fora de carrinho. `aculta_runtime` não teve updates de esquema nem importação de configuração nesta ação.
+
+## Reconciliação do head da PR no checkout autorizado — 2026-10-27
+
+- O único checkout usado foi `/home/piradopirata/projetos/aculta`, na branch `chore/aculta-m0-integridade`; nenhum worktree adicional foi criado ou alterado.
+- Antes da reconciliação, `git fsck --full --no-reflogs --no-dangling` terminou sem erros. As mudanças locais anteriores já estavam commitadas; a branch local foi limpa e estava 11 commits à frente e 1 atrás da referência remota local.
+- A referência remota local continha `79009df60`, com avanços de Avatar/LMS/User. O merge sem conflitos preservou os commits locais de Commerce/Mercado Pago e produziu `f37450251`. Estado observado: 12 commits à frente; nenhuma publicação foi feita.
+- No Runtime `toca` (Drupal 11.4.10, URI `http://default`, banco `aculta_runtime`), `updatedb:status` não indicou updates pendentes. `config:status` segue divergente em frentes não reconciliadas; por isso nenhum `updatedb` ou `config:import` foi executado.
+- `drush cr` foi executado no checkout servido. A verificação HTTP via hostname `default` falhou por resolução DNS local (`curl: Could not resolve host: default`); não houve requisição bem-sucedida a MAIN/Loja nesta etapa. O status do Drush confirmou raiz, URI e conexão Runtime esperados.
