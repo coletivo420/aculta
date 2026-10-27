@@ -36,3 +36,18 @@ Saída: JSON com os resultados e `FALHAS: nenhuma` quando tudo passa. PNG em `SU
 - **Carrinho não coberto:** adicionar produto ao carrinho cria dados no servidor de testes. Fica fora deste roteiro.
 - **Pacote padrão:** o teste assume o pacote cadastrado (16 × 2 × 11 cm, 0,3 kg). Se ele mudar, o resultado da cotação
   muda, mas o teste continua válido.
+
+## carrinho-quantidade.py: BLOQUEADO por separação de domínios (2026-10-27)
+
+Estado: **falha esperada**. O roteiro não consegue validar "o cálculo vai junto" nem o recálculo ao mudar quantidade.
+
+Evidência (sondagem no navegador):
+- O cálculo no produto (`loja.aculta.toca.net.br`) funciona.
+- Depois de "Adicionar ao carrinho" na loja, o carrinho do domínio principal (`aculta.toca.net.br/carrinho`) aparece
+  vazio: "Seu carrinho de compras está vazio."
+- O cookie de sessão é por domínio. O item e o cálculo ficam na sessão da loja; o carrinho principal não os enxerga.
+- Não há captcha no formulário de compra (está na lista de exceção do Turnstile). Não há erro no log do Drupal.
+- As violações de CSP no log são `style-src-attr` em modo `report`. Não bloqueiam nada.
+
+Decisão necessária: o carrinho fica no domínio principal (regra do projeto) ou na loja? Enquanto a sessão não for
+compartilhada, o cálculo feito na página do produto não chega ao carrinho.
