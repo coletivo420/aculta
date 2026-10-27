@@ -51,6 +51,8 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   public const STATUS_PAUSADA = 'paused';
   public const STATUS_CANCELADA = 'canceled';
 
+  private const LOCK_PREFIX = 'aculta_pagamentos_mercadopago.subscription_action.';
+
   /**
    * Ordem de exibição dos status no painel. */
   public const STATUS_ORDEM = [
@@ -223,17 +225,60 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
     if (!$this->podeAlterar($pedido, $acao)) {
       throw new \InvalidArgumentException('Ação não permitida para esta assinatura.');
     }
-    $destino = self::ACOES[$acao]['para'];
-    $resposta = $this->recorrencia->alterarStatusAssinatura($gateway, (string) $pedido->getData(self::CHAVE_ASSINATURA), $destino);
-    $pedido->setData(self::CHAVE_STATUS, (string) ($resposta->status ?? $destino));
-    if ($destino === self::STATUS_CANCELADA) {
-      $this->transicionar($pedido, 'cancel');
+    $assinatura_id = (string) $pedido->getData(self::CHAVE_ASSINATURA);
+    $lock_id = self::LOCK_PREFIX . $assinatura_id;
+    if (!$this->lock->acquire($lock_id, 30)) {
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('A assinatura está sendo atualizada. Tente novamente.'), 503);
     }
-    $pedido->save();
-    $this->logger->notice('Assinatura de doação do pedido @pedido: ação @acao.', [
-      '@pedido' => $pedido->id(),
-      '@acao' => $acao,
-    ]);
+    try {
+      // Reload after taking the lock. Another request may have changed the
+      // order while this action was waiting.
+      $pedido_atual = $this->entidades('commerce_order')->load($pedido->id());
+      if (!$pedido_atual instanceof OrderInterface || !$this->podeAlterar($pedido_atual, $acao)
+        || (string) $pedido_atual->getData(self::CHAVE_ASSINATURA) !== $assinatura_id) {
+        throw new \InvalidArgumentException('A situação da assinatura mudou. Atualize a página e tente novamente.');
+      }
+
+      $regra = self::ACOES[$acao];
+      $destino = $regra['para'];
+      $remota = $this->recorrencia->obterAssinatura($gateway, $assinatura_id);
+      $this->validarAssinaturaRemota($remota, $assinatura_id, (string) $pedido_atual->id());
+      $status_remoto = $this->providerString($remota->status ?? NULL);
+      if ($status_remoto === $destino) {
+        // A previous request may have succeeded remotely but timed out before
+        // the local order was saved. Reconcile without issuing a second PUT.
+        $this->salvarStatusAssinatura($pedido_atual, $destino);
+        return;
+      }
+      $status_conhecidos = [
+        self::STATUS_PENDENTE,
+        self::STATUS_ATIVA,
+        self::STATUS_PAUSADA,
+        self::STATUS_CANCELADA,
+      ];
+      if (!in_array($status_remoto, $status_conhecidos, TRUE)) {
+        throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou uma situação de assinatura inconsistente.'), 502);
+      }
+      if (!in_array($status_remoto, $regra['de'], TRUE)) {
+        $this->salvarStatusAssinatura($pedido_atual, $status_remoto);
+        throw new \InvalidArgumentException('A situação remota da assinatura mudou. Atualize a página e tente novamente.');
+      }
+
+      $resposta = $this->recorrencia->alterarStatusAssinatura($gateway, $assinatura_id, $destino);
+      $this->validarAssinaturaRemota($resposta, $assinatura_id, (string) $pedido_atual->id());
+      if ($this->providerString($resposta->status ?? NULL) !== $destino) {
+        throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago não confirmou a alteração da assinatura.'), 502);
+      }
+
+      $this->salvarStatusAssinatura($pedido_atual, $destino);
+      $this->logger->notice('Assinatura de doação do pedido @pedido: ação @acao.', [
+        '@pedido' => $pedido_atual->id(),
+        '@acao' => $acao,
+      ]);
+    }
+    finally {
+      $this->lock->release($lock_id);
+    }
   }
 
   /**
@@ -392,6 +437,27 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
     if (isset($estado->getTransitions()[$transicao])) {
       $estado->applyTransitionById($transicao);
     }
+  }
+
+  /**
+   * Confirms a provider subscription response belongs to the expected order.
+   */
+  private function validarAssinaturaRemota(object $assinatura, string $id, string $pedido_id): void {
+    if ($this->providerString($assinatura->id ?? NULL) !== $id
+      || $this->providerString($assinatura->external_reference ?? NULL) !== $pedido_id) {
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou uma assinatura inconsistente.'), 502);
+    }
+  }
+
+  /**
+   * Persists a verified provider state on the matching Commerce order.
+   */
+  private function salvarStatusAssinatura(OrderInterface $pedido, string $status): void {
+    $pedido->setData(self::CHAVE_STATUS, $status);
+    if ($status === self::STATUS_CANCELADA) {
+      $this->transicionar($pedido, 'cancel');
+    }
+    $pedido->save();
   }
 
   /**

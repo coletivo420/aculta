@@ -11,6 +11,7 @@ use Drupal\aculta_portal\Exception\PaymentOperationException;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -18,12 +19,23 @@ use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Donor subscription actions and allowed status transitions.
  */
 #[Group('aculta_pagamentos_mercadopago')]
 final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $container = new ContainerBuilder();
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+  }
 
   /**
    * Pedido de assinatura com status e id da assinatura guardados em `data`.
@@ -61,13 +73,23 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
   /**
    * Performs the servico operation.
    */
-  private function servico(MockObject $recorrencia): MercadoPagoSubscriptionRecorder {
+  private function servico(MockObject $recorrencia, ?OrderInterface $pedido = NULL, ?LockBackendInterface $lock = NULL): MercadoPagoSubscriptionRecorder {
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    if ($pedido !== NULL) {
+      $storage = $this->createMock(EntityStorageInterface::class);
+      $storage->method('load')->with($pedido->id())->willReturn($pedido);
+      $entityTypeManager->method('getStorage')->with('commerce_order')->willReturn($storage);
+    }
+    if ($lock === NULL) {
+      $lock = $this->createMock(LockBackendInterface::class);
+      $lock->method('acquire')->willReturn(TRUE);
+    }
     return new MercadoPagoSubscriptionRecorder(
-      $this->createMock(EntityTypeManagerInterface::class),
+      $entityTypeManager,
       $recorrencia,
       $this->createMock(LoggerChannelInterface::class),
       $this->createMock(TimeInterface::class),
-      $this->createMock(LockBackendInterface::class),
+      $lock,
     );
   }
 
@@ -82,40 +104,161 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
    * Pauses an active subscription and updates its order.
    */
   public function testPauseActiveSubscriptionCallsGatewayAndUpdatesOrder(): void {
+    $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
     $recorrencia->expects($this->once())->method('alterarStatusAssinatura')
-      ->with($this->anything(), 'pre-9', 'paused')
-      ->willReturn((object) ['status' => 'paused']);
+      ->with($gateway, 'pre-9', 'paused')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'paused']);
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
     $pedido->expects($this->once())->method('setData')->with(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, 'paused');
     $pedido->expects($this->once())->method('save');
 
-    $this->servico($recorrencia)->alterar($this->gateway(), $pedido, 'pausar');
+    $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'pausar');
   }
 
   /**
    * Tests the reativar uma assinatura pausada volta para ativa behavior.
    */
   public function testReativarUmaAssinaturaPausadaVoltaParaAtiva(): void {
+    $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'paused']);
     $recorrencia->expects($this->once())->method('alterarStatusAssinatura')->with($this->anything(), 'pre-9', 'authorized')
-      ->willReturn((object) ['status' => 'authorized']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
     $pedido = $this->pedido('assinatura', 'paused', 'pre-9', [], $item);
 
-    $this->servico($recorrencia)->alterar($this->gateway(), $pedido, 'reativar');
+    $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'reativar');
   }
 
   /**
    * Tests the cancelar uma assinatura ativa cancela o pedido behavior.
    */
   public function testCancelActiveSubscriptionAndOrder(): void {
+    $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
     $recorrencia->expects($this->once())->method('alterarStatusAssinatura')->with($this->anything(), 'pre-9', 'canceled')
-      ->willReturn((object) ['status' => 'canceled']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'canceled']);
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', ['cancel'], $item);
     $item->expects($this->once())->method('applyTransitionById')->with('cancel');
 
-    $this->servico($recorrencia)->alterar($this->gateway(), $pedido, 'cancelar');
+    $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'cancelar');
+  }
+
+  /**
+   * Reconciles a successful remote action retried after a local timeout.
+   */
+  public function testAlreadyAppliedRemoteActionIsReconciledWithoutAnotherUpdate(): void {
+    $gateway = $this->gateway();
+    $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'paused']);
+    $recorrencia->expects($this->never())->method('alterarStatusAssinatura');
+    $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
+    $pedido->expects($this->once())->method('setData')->with(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, 'paused');
+    $pedido->expects($this->once())->method('save');
+
+    $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'pausar');
+  }
+
+  /**
+   * Rejects an update response for a different subscription.
+   */
+  public function testMismatchedUpdateResponseDoesNotChangeOrder(): void {
+    $gateway = $this->gateway();
+    $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())->method('obterAssinatura')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+    $recorrencia->expects($this->once())->method('alterarStatusAssinatura')
+      ->willReturn((object) ['id' => 'another-subscription', 'external_reference' => '7', 'status' => 'paused']);
+    $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+
+    $this->expectException(MercadoPagoApiException::class);
+    $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'pausar');
+  }
+
+  /**
+   * Does not persist a status the provider did not confirm.
+   */
+  public function testUnconfirmedUpdateStatusDoesNotChangeOrder(): void {
+    $gateway = $this->gateway();
+    $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())->method('obterAssinatura')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+    $recorrencia->expects($this->once())->method('alterarStatusAssinatura')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+    $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+
+    $this->expectException(MercadoPagoApiException::class);
+    $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'pausar');
+  }
+
+  /**
+   * Concurrent actions ask Mercado Pago to retry without making another call.
+   */
+  public function testLockContentionRejectsTheAction(): void {
+    $gateway = $this->gateway();
+    $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->never())->method('obterAssinatura');
+    $recorrencia->expects($this->never())->method('alterarStatusAssinatura');
+    $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())->method('acquire')->willReturn(FALSE);
+    $lock->expects($this->never())->method('release');
+    $service = $this->servico($recorrencia, $pedido, $lock);
+
+    $this->expectException(MercadoPagoApiException::class);
+    $service->alterar($gateway, $pedido, 'pausar');
+  }
+
+  /**
+   * Rejects a remote subscription linked to another order.
+   */
+  public function testRemoteSubscriptionMustBelongToOrderBeforeUpdate(): void {
+    $gateway = $this->gateway();
+    $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())->method('obterAssinatura')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '8', 'status' => 'authorized']);
+    $recorrencia->expects($this->never())->method('alterarStatusAssinatura');
+    $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+
+    $this->expectException(MercadoPagoApiException::class);
+    $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'pausar');
+  }
+
+  /**
+   * A stale action refreshes the order state and does not send another PUT.
+   */
+  public function testStaleActionReconcilesCurrentRemoteStatus(): void {
+    $gateway = $this->gateway();
+    $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'canceled']);
+    $recorrencia->expects($this->never())->method('alterarStatusAssinatura');
+    $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', ['cancel'], $item);
+    $pedido->expects($this->once())->method('setData')->with(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, 'canceled');
+    $pedido->expects($this->once())->method('save');
+    $item->expects($this->once())->method('applyTransitionById')->with('cancel');
+
+    try {
+      $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'pausar');
+      $this->fail('Expected the stale action to be rejected.');
+    }
+    catch (\InvalidArgumentException $exception) {
+      $this->assertStringContainsString('mudou', $exception->getMessage());
+    }
   }
 
   /**
@@ -145,21 +288,27 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
    * Tests the falha do mercado pago nao altera o pedido behavior.
    */
   public function testGatewayFailureDoesNotChangeOrder(): void {
+    $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
     $recorrencia->method('alterarStatusAssinatura')->willThrowException(new MercadoPagoApiException('falha', 500));
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
     $pedido->expects($this->never())->method('setData');
     $pedido->expects($this->never())->method('save');
 
     $this->expectException(MercadoPagoApiException::class);
-    $this->servico($recorrencia)->alterar($this->gateway(), $pedido, 'pausar');
+    $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'pausar');
   }
 
   /**
    * Keeps provider API details out of the user-facing exception.
    */
   public function testProviderFailureIsWrappedWithSafeMessage(): void {
+    $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
     $recorrencia->method('alterarStatusAssinatura')->willThrowException(
       new MercadoPagoApiException('Mensagem segura', 500, new \RuntimeException('RAW API DETAIL')),
     );
@@ -171,16 +320,22 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
         '@order' => 7,
         '@status' => 500,
       ]);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('load')->with(7)->willReturn($pedido);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->with('commerce_order')->willReturn($storage);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->method('acquire')->willReturn(TRUE);
     $service = new MercadoPagoSubscriptionRecorder(
-      $this->createMock(EntityTypeManagerInterface::class),
+      $entityTypeManager,
       $recorrencia,
       $logger,
       $this->createMock(TimeInterface::class),
-      $this->createMock(LockBackendInterface::class),
+      $lock,
     );
 
     try {
-      $service->change($this->gateway(), $pedido, 'pausar');
+      $service->change($gateway, $pedido, 'pausar');
       $this->fail('Expected the neutral provider exception.');
     }
     catch (PaymentOperationException $exception) {

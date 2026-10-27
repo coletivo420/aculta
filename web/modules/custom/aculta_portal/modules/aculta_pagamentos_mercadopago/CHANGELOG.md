@@ -1,3 +1,9 @@
+## 0.1.0-dev.29 — serializar ações de assinatura (2026-10-27)
+
+- Pausar, reativar e cancelar agora compartilham lock por assinatura, recarregam o pedido sob lock e consultam a situação remota antes de alterar.
+- As respostas de consulta e atualização precisam corresponder ao ID da assinatura, à referência do pedido e ao status solicitado antes de persistir.
+- Retry após timeout reconcilia o estado já aplicado sem repetir o `PUT`; estados remotos conhecidos que invalidam a ação atualizam o pedido e pedem nova tentativa pela interface. Unit MP: 171 testes / 611 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
+
 ## 0.1.0-dev.28 — alinhar cancelamento de assinaturas à API (2026-10-27)
 
 - A API de assinaturas documenta `canceled`; o código enviava `cancelled`, portanto o Mercado Pago podia rejeitar cancelamentos. A atualização agora envia o estado oficial e reconcilia notificações com ele.
