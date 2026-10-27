@@ -9,11 +9,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * Último cálculo de frete do visitante, guardado na sessão.
+ * Último cálculo de frete, guardado na sessão.
  *
- * É o que faz o cálculo "ir junto" do produto para o carrinho: a página do produto e o carrinho leem o mesmo resultado.
- * Guarda só o CEP normalizado e o resultado já formatado (sem dados pessoais além do CEP), por TTL curto. O carrinho
- * lateral só lê; quem calcula é a página do produto ou o carrinho completo.
+ * Faz o cálculo "ir junto" do produto para o carrinho: ambos leem o mesmo
+ * resultado. Guarda o CEP normalizado e o resultado formatado por TTL curto.
+ * O carrinho lateral só lê; a página do produto ou o carrinho completo calcula.
  */
 class ShippingQuoteStore {
 
@@ -33,6 +33,7 @@ class ShippingQuoteStore {
   public function __construct(
     private readonly RequestStack $requests,
     private readonly TimeInterface $time,
+    private readonly ShippingPostalCodeStore $postalCodes,
   ) {}
 
   /**
@@ -44,6 +45,10 @@ class ShippingQuoteStore {
    *   Resultado do simulador.
    */
   public function save(string $postalCode, ShippingSimulation $result): void {
+    $postalCode = $this->postalCodes->save($postalCode);
+    if ($postalCode === NULL) {
+      return;
+    }
     $session = $this->session();
     if ($session === NULL) {
       return;
@@ -59,6 +64,7 @@ class ShippingQuoteStore {
    * Cálculo ainda válido da sessão, ou NULL quando não há ou expirou.
    *
    * @return array{postal_code: string, at: int, result: array<string, mixed>}|null
+   *   Stored calculation data, or NULL when missing or expired.
    */
   public function load(): ?array {
     $session = $this->session();
@@ -74,7 +80,14 @@ class ShippingQuoteStore {
   }
 
   /**
-   * Sessão da requisição atual; NULL em contexto sem sessão (linha de comando, cache).
+   * Loads the last CEP, or the authenticated user's saved address CEP.
+   */
+  public function loadLastPostalCode(): ?string {
+    return $this->postalCodes->load();
+  }
+
+  /**
+   * Sessão da requisição atual, ou NULL em contexto sem sessão.
    */
   private function session(): ?SessionInterface {
     $request = $this->requests->getCurrentRequest();

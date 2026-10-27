@@ -117,10 +117,18 @@ services:
   # Último cálculo do visitante na sessão: produto e carrinho leem o mesmo resultado.
   aculta_commerce_melhorenvio.quote_store:
     class: Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore
-    arguments: ['@request_stack', '@datetime.time']
+    arguments: ['@request_stack', '@datetime.time', '@aculta_commerce_melhorenvio.postal_code_store']
 
   Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore:
     alias: aculta_commerce_melhorenvio.quote_store
+
+  # Último CEP: sessão para visitantes e user.data privado para contas; perfil customer como valor inicial.
+  aculta_commerce_melhorenvio.postal_code_store:
+    class: Drupal\aculta_commerce_melhorenvio\Quote\ShippingPostalCodeStore
+    arguments: ['@request_stack', '@current_user', '@user.data', '@entity_type.manager', '@aculta_portal_cep.lookup']
+
+  Drupal\aculta_commerce_melhorenvio\Quote\ShippingPostalCodeStore:
+    alias: aculta_commerce_melhorenvio.postal_code_store
 
   # Linhas do carrinho atual para cotação (variação, quantidade e valor).
   aculta_commerce_melhorenvio.cart_lines:

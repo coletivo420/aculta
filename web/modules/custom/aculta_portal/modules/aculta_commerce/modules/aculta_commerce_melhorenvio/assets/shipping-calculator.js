@@ -36,7 +36,7 @@
     }
     if ((data.state === 'unavailable' || data.state === 'empty') && data.message) {
       const aviso = document.createElement('p');
-      aviso.className = `aculta-shipping-calculator__aviso aculta-shipping-calculator__aviso--${data.state}`;
+      aviso.className = 'aculta-shipping-calculator__aviso aculta-shipping-calculator__aviso--' + data.state;
       aviso.textContent = data.message;
       resultado.append(aviso);
     }
@@ -64,16 +64,16 @@
         const resultado = raiz.querySelector('[data-aculta-shipping-resultado]');
         const endpoint = raiz.dataset.endpoint || '/frete/simular';
         let consulta = 0;
-        let temporizador = null;
+        let temporizador = 0;
 
         const digitos = () => campo.value.replace(/\D/g, '');
 
-        const calcular = async (cep) => {
+        const calcular = async cep => {
           const minha = ++consulta;
           apresentarCarregamento(resultado);
           try {
-            const variacao = raiz.dataset.variation && raiz.dataset.variation !== '0' ? `&variation=${encodeURIComponent(raiz.dataset.variation)}` : '';
-            const resposta = await fetch(`${endpoint}?cep=${encodeURIComponent(cep)}${variacao}`, {
+            const variacao = raiz.dataset.variation && raiz.dataset.variation !== '0' ? '&variation=' + encodeURIComponent(raiz.dataset.variation) : '';
+            const resposta = await fetch(endpoint + '?cep=' + encodeURIComponent(cep) + variacao, {
               headers: { Accept: 'application/json' },
               credentials: 'same-origin',
             });
@@ -117,6 +117,12 @@
             apresentar(resultado, { state: 'unavailable', message: MENSAGEM_CEP_INVALIDO });
           }
         });
+
+        // CEP da sessão, da conta ou do perfil salvo: calcula automaticamente ao abrir o componente.
+        const cepInicial = digitos();
+        if (cepInicial.length === 8) {
+          temporizador = setTimeout(() => calcular(cepInicial), ATRASO_DIGITACAO);
+        }
 
       });
     },

@@ -1,5 +1,18 @@
 # Changelog — ACULTA Commerce Melhor Envio
 
+## 0.1.0-dev.9 — persistir o último CEP para preenchimento automático (2026-10-27)
+
+- Visitantes guardam o último CEP válido na sessão; contas autenticadas usam `user.data`, removido automaticamente quando a conta é excluída. O CEP salvo no endereço `authenticated` é usado como padrão se ainda não houver CEP do simulador.
+- CEP salvo preenche o componente e inicia a cotação ao abrir. Não foi criada tabela nem necessário update de esquema.
+- A saída varia por `user` e `session` e não entra no render cache, para evitar expor ou servir o CEP de outra pessoa.
+- Firefox ESR visível confirmou loading enquanto a resposta AJAX estava suspensa, cotação sandbox após liberar a resposta, restauração do CEP anônimo após reload e recálculo automático. Unit específicos cobrem sessão, `user.data`, CEP do perfil e rejeição de entrada inválida.
+- Política de Privacidade e Termos de Uso receberam a finalidade nas minutas. A publicação em produção aguarda a publicação dos textos.
+
+## 0.1.0-dev.8 — indicador acessível de cálculo de frete (2026-10-27)
+
+- Durante a consulta AJAX, a caixa de resultado mostra um ícone animado e “Calculando o frete…”, com `role="status"` e `aria-busy`; a animação respeita movimento reduzido.
+- O roteiro Firefox segura a resposta do endpoint para verificar o estado de carregamento e depois libera a cotação sandbox real.
+
 ## 0.1.0-dev.7 — não bloquear o submit do carrinho pelo simulador (2026-10-27)
 
 - O componente de cotação do carrinho deixou de emitir um `<form>` aninhado no formulário do Commerce e o CEP opcional não tem mais `required`. Isso corrige o bloqueio nativo do botão “Fechar pedido”; a cotação do CEP continua automática ao digitar.

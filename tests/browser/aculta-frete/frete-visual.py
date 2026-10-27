@@ -78,20 +78,63 @@ try:
     RESULTADO["comportamento_js"] = espera("Drupal && Drupal.behaviors && Drupal.behaviors.acultaShippingCalculator")
     shot("01-produto-desktop.png")
 
-    # Caso 1: CEP válido, cotação real no sandbox.
+    # Caso 1: segura a resposta da cotação real para validar o estado de loading.
+    D.js("""
+      const fetchOriginal = window.fetch.bind(window);
+      window.__acultaQuoteIntercepted = false;
+      window.__acultaReleaseQuote = null;
+      window.fetch = (...args) => {
+        if (String(args[0]).includes('/frete/simular')) {
+          window.fetch = fetchOriginal;
+          window.__acultaQuoteIntercepted = true;
+          return new Promise((resolve, reject) => {
+            window.__acultaReleaseQuote = () => fetchOriginal(...args).then(resolve, reject);
+          });
+        }
+        return fetchOriginal(...args);
+      };
+    """)
     digita_cep(CEP_VALIDO)
     RESULTADO["sem_botao"] = not D.js("return !!document.querySelector('[data-aculta-shipping-calculator] button[type=submit]');")
+    RESULTADO["consulta_interceptada"] = espera("window.__acultaQuoteIntercepted === true", 20)
+    D.js("document.querySelector('.aculta-shipping-calculator__icone-carregando').scrollIntoView({block: 'center', behavior: 'instant'});")
+    RESULTADO["carregando_visivel"] = espera("""
+      (() => {
+      const resultado = document.querySelector('[data-aculta-shipping-calculator] [data-aculta-shipping-resultado]');
+      const icone = resultado && resultado.querySelector('.aculta-shipping-calculator__icone-carregando');
+      const estado = resultado && resultado.querySelector('[role=status]');
+      const caixa = icone && icone.getBoundingClientRect();
+      return resultado && resultado.getAttribute('aria-busy') === 'true' && icone && estado
+        && /calculando o frete/i.test(estado.innerText)
+        && getComputedStyle(icone).animationName !== 'none'
+        && caixa.top < window.innerHeight && caixa.bottom > 0;
+      })()
+    """, 20)
+    shot("02-carregando-desktop.png")
+    D.js("if (window.__acultaReleaseQuote) window.__acultaReleaseQuote();")
     RESULTADO["disponivel_opcoes"] = espera(
         "document.querySelectorAll('[data-aculta-shipping-calculator] .aculta-shipping-calculator__opcao').length > 0", 90)
     RESULTADO["disponivel_texto"] = resultado_texto()
     shot("02-disponivel-desktop.png")
+
+    # CEP anônimo volta após recarregar e a cotação é iniciada sem nova digitação.
+    D.get(PRODUTO)
+    RESULTADO["cep_anônimo_preservado"] = D.js(
+        "return document.querySelector(arguments[0]).value.replace(/\\D/g, '') === arguments[1];",
+        [CAMPO, CEP_VALIDO.replace('-', '')],
+    )
+    RESULTADO["cotacao_automatica_apos_retorno"] = espera(
+        "document.querySelectorAll('[data-aculta-shipping-calculator] .aculta-shipping-calculator__opcao').length > 0",
+        90,
+    )
+    shot("03-cep-restaurado-desktop.png")
 
     # Caso 2: CEP inválido, recusado antes de qualquer chamada.
     digita_cep(CEP_INVALIDO)
     sai_do_campo()
     RESULTADO["invalido_mensagem"] = espera(
         "/CEP inválido/.test(document.querySelector('[data-aculta-shipping-calculator] [data-aculta-shipping-resultado]').innerText)", 20)
-    shot("03-cep-invalido-desktop.png")
+    shot("04-cep-invalido-desktop.png")
 
     # Celular: o Firefox desta sessão X não encolhe a janela abaixo de ~500 px, então a viewport de 390 px é um iframe
     # do mesmo domínio. Mede-se a largura real do documento dentro dele (innerWidth = 390).
@@ -123,7 +166,7 @@ try:
       return {largura: Math.round(caixa.width), esquerda: Math.round(caixa.left), direita: Math.round(caixa.right),
               viewport: w.innerWidth, dentroDaTela: caixa.right <= w.innerWidth + 1 && caixa.left >= -1, estoura: estoura};
     """)
-    shot("04-produto-celular-390.png")
+    shot("05-produto-celular-390.png")
 finally:
     try:
         D.close()

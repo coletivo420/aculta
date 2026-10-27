@@ -1,9 +1,11 @@
 # ACULTA Commerce Melhor Envio
 
-Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão declarada no manifesto (`0.1.0-dev.7`). O motor de frete e o armazenamento de métodos, tarifas e remessas pertencem ao `aculta_commerce`; este módulo fornece o adaptador Melhor Envio.
+Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão declarada no manifesto (`0.1.0-dev.9`). O motor de frete e o armazenamento de métodos, tarifas e remessas pertencem ao `aculta_commerce`; este módulo fornece o adaptador Melhor Envio.
 
 Status: OAuth2, configuração por ambiente, credenciais via Drupal Key com fallback no gerenciador central de segredos, cliente HTTP, cotação simulada e integração com o plugin manager do motor ACULTA estão cobertos por testes Unit e Kernel sem rede externa. Contratação de etiquetas e rastreamento não foram homologados; chamadas externas e checkout ainda exigem validação autorizada no sandbox. Ver
 [ROADMAP](docs/ROADMAP.md) e [CHANGELOG](CHANGELOG.md).
+
+O simulador mostra um indicador acessível enquanto a cotação AJAX está em andamento. Guarda o último CEP válido na sessão do visitante ou em `user.data` privado para a conta autenticada; se não houver CEP usado anteriormente, preenche pelo `field_address` do perfil `authenticated` e inicia a cotação. Não há nova tabela nem migração. O propósito foi acrescentado às minutas da Política de Privacidade e dos Termos; a publicação em produção depende da publicação desses textos.
 
 ## Responsabilidades
 

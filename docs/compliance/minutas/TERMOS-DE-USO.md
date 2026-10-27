@@ -44,6 +44,8 @@ Os pagamentos são feitos no checkout do site e processados pelo Mercado Pago. O
 
 **Produtos da loja** seguem a legislação de consumo aplicável, inclusive o direito de arrependimento em compras à distância [confirmar prazo, procedimento de devolução e responsável pelo frete]. O cancelamento de um pagamento ainda pendente é possível e não é estorno.
 
+O simulador de frete usa o CEP informado para estimar opções de entrega e pode manter o último CEP para preencher cálculos futuros, conforme a Política de Privacidade. O CEP pode ser substituído no próprio campo.
+
 Contestações de cobrança feitas junto ao meio de pagamento são tratadas pelo Mercado Pago e pela Associação conforme as regras do provedor.
 
 ## Comunicações por e-mail
@@ -70,4 +72,4 @@ Aplicam-se as leis brasileiras. Dúvidas sobre estes termos podem ser enviadas a
 
 ## Versão
 
-Versão 0.3 (minuta), 22/10/2026. Substitui a versão 0.2 de 20/10/2026. Acrescenta a seção sobre apoios, doações, assinaturas, cursos e compras, com a regra de não estorno. Recomenda-se revisão jurídica antes da publicação em produção.
+Versão 0.4 (minuta), 27/10/2026. Substitui a versão 0.3 de 22/10/2026. Explica o uso do CEP no simulador de frete e o preenchimento automático futuro. Recomenda-se revisão jurídica antes da publicação em produção.

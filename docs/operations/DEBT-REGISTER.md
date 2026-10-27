@@ -229,6 +229,7 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | DT-ME-04 | Endereço sem número na API do Melhor Envio | Documentação não define representação para S/N. Contratação bloqueada com `sn_not_accepted_by_api`; cotação não exige número | Média | Confirmação com o suporte ou no sandbox; enquanto isso, bloqueio mantido | Pendente — sandbox |
 | DT-ME-05 | Tela administrativa da origem e conferência de endereço no Green Stash | Origem só existe em configuração (`settings:origin`, vazia por padrão) | Média | Form API e componentes SDC/UI Suite, com permissões, sem editar o endereço do cliente | Pendente — ME-0.5-B |
 | DT-ME-06 | Comentário de `StreetNumberField::validateNumber()` diz 1 a 4 dígitos | Código e mensagem usam `MAX_DIGITS = 10`; só o comentário está errado | Baixa | Comentário alinhado ao código, sem mudar a regra | Pendente — fase própria |
+| DT-ME-07 | Publicação da finalidade de salvar último CEP do simulador | Código usa sessão anônima e `user.data` privado; unit/browser/kernel focal verdes; Política/Termos atualizados somente nas minutas | Média | Publicar as versões revisadas da Política e dos Termos antes da disponibilização em produção | Pendente — publicação institucional |
 
 ## Green Stash — dívidas de UX mobile-first (2026-10-23)
 

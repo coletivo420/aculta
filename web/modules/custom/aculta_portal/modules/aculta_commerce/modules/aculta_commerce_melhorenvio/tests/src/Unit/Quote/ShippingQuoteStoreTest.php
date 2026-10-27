@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_commerce_melhorenvio\Unit\Quote;
 
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore;
+use Drupal\aculta_commerce_melhorenvio\Quote\ShippingPostalCodeStore;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulation;
+use Drupal\aculta_portal_cep\Lookup\CepLookupInterface;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Tests\UnitTestCase;
+use Drupal\user\UserDataInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,8 +27,14 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 #[Group('aculta_commerce_melhorenvio')]
 final class ShippingQuoteStoreTest extends UnitTestCase {
 
+  /**
+   * Mock request timestamp.
+   */
   private int $now = 1_000_000;
 
+  /**
+   * Creates a quote store for the supplied request.
+   */
   private function store(?Request $request): ShippingQuoteStore {
     $stack = new RequestStack();
     if ($request !== NULL) {
@@ -31,9 +42,24 @@ final class ShippingQuoteStoreTest extends UnitTestCase {
     }
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturnCallback(fn() => $this->now);
-    return new ShippingQuoteStore($stack, $time);
+    $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('isAuthenticated')->willReturn(FALSE);
+    $account->method('id')->willReturn('0');
+    $cepLookup = $this->createMock(CepLookupInterface::class);
+    $cepLookup->method('normalize')->willReturnCallback(static fn(string $value): ?string => preg_match('/^\d{8}$/D', $value) ? $value : NULL);
+    $postalCodes = new ShippingPostalCodeStore(
+      $stack,
+      $account,
+      $this->createMock(UserDataInterface::class),
+      $this->createMock(EntityTypeManagerInterface::class),
+      $cepLookup,
+    );
+    return new ShippingQuoteStore($stack, $time, $postalCodes);
   }
 
+  /**
+   * Creates a request with an isolated in-memory session.
+   */
   private function request(): Request {
     $request = new Request();
     $request->setSession(new Session(new MockArraySessionStorage()));

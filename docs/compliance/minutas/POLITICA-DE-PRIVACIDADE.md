@@ -2,7 +2,7 @@
 
 > **Minuta, não publicada.** Cópia para leitura e revisão, gerada de `scripts/institution/politica-de-privacidade.html` (fonte única do texto publicado). Não edite este arquivo: altere o HTML e rode `python3 -I scripts/compliance/render-minutas.py`. Os trechos entre colchetes são pendências de decisão ou de revisão jurídica.
 
-**Atualizada em 22/10/2026 — versão 0.4 (minuta).** Esta política explica como o site institucional da Associação Cultural Antiproibicionista trata dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).
+**Atualizada em 27/10/2026 — versão 0.5 (minuta).** Esta política explica como o site institucional da Associação Cultural Antiproibicionista trata dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).
 
 ## Quem trata os dados
 
@@ -32,7 +32,7 @@ Cada uso tem uma base legal da LGPD (art. 7º). Quando o uso revela opinião pol
 - **Formulários de Contato e Faça Parte**: atendimento de manifestação solicitada pela própria pessoa (art. 7º, I e V). O Faça Parte não gera inscrição em lista de marketing.
 - **Mensagens transacionais** (confirmação, recuperação de senha, avisos da conta): execução de contrato (art. 7º, V) e legítimo interesse em segurança (art. 7º, IX). Não há mensagens de marketing.
 - **Segurança, prevenção de fraude e antirrobô**: legítimo interesse (art. 7º, IX).
-- **Consulta de CEP**: execução de contrato (art. 7º, V), somente o CEP.
+- **Consulta de CEP**: execução de contrato (art. 7º, V). O simulador usa e guarda somente o último CEP válido para preencher cotações futuras, na sessão do visitante ou em dado privado da conta autenticada.
 
 O inventário interno da Associação relaciona cada módulo do site a essas bases.
 
@@ -92,7 +92,7 @@ O site usa cookies estritamente necessários à sessão, à autenticação, à s
 
 ## Consulta de CEP
 
-Ao preencher um endereço, o site pode consultar o CEP informado no serviço público ViaCEP. Essa consulta envia somente o CEP.
+Ao preencher um endereço, o site pode consultar o CEP informado no serviço público ViaCEP. Essa consulta envia somente o CEP. No simulador de frete, o último CEP válido informado fica salvo para preencher e recalcular o frete em uma próxima visita: para visitante sem conta, na sessão do navegador; para pessoa autenticada, como dado privado da conta até sua exclusão. Se houver endereço salvo na conta e ainda não houver CEP usado no simulador, o CEP do endereço preenche o campo e inicia a cotação. A pessoa pode substituir o CEP a qualquer momento. O resultado da cotação continua guardado na sessão por até 15 minutos; outros dados do endereço não são copiados para essa preferência.
 
 ## Prazos de retenção
 
@@ -126,4 +126,4 @@ Esta política pode ser atualizada. A data no topo indica a versão vigente. Alt
 
 ## Versão
 
-Versão 0.4 (minuta), 22/10/2026. Substitui a versão 0.3 de 20/10/2026. Acrescenta o estado das assinaturas e a regra de não estorno, o acompanhamento do progresso nos cursos, o acesso a arquivos de mídia e a exclusão da conta. Recomenda-se revisão jurídica antes da publicação em produção.
+Versão 0.5 (minuta), 27/10/2026. Substitui a versão 0.4 de 22/10/2026. Explica o uso e a retenção do último CEP do simulador de frete para preenchimento automático. Recomenda-se revisão jurídica antes da publicação em produção.

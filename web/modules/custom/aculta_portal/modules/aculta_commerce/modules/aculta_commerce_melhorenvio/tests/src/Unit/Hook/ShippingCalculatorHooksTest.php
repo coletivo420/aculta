@@ -21,16 +21,20 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_commerce_melhorenvio')]
 final class ShippingCalculatorHooksTest extends UnitTestCase {
 
-  private function hooks(?string $reason, ?array $stored = NULL): ShippingCalculatorHooks {
+  /**
+   * Creates the hooks with a configured simulator and session quote.
+   */
+  private function hooks(?string $reason, ?array $stored = NULL, ?string $lastPostalCode = NULL): ShippingCalculatorHooks {
     $simulator = $this->createMock(ShippingSimulator::class);
     $simulator->method('availabilityReason')->willReturn($reason);
     $store = $this->createMock(ShippingQuoteStore::class);
     $store->method('load')->willReturn($stored);
+    $store->method('loadLastPostalCode')->willReturn($lastPostalCode);
     return new ShippingCalculatorHooks($simulator, $store);
   }
 
   /**
-   * Sem motivo de indisponibilidade e sem cálculo guardado, o componente aguarda o CEP.
+   * Without a quote, the component waits for a postal code.
    */
   public function testIdleWhenAvailable(): void {
     $props = $this->hooks(NULL)->props('frete-produto');
@@ -46,7 +50,7 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
   }
 
   /**
-   * Sem pacote real (estado atual do cadastro), o componente já nasce indisponível, com a frase genérica.
+   * Without a package, the component shows a generic unavailable message.
    */
   public function testUnavailableWithVisitorMessage(): void {
     $props = $this->hooks(ShippingSimulation::REASON_NO_PACKAGE)->props('frete-produto');
@@ -55,7 +59,16 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
   }
 
   /**
-   * Cálculo já feito na sessão aparece no produto e no carrinho, com o CEP, sem recalcular.
+   * A saved account CEP prefills the component without a previous quote.
+   */
+  public function testLastPostalCodePrefillsTheCalculator(): void {
+    $props = $this->hooks(NULL, NULL, '74003010')->props('frete-produto');
+    $this->assertSame('74003010', $props['postal_code']);
+    $this->assertSame('idle', $props['state']);
+  }
+
+  /**
+   * The saved session quote appears on product and cart without recalculation.
    */
   public function testStoredQuoteCarriesToCart(): void {
     $stored = [
@@ -97,13 +110,18 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
   }
 
   /**
-   * Carrinho completo ganha o componente com o estado atual e o recálculo no submit.
+   * The full cart form gets the component without a separate submit handler.
    */
   public function testCartFormGetsComponentAndRefreshSubmit(): void {
     $form = [];
     $this->hooks(ShippingSimulation::REASON_NO_PACKAGE)->alterCartForm($form);
     $this->assertSame('aculta_shipping_calculator', $form['aculta_shipping_calculator']['#theme']);
-    $this->assertSame(['aculta_commerce_melhorenvio/shipping-calculator'], $form['aculta_shipping_calculator']['#attached']['library']);
+    $this->assertSame(
+      ['aculta_commerce_melhorenvio/shipping-calculator'],
+      $form['aculta_shipping_calculator']['#attached']['library'],
+    );
+    $this->assertSame(['user', 'session'], $form['aculta_shipping_calculator']['#cache']['contexts']);
+    $this->assertSame(0, $form['aculta_shipping_calculator']['#cache']['max-age']);
     $this->assertSame('unavailable', $form['aculta_shipping_calculator']['#state']);
     $this->assertArrayNotHasKey('#submit', $form);
   }

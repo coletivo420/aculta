@@ -98,3 +98,10 @@ a vir do carrinho:
   valor declarado da linha (seguro). A API consolida as caixas.
 - Verificado: o pedido de teste (1 item, R$ 30,00) foi cotado no sandbox com PAC, SEDEX e Mini Envios.
 - Cache por CEP e carrinho inteiro, com a mesma validade de 5 minutos.
+
+## D8. Último CEP informado e CEP do perfil (2026-10-27)
+
+- O simulador guarda o último CEP válido informado: em sessão para visitantes e em `user.data` privado para pessoas autenticadas. O registro autenticado é removido pelo Core junto com os dados da conta; não há tabela ou atualização de esquema nova.
+- Se a pessoa autenticada ainda não tiver usado o simulador, o campo recebe o CEP do perfil `authenticated` (`field_address`). Um CEP usado explicitamente depois passa a prevalecer e é calculado ao abrir o componente.
+- Só o CEP normalizado é guardado como preferência. A cotação continua tendo TTL de 15 minutos na sessão; o CEP salvo não tem prazo independente e acompanha a sessão do visitante ou a conta autenticada.
+- Essa finalidade foi incluída na minuta da Política de Privacidade e nos Termos; ambos continuam minutas ainda não publicadas. A publicação em produção deve aguardar a publicação dos textos.

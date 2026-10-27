@@ -10,31 +10,32 @@ use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulator;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
 
 /**
- * Encaixe do simulador de frete na página do produto.
+ * Adds the shipping calculator to product and cart displays.
  *
- * O estado vem do serviço de simulação; o tema só recebe as props do componente shipping-calculator.
+ * The simulator determines state; the theme receives component props.
  */
 class ShippingCalculatorHooks {
 
   /**
-   * Bundle da loja que mostra o simulador na página do produto.
+   * Product bundle that displays the shipping calculator.
    */
   public const BUNDLE = 'produto_loja';
 
   /**
-   * Tag de cache do objeto de configuração da origem. Sem ela, trocar a origem não atualiza a página já cacheada.
+   * Cache tag for shipping origin configuration.
    */
   public const CONFIG_TAG = 'config:aculta_commerce_melhorenvio.settings';
 
   /**
-   * Caminho do simulador (rota aculta_commerce_melhorenvio.simulate).
+   * Path for the shipping simulator route.
    */
   public const ENDPOINT = '/frete/simular';
 
   /**
-   * Link "Não sei meu CEP" (busca de CEP dos Correios, confirmada pelo responsável em 2026-10-27).
+   * Correios postal code lookup help URL.
    */
   public const HELP_URL = 'https://buscacepinter.correios.com.br/app/endereco/index.php';
 
@@ -47,7 +48,7 @@ class ShippingCalculatorHooks {
   ) {}
 
   /**
-   * Props do simulador da gaveta do carrinho. A gaveta só o mostra com itens (ver cart-offcanvas).
+   * Adds shipping details to page variables for the cart drawer.
    */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
@@ -55,7 +56,7 @@ class ShippingCalculatorHooks {
   }
 
   /**
-   * Resumo do frete no carrinho AJAX ("Adicionar ao carrinho" atualiza a gaveta sem recarregar a página).
+   * Adds shipping details to the AJAX cart panel variables.
    */
   #[Hook('preprocess_aculta_portal_cart_panel')]
   public function preprocessCartPanel(array &$variables): void {
@@ -63,8 +64,9 @@ class ShippingCalculatorHooks {
   }
 
   /**
-   * Carrinho completo: o componente calcula (ou mostra o último cálculo). O recálculo ao mudar a quantidade não fica
-   * aqui: é feito por CartRefreshSubscriber, nos eventos do CartManager, valendo para todos os carrinhos.
+   * Adds the calculator to the full cart form.
+   *
+   * CartRefreshSubscriber recalculates after quantity changes.
    */
   #[Hook('form_views_form_commerce_cart_form_default_alter')]
   public function alterCartForm(array &$form): void {
@@ -72,7 +74,7 @@ class ShippingCalculatorHooks {
   }
 
   /**
-   * Inclui a configuração da origem no cache do produto: mudar a origem invalida a página.
+   * Adds the shipping origin configuration to the product cache tags.
    */
   #[Hook('entity_view_alter')]
   public function entityViewAlter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
@@ -80,7 +82,7 @@ class ShippingCalculatorHooks {
       return;
     }
     $build['#cache']['tags'][] = self::CONFIG_TAG;
-    // Bloco do módulo (vale para qualquer tema). Só na página completa do produto, não na miniatura do catálogo.
+    // The block works with any theme and only appears on full product pages.
     if ($display->getMode() !== 'default') {
       return;
     }
@@ -90,15 +92,28 @@ class ShippingCalculatorHooks {
   }
 
   /**
-   * Props do simulador. Se o visitante já calculou (produto ou carrinho completo), mostra esse resultado e o CEP; senão,
-   * o estado de disponibilidade da configuração. O carrinho lateral só lê; ele não calcula.
+   * Builds component props from the saved quote or current availability.
    *
-   * @return array{id: string, state: string, message: string, options: list<array<string, mixed>>, postal_code: string}
+   * The drawer reads the quote but does not calculate it.
+   *
+   * @param string $id
+   *   Component instance ID.
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface|null $variation
+   *   Optional store variation used to determine quote availability.
+   *
+   * @return array{
+   *   id: string,
+   *   state: string,
+   *   message: string,
+   *   options: list<array<string, mixed>>,
+   *   postal_code: string
+   *   }
+   *   Props for the reusable shipping calculator component.
    */
-  public function props(string $id, ?\Drupal\commerce_product\Entity\ProductVariationInterface $variation = NULL): array {
-    // Endpoint e link explícitos: o include() do Twig não aplica os padrões do componente (ficavam vazios no navegador).
+  public function props(string $id, ?ProductVariationInterface $variation = NULL): array {
+    // Twig include() does not apply the endpoint or help link defaults.
     $base = ['id' => $id, 'endpoint' => self::ENDPOINT, 'help_url' => self::HELP_URL];
-    // Produto sem peso ou dimensões na variação: indisponível, mesmo que a sessão tenha um cálculo de outro produto.
+    // Without package dimensions, the product cannot reuse another quote.
     if ($variation !== NULL) {
       $reason = $this->simulator->availabilityReason($variation);
       if ($reason !== NULL) {
@@ -106,7 +121,7 @@ class ShippingCalculatorHooks {
           'state' => 'unavailable',
           'message' => ShippingSimulation::unavailable($reason)->message(),
           'options' => [],
-          'postal_code' => '',
+          'postal_code' => $this->store->loadLastPostalCode() ?? '',
         ];
       }
     }
@@ -114,9 +129,15 @@ class ShippingCalculatorHooks {
   }
 
   /**
-   * Estado do último cálculo (ou da disponibilidade, sem cálculo), sem id. Usado pelo resumo do carrinho lateral.
+   * Returns the saved quote or current availability for the cart drawer.
    *
-   * @return array{state: string, message: string, options: list<array<string, mixed>>, postal_code: string}
+   * @return array{
+   *   state: string,
+   *   message: string,
+   *   options: list<array<string, mixed>>,
+   *   postal_code: string
+   *   }
+   *   Current quote or idle/unavailable state, including the saved postal code.
    */
   public function summary(): array {
     $stored = $this->store->load();
@@ -134,21 +155,28 @@ class ShippingCalculatorHooks {
       'state' => $reason === NULL ? 'idle' : 'unavailable',
       'message' => $reason === NULL ? '' : ShippingSimulation::unavailable($reason)->message(),
       'options' => [],
-      'postal_code' => '',
+      'postal_code' => $this->store->loadLastPostalCode() ?? '',
     ];
   }
 
   /**
-   * Elemento de render do bloco do módulo. Variáveis do template vão como chaves com '#', como o Drupal exige.
+   * Builds the module's calculator render element.
    *
    * @param array<string, mixed> $props
-   *   Props do simulador (id, state, message, options, postal_code, endpoint, help_url).
+   *   Calculator component props.
+   * @param int $weight
+   *   Render array weight.
    */
   private function element(array $props, int $weight): array {
     $element = [
       '#theme' => 'aculta_shipping_calculator',
       '#attached' => ['library' => [ShippingCalculatorThemeHooks::LIBRARY]],
       '#weight' => $weight,
+      // Contains per-account/session CEP data; prevent render-cache leakage.
+      '#cache' => [
+        'contexts' => ['user', 'session'],
+        'max-age' => 0,
+      ],
     ];
     foreach ($props as $name => $value) {
       $element['#' . $name] = $value;

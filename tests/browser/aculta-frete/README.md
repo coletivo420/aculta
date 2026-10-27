@@ -7,7 +7,7 @@ Melhor Envio. Frente: ME-0.1-C (`aculta_commerce_melhorenvio`).
 
 - **Servidor de testes** (`loja.aculta.toca.net.br`). Não é o ambiente local.
 - Firefox ESR visível (`DISPLAY=:0`), geckodriver via `wdlib.py` da frente `aculta-cpf-checkout`. Nunca headless.
-- Não altera tema, configuração nem carrinho. Só lê a página do produto e preenche o campo de CEP.
+- Não altera tema, configuração nem carrinho. O cenário cria uma sessão anônima de teste e grava nela somente o CEP e a cotação sintéticos usados para verificar persistência; não autentica nem modifica dados de conta.
 
 ## Execução
 
@@ -22,7 +22,7 @@ Saída: JSON com os resultados e `FALHAS: nenhuma` quando tudo passa. PNG em `SU
 ## O que cobre
 
 1. Bloco presente e comportamento JavaScript (`Drupal.behaviors.acultaShippingCalculator`).
-2. CEP válido (`01310-100`): cotação real no sandbox, com as opções, o preço em reais e o prazo.
+2. CEP válido (`01310-100`): segura temporariamente a resposta do endpoint, verifica ícone animado, texto acessível e `aria-busy`, depois libera a cotação real do sandbox e confere opções, preço em reais e prazo. Recarrega a página para confirmar que o CEP anônimo voltou da sessão e que a cotação inicia automaticamente.
 3. CEP inválido (`123`): mensagem de CEP inválido, sem chamar a API.
 4. Celular de 390 px: a viewport é um `iframe` de 390 px do mesmo domínio. Sem rolagem horizontal e com o bloco
    dentro da tela (16 px de margem de cada lado).
@@ -34,6 +34,7 @@ Saída: JSON com os resultados e `FALHAS: nenhuma` quando tudo passa. PNG em `SU
 - **Olivero não coberto:** trocar o tema é mudança global. A verificação com Olivero fica para um roteiro com
   `trap` de restauração do tema.
 - **Carrinho não coberto:** adicionar produto ao carrinho cria dados no servidor de testes. Fica fora deste roteiro.
+- **Conta autenticada:** persistência via `user.data` e preenchimento inicial pelo CEP do perfil cobertos em Unit; este roteiro não autentica usuário nem altera dados de conta.
 - **Pacote padrão:** o teste assume o pacote cadastrado (16 × 2 × 11 cm, 0,3 kg). Se ele mudar, o resultado da cotação
   muda, mas o teste continua válido.
 
