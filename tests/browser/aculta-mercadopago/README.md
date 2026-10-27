@@ -30,6 +30,12 @@ retornou `guest_registration_and_shipping_stage_without_captcha`: produto,
 carrinho, cadastro silencioso e etapa de endereço carregaram; nenhuma cotação
 ou pagamento foi iniciado.
 
+Reexecução após a integração dos totais ajustados no Checkout Pro também
+retornou `guest_registration_and_shipping_stage_without_captcha` no Firefox
+ESR 153.5.1 visível. O smoke não chegou à preferência nem ao pagamento; o
+carrinho anônimo de rascunho gerado pelo teste foi removido após confirmar que
+era o único item criado por essa sessão.
+
 `preference-customer-stage.py` abre um `init_point` de preferência sandbox
 criado pelo cliente/credencial de teste e confirma se a página do provedor
 carrega ou se apresenta um desafio de segurança. Não autentica o comprador e

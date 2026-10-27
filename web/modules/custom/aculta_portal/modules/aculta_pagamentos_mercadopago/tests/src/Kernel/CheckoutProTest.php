@@ -3,7 +3,10 @@
 namespace Drupal\Tests\aculta_pagamentos_mercadopago\Kernel;
 
 use Drupal\commerce_payment\Entity\PaymentGateway;
+use Drupal\commerce_order\Adjustment;
+use Drupal\commerce_order\Entity\OrderItem;
 use Drupal\commerce_price\Price;
+use Drupal\aculta_pagamentos_mercadopago\PluginForm\Checkout\MercadoPagoPreferenceItems;
 use Drupal\Tests\commerce_order\Kernel\OrderKernelTestBase;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -107,6 +110,38 @@ class CheckoutProTest extends OrderKernelTestBase {
       $previous_public_key === FALSE ? putenv('MERCADOPAGO_TEST_PUBLIC_KEY') : putenv('MERCADOPAGO_TEST_PUBLIC_KEY=' . $previous_public_key);
       $previous_access_token === FALSE ? putenv('MERCADOPAGO_TEST_ACCESS_TOKEN') : putenv('MERCADOPAGO_TEST_ACCESS_TOKEN=' . $previous_access_token);
     }
+  }
+
+  /**
+   * Uses Commerce's actual adjusted line total in the provider preference.
+   */
+  public function testCommerceLinePromotionIsReflectedInPreferenceItems(): void {
+    $this->container->get('commerce_price.currency_importer')->import('BRL');
+    $order_item = OrderItem::create([
+      'type' => 'test',
+      'title' => 'Produto de teste',
+      'quantity' => '2',
+      'unit_price' => new Price('10.00', 'BRL'),
+    ]);
+    $order_item->save();
+    $order_item->addAdjustment(new Adjustment([
+      'type' => 'custom',
+      'label' => 'Desconto de teste',
+      'amount' => new Price('-2.00', 'BRL'),
+    ]));
+
+    $adjusted_total = $order_item->getAdjustedTotalPrice();
+    $this->assertSame('18.00', $adjusted_total->getNumber());
+    $items = MercadoPagoPreferenceItems::build([
+      [
+        'item' => ['title' => $order_item->getTitle(), 'quantity' => (int) $order_item->getQuantity()],
+        'amount' => $adjusted_total,
+      ],
+    ], new Price('18.00', 'BRL'));
+
+    $this->assertCount(1, $items);
+    $this->assertSame('Produto de teste (2 un.)', $items[0]['title']);
+    $this->assertSame(18.0, $items[0]['unit_price'] * $items[0]['quantity']);
   }
 
 }

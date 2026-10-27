@@ -1,3 +1,8 @@
+## 0.1.0-dev.43 — provar ajustes de linha no Commerce Kernel (2026-10-27)
+
+- Kernel usa um `OrderItem` real com desconto aplicado e verifica o valor ajustado que o Checkout Pro enviará. A regressão usa exclusivamente `aculta_simpletest` e importa BRL no schema descartável.
+- CheckoutPro Kernel: 2 testes / 89 assertions PASS (77 depreciações upstream); Unit MP: 192 testes / 783 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS. Smoke Firefox ESR repetiu produto, carrinho e checkout até endereço/frete sem CAPTCHA; não criou preferência nem pagamento, e o carrinho temporário foi removido.
+
 ## 0.1.0-dev.42 — refletir ajustes do pedido na preferência (2026-10-27)
 
 - Preferências Checkout Pro agora usam totais de linha ajustados do Commerce, incluem ajustes gerais e alocam descontos gerais sem preços negativos; o frete permanece separado. O gateway bloqueia a chamada remota se o total do pagamento não corresponder ao pedido ou se o merchandise não puder ser representado com segurança.
