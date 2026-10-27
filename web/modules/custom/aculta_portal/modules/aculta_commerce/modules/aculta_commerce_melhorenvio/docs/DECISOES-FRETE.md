@@ -116,3 +116,13 @@ a vir do carrinho:
 - Verificado no navegador: frete PAC, SEDEX e Mini Envios na gaveta após informar o CEP no produto e adicionar o item.
 - Não verificado no navegador: pedido real de LMS ou de doação (não há esses produtos cadastrados no servidor de testes).
   Coberto por teste unitário de inclusão e exclusão de linhas.
+
+### Verificação com produtos de teste (2026-10-27, autorizada)
+
+- Criados no servidor de testes: produto de curso `[TESTE] Curso LMS (não vender)` (id 10, tipo `produto_curso`) e
+  produto de doação `[TESTE] Doação (não vender)` (id 11, tipo `default`). Podem ser removidos quando não forem mais
+  necessários.
+- Verificado no navegador: camiseta com CEP + doação de teste no mesmo carrinho. O frete da gaveta é igual ao da camiseta
+  sozinha (PAC R$ 23,04, SEDEX R$ 51,97, Mini Envios R$ 18,19).
+- Limites: o produto de doação de teste é do tipo padrão, não passa pelo fluxo real de doação (pedido do tipo `doacao`).
+  O LMS não tem formulário de compra na página da loja e não foi verificado no navegador.
