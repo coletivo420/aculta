@@ -1,3 +1,9 @@
+## 0.1.0-dev.28 — serializar autorização da doação recorrente (2026-10-27)
+
+- A pane delega criação, associação ao pedido e transição para `needs_payment` ao recorder do Mercado Pago, que serializa pelo pedido e reaproveita a autorização pendente após validar a referência remota.
+- Timeouts/5xx deixam marcador de conciliação em `data` e bloqueiam nova criação ambígua até validação manual; sem migração de esquema. Unit Doações 24/84 PASS; DonationPortKernelTest 5/195 PASS (88 depreciações upstream).
+- Sandbox continua pendente da autenticação do comprador.
+
 ## 0.1.0-dev.27 — dependência declarada do provedor de pagamento
 
 - `aculta_donation` declara dependência direta de `aculta_portal:aculta_pagamentos_mercadopago`; `RecurringAuthorizationPane` permanece na Doação e continua consumindo classes e serviços MP diretamente.

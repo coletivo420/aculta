@@ -46,6 +46,11 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   public const CHAVE_VERSAO = 'mp_subscription_version';
 
   /**
+   * Marker retained when remote creation may have succeeded without a response.
+   */
+  public const CHAVE_CRIACAO_PENDENTE = 'mp_subscription_creation_pending';
+
+  /**
    * Tipo de pedido de assinatura de doação. */
   public const TIPO_PEDIDO = 'assinatura';
 
@@ -163,6 +168,105 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
    */
   public function chargeStatusLabel(string $status): TranslatableMarkup {
     return self::rotuloCobranca($status);
+  }
+
+  /**
+   * Creates or recovers the single Mercado Pago subscription for an order.
+   *
+   * The per-order lock closes concurrent checkout submissions. The order is
+   * reloaded while holding the lock so a request that waited for another
+   * submission can resume its existing subscription instead of creating a
+   * second one.
+   *
+   * @param \Drupal\commerce_payment\Entity\PaymentGatewayInterface $gateway
+   *   The active Commerce Mercado Pago gateway.
+   * @param \Drupal\commerce_order\Entity\OrderInterface $pedido
+   *   The recurring donation order to associate with the subscription.
+   * @param array<string, mixed> $dados
+   *   Validated subscription fields. The order ID always supplies the external
+   *   reference, and the order email always supplies the payer email.
+   *
+   * @return array{id: string, status: string, init_point: string}
+   *   The linked subscription and its authorization URL.
+   */
+  public function criarAssinatura(PaymentGatewayInterface $gateway, OrderInterface $pedido, array $dados): array {
+    if ($pedido->bundle() !== self::TIPO_PEDIDO || !$pedido->id()) {
+      throw new \InvalidArgumentException('Pedido inválido para assinatura recorrente.');
+    }
+    $pedido_id = (string) $pedido->id();
+    $lock_id = self::LOCK_PREFIX . 'create-order.' . $pedido_id;
+    if (!$this->lock->acquire($lock_id, 30)) {
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('A autorização da doação já está sendo iniciada. Tente novamente.'), 503);
+    }
+
+    try {
+      $pedido_atual = $this->entidades('commerce_order')->load($pedido_id);
+      if (!$pedido_atual instanceof OrderInterface || $pedido_atual->bundle() !== self::TIPO_PEDIDO) {
+        throw new \InvalidArgumentException('Pedido de assinatura não encontrado.');
+      }
+
+      $assinatura_id = (string) $pedido_atual->getData(self::CHAVE_ASSINATURA, '');
+      if ($assinatura_id !== '') {
+        $assinatura = $this->recorrencia->obterAssinatura($gateway, $assinatura_id);
+        $this->validarAssinaturaRemota($assinatura, $assinatura_id, $pedido_id);
+        $status = $this->providerString($assinatura->status ?? NULL);
+        $init_point = $this->providerString($assinatura->init_point ?? NULL);
+        if ($status === self::STATUS_ATIVA) {
+          return ['id' => $assinatura_id, 'status' => $status, 'init_point' => ''];
+        }
+        if ($status !== self::STATUS_PENDENTE || $init_point === '') {
+          throw new MercadoPagoApiException((string) new TranslatableMarkup('A assinatura existente não pode ser autorizada neste checkout. Atualize a página.'), 409);
+        }
+        return ['id' => $assinatura_id, 'status' => $status, 'init_point' => $init_point];
+      }
+
+      if ($pedido_atual->getData(self::CHAVE_CRIACAO_PENDENTE)) {
+        throw new MercadoPagoApiException((string) new TranslatableMarkup('A tentativa anterior precisa ser conciliada antes de iniciar outra autorização. Entre em contato com o suporte.'), 409);
+      }
+
+      $dados['email'] = (string) $pedido_atual->getEmail();
+      $dados['referencia'] = $pedido_id;
+      $pedido_atual->setData(self::CHAVE_CRIACAO_PENDENTE, $this->time->getRequestTime());
+      $pedido_atual->save();
+      try {
+        $assinatura = $this->recorrencia->criarAssinatura($gateway, $dados);
+      }
+      catch (\InvalidArgumentException $exception) {
+        // The request builder rejected the payload before any remote call.
+        $pedido_atual->setData(self::CHAVE_CRIACAO_PENDENTE, NULL);
+        $pedido_atual->save();
+        throw $exception;
+      }
+      catch (MercadoPagoApiException $exception) {
+        if (!$this->falhaRemotaAmbigua($exception)) {
+          $pedido_atual->setData(self::CHAVE_CRIACAO_PENDENTE, NULL);
+          $pedido_atual->save();
+        }
+        throw $exception;
+      }
+      $assinatura_id = trim((string) ($assinatura['id'] ?? ''));
+      $init_point = trim((string) ($assinatura['init_point'] ?? ''));
+      $status = trim((string) ($assinatura['status'] ?? self::STATUS_PENDENTE));
+      if ($assinatura_id === ''
+        || ($status === self::STATUS_PENDENTE && $init_point === '')
+        || !in_array($status, [self::STATUS_PENDENTE, self::STATUS_ATIVA], TRUE)) {
+        throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago não devolveu uma assinatura válida para o pedido.'), 502);
+      }
+
+      $pedido_atual->setData(self::CHAVE_ASSINATURA, $assinatura_id);
+      $pedido_atual->setData(self::CHAVE_STATUS, $status);
+      $pedido_atual->setData(self::CHAVE_CRIACAO_PENDENTE, NULL);
+      $estado = $pedido_atual->getState();
+      if (isset($estado->getTransitions()['place'])) {
+        $estado->applyTransitionById('place');
+      }
+      $pedido_atual->save();
+
+      return ['id' => $assinatura_id, 'status' => $status, 'init_point' => $init_point];
+    }
+    finally {
+      $this->lock->release($lock_id);
+    }
   }
 
   /**
@@ -489,6 +593,14 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
       || $this->providerString($assinatura->external_reference ?? NULL) !== $pedido_id) {
       throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou uma assinatura inconsistente.'), 502);
     }
+  }
+
+  /**
+   * Determines whether a failed request could have created the remote object.
+   */
+  private function falhaRemotaAmbigua(MercadoPagoApiException $exception): bool {
+    $status = $exception->codigoHttp();
+    return $status === 0 || $status === 408 || $status === 409 || $status === 429 || $status >= 500;
   }
 
   /**

@@ -1,3 +1,9 @@
+## 0.1.0-dev.35 — serializar criação de assinaturas por pedido (2026-10-27)
+
+- Criação de assinatura de doação agora usa lock por pedido, recarrega o Commerce Order sob lock e grava o vínculo antes do redirecionamento. Um retry reutiliza a assinatura pendente só depois de conferir ID e `external_reference`; assinatura autorizada retorna à conclusão e referências conflitantes falham fechadas.
+- O `data` do pedido guarda um marcador antes do POST remoto. Em timeout, conflito, rate limit ou erro 5xx, o marcador bloqueia uma segunda criação até conciliação; não há filtro oficial de busca por `external_reference`. Sem nova tabela ou migração. Após confirmar no painel que não existe assinatura, a equipe pode limpar o marcador do pedido; se existir, registrar o ID remoto no pedido após validar sua referência.
+- Regressões cobrem criação/vínculo, retry sem segunda criação remota, referência conflitante, timeout ambíguo, bloqueio de novo POST e limpeza do marcador em validação local rejeitada. Unit MP completo: 183 testes / 712 assertions PASS; Donation Unit 24/84 e Kernel 5/195 PASS; PHPCS focal PASS. Sandbox de assinatura segue pendente de autenticação do comprador.
+
 ## 0.1.0-dev.34 — fixar os padrões efetivos da preferência (2026-10-27)
 
 - A normalização da preferência agora força `binary_mode: false` e `auto_return: approved` antes do diagnóstico e da chamada remota. Isso mantém os logs coerentes com o payload efetivo e protege contra valores conflitantes montados antes.

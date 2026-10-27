@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.27
+version: 0.1.0-dev.28
 state: Dev
 next_phase: Validar os avisos financeiros em sandbox controlada e Runtime autorizado; cada cobrança recorrente confirmada emite aviso próprio ([README](web/modules/custom/aculta_portal/modules/aculta_donation/README.md))
-progress_note: "Dev.27: aculta_donation declara dependência direta de aculta_pagamentos_mercadopago; mantém RecurringAuthorizationPane no módulo. Unit 24/84 PASS; DonationPortKernelTest 5/195 PASS no harness MariaDB (88 depreciações upstream); Runtime, sandbox financeiro e instalação limpa acionada por Doação pendentes."
+progress_note: "Dev.28: RecurringAuthorizationPane delega ao recorder MP; criação usa lock por pedido, reload sob lock, marcador em erro remoto ambíguo e retry validado por external_reference. Unit Doações 24/84 PASS; DonationPortKernelTest 5/195 PASS (88 depreciações upstream). Sandbox financeiro e Runtime seguem pendentes."

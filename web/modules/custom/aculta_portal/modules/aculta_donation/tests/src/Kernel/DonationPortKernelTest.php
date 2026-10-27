@@ -55,7 +55,9 @@ final class DonationPortKernelTest extends OrderKernelTestBase {
     $container->register('aculta_pagamentos_mercadopago.payment_service', MercadoPagoPaymentService::class)
       ->addArgument(new Reference('aculta_pagamentos_mercadopago.client_factory'))
       ->addArgument(new Reference('aculta_pagamentos_mercadopago.payment_policy'))
-      ->addArgument(new Reference('aculta_pagamentos_mercadopago.logger'));
+      ->addArgument(new Reference('aculta_pagamentos_mercadopago.logger'))
+      ->addArgument(new Reference('entity_type.manager'))
+      ->addArgument(new Reference('lock'));
     $container->register('aculta_pagamentos_mercadopago.recurrence_service', MercadoPagoRecurrenceService::class)
       ->addArgument(new Reference('aculta_pagamentos_mercadopago.client_factory'))
       ->addArgument(new Reference('aculta_pagamentos_mercadopago.recurrence_request_builder'))
@@ -64,7 +66,8 @@ final class DonationPortKernelTest extends OrderKernelTestBase {
       ->addArgument(new Reference('entity_type.manager'))
       ->addArgument(new Reference('aculta_pagamentos_mercadopago.recurrence_service'))
       ->addArgument(new Reference('aculta_pagamentos_mercadopago.logger'))
-      ->addArgument(new Reference('datetime.time'));
+      ->addArgument(new Reference('datetime.time'))
+      ->addArgument(new Reference('lock'));
     $container->setAlias('aculta_portal.payment_provider.subscription_status', 'aculta_pagamentos_mercadopago.subscription_recorder');
     $container->setAlias('aculta_portal.payment_provider.subscription_operations', 'aculta_pagamentos_mercadopago.subscription_recorder');
     $container->setAlias('aculta_portal.payment_provider.payment_operations', 'aculta_pagamentos_mercadopago.payment_service');

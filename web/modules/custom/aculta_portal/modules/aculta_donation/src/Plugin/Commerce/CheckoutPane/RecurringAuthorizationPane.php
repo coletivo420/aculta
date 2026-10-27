@@ -6,7 +6,6 @@ namespace Drupal\aculta_donation\Plugin\Commerce\CheckoutPane;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
-use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce\Response\NeedsRedirectException;
 use Drupal\commerce_checkout\Attribute\CommerceCheckoutPane;
@@ -23,13 +22,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Autorização da doação mensal no Mercado Pago (assinatura de doação).
  *
- * Só atua em pedido do tipo `assinatura` sem assinatura ainda criada. Cria a assinatura (API de assinaturas do
- * Mercado Pago, sem plano: valor e frequência vão na própria assinatura), envia o pedido para aguardando autorização
- * e leva o doador ao init_point. Por lançar redirecionamento, esta pane impede que o pagamento avulso
- * (payment_process) rode no mesmo passo. O retorno cai na etapa de conclusão; a cobrança aprovada chega pelo webhook.
+ * Só atua em pedido do tipo `assinatura` sem assinatura ainda criada. Cria a
+ * assinatura (API do Mercado Pago, sem plano: valor e frequência vão na própria
+ * assinatura), envia o pedido para aguardando autorização e leva o doador ao
+ * init_point. Por lançar redirecionamento, esta pane impede que o pagamento
+ * avulso (payment_process) rode no mesmo passo. O retorno cai na etapa de
+ * conclusão; a cobrança aprovada chega pelo webhook.
  *
- * Falha ao criar a assinatura não quebra a página: o doador vê uma mensagem geral no mesmo passo, e o detalhe técnico
- * vai para o log. Não cobra no checkout e não guarda cartão: o Mercado Pago cobra na autorização.
+ * Falha ao criar a assinatura não quebra a página: o doador vê uma mensagem
+ * geral no mesmo passo, e o detalhe técnico vai para o log. Não cobra no
+ * checkout e não guarda cartão: o Mercado Pago cobra na autorização.
  */
 #[CommerceCheckoutPane(
   id: 'donation_recurring_authorization',
@@ -49,7 +51,7 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
     $plugin_definition,
     CheckoutFlowInterface $checkout_flow,
     EntityTypeManagerInterface $entity_type_manager,
-    private readonly MercadoPagoRecurrenceService $recorrencia,
+    private readonly MercadoPagoSubscriptionRecorder $assinaturas,
     private readonly DomainPurposeManager $purposes,
     private readonly LoggerChannelInterface $logger,
     private readonly MessengerInterface $avisos,
@@ -67,7 +69,7 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
       $plugin_definition,
       $checkout_flow,
       $container->get('entity_type.manager'),
-      $container->get('aculta_pagamentos_mercadopago.recurrence_service'),
+      $container->get('aculta_pagamentos_mercadopago.subscription_recorder'),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('aculta_pagamentos_mercadopago.logger'),
       $container->get('messenger'),
@@ -96,7 +98,8 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
    * {@inheritdoc}
    *
    * @throws \Drupal\commerce\Response\NeedsRedirectException
-   *   Leva ao Mercado Pago para autorizar a assinatura, ou volta ao passo com a mensagem de erro.
+   *   Leva ao Mercado Pago para autorizar a assinatura, ou volta ao passo com
+   *   a mensagem de erro.
    * @throws \Drupal\commerce_payment\Exception\PaymentGatewayException
    *   Gateway do Mercado Pago ausente (configuração).
    */
@@ -111,7 +114,7 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
       'step' => 'complete',
     ]);
     try {
-      $assinatura = $this->recorrencia->criarAssinatura($gateway, [
+      $assinatura = $this->assinaturas->criarAssinatura($gateway, $this->order, [
         'email' => (string) $this->order->getEmail(),
         'back_url' => $retorno?->toString() ?? '',
         'referencia' => (string) $this->order->id(),
@@ -120,6 +123,9 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
         'moeda' => $total->getCurrencyCode(),
         'frequencia' => 1,
       ]);
+      if ($assinatura['status'] === MercadoPagoSubscriptionRecorder::STATUS_ATIVA) {
+        throw new NeedsRedirectException($retorno?->toString() ?? '');
+      }
       if (empty($assinatura['init_point'])) {
         throw new MercadoPagoApiException('O Mercado Pago não devolveu o link de autorização.');
       }
@@ -129,17 +135,13 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
         '@pedido' => $this->order->id(),
         '@motivo' => $e->getMessage(),
       ]);
-      $this->avisos->addError($this->t('Não foi possível iniciar a autorização da doação mensal no Mercado Pago. Confira o e-mail do pedido e tente novamente em instantes.'));
+      $mensagem = $e instanceof MercadoPagoApiException && $e->codigoHttp() === 409
+        ? $e->getMessage()
+        : $this->t('Não foi possível iniciar a autorização da doação mensal no Mercado Pago. Confira o e-mail do pedido e tente novamente em instantes.');
+      $this->avisos->addError($mensagem);
       $this->checkoutFlow->redirectToStep($this->checkoutFlow->getStepId());
     }
 
-    $this->order->setData(MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA, $assinatura['id']);
-    $this->order->setData(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, (string) ($assinatura['status'] ?? MercadoPagoSubscriptionRecorder::STATUS_PENDENTE));
-    $estado = $this->order->getState();
-    if (isset($estado->getTransitions()['place'])) {
-      $estado->applyTransitionById('place');
-    }
-    $this->order->save();
     throw new NeedsRedirectException($assinatura['init_point']);
   }
 
