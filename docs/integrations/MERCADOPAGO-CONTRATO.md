@@ -10,6 +10,7 @@ Checkout Pro é a única forma de pagamento do Portal (`aculta_mercadopago_check
 
 Confirmadas por leitura da página oficial:
 - Webhooks, Brasil: https://www.mercadopago.com.br/developers/pt/docs/your-integrations/notifications/webhooks
+- Consulta de contestação (Checkout Pro), Brasil: https://www.mercadopago.com.br/developers/pt/reference/online-payments/checkout-pro-preferences/chargebacks/get-chargeback/get (`GET /v1/chargebacks/{id}`, `X-Caller-Id` obrigatório)
 - Consulta de fatura recorrente (`GET /authorized_payments/{id}`), Brasil: https://www.mercadopago.com.br/developers/pt/reference/online-payments/subscriptions/get-authorized-payment/get
 - Estornos (Checkout Pro), Argentina: https://www.mercadopago.com.ar/developers/en/docs/checkout-pro-preferences/additional-settings/refunds-and-cancellations
 - Assinatura com plano associado, Brasil: https://www.mercadopago.com.br/developers/pt/docs/subscriptions/integration-configuration/subscription-associated-plan

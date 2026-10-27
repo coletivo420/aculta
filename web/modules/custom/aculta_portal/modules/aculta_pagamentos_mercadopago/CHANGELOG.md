@@ -1,7 +1,8 @@
 ## 0.1.0-dev.45 — conciliar notificações assinadas de contestação (2026-10-27)
 
 - Webhook `topic_chargebacks_wh` agora consulta o caso no Mercado Pago pelo ID assinado, associa o pagamento pelo `payment_id` retornado pela API e aciona a conciliação Commerce normal, com validação de pedido/valor/moeda e lock compartilhado. Associação ausente ou ambígua falha e solicita retry; payload remoto e dados do comprador não são registrados.
-- Unit de webhook: 7 testes / 20 assertions PASS; Unit MP 195/792 PASS; PHPCS e Kernel PASS (Kernel: 2 testes / 89 assertions, 77 depreciações upstream); sandbox pendente.
+- Webhook e associação de contestação: testes cobrem assinatura inválida, reentrega, seller header `X-Caller-Id`, caso divergente e vínculo ausente/duplicado; conciliação injeta o contrato de operações Commerce existente.
+- Unit MP: 200 testes / 809 assertions PASS; PHPCS Drupal/DrupalPractice PASS; Kernel: 2 testes / 91 assertions PASS (77 depreciações upstream); sandbox pendente.
 
 ## 0.1.0-dev.44 — corrigir payload e diagnóstico da preferência (2026-10-27)
 

@@ -6,9 +6,9 @@ namespace Drupal\aculta_pagamentos_mercadopago\MercadoPago;
 
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
+use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use MercadoPago\Client\Common\RequestOptions;
 
 /**
@@ -21,7 +21,7 @@ final class MercadoPagoChargebackNotificationService implements MercadoPagoCharg
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly MercadoPagoClientFactory $clients,
-    private readonly MercadoPagoPaymentService $payments,
+    private readonly PaymentOperationsInterface $payments,
     private readonly LoggerChannelInterface $logger,
   ) {}
 
@@ -39,7 +39,7 @@ final class MercadoPagoChargebackNotificationService implements MercadoPagoCharg
     }
     $gateway = $this->entityTypeManager->getStorage('commerce_payment_gateway')->load('mercado_pago');
     if (!$gateway instanceof PaymentGatewayInterface || !$gateway->status()) {
-      throw new MercadoPagoApiException((string) new TranslatableMarkup('O gateway Mercado Pago está indisponível.'), 503);
+      throw new MercadoPagoApiException('O gateway Mercado Pago está indisponível.', 503);
     }
 
     try {
@@ -52,12 +52,12 @@ final class MercadoPagoChargebackNotificationService implements MercadoPagoCharg
       $case = $this->clients->criar('contestacoes', $gateway)->get($caseId, $options);
     }
     catch (\Throwable) {
-      throw new MercadoPagoApiException((string) new TranslatableMarkup('Não foi possível consultar a contestação no Mercado Pago.'), 502);
+      throw new MercadoPagoApiException('Não foi possível consultar a contestação no Mercado Pago.', 502);
     }
     if ((!is_string($case->id ?? NULL) && !is_int($case->id ?? NULL)) || (string) $case->id !== $caseId
       || (!is_string($case->payment_id ?? NULL) && !is_int($case->payment_id ?? NULL))
       || preg_match('/^[1-9][0-9]{0,19}$/D', (string) $case->payment_id) !== 1) {
-      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou uma contestação inconsistente.'), 502);
+      throw new MercadoPagoApiException('O Mercado Pago retornou uma contestação inconsistente.', 502);
     }
 
     $paymentId = (string) $case->payment_id;
@@ -73,17 +73,17 @@ final class MercadoPagoChargebackNotificationService implements MercadoPagoCharg
         '@case' => $caseId,
         '@payment' => $paymentId,
       ]);
-      throw new MercadoPagoApiException((string) new TranslatableMarkup('O pagamento da contestação não pôde ser associado com segurança.'), 409);
+      throw new MercadoPagoApiException('O pagamento da contestação não pôde ser associado com segurança.', 409);
     }
     $payment = $storage->load(reset($paymentIds));
     if (!$payment instanceof PaymentInterface || (string) $payment->getRemoteId() !== $paymentId
       || $payment->getPaymentGatewayId() !== $gateway->id()) {
-      throw new MercadoPagoApiException((string) new TranslatableMarkup('O pagamento da contestação não pôde ser associado com segurança.'), 409);
+      throw new MercadoPagoApiException('O pagamento da contestação não pôde ser associado com segurança.', 409);
     }
 
     // Re-query the payment from Mercado Pago and use the regular shared lock,
     // amount/currency/order checks, and Commerce status reconciliation.
-    $paymentStatus = $this->payments->atualizar($payment);
+    $paymentStatus = $this->payments->refresh($payment);
     $this->logger->warning('Contestação @case do pagamento @payment: status @status. Revisão operacional necessária.', [
       '@case' => $caseId,
       '@payment' => $paymentId,

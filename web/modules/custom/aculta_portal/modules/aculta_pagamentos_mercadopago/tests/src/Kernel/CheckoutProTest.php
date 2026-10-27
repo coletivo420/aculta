@@ -7,6 +7,8 @@ use Drupal\commerce_order\Adjustment;
 use Drupal\commerce_order\Entity\OrderItem;
 use Drupal\commerce_price\Price;
 use Drupal\aculta_pagamentos_mercadopago\PluginForm\Checkout\MercadoPagoPreferenceItems;
+use Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\WebhookGuard;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoChargebackNotificationService;
 use Drupal\Tests\commerce_order\Kernel\OrderKernelTestBase;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -60,6 +62,9 @@ class CheckoutProTest extends OrderKernelTestBase {
     putenv('MERCADOPAGO_TEST_ACCESS_TOKEN=TEST_ACCESS_TOKEN_SENTINEL');
     try {
       $payment_gateway->save();
+
+      $this->assertInstanceOf(WebhookGuard::class, $this->container->get('aculta_pagamentos_mercadopago.webhook_guard'));
+      $this->assertInstanceOf(MercadoPagoChargebackNotificationService::class, $this->container->get('aculta_pagamentos_mercadopago.chargeback_notifications'));
 
       $this->assertTrue($payment_gateway->status());
       $stored_configuration = $payment_gateway->getPluginConfiguration();
