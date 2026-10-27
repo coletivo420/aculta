@@ -22,6 +22,22 @@ final class MercadoPagoCredentials {
 
   public const GATEWAY_ID = 'mercado_pago';
 
+  /**
+   * Credential fields that must remain outside stored gateway configuration.
+   *
+   * @var string[]
+   */
+  private const CREDENTIAL_FIELDS = [
+    'public_key_test',
+    'access_token_test',
+    'public_key_stage',
+    'access_token_stage',
+    'public_key_prod',
+    'access_token_prod',
+    'client_id',
+    'client_secret',
+  ];
+
   private const ENVIRONMENTS = [
     'test' => [
       'mode' => 'test',
@@ -77,6 +93,25 @@ final class MercadoPagoCredentials {
     $spec = self::spec($environment);
     return self::read($spec['public_key_variable']) !== NULL
       && self::read($spec['access_token_variable']) !== NULL;
+  }
+
+  /**
+   * Clears credential values before a gateway entity is saved.
+   *
+   * @param array<string, mixed> $configuration
+   *   Payment gateway plugin configuration.
+   *
+   * @return array<string, mixed>
+   *   Configuration with credential fields empty.
+   */
+  public static function clearCredentialValues(array $configuration): array {
+    foreach (self::CREDENTIAL_FIELDS as $field) {
+      if (array_key_exists($field, $configuration)) {
+        $configuration[$field] = '';
+      }
+    }
+
+    return $configuration;
   }
 
   /**

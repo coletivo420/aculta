@@ -19,8 +19,13 @@ final class EntitySaveHooks {
   #[Hook('entity_presave')]
   public function entityPresave(EntityInterface $entity): void {
     if ($entity->getEntityTypeId() !== 'commerce_payment_gateway'
-      || $entity->id() !== MercadoPagoCredentials::GATEWAY_ID
-      || !$entity->status()) {
+      || $entity->id() !== MercadoPagoCredentials::GATEWAY_ID) {
+      return;
+    }
+
+    // Config overrides supply runtime keys in memory; never persist them.
+    $entity->setPluginConfiguration(MercadoPagoCredentials::clearCredentialValues($entity->getPluginConfiguration()));
+    if (!$entity->status()) {
       return;
     }
 
