@@ -1026,3 +1026,45 @@ Remota excluída nesta rodada (critério a, ancestral da PR): `feat/aculta-mp-ex
 - Erro 500 no perfil do teste.d por ausência de `aculta_user_nickname` no Runtime; pendente da janela de updatedb.
 
 Nenhum desses dois itens foi executado ou observado pelo agente nesta execução.
+
+## Exclusão autorizada de bancos locais — 2026-10-27
+
+Por decisão explícita do responsável, foram excluídos **sem backup** somente os quatro
+bancos listados abaixo. A autorização delimitou o escopo; nenhum outro banco foi alterado.
+Execução administrativa pelo comando `sudo -u mysql mariadb`, em 2026-10-27, por Local 2.
+
+| Banco | Tabelas imediatamente antes | Resultado |
+|---|---:|---|
+| `aculta_id_cpf_test` | 0 | `DROP DATABASE` executado |
+| `aculta_install_b2` | 0 | `DROP DATABASE` executado |
+| `aculta_shipclone_20261026_a6` | 588 | `DROP DATABASE` executado |
+| `aculta_runtime_copia` | 598 | `DROP DATABASE` executado |
+
+O responsável decidiu expressamente não fazer backups prévios. A sequência foi nominal,
+um banco por comando, com `SHOW DATABASES` após cada exclusão. As listas resultantes
+foram, respectivamente:
+
+```text
+aculta_install_b2, aculta_runtime, aculta_runtime_copia, aculta_shipclone_20261026_a6,
+aculta_simpletest, bdtgn, information_schema, mysql, performance_schema, sys, toca
+
+aculta_runtime, aculta_runtime_copia, aculta_shipclone_20261026_a6, aculta_simpletest,
+bdtgn, information_schema, mysql, performance_schema, sys, toca
+
+aculta_runtime, aculta_runtime_copia, aculta_simpletest, bdtgn, information_schema,
+mysql, performance_schema, sys, toca
+
+aculta_runtime, aculta_simpletest, bdtgn, information_schema, mysql,
+performance_schema, sys, toca
+```
+
+O `REVOKE ALL PRIVILEGES ON aculta_id_cpf_test.*` solicitado retornou `ERROR 1141`:
+não havia grant correspondente naquele momento. A leitura administrativa posterior
+mostrou somente `GRANT ALL PRIVILEGES ON aculta_runtime.*` para
+`aculta_runtime@localhost` (o hash de senha foi omitido). Nenhum grant de outro usuário
+foi alterado.
+
+Verificação final: `SHOW DATABASES` confirmou `aculta_runtime` e `aculta_simpletest`;
+`aculta_runtime` permaneceu com 588 tabelas e `aculta_simpletest` com 0. Não houve
+alteração nesses dois bancos. `toca`, `bdtgn` e os bancos de sistema permaneceram na
+lista e fora do escopo desta exclusão.
