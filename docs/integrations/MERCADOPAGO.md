@@ -3,7 +3,7 @@
 Gateway de pagamento do Commerce: submódulo próprio `aculta_pagamentos_mercadopago` (porte do `commerce_mercado_pago` 3.0.0-rc3; plugin `aculta_mercadopago_checkout_pro`).
 Até a versão 1.0, o gateway é **habilitado com chaves de teste** (`MERCADOPAGO_TEST_PUBLIC_KEY` e
 `MERCADOPAGO_TEST_ACCESS_TOKEN`, por variável de ambiente; nunca na configuração). O gateway fica ativo
-quando o ambiente tem o access token correspondente (regra do `aculta_deployer`). Chaves de produção só
+quando o ambiente tem o par de credenciais correspondente (regra do `aculta_deployer`). Chaves de produção só
 entram por decisão do responsável.
 
 ## Credenciais
@@ -103,16 +103,15 @@ Foi criado um comprador de teste por `POST /users/test_user` sem autorização d
 
 Só a conta de `secrets/mercadolivre_test_user` está autorizada para os testes.
 
-Credenciais do comprador de teste da aplicação (login e senha) estão no arquivo local `secrets/mercadolivre_test_user`, ignorado pelo Git (`/secrets/`). Esse arquivo não é lido por código nem versionado. A variável padrão `MERCADOPAGO_TEST_BUYER_PASSWORD` ainda não está no carregador de segredos do ambiente (`secrets/aculta.secrets.env` pertence ao usuário `aculta`). (que descreve a criação pelo painel).
+Credenciais do comprador de teste da aplicação (login e senha) estão no arquivo local `secrets/mercadolivre_test_user`, ignorado pelo Git (`/secrets/`). O módulo nunca lê esse arquivo; somente o helper manual `tests/browser/aculta-mercadopago/buyer-login.py` o lê em memória durante o login autorizado. Valores não são impressos nem versionados.
 
-Como usar: entrar no Mercado Pago Developers com o usuário e a senha da conta de teste, em janela anônima do
-navegador, para evitar erros de duplicidade de credenciais.
+Como usar: abrir `https://www.mercadopago.com.br/` em Firefox ESR visível, clicar em “Iniciar sessão”, inserir o usuário de teste e enviar; na página seguinte inserir a senha e, somente se solicitado, o código de verificação. O helper acima segue essa ordem e não cria pagamentos.
 
 ## Pendências
 
-- Informar, no painel "Credenciais do ambiente" (seção Ambiente de Testes), o Public Key e o Access Token de teste.
-- Validar o Checkout Pro de ponta a ponta no ambiente de testes, com os cartões e status acima, antes de ativar o gateway.
-- Homologar estornos parcial e total no sandbox; a implementação local usa lock e `x-idempotency-key`, mas não há evidência de chamada sandbox nesta versão.
+- Runtime de teste em `test`, gateway `mercado_pago` ativo e par de credenciais sandbox disponível no override do ambiente; os campos armazenados no config ativo e no Sync estão vazios.
+- Validar Checkout Pro de ponta a ponta com o comprador de teste e os cartões/status acima. Em 2026-10-27 Firefox carregou o produto, adicionou ao carrinho e chegou ao checkout central, que exigiu login/cadastro Drupal antes de apresentar o gateway. O teste parou sem criar preferência ou pagamento. A tentativa separada de login no Mercado Pago recebeu HTTP 403; a sessão do comprador não foi confirmada.
+- Homologar estornos parcial e total no sandbox; a implementação usa lock e `x-idempotency-key`, mas ainda não há evidência de chamada sandbox nesta versão.
 - Configurar as notificações da aplicação no painel do Mercado Pago (URL de teste e URL de produção), salvar e
   copiar a assinatura secreta para `MERCADOPAGO_WEBHOOK_SECRET`.
 - Provisionar as credenciais de produção pelo ACULTA Deployer (não pelo painel do Runtime de teste).

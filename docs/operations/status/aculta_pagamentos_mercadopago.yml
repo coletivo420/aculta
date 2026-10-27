@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.19
+version: 0.1.0-dev.20
 state: Dev
-progress_note: "Dev.19: webhook retorna 503 em falha HTTP/transporte; retorno falha fechado sem expor erro. Unit MP 152/480 PASS; lint/PHPCS focais PASS. Kernel, ponta a ponta e sandbox pendentes."
-next_phase: Validar a alteração no checkout de teste e homologar fluxos no sandbox antes de RC ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))
+progress_note: "Dev.20: gateway ativo em test; pré-save mantém credenciais fora do config. Unit 153/482, Kernel 1/50, PHPCS PHP e lint PASS. Browser chegou ao login Drupal antes do gateway; login MP recebeu HTTP 403. Sem preferência ou cobrança; sandbox financeiro pendente."
+next_phase: Prosseguir do login Drupal ao Checkout Pro com conta de teste, concluir fluxo do comprador sandbox e homologar aprovação, pendência, rejeição, cancelamento e webhook ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))

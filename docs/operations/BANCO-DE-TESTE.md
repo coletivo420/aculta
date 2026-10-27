@@ -27,6 +27,7 @@ precisam de um banco MariaDB próprio. Este banco é **dedicado a testes**:
 4. **Não versione** o arquivo, nem copie a URL para README, CHANGELOG, logs ou comandos colados em PRs.
 5. O usuário de teste **não** tem acesso ao Runtime. A verificação é: `SELECT` no banco de teste funciona, e acesso a
    `aculta_runtime` falha com erro 1044.
+6. Credenciais de serviços externos de **teste** (por exemplo, Mercado Pago sandbox) podem ser fornecidas ao processo de uma suíte `SIMPLETEST_DB` quando o responsável autorizar essa integração. Elas não devem ser gravadas nas tabelas de configuração, fixtures, logs, mensagens ou saída do teste; credenciais de produção continuam proibidas. O banco `aculta_simpletest` guarda apenas os dados descartáveis do Drupal.
 
 ## Como rodar os testes de Kernel
 

@@ -1,3 +1,10 @@
+## 0.1.0-dev.20 — gateway de teste ativo e credenciais fora do config (2026-10-27)
+
+- O gateway `mercado_pago` fica ativo no `config/sync`; o modo efetivo continua sendo escolhido pelo Deployer (`test` no Runtime de teste). A configuração ativa do Runtime agora coincide com o YAML do gateway, com campos de credenciais vazios.
+- `EntitySaveHooks` limpa chaves públicas, tokens e campos de cliente no pré-save, inclusive quando um override de ambiente as injeta em memória. Regressão Unit: valores de teste e produção são apagados antes da persistência.
+- Unit MP: 153 testes / 482 assertions PASS. Kernel: 1 teste / 50 assertions PASS, com 77 depreciações upstream. PHPCS Drupal/DrupalPractice (PHP), PHP lint e `node --check` PASS.
+- Firefox ESR visível tentou seguir o login do comprador sandbox, mas não confirmou sessão; os domínios Mercado Pago responderam HTTP 403. Nenhum pagamento ou estorno foi criado.
+
 ## 0.1.0-dev.19 — falhas de transporte no webhook e retorno (2026-10-27)
 
 - `CheckoutPro::onNotify()` responde 503 para falhas de rede/timeout na consulta do pagamento e comerciante, permitindo reentrega; `onReturn()` falha fechado com mensagem segura sem persistência.

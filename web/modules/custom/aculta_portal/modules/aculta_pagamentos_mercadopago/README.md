@@ -5,7 +5,7 @@ Gateway Mercado Pago Checkout Pro do Commerce, código próprio do Portal. Subst
 ## O que faz
 
 - Plugin de gateway `aculta_mercadopago_checkout_pro` (classe `CheckoutPro`), tipo de meio de pagamento `aculta_mercadopago_checkout_pro` e formulário de redirecionamento (`RedirectCheckoutForm`).
-- Configuração por ambiente (`test`, `stage`, `live`) com chaves de API ligadas a Drupal Key, formulário de parcelamento e exclusão de meios de pagamento.
+- Configuração por ambiente (`test`, `stage`, `live`) com chaves de API fornecidas pelo override de ambiente, formulário de parcelamento e exclusão de meios de pagamento.
 - Retorno de popup (`/integracoes/mercadopago/checkout-retorno`) que fecha a janela e leva a aba principal ao retorno do pedido.
 - Notificações de pagamento por Webhooks modernos assinados. O checkout não força `source_news=ipn`; o Portal valida a assinatura e adapta o payload aceito à interface do Commerce.
 - Cobranças recorrentes são consultadas pela API, validadas contra a assinatura/pedido e registradas uma vez por ID remoto, com lock contra entregas concorrentes.
@@ -31,7 +31,7 @@ O único método de pagamento do Portal é `aculta_mercadopago_checkout_pro` (ti
 
 ## Credenciais
 
-Tokens e chaves públicas ficam na configuração do gateway, por ambiente, e são referenciados por Drupal Key com provider `env`. Nenhum segredo fica no código ou no repositório. Ver `docs/integrations/MERCADOPAGO.md` e o ACULTA Secrets Contract.
+Tokens e chaves públicas vêm das variáveis de ambiente declaradas em `MercadoPagoCredentials`; o override injeta os valores em memória. O hook de pré-save também limpa campos de credencial antes de qualquer gravação da entidade Commerce, para que nem um `save()` administrativo persista chaves no config ativo. Nenhum segredo fica no código, no config exportado ou no repositório. Ver `docs/integrations/MERCADOPAGO.md` e o ACULTA Secrets Contract.
 
 ## Atribuição
 
@@ -42,5 +42,7 @@ Porte de `drupal/commerce_mercado_pago` 3.0.0-rc3 (GPL-2.0-or-later). Licença e
 - Suíte Unit: `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/tests/src/Unit`.
 - Regressões Checkout Pro e serviço de operações: cobrem payload inválido, status remoto pendente, referências conflitantes, retorno adulterado, retorno aprovado já processado sem duplicar pagamento, falhas API/transporte fail-closed, estornos parcial/total repetidos e concorrentes, e cancelamento/reconciliação de timeout sem aceitar ID, total ou moeda divergentes. Nenhuma credencial ou chamada externa é usada.
 - Testes Kernel do porte em `tests/src/Kernel` (rodar somente no banco existente `aculta_simpletest`, conforme `docs/operations/BANCO-DE-TESTE.md`).
+- Última execução local (2026-10-27): Unit 153 testes / 482 assertions PASS; Kernel 1 teste / 50 assertions PASS (77 depreciações de Core/contrib); PHPCS Drupal/DrupalPractice nos PHP do módulo e PHP lint sem erros/avisos; `node --check` nos JS PASS.
 - Homologação visual X11 deve usar Firefox ESR visível e geckodriver; consultar `tests/browser/README.md` e `docs/operations/NAVEGADOR-TESTES.md`. Smoke público não comprova aprovação de pagamento nem sandbox.
+- `tests/browser/aculta-mercadopago/checkout-smoke.py` carregou produto, carrinho e checkout no servidor de teste; o fluxo parou no login/cadastro Drupal antes de exibir o gateway. A tentativa separada de login do comprador sandbox não autenticou porque o Mercado Pago respondeu HTTP 403. Não houve preferência, cobrança, estorno ou webhook sandbox nesta rodada.
 - Gate de fronteira: `php scripts/validate-module-theme-boundary.php`.

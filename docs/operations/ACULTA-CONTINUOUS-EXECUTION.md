@@ -1,5 +1,17 @@
 # Execução contínua ACULTA — PR #298
 
+## Mercado Pago — microfase de gateway de teste, credenciais e homologação (2026-10-27)
+
+- Base: `38c4e1bd1`; `git fsck --full --no-reflogs --no-dangling` terminou sem erros.
+- Antes da alteração no `aculta_runtime`, foi salvo snapshot em `/home/piradopirata/aculta-backups/aculta-runtime-before-mp-20261027/runtime.sql`; SHA-256 `2309a8c43627c6396947e98ff3ca97655ddcaf4f5d800a46f0a24b20ef0b45b8`. O gateway `mercado_pago` ficou habilitado em `test`; o modo do gateway e o ambiente permanecem de teste. Campos de credencial foram removidos do config persistido. O pre-save agora limpa valores de credencial dos gateways MP antes de persistir, com teste Unit.
+- `drush cr` foi executado; endpoints MAIN e SHOP responderam HTTP 200. O status de configuração do gateway MP corresponde ao `config/sync`; nenhuma atualização de banco do módulo MP está pendente.
+- O comprador de teste não teve sessão autenticada confirmada: o provedor devolveu HTTP 403 durante o acesso do navegador. Não foram iniciados pagamentos, estornos ou preferências externas; compra, estorno e webhook sandbox seguem sem homologação.
+- A jornada Firefox da Loja foi exercitada sem conta Drupal: produto público carregado em `loja.aculta.toca.net.br`, item adicionado ao carrinho e checkout central aberto em `aculta.toca.net.br`; a etapa seguinte exige login/cadastro Drupal (`/finalizar-compra/{id}/entrar`). O script documentado pode deixar carrinho anônimo no Runtime. Nenhum cadastro, preferência MP ou pagamento foi submetido.
+- Incidentes de saída local: uma inspeção anterior exibiu dados da credencial do comprador; uma consulta Drush em formato completo também incluiu um campo de conexão que pode conter segredo. Nenhum valor é reproduzido neste registro. Recomenda-se trocar a senha de teste se reutilizada e avaliar rotação do segredo de banco com o responsável de infraestrutura; nenhuma rotação foi feita.
+- Unit: 153 testes / 482 assertions PASS. Kernel em `aculta_simpletest`: 1 teste / 50 assertions PASS, com 77 depreciações Core/contrib. PHPCS Drupal/DrupalPractice, PHP lint e sintaxe JavaScript/Python PASS. Fronteira módulo/tema (3062 verificações) e aliases de rotas (27 arquivos) PASS.
+- O índice de status foi regenerado pelo validador oficial após alinhar manifest e status para `0.1.0-dev.20`.
+- `updatedb:status` ainda aponta 17 hooks de outros componentes e `config:status` 132 diferenças globais. Não houve `updatedb` nem import global; o escopo de configuração autorizado foi somente Mercado Pago.
+
 ## Mercado Pago — microfase de falhas de transporte em callbacks (2026-10-27)
 
 - Base local: `a061c7ac3`. `onNotify()` agora retorna 503 para qualquer falha HTTP/transporte ao consultar pagamento ou merchant order, permitindo reentrega; `onReturn()` falha fechado com erro seguro. Ambos deixam detalhes da exceção fora de logs e mensagens.

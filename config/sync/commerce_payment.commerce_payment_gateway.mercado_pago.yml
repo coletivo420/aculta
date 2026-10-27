@@ -1,6 +1,6 @@
 uuid: b27d8a15-13ec-435b-bb3e-dd6c6abf0dea
 langcode: pt-br
-status: false
+status: true
 dependencies:
   module:
     - aculta_pagamentos_mercadopago

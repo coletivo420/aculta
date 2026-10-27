@@ -83,3 +83,17 @@ deixou. Servem de referência de fluxo; ao evoluí-los, considere movê-los para
 
 - CPF/checkout, servidor de testes: `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 9.6.
 - Olivero, ambiente local: mesma seção, subseção "Tema Olivero no ambiente local".
+
+### `aculta-mercadopago/`
+
+`buyer-login.py` abre Mercado Pago em Firefox ESR visível e tenta autenticar
+somente o comprador sandbox autorizado. Lê as credenciais ignoradas pelo Git em
+memória; não salva HTML/screenshot, não cria pedido e não inicia pagamento. Em
+2026-10-27 o login não foi confirmado e os domínios Mercado Pago responderam
+HTTP 403 na sessão de teste. Ver o README da pasta para execução e limitações.
+
+`checkout-smoke.py` abre um produto em `loja.aculta.toca.net.br`, adiciona ao
+carrinho e segue o checkout central em `aculta.toca.net.br`. Em 2026-10-27
+chegou ao login/cadastro Drupal antes da preferência Mercado Pago. Usa produto
+de teste e pode deixar carrinho anônimo no Runtime; não submete cadastro nem
+pagamento. Ver `aculta-mercadopago/README.md`.
