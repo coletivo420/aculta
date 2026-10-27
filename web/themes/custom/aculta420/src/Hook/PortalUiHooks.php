@@ -100,7 +100,7 @@ final class PortalUiHooks {
     // Busca.
     'search' => ['aculta-search'],
     'search-results' => ['aculta-search__results'],
-    'search-utility' => ['aculta-search-utility', 'btn', 'btn-link', 'p-0'],
+    'search-utility' => ['aculta-search-utility', 'aculta-utility-trigger'],
     'search-popup' => ['aculta-search-popup'],
     'search-preview' => ['aculta-search-preview'],
     'search-preview-input' => ['aculta-search-preview-input'],
