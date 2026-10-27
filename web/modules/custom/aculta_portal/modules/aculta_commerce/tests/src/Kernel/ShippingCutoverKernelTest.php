@@ -291,6 +291,14 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
     $dados = $this->criarLegado();
     $pedido = $dados['pedido'];
+    // Uma remessa descartada antes desloca os ids: a referenciada não tem o mesmo id da cópia, como no Runtime.
+    $descartada = \Drupal::entityTypeManager()->getStorage('commerce_shipment')->create([
+      'type' => 'default',
+      'order_id' => $pedido->id(),
+      'title' => 'Descartada',
+    ]);
+    $descartada->save();
+    $descartada->delete();
     $legada = \Drupal::entityTypeManager()->getStorage('commerce_shipment')->create([
       'type' => 'default',
       'order_id' => $pedido->id(),
@@ -314,6 +322,7 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     $referencias = $pedido->get('shipments')->referencedEntities();
     $this->assertCount(1, $referencias, 'o pedido mantém a referência à remessa');
     $copia = reset($referencias);
+    $this->assertNotSame($legada->id(), $copia->id(), 'a cópia não pode coincidir com o id legado');
     $this->assertSame('aculta_shipment', $copia->getEntityTypeId());
     $this->assertSame('Remessa teste', $copia->get('title')->value);
     $this->assertSame([], $service->blockersForUninstall());

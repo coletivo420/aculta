@@ -183,11 +183,11 @@ final class LegacyShippingCutover {
       return $resultado;
     }
 
+    $mapa = [];
+    $remessas = [];
     if ($this->moduleHandler->moduleExists('commerce_shipping')) {
-      $legadas = $this->entityTypeManager->getStorage('commerce_shipment');
       $destino = $this->entityTypeManager->getStorage('aculta_shipment');
-      $mapa = [];
-      $remessas = $legadas->loadMultiple();
+      $remessas = $this->entityTypeManager->getStorage('commerce_shipment')->loadMultiple();
       foreach ($remessas as $legada) {
         $nova = $destino->create(['type' => 'default']);
         foreach (self::SHIPMENT_FIELDS as $nome) {
@@ -201,6 +201,16 @@ final class LegacyShippingCutover {
         $resultado['remessas_copiadas']++;
       }
 
+    }
+
+    // Storage e tipo de pedido vão para o motor antes de qualquer pedido ser salvo. Com o alvo antigo, o processador
+    // de pedido do contrib (LateOrderProcessor) lê referencedEntities() como commerce_shipment e descarta o id novo,
+    // que não existe ali. Por isso a ordem importa.
+    $campo->setSetting('target_type', 'aculta_shipment');
+    $this->atualizarDependenciasDoCampo($campo);
+    $this->migrarTiposDePedido();
+
+    if ($remessas !== []) {
       $pedidos = $this->entityTypeManager->getStorage('commerce_order');
       $ids = $pedidos->getQuery()->condition('shipments.target_id', NULL, 'IS NOT NULL')->accessCheck(FALSE)->execute();
       foreach ($pedidos->loadMultiple($ids) as $pedido) {
@@ -215,13 +225,9 @@ final class LegacyShippingCutover {
         $resultado['pedidos_ajustados']++;
       }
 
-      $legadas->delete($remessas);
+      $this->entityTypeManager->getStorage('commerce_shipment')->delete($remessas);
       $resultado['remessas_apagadas'] = count($remessas);
     }
-
-    $campo->setSetting('target_type', 'aculta_shipment');
-    $this->atualizarDependenciasDoCampo($campo);
-    $this->migrarTiposDePedido();
     return $resultado;
   }
 
