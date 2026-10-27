@@ -42,10 +42,7 @@ class CheckoutProTest extends OrderKernelTestBase {
     $payment_gateway = PaymentGateway::create([
       'id' => 'mercado_pago',
       'label' => 'Mercado Pago',
-      // Desabilitado: o guarda de presave exige chaves de produção quando o
-      // ambiente é production, e este teste
-      // cobre só a configuração padrão do plugin.
-      'status' => FALSE,
+      'status' => TRUE,
       'plugin' => 'aculta_mercadopago_checkout_pro',
       'configuration' => [
         'mode' => 'test',
@@ -53,37 +50,52 @@ class CheckoutProTest extends OrderKernelTestBase {
         'country' => 'AR',
       ],
     ]);
-    $payment_gateway->save();
+    $previous_public_key = getenv('MERCADOPAGO_TEST_PUBLIC_KEY');
+    $previous_access_token = getenv('MERCADOPAGO_TEST_ACCESS_TOKEN');
+    putenv('MERCADOPAGO_TEST_PUBLIC_KEY=TEST_PUBLIC_KEY_SENTINEL');
+    putenv('MERCADOPAGO_TEST_ACCESS_TOKEN=TEST_ACCESS_TOKEN_SENTINEL');
+    try {
+      $payment_gateway->save();
 
-    $plugin = $payment_gateway->getPlugin();
-    $this->assertSame('aculta_mercadopago_checkout_pro', $plugin->getPluginId());
-    $this->assertSame('test', $plugin->getMode());
+      $this->assertTrue($payment_gateway->status());
+      $stored_configuration = $payment_gateway->getPluginConfiguration();
+      $this->assertSame('', $stored_configuration['public_key_test']);
+      $this->assertSame('', $stored_configuration['access_token_test']);
 
-    $default = $plugin->defaultConfiguration();
-    $expected_keys = [
-      'public_key_test',
-      'access_token_test',
-      'public_key_stage',
-      'access_token_stage',
-      'public_key_prod',
-      'access_token_prod',
-      'client_id',
-      'client_secret',
-      'redirect_mode',
-      'country',
-      'payment_types',
-      'payment_method',
-      'max_installments',
-      'autofee',
-      'debug_logging',
-    ];
-    foreach ($expected_keys as $key) {
-      $this->assertArrayHasKey($key, $default, "Default configuration should contain '$key'");
+      $plugin = $payment_gateway->getPlugin();
+      $this->assertSame('aculta_mercadopago_checkout_pro', $plugin->getPluginId());
+      $this->assertSame('test', $plugin->getMode());
+
+      $default = $plugin->defaultConfiguration();
+      $expected_keys = [
+        'public_key_test',
+        'access_token_test',
+        'public_key_stage',
+        'access_token_stage',
+        'public_key_prod',
+        'access_token_prod',
+        'client_id',
+        'client_secret',
+        'redirect_mode',
+        'country',
+        'payment_types',
+        'payment_method',
+        'max_installments',
+        'autofee',
+        'debug_logging',
+      ];
+      foreach ($expected_keys as $key) {
+        $this->assertArrayHasKey($key, $default, "Default configuration should contain '$key'");
+      }
+      $this->assertSame('redirect', $default['redirect_mode']);
+      $this->assertSame(12, $default['max_installments']);
+      $this->assertFalse($default['autofee']);
+      $this->assertFalse($default['debug_logging']);
     }
-    $this->assertSame('redirect', $default['redirect_mode']);
-    $this->assertSame(12, $default['max_installments']);
-    $this->assertFalse($default['autofee']);
-    $this->assertFalse($default['debug_logging']);
+    finally {
+      $previous_public_key === FALSE ? putenv('MERCADOPAGO_TEST_PUBLIC_KEY') : putenv('MERCADOPAGO_TEST_PUBLIC_KEY=' . $previous_public_key);
+      $previous_access_token === FALSE ? putenv('MERCADOPAGO_TEST_ACCESS_TOKEN') : putenv('MERCADOPAGO_TEST_ACCESS_TOKEN=' . $previous_access_token);
+    }
   }
 
 }

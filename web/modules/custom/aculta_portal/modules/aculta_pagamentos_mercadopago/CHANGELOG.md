@@ -1,3 +1,8 @@
+## 0.1.0-dev.22 — gateway ativo no teste Kernel (2026-10-27)
+
+- `CheckoutProTest` salva o gateway ativo em modo de teste, usando chaves sintéticas somente no processo de teste. Confirma que o hook limpa ambas antes de persistir e que o plugin continua selecionando o modo `test`; nenhuma chamada de API é feita.
+- Kernel: 1 teste / 53 assertions PASS em `aculta_simpletest`, com as mesmas 77 depreciações upstream. PHPCS Drupal/DrupalPractice e PHP lint PASS.
+
 ## 0.1.0-dev.21 — sanitização dos logs de checkout e recorrência (2026-10-27)
 
 - O diagnóstico opcional da preferência omite todo o bloco `payer`; falhas da API registram apenas HTTP status e falhas de transporte usam mensagem genérica. O texto e o corpo de exceções nunca entram nos logs.

@@ -1387,3 +1387,8 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - Regressões primeiro falharam ao encontrar mensagem de exceção privada nos logs de ação recorrente; após a correção, a suíte MP inteira passou.
 - Checkout de preferência remove `payer` dos logs de debug e registra falhas somente pelo status HTTP ou classe genérica de transporte. Ações de assinatura não registram mensagem/corpo e não encadeiam a exceção remota no erro neutro.
 - Unit MP: 156 testes / 502 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint dos PHP alterados PASS. Nenhuma credencial foi lida, chamada externa ou escrita Runtime executada nesta microfase.
+
+## Gateway ativo no teste Kernel Mercado Pago — 2026-10-27
+
+- `CheckoutProTest` passou a salvar `mercado_pago` com `status: true` em modo `test`. Chaves sintéticas existem somente no processo do teste; `EntitySaveHooks` as remove antes da persistência, verificado pelas assertions.
+- Kernel `CheckoutProTest`: 1 teste / 53 assertions PASS em `aculta_simpletest`, 77 depreciações upstream; PHPCS Drupal/DrupalPractice e PHP lint PASS. Nenhuma chamada ao SDK ou serviço externo.
