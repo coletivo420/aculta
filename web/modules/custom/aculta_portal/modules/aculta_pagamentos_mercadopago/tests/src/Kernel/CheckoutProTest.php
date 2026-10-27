@@ -3,6 +3,7 @@
 namespace Drupal\Tests\aculta_pagamentos_mercadopago\Kernel;
 
 use Drupal\commerce_payment\Entity\PaymentGateway;
+use Drupal\commerce_price\Price;
 use Drupal\Tests\commerce_order\Kernel\OrderKernelTestBase;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -65,6 +66,16 @@ class CheckoutProTest extends OrderKernelTestBase {
       $plugin = $payment_gateway->getPlugin();
       $this->assertSame('aculta_mercadopago_checkout_pro', $plugin->getPluginId());
       $this->assertSame('test', $plugin->getMode());
+      $this->assertSame('aculta_mercadopago', $plugin->getPaymentType()->getPluginId());
+
+      $payment = $this->container->get('entity_type.manager')->getStorage('commerce_payment')->create([
+        'payment_gateway' => $payment_gateway->id(),
+        'order_id' => 1,
+        'amount' => new Price('10.00', 'BRL'),
+      ]);
+      $this->assertSame('aculta_mercadopago', $payment->bundle());
+      $payment->getState()->applyTransitionById('wait_for_payment');
+      $this->assertSame('pending', $payment->getState()->getId());
 
       $default = $plugin->defaultConfiguration();
       $expected_keys = [

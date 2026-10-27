@@ -116,7 +116,7 @@ final class MercadoPagoPaymentService implements PaymentOperationsInterface {
       $remoto = $this->consultar($locked_payment, $remote_id);
       $status = (string) ($remoto->status ?? '');
       $local = $locked_payment->getState()->getId();
-      if ($status === 'cancelled' && $local === 'authorization') {
+      if ($status === 'cancelled' && in_array($local, ['authorization', 'pending'], TRUE)) {
         // Reconcile a timeout after Mercado Pago accepted the cancellation.
         $locked_payment->setRemoteState('cancelled');
         $locked_payment->setState('authorization_voided');

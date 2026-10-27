@@ -12,7 +12,8 @@ use Drupal\aculta_portal\Contract\RefundPolicyInterface;
  * Função pura, sem banco nem SDK, para testes unitários. Os status remotos
  * seguem a documentação do Mercado Pago: pending, in_process e authorized
  * aceitam cancelamento.
- * Os estados locais são os do workflow payment_default do Commerce.
+ * Os estados locais seguem os workflows do Commerce. Pagamentos novos usam o
+ * workflow do Mercado Pago, que acrescenta o estado pending.
  */
 final class MercadoPagoPaymentPolicy implements RefundPolicyInterface {
 
@@ -30,14 +31,13 @@ final class MercadoPagoPaymentPolicy implements RefundPolicyInterface {
    * Checks whether the payment can be cancelled.
    *
    * O status remoto precisa permitir cancelamento e o pagamento local precisa
-   * estar em authorization.
+   * estar em authorization ou pending.
    *
-   * Pagamentos do Checkout Pro entram como authorization e só viram completed
-   * após aprovação. O cancelamento usa a transição void do Commerce
-   * (authorization para authorization_voided).
+   * O cancelamento usa a transição void do workflow Commerce selecionado pelo
+   * gateway (authorization/pending para authorization_voided).
    */
   public function podeCancelar(string $statusRemoto, string $estadoLocal): bool {
-    return in_array($statusRemoto, self::CANCELAVEIS, TRUE) && $estadoLocal === 'authorization';
+    return in_array($statusRemoto, self::CANCELAVEIS, TRUE) && in_array($estadoLocal, ['authorization', 'pending'], TRUE);
   }
 
   /**
@@ -145,12 +145,18 @@ final class MercadoPagoPaymentPolicy implements RefundPolicyInterface {
       return $resultado;
     }
 
-    if ($statusRemoto === 'approved' && $estadoLocal === 'authorization') {
+    if (in_array($statusRemoto, ['pending', 'in_process', 'authorized'], TRUE)
+      && in_array($estadoLocal, ['new', 'authorization'], TRUE)) {
+      $resultado['estado'] = 'pending';
+      return $resultado;
+    }
+
+    if ($statusRemoto === 'approved' && in_array($estadoLocal, ['new', 'authorization', 'pending'], TRUE)) {
       $resultado['estado'] = 'completed';
       return $resultado;
     }
 
-    if (in_array($statusRemoto, ['cancelled', 'rejected'], TRUE) && $estadoLocal === 'authorization') {
+    if (in_array($statusRemoto, ['cancelled', 'rejected'], TRUE) && in_array($estadoLocal, ['authorization', 'pending'], TRUE)) {
       $resultado['estado'] = 'authorization_voided';
     }
 

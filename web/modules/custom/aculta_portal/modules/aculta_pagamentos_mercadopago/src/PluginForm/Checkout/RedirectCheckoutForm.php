@@ -252,7 +252,7 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
     }
     else {
       $url_success = $form['#return_url'];
-      $url_pending = $form['#cancel_url'];
+      $url_pending = $form['#return_url'];
       $url_failure = $form['#cancel_url'];
     }
 

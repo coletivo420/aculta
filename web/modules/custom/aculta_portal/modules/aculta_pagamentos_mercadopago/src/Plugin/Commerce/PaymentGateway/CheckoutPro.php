@@ -43,6 +43,7 @@ use Symfony\Component\HttpFoundation\Request;
   ],
   payment_method_types: ['aculta_mercadopago_checkout_pro'],
   credit_card_types: ['amex', 'mastercard', 'visa'],
+  payment_type: 'aculta_mercadopago',
 )]
 class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsInterface {
 
@@ -1093,7 +1094,8 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     $remote_status = (string) ($payment->status ?? '');
     $refunded_number = (string) ($payment->transaction_amount_refunded ?? '0');
     $has_refund = is_numeric($refunded_number) && (float) $refunded_number > 0;
-    if (!in_array($remote_status, ['approved', 'refunded'], TRUE) && !$has_refund) {
+    $pending_status = in_array($remote_status, ['pending', 'in_process', 'authorized'], TRUE);
+    if (!in_array($remote_status, ['approved', 'refunded'], TRUE) && !$has_refund && !$pending_status) {
       $logger->info('Payment @id is not complete; remote status is @status.', [
         '@id' => $payment_id,
         '@status' => $remote_status !== '' ? $remote_status : 'unknown',
@@ -1139,7 +1141,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       if ($payment_ids) {
         $commerce_payment = $payment_storage->load(reset($payment_ids));
       }
-      elseif (in_array($remote_status, ['approved', 'refunded'], TRUE)) {
+      elseif (in_array($remote_status, ['approved', 'refunded'], TRUE) || $pending_status) {
         $payment_method = NULL;
         if (!$order->get('payment_method')->isEmpty()) {
           $payment_method = $order->get('payment_method')->entity;
@@ -1159,7 +1161,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         $order->save();
 
         $commerce_payment = $payment_storage->create([
-          'state' => 'authorization',
+          'state' => $pending_status ? 'pending' : 'authorization',
           'amount' => $amount,
           'payment_gateway' => $this->parentEntity->id(),
           'order_id' => $order->id(),
@@ -1192,11 +1194,26 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         $commerce_payment->setRemoteState($remote_status);
         $commerce_payment->save();
       }
-      elseif ($commerce_payment->getState()->getId() === 'authorization') {
+      elseif ($remote_status === 'approved'
+        && in_array($commerce_payment->getState()->getId(), ['new', 'authorization', 'pending'], TRUE)) {
         $commerce_payment->setRemoteState($remote_status);
         $commerce_payment->save();
         $commerce_payment->setState('completed');
         $commerce_payment->save();
+      }
+      elseif ($pending_status) {
+        if ($payment_created) {
+          $commerce_payment->save();
+        }
+        else {
+          if (in_array($commerce_payment->getState()->getId(), ['new', 'authorization'], TRUE)) {
+            $commerce_payment->setState('pending');
+          }
+          if ($commerce_payment->getRemoteState() !== $remote_status) {
+            $commerce_payment->setRemoteState($remote_status);
+            $commerce_payment->save();
+          }
+        }
       }
     }
     finally {
@@ -1240,7 +1257,8 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     }
 
     $verified_status = (string) ($mp_payment->status ?? '');
-    if ($verified_status !== 'approved') {
+    $pending_status = in_array($verified_status, ['pending', 'in_process', 'authorized'], TRUE);
+    if ($verified_status !== 'approved' && !$pending_status) {
       $logger->error('Payment @id not approved (status: @status)', [
         '@id' => $payment_id,
         '@status' => $verified_status !== '' ? $verified_status : 'unknown',
@@ -1365,7 +1383,20 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         ->execute();
 
       if (count($payment_ids) > 0) {
-        $logger->info('Payment already saved from a signed webhook.');
+        $existing_payment = $payment_storage->load(reset($payment_ids));
+        $existing_state = $existing_payment->getState()->getId();
+        if ($verified_status === 'approved' && in_array($existing_state, ['new', 'authorization', 'pending'], TRUE)) {
+          $existing_payment->setRemoteState($verified_status);
+          $existing_payment->save();
+          $existing_payment->setState('completed');
+          $existing_payment->save();
+        }
+        elseif ($pending_status && in_array($existing_state, ['new', 'authorization'], TRUE)) {
+          $existing_payment->setState('pending');
+          $existing_payment->setRemoteState($verified_status);
+          $existing_payment->save();
+        }
+        $logger->info('Payment already saved from a signed webhook or return.');
         return;
       }
       // If OnNotify method failed for some reason
@@ -1419,7 +1450,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
 
       /** @var \Drupal\commerce_payment\Entity\PaymentInterface $payment */
       $payment = $payment_storage->create([
-        'state' => 'authorization',
+        'state' => $pending_status ? 'pending' : 'authorization',
         'amount' => $verified_amount,
         'payment_gateway' => $this->parentEntity->id(),
         'order_id' => $order->id(),
@@ -1428,10 +1459,14 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       ]);
       $payment->save();
 
-      $payment->setState('completed');
-      $payment->save();
-
-      $this->messenger()->addStatus('Payment has been successfully processed.');
+      if ($pending_status) {
+        $this->messenger()->addWarning('Payment is pending confirmation. We will update your order when Mercado Pago confirms it.');
+      }
+      else {
+        $payment->setState('completed');
+        $payment->save();
+        $this->messenger()->addStatus('Payment has been successfully processed.');
+      }
     }
     finally {
       $this->lock->release($lock_id);

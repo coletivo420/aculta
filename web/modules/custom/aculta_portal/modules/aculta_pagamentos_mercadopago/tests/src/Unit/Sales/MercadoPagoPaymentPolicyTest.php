@@ -36,6 +36,7 @@ final class MercadoPagoPaymentPolicyTest extends UnitTestCase {
   public static function cancelamentos(): array {
     return [
       'pendente em authorization' => ['pending', 'authorization', TRUE],
+      'pendente em pending' => ['pending', 'pending', TRUE],
       'em processo em authorization' => ['in_process', 'authorization', TRUE],
       'autorizado em authorization' => ['authorized', 'authorization', TRUE],
       'aprovado nunca cancela' => ['approved', 'authorization', FALSE],
@@ -111,10 +112,19 @@ final class MercadoPagoPaymentPolicyTest extends UnitTestCase {
   /**
    * Tests the pendente nao muda estado local behavior.
    */
-  public function testPendenteNaoMudaEstadoLocal(): void {
+  public function testPendingRemoteStatusKeepsPendingLocalPaymentPending(): void {
     $r = $this->politica->decidirSincronizacao('in_process', 'authorization', '50.00', '0.00');
-    $this->assertNull($r['estado']);
+    $this->assertSame('pending', $r['estado']);
     $this->assertFalse($r['contestacao']);
+  }
+
+  /**
+   * Approval received after a pending response completes the local payment.
+   */
+  public function testApprovalPromotesPendingPaymentToCompleted(): void {
+    $r = $this->politica->decidirSincronizacao('approved', 'pending', '50.00', '0.00');
+
+    $this->assertSame('completed', $r['estado']);
   }
 
   /**

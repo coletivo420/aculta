@@ -4,10 +4,10 @@ Gateway Mercado Pago Checkout Pro do Commerce, código próprio do Portal. Subst
 
 ## O que faz
 
-- Plugin de gateway `aculta_mercadopago_checkout_pro` (classe `CheckoutPro`), tipo de meio de pagamento `aculta_mercadopago_checkout_pro` e formulário de redirecionamento (`RedirectCheckoutForm`).
+- Plugin de gateway `aculta_mercadopago_checkout_pro` (classe `CheckoutPro`), tipo de meio de pagamento `aculta_mercadopago_checkout_pro` e formulário de redirecionamento (`RedirectCheckoutForm`). O gateway associa pagamentos ao tipo Commerce `aculta_mercadopago`, cujo workflow inclui `pending` para aguardarem a confirmação do provedor.
 - Configuração por ambiente (`test`, `stage`, `live`) com chaves de API fornecidas pelo override de ambiente, formulário de parcelamento e exclusão de meios de pagamento.
 - O gateway permanece ativo em todos os ambientes; sem o par de credenciais daquele ambiente, a criação do checkout falha fechada antes de chamar o Mercado Pago.
-- Retorno de popup (`/integracoes/mercadopago/checkout-retorno`) que fecha a janela e leva a aba principal ao retorno do pedido.
+- Retorno de popup (`/integracoes/mercadopago/checkout-retorno`) que fecha a janela e leva a aba principal ao retorno do pedido. Retornos e notificações consultam o status atual pela API; `pending`, `in_process` e `authorized` são registrados como pendentes e só passam a `completed` após confirmação `approved`.
 - Notificações de pagamento por Webhooks modernos assinados. O checkout não força `source_news=ipn`; o Portal valida a assinatura e adapta o payload aceito à interface do Commerce.
 - Preferências mantêm `binary_mode: false`, permitindo que o Mercado Pago conclua pagamentos pendentes ou em análise antes da confirmação no Commerce.
 - Cobranças recorrentes são consultadas pela API, validadas contra a assinatura/pedido e registradas uma vez por ID remoto, com lock contra entregas concorrentes.
@@ -42,7 +42,7 @@ Porte de `drupal/commerce_mercado_pago` 3.0.0-rc3 (GPL-2.0-or-later). Licença e
 ## Validação
 
 - Suíte Unit: `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/tests/src/Unit`.
-- Regressões Checkout Pro e serviço de operações: cobrem payload inválido, status remoto pendente, referências conflitantes, retorno adulterado, retorno aprovado já processado sem duplicar pagamento, falhas API/transporte fail-closed, estornos parcial/total repetidos e concorrentes, e cancelamento/reconciliação de timeout sem aceitar ID, total ou moeda divergentes. Nenhuma credencial ou chamada externa é usada.
+- Regressões Checkout Pro e serviço de operações: cobrem payload inválido, transição de notificação para pendente e aprovação subsequente, referências conflitantes, retorno adulterado, retorno aprovado já processado sem duplicar pagamento, falhas API/transporte fail-closed, estornos parcial/total repetidos e concorrentes, e cancelamento/reconciliação de timeout sem aceitar ID, total ou moeda divergentes. Nenhuma credencial ou chamada externa é usada.
 - Testes Kernel do porte em `tests/src/Kernel` (rodar somente no banco existente `aculta_simpletest`, conforme `docs/operations/BANCO-DE-TESTE.md`).
 - Última execução local (2026-10-27): Unit 159 testes / 512 assertions PASS; Kernel 1 teste / 53 assertions PASS (77 depreciações de Core/contrib); PHPCS Drupal/DrupalPractice nos PHP alterados e PHP lint sem erros/avisos; `node --check` nos JS PASS. As regressões confirmam gateway ativo sem persistir chaves, checkout sem token encerrado antes da API e preferência com modo binário desativado.
 - Homologação visual X11 deve usar Firefox ESR visível e geckodriver; consultar `tests/browser/README.md` e `docs/operations/NAVEGADOR-TESTES.md`. Smoke público não comprova aprovação de pagamento nem sandbox.

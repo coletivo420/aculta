@@ -53,7 +53,7 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 | Área | Como está | Situação |
 | --- | --- | --- |
 | Webhook | `WebhookGuard` valida a assinatura com o SDK e rejeita tópico legado sem assinatura | Alinhado |
-| Aprovação pelo webhook | O handler consulta o pagamento remoto e exige status aprovado, referência do pedido, moeda e valor exatos antes de concluir o pagamento Commerce | Unit cobre remoto pendente, referência divergente e transição de autorização existente após aprovação; Kernel/Runtime pendentes |
+| Status pelo webhook | O handler consulta o pagamento remoto e exige referência do pedido, moeda e valor exatos; `pending`, `in_process` e `authorized` persistem no workflow Commerce `aculta_mercadopago_payment` como pendentes, e somente `approved` conclui o pagamento | Unit cobre persistência pendente, referência divergente e transição de autorização/pending após aprovação; Kernel valida o tipo/workflow; Runtime pendente |
 | Idempotência | Retorno, webhook e cobrança recorrente serializam por ID remoto e consultam duplicatas dentro do lock | Unit cobre retorno aprovado duplicado, lock de recorrência e filtros Commerce; Kernel/Runtime pendentes |
 | Falha remota | Consulta remota não confirma estado local quando API/transport falham | Unit: webhook responde 503 em erro HTTP/timeout para reentrega; retorno lança exceção Commerce segura; transação externa não testada |
 | Estorno | `CheckoutPro::refundPayment()` usa cliente do gateway ativo, lock por pagamento e `x-idempotency-key` estável por total acumulado; persiste somente com resposta `approved` vinculada ao pagamento remoto | Unit retry idempotente, concorrência e status pendente PASS; sandbox parcial/total pendente |
@@ -61,7 +61,7 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 | Assinatura pendente | `status => 'pending'`, sem cartão | Alinhado |
 | Status de assinatura alteráveis | `RecurrenceRequestBuilder::STATUS_ALTERAVEIS = paused, authorized, cancelled` | Confirmar com a referência de `PUT /preapproval/{id}` |
 | Gateway ativo | Configuração canônica permanece `status: true` em todos os ambientes; o hook pré-save remove credenciais e não bloqueia importação quando estão ausentes | Unit cobre preservação do gateway ativo e remoção das chaves; `RedirectCheckoutForm` recusa criar a preferência se o token efetivo estiver vazio |
-| Pagamentos pendentes | Preferência envia `binary_mode: false` para permitir `pending` e `in_process`; com modo binário habilitado, o provedor pode rejeitá-los automaticamente | [Documentação oficial](https://www.mercadopago.com.br/developers/pt/docs/checkout-pro-preferences/additional-settings/binary-mode); Unit protege a política local |
+| Pagamentos pendentes | Preferência envia `binary_mode: false` para permitir `pending` e `in_process`; com modo binário habilitado, o provedor pode rejeitá-los automaticamente. O tipo Commerce próprio adiciona estado `pending` e transições para aprovação/cancelamento posterior | [Documentação oficial](https://www.mercadopago.com.br/developers/pt/docs/checkout-pro-preferences/additional-settings/binary-mode); Unit e Kernel locais PASS |
 
 ## Não confirmado
 

@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.26
+version: 0.1.0-dev.27
 state: Dev
-progress_note: "Dev.26: preferência envia binary_mode false para preservar pagamentos pending/in_process; regressão Unit protege a política e docs referenciam a especificação oficial. Gateway ativo sem credenciais e fail-closed também cobertos (dev.24–25). Unit 159/512 PASS; PHP lint e PHPCS Drupal/Practice focais PASS. Login MP sandbox ficou login_incomplete; nenhuma preferência ou cobrança criada. Homologação financeira pendente."
+progress_note: "Dev.27: tipo/workflow Commerce próprio registra pagamentos pending, in_process e authorized; retorno e Webhook só concluem após consulta remota approved. Unit 163/548 PASS; Kernel 1/56 PASS (77 depreciações upstream); PHP lint/PHPCS focais PASS. Atualização/importação do novo workflow no Runtime, teste browser e sandbox pendentes."
 next_phase: Prosseguir com teste isolado de criação da preferência e, quando o comprador sandbox estiver acessível, homologar aprovação, pendência, rejeição, cancelamento, webhook e recorrência ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))

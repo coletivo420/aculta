@@ -1,3 +1,9 @@
+## 0.1.0-dev.27 — representar pagamentos pendentes no workflow Commerce (2026-10-27)
+
+- Gateway usa o tipo de pagamento `aculta_mercadopago`, com workflow próprio e estado `pending`; retorno e Webhook persistem status pendente sem confirmar pedido e promovem para `completed` somente após consulta remota aprovada.
+- Regressões cobrem notificação pendente, aprovação de pagamentos pendentes/autorizados e retorno duplicado idempotente. Unit: 163 testes / 548 assertions PASS; Kernel `CheckoutProTest`: 1 teste / 56 assertions PASS (77 depreciações de Core/contrib).
+- Pendentes: validar instalação da nova configuração de workflow no Runtime pelo fluxo operacional permitido, teste ponta a ponta/sandbox do estado pendente e revisão completa das transições de assinatura/estorno no workflow próprio.
+
 ## 0.1.0-dev.26 — preservar pagamentos pendentes do provedor (2026-10-27)
 
 - A preferência Checkout Pro envia `binary_mode: false`. A documentação oficial confirma que o modo binário rejeita pagamentos que ficam pendentes ou em análise; o modo normal preserva esses estados para confirmação por Webhook/consulta.
