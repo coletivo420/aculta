@@ -22,7 +22,9 @@ use Symfony\Component\HttpFoundation\Request;
 class QrCodePreviewControllerTest extends UnitTestCase {
 
   /**
-   * Monta o controlador com o validador, o registro de presets e o gerador reais (sem rede e sem banco).
+   * Monta o controlador com o validador, presets e gerador reais.
+   *
+   * Não usa rede nem banco.
    */
   private function controller(): QrCodePreviewController {
     return new QrCodePreviewController(new QrCodePayloadValidator(), new QrCodePresetRegistry(), new QrCodeGenerator());
@@ -32,7 +34,8 @@ class QrCodePreviewControllerTest extends UnitTestCase {
    * URL http/https válida gera SVG com cabeçalhos privados e sandbox.
    */
   public function testValidUrlReturnsPrivateSvg(): void {
-    $response = $this->controller()->preview(Request::create('/x', 'GET', ['url' => 'https://aculta.org/x']));
+    $request = Request::create('/x', 'GET', ['url' => 'https://example.invalid/x']);
+    $response = $this->controller()->preview($request);
     $this->assertSame(200, $response->getStatusCode());
     $this->assertStringContainsString('<svg', (string) $response->getContent());
     $this->assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
@@ -50,7 +53,7 @@ class QrCodePreviewControllerTest extends UnitTestCase {
       'javascript' => ['javascript:alert(1)'],
       'data' => ['data:text/html,<p>x</p>'],
       'file' => ['file:///etc/passwd'],
-      'credenciais' => ['https://usuario:senha@aculta.org/'],
+      'credenciais' => ['https://usuario:senha@example.invalid/'],
       'vazia' => [''],
     ];
   }
