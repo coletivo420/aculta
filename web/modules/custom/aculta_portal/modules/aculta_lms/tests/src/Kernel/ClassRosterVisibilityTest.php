@@ -55,10 +55,12 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
   /**
    * Registers the real author card chain used by the roster service.
    *
-   * The fixture accounts have no public profile, so the identity resolver
-   * returns NULL and the roster keeps the display-name fallback. Registering
-   * the chain here compiles aculta_lms.class_roster_manager without enabling
-   * the full aculta_user configuration graph.
+   * The fixture accounts have no public profile, so the roster uses
+   * AuthorCardBuilder::buildFallback() (display name + acervo). The harness
+   * has no acervo pool, so the test asserts the card contract by
+   * name/variant; the site wiring injects the pool. Registering the chain here
+   * compiles aculta_lms.class_roster_manager without the full aculta_user
+   * configuration graph.
    */
   private function registerAuthorCardBuilder(ContainerBuilder $container): void {
     $profileStorage = $this->createMock(ProfileStorageInterface::class);
@@ -160,7 +162,11 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
     $visible = $manager->build($course, $viewer);
     self::assertCount(1, $visible['classes'], 'A student sees only classes where they are enrolled.');
     self::assertSame('Turma A', $visible['classes'][0]['title']['#value']);
-    $names = array_map(static fn (array $item): string => $item['#plain_text'], $visible['classes'][0]['members']['#items']);
+    $items = $visible['classes'][0]['members']['#items'];
+    self::assertSame('aculta_user_author_card', $items[0]['#theme']);
+    self::assertSame('profile_compact', $items[0]['#variant']);
+    self::assertSame('sm', $items[0]['#size']);
+    $names = array_map(static fn (array $item): string => (string) $item['#display_name'], $items);
     self::assertEqualsCanonicalizing(['peer', 'viewer'], $names);
     self::assertNotContains('blocked', $names);
     self::assertNotContains('other-class-student', $names);

@@ -293,6 +293,35 @@ final class AuthorIdentityTest extends UnitTestCase {
   }
 
   /**
+   * Uses display name + acervo fallback when no public profile exists.
+   */
+  public function testCartaoFallbackUsaNomeDeExibicaoSemPerfilPublico(): void {
+    $account = $this->createMock(UserInterface::class);
+    $account->method('getDisplayName')->willReturn('Estudante Sem Perfil');
+    $account->method('getCacheTags')->willReturn(['user:42']);
+    $account->method('getCacheContexts')->willReturn([]);
+    $account->method('getCacheMaxAge')->willReturn(-1);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $resolver = new AuthorIdentityResolver(
+      $entityTypeManager,
+      $this->createMock(PublicProfileLinkInterface::class),
+      new ImageRenderer(new ImageCatalog(), $entityTypeManager),
+      new PublicProfilePolicy(),
+      new SocialNetworks(),
+      $this->createMock(DateFormatterInterface::class),
+    );
+
+    $build = (new AuthorCardBuilder($resolver))->buildFallback($account, 'sm', 'Educador(a)');
+
+    self::assertSame('Estudante Sem Perfil', $build['#display_name']);
+    self::assertSame('profile_compact', $build['#variant']);
+    self::assertNull($build['#profile_url']);
+    self::assertSame('sm', $build['#size']);
+    self::assertSame('Educador(a)', $build['#designation']);
+    self::assertFalse($build['#has_avatar']);
+  }
+
+  /**
    * Keeps private profile biography and networks out of the editorial card.
    */
   public function testPerfilPrivadoNaoExpoeBioOuRedesNoCartaoEditorial(): void {

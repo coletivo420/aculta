@@ -1,3 +1,18 @@
+## 0.4.0-dev.90 — fallback nome + acervo e autoria da Wiki
+
+- `AuthorIdentityResolver::resolveFallback()` e `AuthorCardBuilder::buildFallback()`
+  montam o cartão de quem não tem perfil público: nome de exibição + avatar do
+  acervo, sem link, foto, bio ou redes. O roster da turma usa esse fallback, então
+  ninguém sai da lista por falta de perfil público (decisão de 2026-10-27).
+- Wiki: confirmado que `node--wiki-entry--full` e `--teaser` não exibem autor. A
+  autoria aparece somente na discussão do verbete, pelo cartão `author_wiki`.
+- `AVATAR-PADRAO.md` e `AUTHOR-CARD-VARIANTS.md` registram as decisões.
+- Validação: PHPUnit Unit 142/552 PASS (1 depreciação PHPUnit); Kernel
+  `ClassRosterVisibilityTest` 1/33 PASS (37 depreciações upstream); gates Portal
+  (1112), foto (INV-FOTO-1 a 10), SDC (632), design foundations, browser
+  validators (21), Foundation (345) e shell-contract (11) PASS. RUNTIME STATUS:
+  DEFERRED para o roster visual (o Runtime não tem turma com roster).
+
 ## 0.4.0-dev.89 — campo de Views para cartões de perfil público (Fase 3)
 
 - Novo campo de Views `aculta_user_author_card`: renderiza o cartão de autor de cada

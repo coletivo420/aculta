@@ -79,12 +79,13 @@ class ClassRosterManager {
         continue;
       }
       usort($members, static fn (UserInterface $a, UserInterface $b): int => strnatcasecmp((string) $a->getDisplayName(), (string) $b->getDisplayName()));
-      // Cartão de autor com avatar (acervo ou foto liberada). Sem identidade pública,
-      // mantém o nome de exibição como antes, para não remover o aluno da lista.
+      // Quem tem perfil público usa o cartão com apelido. Quem não tem continua
+      // na lista com o nome de exibição e o avatar do acervo (decisão de
+      // 2026-10-27), em vez de virar texto simples.
       $items = [];
       foreach ($members as $member) {
         $items[] = $this->cardBuilder->build($member, 'profile_compact', [], NULL, 'sm')
-          ?? ['#plain_text' => (string) $member->getDisplayName()];
+          ?? $this->cardBuilder->buildFallback($member, 'sm');
       }
       $classLists[] = [
         'title' => [

@@ -41,8 +41,10 @@ final class AuthorIdentityResolver implements PublicMemberIdentityInterface {
   ];
 
   /**
-   * Resolvedor de avatar compartilhado com Conta/perfil. Sem ele (testes), a
-   * foto continua valendo e o acervo ilustrativo não é usado.
+   * Resolvedor de avatar compartilhado com Conta/perfil.
+   *
+   * Sem ele (testes), a foto continua valendo e o acervo ilustrativo não é
+   * usado.
    */
   private readonly AvatarResolver $avatars;
 
@@ -136,6 +138,21 @@ final class AuthorIdentityResolver implements PublicMemberIdentityInterface {
       $bio !== '' ? $bio : NULL,
       $socialLinks,
     );
+  }
+
+  /**
+   * Resolve a identidade de quem não tem perfil público.
+   *
+   * O nome de exibição e o avatar do acervo são o mínimo acordado para manter a
+   * pessoa visível em contextos que já mostram o nome, como o roster da turma.
+   * Não expõe foto, link, bio ou redes: sem perfil público, a decisão é nome +
+   * acervo.
+   */
+  public function resolveFallback(UserInterface $account): AuthorIdentity {
+    $cacheability = (new CacheableMetadata())->addCacheableDependency($account);
+    $displayName = trim((string) $account->getDisplayName());
+    $avatar = $this->avatars->build($account, $displayName, FALSE, $cacheability);
+    return new AuthorIdentity('profile_compact', $displayName, NULL, $avatar, NULL, $cacheability);
   }
 
   /**

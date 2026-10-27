@@ -8,13 +8,13 @@ provider autorizado os fornecer. Uma variante nunca amplia acesso por si só.
 | Variante | Finalidade/dados candidatos | Estado |
 | --- | --- | --- |
 | `profile_full` | Perfil público completo; itens visíveis via `PublicProfilePolicy` | Perfil e rota existentes preservados; SDC ainda não substitui a página toda. |
-| `profile_compact` | Nome público, avatar se policy permite, link canônico | Variante aceita pelo resolver; layout compacto no SDC. |
+| `profile_compact` | Nome público, avatar se policy permite, link canônico | Variante aceita pelo resolver; layout compacto no SDC. Contas sem perfil público usam o fallback da mesma variante (nome de exibição + acervo) em contextos que já mostram o nome, como o roster da turma. |
 | `author_editorial` | Autoria de publicação; designação Autor/Coautor vem do Magazine; bio e redes seguem opt-in público | Integrada: `ArticleAuthorsHooks` usa `AuthorCardBuilder`; cartão compartilhado do SDC apresenta identidade, avatar, designação, bio e links autorizados. |
 | `author_comment` | Autoria de comentário interno da Revista, avatar conforme policy, ações fornecidas pelo host | `DiscussionCommentAuthorHooks` seleciona para Comments compartilhados em `revista`; comentários de Fórum não usam esta variante. |
 | `author_forum` | Autor de tópico/resposta pública, avatar conforme policy, ano da conta em perfil público, ações fornecidas pelo host | `PublicForumTopicAuthorHooks` integra tópicos `aculta_forum_topic`; `AuthorCardVariantResolver` usa a mesma variante nas respostas hospedadas nesse bundle. Forum contrib permanece em migração separada. |
 | `author_forum_stacked` | Mesma identidade de `author_forum`, empilhada acima da mensagem | Mesmo view-model; variante visual implementada no SDC. |
 | `author_lms` | Identidade e papel contextual visível, somente após Group/membership access | O resolver identifica o host planejado `aculta_lms_topic`; adapter, dados pedagógicos e acesso Group continuam pendentes. |
-| `author_wiki` | Identidade de participante da discussão do verbete | O resolver identifica `wiki_entry`; a integração Comment e a navegação da Wiki futura continuam pendentes. |
+| `author_wiki` | Identidade de participante da discussão do verbete | `DiscussionCommentAuthorHooks` aplica o cartão aos comentários do host `wiki_entry`. A entrada do verbete não exibe autor (decisão de 2026-10-27); a autoria aparece só na discussão. |
 | `author_growroom_historico` | Nome de acervo e identificação da origem, sem User, login, data de conta, perfil individual ou ações de conta | `AuthorCardBuilder::buildLegacyForum()` prepara o nome de exibição com `-gr`, rótulo do acervo e cache da entidade histórica; o sufixo só aparece em cartões de autoria do Fórum. Comentários compartilhados e tópicos importados o consomem. O memorial coletivo `/u/lendashistoricas` mantém o nome sem sufixo e não há rota individual. |
 | `author_minimal` | Menção/aviso/prévia: nome público mínimo e link apenas se permitido | Identidade compartilhada aceita pelo resolver e builder. |
 

@@ -1,3 +1,19 @@
+## 0.1.0-dev.94 — feedback de educador distingue aluno e educador
+
+- `EducatorFeedbackPolicy` (`aculta_lms.educator_feedback_policy`) define educador
+  como autor diferente do dono da resposta e com a permissão `grade students` no
+  curso. `EducatorFeedbackEventHooks` e `EducatorFeedbackAuthorCardHooks` usam o
+  mesmo critério.
+- `lms_answer_comment` aceita comentário do aluno dono da resposta; esses
+  comentários não recebem o rótulo "Educador(a)" nem disparam a notificação de
+  feedback, mas continuam com cartão de autor (nome + acervo quando não há perfil).
+- O roster usa `AuthorCardBuilder::buildFallback()`: quem não tem perfil público
+  continua na turma com nome de exibição + avatar do acervo.
+- Validação: PHPUnit Unit 88/453 PASS (8 depreciações PHPUnit); Kernel do roster
+  1/33 PASS (37 depreciações upstream); gates Portal (1112), foto, SDC, design
+  foundations, browser validators, Foundation e shell-contract PASS. RUNTIME
+  STATUS: DEFERRED para a verificação visual do feedback (o Runtime não tem turma).
+
 ## 0.1.0-dev.93 — avatar padrão nas turmas e no feedback do educador (Fase 4)
 
 - Roster da turma e participantes da sala mostram cartão de autor (`profile_compact`, tamanho `sm`)
