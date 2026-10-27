@@ -43,10 +43,12 @@ final class EmailConfirmationRequester {
   /**
    * Requests a confirmation for an account.
    *
+   * $responseUrl: para onde a pessoa vai depois de confirmar (padrão: painel). A conta simplificada usa a etapa de senha.
+   *
    * ACCEPTED means Email Confirmer's MailManager call returned success. It does
    * not establish final delivery to the recipient's mailbox.
    */
-  public function request(UserInterface $account): EmailConfirmationRequestResult {
+  public function request(UserInterface $account, ?Url $responseUrl = NULL): EmailConfirmationRequestResult {
     $uid = (int) $account->id();
     $email = trim((string) $account->getEmail());
     if ($account->isNew() || $uid <= 0 || $email === '') {
@@ -72,7 +74,7 @@ final class EmailConfirmationRequester {
       $confirmation->setRealm(self::REALM)
         ->setProperty('user', $uid)
         ->setPrivate()
-        ->setResponseUrl(Url::fromRoute('aculta_portal.dashboard'), 'confirm');
+        ->setResponseUrl($responseUrl ?? Url::fromRoute('aculta_portal.dashboard'), 'confirm');
 
       // Persist first: the email must never contain a token for an entity that
       // failed to save. The previous usable confirmation remains untouched.

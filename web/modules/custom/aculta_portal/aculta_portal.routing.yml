@@ -387,3 +387,14 @@ aculta_portal.checkout_lms:
     _permission: administer aculta checkout lms
   options:
     _admin_route: true
+
+# Etapa de criação de senha do cadastro simplificado: alcançada depois de confirmar o e-mail.
+aculta_portal.simplified_account.password:
+  path: '/criar-senha'
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\SimplifiedAccountPasswordController::page'
+    _title: 'Crie sua senha'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: TRUE
