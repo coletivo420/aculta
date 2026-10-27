@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.16
+version: 0.1.0-dev.17
 state: Dev
-progress_note: "Dev.16: cobrança/assinatura conferem IDs consultados e vínculo armazenado; webhook/retorno validam aprovação, pedido, total/moeda e falha remota fail-closed. Unit 138/369 PASS; lint/PHPCS focais PASS. Ponta a ponta/sandbox e Kernel em aculta_simpletest pendentes."
+progress_note: "Dev.17: estorno usa credencial do gateway ativo, lock e x-idempotency-key determinística; só persiste confirmação aprovada vinculada. Unit MP 143/435 PASS; lint/PHPCS focais PASS. Kernel, ponta a ponta e sandbox pendentes."
 next_phase: Validar a alteração no checkout de teste e homologar fluxos no sandbox antes de RC ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))

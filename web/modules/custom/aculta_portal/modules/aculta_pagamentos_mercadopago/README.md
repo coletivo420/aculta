@@ -9,6 +9,7 @@ Gateway Mercado Pago Checkout Pro do Commerce, código próprio do Portal. Subst
 - Retorno de popup (`/integracoes/mercadopago/checkout-retorno`) que fecha a janela e leva a aba principal ao retorno do pedido.
 - Notificações de pagamento por Webhooks modernos assinados. O checkout não força `source_news=ipn`; o Portal valida a assinatura e adapta o payload aceito à interface do Commerce.
 - Cobranças recorrentes são consultadas pela API, validadas contra a assinatura/pedido e registradas uma vez por ID remoto, com lock contra entregas concorrentes.
+- Estornos usam cliente criado com as credenciais do gateway ativo, lock por pagamento, chave idempotente por total acumulado e só atualizam Commerce após confirmação remota `approved`; erros remotos não são registrados com corpo ou mensagem privada.
 - Biblioteca `aculta_pagamentos_mercadopago/checkout_popup` e `mp_sdk` (SDK JavaScript oficial, `https://sdk.mercadopago.com/js/v2`).
 
 ## Método de pagamento único
@@ -38,7 +39,7 @@ Porte de `drupal/commerce_mercado_pago` 3.0.0-rc3 (GPL-2.0-or-later). Licença e
 ## Validação
 
 - Suíte Unit: `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/tests/src/Unit`.
-- Regressões Checkout Pro: cobrem payload inválido, status remoto pendente, referências conflitantes, retorno adulterado, retorno aprovado já processado sem duplicar pagamento e falhas de API fail-closed. Nenhuma credencial ou chamada externa é usada.
+- Regressões Checkout Pro: cobrem payload inválido, status remoto pendente, referências conflitantes, retorno adulterado, retorno aprovado já processado sem duplicar pagamento, falhas de API fail-closed e estornos parcial repetido (mesma chave), concorrente e ainda pendente no provedor. Nenhuma credencial ou chamada externa é usada.
 - Testes Kernel do porte em `tests/src/Kernel` (rodar somente no banco existente `aculta_simpletest`, conforme `docs/operations/BANCO-DE-TESTE.md`).
 - Homologação visual X11 deve usar Firefox ESR visível e geckodriver; consultar `tests/browser/README.md` e `docs/operations/NAVEGADOR-TESTES.md`. Smoke público não comprova aprovação de pagamento nem sandbox.
 - Gate de fronteira: `php scripts/validate-module-theme-boundary.php`.

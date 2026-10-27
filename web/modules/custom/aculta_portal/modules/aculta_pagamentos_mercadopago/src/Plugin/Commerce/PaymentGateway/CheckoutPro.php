@@ -19,8 +19,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Render\Element\Checkboxes;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use GuzzleHttp\Exception\BadResponseException;
-use MercadoPago\Client\Payment\PaymentRefundClient;
+use MercadoPago\Client\Common\RequestOptions;
 use MercadoPago\Exceptions\MPApiException;
 use MercadoPago\MercadoPagoConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -952,66 +951,96 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       throw new PaymentGatewayException('Refund is not allowed for this payment.');
     }
     $logger = $this->loggerFactory->get('Mercado Pago Refund');
-
-    // If not specified, refund the entire amount.
-    $refund_amount_price = $amount ?? $payment->getAmount();
-    if ($refund_amount_price === NULL) {
-      throw new PaymentGatewayException('Payment amount is missing.');
+    $remote_id = (string) $payment->getRemoteId();
+    if ($remote_id === '' || !ctype_digit($remote_id) || (int) $remote_id < 1) {
+      throw new PaymentGatewayException('The payment has no valid Mercado Pago reference.');
     }
-    $this->assertRefundAmount($payment, $refund_amount_price);
-    $old_refunded_amount = $payment->getRefundedAmount();
-    if ($old_refunded_amount === NULL) {
-      throw new PaymentGatewayException('Refunded amount is missing.');
-    }
-    $new_refunded_amount = $old_refunded_amount->add($refund_amount_price);
-
-    $payment_amount = $payment->getAmount();
-    if ($payment_amount === NULL) {
-      throw new PaymentGatewayException('Payment amount is missing.');
+    $lock_id = 'aculta_pagamentos_mercadopago.refund.' . $remote_id;
+    if (!$this->lock->acquire($lock_id, 120)) {
+      throw new PaymentGatewayException('Another refund operation is already in progress.');
     }
 
     try {
-      MercadoPagoConfig::setAccessToken($this->getAccessToken());
-      MercadoPagoConfig::setIntegratorId(self::INTEGRATOR_ID);
-      $refundClient = new PaymentRefundClient();
-      $payment_id = (int) $payment->getRemoteId();
+      // Reload under the shared lock so concurrent requests calculate against
+      // the latest Commerce balance instead of a stale caller object.
+      $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
+      $locked_payment = $payment->id() ? $payment_storage->load($payment->id()) : NULL;
+      if (!$locked_payment instanceof PaymentInterface) {
+        throw new PaymentGatewayException('The payment could not be reloaded for refund.');
+      }
+      $this->assertPaymentState($locked_payment, ['completed', 'partially_refunded']);
+      if (!$this->canRefundPayment($locked_payment)) {
+        throw new PaymentGatewayException('Refund is not allowed for this payment.');
+      }
+
+      // If not specified, refund the entire remaining balance.
+      $refund_amount_price = $amount ?? $locked_payment->getBalance();
+      if ($refund_amount_price === NULL || $refund_amount_price->isZero()) {
+        throw new PaymentGatewayException('The remaining payment balance is missing.');
+      }
+      $old_refunded_amount = $locked_payment->getRefundedAmount();
+      $payment_amount = $locked_payment->getAmount();
+      if ($old_refunded_amount === NULL || $payment_amount === NULL) {
+        throw new PaymentGatewayException('Payment refund amounts are missing.');
+      }
+      if ($refund_amount_price->getCurrencyCode() !== $payment_amount->getCurrencyCode()
+        || $old_refunded_amount->getCurrencyCode() !== $payment_amount->getCurrencyCode()) {
+        throw new PaymentGatewayException('The refund currency does not match the payment currency.');
+      }
+      $this->assertRefundAmount($locked_payment, $refund_amount_price);
+      $new_refunded_amount = $old_refunded_amount->add($refund_amount_price);
+      $payment_id = (int) $remote_id;
       $refund_float = (float) $refund_amount_price->getNumber();
+      $idempotency_key = 'aculta-refund-' . hash('sha256', implode('|', [
+        $remote_id,
+        $refund_amount_price->getCurrencyCode(),
+        (string) $new_refunded_amount->getNumber(),
+      ]));
+      $request_options = new RequestOptions(NULL, NULL, ['x-idempotency-key' => $idempotency_key]);
+      // Let Commerce own retries; a second network POST must re-enter with the
+      // same durable local balance and therefore produce the same key.
+      $request_options->setMaxRetries(0);
+      $refund_client = $this->clientFactory->criar('reembolsos', $this->parentEntity);
       if ($refund_float >= (float) $payment_amount->getNumber()) {
-        $refund_result = $refundClient->refundTotal($payment_id);
+        $refund_result = $refund_client->refundTotal($payment_id, $request_options);
       }
       else {
-        $refund_result = $refundClient->refund($payment_id, $refund_float);
+        $refund_result = $refund_client->refund($payment_id, $refund_float, $request_options);
       }
+      if (($refund_result->status ?? NULL) !== 'approved'
+        || (isset($refund_result->payment_id) && (string) $refund_result->payment_id !== $remote_id)) {
+        throw new PaymentGatewayException('Mercado Pago has not confirmed the refund.');
+      }
+
+      if ($new_refunded_amount->lessThan($payment_amount)) {
+        $locked_payment->setState('partially_refunded');
+      }
+      else {
+        $locked_payment->setState('refunded');
+      }
+      $locked_payment->setRefundedAmount($new_refunded_amount);
+      $locked_payment->setRemoteState($refund_result->status);
+      $locked_payment->save();
+
+      $order = $locked_payment->getOrder();
+      $logger->info('Refund completed. Amount: @amount; order: @order_id; payment: @remote_id', [
+        '@amount' => $refund_amount_price->getNumber(),
+        '@order_id' => $order !== NULL ? $order->id() : '',
+        '@remote_id' => $remote_id,
+      ]);
     }
-    catch (BadResponseException $exception) {
-      $logger->error($exception->getResponse()->getBody()->getContents());
+    catch (PaymentGatewayException $exception) {
+      throw $exception;
+    }
+    catch (\Throwable $exception) {
+      // Provider responses can include private information. Log no response
+      // bodies, access tokens, or SDK exception messages.
+      $logger->error('Mercado Pago refund request failed for payment @remote_id.', ['@remote_id' => $remote_id]);
       throw new PaymentGatewayException('An error occurred while refunding the payment.');
     }
-    catch (MPApiException $e) {
-      if ($this->isDebugLoggingEnabled()) {
-        $this->loggerFactory->get('Mercado Pago debug')->debug('Refund error: <pre>@data</pre>', [
-          '@data' => $e->getApiResponse()->getContent(),
-        ]);
-      }
-      throw new PaymentGatewayException('Refund error: ' . $e->getMessage());
+    finally {
+      $this->lock->release($lock_id);
     }
-
-    if ($new_refunded_amount->lessThan($payment_amount)) {
-      $payment->setState('partially_refunded');
-    }
-    else {
-      $payment->setState('refunded');
-    }
-    $payment->setRefundedAmount($new_refunded_amount);
-    $payment->setRemoteState($refund_result->status ?? 'refunded');
-    $payment->save();
-
-    $order = $payment->getOrder();
-    $logger->info('Refund completed.<br>Refunded amount: @amount<br>Order id: @order_id<br>Payment: @remote_id', [
-      '@amount' => $refund_amount_price->getNumber(),
-      '@order_id' => $order !== NULL ? $order->id() : '',
-      '@remote_id' => $payment->getRemoteId(),
-    ]);
   }
 
   /**

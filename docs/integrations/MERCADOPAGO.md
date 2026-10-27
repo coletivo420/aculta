@@ -112,6 +112,7 @@ navegador, para evitar erros de duplicidade de credenciais.
 
 - Informar, no painel "Credenciais do ambiente" (seção Ambiente de Testes), o Public Key e o Access Token de teste.
 - Validar o Checkout Pro de ponta a ponta no ambiente de testes, com os cartões e status acima, antes de ativar o gateway.
+- Homologar estornos parcial e total no sandbox; a implementação local usa lock e `x-idempotency-key`, mas não há evidência de chamada sandbox nesta versão.
 - Configurar as notificações da aplicação no painel do Mercado Pago (URL de teste e URL de produção), salvar e
   copiar a assinatura secreta para `MERCADOPAGO_WEBHOOK_SECRET`.
 - Provisionar as credenciais de produção pelo ACULTA Deployer (não pelo painel do Runtime de teste).

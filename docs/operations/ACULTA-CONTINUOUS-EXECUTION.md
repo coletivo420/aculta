@@ -1,5 +1,13 @@
 # Execução contínua ACULTA — PR #298
 
+## Mercado Pago — microfase de estorno idempotente (2026-10-27)
+
+- Base local desta microfase: `be4dbfa28`; branch `chore/aculta-m0-integridade`. `CheckoutPro::refundPayment()` passa a criar o cliente pela fábrica do gateway ativo, serializar por ID remoto, recarregar o pagamento Commerce dentro do lock e enviar `x-idempotency-key` estável pelo total acumulado e moeda.
+- O status Commerce só é atualizado se o Mercado Pago retornar `approved` e, quando presente, o `payment_id` coincidir. Falhas são convertidas em mensagem segura; corpo e mensagem privada do SDK não são registrados. Testes cobrem parcial e total, repetição com a mesma chave, concorrência, resposta `in_process` sem persistência e erro privado sem vazamento.
+- Unit MP: 143 testes / 435 assertions PASS; PHP lint/PHPCS dos PHP alterados PASS; status-index PASS (43 componentes). Foundation 345, shell-contract 11, fixtures 19, SDC 628, design-foundations 2.232/157 fixtures, browser validators 21 e module-theme-boundary 3.061: PASS.
+- Firefox ESR/geckodriver em `DISPLAY=:0`: `scripts/check-browser-hosts.sh` carregou MAIN, Loja e Apoio (3/3, códigos 0). É somente smoke público, não valida ação de reembolso nem sandbox. Kernel não executado (`SIMPLETEST_DB` ausente); nenhum segredo lido e nenhum pagamento externo foi realizado.
+- `aculta_runtime` não recebeu escrita; sem `updatedb`, `config:import` ou alteração de dados. A microfase ainda aguarda homologação sandbox de estorno parcial/total.
+
 ## Mercado Pago — microfase de falhas de API no Checkout Pro (2026-10-27)
 
 - Base publicada: `ad74f6fb5`; callback de notificação devolve 503 após erro remoto e o retorno lança `PaymentGatewayException` sem persistir pagamento.

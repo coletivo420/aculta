@@ -1,3 +1,10 @@
+## 0.1.0-dev.17 — estorno idempotente e isolado por gateway (2026-10-27)
+
+- `refundPayment()` usa `MercadoPagoClientFactory` para selecionar o token do gateway ativo; serializa pelo pagamento remoto, recarrega o pagamento Commerce sob lock e confere saldo/moeda atualizados.
+- Envia `x-idempotency-key` determinística pelo ID remoto, moeda e valor acumulado, permitindo retry seguro após timeout; só persiste o estado local quando a resposta corresponde ao pagamento e está `approved`.
+- Exceções e corpos do provedor não são gravados nos logs. Testes cobrem estorno parcial e total, cliente do gateway correto, repetição com chave idempotente igual, contenção concorrente, resposta remota pendente sem persistência e erro remoto sem vazamento em log/mensagem.
+- Unit MP: 143 testes / 435 assertions PASS; lint e PHPCS Drupal/DrupalPractice dos PHP alterados: PASS. Kernel com Commerce e sandbox financeiro seguem pendentes.
+
 ## 0.1.0-dev.14 — contratos neutros para operações do provedor
 
 - Serviços MP implementam as interfaces neutras do Portal e exportam `aculta_portal.payment_provider.subscription_status`, `.subscription_operations`, `.payment_operations` e `.refund_policy`; os IDs proprietários continuam internos.
