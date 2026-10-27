@@ -63,7 +63,8 @@ abstract class ShippingMethodBase extends PluginBase implements ContainerFactory
     $this->packageTypeManager = $package_type_manager;
     $this->workflowManager = $workflow_manager;
     foreach ($this->pluginDefinition['services'] as $id => $label) {
-      $this->services[$id] = new ShippingService($id, (string) $label);
+      // PHP converte chaves numéricas (códigos de serviço, como 1 e 2) em int; ShippingService exige string.
+      $this->services[$id] = new ShippingService((string) $id, (string) $label);
     }
     $this->setConfiguration($configuration);
   }
