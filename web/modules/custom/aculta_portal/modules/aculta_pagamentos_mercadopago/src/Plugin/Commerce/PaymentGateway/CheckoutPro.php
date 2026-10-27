@@ -1094,7 +1094,8 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     $refunded_number = (string) ($payment->transaction_amount_refunded ?? '0');
     $has_refund = is_numeric($refunded_number) && (float) $refunded_number > 0;
     $pending_status = in_array($remote_status, ['pending', 'in_process', 'authorized'], TRUE);
-    if (!in_array($remote_status, ['approved', 'refunded'], TRUE) && !$has_refund && !$pending_status) {
+    $terminal_status = in_array($remote_status, ['cancelled', 'rejected'], TRUE);
+    if (!in_array($remote_status, ['approved', 'refunded'], TRUE) && !$has_refund && !$pending_status && !$terminal_status) {
       $logger->info('Payment @id is not complete; remote status is @status.', [
         '@id' => $payment_id,
         '@status' => $remote_status !== '' ? $remote_status : 'unknown',
@@ -1140,7 +1141,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       if ($payment_ids) {
         $commerce_payment = $payment_storage->load(reset($payment_ids));
       }
-      elseif (in_array($remote_status, ['approved', 'refunded'], TRUE) || $pending_status) {
+      elseif (!$terminal_status && (in_array($remote_status, ['approved', 'refunded'], TRUE) || $pending_status)) {
         $payment_method = NULL;
         if (!$order->get('payment_method')->isEmpty()) {
           $payment_method = $order->get('payment_method')->entity;
@@ -1170,11 +1171,19 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         $payment_created = TRUE;
       }
       else {
-        $logger->warning('Refund notification for payment @id has no matching Commerce payment.', ['@id' => $payment_id]);
+        $logger->info('Terminal notification for payment @id has no matching Commerce payment.', ['@id' => $payment_id]);
         return new JsonResponse();
       }
 
-      if ($remote_status === 'refunded' || $has_refund) {
+      if ($terminal_status) {
+        if (in_array($commerce_payment->getState()->getId(), ['authorization', 'pending'], TRUE)) {
+          $commerce_payment->setRemoteState($remote_status);
+          $commerce_payment->save();
+          $commerce_payment->setState('authorization_voided');
+          $commerce_payment->save();
+        }
+      }
+      elseif ($remote_status === 'refunded' || $has_refund) {
         if (!is_numeric($refunded_number) || (float) $refunded_number <= 0) {
           return new JsonResponse();
         }

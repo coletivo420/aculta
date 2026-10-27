@@ -1,3 +1,8 @@
+## 0.1.0-dev.39 — reconciliar rejeição e cancelamento via Webhook (2026-10-27)
+
+- `CheckoutPro::onNotify()` agora registra os status remotos `cancelled` e `rejected` como `authorization_voided` no pagamento Commerce existente, sob o lock por ID remoto. Evento terminal sem pagamento local é reconhecido sem criar pagamento.
+- Regressões Unit cobrem ambos os estados e a ausência de duplicação. Unit MP: 186 testes / 748 assertions PASS; Kernel CheckoutPro: 1/56 PASS (77 depreciações upstream); PHPCS e PHP lint focais PASS.
+
 ## 0.1.0-dev.36 — homologar preferência sandbox e tela de comprador (2026-10-27)
 
 - O `MercadoPagoClientFactory` criou uma preferência sintética com token no modo `test`; o `init_point` abriu a tela “Escolha como pagar” no Firefox ESR visível (HTTP 200, sem CAPTCHA), e avançar carregou a identificação do comprador (HTTP 200).

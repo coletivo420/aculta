@@ -326,6 +326,75 @@ final class CheckoutProNotificationTest extends UnitTestCase {
   }
 
   /**
+   * Voids an existing pending payment after a signed terminal provider update.
+   */
+  #[DataProvider('terminalPaymentStatuses')]
+  public function testTerminalNotificationVoidsExistingPayment(string $remote_status): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $parent_gateway->method('id')->willReturn('mercado_pago');
+    $payment_client = new class($remote_status) {
+
+      public function __construct(private string $status) {}
+
+      /** Returns the simulated terminal payment from Mercado Pago. */
+      public function get(int $id): object {
+        return (object) [
+          'external_reference' => '42',
+          'status' => $this->status,
+          'transaction_amount' => '10.00',
+          'currency_id' => 'BRL',
+        ];
+      }
+
+    };
+    $factory = $this->createMock(MercadoPagoClientFactory::class);
+    $factory->expects($this->once())->method('criar')->with('pagamentos', $parent_gateway)->willReturn($payment_client);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn(42);
+    $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
+    $order_storage = $this->createMock(EntityStorageInterface::class);
+    $order_storage->expects($this->once())->method('load')->with('42')->willReturn($order);
+
+    $state = $this->createMock(StateItemInterface::class);
+    $state->method('getId')->willReturn('pending');
+    $commerce_payment = $this->createMock(PaymentInterface::class);
+    $commerce_payment->method('getState')->willReturn($state);
+    $commerce_payment->expects($this->once())->method('setRemoteState')->with($remote_status);
+    $commerce_payment->expects($this->once())->method('setState')->with('authorization_voided');
+    $commerce_payment->expects($this->exactly(2))->method('save');
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('condition')->willReturnSelf();
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('sort')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
+    $query->method('execute')->willReturn([7]);
+    $payment_storage = $this->createMock(EntityStorageInterface::class);
+    $payment_storage->method('getQuery')->willReturn($query);
+    $payment_storage->expects($this->once())->method('load')->with(7)->willReturn($commerce_payment);
+    $payment_storage->expects($this->never())->method('create');
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->method('getStorage')->willReturnCallback(
+      static fn (string $type): EntityStorageInterface => $type === 'commerce_order' ? $order_storage : $payment_storage,
+    );
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())->method('acquire')->with('aculta_pagamentos_mercadopago.payment.123', 30)->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.payment.123');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    $this->assertSame(200, $response->getStatusCode());
+  }
+
+  /**
    * Verifies approval and avoids duplicate return processing.
    */
   public function testApprovedReturnWithExistingPaymentIsIdempotent(): void {
@@ -700,6 +769,19 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     yield 'zero id' => [['topic' => 'payment', 'id' => '0']];
     yield 'non numeric id' => [['topic' => 'payment', 'id' => '12x']];
     yield 'array id' => [['topic' => 'payment', 'id' => ['123']]];
+  }
+
+  /**
+   * Provides provider statuses that terminate a pending payment.
+   *
+   * @return array<string, array{0: string}>
+   *   Terminal provider statuses.
+   */
+  public static function terminalPaymentStatuses(): array {
+    return [
+      'cancelled' => ['cancelled'],
+      'rejected' => ['rejected'],
+    ];
   }
 
 }
