@@ -2,10 +2,11 @@
 
 ## Mercado Pago — microfase de falhas de API no Checkout Pro (2026-10-27)
 
-- Base: `de03ee316`; callback de notificação devolve 503 após erro remoto e o retorno lança `PaymentGatewayException` sem persistir pagamento.
+- Base publicada: `ad74f6fb5`; callback de notificação devolve 503 após erro remoto e o retorno lança `PaymentGatewayException` sem persistir pagamento.
 - `CheckoutProNotificationTest` injeta `MPApiException`/`MPResponse` simulados e confirma nenhuma leitura de pedidos nem lock quando o webhook não consegue consultar o provedor.
 - Unit MP: 138 testes / 369 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint do teste PASS. Nenhuma chamada real ao Mercado Pago.
 - Sandbox e Kernel continuam pendentes; `SIMPLETEST_DB` ausente e credenciais não foram lidas.
+- Commit `ad74f6fb5` publicado por fast-forward. Checkout destacado nesse HEAD; status Drush pós-troca confirmou novamente o Runtime e pendências preexistentes somente leitura; sem update/importação/configuração persistente.
 
 ## Mercado Pago — microfase de recorrência (2026-10-27)
 
