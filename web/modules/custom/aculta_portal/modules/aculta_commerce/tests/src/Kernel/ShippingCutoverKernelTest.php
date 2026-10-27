@@ -11,10 +11,12 @@ use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Cutover do frete: instalação do motor, migração de FlatRate, idempotência e pedidos preservados.
+ * Cutover do frete: instalação do motor e migração de FlatRate.
  *
- * Parte de um site com commerce_shipping e um FlatRate configurado, sem as tabelas do motor próprio
- * (estado do Runtime antes do cutover).
+ * Idempotência e pedidos preservados.
+ *
+ * Parte de um site com commerce_shipping e um FlatRate configurado, sem as
+ * tabelas do motor próprio (estado do Runtime antes do cutover).
  */
 #[Group('aculta_commerce')]
 class ShippingCutoverKernelTest extends KernelTestBase {
@@ -133,7 +135,9 @@ class ShippingCutoverKernelTest extends KernelTestBase {
   ];
 
   /**
-   * Instala o schema do motor e do contrib, como no estado do Runtime antes do cutover.
+   * Instala o schema do motor e do contrib.
+   *
+   * Como no estado do Runtime antes do cutover.
    */
   protected function setUp(): void {
     parent::setUp();
@@ -147,7 +151,11 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installEntitySchema('path_alias');
-    $this->installConfig(['commerce_order', 'commerce_store', 'commerce_shipping']);
+    $this->installConfig([
+      'commerce_order',
+      'commerce_store',
+      'commerce_shipping',
+    ]);
   }
 
   /**
@@ -191,7 +199,9 @@ class ShippingCutoverKernelTest extends KernelTestBase {
   }
 
   /**
-   * O cutover instala as entidades do motor e migra o FlatRate com valores, lojas e status preservados.
+   * O cutover instala as entidades do motor e migra o FlatRate.
+   *
+   * Valores, lojas e status são preservados.
    */
   public function testMigratesFlatRatePreservingValuesAndStores(): void {
     $dados = $this->criarLegado();
@@ -207,16 +217,24 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     $novo = \Drupal::entityTypeManager()->getStorage('aculta_shipping_method')->loadByProperties(['name' => 'Tarifa fixa']);
     $this->assertCount(1, $novo);
     $novo = reset($novo);
-    $this->assertSame('aculta_flat_rate', $novo->get('plugin')->target_plugin_id);
+    $this->assertSame(
+        'aculta_flat_rate',
+        $novo->get('plugin')->target_plugin_id
+    );
     $config = $novo->get('plugin')->target_plugin_configuration;
     $this->assertSame('Entrega padrão', $config['rate_label']);
     $this->assertSame('12.50', $config['rate_amount']['number']);
-    $this->assertArrayNotHasKey('services', $config, 'services do contrib não tem equivalente e não é copiado');
+    $this->assertArrayNotHasKey(
+        'services',
+        $config,
+        'services do contrib não tem equivalente e não é copiado'
+    );
     $this->assertTrue($novo->isEnabled());
     $this->assertSame(3, (int) $novo->get('weight')->value);
     $this->assertSame($dados['loja']->id(), $novo->get('stores')->target_id);
 
-    // O original continua existindo: a remoção só ocorre depois da conferência.
+    // O original continua existindo: a remoção só ocorre depois da
+    // conferência.
     $this->assertNotNull(\Drupal::entityTypeManager()->getStorage('commerce_shipping_method')->load($dados['metodo']->id()));
   }
 
@@ -231,8 +249,15 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     $segunda = $service->migrateMethods();
     $this->assertSame(0, $segunda['migrados']);
     $this->assertSame(1, $segunda['ja_existentes']);
-    $this->assertSame(1, (int) \Drupal::entityQuery('aculta_shipping_method')->accessCheck(FALSE)->count()->execute());
-    $this->assertSame([], $service->installEngineEntities(), 'instalar de novo não faz nada');
+    $this->assertSame(
+        1,
+        (int) \Drupal::entityQuery('aculta_shipping_method')->accessCheck(FALSE)->count()->execute()
+    );
+    $this->assertSame(
+        [],
+        $service->installEngineEntities(),
+        'instalar de novo não faz nada'
+    );
   }
 
   /**
@@ -243,11 +268,16 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     $service = \Drupal::service('aculta_commerce.legacy_shipping_cutover');
     $service->installEngineEntities();
     $service->migrateMethods();
-    $this->assertNotNull(Order::load($dados['pedido']->id()), 'pedido permanece após migração de métodos');
+    $this->assertNotNull(
+        Order::load($dados['pedido']->id()),
+        'pedido permanece após migração de métodos'
+    );
   }
 
   /**
-   * A desinstalação do contrib fica bloqueada sem cópia no motor e é liberada depois da migração.
+   * A desinstalação do contrib fica bloqueada sem cópia no motor.
+   *
+   * Ela é liberada depois da migração.
    */
   public function testUninstallBlockedUntilCopiesExist(): void {
     $this->criarLegado();
@@ -256,42 +286,58 @@ class ShippingCutoverKernelTest extends KernelTestBase {
 
     $antes = $service->blockersForUninstall();
     $this->assertNotEmpty($antes);
-    $this->assertStringContainsString('sem cópia no motor', implode(' ', $antes));
+    $this->assertStringContainsString(
+        'sem cópia no motor',
+        implode(' ', $antes)
+    );
     // Com bloqueios, o uninstall é recusado antes de qualquer remoção.
-    $this->assertFalse($service->uninstallLegacyIfSafe(), 'não desinstala com bloqueios');
+    $this->assertFalse(
+        $service->uninstallLegacyIfSafe(),
+        'não desinstala com bloqueios'
+    );
     $this->assertTrue($this->container->get('module_handler')->moduleExists('commerce_shipping'));
 
     $service->migrateMethods();
-    // O campo commerce_order.shipments ainda aponta para o contrib: o bloqueio tem que persistir até o reapontamento.
-    $this->assertStringContainsString('campo commerce_order.shipments', implode(' ', $service->blockersForUninstall()));
+    // O campo commerce_order.shipments ainda aponta para o contrib: o bloqueio
+    // tem que persistir até o reapontamento.
+    $this->assertStringContainsString(
+        'campo commerce_order.shipments',
+        implode(' ', $service->blockersForUninstall())
+    );
     $service->retargetShipments();
     $this->assertSame([], $service->blockersForUninstall());
-    // A desinstalação em si (remoção de métodos e uninstall) não é provada aqui: exige o schema completo de
-    // comment, file e entity_usage. Fica para o ensaio no banco restaurado do snapshot.
+    // A desinstalação em si (remoção de métodos e uninstall) não é
+    // provada aqui: exige o schema completo de
+    // comment, file e entity_usage. Fica para o ensaio no banco restaurado do
+    // snapshot.
     $this->assertTrue($this->container->get('module_handler')->moduleExists('commerce_shipping'));
   }
 
   /**
    * Remessa referenciada sobrevive ao uninstall do contrib.
    *
-   * Após o retarget e o uninstall, o campo existe, aponta para o motor e o pedido mantém a referência à cópia da
+   * Após o retarget e o uninstall, o campo existe, aponta para o motor e o
+   * pedido mantém a referência à cópia da
    * remessa em aculta_shipment.
    */
   public function testRemessaReferenciadaSobreviveAoUninstall(): void {
-    // A desinstalação do contrib consulta comentários e a visão de remessas: os schemas precisam existir aqui.
+    // A desinstalação do contrib consulta comentários e a visão de
+    // remessas: os schemas precisam existir aqui.
     $this->installEntitySchema('comment');
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installEntitySchema('flagging');
     $this->installSchema('user', ['users_data']);
     $this->installConfig(['comment', 'language']);
-    // Estado do Runtime: o tipo de pedido liga o campo pela configuração do contrib.
+    // Estado do Runtime: o tipo de pedido liga o campo pela configuração do
+    // contrib.
     \Drupal::entityTypeManager()->getStorage('commerce_order_type')->load('default')
       ->setThirdPartySetting('commerce_shipping', 'shipment_type', 'default')
       ->save();
     \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
     $dados = $this->criarLegado();
     $pedido = $dados['pedido'];
-    // Uma remessa descartada antes desloca os ids: a referenciada não tem o mesmo id da cópia, como no Runtime.
+    // Uma remessa descartada antes desloca os ids: a referenciada não tem o
+    // mesmo id da cópia, como no Runtime.
     $descartada = \Drupal::entityTypeManager()->getStorage('commerce_shipment')->create([
       'type' => 'default',
       'order_id' => $pedido->id(),
@@ -320,32 +366,58 @@ class ShippingCutoverKernelTest extends KernelTestBase {
 
     $pedido = Order::load($pedido->id());
     $referencias = $pedido->get('shipments')->referencedEntities();
-    $this->assertCount(1, $referencias, 'o pedido mantém a referência à remessa');
+    $this->assertCount(
+        1,
+        $referencias,
+        'o pedido mantém a referência à remessa'
+    );
     $copia = reset($referencias);
-    $this->assertNotSame($legada->id(), $copia->id(), 'a cópia não pode coincidir com o id legado');
+    $this->assertNotSame(
+        $legada->id(),
+        $copia->id(),
+        'a cópia não pode coincidir com o id legado'
+    );
     $this->assertSame('aculta_shipment', $copia->getEntityTypeId());
     $this->assertSame('Remessa teste', $copia->get('title')->value);
     $this->assertSame([], $service->blockersForUninstall());
 
-    $this->assertTrue($service->uninstallLegacyIfSafe(), 'desinstalação liberada sem bloqueios');
+    $this->assertTrue(
+        $service->uninstallLegacyIfSafe(),
+        'desinstalação liberada sem bloqueios'
+    );
     $this->assertFalse($this->container->get('module_handler')->moduleExists('commerce_shipping'));
 
     $campo = \Drupal::entityTypeManager()->getStorage('field_storage_config')->load('commerce_order.shipments');
     $this->assertNotNull($campo, 'o storage do campo sobrevive ao uninstall');
     $this->assertSame('aculta_shipment', $campo->getSetting('target_type'));
-    $this->assertNotContains('commerce_shipping', $campo->getDependencies()['module'] ?? []);
-    $definicao = \Drupal::service('entity_field.manager')->getFieldDefinitions('commerce_order', 'default')['shipments'] ?? NULL;
-    $this->assertNotNull($definicao, 'o campo continua anexado ao tipo de pedido, agora pelo motor');
+    $this->assertNotContains(
+        'commerce_shipping',
+        $campo->getDependencies()['module'] ?? []
+    );
+    $definicao = \Drupal::service('entity_field.manager')->getFieldDefinitions(
+        'commerce_order',
+        'default'
+    )['shipments'] ?? NULL;
+    $this->assertNotNull(
+        $definicao,
+        'o campo continua anexado ao tipo de pedido, agora pelo motor'
+    );
     $this->assertSame('aculta_shipment', $definicao->getSetting('target_type'));
 
     $pedido = Order::load($pedido->id());
     $referencias = $pedido->get('shipments')->referencedEntities();
-    $this->assertCount(1, $referencias, 'a referência do pedido é preservada após o uninstall');
+    $this->assertCount(
+        1,
+        $referencias,
+        'a referência do pedido é preservada após o uninstall'
+    );
     $this->assertSame($copia->id(), reset($referencias)->id());
   }
 
   /**
-   * Método legado do Melhor Envio (plugin aculta_melhorenvio) migra com default_package_type e services.
+   * Método legado do Melhor Envio migra sua configuração.
+   *
+   * O plugin aculta_melhorenvio mantém default_package_type e services.
    */
   public function testMigratesLegacyMelhorEnvioMethodKeepingItsConfig(): void {
     $loja = Store::create([
@@ -381,20 +453,31 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     $novo = \Drupal::entityTypeManager()->getStorage('aculta_shipping_method')->loadByProperties(['name' => 'Melhor Envio']);
     $this->assertCount(1, $novo);
     $novo = reset($novo);
-    $this->assertSame('aculta_melhorenvio', $novo->get('plugin')->target_plugin_id);
+    $this->assertSame(
+        'aculta_melhorenvio',
+        $novo->get('plugin')->target_plugin_id
+    );
     $config = $novo->get('plugin')->target_plugin_configuration;
     $this->assertSame('custom_box', $config['default_package_type']);
     $this->assertSame(['1', '2'], $config['services']);
-    $this->assertArrayNotHasKey('rate_label', $config, 'chaves de tarifa fixa não são copiadas para o Melhor Envio');
+    $this->assertArrayNotHasKey(
+        'rate_label',
+        $config,
+        'chaves de tarifa fixa não são copiadas para o Melhor Envio'
+    );
   }
 
   /**
-   * Display de commerce_shipment com widget inexistente é removido; display válido permanece.
+   * Display de commerce_shipment com widget inexistente é removido.
+   *
+   * Display válido permanece.
    */
   public function testRemovesOnlyOrphanShipmentDisplays(): void {
-    // O módulo flag consulta a tabela de flagging ao excluir um display: instala o schema no teste.
+    // O módulo flag consulta a tabela de flagging ao excluir um display:
+    // instala o schema no teste.
     $this->installEntitySchema('flagging');
-    // Display órfão gravado como configuração bruta, como ocorre na cópia: salvar via entidade falha ao calcular
+    // Display órfão gravado como configuração bruta, como ocorre na cópia:
+    // salvar via entidade falha ao calcular
     // dependências de um widget inexistente.
     \Drupal::configFactory()->getEditable('core.entity_form_display.commerce_shipment.default.checkout')
       ->setData([
@@ -438,11 +521,21 @@ class ShippingCutoverKernelTest extends KernelTestBase {
 
     $removidos = $service->removeOrphanShipmentDisplays();
 
-    $this->assertContains('core.entity_form_display.commerce_shipment.default.checkout', $removidos);
-    $this->assertNotContains('core.entity_form_display.commerce_shipment.default.default', $removidos);
+    $this->assertContains(
+        'core.entity_form_display.commerce_shipment.default.checkout',
+        $removidos
+    );
+    $this->assertNotContains(
+        'core.entity_form_display.commerce_shipment.default.default',
+        $removidos
+    );
     $this->assertNull(EntityFormDisplay::load('commerce_shipment.default.checkout'));
     $this->assertNotNull(EntityFormDisplay::load('commerce_shipment.default.default'));
-    $this->assertSame([], $service->removeOrphanShipmentDisplays(), 'segunda execução é idempotente');
+    $this->assertSame(
+        [],
+        $service->removeOrphanShipmentDisplays(),
+        'segunda execução é idempotente'
+    );
   }
 
 }

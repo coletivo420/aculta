@@ -63,7 +63,8 @@ abstract class ShippingMethodBase extends PluginBase implements ContainerFactory
     $this->packageTypeManager = $package_type_manager;
     $this->workflowManager = $workflow_manager;
     foreach ($this->pluginDefinition['services'] as $id => $label) {
-      // PHP converte chaves numéricas (códigos de serviço, como 1 e 2) em int; ShippingService exige string.
+      // PHP converte chaves numéricas (códigos de serviço, como 1 e 2) em
+      // int; ShippingService exige string.
       $this->services[$id] = new ShippingService((string) $id, (string) $label);
     }
     $this->setConfiguration($configuration);
@@ -72,7 +73,12 @@ abstract class ShippingMethodBase extends PluginBase implements ContainerFactory
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+  public static function create(
+    ContainerInterface $container,
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+  ): static {
     return new static(
       $configuration,
       $plugin_id,
@@ -156,18 +162,30 @@ abstract class ShippingMethodBase extends PluginBase implements ContainerFactory
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration): void {
-    $this->configuration = NestedArray::mergeDeep($this->defaultConfiguration(), $configuration);
+    $this->configuration = NestedArray::mergeDeep(
+        $this->defaultConfiguration(),
+        $configuration
+    );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
-    $services = array_map(static fn(ShippingService $service): string => $service->getLabel(), $this->services);
+  public function buildConfigurationForm(
+    array $form,
+    FormStateInterface $form_state,
+  ): array {
+    $services = array_map(
+        static fn(ShippingService $service): string => $service->getLabel(),
+        $this->services
+    );
     // Select all services by default.
     if (empty($this->configuration['services'])) {
       $service_ids = array_keys($services);
-      $this->configuration['services'] = array_combine($service_ids, $service_ids);
+      $this->configuration['services'] = array_combine(
+          $service_ids,
+          $service_ids
+      );
     }
     $form['services'] = [
       '#type' => 'checkboxes',
@@ -184,12 +202,18 @@ abstract class ShippingMethodBase extends PluginBase implements ContainerFactory
   /**
    * {@inheritdoc}
    */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {}
+  public function validateConfigurationForm(
+    array &$form,
+    FormStateInterface $form_state,
+  ): void {}
 
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
+  public function submitConfigurationForm(
+    array &$form,
+    FormStateInterface $form_state,
+  ): void {
     if (!$form_state->getErrors()) {
       $values = $form_state->getValue($form['#parents']);
       if (!empty($values['services'])) {
@@ -202,7 +226,10 @@ abstract class ShippingMethodBase extends PluginBase implements ContainerFactory
   /**
    * {@inheritdoc}
    */
-  public function selectRate(ShipmentInterface $shipment, ShippingRate $rate): void {
+  public function selectRate(
+    ShipmentInterface $shipment,
+    ShippingRate $rate,
+  ): void {
     $shipment->setShippingMethodId((int) $rate->getShippingMethodId());
     $shipment->setShippingService($rate->getService()->getId());
     $shipment->setShippingServiceLabel($rate->getService()->getLabel());

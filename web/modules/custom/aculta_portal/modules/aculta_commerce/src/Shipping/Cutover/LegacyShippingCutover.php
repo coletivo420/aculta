@@ -7,16 +7,19 @@ namespace Drupal\aculta_commerce\Shipping\Cutover;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\ModuleInstallerInterface;
 
 /**
- * Cutover do frete do Commerce Shipping (contrib) para o motor próprio do aculta_commerce.
+ * Cutover do frete do Commerce Shipping (contrib) para o motor próprio.
  *
- * Cada etapa é idempotente e não apaga pedidos. Métodos e remessas do contrib só são removidos depois que a
- * migração é conferida, e a desinstalação do contrib só ocorre quando não restam referências a ele.
+ * Cada etapa é idempotente e não apaga pedidos. Métodos e remessas do
+ * contrib só são removidos depois que a
+ * migração é conferida, e a desinstalação do contrib só ocorre quando
+ * não restam referências a ele.
  */
 final class LegacyShippingCutover {
 
@@ -25,7 +28,8 @@ final class LegacyShippingCutover {
   public const PLUGIN_MAP = [
     'flat_rate' => 'aculta_flat_rate',
     'flat_rate_per_item' => 'aculta_flat_rate_per_item',
-    // Mesmo id no motor. Chaves gravadas na cópia: default_package_type (string) e services (array).
+    // Mesmo id no motor. Chaves gravadas na cópia: default_package_type
+    // (string) e services (array).
     'aculta_melhorenvio' => 'aculta_melhorenvio',
   ];
 
@@ -45,12 +49,14 @@ final class LegacyShippingCutover {
     private readonly PluginManagerInterface $widgetManager,
     private readonly PluginManagerInterface $formatterManager,
     private readonly Connection $database,
+    private readonly EntityFieldManagerInterface $entityFieldManager,
   ) {}
 
   /**
-   * Remove displays de formulário e de visualização de commerce_shipment que usam plugin inexistente.
+   * Remove displays de commerce_shipment que usam plugin inexistente.
    *
-   * A entidade commerce_shipment sai com o contrib. O pane AcultaShippingInformation não usa esses displays.
+   * A entidade commerce_shipment sai com o contrib. O pane
+   * AcultaShippingInformation não usa esses displays.
    * Idempotente: displays válidos são mantidos.
    *
    * @return string[]
@@ -87,7 +93,11 @@ final class LegacyShippingCutover {
    */
   public function installEngineEntities(): array {
     $instalados = [];
-    foreach (['aculta_shipping_method', 'aculta_shipment', 'aculta_shipment_type'] as $id) {
+    foreach ([
+      'aculta_shipping_method',
+      'aculta_shipment',
+      'aculta_shipment_type',
+    ] as $id) {
       if ($this->entityDefinitionUpdateManager->getEntityType($id) !== NULL) {
         continue;
       }
@@ -134,11 +144,17 @@ final class LegacyShippingCutover {
       }
 
       $configLegada = $plugin['target_plugin_configuration'] ?? [];
-      $configNova = array_intersect_key($configLegada, array_flip(self::CONFIG_KEYS[$idLegado] ?? []));
+      $configNova = array_intersect_key(
+          $configLegada,
+          array_flip(self::CONFIG_KEYS[$idLegado] ?? [])
+      );
       $novo = $destino->create([
         'name' => $nome,
         'stores' => $metodo->get('stores')->getValue(),
-        'plugin' => ['target_plugin_id' => $idNovo, 'target_plugin_configuration' => $configNova],
+        'plugin' => [
+          'target_plugin_id' => $idNovo,
+          'target_plugin_configuration' => $configNova,
+        ],
         'status' => $metodo->isEnabled(),
         'weight' => $metodo->get('weight')->value,
         'conditions' => $metodo->get('conditions')->getValue(),
@@ -151,7 +167,9 @@ final class LegacyShippingCutover {
   }
 
   /**
-   * Campos de remessa copiados do contrib para aculta_shipment. Itens e ajustes não têm equivalente direto e não são copiados.
+   * Campos de remessa copiados do contrib para aculta_shipment.
+   *
+   * Itens e ajustes não têm equivalente direto e não são copiados.
    */
   public const SHIPMENT_FIELDS = [
     'order_id', 'package_type', 'shipping_service', 'service_label', 'shipping_profile', 'title',
@@ -159,10 +177,12 @@ final class LegacyShippingCutover {
   ];
 
   /**
-   * Reaponta commerce_order.shipments para aculta_shipment preservando a referência de cada pedido.
+   * Reaponta commerce_order.shipments para aculta_shipment.
    *
-   * Cada remessa do contrib é copiada para aculta_shipment; o pedido passa a apontar para a cópia; só então a
-   * original é apagada. Depois, storage e campo do pedido recalculam dependências, para que a desinstalação
+   * Cada remessa do contrib é copiada para aculta_shipment; o pedido passa a
+   * apontar para a cópia; só então a
+   * original é apagada. Depois, storage e campo do pedido recalculam
+   * dependências, para que a desinstalação
    * do contrib não os apague. Idempotente.
    *
    * @return array{referencias_reapontadas:
@@ -205,7 +225,8 @@ final class LegacyShippingCutover {
 
     }
 
-    // Storage e tipo de pedido vão para o motor antes do reapontamento: a partir daí o pedido é lido pelo campo do motor.
+    // Storage e tipo de pedido vão para o motor antes do reapontamento: a
+    // partir daí o pedido é lido pelo campo do motor.
     $campo->setSetting('target_type', 'aculta_shipment');
     $this->atualizarDependenciasDoCampo($campo);
     $this->migrarTiposDePedido();
@@ -220,10 +241,12 @@ final class LegacyShippingCutover {
   }
 
   /**
-   * Troca, nas tabelas do campo, o id da remessa legada pelo id da cópia no motor.
+   * Troca o id da remessa legada pelo id da cópia nas tabelas do campo.
    *
-   * Feito em SQL e não por save() do pedido: salvar dispara o recálculo de remessas do contrib, que ainda está
-   * instalado nesta etapa e falha sem o tipo de remessa do tipo de pedido. Cobre a tabela atual e a de revisão.
+   * Feito em SQL e não por save() do pedido: salvar dispara o recálculo de
+   * remessas do contrib, que ainda está
+   * instalado nesta etapa e falha sem o tipo de remessa do tipo de pedido.
+   * Cobre a tabela atual e a de revisão.
    *
    * @param array<int, int> $mapa
    *   Id legado => id novo.
@@ -235,19 +258,30 @@ final class LegacyShippingCutover {
     if ($mapa === []) {
       return 0;
     }
-    // Uma só passada com CASE: trocas em sequência poderiam reapontar a mesma linha duas vezes.
+    // Uma só passada com CASE: trocas em sequência poderiam reapontar a mesma
+    // linha duas vezes.
     $casos = '';
     foreach ($mapa as $antigo => $novo) {
       $casos .= ' WHEN ' . (int) $antigo . ' THEN ' . (int) $novo;
     }
     $total = 0;
-    foreach (['commerce_order__shipments', 'commerce_order_revision__shipments'] as $tabela) {
+    foreach ([
+      'commerce_order__shipments',
+      'commerce_order_revision__shipments',
+    ] as $tabela) {
       if (!$this->database->schema()->tableExists($tabela)) {
         continue;
       }
       $linhas = $this->database->update($tabela)
-        ->expression('shipments_target_id', 'CASE shipments_target_id' . $casos . ' END')
-        ->condition('shipments_target_id', array_map('intval', array_keys($mapa)), 'IN')
+        ->expression(
+            'shipments_target_id',
+            'CASE shipments_target_id' . $casos . ' END'
+        )
+        ->condition(
+            'shipments_target_id',
+            array_map('intval', array_keys($mapa)),
+            'IN'
+        )
         ->execute();
       if ($tabela === 'commerce_order__shipments') {
         $total = $linhas;
@@ -259,29 +293,39 @@ final class LegacyShippingCutover {
   /**
    * Passa o tipo de remessa dos tipos de pedido do contrib para o motor.
    *
-   * O campo commerce_order.shipments é anexado ao pedido pelo tipo de pedido: com a configuração do contrib, ele
-   * sumiria do pedido depois do uninstall. O motor anexa o campo pela configuração aculta_commerce.shipment_type.
-   * A configuração do contrib é retirada: ao salvar, o tipo de pedido deixa de depender do contrib.
+   * O campo commerce_order.shipments é anexado pelo tipo de pedido.
+   *
+   * Com a configuração do contrib, ele
+   * sumiria do pedido depois do uninstall. O motor anexa o campo pela
+   * configuração aculta_commerce.shipment_type.
+   * A configuração do contrib é retirada: ao salvar, o tipo de pedido deixa
+   * de depender do contrib.
    */
   private function migrarTiposDePedido(): void {
     $tipos = $this->entityTypeManager->getStorage('commerce_order_type')->loadMultiple();
     foreach ($tipos as $tipo) {
-      $legado = $tipo->getThirdPartySetting('commerce_shipping', 'shipment_type');
+      $legado = $tipo->getThirdPartySetting(
+          'commerce_shipping',
+          'shipment_type'
+      );
       if (empty($legado)) {
         continue;
       }
       $novo = $this->entityTypeManager->getStorage('aculta_shipment_type')->load($legado) ? $legado : 'default';
-      if (empty($tipo->getThirdPartySetting('aculta_commerce', 'shipment_type'))) {
+      if (empty($tipo->getThirdPartySetting(
+          'aculta_commerce',
+          'shipment_type'
+      ))) {
         $tipo->setThirdPartySetting('aculta_commerce', 'shipment_type', $novo);
       }
       $tipo->unsetThirdPartySetting('commerce_shipping', 'shipment_type');
       $tipo->save();
     }
-    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+    $this->entityFieldManager->clearCachedFieldDefinitions();
   }
 
   /**
-   * Devolve o método do motor equivalente ao método do contrib de uma remessa, ou NULL se não há.
+   * Devolve o método do motor equivalente ao do contrib, ou NULL se não há.
    */
   private function metodoNovoDe(EntityInterface $remessaLegada): ?int {
     $metodoLegado = $remessaLegada->get('shipping_method')->entity;
@@ -303,9 +347,10 @@ final class LegacyShippingCutover {
   }
 
   /**
-   * Recalcula as dependências do storage e dos campos commerce_order.shipments, sem depender do contrib.
+   * Recalcula as dependências do storage e do campo de remessas do pedido.
    *
-   * O salvamento com setSyncing() não recalcula dependências: sem esta etapa, o storage continuava dependendo de
+   * O salvamento com setSyncing() não recalcula dependências: sem esta etapa,
+   * o storage continuava dependendo de
    * commerce_shipping e o uninstall o apagava junto com a tabela do campo.
    */
   private function atualizarDependenciasDoCampo(EntityInterface $storage): void {
@@ -324,7 +369,9 @@ final class LegacyShippingCutover {
   }
 
   /**
-   * Diz se é seguro desinstalar o contrib: nenhum método, remessa ou referência de campo depende dele.
+   * Diz se é seguro desinstalar o contrib.
+   *
+   * Nenhum método, remessa ou referência de campo pode depender dele.
    *
    * @return string[]
    *   Motivos de bloqueio. Vazio quando a desinstalação é segura.
@@ -361,7 +408,10 @@ final class LegacyShippingCutover {
       $motivos[] = 'campo commerce_order.shipments ainda aponta para o contrib';
     }
     foreach ($this->entityTypeManager->getStorage('commerce_order_type')->loadMultiple() as $tipo) {
-      if (!empty($tipo->getThirdPartySetting('commerce_shipping', 'shipment_type'))) {
+      if (!empty($tipo->getThirdPartySetting(
+          'commerce_shipping',
+          'shipment_type'
+      ))) {
         $motivos[] = 'tipo de pedido ainda usa commerce_shipping: ' . $tipo->id();
       }
     }
@@ -369,7 +419,9 @@ final class LegacyShippingCutover {
   }
 
   /**
-   * Desinstala o contrib quando não há bloqueios. Retorna TRUE se desinstalou.
+   * Desinstala o contrib quando não há bloqueios.
+   *
+   * Retorna TRUE se desinstalou.
    */
   public function uninstallLegacyIfSafe(): bool {
     if (!$this->moduleHandler->moduleExists('commerce_shipping')) {
@@ -378,7 +430,8 @@ final class LegacyShippingCutover {
     if ($this->blockersForUninstall() !== []) {
       return FALSE;
     }
-    // Métodos do contrib já copiados e conferidos são removidos antes da desinstalação: o módulo não desinstala com entidades.
+    // Métodos do contrib já copiados e conferidos são removidos antes da
+    // desinstalação: o módulo não desinstala com entidades.
     $this->entityTypeManager->getStorage('commerce_shipping_method')->delete(
       $this->entityTypeManager->getStorage('commerce_shipping_method')->loadMultiple()
     );
