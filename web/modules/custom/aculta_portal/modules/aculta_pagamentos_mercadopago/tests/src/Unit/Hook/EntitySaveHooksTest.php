@@ -52,4 +52,33 @@ final class EntitySaveHooksTest extends UnitTestCase {
     (new EntitySaveHooks())->entityPresave($gateway);
   }
 
+  /**
+   * Active configuration remains active while credentials are cleared.
+   */
+  public function testActiveGatewayCredentialsAreCleared(): void {
+    $configuration = [
+      'mode' => 'test',
+      'public_key_test' => 'ephemeral-public-key',
+      'access_token_test' => 'ephemeral-access-token',
+    ];
+    $expected = [
+      'mode' => 'test',
+      'public_key_test' => '',
+      'access_token_test' => '',
+    ];
+    $gateway = $this->createMock(PaymentGatewayInterface::class);
+    $gateway->method('getEntityTypeId')->willReturn('commerce_payment_gateway');
+    $gateway->method('id')->willReturn('mercado_pago');
+    $gateway->method('status')->willReturn(TRUE);
+    $gateway->method('getPluginConfiguration')->willReturn($configuration);
+    $gateway->expects($this->once())
+      ->method('setPluginConfiguration')
+      ->with($expected)
+      ->willReturnSelf();
+
+    (new EntitySaveHooks())->entityPresave($gateway);
+
+    $this->assertTrue($gateway->status());
+  }
+
 }

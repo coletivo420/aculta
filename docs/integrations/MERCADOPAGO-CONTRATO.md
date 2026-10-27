@@ -60,6 +60,7 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 | Cancelamento | `MercadoPagoPaymentService::cancelar()` serializa pela chave compartilhada do pagamento, recarrega Commerce, consulta ID remoto, aceita apenas `pending`, `in_process` ou `authorized`, e exige resposta `cancelled` com o mesmo ID | [Referência oficial](https://www.mercadopago.com.br/developers/pt/reference/online-payments/checkout-api-payments/create-cancellation/put) confirma `PUT /v1/payments/{payment_id}` e os estados; Unit cobre cancelamento, reconciliação após timeout e IDs divergentes |
 | Assinatura pendente | `status => 'pending'`, sem cartão | Alinhado |
 | Status de assinatura alteráveis | `RecurrenceRequestBuilder::STATUS_ALTERAVEIS = paused, authorized, cancelled` | Confirmar com a referência de `PUT /preapproval/{id}` |
+| Gateway ativo | Configuração canônica permanece `status: true` em todos os ambientes; o hook pré-save remove credenciais e não bloqueia importação quando estão ausentes | Unit cobre preservação do gateway ativo e remoção das chaves; `RedirectCheckoutForm` recusa criar a preferência se o token efetivo estiver vazio |
 
 ## Não confirmado
 

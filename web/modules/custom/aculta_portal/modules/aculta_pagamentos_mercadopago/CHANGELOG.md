@@ -1,3 +1,9 @@
+## 0.1.0-dev.24 — gateway ativo sem persistir credenciais (2026-10-27)
+
+- O Mercado Pago permanece ativo em todos os ambientes. O hook pré-save limpa os campos de credenciais, sem bloquear a gravação/importação da configuração ativa quando variáveis do ambiente estão ausentes.
+- A criação da preferência continua falhando fechada antes de qualquer chamada externa quando não há token efetivo.
+- Regressão Unit garante que o gateway permaneça ativo e que os campos de credencial sejam removidos. Unit: 157 testes / 505 assertions PASS; PHP lint e PHPCS Drupal/DrupalPractice dos PHP alterados PASS sem avisos. Kernel `CheckoutProTest`: 1/53 PASS, 77 depreciações upstream (reexecutado nesta microfase).
+
 ## 0.1.0-dev.23 — linguagem de webhook moderno (2026-10-27)
 
 - Checkout Pro não descreve os callbacks assinados como IPN. Logs, descrição de configuração e comentários passam a identificá-los como Webhooks; IPN legado continua citado somente ao explicar sua recusa.

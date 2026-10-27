@@ -15,8 +15,8 @@ use Drupal\aculta_portal\Environment\DeployerEnvironment;
  * - Ambiente de produção: modo `live` do gateway e credenciais de produção.
  *
  * Os valores ficam fora da configuração exportada. Campo ausente deixa o
- * gateway vazio e fail-closed (EntitySaveHooks). Client IDs só existem no
- * formulário de configuração; Checkout Pro não os usa.
+ * checkout indisponível e fail-closed antes de chamar o provedor. Client IDs
+ * só existem no formulário de configuração; Checkout Pro não os usa.
  */
 final class MercadoPagoCredentials {
 

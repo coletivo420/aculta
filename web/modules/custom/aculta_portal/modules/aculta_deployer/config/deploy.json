@@ -149,7 +149,7 @@
     },
     {
       "file": "config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml",
-      "reason": "gateway Mercado Pago ativo quando as credenciais do ambiente existem"
+      "reason": "gateway Mercado Pago permanece ativo em todos os ambientes; operações exigem credenciais do ambiente e falham fechadas quando ausentes"
     },
     {
       "file": "config/sync/system.logging.yml",

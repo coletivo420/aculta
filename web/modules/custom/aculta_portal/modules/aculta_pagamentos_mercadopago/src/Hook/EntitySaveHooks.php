@@ -14,7 +14,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 final class EntitySaveHooks {
 
   /**
-   * Keeps the Mercado Pago gateway fail-closed on save.
+   * Keeps the Mercado Pago gateway active without persisting credentials.
    */
   #[Hook('entity_presave')]
   public function entityPresave(EntityInterface $entity): void {
@@ -25,17 +25,6 @@ final class EntitySaveHooks {
 
     // Config overrides supply runtime keys in memory; never persist them.
     $entity->setPluginConfiguration(MercadoPagoCredentials::clearCredentialValues($entity->getPluginConfiguration()));
-    if (!$entity->status()) {
-      return;
-    }
-
-    $environment = MercadoPagoCredentials::currentEnvironment(dirname(DRUPAL_ROOT));
-    if (!MercadoPagoCredentials::hasRuntimeCredentials($environment)) {
-      throw new \LogicException(sprintf(
-        'The Mercado Pago gateway cannot be enabled in the "%s" environment without its Public Key and Access Token.',
-        $environment,
-      ));
-    }
   }
 
 }

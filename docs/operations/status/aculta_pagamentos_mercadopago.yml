@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.23
+version: 0.1.0-dev.24
 state: Dev
-progress_note: "Dev.23: gateway salvo ativo no Kernel em modo test com chaves sintéticas apagadas antes da persistência. Logs sanitizados e terminologia atualizada para Webhooks assinados (IPN só aparece na rejeição do legado). Unit 156/502, Kernel 1/53, PHPCS Drupal/Practice e lint PASS; 77 depreciações upstream. Login MP sandbox respondeu HTTP 403. Sem preferência ou cobrança; cotação de frete e sandbox financeiro pendentes."
-next_phase: Prosseguir do login Drupal ao Checkout Pro com conta de teste, concluir fluxo do comprador sandbox e homologar aprovação, pendência, rejeição, cancelamento e webhook ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))
+progress_note: "Dev.24: gateway permanece ativo mesmo sem credenciais no processo; o pre-save remove credenciais sem bloquear a gravação/importação. RedirectCheckoutForm recusa criar preferência antes de chamar a API quando falta token. Unit 157/505 PASS; Kernel 1/53 PASS, 77 depreciações upstream; PHPCS Drupal/Practice e PHP lint PASS. Login MP sandbox respondeu HTTP 403; sem preferência ou cobrança. Homologação de pagamentos, frete e visual pendentes."
+next_phase: Prosseguir com teste isolado de criação da preferência e, quando o comprador sandbox estiver acessível, homologar aprovação, pendência, rejeição, cancelamento, webhook e recorrência ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))
