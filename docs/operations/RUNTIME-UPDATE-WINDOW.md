@@ -284,6 +284,22 @@ aparecem. Há uma adicional fora do escopo desta frente: `aculta_id_cpf 10002` (
 módulo `aculta_id_cpf`). O settings descartável foi removido; nenhuma credencial ficou em
 log.
 
+## Privilégios MariaDB (2026-10-26, 19:30)
+
+Execução autorizada como administrador do MariaDB. `sudo mysql`, `sudo mariadb` e o socket
+como `root@localhost` falharam com `ERROR 1045 (using password: NO)`. O acesso
+administrativo disponível é `sudo -u mysql mariadb`, autenticado como `mysql@localhost`;
+foi o método usado.
+
+- `aculta_runtime_copia`: criado vazio.
+- `aculta_install_b2`: **já existia** com 272 tabelas; não foi alterado.
+- `GRANT ALL PRIVILEGES` nos dois bancos para `aculta_simpletest@localhost`;
+  `FLUSH PRIVILEGES`.
+- Verificação com o usuário do simpletest: `aculta_runtime_copia` = 0 tabelas;
+  `aculta_install_b2` = 272 tabelas (pré-existentes).
+- Nenhuma senha foi impressa; hash mascarado; option-files temporários removidos.
+
+
 
 
 
