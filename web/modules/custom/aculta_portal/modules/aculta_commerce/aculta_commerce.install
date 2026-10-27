@@ -46,3 +46,15 @@ function aculta_commerce_post_update_retarget_shipments(array &$sandbox): string
   return sprintf('Pedidos com referência legada ajustados: %d; remessas legadas apagadas: %d; destino: %s.',
     $r['pedidos_ajustados'], $r['remessas_apagadas'], $r['destino']);
 }
+
+/**
+ * Remove displays de formulário e visualização de commerce_shipping que usam plugin inexistente.
+ *
+ * Roda antes da desinstalação do commerce_shipping: sem isso, o uninstall tenta atualizar displays com widget órfão.
+ */
+function aculta_commerce_post_update_remove_orphan_shipment_displays(array &$sandbox): string {
+  $ids = \Drupal::service('aculta_commerce.legacy_shipping_cutover')->removeOrphanShipmentDisplays();
+  return $ids === []
+    ? 'Nenhum display órfão de commerce_shipment.'
+    : 'Displays órfãos removidos: ' . implode(', ', $ids) . '.';
+}

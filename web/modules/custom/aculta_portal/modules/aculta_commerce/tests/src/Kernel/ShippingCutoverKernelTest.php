@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_commerce\Kernel;
 
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_store\Entity\Store;
 use Drupal\KernelTests\KernelTestBase;
@@ -312,6 +313,63 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     $this->assertSame('custom_box', $config['default_package_type']);
     $this->assertSame(['1', '2'], $config['services']);
     $this->assertArrayNotHasKey('rate_label', $config, 'chaves de tarifa fixa não são copiadas para o Melhor Envio');
+  }
+
+  /**
+   * Display de commerce_shipment com widget inexistente é removido; display válido permanece.
+   */
+  public function testRemovesOnlyOrphanShipmentDisplays(): void {
+    // O módulo flag consulta a tabela de flagging ao excluir um display: instala o schema no teste.
+    $this->installEntitySchema('flagging');
+    // Display órfão gravado como configuração bruta, como ocorre na cópia: salvar via entidade falha ao calcular
+    // dependências de um widget inexistente.
+    \Drupal::configFactory()->getEditable('core.entity_form_display.commerce_shipment.default.checkout')
+      ->setData([
+        'uuid' => 'a1b2c3d4-0000-4000-8000-000000000001',
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [],
+        'id' => 'commerce_shipment.default.checkout',
+        'targetEntityType' => 'commerce_shipment',
+        'bundle' => 'default',
+        'mode' => 'checkout',
+        'content' => [
+          'shipping_rate' => [
+            'type' => 'aculta_shipping_rate',
+            'weight' => 1,
+            'region' => 'content',
+            'settings' => [],
+            'third_party_settings' => [],
+          ],
+        ],
+        'hidden' => [],
+      ])->save();
+    $valido = EntityFormDisplay::load('commerce_shipment.default.default')
+      ?? EntityFormDisplay::create([
+        'targetEntityType' => 'commerce_shipment',
+        'bundle' => 'default',
+        'mode' => 'default',
+      ]);
+    $valido->set('content', [
+      'title' => [
+        'type' => 'string_textfield',
+        'weight' => 1,
+        'region' => 'content',
+        'settings' => [],
+        'third_party_settings' => [],
+      ],
+    ]);
+    $valido->set('status', TRUE);
+    $valido->save();
+    $service = \Drupal::service('aculta_commerce.legacy_shipping_cutover');
+
+    $removidos = $service->removeOrphanShipmentDisplays();
+
+    $this->assertContains('core.entity_form_display.commerce_shipment.default.checkout', $removidos);
+    $this->assertNotContains('core.entity_form_display.commerce_shipment.default.default', $removidos);
+    $this->assertNull(EntityFormDisplay::load('commerce_shipment.default.checkout'));
+    $this->assertNotNull(EntityFormDisplay::load('commerce_shipment.default.default'));
+    $this->assertSame([], $service->removeOrphanShipmentDisplays(), 'segunda execução é idempotente');
   }
 
 }

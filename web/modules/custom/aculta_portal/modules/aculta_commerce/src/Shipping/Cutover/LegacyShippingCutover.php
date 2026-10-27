@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_commerce\Shipping\Cutover;
 
+use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -39,7 +40,41 @@ final class LegacyShippingCutover {
     private readonly ModuleHandlerInterface $moduleHandler,
     private readonly ModuleInstallerInterface $moduleInstaller,
     private readonly EntityDefinitionUpdateManagerInterface $entityDefinitionUpdateManager,
+    private readonly PluginManagerInterface $widgetManager,
+    private readonly PluginManagerInterface $formatterManager,
   ) {}
+
+  /**
+   * Remove displays de formulário e de visualização de commerce_shipment que usam plugin inexistente.
+   *
+   * A entidade commerce_shipment sai com o contrib. O pane AcultaShippingInformation não usa esses displays.
+   * Idempotente: displays válidos são mantidos.
+   *
+   * @return string[]
+   *   IDs de configuração removidos (sem outros dados).
+   */
+  public function removeOrphanShipmentDisplays(): array {
+    $removidos = [];
+    $fontes = [
+      'entity_form_display' => $this->widgetManager,
+      'entity_view_display' => $this->formatterManager,
+    ];
+    foreach ($fontes as $entityTypeId => $manager) {
+      $definicoes = $manager->getDefinitions();
+      $storage = $this->entityTypeManager->getStorage($entityTypeId);
+      foreach ($storage->loadByProperties(['targetEntityType' => 'commerce_shipment']) as $display) {
+        foreach ($display->getComponents() as $componente) {
+          $tipo = $componente['type'] ?? NULL;
+          if ($tipo !== NULL && !isset($definicoes[$tipo])) {
+            $removidos[] = $display->getConfigDependencyName();
+            $display->delete();
+            break;
+          }
+        }
+      }
+    }
+    return $removidos;
+  }
 
   /**
    * Instala as entidades do motor que ainda não existem no banco. Idempotente.

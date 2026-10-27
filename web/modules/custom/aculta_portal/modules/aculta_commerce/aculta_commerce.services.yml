@@ -91,4 +91,4 @@ services:
 
   aculta_commerce.legacy_shipping_cutover:
     class: Drupal\aculta_commerce\Shipping\Cutover\LegacyShippingCutover
-    arguments: ['@entity_type.manager', '@module_handler', '@module_installer', '@entity.definition_update_manager']
+    arguments: ['@entity_type.manager', '@module_handler', '@module_installer', '@entity.definition_update_manager', '@plugin.manager.field.widget', '@plugin.manager.field.formatter']

@@ -1,5 +1,7 @@
 ## 0.1.0-dev.11 — cutover do frete para o motor próprio (código, sem Runtime) — 2026-10-26
 
+- Post-update `remove_orphan_shipment_displays`: remove displays de formulário e visualização de `commerce_shipment` que usam plugin inexistente (ex.: widget `aculta_shipping_rate`), antes da desinstalação do `commerce_shipping`. Lista só IDs de configuração.
+- Melhor Envio legado (`aculta_melhorenvio`) migra para o mesmo id no motor, com `default_package_type` e `services`.
 - `aculta_commerce.install`: `update_8001` instala as entidades do motor (`aculta_shipping_method`, `aculta_shipment`, `aculta_shipment_type`) de forma idempotente.
 - Post-update `migrate_shipping_methods`: copia `commerce_shipping_method` com plugin `flat_rate` para `aculta_flat_rate` (e `flat_rate_per_item` para `aculta_flat_rate_per_item`), preservando `rate_label`, `rate_description`, `rate_amount`, lojas, status, peso e condições. O original não é apagado. `services` do contrib não tem equivalente e não é copiado.
 - Post-update `retarget_shipments`: remove do pedido só a referência a remessas do contrib, reaponta `commerce_order.shipments` para `aculta_shipment` e apaga remessas legadas. Pedidos não são apagados.
