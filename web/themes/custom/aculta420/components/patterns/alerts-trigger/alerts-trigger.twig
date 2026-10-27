@@ -1,20 +1,23 @@
 {% set count = count|default(0) %}
 {% set counter_label = count_kind|default('active') == 'attention'
-  ? 'avisos ativos ou não lidos'|t
-  : 'avisos ativos'|t %}
+  ? (count == 1 ? 'aviso ativo ou não lido'|t : 'avisos ativos ou não lidos'|t)
+  : (count == 1 ? 'aviso ativo'|t : 'avisos ativos'|t) %}
 {% set label = count > 0
   ? '@count @kind. Abrir avisos'|t({'@count': count, '@kind': counter_label})
   : 'Abrir avisos'|t %}
 {{ attach_library('aculta420/messenger-drawers') }}
 <button type="button"
-        class="btn btn-link p-0 aculta-utility-trigger aculta-alerts-trigger"
+        class="aculta-utility-trigger aculta-alerts-trigger"
         data-bs-toggle="offcanvas"
         data-bs-target="#aculta-alerts-offcanvas"
         aria-controls="aculta-alerts-offcanvas"
         aria-expanded="false"
-        aria-label="{{ label }}">
-  <i class="bi bi-bell" aria-hidden="true"></i>
-  <span class="aculta-unread-count" data-aculta-alerts-count data-count="{{ count }}">{{ count > 99 ? '99+' : count }}</span>
+        aria-label="{{ label }}"
+        data-aculta-count-kind="{{ count_kind|default('active') }}">
+  <span class="aculta-utility-trigger__icon">
+    <i class="bi bi-bell" aria-hidden="true"></i>
+    <span class="aculta-unread-count aculta-utility-trigger__count" data-aculta-alerts-count data-count="{{ count }}" aria-hidden="true">{{ count > 99 ? '99+' : count }}</span>
+  </span>
 </button>
 
 <div class="offcanvas offcanvas-end aculta-utility-offcanvas aculta-alerts-offcanvas"

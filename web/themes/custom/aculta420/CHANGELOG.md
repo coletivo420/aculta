@@ -1,3 +1,10 @@
+## Não validado — alinhamento da barra multidomínio — 2026-10-27
+
+- Unifica a área de toque, o ícone e o posicionamento do contador de busca, carrinho, mensagens e avisos; os contadores usam tokens semânticos existentes.
+- Mantém as gavetas e os atributos AJAX existentes e alinha os rótulos de mensagens e avisos, inclusive depois da atualização da contagem.
+- Unit do tema: 16 testes / 213 assertions; seis cenários de atualização JavaScript; fronteira, schemas SDC e Design Foundations: PASS.
+- Validação visual em Firefox ESR e marcação de versão pendentes; versão pretendida para a correção: `0.7.1-dev.1`.
+
 ## 0.7.0-dev.5 — CSS administrativo de segredos movido ao submódulo — 2026-10-26
 
 - Remove de `portal-requirements-report.css` apenas as regras `.aculta-secret-value*`; o submódulo as fornece para Claro e ACULTA420.

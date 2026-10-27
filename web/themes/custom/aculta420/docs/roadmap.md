@@ -432,3 +432,7 @@ O Studio passou a priorizar **GANJALAB E-0.1**, interface editorial sob `conta.a
 
 - Exceção documentada: UI administrativa renderizada no Claro mantém CSS mínimo no próprio submódulo, com seletores de classe e `data-portal-ui`.
 - Removidas apenas as regras `.aculta-secret-value*` da folha do tema; o mapa de tokens permanece.
+
+## Barra multidomínio — correção visual pendente de validação
+
+- Gatilhos e contadores compartilham a mesma geometria e tokens; rótulos das gavetas acompanham a contagem. Versão PATCH prevista: `0.7.1-dev.1`, após validação visual em Firefox ESR no ambiente autorizado.
