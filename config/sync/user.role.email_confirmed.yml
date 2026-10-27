@@ -51,6 +51,6 @@ permissions:
   - 'use wiki_editorial transition review_to_draft'
   - 'view latest version'
   - 'view own email_confirmed profile'
-  - 'view own wiki proposals'
   - 'view own unpublished content'
+  - 'view own wiki proposals'
   - 'view wiki_entry revisions'
