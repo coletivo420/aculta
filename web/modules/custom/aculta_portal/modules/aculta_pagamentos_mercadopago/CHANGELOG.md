@@ -1,3 +1,9 @@
+## 0.1.0-dev.19 — falhas de transporte no webhook e retorno (2026-10-27)
+
+- `CheckoutPro::onNotify()` responde 503 para falhas de rede/timeout na consulta do pagamento e comerciante, permitindo reentrega; `onReturn()` falha fechado com mensagem segura sem persistência.
+- Logs dos callbacks registram só o ID técnico do pagamento, sem corpo ou mensagem privada da exceção. Regressões simulam timeout com texto sensível e confirmam resposta segura e ausência de exposição.
+- Unit MP: 152 testes / 480 assertions PASS; PHP lint e PHPCS Drupal/DrupalPractice focais PASS. Kernel, sandbox e fluxo ponta a ponta pendentes.
+
 ## 0.1.0-dev.18 — cancelamento e reconciliação sob lock (2026-10-27)
 
 - `MercadoPagoPaymentService` compartilha o lock financeiro do webhook, recarrega o pagamento Commerce, exige ID remoto igual, total e moeda correspondentes na consulta e serializa cancelamento/atualização.

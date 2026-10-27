@@ -1070,7 +1070,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         }
       }
     }
-    catch (MPApiException $e) {
+    catch (\Throwable $exception) {
       $logger->error('Mercado Pago webhook lookup failed for payment @id.', ['@id' => $payment_id]);
       return new JsonResponse([], 503);
     }
@@ -1234,7 +1234,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       $payment_client = $this->clientFactory->criar('pagamentos', $this->parentEntity);
       $mp_payment = $payment_client->get((int) $payment_id);
     }
-    catch (MPApiException $e) {
+    catch (\Throwable $exception) {
       $logger->error('Mercado Pago API error verifying payment @id.', ['@id' => $payment_id]);
       throw new PaymentGatewayException('Could not verify payment with Mercado Pago.', 0);
     }

@@ -375,6 +375,42 @@ final class CheckoutProNotificationTest extends UnitTestCase {
   }
 
   /**
+   * Returns a retryable response for transport exceptions without logging them.
+   */
+  public function testNotificationReturnsRetryableStatusOnTransportFailure(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client = new class {
+
+      /**
+       * Simulates a timeout with private transport details.
+       */
+      public function get(int $id): object {
+        throw new \RuntimeException('private provider response');
+      }
+
+    };
+    $factory = $this->createMock(MercadoPagoClientFactory::class);
+    $factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects($this->once())
+      ->method('error')
+      ->with('Mercado Pago webhook lookup failed for payment @id.', ['@id' => '123']);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($logger);
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $factory);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    $this->assertSame(503, $response->getStatusCode());
+  }
+
+  /**
    * Shows a safe payment exception when API verification fails on return.
    */
   public function testReturnFailsClosedOnProviderApiFailure(): void {
@@ -406,6 +442,48 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
 
     $this->expectException(PaymentGatewayException::class);
+    $gateway->onReturn($order, new Request([
+      'payment_id' => '123',
+      'merchant_order_id' => '900',
+      'status' => 'approved',
+    ]));
+  }
+
+  /**
+   * Hides transport exception details when the return cannot be checked.
+   */
+  public function testReturnFailsClosedOnTransportFailure(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client = new class {
+
+      /**
+       * Simulates an API timeout with private response details.
+       */
+      public function get(int $id): object {
+        throw new \RuntimeException('private provider token');
+      }
+
+    };
+    $factory = $this->createMock(MercadoPagoClientFactory::class);
+    $factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('getData')->with('commerce_mercado_pago_checkout')->willReturn(['preference_id' => 'pref-1']);
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects($this->once())
+      ->method('error')
+      ->with('Mercado Pago API error verifying payment @id.', ['@id' => '123']);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($logger);
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $factory);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $this->expectException(PaymentGatewayException::class);
+    $this->expectExceptionMessage('Could not verify payment with Mercado Pago.');
     $gateway->onReturn($order, new Request([
       'payment_id' => '123',
       'merchant_order_id' => '900',

@@ -1,5 +1,12 @@
 # Execução contínua ACULTA — PR #298
 
+## Mercado Pago — microfase de falhas de transporte em callbacks (2026-10-27)
+
+- Base local: `a061c7ac3`. `onNotify()` agora retorna 503 para qualquer falha HTTP/transporte ao consultar pagamento ou merchant order, permitindo reentrega; `onReturn()` falha fechado com erro seguro. Ambos deixam detalhes da exceção fora de logs e mensagens.
+- Testes adicionados simulam timeout com conteúdo privado: webhook 503 e retorno `PaymentGatewayException` segura. Unit MP: 152 testes / 480 assertions PASS; lint e PHPCS Drupal/DrupalPractice dos PHP alterados PASS.
+- Kernel aguarda ambiente `SIMPLETEST_DB` apontando a `aculta_simpletest`; a opção foi liberada pelo responsável, mas a variável não está presente nesta sessão e o arquivo de configuração em `secrets/` não foi lido. Sandbox financeiro segue sem autorização para credenciais/transações.
+- Nenhuma alteração de checkout, banco, credenciais ou serviço externo ocorreu nesta microfase.
+
 ## Mercado Pago — microfase de cancelamento e reconciliação (2026-10-27)
 
 - Base de trabalho: `cd49917f6`. O serviço de pagamento usa a mesma chave de lock do webhook; consulta e cancelamento recarregam o pagamento Commerce, validam ID remoto e não aceitam total/moeda divergentes. Repetição após timeout reconcilia `cancelled` localmente sem nova chamada de cancelamento.
