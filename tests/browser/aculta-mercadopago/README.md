@@ -21,43 +21,67 @@ Na execução de 2026-10-27, Firefox ESR carregou o produto e carrinho sem
 CAPTCHA, mostrou Google antes do e-mail, revelou o cadastro AJAX sem senha nem
 desafio para novo e-mail e avançou à etapa de endereço e cotação de frete sem
 CAPTCHA. O formulário de endereço não foi enviado, nenhuma cotação foi
-solicitada e o pedido não foi concluído. Preferência e autenticação do
-comprador Mercado Pago continuam pendentes de uma sessão sandbox acessível.
+solicitada e o pedido não foi concluído. Esse smoke não cria preferência pela
+`RedirectCheckoutForm`; a preferência e a tela de comprador são verificadas no
+roteiro separado abaixo.
 
 Após corrigir o campo CEP obrigatório no simulador, a execução de 2026-10-27
 retornou `guest_registration_and_shipping_stage_without_captcha`: produto,
 carrinho, cadastro silencioso e etapa de endereço carregaram; nenhuma cotação
 ou pagamento foi iniciado.
 
+`preference-customer-stage.py` abre um `init_point` de preferência sandbox
+criado pelo cliente/credencial de teste e confirma se a página do provedor
+carrega ou se apresenta um desafio de segurança. Não autentica o comprador e
+nunca submete pagamento. Em 2026-10-27, uma preferência de R$ 1,00 com item e
+referência sintéticos foi criada no modo test, o `init_point` abriu a tela
+“Escolha como pagar” com HTTP 200 e sem CAPTCHA, e “Continuar” chegou à tela de
+identificação do comprador com HTTP 200. O helper tentou o login autorizado
+partindo dessa etapa, mas retornou `login_incomplete`; não houve sessão
+confirmada ou pagamento.
+
 ## Ambiente
 
 - Firefox ESR visível em `DISPLAY=:0`, controlado pelo geckodriver;
 - navegação pela internet até `https://www.mercadopago.com.br/`;
-- credenciais do comprador de teste no arquivo ignorado pelo Git
-  `secrets/mercadolivre_test_user`;
-- não usa credenciais Drupal, banco de dados, API token do vendedor ou
-  configuração administrativa.
+- `buyer-login.py` lê em memória as credenciais do comprador de teste no
+  arquivo ignorado pelo Git `secrets/mercadolivre_test_user`;
+- `create-sandbox-preference.php` usa o gateway do Runtime somente quando ativo,
+  em modo `test` e com token presente. Envia item/referência sintéticos, não usa
+  credenciais de produção e grava somente o `init_point` em `$SUITE_OUT`;
+- os scripts de navegador não usam credenciais Drupal ou acesso direto ao banco.
 
 ## Execução
 
 ```sh
 cd /home/piradopirata/projetos/aculta
-DISPLAY=:0 python3 -I tests/browser/aculta-mercadopago/buyer-login.py
+SUITE_OUT=/tmp/aculta-mp-preference ACULTA_MP_INIT_POINT_FILE=/tmp/aculta-mp-preference/init-point.url vendor/bin/drush php:script tests/browser/aculta-mercadopago/create-sandbox-preference.php
+DISPLAY=:0 SUITE_OUT=/tmp/aculta-mp-preference ACULTA_MP_INIT_POINT_FILE=/tmp/aculta-mp-preference/init-point.url ACULTA_MP_ADVANCE_TO_CUSTOMER=1 python3 -I tests/browser/aculta-mercadopago/preference-customer-stage.py
+DISPLAY=:0 ACULTA_MP_INIT_POINT_FILE=/tmp/aculta-mp-preference/init-point.url python3 -I tests/browser/aculta-mercadopago/buyer-login.py
 DISPLAY=:0 python3 -I tests/browser/aculta-mercadopago/checkout-smoke.py
 ```
 
-O segundo script salva screenshots somente em `$SUITE_OUT` (padrão
+Os scripts de smoke salvam screenshots somente em `$SUITE_OUT` (padrão
 `/tmp/aculta-mercadopago-checkout`). `ACULTA_PRODUCT_BASE_URL`,
 `ACULTA_CHECKOUT_BASE_URL` e `ACULTA_MP_PRODUCT_PATH` podem apontar para outro
 site/produto de teste. Por padrão, o produto é carregado em
 `loja.aculta.toca.net.br` e o carrinho/checkout central em
 `aculta.toca.net.br`.
 
-A saída informa somente o resultado categórico do login. O script não imprime
-credenciais, URL de retorno, conteúdo da página, nome do comprador nem cookies.
-Ele cria perfil temporário em `/tmp` por meio de `wdlib.py` e o remove ao
-encerrar. Não contorna desafios de segurança. Não salva screenshots ou HTML,
-para não registrar informações da conta.
+Para o teste de preferência, o arquivo indicado por `ACULTA_MP_INIT_POINT_FILE`
+deve conter somente a URL de retorno `init_point` produzida por uma preferência
+sandbox; guarde-o em `$SUITE_OUT`, nunca no repositório. A URL não é impressa.
+O helper de login usa esse endereço para abrir diretamente a autenticação
+iniciada pelo checkout; sem a variável, continua iniciando pela página principal.
+
+A saída do helper de login informa somente um resultado categórico. Ele não
+imprime credenciais, URL de retorno, conteúdo da página, nome do comprador ou
+cookies; usa perfil temporário do `wdlib.py` e não salva imagens/HTML da conta.
+O smoke da preferência imprime somente host, path com o ID da preferência
+redigido, título, status HTTP e indicadores de formulário/CAPTCHA; a captura da tela do provedor fica em
+`$SUITE_OUT`. O teste que cria preferência deixa um objeto de teste no painel
+Mercado Pago, mas não cria pedido nem cobrança. Nenhum helper contorna desafios
+de segurança.
 
 ## Limitações
 

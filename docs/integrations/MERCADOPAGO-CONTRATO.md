@@ -72,11 +72,12 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 - **Efeito do cancelamento sobre a preferência e o pedido:** não documentado na página lida.
 - **Exclusão de meios de pagamento:** a regra "Cash in account não pode ser excluído" vem de uma página de outro país; confirmar para o Brasil.
 - **`notification_url` por preferência:** o código envia a rota nativa `commerce_payment.notify` sem `source_news=ipn`. O guard só encaminha webhooks modernos após validar a assinatura; tópicos não suportados são reconhecidos sem executar o handler legado.
+- **Preferência sandbox e tela do comprador:** criação direta pelo `MercadoPagoClientFactory` produziu um `init_point`; Firefox carregou a seleção de pagamento e, após avançar, a identificação do comprador (HTTP 200, sem CAPTCHA). Isso não exercita `RedirectCheckoutForm`, não associa a preferência a um Commerce Order nem confirma pagamento.
 
 ## Próximos passos
 
 1. Ler a referência oficial de pagamentos (cancelamento) e de preapproval (`PUT`), e fechar os itens "não confirmado".
-2. Homologar no sandbox: aprovação, pendência, rejeição, duplicidade, retorno adulterado, estorno parcial e total, cancelamento de pagamento pendente, assinatura pendente com link de pagamento e recebimento dos tópicos de assinatura.
+2. Completar o login do comprador sandbox e homologar pelo checkout ACULTA: aprovação, pendência, rejeição, duplicidade, retorno adulterado, estorno parcial e total, cancelamento de pagamento pendente, assinatura pendente com link de pagamento e recebimento dos tópicos de assinatura.
 3. Só então tratar o Runtime (ver `CHANGELOG` do `aculta_portal`).
 
 ## Verificações em 2026-10-19 (registro)

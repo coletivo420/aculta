@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Sign in to the authorized Mercado Pago test buyer, without submitting a payment."""
 
+import os
 import re
 import sys
 import time
@@ -16,6 +17,7 @@ from wdlib import Driver
 ROOT = Path(__file__).resolve().parents[3]
 BUYER_FILE = ROOT / "secrets" / "mercadolivre_test_user"
 HOME_URL = "https://www.mercadopago.com.br/"
+INIT_POINT_FILE_ENV = "ACULTA_MP_INIT_POINT_FILE"
 
 
 def normalize(value):
@@ -41,6 +43,21 @@ def read_credentials():
     if not values.get("username") or not values.get("password"):
         raise ValueError("required test buyer fields are unavailable")
     return values
+
+
+def start_url():
+    """Uses an optional sandbox init_point to test login from checkout."""
+    path = os.environ.get(INIT_POINT_FILE_ENV)
+    if not path:
+        return HOME_URL
+    url = Path(path).read_text(encoding="utf-8").strip()
+    parsed = urlparse(url)
+    host = (parsed.hostname or "").lower()
+    if parsed.scheme != "https" or not (
+        host == "mercadopago.com.br" or host.endswith(".mercadopago.com.br")
+    ):
+        raise ValueError("checkout URL must be an HTTPS Mercado Pago Brazil init_point")
+    return url
 
 
 def visible_inputs(driver):
@@ -110,26 +127,38 @@ def main():
     driver = Driver()
     outcome = "login_incomplete"
     try:
-        driver.get(HOME_URL)
+        driver.get(start_url())
         time.sleep(2)
-        login_action = driver.js(
-            """const candidates = Array.from(document.querySelectorAll('a,button,[role="button"]'));
-              const target = candidates.find(el => {
-                const label = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
-                return label.includes('iniciar sessão') || label.includes('iniciar sessao')
-                  || label.includes('entrar') || label.includes('login');
-              });
-              if (!target) return {href: '', clicked: false};
-              if (target.tagName === 'A' && target.href) return {href: target.href, clicked: false};
-              target.click();
-              return {href: '', clicked: true};"""
-        )
-        if login_action["href"]:
-            driver.get(login_action["href"])
-        elif login_action["clicked"]:
-            time.sleep(2)
-        else:
-            driver.get("https://www.mercadopago.com.br/hub/login")
+        if os.environ.get(INIT_POINT_FILE_ENV):
+            fields = visible_inputs(driver)
+            has_identity = any(field["type"] in ("email", "text", "password") for field in fields)
+            if not has_identity and not provider_blocked(driver):
+                advanced = driver.js(
+                    """const button = Array.from(document.querySelectorAll('button'))
+                      .find(el => (el.innerText || '').trim().toLowerCase() === 'continuar');
+                      if (!button) return false; button.click(); return true;"""
+                )
+                if advanced:
+                    time.sleep(4)
+        if not visible_inputs(driver):
+            login_action = driver.js(
+                """const candidates = Array.from(document.querySelectorAll('a,button,[role="button"]'));
+                  const target = candidates.find(el => {
+                    const label = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
+                    return label.includes('iniciar sessão') || label.includes('iniciar sessao')
+                      || label.includes('entrar') || label.includes('login');
+                  });
+                  if (!target) return {href: '', clicked: false};
+                  if (target.tagName === 'A' && target.href) return {href: target.href, clicked: false};
+                  target.click();
+                  return {href: '', clicked: true};"""
+            )
+            if login_action["href"]:
+                driver.get(login_action["href"])
+            elif login_action["clicked"]:
+                time.sleep(2)
+            else:
+                driver.get("https://www.mercadopago.com.br/hub/login")
         fields = wait_for_inputs(driver)
         user = choose(
             fields,
@@ -182,9 +211,9 @@ def main():
         else:
             outcome = "login_incomplete"
         return outcome
-    except Exception:
+    except Exception as exception:
         # Never print exception text: browser errors can contain form details.
-        return "browser_or_login_error"
+        return "browser_or_login_error_" + type(exception).__name__
     finally:
         driver.close()
         credentials.clear()

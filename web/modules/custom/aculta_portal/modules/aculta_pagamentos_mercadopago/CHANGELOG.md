@@ -1,3 +1,9 @@
+## 0.1.0-dev.36 — homologar preferência sandbox e tela de comprador (2026-10-27)
+
+- O `MercadoPagoClientFactory` criou uma preferência sintética com token no modo `test`; o `init_point` abriu a tela “Escolha como pagar” no Firefox ESR visível (HTTP 200, sem CAPTCHA), e avançar carregou a identificação do comprador (HTTP 200).
+- O smoke visual reutilizável salva a captura somente em `$SUITE_OUT`; o helper de login aceita o init_point via arquivo temporário. A tentativa autorizada de autenticação terminou `login_incomplete`; não houve pagamento.
+- Evidência parcial da API/provedor. Não comprova a chamada de preferência feita por `RedirectCheckoutForm`, pedido Commerce ou pagamento confirmado.
+
 ## 0.1.0-dev.35 — serializar criação de assinaturas por pedido (2026-10-27)
 
 - Criação de assinatura de doação agora usa lock por pedido, recarrega o Commerce Order sob lock e grava o vínculo antes do redirecionamento. Um retry reutiliza a assinatura pendente só depois de conferir ID e `external_reference`; assinatura autorizada retorna à conclusão e referências conflitantes falham fechadas.
