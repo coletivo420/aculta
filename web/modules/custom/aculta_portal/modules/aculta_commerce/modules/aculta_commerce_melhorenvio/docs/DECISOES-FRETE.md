@@ -143,3 +143,14 @@ a vir do carrinho:
   R$ 18,19): a doação não entra no cálculo.
 - LMS continua não verificado: a compra de curso exige login e um produto de curso publicado no site de cursos. O
   produto de teste id 10 não tem curso associado.
+
+### LMS real verificado no navegador (2026-10-27, autorizada)
+
+- Autorizado pelo responsável: uso da conta de teste `teste.comum` e criação de curso de teste ligado ao produto id 10.
+- Criados no servidor de testes: curso `[TESTE] Curso LMS (não vender)` (grupo 73, ligado ao produto 10) e turma
+  `[TESTE] Turma LMS` (grupo 74, ligada ao curso).
+- Compra real pela conta de teste: o curso foi para um carrinho separado de tipo `curso` (pedido 179, aparece na gaveta como
+  "Cursos").
+- Frete da gaveta com o curso no carrinho: PAC R$ 23,04, SEDEX R$ 51,97, Mini Envios R$ 18,19, iguais aos da camiseta
+  sozinha. O LMS fica fora do frete.
+- Dados de teste deixados no servidor: curso 73, turma 74, pedido 179 e a camiseta no carrinho da conta de teste.
