@@ -316,3 +316,17 @@ foi o método usado.
 - `aculta_runtime_copia`: **não criado.** O acesso administrativo ao MariaDB não foi concedido nesta sessão (a autorização de `sudo mysql` não permitiu escrever a credencial administrativa). Pendente de decisão do responsável.
 - Durante a restauração, o `updatedb` de teste já havia criado 18 tabelas novas no banco da cópia (entidades do motor e tabelas de módulos), somadas às 588 do Runtime (606 no total).
 - **Ensaio geral congelado** até a fase B ser aprovada e integrada.
+
+## Ensaio geral na cópia `aculta_runtime_copia` (2026-10-26, 21:23)
+
+Código: PR `6e3d93d8b` + `feat/aculta-user-10013-contagem` (`fc2abf903`) + `feat/aculta-commerce-cutover` (`975761aff`), merges locais, sem push dessa combinação. Banco: `aculta_runtime_copia`, restaurado do dump de `aculta_runtime` (sha256 `31d5350b…`). Nenhum update foi feito no `aculta_runtime`.
+
+- **Pré-contagem:** pedidos `default` 2 e `doacao` 6; pedidos com remessa 1; `commerce_shipment` 1; métodos do contrib 2; campo `commerce_order.shipments` apontando para `commerce_shipment`.
+- **`drush updatedb -y`:** exit 0, **55 s**. Todos os pendentes concluíram, inclusive os post-updates do Messenger e do cutover. Log literal: `/home/piradopirata/worktrees/out/ensaio-geral-2123.log`.
+- **10013:** indexados 15 UIDs de 26 perfis; ignorados sem dono 10; ignorados vazios 1; órfãos com apelido 0; formato inválido 0; 1 perfil reconciliado no mesmo UID (comportamento já existente).
+- **Cutover:** métodos migrados 1 (`Envio`, `aculta_flat_rate`); não mapeado mantido: `aculta_melhorenvio` (ver abaixo). Remessas legadas apagadas 1; pedido ajustado 1, **salvo sem erro de transação**; campo → `aculta_shipment`.
+- **Pós-checagens:** pedidos por tipo idênticos (2 e 6); `commerce_order__shipments` 0; `commerce_shipment` 0; token sandbox do Melhor Envio em `encrypted_v1`; índice único de CPF presente; índice de apelidos com 15 linhas.
+- **Desinstalação do `commerce_shipping`: BLOQUEADA** por `blockersForUninstall()`: `método sem mapeamento: 2`. O método 2 é "Melhor Envio", plugin `aculta_melhorenvio`, ativo. O mapa de migração não cobre esse plugin. **Achado a corrigir em revisão:** mapear `aculta_melhorenvio` para `aculta_melhorenvio` na migração. Não corrigido nesta execução.
+- **Checkout no Firefox até o passo de envio:** **DEFERRED**. Servir a cópia exige apontar o docroot do servidor de teste, o que toca o checkout servido.
+- **Tempos:** `updatedb` total 55 s. O log não traz horário individual por etapa.
+- **Rollback:** dump `31d5350b…` em `/home/piradopirata/worktrees/ensaio-cutover-private/`, reimportável em 16 s em `aculta_runtime_copia`.
