@@ -55,7 +55,8 @@
         const calcular = async (cep) => {
           const minha = ++consulta;
           try {
-            const resposta = await fetch(`${endpoint}?cep=${encodeURIComponent(cep)}`, {
+            const variacao = raiz.dataset.variation && raiz.dataset.variation !== '0' ? `&variation=${encodeURIComponent(raiz.dataset.variation)}` : '';
+            const resposta = await fetch(`${endpoint}?cep=${encodeURIComponent(cep)}${variacao}`, {
               headers: { Accept: 'application/json' },
               credentials: 'same-origin',
             });

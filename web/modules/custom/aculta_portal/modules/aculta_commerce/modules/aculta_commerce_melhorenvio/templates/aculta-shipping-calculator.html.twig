@@ -2,7 +2,7 @@
   Simulador de frete por CEP (módulo aculta_commerce_melhorenvio). Cálculo automático: ao digitar um CEP de 8 dígitos,
   as opções aparecem sem botão. O estado inicial vem do Commerce. Sem JavaScript, o campo aparece, sem cálculo.
 #}
-<section class="aculta-shipping-calculator" aria-labelledby="{{ id }}-titulo" data-aculta-shipping-calculator data-endpoint="{{ endpoint|default('/frete/simular') }}">
+<section class="aculta-shipping-calculator" aria-labelledby="{{ id }}-titulo" data-aculta-shipping-calculator data-endpoint="{{ endpoint|default('/frete/simular') }}" data-variation="{{ variation_id|default(0) }}">
   <h3 class="aculta-shipping-calculator__titulo h6" id="{{ id }}-titulo">Calcular frete</h3>
 
   <div class="aculta-shipping-calculator__form">

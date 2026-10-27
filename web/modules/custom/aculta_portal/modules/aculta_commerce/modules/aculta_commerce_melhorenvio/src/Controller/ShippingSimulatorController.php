@@ -7,6 +7,8 @@ namespace Drupal\aculta_commerce_melhorenvio\Controller;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulation;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulator;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Flood\FloodInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +33,7 @@ final class ShippingSimulatorController {
     private readonly ShippingSimulator $simulator,
     private readonly FloodInterface $flood,
     private readonly ShippingQuoteStore $store,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -43,7 +46,11 @@ final class ShippingSimulatorController {
     }
     $this->flood->register(self::FLOOD_NAME, self::FLOOD_WINDOW, $ip);
     $cep = (string) $request->query->get('cep', '');
-    $result = $this->simulator->simulate($cep, NULL);
+    $variation = $this->variation((int) $request->query->get('variation', 0));
+    // Com produto, usa o pacote da variação (padrão como mínimo). Sem produto (carrinho), usa o pacote da configuração.
+    $result = $variation !== NULL
+      ? $this->simulator->simulateForVariation($cep, $variation)
+      : $this->simulator->simulate($cep, NULL);
     // Guarda o cálculo na sessão para o produto e o carrinho (o carrinho lateral só lê). CEP inválido não é guardado.
     $digits = preg_replace('/\D/', '', $cep) ?? '';
     if (strlen($digits) === 8) {
@@ -65,6 +72,21 @@ final class ShippingSimulatorController {
     $response->setPrivate();
     $response->headers->addCacheControlDirective('no-store');
     return $response;
+  }
+
+  /**
+   * Variação de produto da loja (produto_loja), publicada. NULL para id ausente ou inválido.
+   */
+  private function variation(int $id): ?ProductVariationInterface {
+    if ($id <= 0) {
+      return NULL;
+    }
+    $variation = $this->entityTypeManager->getStorage('commerce_product_variation')->load($id);
+    if (!$variation instanceof ProductVariationInterface || !$variation->isPublished()) {
+      return NULL;
+    }
+    $product = $variation->getProduct();
+    return $product !== NULL && $product->bundle() === 'produto_loja' ? $variation : NULL;
   }
 
 }

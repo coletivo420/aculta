@@ -33,6 +33,7 @@ class ShippingCalculatorThemeHooks {
           'postal_code' => '',
           'endpoint' => '/frete/simular',
           'help_url' => 'https://buscacepinter.correios.com.br/app/endereco/index.php',
+          'variation_id' => 0,
         ],
         'template' => 'aculta-shipping-calculator',
         'path' => $this->templatesPath(),

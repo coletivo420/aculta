@@ -141,3 +141,4 @@ services:
       - '@aculta_commerce_melhorenvio.shipping_simulator'
       - '@flood'
       - '@aculta_commerce_melhorenvio.quote_store'
+      - '@entity_type.manager'

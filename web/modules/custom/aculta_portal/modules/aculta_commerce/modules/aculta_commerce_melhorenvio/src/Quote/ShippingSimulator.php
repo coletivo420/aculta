@@ -125,6 +125,23 @@ class ShippingSimulator {
   }
 
   /**
+   * Simula o frete de um produto, com o pacote da variação (e não o da configuração).
+   *
+   * Variação sem peso ou dimensões cadastrados é indisponível (sem pacote), sem chamada à API. CEP inválido continua
+   * sendo recusado antes.
+   */
+  public function simulateForVariation(string $postalCode, ProductVariationInterface $variation): ShippingSimulation {
+    $package = $this->packageForVariation($variation);
+    if ($package === NULL) {
+      if ($this->cep->normalize($postalCode) === NULL) {
+        return ShippingSimulation::unavailable(ShippingSimulation::REASON_INVALID_POSTAL_CODE);
+      }
+      return ShippingSimulation::unavailable(ShippingSimulation::REASON_NO_PACKAGE);
+    }
+    return $this->simulate($postalCode, $package);
+  }
+
+  /**
    * Pacote de uma variação: peso e dimensões da própria variação, com o pacote padrão como mínimo.
    *
    * Cada dimensão efetiva é o maior valor entre a da variação e a do padrão; o peso efetivo é o maior entre o da

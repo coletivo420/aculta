@@ -84,7 +84,9 @@ class ShippingCalculatorHooks {
     if ($display->getMode() !== 'default') {
       return;
     }
-    $build['aculta_shipping_calculator'] = $this->element($this->props('frete-produto', $entity->getDefaultVariation()), 100);
+    $variation = $entity->getDefaultVariation();
+    $props = $this->props('frete-produto', $variation) + ['variation_id' => $variation ? (int) $variation->id() : 0];
+    $build['aculta_shipping_calculator'] = $this->element($props, 100);
   }
 
   /**
