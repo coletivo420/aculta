@@ -19,6 +19,30 @@ Regras:
 3. A URL de retorno precisa estar cadastrada no console do provedor com a mesma forma (esquema, host e caminho).
    Trocar o caminho de uma integração existente quebra o retorno até o console ser atualizado.
 4. Retorno OAuth valida o parâmetro `state` antes de trocar o código (ver `OAuthState` no módulo do Melhor Envio).
+5. **Proibido caminho administrativo em qualquer chamada de integração.** Isso vale para todas as chamadas, não só para o retorno OAuth:
+   - ida (autorização, popup), retorno e webhook;
+   - páginas de configuração e de estado da integração (ex.: origem da expedição, conexão);
+   - endpoints JSON e AJAX que a integração expõe ao site.
+
+   Nenhuma dessas rotas usa `/admin/...` nem `/painel-administrativo/...`. Motivo: o módulo `rename_admin_paths`
+   (habilitado, `admin_path_value: painel-administrativo`) reescreve todo `/admin/...` para `/painel-administrativo/...`
+   em tempo de build (prioridade -2048), e o `DomainRouteSubscriber` traduz os segmentos para português. Um caminho de
+   integração assim muda sem aviso e quebra o que está cadastrado no provedor.
+6. Página administrativa de uma integração fica em `/integracoes/<nome>/<ação>` e usa `_admin_route: TRUE` (tema
+   administrativo) com a permissão própria da integração. O prefixo de tema vem da opção, não do caminho.
+7. Rota pública de loja que consulta uma integração (ex.: simulador de frete) não é de integração: usa o prefixo da
+   loja (`/frete/...`), nunca `/admin` nem `/painel-administrativo`.
+
+Rotas atuais do Melhor Envio (conferir com `drush ev` ao alterar):
+
+| Função | Caminho | Permissão |
+| --- | --- | --- |
+| Estado e conexão (página administrativa) | `/integracoes/melhorenvio/configuracao` | `administer melhorenvio` |
+| Origem da expedição (formulário) | `/integracoes/melhorenvio/configuracao/origem` | `administer melhorenvio` |
+| Autorização (popup) | `/integracoes/melhorenvio/autorizar` | `administer melhorenvio` |
+| Retorno OAuth | `/integracoes/melhorenvio/retorno` | `administer melhorenvio` |
+| Webhook (POST, sem sessão) | `/integracoes/melhorenvio/webhook` | `_access: TRUE`, valida assinatura |
+| Simulador de frete (JSON, loja) | `/frete/simular` | `access content` |
 
 Ambiente de teste: host `https://aculta.toca.net.br`. Produção: `https://aculta.org`, com o mesmo caminho.
 
