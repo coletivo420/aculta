@@ -212,7 +212,8 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
           if ($file_uri !== NULL && $file_uri !== '') {
             $picture_url = $this->fileUrlGenerator->generateAbsoluteString($file_uri);
             if ($picture_url !== '') {
-              // Mercado Pago limit is usually 256/600 characters depending on version.
+              // Mercado Pago limit is usually 256/600 characters depending on
+              // version.
               $item['picture_url'] = mb_substr($picture_url, 0, 600);
             }
           }
@@ -227,8 +228,10 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
 
     $is_external_redirect = ($configuration['redirect_mode'] ?? 'redirect') === 'external_redirect';
 
-    // For popup/modal flow, Mercado Pago redirects to our intermediate page so we
-    // can close the popup and redirect the opener (avoids leaving two tabs open).
+    // For popup/modal flow, Mercado Pago redirects to our intermediate page so
+    // we
+    // can close the popup and redirect the opener (avoids leaving two tabs
+    // open).
     if ($is_external_redirect) {
       $popup_return = Url::fromRoute('aculta_pagamentos_mercadopago.checkout_popup_return', [], [
         'absolute' => TRUE,
@@ -316,7 +319,8 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
 
     $preference_id = $preference->id;
 
-    // Use init_point for redirect; sandbox_init_point may be unreliable in test mode.
+    // Use init_point for redirect; sandbox_init_point may be unreliable in test
+    // mode.
     $form['#action'] = $preference->init_point;
 
     $order->setData('commerce_mercado_pago_checkout', [
@@ -381,7 +385,8 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
    *
    * Sets form action to # so the form does not submit; JS opens init_point in a
    * popup instead. Makes the submit button visible so the user triggers the
-   * popup by click (avoids browser blocking). Does not add payment-redirect-form
+   * popup by click (avoids browser blocking). Does not add
+   * payment-redirect-form
    * so Commerce's offsite_redirect.js does not run.
    *
    * @param array<string, mixed> $form
@@ -405,7 +410,7 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
   }
 
   /**
-   * Gets a plain-text description from a purchasable entity (e.g. product variation).
+   * Gets a plain-text description of a purchasable entity.
    *
    * Tries 'body' and 'description' on the entity and, if present, on its parent
    * product. Mercado Pago accepts item description up to 256 characters.

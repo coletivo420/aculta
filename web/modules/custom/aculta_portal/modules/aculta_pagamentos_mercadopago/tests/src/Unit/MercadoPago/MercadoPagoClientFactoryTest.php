@@ -18,7 +18,8 @@ final class MercadoPagoClientFactoryTest extends UnitTestCase {
    * Tests the todos os clientes concretos do sdk estao mapeados behavior.
    */
   public function testTodosOsClientesConcretosDoSdkEstaoMapeados(): void {
-    // dx-php 3.16.0 tem 21 arquivos *Client.php: 20 clientes concretos e a classe base MercadoPagoClient.
+    // dx-php 3.16.0 tem 21 arquivos *Client.php: 20 clientes concretos e a
+    // classe base MercadoPagoClient.
     $this->assertCount(20, MercadoPagoClientFactory::CLIENTES);
   }
 

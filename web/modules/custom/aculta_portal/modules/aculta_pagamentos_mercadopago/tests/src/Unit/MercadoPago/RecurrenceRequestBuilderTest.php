@@ -10,7 +10,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Payloads de planos e assinaturas: validação e formato enviado ao Mercado Pago.
+ * Valida payloads de planos e assinaturas.
  */
 #[Group('aculta_pagamentos_mercadopago')]
 final class RecurrenceRequestBuilderTest extends UnitTestCase {

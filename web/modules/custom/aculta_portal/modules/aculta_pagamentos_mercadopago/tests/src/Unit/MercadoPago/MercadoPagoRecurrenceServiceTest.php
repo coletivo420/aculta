@@ -14,7 +14,9 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Planos e assinaturas: payload enviado e status aceito, com o cliente do SDK substituído por um duplo.
+ * Testa os payloads e estados de planos e assinaturas.
+ *
+ * O SDK é substituído por um duplo.
  */
 #[Group('aculta_pagamentos_mercadopago')]
 final class MercadoPagoRecurrenceServiceTest extends UnitTestCase {
@@ -24,7 +26,8 @@ final class MercadoPagoRecurrenceServiceTest extends UnitTestCase {
    */
   protected function setUp(): void {
     parent::setUp();
-    // Mensagens traduzidas (TranslatableMarkup) precisam de um container com tradução.
+    // Mensagens traduzidas (TranslatableMarkup) precisam de um container com
+    // tradução.
     $container = new ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
@@ -89,7 +92,7 @@ final class MercadoPagoRecurrenceServiceTest extends UnitTestCase {
   }
 
   /**
-   * Tests the criar assinatura recusa email invalido antes de chamar o sdk behavior.
+   * Tests invalid email rejection before the Mercado Pago SDK call.
    */
   public function testCreateSubscriptionRejectsInvalidEmailBeforeSdkCall(): void {
     $capturado = new \stdClass();

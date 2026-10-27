@@ -10,8 +10,10 @@ use Symfony\Contracts\EventDispatcher\Event;
 /**
  * Pergunta se o estorno de um pagamento do Checkout Pro é permitido.
  *
- * O gateway é neutro: não conhece doações, cursos nem outras regras do Portal. Um assinante marca a
- * decisão com deny(). Sem assinante, o estorno segue a regra padrão do Commerce.
+ * O gateway é neutro: não conhece doações, cursos nem outras regras do Portal.
+ * Um assinante marca a
+ * decisão com deny(). Sem assinante, o estorno segue a regra padrão do
+ * Commerce.
  */
 final class RefundEligibilityEvent extends Event {
 

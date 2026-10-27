@@ -101,7 +101,7 @@ final class MercadoPagoPaymentPolicyTest extends UnitTestCase {
   }
 
   /**
-   * Tests the cancelado ou rejeitado em authorization vira authorization voided behavior.
+   * Tests local authorization voiding on provider cancellation or rejection.
    */
   public function testCancelledOrRejectedAuthorizationBecomesVoided(): void {
     $this->assertSame('authorization_voided', $this->politica->decidirSincronizacao('cancelled', 'authorization', '50.00', '0.00')['estado']);

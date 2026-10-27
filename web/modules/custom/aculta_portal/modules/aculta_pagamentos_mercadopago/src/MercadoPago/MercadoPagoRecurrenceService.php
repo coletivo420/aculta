@@ -10,14 +10,15 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use MercadoPago\Exceptions\MPApiException;
 
 /**
- * Recorrência pela API de assinaturas (preapproval) do Mercado Pago.
+ * Manages recurring plans and subscriptions through Mercado Pago.
  *
- * Planos (preapproval_plan) são modelos de cobrança; assinaturas (preapproval) ligam um pagador a um plano
- * ou a uma cobrança própria. A assinatura nasce em pending, e o pagador a autoriza no site do Mercado Pago
- * pelo init_point. A aplicação não guarda cartão nem dado de pagamento: só o id da assinatura.
+ * Planos (preapproval_plan) são modelos de cobrança; assinaturas (preapproval)
+ * associam um pagador a um plano ou cobrança própria. Nascem em pending e o
+ * pagador autoriza no Mercado Pago pelo init_point. A aplicação não guarda
+ * cartão nem dado de pagamento, só o ID da assinatura.
  *
- * Os webhooks de assinatura (tópicos subscription_preapproval e subscription_authorized_payment) não são
- * tratados aqui; ficam para a fase de integração com a loja e as doações (ver docs/portal/MERCADO-PAGO-PLANO.md).
+ * Os webhooks subscription_preapproval e subscription_authorized_payment são
+ * tratados pelo serviço de notificações. Ver docs/portal/MERCADO-PAGO-PLANO.md.
  */
 class MercadoPagoRecurrenceService {
 
@@ -28,7 +29,7 @@ class MercadoPagoRecurrenceService {
   ) {}
 
   /**
-   * Cria um plano de assinatura. Retorna o id do plano e o link de inscrição (init_point).
+   * Creates a subscription plan and returns its ID and init_point.
    *
    * @param \Drupal\commerce_payment\Entity\PaymentGatewayInterface $gateway
    *   Gateway com credenciais do ambiente ativo.
@@ -53,7 +54,7 @@ class MercadoPagoRecurrenceService {
   }
 
   /**
-   * Cria uma assinatura para o pagador. Retorna o id e o link de autorização (init_point).
+   * Creates a subscription for the payer and returns its ID and init_point.
    *
    * O e-mail do pagador vai no payload e não é registrado em log.
    *

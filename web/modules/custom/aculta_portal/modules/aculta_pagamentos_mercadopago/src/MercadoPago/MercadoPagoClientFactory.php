@@ -29,12 +29,10 @@ use MercadoPago\Client\User\UserClient;
 use MercadoPago\MercadoPagoConfig;
 
 /**
- * Entrega os clientes do SDK do Mercado Pago com as credenciais do gateway do ambiente.
+ * Creates Mercado Pago SDK clients for the active environment.
  *
- * @todo s os 20 clientes concretos do SDK 3.x (dx-php) estão mapeados em CLIENTES. O token vem do próprio
- * gateway (aculta_pagamentos_mercadopago), no modo ativo (test, stage ou prod), e nunca de constante no código.
- * O SDK guarda o token de forma estática; a fábrica o redefine a cada criação, então o cliente sempre usa
- * as credenciais do gateway recebido.
+ * Os clientes usam as credenciais do gateway, nunca constantes no código.
+ * O SDK mantém o token estaticamente; a fábrica redefine-o a cada cliente.
  */
 class MercadoPagoClientFactory {
 
@@ -65,7 +63,7 @@ class MercadoPagoClientFactory {
   ];
 
   /**
-   * Chaves de token do gateway por modo (live usa access_token_prod, como no módulo).
+   * Maps gateway token keys by mode.
    */
   private const CHAVES_TOKEN = [
     'test' => 'access_token_test',
@@ -93,7 +91,8 @@ class MercadoPagoClientFactory {
   /**
    * Inventário: alias => classe do SDK instalada (TRUE quando a classe existe).
    *
-   * Usado pelo relatório de status e pelo teste que confirma que o SDK instalado tem todos os clientes.
+   * Usado pelo relatório de status e pelo teste que confirma que o SDK
+   * instalado tem todos os clientes.
    *
    * @return array<string, bool>
    *   Presença de cada classe do SDK instalada.
@@ -103,7 +102,7 @@ class MercadoPagoClientFactory {
   }
 
   /**
-   * Token do modo ativo do gateway (test, stage ou live). Falha se o gateway não for Checkout Pro ou não tiver token.
+   * Gets the active-mode token from the configured gateway.
    *
    * @throws \InvalidArgumentException
    * @throws \RuntimeException

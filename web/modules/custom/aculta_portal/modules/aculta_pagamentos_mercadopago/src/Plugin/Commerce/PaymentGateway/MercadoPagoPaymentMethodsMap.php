@@ -45,7 +45,8 @@ final class MercadoPagoPaymentMethodsMap {
   /**
    * Payment methods by country and type.
    *
-   * Keys: country code (AR, BR, CL, CO, MX, PE, UY) → type id → [ method_id => label ].
+   * Keys: country code (AR, BR, CL, CO, MX, PE, UY) → type id → [ method_id =>
+   * label ].
    * Method IDs match the Mercado Pago API (excluded_payment_methods).
    *
    * @var array<string, array<string, array<string, string>>>
@@ -214,13 +215,15 @@ final class MercadoPagoPaymentMethodsMap {
   ];
 
   /**
-   * Returns payment types available for a country (types that have at least one method).
+   * Returns payment types enabled for a country.
+   *
+   * A type is included when it has at least one method.
    *
    * @param string $country_code
    *   Country code (AR, BR, CL, CO, MX, PE, UY).
    *
    * @return string[]
-   *   Associative array type_id => label.
+   *   Associative array of type IDs to their labels.
    */
   public static function getPaymentTypesForCountry($country_code) {
     $types = [];
@@ -279,6 +282,7 @@ final class MercadoPagoPaymentMethodsMap {
    *   Country code.
    *
    * @return string[]
+   *   The unique payment method IDs supported in the country.
    */
   public static function getAllMethodIdsForCountry(string $country_code): array {
     $by_country = self::$methodsByCountryAndType[$country_code] ?? [];
