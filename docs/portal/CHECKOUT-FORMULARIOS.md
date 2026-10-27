@@ -39,3 +39,12 @@ Assinatura de doação (`assinatura`) segue o fluxo `assinatura_flow`, fora dest
 - Campos do fluxo: `commerce_checkout.commerce_checkout_flow.<fluxo>` (painéis e obrigatoriedade).
 - Doação: fluxo `doacao` com painel `contact_information` (e-mail) e painel de doação.
 - LMS e loja: fluxo `default` e painel `aculta_fiscal_identity` (CPF/CNPJ).
+
+## 5. E-mail obrigatório no cadastro simplificado (2026-10-27)
+
+- O painel de contato do Commerce marca o e-mail como obrigatório (`#required = TRUE`). Os fluxos da loja (`default`) e da
+  doação (`doacao`) têm esse painel ativo, então o e-mail já é exigido nos dois.
+- Loja: o painel de login (cadastro simplificado, e-mail primeiro) está ativo, com cadastro permitido.
+- Doação: o login está desativado e o cadastro ao concluir (`completion_register`) está desativado (`_disabled`).
+  Ativá-lo muda o comportamento da doação e precisa de decisão do responsável.
+- Pendência: confirmar se o cadastro simplificado deve ficar ativo também na doação.
