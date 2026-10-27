@@ -40,7 +40,7 @@ primitivas nem classes Bootstrap de cor no display.
 
 - A listagem não pode mostrar contas com `field_perfil_publico` falso, mesmo com
   apelido preenchido.
-- Conta sem foto mostra o avatar do acervo; sem acervo, a inicial.
+- Conta sem foto mostra o avatar do acervo, que é o fallback final. A inicial não é usada.
 - Caminho da página e slug em português, sem termos técnicos (`membros`, não `members`).
 - Rodar também com o tema Olivero, conforme o CLAUDE.md do repositório.
 
