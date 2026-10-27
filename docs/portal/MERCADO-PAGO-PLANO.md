@@ -69,7 +69,7 @@ O SDK tem 21 arquivos `*Client.php`: 20 clientes concretos e a classe base `Merc
 | `pagamentos` | PaymentClient | create, get, update, cancel, capture, search, searchAll | **Implementado**: consultar (`atualizar`) e cancelar. Capture e search: planejado |
 | `reembolsos` | PaymentRefundClient | refund, refundTotal, get, list | Estorno continua pelo Commerce (`refundPayment` do gateway). Listar estornos: planejado |
 | `pedidos_comerciante` | MerchantOrderClient | create, get, update, search | Planejado: conciliação de pagamentos |
-| `contestacoes` | ChargebackClient | get, search | Planejado: painel de contestações (hoje só registra em log) |
+| `contestacoes` | ChargebackClient | get, search | Webhook assinado busca o caso e concilia o pagamento Commerce vinculado; painel de análise e envio de evidências seguem planejados |
 | `assinaturas` | PreApprovalClient | create, get, update, search, searchAll | **Implementado**: criar, consultar, pausar/reativar/cancelar |
 | `planos_assinatura` | PreApprovalPlanClient | create, get, update, search | **Implementado**: criar e consultar. Alterar e buscar: planejado |
 | `preferencias` | PreferenceClient | Checkout Pro | Usado pelo gateway contrib; não chamado direto |

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionNotificationService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoChargebackNotificationInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use MercadoPago\Exceptions\InvalidWebhookSignatureException;
 use MercadoPago\Webhook\WebhookSignatureValidator;
@@ -18,6 +19,7 @@ final class WebhookGuard {
   public function __construct(
     private readonly ?MercadoPagoSubscriptionNotificationService $assinaturas = NULL,
     private readonly ?LoggerChannelInterface $log = NULL,
+    private readonly ?MercadoPagoChargebackNotificationInterface $contestacoes = NULL,
   ) {}
 
   /**
@@ -89,6 +91,7 @@ final class WebhookGuard {
     }
     $tipo = $types[0];
     $assinatura = in_array($tipo, MercadoPagoSubscriptionNotificationService::TIPOS, TRUE);
+    $contestacao = $tipo === 'topic_chargebacks_wh';
 
     // Pagamentos legados usam ID inteiro; assinaturas usam ID alfanumérico.
     if ($assinatura) {
@@ -117,6 +120,10 @@ final class WebhookGuard {
 
     if ($assinatura) {
       return $this->processarAssinatura($tipo, $data_id);
+    }
+
+    if ($contestacao) {
+      return $this->processarContestacao($data_id);
     }
 
     if ($tipo !== 'payment') {
@@ -151,6 +158,23 @@ final class WebhookGuard {
         '@tipo' => $tipo,
         '@id' => $id,
       ]);
+      return new Response('', Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+    return new Response('', Response::HTTP_OK);
+  }
+
+  /**
+   * Processa contestação validada; erro temporário solicita reentrega.
+   */
+  private function processarContestacao(string $id): Response {
+    if ($this->contestacoes === NULL) {
+      return new Response('', Response::HTTP_SERVICE_UNAVAILABLE);
+    }
+    try {
+      $this->contestacoes->processar($id);
+    }
+    catch (\Throwable) {
+      $this->log?->error('Falha ao processar notificação de contestação @id.', ['@id' => $id]);
       return new Response('', Response::HTTP_INTERNAL_SERVER_ERROR);
     }
     return new Response('', Response::HTTP_OK);

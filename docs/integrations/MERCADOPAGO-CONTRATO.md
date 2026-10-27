@@ -53,7 +53,7 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 
 | Área | Como está | Situação |
 | --- | --- | --- |
-| Webhook | `WebhookGuard` valida a assinatura com o SDK e rejeita tópico legado sem assinatura | Alinhado |
+| Webhook | `WebhookGuard` valida a assinatura com o SDK, rejeita IPN legado e encaminha pagamento, assinaturas e `topic_chargebacks_wh`; contestações são buscadas pela API pelo ID assinado e conciliam o pagamento associado com os validadores e lock normais | Unit cobre assinatura/dispatch/retry; Kernel/Runtime e sandbox pendentes |
 | Status pelo webhook | O handler consulta o pagamento remoto e exige referência do pedido, moeda e valor exatos; `pending`, `in_process` e `authorized` persistem como pendentes, `cancelled` e `rejected` encerram um pagamento Commerce existente como `authorization_voided`, e somente `approved` conclui o pagamento | Unit cobre persistência pendente, aprovação, rejeição/cancelamento sem duplicação e referência divergente; Kernel valida o tipo/workflow; Runtime pendente |
 | Idempotência | Retorno, webhook e cobrança recorrente serializam por ID remoto e consultam duplicatas dentro do lock | Unit cobre retorno aprovado duplicado, lock de recorrência e filtros Commerce; Kernel/Runtime pendentes |
 | Criação da preferência | `RedirectCheckoutForm` envia `X-Idempotency-Key` determinística por ID do pedido e payload; usa totais ajustados Commerce nas linhas, incorpora ajustes/descontos gerais e envia frete separadamente, impedindo diferença entre preferência e pedido | Unit confirma totais e chave estável/diferenciada; aceitação pelo endpoint de Preferências e valores exibidos ainda requer homologação sandbox |
@@ -72,7 +72,7 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 - **Tópicos de assinatura:** os nomes `subscription_preapproval` e `subscription_authorized_payment` estão na tabela de tópicos, mas o payload de cada um não foi lido.
 - **Efeito do cancelamento sobre a preferência e o pedido:** não documentado na página lida.
 - **Exclusão de meios de pagamento:** a regra "Cash in account não pode ser excluído" vem de uma página de outro país; confirmar para o Brasil.
-- **`notification_url` por preferência:** o código envia a rota nativa `commerce_payment.notify` sem `source_news=ipn`. O guard só encaminha webhooks modernos após validar a assinatura; tópicos não suportados são reconhecidos sem executar o handler legado.
+- **`notification_url` por preferência:** o código envia a rota nativa `commerce_payment.notify` sem `source_news=ipn`. O guard encaminha webhooks modernos após validar a assinatura; `payment`, assinaturas e contestações passam por seus handlers; demais tópicos assinados são reconhecidos sem chamar o handler legado.
 - **Preferência sandbox e tela do comprador:** criação direta pelo `MercadoPagoClientFactory` produziu um `init_point`; Firefox carregou a seleção de pagamento e, após avançar, a identificação do comprador (HTTP 200, sem CAPTCHA). Isso não exercita `RedirectCheckoutForm`, não associa a preferência a um Commerce Order nem confirma pagamento.
 
 ## Próximos passos

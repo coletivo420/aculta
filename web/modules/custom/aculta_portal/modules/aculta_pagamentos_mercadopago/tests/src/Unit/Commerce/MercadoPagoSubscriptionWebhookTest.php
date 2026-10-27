@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\Commerce;
 
 use Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\WebhookGuard;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionNotificationService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoChargebackNotificationInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -86,6 +87,47 @@ final class MercadoPagoSubscriptionWebhookTest extends UnitTestCase {
   public function testSemServicoTopicoDeAssinaturaContinuaSendoReconhecido(): void {
     $resposta = (new WebhookGuard())->validateAndNormalize($this->requisicao('subscription_preapproval_plan', 'plan-1'), TRUE, self::SEGREDO);
     $this->assertSame(200, $resposta->getStatusCode());
+  }
+
+  /**
+   * A signed chargeback delegates only its signature-covered case ID.
+   */
+  public function testValidChargebackWebhookDispatchesSignedCaseId(): void {
+    $chargebacks = $this->createMock(MercadoPagoChargebackNotificationInterface::class);
+    $chargebacks->expects($this->once())->method('processar')->with('98765');
+    $response = (new WebhookGuard(NULL, $this->logger(), $chargebacks))
+      ->validateAndNormalize($this->requisicao('topic_chargebacks_wh', '98765'), TRUE, self::SEGREDO);
+
+    $this->assertSame(200, $response->getStatusCode());
+  }
+
+  /**
+   * A reconciliation failure requests safe provider retry.
+   */
+  public function testChargebackServiceFailureReturnsRetryableError(): void {
+    $chargebacks = $this->createMock(MercadoPagoChargebackNotificationInterface::class);
+    $chargebacks->method('processar')->willThrowException(new \RuntimeException('private provider response'));
+    $logger = $this->createMock(LoggerChannelInterface::class);
+    $logger->expects($this->once())->method('error')->with(
+      'Falha ao processar notificação de contestação @id.',
+      ['@id' => '98765'],
+    );
+    $response = (new WebhookGuard(NULL, $logger, $chargebacks))
+      ->validateAndNormalize($this->requisicao('topic_chargebacks_wh', '98765'), TRUE, self::SEGREDO);
+
+    $this->assertSame(500, $response->getStatusCode());
+  }
+
+  /**
+   * An unsigned or forged chargeback cannot reach the provider API service.
+   */
+  public function testInvalidChargebackSignatureIsRejectedWithoutDispatch(): void {
+    $chargebacks = $this->createMock(MercadoPagoChargebackNotificationInterface::class);
+    $chargebacks->expects($this->never())->method('processar');
+    $response = (new WebhookGuard(NULL, $this->logger(), $chargebacks))
+      ->validateAndNormalize($this->requisicao('topic_chargebacks_wh', '98765', str_repeat('0', 64)), TRUE, self::SEGREDO);
+
+    $this->assertSame(401, $response->getStatusCode());
   }
 
 }

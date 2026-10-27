@@ -21,6 +21,9 @@ services:
   aculta_pagamentos_mercadopago.subscription_notifications:
     class: Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionNotificationService
     arguments: ['@entity_type.manager', '@aculta_pagamentos_mercadopago.client_factory', '@aculta_pagamentos_mercadopago.recurrence_service', '@http_client', '@aculta_pagamentos_mercadopago.logger', '@aculta_pagamentos_mercadopago.subscription_recorder']
+  aculta_pagamentos_mercadopago.chargeback_notifications:
+    class: Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoChargebackNotificationService
+    arguments: ['@entity_type.manager', '@aculta_pagamentos_mercadopago.client_factory', '@aculta_pagamentos_mercadopago.payment_service', '@aculta_pagamentos_mercadopago.logger']
   aculta_pagamentos_mercadopago.environment_override:
     class: Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\MercadoPagoEnvironmentOverride
     arguments: ['%app.root%']
@@ -28,7 +31,7 @@ services:
       - { name: config.factory.override, priority: 100 }
   aculta_pagamentos_mercadopago.webhook_guard:
     class: Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\WebhookGuard
-    arguments: ['@aculta_pagamentos_mercadopago.subscription_notifications', '@aculta_pagamentos_mercadopago.logger']
+    arguments: ['@aculta_pagamentos_mercadopago.subscription_notifications', '@aculta_pagamentos_mercadopago.logger', '@aculta_pagamentos_mercadopago.chargeback_notifications']
   aculta_pagamentos_mercadopago.webhook_subscriber:
     class: Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\WebhookEventSubscriber
     arguments: ['@entity_type.manager', '@key.repository', '@aculta_pagamentos_mercadopago.webhook_guard']
