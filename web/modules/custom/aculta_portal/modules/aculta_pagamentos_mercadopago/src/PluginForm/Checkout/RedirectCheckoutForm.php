@@ -31,6 +31,11 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
   use StringTranslationTrait;
 
   /**
+   * Allow pending and in-process payments to reach their final provider state.
+   */
+  private const BINARY_MODE = FALSE;
+
+  /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
@@ -275,6 +280,9 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       $this->loggerFactory->get('Mercado Pago debug')->debug('Request sent: <pre>' . print_r($debug_request, TRUE) . '</pre>');
     }
 
+    // Binary mode automatically rejects payments that need buyer action or
+    // manual review, so keep it disabled to support pending checkout states.
+    $request['binary_mode'] = self::BINARY_MODE;
     $request['auto_return'] = 'approved';
 
     $order_total = $order->getTotalPrice();

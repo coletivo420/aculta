@@ -26,6 +26,15 @@ use PHPUnit\Framework\Attributes\Group;
 final class RedirectCheckoutFormSecurityTest extends UnitTestCase {
 
   /**
+   * Checkout preferences keep pending and in-process provider states enabled.
+   */
+  public function testPreferenceDoesNotEnableBinaryMode(): void {
+    $mode = (new \ReflectionClass(RedirectCheckoutForm::class))->getConstant('BINARY_MODE');
+
+    $this->assertFalse($mode);
+  }
+
+  /**
    * Refuses checkout before provider calls when the active token is missing.
    */
   public function testMissingRuntimeTokenFailsClosedBeforePreferenceCreation(): void {

@@ -1,3 +1,8 @@
+## 0.1.0-dev.26 — preservar pagamentos pendentes do provedor (2026-10-27)
+
+- A preferência Checkout Pro envia `binary_mode: false`. A documentação oficial confirma que o modo binário rejeita pagamentos que ficam pendentes ou em análise; o modo normal preserva esses estados para confirmação por Webhook/consulta.
+- Teste Unit protege a política binária desativada; Unit completa 159 testes / 512 assertions PASS, PHP lint e PHPCS Drupal/DrupalPractice focais PASS.
+
 ## 0.1.0-dev.25 — regressão de checkout sem credencial (2026-10-27)
 
 - `RedirectCheckoutForm` é exercitado com gateway ativo e token ausente: exibe aviso neutro e encerra antes de ler o pedido ou criar preferência no Mercado Pago.

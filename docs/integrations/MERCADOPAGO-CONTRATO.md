@@ -61,6 +61,7 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 | Assinatura pendente | `status => 'pending'`, sem cartão | Alinhado |
 | Status de assinatura alteráveis | `RecurrenceRequestBuilder::STATUS_ALTERAVEIS = paused, authorized, cancelled` | Confirmar com a referência de `PUT /preapproval/{id}` |
 | Gateway ativo | Configuração canônica permanece `status: true` em todos os ambientes; o hook pré-save remove credenciais e não bloqueia importação quando estão ausentes | Unit cobre preservação do gateway ativo e remoção das chaves; `RedirectCheckoutForm` recusa criar a preferência se o token efetivo estiver vazio |
+| Pagamentos pendentes | Preferência envia `binary_mode: false` para permitir `pending` e `in_process`; com modo binário habilitado, o provedor pode rejeitá-los automaticamente | [Documentação oficial](https://www.mercadopago.com.br/developers/pt/docs/checkout-pro-preferences/additional-settings/binary-mode); Unit protege a política local |
 
 ## Não confirmado
 

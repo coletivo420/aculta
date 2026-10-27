@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.25
+version: 0.1.0-dev.26
 state: Dev
-progress_note: "Dev.25: gateway permanece ativo mesmo sem credenciais no processo; o pre-save remove credenciais sem bloquear import. RedirectCheckoutForm recusa criar preferência antes de chamar a API quando falta token; regressão Unit cobre o caminho. Unit 158/511 PASS; Kernel 1/53 PASS, 77 depreciações upstream; PHPCS Drupal/Practice e PHP lint do teste PASS. Login MP sandbox ficou login_incomplete; sem preferência ou cobrança. Homologação de pagamentos, frete e visual pendentes."
+progress_note: "Dev.26: preferência envia binary_mode false para preservar pagamentos pending/in_process; regressão Unit protege a política e docs referenciam a especificação oficial. Gateway ativo sem credenciais e fail-closed também cobertos (dev.24–25). Unit 159/512 PASS; PHP lint e PHPCS Drupal/Practice focais PASS. Login MP sandbox ficou login_incomplete; nenhuma preferência ou cobrança criada. Homologação financeira pendente."
 next_phase: Prosseguir com teste isolado de criação da preferência e, quando o comprador sandbox estiver acessível, homologar aprovação, pendência, rejeição, cancelamento, webhook e recorrência ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))
