@@ -93,3 +93,26 @@ services:
 
   aculta_commerce_melhorenvio.quote_rate_factory:
     class: Drupal\aculta_commerce_melhorenvio\Quote\QuoteRateFactory
+
+  # Contrato do cliente REST: consumidores e testes dependem da interface, não da classe concreta.
+  Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClientInterface:
+    alias: aculta_commerce_melhorenvio.client
+
+  # Simulador de frete por CEP (ME-0.1-C): estados explícitos, cache de 5 min, sem falha para o carrinho.
+  aculta_commerce_melhorenvio.shipping_simulator:
+    class: Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulator
+    arguments:
+      - '@aculta_commerce_melhorenvio.client'
+      - '@aculta_commerce_melhorenvio.quoter'
+      - '@config.factory'
+      - '@aculta_portal_cep.lookup'
+      - '@cache.data'
+      - '@datetime.time'
+      - '@logger.factory'
+
+  # Endpoint JSON do componente shipping-calculator. Limite por IP usa o serviço de flood do Drupal.
+  aculta_commerce_melhorenvio.simulate_controller:
+    class: Drupal\aculta_commerce_melhorenvio\Controller\ShippingSimulatorController
+    arguments:
+      - '@aculta_commerce_melhorenvio.shipping_simulator'
+      - '@flood'

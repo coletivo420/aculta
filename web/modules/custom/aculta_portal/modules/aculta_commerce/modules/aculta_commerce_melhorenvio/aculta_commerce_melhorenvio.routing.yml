@@ -44,3 +44,15 @@ aculta_commerce_melhorenvio.webhook:
   requirements:
     _access: 'TRUE'
   methods: [POST]
+
+# Simulador de frete por CEP, chamado pelo componente shipping-calculator. Responde JSON com o estado do simulador.
+aculta_commerce_melhorenvio.simulate:
+  path: '/frete/simular'
+  defaults:
+    _controller: 'aculta_commerce_melhorenvio.simulate_controller:simulate'
+    _title: 'Simular frete'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: TRUE
+  methods: [GET]
