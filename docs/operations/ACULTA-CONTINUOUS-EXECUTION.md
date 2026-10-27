@@ -2,11 +2,12 @@
 
 ## Mercado Pago — microfase de recorrência (2026-10-27)
 
-- Base publicada: `7c3caf6de`; branch `chore/aculta-m0-integridade`; edição local da microfase sem commit.
+- Base publicada: `8873a7a6f`; branch `chore/aculta-m0-integridade`; microfase de recorrência publicada.
 - `MercadoPagoSubscriptionRecorder` valida resposta da API pelo ID consultado e compara a assinatura remota ao ID guardado no pedido. Cobrança aprovada exige pagamento vinculado, ID financeiro, total e moeda; lock por gateway/ID remoto envolve deduplicação e gravação; IDs já associados a outro pedido são recusados.
 - Novos testes simulam ID de fatura/assinatura divergente, IDs-array, lock ocupado, duplicidade, valor/moeda divergentes e payment ID ligado a outro pedido. Unit MP: 134 testes / 328 assertions PASS; lint e PHPCS focais 0/0.
 - Atualizado para MP dev.16 o changelog, contrato, plano de recorrência, debt register, status e índices. Referência oficial de `GET /authorized_payments/{id}` confirmada e registrada.
-- Kernel não executado: `SIMPLETEST_DB` ausente nesta sessão; sem leitura de secrets ou credenciais privadas. `updatedb:status` e `config:status` no `aculta_runtime` seguem com pendências; nenhum update, config import, schema ou escrita de entidade ocorreu. `drush cr` só recompilou cache/container e o bootstrap DI do serviço passou. Sandbox e retorno financeiro autorizado continuam pendentes.
+- Kernel não executado: `SIMPLETEST_DB` ausente nesta sessão; sem leitura de secrets ou credenciais privadas. `updatedb:status` e `config:status` no `aculta_runtime` seguem com pendências; nenhum update, config import, schema ou escrita de entidade ocorreu. `drush cr` só recompilou cache/container e o bootstrap DI do serviço passou.
+- Commit `8873a7a6f` publicado por fast-forward após fetch/ancestralidade confirmada; checkout de teste destacado no mesmo HEAD. Após a troca, `drush status` confirmou `toca`, Drupal 11.4.10, URI `http://default` e `aculta_runtime`; `updatedb:status` e `config:status` somente leitura repetiram pendências preexistentes. Não foram feitos snapshot, update, importação ou escrita Runtime. Sandbox e retorno financeiro autorizado continuam pendentes.
 
 ## Mercado Pago — microfase de confirmação financeira (2026-10-27)
 
