@@ -270,4 +270,48 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     $this->assertTrue($this->container->get('module_handler')->moduleExists('commerce_shipping'));
   }
 
+  /**
+   * Método legado do Melhor Envio (plugin aculta_melhorenvio) migra com default_package_type e services.
+   */
+  public function testMigratesLegacyMelhorEnvioMethodKeepingItsConfig(): void {
+    $loja = Store::create([
+      'type' => 'online',
+      'name' => 'Loja ME',
+      'uid' => 1,
+      'default_currency' => 'BRL',
+      'mail' => 'me@example.test',
+      'address' => ['country_code' => 'BR'],
+    ]);
+    $loja->save();
+    $legado = \Drupal::entityTypeManager()->getStorage('commerce_shipping_method')->create([
+      'name' => 'Melhor Envio',
+      'stores' => [$loja->id()],
+      'plugin' => [
+        'target_plugin_id' => 'aculta_melhorenvio',
+        'target_plugin_configuration' => [
+          'default_package_type' => 'custom_box',
+          'services' => ['1', '2'],
+        ],
+      ],
+      'status' => TRUE,
+      'weight' => 1,
+    ]);
+    $legado->save();
+    $service = \Drupal::service('aculta_commerce.legacy_shipping_cutover');
+    $service->installEngineEntities();
+
+    $r = $service->migrateMethods();
+
+    $this->assertSame(1, $r['migrados']);
+    $this->assertSame([], $r['nao_mapeados']);
+    $novo = \Drupal::entityTypeManager()->getStorage('aculta_shipping_method')->loadByProperties(['name' => 'Melhor Envio']);
+    $this->assertCount(1, $novo);
+    $novo = reset($novo);
+    $this->assertSame('aculta_melhorenvio', $novo->get('plugin')->target_plugin_id);
+    $config = $novo->get('plugin')->target_plugin_configuration;
+    $this->assertSame('custom_box', $config['default_package_type']);
+    $this->assertSame(['1', '2'], $config['services']);
+    $this->assertArrayNotHasKey('rate_label', $config, 'chaves de tarifa fixa não são copiadas para o Melhor Envio');
+  }
+
 }

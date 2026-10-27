@@ -22,11 +22,17 @@ final class LegacyShippingCutover {
   public const PLUGIN_MAP = [
     'flat_rate' => 'aculta_flat_rate',
     'flat_rate_per_item' => 'aculta_flat_rate_per_item',
+    // Mesmo id no motor. Chaves gravadas na cópia: default_package_type (string) e services (array).
+    'aculta_melhorenvio' => 'aculta_melhorenvio',
   ];
 
   /**
-   * Chaves de configuração do plugin que são preservadas na migração. */
-  public const CONFIG_KEYS = ['rate_label', 'rate_description', 'rate_amount'];
+   * Chaves de configuração preservadas por plugin de origem. */
+  public const CONFIG_KEYS = [
+    'flat_rate' => ['rate_label', 'rate_description', 'rate_amount'],
+    'flat_rate_per_item' => ['rate_label', 'rate_description', 'rate_amount'],
+    'aculta_melhorenvio' => ['default_package_type', 'services'],
+  ];
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -90,7 +96,7 @@ final class LegacyShippingCutover {
       }
 
       $configLegada = $plugin['target_plugin_configuration'] ?? [];
-      $configNova = array_intersect_key($configLegada, array_flip(self::CONFIG_KEYS));
+      $configNova = array_intersect_key($configLegada, array_flip(self::CONFIG_KEYS[$idLegado] ?? []));
       $novo = $destino->create([
         'name' => $nome,
         'stores' => $metodo->get('stores')->getValue(),
