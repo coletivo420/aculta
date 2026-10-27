@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.14
+version: 0.1.0-dev.15
 state: Dev
-progress_note: "Dev.14: implementação MP passa contratos opcionais de pagamento do Portal; erros de API chegam à UI como exceção neutra segura e detalhe cru vai só ao log. Unit 118/260 PASS; PHPCS zero erros/45 avisos, lint PASS. Sem chamada externa ou Runtime; instalação limpa com e sem dependentes aguarda configuração de prefixo descartável validada."
-next_phase: Concluir homologação sandbox e gates/visual antes de RC; validar integração Runtime em Alpha ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))
+progress_note: "Dev.15: webhook e retorno exigem aprovação remota, vínculo inequívoco e valor/moeda integrais; processamento serializado por ID remoto. Unit 126/297 PASS, incluindo regressões de callback adulterado; lint/PHPCS focais e diff-check PASS. Firefox X11 smoke MAIN/SHOP/Apoio 3/3; checkout/sandbox financeiros e Runtime mutável pendentes."
+next_phase: Validar a alteração no checkout de teste e homologar fluxos no sandbox antes de RC ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))

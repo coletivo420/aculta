@@ -48,6 +48,8 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 | Área | Como está | Situação |
 | --- | --- | --- |
 | Webhook | `WebhookGuard` valida a assinatura com o SDK e rejeita tópico legado sem assinatura | Alinhado |
+| Aprovação pelo webhook | O handler consulta o pagamento remoto e exige status aprovado, referência do pedido, moeda e valor exatos antes de concluir o pagamento Commerce | Unit: não aprovado e referências conflitantes cobertos; Kernel/Runtime pendentes |
+| Idempotência | Retorno e webhook serializam o processamento pelo ID remoto e reconsultam o pagamento Commerce dentro do lock | Implementado; teste de concorrência e Kernel/Runtime pendentes |
 | Estorno | `CheckoutPro::refundPayment()` usa `refundTotal` quando o valor cobre o pagamento, senão `refund` parcial | Alinhado |
 | Cancelamento | `MercadoPagoPaymentService::cancelar()` confere o status remoto e chama `PaymentClient::cancel()` do SDK | Alinhado; o endpoint exato não foi confirmado na documentação lida |
 | Assinatura pendente | `status => 'pending'`, sem cartão | Alinhado |
@@ -59,12 +61,12 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 - **Tópicos de assinatura:** os nomes `subscription_preapproval` e `subscription_authorized_payment` estão na tabela de tópicos, mas o payload de cada um não foi lido.
 - **Efeito do cancelamento sobre a preferência e o pedido:** não documentado na página lida.
 - **Exclusão de meios de pagamento:** a regra "Cash in account não pode ser excluído" vem de uma página de outro país; confirmar para o Brasil.
-- **`notification_url` por preferência:** o código envia `notification_url` com `?source_news=ipn`. A página de referência não foi lida; confirmar se a notificação é a configurada no aplicativo ou a da preferência.
+- **`notification_url` por preferência:** o código envia a rota nativa `commerce_payment.notify` sem `source_news=ipn`. O guard só encaminha webhooks modernos após validar a assinatura; tópicos não suportados são reconhecidos sem executar o handler legado.
 
 ## Próximos passos
 
 1. Ler a referência oficial de pagamentos (cancelamento) e de preapproval (`PUT`), e fechar os itens "não confirmado".
-2. Testar no sandbox: estorno parcial e total, cancelamento de pagamento pendente, assinatura pendente com link de pagamento, e recebimento dos tópicos de assinatura.
+2. Homologar no sandbox: aprovação, pendência, rejeição, duplicidade, retorno adulterado, estorno parcial e total, cancelamento de pagamento pendente, assinatura pendente com link de pagamento e recebimento dos tópicos de assinatura.
 3. Só então tratar o Runtime (ver `CHANGELOG` do `aculta_portal`).
 
 ## Verificações em 2026-10-19 (registro)

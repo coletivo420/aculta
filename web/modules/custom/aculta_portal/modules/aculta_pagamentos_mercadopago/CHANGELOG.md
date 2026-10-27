@@ -31,6 +31,16 @@
 
 # Changelog — aculta_pagamentos_mercadopago
 
+## 0.1.0-dev.15 — confirmação e idempotência de pagamentos (2026-10-27)
+
+- Webhook só conclui pagamento após consultar a API e confirmar aprovação, vínculo ao pedido, moeda e valor integral; falhas transitórias da API retornam 503 para reentrega.
+- Retorno exige associação comprovada ao pedido e ao merchant order, compara o valor integral e grava o status remoto consultado, sem confiar no status da URL.
+- Webhook e retorno usam lock por ID remoto e repetem a busca do pagamento Commerce dentro do lock para evitar duplicidade concorrente.
+- Atualizada a documentação do contrato: a preferência não envia `source_news=ipn`.
+- Regressão `CheckoutProNotificationTest`: IDs/topic inválidos (inclui ID-array sem warning), status remoto pendente não adquire lock nem abre storage financeiro, referências divergentes não associam pedido e retorno que mente `approved` é recusado quando a API diz `pending`. Unit MP: 126 testes / 297 assertions PASS; sem depreciações PHPUnit.
+- PHP lint, PHPCS Drupal/DrupalPractice dos dois arquivos alterados e `git diff --check`: PASS. No checkout servido, `drush cr` PASS; MAIN e SHOP HTTP 200; webhook POST sem assinatura HTTP 503 (falha fechada; credencial/gateway não inspecionados).
+- Firefox ESR visível em X11/geckodriver carregou MAIN, SHOP e Apoio (3/3). Cobertura visual é smoke de página pública; não exercitou autenticação, checkout transacional ou sandbox. Nenhum pagamento ou credencial foi acionado.
+
 ## Regressão PR #298 — 2026-10-26
 
 - Unit: 11 testes / 22 assertions PASS. Kernel `CheckoutProTest`: 1 teste / 50 assertions PASS, 76 depreciações Core/contrib e 2 PHPUnit. A execução usou código do worktree e MariaDB dedicado; nenhum SDK remoto, credencial ou pagamento foi acionado.

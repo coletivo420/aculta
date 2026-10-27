@@ -1,5 +1,14 @@
 # Execução contínua ACULTA — PR #298
 
+## Mercado Pago — microfase de confirmação financeira (2026-10-27)
+
+- HEAD da pasta de teste: `4dccab365`, branch `chore/aculta-m0-integridade`; servidor `toca`, URI Drush `http://default`, banco `aculta_runtime`.
+- Atualizado o webhook para só concluir após consulta remota, referência inequívoca, valor/moeda integrais e lock compartilhado com o retorno. O retorno também compara o total, valida associação ao merchant order e grava o status obtido pela API.
+- Novos testes `CheckoutProNotificationTest`: payload malformado (incluindo valor-array), pagamento remoto pendente, referências divergentes e retorno que mente `approved`; Unit MP 126 testes / 297 assertions PASS, sem depreciações PHPUnit. PHPCS dos dois PHP alterados, lint e `git diff --check` PASS.
+- `drush cr` PASS; HTTP no checkout: MAIN `/` 200; SHOP `/` 200; webhook POST sem assinatura 503. Firefox ESR/geckodriver visível em `DISPLAY=:0`: smoke MAIN, SHOP e APOIO 3/3.
+- O smoke visual é de páginas públicas e não exercita pagamento. Kernel não executado porque `SIMPLETEST_DB` não está configurada nesta sessão; credenciais externas e arquivos de segredos não foram lidos. Homologação sandbox continua pendente.
+- Snapshot, `updatedb` e `config:import`: não executados. O índice global agora passa após os status Commerce/User e README terem sido reconciliados em commits próprios. Nenhum pagamento ou credencial foi acionado.
+
 **Branch:** `chore/aculta-m0-integridade`  
 **Último checkpoint remoto verificado antes desta atualização:** `c26f27c76` (`docs(game): record ForumPost award hook coverage`), enviado por push normal a `origin/chore/aculta-m0-integridade`.
 **Estado:** PARTIAL — PHPCS PR-wide, Kernel H5P, gate Domain administrativo e suíte Kernel parcial LMS têm evidências PASS. M-0 continua parcial por instalação/importação de acervo em ambiente efêmero ainda não exercida, divergência ativa dos grants Wiki e Config Sync por purpose. Melhor Envio foi confirmado como extensão fora do Sync. Os defaults estruturais de Messenger foram versionados conforme decisão do responsável; overrides ativos e updates operacionais ainda exigem preflight. M-1–M-5 seguem em execução; nenhum componente foi promovido.

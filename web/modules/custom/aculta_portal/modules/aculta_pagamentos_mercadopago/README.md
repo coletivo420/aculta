@@ -36,6 +36,8 @@ Porte de `drupal/commerce_mercado_pago` 3.0.0-rc3 (GPL-2.0-or-later). Licença e
 
 ## Validação
 
-- Lint PHP e YAML do submódulo.
-- Testes Kernel do porte em `tests/src/Kernel` (rodar no banco `aculta_simpletest`, conforme `docs/operations/BANCO-DE-TESTE.md`).
+- Suíte Unit: `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/tests/src/Unit`.
+- Regressões Checkout Pro: cobrem payload inválido, status remoto pendente, referências de pedido conflitantes e retorno adulterado sem credenciais nem chamadas externas.
+- Testes Kernel do porte em `tests/src/Kernel` (rodar somente no banco existente `aculta_simpletest`, conforme `docs/operations/BANCO-DE-TESTE.md`).
+- Homologação visual X11 deve usar Firefox ESR visível e geckodriver; consultar `tests/browser/README.md` e `docs/operations/NAVEGADOR-TESTES.md`. Smoke público não comprova aprovação de pagamento nem sandbox.
 - Gate de fronteira: `php scripts/validate-module-theme-boundary.php`.
