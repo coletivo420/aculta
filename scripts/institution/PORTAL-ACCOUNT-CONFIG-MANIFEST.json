@@ -8,7 +8,6 @@
     "captcha.captcha_point.node_document_form",
     "captcha.captcha_point.node_editorial_highlight_form",
     "captcha.captcha_point.node_page_form",
-    "captcha.captcha_point.node_project_form",
     "captcha.captcha_point.user_login_form",
     "captcha.captcha_point.user_pass",
     "captcha.captcha_point.user_register_form",
