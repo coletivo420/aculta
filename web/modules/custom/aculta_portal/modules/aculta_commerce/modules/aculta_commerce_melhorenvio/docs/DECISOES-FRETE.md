@@ -154,3 +154,10 @@ a vir do carrinho:
 - Frete da gaveta com o curso no carrinho: PAC R$ 23,04, SEDEX R$ 51,97, Mini Envios R$ 18,19, iguais aos da camiseta
   sozinha. O LMS fica fora do frete.
 - Dados de teste deixados no servidor: curso 73, turma 74, pedido 179 e a camiseta no carrinho da conta de teste.
+
+### Aceite e limpeza (2026-10-27)
+
+- Simulador de frete aceito como concluído para loja e doação. Gaveta do carrinho no Olivero: fora do escopo, por decisão
+  do responsável.
+- Removidos do servidor de testes: pedidos 179 e 180 da conta de teste, curso 73 e turma 74. Mantidos os produtos de teste
+  10 (LMS) e 11 (doação), por decisão do responsável.
