@@ -8,7 +8,6 @@ use Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulation;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulator;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
@@ -69,7 +68,8 @@ class ShippingCalculatorHooks {
   }
 
   /**
-   * Carrinho completo: o componente calcula (ou mostra o último cálculo) e o carrinho refaz o cálculo ao ser salvo.
+   * Carrinho completo: o componente calcula (ou mostra o último cálculo). O recálculo ao mudar a quantidade não fica
+   * aqui: é feito por CartRefreshSubscriber, nos eventos do CartManager, valendo para todos os carrinhos.
    */
   #[Hook('form_views_form_commerce_cart_form_default_alter')]
   public function alterCartForm(array &$form): void {
@@ -79,14 +79,6 @@ class ShippingCalculatorHooks {
       '#props' => $this->props('frete-carrinho'),
       '#weight' => 100,
     ];
-    $form['#submit'][] = [self::class, 'refreshShippingSubmit'];
-  }
-
-  /**
-   * Submit do carrinho: quantidade alterada ou item removido refaz o cálculo com o CEP guardado.
-   */
-  public static function refreshShippingSubmit(array &$form, FormStateInterface $form_state): void {
-    \Drupal::service('aculta_commerce_melhorenvio.cart_refresher')->refresh();
   }
 
   /**

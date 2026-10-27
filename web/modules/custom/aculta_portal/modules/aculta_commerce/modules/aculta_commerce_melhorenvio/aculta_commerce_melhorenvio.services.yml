@@ -127,6 +127,13 @@ services:
     class: Drupal\aculta_commerce_melhorenvio\Quote\ShippingCartRefresher
     arguments: ['@aculta_commerce_melhorenvio.shipping_simulator', '@aculta_commerce_melhorenvio.quote_store']
 
+  # Recalcula o frete a cada mudança do carrinho (adição, quantidade ou remoção), em qualquer carrinho.
+  aculta_commerce_melhorenvio.cart_refresh_subscriber:
+    class: Drupal\aculta_commerce_melhorenvio\EventSubscriber\CartRefreshSubscriber
+    arguments: ['@aculta_commerce_melhorenvio.cart_refresher']
+    tags:
+      - { name: event_subscriber }
+
   # Endpoint JSON do componente shipping-calculator. Limite por IP usa o serviço de flood do Drupal.
   aculta_commerce_melhorenvio.simulate_controller:
     class: Drupal\aculta_commerce_melhorenvio\Controller\ShippingSimulatorController

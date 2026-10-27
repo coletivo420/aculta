@@ -97,7 +97,7 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
     $this->assertSame('component', $form['aculta_shipping_calculator']['#type']);
     $this->assertSame('aculta420:shipping-calculator', $form['aculta_shipping_calculator']['#component']);
     $this->assertSame('unavailable', $form['aculta_shipping_calculator']['#props']['state']);
-    $this->assertContains([ShippingCalculatorHooks::class, 'refreshShippingSubmit'], $form['#submit']);
+    $this->assertArrayNotHasKey('#submit', $form);
   }
 
 }
