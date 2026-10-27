@@ -14,6 +14,7 @@ Confirmadas por leitura da página oficial:
 - Estornos (Checkout Pro), Argentina: https://www.mercadopago.com.ar/developers/en/docs/checkout-pro-preferences/additional-settings/refunds-and-cancellations
 - Assinatura com plano associado, Brasil: https://www.mercadopago.com.br/developers/pt/docs/subscriptions/integration-configuration/subscription-associated-plan
 - Assinatura sem plano com pagamento pendente, Brasil: https://www.mercadopago.com.br/developers/en/docs/subscriptions/integration-configuration/subscription-no-associated-plan/pending-payments
+- Gerenciamento de assinaturas, Brasil: https://www.mercadopago.com.br/developers/pt/docs/subscriptions/subscription-management
 
 Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 - Referência de preferências: https://www.mercadopago.com.br/developers/en/reference/online-payments/checkout-pro-preferences/create-preference/post
@@ -59,7 +60,7 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 | Estorno | `CheckoutPro::refundPayment()` usa cliente do gateway ativo, lock por pagamento e `x-idempotency-key` estável por total acumulado; persiste somente com resposta `approved` vinculada ao pagamento remoto | Unit retry idempotente, concorrência e status pendente PASS; sandbox parcial/total pendente |
 | Cancelamento | `MercadoPagoPaymentService::cancelar()` serializa pela chave compartilhada do pagamento, recarrega Commerce, consulta ID remoto, aceita apenas `pending`, `in_process` ou `authorized`, e exige resposta `cancelled` com o mesmo ID | [Referência oficial](https://www.mercadopago.com.br/developers/pt/reference/online-payments/checkout-api-payments/create-cancellation/put) confirma `PUT /v1/payments/{payment_id}` e os estados; Unit cobre cancelamento, reconciliação após timeout e IDs divergentes |
 | Assinatura pendente | `status => 'pending'`, sem cartão | Alinhado |
-| Status de assinatura alteráveis | `RecurrenceRequestBuilder::STATUS_ALTERAVEIS = paused, authorized, cancelled` | Confirmar com a referência de `PUT /preapproval/{id}` |
+| Status de assinatura alteráveis | `RecurrenceRequestBuilder::STATUS_ALTERAVEIS = paused, authorized, canceled` | `paused` e `canceled` são documentados no guia oficial; reativação com `authorized` tem teste local, mas a sequência precisa de homologação sandbox |
 | Gateway ativo | Configuração canônica permanece `status: true` em todos os ambientes; o hook pré-save remove credenciais e não bloqueia importação quando estão ausentes | Unit cobre preservação do gateway ativo e remoção das chaves; `RedirectCheckoutForm` recusa criar a preferência se o token efetivo estiver vazio |
 | Pagamentos pendentes | Preferência envia `binary_mode: false` para permitir `pending` e `in_process`; com modo binário habilitado, o provedor pode rejeitá-los automaticamente. O tipo Commerce próprio adiciona estado `pending` e transições para aprovação/cancelamento posterior | [Documentação oficial](https://www.mercadopago.com.br/developers/pt/docs/checkout-pro-preferences/additional-settings/binary-mode); Unit e Kernel locais PASS |
 

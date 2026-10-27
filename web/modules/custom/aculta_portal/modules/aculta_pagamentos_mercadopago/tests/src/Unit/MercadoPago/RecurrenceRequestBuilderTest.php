@@ -190,7 +190,7 @@ final class RecurrenceRequestBuilderTest extends UnitTestCase {
    * Performs the status permitidos operation.
    */
   public static function statusPermitidos(): array {
-    return [['paused'], ['authorized'], ['cancelled']];
+    return [['paused'], ['authorized'], ['canceled']];
   }
 
   /**
@@ -207,6 +207,14 @@ final class RecurrenceRequestBuilderTest extends UnitTestCase {
   public function testStatusPendingNaoPodeSerImposto(): void {
     $this->expectException(\InvalidArgumentException::class);
     $this->montagem->statusAssinatura('pending');
+  }
+
+  /**
+   * Rejects the obsolete British spelling.
+   */
+  public function testStatusCanceladoComGrafiaObsoletaNaoPodeSerEnviado(): void {
+    $this->expectException(\InvalidArgumentException::class);
+    $this->montagem->statusAssinatura('cancelled');
   }
 
 }

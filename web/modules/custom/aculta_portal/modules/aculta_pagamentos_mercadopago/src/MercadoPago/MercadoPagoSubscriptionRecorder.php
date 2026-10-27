@@ -28,7 +28,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * Payment IDs are deduplicated and serialized. Donations are not refundable.
  *
  * The provider charges the authorized card. Card and payer data are not stored.
- * Subscription states are `pending`, `authorized`, `paused`, and `cancelled`.
+ * Subscription states are `pending`, `authorized`, `paused`, and `canceled`.
  */
 final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterface, SubscriptionOperationsInterface {
 
@@ -49,7 +49,7 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   public const STATUS_PENDENTE = 'pending';
   public const STATUS_ATIVA = 'authorized';
   public const STATUS_PAUSADA = 'paused';
-  public const STATUS_CANCELADA = 'cancelled';
+  public const STATUS_CANCELADA = 'canceled';
 
   /**
    * Ordem de exibição dos status no painel. */
@@ -196,7 +196,9 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
    * Status atual da assinatura guardado no pedido (vazio se não há assinatura).
    */
   public function statusDoPedido(OrderInterface $pedido): string {
-    return (string) $pedido->getData(self::CHAVE_STATUS, '');
+    $status = (string) $pedido->getData(self::CHAVE_STATUS, '');
+    // Normalize the former local spelling without rewriting existing orders.
+    return $status === 'cancelled' ? self::STATUS_CANCELADA : $status;
   }
 
   /**

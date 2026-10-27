@@ -205,11 +205,11 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
    */
   public function testCancellationUpdatesOrderWhenWorkflowAllows(): void {
     [$servico, $pedido, , $item] = $this->contexto('assinatura', 'completed', ['cancel'], []);
-    $pedido->expects($this->once())->method('setData')->with(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, 'cancelled');
+    $pedido->expects($this->once())->method('setData')->with(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, 'canceled');
     $pedido->expects($this->once())->method('save');
     $item->expects($this->once())->method('applyTransitionById')->with('cancel');
 
-    $servico->assinatura((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'cancelled']);
+    $servico->assinatura((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'canceled']);
   }
 
   /**
@@ -220,6 +220,22 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $pedido->expects($this->never())->method('save');
 
     $servico->assinatura((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+  }
+
+  /**
+   * Keeps orders written with the former spelling readable as canceled.
+   */
+  public function testLegacyCancellationStatusIsNormalizedForReading(): void {
+    [$servico, $pedido] = $this->contexto(
+      'assinatura',
+      'completed',
+      [],
+      [],
+      TRUE,
+      'cancelled',
+    );
+
+    $this->assertSame(MercadoPagoSubscriptionRecorder::STATUS_CANCELADA, $servico->statusDoPedido($pedido));
   }
 
   /**

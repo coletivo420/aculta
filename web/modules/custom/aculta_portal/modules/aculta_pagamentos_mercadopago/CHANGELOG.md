@@ -1,3 +1,9 @@
+## 0.1.0-dev.28 — alinhar cancelamento de assinaturas à API (2026-10-27)
+
+- A API de assinaturas documenta `canceled`; o código enviava `cancelled`, portanto o Mercado Pago podia rejeitar cancelamentos. A atualização agora envia o estado oficial e reconcilia notificações com ele.
+- Pedidos já gravados com `cancelled` continuam legíveis como cancelados, sem migração ou gravação em massa.
+- Regressões cobrem a grafia oficial, rejeitam o valor obsoleto em chamadas novas e preservam a leitura do valor legado. Unit focal: 47 testes / 127 assertions PASS; suíte completa: 165 testes / 550 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
+
 ## 0.1.0-dev.27 — representar pagamentos pendentes no workflow Commerce (2026-10-27)
 
 - Gateway usa o tipo de pagamento `aculta_mercadopago`, com workflow próprio e estado `pending`; retorno e Webhook persistem status pendente sem confirmar pedido e promovem para `completed` somente após consulta remota aprovada.

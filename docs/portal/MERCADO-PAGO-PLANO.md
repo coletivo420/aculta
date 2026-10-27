@@ -95,7 +95,7 @@ Inconsistência registrada: o docblock de `PaymentClient::cancel` diz que só `p
 - planos: `POST /preapproval_plan` (SDK `PreApprovalPlanClient::create`), com `reason`, `auto_recurring` (`frequency`, `frequency_type`, `transaction_amount`, `currency_id`) e `back_url`;
 - assinaturas: `POST /preapproval` (`PreApprovalClient::create`), com `preapproval_plan_id` ou `auto_recurring` próprio, `payer_email`, `external_reference`, `back_url` e `status: pending`;
 - a assinatura nasce em `pending`, e o pagador a autoriza pelo `init_point`;
-- alteração de status por `PUT /preapproval/{id}`, com `paused`, `authorized` ou `cancelled`.
+- alteração de status por `PUT /preapproval/{id}`: o guia oficial documenta `paused` e `canceled`; a reativação enviada pelo código usa `authorized` e ainda precisa de homologação sandbox.
 
 **Não confirmado (lacuna da pesquisa):** o recurso `authorized_payments` (cada cobrança de uma assinatura) e os tópicos de webhook exatos para assinaturas. A pesquisa retornou `subscription_preapproval` como evento de assinatura, mas não confirmou o tópico de cobrança recorrente. Antes de implementar o webhook, consultar a referência oficial do Mercado Pago do país do site (Brasil) e fixar os tópicos.
 
@@ -175,7 +175,7 @@ Respondidas em 2026-10-16; ver a seção 0.
 
 ## 7.1 Assinaturas: status e ações (2026-10-17)
 
-- Status da assinatura (`preapproval`) usados no código: `pending` (aguardando autorização), `authorized` (ativa), `paused` (pausada), `cancelled` (cancelada). Os valores `paused`, `authorized` e `cancelled` para alteração vêm deste plano (seção 2). **Não confirmados na referência da API nesta sessão**: a página `…/reference/subscriptions/_preapproval_id/put` não pôde ser lida (HTTP 404 na tentativa).
+- Status da assinatura (`preapproval`) usados no código: `pending` (aguardando autorização), `authorized` (ativa), `paused` (pausada), `canceled` (cancelada). Para compatibilidade de leitura, o módulo também reconhece `cancelled`, gravado por versões anteriores, como cancelado.
 - Status da cobrança (`authorized_payments`), na documentação oficial consultada: `processed` (cobrado com sucesso, ou parcela que esgotou as tentativas), `waiting for gateway` (em processamento), `recycling` (recusada, em nova tentativa). O exemplo da referência usa `scheduled`. Só `payment.status = approved` vira pagamento no pedido.
 - Ações do doador em "Meu apoio": pausar (de `authorized`), reativar (de `paused`) e cancelar (de `pending`, `authorized` ou `paused`). Cada ação chama `PUT /preapproval/{id}` antes de mudar o pedido. Doações não são estornadas.
 - Painel "Doações recorrentes", em Relatório de doações: resumo por situação e as 100 assinaturas mais recentes.
@@ -184,7 +184,7 @@ Respondidas em 2026-10-16; ver a seção 0.
 
 **Verificado no sandbox (2026-10-17, conta de teste):**
 - `PUT /preapproval/{id}` com `paused` em assinatura `pending` → HTTP 400 `Invalid transition from pending to paused`. Confirma que pausar só vale para `authorized` (regra de `MercadoPagoSubscriptionRecorder::ACOES`).
-- `PUT /preapproval/{id}` com `cancelled` em assinatura `pending` → HTTP 200, `cancelled`.
+- `PUT /preapproval/{id}` usa `canceled` para cancelar e `paused` para pausar, conforme o [guia oficial de gerenciamento](https://www.mercadopago.com.br/developers/pt/docs/subscriptions/subscription-management). A reativação de pausada permanece enviada como `authorized` e deve ser confirmada no sandbox.
 - Criação de assinatura `pending` com `back_url` do domínio `aculta.toca.net.br` e do Mercado Pago: aceita em algumas tentativas. `back_url` `https://aculta.org/` foi recusado pela conta de teste.
 - **Não verificado:** assinatura `authorized` criada com cartão de teste (HTTP 400 `Unsupported_credit_card_for_recurring_payment` no Mastercard e `User bad request` nos Visa), e, por consequência, pausar e reativar a partir de `authorized`, e as cobranças reais (`authorized_payments`). A partir de certo momento da sessão, até a criação `pending` passou a ser recusada com `User bad request`; a causa não foi identificada.
 - Criação de compradores de teste (`POST /users/test_user`) teve limite de taxa local (HTTP 429).

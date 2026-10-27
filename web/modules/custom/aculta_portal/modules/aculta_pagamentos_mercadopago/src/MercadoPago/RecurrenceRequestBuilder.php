@@ -26,9 +26,9 @@ final class RecurrenceRequestBuilder {
    *
    * Assinaturas nascem em pending e são autorizadas pelo pagador no Mercado
    * Pago; a aplicação só pausa,
-   * reativa (authorized) ou cancela.
+   * reativa (authorized) ou cancela (`canceled`).
    */
-  public const STATUS_ALTERAVEIS = ['paused', 'authorized', 'cancelled'];
+  public const STATUS_ALTERAVEIS = ['paused', 'authorized', 'canceled'];
 
   /**
    * Payload de criação de plano de assinatura.

@@ -110,8 +110,8 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
    */
   public function testCancelActiveSubscriptionAndOrder(): void {
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
-    $recorrencia->expects($this->once())->method('alterarStatusAssinatura')->with($this->anything(), 'pre-9', 'cancelled')
-      ->willReturn((object) ['status' => 'cancelled']);
+    $recorrencia->expects($this->once())->method('alterarStatusAssinatura')->with($this->anything(), 'pre-9', 'canceled')
+      ->willReturn((object) ['status' => 'canceled']);
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', ['cancel'], $item);
     $item->expects($this->once())->method('applyTransitionById')->with('cancel');
 
