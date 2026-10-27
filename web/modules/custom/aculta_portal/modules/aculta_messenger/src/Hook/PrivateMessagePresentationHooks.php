@@ -39,18 +39,17 @@ final class PrivateMessagePresentationHooks {
       return;
     }
 
-    // Mesma regra do avatar público: foto, depois acervo ilustrativo, depois inicial.
+    // Mesma regra do avatar público: foto, depois o acervo ilustrativo, que é o
+    // fallback final. A inicial do nome não é usada.
     $name = (string) $sender->getDisplayName();
     $cacheability = (new CacheableMetadata())
       ->addCacheableDependency($sender)
       ->addCacheContexts(['user'])
       ->addCacheTags($access->getCacheTags());
     $avatar = $this->avatars->build($sender, $name, TRUE, $cacheability);
-    $avatar ??= [
-      '#type' => 'html_tag',
-      '#tag' => 'span',
-      '#value' => mb_strtoupper(mb_substr($name, 0, 1)),
-    ];
+    if ($avatar === NULL) {
+      return;
+    }
     $cacheability->applyTo($avatar);
     $variables['aculta_messenger_sender_avatar'] = $avatar;
   }

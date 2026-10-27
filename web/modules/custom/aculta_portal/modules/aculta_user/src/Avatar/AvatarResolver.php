@@ -13,11 +13,13 @@ use Drupal\user\UserInterface;
  * Avatar público único do site, na mesma ordem de Conta/perfil.
  *
  * 1. foto da conta, quando o chamador informa que a política pública a libera;
- * 2. avatar ilustrativo estável do acervo (AvatarPool);
- * 3. nenhum avatar: NULL, e o chamador mostra a inicial do nome.
+ * 2. avatar ilustrativo estável do acervo (AvatarPool), que é o fallback final
+ *    e obrigatório para quem não tem foto.
  *
  * Não decide visibilidade de campos: recebe $showPhoto já calculado pela policy.
  * O AvatarPool é opcional só para testes unitários; em produção é sempre injetado.
+ * O NULL abaixo é contrato defensivo do teste sem pool: o site não tem estado
+ * "sem acervo" e a inicial do nome nunca é usada.
  */
 final class AvatarResolver {
 

@@ -172,7 +172,7 @@ final class PublicProfileController extends ControllerBase {
   }
 
   /**
-   * Builds a permitted photo, archive avatar or safe initial for the profile.
+   * Builds a permitted photo or archive avatar for the profile.
    */
   private function avatar($account, string $apelido, bool $showPhoto): array {
     $wrap = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-avatar']];
@@ -181,9 +181,6 @@ final class PublicProfileController extends ControllerBase {
     if ($image !== NULL) {
       $wrap['image'] = $image;
       $cacheability->applyTo($wrap);
-    }
-    else {
-      $wrap['initial'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => mb_strtoupper(mb_substr($apelido, 0, 1)), '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-initial', 'aria-hidden' => 'true'])];
     }
     return $wrap;
   }

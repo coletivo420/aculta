@@ -25,10 +25,6 @@
   object-fit: cover;
 }
 
-.aculta-author-card__avatar--initial {
-  font-weight: 700;
-}
-
 .aculta-author-card__identity { min-width: 0; }
 .aculta-author-card__name { font-weight: 700; overflow-wrap: anywhere; }
 .aculta-author-card__name a { color: var(--aculta-text-link); text-decoration: underline; text-underline-offset: 0.15em; }

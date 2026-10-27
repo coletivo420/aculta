@@ -11,8 +11,6 @@
 <article class="aculta-author-card aculta-author-card--{{ layout }} aculta-author-card--{{ variant }} aculta-author-card--{{ size|default('md') }}">
   {% if has_avatar %}
     <div class="aculta-author-card__avatar">{{ avatar }}</div>
-  {% else %}
-    <div class="aculta-author-card__avatar aculta-author-card__avatar--initial" aria-hidden="true">{{ display_name|slice(0, 1)|upper }}</div>
   {% endif %}
   <div class="aculta-author-card__identity">
     <div class="aculta-author-card__name">

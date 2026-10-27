@@ -4,7 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
-| **0.7.0-dev.6** | Avatar padrão: `author-card` com tamanhos `sm`, `md`, `lg`, cartão sem imagem e repasse do tamanho pelo campo de Views `aculta_user_author_card` | Design foundations e browser validators PASS; view ainda não criada no Runtime; SDC schemas sem vendor | Fases 2 e 3 do avatar; view e visual pendentes |
+| **0.7.0-dev.6** | Avatar padrão: `author-card` com tamanhos `sm`, `md`, `lg` e repasse do tamanho pelo campo de Views `aculta_user_author_card`; cartão sem imagem removido (a inicial não é usada) | Design foundations e browser validators PASS; view ainda não criada no Runtime; SDC schemas sem vendor | Fases 2 e 3 do avatar; view e visual pendentes |
 | **0.7.0-dev.2** | Kernel de descoberta e renderização do Meu Perfil SDC | Teste Kernel escrito, **não executado** | Quatro SDCs em composição, escape/ausência de public link, slots/metadata; aguarda Drupal instalado, PHPUnit/Firefox ESR. |
 | **0.7.0-dev.1** | Pré-S-R4: quatro SDCs experimentais para Meu Perfil | Código, 8 stories e Unit estático escritos; sem execução de Kernel/Firefox/Runtime | `profile-editor`, `profile-identity`, `profile-bio`, `profile-social`. O Studio mantém seu renderer atual até S-R4. |
 | 0.6.1-dev.13 | Separadores visuais entre grupos de avisos por origem | Messenger Unit 221/1.582, ThemeHooks Unit 1/1, Kernel 38/891, Foundation 345, Design Foundations 2170 e smoke Firefox ESR 8/8 PASS no Runtime de teste (1270 px); Alpha e demais viewports pendentes | Tema apresenta cabeçalhos/separadores do contrato de origem sem alterar autorização, ordem ou persistência |

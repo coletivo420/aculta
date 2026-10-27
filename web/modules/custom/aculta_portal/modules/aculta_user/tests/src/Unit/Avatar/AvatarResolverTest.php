@@ -20,7 +20,8 @@ use PHPUnit\Framework\Attributes\Group;
 class AvatarResolverTest extends UnitTestCase {
 
   /**
-   * Sem foto liberada e sem acervo, o resolver devolve NULL (o chamador mostra a inicial).
+   * Sem foto liberada e sem acervo, o resolver devolve NULL; nenhum chamador
+   * inventa a inicial.
    */
   public function testReturnsNullWithoutPhotoOrPool(): void {
     $account = $this->createMock(UserInterface::class);
