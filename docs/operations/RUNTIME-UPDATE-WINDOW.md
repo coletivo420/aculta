@@ -355,3 +355,16 @@ Código: PR `e9850297d` + `feat/aculta-user-10013-contagem` (`46dffd76b`) + `fea
 - Investigação posterior: os perfis sem dono encontrados na cópia do Runtime (10, todos vazios) precisam de decisão fora deste ensaio (manter, marcar ou remover).
 - Bloqueio apenas por conflito real entre UIDs. Falha de banco ou transação aborta sem índice parcial.
 - Rollback: o snapshot do Runtime tirado antes da janela. Não existe rollback por SQL.
+
+## Exclusão de tabelas em `aculta_install_b2` (2026-10-27)
+
+Autorização do responsável, sem backup. Motivo: `aculta_install_b2` tinha 278 tabelas
+(eram 272 em 26/10 19:30). Todas as 278 tinham `create_time` entre 19:37:01 e 19:38:43 e
+prefixo `b2lms_`; não havia lista nominal das 272 originais, então não era possível separar
+as adicionadas. Por isso a exclusão foi do conjunto inteiro de `b2lms_*`, não só das novas.
+
+- Verificação antes: 278 tabelas, 0 sem prefixo `b2lms_`.
+- Comando: `DROP TABLE` nominal das 278 tabelas, com `FOREIGN_KEY_CHECKS=0` na sessão. Sem `DROP DATABASE`, sem `site:install`.
+- Resultado: `aculta_install_b2` com 0 tabelas.
+- `aculta_runtime` (588) e `aculta_runtime_copia` (598) conferidos e inalterados.
+- A cópia de `aculta_simpletest` (0 tabelas) não foi restaurada, por decisão do responsável.
