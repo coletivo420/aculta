@@ -23,6 +23,14 @@ props:
         - author_growroom_historico
         - author_minimal
       description: 'Presentation variant selected by the functional owner.'
+    size:
+      type: string
+      enum:
+        - sm
+        - md
+        - lg
+      default: md
+      description: 'Tamanho do cartão: sm para listas densas, md padrão, lg para destaques.'
     display_name:
       type: string
       description: 'Public display name already filtered by aculta_user.'

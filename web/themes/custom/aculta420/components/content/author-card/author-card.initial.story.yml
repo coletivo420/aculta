@@ -1,0 +1,8 @@
+name: Autoria sem imagem
+description: Cartão de autor sem avatar disponível; mostra a inicial do nome, como no perfil público.
+component: aculta420:author-card
+props:
+  variant: author_forum
+  display_name: Maria Antônia
+  profile_url: /u/maria
+  has_avatar: false

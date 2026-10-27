@@ -60,3 +60,11 @@
 }
 
 .aculta-author-card__source { display: block; color: var(--aculta-text-secondary); font-size: 0.8125rem; }
+
+/* Tamanhos do SDC (prop size). md é o padrão e usa as dimensões acima. */
+.aculta-author-card--sm { gap: 0.5rem; }
+.aculta-author-card--sm .aculta-author-card__avatar { flex-basis: 2.25rem; width: 2.25rem; height: 2.25rem; }
+.aculta-author-card--sm .aculta-author-card__name { font-size: 0.875rem; }
+.aculta-author-card--lg { gap: 1rem; }
+.aculta-author-card--lg .aculta-author-card__avatar { flex-basis: 4rem; width: 4rem; height: 4rem; }
+.aculta-author-card--lg .aculta-author-card__name { font-size: 1.125rem; }

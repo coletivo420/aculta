@@ -8,7 +8,7 @@
   author_wiki: 'Wiki420'|t
 } %}
 {% set social_icons = { instagram: 'instagram', facebook: 'facebook', reddit: 'reddit' } %}
-<article class="aculta-author-card aculta-author-card--{{ layout }} aculta-author-card--{{ variant }}">
+<article class="aculta-author-card aculta-author-card--{{ layout }} aculta-author-card--{{ variant }} aculta-author-card--{{ size|default('md') }}">
   {% if has_avatar %}
     <div class="aculta-author-card__avatar">{{ avatar }}</div>
   {% else %}

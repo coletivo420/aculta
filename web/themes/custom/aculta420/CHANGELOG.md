@@ -1,3 +1,10 @@
+## 0.7.0-dev.4 — author-card com tamanhos (Fase 2 do avatar padrão)
+
+- `author-card` ganha a prop `size` (`sm`, `md`, `lg`; padrão `md`) para listas densas e destaques. O tamanho é contrato do SDC, não estilo de display: UI Styles continua restrito às famílias semânticas (superfície, texto, borda, elevação).
+- Stories novas: tamanho `sm`, tamanho `lg` e cartão sem imagem (inicial), que mostra o mesmo fallback do perfil público.
+- Marcação visual dos cartões existentes não muda: `md` mantém as dimensões atuais.
+- Validação: `validate-aculta420-design-foundations.php` PASS (2233 checks); `validate-browser-validators.php` PASS (21 checks). `validate-aculta420-sdc-schemas.php` não executado nesta sessão (sem `vendor/`). RUNTIME STATUS: DEFERRED.
+
 ## 0.7.0-dev.3 — PHPCS do tema e tokens de Portal (2026-10-25)
 
 - PHPCS Drupal e DrupalPractice limpo em `src` e `tests` do tema. Blocos de documentação malformados foram corrigidos e os métodos sem descrição receberam texto real.
