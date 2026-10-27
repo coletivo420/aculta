@@ -20,7 +20,6 @@ use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Render\Element\Checkboxes;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use MercadoPago\Client\Common\RequestOptions;
-use MercadoPago\Exceptions\MPApiException;
 use MercadoPago\MercadoPagoConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -1313,7 +1312,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       try {
         $merchant_order = $merchant_order_client->get((int) $merchant_order_id);
       }
-      catch (MPApiException $e) {
+      catch (\Throwable) {
         $logger->error('Mercado Pago API error fetching returned merchant order.');
         throw new PaymentGatewayException('Could not verify payment order.', 0);
       }
@@ -1358,7 +1357,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
           throw new PaymentGatewayException('Payment does not belong to this order.', 0);
         }
       }
-      catch (MPApiException $e) {
+      catch (\Throwable) {
         $logger->error('Mercado Pago API error fetching merchant order @id.', ['@id' => $order_id_mp]);
         throw new PaymentGatewayException('Could not verify payment order.', 0);
       }

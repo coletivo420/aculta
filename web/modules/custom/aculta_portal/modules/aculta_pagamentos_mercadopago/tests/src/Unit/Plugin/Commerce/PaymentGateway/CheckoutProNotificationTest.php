@@ -584,6 +584,65 @@ final class CheckoutProNotificationTest extends UnitTestCase {
   }
 
   /**
+   * Normalizes a transport failure while verifying the returned merchant order.
+   */
+  public function testReturnHidesMerchantOrderTransportFailure(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $payment_client = new class {
+
+      /**
+       * Returns an approved payment tied to the expected Commerce order.
+       */
+      public function get(int $id): object {
+        return (object) [
+          'status' => 'approved',
+          'transaction_amount' => '10.00',
+          'currency_id' => 'BRL',
+          'external_reference' => '42',
+        ];
+      }
+
+    };
+    $merchant_order_client = new class {
+
+      /**
+       * Simulates a network error without exposing provider details.
+       */
+      public function get(int $id): object {
+        throw new \RuntimeException('private transport response');
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->exactly(2))
+      ->method('criar')
+      ->willReturnCallback(static fn (string $alias): object => $alias === 'pagamentos' ? $payment_client : $merchant_order_client);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn(42);
+    $order->method('getData')->with('commerce_mercado_pago_checkout')->willReturn(['preference_id' => 'pref-1']);
+    $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects($this->once())
+      ->method('error')
+      ->with('Mercado Pago API error fetching returned merchant order.');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($logger);
+
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $this->expectException(PaymentGatewayException::class);
+    $this->expectExceptionMessage('Could not verify payment order.');
+    $gateway->onReturn($order, new Request([
+      'payment_id' => '123',
+      'merchant_order_id' => '900',
+      'status' => 'approved',
+    ]));
+  }
+
+  /**
    * Rejects a browser return that claims approval when the API says pending.
    */
   public function testReturnDoesNotTrustBrowserApproval(): void {

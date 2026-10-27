@@ -245,3 +245,8 @@
 - Documentação agora registra o vínculo recorrente com o pedido como implementado e coberto por Unit/Kernel; mantém a homologação ponta a ponta do comprador sandbox como pendente (DT-MP-02/DT-MP-03).
 - Unit MP: 183 testes / 712 assertions PASS. Revisão documental e `git diff --check`.
 
+## 0.1.0-dev.38 — normalizar falhas de transporte na Merchant Order (2026-10-27)
+
+- O retorno agora converte qualquer falha ao consultar a Merchant Order em exceção segura do gateway; detalhes do provedor/transporte não escapam para a resposta.
+- Regressão cobre exceção de transporte genérica. Unit MP: 184 testes / 718 assertions PASS; Kernel CheckoutPro: 1/56 PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS.
+
