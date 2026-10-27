@@ -1,8 +1,76 @@
-## 0.1.1-dev.397 — avatar padrão no remetente da mensagem (Fase 4)
+## 0.1.1-dev.404 — avatar padrão no remetente da mensagem (Fase 4)
 
 - O avatar do remetente segue a regra única: foto, depois acervo ilustrativo, depois inicial.
   Antes, sem foto não havia nada na mensagem.
 - Validação: PHP lint PASS. PHPUnit e Runtime não executados (sem `vendor/`). RUNTIME STATUS: DEFERRED.
+
+## 0.1.1-dev.403 — versionar defaults estruturais de comunicação
+
+Config Sync agora contém os defaults instaláveis de `email_modes` e
+`magazine_events`. A data inicial do digest permanece operacional e fora do
+Sync. A documentação define overrides por ambiente e exige conferir diferenças
+ativas antes de qualquer importação. Nenhuma configuração ativa foi importada.
+
+## 0.1.1-dev.402 — manter relativos os links da gaveta de avisos
+
+Os botões “Ver todos os avisos” e “Ver todas as mensagens” agora geram caminhos
+relativos por route ID. Eles deixam de apontar para o hostname canônico
+`aculta.org`, preservando a política de URLs relativas do projeto.
+
+## 0.1.1-dev.401 — alinhar metadados Sync de amizade com defaults e Runtime
+
+- Config Sync atualiza a descrição de `field_aculta_messenger_attempts` e o rótulo/descrição de `field_aculta_messenger_source_fr` para os valores dos defaults instaláveis. A leitura read-only confirmou que esses metadados também correspondem ao Runtime MAIN.
+- Nenhum valor de mensagem, preferência, modo de e-mail ou dado do Runtime foi alterado. A matriz operacional `email_modes` permanece bloqueada para decisão porque o Runtime difere dos defaults e o Sync ainda não contém essa árvore.
+
+## 0.1.1-dev.400 — corrigir e versionar o contador de tentativas
+
+`field_aculta_enqueue_attempts` agora usa `unsigned`/`size` na configuração de
+storage Integer; os limites de instância não ficam mais no nível de storage.
+Os objetos `field.storage` e `field.field` foram adicionados ao Sync após
+comparação read-only que confirmou o mesmo schema no Runtime MAIN. O update
+10009 já instala esses defaults em sites existentes e permanece pendente no
+Runtime consultado.
+
+`MessengerMailDisplayConfigTest` **3/80 PASS**; conjunto focal de amizade e
+entrega **38/724 PASS**; PHP lint/PHPCS Drupal+DrupalPractice e gates YAML,
+Config Extension, status, pacotes e diff check PASS. Sem alteração de dados.
+
+## 0.1.1-dev.399 — ocultar controles Entity Print em avisos
+
+Os defaults e o Config Sync ocultam os campos extras EPUB, PDF e DOCX do
+Entity Print nos sete displays de e-mail de avisos e no display de avisos
+públicos. A instalação de Entity Print no Runtime MAIN os mantinha ocultos, mas
+os defaults/Sync não. A reconciliação evita que reimportar esses displays os
+tornasse visíveis; o evento de amizade também continua oculto.
+
+Teste de contrato de display: **2/68 PASS**; focais de amizade/entrega:
+**37/712 PASS**. PHPCS Drupal/DrupalPractice e PHP lint do teste PASS; gates
+Config Extension, YAML, índice, pacotes e diff check PASS. Nenhum Runtime ou
+dado de Entity Print foi alterado.
+
+## 0.1.1-dev.398 — ocultar o estado técnico de amizade no e-mail
+
+Os displays de e-mail de amizade no Config Sync agora declaram o campo
+`field_aculta_friendship_event` como dependência e o mantêm oculto. A proteção
+coincide com o Runtime MAIN read-only e com `config/install`; antes, o Sync
+podia renderizar `requested`/`accepted` no assunto ou corpo do aviso, apesar do
+template genérico. Nenhum template ou mensagem Runtime foi alterado.
+
+Testes Unit de amizade e entrega: 35/644 PASS. Gate de dependências Config
+Extension, YAML dos dois displays, índice de status, pacote próprio e diff check
+PASS. PHPCS não aplicável (nenhum PHP foi alterado).
+
+## 0.1.1-dev.397 — reconciliar estados persistentes de entrega no Config Sync
+
+O campo compartilhado `field_aculta_msg_delivery` agora exporta também os
+estados terminais `failed_permanent` e `cancelled`, já usados pelos workers e
+presentes no default do Messenger e no Runtime de teste. A comparação read-only
+confirmou os cinco estados ativos; o Sync anterior listava somente os três
+estados intermediários. Nenhum dado de fila ou configuração ativa foi alterado.
+
+Validado por comparação do default instalado, do Sync e da storage ativa;
+YAML, dependências Config Extension, índice de status e pacote próprio PASS.
+O ensaio de importação não foi executado no Runtime.
 
 ## 0.1.1-dev.396 — remover texto bruto de exceções dos logs operacionais
 
@@ -15,7 +83,7 @@ registros de falha e alertas guardam somente classe/código, sem texto bruto.
 Registros históricos anteriores permanecem sob a retenção/acesso existentes;
 a tela mascara estado IMAP legado, e nenhuma limpeza de logs foi executada.
 
-`MailMonitorTest` **6/18**, `MailSettingsKernelTest` **2/5**, Unit Mailer **161/331** e Kernel Mailer **46/214 PASS** no MariaDB dedicado. PHPCS Drupal/DrupalPractice passou sem erros; há avisos de linhas >80 chars no baseline dos arquivos tocados. Gate Drupal 11+ (**1.155 checks**), índice de status e diff check PASS. PHP 8.4.27; SMTP real e Runtime não executados.
+`MailMonitorTest` **6/18**, `MailSettingsKernelTest` **2/5**, Unit Mailer **162/343** e Kernel Mailer **46/214 PASS** no MariaDB dedicado. PHPCS Drupal/DrupalPractice passou sem erros; há avisos de linhas >80 chars no baseline dos arquivos tocados. Gate Drupal 11+ (**1.155 checks**), índice de status e diff check PASS. PHP 8.4.27; SMTP real e Runtime não executados.
 
 ## 0.1.1-dev.395 — corrigir propriedade de locks durante digest e entrega
 
@@ -4110,4 +4178,5 @@ Validação: Units focais **18/186 PASS**. `PrivateMessageRetentionKernelTest`
 **5/66 PASS** no MariaDB dedicado, incluindo 101 threads com `updated` igual
 atravessando o limite de página; dez depreciações Core/contrib preexistentes.
 Runtime, Alpha e teste visual com volume elevado não executados.
+
 

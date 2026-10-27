@@ -8,7 +8,7 @@ transporte e o código SMTP. Novas falhas guardam somente classe/código no Mail
 históricos anteriores permanecem inalterados sob a retenção/acesso atuais; a
 tela mascara estado IMAP legado e nenhuma limpeza de logs foi executada.
 
-`MailMonitorTest` **6/18**, `MailSettingsKernelTest` **2/5**, Unit Mailer **161/331** e Kernel Mailer **46/214 PASS** no MariaDB dedicado. PHPCS Drupal/DrupalPractice passou sem erros; persistem avisos de linhas >80 chars nos arquivos tocados. Gate Drupal 11+ (**1.155 checks**), índice e diff check PASS. PHP 8.4.27; Runtime e SMTP externo não usados.
+`MailMonitorTest` **6/18**, `MailSettingsKernelTest` **2/5**, Unit Mailer **162/343** e Kernel Mailer **46/214 PASS** no MariaDB dedicado. PHPCS Drupal/DrupalPractice passou sem erros; persistem avisos de linhas >80 chars nos arquivos tocados. Gate Drupal 11+ (**1.155 checks**), índice e diff check PASS. PHP 8.4.27; Runtime e SMTP externo não usados.
 
 ## 0.1.0-dev.73 — consulta de aceite por correlação — 2026-10-24
 

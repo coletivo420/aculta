@@ -71,6 +71,10 @@ atividade carregada no iframe autorizado.
   vínculo do H5P com o Group; os estados e resultados aplicam a mesma relação.
 - Imagens do editor e assets de imagem das bibliotecas usam a política e os
   serviços de `aculta_image`; uploads permanecem arquivos gerenciados privados.
+- Ao remover conteúdo ou bibliotecas, H5P libera seus marcadores e delega a
+  verificação de referências e a exclusão final ao `aculta_portal.unused_file_cleaner`.
+  Assets não-imagem também passam pelo coordenador; referências não verificáveis
+  ou ainda ativas mantêm o arquivo.
 - H5P usa o acesso ao curso do Group para renderizar atividades no contexto do
   LMS. Documentos PDF complementares do curso pertencem à Media
   `course_document` e ao viewer `aculta_pdf_viewer` com controle

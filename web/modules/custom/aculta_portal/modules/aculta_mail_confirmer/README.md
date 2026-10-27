@@ -10,13 +10,16 @@ Confirmação de endereço de e-mail do ACULTA. Código incorporado do módulo c
 - Caminhos públicos do módulo: `/aculta-mail-confirmer/responder/{confirmação}/{hash}` (resposta) e
   `/aculta-mail-confirmer/reenviar/{confirmação}` (reenvio). No domínio de Conta, o Portal publica
   `/confirmar-email/...`.
+- O reenvio exige token CSRF e acesso `update` à confirmação. Pedidos privados de cadastro e troca de e-mail só podem ser acionados pelo titular ou por quem administra confirmações.
 - Configuração em `/painel-administrativo/aculta/confirmacao-de-email`.
 - Tokens `[aculta-mail-confirmer:confirmation-url]` e `[aculta-mail-confirmer:confirmation-mail]`.
 - Limpeza periódica (cron) dos pedidos mais antigos que `confirmation_lifetime`.
 
 ## Submódulo `aculta_mail_confirmer_user`
 
-Troca de e-mail da conta e bloqueio de login de conta não confirmada (`user_email_change`, `user_login`).
+O submódulo `aculta_mail_confirmer_user` controla a confirmação da troca de e-mail (`user_email_change`) e pode registrar confirmações no primeiro login ou no login por link de uso único (`user_login`).
+
+O login não é bloqueado por falta de confirmação. A conta permanece ativa; a política do Portal permite acessar o site e Minha Conta, enquanto restringe as operações que exigem confirmação. Ver [política atual](../../../../../../docs/portal/EMAIL-CONFIRMATION-POLICY.md).
 Caminho de cancelamento: `/usuario/{user}/troca-de-email/cancelar`.
 
 ## Permissões

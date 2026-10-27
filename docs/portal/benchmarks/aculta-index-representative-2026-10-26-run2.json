@@ -1,0 +1,23 @@
+{
+    "benchmark": "representative_mixed_catalog",
+    "date": "2026-10-26",
+    "drupal": "11.4.10",
+    "php": "8.4.27",
+    "built": {
+        "representative_content": 28,
+        "representative_target": 14,
+        "relations": 30
+    },
+    "final": {
+        "representative_content": 27,
+        "representative_target": 14,
+        "relations": 29,
+        "published_page": 19
+    },
+    "rebuild_ms": 428.791,
+    "audit_ms": 46.181,
+    "cold_query_ms": 6.781,
+    "warm_p50_ms": 5.029,
+    "warm_p95_ms": 6.173,
+    "peak_memory_bytes": 86507520
+}

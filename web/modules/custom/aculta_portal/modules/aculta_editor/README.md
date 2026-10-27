@@ -3,7 +3,9 @@
 Submódulo opcional do `aculta_portal`. Reúne os modelos editoriais (templates do CKEditor 5 Plugin Pack) e a
 configuração de formatos de texto do ACULTA. Desabilitado, o Portal não depende dele.
 
-Versão: `0.1.0-dev.4` (estado Dev). Auditoria e decisões: [`docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md`](../../../../../docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md).
+Versão: `0.1.0-dev.5` (estado Dev, igual ao `info.yml`). Papéis e formatos conferidos na auditoria do agente executor 2:
+`content_editor` tem `revista_editorial` e `wiki`; `email_confirmed` tem `usuario_aculta`, `wiki` e `forum`; `authenticated`
+só tem `webform_default`. Nenhum papel comum recebe `full_html`. Auditoria e decisões: [`docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md`](../../../../../docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md).
 
 ## Formatos de texto (unificados)
 

@@ -6,18 +6,19 @@ namespace Drupal\aculta_id_cpf\Service;
 
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Database\IntegrityConstraintViolationException;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Grava o CPF ou CNPJ da pessoa, cifrado, no perfil participante (campo field_documento).
+ * Grava o CPF ou CNPJ cifrado no perfil participante.
  *
- * Junto do valor cifrado grava o fingerprint HMAC (field_documento_indice), usado para recusar o mesmo
- * documento em outra conta. Essa checagem não é transacional: sob gravações simultâneas, duas contas podem
- * passar pela verificação ao mesmo tempo. A garantia forte exige índice único, ainda não decidido (ver README).
- * O campo é privado do perfil (profile_private) e não entra em formulários, exibições nem Views do Portal.
- * Gravar é uma única vez: depois de salvo, o valor não muda pela interface.
+ * O fingerprint HMAC no campo `field_documento_indice` recusa duplicidades. Um
+ * índice único no armazenamento fecha a concorrência entre gravações. O campo
+ * cifrado é privado e não aparece em formulários, exibições ou Views do Portal.
+ * A gravação pela interface é única; o titular não pode trocar o documento.
  */
 final class AccountDocumentStore implements AccountDocumentInterface {
 
@@ -26,6 +27,8 @@ final class AccountDocumentStore implements AccountDocumentInterface {
   private const INDEX_FIELD = 'field_documento_indice';
 
   /**
+   * Cached field definitions for the participant profile.
+   *
    * @var array<string, mixed>|null
    */
   private ?array $profileFields = NULL;
@@ -39,10 +42,16 @@ final class AccountDocumentStore implements AccountDocumentInterface {
     private readonly DocumentFingerprint $fingerprint,
   ) {}
 
+  /**
+   * Checks whether the encrypted document field can be read.
+   */
   public function isAvailable(): bool {
     return isset($this->profileFields()[self::FIELD]) && $this->cipher->isAvailable();
   }
 
+  /**
+   * Checks whether storage and both cryptographic keys are available.
+   */
   public function canSave(): bool {
     $fields = $this->profileFields();
     return isset($fields[self::FIELD], $fields[self::INDEX_FIELD])
@@ -50,6 +59,15 @@ final class AccountDocumentStore implements AccountDocumentInterface {
       && $this->fingerprint->isAvailable();
   }
 
+  /**
+   * Canonicalizes a CPF or CNPJ value without exposing validation details.
+   *
+   * @param string $input
+   *   Submitted document value.
+   *
+   * @return string|null
+   *   Canonical document or NULL when invalid.
+   */
   public function canonicalize(string $input): ?string {
     try {
       return $this->validator->canonicalize($input, $this->validator->detectType($input));
@@ -59,6 +77,15 @@ final class AccountDocumentStore implements AccountDocumentInterface {
     }
   }
 
+  /**
+   * Returns the account's masked document, if one is stored.
+   *
+   * @param \Drupal\user\UserInterface $account
+   *   Account whose document is loaded.
+   *
+   * @return string|null
+   *   Masked document value or NULL when none is stored.
+   */
   public function savedDocument(UserInterface $account): ?string {
     $profile = $this->participantProfile($account);
     if ($profile === NULL) {
@@ -74,6 +101,19 @@ final class AccountDocumentStore implements AccountDocumentInterface {
     return $this->formatter->partial($plain, $this->validator->detectType($plain));
   }
 
+  /**
+   * Saves a valid document once and atomically reserves its fingerprint.
+   *
+   * @param \Drupal\user\UserInterface $account
+   *   Account that owns the participant profile.
+   * @param string $canonical
+   *   Canonical document value.
+   *
+   * @throws \LogicException
+   *   When a document is already saved or registered to another account.
+   * @throws \RuntimeException
+   *   When storage or cryptographic keys are unavailable.
+   */
   public function save(UserInterface $account, string $canonical): void {
     if (!$this->canSave()) {
       throw new \RuntimeException('Document storage is unavailable.');
@@ -83,25 +123,35 @@ final class AccountDocumentStore implements AccountDocumentInterface {
     $value = $this->validator->canonicalize($canonical, $type);
     $index = $this->fingerprint->fingerprint($value, $type);
 
-    // Os campos já foram verificados por canSave(): o perfil é do bundle participante, então os campos existem.
+    // Os campos foram verificados por canSave() no bundle participante.
     $profile = $this->participantProfile($account) ?? $this->createParticipantProfile($account);
     if (!$profile->get(self::FIELD)->isEmpty()) {
       throw new \LogicException('Document already saved.');
     }
-    // Mensagem idêntica para "já cadastrado em outra conta" e para falha: não revela quem tem o documento.
+    // A mesma mensagem evita revelar se outra conta já possui o documento.
     if ($this->indexInUseByOther($index, (int) $account->id())) {
       throw new \LogicException('Document already registered.');
     }
     $profile->set(self::FIELD, $this->cipher->encrypt($value));
     $profile->set(self::INDEX_FIELD, $index);
-    $profile->save();
+    try {
+      $profile->save();
+    }
+    catch (EntityStorageException $exception) {
+      if ($this->isDocumentIndexConflict($exception)) {
+        // The unique database key closes the race between the preflight query
+        // and the save without revealing or propagating its fingerprint value.
+        throw new \LogicException('Document already registered.');
+      }
+      throw $exception;
+    }
   }
 
   /**
-   * Preenche o índice de um documento gravado antes do campo de índice existir (atualização do módulo).
+   * Preenche o índice de um documento gravado antes do campo existir.
    *
    * @return string
-   *   'empty' quando não há documento, 'conflict' quando outro perfil já tem o mesmo documento, ou 'indexed'.
+   *   `empty`, `conflict` ou `indexed`, conforme o resultado.
    *
    * @throws \RuntimeException
    *   Quando a cifra ou o fingerprint não está disponível.
@@ -128,14 +178,18 @@ final class AccountDocumentStore implements AccountDocumentInterface {
   }
 
   /**
-   * Definições de campo do perfil participante, lidas uma vez por instância (o serviço é por requisição).
+   * Returns the participant profile's field definitions, cached per request.
    *
    * @return array<string, mixed>
+   *   Field definitions keyed by machine name.
    */
   private function profileFields(): array {
     return $this->profileFields ??= $this->fieldManager->getFieldDefinitions('profile', 'associado');
   }
 
+  /**
+   * Checks whether another account already uses the fingerprint.
+   */
   private function indexInUseByOther(string $index, int $uid): bool {
     $ids = $this->entities->getStorage('profile')->getQuery()
       ->accessCheck(FALSE)
@@ -148,7 +202,29 @@ final class AccountDocumentStore implements AccountDocumentInterface {
   }
 
   /**
-   * Perfil participante do titular, publicado ou não. Mesma ordem de ProfileStorage::loadByUser, sem o filtro de status.
+   * Determines whether an entity storage exception is the fingerprint conflict.
+   */
+  private function isDocumentIndexConflict(\Throwable $exception): bool {
+    do {
+      if ($exception instanceof IntegrityConstraintViolationException
+        && str_contains($exception->getMessage(), 'aculta_id_cpf_documento_unique')) {
+        return TRUE;
+      }
+      $exception = $exception->getPrevious();
+    } while ($exception !== NULL);
+    return FALSE;
+  }
+
+  /**
+   * Loads the account's participant profile, including unpublished profiles.
+   *
+   * Uses ProfileStorage ordering without filtering status.
+   *
+   * @param \Drupal\user\UserInterface $account
+   *   The account whose participant profile is loaded.
+   *
+   * @return \Drupal\profile\Entity\ProfileInterface|null
+   *   The account profile when present.
    */
   private function participantProfile(UserInterface $account): ?ProfileInterface {
     $storage = $this->entities->getStorage('profile');
@@ -163,6 +239,15 @@ final class AccountDocumentStore implements AccountDocumentInterface {
     return $ids ? $storage->load(reset($ids)) : NULL;
   }
 
+  /**
+   * Creates a default participant profile for an account.
+   *
+   * @param \Drupal\user\UserInterface $account
+   *   The account that owns the new profile.
+   *
+   * @return \Drupal\profile\Entity\ProfileInterface
+   *   The unsaved participant profile.
+   */
   private function createParticipantProfile(UserInterface $account): ProfileInterface {
     return $this->entities->getStorage('profile')->create([
       'type' => 'associado',

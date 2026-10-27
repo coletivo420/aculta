@@ -10,6 +10,7 @@ Checkout Pro é a única forma de pagamento do Portal (`aculta_mercadopago_check
 
 Confirmadas por leitura da página oficial:
 - Webhooks, Brasil: https://www.mercadopago.com.br/developers/pt/docs/your-integrations/notifications/webhooks
+- Consulta de fatura recorrente (`GET /authorized_payments/{id}`), Brasil: https://www.mercadopago.com.br/developers/pt/reference/online-payments/subscriptions/get-authorized-payment/get
 - Estornos (Checkout Pro), Argentina: https://www.mercadopago.com.ar/developers/en/docs/checkout-pro-preferences/additional-settings/refunds-and-cancellations
 - Assinatura com plano associado, Brasil: https://www.mercadopago.com.br/developers/pt/docs/subscriptions/integration-configuration/subscription-associated-plan
 - Assinatura sem plano com pagamento pendente, Brasil: https://www.mercadopago.com.br/developers/en/docs/subscriptions/integration-configuration/subscription-no-associated-plan/pending-payments
@@ -43,28 +44,34 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 - `POST /preapproval` com `status: "pending"`, sem `card_token_id`. O comprador conclui o pagamento por um link de pagamento compartilhado.
 - Isso confere com o código: `RecurrenceRequestBuilder::assinatura()` envia `status => 'pending'` e não envia cartão.
 
+**Cobrança recorrente**
+- A referência brasileira de `GET /authorized_payments/{id}` documenta `id`, `preapproval_id`, `external_reference`, `currency_id`, `transaction_amount`, `status` e pagamento vinculado com `id`/`status`.
+- O módulo confere IDs retornados com a notificação assinada e com a assinatura guardada no pedido; só `payment.status = approved` cria pagamento Commerce, e exige valor/moeda idênticos ao pedido de assinatura.
+
 ## Verificado no código
 
 | Área | Como está | Situação |
 | --- | --- | --- |
 | Webhook | `WebhookGuard` valida a assinatura com o SDK e rejeita tópico legado sem assinatura | Alinhado |
-| Estorno | `CheckoutPro::refundPayment()` usa `refundTotal` quando o valor cobre o pagamento, senão `refund` parcial | Alinhado |
-| Cancelamento | `MercadoPagoPaymentService::cancelar()` confere o status remoto e chama `PaymentClient::cancel()` do SDK | Alinhado; o endpoint exato não foi confirmado na documentação lida |
+| Aprovação pelo webhook | O handler consulta o pagamento remoto e exige status aprovado, referência do pedido, moeda e valor exatos antes de concluir o pagamento Commerce | Unit cobre remoto pendente, referência divergente e transição de autorização existente após aprovação; Kernel/Runtime pendentes |
+| Idempotência | Retorno, webhook e cobrança recorrente serializam por ID remoto e consultam duplicatas dentro do lock | Unit cobre retorno aprovado duplicado, lock de recorrência e filtros Commerce; Kernel/Runtime pendentes |
+| Falha remota | Consulta remota não confirma estado local quando API/transport falham | Unit: webhook responde 503 em erro HTTP/timeout para reentrega; retorno lança exceção Commerce segura; transação externa não testada |
+| Estorno | `CheckoutPro::refundPayment()` usa cliente do gateway ativo, lock por pagamento e `x-idempotency-key` estável por total acumulado; persiste somente com resposta `approved` vinculada ao pagamento remoto | Unit retry idempotente, concorrência e status pendente PASS; sandbox parcial/total pendente |
+| Cancelamento | `MercadoPagoPaymentService::cancelar()` serializa pela chave compartilhada do pagamento, recarrega Commerce, consulta ID remoto, aceita apenas `pending`, `in_process` ou `authorized`, e exige resposta `cancelled` com o mesmo ID | [Referência oficial](https://www.mercadopago.com.br/developers/pt/reference/online-payments/checkout-api-payments/create-cancellation/put) confirma `PUT /v1/payments/{payment_id}` e os estados; Unit cobre cancelamento, reconciliação após timeout e IDs divergentes |
 | Assinatura pendente | `status => 'pending'`, sem cartão | Alinhado |
 | Status de assinatura alteráveis | `RecurrenceRequestBuilder::STATUS_ALTERAVEIS = paused, authorized, cancelled` | Confirmar com a referência de `PUT /preapproval/{id}` |
 
 ## Não confirmado
 
-- **Cancelamento de pagamento aprovado ou pendente:** a página lida trata só de estorno. O endpoint de cancelamento usado (`PaymentClient::cancel`) precisa ser confirmado na referência oficial de pagamentos.
 - **Tópicos de assinatura:** os nomes `subscription_preapproval` e `subscription_authorized_payment` estão na tabela de tópicos, mas o payload de cada um não foi lido.
 - **Efeito do cancelamento sobre a preferência e o pedido:** não documentado na página lida.
 - **Exclusão de meios de pagamento:** a regra "Cash in account não pode ser excluído" vem de uma página de outro país; confirmar para o Brasil.
-- **`notification_url` por preferência:** o código envia `notification_url` com `?source_news=ipn`. A página de referência não foi lida; confirmar se a notificação é a configurada no aplicativo ou a da preferência.
+- **`notification_url` por preferência:** o código envia a rota nativa `commerce_payment.notify` sem `source_news=ipn`. O guard só encaminha webhooks modernos após validar a assinatura; tópicos não suportados são reconhecidos sem executar o handler legado.
 
 ## Próximos passos
 
 1. Ler a referência oficial de pagamentos (cancelamento) e de preapproval (`PUT`), e fechar os itens "não confirmado".
-2. Testar no sandbox: estorno parcial e total, cancelamento de pagamento pendente, assinatura pendente com link de pagamento, e recebimento dos tópicos de assinatura.
+2. Homologar no sandbox: aprovação, pendência, rejeição, duplicidade, retorno adulterado, estorno parcial e total, cancelamento de pagamento pendente, assinatura pendente com link de pagamento e recebimento dos tópicos de assinatura.
 3. Só então tratar o Runtime (ver `CHANGELOG` do `aculta_portal`).
 
 ## Verificações em 2026-10-19 (registro)

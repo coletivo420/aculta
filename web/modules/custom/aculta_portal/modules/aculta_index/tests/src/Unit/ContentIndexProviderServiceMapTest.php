@@ -39,7 +39,7 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
       'aculta_image/aculta_image.services.yml',
       'aculta_lms_resources/aculta_lms_resources.services.yml',
       'aculta_magazine/aculta_magazine.services.yml',
-      'aculta_pdf_viewer/modules/aculta_pdf_viewer_group/aculta_pdf_viewer_group.services.yml',
+      'aculta_document_viewer/modules/aculta_document_viewer_group/aculta_document_viewer_group.services.yml',
       'aculta_wiki/aculta_wiki.services.yml',
     ];
     $container = new ContainerBuilder();
@@ -111,7 +111,7 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
       'wiki' => ['node' => ['wiki_entry']],
       'wiki_category' => ['taxonomy_term' => ['wiki_category']],
     ], $this->providerMap($registry));
-    self::assertSame(2, $registry->get('lms_course')->getProjectionVersion(), 'The service map compiles without the optional PDF Group plugin and includes the owner projection version.');
+    self::assertSame(3, $registry->get('lms_course')->getProjectionVersion(), 'The service map compiles without the optional PDF Group plugin and includes the owner projection version with course_video.');
   }
 
   /**

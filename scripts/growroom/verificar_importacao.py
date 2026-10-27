@@ -9,7 +9,8 @@ Checagens:
 - C5 links: destinos somam o total de alvos; imagens de conteúdo nunca vão para descartar.
 - C6 perfis: URLs de perfil permitidas existem no CDX com status 200 e text/html.
 - C7 mapeamento: arquivos de mapeamento batem com a versão atual do build_mapping (mesmos tópicos).
-- C8 dados pessoais: arquivos de importação não contêm e-mail.
+- C8 dados pessoais: mapas não contêm e-mail.
+- C10 autorias: IDs de origem únicos/válidos, nomes presentes e tópicos existentes.
 
 Uso: sudo -n python3 -B -I verificar_importacao.py [--rapido]
   --rapido pula a leitura completa dos arquivos (C1 e C3 só checam existência e tamanho).
@@ -151,26 +152,71 @@ def c7_mapeamento(topicos):
 
 def c8_pii():
     achados = collections.Counter()
-    for nome in ("mapeamento/autor-topicos.json", "mapeamento/topico-forum.json", "perfis-permitidos.json"):
+    for nome in (
+        "mapeamento/autor-topicos.json",
+        "mapeamento/autor-origem.json",
+        "mapeamento/topico-forum.json",
+        "perfis-permitidos.json",
+    ):
         with open(caminho(nome), "rb") as fh:
             achados[nome] = len(EMAIL.findall(fh.read()))
     return {"emails_encontrados": dict(achados), "ok": sum(achados.values()) == 0}
 
 
+def c10_autores_origem(topicos):
+    caminho_manifesto = caminho("mapeamento/autor-origem.json")
+    if not os.path.isfile(caminho_manifesto):
+        return {"registros": 0, "manifesto_ausente": True, "ok": False}
+    with open(caminho_manifesto, encoding="utf-8") as fh:
+        registros = json.load(fh)
+    with open(caminho("conjunto-importacao.json"), encoding="utf-8") as fh:
+        selecionados = {registro["url"] for registro in json.load(fh)}
+    ids = [r.get("origem_id") for r in registros if isinstance(r.get("origem_id"), str)]
+    duplicados = len(ids) - len(set(ids))
+    pendentes = sum(1 for r in registros if r.get("estado") != "pronto" or not r.get("origem_id"))
+    invalidos = sum(1 for source_id in ids
+                    if not bm.re.fullmatch(r"(?:ips4-[0-9]{1,59}|thw-[0-9]{1,59}|nome-[a-f0-9]{59})", source_id))
+    sem_nome = sum(
+        1 for r in registros
+        if not isinstance(r.get("nome"), str)
+        or not r["nome"].strip()
+        or len(r["nome"]) > 255
+        or any(ord(caractere) < 32 or ord(caractere) == 127 for caractere in r["nome"])
+    )
+    topicos_ausentes = sum(1 for r in registros for url in r.get("topicos", []) if url not in topicos)
+    fora_selecao = sum(1 for r in registros for url in r.get("topicos", []) if url not in selecionados)
+    emails = sum(1 for r in registros if EMAIL.search(r.get("nome", "").encode("utf-8")))
+    return {"registros": len(registros), "ids_duplicados": duplicados, "ids_invalidos": invalidos,
+            "pendentes_revisao": pendentes, "sem_nome": sem_nome, "topicos_ausentes": topicos_ausentes,
+            "fora_selecao": fora_selecao, "emails": emails,
+            "ok": duplicados == invalidos == pendentes == sem_nome == topicos_ausentes == fora_selecao == emails == 0}
+
+
 def c9_conjunto(topicos):
-    """Conjunto de importação: só tópicos baixados, nenhum comercial e exceções só de fórum excluído."""
-    conjunto = json.load(open(caminho("conjunto-importacao.json"), encoding="utf-8"))
-    comerciais = bm.comerciais_forte()
+    """Conjunto: tópicos baixados e comerciais/revisões apenas com seleção explícita."""
+    with open(caminho("conjunto-importacao.json"), encoding="utf-8") as fh:
+        conjunto = json.load(fh)
+    comerciais = bm.comerciais_marcados()
+    selecao_manual = bm._selecao_manual()
     fora_do_acervo = sum(1 for c in conjunto if c["url"] not in topicos)
-    # Comercial só entra por escolha explícita (seleção manual), nunca pela regra automática.
-    comerciais_dentro = sum(1 for c in conjunto
-                            if c["url"] in comerciais and bm.thread_id(c["url"]) not in bm.SELECAO_MANUAL)
+    # Anúncios e casos em revisão exigem escolha explícita, nunca inclusão automática.
+    comerciais_dentro = sum(
+        1 for c in conjunto
+        if bm.comercial_requer_selecao_manual(
+            comerciais.get(c["url"]), bm.thread_id(c["url"]) in selecao_manual
+        )
+    )
+    comerciais_revisar_dentro = sum(
+        1 for c in conjunto if comerciais.get(c["url"]) == "revisar"
+    )
     def forum_valor(valor):
         return valor if valor.startswith("thw:") else int(valor)
 
     excecao_sem_exclusao = sum(1 for c in conjunto
                                if c["motivo"] == "excecao_tematica" and not bm.excluido(forum_valor(c["forum"])))
-    return {"tópicos": len(conjunto), "fora_do_acervo": fora_do_acervo, "comerciais_dentro": comerciais_dentro,
+    return {"tópicos": len(conjunto), "fora_do_acervo": fora_do_acervo,
+            "comerciais_marcados_sem_selecao": comerciais_dentro,
+            "marcados_revisar_selecionados": comerciais_revisar_dentro,
             "excecao_sem_exclusao": excecao_sem_exclusao,
             "ok": fora_do_acervo == 0 and comerciais_dentro == 0 and excecao_sem_exclusao == 0}
 
@@ -188,6 +234,7 @@ def main():
         "C7_mapeamento": c7_mapeamento(topicos),
         "C8_dados_pessoais": c8_pii(),
         "C9_conjunto": c9_conjunto(topicos),
+        "C10_autores_origem": c10_autores_origem(topicos),
     }
     resultado["_modo"] = "rapido" if RAPIDO else "completo"
     resultado["_segundos"] = round(time.time() - inicio)

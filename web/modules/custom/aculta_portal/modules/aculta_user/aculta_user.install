@@ -29,6 +29,15 @@ function aculta_user_schema(): array {
     'primary key' => ['id'],
     'indexes' => ['consent_lookup' => ['uid', 'aculta_user_agreement_type', 'id']],
   ];
+  $schema['aculta_user_nickname'] = [
+    'description' => 'Current public nickname slug claim, derived from role Profiles and keyed by UID.',
+    'fields' => [
+      'uid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'slug' => ['type' => 'varchar', 'length' => 40, 'not null' => TRUE],
+    ],
+    'primary key' => ['uid'],
+    'unique keys' => ['nickname_slug' => ['slug']],
+  ];
   return $schema;
 }
 
@@ -262,4 +271,24 @@ function aculta_user_update_10012(): string {
     }
   }
   return (string) t('Granted the student category to existing email-confirmed accounts.');
+}
+
+/** Builds the unique current nickname index from existing role Profiles. */
+function aculta_user_update_10013(): string {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_user_nickname')) {
+    $schema->createTable('aculta_user_nickname', aculta_user_schema()['aculta_user_nickname']);
+  }
+  $result = \Drupal::service('aculta_user.nickname_registry')->rebuild();
+  // Só contagens: nenhum apelido nem uid aparece no retorno.
+  return (string) t('Built the public nickname index for @uids UIDs from @profiles role Profiles; reconciled @reconciled Profiles across @conflicts same-UID conflicts. Indexados: @uids; ignorados sem dono: @no_owner; ignorados vazios: @empty; órfãos com apelido (sem claim): @orphan; formato inválido (sem claim): @invalid.', [
+    '@uids' => $result['uids'],
+    '@profiles' => $result['profiles'],
+    '@reconciled' => $result['reconciled_profiles'],
+    '@conflicts' => $result['same_uid_conflicts'],
+    '@no_owner' => $result['ignored_no_owner'],
+    '@empty' => $result['ignored_empty'],
+    '@orphan' => $result['orphan_with_nickname'],
+    '@invalid' => $result['ignored_invalid_format'],
+  ]);
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_statistics\Kernel;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\aculta_statistics\Controller\StatisticsDashboardController;
 use Drupal\aculta_statistics\Storage\DailyAggregateStorage;
 use Drupal\KernelTests\KernelTestBase;
@@ -44,7 +45,10 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
     $storage->record('wiki.entries.read', '10', 3);
     $storage->record('wiki.entries.read', '11', 2);
 
-    $request = Request::create('/painel-administrativo/aculta/estatisticas', 'GET', ['metrica' => 'wiki.entries.read', 'dias' => 14]);
+    $request = Request::create('/painel-administrativo/aculta/estatisticas', 'GET', [
+      'metrica' => 'wiki.entries.read',
+      'dias' => 14,
+    ]);
     $page = StatisticsDashboardController::create($this->container)->overview($request);
     $html = (string) $this->container->get('renderer')->renderInIsolation($page);
     $this->assertStringContainsString('<option value="14" selected', $html);
@@ -67,7 +71,11 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
     $storage->record('commerce.orders.by_domain', 'main.aculta|BRL', 2);
     $storage->record('commerce.orders.by_domain', 'loja.aculta|BRL', 5);
 
-    $request = Request::create('/painel-administrativo/aculta/estatisticas', 'GET', ['metrica' => 'commerce.orders.by_domain', 'dias' => 7, 'dominio' => 'loja.aculta']);
+    $request = Request::create('/painel-administrativo/aculta/estatisticas', 'GET', [
+      'metrica' => 'commerce.orders.by_domain',
+      'dias' => 7,
+      'dominio' => 'loja.aculta',
+    ]);
     $page = StatisticsDashboardController::create($this->container)->overview($request);
     $html = (string) $this->container->get('renderer')->renderInIsolation($page);
     $this->assertStringContainsString('<option value="loja.aculta" selected', $html);
@@ -87,7 +95,10 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
     $storage->record('wiki.entries.read', '10', 4);
     $storage->replaceDay('wiki.entries.read', $today - 8, ['10' => 2]);
 
-    $request = Request::create('/painel-administrativo/aculta/estatisticas', 'GET', ['metrica' => 'wiki.entries.read', 'dias' => 7]);
+    $request = Request::create('/painel-administrativo/aculta/estatisticas', 'GET', [
+      'metrica' => 'wiki.entries.read',
+      'dias' => 7,
+    ]);
     $page = StatisticsDashboardController::create($this->container)->overview($request);
     $html = (string) $this->container->get('renderer')->renderInIsolation($page);
     $this->assertStringContainsString('Período anterior (mesmo tamanho): 2 leituras', $html);
@@ -114,7 +125,7 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
    * Área desconhecida responde 404.
    */
   public function testUnknownAreaIsNotFound(): void {
-    $this->expectException(\Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+    $this->expectException(NotFoundHttpException::class);
     StatisticsDashboardController::create($this->container)->overview(Request::create('/x'), 'inexistente');
   }
 

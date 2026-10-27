@@ -15,6 +15,11 @@ temporária dos arquivos alvo e gera `patches-aculta.json` e os arquivos em
 só então Composer aplica os patches como parte do build. `--check` valida sem
 escrever arquivos.
 
+O exportador recusa `patches/` ou `patches/aculta_patcher/` quando forem
+symlinks, para manter os artefatos dentro da raiz do projeto. O Unit cobre essa
+fronteira; a execução completa com registros ativos e `composer patches-repatch`
+continua pendente.
+
 ```sh
 php vendor/drush/drush/drush.php aculta:patcher-export --check
 php vendor/drush/drush/drush.php aculta:patcher-export

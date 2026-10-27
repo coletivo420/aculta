@@ -3,7 +3,9 @@
 Submódulo do `aculta_portal` que integra o sitemap multidomínio da plataforma (linha 0.1.x,
 ADR-009 em `docs/decisions/`).
 
-## Estado (0.1.1: sitemap multidomínio completo no servidor de testes)
+## Estado (0.1.2: sitemap multidomínio completo no servidor de testes)
+
+Versão do `info.yml` e do CHANGELOG: `0.1.2`. Verificações executadas: `php tests/run.php`, suíte Unit e Kernel. O Kernel valida descoberta do plugin e registro da entidade do Simple XML Sitemap em MariaDB dedicado; a execução atual passou (2 testes, 3 assertions), com depreciações em Core/contrib.
 
 - Endereço por ambiente: a `base_url` segue o site definido pelo ACULTA Deployer (`var/deployer/environment.json`).
 
@@ -15,8 +17,8 @@ ADR-009 em `docs/decisions/`).
 - Variante `default` (sitemap institucional anterior) desabilitada. `/sitemaps/default/sitemap.xml` responde 404.
 - Paridade com o sitemap institucional anterior: home do MAIN (`https://aculta.org/`) e `/contato`
   (webform) entram no MAIN. Antes da G, a home do MAIN faltava.
-- Config exportada para `config/sync`: variantes, tipo `aculta_purpose`, `default_variant` e
-  `aculta_portal_sitemap` em `core.extension`.
+- Config exportada para `config/sync`: variantes, tipo `aculta_purpose` e `default_variant`. O módulo consta em
+  `core.extension` com valor `0` (desabilitado): a habilitação é ato de deploy e não está exportada.
 - A `base_url` do `simple_sitemap` é `https://aculta.org` também no servidor de testes. O índice de testes
   aponta para produção; o servidor de testes é noindex.
 

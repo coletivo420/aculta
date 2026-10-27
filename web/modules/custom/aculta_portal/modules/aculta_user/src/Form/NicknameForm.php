@@ -58,7 +58,7 @@ final class NicknameForm extends FormBase {
       '#default_value' => (string) ($profile->get('field_nickname')->value ?? ''),
       '#maxlength' => AccountNames::MAX,
       '#required' => TRUE,
-      '#description' => $this->t('De 3 a 40 caracteres: letras sem acento, números e hífen. Alguns nomes são reservados. A alteração muda a URL pública sem redirecionar o endereço antigo.'),
+      '#description' => $this->t('De 3 a 40 caracteres: letras sem acento, números e hífen; um sufixo numérico como #2 é permitido e vira -2 na URL. Alguns nomes são reservados. A alteração muda a URL pública sem redirecionar o endereço antigo.'),
     ];
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [

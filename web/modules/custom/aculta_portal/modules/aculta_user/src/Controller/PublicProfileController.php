@@ -10,6 +10,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_user\Account\AccountNames;
+use Drupal\aculta_user\Account\NicknameRegistry;
 use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\aculta_user\Form\FriendshipActionForm;
 use Drupal\aculta_user\PublicProfilePolicy;
@@ -27,7 +29,8 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
 /**
  * Página pública do perfil em /u/<apelido>.
  *
- * Perfil inexistente, sem apelido ou fora do propósito MAIN responde 404. Perfil privado mostra só foto e apelido. Só entra no render o que PublicProfilePolicy liberar.
+ * Perfil inexistente, sem apelido ou fora do propósito MAIN responde 404.
+ * Perfil privado mostra só foto e apelido. O render aplica PublicProfilePolicy.
  */
 final class PublicProfileController extends ControllerBase {
 
@@ -46,6 +49,7 @@ final class PublicProfileController extends ControllerBase {
     private readonly FormBuilderInterface $forms,
     private readonly ModuleHandlerInterface $modules,
     private readonly AvatarResolver $avatars,
+    private readonly NicknameRegistry $nicknameRegistry,
   ) {}
 
   /**
@@ -62,6 +66,7 @@ final class PublicProfileController extends ControllerBase {
       $container->get('form_builder'),
       $container->get('module_handler'),
       $container->get('aculta_user.avatar_resolver'),
+      $container->get('aculta_user.nickname_registry'),
     );
   }
 
@@ -87,7 +92,7 @@ final class PublicProfileController extends ControllerBase {
       ->addCacheTags(['profile:' . $profile->id(), 'user:' . $profile->getOwnerId()])
       ->addCacheContexts(['url.path']);
 
-    // Perfil privado mostra só foto e apelido (PublicProfilePolicy). Sem apelido, a resposta é a de inexistente.
+    // Perfil privado mostra só foto e apelido. Sem apelido, retorna 404.
     $items = $this->policy->publicItems($this->valuesOf($profile, $account));
     if ($items === []) {
       throw new NotFoundHttpException();
@@ -96,11 +101,30 @@ final class PublicProfileController extends ControllerBase {
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'public-profile'],
-      'header' => ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-header'], 'avatar' => $this->avatar($account, $displayNickname, isset($items['foto'])), 'identity' => ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-identity'], 'name' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $displayNickname, '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-name'])]]],
+      'header' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'public-profile-header'],
+        'avatar' => $this->avatar($account, $displayNickname, isset($items['foto'])),
+        'identity' => [
+          '#type' => 'container',
+          '#attributes' => ['data-portal-ui' => 'public-profile-identity'],
+          'name' => [
+            '#theme' => 'aculta_portal_element',
+            '#tag' => 'h2',
+            '#value' => $displayNickname,
+            '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-name']),
+          ],
+        ],
+      ],
     ];
 
     if (isset($items['bio']) && $profile->hasField('field_bio') && !$profile->get('field_bio')->isEmpty()) {
-      $build['bio'] = ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => (string) $profile->get('field_bio')->value, '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-bio'])];
+      $build['bio'] = [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'p',
+        '#value' => (string) $profile->get('field_bio')->value,
+        '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-bio']),
+      ];
     }
 
     $links = [];
@@ -125,14 +149,21 @@ final class PublicProfileController extends ControllerBase {
         $cache->addCacheableDependency($relationship);
       }
     }
-    // Other modules add to the profile's actions (the messenger's "Opções" box, which holds the friendship actions).
+    // Modules may add profile actions, such as Messenger friendship actions.
     $actions = $build['header']['actions'] ?? [];
     $this->modules->alter('aculta_user_public_profile_actions', $actions, $profile);
     if ($actions !== []) {
       $build['header']['actions'] = $actions;
     }
     if ($links !== []) {
-      $build['links'] = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-links', 'aria-label' => (string) $this->t('Contatos e redes')], 'items' => $links];
+      $build['links'] = [
+        '#type' => 'container',
+        '#attributes' => [
+          'data-portal-ui' => 'public-profile-links',
+          'aria-label' => (string) $this->t('Contatos e redes'),
+        ],
+        'items' => $links,
+      ];
     }
 
     $this->modules->alter('aculta_user_public_profile', $build, $profile);
@@ -141,7 +172,7 @@ final class PublicProfileController extends ControllerBase {
   }
 
   /**
-   * Avatar do perfil: foto permitida, acervo ilustrativo ou inicial de segurança.
+   * Builds a permitted photo, archive avatar or safe initial for the profile.
    */
   private function avatar($account, string $apelido, bool $showPhoto): array {
     $wrap = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-avatar']];
@@ -158,7 +189,7 @@ final class PublicProfileController extends ControllerBase {
   }
 
   /**
-   * Botão de rede social (Instagram, Facebook, Reddit): ícone Bootstrap e nome, em nova aba.
+   * Builds a social network link with icon, name and a new tab.
    */
   private function socialLink(string $key, string $uri): array {
     $label = (string) SocialNetworks::NETWORKS[$key]['label'];
@@ -171,7 +202,7 @@ final class PublicProfileController extends ControllerBase {
   }
 
   /**
-   * E-mail do perfil: botão com ícone e rótulo, como as demais redes, com link mailto:.
+   * Builds the profile email link using a mailto URI.
    */
   private function emailLink(string $email): array {
     $label = (string) $this->t('E-mail');
@@ -185,24 +216,28 @@ final class PublicProfileController extends ControllerBase {
    * Carrega o perfil participante cujo apelido é o informado.
    */
   private function loadByNickname(string $apelido): ?ProfileInterface {
-    $storage = $this->entityTypeManagerService->getStorage('profile');
-    $ids = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('type', PerfilDoPapel::TIPOS, 'IN')
-      ->condition('field_nickname', $apelido)
-      ->range(0, 1)
-      ->execute();
-    if ($ids === []) {
+    $slug = AccountNames::publicRouteSlug($apelido);
+    if ($slug === NULL) {
       return NULL;
     }
-    $profile = $storage->load(reset($ids));
+    $uid = $this->nicknameRegistry->uidForSlug($slug);
+    if ($uid === NULL) {
+      return NULL;
+    }
+    $account = $this->entityTypeManagerService->getStorage('user')->load($uid);
+    if ($account === NULL) {
+      return NULL;
+    }
+    $storage = $this->entityTypeManagerService->getStorage('profile');
+    $profile = PerfilDoPapel::principal($storage, $account);
     return $profile instanceof ProfileInterface ? $profile : NULL;
   }
 
   /**
-   * Lê os valores de visibilidade do perfil. Campo ausente usa o padrão: perfil público, itens privados.
+   * Reads visibility; absent fields default to public and private items.
    *
-   * @return array{publico: bool, obrigatorio: bool, apelido: string, exibir_foto: bool, exibir_bio: bool, exibir_email: bool, exibir_redes: bool}
+   * @return array{publico: bool, obrigatorio: bool, apelido: string, exibir_foto: bool, exibir_bio: bool,
+   *   exibir_email: bool, exibir_redes: bool}
    */
   private function valuesOf(ProfileInterface $profile, $account): array {
     $flag = static function (string $field, bool $default) use ($profile): bool {

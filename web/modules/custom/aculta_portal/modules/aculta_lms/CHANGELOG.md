@@ -1,9 +1,40 @@
-## 0.1.0-dev.89 — avatar padrão nas turmas e no feedback do educador (Fase 4)
+## 0.1.0-dev.93 — avatar padrão nas turmas e no feedback do educador (Fase 4)
 
 - Roster da turma e participantes da sala mostram cartão de autor (`profile_compact`, tamanho `sm`)
   com a mesma regra de avatar do site. Sem identidade pública, o nome de exibição continua na lista.
 - Feedback do educador em resposta (`lms_answer_comment`) mostra o cartão com o papel "Educador(a)".
 - Validação: PHP lint PASS. PHPUnit e Runtime não executados (sem `vendor/`). RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.92 — dependência declarada do provedor de pagamento
+
+- `aculta_lms` declara dependência direta de `aculta_portal:aculta_pagamentos_mercadopago`; nenhum código do LMS mudou. Os quatro módulos LMS relacionados verificados não usam APIs do MP.
+- Unit: 87 testes / 447 assertions PASS (8 depreciações PHPUnit). Kernel MariaDB dedicado: 29 testes / 836 assertions PASS, com 98 depreciações Core/contrib. O harness usa classes reais MP e os contratos neutros.
+
+## 0.1.0-dev.91 — fechar setup dos Kernels LMS com contratos reais — 2026-10-26
+
+- Os harnesses Kernel que habilitam ou instalam `aculta_lms` agora compartilham
+  definições de teste das classes reais necessárias de Portal, Messenger e
+  Studio. O recorte não instala configuração alheia ao cenário nem adiciona
+  serviços fictícios ao produto. `AcultaLmsInstallTest` também verifica o
+  serviço real `CheckoutSettings`, o tipo padrão `curso` e o controller
+  Ganjalab referenciado pela rota.
+- Kernel agregado: 29 testes / 835 assertions PASS no MariaDB dedicado; uma
+  depreciação vem de `webform_score` contrib. PHPCS Drupal/DrupalPractice e
+  PHP lint dos arquivos alterados PASS. Isso remove os erros de setup dos
+  harnesses LMS, mas não equivale a instalar a closure completa Portal/
+  Messenger/Studio com toda sua configuração. Runtime não foi alterado.
+
+## 0.1.0-dev.90 — Kernel focal do painel de turma com contratos reais — 2026-10-26
+
+- `ClassDashboardKernelTest` não habilita a instalação inteira do Portal, pois isso carregava configuração e serviços de Commerce/Domain não usados pelo caso. O fixture Kernel mantém Group, LMS e `lms_classes` reais, registra os namespaces de código reais e instancia `LearningDashboardManager`, `ClassDashboardAccessCheck`, `LearningDashboardController`, prazo e compositor de Studio reais. Não há serviço fictício nem alteração no produto.
+- O teste passou: 1 teste / 48 assertions, verificando educador, estudante, vínculo turma→curso, escopo de membros, cache tags/contextos e invalidação ao remover relacionamento. PHPCS e PHP lint PASS. 39 depreciações foram reportadas por Core/contrib/Group/LMS.
+- Isso fecha a falha de setup deste caso focal, sem validar a compilação/inicialização limpa de toda a cadeia de serviços Portal/Messenger/Studio. Kernel agregado reexecutado: 29 testes / 98 assertions, 22 erros de setup; todos os 22 harnesses que instalam `aculta_lms` sem Portal falham pelo mesmo serviço obrigatório `aculta_portal.checkout_settings`. Nenhuma assertion funcional falhou nos testes que executaram. Runtime não foi alterado.
+
+## 0.1.0-dev.89 — regressão da suíte Kernel agregada — 2026-10-26
+
+- Unit LMS: 87 testes / 447 assertions PASS (8 depreciações PHPUnit).
+- Kernel LMS agregado: 29 testes, 50 assertions e 23 erros de setup. Os harnesses que compilam serviços `aculta_lms` sem a dependência obrigatória Portal falham por `aculta_portal.checkout_settings` ausente; não se trata de assertions funcionais. Alguns focais executados anteriormente continuam registrados abaixo. A cadeia de instalação limpa Portal/Messenger/Studio permanece sem verificação agregada.
+- Reproduzido isoladamente no worktree `ClassDashboardKernelTest`: 1 erro/0 assertions na compilação do container pela mesma ausência de `aculta_portal.checkout_settings`; a falha é do harness incompleto, sem evidência de defeito funcional no dashboard.
 
 ## 0.1.0-dev.88 — publicar avisos pelo kernel Messenger (2026-10-24)
 

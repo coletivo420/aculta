@@ -20,6 +20,7 @@ interface Ga4Settings {
    * Só devolve chave com tipo `service_account` e chave privada. Nunca registrar o retorno.
    *
    * @return array<string, mixed>|null
+   *   Chave da conta de serviço decodificada ou NULL.
    */
   public function serviceAccount(): ?array;
 

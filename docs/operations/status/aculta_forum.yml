@@ -1,18 +1,11 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-state: RC
+version: 0.1.0-dev.323
+state: Dev
 next_phase: >-
-  Candidato RC 0.1.0-rc.2 concluído em 2026-10-25, depois de regredir para
-  Dev e fechar todas as fases F-M0–F-M7 com evidência executada. Unit
-  184/1.332, Unit Messenger 261/2.023, Kernel 150/2.863, Functional 6/6,
-  PHPCS sem erros, gates de rotas/Portal/slugs/Domain/status PASS e
-  navegador com seguir/avisos 13/13, acessibilidade 49/49 nos dois temas,
-  categorias 9/9, painel 12/12, anexo/mover 4/4 e F-GROUP local. O deploy
-  em Alpha continua dependendo de autorização operacional. Permanecem como
-  portas, não como pendência de código: migração sobre dados reais, entrega
-  de e-mail/digest, ativação do F-GROUP no servidor de testes e em produção,
-  aparelho físico e concorrência real. Checklist em
-  [docs/RC.md](web/modules/custom/aculta_portal/modules/aculta_forum/docs/RC.md).
-version_note: "0.1.0-rc.2 (fases F-M0–F-M7 fechadas; Unit 184/1.332; Unit Messenger 261/2.023; Kernel 150/2.863; Functional 6/6; PHPCS 0 erros; navegador 13/13 e acessibilidade 49/49 nos dois temas; instalação limpa, migração/corte local e F-GROUP homologados)"
+  Reexecutar testes focais de autoria histórica e revisar cartões da última
+  atividade e do conteúdo no Firefox ESR; preparar/validar importador Growroom
+  idempotente em banco efêmero. RC.2 é histórico, sem candidato vigente.
+progress_note: "Dev.323: PublicForumLastActivityAuthorHooks agora usa buildLegacyForum e aplica -gr ao cartão de autoria histórica da última atividade. Correção de contrato F-D44; Unit/visual focal pendente. RC.2 reclassificado como histórico; importador de conteúdo/assets, banco efêmero e homologação do acervo pendentes. Sem Runtime write."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; gate: scripts/validate-no-temporary-route-aliases.php.

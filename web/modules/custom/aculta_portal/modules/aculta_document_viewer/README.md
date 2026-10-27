@@ -16,8 +16,10 @@ padrão e respeita a opção explícita do painel/formatter.
 
 ## Responsabilidade e limites
 
-- Integra Media/File ao PDF.js oficial local, sem armazenar conteúdo, permissões,
-  documentos ou progresso próprios.
+- Fornece leitores DOCX/planilhas e integra Media/File ao motor PDF.js local
+  pertencente a `aculta_pdf_viewer`; não mantém cópias do motor ou de seus assets.
+  Mantém configuração e políticas próprias para Media/File, sem armazenar
+  conteúdo, permissões, documentos ou progresso próprios.
 - CSP é observada com `drupal/csp` em Report-Only e endpoint local `drupal/reporting`;
   Config Sync deixa `enforce` desligado. O candidato só vai a RC após
   testes/gates e revisão visual pré-deploy; Alpha confere relatórios e enforcement
@@ -87,12 +89,13 @@ padrão e respeita a opção explícita do painel/formatter.
    `application/pdf`, extensão `.pdf` e URL local gerada pelo File URL Generator.
    Arquivo privado tem cache max-age zero e não recebe thumbnail. A resposta contém
    tags/contexts/max-age de Media, File e access, os controles acessíveis e a
-   biblioteca local `aculta_document_viewer/viewer`.
+   biblioteca compartilhada `aculta_pdf_viewer/viewer`, pertencente ao módulo
+   `aculta_pdf_viewer`.
    A miniatura pública, quando habilitada, é validada e registrada como File
    temporário pelo `aculta_image.generated_file`, renderizada por
    `aculta_image.render` e removida pela limpeza normal após
    `system.file:temporary_maximum_age`.
-5. `js/pdf-viewer.mjs` importa `pdf.mjs` e aponta o worker para
+5. `aculta_pdf_viewer/js/pdf-viewer.mjs` importa `pdf.mjs` e aponta o worker para
    `pdf.worker.mjs` da distribuição Mozilla instalada localmente em
    `/libraries/pdf.js`. Usa canvas, navegação, zoom com restauração, busca textual por página e
    tela cheia; erro de carregamento informa o usuário e preserva o link de
@@ -100,7 +103,8 @@ padrão e respeita a opção explícita do painel/formatter.
    já existente via CKEditor no Runtime; a criação/upload pela UI como
    `content_editor` ainda não foi verificada. O registro, inclusive dos itens limpos, está em
    [TESTES-NAVEGADOR](../../../../../../docs/portal/TESTES-NAVEGADOR.md).
-6. `viewer-wrapper.html` e `js/pdf-viewer-wrapper.mjs` aplicam os padrões do
+6. `aculta_pdf_viewer/viewer-wrapper.html` e
+   `aculta_pdf_viewer/js/pdf-viewer-wrapper.mjs` aplicam os padrões do
    formatter ao viewer completo pelo evento `webviewerloaded` do PDF.js 6.4.299,
    antes de `PDFViewerApplication.run()`. Nenhum arquivo da distribuição
    Composer é alterado. O builder fornece somente URL local após validar o

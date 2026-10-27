@@ -11,18 +11,24 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Linhas do status das consultas de CEP: APIs (último resultado do cron) e a base local (versão e idade).
+ * Status das consultas de CEP e da base local.
  *
- * Neutro: devolve dados e o estado (ok, attention, error), sem marcação. O Portal monta a tabela com os símbolos e
- * as classes de status já existentes (PortalRequirementsController).
+ * Devolve linhas neutras com estado e detalhes. O Portal monta a tabela usando
+ * os símbolos e classes de status existentes.
  */
 final class CepStatusReport {
 
-  /** Base com até 90 dias é atual; entre 91 e 180, atenção; acima disso, erro (a base precisa ser reimportada). */
+  /**
+   * Idade máxima, em dias, para considerar a base local atual.
+   *
+   * Entre 91 e 180 dias o estado é de atenção; depois disso, é erro.
+   */
   public const LOCAL_OK_DAYS = 90;
   public const LOCAL_ATTENTION_DAYS = 180;
 
-  /** Resultado do cron com mais de 2 dias: o cron pode estar parado. */
+  /**
+   * Resultado do cron com mais de dois dias é considerado antigo.
+   */
   public const API_STALE_SECONDS = 172800;
 
   public function __construct(
@@ -42,6 +48,7 @@ final class CepStatusReport {
    * Linhas: item, valor, detalhe e status (ok, attention ou error).
    *
    * @return array<int, array{item: string, value: string, detail: string, status: string}>
+   *   Status rows for each provider and the local database.
    */
   public function rows(): array {
     $rows = [];
@@ -52,7 +59,12 @@ final class CepStatusReport {
     return $rows;
   }
 
-  /** @return array<int, array{item: string, value: string, detail: string, status: string}> */
+  /**
+   * Returns the API status rows.
+   *
+   * @return array<int, array{item: string, value: string, detail: string, status: string}>
+   *   API rows, one for each configured provider.
+   */
   private function apiRows(): array {
     $last = $this->probe->last();
     $rows = [];
@@ -82,7 +94,10 @@ final class CepStatusReport {
       $ok = (bool) $result['ok'];
       $status = $ok && !$stale ? 'ok' : ($ok ? 'attention' : 'error');
       $value = $ok
-        ? (string) $this->translation->translate('Respondendo (HTTP @code, @ms ms)', ['@code' => (string) $result['http_status'], '@ms' => (string) $result['ms']])
+        ? (string) $this->translation->translate(
+          'Respondendo (HTTP @code, @ms ms)',
+          ['@code' => (string) $result['http_status'], '@ms' => (string) $result['ms']],
+        )
         : (string) $this->translation->translate('Falhou (HTTP @code)', ['@code' => $result['http_status'] === NULL ? 'sem resposta' : (string) $result['http_status']]);
       $rows[] = [
         'item' => (string) $label,
@@ -97,7 +112,12 @@ final class CepStatusReport {
     return $rows;
   }
 
-  /** @return array{item: string, value: string, detail: string, status: string} */
+  /**
+   * Returns the local database status row.
+   *
+   * @return array{item: string, value: string, detail: string, status: string}
+   *   Status for the local CEP database.
+   */
   private function localRow(): array {
     $label = (string) $this->translation->translate('Base local de CEPs');
     if (!$this->sources->enabled('local')) {
@@ -141,7 +161,15 @@ final class CepStatusReport {
     ];
   }
 
-  /** Dias entre a data da versão (Y-m-d) e hoje, ou NULL quando a data é inválida ou futura. */
+  /**
+   * Calculates how old the imported database is.
+   *
+   * @param string $version
+   *   Import date in Y-m-d format.
+   *
+   * @return int|null
+   *   Days since import, or NULL when the date is invalid or in the future.
+   */
   private function daysSince(string $version): ?int {
     $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $version);
     if ($date === FALSE || $date->format('Y-m-d') !== $version) {

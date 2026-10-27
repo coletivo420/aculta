@@ -7,12 +7,16 @@ namespace Drupal\Tests\aculta_portal\Unit;
 use Drupal\aculta_portal\Form\AccountOtherDataForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Verifies context-specific return URLs without duplicating CPF/CNPJ storage.
@@ -20,6 +24,32 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[CoversClass(AccountOtherDataForm::class)]
 #[Group('aculta_portal')]
 final class AccountOtherDataStudioReturnTest extends UnitTestCase {
+
+  /**
+   * The container that was active before this test changed the global one.
+   */
+  private ?ContainerInterface $originalContainer = NULL;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->originalContainer = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $container = new ContainerBuilder();
+    $pathValidator = $this->createMock(PathValidatorInterface::class);
+    $pathValidator->method('getUrlIfValidWithoutAccessCheck')->willReturn(NULL);
+    $container->set('path.validator', $pathValidator);
+    \Drupal::setContainer($container);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function tearDown(): void {
+    \Drupal::setContainer($this->originalContainer ?? new ContainerBuilder());
+    parent::tearDown();
+  }
 
   /**
    * The legacy form continues returning to its original owner route.
@@ -93,7 +123,10 @@ final class AccountOtherDataStudioReturnTest extends UnitTestCase {
     return $this->returnUrl($form)->getRouteName();
   }
 
-  private function returnUrl(AccountOtherDataForm $form): \Drupal\Core\Url {
+  /**
+   * Invokes the private return URL helper without form submission.
+   */
+  private function returnUrl(AccountOtherDataForm $form): Url {
     return (new \ReflectionMethod(AccountOtherDataForm::class, 'returnUrl'))->invoke($form);
   }
 

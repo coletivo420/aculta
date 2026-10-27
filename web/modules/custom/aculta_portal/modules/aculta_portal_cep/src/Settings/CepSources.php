@@ -9,18 +9,19 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Fontes de consulta de CEP: base local (arquivos), ViaCEP e BrasilAPI.
+ * Provides the configured CEP lookup sources.
  *
- * A ordem vem da configuração: a fonte padrão vem primeiro e as demais seguem pelo peso (tabledrag). Só as fontes
- * ativas entram na consulta. Substitui a ordem fixa que estava no código (base local, ViaCEP, BrasilAPI).
+ * The default source is checked first; other enabled sources follow their
+ * configured tabledrag weight.
  */
 final class CepSources {
 
   public const SETTINGS = 'aculta_portal_cep.settings';
 
   /**
-   * Padrão quando a configuração ainda não existe (módulo já instalado antes desta configuração). Igual ao
-   * config/install/aculta_portal_cep.settings.yml.
+   * Defaults for sites without saved source configuration.
+   *
+   * These values match config/install/aculta_portal_cep.settings.yml.
    */
   public const DEFAULTS = [
     'default_source' => 'local',
@@ -31,8 +32,10 @@ final class CepSources {
     ],
   ];
 
-  /** Identificadores e rótulos das fontes, na ordem padrão. */
-  
+  /**
+   * Source identifiers and labels in their default order.
+   */
+
   public const LABELS = [
     'local' => 'Base local de CEPs (arquivos)',
     'viacep' => 'ViaCEP',
@@ -46,7 +49,9 @@ final class CepSources {
     private readonly TranslationInterface $translation,
   ) {}
 
-  /** Fontes ativas, na ordem de consulta: a padrão primeiro, depois as demais pelo peso. */
+  /**
+   * Returns enabled sources in lookup order.
+   */
   public function ordered(): array {
     $config = $this->configs->get(self::SETTINGS);
     $sources = $config->get('sources') ?? self::DEFAULTS['sources'];
@@ -65,12 +70,16 @@ final class CepSources {
     return $order;
   }
 
-  /** Fonte ativa na configuração. */
+  /**
+   * Checks whether a source is enabled.
+   */
   public function enabled(string $id): bool {
     return in_array($id, $this->ordered(), TRUE);
   }
 
-  /** Rótulo traduzível de uma fonte. */
+  /**
+   * Returns the translated label for a source.
+   */
   public function label(string $id): string {
     return (string) $this->translation->translate(self::LABELS[$id] ?? $id);
   }

@@ -116,9 +116,14 @@ final class CommerceOrderPaidSubscriberTest extends TestCase {
     $order->method('get')->with('coupons')->willReturn($coupons);
     // Ajuste de promoção: o subscriber só usa getAmount(). Adjustment real exige o container do Drupal.
     $adjustment = new class() {
+
+      /**
+       * Devolve o ajuste de promoção.
+       */
       public function getAmount(): Price {
         return new Price('-10.00', 'BRL');
       }
+
     };
     $order->method('getAdjustments')->willReturn([$adjustment]);
 

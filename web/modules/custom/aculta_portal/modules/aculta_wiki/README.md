@@ -16,6 +16,26 @@ rotas próprias da Wiki420. O plano completo, com fases, riscos e decisões
 pendentes, está em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+## Auditoria M-0 — RBAC de propostas (2026-10-26)
+
+O Kernel focal `testProposalSubmissionUsesPrivateRevisionedEntityAndAccess`
+passou em MariaDB isolado (1 teste / 216 assertions; 256 depreciações Core/contrib
+e duas de PHPUnit). A checagem read-only do Runtime Wiki confirmou que os grants
+de propostas ainda não estão ativos: `email_confirmed` não tem
+`submit wiki proposals`/`view own wiki proposals`, e `content_editor` não tem
+`view any wiki proposals`/`moderate wiki proposals`. Os quatro grants existem em
+`config/sync/user.role.*.yml`. Assim, envio e fila editorial permanecem
+indisponíveis no Runtime, em vez de receberem acesso por fallback. O handler da
+proposta e as rotas mantêm acesso fechado por permissão; não foi identificada
+exposição de propostas por essa divergência. Nenhuma configuração ativa foi
+alterada. A reconciliação continua bloqueada até autorização de operação de
+configuração e revisão pós-apply; ver o registro M-0.
+
+Dev.118 adiciona `WikiProposalRolePermissionsConfigTest` (1 teste / 8
+assertions) para impedir que uma alteração futura remova os grants necessários
+dos dois papéis versionados. O teste protege o Config Sync e não representa
+homologação dos grants ativos no Runtime.
+
 ## Estado atual
 
 - Contrato Wiki→Messenger v1 documentado em

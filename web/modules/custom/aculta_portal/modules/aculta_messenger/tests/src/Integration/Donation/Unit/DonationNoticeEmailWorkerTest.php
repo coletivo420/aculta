@@ -45,7 +45,7 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
     $notices = $this->createMock(DonationNoticeManagerInterface::class);
     $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
       'email_summary' => 'O pagamento da sua doação foi aprovado.',
-      'url' => Url::fromUri('https://aculta.org/meu-apoio/pedidos/100'),
+      'url' => Url::fromUri('https://example.com/meu-apoio/pedidos/100'),
     ]);
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->with(27, 'doacao')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
@@ -158,7 +158,7 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
     $notices = $this->createMock(DonationNoticeManagerInterface::class);
     $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
       'email_summary' => 'Aviso de doação.',
-      'url' => Url::fromUri('https://aculta.org/meu-apoio/pedidos/100'),
+      'url' => Url::fromUri('https://example.com/meu-apoio/pedidos/100'),
     ]);
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->with(27, 'doacao')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
@@ -195,7 +195,7 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
     $notices = $this->createMock(DonationNoticeManagerInterface::class);
     $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
       'email_summary' => 'Aviso de doação.',
-      'url' => Url::fromUri('https://aculta.org/meu-apoio/pedidos/100'),
+      'url' => Url::fromUri('https://example.com/meu-apoio/pedidos/100'),
     ]);
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->with(27, 'doacao')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
@@ -227,7 +227,7 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
     $notices = $this->createMock(DonationNoticeManagerInterface::class);
     $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
       'email_summary' => 'Aviso de doação.',
-      'url' => Url::fromUri('https://aculta.org/meu-apoio/pedidos/100'),
+      'url' => Url::fromUri('https://example.com/meu-apoio/pedidos/100'),
     ]);
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->with(27, 'doacao')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
@@ -324,7 +324,7 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
    * Runs the worker with a controlled URL assembler. */
   private function withUrlAssembler(callable $callback): void {
     $assembler = $this->createMock(UnroutedUrlAssemblerInterface::class);
-    $assembler->method('assemble')->willReturn('https://aculta.org/meu-apoio/pedidos/100');
+    $assembler->method('assemble')->willReturn('https://example.com/meu-apoio/pedidos/100');
     $container = new Container();
     $container->set('unrouted_url_assembler', $assembler);
     \Drupal::setContainer($container);

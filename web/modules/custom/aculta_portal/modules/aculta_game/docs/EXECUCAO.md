@@ -1,5 +1,19 @@
 # Execução por fases — ACULTA Game
 
+## Dev.17 — centralizar avisos no Messenger (2026-10-25)
+
+- Game publica o evento de conquista no contrato central; Messenger mantém
+  persistência, leitura e migração da central. Mailer permanece dono do
+  transporte de e-mail. O storage/queue paralelo de aviso do Game foi removido.
+- Unit Game: 11 testes / 51 assertions PASS. Kernel
+  `GameAchievementNoticePersistenceKernelTest`: 3 / 30 PASS, revalidando
+  concessões revogadas, migração idempotente e retry da fila legada. Duas
+  deprecações são de annotations `@EntityType` em Message/Message Template.
+- O teste Kernel do Fórum em `ForumPostParticipationPolicyKernelTest` comprova
+  elegibilidade da policy, não a concessão pelo hook `BadgeEvaluationHooks`.
+  Próxima evidência G2: testar o hook e a chamada idempotente ao BadgeService.
+  Nenhuma concessão, instalação ou alteração Runtime ocorreu.
+
 ## Dev.16 — incluir ForumPost na primeira resposta pública
 
 - `BadgeEvaluationHooks` avalia o trigger existente `forum_comment` nos hooks

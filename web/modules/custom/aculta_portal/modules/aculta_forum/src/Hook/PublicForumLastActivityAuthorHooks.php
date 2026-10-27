@@ -118,7 +118,7 @@ final class PublicForumLastActivityAuthorHooks {
       if ($postEntity instanceof ForumPost && $postEntity->hasField('legacy_author') && !$postEntity->get('legacy_author')->isEmpty()) {
         $legacyAuthor = $this->legacyAuthors[(int) $postEntity->get('legacy_author')->target_id] ?? NULL;
         if ($legacyAuthor instanceof LegacyAuthor) {
-          $variables['last_comment_author'] = $this->authorCardBuilder->buildLegacy($legacyAuthor);
+          $variables['last_comment_author'] = $this->authorCardBuilder->buildLegacyForum($legacyAuthor);
         }
         return;
       }

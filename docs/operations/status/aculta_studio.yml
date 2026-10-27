@@ -1,6 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.23
 state: Dev
-version_note: "0.1.0-dev.23 — PHPCS limpo, testes de Conta por rota, rotas verificadas no runtime de teste; navegador S-R4/S-R5 e dependência módulo→tema pendentes."
+progress_note: >-
+  PHPCS limpo, testes de Conta por rota, rotas verificadas no runtime de teste; navegador S-R4/S-R5 e dependência módulo→tema pendentes.
 next_phase: 'Executar lint/PHPCS, PHPUnit Unit+Kernel+Functional, descoberta SDC, gates, duas contas, privacidade e avatar; Firefox ESR visível em 320-1440px, no-JS/AJAX, domínio ACCOUNT, comparação /studio/perfil e /conta-legada. Handoff: web/modules/custom/aculta_portal/modules/aculta_studio/docs/HANDOFF-S-R4-S-R5-2026-10-25.md. Sem merge/deploy.'
 
 # 2026-10-24: P1-B em codigo: bridge Marley e preview /studio/inicio;

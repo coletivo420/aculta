@@ -1,3 +1,5 @@
+version: 0.1.0-dev.2
 # Casca de compatibilidade oculta; não contém fluxo executável.
 state: Dev
+progress_note: 'Runtime MAIN read-only confirmou que a casca ainda está ativa. Ela não tem serviços, rotas, configuração ou storage; permanece fora do Config Sync para não habilitar uma extensão de compatibilidade em instalações novas. Desinstalação do Runtime continua pendente de operação autorizada.'
 next_phase: "Extensão hidden sem serviços, rotas ou código; fluxo migrado para aculta_messenger e publisher mantido em aculta_lms. Remoção da extensão habilitada exige operação de uninstall autorizada. Nenhuma entrega legada ativa. Ver README do módulo."

@@ -38,6 +38,9 @@ content:
     weight: 10
     region: content
 hidden:
+  entity_print_view_word_docx: true
+  entity_print_view_pdf: true
+  entity_print_view_epub: true
   co_authors: true
   field_aculta_notice_end: true
   field_aculta_notice_roles: true

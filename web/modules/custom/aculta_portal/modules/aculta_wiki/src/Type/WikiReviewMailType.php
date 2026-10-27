@@ -45,7 +45,7 @@ final class WikiReviewMailType implements MailTypeInterface {
       ],
       'link' => [
         'label' => (string) $this->translation->translate('Link de edição do verbete'),
-        'sample' => 'https://wiki420.aculta.org/node/123/edit',
+        'sample' => 'https://example.com/node/123/edit',
       ],
     ];
   }

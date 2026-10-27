@@ -1,4 +1,4 @@
-## 0.4.0-dev.77 — campo de Views para cartões de perfil público (Fase 3)
+## 0.4.0-dev.89 — campo de Views para cartões de perfil público (Fase 3)
 
 - Novo campo de Views `aculta_user_author_card`: renderiza o cartão de autor de cada
   conta com perfil público explícito (`field_perfil_publico`). Opções: variante e
@@ -10,7 +10,7 @@
 Validação: PHP lint PASS nos arquivos alterados. PHPUnit e Runtime não executados
 (sem `vendor/`). RUNTIME STATUS: DEFERRED.
 
-## 0.4.0-dev.76 — avatar padrão único nos cartões e no perfil
+## 0.4.0-dev.88 — avatar padrão único nos cartões e no perfil (Fase 1)
 
 `AvatarResolver` passa a ser a única regra de avatar público: foto liberada pela
 policy, depois o avatar ilustrativo do acervo, e por último NULL (o chamador mostra
@@ -22,8 +22,71 @@ Validação: teste unitário `AvatarResolverTest` (contrato sem foto e sem acerv
 PHP lint PASS nos arquivos alterados. PHPUnit, gates e Runtime não executados nesta
 sessão (sem `vendor/`). RUNTIME STATUS: DEFERRED.
 
----
+## 0.4.0-dev.87 — 10013 conta sem bloquear por perfil sem dono (2026-10-26)
 
+- `NicknameRegistry::rebuild()`: perfil sem dono (uid ≤ 0) e vazio é ignorado e não bloqueia. Perfil sem dono com apelido não reivindica índice, não é gravado e é contado à parte (`orphan_with_nickname`). Perfil com formato de apelido inválido não é normalizado nem gravado: fica sem claim (`ignored_invalid_format`).
+- O rebuild bloqueia só por conflito real entre UIDs (`slug_conflicts`). Falha de banco ou transação propaga e aborta sem índice parcial.
+- Retorno do update 10013: contagens (indexados, ignorados sem dono, ignorados vazios, órfãos com apelido, formato inválido). Sem apelidos nem uids.
+- Testes Kernel: perfil sem dono vazio não bloqueia; perfil sem dono com apelido não reivindica; repetir o rebuild é idempotente; os testes existentes de conflito entre UIDs continuam passando (13 testes / 112 asserções).
+
+## 0.4.0-dev.86 — reconciliar Profiles com apelidos divergentes
+
+- No rebuild do índice 10013, o apelido não vazio do Profile com maior `changed` define o valor canônico por UID; timestamp empatado usa o maior ID como desempate determinístico. Profiles de papel do UID são sincronizados dentro da mesma transação. Apelidos vazios não substituem um apelido explícito.
+- Colisões de slug entre UIDs e apelidos inválidos continuam bloqueando o rebuild antes de alterar claims; a migração reporta somente contagens agregadas. A saída do update inclui total de UIDs, Profiles reconciliados e conflitos de mesmo UID.
+- User Unit: 140 testes / 543 assertions PASS. `NicknameRegistryKernelTest`: 10 testes / 88 assertions PASS em MariaDB dedicado; inclui criação do índice pelo update 10013, reconciliação do apelido mais recente e preservação de claims existentes no conflito entre UIDs. PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
+- Leitura agregada MAIN encontrou 26 Profiles de papel, 15 UIDs com apelido, 11 sem apelido e nenhum conflito de mesmo UID ou slug entre UIDs. O update não foi executado no Runtime; instalação efêmera completa continua pendente.
+
+## 0.4.0-dev.85 — testar rollback da projeção de apelidos
+
+- O Kernel simula falha de persistência depois de executar a sincronização do apelido e reverte a transação. A claim anterior permanece; a nova claim e a atualização do Profile irmão são desfeitas.
+- `NicknameRegistryKernelTest`: 8 testes / 65 assertions PASS em MariaDB dedicado, incluindo a corrida concorrente em dois processos. PHPCS Drupal/DrupalPractice e PHP lint PASS.
+- Nenhum update foi executado no Runtime; instalação efêmera e validação do update 10013 permanecem pendentes.
+
+## 0.4.0-dev.84 — validar concorrência da claim SQL em MariaDB
+
+- O Kernel usa dois processos independentes; ambos confirmam que o slug está livre antes de liberar as inserções. A chave única MariaDB aceita uma claim e rejeita a concorrente.
+- O harness carrega explicitamente as classes da branch testada e o Core/MariaDB real, sem depender do código do checkout compartilhado. Resultado: 7 testes / 55 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint da fixture PASS.
+- Rollback em falha de save e instalação efêmera do update 10013 continuam pendentes. Runtime não foi alterado.
+
+## 0.4.0-dev.83 — índice SQL de slugs públicos por UID
+
+- `aculta_user_nickname` é uma projeção derivada com UID como chave primária e slug canônico único. Profile permanece fonte de verdade; presave reivindica o slug dentro da transação de save, sincroniza Profiles de papel do mesmo UID e libera o slug anterior no rename. `#N` e `-N` convergem para a mesma chave.
+- O update 10013 cria a tabela e valida/reconstrói as claims; conflitos entre UIDs, entre Profiles do mesmo UID ou valores inválidos bloqueiam o rebuild antes de substituir dados. A rota pública resolve UID pelo índice e busca o Profile principal; claims são liberadas após exclusão do último Profile de papel.
+- User Unit: 140 testes / 543 assertions PASS (1 depreciação PHPUnit); PHPCS Drupal/DrupalPractice e lint focais PASS. Kernel `NicknameRegistryKernelTest`: 6 testes / 44 assertions PASS em SQLite `:memory:` isolado. A primeira tentativa MariaDB falhou no setup por fixture sem `filter`; o fixture foi corrigido, mas a repetição MariaDB aguarda o banco compartilhado que está em uso pelo agente Index. SQLite não substitui a evidência MariaDB. Update 10013 não executado no Runtime.
+
+## 0.4.0-dev.82 — colisões OAuth e slug separado do nome exibido
+
+- Colisões de apelidos geradas na criação automática usam apresentação `nome#2` e slug público `nome-2`. A forma com `#N` também pode ser digitada manualmente, desde que o slug esteja livre; formulários apenas validam e rejeitam conflito, sem autoajuste.
+- A rota `/u/{apelido}` resolve o slug canônico para a forma exibida. Apelidos manuais `nome-2` e `nome#2` disputam o mesmo identificador público. O usuário interno continua com UID como referência.
+- `AccountCreationHooksTest` confirma OAuth `nome-2` → apelido `nome#2`; Unit focal: 9 testes / 67 assertions PASS; suíte completa User: 140 testes / 542 assertions PASS (1 depreciação PHPUnit). PHPCS Drupal/DrupalPractice e PHP lint dos arquivos tocados PASS. Nenhuma atualização do Runtime foi executada.
+
+## 0.4.0-dev.79 — marcador Growroom no cartão de autoria
+
+- A primeira implementação aplicou `-gr` no builder genérico. Foi substituída em dev.80 após identificar consumidores de comentários compartilhados fora do Fórum; a versão vigente limita o sufixo aos adapters de conteúdo Fórum.
+- Teste focal do formatador: 1/1 PASS; PHPCS e lint focais PASS na implementação dev.79.
+
+## 0.4.0-dev.80 — restringe marcador Growroom aos adapters do Fórum
+
+- `AuthorCardBuilder::buildLegacyForum()` acrescenta o marcador `-gr` para tópicos, posts e comentários do Fórum; o método genérico `buildLegacy()` mantém o nome sem alteração nos demais contextos. O perfil legado não recebe rota individual `/u/`; o memorial coletivo `/u/lendashistoricas` mantém o nome original sem sufixo. Nenhuma entidade ou conta é criada.
+- Unit focal: 1 teste / 1 assertion PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Sem importação de acervo ou alteração no Runtime.
+
+## 0.4.0-dev.78 — persistir o apelido aparado no Profile legado
+
+- O validador de `/dados` e outros forms Profile já comparava `trim(apelido)`, mas deixava o valor original no Form API. Espaços externos podiam ser gravados mesmo que a identidade pública use o texto aparado. O hook agora substitui o valor do widget pela forma aparada depois de formato e colisão aprovados.
+- User Unit: 134 testes / 518 assertions PASS (1 depreciação PHPUnit); Kernel completo 25/361 PASS (5 depreciações Domain/Core/contrib); teste focal de validação 4/18 PASS. PHPCS e lint dos arquivos alterados PASS. Sem alteração Runtime.
+- A concorrência entre cadastros continua sem constraint de armazenamento e segue como pendência independente.
+
+## 0.4.0-dev.77 — limpeza de avatar coordenada pelo Portal
+
+- `AvatarAssetCleanup` delega remoções de uploads temporários e avatares órfãos a `aculta_portal.unused_file_cleaner`, que verifica File Usage, Entity Usage, referências estruturadas e embeds antes de solicitar remoção física ao Image. Sem autorização clara, o arquivo permanece.
+- Os contadores reportam somente exclusões confirmadas (`Deleted`). A retenção de uma hora para temporários e a política de avatares órfãos permanecem.
+- `AvatarAssetCleanupCoordinatorTest` exercita o coordenador real com dependências simuladas: Portal inspeciona referências antes da exclusão. User Unit completa: 133 testes / 512 assertions PASS (1 depreciação PHPUnit); Kernel: 25/361 PASS (5 depreciações contrib). PHPCS e lint alterados PASS.
+
+## 0.4.0-dev.76 — alinhar validação do apelido no formulário Profile legado
+
+- `ProfileNicknameValidationHooks` aplica `AccountNames` e `NicknamePolicy` aos formulários Profile de papéis que expõem `field_nickname`, incluindo `/dados`, que o Portal mantém por compatibilidade. Um apelido legado inalterado não bloqueia a edição de outros dados.
+- O serviço continua responsável pela verificação compartilhada; o Portal não ganhou uma regra paralela nem uma dependência circular.
+- Unit User: 132 testes / 504 assertions PASS (1 depreciação PHPUnit). Kernel User: 25 testes / 361 assertions PASS (5 depreciações Core/contrib). PHP lint e PHPCS Drupal/DrupalPractice nos arquivos novos PASS. A verificação continua sujeita a corrida entre gravações simultâneas; garantia transacional no armazenamento permanece pendente de desenho e teste isolado.
 ## 0.4.0-dev.75 — identificar cada transição de amizade
 
 `FriendshipChangedEvent` recebe um `transitionId` aleatório e imutável por
@@ -892,4 +955,9 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
 `AuthorIdentityResolver` implementa `PublicMemberIdentityInterface`, que devolve somente o apelido aprovado pela política pública ou `NULL`. O contrato permite que módulos consumidores evitem usar `UserInterface::getDisplayName()` como identidade pública.
 
 Validação: `AuthorIdentityResolverTest` **2/9 PASS**, suíte Unit aculta_user **125/448 PASS**. A suíte mantém uma depreciação do PHPUnit em `AuthorCardVariantResolverTest`, fora deste incremento; PHPCS dos novos arquivos PASS.
+
+## 0.4.0-dev.81 — reservar `-gr` para autoria histórica de Fórum — 2026-10-26
+
+- A validação de apelidos de contas rejeita slugs terminados em `-gr`, sem diferenciar maiúsculas/minúsculas. O marcador continua sendo aplicado somente ao nome de exibição dos autores Growroom nos cartões do Fórum; autores importados não ganham User/Profile nem rota individual.
+- Unit focal protege a regra e aceita nomes que apenas começam com `gr`. Referências internas de autoria continuam por UID; nenhuma tabela de aliases ou histórico de URL foi criada.
 

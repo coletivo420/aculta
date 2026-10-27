@@ -1,3 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.4.0-dev.150
 state: Dev
+progress_note: "Kernel H5P completo passou 15 testes/388 assertions e Unit 25/81; integração Group/course 3/134. 41 depreciações Core/contrib; PHPCS focal nos arquivos alterados passa, enquanto a varredura do módulo completo ainda aponta violações legadas não alteradas. Remoção de assets delegada ao coordenador global Portal e testada fail-closed. Formatter e teste seguem aculta_document_viewer_group:course_document. PDF Group permanece necessário à configuração do bundle Media."
 next_phase: 'F15: fechar gates finais e revisão do diff para decisão RC; player H5P, PDF privado e discussão H5P–Fórum já passaram por smoke autenticado e as fixtures foram removidas. F10 permanece homologada ([README](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md))'

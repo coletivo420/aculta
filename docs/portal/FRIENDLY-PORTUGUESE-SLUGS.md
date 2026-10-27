@@ -442,4 +442,8 @@ baseline DT-P20 continua cobrindo as rotas dos módulos habilitados e só pode d
 módulo contrib com rota em caminho inglês ou numérico, o gate passa a falhar até que ele receba um
 caminho em português por override do Portal.
 
+Na verificação de 2026-10-26, as 44 rotas contrib habilitadas não tinham violações e o baseline
+DT-P20 ficou vazio; exceções antigas foram removidas após o próprio gate confirmar que estavam
+resolvidas.
+
 - Exceção aprovada pelo responsável (2026-10-21): `/studio` no domínio de conta (`conta.aculta.*/studio`). O nome do Estúdio é o nome do produto e já aparece no roadmap e no módulo `aculta_studio`; o slug é estável, sem redirecionamento.

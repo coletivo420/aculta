@@ -21,19 +21,20 @@ use Drupal\link\LinkItemInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests Domain-aware resolution of internal node destinations.
- *
- * @group aculta_links
- * @coversDefaultClass \Drupal\aculta_links\Service\LinkDestinationResolver
  */
+#[CoversMethod(\Drupal\aculta_links\Service\LinkDestinationResolver::class, 'resolve')]
+#[Group('aculta_links')]
+#[CoversClass(\Drupal\aculta_links\Service\LinkDestinationResolver::class)]
 final class LinkDestinationResolverTest extends UnitTestCase {
 
   /**
    * Resolves an accessible public node using its source Domain purpose.
-   *
-   * @covers ::resolve
    */
   public function testNodeTargetUsesItsDomainPurposeAndAnonymousAccess(): void {
     $uri_field = $this->createMock(LinkItemInterface::class);

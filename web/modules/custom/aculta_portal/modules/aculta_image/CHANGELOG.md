@@ -1,4 +1,27 @@
+## 0.1.0-dev.34 — toda limpeza delega ao coordenador global (2026-10-26)
+
+- `ImageCleanup` não chama mais `FileRemover` diretamente quando o coordenador
+  do Portal está ausente. O resultado fica `Unverifiable`, a exclusão física é
+  bloqueada e a fila preserva o item para nova tentativa após expirar o lease.
+- A dependência direta de `FileRemover` foi removida do construtor/serviço; o
+  Portal continua dono da avaliação global de referências e Image da remoção
+  física quando autorizada.
+- `ImageCleanupCoordinatorTest` garante que sem o coordenador nenhum arquivo é
+  removido e o item permanece na fila. Suíte Unit total: 28 testes / 118
+  assertions PASS (9 depreciações PHPUnit); PHPCS, lint e gate próprio PASS.
+
 # Changelog — aculta_image
+
+## 0.1.0-dev.33 — coordenar também a quarentena pelo Portal
+
+- ImageQuarantine agora usa aculta_portal.unused_file_cleaner para conferir referências antes de mover e para repetir a verificação antes de excluir entradas vencidas. Sem o coordenador, a quarentena falha fechada.
+- Testes Unit cobrem retenção quando Core File Usage encontra referência e quando o coordenador não está disponível; nenhum arquivo é movido ou excluído.
+
+## 0.1.0-dev.32 — cobrir exclusão fail-closed por referências
+
+- `FileRemoverFailClosedTest` prova que uso reportado pelo File API ou por Entity Usage impede a exclusão; erro ao consultar Entity Usage propaga antes de qualquer acesso à storage de arquivos. Nenhum arquivo real é apagado.
+- Teste focal: 3 testes / 23 assertions PASS; suíte Unit do módulo: 25 / 103 PASS (9 depreciações PHPUnit). PHPCS Drupal/DrupalPractice e PHP lint do teste PASS.
+- README reconciliado à versão `0.1.0-dev.32`; status Dev mantido. Sem alteração no Runtime.
 
 ## 0.1.0-dev.31 — limpeza delegada ao coordenador Portal
 

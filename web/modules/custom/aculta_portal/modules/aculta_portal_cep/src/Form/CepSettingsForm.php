@@ -12,10 +12,10 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Configuração das consultas de CEP: banco de dados padrão e ordem das fontes (tabledrag do Drupal).
+ * Configures the default CEP source and lookup order.
  *
- * A primeira fonte consultada é a padrão. As demais seguem pelo peso. Uma fonte desativada não é consultada e não
- * é verificada pelo cron. Ver CepSources e docs/portal/CEP-LOCAL.md.
+ * The default source runs first. Other enabled sources follow their tabledrag
+ * order. Disabled sources are skipped by lookups and cron checks.
  */
 final class CepSettingsForm extends ConfigFormBase {
 
@@ -27,6 +27,9 @@ final class CepSettingsForm extends ConfigFormBase {
     parent::__construct($config_factory, $typed_config);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('config.factory'),
@@ -35,14 +38,23 @@ final class CepSettingsForm extends ConfigFormBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_portal_cep_settings';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function getEditableConfigNames(): array {
     return [CepSources::SETTINGS];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config(CepSources::SETTINGS);
     $stored = $config->get('sources') ?? CepSources::DEFAULTS['sources'];
@@ -50,7 +62,7 @@ final class CepSettingsForm extends ConfigFormBase {
     $form['intro'] = [
       '#type' => 'item',
       '#title' => $this->t('Consulta de CEP'),
-      '#description' => $this->t('A primeira fonte ativa consultada é a padrão. As demais seguem a ordem da tabela (arraste pelas alças). Fontes desativadas não são consultadas nem verificadas pelo cron.'),
+      '#description' => $this->t('A fonte padrão é consultada primeiro. Fontes desativadas são ignoradas.'),
     ];
 
     $options = [];
@@ -65,7 +77,7 @@ final class CepSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('default_source') ?? CepSources::DEFAULTS['default_source'],
     ];
 
-    // Ordem atual: pelo peso salvo. As fontes desativadas mantêm a sua posição na tabela.
+    // Keep disabled sources in their saved order in the table.
     $ids = array_keys(CepSources::LABELS);
     usort($ids, static fn (string $a, string $b): int => ((int) ($stored[$a]['weight'] ?? 0)) <=> ((int) ($stored[$b]['weight'] ?? 0)));
 
@@ -103,6 +115,9 @@ final class CepSettingsForm extends ConfigFormBase {
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
     $enabled = [];
@@ -121,6 +136,9 @@ final class CepSettingsForm extends ConfigFormBase {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $sources = [];
     foreach (array_keys(CepSources::LABELS) as $id) {

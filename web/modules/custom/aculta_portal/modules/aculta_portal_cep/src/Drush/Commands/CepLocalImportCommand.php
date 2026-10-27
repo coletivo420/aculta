@@ -13,7 +13,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Importa a base local de CEPs (TSV ordenado) para os arquivos privados do Portal. */
+/**
+ * Imports a TSV file into the local CEP database.
+ */
 #[AsCommand(name: 'aculta-portal-cep:import', description: 'Importa a base local de CEPs (TSV ordenado por CEP) para private://aculta_portal_cep.')]
 final class CepLocalImportCommand extends Command {
 
@@ -26,10 +28,16 @@ final class CepLocalImportCommand extends Command {
     parent::__construct();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function configure(): void {
     $this->addArgument('source', InputArgument::REQUIRED, 'Caminho do TSV: cep, logradouro, bairro, cidade, UF, código IBGE.');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function execute(InputInterface $input, OutputInterface $output): int {
     try {
       $count = $this->store->importTsv((string) $input->getArgument('source'));
@@ -38,7 +46,7 @@ final class CepLocalImportCommand extends Command {
       $output->writeln('<error>' . $exception->getMessage() . '</error>');
       return Command::FAILURE;
     }
-    // Versão da base: data desta importação (a origem é o arquivo informado). Ver CepLocalStore::MANIFEST.
+    // The manifest records the import date and source filename.
     $this->store->writeManifest(date('Y-m-d'), $count, basename((string) $input->getArgument('source')));
     $output->writeln('<info>' . $count . ' CEPs importados para ' . CepLocalStore::DIRECTORY . '.</info>');
     return Command::SUCCESS;

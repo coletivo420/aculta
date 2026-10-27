@@ -15,6 +15,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
+use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
@@ -29,8 +30,10 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Verifies H5P access against real Group memberships and LMS course entities. */
 #[RunTestsInSeparateProcesses]
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital,Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the historical H5P test class identifier used by the fork.
 final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
 
+  use PortalCleanupKernelServicesTrait;
   use UserCreationTrait;
 
   /**
@@ -51,10 +54,10 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     'group',
     'views',
     'lms',
+    'aculta_document_viewer_group',
     'aculta_image',
     'aculta_pdf_viewer',
     'aculta_pdf_viewer_group',
-    'aculta_lms',
     'aculta_lms_h5p',
   ];
 
@@ -72,6 +75,7 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
    * {@inheritdoc} */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
+    $this->registerPortalCleanupServices($container);
     $container->register('stream_wrapper.private', PrivateStream::class)
       ->addTag('stream_wrapper', ['scheme' => 'private']);
   }
@@ -89,7 +93,6 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       'user',
       'filter',
       'group',
-      'lms',
       'media',
       'aculta_pdf_viewer',
       'aculta_pdf_viewer_group',
@@ -98,13 +101,26 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
     $this->installEntitySchema('group');
+    GroupType::create([
+      'id' => 'lms_course',
+      'label' => 'Course',
+      'creator_membership' => TRUE,
+      'creator_wizard' => FALSE,
+      'creator_roles' => [],
+    ])->save();
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
     $this->installEntitySchema('aculta_h5p_content');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
-    $this->installSchema('aculta_lms_h5p', ['h5p_content_libraries', 'h5p_libraries', 'h5p_libraries_libraries', 'h5p_points', 'h5p_content_user_data']);
+    $this->installSchema('aculta_lms_h5p', [
+      'h5p_content_libraries',
+      'h5p_libraries',
+      'h5p_libraries_libraries',
+      'h5p_points',
+      'h5p_content_user_data',
+    ]);
 
     FieldStorageConfig::create([
       'field_name' => 'field_h5p_activities',
@@ -131,7 +147,9 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     ]);
     self::assertInstanceOf(aculta_H5PEditorWidget::class, $widget);
 
-    $restored = unserialize(serialize($widget));
+    $restored = unserialize(serialize($widget), [
+      'allowed_classes' => [aculta_H5PEditorWidget::class],
+    ]);
     self::assertInstanceOf(aculta_H5PEditorWidget::class, $restored);
     foreach ([
       'courseAccess' => 'aculta_lms_h5p.course_access',
@@ -238,12 +256,12 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       ->getStorage('group_relationship_type');
     $relationshipTypeId = $relationshipTypes->getRelationshipTypeId(
       'lms_course',
-      'aculta_pdf_viewer_group:course_document',
+      'aculta_document_viewer_group:course_document',
     );
     if (!$relationshipTypes->load($relationshipTypeId)) {
       $relationshipTypes->createFromPlugin(
         GroupType::load('lms_course'),
-        'aculta_pdf_viewer_group:course_document',
+        'aculta_document_viewer_group:course_document',
       )->save();
     }
 
@@ -331,9 +349,12 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     $unlinkedCourseDocument->save();
     $relationship = $course->addRelationship(
       $courseDocument,
-      'aculta_pdf_viewer_group:course_document',
+      'aculta_document_viewer_group:course_document',
     );
     $relationship->save();
+    $courseRelationships = $course->getRelationships('aculta_document_viewer_group:course_document');
+    self::assertCount(1, $courseRelationships);
+    self::assertSame((int) $courseDocument->id(), (int) reset($courseRelationships)->getEntityId());
     $content->set('course_documents', [
       ['target_id' => $document->id()],
       ['target_id' => $courseDocument->id()],
@@ -349,6 +370,9 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     );
     $course->get('field_h5p_activities')->appendItem(['h5p_content_id' => $content->id()]);
     $course->save();
+    self::assertInstanceOf(CourseInterface::class, $course);
+    self::assertCount(1, $course->getRelationships('aculta_document_viewer_group:course_document'));
+    self::assertCount(3, $content->get('course_documents')->referencedEntities());
 
     $access = $this->container->get('aculta_lms_h5p.course_access');
     self::assertTrue($access->studentAccess((int) $course->id(), (int) $content->id(), $student)->isAllowed());

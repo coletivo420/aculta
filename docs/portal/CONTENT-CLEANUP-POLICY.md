@@ -1,6 +1,6 @@
 # Política de limpeza de conteúdo e anexos
 
-**Dono da política:** `aculta_portal`. **Estado:** APIs compartilhadas de verificação/remoção de Media/File implementadas parcialmente em Portal 0.4.1-dev.9; fluxo coordenado de exclusão de conteúdo segue planejado. Nenhuma exclusão automática de posts foi habilitada.
+**Dono da política:** `aculta_portal`. **Estado:** APIs compartilhadas de verificação/remoção de Media/File implementadas parcialmente em Portal 0.4.1-dev.34; fluxo coordenado de exclusão de conteúdo segue planejado. Nenhuma exclusão automática de posts foi habilitada.
 
 ## Objetivo e limites
 
@@ -25,7 +25,7 @@ Nenhum cron apagará posts. Uma operação de limpeza exige IDs explícitos, uma
 - `aculta_forum.attachment_cleanup` demonstra verificações de referências atuais em campos, embeds e revisões; portar somente os trechos genéricos necessários, preservando autoria/licença e atribuindo a lógica específica de Fórum ao seu módulo.
 - `entity_usage` é uma fonte auxiliar, nunca prova única de ausência de referências. Consultar também referências estruturadas e conteúdo versionado suportado pelos adapters.
 
-## Estado da implementação — 2026-10-22
+## Estado da implementação — 2026-10-26
 
 `aculta_portal.unused_file_cleaner` oferece avaliação e remoção fail-closed de File: consulta Core File Usage, Entity Usage quando instalado, referências estruturadas de campos e referências UUID em campos de texto formatado/revisões. Arquivos de imagem são delegados a `aculta_image.file_remover`; arquivos não-imagem sem referências são removidos pela File API. `aculta_portal.unused_media_cleaner` revalida referências estruturadas e embeds/revisões em todo o site, recusa Media publicado e o remove via Entity API. O scanner interrompe a operação quando não consegue verificar uma fonte. Essas APIs ainda não são o executor de exclusão de posts: módulos donos descobrem e submetem candidatos e preservam suas regras específicas.
 

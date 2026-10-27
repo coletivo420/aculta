@@ -7,6 +7,7 @@ aculta_portal.wiki_home:
     _permission: access content
   options:
     _aculta_domain_purpose: wiki
+    _aculta_show_page_title_on_front: true
 
 aculta_portal.wiki_search:
   path: /wiki/busca

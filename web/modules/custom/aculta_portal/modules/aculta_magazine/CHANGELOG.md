@@ -8,6 +8,7 @@
   contextual nem storage/e-mail local.
 - Kernel Magazine **9/208 PASS** e Unit Messenger/adapter **369/3.976** e
   **3/6 PASS**. Runtime/SMTP não validados.
+- Reteste M-0 no HEAD da PR: Magazine Unit **24/96 PASS** (3 depreciações PHPUnit) e Kernel **12/500 PASS** no MariaDB de teste; nenhum Runtime ou SMTP foi usado.
 
 ## 0.5.0-dev.9 — eventos de publicação no Messenger
 

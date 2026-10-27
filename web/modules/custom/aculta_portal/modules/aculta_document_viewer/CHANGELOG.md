@@ -1,5 +1,33 @@
 # Changelog — aculta_document_viewer
 
+## Revisão PHPCS M-0 (2026-10-26)
+
+- Corrigida a indentação de arrays em `PdfViewerBuilder` e adicionados imports
+  explícitos no teste de Media Embed; não houve mudança de comportamento.
+- Unit: 42 testes / 225 assertions PASS. Kernel: 5 erros de setup / 0
+  assertions devido à cadeia Portal/User e configuração de menu ausentes no
+  harness; continua sem aprovação de instalação limpa. PHP lint PASS.
+- PHPCS nos seis arquivos do incremento conjunto: zero erros; um aviso de
+  linha longa preexistente neste módulo. Nenhuma alteração Runtime.
+
+## 0.1.0-dev.15 — reutilizar o motor PDF compartilhado (2026-10-26)
+
+- `aculta_document_viewer` declara dependência de `aculta_pdf_viewer` e anexa
+  sua biblioteca `viewer`; wrapper, JavaScript do viewer, wrapper completo e CSS
+  passam a vir de um único owner.
+- As cópias de assets removidas eram byte-a-byte idênticas às do PDF Viewer. O
+  builder Document Viewer mantém suas próprias opções e checagens Media/File,
+  incluindo a regra privada `course_document`; não houve mudança de acesso nem
+  de armazenamento.
+- Unit completa: 42 testes / 225 assertions PASS. Kernel: 5 erros de setup / 0
+  assertions; a instalação pelo módulo Portal exige Search API (`search_api_db`,
+  `search_api`) e configuração `system.menu.admin` não inicializadas pelo
+  harness. Nenhuma migração ou operação no Runtime foi executada.
+- PHP lint, gate de dependências Config Extension (1.560/1.426), pacote próprio
+  (41), índice de status (41) e diff check PASS. PHPCS no arquivo completo ainda
+  reporta avisos preexistentes fora das linhas alteradas: 31 violações/1 aviso
+  no builder e quatro FQN no Kernel; as linhas alteradas não aparecem no report.
+
 ## 0.1.0-dev.14 — provider de Media document para o Content Index
 
 - Provider opcional `document` projeta somente nome, UUID, idioma, datas e

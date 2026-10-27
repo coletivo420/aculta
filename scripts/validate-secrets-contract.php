@@ -32,6 +32,11 @@ $expected = [
   // Chaves de aplicação em texto puro (docs/operations/SECRETS.md e config/secrets-contract.json).
   'aculta_document_encryption_key' => ['ACULTA_DOCUMENT_ENCRYPTION_KEY', FALSE],
   'aculta_id_cpf_fingerprint' => ['ACULTA_ID_CPF_FINGERPRINT_KEY', FALSE],
+  'aculta_melhorenvio_token_encryption' => ['ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY', FALSE],
+  'melhorenvio_sandbox_client_id' => ['MELHORENVIO_SANDBOX_CLIENT_ID', FALSE],
+  'melhorenvio_sandbox_client_secret' => ['MELHORENVIO_SANDBOX_CLIENT_SECRET', FALSE],
+  'melhorenvio_production_client_id' => ['MELHORENVIO_PRODUCTION_CLIENT_ID', FALSE],
+  'melhorenvio_production_client_secret' => ['MELHORENVIO_PRODUCTION_CLIENT_SECRET', FALSE],
 ];
 
 // Credenciais de envio ficam no arquivo de segredos do servidor, sem Key (regra de segredos do AGENTS.md).
@@ -46,6 +51,7 @@ $file_secrets = [
   'mailer_payload_key' => 'MAILER_PAYLOAD_KEY',
   'imap_password' => 'IMAP_PASSWORD',
   'smtp_password' => 'SMTP_PASSWORD',
+  'melhorenvio_sandbox_access_token' => 'MELHORENVIO_SANDBOX_ACCESS_TOKEN',
 ];
 
 $key_files = glob($root . '/config/sync/key.key.*.yml') ?: [];

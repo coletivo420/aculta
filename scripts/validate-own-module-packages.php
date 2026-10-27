@@ -1,12 +1,16 @@
 <?php
 
 /**
- * Static gate for the package label of our own modules (docs/portal/COMPONENTES-PROPRIOS.md).
+ * @file
+ * Static gate for our modules' package label.
  *
- * Checks that every custom module (type: module under web/modules/custom, at any depth) declares
- * package 'ACULTA Portal', so /painel-administrativo/modulos shows all own modules in a single box.
+ * See docs/portal/COMPONENTES-PROPRIOS.md.
  *
- * The label is compared after YAML parsing, so quoting style does not hide a variant spelling.
+ * Checks that every custom module under web/modules/custom declares package
+ * 'ACULTA Portal', so the module administration page shows them in one box.
+ *
+ * The label is compared after YAML parsing, so quoting style does not hide a
+ * variant spelling.
  * The gate does not bootstrap Drupal, so it runs in any checkout.
  */
 
@@ -16,7 +20,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\Yaml\Yaml;
 
-const OWN_PACKAGE = 'ACULTA Portal';
+$ownPackage = 'ACULTA Portal';
 
 $root = dirname(__DIR__);
 $customRoot = $root . '/web/modules/custom';
@@ -33,15 +37,19 @@ foreach ($iterator as $file) {
 sort($infos);
 
 foreach ($infos as $info) {
+  $relative = substr(dirname($info), strlen($root) + 1);
+  // Modules under tests/modules are discovery fixtures, not product packages.
+  if (preg_match('#(?:^|/)tests/modules(?:/|$)#', $relative)) {
+    continue;
+  }
   $data = Yaml::parseFile($info);
   if (($data['type'] ?? '') !== 'module') {
     continue;
   }
-  $relative = substr(dirname($info), strlen($root) + 1);
   $package = (string) ($data['package'] ?? '');
   $checks++;
-  if ($package !== OWN_PACKAGE) {
-    $failures[] = "custom module '$relative' declares package '$package'; it must declare '" . OWN_PACKAGE . "'.";
+  if ($package !== $ownPackage) {
+    $failures[] = "custom module '$relative' declares package '$package'; it must declare '$ownPackage'.";
   }
 }
 

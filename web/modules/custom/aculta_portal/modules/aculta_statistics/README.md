@@ -6,7 +6,7 @@ Central de métricas da plataforma ACULTA: catálogo, agregados diários, reten�
 configurável por métrica e consulta. Não substitui os dados de origem. Pedidos
 ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mail.
 
-**Estado:** módulo ativo no código. Ativação no Runtime de teste pendente.
+**Estado:** módulo ativo no código; o estado do Runtime não foi verificado nesta auditoria. Consultas GA4/Search Console com credenciais e homologação visual permanecem pendentes.
 
 ## O que existe
 
@@ -51,6 +51,7 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
 
 ## Testes
 
-- Unit: `tests/src/Unit/` (catálogo, retenção, gravador, janela e variação do GSC, controlador da Wiki, pedido pago). 36 casos.
-- Kernel: `tests/src/Kernel/` (storage, cron, formulário de retenção, banner, beacon da Wiki). 14 casos, executados
-  contra `aculta_simpletest`.
+- Unit: `tests/src/Unit/` (catálogo, retenção, gravador, janela e variação do GSC, controlador da Wiki, pedido pago). 108 testes / 438 assertions PASS na auditoria de 2026-10-26 (PHP 8.4.27).
+- Kernel: `tests/src/Kernel/` (storage, cron, formulário de retenção, banner, beacon da Wiki). Última execução registrada: 47 testes / 319 assertions PASS contra `aculta_simpletest`; não reexecutado nesta auditoria.
+- Gates da auditoria de 2026-10-26: PHP lint 95/95; PHPCS Drupal/DrupalPractice com 0 erros e 190 avisos de comprimento de linha (o comando retorna exit 1 por warnings; sobretudo em documentação).
+- O Kernel focal `StatisticsDashboardKernelTest` foi tentado em 2026-10-26: 7 erros de setup / 0 assertions porque o harness carregou `system_hook_info()` pelo Core do worktree e pelo Core do checkout compartilhado. É falha de bootstrap reproduzida, não evidência de defeito do painel. Kernel completo anterior (47/319) permanece histórico; revisão visual e Functional seguem DEFERRED. Sem escrita no Runtime.

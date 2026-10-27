@@ -1,11 +1,3 @@
-viewer:
-  js:
-    js/pdf-viewer.mjs:
-      attributes:
-        type: module
-  dependencies:
-    - core/drupal
-
 docx:
   js:
     js/docx-viewer-behavior.mjs:

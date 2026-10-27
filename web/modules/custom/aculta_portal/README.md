@@ -5,7 +5,20 @@ Core e de módulos contrib para as experiências de conta, conteúdo, Commerce,
 aprendizagem e domínios. Core/contrib continuam donos das entidades e regras que
 já fornecem.
 
-## Situação vigente — S-R3-B2, Portal dev.30 (2026-10-25)
+## Situação vigente — Portal `0.4.1-dev.36` (2026-10-26)
+
+Os testes Unit do Portal foram executados nesta revisão: 353 testes / 914
+assertions PASS (6 depreciações PHPUnit). A suíte Kernel (execução anterior) passou com 53 testes /
+831 assertions (90 depreciações Drupal/Core/contrib), usando MariaDB isolado.
+O teste de retorno Studio/legado inicializa e restaura o container Drupal
+global, conforme exigido por `Url::fromUserInput()` no teste Unit. Essa evidência
+não equivale a homologação de rotas no Runtime, revisão visual nem RC.
+
+O manifesto declara o backend `search_api_db`, exigido pela configuração
+instalável `search_api.server.aculta_database` do próprio Portal. A instalação
+limpa passou dessa dependência e chegou à compilação dos serviços; com o User
+incluído na fixture, prossegue. O Browser do Statistics ainda falha no helper
+de login antes das assertions do painel. Runtime não foi alterado.
 
 Minha Conta Studio `/studio/conta/dados` reutiliza o Form API de Profile
 do Portal para os dados cadastrais privados (nome e WhatsApp), excluindo
@@ -18,9 +31,7 @@ A interface legada em **`/conta-legada` é permanente**: `/dados`
 continua com seu formulário misto e todos os serviços de endereço,
 autenticação, e-mail, CPF/CNPJ, pedidos, checkout e menus intactos.
 A raiz `/` no ACCOUNT serve o hub do Studio; `/studio` direto e
-`/minha-conta` respondem 404. Código entregue, testes novos
-escritos **sem execução**; aguardam lint, PHPUnit, Kernel/Functional,
-Firefox ESR/X11 e Runtime. Contrato atual:
+`/minha-conta` respondem 404. Contrato atual:
 [Conta e Perfil separados](../../../../docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
 
 ## Histórico — Evolução planejada: Conta e Perfil no ACULTA Studio (2026-10-24)
@@ -165,3 +176,11 @@ aculta_studio already is a submodule of aculta_portal and is the shared UI/exper
 `aculta_portal` será responsável pela coordenação **administrativa** de políticas de carrinho e escolha dos checkouts. As abas **Comum | Loja | LMS | Doações** destinam-se exclusivamente à configuração interna. **O carrinho atual da barra multidomínio, incluindo ícone, posição, contadores, links e seleção existente do checkout, não será modificado.** Não criar carrinho público paralelo, checkout combinado ou nova seleção por usuário/sessão. Drupal Commerce continua fonte da verdade; Mercado Pago gateway compartilhado. Ver [ADR-013](../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md). Este texto prevalece sobre menções antigas conflitantes.
 
 **Administração (P-CART E):** ACULTA > Carrinhos e checkouts, em `/painel-administrativo/aculta/checkout`, com as abas Comum, Loja, LMS e Doações. Permissões: `administer aculta checkout common|shop|lms` (Doações usa a permissão do próprio formulário). Config: `aculta_portal.checkout_settings` (`common_checkout_enabled`, `shop_order_type`, `lms_order_type`; padrões equivalentes ao comportamento anterior). Serviços: `aculta_portal.checkout_*` (registry por tag `aculta_portal.checkout_provider`, resolver, política e validador). A regra de estorno (doações, assinaturas e cursos sem estorno) fica em `MercadoPagoPaymentPolicy::bloqueiaEstorno()`. **Rollback:** reverter os commits da P-CART D/E; sem a config, valem os padrões.
+
+
+### Identidade fiscal no checkout LMS
+
+A Loja exige CPF/CNPJ. No LMS, cursos pagos exigem documento; cursos gratuitos
+com preço base zero não exigem. A política lê a variação comprada e falha
+fechada se a composição do pedido não puder ser reconhecida. Descontos sobre
+cursos pagos não alteram essa regra.

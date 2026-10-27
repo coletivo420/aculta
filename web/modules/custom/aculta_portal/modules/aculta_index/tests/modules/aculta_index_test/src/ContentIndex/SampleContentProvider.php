@@ -23,10 +23,15 @@ final class SampleContentProvider implements ContentIndexProviderInterface, Cont
   }
 
   /**
+   * Test override used to simulate a provider contract change.
+   */
+  public static int $projectionVersion = 1;
+
+  /**
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 1;
+    return self::$projectionVersion;
   }
 
   /**

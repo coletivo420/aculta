@@ -59,7 +59,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
   public function testLinksUsePublishedResourcesAndTheirSourceDomains(): void {
     $account = $this->createMock(AccountProxyInterface::class);
     $course = $this->course($account);
-    $article = $this->node(11, 'article', 'Artigo do curso', 'magazine', $account);
+    $article = $this->node(11, 'revista', 'Artigo do curso', 'magazine', $account);
     $wiki = $this->node(12, 'wiki_entry', 'Verbete do curso', 'wiki', $account);
     $gallery = $this->gallery(13, 'Galeria do curso', $account);
     $draft = $this->node(14, 'blog', 'Rascunho oculto', 'magazine', $account, FALSE);

@@ -1,3 +1,7 @@
 view content-level statistics:
   title: 'Consultar métricas públicas por conteúdo autorizado'
   description: 'Test fixture for the permission owned by ACULTA Statistics.'
+
+administer aculta_statistics:
+  title: 'Administrar estatísticas'
+  description: 'Test fixture for the Statistics admin permission used by internal metrics.'

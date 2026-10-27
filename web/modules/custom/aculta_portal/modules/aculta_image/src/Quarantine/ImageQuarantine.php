@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_image\Quarantine;
 
-use Drupal\aculta_image\FileRemover;
+use Drupal\aculta_portal\Cleanup\FileCleanupStatus;
+use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -12,33 +13,35 @@ use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\file\FileInterface;
 use Drupal\file\FileRepositoryInterface;
-use Drupal\file\FileUsage\FileUsageInterface;
 
 /**
  * Quarentena de imagens candidatas (aculta_image, fase M7).
  *
- * Enviar move o arquivo para `private://aculta-image-quarentena` e registra a origem. Restaurar devolve ao local
- * original. Excluir só é possível após o prazo de retenção e depois de nova verificação de uso no momento da exclusão.
+ * Enviar move o arquivo para a quarentena privada e registra a origem.
+ * Restaurar devolve ao local original. Excluir só é possível após o prazo de
+ * retenção e depois de nova verificação de uso.
  * Arquivo com qualquer referência não sai do lugar.
  */
 final class ImageQuarantine {
 
-  /** Diretório privado da quarentena. */
+  /**
+   * Diretório privado da quarentena. */
   public const DIRETORIO = 'private://aculta-image-quarentena';
 
   public function __construct(
     private readonly Connection $database,
     private readonly FileRepositoryInterface $fileRepository,
     private readonly FileSystemInterface $fileSystem,
-    private readonly FileUsageInterface $fileUsage,
-    private readonly FileRemover $remover,
+    private readonly ?UnusedFileCleaner $unusedFileCleaner,
     private readonly TimeInterface $time,
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  /** Envia a imagem para a quarentena. Recusa se ela tiver qualquer referência. */
+  /**
+   * Envia a imagem para a quarentena. Recusa se ela tiver qualquer referência. */
   public function enviar(FileInterface $arquivo, string $motivo): bool {
-    if ($this->temReferencia($arquivo)) {
+    if ($this->unusedFileCleaner === NULL
+      || $this->unusedFileCleaner->assess($arquivo) !== FileCleanupStatus::Available) {
       return FALSE;
     }
     $agora = (int) $this->time->getRequestTime();
@@ -61,7 +64,8 @@ final class ImageQuarantine {
     return TRUE;
   }
 
-  /** Devolve a imagem ao local original (com nome livre). */
+  /**
+   * Devolve a imagem ao local original (com nome livre). */
   public function restaurar(int $fid): bool {
     $linha = $this->linha($fid);
     $arquivo = $this->arquivo($fid);
@@ -78,7 +82,8 @@ final class ImageQuarantine {
     return TRUE;
   }
 
-  /** Entradas da quarentena, com o indicador de vencimento. */
+  /**
+   * Entradas da quarentena, com o indicador de vencimento. */
   public function listar(): array {
     $agora = (int) $this->time->getRequestTime();
     $linhas = $this->database->select('aculta_image_quarantine', 'q')
@@ -93,8 +98,10 @@ final class ImageQuarantine {
   }
 
   /**
-   * Exclui as entradas vencidas que continuam sem referência. Retorna quantas foram apagadas.
-   * Cada exclusão repete a verificação de uso; quem tiver referência permanece na quarentena.
+   * Exclui entradas vencidas após repetir a verificação global de referências.
+   *
+   * @return int
+   *   Número de arquivos removidos.
    */
   public function excluirVencidas(): int {
     $apagadas = 0;
@@ -108,10 +115,10 @@ final class ImageQuarantine {
         $this->database->delete('aculta_image_quarantine')->condition('fid', $fid)->execute();
         continue;
       }
-      if ($this->temReferencia($arquivo)) {
+      if ($this->unusedFileCleaner === NULL) {
         continue;
       }
-      if ($this->remover->delete($arquivo, 'quarentena vencida: ' . $linha['motivo'])) {
+      if ($this->unusedFileCleaner->removeIfUnused($arquivo, TRUE) === FileCleanupStatus::Deleted) {
         $this->database->delete('aculta_image_quarantine')->condition('fid', $fid)->execute();
         $apagadas++;
       }
@@ -119,24 +126,27 @@ final class ImageQuarantine {
     return $apagadas;
   }
 
-  private function temReferencia(FileInterface $arquivo): bool {
-    if (!empty($this->fileUsage->listUsage($arquivo))) {
-      return TRUE;
-    }
-    return (bool) $this->database->select('entity_usage', 'eu')
-      ->fields('eu', ['target_id'])
-      ->condition('eu.target_type', 'file')
-      ->condition('eu.target_id', (string) $arquivo->id())
-      ->range(0, 1)
-      ->execute()
-      ->fetchField();
-  }
-
+  /**
+   * Obtém uma entrada de quarentena pelo ID do arquivo.
+   *
+   * @return array|null
+   *   Dados da quarentena ou NULL quando não houver entrada.
+   */
   private function linha(int $fid): ?array {
-    $linha = $this->database->select('aculta_image_quarantine', 'q')->fields('q')->condition('q.fid', $fid)->execute()->fetchAssoc();
+    $linha = $this->database->select('aculta_image_quarantine', 'q')
+      ->fields('q')
+      ->condition('q.fid', $fid)
+      ->execute()
+      ->fetchAssoc();
     return $linha === FALSE ? NULL : $linha;
   }
 
+  /**
+   * Carrega um arquivo gerenciado.
+   *
+   * @return \Drupal\file\FileInterface|null
+   *   Arquivo encontrado ou NULL.
+   */
   private function arquivo(int $fid): ?FileInterface {
     $arquivo = $this->entityTypeManager->getStorage('file')->load($fid);
     return $arquivo instanceof FileInterface ? $arquivo : NULL;

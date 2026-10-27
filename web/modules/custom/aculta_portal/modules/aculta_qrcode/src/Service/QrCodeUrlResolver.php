@@ -17,7 +17,7 @@ use Drupal\Core\Url;
  * O host vem do `DomainPurposeManager`, nunca de concatenação. O purpose
  * `links` é o mesmo do redirecionamento curto do `aculta_links`.
  */
-final class QrCodeUrlResolver {
+final class QrCodeUrlResolver implements QrCodePublicUrlInterface {
 
   /**
    * Purpose que atende o redirecionamento público.

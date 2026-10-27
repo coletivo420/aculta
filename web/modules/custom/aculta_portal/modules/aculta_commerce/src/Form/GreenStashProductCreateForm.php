@@ -27,6 +27,9 @@ final class GreenStashProductCreateForm extends FormBase {
     private readonly GreenStashStoreResolver $storeResolver,
   ) {}
 
+  /**
+   * Builds the form using the module's injected services.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -36,17 +39,32 @@ final class GreenStashProductCreateForm extends FormBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_commerce_green_stash_product_create';
   }
 
+  /**
+   * Checks both the Studio experience and Commerce product-create grants.
+   */
   private function assertCreateAccess(): void {
-    if (!$this->experiences->access('green_stash', 'account', $this->account)->isAllowed()
-      || !$this->entities->getAccessControlHandler('commerce_product')->createAccess('produto_loja', $this->account)) {
+    $experience_access = $this->experiences->access('green_stash', 'account', $this->account);
+    if (!$experience_access->isAllowed()) {
+      throw new AccessDeniedHttpException();
+    }
+
+    $create_access = $this->entities->getAccessControlHandler('commerce_product')
+      ->createAccess('produto_loja', $this->account);
+    if (!$create_access->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $this->assertCreateAccess();
     if ($this->storeResolver->resolve($this->account) === NULL) {
@@ -73,6 +91,9 @@ final class GreenStashProductCreateForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $this->assertCreateAccess();
     $title = trim((string) $form_state->getValue('title'));
@@ -82,6 +103,9 @@ final class GreenStashProductCreateForm extends FormBase {
 
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->assertCreateAccess();
     $store = $this->storeResolver->resolve($this->account);

@@ -33,6 +33,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -45,13 +46,23 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 #[RunTestsInSeparateProcesses]
 final class CertificateLifecycleTest extends KernelTestBase {
 
+  use AcultaLmsDependencyHarnessTrait;
+
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'file', 'field', 'filter', 'image', 'media', 'options', 'text', 'entity_print',
+    'system', 'domain', 'user', 'file', 'field', 'filter', 'image', 'media', 'options', 'text', 'entity_print',
     'entity_usage', 'aculta_image', 'flexible_permissions', 'group', 'views', 'lms',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerLmsDependencyServices($container);
+  }
 
   /**
    * {@inheritdoc}

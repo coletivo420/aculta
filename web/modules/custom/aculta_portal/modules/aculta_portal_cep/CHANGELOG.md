@@ -1,3 +1,14 @@
+## 0.3.0-dev.13 — PHPCS Drupal do PHP
+
+- PHPDocs, descrições e formatação de estruturas nos dez arquivos PHP do módulo foram ajustados sem alterar os contratos do serviço de lookup. O comando PHPCS deve restringir as extensões a PHP; incluir `js/cep-address.js` no padrão PHP aplica regras incorretas ao JavaScript.
+- PHPCS Drupal/DrupalPractice (PHP): PASS em todo o módulo; PHP lint PASS. `CepLookupServiceTest`: 10 testes / 45 assertions PASS; `scripts/validate-account-address.php`: PASS (24 verificações).
+- Não houve alteração no Runtime. Homologação Browser que salva endereço permanece dependente de conta descartável em ambiente isolado.
+
+## 0.3.0-dev.11 — isolar cache por provedor
+
+- A chave do cache externo agora inclui ViaCEP ou BrasilAPI além do CEP. A ordem/configuração de fontes não pode reutilizar conteúdo identificado como produzido por outro provedor.
+- Unit `CepLookupServiceTest`: 10 testes / 43 assertions PASS, incluindo consulta e gravação isoladas para BrasilAPI; PHPCS Drupal/DrupalPractice e PHP lint nos arquivos alterados PASS. Nenhuma alteração no Runtime.
+
 ## 0.3.0-dev.10 — subaba CEP na aba Pessoas do painel ACULTA — 2026-10-20
 
 - Subaba **CEP** em `/painel-administrativo/aculta/cep`, dentro da aba Pessoas.
@@ -87,3 +98,8 @@
 - Não portado: `viacep.js` e o `ViaCepClient` do contrib (código morto ou conflitante; ver README).
 - O `aculta_portal` passa a depender deste submódulo no lugar do `cep_autocomplete`.
 - RUNTIME STATUS: pendente (ver a entrega do aculta_portal).
+## 0.3.0-dev.12 — restringir a gramática de entrada do CEP — 2026-10-26
+
+- O normalizador não descarta mais caracteres arbitrários para formar um CEP. Aceita oito dígitos em sequência ou com o hífen/whitespace previsto e rejeita letras e separadores repetidos.
+- Regressão Unit adicionada para entradas contaminadas; validações focais registradas no status do componente. Sem chamadas externas ou escrita no Runtime.
+

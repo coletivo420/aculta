@@ -98,7 +98,7 @@
     {% if page.highlighted or aculta_help %}
       <div class="aculta-highlighted">{{ page.highlighted }}{{ aculta_help }}</div>
     {% endif %}
-    {% if aculta_page_title and not institutional_home %}
+    {% if aculta_page_title and (not institutional_home or aculta_show_page_title_on_front) %}
       <div class="aculta-page-heading">{{ aculta_page_title }}</div>
     {% endif %}
     <div class="row g-4 g-xl-5">

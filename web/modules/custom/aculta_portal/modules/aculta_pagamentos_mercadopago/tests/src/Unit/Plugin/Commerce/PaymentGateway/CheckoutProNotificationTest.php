@@ -1,0 +1,554 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\Plugin\Commerce\PaymentGateway;
+
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
+use Drupal\commerce_payment\Entity\PaymentInterface;
+use Drupal\commerce_payment\Exception\PaymentGatewayException;
+use Drupal\commerce_price\Price;
+use Drupal\aculta_pagamentos_mercadopago\Plugin\Commerce\PaymentGateway\CheckoutPro;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
+use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
+use Drupal\Tests\UnitTestCase;
+use MercadoPago\Exceptions\MPApiException;
+use MercadoPago\Net\MPResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
+
+/**
+ * Security regressions for untrusted Checkout Pro notifications.
+ */
+#[Group('aculta_pagamentos_mercadopago')]
+final class CheckoutProNotificationTest extends UnitTestCase {
+
+  /**
+   * Rejects malformed IDs before provider or storage calls.
+   */
+  #[DataProvider('invalidNotificationProvider')]
+  public function testInvalidNotificationIsRejected(array $query): void {
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->expects($this->once())
+      ->method('get')
+      ->with('Mercado Pago Notifications')
+      ->willReturn($logger);
+
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $property = new \ReflectionProperty(CheckoutPro::class, 'loggerFactory');
+    $property->setValue($gateway, $logger_factory);
+
+    $response = $gateway->onNotify(new Request($query));
+
+    $this->assertSame(400, $response->getStatusCode());
+    $this->assertSame([], json_decode((string) $response->getContent(), TRUE));
+  }
+
+  /**
+   * Does not persist a payment when the provider has not approved it.
+   */
+  public function testUnapprovedRemotePaymentDoesNotAcquireLockOrLoadPaymentStorage(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client = new class {
+
+      /**
+       * Returns the simulated pending payment.
+       */
+      public function get(int $id): object {
+        return (object) [
+          'external_reference' => '42',
+          'status' => 'pending',
+        ];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+
+    $order = $this->createMock(OrderInterface::class);
+    $order_storage = $this->createMock(EntityStorageInterface::class);
+    $order_storage->expects($this->once())->method('load')->with('42')->willReturn($order);
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->expects($this->once())
+      ->method('getStorage')
+      ->with('commerce_order')
+      ->willReturn($order_storage);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->never())->method('acquire');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    $this->assertSame(200, $response->getStatusCode());
+  }
+
+  /**
+   * Rejects conflicting payment and merchant order references.
+   */
+  public function testConflictingOrderReferencesAreNotAssociated(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $payment_client = new class {
+
+      /**
+       * Returns the simulated approved payment.
+       */
+      public function get(int $id): object {
+        return (object) [
+          'external_reference' => '42',
+          'status' => 'approved',
+          'order' => (object) ['id' => '900'],
+        ];
+      }
+
+    };
+    $merchant_order_client = new class {
+
+      /**
+       * Returns a merchant order with a conflicting order reference.
+       */
+      public function get(int $id): object {
+        return (object) ['external_reference' => '43'];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->exactly(2))
+      ->method('criar')
+      ->willReturnCallback(static fn (string $alias): object => $alias === 'pagamentos' ? $payment_client : $merchant_order_client);
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->expects($this->never())->method('getStorage');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    $this->assertSame(200, $response->getStatusCode());
+  }
+
+  /**
+   * Completes an authorization only after the API confirms approval.
+   */
+  public function testApprovedRemotePaymentCompletesExistingAuthorization(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $parent_gateway->method('id')->willReturn('mercado_pago');
+    $client = new class {
+
+      /**
+       * Returns the simulated approved payment.
+       */
+      public function get(int $id): object {
+        return (object) [
+          'external_reference' => '42',
+          'status' => 'approved',
+          'transaction_amount' => '10.00',
+          'currency_id' => 'BRL',
+        ];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn(42);
+    $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
+    $order_storage = $this->createMock(EntityStorageInterface::class);
+    $order_storage->expects($this->once())->method('load')->with('42')->willReturn($order);
+
+    $payment_state = $this->createMock(StateItemInterface::class);
+    $payment_state->method('getId')->willReturn('authorization');
+    $payment = $this->createMock(PaymentInterface::class);
+    $payment->method('getState')->willReturn($payment_state);
+    $payment->expects($this->once())->method('setRemoteState')->with('approved');
+    $payment->expects($this->once())->method('setState')->with('completed');
+    $payment->expects($this->exactly(2))->method('save');
+    $query = $this->createMock(QueryInterface::class);
+    $conditions = [];
+    $query->expects($this->exactly(3))
+      ->method('condition')
+      ->willReturnCallback(static function (string $field, mixed $value) use (&$conditions, $query): QueryInterface {
+        $conditions[$field] = $value;
+        return $query;
+      });
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('sort')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
+    $query->method('execute')->willReturn([7]);
+    $payment_storage = $this->createMock(EntityStorageInterface::class);
+    $payment_storage->method('getQuery')->willReturn($query);
+    $payment_storage->expects($this->once())->method('load')->with(7)->willReturn($payment);
+    $payment_storage->expects($this->never())->method('create');
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->method('getStorage')->willReturnCallback(
+      static fn (string $type): EntityStorageInterface => $type === 'commerce_order' ? $order_storage : $payment_storage,
+    );
+
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123', 30)
+      ->willReturn(TRUE);
+    $lock->expects($this->once())
+      ->method('release')
+      ->with('aculta_pagamentos_mercadopago.payment.123');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    $this->assertSame(200, $response->getStatusCode());
+    $this->assertSame([
+      'order_id' => 42,
+      'payment_gateway' => 'mercado_pago',
+      'remote_id' => '123',
+    ], $conditions);
+  }
+
+  /**
+   * Verifies approval and avoids duplicate return processing.
+   */
+  public function testApprovedReturnWithExistingPaymentIsIdempotent(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $parent_gateway->method('id')->willReturn('mercado_pago');
+    $payment_client = new class {
+
+      /**
+       * Returns the simulated approved payment linked to the merchant order.
+       */
+      public function get(int $id): object {
+        return (object) [
+          'status' => 'approved',
+          'transaction_amount' => '10.00',
+          'currency_id' => 'BRL',
+          'external_reference' => '42',
+          'order' => (object) ['id' => '900'],
+        ];
+      }
+
+    };
+    $merchant_order_client = new class {
+
+      /**
+       * Returns the matching merchant order.
+       */
+      public function get(int $id): object {
+        return (object) ['external_reference' => '42'];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->exactly(2))
+      ->method('criar')
+      ->willReturnCallback(static fn (string $alias): object => $alias === 'pagamentos' ? $payment_client : $merchant_order_client);
+
+    $query = $this->createMock(QueryInterface::class);
+    $conditions = [];
+    $query->expects($this->exactly(3))
+      ->method('condition')
+      ->willReturnCallback(static function (string $field, mixed $value) use (&$conditions, $query): QueryInterface {
+        $conditions[$field] = $value;
+        return $query;
+      });
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
+    $query->method('execute')->willReturn([7]);
+    $payment_storage = $this->createMock(EntityStorageInterface::class);
+    $payment_storage->method('getQuery')->willReturn($query);
+    $payment_storage->expects($this->never())->method('create');
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->expects($this->once())
+      ->method('getStorage')
+      ->with('commerce_payment')
+      ->willReturn($payment_storage);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn(42);
+    $order->method('getData')
+      ->with('commerce_mercado_pago_checkout')
+      ->willReturn(['preference_id' => 'pref-1']);
+    $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
+    $order->expects($this->never())->method('save');
+
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123', 30)
+      ->willReturn(TRUE);
+    $lock->expects($this->once())
+      ->method('release')
+      ->with('aculta_pagamentos_mercadopago.payment.123');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $result = $gateway->onReturn($order, new Request([
+      'payment_id' => '123',
+      'merchant_order_id' => '900',
+      'status' => 'approved',
+    ]));
+
+    $this->assertNull($result);
+    $this->assertSame([
+      'order_id' => 42,
+      'payment_gateway' => 'mercado_pago',
+      'remote_id' => '123',
+    ], $conditions);
+  }
+
+  /**
+   * Requests webhook retry when the provider API lookup fails.
+   */
+  public function testNotificationReturnsRetryableStatusOnProviderFailure(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client = new class {
+
+      /**
+       * Simulates a transient provider response.
+       */
+      public function get(int $id): object {
+        throw new MPApiException('provider failure', new MPResponse(503, []));
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->expects($this->never())->method('getStorage');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->never())->method('acquire');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    $this->assertSame(503, $response->getStatusCode());
+  }
+
+  /**
+   * Returns a retryable response for transport exceptions without logging them.
+   */
+  public function testNotificationReturnsRetryableStatusOnTransportFailure(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client = new class {
+
+      /**
+       * Simulates a timeout with private transport details.
+       */
+      public function get(int $id): object {
+        throw new \RuntimeException('private provider response');
+      }
+
+    };
+    $factory = $this->createMock(MercadoPagoClientFactory::class);
+    $factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects($this->once())
+      ->method('error')
+      ->with('Mercado Pago webhook lookup failed for payment @id.', ['@id' => '123']);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($logger);
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $factory);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    $this->assertSame(503, $response->getStatusCode());
+  }
+
+  /**
+   * Shows a safe payment exception when API verification fails on return.
+   */
+  public function testReturnFailsClosedOnProviderApiFailure(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client = new class {
+
+      /**
+       * Simulates a transient provider response.
+       */
+      public function get(int $id): object {
+        throw new MPApiException('provider failure', new MPResponse(503, []));
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('getData')
+      ->with('commerce_mercado_pago_checkout')
+      ->willReturn(['preference_id' => 'pref-1']);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $this->expectException(PaymentGatewayException::class);
+    $gateway->onReturn($order, new Request([
+      'payment_id' => '123',
+      'merchant_order_id' => '900',
+      'status' => 'approved',
+    ]));
+  }
+
+  /**
+   * Hides transport exception details when the return cannot be checked.
+   */
+  public function testReturnFailsClosedOnTransportFailure(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client = new class {
+
+      /**
+       * Simulates an API timeout with private response details.
+       */
+      public function get(int $id): object {
+        throw new \RuntimeException('private provider token');
+      }
+
+    };
+    $factory = $this->createMock(MercadoPagoClientFactory::class);
+    $factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('getData')->with('commerce_mercado_pago_checkout')->willReturn(['preference_id' => 'pref-1']);
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects($this->once())
+      ->method('error')
+      ->with('Mercado Pago API error verifying payment @id.', ['@id' => '123']);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($logger);
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $factory);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $this->expectException(PaymentGatewayException::class);
+    $this->expectExceptionMessage('Could not verify payment with Mercado Pago.');
+    $gateway->onReturn($order, new Request([
+      'payment_id' => '123',
+      'merchant_order_id' => '900',
+      'status' => 'approved',
+    ]));
+  }
+
+  /**
+   * Rejects a browser return that claims approval when the API says pending.
+   */
+  public function testReturnDoesNotTrustBrowserApproval(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client = new class {
+
+      /**
+       * Returns the simulated pending payment.
+       */
+      public function get(int $id): object {
+        return (object) ['status' => 'pending'];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('getData')->with('commerce_mercado_pago_checkout')->willReturn(['preference_id' => 'pref-1']);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $this->expectException(PaymentGatewayException::class);
+    $gateway->onReturn($order, new Request([
+      'payment_id' => '123',
+      'merchant_order_id' => '900',
+      'status' => 'approved',
+    ]));
+  }
+
+  /**
+   * Sets an injected property without constructing Drupal's plugin container.
+   */
+  private function setGatewayProperty(CheckoutPro $gateway, string $name, object $value): void {
+    $property = new \ReflectionProperty(CheckoutPro::class, $name);
+    $property->setValue($gateway, $value);
+  }
+
+  /**
+   * Provides malformed or unsupported callback query values.
+   *
+   * @return iterable<string, array{0: array<string, mixed>}>
+   *   Invalid notification query values.
+   */
+  public static function invalidNotificationProvider(): iterable {
+    yield 'legacy IPN topic' => [['topic' => 'merchant_order', 'id' => '123']];
+    yield 'missing id' => [['topic' => 'payment']];
+    yield 'zero id' => [['topic' => 'payment', 'id' => '0']];
+    yield 'non numeric id' => [['topic' => 'payment', 'id' => '12x']];
+    yield 'array id' => [['topic' => 'payment', 'id' => ['123']]];
+  }
+
+}

@@ -16,12 +16,17 @@ final class Registry {
   /** @var array<int, array<string, mixed>> */
   private array $entries;
 
+  /** Digest SHA-256 do arquivo no momento da leitura, para detectar gravação concorrente. */
+  private string $loadedDigest;
+
   public function __construct(private readonly string $path) {
-    $data = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+    $raw = (string) file_get_contents($path);
+    $data = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
     if (($data['schema'] ?? null) !== 1 || !is_array($data['entries'] ?? null)) {
       throw new \RuntimeException('Registro inválido: schema 1 com lista "entries" é obrigatório.');
     }
     $this->entries = $data['entries'];
+    $this->loadedDigest = hash('sha256', $raw);
   }
 
   /** @return array<int, array<string, mixed>> */
@@ -71,8 +76,10 @@ final class Registry {
   }
 
   /**
-   * Grava o registro de forma atômica: escreve em arquivo temporário, sincroniza
-   * e renomeia. Um bloqueio exclusivo (.lock) impede gravações concorrentes.
+   * Grava o registro de forma atômica: escreve em arquivo temporário e renomeia.
+   *
+   * Controle otimista: sob o bloqueio exclusivo (.lock), recusa gravar se o arquivo mudou desde a leitura.
+   * Sem isso, duas gravações concorrentes sobrescreveriam uma à outra e poderiam atribuir o mesmo id.
    */
   public function save(): void {
     $lock = fopen($this->path . '.lock', 'c');
@@ -80,12 +87,16 @@ final class Registry {
       throw new \RuntimeException('Não foi possível obter o bloqueio do registro.');
     }
     try {
+      if (hash('sha256', (string) @file_get_contents($this->path)) !== $this->loadedDigest) {
+        throw new \RuntimeException('O registro foi alterado por outro processo desde a leitura; releia e repita a operação.');
+      }
       $json = json_encode(['schema' => 1, 'entries' => $this->entries], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n";
       $tmp = $this->path . '.tmp-' . getmypid();
       if (file_put_contents($tmp, $json) === false || !rename($tmp, $this->path)) {
         @unlink($tmp);
         throw new \RuntimeException('Falha ao gravar o registro.');
       }
+      $this->loadedDigest = hash('sha256', $json);
     } finally {
       flock($lock, LOCK_UN);
       fclose($lock);

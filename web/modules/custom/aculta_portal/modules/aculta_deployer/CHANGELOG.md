@@ -1,3 +1,17 @@
+## Não lançado — correções de configuração (agente executor 2)
+
+- `config/deploy.json`: removida a entrada órfã `PublicationBundleMigrationCommand.php` de `environment_bound`. O arquivo
+  não existe mais no branch de integração e a validação de perfis reprovava o build por causa dele.
+- `config/deploy.json`: `aculta_mailer.brand.aculta.yml` (e-mail fixo, identidade legal) ganhou uma regra de identidade
+  nos perfis `production` e `test`. Ela não troca conteúdo; confirma que o rodapé existe. Antes a validação reprovava a
+  configuração.
+- Resultado nos testes: 3 das 4 falhas de `tests/run.php` resolvidas (build de ensaio, `system.mail` de teste e
+  cobertura de perfis).
+- Pendente, fora do submódulo: `aculta_portal.links.menu.yml` referencia a ferramenta `aculta_deployer`. A fronteira
+  `boundaries` reprova por isso. Correção exige alteração no Portal (integração central).
+- Pendente: entrada DEP-0003 bloqueante no registro impede build de produção sem `--allow-open-blocking`. Esperado até a
+  decisão de deploy.
+
 ## 0.1.27 — provisionamento de segredos e webhook do Brevo, idempotente
 
 - `aculta-deployer provision --env=production|test --secrets=CAMINHO`: gera `BREVO_WEBHOOK_TOKEN` e `MAILER_PAYLOAD_KEY` se faltarem (nunca sobrescreve), cadastra o webhook transacional ou troca o token do existente, e remove o cadastro de teste quando pedido (`--remove-test=ID`). Dry-run por padrão; produção exige `--confirm-production`.

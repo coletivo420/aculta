@@ -4,8 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
-| **0.7.0-dev.5** | Tamanho do cartão de perfil repassado ao SDC; campo de Views `aculta_user_author_card` | Design foundations e browser validators PASS; view ainda não criada no Runtime | Fase 3 do avatar; view e visual pendentes |
-| **0.7.0-dev.4** | Avatar padrão: `author-card` com tamanhos `sm`, `md`, `lg` e cartão sem imagem | Design foundations e browser validators PASS; SDC schemas sem vendor | Fase 2 do avatar; visual no servidor de testes pendente |
+| **0.7.0-dev.6** | Avatar padrão: `author-card` com tamanhos `sm`, `md`, `lg`, cartão sem imagem e repasse do tamanho pelo campo de Views `aculta_user_author_card` | Design foundations e browser validators PASS; view ainda não criada no Runtime; SDC schemas sem vendor | Fases 2 e 3 do avatar; view e visual pendentes |
 | **0.7.0-dev.2** | Kernel de descoberta e renderização do Meu Perfil SDC | Teste Kernel escrito, **não executado** | Quatro SDCs em composição, escape/ausência de public link, slots/metadata; aguarda Drupal instalado, PHPUnit/Firefox ESR. |
 | **0.7.0-dev.1** | Pré-S-R4: quatro SDCs experimentais para Meu Perfil | Código, 8 stories e Unit estático escritos; sem execução de Kernel/Firefox/Runtime | `profile-editor`, `profile-identity`, `profile-bio`, `profile-social`. O Studio mantém seu renderer atual até S-R4. |
 | 0.6.1-dev.13 | Separadores visuais entre grupos de avisos por origem | Messenger Unit 221/1.582, ThemeHooks Unit 1/1, Kernel 38/891, Foundation 345, Design Foundations 2170 e smoke Firefox ESR 8/8 PASS no Runtime de teste (1270 px); Alpha e demais viewports pendentes | Tema apresenta cabeçalhos/separadores do contrato de origem sem alterar autorização, ordem ou persistência |
@@ -423,3 +422,18 @@ A fotografia atual da branch aponta **41 metadados SDC e 65 stories** (substitui
 ## Dependências Studio — replanejamento 2026-10-22
 
 O Studio passou a priorizar **GANJALAB E-0.1**, interface editorial sob `conta.aculta.*/studio/ganjalab`. O ACULTA420 responde exclusivamente pelos componentes Core SDC/UI Suite, tokens, reflow mobile-first e coerência light/dark. Usar `context-header`, `context-tabs`, `card`, `content-grid` e `empty-state` existentes como candidatos ao reuso, **sem declarar a integração homologada**. Os gates G420-C2-T (LMS estudante) estão condicionados a fixtures e desenvolvimento paralelo de LMS/tema; não criar componentes exclusivos GanjaLab420 para substituir contratos genéricos. Para editor GanjaLab E-D: auditar slots/contexto, estados de Form API, 320–1440px, teclado/foco/no-JS, preservar o cabeçalho multidomínio e mesma geometria claro/escuro. Interface Studio orquestrada no módulo; aparência e stories no tema. Ver `web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md`.
+
+## 0.7.0-dev.4
+
+- Tokens de apresentação de Links e Secrets Manager registrados; CSS desses submódulos permanece como dívida para migração em etapa própria.
+- Status da validação dos gates e navegador: pendente nesta branch.
+
+
+## 0.7.0-dev.5
+
+- Exceção documentada: UI administrativa renderizada no Claro mantém CSS mínimo no próprio submódulo, com seletores de classe e `data-portal-ui`.
+- Removidas apenas as regras `.aculta-secret-value*` da folha do tema; o mapa de tokens permanece.
+
+## Barra multidomínio — correção visual pendente de validação
+
+- Gatilhos e contadores compartilham a mesma geometria e tokens; rótulos das gavetas acompanham a contagem. Versão PATCH prevista: `0.7.1-dev.1`, após validação visual em Firefox ESR no ambiente autorizado.

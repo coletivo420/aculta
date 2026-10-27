@@ -1,5 +1,10 @@
 # Changelog — aculta_patcher
 
+## 0.1.0-dev.3 — proteção da raiz de artefatos — 2026-10-26
+
+- O exportador recusa diretórios `patches/` e `patches/aculta_patcher/` que resolvam por symlink para fora da raiz do projeto.
+- Adicionado teste Unit de regressão para a fronteira e para exportação vazia local; não executa Composer nem Runtime.
+
 ## 0.1.0-dev.2 — aviso do formulário por token — 2026-10-19
 
 - O aviso de "estado ativo" do formulário de patch usa `data-portal-ui="notice-warning"` no lugar de classes `messages`. Sem mudança de texto nem de comportamento.

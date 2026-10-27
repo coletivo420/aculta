@@ -1,3 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.5
 state: Dev
-next_phase: 'Formatos unificados, Editorial com filtro e tipo aculta_adm com HTML completo. Próximo: restringir a criação de aculta_adm à administração e validar o tipo no navegador ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))'
+progress_note: 'Runtime MAIN read-only: Editor e 16 dependências ativos; os 17 IDs agora constam no core.extension do Sync. Os oito templates e ckeditor5_plugin_pack.settings foram reconciliados a partir dos defaults versionados; 9/9 configs editor/Plugin Pack ativas agora têm equivalente no Sync. `full_html` permanece restrito a administrator; Kernel Editor 8/127 PASS. O shell aculta_lms_messenger é o único ID ativo fora do Sync e segue pendente de uninstall autorizada.'
+next_phase: 'Testar importação limpa em banco efêmero; executar Browser de acesso/sanitização e manter aculta_adm restrito à administração ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))'

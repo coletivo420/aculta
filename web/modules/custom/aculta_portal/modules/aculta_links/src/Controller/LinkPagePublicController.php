@@ -37,7 +37,7 @@ final class LinkPagePublicController {
     $page_ids = $page_storage->getQuery()
       ->accessCheck(TRUE)
       ->condition('slug', $slug)
-      ->condition('status', TRUE)
+      ->condition('status', 1)
       ->range(0, 2)
       ->execute();
     if (count($page_ids) !== 1) {
@@ -95,7 +95,7 @@ final class LinkPagePublicController {
     $ids = $storage->getQuery()
       ->accessCheck(TRUE)
       ->condition('short_code', $codigo)
-      ->condition('status', TRUE)
+      ->condition('status', 1)
       ->range(0, 2)
       ->execute();
     if (count($ids) !== 1) {
@@ -153,7 +153,7 @@ final class LinkPagePublicController {
       ->sort('weight')
       ->sort('id');
     if ($published_only) {
-      $item_query->condition('status', TRUE);
+      $item_query->condition('status', 1);
     }
     $item_ids = $item_query->execute();
     $items = $item_storage->loadMultiple($item_ids);
@@ -249,9 +249,9 @@ final class LinkPagePublicController {
         '#type' => 'link',
         '#title' => $item->get('title')->value,
         '#url' => $url,
-        '#attributes' => $url->isExternal()
+        '#attributes' => ($url->isExternal()
           ? ['rel' => 'noopener noreferrer', 'target' => '_blank']
-          : [],
+          : []) + ['data-portal-ui' => 'links-page-link'],
       ];
     }
 
@@ -262,6 +262,7 @@ final class LinkPagePublicController {
     ];
 
     return [
+      '#attached' => ['library' => ['aculta_links/micropagina']],
       '#theme' => 'aculta_links_page',
       '#title' => $page->label(),
       '#description' => (string) $page->get('description')->value,

@@ -1,0 +1,28 @@
+uuid: e25b4d2e-903b-4b23-9e7d-5fe876848b77
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_msg_delivery
+    - message.template.aculta_msg_wiki_notice
+  module:
+    - options
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: NdGS2SJUN6v3t_Wpl7-SnOga_wW6aZ26WlqCMlsXA8A
+id: message.aculta_msg_wiki_notice.field_aculta_msg_delivery
+field_name: field_aculta_msg_delivery
+entity_type: message
+bundle: aculta_msg_wiki_notice
+label: 'Situação do envio'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: pending
+default_value_callback: ''
+settings: {  }
+field_type: list_string

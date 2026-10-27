@@ -14,7 +14,7 @@ aculta_portal, sem perder confirmações pendentes nem quebrar links já enviado
 | Rota `/email-confirmer/resend/{confirmation}` (reenvio) | Controlada pelo Portal (`EmailResendForm`) | Reenvio pede novo pedido, conforme `LINKS-DE-USO-UNICO.md` |
 | Configuração `email_confirmer.settings` (hash_expiration 86400, confirmation_lifetime 604800, textos, URLs de retorno) | Portal usa `hash_expiration` (24 h) e a limpeza | Textos já saem pela camada (`EmailConfirmationRequestMailType`) |
 | Cron e fila `DelayedRequestDispatcher` | Reenvio atrasado e limpeza de pedidos antigos | Precisa de equivalente |
-| `email_confirmer_user`: opções `user_email_change` e `user_login` (`email_confirmer_user.settings`), rota `/user/{user}/email-change/cancel`, formulário de cancelamento e acesso a troca pendente | Troca de e-mail e bloqueio de login de conta não confirmada | Muda o comportamento de entrada: precisa ser replicado exatamente |
+| `email_confirmer_user`: opções `user_email_change` e `user_login` (`email_confirmer_user.settings`), rota `/user/{user}/email-change/cancel`, formulário de cancelamento e acesso a troca pendente | O contrib original tinha comportamento de bloqueio de login; o ACULTA mantém a troca e o registro de confirmação no login, mas segue sua própria política de conta ativa com capacidades restritas | A política vigente está em `EMAIL-CONFIRMATION-POLICY.md`; não se deve reproduzir o bloqueio de login do contrib |
 
 ## Estado do Runtime de teste (2026-10-20, somente leitura)
 
@@ -29,8 +29,10 @@ aculta_portal, sem perder confirmações pendentes nem quebrar links já enviado
 2. **Manter o caminho `/email-confirmer/reply/...`** no novo módulo, para os links já enviados continuarem válidos.
 3. Copiar os 28 registros para a tabela nova **preservando o cid e o hash**, sem apagar o original (migração não destrutiva).
 4. Trocar as referências do Portal (entidade base, gerenciador, controle de acesso e testes unitários).
-5. Refazer os testes: Unit (requester, policy, regenerator, login bloqueado, troca de e-mail), Kernel (entidade, expiração, reenvio)
-   e navegador (cadastro, confirmação pelo link, cancelamento, troca de e-mail e login bloqueado).
+5. Refazer os testes: Unit (requester, policy, regenerator, autenticação sem enumeração, troca de e-mail), Kernel
+   (entidade, expiração, reenvio) e navegador (cadastro, confirmação pelo link, cancelamento e troca de e-mail). O
+   login de conta ativa sem confirmação deve continuar permitido; ações protegidas são exercitadas pela política do
+   Portal, não por uma negação global do login.
 6. **Somente depois**, com autorização explícita: desinstalar o contrib, apagar a tabela antiga e tirar do composer.
 
 ## Pendências de decisão
@@ -62,6 +64,7 @@ Recuperação: `drush cr` (atualiza os metadados), reinstalação dos módulos n
     de teste removidos; aviso ao endereço antigo desligado só durante o teste e restaurado.
   - Confirmação pelo formulário: página em pt-BR no navegador (X11), desafio anti-bot passou no navegador real. O envio do
     formulário ainda depende de um clique humano (pedido de teste pendente, para remoção depois).
-  - Login bloqueado: pendente. Não há senha conhecida numa conta de teste sem confirmação; coberto só por teste Unit.
+- Comportamento correto: login de conta ativa sem confirmação é permitido conforme a política atual. O teste Browser
+  autenticado de cadastro/aviso e das capacidades restritas ainda está pendente; não usar a etiqueta “login bloqueado”.
 - Concluído em 0.1.0-dev.2: `\Drupal::` removido de `src/` dos dois módulos (serviços por injeção); hooks procedurais do submódulo migrados para `#[Hook]`; teste da fila exato (1 item). Variação anterior da contagem não se reproduziu; causa não identificada.
 - Drift preexistente, fora desta integração: `commerce_shipping` na dependência do papel `authenticated`.

@@ -60,7 +60,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
       'aculta_portal',
       'aculta_lms',
       'aculta_lms_resources',
-      'aculta_pdf_viewer_group',
+      'aculta_document_viewer_group',
       'aculta_forum',
       'aculta_wiki',
       'aculta_statistics',
@@ -103,7 +103,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     self::assertSame('oembed:video', $remoteVideoType->getSource()->getPluginId());
     self::assertNotNull(FieldConfig::loadByName('media', 'remote_video', 'field_media_oembed_video'));
 
-    $this->assertPdfGroupRelationPluginCanAttachCourseDocument();
+    $this->assertDocumentViewerGroupRelationPluginCanAttachCourseDocument();
   }
 
   /**
@@ -123,6 +123,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
     $this->installSchema('user', ['users_data']);
+    $this->installSchema('aculta_user', ['aculta_user_nickname']);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
@@ -251,6 +252,11 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
       'field_wiki_image' => ['target_id' => $privateImage->id()],
     ]);
     $privateImageSource->save();
+    // The real Wiki owner publishes the lead image when its entry is published.
+    // Unpublish it again so this fixture keeps a genuinely private Media target
+    // for the access-filter assertions below.
+    $privateImage->setUnpublished()->save();
+    self::assertFalse($privateImage->access('view', $reader, TRUE)->isAllowed(), 'The private image must remain denied after the Wiki owner sync.');
 
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame(4, $registry->get('wiki')->getProjectionVersion());
@@ -425,9 +431,9 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
   }
 
   /**
-   * Exercises the PDF owner's real Group relation plugin with persisted data.
+   * Exercises the document owner's Group relation plugin with persisted data.
    */
-  private function assertPdfGroupRelationPluginCanAttachCourseDocument(): void {
+  private function assertDocumentViewerGroupRelationPluginCanAttachCourseDocument(): void {
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',
@@ -461,7 +467,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
 
     $relationManager = $this->container->get('group_relation_type.manager');
     $relationManager->clearCachedDefinitions();
-    $definition = $relationManager->getDefinition('aculta_pdf_viewer_group:course_document');
+    $definition = $relationManager->getDefinition('aculta_document_viewer_group:course_document');
     self::assertSame('media', $definition->getEntityTypeId());
     self::assertSame('course_document', $definition->getEntityBundle());
 
@@ -470,7 +476,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $relationshipTypeStorage);
     $relationshipType = $relationshipTypeStorage->createFromPlugin(
       GroupType::load('lms_course'),
-      'aculta_pdf_viewer_group:course_document',
+      'aculta_document_viewer_group:course_document',
     );
     $relationshipType->save();
 
@@ -486,9 +492,9 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
       'status' => FALSE,
     ]);
     $document->save();
-    $relationship = $course->addRelationship($document, 'aculta_pdf_viewer_group:course_document');
+    $relationship = $course->addRelationship($document, 'aculta_document_viewer_group:course_document');
 
-    self::assertSame('aculta_pdf_viewer_group:course_document', $relationship->getPluginId());
+    self::assertSame('aculta_document_viewer_group:course_document', $relationship->getPluginId());
     self::assertSame((string) $document->id(), (string) $relationship->getEntity()->id());
   }
 

@@ -2,53 +2,48 @@
 
 namespace Drupal\aculta_pagamentos_mercadopago\Plugin\Commerce\PaymentGateway;
 
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 use Drupal\commerce_payment\Exception\PaymentGatewayException;
+use Drupal\commerce_payment\Attribute\CommercePaymentGateway;
 use Drupal\commerce_payment\PaymentMethodStorageInterface;
-use Drupal\commerce_payment\PaymentStorageInterface;
 use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\OffsitePaymentGatewayBase;
 use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\SupportsRefundsInterface;
 use Drupal\aculta_pagamentos_mercadopago\Event\RefundEligibilityEvent;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
 use Drupal\commerce_price\Price;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Render\Element\Checkboxes;
-use GuzzleHttp\Exception\BadResponseException;
-use MercadoPago\Client\MerchantOrder\MerchantOrderClient;
-use MercadoPago\Client\Payment\PaymentClient;
-use MercadoPago\Client\Payment\PaymentRefundClient;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use MercadoPago\Client\Common\RequestOptions;
 use MercadoPago\Exceptions\MPApiException;
 use MercadoPago\MercadoPagoConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Provides the Mercado Pago Checkout payment gateway.
- *
- * @CommercePaymentGateway(
- *   id = "aculta_mercadopago_checkout_pro",
- *   label = @Translation("Mercado Pago CheckoutPro"),
- *   display_label = @Translation("Mercado Pago"),
- *   modes = {
- *     "test" = @Translation("Sandbox - Test account"),
- *     "stage" = @Translation("Stage - Production account & Test credentials"),
- *     "live" = @Translation("Live - Production account & Production credentials"),
- *   },
- *   forms = {
- *     "offsite-payment" = "Drupal\aculta_pagamentos_mercadopago\PluginForm\Checkout\RedirectCheckoutForm",
- *   },
- *   payment_method_types = {"aculta_mercadopago_checkout_pro"},
- *   credit_card_types = {
- *      "amex", "mastercard", "visa",
- *   },
- * )
  */
+#[CommercePaymentGateway(
+  id: 'aculta_mercadopago_checkout_pro',
+  label: new TranslatableMarkup('Mercado Pago CheckoutPro'),
+  display_label: new TranslatableMarkup('Mercado Pago'),
+  modes: [
+    'test' => new TranslatableMarkup('Sandbox - Test account'),
+    'stage' => new TranslatableMarkup('Stage - Production account & Test credentials'),
+    'live' => new TranslatableMarkup('Live - Production account & Production credentials'),
+  ],
+  forms: [
+    'offsite-payment' => 'Drupal\\aculta_pagamentos_mercadopago\\PluginForm\\Checkout\\RedirectCheckoutForm',
+  ],
+  payment_method_types: ['aculta_mercadopago_checkout_pro'],
+  credit_card_types: ['amex', 'mastercard', 'visa'],
+)]
 class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsInterface {
 
   /**
@@ -57,7 +52,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   public const INTEGRATOR_ID = 'dev_41f92bb906be11f1865d6a6135317fac';
 
   /**
-   * Payment type IDs that are shown as one "Card brands" block (no duplicate methods).
+   * Payment type IDs shown as one "Card brands" block.
    */
   protected const CARD_PAYMENT_TYPE_IDS = ['credit_card', 'debit_card', 'prepaid_card'];
 
@@ -110,12 +105,31 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   protected $eventDispatcher;
 
   /**
+   * Lock backend used to serialize payment notifications by remote payment ID.
+   *
+   * @var \Drupal\Core\Lock\LockBackendInterface
+   */
+  protected LockBackendInterface $lock;
+
+  /**
+   * Factory for SDK clients configured with this gateway's active credentials.
+   *
+   * @var \Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory
+   */
+  protected MercadoPagoClientFactory $clientFactory;
+
+  /**
    * {@inheritdoc}
    *
    * Constructor receives only configuration, plugin_id, and plugin_definition.
    * Other dependencies are assigned in PaymentGatewayBase::create().
    *
    * @param array<string, mixed> $configuration
+   *   The plugin configuration.
+   * @param string $plugin_id
+   *   The plugin ID.
+   * @param array<string, mixed> $plugin_definition
+   *   The plugin definition.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -130,13 +144,22 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   /**
    * {@inheritdoc}
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container.
    * @param array<string, mixed> $configuration
+   *   The plugin configuration.
+   * @param string $plugin_id
+   *   The plugin ID.
+   * @param array<string, mixed> $plugin_definition
+   *   The plugin definition.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
     $instance->requestStack = $container->get('request_stack');
     $instance->loggerFactory = $container->get('logger.factory');
     $instance->eventDispatcher = $container->get('event_dispatcher');
+    $instance->lock = $container->get('lock');
+    $instance->clientFactory = $container->get('aculta_pagamentos_mercadopago.client_factory');
     return $instance;
   }
 
@@ -157,6 +180,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * are written to the log.
    *
    * @return bool
+   *   Whether debug logging is enabled.
    */
   protected function isDebugLoggingEnabled(): bool {
     return !empty($this->configuration['debug_logging']);
@@ -204,6 +228,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   Default configuration merged with the parent gateway defaults.
    */
   public function defaultConfiguration(): array {
     return [
@@ -229,7 +254,12 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   The current form definition.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   *
    * @return array<string, mixed>
+   *   The configuration form elements.
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildConfigurationForm($form, $form_state);
@@ -396,8 +426,8 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    *   The form state (used for current values when rebuilt via AJAX).
    */
   protected function buildPaymentOptionsWrapper(array &$wrapper, FormStateInterface $form_state): void {
-    // Resolve config key the same way as the AJAX callback: values are stored under
-    // plugin_id (e.g. aculta_mercadopago_checkout_pro), not the form tree key 'form'.
+    // Resolve config key as in the AJAX callback: values are stored under
+    // plugin_id, not the form tree key 'form'.
     $values_config = $form_state->getValues()['configuration'] ?? [];
     $request_config = $this->requestStack->getCurrentRequest()?->request->all()['configuration'] ?? [];
     $config_key = array_key_first($values_config) ?? array_key_first($request_config) ?? $this->pluginId;
@@ -427,7 +457,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     if (empty($selected_type_ids)) {
       $selected_type_ids = array_keys($this->configuration['payment_types'] ?? []);
     }
-    // Only show methods for configurable types; always-enabled types are not in the form.
+    // Only show configurable types; always-enabled types are not in the form.
     $selected_type_ids = array_diff($selected_type_ids, MercadoPagoPaymentMethodsMap::$alwaysEnabledPaymentTypes);
     // When country changed, only keep types that exist for the new country.
     if ($country && isset(MercadoPagoPaymentMethodsMap::$methodsByCountryAndType[$country])) {
@@ -435,7 +465,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       $selected_type_ids = array_intersect($selected_type_ids, $valid_types);
     }
 
-    // Card types (Credit, Debit, Prepaid) are shown as one "Card brands" block; other types stay per-type.
+    // Group card types as one "Card brands" block.
     $selected_card_types = array_intersect(static::CARD_PAYMENT_TYPE_IDS, $selected_type_ids);
     $other_type_ids = array_diff($selected_type_ids, static::CARD_PAYMENT_TYPE_IDS);
 
@@ -444,7 +474,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
 
     $selected_method_ids = [];
     if (!empty($wrapper_values['payment_method']) && is_array($wrapper_values['payment_method'])) {
-      foreach ($wrapper_values['payment_method'] as $key => $type_data) {
+      foreach ($wrapper_values['payment_method'] as $type_data) {
         if (!is_array($type_data)) {
           continue;
         }
@@ -455,21 +485,20 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       }
     }
 
-    // Only show type options when a country is selected; when "None", show nothing.
+    // Show type options only when a country is selected.
     $type_options = [];
     if ($country && isset(MercadoPagoPaymentMethodsMap::$methodsByCountryAndType[$country])) {
       $valid_types = array_keys(MercadoPagoPaymentMethodsMap::getConfigurablePaymentTypesForCountry($country));
       foreach (MercadoPagoPaymentMethodsMap::getConfigurablePaymentTypesForCountry($country) as $type_id => $label) {
-        $type_options[$type_id] = $this->t($label);
+        $type_options[$type_id] = $this->getStringTranslation()->translate($label);
       }
       $normalized_types = array_combine($selected_type_ids, $selected_type_ids) ?: [];
       $form_state->setValue(array_merge($form_parents, ['payment_options_wrapper', 'payment_types']), $normalized_types);
       $by_type = MercadoPagoPaymentMethodsMap::getMethodsForCountryAndTypes($country, $selected_type_ids);
       $normalized_methods = [];
 
-      // Card brands block: one set of checkboxes when any of Credit, Debit or Prepaid is selected.
-      // Use union of all card methods for the country so submitted values stay in #options when
-      // the user toggles Credit/Debit/Prepaid (avoids "value X is not allowed" on AJAX).
+      // Show one card brand set when any card type is selected. Include all
+      // country card methods so AJAX type changes keep submitted values valid.
       if (!empty($selected_card_types)) {
         $by_type_all_cards = MercadoPagoPaymentMethodsMap::getMethodsForCountryAndTypes($country, static::CARD_PAYMENT_TYPE_IDS);
         $valid_card_method_ids = [];
@@ -491,7 +520,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
           $card_checked = array_unique($card_checked);
         }
         elseif (empty($card_checked) && !empty($saved_payment_method)) {
-          // When saved config is flat (method_id => method_id), use keys as checked.
+          // Flat saved config uses method IDs as checked keys.
           // @phpstan-ignore-next-line booleanNot.alwaysTrue (configuration shape can be per-type or flat)
           if (!$saved_methods_per_type) {
             $card_checked = array_keys($saved_payment_method);
@@ -563,16 +592,15 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     if ($country && !empty($selected_type_ids)) {
       $by_type = MercadoPagoPaymentMethodsMap::getMethodsForCountryAndTypes($country, $selected_type_ids);
 
-      // One "Card brands" block when any of Credit, Debit or Prepaid is selected.
-      // Show all card brands for the country (union of Credit + Debit + Prepaid) so options
-      // stay the same when the user toggles types and no "value not allowed" on AJAX submit.
+      // Show one card brand block with the country-wide card method union. This
+      // keeps AJAX values valid when card types change.
       if (!empty($selected_card_types)) {
         $by_type_all_cards = MercadoPagoPaymentMethodsMap::getMethodsForCountryAndTypes($country, static::CARD_PAYMENT_TYPE_IDS);
         $card_options = [];
         foreach ($by_type_all_cards as $methods_for_type) {
           foreach ($methods_for_type as $method_id => $label) {
             if (!isset($card_options[$method_id])) {
-              $card_options[$method_id] = $this->t($label);
+              $card_options[$method_id] = $this->getStringTranslation()->translate($label);
             }
           }
         }
@@ -598,7 +626,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         $type_label = MercadoPagoPaymentMethodsMap::$paymentTypes[$type_id] ?? $type_id;
         $options = [];
         foreach ($by_type[$type_id] as $method_id => $label) {
-          $options[$method_id] = $this->t($label);
+          $options[$method_id] = $this->getStringTranslation()->translate($label);
         }
         $checked_for_type = isset($normalized_methods[$type_id]['methods']) ? array_keys($normalized_methods[$type_id]['methods']) : [];
         $wrapper['payment_method'][$type_id] = [
@@ -628,14 +656,14 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    *   The form state.
    *
    * @return array<string, mixed>
-   *   The payment_options_wrapper form element (with #prefix/#suffix for the id).
+   *   The payment_options_wrapper form element with its wrapper ID.
    */
   public static function ajaxRefreshPaymentOptions(array $form, FormStateInterface $form_state): array {
     $wrapper_id = 'mercado-pago-payment-options-wrapper';
 
-    // Form state stores config under plugin_id (e.g. aculta_mercadopago_checkout_pro), not "form".
+    // Form state stores config under plugin_id, not "form".
     $values_config = $form_state->getValues()['configuration'] ?? [];
-    // getUserInput() é o POST desta requisição AJAX: não é preciso o service locator.
+    // getUserInput() is this AJAX request's POST; no service locator is needed.
     $user_input = $form_state->getUserInput()['configuration'] ?? [];
     $config_key = array_keys($values_config)[0] ?? array_keys($user_input)[0] ?? 'form';
     $country = (string) ($form_state->getValue(['configuration', $config_key, 'country']) ?? '');
@@ -643,8 +671,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       $country = (string) ($user_input[$config_key]['country'] ?? '');
     }
 
-    // Find the wrapper in the form tree (plugin form is under key 'form' in configuration).
-    // Skip non-array entries (e.g. #inline_form is the PluginConfiguration object).
+    // Find the wrapper in the form tree. The inline form can contain objects.
     $form_config_key = NULL;
     foreach ($form['configuration'] ?? [] as $key => $conf) {
       if (is_array($conf) && isset($conf['payment_options_wrapper'])) {
@@ -680,13 +707,15 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * {@inheritdoc}
    *
    * @param array &$form
-   *   The form array (modified by reference). Callers pass generic array from Form API.
+   *   The form array, modified by reference.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   *
    * @phpstan-ignore-next-line missingType.iterableValue (Form API passes untyped array)
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
-    // Remove card brand method IDs that are no longer valid for the selected payment
-    // types (e.g. user unchecked Credit but "oca" was selected). Prevents "The submitted
-    // value X in the configuration element is not allowed" when options change via AJAX.
+    // Remove card method IDs that are no longer valid for selected types.
+    // This prevents invalid submitted values after an AJAX option change.
     $values = $form_state->getValue($form['#parents']);
     if (!empty($values['payment_options_wrapper']['payment_method'][static::CARD_BRANDS_FORM_KEY]['methods'])
       && !empty($values['country'])) {
@@ -761,7 +790,10 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * {@inheritdoc}
    *
    * @param array &$form
-   *   The form array (modified by reference). Callers pass generic array from Form API.
+   *   The form array, modified by reference.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   *
    * @phpstan-ignore-next-line missingType.iterableValue (Form API passes untyped array)
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
@@ -786,7 +818,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       // Unchecked checkboxes are not sent by the browser, and nested form state
       // can merge with defaults and show all as checked. Use raw request so we
       // only get actually submitted (checked) options. Try both possible keys
-      // under 'configuration' (plugin_id from #parents, or 'form' from inline form).
+      // under 'configuration', keyed by plugin_id or 'form'.
       $request_config = $this->requestStack->getCurrentRequest()?->request->all()['configuration'] ?? [];
       $plugin_id = $form['#parents'][1] ?? NULL;
       $wrapper_values = [];
@@ -804,7 +836,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       $wrapper_values = is_array($wrapper_values) ? $wrapper_values : [];
 
       $payment_types = Checkboxes::getCheckedCheckboxes($wrapper_values['payment_types'] ?? []);
-      // Only save types that are valid for the selected country (avoids storing e.g. "ticket" when country has no ticket).
+      // Save only types that are valid for the selected country.
       $enabled_payment_types = [];
       if ($country && isset(MercadoPagoPaymentMethodsMap::$methodsByCountryAndType[$country])) {
         $valid_types = array_keys(MercadoPagoPaymentMethodsMap::getConfigurablePaymentTypesForCountry($country));
@@ -816,7 +848,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       }
       $this->configuration['payment_types'] = $enabled_payment_types;
 
-      // Save payment_method per type_id. Card types (Credit/Debit/Prepaid) share one form block (card_brands).
+      // Save payment methods per type. Card brands share one form block.
       $enabled_payment_methods_by_type = [];
       if ($country && isset(MercadoPagoPaymentMethodsMap::$methodsByCountryAndType[$country])) {
         $valid_methods_by_type = MercadoPagoPaymentMethodsMap::getMethodsForCountryAndTypes($country, array_keys($enabled_payment_types));
@@ -844,9 +876,8 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
             $methods_value = is_array($type_data) ? ($type_data['methods'] ?? $type_data) : [];
             $card_checked = is_array($methods_value) ? Checkboxes::getCheckedCheckboxes($methods_value) : [];
           }
-          // Save the same card brands list for each selected type (Credit/Debit/Prepaid).
-          // Selection is independent of type: user can select e.g. Creditel even if only
-          // Prepaid is enabled; we store all checked brands per type for form reload.
+          // Save the selected card brands under each enabled card type so the
+          // form can restore the same selection.
           foreach ($selected_card_types as $type_id) {
             $enabled_payment_methods_by_type[$type_id] = [];
             foreach ($card_checked as $method_id) {
@@ -900,7 +931,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   /**
    * {@inheritdoc}
    *
-   * O estorno só é oferecido quando o pagamento está aprovado e nenhum assinante negou a operação.
+   * O estorno exige pagamento aprovado e aprovação dos assinantes.
    */
   public function canRefundPayment(PaymentInterface $payment) {
     if (!parent::canRefundPayment($payment)) {
@@ -914,72 +945,102 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   /**
    * {@inheritdoc}
    */
-  public function refundPayment(PaymentInterface $payment, Price $amount = NULL): void {
+  public function refundPayment(PaymentInterface $payment, ?Price $amount = NULL): void {
     $this->assertPaymentState($payment, ['completed', 'partially_refunded']);
     if (!$this->canRefundPayment($payment)) {
       throw new PaymentGatewayException('Refund is not allowed for this payment.');
     }
     $logger = $this->loggerFactory->get('Mercado Pago Refund');
-
-    // If not specified, refund the entire amount.
-    $refund_amount_price = $amount ?? $payment->getAmount();
-    if ($refund_amount_price === NULL) {
-      throw new PaymentGatewayException('Payment amount is missing.');
+    $remote_id = (string) $payment->getRemoteId();
+    if ($remote_id === '' || !ctype_digit($remote_id) || (int) $remote_id < 1) {
+      throw new PaymentGatewayException('The payment has no valid Mercado Pago reference.');
     }
-    $this->assertRefundAmount($payment, $refund_amount_price);
-    $old_refunded_amount = $payment->getRefundedAmount();
-    if ($old_refunded_amount === NULL) {
-      throw new PaymentGatewayException('Refunded amount is missing.');
-    }
-    $new_refunded_amount = $old_refunded_amount->add($refund_amount_price);
-
-    $payment_amount = $payment->getAmount();
-    if ($payment_amount === NULL) {
-      throw new PaymentGatewayException('Payment amount is missing.');
+    $lock_id = 'aculta_pagamentos_mercadopago.refund.' . $remote_id;
+    if (!$this->lock->acquire($lock_id, 120)) {
+      throw new PaymentGatewayException('Another refund operation is already in progress.');
     }
 
     try {
-      MercadoPagoConfig::setAccessToken($this->getAccessToken());
-      MercadoPagoConfig::setIntegratorId(self::INTEGRATOR_ID);
-      $refundClient = new PaymentRefundClient();
-      $payment_id = (int) $payment->getRemoteId();
+      // Reload under the shared lock so concurrent requests calculate against
+      // the latest Commerce balance instead of a stale caller object.
+      $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
+      $locked_payment = $payment->id() ? $payment_storage->load($payment->id()) : NULL;
+      if (!$locked_payment instanceof PaymentInterface) {
+        throw new PaymentGatewayException('The payment could not be reloaded for refund.');
+      }
+      $this->assertPaymentState($locked_payment, ['completed', 'partially_refunded']);
+      if (!$this->canRefundPayment($locked_payment)) {
+        throw new PaymentGatewayException('Refund is not allowed for this payment.');
+      }
+
+      // If not specified, refund the entire remaining balance.
+      $refund_amount_price = $amount ?? $locked_payment->getBalance();
+      if ($refund_amount_price === NULL || $refund_amount_price->isZero()) {
+        throw new PaymentGatewayException('The remaining payment balance is missing.');
+      }
+      $old_refunded_amount = $locked_payment->getRefundedAmount();
+      $payment_amount = $locked_payment->getAmount();
+      if ($old_refunded_amount === NULL || $payment_amount === NULL) {
+        throw new PaymentGatewayException('Payment refund amounts are missing.');
+      }
+      if ($refund_amount_price->getCurrencyCode() !== $payment_amount->getCurrencyCode()
+        || $old_refunded_amount->getCurrencyCode() !== $payment_amount->getCurrencyCode()) {
+        throw new PaymentGatewayException('The refund currency does not match the payment currency.');
+      }
+      $this->assertRefundAmount($locked_payment, $refund_amount_price);
+      $new_refunded_amount = $old_refunded_amount->add($refund_amount_price);
+      $payment_id = (int) $remote_id;
       $refund_float = (float) $refund_amount_price->getNumber();
+      $idempotency_key = 'aculta-refund-' . hash('sha256', implode('|', [
+        $remote_id,
+        $refund_amount_price->getCurrencyCode(),
+        (string) $new_refunded_amount->getNumber(),
+      ]));
+      $request_options = new RequestOptions(NULL, NULL, ['x-idempotency-key' => $idempotency_key]);
+      // Let Commerce own retries; a second network POST must re-enter with the
+      // same durable local balance and therefore produce the same key.
+      $request_options->setMaxRetries(0);
+      $refund_client = $this->clientFactory->criar('reembolsos', $this->parentEntity);
       if ($refund_float >= (float) $payment_amount->getNumber()) {
-        $refund_result = $refundClient->refundTotal($payment_id);
+        $refund_result = $refund_client->refundTotal($payment_id, $request_options);
       }
       else {
-        $refund_result = $refundClient->refund($payment_id, $refund_float);
+        $refund_result = $refund_client->refund($payment_id, $refund_float, $request_options);
       }
+      if (($refund_result->status ?? NULL) !== 'approved'
+        || (isset($refund_result->payment_id) && (string) $refund_result->payment_id !== $remote_id)) {
+        throw new PaymentGatewayException('Mercado Pago has not confirmed the refund.');
+      }
+
+      if ($new_refunded_amount->lessThan($payment_amount)) {
+        $locked_payment->setState('partially_refunded');
+      }
+      else {
+        $locked_payment->setState('refunded');
+      }
+      $locked_payment->setRefundedAmount($new_refunded_amount);
+      $locked_payment->setRemoteState($refund_result->status);
+      $locked_payment->save();
+
+      $order = $locked_payment->getOrder();
+      $logger->info('Refund completed. Amount: @amount; order: @order_id; payment: @remote_id', [
+        '@amount' => $refund_amount_price->getNumber(),
+        '@order_id' => $order !== NULL ? $order->id() : '',
+        '@remote_id' => $remote_id,
+      ]);
     }
-    catch (BadResponseException $exception) {
-      $logger->error($exception->getResponse()->getBody()->getContents());
+    catch (PaymentGatewayException $exception) {
+      throw $exception;
+    }
+    catch (\Throwable $exception) {
+      // Provider responses can include private information. Log no response
+      // bodies, access tokens, or SDK exception messages.
+      $logger->error('Mercado Pago refund request failed for payment @remote_id.', ['@remote_id' => $remote_id]);
       throw new PaymentGatewayException('An error occurred while refunding the payment.');
     }
-    catch (\MercadoPago\Exceptions\MPApiException $e) {
-      if ($this->isDebugLoggingEnabled()) {
-        $this->loggerFactory->get('Mercado Pago debug')->debug('Refund error: <pre>@data</pre>', [
-          '@data' => $e->getApiResponse()->getContent(),
-        ]);
-      }
-      throw new PaymentGatewayException('Refund error: ' . $e->getMessage());
+    finally {
+      $this->lock->release($lock_id);
     }
-
-    if ($new_refunded_amount->lessThan($payment_amount)) {
-      $payment->setState('partially_refunded');
-    }
-    else {
-      $payment->setState('refunded');
-    }
-    $payment->setRefundedAmount($new_refunded_amount);
-    $payment->setRemoteState($refund_result->status ?? 'refunded');
-    $payment->save();
-
-    $order = $payment->getOrder();
-    $logger->info('Refund completed.<br>Refunded amount: @amount<br>Order id: @order_id<br>Payment: @remote_id', [
-      '@amount' => $refund_amount_price->getNumber(),
-      '@order_id' => $order !== NULL ? $order->id() : '',
-      '@remote_id' => $payment->getRemoteId(),
-    ]);
   }
 
   /**
@@ -987,226 +1048,161 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    */
   public function onNotify(Request $request) {
     $logger = $this->loggerFactory->get('Mercado Pago Notifications');
-
-    /*
-    $logger->debug('Headers: <pre>@data</pre>', [
-    '@data' => print_r($request->headers, TRUE),
-    ]);
-     */
-
-    // Reacts to IPN events.
     $response = $request->query->all();
-    // $logger->info('Response: ' . print_r($response, TRUE));
-    MercadoPagoConfig::setAccessToken($this->getAccessToken());
-    MercadoPagoConfig::setIntegratorId(self::INTEGRATOR_ID);
+    if (($response['topic'] ?? NULL) !== 'payment' || !isset($response['id']) || !is_scalar($response['id']) || !ctype_digit((string) $response['id']) || (int) $response['id'] < 1) {
+      return new JsonResponse([], 400);
+    }
 
-    $paymentClient = new PaymentClient();
-    $merchantOrderClient = new MerchantOrderClient();
-
-    if (isset($response["topic"])) {
-      // https://www.mercadopago.com.uy/developers/es/docs/checkout-pro/additional-content/your-integrations/notifications/ipn
+    $payment_id = (string) $response['id'];
+    try {
+      $payment_client = $this->clientFactory->criar('pagamentos', $this->parentEntity);
+      $payment = $payment_client->get((int) $payment_id);
       $merchant_order = NULL;
-      $ipn_payment = NULL;
-      try {
-        switch ($response["topic"]) {
-          case "payment":
-            // Get the payment and the corresponding merchant_order reported by the IPN.
-            $ipn_payment = $paymentClient->get((int) $response["id"]);
-            $order_id_mp = NULL;
-            if (isset($ipn_payment->order)) {
-              $order_id_mp = is_object($ipn_payment->order) ? ($ipn_payment->order->id ?? NULL) : ($ipn_payment->order['id'] ?? NULL);
-            }
-            if ($order_id_mp) {
-              $merchant_order = $merchantOrderClient->get((int) $order_id_mp);
-            }
-            break;
-
-          case "merchant_order":
-            $merchant_order = $merchantOrderClient->get((int) $response["id"]);
-            break;
-        }
-      }
-      catch (MPApiException $e) {
-        $logger->error('IPN API error: @message', ['@message' => $e->getMessage()]);
-        return new JsonResponse();
-      }
-
-      if (!$merchant_order) {
-        return new JsonResponse();
-      }
-
-      $order_id = $merchant_order->external_reference ?? NULL;
-      if ($order_id === NULL || $order_id === '') {
-        return new JsonResponse();
-      }
-      $order = $this->entityTypeManager->getStorage('commerce_order')->load((string) $order_id);
-      if (!$order) {
-        return new JsonResponse();
-      }
-
-      if ($response["topic"] == "merchant_order") {
-
-        if ($this->isDebugLoggingEnabled()) {
-          $this->loggerFactory->get('Mercado Pago debug')->debug('Merchant order data: <pre>@data</pre>', [
-            '@data' => print_r($merchant_order, TRUE),
-          ]);
-        }
-
-        $paid_amount = 0;
-        $payments = $merchant_order->payments ?? [];
-        foreach ($payments as $mo_payment) {
-          $mo_data = is_array($mo_payment) ? $mo_payment : (array) $mo_payment;
-          $status = $mo_data['status'] ?? NULL;
-          $total_paid = $mo_data['total_paid_amount'] ?? 0;
-          if ($status == 'approved') {
-            $paid_amount += (float) $total_paid;
-          }
-        }
-
-        // If the payment's transaction amount is equal (or bigger)
-        // than the merchant_order's amount you can release your items.
-        if ($paid_amount >= $merchant_order->total_amount) {
-          if (!is_null($merchant_order->shipments) && $merchant_order->shipping_cost > 0) {
-            // If the merchant_order has shipments
-            // if($merchant_order->shipments[0]->status == "ready_to_ship") {.
-            $logger->info("Totally paid. Print the label and release your item.<br>Order ID: " . $order_id . "<br>Paid amount: " . $paid_amount);
-            // }
-          }
-          else {
-            // The merchant_order doesn't have any shipments.
-            $logger->info("Totally paid. Release your item.<br>Order ID: " . $order_id . "<br>Paid amount: " . $paid_amount);
-          }
-        }
-        else {
-          $logger->info("Order received at Mercado Pago.<br>Order ID: " . $order_id . "<br>Paid amount: " . $paid_amount);
-        }
-
-      }
-      else {
-
-        // $response["topic"] == "payment"
-        if (isset($ipn_payment)) {
-
-          if ($this->isDebugLoggingEnabled()) {
-            $this->loggerFactory->get('Mercado Pago debug')->debug('Payment data: <pre>@data</pre>', [
-              '@data' => print_r($ipn_payment, TRUE),
-            ]);
-          }
-
-          $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
-
-          $payment_ids = $payment_storage->getQuery()
-            ->condition('order_id', $order_id)
-            ->condition('remote_id', $ipn_payment->id)
-            ->accessCheck(FALSE)
-            ->sort('payment_id', 'DESC')
-            ->range(0, 1)
-            ->execute();
-
-          // If payment was already saved we don't need to save it again.
-          if (!$payment_ids) {
-
-            $payment_method = NULL;
-
-            if ($order instanceof OrderInterface && !$order->get('payment_method')->isEmpty()) {
-              /** @var \Drupal\commerce_payment\Entity\PaymentMethodInterface $payment_method */
-              $payment_method = $order->get('payment_method')->entity;
-            }
-            // If the order doesn't reference a payment method,
-            // or if the payment method doesn't reference
-            // the right gateway, create a new one.
-            if (!$payment_method || $payment_method->getPaymentGatewayId() !== $this->parentEntity->id()) {
-              if (!($order instanceof OrderInterface)) {
-                throw new PaymentGatewayException('Order is required to create a payment method.');
-              }
-              /** @var \Drupal\commerce_payment\PaymentMethodStorageInterface $payment_method_storage */
-              $payment_method_storage = $this->entityTypeManager->getStorage('commerce_payment_method');
-              $payment_method = $payment_method_storage->createForCustomer(
-                'aculta_mercadopago_checkout_pro',
-                (string) $this->parentEntity->id(),
-                $order->getCustomerId(),
-                $order->getBillingProfile()
-              );
-            }
-
-            $payment_method->setRemoteId((string) $merchant_order->id);
-            $payment_method->setReusable(FALSE);
-            $payment_method->save();
-
-            if ($order instanceof OrderInterface) {
-              $order->set('payment_method', $payment_method);
-              $order->save();
-            }
-
-            $txn_details = $ipn_payment->transaction_details ?? NULL;
-            $total_paid = is_array($txn_details) ? ($txn_details['total_paid_amount'] ?? 0) : (is_object($txn_details) ? ($txn_details->total_paid_amount ?? 0) : 0);
-            $total_amount = Price::fromArray([
-              'number' => $total_paid,
-              'currency_code' => $ipn_payment->currency_id ?? 'USD',
-            ]);
-
-            /** @var \Drupal\commerce_payment\PaymentStorageInterface $payment_storage */
-            $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
-
-            /** @var \Drupal\commerce_payment\Entity\PaymentInterface $payment_order */
-            $payment_order = $payment_storage->create([
-              'state' => 'authorization',
-              'amount' => $total_amount,
-              'payment_gateway' => $this->parentEntity->id(),
-              'order_id' => $order->id(),
-              'remote_id' => $ipn_payment->id,
-              'remote_state' => (string) ($ipn_payment->status ?? ''),
-            ]);
-            $payment_order->save();
-
-            $payment_order->setState('completed');
-            $payment_order->save();
-
-            $logger->info('Payment information saved successfully.<br>Order id: ' . $order->id() . '<br>Payment Type: ' . $ipn_payment->payment_type_id . '<br>Amount: ' . $total_amount);
-
-          }
-          else {
-
-            // If it is a refund we update the payment.
-            if ($ipn_payment->status == 'refunded') {
-              $refunded_num = $ipn_payment->transaction_amount_refunded ?? 0;
-              $total_amount = Price::fromArray([
-                'number' => $refunded_num,
-                'currency_code' => $ipn_payment->currency_id ?? 'USD',
-              ]);
-
-              /** @var \Drupal\commerce_payment\PaymentStorageInterface $payment_storage */
-              $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
-              $payment_order = $payment_storage->loadByRemoteId((string) $ipn_payment->id);
-              if (!$payment_order) {
-                $logger->warning('IPN refund: payment not found for remote_id @id', ['@id' => $ipn_payment->id]);
-                return new JsonResponse();
-              }
-
-              $txn_details_refund = $ipn_payment->transaction_details ?? NULL;
-              $total_paid_num = is_array($txn_details_refund) ? ($txn_details_refund['total_paid_amount'] ?? 0) : (is_object($txn_details_refund) ? ($txn_details_refund->total_paid_amount ?? 0) : 0);
-              if ($total_paid_num > $refunded_num) {
-                $payment_order->setState('partially_refunded');
-              }
-              else {
-                $payment_order->setState('refunded');
-              }
-
-              $payment_order->setRemoteState((string) ($ipn_payment->status ?? ''));
-              $payment_order->setRefundedAmount($total_amount);
-              $payment_order->save();
-
-              $logger->info('Refund.<br>Order ID: @order_id<br>Amount refunded: @amount', [
-                '@order_id' => $order->id(),
-                '@amount' => $total_amount->getNumber(),
-              ]);
-            }
-          }
+      $merchant_order_id = NULL;
+      if (isset($payment->order)) {
+        $payment_order = is_object($payment->order)
+          ? ($payment->order->id ?? NULL)
+          : ($payment->order['id'] ?? NULL);
+        if ($payment_order !== NULL && ctype_digit((string) $payment_order)) {
+          $merchant_order_id = (string) $payment_order;
+          $merchant_order_client = $this->clientFactory->criar('pedidos_comerciante', $this->parentEntity);
+          $merchant_order = $merchant_order_client->get((int) $merchant_order_id);
         }
       }
     }
+    catch (\Throwable $exception) {
+      $logger->error('Mercado Pago webhook lookup failed for payment @id.', ['@id' => $payment_id]);
+      return new JsonResponse([], 503);
+    }
 
-    // Return empty response with 200 status code.
+    $payment_reference = (string) ($payment->external_reference ?? '');
+    $merchant_order_reference = (string) ($merchant_order->external_reference ?? '');
+    if ($payment_reference !== '' && $merchant_order_reference !== '' && $payment_reference !== $merchant_order_reference) {
+      $logger->warning('Payment @id has conflicting order references.', ['@id' => $payment_id]);
+      return new JsonResponse();
+    }
+    $order_id = $merchant_order_reference !== '' ? $merchant_order_reference : $payment_reference;
+    if ($order_id === '' || preg_match('/^[1-9][0-9]*$/', $order_id) !== 1) {
+      return new JsonResponse();
+    }
+    $order = $this->entityTypeManager->getStorage('commerce_order')->load($order_id);
+    if (!$order instanceof OrderInterface) {
+      return new JsonResponse();
+    }
+
+    $remote_status = (string) ($payment->status ?? '');
+    $refunded_number = (string) ($payment->transaction_amount_refunded ?? '0');
+    $has_refund = is_numeric($refunded_number) && (float) $refunded_number > 0;
+    if (!in_array($remote_status, ['approved', 'refunded'], TRUE) && !$has_refund) {
+      $logger->info('Payment @id is not complete; remote status is @status.', [
+        '@id' => $payment_id,
+        '@status' => $remote_status !== '' ? $remote_status : 'unknown',
+      ]);
+      return new JsonResponse();
+    }
+
+    $currency = (string) ($payment->currency_id ?? '');
+    $amount_number = (string) ($payment->transaction_amount ?? '');
+    $order_total = $order->getTotalPrice();
+    if ($currency === '' || $currency !== $order_total?->getCurrencyCode() || !is_numeric($amount_number) || (float) $amount_number <= 0) {
+      $logger->warning('Payment @id has an invalid amount or currency for order @order_id.', [
+        '@id' => $payment_id,
+        '@order_id' => $order->id(),
+      ]);
+      return new JsonResponse();
+    }
+    $amount = new Price($amount_number, $currency);
+    if (!$amount->equals($order_total)) {
+      $logger->warning('Payment @id does not match order @order_id total.', [
+        '@id' => $payment_id,
+        '@order_id' => $order->id(),
+      ]);
+      return new JsonResponse();
+    }
+
+    $lock_id = 'aculta_pagamentos_mercadopago.payment.' . $payment_id;
+    if (!$this->lock->acquire($lock_id, 30)) {
+      return new JsonResponse([], 503);
+    }
+    try {
+      $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
+      $payment_ids = $payment_storage->getQuery()
+        ->condition('order_id', $order->id())
+        ->condition('payment_gateway', $this->parentEntity->id())
+        ->condition('remote_id', $payment_id)
+        ->accessCheck(FALSE)
+        ->sort('payment_id', 'DESC')
+        ->range(0, 1)
+        ->execute();
+      $payment_created = FALSE;
+
+      if ($payment_ids) {
+        $commerce_payment = $payment_storage->load(reset($payment_ids));
+      }
+      elseif (in_array($remote_status, ['approved', 'refunded'], TRUE)) {
+        $payment_method = NULL;
+        if (!$order->get('payment_method')->isEmpty()) {
+          $payment_method = $order->get('payment_method')->entity;
+        }
+        if (!$payment_method instanceof PaymentMethodInterface || $payment_method->getPaymentGatewayId() !== $this->parentEntity->id()) {
+          $payment_method = $this->entityTypeManager->getStorage('commerce_payment_method')->createForCustomer(
+            'aculta_mercadopago_checkout_pro',
+            (string) $this->parentEntity->id(),
+            $order->getCustomerId(),
+            $order->getBillingProfile()
+          );
+        }
+        $payment_method->setRemoteId($merchant_order_id ?? $payment_id);
+        $payment_method->setReusable(FALSE);
+        $payment_method->save();
+        $order->set('payment_method', $payment_method);
+        $order->save();
+
+        $commerce_payment = $payment_storage->create([
+          'state' => 'authorization',
+          'amount' => $amount,
+          'payment_gateway' => $this->parentEntity->id(),
+          'order_id' => $order->id(),
+          'remote_id' => $payment_id,
+          'remote_state' => $remote_status,
+        ]);
+        $payment_created = TRUE;
+      }
+      else {
+        $logger->warning('Refund notification for payment @id has no matching Commerce payment.', ['@id' => $payment_id]);
+        return new JsonResponse();
+      }
+
+      if ($remote_status === 'refunded' || $has_refund) {
+        if (!is_numeric($refunded_number) || (float) $refunded_number <= 0) {
+          return new JsonResponse();
+        }
+        $refunded_amount = new Price($refunded_number, $currency);
+        if ($refunded_amount->greaterThan($amount)) {
+          $logger->warning('Refund for payment @id exceeds the captured amount.', ['@id' => $payment_id]);
+          return new JsonResponse();
+        }
+        if ($payment_created) {
+          $commerce_payment->save();
+          $commerce_payment->setState('completed');
+          $commerce_payment->save();
+        }
+        $commerce_payment->setState($refunded_amount->lessThan($amount) ? 'partially_refunded' : 'refunded');
+        $commerce_payment->setRefundedAmount($refunded_amount);
+        $commerce_payment->setRemoteState($remote_status);
+        $commerce_payment->save();
+      }
+      elseif ($commerce_payment->getState()->getId() === 'authorization') {
+        $commerce_payment->setRemoteState($remote_status);
+        $commerce_payment->save();
+        $commerce_payment->setState('completed');
+        $commerce_payment->save();
+      }
+    }
+    finally {
+      $this->lock->release($lock_id);
+    }
+
     return new JsonResponse();
 
   }
@@ -1228,28 +1224,18 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     $merchant_order_id = $response['merchant_order_id'] ?? NULL;
     $status = $response['status'] ?? NULL;
 
-    if ($payment_id === NULL || $merchant_order_id === NULL || $status === NULL) {
-      $logger->error('Missing required parameters on return (payment_id, merchant_order_id, status). Response: <pre>@response</pre>', [
-        '@response' => print_r($response, TRUE),
-      ]);
+    if (!is_scalar($payment_id) || filter_var((string) $payment_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === FALSE || !is_scalar($merchant_order_id) || filter_var((string) $merchant_order_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === FALSE || !is_string($status) || $status === '') {
+      $logger->error('Missing or invalid required parameters on payment return.');
       throw new PaymentGatewayException('Invalid return from payment provider: missing required parameters.', 0);
     }
 
-    // Verify payment with Mercado Pago API before trusting query params (prevents
-    // fraud: a malicious user could otherwise craft a return URL with fake
-    // payment_id/status=approved). Never trust client-supplied payment result.
-    MercadoPagoConfig::setAccessToken($this->getAccessToken());
-    MercadoPagoConfig::setIntegratorId(self::INTEGRATOR_ID);
-
+    // Confirm the payment remotely; do not trust the browser's status value.
     try {
-      $paymentClient = new PaymentClient();
-      $mp_payment = $paymentClient->get((int) $payment_id);
+      $payment_client = $this->clientFactory->criar('pagamentos', $this->parentEntity);
+      $mp_payment = $payment_client->get((int) $payment_id);
     }
-    catch (MPApiException $e) {
-      $logger->error('Mercado Pago API error verifying payment @id: @message', [
-        '@id' => $payment_id,
-        '@message' => $e->getMessage(),
-      ]);
+    catch (\Throwable $exception) {
+      $logger->error('Mercado Pago API error verifying payment @id.', ['@id' => $payment_id]);
       throw new PaymentGatewayException('Could not verify payment with Mercado Pago.', 0);
     }
 
@@ -1266,7 +1252,8 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     // pagamento parcial ou de valor diferente não pode quitar o pedido.
     $verified_amount_number = (string) ($mp_payment->transaction_amount ?? '');
     $verified_currency = (string) ($mp_payment->currency_id ?? '');
-    if (!is_numeric($verified_amount_number) || (float) $verified_amount_number <= 0 || $verified_currency !== $order->getTotalPrice()?->getCurrencyCode()) {
+    $order_total = $order->getTotalPrice();
+    if (!is_numeric($verified_amount_number) || (float) $verified_amount_number <= 0 || $verified_currency !== $order_total?->getCurrencyCode()) {
       $logger->error('Payment @id amount @amount @currency does not match order @order_id currency', [
         '@id' => $payment_id,
         '@amount' => $verified_amount_number !== '' ? $verified_amount_number : 'none',
@@ -1276,9 +1263,15 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       throw new PaymentGatewayException('Payment amount could not be verified.', 0);
     }
     $verified_amount = new Price($verified_amount_number, $verified_currency);
+    if (!$verified_amount->equals($order_total)) {
+      $logger->error('Payment @id amount does not match order @order_id total.', [
+        '@id' => $payment_id,
+        '@order_id' => $order->id(),
+      ]);
+      throw new PaymentGatewayException('Payment amount does not match this order.', 0);
+    }
 
-    // Ensure the payment belongs to this order: get merchant order and check
-    // external_reference matches our order id. Payment resource uses "order", not "order_id".
+    // Confirm the merchant order's external_reference matches this order.
     $order_id_mp = NULL;
     if (isset($mp_payment->order)) {
       $order_id_mp = is_object($mp_payment->order) ? ($mp_payment->order->id ?? NULL) : ($mp_payment->order['id'] ?? NULL);
@@ -1287,8 +1280,8 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       $order_id_mp = is_object($mp_payment->order_id) ? ($mp_payment->order_id->id ?? NULL) : ($mp_payment->order_id ?? NULL);
     }
     if (!$order_id_mp) {
-      // Sem merchant order no pagamento, o external_reference do próprio pagamento
-      // é a única prova de vínculo: sem ela, o retorno não pode marcar o pedido.
+      // Without a merchant order in the payment, its external_reference must
+      // prove the order association.
       $external_ref = $mp_payment->external_reference ?? NULL;
       if ((string) $external_ref !== (string) $order->id()) {
         $logger->error('Payment @id external_reference @ext does not match order @order_id', [
@@ -1298,11 +1291,44 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         ]);
         throw new PaymentGatewayException('Payment does not belong to this order.', 0);
       }
+      $merchant_order_client = $this->clientFactory->criar('pedidos_comerciante', $this->parentEntity);
+      try {
+        $merchant_order = $merchant_order_client->get((int) $merchant_order_id);
+      }
+      catch (MPApiException $e) {
+        $logger->error('Mercado Pago API error fetching returned merchant order.');
+        throw new PaymentGatewayException('Could not verify payment order.', 0);
+      }
+      $merchant_reference = (string) ($merchant_order->external_reference ?? '');
+      $merchant_payments = $merchant_order->payments ?? [];
+      $payment_is_linked = FALSE;
+      foreach ($merchant_payments as $merchant_payment) {
+        $merchant_payment = is_array($merchant_payment) ? $merchant_payment : (array) $merchant_payment;
+        if ((string) ($merchant_payment['id'] ?? '') === (string) $payment_id) {
+          $payment_is_linked = TRUE;
+          break;
+        }
+      }
+      if ($merchant_reference !== (string) $order->id() || !$payment_is_linked) {
+        $logger->error('Payment @id is not linked to returned merchant order @merchant_order_id.', [
+          '@id' => $payment_id,
+          '@merchant_order_id' => $merchant_order_id,
+        ]);
+        throw new PaymentGatewayException('Payment does not belong to this order.', 0);
+      }
     }
     else {
-      $merchantOrderClient = new MerchantOrderClient();
+      if ((string) $order_id_mp !== (string) $merchant_order_id) {
+        $logger->error('Payment @id merchant order @actual does not match returned merchant order @returned.', [
+          '@id' => $payment_id,
+          '@actual' => $order_id_mp,
+          '@returned' => $merchant_order_id,
+        ]);
+        throw new PaymentGatewayException('Payment does not belong to this order.', 0);
+      }
+      $merchant_order_client = $this->clientFactory->criar('pedidos_comerciante', $this->parentEntity);
       try {
-        $merchant_order = $merchantOrderClient->get((int) $order_id_mp);
+        $merchant_order = $merchant_order_client->get((int) $order_id_mp);
         $external_ref = $merchant_order->external_reference ?? NULL;
         if ((string) $external_ref !== (string) $order->id()) {
           $logger->error('Payment @id merchant order @mo_id external_reference @ext does not match order @order_id', [
@@ -1315,105 +1341,117 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         }
       }
       catch (MPApiException $e) {
-        $logger->error('Mercado Pago API error fetching merchant order: @message', ['@message' => $e->getMessage()]);
+        $logger->error('Mercado Pago API error fetching merchant order @id.', ['@id' => $order_id_mp]);
         throw new PaymentGatewayException('Could not verify payment order.', 0);
       }
     }
 
     /** @var \Drupal\commerce_payment\PaymentStorageInterface $payment_storage */
     $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
-
-    // If payment was already saved with IPN method (OnNotify)
-    // no need to save the payment again.
-    $payment_ids = $payment_storage->getQuery()
-      ->condition('order_id', $order->id())
-      ->condition('remote_id', $payment_id)
-      ->accessCheck(FALSE)
-      ->range(0, 1)
-      ->execute();
-
-    if (count($payment_ids) > 0) {
-      $logger->info("Payment already saved with IPN notifications");
-      return;
+    $lock_id = 'aculta_pagamentos_mercadopago.payment.' . (string) $payment_id;
+    if (!$this->lock->acquire($lock_id, 30)) {
+      throw new PaymentGatewayException('Payment verification is already being processed.', 0);
     }
-    // If OnNotify method failed for some reason
-    // we continue to save the payment information.
-    // Merge, não substituir: preference_id é lido na próxima visita ao retorno.
-    $checkout_data = $order->getData('commerce_mercado_pago_checkout') ?? [];
-    $checkout_data['remote_id'] = $merchant_order_id;
-    $order->setData('commerce_mercado_pago_checkout', $checkout_data);
+    try {
 
-    /*
-    // If the user is anonymous, add their Mercado Pago e-mail to the order.
-    if (empty($order->getEmail())) {
-    //@todo get user email from Mercado Pago
-    $user_email = $response['email']
-    $order->setEmail($user_email);
+      // If payment was already saved with IPN method (OnNotify)
+      // no need to save the payment again.
+      $payment_ids = $payment_storage->getQuery()
+        ->condition('order_id', $order->id())
+        ->condition('payment_gateway', $this->parentEntity->id())
+        ->condition('remote_id', $payment_id)
+        ->accessCheck(FALSE)
+        ->range(0, 1)
+        ->execute();
+
+      if (count($payment_ids) > 0) {
+        $logger->info("Payment already saved with IPN notifications");
+        return;
+      }
+      // If OnNotify method failed for some reason
+      // we continue to save the payment information.
+      // Mescla os dados para preservar preference_id no retorno.
+      $checkout_data = $order->getData('commerce_mercado_pago_checkout') ?? [];
+      $checkout_data['remote_id'] = $merchant_order_id;
+      $order->setData('commerce_mercado_pago_checkout', $checkout_data);
+
+      /*
+      // If the user is anonymous, add their Mercado Pago e-mail to the order.
+      if (empty($order->getEmail())) {
+      //@todo get user email from Mercado Pago
+      $user_email = $response['email']
+      $order->setEmail($user_email);
+      }
+       */
+
+      $payment_method = NULL;
+      // Reuse o método de pagamento atual, quando disponível.
+      if (!$order->get('payment_method')->isEmpty()) {
+        /** @var \Drupal\commerce_payment\Entity\PaymentMethodInterface $payment_method */
+        $payment_method = $order->get('payment_method')->entity;
+      }
+      // If the order doesn't reference a payment method yet, or if the payment
+      // method doesn't reference the right gateway, create a new one.
+      if (!$payment_method || $payment_method->getPaymentGatewayId() !== $this->parentEntity->id()) {
+        // Create a payment method.
+        $payment_method_storage = $this->entityTypeManager->getStorage('commerce_payment_method');
+        assert($payment_method_storage instanceof PaymentMethodStorageInterface);
+        $payment_method = $payment_method_storage->createForCustomer(
+          'aculta_mercadopago_checkout_pro',
+          (string) $this->parentEntity->id(),
+          $order->getCustomerId(),
+          $order->getBillingProfile()
+        );
+      }
+
+      $payment_method->setRemoteId((string) $merchant_order_id);
+      $payment_method->setReusable(FALSE);
+      $payment_method->save();
+
+      $order->set('payment_method', $payment_method);
+      $order->save();
+
+      $logger->info('Payment information saved successfully.<br>Payment Type: @type<br>Merchant order id: @mo_id<br>Preference id: @pref_id', [
+        '@type' => $response['payment_type'] ?? 'n/a',
+        '@mo_id' => $merchant_order_id,
+        '@pref_id' => $response['preference_id'] ?? 'n/a',
+      ]);
+
+      /** @var \Drupal\commerce_payment\Entity\PaymentInterface $payment */
+      $payment = $payment_storage->create([
+        'state' => 'authorization',
+        'amount' => $verified_amount,
+        'payment_gateway' => $this->parentEntity->id(),
+        'order_id' => $order->id(),
+        'remote_id' => $payment_id,
+        'remote_state' => $verified_status,
+      ]);
+      $payment->save();
+
+      $payment->setState('completed');
+      $payment->save();
+
+      $this->messenger()->addStatus('Payment has been successfully processed.');
     }
-     */
-
-    $payment_method = NULL;
-    // If a payment method is already referenced by the order, no need to create
-    // a new one.
-    if (!$order->get('payment_method')->isEmpty()) {
-      /** @var \Drupal\commerce_payment\Entity\PaymentMethodInterface $payment_method */
-      $payment_method = $order->get('payment_method')->entity;
+    finally {
+      $this->lock->release($lock_id);
     }
-    // If the order doesn't reference a payment method yet, or if the payment
-    // method doesn't reference the right gateway, create a new one.
-    if (!$payment_method || $payment_method->getPaymentGatewayId() !== $this->parentEntity->id()) {
-      // Create a payment method.
-      $payment_method_storage = $this->entityTypeManager->getStorage('commerce_payment_method');
-      assert($payment_method_storage instanceof PaymentMethodStorageInterface);
-      $payment_method = $payment_method_storage->createForCustomer(
-        'aculta_mercadopago_checkout_pro',
-        (string) $this->parentEntity->id(),
-        $order->getCustomerId(),
-        $order->getBillingProfile()
-      );
-    }
-
-    $payment_method->setRemoteId((string) $merchant_order_id);
-    $payment_method->setReusable(FALSE);
-    $payment_method->save();
-
-    $order->set('payment_method', $payment_method);
-    $order->save();
-
-    $logger->info('Payment information saved successfully.<br>Payment Type: @type<br>Merchant order id: @mo_id<br>Preference id: @pref_id', [
-      '@type' => $response['payment_type'] ?? 'n/a',
-      '@mo_id' => $merchant_order_id,
-      '@pref_id' => $response['preference_id'] ?? 'n/a',
-    ]);
-
-    /** @var \Drupal\commerce_payment\Entity\PaymentInterface $payment */
-    $payment = $payment_storage->create([
-      'state' => 'authorization',
-      'amount' => $verified_amount,
-      'payment_gateway' => $this->parentEntity->id(),
-      'order_id' => $order->id(),
-      'remote_id' => $payment_id,
-      'remote_state' => $status,
-    ]);
-    $payment->save();
-
-    $payment->setState('completed');
-    $payment->save();
-
-    $this->messenger()->addStatus('Payment has been successfully processed.');
 
   }
 
   /**
    * {@inheritdoc}
    *
+   * @param \Drupal\commerce_payment\Entity\PaymentMethodInterface $payment_method
+   *   The payment method to create, which is unsupported for offsite checkout.
    * @param array<string, mixed> $payment_details
+   *   Additional payment details, which are unsupported for offsite checkout.
    *
-   * @return \Drupal\commerce_payment\Entity\PaymentMethodInterface
-   *   Never returns; always throws.
+   * @throws \Drupal\commerce_payment\Exception\PaymentGatewayException
+   *   Always; Checkout Pro creates payment methods in its offsite flow.
    */
   public function createPaymentMethod(PaymentMethodInterface $payment_method, array $payment_details): PaymentMethodInterface {
-    // Checkout Pro is offsite-only; payment methods are created during onReturn/onNotify.
+    // Checkout Pro creates payment methods during onReturn/onNotify.
     throw new PaymentGatewayException('Creating a payment method outside the checkout flow is not supported.', 0);
   }
 
@@ -1433,7 +1471,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * @return \Drupal\profile\Entity\ProfileInterface
    *   The customer profile.
    */
-  protected function buildCustomerProfile(OrderInterface $order): \Drupal\profile\Entity\ProfileInterface {
+  protected function buildCustomerProfile(OrderInterface $order): ProfileInterface {
     /** @var \Drupal\profile\Entity\ProfileInterface $profile */
     $profile = $this->entityTypeManager->getStorage('profile')->create([
       'uid' => $order->getCustomerId(),
@@ -1458,17 +1496,16 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   ];
 
   /**
-   * Builds excluded_payment_methods for the Checkout Preference from gateway config.
+   * Builds excluded_payment_methods for a Checkout Preference.
    *
    * Sends methods that were NOT selected so Mercado Pago excludes them. Account
    * money and wallet (digital_currency) are never excluded (always enabled).
    *
-   * The Checkout Pro API only supports global exclusion: if a method is excluded,
-   * it is hidden for all payment types. So we exclude a method if it is disabled
-   * in any type (e.g. Visa disabled in Credit → Visa is excluded everywhere).
+   * Exclusions are global in the Checkout Pro API. A method disabled for any
+   * type is hidden for all types.
    *
    * @param array<string, mixed> $configuration
-   *   The payment gateway configuration (country, payment_types, payment_method).
+   *   The gateway configuration.
    *
    * @return list<array{id: string}>
    *   List of ['id' => 'method_id'] for the preference API.
@@ -1489,7 +1526,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     $is_per_type = !empty($payment_method) && is_array(reset($payment_method));
 
     if ($is_per_type) {
-      // Per-type config: exclude a method if it is disabled in any type (API is global).
+      // Exclusions apply globally, so one disabled type excludes the method.
       foreach ($by_type as $type_id => $methods_for_type) {
         $available_in_type = array_keys($methods_for_type);
         $enabled_in_type = array_keys($payment_method[$type_id] ?? []);
@@ -1511,7 +1548,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       $excluded = array_diff($all_method_ids, $selected_method_ids);
     }
 
-    // Never exclude account_money or digital_currency (wallet); they are always enabled.
+    // Account money and digital currency are always enabled.
     $excluded = array_diff($excluded, MercadoPagoPaymentMethodsMap::$alwaysEnabledPaymentTypes);
 
     return array_map(function ($id) {
@@ -1520,7 +1557,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   }
 
   /**
-   * Builds excluded_payment_types for the Checkout Preference from gateway config.
+   * Builds excluded_payment_types for a Checkout Preference.
    *
    * Sends types that were NOT selected so Mercado Pago excludes them. Account
    * money and digital_currency (wallet) are never excluded (always enabled).
@@ -1537,7 +1574,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     if (!$country) {
       return [];
     }
-    // Only types that exist for this country can be excluded; account_money and digital_currency are always enabled.
+    // Exclude only country-supported types; wallets are always enabled.
     $configurable_for_country = MercadoPagoPaymentMethodsMap::getConfigurablePaymentTypesForCountry($country);
     $configurable_type_ids = array_keys($configurable_for_country);
     $selected_type_ids = array_keys($payment_types);

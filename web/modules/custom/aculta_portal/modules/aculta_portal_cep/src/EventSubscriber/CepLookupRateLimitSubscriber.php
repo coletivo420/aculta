@@ -10,16 +10,24 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-/** Applies a per-client limit before the public ViaCEP proxy makes a request. */
+/**
+ * Applies a per-client request limit to the CEP lookup route.
+ */
 final class CepLookupRateLimitSubscriber implements EventSubscriberInterface {
 
   public function __construct(private readonly FloodInterface $flood) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function getSubscribedEvents(): array {
     // RouterListener resolves the route at priority 32; run before dispatch.
     return [KernelEvents::REQUEST => ['onKernelRequest', 28]];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function onKernelRequest(RequestEvent $event): void {
     if (!$event->isMainRequest()) {
       return;

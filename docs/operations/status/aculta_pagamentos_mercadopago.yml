@@ -1,3 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.19
 state: Dev
-next_phase: Concluir homologação sandbox e gates/visual antes de RC; validar integração Runtime em Alpha ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))
+progress_note: "Dev.19: webhook retorna 503 em falha HTTP/transporte; retorno falha fechado sem expor erro. Unit MP 152/480 PASS; lint/PHPCS focais PASS. Kernel, ponta a ponta e sandbox pendentes."
+next_phase: Validar a alteração no checkout de teste e homologar fluxos no sandbox antes de RC ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))

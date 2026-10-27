@@ -39,7 +39,7 @@ final class QrCodeExporter {
   public function __construct(
     private readonly QrCodeGenerator $generator,
     private readonly QrCodePresetRegistry $presets,
-    private readonly QrCodeUrlResolver $urlResolver,
+    private readonly QrCodePublicUrlInterface $urlResolver,
     private readonly FileSystemInterface $fileSystem,
     private readonly ?GeneratedImageFileManager $generatedFiles,
     private readonly ?EntityPrintPluginManagerInterface $printEngines,

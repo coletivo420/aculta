@@ -33,7 +33,7 @@ final class WikiNoticeMailType implements MailTypeInterface {
       ],
       'url' => [
         'label' => (string) $this->translation->translate('Link para abrir o aviso'),
-        'sample' => 'https://aculta.org/minha-conta/avisos',
+        'sample' => 'https://example.com/minha-conta/avisos',
       ],
     ];
   }

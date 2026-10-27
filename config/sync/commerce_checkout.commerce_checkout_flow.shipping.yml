@@ -3,7 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   module:
-    - commerce_shipping
+    - aculta_commerce
 _core:
   default_config_hash: myCcwzwqRTCPQuTJ-qnKDEA9xv4UHWSC3P0BEQ48MLw
 label: Envio
@@ -26,10 +26,11 @@ configuration:
       step: order_information
       weight: 1
       double_entry: false
-    shipping_information:
+    aculta_shipping_information:
       step: order_information
       weight: 2
       require_shipping_profile: true
+      auto_recalculate: true
     review:
       step: review
       weight: 3

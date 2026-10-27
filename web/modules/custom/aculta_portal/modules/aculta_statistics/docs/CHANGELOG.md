@@ -1,4 +1,28 @@
+## Functional BrowserKit — diagnóstico do container isolado — 2026-10-26
+
+A execução com Core 11.4.10 físico em docroot temporário corrigiu o harness
+anterior que servia uma raiz sem Core. A instalação agora falha antes das
+assertions ao compilar `aculta_commerce_melhorenvio.shipment_address_binder`: o
+argumento `MelhorEnvioAddressMapper` não resolve o serviço existente
+`aculta_commerce_melhorenvio.address_mapper`. O problema foi encaminhado ao
+proprietário do submódulo e não é atribuído ao painel. Functional segue
+DEFERRED (2 erros/0 assertions); sem Runtime write.
+
 # Changelog — ACULTA Statistics
+
+## Auditoria focal — 2026-10-26
+
+- O serviço `aculta_statistics.ga4_logger` passou a declarar
+  `Drupal\Core\Logger\LoggerChannelInterface`, tipo exigido pelos clientes
+  GA4/Search Console e devolvido por `logger.factory`. A auditoria de serviços
+  confirmou classe, aridade e tipos dos demais serviços.
+- PHPCS Drupal/DrupalPractice: 0 erros e 190 avisos de comprimento de linha (PHPCS retorna exit 1 por warnings)
+  (sobretudo em documentação). Foram corrigidos 79 erros de estilo em `src`,
+  `tests`, `install` e neste changelog; nenhuma mudança de comportamento.
+- Unit: 108 testes / 438 assertions PASS em worktree isolado, PHP 8.4.27.
+  PHP lint: 95/95 arquivos. Kernel `StatisticsDashboardKernelTest` foi tentado e falhou antes das assertions (7 erros/0 assertions) por Core duplicado entre worktree e checkout compartilhado; Functional segue DEFERRED.
+- Nenhuma gravação foi feita no Runtime nesta auditoria. A verificação de
+  instalação ativa ficou fora do escopo desta rodada.
 
 ## 0.9.0-dev.9 — permissão de métricas públicas para editores
 
@@ -9,6 +33,7 @@
   Entity Access do conteúdo. Relatórios gerais, métricas internas/restritas não
   são liberados por essa concessão.
 - A alteração está apenas em Config Sync; não foi importada no Runtime.
+- Regressão executada em 2026-10-26: Unit 108/438 e Kernel 47/319 PASS. Drush read-only confirmou módulo Enabled no MAIN. Functional dashboard foi invocado com server local e banco dedicado, mas os 2 casos falharam antes de assertions ao abrir `settings.php`: o Core symlinkado resolve `DRUPAL_ROOT` ao checkout compartilhado. Revisão visual e consultas com credenciais externas seguem pendentes.
 
 ## 0.9.0-dev.8 — permissão granular para métricas públicas por conteúdo
 
@@ -646,3 +671,12 @@ até o módulo ser ativado.
 - Ativação no Runtime de teste (`updb`) e schema instalado lá.
 - Banner de consentimento para visitante anônimo (tema ACULTA420), autorizado mas não iniciado.
 - Painel de consulta de métricas (dashboards são 0.8.0).
+## Teste funcional — tentativa isolada (2026-10-26)
+
+- A instalação limpa do Functional identificou a dependência omitida `aculta_portal → search_api:search_api_db`; corrigida no manifesto Portal `.33` porque ele próprio instala `search_api.server.aculta_database`.
+- Com `aculta_user` e um Domain MAIN incluídos na fixture, o teste instalou a cadeia e fez 11 assertions antes de falhar no helper de login de BrowserTestBase. O resultado Functional é FAIL no harness; o painel não recebeu assertions positivas e segue inconclusivo.
+
+## Functional BrowserKit — reexecução após wiring Melhor Envio — 2026-10-26
+
+- O alias de `MelhorEnvioAddressMapper` foi integrado em `aculta_commerce_melhorenvio 0.1.0-dev.2`, removendo o erro de definição de serviço originalmente observado. Na reexecução no docroot efêmero, o harness com Core duplicado falhou por declaração dupla de `system_hook_info()`; a tentativa com Core compartilhado não avançou além do cabeçalho do PHPUnit e foi encerrada. A Functional continua sem resultado/asserções pós-fix e fica DEFERRED, não PASS.
+- Nenhuma operação no Runtime; o harness precisa ser reconstruído com um único Core resolvido para servidor e PHPUnit.

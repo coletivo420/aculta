@@ -60,24 +60,33 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     $wrongDocument = $this->createMock(MediaInterface::class);
     $wrongDocument->method('bundle')->willReturn('document');
     $wrongDocument->method('id')->willReturn('42');
-    $course = $this->createCourse($readings, $galleries, [$documents, $wrongDocument]);
+    $video = $this->createMock(MediaInterface::class);
+    $video->method('bundle')->willReturn('remote_video');
+    $video->method('id')->willReturn('51');
+    $wrongVideo = $this->createMock(MediaInterface::class);
+    $wrongVideo->method('bundle')->willReturn('image');
+    $wrongVideo->method('id')->willReturn('52');
+    $videos = $this->createMock(EntityReferenceFieldItemListInterface::class);
+    $videos->method('isEmpty')->willReturn(FALSE);
+    $videos->method('referencedEntities')->willReturn([$video, $wrongVideo]);
+    $course = $this->createCourse($readings, $galleries, [$documents, $wrongDocument], $videos);
     $relationManager = $this->createMock(GroupRelationTypeManagerInterface::class);
-    $relationManager->method('hasDefinition')->with('aculta_pdf_viewer_group:course_document')->willReturn(TRUE);
+    $relationManager->method('hasDefinition')->with('aculta_document_viewer_group:course_document')->willReturn(TRUE);
     $course->method('getRelatedEntities')
-      ->with('aculta_pdf_viewer_group:course_document')
+      ->with('aculta_document_viewer_group:course_document')
       ->willReturn([$documents, $wrongDocument]);
     $projection = $this->createProvider($relationManager)->project($course);
-    self::assertSame(3, $this->createProvider($relationManager)->getProjectionVersion());
+    self::assertSame(4, $this->createProvider($relationManager)->getProjectionVersion());
 
     self::assertNotNull($projection);
     self::assertSame('group', $projection->entityTypeId);
     self::assertSame('lms_course', $projection->bundle);
     self::assertSame('cursos_aculta_org', $projection->domainId);
-    self::assertSame(['course_reading', 'course_reading', 'course_gallery', 'course_document'], array_map(
+    self::assertSame(['course_reading', 'course_reading', 'course_gallery', 'course_document', 'course_video'], array_map(
       static fn ($relation): string => $relation->type,
       $projection->relations,
     ));
-    self::assertSame(['17', '21', '31', '41'], array_map(
+    self::assertSame(['17', '21', '31', '41', '51'], array_map(
       static fn ($relation): string => $relation->targetEntityId,
       $projection->relations,
     ));
@@ -90,12 +99,12 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     $course = $this->createCourse();
     $course->expects(self::never())->method('getRelatedEntities');
     $manager = $this->createMock(GroupRelationTypeManagerInterface::class);
-    $manager->method('hasDefinition')->with('aculta_pdf_viewer_group:course_document')->willReturn(FALSE);
+    $manager->method('hasDefinition')->with('aculta_document_viewer_group:course_document')->willReturn(FALSE);
 
     $projection = $this->createProvider($manager)->project($course);
 
     self::assertNotNull($projection);
-    self::assertSame(2, $this->createProvider($manager)->getProjectionVersion());
+    self::assertSame(3, $this->createProvider($manager)->getProjectionVersion());
     self::assertSame([], $projection->relations);
   }
 
@@ -142,6 +151,7 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     ?EntityReferenceFieldItemListInterface $readings = NULL,
     ?EntityReferenceFieldItemListInterface $galleries = NULL,
     array $documents = [],
+    ?EntityReferenceFieldItemListInterface $videos = NULL,
   ): CourseInterface {
     $language = $this->createMock(LanguageInterface::class);
     $language->method('getId')->willReturn('pt-br');
@@ -159,15 +169,17 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     $course->method('getCacheTags')->willReturn([]);
     $course->method('getCacheMaxAge')->willReturn(-1);
     if ($documents !== []) {
-      $course->method('getRelatedEntities')->with('aculta_pdf_viewer_group:course_document')->willReturn($documents);
+      $course->method('getRelatedEntities')->with('aculta_document_viewer_group:course_document')->willReturn($documents);
     }
     $course->method('hasField')->willReturnMap([
       ['field_lms_readings', $readings !== NULL],
       ['field_lms_galleries', $galleries !== NULL],
+      ['field_lms_videos', $videos !== NULL],
     ]);
     $course->method('get')->willReturnMap([
       ['field_lms_readings', $readings],
       ['field_lms_galleries', $galleries],
+      ['field_lms_videos', $videos],
     ]);
     return $course;
   }

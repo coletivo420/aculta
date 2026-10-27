@@ -27,3 +27,39 @@ aculta_commerce_melhorenvio.settings:
         administrative_area:
           type: string
           label: 'UF'
+    environment:
+      type: string
+      label: 'Ambiente do Melhor Envio (sandbox ou production)'
+    redirect_uri:
+      type: string
+      label: 'URL de retorno OAuth2'
+    scopes:
+      type: string
+      label: 'Escopos OAuth2'
+    contact_email:
+      type: string
+      label: 'E-mail de contato no User-Agent'
+    keys:
+      type: mapping
+      label: 'Nomes das chaves do Drupal Key por ambiente'
+      mapping:
+        sandbox:
+          type: mapping
+          label: 'Sandbox'
+          mapping:
+            client_id:
+              type: string
+              label: 'Chave do client_id'
+            client_secret:
+              type: string
+              label: 'Chave do client_secret'
+        production:
+          type: mapping
+          label: 'Produção'
+          mapping:
+            client_id:
+              type: string
+              label: 'Chave do client_id'
+            client_secret:
+              type: string
+              label: 'Chave do client_secret'

@@ -11,19 +11,23 @@ use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Verifica as APIs de CEP (ViaCEP e BrasilAPI) com um CEP fixo e guarda o resultado no State.
+ * Checks the configured CEP APIs and stores their latest results.
  *
- * Roda no cron (CepStatusCronHooks). O status da página lê o último resultado; não consulta a rede. Usa o mesmo
- * endereço e o mesmo timeout da consulta do Portal (CepLookupController).
+ * Cron invokes the probe. Status pages read the stored results without making
+ * network requests. The probe uses the same endpoint and timeout as lookups.
  */
 final class CepApiProbe {
 
-  /** CEP de referência da verificação (Praça da Sé, São Paulo). */
+  /**
+   * Reference CEP used to check provider availability.
+   */
   public const PROBE_CEP = '01001000';
 
   public const STATE_KEY = 'aculta_portal_cep.api_status';
 
-  /** Intervalo da verificação automática: uma vez por dia, não a cada execução do cron. */
+  /**
+   * Minimum interval between automatic provider checks, in seconds.
+   */
   public const INTERVAL = 86400;
 
   private const APIS = [
@@ -42,20 +46,33 @@ final class CepApiProbe {
     private readonly CepSources $sources,
   ) {}
 
-  /** Consulta cada API e grava o resultado. Retorna o resultado gravado. */
+  /**
+   * Checks enabled APIs and saves their results to state.
+   */
   public function check(): array {
     $result = [];
     foreach (self::APIS as $id => $api) {
       // Fonte desativada na configuração não é consultada.
       if (!$this->sources->enabled($id)) {
-        $result[$id] = ['label' => $api['label'], 'ok' => FALSE, 'disabled' => TRUE, 'http_status' => NULL, 'ms' => 0, 'checked_at' => $this->time->getRequestTime()];
+        $result[$id] = [
+          'label' => $api['label'],
+          'ok' => FALSE,
+          'disabled' => TRUE,
+          'http_status' => NULL,
+          'ms' => 0,
+          'checked_at' => $this->time->getRequestTime(),
+        ];
         continue;
       }
       $started = microtime(TRUE);
       $http_status = NULL;
       $ok = FALSE;
       try {
-        $response = $this->http->request('GET', sprintf($api['url'], self::PROBE_CEP), ['timeout' => 5, 'http_errors' => FALSE]);
+        $response = $this->http->request(
+          'GET',
+          sprintf($api['url'], self::PROBE_CEP),
+          ['timeout' => 5, 'http_errors' => FALSE],
+        );
         $http_status = $response->getStatusCode();
         $data = json_decode((string) $response->getBody(), TRUE);
         $ok = $http_status === 200 && is_array($data) && !empty($data[$api['key']]);
@@ -76,8 +93,10 @@ final class CepApiProbe {
   }
 
   /**
-   * Verifica só quando a última verificação tem mais de INTERVAL segundos (ou não existe). Retorna o resultado
-   * quando executou, ou NULL quando ainda não está vencida.
+   * Checks providers only when the configured interval has elapsed.
+   *
+   * @return array<string, array<string, mixed>>|null
+   *   New provider results, or NULL when the last check is still current.
    */
   public function checkIfDue(): ?array {
     $last = $this->last();
@@ -88,7 +107,12 @@ final class CepApiProbe {
     return $this->check();
   }
 
-  /** Último resultado gravado pelo cron, por API (vazio antes da primeira verificação). */
+  /**
+   * Returns the most recent stored result for each API.
+   *
+   * @return array<string, array<string, mixed>>
+   *   Stored provider results, or an empty array before the first check.
+   */
   public function last(): array {
     return $this->state->get(self::STATE_KEY, []);
   }

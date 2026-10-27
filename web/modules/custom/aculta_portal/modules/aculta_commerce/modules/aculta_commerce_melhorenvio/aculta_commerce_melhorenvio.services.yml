@@ -10,7 +10,86 @@ services:
     class: Drupal\aculta_commerce_melhorenvio\Address\MelhorEnvioAddressMapper
     autowire: true
 
+  Drupal\aculta_commerce_melhorenvio\Address\MelhorEnvioAddressMapper:
+    alias: aculta_commerce_melhorenvio.address_mapper
+
   # Par origem/destino para cotação, contratação e etiqueta. Origem vem de configuração; destino do perfil de envio.
+  # Argumentos explícitos: o mapper é recebido pelo id do serviço. Autowire por classe falha quando o mapper não tem alias
+  # pela classe, e o container não compilava com o módulo habilitado.
   aculta_commerce_melhorenvio.shipment_address_binder:
     class: Drupal\aculta_commerce_melhorenvio\Address\ShipmentAddressBinder
+    arguments: ['@aculta_commerce_melhorenvio.address_mapper', '@config.factory']
+
+  # Configurações do Melhor Envio: ambiente, URL de retorno, escopos e nomes das chaves do Drupal Key.
+  aculta_commerce_melhorenvio.config:
+    class: Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioConfig
     autowire: true
+
+  aculta_commerce_melhorenvio.token_cipher:
+    class: Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioTokenCipher
+    arguments: ['@aculta_portal.secrets_manager']
+
+  # Tokens OAuth2 cifrados no State API, sem exportação de configuração.
+  aculta_commerce_melhorenvio.token_store:
+    class: Drupal\aculta_commerce_melhorenvio\Http\StateMelhorEnvioTokenStore
+    arguments: ['@state', '@aculta_commerce_melhorenvio.token_cipher']
+
+  # Cliente HTTP OAuth2 do Melhor Envio. Único ponto de chamada à API.
+  aculta_commerce_melhorenvio.client:
+    class: Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClient
+    arguments:
+      - '@http_client'
+      - '@aculta_commerce_melhorenvio.config'
+      - '@aculta_commerce_melhorenvio.token_store'
+      - '@key.repository'
+      - '@logger.factory'
+      - 200
+      - ~
+      - '@aculta_portal.secrets_manager'
+
+  # Geração e conferência do parâmetro `state` do OAuth2 (proteção contra CSRF no retorno).
+  aculta_commerce_melhorenvio.oauth_state:
+    class: Drupal\aculta_commerce_melhorenvio\Http\OAuthState
+
+  # Rotas de autorização e de retorno do Melhor Envio.
+  aculta_commerce_melhorenvio.oauth_controller:
+    class: Drupal\aculta_commerce_melhorenvio\Controller\MelhorEnvioOAuthController
+    arguments: ['@aculta_commerce_melhorenvio.client', '@aculta_commerce_melhorenvio.oauth_state', '@logger.factory', '@messenger']
+
+  # Página de administração com o estado da conexão.
+  aculta_commerce_melhorenvio.status_controller:
+    class: Drupal\aculta_commerce_melhorenvio\Controller\MelhorEnvioStatusController
+    arguments: ['@aculta_commerce_melhorenvio.config', '@aculta_commerce_melhorenvio.token_store', '@date.formatter', '@datetime.time']
+
+  # Validação HMAC-SHA256 do cabeçalho X-ME-Signature do webhook.
+  aculta_commerce_melhorenvio.webhook_signature:
+    class: Drupal\aculta_commerce_melhorenvio\Webhook\MelhorEnvioWebhookSignature
+
+  # Recebe as notificações de etiqueta do Melhor Envio.
+  aculta_commerce_melhorenvio.webhook_controller:
+    class: Drupal\aculta_commerce_melhorenvio\Controller\MelhorEnvioWebhookController
+    arguments:
+      - '@aculta_commerce_melhorenvio.config'
+      - '@key.repository'
+      - '@aculta_commerce_melhorenvio.webhook_signature'
+      - '@logger.factory'
+      - '@aculta_portal.secrets_manager'
+
+  # Cotação de frete (ME-0.2-A): payload, leitura da resposta, serviço e conversão em tarifas do Commerce.
+  aculta_commerce_melhorenvio.quote_request_builder:
+    class: Drupal\aculta_commerce_melhorenvio\Quote\QuoteRequestBuilder
+
+  aculta_commerce_melhorenvio.quote_response_parser:
+    class: Drupal\aculta_commerce_melhorenvio\Quote\QuoteResponseParser
+
+  aculta_commerce_melhorenvio.quoter:
+    class: Drupal\aculta_commerce_melhorenvio\Quote\MelhorEnvioQuoter
+    arguments:
+      - '@aculta_commerce_melhorenvio.client'
+      - '@aculta_commerce_melhorenvio.shipment_address_binder'
+      - '@aculta_commerce_melhorenvio.quote_request_builder'
+      - '@aculta_commerce_melhorenvio.quote_response_parser'
+      - '@logger.factory'
+
+  aculta_commerce_melhorenvio.quote_rate_factory:
+    class: Drupal\aculta_commerce_melhorenvio\Quote\QuoteRateFactory

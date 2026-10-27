@@ -14,6 +14,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Verifies educator-controlled roster visibility stays inside one class.
@@ -22,14 +23,24 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class ClassRosterVisibilityTest extends KernelTestBase {
 
+  use AcultaLmsDependencyHarnessTrait;
+
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'file', 'image', 'media', 'entity_usage', 'aculta_image',
+    'system', 'domain', 'user', 'file', 'image', 'media', 'entity_usage', 'aculta_image',
     'field', 'filter', 'flexible_permissions', 'group', 'views', 'options',
     'text', 'lms', 'lms_classes', 'aculta_lms',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerLmsDependencyServices($container);
+  }
 
   /**
    * {@inheritdoc}

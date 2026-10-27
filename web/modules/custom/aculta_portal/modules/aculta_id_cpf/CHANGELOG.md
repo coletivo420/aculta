@@ -1,3 +1,10 @@
+## 0.3.0-dev.2 — restrição transacional de unicidade — 2026-10-25
+
+- `aculta_id_cpf_update_10002` adiciona um índice único ao campo de fingerprint no armazenamento ativo do Profile. A restrição SQL fecha a condição de corrida após a consulta de preflight.
+- O update detecta grupos duplicados antes do DDL e aborta com contagem agregada, sem revelar fingerprints ou documentos. O hook de instalação aplica o mesmo contrato em instalações novas.
+- `AccountDocumentStore` transforma a violação específica do índice em erro genérico, preservando falhas de armazenamento não relacionadas.
+- Kernel MariaDB chama `10002` duas vezes para confirmar idempotência, rejeita duplicata no banco e bloqueia atualização quando já há conflito (2 testes/5 assertions). Nenhuma atualização foi aplicada no Runtime.
+
 ## 0.3.0-dev.1 — módulo oficial de CPF/CNPJ — 2026-10-23
 
 - Decisão de 2026-10-23: `aculta_id_cpf` é a implementação oficial e permanente de identidade fiscal. Machine name, campos, storage, Key IDs, variáveis de ambiente e separador HMAC `aculta_id_cpf:v1` não mudam.
@@ -6,6 +13,18 @@
 - Define a política de identidade fiscal compartilhada entre Loja e LMS em `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`. Implementação do checkout pendente.
 
 # Changelog
+
+## 0.3.0-dev.4 — impedir unicidade falsa com documentos sem fingerprint — 2026-10-26
+
+- O update 10002 agora verifica que todo documento não vazio do bundle Profile associado possui fingerprint antes de criar a restrição SQL. Se faltar índice ou tabela de origem, a operação falha fechada com contagem agregada e sem imprimir valores.
+- Runner de domínio 248 checks, Unit 48/116 e Kernel MariaDB 3/8 PASS. O Kernel cobre sucesso/idempotência, fingerprints duplicados e recusa de documento sem fingerprint; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS.
+- Runtime consultado em modo somente leitura: 1 documento associado, 1 fingerprint, zero não indexados, zero grupos duplicados e ainda sem índice SQL; nenhum update foi executado.
+
+## 0.3.0-dev.3 — proteger diagnóstico de colisão concorrente — 2026-10-26
+
+- Uma violação da chave única de fingerprint continua retornando `Document already registered.`, sem encadear a exceção SQL que pode conter o fingerprint no detalhe do banco. Falhas de armazenamento sem essa chave continuam sendo propagadas.
+- `AccountDocumentStoreUniqueConflictTest` simula a corrida após a consulta prévia e confirma a mensagem genérica sem exceção anterior; Unit 48/116 e Kernel MariaDB 2/5 PASS. PHPCS Drupal/DrupalPractice e PHP lint dos arquivos modificados PASS.
+- O Runtime não foi atualizado. Atualização `10002`, integração Profile/Form API e homologação permanecem pendentes.
 
 ## 0.2.0-dev.2 — unicidade por fingerprint e migração do índice — 2026-10-12
 

@@ -1,5 +1,5 @@
 aculta_pagamentos_mercadopago.checkout_popup_return:
-  path: '/commerce-mercado-pago/checkout-return'
+  path: '/integracoes/mercadopago/checkout-retorno'
   defaults:
     _controller: '\Drupal\aculta_pagamentos_mercadopago\Controller\CheckoutPopupReturnController::returnPage'
   requirements:

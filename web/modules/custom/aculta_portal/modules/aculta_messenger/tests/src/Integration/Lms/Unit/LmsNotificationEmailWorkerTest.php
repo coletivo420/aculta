@@ -45,7 +45,7 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
     $notices = $this->createMock(LearningNoticeManagerInterface::class);
     $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
       'email_summary' => 'Certificado emitido.',
-      'url' => Url::fromUri('https://aculta.org/minha-conta/certificados'),
+      'url' => Url::fromUri('https://example.com/minha-conta/certificados'),
     ]);
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->with(27, 'aprendizagem')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
@@ -180,7 +180,7 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
     $notices = $this->createMock(LearningNoticeManagerInterface::class);
     $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
       'email_summary' => 'Certificado emitido.',
-      'url' => Url::fromUri('https://aculta.org/minha-conta/certificados'),
+      'url' => Url::fromUri('https://example.com/minha-conta/certificados'),
     ]);
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->with(27, 'aprendizagem')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
@@ -219,7 +219,7 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
     $notices = $this->createMock(LearningNoticeManagerInterface::class);
     $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
       'email_summary' => 'Certificado emitido.',
-      'url' => Url::fromUri('https://aculta.org/minha-conta/certificados'),
+      'url' => Url::fromUri('https://example.com/minha-conta/certificados'),
     ]);
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->with(27, 'aprendizagem')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
@@ -252,7 +252,7 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
     $notices = $this->createMock(LearningNoticeManagerInterface::class);
     $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
       'email_summary' => 'Certificado emitido.',
-      'url' => Url::fromUri('https://aculta.org/minha-conta/certificados'),
+      'url' => Url::fromUri('https://example.com/minha-conta/certificados'),
     ]);
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->with(27, 'aprendizagem')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
@@ -395,7 +395,7 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
    */
   private function withUrlAssembler(callable $callback): void {
     $assembler = $this->createMock(UnroutedUrlAssemblerInterface::class);
-    $assembler->method('assemble')->willReturn('https://aculta.org/minha-conta/certificados');
+    $assembler->method('assemble')->willReturn('https://example.com/minha-conta/certificados');
     $container = new Container();
     $container->set('unrouted_url_assembler', $assembler);
     \Drupal::setContainer($container);

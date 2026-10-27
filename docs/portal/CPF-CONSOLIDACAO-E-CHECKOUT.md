@@ -17,7 +17,17 @@ Este documento registra a inventariação (R0), as decisões do responsável e a
 | LMS, acesso gratuito / matrícula sem checkout comercial | Não exigido | Nenhuma alteração na política de matrículas |
 | Doações (`aculta_donation`) | Não obrigatório | Checkout de doação preservado |
 
-Demais decisões: o módulo oficial mantém o machine name `aculta_id_cpf`; o campo `profile.participante.field_documento` e o índice `field_documento_indice` não mudam; chaves, key IDs e separador HMAC (`aculta_id_cpf:v1`) permanecem como estão; o documento não é alterável diretamente após o primeiro cadastro válido; o checkout não sobrescreve o documento cadastrado; alterações excepcionais serão administrativas, autorizadas e auditadas (fase futura).
+Demais decisões: o módulo oficial mantém o machine name `aculta_id_cpf`; o campo `profile.associado.field_documento` e o índice `field_documento_indice` não mudam; chaves, key IDs e separador HMAC (`aculta_id_cpf:v1`) permanecem como estão; o documento não é alterável diretamente após o primeiro cadastro válido; o checkout não sobrescreve o documento cadastrado; alterações excepcionais serão administrativas, autorizadas e auditadas (fase futura).
+
+### Addendo de 2026-10-26 — bundle e atualização de unicidade
+
+O nome do bundle participante foi aposentado em 2026-10-17; o proprietário atual
+é profile.associado, como usado pelo AccountDocumentStore e pela configuração
+ativa. O Runtime MAIN foi consultado somente para leitura: schema CPF 10001,
+um documento associado com fingerprint, nenhum documento sem índice, nenhuma
+duplicidade e ainda sem índice SQL único. A branch da PR contém o update 10002
+que cria essa restrição depois de conferir cobertura e unicidade. Nenhum update
+foi executado.
 
 ## 2. Inventário R0 — `aculta_id_cpf` × `aculta_associado_id`
 
@@ -171,7 +181,7 @@ Dependências: R2 e R3 antes de I-D; I-B antes de I-C e I-D; I-D e LMS antes de 
 ## 8. Roadmap do `aculta_id_cpf` (R5)
 
 - **CPF 0.2-A — Consolidação arquitetural:** módulo único; contratos de serviço; dependências saneadas; documentação atualizada. *Situação: R0–R2 concluídos; remoção do associado bloqueada.*
-- **CPF 0.2-B — Integridade e concorrência:** unicidade transacional; avaliar índice único; testes de gravações concorrentes e documentos duplicados. *O HMAC atual não garante unicidade sob concorrência (ver README do módulo).*
+- **CPF 0.2-B — Integridade e concorrência:** implementada em código `aculta_id_cpf_update_10002`, com índice único no armazenamento ativo de `field_documento_indice`; Kernel MariaDB verifica idempotência, bloqueio de duplicata, recusa documento sem fingerprint e aborta diante de grupo legado sem expor fingerprints (3 testes/8 assertions). *Ativação no Runtime e validação de conflitos reais seguem pendentes de autorização operacional; sem isso, ambientes anteriores ao update continuam usando apenas a checagem prévia.*
 - **CPF 0.2-C — Integração de conta:** formulários do Portal; Profile/User; máscaras e mensagens genéricas; proteção contra exposição de PII; validação de acesso.
 - **CPF 0.2-D — Login por CPF:** estudo somente. Preservar autenticação Core, CAPTCHA, flood control, confirmação de e-mail e Social Auth. Sem implementação antes de contrato de segurança.
 - **CPF 0.2-E — Integrações futuras:** Commerce e LMS (ver CPF-CHECKOUT-0.2-I); Webform com controles de acesso e exportação; serviços internos autorizados; auditoria e retenção.
@@ -204,7 +214,7 @@ Aplicar `drush config:import` no runtime alvo, somente com autorização:
 - O flow `commerce_checkout.commerce_checkout_flow.curso` será **removido** do ativo. Nenhum pedido guarda o ID do flow, mas pedidos em checkout de curso que estejam na etapa de login ou de revisão precisam ser conferidos depois da importação.
 - O tipo `curso` passa a usar o flow `default`.
 - O flow `default` passa a exigir login e a incluir o pane `aculta_fiscal_identity` na etapa de revisão. Compras da Loja sem CPF/CNPJ válido deixam de ser concluídas.
-- Cursos gratuitos que passam pelo checkout também passam a exigir CPF/CNPJ, como decidido.
+- Registro histórico da política de 2026-10-23, **substituído** pela atualização de 2026-10-26 ao final deste documento: cursos gratuitos não exigem CPF/CNPJ.
 
 ## 9.2 Por que o import completo não foi feito
 
@@ -367,3 +377,15 @@ O que o teste prova é que o tema carrega e renderiza as páginas sem erro. Há 
     - **PASS — pane de identidade fiscal na Loja:** pedido 113 em `revisao` recusa vazio e inválido, permanecendo no passo, e conclui com documento válido; o pedido 114 mostra o documento mascarado e sem campo de edição. Evidências em 9.6.
     - **LMS:** `cursos.aculta.toca.net.br/group/1` é página informativa do grupo, sem preço, matrícula ou entrada de checkout; não há fluxo de compra no LMS para percorrer o pane fiscal. Coerente com a ADR-013 e coberto no nível Kernel.
     - **PASS — tema Olivero (ambiente local):** Portal, Fórum e Revista renderizam com Olivero, 6 assets do tema e nenhum de `aculta420`, sem mensagens de erro; a view do Fórum renderiza completa. Feito no ambiente local, não no servidor de testes, com restauração de `aculta420` ao final. Limitação de conteúdo registrada em 9.6.
+
+
+## Atualização de política — matrícula gratuita no LMS (2026-10-26)
+
+A regra histórica da seção 9 que estendia a exigência fiscal a cursos gratuitos
+foi substituída pelo contrato transversal vigente: Loja e cursos pagos exigem
+CPF/CNPJ; participação gratuita no LMS não exige. `FiscalIdentityPolicy` decide
+pelo preço base da variação de curso (`0.00` dispensa), não pelo total ajustado
+do pedido, para preservar a exigência quando um curso pago recebe desconto.
+Pedidos LMS vazios ou com item/composição não reconhecida permanecem
+fail-closed. A alteração está em `aculta_portal` 0.4.1-dev.35 e não altera dados
+existentes nem configuração ativa.

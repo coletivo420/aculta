@@ -39,6 +39,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 #[RunTestsInSeparateProcesses]
 final class AttemptArchiveLifecycleTest extends KernelTestBase {
 
+  use AcultaLmsDependencyHarnessTrait;
+
   use LmsKernelTestTrait;
   use UserCreationTrait;
 
@@ -48,7 +50,7 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
    * @var string[]
    */
   protected static $modules = [
-    'system',
+    'system', 'domain',
     'user',
     'file',
     'image',
@@ -77,6 +79,7 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     parent::register($container);
     $container->register('stream_wrapper.private', PrivateStream::class)
       ->addTag('stream_wrapper', ['scheme' => 'private']);
+    $this->registerLmsDependencyServices($container);
   }
 
   /**

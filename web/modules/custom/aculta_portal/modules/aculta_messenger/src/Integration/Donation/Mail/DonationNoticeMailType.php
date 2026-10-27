@@ -31,7 +31,7 @@ final class DonationNoticeMailType implements MailTypeInterface {
       ],
       'url' => [
         'label' => (string) $this->translation->translate('Link para abrir o aviso'),
-        'sample' => 'https://aculta.org/avisos-mensagens/avisos',
+        'sample' => 'https://example.com/avisos-mensagens/avisos',
       ],
     ];
   }

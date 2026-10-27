@@ -1,5 +1,4 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
 namespace Drupal\aculta_lms_h5p\Plugin\Field\FieldFormatter;
 
@@ -21,12 +20,15 @@ use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface;
 use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Plugin implementation of the H5P formatter. */
+/**
+ * Plugin implementation of the H5P formatter.
+ */
 #[FieldFormatter(
   id: 'h5p_default',
   label: new TranslatableMarkup('Padrão'),
   field_types: ['h5p'],
 )]
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital,Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the historical H5P fork class identifier used by plugin discovery and cached forms.
 class aculta_H5PDefaultFormatter extends FormatterBase {
 
   /**
@@ -80,7 +82,7 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    $summary = array();
+    $summary = [];
 
     $summary[] = $this->t('Exibe conteúdo interativo H5P.');
 
@@ -91,7 +93,7 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $element = array();
+    $element = [];
 
     $course = $items->getEntity();
     if ($course instanceof CourseInterface) {
@@ -112,19 +114,19 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
     foreach ($items as $delta => $item) {
       $value = $item->getValue();
 
-      // Load H5P Content entity
+      // Load H5P Content entity.
       $h5p_content = aculta_H5PContent::load($value['h5p_content_id']);
       if (empty($h5p_content)) {
         continue;
       }
 
-      // Grab generic integration settings
+      // Grab generic integration settings.
       $course = $item->getEntity();
       $h5p_integration = aculta_H5PDrupal::getGenericaculta_H5PIntegrationSettings($course instanceof CourseInterface ? $course : NULL);
       $core = aculta_H5PDrupal::getInstance('core');
       $preloaded_dependencies = $core->loadContentDependencies($h5p_content->id(), 'preloaded');
 
-      // Add content specific settings
+      // Add content specific settings.
       $content_id_string = 'cid-' . $h5p_content->id();
       $embedType = $h5p_content->getEmbedType();
       $content_settings = $h5p_content->getaculta_H5PIntegrationSettings($item->getEntity()->access('update'));
@@ -199,7 +201,7 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
           'drupalSettings' => [
             'h5p' => [
               'H5PIntegration' => $h5p_integration,
-            ]
+            ],
           ],
           'library' => $loadpackages,
         ],
@@ -227,14 +229,11 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
         $documents = [];
         $cacheability->addCacheableDependency($course);
         $relationshipListTag = 'group_relationship_list:plugin:'
-          . 'aculta_pdf_viewer_group:course_document:group:' . $course->id();
+          . 'aculta_document_viewer_group:course_document:group:' . $course->id();
         $cacheability->addCacheTags([
           $relationshipListTag,
         ]);
-        foreach (
-          $h5p_content->get('course_documents')->referencedEntities()
-          as $media
-        ) {
+        foreach ($h5p_content->get('course_documents')->referencedEntities() as $media) {
           if (
             !$media instanceof MediaInterface
             || $media->bundle() !== 'course_document'
@@ -242,12 +241,9 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
             continue;
           }
           $belongsToCourse = FALSE;
-          foreach (
-            $course->getRelationships('aculta_pdf_viewer_group:course_document')
-            as $relationship
-          ) {
+          foreach ($course->getRelationships('aculta_document_viewer_group:course_document') as $relationship) {
             $cacheability->addCacheableDependency($relationship);
-            if ((int) $relationship->getEntity()->id() === (int) $media->id()) {
+            if ((int) $relationship->getEntityId() === (int) $media->id()) {
               $belongsToCourse = TRUE;
             }
           }

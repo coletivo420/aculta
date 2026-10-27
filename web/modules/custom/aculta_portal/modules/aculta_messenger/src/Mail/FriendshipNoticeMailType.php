@@ -33,7 +33,7 @@ final class FriendshipNoticeMailType implements MailTypeInterface {
       ],
       'url' => [
         'label' => (string) $this->translation->translate('Link para abrir sua conta'),
-        'sample' => 'https://aculta.org/minha-conta',
+        'sample' => 'https://example.com/minha-conta',
       ],
     ];
   }

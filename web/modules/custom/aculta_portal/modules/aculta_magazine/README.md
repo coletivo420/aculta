@@ -54,10 +54,14 @@ contrato central `aculta_messenger.notice_event_publisher`. O núcleo persiste o
 aviso como `Message`, agrega a origem Revista na central e coordena e-mail pelo
 Mailer conforme preferência da conta. `seguir_publicacao` é Flag opcional por
 publicação; acompanhar não altera acesso e não inicia conversa. A administração
-do Messenger pode habilitar separadamente publicação e atualização. O fluxo de
-envio para revisão e os resultados editoriais ainda não emitem avisos; ver
-[arquitetura](docs/ARCHITECTURE.md#11-integração-com-avisos-do-aculta-messenger)
-e o roadmap do Messenger.
+do Messenger pode habilitar separadamente publicação e atualização. O módulo
+também publica avisos de envio para revisão (`draft` → `review`) e devolução
+para ajustes (`review` → `draft`), com controles próprios no Messenger. Esses
+avisos editoriais são destinados a autores e coautores que ainda podem acessar
+a revisão, excluindo quem realizou a transição. Aprovação/publicação segue o
+evento público de publicação; comentários e arquivamento não geram avisos.
+Consulte a [arquitetura](docs/ARCHITECTURE.md#11-integração-com-avisos-do-aculta-messenger)
+para audiência, autorização e evidências de teste.
 
 Comentários contextuais continuam como entidades Comment no Node `revista`.
 `aculta_forum` fornece o contexto compartilhado de leitura, resposta e moderação;

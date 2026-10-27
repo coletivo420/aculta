@@ -6,9 +6,12 @@ namespace Drupal\aculta_patcher;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
+use Composer\InstalledVersions;
 use Symfony\Component\Process\Process;
 
-/** Exports active patch records as reviewed Composer Patches artifacts. */
+/**
+ * Exports active patch records as reviewed Composer Patches artifacts.
+ */
 final class PatchManifestExporter {
 
   private const PACKAGE_PATTERN = '/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/';
@@ -17,13 +20,28 @@ final class PatchManifestExporter {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly string $appRoot,
     private readonly FileSystemInterface $fileSystem,
+    private readonly PatchDiffValidator $diffValidator = new PatchDiffValidator(),
+    private readonly ?\Closure $packagePathResolver = NULL,
   ) {}
+
+  /**
+   * Resolves an installed package through an injected resolver or Composer.
+   */
+  private function resolvePackagePath(string $package): ?string {
+    if ($this->packagePathResolver !== NULL) {
+      return ($this->packagePathResolver)($package);
+    }
+    return class_exists(InstalledVersions::class)
+      ? InstalledVersions::getInstallPath($package)
+      : NULL;
+  }
 
   /**
    * Validates active patches, then writes a Composer Patches v2 manifest.
    *
    * @throws \RuntimeException
-   *   When a patch is invalid, stale, or cannot be applied to the locked source.
+   *   When a patch is invalid, stale, or cannot be applied to the locked
+   *   source.
    */
   public function export(bool $checkOnly = FALSE): string {
     $projectRoot = dirname($this->appRoot);
@@ -57,16 +75,9 @@ final class PatchManifestExporter {
       if (($lockedVersions[$package] ?? NULL) !== $version) {
         throw new \RuntimeException(sprintf('O patch %s exige %s %s; o composer.lock contém %s.', $id, $package, $version, $lockedVersions[$package] ?? 'pacote ausente'));
       }
-      if (strlen($diff) > 262144 || !str_contains($diff, '--- ') || !str_contains($diff, '+++ ') || !preg_match('/^@@/m', $diff)) {
-        throw new \RuntimeException(sprintf('O conteúdo do patch %s não é um unified diff válido ou excede 256 KiB.', $id));
-      }
-      if (preg_match('~^(?:---|\+\+\+)\s+(?!(?:/dev/null)(?:\s|$))(?:/|[A-Za-z]:[\\\\/])|^(?:---|\+\+\+)\s+.*(?:^|/)\.\.(?:/|$)~m', $diff)) {
-        throw new \RuntimeException(sprintf('O patch %s aponta para um caminho fora do pacote.', $id));
-      }
+      $this->diffValidator->assertValid($id, $diff);
 
-      $installPath = class_exists(\Composer\InstalledVersions::class)
-        ? \Composer\InstalledVersions::getInstallPath($package)
-        : NULL;
+      $installPath = $this->resolvePackagePath($package);
       $realPackagePath = is_string($installPath) ? realpath($installPath) : FALSE;
       $realProjectRoot = realpath($projectRoot);
       if ($realPackagePath === FALSE || $realProjectRoot === FALSE || !str_starts_with($realPackagePath, $realProjectRoot . DIRECTORY_SEPARATOR)) {
@@ -92,10 +103,7 @@ final class PatchManifestExporter {
       return sprintf('%d patch(es) ativo(s) validados; nenhum artefato foi gravado.', count($artifacts));
     }
 
-    $artifactDirectory = $projectRoot . '/patches/aculta_patcher';
-    if (is_link($artifactDirectory) || (!is_dir($artifactDirectory) && !mkdir($artifactDirectory, 0755, TRUE) && !is_dir($artifactDirectory))) {
-      throw new \RuntimeException('Não foi possível preparar o diretório de artefatos patches/aculta_patcher.');
-    }
+    $this->prepareArtifactDirectory($projectRoot);
     foreach ($artifacts as $relativePath => $contents) {
       $path = $projectRoot . '/' . $relativePath;
       if (is_link($path) || file_put_contents($path, $contents, LOCK_EX) === FALSE) {
@@ -107,6 +115,33 @@ final class PatchManifestExporter {
       throw new \RuntimeException('Não foi possível escrever patches-aculta.json.');
     }
     return sprintf('%d patch(es) exportado(s). Revise patches-aculta.json e patches/aculta_patcher/ no Git antes de composer install.', count($artifacts));
+  }
+
+  /**
+   * Prepares the artifact directory without following symlinked parents.
+   */
+  private function prepareArtifactDirectory(string $projectRoot): string {
+    $realProjectRoot = realpath($projectRoot);
+    $patchesRoot = $projectRoot . '/patches';
+    if ($realProjectRoot === FALSE || is_link($patchesRoot)) {
+      throw new \RuntimeException('A raiz do projeto ou o diretório patches é inválido.');
+    }
+    if (!is_dir($patchesRoot) && !mkdir($patchesRoot, 0755) && !is_dir($patchesRoot)) {
+      throw new \RuntimeException('Não foi possível preparar o diretório de artefatos patches/aculta_patcher.');
+    }
+    $realPatchesRoot = realpath($patchesRoot);
+    if ($realPatchesRoot !== $realProjectRoot . '/patches') {
+      throw new \RuntimeException('O diretório patches precisa permanecer dentro da raiz do projeto.');
+    }
+
+    $artifactDirectory = $patchesRoot . '/aculta_patcher';
+    if (is_link($artifactDirectory) || (!is_dir($artifactDirectory) && !mkdir($artifactDirectory, 0755) && !is_dir($artifactDirectory))) {
+      throw new \RuntimeException('Não foi possível preparar o diretório de artefatos patches/aculta_patcher.');
+    }
+    if (realpath($artifactDirectory) !== $realPatchesRoot . '/aculta_patcher') {
+      throw new \RuntimeException('O diretório de artefatos precisa permanecer dentro de patches/.');
+    }
+    return $artifactDirectory;
   }
 
   /**

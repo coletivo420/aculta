@@ -2,7 +2,7 @@ name: Portal ACULTA
 type: module
 description: 'Integra conta, conteúdo, aprendizagem e discussões; upload seguro e modal compartilhado por política global e de domínio, histórico e descoberta do Fórum, operações administrativas em lote com acesso revalidado, autoria contextual via aculta_user, Views/CTools, PDF, contratos de propósito, slugs públicos canônicos, sanitização nativa de nomes de upload e status de extensões PHP.'
 package: 'ACULTA Portal'
-version: '0.4.1-dev.32'
+version: '0.4.1-dev.38'
 core_version_requirement: ^11.3
 dependencies:
   - ctools:ctools
@@ -30,9 +30,7 @@ dependencies:
   - commerce:commerce_store
   - commerce:commerce_order
   - commerce:commerce_payment
-  - commerce_shipping:commerce_shipping
   - physical:physical
-  - aculta_portal:aculta_pagamentos_mercadopago
   - key:key
   - drupal:node
   - drupal:taxonomy
@@ -49,3 +47,4 @@ dependencies:
   - schema_metatag:schema_product
   - schema_metatag:schema_web_site
   - schema_metatag:schema_web_page
+  - search_api:search_api_db

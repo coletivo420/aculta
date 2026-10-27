@@ -1,0 +1,46 @@
+# Estado da conexão e botão de conectar (abre a autorização em popup). Sem cache: mostra o token atual.
+aculta_commerce_melhorenvio.status:
+  path: '/admin/commerce/config/melhorenvio'
+  defaults:
+    _controller: 'aculta_commerce_melhorenvio.status_controller:page'
+    _title: 'Melhor Envio'
+  requirements:
+    _permission: 'administer melhorenvio'
+  options:
+    _admin_route: TRUE
+    no_cache: TRUE
+  methods: [GET]
+
+# Autorização e retorno nunca entram em cache: cada acesso gera um state novo e de uso único. Em cache, o Drupal
+# servia o redirecionamento antigo, com o state já consumido, sem executar o controlador.
+aculta_commerce_melhorenvio.oauth_authorize:
+  path: '/integracoes/melhorenvio/autorizar'
+  defaults:
+    _controller: 'aculta_commerce_melhorenvio.oauth_controller:authorize'
+    _title: 'Autorizar Melhor Envio'
+  requirements:
+    _permission: 'administer melhorenvio'
+  options:
+    no_cache: TRUE
+  methods: [GET]
+
+aculta_commerce_melhorenvio.oauth_callback:
+  path: '/integracoes/melhorenvio/retorno'
+  defaults:
+    _controller: 'aculta_commerce_melhorenvio.oauth_controller:callback'
+    _title: 'Retorno do Melhor Envio'
+  requirements:
+    _permission: 'administer melhorenvio'
+  options:
+    no_cache: TRUE
+  methods: [GET]
+
+# Webhook público: o Melhor Envio chama esta URL de fora, sem sessão. A autenticidade vem da assinatura X-ME-Signature.
+aculta_commerce_melhorenvio.webhook:
+  path: '/integracoes/melhorenvio/webhook'
+  defaults:
+    _controller: 'aculta_commerce_melhorenvio.webhook_controller:receive'
+    _title: 'Webhook do Melhor Envio'
+  requirements:
+    _access: 'TRUE'
+  methods: [POST]

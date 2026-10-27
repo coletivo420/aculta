@@ -6,6 +6,7 @@ namespace Drupal\aculta_index\Integrity;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Site\Settings;
@@ -886,6 +887,7 @@ final class ContentIndexIntegrityChecker {
         . ' AND relation.source_entity_id = entry.entity_id'
         . ' AND relation.source_langcode = entry.langcode',
     );
+    $query->condition('relation.generation_id', $this->discardingGenerationsSubquery(), 'NOT IN');
     $rows = $query->condition('relation.relation_id', $after, '>')
       ->condition('relation.relation_id', $maximum, '<=')
       ->orderBy('relation.relation_id')
@@ -998,8 +1000,25 @@ final class ContentIndexIntegrityChecker {
         . ' AND relation.source_entity_id = entry.entity_id'
         . ' AND relation.source_langcode = entry.langcode',
     );
+    $query->condition('relation.generation_id', $this->discardingGenerationsSubquery(), 'NOT IN');
     return (int) $query->condition('entry.entry_id', NULL, 'IS NULL')
       ->countQuery()->execute()->fetchField();
+  }
+
+  /**
+   * Builds the set of generations whose derived rows are being removed.
+   *
+   * Cleanup deletes bounded relation and entry pages in separate batches. A
+   * relation from one batch can therefore reference an entry removed in an
+   * earlier batch of the same discarding generation. That transient state is
+   * cleanup progress, not a catalog inconsistency, so integrity checks and
+   * rebuild validation must not count it. The subquery keeps the set atomic
+   * with the count/audit statement instead of racing a separate ID fetch.
+   */
+  private function discardingGenerationsSubquery(): SelectInterface {
+    return $this->database->select('aculta_index_generation', 'discarding_generation')
+      ->fields('discarding_generation', ['generation_id'])
+      ->condition('status', 'discarding');
   }
 
 }

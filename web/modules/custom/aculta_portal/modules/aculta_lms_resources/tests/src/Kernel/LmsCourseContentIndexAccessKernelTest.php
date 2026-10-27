@@ -151,17 +151,31 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     }
     $container->setDefinition('aculta_gallery.content_index_provider', $galleryDefinition);
 
-    $pdfServices = Yaml::parseFile(
-      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/aculta_pdf_viewer_group.services.yml',
+    $documentServices = Yaml::parseFile(
+      dirname(__DIR__, 8) . '/modules/custom/aculta_portal/modules/aculta_document_viewer/modules/aculta_document_viewer_group/aculta_document_viewer_group.services.yml',
       Yaml::PARSE_CUSTOM_TAGS,
     )['services'];
-    $pdfService = $pdfServices['aculta_pdf_viewer_group.course_document_content_index_provider'];
-    $pdfDefinition = (new Definition($pdfService['class'], $pdfService['arguments'] ?? []))
+    $documentService = $documentServices['aculta_document_viewer_group.course_document_content_index_provider'];
+    $documentDefinition = (new Definition($documentService['class'], $documentService['arguments'] ?? []))
       ->setPublic(TRUE);
-    foreach ($pdfService['tags'] ?? [] as $tag) {
-      $pdfDefinition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    foreach ($documentService['tags'] ?? [] as $tag) {
+      $documentDefinition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
     }
-    $container->setDefinition('aculta_pdf_viewer_group.course_document_content_index_provider', $pdfDefinition);
+    $container->setDefinition('aculta_document_viewer_group.course_document_content_index_provider', $documentDefinition);
+
+    // Compile the shared Portal remote_video provider so course_video targets
+    // are indexed with the same minimal projection used in production.
+    $portalServices = Yaml::parseFile(
+      DRUPAL_ROOT . '/modules/custom/aculta_portal/aculta_portal.services.yml',
+      Yaml::PARSE_CUSTOM_TAGS,
+    )['services'];
+    $portalService = $portalServices['aculta_portal.content_index_remote_video_provider'];
+    $portalDefinition = (new Definition($portalService['class'], $portalService['arguments'] ?? []))
+      ->setPublic(TRUE);
+    foreach ($portalService['tags'] ?? [] as $tag) {
+      $portalDefinition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    }
+    $container->setDefinition('aculta_portal.content_index_remote_video_provider', $portalDefinition);
   }
 
   /**
@@ -223,6 +237,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     $this->installConfig(['media_gallery']);
     $this->installCourseReadingField();
     $this->installCourseGalleryField();
+    $this->installCourseVideoField();
   }
 
   /**
@@ -484,6 +499,83 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
   }
 
   /**
+   * Queries a course-video relation through its owner provider and access.
+   */
+  public function testCourseVideoRelationUsesMembershipAccess(): void {
+    $authenticated = $this->container->get('entity_type.manager')->getStorage('user_role')->load('authenticated');
+    $authenticated->grantPermission('access content')->grantPermission('view media')->save();
+    $owner = $this->createUser(['administer lms']);
+    $student = $this->createUser();
+    $educator = $this->createUser();
+    $outsider = $this->createUser();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso com vídeo do Index',
+      'uid' => $owner->id(),
+    ]);
+    $course->save();
+    GroupRole::create([
+      'id' => 'lms_course-index_video_student',
+      'label' => 'Estudante do vídeo',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['take course', 'view group'],
+    ])->save();
+    GroupRole::create([
+      'id' => 'lms_course-index_video_educator',
+      'label' => 'Educador do vídeo',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['grade students', 'view group'],
+    ])->save();
+    $course->addMember($student, ['group_roles' => ['lms_course-index_video_student']]);
+    $course->addMember($educator, ['group_roles' => ['lms_course-index_video_educator']]);
+
+    $video = Media::create([
+      'bundle' => 'remote_video',
+      'name' => 'Vídeo do curso',
+      'status' => TRUE,
+      'field_media_oembed_video' => ['value' => 'https://www.youtube.com/watch?v=course-index-video'],
+    ]);
+    $video->save();
+    $course->set('field_lms_videos', [['target_id' => $video->id()]]);
+    $course->save();
+
+    $this->buildCourseResourceGeneration();
+    $providers = $this->container->get('aculta_index.provider_registry');
+    self::assertSame('remote_video', $providers->findProviderIdForBundle('media', 'remote_video'));
+
+    $relationQuery = $this->container->get('aculta_index.relation_query');
+    foreach ([$student, $educator] as $authorizedAccount) {
+      $result = $relationQuery->queryOutgoing(
+        'group',
+        (string) $course->id(),
+        $course->language()->getId(),
+        'course_video',
+        $authorizedAccount,
+        NULL,
+        10,
+      );
+      self::assertSame([(string) $video->id()], array_map(
+        static fn ($entity): string => (string) $entity->id(),
+        $result->entities,
+      ));
+      self::assertSame(0, $result->cacheability->getCacheMaxAge());
+    }
+
+    $denied = $relationQuery->queryOutgoing(
+      'group',
+      (string) $course->id(),
+      $course->language()->getId(),
+      'course_video',
+      $outsider,
+      NULL,
+      10,
+    );
+    self::assertSame([], $denied->entities, 'An outsider cannot discover the course video.');
+  }
+
+  /**
    * Queries a course-document relation through its owner provider and access.
    */
   public function testCourseDocumentRelationUsesCourseMembershipAccess(): void {
@@ -506,8 +598,8 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
       'permissions' => [
         'take course',
         'view group',
-        'view aculta_pdf_viewer_group:course_document entity',
-        'view any unpublished aculta_pdf_viewer_group:course_document entity',
+        'view aculta_document_viewer_group:course_document entity',
+        'view any unpublished aculta_document_viewer_group:course_document entity',
       ],
     ])->save();
     $course->addMember($student, ['group_roles' => ['lms_course-index_document_student']]);
@@ -518,7 +610,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
       'status' => FALSE,
     ]);
     $document->save();
-    $course->addRelationship($document, 'aculta_pdf_viewer_group:course_document')->save();
+    $course->addRelationship($document, 'aculta_document_viewer_group:course_document')->save();
 
     $generationId = $this->buildCourseResourceGeneration();
     $registry = $this->container->get('aculta_index.provider_registry');
@@ -608,6 +700,31 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
   }
 
   /**
+   * Installs the explicit LMS course video reference field for the Group type.
+   */
+  private function installCourseVideoField(): void {
+    FieldStorageConfig::create([
+      'field_name' => 'field_lms_videos',
+      'entity_type' => 'group',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'media'],
+      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_lms_videos',
+      'entity_type' => 'group',
+      'bundle' => 'lms_course',
+      'label' => 'Course videos',
+      'settings' => [
+        'handler' => 'default:media',
+        'handler_settings' => [
+          'target_bundles' => ['remote_video' => 'remote_video'],
+        ],
+      ],
+    ])->save();
+  }
+
+  /**
    * Creates the fixture relation that mirrors the PDF owner plugin ID.
    */
   private function createCourseDocumentRelationType(): void {
@@ -615,11 +732,11 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('group_relationship_type');
     self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $storage);
-    $id = $storage->getRelationshipTypeId('lms_course', 'aculta_pdf_viewer_group:course_document');
+    $id = $storage->getRelationshipTypeId('lms_course', 'aculta_document_viewer_group:course_document');
     if (!$storage->load($id)) {
       $groupType = GroupType::load('lms_course');
       self::assertInstanceOf(GroupType::class, $groupType);
-      $storage->createFromPlugin($groupType, 'aculta_pdf_viewer_group:course_document')->save();
+      $storage->createFromPlugin($groupType, 'aculta_document_viewer_group:course_document')->save();
     }
   }
 

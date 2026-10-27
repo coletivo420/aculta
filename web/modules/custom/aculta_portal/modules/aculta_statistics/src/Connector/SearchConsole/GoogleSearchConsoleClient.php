@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_statistics\Connector\SearchConsole;
 
+use Google\Service\SearchConsole\SearchAnalyticsQueryRequest;
+use Google\Service\SearchConsole;
+use Google\Client;
 use Drupal\Core\Logger\LoggerChannelInterface;
 
 /**
@@ -20,11 +23,19 @@ final class GoogleSearchConsoleClient {
   public const SCOPE = 'https://www.googleapis.com/auth/webmasters.readonly';
 
   /**
+   * Quando informado, recebe (propriedade, corpo do pedido) e devolve linhas no formato de `normalize()`.
+   *
    * @var null|callable(string, array): array
    */
   private $runner;
 
   /**
+   * Constrói o cliente do Search Console.
+   *
+   * @param \Drupal\aculta_statistics\Connector\SearchConsole\SearchConsoleSettings $settings
+   *   Configuração da propriedade e da credencial.
+   * @param \Drupal\Core\Logger\LoggerChannelInterface $logger
+   *   Canal de log do módulo.
    * @param callable(string, array): array|null $runner
    *   Substituto da chamada à API (teste). NULL usa a biblioteca oficial.
    */
@@ -47,6 +58,7 @@ final class GoogleSearchConsoleClient {
    * Série diária de cliques e impressões nos últimos `$startDate` a `$endDate` (Y-m-d, inclusive), ou NULL.
    *
    * @return array<string, array{clicks: int, impressions: int}>|null
+   *   Série por dia, ou NULL quando a integração está desligada.
    */
   public function report(string $startDate, string $endDate): ?array {
     $site = $this->settings->siteUrl();
@@ -71,6 +83,7 @@ final class GoogleSearchConsoleClient {
    *   Linhas da API, já simplificadas.
    *
    * @return array<string, array{clicks: int, impressions: int}>
+   *   Série por dia.
    */
   public function normalize(array $rows): array {
     $out = [];
@@ -88,18 +101,21 @@ final class GoogleSearchConsoleClient {
   /**
    * Chamada real ao Search Analytics (query) com a biblioteca oficial.
    *
+   * @param string $site
+   *   Propriedade do Search Console.
    * @param array<string, mixed> $request
    *   Intervalo, dimensão e estado dos dados.
    *
    * @return array<int, array<string, mixed>>
+   *   Linhas da API.
    */
   private function callApi(string $site, array $request): array {
-    $client = new \Google\Client();
+    $client = new Client();
     $client->setAuthConfig($this->settings->serviceAccount());
     $client->addScope(self::SCOPE);
-    $service = new \Google\Service\SearchConsole($client);
+    $service = new SearchConsole($client);
 
-    $body = new \Google\Service\SearchConsole\SearchAnalyticsQueryRequest();
+    $body = new SearchAnalyticsQueryRequest();
     $body->setStartDate($request['startDate']);
     $body->setEndDate($request['endDate']);
     $body->setDimensions($request['dimensions']);

@@ -1,17 +1,19 @@
 {% set count = count|default(0) %}
 {% set label = count > 0
-  ? '@count conversas não lidas. Abrir mensagens'|t({'@count': count})
+  ? (count == 1 ? '1 conversa não lida. Abrir mensagens'|t : '@count conversas não lidas. Abrir mensagens'|t({'@count': count}))
   : 'Abrir mensagens'|t %}
 {{ attach_library('aculta420/messenger-drawers') }}
 <button type="button"
-        class="btn btn-link p-0 aculta-utility-trigger aculta-messenger-trigger"
+        class="aculta-utility-trigger aculta-messenger-trigger"
         data-bs-toggle="offcanvas"
         data-bs-target="#aculta-messenger-offcanvas"
         aria-controls="aculta-messenger-offcanvas"
         aria-expanded="false"
         aria-label="{{ label }}">
-  <i class="bi bi-chat-dots" aria-hidden="true"></i>
-  <span class="aculta-unread-count" data-aculta-messenger-count data-count="{{ count }}">{{ count > 99 ? '99+' : count }}</span>
+  <span class="aculta-utility-trigger__icon">
+    <i class="bi bi-chat-dots" aria-hidden="true"></i>
+    <span class="aculta-unread-count aculta-utility-trigger__count" data-aculta-messenger-count data-count="{{ count }}" aria-hidden="true">{{ count > 99 ? '99+' : count }}</span>
+  </span>
 </button>
 
 <div class="offcanvas offcanvas-end aculta-utility-offcanvas aculta-messenger-offcanvas"

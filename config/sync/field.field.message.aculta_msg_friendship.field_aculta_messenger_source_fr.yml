@@ -12,8 +12,8 @@ id: message.aculta_msg_friendship.field_aculta_messenger_source_fr
 field_name: field_aculta_messenger_source_fr
 entity_type: message
 bundle: aculta_msg_friendship
-label: 'Referência de origem'
-description: 'Chave de idempotência do aviso (amizade, evento e instante). Não contém nomes.'
+label: 'Transição de amizade de origem'
+description: 'Chave técnica para deduplicar avisos da mesma transição.'
 required: true
 translatable: false
 default_value: {}

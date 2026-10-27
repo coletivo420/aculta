@@ -27,3 +27,11 @@ cart-status:
   dependencies:
     - core/drupal
     - core/once
+
+# Padrão de integrações externas: abre a autorização ou o pagamento num popup; o retorno é PopupReturnPage.
+integration-popup:
+  js:
+    js/integration-popup.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

@@ -3,7 +3,7 @@ type: module
 description: 'Integração H5P própria do LMS ACULTA, adaptada e mantida pela associação.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
-version: '0.4.0-dev.145'
+version: '0.4.0-dev.150'
 dependencies:
   - drupal:field
   - drupal:file
@@ -13,6 +13,7 @@ dependencies:
   - aculta_portal:aculta_lms
   - aculta_pdf_viewer:aculta_pdf_viewer
   - aculta_pdf_viewer_group:aculta_pdf_viewer_group
+  - aculta_portal:aculta_document_viewer_group
   - group:group
   - ctools:ctools
   - lms:lms

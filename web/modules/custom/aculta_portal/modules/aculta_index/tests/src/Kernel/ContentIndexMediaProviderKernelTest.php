@@ -59,28 +59,31 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     // chain in this focused Kernel harness.
     $ownerServices = [
       [
-        'file' => '/modules/custom/aculta_portal/aculta_portal.services.yml',
+        'file' => '/aculta_portal.services.yml',
         'id' => 'aculta_portal.content_index_remote_video_provider',
       ],
       [
-        'file' => '/modules/custom/aculta_portal/modules/aculta_image/aculta_image.services.yml',
+        'file' => '/modules/aculta_image/aculta_image.services.yml',
         'id' => 'aculta_image.content_index_provider',
       ],
       [
-        'file' => '/modules/custom/aculta_portal/modules/aculta_document_viewer/aculta_document_viewer.services.yml',
+        'file' => '/modules/aculta_document_viewer/aculta_document_viewer.services.yml',
         'id' => 'aculta_document_viewer.content_index_provider',
       ],
       [
-        'file' => '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/aculta_pdf_viewer_group.services.yml',
-        'id' => 'aculta_pdf_viewer_group.course_document_content_index_provider',
+        'file' => '/modules/aculta_document_viewer/modules/aculta_document_viewer_group/aculta_document_viewer_group.services.yml',
+        'id' => 'aculta_document_viewer_group.course_document_content_index_provider',
       ],
       [
-        'file' => '/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.services.yml',
+        'file' => '/modules/aculta_forum/aculta_forum.services.yml',
         'id' => 'aculta_forum.attachment_content_index_provider',
       ],
     ];
     foreach ($ownerServices as $ownerService) {
-      $serviceMap = Yaml::parseFile(DRUPAL_ROOT . $ownerService['file'], Yaml::PARSE_CUSTOM_TAGS)['services'];
+      $serviceMap = Yaml::parseFile(
+        dirname(__DIR__, 5) . $ownerService['file'],
+        Yaml::PARSE_CUSTOM_TAGS,
+      )['services'];
       $service = $serviceMap[$ownerService['id']];
       $definition = (new Definition($service['class'], $service['arguments']))->setPublic(TRUE);
       foreach ($service['tags'] as $tag) {

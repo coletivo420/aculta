@@ -13,13 +13,16 @@ use Drupal\aculta_links\Hook\LinkPageMetatagHooks;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests metadata policy for private ACULTA Links routes.
- *
- * @group aculta_links
- * @coversDefaultClass \Drupal\aculta_links\Hook\LinkPageMetatagHooks
  */
+#[CoversMethod(\Drupal\aculta_links\Hook\LinkPageMetatagHooks::class, 'metatagsAlter')]
+#[Group('aculta_links')]
+#[CoversClass(\Drupal\aculta_links\Hook\LinkPageMetatagHooks::class)]
 final class LinkPageMetatagHooksTest extends UnitTestCase {
 
   /**
@@ -34,8 +37,6 @@ final class LinkPageMetatagHooksTest extends UnitTestCase {
 
   /**
    * A private editing route removes default canonical tags and blocks indexing.
-   *
-   * @covers ::metatagsAlter
    */
   public function testPrivateRoutesAreNotIndexed(): void {
     $route_match = $this->createMock(RouteMatchInterface::class);

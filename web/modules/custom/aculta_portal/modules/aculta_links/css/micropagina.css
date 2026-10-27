@@ -1,0 +1,12 @@
+/*
+ * Micropágina pública: área de toque mínima (WCAG 2.5.5, 44 px).
+ * Só dimensões e espaçamento. Cores e tipografia continuam com o tema.
+ */
+.aculta-links-page__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.5rem 1rem;
+  box-sizing: border-box;
+}

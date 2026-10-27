@@ -2,15 +2,16 @@
 
 namespace Drupal\Tests\aculta_pagamentos_mercadopago\Kernel;
 
-use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_payment\Entity\PaymentGateway;
 use Drupal\Tests\commerce_order\Kernel\OrderKernelTestBase;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Kernel tests for the Mercado Pago Checkout Pro payment gateway plugin.
  *
  * @group aculta_pagamentos_mercadopago
  */
+#[RunTestsInSeparateProcesses]
 class CheckoutProTest extends OrderKernelTestBase {
 
   /**
@@ -19,6 +20,7 @@ class CheckoutProTest extends OrderKernelTestBase {
    * @var list<string>
    */
   protected static $modules = [
+    'key',
     'commerce_payment',
     'aculta_pagamentos_mercadopago',
   ];
@@ -40,6 +42,9 @@ class CheckoutProTest extends OrderKernelTestBase {
     $payment_gateway = PaymentGateway::create([
       'id' => 'mercado_pago',
       'label' => 'Mercado Pago',
+      // Desabilitado: o guarda de presave exige chaves de produção quando o ambiente é production, e este teste
+      // cobre só a configuração padrão do plugin.
+      'status' => FALSE,
       'plugin' => 'aculta_mercadopago_checkout_pro',
       'configuration' => [
         'mode' => 'test',

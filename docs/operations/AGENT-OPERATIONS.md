@@ -127,6 +127,6 @@ e não na `main`). Esta regra existe para que nenhum trabalho dependa de estado 
 - **Não commitar** credenciais, `settings.local.php`, backups locais, `.claude/settings.local.json`
   nem conteúdo de `secrets/`. Verificar o conteúdo staged antes do commit.
 - **Não reescrever histórico** de branch compartilhado (sem force push).
-- **Mensagem de commit** em português, com o trailer `Co-Authored-By` do agente.
+- **Mensagem de commit** em português, sem trailer de coautoria (`Co-Authored-By`) do agente.
 - **Encerramento:** antes de encerrar a sessão, informar o estado de `git status`, o
   branch e o commit de cada entrega. Se algo ficou fora do git, dizer o motivo.

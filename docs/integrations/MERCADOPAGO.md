@@ -28,6 +28,9 @@ Observações:
   aparece antes da configuração. Para renovar, use o botão de redefinição ao lado da assinatura.
 - A validação da `x-signature` é feita pelo SDK oficial (`mercadopago/dx-php`, ver `WebhookGuard`): manifesto
   `id:{data.id};request-id:{x-request-id};ts:{ts};` assinado com HMAC-SHA256 pela chave da aplicação.
+- A URL de notificação gerada pelo Checkout Pro não inclui `source_news=ipn`: esse parâmetro força o canal IPN
+  legado, cuja assinatura não pode ser validada. O Portal aceita Webhooks modernos assinados, rejeita payload IPN
+  (`topic`/`id`) e só então adapta o pagamento à interface do Commerce.
 - A página de notificações pede URLs de recebimento distintas para teste e produção. Cada URL é usada com as
   credenciais correspondentes ao seu ambiente.
 
@@ -109,6 +112,7 @@ navegador, para evitar erros de duplicidade de credenciais.
 
 - Informar, no painel "Credenciais do ambiente" (seção Ambiente de Testes), o Public Key e o Access Token de teste.
 - Validar o Checkout Pro de ponta a ponta no ambiente de testes, com os cartões e status acima, antes de ativar o gateway.
+- Homologar estornos parcial e total no sandbox; a implementação local usa lock e `x-idempotency-key`, mas não há evidência de chamada sandbox nesta versão.
 - Configurar as notificações da aplicação no painel do Mercado Pago (URL de teste e URL de produção), salvar e
   copiar a assinatura secreta para `MERCADOPAGO_WEBHOOK_SECRET`.
 - Provisionar as credenciais de produção pelo ACULTA Deployer (não pelo painel do Runtime de teste).

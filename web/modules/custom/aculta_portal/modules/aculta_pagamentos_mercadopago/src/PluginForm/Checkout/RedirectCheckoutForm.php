@@ -15,6 +15,8 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
+use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
+use Drupal\file\FileInterface;
 use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\Exceptions\MPApiException;
 use MercadoPago\MercadoPagoConfig;
@@ -93,7 +95,12 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
    * @return array<string, mixed>
+   *   The modified form.
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildConfigurationForm($form, $form_state);
@@ -176,12 +183,6 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
         if ($description !== '') {
           $item['description'] = mb_substr($description, 0, 256);
         }
-        /*
-        $picture_url = $this->getProductImageUrl($purchased);
-        if ($picture_url !== '') {
-          $item['picture_url'] = mb_substr($picture_url, 0, 600);
-        }*/
-
         // Common image field names in Drupal Commerce.
         $image_fields = ['field_images', 'images', 'field_image'];
         $file_entity = NULL;
@@ -206,7 +207,7 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
           }
         }
 
-        if ($file_entity instanceof \Drupal\file\FileInterface) {
+        if ($file_entity instanceof FileInterface) {
           $file_uri = $file_entity->getFileUri();
           if ($file_uri !== NULL && $file_uri !== '') {
             $picture_url = $this->fileUrlGenerator->generateAbsoluteString($file_uri);
@@ -250,7 +251,7 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
     $request = [
       'items' => $items,
       'payer' => $payer,
-      'notification_url' => $notification_url->toString() . '?source_news=ipn',
+      'notification_url' => $notification_url->toString(),
       'external_reference' => (string) $order_id,
       'binary_mode' => TRUE,
       'back_urls' => [
@@ -384,9 +385,14 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
    * so Commerce's offsite_redirect.js does not run.
    *
    * @param array<string, mixed> $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    * @param array<string, mixed> $complete_form
+   *   The complete form array.
    *
    * @return array<string, mixed>
+   *   The modified form array.
    */
   public static function processExternalRedirectForm(array $form, FormStateInterface $form_state, array &$complete_form): array {
     $complete_form['#action'] = '#';
@@ -509,11 +515,11 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       return '';
     }
     $item = $entity->get($field_name)->first();
-    if ($item === NULL || !$item instanceof \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem) {
+    if ($item === NULL || !$item instanceof EntityReferenceItem) {
       return '';
     }
     $file = $item->entity;
-    if ($file === NULL || !$file instanceof \Drupal\file\FileInterface) {
+    if ($file === NULL || !$file instanceof FileInterface) {
       return '';
     }
     $uri = $file->getFileUri();

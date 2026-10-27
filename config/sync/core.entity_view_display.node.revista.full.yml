@@ -20,11 +20,9 @@ dependencies:
     - field.field.node.revista.field_subtitle
     - field.field.node.revista.field_summary
     - field.field.node.revista.field_tags
-    - flag.flag.seguir_publicacao
     - node.type.revista
   module:
     - comment
-    - flag
     - link
     - text
     - user
@@ -40,11 +38,6 @@ content:
     third_party_settings: {  }
     weight: 0
     region: content
-  flag_seguir_publicacao:
-    weight: 25
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   content_moderation_control:
     settings: {  }
     third_party_settings: {  }

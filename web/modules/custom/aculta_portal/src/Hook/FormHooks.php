@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
-use Drupal\commerce_payment\Form\PaymentGatewayForm;
+use Drupal\Core\Render\Markup;
+use Drupal\Component\Render\MarkupInterface;
+use Drupal\Component\Utility\Html;
+use Drupal\aculta_portal\Cart\AddToCartAjax;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\CurrentRouteMatch;
@@ -27,11 +32,11 @@ final class FormHooks {
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
     #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
-    private readonly \Drupal\aculta_portal\Account\EmailConfirmationPolicy $emailPolicy,
+    private readonly EmailConfirmationPolicy $emailPolicy,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly \Drupal\aculta_portal\Domain\DomainPurposeManager $domainPurpose,
+    private readonly DomainPurposeManager $domainPurpose,
     #[Autowire(service: 'aculta_portal.cart_ajax')]
-    private readonly \Drupal\aculta_portal\Cart\AddToCartAjax $cartAjax,
+    private readonly AddToCartAjax $cartAjax,
   ) {}
 
   /**
@@ -45,21 +50,23 @@ final class FormHooks {
 
     $this->restrictedFormNotice($form, $formId);
 
-    // Com verificação de e-mail ligada, o Core não mostra senha no cadastro e gera uma. O Portal mostra a senha
-    // escolhida pelo visitante e a grava depois de salvar; a conta continua bloqueada até confirmar o e-mail.
+    // Com a verificação de e-mail ligada, o Core gera a senha no cadastro.
+    // O Portal mostra a senha escolhida e salva depois; a conta ativa permanece
+    // restrita até a confirmação do endereço.
     if ($formId === 'user_register_form' && !isset($form['account']['pass'])) {
       $form['account']['pass'] = [
         '#type' => 'password_confirm',
         '#required' => TRUE,
         '#size' => 25,
-        '#description' => $this->translation->translate('Escolha uma senha com pelo menos 8 caracteres. Enviaremos um link para confirmar o seu e-mail.'),
+        '#description' => $this->translation->translate('Escolha uma senha com pelo menos 8 caracteres.')
+        . ' ' . $this->translation->translate('Enviaremos um link para confirmar o seu e-mail.'),
       ];
       $form['#validate'][] = 'aculta_portal.form_callbacks:validateRegistrationPassword';
       $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:storeRegistrationPassword';
     }
-    // Cadastro: a conta fica ativa e o e-mail só é confirmado pelo link enviado (política de confirmação).
+    // Cadastro: a conta fica ativa; o link enviado confirma o endereço.
     if ($formId === 'user_register_form') {
-      // Checkbox de aceite dos termos, obrigatório, logo acima do botão de envio.
+      // Checkbox obrigatório de aceite dos termos, acima do botão de envio.
       $form['aculta_terms'] = [
         '#type' => 'checkbox',
         '#title' => $this->termsLabel(),
@@ -67,7 +74,7 @@ final class FormHooks {
         '#default_value' => TRUE,
         '#weight' => 90,
       ];
-      // DT-P06: o salvamento passa pelo Portal, que não cria conta quando o e-mail já existe (ver saveRegistration).
+      // DT-P06: o Portal não cria contas com e-mail existente.
       $form['#validate'][] = 'aculta_portal.form_callbacks:validateRegistrationMail';
       $form['actions']['submit']['#submit'] = array_map(
         static fn($callback) => $callback === '::save' ? 'aculta_portal.form_callbacks:saveRegistration' : $callback,
@@ -81,7 +88,7 @@ final class FormHooks {
       // Core reports blocked or unactivated accounts before the password check,
       // which discloses that an address is registered. The Portal callback
       // replaces Core's authentication step. It is always present exactly once:
-      // if Core's step is missing, the callback runs first, so a rename can never
+      // If Core's step is missing, this callback runs first. A rename cannot
       // silently restore the disclosure.
       $wrapper = 'aculta_portal.form_callbacks:validateLoginAuthentication';
       $validators = array_values(array_filter($form['#validate'] ?? [], static fn($v) => $v !== $wrapper));
@@ -95,7 +102,7 @@ final class FormHooks {
       $form['#validate'] = $validators;
     }
 
-    // Formulário da conta em Segurança: a senha atual fica nesta página, sem o link de recuperação do Core.
+    // Na Segurança, a senha atual fica aqui, sem o link de recuperação do Core.
     if ($formId === 'user_form' && $this->routeMatch->getRouteName() === 'aculta_portal.security_password' && isset($form['account']['current_pass'])) {
       $form['account']['current_pass']['#description'] = $this->translation->translate('Obrigatório para alterar a senha: informe sua senha atual.');
     }
@@ -150,60 +157,19 @@ final class FormHooks {
       }
     }
 
-    if (!$formObject instanceof PaymentGatewayForm
-      || $formObject->getEntity()->id() !== 'mercado_pago'
-      || !isset($form['configuration']['form'])) {
-      return;
-    }
-
-    $configurationForm = &$form['configuration']['form'];
-    // Access Tokens de teste e de produção: campo de senha sem valor exibido. O valor real vem do
-    // ambiente (MercadoPagoEnvironmentOverride), nunca da configuração.
-    foreach ([
-      ['credentials_test', 'access_token_test'],
-      ['credentials_prod', 'access_token_prod'],
-    ] as [$fieldset, $key]) {
-      if (isset($configurationForm[$fieldset][$key])) {
-        $configurationForm[$fieldset][$key]['#type'] = 'password';
-        $configurationForm[$fieldset][$key]['#default_value'] = '';
-        unset($configurationForm[$fieldset][$key]['#value']);
-        $configurationForm[$fieldset][$key]['#attributes']['autocomplete'] = 'new-password';
-      }
-    }
-    // Não usados pela integração (modo stage e Client ID/Client Secret): desabilitados e sem valor,
-    // para que nenhuma credencial seja gravada na configuração exportada.
-    foreach ([
-      ['credentials_stage', 'public_key_stage'],
-      ['credentials_stage', 'access_token_stage'],
-      [NULL, 'client_id'],
-      [NULL, 'client_secret'],
-    ] as [$fieldset, $key]) {
-      $element = &$configurationForm;
-      if ($fieldset !== NULL) {
-        $element = &$configurationForm[$fieldset];
-      }
-      if (isset($element[$key])) {
-        $element[$key]['#disabled'] = TRUE;
-        $element[$key]['#default_value'] = '';
-        unset($element[$key]['#value']);
-      }
-    }
   }
 
-
   /**
-   * Formulários de wiki e de comentários para conta sem e-mail confirmado: mostra o motivo e o caminho
-   * Minha conta > Segurança, e desativa os campos (a escrita já é negada pela checagem de acesso).
-   */
-  /**
-   * Formulários da Minha conta salvam por AJAX (sem recarregar a página): o botão de envio chama um callback que
-   * devolve o próprio formulário, com as mensagens, dentro do mesmo bloco (wrapper). Redirecionamentos de salvamento
-   * são desligados para esse envio; o foco vai para o primeiro erro (aculta_portal/account-navigation).
+   * Adds AJAX submit behavior to account forms.
    *
-   * A bio (aculta_user_account_bio_form) fica fora: salva pelo próprio JS do modal (rota JSON) e fecha o modal.
+   * The submit callback returns the form and its messages inside the same
+   * wrapper without reloading. Save redirects are disabled and focus moves to
+   * the first error (aculta_portal/account-navigation).
    *
-   * O login (user_login_form) fica fora: ele precisa do redirecionamento do Core após autenticar. Com o AJAX, a sessão
-   * era criada, mas o redirecionamento era cancelado e a página continuava no formulário de login.
+   * The bio form uses its modal's JSON route and stays outside this behavior.
+   *
+   * The login form stays outside this behavior so Core can redirect after
+   * authentication. AJAX previously kept the new session on the login page.
    */
   private function accountAjaxSubmit(array &$form, string $formId): void {
     $route = $this->routeMatch->getRouteObject();
@@ -211,7 +177,7 @@ final class FormHooks {
       || $formId === 'user_login_form' || $formId === 'aculta_user_account_bio_form' || !empty($form['#aculta_json_save']) || !isset($form['actions']['submit'])) {
       return;
     }
-    $wrapper = 'portal-account-' . \Drupal\Component\Utility\Html::cleanCssIdentifier($formId);
+    $wrapper = 'portal-account-' . Html::cleanCssIdentifier($formId);
     $form['#prefix'] = '<div id="' . $wrapper . '">' . ($form['#prefix'] ?? '');
     $form['#suffix'] = ($form['#suffix'] ?? '') . '</div>';
     $submit = &$form['actions']['submit'];
@@ -219,10 +185,10 @@ final class FormHooks {
       'callback' => 'aculta_portal.form_callbacks:accountAjaxResponse',
       'wrapper' => $wrapper,
       'progress' => ['type' => 'throbber'],
-      // Sem devolver o foco ao botão: o foco vai para o primeiro campo com erro (acultaPortalAccountFormErrors).
+      // Focus moves to the first form error through the account error handler.
       'disable-refocus' => TRUE,
     ];
-    // O último handler de envio desliga o redirecionamento (o envio fica na página, com mensagem).
+    // Keep the response and status message in place instead of redirecting.
     if (!empty($submit['#submit'])) {
       $submit['#submit'][] = 'aculta_portal.form_callbacks:disableAccountRedirect';
     }
@@ -231,9 +197,24 @@ final class FormHooks {
     }
   }
 
+  /**
+   * Adds the confirmation notice and hides protected form fields.
+   *
+   * Wiki and comment writes are already denied by access checks. This directs
+   * the user to account security to confirm the address.
+   */
   private function restrictedFormNotice(array &$form, string $form_id): void {
     $policy = $this->emailPolicy;
-    $is_wiki = in_array($form_id, ['node_wiki_entry_form', 'node_wiki_entry_edit_form', 'taxonomy_term_wiki_category_form', 'taxonomy_term_wiki_category_edit_form'], TRUE);
+    $is_wiki = in_array(
+      $form_id,
+      [
+        'node_wiki_entry_form',
+        'node_wiki_entry_edit_form',
+        'taxonomy_term_wiki_category_form',
+        'taxonomy_term_wiki_category_edit_form',
+      ],
+      TRUE,
+    );
     $is_comment = preg_match('/^comment_.*_form$/', $form_id) === 1;
     if (!($is_wiki || $is_comment) || $this->currentUser->isAnonymous() || $policy->isConfirmed($this->currentUser)) {
       return;
@@ -243,8 +224,10 @@ final class FormHooks {
       '#type' => 'container',
       '#weight' => -100,
       '#attributes' => ['data-portal-ui' => 'notice-error email-notice', 'role' => 'alert'],
-      'text' => ['#markup' => '<p><strong>' . htmlspecialchars((string) $this->translation->translate('Sua conta está bloqueada por não confirmar o e-mail.'), ENT_QUOTES) . '</strong> '
-        . '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '">' . htmlspecialchars((string) $this->translation->translate('Confirme o e-mail em Minha conta > Segurança'), ENT_QUOTES) . '</a>.</p>'],
+      'text' => [
+        '#markup' => '<p><strong>' . htmlspecialchars((string) $this->translation->translate('Você precisa confirmar seu e-mail para participar desta área.'), ENT_QUOTES) . '</strong> '
+        . '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '">' . htmlspecialchars((string) $this->translation->translate('Confirme o e-mail em Minha conta > Segurança'), ENT_QUOTES) . '</a>.</p>',
+      ],
     ];
     foreach (array_keys($form) as $key) {
       if (!str_starts_with((string) $key, '#') && $key !== 'aculta_email_restriction') {
@@ -254,10 +237,11 @@ final class FormHooks {
   }
 
   /**
-   * Rótulo do aceite: "Li e aceito os Termos de Uso e a Política de Privacidade.", com links para as páginas
-   * do MAIN que abrem em nova aba (o cadastro acontece no host da conta).
+   * Builds the terms acceptance label with links to the MAIN pages.
+   *
+   * Links open in a new tab because registration happens on the account host.
    */
-  private function termsLabel(): \Drupal\Component\Render\MarkupInterface {
+  private function termsLabel(): MarkupInterface {
     $link = static function (string $href, string $text): string {
       return '<a href="' . htmlspecialchars($href, ENT_QUOTES) . '" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($text, ENT_QUOTES) . '</a>';
     };
@@ -268,7 +252,7 @@ final class FormHooks {
       '@terms' => $link($terms, (string) $this->translation->translate('Termos de Uso')),
       '@privacy' => $link($privacy, (string) $this->translation->translate('Política de Privacidade')),
     ]);
-    return \Drupal\Core\Render\Markup::create($html);
+    return Markup::create($html);
   }
 
 }

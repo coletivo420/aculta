@@ -1,8 +1,27 @@
+Em dev.80, os cartões de autoria histórica exibidos no Fórum acrescentam `-gr` ao nome para identificar a origem Growroom. Autores legados não têm perfil público individual nem rota `/u/`; o memorial coletivo `/u/lendashistoricas` mantém os nomes sem sufixo. Unit focal 1/1, PHPCS e lint alterados PASS; nenhuma importação ou escrita no Runtime.
+
 # ACULTA User (`aculta_user`)
+
+Em dev.86, a projeção SQL derivada mantém `slug → UID` com índice único; Profile continua como fonte de verdade. No rebuild 10013, o Profile não vazio mais recentemente alterado decide o apelido de cada UID e o valor é sincronizado nos demais Profiles de papel; timestamp empatado usa o maior ID como desempate estável. Colisões entre UIDs e valores inválidos bloqueiam o rebuild antes de substituir claims. O Kernel `NicknameRegistryKernelTest` passou 10/88 em MariaDB dedicado, incluindo disputa de claims, rollback, criação/reconciliação pelo update hook e preservação de claims em conflito entre UIDs. Instalação efêmera completa ainda pendente; nenhum update foi aplicado ao Runtime. Em dev.82, a colisão automática de apelidos pode exibir `nome#2`, com slug canônico `/u/nome-2`. O formato terminal `#N` também pode ser informado manualmente; o formulário só valida disponibilidade e não escolhe sufixo pelo usuário. `nome-2` e `nome#2` compartilham o mesmo slug. Em dev.81, `-gr` foi reservado à autoria Growroom no Fórum; autores legados continuam sem User/Profile ou rota individual, e referências internas seguem por UID.
+
+Em dev.78, os forms Profile legados gravam o apelido aparado que foi validado, mantendo-o coerente com a rota pública. User Unit 134/518 e Kernel 25/361 PASS; PHPCS/lint dos arquivos alterados PASS. A concorrência entre cadastros continua pendente.
+
+Em dev.77, a limpeza de avatar delega exclusões ao coordenador global do Portal; sem referências verificavelmente ausentes, o arquivo fica retido. User Unit 133/512 e Kernel 25/361 PASS (1 depreciação PHPUnit na Unit, 5 depreciações contrib no Kernel); PHPCS/lint alterados PASS.
+
+Em dev.76, o User aplica a validação compartilhada de apelido também aos
+formulários Profile legados de papéis, incluindo `/dados`, usando
+`AccountNames` e `NicknamePolicy`. Valores existentes inalterados são aceitos
+para que uma edição de outros campos não seja bloqueada. Isso elimina o
+bypass de validação encontrado no formulário legado; não oferece ainda uma
+garantia transacional contra duas gravações concorrentes. Essa garantia exige
+um mecanismo de armazenamento/lock que preserve o modelo atual e será tratada
+com teste de concorrência isolado.
 
 Em dev.75, `FriendshipChangedEvent` transporta um identificador imutável por
 transição para consumidores distinguirem mudanças que ocorram no mesmo segundo;
-o ACULTA User continua sem dependência do Messenger. O Kernel completo da
+o ACULTA User continua sem dependência do Messenger. User Unit 132/504 e Kernel
+25/361 passaram no corte anterior; 1 depreciação PHPUnit e 5 de Core/contrib.
+PHP lint e PHPCS dos novos arquivos também passaram. O Kernel completo da
 integração de avisos passou com duas depreciações do Core/contrib `message`.
 
 Em dev.74, a API `PublicMemberIdentityInterface` expõe somente o apelido aprovado
@@ -158,3 +177,6 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../docs/architecture/ACULT
 ACULTA Studio presents account-oriented user experiences. aculta_user stays the owner of identity, profiles, roles and first-participation policy; the GanjaLab/WE SATIVA user experience belongs to aculta_studio, not a second implementation in User.
 
 [Contrato e roadmap transversal](../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
+
+
+A unicidade concorrente do apelido é garantida pela projeção SQL owner-managed `aculta_user_nickname` (`uid` único e `slug` único), com Profile como fonte de verdade. O Kernel MariaDB testa rename/liberação, rebuild, escolha do Profile mais recentemente alterado com propagação entre Profiles de mesmo UID, execução do update 10013, preservação de claims em conflito entre UIDs e dois processos concorrentes (10 testes/88 assertions). A instalação completa permanece pendente; nenhuma atualização foi executada no Runtime. Detalhes e rollback: [NICKNAME-UNIQUENESS.md](docs/NICKNAME-UNIQUENESS.md).

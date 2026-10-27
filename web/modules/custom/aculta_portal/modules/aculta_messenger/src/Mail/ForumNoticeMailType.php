@@ -31,7 +31,7 @@ final class ForumNoticeMailType implements MailTypeInterface {
       ],
       'url' => [
         'label' => (string) $this->translation->translate('Link para abrir o tópico'),
-        'sample' => 'https://aculta.org/forum',
+        'sample' => 'https://example.com/forum',
       ],
     ];
   }

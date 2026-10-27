@@ -2,17 +2,22 @@ _core:
   default_config_hash: 4GIX5Esnc_umpXUBj4IIocRX7Mt5fPhm4AgXfE3E56E
 module:
   aculta_commerce: 0
+  aculta_editor: 0
   aculta_donation: 0
+  aculta_document_viewer: 0
+  aculta_document_viewer_group: 0
   aculta_forum: 0
   aculta_forum_lms: 0
   aculta_forum_wiki: 0
   aculta_gallery: 0
   aculta_game: 0
   aculta_id_cpf: 0
+  aculta_index: 0
   aculta_image: 0
   aculta_lms: 0
   aculta_lms_h5p: 0
   aculta_links: 0
+  aculta_lms_resources: 0
   aculta_magazine: 0
   aculta_mailer: 0
   aculta_messenger: 0
@@ -37,6 +42,22 @@ module:
   breakpoint: 0
   captcha: 0
   ckeditor5: 0
+  ckeditor5_plugin_pack: 0
+  ckeditor5_plugin_pack_auto_image: 0
+  ckeditor5_plugin_pack_bookmark: 0
+  ckeditor5_plugin_pack_find_and_replace: 0
+  ckeditor5_plugin_pack_fullscreen: 0
+  ckeditor5_plugin_pack_highlight: 0
+  ckeditor5_plugin_pack_indent_block: 0
+  ckeditor5_plugin_pack_layout_table: 0
+  ckeditor5_plugin_pack_link_attributes: 0
+  ckeditor5_plugin_pack_media_embed: 0
+  ckeditor5_plugin_pack_page_break: 0
+  ckeditor5_plugin_pack_paste_markdown: 0
+  ckeditor5_plugin_pack_select_all: 0
+  ckeditor5_plugin_pack_templates: 0
+  ckeditor5_plugin_pack_text_transformation: 0
+  ckeditor5_plugin_pack_word_count: 0
   comment: 0
   commerce: 0
   commerce_cart: 0
@@ -46,7 +67,6 @@ module:
   commerce_payment: 0
   commerce_price: 0
   commerce_product: 0
-  commerce_shipping: 0
   commerce_store: 0
   config: 0
   config_translation: 0
@@ -73,6 +93,7 @@ module:
   entity: 0
   entity_embed: 0
   entity_reference_revisions: 0
+  entity_print: 0
   entity_usage: 0
   field: 0
   field_ui: 0
@@ -86,6 +107,7 @@ module:
   freelinking: 0
   gnode: 0
   group: 0
+  google_tag: 0
   help: 0
   history: 0
   image: 0

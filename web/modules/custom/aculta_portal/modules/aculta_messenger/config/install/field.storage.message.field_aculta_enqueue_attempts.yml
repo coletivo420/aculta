@@ -11,10 +11,8 @@ field_name: field_aculta_enqueue_attempts
 entity_type: message
 type: integer
 settings:
-  min: 0
-  max: null
-  prefix: ''
-  suffix: ''
+  unsigned: false
+  size: normal
 module: core
 locked: false
 cardinality: 1

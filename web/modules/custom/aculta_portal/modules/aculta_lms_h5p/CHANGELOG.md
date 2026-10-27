@@ -1,3 +1,39 @@
+## 0.4.0-dev.150 — delegar remoção de assets H5P ao coordenador global — 2026-10-26
+
+- `removeLibraryFiles()` e `removeContentFile()` liberam referências do H5P e da Image e pedem ao `aculta_portal.unused_file_cleaner` a decisão/exclusão final. Arquivos H5P não-imagem também passam pelo proprietário central de referências e remoção; uma referência remanescente mantém o arquivo e falha fechado.
+- A suíte Kernel registra o `UnusedFileCleaner` e o `FileReferenceInspector` reais nos harnesses H5P isolados, sem habilitar a cadeia extensa do Portal. A cobertura Unit confirma que referência global impede o FileRemover e preserva o asset.
+- Verificações no PHP 8.4.27: H5P Unit 25 testes/81 assertions PASS; Kernel 15/388 PASS com 41 depreciações Core/contrib; PHPCS dos arquivos modificados PASS. PHPCS sobre o módulo inteiro segue falhando em arquivos legados não alterados (incluindo nomenclatura H5P histórica, PHPDoc e estilo); não houve reformatamento amplo.
+- Nenhuma limpeza real ou operação Runtime foi executada.
+
+## Revisão PHPCS M-0 (2026-10-26)
+
+- Testes Kernel renomeados conforme convenção Drupal; quatro round-trips locais
+  de Form API limitam `unserialize()` à classe concreta do formulário, mantendo
+  a restauração dos serviços testada sem aceitar classes arbitrárias.
+- Kernel completo: 15 testes / 388 assertions PASS; Unit: 24 / 73 PASS.
+- PHPCS nos dois testes: zero erros e zero avisos. Nenhuma API H5P de produto
+  ou classe persistida foi renomeada; nenhuma alteração Runtime.
+
+## 0.4.0-dev.149 — fixtures Kernel isolam dependências LMS alheias ao cenário — 2026-10-26
+
+- Os Kernel de descoberta de hooks e instalação de pacote não habilitam mais `aculta_lms`, cujos serviços dependem de `aculta_portal.checkout_settings`; os cenários testam apenas descoberta/storage H5P. A integração Course Access permanece separada e valida Group, membership, revogação e serialização.
+- Suítes no MariaDB dedicado: Kernel 15 testes / 388 assertions PASS (41 depreciações Core/contrib); Unit 24 / 73 PASS. Kernel focal de acesso: 3 / 134 PASS.
+- Os arquivos de teste mantêm violações PHPCS históricas ligadas aos nomes `aculta_H5P*`, PHPDoc e convenções do porte; nenhuma exclusão foi adicionada e os nomes/classes não foram alterados.
+
+## 0.4.0-dev.148 — conformidade de estilo no widget — 2026-10-25
+
+- Corrige as violações Drupal/DrupalPractice do widget H5P: comentários e PHPDoc, indentação, nomenclatura de arrays e variável local que ocultava o parâmetro `$element`.
+- Mantém os identificadores históricos `aculta_H5P*`; as exceções PHPCS são pontuais e justificadas por descoberta de plugins e cache do Form API.
+- Verificação: PHPCS do formatter, widget e Kernel focal; PHP lint; Kernel focal 3 testes/134 assertions. Permanecem 41 deprecações de Core/contrib.
+- Não altera configuração ou dados no Runtime.
+
+## 0.4.0-dev.147 — alinhar formatter e teste à relação Group proprietária — 2026-10-25
+
+- O formatter consulta e invalida cache pela relação `aculta_document_viewer_group:course_document`; usa o ID da entidade no relacionamento, sem carregar a entidade apenas para comparar o vínculo.
+- O Kernel focal instala a relação Group real e testa persistência, acesso, conteúdo de curso e restauração dos serviços do widget após serialização. O harness deixa de instalar a configuração LMS não pertinente ao cenário.
+- Verificação: Kernel isolado, 3 testes/134 assertions; PHPCS Drupal/DrupalPractice nos arquivos alterados; PHP lint e `git diff --check` passaram. Permanecem 41 deprecações provenientes de Core/contrib.
+- Não houve operação no Runtime nem migração de armazenamento/plugin. `aculta_pdf_viewer_group` continua necessário à configuração do bundle Media.
+
 ## 0.4.0-dev.145 — declarar a versão do componente — 2026-10-22
 
 - O módulo não declarava `version` em `aculta_lms_h5p.info.yml`; o índice de status o exibia como "versão não declarada".

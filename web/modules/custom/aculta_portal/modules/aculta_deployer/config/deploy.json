@@ -290,16 +290,17 @@
     {
       "file": "config/sync/metatag.metatag_defaults.node__revista.yml",
       "reason": "dados estruturados (JSON-LD) com a identidade institucional de produção; não muda por ambiente"
-    },
-    {
-      "file": "web/modules/custom/aculta_portal/modules/aculta_magazine/src/Drush/Commands/PublicationBundleMigrationCommand.php",
-      "reason": "trava de ambiente do comando de migração: só executa no host de teste da Revista"
     }
   ],
   "profiles": {
     "production": {
       "description": "Transição para produção no build de produção (aculta-deployer build --target production).",
       "rules": [
+        {
+          "file": "config/sync/aculta_mailer.brand.aculta.yml",
+          "pattern": "^footer: ",
+          "with": "footer: "
+        },
         {
           "file": "config/sync/system.site.yml",
           "pattern": "^mail: .*$",
@@ -414,12 +415,22 @@
           "file": "config/sync/aculta_mailer.delivery.yml",
           "pattern": "^bounce_address: .*$",
           "with": "bounce_address: dmarc@aculta.org"
+        },
+        {
+          "file": "config/sync/aculta_mailer.brand.aculta.yml",
+          "pattern": "^footer: .*$",
+          "with": "footer: \"Associação Cultural Antiproibicionista\\nCNPJ 68.238.467/0001-08\\nAvenida Cristóvão Colombo, 736, Quadra 205, Lote 27, Sala 3, Jardim Novo Mundo, Goiânia - GO, CEP 74705-130\\nfaleconosco@aculta.org\""
         }
       ]
     },
     "test": {
       "description": "Configuração do servidor de testes (aculta-deployer build --target test). Remetente de teste.",
       "rules": [
+        {
+          "file": "config/sync/aculta_mailer.brand.aculta.yml",
+          "pattern": "^footer: ",
+          "with": "footer: "
+        },
         {
           "file": "config/sync/system.site.yml",
           "pattern": "^mail: .*$",
@@ -609,6 +620,11 @@
           "file": "config/sync/domain_alias.alias.links_aculta_toca_net_br.yml",
           "pattern": "^pattern: .*$",
           "with": "pattern: links.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/aculta_mailer.brand.aculta.yml",
+          "pattern": "^footer: .*$",
+          "with": "footer: \"Associação Cultural Antiproibicionista\\nCNPJ 68.238.467/0001-08\\nAvenida Cristóvão Colombo, 736, Quadra 205, Lote 27, Sala 3, Jardim Novo Mundo, Goiânia - GO, CEP 74705-130\\nfaleconosco@aculta.org\""
         }
       ]
     }

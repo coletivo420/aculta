@@ -69,6 +69,23 @@ Não concede permissões nativas do Private Message. Conversas preserva a inbox
 contrib; Notificações exibe eventos privados entregues; Avisos lista Nodes
 publicados e visíveis com links nativos lido/não lido do Flag.
 
+## Defaults versionados e overrides por ambiente
+
+`config/sync/aculta_messenger.settings.yml` versiona as políticas estruturais
+de `email_modes` e `magazine_events` com os mesmos defaults de
+`config/install`. Instalações que precisem de política diferente devem defini-la
+como override de configuração no `settings.php` ou `settings.local.php` do
+ambiente, por exemplo em `$config['aculta_messenger.settings']['email_modes']`
+e `$config['aculta_messenger.settings']['magazine_events']`; não exportar
+preferências operacionais para o repositório. O override é específico do
+ambiente e não deve conter segredos neste caso.
+
+`private_message_digest_anchor` permanece fora do Config Sync por ser uma data
+operacional. Antes de qualquer `drush cim`, comparar o estado ativo e confirmar
+que políticas administrativas diferentes dos defaults estão representadas em
+overrides locais. Esta documentação e os defaults versionados não autorizam
+importar configuração em Runtime existente.
+
 ## Checklist para implantação futura
 
 Todas as preferências de e-mail ficam na página de conta `/configuracoes/email`,

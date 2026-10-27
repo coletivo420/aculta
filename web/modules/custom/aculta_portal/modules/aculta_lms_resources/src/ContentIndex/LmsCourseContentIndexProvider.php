@@ -45,7 +45,9 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return $this->relationTypeManager->hasDefinition('aculta_pdf_viewer_group:course_document') ? 3 : 2;
+    // Version 4/3 adds the explicit course_video relation; the document edge
+    // remains optional depending on the PDF Group plugin.
+    return $this->relationTypeManager->hasDefinition('aculta_document_viewer_group:course_document') ? 4 : 3;
   }
 
   /**
@@ -109,6 +111,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
     $this->appendNodeRelations($entity, 'field_lms_readings', $relations);
     $this->appendGalleryRelations($entity, $relations);
     $this->appendDocumentRelations($entity, $relations);
+    $this->appendVideoRelations($entity, $relations);
 
     return new ContentIndexProjection(
       'group',
@@ -171,6 +174,30 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
   }
 
   /**
+   * Adds explicitly selected remote videos to the course projection.
+   *
+   * Only Media of the shared Portal bundle enter the catalog. The video Media
+   * and its Entity Access remain owned by the Portal; no URL, body or
+   * thumbnail is copied.
+   *
+   * @param \Drupal\lms\Entity\Bundle\CourseInterface $course
+   *   Course containing the video reference field.
+   * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
+   *   Relations to append.
+   */
+  private function appendVideoRelations(CourseInterface $course, array &$relations): void {
+    $fieldName = 'field_lms_videos';
+    if (!$course->hasField($fieldName) || $course->get($fieldName)->isEmpty()) {
+      return;
+    }
+    foreach ($course->get($fieldName)->referencedEntities() as $target) {
+      if ($target instanceof MediaInterface && $target->bundle() === 'remote_video') {
+        $relations[] = new ContentIndexRelation('course_video', 'media', (string) $target->id());
+      }
+    }
+  }
+
+  /**
    * Adds access-controlled PDF documents attached through the Group plugin.
    *
    * @param \Drupal\lms\Entity\Bundle\CourseInterface $course
@@ -179,7 +206,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    *   Relations to append.
    */
   private function appendDocumentRelations(CourseInterface $course, array &$relations): void {
-    $pluginId = 'aculta_pdf_viewer_group:course_document';
+    $pluginId = 'aculta_document_viewer_group:course_document';
     if (!$this->relationTypeManager->hasDefinition($pluginId)) {
       return;
     }

@@ -4,26 +4,37 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms_h5p\Unit;
 
-use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_image\ImageFileUsageManager;
 use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_image\PackagedAssetPublisher;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PManagedFileStorage;
 use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PFileUsageManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Database\Connection;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Image\ImageFactory;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\file\FileRepositoryInterface;
+use Drupal\file\FileInterface;
+use Drupal\aculta_image\FileRemoverInterface;
+use Drupal\aculta_portal\Cleanup\FileReferenceInspectorInterface;
+use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
+use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Schema;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+/**
+ * Tests the managed storage adapter that implements H5P's historical API.
+ */
 #[CoversClass(aculta_H5PManagedFileStorage::class)]
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital,Drupal.NamingConventions.ValidClassName.NoUnderscores -- Keep the test class aligned with the H5P adapter name under test.
 final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
 
+  /**
+   * Allows Unicode names for managed H5P files.
+   */
   public function testAllowsUnicodeManagedFilename(): void {
     $root = sys_get_temp_dir() . '/aculta-h5p-private-' . bin2hex(random_bytes(4));
     mkdir($root . '/h5p/editor/images', 0770, TRUE);
@@ -39,10 +50,9 @@ final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
       $root . '/h5p',
       $fileSystem,
       $repository,
-      $this->createMock(EntityTypeManagerInterface::class),
       $fileUsage,
       new ImageFileUsageManager(new ImageInspector($this->createMock(ImageFactory::class)), $fileUsage),
-      new FileRemover($fileUsage, $this->createMock(EntityTypeManagerInterface::class), $this->createMock(Connection::class), $fileSystem, $this->createMock(LoggerChannelFactoryInterface::class)),
+      $this->unusedCleaner(),
       (new \ReflectionClass(PackagedAssetPublisher::class))->newInstanceWithoutConstructor(),
       $this->usageManager($fileSystem, $repository, $fileUsage),
     );
@@ -62,6 +72,9 @@ final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Rejects traversal paths before any managed-file lookup.
+   */
   public function testRejectsTraversalBeforeLookingUpFiles(): void {
     $root = sys_get_temp_dir() . '/aculta-h5p-private-' . bin2hex(random_bytes(4));
     mkdir($root . '/h5p', 0770, TRUE);
@@ -74,10 +87,9 @@ final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
       $root . '/h5p',
       $fileSystem,
       $repository,
-      $this->createMock(EntityTypeManagerInterface::class),
       $fileUsage,
       new ImageFileUsageManager(new ImageInspector($this->createMock(ImageFactory::class)), $fileUsage),
-      new FileRemover($fileUsage, $this->createMock(EntityTypeManagerInterface::class), $this->createMock(Connection::class), $fileSystem, $this->createMock(LoggerChannelFactoryInterface::class)),
+      $this->unusedCleaner(),
       (new \ReflectionClass(PackagedAssetPublisher::class))->newInstanceWithoutConstructor(),
       $this->usageManager($fileSystem, $repository, $fileUsage),
     );
@@ -95,6 +107,9 @@ final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Rejects H5P library extraction outside the private directory.
+   */
   public function testRejectsLibraryExtractionOutsidePrivateH5pStorage(): void {
     $root = sys_get_temp_dir() . '/aculta-h5p-private-' . bin2hex(random_bytes(4));
     $outside = sys_get_temp_dir() . '/aculta-h5p-package-' . bin2hex(random_bytes(4));
@@ -109,10 +124,9 @@ final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
       $root . '/h5p',
       $fileSystem,
       $repository,
-      $this->createMock(EntityTypeManagerInterface::class),
       $fileUsage,
       $imageUsage,
-      new FileRemover($fileUsage, $this->createMock(EntityTypeManagerInterface::class), $this->createMock(Connection::class), $fileSystem, $this->createMock(LoggerChannelFactoryInterface::class)),
+      $this->unusedCleaner(),
       (new \ReflectionClass(PackagedAssetPublisher::class))->newInstanceWithoutConstructor(),
       $this->usageManager($fileSystem, $repository, $fileUsage, $imageUsage),
     );
@@ -135,6 +149,9 @@ final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Rejects raster formats outside the Image policy.
+   */
   public function testRejectsLegacyRasterFormatsOutsideAcultaImagePolicy(): void {
     $root = sys_get_temp_dir() . '/aculta-h5p-private-' . bin2hex(random_bytes(4));
     $source = $root . '/h5p/import/H5P.Test-1.0';
@@ -149,10 +166,9 @@ final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
       $root . '/h5p',
       $fileSystem,
       $repository,
-      $this->createMock(EntityTypeManagerInterface::class),
       $fileUsage,
       $imageUsage,
-      new FileRemover($fileUsage, $this->createMock(EntityTypeManagerInterface::class), $this->createMock(Connection::class), $fileSystem, $this->createMock(LoggerChannelFactoryInterface::class)),
+      $this->unusedCleaner(),
       (new \ReflectionClass(PackagedAssetPublisher::class))->newInstanceWithoutConstructor(),
       $this->usageManager($fileSystem, $repository, $fileUsage, $imageUsage),
     );
@@ -177,6 +193,81 @@ final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Keeps an H5P image when the global inspector finds a reference.
+   */
+  public function testContentImageRemovalFailsClosedOnGlobalReference(): void {
+    $root = sys_get_temp_dir() . '/aculta-h5p-private-' . bin2hex(random_bytes(4));
+    mkdir($root . '/h5p', 0770, TRUE);
+    $fileSystem = $this->createMock(FileSystemInterface::class);
+    $fileSystem->method('realpath')->willReturnCallback(static fn (string $uri) => $uri === 'private://' ? $root : FALSE);
+    $file = $this->createMock(FileInterface::class);
+    $file->method('getFilename')->willReturn('asset.png');
+    $file->method('getMimeType')->willReturn('image/png');
+    $file->method('getFileUri')->willReturn('private://h5p/content/7/images/asset.png');
+    $repository = $this->createMock(FileRepositoryInterface::class);
+    $repository->method('loadByUri')->with('private://h5p/content/7/images/asset.png')->willReturn($file);
+    $fileUsage = $this->createMock(FileUsageInterface::class);
+    $fileUsage->expects(self::exactly(2))->method('delete');
+    $fileUsage->method('listUsage')->with($file)->willReturn([]);
+    $references = $this->createMock(FileReferenceInspectorInterface::class);
+    $references->expects(self::once())->method('inspect')->with($file)->willReturn(FileReferenceStatus::Referenced);
+    $imageRemover = $this->createMock(FileRemoverInterface::class);
+    $imageRemover->expects(self::never())->method('delete');
+    $cleaner = $this->cleaner($fileUsage, $references, $imageRemover);
+    $imageUsage = new ImageFileUsageManager(new ImageInspector($this->createMock(ImageFactory::class)), $fileUsage);
+    $storage = new aculta_H5PManagedFileStorage(
+      $root . '/h5p',
+      $fileSystem,
+      $repository,
+      $fileUsage,
+      $imageUsage,
+      $cleaner,
+      (new \ReflectionClass(PackagedAssetPublisher::class))->newInstanceWithoutConstructor(),
+      $this->usageManager($fileSystem, $repository, $fileUsage, $imageUsage),
+    );
+
+    try {
+      $storage->removeContentFile('images/asset.png', 7);
+      self::fail('Expected an H5P image with a global reference to be retained.');
+    }
+    catch (\RuntimeException $exception) {
+      self::assertSame('An H5P content image is still referenced and cannot be removed.', $exception->getMessage());
+    }
+    finally {
+      rmdir($root . '/h5p');
+      rmdir($root);
+    }
+  }
+
+  /**
+   * Builds the real Portal cleaner around mocked database dependencies.
+   */
+  private function cleaner(FileUsageInterface $fileUsage, FileReferenceInspectorInterface $references, FileRemoverInterface $remover): UnusedFileCleaner {
+    $schema = $this->createMock(Schema::class);
+    $schema->method('tableExists')->with('entity_usage')->willReturn(FALSE);
+    $database = $this->createMock(Connection::class);
+    $database->method('schema')->willReturn($schema);
+    return new UnusedFileCleaner(
+      $fileUsage,
+      $database,
+      $references,
+      $remover,
+      new ImageInspector($this->createMock(ImageFactory::class)),
+      $this->createMock(LoggerChannelInterface::class),
+    );
+  }
+
+  /**
+   * Provides an unused uninitialized cleaner for tests that never delete files.
+   */
+  private function unusedCleaner(): UnusedFileCleaner {
+    return (new \ReflectionClass(UnusedFileCleaner::class))->newInstanceWithoutConstructor();
+  }
+
+  /**
+   * Builds the H5P usage manager for a storage fixture.
+   */
   private function usageManager(FileSystemInterface $fileSystem, FileRepositoryInterface $repository, FileUsageInterface $fileUsage, ?ImageFileUsageManager $imageUsage = NULL): aculta_H5PFileUsageManager {
     $imageUsage ??= new ImageFileUsageManager(new ImageInspector($this->createMock(ImageFactory::class)), $fileUsage);
     return new aculta_H5PFileUsageManager($this->createMock(ConfigFactoryInterface::class), $fileSystem, $repository, $fileUsage, $imageUsage);

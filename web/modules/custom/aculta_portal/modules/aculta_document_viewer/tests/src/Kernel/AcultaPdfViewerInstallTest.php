@@ -31,6 +31,7 @@ final class AcultaPdfViewerInstallTest extends KernelTestBase {
     $module_handler = $container->get('module_handler');
 
     $this->assertTrue($module_handler->moduleExists('aculta_document_viewer'));
+    $this->assertTrue($module_handler->moduleExists('aculta_pdf_viewer'));
     $this->assertFalse($module_handler->moduleExists('pdfpreview'));
     $this->assertInstanceOf(
       PdfViewerBuilderInterface::class,

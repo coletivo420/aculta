@@ -33,4 +33,17 @@ final class MessengerModuleInstallConfigTest extends UnitTestCase {
     self::assertContains('workflows.workflow.editorial', $config['dependencies']['config']);
   }
 
+  /**
+   * Structural communication defaults match between install and Config Sync.
+   */
+  public function testCommunicationDefaultsMatchConfigSync(): void {
+    $modulePath = dirname(__DIR__, 3);
+    $install = Yaml::decode(file_get_contents($modulePath . '/config/install/aculta_messenger.settings.yml'));
+    $sync = Yaml::decode(file_get_contents(dirname($modulePath, 6) . '/config/sync/aculta_messenger.settings.yml'));
+
+    self::assertSame($install['email_modes'], $sync['email_modes']);
+    self::assertSame($install['magazine_events'], $sync['magazine_events']);
+    self::assertArrayNotHasKey('private_message_digest_anchor', $sync);
+  }
+
 }

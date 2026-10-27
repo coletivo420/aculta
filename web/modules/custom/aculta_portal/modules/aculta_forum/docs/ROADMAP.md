@@ -27,6 +27,13 @@ entre publicação e consumo e agregação do resumo diário com Mailer mockado.
 Unit Messenger cobre também a leitura de tópico com parâmetro `NodeInterface`
 upcast pelo Router. Runtime permanece pendente.
 
+**Revisão posterior do RC.2 (2026-10-26):** a auditoria do contrato F-D44
+identificou que o cartão de autoria histórica da última atividade ainda usava
+o builder sem `-gr`. A chamada foi corrigida em dev.323. O RC.2 fica como
+evidência histórica e não é candidato de deploy; reexecutar testes e revisão
+visual/acessível antes de promover outro RC. Autores não recebem perfil/rota
+individual e o memorial coletivo mantém nomes sem sufixo.
+
 **Ownership compartilhado vigente:** o Fórum mantém produtores, assinaturas e
 seleção de destinatários. Todos os consumers/adapters, agregação, persistência
 compartilhada, preferências, filas, workers e coordenação dos modos de e-mail

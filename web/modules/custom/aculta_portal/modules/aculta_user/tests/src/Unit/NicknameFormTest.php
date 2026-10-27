@@ -12,6 +12,7 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -22,9 +23,12 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_user')]
 final class NicknameFormTest extends UnitTestCase {
 
+  /**
+   * Sets the translation service required by FormBase.
+   */
   protected function setUp(): void {
     parent::setUp();
-    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container = new ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
   }
@@ -64,6 +68,29 @@ final class NicknameFormTest extends UnitTestCase {
     $state = $this->createMock(FormStateInterface::class);
     $state->method('getValue')->with('nickname')->willReturn('Pirata');
     $state->expects(self::once())->method('setErrorByName')->with('nickname', self::anything());
+    $form = [];
+    (new NicknameForm($entities, $current, new NicknamePolicy($entities)))->validateForm($form, $state);
+  }
+
+  /**
+   * A manual display suffix is accepted when its public slug is free.
+   */
+  public function testManualHashSuffixIsAcceptedWhenAvailable(): void {
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
+    $query->method('count')->willReturnSelf();
+    $query->method('execute')->willReturn(0);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('getQuery')->willReturn($query);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('profile')->willReturn($storage);
+    $current = $this->createMock(AccountProxyInterface::class);
+    $current->method('id')->willReturn('7');
+    $state = $this->createMock(FormStateInterface::class);
+    $state->method('getValue')->with('nickname')->willReturn('nome#2');
+    $state->expects(self::never())->method('setErrorByName');
     $form = [];
     (new NicknameForm($entities, $current, new NicknamePolicy($entities)))->validateForm($form, $state);
   }

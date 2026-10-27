@@ -1,0 +1,27 @@
+uuid: 7ab482d3-43b4-4551-abdc-2df75cf28ebb
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.plain_text
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: fa3QAZGBgWr_xqX02N5Nf_Bk0Fy0xHhDgFlzx3AQL2A
+template: aculta_msg_donation_notice
+label: 'Aviso de doação ACULTA'
+description: 'Aviso pessoal de pedido criado ou pagamento aprovado, sem dados financeiros sensíveis.'
+text:
+  -
+    value: 'Aviso sobre sua doação à ACULTA'
+    format: plain_text
+  -
+    value: '@summary Acesse: @url'
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {  }

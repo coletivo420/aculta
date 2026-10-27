@@ -49,6 +49,16 @@ final class ContentIndexAccessFilter {
       throw new \InvalidArgumentException(sprintf('At most %d Content Index candidates may be access-checked per call.', self::MAX_CANDIDATES));
     }
 
+    // Core's in-request Entity Access cache is keyed by entity, operation,
+    // language and account, but it is not invalidated when a source entity,
+    // Group membership or grant changes. A long-running consumer (worker,
+    // Drush command or multi-page request) would otherwise keep an old ALLOW
+    // decision after access was revoked. A candidate's handler can also nest
+    // checks on related entity types that are not in this page (for example a
+    // ForumPost checking its host topic), so every content entity handler must
+    // be cleared before the page is revalidated.
+    $this->resetContentEntityAccessCaches();
+
     $cacheability = new CacheableMetadata();
     $allowed = [];
     $chunks = array_chunk($candidates, self::MAX_CANDIDATES);
@@ -174,7 +184,7 @@ final class ContentIndexAccessFilter {
   }
 
   /**
-   * Clears in-request access results that can depend on Domain.
+   * Clears every content entity access cache that can depend on Domain.
    *
    * Content Index access checks can change the active Domain around a source
    * entity check. Drupal's local Entity Access cache does not include cache

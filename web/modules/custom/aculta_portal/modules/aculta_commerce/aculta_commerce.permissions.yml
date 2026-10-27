@@ -2,3 +2,13 @@ access aculta green stash:
   title: 'Access Green Stash store management'
   description: 'Enter the Green Stash administration experience. Does not grant access to Commerce entities, transactions, or payments.'
   restrict access: true
+
+administer aculta shipping methods:
+  title: 'Administer ACULTA shipping methods'
+  description: 'Create, edit and delete the shipping methods used by the ACULTA store.'
+  restrict access: true
+
+administer aculta shipments:
+  title: 'Administer ACULTA shipments'
+  description: 'View and operate shipments, including their state and tracking code.'
+  restrict access: true

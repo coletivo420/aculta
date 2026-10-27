@@ -21,10 +21,27 @@ final class AuthorCardBuilder {
    * Builds a historical card without creating or exposing a User account.
    */
   public function buildLegacy(LegacyAuthor $author): array {
+    return $this->buildLegacyWithDisplayName($author, (string) $author->label());
+  }
+
+  /**
+   * Builds a historical author card for Forum content.
+   */
+  public function buildLegacyForum(LegacyAuthor $author): array {
+    return $this->buildLegacyWithDisplayName(
+      $author,
+      LegacyAuthorDisplayName::forForum((string) $author->label()),
+    );
+  }
+
+  /**
+   * Builds the shared historical card with an explicitly selected display name.
+   */
+  private function buildLegacyWithDisplayName(LegacyAuthor $author, string $displayName): array {
     $build = [
       '#theme' => 'aculta_user_author_card',
       '#variant' => 'author_growroom_historico',
-      '#display_name' => (string) $author->label(),
+      '#display_name' => $displayName,
       '#profile_url' => NULL,
       '#avatar' => NULL,
       '#has_avatar' => FALSE,

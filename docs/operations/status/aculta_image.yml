@@ -1,4 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.34
 state: Dev
-next_phase: Validar a delegação opcional do `ImageCleanup` ao serviço comum no Kernel e conferir que quarentena, retenção e remoção de derivados mantêm paridade; confirmar binários necessários para produção e avançar integração Growroom ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
-version_note: "0.1.0-dev.31 (limpeza de File integrada opcionalmente ao Portal)"
+next_phase: Completar Kernel/instalação limpa da limpeza normal e quarentena delegadas ao Portal, confirmar binários necessários para produção e avançar integração Growroom ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
+progress_note: "Dev.34: ImageCleanup e ImageQuarantine exigem `aculta_portal.unused_file_cleaner`; sem coordenador, limpeza retorna Unverifiable, retém a fila e não remove arquivos. Image Unit 28/118 PASS (9 depreciações); PHPCS/lint e `validate-aculta-image.php` PASS. Nenhum arquivo real foi limpo ou movido; Runtime não alterado."

@@ -1,3 +1,13 @@
+## 0.1.0-dev.118 — proteger grants versionados das propostas (2026-10-26)
+
+- Teste Unit `WikiProposalRolePermissionsConfigTest` verifica que submissão e
+  visualização própria ficam em `email_confirmed`, enquanto visualização ampla
+  e moderação ficam em `content_editor`; ambos os papéis declaram dependência
+  de `aculta_wiki` no Config Sync.
+- Resultado: 1 teste / 8 assertions PASS. Os grants continuam ausentes no
+  Runtime Wiki; nenhuma configuração ativa foi alterada. O handler permanece
+  fail-closed; homologação e reconciliação ativa ficam pendentes.
+
 ## 0.1.0-dev.115 — publicar eventos editoriais no Messenger (2026-10-24)
 
 - O publisher Wiki reside no módulo proprietário; o consumer, Message, central,

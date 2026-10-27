@@ -1,3 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.3.0-dev.13
 state: Dev
-next_phase: Homologar fontes/ordenação e fallback de CEP no Runtime ([contrato](docs/portal/ACCOUNT-ADDRESS.md))
+progress_note: "Dev.13: PHPCS Drupal/DrupalPractice em todo o PHP do módulo PASS; 10 arquivos corrigidos sem mudança de contratos. CepLookupServiceTest 10/45 PASS; validate-account-address.php PASS (24 verificações). Smoke Firefox ESR X11: example.com abriu; conta.aculta.toca.net.br falhou e o resolver local não encontrou DNS. O fluxo que submete endereço também requer conta descartável; nenhuma gravação Runtime foi feita."
+next_phase: Restaurar resolução do host de teste e executar o script Firefox ESR com conta descartável em ambiente isolado; manter PHPCS com extensões PHP explícitas; homologar Browser com conta descartável ([contrato](docs/portal/ACCOUNT-ADDRESS.md))

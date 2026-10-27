@@ -1,6 +1,6 @@
 # ACULTA Messenger
 
-Versão de desenvolvimento atual: **0.1.1-dev.384**. O roadmap e o changelog
+Versão de desenvolvimento atual: **0.1.1-dev.403**. O roadmap e o changelog
 registram o estado de cada incremento e as verificações executadas.
 
 Infraestrutura unificada do ACULTA Portal para avisos do site, notificações, assinaturas, e-mail integrado e conversas privadas voluntárias entre membros. A fonte de verdade de cada
@@ -92,8 +92,8 @@ direto ou digest sem substituir os storages existentes. O Fórum preserva
 momento de abrir e entregar. Preferências individuais são limitadas pela
 política administrativa, e avisos no site continuam obrigatórios.
 
-Validação automatizada mais recente, em 2026-10-25: Unit Messenger **360 testes /
-3.937 assertions PASS**; digest/preferências **11/1.207 PASS** e conjunto amplo
+Validação automatizada reexecutada no HEAD `0.1.1-dev.400`, em 2026-10-25:
+Unit Messenger **382 testes / 4.186 assertions PASS**; digest/preferências **11/1.207 PASS** e conjunto amplo
 de preferências, formulários, digest e workers de e-mail **75/835 PASS**;
 central — agrupamento, filtros e paginação — **21/65 PASS**; segurança de envio
 e validação de origem — **41/246 PASS**. `AvisosResumoMailerKernelTest` **4/70
@@ -103,7 +103,7 @@ retenção **3/76 PASS**. PHPCS Drupal/DrupalPractice, PHP lint e `git diff --ch
 PASS; Runtime e SMTP externo não utilizados.
 
 BrowserTestBase isolado instalou o Messenger (**1 teste / 4 assertions PASS**,
-Dev.384); houve 189 depreciações upstream de Core/contrib. A alegação anterior
+executado no snapshot Dev.384); houve 189 depreciações upstream de Core/contrib. A alegação anterior
 de HTTP 200 em `/user/login` foi retirada porque a resposta tinha corpo vazio.
 O teste não comprova sessão autenticada, fluxo de envio, Runtime ou SMTP.
 

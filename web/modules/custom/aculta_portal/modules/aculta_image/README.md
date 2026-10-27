@@ -6,7 +6,7 @@ origem externa, auditoria, quarentena e comparação visual.
 
 | Estado do submódulo | Versão atual | Próximas fases | Classificação |
 | --- | --- | --- | --- |
-| Em desenvolvimento | `0.1.0-dev.28` ([CHANGELOG](CHANGELOG.md)) | Confirmar binários necessários para produção; concluir integração/importação Growroom conforme [PLANO](docs/PLANO.md) e [IMPORTAÇÃO](docs/IMPORTACAO-GROWROOM.md); concluir gates/testes e revisão visual pré-deploy antes de RC; depois Alpha e produção | **Dev**. Ciclo vigente: Dev → RC → deploy/validação Alpha no servidor de desenvolvimento → produção. |
+| Em desenvolvimento | `0.1.0-dev.34` ([CHANGELOG](CHANGELOG.md)) | Confirmar binários necessários para produção; concluir integração/importação Growroom conforme [PLANO](docs/PLANO.md) e [IMPORTAÇÃO](docs/IMPORTACAO-GROWROOM.md); concluir gates/testes e revisão visual pré-deploy antes de RC; depois Alpha e produção | **Dev**. Ciclo vigente: Dev → RC → deploy/validação Alpha no servidor de desenvolvimento → produção. |
 **Para retomar o trabalho:** [docs/HANDOFF.md](docs/HANDOFF.md).
 **Plano e fases:** [docs/PLANO.md](docs/PLANO.md). **Modelos no texto:** [docs/MODELOS-DE-IMAGEM.md](docs/MODELOS-DE-IMAGEM.md).
 **Estilos:** [docs/ESTILOS.md](docs/ESTILOS.md). **Importação do Growroom:** [docs/IMPORTACAO-GROWROOM.md](docs/IMPORTACAO-GROWROOM.md).
@@ -29,7 +29,7 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 | `aculta_image.inspector` | `ImageInspector` | Dimensões de arquivo ou de bytes. |
 | `aculta_image.generated_file` | `GeneratedImageFileManager` | Registra derivados de imagem públicos como arquivos temporários sujeitos à limpeza normal. |
 | `aculta_image.file_remover` | `FileRemover` | Exclusão de imagem após checagem de `file_usage` e `entity_usage`; invalida derivados e metadados internos. |
-| `aculta_image.cleanup` | `ImageCleanup` | Fila de imagens substituídas/removidas e limpeza de temporários vencidos; cron e ação manual. |
+| `aculta_image.cleanup` | `ImageCleanup` | Fila de imagens substituídas/removidas e limpeza de temporários vencidos, sempre coordenadas pelo Portal; sem coordenador a fila retém itens não verificáveis. |
 | `aculta_image.ingester` | `ImageIngester` | Ingestão de imagem externa (SHA-256, reaproveitamento, origem). |
 | `aculta_image.audit` | `ImageAudit` | Resumo, duplicatas exatas, impressões visuais e candidatas. Somente leitura. |
 | `aculta_image.quarantine` | `ImageQuarantine` | Envio, restauração e exclusão de vencidas à quarentena. |
@@ -72,7 +72,7 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 
 ## Regras de negócio
 
-- **Substituição:** ao atualizar ou excluir uma entidade com campo de imagem/arquivo, ou ao alterar/excluir texto rico com imagem, os arquivos registrados para ela entram na fila. O cron confere novamente `file_usage` e `entity_usage`; arquivo em uso por qualquer post, revisão, nó, mídia, página ou outra entidade permanece. A checagem ocorre também no próprio serviço de exclusão.
+- **Substituição:** ao atualizar ou excluir entidade com campo de arquivo/imagem, ou alterar texto rico com imagem, os arquivos registrados entram na fila. O Portal revalida File Usage, Entity Usage, referências estruturadas e embeds antes de solicitar remoção física ao Image. Referência não verificável mantém o item na fila para nova tentativa após o lease. Sem o coordenador, nenhum arquivo é excluído.
 - **Temporários:** uploads temporários de imagem de qualquer formulário sem referências são removidos após `system.file:temporary_maximum_age` (Runtime atual: 6 horas; fallback: 6 horas), no máximo 100 itens por execução. Arquivos enviados em formulários ainda em andamento não são removidos antes desse prazo. O compressor de inline reduz o próprio arquivo gerenciado, sem criar cópia temporária de conversão.
 - **Derivados:** ao excluir o original elegível, o módulo invalida os derivados dos estilos de imagem do Core para aquele URI.
 - **Quarentena:** 30 dias. Exclusão só depois do prazo e com nova verificação de uso.
@@ -86,7 +86,7 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 ## Gates e testes
 
 - `php scripts/validate-aculta-image.php`: tolerância zero (R1 a R8). Deve passar antes de qualquer PR.
-- Testes unitários (14): `ImageCatalogTest`, `ImageIngesterTest`, `DHashTest`, `QuarantineRulesTest`, `ImageCompressorTest`.
+- Testes unitários (28): `ImageCatalogTest`, `ImageIngesterTest`, `DHashTest`, `QuarantineRulesTest`, `ImageCompressorTest`, `ImageCleanupCoordinatorTest`.
   ```sh
   php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_image/tests/src/Unit
   ```

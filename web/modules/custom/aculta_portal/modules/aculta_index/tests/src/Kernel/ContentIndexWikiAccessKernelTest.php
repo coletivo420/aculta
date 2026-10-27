@@ -65,6 +65,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('path_alias');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
+    $this->installEntitySchema('flagging');
     $this->installEntitySchema('domain');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('file');
@@ -87,9 +88,11 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       ])->save();
     }
     $this->installSchema('user', ['users_data']);
+    $this->installSchema('aculta_user', ['aculta_user_nickname']);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installSchema('history', ['history']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
@@ -214,10 +217,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       $providerRegistry->fingerprint(),
       $this->container->get('aculta_index.generation_manager')->getProviderFingerprint($generationId),
     );
-    $complete = FALSE;
-    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
-      $complete = $rebuilder->processNextBatch($generationId, 20)['complete'];
-    }
+    $complete = $this->rebuildAllBatches($generationId);
     self::assertTrue($complete, 'The real Wiki provider backfill should complete.');
     $this->processWikiWork();
     $rebuilder->validate($generationId);
@@ -441,10 +441,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
 
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
-    $complete = FALSE;
-    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
-      $complete = $rebuilder->processNextBatch($generationId, 20)['complete'];
-    }
+    $complete = $this->rebuildAllBatches($generationId);
     self::assertTrue($complete, 'The Wiki provider backfill should complete.');
     $this->processWikiWork();
     $rebuilder->validate($generationId);
@@ -548,10 +545,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
 
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
-    $complete = FALSE;
-    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
-      $complete = $rebuilder->processNextBatch($generationId, 20)['complete'];
-    }
+    $complete = $this->rebuildAllBatches($generationId);
     self::assertTrue($complete, 'The Index backfill should complete for Wiki records and targets.');
     $this->processWikiWork();
     $rebuilder->validate($generationId);
@@ -610,7 +604,27 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
   }
 
   /**
-   * Processes incremental Wiki work after the backfill.
+   * Runs bounded rebuild batches until the current provider inventory finishes.
+   *
+   * Each batch advances at most one provider/entity-type tuple, so a fixed
+   * batch count silently becomes insufficient when an owner module contributes
+   * another provider. The bound is derived from the booted registry instead.
+   */
+  private function rebuildAllBatches(string $generationId, int $limit = 20): bool {
+    $tuples = 0;
+    foreach ($this->container->get('aculta_index.provider_registry')->all() as $provider) {
+      $tuples += count($provider->getSupportedEntityTypes());
+    }
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $complete = FALSE;
+    for ($batch = 0; $batch < max(10, $tuples + 10) && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, $limit)['complete'];
+    }
+    return $complete;
+  }
+
+  /**
+   * Processes queued work through the real queue worker plugin.
    */
   private function processWikiWork(): void {
     $database = $this->container->get('database');

@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-**Ciclo vigente:** [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Status em 2026-10-20: versão **0.1.0-dev.28**. O campo histórico `commerce_product.produto_loja.field_imagens` foi alinhado à política `aculta_image` e o gate passou. A mesma política foi aplicada somente a esse campo no Runtime de teste; nenhuma importação global foi feita. A classificação permanece **Dev**: há bloqueios operacionais/integração. `preRC` foi aposentado; concluir pendências, gates/testes e revisão visual aplicável antes de RC. Alpha é deploy/validação no servidor de desenvolvimento; produção ocorre depois da aprovação Alpha.
+**Ciclo vigente:** [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Status em 2026-10-26: versão **0.1.0-dev.33**. O campo histórico `commerce_product.produto_loja.field_imagens` foi alinhado à política `aculta_image` e o gate passou. A mesma política foi aplicada somente a esse campo no Runtime de teste; nenhuma importação global foi feita. A classificação permanece **Dev**: há bloqueios operacionais/integração. `preRC` foi aposentado; concluir pendências, gates/testes e revisão visual aplicável antes de RC. Alpha é deploy/validação no servidor de desenvolvimento; produção ocorre depois da aprovação Alpha.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -24,14 +24,14 @@ exclusão de arquivo. O resultado era dívida espalhada e arquivos apagados sem 
 
 ### Integração inicial com limpeza coordenada pelo Portal — 2026-10-22
 
-O Portal implementou `aculta_portal.unused_file_cleaner` para verificar
-referências comuns e coordenar remoção de File. `ImageCleanup` o utiliza quando
-disponível, sem declarar dependência do Portal e mantendo fallback standalone.
-`FileRemoverInterface` formaliza a fronteira: o `aculta_image` continua dono da
-remoção física de imagens, invalidação de derivados e metadados internos. A
-integração ainda requer homologação de quarentena, retenção e todos os fluxos de
-limpeza; migrar consumidores gradualmente e nunca apagar arquivos por SQL/API
-paralela.
+O Portal implementou aculta_portal.unused_file_cleaner para verificar
+referências comuns e coordenar remoção de File. ImageCleanup o utiliza quando
+disponível; a quarentena exige o serviço e falha fechada sem ele. Antes de mover
+uma imagem, a quarentena consulta o coordenador; antes de apagar uma entrada
+vencida, repete a verificação pelo mesmo serviço. FileRemoverInterface
+formaliza a fronteira: aculta_image continua dono da remoção física,
+invalidação de derivados e metadados internos. A exclusão física só ocorre pelo
+coordenador do Portal e pelo proprietário Image.
 
 | Fase | Estado | Observação |
 | --- | --- | --- |
@@ -41,7 +41,7 @@ paralela.
 | M4 miniatura de PDF | feito no Homelab | ImageMagick 7 com Ghostscript; `pdfpreview` com JPEG 480×640; teste com PDF real: 480×621. Produção depende de confirmação da Hostinger |
 | M5 duplicatas exatas | feito | `media_duplicates` 2.0.4; os dois grupos reais da galeria 11 foram mesclados, uma ocorrência por arquivo, mantendo o `alt` do menor ID |
 | M6 auditoria de uso | feito | `entity_usage` 5.0.1; candidatas com motivos |
-| M7 quarentena | feito | 30 dias; restauração e exclusão só com nova verificação de uso. A limpeza de ciclo normal (troca/exclusão de campo) usa fila própria e apaga apenas após checar `file_usage` e `entity_usage`. |
+| M7 quarentena | parcial | 30 dias; restauração preservada; mover e excluir exigem verificação pelo coordenador global. Testes Unit confirmam retenção com referência File API e indisponibilidade do coordenador. Falta validar Kernel/integração em instalação limpa e revisão operacional. |
 | M8 compressão | feito no Homelab | `imageapi_optimize` 4.2.0 + `imageapi_optimize_binaries` 1.2.0-beta1 (aprovado pelo responsável); pipeline `aculta_derivados`. Ganho medido: JPEG 0,7%, PNG 13,6% |
 | M9 comparação visual | feito | dHash de 64 bits com GD, código próprio; cron em lotes de 200; limiar 6 bits |
 | og:image | feito | estilo `aculta_compartilhamento_1200x630`; verificado HTTP 200 |
@@ -152,9 +152,11 @@ pelos estilos), `media_dupe_detect`, `duplicate_images`, `media_dedupe` (ver a t
 
 Imagens candidatas do inventário continuam na quarentena privada por 30 dias, com restauração e nova checagem antes
 da exclusão. Há uma exceção operacional para ciclo de vida normal: quando uma entidade substitui ou remove um campo de
-imagem, o FID anterior entra na fila e pode ser excluído pelo `FileRemover` se `file_usage` e `entity_usage` estiverem
-vazios no momento da execução. Revisões e outras entidades mantêm a imagem. Temporários de imagem sem referência são
-removidos depois de `system.file:temporary_maximum_age` (seis horas no Runtime), em lotes de 100. Arquivos do tema
+imagem, o FID anterior entra na fila. O Portal verifica File Usage, Entity Usage, referências estruturadas e embeds; só
+solicita ao `FileRemover` do Image a exclusão física quando todas as verificações forem claras. Revisões e outras
+entidades mantêm a imagem; consultas não verificáveis preservam o item para nova tentativa após o lease. Sem o
+coordenador Portal, a limpeza falha fechada. Temporários de imagem passam pela mesma checagem após
+`system.file:temporary_maximum_age` (seis horas no Runtime), em lotes de 100. Arquivos do tema
 continuam fora da limpeza de Media. O administrador pode executar a mesma rotina em `/painel-administrativo/imagens/limpeza`.
 
 ## 11. Assets estáticos de dependências Composer

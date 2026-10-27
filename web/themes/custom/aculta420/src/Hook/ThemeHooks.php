@@ -255,7 +255,7 @@ final class ThemeHooks implements TrustedCallbackInterface {
   }
 
   /**
-   * Marca do domínio: o Portal envia uma chave neutra ('#brand_key'); o asset é do tema.
+   * Marca do domínio enviada pelo Portal; o asset pertence ao tema.
    *
    * Sem chave conhecida, o dado já é render array e segue sem alteração.
    */
@@ -267,7 +267,8 @@ final class ThemeHooks implements TrustedCallbackInterface {
     if (!is_file(DRUPAL_ROOT . '/' . $dir . 'wiki420-horizontal-960w.webp')) {
       return [];
     }
-    // O cabeçalho mostra a logo com no máximo 18rem; o navegador escolhe a densidade.
+    // O cabeçalho mostra a logo com no máximo 18rem; o navegador escolhe
+    // a densidade.
     $srcset = [];
     foreach (['480w' => 480, '720w' => 720, '960w' => 960] as $suffix => $width) {
       $srcset[] = Url::fromUri('base:' . $dir . 'wiki420-horizontal-' . $suffix . '.webp')->toString() . ' ' . $width . 'w';
@@ -282,7 +283,8 @@ final class ThemeHooks implements TrustedCallbackInterface {
         'data-portal-ui' => 'domain-brand-image',
         'srcset' => implode(', ', $srcset),
         'sizes' => '18rem',
-        // Logo acima da dobra e principal visual do cabeçalho: sem carregamento preguiçoso.
+        // Logo acima da dobra e principal visual do cabeçalho: sem carregamento
+        // preguiçoso.
         'loading' => 'eager',
         'fetchpriority' => 'high',
       ],
@@ -311,10 +313,11 @@ final class ThemeHooks implements TrustedCallbackInterface {
       'aculta_studio.we_sativa_start',
     ], TRUE);
     $variables['institutional_home'] = $this->pathMatcher->isFrontPage();
+    $variables['aculta_show_page_title_on_front'] = $this->routeMatch->getRouteObject()?->getOption('_aculta_show_page_title_on_front') === TRUE;
     $brandMedia = $variables['domain_presentation']['regions']['brand_media'] ?? NULL;
     $variables['aculta_domain_brand_media'] = is_array($brandMedia) ? $this->brandMediaRender($brandMedia) : [];
-    // The text fallback is only built when there is no brand media; otherwise the
-    // header would show two home links (image and text) for the same destination.
+    // The text fallback is only built without brand media; otherwise the header
+    // would duplicate its home link with image and text.
     $variables['aculta_domain_brand_fallback'] = $variables['aculta_domain_brand_media'] === []
       ? $this->buildDomainBrandFallback($variables['domain_presentation']['identity'] ?? NULL)
       : NULL;
@@ -356,7 +359,7 @@ final class ThemeHooks implements TrustedCallbackInterface {
       $destination = $destinations[$pluginId] ?? NULL;
       if ($destination !== NULL) {
         // Wiki entry and student dashboard Context Header SDCs own their H1.
-        // Suppress only their redundant page-title block; preserve route titles.
+        // Suppress their redundant page-title block; preserve route titles.
         if (($wikiEntryPage || $wikiContextPage || $routeName === 'aculta_lms.student_dashboard')
           && $destination === 'aculta_page_title') {
           unset($variables['page']['header'][$key]);
@@ -369,7 +372,7 @@ final class ThemeHooks implements TrustedCallbackInterface {
   }
 
   /**
-   * Maps Messenger's pages to visual SDCs while keeping access/render logic in the module.
+   * Maps Messenger pages to SDCs; access/render logic stays in the module.
    */
   private function presentMessengerPage(array &$variables, ?string $routeName): void {
     $component = match ($routeName) {
@@ -465,7 +468,7 @@ final class ThemeHooks implements TrustedCallbackInterface {
   }
 
   /**
-   * Wraps the native Private Message entity output in the theme's message item SDC.
+   * Wraps the native Private Message output in the message item SDC.
    */
   #[Hook('preprocess_private_message')]
   public function preprocessPrivateMessage(array &$variables): void {
@@ -524,11 +527,12 @@ final class ThemeHooks implements TrustedCallbackInterface {
   }
 
   /**
-   * Aplica o modo de cor que o Portal resolveu (contrato aculta_color_mode: light, dark ou auto).
+   * Aplica o modo de cor resolvido pelo Portal (`aculta_color_mode`).
    *
-   * O modo chega resolvido pelo Portal. A base Drupal Bootstrap preserva html_attributes,
-   * então ACULTA420 aplica o atributo diretamente. Em auto, removê-lo permite que tokens.css
-   * use prefers-color-scheme sem uma preferência explícita.
+   * O modo chega resolvido pelo Portal. Drupal Bootstrap preserva
+   * `html_attributes`; ACULTA420 aplica o atributo diretamente. Em auto,
+   * removê-lo permite que tokens.css use prefers-color-scheme sem preferência
+   * explícita.
    */
   #[Hook('preprocess_html')]
   public function preprocessHtml(array &$variables): void {
@@ -544,7 +548,7 @@ final class ThemeHooks implements TrustedCallbackInterface {
         $attributes->setAttribute('data-bs-theme', $themeMode);
       }
     }
-    // Título do documento informado pelo Portal (contrato aculta_head_title). Roda depois do Metatag.
+    // Título informado pelo Portal (aculta_head_title), após o Metatag.
     if (!empty($variables['aculta_head_title'])) {
       $variables['head_title'] = ['title' => (string) $variables['aculta_head_title']];
     }

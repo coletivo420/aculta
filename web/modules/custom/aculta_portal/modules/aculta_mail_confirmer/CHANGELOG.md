@@ -1,5 +1,16 @@
 # Changelog — ACULTA Mail Confirmer
 
+## 0.1.0-dev.4 — proteger a rota de reenvio pela autorização da entidade — 2026-10-26
+
+- A rota `/aculta-mail-confirmer/reenviar/{confirmation}` agora usa o access checker do Entity API para exigir `update` na confirmação, além do token CSRF. Confirmações privadas são restritas ao UID proprietário, conforme o handler existente; o endpoint deixou de depender somente da permissão genérica `access aculta mail confirmer`.
+- Kernel constrói o requisito da rota versionada e o executa pelo `EntityAccessCheck` do Drupal: titular permitido, outra conta negada. Suíte Confirmador: 6 testes / 45 assertions; User Change: 2 / 15 PASS. Sem SMTP externo ou escrita no Runtime.
+
+## 0.1.0-dev.3 — alinhar documentação à política de acesso — 2026-10-26
+
+- Atualizados os contratos: conta sem confirmação permanece ativa e pode entrar; operações protegidas pelo Portal exigem marca de confirmação. Confirmação de cadastro marca o e-mail, mas não inicia sessão; a confirmação de troca de endereço pode iniciar sessão somente para visitante anônimo e usuário ativo.
+- O token tem validade de 24 horas (`hash_expiration` 86400), com a mesma fronteira da política de links de uso único; o texto antigo “sem expiração” foi revogado.
+- Testes Kernel de módulo e submódulo: 7 testes / 53 assertions PASS no MariaDB dedicado, 1 depreciação de `token_requirements` em Core/contrib. Sem envio SMTP externo ou write no Runtime.
+
 ## Não lançado — metadados do módulo de teste — 2026-10-22
 
 - `tests/modules/aculta_mail_confirmer_test/aculta_mail_confirmer_test.info.yml` ganhou
@@ -34,4 +45,4 @@
 - Textos da confirmação aprovados (pt-BR, prazo de 24 h).
 - Desinstalado o contrib no Runtime de teste; removido do Composer (`drupal/email_confirmer`).
 - Testes: Kernel do módulo 5/5 (pedido, texto aprovado, confirmação, cancelamento, expiração, reenvio na fila).
-- Pendente: validação do fluxo no navegador (confirmação pelo link, troca de e-mail e login bloqueado).
+- Pendente: validação Browser autenticada de confirmação, troca de e-mail e das capacidades restritas pela política. Login segue permitido para conta ativa sem confirmação.

@@ -1,3 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.9.0-dev.9
 state: Dev
+progress_note: "Runtime MAIN Enabled read-only. Correção do logger GA4/GSC injetando LoggerChannelInterface; Unit reexecutada 108/438 PASS, lint 95/95 PASS, PHPCS 0 erros/190 warnings (exit 1 só por warnings). Kernel completo anterior 47/319 é histórico; Kernel StatisticsDashboard focal tentou 7 testes e falhou no setup (0 assertions) por system_hook_info carregado de dois Core paths. DEFERRED por harness; sem Runtime write. Credenciais/consultas GA4 e Search Console e revisão visual pendentes."
 next_phase: 'Fases 0.6 (clientes GA4 e Search Console no código, desligados sem credencial), 0.7 (mídia), 0.8 (painel) e 0.9 (auditoria) no código; pendentes: provisionar credenciais e validar consultas reais ([roadmap](web/modules/custom/aculta_portal/modules/aculta_statistics/docs/ROADMAP.md))'

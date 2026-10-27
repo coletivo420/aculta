@@ -1,6 +1,6 @@
 # ACULTA Commerce — Roadmap e auditoria 0.1.0-A
 
-Data de início: 2026-10-22. Branch: `docs/aculta-forum-0.1.0-dev.1`. Execução por commits isolados na PR já aberta.
+Escopo iniciado em 2026-10-22; estado revisado em 2026-10-26. Este roadmap é versionado no repositório e não acompanha o nome de uma branch de trabalho específica.
 
 ## Integração Loja → ACULTA Messenger
 
@@ -57,7 +57,7 @@ pendentes; nenhum e-mail real foi enviado.
 - **0.4.0:** Green Stash visão geral, meus produtos e CRUD autorizado.
 - **0.5.0:** inventário e operações de estoque com consistência e logs.
 - **0.6.0:** pedidos, fulfillment, estornos autorizados e conciliação (delegados a gateway/core).
-- **0.7.0:** frete e expedição, CEP, rastreamento, integração brasileira conforme escolha validada.
+- **0.7.0:** motor ACULTA de remessas e adapter Melhor Envio implementados. Checkout end-to-end, cotação no sandbox, compra de etiqueta e rastreamento permanecem fases de homologação/implementação; ver a atualização COM-SHIP datada de 2026-10-26 ao final deste roadmap.
 - **0.8.0:** promoções, métricas e relatórios Statistics; eventos com deduplicação.
 - **0.9.0:** suíte completa e hardening de domínio, acessibilidade, desempenho e segurança.
 - **1.0.0:** release após homologação de fluxos reais e migração reversível.
@@ -97,7 +97,7 @@ A arquitetura normativa é o ADR-013 revisado: **a interface de abas Comum | Loj
 - O checkout comercial da Loja exige CPF/CNPJ válido para concluir a compra. Política compartilhada com o LMS; o documento vem de `aculta_id_cpf`, nunca é copiado para o pedido.
 - Flow e pane compartilhados com o LMS; tipo de pedido `default` mantido.
 - Doações ficam fora da exigência padrão.
-- Pendente: implementação (I-D) e testes. Ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`.
+- Implementação e testes da política central estão no `aculta_portal`; a Loja exige documento e cursos gratuitos do LMS são dispensados conforme decisão vigente. Ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`.
 
 ## Verificação pós-auditoria C-0.1-C1 (2026-10-22)
 
@@ -121,9 +121,9 @@ Foi implementada a fundação de entrada administrativa `GreenStashAccessPolicy`
 - **Próxima fase D-C:** caracterizar provider/rota no homelab e adicionar dashboard exclusivamente administrativo com isolamento de loja e permissions Commerce. **D-D:** apresentação SDC/UI Suite e gates de tema. Dívidas DT-COM-11 a DT-COM-13 no registro central.
 - Preservados carrinho multidomínio, CheckoutSlugMap, CartConsolidator, flows e gateway Mercado Pago.
 
-## Pesquisa e próxima frente COM-SF — Frete brasileiro / estoque (2026-10-22)
+## Pesquisa histórica COM-SF — Frete brasileiro / estoque (2026-10-22; parcialmente superada)
 
-[Pesquisa comparativa e roteiro de implementação](SHIPPING-STOCK-BRAZIL-RESEARCH.md): manter `commerce_shipping:^3.0` já presente, auditar código `melhor_envio` antes de copiar/portar, avaliar integração Correios pela API moderna, instalar preferencialmente `commerce_stock:^3.0` em homelab (sem reimplementar), testar consolidação loja/LMS/doação e preservação do carrinho multidomínio. Decisões de shipping carriers, estoque, etiquetas e telas Green Stash são fases separadas, sem alterar gateway. Dívidas DT-COM-14–17 em `docs/operations/DEBT-REGISTER.md`. Sem dependências novas ativadas nesta etapa.
+[Pesquisa comparativa e roteiro histórico](SHIPPING-STOCK-BRAZIL-RESEARCH.md). A decisão posterior substituiu o plano de manter `commerce_shipping`: o motor de remessas agora pertence a `aculta_commerce`, sem editar contrib nem criar submódulo de Shipping. Avaliação de estoque, compra de etiqueta, rastreamento e telas operacionais continuam como etapas separadas.
 
 ## Green Stash — UX mobile-first (2026-10-23)
 
@@ -195,3 +195,19 @@ site são obrigatórios e e-mail usa off/direto/digest pela preferência e polí
 administrativa. O Mailer mantém o transporte. O recibo Commerce continua para
 convidados e fallback. Unit integrada 36/228 e Kernels MariaDB 6/64 passaram;
 Runtime e concorrência continuam pendentes. Nenhum fluxo legado ativo permanece.
+
+## Atualização COM-SHIP e Melhor Envio — 2026-10-26
+
+O motor próprio de Shipping foi entregue no `aculta_commerce` (manifesto
+`0.1.0-dev.10`): entidades, métodos, remessas, cálculo, checkout pane, Green
+Stash e Config Sync próprios; `drupal/commerce_shipping` não permanece como
+dependência Composer. O módulo `aculta_commerce_melhorenvio` é apenas o provider
+de transportadora, consome as interfaces do motor e fica fora do Config Sync.
+
+Na PR #298, o motor passou Unit 55/272 e Kernel 7/237; o adaptador Melhor Envio
+passou Unit 85/204 e Kernel 11/57 em MariaDB dedicado, sem rede externa. A
+instalação limpa descartável descobriu o provider sem o contrib. O Runtime
+compartilhado não foi alterado. Próxima etapa: checkout Functional/Firefox ESR
+no servidor de testes e cotação sandbox sem contratar envio. Compra de etiqueta,
+rastreio, validação real do webhook e cutover continuam pendentes. Ambos os
+componentes permanecem Dev e sem decisão RC.

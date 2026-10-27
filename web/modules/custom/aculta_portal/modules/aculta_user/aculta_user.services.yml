@@ -19,7 +19,10 @@ services:
     arguments: ['@entity_type.manager', '@current_user', '@lock.persistent', '@flood', '@event_dispatcher']
   aculta_user.nickname_policy:
     class: Drupal\aculta_user\Account\NicknamePolicy
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@aculta_user.nickname_registry']
+  aculta_user.nickname_registry:
+    class: Drupal\aculta_user\Account\NicknameRegistry
+    arguments: ['@database', '@entity_type.manager']
   aculta_user.public_profile_policy:
     class: Drupal\aculta_user\PublicProfilePolicy
   aculta_user.public_profile_link:
@@ -64,7 +67,7 @@ services:
     class: Drupal\aculta_user\Form\PhotoEditorGuard
   aculta_user.avatar_asset_cleanup:
     class: Drupal\aculta_user\Avatar\AvatarAssetCleanup
-    arguments: ["@entity_type.manager", "@datetime.time", "@file.usage", '@aculta_image.file_remover']
+    arguments: ['@entity_type.manager', '@datetime.time', '@aculta_portal.unused_file_cleaner']
   aculta_user.badge_service:
     class: Drupal\aculta_user\Badge\BadgeService
     arguments: ['@entity_type.manager', '@lock.persistent', '@database', '@datetime.time', '@aculta_user.achievement_definitions']

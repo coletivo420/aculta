@@ -21,6 +21,12 @@ Regra permanente (AGENTS.md, seção "Código no Aculta Portal, Design no ACULTA
 - Contrato entre os dois: `data-portal-account-*`, `data-portal-cart-status*`, `data-aculta-*` e nomes de campo do
   Drupal. O tema sobrescreve templates pelo nome; o módulo não sabe qual tema está ativo.
 
+## Exceção: UI administrativa no tema Claro
+
+UI administrativa renderizada no Claro mantém CSS mínimo no próprio submódulo, com seletores de classe e `data-portal-ui`. As rotas `_admin_route` usam o tema administrativo e não executam os hooks do ACULTA420; a biblioteca do submódulo precisa conservar layout e foco nesses contextos. O mapa `PortalUiHooks::TOKENS` continua sendo mantido para o ACULTA420. Essa exceção não autoriza lógica de domínio, acesso ou dados no CSS.
+
+Para o painel de segredos, `css/secrets-tabs.css` contém os seletores emparelhados para abas e valores de credenciais. A folha do ACULTA420 não duplica essas regras.
+
 ## Por que
 
 Se o módulo carrega aparência, trocar o tema deixa a conta sem layout ou exige editar código do módulo. Se o tema tem
@@ -55,6 +61,10 @@ manter o design em um só lugar.
   **Resultado: 8 de 8 idênticas.**
 - **Fluxos com outro tema:** Olivero como tema padrão no servidor de testes. Ver `docs/portal/TESTES-NAVEGADOR.md`, seção L.
 - **Navegador com captura de tela:** não executado nesta rodada (sem ferramenta de navegador disponível no ambiente).
+
+## Título de página em uma home de propósito
+
+Quando uma rota é a página inicial de um Domain e o tema normalmente omite o bloco de título nessa posição, o módulo pode declarar a opção neutra `_aculta_show_page_title_on_front: true`. O ACULTA420 lê essa opção genérica da rota e mostra o título Drupal. O módulo mantém o título semântico no contrato de rota e não consulta o nome do tema nem emite um segundo `h1`.
 
 ## Mecanismo (como o módulo entrega design sem classes)
 
@@ -187,7 +197,7 @@ agrupados por camada. Esta seção registra a delimitação e o resultado; não 
 - Linhas acrescentadas no tema com classe de módulo, referência a `aculta_portal`, hex/rgb ou host fixo: 0.
 - `validate-aculta420-design-foundations`: PASS (1736 verificações). `validate-aculta420-shell-contract`: PASS (11). `validate-aculta420-sdc-schemas`: PASS (14 componentes).
 - `validate-aculta-portal-drupal11`: PASS (696). `validate-portal-ui-docs`: PASS (167 tokens). `validate-portal-popup-rule`: PASS.
-- `validate-public-slugs`: PASS. `validate-environment-addresses`: PASS. `validate-admin-domain-policy`: PASS (2781). `validate-payment-domain-policy`: PASS (49).
+- `validate-public-slugs`: PASS. `validate-environment-addresses`: PASS. `validate-admin-domain-policy`: PASS (3.498 checks em 2026-10-26 via `drush php:script`; execução direta por PHP CLI não inicializa Drupal). `validate-payment-domain-policy`: PASS (49).
 
 ### Falhas que já existiam (não causadas por esta branch)
 

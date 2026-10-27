@@ -1,0 +1,23 @@
+uuid: c0a21ce1-d2f7-4a32-bf4e-118d3afe7eef
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: m44KDd-10INwNRwqzuSDvLNimgCOedRtA5jWemZ5Yrc
+id: message.field_aculta_don_digest
+field_name: field_aculta_don_digest
+entity_type: message
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

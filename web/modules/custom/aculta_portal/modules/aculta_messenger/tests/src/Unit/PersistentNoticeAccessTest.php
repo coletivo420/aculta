@@ -34,6 +34,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_messenger')]
 final class PersistentNoticeAccessTest extends UnitTestCase {
 
+  /**
+   * Tests access for a matching audience and its cache context.
+   */
   public function testAudienceIsRoleScopedAndCacheVariesByAccount(): void {
     $node = $this->notice(['authenticated', 'moderator']);
     $account = $this->account(['authenticated']);
@@ -43,6 +46,9 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
     $this->assertContains('user', $result->getCacheContexts());
   }
 
+  /**
+   * Tests that a nonmatching audience fails closed.
+   */
   public function testNonMatchingRoleFailsClosed(): void {
     $node = $this->notice(['moderator']);
     $result = $this->hooks(1000)->nodeAccess($node, 'view', $this->account(['authenticated']));
@@ -52,6 +58,9 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
     $this->assertContains('user', $result->getCacheContexts());
   }
 
+  /**
+   * Tests that unpublished notices fail closed.
+   */
   public function testUnpublishedNoticeFailsClosed(): void {
     $node = $this->notice(['authenticated'], FALSE);
     $result = $this->hooks(1000)->nodeAccess($node, 'view', $this->account(['authenticated']));
@@ -59,6 +68,9 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
     $this->assertTrue($result->isForbidden());
   }
 
+  /**
+   * Tests start-time access and cache expiration.
+   */
   public function testNoticeIsUnavailableBeforeItsStartAndCacheExpiresAtStart(): void {
     $now = time();
     $start = gmdate('Y-m-d\TH:i:s', $now + 200);
@@ -69,6 +81,9 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
     $this->assertSame(200, $result->getCacheMaxAge());
   }
 
+  /**
+   * Tests that notices are unavailable at their end time.
+   */
   public function testNoticeIsUnavailableAtItsEnd(): void {
     $now = time();
     $end = gmdate('Y-m-d\TH:i:s', $now - 200);
@@ -78,6 +93,9 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
     $this->assertTrue($result->isForbidden());
   }
 
+  /**
+   * Creates the hook subject with mocked services.
+   */
   private function hooks(int $requestTime): MessengerBarHooks {
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn($requestTime);
@@ -109,15 +127,12 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
           ),
         ),
       ),
-      new DomainPurposeManager(
-        $this->createMock(EntityTypeManagerInterface::class),
-        $this->createMock(DomainNegotiatorInterface::class),
-        $this->createMock(ConfigFactoryInterface::class),
-        new RequestStack(),
-      ),
     );
   }
 
+  /**
+   * Creates a mocked account with the requested roles.
+   */
   private function account(array $roles): AccountInterface {
     $account = $this->createMock(AccountInterface::class);
     $account->method('getRoles')->willReturn($roles);
@@ -125,6 +140,9 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
     return $account;
   }
 
+  /**
+   * Creates a notice entity double with the supplied fields.
+   */
   private function notice(array $roles, bool $published = TRUE, array $dates = []): NodeInterface {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('aculta_notice');

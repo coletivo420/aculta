@@ -1,3 +1,49 @@
+## 0.4.1-dev.38 — dependência opcional do Mercado Pago
+
+- Portal deixa de depender do módulo Mercado Pago. Doação e LMS mantêm a dependência direta declarada; o Portal resolve somente contratos opcionais `aculta_portal.payment_provider.*`.
+- Os metadados de Doação/LMS declaram a dependência direta do MP; a prova de instalação limpa segue pendente, pois o Drush não aplicou o prefixo isolado esperado e a execução foi interrompida.
+
+## 0.4.1-dev.37 — contratos neutros para provedores de pagamento
+
+- Portal define interfaces de status de assinatura, ações de assinatura, operações de pagamento e política de estorno; os serviços opcionais usam IDs `aculta_portal.payment_provider.*` registrados pelo módulo provedor. Sem o provedor, relatórios/ações correspondentes desaparecem ou negam acesso.
+- Consumidores do Portal deixaram de referenciar classes e IDs de serviço do Mercado Pago. `SalesPaymentCancelForm` e `SalesPaymentRefreshForm` usam a exceção neutra; nenhum detalhe cru da API chega à UI.
+- Unit Portal: 272 testes / 748 assertions PASS (6 depreciações PHPUnit). Formulários opcionais: 3/3 assertions.
+
+## 0.4.1-dev.36 — comprovar referências de arquivo em revisões e rich text (2026-10-26)
+
+- Novo `FileReferenceInspectorKernelTest` usa Entity API e MariaDB isolado para provar que o Portal detecta um File referenciado somente por revisão histórica e outro UUID de File embutido em campo de texto. Não executa remoção.
+- Kernel: 2 testes / 19 assertions PASS. Unit focais de `UnusedFileCleaner` e `UnusedMediaCleaner`: 8 testes / 31 assertions PASS (duas depreciações PHPUnit).
+- Não houve exclusão de File/Media nem acesso ao Runtime. A validação operacional do cleanup segue pendente.
+
+## 0.4.1-dev.35 — checkout LMS dispensa identidade fiscal para curso gratuito (2026-10-26)
+
+- `FiscalIdentityPolicy` mantém a exigência da Loja e dos cursos pagos do LMS;
+  pedidos LMS só dispensam CPF/CNPJ quando todos os itens são variações `curso`
+  reconhecidas com preço base zero. O preço base evita que desconto/cupom
+  transforme um curso pago em matrícula gratuita. Pedido vazio ou composição
+  ambígua exige documento (fail-closed).
+- `FiscalIdentityPolicyTest`: 13 testes / 30 assertions PASS;
+  FiscalIdentityPaneKernelTest: 12 testes / 343 assertions PASS em MariaDB
+  dedicado (72 depreciações upstream). PHPCS Drupal/DrupalPractice e PHP lint
+  dos arquivos alterados PASS.
+- Esta decisão implementa a política vigente do projeto: matrícula gratuita não
+  exige documento fiscal; não altera pedidos nem configuração do Runtime.
+
+## 0.4.1-dev.34 — cobrir o inspetor global de referências
+
+- FileReferenceInspectorTest cobre referências estruturadas e embeds em texto nas revisões anteriores, além de retorno fail-closed quando a consulta de um campo falha.
+- Suíte Unit Portal: 353 testes / 914 assertions PASS; seis depreciações PHPUnit. Sem alterações de código de Runtime ou escrita no banco.
+
+### Validação das suítes Portal — 2026-10-25 (sem alteração runtime)
+
+- `AccountOtherDataStudioReturnTest` fornece `path.validator` para o caminho
+  Drupal real de `Url::fromUserInput()` e restaura o container global anterior
+  ao terminar; não altera o comportamento runtime do Portal.
+- Portal Unit: 350 testes / 878 assertions PASS; seis depreciações PHPUnit.
+  Portal Kernel em MariaDB isolado: 53 testes / 831 assertions PASS; 90
+  depreciações de Drupal/Core/contrib. Runtime, Functional/browser e RC seguem
+  pendentes.
+
 ## 0.4.1-dev.32 — limpeza global ignora tipos sem armazenamento instalado (2026-10-25)
 
 - `FileReferenceInspector` deixa de tratar como `Unverifiable` os tipos de
@@ -3889,4 +3935,9 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 - `UserUploadPolicyKernelTest`: 5 testes, 83 assertions PASS; cobre abas administrativas, fallback, Managed File, inspeção raster por `aculta_image` e restrição contextual de `aculta_gallery`. O Kernel de publicação/limpeza do Fórum permanece como regressão do lifecycle de consumidor.
 - X11 Firefox: fixture representativa do shell de upload com CSS real do ACULTA420 em 390, 768 e 1024 px; largura, rolagem e rótulo acessível PASS. Isso não substitui inspeção do modal servido por Drupal no Runtime, que permanece DEFERRED.
 - Validação: Kernel central 5/83, Kernel do Fórum 6/148, ACULTA420 `PortalUiHooksTest` 6/29, PHPCS e PHP lint PASS; gates `aculta_image` e `aculta_gallery` PASS. `validate-aculta-portal-drupal11` permanece bloqueado pelo índice global de status (faltam status de `aculta_document_viewer` e `aculta_document_viewer_group`; README gerado também desatualizado por frentes concorrentes). Nenhuma mudança de Runtime ou deploy.
+
+## 0.4.1-dev.33 — declarar backend exigido pela configuração Search API — 2026-10-26
+
+- O manifesto do Portal agora declara `search_api:search_api_db`, requerido pela configuração instalável `search_api.server.aculta_database` que o próprio Portal fornece. A dependência transitiva ativa Search API e seu backend de banco em instalações limpas; não houve alteração no serviço, índice ou runtime existente.
+- O Functional do Statistics reproduziu inicialmente a falha de instalação por dependência ausente. Após declarar Search API DB, a instalação limpa avançou até a compilação de serviços e expôs o contrato Portal→User: o Portal registra serviços que consomem o ledger `aculta_user`, embora User dependa do Portal e não possa ser dependência obrigatória inversa. Instalar ambos na fixture deixa a instalação seguir; a interação de login do BrowserTest ainda falha antes das assertions do painel e permanece DEFERRED para correção do harness/contrato.
 

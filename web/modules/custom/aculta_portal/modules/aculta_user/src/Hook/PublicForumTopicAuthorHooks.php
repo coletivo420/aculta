@@ -35,7 +35,7 @@ final class PublicForumTopicAuthorHooks {
     if ($entity->hasField('field_autor_legado') && !$entity->get('field_autor_legado')->isEmpty()) {
       $legacyAuthor = $entity->get('field_autor_legado')->entity;
       if ($legacyAuthor instanceof LegacyAuthor) {
-        $build['author_card'] = $this->authorCardBuilder->buildLegacy($legacyAuthor) + ['#weight' => -20];
+        $build['author_card'] = $this->authorCardBuilder->buildLegacyForum($legacyAuthor) + ['#weight' => -20];
       }
       return;
     }

@@ -11,8 +11,9 @@ Consulta de CEP e autocompletar do endereço do Portal. Substitui o módulo cont
 ## O que faz
 
 - **Endpoint AJAX** `/aculta_portal_cep/{cep}` (8 dígitos). Responde só a requisições AJAX (`X-Requested-With`); acesso direto no navegador recebe 403.
+- A normalização aceita os oito dígitos em sequência ou o formato `00000-000` (espaços periféricos são ignorados); caracteres alfabéticos e separadores extras são rejeitados.
 - **Fontes:** ViaCEP (com uma nova tentativa) e, se falhar ou não encontrar, BrasilAPI.
-- **Cache** por CEP por 30 dias, no `cache.data`. A resposta não é cacheada por página nem por proxy (`private, no-store`).
+- **Cache** por provedor e CEP por 30 dias, no `cache.data`, para que uma resposta não seja reutilizada como se viesse de outra fonte. A resposta não é cacheada por página nem por proxy (`private, no-store`).
 - **Limite de consultas:** 60 por minuto por IP (`flood`), para evitar abuso das fontes externas.
 - **JavaScript** (`cep-address.js`, biblioteca `aculta_portal_cep/cep-address`): preenche rua, bairro, cidade e estado. Número, S/N e complemento nunca são alterados pela busca. O comportamento completo e os testes estão em `docs/portal/ACCOUNT-ADDRESS.md`.
 

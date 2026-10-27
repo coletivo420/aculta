@@ -6,11 +6,14 @@ namespace Drupal\Tests\aculta_document_viewer_group\Kernel;
 
 use Drupal\Core\DrupalKernel;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Extension\ExtensionDiscovery;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\file\Entity\File;
@@ -18,6 +21,7 @@ use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Verifies private course PDFs follow Group membership at the Core endpoint.
@@ -35,45 +39,112 @@ final class CourseDocumentAccessTest extends KernelTestBase {
     parent::register($container);
     $container->register('stream_wrapper.private', 'Drupal\\Core\\StreamWrapper\\PrivateStream')
       ->addTag('stream_wrapper', ['scheme' => 'private']);
+
   }
 
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [
-    'system',
-    'user',
-    'field',
-    'file',
-    'image',
-    'media',
-    'path_alias',
-    'path',
-    'options',
-    'entity',
-    'flexible_permissions',
-    'group',
-  ];
+  protected static $modules = [];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function bootKernel(): void {
+    static::$modules = $this->resolveModuleDependencyClosure([
+      'system',
+      'user',
+      'field',
+      'file',
+      'image',
+      'media',
+      'path_alias',
+      'path',
+      'options',
+      'entity',
+      'flexible_permissions',
+      'group',
+      'domain',
+      'search_api_db',
+      'aculta_user',
+      'aculta_document_viewer_group',
+    ]);
+    parent::bootKernel();
+  }
 
   /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installSchema('user', ['users_data']);
+    $this->installSchema('aculta_user', ['aculta_user_agreement']);
     $this->installSchema('file', ['file_usage']);
+    $this->installSchema('entity_usage', ['entity_usage']);
+    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installEntitySchema('user');
+    $this->installEntitySchema('profile');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
+    $this->installEntitySchema('comment');
+    $this->installEntitySchema('commerce_order');
     $this->installEntitySchema('path_alias');
     $this->installConfig(['system', 'user', 'media', 'path_alias', 'path', 'group']);
 
     $this->assertTrue($this->container->get('module_installer')->install([
+      'aculta_user',
       'aculta_document_viewer',
       'aculta_document_viewer_group',
     ], TRUE));
+    $this->installConfig([
+      'aculta_user',
+      'aculta_document_viewer',
+      'aculta_document_viewer_group',
+    ]);
+
+    // The course bundle and field are owned by versioned Config Sync, not by
+    // config/install. Create the same Media contract in this isolated Kernel.
+    FieldStorageConfig::create([
+      'entity_type' => 'media',
+      'field_name' => 'field_media_course_document',
+      'type' => 'file',
+      'settings' => [
+        'target_type' => 'file',
+        'display_field' => FALSE,
+        'display_default' => FALSE,
+        'uri_scheme' => 'private',
+      ],
+      'cardinality' => 1,
+      'translatable' => TRUE,
+    ])->save();
+    MediaType::create([
+      'id' => 'course_document',
+      'label' => 'Documento de turma',
+      'description' => 'PDF privado associado a uma turma de aprendizagem.',
+      'source' => 'file',
+      'source_configuration' => ['source_field' => 'field_media_course_document'],
+      'queue_thumbnail_downloads' => FALSE,
+      'new_revision' => TRUE,
+      'field_map' => ['name' => 'name'],
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'media',
+      'bundle' => 'course_document',
+      'field_name' => 'field_media_course_document',
+      'label' => 'PDF da turma',
+      'required' => TRUE,
+      'settings' => [
+        'handler' => 'default:file',
+        'handler_settings' => [],
+        'file_directory' => 'turmas/[date:custom:Y]-[date:custom:m]',
+        'file_extensions' => 'pdf',
+        'max_filesize' => '',
+        'description_field' => FALSE,
+      ],
+    ])->save();
 
     GroupType::create([
       'id' => 'lms_course',
@@ -110,6 +181,57 @@ final class CourseDocumentAccessTest extends KernelTestBase {
     ])->save();
 
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+
+  /**
+   * Resolves the real transitive dependencies of the integrated modules.
+   *
+   * @param string[] $roots
+   *   Modules whose full dependency graph must be available to the Kernel.
+   *
+   * @return string[]
+   *   Module IDs ordered with dependencies before dependents.
+   */
+  private function resolveModuleDependencyClosure(array $roots): array {
+    $discovery = new ExtensionDiscovery(DRUPAL_ROOT);
+    $discovery->setProfileDirectories([]);
+    $extensions = $discovery->scan('module');
+    $ordered = [];
+    $visited = [];
+    $visiting = [];
+
+    $visit = function (string $module) use (&$visit, &$ordered, &$visited, &$visiting, $extensions): void {
+      if (isset($visited[$module])) {
+        return;
+      }
+      if (isset($visiting[$module])) {
+        throw new \LogicException(sprintf('Circular module dependency detected at %s.', $module));
+      }
+      if (!isset($extensions[$module])) {
+        throw new \RuntimeException(sprintf('Required module %s is unavailable.', $module));
+      }
+
+      $visiting[$module] = TRUE;
+      $info = Yaml::parseFile(DRUPAL_ROOT . '/' . $extensions[$module]->getPathname());
+      foreach ($info['dependencies'] ?? [] as $dependency) {
+        if (!is_string($dependency)) {
+          continue;
+        }
+        $dependency = substr($dependency, strrpos($dependency, ':') === FALSE ? 0 : strrpos($dependency, ':') + 1);
+        if (isset($extensions[$dependency])) {
+          $visit($dependency);
+        }
+      }
+      unset($visiting[$module]);
+      $visited[$module] = TRUE;
+      $ordered[] = $module;
+    };
+
+    foreach ($roots as $root) {
+      $visit($root);
+    }
+
+    return $ordered;
   }
 
   /**

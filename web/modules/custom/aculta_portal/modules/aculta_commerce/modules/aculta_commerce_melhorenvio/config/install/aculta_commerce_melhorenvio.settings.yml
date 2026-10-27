@@ -8,3 +8,20 @@ origin:
   dependent_locality: ''
   locality: ''
   administrative_area: ''
+# Ambiente ativo: sandbox ou production. Valor inválido cai no sandbox.
+environment: sandbox
+# URL de retorno cadastrada no app do Melhor Envio. Vazia até o cadastro do app.
+redirect_uri: ''
+# Escopos OAuth2 separados por espaço. Validados no sandbox (ME-PEND-01): cotação e leitura da conta.
+# `user-read` não existe e faz a autorização falhar com invalid_scope; o nome correto é `users-read`.
+scopes: 'shipping-calculate users-read'
+# E-mail de contato exigido no User-Agent da API. Vazio bloqueia as chamadas.
+contact_email: ''
+# IDs do contrato central de segredos. Os valores não ficam nesta configuração.
+keys:
+  sandbox:
+    client_id: 'melhorenvio_sandbox_client_id'
+    client_secret: 'melhorenvio_sandbox_client_secret'
+  production:
+    client_id: 'melhorenvio_production_client_id'
+    client_secret: 'melhorenvio_production_client_secret'

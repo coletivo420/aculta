@@ -4,30 +4,40 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms_h5p\aculta_H5PDrupal;
 
-use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_image\ImageFileUsageManager;
 use Drupal\aculta_image\PackagedAssetPublisher;
+use Drupal\aculta_portal\Cleanup\FileCleanupStatus;
+use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
 use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PFileUsageManager;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\file\FileInterface;
 use Drupal\file\FileRepositoryInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 
-/** H5P file store that keeps editor uploads managed by Drupal's File API. */
+/**
+ * H5P file store that keeps editor uploads managed by Drupal's File API.
+ */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital,Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the established H5P class name consumed by the engine.
 final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
 
+  /**
+   * Absolute private directory used by H5P.
+   */
   private readonly string $h5pPath;
+
+  /**
+   * Stream wrapper URI corresponding to the H5P directory.
+   */
   private readonly string $h5pUri;
 
   public function __construct(
     string $path,
     private readonly FileSystemInterface $fileSystem,
     private readonly FileRepositoryInterface $fileRepository,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FileUsageInterface $fileUsage,
     private readonly ImageFileUsageManager $imageUsage,
-    private readonly FileRemover $imageRemover,
+    private readonly UnusedFileCleaner $unusedFileCleaner,
     private readonly PackagedAssetPublisher $imagePublisher,
     private readonly aculta_H5PFileUsageManager $fileUsageManager,
   ) {
@@ -42,7 +52,8 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
     $this->h5pUri = 'private://' . $relativeRoot;
   }
 
-  /** Stores a validated library without bypassing managed image ingestion. */
+  /**
+   * Stores a validated library without bypassing managed image ingestion. */
   public function saveLibrary($library) {
     $source = realpath((string) ($library['uploadDirectory'] ?? ''));
     if ($source === FALSE || !is_dir($source) || !str_starts_with($source, $this->h5pPath . DIRECTORY_SEPARATOR)) {
@@ -106,7 +117,8 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
     }
   }
 
-  /** Preflights every library asset before the H5P package writes any records. */
+  /**
+   * Preflights every library asset before the H5P package writes any records. */
   public function validateLibraries(array $libraries): void {
     foreach ($libraries as $library) {
       $source = realpath((string) ($library['uploadDirectory'] ?? ''));
@@ -156,7 +168,8 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
     }
   }
 
-  /** Removes managed files for a library that Core has confirmed deletable. */
+  /**
+   * Removes managed files for a library that Core has confirmed deletable. */
   public function removeLibraryFiles($library) {
     $directoryName = \H5PCore::libraryToFolderName((array) $library);
     if (!preg_match('@^[A-Za-z0-9_.-]+$@D', $directoryName)) {
@@ -181,20 +194,18 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
         throw new \RuntimeException('Refusing to delete an H5P library file that is not managed by Drupal.');
       }
       $this->fileUsage->delete($file, 'aculta_lms_h5p', 'h5p_library', $directoryName);
-      if (in_array(strtolower(pathinfo($relative, PATHINFO_EXTENSION)), ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'], TRUE)) {
+      $isImage = in_array(
+        strtolower(pathinfo($relative, PATHINFO_EXTENSION)),
+        ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'],
+        TRUE,
+      );
+      if ($isImage) {
         $usageId = hash('sha256', dirname($directoryName . '/' . $relative));
         $this->fileUsage->delete($file, 'aculta_image', 'h5p_library_asset', $usageId);
-        if (!$this->imageRemover->delete($file, 'H5P library removed by administrator')) {
-          throw new \RuntimeException('An H5P library image is still referenced and cannot be removed.');
-        }
       }
-      else {
-        if (empty($this->fileUsage->listUsage($file)) && !$this->imageRemover->hasReferences($file)) {
-          $this->entityTypeManager->getStorage('file')->delete([$file]);
-        }
-        else {
-          throw new \RuntimeException('An H5P library asset is still referenced and cannot be removed.');
-        }
+      if ($this->unusedFileCleaner->removeIfUnused($file) !== FileCleanupStatus::Deleted) {
+        $type = $isImage ? 'image' : 'asset';
+        throw new \RuntimeException("An H5P library {$type} is still referenced and cannot be removed.");
       }
     }
     $this->fileSystem->deleteRecursive($directory);
@@ -204,8 +215,11 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
    * Copies managed H5P media through File API instead of PHP copy().
    *
    * @param string $file
+   *   Relative H5P media path.
    * @param string|int $fromid
+   *   Source content ID or editor.
    * @param int $toid
+   *   Destination content ID.
    */
   public function cloneContentFile($file, $fromid, $toid) {
     $relative = $this->validatedRelativeFile((string) $file);
@@ -226,7 +240,9 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
     $this->fileUsageManager->keep((string) $this->fileSystem->realpath($destinationUri));
   }
 
-  /** Copies existing content files only when Drupal manages their records. */
+  /**
+   * Copies existing content files only when Drupal manages their records.
+   */
   public function cloneContent($id, $newId) {
     $sourceDirectory = "{$this->h5pPath}/content/" . (int) $id;
     if (!is_dir($sourceDirectory)) {
@@ -306,8 +322,12 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
    * Removes an H5P content file only after clearing its managed references.
    *
    * @param string $file
+   *   Relative H5P media path.
    * @param int $contentid
-   * @return string|int|null
+   *   H5P content ID.
+   *
+   * @return void
+   *   No value is returned.
    */
   public function removeContentFile($file, $contentid) {
     $relative = $this->validatedRelativeFile((string) $file);
@@ -320,20 +340,15 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
     $this->assertSupportedImage($managed);
     $this->fileUsage->delete($managed, 'aculta_lms_h5p', 'h5p_content', (string) $contentid);
     $this->imageUsage->removeH5PReference($managed, (int) $contentid);
-    if ($this->isImageAsset(strtolower(pathinfo($managed->getFilename(), PATHINFO_EXTENSION)), (string) $managed->getMimeType())) {
-      if (!$this->imageRemover->delete($managed, 'H5P activity content updated')) {
-        throw new \RuntimeException('An H5P content image is still referenced and cannot be removed.');
-      }
-    }
-    elseif (empty($this->fileUsage->listUsage($managed)) && !$this->imageRemover->hasReferences($managed)) {
-      $this->entityTypeManager->getStorage('file')->delete([$managed]);
-    }
-    else {
-      throw new \RuntimeException('An H5P content asset is still referenced and cannot be removed.');
+    $isImage = $this->isImageAsset(strtolower(pathinfo($managed->getFilename(), PATHINFO_EXTENSION)), (string) $managed->getMimeType());
+    if ($this->unusedFileCleaner->removeIfUnused($managed) !== FileCleanupStatus::Deleted) {
+      $type = $isImage ? 'image' : 'asset';
+      throw new \RuntimeException("An H5P content {$type} is still referenced and cannot be removed.");
     }
   }
 
-  /** Returns a safe relative H5P media path. */
+  /**
+   * Returns a safe relative H5P media path. */
   private function validatedRelativeFile(string $file): string {
     if (!preg_match('@^(?:images|audios|videos|files)/[\p{L}\p{N}._ -]{1,240}$@uD', $file)
       || str_contains($file, '..')) {
@@ -342,8 +357,10 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
     return $file;
   }
 
-  /** Rejects image formats that cannot be safely retained by aculta_image. */
-  private function assertSupportedImage(\Drupal\file\FileInterface $file): void {
+  /**
+   * Rejects image formats that cannot be safely retained by aculta_image.
+   */
+  private function assertSupportedImage(FileInterface $file): void {
     $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
     $mime = (string) $file->getMimeType();
     if (!$this->isImageAsset($extension, $mime)) {
@@ -365,11 +382,17 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
     }
   }
 
+  /**
+   * Determines whether an H5P asset is an image based on extension or MIME.
+   */
   private function isImageAsset(string $extension, string $mime): bool {
     return in_array($extension, ['png', 'gif', 'jpg', 'jpeg', 'webp', 'svg', 'bmp', 'tif', 'tiff', 'ico', 'avif'], TRUE)
       || str_starts_with(strtolower($mime), 'image/');
   }
 
+  /**
+   * Rejects image extensions outside the shared Image upload policy.
+   */
   private function assertSupportedImageExtension(string $extension): void {
     if (!in_array($extension, ['png', 'gif', 'jpg', 'jpeg', 'webp', 'svg'], TRUE)) {
       throw new \RuntimeException('This H5P image format is not accepted by aculta_image.');

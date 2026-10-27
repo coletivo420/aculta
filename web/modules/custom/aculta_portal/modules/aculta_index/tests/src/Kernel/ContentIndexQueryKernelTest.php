@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_index\Kernel;
 
+use Drupal\aculta_index_test\ContentIndex\SampleContentProvider;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -146,6 +147,113 @@ final class ContentIndexQueryKernelTest extends KernelTestBase {
 
     $freshPage = $query->query($filters, $reader, NULL, 2);
     self::assertSame((string) $newNode->id(), $freshPage->entities[0]->id(), 'A fresh query sees the new entry after its cache revision advances.');
+  }
+
+  /**
+   * A cursor cannot be resumed after its generation stops being active.
+   */
+  public function testCursorFromSupersededGenerationIsRejected(): void {
+    User::create(['name' => 'content-index-generation-root-fixture', 'status' => 1])->save();
+    $reader = User::create(['name' => 'content-index-generation-reader', 'status' => 1]);
+    $reader->save();
+    for ($index = 1; $index <= 3; $index++) {
+      Node::create([
+        'type' => 'sample_content',
+        'title' => 'Generation fixture ' . $index,
+        'status' => TRUE,
+      ])->save();
+    }
+    $this->buildAndActivateGeneration();
+
+    $query = $this->container->get('aculta_index.query');
+    $filters = ['entity_type' => 'node', 'bundle' => 'sample_content'];
+    $firstPage = $query->query($filters, $reader, NULL, 2);
+    self::assertNotNull($firstPage->nextCursor);
+
+    // A new generation replaces the pointer while the old one stays retained
+    // for rollback. A cursor issued by the previous catalog must not leak into
+    // the new identity space.
+    $this->buildAndActivateGeneration();
+    try {
+      $query->query($filters, $reader, $firstPage->nextCursor, 2);
+      self::fail('A cursor bound to a superseded generation must not be resumed.');
+    }
+    catch (\InvalidArgumentException) {
+      // Expected: the cursor was issued for a different active generation.
+    }
+
+    $freshPage = $query->query($filters, $reader, NULL, 2);
+    self::assertCount(2, $freshPage->entities);
+  }
+
+  /**
+   * A cursor is bound to the provider inventory that produced its candidates.
+   */
+  public function testCursorIsRejectedWhenProviderInventoryChanges(): void {
+    User::create(['name' => 'content-index-inventory-root-fixture', 'status' => 1])->save();
+    $reader = User::create(['name' => 'content-index-inventory-reader', 'status' => 1]);
+    $reader->save();
+    for ($index = 1; $index <= 3; $index++) {
+      Node::create([
+        'type' => 'sample_content',
+        'title' => 'Inventory fixture ' . $index,
+        'status' => TRUE,
+      ])->save();
+    }
+    $this->buildAndActivateGeneration();
+
+    $query = $this->container->get('aculta_index.query');
+    $filters = ['entity_type' => 'node', 'bundle' => 'sample_content'];
+    $firstPage = $query->query($filters, $reader, NULL, 2);
+    self::assertNotNull($firstPage->nextCursor);
+
+    SampleContentProvider::$projectionVersion = 2;
+    try {
+      $query->query($filters, $reader, $firstPage->nextCursor, 2);
+      self::fail('A cursor bound to the previous provider inventory must not be resumed.');
+    }
+    catch (\InvalidArgumentException) {
+      // Expected: the catalog must be rebuilt for the new projection version.
+    }
+    $stalePage = $query->query($filters, $reader, NULL, 2);
+    self::assertSame([], $stalePage->entities, 'Rows from the previous projection version are not current candidates.');
+  }
+
+  /**
+   * A cached candidate page never bypasses a later Entity Access denial.
+   */
+  public function testWarmCandidatePageStillRevalidatesAccess(): void {
+    User::create(['name' => 'content-index-cache-root-fixture', 'status' => 1])->save();
+    $reader = User::create(['name' => 'content-index-cache-reader', 'status' => 1]);
+    $reader->save();
+    $nodes = [];
+    for ($index = 1; $index <= 3; $index++) {
+      $nodes[$index] = Node::create([
+        'type' => 'sample_content',
+        'title' => 'Cache fixture ' . $index,
+        'status' => TRUE,
+      ]);
+      $nodes[$index]->save();
+    }
+    $this->buildAndActivateGeneration();
+
+    $query = $this->container->get('aculta_index.query');
+    $filters = ['entity_type' => 'node', 'bundle' => 'sample_content'];
+    $warmPage = $query->query($filters, $reader, NULL, 2);
+    self::assertSame([(string) $nodes[3]->id(), (string) $nodes[2]->id()], $this->entityIds($warmPage->entities));
+    // An identical call can reuse the bounded candidate page. Its identities
+    // are cached, but the access decision is not.
+    $cachedPage = $query->query($filters, $reader, NULL, 2);
+    self::assertSame($this->entityIds($warmPage->entities), $this->entityIds($cachedPage->entities));
+
+    $nodes[3]->setUnpublished()->save();
+
+    // The catalog projection is still stale because the worker has not run;
+    // the cached candidate page also predates the change. Entity Access is
+    // revalidated for every candidate, so the unpublished source disappears.
+    $afterRevocation = $query->query($filters, $reader, NULL, 2);
+    self::assertSame([(string) $nodes[2]->id()], $this->entityIds($afterRevocation->entities));
+    self::assertNotNull($afterRevocation->nextCursor, 'Candidate pagination is unchanged even when one source is denied.');
   }
 
   /**

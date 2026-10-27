@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_document_viewer\Kernel;
 
+use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\File\FileExists;
@@ -152,7 +155,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
    * Tests the shared formatter on an institutional document's File field.
    */
   public function testInstitutionalDocumentFileFieldUsesSharedPdfViewer(): void {
-    $node_type = \Drupal\node\Entity\NodeType::create([
+    $node_type = NodeType::create([
       'type' => 'document',
       'name' => 'Institutional document',
     ]);
@@ -198,7 +201,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $file->setPermanent();
     $file->save();
 
-    $node = \Drupal\node\Entity\Node::create([
+    $node = Node::create([
       'type' => 'document',
       'title' => 'Institutional PDF fixture',
       'status' => TRUE,
@@ -281,7 +284,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $this->assertStringContainsString('data-aculta-pdf-control="zoom-reset"', $processed);
     $this->assertStringContainsString('data-aculta-pdf-control="search-input"', $processed);
     $this->assertStringContainsString('data-aculta-pdf-control="fullscreen"', $processed);
-    $this->assertContains('aculta_document_viewer/viewer', $result->getAttachments()['library'] ?? []);
+    $this->assertContains('aculta_pdf_viewer/viewer', $result->getAttachments()['library'] ?? []);
     $this->assertContains('media:' . $media->id(), $result->getCacheTags());
   }
 
@@ -405,7 +408,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $unauthorized_response = $kernel->handle(Request::create($private_url));
     $this->assertSame(403, $unauthorized_response->getStatusCode());
 
-    $this->container->get('current_user')->setAccount(new \Drupal\Core\Session\AnonymousUserSession());
+    $this->container->get('current_user')->setAccount(new AnonymousUserSession());
     $denied_response = $kernel->handle(Request::create($private_url));
     $this->assertSame(403, $denied_response->getStatusCode());
 
@@ -423,7 +426,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $entity_type_manager = $this->container->get('entity_type.manager');
     $entity_type_manager->getAccessControlHandler('media')->resetCache();
     $entity_type_manager->getAccessControlHandler('file')->resetCache();
-    $anonymous_with_media_access = new \Drupal\Core\Session\AnonymousUserSession();
+    $anonymous_with_media_access = new AnonymousUserSession();
     $this->container->get('current_user')->setAccount($anonymous_with_media_access);
     $this->assertTrue($anonymous_with_media_access->hasPermission('view media'));
     $this->assertTrue($media->access('view', $anonymous_with_media_access, TRUE)->isAllowed());

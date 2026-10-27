@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
+use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
+use Drupal\aculta_studio\Controller\GanjalabController;
 use Drupal\aculta_lms\CourseOrderEnrollmentManagerInterface;
 use Drupal\aculta_lms\Controller\LearningDashboardController;
 use Drupal\aculta_lms\Hook\EnrollmentFormHooks;
@@ -23,6 +26,7 @@ use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
 use Drupal\entity_print\Plugin\PrintEngineInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Verifies optional installation and DI registration without module-owned data.
@@ -31,13 +35,23 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class AcultaLmsInstallTest extends KernelTestBase {
 
+  use AcultaLmsDependencyHarnessTrait;
+
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'file', 'image', 'media', 'options', 'entity_print',
+    'system', 'user', 'file', 'image', 'media', 'options', 'entity_print', 'domain',
     'entity_usage', 'aculta_image',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerLmsDependencyServices($container);
+  }
 
   /**
    * {@inheritdoc}
@@ -56,6 +70,10 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
     $container = \Drupal::getContainer();
     $this->assertTrue($container->get('module_handler')->moduleExists('aculta_lms'));
+    $this->assertInstanceOf(
+      PaymentOperationsInterface::class,
+      $container->get('aculta_portal.payment_provider.payment_operations'),
+    );
     $this->assertTrue($container->get('module_handler')->hasImplementations('form_lms_answer_form_alter', ['aculta_lms']));
     $this->assertTrue($container->get('module_handler')->hasImplementations('commerce_order_insert', ['aculta_lms']));
     $this->assertTrue($container->get('module_handler')->hasImplementations('commerce_order_update', ['aculta_lms']));
@@ -66,6 +84,13 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertInstanceOf(
       CourseOrderEnrollmentManagerInterface::class,
       $container->get('aculta_lms.course_order_enrollment'),
+    );
+    $checkoutSettings = $container->get('aculta_portal.checkout_settings');
+    $this->assertInstanceOf(CheckoutSettings::class, $checkoutSettings);
+    $this->assertSame(CheckoutSettings::LEGACY_LMS_ORDER_TYPE, $checkoutSettings->lmsOrderType());
+    $this->assertInstanceOf(
+      GanjalabController::class,
+      $container->get('aculta_studio.ganjalab_controller'),
     );
     $this->assertInstanceOf(EnrollmentFormHooks::class, $container->get(EnrollmentFormHooks::class));
     $route = $container->get('router.route_provider')->getRouteByName('aculta_lms.class_activity_deadline');

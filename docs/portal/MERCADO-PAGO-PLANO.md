@@ -169,7 +169,7 @@ Respondidas em 2026-10-16; ver a seção 0.
 |---|---|---|
 | F0 | Inventário, camada de API, recorrência, ações de pagamento, relatório (consultas) | Nesta linha 0.4.0-dev.65 |
 | F1 | Painéis: vendas, loja e produto (visual, ações com confirmação) | Próxima, a pedido do responsável |
-| F2 | Webhooks de assinatura e cobrança recorrente; tópicos confirmados | Feito em código (dev.121): gravação no pedido, cobrança aprovada uma vez. Ponta a ponta: DEFERRED |
+| F2 | Webhooks de assinatura e cobrança recorrente; tópicos confirmados | Implementado no código (MP dev.16): resposta da fatura vinculada ao ID consultado, pagamento aprovado comparado ao pedido e gravação serializada/idempotente. Unit PASS; ponta a ponta/sandbox e Kernel pendentes |
 | F3 | Integração com doações (fluxo da seção 5.2) | Feito em código (dev.121 e aculta_donation 0.1.0-dev.16). Pendências: ver seção 7.2 |
 | F4 | Migração de credenciais para Drupal Key (não autorizada ainda); testes Kernel no banco `aculta_simpletest` | Antes de produção |
 
@@ -179,6 +179,7 @@ Respondidas em 2026-10-16; ver a seção 0.
 - Status da cobrança (`authorized_payments`), na documentação oficial consultada: `processed` (cobrado com sucesso, ou parcela que esgotou as tentativas), `waiting for gateway` (em processamento), `recycling` (recusada, em nova tentativa). O exemplo da referência usa `scheduled`. Só `payment.status = approved` vira pagamento no pedido.
 - Ações do doador em "Meu apoio": pausar (de `authorized`), reativar (de `paused`) e cancelar (de `pending`, `authorized` ou `paused`). Cada ação chama `PUT /preapproval/{id}` antes de mudar o pedido. Doações não são estornadas.
 - Painel "Doações recorrentes", em Relatório de doações: resumo por situação e as 100 assinaturas mais recentes.
+- Desde MP dev.16, o registro da cobrança usa lock por gateway/ID de pagamento; exige `currency_id` e `transaction_amount` iguais ao total do pedido e recusa reutilização do ID remoto em outro pedido.
 - Situação da última cobrança, guardada no pedido (`mp_cobranca_situacao`): `paga` (pagamento aprovado), `nao_cobrada` (`processed` sem aprovação: tentativas esgotadas), `recusada` (`recycling`), `processando` (`waiting for gateway`), `agendada` (`scheduled`), `cancelada` (`cancelled`, não documentado: rótulo conservador), `desconhecida` (demais). Só `paga` grava pagamento.
 
 **Verificado no sandbox (2026-10-17, conta de teste):**

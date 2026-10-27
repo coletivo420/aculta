@@ -1,6 +1,6 @@
 # ACULTA Doações (`aculta_donation`)
 
-Submódulo do `aculta_portal` (versão 0.1.0-dev.25). Reúne a doação do site: campanhas com prazo, fluxo de pedido e checkout
+Submódulo do `aculta_portal` (versão 0.1.0-dev.26). Reúne a doação do site: campanhas com prazo, fluxo de pedido e checkout
 (port próprio do `commerce_donation_flow`, que saiu do Composer), blocos, painéis e configuração.
 
 ## O que entrega
@@ -52,9 +52,9 @@ colaboradores). Avisos de licença em `LICENSE.txt` e em `docs/ORIGEM-COMMERCE-D
 
 ## Testes
 
-- Unitários: `tests/src/Unit/DonationCampaignSelectorTest.php`, `tests/src/Unit/CartCheckoutRoutesCharacterizationTest.php` (equivalência de `donate|cart|both` nas rotas) e `tests/src/Unit/DonationCheckoutProviderTest.php`.
-  Execução: `php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_donation/tests/src/Unit`.
-- Runtime de testes: habilitado e verificado por HTTP e por API (ver CHANGELOG). Testes de Kernel do fluxo: pendentes.
+- Unitários: `tests/src/Unit/DonationCampaignSelectorTest.php`, `tests/src/Unit/CartCheckoutRoutesCharacterizationTest.php` (equivalência de `donate|cart|both` nas rotas) e `tests/src/Unit/DonationCheckoutProviderTest.php`. Resultado registrado em `0.1.0-dev.26`: 24 testes / 84 assertions PASS.
+- Kernel: `DonationPortKernelTest` passou 5 testes / 193 assertions em MariaDB isolado (88 depreciações upstream), incluindo publisher Messenger e provider de checkout reais registrados no harness, descoberta de plugins/blocos, criação de pedido e negação de estorno.
+- Runtime de testes: habilitado e verificado por HTTP e por API (ver CHANGELOG).
 - Navegador: pendente (conferência visual do fluxo e dos blocos).
 
 ## Roadmap de integração: Portal multi-carrinho / checkout (ADR-013)

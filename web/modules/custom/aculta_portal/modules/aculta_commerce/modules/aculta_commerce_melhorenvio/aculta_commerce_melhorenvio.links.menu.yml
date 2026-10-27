@@ -1,0 +1,6 @@
+aculta_commerce_melhorenvio.status:
+  title: 'Melhor Envio'
+  description: 'Conexão com o Melhor Envio e estado da autorização.'
+  route_name: aculta_commerce_melhorenvio.status
+  parent: commerce.configuration
+  weight: 20

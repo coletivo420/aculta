@@ -1,3 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.3
 state: Dev
-next_phase: Validar troca de e-mail e bloqueio de login no navegador antes de RC
+next_phase: Validar no navegador troca de e-mail e capacidades restritas pela política; não esperar bloqueio global do login
+progress_note: "Dev.3: `user_login` registra confirmação no primeiro login ou no login por link de uso único; não bloqueia conta ativa. UserEmailChangeKernelTest 2 cenários incluídos no Kernel combinado focal 7/53 PASS (1 depreciação token_requirements Core/contrib). Browser e Runtime pendentes."

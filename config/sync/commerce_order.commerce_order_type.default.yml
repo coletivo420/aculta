@@ -1,12 +1,17 @@
 uuid: a3efb559-cd4f-4302-b7a7-528f77b8f222
 langcode: pt-br
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - aculta_commerce
 _core:
   default_config_hash: jn2Hj-04qG6O3dTtK8EaBB13jVPplONDb9L0Fat-0pI
 id: default
 label: Padrão
 traits: {  }
+third_party_settings:
+  aculta_commerce:
+    shipment_type: default
 locked: false
 workflow: order_default
 showOrderEditLinks: false

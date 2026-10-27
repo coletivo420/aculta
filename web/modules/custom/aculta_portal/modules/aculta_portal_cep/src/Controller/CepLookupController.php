@@ -12,10 +12,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
- * Endpoint AJAX de consulta de CEP do Portal. Só responde a requisições AJAX (X-Requested-With).
+ * Provides the Portal's AJAX endpoint for CEP lookups.
  *
- * A consulta em si (fontes, cache e mapeamento) está em CepLookupService, compartilhado com os módulos PHP. Este
- * controlador só cuida do HTTP: formato da resposta, cabeçalhos de cache e a verificação AJAX.
+ * The shared lookup service handles sources, caching, and address mapping.
+ * This controller enforces the AJAX request contract and response headers.
  */
 final class CepLookupController extends ControllerBase {
 
@@ -24,13 +24,30 @@ final class CepLookupController extends ControllerBase {
     private readonly CepLookupService $lookupService,
   ) {}
 
+  /**
+   * Returns address data for a valid AJAX lookup request.
+   *
+   * @param string $cep
+   *   CEP path argument.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Current HTTP request.
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   JSON address data or a not-found response.
+   */
   public function lookup(string $cep, Request $request): JsonResponse {
     if (!$request->isXmlHttpRequest()) {
       throw new AccessDeniedHttpException();
     }
     $address = $this->lookupService->lookup($cep);
     if ($address === NULL) {
-      $response = new JsonResponse(['ok' => FALSE, 'message' => (string) $this->t('Não encontramos este CEP. Confira o número ou preencha o endereço manualmente.')], 404);
+      $response = new JsonResponse(
+        [
+          'ok' => FALSE,
+          'message' => (string) $this->t('Não encontramos este CEP. Confira o número ou preencha o endereço manualmente.'),
+        ],
+        404,
+      );
       $response->headers->set('Cache-Control', 'private, no-store');
       return $response;
     }

@@ -11,6 +11,78 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 
 /**
+ * Adds a database-level unique constraint for current document fingerprints.
+ *
+ * @throws \RuntimeException
+ *   When the field table is missing or contains duplicate fingerprints.
+ */
+function aculta_id_cpf_ensure_document_index_unique_key(): void {
+  $table = 'profile__field_documento_indice';
+  $documentTable = 'profile__field_documento';
+  $key = 'aculta_id_cpf_documento_unique';
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists($table)) {
+    throw new \RuntimeException('Document index storage table is unavailable.');
+  }
+  if (!$schema->tableExists($documentTable)) {
+    throw new \RuntimeException('Document source storage table is unavailable.');
+  }
+
+  $unindexedDocuments = (int) \Drupal::database()->query(
+    'SELECT COUNT(*)
+    FROM {' . $documentTable . '} d
+    LEFT JOIN {' . $table . '} i
+      ON i.entity_id = d.entity_id
+      AND i.deleted = d.deleted
+      AND i.delta = d.delta
+      AND i.langcode = d.langcode
+      AND i.deleted = 0
+    WHERE d.bundle = :bundle
+      AND d.deleted = 0
+      AND d.field_documento_value IS NOT NULL
+      AND d.field_documento_value <> :empty_document
+      AND (i.field_documento_indice_value IS NULL OR i.field_documento_indice_value = :empty_index)',
+    [':bundle' => 'associado', ':empty_document' => '', ':empty_index' => ''],
+  )->fetchField();
+  if ($unindexedDocuments > 0) {
+    throw new \RuntimeException(sprintf(
+      'Document index constraint not created: %d associated document(s) lack a fingerprint.',
+      $unindexedDocuments,
+    ));
+  }
+
+  $duplicateGroups = (int) \Drupal::database()->query(
+    'SELECT COUNT(*) FROM (
+      SELECT field_documento_indice_value
+      FROM {' . $table . '}
+      WHERE deleted = 0
+        AND field_documento_indice_value IS NOT NULL
+        AND field_documento_indice_value <> \'\'
+      GROUP BY field_documento_indice_value
+      HAVING COUNT(DISTINCT entity_id) > 1
+    ) document_index_duplicates',
+  )->fetchField();
+  if ($duplicateGroups > 0) {
+    throw new \RuntimeException(sprintf(
+      'Document index constraint not created: %d duplicate group(s) require resolution.',
+      $duplicateGroups,
+    ));
+  }
+
+  if ($schema->indexExists($table, $key)) {
+    return;
+  }
+  $schema->addUniqueKey($table, $key, ['field_documento_indice_value']);
+}
+
+/**
+ * Adds the fingerprint uniqueness constraint on fresh installations.
+ */
+function aculta_id_cpf_install(): void {
+  aculta_id_cpf_ensure_document_index_unique_key();
+}
+
+/**
  * Cria o índice de unicidade e indexa os documentos gravados antes dele.
  *
  * Os valores continuam cifrados: o fingerprint é calculado a partir do documento decifrado, dentro da atualização.
@@ -56,4 +128,12 @@ function aculta_id_cpf_update_10001(array &$sandbox): string {
     throw new \RuntimeException(sprintf('Índice de unicidade interrompido: %d documento(s) duplicado(s) entre contas. Resolva antes de repetir.', $counts['conflict']));
   }
   return sprintf('Índice de unicidade criado. Documentos indexados: %d.', $counts['indexed']);
+}
+
+/**
+ * Enforces uniqueness of active CPF/CNPJ fingerprints in Profile storage.
+ */
+function aculta_id_cpf_update_10002(): string {
+  aculta_id_cpf_ensure_document_index_unique_key();
+  return 'Unique document fingerprint constraint created.';
 }

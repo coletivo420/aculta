@@ -24,7 +24,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
   /**
    * Local wrapper that applies per-document defaults to the pinned PDF.js UI.
    */
-  private const VIEWER_WRAPPER_PATH = '/modules/custom/aculta_portal/modules/aculta_document_viewer/viewer-wrapper.html';
+  private const VIEWER_WRAPPER_PATH = '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/viewer-wrapper.html';
 
   public function __construct(
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
@@ -116,15 +116,25 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
 
     $title = trim((string) ($settings['embed_title'] ?? '')) ?: (trim($title) ?: $file->getFilename());
     $defaults = [
-      'show_download' => TRUE, 'show_print' => TRUE, 'show_zoom' => TRUE,
-      'show_fullscreen' => TRUE, 'show_search' => TRUE, 'show_page_navigation' => TRUE,
+      'show_download' => TRUE,
+      'show_print' => TRUE,
+      'show_zoom' => TRUE,
+      'show_fullscreen' => TRUE,
+      'show_search' => TRUE,
+      'show_page_navigation' => TRUE,
       'show_rotation' => TRUE,
       'show_outline' => TRUE,
       'show_page_thumbnails' => TRUE,
-      'show_full_viewer' => TRUE, 'default_zoom' => 'fit-width', 'default_scroll' => 'vertical',
+      'show_full_viewer' => TRUE,
+      'default_zoom' => 'fit-width',
+      'default_scroll' => 'vertical',
       'use_site_settings' => TRUE,
-      'double_page' => FALSE, 'double_page_mobile' => FALSE, 'language' => 'pt-BR',
-      'link_text' => '', 'link_target' => '_blank', 'css_class' => '',
+      'double_page' => FALSE,
+      'double_page_mobile' => FALSE,
+      'language' => 'pt-BR',
+      'link_text' => '',
+      'link_target' => '_blank',
+      'css_class' => '',
     ];
     $settings = array_replace($defaults, $settings);
     $full_viewer_url = $this->fullViewerUrl($url, $settings);
@@ -187,41 +197,41 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
           '#type' => 'container',
           '#attributes' => ['data-aculta-pdf-control' => 'zoom-controls'],
           'zoom_out' => [
-          '#type' => 'html_tag',
-          '#tag' => 'button',
-          '#value' => new TranslatableMarkup('Reduzir zoom'),
-          '#attributes' => [
-            'type' => 'button',
-            'data-aculta-pdf-control' => 'zoom-out',
-            'aria-label' => new TranslatableMarkup('Reduzir zoom'),
+            '#type' => 'html_tag',
+            '#tag' => 'button',
+            '#value' => new TranslatableMarkup('Reduzir zoom'),
+            '#attributes' => [
+              'type' => 'button',
+              'data-aculta-pdf-control' => 'zoom-out',
+              'aria-label' => new TranslatableMarkup('Reduzir zoom'),
+            ],
           ],
-        ],
           'zoom_status' => [
-          '#type' => 'html_tag',
-          '#tag' => 'span',
-          '#value' => '100%',
-          '#attributes' => ['data-aculta-pdf-control' => 'zoom-status', 'aria-live' => 'polite'],
-        ],
+            '#type' => 'html_tag',
+            '#tag' => 'span',
+            '#value' => '100%',
+            '#attributes' => ['data-aculta-pdf-control' => 'zoom-status', 'aria-live' => 'polite'],
+          ],
           'zoom_in' => [
-          '#type' => 'html_tag',
-          '#tag' => 'button',
-          '#value' => new TranslatableMarkup('Aumentar zoom'),
-          '#attributes' => [
-            'type' => 'button',
-            'data-aculta-pdf-control' => 'zoom-in',
-            'aria-label' => new TranslatableMarkup('Aumentar zoom'),
+            '#type' => 'html_tag',
+            '#tag' => 'button',
+            '#value' => new TranslatableMarkup('Aumentar zoom'),
+            '#attributes' => [
+              'type' => 'button',
+              'data-aculta-pdf-control' => 'zoom-in',
+              'aria-label' => new TranslatableMarkup('Aumentar zoom'),
+            ],
           ],
-        ],
           'zoom_reset' => [
-          '#type' => 'html_tag',
-          '#tag' => 'button',
-          '#value' => new TranslatableMarkup('Restaurar zoom'),
-          '#attributes' => [
-            'type' => 'button',
-            'data-aculta-pdf-control' => 'zoom-reset',
+            '#type' => 'html_tag',
+            '#tag' => 'button',
+            '#value' => new TranslatableMarkup('Restaurar zoom'),
+            '#attributes' => [
+              'type' => 'button',
+              'data-aculta-pdf-control' => 'zoom-reset',
+            ],
           ],
         ],
-          ],
         'rotate' => [
           '#type' => 'html_tag',
           '#tag' => 'button',
@@ -367,7 +377,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
           'data-aculta-pdf-control' => 'full-viewer',
         ],
       ],
-      '#attached' => ['library' => ['aculta_document_viewer/viewer']],
+      '#attached' => ['library' => ['aculta_pdf_viewer/viewer']],
     ];
     if (empty($settings['show_download'])) {
       $build['download']['#access'] = FALSE;

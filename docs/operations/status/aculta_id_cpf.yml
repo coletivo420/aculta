@@ -1,3 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.3.0-dev.4
 state: Dev
-next_phase: Módulo oficial de CPF/CNPJ; consolidar contratos e unicidade transacional ([plano](docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md))
+next_phase: Validar a atualização 10002 com conjuntos representativos em banco isolado e integrar o AccountDocumentStore a Profile/Form API; executar atualização no Runtime somente com autorização e plano de rollback ([README](web/modules/custom/aculta_portal/modules/aculta_id_cpf/README.md))
+progress_note: "Runtime MAIN read-only 2026-10-26: módulo ativo no checkout 0.3.0-dev.1, schema 10001; Profile associado possui 1 documento cifrado com 1 fingerprint, 0 não indexados e 0 grupos duplicados; índice SQL único ausente. Update 10002 da branch não aplicado. Runner de domínio 248 PASS, Unit 48/116 PASS, Kernel MariaDB 3/8 PASS; nenhum valor pessoal foi lido ou impresso e nenhum write foi executado."

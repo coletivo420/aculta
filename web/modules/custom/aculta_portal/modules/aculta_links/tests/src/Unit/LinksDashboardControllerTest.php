@@ -12,17 +12,21 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
- * @coversDefaultClass \Drupal\aculta_links\Controller\LinksDashboardController
- * @group aculta_links
+ * Testes de LinksDashboardControllerTest.
  */
+#[CoversMethod(\Drupal\aculta_links\Controller\LinksDashboardController::class, 'buildStatusFilterLinks')]
+#[CoversMethod(\Drupal\aculta_links\Controller\LinksDashboardController::class, 'buildSectionNavigation')]
+#[CoversClass(\Drupal\aculta_links\Controller\LinksDashboardController::class)]
+#[Group('aculta_links')]
 final class LinksDashboardControllerTest extends UnitTestCase {
 
   /**
    * Ensures each status filter resets paging and preserves other filters.
-   *
-   * @covers ::buildStatusFilterLinks
    */
   public function testStatusFilterLinksPreserveIndependentFilters(): void {
     $request = Request::create('/painel-administrativo/links', 'GET', [
@@ -62,8 +66,6 @@ final class LinksDashboardControllerTest extends UnitTestCase {
 
   /**
    * Ensures dashboard section links retain valid filters and target sections.
-   *
-   * @covers ::buildSectionNavigation
    */
   public function testSectionNavigationTargetsListsAndPreservesFilters(): void {
     $request = Request::create('/painel-administrativo/links', 'GET', [

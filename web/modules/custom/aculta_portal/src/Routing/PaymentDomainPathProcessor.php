@@ -22,7 +22,7 @@ final class PaymentDomainPathProcessor implements OutboundPathProcessorInterface
   private const CAMINHOS_DE_PAGAMENTO = [
     '#^/integracoes/pagamentos/[^/]+/notificacao$#',
     '#^/checkout/[^/]+/[^/]+/(return|cancel)$#',
-    '#^/commerce-mercado-pago/checkout-return$#',
+    '#^/integracoes/mercadopago/checkout-retorno$#',
   ];
 
   public function __construct(private readonly DomainPurposeManager $purposes) {}

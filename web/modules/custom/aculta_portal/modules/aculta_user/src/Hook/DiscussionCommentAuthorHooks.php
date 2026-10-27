@@ -36,7 +36,7 @@ final class DiscussionCommentAuthorHooks {
       if ($entity->hasField('legacy_author') && !$entity->get('legacy_author')->isEmpty()) {
         $legacyAuthor = $entity->get('legacy_author')->entity;
         if ($legacyAuthor instanceof LegacyAuthor) {
-          $build['author_card'] = $this->authorCardBuilder->buildLegacy($legacyAuthor) + ['#weight' => -20];
+          $build['author_card'] = $this->authorCardBuilder->buildLegacyForum($legacyAuthor) + ['#weight' => -20];
         }
         return;
       }
@@ -54,16 +54,21 @@ final class DiscussionCommentAuthorHooks {
       return;
     }
 
+    $host = $entity->getCommentedEntity();
+    $variant = $host === NULL ? NULL : $this->variantResolver->forHost($host);
+
     if ($entity->hasField('field_autor_legado') && !$entity->get('field_autor_legado')->isEmpty()) {
       $legacyAuthor = $entity->get('field_autor_legado')->entity;
       if ($legacyAuthor instanceof LegacyAuthor) {
-        $build['author_card'] = $this->authorCardBuilder->buildLegacy($legacyAuthor) + ['#weight' => -20];
+        $builder = $variant === 'author_forum'
+          ? $this->authorCardBuilder->buildLegacyForum($legacyAuthor)
+          : $this->authorCardBuilder->buildLegacy($legacyAuthor);
+        $build['author_card'] = $builder + ['#weight' => -20];
       }
       return;
     }
 
-    $host = $entity->getCommentedEntity();
-    if ($host === NULL || ($variant = $this->variantResolver->forHost($host)) === NULL) {
+    if ($variant === NULL) {
       return;
     }
 

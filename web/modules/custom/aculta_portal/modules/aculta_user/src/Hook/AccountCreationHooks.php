@@ -15,7 +15,7 @@ use Drupal\user\UserInterface;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
- * Criação de conta: perfil participante com apelido inicial, e avatar do acervo quando não há foto.
+ * Creates role Profiles and assigns initial avatars for new accounts.
  */
 final class AccountCreationHooks {
 
@@ -42,8 +42,9 @@ final class AccountCreationHooks {
   }
 
   /**
-   * Conta nova: foto importada do provedor (OAuth, via Social Auth) é foto personalizada, então fica permanente;
-   * sem foto, recebe avatar do acervo. Sem salvar a conta dentro do hook (ver PictureReplacementHooks).
+   * Makes imported provider photos permanent, or assigns an archive avatar.
+   *
+   * The account is not saved from this hook (see PictureReplacementHooks).
    */
   #[Hook('user_presave')]
   public function userPresave(UserInterface $account): void {
@@ -59,7 +60,9 @@ final class AccountCreationHooks {
     $this->avatarPool->assignPresave($account);
   }
 
-  /** Cria o perfil do papel da conta com o nome de usuário como apelido inicial, sem colidir. */
+  /**
+   * Creates the account's role Profile with an available initial nickname.
+   */
   private function createProfile(UserInterface $account): void {
     $storage = $this->entityTypeManager->getStorage('profile');
     if (PerfilDoPapel::principal($storage, $account) !== NULL) {
@@ -67,6 +70,17 @@ final class AccountCreationHooks {
     }
     $base = AccountNames::slug($this->transliteration->transliterate((string) $account->getAccountName(), 'pt-br'));
     $apelido = AccountNames::isValid($base) ? $base : 'pessoa-' . $account->id();
+    // OAuth reserves a unique account name before the Profile is created. If
+    // that reservation added `-N` because the e-mail local part already exists,
+    // keep the public display convention `base#N` while its URL slug is base-N.
+    $emailBase = AccountNames::slug($this->transliteration->transliterate(AccountNames::localPart((string) $account->getEmail()), 'pt-br'));
+    if ($emailBase !== '' && preg_match(
+      '/^' . preg_quote($emailBase, '/') . '-((?:[2-9]|[1-9][0-9]+))$/',
+      $base,
+      $matches,
+    )) {
+      $apelido = AccountNames::withAutomaticSuffix($emailBase, (int) $matches[1]);
+    }
     $storage->create([
       'type' => PerfilDoPapel::tipoDaConta($account),
       'uid' => $account->id(),
@@ -74,12 +88,18 @@ final class AccountCreationHooks {
     ])->save();
   }
 
-  /** Acrescenta sufixo numérico quando o apelido já existe ou é reservado. */
+  /**
+   * Adds a visual suffix when an automatically assigned nickname is occupied.
+   */
   private function unique(string $apelido, int $uid): string {
     $candidate = $apelido;
+    $base = $apelido;
+    if (AccountNames::isHashSuffixNickname($apelido) && preg_match('/^(.+)#([1-9][0-9]*)$/', $apelido, $matches)) {
+      $base = $matches[1];
+    }
     $i = 2;
     while (!AccountNames::isValid($candidate) || $this->nicknamePolicy->isTaken($candidate)) {
-      $candidate = mb_substr($apelido, 0, AccountNames::MAX - strlen('-' . $i)) . '-' . $i++;
+      $candidate = AccountNames::withAutomaticSuffix($base, $i++);
       if ($i > 50) {
         return 'pessoa-' . $uid;
       }

@@ -27,3 +27,14 @@ services:
   aculta_qrcode.download_controller:
     class: Drupal\aculta_qrcode\Controller\QrCodeDownloadController
     arguments: ['@aculta_qrcode.exporter']
+
+  aculta_qrcode.batch_planner:
+    class: Drupal\aculta_qrcode\Service\QrCodeBatchPlanner
+
+  aculta_qrcode.batch_controller:
+    class: Drupal\aculta_qrcode\Controller\QrCodeBatchController
+    arguments: ['@entity_type.manager', '@aculta_qrcode.exporter', '@aculta_qrcode.batch_planner']
+
+  aculta_qrcode.preview_controller:
+    class: Drupal\aculta_qrcode\Controller\QrCodePreviewController
+    arguments: ['@aculta_qrcode.payload_validator', '@aculta_qrcode.preset_registry', '@aculta_qrcode.generator']

@@ -152,7 +152,13 @@ final class RetentionFormKernelTest extends KernelTestBase {
   private function insertOldRow(int $ageDays): void {
     $storage = $this->container->get('aculta_statistics.storage');
     $this->container->get('database')->insert(DailyAggregateStorage::TABLE)
-      ->fields(['metric' => 'wiki.entries.read', 'dimension' => '1', 'day' => $storage->currentDay() - $ageDays, 'total' => 1, 'updated' => 0])
+      ->fields([
+        'metric' => 'wiki.entries.read',
+        'dimension' => '1',
+        'day' => $storage->currentDay() - $ageDays,
+        'total' => 1,
+        'updated' => 0,
+      ])
       ->execute();
   }
 

@@ -70,7 +70,7 @@ final class WikiReviewNotifierTest extends UnitTestCase {
   public function testEnqueuesOneMessagePerRecipient(): void {
     $notifier = $this->notifier(
       ['review_notifications' => TRUE, 'review_recipients' => 'Curadoria@Example.invalid, revisao@example.invalid'],
-      $this->publicUrl('https://wiki420.aculta.org/node/42/edit'),
+      $this->publicUrl('https://example.com/node/42/edit'),
     );
 
     $this->assertSame(2, $notifier->notifyReview($this->verbete()));
@@ -84,7 +84,7 @@ final class WikiReviewNotifierTest extends UnitTestCase {
     $this->assertSame([
       'verbete' => 'Cannabis medicinal',
       'estado' => 'Em revisão',
-      'link' => 'https://wiki420.aculta.org/node/42/edit',
+      'link' => 'https://example.com/node/42/edit',
     ], $message['context']);
     $this->assertSame('revisao@example.invalid', $this->queue->items[1]->to);
   }

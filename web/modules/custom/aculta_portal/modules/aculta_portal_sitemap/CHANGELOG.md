@@ -1,3 +1,17 @@
+## Não lançado — harness Kernel sem Commerce Shipping contrib
+
+- Removida `commerce_shipping` da lista de módulos do `SitemapWiringKernelTest`, pois o pacote contrib foi removido e o projeto usa o motor próprio do Commerce.
+- Reexecutado o Kernel da branch em MariaDB dedicado `aculta_simpletest`: 2 testes e 3 assertions PASS; 46 depreciações reportadas por Core/contrib. Nenhuma chamada externa ou escrita no Runtime.
+
+## Não lançado — auditoria e testes de política (agente executor 2)
+
+- Teste Unit `IndexingPolicyTest` (5 testes): SHOP, FORUM e ACCOUNT fora dos purposes indexáveis; raízes e caminhos
+  extras só em purposes indexáveis; allowlist de bundles conforme a ADR-009; `/contato` como único caminho extra.
+- README: versão de estado alinhada a 0.1.2; `core.extension` com `aculta_portal_sitemap: 0` documentado como
+  habilitação pendente de deploy (antes o texto afirmava que estava exportado).
+- Pendente: a checagem `isPurposeFrontNode` compara o alias com o contexto de host atual; não há teste de integração
+  que prove o comportamento por host (Kernel, exige banco).
+
 ## 0.1.2 — bundle canônico da Revista
 
 - A allowlist de sitemap passa de `article` para `revista`, alinhada à migração editorial concluída.

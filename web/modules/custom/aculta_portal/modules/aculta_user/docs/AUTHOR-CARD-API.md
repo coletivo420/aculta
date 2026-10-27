@@ -60,7 +60,7 @@ entidade Account é cache dependency e a formatação anual usa UTC, sem variaç
 por fuso horário.
 
 `author_growroom_historico` não passa por este resolver: `LegacyAuthor` não é
-User e não ganha login, perfil, data de conta ou ações. `AuthorCardBuilder::buildLegacy()`
-é o consumidor dedicado, apresenta o nome e a origem do acervo e mantém cache da
-entidade histórica.
+User e não ganha login, perfil, data de conta ou ações. `AuthorCardBuilder::buildLegacy()` apresenta nome e origem sem alterar o nome;
+`buildLegacyForum()` aplica `-gr` somente quando o host de conteúdo é Fórum. Ambos
+mantêm cache da entidade histórica e não criam perfil ou rota individual.
 Nenhum service locator novo foi introduzido. Referências Drupal 11+: [DI](https://www.drupal.org/docs/drupal-apis/services-and-dependency-injection/services-and-dependency-injection-in-drupal), [cacheability de render arrays](https://www.drupal.org/docs/drupal-apis/render-api/cacheability-of-render-arrays) e [CacheableDependencyInterface](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableDependencyInterface.php/interface/CacheableDependencyInterface/11.x).

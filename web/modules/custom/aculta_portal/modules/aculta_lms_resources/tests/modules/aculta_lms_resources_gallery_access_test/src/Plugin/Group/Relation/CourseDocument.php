@@ -12,7 +12,7 @@ use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
  * Test fixture for the PDF owner's course document relation.
  */
 #[GroupRelationType(
-  id: 'aculta_pdf_viewer_group',
+  id: 'aculta_document_viewer_group',
   entity_type_id: 'media',
   label: new TranslatableMarkup('Group Media document'),
   description: new TranslatableMarkup('Test relation for course documents.'),
