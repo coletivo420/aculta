@@ -54,9 +54,35 @@ final class CheckoutProNotificationTest extends UnitTestCase {
   }
 
   /**
-   * Does not persist a payment when the provider has not approved it.
+   * Retries before remote lookup when the payment lock is busy.
    */
-  public function testRejectedRemotePaymentDoesNotAcquireLockOrLoadPaymentStorage(): void {
+  public function testBusyPaymentLockRequestsRetryBeforeProviderLookup(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->never())->method('criar');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123', 300)
+      ->willReturn(FALSE);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    $this->assertSame(503, $response->getStatusCode());
+  }
+
+  /**
+   * Terminal status cannot persist without a matching Commerce payment.
+   */
+  public function testRejectedRemotePaymentDoesNotPersistWithoutExistingPayment(): void {
     $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
     $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
     $client = new class {
@@ -87,7 +113,11 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       ->with('commerce_order')
       ->willReturn($order_storage);
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects($this->never())->method('acquire');
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123', 300)
+      ->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.payment.123');
     $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
     $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
@@ -138,12 +168,16 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       ->willReturnCallback(static fn (string $alias): object => $alias === 'pagamentos' ? $payment_client : $merchant_order_client);
     $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_manager->expects($this->never())->method('getStorage');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())->method('acquire')->with('aculta_pagamentos_mercadopago.payment.123', 300)->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.payment.123');
     $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
     $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
     $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
     $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
     $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
     $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
 
     $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
@@ -227,7 +261,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->expects($this->once())
       ->method('acquire')
-      ->with('aculta_pagamentos_mercadopago.payment.123', 30)
+      ->with('aculta_pagamentos_mercadopago.payment.123', 300)
       ->willReturn(TRUE);
     $lock->expects($this->once())
       ->method('release')
@@ -309,7 +343,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       static fn (string $type): EntityStorageInterface => $type === 'commerce_order' ? $order_storage : $payment_storage,
     );
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects($this->once())->method('acquire')->with('aculta_pagamentos_mercadopago.payment.123', 30)->willReturn(TRUE);
+    $lock->expects($this->once())->method('acquire')->with('aculta_pagamentos_mercadopago.payment.123', 300)->willReturn(TRUE);
     $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.payment.123');
     $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
     $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
@@ -378,7 +412,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       static fn (string $type): EntityStorageInterface => $type === 'commerce_order' ? $order_storage : $payment_storage,
     );
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects($this->once())->method('acquire')->with('aculta_pagamentos_mercadopago.payment.123', 30)->willReturn(TRUE);
+    $lock->expects($this->once())->method('acquire')->with('aculta_pagamentos_mercadopago.payment.123', 300)->willReturn(TRUE);
     $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.payment.123');
     $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
     $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
@@ -601,7 +635,11 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_manager->expects($this->never())->method('getStorage');
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects($this->never())->method('acquire');
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123', 300)
+      ->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.payment.123');
     $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
     $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
@@ -643,8 +681,12 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       ->with('Mercado Pago webhook lookup failed for payment @id.', ['@id' => '123']);
     $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
     $logger_factory->method('get')->willReturn($logger);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())->method('acquire')->with('aculta_pagamentos_mercadopago.payment.123', 300)->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.payment.123');
     $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
     $this->setGatewayProperty($gateway, 'clientFactory', $factory);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
     $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
 
     $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));

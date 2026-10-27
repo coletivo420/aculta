@@ -1,3 +1,8 @@
+## 0.1.0-dev.47 — serializar consulta e gravação do webhook de pagamento (2026-10-27)
+
+- `onNotify()` adquire o lock pelo ID remoto antes de consultar o Mercado Pago e mantém a seção crítica até concluir a conciliação Commerce. Uma notificação concorrente recebe 503 antes da consulta e pode ser reenviada; isso impede que uma leitura remota antiga, obtida antes do lock, seja aplicada depois de um estado mais recente.
+- Regressão cobre lock ocupado sem chamada ao provedor; os fluxos de aprovação, pendência, terminais, timeout e referências continuam cobertos. Unit MP: 202 testes / 839 assertions PASS; PHPCS Drupal/DrupalPractice PASS; Kernel `CheckoutProTest`: 2 testes / 91 assertions PASS (77 depreciações upstream).
+
 ## 0.1.0-dev.46 — atualizar status remoto em retorno pendente (2026-10-27)
 
 - `onReturn()` agora atualiza `remote_state` quando o pagamento Commerce já está pendente e a API confirma outro estado ainda pendente (`pending`, `in_process` ou `authorized`). Mantém a máquina Commerce pendente e não regride pagamentos concluídos.

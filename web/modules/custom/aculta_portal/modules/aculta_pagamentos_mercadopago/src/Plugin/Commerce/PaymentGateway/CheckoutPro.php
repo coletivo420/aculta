@@ -1054,79 +1054,81 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     }
 
     $payment_id = (string) $response['id'];
+    $lock_id = 'aculta_pagamentos_mercadopago.payment.' . $payment_id;
+    // Keep the provider snapshot and its Commerce write in one serialized
+    // operation so a slower, older webhook cannot overwrite a newer status.
+    if (!$this->lock->acquire($lock_id, 300)) {
+      return new JsonResponse([], 503);
+    }
     try {
-      $payment_client = $this->clientFactory->criar('pagamentos', $this->parentEntity);
-      $payment = $payment_client->get((int) $payment_id);
-      $merchant_order = NULL;
-      $merchant_order_id = NULL;
-      if (isset($payment->order)) {
-        $payment_order = is_object($payment->order)
-          ? ($payment->order->id ?? NULL)
-          : ($payment->order['id'] ?? NULL);
-        if ($payment_order !== NULL && ctype_digit((string) $payment_order)) {
-          $merchant_order_id = (string) $payment_order;
-          $merchant_order_client = $this->clientFactory->criar('pedidos_comerciante', $this->parentEntity);
-          $merchant_order = $merchant_order_client->get((int) $merchant_order_id);
+      try {
+        $payment_client = $this->clientFactory->criar('pagamentos', $this->parentEntity);
+        $payment = $payment_client->get((int) $payment_id);
+        $merchant_order = NULL;
+        $merchant_order_id = NULL;
+        if (isset($payment->order)) {
+          $payment_order = is_object($payment->order)
+            ? ($payment->order->id ?? NULL)
+            : ($payment->order['id'] ?? NULL);
+          if ($payment_order !== NULL && ctype_digit((string) $payment_order)) {
+            $merchant_order_id = (string) $payment_order;
+            $merchant_order_client = $this->clientFactory->criar('pedidos_comerciante', $this->parentEntity);
+            $merchant_order = $merchant_order_client->get((int) $merchant_order_id);
+          }
         }
       }
-    }
-    catch (\Throwable $exception) {
-      $logger->error('Mercado Pago webhook lookup failed for payment @id.', ['@id' => $payment_id]);
-      return new JsonResponse([], 503);
-    }
+      catch (\Throwable $exception) {
+        $logger->error('Mercado Pago webhook lookup failed for payment @id.', ['@id' => $payment_id]);
+        return new JsonResponse([], 503);
+      }
 
-    $payment_reference = (string) ($payment->external_reference ?? '');
-    $merchant_order_reference = (string) ($merchant_order->external_reference ?? '');
-    if ($payment_reference !== '' && $merchant_order_reference !== '' && $payment_reference !== $merchant_order_reference) {
-      $logger->warning('Payment @id has conflicting order references.', ['@id' => $payment_id]);
-      return new JsonResponse();
-    }
-    $order_id = $merchant_order_reference !== '' ? $merchant_order_reference : $payment_reference;
-    if ($order_id === '' || preg_match('/^[1-9][0-9]*$/', $order_id) !== 1) {
-      return new JsonResponse();
-    }
-    $order = $this->entityTypeManager->getStorage('commerce_order')->load($order_id);
-    if (!$order instanceof OrderInterface) {
-      return new JsonResponse();
-    }
+      $payment_reference = (string) ($payment->external_reference ?? '');
+      $merchant_order_reference = (string) ($merchant_order->external_reference ?? '');
+      if ($payment_reference !== '' && $merchant_order_reference !== '' && $payment_reference !== $merchant_order_reference) {
+        $logger->warning('Payment @id has conflicting order references.', ['@id' => $payment_id]);
+        return new JsonResponse();
+      }
+      $order_id = $merchant_order_reference !== '' ? $merchant_order_reference : $payment_reference;
+      if ($order_id === '' || preg_match('/^[1-9][0-9]*$/', $order_id) !== 1) {
+        return new JsonResponse();
+      }
+      $order = $this->entityTypeManager->getStorage('commerce_order')->load($order_id);
+      if (!$order instanceof OrderInterface) {
+        return new JsonResponse();
+      }
 
-    $remote_status = (string) ($payment->status ?? '');
-    $refunded_number = (string) ($payment->transaction_amount_refunded ?? '0');
-    $has_refund = is_numeric($refunded_number) && (float) $refunded_number > 0;
-    $pending_status = in_array($remote_status, ['pending', 'in_process', 'authorized'], TRUE);
-    $terminal_status = in_array($remote_status, ['cancelled', 'rejected'], TRUE);
-    if (!in_array($remote_status, ['approved', 'refunded'], TRUE) && !$has_refund && !$pending_status && !$terminal_status) {
-      $logger->info('Payment @id is not complete; remote status is @status.', [
-        '@id' => $payment_id,
-        '@status' => $remote_status !== '' ? $remote_status : 'unknown',
-      ]);
-      return new JsonResponse();
-    }
+      $remote_status = (string) ($payment->status ?? '');
+      $refunded_number = (string) ($payment->transaction_amount_refunded ?? '0');
+      $has_refund = is_numeric($refunded_number) && (float) $refunded_number > 0;
+      $pending_status = in_array($remote_status, ['pending', 'in_process', 'authorized'], TRUE);
+      $terminal_status = in_array($remote_status, ['cancelled', 'rejected'], TRUE);
+      if (!in_array($remote_status, ['approved', 'refunded'], TRUE) && !$has_refund && !$pending_status && !$terminal_status) {
+        $logger->info('Payment @id is not complete; remote status is @status.', [
+          '@id' => $payment_id,
+          '@status' => $remote_status !== '' ? $remote_status : 'unknown',
+        ]);
+        return new JsonResponse();
+      }
 
-    $currency = (string) ($payment->currency_id ?? '');
-    $amount_number = (string) ($payment->transaction_amount ?? '');
-    $order_total = $order->getTotalPrice();
-    if ($currency === '' || $currency !== $order_total?->getCurrencyCode() || !is_numeric($amount_number) || (float) $amount_number <= 0) {
-      $logger->warning('Payment @id has an invalid amount or currency for order @order_id.', [
-        '@id' => $payment_id,
-        '@order_id' => $order->id(),
-      ]);
-      return new JsonResponse();
-    }
-    $amount = new Price($amount_number, $currency);
-    if (!$amount->equals($order_total)) {
-      $logger->warning('Payment @id does not match order @order_id total.', [
-        '@id' => $payment_id,
-        '@order_id' => $order->id(),
-      ]);
-      return new JsonResponse();
-    }
+      $currency = (string) ($payment->currency_id ?? '');
+      $amount_number = (string) ($payment->transaction_amount ?? '');
+      $order_total = $order->getTotalPrice();
+      if ($currency === '' || $currency !== $order_total?->getCurrencyCode() || !is_numeric($amount_number) || (float) $amount_number <= 0) {
+        $logger->warning('Payment @id has an invalid amount or currency for order @order_id.', [
+          '@id' => $payment_id,
+          '@order_id' => $order->id(),
+        ]);
+        return new JsonResponse();
+      }
+      $amount = new Price($amount_number, $currency);
+      if (!$amount->equals($order_total)) {
+        $logger->warning('Payment @id does not match order @order_id total.', [
+          '@id' => $payment_id,
+          '@order_id' => $order->id(),
+        ]);
+        return new JsonResponse();
+      }
 
-    $lock_id = 'aculta_pagamentos_mercadopago.payment.' . $payment_id;
-    if (!$this->lock->acquire($lock_id, 30)) {
-      return new JsonResponse([], 503);
-    }
-    try {
       $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
       $payment_ids = $payment_storage->getQuery()
         ->condition('order_id', $order->id())
@@ -1203,7 +1205,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         $commerce_payment->save();
       }
       elseif ($remote_status === 'approved'
-        && in_array($commerce_payment->getState()->getId(), ['new', 'authorization', 'pending'], TRUE)) {
+          && in_array($commerce_payment->getState()->getId(), ['new', 'authorization', 'pending'], TRUE)) {
         $commerce_payment->setRemoteState($remote_status);
         $commerce_payment->save();
         $commerce_payment->setState('completed');
@@ -1223,12 +1225,11 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
           }
         }
       }
+      return new JsonResponse();
     }
     finally {
       $this->lock->release($lock_id);
     }
-
-    return new JsonResponse();
 
   }
 
