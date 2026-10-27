@@ -647,7 +647,7 @@ $sync_storage = \Drupal::service('config.storage.sync');
 // no longer in the manifest.
 // F15: o contrib de envio (mailer_transport) saiu; as configurações de envio
 // são de aculta_mailer e não entram no manifesto de conta.
-$assert(count($manifest['configs']) === 38, 'The reviewed account manifest contains 38 intentionally selected config objects.');
+$assert(count($manifest['configs']) === 37, 'The reviewed account manifest contains 37 intentionally selected config objects.');
 $assert(in_array('field.storage.user.user_picture', $manifest['configs'], TRUE), 'Private User picture storage is included in the reviewed manifest.');
 $sort_recursive = static function (array &$data) use (&$sort_recursive): void {
   ksort($data);
