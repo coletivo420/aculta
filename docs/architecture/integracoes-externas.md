@@ -10,7 +10,7 @@ Exemplos:
 | --- | --- | --- |
 | Melhor Envio | `/integracoes/melhorenvio/autorizar` | `/integracoes/melhorenvio/retorno` |
 | Mercado Pago (retorno do checkout) | — | `/integracoes/mercadopago/checkout-retorno` |
-| Google (e demais redes sociais) | `/user/login/google` | `/integracoes/google/retorno` |
+| Google (e demais redes sociais) | `/integracoes/login/google` | `/integracoes/google/retorno` |
 
 Regras:
 
