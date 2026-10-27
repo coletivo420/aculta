@@ -23,7 +23,7 @@ use Psr\Log\LoggerInterface;
  * - Logs e exceções nunca contêm token, client secret, corpo de resposta ou dados pessoais.
  * - Sem rede nos testes: o transporte é o http_client, substituível por MockHandler.
  */
-final class MelhorEnvioClient {
+final class MelhorEnvioClient implements MelhorEnvioClientInterface {
 
   /**
    * Timeout de conexão, em segundos. */
@@ -184,6 +184,19 @@ final class MelhorEnvioClient {
         $this->refresh($environment);
         $refreshed = TRUE;
       }
+    }
+  }
+
+  /**
+   * Indica se as duas chaves do ambiente ativo existem. Não chama a API nem o endpoint de token.
+   */
+  public function hasCredentials(): bool {
+    try {
+      $this->credentials($this->config->environment());
+      return TRUE;
+    }
+    catch (MelhorEnvioException) {
+      return FALSE;
     }
   }
 
