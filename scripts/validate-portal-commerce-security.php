@@ -1,6 +1,33 @@
 <?php
 
 /** Read-only local checks for account ownership, permissions, and migration. */
+
+use Composer\InstalledVersions;
+use Drupal\Core\Form\FormState;
+use Drupal\Core\Render\Element\Number;
+use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\Core\Site\Settings;
+use Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\MercadoPagoCredentials;
+use Drupal\aculta_portal\Environment\DeployerEnvironment;
+use Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber;
+use Drupal\aculta_portal\Support\Form\SupportForm;
+use Drupal\commerce_checkout\Entity\CheckoutFlow;
+use Drupal\commerce_payment\Entity\PaymentGateway;
+use Drupal\commerce_store\Entity\Store;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
+use MercadoPago\Exceptions\InvalidWebhookSignatureException;
+use MercadoPago\Webhook\WebhookSignatureValidator;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Yaml\Yaml;
 $host = \Drupal::request()->getHost();
 if (!in_array($host, ['localhost', '127.0.0.1', 'default'], TRUE) && !str_ends_with($host, 'aculta.toca.net.br')) {
   throw new RuntimeException('This audit is local-only.');
@@ -43,7 +70,7 @@ $default_transport = \Drupal::entityTypeManager()->getStorage('aculta_mailer_tra
 $assert($default_transport !== NULL && $default_transport->get('user') !== '' && $default_transport->get('password_secret') !== '', 'O transporte padrão da camada de envio E-Mails ACULTA tem usuário e nome de senha configurados.');
 $assert($default_transport !== NULL && \Drupal::service('aculta_portal.secrets_manager')->value((string) $default_transport->get('password_secret')) !== NULL, 'A senha do transporte padrão está no arquivo de segredos.');
 // A configuração versionada não guarda senha.
-$smtp_versioned = \Symfony\Component\Yaml\Yaml::parseFile(DRUPAL_ROOT . '/../config/sync/aculta_mailer.transport.smtp_hostinger.yml') ?: [];
+$smtp_versioned = Yaml::parseFile(DRUPAL_ROOT . '/../config/sync/aculta_mailer.transport.smtp_hostinger.yml') ?: [];
 $assert(!array_key_exists('pass', $smtp_versioned) && !array_key_exists('password', $smtp_versioned), 'Mail transport credentials are absent from the versioned configuration.');
 $login_composer = json_decode(file_get_contents(DRUPAL_ROOT . '/../composer.lock'), TRUE, 512, JSON_THROW_ON_ERROR);
 $login_package = array_values(array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/login_emailusername'))[0] ?? NULL;
@@ -68,7 +95,7 @@ $assert(str_contains($portal_hooks, "^/user/([1-9][0-9]*)/edit$") && str_contain
 $portal_hooks_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/PortalHooks.php');
 $assert(str_contains($portal_hooks_source, 'Nome de usuário ou e-mail'), 'The public login label supports either username or email.');
 $assert((bool) \Drupal::service('user.data')->get('aculta_portal', 999999, 'social_auth_password_unset') === FALSE, 'Social-only password marker is read per user and is not globally shared.');
-$authenticated_role = \Drupal\user\Entity\Role::load('authenticated');
+$authenticated_role = Role::load('authenticated');
 foreach ([
   'access administration pages', 'access toolbar', 'administer users',
   'administer account settings', 'administer permissions', 'administer roles',
@@ -81,15 +108,15 @@ $assert($authenticated_role->hasPermission('access aculta mail confirmer'), 'Aut
 
 $account_route_subscriber = \Drupal::service('aculta_portal.account_route_subscriber');
 $account_switcher = \Drupal::service('account_switcher');
-$route_current = \Drupal\user\Entity\User::create(['uid' => 999991, 'name' => 'portal-route-current', 'roles' => ['authenticated']]);
-$route_other = \Drupal\user\Entity\User::create(['uid' => 999992, 'name' => 'portal-route-other', 'roles' => ['authenticated']]);
-$route_admin = \Drupal\user\Entity\User::create(['uid' => 999993, 'name' => 'portal-route-admin', 'roles' => ['administrator']]);
-$make_account_event = static function (string $route, ?object $target = NULL): \Symfony\Component\HttpKernel\Event\RequestEvent {
+$route_current = User::create(['uid' => 999991, 'name' => 'portal-route-current', 'roles' => ['authenticated']]);
+$route_other = User::create(['uid' => 999992, 'name' => 'portal-route-other', 'roles' => ['authenticated']]);
+$route_admin = User::create(['uid' => 999993, 'name' => 'portal-route-admin', 'roles' => ['administrator']]);
+$make_account_event = static function (string $route, ?object $target = NULL): RequestEvent {
   $http_kernel = \Drupal::service('http_kernel');
-  $request = \Symfony\Component\HttpFoundation\Request::create('/test-account-route');
+  $request = Request::create('/test-account-route');
   $request->attributes->set('_route', $route);
   if ($target) { $request->attributes->set('user', $target); }
-  return new \Symfony\Component\HttpKernel\Event\RequestEvent($http_kernel, $request, \Symfony\Component\HttpKernel\HttpKernelInterface::MAIN_REQUEST);
+  return new RequestEvent($http_kernel, $request, HttpKernelInterface::MAIN_REQUEST);
 };
 $account_switcher->switchTo($route_current);
 try {
@@ -99,7 +126,7 @@ try {
   $security_url = $domain_purpose->routeUrl('account', 'aculta_portal.security')?->toString();
   $assert($own_edit_event->hasResponse() && $own_edit_event->getResponse()->getStatusCode() === 302 && $own_edit_event->getResponse()->headers->get('Location') === $security_url, 'A regular user is redirected from own generic user edit to Portal Security.');
   $raw_edit_event = $make_account_event('entity.user.edit_form');
-  $raw_edit_event->getRequest()->attributes->set('_raw_variables', new \Symfony\Component\HttpFoundation\ParameterBag(['user' => '999991']));
+  $raw_edit_event->getRequest()->attributes->set('_raw_variables', new ParameterBag(['user' => '999991']));
   $account_route_subscriber->onKernelRequest($raw_edit_event);
   $assert($raw_edit_event->hasResponse() && $raw_edit_event->getResponse()->getStatusCode() === 302, 'The route guard redirects the own edit page when the ID is still in Drupal raw route parameters.');
   $own_profile_event = $make_account_event('entity.user.canonical', $route_current);
@@ -117,16 +144,16 @@ finally {
 $account_switcher->switchBack();
 }
 
-$reset_request = \Symfony\Component\HttpFoundation\Request::create('/user/999991/edit', 'GET', ['pass-reset-token' => 'fixture-reset-token']);
-$reset_session = new \Symfony\Component\HttpFoundation\Session\Session(new \Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage());
+$reset_request = Request::create('/user/999991/edit', 'GET', ['pass-reset-token' => 'fixture-reset-token']);
+$reset_session = new Session(new MockArraySessionStorage());
 $reset_session->set('pass_reset_999991', 'fixture-reset-token');
 $reset_request->setSession($reset_session);
-$assert(\Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber::isValidCorePasswordResetRequest($reset_request, 999991, 999991), 'Drupal Core valid one-time password reset token remains accepted for its own account.');
-$assert(!\Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber::isValidCorePasswordResetRequest($reset_request, 999992, 999991), 'A one-time reset token cannot be used to edit another account.');
+$assert(AccountRouteSubscriber::isValidCorePasswordResetRequest($reset_request, 999991, 999991), 'Drupal Core valid one-time password reset token remains accepted for its own account.');
+$assert(!AccountRouteSubscriber::isValidCorePasswordResetRequest($reset_request, 999992, 999991), 'A one-time reset token cannot be used to edit another account.');
 $account_switcher->switchTo($route_current);
 try {
   $reset_event = $make_account_event('entity.user.edit_form');
-  $reset_event->getRequest()->attributes->set('_raw_variables', new \Symfony\Component\HttpFoundation\ParameterBag(['user' => '999991']));
+  $reset_event->getRequest()->attributes->set('_raw_variables', new ParameterBag(['user' => '999991']));
   $reset_event->getRequest()->query->set('pass-reset-token', 'fixture-reset-token');
   $reset_event->getRequest()->setSession($reset_session);
   $account_route_subscriber->onKernelRequest($reset_event);
@@ -136,9 +163,9 @@ finally {
   $account_switcher->switchBack();
 }
 $reset_request->query->set('pass-reset-token', 'invalid-token');
-$assert(!\Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber::isValidCorePasswordResetRequest($reset_request, 999991, 999991), 'An arbitrary pass-reset-token query value does not bypass account route protection.');
+$assert(!AccountRouteSubscriber::isValidCorePasswordResetRequest($reset_request, 999991, 999991), 'An arbitrary pass-reset-token query value does not bypass account route protection.');
 $reset_request->query->remove('pass-reset-token');
-$assert(!\Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber::isValidCorePasswordResetRequest($reset_request, 999991, 999991), 'The generic account edit route stays protected without Core reset token.');
+$assert(!AccountRouteSubscriber::isValidCorePasswordResetRequest($reset_request, 999991, 999991), 'The generic account edit route stays protected without Core reset token.');
 $account_switcher->switchTo($route_admin);
 try {
   $admin_edit_event = $make_account_event('entity.user.edit_form', $route_admin);
@@ -154,11 +181,11 @@ foreach (['aculta_apoio.client', 'aculta_apoio.credentials', 'aculta_apoio.manag
   $assert(!$container->has($service), 'Retired direct gateway service is absent: ' . $service);
 }
 
-$anonymous = \Drupal\user\Entity\User::create(['name' => 'access-audit-anonymous']);
+$anonymous = User::create(['name' => 'access-audit-anonymous']);
 // Unsaved fixture with a synthetic uid: real sessions are logged in only when
 // uid > 0, which routes using _user_is_logged_in require.
-$authenticated = \Drupal\user\Entity\User::create(['uid' => 999990, 'name' => 'access-audit-user', 'roles' => ['authenticated']]);
-$administrator = \Drupal\user\Entity\User::create(['uid' => 1, 'name' => 'access-audit-administrator', 'roles' => ['administrator']]);
+$authenticated = User::create(['uid' => 999990, 'name' => 'access-audit-user', 'roles' => ['authenticated']]);
+$administrator = User::create(['uid' => 1, 'name' => 'access-audit-administrator', 'roles' => ['administrator']]);
 $access = \Drupal::service('access_manager');
 $route_expectations = [
   'aculta_portal.dashboard' => [FALSE, TRUE, TRUE],
@@ -257,8 +284,8 @@ foreach (['aculta_portal.support_form'] as $public_route) {
   }
 }
 
-$authenticated_role = \Drupal\user\Entity\Role::load('authenticated');
-$administrator_role = \Drupal\user\Entity\Role::load('administrator');
+$authenticated_role = Role::load('authenticated');
+$administrator_role = Role::load('administrator');
 $restricted_permissions = [
   'administer aculta support settings',
   'administer aculta apoio',
@@ -279,7 +306,7 @@ $assert(array_intersect($restricted_permissions, $authenticated_role->getPermiss
 $assert($administrator_role->isAdmin(), 'Administrator role retains administrative status.');
 // Exceções aprovadas (CHANGELOG 0.4.0-dev.82): o gerente da loja acessa Formas de apoio, e só isso.
 $approved_role_exceptions = ['gerente_loja' => ['administer aculta support settings']];
-foreach (\Drupal\user\Entity\Role::loadMultiple() as $role) {
+foreach (Role::loadMultiple() as $role) {
   if (!$role->isAdmin()) {
     $forbidden = array_diff(array_intersect($restricted_permissions, $role->getPermissions()), $approved_role_exceptions[$role->id()] ?? []);
     $assert($forbidden === [], 'Non-administrator role has no listed sensitive platform permissions beyond approved exceptions: ' . $role->id());
@@ -292,14 +319,14 @@ $assert(!$profile, 'Participant profile type stays removed (commit d29e34bf).');
 // Todo campo de dados pessoais que existir em qualquer tipo de perfil precisa ser privado.
 foreach (array_keys(\Drupal::entityTypeManager()->getStorage('profile_type')->loadMultiple()) as $profile_type) {
   foreach (['field_nickname', 'field_first_name', 'field_last_name', 'field_whatsapp', 'field_city', 'field_state', 'field_address'] as $field_name) {
-    $field = \Drupal\field\Entity\FieldConfig::loadByName('profile', $profile_type, $field_name);
+    $field = FieldConfig::loadByName('profile', $profile_type, $field_name);
     if ($field) {
       $assert($field->getThirdPartySetting('profile', 'profile_private') === TRUE, "Personal data field is private: $profile_type.$field_name");
     }
   }
 }
-$assert(!\Drupal\field\Entity\FieldConfig::loadByName('profile', 'participante', 'field_phone'), 'Legacy participant phone field instance is absent.');
-$assert(!\Drupal\field\Entity\FieldStorageConfig::loadByName('profile', 'field_phone'), 'Legacy participant phone field storage is absent.');
+$assert(!FieldConfig::loadByName('profile', 'participante', 'field_phone'), 'Legacy participant phone field instance is absent.');
+$assert(!FieldStorageConfig::loadByName('profile', 'field_phone'), 'Legacy participant phone field storage is absent.');
 $picture_storage = \Drupal::config('field.storage.user.user_picture')->get('settings.uri_scheme');
 $assert($picture_storage === 'private', 'User profile photo uses private file storage.');
 $assert((bool) \Drupal::entityTypeManager()->getStorage('crop_type')->load('aculta_avatar_1x1'), 'Institutional square crop type exists.');
@@ -318,8 +345,8 @@ $assert($registration->get('notify.register_no_approval_required') === TRUE, 'Re
 $captcha = \Drupal::config('captcha.settings');
 $assert((int) $captcha->get('enable_globally') === 1, 'Turnstile is globally enabled for anonymous forms.');
 // Só quem confirmou o e-mail (papel email_confirmed) pula o desafio; logado sem confirmação recebe Turnstile (6049919).
-$assert(\Drupal\user\Entity\Role::load('email_confirmed')?->hasPermission('skip CAPTCHA') === TRUE, 'Confirmed-email users can skip the global CAPTCHA challenge.');
-$assert(\Drupal\user\Entity\Role::load('authenticated')?->hasPermission('skip CAPTCHA') !== TRUE, 'Authenticated users without confirmed e-mail still receive the CAPTCHA challenge.');
+$assert(Role::load('email_confirmed')?->hasPermission('skip CAPTCHA') === TRUE, 'Confirmed-email users can skip the global CAPTCHA challenge.');
+$assert(Role::load('authenticated')?->hasPermission('skip CAPTCHA') !== TRUE, 'Authenticated users without confirmed e-mail still receive the CAPTCHA challenge.');
 $expected_forms = [
   'user_login_form',
   'user_register_form',
@@ -335,7 +362,7 @@ foreach (['node_activity_form', 'node_revista_form', 'node_project_form', 'conta
   $assert(!$point || !$point->status(), 'Turnstile is not attached to excluded/internal form: ' . $excluded_form);
 }
 // Versionado: chave de produção (turnstile). Em runtime, TurnstileKeyOverride escolhe a chave do ambiente declarado pelo Deployer.
-$turnstile_env = \Drupal\aculta_portal\Environment\DeployerEnvironment::current(dirname(DRUPAL_ROOT), 'production');
+$turnstile_env = DeployerEnvironment::current(dirname(DRUPAL_ROOT), 'production');
 $assert(\Drupal::service('config.storage.sync')->read('turnstile.settings')['keys'] === 'turnstile', 'Versioned Turnstile key reference is the production Key.');
 $assert(\Drupal::config('turnstile.settings')->get('keys') === ($turnstile_env === 'test' ? 'turnstile_test' : 'turnstile'), 'Turnstile Key reference matches the environment declared by the Deployer.');
 $assert(\Drupal::config('turnstile.settings')->get('testing_secret_key') === '', 'No Turnstile test secret is saved in configuration.');
@@ -425,14 +452,14 @@ $support_settings = \Drupal::config('aculta_portal.support')->getRawData();
 foreach (['access_token', 'client_secret', 'webhook_secret', 'pix_key', 'pix_copy_paste'] as $forbidden) {
   $assert(!array_key_exists($forbidden, $support_settings), 'No payment credential or direct Pix data exists in support settings: ' . $forbidden);
 }
-$doacao = \Drupal\commerce_checkout\Entity\CheckoutFlow::load('doacao');
+$doacao = CheckoutFlow::load('doacao');
 $assert($doacao && $doacao->getPluginId() === 'fluxo_doacao', 'Donation Flow has a dedicated checkout flow.');
 $donation_flow_configuration = $doacao ? $doacao->getPlugin()->getConfiguration() : [];
 $assert(($donation_flow_configuration['panes']['login']['allow_guest_checkout'] ?? FALSE) === TRUE, 'Donation checkout supports guest users.');
 $assert(!isset($donation_flow_configuration['panes']['shipping']), 'Donation checkout does not use shipping.');
 $support_controller_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Support/Controller/SupportController.php');
 $assert(str_contains($support_controller_source, "loadByProperties(['uid' => \$uid])") && str_contains($support_controller_source, "bundle() === 'donation'"), 'My Support reads only the current user\'s Commerce Donation orders.');
-$support_form = \Drupal::formBuilder()->getForm(\Drupal\aculta_portal\Support\Form\SupportForm::class);
+$support_form = \Drupal::formBuilder()->getForm(SupportForm::class);
 $support_html = (string) \Drupal::service('renderer')->renderRoot($support_form);
 // O aviso de indisponibilidade acompanha o estado real do gateway: desligado → aviso e sem /apoiar; ligado → sem aviso.
 $support_notice = str_contains($support_html, 'apoio financeiro está temporariamente indisponível');
@@ -442,7 +469,7 @@ $assert($gateway_enabled ? !$support_notice : ($support_notice && !str_contains(
 // Exercise the amount guard and Form API number minimum with values kept only
 // in this CLI process. No Commerce entity or provider request is created.
 foreach ([['single', 'custom_amount', ''], ['single', 'custom_amount', '0'], ['single', 'custom_amount', '-1'], ['recurring', 'level_1', '20']] as [$gift_type, $choice, $amount]) {
-  $state = new \Drupal\Core\Form\FormState();
+  $state = new FormState();
   $state->clearErrors();
   $state->setValue(['commerce_donation_pane', 'field_gift_type'], [['value' => $gift_type]]);
   $state->setValue(['commerce_donation_pane', 'field_donation_amount'], [['donation_level' => ['value' => $choice, 'amount' => $amount]]]);
@@ -450,17 +477,17 @@ foreach ([['single', 'custom_amount', ''], ['single', 'custom_amount', '0'], ['s
   \Drupal::service('aculta_portal.form_callbacks')->validateDonationAmount($form, $state);
   $assert($state->hasAnyErrors(), 'Donation form rejects empty, zero, negative, or recurring input.');
 }
-$valid_state = new \Drupal\Core\Form\FormState();
+$valid_state = new FormState();
 $valid_state->clearErrors();
 $valid_state->setValue(['commerce_donation_pane', 'field_gift_type'], [['value' => 'single']]);
 $valid_state->setValue(['commerce_donation_pane', 'field_donation_amount'], [['donation_level' => ['value' => 'custom_amount', 'amount' => '20']]]);
 $valid_form = [];
 \Drupal::service('aculta_portal.form_callbacks')->validateDonationAmount($valid_form, $valid_state);
 $assert(!$valid_state->hasAnyErrors(), 'Donation form accepts a positive custom amount.');
-$number_state = new \Drupal\Core\Form\FormState();
+$number_state = new FormState();
 $number_state->clearErrors();
 $number_element = ['#parents' => ['donation_amount'], '#value' => '0', '#min' => 5, '#step' => 'any', '#title' => 'Valor'];
-\Drupal\Core\Render\Element\Number::validateNumber($number_element, $number_state, $valid_form);
+Number::validateNumber($number_element, $number_state, $valid_form);
 $assert($number_state->hasAnyErrors(), 'Donation widget Form API rejects values below its R$5 minimum server-side.');
 $assert(!isset($number_element['#max']), 'Donation widget has no configured maximum amount.');
 
@@ -469,7 +496,7 @@ $previous_mp = [];
 foreach ($mp_variables as $variable) {
   $previous_mp[$variable] = getenv($variable);
 }
-$mp_environment = \Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\MercadoPagoCredentials::currentEnvironment(dirname(\Drupal::root()));
+$mp_environment = MercadoPagoCredentials::currentEnvironment(dirname(\Drupal::root()));
 $mp_token_field = $mp_environment === 'test' ? 'access_token_test' : 'access_token_prod';
 $gateway_storage = \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway');
 $fake_public_key = 'TEST_MP_PUBLIC_' . bin2hex(random_bytes(12));
@@ -483,11 +510,11 @@ $mp_override = \Drupal::service('aculta_pagamentos_mercadopago.environment_overr
 $assert(($mp_override['commerce_payment.commerce_payment_gateway.mercado_pago']['configuration'][$mp_token_field] ?? '') === $fake_access_token, 'Runtime credentials map to the gateway plugin in memory for the declared environment.');
 \Drupal::configFactory()->reset('commerce_payment.commerce_payment_gateway.mercado_pago');
 $gateway_storage->resetCache(['mercado_pago']);
-$runtime_gateway = \Drupal\commerce_payment\Entity\PaymentGateway::load('mercado_pago');
+$runtime_gateway = PaymentGateway::load('mercado_pago');
 $assert(($runtime_gateway->getPluginConfiguration()[$mp_token_field] ?? '') === $fake_access_token, 'Commerce gateway receives the environment override at runtime.');
 $admin_form_html = '';
 try {
-  \Drupal::currentUser()->setAccount(\Drupal\user\Entity\User::load(1));
+  \Drupal::currentUser()->setAccount(User::load(1));
   $gateway_for_form = $runtime_gateway;
   $gateway_form = \Drupal::service('entity.form_builder')->getForm($gateway_for_form, 'edit');
   $admin_form_html = (string) \Drupal::service('renderer')->renderRoot($gateway_form);
@@ -498,11 +525,11 @@ finally {
   }
   \Drupal::configFactory()->reset('commerce_payment.commerce_payment_gateway.mercado_pago');
   $gateway_storage->resetCache(['mercado_pago']);
-  \Drupal::currentUser()->setAccount(new \Drupal\Core\Session\AnonymousUserSession());
+  \Drupal::currentUser()->setAccount(new AnonymousUserSession());
 }
 $assert(!str_contains($admin_form_html, $fake_access_token), 'Gateway admin HTML never reveals the runtime Access Token.');
 $assert(($gateway_storage->loadMultipleOverrideFree(['mercado_pago'])['mercado_pago']->getPluginConfiguration()[$mp_token_field] ?? '') === '', 'Fake runtime credentials were not persisted.');
-$gateway = \Drupal\commerce_payment\Entity\PaymentGateway::load('mercado_pago');
+$gateway = PaymentGateway::load('mercado_pago');
 $assert((bool) $gateway, 'The Mercado Pago gateway config entity exists.');
 // O modo persistido do gateway tem de corresponder ao ambiente declarado em var/deployer/environment.json. O estado
 // ligado/desligado não é fixado aqui: cada banco guarda o seu. Lê-se o storage bruto, sem a sobreposição do deployer,
@@ -522,14 +549,14 @@ $stored_gateway = $gateway_storage->loadMultipleOverrideFree(['mercado_pago'])['
 $assert(($stored_gateway->getPluginConfiguration()['access_token_test'] ?? '') === '', 'Gateway runtime override is not persisted in active config.');
 $assert(!$gateway->access('update', $administrator, TRUE)->isAllowed(), 'The contrib gateway edit form is locked to prevent credential persistence.');
 $assert(\Drupal::moduleHandler()->moduleExists('aculta_donation'), 'ACULTA Donation (port do fluxo de doação) is enabled.');
-$assert(!class_exists(\Composer\InstalledVersions::class) || !\Composer\InstalledVersions::isInstalled('drupal/commerce_donation_flow'), 'The contrib donation flow package is no longer installed (replaced by aculta_donation).');
-$gift_storage = \Drupal\field\Entity\FieldStorageConfig::loadByName('commerce_order_item', 'field_gift_type');
+$assert(!class_exists(InstalledVersions::class) || !InstalledVersions::isInstalled('drupal/commerce_donation_flow'), 'The contrib donation flow package is no longer installed (replaced by aculta_donation).');
+$gift_storage = FieldStorageConfig::loadByName('commerce_order_item', 'field_gift_type');
 $assert($gift_storage && array_keys($gift_storage->getSetting('allowed_values')) === ['single'], 'Only one-time support is allowed by the Donation Flow gift type.');
 $donation_form_display = \Drupal::config('core.entity_form_display.commerce_order_item.donation.donation');
 $levels = $donation_form_display->get('content.field_donation_amount.settings.levels.single') ?? [];
 $assert(($levels['level_1'] ?? NULL) === '20' && ($levels['level_2'] ?? NULL) === '50' && ($levels['level_3'] ?? NULL) === '100', 'Donation Flow presets are R$20, R$50, and R$100.');
 $assert(!\Drupal::moduleHandler()->moduleExists('commerce_recurring'), 'Commerce Recurring is not enabled.');
-$store = \Drupal\commerce_store\Entity\Store::load(1);
+$store = Store::load(1);
 $assert((bool) $store, 'One institutional Commerce Store is provisioned locally.');
 $assert($store->isDefault() && $store->getDefaultCurrencyCode() === 'BRL', 'The institutional Store is default and uses BRL.');
 $assert($store->uuid() === '32f75ad2-5d45-48bb-898e-d657d47d04f8', 'The Store has the stable UUID used by gateway conditions.');
@@ -541,7 +568,7 @@ $manifest_path = dirname(__DIR__) . '/scripts/institution/PORTAL-ACCOUNT-CONFIG-
 $manifest = json_decode(file_get_contents($manifest_path), TRUE, 512, JSON_THROW_ON_ERROR);
 $active_storage = \Drupal::service('config.storage');
 $canonical_sync_path = realpath(dirname(DRUPAL_ROOT) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'sync');
-$effective_sync_path = realpath(\Drupal\Core\Site\Settings::get('config_sync_directory'));
+$effective_sync_path = realpath(Settings::get('config_sync_directory'));
 $assert($canonical_sync_path !== FALSE && $effective_sync_path === $canonical_sync_path, 'Drupal Configuration Sync points at the repository canonical config/sync directory.');
 $sync_storage = \Drupal::service('config.storage.sync');
 // user_registrationpassword and Agreement were removed; their configuration is no longer in the manifest.
@@ -607,7 +634,7 @@ $inspect_secret_values = static function (mixed $value, string $path, string $fi
 $sync_path = realpath($canonical_sync_path);
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sync_path, FilesystemIterator::SKIP_DOTS)) as $config_file) {
   if ($config_file->isFile() && in_array(strtolower($config_file->getExtension()), ['yml', 'yaml'], TRUE)) {
-    $parsed = \Symfony\Component\Yaml\Yaml::parseFile($config_file->getPathname());
+    $parsed = Yaml::parseFile($config_file->getPathname());
     $inspect_secret_values($parsed, '', str_replace($sync_path . DIRECTORY_SEPARATOR, '', $config_file->getPathname()));
   }
 }
@@ -634,7 +661,7 @@ $assert(!\Drupal::keyValue('system.schema')->get('aculta_apoio'), 'No stale sche
 $assert(!\Drupal::keyValue('system.schema')->get('aculta_editorial'), 'No stale schema version remains for consolidated aculta_editorial.');
 // Endereço único (docs/portal/CHECKOUT-BILLING.md): o endereço de cobrança e envio é o field_address do perfil de pessoa.
 // O tipo de perfil customer do Commerce não existe no site; a checagem antiga foi aposentada em 2026-10-20.
-$unified_address = \Drupal\field\Entity\FieldConfig::loadByName('profile', 'associado', 'field_address');
+$unified_address = FieldConfig::loadByName('profile', 'associado', 'field_address');
 $assert((bool) $unified_address && $unified_address->getFieldStorageDefinition()->id() === 'profile.field_address', 'Unified address field_address is attached to the person profile (associado).');
 $assert((bool) \Drupal::entityTypeManager()->getStorage('field_storage_config')->load('profile.field_address'), 'Participant portal address uses its separate field_address storage.');
 
@@ -676,8 +703,8 @@ $assert(($sync_storage->read('core.extension')['module']['aculta_apoio'] ?? NULL
 $webhook_key = \Drupal::service('key.repository')->getKey('mercadopago_webhook_secret');
 $assert($webhook_key && $webhook_key->getKeyProvider()->getPluginId() === 'env', 'Webhook secret is referenced through the Key Environment provider.');
 $assert(($webhook_key->getKeyProvider()->getConfiguration()['env_variable'] ?? NULL) === 'MERCADOPAGO_WEBHOOK_SECRET', 'Webhook Key points to the dedicated signing-secret environment variable.');
-$assert(class_exists(\MercadoPago\Webhook\WebhookSignatureValidator::class) && class_exists(\MercadoPago\Exceptions\InvalidWebhookSignatureException::class), 'The installed Mercado Pago SDK provides its official webhook validator and exception.');
-$assert(\Composer\InstalledVersions::getPrettyVersion('mercadopago/dx-php') === '3.16.0', 'The audited Mercado Pago SDK version is 3.16.0.');
+$assert(class_exists(WebhookSignatureValidator::class) && class_exists(InvalidWebhookSignatureException::class), 'The installed Mercado Pago SDK provides its official webhook validator and exception.');
+$assert(InstalledVersions::getPrettyVersion('mercadopago/dx-php') === '3.16.0', 'The audited Mercado Pago SDK version is 3.16.0.');
 $fake_webhook_secret = 'test_' . bin2hex(random_bytes(32));
 $webhook_request_id = 'local-' . bin2hex(random_bytes(12));
 $webhook_data_id = (string) random_int(100000, 999999999);
@@ -686,9 +713,9 @@ $sign_test_webhook = static function (string $data_id, string $request_id, strin
   $manifest = 'id:' . strtolower($data_id) . ';request-id:' . $request_id . ';ts:' . $timestamp . ';';
   return 'ts=' . $timestamp . ',v1=' . hash_hmac('sha256', $manifest, $secret);
 };
-$make_webhook_request = static function (array $query_values, array $body_values, ?string $signature, ?string $request_id, string $method = 'POST'): \Symfony\Component\HttpFoundation\Request {
+$make_webhook_request = static function (array $query_values, array $body_values, ?string $signature, ?string $request_id, string $method = 'POST'): Request {
   $query = http_build_query($query_values, '', '&', PHP_QUERY_RFC3986);
-  $request = \Symfony\Component\HttpFoundation\Request::create(
+  $request = Request::create(
     'http://default/payment/notify/mercado_pago' . ($query !== '' ? '?' . $query : ''),
     $method,
     [],
@@ -747,7 +774,7 @@ $kernel = \Drupal::service('http_kernel');
 $other_gateway_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], ['type' => 'payment', 'data' => ['id' => $webhook_data_id]], NULL, NULL);
 $other_gateway_request->attributes->set('_route', 'commerce_payment.notify');
 $other_gateway_request->attributes->set('commerce_payment_gateway', 'another_gateway');
-$other_gateway_event = new \Symfony\Component\HttpKernel\Event\RequestEvent($kernel, $other_gateway_request, \Symfony\Component\HttpKernel\HttpKernelInterface::MAIN_REQUEST);
+$other_gateway_event = new RequestEvent($kernel, $other_gateway_request, HttpKernelInterface::MAIN_REQUEST);
 $subscriber->onKernelRequest($other_gateway_event);
 $assert(!$other_gateway_event->hasResponse() && $other_gateway_request->query->has('data_id'), 'Other Commerce gateways pass through untouched.');
 
@@ -760,7 +787,7 @@ try {
   $disabled_gateway_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], ['type' => 'payment', 'data' => ['id' => $webhook_data_id]], $valid_signature, $webhook_request_id);
   $disabled_gateway_request->attributes->set('_route', 'commerce_payment.notify');
   $disabled_gateway_request->attributes->set('commerce_payment_gateway', 'mercado_pago');
-  $disabled_gateway_event = new \Symfony\Component\HttpKernel\Event\RequestEvent($kernel, $disabled_gateway_request, \Symfony\Component\HttpKernel\HttpKernelInterface::MAIN_REQUEST);
+  $disabled_gateway_event = new RequestEvent($kernel, $disabled_gateway_request, HttpKernelInterface::MAIN_REQUEST);
   $subscriber->onKernelRequest($disabled_gateway_event);
   $assert($disabled_gateway_event->hasResponse() && $disabled_gateway_event->getResponse()->getStatusCode() === 503, 'The live native-route subscriber blocks notify while the Mercado Pago gateway entity is disabled.');
 }
@@ -768,12 +795,12 @@ finally {
   \Drupal::configFactory()->getEditable('commerce_payment.commerce_payment_gateway.mercado_pago')->set('status', $mp_original_status)->save();
   \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->resetCache(['mercado_pago']);
 }
-$assert($subscriber::getSubscribedEvents()[\Symfony\Component\HttpKernel\KernelEvents::REQUEST][1] === 29, 'Webhook guard runs after Drupal routing at the audited request event priority.');
+$assert($subscriber::getSubscribedEvents()[KernelEvents::REQUEST][1] === 29, 'Webhook guard runs after Drupal routing at the audited request event priority.');
 
 $other_route_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], ['type' => 'payment', 'data' => ['id' => $webhook_data_id]], NULL, NULL);
 $other_route_request->attributes->set('_route', 'commerce_payment.notify_other');
 $other_route_request->attributes->set('commerce_payment_gateway', 'mercado_pago');
-$other_route_event = new \Symfony\Component\HttpKernel\Event\RequestEvent($kernel, $other_route_request, \Symfony\Component\HttpKernel\HttpKernelInterface::MAIN_REQUEST);
+$other_route_event = new RequestEvent($kernel, $other_route_request, HttpKernelInterface::MAIN_REQUEST);
 $subscriber->onKernelRequest($other_route_event);
 $assert(!$other_route_event->hasResponse(), 'The guard ignores all routes except commerce_payment.notify.');
 
