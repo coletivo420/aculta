@@ -88,4 +88,16 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
     $this->assertArrayNotHasKey('#cache', $untouched);
   }
 
+  /**
+   * Carrinho completo ganha o componente com o estado atual e o recálculo no submit.
+   */
+  public function testCartFormGetsComponentAndRefreshSubmit(): void {
+    $form = [];
+    $this->hooks(ShippingSimulation::REASON_NO_PACKAGE)->alterCartForm($form);
+    $this->assertSame('component', $form['aculta_shipping_calculator']['#type']);
+    $this->assertSame('aculta420:shipping-calculator', $form['aculta_shipping_calculator']['#component']);
+    $this->assertSame('unavailable', $form['aculta_shipping_calculator']['#props']['state']);
+    $this->assertContains([ShippingCalculatorHooks::class, 'refreshShippingSubmit'], $form['#submit']);
+  }
+
 }

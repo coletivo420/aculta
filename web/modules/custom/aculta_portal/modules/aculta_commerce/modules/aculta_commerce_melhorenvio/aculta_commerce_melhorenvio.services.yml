@@ -122,6 +122,11 @@ services:
   Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore:
     alias: aculta_commerce_melhorenvio.quote_store
 
+  # Recalcula o frete guardado quando o carrinho é salvo (quantidade alterada ou item removido).
+  aculta_commerce_melhorenvio.cart_refresher:
+    class: Drupal\aculta_commerce_melhorenvio\Quote\ShippingCartRefresher
+    arguments: ['@aculta_commerce_melhorenvio.shipping_simulator', '@aculta_commerce_melhorenvio.quote_store']
+
   # Endpoint JSON do componente shipping-calculator. Limite por IP usa o serviço de flood do Drupal.
   aculta_commerce_melhorenvio.simulate_controller:
     class: Drupal\aculta_commerce_melhorenvio\Controller\ShippingSimulatorController
