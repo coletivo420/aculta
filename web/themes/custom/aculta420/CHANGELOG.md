@@ -9,7 +9,7 @@
 - Novo componente `shipping-summary`: resumo do último cálculo para o carrinho lateral (sem campo de CEP; a gaveta não calcula). `cart-offcanvas` recebe o resumo na prop `shipping`.
 - Encaixes: página do produto (abaixo da compra), carrinho lateral (gaveta e painel AJAX) e carrinho completo.
 - Stories: aguardando CEP, disponível, indisponível e sem opções (shipping-calculator); resumo com e sem cálculo (shipping-summary).
-- Validação: `validate-aculta420-sdc-schemas.php` PASS (661 checagens); `validate-aculta420-design-foundations.php` PASS; `validate-browser-validators.php` PASS (21 checks); `validate-aculta420-foundation.php` PASS (345 checks, versão asserida 0.7.0-dev.7).
+- Validação: `validate-aculta420-sdc-schemas.php` PASS (661 checagens); `validate-aculta420-design-foundations.php` PASS; `validate-browser-validators.php` PASS (21 checks); `validate-aculta420-foundation.php` PASS (345 checks, versão asserida 0.7.0-dev.8).
 - Não validado no navegador (Firefox ESR, ACULTA420 e Olivero) e no servidor de testes com origem, credencial e pacote reais. RUNTIME STATUS: DEFERRED.
 
 ## 0.7.0-dev.6 — author-card com tamanhos e repasse ao SDC (Fases 2 e 3 do avatar padrão)
