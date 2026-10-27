@@ -674,6 +674,10 @@ foreach ($manifest['configs'] as $name) {
   }
   $active_data = $active_storage->read($name);
   $sync_data = $sync_storage->read($name);
+  $assert(
+    $active_data !== FALSE && $sync_data !== FALSE,
+    'Configuração do manifesto ausente no armazenamento ativo ou no config/sync: ' . $name
+  );
   $sort_recursive($active_data);
   $sort_recursive($sync_data);
   $assert($active_data === $sync_data, 'Reviewed active configuration matches config/sync: ' . $name);
@@ -692,6 +696,10 @@ foreach ($active_names as $name) {
   }
   $active_data = $active_storage->read($name);
   $sync_data = $sync_storage->read($name);
+  $assert(
+    $active_data !== FALSE && $sync_data !== FALSE,
+    'Configuração do manifesto ausente no armazenamento ativo ou no config/sync: ' . $name
+  );
   $sort_recursive($active_data);
   $sort_recursive($sync_data);
   $assert($active_data === $sync_data, 'Full active configuration matches config/sync: ' . $name);
