@@ -2,16 +2,16 @@
   Simulador de frete por CEP. O estado (idle, available, unavailable, empty) e a mensagem chegam do Commerce; o tema
   só apresenta. Sem JavaScript, o campo aparece e o resultado do estado inicial também.
 #}
-<section class="aculta-shipping-calculator" aria-labelledby="{{ id }}-titulo" data-aculta-shipping-calculator data-endpoint="{{ endpoint }}">
+<section class="aculta-shipping-calculator" aria-labelledby="{{ id }}-titulo" data-aculta-shipping-calculator data-endpoint="{{ endpoint|default('/frete/simular') }}">
   <h3 class="aculta-shipping-calculator__titulo h6" id="{{ id }}-titulo">Calcular frete</h3>
 
-  <form class="aculta-shipping-calculator__form" action="{{ endpoint }}" method="get" novalidate>
+  <form class="aculta-shipping-calculator__form" action="{{ endpoint|default('/frete/simular') }}" method="get" novalidate>
     <label class="aculta-shipping-calculator__rotulo" for="{{ id }}-cep">Digite seu CEP</label>
     <div class="input-group aculta-shipping-calculator__campo">
       <input class="form-control" type="text" id="{{ id }}-cep" name="cep" value="{{ postal_code }}" inputmode="numeric" autocomplete="postal-code" maxlength="9" required>
       <button class="btn btn-primary" type="submit">Calcular</button>
     </div>
-    <a class="aculta-shipping-calculator__ajuda" href="{{ help_url }}" target="_blank" rel="noopener noreferrer">Não sei meu CEP</a>
+    <a class="aculta-shipping-calculator__ajuda" href="{{ help_url|default('https://buscacepinter.correios.com.br/app/endereco/index.php') }}" target="_blank" rel="noopener noreferrer">Não sei meu CEP</a>
   </form>
 
   <div class="aculta-shipping-calculator__resultado" aria-live="polite" data-aculta-shipping-resultado>

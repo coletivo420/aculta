@@ -29,6 +29,16 @@ class ShippingCalculatorHooks {
   public const CONFIG_TAG = 'config:aculta_commerce_melhorenvio.settings';
 
   /**
+   * Caminho do simulador (rota aculta_commerce_melhorenvio.simulate).
+   */
+  public const ENDPOINT = '/frete/simular';
+
+  /**
+   * Link "Não sei meu CEP" (busca de CEP dos Correios, confirmada pelo responsável em 2026-10-27).
+   */
+  public const HELP_URL = 'https://buscacepinter.correios.com.br/app/endereco/index.php';
+
+  /**
    * Cria o hook.
    */
   public function __construct(
@@ -99,7 +109,12 @@ class ShippingCalculatorHooks {
    * @return array{id: string, state: string, message: string, options: list<array<string, mixed>>, postal_code: string}
    */
   public function props(string $id): array {
-    return ['id' => $id] + $this->summary();
+    // Endpoint e link explícitos: o include() do Twig não aplica os padrões do componente (ficavam vazios no navegador).
+    return [
+      'id' => $id,
+      'endpoint' => self::ENDPOINT,
+      'help_url' => self::HELP_URL,
+    ] + $this->summary();
   }
 
   /**

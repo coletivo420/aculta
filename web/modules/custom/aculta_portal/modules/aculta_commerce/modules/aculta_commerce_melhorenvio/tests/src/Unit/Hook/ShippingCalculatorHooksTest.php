@@ -34,7 +34,15 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
    */
   public function testIdleWhenAvailable(): void {
     $props = $this->hooks(NULL)->props('frete-produto');
-    $this->assertSame(['id' => 'frete-produto', 'state' => 'idle', 'message' => '', 'options' => [], 'postal_code' => ''], $props);
+    $this->assertSame([
+      'id' => 'frete-produto',
+      'endpoint' => '/frete/simular',
+      'help_url' => 'https://buscacepinter.correios.com.br/app/endereco/index.php',
+      'state' => 'idle',
+      'message' => '',
+      'options' => [],
+      'postal_code' => '',
+    ], $props);
   }
 
   /**
