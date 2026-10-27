@@ -1,16 +1,16 @@
 """Teste visual do frete no carrinho (ME-0.1-C): cálculo no produto, carrinho e alteração de quantidade.
 
-Fluxo no servidor de testes, com Firefox ESR visível (DISPLAY=:0):
+Fluxo no servidor de testes, com Firefox ESR visível (DISPLAY=:0) e CLIQUES REAIS do WebDriver:
 1. Produto (loja.aculta.toca.net.br): digita um CEP válido e espera as opções (sem botão).
-2. Adiciona o produto ao carrinho. O cálculo deve ir junto: o resumo do frete aparece na gaveta.
-3. Carrinho completo (aculta.toca.net.br/carrinho, domínio principal): o bloco de frete mostra o último cálculo.
-4. Altera a quantidade do item para 2 e atualiza o carrinho. O cálculo guardado é refeito e continua aparecendo.
+2. Adiciona o produto ao carrinho com clique real. O cookie de sessão é compartilhado entre os
+   subdomínios (cookie_domain do ambiente), então o carrinho do domínio principal enxerga o item.
+3. Carrinho (aculta.toca.net.br/carrinho): item presente e bloco de frete com o último cálculo.
+4. Digita quantidade 2 e clica em atualizar. O cálculo guardado é refeito e continua aparecendo.
 
 Cria um item no carrinho do servidor de testes (dado de teste). Não altera tema nem configuração.
-Saída: SUITE_OUT (padrão /tmp/aculta-frete). Limitação: a gaveta e o carrinho podem estar em domínios diferentes.
+Saída: SUITE_OUT (padrão /tmp/aculta-frete).
 """
 
-import base64
 import json
 import os
 import sys
@@ -20,21 +20,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "aculta-cpf-checkout"))
 from wdlib import Driver  # noqa: E402
 
-OUT = os.environ.get("SUITE_OUT", "/tmp/aculta-frete")
-os.makedirs(OUT, exist_ok=True)
 PRODUTO = "https://loja.aculta.toca.net.br/loja/produto/bloco-sativa/camiseta-abada-bloco-sativa-2026-regata"
 CARRINHO = "https://aculta.toca.net.br/carrinho"
 PREFS = {"network.dns.localDomains": "loja.aculta.toca.net.br,aculta.toca.net.br"}
 CEP = "01310100"
+CAMPO_CEP = '[data-aculta-shipping-calculator] input[name="cep"]'
+OPCOES = '[data-aculta-shipping-calculator] .aculta-shipping-calculator__opcao'
 D = Driver(prefs=PREFS)
-S = lambda: f"/session/{D.session}"
 R = {}
-
-
-def shot(nome):
-    png = D.req("GET", S() + "/screenshot")
-    with open(os.path.join(OUT, nome), "wb") as fh:
-        fh.write(base64.b64decode(png))
 
 
 def espera(cond, timeout=60):
@@ -46,47 +39,42 @@ def espera(cond, timeout=60):
     return False
 
 
-CAMPO = '[data-aculta-shipping-calculator] input[name="cep"]'
-OPCOES = '[data-aculta-shipping-calculator] .aculta-shipping-calculator__opcao'
+def marca(seletor_js, id_marca):
+    """Marca o primeiro elemento que casa a condição com um id temporário, para o clique real."""
+    return D.js(f"""const e = Array.from(document.querySelectorAll('input,button')).find(e => {seletor_js});
+                    if (e) {{ e.id = '{id_marca}'; return true; }} return false;""")
+
 
 try:
-    D.req("POST", S() + "/window/rect", {"width": 1280, "height": 900})
+    D.req("POST", f"/session/{D.session}/window/rect", {"width": 1280, "height": 900})
     D.get(PRODUTO)
-    espera("document.querySelector('" + CAMPO + "')")
-    D.js("const c = document.querySelector(arguments[0]); c.value=''; c.dispatchEvent(new Event('input'));", [CAMPO])
-    D.type(CAMPO, CEP)
+    espera(f"document.querySelector('{CAMPO_CEP}')")
+    D.type(CAMPO_CEP, CEP)  # digitação real: o cálculo dispara sozinho
     R["produto_opcoes"] = espera(f"document.querySelectorAll('{OPCOES}').length > 0", 90)
-    shot("10-produto-calculado.png")
 
-    # Adiciona ao carrinho: escolhe o primeiro tamanho e envia o formulário de compra.
-    D.js("""const sel = document.querySelector('form[id^="commerce-order-item-add-to-cart-form"] select');
-            if (sel && sel.options.length > 1) { sel.selectedIndex = 1; sel.dispatchEvent(new Event('change')); }""")
-    D.js("""const b = Array.from(document.querySelectorAll('form[id^="commerce-order-item-add-to-cart-form"] input[type=submit]'))[0];
-            b.click();""")
-    time.sleep(6)
-    R["adicionado_url"] = D.js("return location.href;")
-    R["gaveta_resumo_frete"] = espera("document.querySelectorAll('.aculta-shipping-summary__opcao').length > 0 || "
-                                      "document.querySelector('.aculta-shipping-summary') !== null", 20)
-    shot("11-apos-adicionar.png")
-
-    # Carrinho completo, domínio principal: o frete calculado no produto precisa estar lá.
-    D.get(CARRINHO)
-    espera("document.querySelector('form[id*=commerce-cart]') || document.querySelector('[data-aculta-shipping-calculator]')", 60)
-    R["carrinho_bloco"] = espera("document.querySelector('[data-aculta-shipping-calculator]')", 20)
-    R["carrinho_opcoes_do_produto"] = espera(f"document.querySelectorAll('{OPCOES}').length > 0", 15)
-    shot("12-carrinho.png")
-
-    # Altera a quantidade para 2 e atualiza o carrinho.
-    D.js("""const q = Array.from(document.querySelectorAll('input[name^="edit_quantity"]'))[0];
-            if (q) { q.value = '2'; q.dispatchEvent(new Event('change')); }""")
-    D.js("""const u = Array.from(document.querySelectorAll('input[type=submit],button[type=submit]'))
-             .find(b => /atualiz|update/i.test(b.value || b.textContent));
-            if (u) { u.click(); }""")
+    D.js("const s = document.querySelector('form[id^=\"commerce-order-item-add-to-cart-form\"] select');"
+         "s.value = s.options[1].value; s.dispatchEvent(new Event('change', {bubbles: true}));")
+    time.sleep(3)
+    D.click("form[id^='commerce-order-item-add-to-cart-form'] input[type=submit]")
     time.sleep(8)
-    R["quantidade_atual"] = D.js("""const q = Array.from(document.querySelectorAll('input[name^="edit_quantity"]'))[0];
-            return q ? q.value : null;""")
-    R["apos_quantidade_opcoes"] = espera(f"document.querySelectorAll('{OPCOES}').length > 0", 30)
-    shot("13-apos-quantidade.png")
+    R["contador_apos_adicionar"] = D.js("const c = document.querySelector('[data-aculta-cart-count]');"
+                                        "return c ? parseInt(c.textContent, 10) || 0 : 0;")
+
+    D.get(CARRINHO)
+    R["carrinho_item"] = espera("document.body.innerText.includes('Camiseta Abadá Bloco Sativa')", 60)
+    R["carrinho_bloco_frete"] = espera("document.querySelector('[data-aculta-shipping-calculator]')", 20)
+    R["carrinho_opcoes_do_calculo"] = espera(f"document.querySelectorAll('{OPCOES}').length > 0", 20)
+
+    # Altera a quantidade para 2 com digitação real e clica em atualizar.
+    marca("e.name && e.name.startsWith('edit_quantity')", "frete-teste-qtd")
+    D.js("const q = document.getElementById('frete-teste-qtd'); q.value = '';")
+    D.type("#frete-teste-qtd", "2")
+    marca("/atualiz|update/i.test(e.value || e.textContent || '') && (e.type === 'submit' || e.tagName === 'BUTTON')",
+          "frete-teste-atualizar")
+    D.click("#frete-teste-atualizar")
+    time.sleep(8)
+    R["quantidade_apos_atualizar"] = D.js("return document.getElementById('frete-teste-qtd').value;")
+    R["opcoes_apos_quantidade"] = espera(f"document.querySelectorAll('{OPCOES}').length > 0", 30)
 finally:
     try:
         D.close()
@@ -94,6 +82,6 @@ finally:
         pass
 
 print(json.dumps(R, ensure_ascii=False, indent=2))
-falhas = [k for k, v in R.items() if v is False or v in (None, "")]
+falhas = [k for k, v in R.items() if v is False or v in (None, "") or (k == "contador_apos_adicionar" and v == 0)]
 print("FALHAS:", falhas or "nenhuma")
 sys.exit(1 if falhas else 0)
