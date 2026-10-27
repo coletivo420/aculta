@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\Plugin\Commerce\PaymentGateway;
 
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
+use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\commerce_payment\Exception\PaymentGatewayException;
+use Drupal\commerce_price\Price;
 use Drupal\aculta_pagamentos_mercadopago\Plugin\Commerce\PaymentGateway\CheckoutPro;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
+use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -143,6 +147,190 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
 
     $this->assertSame(200, $response->getStatusCode());
+  }
+
+  /**
+   * Completes an authorization only after the API confirms approval.
+   */
+  public function testApprovedRemotePaymentCompletesExistingAuthorization(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $parent_gateway->method('id')->willReturn('mercado_pago');
+    $client = new class {
+
+      /**
+       * Returns the simulated approved payment.
+       */
+      public function get(int $id): object {
+        return (object) [
+          'external_reference' => '42',
+          'status' => 'approved',
+          'transaction_amount' => '10.00',
+          'currency_id' => 'BRL',
+        ];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn(42);
+    $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
+    $order_storage = $this->createMock(EntityStorageInterface::class);
+    $order_storage->expects($this->once())->method('load')->with('42')->willReturn($order);
+
+    $payment_state = $this->createMock(StateItemInterface::class);
+    $payment_state->method('getId')->willReturn('authorization');
+    $payment = $this->createMock(PaymentInterface::class);
+    $payment->method('getState')->willReturn($payment_state);
+    $payment->expects($this->once())->method('setRemoteState')->with('approved');
+    $payment->expects($this->once())->method('setState')->with('completed');
+    $payment->expects($this->exactly(2))->method('save');
+    $query = $this->createMock(QueryInterface::class);
+    $conditions = [];
+    $query->expects($this->exactly(3))
+      ->method('condition')
+      ->willReturnCallback(static function (string $field, mixed $value) use (&$conditions, $query): QueryInterface {
+        $conditions[$field] = $value;
+        return $query;
+      });
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('sort')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
+    $query->method('execute')->willReturn([7]);
+    $payment_storage = $this->createMock(EntityStorageInterface::class);
+    $payment_storage->method('getQuery')->willReturn($query);
+    $payment_storage->expects($this->once())->method('load')->with(7)->willReturn($payment);
+    $payment_storage->expects($this->never())->method('create');
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->method('getStorage')->willReturnCallback(
+      static fn (string $type): EntityStorageInterface => $type === 'commerce_order' ? $order_storage : $payment_storage,
+    );
+
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123', 30)
+      ->willReturn(TRUE);
+    $lock->expects($this->once())
+      ->method('release')
+      ->with('aculta_pagamentos_mercadopago.payment.123');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    $this->assertSame(200, $response->getStatusCode());
+    $this->assertSame([
+      'order_id' => 42,
+      'payment_gateway' => 'mercado_pago',
+      'remote_id' => '123',
+    ], $conditions);
+  }
+
+  /**
+   * Verifies approval and avoids duplicate return processing.
+   */
+  public function testApprovedReturnWithExistingPaymentIsIdempotent(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $parent_gateway->method('id')->willReturn('mercado_pago');
+    $payment_client = new class {
+
+      /**
+       * Returns the simulated approved payment linked to the merchant order.
+       */
+      public function get(int $id): object {
+        return (object) [
+          'status' => 'approved',
+          'transaction_amount' => '10.00',
+          'currency_id' => 'BRL',
+          'external_reference' => '42',
+          'order' => (object) ['id' => '900'],
+        ];
+      }
+
+    };
+    $merchant_order_client = new class {
+
+      /**
+       * Returns the matching merchant order.
+       */
+      public function get(int $id): object {
+        return (object) ['external_reference' => '42'];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->exactly(2))
+      ->method('criar')
+      ->willReturnCallback(static fn (string $alias): object => $alias === 'pagamentos' ? $payment_client : $merchant_order_client);
+
+    $query = $this->createMock(QueryInterface::class);
+    $conditions = [];
+    $query->expects($this->exactly(3))
+      ->method('condition')
+      ->willReturnCallback(static function (string $field, mixed $value) use (&$conditions, $query): QueryInterface {
+        $conditions[$field] = $value;
+        return $query;
+      });
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
+    $query->method('execute')->willReturn([7]);
+    $payment_storage = $this->createMock(EntityStorageInterface::class);
+    $payment_storage->method('getQuery')->willReturn($query);
+    $payment_storage->expects($this->never())->method('create');
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->expects($this->once())
+      ->method('getStorage')
+      ->with('commerce_payment')
+      ->willReturn($payment_storage);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn(42);
+    $order->method('getData')
+      ->with('commerce_mercado_pago_checkout')
+      ->willReturn(['preference_id' => 'pref-1']);
+    $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
+    $order->expects($this->never())->method('save');
+
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123', 30)
+      ->willReturn(TRUE);
+    $lock->expects($this->once())
+      ->method('release')
+      ->with('aculta_pagamentos_mercadopago.payment.123');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $result = $gateway->onReturn($order, new Request([
+      'payment_id' => '123',
+      'merchant_order_id' => '900',
+      'status' => 'approved',
+    ]));
+
+    $this->assertNull($result);
+    $this->assertSame([
+      'order_id' => 42,
+      'payment_gateway' => 'mercado_pago',
+      'remote_id' => '123',
+    ], $conditions);
   }
 
   /**
