@@ -114,7 +114,7 @@ Inconsistência registrada: o docblock de `PaymentClient::cancel` diz que só `p
 | Estornar | `refundPayment` do gateway, pela operação `refund-payment` do Commerce | Total ou parcial, só em `completed` e `partially_refunded` |
 | Contestação | Só registro em log | Exige tratamento manual |
 
-Pagamentos do Checkout Pro entram como `authorization` e viram `completed` na aprovação (IPN ou retorno). Por isso o cancelamento de um pendente usa a transição `void` nativa do Commerce.
+Pagamentos do Checkout Pro usam o workflow próprio `aculta_mercadopago_payment`: `pending`, `in_process` e `authorized` permanecem pendentes; o Webhook assinado ou o retorno reconsulta a API e só muda para `completed` quando o estado remoto é `approved`. Notificações IPN legadas são recusadas. O cancelamento de um pagamento pendente usa a transição `void` do workflow.
 
 Os painéis com botões de cancelar, estornar e atualizar ficam para a fase visual. Cancelar e estornar são concedidos ao gerente de loja (permissão `gerenciar pagamentos de vendas`, papel `gerente_loja`).
 

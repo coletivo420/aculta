@@ -1,3 +1,8 @@
+## 0.1.0-dev.32 — alinhar o contrato de pagamentos pendentes (2026-10-27)
+
+- Roadmap corrigido para descrever o workflow próprio `aculta_mercadopago_payment`, a confirmação por API via retorno/Webhook assinado e a recusa de IPN legado. O texto antigo afirmava `authorization` e IPN como fluxo vigente.
+- Revisão documental; sem alteração de runtime. Gates de índice e `git diff --check` PASS.
+
 ## 0.1.0-dev.31 — normalizar falhas de transporte na recorrência (2026-10-27)
 
 - Timeouts e outras exceções de transporte do SDK em operações de plano/assinatura agora viram `MercadoPagoApiException` com mensagem segura e registro categórico, para que a pane de autorização trate a falha e ofereça nova tentativa sem expor detalhes privados.
