@@ -1399,10 +1399,19 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
           $existing_payment->setState('completed');
           $existing_payment->save();
         }
-        elseif ($pending_status && in_array($existing_state, ['new', 'authorization'], TRUE)) {
-          $existing_payment->setState('pending');
-          $existing_payment->setRemoteState($verified_status);
-          $existing_payment->save();
+        elseif ($pending_status && in_array($existing_state, ['new', 'authorization', 'pending'], TRUE)) {
+          $changed = FALSE;
+          if (in_array($existing_state, ['new', 'authorization'], TRUE)) {
+            $existing_payment->setState('pending');
+            $changed = TRUE;
+          }
+          if ($existing_payment->getRemoteState() !== $verified_status) {
+            $existing_payment->setRemoteState($verified_status);
+            $changed = TRUE;
+          }
+          if ($changed) {
+            $existing_payment->save();
+          }
         }
         $logger->info('Payment already saved from a signed webhook or return.');
         return;

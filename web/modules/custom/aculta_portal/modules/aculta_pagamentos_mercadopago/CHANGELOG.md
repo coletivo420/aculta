@@ -1,3 +1,8 @@
+## 0.1.0-dev.46 — atualizar status remoto em retorno pendente (2026-10-27)
+
+- `onReturn()` agora atualiza `remote_state` quando o pagamento Commerce já está pendente e a API confirma outro estado ainda pendente (`pending`, `in_process` ou `authorized`). Mantém a máquina Commerce pendente e não regride pagamentos concluídos.
+- Regressão: retorno autenticado do provedor `in_process` → `authorized`, pagamento local continua `pending`, `remote_state` é salvo uma vez. Unit MP: 201 testes / 820 assertions PASS; PHPCS Drupal/DrupalPractice PASS; Kernel `CheckoutProTest`: 2 testes / 91 assertions PASS (77 depreciações upstream).
+
 ## 0.1.0-dev.45 — conciliar notificações assinadas de contestação (2026-10-27)
 
 - Webhook `topic_chargebacks_wh` agora consulta o caso no Mercado Pago pelo ID assinado, associa o pagamento pelo `payment_id` retornado pela API e aciona a conciliação Commerce normal, com validação de pedido/valor/moeda e lock compartilhado. Associação ausente ou ambígua falha e solicita retry; payload remoto e dados do comprador não são registrados.
