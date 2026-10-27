@@ -51,9 +51,8 @@
           price: price,
           purchase: product.variations,
         }, with_context = false) }}
-        {% if shipping_calculator %}
-          {{ include('aculta420:shipping-calculator', shipping_calculator, with_context = false) }}
-        {% endif %}
+        {# Calculadora de frete: bloco do módulo aculta_commerce_melhorenvio (funciona com este tema e com qualquer outro). #}
+        {{ elements.aculta_shipping_calculator }}
       </div>
     </div>
 

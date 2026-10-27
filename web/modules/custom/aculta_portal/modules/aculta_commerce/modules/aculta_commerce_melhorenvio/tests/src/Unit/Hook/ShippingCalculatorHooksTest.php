@@ -102,9 +102,9 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
   public function testCartFormGetsComponentAndRefreshSubmit(): void {
     $form = [];
     $this->hooks(ShippingSimulation::REASON_NO_PACKAGE)->alterCartForm($form);
-    $this->assertSame('component', $form['aculta_shipping_calculator']['#type']);
-    $this->assertSame('aculta420:shipping-calculator', $form['aculta_shipping_calculator']['#component']);
-    $this->assertSame('unavailable', $form['aculta_shipping_calculator']['#props']['state']);
+    $this->assertSame('aculta_shipping_calculator', $form['aculta_shipping_calculator']['#theme']);
+    $this->assertSame(['aculta_commerce_melhorenvio/shipping-calculator'], $form['aculta_shipping_calculator']['#attached']['library']);
+    $this->assertSame('unavailable', $form['aculta_shipping_calculator']['#state']);
     $this->assertArrayNotHasKey('#submit', $form);
   }
 

@@ -95,7 +95,7 @@ final class ShippingSimulation {
       return 'Nenhuma opção de entrega para este CEP.';
     }
     return match ($this->reason) {
-      self::REASON_INVALID_POSTAL_CODE => 'Informe um CEP válido, com oito dígitos.',
+      self::REASON_INVALID_POSTAL_CODE => 'CEP inválido.',
       self::REASON_FAILURE => 'Não foi possível calcular o frete agora. Tente novamente.',
       self::REASON_RATE_LIMITED => 'Muitas consultas em pouco tempo. Aguarde um minuto.',
       default => 'Cálculo de frete indisponível no momento.',

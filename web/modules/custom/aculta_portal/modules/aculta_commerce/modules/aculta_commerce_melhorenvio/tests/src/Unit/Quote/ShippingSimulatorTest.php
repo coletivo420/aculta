@@ -195,7 +195,7 @@ final class ShippingSimulatorTest extends UnitTestCase {
   public function testVisitorMessages(): void {
     $this->assertSame('', (new ShippingSimulation(ShippingSimulation::STATE_AVAILABLE, NULL, [new QuoteOption('1', 'PAC', 'Correios', '1.00', 1)]))->message());
     $this->assertSame('Nenhuma opção de entrega para este CEP.', (new ShippingSimulation(ShippingSimulation::STATE_EMPTY))->message());
-    $this->assertSame('Informe um CEP válido, com oito dígitos.', ShippingSimulation::unavailable(ShippingSimulation::REASON_INVALID_POSTAL_CODE)->message());
+    $this->assertSame('CEP inválido.', ShippingSimulation::unavailable(ShippingSimulation::REASON_INVALID_POSTAL_CODE)->message());
     $this->assertSame('Não foi possível calcular o frete agora. Tente novamente.', ShippingSimulation::unavailable(ShippingSimulation::REASON_FAILURE)->message());
     $this->assertSame('Cálculo de frete indisponível no momento.', ShippingSimulation::unavailable(ShippingSimulation::REASON_NO_ORIGIN)->message());
     $this->assertSame('Cálculo de frete indisponível no momento.', ShippingSimulation::unavailable(ShippingSimulation::REASON_NO_PACKAGE)->message());

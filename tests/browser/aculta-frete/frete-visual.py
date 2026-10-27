@@ -51,12 +51,17 @@ def espera(condicao, timeout=60):
     return False
 
 
-def preenche_e_calcula(cep):
-    D.js("""
-      const campo = document.querySelector('[data-aculta-shipping-calculator] input[name="cep"]');
-      campo.value = arguments[0];
-    """, [cep])
-    D.click("[data-aculta-shipping-calculator] button[type=submit]")
+CAMPO = '[data-aculta-shipping-calculator] input[name="cep"]'
+
+
+def digita_cep(cep):
+    """Digita o CEP caractere a caractere (cálculo automático, sem botão)."""
+    D.js("const c = document.querySelector(arguments[0]); c.value = ''; c.dispatchEvent(new Event('input'));", [CAMPO])
+    D.type(CAMPO, cep)
+
+
+def sai_do_campo():
+    D.js("document.querySelector(arguments[0]).blur();", [CAMPO])
 
 
 def resultado_texto():
@@ -74,16 +79,18 @@ try:
     shot("01-produto-desktop.png")
 
     # Caso 1: CEP válido, cotação real no sandbox.
-    preenche_e_calcula(CEP_VALIDO)
+    digita_cep(CEP_VALIDO)
+    RESULTADO["sem_botao"] = not D.js("return !!document.querySelector('[data-aculta-shipping-calculator] button[type=submit]');")
     RESULTADO["disponivel_opcoes"] = espera(
         "document.querySelectorAll('[data-aculta-shipping-calculator] .aculta-shipping-calculator__opcao').length > 0", 90)
     RESULTADO["disponivel_texto"] = resultado_texto()
     shot("02-disponivel-desktop.png")
 
     # Caso 2: CEP inválido, recusado antes de qualquer chamada.
-    preenche_e_calcula(CEP_INVALIDO)
+    digita_cep(CEP_INVALIDO)
+    sai_do_campo()
     RESULTADO["invalido_mensagem"] = espera(
-        "/CEP válido/.test(document.querySelector('[data-aculta-shipping-calculator] [data-aculta-shipping-resultado]').innerText)", 20)
+        "/CEP inválido/.test(document.querySelector('[data-aculta-shipping-calculator] [data-aculta-shipping-resultado]').innerText)", 20)
     shot("03-cep-invalido-desktop.png")
 
     # Celular: o Firefox desta sessão X não encolhe a janela abaixo de ~500 px, então a viewport de 390 px é um iframe

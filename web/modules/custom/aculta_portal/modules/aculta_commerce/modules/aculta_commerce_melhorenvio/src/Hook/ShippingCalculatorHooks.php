@@ -47,21 +47,6 @@ class ShippingCalculatorHooks {
   ) {}
 
   /**
-   * Adiciona as props do simulador à página completa do produto. A miniatura do catálogo não tem simulador.
-   */
-  #[Hook('preprocess_commerce_product')]
-  public function preprocessCommerceProduct(array &$variables): void {
-    $product = $variables['elements']['#commerce_product'] ?? NULL;
-    if ($product === NULL || $product->bundle() !== self::BUNDLE) {
-      return;
-    }
-    if (($variables['elements']['#view_mode'] ?? 'default') === 'catalog') {
-      return;
-    }
-    $variables['shipping_calculator'] = $this->props('frete-produto');
-  }
-
-  /**
    * Props do simulador da gaveta do carrinho. A gaveta só o mostra com itens (ver cart-offcanvas).
    */
   #[Hook('preprocess_page')]
@@ -83,12 +68,7 @@ class ShippingCalculatorHooks {
    */
   #[Hook('form_views_form_commerce_cart_form_default_alter')]
   public function alterCartForm(array &$form): void {
-    $form['aculta_shipping_calculator'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420:shipping-calculator',
-      '#props' => $this->props('frete-carrinho'),
-      '#weight' => 100,
-    ];
+    $form['aculta_shipping_calculator'] = $this->element($this->props('frete-carrinho'), 100);
   }
 
   /**
@@ -100,6 +80,11 @@ class ShippingCalculatorHooks {
       return;
     }
     $build['#cache']['tags'][] = self::CONFIG_TAG;
+    // Bloco do módulo (vale para qualquer tema). Só na página completa do produto, não na miniatura do catálogo.
+    if ($display->getMode() !== 'default') {
+      return;
+    }
+    $build['aculta_shipping_calculator'] = $this->element($this->props('frete-produto'), 100);
   }
 
   /**
@@ -140,6 +125,24 @@ class ShippingCalculatorHooks {
       'options' => [],
       'postal_code' => '',
     ];
+  }
+
+  /**
+   * Elemento de render do bloco do módulo. Variáveis do template vão como chaves com '#', como o Drupal exige.
+   *
+   * @param array<string, mixed> $props
+   *   Props do simulador (id, state, message, options, postal_code, endpoint, help_url).
+   */
+  private function element(array $props, int $weight): array {
+    $element = [
+      '#theme' => 'aculta_shipping_calculator',
+      '#attached' => ['library' => [ShippingCalculatorThemeHooks::LIBRARY]],
+      '#weight' => $weight,
+    ];
+    foreach ($props as $name => $value) {
+      $element['#' . $name] = $value;
+    }
+    return $element;
   }
 
 }

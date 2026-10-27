@@ -1,0 +1,55 @@
+/* Simulador de frete (módulo): tokens do ACULTA420 com fallback para o Bootstrap, para funcionar em qualquer tema. */
+.aculta-shipping-calculator {
+  display: grid;
+  gap: 0.75rem;
+  padding-block-start: 1rem;
+  border-top: 1px solid var(--aculta-border-subtle, var(--bs-border-color, currentColor));
+  color: var(--aculta-text-primary, var(--bs-body-color, inherit));
+}
+.aculta-shipping-calculator__titulo { margin: 0; font-family: var(--aculta-font-body); font-weight: 600; }
+.aculta-shipping-calculator__form { display: grid; gap: 0.5rem; }
+.aculta-shipping-calculator__rotulo { font-size: 0.875rem; color: var(--aculta-text-secondary, var(--bs-secondary-color, inherit)); }
+.aculta-shipping-calculator__campo .form-control { min-width: 0; }
+.aculta-shipping-calculator__ajuda {
+  justify-self: start;
+  font-size: 0.875rem;
+  color: var(--aculta-text-accent, var(--bs-link-color, inherit));
+  text-decoration: underline;
+}
+.aculta-shipping-calculator__ajuda:focus-visible { outline: 2px solid var(--aculta-focus-ring, var(--bs-link-color, currentColor)); outline-offset: 2px; }
+.aculta-shipping-calculator__opcoes { display: grid; gap: 0.5rem; margin: 0; padding: 0; }
+.aculta-shipping-calculator__opcao {
+  display: grid;
+  gap: 0.125rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--aculta-control-border, var(--bs-border-color, currentColor));
+  border-radius: 0.375rem;
+  background: var(--aculta-surface-raised, var(--bs-body-bg, transparent));
+}
+.aculta-shipping-calculator__servico { font-weight: 600; }
+.aculta-shipping-calculator__preco { font-weight: 600; }
+.aculta-shipping-calculator__prazo { font-size: 0.875rem; color: var(--aculta-text-secondary, var(--bs-secondary-color, inherit)); }
+.aculta-shipping-calculator__aviso { margin: 0; padding: 0.5rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; }
+.aculta-shipping-calculator__aviso--unavailable {
+  background: var(--aculta-status-warning-surface, var(--bs-warning-bg-subtle, transparent));
+  border: 1px solid var(--aculta-status-warning-border, var(--bs-warning-border-subtle, currentColor));
+  color: var(--aculta-status-warning-text, var(--bs-warning-text-emphasis, inherit));
+}
+.aculta-shipping-calculator__aviso--empty { color: var(--aculta-text-muted, var(--bs-secondary-color, inherit)); }
+
+@media (min-width: 576px) {
+  .aculta-shipping-calculator__opcao { grid-template-columns: 1fr auto; align-items: baseline; }
+  .aculta-shipping-calculator__prazo { grid-column: 1 / -1; }
+}
+
+/* Botão e campo com a mesma aparência do Bootstrap, para temas sem Bootstrap (ex.: Olivero). */
+.aculta-shipping-calculator .input-group { display: flex; gap: 0.5rem; }
+.aculta-shipping-calculator .form-control {
+  flex: 1 1 auto; min-width: 0; padding: 0.375rem 0.75rem; border: 1px solid var(--bs-border-color, currentColor);
+  border-radius: 0.375rem; background: var(--bs-body-bg, transparent); color: inherit;
+}
+.aculta-shipping-calculator .btn-primary {
+  padding: 0.375rem 0.9rem; border: 1px solid transparent; border-radius: 0.375rem;
+  background: var(--bs-primary, var(--aculta-interactive-bg, currentColor)); color: var(--bs-white, var(--aculta-text-inverse, inherit)); cursor: pointer;
+}
+.aculta-shipping-calculator .list-unstyled { list-style: none; }
