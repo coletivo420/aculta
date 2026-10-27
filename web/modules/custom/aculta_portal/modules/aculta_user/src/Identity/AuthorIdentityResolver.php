@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_user\Identity;
 
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
+use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\aculta_user\PublicProfileLinkInterface;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_user\PublicProfilePolicy;
@@ -39,14 +40,23 @@ final class AuthorIdentityResolver implements PublicMemberIdentityInterface {
     'author_minimal',
   ];
 
+  /**
+   * Resolvedor de avatar compartilhado com Conta/perfil. Sem ele (testes), a
+   * foto continua valendo e o acervo ilustrativo não é usado.
+   */
+  private readonly AvatarResolver $avatars;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly PublicProfileLinkInterface $publicProfileLink,
-    private readonly ImageRenderer $imageRenderer,
+    ImageRenderer $imageRenderer,
     private readonly PublicProfilePolicy $profilePolicy,
     private readonly SocialNetworksInterface $socialNetworks,
     private readonly DateFormatterInterface $dateFormatter,
-  ) {}
+    ?AvatarResolver $avatarResolver = NULL,
+  ) {
+    $this->avatars = $avatarResolver ?? new AvatarResolver($imageRenderer);
+  }
 
   /**
    * Resolve apelido e link público canônico para uma conta Drupal.
@@ -93,14 +103,7 @@ final class AuthorIdentityResolver implements PublicMemberIdentityInterface {
       'exibir_email' => $fieldBoolean($profile, 'field_exibir_email', FALSE),
       'exibir_redes' => $fieldBoolean($profile, 'field_exibir_redes', FALSE),
     ]);
-    $avatar = NULL;
-    if (isset($visibleItems['foto']) && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
-      $file = $account->get('user_picture')->entity;
-      if ($file !== NULL) {
-        $avatar = $this->imageRenderer->build('avatar', $file->getFileUri(), $displayName, ['loading' => 'lazy']);
-        $cacheability->addCacheableDependency($file);
-      }
-    }
+    $avatar = $this->avatars->build($account, $displayName, isset($visibleItems['foto']), $cacheability);
     $memberSince = NULL;
     if (in_array($variant, ['author_forum', 'author_forum_stacked'], TRUE)
       && $publicProfile

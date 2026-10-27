@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Controller;
 
-use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_user\Avatar\AvatarPool;
+use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\aculta_user\Form\FriendshipActionForm;
 use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
@@ -46,8 +45,7 @@ final class PublicProfileController extends ControllerBase {
     private readonly AccountProxyInterface $account,
     private readonly FormBuilderInterface $forms,
     private readonly ModuleHandlerInterface $modules,
-    private readonly AvatarPool $avatarPool,
-    private readonly ImageRenderer $imageRenderer,
+    private readonly AvatarResolver $avatars,
   ) {}
 
   /**
@@ -63,8 +61,7 @@ final class PublicProfileController extends ControllerBase {
       $container->get('current_user'),
       $container->get('form_builder'),
       $container->get('module_handler'),
-      $container->get('aculta_user.avatar_pool'),
-      $container->get('aculta_image.render'),
+      $container->get('aculta_user.avatar_resolver'),
     );
   }
 
@@ -148,26 +145,14 @@ final class PublicProfileController extends ControllerBase {
    */
   private function avatar($account, string $apelido, bool $showPhoto): array {
     $wrap = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-avatar']];
-    if ($showPhoto && $account !== NULL && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
-      $wrap['image'] = $this->imageRenderer->build('avatar', $account->get('user_picture')->entity->getFileUri(), $apelido);
+    $cacheability = new CacheableMetadata();
+    $image = $this->avatars->build($account, $apelido, $showPhoto, $cacheability, ['data-portal-ui' => 'public-profile-avatar-image']);
+    if ($image !== NULL) {
+      $wrap['image'] = $image;
+      $cacheability->applyTo($wrap);
     }
     else {
-      $fallback = $this->avatarPool->fallbackEntry((int) $account?->id());
-      if ($fallback !== NULL) {
-        $wrap['image'] = [
-          '#type' => 'html_tag',
-          '#tag' => 'img',
-          '#attributes' => [
-            'src' => $this->avatarPool->previewUrl($fallback),
-            'alt' => (string) $this->t('Avatar ilustrativo para @name', ['@name' => $apelido]),
-            'data-portal-ui' => 'public-profile-avatar-image',
-          ],
-          '#cache' => ['contexts' => ['languages:language_interface']],
-        ];
-      }
-      else {
-        $wrap['initial'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => mb_strtoupper(mb_substr($apelido, 0, 1)), '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-initial', 'aria-hidden' => 'true'])];
-      }
+      $wrap['initial'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => mb_strtoupper(mb_substr($apelido, 0, 1)), '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-initial', 'aria-hidden' => 'true'])];
     }
     return $wrap;
   }

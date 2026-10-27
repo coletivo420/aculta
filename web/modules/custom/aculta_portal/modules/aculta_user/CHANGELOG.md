@@ -1,3 +1,17 @@
+## 0.4.0-dev.76 — avatar padrão único nos cartões e no perfil
+
+`AvatarResolver` passa a ser a única regra de avatar público: foto liberada pela
+policy, depois o avatar ilustrativo do acervo, e por último NULL (o chamador mostra
+a inicial). `AuthorIdentityResolver` (cartões de autor em fórum, revista, LMS e wiki)
+e `PublicProfileController` (Conta/perfil) usam o mesmo serviço, então o site inteiro
+se comporta igual sem foto. Sem mudança de config, permissão ou campo.
+
+Validação: teste unitário `AvatarResolverTest` (contrato sem foto e sem acervo);
+PHP lint PASS nos arquivos alterados. PHPUnit, gates e Runtime não executados nesta
+sessão (sem `vendor/`). RUNTIME STATUS: DEFERRED.
+
+---
+
 ## 0.4.0-dev.75 — identificar cada transição de amizade
 
 `FriendshipChangedEvent` recebe um `transitionId` aleatório e imutável por

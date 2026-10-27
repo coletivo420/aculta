@@ -63,3 +63,19 @@ inicial, consumido por `AuthorIdentityResolver`, `AuthorCardBuilder` e
 `PublicProfileController`.
 
 Gates aplicáveis: `validate-aculta-portal-drupal11.php`, `validate-aculta-user-photo.php`.
+
+## Fase 1 — implementada (aculta_user 0.4.0-dev.76)
+
+- `Avatar\AvatarResolver` (serviço `aculta_user.avatar_resolver`) é a regra única:
+  foto liberada pela policy → acervo ilustrativo (`AvatarPool::fallbackEntry`) → NULL,
+  que vira inicial no chamador.
+- `Identity\AuthorIdentityResolver` usa o resolver: cartões de autor de fórum,
+  revista, LMS, wiki e comentários passam a mostrar o acervo quando não há foto.
+- `Controller\PublicProfileController` usa o mesmo resolver em Conta/perfil. O marcador
+  `data-portal-ui="public-profile-avatar-image"` foi mantido para o tema.
+- O construtor de `AuthorIdentityResolver` ganhou o último argumento opcional
+  (`AvatarResolver`), para não quebrar os testes existentes.
+
+Pendências das Fases 2 a 5: SDC `author-card` único com UI Styles, Views de perfil,
+aplicação por sessão (roster e sala do LMS sem avatar hoje, wiki sem autor) e verificação visual.
+`LegacyMemorialController` mantém seu bloco próprio de avatar (memorial coletivo, fora desta regra).
