@@ -145,6 +145,8 @@ final class PortalUiHooks {
     'h5p-content-unavailable' => ['h5p-content-unavailable'],
     'h5p-dashboard-course' => ['aculta-lms-h5p-course'],
     'checkout-help' => ['checkout-help'],
+    'checkout-guest-registration' => ['card', 'card-body', 'mb-3'],
+    'checkout-google' => ['d-flex', 'justify-content-center', 'mb-3'],
     'gallery-dialog' => ['aculta-gallery-dialog'],
     'mercado-pago-credentials-test' => ['mercado-pago-credentials', 'mercado-pago-credentials-test'],
     'mercado-pago-credentials-stage' => ['mercado-pago-credentials', 'mercado-pago-credentials-stage'],

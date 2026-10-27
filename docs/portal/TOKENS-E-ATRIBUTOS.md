@@ -458,6 +458,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `h5p-content-unavailable` | `h5p-content-unavailable` | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/Field/FieldFormatter/H5PDefaultFormatter.php` |
 | `h5p-dashboard-course` | `aculta-lms-h5p-course` | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Controller/H5PDashboardController.php` |
 | `checkout-help` | `checkout-help` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/PluginForm/Checkout/RedirectCheckoutForm.php` |
+| `checkout-guest-registration` | `card`, `card-body`, `mb-3` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/AcultaCheckoutLogin.php` |
+| `checkout-google` | `d-flex`, `justify-content-center`, `mb-3` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/AcultaCheckoutLogin.php` |
 | `mercado-pago-credentials-test` | `mercado-pago-credentials`, `mercado-pago-credentials-test` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
 | `mercado-pago-credentials-stage` | `mercado-pago-credentials`, `mercado-pago-credentials-stage` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
 | `mercado-pago-credentials-prod` | `mercado-pago-credentials`, `mercado-pago-credentials-prod` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |

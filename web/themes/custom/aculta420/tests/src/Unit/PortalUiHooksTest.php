@@ -64,6 +64,31 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * Checkout account registration and Google controls receive theme classes.
+   */
+  public function testMapsCheckoutAccountTokens(): void {
+    $variables = [
+      'element' => [
+        '#attributes' => ['data-portal-ui' => 'checkout-guest-registration'],
+      ],
+      'attributes' => new Attribute(['data-portal-ui' => 'checkout-google']),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $registration = $variables['element']['#attributes'];
+    $this->assertArrayNotHasKey('data-portal-ui', $registration);
+    $this->assertContains('card', $registration['class']);
+    $this->assertContains('card-body', $registration['class']);
+    $this->assertContains('mb-3', $registration['class']);
+    $google = $variables['attributes'];
+    $this->assertFalse($google->offsetExists('data-portal-ui'));
+    $this->assertTrue($google->hasClass('d-flex'));
+    $this->assertTrue($google->hasClass('justify-content-center'));
+    $this->assertTrue($google->hasClass('mb-3'));
+  }
+
+  /**
    * WE SATIVA workspace and navigation actions receive responsive Bootstrap classes.
    */
   public function testMapsWeSativaWorkspaceAndLinkTokens(): void {

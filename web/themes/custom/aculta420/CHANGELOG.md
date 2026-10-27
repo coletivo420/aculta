@@ -1,3 +1,8 @@
+## 0.7.0-dev.8 — mapear tokens semânticos do checkout
+
+- O tema traduz `checkout-guest-registration` e `checkout-google` em classes Bootstrap para a identificação e o cadastro durante o checkout.
+- `PortalUiHooksTest`: 9 testes / 52 assertions PASS; validador de fronteira: 3100 verificações PASS. PHPCS Drupal/DrupalPractice: zero erros; seis avisos preexistentes de linhas longas neste arquivo de teste.
+
 ## Não validado — calculadora de frete (ME-0.1-C) — 2026-10-27
 
 - Novo componente `shipping-calculator` (campo de CEP, botão "Calcular", "Não sei meu CEP" e resultado com aria-live). Estados idle, available, unavailable e empty; o tema só apresenta o estado devolvido pelo Commerce.
