@@ -7,6 +7,7 @@
 - Unit MP: 143 testes / 435 assertions PASS; PHP lint/PHPCS dos PHP alterados PASS; status-index PASS (43 componentes). Foundation 345, shell-contract 11, fixtures 19, SDC 628, design-foundations 2.232/157 fixtures, browser validators 21 e module-theme-boundary 3.061: PASS.
 - Firefox ESR/geckodriver em `DISPLAY=:0`: `scripts/check-browser-hosts.sh` carregou MAIN, Loja e Apoio (3/3, códigos 0). É somente smoke público, não valida ação de reembolso nem sandbox. Kernel não executado (`SIMPLETEST_DB` ausente); nenhum segredo lido e nenhum pagamento externo foi realizado.
 - `aculta_runtime` não recebeu escrita; sem `updatedb`, `config:import` ou alteração de dados. A microfase ainda aguarda homologação sandbox de estorno parcial/total.
+- Commit `43c1201bf` publicado em `origin/chore/aculta-m0-integridade` por fast-forward após `git fetch` e confirmação de ancestralidade; checkout destacado nesse SHA. Pós-troca: `drush status`, `updatedb:status` e `config:status` exit 0; Runtime `aculta_runtime` conectado e listas de updates/config ainda pendentes. `drush cr` PASS; MAIN e Loja HTTP 200. Nenhum update/import, snapshot ou dado foi alterado.
 
 ## Mercado Pago — microfase de falhas de API no Checkout Pro (2026-10-27)
 
