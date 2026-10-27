@@ -159,7 +159,8 @@ provider/tipo.
 | `document` | 2 | `media:document` | request atual | — | Kernel Media |
 | `course_document` | 2 | `media:course_document` | `courses` | — | Kernel Group/curso |
 | `remote_video` | 2 | `media:remote_video` | request atual | — | Kernel Media/Portal |
-| `lms_course` | 3 com plugin / 2 sem | `group:lms_course` | `courses` | `course_reading`, `course_gallery`, `course_document` | Kernel LMS + `takeAccess` |
+| `lms_course` | 4 com plugin / 3 sem | `group:lms_course` | `courses` | `course_reading`, `course_gallery`, `course_document`, `course_video` | Kernel LMS + `takeAccess`; `field_lms_videos` |
+| `file` (submódulo `aculta_index_file`) | 1 | `file:file` | request atual | — | Unit 2/21; bridge 3/55; somente permanentes, sem nome/URI/MIME/tamanho |
 
 Matriz de autorização exercitada:
 
@@ -182,14 +183,20 @@ Achados de integração:
   quando o verbete está publicado. O Index deve revalidar o estado atual, não
   tratar a publicação da projeção como definitiva; a fixture do Kernel ajusta
   explicitamente o estado depois do hook.
-- Não há provider `file:file`; `media.files.requests` (Statistics) não é
-  alcançável pelo bridge até existir um owner para esse tipo.
+- O submódulo opcional `aculta_index_file` fornece `file:file` (somente
+  permanentes; sem nome, URI, MIME ou tamanho) e torna
+  `media.files.requests` alcançável pelo bridge quando habilitado; a conta
+  precisa de `administer aculta_statistics` porque a métrica é INTERNAL.
 - O harness Wiki bootava 9 providers/11 tuplas com limite fixo de 10 lotes;
   agora deriva o limite do registry.
 - A limpeza de geração em lotes pode deixar uma relação transitória sem fonte
   dentro da geração `discarding`; a integridade passou a ignorar essa condição,
   sem poupar gerações ativas ou retidas.
-- Relações editoriais de vídeo continuam adiadas por decisão do responsável.
+- O contrato de vídeo foi definido em 2026-10-26. O LMS implementou
+  `field_lms_videos` e `course_video` no owner `aculta_lms_resources` (update
+  `8001`, provider v4/3, Kernel com membro/educador e terceiro negado). Revista
+  tem o formato pronto, mas ainda não emite `embedded_video`; Wiki e Fórum
+  precisam decidir se os formatos permitem `remote_video`.
 - Rebuilds concorrentes agora são recusados: `start` bloqueia a linha singleton
   de estado e exige concluir, validar ou descartar a geração `building` antes de
   abrir outra.

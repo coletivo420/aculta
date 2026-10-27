@@ -1,12 +1,72 @@
 # Changelog — ACULTA Commerce Melhor Envio
 
+## 0.1.0-dev.5 (em andamento)
+
+### Alterado
+
+- Tokens OAuth do Melhor Envio são cifrados em repouso no State API (`encrypted_v1`), com
+  `MelhorEnvioTokenCipher` (libsodium `secretbox`). A chave vem do contrato central de segredos pelo Key ID
+  `aculta_melhorenvio_token_encryption` (variável `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY`, 64 caracteres hex).
+- `SecretsManager::valueForKeyId()` resolve um valor pelo Key ID estável; Key ID ambíguo ou inexistente falha fechado.
+- Credenciais de produção (`melhorenvio_production_client_id` e `_client_secret`) ganham Key versionada com provedor
+  `env`, como o sandbox.
+
+### Corrigido
+
+- Falha de decifração, chave ausente ou formato inválido equivalem a "sem tokens": o usuário precisa autorizar de novo.
+  Nenhum texto puro é devolvido nem gravado.
+- Hook `update_8001` converte nomes legados de variáveis em Key IDs e não altera nada quando não há nomes legados.
+- Hook `update_8002` cifra os registros legados uma vez, pula os já cifrados e falha se a chave não estiver disponível
+  (a atualização fica pendente, sem perda de dados).
+- Registro legado malformado é apagado e contado à parte (`malformed`), sem exceção, para forçar nova autorização.
+  Só a chave de cifragem ausente interrompe a migração. Coberto por
+  `testMigrationDeletesMalformedRecordAndCountsItWithoutException` e `testMigrationWithoutKeyFailsAndWritesNothing`.
+
+### Verificado
+
+- Unit do cipher: 9 testes / 13 asserções OK (ida e volta, nonce novo, chave errada, chave ausente, chave malformada,
+  adulteração, store sem chave).
+- Unit `SecretsManagerTest`: 15 testes / 48 asserções OK (inclui `valueForKeyId`).
+- Kernel `MelhorEnvioWiringKernelTest` em `aculta_simpletest`: 15 testes / 69 asserções OK, com 130 deprecações do
+  Drupal/Core.
+- `validate-secrets-contract.php` e `validate-module-theme-boundary.php`: PASS.
+- PHPCS dos arquivos novos (cipher e seu teste): sem erros nem avisos. Nos arquivos já existentes, o débito anterior
+  foi mantido.
+
+## 0.1.0-dev.4 (em andamento)
+
+### Corrigido
+
+- Valores monetários da cotação são lidos como texto decimal, sem `float`. Valores com até duas casas são preservados;
+  precisão além de centavos é recusada em vez de arredondada. Coberto por `testMoneyStaysExactAndRejectsSubCentPrecision`.
+- O cliente e o controller do webhook ganharam regressões de 403, resposta vazia, 5xx, timeout, assinatura, corpo
+  inválido, segredo ausente e repetição. A suíte Unit reexecutada na PR: 85 testes / 204 assertions PASS.
+- Kernel OAuth cobre retorno sem código e replay de `state`; a classe completa reexecutada na PR: 11 testes / 57
+  assertions PASS em MariaDB dedicado, sem rede externa.
+- PHPCS Drupal/DrupalPractice nos quatro arquivos PHP tocados pela integração: zero erros; avisos apenas de linhas longas.
+- O adaptador resolve credenciais primeiro pelo Drupal Key e usa `aculta_portal.secrets_manager` como fallback. Nenhum
+  valor foi colocado no Config Sync.
+
+### Verificado, sem alteração de código
+
+- Kernel de wiring no MariaDB dedicado com `commerce_shipping` ausente: resultado desta integração é 11 testes / 57
+  assertions PASS; a evidência anterior de 9 / 45 é substituída.
+- Retentativas: a cotação (`POST /api/v2/me/shipment/calculate`) é enviada como idempotente. Não há no repositório
+  prova contratual disso; a compra (`/shipment/checkout`), a geração e o cancelamento não são idempotentes e não são
+  repetidos.
+- Webhook: a documentação oficial confirma HMAC-SHA256 do corpo com o segredo do aplicativo, mas não diz a codificação.
+  O exemplo publicado tem 44 caracteres terminados em `=`, o que indica base64; hex nunca apareceu como evidência.
+  Pendente: confirmar com um webhook real do sandbox.
+
 ## 0.1.0-dev.3
 
 ### Alterado
 
 - Provider de frete integrado ao plugin manager, à remessa e às tarifas do motor proprietário `aculta_commerce`; removida a dependência funcional de `commerce_shipping` no manifesto.
-- Teste de wiring atualizado para verificar o plugin ACULTA. A suíte Unit completa passou: 74 testes / 181 assertions; PHPCS Drupal/DrupalPractice dos arquivos alterados passou.
-- O teste Kernel integrado ainda precisa ser executado em docroot de teste que carregue os fontes desta branch. O módulo permanece fora do Config Sync conforme decisão operacional; nenhum Runtime foi alterado.
+- O teste Kernel de wiring carrega a cadeia real de módulos incluindo Studio e Messenger, sem `commerce_shipping`, e passou nesta branch: 9 testes / 45 assertions, sem rede externa. Reexecutado na PR #298 com Core/vendor físicos do worktree: 9 testes / 45 assertions; a tentativa anterior com Core symlinkado ao checkout compartilhado foi descartada como bootstrap inválido.
+- A página de status usa o contrato neutro `PortalLinkElement` e o token `data-portal-ui="button-primary"`, sem classes visuais do tema dentro do módulo.
+- A suíte Unit passou: 74 testes / 181 assertions com root isolado da PR. A tentativa anterior com Core symlinkado ao checkout compartilhado foi descartada como bootstrap inválido. PHPCS Drupal/DrupalPractice não encontrou erros nos arquivos verificados; permanecem avisos de linhas acima de 80 colunas, incluindo comentários preexistentes.
+- O teste Kernel foi executado em banco isolado. O módulo permanece fora do Config Sync conforme decisão operacional; nenhum Runtime compartilhado foi alterado. Homologação visual e integração real no sandbox continuam pendentes.
 
 ## 0.1.0-dev.1 (em andamento)
 

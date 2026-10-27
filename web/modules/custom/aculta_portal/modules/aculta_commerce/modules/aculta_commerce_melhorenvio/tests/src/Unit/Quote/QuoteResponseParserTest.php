@@ -53,4 +53,23 @@ final class QuoteResponseParserTest extends UnitTestCase {
     self::assertNull($options[0]->deliveryDays);
   }
 
+  /**
+   * Valores monetários ficam em texto decimal de duas casas.
+   *
+   * Precisão além de centavos é recusada, não arredondada.
+   */
+  public function testMoneyStaysExactAndRejectsSubCentPrecision(): void {
+    $options = (new QuoteResponseParser())->parse([
+      ['id' => 1, 'name' => 'Float', 'price' => 10.5, 'company' => ['name' => 'T']],
+      ['id' => 2, 'name' => 'Ruido binario', 'price' => 0.1 + 0.2, 'company' => ['name' => 'T']],
+      ['id' => 3, 'name' => 'Inteiro', 'price' => 100, 'company' => ['name' => 'T']],
+      ['id' => 4, 'name' => 'Tres casas', 'price' => '10.005', 'company' => ['name' => 'T']],
+      ['id' => 5, 'name' => 'Float sub-centavo', 'price' => 10.005, 'company' => ['name' => 'T']],
+      ['id' => 6, 'name' => 'Virgula', 'price' => '10,00', 'company' => ['name' => 'T']],
+      ['id' => 7, 'name' => 'Zero', 'price' => 0, 'company' => ['name' => 'T']],
+    ]);
+    self::assertSame(['10.50', '0.30', '100.00', '0.00'], array_map(static fn($o) => $o->amount, $options));
+    self::assertSame(['1', '2', '3', '7'], array_map(static fn($o) => $o->serviceId, $options));
+  }
+
 }

@@ -120,13 +120,6 @@ aculta_portal.admin_subtab_turnstile:
   parent_id: aculta_portal.admin_tab_seguranca
   weight: 0
 
-aculta_portal.admin_subtab_credenciais:
-  title: 'Credenciais'
-  route_name: aculta_portal.secrets_import
-  base_route: aculta_portal.admin
-  parent_id: aculta_portal.admin_tab_seguranca
-  weight: 1
-
 aculta_portal.admin_subtab_status:
   title: 'Status'
   route_name: aculta_portal.requirements

@@ -38,10 +38,16 @@ final class EmailBackfillCommand extends Command {
     parent::__construct();
   }
 
+  /**
+   * Configura a opção de dias do backfill.
+   */
   protected function configure(): void {
     $this->addOption('days', NULL, InputOption::VALUE_REQUIRED, 'Dias a reconciliar, até o dia atual (1 a 90).', '90');
   }
 
+  /**
+   * Executa a reconciliação do histórico.
+   */
   protected function execute(InputInterface $input, OutputInterface $output): int {
     $days = (int) $input->getOption('days');
     if ($days < 1 || $days > self::MAX_DAYS) {

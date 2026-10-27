@@ -7,6 +7,19 @@ declare(strict_types=1);
  */
 
 $root = dirname(__DIR__);
+
+// O gate usa \Drupal::service(). Chamado com php direto (sem Drupal), delega ao Drush (scr) e repassa a saída
+// e o código de saída, como o gate de Foundation.
+if (!class_exists(\Drupal::class)) {
+  $drush = $root . '/vendor/drush/drush/drush.php';
+  if (!is_file($drush)) {
+    fwrite(STDERR, "ACULTA420 SHELL CONTRACT FAIL: Drush não instalado (vendor/drush/drush/drush.php ausente).\n");
+    exit(1);
+  }
+  passthru(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($drush) . ' scr ' . escapeshellarg(__FILE__), $codigo);
+  exit($codigo);
+}
+
 $themeRoot = $root . '/web/themes/custom/aculta420';
 require_once $root . '/scripts/lib/Aculta420ShellContractAnalyzer.php';
 $checks = [];

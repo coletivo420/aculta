@@ -1,17 +1,15 @@
 # ACULTA Commerce Melhor Envio
 
-Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão `0.1.0-dev.1`.
+Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão declarada no manifesto (`0.1.0-dev.4`). O motor de frete e o armazenamento de métodos, tarifas e remessas pertencem ao `aculta_commerce`; este módulo fornece o adaptador Melhor Envio.
 
-Status: **fundação**, **endereço único** (ME-ADDRESS 0.1), **consulta de CEP compartilhada** (ME-CEP 0.1) e **cliente
-HTTP OAuth2** (ME-0.1-C, somente código e Unit). Ainda não há cotação de frete, contratação, etiqueta, rastreamento. Os
-caminhos de API de autorização, token e cotação **não estão confirmados** (ME-PEND-01) e não foram usados em rede. Ver
+Status: OAuth2, configuração por ambiente, credenciais via Drupal Key com fallback no gerenciador central de segredos, cliente HTTP, cotação simulada e integração com o plugin manager do motor ACULTA estão cobertos por testes Unit e Kernel sem rede externa. Contratação de etiquetas e rastreamento não foram homologados; chamadas externas e checkout ainda exigem validação autorizada no sandbox. Ver
 [ROADMAP](docs/ROADMAP.md) e [CHANGELOG](CHANGELOG.md).
 
 ## Responsabilidades
 
 - Transformar o endereço do ACULTA em dados logísticos para o Melhor Envio (cotação, contratação, etiqueta).
 - Usar a consulta de CEP do Portal (`aculta_portal_cep`). Não existe segundo sistema de consulta.
-- Futuro: método de envio do Drupal Commerce Shipping, cotação, contratação e etiquetas (fases ME-0.2 em diante).
+- Adaptar os serviços elegíveis do Melhor Envio ao motor de frete proprietário do `aculta_commerce`; contratação e etiquetas permanecem etapas futuras.
 
 Fora de escopo, por regra de arquitetura:
 
@@ -46,12 +44,14 @@ Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CO
 - **Retentativas:** só em operações marcadas como `idempotent`, para falhas de rede, 429 e 5xx, com backoff de 100 ms,
   200 ms. Operações POST não são repetidas.
 - **Timeouts:** conexão 5 s, total 20 s. **Espaçamento mínimo** de 200 ms entre requisições, por processo.
-- **Credenciais:** `client_id` e `client_secret` vêm do Drupal Key pelos nomes em `keys.<ambiente>`. Os valores ficam no
-  Key; em produção, no banco criptografado, conforme a política do projeto.
+- **Credenciais:** `client_id` e `client_secret` são resolvidos pelos nomes em `keys.<ambiente>`: Drupal Key tem
+  precedência e o serviço central `aculta_portal.secrets_manager` é fallback para credenciais do servidor. Os valores
+  não entram em configuração exportada nem em logs.
 - **Erros:** `MelhorEnvioException` com `category()` (`unauthenticated`, `unauthorized`, `rate_limited`, `server`,
   `network`, `invalid_response`, `not_configured` etc.) e mensagem fixa. Nenhum corpo de resposta entra na exceção.
 - **Sem rede nos testes:** o transporte é o `http_client`, e os testes usam `MockHandler`.
-- **Pendências:** os caminhos de `MelhorEnvioEndpoints` e o campo `expires_in` precisam de validação no sandbox (ME-PEND-01).
+- **Pendências:** caminhos e resposta da API, validade de `expires_in` e codificação real da assinatura do webhook
+  ainda precisam de validação externa autorizada (ME-PEND-01 e registro de pendências).
 
 ### Mapeamento (`MelhorEnvioAddressMapper`)
 
@@ -85,13 +85,13 @@ Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CO
 
 ## Testes
 
-- Unit: 48 testes em `tests/src/Unit/` (adaptador de CEP 7, mapper 17, binder 5, cliente OAuth2 19). Executados e aprovados.
-- Kernel e Functional: pendentes. Ver a matriz em `docs/ROADMAP.md` e as dívidas em `docs/operations/DEBT-REGISTER.md`.
+- Unit: 85 testes / 204 assertions PASS na PR #298.
+- Kernel `MelhorEnvioWiringKernelTest`: 11 testes / 57 assertions PASS em MariaDB isolado, sem rede externa; inclui verificações de wiring, OAuth, state de uso único e rejeição de callback sem código. PHPCS Drupal/DrupalPractice nos arquivos alterados: zero erros; avisos remanescentes são de linhas longas. Functional e homologação visual permanecem pendentes. Ver `docs/ROADMAP.md` e `docs/PENDENCIAS.md`.
 
 ## Segurança e LGPD
 
 - Nenhum token, CPF, CNPJ ou endereço vai para log. O cliente também não registra query string, headers nem corpo.
-- Tokens OAuth2 ficam no State API, separados por ambiente. Credenciais ficam no Drupal Key.
+- Tokens OAuth2 ficam no State API, separados por ambiente. Credenciais são lidas do Drupal Key ou, como fallback, do gerenciador central de segredos.
 - O CEP é o único dado do endereço enviado à consulta externa, como já acontecia com o endpoint AJAX.
 - O mapper e o binder não fazem HTTP nem gravação.
 
@@ -105,7 +105,9 @@ Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CO
 | `/integracoes/melhorenvio/webhook` | POST | público (`_access: TRUE`) | recebe as notificações de etiqueta; autenticidade pelo `X-ME-Signature` |
 
 Webhook: a assinatura é HMAC-SHA256 do corpo bruto, com o segredo do aplicativo (`keys.<ambiente>.client_secret`, lido do
-Drupal Key). A codificação do hash não é documentada: o código aceita base64 e hexadecimal. Respostas: 503 sem segredo
+Drupal Key ou pelo gerenciador central de segredos). A documentação oficial não diz a codificação do hash; o exemplo
+publicado é base64 (termina em `=`). O código aceita base64 e hexadecimal; hexadecimal não tem evidência de uso e
+precisa ser confirmado com um webhook real do sandbox. Respostas: 503 sem segredo
 configurado, 403 com assinatura inválida, 400 com corpo fora do formato, 204 quando o evento é aceito.
 
 Eventos aceitos (`order.*`): created, pending, released, generated, received, posted, delivered, cancelled,

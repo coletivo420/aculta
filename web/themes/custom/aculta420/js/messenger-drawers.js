@@ -447,9 +447,23 @@
     counter.dataset.count = String(count);
     const trigger = counter.closest('button');
     if (trigger) {
-      const label = type === 'messages'
-        ? (count === 1 ? Drupal.t('1 conversa não lida. Abrir mensagens') : Drupal.t('@count conversas não lidas. Abrir mensagens', { '@count': count }))
-        : (count === 1 ? Drupal.t('1 aviso ativo ou não lido. Abrir avisos') : Drupal.t('@count avisos ativos ou não lidos. Abrir avisos', { '@count': count }));
+      let label;
+      if (type === 'messages') {
+        label = count === 0 ? Drupal.t('Abrir mensagens') : (count === 1
+          ? Drupal.t('1 conversa não lida. Abrir mensagens')
+          : Drupal.t('@count conversas não lidas. Abrir mensagens', { '@count': count }));
+      }
+      else if (count === 0) {
+        label = Drupal.t('Abrir avisos');
+      }
+      else if (trigger.dataset.acultaCountKind === 'attention') {
+        label = count === 1 ? Drupal.t('1 aviso ativo ou não lido. Abrir avisos')
+          : Drupal.t('@count avisos ativos ou não lidos. Abrir avisos', { '@count': count });
+      }
+      else {
+        label = count === 1 ? Drupal.t('1 aviso ativo. Abrir avisos')
+          : Drupal.t('@count avisos ativos. Abrir avisos', { '@count': count });
+      }
       trigger.setAttribute('aria-label', label);
     }
   }

@@ -152,3 +152,7 @@ O smoke de Runtime de teste em 2026-10-20 não equivale a RC, validação Alpha 
 prontidão de produção. A revisão visual/acessível completa, revisão de código
 independente, decisão legal sobre analytics e auditoria licenciada por arquivo
 permanecem gates explícitos.
+
+## Dívida de fronteira módulo–tema
+
+- `css/micropagina.css` permanece no submódulo nesta fase; planejar sua migração para o tema em etapa própria.

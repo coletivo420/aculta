@@ -157,6 +157,16 @@ final class GreenStashController {
               '#value' => 'Rastreamento: ' . $item['tracking_code'],
             ];
           }
+          foreach ($item['transitions'] as $transition_id => $transition_label) {
+            $row['actions'][$transition_id] = [
+              '#type' => 'link',
+              '#title' => $transition_label,
+              '#url' => Url::fromRoute('aculta_commerce.green_stash_shipment_transition', [
+                'aculta_shipment' => $item['id'],
+                'transition' => $transition_id,
+              ]),
+            ];
+          }
           $build['shipments']['shipment_' . $item['id']] = [
             '#type' => 'container',
             'content' => $row,

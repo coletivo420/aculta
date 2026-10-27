@@ -122,6 +122,47 @@ Contratos observados:
   focais). Relatório:
   [`ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md`](../portal/benchmarks/ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md).
 
+### 7. Correções da revisão focada (`c80b9fa64`, `90d50c6cc`, `25e0a5958`)
+
+- A revisão independente apontou que o reset de cache por tipo candidato não
+  cobria checagens aninhadas de tipos ausentes da página. O filtro agora limpa
+  todos os handlers de conteúdo a cada chamada; o teste Unit inclui um tipo
+  não-candidato para provar o reset.
+- A exclusão de gerações `discarding` passou de uma consulta separada para uma
+  subquery `NOT IN` na mesma instrução do count/auditoria, eliminando a janela
+  de transição entre a leitura dos IDs e a contagem.
+- A recusa de `start` quando validação/descarte concorre é retryável e foi
+  documentada; a invariante de uma única geração `building` permanece.
+
+### 8. Submódulo opcional `aculta_index_file` (`162b093f7`, `3fa562e01`)
+
+- A métrica `media.files.requests` exige `file:file`, que não tinha provider.
+  O provider foi adicionado como submódulo opt-in para não indexar arquivos em
+  todo site com o Index nem quebrar os laços de lote dos testes existentes.
+- Projeta somente arquivos permanentes: identidade, bundle, UUID, idioma,
+  datas, estado e `owner_uid`. Não projeta nome, URI, MIME, tamanho, conteúdo,
+  relações ou domínio.
+- O bridge Statistics passou a cobrir a métrica quando o submódulo está
+  habilitado e a conta tem `administer aculta_statistics` (métrica INTERNAL).
+  Unit do submódulo 2/21; bridge 3/55.
+- Config Sync/ativação do submódulo ficam para o agente de integração.
+
+### 9. Vídeo: contrato e LMS (`2f664cca9`, `6d35bd40a`)
+
+- Contrato definido em
+  [`ACULTA-CONTENT-INDEX-VIDEO-RELATIONS`](../portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md):
+  `embedded_video` para embeds editoriais e `course_video` para o recurso de
+  curso; alvo sempre `media:remote_video`, sem URL/corpo/miniatura.
+- O owner `aculta_lms_resources` ganhou `field_lms_videos` (somente
+  `remote_video`), update `8001`, componente de formulário/visualização e a
+  relação `course_video`. A versão de projeção passou a 4 com o plugin PDF
+  Group ou 3 sem ele.
+- Kernel LMS real: estudante e educador veem o vídeo, terceiro é negado;
+  revalidação de origem e alvo pelo Index. Unit LMS 13/70; Kernel LMS 5/259.
+- Revista tem o formato editorial pronto, mas ainda não emite a relação; Wiki e
+  Fórum precisam decidir se os formatos permitem `remote_video`. Config
+  Sync/update do LMS ficam para o agente de integração.
+
 ## Homologação de providers (IDX-2)
 
 Providers descobertos no container local (11 providers, 13 tuplas):
@@ -138,7 +179,8 @@ Providers descobertos no container local (11 providers, 13 tuplas):
 | `document` | 2 | `media:document` | request atual | — |
 | `course_document` | 2 | `media:course_document` | `courses` | — |
 | `remote_video` | 2 | `media:remote_video` | request atual | — |
-| `lms_course` | 3 (plugin PDF presente) / 2 | `group:lms_course` | `courses` | `course_reading`, `course_gallery`, `course_document` |
+| `lms_course` | 4 (plugin PDF presente) / 3 | `group:lms_course` | `courses` | `course_reading`, `course_gallery`, `course_document`, `course_video` (`field_lms_videos`) |
+| `file` (submódulo opt-in) | 1 | `file:file` | request atual | — |
 
 Observações de homologação:
 
@@ -161,9 +203,48 @@ Observações de homologação:
   arquivo, URL privada ou URL oEmbed. `owner_uid` é a única referência pessoal,
   é interno ao filtro e não retorna nos DTOs. Wiki omite `owner_uid` por decisão
   de privacidade do owner.
-- Lacuna documentada: `media.files.requests` (Statistics, dimensão `file:file`)
-  não tem provider `file:file` no Index; a métrica não é alcançável pelo bridge
-  até existir provider desse tipo. Consumidores devem usar o Statistics direto.
+- `media.files.requests` (Statistics, dimensão `file:file`) é coberta pelo
+  submódulo opt-in `aculta_index_file`; sem ele, não há provider e a métrica
+  não é alcançável pelo bridge. A conta precisa de
+  `administer aculta_statistics` porque a métrica é INTERNAL.
+- O LMS passou a permitir `remote_video` por `field_lms_videos` e a projetar
+  `course_video`; o contrato completo está em
+  [`ACULTA-CONTENT-INDEX-VIDEO-RELATIONS`](../portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md).
+
+## Achados fora do escopo (revisão de 2026-10-26)
+
+A primeira revisão independente foi executada no checkout principal, não no
+worktree, e apontou defeitos em outros módulos. Nenhum foi alterado ou
+reproduzido pelo Agente 3; ficam para triagem dos owners. O escopo desta frente
+continua sendo `aculta_index`.
+
+| Severidade | Arquivo:linha | Achado |
+| --- | --- | --- |
+| high | `aculta_document_viewer/js/pdf-viewer.mjs:229` | Listeners em controles removidos por `#access`; `querySelector` nulo impede a renderização do PDF. |
+| high | `aculta_commerce_melhorenvio/src/Http/MelhorEnvioClient.php:391` | Fallback de `SecretsManager` usa o Key ID em vez do nome do contrato; OAuth e webhooks podem responder não configurado/503. |
+| high | `aculta_lms_h5p/src/Plugin/Field/FieldFormatter/aculta_H5PDefaultFormatter.php:250` | `getEntity()` sem checagem de nulo em relação Group obsoleta; erro fatal na página do curso. |
+| medium | `aculta_user/src/Hook/ProfileNicknameValidationHooks.php:1` | Validador do apelido legado removido, mas o campo continua exposto em `/dados`; apelidos inválidos/duplicados. |
+| medium (plausível) | `aculta_commerce/src/Catalog/GreenStashProductReader.php:96` | Sonda de continuação perdida; produtos gerenciáveis após os primeiros 500 podem ficar ocultos. |
+| low | `aculta_user/src/Avatar/AvatarAssetCleanup.php:48` | Contadores sobem mesmo quando `FileRemover::delete()` retorna FALSE. |
+| low | `aculta_patcher/src/PatchDiffValidator.php:40` | `escapesPackage()` não cobre `--- ../foo`; validação inconsistente com o exportador. |
+| low (plausível) | `aculta_deployer/config/deploy.json:301` | Regra de rodapé virou identidade no-op para satisfazer `validateProfiles`. |
+| low | `aculta_portal/src/Hook/FormHooks.php:195` e `aculta_commerce/.../GreenStashProductReader.php:24` | Docblocks órfãos/duplicados. |
+
+Caminhos relativos a `web/modules/custom/aculta_portal/modules/`;
+`aculta_commerce_melhorenvio` está em `aculta_commerce/modules/`.
+
+## Revisão de código
+
+Revisão independente focada no diff do `aculta_index`, no worktree isolado:
+
+- Nenhum bypass de autorização, deadlock ou regressão de paginação confirmado.
+- Achados plausíveis: reset de cache sem tipos aninhados (medium; corrigido em
+  `c80b9fa64`), janela entre a leitura de gerações em descarte e o count (low;
+  corrigido em `90d50c6cc`) e recusa retryável de `start` concorrente com
+  validação/descarte (low; documentado em `25e0a5958`).
+- Cobertura: o Unit passou a incluir um tipo não presente na página; a
+  serialização real de `start` em duas conexões não é exercitada pelo Kernel de
+  conexão única e fica registrada como lacuna de teste.
 
 ## Segurança (IDX-3)
 
@@ -224,28 +305,53 @@ por página é proporcional ao número de tipos (até três aqui) e precisa de
 telemetria em Alpha. Amostras sintéticas, sem SLO. CSV com as duas execuções:
 `docs/portal/benchmarks/aculta-index-forum-access-2026-10-26.csv`.
 
-## Runtime — somente leitura (IDX-7)
+## Runtime — leitura e homologação autorizada (IDX-7)
 
 Ambiente: checkout local `/home/piradopirata/projetos/aculta`, Drush 13.8.0,
 Drupal 11.4.10, banco `aculta_runtime`, site URI `http://default`. Não é o
-servidor `toca` e não é produção.
+servidor `toca` e não é produção. O responsável autorizou, em 2026-10-26,
+executar a homologação de rebuild/ativação diretamente nesse Runtime local.
 
-Verificado apenas leitura:
+Diagnóstico inicial (somente leitura):
 
 - `aculta_index`, `aculta_portal` e `aculta_statistics` habilitados; versão do
   Index `0.1.0-dev.175`.
-- 145 entradas, 110 relações, 1 geração, 0 trabalhos pendentes, 0 cursores.
+- 145 entradas, 110 relações, 1 geração ativa, 0 trabalhos pendentes.
 - Geração ativa `fceee33d-cb34-4c24-add1-56619c426b5a`; auditoria `complete`,
   `valid=true`, todos os contadores de achado em zero.
 - `activation_ready=yes`; fila sem queued/processing/retry/dead.
 - 11 providers descobertos, fingerprint
   `098831a171e6be765f914778fb5306a11f99ca58c1dcaab41cff3b01882bb0e6`.
 - Divergência observada: o `config/sync/core.extension.yml` do checkout local
-  (HEAD `ff92ca0aa`) não contém `aculta_index`, enquanto a branch de integração
-  contém. Nenhum `cim` foi executado. A reconciliação pertence ao agente 1.
+  não contém `aculta_index`, enquanto a branch de integração contém. Nenhum
+  `cim` foi executado; a reconciliação pertence ao agente 1.
 
-Nenhum rebuild, ativação, descarte, retry, `cim`, `updatedb`, instalação ou
-desinstalação foi executado no Runtime.
+Backup antes da operação:
+
+- `/home/piradopirata/aculta-backups/aculta-runtime-before-index-homolog-20261026.sql`
+  (55 MB), dump completo do banco.
+
+Homologação autorizada:
+
+1. A auditoria pendente foi concluída (`complete`, `valid=true`, zero achados).
+2. `aculta-index:rebuild start` criou a geração
+   `25eb002d-bccd-4dee-b88d-4fa0957744a3`.
+3. 14 lotes de `batch --limit=100` projetaram 145 entradas; a fila ficou vazia.
+4. `validate` retornou `valid=true` com zero órfãos, zero projeções obsoletas e
+   zero fontes ausentes.
+5. `activate` trocou o ponteiro; a geração anterior
+   `fceee33d-cb34-4c24-add1-56619c426b5a` ficou `retained` para rollback.
+6. A nova geração tem 145 entradas e 110 relações; `activation_ready=yes` e
+   fila vazia.
+7. Uma nova auditoria da geração ativa terminou `complete`, `valid=true`, com
+   zero achados em todos os contadores.
+
+Rollback: reativar `fceee33d-cb34-4c24-add1-56619c426b5a` (retida) com
+`aculta-index:rebuild activate`; o dump completo é a última linha de defesa.
+Nenhum título, corpo ou dado pessoal foi impresso. Não foram executados `cim`,
+`updatedb`, instalação, desinstalação ou alteração de conteúdo original. O
+Runtime local roda o código do checkout principal, não os novos recursos
+LMS/file desta branch; a homologação acima valida o ciclo de catálogo atual.
 
 ## Testes e gates executados
 
@@ -253,34 +359,70 @@ desinstalação foi executado no Runtime.
 | --- | --- |
 | PHP lint (módulo) | PASS |
 | PHPCS Drupal/DrupalPractice (arquivos alterados) | PASS |
-| Unit `aculta_index` | 51 testes / 282 assertions PASS; 14 depreciações PHPUnit |
-| Kernel `aculta_index` (MariaDB) | 118 testes / 2.001 assertions PASS; 276 depreciações Core/contrib e 56 PHPUnit |
+| Unit `aculta_index` | 51 testes / 265 assertions PASS; 14 depreciações PHPUnit |
+| Kernel `aculta_index` (MariaDB) | 119 testes / 2.019 assertions PASS; 276 depreciações Core/contrib e 56 PHPUnit |
+| Unit `aculta_index_file` | 2 testes / 21 assertions PASS |
+| Bridge Statistics (file:file) | 3 testes / 55 assertions PASS |
+| Unit `aculta_lms_resources` | 13 testes / 70 assertions PASS; 10 depreciações PHPUnit |
+| Kernel LMS `course_video` | 5 testes / 259 assertions PASS; 53 depreciações Core/contrib |
+| Revisão de código focada | Concluída; achados corrigidos/documentados |
 | PHPCS do módulo (`src` + `tests`) | PASS |
 | Gate Drupal 11+ | PASS (1.160 checks) |
 | Índice de status do projeto | PASS (41 componentes) |
 | Simulação de merge com a integração atual | PASS, sem conflitos |
 | Benchmark Fórum opt-in | 1 teste / 395 assertions PASS |
 | Fixture representativa (com medição opt-in) | 1 teste / 75 assertions PASS |
-| Runtime leitura | PASS (métricas acima) |
+| Runtime leitura e rebuild/ativação autorizados | PASS (145/110, auditoria válida, rollback retido) |
 
 Depreciações são de Core/contrib e PHPUnit; nenhuma falha própria.
 
+## Integração com o agente principal
+
+- Em 2026-10-26 o agente principal revisou e integrou os 13 commits publicados
+  até `44de71674` em `chore/aculta-m0-integridade`, como cherry-picks com SHAs
+  próprios. Antes das correções da revisão, o diff do módulo e da documentação
+  entre a integração e esta branch estava vazio.
+- O status integrado (`docs/operations/status/aculta_index.yml`, commit
+  `e3c34b675`) permanece `0.1.0-dev.175`/Dev e registra cinco arquivos não
+  commitados. Esses arquivos foram publicados em `c80b9fa64`, `90d50c6cc` e
+  `25e0a5958`; a nota do status está desatualizada e a reexecução da integração
+  cabe ao agente principal.
+- O agente principal relatou Kernel integral na integração excedendo timeout em
+  63/118, sem resultado conclusivo, por bootstrap compartilhado de Core. A
+  execução isolada deste worktree passou 118/2.001 em MariaDB; a diferença é o
+  `web/core` local e o autoload do vendor apontando para o worktree, conforme a
+  seção de ambiente.
+- Verificação final: o cherry-pick dos quatro commits `c80b9fa64`,
+  `90d50c6cc`, `25e0a5958` e `e6937ef18` sobre `e3c34b675` aplicou limpo em
+  uma branch temporária local, sem conflitos. Eles permanecem pendentes de
+  integração no momento desta verificação.
+- O novo submódulo `aculta_index_file` tem status próprio
+  (`docs/operations/status/aculta_index_file.yml`). O validador de status desta
+  branch falha apenas porque a tabela gerada do README raiz ainda não contém a
+  nova linha; o agente de integração deve rodar
+  `php scripts/validate-project-status-index.php --write` depois de integrar o
+  status. O gate Drupal 11+ herda essa mesma falha. Os gates de código do
+  `aculta_index`/LMS passam.
+- Nenhuma operação Runtime foi executada por nenhum dos lados.
+
 ## Pendências e bloqueios
 
-- Carga representativa com relações reais e perfis de acesso ainda não existe;
-  os benchmarks continuam sintéticos.
-- Homologação operacional de grants/Domain/Group com conteúdo real e telemetria
-  antes de SLO continua pendente.
-- Rebuild/ativação sobre catálogo não vazio no Runtime exige autorização,
-  pré-condições e rollback; não executado.
-- Relações editoriais de vídeo aguardam formatos e contratos dos consumidores.
-- Métrica `media.files.requests` não tem provider `file:file` no Index.
+- Carga representativa com conteúdo real dos owners ainda não existe; a fixture
+  sintética cobre diversidade, mas os benchmarks continuam sintéticos.
+- Homologação operacional de grants/Domain/Group com conteúdo real dos owners e
+  telemetria antes de SLO continua pendente.
+- Rebuild/ativação sobre catálogo não vazio foi homologado no Runtime local
+  autorizado em 2026-10-26; a validação em Alpha/toca continua pendente.
+- Revista tem o formato pronto, mas ainda precisa emitir `embedded_video`; Wiki
+  e Fórum precisam decidir se os formatos permitem `remote_video`.
+- Config Sync/update `8001` do LMS e ativação do submódulo `aculta_index_file`
+  no Runtime pertencem ao agente de integração.
 - Cursor continua vinculado à geração; não é reutilizável após troca de geração
   (testado).
-- A guarda contra duas gerações `building` foi implementada e testada; um
-  rebuild abandonado precisa ser descartado antes de iniciar outro.
 - A fixture representativa é sintética e pequena/média. Conteúdo real dos
   owners, com Group/Media/Domain reais em volume, continua pendente.
+- Operação: um rebuild abandonado em `building` precisa ser descartado antes de
+  outro `start`; a guarda está implementada e testada.
 
 ## Proposta de status (não aplicada)
 
@@ -290,8 +432,10 @@ O status global continua `Dev` e a decisão é do agente 1. Proposta para
 - `version: 0.1.0-dev.176`.
 - `state: Dev`.
 - Registrar: correções de integridade, revalidação de acesso por página, cursor
-  vinculado ao inventário, Kernel 114/1.890, Unit 51/282, benchmark pós-correção
-  e Runtime local read-only (145/110).
+  vinculado ao inventário, guarda de rebuild concorrente, fixture representativa
+  sintética, revisão de código concluída, submódulo opt-in `aculta_index_file`,
+  contrato de vídeo e `course_video` no LMS, Kernel 119/2.019, Unit 51/265, duas
+  amostras de benchmark e Runtime local read-only (145/110).
 - Manter como pendentes: grants operacionais, carga representativa, execução
   sobre catálogo no Runtime e relações de vídeo.
 
@@ -308,8 +452,30 @@ O status global continua `Dev` e a decisão é do agente 1. Proposta para
 - `8b5d41a8a` — fix(index): serialize rebuild starts behind the state fence
 - `0db86be20` — test(index): add representative mixed-catalog fixture
 - `a62f7ea1b` — docs(index): record rebuild fence and representative fixture
+- `03c5cac27` — docs(index): record two representative benchmark samples
+- `44de71674` — docs(index): record two Forum access samples and caveats
+- `c80b9fa64` — fix(index): clear nested entity access handlers on every page
+- `90d50c6cc` — fix(index): make discard exclusion atomic in integrity queries
+- `25e0a5958` — docs(index): note retryable rebuild start refusal
+- `162b093f7` — feat(index): add optional file provider for the file metric
+- `3fa562e01` — test(index): cover file metric through the statistics bridge
+- `2f664cca9` — feat(lms): allow remote video references on courses
+- `6d35bd40a` — test(lms): cover course_video access through the content index
+- `d00d2a193` — test(lms): update builder fixture to the revista bundle
+- `9d547ef21` — docs(lms): publish video contract and course_video evidence
+- `bccd4618c` — docs(index): publish file metric, video contract and runtime homologation
 - Commit documental do worklog: HEAD final da branch
   `feat/aculta-index-fechamento` (registrado no relatório de entrega).
 
 Todos estão publicados em `origin/feat/aculta-index-fechamento`. Nenhum merge,
 PR nova, force push, deploy ou alteração da branch da PR #298.
+
+
+## Integração seletiva na PR #298 — 2026-10-26
+
+- Branch fonte `feat/aculta-index-fechamento` (`98f3937e54`): 27 commits. Os 14 patches equivalentes já estavam na PR; 13 commits patch-únicos foram integrados, sem cherry-pick duplicado.
+- Commits da PR incluem `8082d7d1e` (cache Entity Access por página), `bdf326a7b` (integridade durante descarte), `45a787012` (provider File opt-in), `b5473905d` (campo e relação `course_video`), testes e documentação associados.
+- Reexecução na PR com docroot isolado: Unit Index/File/LMS 17/155 PASS; Kernel Statistics bridge 3/55, LMS course/video access 5/259 e Rebuilder 21/295 PASS. Total focal: 46 testes / 764 assertions. MariaDB `aculta_simpletest`; nenhum dado Runtime alterado.
+- O primeiro runner tentou carregar extensões do checkout compartilhado em `/home` e não descobriu `aculta_index_file`; o docroot isolado corrigiu a causa e passou. Falha inicial classificada como harness, não produto.
+- `aculta_index_file` segue opt-in, fora do Config Sync e não habilitado no Runtime. `field_lms_videos` e update `8001` foram versionados; update não executado no Runtime.
+- Kernel agregado 119/2.019 e observação read-only do Runtime 145/110 foram registrados na branch fonte, não reexecutados nesta integração. Index permanece Dev; faltam grants/Domain dos owners, carga representativa, PHPCS Drupal/DrupalPractice e PHP lint nos dez arquivos PHP tocados: PASS e evidência Functional/Browser.

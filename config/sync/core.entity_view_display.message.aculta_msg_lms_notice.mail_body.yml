@@ -1,0 +1,42 @@
+uuid: c814ed50-1868-4917-878d-b9d97f2dd0be
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.message.mail_body
+    - field.field.message.aculta_msg_lms_notice.field_aculta_lms_digest_sent
+    - field.field.message.aculta_msg_lms_notice.field_aculta_lms_event_type
+    - field.field.message.aculta_msg_lms_notice.field_aculta_lms_event_version
+    - field.field.message.aculta_msg_lms_notice.field_aculta_lms_read
+    - field.field.message.aculta_msg_lms_notice.field_aculta_lms_source_uuid
+    - field.field.message.aculta_msg_lms_notice.field_aculta_messenger_attempts
+    - field.field.message.aculta_msg_lms_notice.field_aculta_msg_delivery
+    - message.template.aculta_msg_lms_notice
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: hTT9NX4ksG5GYrq8wLP0MsWfneVb6qwSKFv04uHNQ54
+id: message.aculta_msg_lms_notice.mail_body
+targetEntityType: message
+bundle: aculta_msg_lms_notice
+mode: mail_body
+content:
+  partial_1:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_aculta_lms_digest_sent: true
+  field_aculta_lms_event_type: true
+  field_aculta_lms_event_version: true
+  field_aculta_lms_read: true
+  field_aculta_lms_source_uuid: true
+  field_aculta_messenger_attempts: true
+  field_aculta_msg_delivery: true
+  partial_0: true
+  search_api_excerpt: true

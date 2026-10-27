@@ -9,10 +9,6 @@ administer aculta support settings:
   title: Administrar configurações editoriais de Apoie
   description: Alterar o texto público da página Apoie.
   restrict access: true
-administer aculta secrets:
-  title: Gerenciar credenciais do ambiente
-  description: Cadastrar credenciais, ver valores mascarados e revelar um valor pelo botão de olho. A revelação é registrada no log (nome e usuário).
-  restrict access: true
 administer aculta deployer:
   title: Ver o status do ACULTA Deployer
   description: Consultar o relatório neutro de fronteiras, correções abertas e credenciais (somente leitura).

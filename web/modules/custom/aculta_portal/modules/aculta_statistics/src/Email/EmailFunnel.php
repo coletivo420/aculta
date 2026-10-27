@@ -82,6 +82,10 @@ final class EmailFunnel {
    *
    * @param array<string, array<string, int>> $counts
    *   Totais em construção, por referência.
+   * @param string $metric
+   *   Métrica do catálogo.
+   * @param string $dimension
+   *   Dimensão da métrica.
    */
   private static function add(array &$counts, string $metric, string $dimension): void {
     $counts[$metric][$dimension] = ($counts[$metric][$dimension] ?? 0) + 1;

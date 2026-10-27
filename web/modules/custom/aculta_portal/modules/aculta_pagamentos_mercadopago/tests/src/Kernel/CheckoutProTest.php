@@ -20,6 +20,7 @@ class CheckoutProTest extends OrderKernelTestBase {
    * @var list<string>
    */
   protected static $modules = [
+    'key',
     'commerce_payment',
     'aculta_pagamentos_mercadopago',
   ];
@@ -41,6 +42,9 @@ class CheckoutProTest extends OrderKernelTestBase {
     $payment_gateway = PaymentGateway::create([
       'id' => 'mercado_pago',
       'label' => 'Mercado Pago',
+      // Desabilitado: o guarda de presave exige chaves de produção quando o ambiente é production, e este teste
+      // cobre só a configuração padrão do plugin.
+      'status' => FALSE,
       'plugin' => 'aculta_mercadopago_checkout_pro',
       'configuration' => [
         'mode' => 'test',

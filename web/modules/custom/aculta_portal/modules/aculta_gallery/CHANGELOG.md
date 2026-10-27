@@ -1,5 +1,10 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-dev.18 — dependências de configuração opcionais
+
+- Configuração da galeria que depende de `media.type.image`, `editorial_category` ou `revista_tags`, incluindo o formulário que referencia esses campos, passa a `config/optional`. A instalação da Gallery não falha em sites sem essas configurações editoriais; ambientes que as fornecem ainda recebem os campos e o formulário.
+- Instalação limpa validada como dependência de Doação e LMS no banco isolado `aculta_install_b2`; Kernel de Index/curso-vídeo: 14 testes, 593 assertions.
+
 ## 0.1.0-dev.17 — versão da projeção no fingerprint do Index
 
 - Provider de Gallery declara sua versão de projeção para validação e retomada

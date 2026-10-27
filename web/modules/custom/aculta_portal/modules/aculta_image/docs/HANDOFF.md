@@ -141,7 +141,7 @@ O schema do submódulo permanece em `aculta_image_update_10003`. O `updb` aplica
 - Toda imagem passa pelo `aculta_image`. Não usar `image_style` direto, `ImageFactory` ou `->delete()` em arquivo de imagem fora da quarentena. O gate `validate-aculta-image.php` tem tolerância zero.
 - Código de comportamento no Aculta Portal; design e CSS no ACULTA420 (com autorização explícita).
 - Não usar `\Drupal::` novo em `src/`. Injeção de dependência.
-- Commit antes de encerrar; mensagem em português; trailer `Co-Authored-By` do agente.
+- Commit antes de encerrar; mensagem em português; sem trailer `Co-Authored-By` do agente.
 - Sem merge, tag ou deploy sem pedido explícito.
 - Não alterar `estados/`, nem `settings.local.php`, nem secrets.
 

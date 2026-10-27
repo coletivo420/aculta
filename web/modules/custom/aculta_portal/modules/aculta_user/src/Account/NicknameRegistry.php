@@ -193,7 +193,8 @@ final class NicknameRegistry {
   /**
    * Rebuilds the derived index after validating existing Profiles.
    *
-   * @return array{uids: int, profiles: int, same_uid_conflicts: int, reconciled_profiles: int}
+   * @return array{uids: int, profiles: int, same_uid_conflicts: int,
+   *   reconciled_profiles: int}
    *   Aggregate counts only; no nickname or personal data is returned.
    */
   public function rebuild(): array {
@@ -202,7 +203,12 @@ final class NicknameRegistry {
     $slugOwners = [];
     $profileCount = 0;
     $slugConflicts = 0;
-    $invalid = 0;
+    // Contagens de perfis que não reivindicam índice. Nenhum deles é
+    // gravado.
+    $ignoredNoOwner = 0;
+    $ignoredEmpty = 0;
+    $orphanWithNickname = 0;
+    $ignoredInvalidFormat = 0;
     $storage = $this->entityTypeManager->getStorage('profile');
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
@@ -215,20 +221,31 @@ final class NicknameRegistry {
       }
       $profileCount++;
       $uid = (int) $profile->getOwnerId();
-      if ($uid <= 0 || !$profile->hasField('field_nickname')) {
-        $invalid++;
+      $nickname = $profile->hasField('field_nickname')
+        ? trim((string) $profile->get('field_nickname')->value)
+        : '';
+      // Perfil sem dono não reivindica índice e não bloqueia o rebuild.
+      // Com apelido preenchido, é contado à parte para investigação
+      // posterior.
+      if ($uid <= 0) {
+        $nickname === '' ? $ignoredNoOwner++ : $orphanWithNickname++;
+        continue;
+      }
+      if (!$profile->hasField('field_nickname')) {
+        $ignoredEmpty++;
         continue;
       }
       $profilesByUid[$uid][] = $profile;
-      $nickname = trim((string) $profile->get('field_nickname')->value);
       // Empty values do not vote against an explicit nickname. If every
       // Profile for this UID is empty, the UID has no public nickname claim.
       if ($nickname === '') {
+        $ignoredEmpty++;
         continue;
       }
       $slug = AccountNames::publicRouteSlug($nickname);
       if ($slug === NULL) {
-        $invalid++;
+        // Formato inválido não é normalizado nem gravado: fica sem claim.
+        $ignoredInvalidFormat++;
         continue;
       }
       $nicknameCandidates[$uid][] = [
@@ -263,11 +280,11 @@ final class NicknameRegistry {
       $slugOwners[$slug] = (int) $uid;
     }
 
-    if ($invalid > 0 || $slugConflicts > 0) {
+    // Bloqueia só por conflito real entre UIDs. Falha de banco ou transação
+    // propaga como exceção.
+    if ($slugConflicts > 0) {
       throw new \RuntimeException(sprintf(
-        'Nickname index rebuild blocked: invalid=%d, same-UID conflicts=%d, cross-UID conflicts=%d.',
-        $invalid,
-        $sameUidConflicts,
+        'Nickname index rebuild blocked: cross-UID conflicts=%d.',
         $slugConflicts,
       ));
     }
@@ -309,6 +326,11 @@ final class NicknameRegistry {
       'profiles' => $profileCount,
       'same_uid_conflicts' => $sameUidConflicts,
       'reconciled_profiles' => $reconciledProfiles,
+      'ignored_no_owner' => $ignoredNoOwner,
+      'ignored_empty' => $ignoredEmpty,
+      'orphan_with_nickname' => $orphanWithNickname,
+      'ignored_invalid_format' => $ignoredInvalidFormat,
+      'slug_conflicts' => $slugConflicts,
     ];
   }
 

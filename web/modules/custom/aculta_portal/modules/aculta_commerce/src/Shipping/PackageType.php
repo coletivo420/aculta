@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_commerce\Shipping;
 
+use Drupal\physical\Length;
+use Drupal\physical\LengthUnit;
 use Drupal\physical\Weight;
 
 /**
@@ -54,6 +56,27 @@ final class PackageType {
    */
   public function getDimensions(): ?array {
     return $this->dimensions;
+  }
+
+  /**
+   * Gets the package length.
+   */
+  public function getLength(): Length {
+    return $this->dimensions['length'] ?? new Length('0', LengthUnit::CENTIMETER);
+  }
+
+  /**
+   * Gets the package width.
+   */
+  public function getWidth(): Length {
+    return $this->dimensions['width'] ?? new Length('0', LengthUnit::CENTIMETER);
+  }
+
+  /**
+   * Gets the package height.
+   */
+  public function getHeight(): Length {
+    return $this->dimensions['height'] ?? new Length('0', LengthUnit::CENTIMETER);
   }
 
 }

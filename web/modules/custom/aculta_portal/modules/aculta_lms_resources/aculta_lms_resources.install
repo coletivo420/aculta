@@ -7,6 +7,8 @@
 
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Implements hook_install().
@@ -47,9 +49,76 @@ function aculta_lms_resources_install(): void {
       'weight' => 21,
       'region' => 'content',
     ]);
-    $view_display->setHidden('field_lms_readings', TRUE);
-    $view_display->setHidden('field_lms_galleries', TRUE);
+    $view_display->removeComponent('field_lms_readings');
+    $view_display->removeComponent('field_lms_galleries');
+    $view_display->save();
+  }
+
+  aculta_lms_resources_ensure_video_displays();
+}
+
+/**
+ * Adds the course video component to the existing displays.
+ *
+ * Shared by the install and update paths so new and existing sites expose the
+ * same field configuration.
+ */
+function aculta_lms_resources_ensure_video_displays(): void {
+  $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('group.lms_course.default');
+  if ($form_display instanceof EntityFormDisplayInterface) {
+    $form_display->setComponent('field_lms_videos', [
+      'type' => 'entity_reference_autocomplete',
+      'weight' => 8,
+      'region' => 'content',
+      'settings' => [
+        'match_operator' => 'CONTAINS',
+        'match_limit' => 10,
+        'size' => 60,
+        'placeholder' => '',
+      ],
+      'third_party_settings' => [],
+    ]);
+    $form_display->save();
+  }
+
+  $view_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load('group.lms_course.default');
+  if ($view_display instanceof EntityViewDisplayInterface) {
+    $view_display->removeComponent('field_lms_videos');
     $view_display->save();
   }
 }
 
+/**
+ * Installs the course video reference for existing sites.
+ */
+function aculta_lms_resources_update_8001(): void {
+  if (!FieldStorageConfig::loadByName('group', 'field_lms_videos')) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_lms_videos',
+      'entity_type' => 'group',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'media'],
+      'cardinality' => -1,
+      'translatable' => FALSE,
+    ])->save();
+  }
+
+  if (!FieldConfig::loadByName('group', 'lms_course', 'field_lms_videos')) {
+    FieldConfig::create([
+      'field_name' => 'field_lms_videos',
+      'entity_type' => 'group',
+      'bundle' => 'lms_course',
+      'label' => 'Vídeos do curso',
+      'description' => 'Vincule vídeos remotos já publicados. O conteúdo e o acesso continuam sob responsabilidade do Portal/Media.',
+      'required' => FALSE,
+      'settings' => [
+        'handler' => 'default:media',
+        'handler_settings' => [
+          'target_bundles' => ['remote_video' => 'remote_video'],
+        ],
+      ],
+    ])->save();
+  }
+
+  aculta_lms_resources_ensure_video_displays();
+}

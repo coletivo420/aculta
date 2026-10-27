@@ -209,11 +209,6 @@ final class PortalHelperRegistry {
       'summary' => 'Preserva respostas, notas e comentários anteriores ao reinício de aula, revalidando acesso pelo curso e pelo usuário.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_lms/README.md',
     ],
-    'aculta_portal.mercado_pago_webhook_guard' => [
-      'label' => 'Proteção de webhook de pagamento',
-      'summary' => 'Valida estrutura e autenticidade das notificações recebidas do gateway.',
-      'docs' => 'docs/portal/PAYMENT-DOMAIN-POLICY.md',
-    ],
     'aculta_portal.registration_mail_policy' => [
       'label' => 'Política de e-mail de cadastro',
       'summary' => 'Coordena as mensagens transacionais de cadastro pela infraestrutura de e-mail existente.',
@@ -249,9 +244,21 @@ final class PortalHelperRegistry {
       'summary' => 'Verifica configuração, credencial e disponibilidade do desafio anti-bot.',
       'docs' => 'web/modules/custom/aculta_portal/README.md',
     ],
-    'aculta_portal.checkout_configuration_resolver' => ['label' => 'Resolução da configuração de checkout', 'summary' => 'Lê a configuração administrativa de cada contexto de checkout (Loja, LMS, Doações).', 'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md'],
-    'aculta_portal.checkout_context_registry' => ['label' => 'Registro de contextos de checkout', 'summary' => 'Reúne os providers de contexto de checkout por tag, sem dependência circular.', 'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md'],
-    'aculta_portal.checkout_policy_manager' => ['label' => 'Política de checkout', 'summary' => 'Decide disponibilidade do checkout comum e dos fluxos dedicados, e detecta conflitos de tipo de pedido.', 'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md'],
+    'aculta_portal.checkout_configuration_resolver' => [
+      'label' => 'Resolução da configuração de checkout',
+      'summary' => 'Lê a configuração administrativa de cada contexto de checkout (Loja, LMS, Doações).',
+      'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md',
+    ],
+    'aculta_portal.checkout_context_registry' => [
+      'label' => 'Registro de contextos de checkout',
+      'summary' => 'Reúne os providers de contexto de checkout por tag, sem dependência circular.',
+      'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md',
+    ],
+    'aculta_portal.checkout_policy_manager' => [
+      'label' => 'Política de checkout',
+      'summary' => 'Decide disponibilidade do checkout comum e dos fluxos dedicados, e detecta conflitos de tipo de pedido.',
+      'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md',
+    ],
   ];
 
   /**

@@ -37,59 +37,87 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system',
-    'aculta_commerce_melhorenvio',
     'aculta_commerce',
+    'aculta_commerce_melhorenvio',
+    'aculta_document_viewer',
+    'aculta_forum',
+    'aculta_gallery',
     'aculta_image',
     'aculta_mail_confirmer',
     'aculta_mail_confirmer_user',
     'aculta_mailer',
+    'aculta_messenger',
     'aculta_pagamentos_mercadopago',
+    'aculta_pdf_viewer',
     'aculta_portal',
-    'aculta_user',
-    'config',
     'aculta_portal_cep',
-    'aculta_portal_sitemap',
+    'aculta_studio',
+    'aculta_user',
     'address',
     'block',
+    'ckeditor5',
+    'comment',
     'commerce',
     'commerce_cart',
+    'commerce_checkout',
     'commerce_number_pattern',
     'commerce_order',
     'commerce_payment',
     'commerce_price',
-    'commerce_shipping',
+    'commerce_product',
     'commerce_store',
+    'content_moderation',
+    'csp',
     'ctools',
     'ctools_views',
     'datetime',
+    'datetime_range',
+    'diff',
     'domain',
     'domain_alias',
     'domain_config',
     'domain_source',
+    'editor',
+    'embed',
     'entity',
+    'entity_embed',
     'entity_reference_revisions',
     'entity_usage',
     'field',
     'file',
     'filter',
+    'flag',
     'flexible_permissions',
     'group',
+    'history',
     'image',
     'inline_entity_form',
     'key',
     'language',
+    'link',
     'lms',
     'login_emailusername',
     'media',
     'media_duplicates',
+    'media_gallery',
+    'media_library',
+    'menu_link_content',
+    'menu_ui',
+    'message',
+    'message_notify',
+    'message_subscribe',
     'metatag',
+    'migrate',
     'node',
     'options',
     'path',
     'path_alias',
+    'pathauto',
+    'photoswipe',
     'physical',
+    'private_message',
     'profile',
+    'reporting',
     'schema_article',
     'schema_event',
     'schema_image_object',
@@ -98,17 +126,22 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     'schema_product',
     'schema_web_page',
     'schema_web_site',
-    'simple_sitemap',
+    'search_api',
+    'search_api_db',
+    'site_alert',
     'social_api',
     'social_auth',
     'state_machine',
+    'system',
     'taxonomy',
     'text',
     'token',
     'user',
     'views',
+    'views_bulk_operations',
     'vvj_core',
     'vvjs',
+    'workflows',
   ];
 
   /**
@@ -131,6 +164,7 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
       'key_provider' => 'config',
       'key_provider_settings' => ['key_value' => 'SECRET-SANDBOX-FIXTURE'],
     ])->save();
+    $this->createEncryptionKeyFixture();
     $this->config('aculta_commerce_melhorenvio.settings')
       ->set('environment', 'sandbox')
       ->set('redirect_uri', 'https://aculta.example.test/melhorenvio/callback')
@@ -138,6 +172,92 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
       ->set('keys.sandbox.client_id', 'me_sb_id')
       ->set('keys.sandbox.client_secret', 'me_sb_secret')
       ->save();
+  }
+
+  /**
+   * Cria a Key de cifragem de fixture (32 bytes em hex). Em produção ela vem do ambiente, pelo contrato.
+   */
+  private function createEncryptionKeyFixture(): void {
+    Key::create([
+      'id' => 'aculta_melhorenvio_token_encryption',
+      'label' => 'Fixture: cifragem de tokens Melhor Envio',
+      'key_type' => 'authentication',
+      'key_provider' => 'config',
+      'key_provider_settings' => ['key_value' => str_repeat('ab', 32)],
+    ])->save();
+  }
+
+  /**
+   * Hook 8001 sem nomes legados: não altera a configuração (sem perda).
+   */
+  public function testUpdate8001LeavesCurrentKeyIdsUntouched(): void {
+    require_once __DIR__ . '/../../../aculta_commerce_melhorenvio.install';
+    $before = $this->config('aculta_commerce_melhorenvio.settings')->get('keys');
+    self::assertStringContainsString('Normalized 0', aculta_commerce_melhorenvio_update_8001());
+    self::assertSame($before, $this->config('aculta_commerce_melhorenvio.settings')->get('keys'));
+  }
+
+  /**
+   * Hook 8001 converte nomes legados em Key IDs uma vez, e a segunda execução não altera nada.
+   */
+  public function testUpdate8001ConvertsLegacyNamesOnceAndIsIdempotent(): void {
+    require_once __DIR__ . '/../../../aculta_commerce_melhorenvio.install';
+    $this->config('aculta_commerce_melhorenvio.settings')
+      ->set('keys.sandbox.client_id', 'MELHORENVIO_SANDBOX_CLIENT_ID')
+      ->set('keys.sandbox.client_secret', 'MELHORENVIO_SANDBOX_CLIENT_SECRET')
+      ->save();
+    self::assertStringContainsString('Normalized 2', aculta_commerce_melhorenvio_update_8001());
+    $keys = $this->config('aculta_commerce_melhorenvio.settings')->get('keys');
+    self::assertSame('melhorenvio_sandbox_client_id', $keys['sandbox']['client_id']);
+    self::assertSame('melhorenvio_sandbox_client_secret', $keys['sandbox']['client_secret']);
+    self::assertStringContainsString('Normalized 0', aculta_commerce_melhorenvio_update_8001());
+  }
+
+  /**
+   * Hook 8002 sem chave de cifragem: falha, e o registro em texto puro permanece para a próxima tentativa.
+   */
+  public function testUpdate8002FailsClosedWithoutKeyAndKeepsLegacyRecord(): void {
+    require_once __DIR__ . '/../../../aculta_commerce_melhorenvio.install';
+    $state = $this->container->get('state');
+    $legacy = [
+      'access_token' => 'token-ficticio-acesso',
+      'refresh_token' => 'token-ficticio-renovacao',
+      'expires_at' => 1900000000,
+    ];
+    $state->set('aculta_commerce_melhorenvio.tokens.sandbox', $legacy);
+    // Chave de cifragem ausente: esvazia o valor na configuração (sem save da entidade) e limpa o cache de Keys.
+    $this->config('key.key.aculta_melhorenvio_token_encryption')->set('key_provider_settings.key_value', '')->save();
+    \Drupal::entityTypeManager()->getStorage('key')->resetCache();
+
+    try {
+      aculta_commerce_melhorenvio_update_8002();
+      self::fail('A migração sem chave de cifragem deveria falhar.');
+    }
+    catch (\RuntimeException) {
+      // Esperado: a atualização fica pendente.
+    }
+    self::assertSame($legacy, $state->get('aculta_commerce_melhorenvio.tokens.sandbox'));
+  }
+
+  /**
+   * Hook 8002 cifra o registro legado uma vez; a segunda execução pula o que já está cifrado.
+   */
+  public function testUpdate8002EncryptsLegacyRecordOnceAndStoreReadsIt(): void {
+    require_once __DIR__ . '/../../../aculta_commerce_melhorenvio.install';
+    $state = $this->container->get('state');
+    $legacy = [
+      'access_token' => 'token-ficticio-acesso',
+      'refresh_token' => 'token-ficticio-renovacao',
+      'expires_at' => 1900000000,
+    ];
+    $state->set('aculta_commerce_melhorenvio.tokens.sandbox', $legacy);
+
+    self::assertStringContainsString('Encrypted 1', aculta_commerce_melhorenvio_update_8002());
+    $stored = $state->get('aculta_commerce_melhorenvio.tokens.sandbox');
+    self::assertSame('encrypted_v1', $stored['format']);
+    self::assertStringNotContainsString('token-ficticio', (string) $stored['payload']);
+    self::assertSame($legacy, $this->container->get('aculta_commerce_melhorenvio.token_store')->load(MelhorEnvioEnvironment::Sandbox));
+    self::assertStringContainsString('Encrypted 0', aculta_commerce_melhorenvio_update_8002());
   }
 
   /**
@@ -166,7 +286,12 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
   public function testOauthRoutesAreNeverCached(): void {
     $path = $this->container->get('extension.list.module')->getPath('aculta_commerce_melhorenvio');
     $routes = Yaml::parseFile(DRUPAL_ROOT . '/' . $path . '/aculta_commerce_melhorenvio.routing.yml');
-    foreach (['aculta_commerce_melhorenvio.status', 'aculta_commerce_melhorenvio.oauth_authorize', 'aculta_commerce_melhorenvio.oauth_callback'] as $name) {
+    $oauthRoutes = [
+      'aculta_commerce_melhorenvio.status',
+      'aculta_commerce_melhorenvio.oauth_authorize',
+      'aculta_commerce_melhorenvio.oauth_callback',
+    ];
+    foreach ($oauthRoutes as $name) {
       self::assertTrue((bool) ($routes[$name]['options']['no_cache'] ?? FALSE), $name);
     }
   }
@@ -199,7 +324,11 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
   public function testCallbackWithUnknownStateUsesPopupReturnAndMessage(): void {
     $this->installEntitySchema('path_alias');
     $this->container->get('router.builder')->rebuild();
-    $request = Request::create('https://aculta.example.test/integracoes/melhorenvio/retorno', 'GET', ['state' => 'antigo', 'code' => 'x']);
+    $request = Request::create(
+      'https://aculta.example.test/integracoes/melhorenvio/retorno',
+      'GET',
+      ['state' => 'antigo', 'code' => 'x'],
+    );
     $request->setSession(new Session(new MockArraySessionStorage()));
     $response = $this->container->get('aculta_commerce_melhorenvio.oauth_controller')->callback($request);
     self::assertSame(200, $response->getStatusCode());
@@ -213,6 +342,51 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
   }
 
   /**
+   * Retorno com state pendente mas sem código: erro de mensagem, nenhuma troca e o state sai da sessão.
+   */
+  public function testCallbackWithValidStateButNoCodeIsRejectedWithoutExchange(): void {
+    $this->installEntitySchema('path_alias');
+    $this->container->get('router.builder')->rebuild();
+    $session = new Session(new MockArraySessionStorage());
+    $session->set('aculta_commerce_melhorenvio.oauth_state', 'estado-pendente');
+    $request = Request::create(
+      'https://aculta.example.test/integracoes/melhorenvio/retorno',
+      'GET',
+      ['state' => 'estado-pendente'],
+    );
+    $request->setSession($session);
+    $response = $this->container->get('aculta_commerce_melhorenvio.oauth_controller')->callback($request);
+    self::assertSame(200, $response->getStatusCode());
+    self::assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
+    $errors = $this->container->get('messenger')->messagesByType('error');
+    self::assertCount(1, $errors);
+    self::assertStringContainsString('não devolveu o código', (string) $errors[0]);
+    self::assertNull($this->container->get('aculta_commerce_melhorenvio.token_store')->load(MelhorEnvioEnvironment::Sandbox));
+    self::assertNull($session->get('aculta_commerce_melhorenvio.oauth_state'));
+  }
+
+  /**
+   * Replay: o mesmo state usado uma vez não é aceito de novo, mesmo na mesma sessão.
+   */
+  public function testStateIsSingleUseOnReplay(): void {
+    $this->installEntitySchema('path_alias');
+    $this->container->get('router.builder')->rebuild();
+    $session = new Session(new MockArraySessionStorage());
+    $session->set('aculta_commerce_melhorenvio.oauth_state', 'estado-unico');
+    $controller = $this->container->get('aculta_commerce_melhorenvio.oauth_controller');
+    $query = ['state' => 'estado-unico'];
+    $first = Request::create('https://aculta.example.test/integracoes/melhorenvio/retorno', 'GET', $query);
+    $first->setSession($session);
+    $controller->callback($first);
+    $second = Request::create('https://aculta.example.test/integracoes/melhorenvio/retorno', 'GET', $query);
+    $second->setSession($session);
+    $controller->callback($second);
+    $errors = $this->container->get('messenger')->messagesByType('error');
+    self::assertCount(2, $errors);
+    self::assertStringContainsString('não pôde ser confirmada', (string) $errors[1]);
+  }
+
+  /**
    * A página de estado mostra o ambiente, a conexão e o botão que abre a autorização em popup.
    */
   public function testStatusPageOffersPopupConnect(): void {
@@ -223,6 +397,7 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     self::assertStringContainsString('Sandbox (testes)', $html);
     self::assertStringContainsString('Não conectada', $html);
     self::assertStringContainsString('data-aculta-popup="melhorenvio_autorizacao"', $html);
+    self::assertStringContainsString('data-portal-ui="button-primary"', $html);
     self::assertStringContainsString('/integracoes/melhorenvio/autorizar', $html);
     self::assertSame(0, $build['#cache']['max-age']);
   }

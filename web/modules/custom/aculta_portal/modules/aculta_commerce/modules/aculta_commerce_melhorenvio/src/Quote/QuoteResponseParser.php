@@ -44,13 +44,21 @@ final class QuoteResponseParser {
   }
 
   /**
-   * Decimal com ponto e duas casas, ou NULL quando o valor não é um número não negativo.
+   * Valor monetário como texto decimal com ponto e duas casas, sem passar por float.
+   *
+   * Aceita apenas valores não negativos com até duas casas. Um valor com mais precisão (por exemplo, 10.005) é
+   * recusado em vez de arredondado em silêncio: não se inventa centavo que a API não informou.
    */
   private static function decimal(mixed $value): ?string {
-    if (!is_numeric($value) || (float) $value < 0) {
+    if (is_int($value) || is_float($value)) {
+      // Com oito casas o float é reproduzido sem ruído binário; zeros finais são removidos.
+      $value = rtrim(rtrim(sprintf('%.8F', (float) $value), '0'), '.');
+    }
+    if (!is_string($value) || preg_match('/^\d+(\.\d{1,2})?$/', $value) !== 1) {
       return NULL;
     }
-    return number_format((float) $value, 2, '.', '');
+    [$integer, $fraction] = explode('.', $value) + [1 => ''];
+    return $integer . '.' . str_pad($fraction, 2, '0');
   }
 
 }

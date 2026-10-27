@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Access hook fixture for the Content Index Wiki integration test.
+ */
+
 declare(strict_types=1);
 
 use Drupal\aculta_portal\Hook\EntityHooks;
@@ -13,4 +18,3 @@ use Drupal\Core\Session\AccountInterface;
 function aculta_index_wiki_access_test_entity_access(EntityInterface $entity, string $operation, AccountInterface $account): ?AccessResultInterface {
   return \Drupal::service(EntityHooks::class)->entityAccess($entity, $operation, $account);
 }
-

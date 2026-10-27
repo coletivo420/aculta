@@ -30,6 +30,9 @@ final class GoogleCheckCommand extends Command {
     parent::__construct();
   }
 
+  /**
+   * Executa a verificação das integrações Google.
+   */
   protected function execute(InputInterface $input, OutputInterface $output): int {
     $end = gmdate('Y-m-d');
     $start = gmdate('Y-m-d', strtotime('-6 days'));

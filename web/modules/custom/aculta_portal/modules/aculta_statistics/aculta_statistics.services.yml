@@ -127,7 +127,7 @@ services:
     class: Drupal\aculta_statistics\Connector\Ga4\SecretsGa4Settings
     arguments: ['@?aculta_portal.secrets_manager']
   aculta_statistics.ga4_logger:
-    class: Psr\Log\LoggerInterface
+    class: Drupal\Core\Logger\LoggerChannelInterface
     factory: ['@logger.factory', 'get']
     arguments: ['aculta_statistics']
   aculta_statistics.ga4_client:

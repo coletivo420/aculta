@@ -1,3 +1,34 @@
+## 0.1.0-dev.14 — contratos neutros para operações do provedor
+
+- Serviços MP implementam as interfaces neutras do Portal e exportam `aculta_portal.payment_provider.subscription_status`, `.subscription_operations`, `.payment_operations` e `.refund_policy`; os IDs proprietários continuam internos.
+- Falhas de API são embrulhadas em `PaymentOperationException` com mensagem segura para a interface. A mensagem crua da API é enviada somente ao log.
+- Unit MP: 118 testes / 260 assertions PASS, incluindo estorno, ações de assinatura e proteção de mensagens.
+
+## 0.1.0-dev.13 — hooks de administração e elegibilidade no módulo próprio
+
+- `RefundEligibilitySubscriber` e os ramos de presave, acesso e formulário do gateway passam ao módulo MP; os serviços não dependem mais de `CheckoutSettings` do Portal.
+- A regra `bloqueiaEstorno` e seus casos permanecem inalterados.
+- Unit do MP: 111 testes / 231 assertions PASS (inclui os 22 casos contratuais informados e os novos testes de acesso/form); PHP lint: 43 arquivos PASS; PHPCS Drupal/DrupalPractice: zero erros e zero avisos nos arquivos alterados; services.yml parseados; `git diff --check` PASS.
+- `validate-portal-commerce-security.php` segue adiado até site descartável; não foi executado no Runtime.
+
+## 0.1.0-dev.12 — credenciais e webhook no módulo próprio
+
+- Credenciais/override de ambiente e guarda/subscriber do webhook passam ao módulo próprio; IDs de serviço renomeados sem aliases.
+- Mantidos `commerce_payment.notify`, prioridade 29, headers `x-signature`/`x-request-id`, Key `mercadopago_webhook_secret`, env `MERCADOPAGO_WEBHOOK_SECRET`, gateway `mercado_pago`, plugin e comportamento fail-closed.
+- Unit: 18 testes / 36 assertions PASS. PHP lint: 8 arquivos PASS; PHPCS Drupal/DrupalPractice: 0 erros / 0 avisos; os dois services.yml parseiam. O validator de segurança não foi executado: só tem entrada Drupal/runtime, sem modo estático isolado; será exercitado em instalação descartável, nunca no Runtime.
+
+## 0.1.0-dev.11 — serviços de pagamento e recorrência no módulo próprio
+
+- Serviços de pagamento, recorrência, gravação de assinaturas e notificações passam a ser declarados pelo módulo; IDs renomeados para `aculta_pagamentos_mercadopago.*`, sem alias.
+- Canal de log passa a `aculta_pagamentos_mercadopago`. Os valores persistidos e regras da integração permanecem iguais.
+- Suítes dos arquivos alterados: 32 testes / 106 assertions PASS; PHP lint em 18 arquivos PASS; PHPCS sem erros e com 77 avisos de linha longa em comentários. Os quatro testes de serviço foram movidos junto às classes; os dois services.yml parseiam.
+
+## 0.1.0-dev.10 — extração das regras puras e fábrica do SDK
+
+- Move `MercadoPagoApiException`, `RecurrenceRequestBuilder`, `MercadoPagoClientFactory` e `MercadoPagoPaymentPolicy` para o módulo Mercado Pago; seus três testes também passam a pertencer ao módulo.
+- Mantidos IDs de serviço atuais até o passo 2; comportamento e valores persistidos não mudam.
+- Suítes dos arquivos alterados: 82 testes / 177 assertions PASS; PHP lint em 22 arquivos PASS; PHPCS sem erros e com 102 avisos de linha longa em comentários.
+
 # Changelog — aculta_pagamentos_mercadopago
 
 ## Regressão PR #298 — 2026-10-26

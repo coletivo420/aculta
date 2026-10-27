@@ -1,0 +1,28 @@
+uuid: a839c3d9-f517-4081-9fe3-53185eedfed4
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_don_read
+    - message.template.aculta_msg_donation_notice
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: KJdNALnVCfKCazhvpeML2yBoXeRtqZNKFsywzzJdju4
+id: message.aculta_msg_donation_notice.field_aculta_don_read
+field_name: field_aculta_don_read
+entity_type: message
+bundle: aculta_msg_donation_notice
+label: 'Aviso lido'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean

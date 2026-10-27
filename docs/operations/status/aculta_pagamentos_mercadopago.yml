@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.9
+version: 0.1.0-dev.14
 state: Dev
-progress_note: "RedirectCheckoutForm não força mais source_news=ipn, incompatível com o guard de Webhooks modernos assinado do Portal; guard Unit 13/19 PASS, PHP lint e PHPCS Drupal/DrupalPractice no form PASS (zero erros; seis avisos de linha longa). Sem pagamento, credencial, chamada externa ou Runtime."
+progress_note: "Dev.14: implementação MP passa contratos opcionais de pagamento do Portal; erros de API chegam à UI como exceção neutra segura e detalhe cru vai só ao log. Unit 118/260 PASS; PHPCS zero erros/45 avisos, lint PASS. Sem chamada externa ou Runtime; instalação limpa com e sem dependentes aguarda configuração de prefixo descartável validada."
 next_phase: Concluir homologação sandbox e gates/visual antes de RC; validar integração Runtime em Alpha ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))

@@ -719,6 +719,580 @@ Após integrar o commit documental do agente 2 e reconciliar Index no Config Syn
 - A suíte Unit inteira de Melhor Envio passou nesta branch: **74 testes / 181 assertions**. PHPCS Drupal/DrupalPractice dos arquivos de provider/factory e dos testes alterados passou; PHP lint dos arquivos alterados e gates de índice (41), pacotes (41) e aliases (26 arquivos) passaram. Corrigi também o teste de definição do serviço para processar os argumentos explícitos que o YAML já declara.
 - Uma primeira execução de Unit sem autoloader da branch carregou `ShippingRate` do checkout principal/contrib e falhou; ela não é contabilizada. A repetição com bootstrap temporário que prioriza os fontes da PR passou. O Kernel do provider ainda requer uma instalação de teste que carregue esta branch no discovery Drupal; permanece pendente, sem PASS presumido. Trabalho não commitado do agente Index permaneceu em seu worktree.
 
+
+## M-4 — conciliação do motor Shipping na PR #298 (2026-10-26)
+
+- Comparei `origin/chore/aculta-m0-integridade` (`541b58239`) e `origin/feat/aculta-commerce-shipping-port` (`37d56355d`); os commits-base já estavam patch-equivalentes na PR. Cherry-pick dos nove commits faltantes, com resolução de histórico no CHANGELOG: suite Kernel, transições Green Stash, revalidação do checkout, provider mock, remoção do pacote Composer, dimensões, `getCreatedTime()`, teste Config Sync e fallback de workflow.
+- Reexecutado no worktree da PR: Unit Commerce **55/272 PASS**; `ShippingEngineKernelTest` **7/237 PASS** (182 depreciações Core/contrib); Unit Melhor Envio **74/181 PASS**; `ShippingConfigSyncTest` incluído; PHP lint e PHPCS Drupal/DrupalPractice dos PHP alterados PASS; Composer validate válido com avisos de constraints exatas; gates de pacote e status **41/41 PASS**. Nenhum skip permanece na suíte Shipping.
+- `MelhorEnvioWiringKernelTest` teve inicialmente 9 erros de setup/0 assertions quando o harness omitia `aculta_studio`; o agente 2 adicionou a cadeia real e removeu `commerce_shipping` do fixture.
+- Instalação limpa Standard com `aculta_commerce` e Melhor Envio foi executada em `aculta_simpletest`, prefixo `shipport_`: `commerce_shipping` ausente; entidades e plugins próprios e provider Melhor Envio descobertos; `drush cr` PASS e nenhum update pendente. Limpeza dos 299 nomes lógicos de tabela via Drupal Schema API; verificação final: banco de teste sem tabelas e site/prefixo descartável removidos.
+- Runtime `aculta_runtime` na URI MAIN foi somente leitura: `commerce_shipping=enabled`, `aculta_commerce=enabled`, Melhor Envio habilitado, `physical=enabled` e field target ativo `commerce_shipment`. Nenhuma importação, atualização, uninstall, pedido, pagamento ou serviço externo foi executado no Runtime.
+- Composer e Config Sync versionados estão alinhados ao motor próprio. Documentos Commerce/status/matriz atualizados; estado segue Dev. Firefox ESR não foi executado porque este worktree ainda não está servido no VirtualHost; checkout visual e cutover Runtime ficam pendentes.
+- Limite de segurança: `site:install` recriou apenas prefixo dedicado na base de testes; no fim a base `aculta_simpletest` inteira foi limpa com autorização explícita do responsável. As credenciais do site descartável foram removidas com o `settings.php`; nenhuma credencial foi registrada em documentação/log.
+- Próxima tarefa: revisar e corrigir o harness Kernel Melhor Envio no worktree do agente 2; em paralelo, preparar uma janela coordenada para aplicar a branch ao servidor de testes e executar cutover com verificação e rollback, preservando pedidos LMS/Doações.
+
+- Gates globais repetidos nesta revisão: Config Extension Dependencies **PASS (1.578 checks/1.425 YAMLs)**; status e pacote **41/41 PASS**; aliases **26 arquivos PASS**; Admin Domain **PASS (3.504 checks)** e Payment Domain **PASS (44 checks)** quando executados por Drush com bootstrap no Runtime de testes. `validate-module-theme-boundary` **FAIL (1/3.022)** em classes de apresentação no `aculta_commerce_melhorenvio` e `aculta_links` (encaminhar ao owner Agent 2). `validate-aculta-portal-drupal11` **FAIL** porque o contrato do gate espera 14 tags `event_subscriber` no Portal (owner Portal; fora do porte). A chamada direta de gates dependentes de Drupal via PHP CLI não é resultado válido; o gate de Portal Commerce Security não foi reexecutado porque seu registro documenta efeitos temporários no gateway.
+
+## Gate Portal — subscribers de rotas (2026-10-26)
+
+- Revisão do commit `fd0c2199b` confirmou que `SocialAuthCallbackRouteSubscriber` implementa a regra documentada de retorno OAuth em `/integracoes/{network}/retorno`; a contagem anterior de 14 no gate estava desatualizada.
+- `validate-aculta-portal-drupal11.php` agora fixa 15 subscribers e verifica a presença do serviço, classe e caminho canônico. Resultado reexecutado com Composer autoload disponível: **PASS (1.164 checks)**; índice derivado: **PASS (41 componentes)**; PHP lint e `git diff --check` PASS.
+
+
+## Reexecução final do adaptador Melhor Envio na PR #298 (2026-10-26)
+
+- Cherry-pick `e74396c00` corrigiu o harness com a cadeia real do Studio/Messenger e removeu classes do tema do controller. Commit publicado como `355c352f5`.
+- Kernel `MelhorEnvioWiringKernelTest` reexecutado nesta PR no MariaDB dedicado, com Core/vendor físicos do worktree: **9 testes / 45 assertions PASS**, sem rede externa; 129 depreciações de Core/contrib. Unit reexecutada no root isolado pelo agente 2: **74 testes / 181 assertions PASS**.
+- As contagens 9/44 e 73/179 vieram de execuções inválidas cujo `web/core` symlinkado resolveu o bootstrap para `/home/piradopirata/projetos/aculta`; não são falhas nem divergências do código e foram substituídas pelos resultados com root correto.
+- PHPCS nos dois arquivos de código alterados: **0 errors**, com 12 avisos de linha longa preexistentes; PHP lint e `git diff --check` PASS. A fronteira módulo–tema continua falhando apenas em `aculta_links`, responsabilidade do agente 2.
+- Nenhuma chamada externa, gravação ou operação de Runtime foi realizada nesta verificação.
+
+
+## Reconciliar aculta_secrets_manager na PR #298 — 2026-10-26
+
+- Integrados os 15 commits da branch `agent/aculta-secrets-manager` no conteúdo da PR. O commit `chore(claude): desativa coautoria` também foi incluído; nenhum commit da frente ficou exclusivo.
+- Reexecução na PR com autoloader que prioriza os módulos do worktree: Unit Portal + Secrets 384/1.008 PASS; consumidores Mailer, Statistics, CPF, Mercado Pago e Melhor Envio 403/1.100 PASS; `SecretsRoutesKernelTest` 1/4 PASS em MariaDB dedicado. PHPCS Drupal/DrupalPractice e lint do submódulo PASS.
+- Gate de contrato de segredos PASS; aliases PASS; admin Domain PASS em 3.504 checks via Drush na URI MAIN read-only. O Runtime MAIN reporta módulo Enabled `0.1.0-dev.1`; nenhuma gravação foi executada.
+- PHPCS detectou inicialmente 66 erros e 20 avisos nos arquivos integrados; PHPCBF e correções manuais resolveram todos sem mudar comportamento. PHPCS final passou com zero findings.
+- A revisão visual Firefox ESR e HTTP autenticado vieram da branch de origem e não foram reexecutados nesta integração. Functional, instalação limpa e rollback continuam pendentes; componente permanece Dev e não elegível a RC.
+- Um comando PHPUnit padrão carregou a implementação fiscal do checkout compartilhado e falhou em dois casos gratuitos de LMS; descartado como teste da PR. Runner com namespaces do worktree foi usado e passou 384/1.008, incluindo os mesmos casos.
+
+
+
+## Integração de Index e LMS Resources na PR #298 — 2026-10-26
+
+- Branch `feat/aculta-index-fechamento` verificada em `98f3937e54`: 27 commits; 14 patches já equivalentes e 13 exclusivos integrados. Index avançou para `0.1.0-dev.176`, LMS Resources para `0.1.0-dev.18`; `aculta_index_file` leva o inventário a 42 módulos + tema (43 componentes).
+- Testes reexecutados na PR: Unit 17/155; Kernel bridge Statistics 3/55, LMS course/video 5/259 e Index Rebuilder 21/295 PASS (46 testes / 764 assertions). O índice de status e gate de pacotes passaram com 43 componentes.
+- `aculta_index_file` é opt-in, não entrou no Config Sync nem foi habilitado no Runtime. O update LMS `8001` está versionado e não foi executado. Nenhuma gravação Runtime ocorreu.
+- O worktree Index da origem foi preservado. Instalação/update limpa, Browser, catálogo representativo/grants e PHPCS/lint focal pós-integração continuam pendentes; ambos os módulos seguem Dev.
+
+
+## Conciliação e limpeza remota de branches — 2026-10-26
+
+- Relatório verificável: [`ACULTA-BRANCH-RECONCILIATION-2026-10.md`](ACULTA-BRANCH-RECONCILIATION-2026-10.md).
+- Removidas do remoto após equivalência e ownership verificados: `feat/aculta-frentes-independentes`, `feat/aculta-commerce-shipping-port`, `feat/aculta-me-conciliacao`, `feat/aculta-index-fechamento` e `agent/aculta-secrets-manager`. As branches locais/worktrees foram mantidos.
+- `feat/aculta-melhorenvio-integracao` foi removida do remoto após a equivalência ser confirmada e as alterações locais do Kernel serem incorporadas em `cedd5cebd`. O worktree e a branch locais foram preservados; `main` e a branch da PR permanecem protegidas.
+- PR #298 após integração do Index, versão/status dos componentes e limpeza: HEAD remoto confirmado `9dfbd31bed190ad6c00416201655688c2cfe16a4`; suíte de gates estáticos de status/pacotes/Config Extension Dependencies passa com 43 componentes.
+
+
+## Fechamento de `feat/aculta-melhorenvio-integracao` e documentação de Shipping — 2026-10-26
+
+- Comparei a ponta remota `da55ae5c7209f4483d27839b4a02b9130bac6c90` à PR por `git cherry` e revisão de patches. Cherry-picks publicados na PR: `7e7d04f78` (precisão monetária), `f212258dc` (testes do cliente/webhook e pendências), `22870f814` (evidência de HMAC e retries). O commit `dc460b02d` foi substituído por roadmap/status verificados porque registrava versões e estado antigos.
+- Dois métodos de teste OAuth que estavam apenas como diff local em `MelhorEnvioWiringKernelTest.php` foram revistos e integrados em `cedd5cebd`: callback com state válido sem código e replay de state. A suíte completa passou na PR: Kernel **11 testes / 57 assertions PASS**, MariaDB dedicado, sem rede; Unit **85 / 204 PASS**. PHP lint passou nos quatro arquivos PHP afetados. PHPCS Drupal/DrupalPractice: zero erros, com avisos residuais de linha longa.
+- Excluí apenas a ref remota `feat/aculta-melhorenvio-integracao`; `git push --delete`, fetch e `git ls-remote` confirmaram ausência. O worktree `/mnt/disco1/tmp/aculta-melhorenvio-int` e a branch local foram preservados, incluindo seu estado de trabalho.
+- Alinhei manifesto e versão para `0.1.0-dev.4`; README/CHANGELOG/roadmap/pendências do adaptador, status YAML, matriz de fechamento, README/CHANGELOG/roadmap Commerce, matriz do porte, relatório de branches e este log. Atualizei as contagens e removi a afirmação de que o Kernel do Melhor Envio falha no setup.
+- O provider usa o motor do `aculta_commerce`; não foi criada dependência de `commerce_shipping`. O adaptador segue fora do Config Sync. Nenhuma configuração foi importada, nenhuma escrita foi feita no Runtime e nenhuma chamada externa ou contratação de envio foi executada. Ambos os projetos permanecem Dev; checkout Functional/Browser e validação sandbox estão pendentes.
+- Próximo passo: homologar o checkout e a seleção de frete no servidor de testes com Firefox ESR e sandbox sem contratar etiqueta, conforme os roadmaps Commerce e Melhor Envio.
+- Limpeza local após o fechamento: removidos os artefatos próprios `aculta-me-kernel-root` (cópia isolada de Core/vendor, ~248 MB), `aculta-me-kernel-lite`, `aculta-me-kernel-out` e `aculta-me-callback-tests.patch` de `/mnt/disco1/tmp`. O worktree fonte `/mnt/disco1/tmp/aculta-melhorenvio-int` e diretórios temporários sem ownership confirmado foram preservados; nenhum Runtime ou dado de projeto foi afetado.
+
+## Cifragem em repouso dos tokens Melhor Envio (0.1.0-dev.5) — 2026-10-26
+
+- Base: `origin/chore/aculta-m0-integridade` em `c1e210934`, que já inclui a frente 2 (`feat/aculta-fronteira-links-secrets`). A cifragem foi reaplicada sobre essa base; não foi feito push nesta execução.
+- Tokens OAuth passam a ser gravados no State API como `encrypted_v1`, com `MelhorEnvioTokenCipher` (libsodium `secretbox`, nonce novo por gravação). A chave vem do contrato central pelo Key ID `aculta_melhorenvio_token_encryption` (`ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY`, 64 caracteres hex, gerada com `openssl rand -hex 32`).
+- Tipo de Key: `authentication` com valor hex, e não `encryption`. Motivo: o tipo `encryption` do módulo Key valida o tamanho em bytes brutos (32), enquanto o valor precisa ser lido igual pelo provedor `env` e pelo fallback de arquivo, que não decodifica base64.
+- Falha fechada: chave ausente, adulteração ou formato inválido devolvem "sem tokens" (reautorização). Nenhum texto puro é devolvido nem gravado.
+- `update_8001` normaliza nomes legados em Key IDs e não altera nada sem nomes legados. `update_8002` cifra registros legados uma vez, é idempotente e falha se a chave faltar (atualização pendente).
+- `SecretsManager::valueForKeyId()` resolve valores pelo Key ID estável; ID ambíguo falha fechado.
+- Verificação: Unit cipher 9/13 PASS; Unit `SecretsManagerTest` 15/48 PASS; Kernel `MelhorEnvioWiringKernelTest` 15/69 PASS em `aculta_simpletest` com 130 deprecações; `validate-secrets-contract.php` PASS; `validate-module-theme-boundary.php` PASS; PHPCS sem erros nem avisos nos arquivos novos.
+- Divergência anterior, fora deste escopo: `validate-project-status-index.php` já falha na base `c1e210934` (`aculta_links` 0.4.0-dev.32 vs manifest 0.4.0-dev.33; `aculta_secrets_manager` 0.1.0-dev.1 vs 0.1.0-dev.3; `aculta420` 0.7.0-dev.3 vs 0.7.0-dev.4). Correção pertence à frente 2 e não foi feita aqui.
+- Provisionamento: `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` em teste e produção; `MELHORENVIO_PRODUCTION_CLIENT_ID` e `MELHORENVIO_PRODUCTION_CLIENT_SECRET` em produção. Trocar a chave invalida os tokens guardados.
+- Pendente: rotação de chave e migração automatizada; checkout e browser no servidor de testes.
+## Troca do checkout do servidor de testes para a PR integrada — 2026-10-26
+
+- Docroot de teste: `/home/aculta/public_html` é o checkout `/home/piradopirata/projetos/aculta` (o `web/` dele). Os testes X11 (`DISPLAY=:0`) rodam contra esse checkout.
+- Autorização: mensagem do responsável do projeto na sessão de 2026-10-26, citada literalmente: "Autorizo 3, pode trocar, documente a troca na documentação e istruções de agentes". O Agente Web não autorizou a troca. O checkout saiu de `8499180a6` (detached) e foi para `c1e210934` (PR integrada, detached).
+- Preservação antes da troca: branch `backup/checkout-antes-pr-8499180a6` no HEAD anterior; alteração não commitada de `docs/operations/ACULTA-MODULES-CLOSEOUT.md` guardada em `git stash` e em patch em `/home/piradopirata/worktrees/backup-checkout-20261026-1730/`; `package.json` e `package-lock.json` (não rastreados) copiados para a mesma pasta. Os não rastreados `node_modules/` e `web/modules/custom/aculta_portal/src/Plugin/Field/` foram mantidos no lugar.
+- Após a troca: `drush cr` (rebuild de cache). Drush conecta em `aculta_runtime`; nenhuma atualização de banco ou configuração foi feita.
+- Ressalva: `vendor/`, `web/core/` e `web/modules/contrib/` continuam os do checkout anterior (lock diferente da PR, que remove `commerce_shipping`).
+- Testes visuais X11 (Firefox ESR, `DISPLAY=:0`):
+  - Micropágina de links: 2/2 PASS (1280 px e 390 px).
+  - Painel de segredos `/painel-administrativo/aculta/segredos`: `painel-visual.py` 16/16 PASS; `popups-visual.py` 7/7 PASS.
+- Dados de teste: a micropágina `pagina-teste-mobile` foi criada por Drush (com link e item marcados `TESTE VISUAL`) e removida ao final; nenhum resíduo.
+- Correção de teste: seletor da tabela de `painel-visual.py` passou a usar o atributo `data-portal-ui`, como o módulo já marca (antes acusava falso negativo).
+- Pendência: o teste do painel não cobre foco visível em todas as abas; manter em rodada própria se for exigido.
+
+## Kernel integral do Index e decisão B do ciclo Portal ↔ Mercado Pago — 2026-10-26
+
+- **Kernel integral de `aculta_index`** no commit `c1e210934` (antes da frente 3), banco dedicado `aculta_simpletest`: 119 testes, 1685 asserções, **110 PASS, 0 SKIPPED, 0 F, 9 E**, com 56 deprecações PHPUnit e 39 de Drupal/Core.
+- Os 9 erros são todos `LogicException: Circular module dependency detected at aculta_portal`:
+  - `ContentIndexOwnerIntegrationKernelTest::testOwnerAdaptersAreDiscoveredByThePortalIndex`
+  - `ContentIndexOwnerIntegrationKernelTest::testRealWikiOwnerBootstrapRevalidatesEntityAccess`
+  - `ContentIndexWikiAccessKernelTest::testRealModulesDiscoverWikiAndMediaProviders`
+  - `ContentIndexWikiAccessKernelTest::testPendingRevisionDoesNotReplacePublishedDefaultProjection`
+  - `ContentIndexWikiAccessKernelTest::testWikiIncrementalUpdateDeleteAndProviderFingerprint`
+  - `ContentIndexWikiAccessKernelTest::testAccessFilterFailsClosedWhenWikiDomainIsMissing`
+  - `ContentIndexWikiAccessKernelTest::testFilterUsesWikiEntityAccessInCanonicalDomain`
+  - `ContentIndexWikiAccessKernelTest::testRelatedEntriesRevalidateSourceAndTargetsInWikiDomain`
+  - `ContentIndexWikiAccessKernelTest::testCategoryAndImageRelationsRevalidateTargetAccess`
+- Não são erro de permissão nem de exec; não vêm do NTFS.
+- **Decisão do responsável: opção B.** Extrair a integração do Mercado Pago para o submódulo, em fase própria. A linha 34 de `aculta_portal.info.yml` **não** foi alterada nesta execução. Causa verificada: o Portal usa o submódulo em tempo de execução (`MercadoPagoClientFactory` referencia `CheckoutPro`; `RefundEligibilitySubscriber` usa `RefundEligibilityEvent::NAME` em `getSubscribedEvents()`, chamado pelo dispatcher do Kernel), então a opção A (remover a linha e tornar os consumidores opcionais) não seria segura sem a extração.
+- Sequência: o Local 3 faz o inventário B0; a fase B1 é executada depois da revisão. Após B1, o Local 3 reexecuta os 9 testes.
+- Tentativa descartada: teste de boot com e sem o submódulo, com lista mínima de módulos. Falhou por dependência de serviço não declarada (`aculta_image.file_remover`), problema de declaração já existente no Portal. Não foi commitado.
+- Ref remota `feat/aculta-fronteira-links-secrets`: excluída após confirmação do coordenador (Local 2 em `feat/aculta-secrets-claro`); `git cherry` vazio e ref ancestral da PR, verificados antes da exclusão.
+
+## Integração de três entregas aprovadas e verificação do Claro — 2026-10-26
+
+**Merges, nesta ordem, sobre `d74a6779d` (PR #298):**
+
+- `9751b494f`: `feat/melhorenvio-token-cipher` @ `0c95bc711` (cifragem dos tokens, migração 8002 com malformado apagado e chave ausente interrompendo).
+  - Testes: Unit cipher 11/19 PASS; Unit `SecretsManagerTest` 15/48 PASS; Kernel `MelhorEnvioWiringKernelTest` 15/69 PASS (130 deprecações); `validate-secrets-contract` PASS.
+- `dfd3421ef`: `feat/aculta-secrets-claro` @ `f4474d5d4` (sem conflito).
+  - Gates: `validate-module-theme-boundary` PASS (3036); `validate-aculta420-sdc-schemas` PASS (45 componentes, 628 checagens); `validate-aculta420-design-foundations` PASS; Foundation via Drush PASS (345); shell-contract via Drush PASS (11).
+  - Testes: Unit `aculta_secrets_manager` 13/56 PASS; `SecretsManagerTest` 15/48 PASS; Kernel `aculta_secrets_manager` 1/4 PASS (62 deprecações).
+- `78f5bb199`: merge de `docs/aculta-mp-extracao-b0` @ `bc1458284`, só docs (`docs/portal/MERCADOPAGO-EXTRACAO.md`).
+- Commit `bcac5eab0`: versões dos status de `aculta_secrets_manager` (0.1.0-dev.4) e `aculta420` (0.7.0-dev.5), com nota de integração.
+
+**Verificação Firefox no Claro, checkout servido em `78f5bb199`** (backup da branch `backup/checkout-antes-78f5bb1` no HEAD `c1e210934`; sem alterações rastreadas; `drush cr`):
+
+- `claro-foco-alvos.py`: 25/28 PASS em 1280, 390 e 320 px.
+- Foco por Tab alcança revelar, alterar e apagar, com foco visível. A aba recebe foco. Alvos de toque ≥ 44 px.
+- **Falha:** cor do ícone de apagar `rgb(35, 36, 41)`, esperado `rgb(179, 38, 30)`. Causa verificada: `--aculta-status-error-text` e `--color-danger` estão vazias na raiz do documento do Claro. Correção para o Local 2: definir o token de erro na página do Claro. Não corrigido aqui.
+
+**Exclusão de refs remotas:**
+
+- Excluídas: `feat/aculta-index-validacao` (ancestral da PR; Local 3 encerrado) e `feat/melhorenvio-token-cipher` (integrada nesta execução). Verificadas com `git cherry` vazio antes da exclusão.
+- Mantidas: `feat/aculta-secrets-claro` (Local 2) e `docs/aculta-mp-extracao-b0` (Local 3, em revisão de B1). `git cherry` vazio nas duas, mas o encerramento dos donos não está confirmado.
+
+**Pendência bloqueante de implantação:** `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` **não está provisionada** no servidor de testes (nome ausente em `secrets/aculta.secrets.env` e no ambiente do shell, verificado sem imprimir valores). Nenhum `drush updatedb` pode rodar até a provisão. O `update_8002` falharia sem a chave, e a atualização ficaria pendente sem perda de dados.
+
+**Ressalva de status:** `validate-project-status-index.php` segue FAIL por `aculta_links` (0.4.0-dev.32 contra manifest 0.4.0-dev.33), fora desta entrega. A tabela do README raiz também está desatualizada.
+
+## Correções de cor, status e exclusão de refs; estado do Melhor Envio no servidor de testes — 2026-10-26
+
+- **Cor do apagar no Claro:** o fallback `--color-danger` não existe no tema Claro. Trocado por `--color-maximumred`, definida em `web/core/themes/claro/css/base/variables.css` (linha 18, `var(--color-red-500)` = `#dc2323`, linha 67). A cadeia `var(--aculta-status-error-text, var(--color-maximumred, currentColor))` é mantida, sem cor literal. `SecretsTabsTest` não fixa nomes de cor, então não precisou de mudança.
+- **Verificação Firefox no Claro** (`claro-foco-alvos.py`, checkout servido em `c0beca205`): **28/28 PASS** em 1280, 390 e 320 px. Cor do apagar `rgb(220, 35, 35)` nas três larguras.
+- **Módulo `aculta_secrets_manager` 0.1.0-dev.5**, com CHANGELOG e status YAML atualizados.
+- **Status de `aculta_links`:** `docs/operations/status/aculta_links.yml` alinhado a `0.4.0-dev.33` (igual ao `info.yml`). Índice regenerado com `php scripts/validate-project-status-index.php --write`: **PASS, 43 componentes**. A regeneração também sincronizou linhas de outros componentes com versões que já estavam nos seus status YAML (`aculta_lms_resources` 0.1.0-dev.19; `aculta_secrets_manager`, `aculta420`).
+- **Exclusão de refs remotas** (após `git cherry` vazio e ancestralidade confirmada, com confirmação do coordenador de que Local 2 está na fase B e Local 3 no Messenger): `feat/aculta-secrets-claro` e `docs/aculta-mp-extracao-b0` excluídas. Antes, `feat/aculta-index-validacao` e `feat/melhorenvio-token-cipher` já tinham sido excluídas nesta execução.
+- **Arquivos reservados ao Local 2 (fase B):** não editados nesta rodada. Foram tocados só arquivos de segredos, status, README e docs.
+- **Servidor de testes e checkout:** o checkout servido foi para `c0beca205` (mesma autorização e mesmo procedimento de backup registrados antes: branch `backup/checkout-antes-c0beca2`, sem alterações rastreadas). `drush cr` executado.
+
+### Melhor Envio no servidor de testes (estado registrado, sem ação)
+
+- **Código servido:** a cifragem dos tokens (`encrypted_v1`) já está em `c0beca205`, portanto em execução no servidor de testes.
+- **Consequência verificada no código:** registro legado em texto puro não é lido. `StateMelhorEnvioTokenStore::load()` devolve `NULL` (falha fechada), então o Melhor Envio aparece sem autorização até o `update_8002` cifrar o registro. Não há leitura de texto puro.
+- **Gravação de novos tokens:** `save()` lança exceção sem a chave de cifragem. Uma nova autorização OAuth falha até a chave ser provisionada. Nada é gravado em texto puro.
+- **Pendência bloqueante, sem ação nesta execução:** `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` **não provisionada** no servidor de testes, e `drush updatedb` **não rodado**. Os dois exigem autorização explícita do responsável. Não foram executados.
+- **Ordem para quando for autorizado:** provisionar a chave no ambiente do servidor, depois `drush updatedb`, que roda o `update_8002`.
+
+## Integração do ensaio parcial dos updates do Messenger — 2026-10-26
+
+- Integrado por merge `feat/aculta-messenger-update-ensaio` @ `4f8694853` (só documentação: `docs/operations/ACULTA-MESSENGER-UPDATE-PLAN.md` e `docs/operations/status/aculta_messenger.yml`). Aprovado pelo Agente Web como ensaio parcial. Sem código, sem Runtime e sem alteração de banco.
+- **Janela de updates do Messenger no Runtime exige snapshot integral de `aculta_runtime` antes.** Os post-updates de preferências removem chaves legadas de `users_data` e criam `avisos_email_mode_*`. A reversão exige restaurar o snapshot integral, sem rollback parcial e sem reversão por SQL improvisada. Antes da janela: snapshot consistente, restauração provada em banco isolado e cron/workers parados. O ensaio local não substitui o snapshot.
+- **O ensaio fiel ao código antigo depende da fase B.** Enquanto a fase B não termina, o ensaio parcial não reproduz o estado de código anterior, por isso não serve de prova de rollback nem de janela.
+- Exclusão de `feat/aculta-messenger-update-ensaio`: pendente de confirmação com o Local 3, que não foi obtida nesta execução.
+
+## Provisão de `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` no servidor de testes — 2026-10-26
+
+- **Autorização:** responsável, mensagem de 18:23 (apenas a chave; `updatedb` proibido). Acesso de escrita concedido pela mensagem seguinte ("Conceder acesso de escrita rodando sudo"), com `sudo setfacl` sobre o arquivo.
+- **Estado de partida:** arquivo `secrets/aculta.secrets.env`, dono `aculta:aculta`, modo 640, ACL com leitura para `piradopirata` e `toca`. Variável ausente (contagem 0). Carregado por `web/sites/default/aculta.secrets.php`.
+- **Backup:** `/home/piradopirata/worktrees/backup-secrets-20261026-1830/aculta.secrets.env`, fora do Git e do docroot, modo 600. Dono `piradopirata`, porque não se preserva `aculta` sem ser root; conteúdo idêntico (cmp).
+- **Gravação:** uma linha acrescentada com `printf ... "$(openssl rand -hex 32)" >>`. O valor não foi exibido, não entrou em log e não ficou no histórico. Arquivo terminava em quebra de linha.
+- **Incidente e correção:** após a escrita, a máscara da ACL deixou o modo 660 e o loader recusou o arquivo ("permissões muito amplas"). Corrigido: ACL do meu usuário removida, máscara `r--`, e leitura `piradopirata:r--` restaurada. Estado final igual ao original: `aculta:aculta 640`, ACL `user:piradopirata:r--`, `user:toca:r--`, `mask::r--`.
+- **Verificação:** Drush, `SecretsManager::valueForKeyId('aculta_melhorenvio_token_encryption')`: comprimento 64, hexadecimal PASS. Web: aba Testes do painel de segredos mostra a linha como "preenchida", status OK (sem valor).
+- **Não feito:** `drush updatedb` (proibido), autorização OAuth e qualquer alteração em tokens de State. Credenciais sandbox do Melhor Envio seguem pendentes.
+- **Rollback:** restaurar o backup (exige escrita concedida ao dono) e `drush cr`.
+- **Efeito:** trocar a chave invalida os tokens cifrados; reautorização obrigatória. Registros legados só são cifrados quando o `update_8002` rodar.
+
+## Inventário de `secrets/`, decisões do responsável e integração do ensaio do `user` — 2026-10-26
+
+- **Integração do ensaio do `user`:** merge de `feat/aculta-user-update-ensaio` @ `3c810a78a`. Só documentação (o commit toca apenas `docs/`; o resultado contra a PR altera uma linha de status de `aculta_user`). Sem código, sem Runtime, sem banco.
+- **Exclusão das refs de ensaio:** `feat/aculta-messenger-update-ensaio` e `feat/aculta-user-update-ensaio` **não excluídas**. Exigem confirmação do Local 3, que não foi obtida nesta execução.
+- **Barreira do Mercado Pago (somente leitura):** ambiente resolvido pelo deployer `test`; modo configurado `test`; modo efetivo do gateway `test`; variáveis resolvidas `MERCADOPAGO_TEST_PUBLIC_KEY` e `MERCADOPAGO_TEST_ACCESS_TOKEN`; credenciais de runtime presentes. Nenhum valor foi exibido. Nenhum sinal de resolução para `PRODUCTION`.
+- **Permissões em `secrets/`:** `chmod 600` não aplicado (zeraria a máscara da ACL e cortaria `www-data`, `toca` e `aculta`, com processos ativos). Aplicado `674` → `670` em `credenciais_de_teste_mercadolivre` e `system`. Dono, conteúdo e ACL preservados. Estado final: `670 piradopirata:piradopirata` nos três arquivos (incluindo `producao-ssh.env`, já em `670`).
+- **Verificação após a mudança:** `drush status` com bootstrap OK; loader lê a chave (comprimento 64, hex); painel de segredos 16/16 PASS no Firefox.
+- **Decisões do responsável (18:32):** credenciais de produção do Mercado Pago permanecem no `secrets/aculta.secrets.env` do servidor de testes, como exceção explícita à regra "teste nunca usa chave de produção". Credencial SSH de produção (`producao-ssh.env`) permanece, sem rotação. Registrado em `SECRETS.md` e em `melhorenvio-secrets.md`.
+- **Regra de escrita em `secrets/`:** somente como o dono do arquivo (`sudo -u aculta`), sem ACL de escrita concedida ao usuário de trabalho.
+- **Incidente da provisão (18:25):** a ACL de escrita fez o modo ficar `660`, e o loader recusou o arquivo. Duração: alguns minutos, entre a gravação às 18:25:32 e a restauração. Modo final `640`, ACL original. **Acesso ao site na janela não verificado**: logs do Apache não legíveis pelo usuário de trabalho. Confirmação pendente pelos logs.
+
+## Incidente: alterações não autorizadas no checkout servido e YAML inválido — 2026-10-26
+
+- **Sintoma relatado pelo Local 3:** `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/aculta_pagamentos_mercadopago.services.yml` inválido no checkout servido (erro de parse na linha 1: a chave `aculta_pagamentos_mercadopago.environment_override` aparece sem o cabeçalho `services:`).
+- **Impacto medido:** `aculta.toca.net.br` e `loja.aculta.toca.net.br` responderam HTTP 200 antes e depois da restauração. O impacto real é de **risco**: a configuração ativa referencia serviços que só existem no arquivo quebrado (`aculta_pagamentos_mercadopago.webhook_guard`, `.webhook_subscriber`). Uma reconstrução de container (`drush cr` ou `updatedb`) em qualquer momento derrubaria o site. Nenhum erro de página foi observado.
+- **Estado encontrado:** `HEAD` em `c0beca205`; sete arquivos tracked modificados e um não rastreado (o YAML). Mtimes: arquivos tracked entre 18:24:37 e 18:25:50, e o YAML às 18:25:50, todos em 2026-10-26. **Não consegui identificar o autor pelo sistema de arquivos**: a janela coincide com a provisão da chave (18:25:32), e o conteúdo é trabalho de extração do Mercado Pago (renomeação para `aculta_pagamentos_mercadopago.*`, remoção de `aculta_portal.mercado_pago_environment_override`), que é da fase B do Local 2, mas também há reformatação de comentários, típica de formatador. Autoria a confirmar pelo Local 2.
+- **Preservação antes da restauração:** `/home/piradopirata/worktrees/backup-checkout-20261026-1837/` com `tracked.patch` (13 KB), `arquivos-tracked.txt` e a cópia do YAML não rastreado (`nao-rastreados/`, idêntica, verificada por `cmp`). Além disso, as alterações tracked foram guardadas em **`git stash`** com mensagem (`stash@{0}`), recuperáveis com `git stash pop`/`git stash show`.
+- **Restauração:** `git stash push` apenas nos arquivos tracked modificados (sem `-u`, sem reset de histórico); YAML não rastreado removido do checkout depois da cópia verificada; `drush cr`; `drush status` com bootstrap OK; HTTP 200 nas duas URIs. Arquivos pré-existentes e não relacionados (`node_modules/`, `package*.json`, `Plugin/Field/`) não foram tocados.
+- **Estado final:** `HEAD` `c0beca205`, árvore limpa nos tracked. O trabalho da fase B que estava no checkout servido **não está mais servido**: está no stash e no backup, para o Local 2 decidir como reaplicar em branch.
+- **Pendências:** confirmar com o Local 2 a autoria e se a extração deve ser retomada em branch; não reaplicar no checkout servido sem revisão. Confirmar, pelos logs (não legíveis neste usuário), se houve erro de container na janela.
+
+## Incidente de exposição de senha do Runtime e decisão de não rotacionar — 2026-10-26
+
+- **O que aconteceu:** durante a inspeção de `secrets/aculta-runtime-db.php`, um `grep` casou a linha inteira e a senha do usuário MariaDB `aculta_runtime` apareceu na saída da sessão do Local 3 (por volta de 18:3x). O valor não foi copiado para commit, documento ou log de aplicação, e o arquivo não é versionado.
+- **Decisão explícita do responsável (18:38):** a senha **não será trocada**. A rotação foi retirada dos pré-requisitos da janela de update do Runtime.
+- **Regra mantida:** leitura de credenciais somente por PHP, com option-file de modo 600, sem impressão de valores. Nenhum comando de inspeção pode usar `grep` sobre arquivos de credenciais.
+- **Registro:** `docs/operations/RUNTIME-UPDATE-WINDOW.md` atualizado (item de incidente, pré-requisitos e retomada). O snapshot-ensaio (`docs/aculta-runtime-snapshot-ensaio`, `24d2e0a0e`) foi integrado como documentação, sem código e sem alteração de banco.
+- **Pendência:** o responsável provisiona o banco descartável (sem `aculta_simpletest`) antes de qualquer ensaio de restauração.
+
+## Decisão do responsável sobre o modo de `secrets/` (18:39) — 2026-10-26
+
+- Decisão explícita: `credenciais_de_teste_mercadolivre`, `system` e `producao-ssh.env` permanecem em **670**. Não aplicar 640.
+- A regra de escrita em `secrets/` (somente como o dono, via `sudo -u aculta`) é procedimento dos agentes, não restrição de permissão.
+- Registrado também em `docs/operations/SECRETS.md`.
+
+## Encerramento do E0 do simulador de frete — 2026-10-26
+
+- **E0 encerrado.** Estudo aprovado com ajustes e integrado na PR por merge de `docs/aculta-frete-simulador-e0` @ `488268aca` (só documentação: `FRETE-SIMULADOR.md`, seção 8). Sem código.
+- **Ref remota `docs/aculta-frete-simulador-e0` excluída** depois de `git cherry` vazio e ancestralidade confirmada.
+- **E1 depende do cutover do frete.** O porte assume o motor próprio (`ShippingOrderManager`, `ShipmentManager`, `plugin.manager.aculta_shipping_method`) e não pode importar `commerce_shipping`. Enquanto o checkout usar o contrib, o simulador fica atrás de feature flag. O cutover está em `feat/aculta-commerce-cutover` (`c8f1f8bbf`), ainda sem ensaio no banco restaurado.
+- **Critério de aceite da E1 (8.7):** `canUse()` exige `validUntil`, e o default `emitido + 600 s` é preenchido em `aculta_flat_rate`, `aculta_flat_rate_per_item` e `aculta_melhorenvio` no mesmo commit, com teste Kernel de cotação no checkout para cada provedor.
+- **Decisão pendente 8.6:** "exibido + revalidado" versus "persistido no carrinho". Até a decisão, a especificação assume "exibido + revalidado", sem persistir a cotação no carrinho.
+
+## Classificação dos 101 commits do backup `backup/checkout-antes-pr-8499180a6` — 2026-10-26
+
+Método: `git cherry -v origin/chore/aculta-m0-integridade backup/checkout-antes-pr-8499180a6`. Para cada commit com `+`, comparou-se, linha a linha, o conteúdo adicionado com o arquivo atual da PR, e conferiu-se o documento `ACULTA-BRANCH-RECONCILIATION-2026-10.md` quanto a substituições declaradas (SHAs existentes no repositório).
+
+- **Total:** 101. **Equivalentes (`-`):** 82. **Sem equivalente por patch-id (`+`):** 19.
+- **(a) Equivalentes:** 14 (o conteúdo já está na PR, com ≥ 90% das linhas ou lógica presente com texto adaptado; ex.: `f812ff495`, `8cb2fa6aa` (92%), `41edddefe`, `140ac2003`).
+- **(b) Substituídos ou adaptados, documentados:** 3. `ff92ca0aa` → `698499396` e `9603a5649` (documento de reconciliação); `0945a7001` → `ba3116cb6` (documento); `8cb2fa6aa` → `a91600359` (documento).
+- **(c) Exclusivos, sem equivalente nem substituição documentada:** 2, ambos só documentação, sem código faltando:
+  - `d4c11717f` — `docs(melhorenvio): atualizar README, roadmap e CHANGELOG`. Arquivos: `docs/operations/ACULTA-AGENT2-WORKLOG.md`; `aculta_commerce_melhorenvio/CHANGELOG.md`, `README.md` e `docs/ROADMAP.md`. Presença no conteúdo: 84%.
+  - `1b782798b` — `docs(secrets): resultados com Olivero e verificação HTTP com sessão real`. Arquivo: `docs/operations/SECRETS-SM9-INTEGRACAO.md`. Presença no conteúdo: 66%. Os resultados foram reexecutados depois e estão registrados nesta execução, mas o documento de reconciliação não os cita como substituídos.
+
+Conclusão: nenhum commit do backup contém código exclusivo fora da PR. Os dois (c) são registros de documentação, que não entraram nos documentos atuais.
+
+## Decisão 8.6 do simulador de frete (19:03) — 2026-10-26
+
+- **Decidido pelo responsável:** o frete do simulador é **exibido e revalidado no checkout**. Nada é persistido no carrinho nem no pedido antes do checkout. A cotação fica só no tempstore da sessão, com expiração pelo `valid_until`.
+- Consequência: o pane `aculta_shipping_information` revalida a cotação no checkout e mostra a mudança de valor antes do pagamento.
+- `FRETE-SIMULADOR.md` seção 8.6 atualizada de "pendente" para "decidido".
+
+## Conciliação local (Homelab) e cutover do frete — 2026-10-26
+
+| Item | Classificação | Ação |
+|---|---|---|
+| Branches locais integrados na PR, de minha autoria (`docs/*` de 8.6, 670, incidentes, E0, Kernel do Index; `integra/*`; `fix/secrets-claro-cor-apagar`; `feat/aculta-index-validacao`) | (i) integrado | `git branch -d`, ou `-D` com verificação de ancestral da PR e `git cherry` vazio (dois casos) |
+| `feat/aculta-fronteira-links-secrets` | (i) integrado | branch local apagada; worktree removido incompleto (ver abaixo) |
+| Worktrees `frente3-merge-teste` e `aculta-frete-simulador-e0` | (i) integrado, limpo | `git worktree remove` sem `--force` |
+| `/mnt/disco1/tmp/aculta-fronteira-links-secrets` | (i) integrado, mas remoção incompleta | **Parado.** 7.532 arquivos (376 MB) restam no diretório. Decisão pendente |
+| `/mnt/disco1/tmp/aculta-token-cipher` | (iv) alterações pendentes | **Parado** (18 alterações; regra de parar). Não removido |
+| `backup/checkout-antes-pr-8499180a6` | (iii) backup | Bundle verificado; branch mantida até o fim da janela de updates |
+| Stashes de Fórum, Messenger, mailer (`stash@{2..9}`) | (iii) backup | Patch salvo em `backup-stashes-20261026/`; nenhum drop nesta rodada |
+| `stash@{0}` (fase B do checkout servido) | (iv) conteúdo exclusivo do Local 2 | Mantido até o Local 2 confirmar a recuperação |
+| Branches `agent/*`, `feat/aculta-secrets-claro`, `docs/aculta-mp-extracao-b0`, `docs/aculta-runtime-snapshot-ensaio`, `feat/aculta-messenger/user-update-ensaio` | (ii) ativo de outro agente | Não tocados |
+| `d4c11717f` (backup, c) | (c) exclusivo | Descartado: README obsoleto, já classificado |
+| `1b782798b` (backup, c) | (c) exclusivo | Incorporado em `SECRETS-SM9-INTEGRACAO.md` (verificação HTTP 9/9), por commit de docs |
+
+**Cutover do frete (`feat/aculta-commerce-cutover` @ `975761aff`, publicado para revisão, sem PR):**
+- `update_8001` instala as entidades do motor (idempotente).
+- `post_update_migrate_shipping_methods` copia FlatRate para `aculta_flat_rate` (e `flat_rate_per_item`), preservando valores, lojas, status e peso; o original não é apagado.
+- `post_update_retarget_shipments` remove só a referência de remessa do pedido, apaga remessas legadas e reaponta o campo. Pedidos não são apagados.
+- A desinstalação do `commerce_shipping` é **passo explícito da janela**, não post-update: `blockersForUninstall()` vazio e depois `drush pm:uninstall commerce_shipping`.
+- Kernel: 4 testes e 112 asserções PASS. PHPCS: 0 erros nos arquivos novos.
+- **Não provado no Kernel:** reapontamento com campo instalado e com dados. O harness falha ao salvar pedido com remessa legada. A prova fica para o ensaio no banco restaurado do snapshot (Local 3).
+- Ordem obrigatória documentada em `RUNTIME-UPDATE-WINDOW.md`: updatedb com o vendor atual → conferir → `drush pm:uninstall` → só então `composer install` com o lock da PR.
+
+## Limpeza de branches e estado da PR — 2026-10-27
+
+### Estado da PR
+
+- Head de `chore/aculta-m0-integridade` antes deste registro: `37e6cc4fbe837a04973daf4a690bee0a3aca1503`.
+- `650f473dc122a3474970a80422eb53501c24c133`: **não é ancestral** do head da PR.
+- `b9d3ed39d0d1026143a3a48b14cb3950068f81a6`: **não é ancestral** do head da PR.
+- Conclusão: a integração desses commits **ainda não aconteceu**. Nada foi integrado nesta etapa.
+
+### Branches locais excluídas (13)
+
+Critério: `git merge-base --is-ancestor` ou `git cherry` sem linhas `+`, e exclusão com `git branch -d`
+(nunca `-D`). Remotas não foram tocadas nesta etapa.
+
+agent/aculta-status-cleanup, backup/checkout-antes-78f5bb1, backup/checkout-antes-c0beca2,
+backup/pre-sync-aculta-runtime-788154eef, docs/aculta-forum-0.1.0-dev.1, docs/ensaio-geral-resultado,
+docs/ensaio-geral-rodada-2, docs/incorpora-1b782798b, docs/integra-bancos-5b5a18f,
+docs/integra-snapshot-30c5450, docs/ordem-cutover-e-limpeza, docs/regra-copia-runtime, integra/fase-b-mp.
+
+### Branches recusadas pelo `-d` (não forçadas)
+
+- **Worktree em uso** (o `-d` recusa; as worktrees pertencem a outras frentes e não foram removidas):
+  agent/aculta-magazine-a2, agent/aculta-magazine-completion-20261026, agent/aculta-me-precision-tests,
+  agent/aculta-melhorenvio-a6, agent/aculta-melhorenvio-kernel, agent/aculta-mercadopago-closeout,
+  agent/index-a6, agent/statistics-focal, agent/melhorenvio-service-fix, docs/aculta-mp-extracao-b0,
+  feat/aculta-document-viewer-fechamento, feat/aculta-index-fechamento, feat/aculta-messenger-update-ensaio,
+  feat/aculta-mp-extracao, feat/aculta-secrets-claro, feat/aculta-user-update-ensaio,
+  feat/melhorenvio-token-cipher, feat/melhorenvio-token-cipher-c1e2109.
+- **"not fully merged"** (o `-d` compara com o HEAD atual, destacado em `c0beca205`; a reavaliar com o
+  head da PR): agent/aculta-m0-phpcs, agent/aculta-m0-phpcs-current, agent/aculta-m0-side-modules,
+  agent/aculta-m0-status-audit, agent/aculta-status-current2, backup/pre-xk-c1-sync-20261022.
+
+### Branches remotas mantidas (commits sem equivalente na PR)
+
+docs/aculta-runtime-snapshot-ensaio (2), feat/aculta-commerce-cutover (8), feat/aculta-user-10013-contagem (2),
+fix/alinhamento-sync-runtime (11), fix/barra-multidominio-alinhamento (1), fix/validador-seguranca-allowlist (3).
+Remota excluída nesta rodada (critério a, ancestral da PR): `feat/aculta-mp-extracao`.
+
+### Relatado pelo responsável (NÃO verificado pelo agente)
+
+- Escrita de teste no Runtime: aviso sintético enviado à teste.c (mensagem 515, conversa 314), feito pelo
+  procedimento de usuários de teste.
+- Erro 500 no perfil do teste.d por ausência de `aculta_user_nickname` no Runtime; pendente da janela de updatedb.
+
+Nenhum desses dois itens foi executado ou observado pelo agente nesta execução.
+
+## Exclusão autorizada de bancos locais — 2026-10-27
+
+Por decisão explícita do responsável, foram excluídos **sem backup** somente os quatro
+bancos listados abaixo. A autorização delimitou o escopo; nenhum outro banco foi alterado.
+Execução administrativa pelo comando `sudo -u mysql mariadb`, em 2026-10-27, por Local 2.
+
+| Banco | Tabelas imediatamente antes | Resultado |
+|---|---:|---|
+| `aculta_id_cpf_test` | 0 | `DROP DATABASE` executado |
+| `aculta_install_b2` | 0 | `DROP DATABASE` executado |
+| `aculta_shipclone_20261026_a6` | 588 | `DROP DATABASE` executado |
+| `aculta_runtime_copia` | 598 | `DROP DATABASE` executado |
+
+O responsável decidiu expressamente não fazer backups prévios. A sequência foi nominal,
+um banco por comando, com `SHOW DATABASES` após cada exclusão. As listas resultantes
+foram, respectivamente:
+
+```text
+aculta_install_b2, aculta_runtime, aculta_runtime_copia, aculta_shipclone_20261026_a6,
+aculta_simpletest, bdtgn, information_schema, mysql, performance_schema, sys, toca
+
+aculta_runtime, aculta_runtime_copia, aculta_shipclone_20261026_a6, aculta_simpletest,
+bdtgn, information_schema, mysql, performance_schema, sys, toca
+
+aculta_runtime, aculta_runtime_copia, aculta_simpletest, bdtgn, information_schema,
+mysql, performance_schema, sys, toca
+
+aculta_runtime, aculta_simpletest, bdtgn, information_schema, mysql,
+performance_schema, sys, toca
+```
+
+O `REVOKE ALL PRIVILEGES ON aculta_id_cpf_test.*` solicitado retornou `ERROR 1141`:
+não havia grant correspondente naquele momento. A leitura administrativa posterior
+mostrou somente `GRANT ALL PRIVILEGES ON aculta_runtime.*` para
+`aculta_runtime@localhost` (o hash de senha foi omitido). Nenhum grant de outro usuário
+foi alterado.
+
+Verificação final: `SHOW DATABASES` confirmou `aculta_runtime` e `aculta_simpletest`;
+`aculta_runtime` permaneceu com 588 tabelas e `aculta_simpletest` com 0. Não houve
+alteração nesses dois bancos. `toca`, `bdtgn` e os bancos de sistema permaneceram na
+lista e fora do escopo desta exclusão.
+
+## Exclusão autorizada do banco local `bdtgn` — 2026-10-27
+
+Por decisão explícita do responsável, `bdtgn` foi excluído sem backup, usando
+`sudo -u mysql mariadb`. Antes do comando, a consulta administrativa confirmou o schema
+`bdtgn` com 176 tabelas. `SHOW FULL PROCESSLIST` mostrou somente a própria consulta
+administrativa, com `db` nulo; nenhuma sessão ativa usava `bdtgn`.
+
+Foi executado um único comando nominal: `DROP DATABASE bdtgn;`. A verificação posterior
+confirmou `bdtgn` ausente. `SHOW DATABASES` listou `aculta_runtime`, `aculta_simpletest`,
+`information_schema`, `mysql`, `performance_schema`, `sys` e `toca`. As contagens finais
+foram `toca` 137, `aculta_runtime` 588 e `aculta_simpletest` 0. Nenhum desses bancos foi
+alterado.
+
+## Gates verdes no head da PR — falhas pré-existentes e correções (2026-10-27)
+
+Head da PR antes: `301441ada`. Depois dos commits de código: `14037de34`. Publicado com fast-forward, sem force.
+
+### Falhas encontradas
+
+1. **Foundation** (`scripts/validate-aculta420-foundation.php`): exceção do container
+   `Class "Drupal\aculta_portal\Commerce\MercadoPago\MercadoPagoEnvironmentOverride" not found`.
+   - Causa: cache compilado antigo do container no checkout servido. Nenhum arquivo versionado
+     referencia esse namespace; o `services.yml` de `aculta_pagamentos_mercadopago` já aponta
+     para `Drupal\aculta_pagamentos_mercadopago\...`, correto no commit.
+   - Correção: `drush cr` no checkout servido, autorizado pelo responsável. Sem commit de código.
+     Após o cache: `345 ACULTA420 Foundation checks passed.`
+   - A correção de namespace prevista ("commit A") não era necessária: não havia o que corrigir.
+
+2. **Shell-contract** (`scripts/validate-aculta420-shell-contract.php`): `Interface
+   "Drupal\Core\Security\TrustedCallbackInterface" not found` em `ThemeHooks.php:26`.
+   - Causa: o script usa `\Drupal::service()` sem iniciar o kernel. Carregar só o autoload
+     do core não basta: falha com `ContainerNotInitializedException`.
+   - Correção: commit `14037de34`. Chamado com `php` direto, o script delega ao `drush scr`,
+     como o gate de Foundation. Não altera `web/themes/custom/aculta420/`.
+
+### Correção de phpcs
+
+- Commit `3ee8c730b`: quebra de linhas longas de comentários em `PortalUiHooks.php`.
+  Zero erros e zero avisos com `Drupal,DrupalPractice`. Código conferido com `php -w`: idêntico.
+
+### Lista de gates no head `14037de34` (saídas resumidas)
+
+| Gate | Resultado |
+|---|---|
+| `git diff --check 301441ada..HEAD` | OK |
+| `php -l` nos 2 PHP alterados | OK |
+| `phpcs` (Drupal, DrupalPractice) | 0 erros, 0 avisos, rc 0 |
+| `node tests/js/messenger-counter.test.js` | `PASS: 6 atualizações de contador e rótulo` |
+| PHPUnit `UtilityBarRenderTest` (a partir do checkout no head) | `OK (1 test, 41 assertions)` |
+| `validate-aculta420-sdc-schemas.php` | PASS (45 componentes, 628 checks) |
+| `validate-aculta420-design-foundations.php` | rc 0 |
+| `scripts/tests/validate-aculta420-design-foundations-test.php` | PASS (157 fixtures) |
+| `validate-browser-validators.php` | PASS (21 checks) |
+| `validate-module-theme-boundary.php` | PASS (3058 verificações) |
+| `validate-aculta420-foundation.php` | `345 ACULTA420 Foundation checks passed.` |
+| `validate-aculta420-shell-contract.php` | `ACULTA420 B.4 SHELL CONTRACT: PASS (11 checks)` |
+| `scripts/tests/validate-aculta420-shell-contract-test.php` | PASS (19 fixtures) |
+
+### Observação
+
+O head da PR recebeu commits só de docs de outra origem enquanto esta sequência rodava
+(`03244e611` e `301441ada`, ambos de registro de exclusão de bancos). Nenhum deles altera código.
+
+## Limpeza de branches no head c0e51bf48 — 2026-10-27
+
+Head da PR (`chore/aculta-m0-integridade`) usado como referência: `c0e51bf4819ac2ca0e375c42db94d4351a62d991`.
+Critérios: (a) `git merge-base --is-ancestor B <head>`; (b) `git cherry <head> B` sem linhas `+`.
+Exclusão somente com `git branch -d` (nunca `-D`) e `git push origin --delete` (nunca `--force`).
+
+### a) EXCLUÍDAS
+
+Nenhuma.
+
+- Locais que passaram pelo critério (b), sem worktree, mas recusadas pelo `git branch -d` com
+  "not fully merged" (os commits são equivalentes na PR, porém não são ancestrais do HEAD):
+  agent/aculta-m0-phpcs, agent/aculta-m0-phpcs-current, agent/aculta-m0-side-modules,
+  agent/aculta-m0-status-audit, agent/aculta-status-current2, backup/pre-xk-c1-sync-20261022,
+  fix/phpcs-portal-ui-hooks-650, fix/phpcs-sobre-03244e611. Mantidas.
+- Remota `origin/fix/barra-multidominio-alinhamento` (critério a): mantida, porque a branch local de
+  mesmo nome tem worktree em uso.
+- Locais integradas (critério a ou b) com worktree em uso: mantidas, sem remoção de worktree.
+
+### b) MANTIDAS
+
+Contagem: `git branch -r` = 9 linhas (incluindo `origin/HEAD` e `origin/main`);
+`git branch` = 42 branches e 1 linha de `HEAD` destacado.
+
+Integradas, mantidas por worktree em uso (locais):
+
+| Branch | Worktree | Último commit |
+|---|---|---|
+| agent/aculta-me-precision-tests | sim | 75e90acb2 docs(aculta): record remote branch reconciliation |
+| agent/aculta-melhorenvio-a6 | sim | f092c359d docs(melhorenvio): record PR test evidence |
+| agent/aculta-melhorenvio-kernel | sim | e74396c00 fix(melhorenvio): complete kernel wiring and portal UI contract |
+| agent/aculta-magazine-a2 | sim | ea7930cd7 test(sitemap): remove unavailable shipping module from kernel |
+| agent/aculta-magazine-completion-20261026 | sim | b6c09d5ba docs(magazine): align notice contracts with implementation |
+| agent/aculta-mercadopago-closeout | sim | f092c359d docs(melhorenvio): record PR test evidence |
+| agent/index-a6 | sim | f092c359d docs(melhorenvio): record PR test evidence |
+| agent/melhorenvio-service-fix | sim | 0f6e61ad5 fix(melhorenvio): alias mapper for binder autowiring |
+| agent/statistics-focal | sim | f57b2ec8d fix(statistics): corrige cabeamento do logger e dívida PHPCS na auditoria focal |
+| docs/aculta-mp-extracao-b0 | sim | bc1458284 docs(mercadopago): inventário B0 para extrair a integração do Portal |
+| feat/aculta-document-viewer-fechamento | sim | 71b96d264 fix(commerce): fall back from legacy shipment workflow |
+| feat/aculta-index-fechamento | sim | 98f3937e5 docs(index): record final LMS, file and runtime commits |
+| feat/aculta-messenger-update-ensaio | sim | 4f8694853 docs(messenger): registra ensaio local dos updates 10008-10012 |
+| feat/aculta-mp-extracao | sim | 4cadfd0e2 test(index): install nickname schema in kernel harnesses |
+| feat/aculta-secrets-claro | sim | f4474d5d4 docs(portal): record Claro admin styling exception |
+| feat/aculta-user-update-ensaio | sim | 3c810a78a docs(user): registra ensaio local do update 10013 |
+| feat/melhorenvio-token-cipher | sim | f2bdf8fbe docs(aculta): record local test artifact cleanup |
+| feat/melhorenvio-token-cipher-c1e2109 | sim | 0c95bc711 fix(melhorenvio): migração 8002 apaga legado malformado e exige chave |
+| fix/barra-multidominio-alinhamento | sim | 650f473dc Corrige alinhamento dos controles da barra multidomínio |
+
+Com commits sem equivalente na PR (mantidas, todas com worktree em uso, exceto a de backup):
+
+| Branch | Commits sem equivalente | Worktree | Último commit |
+|---|---|---|---|
+| agent/aculta-secrets-manager | 2 | sim | b024f5bc4 test(secrets): revelação com valor fictício |
+| backup/checkout-antes-pr-8499180a6 | 19 | não | 8499180a6 test(secrets): revelação com valor fictício |
+| docs/aculta-runtime-snapshot-ensaio | 2 | sim | 1b71c12a3 docs(ops): corrige registro da exclusão em aculta_install_b2 |
+| docs/barra-multidominio-janelas | 4 | sim | a7eee4caa Registra validação da barra com contas de teste |
+| ensaio/geral-local | 14 | sim | 15e7c7b5c Merge remote-tracking branch 'origin/fix/alinhamento-sync-runtime' |
+| feat/aculta-commerce-cutover | 8 | sim | 5f139df4d fix(commerce): reaponta referência de remessa por SQL |
+| feat/aculta-commerce-shipping-port | 3 | sim | 37d56355d fix(commerce): fall back from legacy shipment workflow |
+| feat/aculta-frentes-independentes | 12 | sim | 9f7a09f8e fix(checkout): não gravar o pedido ao copiar o endereço de cobrança |
+| feat/aculta-me-conciliacao | 4 | sim | d410ef313 fix(melhorenvio): binder autowired e alias do mapeador |
+| feat/aculta-melhorenvio-integracao | 1 | sim | da55ae5c7 test(melhorenvio): cobrir falhas da cotação e o controller do webhook |
+| feat/aculta-user-10013-contagem | 2 | sim | 46dffd76b docs(runtime): corrige frase sobre gravação em perfis do 10013 |
+| fix/alinhamento-sync-runtime | 11 | sim | 596fa9d65 docs(operations): registra remoção esperada da view do contrib no uninstall |
+| fix/validador-seguranca-allowlist | 3 | sim | f9eef8472 test(security): remove segunda checagem de estado fixo do gateway MP |
+
+Remotas mantidas (commits sem equivalente na PR): `origin/docs/aculta-runtime-snapshot-ensaio` (2),
+`origin/feat/aculta-commerce-cutover` (8), `origin/feat/aculta-user-10013-contagem` (2),
+`origin/fix/alinhamento-sync-runtime` (11), `origin/fix/validador-seguranca-allowlist` (3).
+
+## Exclusão da remota origin/fix/barra-multidominio-alinhamento — 2026-10-27
+
+- Head da PR usado como referência: `bc17fff3e5419eeec9adf37448979f79b964e08d`.
+- Critério: (a) `git merge-base --is-ancestor origin/fix/barra-multidominio-alinhamento <head>`
+  → ancestral: sim (o commit era `650f473dc`).
+- Comando: `git push origin --delete fix/barra-multidominio-alinhamento` (sem force).
+- Verificação: `git ls-remote --heads origin | grep -c fix/barra-multidominio-alinhamento` → `0`.
+- Não houve remoção de worktree nem alteração de arquivos nesta etapa.
+
+## Classificação das remotas no head df444b820 — 2026-10-27
+
+Head da PR usado: `df444b820a064629145b420bdc1847e573bed9b1`.
+Critério: (a) `git merge-base --is-ancestor origin/R <head>`, ou (b) `git cherry <head> origin/R` sem linhas `+`.
+Nenhuma remota passou pelo critério: **nenhuma excluída nesta etapa**. `origin/HEAD` e `origin/main` não foram analisados.
+
+| Remota | Commits sem equivalente na PR | Último commit |
+|---|---|---|
+| origin/docs/aculta-runtime-snapshot-ensaio | 2 | 1b71c12a3 docs(ops): corrige registro da exclusão em aculta_install_b2 e documenta instalação bloqueada |
+| origin/feat/aculta-commerce-cutover | 8 | 5f139df4d fix(commerce): reaponta referência de remessa por SQL, sem salvar o pedido |
+| origin/feat/aculta-user-10013-contagem | 2 | 46dffd76b docs(runtime): corrige frase sobre gravação em perfis do 10013 (reconciliação) |
+| origin/fix/alinhamento-sync-runtime | 11 | 596fa9d65 docs(operations): registra remoção esperada da view do contrib no uninstall |
+| origin/fix/validador-seguranca-allowlist | 3 | f9eef8472 test(security): remove segunda checagem de estado fixo do gateway MP |
+
+Verificação: `git ls-remote --heads origin` lista as branches remotas mantidas e `chore/aculta-m0-integridade`.
+
+## Publicação do candidato a9bfe7820 e limpeza de branches — 2026-10-27
+
+### Publicação
+
+- Head antes: `6b28136d3`. Publicado: `a9bfe7820` (fast-forward, sem force). `6b28136d3` é ancestral de `a9bfe7820`.
+- Checkout servido: `a9bfe7820`.
+- Descrição da PR 298: seção "Estado do candidato publicado (a9bfe7820)" acrescentada, sem alterar o conteúdo existente. Atualização via API REST, porque `gh pr edit` falhou com rc 1 por aviso de Projects clássicos.
+- Conflitos de cherry-pick: somente em `docs/operations/RUNTIME-UPDATE-WINDOW.md`, resolvidos mantendo os dois lados (3 ocorrências).
+
+### Gates no candidato a9bfe7820
+
+Vermelhos (pendentes de decisão do responsável):
+
+- `validate-portal-commerce-security.php` (via `drush scr`): `No test or real Commerce orders remain.`, rc 1. Pedidos reais ou de teste no Runtime de teste: `doacao` 14 rascunhos; `default` 1 rascunho; 1 pedido sem flow.
+- phpcs (Drupal, DrupalPractice) nos 6 PHP alterados: 112 erros e 23 avisos no validador de segurança; avisos em `LegacyShippingCutover.php` (24), `ShippingCutoverKernelTest.php` (16), `ShippingMethodBase.php` (1), `NicknameRegistry.php` (1), `NicknameRegistryKernelTest.php` (2). Não corrigido.
+
+Verdes:
+
+- `git diff --check 6b28136d3..a9bfe7820`: limpo.
+- `php -l` nos 6 PHP alterados: sem erros.
+- `messenger-counter.test.js`: `PASS: 6 atualizações de contador e rótulo`.
+- PHPUnit `UtilityBarRenderTest` (configuração do core): `OK (1 test, 41 assertions)`.
+- `validate-aculta420-sdc-schemas.php`: `PASS (45 components, 23 include calls, 628 checks)`.
+- `validate-aculta420-design-foundations.php`: rc 0; teste: `PASS (157 expected outcomes)`.
+- `validate-browser-validators.php`: `PASS (21 checks)`.
+- `validate-module-theme-boundary.php`: `PASS (3060 verificações)`.
+- `validate-aculta420-foundation.php`: `345 ACULTA420 Foundation checks passed.`
+- `validate-aculta420-shell-contract.php`: `PASS (11 checks)`; teste: `PASS (19 fixtures)`.
+
+Não executados:
+
+- Testes Kernel alterados (`ShippingCutoverKernelTest`, `NicknameRegistryKernelTest`): sem `SIMPLETEST_DB` no ambiente. A credencial fica em `secrets/`, que não foi lida.
+
+### Gatilho de banco: não executado
+
+- `drush updatedb:status` (somente leitura): 20 pendências, incluindo `aculta_commerce_melhorenvio` 8001/8002, `aculta_id_cpf` 10002, `aculta_lms_resources` 8001, Messenger 10008 a 10012, `aculta_user` 10013 e post-updates de remessas e de Messenger.
+- `drush config:status` (somente leitura): 209 itens. 100 só no banco, 76 diferentes, 33 só no `config/sync`. Um `config:import` apagaria itens presentes só no banco; não foi feito.
+- Snapshot, `updatedb`, `config:import`, `pm:uninstall` e `DROP`: não executados.
+- Escrita de cache: `drush cr` no checkout servido, em etapa anterior e autorizada.
+
+### Verificação do conteúdo das branches remotas no head publicado
+
+Critério: ancestral do head, ou arquivos alterados pela branch idênticos no head. Para `RUNTIME-UPDATE-WINDOW.md`, os títulos de seção da branch precisam existir no head.
+
+| Remota | Ancestral | Arquivos da branch | Resultado |
+|---|---|---|---|
+| origin/docs/aculta-runtime-snapshot-ensaio | não | 1 (doc) | 12 títulos presentes: contida |
+| origin/feat/aculta-commerce-cutover | não | 7 (código) | idênticos: contida |
+| origin/feat/aculta-user-10013-contagem | não | 6 | 5 idênticos; doc com 14 títulos presentes: contida |
+| origin/fix/validador-seguranca-allowlist | não | 1 | idêntico: contida |
+| origin/fix/alinhamento-sync-runtime | não | 10 | 9 idênticos; doc com título "## Estado do ensaio: BLOQUEADO no passo 2" ausente no head: **MANTIDA** |
+
+### Exclusões
+
+- **Remotas excluídas** (`git push origin --delete`, sem force): `docs/aculta-runtime-snapshot-ensaio`, `feat/aculta-commerce-cutover`, `feat/aculta-user-10013-contagem`, `fix/validador-seguranca-allowlist`.
+- **Remotas mantidas:** `fix/alinhamento-sync-runtime` (título ausente no head, arquivo `RUNTIME-UPDATE-WINDOW.md`).
+- **Locais excluídas:** nenhuma. As ancestrais do head e as branches da lista têm worktree, e a regra manda não removê-las. A única sem worktree e não contida, `backup/checkout-antes-pr-8499180a6`, fica.
+- **Locais mantidas com worktree em uso (ancestrais do head):** `agent/aculta-me-precision-tests`, `agent/aculta-melhorenvio-a6`, `agent/aculta-mercadopago-closeout`, `agent/index-a6`, `analise-integracao`, `feat/aculta-document-viewer-fechamento`, `feat/aculta-mp-extracao`, `feat/melhorenvio-token-cipher`.
+- **Locais mantidas com worktree em uso (não contidas):** `agent/aculta-magazine-a2`, `agent/aculta-magazine-completion-20261026`, `agent/aculta-melhorenvio-kernel`, `agent/aculta-secrets-manager`, `agent/melhorenvio-service-fix`, `agent/statistics-focal`, `docs/aculta-runtime-snapshot-ensaio`, `docs/barra-multidominio-janelas`, `ensaio/geral-local`, `feat/aculta-commerce-cutover`, `feat/aculta-commerce-shipping-port`, `feat/aculta-frentes-independentes`, `feat/aculta-me-conciliacao`, `feat/aculta-melhorenvio-integracao`, `feat/aculta-user-10013-contagem`, `fix/alinhamento-sync-runtime`, `fix/validador-seguranca-allowlist`.
+- Worktrees: nenhuma removida nesta etapa. Esta registro usa uma worktree temporária, removida ao final.
+
+### Contagem final
+
+- `git branch -r`: 4 linhas (`origin/HEAD`, `origin/chore/aculta-m0-integridade`, `origin/fix/alinhamento-sync-runtime`, `origin/main`).
+- `git branch`: 28 branches locais, mais a linha de `HEAD` destacado do checkout servido.
+
 ## Incidente de worktrees em /mnt/disco1 — identificação e recuperação (2026-10-27)
 
 - Gate de processo: lsof +D /mnt/disco1/worktrees foi interrompido após demora na travessia NTFS; a consulta somente leitura fuser -vm /mnt/disco1/worktrees não encontrou PID de processo usuário. A saída listou somente root mount /mnt/disco1 e kernel.

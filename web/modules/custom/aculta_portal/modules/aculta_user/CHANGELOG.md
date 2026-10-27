@@ -1,3 +1,10 @@
+## 0.4.0-dev.87 — 10013 conta sem bloquear por perfil sem dono (2026-10-26)
+
+- `NicknameRegistry::rebuild()`: perfil sem dono (uid ≤ 0) e vazio é ignorado e não bloqueia. Perfil sem dono com apelido não reivindica índice, não é gravado e é contado à parte (`orphan_with_nickname`). Perfil com formato de apelido inválido não é normalizado nem gravado: fica sem claim (`ignored_invalid_format`).
+- O rebuild bloqueia só por conflito real entre UIDs (`slug_conflicts`). Falha de banco ou transação propaga e aborta sem índice parcial.
+- Retorno do update 10013: contagens (indexados, ignorados sem dono, ignorados vazios, órfãos com apelido, formato inválido). Sem apelidos nem uids.
+- Testes Kernel: perfil sem dono vazio não bloqueia; perfil sem dono com apelido não reivindica; repetir o rebuild é idempotente; os testes existentes de conflito entre UIDs continuam passando (13 testes / 112 asserções).
+
 ## 0.4.0-dev.86 — reconciliar Profiles com apelidos divergentes
 
 - No rebuild do índice 10013, o apelido não vazio do Profile com maior `changed` define o valor canônico por UID; timestamp empatado usa o maior ID como desempate determinístico. Profiles de papel do UID são sincronizados dentro da mesma transação. Apelidos vazios não substituem um apelido explícito.

@@ -91,7 +91,7 @@ final class MelhorEnvioClient {
    * @param \Closure|null $sleeper
    *   Recebe microssegundos a aguardar. NULL usa usleep(); os testes passam uma função vazia.
    * @param \Drupal\aculta_portal\Secrets\SecretsManager|null $secrets
-   *   Credenciais sem Key, lidas do arquivo de credenciais do servidor pelo nome do contrato. NULL desativa o fallback.
+   *   Credenciais resolvidas pelo contrato central de segredos. NULL desativa o fallback.
    */
   public function __construct(
     private readonly ClientInterface $http,
@@ -386,9 +386,13 @@ final class MelhorEnvioClient {
     foreach (['client_id', 'client_secret'] as $name) {
       $key = $ids[$name] !== '' ? $this->keys->getKey($ids[$name]) : NULL;
       $value = $key?->getKeyValue() ?? '';
-      // Sem Key: o valor vem do arquivo de credenciais do servidor, pelo nome do contrato (SecretsManager).
+      // Compatibilidade com settings antigos que guardavam o nome da variável.
       if ($value === '' && $this->secrets !== NULL && $ids[$name] !== '') {
-        $value = (string) $this->secrets->value($ids[$name]);
+        $value = (string) (
+          $this->secrets->value($ids[$name])
+          ?? $this->secrets->valueForKeyId($ids[$name])
+          ?? ''
+        );
       }
       if ($value === '') {
         throw new MelhorEnvioException('not_configured', self::MESSAGES['not_configured']);

@@ -2,10 +2,16 @@
 version: 0.1.0-dev.10
 state: Dev
 progress_note: >-
-  Unit Commerce 31/192 PASS (11 depreciações PHPUnit); publisher do Messenger
-  cobre pedido de visitante e mantém recibo Commerce como fallback se a publicação
-  compartilhada falhar; GreenStashProductAccessTest
-  cobre acesso por entidade e loja. GreenStashProductCreateAccessTest confirma que AccessResult negado no Studio ou Commerce interrompe a criação. GreenStashProductReaderPaginationTest verifica
-  continuação após 500 resultados filtrados e ausência de cursor sem mais resultados.
-  Motor próprio de envios foi incorporado em aculta_commerce; Unit do módulo 49/230 PASS, incluindo 18/38 dos contratos de cotação. Kernel de shipping marcou 6 casos como skipped antes do setup (0 assertions), portanto instalação de entidades/checkout não está comprovada por essa suíte. PHPCS focal do motor e PHP lint passam; erros antigos em BillingAddressPane continuam fora desta correção. Sync versionado aponta para entidades e pane ACULTA, mas não foi importado no Runtime. Commerce Shipping permanece no Composer e a configuração ativa precisa de preflight antes de qualquer cutover. Kernel de Doações, Functional, Browser e homologação do checkout pendentes.
-next_phase: 'Homologar checkout comercial compartilhado e Green Stash com loja única, grants e contratos de produto em Kernel/Runtime ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/ROADMAP.md))'
+  Motor próprio de shipping concluído dentro de aculta_commerce. Unit Commerce
+  55/272 PASS; ShippingEngineKernelTest 7/237 PASS; Melhor Envio Unit 85/204 PASS
+  e Kernel de wiring 11/57 PASS em MariaDB dedicado, sem rede externa; instalação limpa Standard
+  habilitou Commerce e Melhor Envio sem commerce_shipping, descobriu as entidades
+  aculta_shipment/aculta_shipping_method e plugins próprios, drush cr PASS e
+  updatedb:status sem updates. Composer validate válido; PHPCS Drupal/Practice,
+  PHP lint, Config Sync Unit, pacote próprio (41) e índice de status (41) PASS.
+  Instalação descartável foi limpa via Drupal Schema API; banco aculta_simpletest
+  ficou vazio. Read-only do Runtime compartilhado confirmou commerce_shipping
+  habilitado e field target legado commerce_shipment; nenhum cutover foi aplicado
+  ao Runtime, e nenhum pedido, pagamento ou envio foi alterado. Checkout visual,
+  Functional no Runtime e cutover operacional seguem pendentes; manter Dev.
+next_phase: 'Homologar checkout e seleção de frete em Firefox ESR no servidor de testes, validar cotação sandbox sem contratar envio e planejar cutover autorizado preservando pedidos LMS/Doações ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/ROADMAP.md))'

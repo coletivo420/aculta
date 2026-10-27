@@ -19,6 +19,18 @@ aculta_commerce.green_stash_area:
   options:
     _aculta_domain_purpose: account
 
+aculta_commerce.green_stash_shipment_transition:
+  path: '/estudio/loja/envios/{aculta_shipment}/transicao/{transition}'
+  defaults:
+    _form: '\Drupal\aculta_commerce\Form\GreenStashShipmentTransitionForm'
+    _title: 'Transição de remessa'
+  requirements:
+    _permission: 'access aculta green stash+administer aculta shipments'
+    aculta_shipment: '[1-9][0-9]*'
+    transition: '[a-z_]+'
+  options:
+    _aculta_domain_purpose: account
+
 aculta_commerce.green_stash_product_detail:
   path: '/estudio/loja/produtos/{produto}'
   defaults:

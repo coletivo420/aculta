@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_statistics\Kernel;
 
+use Symfony\Component\HttpFoundation\Response;
 use Drupal\aculta_statistics\Storage\DailyAggregateStorage;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
@@ -102,7 +103,7 @@ final class WikiReadKernelTest extends KernelTestBase {
   /**
    * Envia o beacon como o navegador faria.
    */
-  private function post(int $nid): \Symfony\Component\HttpFoundation\Response {
+  private function post(int $nid): Response {
     return $this->container->get('http_kernel')->handle(Request::create("/estatisticas/wiki/$nid/leitura", 'POST'));
   }
 

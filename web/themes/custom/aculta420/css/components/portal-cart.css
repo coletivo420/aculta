@@ -1,25 +1,48 @@
 /* Carrinho: contador da barra (zero itens esconde o badge) e caixa de status do "Adicionar ao carrinho".
    A marcação é do módulo aculta_portal (classes portal-cart-status*) e do componente cart-offcanvas. */
+/* Geometria comum aos quatro controles da barra institucional. */
 .aculta-utility-trigger {
-  position: relative;
   display: inline-flex;
-  min-width: 2.75rem;
-  min-height: 2.75rem;
+  flex: 0 0 2.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
   align-items: center;
   justify-content: center;
   padding: 0;
   border: 0;
   background: transparent;
   color: inherit;
-  font-size: 1.2rem;
+  font: inherit;
   line-height: 1;
   text-decoration: none;
-  gap: 0.35rem;
+  cursor: pointer;
+}
+
+.aculta-utility-trigger:is(:hover, :focus) {
+  color: inherit;
 }
 
 .aculta-utility-trigger:focus-visible {
   outline: 3px solid var(--aculta-focus-ring);
   outline-offset: 2px;
+}
+
+.aculta-utility-trigger__icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.aculta-utility-trigger .aculta-utility-trigger__count {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  transform: translate(45%, -45%);
+  background: var(--aculta-status-error-text);
+  color: var(--aculta-status-error-surface);
 }
 
 .aculta-utility-offcanvas {

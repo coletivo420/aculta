@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for the Melhor Envio adapter.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Replaces legacy OAuth variable names with stable secret contract Key IDs.
+ */
+function aculta_commerce_melhorenvio_update_8001(): string {
+  $legacyIds = [
+    'MELHORENVIO_SANDBOX_CLIENT_ID' => 'melhorenvio_sandbox_client_id',
+    'MELHORENVIO_SANDBOX_CLIENT_SECRET' => 'melhorenvio_sandbox_client_secret',
+    'MELHORENVIO_PRODUCTION_CLIENT_ID' => 'melhorenvio_production_client_id',
+    'MELHORENVIO_PRODUCTION_CLIENT_SECRET' => 'melhorenvio_production_client_secret',
+  ];
+  $config = \Drupal::configFactory()->getEditable('aculta_commerce_melhorenvio.settings');
+  $keys = $config->get('keys') ?? [];
+  $changed = 0;
+  foreach ($keys as $environment => $credentials) {
+    if (!is_array($credentials)) {
+      continue;
+    }
+    foreach (['client_id', 'client_secret'] as $role) {
+      $legacyId = $credentials[$role] ?? NULL;
+      if (!is_string($legacyId) || !isset($legacyIds[$legacyId])) {
+        continue;
+      }
+      $keys[$environment][$role] = $legacyIds[$legacyId];
+      $changed++;
+    }
+  }
+  if ($changed > 0) {
+    $config->set('keys', $keys)->save(TRUE);
+  }
+  return sprintf('Normalized %d Melhor Envio OAuth Key ID reference(s).', $changed);
+}
+
+/**
+ * Encrypts OAuth token records previously stored as plaintext in State API.
+ */
+function aculta_commerce_melhorenvio_update_8002(): string {
+  $result = \Drupal::service('aculta_commerce_melhorenvio.token_store')->migrateLegacyTokens();
+  return sprintf(
+    'Encrypted %d legacy Melhor Envio token record(s); removed %d malformed record(s) (reauthorization required).',
+    $result['migrated'],
+    $result['malformed'],
+  );
+}

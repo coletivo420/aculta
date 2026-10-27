@@ -14,6 +14,8 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\Role;
@@ -41,7 +43,9 @@ final class ContentIndexStatisticsBridgeKernelTest extends KernelTestBase {
     'field',
     'text',
     'node',
+    'file',
     'aculta_index',
+    'aculta_index_file',
     'aculta_index_statistics_test',
   ];
 
@@ -91,7 +95,9 @@ final class ContentIndexStatisticsBridgeKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
+    $this->installEntitySchema('file');
     $this->installSchema('node', ['node_access']);
+    $this->installSchema('file', ['file_usage']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',
@@ -249,6 +255,58 @@ final class ContentIndexStatisticsBridgeKernelTest extends KernelTestBase {
     ));
     $this->assertSame([(string) $nodes[1]->id() => 5], $second->totals);
     $this->assertNull($second->nextCursor);
+  }
+
+  /**
+   * The file:file metric is reachable now that the Index owns a File provider.
+   */
+  public function testMediaFileMetricIsReachableThroughTheBridge(): void {
+    User::create(['name' => 'statistics-bridge-file-root', 'status' => 1])->save();
+    Role::create(['id' => 'file_metric_reader', 'label' => 'File metric reader'])
+      ->grantPermission('access content')
+      ->grantPermission('administer aculta_statistics')
+      ->save();
+    $reader = User::create(['name' => 'statistics-bridge-file-reader', 'status' => 1]);
+    $reader->addRole('file_metric_reader');
+    $reader->save();
+    self::assertContains('file_metric_reader', $reader->getRoles(), 'The reader holds the metric role.');
+    $this->assertTrue($reader->hasPermission('administer aculta_statistics'), 'The file metric reader has the Statistics admin permission.');
+
+    $file = File::create([
+      'uri' => 'public://statistics-bridge-file.txt',
+      'filename' => 'statistics-bridge-file.txt',
+      'status' => FileInterface::STATUS_PERMANENT,
+      'uid' => $reader->id(),
+    ]);
+    $file->save();
+
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $complete = FALSE;
+    for ($batch = 0; $batch < 50 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
+    }
+    $this->assertTrue($complete, 'The fixture rebuild should complete from the booted provider inventory.');
+    $this->completeQueuedWork();
+    $rebuilder->validate($generationId);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $statisticsStorage = $this->container->get('aculta_statistics.storage');
+    $statisticsStorage->record('media.files.requests', (string) $file->id(), 4);
+    $bridge = $this->container->get('aculta_index.statistics_bridge');
+    $result = $bridge->aggregateForQuery(
+      ['entity_type' => 'file', 'bundle' => 'file', 'published' => TRUE],
+      'media.files.requests',
+      $statisticsStorage->currentDay(),
+      $statisticsStorage->currentDay(),
+      $reader,
+    );
+
+    $this->assertTrue($result->available);
+    $this->assertCount(1, $result->entities);
+    $this->assertInstanceOf(FileInterface::class, $result->entities[0]);
+    $this->assertSame((string) $file->id(), (string) $result->entities[0]->id());
+    $this->assertSame([(string) $file->id() => 4], $result->totals);
   }
 
   /**

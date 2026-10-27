@@ -80,7 +80,10 @@ final class RetentionSettingsForm extends ConfigFormBase {
       $form['retention'][$id] = [
         '#type' => 'select',
         '#title' => $this->t('@label', ['@label' => $definition->label]),
-        '#description' => $this->t('Métrica <code>@id</code>, unidade: @unit.', ['@id' => $id, '@unit' => $definition->unit]),
+        '#description' => $this->t('Métrica <code>@id</code>, unidade: @unit.', [
+          '@id' => $id,
+          '@unit' => $definition->unit,
+        ]),
         '#options' => $this->periodOptions(),
         '#default_value' => $this->retention->daysFor($id),
       ];

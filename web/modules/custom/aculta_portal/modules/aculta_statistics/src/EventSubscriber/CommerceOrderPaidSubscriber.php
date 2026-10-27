@@ -63,6 +63,9 @@ final class CommerceOrderPaidSubscriber implements EventSubscriberInterface {
    */
   private const CURRENCY_PATTERN = '/^[A-Z]{3}$/';
 
+  /**
+   * Canal de log do módulo.
+   */
   private readonly LoggerInterface $logger;
 
   public function __construct(

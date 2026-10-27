@@ -31,4 +31,3 @@ services:
   logger.channel.aculta_index_forum_access_test:
     parent: logger.channel_base
     arguments: ['aculta_index_forum_access_test']
-

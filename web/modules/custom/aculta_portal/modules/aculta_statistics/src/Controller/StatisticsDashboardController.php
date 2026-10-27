@@ -97,6 +97,13 @@ final class StatisticsDashboardController extends ControllerBase {
       $table[] = [$label, $series['values'][$index]];
     }
 
+    $ga4State = $this->ga4->isEnabled()
+      ? $this->t('ligado')
+      : $this->t('desligado (sem propriedade e credencial configuradas)');
+    $gscState = $this->searchConsole->isEnabled()
+      ? $this->t('ligado')
+      : $this->t('desligado (sem propriedade e credencial configuradas)');
+
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'statistics-panel'],
@@ -144,14 +151,20 @@ final class StatisticsDashboardController extends ControllerBase {
         'link' => [
           '#type' => 'link',
           '#title' => $this->t('Exportar CSV'),
-          '#url' => Url::fromRoute('aculta_statistics.dashboard_export', [], ['query' => array_filter(['metrica' => $metric->id, 'dias' => $days, 'dominio' => $domain])]),
+          '#url' => Url::fromRoute('aculta_statistics.dashboard_export', [], [
+            'query' => array_filter([
+              'metrica' => $metric->id,
+              'dias' => $days,
+              'dominio' => $domain,
+            ]),
+          ]),
         ],
       ],
       'integracoes' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'statistics-note'],
-        '#markup' => '<p>' . $this->t('Google Analytics (GA4): @estado.', ['@estado' => $this->ga4->isEnabled() ? $this->t('ligado') : $this->t('desligado (sem propriedade e credencial configuradas)')]) . '</p>'
-          . '<p>' . $this->t('Search Console: @estado.', ['@estado' => $this->searchConsole->isEnabled() ? $this->t('ligado') : $this->t('desligado (sem propriedade e credencial configuradas)')]) . '</p>',
+        '#markup' => '<p>' . $this->t('Google Analytics (GA4): @estado.', ['@estado' => $ga4State]) . '</p>'
+        . '<p>' . $this->t('Search Console: @estado.', ['@estado' => $gscState]) . '</p>',
       ],
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
@@ -184,7 +197,11 @@ final class StatisticsDashboardController extends ControllerBase {
    */
   private function areaNavigation(?string $current): array {
     $items = [];
-    $items[] = ['#type' => 'link', '#title' => $this->t('Todas as métricas'), '#url' => Url::fromRoute('aculta_statistics.dashboard')];
+    $items[] = [
+      '#type' => 'link',
+      '#title' => $this->t('Todas as métricas'),
+      '#url' => Url::fromRoute('aculta_statistics.dashboard'),
+    ];
     foreach (self::AREAS as $id => [$label]) {
       $items[] = [
         '#type' => 'link',
@@ -436,6 +453,7 @@ final class StatisticsDashboardController extends ControllerBase {
    * Purposes que aparecem na métrica no período, ordenados.
    *
    * @return string[]
+   *   Purposes presentes no período.
    */
   private function domainsIn(MetricDefinition $metric, int $today, int $days): array {
     $purposes = [];
@@ -469,6 +487,7 @@ final class StatisticsDashboardController extends ControllerBase {
    * Métricas do catálogo que o painel agregado mostra (sensibilidade P ou I), ordenadas pelo identificador.
    *
    * @return array<string, \Drupal\aculta_statistics\Catalog\MetricDefinition>
+   *   Métricas agregadas, indexadas pelo identificador.
    */
   private function aggregatedMetrics(?string $area = NULL): array {
     $prefix = $area === NULL ? NULL : self::AREAS[$area][1];
