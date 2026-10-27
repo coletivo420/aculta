@@ -182,15 +182,31 @@ foreach ($route_expectations as $route => [$anonymous_expected, $authenticated_e
 }
 $all_routes = \Drupal::service('router.route_provider')->getAllRoutes();
 $retired_portal_route_present = FALSE;
-$retired_finance_route_present = FALSE;
+// Rotas financeiras aposentadas (lista explícita). Nenhuma pode existir.
+$retired_finance_routes = [
+  'aculta_contribution.contribute',
+  'aculta_contribution.webhook',
+  'aculta_apoio.webhook',
+  'aculta_mercadopago.webhook',
+];
+// Allowlist justificada, uma linha por rota. Documenta exceções revisadas; não altera a checagem acima.
+// Nada além desta lista sem revisão.
+$route_allowlist = [
+  // Contribuição editorial da Wiki: exige access content + node.view.
+  'aculta_wiki.contribution_intent',
+  // Webhook de etiqueta do Melhor Envio: chamada externa assinada por HMAC.
+  'aculta_commerce_melhorenvio.webhook',
+];
+$retired_finance_route_found = [];
 foreach ($all_routes as $route_name => $route_definition) {
   $retired_portal_route_present = $retired_portal_route_present || $route_definition->getPath() === '/minha-conta/perfil';
-  // Rotas do módulo de envio (aculta_mailer, F10) são o endpoint de eventos de entrega, não o legado de contribuições.
-  $owned_by_mailer = str_starts_with((string) $route_name, 'aculta_mailer.');
-  $retired_finance_route_present = $retired_finance_route_present || (!$owned_by_mailer && (str_contains((string) $route_name, 'contribution') || str_contains((string) $route_name, 'webhook')));
+  if (in_array((string) $route_name, $retired_finance_routes, TRUE)) {
+    $retired_finance_route_found[] = $route_name;
+  }
 }
 $assert(!$retired_portal_route_present, 'The legacy /minha-conta/perfil route is absent rather than redirected.');
-$assert(!$retired_finance_route_present, 'No custom contribution or webhook route remains.');
+$assert($retired_finance_route_found === [], 'Retired finance routes are absent: ' . implode(', ', $retired_finance_route_found));
+
 $portal_php_files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DRUPAL_ROOT . '/modules/custom/aculta_portal', FilesystemIterator::SKIP_DOTS));
 $retired_namespace_found = FALSE;
 foreach ($portal_php_files as $portal_file) {
