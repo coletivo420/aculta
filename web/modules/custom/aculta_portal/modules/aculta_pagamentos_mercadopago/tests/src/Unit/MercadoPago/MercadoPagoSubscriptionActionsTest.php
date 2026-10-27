@@ -50,11 +50,13 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
    *   Transições permitidas pelo workflow a partir do estado atual.
    * @param \PHPUnit\Framework\MockObject\MockObject|null $item
    *   Recebe o mock do estado do pedido.
+   * @param int $versao
+   *   Última versão remota persistida no pedido.
    *
    * @return \PHPUnit\Framework\MockObject\MockObject
    *   Pedido simulado para o teste.
    */
-  private function pedido(string $tipo, string $statusMp, string $assinatura, array $transicoes, ?MockObject &$item = NULL): MockObject {
+  private function pedido(string $tipo, string $statusMp, string $assinatura, array $transicoes, ?MockObject &$item = NULL, int $versao = 0): MockObject {
     $item = $this->createMock(StateItemInterface::class);
     $item->method('getId')->willReturn('completed');
     $item->method('getTransitions')->willReturn(array_fill_keys($transicoes, new \stdClass()));
@@ -63,10 +65,14 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $pedido->method('bundle')->willReturn($tipo);
     $pedido->method('id')->willReturn(7);
     $pedido->method('getState')->willReturn($item);
-    $pedido->method('getData')->willReturnMap([
-      [MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA, NULL, $assinatura],
-      [MercadoPagoSubscriptionRecorder::CHAVE_STATUS, '', $statusMp],
-    ]);
+    $pedido->method('getData')->willReturnCallback(
+      static fn (string $key, mixed $default = NULL): mixed => match ($key) {
+        MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA => $assinatura,
+        MercadoPagoSubscriptionRecorder::CHAVE_STATUS => $statusMp,
+        MercadoPagoSubscriptionRecorder::CHAVE_VERSAO => $versao,
+        default => $default,
+      },
+    );
     return $pedido;
   }
 
@@ -101,18 +107,34 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
   }
 
   /**
+   * Expects the verified status and monotonic provider version to be saved.
+   */
+  private function expectsSubscriptionData(MockObject $pedido, string $status, int $versao): void {
+    $pedido->expects($this->exactly(2))->method('setData')->willReturnCallback(
+      function (string $key, mixed $value) use ($status, $versao): void {
+        if ($key === MercadoPagoSubscriptionRecorder::CHAVE_STATUS) {
+          $this->assertSame($status, $value);
+          return;
+        }
+        $this->assertSame(MercadoPagoSubscriptionRecorder::CHAVE_VERSAO, $key);
+        $this->assertSame($versao, $value);
+      },
+    );
+  }
+
+  /**
    * Pauses an active subscription and updates its order.
    */
   public function testPauseActiveSubscriptionCallsGatewayAndUpdatesOrder(): void {
     $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized', 'version' => 1]);
     $recorrencia->expects($this->once())->method('alterarStatusAssinatura')
       ->with($gateway, 'pre-9', 'paused')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'paused']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'paused', 'version' => 2]);
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
-    $pedido->expects($this->once())->method('setData')->with(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, 'paused');
+    $this->expectsSubscriptionData($pedido, 'paused', 2);
     $pedido->expects($this->once())->method('save');
 
     $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'pausar');
@@ -125,10 +147,11 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'paused']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'paused', 'version' => 1]);
     $recorrencia->expects($this->once())->method('alterarStatusAssinatura')->with($this->anything(), 'pre-9', 'authorized')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized', 'version' => 2]);
     $pedido = $this->pedido('assinatura', 'paused', 'pre-9', [], $item);
+    $this->expectsSubscriptionData($pedido, 'authorized', 2);
 
     $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'reativar');
   }
@@ -140,10 +163,11 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized', 'version' => 1]);
     $recorrencia->expects($this->once())->method('alterarStatusAssinatura')->with($this->anything(), 'pre-9', 'canceled')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'canceled']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'canceled', 'version' => 2]);
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', ['cancel'], $item);
+    $this->expectsSubscriptionData($pedido, 'canceled', 2);
     $item->expects($this->once())->method('applyTransitionById')->with('cancel');
 
     $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'cancelar');
@@ -156,10 +180,10 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'paused']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'paused', 'version' => 2]);
     $recorrencia->expects($this->never())->method('alterarStatusAssinatura');
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
-    $pedido->expects($this->once())->method('setData')->with(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, 'paused');
+    $this->expectsSubscriptionData($pedido, 'paused', 2);
     $pedido->expects($this->once())->method('save');
 
     $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'pausar');
@@ -172,9 +196,14 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('obterAssinatura')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized', 'version' => 1]);
     $recorrencia->expects($this->once())->method('alterarStatusAssinatura')
-      ->willReturn((object) ['id' => 'another-subscription', 'external_reference' => '7', 'status' => 'paused']);
+      ->willReturn((object) [
+        'id' => 'another-subscription',
+        'external_reference' => '7',
+        'status' => 'paused',
+        'version' => 2,
+      ]);
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
     $pedido->expects($this->never())->method('setData');
     $pedido->expects($this->never())->method('save');
@@ -190,9 +219,9 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('obterAssinatura')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized', 'version' => 1]);
     $recorrencia->expects($this->once())->method('alterarStatusAssinatura')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized', 'version' => 1]);
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
     $pedido->expects($this->never())->method('setData');
     $pedido->expects($this->never())->method('save');
@@ -228,7 +257,7 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('obterAssinatura')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '8', 'status' => 'authorized']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '8', 'status' => 'authorized', 'version' => 1]);
     $recorrencia->expects($this->never())->method('alterarStatusAssinatura');
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
     $pedido->expects($this->never())->method('setData');
@@ -245,10 +274,10 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'canceled']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'canceled', 'version' => 2]);
     $recorrencia->expects($this->never())->method('alterarStatusAssinatura');
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', ['cancel'], $item);
-    $pedido->expects($this->once())->method('setData')->with(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, 'canceled');
+    $this->expectsSubscriptionData($pedido, 'canceled', 2);
     $pedido->expects($this->once())->method('save');
     $item->expects($this->once())->method('applyTransitionById')->with('cancel');
 
@@ -259,6 +288,23 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     catch (\InvalidArgumentException $exception) {
       $this->assertStringContainsString('mudou', $exception->getMessage());
     }
+  }
+
+  /**
+   * Refuses to overwrite newer order state with a stale provider read.
+   */
+  public function testStaleProviderVersionCannotOverwriteOrder(): void {
+    $gateway = $this->gateway();
+    $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized', 'version' => 4]);
+    $recorrencia->expects($this->never())->method('alterarStatusAssinatura');
+    $pedido = $this->pedido('assinatura', 'paused', 'pre-9', [], $item, 5);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+
+    $this->expectException(MercadoPagoApiException::class);
+    $this->servico($recorrencia, $pedido)->alterar($gateway, $pedido, 'reativar');
   }
 
   /**
@@ -291,7 +337,7 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized', 'version' => 1]);
     $recorrencia->method('alterarStatusAssinatura')->willThrowException(new MercadoPagoApiException('falha', 500));
     $pedido = $this->pedido('assinatura', 'authorized', 'pre-9', [], $item);
     $pedido->expects($this->never())->method('setData');
@@ -308,7 +354,7 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $gateway = $this->gateway();
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
     $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')
-      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+      ->willReturn((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized', 'version' => 1]);
     $recorrencia->method('alterarStatusAssinatura')->willThrowException(
       new MercadoPagoApiException('Mensagem segura', 500, new \RuntimeException('RAW API DETAIL')),
     );

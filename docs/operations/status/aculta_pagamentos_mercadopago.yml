@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.29
+version: 0.1.0-dev.30
 state: Dev
-progress_note: "Dev.29 serializa ações de assinatura, recarrega o pedido sob lock, valida ID/referência/status remotos e reconcilia retry já aplicado sem outro PUT. Unit MP 171/611 PASS; PHPCS/lint focais PASS. Dev.28 alinha cancelamento a canceled e lê cancelled legado; Dev.27 workflow Commerce conserva estados pendentes e só conclui após API approved. Kernel atual 1/56 PASS (77 depreciações upstream). Runtime, browser e sandbox pendentes."
+progress_note: "Dev.30 compartilha lock entre webhook e ação e aplica mp_subscription_version monotônica: ignora eventos antigos, rejeita conflitos da mesma versão e recusa consultas remotas antigas. Unit MP 176/642 PASS; PHPCS Drupal/DrupalPractice e lint focais PASS. Dev.29 serializa ações e reconcilia retry; Dev.28 alinha cancelamento a canceled; Dev.27 preserva pagamentos pendentes até API approved. Kernel atual 1/56 PASS (77 depreciações upstream). Runtime, browser e sandbox pendentes."
 next_phase: Prosseguir com teste isolado de criação da preferência e, quando o comprador sandbox estiver acessível, homologar aprovação, pendência, rejeição, cancelamento, webhook e recorrência ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))

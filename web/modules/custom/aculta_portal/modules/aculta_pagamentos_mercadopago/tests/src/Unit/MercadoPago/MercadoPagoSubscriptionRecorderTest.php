@@ -53,11 +53,13 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
    *   Se o lock do pagamento foi adquirido.
    * @param string $status_assinatura
    *   Status remoto já registrado no pedido.
+   * @param int|null $versao_assinatura
+   *   Versão remota já registrada no pedido.
    *
    * @return array{0: MercadoPagoSubscriptionRecorder, 1: MockObject, 2: MockObject, 3: MockObject, 4: LockBackendInterface}
    *   Gravador, pedido, armazém de pagamentos, estado e lock.
    */
-  private function contexto(string $tipo, string $estado, array $transicoes, array $existentes, bool $lock_disponivel = TRUE, string $status_assinatura = ''): array {
+  private function contexto(string $tipo, string $estado, array $transicoes, array $existentes, bool $lock_disponivel = TRUE, string $status_assinatura = '', ?int $versao_assinatura = NULL): array {
     $item = $this->createMock(StateItemInterface::class);
     $item->method('getId')->willReturn($estado);
     $item->method('getTransitions')->willReturn(array_fill_keys($transicoes, new \stdClass()));
@@ -71,6 +73,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
       static fn (string $key, mixed $default = NULL): mixed => match ($key) {
         MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA => 'pre-9',
         MercadoPagoSubscriptionRecorder::CHAVE_STATUS => $status_assinatura,
+        MercadoPagoSubscriptionRecorder::CHAVE_VERSAO => $versao_assinatura,
         default => $default,
       },
     );
@@ -90,6 +93,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
       'id' => 'pre-9',
       'external_reference' => '7',
       'status' => 'authorized',
+      'version' => 1,
     ]);
     $tempo = $this->createMock(TimeInterface::class);
     $tempo->method('getRequestTime')->willReturn(1700000000);
@@ -205,11 +209,20 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
    */
   public function testCancellationUpdatesOrderWhenWorkflowAllows(): void {
     [$servico, $pedido, , $item] = $this->contexto('assinatura', 'completed', ['cancel'], []);
-    $pedido->expects($this->once())->method('setData')->with(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, 'canceled');
+    $pedido->expects($this->exactly(2))->method('setData')->willReturnCallback(
+      static function (string $key, mixed $value): void {
+        if ($key === MercadoPagoSubscriptionRecorder::CHAVE_STATUS) {
+          self::assertSame('canceled', $value);
+          return;
+        }
+        self::assertSame(MercadoPagoSubscriptionRecorder::CHAVE_VERSAO, $key);
+        self::assertSame(1, $value);
+      },
+    );
     $pedido->expects($this->once())->method('save');
     $item->expects($this->once())->method('applyTransitionById')->with('cancel');
 
-    $servico->assinatura((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'canceled']);
+    $servico->assinatura((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'canceled', 'version' => 1]);
   }
 
   /**
@@ -219,7 +232,12 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     [$servico, $pedido] = $this->contexto('doacao', 'draft', [], []);
     $pedido->expects($this->never())->method('save');
 
-    $servico->assinatura((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+    $servico->assinatura((object) [
+      'id' => 'pre-9',
+      'external_reference' => '7',
+      'status' => 'authorized',
+      'version' => 1,
+    ]);
   }
 
   /**
@@ -246,7 +264,91 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $pedido->expects($this->never())->method('setData');
     $pedido->expects($this->never())->method('save');
 
-    $servico->assinatura((object) ['id' => 'other-subscription', 'external_reference' => '7', 'status' => 'cancelled']);
+    $servico->assinatura((object) [
+      'id' => 'other-subscription',
+      'external_reference' => '7',
+      'status' => 'cancelled',
+      'version' => 1,
+    ]);
+  }
+
+  /**
+   * Ignores an older provider version even when its status would regress.
+   */
+  public function testOlderSubscriptionEventCannotRegressOrder(): void {
+    [$servico, $pedido] = $this->contexto('assinatura', 'completed', [], [], TRUE, 'paused', 4);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+
+    $servico->assinatura((object) [
+      'id' => 'pre-9',
+      'external_reference' => '7',
+      'status' => 'authorized',
+      'version' => 3,
+    ]);
+  }
+
+  /**
+   * Conflicting states at one provider version are retried, not persisted.
+   */
+  public function testConflictingStatusAtSameSubscriptionVersionIsRejected(): void {
+    [$servico, $pedido] = $this->contexto('assinatura', 'completed', [], [], TRUE, 'paused', 4);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+    $this->expectException(MercadoPagoApiException::class);
+
+    $servico->assinatura((object) [
+      'id' => 'pre-9',
+      'external_reference' => '7',
+      'status' => 'authorized',
+      'version' => 4,
+    ]);
+  }
+
+  /**
+   * Persists the newest status and provider version together.
+   */
+  public function testNewerSubscriptionEventAdvancesOrderVersion(): void {
+    [$servico, $pedido] = $this->contexto('assinatura', 'completed', [], [], TRUE, 'paused', 4);
+    $pedido->expects($this->exactly(2))->method('setData')->willReturnCallback(
+      static function (string $key, mixed $value): void {
+        if ($key === MercadoPagoSubscriptionRecorder::CHAVE_STATUS) {
+          self::assertSame('authorized', $value);
+          return;
+        }
+        self::assertSame(MercadoPagoSubscriptionRecorder::CHAVE_VERSAO, $key);
+        self::assertSame(5, $value);
+      },
+    );
+    $pedido->expects($this->once())->method('save');
+
+    $servico->assinatura((object) [
+      'id' => 'pre-9',
+      'external_reference' => '7',
+      'status' => 'authorized',
+      'version' => 5,
+    ]);
+  }
+
+  /**
+   * Keeps a contended webhook retryable without saving order state.
+   */
+  public function testContendedSubscriptionWebhookReturnsRetryableFailure(): void {
+    [$servico, $pedido] = $this->contexto('assinatura', 'completed', [], [], FALSE);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+    try {
+      $servico->assinatura((object) [
+        'id' => 'pre-9',
+        'external_reference' => '7',
+        'status' => 'authorized',
+        'version' => 1,
+      ]);
+      $this->fail('Expected a retryable Mercado Pago error.');
+    }
+    catch (MercadoPagoApiException $exception) {
+      $this->assertSame(503, $exception->codigoHttp());
+    }
   }
 
   /**

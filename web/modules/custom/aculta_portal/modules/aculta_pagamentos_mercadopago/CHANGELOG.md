@@ -1,3 +1,10 @@
+## 0.1.0-dev.30 — ordenar notificações de assinatura (2026-10-27)
+
+- Webhooks e ações do doador agora usam o mesmo lock por assinatura. O webhook recarrega o pedido sob lock e só aplica estados de uma versão do Mercado Pago maior que `mp_subscription_version`; versão antiga é ignorada e status conflitante na mesma versão falha para retry.
+- Ações remotas recusam leituras antigas e só salvam atualização confirmada com versão crescente. Retry de ação já aplicada reconcilia estado e versão sem repetir o `PUT`.
+- `mp_subscription_version` é metadado no `data` já existente do pedido Commerce, sem mudança de esquema. Reversão: o código antigo ignora a chave; sua remoção, se desejada, é `unsetData()` no pedido sob procedimento de manutenção, sem migração obrigatória.
+- Regressões cobrem evento atrasado, conflito na mesma versão, avanço, lock ocupado e leitura remota antiga. Unit MP completo: 176 testes / 642 assertions PASS.
+
 ## 0.1.0-dev.29 — serializar ações de assinatura (2026-10-27)
 
 - Pausar, reativar e cancelar agora compartilham lock por assinatura, recarregam o pedido sob lock e consultam a situação remota antes de alterar.
