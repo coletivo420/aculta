@@ -41,8 +41,17 @@ Drupal 11.3+, PHP conforme `docs/architecture/environments.md`; Drupal root `web
 - O agente pode fechar Firefox ESR aberto sem uso. Antes, confirme que nenhum teste está em andamento e que nenhuma sessão WebDriver usa esse Firefox; se alguma estiver em uso, não feche.
 - **Testes visuais são reutilizáveis:** todo script de teste visual (navegador, screenshot, medição de renderização) que um agente criar deve ser salvo no repositório em `tests/browser/<frente>/`, com `README.md` na pasta dizendo o que cobre, o ambiente (servidor de testes ou local), as variáveis e as limitações. Nunca deixe o script só em `/tmp` ou em diretório pessoal: ele se perde e a sessão seguinte refaz o trabalho. Artefatos (PNG, HTML, logs) ficam fora do repositório, em `$SUITE_OUT`. Consulte `tests/browser/README.md` antes de escrever um script novo e reaproveite `wdlib.py`. Se o teste troca estado global (tema, configuração), o comando de execução documentado deve restaurar com `trap`.
 
+## Procedimento de trabalho dos agentes
+Vale para todos os agentes. Detalhes: docs/operations/AGENTES-PROCEDIMENTO.md.
+- Uma PR, um branch: chore/aculta-m0-integridade (PR #298). Todo trabalho é commit nele.
+- O servidor de testes é o checkout /home/piradopirata/projetos/aculta, sempre no
+  head da PR, em HEAD destacado.
+- Bancos: só os existentes. Nunca criar banco. Nunca site:install em banco com tabelas.
+- updatedb e config:import no aculta_runtime seguem o gatilho do procedimento (por
+  head), com snapshot antes. pm:uninstall e DROP exigem ordem explícita.
+- Publicação por fast-forward, sem force. Gate vermelho: não publicar.
+
 ## Consulte apenas quando aplicável
-- Procedimento de trabalho dos agentes (PR única, checkout de teste, bancos): docs/operations/AGENTES-PROCEDIMENTO.md
 - **Índice de regras por escopo:** `docs/operations/AGENT-POLICY-INDEX.md`. Consulte somente o documento local pertinente. `docs/operations/AGENT-GUARDRAILS-FULL.md` é arquivo histórico para auditoria, não contexto padrão.
 - **Aceite e consentimento:** existe um único formulário de aceite e o ledger registra somente os termos. Não crie formulários/checkboxes ou tipos adicionais sem decisão do responsável. Consulte `docs/portal/ACEITE-UNICO.md` e rode `php scripts/validate-single-acceptance.php` quando alterar fluxos de dados pessoais ou consentimento.
 - Portal: `docs/portal/GUARDRAILS.md`, `docs/portal/DRUPAL-11-STANDARDS.md` e documentação local.
