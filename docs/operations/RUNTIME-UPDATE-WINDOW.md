@@ -342,3 +342,8 @@ Código: PR `e9850297d` + `feat/aculta-user-10013-contagem` (`46dffd76b`) + `fea
 - **`drush pm:uninstall commerce_shipping`: NÃO CONCLUÍDO.** Primeira tentativa recusada pelo Drupal (existem métodos `commerce_shipping_method`). Após remover os 2 métodos do contrib na cópia (já migrados), a segunda tentativa falhou ao atualizar a configuração `core.entity_form_display.commerce_shipment.default.checkout`, que usa o widget `aculta_shipping_rate`, inexistente no código. **Decisão pendente:** o que fazer com essa configuração antes da desinstalação. O mesmo ocorreria no Runtime.
 - **`validate-portal-commerce-security.php` (via drush, apontando para a cópia): FALHOU** no assert "No custom contribution or webhook route remains". Os alvos são `aculta_commerce_melhorenvio.webhook` (webhook de etiqueta do Melhor Envio) e `aculta_wiki.contribution_intent` (funcionalidade da wiki), ambos do código da PR. A regra está defasada: precisa de lista de exceções, decisão dos donos dos módulos.
 - **Simulação local 127.0.0.1 no Firefox: NÃO EXECUTADA** nesta rodada. Faltam um produto físico e um carrinho de teste na cópia, e a configuração de `trusted_host_patterns` para 127.0.0.1.
+
+## Remoção esperada no uninstall do commerce_shipping (ensaio na cópia, 2026-10-27)
+
+- Configuração `views.view.order_shipments` (vinda do commerce_shipping): removida pelo `pm:uninstall commerce_shipping`. Só o ID da configuração sai. Não há equivalente no motor e nenhuma referência no código do projeto (aparece só no CHANGELOG de `aculta_commerce`). Não recriar nem alterar.
+- Nota: a ordem de 2026-10-27 chama a view de `order_movida`; o ID observado na cópia é `views.view.order_shipments`. Registrado o ID observado.
