@@ -1,3 +1,9 @@
+## 0.4.1-dev.39 — links de produto do carrinho no domínio SHOP (2026-10-27)
+
+- O formatter `product_id` do modo Commerce `cart` emitia link canônico relativo ao host do carrinho MAIN; a rota de produto pertence ao propósito SHOP e retornava 404 no MAIN.
+- Hook do Portal reescreve o link para SHOP por `DomainPurposeManager`, com cache context `domain`; se SHOP não estiver configurado, apresenta apenas o título e evita link quebrado.
+- Kernel `CartProductLinkHooksKernelTest`: 1 teste / 7 assertions PASS. No Runtime, render do modo `cart` produziu o URL do produto no host SHOP (HTTP 200); o mesmo path no MAIN retorna HTTP 404. PHPCS Drupal/DrupalPractice e PHP lint PASS. Nenhum carrinho ou pedido foi criado.
+
 ## 0.4.1-dev.38 — dependência opcional do Mercado Pago
 
 - Portal deixa de depender do módulo Mercado Pago. Doação e LMS mantêm a dependência direta declarada; o Portal resolve somente contratos opcionais `aculta_portal.payment_provider.*`.
