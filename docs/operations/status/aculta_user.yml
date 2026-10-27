@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-dev.86
+version: 0.4.0-dev.87
 state: Dev
-progress_note: "Dev.86: User Unit 140/543 PASS; NicknameRegistryKernelTest 10/88 PASS em MariaDB. Inclui disputa de claims, rollback, update 10013, seleção do Profile mais recentemente alterado e sincronização entre Profiles do mesmo UID; conflito entre UIDs preserva claims existentes. PHPCS/lint focais PASS. MAIN read-only: 26 Profiles, 15 UIDs com apelido, 11 vazios, zero conflitos observados. Sem update Runtime. Ensaio 2026-10-26 (prefixo usr3_, schema 10012): rebuild criou o índice único para 3 UIDs a partir de 10 role Profiles, reconciliou 3 Profiles e 1 conflito same-UID; duplicidade cross-UID bloqueou o update sem avançar o schema nem gravar linhas; reexecução sem pendências; 230 tabelas usr3_ removidas."
-next_phase: 'Validar instalação limpa completa com o código anterior ao 10013 (bloqueada pelo ciclo Portal↔MP) e revisar rollback antes de qualquer janela operacional. Runtime existente exige autorização operacional.'
+progress_note: "Dev.87: User Unit 140/543 PASS; NicknameRegistryKernelTest 13/112 PASS em MariaDB, cobrindo perfil órfão vazio, perfil órfão com apelido, rebuild idempotente e conflito real entre UIDs. PHPCS/lint focais PASS. MAIN read-only: 26 Profiles, 15 UIDs com apelido, 11 vazios, zero conflitos observados. Sem update Runtime. Ensaio 2026-10-26 (prefixo usr3_, schema 10012): rebuild criou o índice único para 3 UIDs a partir de 10 role Profiles, reconciliou 3 Profiles e 1 conflito same-UID; duplicidade cross-UID bloqueou o update sem avançar o schema nem gravar linhas; reexecução sem pendências; 230 tabelas usr3_ removidas."
+next_phase: 'Revisar rollback e validar instalação limpa completa da cadeia Portal↔MP antes de qualquer janela operacional. Runtime existente exige autorização operacional.'
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
