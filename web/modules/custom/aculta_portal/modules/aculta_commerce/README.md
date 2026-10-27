@@ -44,9 +44,34 @@ Documentos:
 
 Validar compatibilidade das dependências do manifesto com os módulos instalados, `drush pm:list`, `drush en aculta_commerce -y` apenas no runtime isolado, `drush cr`, `drush updatedb:status` e `php scripts/validate-module-theme-boundary.php`. Não ativar nem instalar automaticamente nesta fase.
 
+## Conta de visitante e identificação do checkout
+
+### Conta criada pelo Commerce Core no checkout
+
+Os flows de Loja/LMS (`default` e `shipping`) e Doações (`doacao` e
+`assinatura_flow`) permitem concluir como visitante. O subscriber nativo do
+Commerce Core cria a conta em background ao concluir o checkout e envia o
+aviso com link para definir senha. O checkout não cria contas pelo formulário
+inline. `guest_order_assign` permanece desativado: um e-mail coincidente não
+autoriza anexar um pedido a uma conta existente. O pedido e o módulo dono do
+produto continuam sendo a fonte de verdade; liberar matrícula ou reconhecer
+pagamento depende do estado confirmado do pedido/gateway.
+
+No pane de identificação, o Portal mostra a entrada Google antes do e-mail.
+Após o blur, o AJAX apresenta a senha para um e-mail ligado a conta ou revela o
+cadastro silencioso de visitante para um novo e-mail. A consulta é limitada
+por flood control; a autenticação e o bloqueio de tentativas continuam no Core.
+Adicionar itens, atualizar/remover carrinho, cotar frete e checkout ficam sem
+CAPTCHA em todos os canais. A exceção remove também o elemento inserido pelo
+fallback global do Captcha.
+
+Teste Unit de contrato: `GuestCheckoutRegistrationConfigTest` verifica todos
+os flows e suas associações aos tipos de pedido. Rodar com:
+`php vendor/bin/phpunit -c web/core web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Unit/GuestCheckoutRegistrationConfigTest.php`.
+
 ## Integração com a carteira/carrinhos do Portal
 
-`aculta_commerce` fornece o contexto **Loja** ao gerenciador transversal do Portal por `ShopCheckoutProvider`; o Portal administra as abas **Comum | Loja | LMS | Doações**, seleciona modalidade de checkout por carrinho/pedido e preserva o checkout específico de cada módulo. A aba Comum não significa fusão física de pedidos. O Green Stash é a experiência Studio de administração da loja. A integração está implementada no código e possui testes Unit; checkout completo, Runtime e homologação ainda estão pendentes. Ver [roadmap](docs/ROADMAP.md) e [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
+`aculta_commerce` fornece o contexto **Loja** ao gerenciador transversal do Portal por `ShopCheckoutProvider`; o Portal administra as abas **Comum | Loja | LMS | Doações**, seleciona modalidade de checkout por carrinho/pedido e preserva o checkout específico de cada módulo. A aba Comum não significa fusão física de pedidos. O Green Stash é a experiência Studio de administração da loja. A travessia visual Loja→MAIN e o estado de identificação do checkout foram comprovados; submissão como visitante, conta após checkout, e-mail de senha e gateway permanecem pendentes de configuração e homologação. Ver [roadmap](docs/ROADMAP.md) e [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
 
 ## RETIFICAÇÃO ADR-013 — Abas de administração, não de compra
 

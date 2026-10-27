@@ -1,8 +1,13 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.11
+version: 0.1.0-dev.13
 state: Dev
 progress_note: >-
-  Motor próprio de shipping concluído dentro de aculta_commerce. Unit Commerce
+  Checkout de e-mail por AJAX e compra sem CAPTCHA comprovados em Firefox ESR:
+  produto, carrinho e checkout; Google antes do e-mail; cadastro de visitante
+  aparece para novo e-mail. Não foi enviado pedido nem comprovada a conta criada.
+  Config Sync habilita guest registration Core nos flows Loja/LMS, frete e doações;
+  configuração ativa do Runtime ainda diverge e há updates/configs globais pendentes.
+  9 testes Unit/59 assertions PASS. Motor próprio de shipping concluído dentro de aculta_commerce. Unit Commerce
   55/272 PASS; ShippingEngineKernelTest 7/237 PASS; Melhor Envio Unit 85/204 PASS
   e Kernel de wiring 11/57 PASS em MariaDB dedicado, sem rede externa; instalação limpa Standard
   habilitou Commerce e Melhor Envio sem commerce_shipping, descobriu as entidades
@@ -10,8 +15,9 @@ progress_note: >-
   updatedb:status sem updates. Composer validate válido; PHPCS Drupal/Practice,
   PHP lint, Config Sync Unit, pacote próprio (41) e índice de status (41) PASS.
   Instalação descartável foi limpa via Drupal Schema API; banco aculta_simpletest
-  ficou vazio. Read-only do Runtime compartilhado confirmou commerce_shipping
-  habilitado e field target legado commerce_shipment; nenhum cutover foi aplicado
-  ao Runtime, e nenhum pedido, pagamento ou envio foi alterado. Checkout visual,
-  Functional no Runtime e cutover operacional seguem pendentes; manter Dev.
+  ficou vazio. Runtime permanece com commerce_shipping e field target legado
+  commerce_shipment, 17 updates pendentes e divergências Config Sync globais.
+  Testes visuais criaram carrinhos/pedidos anônimos não enviados, sem pagamento.
+  Conta pós-compra, gateway, Functional no Runtime e cutover operacional
+  permanecem pendentes; manter Dev.
 next_phase: 'Homologar checkout e seleção de frete em Firefox ESR no servidor de testes, validar cotação sandbox sem contratar envio e planejar cutover autorizado preservando pedidos LMS/Doações ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/ROADMAP.md))'

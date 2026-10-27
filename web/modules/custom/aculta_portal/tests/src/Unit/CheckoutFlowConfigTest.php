@@ -9,11 +9,11 @@ use Drupal\Tests\UnitTestCase;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Fiação do checkout comercial compartilhado (Loja e LMS), lida do config/sync: sem banco.
+ * Checkout compartilhado (Loja e LMS), lido do Config Sync sem banco.
  *
  * Garante que o flow `default` tem o pane de identidade fiscal e a política de
- * login decidida, que o flow `curso` duplicado saiu, e que Doações continuam
- * sem o pane. A aplicação em runtime é feita por config:import autorizado.
+ * login definida, que o flow `curso` duplicado saiu, e que Doações continuam
+ * sem o pane fiscal.
  */
 #[Group('aculta_portal')]
 final class CheckoutFlowConfigTest extends UnitTestCase {
@@ -32,14 +32,18 @@ final class CheckoutFlowConfigTest extends UnitTestCase {
   }
 
   /**
-   * Verifica que o flow default tem o pane fiscal, sem guest e com cadastro.
+   * Verifies guest checkout and Core account creation in the shared flow.
    */
-  public function testFlowDefaultHasFiscalPaneAndNoGuest(): void {
-    $panes = $this->sync('commerce_checkout.commerce_checkout_flow.default')['configuration']['panes'];
+  public function testFlowDefaultHasFiscalPaneAndCoreGuestRegistration(): void {
+    $configuration = $this->sync('commerce_checkout.commerce_checkout_flow.default')['configuration'];
+    $panes = $configuration['panes'];
     $this->assertArrayHasKey('aculta_fiscal_identity', $panes);
     $this->assertSame('review', $panes['aculta_fiscal_identity']['step']);
-    $this->assertFalse($panes['login']['allow_guest_checkout']);
-    $this->assertTrue($panes['login']['allow_registration']);
+    $this->assertTrue($panes['login']['allow_guest_checkout']);
+    $this->assertFalse($panes['login']['allow_registration']);
+    $this->assertTrue($configuration['guest_new_account']);
+    $this->assertTrue($configuration['guest_new_account_notify']);
+    $this->assertFalse($configuration['guest_order_assign']);
   }
 
   /**

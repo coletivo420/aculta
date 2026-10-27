@@ -99,3 +99,15 @@
 
 - `ShopCheckoutProvider` declara ao Portal o contexto Loja (tipo de pedido configurado em `aculta_portal.checkout_settings`, padrão `default`, checkout comum e flow efetivo). Somente leitura.
 - O módulo passa a constar em `config/sync/core.extension.yml` e foi habilitado no runtime de testes. Não cria configuração, esquema nem hooks. Rollback: `drush pm:uninstall aculta_commerce` e remover a linha do sync. RUNTIME STATUS: verificado por API no runtime local (diagnóstico lista a Loja, sem conflitos); navegador pendente.
+## 0.1.0-dev.13 — identidade no checkout e compra sem CAPTCHA (2026-10-27)
+
+- O pane Login do Commerce foi especializado sem substituir sua autenticação: Google aparece antes do e-mail; a consulta AJAX revela senha para conta existente ou cadastro de visitante para e-mail novo. O login continua usando autenticação, bloqueio e flood control do Core; consulta de e-mail tem limite por IP. Quando a configuração Sync for aplicada, o Core criará a conta ao concluir e enviará link para senha.
+- Carrinho, adição de itens, produtos e checkout compartilhados por Loja, LMS e Doações ficam sem desafio CAPTCHA/Turnstile. As páginas gerais de login e cadastro preservam a política global. CAPTCHA continua como proteção dos demais formulários; os fluxos de compra usam flood control e validação do pedido.
+- Unit: 9 testes / 59 assertions PASS, cobrindo flows, pane e exceção CAPTCHA; PHP lint e PHPCS sem erros. Firefox ESR no Runtime comprovou: produto e carrinho sem CAPTCHA, checkout com Google antes do e-mail, AJAX revela cadastro para novo e-mail, sem senha ou CAPTCHA. A etapa de conta existente, envio do pedido e e-mail de senha ainda não foi homologada.
+
+## 0.1.0-dev.12 — conta de visitante pelo Commerce Core (2026-10-27)
+
+- Flows padrão, frete, doação avulsa e doação recorrente permitem checkout de visitante e habilitam a criação silenciosa de conta nativa do Commerce ao concluir. O aviso do Core entrega link de configuração de senha.
+- Desabilitado o registro inline no pane de login; `guest_order_assign` continua falso para impedir associação de pedido por simples coincidência de e-mail. O Core continua dono da criação de conta e entidades Commerce; nenhum módulo externo ou cópia do código foi introduzido.
+- Testes Unit de contrato validam flows e associações de pedido. A ativação dessas configurações no Runtime e homologação do e-mail permanecem pendentes.
+

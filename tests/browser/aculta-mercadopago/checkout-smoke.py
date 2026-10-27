@@ -34,7 +34,11 @@ def visible_summary(driver):
                   required:e.required, label:(e.labels?.[0]?.innerText||'').trim().slice(0,80),
                   options:e.tagName==='SELECT'?[...e.options].map(o=>({value:o.value,text:o.text,disabled:o.disabled})):[]}))
         .slice(0,30),
-      message:(document.querySelector('main')?.innerText||'').trim().slice(0,600)
+      forms:[...document.querySelectorAll('main form')].map(f=>({id:f.id,form_id:f.querySelector('input[name=form_id]')?.value||''})),
+      captcha_elements:[...document.querySelectorAll('main [data-drupal-selector*=captcha], main .captcha')].map(e=>({id:e.id||'',type:e.getAttribute('data-drupal-selector')||'',name:e.getAttribute('name')||''})),
+      message:(document.querySelector('main')?.innerText||'').trim().slice(0,600),
+      captcha:!!document.querySelector('.captcha, [data-sitekey], iframe[src*="challenges.cloudflare.com"], script[src*="challenges.cloudflare.com"]'),
+      google:!!document.querySelector('main [data-portal-ui="auth-google"]')
     }""")
 
 
@@ -86,19 +90,46 @@ def main():
         if "Camiseta Abadá Bloco Sativa 2026" not in cart["message"]:
             print("RESULT=add_to_cart_not_confirmed")
             return
-        driver.get(CHECKOUT_BASE + "/carrinho/finalizar")
-        time.sleep(3)
+        if not driver.exists("#edit-checkout"):
+            print("RESULT=cart_checkout_button_missing")
+            return
+        driver.click("#edit-checkout")
+        time.sleep(4)
         checkout = visible_summary(driver)
         print("checkout:", checkout)
         with open(os.path.join(OUT, "checkout.png"), "wb") as image:
             import base64
             image.write(base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot")))
         if checkout["path"].startswith("/finalizar-compra/") and checkout["path"].endswith("/entrar"):
-            print("RESULT=checkout_requires_customer_login_before_gateway")
+            email = "checkout-smoke-" + str(int(time.time())) + "@example.invalid"
+            email_selector = "input[type=email][name*=returning_customer]"
+            if driver.exists(email_selector):
+                driver.type(email_selector, email)
+                driver.js("document.querySelector(arguments[0]).dispatchEvent(new Event('blur',{bubbles:true}))", [email_selector])
+                time.sleep(2)
+                identity = driver.js("""return {
+                  email_stage:!!document.querySelector('#aculta-checkout-identity-stage'),
+                  new_customer_visible:!!document.querySelector('#aculta-checkout-new-customer:not([hidden])'),
+                  password_visible:!!document.querySelector('#aculta-checkout-identity-stage input[type=password]:not([hidden])'),
+                  google_before_email:(()=>{const g=document.querySelector('#aculta-checkout-identity-stage [data-portal-ui="auth-google"]')
+                    || document.querySelector('[data-portal-ui="auth-google"]');
+                    const e=document.querySelector(arguments[0]);return !!g&&!!e&&!!(g.compareDocumentPosition(e)&Node.DOCUMENT_POSITION_FOLLOWING)})(),
+                  captcha:!!document.querySelector('.captcha, [data-sitekey], iframe[src*="challenges.cloudflare.com"], script[src*="challenges.cloudflare.com"]')
+                }""", [email_selector])
+                print("identity:", identity)
+                with open(os.path.join(OUT, "checkout-identity.png"), "wb") as image:
+                    import base64
+                    image.write(base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot")))
+                if identity["new_customer_visible"] and not identity["password_visible"] and not identity["captcha"] and identity["google_before_email"]:
+                    print("RESULT=guest_registration_ajax_without_captcha")
+                else:
+                    print("RESULT=guest_registration_ajax_incomplete")
+            else:
+                print("RESULT=checkout_email_field_missing")
         elif checkout["path"].startswith("/finalizar-compra/"):
             print("RESULT=checkout_loaded_before_payment_confirmation")
         else:
-            print("RESULT=checkout_not_reached; cart_route_remains")
+            print("RESULT=cart_checkout_button_did_not_advance")
     finally:
         driver.close()
 

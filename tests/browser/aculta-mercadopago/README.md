@@ -5,10 +5,10 @@ Mercado Pago. Ele não cria preferência, pedido ou pagamento e não executa
 estorno.
 
 `checkout-smoke.py` percorre a página de um produto, adiciona uma unidade ao
-carrinho anônimo e abre o checkout da Loja no servidor de teste. Para antes de
-confirmar pagamento; não entra na conta do comprador nem tenta contornar o
-bloqueio de acesso ao Mercado Pago. O carrinho/pedido Drupal temporário pode
-permanecer no Runtime para inspeção posterior.
+carrinho anônimo, abre o checkout central e verifica por AJAX o estado de
+cadastro para um e-mail reservado `.invalid`. Para antes de enviar o pedido;
+não cria conta, confirma pagamento nem entra no Mercado Pago. O carrinho/pedido
+Drupal temporário pode permanecer no Runtime para inspeção posterior.
 
 Na execução de 2026-10-27, o produto e o carrinho foram renderizados, e o
 checkout redirecionou para a etapa de login/cadastro Drupal

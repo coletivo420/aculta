@@ -5,19 +5,25 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Hook\Order\OrderAfter;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\aculta_portal\Captcha\TurnstileToggle;
 
 /**
- * Barreira da loja: nenhuma página de produto, carrinho ou checkout carrega o Turnstile.
+ * Barreira de compra: nenhum produto, carrinho ou checkout carrega o Turnstile.
  *
- * O módulo contrib turnstile anexa o script do Cloudflare a todas as páginas. Como a política de CAPTCHA é do
- * Portal, a remoção acontece aqui, só nas rotas da loja. Os formulários da loja ficam fora do CAPTCHA em
- * Captcha\TurnstileToggle (SHOP_FORM_IDS), inclusive quando o responsável liga o Turnstile no resto do site.
+ * O módulo contrib anexa o script do Cloudflare globalmente. Como a política
+ * de CAPTCHA é do Portal, removemos o script das rotas compartilhadas por
+ * Loja, LMS e Doações. Os formulários comerciais também ficam fora do desafio,
+ * mesmo quando o Turnstile estiver ligado no restante do site.
  */
 final class ShopCaptchaHooks {
 
-  /** Rotas de produto, carrinho e checkout da loja (sem CAPTCHA). */
-  public const SHOP_ROUTES = [
+  /**
+   * Lists shared product, cart and checkout routes.
+   */
+  public const COMMERCE_ROUTES = [
     'entity.commerce_product.canonical',
     'commerce_cart.page',
     'commerce_checkout.form',
@@ -27,9 +33,45 @@ final class ShopCaptchaHooks {
     private readonly RouteMatchInterface $routeMatch,
   ) {}
 
+  /**
+   * Removes a global CAPTCHA element from shared Commerce purchase forms.
+   *
+   * Captcha's global fallback ignores a disabled point when no base-form
+   * point exists. This code-level exception keeps cart and checkout usable
+   * even when the site-wide challenge is enabled.
+   */
+  #[Hook('form_alter', order: new OrderAfter(modules: ['captcha']))]
+  public function formAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
+    if (!in_array($form_id, TurnstileToggle::COMMERCE_FORM_IDS, TRUE)
+      && !str_starts_with($form_id, 'commerce_checkout_flow_')
+      && !str_starts_with($form_id, 'views_form_commerce_cart_form')) {
+      return;
+    }
+    $this->removeCaptchaElements($form);
+  }
+
+  /**
+   * Recursively removes CAPTCHA render elements.
+   */
+  private function removeCaptchaElements(array &$element): void {
+    foreach ($element as $key => &$child) {
+      if (!is_array($child)) {
+        continue;
+      }
+      if (($child['#type'] ?? NULL) === 'captcha') {
+        unset($element[$key]);
+        continue;
+      }
+      $this->removeCaptchaElements($child);
+    }
+  }
+
+  /**
+   * Removes the global Turnstile script from commerce purchase pages.
+   */
   #[Hook('page_attachments_alter')]
   public function pageAttachmentsAlter(array &$attachments): void {
-    if (!in_array($this->routeMatch->getRouteName(), self::SHOP_ROUTES, true)) {
+    if (!in_array($this->routeMatch->getRouteName(), self::COMMERCE_ROUTES, TRUE)) {
       return;
     }
     $head = $attachments['#attached']['html_head'] ?? [];
