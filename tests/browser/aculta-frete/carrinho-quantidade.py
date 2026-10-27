@@ -73,7 +73,9 @@ try:
           "frete-teste-atualizar")
     D.click("#frete-teste-atualizar")
     time.sleep(8)
-    R["quantidade_apos_atualizar"] = D.js("return document.getElementById('frete-teste-qtd').value;")
+    # O carrinho é redesenhado após a atualização: o campo é lido de novo pelo nome (o id temporário some).
+    R["quantidade_apos_atualizar"] = D.js("const q = document.querySelector('input[name^=\"edit_quantity\"]');"
+                                          "return q ? q.value : null;")
     R["opcoes_apos_quantidade"] = espera(f"document.querySelectorAll('{OPCOES}').length > 0", 30)
 finally:
     try:
