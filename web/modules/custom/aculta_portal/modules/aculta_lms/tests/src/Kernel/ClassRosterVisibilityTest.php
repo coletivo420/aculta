@@ -9,8 +9,17 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\PermissionScopeInterface;
+use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_lms\ClassRosterManager;
+use Drupal\aculta_user\Identity\AuthorCardBuilder;
+use Drupal\aculta_user\Identity\AuthorIdentityResolver;
+use Drupal\aculta_user\PublicProfileLinkInterface;
+use Drupal\aculta_user\PublicProfilePolicy;
+use Drupal\aculta_user\Social\SocialNetworksInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\profile\ProfileStorageInterface;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -40,6 +49,32 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $this->registerLmsDependencyServices($container);
+    $this->registerAuthorCardBuilder($container);
+  }
+
+  /**
+   * Registers the real author card chain used by the roster service.
+   *
+   * The fixture accounts have no public profile, so the identity resolver
+   * returns NULL and the roster keeps the display-name fallback. Registering
+   * the chain here compiles aculta_lms.class_roster_manager without enabling
+   * the full aculta_user configuration graph.
+   */
+  private function registerAuthorCardBuilder(ContainerBuilder $container): void {
+    $profileStorage = $this->createMock(ProfileStorageInterface::class);
+    $profileStorage->method('loadByUser')->willReturn(NULL);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->with('profile')->willReturn($profileStorage);
+    $resolver = new AuthorIdentityResolver(
+      $entityTypeManager,
+      $this->createMock(PublicProfileLinkInterface::class),
+      (new \ReflectionClass(ImageRenderer::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(PublicProfilePolicy::class))->newInstanceWithoutConstructor(),
+      $this->createMock(SocialNetworksInterface::class),
+      $this->createMock(DateFormatterInterface::class),
+    );
+    $container->register('aculta_user.author_card_builder', AuthorCardBuilder::class)
+      ->addArgument($resolver);
   }
 
   /**
