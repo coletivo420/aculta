@@ -1131,3 +1131,73 @@ Head da PR antes: `301441ada`. Depois dos commits de código: `14037de34`. Publi
 
 O head da PR recebeu commits só de docs de outra origem enquanto esta sequência rodava
 (`03244e611` e `301441ada`, ambos de registro de exclusão de bancos). Nenhum deles altera código.
+
+## Limpeza de branches no head c0e51bf48 — 2026-10-27
+
+Head da PR (`chore/aculta-m0-integridade`) usado como referência: `c0e51bf4819ac2ca0e375c42db94d4351a62d991`.
+Critérios: (a) `git merge-base --is-ancestor B <head>`; (b) `git cherry <head> B` sem linhas `+`.
+Exclusão somente com `git branch -d` (nunca `-D`) e `git push origin --delete` (nunca `--force`).
+
+### a) EXCLUÍDAS
+
+Nenhuma.
+
+- Locais que passaram pelo critério (b), sem worktree, mas recusadas pelo `git branch -d` com
+  "not fully merged" (os commits são equivalentes na PR, porém não são ancestrais do HEAD):
+  agent/aculta-m0-phpcs, agent/aculta-m0-phpcs-current, agent/aculta-m0-side-modules,
+  agent/aculta-m0-status-audit, agent/aculta-status-current2, backup/pre-xk-c1-sync-20261022,
+  fix/phpcs-portal-ui-hooks-650, fix/phpcs-sobre-03244e611. Mantidas.
+- Remota `origin/fix/barra-multidominio-alinhamento` (critério a): mantida, porque a branch local de
+  mesmo nome tem worktree em uso.
+- Locais integradas (critério a ou b) com worktree em uso: mantidas, sem remoção de worktree.
+
+### b) MANTIDAS
+
+Contagem: `git branch -r` = 9 linhas (incluindo `origin/HEAD` e `origin/main`);
+`git branch` = 42 branches e 1 linha de `HEAD` destacado.
+
+Integradas, mantidas por worktree em uso (locais):
+
+| Branch | Worktree | Último commit |
+|---|---|---|
+| agent/aculta-me-precision-tests | sim | 75e90acb2 docs(aculta): record remote branch reconciliation |
+| agent/aculta-melhorenvio-a6 | sim | f092c359d docs(melhorenvio): record PR test evidence |
+| agent/aculta-melhorenvio-kernel | sim | e74396c00 fix(melhorenvio): complete kernel wiring and portal UI contract |
+| agent/aculta-magazine-a2 | sim | ea7930cd7 test(sitemap): remove unavailable shipping module from kernel |
+| agent/aculta-magazine-completion-20261026 | sim | b6c09d5ba docs(magazine): align notice contracts with implementation |
+| agent/aculta-mercadopago-closeout | sim | f092c359d docs(melhorenvio): record PR test evidence |
+| agent/index-a6 | sim | f092c359d docs(melhorenvio): record PR test evidence |
+| agent/melhorenvio-service-fix | sim | 0f6e61ad5 fix(melhorenvio): alias mapper for binder autowiring |
+| agent/statistics-focal | sim | f57b2ec8d fix(statistics): corrige cabeamento do logger e dívida PHPCS na auditoria focal |
+| docs/aculta-mp-extracao-b0 | sim | bc1458284 docs(mercadopago): inventário B0 para extrair a integração do Portal |
+| feat/aculta-document-viewer-fechamento | sim | 71b96d264 fix(commerce): fall back from legacy shipment workflow |
+| feat/aculta-index-fechamento | sim | 98f3937e5 docs(index): record final LMS, file and runtime commits |
+| feat/aculta-messenger-update-ensaio | sim | 4f8694853 docs(messenger): registra ensaio local dos updates 10008-10012 |
+| feat/aculta-mp-extracao | sim | 4cadfd0e2 test(index): install nickname schema in kernel harnesses |
+| feat/aculta-secrets-claro | sim | f4474d5d4 docs(portal): record Claro admin styling exception |
+| feat/aculta-user-update-ensaio | sim | 3c810a78a docs(user): registra ensaio local do update 10013 |
+| feat/melhorenvio-token-cipher | sim | f2bdf8fbe docs(aculta): record local test artifact cleanup |
+| feat/melhorenvio-token-cipher-c1e2109 | sim | 0c95bc711 fix(melhorenvio): migração 8002 apaga legado malformado e exige chave |
+| fix/barra-multidominio-alinhamento | sim | 650f473dc Corrige alinhamento dos controles da barra multidomínio |
+
+Com commits sem equivalente na PR (mantidas, todas com worktree em uso, exceto a de backup):
+
+| Branch | Commits sem equivalente | Worktree | Último commit |
+|---|---|---|---|
+| agent/aculta-secrets-manager | 2 | sim | b024f5bc4 test(secrets): revelação com valor fictício |
+| backup/checkout-antes-pr-8499180a6 | 19 | não | 8499180a6 test(secrets): revelação com valor fictício |
+| docs/aculta-runtime-snapshot-ensaio | 2 | sim | 1b71c12a3 docs(ops): corrige registro da exclusão em aculta_install_b2 |
+| docs/barra-multidominio-janelas | 4 | sim | a7eee4caa Registra validação da barra com contas de teste |
+| ensaio/geral-local | 14 | sim | 15e7c7b5c Merge remote-tracking branch 'origin/fix/alinhamento-sync-runtime' |
+| feat/aculta-commerce-cutover | 8 | sim | 5f139df4d fix(commerce): reaponta referência de remessa por SQL |
+| feat/aculta-commerce-shipping-port | 3 | sim | 37d56355d fix(commerce): fall back from legacy shipment workflow |
+| feat/aculta-frentes-independentes | 12 | sim | 9f7a09f8e fix(checkout): não gravar o pedido ao copiar o endereço de cobrança |
+| feat/aculta-me-conciliacao | 4 | sim | d410ef313 fix(melhorenvio): binder autowired e alias do mapeador |
+| feat/aculta-melhorenvio-integracao | 1 | sim | da55ae5c7 test(melhorenvio): cobrir falhas da cotação e o controller do webhook |
+| feat/aculta-user-10013-contagem | 2 | sim | 46dffd76b docs(runtime): corrige frase sobre gravação em perfis do 10013 |
+| fix/alinhamento-sync-runtime | 11 | sim | 596fa9d65 docs(operations): registra remoção esperada da view do contrib no uninstall |
+| fix/validador-seguranca-allowlist | 3 | sim | f9eef8472 test(security): remove segunda checagem de estado fixo do gateway MP |
+
+Remotas mantidas (commits sem equivalente na PR): `origin/docs/aculta-runtime-snapshot-ensaio` (2),
+`origin/feat/aculta-commerce-cutover` (8), `origin/feat/aculta-user-10013-contagem` (2),
+`origin/fix/alinhamento-sync-runtime` (11), `origin/fix/validador-seguranca-allowlist` (3).
