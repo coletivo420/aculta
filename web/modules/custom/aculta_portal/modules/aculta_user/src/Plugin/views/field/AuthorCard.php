@@ -92,7 +92,16 @@ final class AuthorCard extends FieldPluginBase implements ContainerFactoryPlugin
   public function render(ResultRow $values): array {
     $account = $this->getEntity($values);
     if (!$account instanceof UserInterface) {
-      return [];
+      // Views cacheia o resultado da consulta sem as entidades carregadas; a
+      // linha mantém o uid da tabela base e permite recompor a conta.
+      $uid = $values->uid ?? NULL;
+      if ($uid === NULL) {
+        return [];
+      }
+      $account = $this->entityTypeManager->getStorage('user')->load((int) $uid);
+      if (!$account instanceof UserInterface) {
+        return [];
+      }
     }
     $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $account);
     if ($profile === NULL || !$profile->hasField('field_perfil_publico') || $profile->get('field_perfil_publico')->isEmpty() || !(bool) $profile->get('field_perfil_publico')->value) {
