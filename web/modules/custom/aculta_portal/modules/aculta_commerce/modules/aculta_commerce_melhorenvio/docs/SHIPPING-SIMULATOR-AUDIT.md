@@ -100,8 +100,8 @@ Os IDs seguem a documentação e o fixture do sandbox (`tests/fixtures/quote-san
 ## 5. Link "Não sei meu CEP"
 
 O link de ajuda aponta para a busca de CEP dos Correios. A URL usada é
-`https://buscacepinter.correios.com.br/app/endereco/index.php`, mas **não foi confirmada** pela pesquisa desta fase.
-Confirmar a URL antes da publicação. A URL fica como propriedade do componente, não fixa no template.
+`https://buscacepinter.correios.com.br/app/endereco/index.php`. O responsável confirmou a URL (2026-10-27). A URL fica
+como propriedade do componente (`help_url`), não fixa no template.
 
 ## 6. Pendências que bloqueiam a ativação
 
@@ -109,5 +109,5 @@ Confirmar a URL antes da publicação. A URL fica como propriedade do componente
 |---|---|---|
 | CEP de origem da loja | Responsável | Pendente. Sem ele o simulador fica indisponível. |
 | Pacote padrão (medidas e peso reais da embalagem) | Responsável | Pendente de cadastro no formulário da origem. Sem ele o simulador fica indisponível. |
-| Confirmação da URL dos Correios | Responsável | Pendente. |
+| Confirmação da URL dos Correios | Responsável | Confirmada em 2026-10-27. |
 | Validação de cotação no servidor de testes com a origem configurada | Frente | Pendente (RUNTIME STATUS: DEFERRED). |
