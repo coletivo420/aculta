@@ -29,9 +29,12 @@ final class RedirectCheckoutFormSecurityTest extends UnitTestCase {
    * Checkout preferences keep pending and in-process provider states enabled.
    */
   public function testPreferenceDoesNotEnableBinaryMode(): void {
-    $mode = (new \ReflectionClass(RedirectCheckoutForm::class))->getConstant('BINARY_MODE');
+    $method = new \ReflectionMethod(RedirectCheckoutForm::class, 'applyPreferenceDefaults');
+    $request = $method->invoke(NULL, ['binary_mode' => TRUE, 'auto_return' => 'wrong', 'external_reference' => '42']);
 
-    $this->assertFalse($mode);
+    $this->assertFalse($request['binary_mode']);
+    $this->assertSame('approved', $request['auto_return']);
+    $this->assertSame('42', $request['external_reference']);
   }
 
   /**

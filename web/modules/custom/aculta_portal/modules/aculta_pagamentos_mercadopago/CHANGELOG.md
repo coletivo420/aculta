@@ -1,3 +1,9 @@
+## 0.1.0-dev.34 — fixar os padrões efetivos da preferência (2026-10-27)
+
+- A normalização da preferência agora força `binary_mode: false` e `auto_return: approved` antes do diagnóstico e da chamada remota. Isso mantém os logs coerentes com o payload efetivo e protege contra valores conflitantes montados antes.
+- Regressão exercita a normalização recebendo valores conflitantes; Unit completo 177 testes / 651 assertions PASS; Kernel CheckoutPro 1 teste / 56 assertions PASS (77 depreciações upstream); PHPCS e PHP lint focais PASS.
+- Firefox ESR não autenticou o comprador sandbox: o Mercado Pago pediu desafio de segurança manual. Nenhuma sessão, preferência ou transação foi criada.
+
 ## 0.1.0-dev.33 — corrigir dependências documentadas (2026-10-27)
 
 - README agora corresponde ao `info.yml`: o submódulo depende do `aculta_portal`; o módulo base não depende deste gateway. Loja, LMS e doações seguem consumidores do contrato compartilhado.

@@ -110,7 +110,7 @@ Como usar: abrir `https://www.mercadopago.com.br/` em Firefox ESR visível, clic
 ## Pendências
 
 - Runtime de teste em `test`, gateway `mercado_pago` ativo e par de credenciais sandbox disponível no override do ambiente; os campos armazenados no config ativo e no Sync estão vazios.
-- Validar Checkout Pro de ponta a ponta com o comprador de teste e os cartões/status acima. Em 2026-10-27 Firefox carregou o produto, adicionou ao carrinho e chegou ao checkout central, que exigiu login/cadastro Drupal antes de apresentar o gateway. O teste parou sem criar preferência ou pagamento. A tentativa separada de login no Mercado Pago recebeu HTTP 403; a sessão do comprador não foi confirmada.
+- Validar Checkout Pro de ponta a ponta com o comprador de teste e os cartões/status acima. Em 2026-10-27 Firefox carregou produto, carrinho, cadastro AJAX e etapa de endereço/frete sem CAPTCHA; o smoke para antes de enviar endereço ou pedido, portanto não gera preferência. Tentativas autorizadas de login do comprador terminaram primeiro em HTTP 403 e, na reexecução de 2026-10-27, em desafio de segurança manual. Nenhuma sessão foi confirmada e nenhuma transação foi criada.
 - Homologar estornos parcial e total no sandbox; a implementação usa lock e `x-idempotency-key`, mas ainda não há evidência de chamada sandbox nesta versão.
 - Configurar as notificações da aplicação no painel do Mercado Pago (URL de teste e URL de produção), salvar e
   copiar a assinatura secreta para `MERCADOPAGO_WEBHOOK_SECRET`.

@@ -261,7 +261,6 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       'payer' => $payer,
       'notification_url' => $notification_url->toString(),
       'external_reference' => (string) $order_id,
-      'binary_mode' => TRUE,
       'back_urls' => [
         'success' => $url_success,
         'pending' => $url_pending,
@@ -274,16 +273,12 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
         'default_installments' => 1,
       ],
     ];
+    $request = self::applyPreferenceDefaults($request);
 
     if (!empty($configuration['debug_logging'])) {
       $debug_request = self::sanitizePreferenceDebugRequest($request);
       $this->loggerFactory->get('Mercado Pago debug')->debug('Request sent: <pre>' . print_r($debug_request, TRUE) . '</pre>');
     }
-
-    // Binary mode automatically rejects payments that need buyer action or
-    // manual review, so keep it disabled to support pending checkout states.
-    $request['binary_mode'] = self::BINARY_MODE;
-    $request['auto_return'] = 'approved';
 
     $order_total = $order->getTotalPrice();
     if ($order_total === NULL) {
@@ -396,6 +391,24 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
    */
   private static function sanitizePreferenceDebugRequest(array $request): array {
     unset($request['payer']);
+    return $request;
+  }
+
+  /**
+   * Applies the integration's required preference behavior.
+   *
+   * A later request-array edit cannot accidentally enable binary mode and
+   * suppress pending or in-process payment states.
+   *
+   * @param array<string, mixed> $request
+   *   The preference request.
+   *
+   * @return array<string, mixed>
+   *   The request with ACULTA's fixed checkout behavior.
+   */
+  private static function applyPreferenceDefaults(array $request): array {
+    $request['binary_mode'] = self::BINARY_MODE;
+    $request['auto_return'] = 'approved';
     return $request;
   }
 
