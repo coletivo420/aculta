@@ -1397,3 +1397,11 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 
 - `CheckoutPro` descreve os callbacks modernos assinados como Webhooks; IPN só é citado ao explicar a recusa do protocolo legado.
 - Unit MP 156/502, PHPCS Drupal/DrupalPractice nos PHP alterados e PHP lint PASS. Nenhuma chamada externa.
+
+## Limpeza autorizada dos carrinhos do Runtime — 2026-10-27
+
+- Antes da ação, `hostname` = `toca`; Drush confirmou Drupal 11.4.10, URI `http://default`, raiz `/home/piradopirata/projetos/aculta/web` e banco `aculta_runtime`. HEAD `f56136243`, branch `chore/aculta-m0-integridade`.
+- Integridade do banco: 588 tabelas. Antes: 9 pedidos, todos carrinhos `default/draft`; 9 itens em carrinhos; 0 pagamentos associados; nenhum pedido fora de carrinho.
+- Snapshot anterior à escrita: `/home/piradopirata/aculta-backups/aculta-runtime-before-cart-cleanup-20261027-153416/runtime.sql`, 93.332.258 bytes, modo `0600`, diretório modo `0700`; SHA-256 `82f517076f078f0c12f625f85b3b47662aef6a0c3899eba30ee9a46b2dea9edd`.
+- Ação autorizada: `commerce_cart.cart_manager->emptyCart()` em 9 pedidos de rascunho; removeu 9 itens, mantendo os pedidos vazios. Nenhum pagamento, pedido não-carrinho ou estado de pagamento foi alterado.
+- Verificação posterior: 9 carrinhos, 0 carrinhos com itens, 0 itens, 0 pagamentos associados; 9 pedidos totais e 0 pedidos fora de carrinho. `aculta_runtime` não teve updates de esquema nem importação de configuração nesta ação.
