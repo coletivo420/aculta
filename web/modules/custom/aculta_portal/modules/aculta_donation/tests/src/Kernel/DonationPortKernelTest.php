@@ -125,7 +125,13 @@ final class DonationPortKernelTest extends OrderKernelTestBase {
       $fluxos->getDefinition('fluxo_doacao', FALSE)['class'],
     );
     $paineis = $this->container->get('plugin.manager.commerce_checkout_pane');
-    foreach (['commerce_donation_pane', 'commerce_memorial_pane', 'commerce_donation_add_pane', 'donation_thank_you'] as $id) {
+    foreach ([
+      'commerce_donation_pane',
+      'commerce_memorial_pane',
+      'commerce_donation_add_pane',
+      'donation_thank_you',
+      'donation_recurring_authorization',
+    ] as $id) {
       $this->assertStringStartsWith('Drupal\aculta_donation\\', $paineis->getDefinition($id, FALSE)['class']);
     }
     $this->assertStringStartsWith(

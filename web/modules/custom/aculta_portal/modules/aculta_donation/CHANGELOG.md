@@ -1,3 +1,8 @@
+## 0.1.0-dev.29 — descobrir a pane de autorização recorrente no Kernel (2026-10-27)
+
+- DonationPortKernelTest agora exige a descoberta de `donation_recurring_authorization`, a pane que delega a autorização recorrente ao recorder do Mercado Pago.
+- Kernel 5 testes / 196 assertions PASS (88 depreciações upstream).
+
 ## 0.1.0-dev.28 — serializar autorização da doação recorrente (2026-10-27)
 
 - A pane delega criação, associação ao pedido e transição para `needs_payment` ao recorder do Mercado Pago, que serializa pelo pedido e reaproveita a autorização pendente após validar a referência remota.
