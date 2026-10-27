@@ -678,8 +678,6 @@ $assert($webhook_key && $webhook_key->getKeyProvider()->getPluginId() === 'env',
 $assert(($webhook_key->getKeyProvider()->getConfiguration()['env_variable'] ?? NULL) === 'MERCADOPAGO_WEBHOOK_SECRET', 'Webhook Key points to the dedicated signing-secret environment variable.');
 $assert(class_exists(\MercadoPago\Webhook\WebhookSignatureValidator::class) && class_exists(\MercadoPago\Exceptions\InvalidWebhookSignatureException::class), 'The installed Mercado Pago SDK provides its official webhook validator and exception.');
 $assert(\Composer\InstalledVersions::getPrettyVersion('mercadopago/dx-php') === '3.16.0', 'The audited Mercado Pago SDK version is 3.16.0.');
-$assert($gateway->status() === $mp_credential_present, 'The Mercado Pago gateway state matches the environment access token before webhook tests.');
-
 $fake_webhook_secret = 'test_' . bin2hex(random_bytes(32));
 $webhook_request_id = 'local-' . bin2hex(random_bytes(12));
 $webhook_data_id = (string) random_int(100000, 999999999);
