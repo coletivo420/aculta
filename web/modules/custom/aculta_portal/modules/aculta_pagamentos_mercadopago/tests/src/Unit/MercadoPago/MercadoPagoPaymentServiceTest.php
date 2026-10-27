@@ -6,18 +6,24 @@ namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\MercadoPago;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoPaymentService;
 use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
+use Drupal\aculta_portal\Exception\PaymentOperationException;
 use Drupal\commerce_price\Price;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Atualização e cancelamento de pagamento, com o cliente do SDK substituído por um duplo.
+ * Atualização e cancelamento, usando um dublê do cliente do SDK.
  */
 #[Group('aculta_pagamentos_mercadopago')]
 final class MercadoPagoPaymentServiceTest extends UnitTestCase {
@@ -27,21 +33,21 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
    */
   protected function setUp(): void {
     parent::setUp();
-    // Mensagens traduzidas (TranslatableMarkup) precisam de um container com tradução.
+    // Mensagens TranslatableMarkup precisam de um serviço de tradução.
     $container = new ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
   }
 
   /**
-   * Cliente falso do SDK: devolve o pagamento remoto informado e registra o cancelamento.
+   * Creates a fake SDK client that records cancellation operations.
    */
-  private function cliente(object $remoto, ?object &$registro = NULL): object {
+  private function cliente(object $remoto, ?object &$registro = NULL, ?object $resposta_cancelamento = NULL): object {
     $registro = new \stdClass();
     $registro->cancelado = FALSE;
-    return new class($remoto, $registro) {
+    return new class($remoto, $registro, $resposta_cancelamento) {
 
-      public function __construct(private object $remoto, private object $registro) {}
+      public function __construct(private object $remoto, private object $registro, private ?object $respostaCancelamento) {}
 
       /**
        * Performs the get operation.
@@ -55,7 +61,7 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
        */
       public function cancel(int $id): object {
         $this->registro->cancelado = TRUE;
-        return (object) ['status' => 'cancelled'];
+        return $this->respostaCancelamento ?? (object) ['id' => $this->remoto->id, 'status' => 'cancelled'];
       }
 
     };
@@ -66,6 +72,7 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
    */
   private function pagamento(string $estado, string $remoteId = '123456789'): PaymentInterface&MockObject {
     $pagamento = $this->createMock(PaymentInterface::class);
+    $pagamento->method('id')->willReturn(1);
     $pagamento->method('getRemoteId')->willReturn($remoteId);
     $pagamento->method('getAmount')->willReturn(new Price('120.00', 'BRL'));
     $pagamento->method('getPaymentGateway')->willReturn($this->createMock(PaymentGatewayInterface::class));
@@ -88,11 +95,19 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
   /**
    * Performs the servico operation.
    */
-  private function servico(object $cliente): MercadoPagoPaymentService {
+  private function servico(object $cliente, ?PaymentInterface $pagamento = NULL, ?LockBackendInterface $lock = NULL): MercadoPagoPaymentService {
     $fabrica = $this->createMock(MercadoPagoClientFactory::class);
     $fabrica->method('criar')->willReturn($cliente);
     $log = $this->createMock(LoggerChannelInterface::class);
-    return new MercadoPagoPaymentService($fabrica, new MercadoPagoPaymentPolicy(), $log);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('load')->willReturn($pagamento);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getStorage')->with('commerce_payment')->willReturn($storage);
+    if ($lock === NULL) {
+      $lock = $this->createMock(LockBackendInterface::class);
+      $lock->method('acquire')->willReturn(TRUE);
+    }
+    return new MercadoPagoPaymentService($fabrica, new MercadoPagoPaymentPolicy(), $log, $manager, $lock);
   }
 
   /**
@@ -102,7 +117,14 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
     $pagamento = $this->pagamento('authorization');
     $pagamento->expects($this->once())->method('setState')->with('completed');
     $pagamento->expects($this->once())->method('save');
-    $status = $this->servico($this->cliente((object) ['status' => 'approved', 'transaction_amount_refunded' => 0]))->refresh($pagamento);
+    $cliente = $this->cliente((object) [
+      'id' => 123456789,
+      'status' => 'approved',
+      'transaction_amount' => 120.0,
+      'currency_id' => 'BRL',
+      'transaction_amount_refunded' => 0,
+    ]);
+    $status = $this->servico($cliente, $pagamento)->refresh($pagamento);
     $this->assertSame('approved', $status);
   }
 
@@ -115,7 +137,14 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
       static fn (Price $p): bool => $p->getNumber() === '120.00' && $p->getCurrencyCode() === 'BRL'
     ));
     $pagamento->expects($this->once())->method('setState')->with('refunded');
-    $this->servico($this->cliente((object) ['status' => 'refunded', 'transaction_amount_refunded' => 120.0]))->atualizar($pagamento);
+    $cliente = $this->cliente((object) [
+      'id' => 123456789,
+      'status' => 'refunded',
+      'transaction_amount' => 120.0,
+      'currency_id' => 'BRL',
+      'transaction_amount_refunded' => 120.0,
+    ]);
+    $this->servico($cliente, $pagamento)->atualizar($pagamento);
   }
 
   /**
@@ -125,8 +154,13 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
     $pagamento = $this->pagamento('authorization');
     $pagamento->expects($this->once())->method('setState')->with('authorization_voided');
     $registro = NULL;
-    $cliente = $this->cliente((object) ['status' => 'pending'], $registro);
-    $this->servico($cliente)->cancel($pagamento);
+    $cliente = $this->cliente((object) [
+      'id' => 123456789,
+      'status' => 'pending',
+      'transaction_amount' => 120.0,
+      'currency_id' => 'BRL',
+    ], $registro);
+    $this->servico($cliente, $pagamento)->cancel($pagamento);
     $this->assertTrue($registro->cancelado);
   }
 
@@ -136,10 +170,15 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
   public function testCancelApprovedIsRejectedWithoutCallingSdk(): void {
     $pagamento = $this->pagamento('completed');
     $registro = NULL;
-    $cliente = $this->cliente((object) ['status' => 'approved'], $registro);
+    $cliente = $this->cliente((object) [
+      'id' => 123456789,
+      'status' => 'approved',
+      'transaction_amount' => 120.0,
+      'currency_id' => 'BRL',
+    ], $registro);
     $this->expectException(\DomainException::class);
     try {
-      $this->servico($cliente)->cancelar($pagamento);
+      $this->servico($cliente, $pagamento)->cancelar($pagamento);
     }
     finally {
       $this->assertFalse($registro->cancelado);
@@ -147,11 +186,156 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
   }
 
   /**
+   * Reconciles a cancellation accepted remotely before a local save failure.
+   */
+  public function testAlreadyCancelledRemotePaymentReconcilesWithoutSecondCancel(): void {
+    $pagamento = $this->pagamento('authorization');
+    $pagamento->expects($this->once())->method('setRemoteState')->with('cancelled');
+    $pagamento->expects($this->once())->method('setState')->with('authorization_voided');
+    $pagamento->expects($this->once())->method('save');
+    $registro = NULL;
+    $cliente = $this->cliente((object) [
+      'id' => 123456789,
+      'status' => 'cancelled',
+      'transaction_amount' => 120.0,
+      'currency_id' => 'BRL',
+    ], $registro);
+
+    $this->servico($cliente, $pagamento)->cancelar($pagamento);
+
+    $this->assertFalse($registro->cancelado);
+  }
+
+  /**
+   * Refuses to reconcile a provider response that identifies another payment.
+   */
+  public function testRefreshRejectsMismatchedProviderPaymentId(): void {
+    $pagamento = $this->pagamento('authorization');
+    $pagamento->expects($this->never())->method('setRemoteState');
+    $pagamento->expects($this->never())->method('setState');
+    $pagamento->expects($this->never())->method('save');
+    $cliente = $this->cliente((object) [
+      'id' => 99,
+      'status' => 'approved',
+      'transaction_amount' => 120.0,
+      'currency_id' => 'BRL',
+    ]);
+
+    $this->expectException(PaymentOperationException::class);
+    $this->servico($cliente, $pagamento)->refresh($pagamento);
+  }
+
+  /**
+   * Does not expose transport exception details to the payment operations API.
+   */
+  public function testRefreshHidesTransportErrorDetails(): void {
+    $pagamento = $this->pagamento('authorization');
+    $cliente = new class() {
+
+      /**
+       * Simulates a timeout containing private provider details.
+       */
+      public function get(int $id): object {
+        throw new \RuntimeException('private provider token');
+      }
+
+    };
+
+    $this->expectException(PaymentOperationException::class);
+    $this->expectExceptionMessage('O Mercado Pago não respondeu como esperado.');
+    $this->servico($cliente, $pagamento)->refresh($pagamento);
+  }
+
+  /**
+   * Does not persist a cancellation response tied to another payment.
+   */
+  public function testCancelRejectsMismatchedProviderPaymentId(): void {
+    $pagamento = $this->pagamento('authorization');
+    $pagamento->expects($this->never())->method('setRemoteState');
+    $pagamento->expects($this->never())->method('setState');
+    $pagamento->expects($this->never())->method('save');
+    $registro = NULL;
+    $cliente = $this->cliente(
+      (object) ['id' => 123456789, 'status' => 'pending'],
+      $registro,
+      (object) ['id' => 99, 'status' => 'cancelled'],
+    );
+
+    $this->expectException(MercadoPagoApiException::class);
+    $this->servico($cliente, $pagamento)->cancelar($pagamento);
+  }
+
+  /**
+   * Requests retry instead of overlapping a payment notification operation.
+   */
+  public function testRefreshReturnsRetryableFailureWhenPaymentLockIsBusy(): void {
+    $pagamento = $this->pagamento('authorization');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123456789', 300)
+      ->willReturn(FALSE);
+    $lock->expects($this->never())->method('release');
+    $cliente = new class() {
+
+      /**
+       * Fails the test if the provider is reached while the lock is busy.
+       */
+      public function get(int $id): object {
+        throw new \LogicException('Provider call should not happen.');
+      }
+
+    };
+
+    $this->expectException(PaymentOperationException::class);
+    $this->expectExceptionMessage('Outra operação deste pagamento está em andamento; tente novamente.');
+    $this->servico($cliente, $pagamento, $lock)->refresh($pagamento);
+  }
+
+  /**
+   * Refuses mismatched amount or currency before changing local payment state.
+   */
+  #[DataProvider('mismatchedPaymentProvider')]
+  public function testRefreshRejectsMismatchedRemoteAmounts(string $remote_amount, string $currency): void {
+    $pagamento = $this->pagamento('authorization');
+    $pagamento->expects($this->never())->method('setRemoteState');
+    $pagamento->expects($this->never())->method('setState');
+    $pagamento->expects($this->never())->method('save');
+    $cliente = $this->cliente((object) [
+      'id' => 123456789,
+      'status' => 'approved',
+      'transaction_amount' => $remote_amount,
+      'currency_id' => $currency,
+    ]);
+
+    $this->expectException(PaymentOperationException::class);
+    $this->servico($cliente, $pagamento)->refresh($pagamento);
+  }
+
+  /**
+   * Provides mismatched remote payment values.
+   *
+   * @return iterable<string, array{string, string}>
+   *   Invalid remote amount/currency combinations.
+   */
+  public static function mismatchedPaymentProvider(): iterable {
+    yield 'amount mismatch' => ['119.99', 'BRL'];
+    yield 'currency mismatch' => ['120.00', 'USD'];
+  }
+
+  /**
    * Tests the pagamento sem id remoto eh recusado behavior.
    */
   public function testPagamentoSemIdRemotoEhRecusado(): void {
     $this->expectException(\DomainException::class);
-    $this->servico($this->cliente((object) ['status' => 'approved']))->atualizar($this->pagamento('completed', 'abc'));
+    $pagamento = $this->pagamento('completed', 'abc');
+    $cliente = $this->cliente((object) [
+      'id' => 123456789,
+      'status' => 'approved',
+      'transaction_amount' => 120.0,
+      'currency_id' => 'BRL',
+    ]);
+    $this->servico($cliente, $pagamento)->atualizar($pagamento);
   }
 
 }

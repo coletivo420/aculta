@@ -57,13 +57,12 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 | Idempotência | Retorno, webhook e cobrança recorrente serializam por ID remoto e consultam duplicatas dentro do lock | Unit cobre retorno aprovado duplicado, lock de recorrência e filtros Commerce; Kernel/Runtime pendentes |
 | Falha de API | Consulta remota não confirma estado local quando o provedor retorna erro | Unit: webhook responde 503 para reentrega; retorno lança exceção Commerce segura; transação externa não testada |
 | Estorno | `CheckoutPro::refundPayment()` usa cliente do gateway ativo, lock por pagamento e `x-idempotency-key` estável por total acumulado; persiste somente com resposta `approved` vinculada ao pagamento remoto | Unit retry idempotente, concorrência e status pendente PASS; sandbox parcial/total pendente |
-| Cancelamento | `MercadoPagoPaymentService::cancelar()` confere o status remoto e chama `PaymentClient::cancel()` do SDK | Alinhado; o endpoint exato não foi confirmado na documentação lida |
+| Cancelamento | `MercadoPagoPaymentService::cancelar()` serializa pela chave compartilhada do pagamento, recarrega Commerce, consulta ID remoto, aceita apenas `pending`, `in_process` ou `authorized`, e exige resposta `cancelled` com o mesmo ID | [Referência oficial](https://www.mercadopago.com.br/developers/pt/reference/online-payments/checkout-api-payments/create-cancellation/put) confirma `PUT /v1/payments/{payment_id}` e os estados; Unit cobre cancelamento, reconciliação após timeout e IDs divergentes |
 | Assinatura pendente | `status => 'pending'`, sem cartão | Alinhado |
 | Status de assinatura alteráveis | `RecurrenceRequestBuilder::STATUS_ALTERAVEIS = paused, authorized, cancelled` | Confirmar com a referência de `PUT /preapproval/{id}` |
 
 ## Não confirmado
 
-- **Cancelamento de pagamento aprovado ou pendente:** a página lida trata só de estorno. O endpoint de cancelamento usado (`PaymentClient::cancel`) precisa ser confirmado na referência oficial de pagamentos.
 - **Tópicos de assinatura:** os nomes `subscription_preapproval` e `subscription_authorized_payment` estão na tabela de tópicos, mas o payload de cada um não foi lido.
 - **Efeito do cancelamento sobre a preferência e o pedido:** não documentado na página lida.
 - **Exclusão de meios de pagamento:** a regra "Cash in account não pode ser excluído" vem de uma página de outro país; confirmar para o Brasil.

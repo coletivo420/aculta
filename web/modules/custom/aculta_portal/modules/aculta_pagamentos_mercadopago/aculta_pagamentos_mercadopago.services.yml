@@ -11,7 +11,7 @@ services:
     class: Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy
   aculta_pagamentos_mercadopago.payment_service:
     class: Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoPaymentService
-    arguments: ['@aculta_pagamentos_mercadopago.client_factory', '@aculta_pagamentos_mercadopago.payment_policy', '@aculta_pagamentos_mercadopago.logger']
+    arguments: ['@aculta_pagamentos_mercadopago.client_factory', '@aculta_pagamentos_mercadopago.payment_policy', '@aculta_pagamentos_mercadopago.logger', '@entity_type.manager', '@lock']
   aculta_pagamentos_mercadopago.recurrence_service:
     class: Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService
     arguments: ['@aculta_pagamentos_mercadopago.client_factory', '@aculta_pagamentos_mercadopago.recurrence_request_builder', '@aculta_pagamentos_mercadopago.logger']

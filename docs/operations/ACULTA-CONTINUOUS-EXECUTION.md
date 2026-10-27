@@ -1,5 +1,12 @@
 # Execução contínua ACULTA — PR #298
 
+## Mercado Pago — microfase de cancelamento e reconciliação (2026-10-27)
+
+- Base de trabalho: `cd49917f6`. O serviço de pagamento usa a mesma chave de lock do webhook; consulta e cancelamento recarregam o pagamento Commerce, validam ID remoto e não aceitam total/moeda divergentes. Repetição após timeout reconcilia `cancelled` localmente sem nova chamada de cancelamento.
+- Cancelamento valida ID e estado da resposta do provedor; somente estados `pending`, `in_process` e `authorized` são aceitos, conforme a [referência oficial](https://www.mercadopago.com.br/developers/pt/reference/online-payments/checkout-api-payments/create-cancellation/put). Falhas de transporte usam mensagens/logs sem conteúdo privado.
+- Regressões cobrem cancelamento permitido/negado, reconciliação após timeout, lock ocupado, ID remoto divergente, total/moeda incorretos e falha de transporte. Unit MP: 150 testes / 464 assertions PASS; PHP lint e PHPCS Drupal/DrupalPractice dos PHP alterados PASS.
+- Kernel não executado (`SIMPLETEST_DB` ausente). Sandbox de cancelamento e pagamentos reais não utilizados. No checkout servido, `drush cr` PASS, Drush resolveu `aculta_pagamentos_mercadopago.payment_service` para a classe real e MAIN/Loja responderam HTTP 200. Nenhum `updatedb`, import de config ou escrita em pagamento foi feito. A alteração ainda não foi publicada.
+
 ## Mercado Pago — microfase de estorno idempotente (2026-10-27)
 
 - Base local desta microfase: `be4dbfa28`; branch `chore/aculta-m0-integridade`. `CheckoutPro::refundPayment()` passa a criar o cliente pela fábrica do gateway ativo, serializar por ID remoto, recarregar o pagamento Commerce dentro do lock e enviar `x-idempotency-key` estável pelo total acumulado e moeda.

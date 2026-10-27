@@ -9,16 +9,19 @@ use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
 use Drupal\aculta_portal\Exception\PaymentOperationException;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\commerce_price\Price;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use MercadoPago\Exceptions\MPApiException;
 
 /**
  * Atualiza e cancela pagamentos do Checkout Pro pela API do Mercado Pago.
  *
- * O estorno não é feito aqui: ele é a operação refund do Commerce, que o gateway do módulo implementa
- * (refundPayment). Este serviço cobre o que o Commerce não oferece: consultar o status atual, cancelar
- * pagamento pendente e espelhar no pagamento local o que o Mercado Pago informa.
+ * O estorno não é feito aqui: é a operação refund do Commerce, que o gateway
+ * do módulo implementa (refundPayment). Este serviço cobre o que o Commerce não
+ * oferece: consultar o status atual, cancelar pagamento pendente e espelhar no
+ * pagamento local o que o Mercado Pago informa.
  */
 final class MercadoPagoPaymentService implements PaymentOperationsInterface {
 
@@ -26,6 +29,8 @@ final class MercadoPagoPaymentService implements PaymentOperationsInterface {
     private readonly MercadoPagoClientFactory $clientes,
     private readonly MercadoPagoPaymentPolicy $politica,
     private readonly LoggerChannelInterface $logger,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly LockBackendInterface $lock,
   ) {}
 
   /**
@@ -37,68 +42,117 @@ final class MercadoPagoPaymentService implements PaymentOperationsInterface {
    * @throws \Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException
    */
   public function atualizar(PaymentInterface $pagamento): string {
-    $remoto = $this->consultar($pagamento);
-    $status = (string) ($remoto->status ?? '');
-    $valor = $pagamento->getAmount();
-    $decisao = $this->politica->decidirSincronizacao(
-      $status,
-      $pagamento->getState()->getId(),
-      $this->decimal($valor?->getNumber()),
-      $this->decimal($remoto->transaction_amount_refunded ?? 0),
-    );
+    $remote_id = $this->remoteId($pagamento);
+    $lock_id = 'aculta_pagamentos_mercadopago.payment.' . $remote_id;
+    if (!$this->lock->acquire($lock_id, 300)) {
+      throw new MercadoPagoApiException('Outra operação deste pagamento está em andamento; tente novamente.', 409);
+    }
+    try {
+      $locked_payment = $this->reload($pagamento);
+      $remoto = $this->consultar($locked_payment, $remote_id);
+      $status = (string) ($remoto->status ?? '');
+      $valor = $locked_payment->getAmount();
+      if ($valor === NULL || !is_numeric($remoto->transaction_amount ?? NULL)
+        || $this->decimal((string) $remoto->transaction_amount) !== $this->decimal($valor->getNumber())
+        || ($remoto->currency_id ?? NULL) !== $valor->getCurrencyCode()) {
+        throw new MercadoPagoApiException('Os dados do pagamento remoto não correspondem ao pagamento local.');
+      }
+      $estornado_remoto = $remoto->transaction_amount_refunded ?? 0;
+      if (!is_numeric($estornado_remoto) || (float) $estornado_remoto < 0
+        || (float) $estornado_remoto > (float) $valor->getNumber()) {
+        throw new MercadoPagoApiException('O valor de estorno informado pelo Mercado Pago é inválido.');
+      }
+      if ($status === 'refunded' && (float) $estornado_remoto <= 0) {
+        throw new MercadoPagoApiException('O Mercado Pago não informou o total estornado.');
+      }
+      $decisao = $this->politica->decidirSincronizacao(
+        $status,
+        $locked_payment->getState()->getId(),
+        $this->decimal($valor->getNumber()),
+        $this->decimal((string) $estornado_remoto),
+      );
 
-    $pagamento->setRemoteState($status);
-    if ($decisao['estornado'] !== NULL && $valor !== NULL) {
-      $pagamento->setRefundedAmount(new Price($decisao['estornado'], $valor->getCurrencyCode()));
-    }
-    if ($decisao['estado'] !== NULL) {
-      $pagamento->setState($decisao['estado']);
-    }
-    $pagamento->save();
+      $locked_payment->setRemoteState($status);
+      if ($decisao['estornado'] !== NULL) {
+        $locked_payment->setRefundedAmount(new Price($decisao['estornado'], $valor->getCurrencyCode()));
+      }
+      if ($decisao['estado'] !== NULL) {
+        $locked_payment->setState($decisao['estado']);
+      }
+      $locked_payment->save();
 
-    if ($decisao['contestacao']) {
-      // Chargeback exige tratamento manual; o log registra só o identificador do pagamento.
-      $this->logger->warning('Pagamento @id com contestação (chargeback) no Mercado Pago. Tratar manualmente.', ['@id' => $pagamento->getRemoteId()]);
+      if ($decisao['contestacao']) {
+        $this->logger->warning('Pagamento @id com contestação (chargeback) no Mercado Pago. Tratar manualmente.', ['@id' => $remote_id]);
+      }
+      $this->logger->info('Pagamento @id atualizado a partir do Mercado Pago: status remoto @status.', [
+        '@id' => $remote_id,
+        '@status' => $status,
+      ]);
+      return $status;
     }
-    $this->logger->info('Pagamento @id atualizado a partir do Mercado Pago: status remoto @status.', [
-      '@id' => $pagamento->getRemoteId(),
-      '@status' => $status,
-    ]);
-    return $status;
+    finally {
+      $this->lock->release($lock_id);
+    }
   }
 
   /**
    * Cancela um pagamento pendente no Mercado Pago.
    *
-   * Confere o status remoto antes de cancelar, porque o pagamento local pode estar desatualizado.
+   * Confere o status remoto antes de cancelar, porque o pagamento local pode
+   * estar desatualizado.
    *
    * @throws \DomainException
    *   Pagamento que não pode ser cancelado no estado atual.
    * @throws \Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException
    */
   public function cancelar(PaymentInterface $pagamento): void {
-    $remoto = $this->consultar($pagamento);
-    $status = (string) ($remoto->status ?? '');
-    $local = $pagamento->getState()->getId();
-    if (!$this->politica->podeCancelar($status, $local)) {
-      throw new \DomainException((string) new TranslatableMarkup('Este pagamento não pode ser cancelado no estado atual (@status).', ['@status' => $status]));
+    $remote_id = $this->remoteId($pagamento);
+    $lock_id = 'aculta_pagamentos_mercadopago.payment.' . $remote_id;
+    if (!$this->lock->acquire($lock_id, 300)) {
+      throw new MercadoPagoApiException('Outra operação deste pagamento está em andamento; tente novamente.', 409);
     }
-
     try {
-      $cancelado = $this->clientes->criar('pagamentos', $pagamento->getPaymentGateway())->cancel((int) $pagamento->getRemoteId());
-    }
-    catch (MPApiException $e) {
-      throw $this->falha('cancelar', $e);
-    }
+      $locked_payment = $this->reload($pagamento);
+      $remoto = $this->consultar($locked_payment, $remote_id);
+      $status = (string) ($remoto->status ?? '');
+      $local = $locked_payment->getState()->getId();
+      if ($status === 'cancelled' && $local === 'authorization') {
+        // Reconcile a timeout after Mercado Pago accepted the cancellation.
+        $locked_payment->setRemoteState('cancelled');
+        $locked_payment->setState('authorization_voided');
+        $locked_payment->save();
+        return;
+      }
+      if (!$this->politica->podeCancelar($status, $local)) {
+        throw new \DomainException((string) new TranslatableMarkup('Este pagamento não pode ser cancelado no estado atual (@status).', ['@status' => $status]));
+      }
 
-    $pagamento->setRemoteState((string) ($cancelado->status ?? 'cancelled'));
-    // Pendente local em authorization: transição void do workflow payment_default.
-    $pagamento->setState('authorization_voided');
-    $pagamento->save();
-    $this->logger->notice('Pagamento @id cancelado no Mercado Pago (status anterior @status).', [
-      '@id' => $pagamento->getRemoteId(),
-      '@status' => $status,
-    ]);
+      try {
+        $cancelado = $this->clientes->criar('pagamentos', $locked_payment->getPaymentGateway())->cancel((int) $remote_id);
+      }
+      catch (MPApiException $exception) {
+        throw $this->falha('cancelar', $exception);
+      }
+      catch (\Throwable $exception) {
+        throw $this->falhaTransporte('cancelar', $exception);
+      }
+      if (($cancelado->status ?? NULL) !== 'cancelled'
+        || !isset($cancelado->id)
+        || (string) $cancelado->id !== $remote_id) {
+        throw new MercadoPagoApiException('O Mercado Pago não confirmou o cancelamento deste pagamento.');
+      }
+
+      $locked_payment->setRemoteState('cancelled');
+      $locked_payment->setState('authorization_voided');
+      $locked_payment->save();
+      $this->logger->notice('Pagamento @id cancelado no Mercado Pago (status anterior @status).', [
+        '@id' => $remote_id,
+        '@status' => $status,
+      ]);
+    }
+    finally {
+      $this->lock->release($lock_id);
+    }
   }
 
   /**
@@ -109,7 +163,6 @@ final class MercadoPagoPaymentService implements PaymentOperationsInterface {
       return $this->atualizar($payment);
     }
     catch (MercadoPagoApiException $exception) {
-      $this->logProviderFailure($exception);
       throw new PaymentOperationException($exception->getMessage(), 0, $exception);
     }
   }
@@ -122,37 +175,31 @@ final class MercadoPagoPaymentService implements PaymentOperationsInterface {
       $this->cancelar($payment);
     }
     catch (MercadoPagoApiException $exception) {
-      $this->logProviderFailure($exception);
       throw new PaymentOperationException($exception->getMessage(), 0, $exception);
     }
   }
 
   /**
-   * Logs the provider response detail while keeping it out of the user-facing exception.
-   */
-  private function logProviderFailure(MercadoPagoApiException $exception): void {
-    $this->logger->error('Mercado Pago API failure during payment operation: @message', [
-      '@message' => $exception->getPrevious()?->getMessage() ?? $exception->getMessage(),
-    ]);
-  }
-
-  /**
    * Busca o pagamento remoto, traduzindo falhas da API em exceção segura.
    */
-  private function consultar(PaymentInterface $pagamento): object {
-    if (trim((string) $pagamento->getRemoteId()) === '' || !ctype_digit((string) $pagamento->getRemoteId())) {
-      throw new \DomainException((string) new TranslatableMarkup('Pagamento sem identificador válido no Mercado Pago.'));
-    }
+  private function consultar(PaymentInterface $pagamento, string $remote_id): object {
     try {
-      return $this->clientes->criar('pagamentos', $pagamento->getPaymentGateway())->get((int) $pagamento->getRemoteId());
+      $remoto = $this->clientes->criar('pagamentos', $pagamento->getPaymentGateway())->get((int) $remote_id);
     }
-    catch (MPApiException $e) {
-      throw $this->falha('consultar', $e);
+    catch (MPApiException $exception) {
+      throw $this->falha('consultar', $exception);
     }
+    catch (\Throwable $exception) {
+      throw $this->falhaTransporte('consultar', $exception);
+    }
+    if (!isset($remoto->id) || (string) $remoto->id !== $remote_id) {
+      throw new MercadoPagoApiException('O Mercado Pago retornou outro pagamento durante a consulta.');
+    }
+    return $remoto;
   }
 
   /**
-   * Registra o detalhe da falha no log de depuração e devolve uma exceção com mensagem segura.
+   * Registra o código da falha e devolve uma exceção com mensagem segura.
    */
   private function falha(string $operacao, MPApiException $e): MercadoPagoApiException {
     $codigo = $e->getStatusCode();
@@ -164,7 +211,40 @@ final class MercadoPagoPaymentService implements PaymentOperationsInterface {
   }
 
   /**
-   * Valor decimal com duas casas, sem aritmética em float (bcadd sobre a representação textual).
+   * Translates transport, timeout and client configuration failures safely.
+   */
+  private function falhaTransporte(string $operacao, \Throwable $exception): MercadoPagoApiException {
+    $this->logger->error('Falha de comunicação ao @operacao pagamento no Mercado Pago.', [
+      '@operacao' => $operacao,
+    ]);
+    return new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago não respondeu como esperado. Tente de novo em instantes.'), 0, $exception);
+  }
+
+  /**
+   * Validates and returns the numeric provider payment ID.
+   */
+  private function remoteId(PaymentInterface $payment): string {
+    $remote_id = (string) $payment->getRemoteId();
+    if ($remote_id === '' || !ctype_digit($remote_id) || (int) $remote_id < 1) {
+      throw new \DomainException((string) new TranslatableMarkup('Pagamento sem identificador válido no Mercado Pago.'));
+    }
+    return $remote_id;
+  }
+
+  /**
+   * Reloads a Commerce payment after acquiring its provider ID lock.
+   */
+  private function reload(PaymentInterface $payment): PaymentInterface {
+    $payment_id = $payment->id();
+    $fresh = $payment_id ? $this->entityTypeManager->getStorage('commerce_payment')->load($payment_id) : NULL;
+    if (!$fresh instanceof PaymentInterface || (string) $fresh->getRemoteId() !== (string) $payment->getRemoteId()) {
+      throw new \DomainException((string) new TranslatableMarkup('O pagamento local não corresponde ao registro recarregado.'));
+    }
+    return $fresh;
+  }
+
+  /**
+   * Valor decimal com duas casas, sem aritmética em float.
    */
   private function decimal(string|int|float|null $valor): string {
     return bcadd((string) ($valor ?? '0'), '0', 2);

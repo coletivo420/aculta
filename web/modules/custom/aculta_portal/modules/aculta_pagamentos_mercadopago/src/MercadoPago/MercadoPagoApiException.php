@@ -7,8 +7,8 @@ namespace Drupal\aculta_pagamentos_mercadopago\MercadoPago;
 /**
  * Falha de uma chamada à API do Mercado Pago.
  *
- * A mensagem é segura para exibir ao usuário. O corpo da resposta do Mercado Pago não entra aqui: ele
- * pode conter dados do pagador, e fica só no log de depuração do canal aculta_portal.
+ * A mensagem é segura para exibir ao usuário. O corpo e a mensagem da resposta
+ * do Mercado Pago podem conter dados do pagador e não são incluídos no log.
  */
 final class MercadoPagoApiException extends \RuntimeException {
 

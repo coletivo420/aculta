@@ -1,3 +1,9 @@
+## 0.1.0-dev.18 — cancelamento e reconciliação sob lock (2026-10-27)
+
+- `MercadoPagoPaymentService` compartilha o lock financeiro do webhook, recarrega o pagamento Commerce, exige ID remoto igual, total e moeda correspondentes na consulta e serializa cancelamento/atualização.
+- Cancelamento aceita os estados oficiais `pending`, `in_process` e `authorized`; valida resposta `cancelled` e mesmo ID. Repetição após timeout reconcilia o estado local sem nova operação externa. Falhas de transporte e respostas do provedor não expõem dados privados em logs ou mensagens.
+- A referência oficial confirma `PUT /v1/payments/{payment_id}` e os estados permitidos. Unit MP: 150 testes / 464 assertions PASS; PHP lint e PHPCS Drupal/DrupalPractice focais PASS. Kernel, sandbox e fluxo ponta a ponta pendentes.
+
 ## 0.1.0-dev.17 — estorno idempotente e isolado por gateway (2026-10-27)
 
 - `refundPayment()` usa `MercadoPagoClientFactory` para selecionar o token do gateway ativo; serializa pelo pagamento remoto, recarrega o pagamento Commerce sob lock e confere saldo/moeda atualizados.
