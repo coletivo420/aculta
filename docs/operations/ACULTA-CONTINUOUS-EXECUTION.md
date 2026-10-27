@@ -1081,3 +1081,53 @@ confirmou `bdtgn` ausente. `SHOW DATABASES` listou `aculta_runtime`, `aculta_sim
 `information_schema`, `mysql`, `performance_schema`, `sys` e `toca`. As contagens finais
 foram `toca` 137, `aculta_runtime` 588 e `aculta_simpletest` 0. Nenhum desses bancos foi
 alterado.
+
+## Gates verdes no head da PR — falhas pré-existentes e correções (2026-10-27)
+
+Head da PR antes: `301441ada`. Depois dos commits de código: `14037de34`. Publicado com fast-forward, sem force.
+
+### Falhas encontradas
+
+1. **Foundation** (`scripts/validate-aculta420-foundation.php`): exceção do container
+   `Class "Drupal\aculta_portal\Commerce\MercadoPago\MercadoPagoEnvironmentOverride" not found`.
+   - Causa: cache compilado antigo do container no checkout servido. Nenhum arquivo versionado
+     referencia esse namespace; o `services.yml` de `aculta_pagamentos_mercadopago` já aponta
+     para `Drupal\aculta_pagamentos_mercadopago\...`, correto no commit.
+   - Correção: `drush cr` no checkout servido, autorizado pelo responsável. Sem commit de código.
+     Após o cache: `345 ACULTA420 Foundation checks passed.`
+   - A correção de namespace prevista ("commit A") não era necessária: não havia o que corrigir.
+
+2. **Shell-contract** (`scripts/validate-aculta420-shell-contract.php`): `Interface
+   "Drupal\Core\Security\TrustedCallbackInterface" not found` em `ThemeHooks.php:26`.
+   - Causa: o script usa `\Drupal::service()` sem iniciar o kernel. Carregar só o autoload
+     do core não basta: falha com `ContainerNotInitializedException`.
+   - Correção: commit `14037de34`. Chamado com `php` direto, o script delega ao `drush scr`,
+     como o gate de Foundation. Não altera `web/themes/custom/aculta420/`.
+
+### Correção de phpcs
+
+- Commit `3ee8c730b`: quebra de linhas longas de comentários em `PortalUiHooks.php`.
+  Zero erros e zero avisos com `Drupal,DrupalPractice`. Código conferido com `php -w`: idêntico.
+
+### Lista de gates no head `14037de34` (saídas resumidas)
+
+| Gate | Resultado |
+|---|---|
+| `git diff --check 301441ada..HEAD` | OK |
+| `php -l` nos 2 PHP alterados | OK |
+| `phpcs` (Drupal, DrupalPractice) | 0 erros, 0 avisos, rc 0 |
+| `node tests/js/messenger-counter.test.js` | `PASS: 6 atualizações de contador e rótulo` |
+| PHPUnit `UtilityBarRenderTest` (a partir do checkout no head) | `OK (1 test, 41 assertions)` |
+| `validate-aculta420-sdc-schemas.php` | PASS (45 componentes, 628 checks) |
+| `validate-aculta420-design-foundations.php` | rc 0 |
+| `scripts/tests/validate-aculta420-design-foundations-test.php` | PASS (157 fixtures) |
+| `validate-browser-validators.php` | PASS (21 checks) |
+| `validate-module-theme-boundary.php` | PASS (3058 verificações) |
+| `validate-aculta420-foundation.php` | `345 ACULTA420 Foundation checks passed.` |
+| `validate-aculta420-shell-contract.php` | `ACULTA420 B.4 SHELL CONTRACT: PASS (11 checks)` |
+| `scripts/tests/validate-aculta420-shell-contract-test.php` | PASS (19 fixtures) |
+
+### Observação
+
+O head da PR recebeu commits só de docs de outra origem enquanto esta sequência rodava
+(`03244e611` e `301441ada`, ambos de registro de exclusão de bancos). Nenhum deles altera código.
