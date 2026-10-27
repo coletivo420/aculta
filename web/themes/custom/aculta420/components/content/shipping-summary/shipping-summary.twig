@@ -1,0 +1,24 @@
+{#
+  Resumo do frete no carrinho lateral. Só lê o último cálculo do visitante; o cálculo é feito no produto ou no
+  carrinho completo, nunca aqui.
+#}
+<div class="aculta-shipping-summary">
+  {% if state == 'available' and options %}
+    <p class="aculta-shipping-summary__titulo">Frete</p>
+    <ul class="aculta-shipping-summary__opcoes list-unstyled">
+      {% for option in options %}
+        <li class="aculta-shipping-summary__opcao">
+          <span class="aculta-shipping-summary__servico">{{ option.name }}</span>
+          <span class="aculta-shipping-summary__preco">{{ option.price }}</span>
+          {% if option.days %}
+            <span class="aculta-shipping-summary__prazo">{{ option.days }} {{ option.days == 1 ? 'dia útil' : 'dias úteis' }}</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% elseif postal_code and message %}
+    <p class="aculta-shipping-summary__aviso">{{ message }}</p>
+  {% else %}
+    <p class="aculta-shipping-summary__aviso">Calcule o frete na página do produto ou no carrinho completo.</p>
+  {% endif %}
+</div>

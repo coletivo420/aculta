@@ -56,7 +56,15 @@ class ShippingCalculatorHooks {
    */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
-    $variables['aculta_shipping_calculator'] = $this->props('frete-carrinho-lateral');
+    $variables['aculta_shipping_summary'] = $this->summary();
+  }
+
+  /**
+   * Resumo do frete no carrinho AJAX ("Adicionar ao carrinho" atualiza a gaveta sem recarregar a página).
+   */
+  #[Hook('preprocess_aculta_portal_cart_panel')]
+  public function preprocessCartPanel(array &$variables): void {
+    $variables['shipping'] = $this->summary();
   }
 
   /**
@@ -77,11 +85,19 @@ class ShippingCalculatorHooks {
    * @return array{id: string, state: string, message: string, options: list<array<string, mixed>>, postal_code: string}
    */
   public function props(string $id): array {
+    return ['id' => $id] + $this->summary();
+  }
+
+  /**
+   * Estado do último cálculo (ou da disponibilidade, sem cálculo), sem id. Usado pelo resumo do carrinho lateral.
+   *
+   * @return array{state: string, message: string, options: list<array<string, mixed>>, postal_code: string}
+   */
+  public function summary(): array {
     $stored = $this->store->load();
     if ($stored !== NULL) {
       $result = $stored['result'];
       return [
-        'id' => $id,
         'state' => (string) $result['state'],
         'message' => (string) $result['message'],
         'options' => (array) $result['options'],
@@ -90,7 +106,6 @@ class ShippingCalculatorHooks {
     }
     $reason = $this->simulator->availabilityReason();
     return [
-      'id' => $id,
       'state' => $reason === NULL ? 'idle' : 'unavailable',
       'message' => $reason === NULL ? '' : ShippingSimulation::unavailable($reason)->message(),
       'options' => [],

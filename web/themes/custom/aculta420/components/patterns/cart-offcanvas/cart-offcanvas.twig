@@ -55,7 +55,7 @@
       {% endif %}{% endfor %}
       <p class="aculta-cart-offcanvas__total"><strong>Total geral:</strong> {{ total }}</p>
       {% if shipping %}
-        {{ include('aculta420:shipping-calculator', shipping, with_context = false) }}
+        {{ include('aculta420:shipping-summary', shipping, with_context = false) }}
       {% endif %}
       {% if url %}
         <a class="btn btn-link p-0 aculta-cart-offcanvas__cart-link" href="{{ url }}">Ver carrinho completo</a>

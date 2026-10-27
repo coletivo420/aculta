@@ -1,0 +1,26 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Resumo do frete no carrinho
+status: experimental
+group: Content
+description: 'Resumo do último cálculo de frete do visitante, para o carrinho lateral. Só apresenta: não calcula. Sem cálculo feito, mostra a orientação para calcular no produto ou no carrinho completo.'
+props:
+  type: object
+  properties:
+    state:
+      type: string
+      description: 'Estado do último cálculo: idle (nenhum), available, unavailable ou empty.'
+      enum: ['idle', 'available', 'unavailable', 'empty']
+      default: 'idle'
+    message:
+      type: string
+      description: 'Mensagem do estado unavailable ou empty. Texto vem do Commerce.'
+      default: ''
+    options:
+      type: array
+      description: 'Opções calculadas: name, price e days.'
+      default: []
+    postal_code:
+      type: string
+      description: 'CEP do último cálculo, já normalizado (8 dígitos).'
+      default: ''
+slots: {}
