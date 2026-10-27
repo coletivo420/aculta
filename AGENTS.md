@@ -1,5 +1,21 @@
 # ACULTA — agentes CLI
 
+## REGRA GERAL PARA AGENTES (vale para todos, sem exceção)
+1. Uma PR, um branch: chore/aculta-m0-integridade. Todo trabalho é commit nele.
+   Não criar branch de frente, PR nova ou branch de publicação.
+2. O servidor de testes (checkout /home/piradopirata/projetos/aculta) acompanha
+   SEMPRE o head da PR. Toda publicação é seguida de git checkout --detach no novo head.
+   Não esperar janela para isso.
+3. Bancos: só os existentes (aculta_runtime, aculta_simpletest). Nunca criar banco.
+   Nunca site:install em banco com tabelas. toca não é nosso: não tocar.
+4. Gatilho de banco do aculta_runtime em toda troca de head: updatedb:status e
+   config:status somente leitura; se houver pendência, snapshot com hash antes, depois
+   updatedb e config:import só do config/sync. Nunca pm:uninstall nem DROP sem ordem
+   explícita do responsável.
+5. Publicação por fast-forward, sem force. Gate vermelho: não publicar.
+6. Em dúvida ou ordem fora deste texto: parar e perguntar ao responsável.
+Detalhes: docs/operations/AGENTES-PROCEDIMENTO.md.
+
 PROJECT-STATUS-INDEX-GUARD: 2026-10-21
 
 Drupal 11.3+, PHP conforme `docs/architecture/environments.md`; Drupal root `web/`, módulos `web/modules/custom/`, tema `web/themes/custom/aculta420/`.

@@ -1,5 +1,7 @@
 # Procedimento de trabalho dos agentes
 
+A REGRA GERAL de AGENTS.md prevalece sobre qualquer item abaixo.
+
 Vale para todos os agentes (Local 1, Local 2, Local 3) e para qualquer sessão. Em caso
 de dúvida ou de ordem que não cabe aqui, parar e perguntar ao responsável. Não
 interpretar.
