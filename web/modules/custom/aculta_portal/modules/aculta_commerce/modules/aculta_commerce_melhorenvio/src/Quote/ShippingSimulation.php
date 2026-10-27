@@ -61,7 +61,9 @@ final class ShippingSimulation {
   /**
    * Forma serializável para a resposta JSON do endpoint. Preço formatado em reais, sem float.
    *
-   * @return array{state: string, reason: ?string, options: list<array{name: string, company: string, price: string, days: ?int}>}
+   * A mensagem ao visitante é definida aqui, em um único lugar; o componente só a apresenta.
+   *
+   * @return array{state: string, reason: ?string, message: string, options: list<array{name: string, company: string, price: string, days: ?int}>}
    */
   public function toArray(): array {
     $options = [];
@@ -73,7 +75,31 @@ final class ShippingSimulation {
         'days' => $option->deliveryDays,
       ];
     }
-    return ['state' => $this->state, 'reason' => $this->reason, 'options' => $options];
+    return [
+      'state' => $this->state,
+      'reason' => $this->reason,
+      'message' => $this->message(),
+      'options' => $options,
+    ];
+  }
+
+  /**
+   * Texto curto para o visitante. Estados disponíveis não têm mensagem. Motivos internos (origem, credencial, pacote)
+   * viram a mesma frase genérica: o visitante não precisa saber qual configuração falta.
+   */
+  public function message(): string {
+    if ($this->state === self::STATE_AVAILABLE) {
+      return '';
+    }
+    if ($this->state === self::STATE_EMPTY) {
+      return 'Nenhuma opção de entrega para este CEP.';
+    }
+    return match ($this->reason) {
+      self::REASON_INVALID_POSTAL_CODE => 'Informe um CEP válido, com oito dígitos.',
+      self::REASON_FAILURE => 'Não foi possível calcular o frete agora. Tente novamente.',
+      self::REASON_RATE_LIMITED => 'Muitas consultas em pouco tempo. Aguarde um minuto.',
+      default => 'Cálculo de frete indisponível no momento.',
+    };
   }
 
   /**
