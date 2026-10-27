@@ -1381,3 +1381,9 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - Testes: `GuestCheckoutRegistrationConfigTest` 6/62 PASS; `TurnstileToggleKernelTest` 3/11 PASS em `aculta_simpletest` (5 deprecações do contrib CAPTCHA/Key); PHPCS Drupal/DrupalPractice, PHP lint, `validate-turnstile-exceptions.php` (11 exceções) e índice do README PASS.
 - Firefox ESR `DISPLAY=:0`: produto, carrinho, e-mail/cadastro AJAX e pane de endereço/frete sem CAPTCHA. O fluxo avançou até `/finalizar-compra/139/informacoes-do-pedido`. Não foram enviados endereço ou pedido, nem solicitada cotação do transportador ou iniciado pagamento. Os testes criaram carrinhos Commerce anônimos de rascunho (incluindo pedidos 138 e 139); nenhum foi removido.
 - `drush cr` foi executado (escrita somente em cache). Gatilhos Runtime somente leitura: `updatedb:status` continua com 17 pendências; `config:status` continua divergente em aproximadamente 132 itens. Nenhuma atualização de esquema, importação ou limpeza dos pedidos de teste foi executada.
+
+## Sanitização de diagnósticos Mercado Pago — 2026-10-27
+
+- Regressões primeiro falharam ao encontrar mensagem de exceção privada nos logs de ação recorrente; após a correção, a suíte MP inteira passou.
+- Checkout de preferência remove `payer` dos logs de debug e registra falhas somente pelo status HTTP ou classe genérica de transporte. Ações de assinatura não registram mensagem/corpo e não encadeiam a exceção remota no erro neutro.
+- Unit MP: 156 testes / 502 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint dos PHP alterados PASS. Nenhuma credencial foi lida, chamada externa ou escrita Runtime executada nesta microfase.

@@ -144,11 +144,12 @@ final class WebhookGuard {
     try {
       $this->assinaturas->processar($tipo, $id);
     }
-    catch (\Throwable $e) {
-      $this->log?->error('Falha ao processar notificação @tipo @id: @erro', [
+    catch (\Throwable) {
+      // Provider exceptions can include response bodies or private metadata.
+      // Keep the retryable error in logs without forwarding exception text.
+      $this->log?->error('Falha ao processar notificação @tipo @id.', [
         '@tipo' => $tipo,
         '@id' => $id,
-        '@erro' => $e->getMessage(),
       ]);
       return new Response('', Response::HTTP_INTERNAL_SERVER_ERROR);
     }

@@ -68,8 +68,15 @@ final class MercadoPagoSubscriptionWebhookTest extends UnitTestCase {
    */
   public function testServiceFailureReturns500ForRetry(): void {
     $servico = $this->createMock(MercadoPagoSubscriptionNotificationService::class);
-    $servico->method('processar')->willThrowException(new \RuntimeException('falha simulada'));
-    $resposta = (new WebhookGuard($servico, $this->logger()))->validateAndNormalize($this->requisicao('subscription_authorized_payment', 'cob-9'), TRUE, self::SEGREDO);
+    $servico->method('processar')->willThrowException(new \RuntimeException('provider body contains PRIVATE_TOKEN_SENTINEL'));
+    $logger = $this->createMock(LoggerChannelInterface::class);
+    $logger->expects($this->once())
+      ->method('error')
+      ->with('Falha ao processar notificação @tipo @id.', [
+        '@tipo' => 'subscription_authorized_payment',
+        '@id' => 'cob-9',
+      ]);
+    $resposta = (new WebhookGuard($servico, $logger))->validateAndNormalize($this->requisicao('subscription_authorized_payment', 'cob-9'), TRUE, self::SEGREDO);
     $this->assertSame(500, $resposta->getStatusCode());
   }
 

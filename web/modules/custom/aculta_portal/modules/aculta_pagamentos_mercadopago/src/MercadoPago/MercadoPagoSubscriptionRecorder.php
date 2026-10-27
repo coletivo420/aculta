@@ -184,11 +184,11 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
       $this->alterar($gateway, $order, $action);
     }
     catch (MercadoPagoApiException $exception) {
-      $this->logger->error('Falha de API ao alterar assinatura do pedido @order: @message', [
+      $this->logger->error('Falha de API ao alterar assinatura do pedido @order (HTTP @status).', [
         '@order' => $order->id(),
-        '@message' => $exception->getPrevious()?->getMessage() ?? $exception->getMessage(),
+        '@status' => $exception->codigoHttp() ?: 'indisponível',
       ]);
-      throw new PaymentOperationException($exception->getMessage(), 0, $exception);
+      throw new PaymentOperationException($exception->getMessage());
     }
   }
 

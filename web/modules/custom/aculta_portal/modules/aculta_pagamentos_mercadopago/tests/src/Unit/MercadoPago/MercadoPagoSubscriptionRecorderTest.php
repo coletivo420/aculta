@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\MercadoPago;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_portal\Exception\PaymentOperationException;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
@@ -50,11 +51,13 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
    *   Pagamentos já gravados para o pedido.
    * @param bool $lock_disponivel
    *   Se o lock do pagamento foi adquirido.
+   * @param string $status_assinatura
+   *   Status remoto já registrado no pedido.
    *
    * @return array{0: MercadoPagoSubscriptionRecorder, 1: MockObject, 2: MockObject, 3: MockObject, 4: LockBackendInterface}
    *   Gravador, pedido, armazém de pagamentos, estado e lock.
    */
-  private function contexto(string $tipo, string $estado, array $transicoes, array $existentes, bool $lock_disponivel = TRUE): array {
+  private function contexto(string $tipo, string $estado, array $transicoes, array $existentes, bool $lock_disponivel = TRUE, string $status_assinatura = ''): array {
     $item = $this->createMock(StateItemInterface::class);
     $item->method('getId')->willReturn($estado);
     $item->method('getTransitions')->willReturn(array_fill_keys($transicoes, new \stdClass()));
@@ -65,7 +68,11 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $pedido->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
     $pedido->method('getState')->willReturn($item);
     $pedido->method('getData')->willReturnCallback(
-      static fn (string $key, mixed $default = NULL): mixed => $key === MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA ? 'pre-9' : $default,
+      static fn (string $key, mixed $default = NULL): mixed => match ($key) {
+        MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA => 'pre-9',
+        MercadoPagoSubscriptionRecorder::CHAVE_STATUS => $status_assinatura,
+        default => $default,
+      },
     );
 
     $pedidos = $this->createMock(EntityStorageInterface::class);
@@ -89,8 +96,38 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn($lock_disponivel);
 
-    $servico = new MercadoPagoSubscriptionRecorder($entidades, $recorrencia, $this->createMock(LoggerChannelInterface::class), $tempo, $lock);
-    return [$servico, $pedido, $pagamentos, $item, $lock];
+    $logger = $this->createMock(LoggerChannelInterface::class);
+    $servico = new MercadoPagoSubscriptionRecorder($entidades, $recorrencia, $logger, $tempo, $lock);
+    return [$servico, $pedido, $pagamentos, $item, $lock, $recorrencia, $logger];
+  }
+
+  /**
+   * Provider response bodies never enter logs or public operation errors.
+   */
+  public function testSubscriptionActionFailureDoesNotExposeProviderException(): void {
+    [$servico, $pedido, , , , $recorrencia, $logger] = $this->contexto(
+      'assinatura',
+      'completed',
+      [],
+      [],
+      TRUE,
+      MercadoPagoSubscriptionRecorder::STATUS_ATIVA,
+    );
+    $gateway = $this->gateway();
+    $recorrencia->expects($this->once())
+      ->method('alterarStatusAssinatura')
+      ->with($gateway, 'pre-9', MercadoPagoSubscriptionRecorder::STATUS_PAUSADA)
+      ->willThrowException(new MercadoPagoApiException('Falha segura da API.', 503, new \RuntimeException('PRIVATE_TOKEN_SENTINEL')));
+    $logger->expects($this->once())
+      ->method('error')
+      ->with('Falha de API ao alterar assinatura do pedido @order (HTTP @status).', [
+        '@order' => 7,
+        '@status' => 503,
+      ]);
+
+    $this->expectException(PaymentOperationException::class);
+    $this->expectExceptionMessage('Falha segura da API.');
+    $servico->change($gateway, $pedido, 'pausar');
   }
 
   /**

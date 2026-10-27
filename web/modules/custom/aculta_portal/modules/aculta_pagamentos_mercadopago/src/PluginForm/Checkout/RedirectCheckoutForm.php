@@ -271,7 +271,8 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
     ];
 
     if (!empty($configuration['debug_logging'])) {
-      $this->loggerFactory->get('Mercado Pago debug')->debug('Request sent: <pre>' . print_r($request, TRUE) . '</pre>');
+      $debug_request = self::sanitizePreferenceDebugRequest($request);
+      $this->loggerFactory->get('Mercado Pago debug')->debug('Request sent: <pre>' . print_r($debug_request, TRUE) . '</pre>');
     }
 
     $request['auto_return'] = 'approved';
@@ -303,16 +304,12 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       $preference = $preferenceClient->create($request);
     }
     catch (MPApiException $e) {
-      $this->loggerFactory->get('aculta_pagamentos_mercadopago')->error('Mercado Pago API failed: @message', [
-        '@message' => $e->getMessage(),
-      ]);
+      $this->logPreferenceFailure($e->getStatusCode());
       $this->messenger->addError($this->t('Communication with Mercado Pago API failed. Please contact the administrator.'));
       return $form;
     }
-    catch (\Exception $e) {
-      $this->loggerFactory->get('aculta_pagamentos_mercadopago')->error('Mercado Pago failed: @message', [
-        '@message' => $e->getMessage(),
-      ]);
+    catch (\Throwable) {
+      $this->logPreferenceFailure();
       $this->messenger->addError($this->t('Communication with Mercado Pago failed. Please contact the administrator.'));
       return $form;
     }
@@ -378,6 +375,29 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       $data,
       'post'
     );
+  }
+
+  /**
+   * Removes payer data before writing preference diagnostics to logs.
+   *
+   * @param array<string, mixed> $request
+   *   The preference request sent to the provider.
+   *
+   * @return array<string, mixed>
+   *   A diagnostic copy without personal payer details.
+   */
+  private static function sanitizePreferenceDebugRequest(array $request): array {
+    unset($request['payer']);
+    return $request;
+  }
+
+  /**
+   * Logs a provider failure without forwarding its exception message or body.
+   */
+  private function logPreferenceFailure(?int $status = NULL): void {
+    $this->loggerFactory->get('aculta_pagamentos_mercadopago')->error('Mercado Pago preference creation failed (HTTP @status).', [
+      '@status' => $status ?: 'indisponível',
+    ]);
   }
 
   /**

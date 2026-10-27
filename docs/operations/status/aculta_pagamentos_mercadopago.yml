@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.20
+version: 0.1.0-dev.21
 state: Dev
-progress_note: "Dev.20: gateway ativo em test; pré-save mantém credenciais fora do config. Unit 153/482, Kernel 1/50, PHPCS PHP e lint PASS. Browser chegou ao login Drupal antes do gateway; login MP recebeu HTTP 403. Sem preferência ou cobrança; sandbox financeiro pendente."
+progress_note: "Dev.21: logs sanitizados no checkout de preferência e em ações recorrentes; dados payer e mensagens/corpos remotos omitidos. Unit 156/502, Kernel 1/50, PHPCS Drupal/Practice e lint PASS. Firefox chegou ao checkout Drupal sem CAPTCHA, mas login MP sandbox respondeu HTTP 403. Sem preferência ou cobrança; cotação de frete e sandbox financeiro pendentes."
 next_phase: Prosseguir do login Drupal ao Checkout Pro com conta de teste, concluir fluxo do comprador sandbox e homologar aprovação, pendência, rejeição, cancelamento e webhook ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))

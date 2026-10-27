@@ -167,9 +167,10 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     $logger = $this->createMock(LoggerChannelInterface::class);
     $logger->expects($this->once())
       ->method('error')
-      ->with($this->stringContains('Falha de API'), $this->callback(
-        static fn (array $context): bool => $context['@message'] === 'RAW API DETAIL',
-      ));
+      ->with('Falha de API ao alterar assinatura do pedido @order (HTTP @status).', [
+        '@order' => 7,
+        '@status' => 500,
+      ]);
     $service = new MercadoPagoSubscriptionRecorder(
       $this->createMock(EntityTypeManagerInterface::class),
       $recorrencia,
@@ -184,8 +185,7 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     }
     catch (PaymentOperationException $exception) {
       $this->assertSame('Mensagem segura', $exception->getMessage());
-      $this->assertSame('Mensagem segura', $exception->getPrevious()?->getMessage());
-      $this->assertSame('RAW API DETAIL', $exception->getPrevious()?->getPrevious()?->getMessage());
+      $this->assertNull($exception->getPrevious());
     }
   }
 

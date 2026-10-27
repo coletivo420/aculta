@@ -1,3 +1,9 @@
+## 0.1.0-dev.21 — sanitização dos logs de checkout e recorrência (2026-10-27)
+
+- O diagnóstico opcional da preferência omite todo o bloco `payer`; falhas da API registram apenas HTTP status e falhas de transporte usam mensagem genérica. O texto e o corpo de exceções nunca entram nos logs.
+- Falhas de ação de assinatura registram pedido e status HTTP. `PaymentOperationException` mantém a mensagem segura sem encadear a exceção remota.
+- Regressões injetam sentinelas de e-mail, endereço e token e exigem que fiquem fora de logs. Unit MP completo: 156 testes / 502 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint nos arquivos alterados PASS. Nenhuma chamada externa ou pagamento foi realizado.
+
 ## 0.1.0-dev.20 — gateway de teste ativo e credenciais fora do config (2026-10-27)
 
 - O gateway `mercado_pago` fica ativo no `config/sync`; o modo efetivo continua sendo escolhido pelo Deployer (`test` no Runtime de teste). A configuração ativa do Runtime agora coincide com o YAML do gateway, com campos de credenciais vazios.
