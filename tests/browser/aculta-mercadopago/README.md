@@ -5,16 +5,20 @@ Mercado Pago. Ele não cria preferência, pedido ou pagamento e não executa
 estorno.
 
 `checkout-smoke.py` percorre a página de um produto, adiciona uma unidade ao
-carrinho anônimo, abre o checkout central e verifica por AJAX o estado de
-cadastro para um e-mail reservado `.invalid`. Para antes de enviar o pedido;
-não cria conta, confirma pagamento nem entra no Mercado Pago. O carrinho/pedido
-Drupal temporário pode permanecer no Runtime para inspeção posterior.
+carrinho anônimo, abre o checkout central, verifica por AJAX o cadastro para
+um e-mail reservado `.invalid` e avança até os campos de endereço usados para
+cotar frete. Confirma a ausência de CAPTCHA/Turnstile em cada tela, inclusive
+produto, carrinho, identificação e endereço/frete. Para antes de enviar o
+endereço ou o pedido; não calcula uma cotação externa, cria conta, confirma
+pagamento nem entra no Mercado Pago. O carrinho/pedido Drupal temporário pode
+permanecer no Runtime para inspeção posterior.
 
-Na execução de 2026-10-27, o produto e o carrinho foram renderizados, e o
-checkout redirecionou para a etapa de login/cadastro Drupal
-(`/finalizar-compra/{id}/entrar`). Não foi possível alcançar a preferência nem
-a autenticação do comprador sem uma conta Drupal. A etapa do comprador Mercado
-Pago ainda precisa de uma sessão da conta sandbox acessível.
+Na execução de 2026-10-27, Firefox ESR carregou o produto e carrinho sem
+CAPTCHA, mostrou Google antes do e-mail, revelou o cadastro AJAX sem senha nem
+desafio para novo e-mail e avançou à etapa de endereço e cotação de frete sem
+CAPTCHA. O formulário de endereço não foi enviado, nenhuma cotação foi
+solicitada e o pedido não foi concluído. Preferência e autenticação do
+comprador Mercado Pago continuam pendentes de uma sessão sandbox acessível.
 
 ## Ambiente
 

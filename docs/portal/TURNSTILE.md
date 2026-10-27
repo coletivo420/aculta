@@ -1,6 +1,6 @@
 # Turnstile (anti-bot) do ACULTA Portal
 
-Data da revisão: 2026-10-10. Versões: Portal `0.2.0-dev.23` (caixa de ativação), `0.2.0-dev.24` e `0.2.0-dev.25` (chaves por ambiente).
+Data da revisão: 2026-10-27. Versões: Portal `0.2.0-dev.23` (caixa de ativação), `0.2.0-dev.24` e `0.2.0-dev.25` (chaves por ambiente).
 
 ## Onde o CAPTCHA se aplica
 
@@ -10,6 +10,11 @@ O CAPTCHA é o módulo `captcha` com o desafio `turnstile/Turnstile`. Os pontos 
 - `user_register_form` (cadastro);
 - `user_pass` (recuperação de senha);
 - formulários webform de contato e participação.
+
+Os formulários de compra Commerce são uma exceção permanente: adicionar produto,
+carrinho, cálculo de frete, identificação/cadastro de visitante e demais etapas
+de checkout. O cadastro silencioso do Commerce acontece ao concluir uma compra;
+ele não usa `user_register_form`. A tela separada de cadastro continua protegida.
 
 O CAPTCHA global (`captcha.settings`, `enable_globally`) fica ligado, e as rotas de administração ficam fora dele. Quem tem o papel `email_confirmed` (com a permissão `skip CAPTCHA`) não recebe o desafio.
 
@@ -34,26 +39,30 @@ lista de código é `Captcha\TurnstileToggle::EXCEPTION_FORM_IDS`; cada item tem
 
 | Formulário (`formId`) | Quando aparece | Motivo | Ponto |
 | --- | --- | --- | --- |
-| `commerce_order_item_add_to_cart_form` | Adicionar itens comerciais ao carrinho da Loja, LMS ou Doações | Carrinho não é conta; o desafio interromperia a compra. | `captcha.captcha_point.commerce_order_item_add_to_cart_form.yml` |
+| `commerce_order_item_add_to_cart_form` e IDs com prefixo `commerce_order_item_add_to_cart_form_` | Adicionar itens comerciais ao carrinho da Loja, LMS ou Doações | Variações do form por produto também ficam isentas; o Portal remove o elemento caso o fallback global o insira. | `captcha.captcha_point.commerce_order_item_add_to_cart_form.yml` |
 | `views_form_commerce_cart_form_default` | Atualizar, remover itens e fechar o carrinho compartilhado | O captcha global pode ignorar pontos desligados sem ponto base; o Portal também remove o elemento no alter do formulário. | `captcha.captcha_point.views_form_commerce_cart_form_default.yml` |
 | `commerce_checkout_flow` | Base de todos os checkouts, inclusive Loja, LMS e Doações | Pagamento é feito no Mercado Pago; o desafio não protege a compra. O Captcha usa o form id base quando o ponto específico está desligado (`captcha_form_alter`); sem este ponto, `enable_globally` aplicaria o desafio. | `captcha.captcha_point.commerce_checkout_flow.yml` |
-| `commerce_checkout_flow_default` | Checkout compartilhado de Loja e LMS, incluindo frete e identificação | O desafio não protege pagamento e atrapalharia o cadastro automático pós-compra. | `captcha.captcha_point.commerce_checkout_flow_default.yml` |
+| `commerce_checkout_flow`, `commerce_checkout_flow_default`, `commerce_checkout_flow_fluxo_doacao` e IDs com prefixo `commerce_checkout_flow_` | Todos os flows Commerce ativos, incluindo Loja, LMS, Doações, assinaturas, frete, identificação e cadastro de visitante | A barreira de código cobre também IDs específicos sem ponto próprio. O desafio não protege pagamento e interromperia o checkout. | Pontos específicos existentes ficam desligados; `ShopCaptchaHooks` remove o fallback global. |
 | `aculta_support_form` | Página de apoio (`/` do subdomínio de apoio, entrada das doações), sem envio próprio: a escolha do valor segue para o checkout | Sem Turnstile na entrada da doação para visitante. O formulário não cobra nem cria pedido; o pagamento é feito no checkout do Mercado Pago. | `captcha.captcha_point.aculta_support_form.yml` |
 | `commerce_checkout_flow_fluxo_doacao` | Checkout da doação (apoio), etapa `/apoiar/{id}/donation` no MAIN | Mesma regra de pagamento via Mercado Pago; o visitante doa sem desafio. Form id derivado do plugin `fluxo_doacao`. | `captcha.captcha_point.commerce_checkout_flow_fluxo_doacao.yml` |
 
 Além do Config Sync, `ShopCaptchaHooks` remove o elemento inserido pelo fallback
-global de Captcha nas formas Commerce de carrinho e checkout. A exceção do
-carrinho cobre o form dinâmico `views_form_commerce_cart_form_default_{order}`;
-o widget não pode reaparecer se o Turnstile global for ativado.
+global de Captcha em formulários de produto, carrinho e checkout. Os prefixos
+Commerce também são reconhecidos por `TurnstileToggle::setEnabled()`, para que
+uma ativação global não reabilite pontos dinâmicos de compra. A exceção do
+carrinho cobre o form `views_form_commerce_cart_form_default_{order}`. O widget
+e o script global do Turnstile não aparecem nas rotas compartilhadas de produto,
+carrinho e checkout.
 | `aculta_login_popup_form` | Popup "Entrar" da barra multidomínio (visitante não autenticado) | Decisão do responsável: o modal de login não usa Turnstile. A validação do Core (`user.auth`, flood control e bloqueio de conta) continua, porque o formulário herda `UserLoginForm`. | `captcha.captcha_point.aculta_login_popup_form.yml` |
 | `aculta_register_popup_form` | Cadastro em modal, aberto pelo convite do checkout de doação (visitante) e pela rota `/criar-conta/janela` | Decisão do responsável: o cadastro em modal não usa Turnstile. A validação e a criação da conta são as do Core (`RegisterForm`); a exceção não altera `user_register_form`, que continua protegido. | `captcha.captcha_point.aculta_register_popup_form.yml` |
 | `aculta_messenger_new_conversation` | Nova conversa pela barra de mensagens (formulário de compor) | Só contas com e-mail confirmado (`email_confirmed`) chegam ao formulário. O desafio não protege esse envio, e o widget não é montado no fragmento carregado pela gaveta. A proteção contra envios em excesso é o limite do próprio Messenger (`flood`, 10 envios por hora por conta). | `captcha.captcha_point.aculta_messenger_new_conversation.yml` |
 | `private_message_add_form` | Resposta nas conversas de mensagens (formulário nativo do Private Message, também na gaveta) | Mesma regra: só contas confirmadas escrevem. O widget não é montado no fragmento da gaveta, e o limite de envio do Messenger continua valendo. | `captcha.captcha_point.private_message_add_form.yml` |
 | `aculta_messenger_conversation_relationship` | Opções da conversa na gaveta: adicionar, aceitar, rejeitar ou cancelar amizade, bloquear e desbloquear | Mesma regra do Messenger: só contas confirmadas agem nas conversas. O desafio bloquearia uma ação de um clique; o limite de pedidos de amizade (flood) e o bloqueio do próprio Messenger continuam valendo. | `captcha.captcha_point.aculta_messenger_conversation_relationship.yml` |
 
-- **Cadastro pelo fluxo de compra:** o cadastro feito pelo checkout segue a mesma regra. Hoje o checkout não cria conta
-  (`guest_new_account: false`, login do checkout com `allow_registration: false`). Se a criação de conta for ligada no
-  checkout, ela continua sem Turnstile pelo ponto `commerce_checkout_flow_default`.
+- **Cadastro pelo fluxo de compra:** `default`, `shipping`, doação avulsa e recorrente permitem checkout de visitante;
+  o Commerce Core cria a conta silenciosamente após concluir o pedido e envia link para definir senha. O pane de e-mail
+  mostra o estado de cadastro por AJAX, sem renderizar formulário de senha ou desafio para e-mails novos. O envio final,
+  criação de conta e e-mail ainda dependem de homologação no Runtime.
 - **Página de login `/entrar` não é exceção:** `user_login_form` continua com o desafio (`status: true`). O popup é um
   formulário separado, com ID próprio, e não substitui a página.
 - **Flood control:** o popup não tem desafio anti-bot; a proteção contra tentativas repetidas é o flood control do Core

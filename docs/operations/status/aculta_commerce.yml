@@ -1,13 +1,15 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.13
+version: 0.1.0-dev.14
 state: Dev
 progress_note: >-
-  Checkout de e-mail por AJAX e compra sem CAPTCHA comprovados em Firefox ESR:
-  produto, carrinho e checkout; Google antes do e-mail; cadastro de visitante
-  aparece para novo e-mail. Não foi enviado pedido nem comprovada a conta criada.
+  Firefox ESR comprovou sem CAPTCHA o produto, carrinho, identificação por e-mail,
+  cadastro AJAX de visitante e o formulário de endereço/frete. Google fica antes
+  do e-mail; conta existente mostra senha e e-mail novo mostra cadastro sem senha.
+  Não foi enviado endereço, calculada cotação, enviado pedido nem comprovada a conta.
   Config Sync habilita guest registration Core nos flows Loja/LMS, frete e doações;
   configuração ativa do Runtime ainda diverge e há updates/configs globais pendentes.
-  9 testes Unit/59 assertions PASS. Motor próprio de shipping concluído dentro de aculta_commerce. Unit Commerce
+  Unit GuestCheckoutRegistrationConfigTest 6/62 e Kernel TurnstileToggleKernelTest
+  3/11 PASS (5 deprecações de contrib). Motor próprio de shipping concluído dentro de aculta_commerce. Unit Commerce
   55/272 PASS; ShippingEngineKernelTest 7/237 PASS; Melhor Envio Unit 85/204 PASS
   e Kernel de wiring 11/57 PASS em MariaDB dedicado, sem rede externa; instalação limpa Standard
   habilitou Commerce e Melhor Envio sem commerce_shipping, descobriu as entidades

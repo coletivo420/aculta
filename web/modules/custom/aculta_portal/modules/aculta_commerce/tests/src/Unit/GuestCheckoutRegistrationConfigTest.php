@@ -9,6 +9,7 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\aculta_portal\Hook\CheckoutPaneHooks;
 use Drupal\aculta_portal\Plugin\Commerce\CheckoutPane\AcultaCheckoutLogin;
 use Drupal\aculta_portal\Hook\ShopCaptchaHooks;
+use Drupal\aculta_portal\Captcha\TurnstileToggle;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -108,6 +109,30 @@ final class GuestCheckoutRegistrationConfigTest extends UnitTestCase {
     $this->assertArrayNotHasKey('captcha', $form);
     $this->assertArrayNotHasKey('captcha', $form['nested']);
     $this->assertArrayHasKey('submit', $form);
+  }
+
+  /**
+   * Tests product-specific add-to-cart and every checkout stage bypass CAPTCHA.
+   */
+  public function testProductAndCheckoutVariantsDropCaptchaElement(): void {
+    $hooks = new ShopCaptchaHooks($this->createMock(RouteMatchInterface::class));
+    foreach ([
+      'commerce_order_item_add_to_cart_form_commerce_product_42',
+      'commerce_checkout_flow_form',
+      'commerce_checkout_flow_default',
+      'commerce_checkout_flow_shipping',
+      'commerce_checkout_flow_doacao',
+      'commerce_checkout_flow_assinatura_flow',
+    ] as $form_id) {
+      $form = [
+        'captcha' => ['#type' => 'captcha'],
+        'actions' => ['submit' => ['#type' => 'submit']],
+      ];
+      $hooks->formAlter($form, $this->createMock(FormStateInterface::class), $form_id);
+      $this->assertArrayNotHasKey('captcha', $form, $form_id);
+      $this->assertArrayHasKey('actions', $form, $form_id);
+      $this->assertTrue(TurnstileToggle::isCommercePurchaseForm($form_id), $form_id);
+    }
   }
 
 }

@@ -36,8 +36,8 @@ def visible_summary(driver):
         .slice(0,30),
       forms:[...document.querySelectorAll('main form')].map(f=>({id:f.id,form_id:f.querySelector('input[name=form_id]')?.value||''})),
       captcha_elements:[...document.querySelectorAll('main [data-drupal-selector*=captcha], main .captcha')].map(e=>({id:e.id||'',type:e.getAttribute('data-drupal-selector')||'',name:e.getAttribute('name')||''})),
+      purchase_captcha:!!document.querySelector('.captcha, [data-drupal-selector*=captcha], [data-sitekey], iframe[src*="challenges.cloudflare.com"], script[src*="challenges.cloudflare.com"]'),
       message:(document.querySelector('main')?.innerText||'').trim().slice(0,600),
-      captcha:!!document.querySelector('.captcha, [data-sitekey], iframe[src*="challenges.cloudflare.com"], script[src*="challenges.cloudflare.com"]'),
       google:!!document.querySelector('main [data-portal-ui="auth-google"]')
     }""")
 
@@ -51,6 +51,9 @@ def main():
         time.sleep(2)
         product = visible_summary(driver)
         print("product:", product)
+        if product["purchase_captcha"]:
+            print("RESULT=captcha_present_on_product")
+            return
         with open(os.path.join(OUT, "product.png"), "wb") as image:
             import base64
             image.write(base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot")))
@@ -77,6 +80,9 @@ def main():
         time.sleep(3)
         after_add = visible_summary(driver)
         print("after add:", after_add)
+        if after_add["purchase_captcha"]:
+            print("RESULT=captcha_present_after_add_to_cart")
+            return
         with open(os.path.join(OUT, "after-add.png"), "wb") as image:
             import base64
             image.write(base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot")))
@@ -84,6 +90,9 @@ def main():
         time.sleep(2)
         cart = visible_summary(driver)
         print("cart:", cart)
+        if cart["purchase_captcha"]:
+            print("RESULT=captcha_present_on_cart")
+            return
         with open(os.path.join(OUT, "cart.png"), "wb") as image:
             import base64
             image.write(base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot")))
@@ -97,6 +106,9 @@ def main():
         time.sleep(4)
         checkout = visible_summary(driver)
         print("checkout:", checkout)
+        if checkout["purchase_captcha"]:
+            print("RESULT=captcha_present_on_checkout_identity")
+            return
         with open(os.path.join(OUT, "checkout.png"), "wb") as image:
             import base64
             image.write(base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot")))
@@ -114,14 +126,28 @@ def main():
                   google_before_email:(()=>{const g=document.querySelector('#aculta-checkout-identity-stage [data-portal-ui="auth-google"]')
                     || document.querySelector('[data-portal-ui="auth-google"]');
                     const e=document.querySelector(arguments[0]);return !!g&&!!e&&!!(g.compareDocumentPosition(e)&Node.DOCUMENT_POSITION_FOLLOWING)})(),
-                  captcha:!!document.querySelector('.captcha, [data-sitekey], iframe[src*="challenges.cloudflare.com"], script[src*="challenges.cloudflare.com"]')
+                  captcha:!!document.querySelector('.captcha, [data-drupal-selector*=captcha], [data-sitekey], iframe[src*="challenges.cloudflare.com"], script[src*="challenges.cloudflare.com"]')
                 }""", [email_selector])
                 print("identity:", identity)
                 with open(os.path.join(OUT, "checkout-identity.png"), "wb") as image:
                     import base64
                     image.write(base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot")))
                 if identity["new_customer_visible"] and not identity["password_visible"] and not identity["captcha"] and identity["google_before_email"]:
-                    print("RESULT=guest_registration_ajax_without_captcha")
+                    continue_new = driver.js("""const b=[...document.querySelectorAll('main button, main input[type=submit]')]
+                      .find(e=>/continuar como novo cliente/i.test(e.innerText||e.value||''));
+                      if(b){b.click();return true;}return false;""")
+                    if continue_new:
+                        time.sleep(4)
+                        shipping = visible_summary(driver)
+                        print("shipping stage:", shipping)
+                        if shipping["purchase_captcha"]:
+                            print("RESULT=captcha_present_on_address_or_freight")
+                        elif shipping["path"].startswith("/finalizar-compra/") and shipping["forms"]:
+                            print("RESULT=guest_registration_and_shipping_stage_without_captcha")
+                        else:
+                            print("RESULT=guest_registration_without_captcha_shipping_stage_not_reached")
+                    else:
+                        print("RESULT=guest_registration_ajax_without_captcha_continue_missing")
                 else:
                     print("RESULT=guest_registration_ajax_incomplete")
             else:

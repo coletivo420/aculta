@@ -42,7 +42,11 @@ final class TurnstileToggle {
    * See docs/portal/TURNSTILE.md for the complete list and rationale.
    */
   public const EXCEPTION_FORM_IDS = [
-    ...self::COMMERCE_FORM_IDS,
+    'commerce_order_item_add_to_cart_form',
+    'views_form_commerce_cart_form_default',
+    'commerce_checkout_flow',
+    'commerce_checkout_flow_default',
+    'commerce_checkout_flow_fluxo_doacao',
     'aculta_support_form',
     'aculta_login_popup_form',
     'aculta_register_popup_form',
@@ -79,7 +83,10 @@ final class TurnstileToggle {
   public function setEnabled(bool $enabled, string $account): void {
     $this->configFactory->getEditable('captcha.settings')->set('enable_globally', $enabled)->save();
     foreach ($this->entityTypeManager->getStorage('captcha_point')->loadByProperties(['captchaType' => self::CHALLENGE]) as $point) {
-      if (in_array($point->id(), self::EXCEPTION_FORM_IDS, TRUE)) {
+      if (in_array($point->id(), self::EXCEPTION_FORM_IDS, TRUE) || self::isCommercePurchaseForm($point->id())) {
+        if ($point->status()) {
+          $point->setStatus(FALSE)->save();
+        }
         continue;
       }
       if ((bool) $point->status() !== $enabled) {
@@ -90,6 +97,16 @@ final class TurnstileToggle {
       '@state' => $enabled ? 'ativado' : 'desativado',
       '@account' => $account,
     ]);
+  }
+
+  /**
+   * Determines whether a form ID belongs to any Commerce purchase step.
+   */
+  public static function isCommercePurchaseForm(string $form_id): bool {
+    return in_array($form_id, self::COMMERCE_FORM_IDS, TRUE)
+      || str_starts_with($form_id, 'commerce_order_item_add_to_cart_form_')
+      || str_starts_with($form_id, 'commerce_checkout_flow_')
+      || str_starts_with($form_id, 'views_form_commerce_cart_form');
   }
 
 }

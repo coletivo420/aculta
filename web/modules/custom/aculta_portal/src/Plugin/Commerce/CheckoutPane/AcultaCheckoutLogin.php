@@ -111,7 +111,9 @@ final class AcultaCheckoutLogin extends Login {
         '#attributes' => ['formnovalidate' => 'formnovalidate'],
         '#limit_validation_errors' => [],
         '#submit' => [],
-        '#access' => !empty($this->configuration['allow_guest_checkout']),
+        // Public store, course, and donation flows all support guest checkout.
+        // Do not let stale active checkout config hide the email-first path.
+        '#access' => TRUE,
       ],
     ];
     return $pane_form;

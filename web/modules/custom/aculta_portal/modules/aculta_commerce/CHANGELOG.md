@@ -111,3 +111,9 @@
 - Desabilitado o registro inline no pane de login; `guest_order_assign` continua falso para impedir associação de pedido por simples coincidência de e-mail. O Core continua dono da criação de conta e entidades Commerce; nenhum módulo externo ou cópia do código foi introduzido.
 - Testes Unit de contrato validam flows e associações de pedido. A ativação dessas configurações no Runtime e homologação do e-mail permanecem pendentes.
 
+## 0.1.0-dev.14 — exceção CAPTCHA em todo o fluxo de compra (2026-10-27)
+
+- IDs dinâmicos de adicionar ao carrinho e todos os formulários/etapas `commerce_checkout_flow_*` removem CAPTCHA inclusive quando o fallback global está ativo. O painel Turnstile mantém desligados pontos dinâmicos de compra ao alternar o desafio.
+- A continuação de visitante com e-mail novo é sempre renderizada conforme o contrato de compra anônima, mesmo quando a configuração ativa antiga está divergente; autenticação de contas existentes continua no Commerce Core.
+- Firefox ESR confirmou ausência de CAPTCHA no produto, carrinho, AJAX de cadastro e pane de endereço/frete. O teste parou antes de enviar endereço; não solicitou cotação externa nem concluiu o pedido. Unit 6/62 e Kernel `TurnstileToggleKernelTest` 3/11 PASS; depreciações do contrib CAPTCHA/Key permanecem.
+

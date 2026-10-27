@@ -1,4 +1,4 @@
-# ACULTA Commerce — 0.1.0-dev.10
+# ACULTA Commerce — 0.1.0-dev.14
 
 Submódulo proprietário das integrações da loja, em estado Dev. O motor de envios ACULTA está integrado aqui, sem módulo adicional ou alteração em contrib. O Config Sync versionado aponta para `aculta_shipment`, os plugins próprios e o pane `aculta_shipping_information`; `drupal/commerce_shipping` foi removido de `composer.json`/`composer.lock` e `drupal/physical` é dependência explícita.
 
@@ -62,8 +62,11 @@ Após o blur, o AJAX apresenta a senha para um e-mail ligado a conta ou revela o
 cadastro silencioso de visitante para um novo e-mail. A consulta é limitada
 por flood control; a autenticação e o bloqueio de tentativas continuam no Core.
 Adicionar itens, atualizar/remover carrinho, cotar frete e checkout ficam sem
-CAPTCHA em todos os canais. A exceção remove também o elemento inserido pelo
-fallback global do Captcha.
+CAPTCHA em todos os canais. A exceção também cobre IDs por produto e todos os
+flows (inclusive panes de endereço e frete), removendo o elemento inserido
+pelo fallback global do Captcha mesmo com Turnstile global ativo. O smoke visual
+confere produto, carrinho, cadastro AJAX e formulário de endereço/frete; não
+envia o endereço nem solicita cotação ao transportador.
 
 Teste Unit de contrato: `GuestCheckoutRegistrationConfigTest` verifica todos
 os flows e suas associações aos tipos de pedido. Rodar com:

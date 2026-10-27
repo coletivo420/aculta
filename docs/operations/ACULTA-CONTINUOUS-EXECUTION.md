@@ -1373,3 +1373,11 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 | agent/aculta-mercadopago-closeout | /home/piradopirata/worktrees/recuperada/aculta-mercadopago-closeout | f092c359dfc1e4970174b43a0359f6d7cdce5451 | 8.887 | limpa | /mnt/disco1/worktrees/aculta-mercadopago-closeout | 7,495 | 376,358,492 | 2026-10-27 09:37:08 -0300 | nenhum |
 | agent/index-a6 | /home/piradopirata/worktrees/recuperada/index-a6 | f092c359dfc1e4970174b43a0359f6d7cdce5451 | 8.887 | limpa | /mnt/disco1/worktrees/aculta-index-a6 | 7,495 | 376,358,492 | 2026-10-27 09:37:20 -0300 | nenhum |
 | agent/statistics-focal | /home/piradopirata/worktrees/recuperada/statistics-focal | f57b2ec8dc6bf8b0ef04d4f2dcb5e32df2378017 | 8.887 | limpa | /mnt/disco1/worktrees/aculta-statistics-focal | 49,893 | 543,539,365 | 2026-10-27 09:37:25 -0300 | web/core 42398 |
+
+## Compra sem CAPTCHA em produto, checkout e frete — 2026-10-27
+
+- HEAD de trabalho: `73ccf6ad1`, branch `chore/aculta-m0-integridade`; sem troca de HEAD, publicação ou importação de configuração.
+- Código: a exceção do CAPTCHA agora inclui IDs dinâmicos de add-to-cart, carrinho e todas as etapas `commerce_checkout_flow_*`; ativar Turnstile mantém os pontos de compra desligados. A continuação de visitante para novo e-mail é renderizada mesmo com configuração de checkout ativa antiga divergente.
+- Testes: `GuestCheckoutRegistrationConfigTest` 6/62 PASS; `TurnstileToggleKernelTest` 3/11 PASS em `aculta_simpletest` (5 deprecações do contrib CAPTCHA/Key); PHPCS Drupal/DrupalPractice, PHP lint, `validate-turnstile-exceptions.php` (11 exceções) e índice do README PASS.
+- Firefox ESR `DISPLAY=:0`: produto, carrinho, e-mail/cadastro AJAX e pane de endereço/frete sem CAPTCHA. O fluxo avançou até `/finalizar-compra/139/informacoes-do-pedido`. Não foram enviados endereço ou pedido, nem solicitada cotação do transportador ou iniciado pagamento. Os testes criaram carrinhos Commerce anônimos de rascunho (incluindo pedidos 138 e 139); nenhum foi removido.
+- `drush cr` foi executado (escrita somente em cache). Gatilhos Runtime somente leitura: `updatedb:status` continua com 17 pendências; `config:status` continua divergente em aproximadamente 132 itens. Nenhuma atualização de esquema, importação ou limpeza dos pedidos de teste foi executada.
