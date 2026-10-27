@@ -24,13 +24,23 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
   /**
    * Creates the hooks with a configured simulator and session quote.
    */
-  private function hooks(?string $reason, ?array $stored = NULL, ?string $lastPostalCode = NULL): ShippingCalculatorHooks {
+  /**
+   * Hook com simulador, armazenamento e leitor do carrinho. Por padrão o carrinho tem um item da loja.
+   */
+  private function hooks(?string $reason, ?array $stored = NULL, ?string $lastPostalCode = NULL, bool $cartHasStoreItems = TRUE, ?ShippingSimulation $quote = NULL): ShippingCalculatorHooks {
     $simulator = $this->createMock(ShippingSimulator::class);
     $simulator->method('availabilityReason')->willReturn($reason);
+    if ($quote !== NULL) {
+      $simulator->method('simulateForCartLines')->willReturn($quote);
+    }
     $store = $this->createMock(ShippingQuoteStore::class);
     $store->method('load')->willReturn($stored);
     $store->method('loadLastPostalCode')->willReturn($lastPostalCode);
-    return new ShippingCalculatorHooks($simulator, $store);
+    $lines = $this->createMock(\Drupal\aculta_commerce_melhorenvio\Quote\CartQuoteLines::class);
+    $lines->method('lines')->willReturn($cartHasStoreItems
+      ? [['variation' => $this->createMock(\Drupal\commerce_product\Entity\ProductVariationInterface::class), 'quantity' => 1, 'total' => 30.0]]
+      : []);
+    return new ShippingCalculatorHooks($simulator, $store, $lines);
   }
 
   /**
@@ -62,7 +72,7 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
    * A saved account CEP prefills the component without a previous quote.
    */
   public function testLastPostalCodePrefillsTheCalculator(): void {
-    $props = $this->hooks(NULL, NULL, '74003010')->props('frete-produto');
+    $props = $this->hooks(NULL, NULL, '74003010', FALSE)->props('frete-produto');
     $this->assertSame('74003010', $props['postal_code']);
     $this->assertSame('idle', $props['state']);
   }
@@ -70,21 +80,23 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
   /**
    * The saved session quote appears on product and cart without recalculation.
    */
-  public function testStoredQuoteCarriesToCart(): void {
-    $stored = [
-      'postal_code' => '01310100',
-      'at' => 1_000_000,
-      'result' => [
-        'state' => 'available',
-        'reason' => NULL,
-        'message' => '',
-        'options' => [['name' => 'PAC', 'company' => 'Correios', 'price' => 'R$ 37,79', 'days' => 9]],
-      ],
-    ];
-    $props = $this->hooks(ShippingSimulation::REASON_NO_PACKAGE, $stored)->props('frete-carrinho-lateral');
+  public function testKnownPostalCodeQuotesTheCartWithTheStoreItems(): void {
+    $quote = new ShippingSimulation(ShippingSimulation::STATE_AVAILABLE, NULL, [
+      new \Drupal\aculta_commerce_melhorenvio\Quote\QuoteOption('1', 'PAC', 'Correios', '37.79', 9),
+    ]);
+    $props = $this->hooks(NULL, NULL, '01310100', TRUE, $quote)->props('frete-carrinho-lateral');
     $this->assertSame('available', $props['state']);
     $this->assertSame('01310100', $props['postal_code']);
     $this->assertSame('R$ 37,79', $props['options'][0]['price']);
+  }
+
+  /**
+   * Sem itens da loja no carrinho (ex.: só LMS ou doação), não há frete a mostrar.
+   */
+  public function testNoStoreItemsMeansNoFreight(): void {
+    $props = $this->hooks(NULL, NULL, '01310100', FALSE)->props('frete-carrinho-lateral');
+    $this->assertSame('idle', $props['state']);
+    $this->assertSame([], $props['options']);
   }
 
   /**

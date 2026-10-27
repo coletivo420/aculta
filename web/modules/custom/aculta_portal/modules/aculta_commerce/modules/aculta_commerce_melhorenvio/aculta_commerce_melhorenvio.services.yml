@@ -135,6 +135,10 @@ services:
     class: Drupal\aculta_commerce_melhorenvio\Quote\CartQuoteLines
     arguments: ['@commerce_cart.cart_provider']
 
+  # Autowire do leitor do carrinho pelos hooks e serviços que recebem a classe.
+  Drupal\aculta_commerce_melhorenvio\Quote\CartQuoteLines:
+    alias: aculta_commerce_melhorenvio.cart_lines
+
   # Recalcula o frete guardado quando o carrinho é salvo (quantidade alterada ou item removido).
   aculta_commerce_melhorenvio.cart_refresher:
     class: Drupal\aculta_commerce_melhorenvio\Quote\ShippingCartRefresher

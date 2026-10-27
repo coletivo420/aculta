@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_commerce_melhorenvio\Hook;
 
+use Drupal\aculta_commerce_melhorenvio\Quote\CartQuoteLines;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulation;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulator;
@@ -45,6 +46,7 @@ class ShippingCalculatorHooks {
   public function __construct(
     private readonly ShippingSimulator $simulator,
     private readonly ShippingQuoteStore $store,
+    private readonly CartQuoteLines $cartLines,
   ) {}
 
   /**
@@ -140,6 +142,24 @@ class ShippingCalculatorHooks {
    *   Current quote or idle/unavailable state, including the saved postal code.
    */
   public function summary(): array {
+    // Carrinho atual com itens da loja e CEP conhecido: cota agora (cache do simulador). Vale sobre qualquer resultado
+    // guardado, que pode ter sido calculado antes do item entrar no carrinho.
+    $postal = $this->store->loadLastPostalCode();
+    $lines = $this->cartLines->lines();
+    if ($postal !== NULL && $lines !== []) {
+      $result = $this->simulator->simulateForCartLines($postal, $lines);
+      $this->store->save($postal, $result);
+      return [
+        'state' => $result->state,
+        'message' => $result->message(),
+        'options' => $result->toArray()['options'],
+        'postal_code' => $postal,
+      ];
+    }
+    // Sem itens da loja no carrinho, não há frete a mostrar.
+    if ($lines === []) {
+      return ['state' => 'idle', 'message' => '', 'options' => [], 'postal_code' => $postal ?? ''];
+    }
     $stored = $this->store->load();
     if ($stored !== NULL) {
       $result = $stored['result'];
@@ -155,7 +175,7 @@ class ShippingCalculatorHooks {
       'state' => $reason === NULL ? 'idle' : 'unavailable',
       'message' => $reason === NULL ? '' : ShippingSimulation::unavailable($reason)->message(),
       'options' => [],
-      'postal_code' => $this->store->loadLastPostalCode() ?? '',
+      'postal_code' => $postal ?? '',
     ];
   }
 
