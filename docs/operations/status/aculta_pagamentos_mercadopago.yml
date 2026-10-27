@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.30
+version: 0.1.0-dev.31
 state: Dev
-progress_note: "Dev.30 compartilha lock entre webhook e ação e aplica mp_subscription_version monotônica: ignora eventos antigos, rejeita conflitos da mesma versão e recusa consultas remotas antigas. Unit MP 176/642 PASS; PHPCS Drupal/DrupalPractice e lint focais PASS. Dev.29 serializa ações e reconcilia retry; Dev.28 alinha cancelamento a canceled; Dev.27 preserva pagamentos pendentes até API approved. Kernel atual 1/56 PASS (77 depreciações upstream). Runtime, browser e sandbox pendentes."
+progress_note: "Dev.31 normaliza timeouts das chamadas recorrentes em erro seguro, coberto por Unit. Dev.30 aplica lock compartilhado e mp_subscription_version monotônica contra eventos atrasados. Unit MP 177/649 PASS; Kernel CheckoutPro 1/56 PASS (77 depreciações upstream); PHPCS/lint focais PASS. Runtime leitura: gateway ativo, sem update de banco nem drift de config MP; há diferenças globais fora do escopo selecionado. X11 carregou produto/carrinho, mas checkout exige CEP/frete antes do cadastro; sandbox Mercado Pago ainda não acessível."
 next_phase: Prosseguir com teste isolado de criação da preferência e, quando o comprador sandbox estiver acessível, homologar aprovação, pendência, rejeição, cancelamento, webhook e recorrência ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md))

@@ -503,7 +503,7 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   }
 
   /**
-   * Reads the locally persisted provider version, defaulting old orders to 0.
+   * Reads the locally persisted provider version; old orders have no marker.
    */
   private function versaoLocal(OrderInterface $pedido): int {
     $value = $pedido->getData(self::CHAVE_VERSAO);

@@ -115,6 +115,14 @@ class MercadoPagoRecurrenceService {
       ]);
       throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago não respondeu como esperado. Tente de novo em instantes.'), $e->getStatusCode(), $e);
     }
+    catch (\Exception $exception) {
+      // Transport exceptions can include request URLs or provider details.
+      // Keep the log categorical and return the same safe message to callers.
+      $this->logger->error('Falha de transporte ao @operacao no Mercado Pago.', [
+        '@operacao' => $operacao,
+      ]);
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago não respondeu como esperado. Tente de novo em instantes.'), 0, $exception);
+    }
   }
 
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\RecurrenceRequestBuilder;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
@@ -64,10 +65,10 @@ final class MercadoPagoRecurrenceServiceTest extends UnitTestCase {
   /**
    * Performs the servico operation.
    */
-  private function servico(object $cliente): MercadoPagoRecurrenceService {
+  private function servico(object $cliente, ?LoggerChannelInterface $logger = NULL): MercadoPagoRecurrenceService {
     $fabrica = $this->createMock(MercadoPagoClientFactory::class);
     $fabrica->method('criar')->willReturn($cliente);
-    $log = $this->createMock(LoggerChannelInterface::class);
+    $log = $logger ?? $this->createMock(LoggerChannelInterface::class);
     return new MercadoPagoRecurrenceService($fabrica, new RecurrenceRequestBuilder(), $log);
   }
 
@@ -127,6 +128,46 @@ final class MercadoPagoRecurrenceServiceTest extends UnitTestCase {
     $this->expectException(\InvalidArgumentException::class);
     $this->servico($this->cliente((object) ['id' => 'sub-1'], $capturado))
       ->alterarStatusAssinatura($this->createMock(PaymentGatewayInterface::class), 'sub-1', 'pending');
+  }
+
+  /**
+   * Normalizes a transport timeout without logging or returning its details.
+   */
+  public function testTransportFailureIsSafeAndRetryable(): void {
+    $cliente = new class {
+
+      /**
+       * Simulates a timeout with private request details.
+       */
+      public function create(array $payload): object {
+        throw new \RuntimeException('PRIVATE_ACCESS_TOKEN_AND_URL');
+      }
+
+    };
+    $logger = $this->createMock(LoggerChannelInterface::class);
+    $logger->expects($this->once())
+      ->method('error')
+      ->with('Falha de transporte ao @operacao no Mercado Pago.', ['@operacao' => 'criar plano']);
+
+    try {
+      $this->servico($cliente, $logger)->criarPlano(
+        $this->createMock(PaymentGatewayInterface::class),
+        [
+          'motivo' => 'Apoio mensal',
+          'valor' => '30.00',
+          'moeda' => 'BRL',
+          'frequencia' => 1,
+          'back_url' => 'https://retorno.example.invalid/ok',
+        ],
+      );
+      $this->fail('Expected the transport error to be normalized.');
+    }
+    catch (MercadoPagoApiException $exception) {
+      $this->assertSame(0, $exception->codigoHttp());
+      $this->assertSame('O Mercado Pago não respondeu como esperado. Tente de novo em instantes.', $exception->getMessage());
+      $this->assertStringNotContainsString('PRIVATE_', $exception->getMessage());
+      $this->assertSame('PRIVATE_ACCESS_TOKEN_AND_URL', $exception->getPrevious()?->getMessage());
+    }
   }
 
 }

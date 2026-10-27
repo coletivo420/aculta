@@ -1,3 +1,8 @@
+## 0.1.0-dev.31 — normalizar falhas de transporte na recorrência (2026-10-27)
+
+- Timeouts e outras exceções de transporte do SDK em operações de plano/assinatura agora viram `MercadoPagoApiException` com mensagem segura e registro categórico, para que a pane de autorização trate a falha e ofereça nova tentativa sem expor detalhes privados.
+- Regressão simula falha contendo token/URL sentinela e confirma log e mensagem seguros. Unit focal `MercadoPagoRecurrenceServiceTest`: 5 testes / 13 assertions PASS.
+
 ## 0.1.0-dev.30 — ordenar notificações de assinatura (2026-10-27)
 
 - Webhooks e ações do doador agora usam o mesmo lock por assinatura. O webhook recarrega o pedido sob lock e só aplica estados de uma versão do Mercado Pago maior que `mp_subscription_version`; versão antiga é ignorada e status conflitante na mesma versão falha para retry.
