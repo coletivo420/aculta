@@ -310,6 +310,16 @@ ledger.
   - Durante a importação de teste, o módulo `group` (`group_user_update`) falhou numa gravação posterior à criação, sem
     `original` da conta. Risco a investigar no fluxo OAuth completo antes de ativar o login.
 
+### Regra do avatar e reimportação (2026-10-27)
+
+- Sem foto, a conta usa o avatar do acervo. O acervo é componente obrigatório do site e a inicial do nome nunca é
+  exibida; a ordem completa está em
+  `web/modules/custom/aculta_portal/modules/aculta_user/docs/AVATAR-PADRAO.md`.
+- A foto do Google é importada somente na criação da conta. Reimportar a foto do Google a qualquer momento é
+  pendência registrada (não implementada): o vínculo fica em `social_auth` (`user_id`, `plugin_id`,
+  `provider_user_id`) e a foto atual pode ser substituída como foto personalizada.
+- A remoção da foto personalizada devolve a conta ao acervo, inclusive a foto importada do Google.
+
 A infraestrutura já está PREPARED.
 
 Ativar somente quando:

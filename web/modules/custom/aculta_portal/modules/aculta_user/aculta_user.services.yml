@@ -30,7 +30,7 @@ services:
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
   aculta_user.author_identity_resolver:
     class: Drupal\aculta_user\Identity\AuthorIdentityResolver
-    arguments: ['@entity_type.manager', '@aculta_user.public_profile_link', '@aculta_image.render', '@aculta_user.public_profile_policy', '@aculta_user.social_networks', '@date.formatter']
+    arguments: ['@entity_type.manager', '@aculta_user.public_profile_link', '@aculta_image.render', '@aculta_user.public_profile_policy', '@aculta_user.social_networks', '@date.formatter', '@aculta_user.avatar_resolver']
     tags:
       - { name: aculta_portal.helper }
   Drupal\aculta_user\Identity\PublicMemberIdentityInterface: '@aculta_user.author_identity_resolver'
@@ -55,6 +55,9 @@ services:
   aculta_user.avatar_pool:
     class: Drupal\aculta_user\Avatar\AvatarPool
     arguments: ['@extension.list.module', '@file_system', '@entity_type.manager', '@user.data', '%app.root%']
+  aculta_user.avatar_resolver:
+    class: Drupal\aculta_user\Avatar\AvatarResolver
+    arguments: ['@aculta_image.render', '@aculta_user.avatar_pool']
   aculta_user.social_auth_fields_subscriber:
     class: Drupal\aculta_user\EventSubscriber\SocialAuthFieldsSubscriber
     arguments: ['@entity_type.manager']

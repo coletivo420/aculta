@@ -1,3 +1,10 @@
+## 0.1.0-dev.93 — avatar padrão nas turmas e no feedback do educador (Fase 4)
+
+- Roster da turma e participantes da sala mostram cartão de autor (`profile_compact`, tamanho `sm`)
+  com a mesma regra de avatar do site. Sem identidade pública, o nome de exibição continua na lista.
+- Feedback do educador em resposta (`lms_answer_comment`) mostra o cartão com o papel "Educador(a)".
+- Validação: PHP lint PASS. PHPUnit e Runtime não executados (sem `vendor/`). RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.92 — dependência declarada do provedor de pagamento
 
 - `aculta_lms` declara dependência direta de `aculta_portal:aculta_pagamentos_mercadopago`; nenhum código do LMS mudou. Os quatro módulos LMS relacionados verificados não usam APIs do MP.

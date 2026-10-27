@@ -1,3 +1,39 @@
+## 0.4.0-dev.89 — campo de Views para cartões de perfil público (Fase 3)
+
+- Novo campo de Views `aculta_user_author_card`: renderiza o cartão de autor de cada
+  conta com perfil público explícito (`field_perfil_publico`). Opções: variante e
+  tamanho `sm`, `md`, `lg`. O hook `views_data_alter` declara o campo virtual em
+  `users_field_data`; sem ele o Views instancia um handler broken.
+- `AuthorCardBuilder::build()` aceita `$size` (padrão `md`), repassado ao tema.
+- A view "Perfis públicos" (`views.view.perfis_publicos`, `/membros`) foi criada e
+  exportada para `config/sync`: base `users_field_data`, relacionamento `profile`,
+  filtros de perfil público e apelido, 24 por página, UI Styles no display.
+- O campo carrega a conta pelo `uid` da linha quando o cache da query não traz a
+  entidade; sem isso, os cartões saíam vazios após o cache do Views.
+- A inicial do nome foi removida dos chamadores: `PublicProfileController`,
+  `PrivateMessagePresentationHooks` e o template do cartão usam apenas a foto ou o
+  acervo. O acervo é componente obrigatório e o último fallback.
+
+Validação: PHPUnit Unit 141/546 PASS; Kernel do roster 1/30 PASS; gates Portal
+(1112), foto (INV-FOTO-1 a 10), SDC (632), design foundations, browser validators,
+Foundation (345) e shell-contract (11) PASS. Verificação de navegador no worktree:
+view, perfil, Conta, Mensagens e Revista/Wiki com ACULTA420 e Olivero; Fórum e
+roster/sala/feedback do LMS ficaram DEFERRED por falta de alias local e de turma.
+RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.88 — avatar padrão único nos cartões e no perfil (Fase 1)
+
+`AvatarResolver` passa a ser a única regra de avatar público: foto liberada pela
+policy, depois o avatar ilustrativo do acervo, e por último NULL. A inicial do nome
+não é usada em nenhum momento; o acervo é componente obrigatório e o fallback de
+quem não tem foto. `AuthorIdentityResolver` (cartões de autor em fórum, revista, LMS
+e wiki) e `PublicProfileController` (Conta/perfil) usam o mesmo serviço, então o site
+inteiro se comporta igual sem foto. Sem mudança de config, permissão ou campo.
+
+Validação: teste unitário `AvatarResolverTest` (contrato sem foto e sem acervo);
+PHP lint PASS nos arquivos alterados. PHPUnit, gates e Runtime não executados nesta
+sessão (sem `vendor/`). RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.87 — 10013 conta sem bloquear por perfil sem dono (2026-10-26)
 
 - `NicknameRegistry::rebuild()`: perfil sem dono (uid ≤ 0) e vazio é ignorado e não bloqueia. Perfil sem dono com apelido não reivindica índice, não é gravado e é contado à parte (`orphan_with_nickname`). Perfil com formato de apelido inválido não é normalizado nem gravado: fica sem claim (`ignored_invalid_format`).
@@ -63,7 +99,6 @@
 - `ProfileNicknameValidationHooks` aplica `AccountNames` e `NicknamePolicy` aos formulários Profile de papéis que expõem `field_nickname`, incluindo `/dados`, que o Portal mantém por compatibilidade. Um apelido legado inalterado não bloqueia a edição de outros dados.
 - O serviço continua responsável pela verificação compartilhada; o Portal não ganhou uma regra paralela nem uma dependência circular.
 - Unit User: 132 testes / 504 assertions PASS (1 depreciação PHPUnit). Kernel User: 25 testes / 361 assertions PASS (5 depreciações Core/contrib). PHP lint e PHPCS Drupal/DrupalPractice nos arquivos novos PASS. A verificação continua sujeita a corrida entre gravações simultâneas; garantia transacional no armazenamento permanece pendente de desenho e teste isolado.
-
 ## 0.4.0-dev.75 — identificar cada transição de amizade
 
 `FriendshipChangedEvent` recebe um `transitionId` aleatório e imutável por

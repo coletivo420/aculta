@@ -71,6 +71,7 @@ final class AuthorCardBuilder {
     string $variant = 'author_minimal',
     array $actions = [],
     ?string $designation = NULL,
+    string $size = 'md',
   ): ?array {
     $identity = $this->identityResolver->resolve($account, $variant);
     if ($identity === NULL) {
@@ -90,6 +91,7 @@ final class AuthorCardBuilder {
       '#social_links' => $data['social_links'],
       '#designation' => $designation,
       '#actions' => $actions,
+      '#size' => in_array($size, ['sm', 'md', 'lg'], TRUE) ? $size : 'md',
     ];
     CacheableMetadata::createFromObject($identity)->applyTo($build);
     return $build;

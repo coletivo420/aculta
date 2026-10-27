@@ -12,6 +12,7 @@
  * - INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel, sem reabrir o popup.
  * - INV-FOTO-8: sortear só troca a prévia do modal; a foto muda ao salvar; fechar sem salvar descarta a escolha.
  * - INV-FOTO-7: o popup não mostra nome nem link da foto atual; "Remover foto" (só personalizada) volta a um avatar sorteado do acervo.
+ * - INV-FOTO-10: o acervo é componente obrigatório e o último fallback: catálogo válido e ao menos uma entrada ativa com arquivo.
  *
  * Verificação estática do código-fonte (não depende de servidor). A verificação de navegador está no roteiro do docs.
  */
@@ -130,9 +131,27 @@ else {
   }
 }
 
+// INV-FOTO-10: o acervo é componente obrigatório e o último fallback. Exige catálogo válido e ao menos uma entrada ativa com arquivo.
+$catalogPath = $module . '/assets/avatars/meta/avatars.json';
+$catalog = is_file($catalogPath) ? json_decode((string) file_get_contents($catalogPath), TRUE) : NULL;
+if (!is_array($catalog)) {
+  $errors[] = 'INV-FOTO-10: catálogo do acervo ausente ou inválido (assets/avatars/meta/avatars.json)';
+}
+else {
+  $active = 0;
+  foreach ($catalog as $item) {
+    if (is_array($item) && !empty($item['active']) && is_file($module . '/assets/avatars/' . ($item['file'] ?? ''))) {
+      $active++;
+    }
+  }
+  if ($active === 0) {
+    $errors[] = 'INV-FOTO-10: acervo sem entrada ativa com arquivo; o acervo é o último fallback';
+  }
+}
+
 if ($errors !== []) {
   fwrite(STDERR, "ACULTA USER PHOTO FAIL:\n- " . implode("\n- ", $errors) . "\n");
   exit(1);
 }
 
-echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-9)' . PHP_EOL;
+echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-10)' . PHP_EOL;
