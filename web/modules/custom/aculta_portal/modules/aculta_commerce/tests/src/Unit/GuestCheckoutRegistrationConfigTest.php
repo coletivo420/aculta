@@ -12,6 +12,8 @@ use Drupal\aculta_portal\Hook\ShopCaptchaHooks;
 use Drupal\aculta_portal\Captcha\TurnstileToggle;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\Login;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -92,6 +94,23 @@ final class GuestCheckoutRegistrationConfigTest extends UnitTestCase {
     ];
     (new CheckoutPaneHooks())->commerceCheckoutPaneInfoAlter($definitions);
     $this->assertSame(AcultaCheckoutLogin::class, $definitions['login']['class']);
+  }
+
+  /**
+   * Tests Commerce keeps the identity pane for anonymous buyers only.
+   */
+  public function testCheckoutIdentityPaneVisibilityForGuestAndAuthenticatedUser(): void {
+    $pane = (new \ReflectionClass(AcultaCheckoutLogin::class))->newInstanceWithoutConstructor();
+    $anonymous = $this->createMock(AccountInterface::class);
+    $anonymous->method('isAnonymous')->willReturn(TRUE);
+    $authenticated = $this->createMock(AccountInterface::class);
+    $authenticated->method('isAnonymous')->willReturn(FALSE);
+
+    $current_user = new \ReflectionProperty(Login::class, 'currentUser');
+    $current_user->setValue($pane, $anonymous);
+    $this->assertTrue($pane->isVisible());
+    $current_user->setValue($pane, $authenticated);
+    $this->assertFalse($pane->isVisible());
   }
 
   /**

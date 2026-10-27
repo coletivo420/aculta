@@ -77,7 +77,7 @@ services:
       - { name: aculta_portal.helper }
   aculta_portal.access.protected_route:
     class: Drupal\aculta_portal\Access\ProtectedRouteAccessCheck
-    arguments: ['@aculta_portal.access.email_confirmed', '@class_resolver', '@aculta_portal.aculta_user_agreement_policy']
+    arguments: ['@class_resolver', '@aculta_portal.aculta_user_agreement_policy']
     tags:
       - { name: aculta_portal.implementation }
   aculta_portal.access.email_confirmed:
@@ -195,7 +195,7 @@ services:
     arguments: ['@commerce_cart.cart_provider', '@commerce_cart.cart_session', '@commerce_store.current_store', '@current_user', '@aculta_portal.checkout_settings']
   aculta_portal.cart_utility:
     class: Drupal\aculta_portal\Cart\CartUtility
-    arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation', '@aculta_portal.checkout_settings']
+    arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation', '@aculta_portal.checkout_settings', '@aculta_portal.checkout_step_resolver']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.search_utility:
@@ -207,6 +207,11 @@ services:
   aculta_portal.domain_purpose:
     class: Drupal\aculta_portal\Domain\DomainPurposeManager
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_portal.checkout_step_resolver:
+    class: Drupal\aculta_portal\Checkout\CheckoutStepResolver
+    arguments: ['@commerce_checkout.chain_checkout_flow_resolver']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.payment_domain_path_processor:

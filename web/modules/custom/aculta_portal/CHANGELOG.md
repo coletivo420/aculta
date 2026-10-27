@@ -1,3 +1,16 @@
+## 0.4.1-dev.41 — exceção de confirmação de e-mail no checkout (2026-10-27)
+
+- Decisão do responsável: contas autenticadas podem comprar no checkout Commerce sem confirmar o e-mail. Permanecem obrigatórios pedido próprio, loja publicada, pedido com itens, permissão `access checkout` e aceite dos termos. A decisão não concede papel nem marca de e-mail confirmado.
+- Pedido 131 foi inspecionado por metadados read-only no Runtime: `default`, `draft`, carrinho ativo com um item, proprietário ativo uid 1, loja publicada, sem fluxo/etapa persistidos; os termos estão aceitos e a marca de confirmação de e-mail está ausente. O 403 era da política anterior.
+- `ProtectedRouteAccessCheck` mantém o acesso nativo Commerce como fonte de verdade e combina somente o aceite dos termos para autenticados; a rota de entrada comum preserva a permissão nativa e checkout anônimo. A etapa inicial agora seleciona somente panes visíveis à sessão, evitando `login` após autenticação.
+- Após `drush cr`, `access_manager.checkNamedRoute(commerce_checkout.form, order 131, uid 1)` retornou `allowed` com `email_confirmed=false` e termos aceitos. Regressões cobrem checkout autenticado sem confirmação (mantendo termos), checkout anônimo, pane login visível/oculto e etapa persistida não visível. Unit Portal antes do teste de leitura sem escrita: 280 testes / 763 assertions PASS (6 depreciações PHPUnit); Guest Checkout: 7/64; CheckoutStepResolver: 4/11; ProtectedRouteAccessCheck: 7/20. PHPCS Drupal/DrupalPractice nos arquivos alterados PASS. Login visual na sessão do usuário ainda não foi verificado.
+
+## 0.4.1-dev.40 — etapa válida do checkout após autenticação (2026-10-27)
+
+- Corrigido o carrinho para selecionar uma etapa realmente visível no fluxo Commerce da sessão atual. Um pedido com etapa persistida `login` não volta mais ao pane de identificação depois que o comprador já está autenticado; visitantes anônimos permanecem no fluxo de identificação.
+- Portal declara `commerce_checkout` como dependência direta e registra `aculta_portal.checkout_step_resolver` no catálogo interno de serviços.
+- Regressões Unit verificam etapa `login` visível para visitante, etapa de identificação ignorada para usuário autenticado, resolução pelo fluxo do pedido e fluxo sem etapas. Testes Portal: CheckoutStepResolver 4/8, ProtectedRouteAccessCheck 5/19; contrato Guest Checkout do Commerce 6/62 PASS. PHP lint/PHPCS focais pendentes.
+
 ## 0.4.1-dev.39 — links de produto do carrinho no domínio SHOP (2026-10-27)
 
 - O formatter `product_id` do modo Commerce `cart` emitia link canônico relativo ao host do carrinho MAIN; a rota de produto pertence ao propósito SHOP e retornava 404 no MAIN.

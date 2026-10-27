@@ -302,7 +302,7 @@ Ambiente: servidor de testes `*.aculta.toca.net.br`; Firefox ESR visível em `DI
 ### Correções feitas antes dos testes
 
 - **Autowiring do `CartCheckoutController`:** o serviço falhava com `AutowiringFailedException` ("Cannot autowire service ... argument `$consolidator`"), registrado às 09:35 de 2026-10-23. O `#[Autowire(service: 'aculta_portal.cart_consolidator')]` no construtor resolve. Sem ele, `/carrinho/finalizar` não carrega.
-- **403 do checkout anônimo:** `ProtectedRouteAccessCheck::checkout()` combinava o acesso do Commerce com os checks de e-mail e termos. Para anônimo os dois são neutros, e neutro combinado com permitido continua neutro — e neutro é negado. Agora o anônimo devolve só o acesso do Commerce, que já decide pela sessão do carrinho; o autenticado continua exigindo e-mail confirmado e termos. Coberto por três testes Unit novos.
+- **403 do checkout anônimo:** `ProtectedRouteAccessCheck::checkout()` combinava o acesso do Commerce com os checks de e-mail e termos. Para anônimo os dois são neutros, e neutro combinado com permitido continua neutro — e neutro é negado. O anônimo devolve só o acesso do Commerce, que decide pela sessão do carrinho. A regra histórica de exigir confirmação de e-mail para autenticados foi substituída pela decisão do responsável de 2026-10-27: confirmação de e-mail é dispensada no checkout; o aceite dos termos continua obrigatório.
 
 ### Evidências
 

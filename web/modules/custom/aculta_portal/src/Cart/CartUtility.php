@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Cart;
 
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
+use Drupal\aculta_portal\Checkout\CheckoutStepResolver;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\commerce_cart\CartProviderInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -13,8 +14,9 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
- * Carrinho único do site, agrupado por separador (loja, cursos e apoio). Cada separador tem o próprio botão de checkout,
- * no domínio principal (rotas do Commerce).
+ * Carrinho único do site, agrupado por separador.
+ *
+ * Cada separador tem seu botão de checkout no domínio principal.
  */
 final class CartUtility {
 
@@ -25,14 +27,16 @@ final class CartUtility {
     private readonly DomainPurposeManager $domainPurposeManager,
     TranslationInterface $translation,
     private readonly ?CheckoutSettings $settings = NULL,
+    private readonly ?CheckoutStepResolver $checkoutStepResolver = NULL,
   ) {
     $this->setStringTranslation($translation);
   }
 
   /**
-   * Dados neutros do painel: totais do carrinho e um grupo por separador (loja, cursos, apoio).
+   * Builds neutral cart panel data with totals and groups by cart purpose.
    *
-   * @return array{count: int, empty: bool, url: string, total: string, sites: list<array{key: string, label: string, count: int, empty: bool, total: string, items: list<array{title: string, quantity: string, total: string}>, checkout_url: string}>, cache: \Drupal\Core\Cache\CacheableMetadata}
+   * @return array<string, mixed>
+   *   Cart totals, grouped items, URLs, and cache metadata.
    */
   public function build(): array {
     $cache = (new CacheableMetadata())->addCacheContexts(['cart', 'user', 'session']);
@@ -43,7 +47,11 @@ final class CartUtility {
 
     foreach ($this->cartProvider->getCarts() as $cart) {
       $cache->addCacheableDependency($cart);
-      $site = in_array($cart->bundle(), $this->settings?->lmsOrderTypes() ?? [], TRUE) ? CartSite::CURSOS : CartSite::paraTipo($cart->bundle());
+      $site = in_array(
+        $cart->bundle(),
+        $this->settings?->lmsOrderTypes() ?? [],
+        TRUE,
+      ) ? CartSite::CURSOS : CartSite::paraTipo($cart->bundle());
       $checkout = $site === CartSite::ASSINATURA ? $this->urlDoCheckout($cart) : '';
       foreach ($cart->getItems() as $item) {
         $quantity = (int) $item->getQuantity();
@@ -67,7 +75,8 @@ final class CartUtility {
       }
     }
 
-    // Lista única: separadores (grupos) pelo item adicionado por último; itens do mais recente para o mais antigo.
+    // Lista única: grupos pelo item adicionado por último e itens do mais
+    // recente para o mais antigo.
     uasort($grupos, static fn(array $a, array $b): int => $b['ultimo'] <=> $a['ultimo']);
     $sites = [];
     foreach ($grupos as $grupo) {
@@ -85,8 +94,11 @@ final class CartUtility {
     }
 
     $url = $this->domainPurposeManager->routeUrl('main', 'commerce_cart.page');
-    // Um botão para todo o carrinho (exceto assinatura): junta os itens e abre o checkout do pedido único.
-    $finalizar = $this->domainPurposeManager->routeUrl('main', 'aculta_portal.cart_checkout');
+    // Um botão geral junta os itens e abre o checkout do pedido único.
+    $finalizar = $this->domainPurposeManager->routeUrl(
+      'main',
+      'aculta_portal.cart_checkout',
+    );
 
     return [
       'count' => $count,
@@ -100,12 +112,13 @@ final class CartUtility {
   }
 
   /**
-   * Botão de checkout do separador: o checkout do Commerce, no domínio principal, no passo atual do pedido.
+   * Builds the checkout URL for an individual cart group.
    */
   private function urlDoCheckout(OrderInterface $pedido): string {
-    // Usa o passo guardado no pedido, sem resolver o fluxo aqui (o resolvedor falha para alguns fluxos, como o de doação,
-    // e derruba a página inteira). Passo ausente ou inválido: o Commerce redireciona ao passo correto na própria etapa.
-    $passo = $pedido->get('checkout_step')->value ?: 'login';
+    // Preserva a etapa salva quando visível e corrige a etapa quando ela deixou
+    // de ser válida para a sessão atual (por exemplo, login após autenticação).
+    $passo = $this->checkoutStepResolver?->resolve($pedido)
+      ?? ($pedido->get('checkout_step')->value ?: 'login');
     $url = $this->domainPurposeManager->routeUrl('main', 'commerce_checkout.form', [
       'commerce_order' => $pedido->id(),
       'step' => $passo,
@@ -113,6 +126,9 @@ final class CartUtility {
     return $url !== NULL ? $url->toString() : '';
   }
 
+  /**
+   * Formats a monetary amount for the cart display.
+   */
   private function formatPrice(float $amount, string $currency): string {
     $prefix = $currency === 'BRL' ? 'R$ ' : '';
     return $prefix . number_format($amount, 2, ',', '.');

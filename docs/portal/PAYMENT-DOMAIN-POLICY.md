@@ -72,6 +72,11 @@ link gerado para MAIN pelo Portal
 MAIN checkout
 ```
 
+O Portal também resolve a etapa do Commerce pelo fluxo efetivamente visível à
+sessão atual. Se o pedido ainda guardar `login` após o usuário autenticar, os
+links de finalização escolhem a primeira etapa visível (por exemplo,
+`order_information`); visitantes anônimos continuam no pane de identificação.
+
 O redirect de canonicalização continua como defesa para URLs antigas, links
 contrib que escapem da reescrita ou acesso manual.
 

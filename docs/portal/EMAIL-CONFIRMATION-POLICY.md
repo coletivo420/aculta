@@ -7,7 +7,8 @@ Status: **parcialmente implementada** (ver seções 9 e 10). As decisões penden
 Usuário com e-mail não confirmado:
 
 - **Pode:** acessar o site, fazer login, navegar e usar a área "Minha conta".
-- **Não pode:** editar a wiki (criar ou alterar verbetes), comentar, comprar produtos não educacionais ou apoiar.
+- **Não pode:** editar a wiki (criar ou alterar verbetes) nem comentar.
+- **Checkout é exceção:** uma conta autenticada pode comprar ou apoiar antes de confirmar o e-mail. Commerce continua exigindo que o pedido pertença à conta, tenha itens, use loja publicada e que a conta tenha a permissão `access checkout`; o aceite vigente dos termos também permanece obrigatório.
 - **Cursos:** confirmação de e-mail não é requisito de matrícula nem de participação. O acesso às aulas continua
   condicionado à permissão `take` atual do Group e ao aceite dos termos vigente; o LMS/Group permanece a fonte de
   verdade para matrícula e acesso.
@@ -44,7 +45,8 @@ pelo Portal (flag por usuário, por exemplo em `user.data` do módulo `aculta_po
 Esta política não restringe leitura pública da wiki nem páginas institucionais.
 
 **Troca de e-mail não é bloqueio.** Quem não confirmou o e-mail pode solicitar a troca de endereço em "Segurança"
-(e reenviar a confirmação). A regra de escrita bloqueia apenas wiki, comentários, cursos, loja e apoio.
+(e reenviar a confirmação). A marca ainda controla wiki, comentários e participação moderada. O checkout é a exceção
+aprovada em 2026-10-27: não exige e-mail confirmado.
 
 ## 6. Decisões do responsável (pendentes)
 
@@ -65,7 +67,7 @@ Esta política não restringe leitura pública da wiki nem páginas instituciona
 
 - Contas existentes precisam confirmar (sem marca `email_confirmed` = não confirmado).
 - Cadastro é confirmado pelo `email_confirmer` (realm `aculta_registration`).
-- Escopo: cursos, wiki, comentários, loja e apoio.
+- Escopo original: cursos, wiki, comentários, loja e apoio. **Atualização de 2026-10-27:** checkout Commerce é exceção e permite compra/apoio sem confirmação, sob as verificações de pedido, permissões e termos da seção 1.
 - Login por OAuth confirma o e-mail (provedor já verificou o endereço).
 
 ## 7. Segurança
@@ -122,7 +124,7 @@ própria e não devem ser tratados como garantia.
 |---|---|---|---|
 | Cursos (matrícula e aulas) | Sem requisito de e-mail; exige Group `take` e termos vigentes | Aplicado | `ProtectedRouteAccessCheck::course()` |
 | Checkout de curso | Sem requisito de e-mail; exige propriedade/acesso do pedido e termos vigentes | Aplicado | `ProtectedRouteAccessCheck::checkout()` para pedido `curso` |
-| Checkout (loja) | Exige e-mail confirmado | Aplicado | `ProtectedRouteAccessCheck` (rota `/checkout`) |
+| Checkout (loja, cursos e doações pelo Commerce) | Não exige e-mail confirmado; exige propriedade e permissões Commerce e aceite vigente dos termos | Aplicado (decisão do responsável em 2026-10-27) | `ProtectedRouteAccessCheck::checkout()` |
 | Apoio (contribuições) | Exige e-mail confirmado | A confirmar | Sem verificação própria nesta revisão |
 | Wiki: editar e excluir verbete | Exige e-mail confirmado | Aplicado | `EntityHooks::entityAccess`, `update` e `delete` |
 | Wiki: criar verbete | Exige e-mail confirmado | Aplicado pelo papel | Só `email_confirmed` concede escrita na wiki (`wiki_contributor` foi mesclado em `email_confirmed`; sem hook) |
@@ -137,6 +139,7 @@ Notas:
 - O papel `email_confirmed` é irreversível pela administração (`EmailConfirmedRoleGuard`). A marca de confirmação
   fica em `user.data` do módulo `aculta_portal`.
 - O papel `email_confirmed` também pula o CAPTCHA. Isso é independente do bloqueio de escrita.
+- A exceção do checkout não concede `email_confirmed`, não altera os bloqueios de edição/comentário e não marca a conta como confirmada.
 - Contas existentes sem confirmação (decisão 6.2) não podem comentar nem participar do fórum até confirmar.
   No teste, a conta de editor `coletivo420` está nesse caso.
 

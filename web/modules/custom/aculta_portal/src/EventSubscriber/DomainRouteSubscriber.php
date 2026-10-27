@@ -10,25 +10,29 @@ use Drupal\Core\Routing\RoutingEvents;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Symfony\Component\Routing\RouteCollection;
 
-/** Applies canonical paths and purpose metadata to known route families. */
+/**
+ * Applies canonical paths and purpose metadata to known route families. */
 final class DomainRouteSubscriber extends RouteSubscriberBase {
 
   public function __construct(private readonly ConfigFactoryInterface $configFactory) {}
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public static function getSubscribedEvents(): array {
     // Rename Admin Paths runs at -2048; translate its resulting paths after it.
     return [RoutingEvents::ALTER => [['onAlterRoutes', -2049]]];
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected function alterRoutes(RouteCollection $collection): void {
-    // Doação rápida passa pelo resumo antes do pagamento (Portal\Donation\DonationSummaryController).
+    // Doação rápida passa pelo resumo antes do pagamento
+    // (Portal\Donation\DonationSummaryController).
     if ($quick = $collection->get('aculta_donation.donation.quick')) {
       $quick->setDefault('_controller', '\\Drupal\\aculta_portal\\Donation\\DonationSummaryController::quick');
     }
-    // Política de confirmação de e-mail: cursos e checkout exigem e-mail confirmado, somado à regra original do dono
-    // do recurso (ProtectedRouteAccessCheck). Rota sem recurso (/checkout) só recebe a checagem de e-mail; mantém _permission.
+    // Checkout aceita contas autenticadas sem e-mail confirmado, mantendo as
+    // verificações de propriedade/Commerce e o aceite dos termos.
     $protected = [
       'lms.course.start' => 'aculta_portal.access.protected_route:course',
       'lms.group.answer_form' => 'aculta_portal.access.protected_route:course',
@@ -40,7 +44,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       }
     }
     if ($route = $collection->get('commerce_checkout.checkout')) {
-      $route->setRequirement('_custom_access', 'aculta_portal.access.protected_route:account');
+      $route->setRequirement('_custom_access', 'aculta_portal.access.protected_route:checkoutStart');
     }
     $pathChanges = [
       'user.login' => '/entrar',
@@ -120,8 +124,9 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       }
     }
 
-    // Endereços, pagamentos e pedido: o ID do usuário sai da URL; AccountRouteSubscriber põe o usuário da sessão
-    // no parâmetro antes das verificações de acesso do Commerce. Rotas antigas /user/{uid}/... deixam de existir.
+    // Endereços, pagamentos e pedidos não recebem UID na URL; o
+    // AccountRouteSubscriber usa o usuário da sessão para verificar acesso.
+    // Rotas antigas /user/{uid}/... deixam de existir.
     $account_paths = [
       'entity.commerce_order.user_view' => ['/pedidos/{commerce_order}', []],
     ];
@@ -132,28 +137,43 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         $route->setOption('_aculta_domain_purpose', 'account');
       }
     }
-    // Meios de pagamento não são guardados nem exibidos pelo portal: o pagamento é do Mercado Pago. As rotas de
-    // cadastro, edição, exclusão, padrão e listagem são removidas (404).
-    foreach (['entity.commerce_payment_method.add_form', 'entity.commerce_payment_method.edit_form', 'entity.commerce_payment_method.delete_form', 'entity.commerce_payment_method.set_default'] as $name) {
+    // Meios de pagamento não são guardados nem exibidos pelo Portal: o
+    // pagamento é do Mercado Pago. As rotas de cadastro, edição, exclusão,
+    // padrão e listagem são removidas (404).
+    foreach ([
+      'entity.commerce_payment_method.add_form',
+      'entity.commerce_payment_method.edit_form',
+      'entity.commerce_payment_method.delete_form',
+      'entity.commerce_payment_method.set_default',
+    ] as $name) {
       $collection->remove($name);
     }
-    // Verificações que dependiam do usuário da URL passam a usar a sessão (login) e a verificação da entidade
-    // (dono do pedido ou do perfil). Ver docs/portal/REDIRECTS.md, seção de caminhos de conta.
+    // Verificações usam a sessão e a entidade (dono do pedido/perfil).
+    // Ver docs/portal/REDIRECTS.md, seção de caminhos de conta.
     // Commerce address-book routes are obsolete: the canonical address
     // editor is aculta_portal.my_data_address (/dados/endereco). Do not
     // redirect old pages in a development-only route contract.
-    foreach (['commerce_order.address_book.overview', 'commerce_order.address_book.add_form', 'commerce_order.address_book.edit_form', 'commerce_order.address_book.delete_form', 'commerce_order.address_book.set_default'] as $name) {
+    foreach ([
+      'commerce_order.address_book.overview',
+      'commerce_order.address_book.add_form',
+      'commerce_order.address_book.edit_form',
+      'commerce_order.address_book.delete_form',
+      'commerce_order.address_book.set_default',
+    ] as $name) {
       $collection->remove($name);
     }
-    // Pedidos e pagamentos são as listas do Commerce, agora no painel da conta (sem ID na URL).
-    // O controller da página é o do Portal; o acesso exige login e a lista usa o usuário da sessão.
+    // Pedidos e pagamentos são listas do Commerce no painel da conta, sem UID
+    // na URL. O controller do Portal exige login e usa a sessão atual.
     $account_lists = [
       'view.commerce_user_orders.order_page' => ['/pedidos', 'orders', 'Meus pedidos'],
     ];
     foreach ($account_lists as $name => [$path, $method, $title]) {
       if ($route = $collection->get($name)) {
         $route->setPath($path);
-        $route->setDefaults(['_controller' => '\\Drupal\\aculta_portal\\Controller\\PortalController::' . $method, '_title' => $title]);
+        $route->setDefaults([
+          '_controller' => '\\Drupal\\aculta_portal\\Controller\\PortalController::' . $method,
+          '_title' => $title,
+        ]);
         $route->setRequirements(['_user_is_logged_in' => 'TRUE']);
         $route->setOption('parameters', []);
         $route->setOption('_aculta_domain_purpose', 'account');
@@ -162,7 +182,19 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     // There is no separate payment-methods screen: remove its old list
     // route, instead of publishing a temporary /pagamentos alias.
     $collection->remove('entity.commerce_payment_method.collection');
-    foreach (['aculta_portal.dashboard', 'aculta_portal.my_data', 'aculta_portal.my_data_address', 'aculta_portal.my_data_other', 'aculta_portal.connections', 'aculta_portal.security', 'aculta_portal.security_password', 'aculta_portal.support_my', 'aculta_portal.support_subscription_action', 'aculta_portal.account_courses', 'aculta_portal.account_settings'] as $name) {
+    foreach ([
+      'aculta_portal.dashboard',
+      'aculta_portal.my_data',
+      'aculta_portal.my_data_address',
+      'aculta_portal.my_data_other',
+      'aculta_portal.connections',
+      'aculta_portal.security',
+      'aculta_portal.security_password',
+      'aculta_portal.support_my',
+      'aculta_portal.support_subscription_action',
+      'aculta_portal.account_courses',
+      'aculta_portal.account_settings',
+    ] as $name) {
       if ($route = $collection->get($name)) {
         $route->setOption('_aculta_domain_purpose', 'account');
       }
@@ -183,24 +215,25 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         $route->setOption('_aculta_domain_purpose', 'wiki');
       }
     }
-    // Página do produto da loja pertence ao purpose SHOP (host de loja por ambiente, ver o mapeamento de endereços por ambiente).
+    // Páginas de produto pertencem a SHOP (host conforme o ambiente).
     // Carrinho e checkout continuam no MAIN (DomainRoutePolicy).
     if ($route = $collection->get('entity.commerce_product.canonical')) {
       $route->setOption('_aculta_domain_purpose', 'shop');
     }
-    // Catálogo público da loja; a listagem e o detalhe permanecem no purpose SHOP.
+    // O catálogo público também pertence ao purpose SHOP.
     if ($route = $collection->get('view.aculta_shop_catalog.page_catalog')) {
       $route->setOption('_aculta_domain_purpose', 'shop');
     }
 
-    // Listagens por sessão da Revista (view revista_sessoes) pertencem ao purpose MAGAZINE.
+    // Listagens por sessão da Revista pertencem ao purpose MAGAZINE.
     foreach ($collection as $name => $route) {
       if (str_starts_with((string) $name, 'view.revista_sessoes.')) {
         $route->setOption('_aculta_domain_purpose', 'magazine');
       }
     }
 
-    // Rotas do módulo Forum (fórum, tópicos e containers) pertencem ao purpose FORUM. Admin continua em MAIN (abaixo).
+    // Fórum, tópicos e containers pertencem ao purpose FORUM. Admin continua
+    // em MAIN (abaixo).
     foreach ($collection as $name => $route) {
       if (str_starts_with((string) $name, 'forum.')
         || str_starts_with((string) $name, 'aculta_forum.')
@@ -216,7 +249,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         $route->setOption('_aculta_domain_purpose', 'main');
       }
       if (DomainRoutePolicy::isDonationFlowRouteName((string) $name)) {
-        // Escolha do valor (apoio) fica no SUPPORT; as etapas de checkout ficam no MAIN, com as rotas do Commerce.
+        // Escolha do valor fica em SUPPORT; o checkout Commerce fica em MAIN.
         $purpose = DomainRoutePolicy::purposeForDonationRoute((string) $name);
         $route->setOption('_aculta_domain_purpose', $purpose);
         $route->setOption('_aculta_cross_domain_canonical_purpose', $purpose);

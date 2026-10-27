@@ -6,28 +6,27 @@ namespace Drupal\aculta_portal\Access;
 
 use Drupal\aculta_portal\Account\AcultaUserAgreementPolicy;
 use Drupal\commerce_checkout\Controller\CheckoutController;
-use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Checkout e cursos: preserva acesso original; cursos seguem matrícula Group sem exigir e-mail confirmado.
+ * Commerce and LMS access checks preserve their owners' authorization rules.
  *
- * A política de confirmação de e-mail não substitui a regra do Commerce (dono do pedido, loja publicada,
- * itens, permissão "access checkout") nem a do LMS (group.take). Para loja e rotas sem recurso, combina a regra de
- * e-mail; para cursos, combina somente o acesso Group com os termos vigentes.
+ * Checkout is an exception to the email-confirmation policy. Commerce still
+ * verifies order ownership, store publication, cart items, and `access
+ * checkout`; authenticated customers must also accept the current terms.
  */
 final class ProtectedRouteAccessCheck {
 
   public function __construct(
-    private readonly EmailConfirmedAccessCheck $emailCheck,
     private readonly ClassResolverInterface $classResolver,
     private readonly AcultaUserAgreementPolicy $termsPolicy,
   ) {}
 
-  /** Checkout do Commerce: rota /checkout/{pedido}/{etapa}. */
+  /**
+   * Checkout do Commerce: rota /checkout/{pedido}/{etapa}. */
   public function checkout(RouteMatchInterface $routeMatch, AccountInterface $account): AccessResult {
     $commerce = $this->classResolver->getInstanceFromDefinition(CheckoutController::class);
     $commerceAccess = $commerce->checkAccess($routeMatch, $account);
@@ -37,16 +36,11 @@ final class ProtectedRouteAccessCheck {
     if ($account->isAnonymous()) {
       return $commerceAccess;
     }
-    $order = $routeMatch->getParameter('commerce_order');
-    $emailAccess = $order instanceof OrderInterface && $order->bundle() === 'curso'
-      ? AccessResult::allowed()->cachePerUser()
-      : $this->emailCheck->access($account);
-    return $commerceAccess
-      ->andIf($emailAccess)
-      ->andIf($this->terms($account));
+    return $commerceAccess->andIf($this->terms($account));
   }
 
-  /** Curso e lição do LMS: Group decide a matrícula; termos seguem obrigatórios. */
+  /**
+   * Curso e lição do LMS: Group decide a matrícula; termos seguem obrigatórios. */
   public function course(RouteMatchInterface $routeMatch, AccountInterface $account): AccessResult {
     $group = $routeMatch->getParameter('group');
     $take = $group ? $group->access('take', $account, TRUE) : AccessResult::neutral();
@@ -55,12 +49,19 @@ final class ProtectedRouteAccessCheck {
     return $take->andIf($this->terms($account));
   }
 
-  /** Rotas sem recurso próprio (ex.: /checkout): e-mail confirmado e aceite dos termos. */
-  public function account(AccountInterface $account): AccessResult {
-    return $this->emailCheck->access($account)->andIf($this->terms($account));
+  /**
+   * Commerce checkout entry route; its permission still controls access. */
+  public function checkoutStart(AccountInterface $account): AccessResult {
+    if ($account->isAnonymous()) {
+      // The route's own `access checkout` permission applies; keep anonymous
+      // cart checkout available and leave cart ownership to Commerce.
+      return AccessResult::allowed()->cachePerUser();
+    }
+    return $this->terms($account);
   }
 
-  /** Aceite da versão atual dos termos. Visitante anônimo recebe resultado neutro, como no e-mail. */
+  /**
+   * Aceite da versão atual dos termos. Visitante anônimo recebe resultado neutro, como no e-mail. */
   private function terms(AccountInterface $account): AccessResult {
     if ($account->isAnonymous()) {
       return AccessResult::neutral()->cachePerUser();

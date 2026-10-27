@@ -32,7 +32,7 @@ O domínio de Conta usa a coleção de configuração `domain.conta_aculta_org`,
 
 ## C) Contas
 
-- **Admin `piradopirata`**: uid 1, papéis `administrator` e `authenticated`. O e-mail não está confirmado, e a política de checkout (`aculta_portal.access.protected_route`) nega o checkout. Não confirmar e-mail direto no banco sem decisão do responsável.
+- **Admin `piradopirata`**: uid 1, papéis `administrator` e `authenticated`. O e-mail não está confirmado. Decisão do responsável em 2026-10-27: checkout é exceção e não exige essa confirmação; continuam valendo propriedade do pedido, permissões Commerce e aceite dos termos. Não marcar e-mail confirmado diretamente no banco.
 - **Usuário de teste `teste.comum`** (uid 5): e-mail `teste.comum@example.invalid` (domínio reservado, não recebe mensagens). Papéis observados no Runtime de teste em 2026-10-21: `authenticated`, `email_confirmed`, `gerente_loja`, `content_editor`, `lms_teacher` e `estudante`. Sem papel administrativo (`administrator`); as rotas `/painel-administrativo/*` respondem 403 para esta conta. Os papéis extras vieram de testes de LMS e de Revista e são mantidos como estão até decisão de conta (ver DT-K01 no `docs/operations/DEBT-REGISTER.md`). Termos aceitos e confirmação de e-mail registrados. Criado pelo agente do repositório no banco de testes.
 - **Limpeza ao final de cada rodada**: excluir o usuário `teste.comum`, os pedidos de teste (rascunhos e concluídos), perfis de cobrança e endereços criados no teste. Não deixar resíduos. Só executar com o pedido do responsável.
 

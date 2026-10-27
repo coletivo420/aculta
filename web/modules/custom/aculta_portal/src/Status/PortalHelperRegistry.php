@@ -259,6 +259,11 @@ final class PortalHelperRegistry {
       'summary' => 'Decide disponibilidade do checkout comum e dos fluxos dedicados, e detecta conflitos de tipo de pedido.',
       'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md',
     ],
+    'aculta_portal.checkout_step_resolver' => [
+      'label' => 'Etapa inicial do checkout',
+      'summary' => 'Seleciona uma etapa visível para a sessão atual e evita voltar a um pane de login oculto após autenticação.',
+      'docs' => 'docs/portal/PAYMENT-DOMAIN-POLICY.md',
+    ],
   ];
 
   /**
