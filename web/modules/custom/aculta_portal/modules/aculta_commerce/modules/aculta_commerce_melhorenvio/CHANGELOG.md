@@ -3,7 +3,7 @@
 ## 0.1.0-dev.10 — validar o CEP original antes de salvar (2026-10-27)
 
 - O endpoint do simulador agora delega a validação e normalização ao lookup compartilhado sem remover caracteres da entrada. Isso impede que texto malformado contendo oito dígitos seja salvo como último CEP.
-- Adicionados testes do endpoint para CEP mascarado válido e entrada adulterada; suíte Unit do módulo: 135 testes / 377 assertions PASS.
+- Adicionados testes do endpoint para CEP mascarado válido e entrada adulterada; suíte Unit do módulo: 135 testes / 377 assertions PASS. Kernel wiring: 15 testes / 69 assertions PASS (130 depreciações de Core/contrib).
 
 ## 0.1.0-dev.9 — persistir o último CEP para preenchimento automático (2026-10-27)
 
