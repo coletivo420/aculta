@@ -1,5 +1,10 @@
 # Changelog — ACULTA Commerce Melhor Envio
 
+## 0.1.0-dev.10 — validar o CEP original antes de salvar (2026-10-27)
+
+- O endpoint do simulador agora delega a validação e normalização ao lookup compartilhado sem remover caracteres da entrada. Isso impede que texto malformado contendo oito dígitos seja salvo como último CEP.
+- Adicionados testes do endpoint para CEP mascarado válido e entrada adulterada; suíte Unit do módulo: 135 testes / 377 assertions PASS.
+
 ## 0.1.0-dev.9 — persistir o último CEP para preenchimento automático (2026-10-27)
 
 - Visitantes guardam o último CEP válido na sessão; contas autenticadas usam `user.data`, removido automaticamente quando a conta é excluída. O CEP salvo no endereço `authenticated` é usado como padrão se ainda não houver CEP do simulador.

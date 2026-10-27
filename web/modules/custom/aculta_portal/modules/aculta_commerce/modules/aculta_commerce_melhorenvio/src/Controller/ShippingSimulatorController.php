@@ -15,9 +15,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Endpoint JSON do simulador de frete, chamado pelo componente shipping-calculator.
+ * Endpoint JSON do simulador de frete.
  *
- * Responde sempre com um dos estados do simulador. Limite de 30 consultas por minuto por IP, como as consultas de CEP.
+ * Responde com um estado do simulador e limita consultas por IP.
  */
 final class ShippingSimulatorController {
 
@@ -49,16 +49,14 @@ final class ShippingSimulatorController {
     $this->flood->register(self::FLOOD_NAME, self::FLOOD_WINDOW, $ip);
     $cep = (string) $request->query->get('cep', '');
     $variation = $this->variation((int) $request->query->get('variation', 0));
-    // Com produto, usa o pacote da variação (padrão como mínimo). Sem produto, cota o carrinho inteiro: cada item
-    // vai à API com a própria medida e quantidade.
+    // Com produto, usa seu pacote; sem produto, usa as dimensões e quantidades
+    // do carrinho.
     $result = $variation !== NULL
       ? $this->simulator->simulateForVariation($cep, $variation)
       : $this->simulator->simulateForCartLines($cep, $this->cartLines->lines());
-    // Guarda o cálculo na sessão para o produto e o carrinho (o carrinho lateral só lê). CEP inválido não é guardado.
-    $digits = preg_replace('/\D/', '', $cep) ?? '';
-    if (strlen($digits) === 8) {
-      $this->store->save($digits, $result);
-    }
+    // The shared lookup validates and normalizes the original input. Stripping
+    // characters here could save malformed text as a valid-looking CEP.
+    $this->store->save($cep, $result);
     return $this->json($result->toArray());
   }
 
@@ -78,7 +76,7 @@ final class ShippingSimulatorController {
   }
 
   /**
-   * Variação de produto da loja (produto_loja), publicada. NULL para id ausente ou inválido.
+   * Variação de produto da loja publicada; NULL para ID ausente ou inválido.
    */
   private function variation(int $id): ?ProductVariationInterface {
     if ($id <= 0) {

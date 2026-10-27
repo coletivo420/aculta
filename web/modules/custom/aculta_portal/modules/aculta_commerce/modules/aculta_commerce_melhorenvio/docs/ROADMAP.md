@@ -1,6 +1,6 @@
 # Roadmap — ACULTA Commerce Melhor Envio
 
-Versão do manifesto: `0.1.0-dev.6`. Este componente é um adaptador de transportadora; o motor, métodos, tarifas, pedidos e
+Versão do manifesto: `0.1.0-dev.10`. Este componente é um adaptador de transportadora; o motor, métodos, tarifas, pedidos e
 remessas são propriedade de `aculta_commerce`. O submódulo permanece fora do Config Sync conforme decisão operacional.
 
 ## Estado comprovado
