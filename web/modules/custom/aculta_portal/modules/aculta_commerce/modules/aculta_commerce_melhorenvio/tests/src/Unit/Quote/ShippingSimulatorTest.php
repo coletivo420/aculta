@@ -242,17 +242,26 @@ final class ShippingSimulatorTest extends UnitTestCase {
   }
 
   /**
-   * Variação sem peso ou dimensões cadastrados não tem pacote: indisponível, sem presumir medida.
+   * Variação sem medidas usa o pacote padrão da configuração. Sem padrão configurado, a variação sem medidas não tem
+   * pacote e fica indisponível (nenhuma medida é presumida).
    */
-  public function testVariationWithoutWeightOrDimensionsIsUnavailable(): void {
+  public function testVariationWithoutMeasuresUsesDefaultOrIsUnavailable(): void {
     $empty = $this->createMock(\Drupal\Core\Field\FieldItemListInterface::class);
     $empty->method('isEmpty')->willReturn(TRUE);
     $variation = $this->createMock(\Drupal\commerce_product\Entity\ProductVariationInterface::class);
     $variation->method('hasField')->willReturn(TRUE);
     $variation->method('get')->willReturn($empty);
-    $simulator = $this->simulator(self::ORIGIN, TRUE, $this->quoter(), ['width' => 16, 'height' => 2, 'length' => 11, 'weight' => 0.3]);
-    $this->assertNull($simulator->packageForVariation($variation));
-    $this->assertSame(ShippingSimulation::REASON_NO_PACKAGE, $simulator->availabilityReason($variation));
+
+    $com_padrao = $this->simulator(self::ORIGIN, TRUE, $this->quoter(), ['width' => 16, 'height' => 2, 'length' => 11, 'weight' => 0.3]);
+    $pacote = $com_padrao->packageForVariation($variation);
+    $this->assertNotNull($pacote);
+    $this->assertSame(16.0, $pacote->widthCm);
+    $this->assertSame(0.3, $pacote->weightKg);
+    $this->assertNull($com_padrao->availabilityReason($variation));
+
+    $sem_padrao = $this->simulator(self::ORIGIN, TRUE, $this->quoter(), NULL);
+    $this->assertNull($sem_padrao->packageForVariation($variation));
+    $this->assertSame(ShippingSimulation::REASON_NO_PACKAGE, $sem_padrao->availabilityReason($variation));
   }
 
 }

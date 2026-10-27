@@ -13,7 +13,7 @@
     <a class="aculta-shipping-calculator__ajuda" href="{{ help_url|default('https://buscacepinter.correios.com.br/app/endereco/index.php') }}" target="_blank" rel="noopener noreferrer">Não sei meu CEP</a>
   </div>
 
-  <div class="aculta-shipping-calculator__resultado" aria-live="polite" data-aculta-shipping-resultado>
+  <div class="aculta-shipping-calculator__resultado" aria-live="polite" aria-busy="false" data-aculta-shipping-resultado>
     {% if state == 'available' and options %}
       <ul class="aculta-shipping-calculator__opcoes list-unstyled">
         {% for option in options %}

@@ -9,6 +9,7 @@
 
   const apresentar = (resultado, data) => {
     resultado.replaceChildren();
+    resultado.setAttribute('aria-busy', 'false');
     if (data.state === 'available' && Array.isArray(data.options) && data.options.length > 0) {
       const lista = document.createElement('ul');
       lista.className = 'aculta-shipping-calculator__opcoes list-unstyled';
@@ -41,6 +42,21 @@
     }
   };
 
+  const apresentarCarregamento = (resultado) => {
+    resultado.replaceChildren();
+    resultado.setAttribute('aria-busy', 'true');
+    const estado = document.createElement('p');
+    estado.className = 'aculta-shipping-calculator__carregando';
+    estado.setAttribute('role', 'status');
+    const icone = document.createElement('span');
+    icone.className = 'aculta-shipping-calculator__icone-carregando';
+    icone.setAttribute('aria-hidden', 'true');
+    const texto = document.createElement('span');
+    texto.textContent = 'Calculando o frete…';
+    estado.append(icone, texto);
+    resultado.append(estado);
+  };
+
   Drupal.behaviors.acultaShippingCalculator = {
     attach(context) {
       once('acultaShippingCalculator', '[data-aculta-shipping-calculator]', context).forEach((raiz) => {
@@ -54,6 +70,7 @@
 
         const calcular = async (cep) => {
           const minha = ++consulta;
+          apresentarCarregamento(resultado);
           try {
             const variacao = raiz.dataset.variation && raiz.dataset.variation !== '0' ? `&variation=${encodeURIComponent(raiz.dataset.variation)}` : '';
             const resposta = await fetch(`${endpoint}?cep=${encodeURIComponent(cep)}${variacao}`, {
@@ -75,6 +92,10 @@
         const cancelar = () => {
           clearTimeout(temporizador);
           consulta++;
+          if (resultado.getAttribute('aria-busy') === 'true') {
+            resultado.replaceChildren();
+            resultado.setAttribute('aria-busy', 'false');
+          }
         };
 
         campo.addEventListener('input', () => {

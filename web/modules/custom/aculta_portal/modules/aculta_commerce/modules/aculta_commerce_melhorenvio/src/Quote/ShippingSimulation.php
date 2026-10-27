@@ -35,6 +35,8 @@ final class ShippingSimulation {
 
   public const REASON_RATE_LIMITED = 'rate_limited';
 
+  public const REASON_EMPTY_CART = 'empty_cart';
+
   /**
    * Cria o resultado.
    *
@@ -98,6 +100,7 @@ final class ShippingSimulation {
       self::REASON_INVALID_POSTAL_CODE => 'CEP inválido.',
       self::REASON_FAILURE => 'Não foi possível calcular o frete agora. Tente novamente.',
       self::REASON_RATE_LIMITED => 'Muitas consultas em pouco tempo. Aguarde um minuto.',
+      self::REASON_EMPTY_CART => 'Seu carrinho está vazio.',
       default => 'Cálculo de frete indisponível no momento.',
     };
   }

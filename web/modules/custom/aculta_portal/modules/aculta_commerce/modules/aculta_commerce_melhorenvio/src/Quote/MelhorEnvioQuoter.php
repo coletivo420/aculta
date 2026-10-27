@@ -82,4 +82,27 @@ class MelhorEnvioQuoter {
     return $this->parser->parse($response);
   }
 
+
+  /**
+   * Cotação de um carrinho: um produto por item na API, que monta as caixas.
+   *
+   * @param array<string, mixed>|null $destination
+   *   Campos do destino (país e CEP).
+   * @param list<\Drupal\aculta_commerce_melhorenvio\Quote\QuoteItem> $items
+   *   Itens do carrinho.
+   *
+   * @return list<\Drupal\aculta_commerce_melhorenvio\Quote\QuoteOption>
+   *   Opções disponíveis.
+   *
+   * @throws \Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException
+   *   Endereço inválido, credencial ausente ou falha da API.
+   */
+  public function attemptItems(?array $destination, array $items): array {
+    $pair = $this->binder->bind($destination, MelhorEnvioAddressMapper::PURPOSE_QUOTE);
+    if (!$pair->isValid()) {
+      throw new MelhorEnvioException('invalid_address', 'Endereço inválido para cotação: ' . QuoteRequestBuilder::describeErrors($pair));
+    }
+    $response = $this->client->request('POST', MelhorEnvioEndpoints::QUOTE, $this->builder->buildItems($pair, $items), TRUE);
+    return $this->parser->parse($response);
+  }
 }

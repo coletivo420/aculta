@@ -122,10 +122,15 @@ services:
   Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore:
     alias: aculta_commerce_melhorenvio.quote_store
 
+  # Linhas do carrinho atual para cotação (variação, quantidade e valor).
+  aculta_commerce_melhorenvio.cart_lines:
+    class: Drupal\aculta_commerce_melhorenvio\Quote\CartQuoteLines
+    arguments: ['@commerce_cart.cart_provider']
+
   # Recalcula o frete guardado quando o carrinho é salvo (quantidade alterada ou item removido).
   aculta_commerce_melhorenvio.cart_refresher:
     class: Drupal\aculta_commerce_melhorenvio\Quote\ShippingCartRefresher
-    arguments: ['@aculta_commerce_melhorenvio.shipping_simulator', '@aculta_commerce_melhorenvio.quote_store']
+    arguments: ['@aculta_commerce_melhorenvio.shipping_simulator', '@aculta_commerce_melhorenvio.quote_store', '@aculta_commerce_melhorenvio.cart_lines']
 
   # Recalcula o frete a cada mudança do carrinho (adição, quantidade ou remoção), em qualquer carrinho.
   aculta_commerce_melhorenvio.cart_refresh_subscriber:
@@ -142,3 +147,4 @@ services:
       - '@flood'
       - '@aculta_commerce_melhorenvio.quote_store'
       - '@entity_type.manager'
+      - '@aculta_commerce_melhorenvio.cart_lines'

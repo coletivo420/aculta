@@ -17,6 +17,7 @@ class ShippingCartRefresher {
   public function __construct(
     private readonly ShippingSimulator $simulator,
     private readonly ShippingQuoteStore $store,
+    private readonly CartQuoteLines $cartLines,
   ) {}
 
   /**
@@ -28,7 +29,8 @@ class ShippingCartRefresher {
       return;
     }
     $postal = (string) $stored['postal_code'];
-    $this->store->save($postal, $this->simulator->simulate($postal, NULL));
+    // Recalcula o carrinho inteiro (cada item com a própria medida), não só o pacote da configuração.
+    $this->store->save($postal, $this->simulator->simulateForCartLines($postal, $this->cartLines->lines()));
   }
 
 }

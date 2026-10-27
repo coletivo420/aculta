@@ -82,3 +82,19 @@ a vir do carrinho:
 - Wiring: evento disparado no dispatcher do container, sem gravação no banco.
 - Não verificado: submissão real do carrinho com itens e quantidade alterada, no navegador. Depende de produto com
   pacote, que ainda não existe. Registrar como RUNTIME STATUS: DEFERRED.
+
+## D6. Medidas não preenchidas usam o padrão (2026-10-27)
+
+- Peso e dimensões da variação deixam de ser obrigatórios (configuração do servidor de testes alterada).
+- Cada medida efetiva é a da variação, quando cadastrada, e nunca fica abaixo do padrão. Medida não cadastrada usa o
+  padrão (16 × 2 × 11 cm, 0,3 kg).
+- Sem padrão configurado e sem medida na variação, não há pacote: indisponível.
+
+## D7. Carrinho com vários itens: cada item vai à API, que monta as caixas (2026-10-27)
+
+- Pesquisa: a documentação oficial do Melhor Envio (cálculo de fretes) aceita uma lista `products`, com medida,
+  quantidade e valor de cada item, e a resposta devolve as `packages` já montadas.
+- Decisão: o módulo não soma pesos nem dimensões. Cada item do carrinho vai com a própria medida, a quantidade e o
+  valor declarado da linha (seguro). A API consolida as caixas.
+- Verificado: o pedido de teste (1 item, R$ 30,00) foi cotado no sandbox com PAC, SEDEX e Mini Envios.
+- Cache por CEP e carrinho inteiro, com a mesma validade de 5 minutos.

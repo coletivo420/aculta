@@ -47,6 +47,46 @@ final class QuoteRequestBuilder {
   }
 
   /**
+   * Payload com um produto por item do carrinho (cada um com a própria medida e quantidade). A API do Melhor Envio
+   * monta as caixas a partir da lista `products`; o módulo não soma dimensões.
+   *
+   * @param list<\Drupal\aculta_commerce_melhorenvio\Quote\QuoteItem> $items
+   *   Itens do carrinho.
+   *
+   * @return array<string, mixed>
+   *   Payload pronto para o cliente.
+   *
+   * @throws \InvalidArgumentException
+   *   Quando os endereços não servem para cotação ou não há itens.
+   */
+  public function buildItems(ShipmentAddressPair $pair, array $items): array {
+    if (!$pair->isValid()) {
+      throw new \InvalidArgumentException('Endereços inválidos para cotação: ' . self::describeErrors($pair));
+    }
+    if ($items === []) {
+      throw new \InvalidArgumentException('Carrinho sem itens para cotação.');
+    }
+    $products = [];
+    foreach ($items as $item) {
+      $products[] = [
+        'id' => $item->reference,
+        'width' => self::centimeters($item->package->widthCm),
+        'height' => self::centimeters($item->package->heightCm),
+        'length' => self::centimeters($item->package->lengthCm),
+        'weight' => max(0.01, round($item->package->weightKg, 3)),
+        'insurance_value' => max(0.0, round($item->insuranceValue, 2)),
+        'quantity' => max(1, $item->quantity),
+      ];
+    }
+    return [
+      'from' => $pair->from->toQuoteArray(),
+      'to' => $pair->to->toQuoteArray(),
+      'products' => $products,
+      'options' => ['receipt' => FALSE, 'own_hand' => FALSE],
+    ];
+  }
+
+  /**
    * Códigos de erro por lado, para log e exceção: "origem: x; destino: y". Não inclui CEP nem endereço.
    */
   public static function describeErrors(ShipmentAddressPair $pair): string {

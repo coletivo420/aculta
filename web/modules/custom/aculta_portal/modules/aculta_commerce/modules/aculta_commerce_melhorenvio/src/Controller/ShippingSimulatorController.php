@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_commerce_melhorenvio\Controller;
 
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulation;
+use Drupal\aculta_commerce_melhorenvio\Quote\CartQuoteLines;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulator;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
@@ -34,6 +35,7 @@ final class ShippingSimulatorController {
     private readonly FloodInterface $flood,
     private readonly ShippingQuoteStore $store,
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly CartQuoteLines $cartLines,
   ) {}
 
   /**
@@ -47,10 +49,11 @@ final class ShippingSimulatorController {
     $this->flood->register(self::FLOOD_NAME, self::FLOOD_WINDOW, $ip);
     $cep = (string) $request->query->get('cep', '');
     $variation = $this->variation((int) $request->query->get('variation', 0));
-    // Com produto, usa o pacote da variação (padrão como mínimo). Sem produto (carrinho), usa o pacote da configuração.
+    // Com produto, usa o pacote da variação (padrão como mínimo). Sem produto, cota o carrinho inteiro: cada item
+    // vai à API com a própria medida e quantidade.
     $result = $variation !== NULL
       ? $this->simulator->simulateForVariation($cep, $variation)
-      : $this->simulator->simulate($cep, NULL);
+      : $this->simulator->simulateForCartLines($cep, $this->cartLines->lines());
     // Guarda o cálculo na sessão para o produto e o carrinho (o carrinho lateral só lê). CEP inválido não é guardado.
     $digits = preg_replace('/\D/', '', $cep) ?? '';
     if (strlen($digits) === 8) {
