@@ -80,10 +80,8 @@ Os IDs seguem a documentação e o fixture do sandbox (`tests/fixtures/quote-san
    indisponível e nenhuma chamada é feita. Nenhum CEP de origem é fixado no código.
 2. **Credencial.** O cliente só chama a API quando as duas chaves do Drupal Key do ambiente ativo existem. Sem elas, o
    estado é indisponível. Nenhuma chamada real sem credencial.
-3. **Pacote.** O produto não tem peso nem dimensões cadastrados (a página mostra "Não aplicável"). O pacote padrão do
-   motor (`custom_box`) tem dimensões zero, e o construtor de payload o converteria em 1 cm. Cotar com isso daria preço
-   para uma caixa que não existe. Por isso o simulador exige um pacote real: sem pacote, o estado é indisponível.
-   Isso fica como bloqueio explícito até que o cadastro de dimensões exista (ME-0.2-B).
+3. **Pacote.** O produto não tem peso nem dimensões cadastrados. O pacote padrão é cadastrado pelo responsável no
+   formulário da origem (zero por padrão). Sem pacote, o estado é indisponível e nenhuma medida é presumida.
 4. **Falha.** Erro de rede, HTTP ou credencial recusada vira estado "falha" para o visitante. O carrinho e o checkout
    nunca são interrompidos. Falhas não são guardadas em cache.
 5. **Cache.** Só resultados de cotação bem-sucedidos (com ou sem opções) são guardados por CEP de destino e assinatura
@@ -110,6 +108,6 @@ Confirmar a URL antes da publicação. A URL fica como propriedade do componente
 | Item | Dono | Situação |
 |---|---|---|
 | CEP de origem da loja | Responsável | Pendente. Sem ele o simulador fica indisponível. |
-| Dimensões e peso por produto | Catálogo | Pendente. Sem eles o simulador fica indisponível (sem pacote). |
+| Pacote padrão (medidas e peso reais da embalagem) | Responsável | Pendente de cadastro no formulário da origem. Sem ele o simulador fica indisponível. |
 | Confirmação da URL dos Correios | Responsável | Pendente. |
 | Validação de cotação no servidor de testes com a origem configurada | Frente | Pendente (RUNTIME STATUS: DEFERRED). |

@@ -39,12 +39,15 @@ conta própria.
 - Falhas não são guardadas: a próxima consulta tenta de novo.
 - Mudar a origem invalida o cache pela tag de configuração.
 
-## D5. Sem pacote real, o frete fica indisponível (2026-10-27)
+## D5. Pacote padrão cadastrado pelo responsável; sem medidas, o frete fica indisponível (2026-10-27)
 
-- O produto não tem peso nem dimensões cadastrados. O pacote padrão do motor tem dimensão zero e não é usado: cotar com
-  ele daria preço de uma caixa que não existe.
-- Enquanto não houver pacote, todo cálculo responde "Cálculo de frete indisponível no momento.", mesmo com origem e
-  credencial configuradas.
+- O catálogo não tem peso nem dimensões por produto (o bundle `produto_loja` não tem campos físicos). O pacote do
+  motor (`custom_box`) tem dimensão zero e não é usado: cotar com ele daria preço de uma caixa que não existe.
+- O responsável cadastra o **pacote padrão de envio** no formulário da origem (largura, altura, comprimento em cm e peso
+  em kg). Zero por padrão: nenhuma medida é presumida pelo código.
+- Enquanto o pacote não estiver cadastrado, todo cálculo responde "Cálculo de frete indisponível no momento.", mesmo
+  com origem e credencial configuradas.
+- O valor declarado (seguro) não entra na cotação: o pacote padrão sai com seguro zero.
 
 ## Pendência aberta: ordem do recálculo quando o pacote vier do carrinho
 
@@ -57,6 +60,9 @@ a vir do carrinho:
 
 ## Verificação
 
+- Cotação real no sandbox (origem já configurada no servidor de testes, pacote temporário só em memória, sem gravação):
+  PAC R$ 23,00 em 7 dias, SEDEX R$ 51,93 em 3 dias, Mini Envios R$ 17,85 em 10 dias. Endpoint `/frete/simular` com
+  CEP válido responde disponível com essas opções; CEP inválido responde indisponível sem chamar a API.
 - Testes unitários: `ShippingCartRefresherTest`, `CartRefreshSubscriberTest`, `ShippingQuoteStoreTest`,
   `ShippingCalculatorHooksTest` e `ShippingSimulatorTest`.
 - Wiring: evento disparado no dispatcher do container, sem gravação no banco.
