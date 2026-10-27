@@ -105,3 +105,14 @@ a vir do carrinho:
 - Se a pessoa autenticada ainda não tiver usado o simulador, o campo recebe o CEP do perfil `authenticated` (`field_address`). Um CEP usado explicitamente depois passa a prevalecer e é calculado ao abrir o componente.
 - Só o CEP normalizado é guardado como preferência. A cotação continua tendo TTL de 15 minutos na sessão; o CEP salvo não tem prazo independente e acompanha a sessão do visitante ou a conta autenticada.
 - Essa finalidade foi incluída na minuta da Política de Privacidade e nos Termos; ambos continuam minutas ainda não publicadas. A publicação em produção deve aguardar a publicação dos textos.
+
+## D8. Frete só para a loja; carrinho lateral cota com o CEP informado (2026-10-27)
+
+- O cálculo de frete é restrito à loja. Entram só itens de produto da loja (bundle `produto_loja`) em pedidos do tipo da
+  loja (`default`). LMS (`produto_curso`), doações (pedido `doacao`), cursos e assinaturas não entram no frete, e um
+  carrinho só com eles não tem frete a calcular.
+- O carrinho lateral mostra o frete quando o comprador informou o CEP em algum campo (produto, carrinho ou conta
+  persistida). Para isso, cota o carrinho atual com esse CEP, usando o cache do simulador. A gaveta não tem campo de CEP.
+- Verificado no navegador: frete PAC, SEDEX e Mini Envios na gaveta após informar o CEP no produto e adicionar o item.
+- Não verificado no navegador: pedido real de LMS ou de doação (não há esses produtos cadastrados no servidor de testes).
+  Coberto por teste unitário de inclusão e exclusão de linhas.
