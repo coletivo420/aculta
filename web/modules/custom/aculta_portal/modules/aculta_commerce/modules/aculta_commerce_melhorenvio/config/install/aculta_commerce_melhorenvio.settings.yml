@@ -8,13 +8,15 @@ origin:
   dependent_locality: ''
   locality: ''
   administrative_area: ''
-# Pacote padrão da cotação: medidas e peso reais da embalagem de envio. Zero = não cadastrado; sem pacote o frete fica
-# indisponível. Dimensões em centímetros (inteiros) e peso em quilos. Não há valor padrão inventado.
+# Pacote padrão da cotação (envelope plástico de e-commerce de roupa). Dimensões em centímetros, peso em quilos.
+# Dimensões: envelope mínimo dos Correios, 16 × 11 cm; altura de 2 cm mantém o formato de envelope (página oficial
+# "Envios pelos Correios", PAC e SEDEX). Peso de 0,3 kg: suposição de uma camiseta, a confirmar pelo responsável.
+# Zero em qualquer campo = não cadastrado; sem pacote o frete fica indisponível.
 package:
-  width: 0
-  height: 0
-  length: 0
-  weight: 0
+  width: 16
+  height: 2
+  length: 11
+  weight: 0.3
 # Ambiente ativo: sandbox ou production. Valor inválido cai no sandbox.
 environment: sandbox
 # URL de retorno cadastrada no app do Melhor Envio. Vazia até o cadastro do app.

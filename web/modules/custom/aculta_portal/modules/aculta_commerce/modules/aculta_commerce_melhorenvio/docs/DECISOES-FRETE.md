@@ -39,15 +39,29 @@ conta própria.
 - Falhas não são guardadas: a próxima consulta tenta de novo.
 - Mudar a origem invalida o cache pela tag de configuração.
 
-## D5. Pacote padrão cadastrado pelo responsável; sem medidas, o frete fica indisponível (2026-10-27)
+## D5. Pacote padrão de envio: 16 × 2 × 11 cm, 0,3 kg (2026-10-27)
 
-- O catálogo não tem peso nem dimensões por produto (o bundle `produto_loja` não tem campos físicos). O pacote do
-  motor (`custom_box`) tem dimensão zero e não é usado: cotar com ele daria preço de uma caixa que não existe.
-- O responsável cadastra o **pacote padrão de envio** no formulário da origem (largura, altura, comprimento em cm e peso
-  em kg). Zero por padrão: nenhuma medida é presumida pelo código.
-- Enquanto o pacote não estiver cadastrado, todo cálculo responde "Cálculo de frete indisponível no momento.", mesmo
-  com origem e credencial configuradas.
+**Decisão.** O responsável pediu um pacote padrão de e-commerce. Ele fica na configuração
+(`aculta_commerce_melhorenvio.settings:package`), com 16 cm de largura, 2 cm de altura, 11 cm de comprimento e 0,3 kg.
+Foi gravado no servidor de testes.
+
+**Pesquisa (fontes).**
+- Página oficial dos Correios, "Envios pelos Correios: Encomendas", seções PAC e SEDEX: envelope mínimo 16 × 11 cm;
+  pacote mínimo 11 × 6 × 0,4 cm; maior lado 100 cm; soma das dimensões 200 cm; peso máximo 30 kg.
+  Fonte: https://www.correios.com.br/enviar/encomendas/nacional
+- Envelope é cobrado como envelope quando tem até 2 cm de altura. O envelope mínimo (16 × 11 cm, altura de 2 cm) é o
+  formato usado em e-commerce de roupa.
+- Fontes de terceiros divergem entre si: um blog do Melhor Envio cita mínimo de 1 × 8 × 13 cm, e a biblioteca
+  `gigapix/frete-correios` cita 16 × 11 × 2 cm. Por isso a regra oficial dos Correios prevalece.
+- O valor de 105 cm por lado citado na conversa não existe nas regras oficiais: o máximo é 100 cm por lado e 200 cm de soma.
+
+**Suposição a confirmar.** O peso de 0,3 kg é de uma camiseta típica. Não consta na pesquisa, e não é do catálogo.
+Se o pacote real for outro, o responsável ajusta no formulário da origem.
+
+**Regras que continuam valendo.**
+- Zero em qualquer campo = não cadastrado; sem pacote o frete fica indisponível.
 - O valor declarado (seguro) não entra na cotação: o pacote padrão sai com seguro zero.
+- Caixas maiores que 16 × 2 × 11 cm não são cobertas por este padrão. Para elas, o responsável cadastra o pacote real.
 
 ## Pendência aberta: ordem do recálculo quando o pacote vier do carrinho
 

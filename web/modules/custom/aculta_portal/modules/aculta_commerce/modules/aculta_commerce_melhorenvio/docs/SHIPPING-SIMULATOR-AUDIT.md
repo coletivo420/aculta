@@ -80,8 +80,9 @@ Os IDs seguem a documentação e o fixture do sandbox (`tests/fixtures/quote-san
    indisponível e nenhuma chamada é feita. Nenhum CEP de origem é fixado no código.
 2. **Credencial.** O cliente só chama a API quando as duas chaves do Drupal Key do ambiente ativo existem. Sem elas, o
    estado é indisponível. Nenhuma chamada real sem credencial.
-3. **Pacote.** O produto não tem peso nem dimensões cadastrados. O pacote padrão é cadastrado pelo responsável no
-   formulário da origem (zero por padrão). Sem pacote, o estado é indisponível e nenhuma medida é presumida.
+3. **Pacote.** O produto não tem peso nem dimensões cadastrados. O pacote padrão, 16 × 2 × 11 cm e 0,3 kg (envelope
+   mínimo dos Correios; peso a confirmar), fica na configuração e pode ser trocado no formulário da origem. Sem pacote,
+   o estado é indisponível.
 4. **Falha.** Erro de rede, HTTP ou credencial recusada vira estado "falha" para o visitante. O carrinho e o checkout
    nunca são interrompidos. Falhas não são guardadas em cache.
 5. **Cache.** Só resultados de cotação bem-sucedidos (com ou sem opções) são guardados por CEP de destino e assinatura
@@ -108,6 +109,6 @@ como propriedade do componente (`help_url`), não fixa no template.
 | Item | Dono | Situação |
 |---|---|---|
 | CEP de origem da loja | Responsável | Pendente. Sem ele o simulador fica indisponível. |
-| Pacote padrão (medidas e peso reais da embalagem) | Responsável | Pendente de cadastro no formulário da origem. Sem ele o simulador fica indisponível. |
+| Peso do pacote padrão (0,3 kg é suposição) | Responsável | Pendente de confirmação. Dimensões já cadastradas (16 × 2 × 11 cm). |
 | Confirmação da URL dos Correios | Responsável | Confirmada em 2026-10-27. |
 | Validação de cotação no servidor de testes com a origem configurada | Frente | Pendente (RUNTIME STATUS: DEFERRED). |
