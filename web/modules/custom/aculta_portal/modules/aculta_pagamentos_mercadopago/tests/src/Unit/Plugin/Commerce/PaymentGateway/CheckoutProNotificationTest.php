@@ -18,6 +18,8 @@ use Drupal\aculta_pagamentos_mercadopago\Plugin\Commerce\PaymentGateway\Checkout
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
 use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
 use Drupal\Tests\UnitTestCase;
+use MercadoPago\Exceptions\MPApiException;
+use MercadoPago\Net\MPResponse;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\Log\LoggerInterface;
@@ -331,6 +333,84 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       'payment_gateway' => 'mercado_pago',
       'remote_id' => '123',
     ], $conditions);
+  }
+
+  /**
+   * Requests webhook retry when the provider API lookup fails.
+   */
+  public function testNotificationReturnsRetryableStatusOnProviderFailure(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client = new class {
+
+      /**
+       * Simulates a transient provider response.
+       */
+      public function get(int $id): object {
+        throw new MPApiException('provider failure', new MPResponse(503, []));
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->expects($this->never())->method('getStorage');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->never())->method('acquire');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    $this->assertSame(503, $response->getStatusCode());
+  }
+
+  /**
+   * Shows a safe payment exception when API verification fails on return.
+   */
+  public function testReturnFailsClosedOnProviderApiFailure(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client = new class {
+
+      /**
+       * Simulates a transient provider response.
+       */
+      public function get(int $id): object {
+        throw new MPApiException('provider failure', new MPResponse(503, []));
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('getData')
+      ->with('commerce_mercado_pago_checkout')
+      ->willReturn(['preference_id' => 'pref-1']);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $this->expectException(PaymentGatewayException::class);
+    $gateway->onReturn($order, new Request([
+      'payment_id' => '123',
+      'merchant_order_id' => '900',
+      'status' => 'approved',
+    ]));
   }
 
   /**

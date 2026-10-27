@@ -55,6 +55,7 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 | Webhook | `WebhookGuard` valida a assinatura com o SDK e rejeita tópico legado sem assinatura | Alinhado |
 | Aprovação pelo webhook | O handler consulta o pagamento remoto e exige status aprovado, referência do pedido, moeda e valor exatos antes de concluir o pagamento Commerce | Unit cobre remoto pendente, referência divergente e transição de autorização existente após aprovação; Kernel/Runtime pendentes |
 | Idempotência | Retorno, webhook e cobrança recorrente serializam por ID remoto e consultam duplicatas dentro do lock | Unit cobre retorno aprovado duplicado, lock de recorrência e filtros Commerce; Kernel/Runtime pendentes |
+| Falha de API | Consulta remota não confirma estado local quando o provedor retorna erro | Unit: webhook responde 503 para reentrega; retorno lança exceção Commerce segura; transação externa não testada |
 | Estorno | `CheckoutPro::refundPayment()` usa `refundTotal` quando o valor cobre o pagamento, senão `refund` parcial | Alinhado |
 | Cancelamento | `MercadoPagoPaymentService::cancelar()` confere o status remoto e chama `PaymentClient::cancel()` do SDK | Alinhado; o endpoint exato não foi confirmado na documentação lida |
 | Assinatura pendente | `status => 'pending'`, sem cartão | Alinhado |
