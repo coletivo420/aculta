@@ -184,6 +184,11 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
       'profiles' => 2,
       'same_uid_conflicts' => 0,
       'reconciled_profiles' => 0,
+      'ignored_no_owner' => 0,
+      'ignored_empty' => 0,
+      'orphan_with_nickname' => 0,
+      'ignored_invalid_format' => 0,
+      'slug_conflicts' => 0,
     ], $registry->rebuild());
     self::assertSame((int) $account->id(), $registry->uidForSlug('nome-2'));
     self::assertSame([
@@ -191,6 +196,11 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
       'profiles' => 2,
       'same_uid_conflicts' => 0,
       'reconciled_profiles' => 0,
+      'ignored_no_owner' => 0,
+      'ignored_empty' => 0,
+      'orphan_with_nickname' => 0,
+      'ignored_invalid_format' => 0,
+      'slug_conflicts' => 0,
     ], $registry->rebuild());
   }
 
@@ -231,6 +241,11 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
       'profiles' => 2,
       'same_uid_conflicts' => 1,
       'reconciled_profiles' => 1,
+      'ignored_no_owner' => 0,
+      'ignored_empty' => 0,
+      'orphan_with_nickname' => 0,
+      'ignored_invalid_format' => 0,
+      'slug_conflicts' => 0,
     ], $registry->rebuild());
     self::assertSame((int) $account->id(), $registry->uidForSlug('segundo'));
 
@@ -242,6 +257,11 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
       'profiles' => 2,
       'same_uid_conflicts' => 0,
       'reconciled_profiles' => 0,
+      'ignored_no_owner' => 0,
+      'ignored_empty' => 0,
+      'orphan_with_nickname' => 0,
+      'ignored_invalid_format' => 0,
+      'slug_conflicts' => 0,
     ], $registry->rebuild());
   }
 
@@ -348,6 +368,59 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
 
   /**
    * Creates a registry using the test database and entity manager.
+   */
+
+  /**
+   * Perfil sem dono e vazio é ignorado: não bloqueia o rebuild nem reivindica índice.
+   */
+  public function testRebuildIgnoresOwnerlessEmptyProfileWithoutBlocking(): void {
+    $account = $this->account('dono-ok');
+    $this->profile((int) $account->id(), 'authenticated', 'ativo');
+    $this->profile(0, 'authenticated', '');
+    $registry = $this->registry();
+
+    $result = $registry->rebuild();
+
+    self::assertSame(1, $result['ignored_no_owner']);
+    self::assertSame(0, $result['orphan_with_nickname']);
+    self::assertSame((int) $account->id(), $registry->uidForSlug('ativo'));
+  }
+
+  /**
+   * Perfil sem dono com apelido não reivindica índice, é contado à parte e não bloqueia.
+   */
+  public function testRebuildCountsOwnerlessProfileWithNicknameWithoutClaim(): void {
+    $account = $this->account('dono-ok-2');
+    $this->profile((int) $account->id(), 'authenticated', 'valido');
+    $this->profile(0, 'authenticated', 'orfao');
+    $registry = $this->registry();
+
+    $result = $registry->rebuild();
+
+    self::assertSame(1, $result['orphan_with_nickname']);
+    self::assertSame(0, $result['ignored_no_owner']);
+    self::assertNull($registry->uidForSlug('orfao'));
+    self::assertSame((int) $account->id(), $registry->uidForSlug('valido'));
+  }
+
+  /**
+   * Repetir o rebuild não muda o índice nem os contadores.
+   */
+  public function testRebuildIsIdempotent(): void {
+    $account = $this->account('idem');
+    $this->profile((int) $account->id(), 'authenticated', 'repetido');
+    $this->profile(0, 'authenticated', '');
+    $registry = $this->registry();
+
+    $primeira = $registry->rebuild();
+    $segunda = $registry->rebuild();
+
+    self::assertSame($primeira, $segunda);
+    self::assertSame((int) $account->id(), $registry->uidForSlug('repetido'));
+  }
+
+  /**
+   * Registro de apelidos com o container de teste.
    */
   private function registry(): NicknameRegistry {
     return new NicknameRegistry(

@@ -347,3 +347,11 @@ Código: PR `e9850297d` + `feat/aculta-user-10013-contagem` (`46dffd76b`) + `fea
 
 - Configuração `views.view.order_shipments` (vinda do commerce_shipping): removida pelo `pm:uninstall commerce_shipping`. Só o ID da configuração sai. Não há equivalente no motor e nenhuma referência no código do projeto (aparece só no CHANGELOG de `aculta_commerce`). Não recriar nem alterar.
 - Nota: a ordem de 2026-10-27 chama a view de `order_movida`; o ID observado na cópia é `views.view.order_shipments`. Registrado o ID observado.
+
+## aculta_user_update_10013: contagem corrigida (2026-10-26)
+
+- O 10013 **não grava em perfis**: não normaliza apelidos e não altera `field_nickname` de nenhum perfil. Só reconstrói o índice `aculta_user_nickname` a partir dos perfis válidos e conta o restante.
+- Perfis **sem dono** (uid ≤ 0) e **vazios** são ignorados sem bloquear. Perfis sem dono com apelido não reivindicam índice e são contados à parte (`orphan_with_nickname`).
+- Investigação posterior: os perfis sem dono encontrados na cópia do Runtime (10, todos vazios) precisam de decisão fora deste ensaio (manter, marcar ou remover).
+- Bloqueio apenas por conflito real entre UIDs. Falha de banco ou transação aborta sem índice parcial.
+- Rollback: o snapshot do Runtime tirado antes da janela. Não existe rollback por SQL.
