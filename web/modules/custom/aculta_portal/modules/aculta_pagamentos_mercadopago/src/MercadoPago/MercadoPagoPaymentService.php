@@ -7,6 +7,7 @@ namespace Drupal\aculta_pagamentos_mercadopago\MercadoPago;
 use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
 use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
 use Drupal\aculta_portal\Exception\PaymentOperationException;
+use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\commerce_price\Price;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -194,6 +195,13 @@ final class MercadoPagoPaymentService implements PaymentOperationsInterface {
     }
     if (!isset($remoto->id) || (string) $remoto->id !== $remote_id) {
       throw new MercadoPagoApiException('O Mercado Pago retornou outro pagamento durante a consulta.');
+    }
+    $pedido = $pagamento->getOrder();
+    $referencia = $remoto->external_reference ?? NULL;
+    if (!$pedido instanceof OrderInterface || $pedido->id() === NULL
+      || (!is_string($referencia) && !is_int($referencia))
+      || (string) $referencia !== (string) $pedido->id()) {
+      throw new MercadoPagoApiException('O pagamento remoto não corresponde ao pedido local.');
     }
     return $remoto;
   }

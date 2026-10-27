@@ -1,3 +1,8 @@
+## 0.1.0-dev.41 — validar vínculo em conciliação de pagamento (2026-10-27)
+
+- `MercadoPagoPaymentService` agora exige que `external_reference` da consulta remota corresponda ao ID do pedido Commerce antes de reconciliar ou cancelar. IDs remotos válidos atribuídos a outro pedido falham fechados.
+- Regressão reproduziu a atualização indevida antes da correção e confirma que nenhum estado é salvo para uma referência divergente. Unit MP: 188 testes / 770 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
+
 ## 0.1.0-dev.40 — tornar idempotente a criação de preferências (2026-10-27)
 
 - `RedirectCheckoutForm` cria preferências pelo `MercadoPagoClientFactory` e envia uma chave `X-Idempotency-Key` determinística por pedido e payload. Retry idêntico mantém a chave; payload ou pedido diferente recebe outra chave.

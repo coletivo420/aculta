@@ -9,6 +9,7 @@ use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoPaymentService;
 use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
+use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\aculta_portal\Exception\PaymentOperationException;
@@ -43,6 +44,10 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
    * Creates a fake SDK client that records cancellation operations.
    */
   private function cliente(object $remoto, ?object &$registro = NULL, ?object $resposta_cancelamento = NULL): object {
+    // Checkout Pro preferences always bind the payment to its Commerce order.
+    if (!isset($remoto->external_reference)) {
+      $remoto->external_reference = '1';
+    }
     $registro = new \stdClass();
     $registro->cancelado = FALSE;
     return new class($remoto, $registro, $resposta_cancelamento) {
@@ -73,6 +78,9 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
   private function pagamento(string $estado, string $remoteId = '123456789'): PaymentInterface&MockObject {
     $pagamento = $this->createMock(PaymentInterface::class);
     $pagamento->method('id')->willReturn(1);
+    $pedido = $this->createMock(OrderInterface::class);
+    $pedido->method('id')->willReturn('1');
+    $pagamento->method('getOrder')->willReturn($pedido);
     $pagamento->method('getRemoteId')->willReturn($remoteId);
     $pagamento->method('getAmount')->willReturn(new Price('120.00', 'BRL'));
     $pagamento->method('getPaymentGateway')->willReturn($this->createMock(PaymentGatewayInterface::class));
@@ -222,6 +230,27 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
     ]);
 
     $this->expectException(PaymentOperationException::class);
+    $this->servico($cliente, $pagamento)->refresh($pagamento);
+  }
+
+  /**
+   * Rejects a valid remote payment that belongs to another Commerce order.
+   */
+  public function testRefreshRejectsMismatchedProviderOrderReference(): void {
+    $pagamento = $this->pagamento('authorization');
+    $pagamento->expects($this->never())->method('setRemoteState');
+    $pagamento->expects($this->never())->method('setState');
+    $pagamento->expects($this->never())->method('save');
+    $cliente = $this->cliente((object) [
+      'id' => 123456789,
+      'status' => 'approved',
+      'transaction_amount' => 120.0,
+      'currency_id' => 'BRL',
+      'external_reference' => '999',
+    ]);
+
+    $this->expectException(PaymentOperationException::class);
+    $this->expectExceptionMessage('O pagamento remoto não corresponde ao pedido local.');
     $this->servico($cliente, $pagamento)->refresh($pagamento);
   }
 
