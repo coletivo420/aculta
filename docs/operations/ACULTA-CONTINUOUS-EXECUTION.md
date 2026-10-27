@@ -1210,3 +1210,19 @@ Remotas mantidas (commits sem equivalente na PR): `origin/docs/aculta-runtime-sn
 - Comando: `git push origin --delete fix/barra-multidominio-alinhamento` (sem force).
 - Verificação: `git ls-remote --heads origin | grep -c fix/barra-multidominio-alinhamento` → `0`.
 - Não houve remoção de worktree nem alteração de arquivos nesta etapa.
+
+## Classificação das remotas no head df444b820 — 2026-10-27
+
+Head da PR usado: `df444b820a064629145b420bdc1847e573bed9b1`.
+Critério: (a) `git merge-base --is-ancestor origin/R <head>`, ou (b) `git cherry <head> origin/R` sem linhas `+`.
+Nenhuma remota passou pelo critério: **nenhuma excluída nesta etapa**. `origin/HEAD` e `origin/main` não foram analisados.
+
+| Remota | Commits sem equivalente na PR | Último commit |
+|---|---|---|
+| origin/docs/aculta-runtime-snapshot-ensaio | 2 | 1b71c12a3 docs(ops): corrige registro da exclusão em aculta_install_b2 e documenta instalação bloqueada |
+| origin/feat/aculta-commerce-cutover | 8 | 5f139df4d fix(commerce): reaponta referência de remessa por SQL, sem salvar o pedido |
+| origin/feat/aculta-user-10013-contagem | 2 | 46dffd76b docs(runtime): corrige frase sobre gravação em perfis do 10013 (reconciliação) |
+| origin/fix/alinhamento-sync-runtime | 11 | 596fa9d65 docs(operations): registra remoção esperada da view do contrib no uninstall |
+| origin/fix/validador-seguranca-allowlist | 3 | f9eef8472 test(security): remove segunda checagem de estado fixo do gateway MP |
+
+Verificação: `git ls-remote --heads origin` lista as branches remotas mantidas e `chore/aculta-m0-integridade`.
