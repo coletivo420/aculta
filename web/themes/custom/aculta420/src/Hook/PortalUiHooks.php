@@ -11,16 +11,21 @@ use Drupal\Core\Template\Attribute;
 /**
  * Design do Aculta Portal: traduz tokens semânticos em classes do ACULTA420.
  *
- * "Código no Aculta Portal, Design no ACULTA420." O módulo aculta_portal não escreve classes de apresentação: marca o
- * elemento com data-portal-ui="token token2" (nome semântico, sem classe de design). Este hook troca cada token pelas
- * classes correspondentes aqui e remove o atributo. Token desconhecido não gera classe. Ver docs/portal/FRONTEIRA-MODULO-TEMA.md.
+ * "Código no Aculta Portal, Design no ACULTA420." O módulo aculta_portal não
+ * escreve classes de apresentação: marca o
+ * elemento com data-portal-ui="token token2" (nome semântico, sem classe de
+ * design). Este hook troca cada token pelas
+ * classes correspondentes aqui e remove o atributo. Token desconhecido não
+ * gera classe. Ver docs/portal/FRONTEIRA-MODULO-TEMA.md.
  */
 final class PortalUiHooks {
 
   public const ATTRIBUTE = 'data-portal-ui';
 
   /**
-   * Mapa token → classes de apresentação. A ordem dos tokens define a ordem das classes.
+   * Mapa token → classes de apresentação.
+   *
+   * A ordem dos tokens define a ordem das classes.
    */
   public const TOKENS = [
     // Avisos e mensagens (classes de mensagens do Drupal, estilizadas aqui).
@@ -48,10 +53,12 @@ final class PortalUiHooks {
     'register-popup' => ['d-grid', 'gap-3'],
     // Loja: vitrine da página inicial (produtos publicados).
     'shop-products' => ['d-grid', 'gap-3', 'mt-4'],
-    // Cartão do produto: caixa com borda neutra (sem cor de botão), texto alinhado à esquerda.
+    // Cartão do produto: caixa com borda neutra (sem cor de botão), texto
+    // alinhado à esquerda.
     'shop-product-card' => ['d-block', 'border', 'border-2', 'rounded-3', 'text-start', 'p-3', 'text-decoration-none'],
     // Relatórios de requisitos e segredos (administração do Portal).
-    // Estatísticas (aculta_statistics): painel central e por área. O módulo envia só tokens; o tema define o visual.
+    // Estatísticas (aculta_statistics): painel central e por área. O módulo
+    // envia só tokens; o tema define o visual.
     'statistics-panel' => ['aculta-statistics'],
     'statistics-areas' => ['aculta-statistics__areas'],
     'statistics-controls' => ['aculta-statistics__controls'],
@@ -74,10 +81,12 @@ final class PortalUiHooks {
     'requirements-cep' => ['aculta-portal-requirements__cep'],
     'requirements-cep-table' => ['aculta-portal-requirements__cep-table'],
     'requirements-php-extensions' => ['aculta-portal-requirements__php-extensions'],
-    // Painel de moderação do LMS no Fórum (aculta_forum_lms): estrutura por grupo, sem CSS próprio.
+    // Painel de moderação do LMS no Fórum (aculta_forum_lms): estrutura por
+    // grupo, sem CSS próprio.
     'lms-forum-moderation-overview' => ['aculta-lms-forum-moderation__overview'],
     'lms-forum-moderation-queue' => ['aculta-lms-forum-moderation__queue'],
-    // Discussões LMS no player H5P e sob atividades gerais usam primitives Bootstrap.
+    // Discussões LMS no player H5P e sob atividades gerais usam primitives
+    // Bootstrap.
     'lms-activity-discussions' => ['card', 'card-body', 'mt-3'],
     'lms-h5p-activity' => ['d-grid', 'gap-3'],
     'lms-h5p-discussions' => ['card', 'card-body', 'mt-3'],
@@ -125,7 +134,8 @@ final class PortalUiHooks {
     'user-upload-dialog' => ['aculta-user-upload-dialog'],
     'forum-attachment-dialog' => ['aculta-forum-attachment-dialog'],
     'forum-gallery-dialog' => ['aculta-forum-gallery-dialog'],
-    // Review de texto livre (aculta_lms): seções de retorno e cada frase verificada.
+    // Review de texto livre (aculta_lms): seções de retorno e cada frase
+    // verificada.
     'feedback-matched' => ['feedback-section', 'matched-phrases'],
     'feedback-unmatched' => ['feedback-section', 'unmatched-phrases'],
     'phrase-match' => ['phrase-match'],
@@ -166,7 +176,8 @@ final class PortalUiHooks {
     'account-bio-text' => ['portal-account-bio__text'],
     'account-bio-edit' => ['btn', 'btn-link', 'portal-account-bio__edit', 'bi', 'bi-pencil'],
     'account-bio-actions' => ['portal-account-bio__actions'],
-    // Visão geral da Minha conta: ação "Ver Perfil" no topo (botão secundário, borda visível, foco por teclado).
+    // Visão geral da Minha conta: ação "Ver Perfil" no topo (botão
+    // secundário, borda visível, foco por teclado).
     'account-overview-actions' => ['portal-account-overview__actions'],
     'account-view-profile' => ['btn', 'btn-outline-secondary', 'portal-account-overview__profile'],
     // Cabeçalho da postagem da Revista (metainformação e compartilhamento).
@@ -186,7 +197,8 @@ final class PortalUiHooks {
     'article-authors-title' => ['portal-article-authors__title'],
     'article-authors-list' => ['portal-article-authors__list'],
     'article-author' => ['portal-article-author'],
-    // Abertura do tópico do Fórum (resumo, imagem e link para a publicação da Revista).
+    // Abertura do tópico do Fórum (resumo, imagem e link para a publicação
+    // da Revista).
     'forum-opening-post' => ['portal-forum-opening'],
     'forum-opening-post-title' => ['portal-forum-opening__title'],
     'forum-opening-post-image' => ['portal-forum-opening__image'],
@@ -238,7 +250,8 @@ final class PortalUiHooks {
     'account-data-nav' => ['portal-account-data__nav'],
     'account-data-content' => ['portal-account-data__content'],
     'account-document-input' => ['portal-account-document-input'],
-    // Redes sociais e botões (módulo emite só o token; as classes ficam no tema).
+    // Redes sociais e botões (módulo emite só o token; as classes ficam no
+    // tema).
     'social-links-button-list' => ['aculta-social-links__button-list'],
     'social-links-channel' => ['aculta-social-links__channel'],
     'social-links-channel-website' => ['aculta-social-links__channel--website'],
@@ -274,7 +287,8 @@ final class PortalUiHooks {
     'google-account' => ['aculta-google-account'],
     // Popup de aceite dos termos (diálogo modal do Drupal).
     'account-terms' => ['aculta-account-terms'],
-    // Diálogos abertos pelo módulo: o tema define tamanho e posição (dialog.css).
+    // Diálogos abertos pelo módulo: o tema define tamanho e posição
+    // (dialog.css).
     'photo-dialog' => ['aculta-photo-dialog'],
     'avatar-crop-dialog' => ['aculta-avatar-crop-dialog'],
     'account-bio-dialog' => ['aculta-account-bio-dialog'],
@@ -288,8 +302,10 @@ final class PortalUiHooks {
     'account-home' => ['aculta-account-home'],
     'notice-read-status' => ['aculta-messenger-read-status'],
     'notice-unread-status' => ['aculta-messenger-read-status', 'aculta-messenger-read-status--unread'],
-    // Gaveta e lista do Messenger: o módulo marca elementos com estes tokens; as classes são as do CSS do tema
-    // (messenger-drawer.css e messenger-item.css). Ver docs/portal/MESSENGER.md.
+    // Gaveta e lista do Messenger: o módulo marca elementos com estes tokens;
+    // as classes são as do CSS do tema
+    // (messenger-drawer.css e messenger-item.css). Ver
+    // docs/portal/MESSENGER.md.
     'messenger-back-link' => ['aculta-messenger-back-link'],
     'messenger-drawer-conversation' => ['aculta-messenger-drawer-conversation'],
     'messenger-conversation-toolbar' => ['aculta-messenger-conversation-toolbar'],
@@ -303,8 +319,10 @@ final class PortalUiHooks {
     'messenger-options-status' => ['aculta-messenger-options__status'],
     'messenger-notice' => ['aculta-messenger-notice'],
     'messenger-sender' => ['aculta-messenger-sender', 'aculta-messenger-conversation'],
-    // Rótulo Lido / Não lido no topo da caixa (sem cor de marcação): ver css/components/messenger-drawer.css.
-    // Tópico do Fórum: contagem de respostas no título da seção e chamada para visitante.
+    // Rótulo Lido / Não lido no topo da caixa (sem cor de marcação): ver
+    // css/components/messenger-drawer.css.
+    // Tópico do Fórum: contagem de respostas no título da seção e chamada
+    // para visitante.
     'forum-reply-total' => ['aculta-forum-topic__replies-count'],
     'forum-topic-visitor' => ['aculta-forum-topic__visitor'],
     'read-label' => ['aculta-read-label'],
@@ -313,11 +331,13 @@ final class PortalUiHooks {
     'messenger-sender-date' => ['aculta-messenger-sender__date'],
     'messenger-sender-name' => ['aculta-messenger-sender__name'],
     'messenger-sender-avatar' => ['aculta-messenger-sender__avatar'],
-    // Avisos na gaveta: resumo em caixa de botão (como uma conversa); o aviso completo abre na mesma gaveta.
+    // Avisos na gaveta: resumo em caixa de botão (como uma conversa); o aviso
+    // completo abre na mesma gaveta.
     'notice-summary' => ['aculta-messenger-sender', 'aculta-notice-summary'],
     'notice-summary-link' => ['aculta-messenger-sender__link'],
     'notice-summary-persistent' => ['aculta-notice-summary--persistent'],
-    // Cor de cada tipo de aviso (ver Support\NoticeType): informação, atenção e urgente.
+    // Cor de cada tipo de aviso (ver Support\NoticeType): informação,
+    // atenção e urgente.
     'notice-type-info' => ['aculta-notice-type--info'],
     'notice-type-warning' => ['aculta-notice-type--warning'],
     'notice-type-danger' => ['aculta-notice-type--danger'],
@@ -327,7 +347,8 @@ final class PortalUiHooks {
     'notice-detail' => ['aculta-notice-detail'],
     'achievement-notices' => ['aculta-achievement-notices'],
     'aculta-image-audit' => ['aculta-image-audit'],
-    // Seleção de membros da nova conversa (estilo Gmail): resultados e o campo com os chips.
+    // Seleção de membros da nova conversa (estilo Gmail): resultados e o
+    // campo com os chips.
     'new-conversation-add' => ['aculta-new-conversation-add'],
     'new-conversation-chips' => ['aculta-chips'],
     'new-conversation-chip' => ['aculta-chip'],
@@ -353,9 +374,11 @@ final class PortalUiHooks {
     'aculta-button-outline' => ['aculta-button', 'aculta-button--outline'],
     'status-attention' => ['aculta-portal-requirements__status--attention'],
     'breadcrumb-list' => ['breadcrumb'],
-    // Formulário de apoio: valores sugeridos (módulo aculta_portal, SupportForm).
+    // Formulário de apoio: valores sugeridos (módulo aculta_portal,
+    // SupportForm).
     'support-amounts' => ['aculta-support-amounts'],
-    // Painéis de vendas e doações (módulo aculta_portal, SalesOrdersTableBuilder e controllers de relatório).
+    // Painéis de vendas e doações (módulo aculta_portal,
+    // SalesOrdersTableBuilder e controllers de relatório).
     'sales-panel' => ['aculta-sales-panel'],
     'sales-section' => ['aculta-sales-panel__section'],
     'sales-heading' => ['aculta-sales-panel__heading'],
@@ -392,7 +415,9 @@ final class PortalUiHooks {
   ];
 
   /**
-   * Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements.
+   * Maps tokens on menu link attributes to presentation classes.
+   *
+   * Tokens are set by the Portal, as for other elements.
    */
   #[Hook('preprocess_menu')]
   public function preprocessMenu(array &$variables): void {
@@ -494,18 +519,21 @@ final class PortalUiHooks {
   #[Hook('preprocess_aculta_portal_photo_editor')]
   public function preprocess(array &$variables): void {
     $this->addAccountUnreadBadges($variables);
-    // #attributes do elemento de render são mesclados em "attributes" depois do preprocess: trata o elemento.
+    // #attributes do elemento de render são mesclados em "attributes" depois
+    // do preprocess: trata o elemento.
     if (isset($variables['element']) && is_array($variables['element'])) {
       $this->applyArray($variables['element']['#attributes'] ?? [], $variables['element'], '#attributes');
       $this->applyArray($variables['element']['#wrapper_attributes'] ?? [], $variables['element'], '#wrapper_attributes');
       $this->applyArray($variables['element']['#title_attributes'] ?? [], $variables['element'], '#title_attributes');
     }
-    // Rótulo de campo: o núcleo monta o rótulo como render array (label) com #title_attributes.
+    // Rótulo de campo: o núcleo monta o rótulo como render array (label) com
+    // #title_attributes.
     if (isset($variables['label']) && is_array($variables['label']) && isset($variables['label']['#title_attributes']) && is_array($variables['label']['#title_attributes'])) {
       $this->applyArray($variables['label']['#title_attributes'], $variables['label'], '#title_attributes');
     }
     foreach (['attributes', 'title_attributes', 'content_attributes'] as $key) {
-      // Antes da conversão para Attribute o valor ainda é array (preprocess inicial do núcleo).
+      // Antes da conversão para Attribute o valor ainda é array (preprocess
+      // inicial do núcleo).
       if (isset($variables[$key]) && is_array($variables[$key])) {
         $this->applyArray($variables[$key], $variables, $key);
       }
@@ -529,7 +557,9 @@ final class PortalUiHooks {
   }
 
   /**
-   * The details of the Opções box: mapped after the Bootstrap accordion has set its attributes.
+   * The details of the Opções box.
+   *
+   * Mapped after the Bootstrap accordion has set its attributes.
    */
   #[Hook('preprocess_details')]
   public function preprocessDetails(array &$variables): void {
@@ -561,7 +591,9 @@ final class PortalUiHooks {
   }
 
   /**
-   * Versão para arrays de atributos de render elements: troca o token pelas classes e grava no próprio elemento.
+   * Versão para arrays de atributos de render elements.
+   *
+   * Troca o token pelas classes e grava no próprio elemento.
    *
    * @param array<string, mixed> $attributes
    *   Os atributos do elemento (lidos).
@@ -582,7 +614,8 @@ final class PortalUiHooks {
     }
     $existing = $attributes['class'] ?? [];
     $attributes['class'] = array_values(array_unique(array_merge(is_array($existing) ? $existing : [$existing], $classes)));
-    // Variáveis de template (attributes, title_attributes, content_attributes) são Attribute; elementos guardam array.
+    // Variáveis de template (attributes, title_attributes, content_attributes)
+    // são Attribute; elementos guardam array.
     $container[$key] = in_array($key, ['attributes', 'title_attributes', 'content_attributes'], TRUE) ? new Attribute($attributes) : $attributes;
   }
 
