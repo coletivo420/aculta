@@ -50,6 +50,14 @@ class ShippingCalculatorHooks {
   }
 
   /**
+   * Props do simulador da gaveta do carrinho. A gaveta só o mostra com itens (ver cart-offcanvas).
+   */
+  #[Hook('preprocess_page')]
+  public function preprocessPage(array &$variables): void {
+    $variables['aculta_shipping_calculator'] = $this->props('frete-carrinho-lateral');
+  }
+
+  /**
    * Inclui a configuração da origem no cache do produto: mudar a origem invalida a página.
    */
   #[Hook('entity_view_alter')]

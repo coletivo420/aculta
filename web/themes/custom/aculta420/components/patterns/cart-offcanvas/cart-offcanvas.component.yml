@@ -35,6 +35,10 @@ props:
       type: string
       description: 'Frase fixa do rodapé da gaveta.'
       default: 'Compre na loja e apoie a luta antiproibicionista!'
+    shipping:
+      type: object
+      description: 'Props do simulador de frete (componente shipping-calculator), já calculadas pelo Commerce. Vazio não renderiza.'
+      default: {}
 slots: {}
 assets:
   css:
