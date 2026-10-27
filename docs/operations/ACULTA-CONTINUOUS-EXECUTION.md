@@ -1068,3 +1068,16 @@ Verificação final: `SHOW DATABASES` confirmou `aculta_runtime` e `aculta_simpl
 `aculta_runtime` permaneceu com 588 tabelas e `aculta_simpletest` com 0. Não houve
 alteração nesses dois bancos. `toca`, `bdtgn` e os bancos de sistema permaneceram na
 lista e fora do escopo desta exclusão.
+
+## Exclusão autorizada do banco local `bdtgn` — 2026-10-27
+
+Por decisão explícita do responsável, `bdtgn` foi excluído sem backup, usando
+`sudo -u mysql mariadb`. Antes do comando, a consulta administrativa confirmou o schema
+`bdtgn` com 176 tabelas. `SHOW FULL PROCESSLIST` mostrou somente a própria consulta
+administrativa, com `db` nulo; nenhuma sessão ativa usava `bdtgn`.
+
+Foi executado um único comando nominal: `DROP DATABASE bdtgn;`. A verificação posterior
+confirmou `bdtgn` ausente. `SHOW DATABASES` listou `aculta_runtime`, `aculta_simpletest`,
+`information_schema`, `mysql`, `performance_schema`, `sys` e `toca`. As contagens finais
+foram `toca` 137, `aculta_runtime` 588 e `aculta_simpletest` 0. Nenhum desses bancos foi
+alterado.
