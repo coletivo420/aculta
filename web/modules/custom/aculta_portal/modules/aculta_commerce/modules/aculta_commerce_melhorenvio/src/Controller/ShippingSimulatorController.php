@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_commerce_melhorenvio\Controller;
 
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulation;
+use Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulator;
 use Drupal\Core\Flood\FloodInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,6 +30,7 @@ final class ShippingSimulatorController {
   public function __construct(
     private readonly ShippingSimulator $simulator,
     private readonly FloodInterface $flood,
+    private readonly ShippingQuoteStore $store,
   ) {}
 
   /**
@@ -40,7 +42,13 @@ final class ShippingSimulatorController {
       return $this->json(ShippingSimulation::unavailable(ShippingSimulation::REASON_RATE_LIMITED)->toArray(), 429);
     }
     $this->flood->register(self::FLOOD_NAME, self::FLOOD_WINDOW, $ip);
-    $result = $this->simulator->simulate((string) $request->query->get('cep', ''), NULL);
+    $cep = (string) $request->query->get('cep', '');
+    $result = $this->simulator->simulate($cep, NULL);
+    // Guarda o cálculo na sessão para o produto e o carrinho (o carrinho lateral só lê). CEP inválido não é guardado.
+    $digits = preg_replace('/\D/', '', $cep) ?? '';
+    if (strlen($digits) === 8) {
+      $this->store->save($digits, $result);
+    }
     return $this->json($result->toArray());
   }
 

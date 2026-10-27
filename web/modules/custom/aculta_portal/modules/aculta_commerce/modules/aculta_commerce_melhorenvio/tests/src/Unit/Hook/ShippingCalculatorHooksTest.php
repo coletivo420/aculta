@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_commerce_melhorenvio\Unit\Hook;
 
 use Drupal\aculta_commerce_melhorenvio\Hook\ShippingCalculatorHooks;
+use Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulation;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulator;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -20,18 +21,20 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_commerce_melhorenvio')]
 final class ShippingCalculatorHooksTest extends UnitTestCase {
 
-  private function hooks(?string $reason): ShippingCalculatorHooks {
+  private function hooks(?string $reason, ?array $stored = NULL): ShippingCalculatorHooks {
     $simulator = $this->createMock(ShippingSimulator::class);
     $simulator->method('availabilityReason')->willReturn($reason);
-    return new ShippingCalculatorHooks($simulator);
+    $store = $this->createMock(ShippingQuoteStore::class);
+    $store->method('load')->willReturn($stored);
+    return new ShippingCalculatorHooks($simulator, $store);
   }
 
   /**
-   * Sem motivo de indisponibilidade, o componente aguarda o CEP.
+   * Sem motivo de indisponibilidade e sem cálculo guardado, o componente aguarda o CEP.
    */
   public function testIdleWhenAvailable(): void {
     $props = $this->hooks(NULL)->props('frete-produto');
-    $this->assertSame(['id' => 'frete-produto', 'state' => 'idle', 'message' => ''], $props);
+    $this->assertSame(['id' => 'frete-produto', 'state' => 'idle', 'message' => '', 'options' => [], 'postal_code' => ''], $props);
   }
 
   /**
@@ -41,6 +44,26 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
     $props = $this->hooks(ShippingSimulation::REASON_NO_PACKAGE)->props('frete-produto');
     $this->assertSame('unavailable', $props['state']);
     $this->assertSame('Cálculo de frete indisponível no momento.', $props['message']);
+  }
+
+  /**
+   * Cálculo já feito na sessão aparece no produto e no carrinho, com o CEP, sem recalcular.
+   */
+  public function testStoredQuoteCarriesToCart(): void {
+    $stored = [
+      'postal_code' => '01310100',
+      'at' => 1_000_000,
+      'result' => [
+        'state' => 'available',
+        'reason' => NULL,
+        'message' => '',
+        'options' => [['name' => 'PAC', 'company' => 'Correios', 'price' => 'R$ 37,79', 'days' => 9]],
+      ],
+    ];
+    $props = $this->hooks(ShippingSimulation::REASON_NO_PACKAGE, $stored)->props('frete-carrinho-lateral');
+    $this->assertSame('available', $props['state']);
+    $this->assertSame('01310100', $props['postal_code']);
+    $this->assertSame('R$ 37,79', $props['options'][0]['price']);
   }
 
   /**

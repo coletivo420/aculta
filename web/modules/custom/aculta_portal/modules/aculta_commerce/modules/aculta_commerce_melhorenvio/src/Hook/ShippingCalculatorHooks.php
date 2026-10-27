@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_commerce_melhorenvio\Hook;
 
+use Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulation;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulator;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -32,6 +33,7 @@ class ShippingCalculatorHooks {
    */
   public function __construct(
     private readonly ShippingSimulator $simulator,
+    private readonly ShippingQuoteStore $store,
   ) {}
 
   /**
@@ -69,19 +71,30 @@ class ShippingCalculatorHooks {
   }
 
   /**
-   * Props do componente shipping-calculator para o estado atual, sem CEP digitado.
+   * Props do simulador. Se o visitante já calculou (produto ou carrinho completo), mostra esse resultado e o CEP; senão,
+   * o estado de disponibilidade da configuração. O carrinho lateral só lê; ele não calcula.
    *
-   * @return array{id: string, state: string, message: string}
+   * @return array{id: string, state: string, message: string, options: list<array<string, mixed>>, postal_code: string}
    */
   public function props(string $id): array {
-    $reason = $this->simulator->availabilityReason();
-    if ($reason === NULL) {
-      return ['id' => $id, 'state' => 'idle', 'message' => ''];
+    $stored = $this->store->load();
+    if ($stored !== NULL) {
+      $result = $stored['result'];
+      return [
+        'id' => $id,
+        'state' => (string) $result['state'],
+        'message' => (string) $result['message'],
+        'options' => (array) $result['options'],
+        'postal_code' => (string) $stored['postal_code'],
+      ];
     }
+    $reason = $this->simulator->availabilityReason();
     return [
       'id' => $id,
-      'state' => 'unavailable',
-      'message' => ShippingSimulation::unavailable($reason)->message(),
+      'state' => $reason === NULL ? 'idle' : 'unavailable',
+      'message' => $reason === NULL ? '' : ShippingSimulation::unavailable($reason)->message(),
+      'options' => [],
+      'postal_code' => '',
     ];
   }
 
