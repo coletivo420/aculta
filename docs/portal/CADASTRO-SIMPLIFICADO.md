@@ -41,13 +41,17 @@ Alterado: `EmailConfirmationRequester::request()` aceita a URL de resposta opcio
 ## 3. Estado da implementação
 
 - Feito: confirmação pelo fluxo existente, login depois da confirmação, etapa de senha, marcas de controle.
-- **Bloqueio:** `guest_new_account` está desligado nos fluxos `default`, `doacao` e `assinatura_flow`. Sem ele, o
-  Commerce não cria a conta e o cadastro simplificado não dispara. Ligar muda o checkout e exige decisão (ver seção 4).
+- **Checkout ligado no servidor de testes (autorizado em 2026-10-27):** `guest_new_account` ligado em `default`,
+  `doacao` e `assinatura_flow`, com o aviso nativo do Commerce desligado (`guest_new_account_notify`), para não haver dois
+  e-mails. Compra como convidado permitida no login da loja, da doação e da assinatura. Mudança feita no banco do
+  servidor de testes (configuração de fluxo), não exportada no repositório.
+- Verificado: o requester existente aceita o pedido de confirmação e entrega ao `aculta_mailer`. A entrega real não foi
+  verificada: o SMTP recusa domínios inexistentes (554), o que é esperado para endereço de teste fictício. Falta um
+  endereço que receba e-mail para confirmar a entrega e o link.
 - Pendente: modal sem fechar (hoje é página), recuperação de senha pelo mesmo modal, painel administrativo.
 
-## 4. Decisões pendentes para o checkout
+## 4. Decisões
 
-- Ligar `guest_new_account` nos fluxos `default` e `doacao`, e ligar `allow_guest_checkout` no painel de login, com
-  e-mail obrigatório.
-- O login (`AcultaCheckoutLogin`) diz que a conta é criada ao concluir o pedido, o que hoje só vale com a configuração
-  ligada.
+- Checkout: autorizado ligar `guest_new_account` e `allow_guest_checkout` (2026-10-27), em todos os fluxos.
+- Aviso nativo do Commerce desligado: a confirmação do portal é o único e-mail de criação de conta.
+- Pendência de teste: um endereço que receba e-mail, para verificar a entrega e o link de confirmação.
