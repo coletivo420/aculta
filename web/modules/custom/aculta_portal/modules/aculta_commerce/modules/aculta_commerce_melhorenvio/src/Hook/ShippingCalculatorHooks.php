@@ -84,7 +84,7 @@ class ShippingCalculatorHooks {
     if ($display->getMode() !== 'default') {
       return;
     }
-    $build['aculta_shipping_calculator'] = $this->element($this->props('frete-produto'), 100);
+    $build['aculta_shipping_calculator'] = $this->element($this->props('frete-produto', $entity->getDefaultVariation()), 100);
   }
 
   /**
@@ -93,13 +93,22 @@ class ShippingCalculatorHooks {
    *
    * @return array{id: string, state: string, message: string, options: list<array<string, mixed>>, postal_code: string}
    */
-  public function props(string $id): array {
+  public function props(string $id, ?\Drupal\commerce_product\Entity\ProductVariationInterface $variation = NULL): array {
     // Endpoint e link explícitos: o include() do Twig não aplica os padrões do componente (ficavam vazios no navegador).
-    return [
-      'id' => $id,
-      'endpoint' => self::ENDPOINT,
-      'help_url' => self::HELP_URL,
-    ] + $this->summary();
+    $base = ['id' => $id, 'endpoint' => self::ENDPOINT, 'help_url' => self::HELP_URL];
+    // Produto sem peso ou dimensões na variação: indisponível, mesmo que a sessão tenha um cálculo de outro produto.
+    if ($variation !== NULL) {
+      $reason = $this->simulator->availabilityReason($variation);
+      if ($reason !== NULL) {
+        return $base + [
+          'state' => 'unavailable',
+          'message' => ShippingSimulation::unavailable($reason)->message(),
+          'options' => [],
+          'postal_code' => '',
+        ];
+      }
+    }
+    return $base + $this->summary();
   }
 
   /**

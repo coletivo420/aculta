@@ -12,6 +12,9 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
+use Drupal\physical\LengthUnit;
+use Drupal\physical\WeightUnit;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -111,11 +114,47 @@ class ShippingSimulator {
   /**
    * Disponibilidade para exibir ao visitante sem CEP: configuração e pacote padrão. Não chama a API.
    */
-  public function availabilityReason(): ?string {
+  public function availabilityReason(?ProductVariationInterface $variation = NULL): ?string {
     if ($this->configurationReason() !== NULL) {
       return $this->configurationReason();
     }
+    if ($variation !== NULL) {
+      return $this->packageForVariation($variation) === NULL ? ShippingSimulation::REASON_NO_PACKAGE : NULL;
+    }
     return $this->packageFor() === NULL ? ShippingSimulation::REASON_NO_PACKAGE : NULL;
+  }
+
+  /**
+   * Pacote de uma variação: peso e dimensões da própria variação, com o pacote padrão como mínimo.
+   *
+   * Cada dimensão efetiva é o maior valor entre a da variação e a do padrão; o peso efetivo é o maior entre o da
+   * variação e o do padrão. Sem peso ou dimensões cadastrados na variação, não há pacote (NULL): não se presume medida.
+   */
+  public function packageForVariation(ProductVariationInterface $variation): ?QuotePackage {
+    if (!$variation->hasField('weight') || !$variation->hasField('dimensions')) {
+      return NULL;
+    }
+    $weight = $variation->get('weight');
+    $dimensions = $variation->get('dimensions');
+    if ($weight->isEmpty() || $dimensions->isEmpty()) {
+      return NULL;
+    }
+    $item = $dimensions->first();
+    $width = (float) $item->getWidth()->convert(LengthUnit::CENTIMETER)->getNumber();
+    $height = (float) $item->getHeight()->convert(LengthUnit::CENTIMETER)->getNumber();
+    $length = (float) $item->getLength()->convert(LengthUnit::CENTIMETER)->getNumber();
+    $kg = (float) $weight->first()->toMeasurement()->convert(WeightUnit::KILOGRAM)->getNumber();
+    if ($width <= 0 || $height <= 0 || $length <= 0 || $kg <= 0) {
+      return NULL;
+    }
+    $minimo = $this->packageFor();
+    return new QuotePackage(
+      widthCm: $minimo ? max($width, $minimo->widthCm) : $width,
+      heightCm: $minimo ? max($height, $minimo->heightCm) : $height,
+      lengthCm: $minimo ? max($length, $minimo->lengthCm) : $length,
+      weightKg: $minimo ? max($kg, $minimo->weightKg) : $kg,
+      insuranceValue: 0.0,
+    );
   }
 
   /**

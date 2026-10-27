@@ -241,4 +241,18 @@ final class ShippingSimulatorTest extends UnitTestCase {
     $this->assertSame(ShippingSimulation::STATE_EMPTY, $result->state);
   }
 
+  /**
+   * Variação sem peso ou dimensões cadastrados não tem pacote: indisponível, sem presumir medida.
+   */
+  public function testVariationWithoutWeightOrDimensionsIsUnavailable(): void {
+    $empty = $this->createMock(\Drupal\Core\Field\FieldItemListInterface::class);
+    $empty->method('isEmpty')->willReturn(TRUE);
+    $variation = $this->createMock(\Drupal\commerce_product\Entity\ProductVariationInterface::class);
+    $variation->method('hasField')->willReturn(TRUE);
+    $variation->method('get')->willReturn($empty);
+    $simulator = $this->simulator(self::ORIGIN, TRUE, $this->quoter(), ['width' => 16, 'height' => 2, 'length' => 11, 'weight' => 0.3]);
+    $this->assertNull($simulator->packageForVariation($variation));
+    $this->assertSame(ShippingSimulation::REASON_NO_PACKAGE, $simulator->availabilityReason($variation));
+  }
+
 }
