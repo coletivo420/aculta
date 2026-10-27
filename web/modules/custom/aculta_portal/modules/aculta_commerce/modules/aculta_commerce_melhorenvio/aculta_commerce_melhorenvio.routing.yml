@@ -56,3 +56,15 @@ aculta_commerce_melhorenvio.simulate:
   options:
     no_cache: TRUE
   methods: [GET]
+
+# Origem da expedição (CEP e endereço) usada pela cotação. Administração, com a mesma permissão da conexão.
+aculta_commerce_melhorenvio.origin_form:
+  path: '/admin/commerce/config/melhorenvio/origem'
+  defaults:
+    _form: 'Drupal\aculta_commerce_melhorenvio\Form\MelhorEnvioOriginForm'
+    _title: 'Origem da expedição'
+  requirements:
+    _permission: 'administer melhorenvio'
+  options:
+    _admin_route: TRUE
+    no_cache: TRUE

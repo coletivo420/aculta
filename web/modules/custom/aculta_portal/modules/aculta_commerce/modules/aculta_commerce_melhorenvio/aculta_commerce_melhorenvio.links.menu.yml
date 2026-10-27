@@ -4,3 +4,10 @@ aculta_commerce_melhorenvio.status:
   route_name: aculta_commerce_melhorenvio.status
   parent: commerce.configuration
   weight: 20
+
+aculta_commerce_melhorenvio.origin_form:
+  title: 'Origem da expedição'
+  description: 'CEP e endereço de origem usados pela cotação do Melhor Envio.'
+  route_name: aculta_commerce_melhorenvio.origin_form
+  parent: aculta_commerce_melhorenvio.status
+  weight: 0
