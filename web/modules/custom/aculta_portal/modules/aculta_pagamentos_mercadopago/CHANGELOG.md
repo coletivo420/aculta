@@ -31,6 +31,13 @@
 
 # Changelog — aculta_pagamentos_mercadopago
 
+## 0.1.0-dev.16 — cobrança recorrente serializada e validada (2026-10-27)
+
+- Recorrência confirma que as respostas de fatura e assinatura são os recursos consultados; a assinatura deve coincidir com a registrada no pedido. Cobrança aprovada exige pagamento remoto numérico, valor positivo, moeda e total iguais ao pedido antes da gravação.
+- Gravação usa lock por gateway/pagamento remoto e procura duplicatas globalmente nesse gateway dentro da seção serializada; recusa associação do mesmo pagamento a outro pedido. Contenção do lock retorna falha retryable.
+- Novas regressões cobrem lock ocupado, cobrança repetida, IDs de resposta/assinatura divergentes, valor/moeda incorretos, IDs-array e vínculo prévio a outro pedido. Unit MP: 134 testes / 328 assertions PASS; lint e PHPCS Drupal/DrupalPractice dos cinco PHP alterados: PASS sem avisos.
+- `drush cr` e bootstrap do serviço DI PASS. Kernel não executado: `SIMPLETEST_DB` não está configurada; nenhum arquivo de segredos foi lido. Sem chamada externa, atualização de schema, importação de config ou escrita de entidade.
+
 ## 0.1.0-dev.15 — confirmação e idempotência de pagamentos (2026-10-27)
 
 - Webhook só conclui pagamento após consultar a API e confirmar aprovação, vínculo ao pedido, moeda e valor integral; falhas transitórias da API retornam 503 para reentrega.

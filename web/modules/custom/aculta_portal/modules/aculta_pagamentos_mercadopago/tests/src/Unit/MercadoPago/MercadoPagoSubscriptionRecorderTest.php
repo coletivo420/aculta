@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\MercadoPago;
 
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -13,19 +14,31 @@ use Drupal\commerce_price\Price;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Gravação das notificações de assinatura de doação no pedido (aprovação, idempotência e cancelamento).
+ * Records recurring donation subscription notifications.
  */
 #[Group('aculta_pagamentos_mercadopago')]
 final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
 
   /**
-   * Monta o gravador para um pedido (id 7) com o estado e as transições informados.
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $container = new ContainerBuilder();
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+  }
+
+  /**
+   * Builds a recorder for order 7 and the requested transitions.
    *
    * @param string $tipo
    *   Tipo do pedido carregado.
@@ -35,11 +48,13 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
    *   Transições permitidas a partir do estado atual.
    * @param object[] $existentes
    *   Pagamentos já gravados para o pedido.
+   * @param bool $lock_disponivel
+   *   Se o lock do pagamento foi adquirido.
    *
-   * @return array{0: MercadoPagoSubscriptionRecorder, 1: MockObject, 2: MockObject, 3: MockObject}
-   *   Gravador, pedido, armazém de pagamentos e item de estado.
+   * @return array{0: MercadoPagoSubscriptionRecorder, 1: MockObject, 2: MockObject, 3: MockObject, 4: LockBackendInterface}
+   *   Gravador, pedido, armazém de pagamentos, estado e lock.
    */
-  private function contexto(string $tipo, string $estado, array $transicoes, array $existentes): array {
+  private function contexto(string $tipo, string $estado, array $transicoes, array $existentes, bool $lock_disponivel = TRUE): array {
     $item = $this->createMock(StateItemInterface::class);
     $item->method('getId')->willReturn($estado);
     $item->method('getTransitions')->willReturn(array_fill_keys($transicoes, new \stdClass()));
@@ -49,6 +64,9 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $pedido->method('bundle')->willReturn($tipo);
     $pedido->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
     $pedido->method('getState')->willReturn($item);
+    $pedido->method('getData')->willReturnCallback(
+      static fn (string $key, mixed $default = NULL): mixed => $key === MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA ? 'pre-9' : $default,
+    );
 
     $pedidos = $this->createMock(EntityStorageInterface::class);
     $pedidos->method('load')->with(7)->willReturn($pedido);
@@ -61,12 +79,18 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     );
 
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
-    $recorrencia->method('obterAssinatura')->willReturn((object) ['external_reference' => '7', 'status' => 'authorized']);
+    $recorrencia->method('obterAssinatura')->willReturn((object) [
+      'id' => 'pre-9',
+      'external_reference' => '7',
+      'status' => 'authorized',
+    ]);
     $tempo = $this->createMock(TimeInterface::class);
     $tempo->method('getRequestTime')->willReturn(1700000000);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->method('acquire')->willReturn($lock_disponivel);
 
-    $servico = new MercadoPagoSubscriptionRecorder($entidades, $recorrencia, $this->createMock(LoggerChannelInterface::class), $tempo);
-    return [$servico, $pedido, $pagamentos, $item];
+    $servico = new MercadoPagoSubscriptionRecorder($entidades, $recorrencia, $this->createMock(LoggerChannelInterface::class), $tempo, $lock);
+    return [$servico, $pedido, $pagamentos, $item, $lock];
   }
 
   /**
@@ -85,7 +109,9 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     return [
       'id' => 'cob-1',
       'preapproval_id' => 'pre-9',
+      'status' => 'processed',
       'transaction_amount' => '10.00',
+      'currency_id' => 'BRL',
       'payment' => ['id' => '555', 'status' => 'approved'],
     ];
   }
@@ -110,7 +136,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
    * Tests expected behavior.
    */
   public function testPagamentoNaoAprovadoNaoGravaNada(): void {
-    // `processed` sem pagamento aprovado (parcela que esgotou as tentativas) não é receita.
+    // `processed` without an approved payment is not revenue.
     [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], []);
     $pagamentos->expects($this->never())->method('create');
     $pedido->expects($this->once())->method('save');
@@ -127,9 +153,11 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
    * Tests expected behavior.
    */
   public function testMesmoPagamentoNotificadoDuasVezesGravaUmaVez(): void {
-    [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'completed', [], [$this->createMock(PaymentInterface::class)]);
+    $existente = $this->createMock(PaymentInterface::class);
+    $existente->method('getOrderId')->willReturn(7);
+    [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'completed', [], [$existente]);
     $pagamentos->expects($this->never())->method('create');
-    // A situação da cobrança é atualizada no pedido, mas o pagamento não é gravado de novo.
+    // Update charge state without duplicating the Commerce payment.
     $pedido->expects($this->once())->method('save');
 
     $servico->cobranca($this->gateway(), $this->cobrancaAprovada());
@@ -155,6 +183,17 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $pedido->expects($this->never())->method('save');
 
     $servico->assinatura((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+  }
+
+  /**
+   * Does not apply a subscription event for an ID not stored on the order.
+   */
+  public function testSubscriptionEventWithDifferentIdIsIgnored(): void {
+    [$servico, $pedido] = $this->contexto('assinatura', 'completed', ['cancel'], []);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+
+    $servico->assinatura((object) ['id' => 'other-subscription', 'external_reference' => '7', 'status' => 'cancelled']);
   }
 
   /**
@@ -197,6 +236,81 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $pagamentos->method('create')->willReturn($this->createMock(PaymentInterface::class));
     $item->method('applyTransitionById');
 
+    $servico->cobranca($this->gateway(), $this->cobrancaAprovada());
+  }
+
+  /**
+   * Rejects an approved payment with a mismatched amount.
+   */
+  public function testApprovedChargeWithWrongAmountIsIgnored(): void {
+    [$servico, $pedido, $pagamentos, , $lock] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], []);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+    $pagamentos->expects($this->never())->method('loadByProperties');
+    $pagamentos->expects($this->never())->method('create');
+    $lock->expects($this->once())->method('release');
+
+    $cobranca = $this->cobrancaAprovada();
+    $cobranca['transaction_amount'] = '9.99';
+    $servico->cobranca($this->gateway(), $cobranca);
+  }
+
+  /**
+   * Does not record a charge in a currency different from the order currency.
+   */
+  public function testApprovedChargeWithWrongCurrencyIsIgnored(): void {
+    [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], []);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+    $pagamentos->expects($this->never())->method('loadByProperties');
+    $pagamentos->expects($this->never())->method('create');
+
+    $cobranca = $this->cobrancaAprovada();
+    $cobranca['currency_id'] = 'USD';
+    $servico->cobranca($this->gateway(), $cobranca);
+  }
+
+  /**
+   * Does not treat an array payment ID as an approved financial record.
+   */
+  public function testArrayPaymentIdIsNotCoerced(): void {
+    [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], []);
+    $pedido->expects($this->once())->method('setData')
+      ->with(MercadoPagoSubscriptionRecorder::CHAVE_COBRANCA, MercadoPagoSubscriptionRecorder::COBRANCA_NAO_COBRADA);
+    $pedido->expects($this->once())->method('save');
+    $pagamentos->expects($this->never())->method('create');
+    $cobranca = $this->cobrancaAprovada();
+    $cobranca['payment']['id'] = ['555'];
+    $servico->cobranca($this->gateway(), $cobranca);
+  }
+
+  /**
+   * Does not associate a provider payment already linked to another order.
+   */
+  public function testRemotePaymentAlreadyLinkedToAnotherOrderIsIgnored(): void {
+    $existente = $this->createMock(PaymentInterface::class);
+    $existente->method('getOrderId')->willReturn(8);
+    [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], [$existente]);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+    $pagamentos->expects($this->once())->method('loadByProperties')
+      ->with(['payment_gateway' => 'mercado_pago', 'remote_id' => '555']);
+    $pagamentos->expects($this->never())->method('create');
+
+    $servico->cobranca($this->gateway(), $this->cobrancaAprovada());
+  }
+
+  /**
+   * Retries a concurrent notification instead of risking a duplicate payment.
+   */
+  public function testChargeLockContentionReturnsRetryableFailure(): void {
+    [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], [], FALSE);
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+    $pagamentos->expects($this->never())->method('loadByProperties');
+    $pagamentos->expects($this->never())->method('create');
+
+    $this->expectException(MercadoPagoApiException::class);
     $servico->cobranca($this->gateway(), $this->cobrancaAprovada());
   }
 

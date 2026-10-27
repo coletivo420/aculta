@@ -13,6 +13,7 @@ use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Tests\UnitTestCase;
 use GuzzleHttp\Client;
@@ -24,7 +25,7 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Consulta de cobrança recorrente (GET /authorized_payments/{id}) com cliente HTTP substituído.
+ * Fetches authorized payments through a simulated HTTP client.
  */
 #[Group('aculta_pagamentos_mercadopago')]
 final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase {
@@ -34,7 +35,7 @@ final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase 
    */
   protected function setUp(): void {
     parent::setUp();
-    // Mensagens traduzidas (TranslatableMarkup) precisam de um container com tradução.
+    // TranslatableMarkup requires a translation service container.
     $container = new ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
@@ -47,11 +48,13 @@ final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase 
    *   Respostas enfileiradas para o cliente HTTP simulado.
    * @param array<int, array{request: \Psr\Http\Message\RequestInterface}> $historico
    *   Recebe as requisições feitas pelo serviço.
+   * @param \Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService|null $recorrencia
+   *   Serviço de recorrência simulado, quando necessário.
    *
    * @return \Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionNotificationService
    *   Serviço configurado com o cliente HTTP simulado.
    */
-  private function servico(array $respostas, array &$historico): MercadoPagoSubscriptionNotificationService {
+  private function servico(array $respostas, array &$historico, ?MercadoPagoRecurrenceService $recorrencia = NULL): MercadoPagoSubscriptionNotificationService {
     $pilha = HandlerStack::create(new MockHandler($respostas));
     $pilha->push(Middleware::history($historico));
     $http = new Client(['handler' => $pilha]);
@@ -68,7 +71,7 @@ final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase 
     return new MercadoPagoSubscriptionNotificationService(
       $entidades,
       $fabrica,
-      $this->createMock(MercadoPagoRecurrenceService::class),
+      $recorrencia ?? $this->createMock(MercadoPagoRecurrenceService::class),
       $http,
       $this->createMock(LoggerChannelInterface::class),
       new MercadoPagoSubscriptionRecorder(
@@ -76,6 +79,7 @@ final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase 
         $this->createMock(MercadoPagoRecurrenceService::class),
         $this->createMock(LoggerChannelInterface::class),
         $this->createMock(TimeInterface::class),
+        $this->createMock(LockBackendInterface::class),
       ),
     );
   }
@@ -85,7 +89,7 @@ final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase 
    */
   public function testChargeQueriesEndpointWithGatewayToken(): void {
     $historico = [];
-    $servico = $this->servico([new Response(200, [], json_encode(['status' => 'approved']))], $historico);
+    $servico = $this->servico([new Response(200, [], json_encode(['id' => 'cob-42', 'status' => 'approved']))], $historico);
     $servico->processar('subscription_authorized_payment', 'cob-42');
 
     $this->assertCount(1, $historico);
@@ -93,6 +97,33 @@ final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase 
     $this->assertSame('GET', $requisicao->getMethod());
     $this->assertSame('https://api.mercadopago.com/authorized_payments/cob-42', (string) $requisicao->getUri());
     $this->assertSame('Bearer token-de-teste-nao-real', $requisicao->getHeaderLine('Authorization'));
+  }
+
+  /**
+   * Retries if the authorized payment API returns a different invoice ID.
+   */
+  public function testChargeRejectsUnexpectedResourceId(): void {
+    $historico = [];
+    $servico = $this->servico([new Response(200, [], json_encode(['id' => ['cob-42'], 'status' => 'processed']))], $historico);
+
+    $this->expectException(MercadoPagoApiException::class);
+    $servico->processar('subscription_authorized_payment', 'cob-42');
+  }
+
+  /**
+   * Rejects a subscription lookup that returns another resource ID.
+   */
+  public function testSubscriptionLookupRejectsUnexpectedResourceId(): void {
+    $historico = [];
+    $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())
+      ->method('obterAssinatura')
+      ->with($this->anything(), 'pre-9')
+      ->willReturn((object) ['id' => 'another-subscription', 'status' => 'authorized']);
+    $servico = $this->servico([], $historico, $recorrencia);
+
+    $this->expectException(MercadoPagoApiException::class);
+    $servico->processar('subscription_preapproval', 'pre-9');
   }
 
   /**

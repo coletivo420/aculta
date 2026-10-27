@@ -13,27 +13,22 @@ use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\commerce_price\Price;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Grava no pedido de assinatura o que o Mercado Pago informa, e aplica as ações do doador (pausar, reativar, cancelar).
+ * Persists provider status and donor actions for recurring donation orders.
  *
- * O pedido de assinatura (tipo `assinatura`, workflow order_recurring) agrupa as cobranças. A ligação com o Mercado Pago
- * é o id da assinatura (preapproval), guardado em `data` do pedido, e o `external_reference` da assinatura, que é o id
- * do pedido. Regras:
- * - cobrança só vira pagamento quando o pagamento vinculado está `approved`. O status `processed` da cobrança não basta:
- *   ele também marca parcela que esgotou as tentativas sem aprovação;
- * - cada pagamento aprovado é gravado uma vez (deduplicado pelo id do pagamento no Mercado Pago), porque o webhook
- *   pode ser reenviado;
- * - a primeira cobrança aprovada leva o pedido a `completed` (transição mark_paid); o cancelamento leva a `canceled`;
- * - doações não são estornadas: não há tratamento de estorno aqui.
+ * Subscription orders group recurring charges. The provider subscription ID is
+ * stored in order data, and its external reference points to the order ID.
  *
- * Não grava método de pagamento (o Mercado Pago cobra o cartão da autorização) e não registra e-mail nem dados do pagador.
+ * Only an approved linked payment is recorded. The `processed` invoice state
+ * alone is insufficient because retries can be exhausted without approval.
+ * Payment IDs are deduplicated and serialized. Donations are not refundable.
  *
- * Status da assinatura (preapproval) no Mercado Pago: `pending`, `authorized`, `paused`, `cancelled`. Os status de
- * alteração (`paused`, `authorized`, `cancelled`) vêm do plano de integração (docs/portal/MERCADO-PAGO-PLANO.md); a
- * referência da API não pôde ser lida na sessão, então a confirmação com o sandbox fica pendente.
+ * The provider charges the authorized card. Card and payer data are not stored.
+ * Subscription states are `pending`, `authorized`, `paused`, and `cancelled`.
  */
 final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterface, SubscriptionOperationsInterface {
 
@@ -66,7 +61,7 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   ];
 
   /**
-   * Ações do doador: status de origem permitidos e status de destino no Mercado Pago.
+   * Donor actions and their permitted provider status transitions.
    */
   public const ACOES = [
     'pausar' => ['de' => [self::STATUS_ATIVA], 'para' => self::STATUS_PAUSADA],
@@ -98,6 +93,7 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
     private readonly MercadoPagoRecurrenceService $recorrencia,
     private readonly LoggerChannelInterface $logger,
     private readonly TimeInterface $time,
+    private readonly LockBackendInterface $lock,
   ) {}
 
   /**
@@ -204,7 +200,7 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   }
 
   /**
-   * Indica se a ação pode ser aplicada agora: pedido de assinatura com id no Mercado Pago e status de origem permitido.
+   * Checks for a subscription order and an allowed source status.
    */
   public function podeAlterar(OrderInterface $pedido, string $acao): bool {
     if (!isset(self::ACOES[$acao]) || $pedido->bundle() !== self::TIPO_PEDIDO || !$pedido->getData(self::CHAVE_ASSINATURA)) {
@@ -239,18 +235,26 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   }
 
   /**
-   * Atualiza o pedido com o status da assinatura (tópico subscription_preapproval).
+   * Updates an order from a subscription_preapproval notification.
    *
    * @param object $assinatura
    *   Resposta da assinatura (status, external_reference).
    */
   public function assinatura(object $assinatura): void {
-    $pedido = $this->pedido((string) ($assinatura->external_reference ?? ''));
+    $remote_id = $this->providerString($assinatura->id ?? NULL);
+    $pedido = $this->pedido($this->providerString($assinatura->external_reference ?? NULL));
     if ($pedido === NULL) {
-      $this->logger->warning('Assinatura @id sem pedido de doação correspondente.', ['@id' => (string) ($assinatura->id ?? '')]);
+      $this->logger->warning('Assinatura @id sem pedido de doação correspondente.', ['@id' => $remote_id]);
       return;
     }
-    $status = (string) ($assinatura->status ?? '');
+    if ($remote_id === '' || $remote_id !== (string) $pedido->getData(self::CHAVE_ASSINATURA, '')) {
+      $this->logger->error('Assinatura @id não corresponde à assinatura registrada no pedido @pedido.', [
+        '@id' => $remote_id !== '' ? $remote_id : 'unknown',
+        '@pedido' => $pedido->id(),
+      ]);
+      return;
+    }
+    $status = $this->providerString($assinatura->status ?? NULL);
     if (!in_array($status, [
       self::STATUS_PENDENTE,
       self::STATUS_ATIVA,
@@ -258,7 +262,7 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
       self::STATUS_CANCELADA,
     ], TRUE)) {
       $this->logger->warning('Assinatura @id com status desconhecido: @status.', [
-        '@id' => (string) ($assinatura->id ?? ''),
+        '@id' => $remote_id,
         '@status' => $status,
       ]);
     }
@@ -270,7 +274,7 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   }
 
   /**
-   * Situação da última cobrança, a partir do status da cobrança (authorized_payments) e de o pagamento estar aprovado.
+   * Maps invoice status and payment approval to a local charge state.
    */
   public static function situacaoCobranca(string $status, bool $aprovado): string {
     if ($aprovado) {
@@ -302,7 +306,7 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   }
 
   /**
-   * Situação da última cobrança guardada no pedido (vazia se ainda não há cobrança).
+   * Returns the last charge state stored on the order.
    */
   public function situacaoDaUltimaCobranca(OrderInterface $pedido): string {
     return (string) $pedido->getData(self::CHAVE_COBRANCA, '');
@@ -311,7 +315,7 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   /**
    * Grava uma cobrança autorizada no pedido.
    *
-   * A situação da cobrança é persistida, mas somente pagamento aprovado vira pagamento do Commerce.
+   * Only an approved linked payment creates a Commerce payment.
    *
    * @param \Drupal\commerce_payment\Entity\PaymentGatewayInterface $gateway
    *   Gateway com credenciais do ambiente ativo.
@@ -319,50 +323,52 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
    *   Resposta de GET /authorized_payments/{id}.
    */
   public function cobranca(PaymentGatewayInterface $gateway, array $cobranca): void {
-    $status = (string) ($cobranca['status'] ?? '');
+    $status = $this->providerString($cobranca['status'] ?? NULL);
     $pagamento = is_array($cobranca['payment'] ?? NULL) ? $cobranca['payment'] : [];
-    $remoto = (string) ($pagamento['id'] ?? '');
-    $aprovado = ($pagamento['status'] ?? '') === 'approved' && $remoto !== '';
+    $remoto = $this->providerString($pagamento['id'] ?? NULL);
+    $aprovado = $this->providerString($pagamento['status'] ?? NULL) === 'approved'
+      && ctype_digit($remoto)
+      && (int) $remoto > 0;
     if (!$aprovado && !in_array($status, self::STATUS_COBRANCA, TRUE)) {
       $this->logger->warning('Cobrança @id com status desconhecido: @status.', [
-        '@id' => (string) ($cobranca['id'] ?? ''),
+        '@id' => $this->providerString($cobranca['id'] ?? NULL),
         '@status' => $status,
       ]);
     }
-    $assinatura = $this->recorrencia->obterAssinatura($gateway, (string) ($cobranca['preapproval_id'] ?? ''));
-    $pedido = $this->pedido((string) ($assinatura->external_reference ?? ''));
+    $preapproval_id = $this->providerString($cobranca['preapproval_id'] ?? NULL);
+    if ($preapproval_id === '') {
+      $this->logger->error('Cobrança @id não informa a assinatura vinculada.', ['@id' => $this->providerString($cobranca['id'] ?? NULL) ?: 'unknown']);
+      return;
+    }
+    $assinatura = $this->recorrencia->obterAssinatura($gateway, $preapproval_id);
+    if ($this->providerString($assinatura->id ?? NULL) !== $preapproval_id) {
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou uma assinatura inconsistente.'), 502);
+    }
+    $pedido = $this->pedido($this->providerString($assinatura->external_reference ?? NULL));
     if ($pedido === NULL) {
       $this->logger->warning('Cobrança @id sem pedido de doação correspondente.', [
-        '@id' => (string) ($cobranca['id'] ?? ''),
+        '@id' => $this->providerString($cobranca['id'] ?? NULL),
       ]);
       return;
     }
-    $pedido->setData(self::CHAVE_COBRANCA, self::situacaoCobranca($status, $aprovado));
-    if (!$aprovado) {
-      $pedido->save();
-      $this->logger->notice('Cobrança @id do pedido @pedido: status @status, sem pagamento aprovado.', [
-        '@id' => (string) ($cobranca['id'] ?? ''),
+    if ((string) $pedido->getData(self::CHAVE_ASSINATURA, '') !== $preapproval_id) {
+      $this->logger->error('Cobrança @id não corresponde à assinatura registrada no pedido @pedido.', [
+        '@id' => $this->providerString($cobranca['id'] ?? NULL) ?: 'unknown',
         '@pedido' => $pedido->id(),
-        '@status' => $status,
       ]);
       return;
     }
-    if (!$this->pagamentoExiste($pedido, $remoto)) {
-      $pagamento = $this->entidades('commerce_payment')->create([
-        'state' => 'completed',
-        'amount' => new Price((string) ($cobranca['transaction_amount'] ?? '0'), $pedido->getTotalPrice()->getCurrencyCode()),
-        'payment_gateway' => $gateway->id(),
-        'order_id' => $pedido->id(),
-        'remote_id' => $remoto,
-        'remote_state' => 'approved',
-        'authorized' => $this->time->getRequestTime(),
-      ]);
-      $pagamento->save();
-      if ($pedido->getState()->getId() === 'needs_payment') {
-        $this->transicionar($pedido, 'mark_paid');
-      }
+    $lock_subject = $remoto !== '' ? $remoto : (string) ($cobranca['id'] ?? 'invalid');
+    $lock_id = 'aculta_pagamentos_mercadopago.subscription_payment.' . $gateway->id() . '.' . $lock_subject;
+    if (!$this->lock->acquire($lock_id, 30)) {
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('A cobrança está sendo processada. Tente novamente.'), 503);
     }
-    $pedido->save();
+    try {
+      $this->registrarCobranca($gateway, $pedido, $cobranca, $status, $remoto, $aprovado);
+    }
+    finally {
+      $this->lock->release($lock_id);
+    }
   }
 
   /**
@@ -389,11 +395,72 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   /**
    * Performs the pagamento existe operation.
    */
-  private function pagamentoExiste(OrderInterface $pedido, string $remoto): bool {
-    return $this->entidades('commerce_payment')->loadByProperties([
-      'order_id' => $pedido->id(),
-      'remote_id' => $remoto,
-    ]) !== [];
+  private function registrarCobranca(PaymentGatewayInterface $gateway, OrderInterface $pedido, array $cobranca, string $status, string $remoto, bool $aprovado): void {
+    $pedido_total = $pedido->getTotalPrice();
+    $amount_raw = $cobranca['transaction_amount'] ?? NULL;
+    $amount_number = is_string($amount_raw) || is_int($amount_raw) || is_float($amount_raw) ? (string) $amount_raw : '';
+    $currency = $this->providerString($cobranca['currency_id'] ?? NULL);
+    $amount = NULL;
+    if ($aprovado) {
+      if ($pedido_total === NULL || preg_match('/^[0-9]+(?:\.[0-9]+)?$/D', $amount_number) !== 1 || $currency !== $pedido_total->getCurrencyCode()) {
+        $this->logger->error('Cobrança aprovada @id tem valor/moeda inválidos para o pedido @pedido.', [
+          '@id' => $remoto,
+          '@pedido' => $pedido->id(),
+        ]);
+        return;
+      }
+      $amount = new Price($amount_number, $currency);
+      if (!$amount->greaterThan(new Price('0', $currency)) || !$amount->equals($pedido_total)) {
+        $this->logger->error('Cobrança aprovada @id não corresponde ao total do pedido @pedido.', [
+          '@id' => $remoto,
+          '@pedido' => $pedido->id(),
+        ]);
+        return;
+      }
+    }
+
+    $payments = $this->entidades('commerce_payment');
+    $existentes = [];
+    if ($aprovado) {
+      $existentes = $payments->loadByProperties([
+        'payment_gateway' => $gateway->id(),
+        'remote_id' => $remoto,
+      ]);
+      foreach ($existentes as $existing) {
+        if ((string) $existing->getOrderId() !== (string) $pedido->id()) {
+          $this->logger->error('Pagamento recorrente @id já está associado a outro pedido.', ['@id' => $remoto]);
+          return;
+        }
+      }
+    }
+
+    $pedido->setData(self::CHAVE_COBRANCA, self::situacaoCobranca($status, $aprovado));
+    if (!$aprovado) {
+      $pedido->save();
+      $this->logger->notice('Cobrança @id do pedido @pedido: status @status, sem pagamento aprovado.', [
+        '@id' => (string) ($cobranca['id'] ?? ''),
+        '@pedido' => $pedido->id(),
+        '@status' => $status,
+      ]);
+      return;
+    }
+
+    if ($existentes === []) {
+      $pagamento = $payments->create([
+        'state' => 'completed',
+        'amount' => $amount,
+        'payment_gateway' => $gateway->id(),
+        'order_id' => $pedido->id(),
+        'remote_id' => $remoto,
+        'remote_state' => 'approved',
+        'authorized' => $this->time->getRequestTime(),
+      ]);
+      $pagamento->save();
+      if ($pedido->getState()->getId() === 'needs_payment') {
+        $this->transicionar($pedido, 'mark_paid');
+      }
+    }
+    $pedido->save();
   }
 
   /**
@@ -401,6 +468,13 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
    */
   private function entidades(string $tipo): EntityStorageInterface {
     return $this->entityTypeManager->getStorage($tipo);
+  }
+
+  /**
+   * Converts a scalar provider value without coercing arrays or objects.
+   */
+  private function providerString(mixed $value): string {
+    return is_string($value) || is_int($value) ? trim((string) $value) : '';
   }
 
 }

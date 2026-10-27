@@ -17,7 +17,7 @@ services:
     arguments: ['@aculta_pagamentos_mercadopago.client_factory', '@aculta_pagamentos_mercadopago.recurrence_request_builder', '@aculta_pagamentos_mercadopago.logger']
   aculta_pagamentos_mercadopago.subscription_recorder:
     class: Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder
-    arguments: ['@entity_type.manager', '@aculta_pagamentos_mercadopago.recurrence_service', '@aculta_pagamentos_mercadopago.logger', '@datetime.time']
+    arguments: ['@entity_type.manager', '@aculta_pagamentos_mercadopago.recurrence_service', '@aculta_pagamentos_mercadopago.logger', '@datetime.time', '@lock']
   aculta_pagamentos_mercadopago.subscription_notifications:
     class: Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionNotificationService
     arguments: ['@entity_type.manager', '@aculta_pagamentos_mercadopago.client_factory', '@aculta_pagamentos_mercadopago.recurrence_service', '@http_client', '@aculta_pagamentos_mercadopago.logger', '@aculta_pagamentos_mercadopago.subscription_recorder']

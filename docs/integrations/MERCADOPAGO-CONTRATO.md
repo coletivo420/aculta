@@ -10,6 +10,7 @@ Checkout Pro é a única forma de pagamento do Portal (`aculta_mercadopago_check
 
 Confirmadas por leitura da página oficial:
 - Webhooks, Brasil: https://www.mercadopago.com.br/developers/pt/docs/your-integrations/notifications/webhooks
+- Consulta de fatura recorrente (`GET /authorized_payments/{id}`), Brasil: https://www.mercadopago.com.br/developers/pt/reference/online-payments/subscriptions/get-authorized-payment/get
 - Estornos (Checkout Pro), Argentina: https://www.mercadopago.com.ar/developers/en/docs/checkout-pro-preferences/additional-settings/refunds-and-cancellations
 - Assinatura com plano associado, Brasil: https://www.mercadopago.com.br/developers/pt/docs/subscriptions/integration-configuration/subscription-associated-plan
 - Assinatura sem plano com pagamento pendente, Brasil: https://www.mercadopago.com.br/developers/en/docs/subscriptions/integration-configuration/subscription-no-associated-plan/pending-payments
@@ -43,13 +44,17 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 - `POST /preapproval` com `status: "pending"`, sem `card_token_id`. O comprador conclui o pagamento por um link de pagamento compartilhado.
 - Isso confere com o código: `RecurrenceRequestBuilder::assinatura()` envia `status => 'pending'` e não envia cartão.
 
+**Cobrança recorrente**
+- A referência brasileira de `GET /authorized_payments/{id}` documenta `id`, `preapproval_id`, `external_reference`, `currency_id`, `transaction_amount`, `status` e pagamento vinculado com `id`/`status`.
+- O módulo confere IDs retornados com a notificação assinada e com a assinatura guardada no pedido; só `payment.status = approved` cria pagamento Commerce, e exige valor/moeda idênticos ao pedido de assinatura.
+
 ## Verificado no código
 
 | Área | Como está | Situação |
 | --- | --- | --- |
 | Webhook | `WebhookGuard` valida a assinatura com o SDK e rejeita tópico legado sem assinatura | Alinhado |
 | Aprovação pelo webhook | O handler consulta o pagamento remoto e exige status aprovado, referência do pedido, moeda e valor exatos antes de concluir o pagamento Commerce | Unit: não aprovado e referências conflitantes cobertos; Kernel/Runtime pendentes |
-| Idempotência | Retorno e webhook serializam o processamento pelo ID remoto e reconsultam o pagamento Commerce dentro do lock | Implementado; teste de concorrência e Kernel/Runtime pendentes |
+| Idempotência | Retorno, webhook e cobrança recorrente serializam por ID remoto e consultam duplicatas dentro do lock | Implementado; Unit de contenção/duplicidade passa; Kernel/Runtime pendentes |
 | Estorno | `CheckoutPro::refundPayment()` usa `refundTotal` quando o valor cobre o pagamento, senão `refund` parcial | Alinhado |
 | Cancelamento | `MercadoPagoPaymentService::cancelar()` confere o status remoto e chama `PaymentClient::cancel()` do SDK | Alinhado; o endpoint exato não foi confirmado na documentação lida |
 | Assinatura pendente | `status => 'pending'`, sem cartão | Alinhado |

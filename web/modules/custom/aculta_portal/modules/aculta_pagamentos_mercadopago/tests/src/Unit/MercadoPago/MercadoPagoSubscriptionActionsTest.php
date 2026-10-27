@@ -12,6 +12,7 @@ use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
 use Drupal\Tests\UnitTestCase;
@@ -19,7 +20,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
- * Ações do doador sobre a assinatura (pausar, reativar, cancelar) e a regra de status permitido.
+ * Donor subscription actions and allowed status transitions.
  */
 #[Group('aculta_pagamentos_mercadopago')]
 final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
@@ -66,6 +67,7 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
       $recorrencia,
       $this->createMock(LoggerChannelInterface::class),
       $this->createMock(TimeInterface::class),
+      $this->createMock(LockBackendInterface::class),
     );
   }
 
@@ -77,7 +79,7 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
   }
 
   /**
-   * Tests the pausar uma assinatura ativa chama o mercado pago e atualiza o pedido behavior.
+   * Pauses an active subscription and updates its order.
    */
   public function testPauseActiveSubscriptionCallsGatewayAndUpdatesOrder(): void {
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
@@ -154,7 +156,7 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
   }
 
   /**
-   * Tests that provider API details stay out of the neutral exception shown to users.
+   * Keeps provider API details out of the user-facing exception.
    */
   public function testProviderFailureIsWrappedWithSafeMessage(): void {
     $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
@@ -173,6 +175,7 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
       $recorrencia,
       $logger,
       $this->createMock(TimeInterface::class),
+      $this->createMock(LockBackendInterface::class),
     );
 
     try {

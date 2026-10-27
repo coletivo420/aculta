@@ -12,16 +12,15 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
- * Consulta os recursos citados por uma notificação de assinatura (já validada pela assinatura HMAC).
+ * Loads provider resources referenced by signed subscription notifications.
  *
- * Tópicos tratados (documentação do Mercado Pago, webhooks):
+ * Supported Mercado Pago webhook topics:
  * - subscription_preapproval: consulta a assinatura (SDK PreApprovalClient);
- * - subscription_preapproval_plan: consulta o plano (SDK PreApprovalPlanClient);
- * - subscription_authorized_payment: consulta a cobrança recorrente em GET /authorized_payments/{id}. O SDK
- *   3.16.0 não tem cliente para esse recurso, então a chamada usa o cliente HTTP do Drupal com o token do gateway.
+ * - subscription_preapproval_plan: consulta o plano pelo SDK;
+ * - subscription_authorized_payment: fetches an invoice from
+ *   /authorized_payments/{id} via Drupal HTTP; SDK 3.16 has no client for it.
  *
- * A gravação no pedido de doação (status, pagamento aprovado uma vez) fica em MercadoPagoSubscriptionRecorder. Os dados
- * registrados em log não incluem e-mail, cartão nem outro dado de pagador.
+ * SubscriptionRecorder owns order and payment writes. Logs omit payer data.
  */
 class MercadoPagoSubscriptionNotificationService {
 
@@ -43,7 +42,7 @@ class MercadoPagoSubscriptionNotificationService {
   ) {}
 
   /**
-   * Processa uma notificação de assinatura. Falhas são lançadas para o chamador responder com erro e o Mercado Pago reenviar.
+   * Processes a signed event; failures request provider retry.
    *
    * @throws \Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException
    */
@@ -64,9 +63,12 @@ class MercadoPagoSubscriptionNotificationService {
    */
   private function assinatura(PaymentGatewayInterface $gateway, string $id): void {
     $assinatura = $this->recorrencia->obterAssinatura($gateway, $id);
+    if ((!is_string($assinatura->id ?? NULL) && !is_int($assinatura->id ?? NULL)) || (string) $assinatura->id !== $id) {
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou uma assinatura inconsistente.'), 502);
+    }
     $this->logger->notice('Notificação de assinatura @id: status @status.', [
       '@id' => $id,
-      '@status' => (string) ($assinatura->status ?? ''),
+      '@status' => is_string($assinatura->status ?? NULL) ? $assinatura->status : '',
     ]);
     $this->gravador->assinatura($assinatura);
   }
@@ -76,9 +78,12 @@ class MercadoPagoSubscriptionNotificationService {
    */
   private function plano(PaymentGatewayInterface $gateway, string $id): void {
     $plano = $this->recorrencia->obterPlano($gateway, $id);
+    if ((!is_string($plano->id ?? NULL) && !is_int($plano->id ?? NULL)) || (string) $plano->id !== $id) {
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou um plano inconsistente.'), 502);
+    }
     $this->logger->notice('Notificação de plano de assinatura @id: status @status.', [
       '@id' => $id,
-      '@status' => (string) ($plano->status ?? ''),
+      '@status' => is_string($plano->status ?? NULL) ? $plano->status : '',
     ]);
   }
 
@@ -106,11 +111,16 @@ class MercadoPagoSubscriptionNotificationService {
       throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago não respondeu como esperado.'), $codigo);
     }
     $dados = json_decode((string) $resposta->getBody(), TRUE);
+    $response_id = is_array($dados) ? ($dados['id'] ?? NULL) : NULL;
+    if ((!is_string($response_id) && !is_int($response_id)) || (string) $response_id !== $id) {
+      $this->logger->error('Consulta de cobrança recorrente retornou um identificador inesperado.');
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou dados inconsistentes.'), 502);
+    }
     $this->logger->notice('Notificação de cobrança recorrente @id: status @status.', [
       '@id' => $id,
-      '@status' => (string) ($dados['status'] ?? ''),
+      '@status' => is_string($dados['status'] ?? NULL) ? $dados['status'] : '',
     ]);
-    $this->gravador->cobranca($gateway, is_array($dados) ? $dados : []);
+    $this->gravador->cobranca($gateway, $dados);
   }
 
   /**
