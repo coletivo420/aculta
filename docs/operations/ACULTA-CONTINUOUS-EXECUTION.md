@@ -2,12 +2,13 @@
 
 ## Mercado Pago — microfase de recorrência (2026-10-27)
 
-- Base publicada: `8873a7a6f`; branch `chore/aculta-m0-integridade`; microfase de recorrência publicada.
+- Base publicada: `e9fcd6258`; branch `chore/aculta-m0-integridade`; aprovação/retorno Checkout Pro têm regressão Unit dedicada.
 - `MercadoPagoSubscriptionRecorder` valida resposta da API pelo ID consultado e compara a assinatura remota ao ID guardado no pedido. Cobrança aprovada exige pagamento vinculado, ID financeiro, total e moeda; lock por gateway/ID remoto envolve deduplicação e gravação; IDs já associados a outro pedido são recusados.
-- Testes simulam ID de fatura/assinatura divergente, IDs-array, lock ocupado, duplicidade, valor/moeda divergentes e payment ID ligado a outro pedido. Regressões CheckoutPro verificam aprovação remota da autorização e retorno aprovado idempotente com filtro order/gateway/remote ID. Unit MP: 136 testes / 358 assertions PASS; lint e PHPCS focais 0/0.
+- Testes simulam ID de fatura/assinatura divergente, IDs-array, lock ocupado, duplicidade, valor/moeda divergentes e payment ID ligado a outro pedido. Regressões CheckoutPro verificam aprovação remota da autorização e retorno aprovado idempotente com filtro order/gateway/remote ID. Unit MP: 136 testes / 358 assertions PASS; lint e PHPCS focais 0/0. SDC/design-foundations/browser validators/module-theme boundary/Foundation/shell-contract e fixtures: PASS.
 - Atualizado para MP dev.16 o changelog, contrato, plano de recorrência, debt register, status e índices. Referência oficial de `GET /authorized_payments/{id}` confirmada e registrada.
 - Kernel não executado: `SIMPLETEST_DB` ausente nesta sessão; sem leitura de secrets ou credenciais privadas. `updatedb:status` e `config:status` no `aculta_runtime` seguem com pendências; nenhum update, config import, schema ou escrita de entidade ocorreu. `drush cr` só recompilou cache/container e o bootstrap DI do serviço passou.
 - Commit `8873a7a6f` publicado por fast-forward após fetch/ancestralidade confirmada; checkout de teste destacado no mesmo HEAD. Após a troca, `drush status` confirmou `toca`, Drupal 11.4.10, URI `http://default` e `aculta_runtime`; `updatedb:status` e `config:status` somente leitura repetiram pendências preexistentes. Não foram feitos snapshot, update, importação ou escrita Runtime. Sandbox e retorno financeiro autorizado continuam pendentes.
+- Commit de testes `e9fcd6258` publicado por fast-forward; checkout destacado nesse HEAD. Status Drush pós-troca repetidos em leitura apenas confirmaram novamente pendências de update/config anteriores; não houve alteração de schema/config/dados.
 
 ## Mercado Pago — microfase de confirmação financeira (2026-10-27)
 
