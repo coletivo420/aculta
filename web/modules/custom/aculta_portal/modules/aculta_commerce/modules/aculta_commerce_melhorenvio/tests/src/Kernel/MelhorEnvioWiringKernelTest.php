@@ -335,7 +335,7 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     self::assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
     $html = (string) $response->getContent();
     self::assertStringContainsString('window.opener.location.href = redirect', $html);
-    self::assertStringContainsString('/admin/commerce/config/melhorenvio', $html);
+    self::assertStringContainsString('/integracoes/melhorenvio/configuracao', $html);
     $errors = $this->container->get('messenger')->messagesByType('error');
     self::assertCount(1, $errors);
     self::assertNull($this->container->get('aculta_commerce_melhorenvio.token_store')->load(MelhorEnvioEnvironment::Sandbox));

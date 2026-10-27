@@ -1,6 +1,6 @@
 # Estado da conexão e botão de conectar (abre a autorização em popup). Sem cache: mostra o token atual.
 aculta_commerce_melhorenvio.status:
-  path: '/admin/commerce/config/melhorenvio'
+  path: '/integracoes/melhorenvio/configuracao'
   defaults:
     _controller: 'aculta_commerce_melhorenvio.status_controller:page'
     _title: 'Melhor Envio'
@@ -59,7 +59,7 @@ aculta_commerce_melhorenvio.simulate:
 
 # Origem da expedição (CEP e endereço) usada pela cotação. Administração, com a mesma permissão da conexão.
 aculta_commerce_melhorenvio.origin_form:
-  path: '/admin/commerce/config/melhorenvio/origem'
+  path: '/integracoes/melhorenvio/configuracao/origem'
   defaults:
     _form: 'Drupal\aculta_commerce_melhorenvio\Form\MelhorEnvioOriginForm'
     _title: 'Origem da expedição'
