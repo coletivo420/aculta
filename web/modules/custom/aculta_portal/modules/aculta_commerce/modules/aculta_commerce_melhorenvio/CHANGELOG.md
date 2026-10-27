@@ -1,5 +1,10 @@
 # Changelog — ACULTA Commerce Melhor Envio
 
+## 0.1.0-dev.7 — não bloquear o submit do carrinho pelo simulador (2026-10-27)
+
+- O componente de cotação do carrinho deixou de emitir um `<form>` aninhado no formulário do Commerce e o CEP opcional não tem mais `required`. Isso corrige o bloqueio nativo do botão “Fechar pedido”; a cotação do CEP continua automática ao digitar.
+- Regressão no roteiro visual do checkout verifica que o CEP do simulador não é obrigatório e que o fluxo anônimo chega ao cadastro/etapa de endereço sem CAPTCHA. Firefox ESR: `guest_registration_and_shipping_stage_without_captcha`; sem envio de endereço, cotação ou pagamento.
+
 ## 0.1.0-dev.6 — Não validado — simulador de frete por CEP (ME-0.1-A e ME-0.1-C)
 
 ### Adicionado

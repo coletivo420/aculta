@@ -1,6 +1,6 @@
 # ACULTA Commerce Melhor Envio
 
-Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão declarada no manifesto (`0.1.0-dev.4`). O motor de frete e o armazenamento de métodos, tarifas e remessas pertencem ao `aculta_commerce`; este módulo fornece o adaptador Melhor Envio.
+Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão declarada no manifesto (`0.1.0-dev.7`). O motor de frete e o armazenamento de métodos, tarifas e remessas pertencem ao `aculta_commerce`; este módulo fornece o adaptador Melhor Envio.
 
 Status: OAuth2, configuração por ambiente, credenciais via Drupal Key com fallback no gerenciador central de segredos, cliente HTTP, cotação simulada e integração com o plugin manager do motor ACULTA estão cobertos por testes Unit e Kernel sem rede externa. Contratação de etiquetas e rastreamento não foram homologados; chamadas externas e checkout ainda exigem validação autorizada no sandbox. Ver
 [ROADMAP](docs/ROADMAP.md) e [CHANGELOG](CHANGELOG.md).
@@ -17,7 +17,7 @@ Fora de escopo, por regra de arquitetura:
   (`AccountAddressForm`) é a fonte de verdade.
 - **Endereço persistente:** fica no Profile/Order do Commerce. O submódulo não guarda cópia nem declara campos.
 - **Carrinho, pedido, produto e pagamento:** continuam no Drupal Commerce, no Portal e no Mercado Pago.
-- **Checkout:** nenhum campo novo. Preservados `CartConsolidator`, `CartUtility`, `CartSite`,
+- **Checkout:** o carrinho tem um campo opcional de CEP para simular o frete; ele não substitui nem bloqueia o endereço do pedido. O campo não é um form independente nem obrigatório. Preservados `CartConsolidator`, `CartUtility`, `CartSite`,
   `AcultaShippingInformation` e `BillingAddressPane`.
 
 Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CONTRACT.md).
@@ -85,7 +85,8 @@ Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CO
 
 ## Testes
 
-- Unit: 85 testes / 204 assertions PASS na PR #298.
+- Unit: 122 testes / 318 assertions PASS (reexecutado em 2026-10-27).
+- Navegador Firefox ESR: `tests/browser/aculta-mercadopago/checkout-smoke.py` confirma que o carrinho fecha sem CEP no simulador e chega ao cadastro/etapa de endereço sem CAPTCHA. Não submete endereço, cotação de frete nem pagamento; seleção de tarifa no checkout segue pendente.
 - Kernel `MelhorEnvioWiringKernelTest`: 11 testes / 57 assertions PASS em MariaDB isolado, sem rede externa; inclui verificações de wiring, OAuth, state de uso único e rejeição de callback sem código. PHPCS Drupal/DrupalPractice nos arquivos alterados: zero erros; avisos remanescentes são de linhas longas. Functional e homologação visual permanecem pendentes. Ver `docs/ROADMAP.md` e `docs/PENDENCIAS.md`.
 
 ## Segurança e LGPD

@@ -102,6 +102,16 @@ def main():
         if not driver.exists("#edit-checkout"):
             print("RESULT=cart_checkout_button_missing")
             return
+        cart_shipping = driver.js("""const input=document.querySelector('[data-aculta-shipping-calculator] input[name="cep"]');
+          return input ? {required:input.required, nestedForm:!!input.closest('[data-aculta-shipping-calculator] form')}
+            : {required:null,nestedForm:false};""")
+        print("cart shipping control:", cart_shipping)
+        if cart_shipping["required"] is None:
+            print("RESULT=cart_shipping_calculator_missing")
+            return
+        if cart_shipping["required"] or cart_shipping["nestedForm"]:
+            print("RESULT=shipping_calculator_blocks_cart_form")
+            return
         driver.click("#edit-checkout")
         time.sleep(4)
         checkout = visible_summary(driver)

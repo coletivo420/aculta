@@ -13,12 +13,21 @@ endereço ou o pedido; não calcula uma cotação externa, cria conta, confirma
 pagamento nem entra no Mercado Pago. O carrinho/pedido Drupal temporário pode
 permanecer no Runtime para inspeção posterior.
 
+O roteiro também verifica a regressão em que o simulador no carrinho bloqueava
+“Fechar pedido”: o CEP da cotação precisa ser opcional e o componente não pode
+emitir um formulário aninhado no form do Commerce.
+
 Na execução de 2026-10-27, Firefox ESR carregou o produto e carrinho sem
 CAPTCHA, mostrou Google antes do e-mail, revelou o cadastro AJAX sem senha nem
 desafio para novo e-mail e avançou à etapa de endereço e cotação de frete sem
 CAPTCHA. O formulário de endereço não foi enviado, nenhuma cotação foi
 solicitada e o pedido não foi concluído. Preferência e autenticação do
 comprador Mercado Pago continuam pendentes de uma sessão sandbox acessível.
+
+Após corrigir o campo CEP obrigatório no simulador, a execução de 2026-10-27
+retornou `guest_registration_and_shipping_stage_without_captcha`: produto,
+carrinho, cadastro silencioso e etapa de endereço carregaram; nenhuma cotação
+ou pagamento foi iniciado.
 
 ## Ambiente
 

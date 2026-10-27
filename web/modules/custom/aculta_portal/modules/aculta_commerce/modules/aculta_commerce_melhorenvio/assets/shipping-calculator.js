@@ -96,17 +96,6 @@
           }
         });
 
-        raiz.querySelector('form').addEventListener('submit', (evento) => {
-          evento.preventDefault();
-          cancelar();
-          const cep = digitos();
-          if (cep.length === 8) {
-            calcular(cep);
-          }
-          else {
-            apresentar(resultado, { state: 'unavailable', message: MENSAGEM_CEP_INVALIDO });
-          }
-        });
       });
     },
   };
