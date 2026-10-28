@@ -96,9 +96,9 @@ consumidores, modos claro/escuro e renderização no Firefox ESR.
   capturadas em desktop, 320 px e dark; pares de texto/fundo têm contraste
   calculado de 4,69:1, 5,26:1, 7,84:1 e 12,40:1. Stories de cinco regiões,
   contador, selos e marcas também foram capturadas; seguem candidatas sem
-  consumidor real. O shell administrativo deixa drawers ocultos com overflow
-  horizontal no documento em algumas stories a 320 px, limitação registrada no
-  README da suíte.
+  consumidor real. Drawers offcanvas ocultos elevam `scrollWidth` em algumas
+  stories, mas o tema os recorta fora da viewport e o teste mediu `maxScrollX=0`;
+  não há rolagem horizontal real em 320 px.
 
 ## B8 — composições de página em colunas
 
@@ -107,9 +107,9 @@ conteúdo único e `ui_patterns_layouts` adapta SDCs para Layout Builder sem
 fornecer por si só um arranjo 1/2/3 colunas. O candidato
 `layouts/page-columns` fornece regiões principal, secundária e complementar;
 tem stories de 1, 2 e 3 colunas e empilha as regiões pela ordem do DOM abaixo de
-768 px. As três variações foram capturadas no Runtime em 320 px; não houve
-overflow no próprio layout, embora o shell administrativo gere overflow no
-documento por drawers ocultos. Ainda não há consumidor funcional.
+768 px. As três variações foram capturadas no Runtime em 320 px e dark. Drawers
+ocultos elevam `scrollWidth`, mas não permitem rolagem horizontal (`maxScrollX=0`).
+Ainda não há consumidor funcional.
 
 ## B9 — grade de itens mistos
 

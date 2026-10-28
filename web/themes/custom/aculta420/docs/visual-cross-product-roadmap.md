@@ -87,18 +87,18 @@ renderização/cache no Runtime e revisão visual autorizada.
 Firefox ESR confirmou o card compacto na View pública de álbuns em 1280 px,
 320 px e dark; em 320 px a página não transborda. A revisão encontrou links
 vazios sem nome gerados por duas opções de link concorrentes na View. O Config
-Sync foi corrigido, mas o Runtime continua usando a configuração antiga; sem
-`config:import`, a correção não foi homologada no navegador.
+Sync foi corrigido, mas `drush config:status` confirma que a configuração ativa
+do Runtime ainda está antiga; a verificação visual dos links corrigidos depende
+de autorização para `config:import`.
 
 No tópico do Fórum, os estados salvar/não salvo foram fotografados em desktop,
 320 px e dark. O controle tem foco visível de 3 px, alvo mínimo de 44 px e rótulo
 textual; a Flag do usuário de teste voltou ao estado inicial. As rotas
 protegidas do UI Patterns abriram após corrigir descrições YAML inválidas. As quatro cores, bookmark-toggle, layout de cinco regiões,
 stat-counter, accessibility-badges e sponsor-logos foram capturados no Firefox
-ESR. As stories sem consumidor permanecem experimentais/candidatas. O shell
-administrativo causa overflow de documento por drawers ocultos em algumas
-stories a 320 px; o layout da story permanece visível e a limitação está no
-README do teste.
+ESR. As stories sem consumidor permanecem experimentais/candidatas. Drawers
+ocultos elevam `scrollWidth` em algumas stories, mas `overflow-x: clip` impede
+rolagem real em 320 px (`maxScrollX=0`).
 
 ## B8 — composições de página em colunas
 
@@ -107,10 +107,9 @@ horizontal; `content-section` fornece um único corpo; UI Patterns Layouts não
 inclui grades genéricas 1/2/3. Criado `layouts/page-columns`, candidato sem
 consumidor funcional, com três stories e stack de uma coluna abaixo de 768 px.
 As três stories foram capturadas no Runtime em desktop, 320 px e dark. O layout
-empilha regiões na ordem DOM. Em 320 px, a métrica de documento inclui os
-drawers offcanvas ocultos do shell administrativo (ver README da suíte); o
-conteúdo do layout fica dentro do viewport. Sem consumidor real, permanece
-candidato.
+empilha regiões na ordem DOM. Drawers offcanvas ocultos elevam `scrollWidth`,
+mas não permitem rolagem real em 320 px (`maxScrollX=0`). Sem consumidor real,
+permanece candidato.
 
 ## B9 — grade mista de conteúdo, termos e links externos
 

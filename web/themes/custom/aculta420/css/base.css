@@ -1,4 +1,9 @@
 /* 2. Base */
+html {
+  /* Closed translated drawers must not extend the document's horizontal scroll area. */
+  overflow-x: clip;
+}
+
 body {
   font-family: var(--aculta-font-body);
   font-size: 16px;

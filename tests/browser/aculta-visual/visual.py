@@ -103,8 +103,12 @@ def album_metrics(driver):
       const emptyLinks = cards.flatMap(card => [...card.querySelectorAll('a')])
         .filter(link => !(link.innerText || '').trim() && !link.getAttribute('aria-label'))
         .length;
+      const originalScrollX = scrollX;
+      window.scrollTo(10000, 0);
+      const maxScrollX = scrollX;
+      window.scrollTo(originalScrollX, 0);
       return {title: document.title, heading: document.querySelector('main h1, h1')?.innerText || '',
-        viewport: innerWidth, documentWidth: document.documentElement.scrollWidth,
+        viewport: innerWidth, documentWidth: document.documentElement.scrollWidth, maxScrollX,
         compactCards: cards.length, smallActions, emptyLinks,
         firstCardText: cards[0]?.innerText?.trim().slice(0, 180) || ''};
     })();""")
@@ -166,10 +170,11 @@ def inspect_album(prefs=None, dark=False):
                 metrics["dataBsTheme"] = driver.js(
                     "return document.documentElement.getAttribute('data-bs-theme')"
                 )
-                metrics["dataBsTheme"] = driver.js(
-                    "return document.documentElement.getAttribute('data-bs-theme')"
-                )
             snapshots[label] = metrics
+            if metrics["maxScrollX"] > 0:
+                print(f"BLOCK horizontal scroll album {label}: maxScrollX={metrics['maxScrollX']}")
+            if metrics["emptyLinks"] > 0:
+                print(f"BLOCK unnamed links album {label}: {metrics['emptyLinks']}")
             suffix = "-dark" if dark else ""
             save_screenshot(driver, f"albums-{label}{suffix}.png")
             if actual != width:
@@ -202,8 +207,14 @@ def inspect_story_gate():
             actual = viewport.set(width)
             driver.js("window.scrollTo(0, 0)")
             time.sleep(0.2)
-            result[label] = driver.js("""return {viewport: innerWidth,
+            result[label] = driver.js("""const originalScrollX = scrollX;
+              window.scrollTo(10000, 0);
+              const maxScrollX = scrollX;
+              window.scrollTo(originalScrollX, 0);
+              return {viewport: innerWidth,
               documentWidth: document.documentElement.scrollWidth,
+              maxScrollX,
+              rootOverflowX: getComputedStyle(document.documentElement).overflowX,
               overflow: [...document.querySelectorAll('body *')]
                 .map(element => ({selector: element.tagName.toLowerCase() +
                   (element.id ? '#' + element.id : '') +
@@ -232,6 +243,8 @@ def inspect_story_gate():
         result["blocked"] = "O site encontrou um erro inesperado" in (
             result["320"]["body"] + result["desktop"]["body"]
         )
+        if result["320"].get("maxScrollX", 0) > 0:
+            print(f"BLOCK horizontal scroll at 320: maxScrollX={result['320']['maxScrollX']}")
         return result
     finally:
         viewport.close()
@@ -273,9 +286,15 @@ def capture_bookmark_state(driver, viewport, label):
         metrics[name] = driver.js("""return (() => {
           const link = document.querySelector('.aculta-bookmark-toggle a');
           const r = link?.getBoundingClientRect();
+          const originalScrollX = scrollX;
+          window.scrollTo(10000, 0);
+          const canScrollHorizontally = scrollX > originalScrollX;
+          window.scrollTo(originalScrollX, 0);
           return {label: link?.innerText.trim() || '', width: Math.round(r?.width || 0),
-            height: Math.round(r?.height || 0), overflow: document.documentElement.scrollWidth > innerWidth};
+            height: Math.round(r?.height || 0), canScrollHorizontally};
         })();""")
+        if metrics[name].get("canScrollHorizontally"):
+            print(f"BLOCK horizontal scroll bookmark {label}/{name}")
         save_screenshot(driver, f"bookmark-{label}-{name}.png")
     driver.js("document.documentElement.setAttribute('data-theme', 'dark'); "
               "document.documentElement.setAttribute('data-bs-theme', 'dark')")
