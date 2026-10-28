@@ -1,5 +1,10 @@
 # Changelog — aculta_calendar
 
+## 2026-10-28 — leitor local de arquivos iCalendar (I2)
+
+- Adicionado contrato e leitor local de `.ics`, sem rede nem dependência externa, com limite de 2 MiB e 2.000 eventos.
+- Fixture escrita à mão e testes para leitura, limites e recusa de URL.
+
 ## 2026-10-28 — modelo de importação revisável (I1)
 
 - Adicionadas a fonte configurável de calendário e a entidade revisável de item importado, com estados de rascunho, publicado e cancelado.

@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ACULTA//Fixture de importação//PT-BR
+BEGIN:VEVENT
+UID:importacao-basica@example.invalid
+DTSTART;TZID=America/Sao_Paulo:20261028T140000
+DTEND;TZID=America/Sao_Paulo:20261028T150000
+SUMMARY:Oficina de teste
+DESCRIPTION:Exemplo\, sem dados pessoais
+LOCATION:Espaço de teste
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_calendar\Kernel;
 
 use Drupal\aculta_calendar\Entity\CalendarImportSource;
+use Drupal\aculta_calendar\Import\IcsCalendarFileReader;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -45,6 +46,13 @@ final class CalendarImportEntityKernelTest extends KernelTestBase {
       ->getStorage('aculta_calendar_imported_item')
       ->loadMultiple();
     $this->assertCount(1, $items);
+  }
+
+  public function testLocalReaderIsRegisteredAsService(): void {
+    $this->assertInstanceOf(
+      IcsCalendarFileReader::class,
+      $this->container->get('aculta_calendar.import_reader'),
+    );
   }
 
 }
