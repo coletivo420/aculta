@@ -33,16 +33,27 @@ Não. Na versão atual, o ACULTA não processa pagamento de ingressos. Consulte 
 organização do evento para confirmar valores, disponibilidade e formas de
 compra ou reserva.
 
+## Como encontro a localização de um espaço?
+
+Consulte a página [Locais](/locais) para ver os espaços cadastrados ou abra o
+[Mapa de locais](/mapa). Quando houver endereço, a lista e o mapa oferecem um
+link para abrir a rota no Google Maps.
+
 ## Base de revisão
 
-- Rotas públicas: `/eventos`, `/eventos/{slug}`, `/locais` e `/calendario` em
-  `aculta_events.routing.yml`.
+- Rotas públicas: `/eventos`, `/eventos/{slug}`, `/locais`, `/mapa` e
+  `/calendario` em `aculta_events.routing.yml`.
 - Conteúdo da página de evento: `EventPageController`, o tema
   `aculta_event_page()` e `templates/aculta-event-page.html.twig`.
 - Exportação diária e por período: `AgendaController` e `IcsController` de
   `aculta_calendar`.
+- Localização e rotas: `LocationListController`, `MapController` e o builder de
+  links do `aculta_maps`.
 - Pagamentos de ingresso fora da v1: decisão D-30 e
   `aculta_events/docs/MODELO-DE-DADOS.md`.
 
-Antes do cadastro, revisão editorial deve confirmar a voz institucional e se
+Revisão técnica em 2026-10-28 confirmou rotas, exportação `.ics`, texto de
+cancelamento, dados exibidos e ausência de processamento de ingressos. A nova
+resposta sobre locais reflete o mapa e os links de rota atuais. Antes do
+cadastro, a revisão editorial ainda deve confirmar a voz institucional e se
 estas respostas cobrem as dúvidas prioritárias do público do ACULTA.
