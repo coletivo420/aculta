@@ -4,6 +4,11 @@
 
 ## Decisão obrigatória
 
+**Origem histórica:** decisões de carrinho único e separação de purpose em
+`0.4.0-dev.114`, `0.4.0-dev.120` e `0.4.0-dev.113`, [histórico arquivado do
+Portal](../history/changelog/aculta_portal.md). O desenho administrativo desta
+ADR preserva esses contratos de checkout.
+
 O `aculta_portal` será proprietário da **orquestração técnica e administrativa** de carrinhos e da seleção de modalidades de checkout de Loja, LMS e Doações. **Não criar novo carrinho público, não alterar o carrinho existente na barra multidomínio nem modificar a experiência ou os critérios atuais de seleção do checkout.**
 
 A mudança consiste em reunir contratos, seleção e configurações hoje dispersas em uma infraestrutura central de administração, com transferência progressiva de ownership — **não uma migração de UX do consumidor**.
