@@ -1,6 +1,6 @@
 # Política de documentação
 
-Atualizada em 2026-10-09 pela limpeza documental.
+Atualizada em 2026-10-28 conforme a política de changelog e histórico.
 
 ## O que fica na documentação
 
@@ -29,6 +29,11 @@ Antes de remover, extrair as regras do documento para um guardrail. Depois, remo
 
 No Git. Cada remoção registra o último commit em que o arquivo existia, em `DEBT-REGISTER.md` ou
 na seção de limpeza do changelog. Recuperar: `git show <commit>:<caminho>`.
+
+Cada `CHANGELOG.md` mantém no máximo 30 entradas recentes. As entradas anteriores são copiadas
+sem reescrita para `docs/history/changelog/<modulo>.md`. Decisões ainda vigentes saem do histórico
+e são registradas em ADR, para regras transversais, ou na arquitetura do módulo. Consulte
+[CHANGELOG-POLITICA.md](operations/CHANGELOG-POLITICA.md) para o procedimento completo.
 
 ## Onde fica o estado atual
 
