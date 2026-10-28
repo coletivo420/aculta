@@ -122,3 +122,30 @@ Kernel (com banco): salvar série, criar exceção, ler janela, `.ics` com `RRUL
 3. Entidade `aculta_event_override` e seus testes Kernel (F2).
 4. Agenda e grade consultando o expansor por janela (F5).
 5. `RRULE`, `EXDATE` e `RECURRENCE-ID` no `IcsEventBuilder` (F5).
+
+## 10. Implementação (arquitetura)
+
+Pasta: `aculta_calendar/src/Recurrence/`. Sem dependência de Drupal: são classes puras, testáveis em Unit.
+
+| Classe | Responsabilidade |
+| --- | --- |
+| `RecurrenceRuleParser` | Lista branca da regra (seção 5 e 7). `parse()` devolve partes normalizadas; `normalize()` devolve a forma canônica que vai para `field_regra`. |
+| `RecurrenceExpander` | Expansão na janela (seção 6). Monta o RFC com `DTSTART` no fuso do site, chama `rlanvin/php-rrule` e aplica as exceções por início original (M1). |
+| `RecurrenceException` | Regra inválida ou janela acima do teto (M3). |
+
+Fluxo: o campo guarda `normalize($regra)`. Ao ler uma janela, o expansor recebe a regra, `field_quando`,
+a duração, a janela, o limite de série aberta e as exceções indexadas pelo timestamp original.
+
+Decisões tomadas ao codificar (acrescentam às seções anteriores):
+
+- **Forma canônica ordenada:** `BYDAY` sai na ordem da semana (MO a SU) e `BYMONTHDAY` em ordem
+  numérica. Sem isso, `BYDAY=WE,MO` e `BYDAY=MO,WE` seriam dois valores para o mesmo evento, e a
+  comparação de regras quebraria. Pego pelo teste de canonização.
+- **UNTIL em UTC:** o RFC 5545 exige `UNTIL` em UTC quando `DTSTART` tem fuso. O validador aceita
+  `AAAAMMDD` (dia local) e o expansor converte o fim do dia de Brasília para UTC antes de passar à
+  biblioteca. Pego pelo teste de `UNTIL`.
+- **Janela e duração:** a janela pedida pega ocorrências que começam nela. Uma ocorrência que começa
+  antes da janela e termina dentro dela não é devolvida. Quem chama deve alargar a janela pela
+  duração máxima da série. Decisão de implementação, não de produto.
+
+Testes: `RecurrenceRuleParserTest` (26) e `RecurrenceExpanderTest` (10), na suíte Unit do módulo.
