@@ -10,7 +10,7 @@ Incorporação aceita pelo responsável em 2026-10-28. O estudo, os critérios e
 | Pacote | `dhtmlx-scheduler@7.2.15`, obtido com `npm pack` (sem CDN) |
 | Tarball | `dhtmlx-scheduler-7.2.15.tgz`, sha256 `bcb5bdb00b4b2d5e134690aa72b612d6b19112fa69fe016c91e681a6cface5e2` |
 | `js/dhtmlx/dhtmlxscheduler.js` | sha256 `44c2dd4fb73bec301bbe1ef5f73ed5bf9cf39317ba8956088d267f1f5613bed2` (539.946 bytes) |
-| `css/dhtmlx/dhtmlxscheduler.css` | sha256 `4e194267715657f3e5c75bbcf4b9326e26cad9b75cbd83318662f002e987bb34` (119.763 bytes) |
+| `css/dhtmlx/dhtmlxscheduler.css` | sha256 `96c3c48c1de83a09746baec0bc585b1a2c3efa3056ea29c4cd61221d5a316b31` (113.465 bytes; do pacote original: `4e194267715657f3e5c75bbcf4b9326e26cad9b75cbd83318662f002e987bb34`, 119.763 bytes, antes da remoção das fontes em DH-C) |
 
 ## Licença
 
@@ -28,8 +28,10 @@ library quando tentava processá-los (o HTML saía sem os dois arquivos).
 
 ## Fontes
 
-O CSS original traz 5 `@font-face` de `fonts.gstatic.com`. A remoção está registrada em DH-C (nenhuma
-requisição a terceiros por padrão).
+O CSS original traz 5 `@font-face` de `fonts.gstatic.com`; os blocos foram removidos em DH-C, junto da
+variável `--dhx-scheduler-font-family`, que agora usa `inherit`. O CSS do repositório não tem URL externa
+nem referência a Inter: nenhuma requisição a terceiros por padrão. O tema ACULTA420 continua carregando
+Inter e Oswald do Google em todas as páginas; isso é do tema, não do componente, e segue a frente visual.
 
 ## Teclado (DH-B)
 
