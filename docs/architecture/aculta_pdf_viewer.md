@@ -8,7 +8,10 @@ autorização de arquivo sob Drupal Core e o domínio que detém a referência.
 - **2026-10-17 — Arquivos privados usam a rota protegida do Core.**
   Situação: vigente. Motivo: a URL deve continuar verificando acesso do arquivo
   em cada requisição e respeitar a membership contextual. Origem:
-  `0.1.0-dev.14`, [histórico arquivado](../history/changelog/aculta_pdf_viewer.md).
+  `aculta_document_viewer` `0.1.0-dev.14` e `aculta_pdf_viewer`
+  `0.1.0-dev.5`–`0.1.0-dev.14`, [histórico arquivado do visualizador de
+  documentos](../history/changelog/aculta_document_viewer.md) e [histórico
+  arquivado do submódulo PDF](../history/changelog/aculta_pdf_viewer.md).
   O `PdfViewerBuilder` gera a URL pela rota `system.files` com o parâmetro
   `file`; `aculta_pdf_viewer_group` e o Kernel revalidam Group e membership.
 
