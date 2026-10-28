@@ -91,10 +91,14 @@ consumidores, modos claro/escuro e renderização no Firefox ESR.
 - `bookmark-toggle`: o tópico de homologação mostrou “Salvar tópico” e “Salvo”;
   foco visível com outline de 3 px, alvo de 44 px e sem overflow em 320 px. A
   Flag da conta de teste foi restaurada ao estado inicial.
-- A rota do provider da UI Patterns Library retornou erro genérico do Drupal,
-  mesmo com a conta administrativa de teste. As stories das quatro cores de
-  seção, layout de cinco regiões, contador, selos e marcas seguem sem revisão
-  visual Runtime; não declarar aprovação desses candidatos.
+- Após corrigir descrições YAML inválidas nas stories de cinco regiões e grade
+  mista, as rotas UI Patterns abriram no Runtime. As quatro faixas foram
+  capturadas em desktop, 320 px e dark; pares de texto/fundo têm contraste
+  calculado de 4,69:1, 5,26:1, 7,84:1 e 12,40:1. Stories de cinco regiões,
+  contador, selos e marcas também foram capturadas; seguem candidatas sem
+  consumidor real. O shell administrativo deixa drawers ocultos com overflow
+  horizontal no documento em algumas stories a 320 px, limitação registrada no
+  README da suíte.
 
 ## B8 — composições de página em colunas
 

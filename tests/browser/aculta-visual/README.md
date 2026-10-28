@@ -24,6 +24,9 @@ nativa no tópico do Fórum. A Flag é restaurada ao estado inicial no `finally`
 - `STORY_ONLY=1`: captura somente `STORY_URL` em 1280 px, 320 px e dark; use
   a rota individual do componente, por exemplo
   `.../components/aculta420/page-columns`.
+- `STORY_HEADINGS`: títulos de stories separados por `|`; cada seção indicada
+  ganha capturas próprias em 1280 px, 320 px e dark. O script recolhe o painel
+  administrativo pelo controle Claro antes de fotografar.
 
 ```sh
 DISPLAY=:0 SUITE_OUT=/tmp/aculta-visual-b7 \
@@ -32,10 +35,4 @@ DISPLAY=:0 SUITE_OUT=/tmp/aculta-visual-b7 \
 
 ## Limitações
 
-As páginas são lidas por GET. Para fotografar os dois estados do bookmark, a
-suíte aciona e restaura a Flag do tópico de homologação para a conta de teste;
-não altera conteúdo nem a senha da conta. Ela não valida combinações de cor ou
-os demais SDCs individualmente. A rota do provider da UI Patterns devolveu a
-página genérica de erro do Drupal, então as stories de seção, layout, contador,
-selos e marcas não puderam ser homologadas visualmente. O link único não é
-impresso, salvo ou incluído nos artefatos.
+As páginas são lidas por GET. Para fotografar os dois estados do bookmark, a suíte aciona e restaura a Flag do tópico de homologação para a conta de teste; não altera conteúdo nem a senha da conta. `STORY_HEADINGS` permite capturar stories individuais. Após corrigir descrições YAML inválidas, as stories abriram no Runtime com Firefox ESR. O shell administrativo mantém drawers offcanvas ocultos fora da viewport; no Firefox, eles aumentam `documentElement.scrollWidth` em algumas rotas de story, mesmo sem aparecer nas capturas. O link único não é impresso, salvo ou incluído nos artefatos.

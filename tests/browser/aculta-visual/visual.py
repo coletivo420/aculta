@@ -4,9 +4,11 @@
 import base64
 import json
 import os
+import re
 import subprocess
 import sys
 import time
+import unicodedata
 from pathlib import Path
 from websockets.sync.client import connect
 
@@ -30,6 +32,27 @@ ACCOUNT_URL = "https://conta.aculta.toca.net.br"
 def save_screenshot(driver, filename):
     payload = driver.req("GET", f"/session/{driver.session}/screenshot")
     (OUT / filename).write_bytes(base64.b64decode(payload))
+
+
+def capture_story_headings(driver, mode, viewport_label):
+    headings = [item.strip() for item in os.environ.get("STORY_HEADINGS", "").split("|")
+                if item.strip()]
+    captured = []
+    for heading in headings:
+        exists = driver.js("""const target = [...document.querySelectorAll('h2, h3')]
+          .find(element => element.innerText.trim() === arguments[0]);
+          if (target) target.scrollIntoView({block: 'start'});
+          return !!target;""", [heading])
+        if not exists:
+            print(f"BLOCK story heading not found: {heading}")
+            continue
+        time.sleep(0.2)
+        normalized = unicodedata.normalize("NFKD", heading).encode("ascii", "ignore").decode()
+        slug = re.sub(r"[^a-z0-9]+", "-", normalized.lower()).strip("-") or "story"
+        filename = f"story-{slug}-{mode}-{viewport_label}.png"
+        save_screenshot(driver, filename)
+        captured.append(filename)
+    return captured
 
 
 class Viewport:
@@ -167,24 +190,45 @@ def inspect_story_gate():
         # account password form; navigate directly to the protected library.
         driver.get(STORY_URL)
         time.sleep(2.0)
+        # On narrow viewports the Claro administrative sidebar overlays most of
+        # the story. Collapse it through its UI control before measuring or
+        # capturing the component.
+        viewport.set(320)
+        if driver.exists(".admin-toolbar__close-button"):
+            driver.click(".admin-toolbar__close-button")
+            time.sleep(0.3)
         result = {"url": driver.url().split("?")[0], "title": driver.title()}
         for width, label in ((1280, "desktop"), (320, "320")):
             actual = viewport.set(width)
+            driver.js("window.scrollTo(0, 0)")
             time.sleep(0.2)
             result[label] = driver.js("""return {viewport: innerWidth,
               documentWidth: document.documentElement.scrollWidth,
+              overflow: [...document.querySelectorAll('body *')]
+                .map(element => ({selector: element.tagName.toLowerCase() +
+                  (element.id ? '#' + element.id : '') +
+                  [...element.classList].slice(0, 2).map(name => '.' + name).join(''),
+                  right: Math.round(element.getBoundingClientRect().right),
+                  width: Math.round(element.getBoundingClientRect().width)}))
+                .filter(element => element.right > innerWidth + 1)
+                .slice(0, 8),
               body: (document.body?.innerText || '').slice(0, 180)};""")
             result[label]["requestedViewport"] = width
             save_screenshot(driver, f"ui-patterns-{label}.png")
+            result[label]["storyCaptures"] = capture_story_headings(driver, "light", label)
             if actual != width:
                 print(f"BLOCK viewport story {label}: esperado {width}, recebido {actual}")
         driver.js("document.documentElement.setAttribute('data-theme', 'dark'); "
                    "document.documentElement.setAttribute('data-bs-theme', 'dark')")
+        viewport.set(1280)
+        driver.js("window.scrollTo(0, 0)")
+        time.sleep(0.2)
         result["dark"] = driver.js("""return {darkPreference:
           matchMedia('(prefers-color-scheme: dark)').matches,
           dataTheme: document.documentElement.getAttribute('data-theme'),
           dataBsTheme: document.documentElement.getAttribute('data-bs-theme')};""")
         save_screenshot(driver, "ui-patterns-dark.png")
+        result["dark"]["storyCaptures"] = capture_story_headings(driver, "dark", "desktop")
         result["blocked"] = "O site encontrou um erro inesperado" in (
             result["320"]["body"] + result["desktop"]["body"]
         )

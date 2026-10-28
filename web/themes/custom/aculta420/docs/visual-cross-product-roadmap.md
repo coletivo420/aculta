@@ -92,10 +92,13 @@ Sync foi corrigido, mas o Runtime continua usando a configuração antiga; sem
 
 No tópico do Fórum, os estados salvar/não salvo foram fotografados em desktop,
 320 px e dark. O controle tem foco visível de 3 px, alvo mínimo de 44 px e rótulo
-textual; a Flag do usuário de teste voltou ao estado inicial. A rota protegida
-do UI Patterns Library retornou erro genérico no Runtime, então as stories de
-cores, layout, stat-counter, accessibility-badges e sponsor-logos seguem
-pendentes de renderização. Essas entregas continuam experimentais/candidatas.
+textual; a Flag do usuário de teste voltou ao estado inicial. As rotas
+protegidas do UI Patterns abriram após corrigir descrições YAML inválidas. As quatro cores, bookmark-toggle, layout de cinco regiões,
+stat-counter, accessibility-badges e sponsor-logos foram capturados no Firefox
+ESR. As stories sem consumidor permanecem experimentais/candidatas. O shell
+administrativo causa overflow de documento por drawers ocultos em algumas
+stories a 320 px; o layout da story permanece visível e a limitação está no
+README do teste.
 
 ## B8 — composições de página em colunas
 

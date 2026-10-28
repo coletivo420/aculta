@@ -1,5 +1,5 @@
 name: Página do evento
-description: Demonstra as cinco regiões e a ordem mobile-first: título, destaque, essenciais, conteúdo e complementos.
+description: "Demonstra as cinco regiões e a ordem mobile-first: título, destaque, essenciais, conteúdo e complementos."
 component: aculta420:event-page-five-regions
 slots:
   title:
