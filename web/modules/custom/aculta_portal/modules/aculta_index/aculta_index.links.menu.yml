@@ -1,0 +1,6 @@
+aculta_index.status:
+  title: 'Estado do índice de busca'
+  description: 'Geração ativa e pendências de atualização.'
+  route_name: aculta_index.status
+  parent: system.admin_config_search
+  weight: 50

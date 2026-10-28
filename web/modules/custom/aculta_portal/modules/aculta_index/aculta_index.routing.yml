@@ -1,0 +1,9 @@
+aculta_index.status:
+  path: '/painel-administrativo/indice'
+  defaults:
+    _controller: '\Drupal\aculta_index\Controller\ContentIndexStatusController::status'
+    _title: 'Estado do índice de busca'
+  requirements:
+    _permission: 'administer aculta index'
+  options:
+    _admin_route: true

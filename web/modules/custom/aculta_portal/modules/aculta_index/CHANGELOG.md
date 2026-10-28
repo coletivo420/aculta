@@ -1,5 +1,10 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.177 — painel somente de leitura do estado do índice (2026-10-28)
+
+- Adicionado `/painel-administrativo/indice`, com geração ativa, última reconstrução concluída e contagem de trabalho pendente. A permissão é restrita e a tela não executa rebuild, retry ou outra escrita.
+- Kernel access: 1 teste / 1 assertion PASS (1 depreciação).
+
 ## 0.1.0-dev.176 — revalidar acesso por página e endurecer integridade/cursors (2026-10-26)
 
 - `ContentIndexAccessFilter` limpa os handlers de Entity Access dos tipos
