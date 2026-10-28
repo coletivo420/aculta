@@ -98,3 +98,19 @@ O modelo de confirmação de conta criado antes foi removido, para não duplicar
 - Mudança nova: conta simplificada ainda não confirmada recebe novo pedido em cada compra com o mesmo e-mail (respeitando
   o intervalo de reenvio do requester). Não testada ainda.
 
+## 7. Resultado do teste automático ponta a ponta (2026-10-27)
+
+Roteiro executado no servidor de testes, com o e-mail `dmarc@aculta.org` (caixa de monitoramento, leitura somente):
+
+1. Conclusão de checkout como convidado (pedido de teste): conta criada pelo Commerce, pedido de confirmação enviado.
+2. Mensagem recebida pela caixa; link lido; host local trocado pelo de conta.
+3. Link aberto no Firefox visível e confirmação feita: "Confirmação de e-mail confirmada".
+4. `/criar-senha`: formulário de senha exibido ("Seu e-mail foi confirmado. Crie uma senha para acessar sua conta.").
+5. Senha criada e conta logada: "Senha criada. Bem-vindo!".
+
+Pendências desse resultado:
+- O redirecionamento automático depois de confirmar ainda não acontece: a página fica em "Confirmação de e-mail confirmada".
+  Sem o redirecionamento, a pessoa precisa seguir para `/criar-senha` (ou o link de senha). Investigar a resposta do formulário.
+- A etapa da senha é página, não modal sem botão de fechar (decisão do responsável, a fazer).
+- Reenvio para conta não confirmada em nova compra: implementado (ver seção 5), ainda não testado no servidor.
+
