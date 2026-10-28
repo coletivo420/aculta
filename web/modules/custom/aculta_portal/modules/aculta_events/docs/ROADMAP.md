@@ -158,6 +158,7 @@ Saída: calendário e exportação em teste, nos dois purposes (`main` e `evento
 - [x] `aculta_lms_agenda`: prazos e eventos de turma para matriculados (commit `ac43e7d94`).
 - [x] Bloco de próximos prazos e eventos no painel do aluno (commit `9766bb731`).
 - [x] Campo `field_turma` em `aculta_event` e acesso restrito a matriculados, conforme `aculta_lms_agenda/docs/INTEGRACAO.md`; Kernel cobre matrícula correta, outra turma e ausência de matrícula (4 testes, 176 assertions; commits `df76938ae`, `86f247d4e`).
+- [ ] Fechar a exposição em superfícies públicas. Auditoria em 2026-10-28 confirmou que `EventCatalogue::busca()` não filtra `field_turma`, `EventAccessControlHandler` permite view de publicados/cancelados e `EventIcsController::data()` não revalida membership. A agenda geral já exclui esses itens e CA5 os fornece por matrícula. A regra para catálogo, página por slug e ICS individual aguarda decisão do responsável.
 
 ## Fase F6 — Visual e acessibilidade
 
