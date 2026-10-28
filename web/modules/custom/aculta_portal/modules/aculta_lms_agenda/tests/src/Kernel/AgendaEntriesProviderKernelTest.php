@@ -32,7 +32,7 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'domain', 'datetime', 'datetime_range', 'user', 'file', 'image', 'media', 'options',
+    'system', 'key', 'address', 'geofield', 'domain', 'datetime', 'datetime_range', 'user', 'file', 'image', 'media', 'options',
     'entity_print', 'entity_usage', 'aculta_image', 'field', 'filter', 'flexible_permissions',
     'group', 'lms', 'lms_classes', 'views', 'text', 'taxonomy', 'aculta_lms', 'aculta_calendar',
     'aculta_events', 'aculta_lms_agenda',
@@ -182,6 +182,44 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $this->setCurrentUser($this->createUser());
     $vazio = $bloco->build();
     $this->assertStringContainsString('Nenhum prazo ou evento', (string) $this->render($vazio));
+  }
+
+
+  /**
+   * Link pessoal: o aluno gera o token, o .ics traz o prazo da turma, e o revogado deixa de valer.
+   */
+  public function testIcsPessoalComTokenRevogavel(): void {
+    $fuso = new \DateTimeZone('America/Sao_Paulo');
+    $prazo = (new \DateTimeImmutable('now', $fuso))->modify('+2 days')->setTime(12, 0);
+
+    $dono = $this->createUser();
+    ActivityType::create(['id' => 'pessoal_test', 'name' => 'Pessoal test', 'pluginId' => 'no_answer'])->save();
+    $atividade = Activity::create(['type' => 'pessoal_test', 'name' => 'Leitura pessoal', 'status' => 1, 'uid' => $dono->id()]);
+    $atividade->save();
+    $aula = Lesson::create(['name' => 'Aula pessoal', 'status' => 1, 'uid' => $dono->id()]);
+    $aula->get('activities')->appendItem(['target_id' => $atividade->id()]);
+    $aula->save();
+    $curso = Group::create(['type' => 'lms_course', 'label' => 'Curso pessoal', 'uid' => $dono->id(), 'status' => 1]);
+    $curso->get('lessons')->appendItem(['target_id' => $aula->id()]);
+    $curso->save();
+    $turma = Group::create(['type' => 'lms_class', 'label' => 'Turma pessoal', 'uid' => $dono->id(), 'status' => 1]);
+    $turma->save();
+    $curso->addRelationship($turma, 'lms_classes');
+    $turma->addRelationship($atividade, 'lms_class_activity_due', ['field_activity_due_at' => $prazo->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d\TH:i:s')]);
+
+    $aluno = $this->createUser();
+    $turma->addMember($aluno);
+
+    $tokens = $this->container->get('aculta_lms_agenda.tokens');
+    $token = $tokens->gerar((int) $aluno->id());
+    $resposta = \Drupal\aculta_lms_agenda\Controller\PersonalCalendarController::create($this->container)->exportar($token);
+
+    $this->assertSame(200, $resposta->getStatusCode());
+    $this->assertStringContainsString('SUMMARY:Prazo: Leitura pessoal', (string) $resposta->getContent());
+    $this->assertStringContainsString('no-store', (string) $resposta->headers->get('Cache-Control'));
+
+    $tokens->revogar((int) $aluno->id());
+    $this->assertSame(404, \Drupal\aculta_lms_agenda\Controller\PersonalCalendarController::create($this->container)->exportar($token)->getStatusCode());
   }
 
 }

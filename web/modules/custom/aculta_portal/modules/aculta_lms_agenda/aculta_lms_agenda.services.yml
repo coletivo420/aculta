@@ -2,3 +2,6 @@ services:
   aculta_lms_agenda.entries:
     class: Drupal\aculta_lms_agenda\AgendaEntriesProvider
     arguments: ['@entity_type.manager', '@aculta_lms.class_activity_deadline_manager', '@aculta_events.occurrences', '@datetime.time']
+  aculta_lms_agenda.tokens:
+    class: Drupal\aculta_lms_agenda\Calendar\PersonalCalendarTokens
+    arguments: ['@state']

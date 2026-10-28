@@ -1,0 +1,43 @@
+
+aculta_lms_agenda.calendario_pessoal:
+  path: '/calendario/pessoal'
+  defaults:
+    _controller: '\Drupal\aculta_lms_agenda\Controller\PersonalCalendarController::pagina'
+    _title: 'Meu calendário'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_lms_agenda.gerar:
+  path: '/calendario/pessoal/gerar'
+  defaults:
+    _controller: '\Drupal\aculta_lms_agenda\Controller\PersonalCalendarController::gerar'
+    _title: 'Gerar link do calendário'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _csrf_token: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_lms_agenda.revogar:
+  path: '/calendario/pessoal/revogar'
+  defaults:
+    _controller: '\Drupal\aculta_lms_agenda\Controller\PersonalCalendarController::revogar'
+    _title: 'Revogar link do calendário'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _csrf_token: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_lms_agenda.exportar:
+  path: '/calendario/pessoal/{token}.ics'
+  defaults:
+    _controller: '\Drupal\aculta_lms_agenda\Controller\PersonalCalendarController::exportar'
+    _title: 'Minha agenda'
+  requirements:
+    _access: 'TRUE'
+    token: '[A-Za-z0-9_-]{20,}'
+  options:
+    _aculta_domain_purpose: account
