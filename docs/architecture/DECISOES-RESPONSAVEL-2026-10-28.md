@@ -28,7 +28,7 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 | # | Assunto | Situação |
 | --- | --- | --- |
 | P-01 | Endereço de divulgação responsável (I-17) | **Resolvido em 2026-10-28:** `abuso@aculta.org`, publicado no `SECURITY.md` da raiz. Prazos de resposta ainda não fixados. |
-| P-02 | ADR do provedor de mapa (D-08) | Deixa de ser ADR de exceção. Registrar o Google Maps como provedor padrão, com o tratamento de dados (IP enviado ao Google ao carregar) e a atualização da política de privacidade. Bloqueia a fase F4 de eventos. |
+| P-02 | ADR do provedor de mapa (D-08) | **Resolvido em 2026-10-28:** `docs/decisions/ADR-014-provedor-mapa-google-maps.md`. Verificações de termos, cobrança e LGPD continuam listadas no próprio ADR, antes da F4. |
 
 ## Efeitos em cadeia
 
@@ -40,5 +40,6 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 ## Histórico
 
 - 2026-10-28: decisões D-01 a D-12 registradas, a partir de perguntas interativas. P-01 aguardando dado do responsável.
+- 2026-10-28: P-02 resolvido com o ADR-014 (provedor de mapa).
 - 2026-10-28: P-01 resolvido com o endereço `abuso@aculta.org` e criado o `SECURITY.md`.
 - 2026-10-28 (alteração): D-08 deixa de ser exceção. O mapa carrega na exibição da página, como padrão. Motivo: pedido do responsável.

@@ -11,7 +11,8 @@ frente estarem em RC. Merge em `main` não é deploy.
 Entrada: plano aprovado.
 
 - [x] Decisões D1–D11 registradas (`PLANO-IMPLANTACAO.md`, seção 3). D11: commits na PR atual.
-- [ ] Registrar ADR do purpose `eventos` em `docs/decisions/`, incluindo o Google Maps como provedor padrão do mapa (D7) e o tratamento de privacidade.
+- [x] ADR do provedor de mapa: `docs/decisions/ADR-014-provedor-mapa-google-maps.md` (Google Maps como padrão, D7).
+- [ ] Registrar ADR do purpose `eventos` em `docs/decisions/`.
 - [ ] Verificar compatibilidade com Core ^11.4 de `smart_date`, `geofield` e `address`.
 - [ ] Revisar termos e cobrança da Google Maps Platform (JavaScript API e Geocoding API) e o aviso de privacidade.
 - [x] Auditoria do OpenCulturas (`AUDITORIA-OPENCULTURAS.md`): nenhum arquivo copiado diretamente; achados S1 a S8 e T1 a T14 viram tarefas de F2–F6.
