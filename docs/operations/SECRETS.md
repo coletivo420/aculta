@@ -79,6 +79,11 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `melhorenvio_production_client_id` | `MELHORENVIO_PRODUCTION_CLIENT_ID` | Produção | Não, identificador do cliente | plain |
 | `melhorenvio_production_client_secret` | `MELHORENVIO_PRODUCTION_CLIENT_SECRET` | Produção | Sim | plain |
 | `aculta_melhorenvio_token_encryption` | `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` | Produção e testes (obrigatória nos dois) | Sim, chave de cifra do token OAuth | plain |
+| `osm_test_client_id` | `OSM_TEST_CLIENT_ID` | Testes | Não, ID da aplicação OAuth2 de desenvolvimento do OSM | plain |
+| `osm_test_client_secret` | `OSM_TEST_CLIENT_SECRET` | Testes | Sim, segredo da aplicação OAuth2 de desenvolvimento do OSM | plain |
+| `osm_production_client_id` | `OSM_PRODUCTION_CLIENT_ID` | Produção | Não, ID da aplicação OAuth2 de produção do OSM | plain |
+| `osm_production_client_secret` | `OSM_PRODUCTION_CLIENT_SECRET` | Produção | Sim, segredo da aplicação OAuth2 de produção do OSM | plain |
+| `aculta_osm_token_encryption` | `ACULTA_OSM_TOKEN_ENCRYPTION_KEY` | Produção e testes | Sim, chave hex de 64 caracteres para cifrar tokens OAuth2 no State | plain |
 | `smtp_password` | `SMTP_PASSWORD` | Produção e testes | Sim, senha do envio SMTP do domínio | plain |
 
 Os ambientes vêm do contrato (`environments` em `config/secrets-contract.json`). Variáveis
