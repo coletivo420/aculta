@@ -2,7 +2,7 @@
 
 **Ciclo vigente:** Dev → RC (código, testes, gates e revisão visual aplicável prontos) → deploy/validação Alpha no servidor de desenvolvimento → produção, conforme [ciclo de entrega](../operations/RELEASE-LIFECYCLE.md). Este plano histórico mantém registros antigos, mas não adia requisitos para depois do RC.
 
-Status: **plano de 2026-10-13, com implementação já iniciada**. O submódulo existe em `aculta_portal/modules/aculta_user` (versão 0.4.0-dev.2, `CHANGELOG.md` do submódulo). Esta seção 1 descreve a base de 2026-10-13 (`main` em `ce0941a`, Portal 0.3.0-dev.28) e não é mais o estado atual. O estado de cada decisão e de cada entrega está em [ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md](ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md); a verificação da fase U0 está em [ACULTA-USER-U0-VERIFICACAO.md](ACULTA-USER-U0-VERIFICACAO.md).
+O status atual do componente está em [`status/aculta_user.yml`](../operations/status/aculta_user.yml). O registro histórico de status deste plano está em [`history/status/aculta_user.md`](../history/status/aculta_user.md). O estado de cada decisão e entrega está em [ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md](ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md).
 
 Escopo: avatar, perfil público e autoria, integração com Wiki, Fórum e revista, funções sociais e gamificação, dentro de `web/modules/custom/aculta_portal/modules/aculta_user/`.
 

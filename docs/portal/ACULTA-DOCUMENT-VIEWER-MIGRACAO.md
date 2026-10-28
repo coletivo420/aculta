@@ -352,7 +352,7 @@ Conclusão: a integração técnica está pronta para os consumidores, mas nenhu
 
 ## 0.1.0-rc.1 — homologação (registro)
 
-Estado: **candidato em homologação, RC não declarado**. Faltam a revisão de código (AGENTS.md exige) e a revisão visual em Firefox antes de declarar RC. O estado do módulo continua `Dev` no índice de status.
+O status atual do componente está em [`status/aculta_document_viewer.yml`](../operations/status/aculta_document_viewer.yml). O registro histórico deste estado de homologação está em [`history/status/aculta_document_viewer.md`](../history/status/aculta_document_viewer.md).
 
 ### Testes
 

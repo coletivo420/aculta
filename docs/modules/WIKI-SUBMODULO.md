@@ -1,10 +1,8 @@
 # Wiki420 como submódulo do Portal — planejamento
 
-Status: **implementado até a Fase 4** (incluindo o ranking por verbete, item 4.4);
-o submódulo está declarado em `config/sync/core.extension.yml` (ver "Estado ao fim
-da sessão de 2026-10-22"). Nenhuma rota foi alterada. No Runtime nada foi
-habilitado nesta frente: a ativação ocorre quando o ambiente importar a
-configuração.
+O status do componente é mantido em [`status/aculta_wiki.yml`](../operations/status/aculta_wiki.yml).
+O registro histórico de status que antes abria este plano está em
+[`history/status/aculta_wiki.md`](../history/status/aculta_wiki.md).
 
 Este documento é a fonte única da frente. Cada fase termina antes da próxima começar.
 
