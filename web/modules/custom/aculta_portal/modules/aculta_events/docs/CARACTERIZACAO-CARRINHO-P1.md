@@ -6,7 +6,7 @@ comportamento.** Nenhum arquivo de produção foi alterado.
 - Data: 2026-10-28.
 - Branch: `refactor/opencultures-codigo-visual`.
 - Ambiente: servidor de teste local (esta máquina), Drupal 11.4.10, banco de Kernel `aculta_simpletest`.
-- Base da decisão: `docs/decisions/ADR-013-portal-multi-cart-checkout.md` com o aditivo de 2026-10-28, decisões D-38 a
+- Base da decisão: `docs/decisions/ADR-032-portal-multi-cart-checkout.md` com o aditivo de 2026-10-28, decisões D-38 a
   D-42 em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` e fases P-CART da mesma ADR.
 
 ## Como foi medido

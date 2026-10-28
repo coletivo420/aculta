@@ -1,6 +1,6 @@
 # ACULTA Donation — Roadmap de migração para o multi-carrinho do Portal
 
-**Decisão:** [ADR-013](../../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md). **Status:** planejado; sem alteração funcional.
+**Decisão:** [ADR-032](../../../../../../../docs/decisions/ADR-032-portal-multi-cart-checkout.md). **Status:** planejado; sem alteração funcional.
 
 ## Preservação obrigatória
 

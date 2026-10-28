@@ -2,7 +2,7 @@
 
 **Data:** 2026-10-23. **Branch:** `docs/aculta-forum-0.1.0-dev.1` (PR #297). **Status:** R0–R2 e R5 concluídas; R3 bloqueada; I-A, I-B e a implementação compartilhada de I-D/I-D-LMS feitas em código e configuração, com ativação em runtime pendente. Ver seções 7 a 10.
 
-Este documento registra a inventariação (R0), as decisões do responsável e a auditoria dos carrinhos e checkouts (I-A). A decisão arquitetural vigente está em [ADR-013](../decisions/ADR-013-portal-multi-cart-checkout.md), seção "Adendo — identidade fiscal compartilhada".
+Este documento registra a inventariação (R0), as decisões do responsável e a auditoria dos carrinhos e checkouts (I-A). A decisão arquitetural vigente está em [ADR-032](../decisions/ADR-032-portal-multi-cart-checkout.md), seção "Adendo — identidade fiscal compartilhada".
 
 ## 1. Decisões vigentes
 

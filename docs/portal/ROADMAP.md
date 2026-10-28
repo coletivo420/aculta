@@ -282,7 +282,7 @@ em produção. Ver também o
 
 ## Frente prioritária P-CART — Multi-carrinho e seleção contextual (SUPERSEDIDA) (ADR-013, 2026-10-22)
 
-**Supersedida.** O plano anterior (P-CART 0.1–0.6) descrevia abas e lista de pedidos como interface do comprador e persistência de seleção por sessão. Isso foi revogado: a coordenação é **administrativa** e o carrinho da barra multidomínio e a seleção atual de checkout ficam inalterados. O plano vigente está na seção seguinte e no [ADR-013](../decisions/ADR-013-portal-multi-cart-checkout.md).
+**Supersedida.** O plano anterior (P-CART 0.1–0.6) descrevia abas e lista de pedidos como interface do comprador e persistência de seleção por sessão. Isso foi revogado: a coordenação é **administrativa** e o carrinho da barra multidomínio e a seleção atual de checkout ficam inalterados. O plano vigente está na seção seguinte e no [ADR-032](../decisions/ADR-032-portal-multi-cart-checkout.md).
 
 ## RETIFICAÇÃO VIGENTE — P-CART administrativo (ADR-013, 2026-10-22)
 
@@ -296,7 +296,7 @@ em produção. Ver também o
 - **P-CART F (parcial, 2026-10-22):** log de auditoria das alterações, flow efetivo com fallback do Commerce, ACL por aba e cache de formulários administrativos revisados; sem novas métricas. Pendente: integração com Statistics (nenhuma métrica necessária identificada). Escopo original: auditoria de políticas, conflitos, segurança, Statistics e documentação.
 - **P-CART T (NÃO executada):** exige homelab, navegador e Mercado Pago sandbox. Pendências: comparar rotas compiladas e DOM do carrinho do cabeçalho antes/depois; `donate|cart|both` e a chave global em HTTP real; checkout de Loja, LMS e Doações (anônimo e autenticado); webhooks repetidos e assinaturas; abas em mobile/desktop, claro/escuro e sem JavaScript; apresentação SDC/UI Suite das abas; Olivero sem o ACULTA420. Escopo original: regressão real do cabeçalho e dos três checkouts no homelab, sem alterações visuais ao comprador.
 
-**As seções P-CART anteriores, quando conflitantes, ficam supersedidas por este plano e pelo [ADR-013](../decisions/ADR-013-portal-multi-cart-checkout.md).**
+**As seções P-CART anteriores, quando conflitantes, ficam supersedidas por este plano e pelo [ADR-032](../decisions/ADR-032-portal-multi-cart-checkout.md).**
 
 ## Frente CPF — identidade fiscal oficial e checkout compartilhado (2026-10-23)
 

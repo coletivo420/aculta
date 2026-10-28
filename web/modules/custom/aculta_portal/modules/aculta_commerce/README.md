@@ -74,11 +74,11 @@ os flows e suas associações aos tipos de pedido. Rodar com:
 
 ## Integração com a carteira/carrinhos do Portal
 
-`aculta_commerce` fornece o contexto **Loja** ao gerenciador transversal do Portal por `ShopCheckoutProvider`; o Portal administra as abas **Comum | Loja | LMS | Doações**, seleciona modalidade de checkout por carrinho/pedido e preserva o checkout específico de cada módulo. A aba Comum não significa fusão física de pedidos. O Green Stash é a experiência Studio de administração da loja. A travessia visual Loja→MAIN e o estado de identificação do checkout foram comprovados; submissão como visitante, conta após checkout, e-mail de senha e gateway permanecem pendentes de configuração e homologação. Ver [roadmap](docs/ROADMAP.md) e [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
+`aculta_commerce` fornece o contexto **Loja** ao gerenciador transversal do Portal por `ShopCheckoutProvider`; o Portal administra as abas **Comum | Loja | LMS | Doações**, seleciona modalidade de checkout por carrinho/pedido e preserva o checkout específico de cada módulo. A aba Comum não significa fusão física de pedidos. O Green Stash é a experiência Studio de administração da loja. A travessia visual Loja→MAIN e o estado de identificação do checkout foram comprovados; submissão como visitante, conta após checkout, e-mail de senha e gateway permanecem pendentes de configuração e homologação. Ver [roadmap](docs/ROADMAP.md) e [ADR-032](../../../../../../docs/decisions/ADR-032-portal-multi-cart-checkout.md).
 
 ## RETIFICAÇÃO ADR-013 — Abas de administração, não de compra
 
-O `aculta_commerce` fornece o contexto e as configurações de checkout da **Loja** à orquestração administrativa do `aculta_portal`. **Comum | Loja | LMS | Doações** são exclusivamente abas internas administrativas; não criar uma interface de carrinho público. O carrinho da barra multidomínio e o seletor de checkout atuais são preservados. Green Stash continua gestão da loja no Studio. O Mercado Pago continua gateway transversal. Ver [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
+O `aculta_commerce` fornece o contexto e as configurações de checkout da **Loja** à orquestração administrativa do `aculta_portal`. **Comum | Loja | LMS | Doações** são exclusivamente abas internas administrativas; não criar uma interface de carrinho público. O carrinho da barra multidomínio e o seletor de checkout atuais são preservados. Green Stash continua gestão da loja no Studio. O Mercado Pago continua gateway transversal. Ver [ADR-032](../../../../../../docs/decisions/ADR-032-portal-multi-cart-checkout.md).
 
 ## Green Stash — fundação 0.1.0-D
 

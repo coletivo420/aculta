@@ -1,6 +1,35 @@
-# ADR-013 — Coordenação administrativa de carrinhos e checkouts no ACULTA Portal
+# ADR-032 — Coordenação administrativa de carrinhos e checkouts no ACULTA Portal
+
+> Antes ADR-013. Renumerada em 2026-10-28 porque o número 013 é do ACULTA Content Index.
 
 **Status:** aprovado como planejamento; nenhuma alteração funcional habilitada. **Revisão:** 2026-10-22. Esta versão substitui integralmente a proposta anterior de interface pública multi-carrinho.
+
+
+## Revisão de estado — 2026-10-28
+
+Esta seção **prevalece** sobre a cláusula de unificação de 2026-10-23 abaixo. Motivo: decisão do responsável; o LMS tem fluxo próprio e não tem cálculo de frete, então não pode compartilhar o flow `default` da Loja.
+
+**Fluxo por tipo de pedido (estado a manter):**
+
+| Tipo de pedido | Contexto | Flow de checkout | Frete | Observação |
+| --- | --- | --- | --- | --- |
+| `default` | Loja | `default` (com `aculta_shipping_information`) | Sim | Painel de envio da Loja |
+| `curso` | LMS | flow `curso` próprio, sem envio | Não | Mantém tipo, matrícula e regras do LMS. Identidade fiscal conforme a política do Portal |
+| `doacao` | Doações | `doacao` | Não | Modelo sem envio |
+| `assinatura` | Assinatura de doação | `assinatura_flow` | Não | Fora da fusão do carrinho |
+| `ingresso` (planejado) | Eventos | checkout próprio sem envio (D-38, D-42) | Não | Pagamento na etapa final do Mercado Pago |
+
+**Correções:**
+1. A cláusula de 2026-10-23 que manda `curso` usar o flow `default` **não vale**. O sync (`commerce_order.commerce_order_type.curso.yml`, `checkout_flow: default`) é a divergência a corrigir, com teste de regressão do LMS.
+2. O flow `curso` continua na configuração. O que a ADR de 2026-10-23 chamou de duplicado é o flow de LMS, que é próprio.
+
+**Carrinho integrado (barra multidomínio):** continua com um pedido por carrinho e fluxo mais exigente entre as categorias presentes. A precedência real, no código (`CartConsolidator::prioridade()`), é: tipos LMS configurados > tipo da Loja > `doacao`. Eventos entra entre a Loja e a doação (D-39), o que exige mudar `prioridade()` na fase P4.
+
+**Defeito conhecido (B-01):** com `donation_route=donate`, `commerce_cart.page`, `commerce_checkout.checkout` e `commerce_checkout.form` ficam fechadas também para Loja e LMS. Não é comportamento pretendido. Corrigir de forma isolada e reversível antes da P4.
+
+**Documentos relacionados:** decisões D-38 a D-42 em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`; aditivo de Eventos abaixo; caracterização P1 em `web/modules/custom/aculta_portal/modules/aculta_events/docs/CARACTERIZACAO-CARRINHO-P1.md`.
+
+---
 
 ## Decisão obrigatória
 
@@ -95,7 +124,7 @@ Consequências para esta ADR:
 
 **Situação:** contrato implementado (`FiscalIdentityPolicy`, `FiscalIdentityPane`); configuração do checkout comercial unificada no flow `default`; ativação em runtime pendente de `config:import` autorizado.
 
-**Unificação do checkout comercial (2026-10-23):** Loja (tipo `default`) e LMS (tipo `curso`) passam a usar um único flow, o `default`, com o pane `aculta_fiscal_identity`. O flow `curso`, duplicado, sai da configuração. Os tipos de pedido continuam separados, como o responsável determinou. Login obrigatório e cadastro dentro do checkout permitido, como no LMS. Doações mantêm os flows `doacao` e `assinatura_flow`, sem o pane.
+**[REVOGADA em 2026-10-28, D-43: não vale para o LMS.]** **Unificação do checkout comercial (2026-10-23):** Loja (tipo `default`) e LMS (tipo `curso`) passam a usar um único flow, o `default`, com o pane `aculta_fiscal_identity`. O flow `curso`, duplicado, sai da configuração. Os tipos de pedido continuam separados, como o responsável determinou. Login obrigatório e cadastro dentro do checkout permitido, como no LMS. Doações mantêm os flows `doacao` e `assinatura_flow`, sem o pane.
 
 ## Adendo — estado do `aculta_commerce` (2026-10-23)
 

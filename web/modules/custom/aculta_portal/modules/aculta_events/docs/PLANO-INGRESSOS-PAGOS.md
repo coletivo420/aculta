@@ -1,8 +1,8 @@
 # Plano — ingressos pagos (venda dentro do ACULTA)
 
 Status: **rascunho, sem código.** Fora da v1 de eventos (D-30). A v1 só tem campos informativos de preço e link
-externo (D-29, E1). Decisões que servem de base: D-29 a D-41 em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`,
-e o aditivo de 2026-10-28 à `docs/decisions/ADR-013-portal-multi-cart-checkout.md`.
+externo (D-29, E1). Decisões que servem de base: D-29 a D-43 em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`,
+e o aditivo de 2026-10-28 à `docs/decisions/ADR-032-portal-multi-cart-checkout.md`.
 
 > **Atenção:** a emissão de documento fiscal (ponto A, D-35) está **sem decisão**. Nenhuma venda pode abrir antes do
 > parecer fiscal e jurídico. Este plano não substitui esse parecer.
@@ -23,7 +23,7 @@ pacote novo.
 | --- | --- |
 | `aculta_commerce` | Pedido, linhas de pedido e ajustes. Novo tipo de pedido `ingresso`, sem novo módulo |
 | `aculta_pagamentos_mercadopago` | Checkout Pro, webhooks assinados, estorno com lock e reconciliação |
-| `aculta_portal` (ADR-013) | Registro do contexto em `CheckoutSettings`, carrinho integrado e política de CPF |
+| `aculta_portal` (ADR-032) | Registro do contexto em `CheckoutSettings`, carrinho integrado e política de CPF |
 | `aculta_statistics` | Métricas de pedidos pagos, segmentadas por tipo |
 | Conta única do ACULTA | Recebe todas as vendas. Repasse é manual (D-32) |
 
@@ -48,13 +48,13 @@ Limite conhecido: o gateway não faz repasse automático nem emite documento fis
 
 ## 4. Integração com `aculta_commerce` e `aculta_portal`
 
-Contratos que o `aculta_events` precisa, com a regra da ADR-013 de não classificar pedido só pelo domínio.
+Contratos que o `aculta_events` precisa, com a regra da ADR-032 de não classificar pedido só pelo domínio.
 
 | # | Contrato | Como |
 | --- | --- | --- |
-| I-1 | Tipo de pedido `ingresso` | Novo tipo de pedido. **Não reatribuir** tipos de pedido existentes (`default`, `curso`, `doacao`), como exige a ADR-013 (item 6) |
+| I-1 | Tipo de pedido `ingresso` | Novo tipo de pedido. **Não reatribuir** tipos de pedido existentes (`default`, `curso`, `doacao`), como exige a ADR-032 (item 6) |
 | I-2 | Tipo de item | Novo tipo de item de pedido para o lote. Lote vinculado a `aculta_event_date`. Forma exata (variação de produto Commerce ou entidade própria) a decidir na P2 |
-| I-3 | Classificação | Pedido de Eventos é reconhecido pelo **tipo de pedido e tipo de item**, nunca pelo domínio `eventos` (ADR-013, item 5; ADR-015) |
+| I-3 | Classificação | Pedido de Eventos é reconhecido pelo **tipo de pedido e tipo de item**, nunca pelo domínio `eventos` (ADR-032, item 5; ADR-015) |
 | I-4 | Registro no Portal | `CheckoutSettings` recebe o contexto de Eventos (tipo de pedido, checkout e rota), sem alterar os valores atuais de Loja, LMS e Doações |
 | I-5 | Carrinho integrado | `CartSite` mapeia `ingresso` a um separador próprio (**Eventos**). `CartConsolidator` inclui Eventos na fusão, com a precedência LMS > Loja > Eventos > Doações |
 | I-6 | Pagamento | Mesmo gateway (`aculta_mercadopago_checkout_pro`), na etapa final do Mercado Pago. Webhook e retorno no MAIN, idempotentes por ID remoto, como hoje |
@@ -62,7 +62,7 @@ Contratos que o `aculta_events` precisa, com a regra da ADR-013 de não classifi
 | I-13 | Item não envio | Item de lote é marcado como não envio. Não entra no cálculo de frete nem exige endereço, mesmo em pedido fundido com a Loja |
 | I-7 | Emissão do ingresso | Ao pagamento concluído, como `CourseOrderEnrollmentManager` faz para matrícula: lê pagamentos do pedido, valida estado e emite uma vez |
 | I-8 | Estorno | Ingresso **não entra** na lista fixa de bloqueio de `RefundEligibilitySubscriber`. O estorno segue a configuração administrativa (D-34) |
-| I-9 | Identidade fiscal | CPF exigido só em ingresso pago, pela política do `aculta_portal` (ADR-013, adendo de 2026-10-23, item 2) |
+| I-9 | Identidade fiscal | CPF exigido só em ingresso pago, pela política do `aculta_portal` (ADR-032, adendo de 2026-10-23, item 2) |
 | I-10 | Estatísticas | `aculta_statistics` agrega receita de Eventos separada da Loja. A receita total não é receita da loja (aviso do `aculta_commerce`) |
 | I-11 | Green Stash | **Fora.** Green Stash é administração de loja. A gestão de ingressos fica no `aculta_events` |
 
@@ -75,7 +75,7 @@ Contratos que o `aculta_events` precisa, com a regra da ADR-013 de não classifi
 - **Ordem de precedência.** Confirmar no código de `CartConsolidator` como a ordem LMS > Loja > Doações está
   implementada, antes de inserir Eventos entre Loja e Doações.
 - **Frete em pedido fundido.** Quando Eventos e Loja estão no mesmo pedido, o fluxo é o da Loja (precedência). Ingresso não pode gerar frete nem exigir endereço. Confirmar na P4 que o painel de frete considera só os itens de envio.
-- **Gate do ADR-013.** O aditivo de 2026-10-28 foi registrado. A implementação segue as fases P-CART (caracterização,
+- **Gate do ADR-032.** O aditivo de 2026-10-28 foi registrado. A implementação segue as fases P-CART (caracterização,
   contratos, integração, transferência, administração, hardening e homologação), com teste no homelab.
 
 ## 5. Escopo proposto
@@ -106,7 +106,7 @@ Contratos que o `aculta_events` precisa, com a regra da ADR-013 de não classifi
 | Fase | Entrega | Pré-requisito |
 | --- | --- | --- |
 | P0 | Parecer fiscal e de LGPD (pontos A, B e E) | Decisão do responsável |
-| P1 | Caracterização do carrinho integrado, dos três checkouts e das rotas globais (B-01), com testes | Aditivo à ADR-013 (feito) |
+| P1 | Caracterização do carrinho integrado, dos três checkouts e das rotas globais (B-01), com testes | Aditivo à ADR-032 (feito) |
 | P2 | Tipo de pedido `ingresso`, tipo de item, `CheckoutSettings` e lotes, sem venda aberta (resolve F) | P1 |
 | P3 | Checkout próprio de Eventos com gateway de teste (credenciais em `secrets/`) | P2 |
 | P4 | Inclusão de Eventos no carrinho integrado, com regressão da barra e dos checkouts existentes | P3 |

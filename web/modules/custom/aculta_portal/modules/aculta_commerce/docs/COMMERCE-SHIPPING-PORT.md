@@ -146,6 +146,6 @@ O field storage `field.storage.commerce_order.shipments` é necessário e não d
 - https://www.drupal.org/project/commerce_shipping
 - `web/modules/custom/aculta_portal/modules/aculta_commerce/docs/SHIPPING-STOCK-BRAZIL-RESEARCH.md`
 - `docs/portal/CHECKOUT-BILLING.md`
-- `docs/decisions/ADR-013-portal-multi-cart-checkout.md`
+- `docs/decisions/ADR-032-portal-multi-cart-checkout.md`
 
 **Estado da PR #298 em 2026-10-26:** métodos com workflow legado `shipment_default` recorrem ao workflow ACULTA quando a definição antiga não existe; motor próprio e provider Melhor Envio estão integrados; Unit Commerce 55/272, Kernel Shipping 7/237, Unit Melhor Envio 85/204, Kernel Melhor Envio 11/57 e instalação limpa dos módulos sem `commerce_shipping` PASS. O Kernel do Melhor Envio foi reexecutado em MariaDB dedicado, sem rede externa. Composer e Config Sync versionados usam o motor próprio. Consulta read-only anterior encontrou o Runtime de testes em estado legado (`commerce_shipping` ativo; field target `commerce_shipment`); Runtime não foi alterado nesta sessão. Próximas ações: homologar checkout e visual com Firefox ESR e validar a cotação no sandbox sem contratar envio; cutover permanece separado e autorizado operacionalmente. Ambos os módulos permanecem Dev. Ver [`SHIPPING-PORT-MATRIX.md`](SHIPPING-PORT-MATRIX.md) e o [roadmap do Melhor Envio](../modules/aculta_commerce_melhorenvio/docs/ROADMAP.md).
