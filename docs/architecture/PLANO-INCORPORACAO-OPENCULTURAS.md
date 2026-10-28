@@ -113,7 +113,7 @@ Cada painel é uma microfase, com permissão própria, teste Kernel de acesso ne
 | Id | Painel | Módulo dono | Dependência | Situação |
 | --- | --- | --- | --- | --- |
 | ADM1 | Denúncias e conteúdo moderado, todas as áreas | `aculta_ugc` | Plano U1–U4 de `aculta_ugc` | Planejado |
-| ADM2 | Lista administrativa de pessoas (mínima) | `aculta_user` | D-22 | **Implementado**: `/painel-administrativo/pessoas`, restrita a `administer users`; só nome do perfil, apelido e situação. Kernel: rota negada a usuário comum e conteúdo minimizado. |
+| ADM2 | Lista administrativa de pessoas (mínima) | `aculta_user` | D-22 | **Implementado**, `701fa1d87`: `/painel-administrativo/pessoas`, restrita a `administer users`; só nome do perfil, apelido e situação. Kernel: rota negada a usuário comum e conteúdo minimizado. |
 | ADM3 | Uso de arquivos em `imagens` | `aculta_image` | — | **Feito**, commit `d80b4a748` |
 | ADM4 | FAQ e blocos editáveis | `aculta_portal` (decisão sobre blocos) | Decisão do responsável | Pendente de decisão |
 | ADM5 | Conteúdo geral com filtros | `aculta_portal` | Lista de áreas e papéis | Pendente de decisão |
