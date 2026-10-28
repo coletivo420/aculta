@@ -1,6 +1,6 @@
 # ADR-014 — Provedor de mapa: Google Maps Platform como padrão
 
-**Status:** aceito em 2026-10-28, pelo responsável (decisão D-08 de `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`).
+**Status:** **superado em 2026-10-28 pelo ADR-016** na escolha de provedor (Leaflet com OpenStreetMap como padrão; Google Maps como opção). O conteúdo deste ADR permanece como registro da análise do Google.
 **Escopo:** mapas de locais e eventos (`aculta_events`, fase F4) e geocodificação de endereços de local.
 **Substitui:** a proposta de OpenStreetMap/Leaflet da auditoria do OpenCulturas (`AUDITORIA-OPENCULTURAS.md`, S6 e T4).
 
