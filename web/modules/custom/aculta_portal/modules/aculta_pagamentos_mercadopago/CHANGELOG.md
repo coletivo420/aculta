@@ -1,7 +1,7 @@
 ## 0.1.0-dev.54 — validar integração do webhook no Kernel (2026-10-27)
 
-- Novo teste Kernel atravessa o subscriber real da notificação Commerce, resolve a signing Key pelo provedor `env`, aceita assinatura válida e retorna 401 para assinatura forjada. Nenhum segredo real nem chamada externa.
-- `CheckoutProTest`: 3 testes / 123 assertions PASS (78 depreciações Core/contrib); PHPCS Drupal/DrupalPractice e PHP lint PASS. Unit MP: 215 testes / 969 assertions PASS. Homologação sandbox permanece pendente.
+- Novo teste Kernel atravessa o subscriber real da notificação Commerce, resolve a signing Key pelo provedor `env`, aceita assinatura válida, retorna 401 para assinatura forjada e 503 quando o gateway está desabilitado. Nenhum segredo real nem chamada externa.
+- `CheckoutProTest`: 3 testes / 124 assertions PASS (78 depreciações Core/contrib); PHPCS Drupal/DrupalPractice e PHP lint PASS. Unit MP: 215 testes / 969 assertions PASS. Homologação sandbox permanece pendente.
 
 ## 0.1.0-dev.53 — impedir associação duplicada entre pedidos (2026-10-27)
 
