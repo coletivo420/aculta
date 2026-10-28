@@ -1,0 +1,129 @@
+# Roadmap — ACULTA Eventos (`aculta_events` + `aculta_calendar`)
+
+Roadmap único desta frente. Detalhes de cada fase: `PLANO-IMPLANTACAO.md`.
+Versões seguem `docs/operations/RELEASE-LIFECYCLE.md`; módulos novos começam em `0.1.0-dev.1`.
+
+Regra de implantação: nada vai para produção antes de todos os módulos, temas e subtemas desta
+frente estarem em RC. Merge em `main` não é deploy.
+
+## Fase F0 — Decisões e pré-requisitos
+
+Entrada: plano aprovado.
+
+- [x] Decisões D1–D11 registradas (`PLANO-IMPLANTACAO.md`, seção 3). D11: commits na PR atual.
+- [ ] Registrar ADR do purpose `eventos` em `docs/decisions/`, incluindo a exceção de privacidade do Google Maps (D7).
+- [ ] Verificar compatibilidade com Core ^11.4 de `smart_date`, `geofield` e `address`.
+- [ ] Revisar termos e cobrança da Google Maps Platform (JavaScript API e Geocoding API) e o aviso de privacidade.
+- [ ] Revisar licenças: código GPL-2.0-or-later copiado e ícones Phosphor (MIT).
+
+Saída: decisões registradas; nenhuma dependência nova instalada ainda.
+
+## Fase F1 — Purpose `eventos` e infraestrutura
+
+Entrada: F0 concluída.
+
+- [ ] Domain `eventos_aculta_org` e `DomainPurposeManager` com o purpose `eventos`.
+- [ ] Rotas-esqueleto com `_aculta_domain_purpose`; `DomainRoutePolicy` ativo.
+- [ ] `deploy.json`: `domain_transition`, `robots_policy`, `sitemap`, `environment_bound`.
+- [ ] `config/sync`: `domain.record`, ação de domínio e alias de teste.
+- [ ] `ROUTES-SITEMAP.md` atualizado (identificador `eventos.aculta`).
+- [ ] **Teste:** DNS `eventos.aculta.toca.net.br` (pendente no Cloudflare); certificado e vhost HTTPS.
+- [ ] Gates: `validate-environment-addresses.php`, `validate-public-slugs.php`, `validate-no-temporary-route-aliases.php`, `validate-domain-presentation-contract.php`.
+
+Saída: `https://eventos.aculta.toca.net.br/` responde no ambiente de teste (página provisória), com `noindex`.
+
+## Fase F2 — Modelo de dados
+
+Entrada: F1 concluída.
+
+- [ ] Tipos `aculta_event`, `aculta_event_date`, `aculta_event_location` (`MODELO-DE-DADOS.md`).
+- [ ] Vocabulários `aculta_event_type` e `aculta_location_type`.
+- [ ] Permissões e formulários; `ContentPurposeResolver` cobre os tipos novos.
+- [ ] Testes Kernel de acesso por purpose e de datas.
+
+Saída: cadastro funcional em teste, sem view pública.
+
+## Fase F3 — Catálogo de eventos
+
+Entrada: F2 concluída.
+
+- [ ] View `aculta_event_catalogue` com filtros (tipo, local, período).
+- [ ] Cartão de evento como SDC em `aculta420` (`VISUAL.md`).
+- [ ] Página `/eventos/{slug}` com datas, local e organizador.
+- [ ] Slugs em português; sem alias temporário.
+
+Saída: catálogo e página do evento navegáveis com ACULTA420 e Olivero.
+
+## Fase F4 — Locais com mapa
+
+Entrada: F3 concluída; chave de API do Google provisionada para teste (`secrets/`) e restrição por referenciador definida.
+
+- [ ] Campo de coordenadas e endereço; regra de precisão do endereço.
+- [ ] Geocodificação no servidor (Geocoding API), uma vez por local, com a chave fora do repositório.
+- [ ] Bloco de mapa (Maps JavaScript API + agrupamento de marcadores) e lista sincronizada.
+- [ ] Carregamento do mapa só após ação do usuário, com aviso de privacidade.
+- [ ] Filtro de tipo de local.
+- [ ] Alternativa textual completa ao mapa.
+
+Saída: `/locais` e `/mapa` funcionam sem JavaScript na lista; o mapa é progressivo.
+
+## Fase F5 — Calendário (`aculta_calendar`)
+
+Entrada: F3 concluída.
+
+- [ ] Visão de agenda (lista) e visão de mês (a partir de `md`).
+- [ ] Filtros compartilhados com o catálogo.
+- [ ] Exportação `.ics` de uma data e do calendário inteiro (ICS próprio).
+- [ ] Incorporação por iframe em `/calendario/incorporar`, com política de `frame-ancestors` decidida.
+- [ ] Calendário também no `main` (D6): mesmas rotas de agenda, canonical e sitemap conforme a regra de produção.
+
+Saída: calendário e exportação em teste, nos dois purposes (`main` e `eventos`).
+
+## Fase F6 — Visual e acessibilidade
+
+Entrada: F3 e F5 concluídas.
+
+- [ ] Componentes SDC em `aculta420` com stories (`VISUAL.md`).
+- [ ] Modo claro e escuro por tokens.
+- [ ] Teste em 320 px, zoom de 200% e teclado.
+- [ ] Revisão visual no Firefox ESR (`DISPLAY=:0`), com capturas fora do repositório.
+
+Saída: revisão visual aprovada pelo responsável.
+
+## Fase F7 — SEO e indexação
+
+Entrada: F3 e F4 concluídas.
+
+- [ ] Sitemap do purpose (produção indexável; teste `noindex`).
+- [ ] Metadados de página e dados estruturados de evento (schema.org `Event`), se o `json_ld_schema` do ACULTA for usado.
+- [ ] `validate-final-sitemap.php` verde no ambiente de teste.
+
+Saída: sitemap e robots conferidos pelo `aculta_deployer`.
+
+## Fase F8 — Piloto de conteúdo
+
+Entrada: F6 concluída.
+
+- [ ] Cadastro piloto no ambiente de teste (dados fictícios ou aprovados).
+- [ ] Teste com usuários (organizadores e público).
+
+Saída: lista de ajustes aprovada.
+
+## Fase F9 — Fechamento e RC
+
+Entrada: F0–F8 concluídas.
+
+- [ ] Gates verdes; testes Kernel, Unit e navegador com ACULTA420 e Olivero.
+- [ ] Changelogs e `docs/operations/status/` atualizados pelo fluxo do projeto.
+- [ ] `ORIGEM-OPENCULTURAS.md` revisado (avisos de licença).
+- [ ] DNS e certificado de `eventos.aculta.org` planejados (fora do repositório).
+
+Saída: módulos em RC. Deploy só quando todos os módulos, temas e subtemas estiverem em RC.
+
+## Pós-v1 (sem data)
+
+- Recorrência de eventos.
+- Sincronização com OpenStreetMap (`openculturas_openstreetmap`), via integração do ACULTA.
+- Venda de ingressos e inscrições (plano próprio, com Mercado Pago e `aculta_commerce`).
+- Calendário pessoal na conta do usuário.
+- Integração com a Revista e o Studio (referência a eventos).
