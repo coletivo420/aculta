@@ -19,6 +19,16 @@
         "--header",
         "Authorization: Bearer ${MERCADOPAGO_MCP_TOKEN}"
       ]
+    },
+    "dhtmlx-mcp": {
+      "type": "http",
+      "url": "https://docs.dhtmlx.com/mcp"
+    },
+    "osm-mcp": {
+      "type": "stdio",
+      "command": "/home/piradopirata/.local/share/codex-mcp/osm-mcp-server-0.1.1/bin/osm-mcp-server",
+      "args": [],
+      "env": {}
     }
   }
 }
