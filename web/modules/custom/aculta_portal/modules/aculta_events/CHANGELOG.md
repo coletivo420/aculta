@@ -1,5 +1,11 @@
 # Changelog — aculta_events
 
+## 2026-10-28 — formulário de nova data com referência segura (E4, D-28)
+
+- Adicionado `/painel-administrativo/eventos/datas/adicionar`; o parâmetro `event_id` só preenche o evento quando o usuário tem acesso de atualização. IDs inválidos, inexistentes ou não editáveis deixam o campo em branco.
+- O formulário cria a data com a referência selecionada e campos preenchidos ali; não copia participantes nem clona parágrafos. Implementação reescrita a partir da regra D-28, sem copiar código do OpenCulturas.
+- Kernel: editor autorizado recebe a referência; usuário sem acesso não a recebe; ID inexistente ou evento não editável não quebra o formulário.
+
 ## 2026-10-28 — campos informativos de preço e compra externa (E1, D-29)
 
 - `aculta_event_date` ganha `field_gratuito`, `field_pricing`, `field_pricing_info` e `field_ticketing`; preço é texto, ticketing aceita link externo e não há cobrança no ACULTA.

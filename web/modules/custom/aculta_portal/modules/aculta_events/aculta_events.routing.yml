@@ -29,6 +29,17 @@ aculta_events.locations:
   options:
     _aculta_domain_purpose: eventos
 
+aculta_events.date_add:
+  path: '/painel-administrativo/eventos/datas/adicionar'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateCreateForm'
+    _title: 'Adicionar data de evento'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: eventos
+
 aculta_events.map:
   path: '/mapa'
   defaults:

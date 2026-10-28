@@ -90,6 +90,7 @@ desabilitados. Nunca use um caminho de teste como evidência de produção.
 | `links.aculta` | `/` | Landing pública de perfis e links sociais | Runtime de teste após rebuild: HTTP 200 com ACULTA, botão principal e projetos via fallback; `/redes-sociais` direto retorna 404. Produção e revisão visual não confirmadas. |
 | `eventos.aculta` | `/eventos` | Catálogo de eventos publicados e cancelados, com filtros por tipo e período (dd/mm/aaaa) | Rota `aculta_events.catalogue`, controller `EventCatalogueController`. Rascunho não entra. Teste: `EventCatalogueKernelTest`. A raiz `/` do host responde pelo catálogo (`FRONT_PATHS`). Produção não confirmada. |
 | `eventos.aculta` | `/eventos/{slug}` | Página pública do evento: datas, local, tipo, organizador e aviso de cancelamento | Rota `aculta_events.page`, controller `EventPageController`. Slug gerado na criação (`EventSlugGenerator`), estável depois. Rascunho e slug inexistente respondem 404. |
+| `eventos.aculta` | `/painel-administrativo/eventos/datas/adicionar` | Formulário administrativo para criar data, com pré-preenchimento opcional de evento editável | Rota `aculta_events.date_add`, form `EventDateCreateForm`, permissão `administer aculta events`; `event_id` não revela evento sem acesso de atualização. |
 
 ## Caminhos humanos ativos ou condicionais
 
