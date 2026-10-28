@@ -1,3 +1,8 @@
+## ADM2 — lista administrativa mínima de pessoas
+
+- Criada a lista restrita a `administer users`, com nome de exibição, apelido e situação da conta; sem e-mail, documento ou endereço.
+- O nome usa apenas `field_first_name` do perfil e nunca recorre ao nome de conta, que pode ser um e-mail.
+
 ## 0.4.0-dev.90 — fallback nome + acervo e autoria da Wiki
 
 - `AuthorIdentityResolver::resolveFallback()` e `AuthorCardBuilder::buildFallback()`
@@ -245,11 +250,4 @@ PHP lint PASS. Runtime não executado.
 - Migração legada do `aculta_user.install`: só o aceite único entra no ledger. Ambiente de teste, sem migração de dados.
 - Regra e gate: `docs/portal/ACEITE-UNICO.md`, `php scripts/validate-single-acceptance.php`.
 
-## 0.4.0-dev.60 — conclui namespace do ledger e remove o Agreement contrib — 2026-10-21
-
-- Classes, arquivos, hooks, serviços, rotas, formulários e métodos próprios usam `AcultaUserAgreement*` / `aculta_user_agreement_*`; os identificadores antigos sobrevivem apenas nos updates históricos de migração/revogação.
-- `drupal/agreement` foi desinstalado do Runtime de testes, removido do Composer e de Config Sync. A migração preserva o estado legado disponível, identificado como estado final sem histórico anterior.
-- Update 10010 aplica a retenção escolhida: remove eventos legados de contas que já não existem; a exclusão de uma conta também apaga sua cadeia. Não se conserva dado pessoal após o fim da conta.
-- Runtime: Agreement desativado, 4 eventos/3 contas ativas após retenção, cadeias HMAC válidas. Home MAIN e Conta respondem HTTP 200 após seguir a canonicalização HTTPS. Rebuild de cache concluiu com aviso preexistente de cópia de asset H5P.
-- `aculta_user.info.yml` 0.4.0-dev.60. Estado Dev; revisão autenticada e gates de RC pendentes.
 

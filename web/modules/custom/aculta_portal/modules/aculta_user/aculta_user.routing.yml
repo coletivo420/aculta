@@ -28,6 +28,16 @@ aculta_user.aculta_user_agreement_audit:
   options:
     _admin_route: true
 
+aculta_user.people:
+  path: '/painel-administrativo/pessoas'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\PeopleListController::listing'
+    _title: 'Pessoas'
+  requirements:
+    _permission: 'administer users'
+  options:
+    _admin_route: true
+
 aculta_user.participacao_settings:
   path: '/painel-administrativo/aculta/participacao'
   defaults:

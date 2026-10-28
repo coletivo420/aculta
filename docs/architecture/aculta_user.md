@@ -5,6 +5,10 @@ módulos consumidores consultam esses contratos, sem criar hierarquias paralelas
 
 ## Decisões vigentes
 
+- **2026-10-28 — Lista administrativa mínima de pessoas (D-22).** Situação:
+  vigente. A lista exibe somente nome de exibição, apelido e situação da conta;
+  não inclui e-mail, documento ou endereço. Origem:
+  [decisão D-22](../architecture/DECISOES-RESPONSAVEL-2026-10-28.md#d-22-pessoas-no-painel-administrativo-adm2).
 - **2026-10-21 — Associado é situação da conta, não papel Drupal.** Situação:
   vigente. Motivo: adesão associativa é estado administrativo, não permissão
   herdável. Origem: `0.4.0-dev.239`, [histórico arquivado do Portal](../history/changelog/aculta_portal.md).

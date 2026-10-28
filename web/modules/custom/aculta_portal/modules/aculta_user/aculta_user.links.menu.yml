@@ -12,3 +12,10 @@ aculta_user.aculta_user_agreement_audit:
   route_name: aculta_user.aculta_user_agreement_audit
   parent: aculta_portal.admin
   weight: 5
+
+aculta_user.people:
+  title: 'Pessoas'
+  description: 'Lista mínima de contas e situação.'
+  route_name: aculta_user.people
+  parent: aculta_portal.admin
+  weight: 6

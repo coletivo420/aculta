@@ -1,5 +1,13 @@
 Histórico arquivado do CHANGELOG.md de aculta_user. Não é fonte de decisão vigente: ver docs/decisions/ e docs/architecture/aculta_user.md.
 
+## 0.4.0-dev.60 — conclui namespace do ledger e remove o Agreement contrib — 2026-10-21
+
+- Classes, arquivos, hooks, serviços, rotas, formulários e métodos próprios usam `AcultaUserAgreement*` / `aculta_user_agreement_*`; os identificadores antigos sobrevivem apenas nos updates históricos de migração/revogação.
+- `drupal/agreement` foi desinstalado do Runtime de testes, removido do Composer e de Config Sync. A migração preserva o estado legado disponível, identificado como estado final sem histórico anterior.
+- Update 10010 aplica a retenção escolhida: remove eventos legados de contas que já não existem; a exclusão de uma conta também apaga sua cadeia. Não se conserva dado pessoal após o fim da conta.
+- Runtime: Agreement desativado, 4 eventos/3 contas ativas após retenção, cadeias HMAC válidas. Home MAIN e Conta respondem HTTP 200 após seguir a canonicalização HTTPS. Rebuild de cache concluiu com aviso preexistente de cópia de asset H5P.
+- `aculta_user.info.yml` 0.4.0-dev.60. Estado Dev; revisão autenticada e gates de RC pendentes.
+
 ## 0.4.0-dev.59 — preserva tipo fonte da evidência legada — 2026-10-21
 
 - Migration 10009 registra o tipo de origem do Agreement antigo e marca que o ledger preserva somente o último estado, sem IP/UA nem histórico anterior recuperável; reencadeia os HMACs.
