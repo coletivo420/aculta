@@ -1490,3 +1490,10 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - `drush cr`: `[success] Cache rebuild complete.` Consulta de leitura por eventos publicados com `field_turma` não retornou linhas no Runtime; os casos matriculado/não matriculado foram cobertos apenas no `aculta_simpletest`.
 - Código depois commitado e publicado em `1b932d29c`; os testes completos de Events e LMS Agenda passaram antes da publicação. Nenhuma escrita de conteúdo ou chamada externa foi feita.
 
+## Verificação do HEAD D-15 publicado — 2026-10-28
+
+- Checkout servido em `270a37de9`, branch `refactor/opencultures-codigo-visual`; hostname `toca`; Drupal 11.4.10; URI `http://default`; root `/home/piradopirata/projetos/aculta/web`; banco `aculta_runtime`.
+- `updatedb:status`: `[success] No database updates required.` Contagem somente leitura: 605 tabelas. `config:status` retornou 358 linhas; a divergência global persiste e nenhuma importação foi feita.
+- `drush cr`: `[success] Cache rebuild complete.` Página principal `https://aculta.toca.net.br/` e loja `https://loja.aculta.toca.net.br/` responderam HTTP 200.
+- Nenhum snapshot ou update foi necessário: não há updates de banco pendentes; nenhuma troca de schema ou configuração ocorreu neste gate.
+
