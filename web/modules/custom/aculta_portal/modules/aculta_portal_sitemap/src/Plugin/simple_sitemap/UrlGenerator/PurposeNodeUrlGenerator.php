@@ -57,7 +57,11 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
    * Páginas públicas que não são nós (rotas ou webforms) por purpose. Mantém a
    * paridade com o sitemap institucional anterior: /contato é o webform de contato.
    */
-  public const PUBLIC_PATHS = ['main' => ['/contato']];
+  public const PUBLIC_PATHS = [
+    'main' => ['/contato'],
+    // Páginas de listagem do purpose eventos (F7). Cada evento publicado é tratado à parte.
+    'eventos' => ['/eventos', '/calendario', '/locais', '/mapa'],
+  ];
 
   /** Bundles elegíveis (matriz da política de indexação). */
   public const BUNDLES = ['page', 'activity', 'document', 'wiki_entry', 'revista'];
@@ -120,6 +124,17 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     foreach (array_chunk(array_values($ids), max(1, $size)) as $chunk) {
       $sets[] = ['purpose' => $purpose, 'ids' => $chunk];
     }
+    // Eventos publicados (F7). Cancelado e rascunho não entram no sitemap.
+    if ($purpose === 'eventos' && $this->entityTypeManager->hasDefinition('aculta_event')) {
+      $eventos = $this->entityTypeManager->getStorage('aculta_event')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('field_status', 'publicado')
+        ->sort('id')
+        ->execute();
+      foreach (array_chunk(array_values($eventos), max(1, $size)) as $chunk) {
+        $sets[] = ['purpose' => $purpose, 'event_ids' => $chunk];
+      }
+    }
     return $sets;
   }
 
@@ -144,6 +159,21 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     if (!empty($data_set['root'])) {
       $root = $this->purposes->canonicalPathUrl($purpose, '/');
       return $root === NULL ? [] : [$this->constructPathData($root)];
+    }
+    if (isset($data_set['event_ids'])) {
+      $resultados = [];
+      foreach ($this->entityTypeManager->getStorage('aculta_event')->loadMultiple($data_set['event_ids']) as $evento) {
+        // Só publicado entra; o status é conferido de novo, não só na consulta.
+        if ((string) $evento->get('field_status')->value !== 'publicado' || (string) $evento->get('field_slug')->value === '') {
+          continue;
+        }
+        $url = $this->purposes->canonicalPathUrl($purpose, '/eventos/' . (string) $evento->get('field_slug')->value);
+        if ($url !== NULL) {
+          // Sem <lastmod>: eventos não têm campo de alteração (é opcional no protocolo).
+          $resultados[] = $this->constructPathData($url);
+        }
+      }
+      return $resultados;
     }
     if (isset($data_set['path'])) {
       $url = $this->purposes->canonicalPathUrl($purpose, (string) $data_set['path']);

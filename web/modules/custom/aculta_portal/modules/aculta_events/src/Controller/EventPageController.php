@@ -9,6 +9,7 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Component\Utility\Html;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -84,6 +85,39 @@ final class EventPageController extends ControllerBase {
     // O conjunto de datas muda quando a próxima termina, não a cada requisição.
     $validade = $this->proximas->validade($ocorrencias, $this->tempo->getCurrentTime()) ?? self::VALIDADE_PADRAO;
 
+    // Dados estruturados schema.org (Event), uma entrada por ocorrência listada (até 20).
+    $eventosLd = [];
+    $urlEvento = Url::fromRoute('aculta_events.page', ['slug' => (string) $evento->get('field_slug')->value], ['absolute' => TRUE])->toString();
+    $descricao = mb_substr(trim(strip_tags((string) $evento->get('body')->value)), 0, 500);
+    foreach (array_slice($ocorrencias, 0, 20) as $ocorrencia) {
+      $local = $ocorrencia['data']->get('field_local')->entity;
+      $entrada = [
+        '@type' => 'Event',
+        'name' => (string) $evento->label(),
+        'url' => $urlEvento,
+        'startDate' => $ocorrencia['inicio']->format('c'),
+        'endDate' => $ocorrencia['fim']->format('c'),
+        'eventStatus' => ($ocorrencia['cancelada'] || $evento->get('field_status')->value === 'cancelado')
+          ? 'https://schema.org/EventCancelled' : 'https://schema.org/EventScheduled',
+      ];
+      if ($descricao !== '') {
+        $entrada['description'] = $descricao;
+      }
+      if ($local !== NULL) {
+        $entrada['location'] = ['@type' => 'Place', 'name' => (string) $local->label()];
+      }
+      $eventosLd[] = $entrada;
+    }
+    $anexos = [];
+    if ($eventosLd !== []) {
+      // Escapa "</" para que o JSON não feche a tag de script por acidente.
+      $json = str_replace('</', '<\\/', (string) json_encode(['@context' => 'https://schema.org', '@graph' => $eventosLd], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+      $anexos['html_head'] = [[
+        ['#type' => 'html_tag', '#tag' => 'script', '#attributes' => ['type' => 'application/ld+json'], '#value' => $json],
+        'aculta_events_event_jsonld',
+      ]];
+    }
+
     $organizador = $evento->get('field_organizador')->entity;
     return [
       '#theme' => 'aculta_event_page',
@@ -96,6 +130,7 @@ final class EventPageController extends ControllerBase {
       '#datas' => $linhas,
       '#cancelado' => $evento->get('field_status')->value === 'cancelado',
       '#cache' => ['tags' => array_values(array_unique($tags)), 'max-age' => $validade],
+      '#attached' => $anexos,
     ];
   }
 
