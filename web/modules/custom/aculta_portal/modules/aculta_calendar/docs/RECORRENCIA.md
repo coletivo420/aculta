@@ -1,137 +1,124 @@
-# Recorrência própria — estudo (ACULTA Calendário)
+# Recorrência — ACULTA Calendário
 
-Status: **estudo**, decisão D-14 (recorrência entra na v1). Sem código ainda: o primeiro passo
-de implementação é o parser e a expansão, com testes Unit, antes de qualquer campo novo.
+Status: **decidido**, D-14 (recorrência entra na v1). Implementação: `rlanvin/php-rrule` 3.0.
+Base de comportamento: o sistema do OpenCulturas (`smart_date` + `smart_date_recur`), com
+modificações próprias indicadas explicitamente abaixo.
 
-Motivo: o `smart_date` foi descartado (D-13) por causa da dependência `simshaun/recurr`, que
-não aceita `doctrine/collections` 3.x. A recorrência precisa existir sem essa biblioteca.
+## 0. Origem e licença
 
-## 0. Bibliotecas estudadas e escolha
+- O OpenCulturas usa `drupal/smart_date` `^4.3.0` e o submódulo `smart_date_recur` (GPL-2.0-or-later).
+  Lido em `smart_date` 4.3.0, pacote oficial do drupal.org.
+- Replicamos o **comportamento** (regras de contagem, cancelamento, reagendamento e horizonte),
+  não o código. Se algum trecho de código for copiado, ele entra em `ORIGEM-OPENCULTURAS.md` com
+  a linha `Adaptado de ...`.
+- Biblioteca de cálculo: `rlanvin/php-rrule` 3.0, MIT, sem dependência de runtime. Não puxa
+  `doctrine/collections`. Substitui `simshaun/recurr`, que ficou de fora pelo conflito com
+  `doctrine/collections` 3.x.
 
-**Como o `smart_date` faz (release 4.3.0, GPL-2.0-or-later):**
+## 1. Como o OpenCulturas faz (base)
 
-- O núcleo não calcula recorrência. Ele guarda `rrule` e `rrule_index` por linha de campo.
-- O submódulo `smart_date_recur` faz o cálculo com `simshaun/recurr` 5.x: `new Rule($regra, $inicio, $fim)`
-  e `ArrayTransformer::transform($rule, $constraint)`, com constraints `Between`, `Before` e `After`.
-- Ele **materializa** as ocorrências como linhas do campo. As exceções vão numa entidade própria
-  (`SmartDateOverride`).
-- A dependência que causou o bloqueio é só a `simshaun/recurr` 5.x (`doctrine/collections ~1.6||^2.0`).
+| Ponto | Comportamento no OpenCulturas (`smart_date_recur`) |
+| --- | --- |
+| Geração | A biblioteca gera as ocorrências, numeradas por índice (`rrule_index`). Elas são **materializadas** como linhas do campo. |
+| Série aberta | Sem `limit` (COUNT/UNTIL), o horizonte é `month_limit` meses a partir de agora. O padrão é 12, em `field_date`. |
+| `COUNT` e cancelamento | Cancelar uma ocorrência **não libera** a contagem: a ocorrência cancelada continua gerada, e só é ocultada depois. |
+| Cancelar uma ocorrência | Registro de exceção (`smart_date_override`) com o índice e **sem** horário. A ocorrência some da saída. |
+| Reagendar uma ocorrência | Mesma exceção, com novo início e fim. A ocorrência aparece no novo horário. |
+| Chave da exceção | O índice (`rrule_index`) da ocorrência gerada. |
 
-**O que usamos da ideia:** o cálculo por janela (`Between`), que já está no plano. **O que não
-usamos:** a materialização e a entidade de exceção. Nossas exceções são o campo `field_excecoes`.
+## 2. Decisões (respostas aos três pontos em aberto)
 
-**Escolha:** `rlanvin/php-rrule` `^3.0` (MIT, PHP ≥ 7.3, sem dependência de runtime). Não puxa
-`doctrine/collections`. Verificado com dry-run: 1 instalação, nenhuma atualização nem remoção. Teste
-de fumaça: regra `FREQ=WEEKLY;BYDAY=MO,WE;COUNT=3` a partir de quarta 28/10/2026 às 19h
-(America/Sao_Paulo) gera 28/10, 02/11 e 04/11, todas `-03`.
+1. **Contagem e cancelamento:** igual ao OpenCulturas e ao RFC 5545. Ocorrência cancelada
+   continua contando em `COUNT`.
+2. **Editar uma ocorrência:** **entra na v1**, com o mesmo modelo: exceção por ocorrência com
+   cancelamento ou novo horário.
+3. **Série aberta:** **permitida**, com horizonte de `month_limit` meses, padrão 12, configurável
+   no campo. Igual ao OpenCulturas.
 
-Uso previsto: só a classe de expansão (`RRule\RRule`) e a validação de partes, encapsuladas num
-serviço do `aculta_calendar`. A whitelist da seção 4 fica no nosso código, não na biblioteca.
+## 3. Modificações próprias (em relação ao OpenCulturas)
 
-## 1. Escopo da v1
+| # | O que muda | Por quê |
+| --- | --- | --- |
+| M1 | A exceção é chaveada pelo **início original** da ocorrência (RECURRENCE-ID), não pelo índice. | O índice muda se a regra mudar (ex.: alterar `BYDAY`). O início original não muda. Isso bate com o RFC 5545 e com o `.ics`. |
+| M2 | Cálculo na leitura por janela (`RRule::getOccurrencesBetween`), sem materializar ocorrências. | Uma única fonte de verdade (a regra e as exceções). Evita sincronizar linhas a cada edição. |
+| M3 | Teto de **366 ocorrências** por consulta. Acima disso, erro explícito, não truncamento silencioso. | Proteção de desempenho. Não existe no OpenCulturas. |
+| M4 | Fuso fixo `America/Sao_Paulo` (D9), sem sobrescrita por evento. | Regra do site. O OpenCulturas permite fuso por campo. |
+| M5 | `.ics` emite a série com `RRULE`, `EXDATE` para cancelamentos e VEVENT com `RECURRENCE-ID` para reagendamentos. | Agenda externa recalcula sozinha. Nenhuma ocorrência é expandida no arquivo. |
 
-Subconjunto de RFC 5545 (RRULE), não a norma inteira:
+## 4. Modelo de dados
 
-| Parte | Valores aceitos | Observação |
+- `aculta_event_date.field_quando` (daterange do core): primeiro intervalo da série.
+- `aculta_event_date.field_dia_inteiro` (boolean).
+- `aculta_event_date.field_regra` (string, até 255): RRULE normalizada, por exemplo
+  `FREQ=WEEKLY;BYDAY=MO,WE;COUNT=10`. Vazio = evento único.
+- `aculta_event_date.field_limite_meses` (integer, padrão 12): horizonte de série aberta. Só vale
+  sem `COUNT` nem `UNTIL`. Substitui o `month_limit` do OpenCulturas.
+- **Entidade `aculta_event_override`** (substitui `field_excecoes`):
+  - `field_data_pai` (entity_reference a `aculta_event_date`).
+  - `field_inicio_original` (datetime): chave da exceção (M1).
+  - `field_inicio` e `field_fim` (datetime, vazios = cancelada).
+  - `field_motivo` (string, opcional): texto mostrado na ocorrência cancelada.
+
+## 5. Subconjunto de RRULE da v1
+
+| Parte | Valores | Observação |
 | --- | --- | --- |
 | `FREQ` | `DAILY`, `WEEKLY`, `MONTHLY` | `YEARLY` fica fora da v1 |
-| `INTERVAL` | inteiro de 1 a 99 | Padrão 1 |
-| `BYDAY` | `MO`…`SU` (só com `WEEKLY`) | Lista, sem prefixo numérico |
-| `BYMONTHDAY` | 1 a 31 (só com `MONTHLY`) | Dia que não existe no mês é pulado |
-| `COUNT` ou `UNTIL` | obrigatório um dos dois | Evita série infinita |
-| `EXDATE` | lista de datas de início de ocorrências | Cancela uma ocorrência |
+| `INTERVAL` | 1 a 99 | Padrão 1 |
+| `BYDAY` | `MO` a `SU` (só com `WEEKLY`) | Sem prefixo numérico |
+| `BYMONTHDAY` | 1 a 31 (só com `MONTHLY`) | Dia inexistente no mês é pulado |
+| `COUNT` ou `UNTIL` | opcional; sem os dois, vale `field_limite_meses` | Série aberta |
+| `EXDATE` | não usado na base; cancelamento via `aculta_event_override` | Ver M5 para o `.ics` |
 
-Fora da v1: `BYSETPOS`, `BYHOUR`, `BYMINUTE`, `WKST` diferente de `MO`, prefixos em `BYDAY`
-(`1MO`, `-1FR`), `RDATE`, e ocorrências com fuso diferente do site.
+Fora da v1: `BYSETPOS`, `BYHOUR`, `BYMINUTE`, `WKST` diferente de `MO`, prefixo em `BYDAY`
+(`1MO`, `-1FR`), `RDATE`, `YEARLY`.
 
-Limites: no máximo **366 ocorrências** por série e **2 anos** de horizonte. Acima disso a regra
-é recusada na validação, não truncada em silêncio.
+## 6. Expansão
 
-## 2. Modelo de dados
+1. Partir de `field_quando` (início) e da duração (`end - início`).
+2. Gerar os candidatos com `rlanvin/php-rrule` dentro da janela pedida.
+3. Se não houver `COUNT` nem `UNTIL`, o limite final é `agora + field_limite_meses`.
+4. Contar cada candidato em `COUNT`, mesmo que depois seja cancelado (decisão 1).
+5. Para cada ocorrência, buscar exceção pelo início original (M1):
+   - sem exceção: usa o horário gerado;
+   - exceção com início e fim: usa o horário da exceção (reagendada);
+   - exceção sem horário: cancelada, não entra na saída.
+6. `MONTHLY` com `BYMONTHDAY` 29 a 31: meses curtos são pulados, sem ajuste para o último dia.
 
-Ver `MODELO-DE-DADOS.md`, `aculta_event_date`. Proposta:
+Fuso fixo `America/Sao_Paulo`. O horário de verão não existe no Brasil desde 2019, então não há
+transição a tratar.
 
-- `field_regra` (string, até 255): RRULE normalizada, por exemplo `FREQ=WEEKLY;BYDAY=MO,WE;COUNT=10`.
-  Vazio significa evento único.
-- `field_excecoes` (datetime, multivalor): datas de início canceladas nesta série.
-- `field_quando` continua sendo o **primeiro** intervalo da série. As ocorrências seguintes são
-  calculadas a partir dele; **não são entidades separadas**.
+## 7. Validação
 
-Decisão de armazenamento: calcular na leitura, não materializar. Materializar uma série de 366
-ocorrências cria 366 linhas por evento e exige sincronizar a cada edição. Calcular na leitura
-cabe no limite de 366 e mantém uma única fonte de verdade (a regra).
+Lista branca, não gramática geral:
 
-Cancelar uma ocorrência: entra em `field_excecoes`. O evento continua, e a ocorrência cancelada
-aparece com aviso, igual ao cancelamento de data já definido no modelo.
+- Só as partes da seção 5. Parte desconhecida é erro.
+- `BYDAY` fora de `WEEKLY` e `BYMONTHDAY` fora de `MONTHLY` são erro.
+- `UNTIL` anterior ao início é erro.
+- Mais de 366 ocorrências na janela é erro, com a contagem na mensagem (M3).
+- A regra é validada ao salvar e de novo ao ler.
 
-## 3. Expansão
+## 8. Testes
 
-Algoritmo, em `DateTimeImmutable` com o fuso `America/Sao_Paulo`:
-
-1. Partir de `field_quando.value` (início) e da duração (`field_quando.end_value - value`).
-2. Iterar pelos candidatos da frequência, respeitando `INTERVAL`, `BYDAY` e `BYMONTHDAY`.
-3. Parar em `COUNT` ocorrências, em `UNTIL`, ou no horizonte de 2 anos.
-4. Descartar candidatos que estão em `field_excecoes`.
-5. Para `MONTHLY` com `BYMONTHDAY` 29 a 31: meses curtos são pulados, não ajustados para o último
-   dia. Ex.: `BYMONTHDAY=31` não gera em fevereiro.
-6. Para `DAILY`/`WEEKLY` a hora-do-dia é a do início; a duração é fixa.
-
-Fuso: o site é fixo em `America/Sao_Paulo` e o horário de verão não existe desde 2019, então a
-expansão não precisa de transição de DST. Eventos anteriores a 2019 ficam com a mesma limitação
-já registrada no VTIMEZONE do `IcsEventBuilder`.
-
-## 4. Validação da regra
-
-O parser é uma lista branca, não uma gramática geral:
-
-- Só as chaves da tabela acima. Chave desconhecida é erro, não ignorada.
-- Sem `COUNT` nem `UNTIL`: erro.
-- `BYDAY` com `FREQ` diferente de `WEEKLY`: erro.
-- `BYMONTHDAY` com `FREQ` diferente de `MONTHLY`: erro.
-- `UNTIL` anterior ao início: erro.
-- Valor que gera mais de 366 ocorrências: erro, com a contagem na mensagem.
-
-A regra é validada ao salvar (constraint de entidade) e de novo ao ler, para dado antigo ou
-editado fora da interface.
-
-## 5. Integração
-
-- **Agenda e grade (F5):** a consulta de uma janela de datas chama o expansor para cada série
-  que intersecta a janela. Cache: tag da entidade do evento e contexto `url.query_args`.
-- **`.ics` (F5):** em vez de expandir, a exportação emite uma única VEVENT com `RRULE` e `EXDATE`
-  (ambos com `TZID=America/Sao_Paulo`). O `IcsEventBuilder` ganha `RRULE` e `EXDATE`. Assim a
-  agenda externa recalcula as ocorrências sozinha, e o `UID` continua estável.
-- **Edição:** mudar a regra muda o `UID`? Não: o `UID` deriva da entidade e da data de início,
-  que não mudam. Mudar `field_quando` muda a data de início e, portanto, o `UID`, que é o
-  comportamento já documentado.
-
-## 6. Testes previstos
-
-Unit (sem banco), no gerador de regra e no expansor:
+Unit (sem banco), no validador e no expansor:
 
 - `DAILY` com `INTERVAL=3` e `COUNT=5`.
 - `WEEKLY` com `BYDAY=MO,WE` começando numa quarta.
-- `MONTHLY` com `BYMONTHDAY=31`: meses de 30 dias são pulados.
-- `EXDATE` remove exatamente uma ocorrência.
-- `COUNT` conta ocorrências canceladas? **Não**: `COUNT` conta só as ocorrências geradas;
-  cancelada consome a contagem. Esta é a regra do RFC 5545 e fica documentada.
-- Limite de 366 e horizonte de 2 anos.
-- Regra inválida (cada item da seção 4) gera erro com mensagem clara.
+- `MONTHLY` com `BYMONTHDAY=31`: meses de 30 dias pulados.
+- `COUNT` conta a ocorrência cancelada (decisão 1).
+- Exceção cancelada remove só aquela ocorrência.
+- Exceção reagendada muda só aquela ocorrência e mantém a chave original (M1).
+- Série aberta: horizonte de `field_limite_meses`.
+- Teto de 366 gera erro.
+- Cada regra inválida da seção 7 gera erro com mensagem clara.
 
-Kernel (com banco): salvar série, ler janela, `.ics` com `RRULE` e `EXDATE`.
+Kernel (com banco): salvar série, criar exceção, ler janela, `.ics` com `RRULE`, `EXDATE` e
+`RECURRENCE-ID`.
 
-## 7. Pontos em aberto
+## 9. Ordem de implementação
 
-1. **`COUNT` e cancelamento:** a regra acima segue o RFC. Se o responsável preferir que o
-   cancelamento não consuma a contagem, a expansão muda. Precisa de decisão.
-2. **Edição de uma única ocorrência** (mudar o horário de uma só): não está no escopo. Hoje a
-   saída é cancelar e criar um evento avulso. Precisa de decisão se for requisito da v1.
-3. **Recorrência sem data de fim** (série aberta): fica fora, por causa do limite de 366.
-
-## 8. Ordem de implementação
-
-1. Parser e validador da regra (Unit).
-2. Expansor (Unit).
-3. Campos `field_regra` e `field_excecoes` em `aculta_event_date` (F2, Kernel).
-4. Integração com a agenda e a grade (F5).
-5. `RRULE` e `EXDATE` no `IcsEventBuilder` (F5).
+1. Validador da regra e expansor, com `rlanvin/php-rrule`, em Unit.
+2. Campos `field_regra`, `field_limite_meses` e `field_dia_inteiro` em `aculta_event_date` (F2).
+3. Entidade `aculta_event_override` e seus testes Kernel (F2).
+4. Agenda e grade consultando o expansor por janela (F5).
+5. `RRULE`, `EXDATE` e `RECURRENCE-ID` no `IcsEventBuilder` (F5).
