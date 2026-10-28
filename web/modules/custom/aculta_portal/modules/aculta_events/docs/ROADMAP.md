@@ -176,7 +176,7 @@ Entrada: F3 e F4 concluídas.
 
 - [x] Sitemap do purpose responde no Runtime de teste; index e filho do purpose retornam HTTP 200 com `X-Robots-Tag: noindex, nofollow, noarchive`.
 - [x] Página de evento emite JSON-LD `schema.org/Event`, com datas e estado de cancelamento.
-- [x] D-44: URLs da página e do sitemap vêm do mapeamento `domain_transition` do ACULTA Deployer. No Runtime de teste, canonical e sitemap filho usam `eventos.aculta.toca.net.br`; o ambiente segue `noindex`. Código e testes publicados nesta microfase.
+- [x] D-44: URLs da página e do sitemap vêm do mapeamento `domain_transition` do ACULTA Deployer. No Runtime de teste, canonical e sitemap filho usam `eventos.aculta.toca.net.br`; o ambiente segue `noindex`. Código e testes publicados em `721e9453e`.
 - [x] `validate-final-sitemap.php` PASS no Runtime de teste; index e sitemap filho respondem HTTP 200, com todos os hosts no conjunto previsto pelo Deployer.
 
 Saída: sitemap e robots conferidos pelo `aculta_deployer`.

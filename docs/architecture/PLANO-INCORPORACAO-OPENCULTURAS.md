@@ -73,7 +73,7 @@ foi feito. Uma escrita live requer escolha de um objeto real e de uma correção
 4. R: regra, ocorrência e links de administração concluídos (`c4919bbb3`).
 5. F5: **feito** no `aculta_calendar` (D-20): agenda, grade do mês, dia, `.ics` e `/calendario/incorporar`, com o `aculta_events` como provedor de itens. Falta o calendário no `main` (D6).
 6. F6, F7, F8, F9.
-7. **F7 concluída (D-44):** página de evento e sitemap geram URLs pelos hosts de ambiente mapeados em `domain_transition.entries` do ACULTA Deployer. No teste, index e filho de eventos retornam HTTP 200 e `X-Robots-Tag: noindex, nofollow, noarchive`; o filho de eventos lista apenas URLs de `eventos.aculta.toca.net.br`, e a página declara canonical para o mesmo host. `validate-final-sitemap.php` PASS. Código: commit desta microfase; registro do hash no commit documental seguinte.
+7. **F7 concluída (D-44):** página de evento e sitemap geram URLs pelos hosts de ambiente mapeados em `domain_transition.entries` do ACULTA Deployer. No teste, index e filho de eventos retornam HTTP 200 e `X-Robots-Tag: noindex, nofollow, noarchive`; o filho de eventos lista apenas URLs de `eventos.aculta.toca.net.br`, e a página declara canonical para o mesmo host. `validate-final-sitemap.php` PASS. Código: `721e9453e`.
 
 ## Painéis e opções administrativas do OpenCulturas (ADM)
 
