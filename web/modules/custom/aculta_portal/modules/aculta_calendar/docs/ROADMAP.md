@@ -44,7 +44,7 @@ Decisão do responsável em 2026-10-28; detalhes, origem e hashes em `DHTMLX.md`
 - [x] Tamanho medido: JS 151.259 B gzip; CSS 13.040 B gzip; HTML 5.106 B.
 - [x] Alto contraste: botão com `aria-pressed`; `contrast-black` em 11.94:1 (texto/fundo) e 7.28:1 (evento).
 - [x] Olivero: 13/13 no Firefox ESR; tema restaurado.
-- [ ] Leitor de tela (Orca instalado; anúncio não automatizado).
+- [x] Leitor de tela (Orca): contêiner `application`, foco nas seções de dia com `Notify: True`, botão `toggle`.
 
 ## Importação revisável de arquivos iCalendar
 

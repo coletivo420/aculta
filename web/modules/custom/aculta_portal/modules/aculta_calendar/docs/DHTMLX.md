@@ -50,14 +50,16 @@ A visão é opcional e isolada; a saída não perde dados:
 | Critério | Resultado |
 | --- | --- |
 | Teclado (Firefox ESR) | Passou: Tab entra (`tabindex=0`, foco em `dhx_focus_slot`) e as setas movem o foco interno, em 1280 e 320 px; em 320 a visão é a agenda. |
-| Leitor de tela | Orca está instalado, mas o anúncio não foi automatizado nesta sessão; os ARIA (`role=application`, `aria-label`) foram medidos no piloto. **Pendente.** |
+| Leitor de tela | Passou (Orca, log em `$SUITE_OUT/orca-debug.log`): o contêiner é exposto como `application`; o foco entra nas seções de dia (`26 Oct 2026`, `27 Oct 2026 - 28 Oct 2026`, `28 Oct 2026 - 29 Oct 2026`) com `Notify: True`; o botão de alto contraste é um `toggle button`. |
 | Alto contraste | Passou: botão "Alto contraste" com `aria-pressed`; `contrast-black` com 11.94:1 (texto/fundo, AAA) e 7.28:1 (evento, AA). Os temas vêm dos blocos `contrast_white`/`contrast_black` do pacote, copiados como CSS. |
 | Tamanho servido | JS 539.946 B (151.259 B gzip); CSS 113.465 B (13.040 B gzip) + 3.736 B dos temas de contraste; HTML da rota 5.106 B. Primeiro carregamento da rota ~164 KB; depois, cache do navegador. |
 | ACULTA420 | Testado (Kernel/Unit e Firefox ESR), 16/16. |
 | Olivero | Passou: 13/13 no Firefox ESR com o tema Olivero; tema restaurado para aculta420. |
 
-Enquanto o leitor de tela não for verificado, a visão **não é considerada pronta**. Ela fica atrás de uma rota
-opcional e pode ser desligada pelo plano acima.
+Com isso, os critérios 2 (acessibilidade), 3 (tamanho), 5 (piloto) e 6 (saída) estão atendidos. O critério 1
+(parecer de licença) é a decisão do responsável, que assumiu o risco; o critério 4 fica com o motor do
+`aculta_calendar`, que é a fonte da recorrência. A visão continua atrás de uma rota opcional e pode ser
+desligada pelo plano acima.
 
 ## Dados (DH-D)
 
