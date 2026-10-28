@@ -27,6 +27,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [architecture/environments.md](architecture/environments.md) — Homelab Apache e produção Hostinger LiteSpeed.
 - [architecture/data-ownership.md](architecture/data-ownership.md) — quem é dono de cada dado.
 - [architecture/aculta_image.md](architecture/aculta_image.md) — ownership e política central do pipeline de imagens.
+- [architecture/aculta_wiki.md](architecture/aculta_wiki.md) — ownership da Wiki e revisão editorial de propostas.
 - [decisions/](decisions/) — ADRs vigentes.
 - [ADR-010](decisions/ADR-010-hostinger-litespeed.md) — LiteSpeed na produção Hostinger Cloud Startup; Apache no Homelab.
 - [ADR-012](decisions/ADR-012-aculta420-mobile-first.md) — direção Mobile First do ACULTA420, mantendo Bootstrap, SDC e fronteiras atuais.

@@ -5,6 +5,7 @@
 - **Dono:** Kernel `aculta_portal`.
 - **Iniciativa:** ACULTA Content Index 0.1.0.
 - **Auditoria:** [IDX 0.1-A](../portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
+- **Origem histórica:** `0.1.0-dev.12`, [changelog arquivado de aculta_index](../history/changelog/aculta_index.md); o código atual mantém consulta por cursor sem totais/facetas e revalida acesso na entidade de origem.
 
 ## Contexto
 
