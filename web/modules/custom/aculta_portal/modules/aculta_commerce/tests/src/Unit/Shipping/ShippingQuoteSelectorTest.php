@@ -7,12 +7,12 @@ namespace Drupal\Tests\aculta_commerce\Unit\Shipping;
 use Drupal\aculta_commerce\Shipping\ShippingQuote;
 use Drupal\aculta_commerce\Shipping\ShippingQuoteSelector;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @coversDefaultClass \Drupal\aculta_commerce\Shipping\ShippingQuoteSelector
- *
- * @group aculta_commerce
- */
+#[CoversClass(\Drupal\aculta_commerce\Shipping\ShippingQuoteSelector::class)]
+#[Group('aculta_commerce')]
 final class ShippingQuoteSelectorTest extends UnitTestCase {
 
   /**
@@ -61,9 +61,8 @@ final class ShippingQuoteSelectorTest extends UnitTestCase {
 
   /**
    * Negative, exponential or float-like values are not legal amounts.
-   *
-   * @dataProvider invalidAmountProvider
    */
+  #[DataProvider('invalidAmountProvider')]
   public function testInvalidAmountRejected(string $amount): void {
     $this->expectException(\InvalidArgumentException::class);
     new ShippingQuote('m', 'a', 'Tarifa', $amount, 'BRL');

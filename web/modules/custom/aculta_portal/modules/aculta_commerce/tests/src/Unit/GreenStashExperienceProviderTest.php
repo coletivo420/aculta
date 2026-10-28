@@ -9,10 +9,10 @@ use Drupal\aculta_commerce\Experience\GreenStashExperienceProvider;
 use Drupal\aculta_studio\Experience\StudioExperienceProviderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @group aculta_commerce
- */
+#[Group('aculta_commerce')]
 final class GreenStashExperienceProviderTest extends UnitTestCase {
 
   public function testExperienceContractAndNoDataExposure(): void {
@@ -32,9 +32,7 @@ final class GreenStashExperienceProviderTest extends UnitTestCase {
     self::assertArrayNotHasKey('products', $render);
   }
 
-  /**
-   * @dataProvider permissionCases
-   */
+  #[DataProvider('permissionCases')]
   public function testPermissionIsRequired(bool $granted): void {
     $account = $this->createMock(AccountInterface::class);
     $account->method('hasPermission')

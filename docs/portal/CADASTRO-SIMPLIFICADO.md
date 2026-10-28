@@ -173,7 +173,7 @@ Configuração de fluxo e de tipo de pedido fica só no servidor de testes (não
   servidor de testes, feita por API de configuração. Não está no repositório: produção precisa de decisão própria.
 - Correção local dev.64: `EntitySaveHooks` agora tolera instanciação direta pelo resolvedor do Drupal e a regressão Unit
   confirma que salvar entidades de usuário (fora do gateway) não depende de credenciais Mercado Pago. Ainda não foi repetido
-  o fluxo Runtime; o erro `releaseLock(): null` permanece sem diagnóstico confirmado.
+  o fluxo Runtime; o erro `releaseLock(): null` permanece sem diagnóstico confirmado. O smoke X11 de 2026-10-27 chegou à etapa de endereço sem reproduzi-lo, mas não enviou o endereço nem avançou à revisão/pagamento; a transição que pode liberá-lo continua sem evidência.
 - Pendente após validar o Runtime: compra de LMS com curso de teste (grupo novo; remover ao final) e doação com pedido novo,
   para ver o painel de nome e sobrenome.
 - Recuperação de senha: o redirecionamento agora vai para a Visão geral no domínio da conta (testado no navegador, em

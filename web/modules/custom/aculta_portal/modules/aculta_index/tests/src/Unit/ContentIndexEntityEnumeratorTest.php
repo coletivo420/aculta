@@ -18,12 +18,13 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Tests\UnitTestCase;
 use Psr\Log\LoggerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests bounded, translation-aware keyset discovery.
- *
- * @group aculta_index
  */
+#[Group('aculta_index')]
 final class ContentIndexEntityEnumeratorTest extends UnitTestCase {
 
   /**
@@ -246,9 +247,8 @@ final class ContentIndexEntityEnumeratorTest extends UnitTestCase {
 
   /**
    * Tests requested batches are bounded.
-   *
-   * @dataProvider invalidLimitProvider
    */
+  #[DataProvider('invalidLimitProvider')]
   public function testRejectsInvalidBatchLimit(int $limit): void {
     $registry = new ContentIndexProviderRegistry();
     $manager = $this->createMock(EntityTypeManagerInterface::class);
@@ -259,9 +259,8 @@ final class ContentIndexEntityEnumeratorTest extends UnitTestCase {
 
   /**
    * Cache reset thresholds are positive and remain bounded by the default.
-   *
-   * @dataProvider invalidCacheResetEntityLimitProvider
    */
+  #[DataProvider('invalidCacheResetEntityLimitProvider')]
   public function testRejectsInvalidCacheResetEntityLimit(int $limit): void {
     $registry = new ContentIndexProviderRegistry();
     $manager = $this->createMock(EntityTypeManagerInterface::class);

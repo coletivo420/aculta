@@ -11,14 +11,14 @@ use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_store\CurrentStoreInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Guards non-mutating boundaries of the existing Portal cart consolidator.
  *
  * No container, database, cart deletion, or order creation required.
- *
- * @group aculta_commerce
  */
+#[Group('aculta_commerce')]
 final class PortalCartConsolidatorBoundaryTest extends UnitTestCase {
 
   /**

@@ -173,6 +173,28 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * Newly documented account, reporting, commerce and notice tokens map to styles.
+   */
+  public function testMapsTokensPreviouslyMissingFromTheThemeRegistry(): void {
+    $variables = [
+      'attributes' => new Attribute([
+        'data-portal-ui' => 'consent-banner studio-profile-editor studio-account-section notice-origin-section notice-origin-heading notice-related-group',
+      ]),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $attributes = $variables['attributes'];
+    $this->assertTrue($attributes->hasClass('aculta-consent'));
+    $this->assertTrue($attributes->hasClass('aculta-profile-editor'));
+    $this->assertTrue($attributes->hasClass('studio__layout'));
+    $this->assertTrue($attributes->hasClass('aculta-messenger-notice-origin'));
+    $this->assertTrue($attributes->hasClass('aculta-messenger-notice-origin__heading'));
+    $this->assertTrue($attributes->hasClass('aculta-messenger-notice-related-group'));
+    $this->assertFalse($attributes->offsetExists('data-portal-ui'));
+  }
+
+  /**
    * Atributos ainda em array (antes da conversão do núcleo) viram Attribute com as classes.
    */
   public function testArrayAttributesAreConvertedToAttributeObjects(): void {

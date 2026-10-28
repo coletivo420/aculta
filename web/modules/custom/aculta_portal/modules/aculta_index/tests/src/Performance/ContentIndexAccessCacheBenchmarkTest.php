@@ -23,10 +23,9 @@ use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Measures Index Entity Access checks with canonical Domain switching.
- *
- * @group aculta_index
- * @group performance
  */
+#[Group('aculta_index')]
+#[Group('performance')]
 #[Group('aculta_index')]
 #[Group('performance')]
 #[RunTestsInSeparateProcesses]

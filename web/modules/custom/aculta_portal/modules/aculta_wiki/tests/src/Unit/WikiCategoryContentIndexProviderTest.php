@@ -8,12 +8,12 @@ use Drupal\aculta_wiki\ContentIndex\WikiCategoryContentIndexProvider;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\taxonomy\TermInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests the allowlisted Wiki category term projection and access context.
- *
- * @group aculta_wiki
  */
+#[Group('aculta_wiki')]
 final class WikiCategoryContentIndexProviderTest extends UnitTestCase {
 
   /**

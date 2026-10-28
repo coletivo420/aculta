@@ -8,11 +8,11 @@ use Drupal\aculta_user\Identity\AuthorCardVariantResolver;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @coversDefaultClass \Drupal\aculta_user\Identity\AuthorCardVariantResolver
- * @group aculta_user
- */
+#[CoversClass(\Drupal\aculta_user\Identity\AuthorCardVariantResolver::class)]
+#[Group('aculta_user')]
 final class AuthorCardVariantResolverTest extends TestCase {
 
   /**

@@ -7,12 +7,11 @@ namespace Drupal\Tests\aculta_commerce\Unit\Shipping;
 use Drupal\aculta_commerce\Shipping\PackageTypeManager;
 use Drupal\physical\LengthUnit;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @coversDefaultClass \Drupal\aculta_commerce\Shipping\PackageTypeManager
- *
- * @group aculta_commerce
- */
+#[CoversClass(\Drupal\aculta_commerce\Shipping\PackageTypeManager::class)]
+#[Group('aculta_commerce')]
 final class PackageTypeManagerTest extends UnitTestCase {
 
   /**

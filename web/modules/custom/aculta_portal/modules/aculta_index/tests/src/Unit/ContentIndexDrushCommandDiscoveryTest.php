@@ -8,12 +8,12 @@ use Consolidation\AnnotatedCommand\CommandFileDiscovery;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Verifies Drush discovers the module's attributed commands.
- *
- * @group aculta_index
  */
+#[Group('aculta_index')]
 final class ContentIndexDrushCommandDiscoveryTest extends UnitTestCase {
 
   /**

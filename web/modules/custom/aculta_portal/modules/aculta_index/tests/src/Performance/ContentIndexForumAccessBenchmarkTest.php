@@ -15,10 +15,9 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Measures Forum Entity Access with real Group grants and canonical Domain.
- *
- * @group aculta_index
- * @group performance
  */
+#[Group('aculta_index')]
+#[Group('performance')]
 #[Group('aculta_index')]
 #[Group('performance')]
 #[RunTestsInSeparateProcesses]

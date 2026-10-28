@@ -28,6 +28,7 @@ use Drupal\physical\WeightUnit;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Validates the ACULTA shipping entity model and rate calculation.
@@ -35,9 +36,8 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  * The full dependency closure of aculta_commerce is enabled because the
  * module is a Portal submodule and its services reference Portal, Messenger
  * and Studio services at container compile time.
- *
- * @group aculta_commerce
  */
+#[Group('aculta_commerce')]
 #[RunTestsInSeparateProcesses]
 final class ShippingEngineKernelTest extends KernelTestBase {
 

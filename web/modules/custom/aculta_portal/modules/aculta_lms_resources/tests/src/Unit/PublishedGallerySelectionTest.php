@@ -22,20 +22,18 @@ use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests selection of published galleries from a course editing form.
- *
- * @group aculta_lms_resources
- * @coversDefaultClass \Drupal\aculta_lms_resources\Plugin\EntityReferenceSelection\PublishedGallerySelection
  */
+#[Group('aculta_lms_resources')]
+#[CoversClass(\Drupal\aculta_lms_resources\Plugin\EntityReferenceSelection\PublishedGallerySelection::class)]
 final class PublishedGallerySelectionTest extends UnitTestCase {
 
   /**
    * Tests that only published galleries are selectable by course educators.
-   *
-   * @covers ::getReferenceableEntities
-   * @covers ::buildEntityQuery
    */
   public function testSelectionRestrictsToPublishedGalleriesAndCourseEducators(): void {
     $account = $this->createMock(AccountInterface::class);
@@ -116,8 +114,6 @@ final class PublishedGallerySelectionTest extends UnitTestCase {
 
   /**
    * Tests that the field does not disclose galleries outside course context.
-   *
-   * @covers ::getReferenceableEntities
    */
   public function testSelectionWithoutCourseContextFailsClosed(): void {
     $selection = $this->createSelectionWithoutCourse();

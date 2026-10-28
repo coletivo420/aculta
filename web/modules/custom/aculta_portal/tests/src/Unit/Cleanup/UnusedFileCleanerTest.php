@@ -18,12 +18,12 @@ use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\file\FileInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests Portal coordination and owner delegation for unused files.
- *
- * @group aculta_portal
  */
+#[Group('aculta_portal')]
 final class UnusedFileCleanerTest extends UnitTestCase {
 
   /**

@@ -18,12 +18,12 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Kernel tests for the Mercado Pago Checkout Pro payment gateway plugin.
- *
- * @group aculta_pagamentos_mercadopago
  */
+#[Group('aculta_pagamentos_mercadopago')]
 #[RunTestsInSeparateProcesses]
 class CheckoutProTest extends OrderKernelTestBase {
 

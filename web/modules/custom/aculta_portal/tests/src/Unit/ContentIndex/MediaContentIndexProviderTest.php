@@ -8,21 +8,15 @@ use Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\media\MediaInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @coversDefaultClass \Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
- * @group aculta_portal
- */
+#[CoversClass(\Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider::class)]
+#[Group('aculta_portal')]
 final class MediaContentIndexProviderTest extends UnitTestCase {
 
   /**
    * Tests supported bundle, minimal projection and purpose declaration.
-   *
-   * @covers ::__construct
-   * @covers ::getProviderId
-   * @covers ::getSupportedEntityTypes
-   * @covers ::getAccessPurpose
-   * @covers ::project
    */
   public function testProjectsOneConfiguredMediaBundle(): void {
     $language = $this->createMock(LanguageInterface::class);
@@ -51,8 +45,6 @@ final class MediaContentIndexProviderTest extends UnitTestCase {
 
   /**
    * Tests invalid configuration is rejected at container construction.
-   *
-   * @covers ::__construct
    */
   public function testRejectsInvalidMachineNames(): void {
     $this->expectException(\InvalidArgumentException::class);

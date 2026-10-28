@@ -13,7 +13,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-/** @coversDefaultClass \Drupal\aculta_lms\Event\CourseCompletionPublisher */
 #[CoversClass(CourseCompletionPublisher::class)]
 #[Group('aculta_lms')]
 final class CourseCompletionPublisherTest extends UnitTestCase {

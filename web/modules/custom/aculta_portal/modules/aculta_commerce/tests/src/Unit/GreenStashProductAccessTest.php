@@ -14,12 +14,12 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests Green Stash product and store access boundaries.
- *
- * @group aculta_commerce
  */
+#[Group('aculta_commerce')]
 final class GreenStashProductAccessTest extends UnitTestCase {
 
   /**

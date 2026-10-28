@@ -22,12 +22,12 @@ use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests the allowlisted LMS course and resource projection.
- *
- * @group aculta_lms_resources
  */
+#[Group('aculta_lms_resources')]
 final class LmsCourseContentIndexProviderTest extends UnitTestCase {
 
   /**

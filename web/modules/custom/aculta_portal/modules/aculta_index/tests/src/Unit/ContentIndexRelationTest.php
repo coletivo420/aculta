@@ -6,19 +6,19 @@ namespace Drupal\Tests\aculta_index\Unit;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests explicit relation identity validation.
- *
- * @group aculta_index
  */
+#[Group('aculta_index')]
 final class ContentIndexRelationTest extends UnitTestCase {
 
   /**
    * Tests malformed relation fields are rejected.
-   *
-   * @dataProvider invalidRelationProvider
    */
+  #[DataProvider('invalidRelationProvider')]
   public function testRejectsInvalidRelation(array $arguments, string $message): void {
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage($message);

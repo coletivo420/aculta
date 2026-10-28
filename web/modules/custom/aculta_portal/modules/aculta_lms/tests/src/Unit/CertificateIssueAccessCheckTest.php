@@ -9,17 +9,14 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_lms\Access\CertificateIssueAccessCheck;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Tests certificate access cacheability.
- *
- * @coversDefaultClass \Drupal\aculta_lms\Access\CertificateIssueAccessCheck
  */
+#[CoversClass(\Drupal\aculta_lms\Access\CertificateIssueAccessCheck::class)]
 final class CertificateIssueAccessCheckTest extends UnitTestCase {
 
-  /**
-   * @covers ::access
-   */
   public function testGroupPermissionAccessDeclaresGroupPermissionContext(): void {
     $account = $this->createMock(AccountProxyInterface::class);
     $account->method('hasPermission')->willReturn(FALSE);

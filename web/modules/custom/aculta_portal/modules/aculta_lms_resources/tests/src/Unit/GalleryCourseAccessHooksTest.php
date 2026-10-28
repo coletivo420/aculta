@@ -20,13 +20,14 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests course-scoped access for gallery resources.
- *
- * @group aculta_lms_resources
- * @coversDefaultClass \Drupal\aculta_lms_resources\Hook\GalleryCourseAccessHooks
  */
+#[Group('aculta_lms_resources')]
+#[CoversClass(\Drupal\aculta_lms_resources\Hook\GalleryCourseAccessHooks::class)]
 final class GalleryCourseAccessHooksTest extends UnitTestCase {
 
   /**
@@ -44,8 +45,6 @@ final class GalleryCourseAccessHooksTest extends UnitTestCase {
 
   /**
    * Tests that an active course member can view a gallery linked to the course.
-   *
-   * @covers ::entityAccess
    */
   public function testLinkedCourseMemberIsGrantedAccess(): void {
     $course = $this->course(AccessResult::allowed()->addCacheContexts(['user.group_permissions']));
@@ -60,8 +59,6 @@ final class GalleryCourseAccessHooksTest extends UnitTestCase {
 
   /**
    * Tests that a student without a linked course membership is denied safely.
-   *
-   * @covers ::entityAccess
    */
   public function testUnlinkedAccountDoesNotReceiveGalleryAccess(): void {
     $hook = $this->hook([]);
@@ -74,8 +71,6 @@ final class GalleryCourseAccessHooksTest extends UnitTestCase {
 
   /**
    * Tests that an educator with contextual grading permission can view it.
-   *
-   * @covers ::entityAccess
    */
   public function testCourseEducatorIsGrantedAccess(): void {
     $course = $this->course(AccessResult::forbidden(), TRUE);

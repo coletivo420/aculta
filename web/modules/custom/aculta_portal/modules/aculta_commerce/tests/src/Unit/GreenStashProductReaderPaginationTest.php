@@ -14,12 +14,12 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests cursor behavior when selective access exhausts a bounded scan.
- *
- * @group aculta_commerce
  */
+#[Group('aculta_commerce')]
 final class GreenStashProductReaderPaginationTest extends UnitTestCase {
 
   /**

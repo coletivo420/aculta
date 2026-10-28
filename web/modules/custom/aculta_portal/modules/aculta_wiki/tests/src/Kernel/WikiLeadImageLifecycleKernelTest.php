@@ -69,6 +69,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests Wiki lead image publication and rollback with real entity storage.
@@ -245,9 +246,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
 
   /**
    * A lead image is public only when the submitted Wiki revision is published.
-   *
-   * @dataProvider publicationStates
    */
+  #[DataProvider('publicationStates')]
   public function testMediaAndPrivateFileFollowNodePublication(bool $published): void {
     $owner = $this->createOwner();
     $file = $this->createTemporaryPrivateImage($owner->id());

@@ -11,17 +11,15 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @coversDefaultClass \Drupal\aculta_gallery\ContentIndex\GalleryContentIndexProvider
- * @group aculta_gallery
- */
+#[CoversClass(\Drupal\aculta_gallery\ContentIndex\GalleryContentIndexProvider::class)]
+#[Group('aculta_gallery')]
 final class GalleryContentIndexProviderTest extends UnitTestCase {
 
   /**
    * Tests minimal gallery metadata and image-only outgoing relations.
-   *
-   * @covers ::project
    */
   public function testProjectsGalleryAndExplicitImageRelations(): void {
     $language = $this->createMock(LanguageInterface::class);
@@ -63,8 +61,6 @@ final class GalleryContentIndexProviderTest extends UnitTestCase {
 
   /**
    * Tests Entity Access is revalidated under the canonical Magazine purpose.
-   *
-   * @covers ::getAccessPurpose
    */
   public function testGalleryAccessPurposeIsMagazine(): void {
     $gallery = $this->createMock(MediaGalleryInterface::class);

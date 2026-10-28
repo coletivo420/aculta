@@ -18,9 +18,8 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Protects Messenger integration boundaries and queued data on uninstall.
- *
- * @group aculta_messenger
  */
+#[Group('aculta_messenger')]
 #[Group('aculta_messenger')]
 final class LifecycleHooksTest extends UnitTestCase {
 

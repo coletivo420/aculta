@@ -12,9 +12,8 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Verifies the minimal File provider used by the Statistics bridge.
- *
- * @group aculta_index
  */
+#[Group('aculta_index')]
 #[Group('aculta_index')]
 final class ContentIndexFileProviderTest extends UnitTestCase {
 

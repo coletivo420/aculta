@@ -8,12 +8,11 @@ use Drupal\aculta_commerce\Shipping\ShippingRate;
 use Drupal\aculta_commerce\Shipping\ShippingService;
 use Drupal\commerce_price\Price;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @coversDefaultClass \Drupal\aculta_commerce\Shipping\ShippingRate
- *
- * @group aculta_commerce
- */
+#[CoversClass(\Drupal\aculta_commerce\Shipping\ShippingRate::class)]
+#[Group('aculta_commerce')]
 final class ShippingRateTest extends UnitTestCase {
 
   /**

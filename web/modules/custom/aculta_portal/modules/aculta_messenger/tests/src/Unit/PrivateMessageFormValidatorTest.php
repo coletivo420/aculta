@@ -28,9 +28,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Covers the private-message block and flood safeguards.
- *
- * @group aculta_messenger
  */
+#[Group('aculta_messenger')]
 #[Group('aculta_messenger')]
 final class PrivateMessageFormValidatorTest extends UnitTestCase {
 

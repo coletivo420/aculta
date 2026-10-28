@@ -14,10 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Tests migration metadata field definitions for public Forum posts.
- *
- * @coversDefaultClass \Drupal\aculta_forum\Hook\ForumPostMigrationFieldHooks
- * @group aculta_forum
  */
+#[Group('aculta_forum')]
 #[CoversClass(ForumPostMigrationFieldHooks::class)]
 #[Group('aculta_forum')]
 final class ForumPostMigrationFieldHooksTest extends UnitTestCase {

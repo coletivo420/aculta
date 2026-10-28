@@ -7,19 +7,19 @@ namespace Drupal\Tests\aculta_commerce\Unit;
 use Drupal\aculta_portal\Cart\CartSite;
 use Drupal\aculta_portal\Checkout\CheckoutSlugMap;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Snapshot contract for the existing public cart; does not change runtime.
- *
- * @group aculta_commerce
  */
+#[Group('aculta_commerce')]
 final class ExistingPortalCartContractTest extends UnitTestCase {
 
   /**
    * The portal's user-visible cart separators are compatibility contracts.
-   *
-   * @dataProvider orderTypeContextProvider
    */
+  #[DataProvider('orderTypeContextProvider')]
   public function testExistingOrderTypeLabels(string $type, string $site, string $label): void {
     self::assertSame($site, CartSite::paraTipo($type));
     self::assertSame($label, CartSite::rotulo($site));

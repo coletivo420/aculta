@@ -11,12 +11,13 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests the Magazine projection allowlist and revision boundary.
- *
- * @group aculta_magazine
  */
+#[Group('aculta_magazine')]
 final class MagazineContentIndexProviderTest extends UnitTestCase {
 
   /**
@@ -82,9 +83,8 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
 
   /**
    * Tests other bundles and non-default revisions are excluded.
-   *
-   * @dataProvider unsupportedEntityProvider
    */
+  #[DataProvider('unsupportedEntityProvider')]
   public function testDoesNotProjectUnsupportedEntity(string $bundle, bool $defaultRevision): void {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn($bundle);

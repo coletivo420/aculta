@@ -12,11 +12,11 @@ use Drupal\file\Upload\FileUploadResult;
 use Drupal\file\Upload\FormUploadedFile;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/** @coversDefaultClass \Drupal\aculta_image\ImageUploadIngestor */
+#[CoversClass(\DefaultClass\Drupal\aculta_image\ImageUploadIngestor::class)]
 final class ImageUploadIngestorTest extends UnitTestCase {
 
-  /** @covers ::upload */
   public function testRejectsAnImageWithMismatchedExtension(): void {
     $path = $this->pngFile();
     $handler = $this->createMock(FileUploadHandlerInterface::class);
@@ -36,7 +36,6 @@ final class ImageUploadIngestorTest extends UnitTestCase {
     }
   }
 
-  /** @covers ::upload */
   public function testUsesTheSharedPolicyAndManagedFileHandler(): void {
     $path = $this->pngFile();
     $handler = $this->createMock(FileUploadHandlerInterface::class);

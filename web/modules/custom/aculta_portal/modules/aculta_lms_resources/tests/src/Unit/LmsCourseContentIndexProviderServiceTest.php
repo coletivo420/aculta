@@ -18,12 +18,12 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Yaml\Yaml;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests the LMS provider's service-tag contract using its real service YAML.
- *
- * @group aculta_lms_resources
  */
+#[Group('aculta_lms_resources')]
 final class LmsCourseContentIndexProviderServiceTest extends UnitTestCase {
 
   /**

@@ -16,11 +16,11 @@ use Drupal\aculta_lms\Access\UploadedAnswerAccessCheck;
 use Drupal\aculta_lms\Account\AccountUserLoaderInterface;
 use Drupal\user\UserInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/** @coversDefaultClass \Drupal\aculta_lms\Access\UploadedAnswerAccessCheck */
+#[CoversClass(\DefaultClass\Drupal\aculta_lms\Access\UploadedAnswerAccessCheck::class)]
 final class UploadedAnswerAccessCheckTest extends UnitTestCase {
 
-  /** @covers ::access */
   public function testOwnerNeedsCurrentCourseAccess(): void {
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn('27');
@@ -44,7 +44,6 @@ final class UploadedAnswerAccessCheckTest extends UnitTestCase {
     self::assertFalse($result->isAllowed());
   }
 
-  /** @covers ::access */
   public function testEnrolledOwnerCanAccessFile(): void {
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn('27');
@@ -66,7 +65,6 @@ final class UploadedAnswerAccessCheckTest extends UnitTestCase {
     self::assertTrue($this->accessCheck($account)->access($answer, $account)->isAllowed());
   }
 
-  /** @covers ::access */
   public function testEducatorAccessUsesLmsAnswerPermission(): void {
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn('31');
@@ -79,7 +77,6 @@ final class UploadedAnswerAccessCheckTest extends UnitTestCase {
     self::assertTrue($this->accessCheck($account)->access($answer, $account)->isAllowed());
   }
 
-  /** @covers ::access */
   public function testInactiveSessionAccountIsDeniedBeforeLmsAccess(): void {
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn('27');

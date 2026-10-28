@@ -8,12 +8,13 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests extraction of explicit entity owner IDs.
- *
- * @group aculta_index
  */
+#[Group('aculta_index')]
 final class ContentIndexOwnerResolverTest extends UnitTestCase {
 
   /**
@@ -31,9 +32,8 @@ final class ContentIndexOwnerResolverTest extends UnitTestCase {
 
   /**
    * Tests missing and malformed owners remain absent from the projection.
-   *
-   * @dataProvider invalidOwnerProvider
    */
+  #[DataProvider('invalidOwnerProvider')]
   public function testRejectsMissingOrInvalidOwner(mixed $ownerId): void {
     $entity = $this->createMockForIntersectionOfInterfaces([
       ContentEntityInterface::class,

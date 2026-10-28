@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_index\Unit;
 
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests the initial schema contract without installing tables.
- *
- * @group aculta_index
  */
+#[Group('aculta_index')]
 final class ContentIndexSchemaTest extends UnitTestCase {
 
   /**

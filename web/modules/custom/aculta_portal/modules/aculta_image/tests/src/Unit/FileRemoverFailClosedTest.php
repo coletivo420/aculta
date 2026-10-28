@@ -15,12 +15,12 @@ use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\file\FileInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests fail-closed deletion when references exist or cannot be verified.
- *
- * @group aculta_image
  */
+#[Group('aculta_image')]
 final class FileRemoverFailClosedTest extends UnitTestCase {
 
   /**

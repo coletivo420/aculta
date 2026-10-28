@@ -6,10 +6,9 @@ namespace Drupal\Tests\aculta_commerce\Unit;
 
 use Drupal\aculta_commerce\Navigation\GreenStashNavigation;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @group aculta_commerce
- */
+#[Group('aculta_commerce')]
 final class GreenStashNavigationTest extends UnitTestCase {
 
   public function testEachAreaIsReadOnlyAndHasItsOwnRoute(): void {

@@ -16,12 +16,12 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests that product creation requires both Studio and Commerce access.
- *
- * @group aculta_commerce
  */
+#[Group('aculta_commerce')]
 final class GreenStashProductCreateAccessTest extends UnitTestCase {
 
   /**

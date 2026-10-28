@@ -17,12 +17,12 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Yaml\Yaml;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Compiles the service tags for all implemented ACULTA Content Index adapters.
- *
- * @group aculta_index
  */
+#[Group('aculta_index')]
 final class ContentIndexProviderServiceMapTest extends UnitTestCase {
 
   /**

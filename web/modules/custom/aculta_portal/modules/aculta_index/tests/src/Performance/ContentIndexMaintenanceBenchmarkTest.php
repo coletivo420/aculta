@@ -23,10 +23,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Opt-in benchmark for provider-backed rebuild and incremental audit.
- *
- * @group aculta_index
- * @group performance
  */
+#[Group('aculta_index')]
+#[Group('performance')]
 #[Group('aculta_index')]
 #[Group('performance')]
 #[RunTestsInSeparateProcesses]

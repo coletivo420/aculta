@@ -29,6 +29,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\RequestStack;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Installs and exercises the initial schema in the test database.
@@ -189,9 +190,8 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
 
   /**
    * Cursor cleanup refuses unbounded or empty batches.
-   *
-   * @dataProvider invalidCursorPruneLimitProvider
    */
+  #[DataProvider('invalidCursorPruneLimitProvider')]
   public function testCursorPruningRejectsInvalidLimits(int $limit): void {
     $manager = $this->container->get('aculta_index.cursor_manager');
     $this->expectException(\InvalidArgumentException::class);

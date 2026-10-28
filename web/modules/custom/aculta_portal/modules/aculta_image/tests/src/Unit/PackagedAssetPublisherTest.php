@@ -15,11 +15,11 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\file\FileRepositoryInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/** @coversDefaultClass \Drupal\aculta_image\PackagedAssetPublisher */
+#[CoversClass(\DefaultClass\Drupal\aculta_image\PackagedAssetPublisher::class)]
 final class PackagedAssetPublisherTest extends UnitTestCase {
 
-  /** @covers ::publish */
   public function testRejectsImageOutsidePinnedComposerPackages(): void {
     $source = tempnam(sys_get_temp_dir(), 'aculta-image-test-');
     self::assertNotFalse($source);
@@ -36,7 +36,6 @@ final class PackagedAssetPublisherTest extends UnitTestCase {
     }
   }
 
-  /** @covers ::publish */
   public function testRejectsDestinationTraversal(): void {
     $source = tempnam(sys_get_temp_dir(), 'aculta-image-test-');
     self::assertNotFalse($source);
@@ -53,7 +52,6 @@ final class PackagedAssetPublisherTest extends UnitTestCase {
     }
   }
 
-  /** @covers ::validatedBytes */
   public function testAcceptsPinnedH5pSvgAssetsAndRejectsActiveMarkup(): void {
     $publisher = (new \ReflectionClass(PackagedAssetPublisher::class))->newInstanceWithoutConstructor();
     $validator = new \ReflectionMethod(PackagedAssetPublisher::class, 'validatedBytes');
@@ -72,7 +70,6 @@ final class PackagedAssetPublisherTest extends UnitTestCase {
     self::assertNull($validator->invoke($publisher, '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>', 'public://h5p/h5p-core/images/unsafe.svg'));
   }
 
-  /** @covers ::publishH5PLibraryImage */
   public function testH5pImagePublisherRejectsSourcesOutsideExtractedPackage(): void {
     $root = sys_get_temp_dir() . '/aculta-h5p-extract-' . bin2hex(random_bytes(4));
     mkdir($root, 0700);

@@ -13,7 +13,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/** @coversClass(\Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImageValidator::class) */
 #[CoversClass(LmsSubmissionImageValidator::class)]
 final class LmsSubmissionImageValidatorTest extends TestCase {
 

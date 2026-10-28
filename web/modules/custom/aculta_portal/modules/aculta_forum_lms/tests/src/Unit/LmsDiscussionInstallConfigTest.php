@@ -45,7 +45,8 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
     $textFormat = $this->syncConfig('filter.format.forum');
     self::assertSame('media', $textFormat['filters']['media_embed']['provider']);
     $editor = $this->syncConfig('editor.editor.forum');
-    self::assertSame('forum/anexos', $editor['image_upload']['directory']);
+    // Uploads do Fórum são centralizados em aculta_portal: o upload de imagem nativo do CKEditor fica desligado.
+    self::assertFalse($editor['image_upload']['status']);
   }
 
   /**

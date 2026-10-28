@@ -6,12 +6,12 @@ namespace Drupal\Tests\aculta_portal\Unit\Status;
 
 use Drupal\aculta_portal\Status\PhpExtensionRequirements;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests the PHP extension inventory derived from Composer package metadata.
- *
- * @group aculta_portal
  */
+#[Group('aculta_portal')]
 final class PhpExtensionRequirementsTest extends UnitTestCase {
 
   /** Checks transitive requirements, loaded status, and source attribution. */

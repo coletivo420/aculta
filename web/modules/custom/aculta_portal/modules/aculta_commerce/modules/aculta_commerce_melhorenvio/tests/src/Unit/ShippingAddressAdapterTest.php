@@ -7,6 +7,8 @@ namespace Drupal\Tests\aculta_commerce_melhorenvio\Unit;
 use Drupal\aculta_commerce_melhorenvio\Address\ShippingAddressAdapter;
 use Drupal\aculta_portal_cep\Lookup\CepLookupInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(ShippingAddressAdapter::class)]
 #[Group('aculta_commerce_melhorenvio')]

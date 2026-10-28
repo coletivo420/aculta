@@ -7,12 +7,13 @@ namespace Drupal\Tests\aculta_index\Unit;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests the allowlisted content projection value object.
- *
- * @group aculta_index
  */
+#[Group('aculta_index')]
 final class ContentIndexProjectionTest extends UnitTestCase {
 
   /**
@@ -44,9 +45,8 @@ final class ContentIndexProjectionTest extends UnitTestCase {
 
   /**
    * Tests projections reject malformed identity and non-relation values.
-   *
-   * @dataProvider invalidProjectionProvider
    */
+  #[DataProvider('invalidProjectionProvider')]
   public function testRejectsInvalidProjection(array $arguments, string $message): void {
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage($message);

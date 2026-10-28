@@ -20,6 +20,8 @@
 
 | Atributo | Família | Uso (JS) | Arquivos |
 | --- | --- | --- | ---: |
+
+Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima (o gate reprova o que não estiver).
 | `data-aculta-account-list` | exato | sim | 2 |
 | `data-aculta-add-member` | exato | sim | 2 |
 | `data-aculta-album-open` | exato | sim | 2 |
@@ -43,6 +45,7 @@
 | `data-aculta-confirming` | exato | sim | 1 |
 | `data-aculta-conversation-url` | exato | não | 1 |
 | `data-aculta-conversation-view` | exato | sim | 2 |
+| `data-aculta-count-kind` | exato | não | 1 |
 | `data-aculta-dialog` | exato | sim | 3 |
 | `data-aculta-dialog-close` | exato | sim | 2 |
 | `data-aculta-dialog-open` | exato | sim | 2 |
@@ -74,25 +77,33 @@
 | `data-aculta-drawer-label` | exato | não | 2 |
 | `data-aculta-drawer-url` | exato | sim | 2 |
 | `data-aculta-forum-post-timestamp` | exato | sim | 3 |
+| `data-aculta-game` | exato | não | 1 |
 | `data-aculta-group-max` | exato | sim | 1 |
 | `data-aculta-imagem` | exato | não | 1 |
 | `data-aculta-imagem-alinhamento` | exato | não | 1 |
 | `data-aculta-imagem-legenda` | exato | não | 1 |
 | `data-aculta-imagem-modelo` | exato | não | 1 |
+| `data-aculta-js-only` | exato | sim | 2 |
 | `data-aculta-json-form` | exato | sim | 2 |
 | `data-aculta-lazy-src` | exato | sim | 2 |
 | `data-aculta-legenda` | exato | sim | 2 |
 | `data-aculta-lock-mirror` | exato | sim | 1 |
+| `data-aculta-mailer-preview` | exato | não | 1 |
 | `data-aculta-mailer-table` | exato | não | 2 |
+| `data-aculta-mailer-tendencia` | exato | não | 1 |
 | `data-aculta-member-name` | exato | sim | 1 |
 | `data-aculta-messenger-count` | exato | sim | 2 |
 | `data-aculta-modelo` | exato | sim | 3 |
 | `data-aculta-new-conversation` | exato | sim | 2 |
 | `data-aculta-new-conversation-form` | exato | sim | 2 |
+| `data-aculta-nojs-search` | exato | sim | 2 |
 | `data-aculta-notice-filters` | exato | não | 2 |
+| `data-aculta-notice-group-key` | exato | não | 1 |
 | `data-aculta-notice-message-id` | exato | não | 6 |
 | `data-aculta-notice-origin` | exato | não | 7 |
+| `data-aculta-notice-origin-section` | exato | não | 1 |
 | `data-aculta-notice-read` | exato | não | 9 |
+| `data-aculta-notice-recency` | exato | não | 9 |
 | `data-aculta-number` | exato | sim | 2 |
 | `data-aculta-number-sn` | exato | não | 1 |
 | `data-aculta-open-conversation` | exato | sim | 2 |
@@ -111,8 +122,10 @@
 | `data-aculta-pdf-viewer` | exato | sim | 3 |
 | `data-aculta-photo-editor` | exato | não | 2 |
 | `data-aculta-photo-open` | exato | não | 1 |
+| `data-aculta-popup` | exato | sim | 2 |
 | `data-aculta-portal-link` | exato | não | 2 |
 | `data-aculta-reply-form` | exato | sim | 3 |
+| `data-aculta-revista` | exato | não | 1 |
 | `data-aculta-sent-date` | exato | sim | 1 |
 | `data-aculta-sheet` | exato | sim | 2 |
 | `data-aculta-sheet-count` | exato | sim | 0 |
@@ -123,11 +136,16 @@
 | `data-aculta-sheet-tabulator` | exato | sim | 1 |
 | `data-aculta-sheet-title` | exato | sim | 1 |
 | `data-aculta-sheet-url` | exato | sim | 1 |
+| `data-aculta-shipping-calculator` | exato | sim | 4 |
+| `data-aculta-shipping-resultado` | exato | sim | 4 |
+| `data-aculta-studio` | exato | sim | 3 |
+| `data-aculta-studio-tab` | exato | não | 1 |
 | `data-aculta-thread-id` | exato | não | 1 |
 | `data-aculta-thread-unread` | exato | não | 1 |
 | `data-aculta-user` | exato | não | 1 |
 | `data-aculta-user-avatar` | exato | não | 3 |
 | `data-aculta-user-picture` | exato | não | 1 |
+| `data-aculta-utility-drawer` | exato | sim | 4 |
 | `data-dialog-options` | exato | sim | 6 |
 | `data-dialog-title` | exato | não | 2 |
 | `data-dialog-type` | exato | sim | 7 |
@@ -154,9 +172,6 @@
 | `data-portal-page-title` | exato | sim | 2 |
 | `data-portal-payment-notice` | exato | não | 2 |
 | `data-portal-ui` | exato | sim | 50 |
-
-Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima (o gate reprova o que não estiver).
-
 ## Famílias dinâmicas de tokens
 
 Montadas por concatenação no módulo (o gate não enxerga cada valor; a família é o contrato):
@@ -461,6 +476,85 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `checkout-guest-registration` | `card`, `card-body`, `mb-3` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/AcultaCheckoutLogin.php` |
 | `checkout-google` | `d-flex`, `justify-content-center`, `mb-3` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/AcultaCheckoutLogin.php` |
 | `forum-category-count` | `aculta-forum-category__count` | `web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/ForumCategoryTopicCount.php` |
+
+
+## Tokens com mapeamento de tema
+
+| Token | Classes no ACULTA420 | Origem no módulo/tema |
+| --- | --- | --- |
+| `fiscal-identity-other-data` | `aculta-fiscal-identity-other-data` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/FiscalIdentityPane.php` |
+| `wiki-proposal-contribute` | `button button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiProposalLinkHooks.php` |
+| `statistics-panel` | `aculta-statistics` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
+| `statistics-areas` | `aculta-statistics__areas` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
+| `statistics-controls` | `aculta-statistics__controls` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
+| `statistics-form` | `aculta-statistics__form` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
+| `statistics-summary` | `aculta-statistics__summary` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
+| `statistics-comparison` | `aculta-statistics__comparison` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
+| `statistics-chart` | `aculta-statistics__chart` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
+| `statistics-table` | `aculta-statistics__table` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
+| `statistics-note` | `aculta-statistics__note` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
+| `statistics-wiki-revisions` | `aculta-statistics__wiki-revisions` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
+| `statistics-wiki-ranking` | `aculta-statistics__wiki-ranking` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
+| `lms-class-roster` | `aculta-lms-class-roster d-grid gap-3` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/ClassRosterManager.php` |
+| `consent-banner` | `aculta-consent` | `web/modules/custom/aculta_portal/modules/aculta_statistics/js/consent.js` |
+| `secrets-environment` | `aculta-portal-secrets__environment` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/src/Controller/SecretsController.php` |
+| `links-page-link` | `aculta-links-page__link` | `web/modules/custom/aculta_portal/modules/aculta_links/src/Controller/LinkPagePublicController.php` |
+| `secrets-tabs` | `secrets-tabs` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/js/secrets-tabs.js` |
+| `secrets-tab` | `secrets-tabs__tab` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/js/secrets-tabs.js` |
+| `secrets-tabs-list` | `secrets-tabs__list` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/src/Controller/SecretsController.php` |
+| `secrets-tabs-panel` | `secrets-tabs__panel` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/src/Controller/SecretsController.php` |
+| `secrets-table-scroll` | `secrets-table-scroll` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/src/Controller/SecretsController.php` |
+| `notice-related-group` | `aculta-messenger-notice-related-group` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/NoticeRelatedGrouper.php` |
+| `notice-related-group-items` | `aculta-messenger-notice-related-group__items` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/NoticeRelatedGrouper.php` |
+| `notice-origin-section` | `aculta-messenger-notice-origin` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/NoticeOriginGrouper.php` |
+| `notice-origin-separator` | `aculta-messenger-notice-origin__separator` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/NoticeOriginGrouper.php` |
+| `notice-origin-heading` | `aculta-messenger-notice-origin__heading` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/NoticeOriginGrouper.php` |
+| `notice-origin-items` | `aculta-messenger-notice-origin__items` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/NoticeOriginGrouper.php` |
+| `new-conversation-fallback-search` | `aculta-messenger-fallback-search d-grid gap-2` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php` |
+| `user-upload-dialog` | `aculta-user-upload-dialog` | `web/modules/custom/aculta_portal/src/Upload/UserUploadDialogBuilder.php` |
+| `we-sativa-start` | `d-grid gap-4 we-sativa__workspace` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributorWorkspace.php` |
+| `we-sativa-intent` | `d-grid gap-4 we-sativa__workspace` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiContributionIntentController.php` |
+| `wiki-title-suggestions` | `aculta-wiki-title-suggestions list-group` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryTitleSuggestions.php` |
+| `wiki-proposal-link` | `aculta-wiki-proposal-link btn btn-outline-primary` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiProposalLinkHooks.php` |
+| `wiki-proposal-decision` | `aculta-wiki-proposal-decision` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Form/WikiProposalDecisionForm.php` |
+| `wiki-proposal-status` | `aculta-wiki-proposal-status` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiProposalStatusController.php` |
+| `green-stash-entry` | `aculta-green-stash` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Experience/GreenStashExperienceProvider.php` |
+| `green-stash-product-create` | `aculta-green-stash__product-create` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Form/GreenStashProductCreateForm.php` |
+| `green-stash-navigation-link` | `nav-link aculta-green-stash__navigation-link` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Navigation/GreenStashNavigation.php` |
+| `green-stash-navigation` | `nav aculta-green-stash__navigation` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Navigation/GreenStashNavigation.php` |
+| `green-stash-products` | `aculta-green-stash__products` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Controller/GreenStashController.php` |
+| `green-stash-shipments` | `aculta-green-stash__shipments` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Controller/GreenStashController.php` |
+| `green-stash-product-detail` | `aculta-green-stash__product-detail` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Controller/GreenStashProductController.php` |
+| `studio-shell` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-marley-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/MarleyExperienceProvider.php` |
+| `studio-account-home` | `studio__panel card card-body` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php` |
+| `studio-profile-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/ProfileExperienceProvider.php` |
+| `studio-profile-nickname-edit` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
+| `studio-profile-photo-edit` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
+| `studio-profile-actions` | `studio__actions list-unstyled d-flex flex-wrap gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
+| `studio-profile-public-link` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
+| `studio-profile-editor` | `aculta-profile-editor` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
+| `studio-account-section` | `studio studio__layout` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
+| `studio-account-nav-link` | `nav-link studio__link` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
+| `studio-account-contextual-nav` | `nav nav-tabs studio__subtabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
+| `studio-hub` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioHubController.php` |
+| `studio-experiences` | `studio__actions list-unstyled d-grid gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioHubController.php` |
+| `studio-tabs` | `nav nav-tabs studio__tabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-tab` | `nav-link studio__tab` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-panel` | `studio__panel card card-body` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-heading` | `studio__heading h4` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-actions` | `studio__actions list-unstyled d-flex flex-wrap gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-action` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-empty` | `text-muted` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-layout` | `studio__layout` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-sidebar` | `studio__sidebar` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-main` | `studio__main` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-sections` | `studio__sections list-unstyled` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-subtabs` | `nav nav-tabs studio__subtabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-link` | `nav-link studio__link` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-live` | `studio__live small text-muted` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-listing` | `table table-hover align-middle studio__listing` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php` |
+| `studio-listing-wrap` | `table-responsive studio__listing-wrap` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php` |
 
 ## Painéis de vendas e doações (dev.69 e 0.6.0-dev.67)
 

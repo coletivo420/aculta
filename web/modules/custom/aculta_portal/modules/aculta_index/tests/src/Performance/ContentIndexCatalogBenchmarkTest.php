@@ -25,10 +25,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Opt-in candidate-query benchmark against synthetic catalog rows.
- *
- * @group aculta_index
- * @group performance
  */
+#[Group('aculta_index')]
+#[Group('performance')]
 #[Group('aculta_index')]
 #[Group('performance')]
 #[RunTestsInSeparateProcesses]

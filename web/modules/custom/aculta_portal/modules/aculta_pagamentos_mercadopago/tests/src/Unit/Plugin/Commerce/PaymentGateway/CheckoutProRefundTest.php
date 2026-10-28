@@ -20,6 +20,7 @@ use Drupal\Tests\UnitTestCase;
 use MercadoPago\Client\Common\RequestOptions;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\Log\LoggerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Covers safe, serialized and idempotent Checkout Pro refunds.
@@ -112,9 +113,8 @@ final class CheckoutProRefundTest extends UnitTestCase {
 
   /**
    * Rejects incomplete or unrelated refund resources without mutating Commerce.
-   *
-   * @dataProvider invalidApprovedRefundResponses
    */
+  #[DataProvider('invalidApprovedRefundResponses')]
   public function testApprovedRefundMustIdentifyRefundAndOriginalPayment(array $response): void {
     $gateway = $this->gateway();
     $payment = $this->payment(FALSE);

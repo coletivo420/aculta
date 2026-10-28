@@ -7,17 +7,15 @@ namespace Drupal\Tests\aculta_commerce\Unit;
 use Drupal\aculta_commerce\Access\GreenStashAccessPolicy;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @coversDefaultClass \Drupal\aculta_commerce\Access\GreenStashAccessPolicy
- *
- * @group aculta_commerce
- */
+#[CoversClass(\Drupal\aculta_commerce\Access\GreenStashAccessPolicy::class)]
+#[Group('aculta_commerce')]
 final class GreenStashAccessPolicyTest extends UnitTestCase {
 
-  /**
-   * @dataProvider cases
-   */
+  #[DataProvider('cases')]
   public function testExplicitPermissionGate(bool $granted): void {
     $account = $this->createMock(AccountInterface::class);
     $account->expects(self::once())

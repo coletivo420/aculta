@@ -26,12 +26,12 @@ use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests original entity access revalidation for catalog candidates.
- *
- * @group aculta_index
  */
+#[Group('aculta_index')]
 final class ContentIndexAccessFilterTest extends UnitTestCase {
 
   /**

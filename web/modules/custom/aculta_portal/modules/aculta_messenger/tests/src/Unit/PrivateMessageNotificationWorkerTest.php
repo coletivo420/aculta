@@ -41,9 +41,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Ensures legacy queue items do not claim notifications owned by the Mailer.
- *
- * @group aculta_messenger
  */
+#[Group('aculta_messenger')]
 #[Group('aculta_messenger')]
 final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
 

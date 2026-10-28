@@ -77,7 +77,8 @@ final class WikiSearchFormBuilderTest extends UnitTestCase {
     $this->assertSame('', $build['q']['#value']);
     $this->assertSame('q', $build['q']['#name']);
     $this->assertSame(SearchPageController::MAX_CHARS, $build['q']['#maxlength']);
-    $this->assertContains('aculta-search-preview-input', $build['q']['#attributes']['class']);
+    // O módulo expõe só o marcador neutro; a classe visual é do tema (PortalUiHooks).
+    $this->assertSame('search-preview-input', $build['q']['#attributes']['data-portal-ui']);
     $this->assertSame('/wiki/busca/previa', $build['q']['#attributes']['data-preview-url']);
     $this->assertSame((string) SearchPageController::MIN_CHARS, $build['q']['#attributes']['data-min-chars']);
     $this->assertSame('aculta-wiki-search-preview', $build['preview']['#attributes']['id']);

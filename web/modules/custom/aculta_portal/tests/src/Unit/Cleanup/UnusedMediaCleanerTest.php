@@ -11,12 +11,12 @@ use Drupal\aculta_portal\Cleanup\UnusedMediaCleaner;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\media\MediaInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests safe Portal deletion of orphan Media candidates.
- *
- * @group aculta_portal
  */
+#[Group('aculta_portal')]
 final class UnusedMediaCleanerTest extends UnitTestCase {
 
   /**

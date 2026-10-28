@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit;
 
+use Drupal\aculta_portal\Email\EmailConfirmationRequestMailType;
 use Drupal\aculta_portal\Email\EmailConfirmationRequestResult;
 use Drupal\aculta_portal\Email\EmailConfirmationRequester;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
@@ -203,7 +204,11 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $language->method('getId')->willReturn('pt-br');
     $confirmation->method('language')->willReturn($language);
     $confirmation->method('id')->willReturn((string) $id);
-    $confirmation->method('getProperty')->with('user')->willReturn($uid);
+    $confirmation->method('getProperty')->willReturnCallback(static fn (string $name): mixed => match ($name) {
+      'user' => $uid,
+      'mail_type' => EmailConfirmationRequestMailType::ID,
+      default => NULL,
+    });
     $confirmation->method('setRealm')->willReturnSelf();
     $confirmation->method('setProperty')->willReturnSelf();
     $confirmation->method('setPrivate')->willReturnSelf();

@@ -28,9 +28,8 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Protects the audience and validity rules for persistent notices.
- *
- * @group aculta_messenger
  */
+#[Group('aculta_messenger')]
 #[Group('aculta_messenger')]
 final class PersistentNoticeAccessTest extends UnitTestCase {
 

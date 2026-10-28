@@ -9,10 +9,11 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\webform\WebformSubmissionInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 require_once dirname(__DIR__, 8) . '/modules/contrib/webform_score/webform_score.module';
 
-/** @coversFunction webform_score_entity_field_access */
+#[CoversClass(\Functionwebform_score_entity_field_access::class)]
 final class WebformScoreAccessTest extends UnitTestCase {
 
   public function testOnlySubmissionOwnerCanViewOwnScoreWhenGranted(): void {

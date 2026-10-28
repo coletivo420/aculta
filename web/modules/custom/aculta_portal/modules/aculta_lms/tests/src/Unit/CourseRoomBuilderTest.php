@@ -17,10 +17,9 @@ use Drupal\lms\Entity\Lesson;
 use Drupal\lms\Entity\LessonInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @coversDefaultClass \Drupal\aculta_lms\CourseRoomBuilder
- */
+#[CoversClass(\Drupal\aculta_lms\CourseRoomBuilder::class)]
 final class CourseRoomBuilderTest extends UnitTestCase {
 
   /**

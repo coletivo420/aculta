@@ -8,12 +8,12 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\node\NodeInterface;
 use Drupal\aculta_magazine\Hook\RevistaContentHooks;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests field and metatag lifecycle behavior for the canonical Revista bundle.
- *
- * @group aculta_magazine
  */
+#[Group('aculta_magazine')]
 final class RevistaContentHooksTest extends UnitTestCase {
 
   /**

@@ -66,6 +66,14 @@ services:
     arguments: ['@aculta_portal.domain_purpose']
   Drupal\aculta_forum\Hook\ForumThemeHooks:
     class: Drupal\aculta_forum\Hook\ForumThemeHooks
+  Drupal\aculta_forum\Hook\DiscussionModerationHooks:
+    class: Drupal\aculta_forum\Hook\DiscussionModerationHooks
+  Drupal\aculta_forum\Hook\DiscussionProgressHooks:
+    class: Drupal\aculta_forum\Hook\DiscussionProgressHooks
+  Drupal\aculta_forum\Hook\ForumPostBundleHooks:
+    class: Drupal\aculta_forum\Hook\ForumPostBundleHooks
+  Drupal\aculta_forum\Hook\PublicForumViewsDataHooks:
+    class: Drupal\aculta_forum\Hook\PublicForumViewsDataHooks
   Drupal\aculta_forum\Hook\ForumPostThreadHooks:
     class: Drupal\aculta_forum\Hook\ForumPostThreadHooks
     arguments: ['@aculta_forum.post_thread_builder']

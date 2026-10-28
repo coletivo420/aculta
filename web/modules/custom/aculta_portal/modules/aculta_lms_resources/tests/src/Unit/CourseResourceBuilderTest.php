@@ -17,11 +17,11 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @coversDefaultClass \Drupal\aculta_lms_resources\CourseResourceBuilder
- * @group aculta_lms_resources
- */
+#[CoversClass(\Drupal\aculta_lms_resources\CourseResourceBuilder::class)]
+#[Group('aculta_lms_resources')]
 final class CourseResourceBuilderTest extends UnitTestCase {
 
   /**

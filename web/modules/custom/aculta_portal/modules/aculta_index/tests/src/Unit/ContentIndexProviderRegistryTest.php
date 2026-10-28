@@ -7,12 +7,12 @@ namespace Drupal\Tests\aculta_index\Unit;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests provider registration and stable identity.
- *
- * @group aculta_index
  */
+#[Group('aculta_index')]
 final class ContentIndexProviderRegistryTest extends UnitTestCase {
 
   /**

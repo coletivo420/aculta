@@ -6,12 +6,12 @@ namespace Drupal\Tests\aculta_commerce\Unit\Shipping;
 
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\Yaml\Yaml;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Guards the ACULTA shipping entries in the versioned configuration.
- *
- * @group aculta_commerce
  */
+#[Group('aculta_commerce')]
 final class ShippingConfigSyncTest extends UnitTestCase {
 
   /**

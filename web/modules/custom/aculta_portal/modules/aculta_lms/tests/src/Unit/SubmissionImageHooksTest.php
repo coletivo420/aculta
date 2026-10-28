@@ -16,7 +16,6 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
-/** @coversClass(\Drupal\aculta_lms\Hook\SubmissionImageHooks::class) */
 #[CoversClass(SubmissionImageHooks::class)]
 #[Group('aculta_lms')]
 final class SubmissionImageHooksTest extends UnitTestCase {

@@ -15,8 +15,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Unit tests for the Marley presenter.
- *
- * @coversClass \Drupal\aculta_studio\MarleyPresenter
  */
 #[CoversClass(MarleyPresenter::class)]
 #[Group('aculta_studio')]
