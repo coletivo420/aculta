@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Tema e hooks do módulo ACULTA Eventos.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function aculta_events_theme(): array {
+  return [
+    'aculta_event_page' => [
+      'variables' => [
+        'titulo' => NULL,
+        'subtitulo' => NULL,
+        'descricao' => NULL,
+        'tipo' => NULL,
+        'organizador' => NULL,
+        'url' => NULL,
+        'datas' => [],
+        'cancelado' => FALSE,
+      ],
+    ],
+  ];
+}

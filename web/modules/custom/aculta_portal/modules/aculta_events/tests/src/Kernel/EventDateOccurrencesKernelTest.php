@@ -23,7 +23,7 @@ final class EventDateOccurrencesKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'datetime', 'datetime_range', 'options', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = ['system', 'user', 'taxonomy', 'text', 'filter', 'datetime', 'datetime_range', 'options', 'aculta_calendar', 'aculta_events'];
 
   /**
    * {@inheritdoc}

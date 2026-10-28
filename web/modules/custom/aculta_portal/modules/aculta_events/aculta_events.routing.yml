@@ -1,0 +1,20 @@
+aculta_events.catalogue:
+  path: '/eventos'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventCatalogueController::page'
+    _title: 'Eventos da ACULTA'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.page:
+  path: '/eventos/{slug}'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventPageController::page'
+    _title_callback: '\Drupal\aculta_events\Controller\EventPageController::titulo'
+  requirements:
+    _access: 'TRUE'
+    slug: '[a-z0-9]+(-[a-z0-9]+)*'
+  options:
+    _aculta_domain_purpose: eventos

@@ -6,6 +6,7 @@ namespace Drupal\aculta_events\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -37,6 +38,19 @@ final class Event extends ContentEntityBase {
   /**
    * {@inheritdoc}
    */
+  public function preSave(EntityStorageInterface $storage): void {
+    parent::preSave($storage);
+    // Slug nasce com o evento e não muda depois (estável após publicado).
+    if ($this->get('field_slug')->isEmpty()) {
+      $gerador = \Drupal::service('aculta_events.slug');
+      $this->set('field_slug', $gerador->uniqueFor((string) $this->label(), $this->id() ? (int) $this->id() : NULL));
+    }
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
@@ -51,6 +65,18 @@ final class Event extends ContentEntityBase {
 
     $fields['body'] = BaseFieldDefinition::create('string_long')
       ->setLabel(new TranslatableMarkup('Descrição'));
+
+    // Slug público, gerado na criação (EventSlugGenerator). Não muda depois de publicado.
+    $fields['field_slug'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Endereço (slug)'))
+      ->setSetting('max_length', 255);
+
+    // Tipo de evento: termo do vocabulário aculta_event_type (migrado em aculta_events_update_10001).
+    $fields['field_tipo'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(new TranslatableMarkup('Tipo de evento'))
+      ->setSetting('target_type', 'taxonomy_term')
+      ->setSetting('handler', 'default:taxonomy_term')
+      ->setSetting('handler_settings', ['target_bundles' => ['aculta_event_type' => 'aculta_event_type']]);
 
     $fields['field_url'] = BaseFieldDefinition::create('uri')
       ->setLabel(new TranslatableMarkup('Site do evento'));

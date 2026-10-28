@@ -82,3 +82,43 @@ function aculta_events_update_10001(): string {
 
   return 'Vocabulário event_type migrado para aculta_event_type.';
 }
+
+/**
+ * Instala as colunas de slug e de tipo em aculta_event, se ainda não existirem.
+ *
+ * Idempotente. Campo base de coluna única usa o nome do próprio campo como coluna.
+ */
+function _aculta_events_instala_campos_f3(): array {
+  $banco = \Drupal::database();
+  $gerenciador = \Drupal::entityDefinitionUpdateManager();
+  $definicoes = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event');
+  $instalados = [];
+  foreach (['field_slug' => 'string', 'field_tipo' => 'entity_reference'] as $campo => $tipo) {
+    if ($banco->schema()->fieldExists('aculta_event', $campo)) {
+      continue;
+    }
+    $definicao = $definicoes[$campo] ?? NULL;
+    if ($definicao === NULL) {
+      throw new \RuntimeException("$campo não está declarado em aculta_event.");
+    }
+    $registrado = $gerenciador->getFieldStorageDefinition($campo, 'aculta_event');
+    if ($registrado !== NULL) {
+      $gerenciador->uninstallFieldStorageDefinition($registrado);
+    }
+    $gerenciador->installFieldStorageDefinition($campo, 'aculta_event', 'aculta_events', $definicao);
+    $instalados[] = $campo;
+  }
+  return $instalados;
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Campos da F3: slug público e tipo de evento.
+ */
+function aculta_events_update_10002(): string {
+  $instalados = _aculta_events_instala_campos_f3();
+  return $instalados === []
+    ? 'Campos field_slug e field_tipo já existiam em aculta_event.'
+    : 'Campos instalados em aculta_event: ' . implode(', ', $instalados) . '.';
+}
