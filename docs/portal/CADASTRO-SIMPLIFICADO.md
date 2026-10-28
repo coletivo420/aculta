@@ -152,8 +152,16 @@ Configuração de fluxo e de tipo de pedido fica só no servidor de testes (não
    sem X e sem Esc, senha salva (`changed` da conta atualizado, sessão aberta pelo link). Depois de salvar, o redirecionamento
    vai para `/conta-legada`, que não mostra conteúdo: pendente revisar o destino para a pessoa.
 
+### Bloqueio encontrado no LMS (2026-10-28)
+
+- Na compra de curso (pedido do tipo `curso`, fluxo `curso`), o painel de pagamento mostra "Não existem gateways de pagamento
+  disponíveis para este pedido". O gateway Mercado Pago do servidor de testes tem a condição de tipo de pedido limitada a
+  `default` (loja). Liberar o tipo `curso` nessa condição é mudança de pagamento: precisa de autorização e de alinhamento com
+  o agente do Mercado Pago. Não foi alterado.
+- Teste de LMS feito com curso e turma de teste (grupos 75 e 76) e pedido 197. Removidos ao final, com o produto 10 mantido.
+
 ### Não verificado
 
-- Painel de nome no fluxo `curso` (LMS) e na doação, no navegador. O LMS precisa de curso publicado ligado ao produto 10
-  (removido na limpeza anterior); a criação exige nova autorização para dados de teste.
+- Painel de nome no fluxo `curso` (LMS), no navegador: bloqueado pelo gateway de pagamento (ver acima). Na doação, a
+  tentativa caiu na revisão de um pedido já existente da sessão e o painel de nome não apareceu; falta repetir com pedido novo.
 - Testes automáticos (unit/kernel) do `PersonalNameStore`, do `PersonalNameCompletionSubscriber` e do painel administrativo.
