@@ -38,3 +38,13 @@ aculta_events.map:
     _access: 'TRUE'
   options:
     _aculta_domain_purpose: eventos
+
+aculta_events.ics:
+  path: '/calendario/exportar.ics'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventIcsController::periodo'
+    _title: 'Exportar eventos'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos

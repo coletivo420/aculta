@@ -69,6 +69,34 @@ final class IcsEventBuilder {
     bool $allDay,
     \DateTimeImmutable $stamp,
   ): string {
+    return $this->buildSerie($key, $summary, $location, $start, $end, $allDay, $stamp);
+  }
+
+  /**
+   * Calendário com uma série: evento mestre com RRULE, EXDATE e reagendamentos (RECURRENCE-ID).
+   *
+   * Decisão M5 (RECORRENCIA.md): a série sai como regra, sem expandir ocorrências no arquivo.
+   *
+   * @param string|null $rrule
+   *   RRULE normalizada (FREQ=...;...). UNTIL em AAAAMMDD vira fim do dia de Brasília, em UTC.
+   * @param \DateTimeImmutable[] $excecoes
+   *   Inícios originais cancelados (EXDATE).
+   * @param array<int, array{original: \DateTimeImmutable, inicio: \DateTimeImmutable, fim: ?\DateTimeImmutable}> $reagendadas
+   *   Ocorrências com novo horário (VEVENT com RECURRENCE-ID).
+   */
+  public function buildSerie(
+    string $key,
+    string $summary,
+    string $location,
+    \DateTimeImmutable $start,
+    ?\DateTimeImmutable $end,
+    bool $allDay,
+    \DateTimeImmutable $stamp,
+    ?string $rrule = NULL,
+    array $excecoes = [],
+    array $reagendadas = [],
+  ): string {
+    $uid = $this->uid($key, $start, $allDay);
     $lines = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
@@ -83,10 +111,68 @@ final class IcsEventBuilder {
       'TZOFFSETTO:-0300',
       'END:STANDARD',
       'END:VTIMEZONE',
-      'BEGIN:VEVENT',
-      'UID:' . $this->uid($key, $start, $allDay),
-      'DTSTAMP:' . $this->utc($stamp),
     ];
+    $lines = array_merge($lines, $this->vevent($uid, $summary, $location, $start, $end, $allDay, $stamp, NULL, $rrule, $excecoes));
+    foreach ($reagendadas as $reagendada) {
+      $lines = array_merge($lines, $this->vevent($uid, $summary, $location, $reagendada['inicio'], $reagendada['fim'], $allDay, $stamp, $reagendada['original'], NULL, []));
+    }
+    $lines[] = 'END:VCALENDAR';
+
+    $folded = array_map(fn (string $line): string => $this->fold($line), $lines);
+    return implode(self::EOL, $folded) . self::EOL;
+  }
+
+  /**
+   * Calendário com várias séries (exportação de período). Cada item: chaves do buildSerie().
+   *
+   * @param array<int, array{key: string, summary: string, location: string, start: \DateTimeImmutable, end: ?\DateTimeImmutable, allDay: bool, stamp: \DateTimeImmutable, rrule?: ?string, excecoes?: array, reagendadas?: array}> $series
+   */
+  public function buildMany(array $series): string {
+    $lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//ACULTA//Calendario//PT',
+      'CALSCALE:GREGORIAN',
+      'BEGIN:VTIMEZONE',
+      'TZID:' . self::TZID,
+      'BEGIN:STANDARD',
+      'DTSTART:19700101T000000',
+      'TZOFFSETFROM:-0300',
+      'TZOFFSETTO:-0300',
+      'END:STANDARD',
+      'END:VTIMEZONE',
+    ];
+    foreach ($series as $serie) {
+      $uid = $this->uid($serie['key'], $serie['start'], $serie['allDay']);
+      $lines = array_merge($lines, $this->vevent(
+        $uid, $serie['summary'], $serie['location'], $serie['start'], $serie['end'], $serie['allDay'],
+        $serie['stamp'], NULL, $serie['rrule'] ?? NULL, $serie['excecoes'] ?? [],
+      ));
+      foreach ($serie['reagendadas'] ?? [] as $reagendada) {
+        $lines = array_merge($lines, $this->vevent(
+          $uid, $serie['summary'], $serie['location'], $reagendada['inicio'], $reagendada['fim'], $serie['allDay'],
+          $serie['stamp'], $reagendada['original'], NULL, [],
+        ));
+      }
+    }
+    $lines[] = 'END:VCALENDAR';
+    $folded = array_map(fn (string $line): string => $this->fold($line), $lines);
+    return implode(self::EOL, $folded) . self::EOL;
+  }
+
+  /**
+   * Linhas de um VEVENT. Com $recorrencia, é a ocorrência reagendada de uma série.
+   *
+   * @return string[]
+   */
+  private function vevent(string $uid, string $summary, string $location, \DateTimeImmutable $start, ?\DateTimeImmutable $end, bool $allDay, \DateTimeImmutable $stamp, ?\DateTimeImmutable $recorrencia, ?string $rrule, array $excecoes): array {
+    $lines = ['BEGIN:VEVENT', 'UID:' . $uid, 'DTSTAMP:' . $this->utc($stamp)];
+
+    if ($recorrencia !== NULL) {
+      $lines[] = $allDay
+        ? 'RECURRENCE-ID;VALUE=DATE:' . $recorrencia->format('Ymd')
+        : 'RECURRENCE-ID;TZID=' . self::TZID . ':' . $this->local($recorrencia);
+    }
 
     if ($allDay) {
       $end ??= $start->modify('+1 day');
@@ -100,15 +186,42 @@ final class IcsEventBuilder {
       }
     }
 
+    if ($rrule !== NULL && $rrule !== '') {
+      $lines[] = 'RRULE:' . $this->rruleRfc($rrule, $allDay);
+    }
+    foreach ($excecoes as $excecao) {
+      $lines[] = $allDay
+        ? 'EXDATE;VALUE=DATE:' . $excecao->format('Ymd')
+        : 'EXDATE;TZID=' . self::TZID . ':' . $this->local($excecao);
+    }
+
     $lines[] = 'SUMMARY:' . $this->escape($this->clean($summary));
     if ($location !== '') {
       $lines[] = 'LOCATION:' . $this->escape($this->clean($location));
     }
+    $lines[] = 'END:VEVENT';
+    return $lines;
+  }
 
-    array_push($lines, 'END:VEVENT', 'END:VCALENDAR');
-
-    $folded = array_map(fn (string $line): string => $this->fold($line), $lines);
-    return implode(self::EOL, $folded) . self::EOL;
+  /**
+   * RRULE pronta para o arquivo. UNTIL em data vira fim do dia local, em UTC (ou data, em dia inteiro).
+   */
+  private function rruleRfc(string $rrule, bool $allDay): string {
+    $partes = [];
+    foreach (explode(';', $rrule) as $parte) {
+      if (str_starts_with($parte, 'UNTIL=')) {
+        $data = substr($parte, 6);
+        if ($allDay) {
+          $partes[] = 'UNTIL=' . $data;
+          continue;
+        }
+        $fim = new \DateTimeImmutable($data . ' 23:59:59', new \DateTimeZone(self::TZID));
+        $partes[] = 'UNTIL=' . $fim->setTimezone(new \DateTimeZone('UTC'))->format('Ymd\THis\Z');
+        continue;
+      }
+      $partes[] = $parte;
+    }
+    return implode(';', $partes);
   }
 
   /**

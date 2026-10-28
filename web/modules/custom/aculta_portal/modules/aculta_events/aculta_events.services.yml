@@ -20,3 +20,6 @@ services:
   aculta_events.geocoding:
     class: Drupal\aculta_events\Geocoding\GeocodingService
     arguments: ['@http_client', '@key.repository', '@logger.factory']
+  aculta_events.ics_exporter:
+    class: Drupal\aculta_events\Calendar\EventIcsExporter
+    arguments: ['@entity_type.manager', '@aculta_events.occurrences']

@@ -260,4 +260,84 @@ class IcsEventBuilderTest extends UnitTestCase {
     $this->assertSame(['SUMMARY:' . $titulo], $this->propriedade($ics, 'SUMMARY'));
   }
 
+
+  /**
+   * Série: RRULE com UNTIL em UTC (fim do dia de Brasília), EXDATE do cancelado e RECURRENCE-ID do reagendado.
+   */
+  public function testSerieComRruleExdateERecurrenceId(): void {
+    $brasilia = new \DateTimeZone('America/Sao_Paulo');
+    $inicio = new \DateTimeImmutable('2026-10-28 19:00:00', $brasilia);
+    $ics = $this->builder->buildSerie(
+      'node:9',
+      'Oficina',
+      '',
+      $inicio,
+      $inicio->modify('+2 hours'),
+      FALSE,
+      $this->carimbo(),
+      'FREQ=WEEKLY;BYDAY=MO,WE;UNTIL=20261115',
+      [new \DateTimeImmutable('2026-11-02 19:00:00', $brasilia)],
+      [[
+        'original' => new \DateTimeImmutable('2026-11-04 19:00:00', $brasilia),
+        'inicio' => new \DateTimeImmutable('2026-11-05 20:00:00', $brasilia),
+        'fim' => new \DateTimeImmutable('2026-11-05 22:00:00', $brasilia),
+      ]],
+    );
+
+    // 15/11 às 23:59:59 em Brasília é 16/11 às 02:59:59 UTC.
+    $this->assertSame(['RRULE:FREQ=WEEKLY;BYDAY=MO,WE;UNTIL=20261116T025959Z'], $this->propriedade($ics, 'RRULE'));
+    $this->assertSame(['EXDATE;TZID=America/Sao_Paulo:20261102T190000'], $this->propriedade($ics, 'EXDATE'));
+    $this->assertSame(['RECURRENCE-ID;TZID=America/Sao_Paulo:20261104T190000'], $this->propriedade($ics, 'RECURRENCE-ID'));
+    $this->assertSame(
+      ['DTSTART;TZID=America/Sao_Paulo:20261028T190000', 'DTSTART;TZID=America/Sao_Paulo:20261105T200000'],
+      $this->propriedade($ics, 'DTSTART'),
+    );
+
+    // Mesmo UID no mestre e no reagendado: é a mesma série.
+    $uids = array_unique(array_map(static fn (string $l): string => substr($l, 4), $this->propriedade($ics, 'UID')));
+    $this->assertCount(1, $uids);
+  }
+
+  /**
+   * Série de dia inteiro: UNTIL fica em data, sem conversão de fuso.
+   */
+  public function testSerieDeDiaInteiroMantemUntilComoData(): void {
+    $brasilia = new \DateTimeZone('America/Sao_Paulo');
+    $ics = $this->builder->buildSerie(
+      'node:10',
+      'Feira',
+      '',
+      new \DateTimeImmutable('2026-10-28', $brasilia),
+      NULL,
+      TRUE,
+      $this->carimbo(),
+      'FREQ=DAILY;UNTIL=20261030',
+    );
+    $this->assertSame(['RRULE:FREQ=DAILY;UNTIL=20261030'], $this->propriedade($ics, 'RRULE'));
+  }
+
+
+  /**
+   * Período com várias séries: um VCALENDAR, um VEVENT por série, UIDs distintos.
+   */
+  public function testExportacaoDePeriodoTemUmCalendario(): void {
+    $brasilia = new \DateTimeZone('America/Sao_Paulo');
+    $ics = $this->builder->buildMany([
+      [
+        'key' => 'node:1', 'summary' => 'Oficina', 'location' => '',
+        'start' => new \DateTimeImmutable('2026-10-28 19:00:00', $brasilia),
+        'end' => new \DateTimeImmutable('2026-10-28 21:00:00', $brasilia),
+        'allDay' => FALSE, 'stamp' => $this->carimbo(),
+      ],
+      [
+        'key' => 'node:2', 'summary' => 'Feira', 'location' => 'Praça',
+        'start' => new \DateTimeImmutable('2026-10-30', $brasilia), 'end' => NULL,
+        'allDay' => TRUE, 'stamp' => $this->carimbo(),
+      ],
+    ]);
+    $this->assertCount(1, array_filter($this->linhas($ics), static fn (string $l): bool => $l === 'BEGIN:VCALENDAR'), 'um único calendário');
+    $this->assertCount(2, array_filter($this->linhas($ics), static fn (string $l): bool => $l === 'BEGIN:VEVENT'));
+    $this->assertCount(2, array_unique(array_map(static fn (string $l): string => substr($l, 4), $this->propriedade($ics, 'UID'))));
+  }
+
 }
