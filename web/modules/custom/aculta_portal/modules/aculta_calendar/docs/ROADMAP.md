@@ -4,32 +4,32 @@ Roadmap único do submódulo. Plano: `PLANO-IMPLANTACAO.md`. Arquitetura: ADR-03
 Status: a fazer, salvo onde indicado.
 
 ## CA0 — Fundação independente
-- [ ] Ajustar `aculta_calendar.info.yml` (descrição sem dependência de purpose de eventos).
-- [ ] Definir `CalendarItem` e a interface do provedor, com a tag `aculta_calendar.item_provider`.
-- [ ] Teste de contrato: o submódulo não importa classes de `aculta_events` nem de `aculta_lms_agenda`.
+- [x] Ajustar `aculta_calendar.info.yml` (descrição sem dependência de purpose de eventos).
+- [x] Definir `CalendarItem` e a interface do provedor, com a tag `aculta_calendar.item_provider`.
+- [x] Teste de contrato: o submódulo não importa classes de `aculta_events` nem de `aculta_lms_agenda` (`tests/src/Unit/IsolamentoTest.php`).
 
 ## CA1 — Motor de recorrência (já existe em código)
 - [x] Validador da regra e expansão na janela, com testes Unit (R1 e R2 de `aculta_events`).
-- [ ] Mover o motor para cá sem mudança de comportamento; `aculta_events` passa a chamá-lo.
+- [x] Mover o motor para cá sem mudança de comportamento; `aculta_events` passa a chamá-lo.
 
 ## CA2 — Exportação `.ics` (já existe em código)
 - [x] Gerador próprio com escape RFC 5545 e horário de Brasília (E6).
-- [ ] Exportação de um item, de um dia e de um período, a partir de provedores.
+- [x] Exportação de um item, de um dia e de um período, a partir de provedores.
 
 ## CA3 — Embed (já existe em código)
 - [x] Allowlist de origem do `source_uri` (E5).
-- [ ] Rota de incorporação ligada a um provedor, quando o purpose correspondente estiver ativo.
+- [x] Rota de incorporação ligada a um provedor, quando o purpose correspondente estiver ativo.
 
 ## CA4 — Visões de agenda e de mês
-- [ ] Agenda por dia e grade do mês, com filtros comuns, a partir da API de itens.
-- [ ] Verificação no Firefox ESR: desktop, 320 px e modo escuro (capturas fora do repositório).
+- [x] Agenda por dia e grade do mês, com filtros comuns, a partir da API de itens.
+- [x] Verificação no Firefox ESR: desktop, 320 px e modo escuro (capturas fora do repositório).
 
 ## CA5 — Provedores
-- [ ] `aculta_events` registra o provedor de datas de evento (F5 de eventos).
+- [x] `aculta_events` registra o provedor de datas de evento (F5 de eventos).
 - [ ] `aculta_lms_agenda` registra o provedor de prazos de turma (D-15).
 
 ## CA6 — Documentação para agentes
-- [ ] README com a API, o que cada área pode e não pode fazer, e onde ficam as regras.
+- [x] README com a API, o que cada área pode e não pode fazer, e onde ficam as regras.
 
 ## Importação revisável de arquivos iCalendar
 
