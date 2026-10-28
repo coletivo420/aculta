@@ -9,6 +9,7 @@ use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_portal\Account\RegistrationMailPolicy;
 use Drupal\aculta_portal\Account\AcultaUserAgreementRegistration;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Email\EmailConfirmationRequester;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -42,6 +43,7 @@ final class PortalFormCallbacks {
     private readonly AcultaUserAgreementRegistration $userAgreementRegistration,
     private readonly RegistrationMailPolicy $registrationMail,
     private readonly ?RouteMatchInterface $routeMatch = NULL,
+    private readonly ?DomainPurposeManager $domainPurpose = NULL,
   ) {}
 
   /**
@@ -253,6 +255,12 @@ final class PortalFormCallbacks {
    * Redireciona para o painel após a recuperação da senha.
    */
   public function recoveryPasswordRedirect(array &$form, FormStateInterface $formState): void {
+    // O domínio da conta é o que mostra a Visão geral; no domínio principal a página fica vazia.
+    $url = $this->domainPurpose?->routeUrl('account', 'aculta_portal.dashboard');
+    if ($url !== NULL) {
+      $formState->setRedirectUrl($url);
+      return;
+    }
     $formState->setRedirect('aculta_portal.dashboard');
   }
 

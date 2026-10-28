@@ -14,7 +14,7 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
  * Quem tem conta vê os valores do perfil já preenchidos. Quem não tem conta usa o pedido, e o nome é copiado para a
  * conta criada na compra (ver PersonalNameCompletionSubscriber).
  */
-final class PersonalNameStore {
+class PersonalNameStore {
 
   /**
    * Tamanho máximo de cada parte do nome (campo field_first_name e field_last_name).
@@ -40,8 +40,10 @@ final class PersonalNameStore {
    *   Partes do nome.
    */
   public function forAccount(AccountInterface $account): array {
-    $storage = $this->entityTypeManager->getStorage('profile');
-    $perfil = $account->isAuthenticated() ? PerfilDoPapel::principal($storage, $account) : NULL;
+    $perfil = NULL;
+    if ($account->isAuthenticated()) {
+      $perfil = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $account);
+    }
     return [
       'first' => $perfil !== NULL ? (string) $perfil->get('field_first_name')->value : '',
       'last' => $perfil !== NULL ? (string) $perfil->get('field_last_name')->value : '',

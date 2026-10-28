@@ -20,7 +20,7 @@ use Drupal\user\UserInterface;
 use Throwable;
 
 /** Reliably requests a new registration confirmation without invalidating a usable link on failure. */
-final class EmailConfirmationRequester {
+class EmailConfirmationRequester {
 
   public const REALM = 'aculta_registration';
 
