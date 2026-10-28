@@ -1,5 +1,10 @@
 # Changelog — aculta_calendar
 
+## 2026-10-28 — revisão editorial da importação (I6)
+
+- Adicionada fila administrativa protegida para revisar itens importados, publicar uma revisão ou mantê-la como rascunho.
+- A importação não publica itens automaticamente.
+
 ## 2026-10-28 — reimportação idempotente e itens ausentes (I4)
 
 - Reimportação igual não cria revisão; alterações de item publicado geram revisão de rascunho sem trocar a versão pública.

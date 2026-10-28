@@ -38,6 +38,6 @@ Status: a fazer, salvo onde indicado.
 - [x] I3 — normalização, sanitização de conteúdo e tratamento de fuso/status cancelado.
 - [x] I4 — reimportação idempotente, atualização como revisão e marcação de itens ausentes.
 - [ ] I5 — buscar por URL: bloqueada até confirmação da D-21; sem acesso de rede antes disso.
-- [ ] I6 — painel de revisão editorial, acesso restrito, sem publicação automática.
+- [x] I6 — painel de revisão editorial, acesso restrito, sem publicação automática.
 - [ ] I7 — somente itens publicados entram no provedor do calendário.
 - [ ] I8 — documentar a API de importação e as regras no README.

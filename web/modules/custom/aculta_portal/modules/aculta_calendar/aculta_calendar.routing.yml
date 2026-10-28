@@ -1,0 +1,9 @@
+aculta_calendar.import_review:
+  path: '/painel-administrativo/calendario/importacao'
+  defaults:
+    _form: '\Drupal\aculta_calendar\Form\CalendarImportReviewForm'
+    _title: 'Revisão de itens importados'
+  requirements:
+    _permission: 'administer aculta calendar imports'
+  options:
+    _admin_route: true

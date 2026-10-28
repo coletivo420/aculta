@@ -1,0 +1,3 @@
+administer aculta calendar imports:
+  title: 'Revisar itens importados de calendário'
+  restrict access: true
