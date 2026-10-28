@@ -13,6 +13,14 @@ search-preview:
     - core/drupal
     - core/once
 
+account-password-modal:
+  js:
+    js/account-password-modal.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - core/drupal.dialog
+
 account-terms-modal:
   js:
     js/account-terms-modal.js: {}

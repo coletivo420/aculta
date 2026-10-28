@@ -16,7 +16,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
  * Etapa de criação de senha do cadastro simplificado.
  *
- * Só mostra o formulário para a conta criada pelo cadastro simplificado, logada logo após a confirmação do e-mail.
+ * Só mostra o formulário (em modal) para a conta criada pelo cadastro simplificado,
+ * logada logo após a confirmação do e-mail.
  * Outros visitantes e contas comuns são levados para a página inicial.
  */
 final class SimplifiedAccountPasswordController extends ControllerBase {
@@ -50,7 +51,12 @@ final class SimplifiedAccountPasswordController extends ControllerBase {
     if (!$pendente) {
       return new RedirectResponse('/');
     }
-    return $this->pageFormBuilder->getForm(SimplifiedAccountPasswordForm::class);
+    $form = $this->pageFormBuilder->getForm(SimplifiedAccountPasswordForm::class);
+    // O formulário abre como diálogo modal sem botão de fechar (js/account-password-modal.js).
+    $form['#prefix'] = '<div id="aculta-account-password" hidden>';
+    $form['#suffix'] = '</div>';
+    $form['#attached']['library'][] = 'aculta_portal/account-password-modal';
+    return $form;
   }
 
 }
