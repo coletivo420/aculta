@@ -22,8 +22,9 @@ use Drupal\views\ViewExecutable;
  * `total_rows` e declara max-age até o fim da próxima ocorrência. No instante em que
  * a data passa, o cache vence e a linha sai; nenhuma tarefa agendada é necessária.
  *
- * A tag de lista fecha o outro lado: editar, criar ou excluir evento ou data invalida
- * a listagem, para que o max-age até a próxima data não congele conteúdo editado.
+ * A tag de lista fecha o outro lado: criar, editar ou excluir evento, data ou exceção
+ * de ocorrência invalida a listagem, para que o max-age até a próxima data não congele
+ * conteúdo editado.
  *
  * Limite conhecido: a remoção acontece depois da consulta. A página que contiver a
  * linha removida mostra um item a menos, mas a contagem e a paginação continuam
@@ -82,7 +83,7 @@ final class EventDateHooks {
   }
 
   /**
-   * Invalida as listagens quando evento ou data mudam.
+   * Invalida as listagens quando evento, data ou exceção de ocorrência mudam.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Entidade salva ou excluída.
@@ -93,6 +94,9 @@ final class EventDateHooks {
   #[Hook('aculta_event_date_insert')]
   #[Hook('aculta_event_date_update')]
   #[Hook('aculta_event_date_delete')]
+  #[Hook('aculta_event_override_insert')]
+  #[Hook('aculta_event_override_update')]
+  #[Hook('aculta_event_override_delete')]
   public function invalidarLista(EntityInterface $entity): void {
     Cache::invalidateTags([EventCacheTags::LISTA]);
   }

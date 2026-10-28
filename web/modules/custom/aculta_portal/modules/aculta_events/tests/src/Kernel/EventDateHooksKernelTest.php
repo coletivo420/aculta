@@ -202,6 +202,9 @@ final class EventDateHooksKernelTest extends KernelTestBase {
       'aculta_event_date_insert',
       'aculta_event_date_update',
       'aculta_event_date_delete',
+      'aculta_event_override_insert',
+      'aculta_event_override_update',
+      'aculta_event_override_delete',
     ];
     foreach ($hooks as $hook) {
       $this->assertTrue(

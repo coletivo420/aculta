@@ -49,6 +49,29 @@ aculta_events.ics:
   options:
     _aculta_domain_purpose: eventos
 
+aculta_events.date_rule:
+  path: '/eventos/datas/{aculta_event_date}/recorrencia'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateRuleForm'
+    _title: 'Recorrência da data'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_event_date: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.occurrence:
+  path: '/eventos/datas/{aculta_event_date}/ocorrencia/{inicio}'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateOccurrenceForm'
+    _title: 'Editar ocorrência'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_event_date: '\d+'
+    inicio: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+
 aculta_events.agenda:
   path: '/calendario'
   defaults:
