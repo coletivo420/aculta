@@ -25,6 +25,7 @@ avisos produzidos pelo LMS.
 ## Fronteiras
 
 - A matrícula e o acesso a conteúdo dependem do Group/curso atual; o status do
-  curso não cria permissão global.
+  curso não cria permissão global. Confirmação de e-mail não é requisito de
+  participação, conforme [ADR-029](../decisions/ADR-029-lms-sem-requisito-de-email-confirmado.md).
 - Eventos de aviso são produzidos a partir de estado persistido; Messenger é
   dono da central e das políticas de entrega.
