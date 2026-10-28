@@ -9,6 +9,11 @@ administer aculta support settings:
   title: Administrar configurações editoriais de Apoie
   description: Alterar o texto público da página Apoie.
   restrict access: true
+administer aculta simplified account:
+  title: Administrar o cadastro simplificado
+  description: Ligar ou desligar a confirmação de e-mail e a criação de senha ao concluir uma compra.
+  restrict access: true
+
 administer aculta deployer:
   title: Ver o status do ACULTA Deployer
   description: Consultar o relatório neutro de fronteiras, correções abertas e credenciais (somente leitura).

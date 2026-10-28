@@ -89,6 +89,12 @@ aculta_portal.config_flood_unblock:
   route_name: flood_control.unblock_form
   parent: user.admin_index
   weight: 14
+aculta_portal.simplified_account:
+  title: Cadastro simplificado
+  description: 'Confirmação de e-mail e criação de senha ao concluir uma compra como convidado.'
+  route_name: aculta_portal.simplified_account
+  parent: aculta_portal.admin
+  weight: 9
 aculta_portal.checkout_common:
   title: Carrinhos e checkouts
   description: 'Checkout comum, Loja, LMS e Doações: modalidades, tipos de pedido e diagnóstico.'

@@ -114,7 +114,7 @@ services:
   # Cadastro simplificado: pede a confirmação de e-mail (fluxo existente) para a conta criada no checkout.
   aculta_portal.simplified_account_checkout_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\SimplifiedAccountCheckoutSubscriber
-    arguments: ['@aculta_portal.email_confirmation_requester', '@aculta_portal.email_confirmation_policy', '@user.data']
+    arguments: ['@aculta_portal.email_confirmation_requester', '@aculta_portal.email_confirmation_policy', '@user.data', '@config.factory']
     tags:
       - { name: event_subscriber }
 

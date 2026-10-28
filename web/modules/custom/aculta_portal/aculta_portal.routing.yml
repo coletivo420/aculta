@@ -360,6 +360,16 @@ aculta_portal.cart_checkout:
     _access: 'TRUE'
   options:
     no_cache: true
+aculta_portal.simplified_account:
+  path: /painel-administrativo/aculta/cadastro-simplificado
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\SimplifiedAccountSettingsForm'
+    _title: 'Cadastro simplificado'
+  requirements:
+    _permission: administer aculta simplified account
+  options:
+    _admin_route: true
+
 aculta_portal.checkout_common:
   path: /painel-administrativo/aculta/checkout
   defaults:

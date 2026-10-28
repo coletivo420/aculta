@@ -6,8 +6,10 @@ namespace Drupal\aculta_portal\EventSubscriber;
 
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Email\EmailConfirmationRequester;
+use Drupal\aculta_portal\Form\SimplifiedAccountSettingsForm;
 use Drupal\commerce_checkout\Event\CheckoutEvents;
 use Drupal\commerce_order\Event\OrderEvent;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Url;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
@@ -39,6 +41,7 @@ final class SimplifiedAccountCheckoutSubscriber implements EventSubscriberInterf
     private readonly EmailConfirmationRequester $requester,
     private readonly EmailConfirmationPolicy $policy,
     private readonly UserDataInterface $userData,
+    private readonly ConfigFactoryInterface $configFactory,
   ) {}
 
   /**
@@ -57,6 +60,10 @@ final class SimplifiedAccountCheckoutSubscriber implements EventSubscriberInterf
    * Contas comuns já existentes não recebem o pedido aqui.
    */
   public function onCompletion(OrderEvent $event): void {
+    // Chave do painel administrativo (SimplifiedAccountSettingsForm): desligada, o checkout não pede confirmação.
+    if ($this->configFactory->get(SimplifiedAccountSettingsForm::CONFIG)->get('enabled') === FALSE) {
+      return;
+    }
     $customer = $event->getOrder()->getCustomer();
     if (!$customer instanceof UserInterface || $customer->isAnonymous() || $customer->isBlocked()) {
       return;
