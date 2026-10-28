@@ -150,26 +150,33 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       return $form;
     }
 
+    // Doação: não há endereço de cobrança (o fluxo pede só e-mail e nome). O pagador usa o nome do painel e o e-mail.
     $billing_profile = $order->getBillingProfile();
-    if (!$billing_profile || $billing_profile->get('address')->isEmpty()) {
+    $address = NULL;
+    if ($billing_profile && !$billing_profile->get('address')->isEmpty()) {
+      $address = $billing_profile->get('address')->first();
+      if (!$address instanceof AddressItem) {
+        $this->messenger->addError($this->t('Billing address is missing.'));
+        return $form;
+      }
+    }
+    elseif ($order->bundle() !== 'doacao') {
       $this->messenger->addError($this->t('Billing information is required to proceed.'));
       return $form;
     }
-    $address = $billing_profile->get('address')->first();
-    if ($address === NULL || !$address instanceof AddressItem) {
-      $this->messenger->addError($this->t('Billing address is missing.'));
-      return $form;
-    }
 
+    $nome = (array) $order->getData('aculta_personal_name', []);
     $payer = [
-      'name' => $address->getGivenName(),
-      'surname' => $address->getFamilyName(),
+      'name' => $address ? $address->getGivenName() : (string) ($nome['first'] ?? ''),
+      'surname' => $address ? $address->getFamilyName() : (string) ($nome['last'] ?? ''),
       'email' => $order->getEmail() ?: '',
-      'address' => [
+    ];
+    if ($address) {
+      $payer['address'] = [
         'zip_code' => $address->getPostalCode() ?: '',
         'street_name' => $address->getAddressLine1() . ' / ' . $address->getLocality() . ' ' . $address->getAdministrativeArea() . ' ' . $address->getCountryCode() . ' / ',
-      ],
-    ];
+      ];
+    }
 
     $preference_lines = [];
     foreach ($order->getItems() as $order_item) {
