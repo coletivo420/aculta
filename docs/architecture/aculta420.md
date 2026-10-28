@@ -18,6 +18,15 @@ render arrays neutros; o tema apresenta com SDC, Bootstrap e tokens semânticos.
   [histórico arquivado](../history/changelog/aculta420.md). A biblioteca
   `aculta420/bootstrap-icons` é dependência global do tema e o gate de
   design-foundations reprova SVG inline.
+- **2026-10-14 — Um modelo visual para publicações da Revista.** Situação:
+  vigente. Motivo: artigos e blogs compartilham estrutura editorial e coluna de
+  leitura consistentes; o conteúdo continua no Drupal. Origem: `0.6.0-dev.21`,
+  [histórico arquivado](../history/changelog/aculta420.md). O componente
+  `aculta420:revista-publication` é usado pelo template de publicação descrito
+  em [components.md](../../web/themes/custom/aculta420/docs/components.md).
+- **2026-10-13 — Marca do domínio segue contrato neutro do Portal.** Situação:
+  vigente. Origem: `0.6.0-dev.17`, [histórico arquivado](../history/changelog/aculta420.md);
+  decisão transversal em [ADR-028](../decisions/ADR-028-marca-neutra-portal-tema.md).
 
 ## Fronteiras
 
