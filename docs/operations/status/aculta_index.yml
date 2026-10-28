@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.176
+version: 0.1.0-dev.177
 state: Dev
 next_phase: >-
   Concluir grants/Domain dos providers owners, avaliar catálogo representativo e homologação operacional; manter Dev e não fazer rebuild no Runtime nesta integração.

@@ -1,0 +1,6 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.1
+state: Dev
+progress_note: >-
+  F1–F3 e itens de incorporação: E1 campos informativos de preço e compra externa (D-29), E2 views administrativas, E4 referência segura (D-28), R recorrência na v1, E5 e E6 embed e `.ics`. Mapa parcial (E7). Ingressos pagos fora da v1 (D-30).
+next_phase: 'F0: revisar termos da Google Maps Platform e licenças. F4: agrupamento de marcadores e link de privacidade. Ingressos pagos: fase P1 em [plano](web/modules/custom/aculta_portal/modules/aculta_events/docs/PLANO-INGRESSOS-PAGOS.md). Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_events/docs/ROADMAP.md).'

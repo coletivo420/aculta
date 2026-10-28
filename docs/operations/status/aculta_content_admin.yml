@@ -1,0 +1,6 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.1
+state: Dev
+progress_note: >-
+  ADM5: painel geral de conteúdo que lista só as áreas que o usuário pode moderar (D-24).
+next_phase: 'Auditar novas listas moderáveis ao adicionar módulos e atualizar a allowlist de coleções editoriais. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_content_admin/docs/ROADMAP.md).'

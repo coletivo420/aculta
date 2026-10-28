@@ -1,0 +1,6 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.1
+state: Dev
+progress_note: >-
+  FAQ e blocos editoriais (ADM4 e E9), com texto formatado sanitizado (D-23, D-25).
+next_phase: 'Cadastrar e revisar o conteúdo editorial antes da publicação (F1). Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_faq/docs/ROADMAP.md).'

@@ -1,0 +1,6 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.1
+state: Dev
+progress_note: >-
+  D-15: agenda de turma restrita aos matriculados, com isolamento por turma coberto por testes (`df76938ae`).
+next_phase: 'Confirmar acesso por matrícula via `field_turma`, com teste de acesso negado para aluno de outra turma e para quem não tem matrícula. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_lms_agenda/docs/ROADMAP.md).'
