@@ -20,7 +20,7 @@ final class MapControllerKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'address', 'geofield', 'key', 'options', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = ['system', 'user', 'address', 'geofield', 'key', 'options', 'link', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar', 'aculta_events'];
 
   /**
    * {@inheritdoc}

@@ -5,6 +5,12 @@ declare(strict_types=1);
 /**
  * @file
  * Atualizações do módulo ACULTA Eventos.
+ *
+ * Adaptado de OpenCulturas 3.1.4 (GPL-2.0-or-later),
+ * `profile/config/install/field.storage.node.field_pricing.yml`,
+ * `profile/config/install/field.storage.node.field_pricing_info.yml` e
+ * `profile/config/install/field.storage.node.field_ticketing.yml`.
+ * A migração instala campos informativos; nenhuma lógica de pagamento foi adaptada.
  */
 
 
@@ -207,4 +213,28 @@ function _aculta_events_instala_local(): array {
 function aculta_events_update_10003(): string {
   $feito = _aculta_events_instala_local();
   return $feito === [] ? 'Tipos de local e campos já existiam.' : 'Instalado: ' . implode(', ', $feito) . '.';
+}
+
+/**
+ * Instala campos informativos de preço e compra externa em aculta_event_date.
+ */
+function aculta_events_update_10004(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $definitions = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event_date');
+  $installed = [];
+  foreach (['field_gratuito', 'field_pricing', 'field_pricing_info', 'field_ticketing'] as $field_name) {
+    if ($manager->getFieldStorageDefinition($field_name, 'aculta_event_date') !== NULL) {
+      continue;
+    }
+    $definition = $definitions[$field_name] ?? NULL;
+    if ($definition === NULL) {
+      throw new \RuntimeException("$field_name não está declarado em aculta_event_date.");
+    }
+    $manager->installFieldStorageDefinition($field_name, 'aculta_event_date', 'aculta_events', $definition);
+    $installed[] = $field_name;
+  }
+
+  return $installed === []
+    ? 'Campos informativos de preço e compra externa já existiam.'
+    : 'Instalados em aculta_event_date: ' . implode(', ', $installed) . '.';
 }

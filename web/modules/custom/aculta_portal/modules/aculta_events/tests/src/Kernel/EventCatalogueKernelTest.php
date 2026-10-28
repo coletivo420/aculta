@@ -24,7 +24,7 @@ final class EventCatalogueKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'key', 'address', 'geofield', 'options', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = ['system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar', 'aculta_events'];
 
   /**
    * Agora de Brasília, fixo no teste.

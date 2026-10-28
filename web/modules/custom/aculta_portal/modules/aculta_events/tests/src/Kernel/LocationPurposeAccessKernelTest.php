@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class LocationPurposeAccessKernelTest extends KernelTestBase {
 
   /** {@inheritdoc} */
-  protected static $modules = ['system', 'user', 'key', 'options', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'address', 'geofield', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = ['system', 'user', 'key', 'options', 'link', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'address', 'geofield', 'aculta_calendar', 'aculta_events'];
 
   public function testLocationCatalogIsNotServedFromAnotherPurpose(): void {
     $route = $this->container->get('router.route_provider')->getRouteByName('aculta_events.locations');

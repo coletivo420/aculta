@@ -19,7 +19,7 @@ final class EventRelatedViewsAccessKernelTest extends KernelTestBase {
 
   /** {@inheritdoc} */
   protected static $modules = [
-    'system', 'user', 'key', 'options', 'text', 'filter', 'taxonomy',
+    'system', 'user', 'key', 'options', 'link', 'text', 'filter', 'taxonomy',
     'datetime', 'datetime_range', 'address', 'geofield', 'views',
     'aculta_calendar', 'aculta_events',
   ];

@@ -9,13 +9,18 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\link\LinkItemInterface;
 use Drupal\views\EntityViewsData;
 
 /**
- * Data de um evento: intervalo, dia inteiro e regra de recorrência (MODELO-DE-DADOS.md).
+ * Data de um evento: intervalo, preço e recorrência (MODELO-DE-DADOS.md).
  *
- * `field_quando` é o primeiro intervalo da série. As demais ocorrências são calculadas
+ * `field_quando` é o primeiro intervalo da série. As ocorrências são calculadas
  * na leitura pelo expansor de `aculta_calendar` (RECORRENCIA.md, M2).
+ * Adaptado de OpenCulturas 3.1.4 (GPL-2.0-or-later),
+ * `profile/config/install/field.storage.node.field_pricing.yml`.
+ * `field_pricing_info` e `field_ticketing` também mapeiam campos da origem;
+ * nenhum processamento de pagamento foi trazido.
  */
 #[ContentEntityType(
   id: 'aculta_event_date',
@@ -47,7 +52,7 @@ final class EventDate extends ContentEntityBase {
       ->setRequired(TRUE)
       ->setSetting('max_length', 255);
 
-    // Evento a que a data pertence (obrigatório) e local físico (opcional se for virtual).
+    // Evento obrigatório e local físico opcional quando a data é virtual.
     $fields['field_evento'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Evento'))
       ->setRequired(TRUE)
@@ -57,7 +62,7 @@ final class EventDate extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Local'))
       ->setSetting('target_type', 'aculta_event_location');
 
-    // Intervalo com início e fim. Para dia inteiro, `field_dia_inteiro` manda usar só a data.
+    // Intervalo com início e fim; dia inteiro usa só a data de `field_quando`.
     $fields['field_quando'] = BaseFieldDefinition::create('daterange')
       ->setLabel(new TranslatableMarkup('Quando'))
       ->setRequired(TRUE)
@@ -67,12 +72,29 @@ final class EventDate extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Dia inteiro'))
       ->setDefaultValue(FALSE);
 
+    // Informações de preço não processam pagamento dentro do ACULTA (D-29).
+    $fields['field_gratuito'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('Entrada gratuita'))
+      ->setDefaultValue(FALSE);
+
+    $fields['field_pricing'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Preço'))
+      ->setSetting('max_length', 255);
+
+    // Texto simples evita permitir HTML livre em informações de preço.
+    $fields['field_pricing_info'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(new TranslatableMarkup('Detalhes do preço'));
+
+    $fields['field_ticketing'] = BaseFieldDefinition::create('link')
+      ->setLabel(new TranslatableMarkup('Compra ou reserva externa'))
+      ->setSetting('link_type', LinkItemInterface::LINK_EXTERNAL);
+
     // RRULE normalizada pelo RecurrenceRuleParser. Vazio = evento único.
     $fields['field_regra'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Regra de recorrência'))
       ->setSetting('max_length', 255);
 
-    // Horizonte de série aberta, em meses, a partir de agora (padrão 12, como month_limit no OpenCulturas).
+    // Horizonte mensal de série aberta (padrão 12, como month_limit na origem).
     $fields['field_limite_meses'] = BaseFieldDefinition::create('integer')
       ->setLabel(new TranslatableMarkup('Limite de série aberta (meses)'))
       ->setDefaultValue(12);

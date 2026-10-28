@@ -20,7 +20,7 @@ final class EventTypeMigrationKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'key', 'address', 'geofield', 'field', 'text', 'filter', 'taxonomy', 'options', 'datetime', 'datetime_range', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = ['system', 'user', 'key', 'address', 'geofield', 'field', 'link', 'text', 'filter', 'taxonomy', 'options', 'datetime', 'datetime_range', 'aculta_calendar', 'aculta_events'];
 
   /**
    * {@inheritdoc}

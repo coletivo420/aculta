@@ -32,7 +32,7 @@ final class EventDateHooksKernelTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'taxonomy', 'text', 'filter', 'datetime', 'datetime_range',
+    'system', 'user', 'taxonomy', 'link', 'text', 'filter', 'datetime', 'datetime_range',
     'options', 'field', 'key', 'address', 'geofield', 'views', 'aculta_calendar', 'aculta_events',
   ];
 

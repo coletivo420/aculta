@@ -6,8 +6,10 @@ core_version_requirement: ^11.3
 dependencies:
   - drupal:datetime
   - drupal:datetime_range
+  - drupal:link
   - drupal:options
   - drupal:taxonomy
+  - drupal:text
   - drupal:views
   - address:address
   - key:key

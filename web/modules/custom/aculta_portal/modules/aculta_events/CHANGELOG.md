@@ -1,5 +1,10 @@
 # Changelog — aculta_events
 
+## 2026-10-28 — campos informativos de preço e compra externa (E1, D-29)
+
+- `aculta_event_date` ganha `field_gratuito`, `field_pricing`, `field_pricing_info` e `field_ticketing`; preço é texto, ticketing aceita link externo e não há cobrança no ACULTA.
+- Update hook 10004 instala as definições sem remover dados existentes. Tipos adaptados do OpenCulturas; nenhum código de pagamento foi copiado.
+
 ## 2026-10-28 — views administrativas de locais e datas
 
 - Incluídas as views `eventos_locais` e `eventos_datas_relacionadas` em caminhos portugueses, com acesso restrito ao papel administrador e sem telefone, e-mail ou endereço.

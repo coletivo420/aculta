@@ -30,12 +30,15 @@ Uma ocorrência do evento, em um local, em um intervalo.
 | `field_evento` | entity_reference (`aculta_event`) | referência do `date` ao `event` | Obrigatório |
 | `field_quando` | daterange (core) | `field_date` (`smartdate`) | Início e fim. Sem contrib: a decisão de 2026-10-28 dispensou `smart_date` (dependência de `simshaun/recurr` conflita com `doctrine/collections` 3.x) |
 | `field_dia_inteiro` | boolean | `field_date` (`smartdate`) | Dia inteiro. Quando marcado, só a data de `field_quando` é usada e o fim é exclusivo (RFC 5545) |
+| `field_gratuito` | boolean | `field_forfree` | Entrada gratuita; não representa uma operação de pagamento |
+| `field_pricing` | string (255) | `field_pricing` | Texto informativo de preço, sem cobrança dentro do ACULTA (D-29) |
+| `field_pricing_info` | string_long (texto simples) | `field_pricing_info` | Detalhes adicionais do preço, sem HTML livre (D-29) |
+| `field_ticketing` | link externo | `field_ticketing` | Link externo para compra ou reserva; não inicia pagamento no ACULTA (D-29) |
 | `field_local` | entity_reference (`aculta_event_location`) | `field_location` | Opcional se for virtual |
 | `field_link_virtual` | link | `field_location_virtual` | Para evento on-line |
 | `field_modo` | list_string | `field_attendance_mode` | Presencial, on-line ou híbrido |
 | `field_status` | list_string | `field_event_status` | Agendado, adiado, cancelado |
 | `field_organizador` | entity_reference | `field_organizer` (date) | Pode diferir do organizador do evento |
-| `field_gratuito` | boolean | `field_forfree` | Entrada gratuita |
 | `field_estreia` | boolean | `field_premiere` | Sinalização de estreia |
 | `field_data_pai` | entity_reference (`aculta_event_date`) | `field_parent_date` | Subdatas de uma data (ex.: sessões de um mesmo dia) |
 | `field_regra` | string (255) | `field_date` (recorrência do `smartdate`) | RRULE do subconjunto da v1 (`FREQ`, `INTERVAL`, `BYDAY`, `BYMONTHDAY`, `COUNT`/`UNTIL`). Vazio = evento único. Ver `aculta_calendar/docs/RECORRENCIA.md` |
@@ -44,9 +47,8 @@ Uma ocorrência do evento, em um local, em um intervalo.
 | `field_abertura_portas` | string | `field_door_time_relative` | Horário relativo de abertura |
 | `field_seguranca` | text | `field_safety_info` | Informações de segurança do local |
 
-Campos de preço e ingresso (`field_pricing`, `field_ticketing`) não entram na v1: a
-venda fica fora do escopo (ver `PLANO-IMPLANTACAO.md`, seção 1). Só `field_gratuito`
-representa o preço na v1.
+Venda de ingressos e pagamento dentro do ACULTA continuam fora da v1 (D-30). Os campos
+acima são apenas informativos; `field_ticketing` leva o usuário a um serviço externo.
 
 Regras:
 
