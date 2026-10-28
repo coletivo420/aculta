@@ -68,7 +68,7 @@ Todos os purposes ativos apontam para a mesma aplicação Drupal, banco e sessã
 | MAIN | `aculta.org` |
 | ACCOUNT | `conta.aculta.org` |
 | SUPPORT | `apoio.aculta.org` |
-| MAGAZINE | `revista420.aculta.org` |
+| MAGAZINE | `revista.aculta.org` |
 | WIKI | `wiki420.aculta.org` |
 | SHOP | `loja.aculta.org` |
 | COURSES | `cursos.aculta.org` |

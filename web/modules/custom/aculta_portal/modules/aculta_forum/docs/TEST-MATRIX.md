@@ -1,5 +1,9 @@
 ## Fechamento das fases — 2026-10-25
 
+Os hosts de teste documentados nos resultados abaixo são registros históricos. Em
+2026-10-28, o host da Revista foi renomeado no contrato para
+`revista.aculta.toca.net.br`; a validação desse host aguarda Virtualmin, DNS e TLS.
+
 - Unit do Fórum 184/1.332; Unit do Messenger 261/2.023.
 - Kernel do Fórum 150/2.863 no MariaDB (42 depreciações de Core/contrib).
 - Functional 6/6, 33 asserções, em site novo com o perfil standard:

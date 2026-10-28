@@ -4,7 +4,7 @@ status: true
 dependencies: {  }
 id: revista420_aculta_org
 domain_id: 5376482
-hostname: revista420.aculta.org
+hostname: revista.aculta.org
 name: 'Revista 420'
 scheme: https
 weight: 7

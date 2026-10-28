@@ -62,6 +62,10 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 
 Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero registros no Runtime de teste).
 
+Nota de ambiente (2026-10-28): o host de teste da Revista foi renomeado para
+`revista.aculta.toca.net.br`. A matriz acima registra a medição histórica de
+2026-10-11; o novo hostname depende da conclusão da configuração de Virtualmin e TLS.
+
 ## Pendências para deixar os hosts iguais
 
 - **Loja (SHOP):** a raiz serve a página inicial (nó 69) pelo `PurposeFrontPathProcessor`. Frete, prazo e trocas seguem pendentes do responsável.

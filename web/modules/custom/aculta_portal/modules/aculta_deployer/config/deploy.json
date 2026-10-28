@@ -21,9 +21,6 @@
       "note": "A página do produto da loja fica no host SHOP (loja.aculta.toca.net.br em teste; loja.aculta.org em produção). Carrinho e checkout ficam no MAIN."
     },
     "note": "Migração de domínios do servidor de testes (*.aculta.toca.net.br) para produção (*.aculta.org), por domínio registrado no Portal. Dado declarado: o comando `domains` confere os registros de config/sync contra esta tabela (somente leitura). A troca em produção só acontece no deploy do RC.",
-    "decision_pending": [
-      "revista420_aculta_org: host de produção da revista é revista420.aculta.org (decisão do responsável, 2026-10-11)."
-    ],
     "entries": [
       {
         "domain_id": "aculta_org",
@@ -42,8 +39,8 @@
       },
       {
         "domain_id": "revista420_aculta_org",
-        "test_host": "revista420.aculta.toca.net.br",
-        "production_host": "revista420.aculta.org"
+        "test_host": "revista.aculta.toca.net.br",
+        "production_host": "revista.aculta.org"
       },
       {
         "domain_id": "wiki420_aculta_org",
@@ -84,7 +81,7 @@
         "https://aculta.org/",
         "https://conta.aculta.org/",
         "https://apoio.aculta.org/",
-        "https://revista420.aculta.org/",
+        "https://revista.aculta.org/",
         "https://wiki420.aculta.org/",
         "https://loja.aculta.org/",
         "https://cursos.aculta.org/",
@@ -109,7 +106,7 @@
       "hosts": [
         "https://aculta.toca.net.br/",
         "https://apoio.aculta.toca.net.br/",
-        "https://revista420.aculta.toca.net.br/",
+        "https://revista.aculta.toca.net.br/",
         "https://loja.aculta.toca.net.br/",
         "https://growroom420.aculta.toca.net.br/",
         "https://wiki420.aculta.toca.net.br/",
@@ -204,11 +201,11 @@
       "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
     },
     {
-      "file": "config/sync/domain_alias.alias.revista420_aculta_test_8080.yml",
+      "file": "config/sync/domain_alias.alias.revista_aculta_test_8080.yml",
       "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
     },
     {
-      "file": "config/sync/domain_alias.alias.revista420_aculta_toca_net_br.yml",
+      "file": "config/sync/domain_alias.alias.revista_aculta_toca_net_br.yml",
       "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
     },
     {
@@ -339,7 +336,7 @@
         {
           "file": "config/sync/domain.record.revista420_aculta_org.yml",
           "pattern": "^hostname: .*$",
-          "with": "hostname: revista420.aculta.org"
+          "with": "hostname: revista.aculta.org"
         },
         {
           "file": "config/sync/domain.record.wiki420_aculta_org.yml",
@@ -469,7 +466,7 @@
         {
           "file": "config/sync/domain.record.revista420_aculta_org.yml",
           "pattern": "^hostname: .*$",
-          "with": "hostname: revista420.aculta.toca.net.br"
+          "with": "hostname: revista.aculta.toca.net.br"
         },
         {
           "file": "config/sync/domain.record.wiki420_aculta_org.yml",
@@ -562,14 +559,14 @@
           "with": "pattern: apoio.aculta.toca.net.br"
         },
         {
-          "file": "config/sync/domain_alias.alias.revista420_aculta_test_8080.yml",
+          "file": "config/sync/domain_alias.alias.revista_aculta_test_8080.yml",
           "pattern": "^pattern: .*$",
-          "with": "pattern: 'revista420.aculta.test:8080'"
+          "with": "pattern: 'revista.aculta.test:8080'"
         },
         {
-          "file": "config/sync/domain_alias.alias.revista420_aculta_toca_net_br.yml",
+          "file": "config/sync/domain_alias.alias.revista_aculta_toca_net_br.yml",
           "pattern": "^pattern: .*$",
-          "with": "pattern: revista420.aculta.toca.net.br"
+          "with": "pattern: revista.aculta.toca.net.br"
         },
         {
           "file": "config/sync/domain_alias.alias.conta_aculta_test_8080.yml",

@@ -353,7 +353,7 @@ $expectedProd = [
   'https://aculta.org/',
   'https://conta.aculta.org/',
   'https://apoio.aculta.org/',
-  'https://revista420.aculta.org/',
+  'https://revista.aculta.org/',
   'https://wiki420.aculta.org/',
   'https://loja.aculta.org/',
   'https://cursos.aculta.org/',
@@ -523,7 +523,7 @@ $assert($brc1 !== 0, 'build recusa --env diferente de --target');
 
 // Tabela somente leitura: a revista usa o host decidido.
 exec($cli . ' domains 2>&1', $dom, $domrc);
-$assert($domrc === 0 && str_contains(implode("\n", $dom), 'revista420.aculta.org (regra de host)') && str_contains(implode("\n", $dom), '0 pendente(s) de RC'), 'domains: tabela válida; revista alinhada (host de produção decidido)');
+$assert($domrc === 0 && str_contains(implode("\n", $dom), 'revista.aculta.org (regra de host)') && str_contains(implode("\n", $dom), '0 pendente(s) de RC'), 'domains: tabela válida; revista alinhada (host de produção decidido)');
 
 // Provisionamento idempotente, sem sobrescrever e sem expor valores.
 $assert(Provision::missing(['A', 'B'], ['B', 'C']) === ['C'], 'provision: só falta o que não está no arquivo');

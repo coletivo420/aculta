@@ -36,7 +36,7 @@ Quando o site vai para produção (no deploy do RC), o cookie muda de `.aculta.t
 1. Provisionar `web/sites/default/services.hostinger.yml` no servidor de produção com `cookie_domain: '.aculta.org'`.
    O arquivo não entra no Git.
 2. Rodar `aculta-deployer cookies` contra o modelo: deve sair com `ok production`.
-3. Após o deploy, confirmar em produção que o login feito em `conta.aculta.org` vale em `revista420.aculta.org` (teste manual
+3. Após o deploy, confirmar em produção que o login feito em `conta.aculta.org` vale em `revista.aculta.org` (teste manual
    de navegador, registrado em `docs/portal/TESTES-NAVEGADOR.md`).
 
 **Impacto:** o cookie é emitido para `.aculta.org`. Sessões obtidas no ambiente de teste não são aceitas em produção: os

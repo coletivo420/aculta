@@ -39,7 +39,7 @@ os.makedirs(SUITE_OUT, exist_ok=True)
 HOSTS = ",".join([
     "aculta.test",
     "conta.aculta.test",
-    "revista420.aculta.test",
+    "revista.aculta.test",
     "cursos.aculta.test",
     "wiki420.aculta.test",
     "growroom420.aculta.toca.net.br",
@@ -113,7 +113,7 @@ def check_perfil():
 def check_public_pages():
     pages = {
         "forum": "http://growroom420.aculta.toca.net.br:8080/",
-        "revista": "http://revista420.aculta.test:8080/",
+        "revista": "http://revista.aculta.test:8080/",
         "cursos": "http://cursos.aculta.test:8080/",
         "wiki": "http://wiki420.aculta.test:8080/",
         "conta": "http://conta.aculta.test:8080/",

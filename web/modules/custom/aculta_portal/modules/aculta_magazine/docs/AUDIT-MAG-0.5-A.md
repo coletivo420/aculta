@@ -158,6 +158,13 @@ majoritariamente de outras frentes; nenhuma delas é `revista` além das listada
 | `metatag.metatag_defaults.node__revista` | nenhuma | — | — | Magazine | preservado |
 | `pathauto.pattern.aculta_article` | nenhuma | — | — | Magazine | preservado |
 | `simple_sitemap.sitemap.magazine` | nenhuma | — | — | Portal/Magazine | preservado |
+
+### Adendo (2026-10-28)
+
+O responsável decidiu que os hosts da Revista passam a ser `revista.aculta.org` em
+produção e `revista.aculta.toca.net.br` no Homelab. O registro, alias e perfis do
+Deployer foram atualizados. A observação acima descreve a comparação feita na data da
+auditoria; o ID técnico do Domain permanece inalterado.
 | `search_api.index.aculta_conteudo` | divergente em outras frentes; bundle `revista` correto | concorrente | não avaliado aqui | Busca | nenhuma ação |
 
 As duas primeiras linhas foram corrigidas **no repositório** (0.5-A.3). Como a importação global está bloqueada, a

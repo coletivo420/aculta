@@ -144,7 +144,7 @@ Pendências desta fase:
 **Status: preparação concluída; execução após RC, no fluxo Alpha → produção.** Tabela `domain_transition` em `config/deploy.json`, comando `domains` (somente leitura) e guia em `docs/MIGRACAO-DOMINIOS.md`.
 
 Pendências:
-1. Decidir o host de produção da revista (`revista420.aculta.org` ou manter `revista420.aculta.org`).
+1. Host de produção decidido pelo responsável em 2026-10-28: `revista.aculta.org`.
 2. Antes de RC, deixar comando, configuração, gate e rollback prontos. Após Alpha validado, `domains` sem pendências, `transition --target=production`, importação parcial com backup, DNS/certificados (fora do repositório) e verificação pós-deploy.
 
 ## Fase 6 — Release 0.2.0 (curta)

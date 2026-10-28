@@ -3960,3 +3960,8 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 - O manifesto do Portal agora declara `search_api:search_api_db`, requerido pela configuração instalável `search_api.server.aculta_database` que o próprio Portal fornece. A dependência transitiva ativa Search API e seu backend de banco em instalações limpas; não houve alteração no serviço, índice ou runtime existente.
 - O Functional do Statistics reproduziu inicialmente a falha de instalação por dependência ausente. Após declarar Search API DB, a instalação limpa avançou até a compilação de serviços e expôs o contrato Portal→User: o Portal registra serviços que consomem o ledger `aculta_user`, embora User dependa do Portal e não possa ser dependência obrigatória inversa. Instalar ambos na fixture deixa a instalação seguir; a interação de login do BrowserTest ainda falha antes das assertions do painel e permanece DEFERRED para correção do harness/contrato.
 
+## 0.4.1-dev.42 — domínio público da revista (2026-10-28)
+
+- Os hosts da Revista passam a ser `revista.aculta.org` em produção e `revista.aculta.toca.net.br` no Homelab; configuração do Domain, aliases, política do Deployer, sitemap e documentação ativa foram alinhados. O ID interno `revista420_aculta_org` não muda.
+- O DNS e o certificado de produção serão configurados pelo responsável no Cloudflare/Hostinger; esta alteração prepara configuração e URLs canônicas no repositório e não faz deploy.
+

@@ -28,7 +28,7 @@ os.makedirs(EV, exist_ok=True)
 HOSTS = ",".join([
     "aculta.toca.net.br",
     "conta.aculta.toca.net.br",
-    "revista420.aculta.toca.net.br",
+    "revista.aculta.toca.net.br",
     "growroom420.aculta.toca.net.br",
     "cursos.aculta.toca.net.br",
     "loja.aculta.toca.net.br",
@@ -38,7 +38,7 @@ PREFS = {"network.dns.localDomains": HOSTS}
 PAGES = [
     ("portal_home", "https://aculta.toca.net.br/"),
     ("forum_discussoes", "https://growroom420.aculta.toca.net.br/"),
-    ("revista", "https://revista420.aculta.toca.net.br/"),
+    ("revista", "https://revista.aculta.toca.net.br/"),
 ]
 
 D = Driver(prefs=PREFS)
