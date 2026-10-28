@@ -90,6 +90,10 @@ final class ShippingConfigSyncTest extends UnitTestCase {
     $composer = json_decode((string) file_get_contents($this->repoRoot . '/composer.json'), TRUE, 512, JSON_THROW_ON_ERROR);
     $this->assertArrayNotHasKey('drupal/commerce_shipping', $composer['require'] ?? []);
     $this->assertArrayNotHasKey('drupal/commerce_shipping', $composer['require-dev'] ?? []);
+
+    $commerce = Yaml::parseFile($this->repoRoot . '/web/modules/custom/aculta_portal/modules/aculta_commerce/aculta_commerce.info.yml');
+    $this->assertNotContains('commerce:commerce_cart', $commerce['dependencies'] ?? [], 'aculta_commerce must not redeclare the cart dependency.');
+    $this->assertNotContains('commerce:commerce_payment', $commerce['dependencies'] ?? [], 'aculta_commerce must not redeclare the payment dependency.');
   }
 
   /**
