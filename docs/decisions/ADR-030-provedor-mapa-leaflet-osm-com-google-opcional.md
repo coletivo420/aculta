@@ -119,3 +119,11 @@ Revisão das políticas oficiais em 2026-10-28: [política de tiles OSM](https:/
 exige atribuição visível e respeito às respostas de cache; [política Nominatim](https://operations.osmfoundation.org/policies/nominatim/)
 define o limite de uma requisição por segundo, identifica o cliente no `User-Agent` e proíbe autocomplete no serviço
 público. O código segue esses requisitos, sem consulta em lote.
+
+Revisão oficial de cobrança/licença em 2026-10-28: [termos da Google Maps Platform](https://cloud.google.com/maps-platform/terms),
+[termos específicos de serviço](https://cloud.google.com/maps-platform/terms/maps-service-terms) e
+[preços por SKU](https://developers.google.com/maps/billing-and-pricing/pricing). A Geocoding API não pode ser usada
+junto a mapa não Google; coordenadas podem ser armazenadas por até 30 dias, salvo uma exceção restrita de uso
+diretamente voltado ao usuário e isolado por usuário. O código só chama Google quando Google Maps está selecionado,
+mas persiste coordenadas no local sem origem nem expiração. O responsável precisa escolher a política de dados antes
+de ativar Geocoding Google; detalhes em `web/modules/custom/aculta_portal/modules/aculta_maps/docs/REVISAO-TERMOS-MAPAS-2026-10-28.md`.

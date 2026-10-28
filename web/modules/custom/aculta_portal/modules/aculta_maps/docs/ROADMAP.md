@@ -69,3 +69,10 @@ Evidência técnica MP6: `58359728f`; testes atuais Maps 10/44 e Events 57/668.
 Evidência MP7: smoke no servidor `eventos.aculta.toca.net.br`; configuração ativa `openstreetmap`. O catálogo do Runtime de teste não tem marcador com coordenadas, então a presença do marcador aproximado é validada pela Kernel `MapControllerKernelTest`.
 
 Commit MP7: `fd5c96526`.
+
+## Revisão F0 — Termos e licenças
+
+Revisão técnica em [`REVISAO-TERMOS-MAPAS-2026-10-28.md`](REVISAO-TERMOS-MAPAS-2026-10-28.md). OpenStreetMap permanece
+o engine do Runtime de teste. Os termos da Geocoding API exigem decidir a persistência das coordenadas antes de usar
+esse serviço; a decisão do responsável foi solicitada. A política pública não foi alterada e a revisão editorial
+sobre o provedor de tiles permanece pendente.

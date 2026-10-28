@@ -16,9 +16,9 @@ Entrada: plano aprovado.
 - [x] D-13: campo de data com `daterange` do core, sem `smart_date` (incompatível com `doctrine/collections` 3.x via `simshaun/recurr`).
 - [x] Compatibilidade com Core ^11.4 de `geofield` (1.67.0) e `address`: verificada no Core 11.4.10 — `EventLocation` usa os dois tipos de campo e as suítes Kernel do módulo passam (36 testes).
 - [x] D-14: recorrência própria na v1, com `rlanvin/php-rrule` 3.0 (commit `dcea19c4a`, `7ae9e54e4`). **Autorizada pelo responsável em 2026-10-28** (D-16), junto com `drupal/geofield`; nenhuma das duas precisa ser revertida.
-- [ ] Revisar termos e cobrança da Google Maps Platform (JavaScript API e Geocoding API) e o aviso de privacidade.
+- [x] Revisão técnica de termos/cobrança concluída em `aculta_maps/docs/REVISAO-TERMOS-MAPAS-2026-10-28.md`: Google exige faturamento e restringe uso/cache de Geocoding; a persistência atual de coordenadas sem origem/expiração aguarda decisão do responsável. A página de privacidade não foi alterada conforme instrução do responsável.
 - [x] Auditoria do OpenCulturas (`AUDITORIA-OPENCULTURAS.md`): nenhum arquivo copiado diretamente; achados S1 a S8 e T1 a T14 viram tarefas de F2–F6.
-- [ ] Revisar licenças: código GPL-2.0-or-later adaptado (ORIGEM-OPENCULTURAS.md) e ícones Phosphor (MIT), se usados.
+- [x] Revisão de licenças: OpenCulturas GPL-2.0-or-later e trechos derivados registrados em `ORIGEM-OPENCULTURAS.md`; Phosphor não é usado; Bootstrap Icons tem licença MIT.
 
 Saída: decisões registradas; nenhuma dependência nova instalada ainda.
 

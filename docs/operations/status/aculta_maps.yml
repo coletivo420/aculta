@@ -5,5 +5,6 @@ progress_note: >-
   MP0–MP7 concluídas e `aculta_maps` ativado no Runtime de teste com OpenStreetMap. Google permanece opcional; chave de
   navegador e chave server-side de geocodificação são distintas. Firefox ESR verificou 1280 px, 320 px e modo escuro.
   A política não foi alterada conforme decisão do responsável de não informar IP; revisão editorial da divulgação de
-  tiles e provedor permanece pendente.
-next_phase: 'Revisar editorialmente a divulgação do provedor de tiles sem alterar a decisão sobre IP. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_maps/docs/ROADMAP.md) e [ADR-030](docs/decisions/ADR-030-provedor-mapa-leaflet-osm-com-google-opcional.md).'
+  tiles e provedor permanece pendente. F0 identificou que a persistência de coordenadas do Google carece de origem e
+  expiração; a decisão de uso aguarda o responsável.
+next_phase: 'Definir se Google Geocoding será removido ou terá coordenadas com origem e expiração. Ver [revisão F0](web/modules/custom/aculta_portal/modules/aculta_maps/docs/REVISAO-TERMOS-MAPAS-2026-10-28.md), [roadmap](web/modules/custom/aculta_portal/modules/aculta_maps/docs/ROADMAP.md) e [ADR-030](docs/decisions/ADR-030-provedor-mapa-leaflet-osm-com-google-opcional.md).'
