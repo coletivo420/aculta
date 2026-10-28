@@ -45,7 +45,9 @@ conditions:
     plugin: order_type
     configuration:
       bundles:
+        - curso
         - default
+        - doacao
   -
     plugin: order_currency
     configuration:

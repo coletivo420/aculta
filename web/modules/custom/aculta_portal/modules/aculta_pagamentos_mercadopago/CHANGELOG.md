@@ -1,3 +1,7 @@
+## 0.1.0-dev.80 — sincronizar os tipos de pedido do gateway (2026-10-28)
+
+- `config/sync` agora declara os bundles `curso`, `default` e `doacao` aceitos pelo gateway ativo em modo `test`; comparação focal do Runtime não aponta diferença. Nenhuma importação ou escrita de banco foi feita.
+
 ## 0.1.0-dev.79 — gestão de planos no Studio (2026-10-28)
 
 - A tela do ACULTA Studio em `/studio/conta/mercado-pago/planos` lista, cria e atualiza planos; a submissão usa `/integracoes/mercadopago/planos` e retorna à tela no propósito `account`. A interface rejeita gateways fora de `test` e exige usuário autenticado, `access aculta portal` e `administrar doacoes`.

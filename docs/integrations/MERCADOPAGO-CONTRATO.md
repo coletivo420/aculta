@@ -6,6 +6,8 @@ Documento de auditoria da integração. Registra o que a documentação oficial 
 
 Checkout Pro é a única forma de pagamento do Portal (`aculta_mercadopago_checkout_pro`). Todos os fluxos passam por ele: loja, doações avulsas, doações recorrentes, cursos, cancelamento, estorno e retorno de notificações. Os clientes do SDK `mercadopago/dx-php` (Point, OAuth, Orders, Customer, Invoice, Chargeback, PreApprovalPlan) são usados como apoio dessa integração, não como formas de pagamento separadas.
 
+A configuração versionada do gateway Commerce aplica-se aos tipos de pedido `curso`, `default` e `doacao`. A condição foi comparada com a configuração ativa do Runtime em 2026-10-28; o `config:status` focal não apresenta divergência e o gateway continua ativo em modo de teste.
+
 ## Fontes
 
 Confirmadas por leitura da página oficial:
