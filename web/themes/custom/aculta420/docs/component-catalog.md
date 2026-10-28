@@ -88,7 +88,8 @@ consumidores, modos claro/escuro e renderização no Firefox ESR.
   link de entidade do título e aplicada por import parcial apenas de
   `views.view.aculta_albuns`, após snapshot do Runtime. Firefox ESR confirmou
   zero links sem nome/placeholders em desktop, 320 px e dark; ambos os cartões
-  compactos permaneceram legíveis e sem rolagem horizontal.
+  compactos permaneceram legíveis e sem rolagem horizontal. `drush cr` foi
+  executado após o import e concluiu com sucesso.
 - `bookmark-toggle`: o tópico de homologação mostrou “Salvar tópico” e “Salvo”;
   foco visível com outline de 3 px, alvo de 44 px e sem overflow em 320 px. A
   Flag da conta de teste foi restaurada ao estado inicial.
