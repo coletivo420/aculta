@@ -59,7 +59,7 @@ foi feito. Uma escrita live requer escolha de um objeto real e de uma correção
 ## Pendências que bloqueiam o próximo passo
 
 1. ~~Confirmar a autorização de `composer require` de `rlanvin/php-rrule`~~ **Resolvido em 2026-10-28:** D-16 autoriza `rlanvin/php-rrule` e `drupal/geofield`, já instalados (`7ae9e54e4`, `b103692c8` e `fd70ddd8a`).
-2. **Verificações do Google Maps antes da F4**: termos, cobrança, lista de hosts no deployer e LGPD (ADR-014).
+2. **Verificações do Google Maps antes da F4**: auditoria técnica dos termos/cobrança em 2026-10-28 concluída. Termos da Geocoding API proíbem usar o resultado com mapa não Google e limitam o cache de coordenadas a 30 dias. O código só usa Google no engine Google, mas persiste coordenadas sem origem/prazo; decisão do responsável pendente. Ver [revisão F0](web/modules/custom/aculta_portal/modules/aculta_maps/docs/REVISAO-TERMOS-MAPAS-2026-10-28.md) e ADR-030.
 3. **Rota `/calendario/incorporar`** depende de o purpose `eventos` estar com Domain ativo no servidor de teste.
 4. **Revisão visual de eventos** não tem registro (F6).
 5. **Política de privacidade para os provedores do mapa**: os documentos institucionais agora estão em `/sobre/termos-de-uso` (nó 41) e `/sobre/politica-de-privacidade` (nó 11). O Runtime de teste confirma ambos HTTP 200 e os aliases antigos HTTP 404, sem redirects. O link interno nos Termos foi atualizado, sem mudança substantiva do texto. A Política ainda precisa revisão específica dos provedores; nenhum texto legal novo foi publicado.
