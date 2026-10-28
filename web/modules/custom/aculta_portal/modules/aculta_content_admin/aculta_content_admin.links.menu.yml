@@ -1,0 +1,6 @@
+aculta_content_admin.overview:
+  title: 'Conteúdo que posso moderar'
+  route_name: aculta_content_admin.overview
+  parent: system.admin_content
+  weight: 25
+

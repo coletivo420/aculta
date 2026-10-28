@@ -1,0 +1,5 @@
+services:
+  aculta_content_admin.moderation_registry:
+    class: Drupal\aculta_content_admin\Moderation\ModeratableCollectionRegistry
+    arguments: ['@entity_type.manager', '@access_manager', '@views.views_data']
+

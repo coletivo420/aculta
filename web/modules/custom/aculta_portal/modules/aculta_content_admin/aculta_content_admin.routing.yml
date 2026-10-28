@@ -1,0 +1,10 @@
+aculta_content_admin.overview:
+  path: /painel-administrativo/conteudo
+  defaults:
+    _controller: '\Drupal\aculta_content_admin\Controller\ContentModerationOverviewController::overview'
+    _title: 'Conteúdo que posso moderar'
+  requirements:
+    _custom_access: 'aculta_content_admin.moderation_registry:overviewAccess'
+  options:
+    _admin_route: true
+

@@ -110,6 +110,13 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/apoiar/{valor}/agora` | Doação rápida de valor informado | Ativo conforme configuração do fluxo Commerce. |
 | `main.aculta` | `/termos/aceitar` | Ação de aceite dos termos | Endpoint autenticado; `POST` processa e redireciona ao destino seguro. |
 | `main.aculta` | `/painel-administrativo/**` | Árvore do painel administrativo ACULTA | Rotas administrativas; access do Core/contrib decide cada operação. |
+| `main.aculta` | `/painel-administrativo/conteudo` | Links para coleções editoriais que a pessoa autenticada pode moderar | Condicional ao submódulo `aculta_content_admin`; só lista rotas com acesso nativo permitido. A própria página nega acesso quando nenhuma coleção é autorizada. |
+| `main.aculta` | `/perguntas-frequentes` | Lista pública das perguntas frequentes publicadas | Condicional ao submódulo `aculta_faq`; cada node respeita o acesso e a publicação. |
+| `main.aculta` | `/painel-administrativo/faq` | Lista e atalhos de edição de perguntas frequentes e blocos editoriais | Condicional ao `aculta_faq`; exige `administer aculta faq`. |
+| `main.aculta` | `/painel-administrativo/faq/perguntas/adicionar` | Formulário de criação de pergunta frequente | Condicional ao `aculta_faq`; exige `administer aculta faq`. |
+| `main.aculta` | `/painel-administrativo/faq/perguntas/{node}/editar` | Formulário de edição da pergunta frequente indicada | Condicional ao `aculta_faq`; exige bundle FAQ e `administer aculta faq`. |
+| `main.aculta` | `/painel-administrativo/faq/blocos/adicionar` | Formulário de criação de bloco editorial | Condicional ao `aculta_faq`; exige `administer aculta faq`. |
+| `main.aculta` | `/painel-administrativo/faq/blocos/{block_content}/editar` | Formulário de edição do bloco editorial indicado | Condicional ao `aculta_faq`; exige bundle `aculta_editorial` e `administer aculta faq`. |
 | `main.aculta` | `/painel-administrativo/lms/h5p` | Painel administrativo de H5P do LMS | Ativo no Runtime de teste; exige `administer h5p libraries`; revisão visual X11 em 2026-10-21. |
 | `main.aculta` | `/painel-administrativo/configuracoes/system/h5p` | Configurações do H5P do LMS | Rota Core `/admin/config/system/h5p` canonicalizada pelo Portal; ativa no Runtime de teste, exige `administer h5p libraries`. |
 | `main.aculta` | `/painel-administrativo/conteudo/h5p` | Administração das bibliotecas H5P instaladas | Rota Core `/admin/content/h5p` canonicalizada pelo Portal; ativa no Runtime de teste, exige `administer h5p libraries`. |
