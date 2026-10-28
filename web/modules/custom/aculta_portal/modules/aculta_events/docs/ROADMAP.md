@@ -217,7 +217,7 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 
 ## Pós-v1 (sem data)
 
-- Importação de local a partir do OpenStreetMap e envio de alterações ao OSM (E10, decidido em D-26: envio à API de teste no teste e à produção do OSM em produção). Fora da v1. Antes do primeiro envio real, precisa de revisão de termos ODbL e atribuição, registrada no docs. Ver `docs/architecture/PLANO-INCORPORACAO-OPENCULTURAS.md`.
+- Importação de local a partir do OpenStreetMap e envio de alterações ao OSM (E10, decidido em D-26: API de teste em teste, produção somente em produção). Fora da v1. O contrato de segredos já separa credenciais de cliente e chave de cifra por ambiente (commit `5dfb7ac0c`); os valores ainda não foram provisionados. Antes do primeiro envio real, termos ODbL e atribuição já foram revisados e registrados; nenhum envio foi feito. Ver `docs/architecture/PLANO-INCORPORACAO-OPENCULTURAS.md`.
 
 - Recorrência de eventos.
 - Sincronização com OpenStreetMap (`openculturas_openstreetmap`), via integração do ACULTA.
