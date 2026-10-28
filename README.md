@@ -134,35 +134,53 @@ resultados de testes e status de PR continuam apenas nos changelogs e no GitHub.
 
 ## Bibliotecas usadas
 
-Versões declaradas nos manifestos (`composer.json` e `web/themes/custom/aculta420/package.json`). A lista completa de pacotes Composer está no `composer.json`; esta tabela cobre as bibliotecas que o projeto usa diretamente ou que aparecem no código.
+Versões declaradas nos manifestos (`composer.json` e `web/themes/custom/aculta420/package.json`). A lista completa de pacotes Composer está no `composer.json`. Esta tabela cobre o que o projeto usa diretamente ou o que aparece no código, separado por tipo.
+
+### Módulos Drupal (core e contrib)
 
 | Biblioteca | Versão declarada | Origem | Uso no projeto |
 | --- | --- | --- | --- |
 | Drupal core (`core-recommended`) | ^11.4 | Composer | Base do site (Drupal 11); PHP `>=8.3` no `composer.json` |
-| Drush | ^13.8 | Composer | Linha de comando e operações de cache, banco e configuração |
 | `drupal/commerce`, `commerce_cart`, `commerce_checkout` | ^3.3 / 3.3.10 | Composer | Loja, carrinhos e checkouts (base de `aculta_commerce` e dos checkouts por contexto) |
 | `drupal/bootstrap` | ^5.0 | Composer | Tema base do ACULTA420 |
-| `mercadopago/dx-php` | ^3 | Composer | SDK do Mercado Pago, usado pelo `aculta_pagamentos_mercadopago` |
-| SDK JavaScript do Mercado Pago (`sdk.mercadopago.com`) | v2 | Carregado de fora | Checkout Pro no navegador |
-| `rlanvin/php-rrule` | ^3.0 | Composer | Recorrência de eventos (`aculta_calendar`, D-14, D-16) |
 | `drupal/geofield` | ^1 | Composer | Coordenadas de locais (`aculta_events`) |
 | `drupal/search_api` | ^1.40 | Composer | Índice de busca (`aculta_index`) |
 | `drupal/webform` | ^6.3 | Composer | Formulários do site (uso pontual) |
 | `drupal/group` | ^3.3 | Composer | Turmas e grupos do LMS |
 | `drupal/lms` | ^1.2 | Composer | Base de cursos do LMS |
+| `drupal/key` | ^1.22 | Composer | Chaves usadas pelo `SecretsManager` do `aculta_portal` |
+| `drupal/csp`, `drupal/turnstile`, `drupal/captcha` | ^2.2 / ^1.2 / ^2.0 | Composer | Política de segurança de conteúdo e proteção contra robôs |
+| `drupal/ckeditor5_plugin_pack` | ^1.5 | Composer | Editor de texto rico |
+
+### Bibliotecas PHP e integrações
+
+| Biblioteca | Versão declarada | Origem | Uso no projeto |
+| --- | --- | --- | --- |
+| `mercadopago/dx-php` | ^3 | Composer | SDK do Mercado Pago, usado pelo `aculta_pagamentos_mercadopago` |
+| `rlanvin/php-rrule` | ^3.0 | Composer | Recorrência de eventos (`aculta_calendar`, D-14, D-16) |
 | `h5p/h5p-core`, `h5p/h5p-editor` | ^1.28 / ^1.25 | Composer | Conteúdo interativo H5P (`aculta_lms_h5p`) |
-| `mozilla/pdfjs-dist` | 6.4.299 | Composer | Visualização de PDF (`aculta_pdf_viewer`) |
 | `endroid/qr-code` | ^6.1.3 | Composer | Geração de QR codes (`aculta_qrcode`). QR de ingressos é planejado |
 | `google/apiclient` | ^2.18 | Composer | Conectores do `aculta_statistics` (GA4 e Search Console) |
 | `symfony/brevo-mailer`, `symfony/http-client` | ^7.4 | Composer | Envio de e-mail e cliente HTTP das integrações |
-| `drupal/ckeditor5_plugin_pack`, `codemirror` | ^1.5 / 5.65.12 | Composer | Editor de texto rico e edição de código |
-| `drupal/csp`, `drupal/turnstile`, `drupal/captcha` | ^2.2 / ^1.2 / ^2.0 | Composer | Política de segurança de conteúdo e proteção contra robôs |
-| `drupal/key` | ^1.22 | Composer | Chaves usadas pelo `SecretsManager` do `aculta_portal` |
+| SDK JavaScript do Mercado Pago (`sdk.mercadopago.com`) | v2 | Carregado de fora | Checkout Pro no navegador |
+
+### Front-end (JavaScript e CSS)
+
+| Biblioteca | Versão declarada | Origem | Uso no projeto |
+| --- | --- | --- | --- |
+| `mozilla/pdfjs-dist` | 6.4.299 | Composer | Visualização de PDF (`aculta_pdf_viewer`) |
 | `photoswipe` | 5.4.4 | Composer | Galerias de imagem (`aculta_gallery`) |
+| `codemirror` | 5.65.12 | Composer | Edição de código em campos administrativos |
 | `select2`, `intl-tel-input`, `inputmask`, `timepicker`, `rateit`, `textcounter` | 4.0.13 / 17.0.19 / 5.0.9 / 1.14.0 / 1.1.5 / 0.9.1 | Composer (jQuery) | Campos de formulário (seleção, telefone, máscara, horário, avaliação e contador) |
 | `tippyjs`, `popperjs`, `tabby`, `progress-tracker`, `signature_pad` | 6.3.7 / 2.11.6 / 12.0.3 / 2.0.7 / 2.3.0 | Composer | Dicas, posicionamento, abas, progresso e assinatura |
 | Bootstrap Icons | (no tema) | Arquivos no tema | Ícones do ACULTA420 (`web/themes/custom/aculta420/assets/icons`) |
 | DHTMLX Scheduler | 7.2.15 (edição GPL-2.0) | Arquivos copiados no módulo | Visão interativa do calendário (`aculta_calendar`), com decisão de adoção D-21 e critérios do estudo |
+
+### Ferramentas de desenvolvimento
+
+| Biblioteca | Versão declarada | Origem | Uso no projeto |
+| --- | --- | --- | --- |
+| Drush | ^13.8 | Composer | Linha de comando: cache, banco e configuração |
 | ESLint | ^10.13 | npm (tema) | Lint de JavaScript do tema |
 | Stylelint | ^17.16 | npm (tema) | Lint de CSS do tema |
 
