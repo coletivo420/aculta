@@ -30,3 +30,10 @@ library quando tentava processá-los (o HTML saía sem os dois arquivos).
 
 O CSS original traz 5 `@font-face` de `fonts.gstatic.com`. A remoção está registrada em DH-C (nenhuma
 requisição a terceiros por padrão).
+
+## Teclado (DH-B)
+
+Medido no Firefox ESR (geckodriver, `DISPLAY=:0`) em 1280 e 320 px: com `scheduler.plugins({ key_nav: true })`
+antes do init, o Tab alcança o calendário (`tabindex="0"` no contêiner; foco em `dhx_focus_slot`) e as setas
+movem o foco interno (de 28/10/2026 para 30–31/10/2026). Sem o plugin, o Tab não entrava (piloto da seção 8 do
+estudo). Capturas em `$SUITE_OUT`.

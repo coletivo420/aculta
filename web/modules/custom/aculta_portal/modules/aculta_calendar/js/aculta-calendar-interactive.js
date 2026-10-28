@@ -15,6 +15,10 @@
         return;
       }
       container.dataset.acultaInit = '1';
+      // O calendário só é alcançável por Tab com o plugin key_nav, antes do init.
+      if (typeof window.scheduler.plugins === 'function') {
+        window.scheduler.plugins({ key_nav: true });
+      }
       window.scheduler.init(container, new Date(), 'month');
     },
   };
