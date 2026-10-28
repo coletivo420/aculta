@@ -192,6 +192,13 @@ class CheckoutProTest extends OrderKernelTestBase {
       $forged_event = new RequestEvent($this->container->get('kernel'), $forged_request, HttpKernelInterface::MAIN_REQUEST);
       $this->container->get('aculta_pagamentos_mercadopago.webhook_subscriber')->onKernelRequest($forged_event);
       $this->assertSame(401, $forged_event->getResponse()?->getStatusCode());
+
+      $gateway->setStatus(FALSE);
+      $gateway->save();
+      $disabled_request = $this->webhookRequest('kernel-test-only-secret');
+      $disabled_event = new RequestEvent($this->container->get('kernel'), $disabled_request, HttpKernelInterface::MAIN_REQUEST);
+      $this->container->get('aculta_pagamentos_mercadopago.webhook_subscriber')->onKernelRequest($disabled_event);
+      $this->assertSame(503, $disabled_event->getResponse()?->getStatusCode());
     }
     finally {
       $previous_secret === FALSE ? putenv('MERCADOPAGO_WEBHOOK_SECRET') : putenv('MERCADOPAGO_WEBHOOK_SECRET=' . $previous_secret);
