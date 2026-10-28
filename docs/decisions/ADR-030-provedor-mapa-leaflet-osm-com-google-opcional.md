@@ -109,6 +109,10 @@ MP5 adiciona o `RouteLinkBuilder` no ACULTA Maps. Ele monta links HTTPS de rota 
 aceita somente hosts Google aprovados e codifica o destino; a lista textual e os popups abrem a rota só após clique.
 Evidência: `33b638ccf`.
 
+MP6 arredonda coordenadas de locais aproximados antes de anexá-las ao render array. A página `/mapa` mostra aviso e
+link para a política pública. Os testes Maps/Events cobrem arredondamento, aviso e destino do link. A mudança de
+política e ativação dos provedores seguem pendentes conforme a decisão atual de não informar IP.
+
 Revisão das políticas oficiais em 2026-10-28: [política de tiles OSM](https://operations.osmfoundation.org/policies/tiles/)
 exige atribuição visível e respeito às respostas de cache; [política Nominatim](https://operations.osmfoundation.org/policies/nominatim/)
 define o limite de uma requisição por segundo, identifica o cliente no `User-Agent` e proíbe autocomplete no serviço

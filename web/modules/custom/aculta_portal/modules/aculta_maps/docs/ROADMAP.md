@@ -1,7 +1,7 @@
 # Roadmap — ACULTA Maps (`aculta_maps`)
 
 Roadmap único do submódulo. Plano e contrato: `PLANO-IMPLANTACAO.md`.
-Status: MP0–MP2 e MP4–MP5 concluídas tecnicamente; MP3 aguarda revisão de transparência antes da ativação no Runtime; MP6–MP7 pendentes.
+Status: MP0–MP2 e MP4–MP6 concluídas tecnicamente; MP3 aguarda revisão de transparência antes da ativação no Runtime; MP7 pendente.
 
 ## MP0 — Criação do submódulo
 
@@ -55,8 +55,10 @@ Evidência MP5: `33b638ccf`.
 
 ## MP6 — Privacidade
 
-- [ ] Arredondamento de coordenadas de precisão aproximada, antes de sair do serviço. Teste Unit.
-- [ ] Aviso de privacidade visível na página do mapa, com link para a política.
+- [x] Coordenadas de precisão aproximada arredondadas antes de sair do `MapRenderer`; Unit cobre duas casas decimais.
+- [x] Aviso de privacidade visível na página do mapa, com link para `/sobre/politica-de-privacidade`; Kernel cobre a renderização.
+
+Evidência técnica MP6: `58359728f`; testes atuais Maps 10/44 e Events 57/668.
 
 ## MP7 — Verificação e documentação para agentes
 
