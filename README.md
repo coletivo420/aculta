@@ -134,42 +134,65 @@ resultados de testes e status de PR continuam apenas nos changelogs e no GitHub.
 
 ## Bibliotecas usadas
 
-Versões declaradas nos manifestos (`composer.json` e `web/themes/custom/aculta420/package.json`). A lista completa de pacotes Composer está no `composer.json`. Esta tabela cobre o que o projeto usa diretamente ou o que aparece no código, separado por tipo.
+Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package-lock.json`; as restrições declaradas estão no `composer.json` e no `package.json`. A lista completa de pacotes Composer (inclusive transitivos) está no `composer.json`/`composer.lock`. Esta seção cobre o que o projeto usa diretamente, separado por tipo.
 
-### Módulos Drupal (core e contrib)
+### Drupal core
 
-| Biblioteca | Versão declarada | Origem | Uso no projeto |
+| Biblioteca | Versão instalada | Origem | Uso no projeto |
 | --- | --- | --- | --- |
-| Drupal core (`core-recommended`) | ^11.4 | Composer | Base do site (Drupal 11); PHP `>=8.3` no `composer.json` |
-| `drupal/commerce`, `commerce_cart`, `commerce_checkout` | ^3.3 / 3.3.10 | Composer | Loja, carrinhos e checkouts (base de `aculta_commerce` e dos checkouts por contexto) |
-| `drupal/bootstrap` | ^5.0 | Composer | Tema base do ACULTA420 |
-| `drupal/geofield` | ^1 | Composer | Coordenadas de locais (`aculta_events`) |
-| `drupal/search_api` | ^1.40 | Composer | Índice de busca (`aculta_index`) |
-| `drupal/webform` | ^6.3 | Composer | Formulários do site (uso pontual) |
-| `drupal/group` | ^3.3 | Composer | Turmas e grupos do LMS |
-| `drupal/lms` | ^1.2 | Composer | Base de cursos do LMS |
-| `drupal/key` | ^1.22 | Composer | Chaves usadas pelo `SecretsManager` do `aculta_portal` |
-| `drupal/csp`, `drupal/turnstile`, `drupal/captcha` | ^2.2 / ^1.2 / ^2.0 | Composer | Política de segurança de conteúdo e proteção contra robôs |
-| `drupal/ckeditor5_plugin_pack` | ^1.5 | Composer | Editor de texto rico |
+| `drupal/core-recommended`, `core-composer-scaffold`, `core-project-message`, `core-recipe-unpack` | 11.4.10 | Composer | Núcleo do Drupal 11 e scaffolding do Composer |
+
+### Drupal contrib (módulos e tema)
+
+| Biblioteca | Versão instalada | Origem | Uso no projeto |
+| --- | --- | --- | --- |
+| `drupal/commerce`, `commerce_cart`, `commerce_checkout` | 3.3.10 | Composer | Loja, carrinhos e checkouts (base de `aculta_commerce` e dos checkouts por contexto) |
+| `drupal/lms`, `lms_file_upload` | 1.2.4 / 1.0.2 | Composer | Cursos, turmas e upload de atividades do LMS |
+| `drupal/group`, `physical`, `profile` | 3.3.5 / 1.5.0 / 1.14.0 | Composer | Grupos e turmas, dados físicos (endereço) e perfis |
+| `drupal/ckeditor5_plugin_pack` | 1.5.6 | Composer | Editor de texto rico |
+| `drupal/ctools`, `diff`, `fences`, `freelinking`, `history`, `section_library` | 4.1.1 / 2.1.1 / 3.0.9 / 4.0.3 / 1.0.0 / 2.0.1 | Composer | Componentes de conteúdo, comparação de revisões, filtros e bibliotecas de seção |
+| `drupal/ui_patterns`, `ui_patterns_field_group`, `ui_patterns_layouts`, `ui_styles` | 2.0.23 / 2.0.0-beta2 / 2.0.23 / 1.22.0 | Composer | Padrões de UI, layout e estilos do tema |
+| `drupal/webform`, `webform_score` | 6.3.1 / 2.4.0 | Composer | Formulários e notas de formulários |
+| `drupal/entity_embed`, `entity_usage` | 1.7.0 / 5.0.1 | Composer | Incorporação e rastreio de uso de entidades |
+| `drupal/entity_print`, `pdfpreview` | 2.19.0 / 1.2.0 | Composer | Impressão de entidades em PDF e prévia de PDF |
+| `drupal/crop`, `image_widget_crop`, `imagemagick`, `imageapi_optimize_binaries` | 2.6.0 / 3.0.0 / 4.0.2 / 1.2.0-beta1 | Composer | Recorte, tratamento e otimização de imagens |
+| `drupal/media_duplicates`, `media_gallery`, `photoswipe` | 2.0.4 / 3.3.0 / 5.0.12 | Composer | Mídia, galerias e visualização de fotos |
+| `drupal/flag`, `message`, `message_notify`, `message_subscribe` | 5.1.1 / 1.9.0 / 1.5.0 / 2.1.0 | Composer | Marcações, mensagens e assinaturas de notificação |
+| `drupal/private_message`, `node_co_authors` | 3.0.7 / 1.2.3 | Composer | Mensagens privadas e coautoria de conteúdo |
+| `drupal/social_auth`, `social_auth_google` | 4.1.2 / 4.0.3 | Composer | Login social (Google) |
+| `drupal/captcha`, `turnstile`, `csp`, `flood_control` | 2.0.10 / 1.2.0 / 2.2.4 / 3.0.1 | Composer | CAPTCHA/Turnstile, política de segurança de conteúdo e controle de flood |
+| `drupal/security_review`, `username_enumeration_prevention` | 3.1.3 / 1.4.0 | Composer | Revisão de segurança e proteção contra enumeração de usuários |
+| `drupal/key`, `rename_admin_paths`, `role_hierarchy` | 1.22.0 / 3.1.0 / 4.0.0 | Composer | Chaves do `SecretsManager`, caminhos administrativos e hierarquia de papéis |
+| `drupal/login_emailusername`, `content_lock`, `reporting`, `site_alert`, `views_bulk_operations` | 3.0.1 / 3.0.0 / 2.2.0 / 1.4.0 / 4.4.9 | Composer | Login por e-mail/usuário, bloqueio de edição, relatórios, avisos e operações em lote |
+| `drupal/domain` | 3.0.1 | Composer | Multidomínio por purpose (`main`, `account`, `shop`, `courses`, etc.) |
+| `drupal/search_api`, `google_tag` | 1.41.0 / 2.0.9 | Composer | Índice de busca e marcação do Google (GA4) |
+| `drupal/metatag`, `schema_metatag`, `simple_sitemap`, `pathauto`, `redirect` | 2.2.0 / 3.0.4 / 4.2.3 / 1.15.0 / 1.13.0 | Composer | Metadados, sitemap, aliases e redirecionamentos |
+| `drupal/geofield` | 1.67.0 | Composer | Coordenadas de locais (`aculta_events`) |
+| `drupal/vvja`, `vvjb`, `vvjf`, `vvjh`, `vvjl`, `vvjr`, `vvjs`, `vvjt` | 2.0.1 / 2.0.0 / 2.0.1 / 2.0.1 / 2.0.2 / 2.0.1 / 2.0.2 / 2.0.1 | Composer | Componentes VVJ usados pelo tema e por campos de formulário |
+| `drupal/bootstrap` | 5.0.2 | Composer | Tema base do ACULTA420 |
+
+**Documentos e planilhas.** O `aculta_document_viewer` lê DOCX, XLSX e ODS com a extensão PHP `ZipArchive`, sem biblioteca externa de documentos ou planilhas. PDF usa `mozilla/pdfjs-dist` no navegador (front-end), `drupal/pdfpreview` para prévia e `drupal/entity_print` com `dompdf/dompdf` para gerar o PDF.
 
 ### Bibliotecas PHP e integrações
 
-| Biblioteca | Versão declarada | Origem | Uso no projeto |
+| Biblioteca | Versão instalada | Origem | Uso no projeto |
 | --- | --- | --- | --- |
-| `mercadopago/dx-php` | ^3 | Composer | SDK do Mercado Pago, usado pelo `aculta_pagamentos_mercadopago` |
-| `rlanvin/php-rrule` | ^3.0 | Composer | Recorrência de eventos (`aculta_calendar`, D-14, D-16) |
-| `h5p/h5p-core`, `h5p/h5p-editor` | ^1.28 / ^1.25 | Composer | Conteúdo interativo H5P (`aculta_lms_h5p`) |
-| `endroid/qr-code` | ^6.1.3 | Composer | Geração de QR codes (`aculta_qrcode`). QR de ingressos é planejado |
-| `google/apiclient` | ^2.18 | Composer | Conectores do `aculta_statistics` (GA4 e Search Console) |
-| `symfony/brevo-mailer`, `symfony/http-client` | ^7.4 | Composer | Envio de e-mail e cliente HTTP das integrações |
+| `mercadopago/dx-php` | 3.16.0 | Composer | SDK do Mercado Pago, usado pelo `aculta_pagamentos_mercadopago` |
+| `dompdf/dompdf` | 3.1.6 | Composer (transitivo de `entity_print`) | Geração de PDF do `drupal/entity_print` |
+| `rlanvin/php-rrule` | 3.0.0 | Composer | Recorrência de eventos (`aculta_calendar`, D-14, D-16) |
+| `h5p/h5p-core`, `h5p/h5p-editor` | 1.28.0 / 1.25 | Composer | Conteúdo interativo H5P (`aculta_lms_h5p`) |
+| `endroid/qr-code` | 6.1.3 | Composer | Geração de QR codes (`aculta_qrcode`). QR de ingressos é planejado |
+| `google/apiclient` | 2.20.1 | Composer | Conectores do `aculta_statistics` (GA4 e Search Console) |
+| `symfony/brevo-mailer`, `symfony/http-client` | 7.4.13 / 7.4.21 | Composer | Envio de e-mail e cliente HTTP das integrações |
+| `composer/installers`, `composer/semver`, `cweagans/composer-patches` | 2.3.0 / 3.4.4 / 2.0.0 | Composer | Instalação de módulos/temas em `web/`, comparação de versões e aplicação de patches |
 | SDK JavaScript do Mercado Pago (`sdk.mercadopago.com`) | v2 | Carregado de fora | Checkout Pro no navegador |
 
 ### Front-end (JavaScript e CSS)
 
-| Biblioteca | Versão declarada | Origem | Uso no projeto |
+| Biblioteca | Versão instalada | Origem | Uso no projeto |
 | --- | --- | --- | --- |
-| `mozilla/pdfjs-dist` | 6.4.299 | Composer | Visualização de PDF (`aculta_pdf_viewer`) |
-| `photoswipe` | 5.4.4 | Composer | Galerias de imagem (`aculta_gallery`) |
+| `mozilla/pdfjs-dist` | 6.4.299 | Composer | Visualização de PDF (`aculta_pdf_viewer` e `aculta_document_viewer`) |
+| `photoswipe`, `photoswipe-dynamic-caption-plugin` | 5.4.4 / 1.2.7 | Composer | Galerias de imagem (`aculta_gallery`) |
 | `codemirror` | 5.65.12 | Composer | Edição de código em campos administrativos |
 | `select2`, `intl-tel-input`, `inputmask`, `timepicker`, `rateit`, `textcounter` | 4.0.13 / 17.0.19 / 5.0.9 / 1.14.0 / 1.1.5 / 0.9.1 | Composer (jQuery) | Campos de formulário (seleção, telefone, máscara, horário, avaliação e contador) |
 | `tippyjs`, `popperjs`, `tabby`, `progress-tracker`, `signature_pad` | 6.3.7 / 2.11.6 / 12.0.3 / 2.0.7 / 2.3.0 | Composer | Dicas, posicionamento, abas, progresso e assinatura |
@@ -178,11 +201,13 @@ Versões declaradas nos manifestos (`composer.json` e `web/themes/custom/aculta4
 
 ### Ferramentas de desenvolvimento
 
-| Biblioteca | Versão declarada | Origem | Uso no projeto |
+| Biblioteca | Versão instalada | Origem | Uso no projeto |
 | --- | --- | --- | --- |
-| Drush | ^13.8 | Composer | Linha de comando: cache, banco e configuração |
-| ESLint | ^10.13 | npm (tema) | Lint de JavaScript do tema |
-| Stylelint | ^17.16 | npm (tema) | Lint de CSS do tema |
+| Drush | 13.8.0 | Composer | Linha de comando: cache, banco e configuração |
+| `drupal/core-dev` | 11.4.10 | Composer (dev) | PHPUnit, PHPCS, PHPStan e demais ferramentas de teste do core |
+| `drupal/sdc_devel`, `drupal/storybook` | 1.0.3 / 1.0.4 | Composer (dev) | Desenvolvimento de componentes SDC e catálogo visual |
+| ESLint, `@eslint/js`, `globals` | ^10.13 / ^10.0.1 / ^17.13.0 | npm (tema) | Lint de JavaScript do tema |
+| Stylelint, `stylelint-config-recommended` | ^17.16 / ^18.0.0 | npm (tema) | Lint de CSS do tema |
 
 **Planejado, ainda não instalado:**
 - **Leaflet e OpenStreetMap** (mapa padrão de locais, ADR-030). O submódulo `aculta_maps` existe só como documentação.
