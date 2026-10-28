@@ -88,13 +88,13 @@ services:
   aculta_portal.email_confirmation_notice:
     class: Drupal\aculta_portal\Account\EmailConfirmationNotice
     arguments: ['@aculta_portal.email_confirmation_policy', '@current_user', '@current_route_match', '@string_translation', '@module_handler']
-  aculta_portal.simplified_account_confirmation_mail_type:
-    class: Drupal\aculta_portal\Email\SimplifiedAccountConfirmationMailType
+  aculta_portal.email_confirmation_request_mail_type:
+    class: Drupal\aculta_portal\Email\EmailConfirmationRequestMailType
     arguments: ['@string_translation']
     tags:
       - { name: aculta_mailer.type }
-  aculta_portal.email_confirmation_request_mail_type:
-    class: Drupal\aculta_portal\Email\EmailConfirmationRequestMailType
+  aculta_portal.simplified_account_confirmation_mail_type:
+    class: Drupal\aculta_portal\Email\SimplifiedAccountConfirmationMailType
     arguments: ['@string_translation']
     tags:
       - { name: aculta_mailer.type }
@@ -389,6 +389,16 @@ services:
     arguments: ['@aculta_portal.checkout_context_registry']
     tags:
       - { name: aculta_portal.helper }
+  aculta_portal.personal_name_store:
+    class: Drupal\aculta_portal\Checkout\PersonalNameStore
+    arguments: ['@entity_type.manager']
+
+  aculta_portal.personal_name_completion_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\PersonalNameCompletionSubscriber
+    arguments: ['@aculta_portal.personal_name_store']
+    tags:
+      - { name: event_subscriber }
+
   aculta_portal.fiscal_identity_policy:
     class: Drupal\aculta_portal\Checkout\FiscalIdentityPolicy
     arguments: ['@aculta_portal.checkout_settings', '@?aculta_id_cpf.account_document']
