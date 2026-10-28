@@ -81,7 +81,7 @@ aculta_events.agenda:
     _access: 'TRUE'
   options:
     _aculta_domain_purpose: eventos
-    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed}
+    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed, interactive: aculta_events.interactive}
 
 aculta_events.month:
   path: '/calendario/mes/{ano}/{mes}'
@@ -94,7 +94,7 @@ aculta_events.month:
     mes: '\d{1,2}'
   options:
     _aculta_domain_purpose: eventos
-    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed}
+    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed, interactive: aculta_events.interactive}
 
 aculta_events.day:
   path: '/calendario/dia/{ano}/{mes}/{dia}'
@@ -108,7 +108,7 @@ aculta_events.day:
     dia: '\d{1,2}'
   options:
     _aculta_domain_purpose: eventos
-    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed}
+    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed, interactive: aculta_events.interactive}
 
 aculta_events.date_ics:
   path: '/eventos/{slug}/data/{id}/calendario.ics'
@@ -131,7 +131,7 @@ aculta_events.interactive:
     _access: 'TRUE'
   options:
     _aculta_domain_purpose: eventos
-    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed}
+    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed, interactive: aculta_events.interactive}
 
 aculta_events.embed:
   path: '/calendario/incorporar'

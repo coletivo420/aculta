@@ -76,9 +76,9 @@ final class AgendaController extends ControllerBase {
   public function conteudo(bool $incorporado): array {
     $fuso = new \DateTimeZone('America/Sao_Paulo');
     $agora = $this->agora($fuso);
-    $consulta = $this->pilha->getCurrentRequest()->query;
-    $de = $this->dataBr((string) $consulta->get('de'), $fuso) ?? $agora->setTime(0, 0);
-    $ate = $this->dataBr((string) $consulta->get('ate'), $fuso) ?? $de->modify('+30 days');
+    $consulta = $this->pilha->getCurrentRequest()?->query;
+    $de = $this->dataBr((string) $consulta?->get('de'), $fuso) ?? $agora->setTime(0, 0);
+    $ate = $this->dataBr((string) $consulta?->get('ate'), $fuso) ?? $de->modify('+30 days');
     $ate = $ate->setTime(23, 59, 59);
     $aviso = '';
     if ($ate < $de) {
@@ -194,6 +194,10 @@ final class AgendaController extends ControllerBase {
     if ($ics !== NULL) {
       $links[] = '<a href="' . Html::escape($ics) . '">' . Html::escape((string) $this->t('Exportar o período (.ics)')) . '</a>';
     }
+    $interativo = $this->url('interactive');
+    if ($interativo !== NULL) {
+      $links[] = '<a href="' . Html::escape($interativo) . '">' . Html::escape((string) $this->t('Visão interativa')) . '</a>';
+    }
     return $links === [] ? '' : '<p class="aculta-agenda__acoes">' . implode(' · ', $links) . '</p>';
   }
 
@@ -293,9 +297,13 @@ final class AgendaController extends ControllerBase {
    * @return array<string, int>
    */
   private function filtrosDaUrl(): array {
+    $request = $this->pilha->getCurrentRequest();
+    if ($request === NULL) {
+      return [];
+    }
     $filtros = [];
     foreach (array_keys($this->fonte->filtros()) as $chave) {
-      $valor = $this->pilha->getCurrentRequest()->query->getInt($chave);
+      $valor = $request->query->getInt($chave);
       if ($valor > 0) {
         $filtros[$chave] = $valor;
       }

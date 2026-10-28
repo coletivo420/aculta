@@ -31,6 +31,7 @@ final class InteractiveController extends ControllerBase {
     private readonly CalendarItemSource $fonte,
     private readonly CalendarOccurrences $ocorrencias,
     private readonly TimeInterface $tempo,
+    private readonly AgendaController $agendaPagina,
   ) {}
 
   /**
@@ -42,6 +43,7 @@ final class InteractiveController extends ControllerBase {
       $container->get('aculta_calendar.item_source'),
       $container->get('aculta_calendar.occurrences'),
       $container->get('datetime.time'),
+      AgendaController::create($container),
     );
   }
 
@@ -54,6 +56,15 @@ final class InteractiveController extends ControllerBase {
       'aviso' => ['#markup' => Markup::create('<p class="aculta-calendar-interactive__aviso">Visão interativa do calendário. Sem JavaScript, use a agenda em lista.</p>')],
       'componente' => ['#markup' => Markup::create('<div id="aculta-calendar-interactive" class="aculta-calendar-interactive" role="region" aria-label="Calendário interativo de eventos"></div>')],
       'alternativa' => ['#markup' => Markup::create($agenda === NULL ? '' : '<p class="aculta-calendar-interactive__alternativa"><a href="' . Html::escape($agenda) . '">Ver a agenda em lista</a></p>')],
+      // Em telas menores, a grade dá lugar a esta agenda (sem JavaScript, também).
+      'agenda' => [
+        '#type' => 'container',
+        '#attributes' => [
+          'id' => 'aculta-calendar-agenda',
+          'class' => ['aculta-calendar-interactive__agenda'],
+        ],
+        'conteudo' => $this->agendaPagina->conteudo(TRUE),
+      ],
       '#attached' => [
         'library' => ['aculta_calendar/dhtmlx'],
         'drupalSettings' => ['acultaCalendar' => $this->dados()],

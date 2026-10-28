@@ -41,6 +41,14 @@ expande com `CalendarOccurrences` (motor do calendário) e entrega as ocorrênci
 O período é o mês anterior e o seguinte, e a grade abre no mês da primeira ocorrência. Cancelados saem com
 `[Cancelado]`. O motor de recorrência, o `.ics` e a regra de acesso continuam no `aculta_calendar`.
 
+## Responsividade (DH-E)
+
+Abaixo de md (768 px), o JavaScript esconde o componente e mostra a agenda em HTML (`#aculta-calendar-agenda`,
+renderizada pelo `AgendaController`); a partir de md, mostra a grade e esconde a agenda. A alternância reage a
+mudanças de largura. A agenda é a mesma da visão em lista, com `.ics` por dia; nada é escondido sem alternativa.
+Medido no Firefox ESR: 1280 px com a grade (6 eventos) e a agenda escondida; 320 px com o componente escondido e
+a agenda visível, sem rolagem horizontal. O link "Visão interativa" aparece na agenda.
+
 ## Teclado (DH-B)
 
 Medido no Firefox ESR (geckodriver, `DISPLAY=:0`) em 1280 e 320 px: com `scheduler.plugins({ key_nav: true })`

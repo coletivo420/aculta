@@ -33,6 +33,7 @@ final class InteractiveControllerKernelTest extends KernelTestBase {
     $this->assertArrayHasKey('acultaCalendar', $build['#attached']['drupalSettings']);
     $this->assertArrayHasKey('items', $build['#attached']['drupalSettings']['acultaCalendar']);
     $this->assertArrayHasKey('date', $build['#attached']['drupalSettings']['acultaCalendar']);
+    $this->assertArrayHasKey('agenda', $build, 'a agenda em HTML é a alternativa em telas menores');
     $this->assertSame('', (string) $build['alternativa']['#markup'], 'sem rota de agenda informada, não há link');
   }
 
