@@ -31,3 +31,15 @@ aculta_events_openstreetmap.oauth_callback:
   options:
     no_cache: true
   methods: [GET]
+
+aculta_events_openstreetmap.import:
+  path: '/integracoes/openstreetmap/importar'
+  defaults:
+    _form: 'Drupal\aculta_events_openstreetmap\Form\OpenStreetMapImportWizard'
+    _title: 'Importar local do OpenStreetMap'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    no_cache: true
+  methods: [GET, POST]

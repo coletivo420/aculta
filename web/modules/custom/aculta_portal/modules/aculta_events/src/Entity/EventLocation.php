@@ -13,7 +13,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\views\EntityViewsData;
 
 /**
- * Local de evento. Endereço e coordenadas (address e geofield) ficam para a F4.
+ * Local de evento, com endereço, coordenadas e referência OSM opcional.
  */
 #[ContentEntityType(
   id: 'aculta_event_location',
@@ -39,10 +39,12 @@ final class EventLocation extends ContentEntityBase {
    */
   public function preSave(EntityStorageInterface $storage): void {
     parent::preSave($storage);
-    // Geocodifica só quando o endereço muda ou ainda não há coordenadas (uma vez por endereço).
+    // Geocodifica quando o endereço muda ou ainda não há coordenadas.
+    // Cada endereço é geocodificado uma vez.
     $mudouEndereco = !$this->isNew() && $this->original !== NULL
       && $this->original->get('field_endereco')->getValue() !== $this->get('field_endereco')->getValue();
-    // Sem o módulo key (ambiente ou teste isolado), não há chave: a geocodificação é pulada.
+    // Sem o módulo key não há chave e a geocodificação é pulada.
+    // Isso vale para ambientes incompletos e testes isolados.
     if (\Drupal::hasService('key.repository') && ($this->get('field_coordenadas')->isEmpty() || $mudouEndereco)) {
       $texto = $this->enderecoTexto();
       $coordenadas = $texto !== '' ? \Drupal::service('aculta_events.geocoding')->geocodificar($texto) : NULL;
@@ -86,7 +88,8 @@ final class EventLocation extends ContentEntityBase {
       ->setRequired(TRUE)
       ->setSetting('max_length', 255);
 
-    // Exato ou aproximado. Campo próprio, sem origem no OpenCulturas (auditoria, T9).
+    // Exato ou aproximado. Campo próprio, sem origem no OpenCulturas.
+    // Ver auditoria T9.
     $fields['field_precisao'] = BaseFieldDefinition::create('list_string')
       ->setLabel(new TranslatableMarkup('Precisão do endereço'))
       ->setDefaultValue('exato')
@@ -95,7 +98,8 @@ final class EventLocation extends ContentEntityBase {
         'aproximado' => new TranslatableMarkup('Aproximado (só bairro e município)'),
       ]);
 
-    // Tipo de local: termo do vocabulário aculta_location_type (portado do OpenCulturas).
+    // Tipo de local: termo do vocabulário aculta_location_type.
+    // O vocabulário é portado do OpenCulturas.
     $fields['field_tipo'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Tipo de local'))
       ->setSetting('target_type', 'taxonomy_term')
@@ -107,12 +111,21 @@ final class EventLocation extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Endereço'))
       ->setSetting('available_countries', ['BR']);
 
-    // Coordenadas para o mapa (geofield). O endereço é geocodificado no servidor (ADR-014).
+    // Coordenadas para o mapa (geofield).
+    // O endereço é geocodificado no servidor (ADR-014).
     $fields['field_coordenadas'] = BaseFieldDefinition::create('geofield')
       ->setLabel(new TranslatableMarkup('Coordenadas'));
 
     $fields['field_horario'] = BaseFieldDefinition::create('string_long')
       ->setLabel(new TranslatableMarkup('Horário de funcionamento'));
+
+    $fields['field_osm_id'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Identificador do OpenStreetMap'))
+      ->setSetting('max_length', 64);
+
+    $fields['field_osm_version'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Versão do elemento do OpenStreetMap'))
+      ->setSetting('max_length', 32);
 
     return $fields;
   }

@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_events_openstreetmap\Kernel;
 
 use Drupal\aculta_events_openstreetmap\OAuth\OpenStreetMapOAuthClient;
 use Drupal\aculta_events_openstreetmap\OAuth\OpenStreetMapOAuthException;
+use Drupal\aculta_events_openstreetmap\Osm\OpenStreetMapApiClient;
 use Drupal\aculta_events_openstreetmap\Security\OpenStreetMapCredentialProviderInterface;
 use Drupal\aculta_events_openstreetmap\Security\OpenStreetMapEnvironment;
 use Drupal\aculta_events_openstreetmap\Security\OpenStreetMapTokenCipher;
@@ -15,6 +16,7 @@ use Drupal\KernelTests\KernelTestBase;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -41,6 +43,20 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installConfig(['system', 'user']);
+  }
+
+  /**
+   * Common accounts cannot access the integration or its import wizard.
+   */
+  public function testIntegrationRoutesRequireEventAdministration(): void {
+    $provider = $this->container->get('router.route_provider');
+    $access = $this->container->get('access_manager');
+    $account = $this->container->get('current_user')->getAccount();
+    foreach (['aculta_events_openstreetmap.status', 'aculta_events_openstreetmap.import'] as $route_name) {
+      $route = $provider->getRouteByName($route_name);
+      $this->assertSame('administer aculta events', $route->getRequirement('_permission'));
+      $this->assertFalse($access->checkNamedRoute($route_name, [], $account));
+    }
   }
 
   /**
@@ -79,6 +95,20 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
       new OpenStreetMapTokenCipher($missing),
       $defaultEnvironment,
     );
+    $api = new OpenStreetMapApiClient(
+      new Client(['handler' => HandlerStack::create(new MockHandler([]))]),
+      $defaultEnvironment,
+      $missing,
+      $tokenStore,
+      $this->container->get('logger.factory'),
+    );
+    try {
+      $api->update(['type' => 'node', 'id' => '1', 'version' => '1'], ['name' => 'Local fictício'], 'Teste fictício');
+      $this->fail('An OSM edit must be refused without credentials.');
+    }
+    catch (OpenStreetMapOAuthException) {
+      $this->assertTrue(TRUE);
+    }
     $http = new Client(['handler' => HandlerStack::create(new MockHandler([]))]);
     $client = new OpenStreetMapOAuthClient(
       $http,
@@ -126,6 +156,19 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
     $this->assertNull($environment->environment());
     $this->assertNull($environment->apiBaseUrl());
     $this->assertNull($environment->oauthBaseUrl());
+    $api = new OpenStreetMapApiClient(
+      new Client(['handler' => HandlerStack::create(new MockHandler([]))]),
+      $environment,
+      $credentials,
+      new OpenStreetMapTokenStore(
+        $this->container->get('state'),
+        new OpenStreetMapTokenCipher($credentials),
+        $environment,
+      ),
+      $this->container->get('logger.factory'),
+    );
+    $this->expectException(OpenStreetMapOAuthException::class);
+    $api->update(['type' => 'node', 'id' => '1', 'version' => '1'], ['name' => 'Local fictício'], 'Teste fictício');
   }
 
   /**
@@ -199,6 +242,32 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
     $this->assertIsArray($stored);
     $this->assertStringNotContainsString($token, $stored['payload']);
     $this->assertNull($this->container->get('state')->get('aculta_events_openstreetmap.oauth_token.production'));
+
+    $responses = [
+      new Response(200, ['Content-Type' => 'application/xml'], '<osm version="0.6"><node id="100" lat="-23.5" lon="-46.6" version="1"><tag k="name" v="Local fictício"/><tag k="contact:email" v="nao-importar@example.invalid"/></node></osm>'),
+      new Response(200, ['Content-Type' => 'application/xml'], '<osm version="0.6"><node id="100" lat="-23.5" lon="-46.6" version="1"><tag k="name" v="Local fictício"/><tag k="contact:email" v="nao-importar@example.invalid"/></node></osm>'),
+      new Response(200, [], '42'),
+      new Response(200, ['Content-Type' => 'application/xml'], '<osm version="0.6"><node id="100" lat="-23.5" lon="-46.6" version="1"><tag k="name" v="Local fictício"/><tag k="contact:email" v="nao-importar@example.invalid"/></node></osm>'),
+      new Response(200, [], '2'),
+      new Response(200),
+    ];
+    $history = [];
+    $stack = HandlerStack::create(new MockHandler($responses));
+    $stack->push(Middleware::history($history));
+    $api = new OpenStreetMapApiClient(new Client(['handler' => $stack]), $environment, $credentials, $store, $this->container->get('logger.factory'));
+    $found = $api->find('node', '100');
+    $this->assertSame('Local fictício', $found['tags']['name']);
+    $this->assertArrayNotHasKey('contact:email', $found['tags']);
+    $result = $api->update($found, ['name' => 'Local de teste fictício'], 'Atualização de teste fictícia');
+    $this->assertSame(['changeset' => '42', 'version' => '2'], $result);
+    $this->assertCount(6, $history);
+    foreach ($history as $transaction) {
+      $this->assertStringStartsWith('https://master.apis.dev.openstreetmap.org/api/0.6/', (string) $transaction['request']->getUri());
+      $this->assertStringNotContainsString('api.openstreetmap.org/api', (string) $transaction['request']->getUri());
+      if ($transaction['request']->getMethod() !== 'GET') {
+        $this->assertSame('Bearer ' . $token, $transaction['request']->getHeaderLine('Authorization'));
+      }
+    }
   }
 
 }

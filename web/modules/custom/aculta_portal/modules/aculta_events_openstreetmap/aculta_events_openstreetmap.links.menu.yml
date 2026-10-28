@@ -4,3 +4,10 @@ aculta_events_openstreetmap.status:
   route_name: aculta_events_openstreetmap.status
   parent: system.admin_content
   weight: 30
+
+aculta_events_openstreetmap.import:
+  title: 'Importar local do OpenStreetMap'
+  description: 'Busca e revisa um elemento da API ativa antes de importar e enviar alterações.'
+  route_name: aculta_events_openstreetmap.import
+  parent: aculta_events_openstreetmap.status
+  weight: 1

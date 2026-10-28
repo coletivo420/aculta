@@ -36,3 +36,7 @@ services:
   aculta_events_openstreetmap.status_controller:
     class: Drupal\aculta_events_openstreetmap\Controller\OpenStreetMapStatusController
     arguments: ['@aculta_events_openstreetmap.oauth_client', '@aculta_events_openstreetmap.environment', '@aculta_events_openstreetmap.token_store']
+
+  aculta_events_openstreetmap.api_client:
+    class: Drupal\aculta_events_openstreetmap\Osm\OpenStreetMapApiClient
+    arguments: ['@http_client', '@aculta_events_openstreetmap.environment', '@aculta_events_openstreetmap.credentials', '@aculta_events_openstreetmap.token_store', '@logger.factory']

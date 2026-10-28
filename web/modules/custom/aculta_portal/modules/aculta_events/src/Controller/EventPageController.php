@@ -6,6 +6,7 @@ namespace Drupal\aculta_events\Controller;
 
 use Drupal\aculta_events\Cache\EventCacheTags;
 use Drupal\aculta_events\Entity\Event;
+use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -16,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Página pública de um evento (/eventos/{slug}): descrição, datas, locais e organizador.
+ * Página pública de um evento com descrição, datas, locais e organizador.
  *
  * Rascunho e slug inexistente respondem 404, sem confirmar que o evento existe.
  * Cancelado aparece com aviso (MODELO-DE-DADOS.md).
@@ -63,11 +64,12 @@ final class EventPageController extends ControllerBase {
 
     $agora = (new \DateTimeImmutable('@' . $this->tempo->getCurrentTime()))
       ->setTimezone(new \DateTimeZone(UpcomingDates::FUSO));
-    $ocorrencias = $this->proximas->doEvento($evento, $agora, self::HORIZONTE_DIAS);
+    $ocorrencias = $this->proximas
+      ->doEvento($evento, $agora, self::HORIZONTE_DIAS);
 
     $linhas = [];
-    // A tag de lista cobre data criada, editada ou excluída: a página não fica com
-    // max-age longo presa a um conjunto de datas que mudou.
+    // A tag de lista cobre data criada, editada ou excluída.
+    // Evita cache longo com um conjunto de datas desatualizado.
     $tags = array_merge($evento->getCacheTags(), [EventCacheTags::LISTA]);
     foreach ($ocorrencias as $ocorrencia) {
       $local = $ocorrencia['data']->get('field_local')->entity;
@@ -79,13 +81,17 @@ final class EventPageController extends ControllerBase {
       if ($ocorrencia['cancelada'] || $evento->get('field_status')->value === 'cancelado') {
         $texto .= ' <strong>(cancelado)</strong>';
       }
+      if ($local instanceof EventLocation && !$local->get('field_osm_id')->isEmpty()) {
+        $texto .= ' — <a href="https://www.openstreetmap.org/copyright" rel="noopener">'
+          . Html::escape((string) $this->t('© OpenStreetMap contributors')) . '</a>';
+      }
       $linhas[] = ['#markup' => $texto];
     }
 
     // O conjunto de datas muda quando a próxima termina, não a cada requisição.
     $validade = $this->proximas->validade($ocorrencias, $this->tempo->getCurrentTime()) ?? self::VALIDADE_PADRAO;
 
-    // Dados estruturados schema.org (Event), uma entrada por ocorrência listada (até 20).
+    // Dados schema.org (Event), uma entrada por ocorrência listada (até 20).
     $eventosLd = [];
     $urlEvento = Url::fromRoute('aculta_events.page', ['slug' => (string) $evento->get('field_slug')->value], ['absolute' => TRUE])->toString();
     $descricao = mb_substr(trim(strip_tags((string) $evento->get('body')->value)), 0, 500);
@@ -111,11 +117,20 @@ final class EventPageController extends ControllerBase {
     $anexos = [];
     if ($eventosLd !== []) {
       // Escapa "</" para que o JSON não feche a tag de script por acidente.
-      $json = str_replace('</', '<\\/', (string) json_encode(['@context' => 'https://schema.org', '@graph' => $eventosLd], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-      $anexos['html_head'] = [[
-        ['#type' => 'html_tag', '#tag' => 'script', '#attributes' => ['type' => 'application/ld+json'], '#value' => $json],
+      $jsonLd = json_encode(
+        ['@context' => 'https://schema.org', '@graph' => $eventosLd],
+        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
+      );
+      $json = str_replace('</', '<\\/', (string) $jsonLd);
+      $anexos['html_head'][] = [
+        [
+          '#type' => 'html_tag',
+          '#tag' => 'script',
+          '#attributes' => ['type' => 'application/ld+json'],
+          '#value' => $json,
+        ],
         'aculta_events_event_jsonld',
-      ]];
+      ];
     }
 
     $organizador = $evento->get('field_organizador')->entity;

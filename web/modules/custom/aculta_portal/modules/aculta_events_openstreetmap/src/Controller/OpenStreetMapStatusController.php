@@ -59,6 +59,13 @@ final class OpenStreetMapStatusController extends ControllerBase {
         '#attached' => ['library' => ['aculta_portal/integration-popup']],
       ];
     }
+    if ($environment !== NULL) {
+      $build['import'] = [
+        '#type' => 'link',
+        '#title' => $this->t('Importar local do OpenStreetMap'),
+        '#url' => Url::fromRoute('aculta_events_openstreetmap.import'),
+      ];
+    }
     return $build;
   }
 

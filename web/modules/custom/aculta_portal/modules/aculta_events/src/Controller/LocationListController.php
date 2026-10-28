@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Lista textual de locais (/locais). Funciona sem JavaScript; o mapa é progressivo (F4).
+ * Lista textual de locais com mapa progressivo e sem JavaScript (F4).
  */
 final class LocationListController extends ControllerBase {
 
@@ -40,6 +40,10 @@ final class LocationListController extends ControllerBase {
       $linha = '<strong>' . Html::escape((string) $item['local']->label()) . '</strong>';
       if ($item['endereco'] !== '') {
         $linha .= '<br>' . Html::escape($item['endereco']);
+      }
+      if (!$item['local']->get('field_osm_id')->isEmpty()) {
+        $linha .= '<br><a href="https://www.openstreetmap.org/copyright" rel="noopener">'
+          . Html::escape((string) $this->t('© OpenStreetMap contributors')) . '</a>';
       }
       $itens[] = ['#markup' => $linha];
     }

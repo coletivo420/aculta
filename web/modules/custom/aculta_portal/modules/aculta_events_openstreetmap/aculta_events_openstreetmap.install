@@ -1,0 +1,40 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Install and update hooks for ACULTA Events OpenStreetMap.
+ */
+
+/** Installs OSM identity fields when the module is enabled on an existing site. */
+function aculta_events_openstreetmap_install(): void {
+  _aculta_events_openstreetmap_install_identity_fields();
+}
+
+/** Installs OSM identity fields on existing event locations. */
+function aculta_events_openstreetmap_update_10001(): string {
+  $installed = _aculta_events_openstreetmap_install_identity_fields();
+  return $installed === []
+    ? 'OpenStreetMap identity fields already existed on event locations.'
+    : 'Installed OpenStreetMap identity fields: ' . implode(', ', $installed) . '.';
+}
+
+/** Installs identity fields and returns their machine names. */
+function _aculta_events_openstreetmap_install_identity_fields(): array {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $definitions = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event_location');
+  $installed = [];
+  foreach (['field_osm_id', 'field_osm_version'] as $field_name) {
+    if ($manager->getFieldStorageDefinition($field_name, 'aculta_event_location') !== NULL) {
+      continue;
+    }
+    $definition = $definitions[$field_name] ?? NULL;
+    if ($definition === NULL) {
+      throw new \RuntimeException("$field_name is not defined on aculta_event_location.");
+    }
+    $manager->installFieldStorageDefinition($field_name, 'aculta_event_location', 'aculta_events', $definition);
+    $installed[] = $field_name;
+  }
+  return $installed;
+}
