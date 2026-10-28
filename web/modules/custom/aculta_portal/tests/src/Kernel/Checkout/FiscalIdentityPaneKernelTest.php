@@ -166,7 +166,8 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
    */
   public function testVisibleOnlyForCommercialTypes(): void {
     $doc = $this->document([self::MASCARA, self::MASCARA, self::MASCARA]);
-    $this->assertTrue($this->pane('default', $doc)->isVisible());
+    $this->assertTrue($this->pane('curso', $doc)->isVisible());
+    $this->assertFalse($this->pane('default', $doc)->isVisible(), 'Loja não tem painel de CPF.');
     $this->assertTrue($this->pane('curso', $doc)->isVisible());
     $this->assertFalse($this->pane('doacao', $doc)->isVisible());
   }
@@ -182,7 +183,7 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
    * Verifica que, sem documento e com cifra, exige entrada.
    */
   public function testWithoutDocumentAndCipherRequiresInput(): void {
-    $this->assertTrue($this->validate($this->pane('default', $this->document([NULL])))->hasAnyErrors());
+    $this->assertTrue($this->validate($this->pane('curso', $this->document([NULL])))->hasAnyErrors());
   }
 
   /**
@@ -191,7 +192,7 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
   public function testFirstRegistrationSavesOnce(): void {
     $doc = $this->document([NULL, self::MASCARA]);
     $doc->expects($this->once())->method('save');
-    $state = $this->validate($this->pane('default', $doc), ['document' => '52998224725']);
+    $state = $this->validate($this->pane('curso', $doc), ['document' => '52998224725']);
     $this->assertFalse($state->hasAnyErrors());
   }
 
@@ -201,7 +202,7 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
   public function testInvalidInputDoesNotSave(): void {
     $doc = $this->document([NULL]);
     $doc->expects($this->never())->method('save');
-    $this->assertTrue($this->validate($this->pane('default', $doc), ['document' => 'abc'])->hasAnyErrors());
+    $this->assertTrue($this->validate($this->pane('curso', $doc), ['document' => 'abc'])->hasAnyErrors());
   }
 
   /**
@@ -209,14 +210,14 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
    */
   public function testWithoutCipherFailsClosed(): void {
     $doc = $this->document([NULL], FALSE);
-    $this->assertTrue($this->validate($this->pane('default', $doc), ['document' => '52998224725'])->hasAnyErrors());
+    $this->assertTrue($this->validate($this->pane('curso', $doc), ['document' => '52998224725'])->hasAnyErrors());
   }
 
   /**
    * Verifica que o link para Outros Dados devolve ao checkout deste pedido.
    */
   public function testMissingWithCipherOffersOtherDataLink(): void {
-    $pane = $this->pane('default', $this->document([NULL]));
+    $pane = $this->pane('curso', $this->document([NULL]));
     $form = $this->build($pane);
     $this->assertArrayHasKey('document', $form);
     $this->assertArrayHasKey('other_data', $form);
@@ -241,7 +242,7 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
    * Verifica que, sem cifra, não há link: falha fechada mostra só o aviso.
    */
   public function testMissingWithoutCipherHasNoLink(): void {
-    $pane = $this->pane('default', $this->document([NULL], FALSE));
+    $pane = $this->pane('curso', $this->document([NULL], FALSE));
     $form = $this->build($pane);
     $this->assertArrayNotHasKey('document', $form);
     $this->assertArrayNotHasKey('other_data', $form);
@@ -255,7 +256,7 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
   public function testValidDocumentIsMaskedAndReadOnly(): void {
     $doc = $this->document([self::MASCARA]);
     $doc->expects($this->never())->method('save');
-    $pane = $this->pane('default', $doc);
+    $pane = $this->pane('curso', $doc);
     $form = $this->build($pane);
     $this->assertArrayNotHasKey('document', $form);
     $this->assertArrayNotHasKey('other_data', $form);
@@ -283,7 +284,7 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
   public function testUnavailableFailsClosedAndDoesNotSave(): void {
     $doc = $this->document([NULL], TRUE, FALSE);
     $doc->expects($this->never())->method('save');
-    $pane = $this->pane('default', $doc);
+    $pane = $this->pane('curso', $doc);
     $form = $this->build($pane);
     $this->assertArrayNotHasKey('document', $form);
     $this->assertArrayHasKey('status', $form);

@@ -51,12 +51,13 @@ final class FiscalIdentityPolicy {
   /**
    * Indica se o pedido exige identidade fiscal.
    *
-   * Loja sempre exige. No LMS, apenas cursos com preço base maior que zero
-   * exigem; pedidos sem composição reconhecível continuam fail-closed.
+   * Só o LMS exige: o CPF vai ao certificado. A loja não exige (decisão do responsável, 2026-10-28; o Mercado Pago
+   * não exige CPF nem endereço no pagador). No LMS, apenas cursos com preço base maior que zero exigem;
+   * pedidos sem composição reconhecível continuam fail-closed.
    */
   public function requiresDocument(OrderInterface $order): bool {
     if ($order->bundle() === $this->settings->shopOrderType()) {
-      return TRUE;
+      return FALSE;
     }
     if (!in_array($order->bundle(), $this->settings->lmsOrderTypes(), TRUE)) {
       return FALSE;

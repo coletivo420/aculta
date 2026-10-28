@@ -8,12 +8,18 @@ Este documento registra a inventariação (R0), as decisões do responsável e a
 
 > **Decisão de 2026-10-23:** cancelar a substituição de `aculta_id_cpf` por `aculta_associado_id`. A implementação `aculta_id_cpf` é mantida como módulo oficial. `aculta_associado_id` será descontinuado e removido de maneira controlada, após auditoria das dependências e do Runtime. Os dados de associação pertencem ao domínio de usuários/perfis e não justificam um segundo módulo de identidade fiscal.
 
+> **Decisão de 2026-10-28 (responsável):** o CPF/CNPJ é exigido **somente no fluxo do LMS**, porque o CPF é usado no certificado.
+> A loja não exige CPF. **Achado:** o Mercado Pago aceitou a criação de preferência de pagamento sem CPF e sem endereço do
+> pagador (sonda no ambiente de teste, 2026-10-28), então não há exigência do gateway. A regra passou a ser só do LMS em
+> `FiscalIdentityPolicy::requiresDocument()` (loja → FALSE; LMS pago → TRUE; doação → FALSE). Testes unitários atualizados;
+> o teste de kernel precisa de banco isolado (`SIMPLETEST_DB`), que não está configurado neste ambiente.
+
 > Em 2026-10-23, o responsável determinou que os checkouts comerciais da Loja e do LMS utilizem a mesma política obrigatória de identidade fiscal, baseada no documento mantido em `/dados/outros-dados` pelo `aculta_id_cpf`. O checkout padrão de doações permanece dispensado. A exigência não se aplica à participação gratuita no LMS nem implica fusão física de carrinhos ou pedidos.
 
 | Contexto | CPF/CNPJ | Regra |
 |---|---|---|
-| Loja (`aculta_commerce`) | Obrigatório para concluir compra | Documento cadastrado e válido antes da conclusão |
-| LMS, cursos pagos | Obrigatório para concluir compra | Mesma regra da Loja |
+| Loja (`aculta_commerce`) | **Não exigido** (decisão de 2026-10-28, ver abaixo) | Sem painel de CPF no checkout da loja |
+| LMS, cursos pagos | Obrigatório para concluir compra | Documento cadastrado e válido antes da conclusão; o CPF vai ao certificado |
 | LMS, acesso gratuito / matrícula sem checkout comercial | Não exigido | Nenhuma alteração na política de matrículas |
 | Doações (`aculta_donation`) | Não obrigatório | Checkout de doação preservado |
 

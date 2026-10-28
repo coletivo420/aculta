@@ -12,7 +12,7 @@ exigida na Loja e no LMS. Este documento trata dos campos de cada formulário.
 |---|---|---|---|
 | Doação (`doacao`) | E-mail e nome | Fluxo `doacao`: formulário simplificado, sem CPF | E-mail confirmado no painel de contato (`double_entry`). O nome vem do painel de doação, a confirmar. |
 | LMS, curso pago (`curso`) | E-mail, nome completo e CPF/CNPJ | Fluxo próprio do LMS (`curso`): contato, nome e sobrenome (painel `aculta_personal_name`), identidade fiscal e pagamento. Sem endereço de cobrança e sem envio. | Fluxo criado no servidor de testes (2026-10-28). Falta verificar no navegador com um curso publicado. |
-| Loja (`default`) | Identidade fiscal (CPF/CNPJ), endereço de cobrança e envio | Fluxo `default` | Conforme. |
+| Loja (`default`) | Endereço de cobrança e envio (CPF/CNPJ **não** exigido desde 2026-10-28) | Fluxo `default` | Conforme. |
 | Carrinho misto (mais de um tipo de pedido no mesmo checkout) | O formulário com mais dados obrigatórios | Fluxo `default` (loja), que é o mais completo | Conforme, por ser o fluxo da loja. |
 
 Assinatura de doação (`assinatura`) segue o fluxo `assinatura_flow`, fora desta decisão.

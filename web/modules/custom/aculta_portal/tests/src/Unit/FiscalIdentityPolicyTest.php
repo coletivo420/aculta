@@ -80,7 +80,7 @@ final class FiscalIdentityPolicyTest extends UnitTestCase {
    */
   public function testLojaLmsExigemDocumentoDoacoesDispensadas(): void {
     $policy = new FiscalIdentityPolicy($this->settings());
-    $this->assertTrue($policy->requiresDocument($this->order('default')), 'Loja exige.');
+    $this->assertFalse($policy->requiresDocument($this->order('default')), 'Loja não exige (CPF só no LMS).');
     $this->assertTrue($policy->requiresDocument($this->order('curso')), 'LMS exige.');
     $this->assertFalse($policy->requiresDocument($this->order('doacao')), 'Doação não exige.');
     $this->assertFalse($policy->requiresDocument($this->order('assinatura')), 'Assinatura não exige.');
