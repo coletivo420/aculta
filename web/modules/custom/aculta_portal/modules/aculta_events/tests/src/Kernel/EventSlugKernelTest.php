@@ -19,7 +19,7 @@ final class EventSlugKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'address', 'geofield', 'options', 'text', 'filter', 'taxonomy', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = ['system', 'user', 'key', 'address', 'geofield', 'options', 'text', 'filter', 'taxonomy', 'aculta_calendar', 'aculta_events'];
 
   /**
    * {@inheritdoc}

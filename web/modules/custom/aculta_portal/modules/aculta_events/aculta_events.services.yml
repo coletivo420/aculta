@@ -11,3 +11,6 @@ services:
   aculta_events.locations:
     class: Drupal\aculta_events\Catalogue\LocationCatalogue
     arguments: ['@entity_type.manager']
+  aculta_events.geocoding:
+    class: Drupal\aculta_events\Geocoding\GeocodingService
+    arguments: ['@http_client', '@key.repository', '@logger.factory']

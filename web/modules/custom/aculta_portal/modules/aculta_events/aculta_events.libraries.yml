@@ -1,0 +1,6 @@
+mapa:
+  js:
+    js/aculta-map.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings

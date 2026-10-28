@@ -6,6 +6,7 @@ namespace Drupal\aculta_events\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -30,6 +31,47 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   ],
 )]
 final class EventLocation extends ContentEntityBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preSave(EntityStorageInterface $storage): void {
+    parent::preSave($storage);
+    // Geocodifica só quando o endereço muda ou ainda não há coordenadas (uma vez por endereço).
+    $mudouEndereco = !$this->isNew() && $this->original !== NULL
+      && $this->original->get('field_endereco')->getValue() !== $this->get('field_endereco')->getValue();
+    // Sem o módulo key (ambiente ou teste isolado), não há chave: a geocodificação é pulada.
+    if (\Drupal::hasService('key.repository') && ($this->get('field_coordenadas')->isEmpty() || $mudouEndereco)) {
+      $texto = $this->enderecoTexto();
+      $coordenadas = $texto !== '' ? \Drupal::service('aculta_events.geocoding')->geocodificar($texto) : NULL;
+      if ($coordenadas !== NULL) {
+        $this->set('field_coordenadas', [
+          'lat' => $coordenadas['lat'],
+          'lon' => $coordenadas['lng'],
+          'value' => sprintf('POINT (%F %F)', $coordenadas['lng'], $coordenadas['lat']),
+          'geo_type' => 'Point',
+        ]);
+      }
+    }
+  }
+
+  /**
+   * Endereço em texto para a geocodificação (sem CEP genérico quando há rua).
+   */
+  private function enderecoTexto(): string {
+    $item = $this->get('field_endereco')->first();
+    if ($item === NULL) {
+      return '';
+    }
+    $e = $item->getValue();
+    return trim(implode(', ', array_filter([
+      (string) ($e['address_line1'] ?? ''),
+      (string) ($e['locality'] ?? ''),
+      (string) ($e['administrative_area'] ?? ''),
+      (string) ($e['postal_code'] ?? ''),
+      'Brasil',
+    ])));
+  }
 
   /**
    * {@inheritdoc}

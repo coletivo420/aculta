@@ -9,6 +9,7 @@ dependencies:
   - drupal:options
   - drupal:taxonomy
   - address:address
+  - key:key
   - geofield:geofield
   - drupal:user
   - aculta_portal:aculta_calendar

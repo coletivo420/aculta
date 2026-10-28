@@ -28,3 +28,13 @@ aculta_events.locations:
     _access: 'TRUE'
   options:
     _aculta_domain_purpose: eventos
+
+aculta_events.map:
+  path: '/mapa'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\MapController::page'
+    _title: 'Mapa de locais'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
