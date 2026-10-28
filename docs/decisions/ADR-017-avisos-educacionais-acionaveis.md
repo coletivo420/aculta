@@ -2,7 +2,7 @@
 
 **Status:** aceito em 2026-10-21 pelo responsável.
 **Escopo:** eventos de turma produzidos pelo LMS e entregues pelo Messenger.
-**Origem:** `0.1.0-dev.63` e decisões F13 em
+**Origem:** `0.1.0-dev.17`, `0.1.0-dev.18`, `0.1.0-dev.63` e decisões F13 em
 [histórico do LMS](../history/changelog/aculta_lms.md).
 
 ## Contexto
