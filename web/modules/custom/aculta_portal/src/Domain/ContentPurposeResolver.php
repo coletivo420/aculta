@@ -123,6 +123,11 @@ final class ContentPurposeResolver {
       }
     }
 
+    // Tipos do módulo de eventos (aculta_events) pertencem ao purpose eventos (MODELO-DE-DADOS.md).
+    if (in_array($routeName, ['entity.aculta_event.canonical', 'entity.aculta_event_date.canonical', 'entity.aculta_event_location.canonical'], TRUE)) {
+      return 'eventos';
+    }
+
     if ($routeName === 'entity.taxonomy_term.canonical') {
       $parameter = $request->attributes->get('taxonomy_term');
       if ($parameter === NULL && $raw instanceof ParameterBag) {

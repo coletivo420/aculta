@@ -29,6 +29,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   ],
   handlers: [
     'storage' => 'Drupal\Core\Entity\Sql\SqlContentEntityStorage',
+    'access' => 'Drupal\aculta_events\Access\EventAccessControlHandler',
   ],
 )]
 final class Event extends ContentEntityBase {
