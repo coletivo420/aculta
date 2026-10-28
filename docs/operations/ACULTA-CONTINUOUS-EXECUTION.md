@@ -1456,3 +1456,11 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - Verificado no Runtime: submódulo habilitado, campos instalados, rotas `/painel-administrativo/eventos/locais`, `/painel-administrativo/eventos/datas-relacionadas`, `/integracoes/openstreetmap/configuracao` e `/integracoes/openstreetmap/importar` presentes. Acesso anônimo HTTP: Views e configuração OSM `403`. MAIN `https://aculta.toca.net.br/` e Loja `https://loja.aculta.toca.net.br/` responderam `200`.
 - SecretsManager consultado sem exibir valores: `OSM_TEST_CLIENT_ID`, `OSM_TEST_CLIENT_SECRET` e `ACULTA_OSM_TOKEN_ENCRYPTION_KEY` ausentes. Nenhuma conexão de escrita ou envio OSM foi feita. Produção não foi acessada.
 - Gates no banco `aculta_simpletest`: Events `62 testes, 672 assertions, 27 depreciações`; OSM `4 testes, 49 assertions, 12 depreciações`; PHP lint `65 arquivos`; `git diff --check` passou.
+
+## Configuração explícita da API ativa do OSM no checkout de teste — 2026-10-28
+
+- Autorização: D-45, registrada em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`, permite explicitamente ao checkout de teste usar a API ativa do OSM; as decisões anteriores já exigiam segredos fora do Git. Não foi solicitado nem executado envio de edição nesta etapa.
+- Ambiente verificado antes da ação: hostname `toca`; Drush URI `http://default`; raiz `/home/piradopirata/projetos/aculta/web`; banco `aculta_runtime`; HEAD `aad9608f4`. Nenhuma troca de checkout, atualização de banco ou importação de configuração ocorreu.
+- Em `secrets/aculta.secrets.env` (fora do Git, proprietário `aculta:aculta`, modo `0640`) foram provisionados o ID e o segredo da aplicação OAuth da API ativa, além de `ACULTA_OSM_TOKEN_ENCRYPTION_KEY` aleatória. Valores deliberadamente omitidos deste registro.
+- Em `web/sites/default/settings.local.php` foi definida explicitamente a seleção `production` para `aculta_openstreetmap_environment`, limitada ao checkout local de teste e não versionada. `drush cr` concluiu.
+- Verificação read-only via Drush: ambiente do site `test`; API selecionada `production`; base de API `https://api.openstreetmap.org/api/0.6`; OAuth `https://www.openstreetmap.org`; ID, segredo e chave de cifra presentes. Nenhum valor foi impresso. Nenhum OAuth foi concluído e nenhuma escrita no mapa foi feita.

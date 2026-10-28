@@ -22,7 +22,7 @@ Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem 
 | E7 | `openculturas_map` | `aculta_maps` (D-19): Leaflet + OSM público (padrão e fallback); Google Maps opcional; link de rota sem API (ADR-030) | **Pendente após conferência do código:** `aculta_maps` ainda só tem documentação; o controller e a geocodificação continuam em `aculta_events` e usam Google quando a chave está configurada. Ainda faltam a migração MP0/MP1 e o agrupamento de marcadores. Os nós públicos de termos e privacidade agora usam `/sobre/termos-de-uso` e `/sobre/politica-de-privacidade`; o Runtime de teste confirmou ambos HTTP 200 e os aliases antigos HTTP 404, sem redirects. O conteúdo ainda precisa revisão específica dos provedores de mapa; nenhuma verificação visual OSM foi realizada | ADR-030, D-19; aliases no Runtime verificados em 2026-10-28 |
 | E8 | `openculturas_section` (cor por vocabulário) | Frente B, B2 (cores fechadas) | **Feito** no tema. Consumidor na Revista pendente | `15a3f0488` |
 | E9 | `openculturas_faq` | Submódulo `aculta_faq`: FAQ e blocos editoriais | **Código implementado; minuta editorial preparada** em `aculta_faq/docs/CONTEUDO-PERGUNTAS-FREQUENTES-RASCUNHO.md`, redigida dos fluxos atuais do ACULTA sem reproduzir texto da origem. Cadastro e publicação aguardam revisão editorial | `f34dbe5b5`, `5b3284bec` |
-| E10 | `openculturas_openstreetmap`: assistente administrativo (Find → Select → Review → Save) para importar e enviar dados de local ao OSM (`PushData`) | `aculta_events_openstreetmap`, integração OAuth2 e fluxo revisável por ambiente (D-45) | **Código anterior implementado e submódulo ativo no Runtime de teste.** A seleção da API ativa agora é possível somente com configuração explícita; o teste continua usando a API de desenvolvimento por padrão. Credenciais OAuth ainda não estão provisionadas no arquivo de segredos do teste; configuração live e envio real permanecem pendentes. Nenhuma escrita real foi realizada. Kernel: 4 testes/53 assertions, 12 deprecações; lint, phpcs e contrato de segredos passam. D-26 revogada por D-45 | `5dfb7ac0c`, `3b1fe6572`, `4078138b7`, ativação anterior `0f1f384d8`; seleção explícita D-45 `edb7e338f` |
+| E10 | `openculturas_openstreetmap`: assistente administrativo (Find → Select → Review → Save) para importar e enviar dados de local ao OSM (`PushData`) | `aculta_events_openstreetmap`, integração OAuth2 e fluxo revisável por ambiente (D-45) | **Código implementado e submódulo ativo no Runtime de teste.** D-45 permite selecionar explicitamente a API ativa no teste; o endpoint live e as credenciais OAuth estão configurados no checkout de teste, com segredo e chave de cifra somente em `secrets/`. OAuth ainda não foi concluído e nenhuma escrita no OSM foi feita. Cada alteração segue sujeita a revisão e confirmação explícita no assistente. Kernel: 4 testes/53 assertions, 12 depreciações; lint, phpcs e contrato de segredos passam | `5dfb7ac0c`, `3b1fe6572`, `4078138b7`, ativação anterior `0f1f384d8`, seleção explícita `edb7e338f` |
 | T5 | `SmartDateUpcomingFormatter` | `DateRangeUpcomingFormatter` com `daterange` do core, cache até a próxima data | **Feito** | `56725c71d` |
 | D-15 | Calendário e LMS (decisão própria, sem origem no OC) | `aculta_lms_agenda` e painel do aluno | **Acesso confirmado**: provedor exige membership na turma publicada e acesso ao curso publicado; Kernel cobre turma correta, turma diferente e ausência de matrícula. Fixture agora instala o tipo de campo `link` exigido pelo evento | `ac43e7d94`, `9766bb731`, `df76938ae`, `86f247d4e` |
 | R | Recorrência `smart_date_recur` (replicada, com modificações próprias, D-14) | `aculta_calendar` (validador, expansão) e `aculta_events` (regra e ocorrência) | **Feito na v1.** Regra, expansão e edição de recorrência/ocorrência concluídas; a página do evento agora mostra os links de administração apenas para quem tem permissão, com cache variado por `user.permissions`. Kernel confirma links para administrador e ausência para público | `5f3b61ee7`, `1caa5fc7d`, `dcea19c4a`, `b9144b142`, `c4919bbb3` |
@@ -33,21 +33,19 @@ O que o OpenCulturas faz: um assistente em `/admin/config/services/openculturas_
 OSM correspondente a um local, deixa escolher quais campos copiar, mostra a revisão e salva. O envio ao OSM usa OAuth
 e fica ativo no modo de desenvolvimento.
 
-Decisão D-26 autorizou a importação e o envio revisável na v1. A busca/importação é distinta do provedor de
-mapa, e não altera a escolha do mapa. Chamadas OAuth seguem `/integracoes/openstreetmap/...` e o popup padrão
-do Portal. Os endpoints de teste e produção são segregados; o default seguro é a API de teste, enquanto
-produção exige configuração explícita e correspondência com o ambiente do site.
+Decisão D-45 revogou D-26 e autorizou explicitamente o checkout de teste a usar a API ativa do OSM. A busca/importação
+é distinta do provedor de mapa e não altera sua escolha. Chamadas OAuth seguem `/integracoes/openstreetmap/...` e o
+popup padrão do Portal. O default segue a API de desenvolvimento; neste checkout de teste a API ativa está selecionada
+explicitamente, e as credenciais de produção ficam no arquivo de segredos local, nunca em configuração versionada.
 
 Revisão registrada em 2026-10-28: a [política da API do OpenStreetMap](https://operations.osmfoundation.org/policies/api/)
 define a API de edição para alterar dados do mapa, não como API somente de leitura; importação e edição devem permanecer
 no fluxo explícito de revisão e contribuição, sem consultas em lote. A página de
 [copyright e licença do OSM](https://www.openstreetmap.org/copyright) identifica a licença ODbL e exige atribuição.
-O ACULTA exibe atribuição e link para essa licença nos dados importados de local. O fluxo OAuth2 e o assistente
-de revisão estão implementados em código, mas o módulo está desativado no Runtime; a ativação aguarda autorização para
-configuração. Nenhum envio real foi feito nesta execução. Antes de testar envio, provisionar credenciais separadas para
-`master.apis.dev.openstreetmap.org` em `secrets/` e usar apenas dados fictícios; a
-[documentação do servidor de desenvolvimento](https://wiki.openstreetmap.org/wiki/Dev_Server_Account) confirma que
-ele é isolado dos dados de produção. Produção permanece fora desta execução.
+O ACULTA exibe atribuição e link para essa licença nos dados importados de local. O módulo está ativo no Runtime de
+teste, e o `SecretsManager` confirma presença das credenciais e da chave de cifra sem revelar valores. A URL OAuth e
+a API resolvidas são as de produção por configuração explícita local. OAuth ainda não foi concluído; nenhum envio real
+foi feito. Uma escrita live requer escolha de um objeto real e de uma correção factual para revisão no assistente.
 
 ## Não copiar (decidido)
 
@@ -71,7 +69,7 @@ ele é isolado dos dados de produção. Produção permanece fora desta execuç�
 
 1. E2: Views e exportação via provedor estão implementadas e ativas no Runtime de teste (`0f1f384d8`); o status focal está sincronizado. Não importar o restante do sync enquanto houver divergências amplas fora do escopo.
 2. E7: iniciar MP0/MP1 em `aculta_maps` conforme D-19; só depois fechar OSM, agrupamento e link da política quando a URL pública existir. O código atual em `aculta_events` ainda usa Google.
-3. E10: fluxo Find → Select → Review → Save implementado e módulo ativo no Runtime (`0f1f384d8`). Envio real de teste aguarda credenciais próprias no SecretsManager do ambiente de teste; nenhuma escrita real foi feita.
+3. E10: fluxo Find → Select → Review → Save implementado e módulo ativo no Runtime (`0f1f384d8`). D-45, commit `edb7e338f`, permite explicitamente API ativa a partir do checkout de teste; credenciais e chave de cifra foram provisionadas apenas em `secrets/` e a seleção live local foi verificada. OAuth e uma edição factual revisada ainda não foram concluídos.
 4. R: regra, ocorrência e links de administração concluídos (`c4919bbb3`).
 5. F5: **feito** no `aculta_calendar` (D-20): agenda, grade do mês, dia, `.ics` e `/calendario/incorporar`, com o `aculta_events` como provedor de itens. Falta o calendário no `main` (D6).
 6. F6, F7, F8, F9.
