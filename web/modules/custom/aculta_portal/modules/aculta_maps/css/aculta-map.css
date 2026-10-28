@@ -1,16 +1,16 @@
 .aculta-map {
   min-height: 20rem;
   width: 100%;
-  background: #e8e7e3;
+  background: var(--aculta-media-stage-bg, #e8dfcc);
 }
 
 .aculta-map__cluster {
   align-items: center;
   background: rgb(22 101 52 / 88%);
-  border: 3px solid #fff;
+  border: 3px solid var(--aculta-surface-raised, #fff);
   border-radius: 50%;
   box-shadow: 0 1px 5px rgb(0 0 0 / 35%);
-  color: #fff;
+  color: var(--aculta-text-inverse, #fff);
   display: flex;
   font-size: 0.875rem;
   font-weight: 700;
@@ -19,8 +19,13 @@
 }
 
 .aculta-map__cluster:focus-visible {
-  outline: 3px solid #111;
+  outline: 3px solid var(--aculta-focus-ring, #111);
   outline-offset: 2px;
+}
+
+.aculta-map__location-route {
+  display: inline-block;
+  margin-inline-start: 0.5rem;
 }
 
 .aculta-map .leaflet-popup-content p {

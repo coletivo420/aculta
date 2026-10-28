@@ -65,6 +65,7 @@ final class MapController extends ControllerBase {
           '#type' => 'link',
           '#title' => $this->t('Ver rota'),
           '#url' => $this->routeLinks->build($item['endereco']),
+          '#options' => ['attributes' => ['class' => ['aculta-map__location-route']]],
         ];
       }
       $itens[] = $itemRender;

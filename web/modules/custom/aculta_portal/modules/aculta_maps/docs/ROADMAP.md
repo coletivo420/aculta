@@ -1,7 +1,7 @@
 # Roadmap — ACULTA Maps (`aculta_maps`)
 
 Roadmap único do submódulo. Plano e contrato: `PLANO-IMPLANTACAO.md`.
-Status: MP0–MP2 e MP4–MP6 concluídas tecnicamente; documentação de MP7 atualizada; MP3/MP7 aguardam revisão de transparência antes de ativar e visualizar no Runtime.
+Status: MP0–MP7 verificados no Runtime de teste, com OSM como provedor padrão. A política pública não foi alterada após a decisão de não informar IP.
 
 ## MP0 — Criação do submódulo
 
@@ -32,7 +32,7 @@ Evidência de MP2: `cac0efbba`.
 - [x] Geocodificação com Nominatim: 1 req/s global, User-Agent, coordenadas armazenadas no local, sem autocompletar.
 - [x] Lista alternativa textual funciona sem JavaScript.
 
-Pendente para fechar a ativação de MP3 no Runtime: adicionar à política pública a informação sobre tiles OSM e envio do IP. A página de teste atual ainda não menciona os provedores; a decisão sobre a alteração de conteúdo está aguardando resposta.
+Runtime de teste ativado com OSM após ordem explícita do responsável. A política não foi alterada conforme decisão de não informar IP; esse ponto de transparência continua registrado como pendência editorial.
 
 Evidência técnica MP3: `58359728f`.
 
@@ -62,6 +62,8 @@ Evidência técnica MP6: `58359728f`; testes atuais Maps 10/44 e Events 57/668.
 
 ## MP7 — Verificação e documentação para agentes
 
-- [ ] Verificação no Firefox ESR (`DISPLAY=:0`): desktop 1280 px, 320 px e modo escuro, com capturas em `$SUITE_OUT`. **Pendente:** o módulo ainda não está ativo no Runtime; ativá-lo sem atualização da política geraria requisições externas sem a divulgação exigida pelo ADR-030.
+- [x] Firefox ESR visível em `DISPLAY=:0`: desktop 1280 px, viewport real de 320 px e modo escuro; sem overflow horizontal. Capturas e JSON em `/home/piradopirata/aculta-suite-out/mp7-maps`.
 - [x] README do módulo documenta API, responsabilidades dos consumidores e chaves.
 - [x] ADR-030 registra o estado de implementação e o bloqueio de transparência.
+
+Evidência MP7: smoke no servidor `eventos.aculta.toca.net.br`; configuração ativa `openstreetmap`. O catálogo do Runtime de teste não tem marcador com coordenadas, então a presença do marcador aproximado é validada pela Kernel `MapControllerKernelTest`.

@@ -46,11 +46,11 @@ final class MapControllerKernelTest extends KernelTestBase {
   public function testOsmMapRendersWithoutCredentials(): void {
     EventLocation::create([
       'title' => 'Casa de cultura',
-      'field_precisao' => 'exato',
+      'field_precisao' => 'aproximado',
       'field_coordenadas' => [
-        'lat' => -16.68,
-        'lon' => -49.26,
-        'value' => 'POINT (-49.26 -16.68)',
+        'lat' => -16.68123,
+        'lon' => -49.26011,
+        'value' => 'POINT (-49.26011 -16.68123)',
         'geo_type' => 'Point',
       ],
       'field_endereco' => [
@@ -65,6 +65,10 @@ final class MapControllerKernelTest extends KernelTestBase {
     $pagina = MapController::create($this->container)->page();
     $this->assertArrayHasKey('mapa', $pagina);
     $this->assertContains('aculta_maps/map', $pagina['mapa']['#attached']['library']);
+    $marcadores = $pagina['mapa']['#attached']['drupalSettings']['acultaMaps']['aculta-map']['markers'];
+    $this->assertCount(1, $marcadores);
+    $this->assertSame(-16.68, $marcadores[0]['lat']);
+    $this->assertSame(-49.26, $marcadores[0]['lng']);
     $this->assertStringContainsString('Casa de cultura', (string) \Drupal::service('renderer')->renderInIsolation($pagina['lista']));
     $aviso = (string) \Drupal::service('renderer')->renderInIsolation($pagina['aviso']);
     $this->assertStringContainsString('OpenStreetMap', $aviso);
