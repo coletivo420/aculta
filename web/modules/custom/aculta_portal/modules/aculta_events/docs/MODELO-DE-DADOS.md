@@ -28,7 +28,8 @@ Uma ocorrência do evento, em um local, em um intervalo.
 | Campo | Tipo Drupal | Origem OpenCulturas | Observação |
 | --- | --- | --- | --- |
 | `field_evento` | entity_reference (`aculta_event`) | referência do `date` ao `event` | Obrigatório |
-| `field_quando` | smartdate | `field_date` (`smartdate`) | Início, fim, dia inteiro |
+| `field_quando` | daterange (core) | `field_date` (`smartdate`) | Início e fim. Sem contrib: a decisão de 2026-10-28 dispensou `smart_date` (dependência de `simshaun/recurr` conflita com `doctrine/collections` 3.x) |
+| `field_dia_inteiro` | boolean | `field_date` (`smartdate`) | Dia inteiro. Quando marcado, só a data de `field_quando` é usada e o fim é exclusivo (RFC 5545) |
 | `field_local` | entity_reference (`aculta_event_location`) | `field_location` | Opcional se for virtual |
 | `field_link_virtual` | link | `field_location_virtual` | Para evento on-line |
 | `field_modo` | list_string | `field_attendance_mode` | Presencial, on-line ou híbrido |

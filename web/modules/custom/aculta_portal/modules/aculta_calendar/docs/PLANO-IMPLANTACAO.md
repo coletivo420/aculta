@@ -52,7 +52,7 @@ Não criar aliases temporários nem redirecionamentos (`AGENTS.md`). Caminho ant
 
 ## Dados e regras
 
-- Fonte: `aculta_event_date` (campo `field_quando`, do tipo smartdate). Ver `MODELO-DE-DADOS.md`.
+- Fonte: `aculta_event_date` (campo `field_quando`, `daterange` do core, com `field_dia_inteiro`). Ver `MODELO-DE-DADOS.md`. Recorrência própria, sem `smart_date`, conforme a decisão D-13.
 - Só datas publicadas e não canceladas entram na agenda; canceladas aparecem com aviso no evento.
 - Datas passadas: saem da agenda principal e ficam no arquivo (`/calendario/arquivo`, a incluir na
   fase F5 se aprovado).
