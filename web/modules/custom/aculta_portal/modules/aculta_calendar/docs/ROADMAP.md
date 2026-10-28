@@ -42,8 +42,9 @@ Decisão do responsável em 2026-10-28; detalhes, origem e hashes em `DHTMLX.md`
 - [x] DH-E — grade a partir de md; agenda em HTML abaixo; link "Visão interativa" na agenda.
 - [x] DH-F — plano de saída documentado em `DHTMLX.md`.
 - [x] Tamanho medido: JS 151.259 B gzip; CSS 13.040 B gzip; HTML 5.106 B.
-- [ ] Leitor de tela (Orca instalado; anúncio não automatizado) e alto contraste (skins só em LESS, sem CSS compilado).
-- [ ] Olivero: bloqueado pelo `drush cr` quebrado em `aculta_user/PeopleListController.php`.
+- [x] Alto contraste: botão com `aria-pressed`; `contrast-black` em 11.94:1 (texto/fundo) e 7.28:1 (evento).
+- [x] Olivero: 13/13 no Firefox ESR; tema restaurado.
+- [ ] Leitor de tela (Orca instalado; anúncio não automatizado).
 
 ## Importação revisável de arquivos iCalendar
 

@@ -12,6 +12,8 @@ dhtmlx:
   css:
     theme:
       css/dhtmlx/dhtmlxscheduler.css: { preprocess: false }
+      css/dhtmlx/contrast_white.css: { preprocess: false }
+      css/dhtmlx/contrast_black.css: { preprocess: false }
   dependencies:
     - core/drupal
     - core/drupalSettings

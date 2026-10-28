@@ -51,13 +51,13 @@ A visão é opcional e isolada; a saída não perde dados:
 | --- | --- |
 | Teclado (Firefox ESR) | Passou: Tab entra (`tabindex=0`, foco em `dhx_focus_slot`) e as setas movem o foco interno, em 1280 e 320 px; em 320 a visão é a agenda. |
 | Leitor de tela | Orca está instalado, mas o anúncio não foi automatizado nesta sessão; os ARIA (`role=application`, `aria-label`) foram medidos no piloto. **Pendente.** |
-| Alto contraste | O pacote 7.2.15 traz `contrast_white` e `contrast_black` só em LESS, sem CSS compilado. **Não testado; pendente.** |
-| Tamanho servido | JS 539.946 B (151.259 B gzip); CSS 113.465 B (13.040 B gzip); HTML da rota 5.106 B. Primeiro carregamento da rota ~164 KB; depois, cache do navegador. |
-| ACULTA420 | Testado (Kernel/Unit e Firefox ESR). |
-| Olivero | **Bloqueado:** `drush cr` falha em `aculta_user/PeopleListController.php` (arquivo de outra sessão), então não foi possível trocar o tema com segurança. |
+| Alto contraste | Passou: botão "Alto contraste" com `aria-pressed`; `contrast-black` com 11.94:1 (texto/fundo, AAA) e 7.28:1 (evento, AA). Os temas vêm dos blocos `contrast_white`/`contrast_black` do pacote, copiados como CSS. |
+| Tamanho servido | JS 539.946 B (151.259 B gzip); CSS 113.465 B (13.040 B gzip) + 3.736 B dos temas de contraste; HTML da rota 5.106 B. Primeiro carregamento da rota ~164 KB; depois, cache do navegador. |
+| ACULTA420 | Testado (Kernel/Unit e Firefox ESR), 16/16. |
+| Olivero | Passou: 13/13 no Firefox ESR com o tema Olivero; tema restaurado para aculta420. |
 
-Enquanto o leitor de tela, o alto contraste e o Olivero não forem verificados, a visão **não é considerada pronta**.
-Ela fica atrás de uma rota opcional e pode ser desligada pelo plano acima.
+Enquanto o leitor de tela não for verificado, a visão **não é considerada pronta**. Ela fica atrás de uma rota
+opcional e pode ser desligada pelo plano acima.
 
 ## Dados (DH-D)
 

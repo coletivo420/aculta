@@ -12,17 +12,39 @@
         return;
       }
       const agenda = document.getElementById('aculta-calendar-agenda');
+      const botao = document.getElementById('aculta-calendar-contrast');
+      if (botao && botao.dataset.acultaContraste !== '1') {
+        botao.dataset.acultaContraste = '1';
+        botao.addEventListener('click', () => {
+          const atual = document.documentElement.getAttribute('data-scheduler-theme');
+          const proximo = atual === 'contrast-black' ? 'contrast-white' : atual === 'contrast-white' ? '' : 'contrast-black';
+          if (proximo) {
+            document.documentElement.setAttribute('data-scheduler-theme', proximo);
+          }
+          else {
+            document.documentElement.removeAttribute('data-scheduler-theme');
+          }
+          botao.setAttribute('aria-pressed', proximo ? 'true' : 'false');
+          botao.textContent = proximo === 'contrast-black' ? 'Alto contraste (branco)' : proximo === 'contrast-white' ? 'Voltar ao tema padrão' : 'Alto contraste';
+        });
+      }
       const mq = window.matchMedia('(max-width: 767px)');
       const aplicar = () => {
         // Abaixo de md, a grade dá lugar à agenda em HTML (a alternativa).
         if (mq.matches) {
           container.hidden = true;
+          if (botao) {
+            botao.hidden = true;
+          }
           if (agenda) {
             agenda.hidden = false;
           }
           return;
         }
         container.hidden = false;
+        if (botao) {
+          botao.hidden = false;
+        }
         if (agenda) {
           agenda.hidden = true;
         }
