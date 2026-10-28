@@ -47,8 +47,10 @@ final class CheckoutSlugMap {
    */
   public static function toPublic(string $path): ?string {
     if (preg_match('#^/apoiar/(\d+)/([a-z_]+)$#', $path, $d)) {
+      // Só a etapa interna com slug público vira outro caminho. Os demais (inclusive os já públicos) não são
+      // redirecionados: o assinante de URLs antigas trataria a conversão para o próprio caminho como loop.
       $publico = array_search($d[2], self::DONATION_STEPS, TRUE);
-      return self::DONATION_PREFIX . '/' . $d[1] . '/' . ($publico !== FALSE ? $publico : $d[2]);
+      return $publico === FALSE ? NULL : self::DONATION_PREFIX . '/' . $d[1] . '/' . $publico;
     }
     if (!preg_match('#^/checkout/(\d+)(?:/([a-z_]+))?(/.*)?$#', $path, $m)) {
       return NULL;
