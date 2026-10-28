@@ -13,10 +13,12 @@ Entrada: plano aprovado.
 - [x] Decisões D1–D11 registradas (`PLANO-IMPLANTACAO.md`, seção 3). D11: commits na PR atual.
 - [x] ADR do provedor de mapa: `docs/decisions/ADR-014-provedor-mapa-google-maps.md` (Google Maps como padrão, D7).
 - [x] ADR do purpose `eventos`: `docs/decisions/ADR-015-purpose-eventos.md`.
-- [ ] Verificar compatibilidade com Core ^11.4 de `smart_date`, `geofield` e `address`.
+- [x] D-13: campo de data com `daterange` do core, sem `smart_date` (incompatível com `doctrine/collections` 3.x via `simshaun/recurr`).
+- [ ] Verificar compatibilidade com Core ^11.4 de `geofield` e `address` quando entrarem no código.
+- [x] D-14: recorrência própria na v1, com `rlanvin/php-rrule` 3.0 (commit `dcea19c4a`, `7ae9e54e4`). **Pendente de confirmação:** a dependência entrou no `composer.json`; registrar a autorização de `composer require` ou reverter.
 - [ ] Revisar termos e cobrança da Google Maps Platform (JavaScript API e Geocoding API) e o aviso de privacidade.
 - [x] Auditoria do OpenCulturas (`AUDITORIA-OPENCULTURAS.md`): nenhum arquivo copiado diretamente; achados S1 a S8 e T1 a T14 viram tarefas de F2–F6.
-- [ ] Revisar licenças: código GPL-2.0-or-later copiado e ícones Phosphor (MIT).
+- [ ] Revisar licenças: código GPL-2.0-or-later adaptado (ORIGEM-OPENCULTURAS.md) e ícones Phosphor (MIT), se usados.
 
 Saída: decisões registradas; nenhuma dependência nova instalada ainda.
 
@@ -38,10 +40,12 @@ Saída: `https://eventos.aculta.toca.net.br/` responde no ambiente de teste (pá
 
 Entrada: F1 concluída.
 
-- [ ] Tipos `aculta_event`, `aculta_event_date`, `aculta_event_location` (`MODELO-DE-DADOS.md`).
-- [ ] Vocabulários `aculta_event_type` e `aculta_location_type`.
-- [ ] Permissões e formulários; `ContentPurposeResolver` cobre os tipos novos.
-- [ ] Testes Kernel de acesso por purpose e de datas.
+- [x] Entidades `Evento` e `Local`, e entidade de data com exceção e expansão de ocorrências (commits `0e6d81397`, `bb0a907c8`).
+- [x] Vocabulário `aculta_event_type`, com migração de `event_type` (update 10001, commit `8668fc957`).
+- [ ] Vocabulário `aculta_location_type`.
+- [x] Permissões, acesso ao evento e purpose das rotas de evento (commit `5226494e2`).
+- [ ] `ContentPurposeResolver` cobre os tipos novos (confirmar).
+- [ ] Testes Kernel de acesso por purpose e de datas (confirmar cobertura).
 
 Saída: cadastro funcional em teste, sem view pública.
 
@@ -75,11 +79,27 @@ Entrada: F3 concluída.
 
 - [ ] Visão de agenda (lista) e visão de mês (a partir de `md`).
 - [ ] Filtros compartilhados com o catálogo.
-- [ ] Exportação `.ics` de uma data e do calendário inteiro (ICS próprio).
+- [x] Gerador `.ics` próprio (E6): escape RFC 5545, CR/LF como espaço, horário de Brasília (commit `a26bff741`, `e8e8d0151`). Exportação de página ainda pendente.
+- [x] Allowlist do `source_uri` do embed (E5, commit `7985bc36f`). Rota `/calendario/incorporar` ainda pendente; depende do purpose `eventos` estar ativo.
+- [x] Validador (R1) e expansão de série na janela (R2) da recorrência (commits `5f3b61ee7`, `1caa5fc7d`).
 - [ ] Incorporação por iframe em `/calendario/incorporar`, com política de `frame-ancestors` decidida.
 - [ ] Calendário também no `main` (D6): mesmas rotas de agenda, canonical e sitemap conforme a regra de produção.
 
 Saída: calendário e exportação em teste, nos dois purposes (`main` e `eventos`).
+
+## Itens de incorporação do OpenCulturas ainda não concluídos
+
+- [x] Formatter de datas futuras (T5, commit `56725c71d`), sem smart_date e sem cron de invalidação.
+- [ ] E3: hooks de datas (`nodeViewAlter`, `viewsPostExecute`) reescritos em classes com `#[Hook]`, cache até a próxima data.
+- [ ] E4: pré-preenchimento de data com checagem de acesso, **se** for necessário. O `nodePrepareForm` original não é copiado (S1).
+- [ ] E2: views de locais e de datas relacionadas, sem export com telefone e e-mail (S5).
+- [ ] E9 (opcional, I-15): FAQ. Só se o responsável pedir.
+
+## Integração com LMS (D-15)
+
+- [x] `aculta_lms_agenda`: prazos e eventos de turma para matriculados (commit `ac43e7d94`).
+- [x] Bloco de próximos prazos e eventos no painel do aluno (commit `9766bb731`).
+- [ ] Campo `field_turma` em `aculta_event` e acesso restrito a matriculados, conforme `aculta_lms_agenda/docs/INTEGRACAO.md`. Confirmar a cobertura.
 
 ## Fase F6 — Visual e acessibilidade
 
@@ -88,7 +108,7 @@ Entrada: F3 e F5 concluídas.
 - [ ] Componentes SDC em `aculta420` com stories (`VISUAL.md`).
 - [ ] Modo claro e escuro por tokens.
 - [ ] Teste em 320 px, zoom de 200% e teclado.
-- [ ] Revisão visual no Firefox ESR (`DISPLAY=:0`), com capturas fora do repositório.
+- [ ] Revisão visual no Firefox ESR (`DISPLAY=:0`), com capturas fora do repositório. Sem revisão registrada até aqui (a frente B revisou só a View de álbuns).
 
 Saída: revisão visual aprovada pelo responsável.
 
