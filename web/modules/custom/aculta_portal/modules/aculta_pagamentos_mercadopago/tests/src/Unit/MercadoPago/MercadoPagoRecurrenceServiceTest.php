@@ -12,6 +12,7 @@ use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Tests\UnitTestCase;
 use MercadoPago\Client\Common\RequestOptions;
+use MercadoPago\Net\MPSearchRequest;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -90,6 +91,7 @@ final class MercadoPagoRecurrenceServiceTest extends UnitTestCase {
         'frequencia' => 1,
         'back_url' => 'https://retorno.example.invalid/ok',
       ],
+      'plan-intent-basic',
     );
     $this->assertSame(['id' => 'plan-1', 'init_point' => 'https://www.mercadopago.com.br/x'], $resultado);
     $this->assertSame(30.0, $capturado->payload['auto_recurring']['transaction_amount']);
@@ -112,11 +114,51 @@ final class MercadoPagoRecurrenceServiceTest extends UnitTestCase {
       'back_url' => 'https://retorno.example.invalid/ok',
     ];
 
-    $servico->criarPlano($gateway, $dados);
+    $servico->criarPlano($gateway, $dados, 'plan-intent-1');
     $primeira = $capturado->options->getCustomHeaders()['x-idempotency-key'];
-    $servico->criarPlano($gateway, $dados);
+    $servico->criarPlano($gateway, $dados, 'plan-intent-1');
 
     $this->assertSame($primeira, $capturado->options->getCustomHeaders()['x-idempotency-key']);
+  }
+
+  /**
+   * Identical plan data from distinct create intents must not collide.
+   */
+  public function testIdenticalPlansUseDistinctIdempotencyKeysForDistinctIntents(): void {
+    $capturado = new \stdClass();
+    $servico = $this->servico($this->cliente((object) ['id' => 'plan-1'], $capturado));
+    $gateway = $this->createMock(PaymentGatewayInterface::class);
+    $dados = [
+      'motivo' => 'Apoio mensal',
+      'valor' => '30.00',
+      'moeda' => 'BRL',
+      'frequencia' => 1,
+      'back_url' => 'https://retorno.example.invalid/ok',
+    ];
+
+    $servico->criarPlano($gateway, $dados, 'plan-intent-1');
+    $primeira = $capturado->options->getCustomHeaders()['x-idempotency-key'];
+    $servico->criarPlano($gateway, $dados, 'plan-intent-2');
+
+    $this->assertNotSame($primeira, $capturado->options->getCustomHeaders()['x-idempotency-key']);
+  }
+
+  /**
+   * Invalid create intent identifiers are rejected before any SDK call.
+   */
+  public function testCreatePlanRejectsInvalidIntentIdentifier(): void {
+    $this->expectException(\InvalidArgumentException::class);
+    $this->servico(new \stdClass())->criarPlano(
+      $this->createMock(PaymentGatewayInterface::class),
+      [
+        'motivo' => 'Apoio mensal',
+        'valor' => '30.00',
+        'moeda' => 'BRL',
+        'frequencia' => 1,
+        'back_url' => 'https://retorno.example.invalid/ok',
+      ],
+      'not a valid intent',
+    );
   }
 
   /**
@@ -133,7 +175,7 @@ final class MercadoPagoRecurrenceServiceTest extends UnitTestCase {
       'moeda' => 'BRL',
       'frequencia' => 1,
       'back_url' => 'https://retorno.example.invalid/ok',
-    ]);
+    ], 'plan-intent-invalid-id');
   }
 
   /**
@@ -182,6 +224,105 @@ final class MercadoPagoRecurrenceServiceTest extends UnitTestCase {
   }
 
   /**
+   * Plan search validates pagination and every returned remote identifier.
+   */
+  public function testSearchPlansUsesBoundedPaginationAndValidatesIds(): void {
+    $capturado = new \stdClass();
+    $cliente = new class($capturado) {
+
+      public function __construct(private \stdClass $capturado) {}
+
+      /**
+       * Search plans and capture the request.
+       */
+      public function search(MPSearchRequest $request): object {
+        $this->capturado->request = $request;
+        return (object) [
+          'results' => [(object) ['id' => 'plan-1'], (object) ['id' => 'plan-2']],
+          'paging' => (object) ['total' => 2, 'limit' => 25, 'offset' => 0],
+        ];
+      }
+
+    };
+    $result = $this->servico($cliente)->listarPlanos(
+      $this->createMock(PaymentGatewayInterface::class),
+      25,
+      0,
+    );
+
+    $this->assertSame(25, $capturado->request->getLimit());
+    $this->assertSame(0, $capturado->request->getOffset());
+    $this->assertSame(['plan-1', 'plan-2'], array_map(static fn (object $plan): string => $plan->id, $result['results']));
+    $this->assertSame(2, $result['paging']->total);
+  }
+
+  /**
+   * Invalid plan search pagination fails before calling the provider.
+   */
+  public function testSearchPlansRejectsInvalidPaginationBeforeProviderCall(): void {
+    $this->expectException(\InvalidArgumentException::class);
+    $this->servico(new \stdClass())->listarPlanos(
+      $this->createMock(PaymentGatewayInterface::class),
+      0,
+      0,
+    );
+  }
+
+  /**
+   * A search response with a malformed plan ID fails closed.
+   */
+  public function testSearchPlansRejectsMalformedRemotePlanIds(): void {
+    $client = new class {
+
+      /**
+       * Return an invalid plan identifier.
+       */
+      public function search(MPSearchRequest $request): object {
+        return (object) ['results' => [(object) ['id' => ['invalid']]]];
+      }
+
+    };
+    $this->expectException(MercadoPagoApiException::class);
+    $this->servico($client)->listarPlanos($this->createMock(PaymentGatewayInterface::class));
+  }
+
+  /**
+   * Duplicate remote plan identifiers fail closed.
+   */
+  public function testSearchPlansRejectsDuplicateRemoteIds(): void {
+    $client = new class {
+
+      /**
+       * Return two results with the same identifier.
+       */
+      public function search(MPSearchRequest $request): object {
+        return (object) ['results' => [(object) ['id' => 'plan-1'], (object) ['id' => 'plan-1']]];
+      }
+
+    };
+    $this->expectException(MercadoPagoApiException::class);
+    $this->servico($client)->listarPlanos($this->createMock(PaymentGatewayInterface::class));
+  }
+
+  /**
+   * A malformed search result collection fails closed.
+   */
+  public function testSearchPlansRejectsMalformedResultsCollection(): void {
+    $client = new class {
+
+      /**
+       * Return a result collection with an invalid shape.
+       */
+      public function search(MPSearchRequest $request): object {
+        return (object) ['results' => (object) ['id' => 'plan-1']];
+      }
+
+    };
+    $this->expectException(MercadoPagoApiException::class);
+    $this->servico($client)->listarPlanos($this->createMock(PaymentGatewayInterface::class));
+  }
+
+  /**
    * Tests invalid email rejection before the Mercado Pago SDK call.
    */
   public function testCreateSubscriptionRejectsInvalidEmailBeforeSdkCall(): void {
@@ -227,6 +368,48 @@ final class MercadoPagoRecurrenceServiceTest extends UnitTestCase {
     $dados['referencia'] = 'commerce-order-43';
     $servico->criarAssinatura($this->createMock(PaymentGatewayInterface::class), $dados);
     $this->assertNotSame($primeira, $capturado->options->getCustomHeaders()['x-idempotency-key']);
+  }
+
+  /**
+   * Malformed provider subscription IDs fail closed without string coercion.
+   */
+  public function testCreateSubscriptionRejectsMalformedProviderId(): void {
+    $capturado = new \stdClass();
+    $resposta = (object) [
+      'id' => ['unexpected'],
+      'init_point' => 'https://www.mercadopago.com.br/subscriptions/checkout',
+      'status' => 'pending',
+    ];
+    $servico = $this->servico($this->cliente($resposta, $capturado));
+
+    $this->expectException(MercadoPagoApiException::class);
+    $servico->criarAssinatura($this->createMock(PaymentGatewayInterface::class), [
+      'email' => 'buyer@example.invalid',
+      'back_url' => 'https://retorno.example.invalid/ok',
+      'referencia' => 'commerce-order-42',
+      'plano_id' => 'plan-1',
+    ]);
+  }
+
+  /**
+   * Pending subscriptions cannot redirect to an origin outside Mercado Pago.
+   */
+  public function testCreateSubscriptionRejectsForeignAuthorizationOrigin(): void {
+    $capturado = new \stdClass();
+    $resposta = (object) [
+      'id' => 'sub-1',
+      'init_point' => 'https://mercadopago.com.br.attacker.invalid/checkout',
+      'status' => 'pending',
+    ];
+    $servico = $this->servico($this->cliente($resposta, $capturado));
+
+    $this->expectException(MercadoPagoApiException::class);
+    $servico->criarAssinatura($this->createMock(PaymentGatewayInterface::class), [
+      'email' => 'buyer@example.invalid',
+      'back_url' => 'https://retorno.example.invalid/ok',
+      'referencia' => 'commerce-order-42',
+      'plano_id' => 'plan-1',
+    ]);
   }
 
   /**
@@ -279,6 +462,7 @@ final class MercadoPagoRecurrenceServiceTest extends UnitTestCase {
           'frequencia' => 1,
           'back_url' => 'https://retorno.example.invalid/ok',
         ],
+        'plan-intent-timeout',
       );
       $this->fail('Expected the transport error to be normalized.');
     }

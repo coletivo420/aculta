@@ -111,7 +111,7 @@ configuração de logging referencia o channel.
 
 | Hook | Arquivo | O que faz | Decisão proposta |
 |---|---|---|---|
-| `entity_presave` | `src/Hook/EntitySaveHooks.php:20-35` | Impede habilitar o gateway sem credenciais do ambiente (fail-closed) | **Mover** para o MP como hook próprio |
+| `entity_presave` | `src/Hook/EntitySaveHooks.php` | Mantém o gateway ativo e remove credenciais da configuração salva; a ausência de chaves bloqueia operações financeiras, não a sincronização segura de configuração | **Movido** para o MP como hook próprio |
 | `entity_access` | `src/Hook/EntityHooks.php:99-107` | Proíbe editar o gateway pelo formulário padrão | **Mover** para o MP |
 | `form_alter` | `src/Hook/FormHooks.php:160-180` | Transforma tokens em campos de senha no formulário do gateway | **Mover** para o MP |
 | `entity_bundle_field_info` | `src/Hook/ProfileAddressAliasHooks.php` | Expõe `address` computado no perfil | **Fica no Portal** — usado por Doação, Melhor Envio e MP |

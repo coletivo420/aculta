@@ -19,6 +19,7 @@ services:
       - [addProvider, ['@aculta_studio.experience.marley']]
       - [addProvider, ['@aculta_studio.experience.ganjalab']]
       - [addProvider, ['@aculta_studio.experience.we_sativa']]
+      - [addProvider, ['@aculta_studio.experience.mercado_pago_plans']]
   aculta_studio.experience.marley:
     class: Drupal\aculta_studio\Experience\MarleyExperienceProvider
     arguments: ['@aculta_studio.marley_presenter', '@current_user']
@@ -56,6 +57,9 @@ services:
   aculta_studio.experience.we_sativa:
     class: Drupal\aculta_studio\Experience\WeSativaExperienceProvider
     arguments: ['@?aculta_wiki.contributor_workspace', '@current_user']
+  aculta_studio.experience.mercado_pago_plans:
+    class: Drupal\aculta_studio\Experience\MercadoPagoPlansExperienceProvider
+    arguments: ['@module_handler']
   aculta_studio.ganjalab_controller:
     class: Drupal\aculta_studio\Controller\GanjalabController
     arguments: ['@aculta_studio.experience_manager', '@current_user']

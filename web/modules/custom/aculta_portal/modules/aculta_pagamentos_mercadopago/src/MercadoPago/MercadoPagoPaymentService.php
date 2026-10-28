@@ -53,24 +53,39 @@ final class MercadoPagoPaymentService implements PaymentOperationsInterface {
       $remoto = $this->consultar($locked_payment, $remote_id);
       $status = (string) ($remoto->status ?? '');
       $valor = $locked_payment->getAmount();
-      if ($valor === NULL || !is_numeric($remoto->transaction_amount ?? NULL)
-        || $this->decimal((string) $remoto->transaction_amount) !== $this->decimal($valor->getNumber())
+      if ($valor === NULL) {
+        throw new MercadoPagoApiException('Os dados do pagamento remoto não correspondem ao pagamento local.');
+      }
+      $precision = MercadoPagoAmount::currencyPrecision($valor->getCurrencyCode());
+      try {
+        $remote_amount = MercadoPagoAmount::normalize($remoto->transaction_amount ?? NULL, $precision);
+        $local_amount = MercadoPagoAmount::normalize($valor->getNumber(), $precision);
+      }
+      catch (MercadoPagoApiException $exception) {
+        throw new MercadoPagoApiException($exception->getMessage(), 0, $exception);
+      }
+      if ($remote_amount !== $local_amount
         || ($remoto->currency_id ?? NULL) !== $valor->getCurrencyCode()) {
         throw new MercadoPagoApiException('Os dados do pagamento remoto não correspondem ao pagamento local.');
       }
-      $estornado_remoto = $remoto->transaction_amount_refunded ?? 0;
-      if (!is_numeric($estornado_remoto) || (float) $estornado_remoto < 0
-        || (float) $estornado_remoto > (float) $valor->getNumber()) {
+      try {
+        $estornado_remoto = MercadoPagoAmount::normalize($remoto->transaction_amount_refunded ?? 0, $precision);
+      }
+      catch (MercadoPagoApiException $exception) {
+        throw new MercadoPagoApiException('O valor de estorno informado pelo Mercado Pago é inválido.', 0, $exception);
+      }
+      if (bccomp($estornado_remoto, '0', $precision) < 0 || bccomp($estornado_remoto, $local_amount, $precision) > 0) {
         throw new MercadoPagoApiException('O valor de estorno informado pelo Mercado Pago é inválido.');
       }
-      if ($status === 'refunded' && (float) $estornado_remoto <= 0) {
+      if ($status === 'refunded' && bccomp($estornado_remoto, '0', $precision) <= 0) {
         throw new MercadoPagoApiException('O Mercado Pago não informou o total estornado.');
       }
       $decisao = $this->politica->decidirSincronizacao(
         $status,
         $locked_payment->getState()->getId(),
-        $this->decimal($valor->getNumber()),
-        $this->decimal((string) $estornado_remoto),
+        $local_amount,
+        $estornado_remoto,
+        $precision,
       );
 
       $locked_payment->setRemoteState($status);
@@ -249,13 +264,6 @@ final class MercadoPagoPaymentService implements PaymentOperationsInterface {
       throw new \DomainException((string) new TranslatableMarkup('O pagamento local não corresponde ao registro recarregado.'));
     }
     return $fresh;
-  }
-
-  /**
-   * Valor decimal com duas casas, sem aritmética em float.
-   */
-  private function decimal(string|int|float|null $valor): string {
-    return bcadd((string) ($valor ?? '0'), '0', 2);
   }
 
 }

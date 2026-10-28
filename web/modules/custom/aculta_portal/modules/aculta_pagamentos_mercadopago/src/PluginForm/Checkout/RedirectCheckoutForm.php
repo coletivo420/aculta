@@ -4,6 +4,7 @@ namespace Drupal\aculta_pagamentos_mercadopago\PluginForm\Checkout;
 
 use Drupal\aculta_pagamentos_mercadopago\Plugin\Commerce\PaymentGateway\CheckoutPro;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRedirectUrl;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\commerce_payment\PluginForm\PaymentOffsiteForm as BasePaymentOffsiteForm;
 use Drupal\commerce_price\Price;
@@ -150,7 +151,8 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       return $form;
     }
 
-    // Doação: não há endereço de cobrança (o fluxo pede só e-mail e nome). O pagador usa o nome do painel e o e-mail.
+    // Doação não tem endereço de cobrança (só pede e-mail e nome). O pagador
+    // usa o nome do painel e o e-mail.
     $billing_profile = $order->getBillingProfile();
     $address = NULL;
     if ($billing_profile && !$billing_profile->get('address')->isEmpty()) {
@@ -351,11 +353,19 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
       return $form;
     }
 
-    $preference_id = $preference->id;
+    $redirect = self::preferenceRedirect($preference);
+    if ($redirect === NULL) {
+      $this->logPreferenceFailure();
+      $this->messenger->addError($this->t('Mercado Pago did not return a valid checkout link. Please contact the administrator.'));
+      return $form;
+    }
+    $preference_id = $redirect['id'];
+    $redirect_url = $redirect['url'];
 
     // Use init_point for redirect; sandbox_init_point may be unreliable in test
-    // mode.
-    $form['#action'] = $preference->init_point;
+    // mode. Validate the provider origin before exposing it to the form or
+    // popup.
+    $form['#action'] = $redirect_url;
 
     $order->setData('commerce_mercado_pago_checkout', [
       'preference_id' => $preference_id,
@@ -365,11 +375,6 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
 
     $public_key = $payment_gateway_plugin->getPublicKey();
 
-    $redirect_url = $preference->init_point ?? '';
-    if ($redirect_url === '') {
-      $this->messenger->addError($this->t('Mercado Pago redirect URL is missing.'));
-      return $form;
-    }
     $data = [
       'return' => $form['#return_url'],
       'cancel' => $form['#cancel_url'],
@@ -434,6 +439,29 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
     $options = new RequestOptions(NULL, NULL, ['x-idempotency-key' => $idempotency_key]);
     $client = $this->clientFactory->criar('preferencias', $gateway);
     return $client->create($request, $options);
+  }
+
+  /**
+   * Returns safe preference data for an external redirect, or NULL.
+   *
+   * @return array{id: string, url: string}|null
+   *   Scalar provider ID and validated official checkout URL.
+   */
+  private static function preferenceRedirect(mixed $preference): ?array {
+    if (!is_object($preference)) {
+      return NULL;
+    }
+    $id = $preference->id ?? NULL;
+    $url = $preference->init_point ?? NULL;
+    if ((!is_string($id) && !is_int($id)) || !is_string($url)) {
+      return NULL;
+    }
+    $id = trim((string) $id);
+    $url = trim($url);
+    if ($id === '' || !MercadoPagoRedirectUrl::isValid($url)) {
+      return NULL;
+    }
+    return ['id' => $id, 'url' => $url];
   }
 
   /**

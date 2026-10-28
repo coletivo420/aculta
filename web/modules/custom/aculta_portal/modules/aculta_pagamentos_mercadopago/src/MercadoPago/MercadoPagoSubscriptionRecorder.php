@@ -61,7 +61,10 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   public const STATUS_PAUSADA = 'paused';
   public const STATUS_CANCELADA = 'canceled';
 
-  private const LOCK_PREFIX = 'aculta_pagamentos_mercadopago.subscription.';
+  /**
+   * Serializes data writes from different events that belong to one order.
+   */
+  private const ORDER_LOCK_PREFIX = 'aculta_pagamentos_mercadopago.subscription_order.';
 
   /**
    * Ordem de exibição dos status no painel. */
@@ -194,13 +197,13 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
       throw new \InvalidArgumentException('Pedido inválido para assinatura recorrente.');
     }
     $pedido_id = (string) $pedido->id();
-    $lock_id = self::LOCK_PREFIX . 'create-order.' . $pedido_id;
+    $lock_id = self::ORDER_LOCK_PREFIX . $pedido_id;
     if (!$this->lock->acquire($lock_id, 30)) {
       throw new MercadoPagoApiException((string) new TranslatableMarkup('A autorização da doação já está sendo iniciada. Tente novamente.'), 503);
     }
 
     try {
-      $pedido_atual = $this->entidades('commerce_order')->load($pedido_id);
+      $pedido_atual = $this->entidades('commerce_order')->loadUnchanged($pedido_id);
       if (!$pedido_atual instanceof OrderInterface || $pedido_atual->bundle() !== self::TIPO_PEDIDO) {
         throw new \InvalidArgumentException('Pedido de assinatura não encontrado.');
       }
@@ -214,7 +217,7 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
         if ($status === self::STATUS_ATIVA) {
           return ['id' => $assinatura_id, 'status' => $status, 'init_point' => ''];
         }
-        if ($status !== self::STATUS_PENDENTE || $init_point === '') {
+        if ($status !== self::STATUS_PENDENTE || !MercadoPagoRedirectUrl::isValid($init_point)) {
           throw new MercadoPagoApiException((string) new TranslatableMarkup('A assinatura existente não pode ser autorizada neste checkout. Atualize a página.'), 409);
         }
         return ['id' => $assinatura_id, 'status' => $status, 'init_point' => $init_point];
@@ -244,11 +247,13 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
         }
         throw $exception;
       }
-      $assinatura_id = trim((string) ($assinatura['id'] ?? ''));
-      $init_point = trim((string) ($assinatura['init_point'] ?? ''));
-      $status = trim((string) ($assinatura['status'] ?? self::STATUS_PENDENTE));
+      $assinatura_id = $this->providerString($assinatura['id'] ?? NULL);
+      $init_point = $this->providerString($assinatura['init_point'] ?? NULL);
+      $status_value = $assinatura['status'] ?? self::STATUS_PENDENTE;
+      $status = $this->providerString($status_value);
       if ($assinatura_id === ''
-        || ($status === self::STATUS_PENDENTE && $init_point === '')
+        || ($init_point !== '' && !MercadoPagoRedirectUrl::isValid($init_point))
+        || ($status === self::STATUS_PENDENTE && !MercadoPagoRedirectUrl::isValid($init_point))
         || !in_array($status, [self::STATUS_PENDENTE, self::STATUS_ATIVA], TRUE)) {
         throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago não devolveu uma assinatura válida para o pedido.'), 502);
       }
@@ -335,14 +340,14 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
       throw new \InvalidArgumentException('Ação não permitida para esta assinatura.');
     }
     $assinatura_id = (string) $pedido->getData(self::CHAVE_ASSINATURA);
-    $lock_id = self::LOCK_PREFIX . $assinatura_id;
+    $lock_id = self::ORDER_LOCK_PREFIX . $pedido->id();
     if (!$this->lock->acquire($lock_id, 30)) {
       throw new MercadoPagoApiException((string) new TranslatableMarkup('A assinatura está sendo atualizada. Tente novamente.'), 503);
     }
     try {
       // Reload after taking the lock. Another request may have changed the
       // order while this action was waiting.
-      $pedido_atual = $this->entidades('commerce_order')->load($pedido->id());
+      $pedido_atual = $this->entidades('commerce_order')->loadUnchanged($pedido->id());
       if (!$pedido_atual instanceof OrderInterface || !$this->podeAlterar($pedido_atual, $acao)
         || (string) $pedido_atual->getData(self::CHAVE_ASSINATURA) !== $assinatura_id) {
         throw new \InvalidArgumentException('A situação da assinatura mudou. Atualize a página e tente novamente.');
@@ -412,13 +417,16 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
       $this->logger->error('Notificação de assinatura sem ID ou referência de pedido válidos.');
       return;
     }
-    $lock_id = self::LOCK_PREFIX . $remote_id;
+    $lock_id = self::ORDER_LOCK_PREFIX . $pedido_id;
     if (!$this->lock->acquire($lock_id, 30)) {
       throw new MercadoPagoApiException((string) new TranslatableMarkup('A assinatura está sendo processada. Tente novamente.'), 503);
     }
     try {
       // A ordem é carregada novamente depois do mesmo lock usado pelas ações.
-      $pedido = $this->pedido($pedido_id);
+      $pedido = $this->entidades('commerce_order')->loadUnchanged((int) $pedido_id);
+      if (!$pedido instanceof OrderInterface || $pedido->bundle() !== self::TIPO_PEDIDO) {
+        $pedido = NULL;
+      }
       if ($pedido === NULL) {
         $this->logger->warning('Assinatura @id sem pedido de doação correspondente.', ['@id' => $remote_id]);
         return;
@@ -563,7 +571,30 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
       throw new MercadoPagoApiException((string) new TranslatableMarkup('A cobrança está sendo processada. Tente novamente.'), 503);
     }
     try {
-      $this->registrarCobranca($gateway, $pedido, $cobranca, $status, $remoto, $aprovado);
+      // Per-payment locks prevent duplicate Commerce payments. The additional
+      // order lock serializes different invoices that update the same order
+      // data; reload without entity cache so each event preserves prior writes.
+      $order_lock_id = self::ORDER_LOCK_PREFIX . $pedido->id();
+      if (!$this->lock->acquire($order_lock_id, 30)) {
+        throw new MercadoPagoApiException((string) new TranslatableMarkup('Outra cobrança desta assinatura está sendo processada. Tente novamente.'), 503);
+      }
+      try {
+        $pedido_atual = $this->entidades('commerce_order')->loadUnchanged($pedido->id());
+        if (!$pedido_atual instanceof OrderInterface || $pedido_atual->bundle() !== self::TIPO_PEDIDO) {
+          throw new MercadoPagoApiException((string) new TranslatableMarkup('O pedido da cobrança não está disponível para conciliação.'), 503);
+        }
+        if ((string) $pedido_atual->getData(self::CHAVE_ASSINATURA, '') !== $preapproval_id) {
+          $this->logger->error('Cobrança @id deixou de corresponder à assinatura registrada no pedido @pedido.', [
+            '@id' => $this->providerString($cobranca['id'] ?? NULL) ?: 'unknown',
+            '@pedido' => $pedido_atual->id(),
+          ]);
+          return;
+        }
+        $this->registrarCobranca($gateway, $pedido_atual, $cobranca, $status, $remoto, $aprovado);
+      }
+      finally {
+        $this->lock->release($order_lock_id);
+      }
     }
     finally {
       $this->lock->release($lock_id);
@@ -669,11 +700,21 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
   private function registrarCobranca(PaymentGatewayInterface $gateway, OrderInterface $pedido, array $cobranca, string $status, string $remoto, bool $aprovado): void {
     $pedido_total = $pedido->getTotalPrice();
     $amount_raw = $cobranca['transaction_amount'] ?? NULL;
-    $amount_number = is_string($amount_raw) || is_int($amount_raw) || is_float($amount_raw) ? (string) $amount_raw : '';
     $currency = $this->providerString($cobranca['currency_id'] ?? NULL);
     $amount = NULL;
     if ($aprovado) {
-      if ($pedido_total === NULL || preg_match('/^[0-9]+(?:\.[0-9]+)?$/D', $amount_number) !== 1 || $currency !== $pedido_total->getCurrencyCode()) {
+      try {
+        $precision = MercadoPagoAmount::currencyPrecision($currency);
+        $amount_number = MercadoPagoAmount::normalize($amount_raw, $precision);
+      }
+      catch (MercadoPagoApiException) {
+        $this->logger->error('Cobrança aprovada @id tem valor/moeda inválidos para o pedido @pedido.', [
+          '@id' => $remoto,
+          '@pedido' => $pedido->id(),
+        ]);
+        return;
+      }
+      if ($pedido_total === NULL || $currency !== $pedido_total->getCurrencyCode()) {
         $this->logger->error('Cobrança aprovada @id tem valor/moeda inválidos para o pedido @pedido.', [
           '@id' => $remoto,
           '@pedido' => $pedido->id(),

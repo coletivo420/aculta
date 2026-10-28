@@ -90,6 +90,36 @@ final class RedirectCheckoutFormSecurityTest extends UnitTestCase {
   }
 
   /**
+   * Checkout only exposes a scalar preference ID and trusted provider URL.
+   */
+  public function testPreferenceRedirectRequiresValidIdAndMercadoPagoOrigin(): void {
+    $method = new \ReflectionMethod(RedirectCheckoutForm::class, 'preferenceRedirect');
+    $method->setAccessible(TRUE);
+
+    $valid = $method->invoke(NULL, (object) [
+      'id' => 'preference-1',
+      'init_point' => 'https://www.mercadopago.com/mla/checkout/start?pref_id=preference-1',
+    ]);
+    $this->assertSame([
+      'id' => 'preference-1',
+      'url' => 'https://www.mercadopago.com/mla/checkout/start?pref_id=preference-1',
+    ], $valid);
+    $regional = $method->invoke(NULL, (object) [
+      'id' => 'subscription-1',
+      'init_point' => 'https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_id=subscription-1',
+    ]);
+    $this->assertNotNull($regional);
+    $this->assertNull($method->invoke(NULL, (object) [
+      'id' => 'preference-1',
+      'init_point' => 'https://mercadopago.com.attacker.invalid/checkout',
+    ]));
+    $this->assertNull($method->invoke(NULL, (object) [
+      'id' => ['malformed'],
+      'init_point' => 'https://www.mercadopago.com/checkout',
+    ]));
+  }
+
+  /**
    * Refuses checkout before provider calls when the active token is missing.
    */
   public function testMissingRuntimeTokenFailsClosedBeforePreferenceCreation(): void {

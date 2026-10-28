@@ -70,7 +70,17 @@ class CheckoutProTest extends OrderKernelTestBase {
     putenv('MERCADOPAGO_TEST_PUBLIC_KEY=TEST_PUBLIC_KEY_SENTINEL');
     putenv('MERCADOPAGO_TEST_ACCESS_TOKEN=TEST_ACCESS_TOKEN_SENTINEL');
     try {
-      $payment_gateway->save();
+      // Configuration may be safely saved while runtime secrets are absent.
+      // Restore the sandbox pair before exercising the configured plugin.
+      putenv('MERCADOPAGO_TEST_PUBLIC_KEY');
+      putenv('MERCADOPAGO_TEST_ACCESS_TOKEN');
+      try {
+        $payment_gateway->save();
+      }
+      finally {
+        putenv('MERCADOPAGO_TEST_PUBLIC_KEY=TEST_PUBLIC_KEY_SENTINEL');
+        putenv('MERCADOPAGO_TEST_ACCESS_TOKEN=TEST_ACCESS_TOKEN_SENTINEL');
+      }
 
       $this->assertInstanceOf(WebhookGuard::class, $this->container->get('aculta_pagamentos_mercadopago.webhook_guard'));
       $this->assertInstanceOf(MercadoPagoChargebackNotificationService::class, $this->container->get('aculta_pagamentos_mercadopago.chargeback_notifications'));

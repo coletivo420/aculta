@@ -85,6 +85,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
 
     $pedidos = $this->createMock(EntityStorageInterface::class);
     $pedidos->method('load')->with(7)->willReturn($pedido);
+    $pedidos->method('loadUnchanged')->with(7)->willReturn($pedido);
     $pagamentos = $this->createMock(EntityStorageInterface::class);
     $pagamentos->method('loadByProperties')->willReturn($existentes);
 
@@ -107,7 +108,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
 
     $logger = $this->createMock(LoggerChannelInterface::class);
     $servico = new MercadoPagoSubscriptionRecorder($entidades, $recorrencia, $logger, $tempo, $lock);
-    return [$servico, $pedido, $pagamentos, $item, $lock, $recorrencia, $logger];
+    return [$servico, $pedido, $pagamentos, $item, $lock, $recorrencia, $logger, $pedidos];
   }
 
   /**
@@ -166,7 +167,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $order->expects($this->exactly(2))->method('save');
 
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->expects($this->once())->method('load')->with('7')->willReturn($order);
+    $storage->expects($this->once())->method('loadUnchanged')->with('7')->willReturn($order);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->expects($this->once())->method('getStorage')->with('commerce_order')->willReturn($storage);
     $recurrence = $this->createMock(MercadoPagoRecurrenceService::class);
@@ -178,8 +179,8 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
       'init_point' => 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_id=pre-10',
     ]);
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects($this->once())->method('acquire')->with('aculta_pagamentos_mercadopago.subscription.create-order.7', 30)->willReturn(TRUE);
-    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.subscription.create-order.7');
+    $lock->expects($this->once())->method('acquire')->with('aculta_pagamentos_mercadopago.subscription_order.7', 30)->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.subscription_order.7');
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn(1700000000);
     $recorder = new MercadoPagoSubscriptionRecorder(
@@ -202,6 +203,47 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
   }
 
   /**
+   * Malformed provider IDs must not be string-cast and linked to the order.
+   */
+  public function testMalformedSubscriptionCreationResponseKeepsReconciliationMarker(): void {
+    $gateway = $this->gateway();
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn('7');
+    $order->method('bundle')->willReturn('assinatura');
+    $order->method('getEmail')->willReturn('donor@example.invalid');
+    $order->method('getData')->willReturn('');
+    $order->expects($this->once())->method('setData')
+      ->with(MercadoPagoSubscriptionRecorder::CHAVE_CRIACAO_PENDENTE, 1700000000);
+    $order->expects($this->once())->method('save');
+
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects($this->once())->method('loadUnchanged')->with('7')->willReturn($order);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->expects($this->once())->method('getStorage')->with('commerce_order')->willReturn($storage);
+    $recurrence = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recurrence->expects($this->once())->method('criarAssinatura')->willReturn([
+      'id' => ['malformed'],
+      'status' => 'pending',
+      'init_point' => 'https://www.mercadopago.com.br/subscriptions/checkout',
+    ]);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->method('acquire')->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.subscription_order.7');
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn(1700000000);
+    $recorder = new MercadoPagoSubscriptionRecorder(
+      $manager,
+      $recurrence,
+      $this->createMock(LoggerChannelInterface::class),
+      $time,
+      $lock,
+    );
+
+    $this->expectException(MercadoPagoApiException::class);
+    $recorder->criarAssinatura($gateway, $order, []);
+  }
+
+  /**
    * An ambiguous remote timeout leaves a marker to prevent duplicate creation.
    */
   public function testSubscriptionCreationTimeoutKeepsReconciliationMarker(): void {
@@ -218,6 +260,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $order->expects($this->once())->method('save');
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('load')->with('7')->willReturn($order);
+    $storage->method('loadUnchanged')->with('7')->willReturn($order);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->method('getStorage')->with('commerce_order')->willReturn($storage);
     $recurrence = $this->createMock(MercadoPagoRecurrenceService::class);
@@ -255,6 +298,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $order->expects($this->never())->method('save');
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('load')->with('7')->willReturn($order);
+    $storage->method('loadUnchanged')->with('7')->willReturn($order);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->method('getStorage')->with('commerce_order')->willReturn($storage);
     $recurrence = $this->createMock(MercadoPagoRecurrenceService::class);
@@ -295,6 +339,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $order->expects($this->exactly(2))->method('save');
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('load')->with('7')->willReturn($order);
+    $storage->method('loadUnchanged')->with('7')->willReturn($order);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->method('getStorage')->with('commerce_order')->willReturn($storage);
     $recurrence = $this->createMock(MercadoPagoRecurrenceService::class);
@@ -327,7 +372,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $order->method('bundle')->willReturn('assinatura');
     $order->method('getData')->with(MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA, '')->willReturn('pre-10');
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->expects($this->once())->method('load')->with('7')->willReturn($order);
+    $storage->expects($this->once())->method('loadUnchanged')->with('7')->willReturn($order);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->expects($this->once())->method('getStorage')->with('commerce_order')->willReturn($storage);
     $recurrence = $this->createMock(MercadoPagoRecurrenceService::class);
@@ -356,6 +401,44 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
   }
 
   /**
+   * Existing pending subscriptions cannot redirect to a foreign origin.
+   */
+  public function testSubscriptionRetryRejectsForeignAuthorizationOrigin(): void {
+    $gateway = $this->gateway();
+    $pedido = $this->createMock(OrderInterface::class);
+    $pedido->method('id')->willReturn(7);
+    $pedido->method('bundle')->willReturn('assinatura');
+    $pedido->method('getData')->with(MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA, '')->willReturn('pre-9');
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('loadUnchanged')->with(7)->willReturn($pedido);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getStorage')->with('commerce_order')->willReturn($storage);
+    $recorrencia = $this->createMock(MercadoPagoRecurrenceService::class);
+    $recorrencia->expects($this->once())->method('obterAssinatura')->with($gateway, 'pre-9')->willReturn((object) [
+      'id' => 'pre-9',
+      'external_reference' => '7',
+      'status' => 'pending',
+      'init_point' => 'https://mercadopago.com.br.attacker.invalid/checkout',
+    ]);
+    $recorrencia->expects($this->never())->method('criarAssinatura');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())->method('acquire')->with('aculta_pagamentos_mercadopago.subscription_order.7', 30)->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.subscription_order.7');
+    $servico = new MercadoPagoSubscriptionRecorder(
+      $manager,
+      $recorrencia,
+      $this->createMock(LoggerChannelInterface::class),
+      $this->createMock(TimeInterface::class),
+      $lock,
+    );
+
+    $this->expectException(MercadoPagoApiException::class);
+    $servico->criarAssinatura($gateway, $pedido, []);
+  }
+
+  /**
    * A subscription linked to a different order cannot be reused at checkout.
    */
   public function testSubscriptionCreationRetryRejectsConflictingOrderReference(): void {
@@ -366,6 +449,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $order->method('getData')->willReturn('pre-10');
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('load')->with('7')->willReturn($order);
+    $storage->method('loadUnchanged')->with('7')->willReturn($order);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->method('getStorage')->with('commerce_order')->willReturn($storage);
     $recurrence = $this->createMock(MercadoPagoRecurrenceService::class);
@@ -399,7 +483,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
       'id' => 'cob-1',
       'preapproval_id' => 'pre-9',
       'status' => 'processed',
-      'transaction_amount' => '10.00',
+      'transaction_amount' => '1.0e1',
       'currency_id' => 'BRL',
       'payment' => ['id' => '555', 'status' => 'approved'],
     ];
@@ -538,10 +622,10 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $pedido->expects($this->never())->method('setData');
     $pedido->expects($this->never())->method('save');
     $lock->expects($this->once())->method('acquire')
-      ->with('aculta_pagamentos_mercadopago.subscription.pre-9', 30)
+      ->with('aculta_pagamentos_mercadopago.subscription_order.7', 30)
       ->willReturn(TRUE);
     $lock->expects($this->once())->method('release')
-      ->with('aculta_pagamentos_mercadopago.subscription.pre-9');
+      ->with('aculta_pagamentos_mercadopago.subscription_order.7');
 
     try {
       $servico->assinatura((object) [
@@ -688,10 +772,10 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $pedido->expects($this->never())->method('save');
     $pagamentos->expects($this->never())->method('loadByProperties');
     $pagamentos->expects($this->never())->method('create');
-    $lock->expects($this->once())->method('release');
+    $lock->expects($this->exactly(2))->method('release');
 
     $cobranca = $this->cobrancaAprovada();
-    $cobranca['transaction_amount'] = '9.99';
+    $cobranca['transaction_amount'] = '10.001';
     $servico->cobranca($this->gateway(), $cobranca);
   }
 
@@ -738,6 +822,42 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $pagamentos->expects($this->never())->method('create');
 
     $servico->cobranca($this->gateway(), $this->cobrancaAprovada());
+  }
+
+  /**
+   * Different recurring charge IDs serialize and reload the shared order.
+   */
+  public function testDifferentChargesForOneOrderUseSharedLockAndReload(): void {
+    [$servico, $pedido, $pagamentos, , $lock, , , $orders] = $this->contexto('assinatura', 'completed', [], []);
+    $orders->expects($this->exactly(2))->method('loadUnchanged')->with(7)->willReturn($pedido);
+    $lock_ids = [];
+    $lock->expects($this->exactly(4))->method('acquire')->willReturnCallback(
+      static function (string $lock_id) use (&$lock_ids): bool {
+        $lock_ids[] = $lock_id;
+        return TRUE;
+      },
+    );
+    $lock->expects($this->exactly(4))->method('release');
+    $pagamentos->expects($this->exactly(2))->method('loadByProperties')->willReturn([]);
+    $pagamentos->expects($this->exactly(2))->method('create')->willReturn(
+      $this->createMock(PaymentInterface::class),
+      $this->createMock(PaymentInterface::class),
+    );
+    $pedido->expects($this->exactly(2))->method('save');
+
+    $first_charge = $this->cobrancaAprovada();
+    $second_charge = $this->cobrancaAprovada();
+    $second_charge['id'] = 'cob-2';
+    $second_charge['payment']['id'] = '556';
+    $servico->cobranca($this->gateway(), $first_charge);
+    $servico->cobranca($this->gateway(), $second_charge);
+
+    $this->assertSame([
+      'aculta_pagamentos_mercadopago.subscription_payment.mercado_pago.555',
+      'aculta_pagamentos_mercadopago.subscription_order.7',
+      'aculta_pagamentos_mercadopago.subscription_payment.mercado_pago.556',
+      'aculta_pagamentos_mercadopago.subscription_order.7',
+    ], $lock_ids);
   }
 
   /**

@@ -8,17 +8,11 @@ use Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\MercadoPagoCredent
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Mercado Pago entity lifecycle guards.
  */
 final class EntitySaveHooks {
-
-  public function __construct(
-    #[Autowire('%app.root%')]
-    private readonly string $appRoot,
-  ) {}
 
   /**
    * Keeps the Mercado Pago gateway active without persisting credentials.
@@ -29,11 +23,6 @@ final class EntitySaveHooks {
       || $entity->id() !== MercadoPagoCredentials::GATEWAY_ID
       || !$entity instanceof PaymentGatewayInterface) {
       return;
-    }
-
-    $environment = MercadoPagoCredentials::currentEnvironment(dirname($this->appRoot));
-    if (!MercadoPagoCredentials::hasRuntimeCredentials($environment)) {
-      throw new \LogicException('O gateway Mercado Pago não pode ser salvo sem as credenciais do ambiente ativo.');
     }
 
     $entity->setStatus(TRUE);

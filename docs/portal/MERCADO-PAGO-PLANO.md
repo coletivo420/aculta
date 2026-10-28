@@ -2,7 +2,7 @@
 
 **Ciclo vigente:** este plano segue [Dev → RC → deploy/validação Alpha → produção](../operations/RELEASE-LIFECYCLE.md). Concluir integração, testes/gates e revisão visual aplicável antes de RC; validar o candidato em Alpha antes da migração a produção.
 
-Status atualizado em 2026-10-27: a integração está em desenvolvimento ativo; o submódulo está em `0.1.0-dev.60`, `aculta_portal` em `0.4.1-dev.41` e `aculta_donation` em `0.1.0-dev.29`. Este documento contém decisões e evidências históricas abaixo; pendências atuais estão resumidas na seção [8](#8-testes-e-evidências) e no status do componente.
+Status atualizado em 2026-10-27: a integração está em desenvolvimento ativo; o submódulo está em `0.1.0-dev.77`. Este documento contém decisões e evidências históricas abaixo; pendências atuais estão resumidas na seção [8](#8-testes-e-evidências) e no status do componente.
 
 Base: SDK `mercadopago/dx-php` instalado em `vendor/`; gateway Commerce `mercado_pago`, plugin `aculta_mercadopago_checkout_pro` (Checkout Pro).
 
@@ -71,7 +71,7 @@ O SDK tem 21 arquivos `*Client.php`: 20 clientes concretos e a classe base `Merc
 | `pedidos_comerciante` | MerchantOrderClient | create, get, update, search | Planejado: conciliação de pagamentos |
 | `contestacoes` | ChargebackClient | get, search | Webhook assinado busca o caso e concilia o pagamento Commerce vinculado; painel de análise e envio de evidências seguem planejados |
 | `assinaturas` | PreApprovalClient | create, get, update, search, searchAll | **Implementado**: criar, consultar, pausar/reativar/cancelar |
-| `planos_assinatura` | PreApprovalPlanClient | create, get, update, search | Implementados no serviço: criar, consultar e alterar com validação de ID e idempotência estável; busca não tem consumidor ACULTA. Cancelamento é manual no painel e irreversível |
+| `planos_assinatura` | PreApprovalPlanClient | create, get, update, search | Implementados no serviço: criar (exige ID de intenção único e estável para retries), consultar, alterar e buscar (páginas limitadas e IDs validados). A busca ainda não está conectada a uma interface operacional ACULTA. Cancelamento é manual no painel e irreversível |
 | `preferencias` | PreferenceClient | Checkout Pro | Usado pelo gateway contrib; não chamado direto |
 | `pedidos` | OrderClient | Orders API | Avaliar: API de pedidos nova do Mercado Pago |
 | `transacoes_pedido` | OrderTransactionClient | Transações de pedido | Avaliar junto de `pedidos` |
@@ -101,7 +101,7 @@ Inconsistência registrada: o docblock de `PaymentClient::cancel` diz que só `p
 
 **Implementado nesta fase:**
 - `RecurrenceRequestBuilder`: valida valor (decimal, > 0, até duas casas), moeda (BRL), frequência (1 a 12 meses), `back_url` (https com host), e-mail do pagador e referência. Testado em unidade.
-- `MercadoPagoRecurrenceService`: `criarPlano`, `obterPlano`, `alterarPlano`, `criarAssinatura`, `obterAssinatura`, `alterarStatusAssinatura`; criação/alteração de planos e criação de assinatura enviam chaves de idempotência determinísticas e validam o ID remoto.
+- `MercadoPagoRecurrenceService`: `criarPlano`, `obterPlano`, `alterarPlano`, `listarPlanos`, `criarAssinatura`, `obterAssinatura`, `alterarStatusAssinatura`; a busca limita paginação e valida o formato e IDs da resposta. Criação/alteração de planos e criação de assinatura enviam chaves de idempotência determinísticas e validam o ID remoto.
 
 **Decisão:** a recorrência usa a API de assinaturas do Mercado Pago, não o módulo `commerce_recurring`. Motivo: `commerce_recurring` não está habilitado no Runtime, e o cobrador de recorrência do Commerce não tem cobrança via Mercado Pago. Isto precisa de confirmação do responsável (pergunta 2 da seção 6).
 
@@ -191,9 +191,12 @@ Respondidas em 2026-10-16; ver a seção 0.
 
 ## 8. Testes e evidências
 
-- Unit do submódulo Mercado Pago: 221 testes / 984 assertions PASS em 2026-10-27 (1 depreciação PHPUnit); regressões dev.58/59/60 cobrem idempotência de recorrência, pré-save de credenciais e gateway ativo.
-- Kernel Mercado Pago: 3 testes / 129 assertions PASS em `aculta_simpletest` (78 depreciações Core/contrib).
-- Gates verificados nesta microfase: Portal Drupal 11+ PASS (1157 checks), mapa módulo/tema PASS (200 checks), índice de status PASS (43 componentes) e fronteira módulo/tema PASS (3124 verificações). PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
+- Unit do submódulo Mercado Pago: 258 testes / 1.156 assertions PASS em 2026-10-28 (1 depreciação PHPUnit); Unit Studio 62/502 PASS.
+- Kernel Mercado Pago: `CheckoutProTest` 3 testes / 135 assertions PASS em execução registrada anteriormente (78 depreciações Core/contrib). Na verificação atual, `aculta_simpletest` não existe; o Kernel não foi repetido e nenhum banco foi criado.
+- Gates verificados nesta microfase: Portal Drupal 11+ PASS (1.155 checks), índice de status PASS (43 componentes) e fronteira módulo/tema PASS (3.132 verificações). PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
 - **Runtime (verificado em 2026-10-16):** o gateway `mercado_pago` (plugin `aculta_mercadopago_checkout_pro`, modo `test`) existe, com token de teste. Uma chamada somente leitura `UserClient::get` autenticou com o token de teste (site `MLB`). O Runtime carrega este checkout (`web/modules/custom/aculta_portal` aponta para o mesmo repositório). As consultas do relatório executam no MariaDB sem erro; o banco de teste não tem pedidos concluídos, então os valores não foram conferidos.
 - Sandbox: preferência sintética aberta no Firefox ESR visível até as etapas de escolha de pagamento e identificação do comprador (HTTP 200, sem CAPTCHA); o login do comprador não foi concluído. Não há evidência de pedido Commerce pago, estorno, nem autorização/cobrança de assinatura.
-- Operações de Runtime com escrita, publicação e alterações de configuração persistente não foram realizadas nesta microfase.
+- Não houve escrita em bancos do Runtime, alteração persistente de configuração ou publicação nesta microfase; houve apenas atualização de um plano sandbox já existente.
+### Gestão administrativa dos planos — MP dev.79 / Studio dev.24 (2026-10-28)
+
+A equipe autorizada administra os modelos na tela Studio `/studio/conta/mercado-pago/planos`, cujo POST usa o endpoint canônico `/integracoes/mercadopago/planos` no domínio MAIN. A tela consulta o catálogo remoto com paginação limitada, cria planos e atualiza por ID. As operações estão restritas a gateway ativo em modo sandbox e às permissões `access aculta portal` e `administrar doacoes`; não há exclusão de planos pela API nem persistência local paralela. Firefox ESR/X11 no Runtime confirmou o shell ACULTA420, formulário, listagem, labels, envio ao domínio MAIN e reflow em 390/1280 px. Homologação sandbox criou plano mensal de R$ 1,00, atualizou esse mesmo plano para R$ 1,25 e confirmou o estado por API GET; nenhuma assinatura ou cobrança foi iniciada. O plano permanece ativo na conta de teste porque a API não oferece exclusão. Unit MP 258/1.156, Unit Studio 62/502, PHPCS, PHP lint, boundary e gate Drupal 11 passaram nesta execução; o Kernel 3/135 tem evidência anterior, mas não pôde ser repetido pois `aculta_simpletest` não existe. A tentativa de autenticar o comprador em 2026-10-28 retornou `manual_security_challenge`, mantendo checkout de pagamentos pendente.

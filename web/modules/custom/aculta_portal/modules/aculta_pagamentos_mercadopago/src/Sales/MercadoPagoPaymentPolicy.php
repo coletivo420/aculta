@@ -116,16 +116,18 @@ final class MercadoPagoPaymentPolicy implements RefundPolicyInterface {
    *   Estado do commerce_payment (authorization, completed, partially_refunded,
    *   refunded...).
    * @param string $valor
-   *   Valor do pagamento local, com duas casas (ex.: "120.00").
+   *   Valor do pagamento local, na precisão da moeda (ex.: "120.00").
    * @param string $valorEstornado
-   *   Valor já estornado segundo o Mercado Pago, com duas casas.
+   *   Valor já estornado segundo o Mercado Pago, na precisão da moeda.
+   * @param int $precision
+   *   ISO fraction digits for the payment currency.
    *
    * @return array{estado: ?string, estornado: ?string, contestacao: bool}
    *   estado: novo estado local, ou NULL para não mudar; estornado: novo valor
-   *   estornado, ou NULL;
-   *   contestacao: TRUE quando há chargeback, que exige tratamento manual.
+   *   estornado, ou NULL; contestacao: TRUE quando há chargeback, que exige
+   *   tratamento manual.
    */
-  public function decidirSincronizacao(string $statusRemoto, string $estadoLocal, string $valor, string $valorEstornado): array {
+  public function decidirSincronizacao(string $statusRemoto, string $estadoLocal, string $valor, string $valorEstornado, int $precision = 2): array {
     $resultado = ['estado' => NULL, 'estornado' => NULL, 'contestacao' => FALSE];
 
     if ($statusRemoto === 'charged_back') {
@@ -133,10 +135,10 @@ final class MercadoPagoPaymentPolicy implements RefundPolicyInterface {
       return $resultado;
     }
 
-    $temEstorno = bccomp($valorEstornado, '0', 2) === 1;
+    $temEstorno = bccomp($valorEstornado, '0', $precision) === 1;
     if ($temEstorno && in_array($estadoLocal, self::ESTORNAVEIS, TRUE)) {
       $resultado['estornado'] = $valorEstornado;
-      if (bccomp($valorEstornado, $valor, 2) >= 0) {
+      if (bccomp($valorEstornado, $valor, $precision) >= 0) {
         $resultado['estado'] = $estadoLocal === 'refunded' ? NULL : 'refunded';
       }
       else {

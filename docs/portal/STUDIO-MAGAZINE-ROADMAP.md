@@ -1,5 +1,25 @@
 # ACULTA Magazine — Roadmap de realinhamento arquitetural
 
+### Gestão de planos Mercado Pago pelo Studio (MP dev.79 / Studio dev.24)
+
+O hub do Studio oferece a entrada para gestão de planos do Mercado Pago apenas a
+contas autenticadas com `access aculta portal` e `administrar doacoes`. O
+módulo Mercado Pago mantém a rota de integração e a operação dos dados remotos;
+a tela permite listar, criar e atualizar planos exclusivamente no gateway em
+modo sandbox. Não há nova persistência local. Unit focal do provider e os gates
+da interface passaram: Studio 62/502 Unit; provider 2/19; PHP lint, PHPCS,
+Kernel CheckoutPro 3/135 e module/theme boundary PASS. Firefox ESR/X11 abriu a
+entrada, shell Studio/ACULTA420, labels/caption e reflow 390/1280px. O CRUD
+de sandbox criou um plano mensal e atualizou o mesmo; API GET confirmou R$ 1,25.
+Nenhuma cobrança ocorreu; o plano permanece ativo porque a API não permite
+excluí-lo. A tela do Studio usa o propósito `account` e o endpoint POST segue
+sob `/integracoes` conforme o contrato de integrações. A revisão visual dos
+demais painéis segue pendente. O gate Drupal 11 PASSA (1.155
+verificações) após atualizar suas invariantes de gateway para o contrato
+aprovado: configuração salva sem credenciais, gateway sempre ativo, segredos
+removidos no pre-save, acesso direto negado e cliente financeiro falha fechado
+sem token.
+
 **MAG 0.5-R · 2026-10-22 · Planejamento, sem alteração funcional ou homologação.**
 
 ### Meu Perfil Studio — S-R4 em SDCs (dev.21)

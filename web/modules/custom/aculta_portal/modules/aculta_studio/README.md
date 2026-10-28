@@ -226,6 +226,7 @@ Todas as experiências usam `_aculta_domain_purpose: account`, `access aculta po
 - Marley: `/studio/marley` (entrada canônica, minúscula), `/studio/marley/{aba}`, `/studio/marley/{aba}/{secao}`, `/studio/marley/{aba}/{secao}/{sub}`.
 - Ganjalab: `/studio/ganjalab` (estudante autenticado; declarada pelo LMS).
 - WE SATIVA: `/studio/we-sativa` e `/studio/we-sativa/inicio`.
+- Planos Mercado Pago: apresentação administrativa no Studio em `/studio/conta/mercado-pago/planos`; o módulo de pagamentos é dono do formulário, do endpoint POST `/integracoes/mercadopago/planos` e das operações no provedor.
 
 A entrada antiga `/studio/ganjalab` não pode continuar editorial: agora pertence exclusivamente a Ganjalab. As entradas antigas não colidentes usam redirects temporários 302 apenas em GET/HEAD: `/ganjalab` e níveis profundos editoriais para Marley; `/ganjalab420`, `/minha-aprendizagem` e `/studio/ganjalab420` para Ganjalab. Métodos de escrita não são redirecionados. O registro completo está em [contrato de identidade](../../../../../../docs/portal/ACULTA-STUDIO-IDENTITY.md) e no [mapa de rotas](../../../../../../docs/architecture/ROUTES-SITEMAP.md).
 

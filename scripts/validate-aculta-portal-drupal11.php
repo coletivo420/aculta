@@ -328,6 +328,8 @@ $check(
 );
 $entitySaveHooks = $mpSrcRoot . '/Hook/EntitySaveHooks.php';
 $entitySaveHooksSource = $read($entitySaveHooks);
+$mpClientFactorySource = $read($mpSrcRoot . '/MercadoPago/MercadoPagoClientFactory.php');
+$mpClientFactoryTestSource = $read($mpModuleRoot . '/tests/src/Unit/MercadoPago/MercadoPagoClientFactoryTest.php');
 $check(is_file($entitySaveHooks), 'P4.3 EntitySaveHooks class must exist.');
 $check(
   substr_count($hookRuntimeSources, "#[Hook('entity_presave')]") === 0,
@@ -352,18 +354,27 @@ $check(
   !str_contains($services, 'Drupal\\aculta_portal\\Hook\\EntitySaveHooks'),
   'P4.3 Hook classes are auto-discovered/autowired; do not add redundant EntitySaveHooks YAML service definitions.',
 );
-foreach ([
-  "'commerce_payment_gateway'",
-  'MercadoPagoCredentials::GATEWAY_ID',
-  'MercadoPagoCredentials::hasRuntimeCredentials',
-  'MercadoPagoCredentials::currentEnvironment',
-  'LogicException',
-] as $invariant) {
-  $check(
-    str_contains($entitySaveHooksSource, $invariant),
-    'P4.3 Mercado Pago presave invariant must remain present: ' . $invariant,
-  );
-}
+$mpEntitySaveTestSource = $read($mpModuleRoot . '/tests/src/Unit/Hook/EntitySaveHooksTest.php');
+$check(
+  str_contains($entitySaveHooksSource, "'commerce_payment_gateway'")
+    && str_contains($entitySaveHooksSource, 'MercadoPagoCredentials::GATEWAY_ID')
+    && str_contains($entitySaveHooksSource, 'setStatus(TRUE)')
+    && str_contains($entitySaveHooksSource, 'MercadoPagoCredentials::clearCredentialValues')
+    && !str_contains($entitySaveHooksSource, 'MercadoPagoCredentials::hasRuntimeCredentials')
+    && !str_contains($entitySaveHooksSource, 'MercadoPagoCredentials::currentEnvironment')
+    && !str_contains($entitySaveHooksSource, 'LogicException'),
+  'P4.3 Mercado Pago presave must always enable its gateway and clear credentials without blocking config saves when runtime credentials are absent.',
+);
+$check(
+  str_contains($mpEntitySaveTestSource, 'testGatewayCanBeSavedWithoutRuntimeCredentials'),
+  'P4.3 missing-credentials gateway saves must remain covered by a regression test.',
+);
+$check(
+  str_contains($mpClientFactorySource, 'if ($token === \'\')')
+    && str_contains($mpClientFactorySource, 'throw new \\RuntimeException')
+    && str_contains($mpClientFactoryTestSource, 'testMissingActiveTokenRejectsClientConfiguration'),
+  'P4.3 financial SDK clients must stay fail-closed on missing active credentials, with a regression test.',
+);
 
 $entityHooks = $srcRoot . '/Hook/EntityHooks.php';
 $entityHooksSource = $read($entityHooks);
@@ -482,22 +493,22 @@ $mpHookRuntimeSources = '';
 foreach (glob($mpSrcRoot . '/Hook/*.php') ?: [] as $hookFile) {
   $mpHookRuntimeSources .= $read($hookFile);
 }
-foreach (['form_alter' => 1, 'entity_access' => 1, 'entity_presave' => 1] as $hookName => $expected) {
+foreach (['form_alter' => 0, 'entity_access' => 1, 'entity_presave' => 1] as $hookName => $expected) {
   $check(
     substr_count($mpHookRuntimeSources, "#[Hook('" . $hookName . "')]") === $expected,
     'Mercado Pago module hook count drifted for ' . $hookName . ' (expected ' . $expected . ').',
   );
 }
 $mpPaymentGatewayEntityHooks = $read($mpSrcRoot . '/Hook/PaymentGatewayEntityHooks.php');
-$mpPaymentGatewayFormHooks = $read($mpSrcRoot . '/Hook/PaymentGatewayFormHooks.php');
+$mpPaymentGatewayHooksTest = $read($mpModuleRoot . '/tests/src/Unit/Hook/PaymentGatewayHooksTest.php');
 $check(
   str_contains($mpPaymentGatewayEntityHooks, "'commerce_payment_gateway'")
     && str_contains($mpPaymentGatewayEntityHooks, "'mercado_pago'")
-    && str_contains($mpPaymentGatewayFormHooks, 'PaymentGatewayForm')
-    && str_contains($mpPaymentGatewayFormHooks, "'credentials_test'")
-    && str_contains($mpPaymentGatewayFormHooks, "'access_token_test'")
-    && str_contains($mpPaymentGatewayFormHooks, "'client_secret'"),
-  'Mercado Pago module hooks must retain gateway access and credential masking protections.',
+    && str_contains($mpPaymentGatewayEntityHooks, "'update'")
+    && str_contains($mpPaymentGatewayEntityHooks, 'AccessResult::forbidden')
+    && str_contains($entitySaveHooksSource, 'MercadoPagoCredentials::clearCredentialValues')
+    && str_contains($mpPaymentGatewayHooksTest, 'testGatewayUpdateIsForbidden'),
+  'Mercado Pago must deny direct gateway edits and clear credentials at presave; access denial and masking behavior must be covered.',
 );
 
 $p4HookSources = [
@@ -552,10 +563,10 @@ $check(
   'P4-R password-reset neutral access must remain request-sensitive and uncacheable.',
 );
 $check(
-  str_contains($entitySaveHooksSource, 'MercadoPagoCredentials::hasRuntimeCredentials')
-    && str_contains($entitySaveHooksSource, 'MercadoPagoCredentials::currentEnvironment')
-    && str_contains($entitySaveHooksSource, 'throw new \\LogicException'),
-  'P4-R Mercado Pago presave guard must remain fail-closed on missing runtime credentials.',
+  str_contains($entitySaveHooksSource, 'setStatus(TRUE)')
+    && str_contains($entitySaveHooksSource, 'MercadoPagoCredentials::clearCredentialValues')
+    && str_contains($mpEntitySaveTestSource, 'testGatewayCanBeSavedWithoutRuntimeCredentials'),
+  'P4-R Mercado Pago presave must keep the gateway active, strip secrets, and permit configuration saves without runtime credentials.',
 );
 
 $formCallbacks = $srcRoot . '/Form/PortalFormCallbacks.php';

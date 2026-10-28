@@ -84,6 +84,7 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
     if ($pedido !== NULL) {
       $storage = $this->createMock(EntityStorageInterface::class);
       $storage->method('load')->with($pedido->id())->willReturn($pedido);
+      $storage->method('loadUnchanged')->with($pedido->id())->willReturn($pedido);
       $entityTypeManager->method('getStorage')->with('commerce_order')->willReturn($storage);
     }
     if ($lock === NULL) {
@@ -368,6 +369,7 @@ final class MercadoPagoSubscriptionActionsTest extends UnitTestCase {
       ]);
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('load')->with(7)->willReturn($pedido);
+    $storage->method('loadUnchanged')->with(7)->willReturn($pedido);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->with('commerce_order')->willReturn($storage);
     $lock = $this->createMock(LockBackendInterface::class);

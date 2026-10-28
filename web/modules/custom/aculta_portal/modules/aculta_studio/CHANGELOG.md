@@ -255,3 +255,8 @@
   cache. Firefox ESR/X11 passou em 29/29 verificações aplicáveis; a checagem de
   link de edição foi ignorada porque não há publicação própria de teste.
 
+## 0.1.0-dev.24 — entrada de gestão de planos Mercado Pago
+
+- A experiência `mercado_pago_plans` oferece a administração no ACULTA Studio, delegando rota, operações remotas e autorização ao módulo Mercado Pago e à permissão proprietária `administrar doacoes`.
+- Provider: 2 Unit / 19 assertions PASS. Suíte Studio: 62 testes / 502 assertions PASS. Fronteira módulo/tema e gate Portal Drupal 11 PASS (1.155 verificações) após alinhar contrato e testes à política de salvar config sem credenciais e negar edição direta. Firefox ESR/X11 verificou entrada, tela, labels acessíveis, caption da tabela e reflow em 390/1280px. O fluxo sandbox pelo formulário criou e atualizou um plano de teste; nenhum pagamento foi iniciado.
+

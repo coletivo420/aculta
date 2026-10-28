@@ -48,9 +48,9 @@ final class CheckoutProRefundTest extends UnitTestCase {
       /**
        * Simulates an approved partial refund.
        */
-      public function refund(int $payment_id, float $amount, ?RequestOptions $options = NULL): object {
+      public function refund(int $payment_id, float $amount, ?RequestOptions $options = NULL): array {
         $this->options[] = $options;
-        return (object) ['id' => 501, 'status' => 'approved', 'payment_id' => $payment_id, 'amount' => $amount];
+        return ['id' => 501, 'status' => 'approved', 'payment_id' => $payment_id, 'amount' => $amount];
       }
 
     };
@@ -204,6 +204,47 @@ final class CheckoutProRefundTest extends UnitTestCase {
   }
 
   /**
+   * Accepts a partial refund at three-digit BHD precision.
+   */
+  public function testPartialRefundUsesThreeDigitCurrencyPrecision(): void {
+    $gateway = $this->gateway();
+    $payment = $this->payment(TRUE, 1, 'partially_refunded', '1.234', 'BHD', '5.678');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects($this->once())->method('load')->with(12)->willReturn($payment);
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->method('getStorage')->with('commerce_payment')->willReturn($storage);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())->method('acquire')->willReturn(TRUE);
+    $lock->expects($this->once())->method('release');
+    $provider = new class() {
+
+      /** @var float|null */
+      public ?float $amount = NULL;
+
+      /**
+       * Simulates an approved BHD partial refund.
+       */
+      public function refund(int $payment_id, float $amount, ?RequestOptions $options = NULL): object {
+        $this->amount = $amount;
+        return (object) ['id' => 503, 'status' => 'approved', 'payment_id' => $payment_id, 'amount' => $amount];
+      }
+
+    };
+    $gateway_entity = $this->createMock(PaymentGatewayInterface::class);
+    $factory = $this->createMock(MercadoPagoClientFactory::class);
+    $factory->expects($this->once())->method('criar')->with('reembolsos', $gateway_entity)->willReturn($provider);
+    $this->inject($gateway, 'parentEntity', $gateway_entity);
+    $this->inject($gateway, 'entityTypeManager', $entity_manager);
+    $this->inject($gateway, 'lock', $lock);
+    $this->inject($gateway, 'clientFactory', $factory);
+    $this->injectLogger($gateway);
+
+    $gateway->refundPayment($payment, new Price('1.234', 'BHD'));
+
+    $this->assertSame(1.234, $provider->amount);
+  }
+
+  /**
    * Hides private provider exception details from logs and Commerce errors.
    */
   public function testProviderFailureIsLoggedWithoutResponseDetails(): void {
@@ -289,21 +330,21 @@ final class CheckoutProRefundTest extends UnitTestCase {
   /**
    * Creates a persisted completed payment fixture with a remote ID.
    */
-  private function payment(bool $expect_mutation = TRUE, int $mutation_count = 2, string $expected_state = 'partially_refunded', string $expected_refunded_amount = '25'): PaymentInterface {
+  private function payment(bool $expect_mutation = TRUE, int $mutation_count = 2, string $expected_state = 'partially_refunded', string $expected_refunded_amount = '25', string $currency_code = 'BRL', string $total_amount = '100.00'): PaymentInterface {
     $state = $this->createMock(StateItemInterface::class);
     $state->method('getId')->willReturn('completed');
     $payment = $this->createMock(PaymentInterface::class);
     $payment->method('id')->willReturn(12);
     $payment->method('getRemoteId')->willReturn('999');
     $payment->method('getState')->willReturn($state);
-    $payment->method('getAmount')->willReturn(new Price('100.00', 'BRL'));
-    $payment->method('getRefundedAmount')->willReturn(new Price('0.00', 'BRL'));
-    $payment->method('getBalance')->willReturn(new Price('100.00', 'BRL'));
+    $payment->method('getAmount')->willReturn(new Price($total_amount, $currency_code));
+    $payment->method('getRefundedAmount')->willReturn(new Price('0', $currency_code));
+    $payment->method('getBalance')->willReturn(new Price($total_amount, $currency_code));
     $payment->method('getOrder')->willReturn($this->createMock(OrderInterface::class));
     if ($expect_mutation) {
       $payment->expects($this->exactly($mutation_count))->method('setState')->with($expected_state);
       $payment->expects($this->exactly($mutation_count))->method('setRefundedAmount')->with($this->callback(
-        static fn (Price $price): bool => $price->getNumber() === $expected_refunded_amount && $price->getCurrencyCode() === 'BRL',
+        static fn (Price $price): bool => $price->getNumber() === $expected_refunded_amount && $price->getCurrencyCode() === $currency_code,
       ));
       $payment->expects($this->exactly($mutation_count))->method('setRemoteState')->with('approved');
       $payment->expects($this->exactly($mutation_count))->method('save');

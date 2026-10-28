@@ -75,14 +75,14 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
   /**
    * Performs the pagamento operation.
    */
-  private function pagamento(string $estado, string $remoteId = '123456789'): PaymentInterface&MockObject {
+  private function pagamento(string $estado, string $remoteId = '123456789', ?Price $amount = NULL): PaymentInterface&MockObject {
     $pagamento = $this->createMock(PaymentInterface::class);
     $pagamento->method('id')->willReturn(1);
     $pedido = $this->createMock(OrderInterface::class);
     $pedido->method('id')->willReturn('1');
     $pagamento->method('getOrder')->willReturn($pedido);
     $pagamento->method('getRemoteId')->willReturn($remoteId);
-    $pagamento->method('getAmount')->willReturn(new Price('120.00', 'BRL'));
+    $pagamento->method('getAmount')->willReturn($amount ?? new Price('120.00', 'BRL'));
     $pagamento->method('getPaymentGateway')->willReturn($this->createMock(PaymentGatewayInterface::class));
     $etapa = new class($estado) {
 
@@ -230,6 +230,83 @@ final class MercadoPagoPaymentServiceTest extends UnitTestCase {
     ]);
 
     $this->expectException(PaymentOperationException::class);
+    $this->servico($cliente, $pagamento)->refresh($pagamento);
+  }
+
+  /**
+   * Accepts scientific-notation amounts returned as numeric strings by the SDK.
+   */
+  public function testRefreshNormalizesScientificNotationWithoutLosingCents(): void {
+    $pagamento = $this->pagamento('authorization');
+    $pagamento->expects($this->once())->method('setRemoteState')->with('pending');
+    $pagamento->expects($this->once())->method('setState')->with('pending');
+    $pagamento->expects($this->once())->method('save');
+    $cliente = $this->cliente((object) [
+      'id' => 123456789,
+      'status' => 'pending',
+      'transaction_amount' => '1.2e2',
+      'currency_id' => 'BRL',
+      'transaction_amount_refunded' => '0e0',
+    ]);
+
+    $this->assertSame('pending', $this->servico($cliente, $pagamento)->refresh($pagamento));
+  }
+
+  /**
+   * Uses ISO currency precision for zero- and three-digit amounts.
+   *
+   * @param string $currency_code
+   *   ISO currency code.
+   * @param string $amount
+   *   Exact payment amount.
+   */
+  #[DataProvider('nonTwoDigitCurrencies')]
+  public function testRefreshUsesCurrencySpecificPrecision(string $currency_code, string $amount): void {
+    $pagamento = $this->pagamento('authorization', '123456789', new Price($amount, $currency_code));
+    $pagamento->expects($this->once())->method('setState')->with('completed');
+    $pagamento->expects($this->once())->method('save');
+    $cliente = $this->cliente((object) [
+      'id' => 123456789,
+      'status' => 'approved',
+      'transaction_amount' => $amount,
+      'currency_id' => $currency_code,
+      'transaction_amount_refunded' => 0,
+    ]);
+
+    $this->assertSame('approved', $this->servico($cliente, $pagamento)->refresh($pagamento));
+  }
+
+  /**
+   * Currencies with a minor-unit precision different from two.
+   *
+   * @return array<string, array{string, string}>
+   *   Currency and payment amount.
+   */
+  public static function nonTwoDigitCurrencies(): array {
+    return [
+      'zero fraction digits' => ['JPY', '120'],
+      'three fraction digits' => ['BHD', '1.234'],
+    ];
+  }
+
+  /**
+   * Rejects remote amounts with non-zero precision beyond currency cents.
+   */
+  public function testRefreshRejectsSubCentRemoteAmount(): void {
+    $pagamento = $this->pagamento('authorization');
+    $pagamento->expects($this->never())->method('setRemoteState');
+    $pagamento->expects($this->never())->method('setState');
+    $pagamento->expects($this->never())->method('save');
+    $cliente = $this->cliente((object) [
+      'id' => 123456789,
+      'status' => 'pending',
+      'transaction_amount' => '120.001',
+      'currency_id' => 'BRL',
+      'transaction_amount_refunded' => 0,
+    ]);
+
+    $this->expectException(PaymentOperationException::class);
+    $this->expectExceptionMessage('O Mercado Pago informou um valor com precisão inválida.');
     $this->servico($cliente, $pagamento)->refresh($pagamento);
   }
 

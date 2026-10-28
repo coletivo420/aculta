@@ -3,9 +3,9 @@
 Gateway de pagamento do Commerce: submódulo próprio `aculta_pagamentos_mercadopago` (porte do `commerce_mercado_pago` 3.0.0-rc3; plugin `aculta_mercadopago_checkout_pro`).
 O gateway permanece **ativo em todos os ambientes**. Até a versão 1.0, o checkout usa as chaves de teste
 (`MERCADOPAGO_TEST_PUBLIC_KEY` e `MERCADOPAGO_TEST_ACCESS_TOKEN`) somente por variável de ambiente; nunca na
-configuração. Ao salvar ou importar a configuração, o pré-save exige o par do ambiente declarado pelo Deployer,
-força o gateway ativo e remove valores secretos antes da gravação; sem credenciais, falha antes de persistir. Se
-uma chave faltar em runtime depois da configuração, operações de pagamento falham fechadas sem chamar o provedor.
+configuração. Ao salvar ou importar a configuração, o pré-save força o gateway ativo e remove valores secretos
+antes da gravação. A falta de credenciais não bloqueia essa gravação segura; operações financeiras falham fechadas
+sem chamar o provedor quando o token de runtime está ausente.
 Chaves de produção só entram por decisão do responsável.
 
 ## Credenciais
@@ -48,8 +48,8 @@ O ambiente vem do ACULTA Deployer (`var/deployer/environment.json`). Nenhuma par
 - O modo `stage` do módulo (conta de produção com credenciais de teste) não é usado.
 - Os valores entram por `MercadoPagoEnvironmentOverride` (`aculta_portal`) em memória. Não são exportados
   nem gravados na configuração do gateway.
-- Campo ausente fica vazio no gateway. Com a validação `EntitySaveHooks` (`entity_presave`), o gateway não pode
-  ser ativado num ambiente sem Public Key e Access Token do modo correspondente.
+- Campo ausente fica vazio no gateway. `EntitySaveHooks` (`entity_presave`) mantém o gateway ativo e limpa
+  segredos antes de persistir. Sem Public Key e Access Token, as operações de pagamento falham fechadas.
 
 ## Dados de teste
 

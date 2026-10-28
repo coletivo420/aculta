@@ -1,9 +1,9 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.23
+version: 0.1.0-dev.24
 state: Dev
 progress_note: >-
-  PHPCS limpo, testes de Conta por rota, rotas verificadas no runtime de teste; navegador S-R4/S-R5 e dependência módulo→tema pendentes.
-next_phase: 'Executar lint/PHPCS, PHPUnit Unit+Kernel+Functional, descoberta SDC, gates, duas contas, privacidade e avatar; Firefox ESR visível em 320-1440px, no-JS/AJAX, domínio ACCOUNT, comparação /studio/perfil e /conta-legada. Handoff: web/modules/custom/aculta_portal/modules/aculta_studio/docs/HANDOFF-S-R4-S-R5-2026-10-25.md. Sem merge/deploy.'
+  Dev.24 adiciona provider e apresentação Studio para administração de planos Mercado Pago. Suíte Studio 62/502 PASS; gate Portal Drupal 11 PASS (1.155 verificações) após alinhar invariantes à política aprovada para gateway e credenciais; fronteira módulo/tema PASS. Firefox ESR/X11 verificou a rota Studio no ACULTA420, lista remota, labels e reflow 390/1280px. As homologações visuais S-R4/S-R5 permanecem pendentes.
+next_phase: 'Concluir S-R4/S-R5 em 320-1440px, no-JS/AJAX, domínio ACCOUNT e comparar /studio/perfil e /conta-legada. Handoff: web/modules/custom/aculta_portal/modules/aculta_studio/docs/HANDOFF-S-R4-S-R5-2026-10-25.md. Sem merge/deploy.'
 
 # 2026-10-24: P1-B em codigo: bridge Marley e preview /studio/inicio;
 # a home /studio continua legado Marley, sem Runtime homologado.

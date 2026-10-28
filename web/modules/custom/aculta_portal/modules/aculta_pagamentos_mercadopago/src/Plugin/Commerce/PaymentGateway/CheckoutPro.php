@@ -12,6 +12,8 @@ use Drupal\commerce_payment\PaymentMethodStorageInterface;
 use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\OffsitePaymentGatewayBase;
 use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\SupportsRefundsInterface;
 use Drupal\aculta_pagamentos_mercadopago\Event\RefundEligibilityEvent;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoAmount;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
 use Drupal\commerce_price\Price;
 use Drupal\Component\Utility\NestedArray;
@@ -886,10 +888,20 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         || $old_refunded_amount->getCurrencyCode() !== $payment_amount->getCurrencyCode()) {
         throw new PaymentGatewayException('The refund currency does not match the payment currency.');
       }
+      try {
+        $precision = MercadoPagoAmount::currencyPrecision($payment_amount->getCurrencyCode());
+        $refund_number = MercadoPagoAmount::normalize($refund_amount_price->getNumber(), $precision);
+        $payment_number = MercadoPagoAmount::normalize($payment_amount->getNumber(), $precision);
+      }
+      catch (MercadoPagoApiException) {
+        throw new PaymentGatewayException('The refund amount cannot be represented in the payment currency.');
+      }
       $this->assertRefundAmount($locked_payment, $refund_amount_price);
       $new_refunded_amount = $old_refunded_amount->add($refund_amount_price);
       $payment_id = (int) $remote_id;
-      $refund_float = (float) $refund_amount_price->getNumber();
+      // The SDK accepts a float; all validation and endpoint selection happen
+      // against exact currency precision before this boundary conversion.
+      $refund_float = (float) $refund_number;
       $idempotency_key = 'aculta-refund-' . hash('sha256', implode('|', [
         $remote_id,
         $refund_amount_price->getCurrencyCode(),
@@ -900,7 +912,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       // same durable local balance and therefore produce the same key.
       $request_options->setMaxRetries(0);
       $refund_client = $this->clientFactory->criar('reembolsos', $this->parentEntity);
-      if ($refund_float >= (float) $payment_amount->getNumber()) {
+      if (bccomp($refund_number, $payment_number, $precision) >= 0) {
         $refund_result = $refund_client->refundTotal($payment_id, $request_options);
       }
       else {
@@ -930,7 +942,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         $locked_payment->setState('refunded');
       }
       $locked_payment->setRefundedAmount($new_refunded_amount);
-      $locked_payment->setRemoteState($refund_result->status);
+      $locked_payment->setRemoteState($refund_status);
       $locked_payment->save();
 
       $order = $locked_payment->getOrder();
@@ -985,14 +997,17 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
           $payment_order = is_object($payment->order)
             ? ($payment->order->id ?? NULL)
             : ($payment->order['id'] ?? NULL);
-          if ($payment_order !== NULL && ctype_digit((string) $payment_order)) {
-            $merchant_order_id = (string) $payment_order;
-            $merchant_order_client = $this->clientFactory->criar('pedidos_comerciante', $this->parentEntity);
-            $merchant_order = $merchant_order_client->get((int) $merchant_order_id);
-            if (!$this->remoteIdMatches($merchant_order, $merchant_order_id)) {
-              $logger->warning('Merchant order lookup for @id returned a conflicting ID.', ['@id' => $merchant_order_id]);
-              return new JsonResponse([], 503);
-            }
+          if (!is_scalar($payment_order)
+            || filter_var((string) $payment_order, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === FALSE) {
+            $logger->warning('Payment @id has an invalid merchant order reference.', ['@id' => $payment_id]);
+            return new JsonResponse([], 503);
+          }
+          $merchant_order_id = (string) $payment_order;
+          $merchant_order_client = $this->clientFactory->criar('pedidos_comerciante', $this->parentEntity);
+          $merchant_order = $merchant_order_client->get((int) $merchant_order_id);
+          if (!$this->remoteIdMatches($merchant_order, $merchant_order_id)) {
+            $logger->warning('Merchant order lookup for @id returned a conflicting ID.', ['@id' => $merchant_order_id]);
+            return new JsonResponse([], 503);
           }
         }
       }
@@ -1017,8 +1032,32 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       }
 
       $remote_status = (string) ($payment->status ?? '');
-      $refunded_number = (string) ($payment->transaction_amount_refunded ?? '0');
-      $has_refund = is_numeric($refunded_number) && (float) $refunded_number > 0;
+      $currency = (string) ($payment->currency_id ?? '');
+      if ($currency === '') {
+        $logger->warning('Payment @id has an invalid amount or currency for order @order_id.', [
+          '@id' => $payment_id,
+          '@order_id' => $order->id(),
+        ]);
+        return new JsonResponse();
+      }
+      try {
+        $precision = MercadoPagoAmount::currencyPrecision($currency);
+      }
+      catch (MercadoPagoApiException) {
+        $logger->warning('Payment @id has an invalid amount or currency for order @order_id.', [
+          '@id' => $payment_id,
+          '@order_id' => $order->id(),
+        ]);
+        return new JsonResponse();
+      }
+      try {
+        $refunded_number = MercadoPagoAmount::normalize($payment->transaction_amount_refunded ?? 0, $precision);
+      }
+      catch (MercadoPagoApiException) {
+        $logger->warning('Payment @id has an invalid refunded amount.', ['@id' => $payment_id]);
+        return new JsonResponse();
+      }
+      $has_refund = bccomp($refunded_number, '0', $precision) > 0;
       $pending_status = in_array($remote_status, ['pending', 'in_process', 'authorized'], TRUE);
       $terminal_status = in_array($remote_status, ['cancelled', 'rejected'], TRUE);
       if (!in_array($remote_status, ['approved', 'refunded'], TRUE) && !$has_refund && !$pending_status && !$terminal_status) {
@@ -1029,10 +1068,18 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         return new JsonResponse();
       }
 
-      $currency = (string) ($payment->currency_id ?? '');
-      $amount_number = (string) ($payment->transaction_amount ?? '');
+      try {
+        $amount_number = MercadoPagoAmount::normalize($payment->transaction_amount ?? NULL, $precision);
+      }
+      catch (MercadoPagoApiException) {
+        $logger->warning('Payment @id has an invalid amount or currency for order @order_id.', [
+          '@id' => $payment_id,
+          '@order_id' => $order->id(),
+        ]);
+        return new JsonResponse();
+      }
       $order_total = $order->getTotalPrice();
-      if ($currency === '' || $currency !== $order_total?->getCurrencyCode() || !is_numeric($amount_number) || (float) $amount_number <= 0) {
+      if ($currency !== $order_total?->getCurrencyCode() || bccomp($amount_number, '0', $precision) <= 0) {
         $logger->warning('Payment @id has an invalid amount or currency for order @order_id.', [
           '@id' => $payment_id,
           '@order_id' => $order->id(),
@@ -1103,7 +1150,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         }
       }
       elseif ($remote_status === 'refunded' || $has_refund) {
-        if (!is_numeric($refunded_number) || (float) $refunded_number <= 0) {
+        if (bccomp($refunded_number, '0', $precision) <= 0) {
           return new JsonResponse();
         }
         $refunded_amount = new Price($refunded_number, $currency);
@@ -1133,12 +1180,23 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
           $commerce_payment->save();
         }
         else {
-          if (in_array($commerce_payment->getState()->getId(), ['new', 'authorization'], TRUE)) {
-            $commerce_payment->setState('pending');
-          }
-          if ($commerce_payment->getRemoteState() !== $remote_status) {
-            $commerce_payment->setRemoteState($remote_status);
-            $commerce_payment->save();
+          $local_state = $commerce_payment->getState()->getId();
+          // A provider lookup can lag behind a previous approved or terminal
+          // event. Do not let that stale pending response regress its remote
+          // state or overwrite a completed/refunded/voided Commerce record.
+          if (in_array($local_state, ['new', 'authorization', 'pending'], TRUE)) {
+            $changed = FALSE;
+            if (in_array($local_state, ['new', 'authorization'], TRUE)) {
+              $commerce_payment->setState('pending');
+              $changed = TRUE;
+            }
+            if ($commerce_payment->getRemoteState() !== $remote_status) {
+              $commerce_payment->setRemoteState($remote_status);
+              $changed = TRUE;
+            }
+            if ($changed) {
+              $commerce_payment->save();
+            }
           }
         }
       }
@@ -1221,13 +1279,23 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
 
     // Registra o valor que o Mercado Pago confirmou, não o saldo do pedido: um
     // pagamento parcial ou de valor diferente não pode quitar o pedido.
-    $verified_amount_number = (string) ($mp_payment->transaction_amount ?? '');
     $verified_currency = (string) ($mp_payment->currency_id ?? '');
+    try {
+      $precision = MercadoPagoAmount::currencyPrecision($verified_currency);
+      $verified_amount_number = MercadoPagoAmount::normalize($mp_payment->transaction_amount ?? NULL, $precision);
+    }
+    catch (MercadoPagoApiException) {
+      $logger->error('Payment @id has an invalid amount or currency for order @order_id.', [
+        '@id' => $payment_id,
+        '@order_id' => $order->id(),
+      ]);
+      throw new PaymentGatewayException('Payment amount could not be verified.', 0);
+    }
     $order_total = $order->getTotalPrice();
-    if (!is_numeric($verified_amount_number) || (float) $verified_amount_number <= 0 || $verified_currency !== $order_total?->getCurrencyCode()) {
+    if (bccomp($verified_amount_number, '0', $precision) <= 0 || $verified_currency !== $order_total?->getCurrencyCode()) {
       $logger->error('Payment @id amount @amount @currency does not match order @order_id currency', [
         '@id' => $payment_id,
-        '@amount' => $verified_amount_number !== '' ? $verified_amount_number : 'none',
+        '@amount' => $verified_amount_number,
         '@currency' => $verified_currency !== '' ? $verified_currency : 'none',
         '@order_id' => $order->id(),
       ]);
@@ -1240,6 +1308,18 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         '@order_id' => $order->id(),
       ]);
       throw new PaymentGatewayException('Payment amount does not match this order.', 0);
+    }
+
+    // A non-empty payment reference must agree with the local order even when
+    // its authenticated response also includes a Merchant Order ID.
+    $payment_external_reference = $mp_payment->external_reference ?? NULL;
+    if ($payment_external_reference !== NULL && $payment_external_reference !== ''
+      && (!is_scalar($payment_external_reference) || (string) $payment_external_reference !== (string) $order->id())) {
+      $logger->error('Payment @id external reference does not match order @order_id.', [
+        '@id' => $payment_id,
+        '@order_id' => $order->id(),
+      ]);
+      throw new PaymentGatewayException('Payment does not belong to this order.', 0);
     }
 
     // Confirm the merchant order's external_reference matches this order.

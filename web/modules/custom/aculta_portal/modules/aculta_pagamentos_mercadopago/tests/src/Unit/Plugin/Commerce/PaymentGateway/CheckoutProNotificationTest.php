@@ -80,6 +80,60 @@ final class CheckoutProNotificationTest extends UnitTestCase {
   }
 
   /**
+   * Retries instead of falling back to a weaker reference on malformed order.
+   */
+  public function testMalformedMerchantOrderReferenceCannotFallBackToExternalReference(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client = new class {
+
+      /**
+       * Returns a payment whose Merchant Order reference is malformed.
+       */
+      public function get(int $id): object {
+        return (object) [
+          'external_reference' => '42',
+          'id' => '123',
+          'status' => 'approved',
+          'order' => (object) ['id' => 'invalid'],
+        ];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->expects($this->never())->method('getStorage');
+
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects($this->once())
+      ->method('warning')
+      ->with('Payment @id has an invalid merchant order reference.', ['@id' => '123']);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($logger);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123', 300)
+      ->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.payment.123');
+
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    $this->assertSame(503, $response->getStatusCode());
+    $this->assertSame([], json_decode((string) $response->getContent(), TRUE));
+  }
+
+  /**
    * Terminal status cannot persist without a matching Commerce payment.
    */
   public function testRejectedRemotePaymentDoesNotPersistWithoutExistingPayment(): void {
@@ -150,7 +204,8 @@ final class CheckoutProNotificationTest extends UnitTestCase {
           'external_reference' => '42',
           'id' => '123',
           'status' => 'approved',
-          'transaction_amount' => '10.00',
+          'transaction_amount' => '1.0e1',
+          'transaction_amount_refunded' => '0e0',
           'currency_id' => 'BRL',
         ];
       }
@@ -217,7 +272,8 @@ final class CheckoutProNotificationTest extends UnitTestCase {
           'external_reference' => '42',
           'id' => '123',
           'status' => 'approved',
-          'transaction_amount' => '10.00',
+          'transaction_amount' => '1.0e1',
+          'transaction_amount_refunded' => '0e0',
           'currency_id' => 'BRL',
         ];
       }
@@ -319,6 +375,74 @@ final class CheckoutProNotificationTest extends UnitTestCase {
   }
 
   /**
+   * Does not write Commerce state for a remote amount below cent precision.
+   */
+  public function testNotificationRejectsSubcentAmountBeforePaymentPersistence(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $client = new class {
+
+      /**
+       * Returns an amount that cannot be represented as a currency value.
+       */
+      public function get(int $id): object {
+        return (object) [
+          'external_reference' => '42',
+          'id' => '123',
+          'status' => 'approved',
+          'transaction_amount' => '10.001',
+          'transaction_amount_refunded' => '0.00',
+          'currency_id' => 'BRL',
+        ];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($client);
+
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn(42);
+    $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
+    $order_storage = $this->createMock(EntityStorageInterface::class);
+    $order_storage->expects($this->once())->method('load')->with('42')->willReturn($order);
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->expects($this->once())
+      ->method('getStorage')
+      ->with('commerce_order')
+      ->willReturn($order_storage);
+
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects($this->once())
+      ->method('warning')
+      ->with('Payment @id has an invalid amount or currency for order @order_id.', [
+        '@id' => '123',
+        '@order_id' => 42,
+      ]);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($logger);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123', 300)
+      ->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.payment.123');
+
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    $this->assertSame(200, $response->getStatusCode());
+    $this->assertSame([], json_decode((string) $response->getContent(), TRUE));
+  }
+
+  /**
    * Completes an existing payment only after the API confirms approval.
    */
   #[DataProvider('statesToComplete')]
@@ -336,7 +460,8 @@ final class CheckoutProNotificationTest extends UnitTestCase {
           'external_reference' => '42',
           'id' => '123',
           'status' => 'approved',
-          'transaction_amount' => '10.00',
+          'transaction_amount' => '1.0e1',
+          'transaction_amount_refunded' => '0e0',
           'currency_id' => 'BRL',
         ];
       }
@@ -392,9 +517,10 @@ final class CheckoutProNotificationTest extends UnitTestCase {
   }
 
   /**
-   * Records a pending remote payment without completing the Commerce payment.
+   * Applies pending remote state without regressing the Commerce payment.
    */
-  public function testPendingNotificationRecordsPendingState(): void {
+  #[DataProvider('pendingNotificationProvider')]
+  public function testPendingNotificationRecordsPendingState(string $commerce_state, string $stored_remote_state, bool $save_pending): void {
     $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
     $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
     $parent_gateway->method('id')->willReturn('mercado_pago');
@@ -427,13 +553,19 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $order_storage->expects($this->once())->method('load')->with('42')->willReturn($order);
 
     $payment_state = $this->createMock(StateItemInterface::class);
-    $payment_state->method('getId')->willReturn('authorization');
+    $payment_state->method('getId')->willReturn($commerce_state);
     $payment = $this->createMock(PaymentInterface::class);
     $payment->method('getState')->willReturn($payment_state);
-    $payment->method('getRemoteState')->willReturn('pending');
-    $payment->expects($this->once())->method('setState')->with('pending');
-    $payment->expects($this->once())->method('setRemoteState')->with('in_process');
-    $payment->expects($this->once())->method('save');
+    $payment->method('getRemoteState')->willReturn($stored_remote_state);
+    if ($save_pending) {
+      $payment->expects($this->once())->method('setState')->with('pending');
+      $payment->expects($this->once())->method('save');
+    }
+    else {
+      $payment->expects($this->never())->method('setState');
+      $payment->expects($this->never())->method('save');
+    }
+    $payment->expects($this->never())->method('setRemoteState');
 
     $payment_storage = $this->createMock(EntityStorageInterface::class);
     $payment->method('getOrderId')->willReturn(42);
@@ -459,6 +591,20 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
 
     $this->assertSame(200, $response->getStatusCode());
+  }
+
+  /**
+   * Pending notifications only mutate an unfinished local payment.
+   *
+   * @return array<string, array{string, string, bool}>
+   *   Commerce state, stored remote state, and whether the local state changes.
+   */
+  public static function pendingNotificationProvider(): array {
+    return [
+      'persist local transition when remote state already matches' => ['authorization', 'in_process', TRUE],
+      'ignore stale pending status after approval' => ['completed', 'approved', FALSE],
+      'ignore pending status after terminal authorization' => ['authorization_voided', 'cancelled', FALSE],
+    ];
   }
 
   /**
@@ -541,7 +687,8 @@ final class CheckoutProNotificationTest extends UnitTestCase {
         return (object) [
           'id' => '123',
           'status' => 'approved',
-          'transaction_amount' => '10.00',
+          'transaction_amount' => '1.0e1',
+          'transaction_amount_refunded' => '0e0',
           'currency_id' => 'BRL',
           'external_reference' => '42',
           'order' => (object) ['id' => '900'],
@@ -886,6 +1033,60 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
     $order->expects($this->never())->method('set');
     $order->expects($this->never())->method('save');
+
+    $this->expectException(PaymentGatewayException::class);
+    $this->expectExceptionMessage('Payment does not belong to this order.');
+    $gateway->onReturn($order, new Request([
+      'payment_id' => '123',
+      'merchant_order_id' => '900',
+      'status' => 'approved',
+    ]));
+  }
+
+  /**
+   * A browser return rejects conflicting payment external references.
+   */
+  public function testReturnRejectsConflictingPaymentExternalReference(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $parent_gateway->method('id')->willReturn('mercado_pago');
+    $payment_client = new class {
+
+      /**
+       * Returns an approved payment whose order reference conflicts locally.
+       */
+      public function get(int $id): object {
+        return (object) [
+          'id' => '123',
+          'status' => 'approved',
+          'transaction_amount' => '10.00',
+          'currency_id' => 'BRL',
+          'external_reference' => '99',
+          'order' => (object) ['id' => '900'],
+        ];
+      }
+
+    };
+    $factory = $this->createMock(MercadoPagoClientFactory::class);
+    $factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($payment_client);
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->expects($this->never())->method('getStorage');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+    $this->setSuccessfulPaymentLock($gateway);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn(42);
+    $order->method('getData')
+      ->with('commerce_mercado_pago_checkout')
+      ->willReturn(['preference_id' => 'pref-1']);
+    $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
 
     $this->expectException(PaymentGatewayException::class);
     $this->expectExceptionMessage('Payment does not belong to this order.');

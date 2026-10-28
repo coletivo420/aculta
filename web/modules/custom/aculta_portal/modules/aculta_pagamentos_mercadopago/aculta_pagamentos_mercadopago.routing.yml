@@ -4,3 +4,27 @@ aculta_pagamentos_mercadopago.checkout_popup_return:
     _controller: '\Drupal\aculta_pagamentos_mercadopago\Controller\CheckoutPopupReturnController::returnPage'
   requirements:
     _access: 'TRUE'
+
+aculta_pagamentos_mercadopago.plans:
+  path: '/integracoes/mercadopago/planos'
+  defaults:
+    _form: '\Drupal\aculta_pagamentos_mercadopago\Form\MercadoPagoPlanManagementForm'
+    _title: 'Planos de assinatura'
+  requirements:
+    _custom_access: 'aculta_pagamentos_mercadopago.plan_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _admin_route: TRUE
+    no_cache: TRUE
+
+aculta_pagamentos_mercadopago.studio_plans:
+  path: '/studio/conta/mercado-pago/planos'
+  defaults:
+    _controller: 'aculta_pagamentos_mercadopago.plan_studio_controller:page'
+    _title: 'Planos Mercado Pago'
+  requirements:
+    _custom_access: 'aculta_pagamentos_mercadopago.plan_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: TRUE

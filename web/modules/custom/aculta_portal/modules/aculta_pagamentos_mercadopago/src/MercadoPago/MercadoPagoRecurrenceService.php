@@ -9,6 +9,7 @@ use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use MercadoPago\Client\Common\RequestOptions;
 use MercadoPago\Exceptions\MPApiException;
+use MercadoPago\Net\MPSearchRequest;
 
 /**
  * Manages recurring plans and subscriptions through Mercado Pago.
@@ -36,13 +37,19 @@ class MercadoPagoRecurrenceService {
    *   Gateway com credenciais do ambiente ativo.
    * @param array{motivo: string, valor: string, moeda: string, frequencia: int, back_url: string} $dados
    *   Dados validados para o plano.
+   * @param string $intentId
+   *   Stable unique identifier for this logical creation request. Reuse it for
+   *   retries; use a different value when creating an identical new plan.
    *
    * @return array{id: string, init_point: ?string}
    *   Identificador do plano e URL de autorização.
    */
-  public function criarPlano(PaymentGatewayInterface $gateway, array $dados): array {
+  public function criarPlano(PaymentGatewayInterface $gateway, array $dados, string $intentId): array {
+    if (preg_match('/^[A-Za-z0-9_-]{1,128}$/D', $intentId) !== 1) {
+      throw new \InvalidArgumentException('Identificador da tentativa de criação de plano inválido.');
+    }
     $payload = $this->montagem->plano($dados);
-    $opcoes = $this->opcoesIdempotencia('plan-create', $payload);
+    $opcoes = $this->opcoesIdempotencia('plan-create|' . $intentId, $payload);
     $plano = $this->executar('criar plano', fn () => $this->clientes->criar('planos_assinatura', $gateway)->create($payload, $opcoes));
     $id = $this->idPlano($plano->id ?? NULL);
     if ($id === '') {
@@ -96,6 +103,58 @@ class MercadoPagoRecurrenceService {
   }
 
   /**
+   * Searches subscription plans using bounded pagination.
+   *
+   * @param \Drupal\commerce_payment\Entity\PaymentGatewayInterface $gateway
+   *   Gateway com credenciais do ambiente ativo.
+   * @param int $limit
+   *   Número máximo de resultados, de 1 a 100.
+   * @param int $offset
+   *   Deslocamento não negativo para paginação.
+   *
+   * @return array{results: list<object>, paging: array<string, mixed>|object|null}
+   *   Planos com IDs validados e metadados de paginação do provedor.
+   *
+   * @throws \InvalidArgumentException
+   *   Se a paginação estiver fora dos limites permitidos.
+   * @throws \Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException
+   *   Se a resposta remota for inválida.
+   */
+  public function listarPlanos(PaymentGatewayInterface $gateway, int $limit = 25, int $offset = 0): array {
+    if ($limit < 1 || $limit > 100 || $offset < 0) {
+      throw new \InvalidArgumentException('Paginação de planos inválida.');
+    }
+
+    $resultado = $this->executar(
+      'consultar planos',
+      fn () => $this->clientes->criar('planos_assinatura', $gateway)->search(new MPSearchRequest($limit, $offset)),
+    );
+    $planos = is_object($resultado) ? ($resultado->results ?? NULL) : NULL;
+    if (!is_array($planos)) {
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou uma lista de planos inválida.'), 502);
+    }
+
+    $ids = [];
+    foreach ($planos as $plano) {
+      if (!is_object($plano)) {
+        throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou um plano inválido.'), 502);
+      }
+      $id = $this->idPlano($plano->id ?? NULL);
+      if ($id === '' || isset($ids[$id])) {
+        throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou identificadores de plano inválidos.'), 502);
+      }
+      $ids[$id] = TRUE;
+    }
+
+    $paging = $resultado->paging ?? NULL;
+    if ($paging !== NULL && !is_array($paging) && !is_object($paging)) {
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou paginação de planos inválida.'), 502);
+    }
+
+    return ['results' => array_values($planos), 'paging' => $paging];
+  }
+
+  /**
    * Creates a subscription for the payer and returns its ID and init_point.
    *
    * O e-mail do pagador vai no payload e não é registrado em log.
@@ -116,8 +175,26 @@ class MercadoPagoRecurrenceService {
     $referencia = (string) $payload['external_reference'];
     $opcoes = $this->opcoesIdempotencia('subscription|' . $referencia, $payload);
     $assinatura = $this->executar('criar assinatura', fn () => $this->clientes->criar('assinaturas', $gateway)->create($payload, $opcoes));
-    $this->logger->notice('Assinatura @id criada no Mercado Pago.', ['@id' => $assinatura->id]);
-    return ['id' => (string) $assinatura->id, 'init_point' => $assinatura->init_point, 'status' => $assinatura->status];
+    $id = is_object($assinatura) ? $this->idPlano($assinatura->id ?? NULL) : '';
+    $status = is_object($assinatura) ? $this->valorEscalar($assinatura->status ?? NULL) : '';
+    $init_point = is_object($assinatura) ? $this->valorEscalar($assinatura->init_point ?? NULL) : '';
+    if ($id === ''
+      || !in_array($status, ['pending', 'authorized'], TRUE)
+      || ($init_point !== '' && !self::urlAutorizacaoValida($init_point))
+      || ($status === 'pending' && !self::urlAutorizacaoValida($init_point))) {
+      // A malformed response may follow a successful remote creation. The
+      // caller keeps its reconciliation marker and must not issue another POST.
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago não devolveu uma assinatura válida para o pedido.'), 502);
+    }
+    $this->logger->notice('Assinatura @id criada no Mercado Pago.', ['@id' => $id]);
+    return ['id' => $id, 'init_point' => $init_point !== '' ? $init_point : NULL, 'status' => $status];
+  }
+
+  /**
+   * Checks an authorization URL against the Mercado Pago Brazil origin.
+   */
+  public static function urlAutorizacaoValida(string $url): bool {
+    return MercadoPagoRedirectUrl::isValid($url);
   }
 
   /**
@@ -194,6 +271,13 @@ class MercadoPagoRecurrenceService {
       return '';
     }
     return (string) $id;
+  }
+
+  /**
+   * Reads a scalar provider string without converting arrays or objects.
+   */
+  private function valorEscalar(mixed $value): string {
+    return is_string($value) || is_int($value) ? trim((string) $value) : '';
   }
 
 }

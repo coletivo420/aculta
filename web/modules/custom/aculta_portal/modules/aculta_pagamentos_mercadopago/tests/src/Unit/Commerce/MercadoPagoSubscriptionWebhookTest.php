@@ -75,18 +75,30 @@ final class MercadoPagoSubscriptionWebhookTest extends UnitTestCase {
       ->method('error')
       ->with('Falha ao processar notificação @tipo @id.', [
         '@tipo' => 'subscription_authorized_payment',
-        '@id' => 'cob-9',
+        '@id' => '3950169598',
       ]);
-    $resposta = (new WebhookGuard($servico, $logger))->validateAndNormalize($this->requisicao('subscription_authorized_payment', 'cob-9'), TRUE, self::SEGREDO);
+    $resposta = (new WebhookGuard($servico, $logger))->validateAndNormalize($this->requisicao('subscription_authorized_payment', '3950169598'), TRUE, self::SEGREDO);
     $this->assertSame(500, $resposta->getStatusCode());
+  }
+
+  /**
+   * Authorized-payment invoice IDs must match the provider's numeric contract.
+   */
+  public function testAuthorizedPaymentRejectsNonNumericIdBeforeDispatch(): void {
+    $servico = $this->createMock(MercadoPagoSubscriptionNotificationService::class);
+    $servico->expects($this->never())->method('processar');
+    $resposta = (new WebhookGuard($servico, $this->logger()))
+      ->validateAndNormalize($this->requisicao('subscription_authorized_payment', 'cob-9'), TRUE, self::SEGREDO);
+
+    $this->assertSame(400, $resposta->getStatusCode());
   }
 
   /**
    * Tests expected behavior.
    */
-  public function testSemServicoTopicoDeAssinaturaContinuaSendoReconhecido(): void {
+  public function testSemServicoWebhookDeAssinaturaSolicitaRetry(): void {
     $resposta = (new WebhookGuard())->validateAndNormalize($this->requisicao('subscription_preapproval_plan', 'plan-1'), TRUE, self::SEGREDO);
-    $this->assertSame(200, $resposta->getStatusCode());
+    $this->assertSame(503, $resposta->getStatusCode());
   }
 
   /**

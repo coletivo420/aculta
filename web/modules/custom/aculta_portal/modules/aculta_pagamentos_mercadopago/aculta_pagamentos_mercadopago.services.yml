@@ -1,4 +1,9 @@
 services:
+  aculta_pagamentos_mercadopago.plan_access:
+    class: Drupal\aculta_pagamentos_mercadopago\Access\MercadoPagoPlanAccess
+  aculta_pagamentos_mercadopago.plan_studio_controller:
+    class: Drupal\aculta_pagamentos_mercadopago\Controller\MercadoPagoPlanStudioController
+    arguments: ['@form_builder']
   aculta_pagamentos_mercadopago.logger:
     class: Drupal\Core\Logger\LoggerChannelInterface
     factory: ['@logger.factory', 'get']

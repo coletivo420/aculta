@@ -1,5 +1,52 @@
 # Mercado Pago — login sandbox do comprador
 
+## Gestão de planos no Studio
+
+`plan-management.py` valida visualmente a entrada da gestão pelo hub Studio, a
+tela `/studio/conta/mercado-pago/planos` no shell ACULTA420, a listagem e os
+campos de plano, a submissão para o domínio MAIN e o reflow em 390 e 1280 px.
+Não envia o formulário e não cria/atualiza plano. Usa Firefox ESR visível em
+`DISPLAY=:0`, geckodriver e o `wdlib.py` compartilhado em
+`tests/browser/aculta-cpf-checkout/`. Destino padrão: servidor de testes
+`https://conta.aculta.toca.net.br`; artefatos ficam em `$SUITE_OUT`.
+
+Execução após autorização e rebuild do cache do Runtime (o comando não importa
+configuração nem altera dados de negócio):
+
+```sh
+cd /home/piradopirata/projetos/aculta
+login_url="$(vendor/bin/drush uli --no-browser --uid=1 --uri=https://conta.aculta.toca.net.br 2>/dev/null | tail -n 1)"
+trap 'unset login_url' EXIT
+DISPLAY=:0 SUITE_OUT=/tmp/aculta-mercadopago-plan-management ACULTA_MP_STUDIO_LOGIN_URL="$login_url" python3 -I tests/browser/aculta-mercadopago/plan-management.py
+```
+
+Limitações: usa uma sessão administrativa de teste para validar o acesso; o
+smoke não verifica mutações remotas nem homologação de sandbox.
+
+### CRUD de plano no sandbox
+
+`plan-management-sandbox.py` envia o formulário pela interface para criar um
+plano mensal de R$ 1,00 e atualizar o mesmo plano para R$ 1,25, confirmando a
+resposta e os valores na listagem. Use somente porque cria um recurso remoto de
+teste que a API não permite excluir; o plano permanece na conta sandbox. O ID
+é salvo em `$SUITE_OUT/created-plan-id.txt` e não é impresso.
+
+```sh
+cd /home/piradopirata/projetos/aculta
+login_url="$(vendor/bin/drush uli --no-browser --uid=1 --uri=https://conta.aculta.toca.net.br 2>/dev/null | tail -n 1)"
+trap 'unset login_url' EXIT
+DISPLAY=:0 SUITE_OUT=/tmp/aculta-mercadopago-plan-management ACULTA_MP_STUDIO_LOGIN_URL="$login_url" python3 -I tests/browser/aculta-mercadopago/plan-management-sandbox.py
+```
+
+Resultado em 2026-10-28: `sandbox_plan_update=PASS` e
+`sandbox_plan_remote_requery=PASS`; a criação ocorreu na primeira execução e
+`plan-management-sandbox.py` confirmou o retorno de criação. Um plano mensal
+de teste ficou ativo na conta sandbox; não há API de exclusão. Nenhuma
+assinatura foi criada ou cobrança enviada.
+
+Limitação: exige gateway ativo em `test`, credenciais sandbox e conexão ao
+Mercado Pago. Não cria assinatura nem cobra saldo.
+
 Este script valida que o comprador sandbox autorizado consegue autenticar no
 Mercado Pago. Ele não cria preferência, pedido ou pagamento e não executa
 estorno.
@@ -30,6 +77,13 @@ retornou `guest_registration_and_shipping_stage_without_captcha`: produto,
 carrinho, cadastro silencioso e etapa de endereço carregaram; nenhuma cotação
 ou pagamento foi iniciado.
 
+Reexecução no servidor de testes em 2026-10-27: Firefox ESR visível retornou
+`guest_registration_and_shipping_stage_without_captcha`, sem CAPTCHA no produto,
+carrinho, identificação ou endereço. O teste não enviou endereço nem avançou à
+revisão/pagamento. O único pedido anônimo `draft` com um item criado pela sessão
+foi removido após conferência; `releaseLock(): null` não foi exercitado nesta
+transição.
+
 Reexecução após a integração dos totais ajustados no Checkout Pro também
 retornou `guest_registration_and_shipping_stage_without_captcha` no Firefox
 ESR 153.5.1 visível. O smoke não chegou à preferência nem ao pagamento; o
@@ -45,6 +99,11 @@ referência sintéticos foi criada no modo test, o `init_point` abriu a tela
 identificação do comprador com HTTP 200. O helper tentou o login autorizado
 partindo dessa etapa, mas retornou `login_incomplete`; não houve sessão
 confirmada ou pagamento.
+
+Nova tentativa em 2026-10-28 com `buyer-login.py` e as credenciais de teste
+autorizadas retornou `manual_security_challenge`. O comprador não autenticou;
+nenhum pagamento foi enviado. A preferência continua sem pedido Commerce
+associado e não comprova o fluxo de produção.
 
 ## Ambiente
 

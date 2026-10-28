@@ -94,7 +94,14 @@ final class WebhookGuard {
     $contestacao = $tipo === 'topic_chargebacks_wh';
 
     // Pagamentos legados usam ID inteiro; assinaturas usam ID alfanumérico.
-    if ($assinatura) {
+    if ($tipo === 'subscription_authorized_payment') {
+      // Mercado Pago documents authorized-payment invoice IDs as positive
+      // numeric identifiers. Reject malformed IDs before calling its API.
+      if (preg_match('/^[1-9][0-9]*$/', $data_id) !== 1) {
+        return new Response('', Response::HTTP_BAD_REQUEST);
+      }
+    }
+    elseif ($assinatura) {
       if (preg_match('/^[A-Za-z0-9_-]{1,64}$/', $data_id) !== 1) {
         return new Response('', Response::HTTP_BAD_REQUEST);
       }
@@ -146,7 +153,7 @@ final class WebhookGuard {
    */
   private function processarAssinatura(string $tipo, string $id): Response {
     if ($this->assinaturas === NULL) {
-      return new Response('', Response::HTTP_OK);
+      return new Response('', Response::HTTP_SERVICE_UNAVAILABLE);
     }
     try {
       $this->assinaturas->processar($tipo, $id);
