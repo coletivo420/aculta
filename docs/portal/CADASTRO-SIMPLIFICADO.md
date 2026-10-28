@@ -165,3 +165,16 @@ Configuração de fluxo e de tipo de pedido fica só no servidor de testes (não
 - Painel de nome no fluxo `curso` (LMS), no navegador: bloqueado pelo gateway de pagamento (ver acima). Na doação, a
   tentativa caiu na revisão de um pedido já existente da sessão e o painel de nome não apareceu; falta repetir com pedido novo.
 - Testes automáticos (unit/kernel) do `PersonalNameStore`, do `PersonalNameCompletionSubscriber` e do painel administrativo.
+
+### Atualização (2026-10-28): gateway do LMS e bloqueio do servidor de testes
+
+- Autorizado pelo responsável: o tipo de pedido `curso` foi incluído nas condições do gateway Mercado Pago do servidor de
+  testes (`commerce_payment.commerce_payment_gateway.mercado_pago`, condição `order_type`). Alteração só de configuração do
+  servidor de testes, feita por API de configuração. Não está no repositório: produção precisa de decisão própria.
+- Bloqueio: trabalho em andamento do agente do Mercado Pago (`EntitySaveHooks`, não commitado) faz salvar pedido e usuário
+  falhar no servidor de testes ("ArgumentCountError" e depois "releaseLock(): null"). Isso impede a compra de teste do LMS e a
+  doação com pedido novo. A decisão do responsável foi aguardar a correção desse agente, sem alterar o código dele.
+- Pendente após a correção: compra de LMS com curso de teste (grupo novo; remover ao final) e doação com pedido novo, para
+  ver o painel de nome e sobrenome.
+- Recuperação de senha: o redirecionamento agora vai para a Visão geral no domínio da conta (testado no navegador, em
+  `conta.aculta.toca.net.br/conta-legada`, que mostra conteúdo). Repetir o teste completo depois do desbloqueio.
