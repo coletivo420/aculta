@@ -1,3 +1,18 @@
+## 0.1.0-dev.60 — atualizar planos com idempotência e validar IDs (2026-10-27)
+
+- `MercadoPagoRecurrenceService` agora implementa atualização de plano pelo endpoint oficial `PUT /preapproval_plan/{id}`, com payload validado, `X-Idempotency-Key` estável e conferência do ID retornado. Criação de planos também usa chave estável e falha fechada se a API não devolver ID válido. Não foi criado cancelamento por API: a documentação do Mercado Pago descreve essa ação como irreversível no painel e informa que assinantes existentes continuam ativos.
+- Unit `MercadoPagoRecurrenceServiceTest`: 10 testes / 23 assertions PASS; suíte Unit MP: 221 testes / 984 assertions PASS (1 depreciação PHPUnit). PHPCS Drupal/DrupalPractice e PHP lint focais PASS. Homologação da operação de plano sandbox pendente.
+
+## 0.1.0-dev.59 — manter gateway ativo e validar credenciais no pré-save (2026-10-27)
+
+- `EntitySaveHooks` agora falha fechado se o par de credenciais do ambiente definido pelo Deployer estiver ausente, força `mercado_pago` ativo e remove valores de credenciais antes da persistência. Regressões Unit/Kernel cobrem ativação e ausência de credenciais; Kernel comprova que tentativa de desativação não persiste.
+- Sincronizei o plano Mercado Pago e o mapa de módulos com o estado atual. Unit MP: 217 testes / 976 assertions PASS; Kernel: 3 testes / 129 assertions PASS (78 depreciações Core/contrib); PHPCS/PHP lint focais e gates Portal/mapa PASS.
+
+## 0.1.0-dev.58 — idempotência estável ao criar assinatura (2026-10-27)
+
+- `MercadoPagoRecurrenceService::criarAssinatura()` agora envia `X-Idempotency-Key` derivada do pedido e do payload exato. A chave evita que uma repetição após timeout crie outra assinatura; pedidos diferentes e alterações de payload recebem chaves distintas.
+- Regressão verifica estabilidade da chave no retry e isolamento por pedido. Unit `MercadoPagoRecurrenceServiceTest`: 6 testes / 16 assertions PASS; PHP lint PASS. Sandbox permanece pendente.
+
 ## 0.1.0-dev.57 — reconciliar retorno sem status do navegador (2026-10-27)
 
 - O retorno agora exige os IDs do pagamento e do Merchant Order, mas não exige o `status` enviado pelo navegador. A decisão continua baseada na consulta autenticada à API do Mercado Pago e na verificação dos vínculos. Também removi um bloco comentado que propunha copiar o e-mail do comprador da resposta remota para o pedido.

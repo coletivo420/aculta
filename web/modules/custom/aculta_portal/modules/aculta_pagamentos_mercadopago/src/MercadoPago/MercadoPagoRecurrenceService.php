@@ -7,6 +7,7 @@ namespace Drupal\aculta_pagamentos_mercadopago\MercadoPago;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use MercadoPago\Client\Common\RequestOptions;
 use MercadoPago\Exceptions\MPApiException;
 
 /**
@@ -41,16 +42,57 @@ class MercadoPagoRecurrenceService {
    */
   public function criarPlano(PaymentGatewayInterface $gateway, array $dados): array {
     $payload = $this->montagem->plano($dados);
-    $plano = $this->executar('criar plano', fn () => $this->clientes->criar('planos_assinatura', $gateway)->create($payload));
+    $opcoes = $this->opcoesIdempotencia('plan-create', $payload);
+    $plano = $this->executar('criar plano', fn () => $this->clientes->criar('planos_assinatura', $gateway)->create($payload, $opcoes));
+    $id = $this->idPlano($plano->id ?? NULL);
+    if ($id === '') {
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago não devolveu um identificador de plano válido.'), 502);
+    }
     $this->logger->notice('Plano de assinatura @id criado no Mercado Pago.', ['@id' => $plano->id]);
-    return ['id' => (string) $plano->id, 'init_point' => $plano->init_point];
+    return ['id' => $id, 'init_point' => is_string($plano->init_point ?? NULL) ? $plano->init_point : NULL];
   }
 
   /**
    * Consulta um plano de assinatura.
    */
   public function obterPlano(PaymentGatewayInterface $gateway, string $id): object {
-    return $this->executar('consultar plano', fn () => $this->clientes->criar('planos_assinatura', $gateway)->get($id));
+    $id = trim($id);
+    if ($this->idPlano($id) === '') {
+      throw new \InvalidArgumentException('Identificador do plano inválido.');
+    }
+    $plano = $this->executar('consultar plano', fn () => $this->clientes->criar('planos_assinatura', $gateway)->get($id));
+    if ($this->idPlano($plano->id ?? NULL) !== $id) {
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou um plano inconsistente.'), 502);
+    }
+    return $plano;
+  }
+
+  /**
+   * Updates a subscription plan with a stable key for safe retries.
+   *
+   * @param \Drupal\commerce_payment\Entity\PaymentGatewayInterface $gateway
+   *   Gateway com credenciais do ambiente ativo.
+   * @param string $id
+   *   Identificador do plano existente.
+   * @param array{motivo: string, valor: string, moeda: string, frequencia: int, back_url: string} $dados
+   *   Dados validados do plano.
+   *
+   * @return object
+   *   Plano atualizado, com o ID conferido.
+   */
+  public function alterarPlano(PaymentGatewayInterface $gateway, string $id, array $dados): object {
+    $id = trim($id);
+    if ($this->idPlano($id) === '') {
+      throw new \InvalidArgumentException('Identificador do plano inválido.');
+    }
+    $payload = $this->montagem->plano($dados);
+    $opcoes = $this->opcoesIdempotencia('plan-update|' . $id, $payload);
+    $plano = $this->executar('alterar plano', fn () => $this->clientes->criar('planos_assinatura', $gateway)->update($id, $payload, $opcoes));
+    if ($this->idPlano($plano->id ?? NULL) !== $id) {
+      throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago retornou um plano inconsistente.'), 502);
+    }
+    $this->logger->notice('Plano de assinatura @id atualizado no Mercado Pago.', ['@id' => $id]);
+    return $plano;
   }
 
   /**
@@ -68,7 +110,12 @@ class MercadoPagoRecurrenceService {
    */
   public function criarAssinatura(PaymentGatewayInterface $gateway, array $dados): array {
     $payload = $this->montagem->assinatura($dados);
-    $assinatura = $this->executar('criar assinatura', fn () => $this->clientes->criar('assinaturas', $gateway)->create($payload));
+    // The SDK creates a random idempotency key for each POST by default. That
+    // does not protect a retry after a transport timeout, so scope a stable key
+    // to the Commerce order reference and exact provider payload.
+    $referencia = (string) $payload['external_reference'];
+    $opcoes = $this->opcoesIdempotencia('subscription|' . $referencia, $payload);
+    $assinatura = $this->executar('criar assinatura', fn () => $this->clientes->criar('assinaturas', $gateway)->create($payload, $opcoes));
     $this->logger->notice('Assinatura @id criada no Mercado Pago.', ['@id' => $assinatura->id]);
     return ['id' => (string) $assinatura->id, 'init_point' => $assinatura->init_point, 'status' => $assinatura->status];
   }
@@ -123,6 +170,30 @@ class MercadoPagoRecurrenceService {
       ]);
       throw new MercadoPagoApiException((string) new TranslatableMarkup('O Mercado Pago não respondeu como esperado. Tente de novo em instantes.'), 0, $exception);
     }
+  }
+
+  /**
+   * Builds deterministic provider idempotency options for the exact operation.
+   *
+   * @param string $escopo
+   *   Operation and resource scope included in the key.
+   * @param array<string, mixed> $payload
+   *   Validated provider payload.
+   */
+  private function opcoesIdempotencia(string $escopo, array $payload): RequestOptions {
+    $serializado = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+    $chave = hash('sha256', 'aculta-mercadopago|' . $escopo . '|' . $serializado);
+    return new RequestOptions(NULL, NULL, ['x-idempotency-key' => $chave]);
+  }
+
+  /**
+   * Validates a scalar provider plan ID without coercing other values.
+   */
+  private function idPlano(mixed $id): string {
+    if ((!is_string($id) && !is_int($id)) || preg_match('/^[A-Za-z0-9_-]{1,64}$/', (string) $id) !== 1) {
+      return '';
+    }
+    return (string) $id;
   }
 
 }

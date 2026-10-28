@@ -2,9 +2,9 @@
 
 **Ciclo vigente:** este plano segue [Dev → RC → deploy/validação Alpha → produção](../operations/RELEASE-LIFECYCLE.md). Concluir integração, testes/gates e revisão visual aplicável antes de RC; validar o candidato em Alpha antes da migração a produção.
 
-Status: **plano de trabalho** para a linha 0.4.0-dev.65 (`aculta_portal`). Painéis visuais (vendas, loja e produto) ficam para a fase seguinte, por decisão do responsável.
+Status atualizado em 2026-10-27: a integração está em desenvolvimento ativo; o submódulo está em `0.1.0-dev.60`, `aculta_portal` em `0.4.1-dev.41` e `aculta_donation` em `0.1.0-dev.29`. Este documento contém decisões e evidências históricas abaixo; pendências atuais estão resumidas na seção [8](#8-testes-e-evidências) e no status do componente.
 
-Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `aculta_pagamentos_mercadopago` 0.1.0-dev.2, porte do `commerce_mercado_pago` 3.0.0-rc3 (Checkout Pro).
+Base: SDK `mercadopago/dx-php` instalado em `vendor/`; gateway Commerce `mercado_pago`, plugin `aculta_mercadopago_checkout_pro` (Checkout Pro).
 
 ## 0. Decisões do responsável (2026-10-16 e 2026-10-17)
 
@@ -37,24 +37,24 @@ Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `aculta_pa
 | Testes dos serviços do SDK | Feito, com cliente substituído por duplo (sem rede) |
 | Permissões no Runtime | Feito por escopo do papel `gerente_loja`; import completo de config não feito |
 | Tópicos de webhook | Confirmados: `subscription_preapproval`, `subscription_preapproval_plan`, `subscription_authorized_payment` |
-| Webhook com verificação de assinatura | **Bloqueado**: exige segredo do aplicativo (credencial nova, Key). Sem autorização |
-| URL de notificação | **Bloqueado**: precisa de entrada em `environment_bound` do `aculta_deployer` |
-| Vínculo assinatura ↔ pedido de doação (F3) | Feito em `aculta_portal` 0.4.0-dev.121 e `aculta_donation` 0.1.0-dev.16 (código e testes unitários). Ponta a ponta no sandbox: DEFERRED |
-| Painéis e ações de pagamento (F1) | Feito em dev.69: tabela de pedidos, atualizar, cancelar e estornar com permissão por escopo. Pendente: teste visual com pedidos de teste, teste Kernel e tema ACULTA420 (não autorizado) |
+| Webhook com verificação de assinatura | Implementado: segredo via Key/env e verificação oficial HMAC; Kernel rejeita segredo ausente/inválido e gateway desabilitado. Recebimento de todos os tópicos ainda depende da configuração da aplicação e homologação sandbox |
+| URL de notificação | Checkout Pro usa a rota nativa `commerce_payment.notify` por `notification_url`, sem IPN legado. Webhooks de assinatura são encaminhados ao mesmo endpoint; habilitação de tópicos no painel ainda requer comprovação |
+| Vínculo assinatura ↔ pedido de doação (F3) | Implementado em `aculta_donation`: associação sob lock, referência do pedido, reconciliação por versão e registro deduplicado de cobranças aprovadas. Testes Unit/Kernel passam; homologação ponta a ponta aguarda comprador sandbox autenticado |
+| Painéis e ações de pagamento (F1) | Código de vendas/doações, escopo de permissões e ações implementados. Revisão visual autenticada com pedidos de teste e operação sandbox permanecem pendentes |
 
-## 0.3 Webhooks de assinatura (dev.68)
+## 0.3 Webhooks de assinatura (registro histórico; implementação evoluiu)
 
 - Segredo: Key `mercadopago_webhook_secret` (env `MERCADOPAGO_WEBHOOK_SECRET`), já no contrato de segredos. Autorizado pelo responsável.
 - Verificação: `WebhookSignatureValidator` do SDK, sem cópia própria.
 - Endpoint: o mesmo da notificação do gateway, `/integracoes/pagamentos/mercado_pago/notificacao` (a rota é reescrita pelo Portal). Nenhuma URL nova no código.
-- Tópicos consultados: assinatura, plano e cobrança (`GET /authorized_payments/{id}`). Nenhuma gravação no Commerce ainda (F3).
+- O código atual consulta assinatura, plano e cobrança (`GET /authorized_payments/{id}`), valida IDs e integra a gravação com o Commerce. Ver detalhes atuais em `docs/integrations/MERCADOPAGO-CONTRATO.md`.
 - Verificado no Runtime: sem assinatura e com assinatura inválida, 401; assinatura válida com id inexistente, 500 com registro em log.
 - Caminho de sucesso verificado com plano real de teste (`subscription_preapproval_plan`): 200, plano consultado (status `active`). Plano criado na conta de teste; não pode ser apagado pela API.
 - Assinatura de teste (`subscription_preapproval`): **verificada em 2026-10-16** com comprador de teste criado por `POST /users/test_user` (e-mail `test_user_…@testuser.com`; o painel não mostra e-mail). Assinatura `4e7c1e310e84410985a281431511bdd3`, status `pending`; notificação assinada consultada com 200. A cobrança (`subscription_authorized_payment`) depende de autorização do comprador pelo `init_point`.
 - Bloqueio anterior (histórico): assinatura de teste (`subscription_preapproval`) bloqueada até obter o comprador. O Mercado Pago exige `payer_email` de um comprador diferente da conta vendedora, e o e-mail do usuário de teste não é retornado pela API. Falta o e-mail do comprador de teste, que está no painel (Suas integrações > aplicação > Contas de teste).
 - Diagnóstico registrado: criar assinatura com `preapproval_plan_id` exige `card_token_id` (não usado pelo projeto); sem plano, a API recusou o pagador (`User bad request`).
 
-## 0.4 Painéis (F1, dev.69)
+## 0.4 Painéis (registro histórico da implementação; evidência visual atual pendente)
 
 - Painéis de vendas e de doações com tabela de pedidos e ações por pagamento.
 - Permissão por escopo do pedido (produto: `gerenciar pagamentos de vendas`; doação: `administrar doacoes`; misto: as duas).
@@ -71,7 +71,7 @@ O SDK tem 21 arquivos `*Client.php`: 20 clientes concretos e a classe base `Merc
 | `pedidos_comerciante` | MerchantOrderClient | create, get, update, search | Planejado: conciliação de pagamentos |
 | `contestacoes` | ChargebackClient | get, search | Webhook assinado busca o caso e concilia o pagamento Commerce vinculado; painel de análise e envio de evidências seguem planejados |
 | `assinaturas` | PreApprovalClient | create, get, update, search, searchAll | **Implementado**: criar, consultar, pausar/reativar/cancelar |
-| `planos_assinatura` | PreApprovalPlanClient | create, get, update, search | **Implementado**: criar e consultar. Alterar e buscar: planejado |
+| `planos_assinatura` | PreApprovalPlanClient | create, get, update, search | Implementados no serviço: criar, consultar e alterar com validação de ID e idempotência estável; busca não tem consumidor ACULTA. Cancelamento é manual no painel e irreversível |
 | `preferencias` | PreferenceClient | Checkout Pro | Usado pelo gateway contrib; não chamado direto |
 | `pedidos` | OrderClient | Orders API | Avaliar: API de pedidos nova do Mercado Pago |
 | `transacoes_pedido` | OrderTransactionClient | Transações de pedido | Avaliar junto de `pedidos` |
@@ -97,11 +97,11 @@ Inconsistência registrada: o docblock de `PaymentClient::cancel` diz que só `p
 - a assinatura nasce em `pending`, e o pagador a autoriza pelo `init_point`;
 - alteração de status por `PUT /preapproval/{id}`: o guia oficial documenta `paused` e `canceled`; a reativação enviada pelo código usa `authorized` e ainda precisa de homologação sandbox.
 
-**Não confirmado (lacuna da pesquisa):** o recurso `authorized_payments` (cada cobrança de uma assinatura) e os tópicos de webhook exatos para assinaturas. A pesquisa retornou `subscription_preapproval` como evento de assinatura, mas não confirmou o tópico de cobrança recorrente. Antes de implementar o webhook, consultar a referência oficial do Mercado Pago do país do site (Brasil) e fixar os tópicos.
+**Confirmado na documentação oficial brasileira:** tópicos `subscription_preapproval`, `subscription_preapproval_plan` e `subscription_authorized_payment` e consulta correspondente por API. Assinaturas também exigem ativar o tópico `payments` para conciliar os pagamentos associados. A ativação no painel e a entrega real ainda precisam ser comprovadas em sandbox. Ver `docs/integrations/MERCADOPAGO-CONTRATO.md`.
 
 **Implementado nesta fase:**
 - `RecurrenceRequestBuilder`: valida valor (decimal, > 0, até duas casas), moeda (BRL), frequência (1 a 12 meses), `back_url` (https com host), e-mail do pagador e referência. Testado em unidade.
-- `MercadoPagoRecurrenceService`: `criarPlano`, `obterPlano`, `criarAssinatura`, `obterAssinatura`, `alterarStatusAssinatura`.
+- `MercadoPagoRecurrenceService`: `criarPlano`, `obterPlano`, `alterarPlano`, `criarAssinatura`, `obterAssinatura`, `alterarStatusAssinatura`; criação/alteração de planos e criação de assinatura enviam chaves de idempotência determinísticas e validam o ID remoto.
 
 **Decisão:** a recorrência usa a API de assinaturas do Mercado Pago, não o módulo `commerce_recurring`. Motivo: `commerce_recurring` não está habilitado no Runtime, e o cobrador de recorrência do Commerce não tem cobrança via Mercado Pago. Isto precisa de confirmação do responsável (pergunta 2 da seção 6).
 
@@ -112,18 +112,18 @@ Inconsistência registrada: o docblock de `PaymentClient::cancel` diz que só `p
 | Atualizar status | `PaymentClient::get` e `decidirSincronizacao` | Espelha `remote_state`, o valor estornado e os estados `completed`, `partially_refunded`, `refunded` e `authorization_voided` |
 | Cancelar | `PaymentClient::cancel` (PUT com `status: cancelled`) | Só com status remoto em `pending`, `in_process` ou `authorized` e estado local `authorization`. Transição local `void` |
 | Estornar | `refundPayment` do gateway, pela operação `refund-payment` do Commerce | Total ou parcial, só em `completed` e `partially_refunded` |
-| Contestação | Só registro em log | Exige tratamento manual |
+| Contestação | Webhook assinado consulta o caso pela API, confere o pagamento e associa-o ao pedido sob lock; painel especializado e envio de evidências ainda não implementados | Revisão humana do caso continua necessária |
 
 Pagamentos do Checkout Pro usam o workflow próprio `aculta_mercadopago_payment`: `pending`, `in_process` e `authorized` permanecem pendentes; o Webhook assinado ou o retorno reconsulta a API e só muda para `completed` quando o estado remoto é `approved`. Notificações IPN legadas são recusadas. O cancelamento de um pagamento pendente usa a transição `void` do workflow.
 
-Os painéis com botões de cancelar, estornar e atualizar ficam para a fase visual. Cancelar e estornar são concedidos ao gerente de loja (permissão `gerenciar pagamentos de vendas`, papel `gerente_loja`).
+Os painéis de vendas e doações têm ações de atualização, cancelamento e estorno conforme o escopo e as permissões de cada tipo de pedido. Doações recorrentes não permitem estorno; ações de assinatura são expostas no fluxo de recorrência.
 
 ## 4. Relatório de vendas
 
 - `SalesReportQuery` lê `commerce_order` e `commerce_order_item` direto, sem tabela paralela. Assim, estorno e cancelamento aparecem sem regerar dados.
 - `SalesReportFilters` trata datas (`de`, `ate`), loja (`loja`) e granularidade (`granularidade`), com limite de 366 dias.
 - A sintaxe de data é MariaDB, o banco de produção. Portabilidade é do DBTNG-2.
-- Ainda não ligado ao controller: `SalesReportController` continua com a agregação antiga. A ligação faz parte da fase visual.
+- O controller usa `SalesReportQuery`; vendas e doações mantêm escopos separados e não duplicam persistência financeira.
 
 Origem das ideias: o `commerce_reports` (GPL-2.0-or-later) inspirou a granularidade por período e a estrutura de tipos de relatório. Nenhum arquivo foi copiado literalmente; a versão do projeto usa consultas próprias sobre as tabelas do Commerce, por decisão de não criar armazenamento paralelo (AGENTS.md).
 
@@ -137,27 +137,19 @@ Origem das ideias: o `commerce_reports` (GPL-2.0-or-later) inspirou a granularid
 
 ### 5.2 Com doações (`commerce_donation_flow`)
 
-O módulo já tem a opção `recurring` (campo `field_gift_type`), o valor mensal (`field_monthly`) e a data de início (`field_recurring_begins`). Hoje a opção só funciona com `commerce_recurring`, que não está ativo.
+O módulo usa os campos de frequência e valor do fluxo de doação para criar um pedido do tipo `assinatura` e delega ao serviço Mercado Pago; não depende de `commerce_recurring`.
 
-Fluxo proposto:
-1. A doação recorrente cria um item de pedido com valor e frequência mensal.
-2. O Portal chama `MercadoPagoRecurrenceService::criarAssinatura` com o e-mail do pagador (do checkout), a referência igual ao id do pedido e a `back_url` do ambiente.
-3. A pessoa é redirecionada ao `init_point` e autoriza no Mercado Pago.
-4. Webhook de assinatura atualiza o pedido e cria um pagamento local por cobrança aprovada.
-5. Em "Meu apoio", a pessoa pode pausar ou cancelar a assinatura; a alteração chama `alterarStatusAssinatura`.
-
-Pontos que dependem de confirmação: tópicos de webhook (seção 2), e se o pedido de doação recorrente deve ser um pedido por cobrança ou um pedido único que agrupa as cobranças.
+Fluxo implementado: o checkout cria o pedido de assinatura e inicia uma assinatura pendente no Mercado Pago usando referência do pedido e chave idempotente; o comprador autoriza pelo `init_point`. Webhooks assinados atualizam o estado por versão e cobranças aprovadas criam pagamentos Commerce deduplicados no pedido associado. A interface de recorrência oferece pausa, reativação e cancelamento nas transições permitidas. O fluxo está coberto por Unit/Kernel; confirmação de autorização e cobrança no sandbox continua pendente.
 
 ### 5.3 Ambiente e endereços
 
-- `back_url`, `notification_url` e o domínio de retorno são endereços dependentes de ambiente. Devem ir para `environment_bound` do `aculta_deployer` (`deploy.json`), nunca para o código. O builder só aceita https com host.
+- `back_url` e URLs de retorno são dependentes de ambiente e devem respeitar o mapeamento de domínios ACULTA. `notification_url` do Checkout Pro é gerada pela rota nativa Commerce. O builder de recorrência só aceita `back_url` HTTPS com host.
 - Gate: `php scripts/validate-environment-addresses.php` deve continuar PASS.
 
 ### 5.4 Credenciais
 
-- Os tokens do gateway estão em configuração do módulo contrib (`access_token_test`, `access_token_stage`, `access_token_prod`). O AGENTS.md exige Drupal Key com provider `env`.
-- **Decisão:** a migração para Drupal Key não foi autorizada. Nesta linha, a aplicação usa os tokens de teste já configurados. Antes de produção, a migração precisa de nova autorização do responsável.
-- Esta fase lê o token, não o grava.
+- O gateway seleciona o token do ambiente ativo em memória; `MercadoPagoCredentials` e o override obtêm valores de ambiente, e o hook pré-save remove valores de credenciais antes de persistir a entidade.
+- O segredo HMAC de webhook é carregado por Drupal Key com provider `env`. Nenhuma credencial deve ser gravada em config exportado, logs, fixtures ou respostas.
 
 ## 6. Perguntas
 
@@ -167,11 +159,11 @@ Respondidas em 2026-10-16; ver a seção 0.
 
 | Fase | Conteúdo | Situação |
 |---|---|---|
-| F0 | Inventário, camada de API, recorrência, ações de pagamento, relatório (consultas) | Nesta linha 0.4.0-dev.65 |
-| F1 | Painéis: vendas, loja e produto (visual, ações com confirmação) | Próxima, a pedido do responsável |
-| F2 | Webhooks de assinatura e cobrança recorrente; tópicos confirmados | Implementado no código (MP dev.16): resposta da fatura vinculada ao ID consultado, pagamento aprovado comparado ao pedido e gravação serializada/idempotente. Unit PASS; ponta a ponta/sandbox e Kernel pendentes |
-| F3 | Integração com doações (fluxo da seção 5.2) | Feito em código (dev.121 e aculta_donation 0.1.0-dev.16). Pendências: ver seção 7.2 |
-| F4 | Migração de credenciais para Drupal Key (não autorizada ainda); testes Kernel no banco `aculta_simpletest` | Antes de produção |
+| F0 | Inventário, camada de API, recorrência, ações de pagamento, relatório | Implementado em código; testes Unit/Kernel focais passam, operação sandbox ainda pendente |
+| F1 | Painéis: vendas e doações, ações com confirmação e escopo de permissões | Implementado em código; inspeção visual autenticada com pedidos de teste pendente |
+| F2 | Webhooks de pagamentos, assinatura, plano, cobrança recorrente e contestação | Implementado com assinatura HMAC, consulta remota e associação validada; Unit/Kernel passam. Configuração dos tópicos e entrega ponta a ponta sandbox pendentes |
+| F3 | Integração com doações (fluxo da seção 5.2) | Implementada em código e coberta; aprovação/autorização/cobrança recorrente sandbox pendentes |
+| F4 | Credenciais por ambiente, Drupal Key/env e Kernel no banco dedicado | Implementado e testado; o pré-save mantém o gateway ativo, falha fechado sem credenciais do ambiente e impede persistência dos valores. Preparação de produção depende de configuração operacional e homologação |
 
 ## 7.1 Assinaturas: status e ações (2026-10-17)
 
@@ -190,16 +182,18 @@ Respondidas em 2026-10-16; ver a seção 0.
 - **Não verificado:** assinatura `authorized` criada com cartão de teste (HTTP 400 `Unsupported_credit_card_for_recurring_payment` no Mastercard e `User bad request` nos Visa), e, por consequência, pausar e reativar a partir de `authorized`, e as cobranças reais (`authorized_payments`). A partir de certo momento da sessão, até a criação `pending` passou a ser recusada com `User bad request`; a causa não foi identificada.
 - Criação de compradores de teste (`POST /users/test_user`) teve limite de taxa local (HTTP 429).
 
-## 7.2 Pendências de F2 e F3
+## 7.2 Pendências de sandbox e interface
 
-- Ponta a ponta no sandbox: criar assinatura `authorized`, pausar, reativar e receber cobranças. Bloqueado pela recusa da criação de assinatura `authorized` (ver 7.1).
-- Confirmar no sandbox os valores de `status` que não estão documentados acima.
-- Mensagem de erro no checkout: implementada com mensagem geral e detalhe no log; falta verificar a tela no Runtime.
+- Ponta a ponta no sandbox pelo checkout ACULTA: autenticar comprador de teste, aprovar/recusar/aguardar pagamento, validar retorno e webhook, autorizar assinatura, pausar, reativar, cancelar e receber cobrança.
+- Habilitar no painel da aplicação os tópicos necessários (`subscription_preapproval` ou `subscription_preapproval_plan`, `subscription_authorized_payment` e `payments`) e registrar a evidência de entrega assinada.
+- Inspecionar visualmente checkout, feedback de pagamento, painel financeiro e ações de assinatura com sessão de teste autenticada.
+- Confirmar no sandbox os valores de status de cobrança que não estejam descritos pela referência oficial.
 
 ## 8. Testes e evidências
 
-- Unit `aculta_portal`: 139 testes, 369 asserções, OK (dev.67) (inclui `RecurrenceRequestBuilderTest`, `MercadoPagoPaymentPolicyTest`, `SalesReportFiltersTest`, `MercadoPagoClientFactoryTest`).
-- Gates: `validate-aculta-portal-drupal11`, `validate-module-theme-boundary`, `validate-module-theme-map` e `validate-environment-addresses` PASS.
-- **Kernel (dev.67): feito.** `SalesReportQueryKernelTest`, 6 casos, no banco `aculta_simpletest`.
+- Unit do submódulo Mercado Pago: 221 testes / 984 assertions PASS em 2026-10-27 (1 depreciação PHPUnit); regressões dev.58/59/60 cobrem idempotência de recorrência, pré-save de credenciais e gateway ativo.
+- Kernel Mercado Pago: 3 testes / 129 assertions PASS em `aculta_simpletest` (78 depreciações Core/contrib).
+- Gates verificados nesta microfase: Portal Drupal 11+ PASS (1157 checks), mapa módulo/tema PASS (200 checks), índice de status PASS (43 componentes) e fronteira módulo/tema PASS (3124 verificações). PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
 - **Runtime (verificado em 2026-10-16):** o gateway `mercado_pago` (plugin `aculta_mercadopago_checkout_pro`, modo `test`) existe, com token de teste. Uma chamada somente leitura `UserClient::get` autenticou com o token de teste (site `MLB`). O Runtime carrega este checkout (`web/modules/custom/aculta_portal` aponta para o mesmo repositório). As consultas do relatório executam no MariaDB sem erro; o banco de teste não tem pedidos concluídos, então os valores não foram conferidos.
-- **Runtime: DEFERRED** para: ações de cancelar e estornar (sem tela ainda), criação de planos e assinaturas (escrevem na conta de teste; aguardam confirmação), e conferência de valores do relatório (sem pedidos de teste).
+- Sandbox: preferência sintética aberta no Firefox ESR visível até as etapas de escolha de pagamento e identificação do comprador (HTTP 200, sem CAPTCHA); o login do comprador não foi concluído. Não há evidência de pedido Commerce pago, estorno, nem autorização/cobrança de assinatura.
+- Operações de Runtime com escrita, publicação e alterações de configuração persistente não foram realizadas nesta microfase.
