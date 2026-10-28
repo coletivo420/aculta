@@ -48,3 +48,13 @@ aculta_events.ics:
     _access: 'TRUE'
   options:
     _aculta_domain_purpose: eventos
+
+aculta_events.agenda:
+  path: '/calendario'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventAgendaController::page'
+    _title: 'Calendário de eventos'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos

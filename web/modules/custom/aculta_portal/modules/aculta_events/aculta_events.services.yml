@@ -23,3 +23,6 @@ services:
   aculta_events.ics_exporter:
     class: Drupal\aculta_events\Calendar\EventIcsExporter
     arguments: ['@entity_type.manager', '@aculta_events.occurrences']
+  aculta_events.agenda:
+    class: Drupal\aculta_events\Agenda\EventAgenda
+    arguments: ['@entity_type.manager', '@aculta_events.occurrences']
