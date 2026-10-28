@@ -24,7 +24,8 @@ responsável decidiu copiar esse método.
    formulário, na configuração exportada, no repositório nem no HTML. Se a opção for Google e a chave faltar, o
    mapa mostra a lista e um aviso, sem erro.
 5. **Carregamento na página** (D-08 vale): o mapa carrega junto com a página em ambas as opções. Aviso de
-   privacidade visível, com link para a política de privacidade.
+   privacidade visível, com link para a seção “Privacidade” de `/termos-de-uso` (caminho indicado pelo responsável
+   em 2026-10-28). O conteúdo deve mencionar os provedores e os dados técnicos enviados antes de ativar o link no mapa.
 6. **Geocodificação:** no servidor, uma vez por local, guardada no local. Não é feita a cada visualização. Com
    OpenStreetMap, a geocodificação usa o Nominatim público, com User-Agent identificando o ACULTA, no máximo uma
    requisição por segundo, sem autocompletar (ver Riscos).
