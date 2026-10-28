@@ -26,6 +26,8 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
 
+require_once __DIR__ . '/DocumentViewerKernelClosureTrait.php';
+
 /**
  * Tests the CKEditor Media Embed to shared PDF viewer rendering path.
  */
@@ -34,6 +36,7 @@ use Symfony\Component\HttpFoundation\Request;
 final class AcultaPdfMediaEmbedTest extends KernelTestBase {
 
   use UserCreationTrait;
+  use DocumentViewerKernelClosureTrait;
 
   /**
    * {@inheritdoc}
@@ -47,17 +50,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [
-    'system',
-    'user',
-    'field',
-    'file',
-    'image',
-    'media',
-    'filter',
-    'text',
-    'node',
-  ];
+  protected static $modules = self::DOCUMENT_VIEWER_KERNEL_CLOSURE;
 
   /**
    * {@inheritdoc}
@@ -65,13 +58,43 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->installConfig(['system', 'user', 'media', 'filter', 'image', 'node']);
+    $this->installConfig(['system', 'language', 'user', 'media', 'filter', 'image', 'node', 'aculta_user', 'domain_source']);
     $this->installSchema('file', ['file_usage']);
+    $this->installSchema('user', ['users_data']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
     $this->installEntitySchema('node');
+    $this->installEntitySchema('path_alias');
+    $this->installEntitySchema('profile');
+    // Role profiles live only in the site's config/sync; the module ships the
+    // field storage, so the harness adds the instances used by public links.
+    foreach ($this->container->get('entity_type.manager')->getStorage('profile_type')->loadMultiple() as $bundle => $profile_type) {
+      FieldConfig::create([
+        'field_name' => 'field_nickname',
+        'entity_type' => 'profile',
+        'bundle' => $bundle,
+        'type' => 'string',
+        'label' => 'Apelido',
+      ])->save();
+      FieldConfig::create([
+        'field_name' => 'field_perfil_publico',
+        'entity_type' => 'profile',
+        'bundle' => $bundle,
+        'type' => 'boolean',
+        'label' => 'Perfil público',
+      ])->save();
+    }
     $this->installSchema('node', ['node_access']);
+    $this->installSchema('aculta_user', ['aculta_user_agreement', 'aculta_user_nickname']);
+    $this->installSchema('entity_usage', ['entity_usage']);
+    // Portal services load Commerce hooks; their tables must exist even when
+    // this test never creates an order.
+    foreach (array_keys($this->container->get('entity_type.manager')->getDefinitions()) as $entity_type_id) {
+      if (str_starts_with($entity_type_id, 'commerce_')) {
+        $this->installEntitySchema($entity_type_id);
+      }
+    }
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_document_viewer'], TRUE));
 
     $media_type = MediaType::create([

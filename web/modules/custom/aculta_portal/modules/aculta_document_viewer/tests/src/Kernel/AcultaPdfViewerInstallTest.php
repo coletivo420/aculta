@@ -10,6 +10,8 @@ use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
+require_once __DIR__ . '/DocumentViewerKernelClosureTrait.php';
+
 /**
  * Verifies extension discovery, plugin discovery, and service registration.
  */
@@ -17,10 +19,21 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class AcultaPdfViewerInstallTest extends KernelTestBase {
 
+  use DocumentViewerKernelClosureTrait;
+
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'file', 'media'];
+  protected static $modules = self::DOCUMENT_VIEWER_KERNEL_CLOSURE;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    // Language's modules_installed hook reads its negotiation config.
+    $this->installConfig(['language']);
+  }
 
   /**
    * Tests service and formatter registration without module-owned storage.
@@ -45,7 +58,9 @@ final class AcultaPdfViewerInstallTest extends KernelTestBase {
       'aculta_document_pdf_media',
       $container->get('plugin.manager.field.formatter')->getDefinitions(),
     );
-    $this->assertFalse($container->get('config.storage')->exists('aculta_document_viewer.settings'));
+    $settings = $container->get('config.factory')->get('aculta_document_viewer.settings');
+    $this->assertTrue($settings->get('show_download'));
+    $this->assertSame('fit-width', $settings->get('default_zoom'));
     $this->assertFalse($module_handler->hasImplementations('file_download', ['aculta_document_viewer']));
     $this->assertFalse($module_handler->hasImplementations('install', ['aculta_document_viewer']));
   }
