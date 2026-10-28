@@ -122,6 +122,8 @@ Regras transversais:
 - Campo de contato, de segurança e de galeria seguem a política de imagem e de upload (`USER-UPLOADS.md`).
 - A reivindicação de posse (`field_allow_claiming`) é decidida pelo dono do local, e não pela moderação, enquanto o padrão for fechado.
 
+> **D-20:** o calendário é o submódulo `aculta_calendar`. Esta fase entrega o **provedor de itens de evento** e as páginas de evento; agenda, grade, `.ics` e embed são do submódulo (CA1 a CA5). Arquitetura: ADR-031.
+
 ## Fase F5 — Calendário (`aculta_calendar`)
 
 Entrada: F3 concluída.

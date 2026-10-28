@@ -1,5 +1,9 @@
 # Plano de implantação — ACULTA Calendário (`aculta_calendar`)
 
+> **Atualização (D-20, ADR-031):** o calendário é um submódulo independente. Este plano descreve a primeira
+> consumidora (eventos). A API de itens, os provedores e os rótulos genéricos estão em `ADR-031` e em
+> `ROADMAP.md`. Onde este plano falar de "eventos", leia "um provedor de itens".
+
 Submódulo do projeto de eventos. O modelo de dados, o purpose `eventos`, o deployer e as fases
 gerais estão em `../../aculta_events/docs/PLANO-IMPLANTACAO.md`. O roadmap único da frente é
 `../../aculta_events/docs/ROADMAP.md` (fases F5 e F6 tratam deste submódulo).
