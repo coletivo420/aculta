@@ -21,6 +21,9 @@ Em todo ponto que mostra uma pessoa, a ordem é:
 O acervo é componente obrigatório do site; removê-lo exige decisão do
 responsável e passa pelo gate de foto.
 
+Esta regra substitui o fallback por inicial registrado em
+`0.4.0-dev.9` do [histórico arquivado de aculta_user](../history/changelog/aculta_user.md).
+
 A mesma regra vale para Conta/perfil, cartões de autor, Fórum, Revista, LMS
 (roster, sala e feedback), Wiki, Mensagens privadas, memorial histórico e
 Views que mostrem pessoas.
