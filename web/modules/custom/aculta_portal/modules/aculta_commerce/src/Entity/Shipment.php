@@ -29,6 +29,11 @@ use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
  * Adapted from drupal/commerce_shipping 3.0.5 (GPL-2.0-or-later). The engine
  * lives inside aculta_commerce; the entity type, tables, field names and
  * plugin IDs are ACULTA-owned.
+ *
+ * Service locator: entity storage constructs content entities directly from
+ * values and the entity type ID, so constructor injection is unavailable.
+ * getPackageType() and the static postDelete() use \Drupal only for services
+ * the entity lifecycle cannot receive.
  */
 #[ContentEntityType(
   id: 'aculta_shipment',
@@ -79,6 +84,7 @@ class Shipment extends ContentEntityBase implements ShipmentInterface {
     if ($package_type === '') {
       return NULL;
     }
+    // No DI entry point for an entity loaded by storage; see class docblock.
     return \Drupal::service('aculta_commerce.package_type_manager')->getPackageType($package_type);
   }
 
@@ -450,6 +456,8 @@ class Shipment extends ContentEntityBase implements ShipmentInterface {
       }
     }
     if ($profiles_to_delete) {
+      // Static entity hook: only storage and entities are passed in, so the
+      // profile storage has to come from the container.
       \Drupal::entityTypeManager()->getStorage('profile')->delete($profiles_to_delete);
     }
   }
