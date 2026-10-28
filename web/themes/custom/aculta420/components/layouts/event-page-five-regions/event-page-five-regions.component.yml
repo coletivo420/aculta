@@ -1,0 +1,28 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Página de evento — cinco regiões
+status: experimental
+group: Layouts
+description: 'Layout UI Patterns Layouts para página de evento, com ordem mobile-first definida e sem lógica de domínio.'
+props:
+  type: object
+  properties: {}
+slots:
+  title:
+    title: Título
+    description: Título da página do evento, incluindo seu H1.
+  highlight:
+    title: Destaque
+    description: Mídia ou destaque editorial principal.
+  essentials:
+    title: Informações essenciais
+    description: Próxima data, local e acesso principal.
+  content:
+    title: Conteúdo
+    description: Descrição, datas, acessibilidade e classificação do evento.
+  sidebar:
+    title: Complementos
+    description: Organização e informações relacionadas.
+assets:
+  css:
+    component:
+      event-page-five-regions.css: {}

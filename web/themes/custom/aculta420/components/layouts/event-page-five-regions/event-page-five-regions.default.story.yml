@@ -1,0 +1,14 @@
+name: Página do evento
+description: Demonstra as cinco regiões e a ordem mobile-first: título, destaque, essenciais, conteúdo e complementos.
+component: aculta420:event-page-five-regions
+slots:
+  title:
+    markup: '<h1>Encontro de cultura e direitos</h1>'
+  highlight:
+    markup: '<div class="ratio ratio-16x9 bg-body-secondary" role="img" aria-label="Área reservada ao destaque do evento"></div>'
+  essentials:
+    markup: '<h2>Informações essenciais</h2><p>28 de outubro · São Paulo</p><a href="#">Ver local</a>'
+  content:
+    markup: '<h2>Sobre o encontro</h2><p>Descrição e programação do evento.</p><h2>Acessibilidade</h2><p>Informações textuais sobre os recursos disponíveis.</p>'
+  sidebar:
+    markup: '<h2>Organização</h2><p>Coletivo demonstrativo</p>'
