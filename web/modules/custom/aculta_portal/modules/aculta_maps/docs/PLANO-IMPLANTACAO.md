@@ -30,7 +30,7 @@ Um módulo que precisa de mapa monta um array com marcadores e chama o serviço 
 | --- | --- |
 | `MapRenderer::build(array $options)` | Retorna render array neutro do mapa. A lista alternativa e o aviso são responsabilidade do módulo consumidor. Opções: marcadores, centro, zoom, id |
 | Marcador | `lat`, `lng`, `label`, `url` (opcional), `precision` (`exact` ou `approximate`) |
-| `GeocodingService::geocode(string $address): ?array` | Retorna `lat`, `lng` ou nulo. Respeita limite e cache |
+| `GeocodingService::geocode(string $address): ?array` | Retorna `lat`, `lng` ou nulo. Nominatim é limitado a uma chamada por segundo; coordenadas encontradas são armazenadas no local |
 | `RouteLinkBuilder::build(array $destination): Url` | Link de rota com o modelo configurado, sem API |
 | `MapSettings` | Configuração lida do config do submódulo (engine, centro, zoom, modelo de URL) |
 
@@ -55,7 +55,7 @@ Regras do contrato:
 ## 5. Privacidade
 
 - Carregamento do mapa junto com a página (D-08, mantido pelo D-18), com aviso visível e link para a política.
-- Com OSM, o IP do visitante vai aos servidores do OpenStreetMap ao carregar os tiles. Está no aviso e na política.
+- Com OSM, o IP do visitante vai aos servidores do OpenStreetMap ao carregar os tiles. Está no aviso; a política pública precisa registrar esse fluxo antes da ativação final.
 - Com Google, o IP vai ao Google. Só na engine `google`.
 - Local de precisão aproximada: coordenadas arredondadas (ex.: duas casas decimais) antes do mapa e da lista.
 - Nenhum script de terceiro carregado no modo de link de rota.
@@ -64,11 +64,11 @@ Regras do contrato:
 
 O código de mapa estava em `aculta_events`. MP1 moveu `GeocodingService`, `aculta-map.js` e `GeocodingServiceTest` para `aculta_maps`. `MapController` permanece em `aculta_events`, pois obtém e prepara dados do catálogo de locais e atende a rota pública `/mapa`.
 
-`aculta_events` chama `MapRenderer` e `GeocodingService` do `aculta_maps`. O renderer preserva temporariamente o comportamento Google existente. MP3 substitui o provedor padrão por Leaflet/OSM; MP4 implementa Google como opção e fallback.
+`aculta_events` chama `MapRenderer` e `GeocodingService` do `aculta_maps`. MP3 estabelece Leaflet/OSM como padrão; MP4 implementa Google como opção e fallback.
 
 ## 7. Dependências
 
-- Nenhum pacote Composer novo para o OSM (Leaflet entra como arquivo local, com licença MIT/BSD no próprio pacote).
+- Nenhum pacote Composer novo para o OSM (Leaflet 1.9.4 entra como arquivo local, sob BSD-2-Clause).
 - Coordenadas vêm de campo geofield nos consumidores (`geofield` já está instalado, D-16).
 - Google: só a chave, sem pacote.
 

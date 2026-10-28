@@ -17,7 +17,7 @@ responsável decidiu copiar esse método.
    (`tile.openstreetmap.org`), com atribuição visível, como no OpenCulturas.
 2. **Opção: Google Maps**, escolhida no painel administrativo, para o mapa e a geocodificação. Só é usada se o
    responsável a selecionar.
-3. **Seleção no painel:** um formulário de configuração em `/painel-administrativo/eventos/mapa` define o provedor
+3. **Seleção no painel:** um formulário de configuração em `/painel-administrativo/mapas` define o provedor
    (`openstreetmap` ou `google`), o centro e o zoom iniciais, e o zoom para "mostrar no mapa". Sem caminho `/admin`.
 4. **Chave do Google no `aculta_secrets`:** a chave `GOOGLE_MAPS_API_KEY` já está declarada em
    `config/secrets-contract.json` (sensível, produção e teste). É lida com `SecretsManager::value()`. Nunca fica no
@@ -85,3 +85,17 @@ Consequência: o visitante só sai do ACULTA por clique, em qualquer modo. Não 
 O mapa e a geocodificação ficam no submódulo `aculta_maps`, e não em `aculta_events`. As regras deste ADR (provedores,
 chave no `aculta_secrets`, fallback, link de rota e privacidade) valem para o submódulo. Plano e roadmap:
 `web/modules/custom/aculta_portal/modules/aculta_maps/docs/`.
+
+## Estado de implementação (MP0–MP3)
+
+`aculta_maps` contém o renderer compartilhado, o painel ADM7 e a engine padrão Leaflet 1.9.4 com tiles OSM,
+atribuição visível e agrupamento local de marcadores. Leaflet fica em `assets/vendor/leaflet/` sob BSD-2-Clause;
+comportamento e clustering ACULTA são código próprio. Nominatim é chamado somente ao salvar um endereço, com
+`User-Agent` identificado, limite global de uma requisição por segundo e coordenadas persistidas no local. O mapa
+continua acompanhado da lista textual. O aviso aponta para `/sobre/politica-de-privacidade`; a página do ambiente de
+teste ainda precisa incluir o fluxo do IP para o OpenStreetMap antes da ativação final no Runtime.
+
+Revisão das políticas oficiais em 2026-10-28: [política de tiles OSM](https://operations.osmfoundation.org/policies/tiles/)
+exige atribuição visível e respeito às respostas de cache; [política Nominatim](https://operations.osmfoundation.org/policies/nominatim/)
+define o limite de uma requisição por segundo, identifica o cliente no `User-Agent` e proíbe autocomplete no serviço
+público. O código segue esses requisitos, sem consulta em lote.

@@ -1,7 +1,7 @@
 # Roadmap — ACULTA Maps (`aculta_maps`)
 
 Roadmap único do submódulo. Plano e contrato: `PLANO-IMPLANTACAO.md`.
-Status: MP0–MP2 concluídas; MP3–MP7 a fazer.
+Status: MP0–MP2 concluídas; MP3 técnica implementada, aguardando atualização da política e ativação no Runtime; MP4–MP7 a fazer.
 
 ## MP0 — Criação do submódulo
 
@@ -27,10 +27,12 @@ Evidência de MP2: `cac0efbba`.
 
 ## MP3 — Engine OpenStreetMap (padrão e fallback)
 
-- [ ] Leaflet e agrupamento de marcadores como arquivos locais, com LICENSE no pacote. Sem CDN.
-- [ ] Atribuição "© OpenStreetMap contributors" visível em todo mapa.
-- [ ] Geocodificação com Nominatim: 1 req/s, User-Agent, cache no objeto de origem, sem autocompletar.
-- [ ] Lista alternativa textual funciona sem JavaScript.
+- [x] Leaflet 1.9.4 e assets locais sob BSD-2-Clause; agrupamento próprio, sem CDN.
+- [x] Atribuição "© OpenStreetMap contributors" visível em todo mapa.
+- [x] Geocodificação com Nominatim: 1 req/s global, User-Agent, coordenadas armazenadas no local, sem autocompletar.
+- [x] Lista alternativa textual funciona sem JavaScript.
+
+Pendente para fechar a ativação de MP3 no Runtime: adicionar à política pública a informação sobre tiles OSM e envio do IP. A página de teste atual ainda não menciona os provedores; a decisão sobre a alteração de conteúdo está aguardando resposta.
 
 ## MP4 — Engine Google (opção) e fallback
 

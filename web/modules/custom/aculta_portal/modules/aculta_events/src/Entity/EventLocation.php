@@ -43,9 +43,9 @@ final class EventLocation extends ContentEntityBase {
     // Cada endereço é geocodificado uma vez.
     $mudouEndereco = !$this->isNew() && $this->original !== NULL
       && $this->original->get('field_endereco')->getValue() !== $this->get('field_endereco')->getValue();
-    // Sem o módulo key não há chave e a geocodificação é pulada.
-    // Isso vale para ambientes incompletos e testes isolados.
-    if (\Drupal::hasService('key.repository') && ($this->get('field_coordenadas')->isEmpty() || $mudouEndereco)) {
+    // Geocode once when a location is created or its address changes.
+    $precisaGeocodificar = $mudouEndereco || ($this->isNew() && $this->get('field_coordenadas')->isEmpty());
+    if (\Drupal::hasService('aculta_maps.geocoding') && $precisaGeocodificar) {
       $texto = $this->enderecoTexto();
       $coordenadas = $texto !== '' ? \Drupal::service('aculta_maps.geocoding')->geocode($texto) : NULL;
       if ($coordenadas !== NULL) {
@@ -55,6 +55,9 @@ final class EventLocation extends ContentEntityBase {
           'value' => sprintf('POINT (%F %F)', $coordenadas['lng'], $coordenadas['lat']),
           'geo_type' => 'Point',
         ]);
+      }
+      elseif ($mudouEndereco) {
+        $this->set('field_coordenadas', NULL);
       }
     }
   }

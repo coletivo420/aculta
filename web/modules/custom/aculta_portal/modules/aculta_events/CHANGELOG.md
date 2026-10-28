@@ -1,5 +1,11 @@
 # Changelog — aculta_events
 
+## 2026-10-28 — E7 MP3, mapas Leaflet/OSM
+
+- `/mapa` passa a usar o renderer compartilhado `aculta_maps`, tiles OSM e agrupamento de marcadores; a lista continua disponível sem JavaScript.
+- O aviso identifica o envio do IP aos tiles OSM e aponta para `/sobre/politica-de-privacidade`; a ativação no Runtime aguarda revisão do conteúdo da política.
+- Geocodificação Nominatim acontece ao criar local ou alterar endereço. Sucesso grava coordenadas; falha ao atualizar endereço remove coordenadas antigas para evitar localização desatualizada.
+
 ## 2026-10-28 — URLs de página e sitemap por ambiente no F7
 
 - Página de evento e sitemap do purpose usam o host que o ACULTA Deployer mapeia para o ambiente ativo; o ambiente de teste permanece `noindex`.

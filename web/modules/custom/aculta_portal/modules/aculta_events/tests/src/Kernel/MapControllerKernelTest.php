@@ -41,12 +41,18 @@ final class MapControllerKernelTest extends KernelTestBase {
   }
 
   /**
-   * Without a provider key, the textual list and privacy notice remain.
+   * OSM renders without credentials and keeps the list and privacy notice.
    */
-  public function testMissingProviderKeepsListAndNotice(): void {
+  public function testOsmMapRendersWithoutCredentials(): void {
     EventLocation::create([
       'title' => 'Casa de cultura',
       'field_precisao' => 'exato',
+      'field_coordenadas' => [
+        'lat' => -16.68,
+        'lon' => -49.26,
+        'value' => 'POINT (-49.26 -16.68)',
+        'geo_type' => 'Point',
+      ],
       'field_endereco' => [
         'country_code' => 'BR',
         'locality' => 'Goiânia',
@@ -57,10 +63,12 @@ final class MapControllerKernelTest extends KernelTestBase {
     ])->save();
 
     $pagina = MapController::create($this->container)->page();
-    $this->assertArrayNotHasKey('mapa', $pagina);
-    $this->assertArrayNotHasKey('#attached', $pagina);
+    $this->assertArrayHasKey('mapa', $pagina);
+    $this->assertContains('aculta_maps/map', $pagina['mapa']['#attached']['library']);
     $this->assertStringContainsString('Casa de cultura', (string) \Drupal::service('renderer')->renderInIsolation($pagina['lista']));
-    $this->assertStringContainsString('seu navegador envia', (string) \Drupal::service('renderer')->renderInIsolation($pagina['aviso']));
+    $aviso = (string) \Drupal::service('renderer')->renderInIsolation($pagina['aviso']);
+    $this->assertStringContainsString('OpenStreetMap', $aviso);
+    $this->assertStringContainsString('/sobre/politica-de-privacidade', $aviso);
   }
 
 }

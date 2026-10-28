@@ -48,6 +48,12 @@ final class LocationCatalogueKernelTest extends KernelTestBase {
     $valores = [
       'title' => $nome,
       'field_precisao' => $precisao,
+      'field_coordenadas' => [
+        'lat' => -16.68,
+        'lon' => -49.26,
+        'value' => 'POINT (-49.26 -16.68)',
+        'geo_type' => 'Point',
+      ],
       'field_endereco' => [
         'country_code' => 'BR',
         'administrative_area' => 'GO',

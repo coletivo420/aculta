@@ -7,6 +7,7 @@ namespace Drupal\aculta_events\Controller;
 use Drupal\aculta_events\Catalogue\LocationCatalogue;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Url;
 use Drupal\aculta_maps\MapRenderer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -59,37 +60,37 @@ final class MapController extends ControllerBase {
       if (!empty($coords['lat']) && !empty($coords['lon'])) {
         $casas = (string) $local->get('field_precisao')->value === 'aproximado' ? self::CASAS_APROXIMADO : 6;
         $marcadores[] = [
-          'nome' => (string) $local->label(),
+          'label' => (string) $local->label(),
           'lat' => round((float) $coords['lat'], $casas),
           'lng' => round((float) $coords['lon'], $casas),
-          'endereco' => $item['endereco'],
+          'description' => $item['endereco'],
+          'precision' => $casas === self::CASAS_APROXIMADO ? 'approximate' : 'exact',
         ];
       }
     }
 
     $mapa = $this->mapRenderer->build([
       'label' => (string) $this->t('Mapa de locais'),
-      'markers' => array_map(static fn(array $marker): array => [
-        'nome' => $marker['nome'],
-        'lat' => $marker['lat'],
-        'lng' => $marker['lng'],
-        'endereco' => $marker['endereco'],
-      ], $marcadores),
+      'markers' => $marcadores,
     ]);
     $render = [
       'lista' => ['#theme' => 'item_list', '#items' => $itens, '#empty' => $this->t('Nenhum local cadastrado.')],
       'aviso' => [
-        '#markup' => '<p class="aculta-map__aviso">' . $this->t('Ao carregar o mapa, seu navegador envia seu endereço IP e as informações de navegação ao Google. A política de privacidade do site detalha esse uso.') . '</p>',
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-map__aviso']],
+        'texto' => [
+          '#plain_text' => $this->t('Ao carregar o mapa, seu navegador envia seu endereço IP ao OpenStreetMap para solicitar os mapas. Consulte a política de privacidade para saber como funciona esse serviço.'),
+        ],
+        'politica' => [
+          '#type' => 'link',
+          '#title' => $this->t('Política de privacidade'),
+          '#url' => Url::fromUri('internal:/sobre/politica-de-privacidade'),
+        ],
       ],
       '#cache' => ['tags' => ['aculta_event_location_list'], 'max-age' => 900],
     ];
 
-    if ($mapa !== []) {
-      $render['mapa'] = $mapa;
-    }
-    else {
-      $render['sem_mapa'] = ['#markup' => '<p>' . $this->t('O mapa não está disponível neste ambiente. A lista acima tem os mesmos locais.') . '</p>'];
-    }
+    $render['mapa'] = $mapa;
 
     return $render;
   }
