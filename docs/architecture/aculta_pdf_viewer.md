@@ -14,6 +14,12 @@ autorização de arquivo sob Drupal Core e o domínio que detém a referência.
   arquivado do submódulo PDF](../history/changelog/aculta_pdf_viewer.md).
   O `PdfViewerBuilder` gera a URL pela rota `system.files` com o parâmetro
   `file`; `aculta_pdf_viewer_group` e o Kernel revalidam Group e membership.
+- **2026-10-16 — Relação Group somente para documentos de curso.** Situação:
+  vigente. Motivo: o vínculo de controle de acesso pertence a `lms_course`,
+  sem instalar relações de Media em todos os tipos de Group. Origem:
+  `aculta_pdf_viewer_group` `0.1.0-dev.2`, [histórico arquivado](../history/changelog/aculta_pdf_viewer.md).
+  `MediaDocument` usa `enforced: FALSE`, deriva somente `course_document` e a
+  configuração sincronizada declara a relação em `lms_course`.
 
 ## Fronteiras
 
