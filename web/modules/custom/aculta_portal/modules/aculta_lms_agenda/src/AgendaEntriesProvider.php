@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms_agenda;
 
 use Drupal\aculta_events\Entity\Event;
-use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Occurrence\EventDateOccurrences;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\Component\Datetime\TimeInterface;
@@ -15,13 +14,17 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Entradas da agenda de um usuário: prazos e eventos das turmas em que ele está matriculado.
+ * Entradas da agenda de um usuário.
  *
- * Regra de acesso (docs/INTEGRACAO.md): só entra o que vem de uma turma publicada da qual o
- * usuário é membro, de um curso publicado ao qual ele tem acesso. Sem membro, não há entrada.
+ * Inclui prazos e eventos das turmas em que ele está matriculado.
  *
- * Horários saem em horário de Brasília e no formato dd/mm/aaaa HH:mm (a apresentação fica
- * com quem consome; o provedor entrega DateTimeImmutable no fuso do site).
+ * Regra de acesso (docs/INTEGRACAO.md): só entram dados de turma publicada
+ * cuja conta seja membro e de curso publicado ao qual tenha acesso. Sem
+ * membro, não há entrada.
+ *
+ * Horários saem em horário de Brasília e no formato dd/mm/aaaa HH:mm.
+ * A apresentação fica com quem consome; o provedor entrega DateTimeImmutable no
+ * fuso do site.
  */
 final class AgendaEntriesProvider {
 
@@ -47,6 +50,9 @@ final class AgendaEntriesProvider {
    *   `tipo` é `prazo` ou `evento`.
    */
   public function forAccount(AccountInterface $account, \DateTimeImmutable $de, \DateTimeImmutable $ate): array {
+    if (!$account->isAuthenticated()) {
+      return [];
+    }
     $fuso = new \DateTimeZone(self::FUSO);
     $de = $de->setTimezone($fuso);
     $ate = $ate->setTimezone($fuso);
@@ -105,6 +111,7 @@ final class AgendaEntriesProvider {
    * Turmas publicadas em que o usuário é membro.
    *
    * @return \Drupal\group\Entity\GroupInterface[]
+   *   Turmas às quais a conta tem membership.
    */
   private function turmasDoUsuario(AccountInterface $account): array {
     $turmas = [];
@@ -121,6 +128,7 @@ final class AgendaEntriesProvider {
    * Eventos ligados à turma, publicados ou cancelados (rascunho não entra).
    *
    * @return \Drupal\aculta_events\Entity\Event[]
+   *   Eventos publicados ou cancelados ligados à turma.
    */
   private function eventosDaTurma(GroupInterface $turma): array {
     $storage = $this->entityTypeManager->getStorage('aculta_event');
@@ -136,6 +144,7 @@ final class AgendaEntriesProvider {
    * Datas (EventDate) de um evento.
    *
    * @return \Drupal\aculta_events\Entity\EventDate[]
+   *   Datas vinculadas ao evento.
    */
   private function datasDoEvento(Event $evento): array {
     $storage = $this->entityTypeManager->getStorage('aculta_event_date');

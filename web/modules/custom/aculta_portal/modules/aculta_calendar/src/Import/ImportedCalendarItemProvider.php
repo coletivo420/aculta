@@ -9,15 +9,23 @@ use Drupal\aculta_calendar\Item\CalendarItemProviderInterface;
 use Drupal\aculta_calendar\Item\CalendarQuery;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
-/** Exposes published imported items through the public calendar API. */
+/**
+ * Provedor de itens importados publicados na agenda pública.
+ */
 final class ImportedCalendarItemProvider implements CalendarItemProviderInterface {
 
   public function __construct(private readonly EntityTypeManagerInterface $entityTypeManager) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public function id(): string {
     return 'aculta_calendar_import';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function items(CalendarQuery $query): iterable {
     $storage = $this->entityTypeManager->getStorage('aculta_calendar_imported_item');
     $ids = $storage->getQuery()
@@ -47,12 +55,32 @@ final class ImportedCalendarItemProvider implements CalendarItemProviderInterfac
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function filtros(): array {
     return [];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function cacheTags(): array {
     return ['aculta_calendar_imported_item_list'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function cacheContexts(): array {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function cacheMaxAge(): int {
+    return 900;
   }
 
 }

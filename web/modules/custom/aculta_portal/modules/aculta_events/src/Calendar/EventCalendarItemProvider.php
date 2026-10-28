@@ -50,6 +50,11 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
       if ($evento === NULL || !in_array((string) $evento->get('field_status')->value, ['publicado', 'cancelado'], TRUE)) {
         continue;
       }
+      // Events linked to LMS classes are private to enrolled members; the LMS
+      // provider supplies them after rechecking membership and course access.
+      if ($evento->hasField('field_turma') && !$evento->get('field_turma')->isEmpty()) {
+        continue;
+      }
       $local = $data->get('field_local')->entity;
       if (!$this->filtro->aceita($evento, $local instanceof EventLocation ? $local : NULL, $query->filtros['tipo'] ?? NULL, $query->filtros['tipo_local'] ?? NULL)) {
         continue;
@@ -76,6 +81,18 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
    */
   public function cacheTags(): array {
     return ['aculta_event_date_list', 'aculta_event_list'];
+  }
+
+  /**
+   * {@inheritdoc} */
+  public function cacheContexts(): array {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc} */
+  public function cacheMaxAge(): int {
+    return 900;
   }
 
   /**
@@ -109,8 +126,8 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
       diaInteiro: (bool) $data->get('field_dia_inteiro')->value,
       fuso: 'America/Sao_Paulo',
       local: $local instanceof EventLocation ? (string) $local->label() : '',
-      // O path é o da rota aculta_events.page; fromUserInput evita depender do
-      // router na geração do item (exportação e testes Kernel usam o mesmo dado).
+      // O path é da rota aculta_events.page. fromUserInput evita depender do
+      // router na geração do item para exportação e testes Kernel.
       link: $slug !== '' ? Url::fromUserInput('/eventos/' . $slug)->toString() : NULL,
       origem: 'aculta_events',
       rrule: $regra !== '' ? $regra : NULL,
@@ -125,6 +142,7 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
    * Exceções da data: canceladas e reagendadas.
    *
    * @return array{0: \DateTimeImmutable[], 1: array<int, array{original: \DateTimeImmutable, inicio: \DateTimeImmutable, fim: ?\DateTimeImmutable}>}
+   *   Exceções canceladas e reagendadas.
    */
   private function excecoes(EventDate $data, \DateTimeZone $fuso, \DateTimeZone $utc): array {
     $storage = $this->entityTypeManager->getStorage('aculta_event_override');
@@ -154,6 +172,7 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
    * Opções de um vocabulário (id => nome).
    *
    * @return array<int, string>
+   *   Opções do vocabulário, indexadas pelo ID do termo.
    */
   private function termos(string $vid): array {
     $opcoes = [];

@@ -77,6 +77,16 @@ final class AdministrativeEventExportControllerTest extends TestCase {
         return [];
       }
 
+      /** {@inheritdoc} */
+      public function cacheContexts(): array {
+        return [];
+      }
+
+      /** {@inheritdoc} */
+      public function cacheMaxAge(): int {
+        return 900;
+      }
+
     };
     $time = $this->createMock(TimeInterface::class);
     $time->method('getCurrentTime')->willReturn(strtotime('2026-01-01 12:00:00 UTC'));

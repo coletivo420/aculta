@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_calendar\Item;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
 /**
- * Agrega os provedores de itens registrados (tag aculta_calendar.item_provider).
+ * Agrega os provedores de itens registrados pela tag do calendário.
  *
  * Um provedor com defeito não derruba a agenda: a falha é registrada no log e
  * os demais provedores continuam.
@@ -28,9 +29,10 @@ final class CalendarItemSource {
   ) {}
 
   /**
-   * Todos os itens dos provedores para a consulta.
+   * Retorna os itens dos provedores para a consulta.
    *
    * @return array<int, \Drupal\aculta_calendar\Item\CalendarItem>
+   *   Itens encontrados, sem normalizar a recorrência.
    */
   public function items(CalendarQuery $query): array {
     $itens = [];
@@ -53,6 +55,7 @@ final class CalendarItemSource {
    * Chaves iguais entre provedores são mescladas, com as opções de todos.
    *
    * @return array<string, array{label: string, opcoes: array<int, string>}>
+   *   Definições agregadas por chave de filtro.
    */
   public function filtros(): array {
     $filtros = [];
@@ -77,6 +80,7 @@ final class CalendarItemSource {
    * Tags de cache agregadas dos provedores.
    *
    * @return string[]
+   *   Tags únicas.
    */
   public function cacheTags(): array {
     $tags = [];
@@ -89,6 +93,44 @@ final class CalendarItemSource {
       }
     }
     return array_values(array_unique($tags));
+  }
+
+  /**
+   * Cache contexts aggregated from providers.
+   *
+   * @return string[]
+   *   Unique contexts required to isolate provider results.
+   */
+  public function cacheContexts(): array {
+    $contexts = [];
+    foreach ($this->provedores as $provedor) {
+      try {
+        $contexts = array_merge($contexts, $provedor->cacheContexts());
+      }
+      catch (\Throwable $e) {
+        $this->registrarFalha($provedor, $e);
+      }
+    }
+    return array_values(array_unique($contexts));
+  }
+
+  /**
+   * Maximum cache age allowed by all providers.
+   *
+   * @return int
+   *   Cache max-age combined across providers.
+   */
+  public function cacheMaxAge(): int {
+    $maxAge = Cache::PERMANENT;
+    foreach ($this->provedores as $provedor) {
+      try {
+        $maxAge = Cache::mergeMaxAges($maxAge, $provedor->cacheMaxAge());
+      }
+      catch (\Throwable $e) {
+        $this->registrarFalha($provedor, $e);
+      }
+    }
+    return $maxAge;
   }
 
   /**

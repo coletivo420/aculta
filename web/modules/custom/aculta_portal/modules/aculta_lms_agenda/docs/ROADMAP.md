@@ -8,7 +8,8 @@
 - [x] Painel do aluno usa o mesmo provedor e revalida acesso.
 - [x] O fixture Kernel instala o módulo Core `link`, necessário pela definição `field_ticketing` de `aculta_event`.
 
-Verificação em 2026-10-28: `AgendaEntriesProviderKernelTest`, 4 testes / 203 assertions; 92 depreciações de Core e
+Verificação em 2026-10-28: `AgendaEntriesProviderKernelTest`, 4 testes / 205 assertions; 92 depreciações de Core e
 contrib. A suíte cobre a matrícula exclusiva em outra turma e confirma que ela não recebe o evento da turma A.
-O registro de `aculta_lms_agenda` como provedor geral de `aculta_calendar` (CA5) permanece em implementação.
+O provedor registrado em `aculta_calendar` usa contexto `user`, max-age zero e retorna vazio para visitante anônimo.
+O provedor público de eventos exclui eventos vinculados a turma, evitando duplicação e exposição no catálogo comum.
 Nenhuma chamada ao Runtime, envio de e-mail ou dado real foi usado.

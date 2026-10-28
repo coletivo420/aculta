@@ -48,8 +48,11 @@ final class EmbedController extends ControllerBase {
       . $corpo
       . '</main></body></html>';
 
-    $resposta = new Response($html, 200, ['Content-Type' => 'text/html; charset=UTF-8']);
-    // A política de incorporação (só sites da ACULTA) é aplicada pelo publisher.
+    $resposta = new Response($html, 200, [
+      'Content-Type' => 'text/html; charset=UTF-8',
+      'Cache-Control' => 'private, no-store, max-age=0',
+    ]);
+    // O publisher aplica a política de incorporação (sites ACULTA).
     $resposta->headers->set('X-Robots-Tag', 'noindex, nofollow, noarchive');
     return $resposta;
   }

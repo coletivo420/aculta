@@ -71,6 +71,9 @@ host. Exemplo em `aculta_events.routing.yml`.
 | `/calendario/exportar.ics` | `.ics` de um período filtrado |
 | `/calendario/incorporar` | Agenda para iframe |
 
+A resposta HTML do iframe usa `private, no-store`, pois um provedor pode devolver itens vinculados à conta atual.
+O render array da agenda mantém os contexts e tags dos provedores.
+
 ## O que cada área pode e não pode
 
 - **Pode:** registrar um provedor, consumir `aculta_calendar.item_source`, `aculta_calendar.agenda`,

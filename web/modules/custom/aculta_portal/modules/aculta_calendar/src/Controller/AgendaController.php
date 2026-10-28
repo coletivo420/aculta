@@ -11,6 +11,7 @@ use Drupal\aculta_calendar\Item\CalendarQuery;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
@@ -30,7 +31,15 @@ final class AgendaController extends ControllerBase {
   /**
    * Dias da semana em português, indexados pelo número ISO (1 = segunda).
    */
-  private const DIAS_SEMANA = [1 => 'segunda-feira', 2 => 'terça-feira', 3 => 'quarta-feira', 4 => 'quinta-feira', 5 => 'sexta-feira', 6 => 'sábado', 7 => 'domingo'];
+  private const DIAS_SEMANA = [
+    1 => 'segunda-feira',
+    2 => 'terça-feira',
+    3 => 'quarta-feira',
+    4 => 'quinta-feira',
+    5 => 'sexta-feira',
+    6 => 'sábado',
+    7 => 'domingo',
+  ];
 
   /**
    * Cabeçalho curto da grade do mês (também é o texto do `scope="col"`).
@@ -94,7 +103,9 @@ final class AgendaController extends ControllerBase {
   }
 
   /**
-   * Agenda de um dia (/calendario/dia/{ano}/{mes}/{dia}), fonte do link da grade.
+   * Agenda de um dia (/calendario/dia/{ano}/{mes}/{dia}).
+   *
+   * Esta é a fonte do link da grade.
    */
   public function dia(int $ano, int $mes, int $dia): array {
     if (!checkdate($mes, $dia, $ano) || $ano < 1900 || $ano > 2200) {
@@ -132,7 +143,20 @@ final class AgendaController extends ControllerBase {
    * Título da grade do mês.
    */
   public function tituloMes(int $ano, int $mes): string {
-    $nomes = [1 => 'janeiro', 2 => 'fevereiro', 3 => 'março', 4 => 'abril', 5 => 'maio', 6 => 'junho', 7 => 'julho', 8 => 'agosto', 9 => 'setembro', 10 => 'outubro', 11 => 'novembro', 12 => 'dezembro'];
+    $nomes = [
+      1 => 'janeiro',
+      2 => 'fevereiro',
+      3 => 'março',
+      4 => 'abril',
+      5 => 'maio',
+      6 => 'junho',
+      7 => 'julho',
+      8 => 'agosto',
+      9 => 'setembro',
+      10 => 'outubro',
+      11 => 'novembro',
+      12 => 'dezembro',
+    ];
     return (string) $this->t('Calendário — @mes de @ano', ['@mes' => $nomes[$mes] ?? '', '@ano' => $ano]);
   }
 
@@ -170,7 +194,7 @@ final class AgendaController extends ControllerBase {
     }
 
     return [
-      // A incorporação é uma agenda para terceiros: sem filtros nem navegação do site.
+      // Incorporação para terceiros: sem filtros nem navegação do site.
       'filtros' => ['#markup' => Markup::create($incorporado ? '' : $this->formularioFiltros($query, TRUE, $this->url('agenda')))],
       'navegacao' => ['#markup' => Markup::create($incorporado ? '' : $this->navegacaoAgenda($query))],
       '#prefix' => $aviso,
@@ -186,7 +210,11 @@ final class AgendaController extends ControllerBase {
   private function navegacaoAgenda(CalendarQuery $query): string {
     $consultaLinks = $query->filtros;
     $mes = $this->url('month', ['ano' => (int) $query->de->format('Y'), 'mes' => (int) $query->de->format('n')], $consultaLinks);
-    $ics = $this->url('ics', [], $consultaLinks + ['de' => $query->de->format('d/m/Y'), 'ate' => $query->ate->format('d/m/Y')]);
+    $parametrosIcs = $consultaLinks + [
+      'de' => $query->de->format('d/m/Y'),
+      'ate' => $query->ate->format('d/m/Y'),
+    ];
+    $ics = $this->url('ics', [], $parametrosIcs);
     $links = [];
     if ($mes !== NULL) {
       $links[] = '<a href="' . Html::escape($mes) . '">' . Html::escape((string) $this->t('Ver a grade do mês')) . '</a>';
@@ -295,6 +323,7 @@ final class AgendaController extends ControllerBase {
    * Filtros da URL, para as chaves que os provedores definem.
    *
    * @return array<string, int>
+   *   Filtros aceitos pela URL.
    */
   private function filtrosDaUrl(): array {
     $request = $this->pilha->getCurrentRequest();
@@ -325,9 +354,9 @@ final class AgendaController extends ControllerBase {
    */
   private function cacheVisao(): array {
     return [
-      'contexts' => ['url.query_args'],
+      'contexts' => array_values(array_unique(array_merge(['url.query_args'], $this->fonte->cacheContexts()))),
       'tags' => array_merge(['aculta_calendar_item_list'], $this->fonte->cacheTags()),
-      'max-age' => 900,
+      'max-age' => Cache::mergeMaxAges(900, $this->fonte->cacheMaxAge()),
     ];
   }
 
@@ -339,7 +368,9 @@ final class AgendaController extends ControllerBase {
   }
 
   /**
-   * Data em dd/mm/aaaa, de Brasília; vazio ou inválido vira NULL (usa o padrão).
+   * Data em dd/mm/aaaa, de Brasília.
+   *
+   * Valor vazio ou inválido vira NULL e usa o padrão.
    */
   private function dataBr(string $valor, \DateTimeZone $fuso): ?\DateTimeImmutable {
     if ($valor === '') {

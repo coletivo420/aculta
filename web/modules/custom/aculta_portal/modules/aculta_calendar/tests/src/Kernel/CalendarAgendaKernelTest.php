@@ -34,7 +34,7 @@ final class CalendarAgendaKernelTest extends KernelTestBase {
   /**
    * Dois itens no mesmo dia ficam juntos e em ordem; cancelado sai marcado.
    */
-  public function testAgrupaPorDiaEOrdena(): void {
+  public function testAgrupaPorDiaComOrdenacao(): void {
     $itens = [
       $this->item('a', 'Roda', '2030-05-10 10:00', '2030-05-10 12:00'),
       $this->item('b', 'Oficina', '2030-05-10 19:00', '2030-05-10 21:00'),
@@ -48,7 +48,7 @@ final class CalendarAgendaKernelTest extends KernelTestBase {
   }
 
   /**
-   * Série semanal é expandida no fuso do item, inclusive começando perto da meia-noite.
+   * Série semanal respeita o fuso local, mesmo perto da meia-noite.
    */
   public function testSerieComecandoPertoDaMeiaNoite(): void {
     $serie = $this->item('s', 'Série', '2030-05-01 00:30', '2030-05-01 01:30', rrule: 'FREQ=WEEKLY;BYDAY=WE;COUNT=3');
@@ -124,6 +124,16 @@ final class CalendarAgendaKernelTest extends KernelTestBase {
        */
       public function cacheTags(): array {
         return ['teste_list'];
+      }
+
+      /** {@inheritdoc} */
+      public function cacheContexts(): array {
+        return [];
+      }
+
+      /** {@inheritdoc} */
+      public function cacheMaxAge(): int {
+        return 900;
       }
 
     };

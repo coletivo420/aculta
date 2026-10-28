@@ -58,6 +58,16 @@ final class CalendarItemSourceKernelTest extends KernelTestBase {
         throw new \RuntimeException('sem tabela');
       }
 
+      /** {@inheritdoc} */
+      public function cacheContexts(): array {
+        throw new \RuntimeException('sem tabela');
+      }
+
+      /** {@inheritdoc} */
+      public function cacheMaxAge(): int {
+        throw new \RuntimeException('sem tabela');
+      }
+
     };
     $ok = new class implements CalendarItemProviderInterface {
 
@@ -79,7 +89,8 @@ final class CalendarItemSourceKernelTest extends KernelTestBase {
           inicio: new \DateTimeImmutable('2030-05-10 19:00:00', $fuso),
           fim: new \DateTimeImmutable('2030-05-10 21:00:00', $fuso),
           origem: 'teste',
-        )];
+          ),
+        ];
       }
 
       /**
@@ -94,6 +105,16 @@ final class CalendarItemSourceKernelTest extends KernelTestBase {
        */
       public function cacheTags(): array {
         return ['teste_list'];
+      }
+
+      /** {@inheritdoc} */
+      public function cacheContexts(): array {
+        return ['user'];
+      }
+
+      /** {@inheritdoc} */
+      public function cacheMaxAge(): int {
+        return 0;
       }
 
     };
@@ -111,6 +132,8 @@ final class CalendarItemSourceKernelTest extends KernelTestBase {
     $this->assertSame('teste:1', $itens[0]->id);
     $this->assertArrayHasKey('tipo', $fonte->filtros());
     $this->assertSame(['teste_list'], $fonte->cacheTags());
+    $this->assertSame(['user'], $fonte->cacheContexts());
+    $this->assertSame(0, $fonte->cacheMaxAge());
   }
 
 }

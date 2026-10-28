@@ -49,7 +49,8 @@ final class CalendarIcsExportKernelTest extends KernelTestBase {
         'original' => new \DateTimeImmutable('2026-11-04 19:00:00', $fuso),
         'inicio' => new \DateTimeImmutable('2026-11-05 20:00:00', $fuso),
         'fim' => new \DateTimeImmutable('2026-11-05 22:00:00', $fuso),
-      ]],
+      ],
+      ],
     );
 
     $ics = $this->exportador([$item])->exportar($this->consulta('2026-10-01', '2026-11-30'), 'eventos.exemplo.invalid');
@@ -65,7 +66,7 @@ final class CalendarIcsExportKernelTest extends KernelTestBase {
   /**
    * Item cancelado sai com o prefixo.
    */
-  public function testItemCanceladoEMarcado(): void {
+  public function testItemCanceladoFicaMarcado(): void {
     $fuso = new \DateTimeZone(self::FUSO);
     $item = new CalendarItem(
       id: 'eventdate:8',
@@ -138,6 +139,16 @@ final class CalendarIcsExportKernelTest extends KernelTestBase {
        */
       public function cacheTags(): array {
         return ['teste_list'];
+      }
+
+      /** {@inheritdoc} */
+      public function cacheContexts(): array {
+        return [];
+      }
+
+      /** {@inheritdoc} */
+      public function cacheMaxAge(): int {
+        return 900;
       }
 
     };

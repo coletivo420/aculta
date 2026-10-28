@@ -26,7 +26,7 @@ Status: a fazer, salvo onde indicado.
 
 ## CA5 — Provedores
 - [x] `aculta_events` registra o provedor de datas de evento (F5 de eventos).
-- [ ] `aculta_lms_agenda` registra o provedor de prazos de turma (D-15).
+- [x] `aculta_lms_agenda` registra o provedor de prazos e eventos de turma (D-15), com contexto de cache por usuário e resposta não compartilhável.
 
 ## CA6 — Documentação para agentes
 - [x] README com a API, o que cada área pode e não pode fazer, e onde ficam as regras.

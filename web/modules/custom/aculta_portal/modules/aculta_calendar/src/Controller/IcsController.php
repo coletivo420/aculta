@@ -76,11 +76,15 @@ final class IcsController extends ControllerBase {
     return new Response($conteudo, 200, [
       'Content-Type' => 'text/calendar; charset=UTF-8',
       'Content-Disposition' => 'attachment; filename="eventos-aculta.ics"',
+      'Cache-Control' => 'private, no-store, max-age=0',
+      'X-Robots-Tag' => 'noindex, nofollow, noarchive',
     ]);
   }
 
   /**
-   * Data em dd/mm/aaaa, de Brasília; vazio vira NULL; inválido também (usa o padrão).
+   * Data em dd/mm/aaaa, de Brasília.
+   *
+   * Valor vazio ou inválido vira NULL e usa o padrão.
    */
   private function dataBr(string $valor, \DateTimeZone $fuso): ?\DateTimeImmutable {
     if ($valor === '') {

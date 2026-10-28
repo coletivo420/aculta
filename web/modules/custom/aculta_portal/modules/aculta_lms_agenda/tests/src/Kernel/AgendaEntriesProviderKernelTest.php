@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms_agenda\Kernel;
 
 use Drupal\aculta_lms_agenda\Controller\PersonalCalendarController;
+use Drupal\aculta_calendar\Item\CalendarQuery;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\lms\Entity\Activity;
@@ -146,9 +147,9 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
 
     $aluno = $this->createUser();
     $turma->addMember($aluno);
-    $visitante = $this->createUser();
     $alunoOutraTurma = $this->createUser();
     $outraTurma->addMember($alunoOutraTurma);
+    $visitante = $this->createUser();
 
     $de = new \DateTimeImmutable('2026-11-01 00:00:00', new \DateTimeZone('America/Sao_Paulo'));
     $ate = new \DateTimeImmutable('2026-11-30 23:59:59', new \DateTimeZone('America/Sao_Paulo'));
@@ -163,6 +164,25 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $entradasOutraTurma = $servico->forAccount($alunoOutraTurma, $de, $ate);
     $this->assertSame(['Aula da Turma B'], array_column($entradasOutraTurma, 'titulo'));
     $this->assertNotContains('Roda de conversa', array_column($entradasOutraTurma, 'titulo'));
+
+    $consulta = new CalendarQuery($de, $ate, $de);
+    $provedorCalendario = $this->container->get('aculta_lms_agenda.calendar_provider');
+    $this->setCurrentUser($aluno);
+    $itensCalendario = iterator_to_array($provedorCalendario->items($consulta));
+    $this->assertCount(2, $itensCalendario);
+    $this->assertSame(['prazo', 'evento'], array_map(static fn ($item): string => explode(':', $item->id)[1], $itensCalendario));
+    $this->assertSame(['user'], $provedorCalendario->cacheContexts());
+    $this->assertSame(0, $provedorCalendario->cacheMaxAge());
+
+    $this->setCurrentUser($alunoOutraTurma);
+    $itensDaOutraTurma = iterator_to_array($provedorCalendario->items($consulta));
+    $this->assertCount(1, $itensDaOutraTurma);
+    $this->assertSame('Aula da Turma B', $itensDaOutraTurma[0]->titulo);
+
+    $this->setCurrentUser($visitante);
+    $this->assertSame([], iterator_to_array($provedorCalendario->items($consulta)));
+    $eventosPublicos = iterator_to_array($this->container->get('aculta_events.item_provider')->items($consulta));
+    $this->assertSame([], $eventosPublicos, 'Eventos de turma não vazam pelo provedor público de eventos.');
   }
 
   /**
