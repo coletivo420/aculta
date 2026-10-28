@@ -51,6 +51,22 @@ final class EventLocation extends ContentEntityBase {
         'aproximado' => new TranslatableMarkup('Aproximado (só bairro e município)'),
       ]);
 
+    // Tipo de local: termo do vocabulário aculta_location_type (portado do OpenCulturas).
+    $fields['field_tipo'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(new TranslatableMarkup('Tipo de local'))
+      ->setSetting('target_type', 'taxonomy_term')
+      ->setSetting('handler', 'default:taxonomy_term')
+      ->setSetting('handler_settings', ['target_bundles' => ['aculta_location_type' => 'aculta_location_type']]);
+
+    // Endereço postal (módulo address). Só Brasil no ACULTA.
+    $fields['field_endereco'] = BaseFieldDefinition::create('address')
+      ->setLabel(new TranslatableMarkup('Endereço'))
+      ->setSetting('available_countries', ['BR']);
+
+    // Coordenadas para o mapa (geofield). O endereço é geocodificado no servidor (ADR-014).
+    $fields['field_coordenadas'] = BaseFieldDefinition::create('geofield')
+      ->setLabel(new TranslatableMarkup('Coordenadas'));
+
     $fields['field_horario'] = BaseFieldDefinition::create('string_long')
       ->setLabel(new TranslatableMarkup('Horário de funcionamento'));
 

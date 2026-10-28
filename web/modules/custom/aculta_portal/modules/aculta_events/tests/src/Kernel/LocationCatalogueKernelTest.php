@@ -1,0 +1,97 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_events\Kernel;
+
+use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\KernelTests\KernelTestBase;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+
+/**
+ * Lista de locais: privacidade pela precisão (exato x aproximado) e filtro por tipo.
+ */
+#[Group('aculta_events')]
+#[RunTestsInSeparateProcesses]
+final class LocationCatalogueKernelTest extends KernelTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = ['system', 'user', 'options', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'address', 'geofield', 'aculta_calendar', 'aculta_events'];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('taxonomy_term');
+    $this->installConfig(['system', 'taxonomy']);
+    $this->installEntitySchema('aculta_event');
+    $this->installEntitySchema('aculta_event_date');
+    $this->installEntitySchema('aculta_event_location');
+    $this->installEntitySchema('aculta_event_override');
+  }
+
+  /**
+   * Local com o endereço e a precisão informados.
+   */
+  private function local(string $nome, string $precisao, ?Term $tipo = NULL): EventLocation {
+    $valores = [
+      'title' => $nome,
+      'field_precisao' => $precisao,
+      'field_endereco' => [
+        'country_code' => 'BR',
+        'administrative_area' => 'GO',
+        'locality' => 'Goiânia',
+        'dependent_locality' => 'Setor Central',
+        'postal_code' => '74000-000',
+        'address_line1' => 'Rua 10, 123',
+      ],
+    ];
+    if ($tipo !== NULL) {
+      $valores['field_tipo'] = $tipo->id();
+    }
+    $local = EventLocation::create($valores);
+    $local->save();
+    return $local;
+  }
+
+  /**
+   * Local exato traz rua e CEP; aproximado traz só bairro e município.
+   */
+  public function testPrecisaoControlaEndereco(): void {
+    $exato = $this->local('Casa de cultura', 'exato');
+    $aproximado = $this->local('Praça pública', 'aproximado');
+    $servico = $this->container->get('aculta_events.locations');
+
+    $this->assertSame('Rua 10, 123, Setor Central — Goiânia — GO, CEP 74000-000', $servico->enderecoPublico($exato));
+    $this->assertSame('Setor Central — Goiânia — GO', $servico->enderecoPublico($aproximado));
+    $this->assertStringNotContainsString('Rua 10', $servico->enderecoPublico($aproximado));
+  }
+
+  /**
+   * Filtro por tipo devolve só os locais desse tipo, em ordem alfabética.
+   */
+  public function testFiltraPorTipo(): void {
+    Vocabulary::create(['vid' => 'aculta_location_type', 'name' => 'Tipo de local'])->save();
+    $teatro = Term::create(['vid' => 'aculta_location_type', 'name' => 'Teatro']);
+    $teatro->save();
+    $museu = Term::create(['vid' => 'aculta_location_type', 'name' => 'Museu']);
+    $museu->save();
+    $this->local('Teatro Municipal', 'exato', $teatro);
+    $this->local('Museu da Cidade', 'exato', $museu);
+    $this->local('Sala sem tipo', 'exato');
+
+    $servico = $this->container->get('aculta_events.locations');
+    $nomes = array_map(static fn (array $i): string => (string) $i['local']->label(), $servico->busca((int) $teatro->id()));
+    $this->assertSame(['Teatro Municipal'], $nomes);
+    $todos = array_map(static fn (array $i): string => (string) $i['local']->label(), $servico->busca(NULL));
+    $this->assertSame(['Museu da Cidade', 'Sala sem tipo', 'Teatro Municipal'], $todos);
+  }
+
+}

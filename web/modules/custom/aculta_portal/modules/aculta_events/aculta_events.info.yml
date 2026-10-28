@@ -8,5 +8,7 @@ dependencies:
   - drupal:datetime_range
   - drupal:options
   - drupal:taxonomy
+  - address:address
+  - geofield:geofield
   - drupal:user
   - aculta_portal:aculta_calendar

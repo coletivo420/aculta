@@ -19,7 +19,7 @@ final class DateRangeUpcomingFormatterKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'taxonomy', 'text', 'filter', 'datetime', 'datetime_range', 'options', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = ['system', 'user', 'address', 'geofield', 'taxonomy', 'text', 'filter', 'datetime', 'datetime_range', 'options', 'aculta_calendar', 'aculta_events'];
 
   /**
    * {@inheritdoc}

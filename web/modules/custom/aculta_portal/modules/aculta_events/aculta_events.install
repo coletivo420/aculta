@@ -7,6 +7,7 @@ declare(strict_types=1);
  * Atualizações do módulo ACULTA Eventos.
  */
 
+
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 
@@ -121,4 +122,89 @@ function aculta_events_update_10002(): string {
   return $instalados === []
     ? 'Campos field_slug e field_tipo já existiam em aculta_event.'
     : 'Campos instalados em aculta_event: ' . implode(', ', $instalados) . '.';
+}
+
+/**
+ * Tipos de local portados do OpenCulturas (location_type), em português.
+ *
+ * Correção: o OpenCulturas tem "Gastronmy" (erro de digitação); aqui sai "Gastronomia".
+ */
+const ACULTA_EVENTS_TIPOS_LOCAL = [
+  'Atração turística',
+  'Clube',
+  'Centro de convenções',
+  'Espaço multifuncional',
+  'Espaço público',
+  'Gastronomia',
+  'Hotel',
+  'Instituição de ensino',
+  'Local de festival',
+  'Mercado',
+  'Monumento',
+  'Museu',
+  'Palco ao ar livre',
+  'Parque de exposições',
+  'Prédio de escritórios',
+  'Sala de concertos',
+  'Teatro',
+];
+
+/**
+ * Cria o vocabulário de tipos de local e instala os campos da entidade de local.
+ *
+ * Idempotente. Coluna de campo base de coluna única leva o nome do campo; o geofield tem
+ * várias colunas, então a verificação usa uma delas.
+ */
+function _aculta_events_instala_local(): array {
+  $instalados = [];
+  if (!Vocabulary::load('aculta_location_type')) {
+    Vocabulary::create([
+      'vid' => 'aculta_location_type',
+      'name' => 'Tipo de local',
+      'description' => 'Categoria de cada local de evento (portado do OpenCulturas).',
+    ])->save();
+    $instalados[] = 'vocabulário aculta_location_type';
+  }
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $nomes = array_map(static fn ($t) => $t->label(), $storage->loadByProperties(['vid' => 'aculta_location_type']));
+  foreach (ACULTA_EVENTS_TIPOS_LOCAL as $peso => $nome) {
+    if (!in_array($nome, $nomes, TRUE)) {
+      Term::create(['vid' => 'aculta_location_type', 'name' => $nome, 'weight' => $peso])->save();
+    }
+  }
+
+  $banco = \Drupal::database();
+  $gerenciador = \Drupal::entityDefinitionUpdateManager();
+  $definicoes = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event_location');
+  $campos = [
+    'field_tipo' => ['coluna' => 'field_tipo'],
+    'field_endereco' => ['coluna' => 'field_endereco_country_code'],
+    'field_coordenadas' => ['coluna' => 'field_coordenadas_lat'],
+  ];
+  foreach ($campos as $campo => $info) {
+    if ($banco->schema()->fieldExists('aculta_event_location', $info['coluna'])) {
+      continue;
+    }
+    $definicao = $definicoes[$campo] ?? NULL;
+    if ($definicao === NULL) {
+      throw new \RuntimeException("$campo não está declarado em aculta_event_location.");
+    }
+    $registrado = $gerenciador->getFieldStorageDefinition($campo, 'aculta_event_location');
+    if ($registrado !== NULL) {
+      $gerenciador->uninstallFieldStorageDefinition($registrado);
+    }
+    $gerenciador->installFieldStorageDefinition($campo, 'aculta_event_location', 'aculta_events', $definicao);
+    $instalados[] = $campo;
+  }
+  return $instalados;
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * F4: tipos de local (portados do OpenCulturas) e campos de endereço e coordenadas do local.
+ */
+function aculta_events_update_10003(): string {
+  $feito = _aculta_events_instala_local();
+  return $feito === [] ? 'Tipos de local e campos já existiam.' : 'Instalado: ' . implode(', ', $feito) . '.';
 }

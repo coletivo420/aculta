@@ -18,3 +18,13 @@ aculta_events.page:
     slug: '[a-z0-9]+(-[a-z0-9]+)*'
   options:
     _aculta_domain_purpose: eventos
+
+aculta_events.locations:
+  path: '/locais'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\LocationListController::page'
+    _title: 'Locais'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
