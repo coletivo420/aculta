@@ -1,0 +1,22 @@
+.aculta-stat-counter {
+  padding: 1rem;
+  margin: 0;
+  color: var(--aculta-text-primary);
+  background-color: var(--aculta-surface-raised);
+  border: 1px solid var(--aculta-border-default);
+  border-inline-start: 0.25rem solid var(--aculta-border-accent);
+}
+
+.aculta-stat-counter__label {
+  color: var(--aculta-text-secondary);
+  font-size: 0.9375rem;
+}
+
+.aculta-stat-counter__value {
+  margin: 0.25rem 0 0;
+  font-family: var(--aculta-font-display);
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
