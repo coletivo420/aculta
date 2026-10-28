@@ -63,22 +63,22 @@ Saída: catálogo e página do evento navegáveis. Cartão em SDC e validação 
 
 ## Fase F4 — Locais com mapa
 
-> **D-19:** o mapa e a geocodificação passam a ser do submódulo `aculta_maps`. MP0–MP3 extraíram o renderer, serviço de geocodificação e biblioteca JavaScript; `MapController` permanece em `aculta_events` por montar os dados do catálogo e a rota `/mapa`. MP3 `58359728f` usa Leaflet/OSM e Nominatim. A ativação no Runtime aguarda revisão da política de privacidade. Plano: `web/modules/custom/aculta_portal/modules/aculta_maps/docs/`.
+> **D-19:** o mapa e a geocodificação pertencem ao submódulo `aculta_maps`. MP0–MP7 estão concluídas; `MapController` permanece em `aculta_events` por montar os dados do catálogo e a rota `/mapa`. O Runtime de teste está ativado com Leaflet/OpenStreetMap como padrão. A política não foi alterada conforme decisão do responsável de não informar IP; a revisão editorial da divulgação de tiles e do provedor segue pendente. Evidências detalhadas em `web/modules/custom/aculta_portal/modules/aculta_maps/docs/`.
 
 Entrada: F3 concluída. Configuração do mapa conforme D-18 e ADR-030: Leaflet com OpenStreetMap público como padrão e fallback; Google Maps API opcional, com a chave em `aculta_secrets`; link de rota do Google sem API; URL de rota configurável.
 
 - [x] Campo de coordenadas e endereço; regra de precisão do endereço (commit `fd70ddd8a`).
 - [x] Geocodificação no servidor (Geocoding API), uma vez por local, com a chave fora do repositório (commit `f761d8593`).
-- [ ] Bloco de mapa (Maps JavaScript API + agrupamento de marcadores) e lista sincronizada. **Parcial** (`f761d8593`): mapa e lista; falta a biblioteca de agrupamento de marcadores.
-- [ ] Mapa carregado na exibição da página, com aviso de privacidade e link para a política. **Parcial** (`f761d8593`): mapa e aviso; falta o link, porque o site ainda não tem página pública da política.
-- [ ] **Painel administrativo de opções do mapa** (ADM7), em `/painel-administrativo/eventos/mapa`:
+- [x] Bloco de mapa Leaflet/OSM, agrupamento próprio de marcadores e lista sincronizada (`58359728f`, `fd5c96526`).
+- [x] Mapa na página, com aviso e link para `/sobre/politica-de-privacidade` (`58359728f`). A divulgação editorial sobre tiles/provedor continua pendente; a política não foi alterada.
+- [x] **Painel administrativo de opções do mapa** (ADM7), em `/painel-administrativo/mapas` (`cac0efbba`):
   - engine: `openstreetmap` (padrão) ou `google`, com o fallback automático para o OpenStreetMap quando a chave faltar ou a API falhar;
   - estado da chave `GOOGLE_MAPS_API_KEY` no `aculta_secrets` (mostra "configurada" ou "ausente", nunca o valor);
   - centro inicial e zoom (inicial e ao mostrar um local);
   - modelo da URL de rota do Google, sem API (padrão: `https://www.google.com/maps/dir/?api=1&destination={destino}`), editável;
   - permissão própria e teste Kernel de acesso negado para usuário comum;
   - teste Kernel: salvar a configuração e confirmar que nenhum valor de chave aparece no config export.
-- [ ] Link de rota do Google sem API, aberto em nova aba só por clique (D-18). Teste Kernel de que a página não carrega script do Google nesse modo.
+- [x] Link de rota do Google sem API, aberto em nova aba só por clique, sem carregar script do Google (`33b638ccf`; teste Kernel).
 - [x] Filtro de tipo de local (commit `fd70ddd8a`).
 - [x] Alternativa textual completa ao mapa (commit `f761d8593`).
 
