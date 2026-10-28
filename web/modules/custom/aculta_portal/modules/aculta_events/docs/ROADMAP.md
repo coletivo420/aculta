@@ -77,13 +77,14 @@ Saída: `/locais` e `/mapa` funcionam sem JavaScript na lista; o mapa é progres
 
 Entrada: F3 concluída.
 
-- [ ] Visão de agenda (lista) e visão de mês (a partir de `md`).
+- [x] Visão de agenda pública por dia em `/calendario` (commit `7eb8deec1`). **Visão de mês não existe** no código.
 - [ ] Filtros compartilhados com o catálogo.
-- [x] Gerador `.ics` próprio (E6): escape RFC 5545, CR/LF como espaço, horário de Brasília (commit `a26bff741`, `e8e8d0151`). Exportação de página ainda pendente.
-- [x] Allowlist do `source_uri` do embed (E5, commit `7985bc36f`). Rota `/calendario/incorporar` ainda pendente; depende do purpose `eventos` estar ativo.
+- [x] Gerador `.ics` próprio (E6): escape RFC 5545, CR/LF como espaço, horário de Brasília (commits `a26bff741`, `e8e8d0151`). Exportação de período com séries (`RRULE`, `EXDATE`, `RECURRENCE-ID`) em `224c3925e`; exportação de uma data só ainda não existe.
+- [x] Allowlist do `source_uri` do embed (E5, commit `7985bc36f`). Rota `/calendario/incorporar` entregue em `224c3925e`, com o purpose `eventos` ativo no servidor de teste.
 - [x] Validador (R1) e expansão de série na janela (R2) da recorrência (commits `5f3b61ee7`, `1caa5fc7d`).
 - [x] Interface da recorrência (M4, commit `b9144b142`): regra da série em `/eventos/datas/{data}/recorrencia` e edição de uma ocorrência em `/eventos/datas/{data}/ocorrencia/{inicio}` (cancelar, reagendar, restaurar), só para `administer aculta events`. Falta o link para os formulários na página do evento (F6).
-- [ ] Incorporação por iframe em `/calendario/incorporar`, com política de `frame-ancestors` decidida.
+- [x] Incorporação por iframe em `/calendario/incorporar`, com `Content-Security-Policy: frame-ancestors` explícito (lista dos hosts `*.aculta.org` e `*.aculta.toca.net.br`) e `noindex` no ambiente de teste (commit `224c3925e`).
+- [x] Smoke visual em `1280`, `390` e `320` px reais na agenda e na incorporação: `tests/browser/eventos/agenda-embed.mjs`, 33/33 verificações (commit `e81c841f0`). O Runtime de teste está sem eventos, então cobre carregamento, layout e estado vazio, não a renderização de ocorrências.
 - [ ] Calendário também no `main` (D6): mesmas rotas de agenda, canonical e sitemap conforme a regra de produção.
 
 Saída: calendário e exportação em teste, nos dois purposes (`main` e `eventos`).
