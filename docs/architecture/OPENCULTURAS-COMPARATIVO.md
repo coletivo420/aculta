@@ -434,3 +434,8 @@ Sem nomes, sem lista. Atualização a cada minuto; texto alternativo com o perí
   (seção "Candidatos da segunda leva OpenCulturas").
 - Itens de view e de módulo: roadmap de cada módulo (Statistics, Revista, `aculta_events`, Studio, Apoio).
 - Itens de portal: `docs/portal/ROADMAP.md`.
+
+### 9.6 Código
+
+Análise de funções, hooks e padrões de código, com os itens C-01 a C-10 e os defeitos a corrigir antes do
+reuso: `docs/architecture/OPENCULTURAS-INCORPORACAO-CODIGO.md`.

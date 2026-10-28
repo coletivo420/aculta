@@ -120,3 +120,12 @@ Ordem de dependência: U0 → U1 → (U2, U5) → U3 → U4; U6 pode correr em p
 - `docs/portal/MARLEY-WIKI-MODERATION.md`
 - `docs/portal/WE-SATIVA-C01-B-CONTRIBUTOR-MODERATION-CONTRACT.md`
 - `web/modules/custom/aculta_portal/modules/aculta_user/src/Moderation/ReportQueue.php`
+
+## 9. Código de referência do OpenCulturas
+
+Padrões a reescrever (não copiar), com defeitos a evitar:
+
+- **C-01:** destinatários de aviso como entidade de configuração, sem ECA (U2). Substitui o campo de texto
+  livre de `alerts_recipients` do `aculta_mailer` para a finalidade de denúncia.
+- **C-05:** cache por usuário invalidado ao salvar um flag (confirmar antes do "Meus salvos").
+- Fonte e defeitos: `docs/architecture/OPENCULTURAS-INCORPORACAO-CODIGO.md`.
