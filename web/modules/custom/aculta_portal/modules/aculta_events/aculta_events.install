@@ -179,25 +179,15 @@ function _aculta_events_instala_local(): array {
     }
   }
 
-  $banco = \Drupal::database();
   $gerenciador = \Drupal::entityDefinitionUpdateManager();
   $definicoes = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event_location');
-  $campos = [
-    'field_tipo' => ['coluna' => 'field_tipo'],
-    'field_endereco' => ['coluna' => 'field_endereco_country_code'],
-    'field_coordenadas' => ['coluna' => 'field_coordenadas_lat'],
-  ];
-  foreach ($campos as $campo => $info) {
-    if ($banco->schema()->fieldExists('aculta_event_location', $info['coluna'])) {
+  foreach (['field_tipo', 'field_endereco', 'field_coordenadas'] as $campo) {
+    if ($gerenciador->getFieldStorageDefinition($campo, 'aculta_event_location') !== NULL) {
       continue;
     }
     $definicao = $definicoes[$campo] ?? NULL;
     if ($definicao === NULL) {
       throw new \RuntimeException("$campo não está declarado em aculta_event_location.");
-    }
-    $registrado = $gerenciador->getFieldStorageDefinition($campo, 'aculta_event_location');
-    if ($registrado !== NULL) {
-      $gerenciador->uninstallFieldStorageDefinition($registrado);
     }
     $gerenciador->installFieldStorageDefinition($campo, 'aculta_event_location', 'aculta_events', $definicao);
     $instalados[] = $campo;
