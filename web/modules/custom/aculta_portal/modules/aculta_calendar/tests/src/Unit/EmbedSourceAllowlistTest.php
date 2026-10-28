@@ -19,7 +19,7 @@ class EmbedSourceAllowlistTest extends UnitTestCase {
    * Allowlist com um único host configurado.
    */
   private function allowlist(): EmbedSourceAllowlist {
-    return new EmbedSourceAllowlist(['Eventos.aculta.org']);
+    return new EmbedSourceAllowlist(['Eventos.exemplo.invalid']);
   }
 
   /**
@@ -31,9 +31,9 @@ class EmbedSourceAllowlistTest extends UnitTestCase {
     return [
       'caminho interno' => ['/calendario'],
       'caminho com consulta' => ['/calendario?mes=10'],
-      'https do host da lista' => ['https://eventos.aculta.org/calendario'],
-      'host em maiúsculas' => ['https://EVENTOS.aculta.org/calendario'],
-      'https com porta padrão' => ['https://eventos.aculta.org:443/calendario'],
+      'https do host da lista' => ['https://eventos.exemplo.invalid/calendario'],
+      'host em maiúsculas' => ['https://EVENTOS.exemplo.invalid/calendario'],
+      'https com porta padrão' => ['https://eventos.exemplo.invalid:443/calendario'],
     ];
   }
 
@@ -46,13 +46,13 @@ class EmbedSourceAllowlistTest extends UnitTestCase {
     return [
       'javascript' => ['javascript:alert(1)'],
       'data' => ['data:text/html,<script>alert(1)</script>'],
-      'http' => ['http://eventos.aculta.org/calendario'],
+      'http' => ['http://eventos.exemplo.invalid/calendario'],
       'host fora da lista' => ['https://evil.com/calendario'],
-      'sufixo de host' => ['https://eventos.aculta.org.evil.com/'],
+      'sufixo de host' => ['https://eventos.exemplo.invalid.evil.com/'],
       'protocolo relativo' => ['//evil.com/calendario'],
       'barra invertida após barra' => ['/\\evil.com'],
-      'credencial na URL' => ['https://eventos.aculta.org@evil.com/'],
-      'porta fora do padrão' => ['https://eventos.aculta.org:8443/'],
+      'credencial na URL' => ['https://eventos.exemplo.invalid@evil.com/'],
+      'porta fora do padrão' => ['https://eventos.exemplo.invalid:8443/'],
       'caminho sem barra inicial' => ['calendario'],
       'vazio' => [''],
       'espaço no meio' => ['/calendario x'],

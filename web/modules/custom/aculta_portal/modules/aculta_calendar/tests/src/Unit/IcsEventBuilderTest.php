@@ -24,7 +24,7 @@ class IcsEventBuilderTest extends UnitTestCase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->builder = new IcsEventBuilder();
+    $this->builder = new IcsEventBuilder('exemplo.invalid');
   }
 
   /**
@@ -161,7 +161,7 @@ class IcsEventBuilderTest extends UnitTestCase {
 
     $this->assertNotSame($base, $outraData);
     $this->assertNotSame($base, $outraEntidade);
-    $this->assertStringEndsWith('@aculta.org', $base[0]);
+    $this->assertStringEndsWith('@exemplo.invalid', $base[0]);
   }
 
   /**

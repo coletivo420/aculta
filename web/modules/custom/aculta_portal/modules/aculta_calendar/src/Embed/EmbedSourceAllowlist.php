@@ -24,7 +24,7 @@ final class EmbedSourceAllowlist {
    * Construtor.
    *
    * @param string[] $allowedHosts
-   *   Hosts aceitos para URL absoluta, por exemplo "eventos.aculta.org".
+   *   Hosts aceitos para URL absoluta, por exemplo "eventos.exemplo.invalid".
    */
   public function __construct(array $allowedHosts) {
     $this->hosts = array_map(static fn (string $host): string => strtolower($host), $allowedHosts);

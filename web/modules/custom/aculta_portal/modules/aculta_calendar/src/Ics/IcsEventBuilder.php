@@ -34,7 +34,7 @@ final class IcsEventBuilder {
    *   Domínio do UID. Compõe o identificador do evento.
    */
   public function __construct(
-    private readonly string $uidDomain = 'aculta.org',
+    private readonly string $uidDomain,
   ) {}
 
   /**
