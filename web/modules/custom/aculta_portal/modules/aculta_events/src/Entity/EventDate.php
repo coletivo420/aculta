@@ -45,6 +45,16 @@ final class EventDate extends ContentEntityBase {
       ->setRequired(TRUE)
       ->setSetting('max_length', 255);
 
+    // Evento a que a data pertence (obrigatório) e local físico (opcional se for virtual).
+    $fields['field_evento'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(new TranslatableMarkup('Evento'))
+      ->setRequired(TRUE)
+      ->setSetting('target_type', 'aculta_event');
+
+    $fields['field_local'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(new TranslatableMarkup('Local'))
+      ->setSetting('target_type', 'aculta_event_location');
+
     // Intervalo com início e fim. Para dia inteiro, `field_dia_inteiro` manda usar só a data.
     $fields['field_quando'] = BaseFieldDefinition::create('daterange')
       ->setLabel(new TranslatableMarkup('Quando'))

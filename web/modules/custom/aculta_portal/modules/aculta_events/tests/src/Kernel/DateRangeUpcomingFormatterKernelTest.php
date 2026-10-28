@@ -19,7 +19,7 @@ final class DateRangeUpcomingFormatterKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'datetime', 'datetime_range', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = ['system', 'user', 'datetime', 'datetime_range', 'options', 'aculta_calendar', 'aculta_events'];
 
   /**
    * {@inheritdoc}
@@ -28,6 +28,17 @@ final class DateRangeUpcomingFormatterKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('aculta_event_date');
+    $this->installEntitySchema('aculta_event');
+    $this->installEntitySchema('aculta_event_location');
+  }
+
+  /**
+   * Evento de apoio: a data precisa pertencer a um evento.
+   */
+  private function evento(): \Drupal\aculta_events\Entity\Event {
+    $evento = \Drupal\aculta_events\Entity\Event::create(['title' => 'Evento de teste']);
+    $evento->save();
+    return $evento;
   }
 
   /**
@@ -44,6 +55,7 @@ final class DateRangeUpcomingFormatterKernelTest extends KernelTestBase {
    */
   public function testMostraDataFuturaNoFormatoBrasileiro(): void {
     $data = EventDate::create([
+      'field_evento' => $this->evento()->id(),
       'title' => 'Feira',
       'field_quando' => [
         'value' => $this->utc('2030-05-10 19:00:00'),
@@ -61,6 +73,7 @@ final class DateRangeUpcomingFormatterKernelTest extends KernelTestBase {
    */
   public function testOcultaDataPassada(): void {
     $data = EventDate::create([
+      'field_evento' => $this->evento()->id(),
       'title' => 'Antiga',
       'field_quando' => [
         'value' => $this->utc('2020-01-10 19:00:00'),
@@ -78,6 +91,7 @@ final class DateRangeUpcomingFormatterKernelTest extends KernelTestBase {
    */
   public function testCacheExpiraNoFimDaData(): void {
     $data = EventDate::create([
+      'field_evento' => $this->evento()->id(),
       'title' => 'Feira',
       'field_quando' => [
         'value' => $this->utc('2030-05-10 19:00:00'),

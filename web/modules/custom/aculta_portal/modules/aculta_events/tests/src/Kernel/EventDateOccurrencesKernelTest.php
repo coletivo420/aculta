@@ -23,7 +23,7 @@ final class EventDateOccurrencesKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'datetime', 'datetime_range', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = ['system', 'user', 'datetime', 'datetime_range', 'options', 'aculta_calendar', 'aculta_events'];
 
   /**
    * {@inheritdoc}
@@ -32,7 +32,18 @@ final class EventDateOccurrencesKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('aculta_event_date');
+    $this->installEntitySchema('aculta_event');
+    $this->installEntitySchema('aculta_event_location');
     $this->installEntitySchema('aculta_event_override');
+  }
+
+  /**
+   * Evento de apoio: a data precisa pertencer a um evento.
+   */
+  private function evento(): \Drupal\aculta_events\Entity\Event {
+    $evento = \Drupal\aculta_events\Entity\Event::create(['title' => 'Evento de teste']);
+    $evento->save();
+    return $evento;
   }
 
   /**
@@ -48,6 +59,7 @@ final class EventDateOccurrencesKernelTest extends KernelTestBase {
    */
   private function serie(): EventDate {
     $data = EventDate::create([
+      'field_evento' => $this->evento()->id(),
       'title' => 'Oficina de cerâmica',
       'field_quando' => [
         'value' => $this->utc('2026-10-28 19:00:00'),
@@ -101,6 +113,7 @@ final class EventDateOccurrencesKernelTest extends KernelTestBase {
    */
   public function testDataUnicaSoApareceNaJanela(): void {
     $data = EventDate::create([
+      'field_evento' => $this->evento()->id(),
       'title' => 'Palestra',
       'field_quando' => [
         'value' => $this->utc('2026-11-10 18:30:00'),
