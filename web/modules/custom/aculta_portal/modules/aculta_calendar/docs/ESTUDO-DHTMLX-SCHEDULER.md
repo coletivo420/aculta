@@ -119,3 +119,57 @@ O que o piloto **não** mediu, e que continua pendente:
 Conclusão do piloto: o componente funciona visualmente e pelo teclado **somente com o plugin `key_nav`**. Não há
 impedimento técnico grave demonstrado, mas os critérios 1 (parecer), 2 (leitor de tela e alto contraste) e 3
 (tamanho servido) da seção 6 seguem abertos. Não há adoção.
+
+## 9. Estado das microfases e divergência de numeração (2026-10-28)
+
+Antes de iniciar as microfases A–F, a verificação pedida encontrou uma divergência de numeração.
+Fica registrada aqui; nenhum código foi alterado.
+
+### O que o repositório tem
+
+| Rótulo | Onde | O que é | Estado |
+| --- | --- | --- | --- |
+| EV-M1 | `aculta_events/docs/ROADMAP.md` | Hooks de datas (E3) | Feito, `8bd6d832b` |
+| EV-M2 | `aculta_events/docs/ROADMAP.md` | Recorrência com interface (D-14) | Feito, `b9144b142` |
+| EV-M3 | `aculta_events/docs/ROADMAP.md` e `aculta_calendar/docs/ROADMAP.md` | API de itens e agenda no `aculta_calendar` (D-20) | Feito, `c9b6b8e1f` |
+| EV-M4 | `aculta_events/docs/ROADMAP.md` | Verificação visual de eventos e calendário | Feito, `e33636144` |
+| M1–M4 | `aculta_calendar/docs/RECORRENCIA.md`, seção 3 | Decisões de recorrência: chave pelo início original, cálculo na leitura, teto de 366 ocorrências e fuso fixo | Decisões, não microfases |
+| M4 | `RECORRENCIA.md`, seção 11, e `ROADMAP.md` de eventos | Interface de edição da recorrência | Feito, `b9144b142` |
+
+### O que foi pedido
+
+A tarefa pediu o estado das microfases M1–M4 de incorporação do DHTMLX e a execução de A–F.
+Não existe, no repositório, um conjunto M1–M4 de entrega: os rótulos M1–M4 são decisões da
+recorrência, e "M4" também nomeia a interface de edição. As microfases de entrega usam o
+prefixo EV- (EV-M1 a EV-M4) e as do calendário usam CA0–CA6 e I1–I8.
+
+### Consequência
+
+Parei antes de alterar código, conforme a instrução. Nada de A–F foi implementado: nenhuma
+biblioteca foi adicionada, nenhuma rota foi criada e nenhum arquivo do módulo foi alterado.
+Esta branch contém apenas este registro.
+
+### Para retomar
+
+- Definir a numeração das microfases desta incorporação (sugestão: DH-A a DH-F, para não
+  colidir com M1–M5 da recorrência, EV-M1–EV-M4 e CA0–CA6).
+- Os critérios 2 (leitor de tela e alto contraste) e 3 (tamanho servido com compressão) da
+  seção 6 continuam abertos. O piloto mediu teclado, 320 px e URLs externas do CSS, não
+  leitor de tela, alto contraste nem compressão do servidor.
+- O caminho do estudo é
+  `web/modules/custom/aculta_portal/modules/aculta_calendar/docs/ESTUDO-DHTMLX-SCHEDULER.md`;
+  não existe `docs/ESTUDO-DHTMLX-SCHEDULER.md` na raiz.
+
+## 10. Decisão do responsável sobre o arquivo de licença (2026-10-28)
+
+O responsável decidiu: **remover o `LICENSE` do pacote DHTMLX e assumir todos os riscos**.
+
+- A decisão é dele, não parecer jurídico. O parecer de compatibilidade (seção 3) continua sem ter sido
+  feito por nenhum agente; o risco passa a ser assumido explicitamente pelo responsável.
+- O repositório não guardará o `LICENSE` do pacote. O aviso de copyright e a menção à GPL v2 do
+  componente ficam no README do módulo e/ou em `NOTICE`, junto da origem, da versão fixa 7.2.15 e do
+  hash do pacote, como o item A já exige.
+- A leitura do item A passa a ser: incluir o componente **sem** o `LICENSE` do pacote, registrando
+  origem, versão e hash no docs.
+- Nada foi implementado: a incorporação continua parada pela divergência de numeração (seção 9).
+  Falta definir a numeração das microfases para retomar.
