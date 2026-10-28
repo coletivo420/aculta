@@ -161,3 +161,13 @@ a vir do carrinho:
   do responsável.
 - Removidos do servidor de testes: pedidos 179 e 180 da conta de teste, curso 73 e turma 74. Mantidos os produtos de teste
   10 (LMS) e 11 (doação), por decisão do responsável.
+
+### LMS verificado no navegador e itens de teste removidos (2026-10-28)
+
+- Curso completo de teste criado (autorizado): atividade, aula, curso e turma, vinculados ao produto de LMS de teste.
+- Carrinho misto no navegador: camiseta com CEP + compra do curso. O Commerce juntou a camiseta ao pedido de curso.
+  Correção: a regra de inclusão passa a ser pelo produto (produto da loja entra, mesmo em pedido misto; LMS e
+  doações ficam de fora). Frete da gaveta igual ao da camiseta sozinha (PAC R$ 23,04, SEDEX R$ 51,97, Mini Envios
+  R$ 18,19), com o curso no carrinho.
+- Removidos após a verificação: curso, turma, aula, atividade e os produtos de teste (ids 10 e 11). Pedidos de teste
+  criados na verificação permanecem como rascunho no servidor de testes.

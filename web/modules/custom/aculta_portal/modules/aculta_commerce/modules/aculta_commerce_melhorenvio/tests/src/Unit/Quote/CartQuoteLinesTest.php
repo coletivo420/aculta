@@ -55,15 +55,17 @@ final class CartQuoteLinesTest extends UnitTestCase {
   }
 
   /**
-   * Pedido de doação ou de curso (tipo próprio) não entra no frete, mesmo com item de produto da loja.
+   * Pedido misto: produto da loja junto de LMS num pedido de curso entra só o produto da loja. Doação no pedido de
+   * doação não entra.
    */
-  public function testNonStoreOrderTypesAreExcluded(): void {
+  public function testStoreItemInMixedOrderIsQuotedButDigitalItemsAreNot(): void {
     $carts = $this->createMock(CartProviderInterface::class);
     $carts->method('getCarts')->willReturn([
-      $this->cart([$this->item('produto_loja', 1)], 'doacao'),
-      $this->cart([$this->item('produto_loja', 1)], 'curso'),
+      $this->cart([$this->item('produto_curso', 1), $this->item('produto_loja', 1)], 'curso'),
+      $this->cart([$this->item('default', 1)], 'doacao'),
     ]);
-    $this->assertSame([], (new CartQuoteLines($carts))->lines());
+    $lines = (new CartQuoteLines($carts))->lines();
+    $this->assertCount(1, $lines);
   }
 
   /**

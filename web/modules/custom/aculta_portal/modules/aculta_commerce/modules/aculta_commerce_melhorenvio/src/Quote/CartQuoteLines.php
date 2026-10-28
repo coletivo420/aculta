@@ -10,8 +10,9 @@ use Drupal\commerce_product\Entity\ProductVariationInterface;
 /**
  * Linhas do carrinho para cotação de frete: somente produtos da loja (bundle produto_loja).
  *
- * Lê todos os carrinhos da sessão, como a gaveta do carrinho. LMS (produto_curso), doações e qualquer outro produto
- * digital ficam fora do frete: o cálculo é restrito à loja.
+ * Lê todos os carrinhos da sessão, como a gaveta do carrinho. A regra é pelo produto: só itens de produto da loja
+ * entram, mesmo quando o pedido é misto (o Commerce pode juntar um produto da loja a um pedido de curso). LMS
+ * (produto_curso) e doações ficam fora do frete.
  */
 class CartQuoteLines {
 
@@ -20,10 +21,6 @@ class CartQuoteLines {
    */
   public const BUNDLE_LOJA = 'produto_loja';
 
-  /**
-   * Tipo de pedido da loja. Pedidos de curso (LMS), doação e assinatura têm tipos próprios e não entram no frete.
-   */
-  public const ORDER_TYPE_LOJA = 'default';
 
   /**
    * Cria o leitor.
@@ -40,9 +37,6 @@ class CartQuoteLines {
   public function lines(): array {
     $lines = [];
     foreach ($this->carts->getCarts() as $cart) {
-      if ($cart->bundle() !== self::ORDER_TYPE_LOJA) {
-        continue;
-      }
       foreach ($cart->getItems() as $item) {
         $variation = $item->getPurchasedEntity();
         if (!$variation instanceof ProductVariationInterface || !$this->isStoreProduct($variation)) {
