@@ -1,0 +1,4 @@
+services:
+  aculta_events.occurrences:
+    class: Drupal\aculta_events\Occurrence\EventDateOccurrences
+    arguments: ['@entity_type.manager']

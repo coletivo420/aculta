@@ -1,0 +1,10 @@
+name: ACULTA Eventos
+type: module
+description: 'Eventos, datas e locais do purpose eventos. Modelo em docs/MODELO-DE-DADOS.md. Recorrência via aculta_calendar.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:datetime
+  - drupal:datetime_range
+  - drupal:user
+  - aculta_portal:aculta_calendar
