@@ -46,20 +46,29 @@ final class ExistingPortalCartContractTest extends UnitTestCase {
    */
   public function testCheckoutPathCompatibility(): void {
     self::assertSame(
-      '/finalizar-compra/42/pagamento',
+      '/finalizar-compra/42/concluir',
       CheckoutSlugMap::toPublic('/checkout/42/payment'),
     );
     self::assertSame(
       '/checkout/42/payment',
-      CheckoutSlugMap::toInternal('/finalizar-compra/42/pagamento'),
+      CheckoutSlugMap::toInternal('/finalizar-compra/42/concluir'),
     );
     self::assertSame(
-      '/finalizar-compra/42/pagamento/return',
+      '/finalizar-compra/42/concluir/return',
       CheckoutSlugMap::toPublic('/checkout/42/payment/return'),
     );
     self::assertSame(
       '/checkout/42/payment/cancel',
-      CheckoutSlugMap::toInternal('/finalizar-compra/42/pagamento/cancel'),
+      CheckoutSlugMap::toInternal('/finalizar-compra/42/concluir/cancel'),
+    );
+    // Cobrança (billing) usa /pagamento; /billing deixa de ser slug público.
+    self::assertSame(
+      '/finalizar-compra/42/pagamento',
+      CheckoutSlugMap::toPublic('/checkout/42/billing'),
+    );
+    self::assertSame(
+      '/checkout/42/billing',
+      CheckoutSlugMap::toInternal('/finalizar-compra/42/pagamento'),
     );
     self::assertNull(CheckoutSlugMap::toPublic('/loja'));
     self::assertNull(CheckoutSlugMap::toInternal('/donate'));

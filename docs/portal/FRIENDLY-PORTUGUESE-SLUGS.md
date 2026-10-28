@@ -447,3 +447,22 @@ DT-P20 ficou vazio; exceções antigas foram removidas após o próprio gate con
 resolvidas.
 
 - Exceção aprovada pelo responsável (2026-10-21): `/studio` no domínio de conta (`conta.aculta.*/studio`). O nome do Estúdio é o nome do produto e já aparece no roadmap e no módulo `aculta_studio`; o slug é estável, sem redirecionamento.
+
+## Etapas do checkout (decisão do responsável, 2026-10-28)
+
+Vale para todos os fluxos (loja, LMS, assinatura e doação), porque o mapa é único (`CheckoutSlugMap`):
+
+| Etapa interna | Caminho público |
+|---|---|
+| `login` | `/finalizar-compra/{pedido}/entrar` |
+| `order_information` | `/finalizar-compra/{pedido}/informacoes-do-pedido` |
+| `billing` (cobrança: contato, nome, endereço) | `/finalizar-compra/{pedido}/pagamento` |
+| `review` | `/finalizar-compra/{pedido}/revisao` |
+| `payment` (pagar e concluir) | `/finalizar-compra/{pedido}/concluir` |
+| `complete` | `/finalizar-compra/{pedido}/concluido` |
+
+- O slug `/billing` deixa de existir como público. Na doação, `/apoiar/{pedido}/billing` vira `/apoiar/{pedido}/pagamento`,
+  e `/apoiar/{pedido}/payment` vira `/apoiar/{pedido}/concluir`. As demais etapas da doação mantêm o nome interno.
+- Os retornos e cancelamentos do Mercado Pago seguem a etapa: `/concluir/return` e `/concluir/cancel`.
+- Caminhos antigos `/finalizar-compra/{pedido}/pagamento` passam a abrir a etapa de cobrança. O checkout leva a pessoa à
+  etapa correta de qualquer forma.

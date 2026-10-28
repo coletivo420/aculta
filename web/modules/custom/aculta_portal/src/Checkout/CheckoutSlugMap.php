@@ -17,17 +17,39 @@ final class CheckoutSlugMap {
 
   public const PUBLIC_PREFIX = '/finalizar-compra';
 
-  /** Etapa pública => etapa interna do fluxo Commerce. */
+  /**
+   * Etapa pública => etapa interna do fluxo Commerce.
+   */
   public const STEPS = [
     'entrar' => 'login',
     'informacoes-do-pedido' => 'order_information',
     'revisao' => 'review',
-    'pagamento' => 'payment',
+    'pagamento' => 'billing',
+    'concluir' => 'payment',
     'concluido' => 'complete',
   ];
 
-  /** Caminho interno /checkout/... para o público /finalizar-compra/... ; NULL se não for do checkout. */
+  /**
+   * Prefixo público da doação: /apoiar/{pedido}/{etapa}. Só cobrança e pagamento mudam de slug.
+   */
+  public const DONATION_PREFIX = '/apoiar';
+
+  /**
+   * Etapa pública da doação => etapa interna.
+   */
+  public const DONATION_STEPS = [
+    'pagamento' => 'billing',
+    'concluir' => 'payment',
+  ];
+
+  /**
+   * Caminho interno /checkout/... para o público /finalizar-compra/... ; NULL se não for do checkout.
+   */
   public static function toPublic(string $path): ?string {
+    if (preg_match('#^/apoiar/(\d+)/([a-z_]+)$#', $path, $d)) {
+      $publico = array_search($d[2], self::DONATION_STEPS, TRUE);
+      return self::DONATION_PREFIX . '/' . $d[1] . '/' . ($publico !== FALSE ? $publico : $d[2]);
+    }
     if (!preg_match('#^/checkout/(\d+)(?:/([a-z_]+))?(/.*)?$#', $path, $m)) {
       return NULL;
     }
@@ -36,8 +58,13 @@ final class CheckoutSlugMap {
     return self::PUBLIC_PREFIX . '/' . $m[1] . ($public_step !== '' ? '/' . $public_step : '') . ($m[3] ?? '');
   }
 
-  /** Caminho público /finalizar-compra/... para o interno /checkout/... ; NULL se não for do checkout público. */
+  /**
+   * Caminho público /finalizar-compra/... para o interno /checkout/... ; NULL se não for do checkout público.
+   */
   public static function toInternal(string $path): ?string {
+    if (preg_match('#^' . preg_quote(self::DONATION_PREFIX, '#') . '/(\d+)/([a-z-]+)$#', $path, $d)) {
+      return self::DONATION_PREFIX . '/' . $d[1] . '/' . (self::DONATION_STEPS[$d[2]] ?? $d[2]);
+    }
     if (!preg_match('#^' . preg_quote(self::PUBLIC_PREFIX, '#') . '/(\d+)(?:/([a-z-]+))?(/.*)?$#', $path, $m)) {
       return NULL;
     }
