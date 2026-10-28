@@ -6,6 +6,28 @@ de implementação é o parser e a expansão, com testes Unit, antes de qualquer
 Motivo: o `smart_date` foi descartado (D-13) por causa da dependência `simshaun/recurr`, que
 não aceita `doctrine/collections` 3.x. A recorrência precisa existir sem essa biblioteca.
 
+## 0. Bibliotecas estudadas e escolha
+
+**Como o `smart_date` faz (release 4.3.0, GPL-2.0-or-later):**
+
+- O núcleo não calcula recorrência. Ele guarda `rrule` e `rrule_index` por linha de campo.
+- O submódulo `smart_date_recur` faz o cálculo com `simshaun/recurr` 5.x: `new Rule($regra, $inicio, $fim)`
+  e `ArrayTransformer::transform($rule, $constraint)`, com constraints `Between`, `Before` e `After`.
+- Ele **materializa** as ocorrências como linhas do campo. As exceções vão numa entidade própria
+  (`SmartDateOverride`).
+- A dependência que causou o bloqueio é só a `simshaun/recurr` 5.x (`doctrine/collections ~1.6||^2.0`).
+
+**O que usamos da ideia:** o cálculo por janela (`Between`), que já está no plano. **O que não
+usamos:** a materialização e a entidade de exceção. Nossas exceções são o campo `field_excecoes`.
+
+**Escolha:** `rlanvin/php-rrule` `^3.0` (MIT, PHP ≥ 7.3, sem dependência de runtime). Não puxa
+`doctrine/collections`. Verificado com dry-run: 1 instalação, nenhuma atualização nem remoção. Teste
+de fumaça: regra `FREQ=WEEKLY;BYDAY=MO,WE;COUNT=3` a partir de quarta 28/10/2026 às 19h
+(America/Sao_Paulo) gera 28/10, 02/11 e 04/11, todas `-03`.
+
+Uso previsto: só a classe de expansão (`RRule\RRule`) e a validação de partes, encapsuladas num
+serviço do `aculta_calendar`. A whitelist da seção 4 fica no nosso código, não na biblioteca.
+
 ## 1. Escopo da v1
 
 Subconjunto de RFC 5545 (RRULE), não a norma inteira:

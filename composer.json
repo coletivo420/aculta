@@ -353,6 +353,7 @@
         "photoswipe/photoswipe-dynamic-caption-plugin": "1.2.7",
         "popperjs/popperjs": "2.11.6",
         "progress-tracker/progress-tracker": "2.0.7",
+        "rlanvin/php-rrule": "^3.0",
         "signature_pad/signature_pad": "2.3.0",
         "symfony/brevo-mailer": "^7.4",
         "symfony/http-client": "^7.4",
