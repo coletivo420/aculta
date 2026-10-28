@@ -106,8 +106,11 @@ Auditoria estática: `rail` não atende colunas de página por ser uma faixa
 horizontal; `content-section` fornece um único corpo; UI Patterns Layouts não
 inclui grades genéricas 1/2/3. Criado `layouts/page-columns`, candidato sem
 consumidor funcional, com três stories e stack de uma coluna abaixo de 768 px.
-A rota individual da story retornou erro genérico do Drupal; sem evidência
-Runtime para 320 px ou dark.
+As três stories foram capturadas no Runtime em desktop, 320 px e dark. O layout
+empilha regiões na ordem DOM. Em 320 px, a métrica de documento inclui os
+drawers offcanvas ocultos do shell administrativo (ver README da suíte); o
+conteúdo do layout fica dentro do viewport. Sem consumidor real, permanece
+candidato.
 
 ## B9 — grade mista de conteúdo, termos e links externos
 

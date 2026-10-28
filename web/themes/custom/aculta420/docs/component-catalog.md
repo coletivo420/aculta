@@ -107,8 +107,9 @@ conteúdo único e `ui_patterns_layouts` adapta SDCs para Layout Builder sem
 fornecer por si só um arranjo 1/2/3 colunas. O candidato
 `layouts/page-columns` fornece regiões principal, secundária e complementar;
 tem stories de 1, 2 e 3 colunas e empilha as regiões pela ordem do DOM abaixo de
-768 px. Ainda não há consumidor funcional. A story individual falhou com erro
-genérico no Runtime UI Patterns; homologação visual 320 px/dark pendente.
+768 px. As três variações foram capturadas no Runtime em 320 px; não houve
+overflow no próprio layout, embora o shell administrativo gere overflow no
+documento por drawers ocultos. Ainda não há consumidor funcional.
 
 ## B9 — grade de itens mistos
 
