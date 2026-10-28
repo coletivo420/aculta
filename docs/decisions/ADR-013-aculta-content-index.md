@@ -31,6 +31,14 @@ O rebuild usa `generation_id` nas tabelas e um ponteiro de geração ativa troca
 
 Reconstruções usam geração/checkpoint e catch-up de alterações. A gravação valida versão/fingerprint para impedir jobs antigos de sobrescrever dados novos. O worker aplica alterações às gerações `active`, `building` e `validated`. A ativação aguarda a fila dos providers ativos, bloqueia dead-letter e compartilha uma fence transacional com a gravação de eventos; a geração validada continua recebendo deltas até a troca. Todos os reads verificam acesso na entidade original e falham fechados. No contrato inicial 0.1, consultas não retornam totais nem facetas. A varredura tem limite fixo de até 100 candidatos; cursor aleatório, vinculado a conta/filtros/geração, guarda somente hash no banco e não expõe IDs. O token de continuação aparece quando a página de candidatos alcança o limite, o que pode sinalizar que existe continuação; não inclui contagem ou metadados privados.
 
+Projeções de um provider desativado ou com ownership não verificável são
+preservadas até que o módulo proprietário volte a fornecer uma autoridade para
+reconciliar; a consulta nunca expõe uma linha antiga quando não há provider
+atual que possa validar sua política de acesso. A reconciliação só agenda
+exclusão quando o provider registrado confirma que ainda é dono do tipo/bundle
+e que a fonte realmente desapareceu. Origem: `0.1.0-dev.38` e
+`0.1.0-dev.123`, [histórico arquivado de aculta_index](../history/changelog/aculta_index.md).
+
 ## Alternativas consideradas
 
 1. **Expandir `aculta_conteudo` / Search API para todos os usos:** rejeitada como catálogo geral; Search API resolve texto/index tracking, mas não substitui contratos de projeção, relações editoriais e autorização contextual.

@@ -16,6 +16,7 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 - [ADR-017 — Avisos educacionais acionáveis](ADR-017-avisos-educacionais-acionaveis.md)
 - [ADR-018 — Messenger como núcleo de mensagens](ADR-018-messenger-como-nucleo-de-mensagens.md)
 - [ADR-019 — Política central de imagens](ADR-019-politica-central-de-imagens.md)
+- [ADR-020 — Página atômica Content Index–Statistics](ADR-020-pagina-atomica-content-index-statistics.md)
 
 ADRs históricos e decisões locais de arquitetura também podem ser encontrados
 neste diretório e em `docs/architecture/`. Para registrar uma decisão nova,
