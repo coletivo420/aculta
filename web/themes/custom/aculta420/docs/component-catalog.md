@@ -83,11 +83,12 @@ consumidores, modos claro/escuro e renderização no Firefox ESR.
 - `patterns/card` compact: View pública de álbuns fotografada em 1280 px, 320 px
   e modo escuro; em 320 px não houve overflow e os dois cartões permaneceram
   legíveis.
-- A captura encontrou dois links vazios sem nome (`/%5Bpath%5D`) nos cartões. A
+- A captura inicial encontrou dois anchors sem nome em `/%5Bpath%5D`. A
   configuração da View em Config Sync foi corrigida para preservar somente o
-  link de entidade do título. O Runtime ainda mostra os dois links porque a
-  configuração não foi importada; a validação dessa correção fica pendente de
-  autorização para `config:import`.
+  link de entidade do título e aplicada por import parcial apenas de
+  `views.view.aculta_albuns`, após snapshot do Runtime. Firefox ESR confirmou
+  zero links sem nome/placeholders em desktop, 320 px e dark; ambos os cartões
+  compactos permaneceram legíveis e sem rolagem horizontal.
 - `bookmark-toggle`: o tópico de homologação mostrou “Salvar tópico” e “Salvo”;
   foco visível com outline de 3 px, alvo de 44 px e sem overflow em 320 px. A
   Flag da conta de teste foi restaurada ao estado inicial.

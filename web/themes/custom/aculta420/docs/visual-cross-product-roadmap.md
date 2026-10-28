@@ -87,9 +87,10 @@ renderização/cache no Runtime e revisão visual autorizada.
 Firefox ESR confirmou o card compacto na View pública de álbuns em 1280 px,
 320 px e dark; em 320 px a página não transborda. A revisão encontrou links
 vazios sem nome gerados por duas opções de link concorrentes na View. O Config
-Sync foi corrigido, mas `drush config:status` confirma que a configuração ativa
-do Runtime ainda está antiga; a verificação visual dos links corrigidos depende
-de autorização para `config:import`.
+Sync foi corrigido e aplicado por import parcial restrito a
+`views.view.aculta_albuns`, depois de snapshot com hash do Runtime. A verificação
+Firefox ESR em desktop, 320 px e dark confirmou zero links sem nome/placeholders
+nos dois cartões compactos.
 
 No tópico do Fórum, os estados salvar/não salvo foram fotografados em desktop,
 320 px e dark. O controle tem foco visível de 3 px, alvo mínimo de 44 px e rótulo
