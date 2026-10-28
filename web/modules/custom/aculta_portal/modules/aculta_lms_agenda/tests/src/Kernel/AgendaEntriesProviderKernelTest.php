@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms_agenda\Kernel;
 
+use Drupal\aculta_lms_agenda\Controller\PersonalCalendarController;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\lms\Entity\Activity;
@@ -19,7 +20,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Agenda do aluno: prazos e eventos das turmas em que ele está matriculado, e só esses.
+ * Agenda do aluno: prazos e eventos das turmas em que está matriculado.
  */
 #[TestGroup('aculta_lms_agenda')]
 #[RunTestsInSeparateProcesses]
@@ -32,7 +33,7 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'key', 'address', 'geofield', 'domain', 'datetime', 'datetime_range', 'user', 'file', 'image', 'media', 'options',
+    'system', 'key', 'address', 'geofield', 'domain', 'datetime', 'datetime_range', 'user', 'file', 'image', 'media', 'options', 'link',
     'entity_print', 'entity_usage', 'aculta_image', 'field', 'filter', 'flexible_permissions',
     'group', 'lms', 'lms_classes', 'views', 'text', 'taxonomy', 'aculta_lms', 'aculta_calendar',
     'aculta_events', 'aculta_lms_agenda',
@@ -97,7 +98,12 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
   public function testSoMatriculadosVeemAsEntradasDaTurma(): void {
     $dono = $this->createUser();
     ActivityType::create(['id' => 'agenda_test', 'name' => 'Agenda test', 'pluginId' => 'no_answer'])->save();
-    $atividade = Activity::create(['type' => 'agenda_test', 'name' => 'Atividade de agenda', 'status' => 1, 'uid' => $dono->id()]);
+    $atividade = Activity::create([
+      'type' => 'agenda_test',
+      'name' => 'Atividade de agenda',
+      'status' => 1,
+      'uid' => $dono->id(),
+    ]);
     $atividade->save();
     $aula = Lesson::create(['name' => 'Aula', 'status' => 1, 'uid' => $dono->id()]);
     $aula->get('activities')->appendItem(['target_id' => $atividade->id()]);
@@ -114,7 +120,11 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $outraTurma->save();
     $curso->addRelationship($outraTurma, 'lms_classes');
 
-    $evento = Event::create(['title' => 'Roda de conversa', 'field_status' => 'publicado', 'field_turma' => $turma->id()]);
+    $evento = Event::create([
+      'title' => 'Roda de conversa',
+      'field_status' => 'publicado',
+      'field_turma' => $turma->id(),
+    ]);
     $evento->save();
     EventDate::create([
       'title' => 'Roda de conversa',
@@ -122,7 +132,11 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
       'field_quando' => ['value' => $this->utc('2026-11-04 19:00:00'), 'end_value' => $this->utc('2026-11-04 21:00:00')],
     ])->save();
 
-    $eventoDaOutraTurma = Event::create(['title' => 'Aula da Turma B', 'field_status' => 'publicado', 'field_turma' => $outraTurma->id()]);
+    $eventoDaOutraTurma = Event::create([
+      'title' => 'Aula da Turma B',
+      'field_status' => 'publicado',
+      'field_turma' => $outraTurma->id(),
+    ]);
     $eventoDaOutraTurma->save();
     EventDate::create([
       'title' => 'Aula da Turma B',
@@ -146,7 +160,6 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $this->assertSame([], $servico->forAccount($visitante, $de, $ate));
   }
 
-
   /**
    * O painel mostra os próximos itens do aluno e nada para o visitante.
    */
@@ -158,7 +171,12 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
 
     $dono = $this->createUser();
     ActivityType::create(['id' => 'painel_test', 'name' => 'Painel test', 'pluginId' => 'no_answer'])->save();
-    $atividade = Activity::create(['type' => 'painel_test', 'name' => 'Leitura do painel', 'status' => 1, 'uid' => $dono->id()]);
+    $atividade = Activity::create([
+      'type' => 'painel_test',
+      'name' => 'Leitura do painel',
+      'status' => 1,
+      'uid' => $dono->id(),
+    ]);
     $atividade->save();
     $aula = Lesson::create(['name' => 'Aula do painel', 'status' => 1, 'uid' => $dono->id()]);
     $aula->get('activities')->appendItem(['target_id' => $atividade->id()]);
@@ -171,7 +189,11 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $curso->addRelationship($turma, 'lms_classes');
     $turma->addRelationship($atividade, 'lms_class_activity_due', ['field_activity_due_at' => $prazo->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d\TH:i:s')]);
 
-    $eventoEntidade = Event::create(['title' => 'Encontro do painel', 'field_status' => 'publicado', 'field_turma' => $turma->id()]);
+    $eventoEntidade = Event::create([
+      'title' => 'Encontro do painel',
+      'field_status' => 'publicado',
+      'field_turma' => $turma->id(),
+    ]);
     $eventoEntidade->save();
     EventDate::create([
       'title' => 'Encontro do painel',
@@ -197,9 +219,8 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $this->assertStringContainsString('Nenhum prazo ou evento', (string) $this->render($vazio));
   }
 
-
   /**
-   * Link pessoal: o aluno gera o token, o .ics traz o prazo da turma, e o revogado deixa de valer.
+   * O link pessoal gera token revogável para o calendário.
    */
   public function testIcsPessoalComTokenRevogavel(): void {
     $fuso = new \DateTimeZone('America/Sao_Paulo');
@@ -207,7 +228,12 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
 
     $dono = $this->createUser();
     ActivityType::create(['id' => 'pessoal_test', 'name' => 'Pessoal test', 'pluginId' => 'no_answer'])->save();
-    $atividade = Activity::create(['type' => 'pessoal_test', 'name' => 'Leitura pessoal', 'status' => 1, 'uid' => $dono->id()]);
+    $atividade = Activity::create([
+      'type' => 'pessoal_test',
+      'name' => 'Leitura pessoal',
+      'status' => 1,
+      'uid' => $dono->id(),
+    ]);
     $atividade->save();
     $aula = Lesson::create(['name' => 'Aula pessoal', 'status' => 1, 'uid' => $dono->id()]);
     $aula->get('activities')->appendItem(['target_id' => $atividade->id()]);
@@ -225,30 +251,38 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
 
     $tokens = $this->container->get('aculta_lms_agenda.tokens');
     $token = $tokens->gerar((int) $aluno->id());
-    $resposta = \Drupal\aculta_lms_agenda\Controller\PersonalCalendarController::create($this->container)->exportar($token);
+    $resposta = PersonalCalendarController::create($this->container)->exportar($token);
 
     $this->assertSame(200, $resposta->getStatusCode());
     $this->assertStringContainsString('SUMMARY:Prazo: Leitura pessoal', (string) $resposta->getContent());
     $this->assertStringContainsString('no-store', (string) $resposta->headers->get('Cache-Control'));
 
     $tokens->revogar((int) $aluno->id());
-    $this->assertSame(404, \Drupal\aculta_lms_agenda\Controller\PersonalCalendarController::create($this->container)->exportar($token)->getStatusCode());
+    $this->assertSame(404, PersonalCalendarController::create($this->container)->exportar($token)->getStatusCode());
   }
 
-
   /**
-   * Evento de turma enfileira um aviso ao ser publicado; editar de novo não reenfileira; rascunho não.
+   * Publicar evento de turma enfileira aviso uma vez; rascunho não enfileira.
    */
   public function testAvisoEnfileiradoSoNaPublicacao(): void {
     $dono = $this->createUser();
-    $turma = Group::create(['type' => 'lms_class', 'label' => 'Turma aviso', 'uid' => $dono->id(), 'status' => 1]);
+    $turma = Group::create([
+      'type' => 'lms_class',
+      'label' => 'Turma aviso',
+      'uid' => $dono->id(),
+      'status' => 1,
+    ]);
     $turma->save();
     $fila = $this->container->get('queue')->get('aculta_lms_agenda_evento_turma');
     if (method_exists($fila, 'createQueue')) {
       $fila->createQueue();
     }
 
-    $evento = Event::create(['title' => 'Encontro da turma', 'field_status' => 'rascunho', 'field_turma' => $turma->id()]);
+    $evento = Event::create([
+      'title' => 'Encontro da turma',
+      'field_status' => 'rascunho',
+      'field_turma' => $turma->id(),
+    ]);
     $evento->save();
     $this->assertSame(0, $fila->numberOfItems(), 'rascunho não avisa');
 
