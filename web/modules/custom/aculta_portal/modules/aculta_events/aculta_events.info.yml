@@ -8,6 +8,7 @@ dependencies:
   - drupal:datetime_range
   - drupal:options
   - drupal:taxonomy
+  - drupal:views
   - address:address
   - key:key
   - geofield:geofield

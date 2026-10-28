@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\views\EntityViewsData;
 
 /**
  * Local de evento. Endereço e coordenadas (address e geofield) ficam para a F4.
@@ -28,6 +29,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   ],
   handlers: [
     'storage' => 'Drupal\Core\Entity\Sql\SqlContentEntityStorage',
+    'views_data' => EntityViewsData::class,
   ],
 )]
 final class EventLocation extends ContentEntityBase {

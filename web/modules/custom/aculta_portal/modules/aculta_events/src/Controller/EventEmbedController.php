@@ -36,7 +36,7 @@ final class EventEmbedController extends ControllerBase {
    * Documento HTML com a agenda, pronto para ser incorporado.
    */
   public function page(): Response {
-    $agenda = $this->agendaPagina->page();
+    $agenda = $this->agendaPagina->conteudo(TRUE);
     $corpo = (string) $this->renderizador->renderInIsolation($agenda);
     $titulo = (string) $this->t('Calendário de eventos da ACULTA');
     $html = '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">'

@@ -9,6 +9,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\views\EntityViewsData;
 
 /**
  * Data de um evento: intervalo, dia inteiro e regra de recorrência (MODELO-DE-DADOS.md).
@@ -30,6 +31,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   ],
   handlers: [
     'storage' => 'Drupal\Core\Entity\Sql\SqlContentEntityStorage',
+    'views_data' => EntityViewsData::class,
   ],
 )]
 final class EventDate extends ContentEntityBase {

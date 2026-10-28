@@ -14,7 +14,7 @@ Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem 
 | --- | --- | --- | --- | --- |
 | E0 | Dependências do `info.yml` | `aculta_events`, `aculta_calendar` sem `openculturas_custom` | **Feito.** Recorrência usa `rlanvin/php-rrule` 3.0 e a local usa `drupal/geofield`, ambos autorizados pelo responsável (D-16). `smart_date` não entra (D-13); nenhum submódulo do OpenCulturas é dependência | `7ae9e54e4`, D-16 |
 | E1 | `node.type.event/date/location` e campos | Entidades `Evento`, `Local`, data com exceção; `aculta_event_type` e `aculta_location_type` | **Feito na parte de tipos.** Os dois vocabulários existem, com os 17 tipos de local do OpenCulturas em português. Campos de venda seguem fora (`drupal/geofield` instalado para as coordenadas). Testes Kernel cobrem criação/listagem e negação de `/locais` fora do purpose `eventos`; vocabulário sincronizado. | `0e6d81397`, `bb0a907c8`, `8668fc957`, `fd70ddd8a`, `b1f897b48` |
-| E2 | Views `event_catalogue`, `locations`, `related_dates_*` | Catálogo e lista de locais em controller (desvio registrado no roadmap); views de datas relacionadas e exportação pendentes | **Parcial.** Catálogo e `/locais` textuais feitos. Faltam as views de datas relacionadas e a exportação administrativa, que continua sem decisão do responsável (S5) | `0174e641c`, `fd70ddd8a` |
+| E2 | Views `event_catalogue`, `locations`, `related_dates_*` | Catálogo e `/locais` públicos seguem em controllers; views administrativas de locais e datas relacionadas em português | **Parcial.** Views administrativas de locais e datas relacionadas criadas com acesso de papel administrador e campos mínimos. Exportação administrativa aprovada para a v1 via provedor do `aculta_calendar` (ADR-031), pendente da API CA0/CA2; não criar exportação paralela em `aculta_events`. Configuração fica versionada; ativação no Runtime aguarda o fluxo autorizado de configuração | C-E2 |
 | E3 | `DateEventHooks::nodeViewAlter` e `viewsPostExecute` | Listagens sem data passada e cache até a próxima data (`EventDateHooks`, `UpcomingDates`) | **Feito, com desvio.** `viewsPostExecute` virou `#[Hook('views_post_execute')]`; `nodeViewAlter` não tem equivalente em entity view no ACULTA, então a regra vive nos controllers da página e do catálogo. Sem cron (T5). `nodePrepareForm` (S1) não copiado. | `8bd6d832b` |
 | E4 | `DateEventHooks::nodePrepareForm` | **Não copiar** (S1). Pré-preenchimento só com checagem de acesso, se for necessário | **Decidido: não copiado.** Pedido pendente se o responsável quiser o recurso | — |
 | E5 | `openculturas_calendar_widget` (allowlist do `source_uri`, S3) | `EmbedSourceAllowlist` | **Feito.** Rota `/calendario/incorporar` no ar no servidor de teste, com `frame-ancestors` explícito e `noindex`; smoke visual em 320, 390 e 1280 px | `7985bc36f`, `224c3925e`, `e81c841f0` |
@@ -61,11 +61,11 @@ parecer de ODbL? (c) o envio ao OSM fica fora de escopo? Sem essas respostas, o 
 3. **Rota `/calendario/incorporar`** depende de o purpose `eventos` estar com Domain ativo no servidor de teste.
 4. **Revisão visual de eventos** não tem registro (F6).
 5. **Página pública da política de privacidade**: o aviso do mapa já existe, mas o link para a política depende dessa página, que o site ainda não tem.
-6. **Exportação administrativa de datas**: sem decisão do responsável se deve existir (S5). O hook de listagem não exporta nada.
+6. **Exportação administrativa de datas**: aprovada para a v1 via provedor de itens do `aculta_calendar` (S5, D-20, ADR-031). Implementar depois da API CA0/CA2; `aculta_events` não cria exportação paralela.
 
 ## Próximos passos, em ordem
 
-1. E2: views de datas relacionadas (sem telefone nem e-mail, S5) e, se o responsável decidir, a exportação administrativa sob `/painel-administrativo/...`.
+1. E2: views de locais e datas relacionadas, sem telefone, e-mail ou endereço. A exportação administrativa de datas entra pela API de provedores do calendário, pendente de CA0/CA2.
 2. R: interface de edição da regra e de uma ocorrência (D-14), com teste de expansão no fuso de Brasília.
 3. F5: visões de agenda e de mês, e a rota `/calendario/incorporar` quando o purpose estiver ativo.
 4. F4 (E7): fechar o agrupamento de marcadores, o link da política de privacidade e as verificações da pendência 2.
@@ -95,7 +95,7 @@ integrações). Não há `/admin` nas telas novas.
 | `block_content` (`/admin/content/block`) | Blocos de conteúdo editáveis | Não existe | ADM4: avaliar com o responsável; pode ficar como editorial highlight |
 | `content` (`/admin/content/node`) | Lista geral de conteúdo, com filtro | Drupal padrão, sem painel do ACULTA | ADM5: painel geral com filtro por área, status e autor, sem exportar dado pessoal |
 | `search_api` (índice) | Estado do índice de busca | `/painel-administrativo/indice` (ADM6; geração ativa, última reconstrução, pendências, só leitura) e Drush (`aculta_index`, commit `867bb05da`) |
-| `related_dates_export` (CSV, JSON, XML) | Exportação de datas | Não existe | Entra com E2, com campos mínimos (S5), sem telefone nem e-mail |
+| `related_dates_export` (CSV, JSON, XML) | Exportação de datas | `aculta_calendar` após CA0/CA2 | Aprovada para v1 via provedor (S5, ADR-031); não criar exportação paralela em `aculta_events`; campos mínimos, sem telefone, e-mail ou endereço |
 | `watchdog` | Log do sistema | Log do Drupal | Não copiar: é operação, não painel de conteúdo |
 | `openculturas_map` (configuração) | Centro, zoom e ícone do mapa | Não existe | ADM7: configuração do mapa do Google (ADR-014), por ambiente, sem chave no formulário |
 | `openculturas_calendar_widget` (configuração) | Limitar acesso, sites permitidos, CSS, cabeçalho e rodapé do embed | Só a allowlist em código (E5) | ADM8: painel de embed com a mesma allowlist; CSS e HTML livres não entram (S3) |

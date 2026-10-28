@@ -1,3 +1,10 @@
+agenda:
+  css:
+    theme:
+      css/agenda.css: {}
+  dependencies:
+    - core/drupal
+
 mapa:
   js:
     js/aculta-map.js: {}

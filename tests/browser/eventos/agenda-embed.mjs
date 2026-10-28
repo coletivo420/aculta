@@ -1,9 +1,12 @@
-// Smoke visual da agenda de eventos e da página incorporável, no host do purpose
-// `eventos` do SERVIDOR DE TESTES (https://eventos.aculta.toca.net.br).
+// Smoke visual da agenda de eventos, da grade do mês, do dia e da página
+// incorporável, no host do purpose `eventos` do SERVIDOR DE TESTES
+// (https://eventos.aculta.toca.net.br).
 // Confere: página carrega, título, estado do conteúdo, ausência de erro visível,
 // rolagem horizontal zero e largura real de viewport em 1280, 390 e 320 px —
 // as duas menores pelo BiDi (browsingContext.setViewport), porque o gerenciador
-// X11 impõe largura mínima de janela.
+// X11 impõe largura mínima de janela. Na grade, confere a tabela semântica e a
+// troca contagem → nome do evento no breakpoint md (768 px). No fim, emula
+// prefers-color-scheme: dark (o mecanismo do ACULTA420) e captura a grade.
 // Não autentica, não envia formulário e não escreve no banco. Artefatos em $SUITE_OUT.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
@@ -18,6 +21,8 @@ mkdirSync(OUT, { recursive: true });
 
 const PAGES = [
   ['agenda', '/calendario', /Calendário de eventos/],
+  ['mes', '/calendario/mes/2026/10', /Calendário/],
+  ['dia', '/calendario/dia/2026/10/28', /Calendário/],
   ['embed', '/calendario/incorporar', /Calendário de eventos/],
   ['mapa', '/mapa', /Locais|Mapa/],
 ];
@@ -89,17 +94,56 @@ try {
         texto: (document.querySelector('main') || document.body).innerText.replace(/\\s+/g, ' ').trim().slice(0, 240),
         viewport: window.innerWidth,
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        largos: [...document.querySelectorAll('body *')]
+          .filter(e => e.getBoundingClientRect().width > document.documentElement.clientWidth + 1)
+          .sort((a, b) => b.getBoundingClientRect().width - a.getBoundingClientRect().width)
+          .slice(0, 8)
+          .map(e => (e.tagName + '.' + String(e.className || '')).slice(0, 60) + ' width=' + Math.round(e.getBoundingClientRect().width) + ' left=' + Math.round(e.getBoundingClientRect().left)),
+        rolagens: [...document.querySelectorAll('body *')]
+          .filter(e => e.scrollWidth > e.clientWidth + 1)
+          .sort((a, b) => (b.scrollWidth - b.clientWidth) - (a.scrollWidth - a.clientWidth))
+          .slice(0, 6)
+          .map(e => (e.tagName + '.' + String(e.className || '')).slice(0, 60) + ' scroll=' + e.scrollWidth + ' client=' + e.clientWidth),
+        estouros: [...document.querySelectorAll('body *')]
+          .filter(e => e.getBoundingClientRect().right > document.documentElement.clientWidth + 1)
+          .sort((a, b) => b.getBoundingClientRect().right - a.getBoundingClientRect().right)
+          .slice(0, 8)
+          .map(e => (e.tagName + '.' + String(e.className || '')).slice(0, 60) + ' right=' + Math.round(e.getBoundingClientRect().right)),
         erros: [...document.querySelectorAll('.messages--error, [role=alert]')].map(e => e.innerText.trim()).filter(Boolean).slice(0, 3),
         noindex: (document.querySelector('meta[name=robots]') || {}).content || ''
       });`));
 
       check(`${nome} ${largura}px: título`, tituloEsperado.test(info.titulo), info.titulo);
       check(`${nome} ${largura}px: viewport real`, info.viewport === largura, `pedido ${largura}, efetivo ${info.viewport}`);
-      check(`${nome} ${largura}px: sem rolagem horizontal`, info.overflow <= 0, `${info.overflow}px`);
+      check(`${nome} ${largura}px: sem rolagem horizontal`, info.overflow <= 0, `${info.overflow}px ${info.estouros.join(' | ')} || LARGOS: ${info.largos.join(' | ')} || ROLAGENS: ${info.rolagens.join(' | ')}`);
       check(`${nome} ${largura}px: sem erro visível`, info.erros.length === 0, info.erros.join(' | '));
       check(`${nome} ${largura}px: conteúdo`, info.texto.length > 0, info.texto);
       if (nome === 'embed') {
         check(`${nome} ${largura}px: noindex`, /noindex/.test(info.noindex), info.noindex);
+      }
+      if (nome === 'mes') {
+        const grade = JSON.parse(await exec(`var t = document.querySelector('table.aculta-mes');
+          var medir = function (classe) {
+            var d = document.createElement('div');
+            d.className = classe;
+            document.body.append(d);
+            var v = getComputedStyle(d).display;
+            d.remove();
+            return v;
+          };
+          return JSON.stringify({
+            existe: !!t,
+            caption: t ? (t.querySelector('caption') || {}).innerText || '' : '',
+            colunas: t ? t.querySelectorAll('th[scope=col]').length : 0,
+            linhas: t ? t.querySelectorAll('tbody tr').length : 0,
+            eventos: medir('aculta-mes__eventos'),
+            contagem: medir('aculta-mes__contagem')
+          });`));
+        check(`${nome} ${largura}px: tabela da grade`, grade.existe && grade.colunas === 7 && grade.linhas >= 4, `colunas ${grade.colunas}, linhas ${grade.linhas}`);
+        check(`${nome} ${largura}px: caption do mês`, /2026/.test(grade.caption), grade.caption);
+        // Abaixo de md vale a contagem; a partir de md, o nome do primeiro evento.
+        const esperado = largura >= 768 ? ['block', 'none'] : ['none', 'block'];
+        check(`${nome} ${largura}px: responsivo no breakpoint md`, grade.eventos === esperado[0] && grade.contagem === esperado[1], `eventos=${grade.eventos}, contagem=${grade.contagem}`);
       }
       if (nome === 'mapa') {
         // O Google desenha um aviso dentro do container quando a chave é recusada.
@@ -123,6 +167,30 @@ try {
       await shot(`${nome}_${largura}`);
     }
   }
+
+  // Modo escuro: o ACULTA420 resolve o modo por data-bs-theme (o Portal aplica o
+  // atributo). O site de teste está em claro, então o teste alterna o atributo na
+  // própria página, sem tocar na configuração do servidor.
+  await bsend('browsingContext.setViewport', { context, viewport: { width: 1280, height: 900 } });
+  await wd('POST', p('/url'), { url: BASE + '/calendario/mes/2026/10' });
+  await sleep(1200);
+  await exec(`document.documentElement.setAttribute('data-bs-theme', 'dark'); return true;`);
+  await sleep(400);
+  const escuro = JSON.parse(await exec(`return JSON.stringify({
+    fundoBody: getComputedStyle(document.body).backgroundColor,
+    fundoHtml: getComputedStyle(document.documentElement).backgroundColor,
+    texto: getComputedStyle(document.body).color,
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    erros: [...document.querySelectorAll('.messages--error, [role=alert]')].length
+  });`));
+  const canais = (cor) => (cor.match(/\d+/g) || []).slice(0, 3).map(Number);
+  const soma = (cor) => canais(cor).reduce((a, b) => a + b, 0);
+  const fundo = escuro.fundoBody === 'rgba(0, 0, 0, 0)' ? escuro.fundoHtml : escuro.fundoBody;
+  check('modo escuro 1280px: sem rolagem horizontal', escuro.overflow <= 0, `${escuro.overflow}px`);
+  check('modo escuro 1280px: sem erro visível', escuro.erros === 0, String(escuro.erros));
+  check('modo escuro 1280px: fundo escuro', fundo !== 'rgba(0, 0, 0, 0)' && soma(fundo) < 384, `fundo ${fundo}, texto ${escuro.texto}`);
+  await shot('mes_dark_1280');
+  await exec(`document.documentElement.removeAttribute('data-bs-theme'); return true;`);
 } finally {
   const linhas = results.map((r) => `${r.ok === null ? 'ignorado' : r.ok ? 'ok' : 'FALHA'},${r.name},"${String(r.detail).replace(/"/g, "'")}"`);
   writeFileSync(join(OUT, 'resumo.txt'), linhas.join('\n') + '\n');

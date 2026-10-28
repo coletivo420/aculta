@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Agenda;
 
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Occurrence\EventDateOccurrences;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -21,14 +22,20 @@ final class EventAgenda {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly EventDateOccurrences $ocorrencias,
+    private readonly EventFilter $filtro = new EventFilter(),
   ) {}
 
   /**
    * Ocorrências de [$de, $ate], agrupadas por dia (chave Y-m-d, horário de Brasília).
    *
+   * @param int|null $tipo
+   *   Termo de aculta_event_type; NULL não filtra.
+   * @param int|null $tipoLocal
+   *   Termo de aculta_location_type do local da data; NULL não filtra.
+   *
    * @return array<string, array<int, array{titulo: string, inicio: \DateTimeImmutable, fim: \DateTimeImmutable, local: string, cancelada: bool}>>
    */
-  public function dias(\DateTimeImmutable $de, \DateTimeImmutable $ate, \DateTimeImmutable $agora): array {
+  public function dias(\DateTimeImmutable $de, \DateTimeImmutable $ate, \DateTimeImmutable $agora, ?int $tipo = NULL, ?int $tipoLocal = NULL): array {
     $storage = $this->entityTypeManager->getStorage('aculta_event_date');
     $grupos = [];
     foreach ($storage->loadMultiple($storage->getQuery()->accessCheck(FALSE)->execute()) as $data) {
@@ -40,6 +47,9 @@ final class EventAgenda {
         continue;
       }
       $local = $data->get('field_local')->entity;
+      if (!$this->filtro->aceita($evento, $local instanceof EventLocation ? $local : NULL, $tipo, $tipoLocal)) {
+        continue;
+      }
       foreach ($this->ocorrencias->expandir($data, $de, $ate, $agora) as $o) {
         $cancelada = $o['cancelada'] || (string) $evento->get('field_status')->value === 'cancelado';
         $grupos[$o['inicio']->format('Y-m-d')][] = [

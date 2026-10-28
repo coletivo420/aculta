@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Calendar;
 
 use Drupal\aculta_calendar\Ics\IcsEventBuilder;
+use Drupal\aculta_events\Agenda\EventFilter;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Occurrence\EventDateOccurrences;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -23,16 +25,26 @@ final class EventIcsExporter {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly EventDateOccurrences $ocorrencias,
+    private readonly EventFilter $filtro = new EventFilter(),
   ) {}
 
   /**
    * Conteúdo do .ics para o período [$de, $ate], inclusivo, em horário de Brasília (UID com $dominioUid).
+   *
+   * @param int|null $tipo
+   *   Termo de aculta_event_type; NULL não filtra.
+   * @param int|null $tipoLocal
+   *   Termo de aculta_location_type do local da data; NULL não filtra.
    */
-  public function exportar(\DateTimeImmutable $de, \DateTimeImmutable $ate, \DateTimeImmutable $agora, string $dominioUid): string {
+  public function exportar(\DateTimeImmutable $de, \DateTimeImmutable $ate, \DateTimeImmutable $agora, string $dominioUid, ?int $tipo = NULL, ?int $tipoLocal = NULL): string {
     $series = [];
     foreach ($this->datas() as $data) {
       $evento = $data->get('field_evento')->entity;
       if ($evento === NULL || !in_array((string) $evento->get('field_status')->value, ['publicado', 'cancelado'], TRUE)) {
+        continue;
+      }
+      $local = $data->get('field_local')->entity;
+      if (!$this->filtro->aceita($evento, $local instanceof EventLocation ? $local : NULL, $tipo, $tipoLocal)) {
         continue;
       }
       $serie = $this->serie($data, $evento, $de, $ate, $agora);
@@ -45,6 +57,19 @@ final class EventIcsExporter {
   }
 
   /**
+   * Conteúdo do .ics de uma data (/eventos/{slug}/data/{id}.ics), com a regra da série quando houver.
+   *
+   * Não depende de janela: a data pedida é exportada inteira, como a série.
+   */
+  public function exportarData(EventDate $data, \DateTimeImmutable $agora, string $dominioUid): string {
+    $evento = $data->get('field_evento')->entity;
+    if ($evento === NULL || !in_array((string) $evento->get('field_status')->value, ['publicado', 'cancelado'], TRUE)) {
+      return (new IcsEventBuilder($dominioUid))->buildMany([]);
+    }
+    return (new IcsEventBuilder($dominioUid))->buildMany([$this->serieDe($data, $evento, $agora)]);
+  }
+
+  /**
    * Série de uma data, ou NULL quando não tem ocorrência no período.
    *
    * @return array<string, mixed>|null
@@ -54,6 +79,15 @@ final class EventIcsExporter {
     if ($ocorrenciasNoPeriodo === []) {
       return NULL;
     }
+    return $this->serieDe($data, $evento, $agora);
+  }
+
+  /**
+   * Monta a série (VEVENT mestre, RRULE e exceções) sem checar janela.
+   *
+   * @return array<string, mixed>
+   */
+  private function serieDe(EventDate $data, object $evento, \DateTimeImmutable $agora): array {
     $fuso = new \DateTimeZone('America/Sao_Paulo');
     $utc = new \DateTimeZone('UTC');
     $item = $data->get('field_quando')->first()->getValue();

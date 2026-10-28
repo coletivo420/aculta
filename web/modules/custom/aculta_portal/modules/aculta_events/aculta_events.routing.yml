@@ -82,6 +82,43 @@ aculta_events.agenda:
   options:
     _aculta_domain_purpose: eventos
 
+aculta_events.month:
+  path: '/calendario/mes/{ano}/{mes}'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventAgendaController::mes'
+    _title_callback: '\Drupal\aculta_events\Controller\EventAgendaController::tituloMes'
+  requirements:
+    _access: 'TRUE'
+    ano: '\d{4}'
+    mes: '\d{1,2}'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.day:
+  path: '/calendario/dia/{ano}/{mes}/{dia}'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventAgendaController::dia'
+    _title_callback: '\Drupal\aculta_events\Controller\EventAgendaController::tituloDia'
+  requirements:
+    _access: 'TRUE'
+    ano: '\d{4}'
+    mes: '\d{1,2}'
+    dia: '\d{1,2}'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.date_ics:
+  path: '/eventos/{slug}/data/{id}.ics'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventIcsController::data'
+    _title: 'Exportar data do evento'
+  requirements:
+    _access: 'TRUE'
+    slug: '[a-z0-9]+(-[a-z0-9]+)*'
+    id: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+
 aculta_events.embed:
   path: '/calendario/incorporar'
   defaults:
