@@ -146,9 +146,9 @@ Saída: calendário e exportação em teste, nos dois purposes (`main` e `evento
 
 - [x] Formatter de datas futuras (T5, commit `56725c71d`), sem smart_date e sem cron de invalidação.
 - [x] E3: datas passadas fora das listagens, com cache até a próxima data (commit `8bd6d832b`). `viewsPostExecute` virou `#[Hook('views_post_execute')]` em `EventDateHooks`; o `nodeViewAlter` não tem equivalente em entity view no ACULTA e a regra vive no builder da página e do catálogo (`UpcomingDates`). Sem cron. A tag `aculta_event_list`, antes declarada e nunca invalidada, agora é invalidada por hook ao salvar ou excluir evento e data.
-- [ ] E4: pré-preenchimento de data com checagem de acesso, **se** for necessário. O `nodePrepareForm` original não é copiado (S1).
+- [ ] E4: pré-preenchimento de nova data a partir de um evento (D-28, decidido em 2026-10-28). Regras: copiar **só a referência ao evento** (`event_id`), **só de eventos que o usuário pode editar**, sem copiar pessoas nem clonar parágrafos. Implementação pendente, com teste Kernel de acesso negado. O `nodePrepareForm` original não é copiado como está (S1).
 - [x] E2 (views): locais e datas relacionadas em português, acesso administrativo e campos mínimos; Kernel nega acesso comum e fixa a allowlist de campos. A exportação administrativa estruturada segue pendente: `aculta_calendar` hoje exporta agenda por provedores em `.ics`, mas ainda não oferece exportação de dados administrativos; não criar uma exportação paralela em `aculta_events`.
-- [ ] E9 (opcional, I-15): FAQ. Só se o responsável pedir.
+- [ ] E9 (I-15): FAQ do OpenCulturas, **copiar com revisão** (D-25, decidido em 2026-10-28). Reescrita com revisão de conteúdo e atribuição em `ORIGEM-OPENCULTURAS.md`. Implementação pendente.
 
 ## Integração com LMS (D-15)
 
@@ -215,10 +215,10 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 
 ## Pós-v1 (sem data)
 
-- Importação de local a partir do OpenStreetMap (E10, assistente administrativo do OpenCulturas). Fora da v1; bloqueada por parecer de licença ODbL e por decisão de integração. Ver `docs/architecture/PLANO-INCORPORACAO-OPENCULTURAS.md`.
+- Importação de local a partir do OpenStreetMap e envio de alterações ao OSM (E10, decidido em D-26: envio à API de teste no teste e à produção do OSM em produção). Fora da v1. Antes do primeiro envio real, precisa de revisão de termos ODbL e atribuição, registrada no docs. Ver `docs/architecture/PLANO-INCORPORACAO-OPENCULTURAS.md`.
 
 - Recorrência de eventos.
 - Sincronização com OpenStreetMap (`openculturas_openstreetmap`), via integração do ACULTA.
-- Venda de ingressos e inscrições (plano próprio, com Mercado Pago e `aculta_commerce`).
+- Venda de ingressos pagos dentro do ACULTA (D-30 a D-37): usa só `aculta_commerce` e `aculta_pagamentos_mercadopago`, sem repasse automático, com repasse manual por evento. Plano em `docs/PLANO-INGRESSOS-PAGOS.md`; depende de parecer fiscal e de LGPD antes de qualquer venda.
 - Calendário pessoal na conta do usuário.
 - Integração com a Revista e o Studio (referência a eventos).
