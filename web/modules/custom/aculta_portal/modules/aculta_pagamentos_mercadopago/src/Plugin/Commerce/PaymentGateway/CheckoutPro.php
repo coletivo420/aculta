@@ -1017,8 +1017,20 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       else {
         $refund_result = $refund_client->refund($payment_id, $refund_float, $request_options);
       }
-      if (($refund_result->status ?? NULL) !== 'approved'
-        || (isset($refund_result->payment_id) && (string) $refund_result->payment_id !== $remote_id)) {
+      $refund_id = is_object($refund_result)
+        ? ($refund_result->id ?? NULL)
+        : (is_array($refund_result) ? ($refund_result['id'] ?? NULL) : NULL);
+      $refund_payment_id = is_object($refund_result)
+        ? ($refund_result->payment_id ?? NULL)
+        : (is_array($refund_result) ? ($refund_result['payment_id'] ?? NULL) : NULL);
+      $refund_status = is_object($refund_result)
+        ? ($refund_result->status ?? NULL)
+        : (is_array($refund_result) ? ($refund_result['status'] ?? NULL) : NULL);
+      if ($refund_status !== 'approved'
+        || !is_scalar($refund_id)
+        || filter_var((string) $refund_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === FALSE
+        || !is_scalar($refund_payment_id)
+        || (string) $refund_payment_id !== $remote_id) {
         throw new PaymentGatewayException('Mercado Pago has not confirmed the refund.');
       }
 

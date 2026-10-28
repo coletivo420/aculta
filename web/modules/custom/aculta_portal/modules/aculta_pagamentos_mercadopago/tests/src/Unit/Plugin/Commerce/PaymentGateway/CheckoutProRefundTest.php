@@ -50,7 +50,7 @@ final class CheckoutProRefundTest extends UnitTestCase {
        */
       public function refund(int $payment_id, float $amount, ?RequestOptions $options = NULL): object {
         $this->options[] = $options;
-        return (object) ['status' => 'approved', 'payment_id' => $payment_id];
+        return (object) ['id' => 501, 'status' => 'approved', 'payment_id' => $payment_id, 'amount' => $amount];
       }
 
     };
@@ -111,6 +111,64 @@ final class CheckoutProRefundTest extends UnitTestCase {
   }
 
   /**
+   * Rejects incomplete or unrelated refund resources without mutating Commerce.
+   *
+   * @dataProvider invalidApprovedRefundResponses
+   */
+  public function testApprovedRefundMustIdentifyRefundAndOriginalPayment(array $response): void {
+    $gateway = $this->gateway();
+    $payment = $this->payment(FALSE);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects($this->once())->method('load')->with(12)->willReturn($payment);
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->method('getStorage')->with('commerce_payment')->willReturn($storage);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())->method('acquire')->willReturn(TRUE);
+    $lock->expects($this->once())->method('release');
+    $provider = new class($response) {
+
+      /**
+       * Creates the response fixture used by this provider stub.
+       */
+      public function __construct(private array $response) {}
+
+      /**
+       * Returns the configured provider response for the refund request.
+       */
+      public function refund(int $payment_id, float $amount, ?RequestOptions $options = NULL): object {
+        return (object) $this->response;
+      }
+
+    };
+    $gateway_entity = $this->createMock(PaymentGatewayInterface::class);
+    $factory = $this->createMock(MercadoPagoClientFactory::class);
+    $factory->expects($this->once())->method('criar')->with('reembolsos', $gateway_entity)->willReturn($provider);
+    $this->inject($gateway, 'parentEntity', $gateway_entity);
+    $this->inject($gateway, 'entityTypeManager', $entity_manager);
+    $this->inject($gateway, 'lock', $lock);
+    $this->inject($gateway, 'clientFactory', $factory);
+    $this->injectLogger($gateway);
+
+    $this->expectException(PaymentGatewayException::class);
+    $gateway->refundPayment($payment, new Price('25.00', 'BRL'));
+  }
+
+  /**
+   * Supplies malformed approved refund responses.
+   *
+   * @return array<string, array{0: array<string, mixed>}>
+   *   Refund response fixtures.
+   */
+  public static function invalidApprovedRefundResponses(): array {
+    return [
+      'missing refund ID' => [['status' => 'approved', 'payment_id' => 999]],
+      'missing payment ID' => [['id' => 501, 'status' => 'approved']],
+      'different payment ID' => [['id' => 501, 'status' => 'approved', 'payment_id' => 1000]],
+      'invalid refund ID' => [['id' => 0, 'status' => 'approved', 'payment_id' => 999]],
+    ];
+  }
+
+  /**
    * Uses the full-refund endpoint and records the completed balance.
    */
   public function testFullRefundUsesTotalEndpoint(): void {
@@ -129,7 +187,7 @@ final class CheckoutProRefundTest extends UnitTestCase {
        * Simulates an approved total refund.
        */
       public function refundTotal(int $payment_id, ?RequestOptions $options = NULL): object {
-        return (object) ['status' => 'approved', 'payment_id' => $payment_id];
+        return (object) ['id' => 502, 'status' => 'approved', 'payment_id' => $payment_id, 'amount' => 100.0];
       }
 
     };
