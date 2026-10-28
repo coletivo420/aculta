@@ -62,12 +62,20 @@ Saída: catálogo e página do evento navegáveis. Cartão em SDC e validação 
 
 ## Fase F4 — Locais com mapa
 
-Entrada: F3 concluída; chave de API do Google provisionada para teste (`secrets/`) e restrição por referenciador definida.
+Entrada: F3 concluída. Configuração do mapa conforme D-18 e ADR-030: Leaflet com OpenStreetMap público como padrão e fallback; Google Maps API opcional, com a chave em `aculta_secrets`; link de rota do Google sem API; URL de rota configurável.
 
 - [x] Campo de coordenadas e endereço; regra de precisão do endereço (commit `fd70ddd8a`).
 - [x] Geocodificação no servidor (Geocoding API), uma vez por local, com a chave fora do repositório (commit `f761d8593`).
 - [ ] Bloco de mapa (Maps JavaScript API + agrupamento de marcadores) e lista sincronizada. **Parcial** (`f761d8593`): mapa e lista; falta a biblioteca de agrupamento de marcadores.
 - [ ] Mapa carregado na exibição da página, com aviso de privacidade e link para a política. **Parcial** (`f761d8593`): mapa e aviso; falta o link, porque o site ainda não tem página pública da política.
+- [ ] **Painel administrativo de opções do mapa** (ADM7), em `/painel-administrativo/eventos/mapa`:
+  - engine: `openstreetmap` (padrão) ou `google`, com o fallback automático para o OpenStreetMap quando a chave faltar ou a API falhar;
+  - estado da chave `GOOGLE_MAPS_API_KEY` no `aculta_secrets` (mostra "configurada" ou "ausente", nunca o valor);
+  - centro inicial e zoom (inicial e ao mostrar um local);
+  - modelo da URL de rota do Google, sem API (padrão: `https://www.google.com/maps/dir/?api=1&destination={destino}`), editável;
+  - permissão própria e teste Kernel de acesso negado para usuário comum;
+  - teste Kernel: salvar a configuração e confirmar que nenhum valor de chave aparece no config export.
+- [ ] Link de rota do Google sem API, aberto em nova aba só por clique (D-18). Teste Kernel de que a página não carrega script do Google nesse modo.
 - [x] Filtro de tipo de local (commit `fd70ddd8a`).
 - [x] Alternativa textual completa ao mapa (commit `f761d8593`).
 
