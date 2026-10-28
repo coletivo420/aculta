@@ -26,3 +26,11 @@ services:
   aculta_events.agenda:
     class: Drupal\aculta_events\Agenda\EventAgenda
     arguments: ['@entity_type.manager', '@aculta_events.occurrences']
+  aculta_events.embed_frame_subscriber:
+    class: Drupal\aculta_events\EventSubscriber\EmbedFrameSubscriber
+    arguments: ['@aculta_events.embed_hosts']
+    tags:
+      - { name: event_subscriber }
+  aculta_events.embed_hosts:
+    class: Drupal\aculta_events\Embed\EmbedHostAllowlist
+    arguments: ['@extension.list.module']

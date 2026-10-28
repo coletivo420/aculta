@@ -81,3 +81,13 @@ aculta_events.agenda:
     _access: 'TRUE'
   options:
     _aculta_domain_purpose: eventos
+
+aculta_events.embed:
+  path: '/calendario/incorporar'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventEmbedController::page'
+    _title: 'Calendário de eventos da ACULTA'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
