@@ -2,26 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_events\Unit;
+namespace Drupal\Tests\aculta_maps\Unit;
 
-use Drupal\aculta_events\Geocoding\GeocodingService;
+use Drupal\aculta_maps\Geocoding\GeocodingService;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\key\KeyRepositoryInterface;
 use Drupal\Tests\UnitTestCase;
 use GuzzleHttp\ClientInterface;
 use PHPUnit\Framework\Attributes\Group;
+use Psr\Log\LoggerInterface;
 
 /**
  * Interpretação da resposta da Geocoding API (sem rede).
  */
-#[Group('aculta_events')]
+#[Group('aculta_maps')]
 class GeocodingServiceTest extends UnitTestCase {
 
   /**
    * Serviço com dependências falsas: a interpretação não usa rede nem chave.
    */
   private function servico(): GeocodingService {
-    $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
+    $logger = $this->createMock(LoggerInterface::class);
     $logs = $this->createMock(LoggerChannelFactoryInterface::class);
     $logs->method('get')->willReturn($logger);
     return new GeocodingService(
@@ -36,13 +37,14 @@ class GeocodingServiceTest extends UnitTestCase {
    */
   public function testRespostaOkDevolveCoordenadas(): void {
     $dados = ['status' => 'OK', 'results' => [['geometry' => ['location' => ['lat' => -16.68, 'lng' => -49.26]]]]];
-    $this->assertSame(['lat' => -16.68, 'lng' => -49.26], $this->servico()->interpretar($dados));
+    $this->assertSame(['lat' => -16.68, 'lng' => -49.26], $this->servico()->interpret($dados));
   }
 
   /**
    * Sem resultado, status de erro ou resposta malformada devolvem NULL.
    *
-   * @return array<string, array{array}>
+   * @return array<string, array{0: array}>
+   *   Test cases with malformed or empty responses.
    */
   public static function semResultado(): array {
     return [
@@ -58,7 +60,7 @@ class GeocodingServiceTest extends UnitTestCase {
    */
   #[\PHPUnit\Framework\Attributes\DataProvider('semResultado')]
   public function testSemCoordenadasDevolveNulo(array $dados): void {
-    $this->assertNull($this->servico()->interpretar($dados));
+    $this->assertNull($this->servico()->interpret($dados));
   }
 
 }

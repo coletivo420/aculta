@@ -17,3 +17,4 @@ dependencies:
   - geofield:geofield
   - drupal:user
   - aculta_portal:aculta_calendar
+  - aculta_portal:aculta_maps

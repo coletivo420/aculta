@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Mapa sem chave: sem carregamento do Google, lista textual e aviso de privacidade.
+ * Tests the map page without a configured provider.
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -20,7 +20,11 @@ final class MapControllerKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'address', 'geofield', 'key', 'options', 'link', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = [
+    'system', 'user', 'address', 'geofield', 'key', 'options', 'link', 'text',
+    'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar',
+    'aculta_maps', 'aculta_events',
+  ];
 
   /**
    * {@inheritdoc}
@@ -37,13 +41,19 @@ final class MapControllerKernelTest extends KernelTestBase {
   }
 
   /**
-   * Sem chave provisionada: a página não carrega o mapa, mas mantém a lista e o aviso.
+   * Without a provider key, the textual list and privacy notice remain.
    */
-  public function testSemChaveMostraListaESemMapa(): void {
+  public function testMissingProviderKeepsListAndNotice(): void {
     EventLocation::create([
       'title' => 'Casa de cultura',
       'field_precisao' => 'exato',
-      'field_endereco' => ['country_code' => 'BR', 'locality' => 'Goiânia', 'administrative_area' => 'GO', 'address_line1' => 'Rua 10, 123', 'postal_code' => '74000000'],
+      'field_endereco' => [
+        'country_code' => 'BR',
+        'locality' => 'Goiânia',
+        'administrative_area' => 'GO',
+        'address_line1' => 'Rua 10, 123',
+        'postal_code' => '74000000',
+      ],
     ])->save();
 
     $pagina = MapController::create($this->container)->page();

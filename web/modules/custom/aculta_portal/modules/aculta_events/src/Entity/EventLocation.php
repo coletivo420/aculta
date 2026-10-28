@@ -47,7 +47,7 @@ final class EventLocation extends ContentEntityBase {
     // Isso vale para ambientes incompletos e testes isolados.
     if (\Drupal::hasService('key.repository') && ($this->get('field_coordenadas')->isEmpty() || $mudouEndereco)) {
       $texto = $this->enderecoTexto();
-      $coordenadas = $texto !== '' ? \Drupal::service('aculta_events.geocoding')->geocodificar($texto) : NULL;
+      $coordenadas = $texto !== '' ? \Drupal::service('aculta_maps.geocoding')->geocode($texto) : NULL;
       if ($coordenadas !== NULL) {
         $this->set('field_coordenadas', [
           'lat' => $coordenadas['lat'],

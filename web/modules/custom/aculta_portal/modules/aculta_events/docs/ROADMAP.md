@@ -63,7 +63,7 @@ Saída: catálogo e página do evento navegáveis. Cartão em SDC e validação 
 
 ## Fase F4 — Locais com mapa
 
-> **D-19:** o mapa e a geocodificação passam a ser do submódulo `aculta_maps`. Os itens de mapa desta fase são entregues por ele (MP1 a MP6). `aculta_events` só consome a API pública. Plano: `web/modules/custom/aculta_portal/modules/aculta_maps/docs/`.
+> **D-19:** o mapa e a geocodificação passam a ser do submódulo `aculta_maps`. MP0/MP1 extraíram o renderer, serviço de geocodificação e biblioteca JavaScript; `MapController` permanece em `aculta_events` por montar os dados do catálogo e a rota `/mapa`. Código MP1: a registrar no plano central. O renderer ainda preserva Google temporariamente até MP3. Plano: `web/modules/custom/aculta_portal/modules/aculta_maps/docs/`.
 
 Entrada: F3 concluída. Configuração do mapa conforme D-18 e ADR-030: Leaflet com OpenStreetMap público como padrão e fallback; Google Maps API opcional, com a chave em `aculta_secrets`; link de rota do Google sem API; URL de rota configurável.
 

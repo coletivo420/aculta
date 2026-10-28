@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Controller;
 
 use Drupal\aculta_events\Catalogue\LocationCatalogue;
-use Drupal\aculta_events\Geocoding\GeocodingService;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\aculta_maps\MapRenderer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Mapa de locais (/mapa). Progressivo: a lista textual (/locais) funciona sem JavaScript
- * e sem chave; o mapa só carrega quando a chave do Maps está provisionada.
+ * Mapa de locais (/mapa).
  *
- * Privacidade: local "aproximado" aparece no mapa com coordenadas arredondadas (cerca de 1 km),
- * e nunca como texto de coordenada.
+ * A lista textual funciona sem JavaScript e sem chave. O mapa só carrega
+ * quando há credencial de provedor.
+ *
+ * Privacidade: local "aproximado" aparece com coordenadas arredondadas (cerca
+ * de 1 km), e nunca como texto de coordenada.
  */
 final class MapController extends ControllerBase {
 
@@ -29,14 +31,14 @@ final class MapController extends ControllerBase {
    */
   public function __construct(
     private readonly LocationCatalogue $locais,
-    private readonly GeocodingService $geocodificacao,
+    private readonly MapRenderer $mapRenderer,
   ) {}
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('aculta_events.locations'), $container->get('aculta_events.geocoding'));
+    return new static($container->get('aculta_events.locations'), $container->get('aculta_maps.renderer'));
   }
 
   /**
@@ -65,7 +67,15 @@ final class MapController extends ControllerBase {
       }
     }
 
-    $chave = $this->geocodificacao->chave();
+    $mapa = $this->mapRenderer->build([
+      'label' => (string) $this->t('Mapa de locais'),
+      'markers' => array_map(static fn(array $marker): array => [
+        'nome' => $marker['nome'],
+        'lat' => $marker['lat'],
+        'lng' => $marker['lng'],
+        'endereco' => $marker['endereco'],
+      ], $marcadores),
+    ]);
     $render = [
       'lista' => ['#theme' => 'item_list', '#items' => $itens, '#empty' => $this->t('Nenhum local cadastrado.')],
       'aviso' => [
@@ -74,15 +84,8 @@ final class MapController extends ControllerBase {
       '#cache' => ['tags' => ['aculta_event_location_list'], 'max-age' => 900],
     ];
 
-    if ($chave !== NULL) {
-      $render['mapa'] = [
-        '#markup' => '<div id="aculta-map" class="aculta-map" role="region" aria-label="' . Html::escape((string) $this->t('Mapa de locais')) . '"></div>',
-      ];
-      $render['#attached']['library'][] = 'aculta_events/mapa';
-      $render['#attached']['drupalSettings']['acultaEvents'] = [
-        'mapsKey' => $chave,
-        'marcadores' => $marcadores,
-      ];
+    if ($mapa !== []) {
+      $render['mapa'] = $mapa;
     }
     else {
       $render['sem_mapa'] = ['#markup' => '<p>' . $this->t('O mapa não está disponível neste ambiente. A lista acima tem os mesmos locais.') . '</p>'];

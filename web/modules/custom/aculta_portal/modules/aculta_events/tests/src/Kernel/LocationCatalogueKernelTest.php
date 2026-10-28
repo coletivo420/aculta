@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Lista de locais: privacidade pela precisão (exato x aproximado) e filtro por tipo.
+ * Tests location precision privacy and type filtering.
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -21,7 +21,11 @@ final class LocationCatalogueKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'key', 'options', 'link', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'address', 'geofield', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = [
+    'system', 'user', 'key', 'options', 'link', 'text', 'filter', 'taxonomy',
+    'datetime', 'datetime_range', 'address', 'geofield', 'aculta_calendar',
+    'aculta_maps', 'aculta_events',
+  ];
 
   /**
    * {@inheritdoc}

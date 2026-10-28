@@ -6,15 +6,15 @@
 (function (Drupal, drupalSettings) {
   'use strict';
 
-  Drupal.behaviors.acultaEventsMapa = {
+  Drupal.behaviors.acultaMapsMapa = {
     attach(context) {
       const elemento = context.querySelector ? context.querySelector('#aculta-map') : null;
-      const config = drupalSettings.acultaEvents;
+      const config = drupalSettings.acultaMaps;
       if (!elemento || !config || elemento.dataset.iniciado === '1') {
         return;
       }
       elemento.dataset.iniciado = '1';
-      carregarMapsApi(config.mapsKey).then(() => desenhar(elemento, config.marcadores || []));
+      carregarMapsApi(config.mapsKey).then(() => desenhar(elemento, config.markers || []));
     },
   };
 

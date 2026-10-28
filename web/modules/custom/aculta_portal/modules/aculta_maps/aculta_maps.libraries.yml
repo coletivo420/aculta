@@ -1,4 +1,4 @@
-mapa:
+map:
   js:
     js/aculta-map.js: {}
   dependencies:

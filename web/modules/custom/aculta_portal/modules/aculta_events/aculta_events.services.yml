@@ -17,9 +17,6 @@ services:
   Drupal\aculta_events\Hook\EventDateHooks:
     class: Drupal\aculta_events\Hook\EventDateHooks
     arguments: ['@datetime.time', '@aculta_events.upcoming', '@router.admin_context']
-  aculta_events.geocoding:
-    class: Drupal\aculta_events\Geocoding\GeocodingService
-    arguments: ['@http_client', '@key.repository', '@logger.factory']
   aculta_events.event_filter:
     class: Drupal\aculta_events\Agenda\EventFilter
   aculta_events.item_provider:

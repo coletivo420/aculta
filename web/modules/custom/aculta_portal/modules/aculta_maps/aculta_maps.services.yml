@@ -1,1 +1,7 @@
-services: {}
+services:
+  aculta_maps.geocoding:
+    class: Drupal\aculta_maps\Geocoding\GeocodingService
+    arguments: ['@http_client', '@key.repository', '@logger.factory']
+  aculta_maps.renderer:
+    class: Drupal\aculta_maps\MapRenderer
+    arguments: ['@aculta_maps.geocoding']

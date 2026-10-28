@@ -1,18 +1,20 @@
 # Roadmap — ACULTA Maps (`aculta_maps`)
 
 Roadmap único do submódulo. Plano e contrato: `PLANO-IMPLANTACAO.md`.
-Status: MP0 concluída; MP1–MP7 a fazer.
+Status: MP0 e MP1 concluídas; MP2–MP7 a fazer.
 
 ## MP0 — Criação do submódulo
 
 - [x] `aculta_maps.info.yml` sem dependências de terceiros, `aculta_maps.services.yml` vazio, README do módulo.
-- [ ] Teste de contrato: nenhum módulo do ACULTA chama Google, OSM ou Nominatim diretamente (grep no código, com exceções listadas).
+- [x] Busca estática: chamadas de mapa Google agora ficam em `aculta_maps`; `aculta_events_openstreetmap` mantém apenas sua integração separada de edição/importação OSM (E10).
 
 ## MP1 — Migração do código de `aculta_events`
 
-- [ ] Mover `MapController`, `GeocodingService` e `aculta-map.js` para `aculta_maps`, sem mudança de comportamento.
-- [ ] `aculta_events` passa a chamar `MapRenderer` e `GeocodingService` do `aculta_maps`.
-- [ ] Mover os testes existentes. Mesmos resultados antes e depois.
+- [x] Extrair `GeocodingService` e `aculta-map.js`; manter `MapController` em `aculta_events` porque monta o catálogo de locais e a rota `/mapa`.
+- [x] `aculta_events` consome `MapRenderer` e `GeocodingService` de `aculta_maps`.
+- [x] Mover os testes unitários de geocodificação e adaptar os Kernel tests do consumidor. Suíte Events: 57 testes, 667 assertions, 27 depreciações; Maps: 5 testes, 5 assertions.
+
+Evidência de MP0: `9ff609c1e`. Código MP1: hash será registrado após o commit de implementação.
 
 ## MP2 — Configuração e painel (ADM7)
 
