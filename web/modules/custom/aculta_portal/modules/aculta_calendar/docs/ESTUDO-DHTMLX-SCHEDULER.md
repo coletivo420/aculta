@@ -1,6 +1,7 @@
 # Estudo — DHTMLX Scheduler (edição GPL) como visão interativa do calendário
 
-Status: **estudo, sem decisão.** Nenhum código foi adotado. Decisão do responsável: assumir o risco da licença
+Status: **incorporação aceita pelo responsável em 2026-10-28.** O responsável considera a licença compatível com o
+projeto; isso é decisão dele, não parecer jurídico. Os critérios da seção 6 continuam como condição de entrega. Decisão do responsável: assumir o risco da licença
 (registrado aqui). Critérios de adoção estão na seção 6.
 
 ## 1. O que está confirmado
@@ -82,3 +83,39 @@ Estudo concluído, sem adoção ainda. Ordem sugerida, se você quiser seguir:
 
 Se o parecer for negativo, a alternativa permissiva (FullCalendar núcleo ou Schedule-X) passa a ser a candidata,
 com o mesmo teste de acessibilidade.
+
+## 8. Resultados do piloto (2026-10-28)
+
+Piloto em `tests/browser/aculta-calendar-piloto/` (Firefox ESR, `DISPLAY=:0`, 40 eventos fictícios, mês de novembro
+de 2026). Medições brutas em `$SUITE_OUT` (fora do repositório). Detalhes de execução no README da pasta.
+
+| Medição | Padrão (sem plugin) | Com `key_nav` (plugin) |
+| --- | --- | --- |
+| Eventos renderizados na grade do mês | 40 | 40 |
+| Tab entra no calendário | **Não** (nenhum controle com `tabindex`; o foco sai do documento) | **Sim** (contêiner com `tabindex="0"`) |
+| Setas após entrar | Sem efeito | Movem o foco interno (`dhx_focus_slot`, com rótulo de data e hora) |
+| Overflow horizontal em 320 px (iframe) | Não | Não |
+| Legibilidade da grade em 320 px | Ilegível: horários cortados (`09:0`), dias da semana truncados | Igual (é a visão de mês, não o problema do plugin) |
+
+Pontos confirmados:
+
+- **Ativação do teclado:** a documentação oficial exige `scheduler.plugins({ key_nav: true })`. Sem isso, o componente não
+  é alcançável por teclado. Configurar só `scheduler.config.key_nav = true` não basta.
+- **Atributos ARIA:** presentes por padrão (`role="application"` no contêiner, `role="button"` nos controles e rótulos
+  `aria-label`). Isso só descreve; não garante que o teclado funcione.
+- **Fonte externa:** o CSS carrega cinco arquivos Inter de `fonts.gstatic.com`. Para o ACULTA isso é um ponto de privacidade
+  a resolver antes de qualquer adoção (ou remover a fonte, ou hospedá-la localmente).
+- **Grade de mês em 320 px:** confirma a regra do plano de implantação. A grade só aparece a partir de `md`; em tela
+  pequena, a visão é a agenda.
+
+O que o piloto **não** mediu, e que continua pendente:
+
+- Leitor de tela de fato (NVDA, Orca) e o anúncio de eventos.
+- Alto contraste (o tema de alto contraste do componente, e o contraste dos tokens do ACULTA).
+- Tamanho servido com compressão do servidor de teste (a medição de tamanho é só do arquivo local: 539.946 bytes
+  sem compressão, 150.583 gzip para o JS; 119.763 e 17.358 para o CSS).
+- Parecer de licença (seção 3), que continua sem resposta.
+
+Conclusão do piloto: o componente funciona visualmente e pelo teclado **somente com o plugin `key_nav`**. Não há
+impedimento técnico grave demonstrado, mas os critérios 1 (parecer), 2 (leitor de tela e alto contraste) e 3
+(tamanho servido) da seção 6 seguem abertos. Não há adoção.
