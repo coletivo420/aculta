@@ -1,0 +1,25 @@
+aculta_calendar.import_source.*:
+  type: config_entity
+  label: 'Fonte de importação do calendário'
+  mapping:
+    id:
+      type: machine_name
+      label: 'Identificador'
+    label:
+      type: label
+      label: 'Nome'
+    uuid:
+      type: uuid
+      label: 'UUID'
+    status:
+      type: boolean
+      label: 'Ativa'
+    sourceUrl:
+      type: uri
+      label: 'Endereço do arquivo'
+    lastSync:
+      type: integer
+      label: 'Última sincronização (UTC)'
+    lastResult:
+      type: string
+      label: 'Último resultado'
