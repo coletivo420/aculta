@@ -3,7 +3,7 @@
 Documento vivo. Mostra o que do código do OpenCulturas já foi reescrito no ACULTA, o que falta e o que foi
 decidido não copiar. Fontes: `web/modules/custom/aculta_portal/modules/aculta_events/docs/AUDITORIA-OPENCULTURAS.md`
 (achados S1–S8, T1–T14), `OPENCULTURAS-INCORPORACAO-CODIGO.md` (C-01 a C-10) e
-`docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` (D-01 a D-15).
+`docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` (D-01 a D-42).
 
 Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem cabeçalho de atribuição e uma linha em
 `aculta_events/docs/ORIGEM-OPENCULTURAS.md`. Repositório em GPLv3 e origem em GPL-2.0-or-later: compatível.
@@ -19,15 +19,15 @@ Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem 
 | E4 | `DateEventHooks::nodePrepareForm` | **Não copiar** (S1). Formulário novo em `aculta_events`, com checagem de acesso | **Feito (D-28):** `/painel-administrativo/eventos/datas/adicionar` preenche somente a referência de evento quando o usuário tem acesso de atualização; IDs inexistentes e eventos não editáveis deixam o campo em branco. Não copia pessoas nem clona parágrafos. Kernel: 58 testes da suíte, 619 assertions, 27 depreciações | `ce0853bbb` |
 | E5 | `openculturas_calendar_widget` (allowlist do `source_uri`, S3) | `EmbedSourceAllowlist` | **Feito.** Rota `/calendario/incorporar` no ar no servidor de teste, com `frame-ancestors` explícito e `noindex`; smoke visual em 320, 390 e 1280 px | `7985bc36f`, `224c3925e`, `e81c841f0` |
 | E6 | `AddToCal` (regra, sem cópia) | `IcsEventBuilder` próprio, escape RFC 5545, CR/LF como espaço (S2, T10), no `aculta_calendar` | **Feito** para período (séries com `RRULE`, `EXDATE`, `RECURRENCE-ID`) e para uma data (`/eventos/{slug}/data/{id}/calendario.ics`), a partir dos provedores de itens (ADR-031) | `a26bff741`, `e8e8d0151`, `224c3925e`, `c9b6b8e1f` |
-| E7 | `openculturas_map` | Leaflet + OSM público (padrão e fallback); Google Maps opcional com chave em `aculta_secrets`; link de rota do Google sem API (ADR-030, D-18) | **Parcial.** Geocodificação e mapa carregados na página, com lista textual e aviso de privacidade; a chave fica em `secrets`/ambiente. Faltam o agrupamento de marcadores e o link da política de privacidade. As verificações de termos, cobrança e LGPD do responsável seguem pendentes | `f761d8593`, ADR-014 |
+| E7 | `openculturas_map` | `aculta_maps` (D-19): Leaflet + OSM público (padrão e fallback); Google Maps opcional; link de rota sem API (ADR-030) | **Pendente após conferência do código:** `aculta_maps` ainda só tem documentação; o controller e a geocodificação continuam em `aculta_events` e usam Google. Ainda faltam a migração MP0/MP1, engine OSM, agrupamento de marcadores e link público para a política de privacidade. Não alterar o mapa até a política ter URL publicada; nenhuma verificação visual OSM foi realizada | ADR-030, D-19 |
 | E8 | `openculturas_section` (cor por vocabulário) | Frente B, B2 (cores fechadas) | **Feito** no tema. Consumidor na Revista pendente | `15a3f0488` |
 | E9 | `openculturas_faq` | Submódulo `aculta_faq`: FAQ e blocos editoriais | **Código implementado** com revisão do fluxo e atribuição; não havia conteúdo FAQ editorial versionado na origem para migrar. Revisão/cadastro do conteúdo ACULTA continua pendente | `f34dbe5b5` |
-| E10 | `openculturas_openstreetmap`: assistente administrativo (Find → Select → Review → Save) que importa dados de um local do OpenStreetMap e, em modo de desenvolvimento, envia alterações ao próprio OSM (`PushData`) | Importação de local a partir do OSM, no admin de `aculta_events`, **somente se aprovada** | **Decidido (D-26): importar e enviar ao OSM, ambiente segue o do site. Fora da v1.** Implementação pendente; revisão de termos ODbL antes do primeiro envio | — |
+| E10 | `openculturas_openstreetmap`: assistente administrativo (Find → Select → Review → Save) que importa dados de um local do OpenStreetMap e, em modo de desenvolvimento, envia alterações ao próprio OSM (`PushData`) | Importação e envio em fluxo revisável, com API do ambiente correspondente (D-26) | **Decidido (D-26), implementação pendente e fora da v1.** `config/secrets-contract.json` ainda não define credenciais OSM. Não foi feito envio. O teste autorizado depende de credenciais próprias da API de desenvolvimento e dados fictícios; não se deve usar a API de produção nesta execução | D-26; ver revisão de termos abaixo |
 | T5 | `SmartDateUpcomingFormatter` | `DateRangeUpcomingFormatter` com `daterange` do core, cache até a próxima data | **Feito** | `56725c71d` |
 | D-15 | Calendário e LMS (decisão própria, sem origem no OC) | `aculta_lms_agenda` e painel do aluno | **Acesso confirmado**: provedor exige membership na turma publicada e acesso ao curso publicado; Kernel cobre turma correta, turma diferente e ausência de matrícula | `ac43e7d94`, `9766bb731`, `df76938ae` |
 | R | Recorrência `smart_date_recur` (replicada, com modificações próprias, D-14) | `aculta_calendar` (validador, expansão) e `aculta_events` (regra e ocorrência) | **Feito na v1.** Regra em `EventDate` (`field_regra`, `field_limite_meses`), expansão na janela, interface da regra em forma canônica e edição de uma ocorrência (cancelar, reagendar, restaurar) por início original. Falta só o link para os formulários na página do evento (F6) | `5f3b61ee7`, `1caa5fc7d`, `dcea19c4a`, `b9144b142` |
 
-## E10 — importação de local a partir do OpenStreetMap (decisões antes de qualquer código)
+## E10 — revisão de termos e implementação pendente
 
 O que o OpenCulturas faz: um assistente em `/admin/config/services/openculturas_openstreetmap` busca o elemento do
 OSM correspondente a um local, deixa escolher quais campos copiar, mostra a revisão e salva. O envio ao OSM usa OAuth
@@ -42,8 +42,15 @@ Não entra na v1 por quatro motivos, e cada um vira decisão antes do código:
 3. **Escrita no OSM.** O envio de alterações ao OSM não deve existir sem decisão própria. Recomendação: não implementar.
 4. **Coerência com D-08.** O ACULTA usa Google Maps para o mapa. Importar dados do OSM para o local é outro serviço.
 
-Decisões necessárias: (a) a importação de OSM é desejada ou o local é só cadastrado pela organização? (b) aceita o
-parecer de ODbL? (c) o envio ao OSM fica fora de escopo? Sem essas respostas, o E10 permanece como item de pós-v1.
+Revisão registrada em 2026-10-28: a [política da API do OpenStreetMap](https://operations.osmfoundation.org/policies/api/)
+define a API de edição para alterar dados do mapa, não como API somente de leitura; importação e edição devem permanecer
+no fluxo explícito de revisão e contribuição, sem consultas em lote. A página de
+[copyright e licença do OSM](https://www.openstreetmap.org/copyright) identifica a licença ODbL e exige atribuição.
+O ACULTA deve exibir atribuição e link para essa licença nos dados/mapas derivados. D-26 autorizou a funcionalidade,
+mas nenhum envio real foi feito nesta execução. Antes de testar envio, provisionar credenciais separadas para
+`master.apis.dev.openstreetmap.org` em `secrets/` e usar apenas dados fictícios; a
+[documentação do servidor de desenvolvimento](https://wiki.openstreetmap.org/wiki/Dev_Server_Account) confirma que
+ele é isolado dos dados de produção. Produção permanece fora desta execução.
 
 ## Não copiar (decidido)
 
@@ -65,11 +72,11 @@ parecer de ODbL? (c) o envio ao OSM fica fora de escopo? Sem essas respostas, o 
 
 ## Próximos passos, em ordem
 
-1. E2: views de locais e datas relacionadas, sem telefone, e-mail ou endereço. A exportação administrativa de datas entra pela API de provedores do calendário, pendente de CA0/CA2.
-2. R: interface de edição da regra e de uma ocorrência (D-14), com teste de expansão no fuso de Brasília.
-3. F5: **feito** no `aculta_calendar` (D-20): agenda, grade do mês, dia, `.ics` e `/calendario/incorporar`, com o `aculta_events` como provedor de itens. Falta o calendário no `main` (D6).
-4. F4 (E7): fechar o agrupamento de marcadores, o link da política de privacidade e as verificações da pendência 2.
-5. Teste Kernel de acesso por purpose dos tipos novos (não localizado até aqui).
+1. E2: Views estão implementadas sem telefone, e-mail ou endereço. A exportação administrativa aprovada passa pelo provedor do `aculta_calendar`; continua pendente de API estruturada (CA0/CA2). Não criar exportação paralela.
+2. E7: iniciar MP0/MP1 em `aculta_maps` conforme D-19; só depois fechar OSM, agrupamento e link da política quando a URL pública existir. O código atual em `aculta_events` ainda usa Google.
+3. E10: implementar o fluxo Find → Select → Review → Save e o cliente da API de desenvolvimento com padrão seguro; bloqueado para teste de envio até credenciais de teste serem provisionadas no contrato de segredos.
+4. R: regra e ocorrência têm interface e Kernel; o link na página do evento pertence à F6.
+5. F5: **feito** no `aculta_calendar` (D-20): agenda, grade do mês, dia, `.ics` e `/calendario/incorporar`, com o `aculta_events` como provedor de itens. Falta o calendário no `main` (D6).
 6. F6, F7, F8, F9.
 
 ## Painéis e opções administrativas do OpenCulturas (ADM)
