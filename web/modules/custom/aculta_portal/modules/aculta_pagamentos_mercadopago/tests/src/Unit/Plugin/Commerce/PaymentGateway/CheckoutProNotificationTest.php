@@ -160,7 +160,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
        * Returns a merchant order with a conflicting order reference.
        */
       public function get(int $id): object {
-        return (object) ['external_reference' => '43'];
+        return (object) ['id' => '900', 'external_reference' => '43'];
       }
 
     };
@@ -463,7 +463,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
        * Returns the matching merchant order.
        */
       public function get(int $id): object {
-        return (object) ['external_reference' => '42'];
+        return (object) ['id' => '900', 'external_reference' => '42'];
       }
 
     };
@@ -566,7 +566,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
        * Returns the matching merchant order.
        */
       public function get(int $id): object {
-        return (object) ['external_reference' => '42'];
+        return (object) ['id' => '900', 'external_reference' => '42'];
       }
 
     };
@@ -734,6 +734,131 @@ final class CheckoutProNotificationTest extends UnitTestCase {
 
     $this->expectException(PaymentGatewayException::class);
     $this->expectExceptionMessage('Could not verify payment with Mercado Pago.');
+    $gateway->onReturn($order, new Request([
+      'payment_id' => '123',
+      'merchant_order_id' => '900',
+      'status' => 'approved',
+    ]));
+  }
+
+  /**
+   * A notification rejects a Merchant Order response with a different ID.
+   */
+  public function testNotificationRejectsProviderResponseWithDifferentMerchantOrderId(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $payment_client = new class {
+
+      /**
+       * Returns the payment linked to merchant order 900.
+       */
+      public function get(int $id): object {
+        return (object) [
+          'id' => '123',
+          'status' => 'approved',
+          'transaction_amount' => '10.00',
+          'currency_id' => 'BRL',
+          'external_reference' => '42',
+          'order' => (object) ['id' => '900'],
+        ];
+      }
+
+    };
+    $merchant_order_client = new class {
+
+      /**
+       * Returns a different merchant order with the same external reference.
+       */
+      public function get(int $id): object {
+        return (object) ['id' => '901', 'external_reference' => '42'];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->exactly(2))
+      ->method('criar')
+      ->willReturnCallback(static fn (string $alias): object => $alias === 'pagamentos' ? $payment_client : $merchant_order_client);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->method('acquire')->with('aculta_pagamentos_mercadopago.payment.123', 300)->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.payment.123');
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects($this->once())
+      ->method('warning')
+      ->with('Merchant order lookup for @id returned a conflicting ID.', ['@id' => '900']);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($logger);
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->expects($this->never())->method('getStorage');
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    self::assertSame(503, $response->getStatusCode());
+  }
+
+  /**
+   * A return rejects a Merchant Order response with a different ID.
+   */
+  public function testReturnRejectsProviderResponseWithDifferentMerchantOrderId(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $payment_client = new class {
+
+      /**
+       * Returns the payment linked to merchant order 900.
+       */
+      public function get(int $id): object {
+        return (object) [
+          'id' => '123',
+          'status' => 'approved',
+          'transaction_amount' => '10.00',
+          'currency_id' => 'BRL',
+          'external_reference' => '42',
+          'order' => (object) ['id' => '900'],
+        ];
+      }
+
+    };
+    $merchant_order_client = new class {
+
+      /**
+       * Returns a different merchant order with the same external reference.
+       */
+      public function get(int $id): object {
+        return (object) ['id' => '901', 'external_reference' => '42'];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->exactly(2))
+      ->method('criar')
+      ->willReturnCallback(static fn (string $alias): object => $alias === 'pagamentos' ? $payment_client : $merchant_order_client);
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects($this->once())
+      ->method('error')
+      ->with('Merchant order lookup for @id returned a conflicting ID.', ['@id' => '900']);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($logger);
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+    $this->setSuccessfulPaymentLock($gateway);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('getData')
+      ->with('commerce_mercado_pago_checkout')
+      ->willReturn(['preference_id' => 'pref-1']);
+    $order->method('id')->willReturn(42);
+    $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->expects($this->never())->method('getStorage');
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+
+    $this->expectException(PaymentGatewayException::class);
+    $this->expectExceptionMessage('Could not verify payment order.');
     $gateway->onReturn($order, new Request([
       'payment_id' => '123',
       'merchant_order_id' => '900',

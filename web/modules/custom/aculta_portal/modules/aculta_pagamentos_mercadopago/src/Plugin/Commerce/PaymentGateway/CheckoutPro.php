@@ -943,6 +943,16 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   }
 
   /**
+   * Checks the ID returned for a provider resource against the requested ID.
+   */
+  private function remoteIdMatches(mixed $resource, string $expectedId): bool {
+    $remoteId = is_object($resource)
+      ? ($resource->id ?? NULL)
+      : (is_array($resource) ? ($resource['id'] ?? NULL) : NULL);
+    return is_scalar($remoteId) && (string) $remoteId === $expectedId;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function refundPayment(PaymentInterface $payment, ?Price $amount = NULL): void {
@@ -1064,7 +1074,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       try {
         $payment_client = $this->clientFactory->criar('pagamentos', $this->parentEntity);
         $payment = $payment_client->get((int) $payment_id);
-        if (!is_scalar($payment->id ?? NULL) || (string) $payment->id !== $payment_id) {
+        if (!$this->remoteIdMatches($payment, $payment_id)) {
           $logger->warning('Payment lookup for @id returned a conflicting ID.', ['@id' => $payment_id]);
           return new JsonResponse([], 503);
         }
@@ -1078,6 +1088,10 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
             $merchant_order_id = (string) $payment_order;
             $merchant_order_client = $this->clientFactory->criar('pedidos_comerciante', $this->parentEntity);
             $merchant_order = $merchant_order_client->get((int) $merchant_order_id);
+            if (!$this->remoteIdMatches($merchant_order, $merchant_order_id)) {
+              $logger->warning('Merchant order lookup for @id returned a conflicting ID.', ['@id' => $merchant_order_id]);
+              return new JsonResponse([], 503);
+            }
           }
         }
       }
@@ -1292,7 +1306,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       $logger->error('Mercado Pago API error verifying payment @id.', ['@id' => $payment_id]);
       throw new PaymentGatewayException('Could not verify payment with Mercado Pago.', 0);
     }
-    if (!is_scalar($mp_payment->id ?? NULL) || (string) $mp_payment->id !== (string) $payment_id) {
+    if (!$this->remoteIdMatches($mp_payment, (string) $payment_id)) {
       $logger->error('Payment lookup for @id returned a conflicting ID.', ['@id' => (string) $payment_id]);
       throw new PaymentGatewayException('Could not verify payment with Mercado Pago.', 0);
     }
@@ -1358,6 +1372,10 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
         $logger->error('Mercado Pago API error fetching returned merchant order.');
         throw new PaymentGatewayException('Could not verify payment order.', 0);
       }
+      if (!$this->remoteIdMatches($merchant_order, (string) $merchant_order_id)) {
+        $logger->error('Merchant order lookup for @id returned a conflicting ID.', ['@id' => (string) $merchant_order_id]);
+        throw new PaymentGatewayException('Could not verify payment order.', 0);
+      }
       $merchant_reference = (string) ($merchant_order->external_reference ?? '');
       $merchant_payments = $merchant_order->payments ?? [];
       $payment_is_linked = FALSE;
@@ -1388,20 +1406,24 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       $merchant_order_client = $this->clientFactory->criar('pedidos_comerciante', $this->parentEntity);
       try {
         $merchant_order = $merchant_order_client->get((int) $order_id_mp);
-        $external_ref = $merchant_order->external_reference ?? NULL;
-        if ((string) $external_ref !== (string) $order->id()) {
-          $logger->error('Payment @id merchant order @mo_id external_reference @ext does not match order @order_id', [
-            '@id' => $payment_id,
-            '@mo_id' => $order_id_mp,
-            '@ext' => $external_ref,
-            '@order_id' => $order->id(),
-          ]);
-          throw new PaymentGatewayException('Payment does not belong to this order.', 0);
-        }
       }
       catch (\Throwable) {
         $logger->error('Mercado Pago API error fetching merchant order @id.', ['@id' => $order_id_mp]);
         throw new PaymentGatewayException('Could not verify payment order.', 0);
+      }
+      if (!$this->remoteIdMatches($merchant_order, (string) $order_id_mp)) {
+        $logger->error('Merchant order lookup for @id returned a conflicting ID.', ['@id' => (string) $order_id_mp]);
+        throw new PaymentGatewayException('Could not verify payment order.', 0);
+      }
+      $external_ref = $merchant_order->external_reference ?? NULL;
+      if ((string) $external_ref !== (string) $order->id()) {
+        $logger->error('Payment @id merchant order @mo_id external_reference @ext does not match order @order_id', [
+          '@id' => $payment_id,
+          '@mo_id' => $order_id_mp,
+          '@ext' => $external_ref,
+          '@order_id' => $order->id(),
+        ]);
+        throw new PaymentGatewayException('Payment does not belong to this order.', 0);
       }
     }
 
