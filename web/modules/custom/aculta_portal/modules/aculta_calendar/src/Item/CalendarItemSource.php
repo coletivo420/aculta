@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_calendar\Item;
 
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+
 /**
  * Agrega os provedores de itens registrados (tag aculta_calendar.item_provider).
+ *
+ * Um provedor com defeito não derruba a agenda: a falha é registrada no log e
+ * os demais provedores continuam.
  */
 final class CalendarItemSource {
 
@@ -14,9 +19,12 @@ final class CalendarItemSource {
    *
    * @param iterable<CalendarItemProviderInterface> $provedores
    *   Provedores coletados pela tag.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface|null $logger
+   *   Fábrica de log; opcional para uso isolado em testes.
    */
   public function __construct(
     private readonly iterable $provedores,
+    private readonly ?LoggerChannelFactoryInterface $logger = NULL,
   ) {}
 
   /**
@@ -27,8 +35,13 @@ final class CalendarItemSource {
   public function items(CalendarQuery $query): array {
     $itens = [];
     foreach ($this->provedores as $provedor) {
-      foreach ($provedor->items($query) as $item) {
-        $itens[] = $item;
+      try {
+        foreach ($provedor->items($query) as $item) {
+          $itens[] = $item;
+        }
+      }
+      catch (\Throwable $e) {
+        $this->registrarFalha($provedor, $e);
       }
     }
     return $itens;
@@ -44,12 +57,17 @@ final class CalendarItemSource {
   public function filtros(): array {
     $filtros = [];
     foreach ($this->provedores as $provedor) {
-      foreach ($provedor->filtros() as $chave => $definicao) {
-        if (!isset($filtros[$chave])) {
-          $filtros[$chave] = $definicao;
-          continue;
+      try {
+        foreach ($provedor->filtros() as $chave => $definicao) {
+          if (!isset($filtros[$chave])) {
+            $filtros[$chave] = $definicao;
+            continue;
+          }
+          $filtros[$chave]['opcoes'] = array_replace($filtros[$chave]['opcoes'], $definicao['opcoes'] ?? []);
         }
-        $filtros[$chave]['opcoes'] = array_replace($filtros[$chave]['opcoes'], $definicao['opcoes'] ?? []);
+      }
+      catch (\Throwable $e) {
+        $this->registrarFalha($provedor, $e);
       }
     }
     return $filtros;
@@ -63,9 +81,24 @@ final class CalendarItemSource {
   public function cacheTags(): array {
     $tags = [];
     foreach ($this->provedores as $provedor) {
-      $tags = array_merge($tags, $provedor->cacheTags());
+      try {
+        $tags = array_merge($tags, $provedor->cacheTags());
+      }
+      catch (\Throwable $e) {
+        $this->registrarFalha($provedor, $e);
+      }
     }
     return array_values(array_unique($tags));
+  }
+
+  /**
+   * Registra a falha de um provedor sem interromper os demais.
+   */
+  private function registrarFalha(CalendarItemProviderInterface $provedor, \Throwable $e): void {
+    $this->logger?->get('aculta_calendar')->warning('Provedor de itens @id falhou: @mensagem', [
+      '@id' => $provedor->id(),
+      '@mensagem' => $e->getMessage(),
+    ]);
   }
 
 }

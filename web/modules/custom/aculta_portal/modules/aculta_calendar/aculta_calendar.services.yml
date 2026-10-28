@@ -3,7 +3,7 @@ services:
     class: Drupal\aculta_calendar\Recurrence\RecurrenceExpander
   aculta_calendar.item_source:
     class: Drupal\aculta_calendar\Item\CalendarItemSource
-    arguments: [!tagged_iterator aculta_calendar.item_provider]
+    arguments: [!tagged_iterator aculta_calendar.item_provider, '@logger.factory']
   aculta_calendar.occurrences:
     class: Drupal\aculta_calendar\Agenda\CalendarOccurrences
     arguments: ['@aculta_calendar.recurrence_expander']
