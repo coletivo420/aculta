@@ -1,3 +1,8 @@
+## 0.1.0-dev.56 — esclarecer o escopo do log de debug (2026-10-27)
+
+- A descrição administrativa agora informa que só o payload de preferência sanitizado é registrado; dados de pagador são removidos, mas detalhes de pedido e itens permanecem. Removido um método de debug sem uso.
+- Unit MP: 215 testes / 969 assertions PASS; Kernel `CheckoutProTest`: 3 testes / 128 assertions PASS (78 depreciações Core/contrib); PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
+
 ## 0.1.0-dev.55 — remover controle de taxa sem efeito (2026-10-27)
 
 - O formulário do gateway não expõe mais `autofee`: o campo prometia adicionar taxas do adquirente, mas não existia cálculo correspondente. A chave e o schema permanecem por compatibilidade; salvar o gateway força o legado a `false`.
