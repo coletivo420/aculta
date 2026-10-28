@@ -48,7 +48,19 @@ final class EmailConfirmationRequester {
    * ACCEPTED means Email Confirmer's MailManager call returned success. It does
    * not establish final delivery to the recipient's mailbox.
    */
-  public function request(UserInterface $account, ?Url $responseUrl = NULL): EmailConfirmationRequestResult {
+  public function request(
+    UserInterface $account,
+    ?Url $responseUrl = NULL,
+    ?string $mailTypeId = NULL,
+    ?int $resendWindow = NULL,
+  ): EmailConfirmationRequestResult {
+    // Só os tipos de e-mail de confirmação conhecidos; o intervalo padrão é o de todas as confirmações do portal.
+    $tipo = $mailTypeId ?? EmailConfirmationRequestMailType::ID;
+    if (!in_array($tipo, [EmailConfirmationRequestMailType::ID, SimplifiedAccountConfirmationMailType::ID], TRUE)) {
+      $tipo = EmailConfirmationRequestMailType::ID;
+    }
+    $janela = $resendWindow !== NULL && $resendWindow > 0 ? $resendWindow : self::RESEND_WINDOW;
+
     $uid = (int) $account->id();
     $email = trim((string) $account->getEmail());
     if ($account->isNew() || $uid <= 0 || $email === '') {
@@ -62,19 +74,20 @@ final class EmailConfirmationRequester {
 
     try {
       $identifier = (string) $uid;
-      if (!$this->flood->isAllowed(self::FLOOD_EVENT, 1, self::RESEND_WINDOW, $identifier)) {
+      if (!$this->flood->isAllowed(self::FLOOD_EVENT, 1, $janela, $identifier)) {
         return EmailConfirmationRequestResult::RATE_LIMITED;
       }
       // Count failed attempts too, so a failing transport cannot be abused by
       // repeatedly submitting the same account's request.
-      $this->flood->register(self::FLOOD_EVENT, self::RESEND_WINDOW, $identifier);
+      $this->flood->register(self::FLOOD_EVENT, $janela, $identifier);
 
       $storage = $this->entityTypeManager->getStorage('aculta_mail_confirmer');
       $confirmation = $this->manager->createConfirmation($email);
       $confirmation->setRealm(self::REALM)
         ->setProperty('user', $uid)
         ->setPrivate()
-        ->setResponseUrl($responseUrl ?? Url::fromRoute('aculta_portal.dashboard'), 'confirm');
+        ->setResponseUrl($responseUrl ?? Url::fromRoute('aculta_portal.dashboard'), 'confirm')
+        ->setProperty('mail_type', $tipo);
 
       // Persist first: the email must never contain a token for an entity that
       // failed to save. The previous usable confirmation remains untouched.
@@ -162,8 +175,9 @@ final class EmailConfirmationRequester {
       'aculta_mail_confirmer' => $confirmation->uuid(),
       'hash' => $this->manager->getHash($confirmation),
     ], ['absolute' => TRUE]);
+    $tipo = (string) ($confirmation->getProperty('mail_type') ?: EmailConfirmationRequestMailType::ID);
     $message = new MailMessage(
-      EmailConfirmationRequestMailType::ID,
+      $tipo,
       (string) $confirmation->getEmail(),
       $confirmation->language()->getId(),
       ['email' => (string) $confirmation->getEmail(), 'confirm_url' => $url],

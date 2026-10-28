@@ -88,6 +88,11 @@ services:
   aculta_portal.email_confirmation_notice:
     class: Drupal\aculta_portal\Account\EmailConfirmationNotice
     arguments: ['@aculta_portal.email_confirmation_policy', '@current_user', '@current_route_match', '@string_translation', '@module_handler']
+  aculta_portal.simplified_account_confirmation_mail_type:
+    class: Drupal\aculta_portal\Email\SimplifiedAccountConfirmationMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
   aculta_portal.email_confirmation_request_mail_type:
     class: Drupal\aculta_portal\Email\EmailConfirmationRequestMailType
     arguments: ['@string_translation']

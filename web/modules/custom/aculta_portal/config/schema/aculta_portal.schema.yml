@@ -152,6 +152,9 @@ aculta_portal.simplified_account:
     enabled:
       type: boolean
       label: 'Cadastro simplificado habilitado'
+    resend_window:
+      type: integer
+      label: 'Intervalo entre reenvios de confirmação (segundos)'
 
 aculta_portal.checkout_settings:
   type: config_object

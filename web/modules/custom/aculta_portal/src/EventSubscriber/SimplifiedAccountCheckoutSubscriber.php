@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\EventSubscriber;
 
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Email\EmailConfirmationRequester;
+use Drupal\aculta_portal\Email\SimplifiedAccountConfirmationMailType;
 use Drupal\aculta_portal\Form\SimplifiedAccountSettingsForm;
 use Drupal\commerce_checkout\Event\CheckoutEvents;
 use Drupal\commerce_order\Event\OrderEvent;
@@ -60,8 +61,9 @@ final class SimplifiedAccountCheckoutSubscriber implements EventSubscriberInterf
    * Contas comuns já existentes não recebem o pedido aqui.
    */
   public function onCompletion(OrderEvent $event): void {
-    // Chave do painel administrativo (SimplifiedAccountSettingsForm): desligada, o checkout não pede confirmação.
-    if ($this->configFactory->get(SimplifiedAccountSettingsForm::CONFIG)->get('enabled') === FALSE) {
+    // Chaves do painel administrativo (SimplifiedAccountSettingsForm): desligado, o checkout não pede confirmação.
+    $config = $this->configFactory->get(SimplifiedAccountSettingsForm::CONFIG);
+    if ($config->get('enabled') === FALSE) {
       return;
     }
     $customer = $event->getOrder()->getCustomer();
@@ -79,7 +81,12 @@ final class SimplifiedAccountCheckoutSubscriber implements EventSubscriberInterf
     }
     // Marca a conta como simplificada antes do pedido: a etapa de senha depende dessa marca.
     $this->userData->set('aculta_portal', $uid, self::FLAG, TRUE);
-    $this->requester->request($customer, Url::fromRoute('aculta_portal.simplified_account.password'));
+    $this->requester->request(
+      $customer,
+      Url::fromRoute('aculta_portal.simplified_account.password'),
+      SimplifiedAccountConfirmationMailType::ID,
+      (int) ($config->get('resend_window') ?: SimplifiedAccountSettingsForm::DEFAULT_RESEND_WINDOW),
+    );
   }
 
 }

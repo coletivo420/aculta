@@ -1,1 +1,2 @@
 enabled: true
+resend_window: 900

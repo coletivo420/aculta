@@ -20,6 +20,11 @@ final class SimplifiedAccountSettingsForm extends ConfigFormBase {
   public const CONFIG = 'aculta_portal.simplified_account';
 
   /**
+   * Intervalo padrão entre reenvios de confirmação, em segundos (15 minutos).
+   */
+  public const DEFAULT_RESEND_WINDOW = 900;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId(): string {
@@ -43,8 +48,15 @@ final class SimplifiedAccountSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Ligado, a conta criada na compra recebe um e-mail de confirmação e, depois de confirmar, cria a senha. Uma nova compra com o mesmo e-mail, ainda não confirmado, reenvia o e-mail respeitando o intervalo entre reenvios.'),
       '#default_value' => $this->config(self::CONFIG)->get('enabled') !== FALSE,
     ];
-    $form['resumo'] = [
-      '#markup' => '<p>' . $this->t('Intervalo entre reenvios: 15 minutos por conta. Os reenvios usam o modelo de e-mail de confirmação do aculta_mailer.') . '</p>',
+    $form['resend_window'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Intervalo entre reenvios (segundos)'),
+      '#description' => $this->t('Tempo mínimo entre dois e-mails de confirmação para a mesma conta. Padrão: 900 (15 minutos). Vale só para este fluxo.'),
+      '#default_value' => (int) ($this->config(self::CONFIG)->get('resend_window') ?: self::DEFAULT_RESEND_WINDOW),
+      '#min' => 60,
+      '#max' => 86400,
+      '#step' => 1,
+      '#required' => TRUE,
     ];
     return parent::buildForm($form, $form_state);
   }
@@ -53,7 +65,10 @@ final class SimplifiedAccountSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $this->config(self::CONFIG)->set('enabled', (bool) $form_state->getValue('enabled'))->save();
+    $this->config(self::CONFIG)
+      ->set('enabled', (bool) $form_state->getValue('enabled'))
+      ->set('resend_window', (int) $form_state->getValue('resend_window'))
+      ->save();
     parent::submitForm($form, $form_state);
   }
 
