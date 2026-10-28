@@ -108,3 +108,14 @@ Medição de 2026-10-23, somente leitura, no runtime local:
 
 Portanto a divergência apontada na pendência 8 de `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md` é real: a ADR estava desatualizada em relação ao repositório e ao runtime local. Nenhum código ou configuração foi alterado por este adendo; a verificação nos servidores de teste (`*.aculta.toca.net.br`) e produção (`*.aculta.org`) continua pendente de acesso. A frase original permanece sem edição para manter o histórico da decisão.
 
+## Aditivo — Eventos no carrinho integrado (2026-10-28)
+
+Decisão do responsável (D-38 a D-41 em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`).
+
+1. **Checkout próprio de Eventos**, com a mesma separação de Loja, LMS e Doações. Configuração no `aculta_events`; o `aculta_portal` registra o contexto em `CheckoutSettings`. Sem quinta aba administrativa.
+2. **Eventos entra no carrinho integrado da barra multidomínio**, sem criar carrinho público novo. Usa as regras atuais: pedido único por carrinho, `CartConsolidator` e fluxo mais exigente entre as categorias presentes.
+3. **Precedência do fluxo mais exigente:** LMS > Loja > Eventos > Doações.
+4. **Identidade fiscal:** CPF/CNPJ é exigido apenas em eventos pagos, pela política do `aculta_portal`. Eventos gratuitos pedem nome e e-mail.
+5. **Classificação:** o pedido de Eventos é classificado pelo tipo de pedido e pelo tipo de item (ADR-013, item 5), não pelo domínio.
+6. **Preservação:** o carrinho da barra e o checkout atual de Loja, LMS e Doações não mudam de comportamento. A inclusão de Eventos exige testes de caracterização antes e regressão depois, conforme as fases P-CART.
+
