@@ -9,6 +9,7 @@ use Drupal\aculta_calendar\Import\IcsCalendarFileReader;
 use Drupal\aculta_calendar\Import\CalendarImportRepository;
 use Drupal\aculta_calendar\Import\CalendarEventNormalizer;
 use Drupal\aculta_calendar\Import\CalendarImportProcessor;
+use Drupal\aculta_calendar\Import\ImportedCalendarItemProvider;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -23,6 +24,9 @@ final class AcultaCalendarServiceProvider extends ServiceProviderBase {
     $container->register('aculta_calendar.import_normalizer', CalendarEventNormalizer::class);
     $container->register('aculta_calendar.import_processor', CalendarImportProcessor::class)
       ->addArgument(new Reference('aculta_calendar.import_repository'));
+    $container->register('aculta_calendar.imported_item_provider', ImportedCalendarItemProvider::class)
+      ->addArgument(new Reference('entity_type.manager'))
+      ->addTag('aculta_calendar.item_provider');
   }
 
 }

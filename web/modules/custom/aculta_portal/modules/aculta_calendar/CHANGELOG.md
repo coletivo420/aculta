@@ -1,5 +1,9 @@
 # Changelog — aculta_calendar
 
+## 2026-10-28 — provedor de itens importados (I7)
+
+- Itens importados publicados são disponibilizados à agenda via `aculta_calendar.item_provider`; rascunhos ficam fora.
+
 ## 2026-10-28 — revisão editorial da importação (I6)
 
 - Adicionada fila administrativa protegida para revisar itens importados, publicar uma revisão ou mantê-la como rascunho.
