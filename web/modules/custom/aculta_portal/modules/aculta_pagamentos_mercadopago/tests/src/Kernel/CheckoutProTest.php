@@ -5,11 +5,15 @@ namespace Drupal\Tests\aculta_pagamentos_mercadopago\Kernel;
 use Drupal\commerce_payment\Entity\PaymentGateway;
 use Drupal\commerce_order\Adjustment;
 use Drupal\commerce_order\Entity\OrderItem;
+use Drupal\key\Entity\Key;
 use Drupal\commerce_price\Price;
 use Drupal\aculta_pagamentos_mercadopago\PluginForm\Checkout\MercadoPagoPreferenceItems;
 use Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\WebhookGuard;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoChargebackNotificationService;
 use Drupal\Tests\commerce_order\Kernel\OrderKernelTestBase;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpFoundation\Request;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
@@ -39,6 +43,7 @@ class CheckoutProTest extends OrderKernelTestBase {
     $this->installEntitySchema('commerce_payment');
     $this->installEntitySchema('commerce_payment_method');
     $this->installConfig('commerce_payment');
+    $this->installConfig('key');
   }
 
   /**
@@ -147,6 +152,65 @@ class CheckoutProTest extends OrderKernelTestBase {
     $this->assertCount(1, $items);
     $this->assertSame('Produto de teste (2 un.)', $items[0]['title']);
     $this->assertSame(18.0, $items[0]['unit_price'] * $items[0]['quantity']);
+  }
+
+  /**
+   * The native Commerce webhook requires the environment Key and fails closed.
+   */
+  public function testNativeWebhookRouteRequiresEnvironmentSignature(): void {
+    $gateway = PaymentGateway::create([
+      'id' => 'mercado_pago',
+      'label' => 'Mercado Pago',
+      'status' => TRUE,
+      'plugin' => 'aculta_mercadopago_checkout_pro',
+      'configuration' => ['mode' => 'test'],
+    ]);
+    $gateway->save();
+    Key::create([
+      'id' => 'mercadopago_webhook_secret',
+      'label' => 'Test webhook signing secret',
+      'key_type' => 'authentication',
+      'key_provider' => 'env',
+      'key_provider_settings' => [
+        'env_variable' => 'MERCADOPAGO_WEBHOOK_SECRET',
+        'base64_encoded' => FALSE,
+        'strip_line_breaks' => TRUE,
+      ],
+      'key_input' => 'none',
+    ])->save();
+
+    $previous_secret = getenv('MERCADOPAGO_WEBHOOK_SECRET');
+    putenv('MERCADOPAGO_WEBHOOK_SECRET=kernel-test-only-secret');
+    try {
+      $request = $this->webhookRequest('kernel-test-only-secret');
+      $event = new RequestEvent($this->container->get('kernel'), $request, HttpKernelInterface::MAIN_REQUEST);
+      $this->container->get('aculta_pagamentos_mercadopago.webhook_subscriber')->onKernelRequest($event);
+      $this->assertNull($event->getResponse());
+      $this->assertSame(['topic' => 'payment', 'id' => '123'], $request->query->all());
+
+      $forged_request = $this->webhookRequest('wrong-test-secret');
+      $forged_event = new RequestEvent($this->container->get('kernel'), $forged_request, HttpKernelInterface::MAIN_REQUEST);
+      $this->container->get('aculta_pagamentos_mercadopago.webhook_subscriber')->onKernelRequest($forged_event);
+      $this->assertSame(401, $forged_event->getResponse()?->getStatusCode());
+    }
+    finally {
+      $previous_secret === FALSE ? putenv('MERCADOPAGO_WEBHOOK_SECRET') : putenv('MERCADOPAGO_WEBHOOK_SECRET=' . $previous_secret);
+    }
+  }
+
+  /**
+   * Creates a synthetic signed native webhook request.
+   */
+  private function webhookRequest(string $signing_secret): Request {
+    $timestamp = (string) (int) (microtime(TRUE) * 1000);
+    $request_id = 'kernel-test-request';
+    $hash = hash_hmac('sha256', 'id:123;request-id:' . $request_id . ';ts:' . $timestamp . ';', $signing_secret);
+    $request = Request::create('/commerce_payment/notify/mercado_pago?data.id=123&type=payment', 'POST');
+    $request->attributes->set('_route', 'commerce_payment.notify');
+    $request->attributes->set('commerce_payment_gateway', 'mercado_pago');
+    $request->headers->set('x-signature', 'ts=' . $timestamp . ',v1=' . $hash);
+    $request->headers->set('x-request-id', $request_id);
+    return $request;
   }
 
 }
