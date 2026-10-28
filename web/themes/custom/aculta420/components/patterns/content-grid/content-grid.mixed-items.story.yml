@@ -1,4 +1,4 @@
-name: Grade mista: conteúdo, termo e link externo
+name: "Grade mista: conteúdo, termo e link externo"
 description: Os três tipos usam o mesmo slot genérico de itens renderizados.
 component: aculta420:content-grid
 props:

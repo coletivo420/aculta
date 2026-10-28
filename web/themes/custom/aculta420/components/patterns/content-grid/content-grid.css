@@ -1,9 +1,9 @@
 /* Content grid pattern: layout only; items keep their own card styles. */
 .aculta-content-grid { display: grid; gap: 2rem 3rem; }
 .aculta-content-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.aculta-content-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 575.98px) {
   .aculta-content-grid--2,
   .aculta-content-grid--3 { grid-template-columns: minmax(0, 1fr); }
 }
-.aculta-content-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .aculta-content-grid > * { min-width: 0; }

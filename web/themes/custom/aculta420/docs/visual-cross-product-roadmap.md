@@ -120,9 +120,9 @@ GanjaLab em `MarleyController`; cursos e certificados em
 `WikiContributionIntentController`; listagem WE SATIVA em
 `WikiContributorWorkspace::listSection`. Como o slot renderizado `items` já
 aceita esses tipos heterogêneos, o contrato props/slots não mudou. A nova story
-mistura os três tipos na mesma grade e a variante de 3 colunas passa a empilhar
-abaixo de 576 px. O UI Patterns Runtime segue retornando erro genérico; 320 px e
-dark não foram visualmente homologados.
+mistura os três tipos na mesma grade. A primeira captura revelou que a regra de
+três colunas precedia a media query; a ordem foi corrigida e o empilhamento
+validado em 320 px, além das capturas desktop/dark.
 
 ## Links
 - [Shell multidomínio](shell.md)

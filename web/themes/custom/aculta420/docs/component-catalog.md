@@ -120,8 +120,9 @@ e `aculta_wiki` em `WikiContributionIntentController` (intenções) e
 registra fallback, mas não fornece itens. O contrato existente já aceita
 qualquer render array no slot único `items`; props e slots estruturais foram
 mantidos. A story nova mistura artigo, termo taxonômico e link externo. A grade
-de 3 colunas empilha no breakpoint mobile. A rota de story permaneceu em erro
-genérico no Runtime; revisão visual 320 px/dark pendente.
+de 3 colunas empilha no breakpoint mobile. A story mista foi capturada no
+Runtime em desktop, 320 px e dark; a revisão corrigiu uma regra CSS que impedia
+o empilhamento em 320 px.
 
 ## Backlog do catálogo — padrões transversais ainda não implementados
 
