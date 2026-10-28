@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_events\Unit;
+namespace Drupal\Tests\aculta_calendar\Unit;
 
-use Drupal\aculta_events\Agenda\MonthGrid;
+use Drupal\aculta_calendar\Agenda\MonthGrid;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Grade do mês: semanas ISO, dias fora do mês vazios, link e contagem por dia.
+ * Grade do mês: semanas ISO, dias fora do mês vazios e contagem por dia.
  */
-#[Group('aculta_events')]
+#[Group('aculta_calendar')]
 final class MonthGridTest extends TestCase {
 
   /**

@@ -1,5 +1,5 @@
 name: ACULTA Calendário
 type: module
-description: 'Exportação .ics própria e allowlist do embed do calendário. Não habilitado: aguarda o purpose eventos (F1).'
+description: 'Motor de recorrência, exportação .ics, embed e visões de agenda e de mês. Fornece conteúdo a partir de provedores de itens (ADR-031).'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3

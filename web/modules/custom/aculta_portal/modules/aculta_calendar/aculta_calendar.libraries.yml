@@ -1,0 +1,6 @@
+agenda:
+  css:
+    theme:
+      css/agenda.css: {}
+  dependencies:
+    - core/drupal

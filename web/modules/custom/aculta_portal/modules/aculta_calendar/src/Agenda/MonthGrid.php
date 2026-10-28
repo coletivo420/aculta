@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_events\Agenda;
+namespace Drupal\aculta_calendar\Agenda;
 
 /**
- * Grade de um mês (F5), independente de entidade e de renderização.
+ * Grade de um mês (CA4), independente de entidade e de renderização.
  *
  * Semanas começam na segunda (ISO 8601). Dias de outros meses entram como célula
  * vazia, para a grade fechar em sete colunas, sem conteúdo fora do mês.
@@ -25,7 +25,7 @@ final class MonthGrid {
    * @param int $mes
    *   Mês de 1 a 12.
    * @param array<string, array<int, array<string, mixed>>> $porDia
-   *   Itens por chave Y-m-d (saída de EventAgenda::dias()).
+   *   Itens por chave Y-m-d (saída de CalendarAgenda::dias()).
    * @param \DateTimeImmutable $hoje
    *   Data de referência em horário de Brasília, para marcar o dia de hoje.
    *

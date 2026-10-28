@@ -18,7 +18,7 @@ Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem 
 | E3 | `DateEventHooks::nodeViewAlter` e `viewsPostExecute` | Listagens sem data passada e cache até a próxima data (`EventDateHooks`, `UpcomingDates`) | **Feito, com desvio.** `viewsPostExecute` virou `#[Hook('views_post_execute')]`; `nodeViewAlter` não tem equivalente em entity view no ACULTA, então a regra vive nos controllers da página e do catálogo. Sem cron (T5). `nodePrepareForm` (S1) não copiado. | `8bd6d832b` |
 | E4 | `DateEventHooks::nodePrepareForm` | **Não copiar** (S1). Pré-preenchimento só com checagem de acesso, se for necessário | **Decidido: não copiado.** Pedido pendente se o responsável quiser o recurso | — |
 | E5 | `openculturas_calendar_widget` (allowlist do `source_uri`, S3) | `EmbedSourceAllowlist` | **Feito.** Rota `/calendario/incorporar` no ar no servidor de teste, com `frame-ancestors` explícito e `noindex`; smoke visual em 320, 390 e 1280 px | `7985bc36f`, `224c3925e`, `e81c841f0` |
-| E6 | `AddToCal` (regra, sem cópia) | `IcsEventBuilder` próprio, escape RFC 5545, CR/LF como espaço (S2, T10) | **Feito** na exportação de período, com séries (`RRULE`, `EXDATE`, `RECURRENCE-ID`). Exportação de uma data só ainda não existe | `a26bff741`, `e8e8d0151`, `224c3925e` |
+| E6 | `AddToCal` (regra, sem cópia) | `IcsEventBuilder` próprio, escape RFC 5545, CR/LF como espaço (S2, T10), no `aculta_calendar` | **Feito** para período (séries com `RRULE`, `EXDATE`, `RECURRENCE-ID`) e para uma data (`/eventos/{slug}/data/{id}/calendario.ics`), a partir dos provedores de itens (ADR-031) | `a26bff741`, `e8e8d0151`, `224c3925e` |
 | E7 | `openculturas_map` | Leaflet + OSM público (padrão e fallback); Google Maps opcional com chave em `aculta_secrets`; link de rota do Google sem API (ADR-030, D-18) | **Parcial.** Geocodificação e mapa carregados na página, com lista textual e aviso de privacidade; a chave fica em `secrets`/ambiente. Faltam o agrupamento de marcadores e o link da política de privacidade. As verificações de termos, cobrança e LGPD do responsável seguem pendentes | `f761d8593`, ADR-014 |
 | E8 | `openculturas_section` (cor por vocabulário) | Frente B, B2 (cores fechadas) | **Feito** no tema. Consumidor na Revista pendente | `15a3f0488` |
 | E9 | `openculturas_faq` | FAQ, opcional (I-15) | **Não iniciado.** Só se o responsável pedir | — |
@@ -67,7 +67,7 @@ parecer de ODbL? (c) o envio ao OSM fica fora de escopo? Sem essas respostas, o 
 
 1. E2: views de locais e datas relacionadas, sem telefone, e-mail ou endereço. A exportação administrativa de datas entra pela API de provedores do calendário, pendente de CA0/CA2.
 2. R: interface de edição da regra e de uma ocorrência (D-14), com teste de expansão no fuso de Brasília.
-3. F5: visões de agenda e de mês, e a rota `/calendario/incorporar` quando o purpose estiver ativo.
+3. F5: **feito** no `aculta_calendar` (D-20): agenda, grade do mês, dia, `.ics` e `/calendario/incorporar`, com o `aculta_events` como provedor de itens. Falta o calendário no `main` (D6).
 4. F4 (E7): fechar o agrupamento de marcadores, o link da política de privacidade e as verificações da pendência 2.
 5. Teste Kernel de acesso por purpose dos tipos novos (não localizado até aqui).
 6. F6, F7, F8, F9.

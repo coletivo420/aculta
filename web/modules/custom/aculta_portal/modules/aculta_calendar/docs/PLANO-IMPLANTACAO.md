@@ -50,7 +50,7 @@ regra no `ROUTES-SITEMAP.md` antes de F5 (a regra de canonical do ACULTA é pela
 | `/calendario/dia/{ano}/{mes}/{dia}` | Eventos de um dia | Fonte do link da grade |
 | `/calendario/exportar.ics` | Exportação do período filtrado | Cabeçalho `text/calendar` |
 | `/calendario/incorporar` | Agenda para iframe | Sem menu do site; `noindex` |
-| `/eventos/{slug}/data/{id}.ics` | `.ics` de uma data | Usa o slug do evento |
+| `/eventos/{slug}/data/{id}/calendario.ics` | `.ics` de uma data | Usa o slug do evento; segmento literal final porque o `PathMatcher` do Drupal não casa sufixo `.ics` em placeholder |
 
 Não criar aliases temporários nem redirecionamentos (`AGENTS.md`). Caminho antigo responde 404.
 

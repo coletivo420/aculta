@@ -22,14 +22,11 @@ services:
     arguments: ['@http_client', '@key.repository', '@logger.factory']
   aculta_events.event_filter:
     class: Drupal\aculta_events\Agenda\EventFilter
-  aculta_events.month_grid:
-    class: Drupal\aculta_events\Agenda\MonthGrid
-  aculta_events.ics_exporter:
-    class: Drupal\aculta_events\Calendar\EventIcsExporter
-    arguments: ['@entity_type.manager', '@aculta_events.occurrences', '@aculta_events.event_filter']
-  aculta_events.agenda:
-    class: Drupal\aculta_events\Agenda\EventAgenda
-    arguments: ['@entity_type.manager', '@aculta_events.occurrences', '@aculta_events.event_filter']
+  aculta_events.item_provider:
+    class: Drupal\aculta_events\Calendar\EventCalendarItemProvider
+    arguments: ['@entity_type.manager', '@aculta_events.event_filter']
+    tags:
+      - { name: aculta_calendar.item_provider }
   aculta_events.embed_frame_subscriber:
     class: Drupal\aculta_events\EventSubscriber\EmbedFrameSubscriber
     arguments: ['@aculta_events.embed_hosts']

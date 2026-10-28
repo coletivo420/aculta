@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_events\Controller;
+namespace Drupal\aculta_calendar\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\RendererInterface;
@@ -10,26 +10,26 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Agenda para incorporação por iframe (/calendario/incorporar), sem menu nem rodapé do site.
+ * Agenda para incorporação por iframe (/calendario/incorporar), em CA3.
  *
- * Incorporável só por sites da própria ACULTA (EmbedFrameSubscriber). Leva noindex.
- * O restante do site continua sem permissão de incorporação.
+ * Sem menu nem rodapé do site. A política de incorporação é aplicada pelo
+ * módulo que publica a rota, a partir da allowlist de aculta_calendar.
  */
-final class EventEmbedController extends ControllerBase {
+final class EmbedController extends ControllerBase {
 
   /**
    * Construtor.
    */
   public function __construct(
     private readonly RendererInterface $renderizador,
-    private readonly EventAgendaController $agendaPagina,
+    private readonly AgendaController $agendaPagina,
   ) {}
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('renderer'), EventAgendaController::create($container));
+    return new static($container->get('renderer'), AgendaController::create($container));
   }
 
   /**
@@ -49,7 +49,7 @@ final class EventEmbedController extends ControllerBase {
       . '</main></body></html>';
 
     $resposta = new Response($html, 200, ['Content-Type' => 'text/html; charset=UTF-8']);
-    // A política de incorporação (só sites da ACULTA) é aplicada por EmbedFrameSubscriber.
+    // A política de incorporação (só sites da ACULTA) é aplicada pelo publisher.
     $resposta->headers->set('X-Robots-Tag', 'noindex, nofollow, noarchive');
     return $resposta;
   }
