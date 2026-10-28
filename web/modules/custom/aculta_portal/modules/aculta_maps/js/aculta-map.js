@@ -130,6 +130,14 @@
           link.textContent = Drupal.t('Ver detalhes');
           content.appendChild(link);
         }
+        if (isSafeUrl(marker.routeUrl)) {
+          const route = document.createElement('a');
+          route.href = marker.routeUrl;
+          route.target = '_blank';
+          route.rel = 'noopener noreferrer';
+          route.textContent = Drupal.t('Ver rota');
+          content.appendChild(route);
+        }
         const info = new window.google.maps.InfoWindow({ content });
         pin.addListener('click', () => info.open({ anchor: pin, map }));
       });
@@ -222,6 +230,14 @@
       link.href = marker.url;
       link.textContent = Drupal.t('Ver detalhes');
       content.appendChild(link);
+    }
+    if (isSafeUrl(marker.routeUrl)) {
+      const route = document.createElement('a');
+      route.href = marker.routeUrl;
+      route.target = '_blank';
+      route.rel = 'noopener noreferrer';
+      route.textContent = Drupal.t('Ver rota');
+      content.appendChild(route);
     }
     pin.bindPopup(content);
   }

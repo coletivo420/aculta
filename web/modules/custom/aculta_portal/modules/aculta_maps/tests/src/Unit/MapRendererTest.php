@@ -44,7 +44,13 @@ final class MapRendererTest extends UnitTestCase {
       'id' => 'event map',
       'label' => 'Eventos',
       'markers' => [
-        ['lat' => -16.68123, 'lng' => -49.26011, 'label' => 'Local aproximado', 'precision' => 'approximate'],
+        [
+          'lat' => -16.68123,
+          'lng' => -49.26011,
+          'label' => 'Local aproximado',
+          'precision' => 'approximate',
+          'routeUrl' => 'https://www.google.com/maps/dir/?destination=Goi%C3%A2nia',
+        ],
         ['lat' => 91, 'lng' => 0, 'label' => 'Coordenada inválida'],
       ],
     ]);
@@ -54,6 +60,7 @@ final class MapRendererTest extends UnitTestCase {
     $this->assertSame(-16.68, $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers'][0]['lat']);
     $this->assertSame(-49.26, $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers'][0]['lng']);
     $this->assertCount(1, $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers']);
+    $this->assertSame('https://www.google.com/maps/dir/?destination=Goi%C3%A2nia', $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers'][0]['routeUrl']);
   }
 
   /**

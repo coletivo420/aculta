@@ -63,7 +63,7 @@ Regras do contrato:
 
 ## 6. Migração do código existente (microfase MP1)
 
-O código de mapa estava em `aculta_events`. MP1 moveu `GeocodingService`, `aculta-map.js` e `GeocodingServiceTest` para `aculta_maps`. `MapController` permanece em `aculta_events`, pois obtém e prepara dados do catálogo de locais e atende a rota pública `/mapa`.
+O código de mapa estava em `aculta_events`. MP1 moveu `GeocodingService`, `aculta-map.js` e `GeocodingServiceTest` para `aculta_maps`. `MapController` permanece em `aculta_events`, pois obtém e prepara dados do catálogo de locais e atende a rota pública `/mapa`; MP5 usa o builder compartilhado para links de rota.
 
 `aculta_events` chama `MapRenderer` e `GeocodingService` do `aculta_maps`. MP3 estabelece Leaflet/OSM como padrão; MP4 implementa Google como opção e fallback.
 

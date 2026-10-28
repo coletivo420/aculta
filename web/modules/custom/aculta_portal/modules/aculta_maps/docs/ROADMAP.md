@@ -1,7 +1,7 @@
 # Roadmap — ACULTA Maps (`aculta_maps`)
 
 Roadmap único do submódulo. Plano e contrato: `PLANO-IMPLANTACAO.md`.
-Status: MP0–MP2 e MP4 concluídas; MP3 técnica implementada, aguardando revisão de transparência e ativação no Runtime; MP5 em andamento; MP6–MP7 pendentes.
+Status: MP0–MP2 e MP4–MP5 concluídas tecnicamente; MP3 aguarda revisão de transparência antes da ativação no Runtime; MP6–MP7 pendentes.
 
 ## MP0 — Criação do submódulo
 
@@ -47,9 +47,9 @@ Evidência MP4: `d9ae563d4`.
 
 ## MP5 — Link de rota sem API
 
-- [ ] `RouteLinkBuilder` usa o modelo configurável e codifica o destino.
-- [ ] Link abre em nova aba com `noopener noreferrer`; não injeta script Google para gerar a rota.
-- [ ] Lista textual e popups do mapa oferecem rota quando há endereço.
+- [x] `RouteLinkBuilder` usa o modelo configurável, codifica o destino e rejeita hosts não aprovados.
+- [x] Link abre em nova aba com `noopener noreferrer`; não injeta script Google para gerar a rota.
+- [x] Lista textual e popups do mapa oferecem rota quando há endereço.
 
 ## MP6 — Privacidade
 

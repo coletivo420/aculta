@@ -9,6 +9,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Drupal\aculta_maps\MapRenderer;
+use Drupal\aculta_maps\RouteLinkBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -33,13 +34,14 @@ final class MapController extends ControllerBase {
   public function __construct(
     private readonly LocationCatalogue $locais,
     private readonly MapRenderer $mapRenderer,
+    private readonly RouteLinkBuilder $routeLinks,
   ) {}
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('aculta_events.locations'), $container->get('aculta_maps.renderer'));
+    return new static($container->get('aculta_events.locations'), $container->get('aculta_maps.renderer'), $container->get('aculta_maps.route_link_builder'));
   }
 
   /**
@@ -54,7 +56,18 @@ final class MapController extends ControllerBase {
       if ($item['endereco'] !== '') {
         $linha .= '<br>' . Html::escape($item['endereco']);
       }
-      $itens[] = ['#markup' => $linha];
+      $itemRender = [
+        '#type' => 'container',
+        'location' => ['#markup' => $linha],
+      ];
+      if ($item['endereco'] !== '') {
+        $itemRender['route'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Ver rota'),
+          '#url' => $this->routeLinks->build($item['endereco']),
+        ];
+      }
+      $itens[] = $itemRender;
 
       $coords = $local->get('field_coordenadas')->first()?->getValue();
       if (!empty($coords['lat']) && !empty($coords['lon'])) {
@@ -65,6 +78,7 @@ final class MapController extends ControllerBase {
           'lng' => round((float) $coords['lon'], $casas),
           'description' => $item['endereco'],
           'precision' => $casas === self::CASAS_APROXIMADO ? 'approximate' : 'exact',
+          'routeUrl' => $item['endereco'] !== '' ? $this->routeLinks->build($item['endereco'])->toString() : '',
         ];
       }
     }

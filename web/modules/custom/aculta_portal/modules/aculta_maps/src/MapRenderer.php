@@ -55,6 +55,7 @@ final class MapRenderer {
         'label' => (string) ($marker['label'] ?? ''),
         'description' => (string) ($marker['description'] ?? ''),
         'url' => (string) ($marker['url'] ?? ''),
+        'routeUrl' => (string) ($marker['routeUrl'] ?? ''),
       ];
     }
 
