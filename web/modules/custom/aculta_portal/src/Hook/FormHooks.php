@@ -229,7 +229,11 @@ final class FormHooks {
         unset($form['account'][$key]);
       }
     }
+    // O Core espera o campo de papéis no buildEntity: mantém os papéis atuais, sem exibir o campo.
+    $papeis = array_values(array_diff($account->getRoles(), ['authenticated']));
+    $form['account']['roles'] = ['#type' => 'value', '#value' => array_combine($papeis, $papeis) ?: []];
     $form['actions']['submit']['#value'] = $this->translation->translate('Salvar nova senha');
+    $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:recoveryPasswordRedirect';
     $title = Html::escape((string) $this->translation->translate('Crie sua nova senha'));
     $form['#prefix'] = '<div id="aculta-account-password" data-dialog-title="' . $title . '" hidden>';
     $form['#suffix'] = '</div>';

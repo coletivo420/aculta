@@ -19,6 +19,12 @@
           beforeClose: () => false,
         });
         dialog.showModal();
+        // O overlay do jQuery UI é criado com o z-index do diálogo; baixa uma camada para o botão do modal continuar clicável.
+        setTimeout(() => {
+          document.querySelectorAll('.ui-widget-overlay').forEach((overlay) => {
+            overlay.style.zIndex = '10001';
+          });
+        }, 0);
         element.querySelector('input[type="password"]')?.focus();
       });
     },

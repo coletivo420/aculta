@@ -221,6 +221,13 @@ final class PortalFormCallbacks {
     return $form;
   }
 
+  /**
+   * Recuperação de senha: depois de salvar, a pessoa vai ao painel (a página de edição de conta é administrativa).
+   */
+  public function recoveryPasswordRedirect(array &$form, FormStateInterface $formState): void {
+    $formState->setRedirect('aculta_portal.dashboard');
+  }
+
   /** Returns the profile-photo form to the account overview. */
   public function accountPhotoRedirect(array &$form, FormStateInterface $formState): void {
     $formState->setRedirect('aculta_portal.dashboard');

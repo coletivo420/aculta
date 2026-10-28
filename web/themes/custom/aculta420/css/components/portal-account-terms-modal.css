@@ -4,9 +4,12 @@
 }
 
 /* Mensagens de status (alert-wrapper, z-index 9999) não podem cobrir o botão do modal de senha. */
+/* Acima das mensagens de status (9999). O overlay fica uma camada abaixo: ver js/account-password-modal.js. */
 .ui-dialog:has(#aculta-account-password) {
-  z-index: 10001;
+  z-index: 10002;
 }
+
+
 
 /* Popup de aceite dos termos (AccountTermsHooks): diálogo modal do Drupal, como os demais modais (fundo escurecido
    pelo token --aculta-scrim em dialog.css). Não tem botão de fechar: só o aceite fecha. */
