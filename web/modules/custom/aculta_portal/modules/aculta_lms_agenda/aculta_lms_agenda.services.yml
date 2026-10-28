@@ -1,0 +1,4 @@
+services:
+  aculta_lms_agenda.entries:
+    class: Drupal\aculta_lms_agenda\AgendaEntriesProvider
+    arguments: ['@entity_type.manager', '@aculta_lms.class_activity_deadline_manager', '@aculta_events.occurrences', '@datetime.time']

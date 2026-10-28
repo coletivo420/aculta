@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Campos que o submódulo acrescenta às entidades de eventos.
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
+/**
+ * Implements hook_entity_base_field_info().
+ *
+ * O vínculo com a turma fica aqui, e não em aculta_events, para o módulo de eventos
+ * continuar independente do LMS. Sem este submódulo, evento não tem turma.
+ */
+function aculta_lms_agenda_entity_base_field_info(EntityTypeInterface $entity_type): array {
+  if ($entity_type->id() !== 'aculta_event') {
+    return [];
+  }
+  $fields['field_turma'] = BaseFieldDefinition::create('entity_reference')
+    ->setLabel(new TranslatableMarkup('Turma'))
+    ->setDescription(new TranslatableMarkup('Turma do LMS a que o evento pertence. Vazio = evento público do purpose eventos; preenchido = visível só aos matriculados.'))
+    ->setSetting('target_type', 'group')
+    ->setSetting('handler', 'default:group')
+    ->setSetting('handler_settings', ['target_bundles' => ['lms_class' => 'lms_class']]);
+  return $fields;
+}

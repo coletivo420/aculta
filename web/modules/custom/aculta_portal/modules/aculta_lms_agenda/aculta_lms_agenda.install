@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Instalação do submódulo ACULTA LMS Agenda.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Cria a coluna do campo de turma em aculta_event, que o hook de campos declara.
+ */
+function aculta_lms_agenda_install(): void {
+  $manager = \Drupal::service('entity_field.manager');
+  $definicao = $manager->getBaseFieldDefinitions('aculta_event')['field_turma'] ?? NULL;
+  if ($definicao === NULL) {
+    return;
+  }
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition(
+    'field_turma',
+    'aculta_event',
+    'aculta_lms_agenda',
+    $definicao,
+  );
+}

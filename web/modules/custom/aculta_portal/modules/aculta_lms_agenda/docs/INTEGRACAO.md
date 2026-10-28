@@ -40,5 +40,13 @@ da agenda não tem caminho público: toda consulta recebe o usuário e aplica es
 
 ## Dados
 
-- `aculta_event.field_turma`: `entity_reference` para `group` com bundle `lms_class`.
-  Evento sem turma é público, conforme o purpose eventos; evento de turma é restrito.
+- `aculta_event.field_turma`: `entity_reference` para `group` com bundle `lms_class`. Declarado por
+  `hook_entity_base_field_info()` no próprio `aculta_lms_agenda`, e não em `aculta_events`, para o
+  módulo de eventos continuar independente do LMS. Evento sem turma é público; evento de turma é restrito.
+- `hook_install` cria a coluna do campo ao habilitar o submódulo.
+
+## Bloco do painel
+
+`ProximosEventosBlock` (`aculta_lms_agenda_proximos`) mostra os próximos 5 itens dos próximos 60
+dias, em dd/mm/aaaa HH:mm, para o usuário atual. Visitante vê o aviso de lista vazia. A colocação
+na região do painel é configuração do site e depende de aprovação.

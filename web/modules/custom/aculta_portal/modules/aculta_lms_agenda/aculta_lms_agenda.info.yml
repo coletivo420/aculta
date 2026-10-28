@@ -1,0 +1,9 @@
+name: ACULTA LMS Agenda
+type: module
+description: 'Prazos das turmas e eventos de turma na agenda e no painel de aprendizado. Restrito aos matriculados (docs/INTEGRACAO.md, D-15).'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - aculta_portal:aculta_lms
+  - aculta_portal:aculta_events
+  - group:group
