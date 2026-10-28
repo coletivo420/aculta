@@ -1,0 +1,21 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Selos de acessibilidade
+status: experimental
+group: Conteúdo
+description: 'Lista rótulos textuais de recursos de acessibilidade; cada selo comunica seu significado por texto.'
+props:
+  type: object
+  properties:
+    label:
+      type: string
+      title: Rótulo da lista
+      description: Nome acessível opcional para o conjunto de selos.
+      default: Recursos de acessibilidade
+slots:
+  badges:
+    title: Selos
+    description: Itens HTML li com rótulos visíveis, preparados pelo consumidor.
+assets:
+  css:
+    component:
+      accessibility-badges.css: {}
