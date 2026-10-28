@@ -42,7 +42,7 @@ Entrada: F1 concluída.
 
 - [x] Entidades `Evento` e `Local`, e entidade de data com exceção e expansão de ocorrências (commits `0e6d81397`, `bb0a907c8`).
 - [x] Vocabulário `aculta_event_type`, com migração de `event_type` (update 10001, commit `8668fc957`).
-- [x] Vocabulário `aculta_location_type`, com os 17 tipos do OpenCulturas em português (commit `fd70ddd8a`).
+- [x] Vocabulário `aculta_location_type`, com os 17 tipos do OpenCulturas em português; Kernel confirma criação/listagem e idempotência do update 10003 (`fd70ddd8a`, `82efe4456`).
 - [x] Campos informativos `field_gratuito`, `field_pricing`, `field_pricing_info` e `field_ticketing` em `aculta_event_date` (D-29); update 10004, sem fluxo de pagamento. Kernel: persistência dos campos e idempotência do update.
 - [x] Permissões, acesso ao evento e purpose das rotas de evento (commit `5226494e2`).
 - [ ] `ContentPurposeResolver` cobre os tipos novos (confirmar).
