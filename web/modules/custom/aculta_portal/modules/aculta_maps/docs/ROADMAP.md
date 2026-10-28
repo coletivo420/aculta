@@ -58,7 +58,7 @@ Evidência MP5: `33b638ccf`.
 - [x] Coordenadas de precisão aproximada arredondadas antes de sair do `MapRenderer`; Unit cobre duas casas decimais.
 - [x] Aviso de privacidade visível na página do mapa, com link para `/sobre/politica-de-privacidade`; Kernel cobre a renderização.
 
-Evidência técnica MP6: `58359728f`; testes atuais Maps 10/44 e Events 57/668.
+Evidência técnica MP6: `58359728f`; suítes verificadas em 2026-10-28: Maps 10 testes/44 assertions/2 depreciações e Events 57/671/26.
 
 ## MP7 — Verificação e documentação para agentes
 
