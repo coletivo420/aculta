@@ -11,6 +11,7 @@ esta página não replica listas de versões ou de módulos habilitados.
 
 - [Autenticação e identidade](AUTHENTICATION.md)
 - [Avatar e identidade de autoria](../architecture/avatar.md)
+- [Arquitetura do ACULTA420](../architecture/aculta420.md)
 - [Arquitetura e política de imagens](../architecture/aculta_image.md)
 - [Arquitetura da Wiki](../architecture/aculta_wiki.md)
 - [Conta, AJAX e Views](ACCOUNT-UI.md)
