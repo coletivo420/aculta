@@ -439,3 +439,9 @@ Sem nomes, sem lista. Atualização a cada minuto; texto alternativo com o perí
 
 Análise de funções, hooks e padrões de código, com os itens C-01 a C-10 e os defeitos a corrigir antes do
 reuso: `docs/architecture/OPENCULTURAS-INCORPORACAO-CODIGO.md`.
+
+## 10. Decisões registradas (2026-10-28)
+
+As perguntas da seção 7 foram respondidas. Decisões, impactos e pendências estão em
+`docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Pendente: endereço de divulgação responsável
+(I-17) e ADR da exceção do Google Maps (D-08).
