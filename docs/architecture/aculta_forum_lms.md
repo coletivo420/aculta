@@ -12,7 +12,9 @@ Ele não é dono de tópicos, memberships ou permissões globais de Fórum.
   [histórico arquivado](../history/changelog/aculta_forum_lms.md).
   O provider atual rejeita Group/curso inválidos e delega a autorização ao
   `Group::takeAccess()` ou à permissão contextual do educador, com cacheability
-  e revalidação.
+  e revalidação. O contrato transversal está em
+  [ADR-025](../decisions/ADR-025-acesso-e-moderacao-forum-lms.md), incluindo a
+  limitação da moderação contextual a `view` e `approve`.
 
 ## Fronteiras
 
