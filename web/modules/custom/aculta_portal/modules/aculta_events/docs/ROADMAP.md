@@ -42,7 +42,7 @@ Entrada: F1 concluída.
 
 - [x] Entidades `Evento` e `Local`, e entidade de data com exceção e expansão de ocorrências (commits `0e6d81397`, `bb0a907c8`).
 - [x] Vocabulário `aculta_event_type`, com migração de `event_type` (update 10001, commit `8668fc957`).
-- [ ] Vocabulário `aculta_location_type`.
+- [x] Vocabulário `aculta_location_type`, com os 17 tipos do OpenCulturas em português (commit `fd70ddd8a`).
 - [x] Permissões, acesso ao evento e purpose das rotas de evento (commit `5226494e2`).
 - [ ] `ContentPurposeResolver` cobre os tipos novos (confirmar).
 - [ ] Testes Kernel de acesso por purpose e de datas (confirmar cobertura).
@@ -64,12 +64,12 @@ Saída: catálogo e página do evento navegáveis. Cartão em SDC e validação 
 
 Entrada: F3 concluída; chave de API do Google provisionada para teste (`secrets/`) e restrição por referenciador definida.
 
-- [ ] Campo de coordenadas e endereço; regra de precisão do endereço.
-- [ ] Geocodificação no servidor (Geocoding API), uma vez por local, com a chave fora do repositório.
-- [ ] Bloco de mapa (Maps JavaScript API + agrupamento de marcadores) e lista sincronizada.
-- [ ] Mapa carregado na exibição da página, com aviso de privacidade e link para a política.
-- [ ] Filtro de tipo de local.
-- [ ] Alternativa textual completa ao mapa.
+- [x] Campo de coordenadas e endereço; regra de precisão do endereço (commit `fd70ddd8a`).
+- [x] Geocodificação no servidor (Geocoding API), uma vez por local, com a chave fora do repositório (commit `f761d8593`).
+- [ ] Bloco de mapa (Maps JavaScript API + agrupamento de marcadores) e lista sincronizada. **Parcial** (`f761d8593`): mapa e lista; falta a biblioteca de agrupamento de marcadores.
+- [ ] Mapa carregado na exibição da página, com aviso de privacidade e link para a política. **Parcial** (`f761d8593`): mapa e aviso; falta o link, porque o site ainda não tem página pública da política.
+- [x] Filtro de tipo de local (commit `fd70ddd8a`).
+- [x] Alternativa textual completa ao mapa (commit `f761d8593`).
 
 Saída: `/locais` e `/mapa` funcionam sem JavaScript na lista; o mapa é progressivo.
 
@@ -90,7 +90,7 @@ Saída: calendário e exportação em teste, nos dois purposes (`main` e `evento
 ## Itens de incorporação do OpenCulturas ainda não concluídos
 
 - [x] Formatter de datas futuras (T5, commit `56725c71d`), sem smart_date e sem cron de invalidação.
-- [ ] E3: hooks de datas (`nodeViewAlter`, `viewsPostExecute`) reescritos em classes com `#[Hook]`, cache até a próxima data.
+- [x] E3: datas passadas fora das listagens, com cache até a próxima data (commit `8bd6d832b`). `viewsPostExecute` virou `#[Hook('views_post_execute')]` em `EventDateHooks`; o `nodeViewAlter` não tem equivalente em entity view no ACULTA e a regra vive no builder da página e do catálogo (`UpcomingDates`). Sem cron. A tag `aculta_event_list`, antes declarada e nunca invalidada, agora é invalidada por hook ao salvar ou excluir evento e data.
 - [ ] E4: pré-preenchimento de data com checagem de acesso, **se** for necessário. O `nodePrepareForm` original não é copiado (S1).
 - [ ] E2: views de locais e de datas relacionadas, sem export com telefone e e-mail (S5).
 - [ ] E9 (opcional, I-15): FAQ. Só se o responsável pedir.
