@@ -1,6 +1,6 @@
 # Política de requests e redirects cross-domain
 
-Status: **hardening pré-ACULTA420 0.2-B.3; validação Runtime pendente**.
+Estado dos componentes: [aculta_portal](../operations/status/aculta_portal.yml) e [ACULTA420](../operations/status/aculta420.yml). Este documento registra o contrato cross-domain.
 
 Este contrato complementa `ADMIN-DOMAIN-POLICY.md` e cobre toda transição
 intencional entre purposes ACULTA.

@@ -1,6 +1,6 @@
 # Política do domínio de checkout e pagamentos
 
-Status: **política implementada e gates estruturais PASS; fluxo funcional Commerce bloqueado pela configuração atual do Homelab**.
+Estado dos componentes relacionados: [Commerce](../operations/status/aculta_commerce.yml), [Doações](../operations/status/aculta_donation.yml) e [Mercado Pago](../operations/status/aculta_pagamentos_mercadopago.yml). Este documento registra a política de domínio.
 
 ## Regra canônica
 

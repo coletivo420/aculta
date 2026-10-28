@@ -1,6 +1,6 @@
 # Política de confirmação de e-mail
 
-Status: **parcialmente implementada** (ver seções 9 e 10). As decisões pendentes da seção 6 continuam abertas.
+Status dos componentes que implementam a política: [aculta_portal](../operations/status/aculta_portal.yml), [aculta_mail_confirmer](../operations/status/aculta_mail_confirmer.yml) e [aculta_mail_confirmer_user](../operations/status/aculta_mail_confirmer_user.yml). Pendências operacionais estão no [registro de dívidas](../operations/DEBT-REGISTER.md).
 
 ## 1. Regra
 

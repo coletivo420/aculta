@@ -1,6 +1,6 @@
 # Política de domínio administrativo
 
-Status: **implementada antes da ACULTA420 0.2-B.3; validação Runtime pendente**.
+Estado dos componentes: [aculta_portal](../operations/status/aculta_portal.yml) e [ACULTA420](../operations/status/aculta420.yml). Este documento registra o contrato da política.
 
 ## Regra canônica
 

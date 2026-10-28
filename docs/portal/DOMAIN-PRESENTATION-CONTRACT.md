@@ -1,6 +1,6 @@
 # ACULTA420 0.2-B.1 — Inventário da fronteira Domain Presentation
 
-Status: **0.2-B.1 concluída; 0.2-B.2 validada no Runtime Homelab; 0.2-B.3 e 0.2-B.4 implementadas na PR #88 e aguardando Runtime final**.
+Estado dos componentes: [aculta_portal](../operations/status/aculta_portal.yml) e [ACULTA420](../operations/status/aculta420.yml). O histórico da implementação fica nos changelogs e no Git.
 
 Este documento delimita a fronteira entre Drupal Domain, `aculta_portal` e o
 tema `aculta420` antes da implementação do shell multidomínio 0.2-C/0.2-D.
