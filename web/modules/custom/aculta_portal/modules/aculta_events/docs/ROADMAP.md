@@ -81,6 +81,45 @@ Entrada: F3 concluída. Configuração do mapa conforme D-18 e ADR-030: Leaflet 
 
 Saída: `/locais` e `/mapa` funcionam sem JavaScript na lista; o mapa é progressivo.
 
+## Campos do local — paridade com o OpenCulturas
+
+Mapeamento dos campos do tipo `location` do OpenCulturas (`profile/config/install/field.field.node.location.*.yml`).
+Um item por campo, com o nome em português e o tipo de dado no ACULTA. Os campos que não existem no ACULTA entram
+com o mesmo papel do OpenCulturas. `[x]` = já existe; `[ ]` = a fazer.
+
+- [x] Nome do local (`title`).
+- [x] Tipo de local: `aculta_location_type` (vocabulário próprio).
+- [x] Endereço, coordenadas e precisão do endereço (`aculta_events`, F4).
+- [x] Horário de funcionamento (campo estruturado, equivalente a `field_office_hours`).
+- [ ] Nome alternativo (`field_alternative_title`, string).
+- [ ] Subtítulo ou chamada (`field_subtitle`, texto curto).
+- [ ] Descrição (`body`, texto longo com formatação).
+- [ ] Foco ou categorias (`field_category`, referência a taxonomia).
+- [ ] Data de início da atividade, "ativo desde" (`field_started`, data).
+- [ ] Informações de horário em texto livre (`field_opening_hours`, texto longo), para casos que o campo estruturado não cobre.
+- [ ] Informações adicionais (`field_additional_information`, texto longo).
+- [ ] Informações de segurança (`field_safety_info`, texto longo). Visível ao público quando preenchido.
+- [ ] Acessibilidade (`field_accessibility`, lista de itens com rótulo textual). Alimenta os selos do I-28.
+- [ ] Contato (`field_contact_data`, bloco com telefone, e-mail e site). Não aparece em exportação administrativa (S5).
+- [ ] Imagem principal (`field_mood_image`, imagem).
+- [ ] Imagem de perfil (`field_portrait`, imagem).
+- [ ] Logotipo (`field_logo`, imagem).
+- [ ] Galeria (`field_gallery`, galeria de imagens, com `aculta_gallery`).
+- [ ] Apoiadores (`field_supporters`, referência a apoiadores). Exige autorização registrada (I-27).
+- [ ] Menções na imprensa (`field_press_quotes`, bloco com veículo, data e link externo). Ver I-26.
+- [ ] Pessoas regulares (`field_people_reference`, bloco com referência a perfil, do `aculta_user`).
+- [ ] Permitir reivindicação (`field_allow_claiming`, booleano). **Padrão fechado** (C-02): só o dono altera.
+- [ ] Recomendações (`field_recommendations`). Depende de um flag de recomendação que o ACULTA ainda não tem; entra depois.
+
+Campos do OpenCulturas que **não** entram, e por quê:
+- `field_reference_title` (título personalizado de seção): é apresentação, e o ACULTA controla isso pelo layout.
+- Visões de datas passadas, datas relacionadas, menções e recomendações (`field_past_dates_view_ref` e outros): são views de listagem, não campos. Ficam como blocos de conteúdo relacionado (I-02), não como campos do local.
+
+Regras transversais:
+- Todo campo de texto é traduzível e tem `t()` no código (regra do projeto).
+- Campo de contato, de segurança e de galeria seguem a política de imagem e de upload (`USER-UPLOADS.md`).
+- A reivindicação de posse (`field_allow_claiming`) é decidida pelo dono do local, e não pela moderação, enquanto o padrão for fechado.
+
 ## Fase F5 — Calendário (`aculta_calendar`)
 
 Entrada: F3 concluída.
