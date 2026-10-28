@@ -116,7 +116,7 @@ Cada painel é uma microfase, com permissão própria, teste Kernel de acesso ne
 | ADM2 | Lista administrativa de pessoas (mínima) | `aculta_user` | D-22 | **Implementado**, `701fa1d87`: `/painel-administrativo/pessoas`, restrita a `administer users`; só nome do perfil, apelido e situação. Kernel: rota negada a usuário comum e conteúdo minimizado. |
 | ADM3 | Uso de arquivos em `imagens` | `aculta_image` | — | **Feito**, commit `d80b4a748` |
 | ADM4 | FAQ e blocos editáveis | `aculta_faq` | D-23 | **Implementado**, `f34dbe5b5`: painel `/painel-administrativo/faq`; pergunta/resposta e bloco reutilizável limitados ao formato `aculta_editorial`; Kernel cobre XSS e negação para usuário comum. Cadastro/revisão editorial de conteúdo continua pendente. |
-| ADM5 | Conteúdo geral com filtros | `aculta_portal` | D-24 e allowlist confirmada pelo responsável | Só listar áreas moderáveis, inclusive coleções servidas por controllers, com allowlist explícita; implementação pendente |
+| ADM5 | Conteúdo geral com filtros | `aculta_content_admin` | D-24 e allowlist confirmada pelo responsável | **Implementado**, `5804517b9`: `/painel-administrativo/conteudo` descobre Views de entidades de conteúdo e usa allowlist para coleções servidas por controllers. Checa o acesso nativo de cada rota; só lista áreas permitidas e nega o painel se nenhuma estiver acessível. Kernel cobre View com/sem permissão e FAQ. |
 | ADM6 | Estado do índice de busca (só leitura) | `aculta_index` | — | **Feito**, commit `867bb05da` |
 | ADM7 | Configuração de mapa (provedor, chave, centro, zoom) e URL de rota configurável | `aculta_events` | ADR-030 (D-18) e F4 | Pendente da F4 |
 | ADM8 | Painel de embed do calendário | `aculta_calendar` | E5 com rota (F5) | Pendente da F5 |
