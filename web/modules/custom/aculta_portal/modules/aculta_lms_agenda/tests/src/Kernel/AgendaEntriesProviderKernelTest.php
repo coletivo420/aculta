@@ -147,6 +147,8 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $aluno = $this->createUser();
     $turma->addMember($aluno);
     $visitante = $this->createUser();
+    $alunoOutraTurma = $this->createUser();
+    $outraTurma->addMember($alunoOutraTurma);
 
     $de = new \DateTimeImmutable('2026-11-01 00:00:00', new \DateTimeZone('America/Sao_Paulo'));
     $ate = new \DateTimeImmutable('2026-11-30 23:59:59', new \DateTimeZone('America/Sao_Paulo'));
@@ -158,6 +160,9 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $this->assertSame('02/11/2026 12:00', $entradas[0]['inicio']->format('d/m/Y H:i'));
     $this->assertSame('04/11/2026 19:00', $entradas[1]['inicio']->format('d/m/Y H:i'));
     $this->assertSame([], $servico->forAccount($visitante, $de, $ate));
+    $entradasOutraTurma = $servico->forAccount($alunoOutraTurma, $de, $ate);
+    $this->assertSame(['Aula da Turma B'], array_column($entradasOutraTurma, 'titulo'));
+    $this->assertNotContains('Roda de conversa', array_column($entradasOutraTurma, 'titulo'));
   }
 
   /**
