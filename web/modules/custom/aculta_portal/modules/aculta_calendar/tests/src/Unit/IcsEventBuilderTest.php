@@ -47,7 +47,9 @@ class IcsEventBuilderTest extends UnitTestCase {
    * @return string[]
    */
   private function linhas(string $ics): array {
-    $desdobrado = str_replace("\r\n ", '', $ics);
+    // O bloco VTIMEZONE tem DTSTART próprio; fica fora das propriedades do evento.
+    $semFuso = preg_replace('/BEGIN:VTIMEZONE.*?END:VTIMEZONE\r\n/s', '', $ics) ?? $ics;
+    $desdobrado = str_replace("\r\n ", '', $semFuso);
     return explode("\r\n", rtrim($desdobrado, "\r\n"));
   }
 
@@ -64,12 +66,12 @@ class IcsEventBuilderTest extends UnitTestCase {
   }
 
   /**
-   * Título com CRLF não cria propriedade extra; CR e LF somem antes do escape.
+   * Título com CRLF não cria propriedade extra; CR e LF viram espaço antes do escape.
    */
   public function testTituloComQuebraDeLinhaNaoCriaPropriedade(): void {
     $ics = $this->builder->build(
       'node:1',
-      "Festa\r\nATTENDEE:mailto:invasor@exemplo.org",
+      "Evento\r\nATTENDEE:mailto:invasor@exemplo.org",
       '',
       $this->inicio(),
       NULL,
@@ -80,7 +82,7 @@ class IcsEventBuilderTest extends UnitTestCase {
     $this->assertCount(1, $this->propriedade($ics, 'SUMMARY'));
     $this->assertCount(0, $this->propriedade($ics, 'ATTENDEE'));
     $this->assertSame(
-      ['SUMMARY:FestaATTENDEE:mailto:invasor@exemplo.org'],
+      ['SUMMARY:Evento ATTENDEE:mailto:invasor@exemplo.org'],
       $this->propriedade($ics, 'SUMMARY'),
     );
   }
@@ -100,7 +102,7 @@ class IcsEventBuilderTest extends UnitTestCase {
     );
 
     $this->assertCount(0, $this->propriedade($ics, 'DESCRIPTION'));
-    $this->assertSame(['LOCATION:Sala 2DESCRIPTION:falsa'], $this->propriedade($ics, 'LOCATION'));
+    $this->assertSame(['LOCATION:Sala 2 DESCRIPTION:falsa'], $this->propriedade($ics, 'LOCATION'));
   }
 
   /**
@@ -198,9 +200,9 @@ class IcsEventBuilderTest extends UnitTestCase {
   }
 
   /**
-   * Evento com horário sai em UTC, com sufixo Z; DTSTAMP também.
+   * Evento com horário sai no horário de Brasília (TZID), com VTIMEZONE; DTSTAMP segue em UTC.
    */
-  public function testHorarioConvertidoParaUtcComDtstamp(): void {
+  public function testHorarioEmBrasiliaComVtimezoneEDtstampEmUtc(): void {
     $ics = $this->builder->build(
       'node:4',
       'Sessão',
@@ -211,9 +213,29 @@ class IcsEventBuilderTest extends UnitTestCase {
       $this->carimbo(),
     );
 
-    $this->assertSame(['DTSTART:20261028T220000Z'], $this->propriedade($ics, 'DTSTART'));
-    $this->assertSame(['DTEND:20261029T000000Z'], $this->propriedade($ics, 'DTEND'));
+    $this->assertSame(['DTSTART;TZID=America/Sao_Paulo:20261028T190000'], $this->propriedade($ics, 'DTSTART'));
+    $this->assertSame(['DTEND;TZID=America/Sao_Paulo:20261028T210000'], $this->propriedade($ics, 'DTEND'));
     $this->assertSame(['DTSTAMP:20261028T120000Z'], $this->propriedade($ics, 'DTSTAMP'));
+    $this->assertStringContainsString("BEGIN:VTIMEZONE\r\nTZID:America/Sao_Paulo\r\n", $ics);
+    $this->assertStringContainsString("TZOFFSETFROM:-0300\r\nTZOFFSETTO:-0300\r\n", $ics);
+  }
+
+  /**
+   * Horário informado em outro fuso é convertido para Brasília.
+   */
+  public function testHorarioDeOutroFusoEConvertidoParaBrasilia(): void {
+    $ics = $this->builder->build(
+      'node:4',
+      'Sessão',
+      '',
+      new \DateTimeImmutable('2026-10-28 22:00:00', new \DateTimeZone('UTC')),
+      NULL,
+      FALSE,
+      $this->carimbo(),
+    );
+
+    $this->assertSame(['DTSTART;TZID=America/Sao_Paulo:20261028T190000'], $this->propriedade($ics, 'DTSTART'));
+    $this->assertSame([], $this->propriedade($ics, 'DTEND'));
   }
 
   /**

@@ -23,6 +23,11 @@ final class IcsEventBuilder {
   private const LINE_LIMIT = 75;
 
   /**
+   * Fuso dos horários do ACULTA: horário de Brasília.
+   */
+  private const TZID = 'America/Sao_Paulo';
+
+  /**
    * Construtor.
    *
    * @param string $uidDomain
@@ -39,7 +44,7 @@ final class IcsEventBuilder {
    *   Chave estável da entidade, por exemplo "node:123". Compõe o UID junto
    *   com a data de início, então o mesmo evento na mesma data mantém o UID.
    * @param string $summary
-   *   Título. CR, LF e demais controles são removidos antes do escape.
+   *   Título. CR e LF viram espaço; demais controles são removidos antes do escape.
    * @param string $location
    *   Local. Recebe o mesmo tratamento do título. Vazio omite a propriedade.
    * @param \DateTimeImmutable $start
@@ -69,6 +74,15 @@ final class IcsEventBuilder {
       'VERSION:2.0',
       'PRODID:-//ACULTA//Calendario//PT',
       'CALSCALE:GREGORIAN',
+      // Brasília não tem horário de verão desde 2019: deslocamento fixo.
+      'BEGIN:VTIMEZONE',
+      'TZID:' . self::TZID,
+      'BEGIN:STANDARD',
+      'DTSTART:19700101T000000',
+      'TZOFFSETFROM:-0300',
+      'TZOFFSETTO:-0300',
+      'END:STANDARD',
+      'END:VTIMEZONE',
       'BEGIN:VEVENT',
       'UID:' . $this->uid($key, $start, $allDay),
       'DTSTAMP:' . $this->utc($stamp),
@@ -80,9 +94,9 @@ final class IcsEventBuilder {
       $lines[] = 'DTEND;VALUE=DATE:' . $end->format('Ymd');
     }
     else {
-      $lines[] = 'DTSTART:' . $this->utc($start);
+      $lines[] = 'DTSTART;TZID=' . self::TZID . ':' . $this->local($start);
       if ($end !== NULL) {
-        $lines[] = 'DTEND:' . $this->utc($end);
+        $lines[] = 'DTEND;TZID=' . self::TZID . ':' . $this->local($end);
       }
     }
 
@@ -106,19 +120,29 @@ final class IcsEventBuilder {
   }
 
   /**
-   * Data e hora em UTC, no formato de DATE-TIME com sufixo Z.
+   * Data e hora em UTC, no formato de DATE-TIME com sufixo Z (usado em DTSTAMP).
    */
   private function utc(\DateTimeImmutable $moment): string {
     return $moment->setTimezone(new \DateTimeZone('UTC'))->format('Ymd\THis\Z');
   }
 
   /**
-   * Remove CR, LF e demais controles antes do escape (RFC 5545 §3.3.11).
+   * Data e hora no horário de Brasília, sem sufixo (o TZID leva o fuso).
+   */
+  private function local(\DateTimeImmutable $moment): string {
+    return $moment->setTimezone(new \DateTimeZone(self::TZID))->format('Ymd\THis');
+  }
+
+  /**
+   * Troca CR e LF por espaço e remove os demais controles (RFC 5545 §3.3.11).
    *
-   * Evita que uma quebra de linha no título crie uma propriedade nova.
+   * Assim uma quebra de linha no título não cria propriedade nova, e as
+   * palavras continuam separadas.
    */
   private function clean(string $text): string {
-    return preg_replace('/[\x00-\x08\x0A-\x1F\x7F]/', '', $text) ?? '';
+    // CRLF conta como uma quebra só, então vira um espaço só.
+    $semQuebras = str_replace(["\r\n", "\r", "\n"], ' ', $text);
+    return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $semQuebras) ?? '';
   }
 
   /**
