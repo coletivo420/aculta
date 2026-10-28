@@ -1,11 +1,11 @@
 # Roadmap — ACULTA Maps (`aculta_maps`)
 
 Roadmap único do submódulo. Plano e contrato: `PLANO-IMPLANTACAO.md`.
-Status: todas as fases estão **a fazer**; nenhuma foi iniciada.
+Status: MP0 concluída; MP1–MP7 a fazer.
 
 ## MP0 — Criação do submódulo
 
-- [ ] `aculta_maps.info.yml` sem dependências de terceiros, `aculta_maps.services.yml` vazio, README do módulo.
+- [x] `aculta_maps.info.yml` sem dependências de terceiros, `aculta_maps.services.yml` vazio, README do módulo.
 - [ ] Teste de contrato: nenhum módulo do ACULTA chama Google, OSM ou Nominatim diretamente (grep no código, com exceções listadas).
 
 ## MP1 — Migração do código de `aculta_events`
