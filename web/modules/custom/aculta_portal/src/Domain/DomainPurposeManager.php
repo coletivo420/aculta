@@ -26,6 +26,7 @@ final class DomainPurposeManager {
     'courses' => 'cursos_aculta_org',
     'forum' => 'forum_aculta_org',
     'links' => 'links_aculta_org',
+    'eventos' => 'eventos_aculta_org',
   ];
 
   public function __construct(

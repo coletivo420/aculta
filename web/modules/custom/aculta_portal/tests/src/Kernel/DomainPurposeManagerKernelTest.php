@@ -33,6 +33,7 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
     'shop' => 'loja_aculta_org',
     'courses' => 'cursos_aculta_org',
     'forum' => 'forum_aculta_org',
+    'eventos' => 'eventos_aculta_org',
   ];
 
   private DomainPurposeManager $manager;
