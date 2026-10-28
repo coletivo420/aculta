@@ -178,3 +178,19 @@ Configuração de fluxo e de tipo de pedido fica só no servidor de testes (não
   ver o painel de nome e sobrenome.
 - Recuperação de senha: o redirecionamento agora vai para a Visão geral no domínio da conta (testado no navegador, em
   `conta.aculta.toca.net.br/conta-legada`, que mostra conteúdo). Repetir o teste completo depois do desbloqueio.
+
+### Fechamento da rodada de testes (2026-10-28)
+
+- **Recuperação de senha, repetição completa: passou.** E-mail recebido, link de uso único, modal "Crie sua nova senha" sem X
+  e sem Esc, senha salva, e a Visão geral (`conta.aculta.toca.net.br/conta-legada`) mostra "As alterações foram salvas".
+- **LMS, painel de nome: passou.** Compra de curso de teste pela conta `teste.comum`, o painel "Nome e sobrenome" aparece
+  na etapa de informações do pedido, preenchido pelo perfil. Nome vazio impede o avanço.
+  Correção: o fluxo `curso` usa o passo `order_information`. O passo `billing` não existe no `multistep_default`, e o painel
+  ficava sem exibição.
+- **Doação, painel de nome: não verificado.** Em um pedido de doação de visitante, a revisão aparece direto, sem a etapa de
+  contato e sem o painel de nome. Isso não foi causado pelo painel: a etapa `billing` do fluxo de doação é pulada. Falta
+  investigar esse comportamento do fluxo de doação (módulo `aculta_donation`) antes de dizer que o nome é pedido.
+- O gateway do Mercado Pago voltou a aceitar pedidos do tipo `curso` no servidor de testes (autorizado; só config).
+- Limpeza: pedidos 199 a 205, grupos 75 a 78 e a conta dmarc (uid 216) removidos. O produto 10 foi mantido.
+- Bloqueio do servidor: uma edição em andamento do agente do Mercado Pago quebrou o login por alguns minutos
+  (`PaymentGatewayFormHooks` não encontrada). `drush cr` resolveu quando o código estabilizou.
