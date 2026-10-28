@@ -33,11 +33,6 @@ final class EventRouteAccess {
       return AccessResult::forbidden()->cachePerUser()->setCacheMaxAge(0);
     }
 
-    $status = (string) $event->get('field_status')->value;
-    if (!in_array($status, ['publicado', 'cancelado'], TRUE)) {
-      return AccessResult::forbidden()->addCacheableDependency($event);
-    }
-
     return $event->access('view', $this->currentUser, TRUE);
   }
 

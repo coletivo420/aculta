@@ -175,6 +175,14 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
       'aculta_lms_agenda.event_route_access::access',
       $routeProvider->getRouteByName('aculta_events.date_ics')->getRequirement('_custom_access'),
     );
+    $draftPreview = Event::create([
+      'title' => 'Prévia de rascunho',
+      'field_status' => 'rascunho',
+    ]);
+    $draftPreview->save();
+    $editor = $this->createUser(['view aculta event drafts']);
+    $this->setCurrentUser($editor);
+    $this->assertTrue($routeAccess->access((string) $draftPreview->get('field_slug')->value)->isAllowed());
 
     $this->setCurrentUser($aluno);
     $this->assertSame('Roda de conversa', EventPageController::create($this->container)->page((string) $evento->get('field_slug')->value)['#titulo']);
