@@ -132,6 +132,14 @@ COURSES: Cursos | Trilhas | Meus cursos
 O tema não decide esses menus por hostname. A origem/seleção é preparada pelo
 Portal e apresentada pelo shell.
 
+### Vitrine na home do MAIN
+
+Na home do `main`, o contrato traz `regions.showcase`: uma lista de `purpose`, `title` e `url`
+(raiz de cada purpose com Domain ativo, gerada pelo Portal). O `page.html.twig` renderiza essa lista
+como `nav` com título “Ecossistema ACULTA”, com botões do Bootstrap. A lista é `NULL` fora da home do
+`main`. O tema não consulta Domain nem monta URLs. Detalhes: `docs/architecture/multidomain.md`,
+seção “Vitrine do MAIN”.
+
 ## Composição Twig/SDC
 
 `page.html.twig` permanece compositor do shell. Não criar um SDC monolítico da

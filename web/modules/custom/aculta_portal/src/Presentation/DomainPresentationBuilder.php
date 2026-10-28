@@ -104,6 +104,10 @@ final class DomainPresentationBuilder {
     // (ThemeHooks::brandMediaRender). Sem tema que trate a chave, o cabeçalho usa só o título.
     $brandMedia = $purpose === 'wiki' ? ['#brand_key' => 'wiki420', '#alt' => $title] : NULL;
 
+    $showcase = $purpose === 'main' && $this->pathMatcher->isFrontPage()
+      ? $this->buildShowcase($cacheability)
+      : NULL;
+
     return new DomainPresentation(
       [
         'purpose' => $purpose,
@@ -119,6 +123,7 @@ final class DomainPresentationBuilder {
         'wiki_search' => $purpose === 'wiki' && $this->wikiSearchFormBuilder !== NULL
           ? $this->wikiSearchFormBuilder->build()
           : NULL,
+        'showcase' => $showcase,
       ],
       $cacheability,
       [
@@ -128,6 +133,36 @@ final class DomainPresentationBuilder {
         'show_site_header' => $purpose === 'wiki' || ($purpose === 'main' && $this->pathMatcher->isFrontPage()),
       ],
     );
+  }
+
+  /**
+   * Vitrine da home do MAIN: um link para a raiz de cada purpose com Domain ativo.
+   *
+   * O conteúdo de cada subdomínio continua respondendo somente no próprio host; a vitrine apenas
+   * aponta para ele. A URL vem do DomainPurposeManager, então respeita o ambiente (teste ou produção).
+   * Purposes sem Domain ativo são omitidos.
+   *
+   * @return list<array{purpose: string, title: string, url: string}>
+   */
+  private function buildShowcase(CacheableMetadata $cacheability): array {
+    $items = [];
+    foreach (array_keys(self::PURPOSE_IDENTITIES) as $purpose) {
+      if ($purpose === 'main') {
+        continue;
+      }
+      $domain = $this->domainPurpose->getDomain($purpose);
+      $url = $this->domainPurpose->pathUrl($purpose, '/');
+      if ($domain === NULL || $url === NULL) {
+        continue;
+      }
+      $cacheability->addCacheableDependency($domain);
+      $items[] = [
+        'purpose' => $purpose,
+        'title' => (string) $this->translation->translate(self::PURPOSE_IDENTITIES[$purpose]['title']),
+        'url' => $url->toString(),
+      ];
+    }
+    return $items;
   }
 
 }

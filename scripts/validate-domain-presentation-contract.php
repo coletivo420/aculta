@@ -71,7 +71,7 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
     'Identity contract has the stable key set: ' . $purpose,
   );
   $assert(
-    array_keys($theme['regions']) === ['brand_media', 'navigation', 'actions', 'wiki_search'],
+    array_keys($theme['regions']) === ['brand_media', 'navigation', 'actions', 'wiki_search', 'showcase'],
     'Region contract has the stable key set: ' . $purpose,
   );
   $assert($theme['identity']['purpose'] === $purpose, 'Purpose remains stable in presentation: ' . $purpose);
@@ -102,6 +102,14 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
       && $theme['regions']['navigation'] === NULL
       && $theme['regions']['actions'] === NULL,
     'Wiki receives branded media and the shared GET search form; navigation/actions stay deferred: ' . $purpose,
+  );
+  // Vitrine só na home do MAIN: outros purposes nunca recebem itens; no MAIN, cada item é uma raiz de purpose.
+  $showcase = $theme['regions']['showcase'];
+  $assert(
+    $showcase === NULL
+      || ($purpose === 'main' && is_array($showcase) && array_reduce($showcase, static fn(bool $ok, $item): bool => $ok
+        && is_array($item) && array_keys($item) === ['purpose', 'title', 'url'] && !str_contains($item['purpose'], 'main'), TRUE)),
+    'Showcase is only offered on the MAIN front and lists purpose roots: ' . $purpose,
   );
 
   $contexts = $presentation->getCacheContexts();

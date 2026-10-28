@@ -38,6 +38,41 @@ hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado e
 | forum | growroom420.aculta.org | growroom420.aculta.toca.net.br | ativo (0.2.0-dev.57) |
 | links | links.aculta.org | links.aculta.toca.net.br | Domain/purpose ativo; landing preservadora em `aculta_links`; Runtime de teste HTTP 200/404 confirmado; DNS de produção não provisionado |
 
+## Vitrine do MAIN (2026-10-28)
+
+**Comportamento anterior (medido no servidor de testes em 2026-10-28):** cada conteúdo
+respondia só no próprio host. Pelo `main`, `/verbete/...` da wiki respondia 403, `/noticias`
+da revista e `/topico/...` do fórum respondiam 404, e `/apoio` respondia 404 em todos os hosts
+(é rota interna). Só a raiz de cada host era acessível e o `main` não apresentava os subdomínios.
+
+**Decisão do responsável (2026-10-28):** “aparecer no main” significa **vitrine**. A home do
+`main` apresenta um link para a raiz de cada subdomínio com Domain ativo. O conteúdo de cada
+subdomínio continua respondendo somente no próprio host.
+
+**O que muda:**
+
+- `DomainPresentationBuilder` monta `regions.showcase` (lista de `purpose`, `title`, `url`) só
+  quando o purpose é `main` e a requisição é a home. Cada URL vem de `DomainPurposeManager::pathUrl`,
+  então respeita o ambiente (teste ou produção). Purposes sem Domain ativo são omitidos.
+- O tema (`page.html.twig`) renderiza a lista como `nav` com título “Ecossistema ACULTA”.
+- Cacheability: cada Domain listado entra como dependência; o contexto `url.path.is_front` já existia.
+- O gate `scripts/validate-domain-presentation-contract.php` passou a exigir a chave `showcase` e a
+  checar que a vitrine só existe no `main`.
+
+**O que não muda:**
+
+- Acesso e roteamento por purpose (`DomainPurposeRequestSubscriber`, `DomainRoutePolicy`).
+- Canonical: cada conteúdo continua com canonical no host dono, em produção.
+- Conta, fluxo de apoio e checkout continuam nos seus purposes (decisões registradas acima).
+- Sitemap: a vitrine não cria URLs novas.
+
+**Pendências:**
+
+- Purpose `eventos` aparece na vitrine quando tiver Domain ativo (fase F1 de `aculta_events`).
+- Calendário no `main` (decisão D6 de `aculta_events`) é uma rota de conteúdo, não vitrine; entra
+  na fase F5, com as regras de canonical.
+- Mudança de Twig só aparece depois de `drush cr` (cache de templates), que precisa de autorização.
+
 ## Redes sociais (LINKS)
 
 - A URL pública planejada é a raiz `/` em `links.aculta.toca.net.br`. O front interno

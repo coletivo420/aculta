@@ -17,7 +17,7 @@ final class DomainPresentation implements CacheableDependencyInterface {
 
   /**
    * @param array{purpose: string, title: string, short_title: ?string, home_url: string, logo_alt: ?string} $identity
-   * @param array{brand_media: ?array, navigation: ?array, actions: ?array, wiki_search: ?array} $regions
+   * @param array{brand_media: ?array, navigation: ?array, actions: ?array, wiki_search: ?array, showcase: ?array} $regions
    * @param array{institution_bar_account: bool, show_utility_bar: bool, links_page: bool, show_site_header: bool} $layout
    *   Visibility decided by the Portal per purpose. The theme only draws what these flags allow.
    */
@@ -33,7 +33,7 @@ final class DomainPresentation implements CacheableDependencyInterface {
    *
    * @return array{
    *   identity: array{purpose: string, title: string, short_title: ?string, home_url: string, logo_alt: ?string},
-   *   regions: array{brand_media: ?array, navigation: ?array, actions: ?array, wiki_search: ?array},
+   *   regions: array{brand_media: ?array, navigation: ?array, actions: ?array, wiki_search: ?array, showcase: ?array},
    *   layout: array{institution_bar_account: bool, show_utility_bar: bool, links_page: bool, show_site_header: bool}
    * }
    */

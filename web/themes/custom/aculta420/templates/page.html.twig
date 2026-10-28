@@ -96,6 +96,17 @@
     {% if aculta_breadcrumb %}
       <div class="aculta-breadcrumb">{{ aculta_breadcrumb }}</div>
     {% endif %}
+    {% set aculta_showcase = domain_presentation.regions.showcase|default([]) %}
+    {% if aculta_showcase %}
+      <nav class="aculta-purpose-showcase mb-4" aria-labelledby="aculta-purpose-showcase-title">
+        <h2 id="aculta-purpose-showcase-title" class="h5">{{ 'Ecossistema ACULTA'|t }}</h2>
+        <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
+          {% for item in aculta_showcase %}
+            <li><a class="btn btn-outline-secondary" href="{{ item.url }}">{{ item.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    {% endif %}
     {% if page.highlighted or aculta_help %}
       <div class="aculta-highlighted">{{ page.highlighted }}{{ aculta_help }}</div>
     {% endif %}

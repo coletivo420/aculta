@@ -70,7 +70,7 @@ desabilitados. Nunca use um caminho de teste como evidência de produção.
 
 | Identificador | Caminho | Título / objeto da página inicial | Estado |
 | --- | --- | --- | --- |
-| `main.aculta` | `/` | Início institucional da ACULTA | Ativo. Administração, carrinho, checkout e pagamentos pertencem a este purpose. |
+| `main.aculta` | `/` | Início institucional da ACULTA, com vitrine dos subdomínios (links para a raiz de cada purpose com Domain ativo) | Ativo. Administração, carrinho, checkout e pagamentos pertencem a este purpose. A vitrine só links; o conteúdo dos subdomínios responde no próprio host (ver `multidomain.md`, “Vitrine do MAIN”). |
 | `conta.aculta` | `/` | **Hub ACULTA Studio** | Root resolvido internamente para `aculta_studio.hub`, visitante vai ao login. |
 | `conta.aculta` | `/conta-legada` | **Minha Conta original permanente** | `aculta_portal.dashboard`, shell, menus e forms originais para comparação, sem prazo de retirada. |
 | `apoio.aculta` | `/` | Formulário público para escolher valor de apoio | Ativo; caminho interno `/apoio` responde `404` diretamente. |
