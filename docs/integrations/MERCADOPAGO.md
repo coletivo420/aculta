@@ -3,8 +3,10 @@
 Gateway de pagamento do Commerce: submódulo próprio `aculta_pagamentos_mercadopago` (porte do `commerce_mercado_pago` 3.0.0-rc3; plugin `aculta_mercadopago_checkout_pro`).
 O gateway permanece **ativo em todos os ambientes**. Até a versão 1.0, o checkout usa as chaves de teste
 (`MERCADOPAGO_TEST_PUBLIC_KEY` e `MERCADOPAGO_TEST_ACCESS_TOKEN`) somente por variável de ambiente; nunca na
-configuração. Se faltar qualquer chave do ambiente, o gateway segue ativo e o checkout falha fechado com aviso
-seguro, sem chamar o provedor. Chaves de produção só entram por decisão do responsável.
+configuração. Ao salvar ou importar a configuração, o pré-save exige o par do ambiente declarado pelo Deployer,
+força o gateway ativo e remove valores secretos antes da gravação; sem credenciais, falha antes de persistir. Se
+uma chave faltar em runtime depois da configuração, operações de pagamento falham fechadas sem chamar o provedor.
+Chaves de produção só entram por decisão do responsável.
 
 ## Credenciais
 

@@ -191,6 +191,10 @@ class CheckoutProTest extends OrderKernelTestBase {
       'plugin' => 'aculta_mercadopago_checkout_pro',
       'configuration' => ['mode' => 'test'],
     ]);
+    $previous_public_key = getenv('MERCADOPAGO_TEST_PUBLIC_KEY');
+    $previous_access_token = getenv('MERCADOPAGO_TEST_ACCESS_TOKEN');
+    putenv('MERCADOPAGO_TEST_PUBLIC_KEY=KERNEL_TEST_PUBLIC_KEY');
+    putenv('MERCADOPAGO_TEST_ACCESS_TOKEN=KERNEL_TEST_ACCESS_TOKEN');
     $gateway->save();
     Key::create([
       'id' => 'mercadopago_webhook_secret',
@@ -219,15 +223,20 @@ class CheckoutProTest extends OrderKernelTestBase {
       $this->container->get('aculta_pagamentos_mercadopago.webhook_subscriber')->onKernelRequest($forged_event);
       $this->assertSame(401, $forged_event->getResponse()?->getStatusCode());
 
+      // The Portal invariant keeps this gateway enabled even if another
+      // configuration write attempts to disable it.
       $gateway->setStatus(FALSE);
       $gateway->save();
-      $disabled_request = $this->webhookRequest('kernel-test-only-secret');
-      $disabled_event = new RequestEvent($this->container->get('kernel'), $disabled_request, HttpKernelInterface::MAIN_REQUEST);
-      $this->container->get('aculta_pagamentos_mercadopago.webhook_subscriber')->onKernelRequest($disabled_event);
-      $this->assertSame(503, $disabled_event->getResponse()?->getStatusCode());
+      $this->assertTrue($gateway->status());
+      $enabled_request = $this->webhookRequest('kernel-test-only-secret');
+      $enabled_event = new RequestEvent($this->container->get('kernel'), $enabled_request, HttpKernelInterface::MAIN_REQUEST);
+      $this->container->get('aculta_pagamentos_mercadopago.webhook_subscriber')->onKernelRequest($enabled_event);
+      $this->assertNull($enabled_event->getResponse());
     }
     finally {
       $previous_secret === FALSE ? putenv('MERCADOPAGO_WEBHOOK_SECRET') : putenv('MERCADOPAGO_WEBHOOK_SECRET=' . $previous_secret);
+      $previous_public_key === FALSE ? putenv('MERCADOPAGO_TEST_PUBLIC_KEY') : putenv('MERCADOPAGO_TEST_PUBLIC_KEY=' . $previous_public_key);
+      $previous_access_token === FALSE ? putenv('MERCADOPAGO_TEST_ACCESS_TOKEN') : putenv('MERCADOPAGO_TEST_ACCESS_TOKEN=' . $previous_access_token);
     }
   }
 

@@ -202,7 +202,7 @@ $check(
 // The external integration contract adds SocialAuthCallbackRouteSubscriber for
 // /integracoes/{network}/retorno. Mercado Pago owns its webhook subscriber.
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 13
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 15
     && str_contains($services, 'aculta_portal.social_auth_callback_route_subscriber:')
     && str_contains($services, 'Drupal\\aculta_portal\\EventSubscriber\\SocialAuthCallbackRouteSubscriber')
     && str_contains($read($srcRoot . '/EventSubscriber/SocialAuthCallbackRouteSubscriber.php'), "'/integracoes/{network}/retorno'"),
