@@ -71,3 +71,58 @@ parecer de ODbL? (c) o envio ao OSM fica fora de escopo? Sem essas respostas, o 
 4. F4 (E7): fechar o agrupamento de marcadores, o link da política de privacidade e as verificações da pendência 2.
 5. Teste Kernel de acesso por purpose dos tipos novos (não localizado até aqui).
 6. F6, F7, F8, F9.
+
+## Painéis e opções administrativas do OpenCulturas (ADM)
+
+Escopo: as telas de administração e as opções de configuração do OpenCulturas. Não é importação. Mapeamento
+feito sobre as rotas (`/admin/...`), os formulários de configuração e as views administrativas do pacote, e
+sobre as 82 telas que o ACULTA já tem em `/painel-administrativo`.
+
+Regra de caminho: no ACULTA, toda tela administrativa fica em `/painel-administrativo/...` (`AGENTS.md`, seção de
+integrações). Não há `/admin` nas telas novas.
+
+### Mapeamento
+
+| OpenCulturas | Função | ACULTA hoje | Ação |
+| --- | --- | --- | --- |
+| `flagged_content` (`/admin/content/reports`) | Denúncias de qualquer conteúdo | Só fórum: `/painel-administrativo/forum/denuncias` | ADM1: painel geral de denúncias, em `aculta_ugc` (plano U4) |
+| `moderated_content` | Conteúdo moderado | Só fórum e wiki por workflow | ADM1: mesmo painel, com filtro por área |
+| `legal_terms`, `legal_users` | Histórico de termos e aceites | `/painel-administrativo/termos/aceites` | Já existe. Sem ação |
+| `user_admin_people` | Lista de pessoas | Não há painel geral (há `contas/nao-confirmadas`) | ADM2: lista administrativa mínima, sem dado sensível; revisão de LGPD antes |
+| `media`, `media_library`, `files` (uso de arquivo) | Mídia e uso de arquivos | `/painel-administrativo/imagens` (catálogo, quarentena, limpeza, relatório) | ADM3: acrescentar a visão "onde este arquivo é usado" |
+| `oc_comments` | Comentários de todas as áreas | Só fórum (`forum/comentarios/...`) | Coberto por ADM1 quando houver comentário fora do fórum |
+| `faq` (`/admin/content/faq`) | Perguntas frequentes | Não existe | ADM4: FAQ editável (I-15), com painel próprio |
+| `block_content` (`/admin/content/block`) | Blocos de conteúdo editáveis | Não existe | ADM4: avaliar com o responsável; pode ficar como editorial highlight |
+| `content` (`/admin/content/node`) | Lista geral de conteúdo, com filtro | Drupal padrão, sem painel do ACULTA | ADM5: painel geral com filtro por área, status e autor, sem exportar dado pessoal |
+| `search_api` (índice) | Estado do índice de busca | Só Drush (`aculta_index`) | ADM6: painel de estado do índice (última reconstrução, pendências), só leitura |
+| `related_dates_export` (CSV, JSON, XML) | Exportação de datas | Não existe | Entra com E2, com campos mínimos (S5), sem telefone nem e-mail |
+| `watchdog` | Log do sistema | Log do Drupal | Não copiar: é operação, não painel de conteúdo |
+| `openculturas_map` (configuração) | Centro, zoom e ícone do mapa | Não existe | ADM7: configuração do mapa do Google (ADR-014), por ambiente, sem chave no formulário |
+| `openculturas_calendar_widget` (configuração) | Limitar acesso, sites permitidos, CSS, cabeçalho e rodapé do embed | Só a allowlist em código (E5) | ADM8: painel de embed com a mesma allowlist; CSS e HTML livres não entram (S3) |
+| `openculturas_address_links` (configuração) | URL base de rotas e transporte | Não existe | ADM7: configuração de "como chegar" (I-11), no mesmo painel de eventos |
+| `openculturas_custom` (configuração) | Classes permitidas e assinatura de e-mail | Assinatura já existe em `aculta_mailer` | Não copiar: a assinatura fica no mailer |
+| `eca-notification-recipient` (CRUD) | Destinatários de aviso | Não existe | Já previsto (C-01 e D-03): entidade de destinatários do `aculta_ugc` |
+| `openculturas_openstreetmap` (configuração e assistente) | OSM | Não existe | Fora (E10) |
+| `tour` e `dark_mode`, `cookies` | Tours e preferências | Não existe / tokens e aceite único | Não copiar |
+
+### Microfases de painel (ADM)
+
+Cada painel é uma microfase, com permissão própria, teste Kernel de acesso negado para usuário comum e um item no
+índice de administração.
+
+| Id | Painel | Módulo dono | Dependência |
+| --- | --- | --- | --- |
+| ADM1 | Denúncias e conteúdo moderado, todas as áreas | `aculta_ugc` | Plano U1–U4 de `aculta_ugc` |
+| ADM2 | Lista administrativa de pessoas (mínima) | `aculta_user` | Revisão de LGPD |
+| ADM3 | Uso de arquivos em `imagens` | `aculta_image` | — |
+| ADM4 | FAQ e blocos editáveis | `aculta_portal` (decisão sobre blocos) | Decisão do responsável |
+| ADM5 | Conteúdo geral com filtros | `aculta_portal` | Lista de áreas e papéis |
+| ADM6 | Estado do índice de busca (só leitura) | `aculta_index` | — |
+| ADM7 | Configuração de mapa e de "como chegar" | `aculta_events` | ADR-014 e F4 |
+| ADM8 | Painel de embed do calendário | `aculta_calendar` | E5 com rota (F5) |
+
+### Decisões necessárias antes de ADM2, ADM4 e ADM5
+
+1. **ADM2:** quais campos aparecem na lista de pessoas? Recomendação: nome de exibição, apelido e situação da conta, sem e-mail nem documento.
+2. **ADM4:** FAQ e blocos editáveis são necessários agora, ou ficam para depois da v1?
+3. **ADM5:** o painel geral de conteúdo deve listar todas as áreas ou só as que o usuário pode moderar?
