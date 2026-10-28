@@ -32,6 +32,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [architecture/aculta_document_viewer.md](architecture/aculta_document_viewer.md) — ownership e autorização dos documentos File/Media.
 - [architecture/aculta_forum_lms.md](architecture/aculta_forum_lms.md) — contrato de acesso contextual entre Fórum e LMS.
 - [architecture/aculta_lms.md](architecture/aculta_lms.md) — matrículas, prazos e ciclo de vida de certificados.
+- [architecture/aculta_portal.md](architecture/aculta_portal.md) — fronteiras de contratos transversais do Portal.
 - [architecture/aculta_forum.md](architecture/aculta_forum.md) — ownership, acesso público e conteúdo legado imutável do Fórum.
 - [architecture/aculta_links.md](architecture/aculta_links.md) — ownership de micropáginas e prévias privadas.
 - [architecture/aculta_user.md](architecture/aculta_user.md) — ownership de identidade, papéis, perfis e participação.
