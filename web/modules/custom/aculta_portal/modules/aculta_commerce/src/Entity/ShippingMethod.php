@@ -21,8 +21,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * Defines the ACULTA shipping method entity.
  *
  * Adapted from drupal/commerce_shipping 3.0.5 (GPL-2.0-or-later). Uses the
- * aculta_shipping_method plugin type and its own plugin field so that it can
- * coexist with the contributed commerce_shipping module during the port.
+ * ACULTA-owned aculta_shipping_method plugin type and its own plugin field;
+ * it does not depend on the contributed commerce_shipping module.
  */
 #[ContentEntityType(
   id: 'aculta_shipping_method',

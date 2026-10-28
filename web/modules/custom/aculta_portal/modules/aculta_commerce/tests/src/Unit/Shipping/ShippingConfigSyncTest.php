@@ -73,6 +73,26 @@ final class ShippingConfigSyncTest extends UnitTestCase {
   }
 
   /**
+   * The module manifests and composer do not depend on the contributed module.
+   */
+  public function testManifestsDoNotDependOnContributedShipping(): void {
+    $modules = [
+      'aculta_commerce' => $this->repoRoot . '/web/modules/custom/aculta_portal/modules/aculta_commerce/aculta_commerce.info.yml',
+      'aculta_commerce_melhorenvio' => $this->repoRoot . '/web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/aculta_commerce_melhorenvio.info.yml',
+    ];
+    foreach ($modules as $name => $path) {
+      $this->assertFileExists($path);
+      $info = Yaml::parseFile($path);
+      $this->assertIsArray($info);
+      $this->assertNotContains('commerce_shipping:commerce_shipping', $info['dependencies'] ?? [], $name . ' declares commerce_shipping.');
+    }
+
+    $composer = json_decode((string) file_get_contents($this->repoRoot . '/composer.json'), TRUE, 512, JSON_THROW_ON_ERROR);
+    $this->assertArrayNotHasKey('drupal/commerce_shipping', $composer['require'] ?? []);
+    $this->assertArrayNotHasKey('drupal/commerce_shipping', $composer['require-dev'] ?? []);
+  }
+
+  /**
    * The contributed module is not enabled or referenced by shipping config.
    */
   public function testContributedModuleIsNotEnabled(): void {

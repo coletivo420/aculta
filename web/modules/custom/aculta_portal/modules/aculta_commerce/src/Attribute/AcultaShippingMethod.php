@@ -11,8 +11,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * Defines the AcultaShippingMethod plugin attribute.
  *
  * Adapted from drupal/commerce_shipping 3.0.5 (GPL-2.0-or-later). The plugin
- * type and all identifiers are ACULTA-owned so they can coexist with the
- * contributed module while the port is being validated.
+ * type and all identifiers are ACULTA-owned; there is no dependency on the
+ * contributed commerce_shipping module.
  */
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class AcultaShippingMethod extends Plugin {

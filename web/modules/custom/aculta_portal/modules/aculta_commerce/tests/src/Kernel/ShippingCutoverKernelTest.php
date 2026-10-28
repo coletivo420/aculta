@@ -9,6 +9,7 @@ use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_store\Entity\Store;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Cutover do frete: instalação do motor e migração de FlatRate.
@@ -19,7 +20,30 @@ use PHPUnit\Framework\Attributes\Group;
  * tabelas do motor próprio (estado do Runtime antes do cutover).
  */
 #[Group('aculta_commerce')]
+#[RunTestsInSeparateProcesses]
 class ShippingCutoverKernelTest extends KernelTestBase {
+
+  /**
+   * Whether the legacy commerce_shipping module is available in this checkout.
+   */
+  private static bool $commerceShippingAvailable = FALSE;
+
+  /**
+   * Removes the legacy module from the boot list when it is not installed.
+   *
+   * The cutover is rehearsed on a restored database; this Kernel test only
+   * runs where the contrib is still present in the codebase.
+   */
+  public static function setUpBeforeClass(): void {
+    $root = __DIR__;
+    while ($root !== dirname($root) && !is_file($root . '/core/lib/Drupal.php')) {
+      $root = dirname($root);
+    }
+    self::$commerceShippingAvailable = is_file($root . '/modules/contrib/commerce_shipping/commerce_shipping.info.yml');
+    if (!self::$commerceShippingAvailable) {
+      static::$modules = array_values(array_diff(static::$modules, ['commerce_shipping']));
+    }
+  }
 
   /**
    * Módulos do site de teste (mesma base do teste de motor).
@@ -141,6 +165,9 @@ class ShippingCutoverKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    if (!self::$commerceShippingAvailable) {
+      $this->markTestSkipped('commerce_shipping is not available in this checkout; the cutover is rehearsed on a restored database.');
+    }
     $this->installEntitySchema('user');
     $this->installEntitySchema('commerce_store');
     $this->installEntitySchema('commerce_order');
