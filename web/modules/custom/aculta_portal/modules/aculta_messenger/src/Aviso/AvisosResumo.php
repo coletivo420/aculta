@@ -236,13 +236,35 @@ final class AvisosResumo {
     if ($recuperacao !== NULL) {
       return $recuperacao ? self::RESULT_RECONCILED : self::RESULT_SKIPPED;
     }
-    if (!$conta->isActive() || $conta->getEmail() === '' || !$this->emailPolicy->isConfirmed($conta)) {
+    if (!$this->isEligibleAccount($conta)) {
       return self::RESULT_SKIPPED;
     }
     $agora = $this->time->getRequestTime();
     if (!self::podeEnviar($agora, (int) $this->userData->get('aculta_messenger', $uid, 'avisos_resumo_ultimo'))) {
       return self::RESULT_SKIPPED;
     }
+
+    $envio = $this->montarEnvio($uid, $conta, $recipientLookupFailed, $agora);
+    if ($envio === NULL) {
+      return self::RESULT_SKIPPED;
+    }
+    return $this->registrarEnvio($uid, $lockName, $agora, $envio);
+  }
+
+  /**
+   * Checks the account state required before building a digest.
+   */
+  private function isEligibleAccount(UserInterface $conta): bool {
+    return $conta->isActive() && $conta->getEmail() !== '' && $this->emailPolicy->isConfirmed($conta);
+  }
+
+  /**
+   * Collects the pending Forum and provider rows for one recipient.
+   *
+   * @return array{linhas: array, daFila: array, providersWithRows: array, providerLookupFailed: bool}
+   *   Digest rows plus the manifest data and lookup failure state.
+   */
+  private function buildDigest(int $uid, bool $recipientLookupFailed): array {
     // Re-read under the recipient lock so concurrent event aggregation cannot
     // be reset after its count was missed by this digest.
     $avisos = $this->forumAvisosPendentes($uid);
@@ -413,9 +435,26 @@ final class AvisosResumo {
         )))),
       ];
     }
-    if ($linhas === []) {
-      return self::RESULT_SKIPPED;
+    return [
+      'linhas' => $linhas,
+      'daFila' => $daFila,
+      'providersWithRows' => $providersWithRows,
+      'providerLookupFailed' => $providerLookupFailed,
+    ];
+  }
+
+  /**
+   * Builds the deterministic manifest, email and recovery snapshot.
+   */
+  private function montarEnvio(int $uid, UserInterface $conta, bool $recipientLookupFailed, int $agora): ?array {
+    $digest = $this->buildDigest($uid, $recipientLookupFailed);
+    if ($digest['linhas'] === []) {
+      return NULL;
     }
+    $linhas = $digest['linhas'];
+    $daFila = $digest['daFila'];
+    $providersWithRows = $digest['providersWithRows'];
+    $providerLookupFailed = $digest['providerLookupFailed'];
     $entregasManifesto = [];
     foreach ($daFila as $aviso) {
       $entregasManifesto[] = [
@@ -458,6 +497,24 @@ final class AvisosResumo {
         'delivery_ids' => $providerRows['delivery_ids'],
       ], $providersWithRows),
     ];
+    return [
+      'mensagem' => $mensagem,
+      'snapshot' => $snapshot,
+      'daFila' => $daFila,
+      'providersWithRows' => $providersWithRows,
+      'providerLookupFailed' => $providerLookupFailed,
+    ];
+  }
+
+  /**
+   * Delivers the prepared email and registers its exact outcome.
+   */
+  private function registrarEnvio(int $uid, string $lockName, int $agora, array $envio): int {
+    $mensagem = $envio['mensagem'];
+    $snapshot = $envio['snapshot'];
+    $daFila = $envio['daFila'];
+    $providersWithRows = $envio['providersWithRows'];
+    $providerLookupFailed = $envio['providerLookupFailed'];
     // Store IDs and counters only (no recipient address or notice content) so
     // the accepted transport can be reconciled after a process interruption.
     $this->userData->set('aculta_messenger', $uid, 'avisos_resumo_em_andamento', $snapshot);
