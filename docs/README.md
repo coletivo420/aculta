@@ -30,6 +30,11 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [architecture/aculta_wiki.md](architecture/aculta_wiki.md) — ownership da Wiki e revisão editorial de propostas.
 - [architecture/aculta_pdf_viewer.md](architecture/aculta_pdf_viewer.md) — autorização dos arquivos PDF privados pelo Core e Group.
 - [architecture/aculta_forum_lms.md](architecture/aculta_forum_lms.md) — contrato de acesso contextual entre Fórum e LMS.
+- [architecture/aculta_links.md](architecture/aculta_links.md) — ownership de micropáginas e prévias privadas.
+- [architecture/aculta_user.md](architecture/aculta_user.md) — ownership de identidade, papéis, perfis e participação.
+- [architecture/aculta_messenger.md](architecture/aculta_messenger.md) — ownership de mensagens e avisos.
+- [architecture/aculta_mailer.md](architecture/aculta_mailer.md) — políticas e transportes de e-mail.
+- [architecture/aculta_pagamentos_mercadopago.md](architecture/aculta_pagamentos_mercadopago.md) — fronteira do adapter de pagamentos.
 - [architecture/aculta420.md](architecture/aculta420.md) — catálogo visual, SDC, tokens e ícones do tema.
 - [decisions/](decisions/) — ADRs vigentes.
 - [ADR-010](decisions/ADR-010-hostinger-litespeed.md) — LiteSpeed na produção Hostinger Cloud Startup; Apache no Homelab.

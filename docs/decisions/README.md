@@ -17,6 +17,10 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 - [ADR-018 — Messenger como núcleo de mensagens](ADR-018-messenger-como-nucleo-de-mensagens.md)
 - [ADR-019 — Política central de imagens](ADR-019-politica-central-de-imagens.md)
 - [ADR-020 — Página atômica Content Index–Statistics](ADR-020-pagina-atomica-content-index-statistics.md)
+- [ADR-021 — Um único aceite de Termos e Política de Privacidade](ADR-021-aceite-unico.md)
+- [ADR-022 — Separação entre domínio de apoio e transação Commerce](ADR-022-dominios-de-doacao-e-checkout.md)
+- [ADR-023 — Associado é uma situação da conta, não um papel](ADR-023-associado-como-situacao.md)
+- [ADR-024 — Webhooks modernos assinados do Mercado Pago](ADR-024-webhooks-mercado-pago-assinados.md)
 
 ADRs históricos e decisões locais de arquitetura também podem ser encontrados
 neste diretório e em `docs/architecture/`. Para registrar uma decisão nova,
