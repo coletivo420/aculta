@@ -106,6 +106,18 @@ consumidor funcional, com três stories e stack de uma coluna abaixo de 768 px.
 A rota individual da story retornou erro genérico do Drupal; sem evidência
 Runtime para 320 px ou dark.
 
+## B9 — grade mista de conteúdo, termos e links externos
+
+Os consumidores existentes foram inventariados antes da alteração: ações
+GanjaLab em `MarleyController`; cursos e certificados em
+`LearnerDashboardComposer`; escolhas WE SATIVA em
+`WikiContributionIntentController`; listagem WE SATIVA em
+`WikiContributorWorkspace::listSection`. Como o slot renderizado `items` já
+aceita esses tipos heterogêneos, o contrato props/slots não mudou. A nova story
+mistura os três tipos na mesma grade e a variante de 3 colunas passa a empilhar
+abaixo de 576 px. O UI Patterns Runtime segue retornando erro genérico; 320 px e
+dark não foram visualmente homologados.
+
 ## Links
 - [Shell multidomínio](shell.md)
 - [Arquitetura](architecture.md) · [Componentes](components.md) · [Catálogo de SDCs](component-catalog.md)

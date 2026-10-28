@@ -1,0 +1,23 @@
+name: Grade mista: conteúdo, termo e link externo
+description: Os três tipos usam o mesmo slot genérico de itens renderizados.
+component: aculta420:content-grid
+props:
+  columns: 3
+slots:
+  items:
+    markup: |
+      <article class="card h-100"><div class="card-body">
+        <p>Tipo: conteúdo</p>
+        <h2><a href="#">Artigo sobre participação cultural</a></h2>
+        <p>Conteúdo publicado com resumo e autoria fornecidos pelo consumidor.</p>
+      </div></article>
+      <article class="card h-100"><div class="card-body">
+        <p>Tipo: termo</p>
+        <h2><a href="#">Políticas públicas</a></h2>
+        <p>Termo taxonômico apresentado com sua descrição.</p>
+      </div></article>
+      <article class="card h-100"><div class="card-body">
+        <p>Tipo: link externo</p>
+        <h2><a href="https://example.org/referencias" target="_blank" rel="external noopener noreferrer">Repositório de referências (abre fora do ACULTA)</a></h2>
+        <p>A origem externa fica indicada no próprio rótulo do link.</p>
+      </div></article>

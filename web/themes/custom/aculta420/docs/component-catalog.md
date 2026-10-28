@@ -106,6 +106,18 @@ tem stories de 1, 2 e 3 colunas e empilha as regiões pela ordem do DOM abaixo d
 768 px. Ainda não há consumidor funcional. A story individual falhou com erro
 genérico no Runtime UI Patterns; homologação visual 320 px/dark pendente.
 
+## B9 — grade de itens mistos
+
+Antes da alteração, foram localizados os consumidores `aculta_studio` em
+`MarleyController` (ações), `LearnerDashboardComposer` (cursos e certificados)
+e `aculta_wiki` em `WikiContributionIntentController` (intenções) e
+`WikiContributorWorkspace::listSection` (listagem). `ComponentFallbackHooks`
+registra fallback, mas não fornece itens. O contrato existente já aceita
+qualquer render array no slot único `items`; props e slots estruturais foram
+mantidos. A story nova mistura artigo, termo taxonômico e link externo. A grade
+de 3 colunas empilha no breakpoint mobile. A rota de story permaneceu em erro
+genérico no Runtime; revisão visual 320 px/dark pendente.
+
 ## Backlog do catálogo — padrões transversais ainda não implementados
 
 `context-header`, `context-tabs` e `empty-state` já existem na árvore e não são

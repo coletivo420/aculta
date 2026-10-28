@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schema
 name: Content grid
 status: experimental
 group: Patterns
-description: 'Responsive grid for repeated content items. Two columns by default, as the project list has always used.'
+description: 'Responsive grid for mixed rendered items such as content, taxonomy terms and external links. Each item keeps its own markup.'
 props:
   type: object
   properties:
@@ -14,7 +14,7 @@ props:
 slots:
   items:
     title: Items
-    description: 'Rendered items, each one wrapped by the caller.'
+    description: 'Any rendered item, including a content card, taxonomy term or external link, wrapped by its caller.'
 assets:
   css:
     component:
