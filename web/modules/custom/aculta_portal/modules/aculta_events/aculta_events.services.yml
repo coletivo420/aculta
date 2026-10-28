@@ -35,3 +35,7 @@ services:
   aculta_events.embed_hosts:
     class: Drupal\aculta_events\Embed\EmbedHostAllowlist
     arguments: ['@extension.list.module']
+  aculta_events.admin_export_route_subscriber:
+    class: Drupal\aculta_events\EventSubscriber\AdministrativeExportRouteSubscriber
+    tags:
+      - { name: event_subscriber }

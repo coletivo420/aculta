@@ -1,0 +1,6 @@
+aculta_events.admin_export:
+  title: 'Exportar eventos (CSV)'
+  description: 'Baixa datas de eventos publicados por período, com campos administrativos mínimos.'
+  route_name: aculta_events.admin_export
+  parent: system.admin_content
+  weight: 31
