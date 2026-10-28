@@ -171,11 +171,11 @@ Configuração de fluxo e de tipo de pedido fica só no servidor de testes (não
 - Autorizado pelo responsável: o tipo de pedido `curso` foi incluído nas condições do gateway Mercado Pago do servidor de
   testes (`commerce_payment.commerce_payment_gateway.mercado_pago`, condição `order_type`). Alteração só de configuração do
   servidor de testes, feita por API de configuração. Não está no repositório: produção precisa de decisão própria.
-- Bloqueio: trabalho em andamento do agente do Mercado Pago (`EntitySaveHooks`, não commitado) faz salvar pedido e usuário
-  falhar no servidor de testes ("ArgumentCountError" e depois "releaseLock(): null"). Isso impede a compra de teste do LMS e a
-  doação com pedido novo. A decisão do responsável foi aguardar a correção desse agente, sem alterar o código dele.
-- Pendente após a correção: compra de LMS com curso de teste (grupo novo; remover ao final) e doação com pedido novo, para
-  ver o painel de nome e sobrenome.
+- Correção local dev.64: `EntitySaveHooks` agora tolera instanciação direta pelo resolvedor do Drupal e a regressão Unit
+  confirma que salvar entidades de usuário (fora do gateway) não depende de credenciais Mercado Pago. Ainda não foi repetido
+  o fluxo Runtime; o erro `releaseLock(): null` permanece sem diagnóstico confirmado.
+- Pendente após validar o Runtime: compra de LMS com curso de teste (grupo novo; remover ao final) e doação com pedido novo,
+  para ver o painel de nome e sobrenome.
 - Recuperação de senha: o redirecionamento agora vai para a Visão geral no domínio da conta (testado no navegador, em
   `conta.aculta.toca.net.br/conta-legada`, que mostra conteúdo). Repetir o teste completo depois do desbloqueio.
 
@@ -194,3 +194,12 @@ Configuração de fluxo e de tipo de pedido fica só no servidor de testes (não
 - Limpeza: pedidos 199 a 205, grupos 75 a 78 e a conta dmarc (uid 216) removidos. O produto 10 foi mantido.
 - Bloqueio do servidor: uma edição em andamento do agente do Mercado Pago quebrou o login por alguns minutos
   (`PaymentGatewayFormHooks` não encontrada). `drush cr` resolveu quando o código estabilizou.
+
+### Verificação após a decisão de CPF só no LMS (2026-10-28)
+
+- **Teste de kernel:** `FiscalIdentityPaneKernelTest` passou (12 testes, 344 asserções) com `SIMPLETEST_DB` de
+  `secrets/simpletest-db.env`, sem alterar o Runtime. Só avisos de depreciação do Drupal.
+- **LMS no navegador:** a compra do curso de teste leva ao passo com nome e sobrenome, e a revisão mostra o campo de CPF.
+  Curso, turma e pedido de teste removidos ao final.
+- **Pagamento de teste da doação: não concluído.** O envio dos dados de cartão na tela do Mercado Pago foi bloqueado pelo
+  classificador de segurança, por ser transação financeira. Falta a conclusão manual ou autorização explícita.
