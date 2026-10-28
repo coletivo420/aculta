@@ -25,7 +25,7 @@ Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem 
 | E10 | `openculturas_openstreetmap`: assistente administrativo (Find → Select → Review → Save) para importar e enviar dados de local ao OSM (`PushData`) | `aculta_events_openstreetmap`, integração OAuth2 e fluxo revisável por ambiente (D-26) | **Código implementado (E10-A/B).** OAuth2 no popup, `state` de uso único, token cifrado em State, Find por tipo/ID no endpoint ativo, seleção de tags sem contato, revisão e confirmação explícita, local salvo com ID/versão OSM e atribuição pública. Kernel cobre rotas, falta de credenciais, bloqueio de ambiente cruzado e escrita simulada exclusivamente no host de desenvolvimento. **Envio real de teste pendente**: valores próprios da API de desenvolvimento não estão provisionados; nenhum envio foi realizado. Produção não foi usada | `5dfb7ac0c`, `3b1fe6572`, `4078138b7`; D-26 |
 | T5 | `SmartDateUpcomingFormatter` | `DateRangeUpcomingFormatter` com `daterange` do core, cache até a próxima data | **Feito** | `56725c71d` |
 | D-15 | Calendário e LMS (decisão própria, sem origem no OC) | `aculta_lms_agenda` e painel do aluno | **Acesso confirmado**: provedor exige membership na turma publicada e acesso ao curso publicado; Kernel cobre turma correta, turma diferente e ausência de matrícula. Fixture agora instala o tipo de campo `link` exigido pelo evento | `ac43e7d94`, `9766bb731`, `df76938ae`, `86f247d4e` |
-| R | Recorrência `smart_date_recur` (replicada, com modificações próprias, D-14) | `aculta_calendar` (validador, expansão) e `aculta_events` (regra e ocorrência) | **Feito na v1.** Regra em `EventDate` (`field_regra`, `field_limite_meses`), expansão na janela, interface da regra em forma canônica e edição de uma ocorrência (cancelar, reagendar, restaurar) por início original. Falta só o link para os formulários na página do evento (F6) | `5f3b61ee7`, `1caa5fc7d`, `dcea19c4a`, `b9144b142` |
+| R | Recorrência `smart_date_recur` (replicada, com modificações próprias, D-14) | `aculta_calendar` (validador, expansão) e `aculta_events` (regra e ocorrência) | **Feito na v1.** Regra, expansão e edição de recorrência/ocorrência concluídas; a página do evento agora mostra os links de administração apenas para quem tem permissão, com cache variado por `user.permissions`. Kernel confirma links para administrador e ausência para público | `5f3b61ee7`, `1caa5fc7d`, `dcea19c4a`, `b9144b142`, `c4919bbb3` |
 
 ## E10 — revisão de termos e implementação
 
@@ -71,7 +71,7 @@ ele é isolado dos dados de produção. Produção permanece fora desta execuç�
 1. E2: código das Views e exportação CSV via provedor está pronto. Ativar as Views no Runtime quando houver autorização para o fluxo de configuração; exportação omite endereço e contatos.
 2. E7: iniciar MP0/MP1 em `aculta_maps` conforme D-19; só depois fechar OSM, agrupamento e link da política quando a URL pública existir. O código atual em `aculta_events` ainda usa Google.
 3. E10: implementar o fluxo Find → Select → Review → Save e o cliente da API de desenvolvimento com padrão seguro; o contrato existe, mas teste de envio aguarda provisionamento de valores de teste em `secrets/`.
-4. R: regra e ocorrência têm interface e Kernel; o link na página do evento pertence à F6.
+4. R: regra, ocorrência e links de administração concluídos (`c4919bbb3`).
 5. F5: **feito** no `aculta_calendar` (D-20): agenda, grade do mês, dia, `.ics` e `/calendario/incorporar`, com o `aculta_events` como provedor de itens. Falta o calendário no `main` (D6).
 6. F6, F7, F8, F9.
 
