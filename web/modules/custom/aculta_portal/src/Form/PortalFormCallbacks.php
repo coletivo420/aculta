@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Form;
 
+use Drupal\aculta_portal\Email\EmailConfirmationRequestResult;
+use Drupal\aculta_portal\Account\AccountAddressForm;
+use Drupal\aculta_portal\Account\RegistrationMailPolicy;
+use Drupal\aculta_portal\Account\AcultaUserAgreementRegistration;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\aculta_portal\Email\EmailConfirmationRequester;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -12,7 +16,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\profile\ProfileInterface;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\Form\UserLoginForm;
 use Drupal\user\UserAuthenticationInterface;
 use Drupal\user\UserFloodControlInterface;
@@ -35,58 +39,69 @@ final class PortalFormCallbacks {
     private readonly UserFloodControlInterface $floodControl,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EmailConfirmationRequester $confirmationRequester,
-    private readonly \Drupal\aculta_portal\Account\AcultaUserAgreementRegistration $userAgreementRegistration,
-    private readonly \Drupal\aculta_portal\Account\RegistrationMailPolicy $registrationMail,
+    private readonly AcultaUserAgreementRegistration $userAgreementRegistration,
+    private readonly RegistrationMailPolicy $registrationMail,
     private readonly ?RouteMatchInterface $routeMatch = NULL,
   ) {}
 
-  /** Mensagem única do cadastro, igual com e-mail novo ou já cadastrado (DT-P06). */
+  /**
+   * Returns the same registration message for both address types (DT-P06).
+   */
   private function registrationStatusMessage(): string {
     return (string) $this->translation->translate('Sua solicitação foi recebida. Se este endereço tiver uma confirmação ou aviso disponível, verifique a caixa de entrada e a pasta de spam. Se nenhuma mensagem chegar, tente novamente mais tarde.');
   }
 
   /**
-   * Entity builder de Meus Dados: junta a rua e o número ("Rua, número") antes de gravar o perfil, no mesmo formato
-   * do checkout. Roda na montagem da entidade, antes do save.
+   * Combines street and number before saving the profile, as in checkout.
+   *
+   * This entity builder runs before the profile is saved.
    */
   public function buildStreetNumber(string $entityTypeId, $profile, array &$form, FormStateInterface $formState): void {
-    if (!$profile instanceof \Drupal\profile\Entity\ProfileInterface || $profile->get('field_address')->isEmpty()) {
+    if (!$profile instanceof ProfileInterface || $profile->get('field_address')->isEmpty()) {
       return;
     }
-    \Drupal\aculta_portal\Account\AccountAddressForm::buildStreetNumber($entityTypeId, $profile, $form, $formState);
+    AccountAddressForm::buildStreetNumber($entityTypeId, $profile, $form, $formState);
   }
 
-  /** Resposta AJAX do salvamento na Minha conta: mensagens e o formulário, no mesmo bloco. */
+  /**
+   * Returns the messages and account form in the same AJAX response.
+   */
   public function accountAjaxResponse(array &$form, FormStateInterface $formState): array {
     unset($form['#prefix'], $form['#suffix']);
     return ['messages' => ['#type' => 'status_messages'], 'form' => $form];
   }
 
-  /** Último handler de envio da Minha conta: o salvamento fica na página (sem redirecionamento). */
+  /**
+   * Keeps account saves on the same page.
+   */
   public function disableAccountRedirect(array &$form, FormStateInterface $formState): void {
     $formState->disableRedirect();
   }
 
-  /** Registra o aceite dos termos do cadastro (checkbox obrigatório no formulário). */
+  /**
+   * Records acceptance of the required registration terms.
+   */
   public function recordAcultaUserAgreementAcceptance(array &$form, FormStateInterface $formState): void {
     if ($this->registrationAlreadyUsed($formState)) {
       return;
     }
     $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
-    if ($account instanceof \Drupal\user\UserInterface) {
+    if ($account instanceof UserInterface) {
       $this->userAgreementRegistration->record($account);
     }
   }
 
-  /** Envia a confirmação de e-mail do cadastro recém-criado (conta ativa, e-mail não confirmado). */
+  /**
+   * Sends the confirmation email for a newly created account.
+   */
   public function requestRegistrationConfirmation(array &$form, FormStateInterface $formState): void {
     if ($this->registrationAlreadyUsed($formState)) {
       return;
     }
     $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
-    if ($account instanceof \Drupal\user\UserInterface) {
+    if ($account instanceof UserInterface) {
       $result = $this->confirmationRequester->request($account);
-      if ($result !== \Drupal\aculta_portal\Email\EmailConfirmationRequestResult::ACCEPTED) {
+      if ($result !== EmailConfirmationRequestResult::ACCEPTED) {
         // Keep the registration response identical for unknown and existing
         // addresses; its wording does not claim that an email was delivered.
         return;
@@ -100,8 +115,8 @@ final class PortalFormCallbacks {
    * Core reports a blocked or unactivated account with its own message before
    * any password check. Here a blocked account is recognized first and leaves
    * the authentication step, so validateFinal() gives the generic message used
-   * for unknown accounts. The IP flood check runs first, with the same condition
-   * and outcome as Core, so the flood response cannot tell the accounts apart.
+   * for unknown accounts. The IP flood check matches Core's condition and
+   * outcome, so its response cannot reveal whether an account exists.
    * Every other account goes through Core's validateAuthentication().
    */
   public function validateLoginAuthentication(array &$form, FormStateInterface $formState): void {
@@ -128,7 +143,9 @@ final class PortalFormCallbacks {
     $formObject->validateAuthentication($form, $formState);
   }
 
-  /** Valida a senha escolhida no cadastro e guarda-a no form state para gravar depois do salvamento. */
+  /**
+   * Validates the registration password and stores it for the save handler.
+   */
   public function validateRegistrationPassword(array &$form, FormStateInterface $formState): void {
     $pass = (string) $formState->getValue('pass');
     if (mb_strlen($pass) < 8) {
@@ -139,8 +156,10 @@ final class PortalFormCallbacks {
   }
 
   /**
-   * Cadastro com e-mail já usado: o erro "already taken" do Core sai (ele revela a existência da conta) e a
-   * submissão segue até saveRegistration(), que não cria conta. Outros erros do formulário são mantidos.
+   * Keeps registration responses the same when an email is already used.
+   *
+   * The existing account receives a notice; no account is created again.
+   * Other form errors are preserved.
    */
   public function validateRegistrationMail(array &$form, FormStateInterface $formState): void {
     $existing = $this->registrationMail->existingAccount((string) $formState->getValue('mail'));
@@ -161,45 +180,53 @@ final class PortalFormCallbacks {
   }
 
   /**
-   * Salvamento do cadastro (substitui o ::save do Core no botão). Com e-mail já cadastrado, nada é criado: o dono da
-   * conta recebe um aviso. Nos dois casos a resposta é a mesma: mesma mensagem e mesmo destino.
+   * Saves a registration, replacing Core's submit handler.
+   *
+   * Existing accounts are not created again; both paths return the same
+   * message and destination.
    */
   public function saveRegistration(array $form, FormStateInterface $formState): void {
     $existingId = $formState->get('aculta_registration_existing');
     if ($existingId !== NULL) {
       $existing = $this->entityTypeManager->getStorage('user')->load((int) $existingId);
-      if ($existing instanceof \Drupal\user\UserInterface) {
+      if ($existing instanceof UserInterface) {
         $this->registrationMail->notifyExistingAccount($existing);
       }
     }
     else {
       $formState->getFormObject()->save($form, $formState);
-      // A mensagem do Core ("A welcome message...") é trocada pela mensagem única.
+      // Replace Core's welcome message with the generic response.
       $this->messenger->deleteByType(MessengerInterface::TYPE_STATUS);
     }
     $this->messenger->addStatus($this->registrationStatusMessage());
     $formState->setRedirect('<front>');
   }
 
+  /**
+   * Checks whether this request matches an existing email account.
+   */
   private function registrationAlreadyUsed(FormStateInterface $formState): bool {
     return $formState->get('aculta_registration_existing') !== NULL;
   }
 
-  /** Grava a senha escolhida na conta criada (que segue bloqueada até a confirmação do e-mail). */
+  /**
+   * Saves the chosen password on the account created by registration.
+   */
   public function storeRegistrationPassword(array &$form, FormStateInterface $formState): void {
     if ($this->registrationAlreadyUsed($formState)) {
       return;
     }
     $pass = $formState->get('aculta_register_pass');
     $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
-    if (!is_string($pass) || $pass === '' || !$account instanceof \Drupal\user\UserInterface) {
+    if (!is_string($pass) || $pass === '' || !$account instanceof UserInterface) {
       return;
     }
     $account->setPassword($pass);
     $account->save();
   }
 
-  /** Returns the password form to Portal and records a local password. */
+  /**
+   * Returns the password form to Portal and records a local password. */
   public function securityPasswordRedirect(array &$form, FormStateInterface $formState): void {
     $uid = (int) $this->currentUser->id();
     if ($uid > 0) {
@@ -208,7 +235,8 @@ final class PortalFormCallbacks {
     $formState->setRedirect('aculta_portal.security_password');
   }
 
-  /** Applies accessible labels/autocomplete to Core's password widget. */
+  /**
+   * Applies accessible labels/autocomplete to Core's password widget. */
   public function securityPasswordAfterBuild(array $form, FormStateInterface $formState): array {
     if (isset($form['account']['pass']['pass1'])) {
       $form['account']['pass']['pass1']['#title'] = $this->translation->translate('Nova senha');
@@ -222,13 +250,14 @@ final class PortalFormCallbacks {
   }
 
   /**
-   * Recuperação de senha: depois de salvar, a pessoa vai ao painel (a página de edição de conta é administrativa).
+   * Redireciona para o painel após a recuperação da senha.
    */
   public function recoveryPasswordRedirect(array &$form, FormStateInterface $formState): void {
     $formState->setRedirect('aculta_portal.dashboard');
   }
 
-  /** Returns the profile-photo form to the account overview. */
+  /**
+   * Returns the profile-photo form to the account overview. */
   public function accountPhotoRedirect(array &$form, FormStateInterface $formState): void {
     $formState->setRedirect('aculta_portal.dashboard');
   }
@@ -255,7 +284,8 @@ final class PortalFormCallbacks {
     }
   }
 
-  /** Synchronizes Commerce address names with the participant profile. */
+  /**
+   * Synchronizes Commerce address names with the participant profile. */
   public function syncCustomerAddressNames(array &$form, FormStateInterface $formState): void {
     $participant = $formState->getFormObject()->getEntity();
     if (!$participant instanceof ProfileInterface || !PerfilDoPapel::ehTipoDePapel($participant)) {
@@ -291,7 +321,8 @@ final class PortalFormCallbacks {
     }
   }
 
-  /** Rejects empty/non-positive custom donation amounts. */
+  /**
+   * Rejects empty/non-positive custom donation amounts. */
   public function validateDonationAmount(array &$form, FormStateInterface $formState): void {
     $giftType = $formState->getValue(['commerce_donation_pane', 'field_gift_type']);
     $giftType = is_array($giftType)

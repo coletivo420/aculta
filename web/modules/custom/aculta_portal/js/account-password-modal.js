@@ -19,7 +19,7 @@
           beforeClose: () => false,
         });
         dialog.showModal();
-        // O overlay do jQuery UI é criado com o z-index do diálogo; baixa uma camada para o botão do modal continuar clicável.
+        // Abaixo o overlay para não cobrir o botão do diálogo.
         setTimeout(() => {
           document.querySelectorAll('.ui-widget-overlay').forEach((overlay) => {
             overlay.style.zIndex = '10001';
