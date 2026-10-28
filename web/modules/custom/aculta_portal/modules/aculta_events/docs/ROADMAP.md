@@ -24,13 +24,13 @@ Saída: decisões registradas; nenhuma dependência nova instalada ainda.
 
 Entrada: F0 concluída.
 
-- [ ] Domain `eventos_aculta_org` e `DomainPurposeManager` com o purpose `eventos`.
-- [ ] Rotas-esqueleto com `_aculta_domain_purpose`; `DomainRoutePolicy` ativo.
-- [ ] `deploy.json`: `domain_transition`, `robots_policy`, `sitemap`, `environment_bound`.
-- [ ] `config/sync`: `domain.record`, ação de domínio e alias de teste.
-- [ ] `ROUTES-SITEMAP.md` atualizado (identificador `eventos.aculta`).
-- [ ] **Teste:** DNS `eventos.aculta.toca.net.br` (pendente no Cloudflare); certificado e vhost HTTPS.
-- [ ] Gates: `validate-environment-addresses.php`, `validate-public-slugs.php`, `validate-no-temporary-route-aliases.php`, `validate-domain-presentation-contract.php`.
+- [x] Domain `eventos_aculta_org` e `DomainPurposeManager` com o purpose `eventos` (commit `33cde2adb`).
+- [x] Rotas-esqueleto com `_aculta_domain_purpose`; `DomainRoutePolicy` ativo. Rota `aculta_portal.eventos_home` (`/eventos`, página provisória), com a raiz do host apontando para ela.
+- [x] `deploy.json`: `domain_transition`, `robots_policy` (teste `noindex`, produção indexável), `sitemap` e `environment_bound`. `validate` e `validateProfiles` sem erros.
+- [x] `config/sync`: `domain.record`, ação de domínio e alias de teste. Importados no servidor de teste com `config:import --partial` (só esses 3 arquivos).
+- [x] `ROUTES-SITEMAP.md` atualizado (identificador `eventos.aculta`).
+- [x] **Teste:** DNS `eventos.aculta.toca.net.br` ativo; certificado Let's Encrypt próprio para o host; vhost HTTPS em `sites-available/eventos-aculta-ssl.conf`. HTTP 200 com `noindex`.
+- [x] Gates: `validate-environment-addresses.php` (PASS), `validate-no-temporary-route-aliases.php` (PASS), `validate-domain-presentation-contract.php` (PASS, 169 checks). `validate-public-slugs.php` tem 34 falhas de rotas de contrib, pré-existentes e fora do baseline DT-P20; nenhuma em `eventos`.
 
 Saída: `https://eventos.aculta.toca.net.br/` responde no ambiente de teste (página provisória), com `noindex`.
 

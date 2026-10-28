@@ -13,8 +13,8 @@ $assert = static function (bool $ok, string $name) use (&$failures): void {
 };
 $plugin = (string) file_get_contents($root . '/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php');
 $assert(!str_contains($plugin, '\\Drupal::'), 'plugin usa injeção de dependências, sem \\Drupal:: estático');
-$assert(str_contains($plugin, "const INDEXABLE_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses', 'links'];"), 'SHOP fora dos purposes indexáveis (sem conteúdo público)');
-$assert(str_contains($plugin, "const ROOT_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses', 'links'];"), 'raiz de cada purpose indexável é URL própria (rota, não nó)');
+$assert(str_contains($plugin, "const INDEXABLE_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses', 'links', 'eventos'];"), 'SHOP fora dos purposes indexáveis (sem conteúdo público)');
+$assert(str_contains($plugin, "const ROOT_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses', 'links', 'eventos'];"), 'raiz de cada purpose indexável é URL própria (rota, não nó)');
 $assert(str_contains($plugin, 'isPurposeFrontNode'), 'página inicial de domínio excluída do conjunto de nós (sem redirect)');
 $assert(str_contains($plugin, "const PUBLIC_PATHS = ['main' => ['/contato']];"), 'contato (webform) incluído no MAIN, como no sitemap institucional anterior');
 $assert(str_contains($plugin, 'runInPurpose'), 'acesso avaliado no contexto do purpose de origem (verbetes da WIKI)');

@@ -88,6 +88,7 @@ desabilitados. Nunca use um caminho de teste como evidência de produção.
 | `main.aculta` | `/painel-administrativo/configuracoes/aculta/uploads-usuarios` | Configuração central de extensões e tamanho dos arquivos enviados por usuários | Caminho canonicalizado pelo Portal para a rota administrativa declarada; Runtime não validado. |
 | `links.aculta` | `/pagina/{slug}` | Micropágina pública do ACULTA Links | Declarada e ativa no Runtime de teste após habilitação em 2026-10-20; exige página e itens publicados, slug válido e purpose `links`. Produção não confirmada. |
 | `links.aculta` | `/` | Landing pública de perfis e links sociais | Runtime de teste após rebuild: HTTP 200 com ACULTA, botão principal e projetos via fallback; `/redes-sociais` direto retorna 404. Produção e revisão visual não confirmadas. |
+| `eventos.aculta` | `/` | Página provisória do purpose eventos (F1), até o catálogo da F3 | Runtime de teste após rebuild de 2026-10-28: HTTP 200 com texto provisório e `X-Robots-Tag: noindex, nofollow, noarchive`. Rota `aculta_portal.eventos_home` em `/eventos` (`_aculta_domain_purpose: eventos`); `/eventos` direto retorna 404, mesmo padrão de `/redes-sociais`. Produção: host `eventos.aculta.org` ainda sem DNS de produção, não confirmada. |
 
 ## Caminhos humanos ativos ou condicionais
 
