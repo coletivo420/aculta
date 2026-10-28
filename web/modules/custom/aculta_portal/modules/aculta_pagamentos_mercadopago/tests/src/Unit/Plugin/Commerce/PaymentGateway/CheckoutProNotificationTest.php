@@ -526,9 +526,9 @@ final class CheckoutProNotificationTest extends UnitTestCase {
   }
 
   /**
-   * Verifies approval and avoids duplicate return processing.
+   * Verifies approval remotely even when the browser omits its status.
    */
-  public function testApprovedReturnWithExistingPaymentIsIdempotent(): void {
+  public function testApprovedReturnWithoutBrowserStatusIsIdempotent(): void {
     $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
     $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
     $parent_gateway->method('id')->willReturn('mercado_pago');
@@ -606,7 +606,6 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $result = $gateway->onReturn($order, new Request([
       'payment_id' => '123',
       'merchant_order_id' => '900',
-      'status' => 'approved',
     ]));
 
     $this->assertNull($result);

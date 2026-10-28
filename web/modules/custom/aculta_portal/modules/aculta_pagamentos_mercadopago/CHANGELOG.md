@@ -1,3 +1,8 @@
+## 0.1.0-dev.57 — reconciliar retorno sem status do navegador (2026-10-27)
+
+- O retorno agora exige os IDs do pagamento e do Merchant Order, mas não exige o `status` enviado pelo navegador. A decisão continua baseada na consulta autenticada à API do Mercado Pago e na verificação dos vínculos. Também removi um bloco comentado que propunha copiar o e-mail do comprador da resposta remota para o pedido.
+- Regressão aprova a repetição idempotente quando a API confirma `approved` e o navegador omite `status`; teste de aprovação forjada contra API pendente continua cobrindo rejeição. Unit MP: 215 testes / 969 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint focais PASS.
+
 ## 0.1.0-dev.56 — esclarecer o escopo do log de debug (2026-10-27)
 
 - A descrição administrativa agora informa que só o payload de preferência sanitizado é registrado; dados de pagador são removidos, mas detalhes de pedido e itens permanecem. Removido um método de debug sem uso.

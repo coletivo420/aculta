@@ -1309,9 +1309,8 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
 
     $payment_id = $response['payment_id'] ?? NULL;
     $merchant_order_id = $response['merchant_order_id'] ?? NULL;
-    $status = $response['status'] ?? NULL;
 
-    if (!is_scalar($payment_id) || filter_var((string) $payment_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === FALSE || !is_scalar($merchant_order_id) || filter_var((string) $merchant_order_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === FALSE || !is_string($status) || $status === '') {
+    if (!is_scalar($payment_id) || filter_var((string) $payment_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === FALSE || !is_scalar($merchant_order_id) || filter_var((string) $merchant_order_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === FALSE) {
       $logger->error('Missing or invalid required parameters on payment return.');
       throw new PaymentGatewayException('Invalid return from payment provider: missing required parameters.', 0);
     }
@@ -1489,15 +1488,6 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     $checkout_data = $order->getData('commerce_mercado_pago_checkout') ?? [];
     $checkout_data['remote_id'] = $merchant_order_id;
     $order->setData('commerce_mercado_pago_checkout', $checkout_data);
-
-    /*
-    // If the user is anonymous, add their Mercado Pago e-mail to the order.
-    if (empty($order->getEmail())) {
-    //@todo get user email from Mercado Pago
-    $user_email = $response['email']
-    $order->setEmail($user_email);
-    }
-     */
 
     $payment_method = NULL;
     // Reuse o método de pagamento atual, quando disponível.
