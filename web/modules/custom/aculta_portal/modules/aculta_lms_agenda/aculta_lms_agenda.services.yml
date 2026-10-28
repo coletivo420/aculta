@@ -1,4 +1,14 @@
 services:
+  aculta_lms_agenda.event_access:
+    class: Drupal\aculta_lms_agenda\EventClassAccess
+    arguments: ['@aculta_lms.class_activity_deadline_access']
+  aculta_lms_agenda.event_route_access:
+    class: Drupal\aculta_lms_agenda\EventRouteAccess
+    arguments: ['@entity_type.manager', '@current_user']
+  aculta_lms_agenda.event_route_subscriber:
+    class: Drupal\aculta_lms_agenda\EventSubscriber\LmsEventRouteSubscriber
+    tags:
+      - { name: event_subscriber }
   aculta_lms_agenda.entries:
     class: Drupal\aculta_lms_agenda\AgendaEntriesProvider
     arguments: ['@entity_type.manager', '@aculta_lms.class_activity_deadline_manager', '@aculta_events.occurrences', '@datetime.time']

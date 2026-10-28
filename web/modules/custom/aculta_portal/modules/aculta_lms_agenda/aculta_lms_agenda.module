@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Session\AccountInterface;
 
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -30,6 +32,22 @@ function aculta_lms_agenda_entity_base_field_info(EntityTypeInterface $entity_ty
     ->setSetting('handler', 'default:group')
     ->setSetting('handler_settings', ['target_bundles' => ['lms_class' => 'lms_class']]);
   return $fields;
+}
+
+/**
+ * Implements hook_entity_access().
+ *
+ * Eventos vinculados a uma turma só podem ser vistos por seus matriculados.
+ * O acesso à entidade protege páginas diretas e qualquer consumidor que respeite
+ * o access handler; o provedor também aplica a regra ao catálogo público.
+ */
+function aculta_lms_agenda_entity_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult {
+  if ($entity->getEntityTypeId() !== 'aculta_event' || $operation !== 'view'
+    || !$entity->hasField('field_turma') || $entity->get('field_turma')->isEmpty()) {
+    return AccessResult::neutral();
+  }
+
+  return \Drupal::service('aculta_lms_agenda.event_access')->access($entity, $account);
 }
 
 /**

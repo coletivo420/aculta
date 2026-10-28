@@ -10,10 +10,10 @@ use Drupal\aculta_events\Occurrence\EventDateOccurrences;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * Busca do catálogo: eventos publicados com ocorrência no período, por tipo (F3).
+ * Busca do catálogo: eventos publicados com ocorrência no período (F3).
  *
- * Rascunho não entra. Cancelado entra, com aviso, como no modelo. Períodos chegam como
- * datas de Brasília; a saída é em ordem de primeira ocorrência.
+ * Rascunho não entra. Cancelado entra com aviso, como no modelo. Períodos
+ * chegam como datas de Brasília; a saída é em ordem de primeira ocorrência.
  */
 final class EventCatalogue {
 
@@ -31,9 +31,10 @@ final class EventCatalogue {
   ) {}
 
   /**
-   * Eventos com ao menos uma ocorrência no período, cada um com a primeira ocorrência.
+   * Eventos com ocorrência no período, cada um com a primeira ocorrência.
    *
    * @return array<int, array{evento: \Drupal\aculta_events\Entity\Event, proxima: array}>
+   *   Eventos com suas ocorrências mais próximas.
    */
   public function busca(?int $tipo, ?\DateTimeImmutable $de, ?\DateTimeImmutable $ate, \DateTimeImmutable $agora): array {
     $fuso = new \DateTimeZone('America/Sao_Paulo');
@@ -52,6 +53,9 @@ final class EventCatalogue {
     }
     $resultados = [];
     foreach ($storage->loadMultiple($consulta->execute()) as $evento) {
+      if (!$evento->access('view')) {
+        continue;
+      }
       $proxima = $this->primeiraOcorrencia($evento, $inicio, $fim, $agora);
       if ($proxima !== NULL) {
         $resultados[] = ['evento' => $evento, 'proxima' => $proxima];

@@ -17,8 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Catálogo público de eventos (/eventos), com filtros por tipo e período.
  *
- * Período e datas usam o formato brasileiro (dd/mm/aaaa). Data inválida é ignorada e
- * aparece como aviso, sem derrubar a página.
+ * Período e datas usam o formato brasileiro (dd/mm/aaaa). Data inválida é
+ * ignorada e aparece como aviso, sem derrubar a página.
  */
 final class EventCatalogueController extends ControllerBase {
 
@@ -90,12 +90,14 @@ final class EventCatalogueController extends ControllerBase {
       '#items' => $itens,
       '#empty' => $this->t('Nenhum evento encontrado para este período.'),
       '#prefix' => $this->avisos($avisos),
-      '#cache' => ['contexts' => ['url.query_args'], 'tags' => [EventCacheTags::LISTA], 'max-age' => $validade],
+      '#cache' => ['contexts' => ['url.query_args', 'user'], 'tags' => [EventCacheTags::LISTA], 'max-age' => $validade],
     ];
   }
 
   /**
-   * Converte dd/mm/aaaa em data de Brasília; vazio vira NULL; inválido vira aviso.
+   * Converte dd/mm/aaaa em data de Brasília; vazio vira NULL.
+   *
+   * Um valor inválido gera aviso.
    */
   private function dataBr(string $valor, \DateTimeZone $fuso, array &$avisos, string $rotulo): ?\DateTimeImmutable {
     if ($valor === '') {

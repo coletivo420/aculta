@@ -6,8 +6,10 @@ namespace Drupal\Tests\aculta_lms_agenda\Kernel;
 
 use Drupal\aculta_lms_agenda\Controller\PersonalCalendarController;
 use Drupal\aculta_calendar\Item\CalendarQuery;
+use Drupal\aculta_events\Controller\EventCatalogueController;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\aculta_events\Controller\EventPageController;
 use Drupal\lms\Entity\Activity;
 use Drupal\lms\Entity\ActivityType;
 use Drupal\lms\Entity\Lesson;
@@ -19,6 +21,8 @@ use Drupal\Component\Serialization\Yaml;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Agenda do aluno: prazos e eventos das turmas em que está matriculado.
@@ -150,6 +154,55 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $alunoOutraTurma = $this->createUser();
     $outraTurma->addMember($alunoOutraTurma);
     $visitante = $this->createUser();
+
+    $this->assertTrue($evento->access('view', $aluno));
+    $this->assertFalse($evento->access('view', $alunoOutraTurma));
+    $this->assertFalse($evento->access('view', $visitante));
+    $this->assertTrue($eventoDaOutraTurma->access('view', $alunoOutraTurma));
+    $this->assertFalse($eventoDaOutraTurma->access('view', $aluno));
+
+    $routeAccess = $this->container->get('aculta_lms_agenda.event_route_access');
+    $this->setCurrentUser($aluno);
+    $this->assertTrue($routeAccess->access((string) $evento->get('field_slug')->value)->isAllowed());
+    $this->assertFalse($routeAccess->access((string) $eventoDaOutraTurma->get('field_slug')->value)->isAllowed());
+    $this->assertFalse($routeAccess->access('evento-inexistente')->isAllowed());
+    $routeProvider = $this->container->get('router.route_provider');
+    $this->assertSame(
+      'aculta_lms_agenda.event_route_access::access',
+      $routeProvider->getRouteByName('aculta_events.page')->getRequirement('_custom_access'),
+    );
+    $this->assertSame(
+      'aculta_lms_agenda.event_route_access::access',
+      $routeProvider->getRouteByName('aculta_events.date_ics')->getRequirement('_custom_access'),
+    );
+
+    $this->setCurrentUser($aluno);
+    $this->assertSame('Roda de conversa', EventPageController::create($this->container)->page((string) $evento->get('field_slug')->value)['#titulo']);
+    $deniedPage = FALSE;
+    try {
+      EventPageController::create($this->container)->page((string) $eventoDaOutraTurma->get('field_slug')->value);
+    }
+    catch (NotFoundHttpException) {
+      $deniedPage = TRUE;
+    }
+    $this->assertTrue($deniedPage, 'The direct page must hide events from another class.');
+
+    $agoraCatalogo = new \DateTimeImmutable('2026-11-01 00:00:00', new \DateTimeZone('America/Sao_Paulo'));
+    $catalogo = $this->container->get('aculta_events.catalogue');
+    $titulosCatalogo = array_map(static fn (array $row): string => (string) $row['evento']->label(), $catalogo->busca(NULL, NULL, NULL, $agoraCatalogo));
+    $this->assertContains('Roda de conversa', $titulosCatalogo);
+    $this->assertNotContains('Aula da Turma B', $titulosCatalogo);
+
+    $this->setCurrentUser($visitante);
+    $titulosVisitante = array_map(static fn (array $row): string => (string) $row['evento']->label(), $catalogo->busca(NULL, NULL, NULL, $agoraCatalogo));
+    $this->assertNotContains('Roda de conversa', $titulosVisitante);
+    $this->assertNotContains('Aula da Turma B', $titulosVisitante);
+
+    $pilha = $this->container->get('request_stack');
+    $pilha->push(Request::create('/eventos'));
+    $catalogoRenderizado = EventCatalogueController::create($this->container)->page();
+    $this->assertContains('user', $catalogoRenderizado['#cache']['contexts']);
+    $pilha->pop();
 
     $de = new \DateTimeImmutable('2026-11-01 00:00:00', new \DateTimeZone('America/Sao_Paulo'));
     $ate = new \DateTimeImmutable('2026-11-30 23:59:59', new \DateTimeZone('America/Sao_Paulo'));
