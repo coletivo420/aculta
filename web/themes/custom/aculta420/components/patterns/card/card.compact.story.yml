@@ -1,0 +1,14 @@
+name: Compacto para listagem
+description: Cartão de lista com mídia quadrada e conteúdo em coluna, usado na listagem de álbuns.
+component: aculta420:card
+props:
+  variant: compact
+slots:
+  image:
+    markup: '<div class="ratio ratio-1x1 bg-body-secondary" role="img" aria-label="Área reservada para capa de álbum"></div>'
+  header:
+    markup: Edição cultural
+  content:
+    markup: '<h3>Memória e território</h3><p>Registro de atividades e encontros.</p>'
+  footer:
+    markup: '<a href="#">Abrir álbum</a>'

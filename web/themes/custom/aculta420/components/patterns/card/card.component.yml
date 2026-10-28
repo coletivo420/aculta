@@ -6,6 +6,8 @@ description: 'Cartão composto com slots opcionais de mídia, cabeçalho, conte�
 variants:
   default:
     title: Vertical
+  compact:
+    title: Compacto
   horizontal:
     title: Horizontal
   overlay:
@@ -19,6 +21,7 @@ props:
       description: Variante visual limitada a uma das apresentações nomeadas do cartão.
       enum:
         - default
+        - compact
         - horizontal
         - overlay
       default: default

@@ -43,10 +43,10 @@ contraste inadequado. Não disponibilizar texto inverso sem superfície compatí
 
 ## Variações de cartão (I-10, 2026-10-28)
 
-Lista fechada de variações de cartão de conteúdo, usadas por revista, wiki, eventos e busca:
-`compact` (lista), `teaser` (padrão), `destaque` (capa) e `busca` (resultado com trecho destacado).
-Cada variação é um componente SDC, com stories próprias e as mesmas regras de imagem. Referência: V-8 do
-comparativo. Não criar variação nova sem entrar nesta lista.
+`patterns/card` é o componente SDC reutilizável para cartões de conteúdo. Suas variantes são
+`default` (vertical), `compact` (lista), `horizontal` e `overlay`. A variante `compact` tem story própria
+e é usada pela View de álbuns. `teaser`, `destaque` e `busca` permanecem itens de planejamento até que
+contratos e consumidores reais autorizem sua implementação; não são componentes disponíveis.
 
 ## Backlog do catálogo — padrões transversais ainda não implementados
 

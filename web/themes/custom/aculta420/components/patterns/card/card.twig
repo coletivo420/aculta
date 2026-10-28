@@ -1,5 +1,7 @@
 {% set card_classes = ['aculta-card', 'card'] %}
-{% if variant == 'overlay' %}
+{% if variant == 'compact' %}
+  {% set card_classes = card_classes|merge(['aculta-card--compact']) %}
+{% elseif variant == 'overlay' %}
   {% set card_classes = card_classes|merge(['aculta-card--overlay']) %}
 {% elseif variant == 'horizontal' %}
   {% set card_classes = card_classes|merge(['aculta-card--horizontal']) %}
@@ -14,6 +16,13 @@
         {% if content %}<div class="card-body">{{ content }}</div>{% endif %}
         {% if footer %}<div class="card-footer">{{ footer }}</div>{% endif %}
       </div>
+    </div>
+  {% elseif variant == 'compact' %}
+    {% if image %}<div class="aculta-card__compact-media">{{ image|add_class('img-fluid') }}</div>{% endif %}
+    <div class="aculta-card__compact-body">
+      {% if header %}<div class="card-header">{{ header }}</div>{% endif %}
+      {% if content %}<div class="card-body">{{ content }}</div>{% endif %}
+      {% if footer %}<div class="card-footer">{{ footer }}</div>{% endif %}
     </div>
   {% elseif variant == 'horizontal' %}
     <div class="row g-0">
