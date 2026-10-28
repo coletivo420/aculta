@@ -13,6 +13,12 @@ eventos e conteúdo segundo os contratos do Mailer e do Messenger.
   `TransportFailover` é injetado em `AcultaMailer` e `DeliveryPlanner`; o caminho
   legacy do Core mantém sua configuração de transporte própria, descrita em
   [EMAIL-TRANSPORT.md](../portal/EMAIL-TRANSPORT.md).
+- **2026-10-20 — Transporte sem cota disponível é ignorado na seleção.**
+  Situação: vigente. Motivo: não enviar por contingência esgotada nem registrar
+  uma escolha que não possa entregar. Origem: `0.1.0-dev.14` e `0.1.0-dev.29`,
+  [histórico arquivado](../history/changelog/aculta_mailer.md). `TransportChoice`
+  seleciona o primário ou fallback disponível e preserva o transporte pedido
+  quando nenhum pode ser escolhido.
 
 ## Fronteiras
 
