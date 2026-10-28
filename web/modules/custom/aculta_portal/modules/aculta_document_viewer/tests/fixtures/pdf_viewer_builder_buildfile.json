@@ -1,0 +1,1436 @@
+{
+    "public_pdf": {
+        "#type": "container",
+        "#attributes": {
+            "data-aculta-pdf-viewer": "true",
+            "role": "region",
+            "aria-label": "documento.pdf",
+            "data-aculta-pdf-url": "/sites/default/files/documento.pdf",
+            "data-aculta-pdf-title": "documento.pdf",
+            "data-aculta-pdf-default-zoom": "fit-width",
+            "data-aculta-pdf-default-scroll": "vertical",
+            "data-aculta-pdf-double-page": "false",
+            "data-aculta-pdf-double-page-mobile": "false",
+            "data-aculta-pdf-show-zoom": "true",
+            "data-aculta-pdf-show-fullscreen": "true",
+            "data-aculta-pdf-show-search": "true",
+            "data-aculta-pdf-show-page-navigation": "true",
+            "class": [
+                "aculta-pdf-viewer"
+            ]
+        },
+        "toolbar": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "toolbar"
+            },
+            "previous": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Página anterior"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "previous",
+                    "disabled": "disabled"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "span",
+                "#value": {
+                    "__translatable": "Carregando PDF…"
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "status",
+                    "aria-live": "polite"
+                }
+            },
+            "next": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Próxima página"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "next",
+                    "disabled": "disabled"
+                }
+            }
+        },
+        "reader_controls": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "reader-controls"
+            },
+            "zoom": {
+                "#type": "container",
+                "#attributes": {
+                    "data-aculta-pdf-control": "zoom-controls"
+                },
+                "zoom_out": {
+                    "#type": "html_tag",
+                    "#tag": "button",
+                    "#value": {
+                        "__translatable": "Reduzir zoom"
+                    },
+                    "#attributes": {
+                        "type": "button",
+                        "data-aculta-pdf-control": "zoom-out",
+                        "aria-label": {
+                            "__translatable": "Reduzir zoom"
+                        }
+                    }
+                },
+                "zoom_status": {
+                    "#type": "html_tag",
+                    "#tag": "span",
+                    "#value": "100%",
+                    "#attributes": {
+                        "data-aculta-pdf-control": "zoom-status",
+                        "aria-live": "polite"
+                    }
+                },
+                "zoom_in": {
+                    "#type": "html_tag",
+                    "#tag": "button",
+                    "#value": {
+                        "__translatable": "Aumentar zoom"
+                    },
+                    "#attributes": {
+                        "type": "button",
+                        "data-aculta-pdf-control": "zoom-in",
+                        "aria-label": {
+                            "__translatable": "Aumentar zoom"
+                        }
+                    }
+                },
+                "zoom_reset": {
+                    "#type": "html_tag",
+                    "#tag": "button",
+                    "#value": {
+                        "__translatable": "Restaurar zoom"
+                    },
+                    "#attributes": {
+                        "type": "button",
+                        "data-aculta-pdf-control": "zoom-reset"
+                    }
+                }
+            },
+            "rotate": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Girar página 90 graus"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "rotate",
+                    "aria-label": {
+                        "__translatable": "Girar página 90 graus"
+                    }
+                }
+            },
+            "fullscreen": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Tela cheia"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "fullscreen",
+                    "aria-label": {
+                        "__translatable": "Abrir leitor em tela cheia"
+                    },
+                    "aria-pressed": "false"
+                }
+            }
+        },
+        "search_controls": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "search-controls"
+            },
+            "input": {
+                "#type": "html_tag",
+                "#tag": "input",
+                "#attributes": {
+                    "type": "search",
+                    "data-aculta-pdf-control": "search-input",
+                    "aria-label": {
+                        "__translatable": "Buscar texto no PDF"
+                    }
+                }
+            },
+            "submit": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Buscar"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "search-submit"
+                }
+            },
+            "previous": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Resultado anterior"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "search-previous",
+                    "disabled": "disabled"
+                }
+            },
+            "next": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Próximo resultado"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "search-next",
+                    "disabled": "disabled"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "span",
+                "#attributes": {
+                    "data-aculta-pdf-control": "search-status",
+                    "aria-live": "polite"
+                }
+            }
+        },
+        "outline": {
+            "#type": "details",
+            "#title": {
+                "__translatable": "Contorno do documento"
+            },
+            "#attributes": {
+                "data-aculta-pdf-control": "outline"
+            },
+            "items": {
+                "#type": "html_tag",
+                "#tag": "ul",
+                "#attributes": {
+                    "data-aculta-pdf-control": "outline-items"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "p",
+                "#value": {
+                    "__translatable": "Este PDF não contém contorno."
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "outline-status",
+                    "aria-live": "polite"
+                }
+            }
+        },
+        "page_thumbnails": {
+            "#type": "details",
+            "#title": {
+                "__translatable": "Miniaturas das páginas"
+            },
+            "#attributes": {
+                "data-aculta-pdf-control": "page-thumbnails"
+            },
+            "items": {
+                "#type": "html_tag",
+                "#tag": "ol",
+                "#attributes": {
+                    "data-aculta-pdf-control": "page-thumbnail-items"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "p",
+                "#value": {
+                    "__translatable": "As miniaturas serão preparadas ao abrir esta seção."
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "page-thumbnail-status",
+                    "aria-live": "polite"
+                }
+            }
+        },
+        "page_stage": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "page-stage"
+            },
+            "page": {
+                "#type": "html_tag",
+                "#tag": "canvas",
+                "#attributes": {
+                    "data-aculta-pdf-control": "page",
+                    "aria-label": {
+                        "__translatable": "Página do documento"
+                    },
+                    "hidden": "hidden"
+                }
+            }
+        },
+        "download": {
+            "#type": "html_tag",
+            "#tag": "a",
+            "#value": {
+                "__translatable": "Abrir ou baixar PDF"
+            },
+            "#attributes": {
+                "href": "/sites/default/files/documento.pdf",
+                "data-aculta-pdf-control": "download"
+            }
+        },
+        "print": {
+            "#type": "html_tag",
+            "#tag": "a",
+            "#value": {
+                "__translatable": "Abrir leitor completo para imprimir"
+            },
+            "#attributes": {
+                "href": "/modules/custom/aculta_portal/modules/aculta_pdf_viewer/viewer-wrapper.html?file=/sites/default/files/documento.pdf&locale=pt-BR&scroll=vertical&spread=0&spread_mobile=0&print=1&download=1",
+                "target": "_blank",
+                "rel": "noopener noreferrer",
+                "data-aculta-pdf-control": "print"
+            }
+        },
+        "full_viewer": {
+            "#type": "html_tag",
+            "#tag": "a",
+            "#value": {
+                "__translatable": "Abrir leitor completo do PDF (nova aba)"
+            },
+            "#attributes": {
+                "href": "/modules/custom/aculta_portal/modules/aculta_pdf_viewer/viewer-wrapper.html?file=/sites/default/files/documento.pdf&locale=pt-BR&scroll=vertical&spread=0&spread_mobile=0&print=1&download=1",
+                "target": "_blank",
+                "rel": "noopener noreferrer",
+                "data-aculta-pdf-control": "full-viewer"
+            }
+        },
+        "#attached": {
+            "library": [
+                "aculta_pdf_viewer/viewer"
+            ]
+        },
+        "thumbnail": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "thumbnail-container"
+            },
+            "#weight": -10,
+            "image": {
+                "#type": "html_tag",
+                "#tag": "img",
+                "#attributes": {
+                    "src": "/sites/default/files/thumb.png"
+                }
+            }
+        },
+        "#cache": {
+            "contexts": [
+                "user.permissions"
+            ],
+            "tags": [
+                "file:11"
+            ],
+            "max-age": -1
+        }
+    },
+    "private_pdf": {
+        "#type": "container",
+        "#attributes": {
+            "data-aculta-pdf-viewer": "true",
+            "role": "region",
+            "aria-label": "trabalho.pdf",
+            "data-aculta-pdf-url": "/system/files?file=turma/trabalho.pdf",
+            "data-aculta-pdf-title": "trabalho.pdf",
+            "data-aculta-pdf-default-zoom": "fit-width",
+            "data-aculta-pdf-default-scroll": "vertical",
+            "data-aculta-pdf-double-page": "false",
+            "data-aculta-pdf-double-page-mobile": "false",
+            "data-aculta-pdf-show-zoom": "true",
+            "data-aculta-pdf-show-fullscreen": "true",
+            "data-aculta-pdf-show-search": "true",
+            "data-aculta-pdf-show-page-navigation": "true",
+            "class": [
+                "aculta-pdf-viewer"
+            ]
+        },
+        "toolbar": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "toolbar"
+            },
+            "previous": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Página anterior"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "previous",
+                    "disabled": "disabled"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "span",
+                "#value": {
+                    "__translatable": "Carregando PDF…"
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "status",
+                    "aria-live": "polite"
+                }
+            },
+            "next": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Próxima página"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "next",
+                    "disabled": "disabled"
+                }
+            }
+        },
+        "reader_controls": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "reader-controls"
+            },
+            "zoom": {
+                "#type": "container",
+                "#attributes": {
+                    "data-aculta-pdf-control": "zoom-controls"
+                },
+                "zoom_out": {
+                    "#type": "html_tag",
+                    "#tag": "button",
+                    "#value": {
+                        "__translatable": "Reduzir zoom"
+                    },
+                    "#attributes": {
+                        "type": "button",
+                        "data-aculta-pdf-control": "zoom-out",
+                        "aria-label": {
+                            "__translatable": "Reduzir zoom"
+                        }
+                    }
+                },
+                "zoom_status": {
+                    "#type": "html_tag",
+                    "#tag": "span",
+                    "#value": "100%",
+                    "#attributes": {
+                        "data-aculta-pdf-control": "zoom-status",
+                        "aria-live": "polite"
+                    }
+                },
+                "zoom_in": {
+                    "#type": "html_tag",
+                    "#tag": "button",
+                    "#value": {
+                        "__translatable": "Aumentar zoom"
+                    },
+                    "#attributes": {
+                        "type": "button",
+                        "data-aculta-pdf-control": "zoom-in",
+                        "aria-label": {
+                            "__translatable": "Aumentar zoom"
+                        }
+                    }
+                },
+                "zoom_reset": {
+                    "#type": "html_tag",
+                    "#tag": "button",
+                    "#value": {
+                        "__translatable": "Restaurar zoom"
+                    },
+                    "#attributes": {
+                        "type": "button",
+                        "data-aculta-pdf-control": "zoom-reset"
+                    }
+                }
+            },
+            "rotate": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Girar página 90 graus"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "rotate",
+                    "aria-label": {
+                        "__translatable": "Girar página 90 graus"
+                    }
+                }
+            },
+            "fullscreen": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Tela cheia"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "fullscreen",
+                    "aria-label": {
+                        "__translatable": "Abrir leitor em tela cheia"
+                    },
+                    "aria-pressed": "false"
+                }
+            }
+        },
+        "search_controls": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "search-controls"
+            },
+            "input": {
+                "#type": "html_tag",
+                "#tag": "input",
+                "#attributes": {
+                    "type": "search",
+                    "data-aculta-pdf-control": "search-input",
+                    "aria-label": {
+                        "__translatable": "Buscar texto no PDF"
+                    }
+                }
+            },
+            "submit": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Buscar"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "search-submit"
+                }
+            },
+            "previous": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Resultado anterior"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "search-previous",
+                    "disabled": "disabled"
+                }
+            },
+            "next": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Próximo resultado"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "search-next",
+                    "disabled": "disabled"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "span",
+                "#attributes": {
+                    "data-aculta-pdf-control": "search-status",
+                    "aria-live": "polite"
+                }
+            }
+        },
+        "outline": {
+            "#type": "details",
+            "#title": {
+                "__translatable": "Contorno do documento"
+            },
+            "#attributes": {
+                "data-aculta-pdf-control": "outline"
+            },
+            "items": {
+                "#type": "html_tag",
+                "#tag": "ul",
+                "#attributes": {
+                    "data-aculta-pdf-control": "outline-items"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "p",
+                "#value": {
+                    "__translatable": "Este PDF não contém contorno."
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "outline-status",
+                    "aria-live": "polite"
+                }
+            }
+        },
+        "page_thumbnails": {
+            "#type": "details",
+            "#title": {
+                "__translatable": "Miniaturas das páginas"
+            },
+            "#attributes": {
+                "data-aculta-pdf-control": "page-thumbnails"
+            },
+            "items": {
+                "#type": "html_tag",
+                "#tag": "ol",
+                "#attributes": {
+                    "data-aculta-pdf-control": "page-thumbnail-items"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "p",
+                "#value": {
+                    "__translatable": "As miniaturas serão preparadas ao abrir esta seção."
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "page-thumbnail-status",
+                    "aria-live": "polite"
+                }
+            }
+        },
+        "page_stage": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "page-stage"
+            },
+            "page": {
+                "#type": "html_tag",
+                "#tag": "canvas",
+                "#attributes": {
+                    "data-aculta-pdf-control": "page",
+                    "aria-label": {
+                        "__translatable": "Página do documento"
+                    },
+                    "hidden": "hidden"
+                }
+            }
+        },
+        "download": {
+            "#type": "html_tag",
+            "#tag": "a",
+            "#value": {
+                "__translatable": "Abrir ou baixar PDF"
+            },
+            "#attributes": {
+                "href": "/system/files?file=turma/trabalho.pdf",
+                "data-aculta-pdf-control": "download"
+            }
+        },
+        "print": {
+            "#type": "html_tag",
+            "#tag": "a",
+            "#value": {
+                "__translatable": "Abrir leitor completo para imprimir"
+            },
+            "#attributes": {
+                "href": "/modules/custom/aculta_portal/modules/aculta_pdf_viewer/viewer-wrapper.html?file=/system/files%3Ffile%3Dturma/trabalho.pdf&locale=pt-BR&scroll=vertical&spread=0&spread_mobile=0&print=1&download=1",
+                "target": "_blank",
+                "rel": "noopener noreferrer",
+                "data-aculta-pdf-control": "print"
+            }
+        },
+        "full_viewer": {
+            "#type": "html_tag",
+            "#tag": "a",
+            "#value": {
+                "__translatable": "Abrir leitor completo do PDF (nova aba)"
+            },
+            "#attributes": {
+                "href": "/modules/custom/aculta_portal/modules/aculta_pdf_viewer/viewer-wrapper.html?file=/system/files%3Ffile%3Dturma/trabalho.pdf&locale=pt-BR&scroll=vertical&spread=0&spread_mobile=0&print=1&download=1",
+                "target": "_blank",
+                "rel": "noopener noreferrer",
+                "data-aculta-pdf-control": "full-viewer"
+            }
+        },
+        "#attached": {
+            "library": [
+                "aculta_pdf_viewer/viewer"
+            ]
+        },
+        "#cache": {
+            "contexts": [
+                "user.permissions"
+            ],
+            "tags": [
+                "file:11"
+            ],
+            "max-age": 0
+        }
+    },
+    "non_pdf": {
+        "#access": false,
+        "#cache": {
+            "contexts": [
+                "user.permissions"
+            ],
+            "tags": [
+                "file:11"
+            ],
+            "max-age": -1
+        }
+    },
+    "access_denied": {
+        "#access": false,
+        "#cache": {
+            "contexts": [
+                "user.permissions"
+            ],
+            "tags": [
+                "file:11"
+            ],
+            "max-age": -1
+        }
+    },
+    "settings_varied": {
+        "#type": "container",
+        "#attributes": {
+            "data-aculta-pdf-viewer": "true",
+            "role": "region",
+            "aria-label": "Documento variado",
+            "data-aculta-pdf-url": "/sites/default/files/documento.pdf",
+            "data-aculta-pdf-title": "Documento variado",
+            "data-aculta-pdf-default-zoom": "page-fit",
+            "data-aculta-pdf-default-scroll": "horizontal",
+            "data-aculta-pdf-double-page": "true",
+            "data-aculta-pdf-double-page-mobile": "true",
+            "data-aculta-pdf-show-zoom": "false",
+            "data-aculta-pdf-show-fullscreen": "false",
+            "data-aculta-pdf-show-search": "false",
+            "data-aculta-pdf-show-page-navigation": "false",
+            "class": [
+                "aculta-pdf-viewer",
+                "minha classe"
+            ]
+        },
+        "toolbar": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "toolbar"
+            },
+            "previous": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Página anterior"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "previous",
+                    "disabled": "disabled"
+                },
+                "#access": false
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "span",
+                "#value": {
+                    "__translatable": "Carregando PDF…"
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "status",
+                    "aria-live": "polite"
+                }
+            },
+            "next": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Próxima página"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "next",
+                    "disabled": "disabled"
+                },
+                "#access": false
+            }
+        },
+        "reader_controls": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "reader-controls"
+            },
+            "zoom": {
+                "#type": "container",
+                "#attributes": {
+                    "data-aculta-pdf-control": "zoom-controls"
+                },
+                "zoom_out": {
+                    "#type": "html_tag",
+                    "#tag": "button",
+                    "#value": {
+                        "__translatable": "Reduzir zoom"
+                    },
+                    "#attributes": {
+                        "type": "button",
+                        "data-aculta-pdf-control": "zoom-out",
+                        "aria-label": {
+                            "__translatable": "Reduzir zoom"
+                        }
+                    }
+                },
+                "zoom_status": {
+                    "#type": "html_tag",
+                    "#tag": "span",
+                    "#value": "100%",
+                    "#attributes": {
+                        "data-aculta-pdf-control": "zoom-status",
+                        "aria-live": "polite"
+                    }
+                },
+                "zoom_in": {
+                    "#type": "html_tag",
+                    "#tag": "button",
+                    "#value": {
+                        "__translatable": "Aumentar zoom"
+                    },
+                    "#attributes": {
+                        "type": "button",
+                        "data-aculta-pdf-control": "zoom-in",
+                        "aria-label": {
+                            "__translatable": "Aumentar zoom"
+                        }
+                    }
+                },
+                "zoom_reset": {
+                    "#type": "html_tag",
+                    "#tag": "button",
+                    "#value": {
+                        "__translatable": "Restaurar zoom"
+                    },
+                    "#attributes": {
+                        "type": "button",
+                        "data-aculta-pdf-control": "zoom-reset"
+                    }
+                },
+                "#access": false
+            },
+            "rotate": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Girar página 90 graus"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "rotate",
+                    "aria-label": {
+                        "__translatable": "Girar página 90 graus"
+                    }
+                },
+                "#access": false
+            },
+            "fullscreen": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Tela cheia"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "fullscreen",
+                    "aria-label": {
+                        "__translatable": "Abrir leitor em tela cheia"
+                    },
+                    "aria-pressed": "false"
+                },
+                "#access": false
+            }
+        },
+        "search_controls": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "search-controls"
+            },
+            "input": {
+                "#type": "html_tag",
+                "#tag": "input",
+                "#attributes": {
+                    "type": "search",
+                    "data-aculta-pdf-control": "search-input",
+                    "aria-label": {
+                        "__translatable": "Buscar texto no PDF"
+                    }
+                }
+            },
+            "submit": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Buscar"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "search-submit"
+                }
+            },
+            "previous": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Resultado anterior"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "search-previous",
+                    "disabled": "disabled"
+                }
+            },
+            "next": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Próximo resultado"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "search-next",
+                    "disabled": "disabled"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "span",
+                "#attributes": {
+                    "data-aculta-pdf-control": "search-status",
+                    "aria-live": "polite"
+                }
+            },
+            "#access": false
+        },
+        "outline": {
+            "#type": "details",
+            "#title": {
+                "__translatable": "Contorno do documento"
+            },
+            "#attributes": {
+                "data-aculta-pdf-control": "outline"
+            },
+            "items": {
+                "#type": "html_tag",
+                "#tag": "ul",
+                "#attributes": {
+                    "data-aculta-pdf-control": "outline-items"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "p",
+                "#value": {
+                    "__translatable": "Este PDF não contém contorno."
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "outline-status",
+                    "aria-live": "polite"
+                }
+            },
+            "#access": false
+        },
+        "page_thumbnails": {
+            "#type": "details",
+            "#title": {
+                "__translatable": "Miniaturas das páginas"
+            },
+            "#attributes": {
+                "data-aculta-pdf-control": "page-thumbnails"
+            },
+            "items": {
+                "#type": "html_tag",
+                "#tag": "ol",
+                "#attributes": {
+                    "data-aculta-pdf-control": "page-thumbnail-items"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "p",
+                "#value": {
+                    "__translatable": "As miniaturas serão preparadas ao abrir esta seção."
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "page-thumbnail-status",
+                    "aria-live": "polite"
+                }
+            },
+            "#access": false
+        },
+        "page_stage": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "page-stage"
+            },
+            "page": {
+                "#type": "html_tag",
+                "#tag": "canvas",
+                "#attributes": {
+                    "data-aculta-pdf-control": "page",
+                    "aria-label": {
+                        "__translatable": "Página do documento"
+                    },
+                    "hidden": "hidden"
+                }
+            }
+        },
+        "download": {
+            "#type": "html_tag",
+            "#tag": "a",
+            "#value": "Baixar agora",
+            "#attributes": {
+                "href": "/sites/default/files/documento.pdf",
+                "data-aculta-pdf-control": "download"
+            },
+            "#access": false
+        },
+        "print": {
+            "#type": "html_tag",
+            "#tag": "a",
+            "#value": {
+                "__translatable": "Abrir leitor completo para imprimir"
+            },
+            "#attributes": {
+                "href": "/modules/custom/aculta_portal/modules/aculta_pdf_viewer/viewer-wrapper.html?file=/sites/default/files/documento.pdf&locale=en-US&scroll=horizontal&spread=1&spread_mobile=1&print=0&download=0",
+                "target": "_blank",
+                "rel": "noopener noreferrer",
+                "data-aculta-pdf-control": "print"
+            },
+            "#access": false
+        },
+        "full_viewer": {
+            "#type": "html_tag",
+            "#tag": "a",
+            "#value": {
+                "__translatable": "Abrir leitor completo do PDF (nova aba)"
+            },
+            "#attributes": {
+                "href": "/modules/custom/aculta_portal/modules/aculta_pdf_viewer/viewer-wrapper.html?file=/sites/default/files/documento.pdf&locale=en-US&scroll=horizontal&spread=1&spread_mobile=1&print=0&download=0",
+                "target": "_self",
+                "rel": null,
+                "data-aculta-pdf-control": "full-viewer"
+            },
+            "#access": false
+        },
+        "#attached": {
+            "library": [
+                "aculta_pdf_viewer/viewer"
+            ]
+        },
+        "thumbnail": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "thumbnail-container"
+            },
+            "#weight": -10,
+            "image": {
+                "#type": "html_tag",
+                "#tag": "img",
+                "#attributes": {
+                    "src": "/sites/default/files/thumb.png"
+                }
+            }
+        },
+        "#cache": {
+            "contexts": [
+                "user.permissions"
+            ],
+            "tags": [
+                "file:11"
+            ],
+            "max-age": -1
+        }
+    },
+    "site_settings": {
+        "#type": "container",
+        "#attributes": {
+            "data-aculta-pdf-viewer": "true",
+            "role": "region",
+            "aria-label": "Título do site",
+            "data-aculta-pdf-url": "/sites/default/files/documento.pdf",
+            "data-aculta-pdf-title": "Título do site",
+            "data-aculta-pdf-default-zoom": "page-width",
+            "data-aculta-pdf-default-scroll": "vertical",
+            "data-aculta-pdf-double-page": "false",
+            "data-aculta-pdf-double-page-mobile": "false",
+            "data-aculta-pdf-show-zoom": "true",
+            "data-aculta-pdf-show-fullscreen": "true",
+            "data-aculta-pdf-show-search": "true",
+            "data-aculta-pdf-show-page-navigation": "true",
+            "class": [
+                "aculta-pdf-viewer"
+            ]
+        },
+        "toolbar": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "toolbar"
+            },
+            "previous": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Página anterior"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "previous",
+                    "disabled": "disabled"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "span",
+                "#value": {
+                    "__translatable": "Carregando PDF…"
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "status",
+                    "aria-live": "polite"
+                }
+            },
+            "next": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Próxima página"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "next",
+                    "disabled": "disabled"
+                }
+            }
+        },
+        "reader_controls": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "reader-controls"
+            },
+            "zoom": {
+                "#type": "container",
+                "#attributes": {
+                    "data-aculta-pdf-control": "zoom-controls"
+                },
+                "zoom_out": {
+                    "#type": "html_tag",
+                    "#tag": "button",
+                    "#value": {
+                        "__translatable": "Reduzir zoom"
+                    },
+                    "#attributes": {
+                        "type": "button",
+                        "data-aculta-pdf-control": "zoom-out",
+                        "aria-label": {
+                            "__translatable": "Reduzir zoom"
+                        }
+                    }
+                },
+                "zoom_status": {
+                    "#type": "html_tag",
+                    "#tag": "span",
+                    "#value": "100%",
+                    "#attributes": {
+                        "data-aculta-pdf-control": "zoom-status",
+                        "aria-live": "polite"
+                    }
+                },
+                "zoom_in": {
+                    "#type": "html_tag",
+                    "#tag": "button",
+                    "#value": {
+                        "__translatable": "Aumentar zoom"
+                    },
+                    "#attributes": {
+                        "type": "button",
+                        "data-aculta-pdf-control": "zoom-in",
+                        "aria-label": {
+                            "__translatable": "Aumentar zoom"
+                        }
+                    }
+                },
+                "zoom_reset": {
+                    "#type": "html_tag",
+                    "#tag": "button",
+                    "#value": {
+                        "__translatable": "Restaurar zoom"
+                    },
+                    "#attributes": {
+                        "type": "button",
+                        "data-aculta-pdf-control": "zoom-reset"
+                    }
+                }
+            },
+            "rotate": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Girar página 90 graus"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "rotate",
+                    "aria-label": {
+                        "__translatable": "Girar página 90 graus"
+                    }
+                }
+            },
+            "fullscreen": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Tela cheia"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "fullscreen",
+                    "aria-label": {
+                        "__translatable": "Abrir leitor em tela cheia"
+                    },
+                    "aria-pressed": "false"
+                }
+            }
+        },
+        "search_controls": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "search-controls"
+            },
+            "input": {
+                "#type": "html_tag",
+                "#tag": "input",
+                "#attributes": {
+                    "type": "search",
+                    "data-aculta-pdf-control": "search-input",
+                    "aria-label": {
+                        "__translatable": "Buscar texto no PDF"
+                    }
+                }
+            },
+            "submit": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Buscar"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "search-submit"
+                }
+            },
+            "previous": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Resultado anterior"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "search-previous",
+                    "disabled": "disabled"
+                }
+            },
+            "next": {
+                "#type": "html_tag",
+                "#tag": "button",
+                "#value": {
+                    "__translatable": "Próximo resultado"
+                },
+                "#attributes": {
+                    "type": "button",
+                    "data-aculta-pdf-control": "search-next",
+                    "disabled": "disabled"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "span",
+                "#attributes": {
+                    "data-aculta-pdf-control": "search-status",
+                    "aria-live": "polite"
+                }
+            }
+        },
+        "outline": {
+            "#type": "details",
+            "#title": {
+                "__translatable": "Contorno do documento"
+            },
+            "#attributes": {
+                "data-aculta-pdf-control": "outline"
+            },
+            "items": {
+                "#type": "html_tag",
+                "#tag": "ul",
+                "#attributes": {
+                    "data-aculta-pdf-control": "outline-items"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "p",
+                "#value": {
+                    "__translatable": "Este PDF não contém contorno."
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "outline-status",
+                    "aria-live": "polite"
+                }
+            }
+        },
+        "page_thumbnails": {
+            "#type": "details",
+            "#title": {
+                "__translatable": "Miniaturas das páginas"
+            },
+            "#attributes": {
+                "data-aculta-pdf-control": "page-thumbnails"
+            },
+            "items": {
+                "#type": "html_tag",
+                "#tag": "ol",
+                "#attributes": {
+                    "data-aculta-pdf-control": "page-thumbnail-items"
+                }
+            },
+            "status": {
+                "#type": "html_tag",
+                "#tag": "p",
+                "#value": {
+                    "__translatable": "As miniaturas serão preparadas ao abrir esta seção."
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "page-thumbnail-status",
+                    "aria-live": "polite"
+                }
+            }
+        },
+        "page_stage": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "page-stage"
+            },
+            "page": {
+                "#type": "html_tag",
+                "#tag": "canvas",
+                "#attributes": {
+                    "data-aculta-pdf-control": "page",
+                    "aria-label": {
+                        "__translatable": "Página do documento"
+                    },
+                    "hidden": "hidden"
+                }
+            }
+        },
+        "download": {
+            "#type": "html_tag",
+            "#tag": "a",
+            "#value": {
+                "__translatable": "Abrir ou baixar PDF"
+            },
+            "#attributes": {
+                "href": "/sites/default/files/documento.pdf",
+                "data-aculta-pdf-control": "download"
+            }
+        },
+        "print": {
+            "#type": "html_tag",
+            "#tag": "a",
+            "#value": {
+                "__translatable": "Abrir leitor completo para imprimir"
+            },
+            "#attributes": {
+                "href": "/modules/custom/aculta_portal/modules/aculta_pdf_viewer/viewer-wrapper.html?file=/sites/default/files/documento.pdf&locale=pt-BR&scroll=vertical&spread=0&spread_mobile=0&print=0&download=1",
+                "target": "_blank",
+                "rel": "noopener noreferrer",
+                "data-aculta-pdf-control": "print"
+            },
+            "#access": false
+        },
+        "full_viewer": {
+            "#type": "html_tag",
+            "#tag": "a",
+            "#value": {
+                "__translatable": "Abrir leitor completo do PDF (nova aba)"
+            },
+            "#attributes": {
+                "href": "/modules/custom/aculta_portal/modules/aculta_pdf_viewer/viewer-wrapper.html?file=/sites/default/files/documento.pdf&locale=pt-BR&scroll=vertical&spread=0&spread_mobile=0&print=0&download=1",
+                "target": "_blank",
+                "rel": "noopener noreferrer",
+                "data-aculta-pdf-control": "full-viewer"
+            }
+        },
+        "#attached": {
+            "library": [
+                "aculta_pdf_viewer/viewer"
+            ]
+        },
+        "thumbnail": {
+            "#type": "container",
+            "#attributes": {
+                "data-aculta-pdf-control": "thumbnail-container"
+            },
+            "#weight": -10,
+            "image": {
+                "#type": "html_tag",
+                "#tag": "img",
+                "#attributes": {
+                    "src": "/sites/default/files/thumb.png"
+                }
+            }
+        },
+        "#cache": {
+            "contexts": [
+                "user.permissions"
+            ],
+            "tags": [
+                "file:11",
+                "config:aculta_document_viewer.settings"
+            ],
+            "max-age": -1
+        }
+    },
+    "scheme_mismatch": {
+        "#access": false,
+        "#cache": {
+            "contexts": [
+                "user.permissions"
+            ],
+            "tags": [
+                "file:11"
+            ],
+            "max-age": -1
+        }
+    },
+    "non_permanent": {
+        "#access": false,
+        "#cache": {
+            "contexts": [
+                "user.permissions"
+            ],
+            "tags": [
+                "file:11"
+            ],
+            "max-age": -1
+        }
+    }
+}
