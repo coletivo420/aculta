@@ -122,6 +122,17 @@ aculta_events.date_ics:
   options:
     _aculta_domain_purpose: eventos
 
+aculta_events.interactive:
+  path: '/calendario/interativo'
+  defaults:
+    _controller: '\Drupal\aculta_calendar\Controller\InteractiveController::page'
+    _title: 'Calendário interativo'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed}
+
 aculta_events.embed:
   path: '/calendario/incorporar'
   defaults:

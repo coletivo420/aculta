@@ -4,3 +4,14 @@ agenda:
       css/agenda.css: {}
   dependencies:
     - core/drupal
+
+dhtmlx:
+  js:
+    js/dhtmlx/dhtmlxscheduler.js: { preprocess: false }
+    js/aculta-calendar-interactive.js: {}
+  css:
+    theme:
+      css/dhtmlx/dhtmlxscheduler.css: { preprocess: false }
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
