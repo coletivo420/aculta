@@ -45,8 +45,8 @@ Entrada: F1 concluída.
 - [x] Vocabulário `aculta_location_type`, com os 17 tipos do OpenCulturas em português; Kernel confirma criação/listagem e idempotência do update 10003 (`fd70ddd8a`, `82efe4456`).
 - [x] Campos informativos `field_gratuito`, `field_pricing`, `field_pricing_info` e `field_ticketing` em `aculta_event_date` (D-29); update 10004, sem fluxo de pagamento. Kernel: persistência dos campos e idempotência do update.
 - [x] Permissões, acesso ao evento e purpose das rotas de evento (commit `5226494e2`).
-- [ ] `ContentPurposeResolver` cobre os tipos novos (confirmar).
-- [ ] Testes Kernel de acesso por purpose e de datas (confirmar cobertura).
+- [x] `ContentPurposeResolver` reconhece as rotas canônicas de evento, data e local como `eventos`; Unit usa data provider para os três tipos (`ContentPurposeResolverEventsUnitTest`). As rotas funcionais do submódulo declaram `_aculta_domain_purpose: eventos`.
+- [x] Cobertura Kernel de purpose, acesso e datas: `LocationPurposeAccessKernelTest` confirma 404 fora do purpose; `EventAccessKernelTest` cobre rascunho/publicação e permissão; `EventDateHooksKernelTest` cobre filtragem e cache das datas.
 
 Saída: cadastro funcional em teste, sem view pública.
 
