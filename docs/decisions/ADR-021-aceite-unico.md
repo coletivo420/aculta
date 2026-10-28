@@ -2,7 +2,7 @@
 
 **Status:** vigente desde 2026-10-21, por decisão do responsável.  
 **Escopo:** coleta de aceite e ledger de consentimento em todo o projeto.  
-**Origem:** `0.4.0-dev.243`, `0.4.0-dev.245` e `0.4.0-dev.247`, [histórico arquivado do Portal](../history/changelog/aculta_portal.md).
+**Origem:** `0.4.0-dev.243`, `0.4.0-dev.245` e `0.4.0-dev.247`, [histórico arquivado do Portal](../history/changelog/aculta_portal.md), e a decisão de banner de cookie sem conta em `0.2.0-dev.2`, [histórico arquivado de Statistics](../history/changelog/aculta_statistics.md).
 
 ## Contexto
 

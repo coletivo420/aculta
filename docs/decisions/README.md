@@ -23,6 +23,7 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 - [ADR-024 — Webhooks modernos assinados do Mercado Pago](ADR-024-webhooks-mercado-pago-assinados.md)
 - [ADR-025 — Acesso e moderação do Fórum no contexto do LMS](ADR-025-acesso-e-moderacao-forum-lms.md)
 - [ADR-026 — Ownership da moderação de propostas entre Wiki e Studio](ADR-026-ownership-moderacao-wiki-studio.md)
+- [ADR-027 — Contador público de leituras da Wiki](ADR-027-contador-publico-leituras-wiki.md)
 
 ADRs históricos e decisões locais de arquitetura também podem ser encontrados
 neste diretório e em `docs/architecture/`. Para registrar uma decisão nova,
