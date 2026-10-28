@@ -9,6 +9,8 @@
  */
 #}
 <article{{ attributes.addClass('aculta-forum-topic', 'aculta-forum-topic--' ~ view_mode) }}>
+  {% set bookmark_action = content.flag_salvar_topico|default(null) %}
+  {% set content = content|without('flag_salvar_topico') %}
   {{ title_prefix }}
   {% if label and view_mode != 'full' %}
     <h2{{ title_attributes }}>
@@ -19,6 +21,10 @@
 
   {% if display_submitted and date %}
     <footer class="aculta-forum-topic__meta">{{ date }}</footer>
+  {% endif %}
+
+  {% if bookmark_action %}
+    {{ include('aculta420:bookmark-toggle', { action: bookmark_action }, with_context = false) }}
   {% endif %}
 
   <div{{ content_attributes }}>

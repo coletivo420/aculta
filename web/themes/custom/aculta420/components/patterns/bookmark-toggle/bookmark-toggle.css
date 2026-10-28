@@ -1,0 +1,24 @@
+.aculta-bookmark-toggle .flag a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 0.875rem;
+  color: var(--aculta-text-primary);
+  background-color: var(--aculta-surface-raised);
+  border: 1px solid var(--aculta-border-strong);
+  border-radius: var(--bs-border-radius);
+  line-height: 1.25;
+  text-decoration: none;
+}
+
+.aculta-bookmark-toggle .flag a:hover {
+  color: var(--aculta-interactive-hover-text);
+  background-color: var(--aculta-interactive-hover-bg);
+  border-color: var(--aculta-interactive-hover-bg);
+}
+
+.aculta-bookmark-toggle .flag a:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}

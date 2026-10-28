@@ -1,0 +1,6 @@
+name: Salvo
+description: Ação nativa com rótulo visível que confirma o estado salvo.
+component: aculta420:bookmark-toggle
+slots:
+  action:
+    markup: '<div class="flag flag-salvar-topico action-unflag"><a href="#">Salvo</a></div>'

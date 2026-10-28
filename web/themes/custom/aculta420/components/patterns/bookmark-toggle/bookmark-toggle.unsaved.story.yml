@@ -1,0 +1,6 @@
+name: Não salvo
+description: Ação nativa com rótulo visível para salvar o conteúdo.
+component: aculta420:bookmark-toggle
+slots:
+  action:
+    markup: '<div class="flag flag-salvar-topico action-flag"><a href="#">Salvar tópico</a></div>'
