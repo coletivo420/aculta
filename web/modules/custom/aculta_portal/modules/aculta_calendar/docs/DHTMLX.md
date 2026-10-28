@@ -33,6 +33,32 @@ variável `--dhx-scheduler-font-family`, que agora usa `inherit`. O CSS do repos
 nem referência a Inter: nenhuma requisição a terceiros por padrão. O tema ACULTA420 continua carregando
 Inter e Oswald do Google em todas as páginas; isso é do tema, não do componente, e segue a frente visual.
 
+## Como desligar (DH-F)
+
+A visão é opcional e isolada; a saída não perde dados:
+
+1. Remova a rota `aculta_events.interactive` (ou o link `interactive` das `_aculta_calendar_rotas`). A agenda e a
+   grade em HTML continuam funcionando.
+2. A library `aculta_calendar/dhtmlx` só é anexada por essa rota; sem ela, nenhum JS ou CSS do DHTMLX é servido.
+3. Para remover o pacote, apague `js/dhtmlx/`, `css/dhtmlx/` e a library `dhtmlx`.
+4. Nenhum dado está no componente: os itens vêm de `aculta_calendar.item_source`; o motor de recorrência, o `.ics`
+   e a regra de acesso ficam no `aculta_calendar`. Não há perda de dados.
+5. Os formulários de edição (regra e ocorrência) e a página do evento não dependem desta visão.
+
+## Resultados medidos e pendências (2026-10-28)
+
+| Critério | Resultado |
+| --- | --- |
+| Teclado (Firefox ESR) | Passou: Tab entra (`tabindex=0`, foco em `dhx_focus_slot`) e as setas movem o foco interno, em 1280 e 320 px; em 320 a visão é a agenda. |
+| Leitor de tela | Orca está instalado, mas o anúncio não foi automatizado nesta sessão; os ARIA (`role=application`, `aria-label`) foram medidos no piloto. **Pendente.** |
+| Alto contraste | O pacote 7.2.15 traz `contrast_white` e `contrast_black` só em LESS, sem CSS compilado. **Não testado; pendente.** |
+| Tamanho servido | JS 539.946 B (151.259 B gzip); CSS 113.465 B (13.040 B gzip); HTML da rota 5.106 B. Primeiro carregamento da rota ~164 KB; depois, cache do navegador. |
+| ACULTA420 | Testado (Kernel/Unit e Firefox ESR). |
+| Olivero | **Bloqueado:** `drush cr` falha em `aculta_user/PeopleListController.php` (arquivo de outra sessão), então não foi possível trocar o tema com segurança. |
+
+Enquanto o leitor de tela, o alto contraste e o Olivero não forem verificados, a visão **não é considerada pronta**.
+Ela fica atrás de uma rota opcional e pode ser desligada pelo plano acima.
+
 ## Dados (DH-D)
 
 O componente recebe `drupalSettings.acultaCalendar.items` (`id`, `text`, `start_date`, `end_date`, `local`,

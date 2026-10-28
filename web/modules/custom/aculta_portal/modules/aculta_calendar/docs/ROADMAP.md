@@ -31,6 +31,20 @@ Status: a fazer, salvo onde indicado.
 ## CA6 — Documentação para agentes
 - [x] README com a API, o que cada área pode e não pode fazer, e onde ficam as regras.
 
+## DH — DHTMLX Scheduler (visão interativa)
+
+Decisão do responsável em 2026-10-28; detalhes, origem e hashes em `DHTMLX.md` e `ESTUDO-DHTMLX-SCHEDULER.md`.
+
+- [x] DH-A — componente 7.2.15 local (npm pack), library só na rota `/calendario/interativo`, sem CDN; `LICENSE` do pacote não incluído (decisão do responsável).
+- [x] DH-B — `key_nav` antes do init; teclado medido no Firefox ESR.
+- [x] DH-C — fontes externas removidas do CSS do componente (0 URLs externas).
+- [x] DH-D — dados via `CalendarItemSource`/`CalendarOccurrences`; o componente só apresenta.
+- [x] DH-E — grade a partir de md; agenda em HTML abaixo; link "Visão interativa" na agenda.
+- [x] DH-F — plano de saída documentado em `DHTMLX.md`.
+- [x] Tamanho medido: JS 151.259 B gzip; CSS 13.040 B gzip; HTML 5.106 B.
+- [ ] Leitor de tela (Orca instalado; anúncio não automatizado) e alto contraste (skins só em LESS, sem CSS compilado).
+- [ ] Olivero: bloqueado pelo `drush cr` quebrado em `aculta_user/PeopleListController.php`.
+
 ## Importação revisável de arquivos iCalendar
 
 - [x] I1 — fonte de calendário como entidade de configuração e itens importados como entidade revisável; UID deduplicado por fonte.
