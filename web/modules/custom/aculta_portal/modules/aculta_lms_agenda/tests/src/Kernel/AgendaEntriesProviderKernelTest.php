@@ -110,12 +110,24 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $curso->addRelationship($turma, 'lms_classes');
     $turma->addRelationship($atividade, 'lms_class_activity_due', ['field_activity_due_at' => $this->utc('2026-11-02 12:00:00')]);
 
+    $outraTurma = Group::create(['type' => 'lms_class', 'label' => 'Turma B', 'uid' => $dono->id(), 'status' => 1]);
+    $outraTurma->save();
+    $curso->addRelationship($outraTurma, 'lms_classes');
+
     $evento = Event::create(['title' => 'Roda de conversa', 'field_status' => 'publicado', 'field_turma' => $turma->id()]);
     $evento->save();
     EventDate::create([
       'title' => 'Roda de conversa',
       'field_evento' => $evento->id(),
       'field_quando' => ['value' => $this->utc('2026-11-04 19:00:00'), 'end_value' => $this->utc('2026-11-04 21:00:00')],
+    ])->save();
+
+    $eventoDaOutraTurma = Event::create(['title' => 'Aula da Turma B', 'field_status' => 'publicado', 'field_turma' => $outraTurma->id()]);
+    $eventoDaOutraTurma->save();
+    EventDate::create([
+      'title' => 'Aula da Turma B',
+      'field_evento' => $eventoDaOutraTurma->id(),
+      'field_quando' => ['value' => $this->utc('2026-11-05 19:00:00'), 'end_value' => $this->utc('2026-11-05 21:00:00')],
     ])->save();
 
     $aluno = $this->createUser();
@@ -128,6 +140,7 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
 
     $entradas = $servico->forAccount($aluno, $de, $ate);
     $this->assertSame(['prazo', 'evento'], array_column($entradas, 'tipo'));
+    $this->assertNotContains('Aula da Turma B', array_column($entradas, 'titulo'));
     $this->assertSame('02/11/2026 12:00', $entradas[0]['inicio']->format('d/m/Y H:i'));
     $this->assertSame('04/11/2026 19:00', $entradas[1]['inicio']->format('d/m/Y H:i'));
     $this->assertSame([], $servico->forAccount($visitante, $de, $ate));

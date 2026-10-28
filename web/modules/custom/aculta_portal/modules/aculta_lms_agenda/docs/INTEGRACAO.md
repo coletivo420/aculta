@@ -50,3 +50,11 @@ da agenda não tem caminho público: toda consulta recebe o usuário e aplica es
 `ProximosEventosBlock` (`aculta_lms_agenda_proximos`) mostra os próximos 5 itens dos próximos 60
 dias, em dd/mm/aaaa HH:mm, para o usuário atual. Visitante vê o aviso de lista vazia. A colocação
 na região do painel é configuração do site e depende de aprovação.
+
+## Verificação de acesso por matrícula
+
+`AgendaEntriesProviderKernelTest::testSoMatriculadosVeemAsEntradasDaTurma` cobre
+o aluno matriculado na turma correta, um aluno matriculado em outra turma e um
+usuário sem matrícula. Só o primeiro recebe as entradas. `forAccount()` ainda
+revalida que a turma e o curso estão publicados e que `takeAccess()` permite o
+acesso ao curso.
