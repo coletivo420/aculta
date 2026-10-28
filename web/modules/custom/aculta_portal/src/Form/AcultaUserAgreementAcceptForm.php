@@ -46,8 +46,8 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
     $form['documents'] = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'terms-modal-documents'],
-      'terms' => $this->documentLink('/termos-de-uso', $this->t('Termos de Uso')),
-      'privacy' => $this->documentLink('/politica-de-privacidade', $this->t('Política de Privacidade')),
+      'terms' => $this->documentLink('/sobre/termos-de-uso', $this->t('Termos de Uso')),
+      'privacy' => $this->documentLink('/sobre/politica-de-privacidade', $this->t('Política de Privacidade')),
     ];
     $form['accept'] = [
       '#type' => 'checkbox',

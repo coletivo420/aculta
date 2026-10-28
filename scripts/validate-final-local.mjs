@@ -18,7 +18,7 @@ const originalMessage=socket.onmessage;
 socket.onmessage=e=>{const m=JSON.parse(e.data);if(m.method==='Runtime.exceptionThrown'){const d=m.params.exceptionDetails;report.errors.push({text:d.text,description:d.exception?.description,url:d.url,stack:d.stackTrace});}originalMessage(e);};
 await call('Runtime.enable');
 const links=new Set();
-for(const path of ['/','/institucional','/projetos','/atividades','/noticias','/transparencia','/contato','/politica-de-privacidade']){
+for(const path of ['/','/institucional','/projetos','/atividades','/noticias','/transparencia','/contato','/sobre/politica-de-privacidade']){
  const response=await fetch(origin+path);await navigate(path);
  const info=await evaluate(`(()=>{const body=document.body.innerText;return {h1:[...document.querySelectorAll('h1')].map(e=>e.innerText),title:document.title,description:document.querySelector('meta[name=description]')?.content,links:[...document.querySelectorAll('a[href]')].map(e=>e.getAttribute('href')),placeholders:/Welcome!|No front page content|Lorem ipsum|admin@example.com|Coming soon|Em construção|AGUARDANDO CNPJ|INSERIR CNPJ/i.test(body),brokenImages:[...document.images].filter(e=>!e.complete||e.naturalWidth===0).map(e=>e.src),footerSlogan:document.querySelector('.aculta-footer-description')?.innerText,fields:[...document.querySelectorAll('input:not([type=hidden]):not([type=submit]),textarea')].map(e=>({name:e.name,label:!!document.querySelector('label[for="'+e.id+'"]')})),emptyHashLinks:[...document.querySelectorAll('a[href="#"]')].length};})()`);
  for(const href of info.links){const u=new URL(href,origin);if(['localhost','127.0.0.1','aculta.org'].includes(u.hostname)&&['http:','https:'].includes(u.protocol))links.add(u.pathname+u.search);}
@@ -60,7 +60,7 @@ await call('Emulation.setEmulatedMedia',{features:[]});
 // First keyboard focus can occur before VVJ's lazy hydration; the theme must wait.
 await navigate('/');await evaluate('document.querySelector("vvjb-carousel").focus()');await sleep(700);
 report.interaction.lazyFocusPaused=await evaluate('document.querySelector("vvjb-carousel")._isPaused');
-for(const path of ['/institucional','/projetos','/atividades','/noticias','/transparencia','/contato','/politica-de-privacidade']){
+for(const path of ['/institucional','/projetos','/atividades','/noticias','/transparencia','/contato','/sobre/politica-de-privacidade']){
  for(const width of [1440,1200,1024,768,480,360]){
   await call('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});await navigate(path);
   report.internalResponsive.push({path,width,overflow:await evaluate('document.documentElement.scrollWidth>innerWidth')});

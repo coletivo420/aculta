@@ -288,8 +288,8 @@ final class FormHooks {
     $link = static function (string $href, string $text): string {
       return '<a href="' . htmlspecialchars($href, ENT_QUOTES) . '" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($text, ENT_QUOTES) . '</a>';
     };
-    $terms = $this->domainPurpose->pathUrl('main', '/termos-de-uso')?->toString() ?? '/termos-de-uso';
-    $privacy = $this->domainPurpose->pathUrl('main', '/politica-de-privacidade')?->toString() ?? '/politica-de-privacidade';
+    $terms = $this->domainPurpose->pathUrl('main', '/sobre/termos-de-uso')?->toString() ?? '/sobre/termos-de-uso';
+    $privacy = $this->domainPurpose->pathUrl('main', '/sobre/politica-de-privacidade')?->toString() ?? '/sobre/politica-de-privacidade';
     $pattern = (string) $this->translation->translate('Li e aceito os @terms e a @privacy.');
     $html = strtr($pattern, [
       '@terms' => $link($terms, (string) $this->translation->translate('Termos de Uso')),

@@ -77,7 +77,7 @@ final class AcultaUserAgreementLedger {
   /** Captures stable revision references and content hashes for the current legal documents. */
   private function currentTermsEvidence(): array {
     $evidence = [];
-    foreach (['/termos-de-uso', '/politica-de-privacidade'] as $alias) {
+    foreach (['/sobre/termos-de-uso', '/sobre/politica-de-privacidade'] as $alias) {
       $path = $this->pathAliasManager->getPathByAlias($alias);
       if (!preg_match('@^/node/(\d+)$@', $path, $matches)) {
         $evidence[] = ['alias' => $alias, 'status' => 'document_unresolved'];

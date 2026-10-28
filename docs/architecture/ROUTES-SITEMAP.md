@@ -106,6 +106,8 @@ correspondentes estão habilitados no ambiente.
 | Host | Caminho | Título / objeto | Estado |
 | --- | --- | --- | --- |
 | `main.aculta` | `/` | Início institucional | Ativo. |
+| `main.aculta` | `/sobre/termos-de-uso` | Termos de Uso (nó 41) | Alias editorial ativo no Runtime de teste; conteúdo sujeito à revisão da minuta institucional. |
+| `main.aculta` | `/sobre/politica-de-privacidade` | Política de Privacidade (nó 11) | Alias editorial ativo no Runtime de teste; conteúdo sujeito à revisão dos provedores externos. |
 | `main.aculta` | `/busca` | Formulário de busca | Ativo; envio direciona para a busca com query. |
 | `main.aculta` | `/busca?q={termo}` | Resultados da busca pelo termo | Ativo. |
 | `main.aculta` | `/busca/popup` | Formulário de busca em janela | Endpoint de interface; access conforme a busca pública. |
@@ -475,6 +477,8 @@ módulos instalados: módulos desabilitados não expõem rotas ativas.
 | `/pagamentos/{id}/excluir` | `conta.aculta` | Exclusão de meio de pagamento pessoal | `404`; ACULTA não armazena nem exibe meios de pagamento pessoais. |
 | `/pagamentos/{id}/padrao` | `conta.aculta` | Seleção de meio de pagamento padrão pessoal | `404`; ACULTA não armazena nem exibe meios de pagamento pessoais. |
 | `/aceite-termos` | Todos os purposes | Antiga página dedicada ao aceite dos termos | Removida; `404`. O fluxo atual usa popup e `POST /termos/aceitar`. |
+| `/termos-de-uso` | `main.aculta` | Alias editorial anterior do nó Termos de Uso | Removido sem redirect; HTTP 404 no Runtime de teste (2026-10-28). |
+| `/politica-de-privacidade` | `main.aculta` | Alias editorial anterior da Política de Privacidade | Removido sem redirect; HTTP 404 no Runtime de teste (2026-10-28). |
 | `/albuns` | Todos os purposes | Catálogo de álbuns publicados | Rota da View, condicional ao módulo; confirmar estado Runtime antes de afirmar ativa. |
 | `/albuns/{titulo}` | Todos os purposes | Álbum da galeria publicado | Rota condicional do submódulo; confirmar estado efetivo do Runtime, não inferir pelo YAML. |
 

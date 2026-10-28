@@ -52,7 +52,7 @@ final class ConsentBannerHooks {
       'cookieName' => self::COOKIE_NAME,
       'version' => self::COOKIE_VERSION,
       // Caminho relativo: o host vem do ambiente, nunca fixo no código (AGENTS, endereços dependentes de ambiente).
-      'privacyUrl' => Url::fromUserInput('/politica-de-privacidade', ['absolute' => FALSE])->toString(),
+      'privacyUrl' => Url::fromUserInput('/sobre/politica-de-privacidade', ['absolute' => FALSE])->toString(),
     ];
   }
 

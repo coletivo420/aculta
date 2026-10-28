@@ -55,7 +55,7 @@ final class ConsentBannerHooksKernelTest extends KernelTestBase {
     $consent = $attachments['#attached']['drupalSettings']['acultaStatistics']['consent'];
     $this->assertSame(ConsentBannerHooks::COOKIE_NAME, $consent['cookieName']);
     $this->assertSame(ConsentBannerHooks::COOKIE_VERSION, $consent['version']);
-    $this->assertSame('/politica-de-privacidade', $consent['privacyUrl']);
+    $this->assertSame('/sobre/politica-de-privacidade', $consent['privacyUrl']);
   }
 
   /**

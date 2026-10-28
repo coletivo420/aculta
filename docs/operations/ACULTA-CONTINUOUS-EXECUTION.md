@@ -1,5 +1,12 @@
 # Execução contínua ACULTA — PR #298
 
+## Aliases dos documentos institucionais — PR #299 — 2026-10-28
+
+- Operação autorizada pelo responsável: mover os Termos de Uso e a Política de Privacidade para `/sobre/termos-de-uso` e `/sobre/politica-de-privacidade`, sem manter compatibilidade temporária. Host `toca`; checkout `/home/piradopirata/projetos/aculta`; branch `refactor/opencultures-codigo-visual`; HEAD no início `cdc462295`; Drush URI `http://default`; root `/home/piradopirata/projetos/aculta/web`; Drupal 11.4.10; banco `aculta_runtime` com 605 tabelas (igual ao registro anterior).
+- Antes da escrita, snapshot do banco Runtime: `/home/piradopirata/aculta-backups/aculta-runtime-terms-paths-20261028/aculta_runtime-before-terms-paths.sql.gz`, 5.675.908 bytes, SHA-256 `8d7ee79168a436593b422824a1d11f5f1dd8e1bb82fbed2613c737ffc4ac08a3`.
+- Atualizados via Entity API os aliases de `/node/11` (Política) e `/node/41` (Termos), incluindo as variantes `pt-br` e `und` existentes; a referência interna à Política nos Termos foi atualizada em nova revisão do nó 41 (revisão 723), sem mudança substantiva do texto. Três redirects exatos criados pelo módulo Redirect para os aliases antigos foram removidos após conferir origem/destino. `drush cr` concluiu.
+- HTTP no host MAIN de desenvolvimento: `/sobre/termos-de-uso` 200; `/sobre/politica-de-privacidade` 200; `/termos-de-uso` 404; `/politica-de-privacidade` 404. Não houve `updatedb`, `config:import`, escrita em produção ou mudança de texto legal substantivo.
+
 ## Mercado Pago — planos no Studio e alinhamento do gateway no Sync (2026-10-28)
 
 - Base publicada: `770ec1bc4`; commit `fda2c2d3d` (`feat(mercadopago): manage sandbox plans in Studio`) foi enviado por fast-forward para `origin/chore/aculta-m0-integridade`. `git fsck --full --no-reflogs --no-dangling` terminou sem erros antes do commit e do push. HEAD servido/pós-publicação: `fda2c2d3d` (destacado); branch remota confirmada pelo push.

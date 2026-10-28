@@ -2,7 +2,7 @@
 
 > **Minuta, não publicada.** Cópia para leitura e revisão, gerada de `scripts/institution/termos-de-uso.html` (fonte única do texto publicado). Não edite este arquivo: altere o HTML e rode `python3 -I scripts/compliance/render-minutas.py`. Os trechos entre colchetes são pendências de decisão ou de revisão jurídica.
 
-**Atualizados em 22/10/2026 — versão 0.3 (minuta).** Estes Termos de Uso explicam as condições de utilização do site institucional da Associação Cultural Antiproibicionista, em **aculta.org**. Ao navegar ou usar uma funcionalidade, a pessoa concorda com as regras aplicáveis a ela e com a [Política de Privacidade](/politica-de-privacidade).
+**Atualizados em 22/10/2026 — versão 0.3 (minuta).** Estes Termos de Uso explicam as condições de utilização do site institucional da Associação Cultural Antiproibicionista, em **aculta.org**. Ao navegar ou usar uma funcionalidade, a pessoa concorda com as regras aplicáveis a ela e com a [Política de Privacidade](/sobre/politica-de-privacidade).
 
 ## Sobre a Associação e o site
 
@@ -64,7 +64,7 @@ O site pode passar por manutenção, atualização ou indisponibilidade temporá
 
 ## Privacidade
 
-O tratamento de dados pessoais é descrito na [Política de Privacidade](/politica-de-privacidade), que integra a experiência do site.
+O tratamento de dados pessoais é descrito na [Política de Privacidade](/sobre/politica-de-privacidade), que integra a experiência do site.
 
 ## Legislação e contato
 

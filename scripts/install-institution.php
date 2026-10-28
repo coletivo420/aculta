@@ -210,7 +210,7 @@ institution_node('activities', 'page', 'Atividades', institution_paragraphs($dat
 institution_node('news', 'page', 'Notícias', '<h2>' . institution_escape($data['knowledge']['title']) . '</h2>' . institution_paragraphs($data['knowledge']['paragraphs']) . '<p>' . institution_link('/projetos/podplant420', 'Conheça o PodPlant420') . '</p>', '/noticias');
 institution_node('transparency', 'page', 'Transparência', '<p class="aculta-page-intro">' . institution_escape($data['transparency']['intro']) . '</p>' . institution_paragraphs($data['transparency']['paragraphs']), '/transparencia');
 $privacy = file_get_contents(__DIR__ . '/institution/politica-de-privacidade.html');
-institution_node('privacy', 'page', 'Política de Privacidade', $privacy, '/politica-de-privacidade');
+institution_node('privacy', 'page', 'Política de Privacidade', $privacy, '/sobre/politica-de-privacidade');
 
 // Reusable structured institutional data: empty fields are never rendered.
 if (!BlockContentType::load('aculta_institution')) {
