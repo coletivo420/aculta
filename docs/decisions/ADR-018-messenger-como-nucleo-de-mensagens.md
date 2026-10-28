@@ -3,7 +3,7 @@
 **Status:** vigente desde 2026-10-24.
 **Escopo:** Portal e módulos produtores de mensagens/avisos, incluindo Fórum,
 Wiki, LMS, Revista, Loja e Doações.
-**Origem:** `0.1.1-dev.97`, [histórico do Messenger](../history/changelog/aculta_messenger.md).
+**Origem:** `0.1.1-dev.97`, [histórico do Messenger](../history/changelog/aculta_messenger.md), e política F-D21 de avisos do Fórum em [seu histórico arquivado](../history/changelog/aculta_forum.md).
 
 ## Contexto
 
