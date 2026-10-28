@@ -114,6 +114,17 @@ final class ImageAuditController extends ControllerBase {
         '#rows' => $candidatas,
         '#empty' => $this->t('Nenhuma imagem sem referência.'),
       ],
+      'usos_arquivo' => [
+        '#type' => 'table',
+        '#caption' => $this->t('Uso de arquivos de imagem'),
+        '#header' => [$this->t('Arquivo'), $this->t('Tamanho'), $this->t('Ação')],
+        '#rows' => array_map(fn (array $arquivo): array => [
+          $arquivo['filename'],
+          round($arquivo['filesize'] / 1024, 1) . ' KB',
+          Link::createFromRoute($this->t('Onde é usado'), 'aculta_image.file_usage', ['file' => $arquivo['fid']]),
+        ], $this->audit->arquivos()),
+        '#empty' => $this->t('Nenhum arquivo de imagem gerenciado.'),
+      ],
     ];
   }
 

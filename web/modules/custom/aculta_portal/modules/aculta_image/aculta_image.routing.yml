@@ -18,6 +18,20 @@ aculta_image.audit_report:
   options:
     _admin_route: true
 
+aculta_image.file_usage:
+  path: '/painel-administrativo/imagens/{file}/usos'
+  defaults:
+    _controller: '\Drupal\aculta_image\Controller\ImageFileUsageController::view'
+    _title: 'Onde o arquivo é usado'
+  requirements:
+    _permission: 'administer aculta images'
+    file: '\d+'
+  options:
+    _admin_route: true
+    parameters:
+      file:
+        type: entity:file
+
 aculta_image.quarantine:
   path: '/painel-administrativo/imagens/quarentena'
   defaults:

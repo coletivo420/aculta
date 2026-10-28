@@ -12,6 +12,11 @@
 
 # Changelog — aculta_image
 
+## 0.1.0-dev.35 — consulta de uso de arquivo (2026-10-28)
+
+- Adicionada consulta somente de leitura em `/painel-administrativo/imagens/{file}/usos`, protegida por `administer aculta images`. Lista apenas entidades acessíveis e não altera a política de upload.
+- O relatório ganhou uma lista limitada de imagens com link para a consulta de uso. Baseada no conceito da view do OpenCulturas; implementação própria com File Usage API. Kernel access: 1 teste / 1 assertion PASS (1 depreciação).
+
 ## 0.1.0-dev.33 — coordenar também a quarentena pelo Portal
 
 - ImageQuarantine agora usa aculta_portal.unused_file_cleaner para conferir referências antes de mover e para repetir a verificação antes de excluir entradas vencidas. Sem o coordenador, a quarentena falha fechada.

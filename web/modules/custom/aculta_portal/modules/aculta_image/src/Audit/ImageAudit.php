@@ -97,6 +97,27 @@ final class ImageAudit {
   }
 
   /**
+   * Managed image files available to the administrative usage inventory.
+   *
+   * @return list<array{fid: int, filename: string, filesize: int}>
+   *   Bounded file list without exposing storage URIs.
+   */
+  public function arquivos(int $limite = 200): array {
+    $linhas = $this->database->select('file_managed', 'f')
+      ->fields('f', ['fid', 'filename', 'filesize'])
+      ->condition('f.filemime', 'image/%', 'LIKE')
+      ->orderBy('f.fid', 'DESC')
+      ->range(0, $limite)
+      ->execute()
+      ->fetchAll();
+    return array_map(static fn ($linha): array => [
+      'fid' => (int) $linha->fid,
+      'filename' => (string) $linha->filename,
+      'filesize' => (int) $linha->filesize,
+    ], $linhas);
+  }
+
+  /**
    * Calcula a impressão digital visual de até $limite imagens que ainda não têm uma (lote de cron).
    * Retorna quantas foram calculadas. Imagens que o GD não lê ficam sem impressão e não são tentadas de novo.
    */
