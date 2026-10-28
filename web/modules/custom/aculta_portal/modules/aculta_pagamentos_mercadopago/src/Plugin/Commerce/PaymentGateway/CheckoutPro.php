@@ -1237,6 +1237,30 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * {@inheritdoc}
    */
   public function onReturn(OrderInterface $order, Request $request): void {
+    $response = $request->query->all();
+    $payment_id = $response['payment_id'] ?? NULL;
+    if (!is_scalar($payment_id) || filter_var((string) $payment_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === FALSE) {
+      // Preserve the existing validation error for malformed payment IDs.
+      $this->processReturn($order, $request);
+      return;
+    }
+
+    $lock_id = 'aculta_pagamentos_mercadopago.payment.' . (string) $payment_id;
+    if (!$this->lock->acquire($lock_id, 300)) {
+      throw new PaymentGatewayException('Payment verification is already being processed.', 0);
+    }
+    try {
+      $this->processReturn($order, $request);
+    }
+    finally {
+      $this->lock->release($lock_id);
+    }
+  }
+
+  /**
+   * Reconciles provider state while the caller holds the payment lock.
+   */
+  private function processReturn(OrderInterface $order, Request $request): void {
     $logger = $this->loggerFactory->get('Mercado Pago OnReturn');
 
     $order_checkout_pro_data = $order->getData('commerce_mercado_pago_checkout');
@@ -1375,121 +1399,110 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
 
     /** @var \Drupal\commerce_payment\PaymentStorageInterface $payment_storage */
     $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
-    $lock_id = 'aculta_pagamentos_mercadopago.payment.' . (string) $payment_id;
-    if (!$this->lock->acquire($lock_id, 30)) {
-      throw new PaymentGatewayException('Payment verification is already being processed.', 0);
-    }
-    try {
+    // If payment was already saved from a signed webhook (OnNotify)
+    // no need to save the payment again.
+    $payment_ids = $payment_storage->getQuery()
+      ->condition('order_id', $order->id())
+      ->condition('payment_gateway', $this->parentEntity->id())
+      ->condition('remote_id', $payment_id)
+      ->accessCheck(FALSE)
+      ->range(0, 1)
+      ->execute();
 
-      // If payment was already saved from a signed webhook (OnNotify)
-      // no need to save the payment again.
-      $payment_ids = $payment_storage->getQuery()
-        ->condition('order_id', $order->id())
-        ->condition('payment_gateway', $this->parentEntity->id())
-        ->condition('remote_id', $payment_id)
-        ->accessCheck(FALSE)
-        ->range(0, 1)
-        ->execute();
-
-      if (count($payment_ids) > 0) {
-        $existing_payment = $payment_storage->load(reset($payment_ids));
-        $existing_state = $existing_payment->getState()->getId();
-        if ($verified_status === 'approved' && in_array($existing_state, ['new', 'authorization', 'pending'], TRUE)) {
+    if (count($payment_ids) > 0) {
+      $existing_payment = $payment_storage->load(reset($payment_ids));
+      $existing_state = $existing_payment->getState()->getId();
+      if ($verified_status === 'approved' && in_array($existing_state, ['new', 'authorization', 'pending'], TRUE)) {
+        $existing_payment->setRemoteState($verified_status);
+        $existing_payment->save();
+        $existing_payment->setState('completed');
+        $existing_payment->save();
+      }
+      elseif ($pending_status && in_array($existing_state, ['new', 'authorization', 'pending'], TRUE)) {
+        $changed = FALSE;
+        if (in_array($existing_state, ['new', 'authorization'], TRUE)) {
+          $existing_payment->setState('pending');
+          $changed = TRUE;
+        }
+        if ($existing_payment->getRemoteState() !== $verified_status) {
           $existing_payment->setRemoteState($verified_status);
-          $existing_payment->save();
-          $existing_payment->setState('completed');
+          $changed = TRUE;
+        }
+        if ($changed) {
           $existing_payment->save();
         }
-        elseif ($pending_status && in_array($existing_state, ['new', 'authorization', 'pending'], TRUE)) {
-          $changed = FALSE;
-          if (in_array($existing_state, ['new', 'authorization'], TRUE)) {
-            $existing_payment->setState('pending');
-            $changed = TRUE;
-          }
-          if ($existing_payment->getRemoteState() !== $verified_status) {
-            $existing_payment->setRemoteState($verified_status);
-            $changed = TRUE;
-          }
-          if ($changed) {
-            $existing_payment->save();
-          }
-        }
-        $logger->info('Payment already saved from a signed webhook or return.');
-        return;
       }
-      // If OnNotify method failed for some reason
-      // we continue to save the payment information.
-      // Mescla os dados para preservar preference_id no retorno.
-      $checkout_data = $order->getData('commerce_mercado_pago_checkout') ?? [];
-      $checkout_data['remote_id'] = $merchant_order_id;
-      $order->setData('commerce_mercado_pago_checkout', $checkout_data);
+      $logger->info('Payment already saved from a signed webhook or return.');
+      return;
+    }
+    // If OnNotify method failed for some reason
+    // we continue to save the payment information.
+    // Mescla os dados para preservar preference_id no retorno.
+    $checkout_data = $order->getData('commerce_mercado_pago_checkout') ?? [];
+    $checkout_data['remote_id'] = $merchant_order_id;
+    $order->setData('commerce_mercado_pago_checkout', $checkout_data);
 
-      /*
-      // If the user is anonymous, add their Mercado Pago e-mail to the order.
-      if (empty($order->getEmail())) {
-      //@todo get user email from Mercado Pago
-      $user_email = $response['email']
-      $order->setEmail($user_email);
-      }
-       */
+    /*
+    // If the user is anonymous, add their Mercado Pago e-mail to the order.
+    if (empty($order->getEmail())) {
+    //@todo get user email from Mercado Pago
+    $user_email = $response['email']
+    $order->setEmail($user_email);
+    }
+     */
 
-      $payment_method = NULL;
-      // Reuse o método de pagamento atual, quando disponível.
-      if (!$order->get('payment_method')->isEmpty()) {
-        /** @var \Drupal\commerce_payment\Entity\PaymentMethodInterface $payment_method */
-        $payment_method = $order->get('payment_method')->entity;
-      }
-      // If the order doesn't reference a payment method yet, or if the payment
-      // method doesn't reference the right gateway, create a new one.
-      if (!$payment_method || $payment_method->getPaymentGatewayId() !== $this->parentEntity->id()) {
-        // Create a payment method.
-        $payment_method_storage = $this->entityTypeManager->getStorage('commerce_payment_method');
-        assert($payment_method_storage instanceof PaymentMethodStorageInterface);
-        $payment_method = $payment_method_storage->createForCustomer(
-          'aculta_mercadopago_checkout_pro',
-          (string) $this->parentEntity->id(),
-          $order->getCustomerId(),
-          $order->getBillingProfile()
-        );
-      }
+    $payment_method = NULL;
+    // Reuse o método de pagamento atual, quando disponível.
+    if (!$order->get('payment_method')->isEmpty()) {
+      /** @var \Drupal\commerce_payment\Entity\PaymentMethodInterface $payment_method */
+      $payment_method = $order->get('payment_method')->entity;
+    }
+    // If the order doesn't reference a payment method yet, or if the payment
+    // method doesn't reference the right gateway, create a new one.
+    if (!$payment_method || $payment_method->getPaymentGatewayId() !== $this->parentEntity->id()) {
+      // Create a payment method.
+      $payment_method_storage = $this->entityTypeManager->getStorage('commerce_payment_method');
+      assert($payment_method_storage instanceof PaymentMethodStorageInterface);
+      $payment_method = $payment_method_storage->createForCustomer(
+        'aculta_mercadopago_checkout_pro',
+        (string) $this->parentEntity->id(),
+        $order->getCustomerId(),
+        $order->getBillingProfile()
+      );
+    }
 
-      $payment_method->setRemoteId((string) $merchant_order_id);
-      $payment_method->setReusable(FALSE);
-      $payment_method->save();
+    $payment_method->setRemoteId((string) $merchant_order_id);
+    $payment_method->setReusable(FALSE);
+    $payment_method->save();
 
-      $order->set('payment_method', $payment_method);
-      $order->save();
+    $order->set('payment_method', $payment_method);
+    $order->save();
 
-      $logger->info('Payment information saved successfully.<br>Payment Type: @type<br>Merchant order id: @mo_id<br>Preference id: @pref_id', [
-        '@type' => $response['payment_type'] ?? 'n/a',
-        '@mo_id' => $merchant_order_id,
-        '@pref_id' => $response['preference_id'] ?? 'n/a',
-      ]);
+    $logger->info('Payment information saved successfully.<br>Payment Type: @type<br>Merchant order id: @mo_id<br>Preference id: @pref_id', [
+      '@type' => $response['payment_type'] ?? 'n/a',
+      '@mo_id' => $merchant_order_id,
+      '@pref_id' => $response['preference_id'] ?? 'n/a',
+    ]);
 
-      /** @var \Drupal\commerce_payment\Entity\PaymentInterface $payment */
-      $payment = $payment_storage->create([
-        'state' => $pending_status ? 'pending' : 'authorization',
-        'amount' => $verified_amount,
-        'payment_gateway' => $this->parentEntity->id(),
-        'order_id' => $order->id(),
-        'remote_id' => $payment_id,
-        'remote_state' => $verified_status,
-      ]);
+    /** @var \Drupal\commerce_payment\Entity\PaymentInterface $payment */
+    $payment = $payment_storage->create([
+      'state' => $pending_status ? 'pending' : 'authorization',
+      'amount' => $verified_amount,
+      'payment_gateway' => $this->parentEntity->id(),
+      'order_id' => $order->id(),
+      'remote_id' => $payment_id,
+      'remote_state' => $verified_status,
+    ]);
+    $payment->save();
+
+    if ($pending_status) {
+      $this->messenger()->addWarning('Payment is pending confirmation. We will update your order when Mercado Pago confirms it.');
+    }
+    else {
+      $payment->setState('completed');
       $payment->save();
-
-      if ($pending_status) {
-        $this->messenger()->addWarning('Payment is pending confirmation. We will update your order when Mercado Pago confirms it.');
-      }
-      else {
-        $payment->setState('completed');
-        $payment->save();
-        $this->messenger()->addStatus('Payment has been successfully processed.');
-      }
+      $this->messenger()->addStatus('Payment has been successfully processed.');
     }
-    finally {
-      $this->lock->release($lock_id);
-    }
-
   }
 
   /**

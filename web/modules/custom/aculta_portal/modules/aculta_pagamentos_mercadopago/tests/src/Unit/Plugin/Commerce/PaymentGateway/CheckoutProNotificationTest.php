@@ -502,7 +502,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->expects($this->once())
       ->method('acquire')
-      ->with('aculta_pagamentos_mercadopago.payment.123', 30)
+      ->with('aculta_pagamentos_mercadopago.payment.123', 300)
       ->willReturn(TRUE);
     $lock->expects($this->once())
       ->method('release')
@@ -593,7 +593,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
 
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->method('acquire')->with('aculta_pagamentos_mercadopago.payment.123', 30)->willReturn(TRUE);
+    $lock->method('acquire')->with('aculta_pagamentos_mercadopago.payment.123', 300)->willReturn(TRUE);
     $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.payment.123');
     $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
     $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
@@ -608,6 +608,38 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       'payment_id' => '123',
       'merchant_order_id' => '900',
       'status' => 'pending',
+    ]));
+  }
+
+  /**
+   * A busy return lock prevents remote lookup until reconciliation completes.
+   */
+  public function testBusyReturnLockDoesNotQueryProvider(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123', 300)
+      ->willReturn(FALSE);
+    $lock->expects($this->never())->method('release');
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->never())->method('criar');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('getData')
+      ->with('commerce_mercado_pago_checkout')
+      ->willReturn(['preference_id' => 'pref-1']);
+
+    $this->expectException(PaymentGatewayException::class);
+    $this->expectExceptionMessage('Payment verification is already being processed.');
+    $gateway->onReturn($order, new Request([
+      'payment_id' => '123',
+      'merchant_order_id' => '900',
+      'status' => 'approved',
     ]));
   }
 
@@ -722,6 +754,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
     $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
     $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setSuccessfulPaymentLock($gateway);
     $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
     $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
 
@@ -763,6 +796,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
     $logger_factory->method('get')->willReturn($logger);
     $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setSuccessfulPaymentLock($gateway);
     $this->setGatewayProperty($gateway, 'clientFactory', $factory);
     $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
 
@@ -822,6 +856,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $logger_factory->method('get')->willReturn($logger);
 
     $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setSuccessfulPaymentLock($gateway);
     $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
     $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
 
@@ -861,6 +896,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
     $logger_factory->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
     $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setSuccessfulPaymentLock($gateway);
     $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
     $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
 
@@ -870,6 +906,21 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       'merchant_order_id' => '900',
       'status' => 'approved',
     ]));
+  }
+
+  /**
+   * Configures the payment lock for a valid return flow.
+   */
+  private function setSuccessfulPaymentLock(CheckoutPro $gateway): void {
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123', 300)
+      ->willReturn(TRUE);
+    $lock->expects($this->once())
+      ->method('release')
+      ->with('aculta_pagamentos_mercadopago.payment.123');
+    $this->setGatewayProperty($gateway, 'lock', $lock);
   }
 
   /**
