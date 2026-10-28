@@ -11,6 +11,12 @@ services:
   aculta_events.locations:
     class: Drupal\aculta_events\Catalogue\LocationCatalogue
     arguments: ['@entity_type.manager']
+  aculta_events.upcoming:
+    class: Drupal\aculta_events\Occurrence\UpcomingDates
+    arguments: ['@entity_type.manager', '@aculta_events.occurrences']
+  Drupal\aculta_events\Hook\EventDateHooks:
+    class: Drupal\aculta_events\Hook\EventDateHooks
+    arguments: ['@datetime.time', '@aculta_events.upcoming', '@router.admin_context']
   aculta_events.geocoding:
     class: Drupal\aculta_events\Geocoding\GeocodingService
     arguments: ['@http_client', '@key.repository', '@logger.factory']

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Controller;
 
+use Drupal\aculta_events\Cache\EventCacheTags;
 use Drupal\aculta_events\Entity\Event;
-use Drupal\aculta_events\Entity\EventDate;
-use Drupal\aculta_events\Occurrence\EventDateOccurrences;
+use Drupal\aculta_events\Occurrence\UpcomingDates;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -28,11 +28,16 @@ final class EventPageController extends ControllerBase {
   private const HORIZONTE_DIAS = 365;
 
   /**
+   * Validade do cache quando o evento não tem data futura: 15 minutos.
+   */
+  private const VALIDADE_PADRAO = 900;
+
+  /**
    * Construtor.
    */
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
-    private readonly EventDateOccurrences $ocorrencias,
+    private readonly UpcomingDates $proximas,
     private readonly TimeInterface $tempo,
   ) {}
 
@@ -42,7 +47,7 @@ final class EventPageController extends ControllerBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
-      $container->get('aculta_events.occurrences'),
+      $container->get('aculta_events.upcoming'),
       $container->get('datetime.time'),
     );
   }
@@ -55,22 +60,29 @@ final class EventPageController extends ControllerBase {
   public function page(string $slug): array {
     $evento = $this->eventoPorSlug($slug);
 
-    $fuso = new \DateTimeZone('America/Sao_Paulo');
-    $agora = (new \DateTimeImmutable('@' . $this->tempo->getCurrentTime()))->setTimezone($fuso);
+    $agora = (new \DateTimeImmutable('@' . $this->tempo->getCurrentTime()))
+      ->setTimezone(new \DateTimeZone(UpcomingDates::FUSO));
+    $ocorrencias = $this->proximas->doEvento($evento, $agora, self::HORIZONTE_DIAS);
+
     $linhas = [];
-    foreach ($this->datas($evento) as $data) {
-      $local = $data->get('field_local')->entity?->label();
-      foreach ($this->ocorrencias->expandir($data, $agora, $agora->modify('+' . self::HORIZONTE_DIAS . ' days'), $agora) as $ocorrencia) {
-        $texto = Html::escape($ocorrencia['inicio']->format('d/m/Y H:i') . ' às ' . $ocorrencia['fim']->format('H:i'));
-        if ($local) {
-          $texto .= ' — ' . Html::escape((string) $local);
-        }
-        if ($ocorrencia['cancelada'] || $evento->get('field_status')->value === 'cancelado') {
-          $texto .= ' <strong>(cancelado)</strong>';
-        }
-        $linhas[] = ['#markup' => $texto];
+    // A tag de lista cobre data criada, editada ou excluída: a página não fica com
+    // max-age longo presa a um conjunto de datas que mudou.
+    $tags = array_merge($evento->getCacheTags(), [EventCacheTags::LISTA]);
+    foreach ($ocorrencias as $ocorrencia) {
+      $local = $ocorrencia['data']->get('field_local')->entity;
+      $texto = Html::escape($ocorrencia['inicio']->format('d/m/Y H:i') . ' às ' . $ocorrencia['fim']->format('H:i'));
+      if ($local !== NULL) {
+        $texto .= ' — ' . Html::escape((string) $local->label());
+        $tags = array_merge($tags, $local->getCacheTags());
       }
+      if ($ocorrencia['cancelada'] || $evento->get('field_status')->value === 'cancelado') {
+        $texto .= ' <strong>(cancelado)</strong>';
+      }
+      $linhas[] = ['#markup' => $texto];
     }
+
+    // O conjunto de datas muda quando a próxima termina, não a cada requisição.
+    $validade = $this->proximas->validade($ocorrencias, $this->tempo->getCurrentTime()) ?? self::VALIDADE_PADRAO;
 
     $organizador = $evento->get('field_organizador')->entity;
     return [
@@ -83,7 +95,7 @@ final class EventPageController extends ControllerBase {
       '#url' => (string) $evento->get('field_url')->value,
       '#datas' => $linhas,
       '#cancelado' => $evento->get('field_status')->value === 'cancelado',
-      '#cache' => ['tags' => $evento->getCacheTags(), 'max-age' => 900],
+      '#cache' => ['tags' => array_values(array_unique($tags)), 'max-age' => $validade],
     ];
   }
 
@@ -106,17 +118,6 @@ final class EventPageController extends ControllerBase {
       throw new NotFoundHttpException();
     }
     return $evento;
-  }
-
-  /**
-   * Datas (EventDate) do evento.
-   *
-   * @return \Drupal\aculta_events\Entity\EventDate[]
-   */
-  private function datas(Event $evento): array {
-    $storage = $this->entities->getStorage('aculta_event_date');
-    $ids = $storage->getQuery()->condition('field_evento.target_id', $evento->id())->accessCheck(FALSE)->execute();
-    return array_values(array_filter($storage->loadMultiple($ids), static fn ($d) => $d instanceof EventDate));
   }
 
 }

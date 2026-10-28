@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Controller;
 
+use Drupal\aculta_events\Cache\EventCacheTags;
 use Drupal\aculta_events\Catalogue\EventCatalogue;
+use Drupal\aculta_events\Occurrence\UpcomingDates;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
@@ -21,10 +23,16 @@ use Symfony\Component\HttpFoundation\Request;
 final class EventCatalogueController extends ControllerBase {
 
   /**
+   * Validade do cache quando não há evento futuro na listagem: 15 minutos.
+   */
+  private const VALIDADE_PADRAO = 900;
+
+  /**
    * Construtor.
    */
   public function __construct(
     private readonly EventCatalogue $catalogo,
+    private readonly UpcomingDates $proximas,
     private readonly TimeInterface $tempo,
     private readonly Request $requisicao,
   ) {}
@@ -35,6 +43,7 @@ final class EventCatalogueController extends ControllerBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_events.catalogue'),
+      $container->get('aculta_events.upcoming'),
       $container->get('datetime.time'),
       $container->get('request_stack')->getCurrentRequest(),
     );
@@ -50,8 +59,13 @@ final class EventCatalogueController extends ControllerBase {
     $de = $this->dataBr((string) $this->requisicao->query->get('de'), $fuso, $avisos, 'início');
     $ate = $this->dataBr((string) $this->requisicao->query->get('ate'), $fuso, $avisos, 'fim');
 
-    $agora = (new \DateTimeImmutable('@' . $this->tempo->getCurrentTime()))->setTimezone($fuso);
+    $agoraSegundos = $this->tempo->getCurrentTime();
+    $agora = (new \DateTimeImmutable('@' . $agoraSegundos))->setTimezone($fuso);
     $resultados = $this->catalogo->busca($tipo, $de, $ate, $agora);
+
+    // A listagem muda quando a próxima data de cada evento termina (T5).
+    $fins = array_map(static fn (array $item): array => ['fim' => $item['proxima']['fim']], $resultados);
+    $validade = $this->proximas->validade($fins, $agoraSegundos) ?? self::VALIDADE_PADRAO;
 
     $itens = [];
     foreach ($resultados as $item) {
@@ -70,7 +84,7 @@ final class EventCatalogueController extends ControllerBase {
       '#items' => $itens,
       '#empty' => $this->t('Nenhum evento encontrado para este período.'),
       '#prefix' => $this->avisos($avisos),
-      '#cache' => ['contexts' => ['url.query_args'], 'tags' => ['aculta_event_list'], 'max-age' => 900],
+      '#cache' => ['contexts' => ['url.query_args'], 'tags' => [EventCacheTags::LISTA], 'max-age' => $validade],
     ];
   }
 
@@ -83,7 +97,10 @@ final class EventCatalogueController extends ControllerBase {
     }
     $data = \DateTimeImmutable::createFromFormat('!d/m/Y', $valor, $fuso);
     if ($data === FALSE || $data->format('d/m/Y') !== $valor) {
-      $avisos[] = $this->t('Data de @rotulo inválida: @valor. Use dd/mm/aaaa.', ['@rotulo' => $rotulo, '@valor' => $valor]);
+      $avisos[] = $this->t('Data de @rotulo inválida: @valor. Use dd/mm/aaaa.', [
+        '@rotulo' => $rotulo,
+        '@valor' => $valor,
+      ]);
       return NULL;
     }
     return $data;
