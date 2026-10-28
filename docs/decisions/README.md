@@ -26,6 +26,7 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 - [ADR-027 — Contador público de leituras da Wiki](ADR-027-contador-publico-leituras-wiki.md)
 - [ADR-028 — Contrato neutro de marca entre Portal e tema](ADR-028-marca-neutra-portal-tema.md)
 - [ADR-029 — Participação no LMS sem requisito de e-mail confirmado](ADR-029-lms-sem-requisito-de-email-confirmado.md)
+- [ADR-030 — Provedor de mapa: Leaflet com OpenStreetMap como padrão e Google Maps como opção](ADR-030-provedor-mapa-leaflet-osm-com-google-opcional.md)
 
 ADRs históricos e decisões locais de arquitetura também podem ser encontrados
 neste diretório e em `docs/architecture/`. Para registrar uma decisão nova,

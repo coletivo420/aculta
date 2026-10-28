@@ -1,4 +1,4 @@
-# ADR-016 — Provedor de mapa: Leaflet com OpenStreetMap como padrão e Google Maps como opção
+# ADR-030 — Provedor de mapa: Leaflet com OpenStreetMap como padrão e Google Maps como opção
 
 **Status:** aceito em 2026-10-28, pelo responsável. Substitui a escolha de provedor do ADR-014 e a decisão D-08.
 **Escopo:** mapas de locais e eventos (`aculta_events`, fase F4), configuração no painel administrativo e
