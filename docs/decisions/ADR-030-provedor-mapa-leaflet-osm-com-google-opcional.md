@@ -105,6 +105,10 @@ separada `GOOGLE_GEOCODING_API_KEY`, restrita para uso de servidor.
 O código não está ativado no Runtime: a política pública ainda não descreve os provedores e o responsável decidiu
 não informar IP na política. Essa incompatibilidade com a exigência de transparência deste ADR continua pendente.
 
+MP5 adiciona o `RouteLinkBuilder` no ACULTA Maps. Ele monta links HTTPS de rota a partir do modelo configurado,
+aceita somente hosts Google aprovados e codifica o destino; a lista textual e os popups abrem a rota só após clique.
+Evidência: `33b638ccf`.
+
 Revisão das políticas oficiais em 2026-10-28: [política de tiles OSM](https://operations.osmfoundation.org/policies/tiles/)
 exige atribuição visível e respeito às respostas de cache; [política Nominatim](https://operations.osmfoundation.org/policies/nominatim/)
 define o limite de uma requisição por segundo, identifica o cliente no `User-Agent` e proíbe autocomplete no serviço

@@ -51,6 +51,8 @@ Evidência MP4: `d9ae563d4`.
 - [x] Link abre em nova aba com `noopener noreferrer`; não injeta script Google para gerar a rota.
 - [x] Lista textual e popups do mapa oferecem rota quando há endereço.
 
+Evidência MP5: `33b638ccf`.
+
 ## MP6 — Privacidade
 
 - [ ] Arredondamento de coordenadas de precisão aproximada, antes de sair do serviço. Teste Unit.
