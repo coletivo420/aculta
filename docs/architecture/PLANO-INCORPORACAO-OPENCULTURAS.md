@@ -21,7 +21,7 @@ Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem 
 | E6 | `AddToCal` (regra, sem cópia) | `IcsEventBuilder` próprio, escape RFC 5545, CR/LF como espaço (S2, T10), no `aculta_calendar` | **Feito** para período (séries com `RRULE`, `EXDATE`, `RECURRENCE-ID`) e para uma data (`/eventos/{slug}/data/{id}/calendario.ics`), a partir dos provedores de itens (ADR-031) | `a26bff741`, `e8e8d0151`, `224c3925e`, `c9b6b8e1f` |
 | E7 | `openculturas_map` | Leaflet + OSM público (padrão e fallback); Google Maps opcional com chave em `aculta_secrets`; link de rota do Google sem API (ADR-030, D-18) | **Parcial.** Geocodificação e mapa carregados na página, com lista textual e aviso de privacidade; a chave fica em `secrets`/ambiente. Faltam o agrupamento de marcadores e o link da política de privacidade. As verificações de termos, cobrança e LGPD do responsável seguem pendentes | `f761d8593`, ADR-014 |
 | E8 | `openculturas_section` (cor por vocabulário) | Frente B, B2 (cores fechadas) | **Feito** no tema. Consumidor na Revista pendente | `15a3f0488` |
-| E9 | `openculturas_faq` | FAQ, opcional (I-15) | **Decidido (D-25): copiar com revisão.** Implementação pendente | — |
+| E9 | `openculturas_faq` | Submódulo `aculta_faq`: FAQ e blocos editoriais | **Código implementado** com revisão do fluxo e atribuição; não havia conteúdo FAQ editorial versionado na origem para migrar. Revisão/cadastro do conteúdo ACULTA continua pendente | `f34dbe5b5` |
 | E10 | `openculturas_openstreetmap`: assistente administrativo (Find → Select → Review → Save) que importa dados de um local do OpenStreetMap e, em modo de desenvolvimento, envia alterações ao próprio OSM (`PushData`) | Importação de local a partir do OSM, no admin de `aculta_events`, **somente se aprovada** | **Decidido (D-26): importar e enviar ao OSM, ambiente segue o do site. Fora da v1.** Implementação pendente; revisão de termos ODbL antes do primeiro envio | — |
 | T5 | `SmartDateUpcomingFormatter` | `DateRangeUpcomingFormatter` com `daterange` do core, cache até a próxima data | **Feito** | `56725c71d` |
 | D-15 | Calendário e LMS (decisão própria, sem origem no OC) | `aculta_lms_agenda` e painel do aluno | **Acesso confirmado**: provedor exige membership na turma publicada e acesso ao curso publicado; Kernel cobre turma correta, turma diferente e ausência de matrícula | `ac43e7d94`, `9766bb731`, `df76938ae` |
@@ -115,14 +115,10 @@ Cada painel é uma microfase, com permissão própria, teste Kernel de acesso ne
 | ADM1 | Denúncias e conteúdo moderado, todas as áreas | `aculta_ugc` | Plano U1–U4 de `aculta_ugc` | Planejado |
 | ADM2 | Lista administrativa de pessoas (mínima) | `aculta_user` | D-22 | **Implementado**, `701fa1d87`: `/painel-administrativo/pessoas`, restrita a `administer users`; só nome do perfil, apelido e situação. Kernel: rota negada a usuário comum e conteúdo minimizado. |
 | ADM3 | Uso de arquivos em `imagens` | `aculta_image` | — | **Feito**, commit `d80b4a748` |
-| ADM4 | FAQ e blocos editáveis | `aculta_portal` (decisão sobre blocos) | Decisão do responsável | Decidido (D-23): na v1, só texto formatado sanitizado. Implementação pendente |
-| ADM5 | Conteúdo geral com filtros | `aculta_portal` | Lista de áreas e papéis | Decidido (D-24): só áreas que o usuário pode moderar. Implementação pendente |
+| ADM4 | FAQ e blocos editáveis | `aculta_faq` | D-23 | **Implementado**, `f34dbe5b5`: painel `/painel-administrativo/faq`; pergunta/resposta e bloco reutilizável limitados ao formato `aculta_editorial`; Kernel cobre XSS e negação para usuário comum. Cadastro/revisão editorial de conteúdo continua pendente. |
+| ADM5 | Conteúdo geral com filtros | `aculta_portal` | D-24 e allowlist confirmada pelo responsável | Só listar áreas moderáveis, inclusive coleções servidas por controllers, com allowlist explícita; implementação pendente |
 | ADM6 | Estado do índice de busca (só leitura) | `aculta_index` | — | **Feito**, commit `867bb05da` |
 | ADM7 | Configuração de mapa (provedor, chave, centro, zoom) e URL de rota configurável | `aculta_events` | ADR-030 (D-18) e F4 | Pendente da F4 |
 | ADM8 | Painel de embed do calendário | `aculta_calendar` | E5 com rota (F5) | Pendente da F5 |
 
-### Decisões necessárias antes de ADM2, ADM4 e ADM5
-
-1. **ADM2:** resolvido por D-22; implementação concluída em `aculta_user` (ver linha ADM2 acima).
-2. **ADM4:** FAQ e blocos editáveis são necessários agora, ou ficam para depois da v1?
-3. **ADM5:** o painel geral de conteúdo deve listar todas as áreas ou só as que o usuário pode moderar?
+ADM2, ADM4 e ADM5 têm decisões registradas em D-22, D-23 e D-24. A confirmação posterior de ADM5 inclui rotas de listagem de controllers e requer allowlist explícita.
