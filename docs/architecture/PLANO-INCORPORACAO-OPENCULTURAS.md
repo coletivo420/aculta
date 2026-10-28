@@ -75,6 +75,7 @@ ele é isolado dos dados de produção. Produção permanece fora desta execuç�
 4. R: regra, ocorrência e links de administração concluídos (`c4919bbb3`).
 5. F5: **feito** no `aculta_calendar` (D-20): agenda, grade do mês, dia, `.ics` e `/calendario/incorporar`, com o `aculta_events` como provedor de itens. Falta o calendário no `main` (D6).
 6. F6, F7, F8, F9.
+7. **F7, conferência parcial em 2026-10-28 (`c43278766`):** sitemap do servidor de teste e filho `eventos` respondem HTTP 200, ambos com `X-Robots-Tag: noindex`; o filho lista rotas e eventos com URL de produção, conforme ADR-009. A página de evento emite JSON-LD `schema.org/Event`, mas seu `rel=canonical` aponta para o host de teste. `deploy.json` afirma que filhos de teste usam hosts de teste, em divergência com ADR-009 e a saída atual. Aguarda decisão do responsável; `validate-final-sitemap.php` ainda não foi executado.
 
 ## Painéis e opções administrativas do OpenCulturas (ADM)
 
