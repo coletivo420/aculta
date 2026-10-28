@@ -10,7 +10,11 @@ use Drupal\aculta_portal\Checkout\FiscalIdentityPolicy;
 use Drupal\aculta_portal\Plugin\Commerce\CheckoutPane\FiscalIdentityPane;
 use Drupal\commerce_checkout\Entity\CheckoutFlow;
 use Drupal\commerce_order\Entity\Order;
+use Drupal\commerce_order\Entity\OrderItem;
 use Drupal\commerce_order\Entity\OrderType;
+use Drupal\commerce_price\Price;
+use Drupal\commerce_product\Entity\ProductVariation;
+use Drupal\commerce_product\Entity\ProductVariationType;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Form\FormState;
@@ -96,7 +100,7 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
    * @param \Drupal\aculta_portal\Checkout\CheckoutSettings|null $settings
    *   Configuração de checkout alternativa; sem ela, a real (config ausente).
    */
-  private function pane(string $orderType, AccountDocumentInterface $doc, ?CheckoutSettings $settings = NULL): FiscalIdentityPane {
+  private function pane(string $orderType, AccountDocumentInterface $doc, ?CheckoutSettings $settings = NULL, ?ProductVariation $variation = NULL): FiscalIdentityPane {
     if (!OrderType::load($orderType)) {
       OrderType::create(['id' => $orderType, 'label' => $orderType, 'workflow' => 'order_default'])->save();
     }
@@ -107,6 +111,17 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
       'state' => 'draft',
     ]);
     $order->save();
+    if ($variation !== NULL) {
+      $item = OrderItem::create([
+        'type' => 'test',
+        'purchased_entity' => $variation,
+        'quantity' => 1,
+        'unit_price' => new Price('0.00', 'USD'),
+      ]);
+      $item->save();
+      $order->addItem($item);
+      $order->save();
+    }
     $this->lastOrder = $order;
     $flow = CheckoutFlow::create([
       'id' => 'teste_' . $orderType,
@@ -170,6 +185,42 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
     $this->assertFalse($this->pane('default', $doc)->isVisible(), 'Loja não tem painel de CPF.');
     $this->assertTrue($this->pane('curso', $doc)->isVisible());
     $this->assertFalse($this->pane('doacao', $doc)->isVisible());
+  }
+
+  /**
+   * Curso gratuito não mostra o painel fiscal.
+   */
+  public function testFreeCourseDoesNotShowPane(): void {
+    $doc = $this->document([self::MASCARA]);
+    $this->assertFalse($this->pane('curso', $doc, NULL, $this->variation('0.00'))->isVisible());
+  }
+
+  /**
+   * Curso pago mostra o painel fiscal.
+   */
+  public function testPaidCourseShowsPane(): void {
+    $doc = $this->document([self::MASCARA]);
+    $this->assertTrue($this->pane('curso', $doc, NULL, $this->variation('10.00'))->isVisible());
+  }
+
+  /**
+   * Creates a course product variation with the requested price.
+   */
+  private function variation(string $price): ProductVariation {
+    if (!ProductVariationType::load('curso')) {
+      ProductVariationType::create([
+        'id' => 'curso',
+        'label' => 'Curso',
+        'orderItemType' => 'test',
+      ])->save();
+    }
+    $variation = ProductVariation::create([
+      'type' => 'curso',
+      'sku' => 'curso-' . $price,
+      'price' => new Price($price, 'USD'),
+    ]);
+    $variation->save();
+    return $variation;
   }
 
   /**

@@ -327,6 +327,37 @@ final class CourseOrderEnrollmentManagerTest extends UnitTestCase {
   }
 
   /**
+   * A paid order that is not completed does not grant enrollment.
+   *
+   * Checkout complete is not enough: the entitlement waits for the completed
+   * state.
+   */
+  public function testPaymentWithoutCompletedOrderDoesNotGrantEnrollment(): void {
+    $payment = $this->createPayment('completed', new Price('10.00', 'BRL'));
+    $manager = $this->manager([$payment], FALSE);
+
+    self::assertFalse($manager->hasActiveEntitlement($this->createOrder('checkout_complete', FALSE)));
+  }
+
+  /**
+   * The fiscal identity is not part of the enrollment contract.
+   *
+   * A saved CPF/CNPJ must never unlock a course; the entitlement reads only
+   * order state and payments. This guards against coupling the policy into the
+   * enrollment manager.
+   */
+  public function testEntitlementDoesNotReadFiscalIdentity(): void {
+    $constructor = (new \ReflectionClass(CourseOrderEnrollmentManager::class))->getConstructor();
+    self::assertNotNull($constructor);
+    foreach ($constructor->getParameters() as $parameter) {
+      self::assertNotSame(
+        'Drupal\aculta_portal\Account\AccountDocumentInterface',
+        (string) $parameter->getType(),
+      );
+    }
+  }
+
+  /**
    * Creates the manager with a mocked Commerce payment storage.
    *
    * @param \Drupal\commerce_payment\Entity\PaymentInterface[] $payments

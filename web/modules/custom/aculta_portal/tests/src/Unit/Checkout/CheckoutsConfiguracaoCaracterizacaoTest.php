@@ -72,7 +72,7 @@ final class CheckoutsConfiguracaoCaracterizacaoTest extends UnitTestCase {
   public static function tiposDePedido(): array {
     return [
       'loja (default) não declara flow: o Commerce usa o default' => ['default', NULL],
-      'curso usa o flow default na configuração versionada' => ['curso', 'default'],
+      'curso usa o flow próprio do LMS (D-43)' => ['curso', 'curso'],
       'doação usa o flow doacao' => ['doacao', 'doacao'],
       'assinatura usa o flow assinatura_flow' => ['assinatura', 'assinatura_flow'],
     ];

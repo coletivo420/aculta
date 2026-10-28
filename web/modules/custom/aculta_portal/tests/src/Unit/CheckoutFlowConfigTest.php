@@ -9,11 +9,12 @@ use Drupal\Tests\UnitTestCase;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Checkout compartilhado (Loja e LMS), lido do Config Sync sem banco.
+ * Checkout da Loja e do LMS, lido do Config Sync sem banco.
  *
- * Garante que o flow `default` tem o pane de identidade fiscal e a política de
- * login definida, que o flow `curso` duplicado saiu, e que Doações continuam
- * sem o pane fiscal.
+ * D-43 (2026-10-28): a Loja mantém o flow `default` com envio; o LMS tem o
+ * flow `curso` próprio, sem envio, com identidade fiscal e pagamento. A
+ * unificação de 2026-10-23 (curso no `default`) está revogada. Doações
+ * continuam sem o pane fiscal.
  */
 #[Group('aculta_portal')]
 final class CheckoutFlowConfigTest extends UnitTestCase {
@@ -32,7 +33,7 @@ final class CheckoutFlowConfigTest extends UnitTestCase {
   }
 
   /**
-   * Verifies guest checkout and Core account creation in the shared flow.
+   * Verifies guest checkout and Core account creation in the shop flow.
    */
   public function testFlowDefaultHasFiscalPaneAndCoreGuestRegistration(): void {
     $configuration = $this->sync('commerce_checkout.commerce_checkout_flow.default')['configuration'];
@@ -47,19 +48,43 @@ final class CheckoutFlowConfigTest extends UnitTestCase {
   }
 
   /**
-   * Verifica que o flow curso duplicado foi removido.
+   * O flow do LMS é próprio, sem envio, com identidade fiscal e pagamento.
    */
-  public function testFlowCursoDuplicadoFoiRemovido(): void {
-    $root = dirname(__DIR__, 7);
-    $this->assertFileDoesNotExist($root . '/config/sync/commerce_checkout.commerce_checkout_flow.curso.yml');
+  public function testFlowCursoHasNoShippingAndHasFiscalAndPayment(): void {
+    $configuration = $this->sync('commerce_checkout.commerce_checkout_flow.curso')['configuration'];
+    $panes = $configuration['panes'];
+
+    $this->assertSame('multistep_default', $this->sync('commerce_checkout.commerce_checkout_flow.curso')['plugin']);
+    $this->assertArrayNotHasKey('aculta_shipping_information', $panes);
+    $this->assertArrayNotHasKey('aculta_billing_address', $panes);
+    $this->assertArrayHasKey('aculta_fiscal_identity', $panes);
+    $this->assertSame('review', $panes['aculta_fiscal_identity']['step']);
+    $this->assertArrayHasKey('aculta_personal_name', $panes);
+    $this->assertSame('order_information', $panes['aculta_personal_name']['step']);
+    $this->assertArrayHasKey('payment_information', $panes);
+    $this->assertArrayHasKey('payment_process', $panes);
+    $this->assertSame('payment', $panes['payment_process']['step']);
+    $this->assertTrue($panes['payment_process']['capture']);
+    $this->assertTrue($panes['login']['allow_guest_checkout']);
+    $this->assertTrue($panes['login']['allow_registration']);
   }
 
   /**
-   * Verifica que o tipo de pedido curso usa o flow compartilhado.
+   * Verifica que o tipo de pedido curso usa o flow próprio do LMS.
    */
-  public function testCursoOrderTypeUsesSharedFlow(): void {
+  public function testCursoOrderTypeUsesOwnFlow(): void {
     $flow = $this->sync('commerce_order.commerce_order_type.curso')['third_party_settings']['commerce_checkout']['checkout_flow'];
-    $this->assertSame('default', $flow);
+    $this->assertSame('curso', $flow);
+  }
+
+  /**
+   * O flow do LMS não reaproveita o flow da Loja.
+   */
+  public function testLmsFlowIsNotTheShopFlow(): void {
+    $this->assertNotSame(
+      $this->sync('commerce_checkout.commerce_checkout_flow.default'),
+      $this->sync('commerce_checkout.commerce_checkout_flow.curso'),
+    );
   }
 
   /**
