@@ -77,6 +77,24 @@ O tema tem `npm run lint:css` e `npm run lint:js`. Ambos passaram na microfase
 B5. O inventário estático acima não substitui revisão WCAG 2.2 AA, testes de
 consumidores, modos claro/escuro e renderização no Firefox ESR.
 
+## Revisão visual B7 — 2026-10-28
+
+- `patterns/card` compact: View pública de álbuns fotografada em 1280 px, 320 px
+  e modo escuro; em 320 px não houve overflow e os dois cartões permaneceram
+  legíveis.
+- A captura encontrou dois links vazios sem nome (`/%5Bpath%5D`) nos cartões. A
+  configuração da View em Config Sync foi corrigida para preservar somente o
+  link de entidade do título. O Runtime ainda mostra os dois links porque a
+  configuração não foi importada; a validação dessa correção fica pendente de
+  autorização para `config:import`.
+- `bookmark-toggle`: o tópico de homologação mostrou “Salvar tópico” e “Salvo”;
+  foco visível com outline de 3 px, alvo de 44 px e sem overflow em 320 px. A
+  Flag da conta de teste foi restaurada ao estado inicial.
+- A rota do provider da UI Patterns Library retornou erro genérico do Drupal,
+  mesmo com a conta administrativa de teste. As stories das quatro cores de
+  seção, layout de cinco regiões, contador, selos e marcas seguem sem revisão
+  visual Runtime; não declarar aprovação desses candidatos.
+
 ## Backlog do catálogo — padrões transversais ainda não implementados
 
 `context-header`, `context-tabs` e `empty-state` já existem na árvore e não são

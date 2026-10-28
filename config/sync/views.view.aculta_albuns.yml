@@ -61,8 +61,6 @@ display:
           exclude: false
           alter:
             alter_text: false
-            make_link: true
-            path: '[path]'
           element_type: h3
           click_sort_column: value
           type: string

@@ -81,6 +81,21 @@ renderização/cache no Runtime e revisão visual autorizada.
   passaram. Verificação visual das mudanças Twig continua pendente de autorização
   para `drush cr`.
 
+## Revisão visual B7 — 2026-10-28
+
+Firefox ESR confirmou o card compacto na View pública de álbuns em 1280 px,
+320 px e dark; em 320 px a página não transborda. A revisão encontrou links
+vazios sem nome gerados por duas opções de link concorrentes na View. O Config
+Sync foi corrigido, mas o Runtime continua usando a configuração antiga; sem
+`config:import`, a correção não foi homologada no navegador.
+
+No tópico do Fórum, os estados salvar/não salvo foram fotografados em desktop,
+320 px e dark. O controle tem foco visível de 3 px, alvo mínimo de 44 px e rótulo
+textual; a Flag do usuário de teste voltou ao estado inicial. A rota protegida
+do UI Patterns Library retornou erro genérico no Runtime, então as stories de
+cores, layout, stat-counter, accessibility-badges e sponsor-logos seguem
+pendentes de renderização. Essas entregas continuam experimentais/candidatas.
+
 ## Links
 - [Shell multidomínio](shell.md)
 - [Arquitetura](architecture.md) · [Componentes](components.md) · [Catálogo de SDCs](component-catalog.md)
