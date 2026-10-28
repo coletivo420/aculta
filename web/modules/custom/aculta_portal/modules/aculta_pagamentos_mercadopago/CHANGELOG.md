@@ -1,3 +1,8 @@
+## 0.1.0-dev.49 — confirmar o ID retornado pela API (2026-10-27)
+
+- `onNotify()` e `onReturn()` agora exigem que o ID no objeto devolvido pelo Mercado Pago corresponda ao ID solicitado. Uma resposta divergente não consulta Merchant Order nem grava pagamento; notificação pede retry e retorno falha fechado.
+- Regressões cobrem respostas de API com ID diferente em ambos os fluxos. Unit MP: 205 testes / 886 assertions PASS; Kernel `CheckoutProTest`: 2 testes / 91 assertions PASS (77 depreciações upstream).
+
 ## 0.1.0-dev.48 — serializar também o retorno do navegador (2026-10-27)
 
 - `onReturn()` agora adquire o lock compartilhado pelo ID remoto antes de qualquer consulta ao Mercado Pago e o mantém até persistir no Commerce. Lock ocupado encerra com exceção segura sem chamar o provedor; falhas liberam o lock em `finally`.
