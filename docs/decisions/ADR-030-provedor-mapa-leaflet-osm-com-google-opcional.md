@@ -67,3 +67,14 @@ responsável decidiu copiar esse método.
 - Credenciais seguem `credenciais-producao-banco`: no banco, criptografadas, em produção; em `secrets/`, só no teste.
 - Endereços de ambiente seguem `ENDERECOS-AMBIENTE.md`.
 - O ADR-014 continua como registro da análise do Google. Sua escolha de provedor está superada por este ADR.
+
+## Atualização de decisão — D-18 (2026-10-28)
+
+O responsável fixou a configuração final do mapa:
+
+1. **Padrão e fallback:** Leaflet com OpenStreetMap público. Se a opção Google estiver escolhida e a chave faltar ou a API falhar, o mapa volta ao OpenStreetMap, sem erro para o visitante.
+2. **Opção Google Maps API:** escolhida no painel. A chave `GOOGLE_MAPS_API_KEY` vem do `aculta_secrets`.
+3. **Link de rota do Google sem API:** disponível em qualquer modo. Abre o Google Maps numa nova aba, com o endereço ou a coordenada do local. Não carrega script do Google na página.
+4. **URL de rota configurável** no painel do mapa, no mesmo padrão da configuração de links de rota do OpenCulturas (`openculturas_address_links`). O administrador troca o modelo de URL sem alterar código.
+
+Consequência: o visitante só sai do ACULTA por clique, em qualquer modo. Não há dado de visitante enviado ao Google sem ação dele.

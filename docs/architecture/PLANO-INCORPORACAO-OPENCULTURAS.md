@@ -19,7 +19,7 @@ Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem 
 | E4 | `DateEventHooks::nodePrepareForm` | **Não copiar** (S1). Pré-preenchimento só com checagem de acesso, se for necessário | **Decidido: não copiado.** Pedido pendente se o responsável quiser o recurso | — |
 | E5 | `openculturas_calendar_widget` (allowlist do `source_uri`, S3) | `EmbedSourceAllowlist` | **Feito.** Rota `/calendario/incorporar` no ar no servidor de teste, com `frame-ancestors` explícito e `noindex`; smoke visual em 320, 390 e 1280 px | `7985bc36f`, `224c3925e`, `e81c841f0` |
 | E6 | `AddToCal` (regra, sem cópia) | `IcsEventBuilder` próprio, escape RFC 5545, CR/LF como espaço (S2, T10) | **Feito** na exportação de período, com séries (`RRULE`, `EXDATE`, `RECURRENCE-ID`). Exportação de uma data só ainda não existe | `a26bff741`, `e8e8d0151`, `224c3925e` |
-| E7 | `openculturas_map` | Google Maps (ADR-014), sem Leaflet nem OSM | **Parcial.** Geocodificação e mapa carregados na página, com lista textual e aviso de privacidade; a chave fica em `secrets`/ambiente. Faltam o agrupamento de marcadores e o link da política de privacidade. As verificações de termos, cobrança e LGPD do responsável seguem pendentes | `f761d8593`, ADR-014 |
+| E7 | `openculturas_map` | Leaflet + OSM público (padrão e fallback); Google Maps opcional com chave em `aculta_secrets`; link de rota do Google sem API (ADR-030, D-18) | **Parcial.** Geocodificação e mapa carregados na página, com lista textual e aviso de privacidade; a chave fica em `secrets`/ambiente. Faltam o agrupamento de marcadores e o link da política de privacidade. As verificações de termos, cobrança e LGPD do responsável seguem pendentes | `f761d8593`, ADR-014 |
 | E8 | `openculturas_section` (cor por vocabulário) | Frente B, B2 (cores fechadas) | **Feito** no tema. Consumidor na Revista pendente | `15a3f0488` |
 | E9 | `openculturas_faq` | FAQ, opcional (I-15) | **Não iniciado.** Só se o responsável pedir | — |
 | E10 | `openculturas_openstreetmap`: assistente administrativo (Find → Select → Review → Save) que importa dados de um local do OpenStreetMap e, em modo de desenvolvimento, envia alterações ao próprio OSM (`PushData`) | Importação de local a partir do OSM, no admin de `aculta_events`, **somente se aprovada** | **Não iniciado. Fora da v1.** Bloqueado pelas decisões abaixo | — |
@@ -118,7 +118,7 @@ Cada painel é uma microfase, com permissão própria, teste Kernel de acesso ne
 | ADM4 | FAQ e blocos editáveis | `aculta_portal` (decisão sobre blocos) | Decisão do responsável |
 | ADM5 | Conteúdo geral com filtros | `aculta_portal` | Lista de áreas e papéis |
 | ADM6 | Estado do índice de busca (só leitura) | `aculta_index` | — |
-| ADM7 | Configuração de mapa e de "como chegar" | `aculta_events` | ADR-014 e F4 |
+| ADM7 | Configuração de mapa (provedor, chave, centro, zoom) e URL de rota configurável | `aculta_events` | ADR-030 (D-18) e F4 |
 | ADM8 | Painel de embed do calendário | `aculta_calendar` | E5 com rota (F5) |
 
 ### Decisões necessárias antes de ADM2, ADM4 e ADM5
