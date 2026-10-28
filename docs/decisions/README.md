@@ -21,6 +21,8 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 - [ADR-022 — Separação entre domínio de apoio e transação Commerce](ADR-022-dominios-de-doacao-e-checkout.md)
 - [ADR-023 — Associado é uma situação da conta, não um papel](ADR-023-associado-como-situacao.md)
 - [ADR-024 — Webhooks modernos assinados do Mercado Pago](ADR-024-webhooks-mercado-pago-assinados.md)
+- [ADR-025 — Acesso e moderação do Fórum no contexto do LMS](ADR-025-acesso-e-moderacao-forum-lms.md)
+- [ADR-026 — Ownership da moderação de propostas entre Wiki e Studio](ADR-026-ownership-moderacao-wiki-studio.md)
 
 ADRs históricos e decisões locais de arquitetura também podem ser encontrados
 neste diretório e em `docs/architecture/`. Para registrar uma decisão nova,

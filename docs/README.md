@@ -29,6 +29,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [architecture/aculta_image.md](architecture/aculta_image.md) — ownership e política central do pipeline de imagens.
 - [architecture/aculta_wiki.md](architecture/aculta_wiki.md) — ownership da Wiki e revisão editorial de propostas.
 - [architecture/aculta_pdf_viewer.md](architecture/aculta_pdf_viewer.md) — autorização dos arquivos PDF privados pelo Core e Group.
+- [architecture/aculta_document_viewer.md](architecture/aculta_document_viewer.md) — ownership e autorização dos documentos File/Media.
 - [architecture/aculta_forum_lms.md](architecture/aculta_forum_lms.md) — contrato de acesso contextual entre Fórum e LMS.
 - [architecture/aculta_links.md](architecture/aculta_links.md) — ownership de micropáginas e prévias privadas.
 - [architecture/aculta_user.md](architecture/aculta_user.md) — ownership de identidade, papéis, perfis e participação.
