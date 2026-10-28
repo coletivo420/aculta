@@ -1,0 +1,21 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Logos de apoiadores
+status: experimental
+group: Conteúdo
+description: 'Apresenta marcas de apoiadores autorizadas pelo responsável pelo respectivo logotipo.'
+props:
+  type: object
+  properties:
+    label:
+      type: string
+      title: Rótulo da lista
+      description: Nome acessível do conjunto de apoiadores.
+      default: Apoiadores e parceiros
+slots:
+  sponsors:
+    title: Marcas autorizadas
+    description: Itens li com mídia já renderizada pelo Drupal/aculta_image, texto alternativo significativo e link opcional.
+assets:
+  css:
+    component:
+      sponsor-logos.css: {}
