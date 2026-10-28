@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_events_openstreetmap\Security;
 
 use Drupal\aculta_portal\Secrets\SecretsManager;
+use Drupal\Core\Site\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,7 +27,11 @@ final class OpenStreetMapCredentialsFactory {
     $secrets = $this->container->has('aculta_portal.secrets_manager')
       ? $this->container->get('aculta_portal.secrets_manager')
       : NULL;
-    return new OpenStreetMapCredentialProvider($secrets instanceof SecretsManager ? $secrets : NULL);
+    $settings = $this->container->has('settings') ? $this->container->get('settings') : NULL;
+    return new OpenStreetMapCredentialProvider(
+      $secrets instanceof SecretsManager ? $secrets : NULL,
+      $settings instanceof Settings ? $settings : NULL,
+    );
   }
 
 }

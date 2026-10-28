@@ -60,9 +60,9 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
   }
 
   /**
-   * Missing credentials and a production target on a test site fail closed.
+   * Missing credentials fail closed; test defaults to the development API.
    */
-  public function testMissingCredentialsAndProductionTargetOnTestAreRefused(): void {
+  public function testMissingCredentialsAreRefusedAndTestDefaultsToDevelopment(): void {
     $missing = new class() implements OpenStreetMapCredentialProviderInterface {
 
       /** Returns the test site environment. */
@@ -123,9 +123,14 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
   }
 
   /**
-   * A test site cannot select the production OpenStreetMap API.
+   * A test site can select the live API only through an explicit setting.
    */
-  public function testProductionTargetOnTestSiteIsRefused(): void {
+  public function testExplicitProductionTargetOnTestSiteSelectsLiveApiButCannotWriteWithoutToken(): void {
+    $this->assertSame('test', OpenStreetMapEnvironment::resolve('test', NULL));
+    $this->assertSame('production', OpenStreetMapEnvironment::resolve('test', 'production'));
+    $this->assertNull(OpenStreetMapEnvironment::resolve('production', NULL));
+    $this->assertNull(OpenStreetMapEnvironment::resolve('production', 'test'));
+
     $credentials = new class() implements OpenStreetMapCredentialProviderInterface {
 
       /** Returns the test site environment. */
@@ -153,9 +158,9 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
       $credentials,
       new Settings(['aculta_openstreetmap_environment' => 'production']),
     );
-    $this->assertNull($environment->environment());
-    $this->assertNull($environment->apiBaseUrl());
-    $this->assertNull($environment->oauthBaseUrl());
+    $this->assertSame('production', $environment->environment());
+    $this->assertSame('https://api.openstreetmap.org/api/0.6', $environment->apiBaseUrl());
+    $this->assertSame('https://www.openstreetmap.org', $environment->oauthBaseUrl());
     $api = new OpenStreetMapApiClient(
       new Client(['handler' => HandlerStack::create(new MockHandler([]))]),
       $environment,
@@ -167,8 +172,13 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
       ),
       $this->container->get('logger.factory'),
     );
-    $this->expectException(OpenStreetMapOAuthException::class);
-    $api->update(['type' => 'node', 'id' => '1', 'version' => '1'], ['name' => 'Local fictício'], 'Teste fictício');
+    try {
+      $api->update(['type' => 'node', 'id' => '1', 'version' => '1'], ['name' => 'Local fictício'], 'Teste fictício');
+      $this->fail('An OSM edit must be refused without an authenticated token.');
+    }
+    catch (OpenStreetMapOAuthException) {
+      $this->assertTrue(TRUE);
+    }
   }
 
   /**

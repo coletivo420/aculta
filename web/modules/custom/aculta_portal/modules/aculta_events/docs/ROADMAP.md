@@ -151,7 +151,7 @@ Saída: calendário e exportação em teste, nos dois purposes (`main` e `evento
 - [x] E4 (D-28, commit registrado no plano de incorporação): pré-preenchimento de nova data a partir de um evento. Regras: copiar **só a referência ao evento** (`event_id`), **só de eventos que o usuário pode editar**, sem copiar pessoas nem clonar parágrafos. Kernel confirma acesso permitido, acesso negado e ID inexistente. Implementação original da regra; `nodePrepareForm` não foi copiado (S1).
 - [x] E2 (views e exportação): locais e datas relacionadas em português, acesso administrativo e campos mínimos; Kernel nega acesso comum e fixa a allowlist de campos. CSV de datas em `/painel-administrativo/eventos/exportar` usa `CalendarItemSource` e `CalendarOccurrences`, restrito aos itens `aculta_events`, janela máxima de 366 dias, sem telefone, e-mail ou endereço; neutraliza fórmulas de planilha. Suíte Events: 62 testes, 672 assertions. Views ativas no Runtime de teste; ambas negam acesso anônimo e o status focal config/sync não apresenta diferenças. Commit de sincronização `0f1f384d8`.
 - [x] E9 (I-15): código do FAQ reescrito em `aculta_faq`, com atribuição em `ORIGEM-OPENCULTURAS.md` (D-25). A origem não tinha conteúdo FAQ editorial versionado; revisão e cadastro do conteúdo ACULTA continuam pendentes.
-- [x] E10 (D-26): E10-A/B implementam OAuth2 no popup, token cifrado, endpoint fixo por ambiente e assistente Find → Select → Review → Save. Busca por tipo/ID ocorre no endpoint ativo; tags de contato não entram; envio usa changeset com comentário e confirmação. Kernel: 4 testes / 49 assertions, incluindo recusa sem credencial, bloqueio de ambiente cruzado e escrita simulada só na API de desenvolvimento. Submódulo ativo no Runtime e rotas administrativas protegidas; os dois campos OSM estão instalados. **Envio real de teste pendente**: credenciais próprias ausentes no SecretsManager de teste; nenhuma escrita real foi feita. Commit de ativação/configuração `0f1f384d8`.
+- [ ] E10 (D-45): E10-A/B implementam OAuth2 no popup, token cifrado, e assistente Find → Select → Review → Save. O checkout de teste usa a API de desenvolvimento por padrão e pode selecionar explicitamente a API ativa; em ambos os casos cada alteração exige revisão e confirmação explícita. A seleção explícita da API ativa está implementada, mas as credenciais ainda não foram provisionadas no arquivo de segredos do teste e o endpoint live não foi ativado. Kernel: 4 testes / 53 assertions, 12 deprecações; nenhum envio real foi feito. D-26 foi revogada por D-45. Commit de ativação/configuração prévio `0f1f384d8`; hash desta alteração será registrado após commit.
 
 ## Integração com LMS (D-15)
 
@@ -174,9 +174,9 @@ Saída: revisão visual aprovada pelo responsável.
 
 Entrada: F3 e F4 concluídas.
 
-- [x] Sitemap do purpose responde no Runtime de teste; index e filho do purpose retornam HTTP 200 com `X-Robots-Tag: noindex, nofollow, noarchive`. O sitemap lista as rotas públicas e eventos publicados com URLs canônicas de produção, conforme ADR-009.
+- [x] Sitemap do purpose responde no Runtime de teste; index e filho do purpose retornam HTTP 200 com `X-Robots-Tag: noindex, nofollow, noarchive`.
 - [x] Página de evento emite JSON-LD `schema.org/Event`, com datas e estado de cancelamento.
-- [ ] Resolver a divergência de canonical: o sitemap lista host de produção, enquanto a página de evento no teste aponta para `eventos.aculta.toca.net.br`; `deploy.json` também diz que o filho de teste usa hosts de teste. O teste permanece `noindex`. Ver decisão pendente do responsável.
+- [ ] Aplicar D-44: URLs da página e do sitemap devem vir do mapeamento `domain_transition` do ACULTA Deployer. O código agora consulta esse mapeamento; falta regenerar e validar no servidor de teste. A página de evento já aponta para o host de teste e o ambiente continua `noindex`.
 - [ ] `validate-final-sitemap.php` verde no ambiente de teste.
 
 Saída: sitemap e robots conferidos pelo `aculta_deployer`.

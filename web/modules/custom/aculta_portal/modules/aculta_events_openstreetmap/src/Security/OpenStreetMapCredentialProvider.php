@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_events_openstreetmap\Security;
 
 use Drupal\aculta_portal\Secrets\SecretsManager;
+use Drupal\Core\Site\Settings;
 
 /**
  * Resolve credenciais pelo SecretsManager sem persistir os valores.
@@ -13,6 +14,7 @@ final class OpenStreetMapCredentialProvider implements OpenStreetMapCredentialPr
 
   public function __construct(
     private readonly ?SecretsManager $secrets,
+    private readonly ?Settings $settings = NULL,
   ) {}
 
   /**
@@ -47,7 +49,12 @@ final class OpenStreetMapCredentialProvider implements OpenStreetMapCredentialPr
    * Lê credencial somente quando pertence ao ambiente ativo do site.
    */
   private function valueForEnvironment(string $environment, string $suffix): ?string {
-    if (!in_array($environment, ['test', 'production'], TRUE) || $environment !== $this->siteEnvironment()) {
+    $configured = $this->settings?->get('aculta_openstreetmap_environment');
+    $selected = OpenStreetMapEnvironment::resolve(
+      $this->siteEnvironment(),
+      is_string($configured) ? $configured : NULL,
+    );
+    if ($environment !== $selected) {
       return NULL;
     }
     $prefix = $environment === 'test' ? 'OSM_TEST_' : 'OSM_PRODUCTION_';

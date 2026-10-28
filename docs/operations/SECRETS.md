@@ -81,13 +81,17 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `aculta_melhorenvio_token_encryption` | `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` | Produção e testes (obrigatória nos dois) | Sim, chave de cifra do token OAuth | plain |
 | `osm_test_client_id` | `OSM_TEST_CLIENT_ID` | Testes | Não, ID da aplicação OAuth2 de desenvolvimento do OSM | plain |
 | `osm_test_client_secret` | `OSM_TEST_CLIENT_SECRET` | Testes | Sim, segredo da aplicação OAuth2 de desenvolvimento do OSM | plain |
-| `osm_production_client_id` | `OSM_PRODUCTION_CLIENT_ID` | Produção | Não, ID da aplicação OAuth2 de produção do OSM | plain |
-| `osm_production_client_secret` | `OSM_PRODUCTION_CLIENT_SECRET` | Produção | Sim, segredo da aplicação OAuth2 de produção do OSM | plain |
+| `osm_production_client_id` | `OSM_PRODUCTION_CLIENT_ID` | Produção e testes | Não, ID da aplicação OAuth2 da API ativa do OSM; no teste só é resolvido com `aculta_openstreetmap_environment=production` (D-45) | plain |
+| `osm_production_client_secret` | `OSM_PRODUCTION_CLIENT_SECRET` | Produção e testes | Sim, segredo da aplicação OAuth2 da API ativa; em teste fica somente em `secrets/aculta.secrets.env` (D-45) | plain |
 | `aculta_osm_token_encryption` | `ACULTA_OSM_TOKEN_ENCRYPTION_KEY` | Produção e testes | Sim, chave hex de 64 caracteres para cifrar tokens OAuth2 no State | plain |
 | `smtp_password` | `SMTP_PASSWORD` | Produção e testes | Sim, senha do envio SMTP do domínio | plain |
 
 Os ambientes vêm do contrato (`environments` em `config/secrets-contract.json`). Variáveis
 compartilhadas aparecem nas duas seções do painel. Mercado Pago: ver [MERCADOPAGO.md](../integrations/MERCADOPAGO.md).
+Pela D-45, o checkout de teste pode selecionar explicitamente a API ativa do OSM;
+nesse modo as credenciais de cliente OAuth de produção ficam no arquivo de segredos
+do teste e o token do usuário continua cifrado no State do banco de teste. Sem a
+configuração explícita, o site de teste continua usando a API de desenvolvimento.
 O allowlist do loader do Runtime também deve reconhecer cada variável do contrato,
 inclusive as credenciais opcionais; o gate `validate-secrets-contract.php`
 verifica essa correspondência.

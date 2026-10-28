@@ -11,8 +11,8 @@ use Drupal\Core\Site\Settings;
  *
  * O default é sempre a API de desenvolvimento.
  *
- * Produção exige configuração explícita e ambiente de site production.
- * Um site de teste nunca seleciona a API de produção.
+ * Produção exige configuração explícita. D-45 permite ao site de teste escolher
+ * explicitamente a API ativa; sem essa configuração o teste usa a API de teste.
  */
 final class OpenStreetMapEnvironment {
 
@@ -33,7 +33,7 @@ final class OpenStreetMapEnvironment {
   }
 
   /**
-   * Política testável: produção nunca herda o default de desenvolvimento. */
+   * Política testável: o padrão do teste é dev; produção só pode ser escolhida explicitamente. */
   public static function resolve(string $siteEnvironment, ?string $configuredEnvironment): ?string {
     if ($configuredEnvironment === NULL || $configuredEnvironment === '') {
       if ($siteEnvironment === 'production') {
@@ -41,8 +41,11 @@ final class OpenStreetMapEnvironment {
       }
       $configuredEnvironment = 'test';
     }
-    if (!in_array($configuredEnvironment, ['test', 'production'], TRUE)
-      || $configuredEnvironment !== $siteEnvironment) {
+    if (!in_array($siteEnvironment, ['test', 'production'], TRUE)
+      || !in_array($configuredEnvironment, ['test', 'production'], TRUE)) {
+      return NULL;
+    }
+    if ($configuredEnvironment === 'test' && $siteEnvironment !== 'test') {
       return NULL;
     }
     return $configuredEnvironment;
