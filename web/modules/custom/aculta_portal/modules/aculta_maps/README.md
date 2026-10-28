@@ -7,8 +7,8 @@ diretamente com Google Maps, OpenStreetMap ou Nominatim.
 Consumidores montam `markers` com `lat`, `lng`, `nome` e `endereco` e chamam
 `aculta_maps.renderer` (`MapRenderer::build()`). Geocodificação de endereços usa
 `aculta_maps.geocoding` (`GeocodingService::geocode()`). As chaves externas
-ficam no `aculta_secrets` e nunca são armazenadas na configuração exportável.
-O mecanismo Google atual é transitório; MP3 estabelece Leaflet/OSM como padrão.
+ficam no `aculta_secrets` e nunca são armazenadas na configuração exportável. Google usa
+uma chave restrita para o navegador e outra para geocodificação no servidor.
 O contrato e o estado por microfase estão em `docs/`.
 
 Leaflet 1.9.4 é distribuído localmente em `assets/vendor/leaflet/` sob BSD-2-Clause.

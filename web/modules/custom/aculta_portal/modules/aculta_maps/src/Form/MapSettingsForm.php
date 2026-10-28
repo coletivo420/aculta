@@ -8,7 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
-use Drupal\key\KeyRepositoryInterface;
+use Drupal\aculta_portal\Secrets\SecretsManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,7 +19,7 @@ final class MapSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $configFactory,
     TypedConfigManagerInterface $typedConfigManager,
-    private readonly KeyRepositoryInterface $keys,
+    private readonly ?SecretsManager $secrets,
   ) {
     parent::__construct($configFactory, $typedConfigManager);
   }
@@ -31,7 +31,7 @@ final class MapSettingsForm extends ConfigFormBase {
     return new static(
       $container->get('config.factory'),
       $container->get('config.typed'),
-      $container->get('key.repository'),
+      $container->has('aculta_portal.secrets_manager') ? $container->get('aculta_portal.secrets_manager') : NULL,
     );
   }
 
@@ -103,13 +103,19 @@ final class MapSettingsForm extends ConfigFormBase {
       '#maxlength' => 255,
       '#required' => TRUE,
     ];
-    $key = $this->keys->getKey('google_maps_api_key');
-    $keyValue = $key?->getKeyValue();
+    $keyValue = $this->secrets?->value('GOOGLE_MAPS_API_KEY');
     $form['credential_status'] = [
       '#type' => 'item',
       '#title' => $this->t('Chave do Google Maps'),
       '#markup' => is_string($keyValue) && $keyValue !== '' ? $this->t('Configurada') : $this->t('Ausente'),
       '#description' => $this->t('A chave fica no Secrets Manager. Este formulário não exibe nem altera credenciais.'),
+    ];
+    $geocodingKey = $this->secrets?->value('GOOGLE_GEOCODING_API_KEY');
+    $form['geocoding_credential_status'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Chave do Google Geocoding'),
+      '#markup' => is_string($geocodingKey) && $geocodingKey !== '' ? $this->t('Configurada') : $this->t('Ausente'),
+      '#description' => $this->t('A chamada de geocodificação usa uma chave separada, restrita para uso no servidor.'),
     ];
     return parent::buildForm($form, $form_state);
   }

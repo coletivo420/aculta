@@ -1,7 +1,7 @@
 # Roadmap — ACULTA Maps (`aculta_maps`)
 
 Roadmap único do submódulo. Plano e contrato: `PLANO-IMPLANTACAO.md`.
-Status: MP0–MP2 concluídas; MP3 técnica implementada, aguardando atualização da política e ativação no Runtime; MP4–MP7 a fazer.
+Status: MP0–MP2 e MP4 concluídas; MP3 técnica implementada, aguardando revisão de transparência e ativação no Runtime; MP5 em andamento; MP6–MP7 pendentes.
 
 ## MP0 — Criação do submódulo
 
@@ -38,15 +38,16 @@ Evidência técnica MP3: `58359728f`.
 
 ## MP4 — Engine Google (opção) e fallback
 
-- [ ] Maps JavaScript API com a chave lida do `aculta_secrets`.
-- [ ] Geocoding API no servidor, mesma interface do serviço.
-- [ ] Fallback para OSM quando a chave falta ou a API falha; aviso só para o administrador.
-- [ ] Documentar as restrições de referenciador e de API da chave.
+- [x] Maps JavaScript API opcional com chave lida do `aculta_secrets`, carregada só quando Google está selecionado.
+- [x] Geocoding API no servidor com `GOOGLE_GEOCODING_API_KEY`, separada da chave de navegador.
+- [x] Fallback para OSM sem chave ou quando a API falha; aviso só para o administrador.
+- [x] Documentar restrições por referenciador/API no navegador e por IP/API no servidor.
 
 ## MP5 — Link de rota sem API
 
-- [ ] `RouteLinkBuilder` com modelo configurável (padrão: `https://www.google.com/maps/dir/?api=1&destination={destino}`).
-- [ ] Abre em nova aba só por clique. Teste: a página não carrega script do Google nesse modo.
+- [ ] `RouteLinkBuilder` usa o modelo configurável e codifica o destino.
+- [ ] Link abre em nova aba com `noopener noreferrer`; não injeta script Google para gerar a rota.
+- [ ] Lista textual e popups do mapa oferecem rota quando há endereço.
 
 ## MP6 — Privacidade
 

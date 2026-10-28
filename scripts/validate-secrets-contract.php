@@ -22,6 +22,7 @@ $expected = [
   'google_oauth_client_id' => ['GOOGLE_OAUTH_CLIENT_ID', FALSE],
   'google_oauth_client_secret' => ['GOOGLE_OAUTH_CLIENT_SECRET', FALSE],
   'google_maps_api_key' => ['GOOGLE_MAPS_API_KEY', FALSE],
+  'google_geocoding_api_key' => ['GOOGLE_GEOCODING_API_KEY', FALSE],
   'mercadopago_production_public_key' => ['MERCADOPAGO_PRODUCTION_PUBLIC_KEY', FALSE],
   'mercadopago_production_access_token' => ['MERCADOPAGO_PRODUCTION_ACCESS_TOKEN', FALSE],
   'mercadopago_test_public_key' => ['MERCADOPAGO_TEST_PUBLIC_KEY', FALSE],

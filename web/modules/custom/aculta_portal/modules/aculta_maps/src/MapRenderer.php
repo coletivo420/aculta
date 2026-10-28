@@ -6,13 +6,19 @@ namespace Drupal\aculta_maps;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\aculta_portal\Secrets\SecretsManager;
 
 /**
  * Produces a provider-neutral map render array.
  */
 final class MapRenderer {
 
-  public function __construct(private readonly ConfigFactoryInterface $configFactory) {}
+  public function __construct(
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly ?SecretsManager $secrets,
+    private readonly AccountProxyInterface $currentUser,
+  ) {}
 
   /**
    * Builds a map for the supplied markers.
@@ -25,6 +31,9 @@ final class MapRenderer {
    */
   public function build(array $options): array {
     $settings = $this->configFactory->get('aculta_maps.settings');
+    $engine = $settings->get('engine') ?? 'openstreetmap';
+    $googleKey = $engine === 'google' ? $this->secrets?->value('GOOGLE_MAPS_API_KEY') : NULL;
+    $provider = $googleKey ? 'google' : 'openstreetmap';
     $mapId = Html::getId((string) ($options['id'] ?? 'aculta-map'));
     $markers = [];
     foreach ($options['markers'] ?? [] as $marker) {
@@ -49,7 +58,7 @@ final class MapRenderer {
       ];
     }
 
-    return [
+    $build = [
       '#type' => 'container',
       '#attributes' => [
         'id' => $mapId,
@@ -58,7 +67,7 @@ final class MapRenderer {
         'aria-label' => (string) ($options['label'] ?? 'Mapa'),
         'data-aculta-map' => 'true',
       ],
-      '#cache' => ['tags' => ['config:aculta_maps.settings']],
+      '#cache' => ['tags' => ['config:aculta_maps.settings'], 'contexts' => ['user.permissions']],
       '#attached' => [
         'library' => ['aculta_maps/map'],
         'drupalSettings' => [
@@ -70,12 +79,27 @@ final class MapRenderer {
               ],
               'zoom' => (int) ($settings->get('zoom_initial') ?? 4),
               'zoomLocation' => (int) ($settings->get('zoom_location') ?? 15),
+              'provider' => $provider,
+              'showAdminNotice' => $this->currentUser->hasPermission('administer aculta maps'),
               'markers' => $markers,
             ],
           ],
         ],
       ],
     ];
+    if ($googleKey) {
+      $build['#attached']['drupalSettings']['acultaMaps'][$mapId]['googleApiKey'] = $googleKey;
+    }
+    if ($engine === 'google' && !$googleKey) {
+      $build['provider_notice'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#value' => 'Google Maps não está configurado; usando OpenStreetMap.',
+        '#access' => $this->currentUser->hasPermission('administer aculta maps'),
+        '#attributes' => ['class' => ['messages', 'messages--warning']],
+      ];
+    }
+    return $build;
   }
 
 }

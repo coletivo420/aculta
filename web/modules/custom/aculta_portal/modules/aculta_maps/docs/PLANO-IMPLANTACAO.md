@@ -44,19 +44,20 @@ Regras do contrato:
 | Engine | Mapa | Geocodificação | Chave |
 | --- | --- | --- | --- |
 | `openstreetmap` (padrão e fallback) | Leaflet com tiles públicos do OSM, atribuição visível | Nominatim público: 1 req/s, User-Agent do ACULTA, cache, sem autocompletar | Não precisa |
-| `google` (opção) | Maps JavaScript API | Geocoding API, no servidor | `GOOGLE_MAPS_API_KEY` do `aculta_secrets` |
+| `google` (opção) | Maps JavaScript API | Geocoding API, no servidor | `GOOGLE_MAPS_API_KEY` (navegador) e `GOOGLE_GEOCODING_API_KEY` (servidor), do `aculta_secrets` |
 
 - Se `google` estiver escolhido e a chave faltar ou a API falhar: usar `openstreetmap` e mostrar aviso discreto ao
   administrador. O visitante não vê erro.
 - Link de rota: disponível em qualquer engine, abre o Google Maps em nova aba só por clique.
-- Chave do Google: fica visível no navegador (exigência da Maps JavaScript API). Por isso precisa de restrição de
-  referenciador por host e de restrição de API. Registrado em ADR-030.
+- Chave do Maps JavaScript fica visível no navegador e deve ter restrições de host e API. A chave da Geocoding API
+  é separada, restrita a IP do servidor e à Geocoding API. Nenhuma chave fica em configuração exportável.
 
 ## 5. Privacidade
 
 - Carregamento do mapa junto com a página (D-08, mantido pelo D-18), com aviso visível e link para a política.
-- Com OSM, o IP do visitante vai aos servidores do OpenStreetMap ao carregar os tiles. Está no aviso; a política pública precisa registrar esse fluxo antes da ativação final.
-- Com Google, o IP vai ao Google. Só na engine `google`.
+- Provedores externos recebem os dados técnicos exigidos pelo protocolo quando há requisição. A política pública do
+  ambiente deve descrever o fluxo de cada provedor antes da ativação final; a preferência atual do responsável é não
+  mencionar IP na política, portanto a ativação permanece pendente de compatibilização editorial.
 - Local de precisão aproximada: coordenadas arredondadas (ex.: duas casas decimais) antes do mapa e da lista.
 - Nenhum script de terceiro carregado no modo de link de rota.
 

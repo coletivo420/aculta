@@ -54,6 +54,8 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | --- | --- | --- | --- | --- |
 | `google_oauth_client_id` | `GOOGLE_OAUTH_CLIENT_ID` | Produção e testes | Não, identificador público | plain |
 | `google_oauth_client_secret` | `GOOGLE_OAUTH_CLIENT_SECRET` | Produção e testes | Sim | plain |
+| `google_maps_api_key` | `GOOGLE_MAPS_API_KEY` | Produção e testes | Sim, chave pública do navegador com restrições de referenciador e Maps JavaScript API | plain |
+| `google_geocoding_api_key` | `GOOGLE_GEOCODING_API_KEY` | Produção e testes (opcional) | Sim, chave de servidor com restrição de IP e Geocoding API | plain |
 | `mercadopago_production_public_key` | `MERCADOPAGO_PRODUCTION_PUBLIC_KEY` | Produção | Não, uso no frontend | plain |
 | `mercadopago_production_access_token` | `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` | Produção | Sim | plain |
 | `mercadopago_webhook_secret` | `MERCADOPAGO_WEBHOOK_SECRET` | Produção e testes (aplicação; obrigatória em produção) | Sim | plain |

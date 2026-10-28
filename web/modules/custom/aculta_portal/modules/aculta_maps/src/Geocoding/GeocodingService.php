@@ -8,6 +8,8 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\State\StateInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\aculta_portal\Secrets\SecretsManager;
 use GuzzleHttp\ClientInterface;
 
 /**
@@ -27,6 +29,8 @@ final class GeocodingService {
     private readonly StateInterface $state,
     private readonly LockBackendInterface $lock,
     private readonly TimeInterface $time,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly ?SecretsManager $secrets,
   ) {}
 
   /**
@@ -41,6 +45,12 @@ final class GeocodingService {
    */
   public function geocode(string $address): ?array {
     $address = trim($address);
+    if (($this->configFactory->get('aculta_maps.settings')->get('engine') ?? 'openstreetmap') === 'google') {
+      $key = $this->secrets?->value('GOOGLE_GEOCODING_API_KEY');
+      if ($key && ($coordinates = $this->geocodeWithGoogle($address, $key)) !== NULL) {
+        return $coordinates;
+      }
+    }
     if ($address === '' || !$this->lock->acquire(self::RATE_LIMIT_LOCK)) {
       return NULL;
     }
@@ -72,6 +82,35 @@ final class GeocodingService {
     }
     finally {
       $this->lock->release(self::RATE_LIMIT_LOCK);
+    }
+  }
+
+  /**
+   * Requests one geocoding result from Google without logging address or key.
+   */
+  private function geocodeWithGoogle(string $address, string $key): ?array {
+    if ($address === '') {
+      return NULL;
+    }
+    try {
+      $response = $this->http->request('GET', 'https://maps.googleapis.com/maps/api/geocode/json', [
+        'query' => ['address' => $address, 'key' => $key],
+        'connect_timeout' => 3,
+        'timeout' => 8,
+      ]);
+      $data = json_decode((string) $response->getBody(), TRUE);
+      $location = is_array($data) ? ($data['results'][0]['geometry']['location'] ?? NULL) : NULL;
+      if (($data['status'] ?? '') !== 'OK' || !is_array($location)
+        || !is_numeric($location['lat'] ?? NULL) || !is_numeric($location['lng'] ?? NULL)) {
+        return NULL;
+      }
+      $lat = (float) $location['lat'];
+      $lng = (float) $location['lng'];
+      return $lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180 ? ['lat' => $lat, 'lng' => $lng] : NULL;
+    }
+    catch (\Throwable $exception) {
+      $this->logs->get('aculta_maps')->warning('Google geocoding failed: @class.', ['@class' => $exception::class]);
+      return NULL;
     }
   }
 

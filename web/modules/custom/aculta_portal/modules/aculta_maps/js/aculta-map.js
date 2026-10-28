@@ -17,11 +17,18 @@
           return;
         }
         const settings = drupalSettings.acultaMaps && drupalSettings.acultaMaps[element.id];
-        if (!settings || !window.L) {
+        if (!settings) {
           return;
         }
         element.dataset.acultaMapsReady = 'true';
-        drawMap(element, settings);
+        if (settings.provider === 'google' && settings.googleApiKey) {
+          loadGoogleMaps(settings.googleApiKey)
+            .then(() => drawGoogleMap(element, settings))
+            .catch(() => drawFallbackMap(element, settings, true));
+        }
+        else {
+          drawFallbackMap(element, settings);
+        }
       });
     },
   };
@@ -63,6 +70,94 @@
       });
     }
     window.requestAnimationFrame(() => map.invalidateSize());
+  }
+
+  let googleMapsPromise;
+  const googleFallbacks = [];
+
+  window.gm_authFailure = () => {
+    googleFallbacks.forEach(({ element, settings }) => drawFallbackMap(element, settings, true));
+    googleFallbacks.length = 0;
+  };
+
+  function loadGoogleMaps(apiKey) {
+    if (window.google && window.google.maps) {
+      return Promise.resolve();
+    }
+    if (!googleMapsPromise) {
+      googleMapsPromise = new Promise((resolve, reject) => {
+        const callbackName = `acultaMapsGoogleReady${Date.now()}`;
+        window[callbackName] = () => {
+          delete window[callbackName];
+          resolve();
+        };
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&callback=${callbackName}&loading=async`;
+        script.async = true;
+        script.onerror = () => reject(new Error('Google Maps could not be loaded'));
+        window.setTimeout(() => reject(new Error('Google Maps load timed out')), 10000);
+        document.head.appendChild(script);
+      });
+    }
+    return googleMapsPromise;
+  }
+
+  function drawGoogleMap(element, settings) {
+    try {
+      googleFallbacks.push({ element, settings });
+      const map = new window.google.maps.Map(element, {
+        center: settings.center,
+        zoom: settings.zoom,
+        gestureHandling: 'cooperative',
+      });
+      const bounds = new window.google.maps.LatLngBounds();
+      (settings.markers || []).forEach((marker) => {
+        const position = { lat: marker.lat, lng: marker.lng };
+        const pin = new window.google.maps.Marker({ map, position, title: marker.label });
+        bounds.extend(position);
+        const content = document.createElement('div');
+        const title = document.createElement('strong');
+        title.textContent = marker.label;
+        content.appendChild(title);
+        if (marker.description) {
+          const description = document.createElement('p');
+          description.textContent = marker.description;
+          content.appendChild(description);
+        }
+        if (isSafeUrl(marker.url)) {
+          const link = document.createElement('a');
+          link.href = marker.url;
+          link.textContent = Drupal.t('Ver detalhes');
+          content.appendChild(link);
+        }
+        const info = new window.google.maps.InfoWindow({ content });
+        pin.addListener('click', () => info.open({ anchor: pin, map }));
+      });
+      if (settings.markers.length === 1) {
+        map.setCenter(bounds.getCenter());
+        map.setZoom(settings.zoomLocation ?? settings.zoom);
+      }
+      else if (settings.markers.length > 1) {
+        map.fitBounds(bounds);
+      }
+      googleFallbacks.splice(googleFallbacks.findIndex((entry) => entry.element === element), 1);
+    }
+    catch (error) {
+      drawFallbackMap(element, settings, true);
+    }
+  }
+
+  function drawFallbackMap(element, settings, failed = false) {
+    if (failed && settings.showAdminNotice && !element.dataset.acultaMapFallbackNotified) {
+      const notice = document.createElement('p');
+      notice.className = 'messages messages--warning';
+      notice.textContent = Drupal.t('Google Maps falhou; o mapa foi substituído pelo OpenStreetMap.');
+      element.insertAdjacentElement('afterend', notice);
+      element.dataset.acultaMapFallbackNotified = 'true';
+    }
+    if (window.L) {
+      drawMap(element, settings);
+    }
   }
 
   function clusterMarkers(markers, map) {

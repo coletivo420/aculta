@@ -19,16 +19,17 @@ responsável decidiu copiar esse método.
    responsável a selecionar.
 3. **Seleção no painel:** um formulário de configuração em `/painel-administrativo/mapas` define o provedor
    (`openstreetmap` ou `google`), o centro e o zoom iniciais, e o zoom para "mostrar no mapa". Sem caminho `/admin`.
-4. **Chave do Google no `aculta_secrets`:** a chave `GOOGLE_MAPS_API_KEY` já está declarada em
-   `config/secrets-contract.json` (sensível, produção e teste). É lida com `SecretsManager::value()`. Nunca fica no
-   formulário, na configuração exportada, no repositório nem no HTML. Se a opção for Google e a chave faltar, o
-   mapa mostra a lista e um aviso, sem erro.
+4. **Chaves do Google no `aculta_secrets`:** `GOOGLE_MAPS_API_KEY` é enviada ao navegador somente quando Google
+   está selecionado; deve restringir referenciadores aos hosts autorizados e a Maps JavaScript API.
+   `GOOGLE_GEOCODING_API_KEY` é distinta e usada só no servidor, restrita ao IP do servidor e à Geocoding API.
+   Nenhuma chave é editável no formulário ou salva em configuração exportada. Sem chave de navegador, o mapa cai
+   para OSM; o aviso de fallback é restrito a administradores.
 5. **Carregamento na página** (D-08 vale): o mapa carrega junto com a página em ambas as opções. Aviso de
    privacidade visível, com link para `/sobre/politica-de-privacidade` (caminho indicado pelo responsável
    em 2026-10-28). O conteúdo deve mencionar os provedores e os dados técnicos enviados antes de ativar o link no mapa.
 6. **Geocodificação:** no servidor, uma vez por local, guardada no local. Não é feita a cada visualização. Com
-   OpenStreetMap, a geocodificação usa o Nominatim público, com User-Agent identificando o ACULTA, no máximo uma
-   requisição por segundo, sem autocompletar (ver Riscos).
+   OpenStreetMap, usa Nominatim público, com User-Agent identificando o ACULTA, no máximo uma requisição por
+   segundo e sem autocompletar. Com Google, usa a chave de servidor distinta.
 7. **Atribuição obrigatória** ("© OpenStreetMap contributors") em todo mapa que use tiles do OSM.
 8. **Código:** o sistema de mapa do OpenCulturas (`openculturas_map`, GPL-2.0-or-later) é adaptado, não copiado. Cada
    arquivo derivado leva o cabeçalho de atribuição e uma linha em `ORIGEM-OPENCULTURAS.md`. O que sai do
@@ -95,6 +96,14 @@ comportamento e clustering ACULTA são código próprio. Nominatim é chamado so
 continua acompanhado da lista textual. O aviso aponta para `/sobre/politica-de-privacidade`; a página do ambiente de
 teste ainda precisa incluir o fluxo do IP para o OpenStreetMap antes da ativação final no Runtime. Implementação
 técnica publicada em `58359728f`.
+
+## Atualização técnica MP4
+
+O código aceita Google Maps JavaScript somente quando selecionado e quando a chave pública restrita está disponível;
+sem chave ou diante de falha de carregamento, volta a Leaflet/OSM e informa administradores. Geocoding usa uma chave
+separada `GOOGLE_GEOCODING_API_KEY`, restrita para uso de servidor.
+O código não está ativado no Runtime: a política pública ainda não descreve os provedores e o responsável decidiu
+não informar IP na política. Essa incompatibilidade com a exigência de transparência deste ADR continua pendente.
 
 Revisão das políticas oficiais em 2026-10-28: [política de tiles OSM](https://operations.osmfoundation.org/policies/tiles/)
 exige atribuição visível e respeito às respostas de cache; [política Nominatim](https://operations.osmfoundation.org/policies/nominatim/)
