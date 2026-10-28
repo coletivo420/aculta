@@ -55,3 +55,46 @@ Alterado: `EmailConfirmationRequester::request()` aceita a URL de resposta opcio
 - Checkout: autorizado ligar `guest_new_account` e `allow_guest_checkout` (2026-10-27), em todos os fluxos.
 - Aviso nativo do Commerce desligado: a confirmação do portal é o único e-mail de criação de conta.
 - Pendência de teste: um endereço que receba e-mail, para verificar a entrega e o link de confirmação.
+
+## 5. Caminhos do código e do teste (atualizado em 2026-10-27)
+
+**Código (módulo `aculta_portal`):**
+
+| Etapa | Arquivo |
+|---|---|
+| Pedido de confirmação ao concluir o checkout | `src/EventSubscriber/SimplifiedAccountCheckoutSubscriber.php` |
+| Envio e controle de reenvio (já existia) | `src/Email/EmailConfirmationRequester.php` (`request($conta, ?Url $respostaUrl)`) |
+| Confirmação e login da conta simplificada | `src/Hook/EmailConfirmerHooks.php` (realm `aculta_registration`) |
+| Política de confirmação e papel `email_confirmed` (já existia) | `src/Account/EmailConfirmationPolicy.php` |
+| Etapa da senha (controller) | `src/Controller/SimplifiedAccountPasswordController.php` (rota `/criar-senha`) |
+| Etapa da senha (formulário) | `src/Form/SimplifiedAccountPasswordForm.php` |
+| Serviços e rotas | `aculta_portal.services.yml`, `aculta_portal.routing.yml` |
+
+**Envio (módulo `aculta_mailer`, já existia):** modelo `email_confirmation_request`, enviado por `aculta_mailer.mailer`.
+O modelo de confirmação de conta criado antes foi removido, para não duplicar o modelo existente.
+
+**Marcas de controle (`user.data`, módulo `aculta_portal`):**
+- `simplified_account`: conta criada ou usada pelo cadastro simplificado (pendente de senha).
+
+**Teste automático (caixa de monitoramento):**
+- Caixa: `dmarc@aculta.org` é alias de `naoresponda@aculta.org`. Leitura somente, por IMAP `imap.hostinger.com:993`,
+  conforme [INSPECAO-VISUAL-EMAIL.md](../operations/INSPECAO-VISUAL-EMAIL.md). A senha vem de `secrets/aculta.secrets.env`
+  (`IMAP_PASSWORD`) e nunca é impressa.
+- Roteiro: `tests/browser/aculta-frete/` (script de cadastro simplificado a ser versionado; hoje está em
+  `scratchpad`). Dispara a conclusão de checkout como convidado (pedido de teste), lê a confirmação pela caixa
+  (somente `EXAMINE` e `BODY.PEEK`), abre o link no Firefox visível, confirma e segue para a senha.
+- Dados de teste: conta, confirmações e pedidos do `dmarc@aculta.org`. Limpeza restrita a esses registros.
+
+## 6. Estado e achados
+
+- Confirmado no servidor de testes: pedido de confirmação enviado pelo `aculta_mailer`, mensagem recebida na caixa,
+  link lido, confirmação feita, conta com papel `email_confirmed`, sessão logada.
+- Achado 1: depois de confirmar, a página mostra "Confirmação de e-mail confirmada" mas **não redireciona** para
+  `/criar-senha`, embora o destino da resposta esteja definido. Investigação em andamento.
+- Achado 2: o assunto do e-mail reaproveitado diz "Confirme seu novo endereço de e-mail", porque o modelo é o de troca de
+  e-mail. Decidir se o cadastro simplificado precisa de texto próprio.
+- Achado 3: o link do e-mail sai com o host local `http://default` (URL base do ambiente de teste). Em produção, o
+  domínio é o público. No teste automático o host é trocado pelo de conta.
+- Mudança nova: conta simplificada ainda não confirmada recebe novo pedido em cada compra com o mesmo e-mail (respeitando
+  o intervalo de reenvio do requester). Não testada ainda.
+

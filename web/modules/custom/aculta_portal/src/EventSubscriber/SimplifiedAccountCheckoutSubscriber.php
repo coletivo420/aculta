@@ -6,7 +6,6 @@ namespace Drupal\aculta_portal\EventSubscriber;
 
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Email\EmailConfirmationRequester;
-use Drupal\aculta_portal\Email\EmailConfirmationRequestResult;
 use Drupal\commerce_checkout\Event\CheckoutEvents;
 use Drupal\commerce_order\Event\OrderEvent;
 use Drupal\Core\Url;
@@ -24,7 +23,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class SimplifiedAccountCheckoutSubscriber implements EventSubscriberInterface {
 
   /**
-   * Chave de userData (módulo aculta_portal): conta criada pelo cadastro simplificado.
+   * Chave de userData (módulo aculta_portal): conta criada pelo cadastro simplificado (pendente de senha).
    */
   public const FLAG = 'simplified_account';
 
@@ -51,7 +50,11 @@ final class SimplifiedAccountCheckoutSubscriber implements EventSubscriberInterf
   }
 
   /**
-   * Pede a confirmação do e-mail para a conta criada neste pedido.
+   * Pede a confirmação do e-mail da conta do pedido, quando ela ainda não foi confirmada.
+   *
+   * Vale para conta criada neste checkout e para conta do cadastro simplificado que ainda não confirmou: uma nova
+   * compra com o mesmo e-mail reenvia a confirmação. O intervalo entre reenvios é o do requester existente.
+   * Contas comuns já existentes não recebem o pedido aqui.
    */
   public function onCompletion(OrderEvent $event): void {
     $customer = $event->getOrder()->getCustomer();
@@ -61,17 +64,15 @@ final class SimplifiedAccountCheckoutSubscriber implements EventSubscriberInterf
     if ($this->policy->isConfirmed($customer)) {
       return;
     }
-    if (time() - (int) $customer->getCreatedTime() > self::NEW_ACCOUNT_WINDOW) {
+    $uid = (int) $customer->id();
+    $nova = time() - (int) $customer->getCreatedTime() <= self::NEW_ACCOUNT_WINDOW;
+    $simplificada = (bool) $this->userData->get('aculta_portal', $uid, self::FLAG);
+    if (!$nova && !$simplificada) {
       return;
     }
-    if ((bool) $this->userData->get('aculta_portal', (int) $customer->id(), self::FLAG . '_requested')) {
-      return;
-    }
-    $this->userData->set('aculta_portal', (int) $customer->id(), self::FLAG, TRUE);
-    $result = $this->requester->request($customer, Url::fromRoute('aculta_portal.simplified_account.password'));
-    if ($result === EmailConfirmationRequestResult::ACCEPTED) {
-      $this->userData->set('aculta_portal', (int) $customer->id(), self::FLAG . '_requested', TRUE);
-    }
+    // Marca a conta como simplificada antes do pedido: a etapa de senha depende dessa marca.
+    $this->userData->set('aculta_portal', $uid, self::FLAG, TRUE);
+    $this->requester->request($customer, Url::fromRoute('aculta_portal.simplified_account.password'));
   }
 
 }
