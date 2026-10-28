@@ -147,4 +147,4 @@ PDF.js passam a pertencer ao submódulo opcional `aculta_pdf_viewer`. A configur
 exportada habilita o módulo para o display padrão Media `document`. Testes Unit do builder/formatter e Kernel de descoberta do submódulo passaram
 no ambiente isolado. O viewer ESM também teve smoke test isolado na F2. A etapa
 PV2 (CKEditor da Revista), Runtime, PDFPreview/ImageMagick, leitura privada e
-produção LiteSpeed seguem DEFERRED; veja [roadmap](docs/ROADMAP.md).
+produção LiteSpeed seguem DEFERRED; veja [roadmap](../../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/docs/ROADMAP.md).

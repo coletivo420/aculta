@@ -532,7 +532,7 @@ Histórico arquivado do CHANGELOG.md de aculta_forum. Não é fonte de decisão 
 ## `0.1.0-dev.242` — prova de ACL de Group e revogação (XK-C3) — 2026-10-22
 
 - Documento novo
-  [`docs/FORUM-PART-0.1-C3-CHARACTERIZATION.md`](docs/FORUM-PART-0.1-C3-CHARACTERIZATION.md)
+  [`docs/FORUM-PART-0.1-C3-CHARACTERIZATION.md`](../../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/FORUM-PART-0.1-C3-CHARACTERIZATION.md)
   com a matriz conjunta de acesso, a regra de revogação na checagem e as tags
   de cache do subsistema `RestrictedForum*`.
 - Teste novo
@@ -580,7 +580,7 @@ Histórico arquivado do CHANGELOG.md de aculta_forum. Não é fonte de decisão 
 - Testes: `tests/src/Unit/RestrictedForum` — 60 testes, 167 asserções, OK;
   PHPCS e PHPStan nível 5 limpos. Kernel/Runtime/busca/anexos ficam DEFERRED,
   com motivo em `docs/RESTRICTED-FORUMS.md`.
-- Documento novo [`docs/RESTRICTED-FORUMS.md`](docs/RESTRICTED-FORUMS.md) com a
+- Documento novo [`docs/RESTRICTED-FORUMS.md`](../../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/RESTRICTED-FORUMS.md) com a
   matriz F-GROUP-A, decisões, passos de ativação (inclui
   `NodeAccessRebuild::rebuild()`), matriz de testes e riscos residuais.
 
@@ -3740,7 +3740,7 @@ Histórico arquivado do CHANGELOG.md de aculta_forum. Não é fonte de decisão 
   dos legados e a página coletiva `/u/lendashistoricas`.
 - Documentados pesquisa, arquitetura, reconstrução, roadmap e gates futuros.
 - Entrega exclusivamente documental, sem versão de módulo instalável ou Runtime.
-- [Evidência de revisão e validação estática](../../../../../../docs/portal/FORUM-GAME-PESQUISA-VALIDACAO.md).
+- [Evidência de revisão e validação estática](../../portal/FORUM-GAME-PESQUISA-VALIDACAO.md).
 ## `0.1.0-dev.22` — separação administrativa por contexto — 2026-10-19
 
 - Incluída a listagem administrativa de tópicos em
