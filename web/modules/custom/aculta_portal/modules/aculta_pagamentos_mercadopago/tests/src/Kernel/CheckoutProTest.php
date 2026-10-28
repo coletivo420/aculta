@@ -60,6 +60,7 @@ class CheckoutProTest extends OrderKernelTestBase {
         'mode' => 'test',
         'redirect_mode' => 'redirect',
         'country' => 'AR',
+        'autofee' => TRUE,
       ],
     ]);
     $previous_public_key = getenv('MERCADOPAGO_TEST_PUBLIC_KEY');
@@ -83,6 +84,26 @@ class CheckoutProTest extends OrderKernelTestBase {
       $this->assertSame('aculta_mercadopago', $plugin->getPaymentType()->getPluginId());
       $configuration_form = $plugin->buildConfigurationForm([], new FormState());
       $this->assertArrayNotHasKey('autofee', $configuration_form);
+      $configuration_form['#parents'] = ['configuration', 'aculta_mercadopago_checkout_pro'];
+      $form_state = new FormState();
+      $form_state->setValue($configuration_form['#parents'], [
+        'display_label' => 'Mercado Pago',
+        'mode' => 'test',
+        'payment_method_types' => [],
+        'collect_billing_information' => FALSE,
+        'credentials_test' => [],
+        'credentials_stage' => [],
+        'credentials_prod' => [],
+        'client_id' => '',
+        'client_secret' => '',
+        'redirect_mode' => 'redirect',
+        'country' => 'AR',
+        'payment_options_wrapper' => [],
+        'max_installments' => 12,
+        'debug_logging' => FALSE,
+      ]);
+      $plugin->submitConfigurationForm($configuration_form, $form_state);
+      $this->assertFalse($plugin->getConfiguration()['autofee']);
 
       $payment = $this->container->get('entity_type.manager')->getStorage('commerce_payment')->create([
         'payment_gateway' => $payment_gateway->id(),
