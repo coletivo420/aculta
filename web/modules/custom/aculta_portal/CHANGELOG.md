@@ -1,3 +1,9 @@
+## 0.4.1-dev.43 — URLs do sitemap por ambiente no Deployer (F7) — 2026-10-28
+
+- `DeployerEnvironment` lê o host de cada Domain em `domain_transition.entries`; `DomainPurposeManager` gera URLs de página/caminho para o ambiente ativo. As URLs canônicas de produção existentes permanecem separadas.
+- O sitemap usa os hosts do ambiente para raízes, caminhos públicos, conteúdo e eventos. No teste, canonical e sitemaps usam hosts de teste e mantêm `noindex`.
+- Kernel e Unit: sitemap 7 testes/13 assertions, 46 depreciações; Portal DomainPurposeManager 8/47, 1 depreciação; DeployerEnvironment 4/9. PHPCS Drupal/DrupalPractice, PHP lint e validação HTTP passaram.
+
 ## 0.4.1-dev.41 — exceção de confirmação de e-mail no checkout (2026-10-27)
 
 - Decisão do responsável: contas autenticadas podem comprar no checkout Commerce sem confirmar o e-mail. Permanecem obrigatórios pedido próprio, loja publicada, pedido com itens, permissão `access checkout` e aceite dos termos. A decisão não concede papel nem marca de e-mail confirmado.
@@ -222,12 +228,3 @@
 - Novo `Drupal\aculta_portal\Checkout`: `CheckoutContextProviderInterface`, `CheckoutMode`, `CheckoutContextConfiguration`, `CheckoutContextRegistry`, `CheckoutConfigurationResolver` e `CheckoutPolicyManager`, registrados como serviços. Providers entram pela tag `aculta_portal.checkout_provider` (`tagged_iterator`).
 - Somente leitura e sem efeito público: nenhum provider registrado ainda, nenhuma rota, subscriber, carrinho ou checkout alterado (ADR-013).
 - Testes Unit: `Unit/Checkout/CheckoutOrchestrationTest.php`. RUNTIME STATUS: DEFERRED.
-
-## 0.4.1-dev.12 — ownership editorial de Activity e limpeza de Magazine
-
-- `EditorialHooks` deixa de executar comportamentos para `article`/`blog` e
-  deixa de possuir hooks específicos do bundle `activity`, agora mantidos por
-  `aculta_activity`.
-- Publicações atuais são mantidas pelo `aculta_magazine` no bundle `revista`.
-- Removido o migrador já executado de bundles `article`/`blog` para `revista`.
-

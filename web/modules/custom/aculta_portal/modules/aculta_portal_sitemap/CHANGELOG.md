@@ -1,3 +1,9 @@
+## Não lançado — URLs de sitemap por ambiente via ACULTA Deployer (F7)
+
+- Raízes, caminhos públicos e eventos agora usam `DomainPurposeManager::environmentPathUrl()`; conteúdo usa `environmentRouteUrl()`. Os hosts vêm de `domain_transition.entries` em `aculta_deployer/config/deploy.json`.
+- Teste HTTP: índice e filho de eventos retornam 200 com `noindex`; o filho contém somente URLs de `eventos.aculta.toca.net.br`. Canonical do evento também usa o host mapeado de teste.
+- A fixture Kernel habilita `commerce_checkout`, dependência real dos serviços do Portal. Suíte: 7 testes/13 assertions, 46 depreciações; validator do sitemap PASS.
+
 ## Não lançado — harness Kernel sem Commerce Shipping contrib
 
 - Removida `commerce_shipping` da lista de módulos do `SitemapWiringKernelTest`, pois o pacote contrib foi removido e o projeto usa o motor próprio do Commerce.

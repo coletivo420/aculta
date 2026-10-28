@@ -1,5 +1,10 @@
 # Changelog — aculta_events
 
+## 2026-10-28 — URLs de página e sitemap por ambiente no F7
+
+- Página de evento e sitemap do purpose usam o host que o ACULTA Deployer mapeia para o ambiente ativo; o ambiente de teste permanece `noindex`.
+- Smoke HTTP no teste: sitemap index e filho `eventos` respondem 200; o filho lista URLs no host `eventos` de teste e a página declara canonical para o mesmo host. F7 concluído em `D-44`.
+
 ## 2026-10-28 — formulário de nova data com referência segura (E4, D-28)
 
 - Adicionado `/painel-administrativo/eventos/datas/adicionar`; o parâmetro `event_id` só preenche o evento quando o usuário tem acesso de atualização. IDs inválidos, inexistentes ou não editáveis deixam o campo em branco.

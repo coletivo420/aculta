@@ -11,7 +11,7 @@ Esta microfase não contém código.
 | --- | --- | --- |
 | Purpose de um domínio | `DomainPurposeManager::getPurposeForDomainId()` | Autoridade de purposes. |
 | Domínio de um purpose | `DomainPurposeManager::getDomain()` | Usado para o host da URL. |
-| URL canônica de conteúdo | `DomainPurposeManager::canonicalRouteUrl()` | Canonical sempre pelo host de produção. |
+| URL canônica de conteúdo | `DomainPurposeManager` e ACULTA Deployer | Host do ambiente declarado pelo ACULTA Deployer; host de teste em `test`, host de produção em `production`. |
 | Purpose de origem do conteúdo | `field_domain_source` + `getPurposeForDomainId()` | Mesmo critério de `PortalHooks` e `ContentPurposeResolver`. |
 
 O mapa `DOMAIN_IDS` em `DomainPurposeManager` é a única lista de domínios existente;
@@ -29,8 +29,9 @@ o submódulo não cria outra.
   de metatag é feita na microfase E, quando o padrão de metatag do projeto estiver confirmado.
 - **R6 — Tipos.** Somente os bundles listados na matriz da fase E (`page`, `project`,
   `activity`, `document`, `wiki_entry`, `article`). `editorial_highlight` não é página.
-- **R7 — Hosts de teste.** Aliases `*.aculta.toca.net.br` nunca são URL pública; a URL
-  canônica sempre usa o host de produção.
+- **R7 — Hosts por ambiente.** O ACULTA Deployer é a fonte do mapeamento de domínios. Em
+  `test`, páginas e sitemaps usam os hosts de teste; todos os hosts do ambiente de teste
+  permanecem `noindex`. Em `production`, URLs canônicas usam os hosts de produção.
 
 ## Matriz por purpose (política; a implementação é das fases E e F)
 

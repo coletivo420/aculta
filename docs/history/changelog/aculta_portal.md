@@ -1,5 +1,13 @@
 Histórico arquivado do CHANGELOG.md de aculta_portal. Não é fonte de decisão vigente: ver docs/decisions/ e docs/architecture/aculta_portal.md.
 
+## 0.4.1-dev.12 — ownership editorial de Activity e limpeza de Magazine
+
+- `EditorialHooks` deixa de executar comportamentos para `article`/`blog` e
+  deixa de possuir hooks específicos do bundle `activity`, agora mantidos por
+  `aculta_activity`.
+- Publicações atuais são mantidas pelo `aculta_magazine` no bundle `revista`.
+- Removido o migrador já executado de bundles `article`/`blog` para `revista`.
+
 ## 0.4.1-dev.10 — versão explícita das projeções do Content Index
 
 - O contrato neutro `ContentIndexProviderInterface` passa a exigir
