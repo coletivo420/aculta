@@ -1,0 +1,9 @@
+uuid: d4bad1c3-2019-434e-93ab-c87cf4159c3f
+langcode: pt-br
+status: true
+dependencies: {  }
+name: 'Tipo de local'
+vid: aculta_location_type
+description: 'Categoria de cada local de evento (portado do OpenCulturas).'
+weight: 0
+new_revision: false
