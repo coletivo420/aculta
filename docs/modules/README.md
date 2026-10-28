@@ -20,6 +20,7 @@ esta página não replica listas de versões ou de módulos habilitados.
 - [Plataforma de formulários Webform](WEBFORM-PLATFORM.md)
 - [LMS e Group](LMS-GROUP.md)
 - [Compatibilidade LMS/PDF](LMS-COMPATIBILITY.md)
+- [Arquitetura do leitor PDF](../architecture/aculta_pdf_viewer.md)
 - [Operações de módulos e infraestrutura](OPERATIONS.md)
 - [Roadmap do ACULTA LMS](ACULTA-LMS-ROADMAP.md)
 - [Auditoria H5P/LMS](LMS-H5P-AUDIT.md)
