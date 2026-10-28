@@ -7,5 +7,6 @@ dependencies:
   - drupal:datetime
   - drupal:datetime_range
   - drupal:options
+  - drupal:taxonomy
   - drupal:user
   - aculta_portal:aculta_calendar

@@ -1,9 +1,0 @@
-uuid: 17e0d4c4-58eb-4857-9b6c-f4795383a23d
-langcode: pt-br
-status: true
-dependencies: {  }
-name: 'Tipo de atividade'
-vid: event_type
-description: 'Formato de cada atividade ou evento institucional.'
-weight: 0
-new_revision: false

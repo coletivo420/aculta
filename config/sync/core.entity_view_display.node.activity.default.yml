@@ -14,7 +14,6 @@ dependencies:
     - field.field.node.activity.field_event_start
     - field.field.node.activity.field_event_status
     - field.field.node.activity.field_event_street
-    - field.field.node.activity.field_event_type
     - field.field.node.activity.field_free
     - field.field.node.activity.field_media_image
     - field.field.node.activity.field_meta_tags
@@ -141,14 +140,20 @@ content:
     weight: 100
     region: content
 hidden:
+  co_authors: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_activity_date: true
   field_domain_source: true
   field_event_country: true
   field_event_postal: true
   field_event_region: true
-  field_event_type: true
   field_free: true
   field_meta_tags: true
   field_modality: true
   field_organizer: true
   langcode: true
+  private_message_link: true
+  search_api_excerpt: true
+

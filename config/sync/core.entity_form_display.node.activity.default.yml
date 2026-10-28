@@ -14,7 +14,6 @@ dependencies:
     - field.field.node.activity.field_event_start
     - field.field.node.activity.field_event_status
     - field.field.node.activity.field_event_street
-    - field.field.node.activity.field_event_type
     - field.field.node.activity.field_free
     - field.field.node.activity.field_media_image
     - field.field.node.activity.field_meta_tags
@@ -26,6 +25,7 @@ dependencies:
     - field.field.node.activity.field_summary
     - node.type.activity
   module:
+    - content_moderation
     - datetime
     - link
     - media_library
@@ -46,6 +46,16 @@ content:
       summary_rows: 3
       placeholder: ''
       show_summary: false
+    third_party_settings: {  }
+  co_authors:
+    type: entity_reference_autocomplete_tags
+    weight: 17
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   created:
     type: datetime_timestamp
@@ -114,16 +124,6 @@ content:
     weight: 15
     region: content
     settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_event_type:
-    type: entity_reference_autocomplete
-    weight: 15
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
@@ -202,6 +202,12 @@ content:
     settings:
       include_locked: true
     third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   path:
     type: path
     weight: 30
@@ -247,3 +253,4 @@ hidden:
   field_activity_date: true
   promote: true
   sticky: true
+

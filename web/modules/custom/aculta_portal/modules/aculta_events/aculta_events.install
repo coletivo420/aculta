@@ -1,0 +1,84 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Atualizações do módulo ACULTA Eventos.
+ */
+
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
+
+/**
+ * Tipos de evento do ACULTA (vocabulário aculta_event_type, MODELO-DE-DADOS.md).
+ *
+ * Os mesmos nomes que estavam no vocabulário antigo "event_type" (Tipo de atividade).
+ */
+const ACULTA_EVENTS_TIPOS = [
+  'Assembleia',
+  'Cortejo',
+  'Encontro',
+  'Feira',
+  'Festival',
+  'Formação',
+  'Oficina',
+  'Outro',
+  'Roda de conversa',
+  'Seminário',
+];
+
+/**
+ * Migra o vocabulário "event_type" (Tipo de atividade) para "aculta_event_type".
+ *
+ * Idempotente: pode rodar mais de uma vez. Antes de apagar, confere que nenhum nó
+ * usa os termos antigos; se usar, a função falha em vez de perder a referência.
+ */
+function aculta_events_update_10001(): string {
+  // 1. Vocabulário novo, com os termos de tipo de evento.
+  if (!Vocabulary::load('aculta_event_type')) {
+    Vocabulary::create([
+      'vid' => 'aculta_event_type',
+      'name' => 'Tipo de evento',
+      'description' => 'Formato de cada evento do ACULTA.',
+    ])->save();
+  }
+  $existentes = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
+    ->loadByProperties(['vid' => 'aculta_event_type']);
+  $nomes = array_map(static fn ($termo) => $termo->label(), $existentes);
+  foreach (ACULTA_EVENTS_TIPOS as $peso => $nome) {
+    if (!in_array($nome, $nomes, TRUE)) {
+      Term::create([
+        'vid' => 'aculta_event_type',
+        'name' => $nome,
+        'weight' => $peso,
+      ])->save();
+    }
+  }
+
+  // 2. Antes de apagar o antigo, confere que nenhum nó o usa.
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $antigos = array_keys($storage->loadByProperties(['vid' => 'event_type']));
+  if ($antigos !== [] && \Drupal::entityTypeManager()->hasDefinition('node')) {
+    $usados = \Drupal::entityTypeManager()->getStorage('node')->getQuery()
+      ->condition('field_event_type.target_id', $antigos, 'IN')
+      ->accessCheck(FALSE)
+      ->count()
+      ->execute();
+    if ($usados > 0) {
+      throw new \RuntimeException("event_type ainda é usado por $usados nó(s); migração interrompida.");
+    }
+    $storage->delete($storage->loadMultiple($antigos));
+  }
+
+  // 3. Campos do tipo activity que apontavam para o vocabulário antigo.
+  foreach (['node.activity.field_event_type' => 'field_config', 'node.field_event_type' => 'field_storage_config'] as $id => $tipo) {
+    $entidade = \Drupal::entityTypeManager()->getStorage($tipo)->load($id);
+    $entidade?->delete();
+  }
+
+  // 4. Vocabulário antigo.
+  Vocabulary::load('event_type')?->delete();
+
+  return 'Vocabulário event_type migrado para aculta_event_type.';
+}
