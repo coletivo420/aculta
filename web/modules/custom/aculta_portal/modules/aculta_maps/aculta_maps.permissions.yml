@@ -1,0 +1,4 @@
+administer aculta maps:
+  title: 'Configurar mapas do ACULTA'
+  description: 'Alterar provedor, centro, zoom e link de rotas dos mapas.'
+  restrict access: true

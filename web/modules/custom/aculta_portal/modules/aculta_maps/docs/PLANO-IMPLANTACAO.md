@@ -28,7 +28,7 @@ Um módulo que precisa de mapa monta um array com marcadores e chama o serviço 
 
 | Item | Descrição |
 | --- | --- |
-| `MapRenderer::build(array $options)` | Retorna render array com o mapa, a lista alternativa e o aviso. Opções: marcadores, centro, zoom, id |
+| `MapRenderer::build(array $options)` | Retorna render array neutro do mapa. A lista alternativa e o aviso são responsabilidade do módulo consumidor. Opções: marcadores, centro, zoom, id |
 | Marcador | `lat`, `lng`, `label`, `url` (opcional), `precision` (`exact` ou `approximate`) |
 | `GeocodingService::geocode(string $address): ?array` | Retorna `lat`, `lng` ou nulo. Respeita limite e cache |
 | `RouteLinkBuilder::build(array $destination): Url` | Link de rota com o modelo configurado, sem API |
@@ -62,14 +62,9 @@ Regras do contrato:
 
 ## 6. Migração do código existente (microfase MP1)
 
-Hoje o código de mapa está em `aculta_events`:
-- `src/Controller/MapController.php`
-- `src/Geocoding/GeocodingService.php`
-- `js/aculta-map.js`
-- testes `MapControllerKernelTest` e `GeocodingServiceTest`
+O código de mapa estava em `aculta_events`. MP1 moveu `GeocodingService`, `aculta-map.js` e `GeocodingServiceTest` para `aculta_maps`. `MapController` permanece em `aculta_events`, pois obtém e prepara dados do catálogo de locais e atende a rota pública `/mapa`.
 
-Ordem: mover para `aculta_maps` sem mudar comportamento; `aculta_events` passa a chamar `aculta_maps`; os testes
-movem junto. Só depois a engine OSM entra, e por último o Google e o painel.
+`aculta_events` chama `MapRenderer` e `GeocodingService` do `aculta_maps`. O renderer preserva temporariamente o comportamento Google existente. MP3 substitui o provedor padrão por Leaflet/OSM; MP4 implementa Google como opção e fallback.
 
 ## 7. Dependências
 

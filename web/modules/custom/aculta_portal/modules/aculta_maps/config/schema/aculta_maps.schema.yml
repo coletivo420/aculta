@@ -1,0 +1,22 @@
+aculta_maps.settings:
+  type: config_object
+  label: 'ACULTA Maps settings'
+  mapping:
+    engine:
+      type: string
+      label: 'Map engine'
+    center_lat:
+      type: float
+      label: 'Initial map center latitude'
+    center_lng:
+      type: float
+      label: 'Initial map center longitude'
+    zoom_initial:
+      type: integer
+      label: 'Initial map zoom'
+    zoom_location:
+      type: integer
+      label: 'Zoom when showing a location'
+    route_url_template:
+      type: string
+      label: 'External route URL template'

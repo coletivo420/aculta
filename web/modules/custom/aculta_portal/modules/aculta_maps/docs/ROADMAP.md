@@ -1,11 +1,11 @@
 # Roadmap — ACULTA Maps (`aculta_maps`)
 
 Roadmap único do submódulo. Plano e contrato: `PLANO-IMPLANTACAO.md`.
-Status: MP0 e MP1 concluídas; MP2–MP7 a fazer.
+Status: MP0–MP2 concluídas; MP3–MP7 a fazer.
 
 ## MP0 — Criação do submódulo
 
-- [x] `aculta_maps.info.yml` sem dependências de terceiros, `aculta_maps.services.yml` vazio, README do módulo.
+- [x] `aculta_maps.info.yml`, service definitions e README do módulo. Dependências de runtime limitadas ao Portal e Key (sem nova biblioteca externa).
 - [x] Busca estática: chamadas de mapa Google agora ficam em `aculta_maps`; `aculta_events_openstreetmap` mantém apenas sua integração separada de edição/importação OSM (E10).
 
 ## MP1 — Migração do código de `aculta_events`
@@ -18,10 +18,10 @@ Evidência de MP0: `9ff609c1e`. MP1: `917cce3f1`.
 
 ## MP2 — Configuração e painel (ADM7)
 
-- [ ] Formulário em `/painel-administrativo/mapas`: engine, centro, zoom inicial, zoom ao mostrar um local, modelo da URL de rota.
-- [ ] Estado da chave `GOOGLE_MAPS_API_KEY` (configurada ou ausente), nunca o valor.
-- [ ] Permissão própria. Teste de acesso negado para usuário comum.
-- [ ] Teste: salvar a configuração e confirmar que nenhum valor de chave aparece no config export.
+- [x] Formulário em `/painel-administrativo/mapas`: engine, centro, zoom inicial, zoom ao mostrar um local, modelo da URL de rota.
+- [x] Estado da chave `GOOGLE_MAPS_API_KEY` (configurada ou ausente), nunca o valor.
+- [x] Permissão própria. Kernel nega acesso ao usuário comum.
+- [x] Kernel salva as opções e confirma que nenhum valor de chave aparece na configuração exportada; URL rejeita `javascript:` e hosts não aprovados.
 
 ## MP3 — Engine OpenStreetMap (padrão e fallback)
 

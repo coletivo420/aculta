@@ -1,0 +1,6 @@
+aculta_maps.settings:
+  title: 'Configurações de mapas'
+  description: 'Provedor e opções dos mapas do ACULTA.'
+  route_name: aculta_maps.settings
+  parent: system.admin_config_services
+  weight: 30

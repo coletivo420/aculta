@@ -1,0 +1,9 @@
+aculta_maps.settings:
+  path: '/painel-administrativo/mapas'
+  defaults:
+    _form: '\Drupal\aculta_maps\Form\MapSettingsForm'
+    _title: 'Configurações de mapas'
+  requirements:
+    _permission: 'administer aculta maps'
+  options:
+    _admin_route: true
