@@ -5,3 +5,8 @@ services:
   aculta_lms_agenda.tokens:
     class: Drupal\aculta_lms_agenda\Calendar\PersonalCalendarTokens
     arguments: ['@state']
+  aculta_lms_agenda.mail_type_evento_turma:
+    class: Drupal\aculta_lms_agenda\Mail\EventoTurmaMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }

@@ -7,7 +7,9 @@ declare(strict_types=1);
  * Campos que o submódulo acrescenta às entidades de eventos.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
@@ -28,4 +30,32 @@ function aculta_lms_agenda_entity_base_field_info(EntityTypeInterface $entity_ty
     ->setSetting('handler', 'default:group')
     ->setSetting('handler_settings', ['target_bundles' => ['lms_class' => 'lms_class']]);
   return $fields;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for aculta_event.
+ */
+function aculta_lms_agenda_aculta_event_insert(EntityInterface $evento): void {
+  _aculta_lms_agenda_avisa_turma($evento, NULL);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update() for aculta_event.
+ */
+function aculta_lms_agenda_aculta_event_update(EntityInterface $evento): void {
+  _aculta_lms_agenda_avisa_turma($evento, $evento->original ?? NULL);
+}
+
+/**
+ * Enfileira o aviso quando o evento de turma passa a publicado (não em cada edição).
+ */
+function _aculta_lms_agenda_avisa_turma(EntityInterface $evento, ?EntityInterface $anterior): void {
+  if ($evento->get('field_turma')->isEmpty() || (string) $evento->get('field_status')->value !== 'publicado') {
+    return;
+  }
+  $jaPublicado = $anterior !== NULL && (string) $anterior->get('field_status')->value === 'publicado';
+  if ($jaPublicado) {
+    return;
+  }
+  \Drupal::queue('aculta_lms_agenda_evento_turma')->createItem(['event_id' => (int) $evento->id()]);
 }

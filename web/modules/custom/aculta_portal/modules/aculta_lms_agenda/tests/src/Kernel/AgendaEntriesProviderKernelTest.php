@@ -222,4 +222,30 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $this->assertSame(404, \Drupal\aculta_lms_agenda\Controller\PersonalCalendarController::create($this->container)->exportar($token)->getStatusCode());
   }
 
+
+  /**
+   * Evento de turma enfileira um aviso ao ser publicado; editar de novo não reenfileira; rascunho não.
+   */
+  public function testAvisoEnfileiradoSoNaPublicacao(): void {
+    $dono = $this->createUser();
+    $turma = Group::create(['type' => 'lms_class', 'label' => 'Turma aviso', 'uid' => $dono->id(), 'status' => 1]);
+    $turma->save();
+    $fila = $this->container->get('queue')->get('aculta_lms_agenda_evento_turma');
+    if (method_exists($fila, 'createQueue')) {
+      $fila->createQueue();
+    }
+
+    $evento = Event::create(['title' => 'Encontro da turma', 'field_status' => 'rascunho', 'field_turma' => $turma->id()]);
+    $evento->save();
+    $this->assertSame(0, $fila->numberOfItems(), 'rascunho não avisa');
+
+    $evento->set('field_status', 'publicado');
+    $evento->save();
+    $this->assertSame(1, $fila->numberOfItems(), 'publicar avisa');
+
+    $evento->set('title', 'Encontro da turma (ajustado)');
+    $evento->save();
+    $this->assertSame(1, $fila->numberOfItems(), 'editar um publicado não avisa de novo');
+  }
+
 }
