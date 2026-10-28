@@ -1,0 +1,38 @@
+services:
+  aculta_events_openstreetmap.credentials:
+    class: Drupal\aculta_events_openstreetmap\Security\OpenStreetMapCredentialProvider
+    factory: ['@aculta_events_openstreetmap.credentials_factory', 'create']
+
+  aculta_events_openstreetmap.credentials_factory:
+    class: Drupal\aculta_events_openstreetmap\Security\OpenStreetMapCredentialsFactory
+    arguments: ['@service_container']
+
+  Drupal\aculta_events_openstreetmap\Security\OpenStreetMapCredentialProviderInterface:
+    alias: aculta_events_openstreetmap.credentials
+
+  aculta_events_openstreetmap.environment:
+    class: Drupal\aculta_events_openstreetmap\Security\OpenStreetMapEnvironment
+    arguments: ['@aculta_events_openstreetmap.credentials', '@settings']
+
+  aculta_events_openstreetmap.token_cipher:
+    class: Drupal\aculta_events_openstreetmap\Security\OpenStreetMapTokenCipher
+    arguments: ['@aculta_events_openstreetmap.credentials']
+
+  aculta_events_openstreetmap.token_store:
+    class: Drupal\aculta_events_openstreetmap\Security\OpenStreetMapTokenStore
+    arguments: ['@state', '@aculta_events_openstreetmap.token_cipher', '@aculta_events_openstreetmap.environment']
+
+  aculta_events_openstreetmap.oauth_state:
+    class: Drupal\aculta_events_openstreetmap\Security\OpenStreetMapOAuthState
+
+  aculta_events_openstreetmap.oauth_client:
+    class: Drupal\aculta_events_openstreetmap\OAuth\OpenStreetMapOAuthClient
+    arguments: ['@http_client', '@aculta_events_openstreetmap.credentials', '@aculta_events_openstreetmap.environment', '@aculta_events_openstreetmap.token_store', '@logger.factory']
+
+  aculta_events_openstreetmap.oauth_controller:
+    class: Drupal\aculta_events_openstreetmap\Controller\OpenStreetMapOAuthController
+    arguments: ['@aculta_events_openstreetmap.oauth_client', '@aculta_events_openstreetmap.oauth_state', '@messenger']
+
+  aculta_events_openstreetmap.status_controller:
+    class: Drupal\aculta_events_openstreetmap\Controller\OpenStreetMapStatusController
+    arguments: ['@aculta_events_openstreetmap.oauth_client', '@aculta_events_openstreetmap.environment', '@aculta_events_openstreetmap.token_store']

@@ -22,32 +22,28 @@ Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem 
 | E7 | `openculturas_map` | `aculta_maps` (D-19): Leaflet + OSM público (padrão e fallback); Google Maps opcional; link de rota sem API (ADR-030) | **Pendente após conferência do código:** `aculta_maps` ainda só tem documentação; o controller e a geocodificação continuam em `aculta_events` e usam Google. Ainda faltam a migração MP0/MP1, engine OSM, agrupamento de marcadores e link público para a política de privacidade. Não alterar o mapa até a política ter URL publicada; nenhuma verificação visual OSM foi realizada | ADR-030, D-19 |
 | E8 | `openculturas_section` (cor por vocabulário) | Frente B, B2 (cores fechadas) | **Feito** no tema. Consumidor na Revista pendente | `15a3f0488` |
 | E9 | `openculturas_faq` | Submódulo `aculta_faq`: FAQ e blocos editoriais | **Código implementado** com revisão do fluxo e atribuição; não havia conteúdo FAQ editorial versionado na origem para migrar. Revisão/cadastro do conteúdo ACULTA continua pendente | `f34dbe5b5` |
-| E10 | `openculturas_openstreetmap`: assistente administrativo (Find → Select → Review → Save) que importa dados de um local do OpenStreetMap e, em modo de desenvolvimento, envia alterações ao próprio OSM (`PushData`) | Importação e envio em fluxo revisável, com API do ambiente correspondente (D-26) | **Decidido (D-26), implementação pendente e fora da v1.** Contrato de segredos separado por ambiente registrado; valores de cliente e chave de cifra ainda não foram provisionados. Não foi feito envio. O teste autorizado depende de credenciais próprias da API de desenvolvimento e dados fictícios; não se deve usar a API de produção nesta execução | `5dfb7ac0c`; D-26; ver revisão de termos abaixo |
+| E10 | `openculturas_openstreetmap`: assistente administrativo (Find → Select → Review → Save) para importar e enviar dados de local ao OSM (`PushData`) | `aculta_events_openstreetmap`, integração OAuth2 e fluxo revisável por ambiente (D-26) | **Parcial.** E10-A implementa OAuth2 no popup, `state` de sessão, seleção segura do endpoint por ambiente e token cifrado em State. E10-B (busca, seleção, revisão, salvar local e envio confirmado) pendente. Segredos por ambiente estão contratualmente definidos, mas valores de cliente e chave não estão provisionados; envio de teste aguarda credenciais próprias e dados fictícios. Produção não será usada nesta execução | `5dfb7ac0c`; implementação E10-A nesta frente; D-26 |
 | T5 | `SmartDateUpcomingFormatter` | `DateRangeUpcomingFormatter` com `daterange` do core, cache até a próxima data | **Feito** | `56725c71d` |
 | D-15 | Calendário e LMS (decisão própria, sem origem no OC) | `aculta_lms_agenda` e painel do aluno | **Acesso confirmado**: provedor exige membership na turma publicada e acesso ao curso publicado; Kernel cobre turma correta, turma diferente e ausência de matrícula. Fixture agora instala o tipo de campo `link` exigido pelo evento | `ac43e7d94`, `9766bb731`, `df76938ae`, `86f247d4e` |
 | R | Recorrência `smart_date_recur` (replicada, com modificações próprias, D-14) | `aculta_calendar` (validador, expansão) e `aculta_events` (regra e ocorrência) | **Feito na v1.** Regra em `EventDate` (`field_regra`, `field_limite_meses`), expansão na janela, interface da regra em forma canônica e edição de uma ocorrência (cancelar, reagendar, restaurar) por início original. Falta só o link para os formulários na página do evento (F6) | `5f3b61ee7`, `1caa5fc7d`, `dcea19c4a`, `b9144b142` |
 
-## E10 — revisão de termos e implementação pendente
+## E10 — revisão de termos e implementação
 
 O que o OpenCulturas faz: um assistente em `/admin/config/services/openculturas_openstreetmap` busca o elemento do
 OSM correspondente a um local, deixa escolher quais campos copiar, mostra a revisão e salva. O envio ao OSM usa OAuth
 e fica ativo no modo de desenvolvimento.
 
-Não entra na v1 por quatro motivos, e cada um vira decisão antes do código:
-
-1. **Licença dos dados.** Os dados do OpenStreetMap são sob ODbL, que exige atribuição e, em bases derivadas,
-   compartilhamento pela mesma licença. Parecer antes de copiar dados para o banco do ACULTA.
-2. **Integração externa.** Chamadas autenticadas a terceiros seguem o padrão de integrações do ACULTA
-   (`/integracoes/<nome>/<ação>` e popup), e não a rota administrativa do OpenCulturas.
-3. **Escrita no OSM.** O envio de alterações ao OSM não deve existir sem decisão própria. Recomendação: não implementar.
-4. **Coerência com D-08.** O ACULTA usa Google Maps para o mapa. Importar dados do OSM para o local é outro serviço.
+Decisão D-26 autorizou a importação e o envio revisável na v1. A busca/importação é distinta do provedor de
+mapa, e não altera a escolha do mapa. Chamadas OAuth seguem `/integracoes/openstreetmap/...` e o popup padrão
+do Portal. Os endpoints de teste e produção são segregados; o default seguro é a API de teste, enquanto
+produção exige configuração explícita e correspondência com o ambiente do site.
 
 Revisão registrada em 2026-10-28: a [política da API do OpenStreetMap](https://operations.osmfoundation.org/policies/api/)
 define a API de edição para alterar dados do mapa, não como API somente de leitura; importação e edição devem permanecer
 no fluxo explícito de revisão e contribuição, sem consultas em lote. A página de
 [copyright e licença do OSM](https://www.openstreetmap.org/copyright) identifica a licença ODbL e exige atribuição.
-O ACULTA deve exibir atribuição e link para essa licença nos dados/mapas derivados. D-26 autorizou a funcionalidade,
-mas nenhum envio real foi feito nesta execução. Antes de testar envio, provisionar credenciais separadas para
+O ACULTA deve exibir atribuição e link para essa licença nos dados/mapas derivados. O fluxo OAuth2 seguro foi
+implementado parcialmente; nenhum envio real foi feito nesta execução. Antes de testar envio, provisionar credenciais separadas para
 `master.apis.dev.openstreetmap.org` em `secrets/` e usar apenas dados fictícios; a
 [documentação do servidor de desenvolvimento](https://wiki.openstreetmap.org/wiki/Dev_Server_Account) confirma que
 ele é isolado dos dados de produção. Produção permanece fora desta execução.

@@ -1,0 +1,6 @@
+aculta_events_openstreetmap.status:
+  title: 'OpenStreetMap'
+  description: 'Conexão e importação de locais de eventos.'
+  route_name: aculta_events_openstreetmap.status
+  parent: system.admin_content
+  weight: 30

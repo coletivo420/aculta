@@ -1,0 +1,33 @@
+aculta_events_openstreetmap.status:
+  path: '/integracoes/openstreetmap/configuracao'
+  defaults:
+    _controller: 'aculta_events_openstreetmap.status_controller:page'
+    _title: 'OpenStreetMap para Eventos'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    no_cache: true
+  methods: [GET]
+
+aculta_events_openstreetmap.oauth_authorize:
+  path: '/integracoes/openstreetmap/autorizar'
+  defaults:
+    _controller: 'aculta_events_openstreetmap.oauth_controller:authorize'
+    _title: 'Autorizar OpenStreetMap'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    no_cache: true
+  methods: [GET]
+
+aculta_events_openstreetmap.oauth_callback:
+  path: '/integracoes/openstreetmap/retorno'
+  defaults:
+    _controller: 'aculta_events_openstreetmap.oauth_controller:callback'
+    _title: 'Retorno do OpenStreetMap'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    no_cache: true
+  methods: [GET]
