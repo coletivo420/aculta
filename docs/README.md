@@ -10,6 +10,14 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [DOCUMENTATION.md](DOCUMENTATION.md) — política desta documentação: o que é guardrail e o que sai.
 - [operations/DEBT-REGISTER.md](operations/DEBT-REGISTER.md) — dívidas e pendências, com evidência.
 
+## Encontrar a regra ou o procedimento
+
+- Quero mudar uma regra de domínio → [portal/GUARDRAILS.md](portal/GUARDRAILS.md).
+- Quero rodar testes Kernel → [operations/TESTING.md](operations/TESTING.md).
+- Quero localizar a decisão vigente sobre um assunto → [decisions/README.md](decisions/README.md).
+- Quero registrar ou alterar um ADR → [operations/CHANGELOG-POLITICA.md](operations/CHANGELOG-POLITICA.md).
+- Quero saber quais são os roadmaps → [portal/ROADMAP.md](portal/ROADMAP.md).
+
 ## Arquitetura e decisões
 
 - [architecture/overview.md](architecture/overview.md) — camadas Core → Portal → tema → Bootstrap.
