@@ -14,6 +14,7 @@ Entrada: plano aprovado.
 - [ ] Registrar ADR do purpose `eventos` em `docs/decisions/`, incluindo a exceção de privacidade do Google Maps (D7).
 - [ ] Verificar compatibilidade com Core ^11.4 de `smart_date`, `geofield` e `address`.
 - [ ] Revisar termos e cobrança da Google Maps Platform (JavaScript API e Geocoding API) e o aviso de privacidade.
+- [x] Auditoria do OpenCulturas (`AUDITORIA-OPENCULTURAS.md`): nenhum arquivo copiado diretamente; achados S1 a S8 e T1 a T14 viram tarefas de F2–F6.
 - [ ] Revisar licenças: código GPL-2.0-or-later copiado e ícones Phosphor (MIT).
 
 Saída: decisões registradas; nenhuma dependência nova instalada ainda.

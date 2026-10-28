@@ -60,14 +60,14 @@ Lugar físico ou virtual onde ocorrem eventos.
 | `field_tipo` | entity_reference (`aculta_location_type`) | `location_type` | Vocabulário próprio |
 | `field_endereco` | address (paragrafo ou campo) | `field_address_data` (paragraph `address_data`) | Avaliar `drupal/address` |
 | `field_coordenadas` | geofield | `field_address_location` (paragraph) | Lat/long para o mapa |
-| `field_precisao` | list_string | regra de `LocationPrecisionHooks` | Endereço exato ou aproximado |
+| `field_precisao` | list_string | Sem origem no OpenCulturas (o `field_location_precision` de lá marca áreas desenhadas à mão, não privacidade) | Exato ou aproximado; campo próprio (auditoria, achado T9) |
 | `field_horario` | office_hours ou texto | `field_office_hours` / `field_opening_hours` | Escolher uma forma |
 | `field_contato` | entity_reference_revisions | `field_contact_data` | Telefone, e-mail, site |
 | `field_imagem` | image | `field_mood_image`, `field_gallery` | Galeria opcional |
 
 Regras de privacidade:
 
-- Local em residência particular: exibir somente o bairro/município, com `field_precisao = aproximado`.
+- Local em residência particular: exibir somente o bairro/município, com `field_precisao = aproximado`. Regra a definir pelo responsável; o OpenCulturas não a fornece.
 - Coordenadas não exibidas como texto; só no mapa.
 
 ## Relações

@@ -83,9 +83,9 @@ Recomendação em negrito. Até a confirmação, a implementação não começa 
 | `views.view.event_catalogue` | `aculta_event_catalogue` | Reimplementar com a View do ACULTA; filtros sem `better_exposed_filters` se o Core bastar |
 | `views.view.locations`, `locations_opening_hours` | `aculta_event_locations` | Reimplementar |
 | `views.view.related_dates_archive`, `related_dates_export`, `related_date` | `aculta_calendar` (arquivo, exportação) e `aculta_events` (datas relacionadas) | Reimplementar |
-| `openculturas_map` (bloco, filtro, views `oc_map_*`, `SmartDateUpcomingFormatter`, `ImageThumbnailUrlFormatter`) | `aculta_events`: `src/Plugin/Block/`, `src/Plugin/Field/` | Copiar **lógica** com atribuição; reescrever JS para o padrão do ACULTA |
+| `openculturas_map` (bloco, filtro, views `oc_map_*`, `SmartDateUpcomingFormatter`, `ImageThumbnailUrlFormatter`) | `aculta_events`: `src/Plugin/Block/`, `src/Plugin/Field/` | **Não copiar** JS, CSS nem Twig (decisão D7: Google Maps). Usar só como referência para filtros e views. Auditoria: `docs/AUDITORIA-OPENCULTURAS.md` |
 | `openculturas_calendar_widget` | `aculta_calendar`: rota de incorporação | Reimplementar; caminho público em português (ex.: `/calendario/incorporar`) |
-| `openculturas_custom` `DateEventHooks`, `LocationPrecisionHooks` | `aculta_events` | Avaliar cada regra antes de copiar (privacidade do endereço exato) |
+| `openculturas_custom` `DateEventHooks`, `LocationPrecisionHooks` | `aculta_events` | **Não copiar** `nodePrepareForm` (falha de acesso, achado S1). `LocationPrecisionHooks` trata áreas desenhadas, não privacidade: não portar. Demais hooks só reescritos (ver auditoria) |
 | `openculturas_openstreetmap` | Fora da v1 | Registrar como item futuro |
 | `opcult` / `openculturas_base` (temas) | SDC em `aculta420` | Padrões visuais; sem cópia de tema, fonte nem paleta |
 | `cookies_popover`, `dark_mode_toggle` | Não portar | O ACULTA já tem aceite único e modo escuro por tokens |
@@ -149,7 +149,7 @@ Gerar dependências só depois da decisão D8, com `composer require` no fluxo n
 | Chave de API exposta ou usada fora do domínio | Consumo indevido e custo | Restrição por referenciador por host (`eventos.aculta.org`, `eventos.aculta.toca.net.br` etc.) e restrição de API; chave fora do repositório |
 | Custo e cota da API | Cobrança inesperada | Cota diária configurada no Google Cloud; geocodificação feita uma vez por local e guardada |
 | Geocodificação do Google no servidor | Envio do endereço ao Google | Só endereço de local cadastrado pela organização; nunca dados de pessoa |
-| Localização exata do local | Exposição de endereço de pessoa física (local em residência) | Regra de precisão (equivalente a `LocationPrecisionHooks`) e campo de visibilidade do endereço |
+| Localização exata do local | Exposição de endereço de pessoa física (local em residência) | Campo de precisão próprio do ACULTA (sem equivalente no OpenCulturas, achado T9) e visibilidade do endereço |
 | Recorrência e fuso | Datas erradas no calendário e no `.ics` | Fuso do site; testes com datas de fronteira (DST não se aplica ao Brasil desde 2019, mas testar mudanças de horário) |
 | Contrib sem compatibilidade com Core ^11.4 | Bloqueio de F2 | Verificar versão antes de F0 e registrar no `DEBT-REGISTER.md` se necessário |
 | Escopo crescer para ingressos | Atraso e risco financeiro | Fora da v1; plano separado |

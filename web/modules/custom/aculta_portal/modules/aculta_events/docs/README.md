@@ -8,6 +8,7 @@ Submódulo em planejamento. Ainda não há código instalável nem dependências
 | [ROADMAP.md](ROADMAP.md) | Roadmap único da frente (`aculta_events` e `aculta_calendar`), com critérios de entrada e saída |
 | [MODELO-DE-DADOS.md](MODELO-DE-DADOS.md) | Evento, data e local; campos, origem no OpenCulturas e regras de privacidade |
 | [VISUAL.md](VISUAL.md) | Esquema visual, tokens do ACULTA420, componentes SDC e critérios de acessibilidade |
+| [AUDITORIA-OPENCULTURAS.md](AUDITORIA-OPENCULTURAS.md) | Auditoria arquivo a arquivo do que seria copiado: achados de segurança, técnicos e visuais, decisão por arquivo e dependências |
 | [ORIGEM-OPENCULTURAS.md](ORIGEM-OPENCULTURAS.md) | Procedência do pacote (SHA-256), licença GPL-2.0-or-later e registro de cópias |
 | [upstream-openculturas/](upstream-openculturas/) | Cópia da documentação de origem, sem alteração |
 
