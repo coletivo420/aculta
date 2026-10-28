@@ -1483,3 +1483,10 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - **Verificação posterior:** Drush lista ambos os módulos como `Enabled`; banco continua com 605 tabelas e `updatedb:status` continua sem atualizações. HTTP anônimo: `/painel-administrativo/faq` `403`, `/painel-administrativo/conteudo` `403`, `/perguntas-frequentes` `200`. Nenhum item de FAQ foi criado ou publicado.
 - **Não executado:** `updatedb`, `config:import`, deploy ou operação em produção. A configuração global do Runtime continua divergente e não foi reconciliada.
 
+## Gate de Runtime para acesso D-15 — 2026-10-28
+
+- Ambiente: hostname `toca`; checkout `/home/piradopirata/projetos/aculta`; branch `refactor/opencultures-codigo-visual`; HEAD `54b9a2790` durante o gate, com alterações de código locais da microfase D-15; Drush confirmou Drupal 11.4.10, URI `http://default`, root `/home/piradopirata/projetos/aculta/web` e `aculta_runtime`.
+- Antes/depois: consulta somente leitura retornou `605` tabelas; `drush updatedb:status`: `[success] No database updates required.` Não houve troca de HEAD, update ou importação de configuração.
+- `drush cr`: `[success] Cache rebuild complete.` Consulta de leitura por eventos publicados com `field_turma` não retornou linhas no Runtime; os casos matriculado/não matriculado foram cobertos apenas no `aculta_simpletest`.
+- Código depois commitado e publicado em `1b932d29c`; os testes completos de Events e LMS Agenda passaram antes da publicação. Nenhuma escrita de conteúdo ou chamada externa foi feita.
+
