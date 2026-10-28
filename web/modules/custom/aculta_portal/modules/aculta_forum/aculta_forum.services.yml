@@ -64,6 +64,8 @@ services:
   Drupal\aculta_forum\Hook\ForumPostAccessHooks:
     class: Drupal\aculta_forum\Hook\ForumPostAccessHooks
     arguments: ['@aculta_portal.domain_purpose']
+  Drupal\aculta_forum\Hook\ForumThemeHooks:
+    class: Drupal\aculta_forum\Hook\ForumThemeHooks
   Drupal\aculta_forum\Hook\ForumPostThreadHooks:
     class: Drupal\aculta_forum\Hook\ForumPostThreadHooks
     arguments: ['@aculta_forum.post_thread_builder']

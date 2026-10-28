@@ -70,16 +70,21 @@ Medição com `grep` e leitura de código. O tamanho de funções foi conferido 
   `pre_render`. Mesma regra de licença de I-13.
 - **Destino:** `aculta_image` e `aculta_gallery` (I-13); `USER-UPLOADS.md`.
 
-### C-05 — Invalidação de cache por usuário ao alterar um flag
+### C-05 — Cache por usuário em "Meus salvos" (rebaixado: risco futuro, não defeito atual)
 
 - **OpenCulturas:** `flaggingInsert()` invalida a tag `entity_view_user_<uid>_full` ao salvar `bookmark_node`
   ou `bookmark_term`. `nodePresave()` invalida a tag do dono ao salvar um nó.
-- **Situação no ACULTA:** 9 usos de tags por usuário em `aculta_portal`; flags `salvar_topico`, `seguir_topico`,
-  `sinalizar_*` existem. Não localizei invalidação equivalente ao salvar um flag de salvar ou seguir.
-- **Recomendação:** antes da lista "Meus salvos" (I-07), confirmar que salvar ou desfazer invalida a tag
-  do usuário. Se não invalidar, a lista mostra dado antigo.
-- **Destino:** `aculta_studio` (I-07) e `aculta_portal` (verificação). Teste Kernel: salvar, ver a lista,
-  desfazer, ver a lista.
+- **Verificado no ACULTA (2026-10-28):** `salvar_topico` está configurado (`config/sync/flag.flag.salvar_topico.yml`),
+  mas **nenhum código PHP o lê hoje**. Só `seguir_topico` é lido, pelo `aculta_messenger`. Logo, a lista
+  "Meus salvos" (I-07) ainda não existe e nenhum cache atual depende de salvar.
+- **Botão de salvar:** é renderizado pelo módulo Flag, que já trata cache por usuário e tags de lista. Não há
+  motivo para invalidação manual nesse caso.
+- **Risco real na lista futura:** uma View de "Meus salvos" com cache do tipo `tag` e **sem contexto `user`**
+  serviria a lista de uma pessoa a outra (vazamento). Esse é o ponto a testar, não a invalidação.
+- **Recomendação:** ao criar "Meus salvos", exigir contexto `user` no cache da View e um teste Kernel com duas
+  contas: A salva, B não vê; A desfaz, a lista de A atualiza. A invalidação por tag customizada só entra se o
+  teste mostrar atraso.
+- **Destino:** `aculta_studio` (I-07).
 
 ### C-06 — Acesso a campo por valor de outro campo
 

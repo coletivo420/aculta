@@ -1,4 +1,6 @@
 services:
+  Drupal\aculta_donation\Hook\DonationThemeHooks:
+    class: Drupal\aculta_donation\Hook\DonationThemeHooks
   Drupal\aculta_donation\Hook\DonationNoticeEventPublisher:
     class: Drupal\aculta_donation\Hook\DonationNoticeEventPublisher
     arguments: ['@entity_type.manager', '@aculta_messenger.notice_event_publisher', '@datetime.time', '@logger.channel.aculta_donation']

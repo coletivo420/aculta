@@ -29,6 +29,10 @@ services:
     arguments: ['@entity_type.manager']
 
 
+  Drupal\aculta_commerce\Hook\CommerceEntityHooks:
+    class: Drupal\aculta_commerce\Hook\CommerceEntityHooks
+    arguments: ['@entity_type.manager']
+
   aculta_commerce.notice_event_publisher:
     class: Drupal\aculta_commerce\EventSubscriber\CommerceOrderNoticePublisher
     arguments: ['@aculta_portal.checkout_settings', '@entity_type.manager', '@aculta_messenger.notice_event_publisher', '@datetime.time', '@logger.channel.aculta_messenger']
