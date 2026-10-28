@@ -1,7 +1,7 @@
 # Roadmap — ACULTA Maps (`aculta_maps`)
 
 Roadmap único do submódulo. Plano e contrato: `PLANO-IMPLANTACAO.md`.
-Status: MP0–MP2 e MP4–MP6 concluídas tecnicamente; MP3 aguarda revisão de transparência antes da ativação no Runtime; MP7 pendente.
+Status: MP0–MP2 e MP4–MP6 concluídas tecnicamente; documentação de MP7 atualizada; MP3/MP7 aguardam revisão de transparência antes de ativar e visualizar no Runtime.
 
 ## MP0 — Criação do submódulo
 
@@ -62,6 +62,6 @@ Evidência técnica MP6: `58359728f`; testes atuais Maps 10/44 e Events 57/668.
 
 ## MP7 — Verificação e documentação para agentes
 
-- [ ] Verificação no Firefox ESR (`DISPLAY=:0`): desktop 1280 px, 320 px e modo escuro, com capturas em `$SUITE_OUT`.
-- [ ] README do módulo com a API, o que cada módulo pode e não pode fazer, e onde ficam as chaves.
-- [ ] Atualizar ADR-030 com o estado de implementação.
+- [ ] Verificação no Firefox ESR (`DISPLAY=:0`): desktop 1280 px, 320 px e modo escuro, com capturas em `$SUITE_OUT`. **Pendente:** o módulo ainda não está ativo no Runtime; ativá-lo sem atualização da política geraria requisições externas sem a divulgação exigida pelo ADR-030.
+- [x] README do módulo documenta API, responsabilidades dos consumidores e chaves.
+- [x] ADR-030 registra o estado de implementação e o bloqueio de transparência.

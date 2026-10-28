@@ -110,8 +110,9 @@ aceita somente hosts Google aprovados e codifica o destino; a lista textual e os
 Evidência: `33b638ccf`.
 
 MP6 arredonda coordenadas de locais aproximados antes de anexá-las ao render array. A página `/mapa` mostra aviso e
-link para a política pública. Os testes Maps/Events cobrem arredondamento, aviso e destino do link. A mudança de
-política e ativação dos provedores seguem pendentes conforme a decisão atual de não informar IP.
+link para a política pública. Os testes Maps/Events cobrem arredondamento, aviso e destino do link. MP7 documenta a
+API compartilhada e a separação das credenciais. Smoke visual e ativação dos provedores seguem pendentes: o módulo
+não está ativo no Runtime e o responsável decidiu não informar IP na política.
 
 Revisão das políticas oficiais em 2026-10-28: [política de tiles OSM](https://operations.osmfoundation.org/policies/tiles/)
 exige atribuição visível e respeito às respostas de cache; [política Nominatim](https://operations.osmfoundation.org/policies/nominatim/)
