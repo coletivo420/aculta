@@ -47,3 +47,28 @@
 }
 .aculta-metadata, .aculta-category { line-height: 1.5; }
 .aculta-category { color: var(--aculta-text-primary); font-weight: 600; }
+
+/* Keep the compact album cards readable when the Views grid has less space. */
+.view-aculta-albuns .views-view-grid .views-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.view-aculta-albuns .views-view-grid .views-col {
+  width: auto !important;
+  min-width: 0;
+  float: none;
+}
+
+@media (min-width: 768px) {
+  .view-aculta-albuns .views-view-grid .views-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .view-aculta-albuns .views-view-grid .views-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
