@@ -12,7 +12,7 @@ Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem 
 
 | Id | Origem no OpenCulturas | Destino no ACULTA | Situação | Evidência |
 | --- | --- | --- | --- | --- |
-| E0 | Dependências do `info.yml` | `aculta_events`, `aculta_calendar` sem `openculturas_custom` | **Parcial.** Recorrência usa `rlanvin/php-rrule` 3.0, com autorização a confirmar. `smart_date` não entra (D-13). | `7ae9e54e4` |
+| E0 | Dependências do `info.yml` | `aculta_events`, `aculta_calendar` sem `openculturas_custom` | **Feito.** Recorrência usa `rlanvin/php-rrule` 3.0 e a local usa `drupal/geofield`, ambos autorizados pelo responsável (D-16). `smart_date` não entra (D-13); nenhum submódulo do OpenCulturas é dependência | `7ae9e54e4`, D-16 |
 | E1 | `node.type.event/date/location` e campos | Entidades `Evento`, `Local`, data com exceção; `aculta_event_type` e `aculta_location_type` | **Feito na parte de tipos.** Os dois vocabulários existem, com os 17 tipos de local do OpenCulturas em português. Campos de venda seguem fora (`drupal/geofield` instalado para as coordenadas). | `0e6d81397`, `bb0a907c8`, `8668fc957`, `fd70ddd8a` |
 | E2 | Views `event_catalogue`, `locations`, `related_dates_*` | Catálogo e lista de locais em controller (desvio registrado no roadmap); views de datas relacionadas e exportação pendentes | **Parcial.** Catálogo e `/locais` textuais feitos. Faltam as views de datas relacionadas e a exportação administrativa, que continua sem decisão do responsável (S5) | `0174e641c`, `fd70ddd8a` |
 | E3 | `DateEventHooks::nodeViewAlter` e `viewsPostExecute` | Listagens sem data passada e cache até a próxima data (`EventDateHooks`, `UpcomingDates`) | **Feito, com desvio.** `viewsPostExecute` virou `#[Hook('views_post_execute')]`; `nodeViewAlter` não tem equivalente em entity view no ACULTA, então a regra vive nos controllers da página e do catálogo. Sem cron (T5). `nodePrepareForm` (S1) não copiado. | `8bd6d832b` |
@@ -56,7 +56,7 @@ parecer de ODbL? (c) o envio ao OSM fica fora de escopo? Sem essas respostas, o 
 
 ## Pendências que bloqueiam o próximo passo
 
-1. **Confirmar a autorização de `composer require` de `rlanvin/php-rrule`** (entrou em `composer.json` em `7ae9e54e4`).
+1. ~~Confirmar a autorização de `composer require` de `rlanvin/php-rrule`~~ **Resolvido em 2026-10-28:** D-16 autoriza `rlanvin/php-rrule` e `drupal/geofield`, já instalados (`7ae9e54e4`, `b103692c8` e `fd70ddd8a`).
 2. **Verificações do Google Maps antes da F4**: termos, cobrança, lista de hosts no deployer e LGPD (ADR-014).
 3. **Rota `/calendario/incorporar`** depende de o purpose `eventos` estar com Domain ativo no servidor de teste.
 4. **Revisão visual de eventos** não tem registro (F6).

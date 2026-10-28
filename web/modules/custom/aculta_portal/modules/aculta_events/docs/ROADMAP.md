@@ -14,8 +14,8 @@ Entrada: plano aprovado.
 - [x] ADR do provedor de mapa: `docs/decisions/ADR-014-provedor-mapa-google-maps.md` (Google Maps como padrão, D7).
 - [x] ADR do purpose `eventos`: `docs/decisions/ADR-015-purpose-eventos.md`.
 - [x] D-13: campo de data com `daterange` do core, sem `smart_date` (incompatível com `doctrine/collections` 3.x via `simshaun/recurr`).
-- [ ] Verificar compatibilidade com Core ^11.4 de `geofield` e `address` quando entrarem no código.
-- [x] D-14: recorrência própria na v1, com `rlanvin/php-rrule` 3.0 (commit `dcea19c4a`, `7ae9e54e4`). **Pendente de confirmação:** a dependência entrou no `composer.json`; registrar a autorização de `composer require` ou reverter.
+- [x] Compatibilidade com Core ^11.4 de `geofield` (1.67.0) e `address`: verificada no Core 11.4.10 — `EventLocation` usa os dois tipos de campo e as suítes Kernel do módulo passam (36 testes).
+- [x] D-14: recorrência própria na v1, com `rlanvin/php-rrule` 3.0 (commit `dcea19c4a`, `7ae9e54e4`). **Autorizada pelo responsável em 2026-10-28** (D-16), junto com `drupal/geofield`; nenhuma das duas precisa ser revertida.
 - [ ] Revisar termos e cobrança da Google Maps Platform (JavaScript API e Geocoding API) e o aviso de privacidade.
 - [x] Auditoria do OpenCulturas (`AUDITORIA-OPENCULTURAS.md`): nenhum arquivo copiado diretamente; achados S1 a S8 e T1 a T14 viram tarefas de F2–F6.
 - [ ] Revisar licenças: código GPL-2.0-or-later adaptado (ORIGEM-OPENCULTURAS.md) e ícones Phosphor (MIT), se usados.

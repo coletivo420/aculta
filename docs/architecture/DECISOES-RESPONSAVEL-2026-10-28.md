@@ -25,6 +25,7 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 | D-13 | Campo de data do evento (F2) | **`daterange` do core com `field_dia_inteiro`**, sem `smart_date`. O `smart_date` 4.x exige `simshaun/recurr`, que não aceita `doctrine/collections` 3.x; instalá-lo obrigaria a rebaixar a biblioteca. Recorrência, quando entrar, será própria do ACULTA. | `MODELO-DE-DADOS.md` (`field_quando`, `field_dia_inteiro`) e `aculta_calendar` F5. |
 | D-14 | Recorrência de eventos | **Entra na v1.** Subconjunto de RRULE (`FREQ` DAILY/WEEKLY/MONTHLY, `INTERVAL`, `BYDAY`, `BYMONTHDAY`, `COUNT`/`UNTIL`). Replica o comportamento do OpenCulturas (`smart_date_recur`), com modificações próprias. Biblioteca: `rlanvin/php-rrule` 3.0. Respostas do responsável: cancelada conta em `COUNT`; editar uma ocorrência entra na v1; série aberta permitida com horizonte de 12 meses. Detalhes em `aculta_calendar/docs/RECORRENCIA.md`. | `MODELO-DE-DADOS.md` (`field_regra`, `field_limite_meses`, entidade `aculta_event_override`), F2 e F5 ampliadas. Substitui a parte "pós-v1" de D9 e do modelo. |
 | D-15 | Integração do calendário e eventos ao LMS | **Em todos os pontos, restrito a cursos e usuários matriculados**: prazos das turmas no calendário, eventos de turma (`field_turma`) e próximos eventos no painel de aprendizado. Regra de acesso pela matrícula na turma e no curso. | `aculta_lms_agenda` (novo submódulo), `aculta_events` (`field_turma`), `aculta_lms` (painel). Desenho em `aculta_lms_agenda/docs/INTEGRACAO.md`. |
+| D-16 | Dependências de recorrência e de coordenadas | **Autorizado** o `composer require` de `rlanvin/php-rrule` (3.0, MIT) e de `drupal/geofield` (1.67.0). As duas já estão em `composer.json`/`composer.lock` e instaladas: a autorização fecha a pendência, nada a reverter. `drupal/address` já estava no projeto. | D-14 (recorrência), E0 (dependências), E7/F4 (coordenadas). `aculta_events.info.yml` declara `address:address`, `geofield:geofield` e `key:key`. |
 
 ## Pendente
 
@@ -46,3 +47,4 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 - 2026-10-28: P-02 resolvido com o ADR-014 (provedor de mapa).
 - 2026-10-28: P-01 resolvido com o endereço `abuso@aculta.org` e criado o `SECURITY.md`.
 - 2026-10-28 (alteração): D-08 deixa de ser exceção. O mapa carrega na exibição da página, como padrão. Motivo: pedido do responsável.
+- 2026-10-28: D-16 registrada — autorização do responsável para `rlanvin/php-rrule` e `drupal/geofield`. Resolve a pendência 1 do plano de incorporação.
