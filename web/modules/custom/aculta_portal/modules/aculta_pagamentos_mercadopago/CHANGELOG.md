@@ -1,3 +1,8 @@
+## 0.1.0-dev.50 — confirmar o ID do Merchant Order retornado (2026-10-27)
+
+- `onNotify()` e `onReturn()` agora verificam que `merchant_order.id` devolvido pela API corresponde ao Merchant Order ligado ao pagamento e ao ID consultado. Uma resposta divergente não grava pagamento; webhook pede retry e retorno falha fechado.
+- Regressões cobrem Merchant Order divergente com a mesma `external_reference` em webhook e retorno. Unit MP: 207 testes / 908 assertions PASS; Kernel `CheckoutProTest`: 2 testes / 91 assertions PASS (77 depreciações upstream); PHPCS/PHP lint PASS.
+
 ## 0.1.0-dev.49 — confirmar o ID retornado pela API (2026-10-27)
 
 - `onNotify()` e `onReturn()` agora exigem que o ID no objeto devolvido pelo Mercado Pago corresponda ao ID solicitado. Uma resposta divergente não consulta Merchant Order nem grava pagamento; notificação pede retry e retorno falha fechado.
