@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_events\Kernel;
 use Drupal\aculta_events\Controller\EventPageController;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\Core\Session\UserSession;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
@@ -15,7 +16,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Catálogo (busca por tipo e período, sem rascunho) e página do evento (slug, 404 para rascunho).
+ * Catálogo e página do evento, incluindo busca, slug e bloqueio de rascunhos.
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -24,7 +25,11 @@ final class EventCatalogueKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = [
+    'system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text',
+    'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar',
+    'aculta_events',
+  ];
 
   /**
    * Agora de Brasília, fixo no teste.
@@ -79,7 +84,11 @@ final class EventCatalogueKernelTest extends KernelTestBase {
   /**
    * Cenário comum: oficina publicada, feira publicada, cancelado e rascunho.
    *
-   * @return array{oficina: \Drupal\aculta_events\Entity\Event, feira: \Drupal\aculta_events\Entity\Event, cancelado: \Drupal\aculta_events\Entity\Event, rascunho: \Drupal\aculta_events\Entity\Event, tipo: \Drupal\taxonomy\Entity\Term}
+   * @return array{oficina: \Drupal\aculta_events\Entity\Event,
+   *   feira: \Drupal\aculta_events\Entity\Event,
+   *   cancelado: \Drupal\aculta_events\Entity\Event,
+   *   rascunho: \Drupal\aculta_events\Entity\Event,
+   *   tipo: \Drupal\taxonomy\Entity\Term}
    */
   private function cenario(): array {
     Vocabulary::create(['vid' => 'aculta_event_type', 'name' => 'Tipo de evento'])->save();
@@ -95,11 +104,17 @@ final class EventCatalogueKernelTest extends KernelTestBase {
     $rascunho = $this->evento('Rascunho secreto', 'rascunho');
     $this->data($rascunho, 4);
 
-    return ['oficina' => $oficina, 'feira' => $feira, 'cancelado' => $cancelado, 'rascunho' => $rascunho, 'tipo' => $tipo];
+    return [
+      'oficina' => $oficina,
+      'feira' => $feira,
+      'cancelado' => $cancelado,
+      'rascunho' => $rascunho,
+      'tipo' => $tipo,
+    ];
   }
 
   /**
-   * Catálogo sem filtro: publicado e cancelado entram, rascunho não; ordem por data.
+   * Catálogo mantém cancelados e exclui rascunhos em ordem cronológica.
    */
   public function testCatalogoSemFiltroSemRascunhoEmOrdem(): void {
     $this->cenario();
@@ -129,9 +144,9 @@ final class EventCatalogueKernelTest extends KernelTestBase {
   }
 
   /**
-   * Página do evento pelo slug; rascunho e slug inexistente respondem 404.
+   * Página do evento pelo slug; rascunhos e slugs inexistentes respondem 404.
    */
-  public function testPaginaPorSlugEBloqueiaRascunho(): void {
+  public function testPaginaPorSlugNaoPermiteRascunho(): void {
     $this->cenario();
     $controlador = EventPageController::create($this->container);
     $pagina = $controlador->page('oficina-de-ceramica');
@@ -140,6 +155,44 @@ final class EventCatalogueKernelTest extends KernelTestBase {
 
     $this->expectException(NotFoundHttpException::class);
     $controlador->page('rascunho-secreto');
+  }
+
+  /**
+   * Recurrence controls appear only for administrators and vary by permissions.
+   */
+  public function testRecurrenceLinksArePermissionScoped(): void {
+    $evento = $this->evento('Oficina recorrente', 'publicado');
+    $inicio = $this->agora->modify('+2 days')->setTime(10, 0);
+    $fim = $inicio->modify('+1 hour');
+    $utc = new \DateTimeZone('UTC');
+    $data = EventDate::create([
+      'title' => $evento->label(),
+      'field_evento' => $evento->id(),
+      'field_quando' => [
+        'value' => $inicio->setTimezone($utc)->format('Y-m-d\\TH:i:s'),
+        'end_value' => $fim->setTimezone($utc)->format('Y-m-d\\TH:i:s'),
+      ],
+      'field_regra' => 'FREQ=DAILY;COUNT=2',
+    ]);
+    $data->save();
+
+    $this->container->get('current_user')->setAccount(new UserSession([
+      'uid' => 1,
+      'permissions' => ['administer aculta events'],
+    ]));
+    $page = EventPageController::create($this->container)->page('oficina-recorrente');
+    $this->assertContains('user.permissions', $page['#cache']['contexts']);
+    $adminMarkup = $page['#datas'][0]['#markup'];
+    $id = (string) $data->id();
+    $this->assertStringContainsString('/eventos/datas/' . $id . '/recorrencia', $adminMarkup);
+    $this->assertStringContainsString('/eventos/datas/' . $id . '/ocorrencia/' . $inicio->getTimestamp(), $adminMarkup);
+    $this->assertStringContainsString('Editar recorrência', $adminMarkup);
+    $this->assertStringContainsString('Editar esta ocorrência', $adminMarkup);
+
+    $this->container->get('current_user')->setAccount(new UserSession(['uid' => 0]));
+    $publicPage = EventPageController::create($this->container)->page('oficina-recorrente');
+    $this->assertStringNotContainsString('/eventos/datas/' . $id . '/recorrencia', $publicPage['#datas'][0]['#markup']);
+    $this->assertContains('user.permissions', $publicPage['#cache']['contexts']);
   }
 
 }

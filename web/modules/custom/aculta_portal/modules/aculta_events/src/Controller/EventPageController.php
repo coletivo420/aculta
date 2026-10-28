@@ -68,6 +68,7 @@ final class EventPageController extends ControllerBase {
       ->doEvento($evento, $agora, self::HORIZONTE_DIAS);
 
     $linhas = [];
+    $podeEditarRecorrencia = $this->currentUser()->hasPermission('administer aculta events');
     // A tag de lista cobre data criada, editada ou excluída.
     // Evita cache longo com um conjunto de datas desatualizado.
     $tags = array_merge($evento->getCacheTags(), [EventCacheTags::LISTA]);
@@ -85,7 +86,21 @@ final class EventPageController extends ControllerBase {
         $texto .= ' — <a href="https://www.openstreetmap.org/copyright" rel="noopener">'
           . Html::escape((string) $this->t('© OpenStreetMap contributors')) . '</a>';
       }
-      $linhas[] = ['#markup' => $texto];
+      $data = $ocorrencia['data'];
+      if ($podeEditarRecorrencia && !$data->get('field_regra')->isEmpty()) {
+        $id = (string) $data->id();
+        $urlRegra = Url::fromRoute('aculta_events.date_rule', ['aculta_event_date' => $id])->toString();
+        $urlOcorrencia = Url::fromRoute('aculta_events.occurrence', [
+          'aculta_event_date' => $id,
+          'inicio' => (string) $ocorrencia['original']->getTimestamp(),
+        ])->toString();
+        $texto .= ' — <a href="' . Html::escape($urlRegra) . '">'
+          . Html::escape((string) $this->t('Editar recorrência')) . '</a>';
+        $texto .= ' · <a href="' . Html::escape($urlOcorrencia) . '">'
+          . Html::escape((string) $this->t('Editar esta ocorrência')) . '</a>';
+      }
+      $linha = ['#markup' => $texto];
+      $linhas[] = $linha;
     }
 
     // O conjunto de datas muda quando a próxima termina, não a cada requisição.
@@ -144,7 +159,11 @@ final class EventPageController extends ControllerBase {
       '#url' => (string) $evento->get('field_url')->value,
       '#datas' => $linhas,
       '#cancelado' => $evento->get('field_status')->value === 'cancelado',
-      '#cache' => ['tags' => array_values(array_unique($tags)), 'max-age' => $validade],
+      '#cache' => [
+        'contexts' => ['user.permissions'],
+        'tags' => array_values(array_unique($tags)),
+        'max-age' => $validade,
+      ],
       '#attached' => $anexos,
     ];
   }
