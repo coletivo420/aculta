@@ -615,6 +615,20 @@ Runtime `DEFERRED` até deploy/validação em Alpha):
 **Decisões 33 a 35 respondidas em 2026-10-13:** papel único `content_editor`; discussão do LMS por curso e por atividade, com comentário no Fórum; matriculados isentos da primeira moderação (decisão 36); 10 comentários como padrão, alterável no painel administrativo.
 45. **Skip CAPTCHA:** respondida nesta sessão: manter `skip CAPTCHA` só em `email_confirmed`; `authenticated` não muda. Wiki: `wiki_contributor` segue `email_confirmed` em todos os casos (decisão 28).
 
+## 9A. Papéis de organização e reivindicação (inspirado no OpenCulturas, 2026-10-28)
+
+Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`, seção 4.4. Propostas para decisão do responsável;
+nenhuma foi implementada.
+
+- **I-06 — Papéis `organizador` e `membro`.** `organizador` gerencia só os conteúdos que reivindicou ou
+  criou (locais, eventos, perfil de organização). `membro` não publica. Lista de permissões exata, com
+  teste de acesso negado. O OpenCulturas dá ao `oc_organizer` 10 permissões e ao `oc_member` 7; o ACULTA
+  não adota um papel administrativo amplo como o `oc_admin` (108).
+- **I-05 — Reivindicação de posse.** Pedido de posse de local, evento ou perfil de organização, com
+  motivo e contato. Vai a uma fila de moderação e a decisão fica registrada. Nada muda até a aprovação, e o
+  pedido não transfere edição de conteúdo antigo. Substitui o ECA "Claim ownership" do OpenCulturas por código.
+- Referência visual: V-5. Decisões pendentes: quem decide (moderação ou administração) e a documentação exigida.
+
 ## 10. Decisões de cadastro, avatar e associado (2026-10-12)
 
 - **Nome de usuário vira apelido** no cadastro; a pessoa troca depois. Conta OAuth usa a parte local do e-mail, sem o

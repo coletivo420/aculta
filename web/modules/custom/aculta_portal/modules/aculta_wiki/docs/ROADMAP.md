@@ -16,6 +16,13 @@ real do navegador seguem pendentes, assim como a divergência RBAC das permissõ
 de proposta no Runtime. `/wiki` é caminho interno da raiz Wiki e responde 404
 quando chamado diretamente.
 
+## Índice A-Z de verbetes (I-16, inspirado no OpenCulturas, 2026-10-28)
+
+Índice alfabético da Wiki420, por título de verbete e por `wiki_category`. Usa a listagem filtrável padrão
+(I-01 do `docs/portal/ROADMAP.md`, V-1 do comparativo). Só verbetes publicados e permitidos ao visitante
+entram no índice. Sem JavaScript obrigatório: cada letra é um link. Não cria rota nova além da listagem;
+o caminho segue o padrão de slugs em português.
+
 ## Auditoria M-0 — RBAC de propostas
 
 Dev.118 adiciona teste focal de Config Sync (1 teste / 8 assertions) para os

@@ -107,6 +107,28 @@ hospedeiro e integração com `aculta_image`. O roteiro e a fronteira estão em
 [`USER-UPLOADS.md`](USER-UPLOADS.md). A entrega segue Dev até concluir testes,
 gates e revisão visual aplicável.
 
+## Melhorias inspiradas no OpenCulturas (2026-10-28)
+
+Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`. Estas frentes entram **depois** das prioridades
+já decididas acima; não reordenam saneamento, F1–F4 nem a política de upload.
+
+| ID | Melhoria | Destino | Pré-requisito |
+| --- | --- | --- | --- |
+| I-01 | Listagem filtrável padrão (View, filtros expostos, cartão SDC, contagem, paginação sem JS obrigatório) | Portal; catálogo de `aculta_events` | Lista oficial de variações de cartão (I-10) |
+| I-02 | Blocos de conteúdo relacionado sobre as relações nomeadas do `aculta_index` | `aculta_index` + Portal | Relação nomeada com dono |
+| I-12 | JSON-LD de Event, Article, Place e Organization | Portal (metatag) | Auditoria de metatags atuais |
+| I-13 | Licença por mídia obrigatória para upload público | `aculta_image`; `USER-UPLOADS.md` | Decisão de licença padrão |
+| I-14 | Honeypot e limite de taxa antes do captcha externo | `aculta_ugc` | Plano U0 |
+| I-15 | FAQ editável para apoio e institucional | Apoio; Institucional | — |
+| I-16 | Índice A-Z da wiki | `aculta_wiki` | I-01 |
+| I-17 | Página de divulgação responsável (`SECURITY.md`) | Raiz do repositório | Contato informado pelo responsável |
+| I-18 | Regras de link versus botão e de unidades que respeitam a fonte do usuário | `aculta420/docs/accessibility.md` | — |
+| I-19 | Lint de CSS e JS do tema (`stylelint`, `eslint`) | `docs/operations/` | Decisão de ferramenta |
+| I-20 | Comando `doctor` para patches | `aculta_patcher` | — |
+
+Critério de aceite comum: cada item tem teste automatizado (Unit ou Kernel), gates do projeto verdes,
+revisão visual com Firefox ESR no servidor de testes (quando houver interface) e versões ACULTA420 e Olivero.
+
 ## Ordem de execução
 
 1. **Saneamento (S0–S6)**: resolver as dívidas antes de qualquer feature.

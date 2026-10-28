@@ -121,6 +121,16 @@ Entrada: F0–F8 concluídas.
 
 Saída: módulos em RC. Deploy só quando todos os módulos, temas e subtemas estiverem em RC.
 
+## Padrões do Portal reutilizados (2026-10-28)
+
+Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
+
+- F3 usa a listagem filtrável padrão (I-01, V-1) no catálogo.
+- F3 e F4 usam o bloco de conteúdo relacionado (I-02) para eventos e locais relacionados.
+- F4 inclui "como chegar" (I-11): links para provedores de rota, abertos só por clique do usuário.
+- F7 inclui JSON-LD de Event e Place (I-12).
+- Imagens de eventos e locais declaram licença (I-13).
+
 ## Pós-v1 (sem data)
 
 - Recorrência de eventos.

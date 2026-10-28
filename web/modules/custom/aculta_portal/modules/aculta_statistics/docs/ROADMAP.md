@@ -150,6 +150,16 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 - Mídia: instrumentar downloads e reproduções.
 - Eventos e Messenger, quando existirem como fonte.
 
+## Painel de moderação (I-03, inspirado no OpenCulturas, 2026-10-28)
+
+Adição ao escopo de 0.8.0 (Dashboards). Mostra **contagens e tempos agregados**: denúncias abertas, idade
+da mais antiga, resolvidas no período, tempo médio de decisão, e totais por tipo e por área (fórum, revista,
+wiki, eventos). Não mostra quem denunciou, nem a lista de quem está online. Acesso: papel de moderação.
+Dados vêm do `aculta_ugc` (plano U4). Referência visual: V-3 do comparativo.
+
+Fora de escopo: "quem está online" individual (dado de presença por pessoa). Se for necessário, é
+contagem agregada por hora, sem identificação, com decisão própria.
+
 ## 0.8.0 — Dashboards
 
 - Regra (ADR-0005, 2026-10-21): todo gráfico com eixo de tempo tem seletor de período (7, 14 e 30 dias), no mesmo commit do gráfico.

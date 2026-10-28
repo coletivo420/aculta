@@ -41,6 +41,13 @@ função em todos os modos. Não expor valores livres, primitivas de paleta,
 classes Bootstrap genéricas, espaçamentos ad hoc ou combinações que ocultem
 contraste inadequado. Não disponibilizar texto inverso sem superfície compatível.
 
+## Variações de cartão (I-10, 2026-10-28)
+
+Lista fechada de variações de cartão de conteúdo, usadas por revista, wiki, eventos e busca:
+`compact` (lista), `teaser` (padrão), `destaque` (capa) e `busca` (resultado com trecho destacado).
+Cada variação é um componente SDC, com stories próprias e as mesmas regras de imagem. Referência: V-8 do
+comparativo. Não criar variação nova sem entrar nesta lista.
+
 ## Backlog do catálogo — padrões transversais ainda não implementados
 
 O [roadmap visual próprio do tema](visual-cross-product-roadmap.md) define candidatos `context-header`, `context-tabs`, `empty-state`, `content-reader`, `resource-list`, `status-timeline` e outros. **Não listar como SDC existente nem contabilizar nos componentes disponíveis.** Quando qualquer padrão entrar no código, adicionar um story `.story.yml` real, atualizar contagem/inventário e criar demonstrações de mobile, desktop, claro/escuro e estados pertinentes. Preservar o shell global e priorizar variantes dos SDC atuais.

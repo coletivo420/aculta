@@ -71,6 +71,15 @@ Smoke em memória no Runtime de teste confirmou o field/display e renderizou o
 formulário Comment para um participante de teste com `post comments`. Nenhum
 formulário foi enviado, e a contagem de Comments permaneceu zero.
 
+## Melhorias inspiradas no OpenCulturas (2026-10-28)
+
+- **I-09 — Cor de seção.** Cada categoria editorial recebe uma cor de uma lista fechada de tokens do
+  `aculta420`. Sem cor livre. A cor reforça o nome da seção e nunca é o único sinal. Referência: V-7 do
+  comparativo.
+- **I-10 — Variações de cartão.** Lista fechada: `compact` (lista), `teaser` (padrão), `destaque` (capa) e
+  `busca` (resultado). Cada variação é um SDC com as mesmas regras de imagem. Referência: V-8.
+- Editor da revista: continua com `content_editor` e permissões de revista. Sem papel novo (privilégio mínimo).
+
 ## Categorias editoriais
 
 As categorias em `editorial_category` classificam o conteúdo: Editorial, Blog/Opinião, Notícias, Reportagens,

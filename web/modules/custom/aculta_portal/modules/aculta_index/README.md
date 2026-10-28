@@ -133,6 +133,14 @@ Na limpeza final, outro gerenciador espera o commit e depois encontra a geraçã
 já removida. O timeout de um segundo só afeta a sessão concorrente do teste.
 Não equivale a carga com vários workers PHP nem à homologação no Runtime.
 
+## Bloco de conteúdo relacionado (I-02, inspirado no OpenCulturas, 2026-10-28)
+
+O índice já guarda relações nomeadas. A melhoria é um bloco "Conteúdo relacionado" que consulta essas
+relações, respeita o acesso por entidade e por purpose, e não aparece quando não há relação suficiente.
+O bloco nunca consulta as entidades de origem diretamente: lê só o índice. O cache usa as tags das
+entidades relacionadas, sem contexto de usuário. Ordem: prioridade da relação, depois data de publicação.
+Referência visual: V-2 do comparativo.
+
 ## Provider services
 
 Um módulo proprietário pode registrar um provider como serviço e marcá-lo com a tag `aculta_index.provider`. O provider implementa `ContentIndexProviderInterface`, declara ID estável e lista de tipos/bundles que conhece. Serviços de módulos desativados não são carregados pelo Drupal.

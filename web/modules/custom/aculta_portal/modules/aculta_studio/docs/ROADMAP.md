@@ -1,3 +1,17 @@
+## Melhorias inspiradas no OpenCulturas (2026-10-28)
+
+Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`. Entram depois do fechamento de S-R5.
+
+- **I-07 — Meus salvos e recomendações.** Aba "Salvos" com o que o usuário marcou (`salvar_topico`,
+  `seguir_topico` e `salvar_conteudo` a criar). Aba "Recomendações" depois, no mesmo padrão. Lista em
+  cartões `compact`. Não coleta dado novo. Gates: acesso só do dono; cache por UID; teclado e 320 px.
+- **I-08 — Primeiro acesso em cartões.** Passos reais (escolher apelido, completar perfil, salvar um
+  conteúdo) no hub. Sem JavaScript obrigatório, sem biblioteca de tour. Fechamento por "Não mostrar de novo",
+  gravado na conta.
+- **I-06 — Seção "Minha organização".** Só para o papel `organizador` (ver `ACULTA-USER-PLAN.md`, seção 9A).
+  Lista os locais, eventos e perfis que a organização reivindicou ou criou.
+- Visual de referência: V-6 do comparativo.
+
 ## S-R5 — instrumentação e matriz de paridade (2026-10-25; sem homologação)
 
 - **Frente iniciada no código de testes e documentação:** [matriz S-R5](S-R5-MATRIZ-COMPARACAO.md) e [suíte Firefox ESR](../../../../../../../tests/browser/aculta-studio/README.md) para comparar Conta Studio, Conta legada e Perfil em MAIN, sem criar novo storage, rotas ou operações.

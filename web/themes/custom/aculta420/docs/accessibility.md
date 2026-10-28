@@ -73,6 +73,16 @@ Light/dark/auto só podem ser liberados quando:
 - assets/logos funcionam nos modos;
 - escolha explícita do usuário não é sobrescrita pelo sistema.
 
+## Links, botões e unidades (2026-10-28)
+
+Origem: princípios do OpenCulturas (`DEVELOPMENT.md`), item I-18 do comparativo.
+
+- **Link** leva a outra página ou a outro ponto da página. **Botão** dispara uma ação na página atual.
+  Quando o visual precisar de um link com cara de botão, o elemento continua sendo `<a>`, com a classe
+  visual; quando for ação, usar `<button>`. Não usar `<div>` ou `<span>` com comportamento de clique.
+- Tamanhos de texto, espaçamento e áreas de toque em unidades relativas (`rem`, `em`), para respeitar a
+  fonte escolhida pelo usuário. Evitar largura e altura fixas em pixels para texto.
+
 ## Component checklist
 
 Antes de promover um SDC para stable:
