@@ -1,7 +1,7 @@
 ## 0.1.0-dev.51 — validar vínculo da resposta de estorno (2026-10-27)
 
 - `refundPayment()` só atualiza o pagamento Commerce quando a API retorna um estorno aprovado com ID positivo e `payment_id` igual ao pagamento solicitado. Respostas incompletas ou vinculadas a outro pagamento falham fechadas.
-- Regressões cobrem ausência de ID de estorno ou `payment_id`, ID inválido e pagamento divergente. Unit MP: 211 testes / 944 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint focais PASS. A homologação de estorno sandbox continua pendente.
+- Regressões cobrem ausência de ID de estorno ou `payment_id`, ID inválido e pagamento divergente. Unit MP: 211 testes / 944 assertions PASS; Kernel `CheckoutProTest`: 2 testes / 91 assertions PASS (77 depreciações upstream); PHPCS Drupal/DrupalPractice e PHP lint focais PASS. A homologação de estorno sandbox continua pendente.
 
 ## 0.1.0-dev.50 — confirmar o ID do Merchant Order retornado (2026-10-27)
 
