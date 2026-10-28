@@ -73,6 +73,12 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `gsc_site_url` | `GSC_SITE_URL` | Produção e testes (opcional; sem ela, o Search Console fica desligado) | Não, propriedade do Search Console (`sc-domain:` ou URL com prefixo) | plain |
 | `mailer_payload_key` | `MAILER_PAYLOAD_KEY` | Testes (produção pendente no deploy do RC) | Sim, chave de 32 bytes (base64) que cifra o conteúdo das mensagens com falha guardadas para reenvio | plain |
 | `imap_password` | `IMAP_PASSWORD` | Produção e testes | Sim, senha da caixa de monitoramento de retorno | plain |
+| `melhorenvio_sandbox_client_id` | `MELHORENVIO_SANDBOX_CLIENT_ID` | Testes | Não, identificador do cliente sandbox | plain |
+| `melhorenvio_sandbox_client_secret` | `MELHORENVIO_SANDBOX_CLIENT_SECRET` | Testes | Sim | plain |
+| `melhorenvio_sandbox_access_token` | `MELHORENVIO_SANDBOX_ACCESS_TOKEN` | Testes | Sim | plain |
+| `melhorenvio_production_client_id` | `MELHORENVIO_PRODUCTION_CLIENT_ID` | Produção | Não, identificador do cliente | plain |
+| `melhorenvio_production_client_secret` | `MELHORENVIO_PRODUCTION_CLIENT_SECRET` | Produção | Sim | plain |
+| `aculta_melhorenvio_token_encryption` | `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` | Produção e testes (obrigatória nos dois) | Sim, chave de cifra do token OAuth | plain |
 | `smtp_password` | `SMTP_PASSWORD` | Produção e testes | Sim, senha do envio SMTP do domínio | plain |
 
 Os ambientes vêm do contrato (`environments` em `config/secrets-contract.json`). Variáveis
