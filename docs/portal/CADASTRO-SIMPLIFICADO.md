@@ -114,3 +114,46 @@ Pendências desse resultado:
 - A etapa da senha é página, não modal sem botão de fechar (decisão do responsável, a fazer).
 - Reenvio para conta não confirmada em nova compra: implementado (ver seção 5), ainda não testado no servidor.
 
+
+## 8. Rodada de fechamento (2026-10-28)
+
+Decisões do responsável, por pergunta interativa:
+
+- **Recuperação de senha em modal:** o link de recuperação (`/recuperar-acesso/...`) entra pela conta com o token do Core.
+  Só o campo de nova senha aparece, em modal sem X e sem Esc (`js/account-password-modal.js`, título
+  "Crie sua nova senha"). Depois de salvar, a pessoa vai ao painel (`PortalFormCallbacks::recoveryPasswordRedirect`).
+  O formulário `user_pass_reset` fica fora da regra de envio AJAX da conta (`FormHooks::accountAjaxSubmit`), que
+  consumia o link de uso único.
+- **E-mail da conta nova:** tipo próprio `simplified_account_confirmation` (`SimplifiedAccountConfirmationMailType`),
+  assunto "Confirme seu e-mail e crie sua senha". Os demais pedidos de confirmação (troca de e-mail) mantêm o modelo
+  `email_confirmation_request`. O tipo fica guardado em cada confirmação (`mail_type`).
+- **Intervalo de reenvio:** configurável no painel (`resend_window`, padrão 900 s, mínimo 60 s). Vale só para este
+  fluxo; `EmailConfirmationRequester::request()` aceita o intervalo e o tipo de e-mail como argumentos opcionais.
+- **Painel administrativo:** Painel administrativo > Cadastro simplificado (permissão `administer aculta simplified account`):
+  liga/desliga e intervalo de reenvio.
+- **Nome e sobrenome no checkout:** painel `aculta_personal_name` (`PersonalNamePane`). Preenchido pelo perfil principal
+  (Meu Perfil, `field_first_name`/`field_last_name`) quando a pessoa tem conta; senão, pelo que ela informou no pedido.
+  Ao concluir, o nome do pedido vai para o perfil da conta criada na compra (`PersonalNameCompletionSubscriber`, prioridade
+  -50, antes do cadastro simplificado), sem sobrescrever nome já salvo.
+- **Fluxos:** `curso` (LMS, novo) = contato (e-mail), nome e sobrenome, CPF/CNPJ e pagamento; sem endereço de cobrança e
+  sem envio. `doacao` ganhou o painel de nome. A loja (`default`) não ganhou painel de nome: o nome já vem no endereço
+  de cobrança.
+
+Configuração de fluxo e de tipo de pedido fica só no servidor de testes (não exportada): `commerce_checkout.commerce_checkout_flow.curso`
+(criado), `commerce_checkout.commerce_checkout_flow.doacao` (painel de nome) e o tipo de pedido `curso` (flow `curso`).
+
+### Verificado no navegador (servidor de testes, caixa dmarc@aculta.org)
+
+1. **Confirmação e criação de senha** com modal sem X: e-mail chegou, link confirmado, `/criar-senha` abriu como modal,
+   Esc não fechou, senha criada ("Senha criada. Bem-vindo!").
+2. **Reenvio:** a segunda compra logo depois não enviou e-mail (janela de 15 min). Depois da janela, a compra reenviou
+   com o novo assunto e o fluxo foi concluído até o modal de senha.
+3. **Recuperação de senha:** pedido em `/recuperar-senha`, e-mail recebido, link de uso único, modal "Crie sua nova senha"
+   sem X e sem Esc, senha salva (`changed` da conta atualizado, sessão aberta pelo link). Depois de salvar, o redirecionamento
+   vai para `/conta-legada`, que não mostra conteúdo: pendente revisar o destino para a pessoa.
+
+### Não verificado
+
+- Painel de nome no fluxo `curso` (LMS) e na doação, no navegador. O LMS precisa de curso publicado ligado ao produto 10
+  (removido na limpeza anterior); a criação exige nova autorização para dados de teste.
+- Testes automáticos (unit/kernel) do `PersonalNameStore`, do `PersonalNameCompletionSubscriber` e do painel administrativo.
