@@ -19,6 +19,8 @@ autorizadas; ele não substitui o armazenamento nem o controle de acesso da Wiki
   commit de origem `cd163afb3` (2026-10-23). Contrato atual:
   [MARLEY-WIKI-MODERATION.md](../portal/MARLEY-WIKI-MODERATION.md) e
   [contrato de moderação compartilhada](ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md).
+  A fronteira de ownership Wiki–Studio é consolidada em
+  [ADR-026](../decisions/ADR-026-ownership-moderacao-wiki-studio.md).
 
 ## Fronteiras
 
