@@ -8,6 +8,7 @@ dependencies:
     - field.field.block_content.basic.field_section_heading
     - field.field.block_content.basic.field_section_title
     - field.field.block_content.basic.field_section_variant
+    - field.field.block_content.basic.field_section_color
   module:
     - text
 _core:
@@ -44,6 +45,12 @@ content:
   field_section_variant:
     type: options_select
     weight: 22
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_section_color:
+    type: options_select
+    weight: 23
     region: content
     settings: {  }
     third_party_settings: {  }

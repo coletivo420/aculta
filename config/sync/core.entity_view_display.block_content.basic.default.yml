@@ -8,6 +8,7 @@ dependencies:
     - field.field.block_content.basic.field_section_heading
     - field.field.block_content.basic.field_section_title
     - field.field.block_content.basic.field_section_variant
+    - field.field.block_content.basic.field_section_color
   module:
     - text
 _core:
@@ -28,4 +29,5 @@ hidden:
   field_section_heading: true
   field_section_title: true
   field_section_variant: true
+  field_section_color: true
   langcode: true

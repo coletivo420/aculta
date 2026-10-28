@@ -43,6 +43,9 @@ final class EditorialHooks {
     $build['#section_title'] = $entity->hasField('field_section_title') ? ($entity->get('field_section_title')->value ?: NULL) : NULL;
     $build['#section_heading'] = $entity->hasField('field_section_heading') ? ($entity->get('field_section_heading')->value ?: NULL) : NULL;
     $build['#section_variant'] = $entity->hasField('field_section_variant') ? ($entity->get('field_section_variant')->value ?: 'default') : 'default';
+    $build['#section_color'] = $entity->hasField('field_section_color')
+      ? ($entity->get('field_section_color')->value ?: 'default')
+      : 'default';
     $build['#section_body'] = $build['body'] ?? NULL;
     unset($build['body']);
   }

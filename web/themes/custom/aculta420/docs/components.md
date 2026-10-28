@@ -90,7 +90,7 @@ Estado em 0.4.0. Todos experimentais por política, até consumo estável e vali
 
 | Pattern | Local | Consumidor | Dados |
 | --- | --- | --- | --- |
-| `aculta420:content-section` | `components/patterns/content-section/` | `block--block-content--type--basic.html.twig` | campos `field_section_title`, `field_section_heading`, `field_section_variant` e o corpo |
+| `aculta420:content-section` | `components/patterns/content-section/` | `block--block-content--type--basic.html.twig` | campos `field_section_title`, `field_section_heading`, `field_section_variant`, `field_section_color` e o corpo |
 | `aculta420:hero` | `components/patterns/hero/` | `ThemeHooks::preprocessNode()` (página `page` na visualização full) | campos `field_hero_*` do nó |
 | `aculta420:content-grid` | `components/patterns/content-grid/` | (view de projetos removida com o tipo projeto) | linhas de uma view (cada uma com seu presenter) |
 | `aculta420:carousel` | `components/patterns/carousel/` | `views-view-vvjb.html.twig` | engine VVJB, sem alteração |

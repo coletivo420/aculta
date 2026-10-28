@@ -4,24 +4,42 @@ declare(strict_types=1);
 
 /**
  * @file
- * Instalação do submódulo ACULTA LMS Agenda.
+ * Instalação e atualizações do submódulo ACULTA LMS Agenda.
  */
 
 /**
- * Implements hook_install().
+ * Cria a coluna de turma em aculta_event, se ainda não existir.
  *
- * Cria a coluna do campo de turma em aculta_event, que o hook de campos declara.
+ * Idempotente. Usada pela atualização e pela instalação: na instalação o módulo ainda não
+ * está registrado quando o hook roda, então a atualização é o caminho confiável.
  */
-function aculta_lms_agenda_install(): void {
-  $manager = \Drupal::service('entity_field.manager');
-  $definicao = $manager->getBaseFieldDefinitions('aculta_event')['field_turma'] ?? NULL;
-  if ($definicao === NULL) {
-    return;
+function _aculta_lms_agenda_instala_turma(): bool {
+  // Campo base de coluna única: a coluna leva o nome do próprio campo (field_turma).
+  $banco = \Drupal::database();
+  $gerenciador = \Drupal::entityDefinitionUpdateManager();
+  if ($banco->schema()->fieldExists('aculta_event', 'field_turma')) {
+    return FALSE;
   }
-  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition(
-    'field_turma',
-    'aculta_event',
-    'aculta_lms_agenda',
-    $definicao,
-  );
+  $definicao = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event')['field_turma'] ?? NULL;
+  if ($definicao === NULL) {
+    throw new \RuntimeException('field_turma não está declarado em aculta_event; o módulo está habilitado?');
+  }
+  // Registro sem coluna (instalação interrompida) é removido antes de reinstalar.
+  $registrado = $gerenciador->getFieldStorageDefinition('field_turma', 'aculta_event');
+  if ($registrado !== NULL) {
+    $gerenciador->uninstallFieldStorageDefinition($registrado);
+  }
+  $gerenciador->installFieldStorageDefinition('field_turma', 'aculta_event', 'aculta_lms_agenda', $definicao);
+  return TRUE;
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Instala field_turma em aculta_event (vínculo entre evento e turma do LMS).
+ */
+function aculta_lms_agenda_update_10001(): string {
+  return _aculta_lms_agenda_instala_turma()
+    ? 'Campo field_turma instalado em aculta_event.'
+    : 'Campo field_turma já existia em aculta_event.';
 }

@@ -68,9 +68,9 @@ contratos e consumidores reais autorizem sua implementação; não são componen
 | `layouts/page-columns` (I-22) | Layout UI Patterns experimental com variações 1, 2 e 3 colunas e ordem DOM preservada no mobile | Sem consumidor real; permanece candidato. `rail` é horizontal e `content-section` não compõe regiões em colunas. |
 
 As quatro cores fechadas de seção têm tokens, pares de contraste e stories no
-`content-section`. A seleção no bloco básico ainda depende do pedido `Pede-A`
-registrado no commit B2. Nenhuma destas entregas novas está declarada aprovada:
-falta renderização/homologação visual com autorização para `drush cr`.
+`content-section`. O bloco básico expõe `field_section_color` e preserva
+`field_section_variant` como dimensão visual separada; a hook `aculta_section`
+passa a cor escolhida ao SDC com fallback `default`.
 
 ## Gates do tema — 2026-10-28
 

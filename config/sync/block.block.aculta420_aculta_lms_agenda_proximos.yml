@@ -1,0 +1,26 @@
+uuid: fb53e21b-60b4-4d1f-9433-ba88129b3210
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_lms_agenda
+    - system
+  theme:
+    - aculta420
+id: aculta420_aculta_lms_agenda_proximos
+theme: aculta420
+region: sidebar
+weight: 0
+provider: null
+plugin: aculta_lms_agenda_proximos
+settings:
+  id: aculta_lms_agenda_proximos
+  label: 'Próximos prazos e eventos das turmas'
+  label_display: visible
+  provider: aculta_lms_agenda
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /studio/ganjalab
+

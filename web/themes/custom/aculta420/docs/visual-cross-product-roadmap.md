@@ -71,8 +71,8 @@ renderização/cache no Runtime e revisão visual autorizada.
 
 - **B1:** `patterns/card` ganhou `compact`, story e consumidor na View de álbuns.
 - **B2:** tokens e modificadores fechados de seção; contraste mínimo calculado de
-  4,69:1. O bloco básico ainda precisa receber a opção `section_color` pela
-  Frente A (`Pede-A` no commit).
+  4,69:1. O bloco básico agora apresenta `field_section_color`, separado de
+  `field_section_variant`, e passa a escolha pelo hook `aculta_section`.
 - **B3:** cada padrão avaliado; novos SDCs ficam experimentais/candidatos sem
   consumidor ou validação suficientes. `editorial-card` foi reutilizado para
   menções; a flag do Fórum foi composta por `bookmark-toggle`.

@@ -727,6 +727,7 @@ final class PortalHooks {
           'section_title' => NULL,
           'section_heading' => NULL,
           'section_variant' => 'default',
+          'section_color' => 'default',
           'section_body' => NULL,
         ],
         'template' => 'aculta-section',

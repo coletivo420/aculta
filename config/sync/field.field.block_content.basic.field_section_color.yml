@@ -1,0 +1,21 @@
+uuid: 9a86bc3d-ebd2-4f24-872e-c25716012046
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.basic
+    - field.storage.block_content.field_section_color
+id: block_content.basic.field_section_color
+field_name: field_section_color
+entity_type: block_content
+bundle: basic
+label: 'Cor da seção'
+description: 'Cor da faixa do título. O título da seção precisa estar preenchido para a cor aparecer.'
+required: false
+translatable: true
+default_value:
+  -
+    value: default
+default_value_callback: ''
+settings: {}
+field_type: list_string

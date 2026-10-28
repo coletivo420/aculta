@@ -1,0 +1,36 @@
+uuid: 0a5eaf92-00e1-4934-a43e-d1dd022913c2
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - block_content
+    - options
+id: block_content.field_section_color
+field_name: field_section_color
+entity_type: block_content
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: default
+      label: Padrão
+    -
+      value: red
+      label: Vermelha
+    -
+      value: green
+      label: Verde
+    -
+      value: yellow
+      label: Amarela
+    -
+      value: green-dark
+      label: Verde-escura
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {}
+persist_with_no_fields: false
+custom_storage: false
