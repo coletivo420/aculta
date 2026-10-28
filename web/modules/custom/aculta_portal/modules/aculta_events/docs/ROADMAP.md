@@ -160,6 +160,8 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 
 ## Pós-v1 (sem data)
 
+- Importação de local a partir do OpenStreetMap (E10, assistente administrativo do OpenCulturas). Fora da v1; bloqueada por parecer de licença ODbL e por decisão de integração. Ver `docs/architecture/PLANO-INCORPORACAO-OPENCULTURAS.md`.
+
 - Recorrência de eventos.
 - Sincronização com OpenStreetMap (`openculturas_openstreetmap`), via integração do ACULTA.
 - Venda de ingressos e inscrições (plano próprio, com Mercado Pago e `aculta_commerce`).

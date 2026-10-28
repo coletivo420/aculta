@@ -22,9 +22,28 @@ Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem 
 | E7 | `openculturas_map` | Google Maps (ADR-014), sem Leaflet nem OSM | **Parcial.** Geocodificação e mapa carregados na página, com lista textual e aviso de privacidade; a chave fica em `secrets`/ambiente. Faltam o agrupamento de marcadores e o link da política de privacidade. As verificações de termos, cobrança e LGPD do responsável seguem pendentes | `f761d8593`, ADR-014 |
 | E8 | `openculturas_section` (cor por vocabulário) | Frente B, B2 (cores fechadas) | **Feito** no tema. Consumidor na Revista pendente | `15a3f0488` |
 | E9 | `openculturas_faq` | FAQ, opcional (I-15) | **Não iniciado.** Só se o responsável pedir | — |
+| E10 | `openculturas_openstreetmap`: assistente administrativo (Find → Select → Review → Save) que importa dados de um local do OpenStreetMap e, em modo de desenvolvimento, envia alterações ao próprio OSM (`PushData`) | Importação de local a partir do OSM, no admin de `aculta_events`, **somente se aprovada** | **Não iniciado. Fora da v1.** Bloqueado pelas decisões abaixo | — |
 | T5 | `SmartDateUpcomingFormatter` | `DateRangeUpcomingFormatter` com `daterange` do core, cache até a próxima data | **Feito** | `56725c71d` |
 | D-15 | Calendário e LMS (decisão própria, sem origem no OC) | `aculta_lms_agenda` e painel do aluno | **Parcial.** Falta confirmar acesso por matrícula no `field_turma` | `ac43e7d94`, `9766bb731` |
 | R | Recorrência `smart_date_recur` (replicada, com modificações próprias, D-14) | `aculta_calendar`: validador (R1) e expansão na janela (R2) | **Parcial.** Regra persistida em `EventDate` (`field_regra`, `field_limite_meses`) e expansão testada. Falta a interface de edição e a edição de uma ocorrência (D-14) | `5f3b61ee7`, `1caa5fc7d`, `dcea19c4a` |
+
+## E10 — importação de local a partir do OpenStreetMap (decisões antes de qualquer código)
+
+O que o OpenCulturas faz: um assistente em `/admin/config/services/openculturas_openstreetmap` busca o elemento do
+OSM correspondente a um local, deixa escolher quais campos copiar, mostra a revisão e salva. O envio ao OSM usa OAuth
+e fica ativo no modo de desenvolvimento.
+
+Não entra na v1 por quatro motivos, e cada um vira decisão antes do código:
+
+1. **Licença dos dados.** Os dados do OpenStreetMap são sob ODbL, que exige atribuição e, em bases derivadas,
+   compartilhamento pela mesma licença. Parecer antes de copiar dados para o banco do ACULTA.
+2. **Integração externa.** Chamadas autenticadas a terceiros seguem o padrão de integrações do ACULTA
+   (`/integracoes/<nome>/<ação>` e popup), e não a rota administrativa do OpenCulturas.
+3. **Escrita no OSM.** O envio de alterações ao OSM não deve existir sem decisão própria. Recomendação: não implementar.
+4. **Coerência com D-08.** O ACULTA usa Google Maps para o mapa. Importar dados do OSM para o local é outro serviço.
+
+Decisões necessárias: (a) a importação de OSM é desejada ou o local é só cadastrado pela organização? (b) aceita o
+parecer de ODbL? (c) o envio ao OSM fica fora de escopo? Sem essas respostas, o E10 permanece como item de pós-v1.
 
 ## Não copiar (decidido)
 
