@@ -1,3 +1,8 @@
+## 0.1.0-dev.53 — impedir associação duplicada entre pedidos (2026-10-27)
+
+- `onNotify()` e `onReturn()` agora verificam se o ID remoto já está associado a outro pedido Commerce antes de criar pagamento local. Mais de um registro local com o mesmo gateway/ID também falha fechado; webhook pede retry e retorno não altera pedido/pagamento.
+- Regressões cobrem ID já associado a outro pedido nos dois fluxos e mais de um pagamento Commerce para o mesmo ID. Unit MP: 215 testes / 969 assertions PASS; Kernel `CheckoutProTest`: 2 testes / 91 assertions PASS (77 depreciações upstream); PHPCS Drupal/DrupalPractice e PHP lint focais PASS. Homologação sandbox pendente.
+
 ## 0.1.0-dev.52 — reentregar webhook durante vínculo da assinatura (2026-10-27)
 
 - `subscription_preapproval` agora retorna erro retryable quando o ID remoto chega enquanto o pedido ainda tem `mp_subscription_creation_pending` e ainda não salvou o vínculo. O evento assinado não é descartado com HTTP 200 antes da conclusão da gravação local.
