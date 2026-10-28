@@ -53,3 +53,12 @@ configuration:
       step: _sidebar
       weight: 5
       view: commerce_checkout_order_summary
+    # O LMS não tem envio e o Mercado Pago não exige endereço. Sem esta
+    # desabilitação explícita, o pane de endereço usaria o default_step
+    # (order_information) e apareceria no checkout do curso.
+    aculta_billing_address:
+      step: _disabled
+      weight: 99
+    aculta_shipping_information:
+      step: _disabled
+      weight: 99

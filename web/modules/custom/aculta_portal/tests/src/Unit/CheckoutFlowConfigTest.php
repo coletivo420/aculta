@@ -55,8 +55,8 @@ final class CheckoutFlowConfigTest extends UnitTestCase {
     $panes = $configuration['panes'];
 
     $this->assertSame('multistep_default', $this->sync('commerce_checkout.commerce_checkout_flow.curso')['plugin']);
-    $this->assertArrayNotHasKey('aculta_shipping_information', $panes);
-    $this->assertArrayNotHasKey('aculta_billing_address', $panes);
+    $this->assertSame('_disabled', $panes['aculta_shipping_information']['step'] ?? NULL);
+    $this->assertSame('_disabled', $panes['aculta_billing_address']['step'] ?? NULL);
     $this->assertArrayHasKey('aculta_fiscal_identity', $panes);
     $this->assertSame('review', $panes['aculta_fiscal_identity']['step']);
     $this->assertArrayHasKey('aculta_personal_name', $panes);
