@@ -71,7 +71,7 @@ ele é isolado dos dados de produção. Produção permanece fora desta execuç�
 
 1. E2: código das Views e exportação CSV via provedor está pronto. Ativar as Views no Runtime quando houver autorização para o fluxo de configuração; exportação omite endereço e contatos.
 2. E7: iniciar MP0/MP1 em `aculta_maps` conforme D-19; só depois fechar OSM, agrupamento e link da política quando a URL pública existir. O código atual em `aculta_events` ainda usa Google.
-3. E10: implementar o fluxo Find → Select → Review → Save e o cliente da API de desenvolvimento com padrão seguro; o contrato existe, mas teste de envio aguarda provisionamento de valores de teste em `secrets/`.
+3. E10: fluxo Find → Select → Review → Save implementado e testado com API simulada de desenvolvimento. Ativação do submódulo no Runtime aguarda autorização de configuração; envio real de teste aguarda credenciais próprias em `secrets/`. Não fazer escrita real antes de ambos.
 4. R: regra, ocorrência e links de administração concluídos (`c4919bbb3`).
 5. F5: **feito** no `aculta_calendar` (D-20): agenda, grade do mês, dia, `.ics` e `/calendario/incorporar`, com o `aculta_events` como provedor de itens. Falta o calendário no `main` (D6).
 6. F6, F7, F8, F9.

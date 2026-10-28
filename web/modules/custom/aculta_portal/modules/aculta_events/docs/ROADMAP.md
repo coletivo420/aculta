@@ -218,10 +218,6 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 
 ## Pós-v1 (sem data)
 
-- Importação de local a partir do OpenStreetMap e envio de alterações ao OSM (E10, decidido em D-26: API de teste em teste, produção somente em produção). Fora da v1. O contrato de segredos já separa credenciais de cliente e chave de cifra por ambiente (commit `5dfb7ac0c`); os valores ainda não foram provisionados. Antes do primeiro envio real, termos ODbL e atribuição já foram revisados e registrados; nenhum envio foi feito. Ver `docs/architecture/PLANO-INCORPORACAO-OPENCULTURAS.md`.
-
-- Recorrência de eventos.
-- Sincronização com OpenStreetMap (`openculturas_openstreetmap`), via integração do ACULTA.
 - Venda de ingressos pagos dentro do ACULTA (D-30 a D-41). Usa só `aculta_commerce` e `aculta_pagamentos_mercadopago`, sem repasse automático e com repasse manual por evento. Checkout próprio de Eventos, com entrada no carrinho integrado (precedência LMS > Loja > Eventos > Doações), conforme o aditivo à ADR-013. Sem frete; pagamento na etapa final do Mercado Pago (D-42). CPF só em evento pago. Fases P0 a P7 em `docs/PLANO-INGRESSOS-PAGOS.md`. Depende de parecer fiscal e de LGPD antes de qualquer venda, e a fase P1 (caracterização do carrinho e das rotas globais) precede qualquer mudança no integrado.
 - Calendário pessoal na conta do usuário.
 - Integração com a Revista e o Studio (referência a eventos).
