@@ -40,4 +40,4 @@ Status: a fazer, salvo onde indicado.
 - [ ] I5 — buscar por URL: bloqueada até confirmação da D-21; sem acesso de rede antes disso.
 - [x] I6 — painel de revisão editorial, acesso restrito, sem publicação automática.
 - [x] I7 — somente itens publicados entram no provedor do calendário.
-- [ ] I8 — documentar a API de importação e as regras no README.
+- [x] I8 — documentar a API de importação e as regras no README.

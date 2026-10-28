@@ -1,5 +1,9 @@
 # Changelog — aculta_calendar
 
+## 2026-10-28 — documentação da importação (I8)
+
+- README descreve o fluxo local, os limites, a revisão editorial e a integração pelo provedor; a busca remota I5 continua bloqueada pela D-21.
+
 ## 2026-10-28 — provedor de itens importados (I7)
 
 - Itens importados publicados são disponibilizados à agenda via `aculta_calendar.item_provider`; rascunhos ficam fora.

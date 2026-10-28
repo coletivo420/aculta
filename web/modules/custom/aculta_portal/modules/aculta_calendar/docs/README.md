@@ -22,6 +22,33 @@ Regra de uso: nenhum módulo gera `.ics` ou embed próprios. Quem tem datas regi
 O calendário expande a regra (`CalendarOccurrences`), monta a agenda (`CalendarAgenda`), a grade
 do mês (`MonthGrid`) e o `.ics` (`CalendarIcsExporter`). O provedor só traduz o dono do dado.
 
+## Importação revisável de iCalendar
+
+A importação local é uma funcionalidade opcional do próprio `aculta_calendar`; ainda não existe busca pela URL.
+O fluxo é deliberadamente separado em leitura, normalização, reconciliação e revisão editorial:
+
+1. Crie uma entidade de configuração `CalendarImportSource` (`aculta_calendar_import_source`) para identificar a
+   origem. `sourceUrl` é apenas metadado nesta versão; não é acessado pela aplicação.
+2. `aculta_calendar.import_reader` (`CalendarFileReader::read($path)`) lê um arquivo local legível. O leitor recusa
+   URLs, arquivos acima de 2 MiB e calendários com mais de 2.000 eventos. Ele lê os campos UID, DTSTART, DTEND,
+   SUMMARY, DESCRIPTION, LOCATION e STATUS; não interpreta recorrência ou todos os componentes RFC 5545.
+3. Passe cada `ParsedCalendarEvent` por `aculta_calendar.import_normalizer` (`normalize()`). O normalizador limpa e
+   limita os textos, valida TZID, assume `America/Sao_Paulo` quando não há fuso e marca `timezoneAssumed`.
+4. Passe a lista de `NormalizedCalendarEvent` para `aculta_calendar.import_processor`
+   (`process($source, $events)`). O retorno contém contagens `created`, `updated`, `unchanged` e `absent`.
+   UID repetido no mesmo arquivo rejeita a importação. UID igual não cria revisão; conteúdo alterado gera revisão
+   para revisão humana; UID ausente é marcado, sem exclusão nem despublicação automática.
+5. Usuários com a permissão restrita `administer aculta calendar imports` revisam os itens em
+   `/painel-administrativo/calendario/importacao`. Publicar promove o conteúdo revisado; manter como rascunho não
+   o publica. A importação nunca publica automaticamente.
+
+O provedor `aculta_calendar.imported_item_provider` integra itens publicados ao contrato geral de calendário.
+Rascunhos e cancelamentos não são expostos. Um item publicado que desapareça da fonte continua público até uma
+decisão editorial, conforme a regra de ausência; o campo `source_presence` informa a divergência.
+
+I5 — buscar uma fonte por URL — continua bloqueada até confirmação explícita da D-21. Não adicione suporte de rede,
+redirecionamento ou biblioteca de parsing externa sem essa confirmação.
+
 ## Rotas e purposes
 
 O módulo que publica a página define as rotas e informa os nomes na opção
@@ -48,3 +75,4 @@ host. Exemplo em `aculta_events.routing.yml`.
 | Provedor | Módulo | Itens |
 | --- | --- | --- |
 | `aculta_events` | `aculta_events` | Datas de evento publicadas e canceladas, com regra e exceções |
+| `aculta_calendar_import` | `aculta_calendar` | Itens importados publicados após revisão editorial |
