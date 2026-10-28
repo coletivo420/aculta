@@ -149,3 +149,26 @@ Decisões tomadas ao codificar (acrescentam às seções anteriores):
   duração máxima da série. Decisão de implementação, não de produto.
 
 Testes: `RecurrenceRuleParserTest` (26) e `RecurrenceExpanderTest` (10), na suíte Unit do módulo.
+
+## 11. Interface de edição (M4)
+
+Implementada em `aculta_events`, porque a série é uma `EventDate`:
+
+| Rota | Formulário | O que faz |
+| --- | --- | --- |
+| `/eventos/datas/{aculta_event_date}/recorrencia` | `EventDateRuleForm` | Edita `field_regra` e `field_limite_meses`. A regra é validada pelo `RecurrenceRuleParser` e gravada na forma canônica; regra inválida não altera o campo. |
+| `/eventos/datas/{aculta_event_date}/ocorrencia/{inicio}` | `EventDateOccurrenceForm` | Cancela, reagenda ou restaura a ocorrência cujo início original é `inicio` (timestamp). |
+
+Regras da interface:
+
+- As duas rotas exigem `administer aculta events` e pertencem ao purpose `eventos`.
+- A chave é sempre o início original (seção 3, M1). Mudar a regra não muda a chave de uma exceção já
+  gravada; se a ocorrência deixar de existir na série, o POST é recusado na validação.
+- Cancelar grava a exceção sem horário; reagendar grava novo início e fim; restaurar apaga a exceção.
+- Novo início e fim entram e saem em `dd/mm/aaaa hh:mm` no fuso `America/Sao_Paulo`; o campo guarda UTC.
+- Salvar data ou exceção invalida a tag `aculta_event_list`, que alimenta página e catálogo.
+- Pendente (F6): link para os formulários na página do evento. Hoje as rotas só são alcançáveis
+  digitando o endereço.
+
+Teste: `RecurrenceManagementKernelTest` (8 testes), incluindo a ocorrência de meia-noite no fuso de
+Brasília, que se desloca se o valor UTC for tratado como hora local.

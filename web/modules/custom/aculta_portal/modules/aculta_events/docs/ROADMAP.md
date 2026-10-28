@@ -82,6 +82,7 @@ Entrada: F3 concluída.
 - [x] Gerador `.ics` próprio (E6): escape RFC 5545, CR/LF como espaço, horário de Brasília (commit `a26bff741`, `e8e8d0151`). Exportação de página ainda pendente.
 - [x] Allowlist do `source_uri` do embed (E5, commit `7985bc36f`). Rota `/calendario/incorporar` ainda pendente; depende do purpose `eventos` estar ativo.
 - [x] Validador (R1) e expansão de série na janela (R2) da recorrência (commits `5f3b61ee7`, `1caa5fc7d`).
+- [x] Interface da recorrência (M4, commit `b9144b142`): regra da série em `/eventos/datas/{data}/recorrencia` e edição de uma ocorrência em `/eventos/datas/{data}/ocorrencia/{inicio}` (cancelar, reagendar, restaurar), só para `administer aculta events`. Falta o link para os formulários na página do evento (F6).
 - [ ] Incorporação por iframe em `/calendario/incorporar`, com política de `frame-ancestors` decidida.
 - [ ] Calendário também no `main` (D6): mesmas rotas de agenda, canonical e sitemap conforme a regra de produção.
 

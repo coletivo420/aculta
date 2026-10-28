@@ -25,7 +25,7 @@ Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem 
 | E10 | `openculturas_openstreetmap`: assistente administrativo (Find → Select → Review → Save) que importa dados de um local do OpenStreetMap e, em modo de desenvolvimento, envia alterações ao próprio OSM (`PushData`) | Importação de local a partir do OSM, no admin de `aculta_events`, **somente se aprovada** | **Não iniciado. Fora da v1.** Bloqueado pelas decisões abaixo | — |
 | T5 | `SmartDateUpcomingFormatter` | `DateRangeUpcomingFormatter` com `daterange` do core, cache até a próxima data | **Feito** | `56725c71d` |
 | D-15 | Calendário e LMS (decisão própria, sem origem no OC) | `aculta_lms_agenda` e painel do aluno | **Parcial.** Falta confirmar acesso por matrícula no `field_turma` | `ac43e7d94`, `9766bb731` |
-| R | Recorrência `smart_date_recur` (replicada, com modificações próprias, D-14) | `aculta_calendar`: validador (R1) e expansão na janela (R2) | **Parcial.** Regra persistida em `EventDate` (`field_regra`, `field_limite_meses`) e expansão testada. Falta a interface de edição e a edição de uma ocorrência (D-14) | `5f3b61ee7`, `1caa5fc7d`, `dcea19c4a` |
+| R | Recorrência `smart_date_recur` (replicada, com modificações próprias, D-14) | `aculta_calendar` (validador, expansão) e `aculta_events` (regra e ocorrência) | **Feito na v1.** Regra em `EventDate` (`field_regra`, `field_limite_meses`), expansão na janela, interface da regra em forma canônica e edição de uma ocorrência (cancelar, reagendar, restaurar) por início original. Falta só o link para os formulários na página do evento (F6) | `5f3b61ee7`, `1caa5fc7d`, `dcea19c4a`, `b9144b142` |
 
 ## E10 — importação de local a partir do OpenStreetMap (decisões antes de qualquer código)
 
