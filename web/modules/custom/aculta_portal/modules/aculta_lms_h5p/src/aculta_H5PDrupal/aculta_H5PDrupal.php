@@ -303,8 +303,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
 
   /** Normalizes aggregator output to absolute URLs for the legacy H5P player. */
   private function buildAggregatedAssets($scriptAssets, $styleAssets): array {
-    // @todo: deprecate this method and handle all assets via Drupal's library
-    // system.
+    // DT-H5P02 (docs/operations/DEBT-REGISTER.md): handle assets through
+    // Drupal's library system once the legacy player no longer needs it.
     foreach ($scriptAssets as $key => $assets) {
       foreach ($assets as $asset_key => $asset) {
         $scriptAssets[$key][$asset_key] = $this->fileUrlGenerator->generateAbsoluteString($asset);
@@ -400,9 +400,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     if ($stream && empty($response->error)) {
       // Create file from data
       aculta_H5PEditorDrupalStorage::saveFileTemporarily($response_data);
-      // TODO: Cannot rely on H5PEditor module – Perhaps we could use the
-      // save_to/sink option to save directly to file when streaming ?
-      // http://guzzle.readthedocs.io/en/latest/request-options.html#sink-option
+      // DT-H5P03 (docs/operations/DEBT-REGISTER.md): evaluate Guzzle's sink
+      // option instead of delegating the stream to the H5P Editor storage.
       return TRUE;
     }
 
@@ -930,11 +929,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       $query->condition('major_version', $dependency['majorVersion']);
       $query->condition('minor_version', $dependency['minorVersion']);
 
-      /*
-       * TODO: The order of the required_library_id and library_id below is reversed,
-       * to match the order of the fields in the select statement. We should rather
-       * try to control the order of the fields in the select statement or something.
-       */
+      // The insert field order mirrors the select expressions above:
+      // required_library_id, library_id, dependency_type.
       $database->insert('h5p_libraries_libraries')
         ->fields(array('required_library_id', 'library_id', 'dependency_type'))
         ->from($query)

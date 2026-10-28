@@ -51,7 +51,7 @@ class aculta_H5PAdminSettingsForm extends FormBase {
       '#title' => $this->t('Opções de exibição'),
     ];
 
-    // todo $JM
+    // Hub confirmation UI stays disabled in ACULTA; kept for upstream parity.
     /*
     $disable_hub_data = array(
       'errors' => $server_setup_errors,
@@ -176,7 +176,7 @@ class aculta_H5PAdminSettingsForm extends FormBase {
       '#markup' => '<p>' . $this->t('O Hub de conteúdo e o envio de estatísticas estão desativados nesta instalação.') . '</p>',
     ];
 
-    // TODO: Be able to change site key
+    // Site key editing is intentionally unavailable while the H5P Hub is disabled.
 //  $site_key = variable_get('h5p_site_key', variable_get('h5p_site_uuid', ''));
 //  $form['h5p_site_key'] = array(
 //    '#type' => 'textfield',
@@ -275,7 +275,7 @@ class aculta_H5PAdminSettingsForm extends FormBase {
 
     $this->cacheTagsInvalidator->invalidateTags(['h5p_content']);
 
-    // TODO: Be able to change site key
+    // Site key editing is intentionally unavailable while the H5P Hub is disabled.
 //  if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $form_state['values']['h5p_site_key'])) {
 //    // Invalid key, use the old one
 //    $form_state['values']['h5p_site_key'] = variable_get('h5p_site_key', variable_get('h5p_site_uuid', ''));

@@ -189,7 +189,9 @@ function aculta_lms_h5p_schema() {
         'description' => 'The preloaded css for this library as a comma separated list',
         'type' => 'text',
       ),
-      'drop_library_css' => array( // TODO: This really needs to be move to h5p_libraries_libraries.
+      // DT-H5P01 (docs/operations/DEBT-REGISTER.md): column placement kept
+      // for upstream parity; moving it requires a schema migration.
+      'drop_library_css' => array(
         'description' => 'List of libraries that should not have CSS included if this library is used. Comma separated list.',
         'type' => 'text',
       ),

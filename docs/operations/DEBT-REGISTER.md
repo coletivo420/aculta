@@ -309,3 +309,18 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | DT-F01 | Painel administrativo do Fórum executa 21 consultas de estatística por render (7 dias × 3 métricas) mais duas contagens | `ForumAdminOverviewController::activitySeries()` chama `statisticsStorage->total()` para cada dia e métrica; a página tem cache de 60 s | Baixa | Não; agregar em uma consulta com intervalo e agrupamento quando o histórico crescer | Alpha/pós-RC | Aberta |
 | DT-F02 | O predicado de "ForumPost publicado" e a ordenação de thread são reimplementados em quatro consultas | `ForumPostUnreadManager`, `ForumPublicPostStatistics`, `ForumUnreadContent` e `ForumPostThreadBuilder::getPageForPost()` repetem status/langcode/`first_published` e o desempate | Média | Não; extrair uma definição compartilhada antes de alterar a semântica de publicação | Pós-RC | Aberta |
 | DT-F03 | `drush migrate:import aculta_forum_comment_flaggings` falha no wrapper do migrate_tools com “The "" entity type does not exist”, embora a mesma migração conclua pela API (`MigrateExecutable`) | O destino customizado resolve o tipo pela API; o comando do Drush monta o destino antes do contexto de origem | Baixa | Não; a execução local usou a API e não havia denúncias de origem. Investigar o wrapper antes de migrar dados reais com denúncias | Alpha | Aberta |
+
+## ACULTA LMS H5P — triagem de TODOs (2026-10-28)
+
+Triagem da microfase A5 da Frente A: 10 marcadores de TODO de produção. Cinco
+foram resolvidos como obsoletos (assinatura de `getLibraryUsage`, ordem de campos
+do insert, `todo $JM` e duas menções ao site key com o Hub desativado). Os cinco
+restantes foram agrupados nas dívidas abaixo; nenhum marcador TODO permanece no
+código do módulo.
+
+| ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| DT-H5P01 | `drop_library_css` continua em `h5p_libraries`, embora pertença a `h5p_libraries_libraries` | `aculta_lms_h5p.install`: definição da tabela `h5p_libraries`; mover exige atualização de schema e migração de dados | Baixa | Não; paridade com o schema upstream | Pós-RC | Aberta |
+| DT-H5P02 | Assets agregados são normalizados para o player legado em vez de passarem pelo sistema de libraries do Drupal | `aculta_H5PDrupal::buildAggregatedAssets()`, chamado por `aggregatedAssets()` | Média | Não; depende da remoção do player legado | Pós-RC | Aberta |
+| DT-H5P03 | Busca em streaming salva via `aculta_H5PEditorDrupalStorage::saveFileTemporarily()` em vez da opção `sink` do Guzzle | `aculta_H5PDrupal::fetchExternalData()`, ramo `$stream` | Baixa | Não; avaliar junto com a atualização do cliente HTTP | Pós-RC | Aberta |
+| DT-H5P04 | O filtro `semantics IS NOT NULL` nas duas consultas de listagem de bibliotecas pode ser desnecessário | `aculta_H5PEditorDrupalStorage.php`, consultas de detalhes e de listagem | Baixa | Não; medir o custo antes de remover | Pós-RC | Aberta |

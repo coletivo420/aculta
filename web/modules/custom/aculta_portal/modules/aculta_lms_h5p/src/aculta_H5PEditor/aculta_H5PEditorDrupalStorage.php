@@ -115,7 +115,7 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
           WHERE machine_name = :name
           AND major_version = :major
           AND minor_version = :minor
-          AND semantics IS NOT NULL", // TODO: Consider if semantics is really needed (DB performance-wise)
+          AND semantics IS NOT NULL", // DT-H5P04 (DEBT-REGISTER.md): measure before removing.
           [
             ':name' => $library->name,
             ':major' => $library->majorVersion,
@@ -148,7 +148,7 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
       FROM {h5p_libraries}
       WHERE runnable = 1
       AND semantics IS NOT NULL
-      ORDER BY title"); // TODO: Consider if semantics is really needed (DB performance-wise)
+      ORDER BY title"); // DT-H5P04 (DEBT-REGISTER.md): measure before removing.
     foreach ($libraries_result as $library) {
       // Convert result object properties to camelCase.
       $library = \H5PCore::snakeToCamel($library, true);
