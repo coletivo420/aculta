@@ -424,6 +424,12 @@ final class MercadoPagoSubscriptionRecorder implements SubscriptionStatusInterfa
         return;
       }
       if ($remote_id !== (string) $pedido->getData(self::CHAVE_ASSINATURA, '')) {
+        if ($pedido->getData(self::CHAVE_CRIACAO_PENDENTE)) {
+          // Mercado Pago can notify about the subscription immediately after
+          // creation, before this request saves its ID on the Commerce order.
+          // Ask for a retry so the event can be reconciled after that write.
+          throw new MercadoPagoApiException((string) new TranslatableMarkup('A assinatura ainda está sendo vinculada ao pedido. Tente novamente.'), 503);
+        }
         $this->logger->error('Assinatura @id não corresponde à assinatura registrada no pedido @pedido.', [
           '@id' => $remote_id,
           '@pedido' => $pedido->id(),

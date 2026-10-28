@@ -55,11 +55,15 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
    *   Status remoto já registrado no pedido.
    * @param int|null $versao_assinatura
    *   Versão remota já registrada no pedido.
+   * @param string $assinatura_id
+   *   ID remoto de assinatura armazenado no pedido.
+   * @param mixed $criacao_pendente
+   *   Marcador de tentativa remota de criação ainda sem conciliação.
    *
    * @return array{0: MercadoPagoSubscriptionRecorder, 1: MockObject, 2: MockObject, 3: MockObject, 4: LockBackendInterface}
    *   Gravador, pedido, armazém de pagamentos, estado e lock.
    */
-  private function contexto(string $tipo, string $estado, array $transicoes, array $existentes, bool $lock_disponivel = TRUE, string $status_assinatura = '', ?int $versao_assinatura = NULL): array {
+  private function contexto(string $tipo, string $estado, array $transicoes, array $existentes, bool $lock_disponivel = TRUE, string $status_assinatura = '', ?int $versao_assinatura = NULL, string $assinatura_id = 'pre-9', mixed $criacao_pendente = NULL): array {
     $item = $this->createMock(StateItemInterface::class);
     $item->method('getId')->willReturn($estado);
     $item->method('getTransitions')->willReturn(array_fill_keys($transicoes, new \stdClass()));
@@ -71,9 +75,10 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $pedido->method('getState')->willReturn($item);
     $pedido->method('getData')->willReturnCallback(
       static fn (string $key, mixed $default = NULL): mixed => match ($key) {
-        MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA => 'pre-9',
+        MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA => $assinatura_id,
         MercadoPagoSubscriptionRecorder::CHAVE_STATUS => $status_assinatura,
         MercadoPagoSubscriptionRecorder::CHAVE_VERSAO => $versao_assinatura,
+        MercadoPagoSubscriptionRecorder::CHAVE_CRIACAO_PENDENTE => $criacao_pendente,
         default => $default,
       },
     );
@@ -513,6 +518,43 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
       'status' => 'cancelled',
       'version' => 1,
     ]);
+  }
+
+  /**
+   * Requests provider retry while a new subscription ID is not linked yet.
+   */
+  public function testSubscriptionWebhookRetriesWhileCreationIsUnlinked(): void {
+    [$servico, $pedido, , , $lock] = $this->contexto(
+      'assinatura',
+      'completed',
+      [],
+      [],
+      TRUE,
+      '',
+      NULL,
+      '',
+      1700000000,
+    );
+    $pedido->expects($this->never())->method('setData');
+    $pedido->expects($this->never())->method('save');
+    $lock->expects($this->once())->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.subscription.pre-9', 30)
+      ->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')
+      ->with('aculta_pagamentos_mercadopago.subscription.pre-9');
+
+    try {
+      $servico->assinatura((object) [
+        'id' => 'pre-9',
+        'external_reference' => '7',
+        'status' => 'authorized',
+        'version' => 1,
+      ]);
+      $this->fail('Expected a retryable error while subscription creation is unlinked.');
+    }
+    catch (MercadoPagoApiException $exception) {
+      $this->assertSame(503, $exception->codigoHttp());
+    }
   }
 
   /**
