@@ -67,3 +67,5 @@ Evidência técnica MP6: `58359728f`; testes atuais Maps 10/44 e Events 57/668.
 - [x] ADR-030 registra o estado de implementação e o bloqueio de transparência.
 
 Evidência MP7: smoke no servidor `eventos.aculta.toca.net.br`; configuração ativa `openstreetmap`. O catálogo do Runtime de teste não tem marcador com coordenadas, então a presença do marcador aproximado é validada pela Kernel `MapControllerKernelTest`.
+
+Commit MP7: `fd5c96526`.

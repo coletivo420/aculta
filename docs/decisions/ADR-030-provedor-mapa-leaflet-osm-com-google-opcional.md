@@ -102,17 +102,18 @@ técnica publicada em `58359728f`.
 O código aceita Google Maps JavaScript somente quando selecionado e quando a chave pública restrita está disponível;
 sem chave ou diante de falha de carregamento, volta a Leaflet/OSM e informa administradores. Geocoding usa uma chave
 separada `GOOGLE_GEOCODING_API_KEY`, restrita para uso de servidor.
-O código não está ativado no Runtime: a política pública ainda não descreve os provedores e o responsável decidiu
-não informar IP na política. Essa incompatibilidade com a exigência de transparência deste ADR continua pendente.
+O Google é código opcional e não está selecionado no Runtime de teste. A política pública ainda não descreve os
+provedores e o responsável decidiu não informar IP; essa pendência de transparência deste ADR continua registrada.
 
 MP5 adiciona o `RouteLinkBuilder` no ACULTA Maps. Ele monta links HTTPS de rota a partir do modelo configurado,
 aceita somente hosts Google aprovados e codifica o destino; a lista textual e os popups abrem a rota só após clique.
 Evidência: `33b638ccf`.
 
 MP6 arredonda coordenadas de locais aproximados antes de anexá-las ao render array. A página `/mapa` mostra aviso e
-link para a política pública. Os testes Maps/Events cobrem arredondamento, aviso e destino do link. MP7 documenta a
-API compartilhada e a separação das credenciais. Smoke visual e ativação dos provedores seguem pendentes: o módulo
-não está ativo no Runtime e o responsável decidiu não informar IP na política.
+link para a política pública. MP7 documenta a API e o Firefox ESR confirmou layout em 1280 px, viewport real de
+320 px e modo escuro, sem overflow (`fd5c96526`). `aculta_maps` foi ativado no Runtime de teste por ordem explícita, com OSM
+padrão; não houve updatedb nem import global. A política continua sem a informação de IP conforme decisão do
+responsável, e a pendência editorial permanece registrada.
 
 Revisão das políticas oficiais em 2026-10-28: [política de tiles OSM](https://operations.osmfoundation.org/policies/tiles/)
 exige atribuição visível e respeito às respostas de cache; [política Nominatim](https://operations.osmfoundation.org/policies/nominatim/)
