@@ -13,7 +13,7 @@
       once('aculta-account-password-modal', '#aculta-account-password', context).forEach((element) => {
         element.removeAttribute('hidden');
         const dialog = Drupal.dialog(element, {
-          title: Drupal.t('Crie sua senha'),
+          title: element.dataset.dialogTitle || Drupal.t('Crie sua senha'),
           modal: true,
           closeOnEscape: false,
           beforeClose: () => false,

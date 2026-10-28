@@ -60,6 +60,7 @@ final class LoginValidatorSwapTest extends UnitTestCase {
         $this->createMock(RendererInterface::class),
         $this->createMock(MessengerInterface::class),
       ),
+      new RequestStack(),
     );
     $form = ['#validate' => $start];
     $state = $this->createMock(FormStateInterface::class);

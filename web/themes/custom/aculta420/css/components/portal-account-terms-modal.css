@@ -3,6 +3,11 @@
   display: none;
 }
 
+/* Mensagens de status (alert-wrapper, z-index 9999) não podem cobrir o botão do modal de senha. */
+.ui-dialog:has(#aculta-account-password) {
+  z-index: 10001;
+}
+
 /* Popup de aceite dos termos (AccountTermsHooks): diálogo modal do Drupal, como os demais modais (fundo escurecido
    pelo token --aculta-scrim em dialog.css). Não tem botão de fechar: só o aceite fecha. */
 .ui-dialog:has(#aculta-account-terms) .ui-dialog-titlebar-close {

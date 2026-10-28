@@ -10,6 +10,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\aculta_portal\Cart\AddToCartAjax;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
+use Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\CurrentRouteMatch;
@@ -18,6 +19,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\user\AccountForm;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Account and Commerce form alterations owned by the Portal.
@@ -37,6 +39,8 @@ final class FormHooks {
     private readonly DomainPurposeManager $domainPurpose,
     #[Autowire(service: 'aculta_portal.cart_ajax')]
     private readonly AddToCartAjax $cartAjax,
+    #[Autowire(service: 'request_stack')]
+    private readonly RequestStack $requestStack,
   ) {}
 
   /**
@@ -49,6 +53,7 @@ final class FormHooks {
     $this->cartAjax->alter($form, $formId);
 
     $this->restrictedFormNotice($form, $formId);
+    $this->recoveryPasswordModal($form, $formState, $formId);
 
     // Com a verificação de e-mail ligada, o Core gera a senha no cadastro.
     // O Portal mostra a senha escolhida e salva depois; a conta ativa permanece
@@ -174,7 +179,7 @@ final class FormHooks {
   private function accountAjaxSubmit(array &$form, string $formId): void {
     $route = $this->routeMatch->getRouteObject();
     if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_aculta_user_agreement_accept' || $formId === 'aculta_portal_account_password_create'
-      || $formId === 'user_login_form' || $formId === 'aculta_mail_confirmer_response' || $formId === 'aculta_user_account_bio_form' || !empty($form['#aculta_json_save']) || !isset($form['actions']['submit'])) {
+      || $formId === 'user_login_form' || $formId === 'user_pass_reset' || $formId === 'aculta_mail_confirmer_response' || $formId === 'aculta_user_account_bio_form' || !empty($form['#aculta_json_save']) || !isset($form['actions']['submit'])) {
       return;
     }
     $wrapper = 'portal-account-' . Html::cleanCssIdentifier($formId);
@@ -195,6 +200,40 @@ final class FormHooks {
     else {
       $form['#submit'][] = 'aculta_portal.form_callbacks:disableAccountRedirect';
     }
+  }
+
+  /**
+   * Recuperação de senha em modal sem fechar, só com a nova senha.
+   *
+   * O link do e-mail leva ao formulário de conta com o token do Core. Só o campo de senha aparece, em modal sem botão
+   * de fechar (js/account-password-modal.js), como na criação de senha do cadastro simplificado.
+   */
+  private function recoveryPasswordModal(array &$form, FormStateInterface $formState, string $formId): void {
+    $formObject = $formState->getFormObject();
+    $request = $this->requestStack->getCurrentRequest();
+    if ($formId !== 'user_form' || !$formObject instanceof AccountForm || $request === NULL) {
+      return;
+    }
+    $account = $formObject->getEntity();
+    if (!AccountRouteSubscriber::isValidCorePasswordResetRequest($request, (int) $account->id(), (int) $this->currentUser->id())) {
+      return;
+    }
+    $manter = ['account', 'actions', 'form_build_id', 'form_token', 'form_id'];
+    foreach (array_keys($form) as $key) {
+      if (!str_starts_with((string) $key, '#') && !in_array($key, $manter, TRUE)) {
+        unset($form[$key]);
+      }
+    }
+    foreach (array_keys($form['account']) as $key) {
+      if (!str_starts_with((string) $key, '#') && $key !== 'pass') {
+        unset($form['account'][$key]);
+      }
+    }
+    $form['actions']['submit']['#value'] = $this->translation->translate('Salvar nova senha');
+    $title = Html::escape((string) $this->translation->translate('Crie sua nova senha'));
+    $form['#prefix'] = '<div id="aculta-account-password" data-dialog-title="' . $title . '" hidden>';
+    $form['#suffix'] = '</div>';
+    $form['#attached']['library'][] = 'aculta_portal/account-password-modal';
   }
 
   /**
