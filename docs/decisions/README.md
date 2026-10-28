@@ -12,6 +12,7 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 - [ADR-013 — Portal multi-cart e checkout](ADR-013-portal-multi-cart-checkout.md)
 - [ADR-014 — Google Maps Platform](ADR-014-provedor-mapa-google-maps.md)
 - [ADR-015 — Purpose de eventos](ADR-015-purpose-eventos.md)
+- [ADR-016 — Links de acesso único](ADR-016-links-de-acesso-unico-24-horas.md)
 
 ADRs históricos e decisões locais de arquitetura também podem ser encontrados
 neste diretório e em `docs/architecture/`. Para registrar uma decisão nova,
