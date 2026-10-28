@@ -17,7 +17,7 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 | D-05 | Presença "quem está online": onde aparece | **Painel administrativo do Statistics e rodapé do fórum** (purpose fórum). Visitantes fora do fórum não veem a contagem. | Statistics (presença agregada). Rodapé do fórum novo. |
 | D-06 | Rodapé do fórum: formato | **Só o total** ("N pessoas online"). Sem separar visitantes e registrados. | Evita revelar a composição do grupo. |
 | D-07 | Janela "online" | **5 minutos.** | Contagem sobe e cai mais rápido que o padrão do OpenCulturas (15). |
-| D-08 | Mapa (D7) | **Google Maps com exceção de privacidade**: carrega só após clique do visitante, aviso na página, chave restrita por domínio. | Exige ADR de exceção (ainda não escrito) e chave por ambiente. |
+| D-08 | Mapa (D7) | **Google Maps como provedor padrão do mapa, carregado já na exibição da página.** Não é exceção: é o comportamento padrão, com aviso de privacidade visível na página e link para a política. | Política de privacidade cita o envio do IP ao Google. Chave de API restrita por domínio, por ambiente. |
 | D-09 | Canonical do calendário (D6) | **Eventos.** A versão no main aponta canonical para `eventos.aculta.org/calendario`. | `aculta_calendar` F5. |
 | D-10 | Licença de mídia (I-13) | **Opcional.** Sem obrigação de licença e sem filtro por licença. | Derruba a parte de filtro por licença do C-04. Não há requisito de CC. |
 | D-11 | Anti-spam (I-14) | **Manter só o captcha atual** (Turnstile). Honeypot não entra agora. | I-14 fica fora da fase U5. |
@@ -27,8 +27,8 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 
 | # | Assunto | Situação |
 | --- | --- | --- |
-| P-01 | Endereço de divulgação responsável (I-17) | **Aguardando o endereço do responsável.** Sem ele não há `SECURITY.md`. |
-| P-02 | ADR de exceção do Google Maps (D-08) | A escrever, com a decisão de privacidade registrada. Bloqueia a fase F4 de eventos. |
+| P-01 | Endereço de divulgação responsável (I-17) | **Resolvido em 2026-10-28:** `abuso@aculta.org`, publicado no `SECURITY.md` da raiz. Prazos de resposta ainda não fixados. |
+| P-02 | ADR do provedor de mapa (D-08) | Deixa de ser ADR de exceção. Registrar o Google Maps como provedor padrão, com o tratamento de dados (IP enviado ao Google ao carregar) e a atualização da política de privacidade. Bloqueia a fase F4 de eventos. |
 
 ## Efeitos em cadeia
 
@@ -40,3 +40,5 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 ## Histórico
 
 - 2026-10-28: decisões D-01 a D-12 registradas, a partir de perguntas interativas. P-01 aguardando dado do responsável.
+- 2026-10-28: P-01 resolvido com o endereço `abuso@aculta.org` e criado o `SECURITY.md`.
+- 2026-10-28 (alteração): D-08 deixa de ser exceção. O mapa carrega na exibição da página, como padrão. Motivo: pedido do responsável.

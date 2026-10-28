@@ -132,7 +132,7 @@ Dependências que o reuso exige, em ordem de substituição:
 
 ## 7. Plano de reuso (ordem)
 
-1. Antes de qualquer código: decidir o ADR da exceção de privacidade do Google Maps (D7) e a
+1. Antes de qualquer código: decidir o ADR do provedor de mapa (Google Maps, D7, como padrão) e a
    regra de endereço de residência (T9).
 2. Corrigir a fundação: dependências declaradas, sem `openculturas_custom` (T1, T2).
 3. Modelo de dados em `aculta_events` (C3, D4) sem campos de venda (C2).

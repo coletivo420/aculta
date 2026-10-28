@@ -11,7 +11,7 @@ frente estarem em RC. Merge em `main` não é deploy.
 Entrada: plano aprovado.
 
 - [x] Decisões D1–D11 registradas (`PLANO-IMPLANTACAO.md`, seção 3). D11: commits na PR atual.
-- [ ] Registrar ADR do purpose `eventos` em `docs/decisions/`, incluindo a exceção de privacidade do Google Maps (D7).
+- [ ] Registrar ADR do purpose `eventos` em `docs/decisions/`, incluindo o Google Maps como provedor padrão do mapa (D7) e o tratamento de privacidade.
 - [ ] Verificar compatibilidade com Core ^11.4 de `smart_date`, `geofield` e `address`.
 - [ ] Revisar termos e cobrança da Google Maps Platform (JavaScript API e Geocoding API) e o aviso de privacidade.
 - [x] Auditoria do OpenCulturas (`AUDITORIA-OPENCULTURAS.md`): nenhum arquivo copiado diretamente; achados S1 a S8 e T1 a T14 viram tarefas de F2–F6.
@@ -62,7 +62,7 @@ Entrada: F3 concluída; chave de API do Google provisionada para teste (`secrets
 - [ ] Campo de coordenadas e endereço; regra de precisão do endereço.
 - [ ] Geocodificação no servidor (Geocoding API), uma vez por local, com a chave fora do repositório.
 - [ ] Bloco de mapa (Maps JavaScript API + agrupamento de marcadores) e lista sincronizada.
-- [ ] Carregamento do mapa só após ação do usuário, com aviso de privacidade.
+- [ ] Mapa carregado na exibição da página, com aviso de privacidade e link para a política.
 - [ ] Filtro de tipo de local.
 - [ ] Alternativa textual completa ao mapa.
 

@@ -183,7 +183,7 @@ O OpenCulturas tem princípios que o ACULTA aplica em partes, mas não reuniu em
 
 | Princípio (OpenCulturas) | Estado no ACULTA | Ação |
 | --- | --- | --- |
-| Privacidade por padrão, sem CDN nem terceiros | Parcial (Turnstile e Google Maps decididos com exceção) | Registrar a regra no ADR da exceção do Google |
+| Privacidade por padrão, sem CDN nem terceiros | Parcial (Turnstile e Google Maps como provedor padrão, com aviso) | Registrar o tratamento de dados do Google no ADR do provedor de mapa |
 | Acessibilidade: link para navegação, botão para ação | Não escrito | I-18 em `accessibility.md` |
 | Acessibilidade: unidades que respeitam o tamanho de fonte do usuário | Não escrito | I-18 em `accessibility.md` |
 | Acessibilidade: cores de variáveis que funcionam no modo escuro | Feito (tokens) | Nenhuma |
@@ -330,7 +330,7 @@ busca     Título  ·  trecho com o termo destacado  ·  purpose
 | Redirect automático de URL antiga | Política do Aculta: sem alias ou redirect temporário |
 | Cookies popover e dark mode toggle | Aceite único e tokens já cobrem |
 | Bookable e ingressos | Venda fora da v1 de eventos (`aculta_commerce` e Mercado Pago) |
-| OpenStreetMap e Nominatim | Decisão D7 (Google Maps com exceção de privacidade) |
+| OpenStreetMap e Nominatim | Decisão D7 (Google Maps como provedor padrão) |
 | Matomo | Estatística própria (`aculta_statistics`) com retenção configurável |
 | Manifesto de `config_devel` | `config/sync` completo já atende |
 
@@ -444,4 +444,4 @@ reuso: `docs/architecture/OPENCULTURAS-INCORPORACAO-CODIGO.md`.
 
 As perguntas da seção 7 foram respondidas. Decisões, impactos e pendências estão em
 `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Pendente: endereço de divulgação responsável
-(I-17) e ADR da exceção do Google Maps (D-08).
+(I-17) e ADR do provedor de mapa (D-08).

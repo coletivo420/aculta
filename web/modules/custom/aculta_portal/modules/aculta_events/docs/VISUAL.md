@@ -93,9 +93,9 @@ Mobile (padrão):              Desktop (≥ lg):
 ```
 
 - Sem JavaScript: a lista funciona sozinha (sem mapa).
-- Com JavaScript: o mapa do Google só é carregado depois de o usuário tocar em “Mostrar mapa”
-  (privacidade, decisão D7). Antes disso aparece a lista e um aviso de que o mapa usa serviço do Google.
-- Botão “Ver lista” volta à alternativa textual a qualquer momento.
+- Com JavaScript: o mapa do Google carrega junto com a página. Um aviso curto informa que o mapa usa serviço
+  do Google, com link para a política de privacidade. A lista continua disponível ao lado do mapa.
+- Botão “Ver lista” alterna para a alternativa textual.
 - Cada marcador tem rótulo textual acessível e o cartão tem link para o local.
 - Controles de zoom com alvo de 44 × 44 px.
 

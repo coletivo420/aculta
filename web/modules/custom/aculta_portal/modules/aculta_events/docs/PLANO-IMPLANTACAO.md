@@ -39,9 +39,9 @@ Modelo de dados: `MODELO-DE-DADOS.md`. Visual: `VISUAL.md`.
 
 ## 2. Princípios herdados (e confirmados pelo ACULTA)
 
-- **Privacidade por padrão:** o OpenCulturas evita CDN e terceiros (`docs/DEVELOPMENT.md`). A
-  decisão D7 (Google Maps) é uma exceção consciente a essa regra: o mapa carrega recursos do Google
-  e envia o IP do visitante. Por isso o mapa só é carregado sob ação do usuário (ver riscos).
+- **Privacidade:** o OpenCulturas evita CDN e terceiros (`docs/DEVELOPMENT.md`). O Google Maps é o provedor
+  padrão do mapa (decisão D7), com carregamento na exibição da página. Por isso o aviso de privacidade fica
+  visível na página e a política do site cita o envio do IP ao Google.
 - **Acessibilidade:** teclado, WCAG 2.2 AA, alvos de 44 × 44 px, lista alternativa ao mapa,
   cor nunca como único sinal (ver `VISUAL.md`).
 - **Reutilizar antes de criar:** campos, views e modos de exibição do Drupal Core/contrib quando
@@ -145,7 +145,7 @@ Gerar dependências só depois da decisão D8, com `composer require` no fluxo n
 
 | Risco | Efeito | Mitigação |
 | --- | --- | --- |
-| Privacidade do Google Maps | O IP e dados do navegador vão ao Google; quebra da regra de privacidade do OpenCulturas | Mapa carregado só após ação do usuário (botão "Mostrar mapa") ou consentimento pelo aceite único; aviso de privacidade na página; registrar a exceção em decisão (ADR) |
+| Privacidade do Google Maps | O IP do visitante é enviado ao Google ao carregar a página | Aviso visível na página e na política de privacidade; chave restrita por domínio; revisão de LGPD antes do RC |
 | Chave de API exposta ou usada fora do domínio | Consumo indevido e custo | Restrição por referenciador por host (`eventos.aculta.org`, `eventos.aculta.toca.net.br` etc.) e restrição de API; chave fora do repositório |
 | Custo e cota da API | Cobrança inesperada | Cota diária configurada no Google Cloud; geocodificação feita uma vez por local e guardada |
 | Geocodificação do Google no servidor | Envio do endereço ao Google | Só endereço de local cadastrado pela organização; nunca dados de pessoa |
@@ -169,7 +169,7 @@ Os critérios de entrada e saída estão no `ROADMAP.md`.
 | F1 | Purpose `eventos`: Domain, rotas-esqueleto, deployer, sitemap, robots, gates | Host de teste servindo página vazia com HTTP/HTTPS |
 | F2 | Modelo de dados (tipos, campos, vocabulários, permissões), testes Kernel | Cadastro funcional no ambiente de teste |
 | F3 | Catálogo de eventos: View, cartão, página do evento | Catálogo navegável com filtros |
-| F4 | Locais com mapa: geofield, Google Maps (JavaScript API), bloco, lista sincronizada | Mapa com agrupamento e alternativa textual; carregamento sob ação do usuário |
+| F4 | Locais com mapa: geofield, Google Maps (JavaScript API), bloco, lista sincronizada | Mapa com agrupamento e alternativa textual; mapa carregado na exibição, com aviso de privacidade |
 | F5 | Calendário (`aculta_calendar`): agenda, filtros, `.ics`, embed | Calendário e exportação |
 | F6 | Visual e acessibilidade: SDC em `aculta420`, stories, dark mode, 320 px | Revisão visual com Firefox X11 |
 | F7 | SEO: sitemap, metadados, dados estruturados de evento | Gates de sitemap e robots verdes |
