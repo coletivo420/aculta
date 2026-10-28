@@ -28,6 +28,7 @@ Referência local: `/home/piradopirata/projetos/aculta-openculturas/` (somente l
 | --- | --- | --- | --- | --- |
 | — | — | — | Nenhuma cópia feita até a fase F0 | — |
 | `profile/modules/custom/openculturas_custom/src/Plugin/DateAugmenter/AddToCal.php` (só regra, nenhum trecho copiado) | `aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php` | Reescrita do zero (E6, C1) | Gerador `.ics` próprio: escape RFC 5545, remoção de CR/LF em SUMMARY e LOCATION (S2), UID estável, dobra em 75 octetos, DTSTAMP em UTC. Sem `addtocal_augment` (T10). Sem atribuição, pois nenhum trecho foi copiado | 2026-10-28 |
+| `profile/modules/custom/openculturas_calendar_widget/src/Controller/OpenculturasCalendarWidgetController.php` (só regra do S3, nenhum trecho copiado) | `aculta_portal/modules/aculta_calendar/src/Embed/EmbedSourceAllowlist.php` | Reescrita do zero (E5, C2) | Lógica de allowlist do `source_uri`: caminho interno ou https de host da lista; recusa javascript:, data:, http, protocolo relativo, credencial e porta fora do padrão (S3). Sem rota, controller ou bloco nesta fase. Sem atribuição, pois nenhum trecho foi copiado | 2026-10-28 |
 
 ## Diferença de licença com o AGPL
 
