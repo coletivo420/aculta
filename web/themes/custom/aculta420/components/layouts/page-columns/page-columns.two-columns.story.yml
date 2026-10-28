@@ -1,0 +1,18 @@
+name: Duas colunas
+description: Conteúdo principal seguido por uma região de apoio.
+component: aculta420:page-columns
+props:
+  columns: 2
+slots:
+  primary:
+    markup: |
+      <article class="card"><div class="card-body">
+        <h2>Conteúdo principal</h2>
+        <p>Texto e informações da página.</p>
+      </div></article>
+  secondary:
+    markup: |
+      <aside class="card"><div class="card-body">
+        <h2>Informações de apoio</h2>
+        <p>Detalhes complementares, lidos depois do conteúdo principal.</p>
+      </div></aside>

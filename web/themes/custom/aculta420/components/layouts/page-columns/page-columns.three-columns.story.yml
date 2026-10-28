@@ -1,0 +1,24 @@
+name: Três colunas
+description: Três regiões lidas em ordem principal, secundária e complementar.
+component: aculta420:page-columns
+props:
+  columns: 3
+slots:
+  primary:
+    markup: |
+      <article class="card"><div class="card-body">
+        <h2>Principal</h2>
+        <p>Primeira região da página.</p>
+      </div></article>
+  secondary:
+    markup: |
+      <section class="card"><div class="card-body">
+        <h2>Secundária</h2>
+        <p>Segunda região da página.</p>
+      </div></section>
+  tertiary:
+    markup: |
+      <aside class="card"><div class="card-body">
+        <h2>Complementar</h2>
+        <p>Terceira região da página.</p>
+      </div></aside>

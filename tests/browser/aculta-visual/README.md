@@ -21,6 +21,9 @@ nativa no tópico do Fórum. A Flag é restaurada ao estado inicial no `finally`
   `/tmp/aculta-visual-b7`.
 - `VISUAL_ADMIN_UID`: UID da conta administrativa de teste; padrão `205`.
 - `ALBUM_URL` e `STORY_URL`: permitem apontar às rotas de teste canônicas.
+- `STORY_ONLY=1`: captura somente `STORY_URL` em 1280 px, 320 px e dark; use
+  a rota individual do componente, por exemplo
+  `.../components/aculta420/page-columns`.
 
 ```sh
 DISPLAY=:0 SUITE_OUT=/tmp/aculta-visual-b7 \

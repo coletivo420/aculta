@@ -62,6 +62,7 @@ pelo menos um consumidor real. Template ou bloco do OpenCulturas é referência,
 | `content/sponsor-logos` (I-27) | Candidato criado com slot para mídia do Drupal/aculta_image. | Sem consumidor; cada marca exige autorização registrada. |
 | `patterns/bookmark-toggle` (I-31) | Composição do SDC envolve a ação nativa `flag_salvar_topico` no tópico completo do Fórum. | Candidato consumido por código; validação visual Runtime pendente. |
 | Layout 5 regiões (I-21) | UI Patterns Layouts 2.0.23 está instalado no código e habilitado em Config Sync; layout criado com cinco slots. | Experimental; sem consumidor real enquanto `aculta_events` não implementar F3. |
+| `layouts/page-columns` (I-22) | Layout SDC com regiões nomeadas principal/secundária/complementar, stories 1/2/3 colunas e colapso mobile em ordem DOM. | Candidato sem consumidor real; story não renderizada no Runtime UI Patterns. |
 
 Resultado: stories existem; não declarar aprovação sem validação do schema,
 renderização/cache no Runtime e revisão visual autorizada.
@@ -95,6 +96,15 @@ textual; a Flag do usuário de teste voltou ao estado inicial. A rota protegida
 do UI Patterns Library retornou erro genérico no Runtime, então as stories de
 cores, layout, stat-counter, accessibility-badges e sponsor-logos seguem
 pendentes de renderização. Essas entregas continuam experimentais/candidatas.
+
+## B8 — composições de página em colunas
+
+Auditoria estática: `rail` não atende colunas de página por ser uma faixa
+horizontal; `content-section` fornece um único corpo; UI Patterns Layouts não
+inclui grades genéricas 1/2/3. Criado `layouts/page-columns`, candidato sem
+consumidor funcional, com três stories e stack de uma coluna abaixo de 768 px.
+A rota individual da story retornou erro genérico do Drupal; sem evidência
+Runtime para 320 px ou dark.
 
 ## Links
 - [Shell multidomínio](shell.md)

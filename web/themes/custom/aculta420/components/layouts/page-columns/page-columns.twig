@@ -1,0 +1,6 @@
+{% set layout_classes = ['aculta-page-columns', 'aculta-page-columns--' ~ columns] %}
+<div{{ attributes.addClass(layout_classes) }}>
+  {% if primary %}<div class="aculta-page-columns__primary">{{ primary }}</div>{% endif %}
+  {% if secondary %}<div class="aculta-page-columns__secondary">{{ secondary }}</div>{% endif %}
+  {% if tertiary %}<div class="aculta-page-columns__tertiary">{{ tertiary }}</div>{% endif %}
+</div>

@@ -65,6 +65,7 @@ contratos e consumidores reais autorizem sua implementação; não são componen
 | `content/sponsor-logos` | Candidato experimental, sem marcas reais | Nenhum consumidor; marca só entra após autorização registrada e mídia pelo pipeline `aculta_image`. |
 | `patterns/bookmark-toggle` | Candidato experimental, com estados em stories | Consumido pelo tópico completo do Fórum através da ação nativa `flag_salvar_topico`; validação visual no Runtime pendente. A Flag mantém comportamento e acesso. |
 | `layouts/event-page-five-regions` | Layout UI Patterns experimental | UI Patterns Layouts está no código e em Config Sync. Sem consumidor real: o módulo `aculta_events` ainda não tem implementação funcional. |
+| `layouts/page-columns` (I-22) | Layout UI Patterns experimental com variações 1, 2 e 3 colunas e ordem DOM preservada no mobile | Sem consumidor real; permanece candidato. `rail` é horizontal e `content-section` não compõe regiões em colunas. |
 
 As quatro cores fechadas de seção têm tokens, pares de contraste e stories no
 `content-section`. A seleção no bloco básico ainda depende do pedido `Pede-A`
@@ -94,6 +95,16 @@ consumidores, modos claro/escuro e renderização no Firefox ESR.
   mesmo com a conta administrativa de teste. As stories das quatro cores de
   seção, layout de cinco regiões, contador, selos e marcas seguem sem revisão
   visual Runtime; não declarar aprovação desses candidatos.
+
+## B8 — composições de página em colunas
+
+`patterns/rail` oferece rolagem horizontal, `content-section` é um frame de
+conteúdo único e `ui_patterns_layouts` adapta SDCs para Layout Builder sem
+fornecer por si só um arranjo 1/2/3 colunas. O candidato
+`layouts/page-columns` fornece regiões principal, secundária e complementar;
+tem stories de 1, 2 e 3 colunas e empilha as regiões pela ordem do DOM abaixo de
+768 px. Ainda não há consumidor funcional. A story individual falhou com erro
+genérico no Runtime UI Patterns; homologação visual 320 px/dark pendente.
 
 ## Backlog do catálogo — padrões transversais ainda não implementados
 

@@ -301,22 +301,28 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     os.chmod(OUT, 0o700)
     os.umask(0o077)
-    light = inspect_album()
-    dark = inspect_album({"ui.systemUsesDarkTheme": 1}, dark=True)
     story = inspect_story_gate()
-    bookmark = inspect_bookmark()
-    summary = {"album": {"light": light, "dark": dark},
-               "uiPatterns": story, "bookmark": bookmark}
+    if os.environ.get("STORY_ONLY") == "1":
+        summary = {"uiPatterns": story}
+    else:
+        light = inspect_album()
+        dark = inspect_album({"ui.systemUsesDarkTheme": 1}, dark=True)
+        bookmark = inspect_bookmark()
+        summary = {"album": {"light": light, "dark": dark},
+                   "uiPatterns": story, "bookmark": bookmark}
     (OUT / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
-    print(f"Album: {ALBUM_URL}")
-    for variant in ("light", "dark"):
-        for size, data in summary["album"][variant].items():
-            print(f"album {variant}/{size}: {data['compactCards']} cards compact; "
-                  f"viewport={data['viewport']}; documento={data['documentWidth']}; "
-                  f"alvos pequenos={len(data['smallActions'])}; links vazios sem nome={data['emptyLinks']}")
+    if os.environ.get("STORY_ONLY") != "1":
+        print(f"Album: {ALBUM_URL}")
+        for variant in ("light", "dark"):
+            for size, data in summary["album"][variant].items():
+                print(f"album {variant}/{size}: {data['compactCards']} cards compact; "
+                      f"viewport={data['viewport']}; documento={data['documentWidth']}; "
+                      f"alvos pequenos={len(data['smallActions'])}; "
+                      f"links vazios sem nome={data['emptyLinks']}")
     print("UI Patterns bloqueada:", story["blocked"])
-    print("Flag Fórum: estados salvo/não salvo capturados; estado inicial restaurado:",
-          bookmark["restoredInitialState"])
+    if os.environ.get("STORY_ONLY") != "1":
+        print("Flag Fórum: estados salvo/não salvo capturados; estado inicial restaurado:",
+              bookmark["restoredInitialState"])
     print("Evidências:", OUT)
 
 
