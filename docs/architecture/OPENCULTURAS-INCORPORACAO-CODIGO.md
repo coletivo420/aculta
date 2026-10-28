@@ -19,7 +19,7 @@ Referência: `/home/piradopirata/projetos/aculta-openculturas/` (somente leitura
 | `\Drupal::` estático dentro de `src/` (sem testes) | 5 ocorrências em 3 arquivos | — | Baixo; 2 delas estão na entidade `Shipment` |
 | Funções acima de 100 linhas | 70 de 5.640 (1,2%) | 13 de 407 (3,2%) | Proporção do ACULTA é menor, mas os casos são maiores |
 | Maiores funções confirmadas | `PdfViewerBuilder::buildFile` (357 linhas, 70–426); `AvisosResumo::enviarParaComLock` (313 linhas, 223–535) | `OSMIDDefaultWidget::rebuildFormSubmit` (206) | Candidatas a dividir |
-| TODO/FIXME | 20 | 0 | 16 estão em `aculta_lms_h5p` |
+| TODO/FIXME em código de produção (sem testes) | 11 | 0 | Todos em `aculta_lms_h5p` (a contagem anterior de 20 incluía testes) |
 | Métodos-stub sem implementação | 4 em `aculta_H5PDrupal.php` (1557–1581) | — | Retornam `null` sem erro e sem chamadas no ACULTA |
 | `catch` genérico | 155 | 17 | **Não conclusivo**: a heurística não reconhece métodos próprios de log (`logFailure`). Revisão manual antes de afirmar |
 
