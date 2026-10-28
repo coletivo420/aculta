@@ -401,13 +401,6 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       '#required' => TRUE,
     ];
 
-    $form['autofee'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Autofee'),
-      '#description' => $this->t('If set, the fee charged by the acquirer will be calculated and added to the transaction amount. @TODO'),
-      '#default_value' => $this->configuration['autofee'],
-    ];
-
     $form['debug_logging'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable extra debug logging'),
@@ -924,7 +917,8 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       $max = (int) ($values['max_installments'] ?? 12);
       $this->configuration['max_installments'] = max(1, min(12, $max));
 
-      $this->configuration['autofee'] = $values['autofee'];
+      // The legacy setting was never connected to a provider fee calculation.
+      $this->configuration['autofee'] = FALSE;
       $this->configuration['debug_logging'] = !empty($values['debug_logging']);
     }
   }

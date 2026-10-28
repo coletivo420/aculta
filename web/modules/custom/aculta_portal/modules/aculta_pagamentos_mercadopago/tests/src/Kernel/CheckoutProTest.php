@@ -5,6 +5,7 @@ namespace Drupal\Tests\aculta_pagamentos_mercadopago\Kernel;
 use Drupal\commerce_payment\Entity\PaymentGateway;
 use Drupal\commerce_order\Adjustment;
 use Drupal\commerce_order\Entity\OrderItem;
+use Drupal\Core\Form\FormState;
 use Drupal\key\Entity\Key;
 use Drupal\commerce_price\Price;
 use Drupal\aculta_pagamentos_mercadopago\PluginForm\Checkout\MercadoPagoPreferenceItems;
@@ -80,6 +81,8 @@ class CheckoutProTest extends OrderKernelTestBase {
       $this->assertSame('aculta_mercadopago_checkout_pro', $plugin->getPluginId());
       $this->assertSame('test', $plugin->getMode());
       $this->assertSame('aculta_mercadopago', $plugin->getPaymentType()->getPluginId());
+      $configuration_form = $plugin->buildConfigurationForm([], new FormState());
+      $this->assertArrayNotHasKey('autofee', $configuration_form);
 
       $payment = $this->container->get('entity_type.manager')->getStorage('commerce_payment')->create([
         'payment_gateway' => $payment_gateway->id(),
