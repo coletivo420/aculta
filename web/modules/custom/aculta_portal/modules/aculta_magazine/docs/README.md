@@ -136,7 +136,7 @@ separar formatos; todas as publicações usam `revista`.
   `aculta-magazine:migrate-gallery-references` faz prévia por padrão e migra em
   lotes apenas embeds únicos resolvidos; casos com várias galerias são
   reportados para revisão. O corpo e a apresentação Entity Embed permanecem
-  inalterados. Consulte [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
+  inalterados. Consulte [ACULTA Content Index](../../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 - A captura pública em Firefox não teve overflow em mobile; com sessão editorial,
   a barra administrativa gera 78 px de overflow em 390 px. Revisar essa
   apresentação antes de RC.

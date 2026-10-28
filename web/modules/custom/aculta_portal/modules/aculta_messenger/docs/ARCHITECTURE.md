@@ -1,6 +1,6 @@
 # Arquitetura do ACULTA Messenger
 
-**Fonte normativa principal.** Revisão: 2026-10-25. O inventário de rotas e classes implementadas está em [MESSENGER.md](../../../../../../docs/portal/MESSENGER.md); o plano de entrega é [ROADMAP.md](ROADMAP.md).
+**Fonte normativa principal.** Revisão: 2026-10-25. O inventário de rotas e classes implementadas está em [MESSENGER.md](../../../../../../../docs/portal/MESSENGER.md); o plano de entrega é [ROADMAP.md](ROADMAP.md).
 
 ## Decisão e limites
 

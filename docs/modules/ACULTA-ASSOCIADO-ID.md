@@ -1,4 +1,4 @@
-> **SUPERSEDED (2026-10-23).** Este plano de migração para `aculta_associado_id` está cancelado. Por decisão do responsável, `aculta_id_cpf` é o módulo oficial de CPF/CNPJ; `aculta_associado_id` será descontinuado e removido após verificação de Runtime (ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 4). Os dados de associação pertencem ao domínio de usuários/perfis. O texto abaixo é histórico e não representa a arquitetura vigente.
+> **SUPERSEDED (2026-10-23).** Este plano de migração para `aculta_associado_id` está cancelado. Por decisão do responsável, `aculta_id_cpf` é o módulo oficial de CPF/CNPJ; `aculta_associado_id` será descontinuado e removido após verificação de Runtime (ver [CPF e checkout](../portal/CPF-CONSOLIDACAO-E-CHECKOUT.md), seção 4). Os dados de associação pertencem ao domínio de usuários/perfis. O texto abaixo é histórico e não representa a arquitetura vigente.
 
 # ACULTA Associado ID — escopo e migração
 
@@ -21,7 +21,7 @@ orquestração dos demais dados ainda não estão implementados.
 
 ## Compatibilidade da substituição
 
-O nome anterior da extensão era `aculta_id_cpf` (o diretório presente no Git).
+O módulo oficial atual é [`aculta_id_cpf`](../../web/modules/custom/aculta_portal/modules/aculta_id_cpf/README.md).
 A extensão antiga está preservada como compatibilidade transitória; o Portal
 prefere o serviço novo e recorre ao antigo durante a migração. O Runtime local
 está com `aculta_id_cpf` habilitado e schema `10001`.
@@ -75,6 +75,6 @@ submódulo para o histórico detalhado da implementação original.
 
 ## Referências
 
-- [README do submódulo](../../web/modules/custom/aculta_portal/modules/aculta_associado_id/README.md)
+- [README de CPF/CNPJ](../../web/modules/custom/aculta_portal/modules/aculta_id_cpf/README.md)
 - [Changelog do Portal](../../web/modules/custom/aculta_portal/CHANGELOG.md)
 - [Manual Receita/Serpro do DV de CNPJ](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/cnpj/manual-dv-cnpj.pdf)

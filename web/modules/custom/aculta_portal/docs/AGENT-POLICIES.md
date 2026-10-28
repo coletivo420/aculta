@@ -6,7 +6,7 @@ Estas regras foram realocadas do arquivo histórico de instruções; aplique som
 
 CTools é uma implementação suportada do projeto, não uma dependência a evitar
 por padrão. Antes de criar configuração ou código para uma necessidade que ele
-cobre, leia [`web/modules/custom/aculta_portal/docs/CTOOLS.md`](web/modules/custom/aculta_portal/docs/CTOOLS.md) e verifique o código
+cobre, leia [`web/modules/custom/aculta_portal/docs/CTOOLS.md`](CTOOLS.md) e verifique o código
 instalado e a documentação upstream. Use `ctools_views` para blocos de Views
 quando for necessário configurar por colocação, por exemplo quantidade de itens
 e pager; use a API de plugins/condições do CTools para integrações contextuais
@@ -50,7 +50,7 @@ A documentação deve registrar o motivo arquitetural das regras, não apenas su
   integração visual e funcional deve reutilizar `aculta_gallery`, `aculta_image`,
   Document Viewer e componentes ACULTA pertinentes, sem criar leitores ou
   storage paralelos.
-- Contrato vigente e sequência: [`docs/portal/USER-UPLOADS.md`](docs/portal/USER-UPLOADS.md).
+- Contrato vigente e sequência: [`docs/portal/USER-UPLOADS.md`](../../../../../docs/portal/USER-UPLOADS.md).
 
 ## Fronteira de autenticação e anti-bot
 

@@ -106,7 +106,7 @@ ACULTA420 apresenta o estado vazio junto aos demais resultados do Fórum.
 A busca `/pesquisar` é somente leitura e usa GET. Como as listagens públicas do
 Growroom420, não renderiza CAPTCHA; essa exceção não se estende a formulários
 que criam ou alteram conteúdo. A política está detalhada em
-[`docs/integrations/CAPTCHA.md`](/docs/integrations/CAPTCHA.md).
+[`docs/integrations/CAPTCHA.md`](../../../../../../../docs/integrations/CAPTCHA.md).
 
 Não se usa CTools para montar o formulário ou a consulta: Search API e Views são
 os mecanismos próprios. CTools Views continua disponível para blocos de Views

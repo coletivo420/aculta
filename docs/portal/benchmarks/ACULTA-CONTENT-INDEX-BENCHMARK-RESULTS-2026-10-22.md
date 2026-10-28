@@ -165,7 +165,7 @@ pendente.
 
 ## Arquivos brutos
 
-- [CSV de query/catálogo](benchmarks/aculta-index-query-2026-10-22.csv).
-- [CSV de relações](benchmarks/aculta-index-relations-2026-10-22.csv).
-- [CSV de writer, insert/idempotência/update](benchmarks/aculta-index-writer-1000-2026-10-23.csv).
-- [CSV de rebuild/auditoria por rodada e variante](benchmarks/aculta-index-maintenance-batch-comparison-10k-2026-10-23.csv).
+- [CSV de query/catálogo](aculta-index-query-2026-10-22.csv).
+- [CSV de relações](aculta-index-relations-2026-10-22.csv).
+- [CSV de writer, insert/idempotência/update](aculta-index-writer-1000-2026-10-23.csv).
+- [CSV de rebuild/auditoria por rodada e variante](aculta-index-maintenance-batch-comparison-10k-2026-10-23.csv).

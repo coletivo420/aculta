@@ -403,5 +403,5 @@ ACULTA Studio Marley (`marley`) é a experiência editorial e ACULTA Studio
 Ganjalab (`ganjalab`) é a experiência de aprendizagem. `aculta_studio` continua
 sendo a plataforma compartilhada. As seções abaixo de G420/GanjaLab preservam
 o histórico das fases anteriores; nomes e caminhos atuais estão no
-[contrato de identidade](../../../../../../docs/portal/ACULTA-STUDIO-IDENTITY.md).
+[contrato de identidade](../../../../../../../docs/portal/ACULTA-STUDIO-IDENTITY.md).
 

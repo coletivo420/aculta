@@ -3,7 +3,7 @@
 Data: 2026-10-20. Branch: `docs/aculta-forum-0.1.0-dev.1` (PR #297, base `main`). Escopo: inventário estático do
 código versionado e da configuração exportada. Nenhum comportamento foi alterado nesta fase.
 
-Referências: [EMAIL-TRANSPORT](../../../../../../docs/portal/EMAIL-TRANSPORT.md),
+Referências: [EMAIL-TRANSPORT](../../../../../../../docs/portal/EMAIL-TRANSPORT.md),
 [ARCHITECTURE](ARCHITECTURE.md), [UPSTREAM](UPSTREAM.md).
 
 ## 1. Dependências e módulos ativos

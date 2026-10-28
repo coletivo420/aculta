@@ -10,9 +10,9 @@ Documento de referência arquitetural. Dono: `aculta_messenger` no ACULTA
 Portal. Revisão: 2026-10-15.
 
 > Estado atual do projeto (rotas, serviços, hooks, classes e contratos com o
-> tema) está em [`docs/portal/MESSENGER.md`](../../../../../../docs/portal/MESSENGER.md).
+> tema) está em [`docs/portal/MESSENGER.md`](../../../../../../../docs/portal/MESSENGER.md).
 > A separação entre módulo, submódulo e tema está em
-> [`docs/portal/MESSENGER-AUDIT.md`](../../../../../../docs/portal/MESSENGER-AUDIT.md).
+> [`docs/portal/MESSENGER-AUDIT.md`](../../../../../../../docs/portal/MESSENGER-AUDIT.md).
 > As seções deste arquivo descrevem as decisões de cada subfase.
 
 ## Fronteira

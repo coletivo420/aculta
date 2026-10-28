@@ -3,12 +3,12 @@
 ## Mapa de documentação
 
 - [README do projeto](README.md) — entrada geral e índice de módulos/temas.
-- [Mapa de caminhos](docs/architecture/ROUTES-SITEMAP.md) — referência transversal de rotas ativas, administrativas, internas, desabilitadas e redirects.
-- [Índice documental](docs/README.md) — arquitetura, decisões, normas e operação.
-- [Inspeção visual de e-mails](docs/operations/INSPECAO-VISUAL-EMAIL.md) — leitura por IMAP da caixa de monitoramento (`dmarc@` é alias de `naoresponda@`), somente leitura, sem expor senhas.
-- [Normas do Portal](docs/portal/README.md) — padrões, políticas e contratos do `aculta_portal`.
-- [Módulos e integrações](docs/modules/README.md) — referências transversais Core/contrib.
-- [Documentação ACULTA420](web/themes/custom/aculta420/docs/README.md) — tema e design system.
+- [Mapa de caminhos](../architecture/ROUTES-SITEMAP.md) — referência transversal de rotas ativas, administrativas, internas, desabilitadas e redirects.
+- [Índice documental](../README.md) — arquitetura, decisões, normas e operação.
+- [Inspeção visual de e-mails](INSPECAO-VISUAL-EMAIL.md) — leitura por IMAP da caixa de monitoramento (`dmarc@` é alias de `naoresponda@`), somente leitura, sem expor senhas.
+- [Normas do Portal](../portal/README.md) — padrões, políticas e contratos do `aculta_portal`.
+- [Módulos e integrações](../modules/README.md) — referências transversais Core/contrib.
+- [Documentação ACULTA420](../../web/themes/custom/aculta420/docs/README.md) — tema e design system.
 - Cada módulo/submódulo mantém seu escopo e guias na própria pasta; o README do
   componente é a entrada local. CHANGELOGs registram entregas, roadmaps registram
   planejamento e `docs/operations/DEBT-REGISTER.md` concentra pendências.
@@ -33,7 +33,7 @@ PROJECT-STATUS-INDEX-GUARD: 2026-10-21
 - Essa regra existe para que trabalhos paralelos não conflitem na mesma linha do
   README. O estado e a próxima fase devem vir do roadmap/changelog dono; não invente fases.
 - Estados vigentes são Dev, RC e Alpha conforme
-  [`docs/operations/RELEASE-LIFECYCLE.md`](docs/operations/RELEASE-LIFECYCLE.md).
+  [`docs/operations/RELEASE-LIFECYCLE.md`](RELEASE-LIFECYCLE.md).
   Não criar `preRC`. RC exige código concluído, gates/testes, revisão de código
   e visual pré-deploy aplicável. Alpha é status e ambiente: candidato implantado
   no servidor de desenvolvimento, aguardando/registrando validação desse Runtime.
@@ -159,7 +159,7 @@ Preserve as fronteiras Core/contrib → `aculta_portal` → contrato neutro → 
 
 CTools é uma implementação suportada do projeto, não uma dependência a evitar
 por padrão. Antes de criar configuração ou código para uma necessidade que ele
-cobre, leia [`web/modules/custom/aculta_portal/docs/CTOOLS.md`](web/modules/custom/aculta_portal/docs/CTOOLS.md) e verifique o código
+cobre, leia [`web/modules/custom/aculta_portal/docs/CTOOLS.md`](../../web/modules/custom/aculta_portal/docs/CTOOLS.md) e verifique o código
 instalado e a documentação upstream. Use `ctools_views` para blocos de Views
 quando for necessário configurar por colocação, por exemplo quantidade de itens
 e pager; use a API de plugins/condições do CTools para integrações contextuais
@@ -496,7 +496,7 @@ WCAG 2.2, critério 1.4.10 Reflow](https://www.w3.org/WAI/WCAG22/Understanding/r
   integração visual e funcional deve reutilizar `aculta_gallery`, `aculta_image`,
   Document Viewer e componentes ACULTA pertinentes, sem criar leitores ou
   storage paralelos.
-- Contrato vigente e sequência: [`docs/portal/USER-UPLOADS.md`](docs/portal/USER-UPLOADS.md).
+- Contrato vigente e sequência: [`docs/portal/USER-UPLOADS.md`](../portal/USER-UPLOADS.md).
 
 ## Segurança
 
@@ -684,7 +684,7 @@ Antes de alterar código do Portal ou do tema, siga `web/themes/custom/aculta420
 - Antes de baixar, pesquisar ou analisar um projeto que já esteja disponível localmente, use a cópia existente nessa pasta. Organize cada referência em subdiretório próprio e mantenha origem, URL e versão/commit identificáveis.
 - Trate esses projetos como material de referência: não os misture ao repositório ACULTA nem altere sua cópia sem necessidade. Código ou funções aproveitados devem ser adaptados ao projeto ACULTA, respeitando licença e atribuição aplicáveis.
 - A pasta pode estar fora dos diretórios graváveis da sessão. Nesse caso, não tente contornar o sandbox: solicite a permissão de escrita necessária pelo mecanismo de aprovação ou prossiga somente com material já acessível.
-- Procedimento e organização: [`docs/operations/PROJETOS-REFERENCIA.md`](docs/operations/PROJETOS-REFERENCIA.md).
+- Procedimento e organização: [`docs/operations/PROJETOS-REFERENCIA.md`](PROJETOS-REFERENCIA.md).
 
 ### Diretório de trabalho obrigatório
 

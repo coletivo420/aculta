@@ -3,7 +3,7 @@
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). PV7 só pode ser classificada RC quando todo o escopo e testes, CSP em Report-Only configurada sem enforcement, acessibilidade e validação visual pré-deploy aplicável estiverem concluídos. Alpha valida a coleta/análise dos relatórios no servidor de desenvolvimento; enforcement será decidido após Alpha. LiteSpeed/Cloudflare são validados depois do deploy em produção.
 
 Este roadmap cobre somente o módulo compartilhado `aculta_pdf_viewer`. O
-roadmap LMS permanece em [ACULTA-LMS-ROADMAP.md](../../../../../../docs/modules/ACULTA-LMS-ROADMAP.md).
+roadmap LMS permanece em [ACULTA-LMS-ROADMAP.md](../../../../../../../docs/modules/ACULTA-LMS-ROADMAP.md).
 Cada etapa deve permanecer pequena, revisável e rastreável por commits na branch
 autorizada. Nenhuma fase aqui autoriza merge, deploy ou operação de configuração
 no Runtime.
@@ -232,4 +232,4 @@ foi homologada no Runtime de teste: membro recebeu o PDF, e remover membership o
 - [Drupal CSP — projeto](https://www.drupal.org/project/csp)
 - [Drupal CSP — alterar a política do site](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/content-security-policy/altering-a-sites-policy)
 - [MDN — diretiva `worker-src`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/worker-src)
-- [Contrato de integração e acesso PDF ACULTA](../../../../../../docs/portal/PDF-VIEWER-INTEGRATION.md)
+- [Contrato de integração e acesso PDF ACULTA](../../../../../../../docs/portal/PDF-VIEWER-INTEGRATION.md)
