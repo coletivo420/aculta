@@ -1,0 +1,9 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.4
+state: Dev
+progress_note: >-
+  MP0–MP7 concluídas e `aculta_maps` ativado no Runtime de teste com OpenStreetMap. Google permanece opcional; chave de
+  navegador e chave server-side de geocodificação são distintas. Firefox ESR verificou 1280 px, 320 px e modo escuro.
+  A política não foi alterada conforme decisão do responsável de não informar IP; revisão editorial da divulgação de
+  tiles e provedor permanece pendente.
+next_phase: 'Revisar editorialmente a divulgação do provedor de tiles sem alterar a decisão sobre IP. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_maps/docs/ROADMAP.md) e [ADR-030](docs/decisions/ADR-030-provedor-mapa-leaflet-osm-com-google-opcional.md).'
