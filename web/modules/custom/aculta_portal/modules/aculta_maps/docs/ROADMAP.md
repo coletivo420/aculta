@@ -14,7 +14,7 @@ Status: MP0 e MP1 concluídas; MP2–MP7 a fazer.
 - [x] `aculta_events` consome `MapRenderer` e `GeocodingService` de `aculta_maps`.
 - [x] Mover os testes unitários de geocodificação e adaptar os Kernel tests do consumidor. Suíte Events: 57 testes, 667 assertions, 27 depreciações; Maps: 5 testes, 5 assertions.
 
-Evidência de MP0: `9ff609c1e`. Código MP1: hash será registrado após o commit de implementação.
+Evidência de MP0: `9ff609c1e`. MP1: `917cce3f1`.
 
 ## MP2 — Configuração e painel (ADM7)
 
