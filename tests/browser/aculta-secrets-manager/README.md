@@ -4,7 +4,7 @@ Verifica as abas Produção/Testes do painel `/painel-administrativo/aculta/segr
 ausência de botões na aba do outro ambiente, troca de aba sem alterar o ambiente, teclado (setas, Home) e
 ausência de rolagem horizontal em 1280, 390 e 320 px.
 
-- **Ambiente:** servidor de testes (`*.aculta.toca.net.br`). Não é o ambiente local.
+- **Ambiente:** servidor de desenvolvimento (`*.aculta.toca.net.br`). Não é o ambiente local.
 - **Execução:** `DISPLAY=:0 python3 tests/browser/aculta-secrets-manager/painel-visual.py`
 - **Variáveis:** `SECRETS_UID` (padrão 205, conta de teste `qa_segredos`), `SUITE_OUT` (capturas, fora do Git).
 - **Login:** link de uso único do Drush, gerado no subprocesso e nunca impresso.
@@ -17,12 +17,12 @@ ausência de rolagem horizontal em 1280, 390 e 320 px.
 - **Execução:** `DISPLAY=:0 python3 tests/browser/aculta-secrets-manager/popups-visual.py`
 - **Cobre:** olho com token CSRF no link (sem clicar); alterar e apagar abrem com título e fecham pelo botão do
   diálogo, sem enviar formulário.
-- **Não cobre:** revelar (o olho mostra o valor real do servidor de testes), gravar e apagar de fato. Essas ações
+- **Não cobre:** revelar (o olho mostra o valor real do servidor de desenvolvimento), gravar e apagar de fato. Essas ações
   pedem credenciais sintéticas, em rodada própria.
 
 ## Histórico de execução
 
-- 2026-10-26, checkout do servidor de testes em `c1e210934`: `painel-visual.py` 16/16 PASS (1280, 390 e 320 px);
+- 2026-10-26, checkout do servidor de desenvolvimento em `c1e210934`: `painel-visual.py` 16/16 PASS (1280, 390 e 320 px);
   `popups-visual.py` 7/7 PASS. Conta `qa_segredos` (uid 205).
 - Correção do seletor da tabela: o módulo marca o contêiner com `data-portal-ui="secrets-table-scroll"`, e não com a
   classe. O script procurava a classe e acusava falso "não encontrado" (`excesso=None`). O seletor agora usa o atributo,
@@ -31,7 +31,7 @@ ausência de rolagem horizontal em 1280, 390 e 320 px.
 
 ## Foco por teclado, alvos e cor do ícone de apagar (Claro): `claro-foco-alvos.py`
 
-- **Ambiente:** servidor de testes (`*.aculta.toca.net.br`), tema Claro. Firefox ESR visível em `DISPLAY=:0`.
+- **Ambiente:** servidor de desenvolvimento (`*.aculta.toca.net.br`), tema Claro. Firefox ESR visível em `DISPLAY=:0`.
 - **Execução:** `DISPLAY=:0 SECRETS_UID=205 python3 tests/browser/aculta-secrets-manager/claro-foco-alvos.py`
 - **Cobre:** Tab alcança revelar, alterar e apagar em 1280, 390 e 320 px, com foco visível (estilo computado);
   abas recebem foco; alvos de toque ≥ 44 px; cor computada do ícone de apagar (esperado `rgb(179, 38, 30)`).

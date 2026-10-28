@@ -6,7 +6,7 @@ existe em vez de reescrever a descoberta de seletores e o fluxo.
 
 ## Ambiente de execução
 
-- Os testes visuais X11 rodam com `DISPLAY=:0` contra o servidor de testes `aculta.toca.net.br`, cujo docroot
+- Os testes visuais X11 rodam com `DISPLAY=:0` contra o servidor de desenvolvimento `aculta.toca.net.br`, cujo docroot
   `/home/aculta/public_html` é o checkout `/home/piradopirata/projetos/aculta`.
 - O código testado é o do commit que está nesse checkout. Confira antes com `git rev-parse --short HEAD` no checkout.
 - Trocar o commit desse checkout exige autorização do responsável, backup de alterações não commitadas e `drush cr`.
@@ -21,7 +21,7 @@ sessão termina e o trabalho se perde.
 - **Uma pasta por frente**, nomeada pelo assunto (`aculta-cpf-checkout`), não
   pelo agente nem pela data.
 - **O `README.md` local** diz o que o script cobre, o ambiente em que roda
-  (servidor de testes ou local), as variáveis de ambiente, como executar e
+  (servidor de desenvolvimento ou local), as variáveis de ambiente, como executar e
   quais são as limitações conhecidas.
 - **Artefatos ficam fora do repositório**: PNG, HTML e logs vão para
   `$SUITE_OUT` (padrão em `/tmp/...`). O repositório guarda o script, não a
@@ -31,7 +31,7 @@ sessão termina e o trabalho se perde.
 - **Reaproveite antes de criar**: procure aqui a frente mais próxima e reuse
   `wdlib.py` (WebDriver W3C do projeto) em vez de reescrever a camada de
   driver.
-- **Ambiente declarado**: o script deve dizer se fala com o servidor de testes
+- **Ambiente declarado**: o script deve dizer se fala com o servidor de desenvolvimento
   (`*.aculta.toca.net.br`) ou com o ambiente local (`127.0.0.1` com os hosts
   resolvidos no perfil do Firefox). Não confunda os dois.
 - **Mudança global exige restauração**: se o teste troca tema, configuração ou
@@ -52,21 +52,21 @@ pasta.
 | Script | Cobre | Ambiente |
 |---|---|---|
 | `wdlib.py` | biblioteca WebDriver W3C: sessão, `get`, `js`, `find`, `click`, `type`, abas, screenshot | qualquer |
-| `login-probe.py` | descoberta de seletores do login, `/dados` e página de produto da Loja | servidor de testes |
-| `login-captcha.py` | login com espera do token do Cloudflare Turnstile | servidor de testes |
-| `multi-tab-checkout.py` | carrinho e checkout em múltiplas abas, cookies sem valor, LMS (`/group/1`) | servidor de testes |
+| `login-probe.py` | descoberta de seletores do login, `/dados` e página de produto da Loja | servidor de desenvolvimento |
+| `login-captcha.py` | login com espera do token do Cloudflare Turnstile | servidor de desenvolvimento |
+| `multi-tab-checkout.py` | carrinho e checkout em múltiplas abas, cookies sem valor, LMS (`/group/1`) | servidor de desenvolvimento |
 | `olivero-smoke.py` | tema Olivero no Portal, Fórum e Revista; assets do tema, erros visíveis, screenshot | ambiente local |
 
 ### `aculta-wiki/`
 
 | Script | Cobre | Ambiente |
 |---|---|---|
-| `visual.py`, `keyboard.py` | páginas públicas, reflow e teclado da busca | servidor de testes |
-| `we-sativa.py` | workspace autenticado, reflow 1280/390/320 px, ação nativa e retorno ao Studio | servidor de testes; login Drush da conta de teste |
+| `visual.py`, `keyboard.py` | páginas públicas, reflow e teclado da busca | servidor de desenvolvimento |
+| `we-sativa.py` | workspace autenticado, reflow 1280/390/320 px, ação nativa e retorno ao Studio | servidor de desenvolvimento; login Drush da conta de teste |
 
 ### `aculta-conta-raiz/`
 
-Raiz da Conta (Domain ACCOUNT) sem sessão: `/` e `/conta-legada` levam ao login, `/minha-conta` e `/studio` dão 404, e o login não tem rolagem horizontal em 390 px e 1280 px. Servidor de testes, Firefox ESR em `DISPLAY=:0`. Não cobre o estado logado. Ver `aculta-conta-raiz/README.md`.
+Raiz da Conta (Domain ACCOUNT) sem sessão: `/` e `/conta-legada` levam ao login, `/minha-conta` e `/studio` dão 404, e o login não tem rolagem horizontal em 390 px e 1280 px. Servidor de desenvolvimento, Firefox ESR em `DISPLAY=:0`. Não cobre o estado logado. Ver `aculta-conta-raiz/README.md`.
 
 ### Fora da convenção de pasta
 
@@ -81,7 +81,7 @@ deixou. Servem de referência de fluxo; ao evoluí-los, considere movê-los para
 
 ## Evidência das últimas rodadas
 
-- CPF/checkout, servidor de testes: `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 9.6.
+- CPF/checkout, servidor de desenvolvimento: `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 9.6.
 - Olivero, ambiente local: mesma seção, subseção "Tema Olivero no ambiente local".
 
 ### `aculta-mercadopago/`

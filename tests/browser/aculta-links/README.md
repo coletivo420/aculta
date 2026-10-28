@@ -5,7 +5,7 @@ via `tests/browser/aculta-cpf-checkout/wdlib.py`. Não usa Chromium nem headless
 
 ## O que cobre
 
-Para a micropágina `LINK_SLUG` publicada no servidor de teste, como visitante anônimo, em 1280 px e 390 px:
+Para a micropágina `LINK_SLUG` publicada no servidor de desenvolvimento, como visitante anônimo, em 1280 px e 390 px:
 
 | Verificação | Esperado |
 | --- | --- |
@@ -21,7 +21,7 @@ Para a micropágina `LINK_SLUG` publicada no servidor de teste, como visitante a
 
 ## Pré-requisito: página publicada
 
-O script não cria páginas. Para o teste, é preciso uma micropágina publicada no servidor de teste. A execução de
+O script não cria páginas. Para o teste, é preciso uma micropágina publicada no servidor de desenvolvimento. A execução de
 referência usou uma página de teste criada por Drush (`slug = pagina-teste-mobile`, um item de botão) e removida ao
 final. Não há credencial no script.
 
@@ -42,6 +42,6 @@ Código de saída: `0` se tudo passou; `1` se alguma verificação falhou.
 - Antes da correção: falha, com 1 alvo de 20 px ("Botão de teste") em 390 px e em 1280 px. Motivo: o link do item
   não tinha classe nem estilo de área de toque (`cfa192096` corrige, com a biblioteca `aculta_links/micropagina`).
 - Depois da correção: 2/2 PASS.
-- 2026-10-26, checkout do servidor de testes em `c1e210934` (docroot `/home/aculta/public_html`): 2/2 PASS em 1280 px e
+- 2026-10-26, checkout do servidor de desenvolvimento em `c1e210934` (docroot `/home/aculta/public_html`): 2/2 PASS em 1280 px e
   390 px (HTTP 200, sem rolagem horizontal, nenhum alvo menor que 44 px). Página sintética `pagina-teste-mobile`, com um
   link e um item marcados como `TESTE VISUAL`, criada por Drush para a rodada e removida ao final.

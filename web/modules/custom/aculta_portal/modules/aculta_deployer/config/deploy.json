@@ -20,7 +20,7 @@
       "route": "entity.commerce_product.canonical",
       "note": "A página do produto da loja fica no host SHOP (loja.aculta.toca.net.br em teste; loja.aculta.org em produção). Carrinho e checkout ficam no MAIN."
     },
-    "note": "Migração de domínios do servidor de testes (*.aculta.toca.net.br) para produção (*.aculta.org), por domínio registrado no Portal. Dado declarado: o comando `domains` confere os registros de config/sync contra esta tabela (somente leitura). A troca em produção só acontece no deploy do RC.",
+    "note": "Migração de domínios do servidor de desenvolvimento (*.aculta.toca.net.br) para produção (*.aculta.org), por domínio registrado no Portal. Dado declarado: o comando `domains` confere os registros de config/sync contra esta tabela (somente leitura). A troca de domínio acontece no Alpha, no servidor de desenvolvimento; o deploy no Hostinger (produção) acontece no Beta.",
     "entries": [
       {
         "domain_id": "aculta_org",
@@ -94,7 +94,7 @@
         "https://eventos.aculta.org/",
         "https://growroom420.aculta.org/"
       ],
-      "note": "Indexação ativa em todos os domínios e subdomínios de produção. Noindex de páginas privadas da conta permanece no Portal (meta robots por rota).",
+      "note": "Indexação ativa em todos os domínios e subdomínios de produção, a partir do Beta. Até lá, o servidor de desenvolvimento mantém noindex mesmo servindo `*.aculta.org` no Alpha (decisão de 2026-10-28); por isso esta verificação não é gate do Alpha. Noindex de páginas privadas da conta permanece no Portal (meta robots por rota).",
       "private_probes": [
         "https://conta.aculta.org/entrar",
         "https://conta.aculta.org/dados",
@@ -119,7 +119,7 @@
         "https://links.aculta.toca.net.br/",
         "https://eventos.aculta.toca.net.br/"
       ],
-      "note": "Servidor de testes não indexável."
+      "note": "Servidor de desenvolvimento não indexável."
     }
   },
   "sitemap": {
@@ -131,7 +131,7 @@
     "test": {
       "index_url": "https://aculta.toca.net.br/sitemap.xml",
       "index_base": "https://aculta.toca.net.br",
-      "note": "Índice no servidor de testes. Os filhos listam os hosts de teste (perfil test, registros de domínio por ambiente); a produção lista os hosts de produção."
+      "note": "Índice no servidor de desenvolvimento. Os filhos listam os hosts de teste (perfil test, registros de domínio por ambiente); a produção lista os hosts de produção."
     }
   },
   "environments": {
@@ -193,63 +193,63 @@
     },
     {
       "file": "config/sync/domain_alias.alias.aculta_test_8080.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.aculta_toca_net_br.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.apoio_aculta_test_8080.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.apoio_aculta_toca_net_br.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.revista_aculta_test_8080.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.revista_aculta_toca_net_br.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.conta_aculta_test_8080.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.conta_aculta_toca_net_br.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.cursos_aculta_test_8080.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.cursos_aculta_toca_net_br.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.forum_aculta_toca_net_br.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.loja_aculta_test_8080.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.loja_aculta_toca_net_br.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.wiki420_aculta_test_8080.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/domain_alias.alias.wiki420_aculta_toca_net_br.yml",
-      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+      "reason": "alias de host do servidor de desenvolvimento (migrar para provisionamento por ambiente)"
     },
     {
       "file": "config/sync/metatag.metatag_defaults.global.yml",
@@ -273,7 +273,7 @@
     },
     {
       "file": "config/sync/domain_alias.alias.links_aculta_toca_net_br.yml",
-      "reason": "alias do host do servidor de testes; excluído no build de produção"
+      "reason": "alias do host do servidor de desenvolvimento; excluído no build de produção"
     },
     {
       "file": "config/sync/domain.record.eventos_aculta_org.yml",
@@ -281,7 +281,7 @@
     },
     {
       "file": "config/sync/domain_alias.alias.eventos_aculta_toca_net_br.yml",
-      "reason": "alias do host do servidor de testes; excluído no build de produção"
+      "reason": "alias do host do servidor de desenvolvimento; excluído no build de produção"
     },
     {
       "file": "config/sync/aculta_mailer.transport.smtp_hostinger.yml",
@@ -441,7 +441,7 @@
       ]
     },
     "test": {
-      "description": "Configuração do servidor de testes (aculta-deployer build --target test). Remetente de teste.",
+      "description": "Configuração do servidor de desenvolvimento (aculta-deployer build --target test). Remetente de teste.",
       "rules": [
         {
           "file": "config/sync/aculta_mailer.brand.aculta.yml",
@@ -680,7 +680,7 @@
         "production": {
           "status": "pendente",
           "registration_id": null,
-          "action": "no deploy do RC, o deployer faz: aculta-deployer provision --env=production --secrets=CAMINHO_DO_ARQUIVO_DE_SEGREDOS_DO_SERVIDOR --apply --confirm-production --remove-test=2631443. Gera BREVO_WEBHOOK_TOKEN e MAILER_PAYLOAD_KEY se faltarem, cadastra o webhook de produção e remove o cadastro de teste. Depois, atualizar registration_id aqui com o id devolvido.",
+          "action": "no deploy Beta (Hostinger), o deployer faz: aculta-deployer provision --env=production --secrets=CAMINHO_DO_ARQUIVO_DE_SEGREDOS_DO_SERVIDOR --apply --confirm-production --remove-test=2631443. Gera BREVO_WEBHOOK_TOKEN e MAILER_PAYLOAD_KEY se faltarem, cadastra o webhook de produção e remove o cadastro de teste. Depois, atualizar registration_id aqui com o id devolvido.",
           "decision_pending": [
             "Confirmar com o responsável a data do cadastro de produção (depende da implantação)."
           ]
@@ -712,7 +712,7 @@
     "transition": {
       "from": "test",
       "to": "production",
-      "change": "cookie_domain muda de .aculta.toca.net.br para .aculta.org no deploy do RC",
+      "change": "cookie_domain muda de .aculta.toca.net.br para .aculta.org na troca de domínio no Alpha",
       "impact": "o cookie de sessão é emitido por host de produção; sessões do Runtime de teste não são aceitas em aculta.org. Usuários entram de novo.",
       "verify": "aculta-deployer cookies (somente leitura)",
       "decision_pending": [

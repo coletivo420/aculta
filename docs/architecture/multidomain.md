@@ -40,7 +40,7 @@ hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado e
 
 ## Vitrine do MAIN (2026-10-28)
 
-**Comportamento anterior (medido no servidor de testes em 2026-10-28):** cada conteúdo
+**Comportamento anterior (medido no servidor de desenvolvimento em 2026-10-28):** cada conteúdo
 respondia só no próprio host. Pelo `main`, `/verbete/...` da wiki respondia 403, `/noticias`
 da revista e `/topico/...` do fórum respondiam 404, e `/apoio` respondia 404 em todos os hosts
 (é rota interna). Só a raiz de cada host era acessível e o `main` não apresentava os subdomínios.
@@ -106,7 +106,7 @@ subdomínio continua respondendo somente no próprio host.
 - Abaixo dos canais sociais, a página referencia os nós `project` publicados
   existentes. O Portal verifica acesso e monta URLs para MAIN com
   `DomainPurposeManager`, respeitando o host configurado em cada ambiente.
-- DNS do servidor de testes: CNAME `links.aculta.toca.net.br` →
+- DNS do servidor de desenvolvimento: CNAME `links.aculta.toca.net.br` →
   `aculta.toca.net.br`, sem proxy Cloudflare. A produção não recebeu registro DNS
   nesta configuração.
 - O host de testes mantém `noindex, nofollow, noarchive` conforme a política de

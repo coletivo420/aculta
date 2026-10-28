@@ -196,7 +196,7 @@ Configuração que muda entre teste e produção não é editada à mão: está 
   e nos hosts de conteúdo. Confere (1) que cada filho do índice está na base do ambiente
   (`index_base`) e (2) que as URLs de conteúdo pertencem aos hosts da política de produção e
   que esses hosts respondem (cross-host).
-- `$CLI sitemap --env=test`: o mesmo, com a base do servidor de testes. Os filhos continuam
+- `$CLI sitemap --env=test`: o mesmo, com a base do servidor de desenvolvimento. Os filhos continuam
   com URLs canônicas de produção, por desenho do Portal; só o índice segue a base do ambiente.
 - `$CLI robots --env=production` também confere o `robots.txt` de cada host: diretiva
   `Sitemap:` com o índice de produção e nenhum `Disallow: /`.
@@ -204,7 +204,7 @@ Configuração que muda entre teste e produção não é editada à mão: está 
 ### Provisionamento por ambiente (problema 1)
 
 - Produção: `simple_sitemap.settings:base_url` é `https://aculta.org` em `config/sync`.
-- Servidor de testes: o runtime define `base_url` como `https://aculta.toca.net.br`, por
+- Servidor de desenvolvimento: o runtime define `base_url` como `https://aculta.toca.net.br`, por
   `drush config:set` no runtime (não versionado, operação de runtime). Sem isso,
   `sitemap --env=test` falha com "índice aponta para aculta.org".
 - Qualquer nova divergência de host, base, `robots.txt` ou sitemap entre ambientes deve ser

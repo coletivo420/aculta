@@ -6,15 +6,15 @@ Documento vivo. Atualizar a cada rodada de teste: seções F (resultado) e G (de
 
 Dois agentes e uma pessoa responsável (Felipe):
 
-- **Agente do repositório** (Claude Code, neste repositório): altera código e configuração, roda gates, publica no servidor de testes e diz o **passo exato** a executar.
+- **Agente do repositório** (Claude Code, neste repositório): altera código e configuração, roda gates, publica no servidor de desenvolvimento e diz o **passo exato** a executar.
 - **Agente de navegador** (Claude in Chrome / Cowork): executa o passo no navegador logado na conta de teste e reporta **etapa, URL, pedido, erro e requisição** (com o texto da mensagem, se houver). Não corrige nada.
 - **Felipe**: faz o login quando o agente de navegador não pode digitar senha, digita cartão e CPF, e decide o que é mudança de segurança.
 
 Regra: o agente do repositório só afirma que algo funciona depois de verificar por HTTP ou API. Depois que o navegador confirma, o resultado vai para a seção F.
 
-## B) Hosts e URLs (servidor de testes)
+## B) Hosts e URLs (servidor de desenvolvimento)
 
-Os hosts do servidor de testes são `*.aculta.toca.net.br`. `*.aculta.org` é produção; não usar produção nos testes.
+Os hosts do servidor de desenvolvimento são `*.aculta.toca.net.br`. `*.aculta.org` é produção; não usar produção nos testes.
 
 | Host | Papel | Caminhos principais |
 | --- | --- | --- |
@@ -85,7 +85,7 @@ Login de teste sem digitar senha: o agente do repositório gera um link único c
 | `0e8f00e` (publicado) | 0.3.0-dev.14 | Documentação do incidente (`CHECKOUT-BILLING.md`); `collect_billing_information` do Mercado Pago; acordo sem destino fixo | Erro de cobrança no pedido 5; destino fixo levava à home da loja |
 | Pendente de commit | 0.3.0-dev.15 | Pane `aculta_billing_address` no fluxo `default`; `billing_information` trocado no `config/sync`; flag do Mercado Pago de volta a `false`; traduções "Payment" e "Quantity"; display `cart` do bundle `camiseta_tamanho` | Passo de endereço com CEP (G1); nome do produto no carrinho (F5); tradução (F8) |
 
-Estado no runtime (servidor de testes):
+Estado no runtime (servidor de desenvolvimento):
 
 - Loja 1: `billing_countries = [BR]` (dado de entidade; não está em `config/sync`. Replicar em produção).
 - Pane `aculta_billing_address` registrado e presente em `order_information`; página do pedido 5 renderiza o campo `postal_code` e carrega `cep_autocomplete/viacep`.
@@ -262,7 +262,7 @@ uma foto própria para recortar."). **Não executado:** P2, P4 e P5 no navegador
   (`FormHooks::accountAjaxSubmit`). O envio por AJAX devolvia o próprio formulário, e `disableAccountRedirect` cancelava
   o redirecionamento do Core (`UserLoginForm::submitForm`). A validação e a sessão estavam corretas.
 - **Correção:** `user_login_form` fica fora da regra AJAX; o login volta a ser um POST comum com redirecionamento 303.
-- **Roteiro de regressão (servidor de testes):**
+- **Roteiro de regressão (servidor de desenvolvimento):**
   1. Abrir `/entrar`, informar a conta de teste e a senha correta, e enviar.
   2. Esperado: a página sai de `/entrar` e vai para a área logada (`https://conta.aculta.toca.net.br/`); o menu da
      conta aparece.
@@ -311,7 +311,7 @@ RUNTIME STATUS: DEFERRED. Ainda não executado.
 
 ## O. Fase 10 da ACULTA Gallery (rodadas de 2026-10-14 e 2026-10-15)
 
-Ambiente: servidor de testes (`*.aculta.toca.net.br`), Firefox por BiDi com ferramentas internas (scripts do agente). Hosts: Revista `revista420.aculta.toca.net.br`, principal `aculta.toca.net.br`. Login de administrador por link de uso único (`drush user:login`, conta do responsável). Dados de teste criados e removidos ao fim de cada rodada.
+Ambiente: servidor de desenvolvimento (`*.aculta.toca.net.br`), Firefox por BiDi com ferramentas internas (scripts do agente). Hosts: Revista `revista420.aculta.toca.net.br`, principal `aculta.toca.net.br`. Login de administrador por link de uso único (`drush user:login`, conta do responsável). Dados de teste criados e removidos ao fim de cada rodada.
 
 | Passo | Resultado | Evidência |
 | --- | --- | --- |
@@ -351,7 +351,7 @@ Decisão pendente: com a rodada 2 sem defeitos abertos, a Fase 10 pode ser decla
 
 ### Pré-condições
 
-- Host: servidor de testes `aculta.toca.net.br` (Homelab, runtime `aculta_runtime`).
+- Host: servidor de desenvolvimento `aculta.toca.net.br` (Homelab, runtime `aculta_runtime`).
 - Conta: membro comum `teste.comum`, login por link único gerado com `drush uli`.
 - Destinatário: `teste.destino.nova` (criado só para o teste).
 - Navegador: Firefox ESR 153 headless, controlado pelo geckodriver 0.37.1 (protocolo WebDriver). O Chromium do host travou a aba nesta rodada e não foi usado.
@@ -383,7 +383,7 @@ Decisão pendente: com a rodada 2 sem defeitos abertos, a Fase 10 pode ser decla
 
 ### Pré-condições
 
-- Host: servidor de testes `aculta.toca.net.br` (Homelab, runtime `aculta_runtime`).
+- Host: servidor de desenvolvimento `aculta.toca.net.br` (Homelab, runtime `aculta_runtime`).
 - Contas: `teste.comum` (uid 5, confirmada) e `teste.b` (uid 31, criada para o teste). A suíte zera, no início, a privacidade, as amizades, os bloqueios e os contadores de envio das duas contas, e apaga as conversas entre elas.
 - Privacidade "só amigos" de `teste.b` definida pelo `user.data` (o mesmo dado que o formulário de Configurações grava). Não passou pela interface de Configurações.
 - Navegador: Firefox ESR 153 headless, geckodriver 0.37.1 (protocolo WebDriver). Chromium não usado (travou a aba).
@@ -500,7 +500,7 @@ Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova co
 
 ## Imagens inline da Revista — revisão integrada (2026-10-16)
 
-- **Ambiente:** servidor de testes, host `revista420.aculta.toca.net.br`, Firefox 153.4 ESR e geckodriver 0.37.1; Drupal 11.4.10, banco `aculta_runtime`.
+- **Ambiente:** servidor de desenvolvimento, host `revista420.aculta.toca.net.br`, Firefox 153.4 ESR e geckodriver 0.37.1; Drupal 11.4.10, banco `aculta_runtime`.
 - **Acesso:** Firefox/geckodriver em sessão privada sem autenticação. Fixture foi artigo temporário `published`, domínio `revista420_aculta_org`, quatro imagens com modelo e legenda. Todas as fixtures criadas nesta rodada foram removidas; conteúdo preexistente não foi alterado.
 - **Desktop (1366 px):** as quatro figuras públicas renderizaram com `<figcaption>`. Larguras aferidas: Pequena 320 px, Padrão 580 px, Larga 900 px e Destaque 960 px. As imagens carregadas sob demanda foram verificadas após rolagem.
 - **Janela estreita na primeira rodada:** ao pedir 390 px pelo redimensionamento tradicional do geckodriver, o Firefox informou viewport útil de 500 px. Nessa largura, os quatro modelos e imagens mediram 456 px, as legendas apareceram e `document.documentElement.scrollWidth` não excedeu o viewport.
@@ -581,7 +581,7 @@ Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova co
   formulários nem criou conteúdo. RUNTIME STATUS: PASS para esta navegação.
 
 Aplicar na revisão visual da dev.11 e repetir na homologação rc.1, usando
-Firefox visível na sessão X11 do servidor de teste ou workstation autorizada.
+Firefox visível na sessão X11 do servidor de desenvolvimento ou workstation autorizada.
 Confirmar `DISPLAY`, URI de teste e viewport efetivo do navegador; registrar
 resolução CSS aferida, tema claro/escuro, conta/perfil de acesso e data da
 consulta de referência. Não salvar screenshots com dados pessoais ou privados
@@ -616,7 +616,7 @@ esse roteiro com o Firefox X11 e evidência real.
 ## R. Rodada no X11 local (2026-10-21): foto, associado, atividade e login
 
 Ambiente: Chromium com janela visível no display X11 local (`DISPLAY=:0`), controlado pelo protocolo DevTools; conta de
-teste `teste.comum` (uid 5); administração pelo navegador com link único gerado no servidor de testes. Capturas no
+teste `teste.comum` (uid 5); administração pelo navegador com link único gerado no servidor de desenvolvimento. Capturas no
 diretório de trabalho do agente (não versionadas). Esta rodada substitui os passos de envio do roteiro N, que ainda citava
 "Salvar" depois do recorte e o limite de 2 MB (o limite atual é o da `UploadPolicy`, 10 MB).
 

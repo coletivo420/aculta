@@ -15,7 +15,7 @@ não é aceito no outro (sintoma observado no Runtime: o administrador logado em
 | Ambiente | `cookie_domain` | Arquivo que define | Carregado por | Situação |
 | --- | --- | --- | --- | --- |
 | **test** (Homelab, `*.aculta.toca.net.br`) | `.aculta.toca.net.br` | `web/sites/default/services.homelab.yml` (versionado) | `settings.local.php` do Homelab | Vigente |
-| **production** (`*.aculta.org`) | `.aculta.org` | `web/sites/default/services.hostinger.yml` (provisionado no servidor; **não versionado**) | `settings.hostinger.php.example` (modelo) | Declarado; provisionar no RC |
+| **production** (`*.aculta.org`) | `.aculta.org` | `web/sites/default/services.hostinger.yml` (provisionado no servidor; **não versionado**) | `settings.hostinger.php.example` (modelo) | Declarado; provisionar no Beta |
 
 Campos fixos em ambos os ambientes (já em `services.homelab.yml`): `cookie_samesite: Lax`, `cookie_httponly: true`,
 `cookie_secure: true`. Não mudar sem explicar (regra de segurança do AGENTS).
@@ -31,7 +31,7 @@ existe no repositório (é o caso), confere o modelo `services.hostinger.yml.exa
 
 ## Transição: teste → produção
 
-Quando o site vai para produção (no deploy do RC), o cookie muda de `.aculta.toca.net.br` para `.aculta.org`. Passos:
+Na troca de domínio para `*.aculta.org` no Alpha, o cookie muda de `.aculta.toca.net.br` para `.aculta.org`. Passos:
 
 1. Provisionar `web/sites/default/services.hostinger.yml` no servidor de produção com `cookie_domain: '.aculta.org'`.
    O arquivo não entra no Git.

@@ -14,7 +14,7 @@ avatar da entrega `feat/avatar-padrao`:
 
 ## Ambiente
 
-- **Local**, não é o servidor de testes remoto. O script fala com o `runserver`
+- **Local**, não é o servidor de desenvolvimento remoto. O script fala com o `runserver`
   do Drush em `127.0.0.1:8080` e resolve os hosts no próprio Firefox
   (`network.dns.localDomains`).
 - Usa os aliases locais do Domain Alias (`*.aculta.test:8080`), porque o padrão

@@ -11,7 +11,7 @@ Arquivo: `registry/deploy-registry.json`. Schema 1.
 | `status` | sim | `open` ou `resolved`. |
 | `blocking` | não | `true` impede o build de produção enquanto a entrada estiver aberta. |
 | `page` | sim | Página ou recurso afetado. |
-| `current` | sim | Valor observado no servidor de testes. |
+| `current` | sim | Valor observado no servidor de desenvolvimento. |
 | `expected_production` | sim | Valor esperado em produção. |
 | `reason` | sim | Por que o código não resolve sozinho. |
 | `owner` | sim | Responsável pela decisão. |

@@ -16,8 +16,8 @@ interpretar.
 - Antes de publicar: git fetch, e conferir que o head remoto é ancestral do commit que
   será publicado.
 
-## 2. O servidor de testes é o checkout servido
-- O servidor de testes é o checkout /home/piradopirata/projetos/aculta, em HEAD
+## 2. O servidor de desenvolvimento é o checkout servido
+- O servidor de desenvolvimento é o checkout /home/piradopirata/projetos/aculta, em HEAD
   destacado, sempre no head da PR.
 - Não editar arquivos rastreados no checkout servido. Toda mudança entra por commit na
   PR e chega ao servidor por git checkout --detach <head>.
@@ -31,7 +31,7 @@ interpretar.
 
 ## 3. Bancos: só os existentes, com gatilho por head
 Bancos permitidos:
-- aculta_runtime: banco do servidor de testes.
+- aculta_runtime: banco do servidor de desenvolvimento.
 - aculta_simpletest: testes virtuais dos agentes, com prefixos por agente.
 - toca: fora do escopo do procedimento. Dono não verificado. Não tocar sem ordem
   explícita do responsável.

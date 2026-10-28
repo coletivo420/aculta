@@ -7,7 +7,7 @@ tela `/studio/conta/mercado-pago/planos` no shell ACULTA420, a listagem e os
 campos de plano, a submissão para o domínio MAIN e o reflow em 390 e 1280 px.
 Não envia o formulário e não cria/atualiza plano. Usa Firefox ESR visível em
 `DISPLAY=:0`, geckodriver e o `wdlib.py` compartilhado em
-`tests/browser/aculta-cpf-checkout/`. Destino padrão: servidor de testes
+`tests/browser/aculta-cpf-checkout/`. Destino padrão: servidor de desenvolvimento
 `https://conta.aculta.toca.net.br`; artefatos ficam em `$SUITE_OUT`.
 
 Execução após autorização e rebuild do cache do Runtime (o comando não importa
@@ -77,7 +77,7 @@ retornou `guest_registration_and_shipping_stage_without_captcha`: produto,
 carrinho, cadastro silencioso e etapa de endereço carregaram; nenhuma cotação
 ou pagamento foi iniciado.
 
-Reexecução no servidor de testes em 2026-10-27: Firefox ESR visível retornou
+Reexecução no servidor de desenvolvimento em 2026-10-27: Firefox ESR visível retornou
 `guest_registration_and_shipping_stage_without_captcha`, sem CAPTCHA no produto,
 carrinho, identificação ou endereço. O teste não enviou endereço nem avançou à
 revisão/pagamento. O único pedido anônimo `draft` com um item criado pela sessão

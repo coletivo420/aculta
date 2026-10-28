@@ -1,6 +1,6 @@
 # Endereços dependentes de ambiente (regra permanente)
 
-Regra: **todo endereço que muda entre ambientes** (servidor de testes `*.aculta.toca.net.br`, produção `*.aculta.org`, ou
+Regra: **todo endereço que muda entre ambientes** (servidor de desenvolvimento `*.aculta.toca.net.br`, produção `*.aculta.org`, ou
 qualquer outro) deve estar declarado no mapeamento do aculta_deployer (`config/deploy.json`) e **nunca** fixo no código,
 nos templates, nos assets ou na configuração exportada.
 
@@ -47,7 +47,7 @@ $url = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.my_data')
 
 ## Pendência conhecida
 
-Os aliases de host do servidor de testes (`config/sync/domain_alias.alias.*.yml`) estão exportados e declarados em
+Os aliases de host do servidor de desenvolvimento (`config/sync/domain_alias.alias.*.yml`) estão exportados e declarados em
 `environment_bound`. Migrar para provisionamento por ambiente (fora do `config/sync`) é o próximo passo do deployer.
 
 ## Cookies de sessão

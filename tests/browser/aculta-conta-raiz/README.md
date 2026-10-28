@@ -16,7 +16,7 @@ O status HTTP vem de `performance.getEntriesByType('navigation')[0].responseStat
 
 ## Ambiente
 
-Servidor de testes (`*.aculta.toca.net.br`), host `conta.aculta.toca.net.br`. Não é produção e não é o ambiente local `127.0.0.1`. Não usa senha nem link de login: só navega como visitante.
+Servidor de desenvolvimento (`*.aculta.toca.net.br`), host `conta.aculta.toca.net.br`. Não é produção e não é o ambiente local `127.0.0.1`. Não usa senha nem link de login: só navega como visitante.
 
 ## Como executar
 
@@ -32,5 +32,5 @@ Código de saída: `0` se tudo passou; `1` se alguma verificação falhou.
 
 - **Não cobre o estado logado.** `/` logado (hub do Studio), `/conta-legada` logado e o editor de endereço com Número/S-N precisam de uma sessão de teste. A geração do link único de login (`drush uli`) não foi autorizada nesta suíte, então essa parte fica para uma rodada própria.
 - Não captura erros do console JavaScript. Para isso seria preciso BiDi (`bidi=True` no `wdlib.Driver`).
-- Não cobre o tema Olivero. A regra do projeto exige testar Portal e Revista também com ele; isso depende de troca de tema no servidor de testes, que é um estado compartilhado.
+- Não cobre o tema Olivero. A regra do projeto exige testar Portal e Revista também com ele; isso depende de troca de tema no servidor de desenvolvimento, que é um estado compartilhado.
 - O texto de ajuda do campo "Usuário ou endereço de e-mail" aparece em inglês ("Enter your username or email address."). Esta suíte não verifica idioma, então não reprova isso.

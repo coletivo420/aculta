@@ -356,7 +356,7 @@ torna dados existentes ilegíveis e quebra correspondências. O painel não rota
 
 ## Decisões do responsável sobre `secrets/` (2026-10-26, 18:32)
 
-- **Mercado Pago de produção no servidor de testes:** `MERCADOPAGO_PRODUCTION_PUBLIC_KEY`, `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` e `MERCADOPAGO_WEBHOOK_SECRET` permanecem em `secrets/aculta.secrets.env`, aceitas explicitamente pelo responsável como **exceção** à regra "teste nunca usa chave de produção". A barreira de execução continua em modo de teste (ver abaixo).
+- **Mercado Pago de produção no servidor de desenvolvimento:** `MERCADOPAGO_PRODUCTION_PUBLIC_KEY`, `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` e `MERCADOPAGO_WEBHOOK_SECRET` permanecem em `secrets/aculta.secrets.env`, aceitas explicitamente pelo responsável como **exceção** à regra "teste nunca usa chave de produção". A barreira de execução continua em modo de teste (ver abaixo).
 - **Credencial SSH de produção** (`secrets/producao-ssh.env`) permanece, **sem rotação**.
 - **Permissões:** `chmod 600` não foi aplicado nos arquivos de modo `674`. Ele zeraria a máscara da ACL e cortaria os usuários nomeados `www-data`, `toca` e `aculta`, que têm entrada na ACL e processos ativos. A remoção de leitura para "outros" (`674` → `670`) foi aplicada em `credenciais_de_teste_mercadolivre` e `system`. Dono, conteúdo e ACL não mudaram. `producao-ssh.env` já estava em `670`.
 - **Regra de escrita:** gravar em `secrets/` somente como o dono do arquivo (`sudo -u aculta`), sem ACL de escrita concedida ao usuário de trabalho. A regra vale para qualquer alteração de conteúdo.

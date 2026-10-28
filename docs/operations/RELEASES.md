@@ -1,6 +1,6 @@
 # Releases e versionamento
 
-Data da revisão: 2026-10-20. Ciclo vigente: [Dev → RC → Alpha](RELEASE-LIFECYCLE.md).
+Data da revisão: 2026-10-20. Ciclo vigente: [Dev → RC → Alpha → Beta](RELEASE-LIFECYCLE.md).
 
 ## Versionamento
 

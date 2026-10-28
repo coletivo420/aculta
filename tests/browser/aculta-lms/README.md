@@ -6,7 +6,7 @@ horizontal e ausência de erros de JavaScript.
 
 ## Onde roda
 
-Somente no **servidor de teste** (`https://cursos.aculta.toca.net.br`, runtime `aculta_runtime`). A atividade de
+Somente no **servidor de desenvolvimento** (`https://cursos.aculta.toca.net.br`, runtime `aculta_runtime`). A atividade de
 teste precisa existir antes (tipo de atividade File Upload, aula, curso e matrícula da conta de teste). O cenário
 usado na revisão foi criado e removido ao final; ver o CHANGELOG do aculta_lms (0.1.0-dev.80).
 

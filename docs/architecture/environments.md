@@ -13,7 +13,7 @@ Apache é o servidor web do Homelab. O ambiente de teste valida `.htaccess`,
 rewrite, headers e PHP-FPM neste servidor; produção usa LiteSpeed e precisa de
 validação específica, sem manter uma camada de compatibilidade com Nginx.
 
-No servidor de testes, `/home/aculta` é um symlink para o checkout
+No servidor de desenvolvimento, `/home/aculta` é um symlink para o checkout
 `/home/piradopirata/projetos/aculta`; não há uma subpasta `aculta-site`
 dentro dele. O acesso público usa `/home/aculta/public_html -> web` (symlink
 relativo), e o VirtualHost aponta para `/home/aculta/public_html`. A raiz serve
@@ -38,16 +38,16 @@ são acessados por symlinks no topo do projeto, fora da árvore pública.
   permissão, o `drush status` não mostra banco nem site URI. Não relaxe o modo dos arquivos
   de configuração nem copie segredos para fora da instalação para contornar isso.
 - Estado verificado em 2026-10-22: o checkout em `/home/piradopirata/projetos/aculta`
-  está no servidor de testes (`hostname: toca`) e o Drush alcança o Runtime de teste
+  está no servidor de desenvolvimento (`hostname: toca`) e o Drush alcança o Runtime de teste
   `aculta_runtime`. Neste servidor, `Site URI: http://default` é uma saída esperada quando o Drush
   roda sem `--uri`; não indica produção nem conexão errada por si só. Para comandos que dependem do
   purpose/domínio, informe `--uri` com um host de teste listado em
   `docs/architecture/multidomain.md`. Confirme sempre hostname, checkout, branch, banco e efeitos
   antes de qualquer operação persistente. Não fixe uma URI nas configurações locais.
 
-## Servidor de testes
+## Servidor de desenvolvimento
 
-`*.aculta.toca.net.br` é o **servidor de testes** do projeto. Neste documento ele
+`*.aculta.toca.net.br` é o **servidor de desenvolvimento** do projeto. Neste documento ele
 aparece como Homelab; os dois termos designam o mesmo ambiente. Os hosts e seus
 purposes estão em `docs/architecture/multidomain.md`; não há uma URI única que
 represente todos os sites/purposes do Runtime.
@@ -56,12 +56,14 @@ represente todos os sites/purposes do Runtime.
 
 Testes locais em máquina de desenvolvimento (por exemplo, Firefox visível na
 sessão X11 apontado para `127.0.0.1` com resolução de host própria) simulam o servidor de
-testes, mas não são o servidor de testes. Resultados desses testes devem ser
+testes, mas não são o servidor de desenvolvimento. Resultados desses testes devem ser
 registrados como tal.
 
 ## Produção
 
 Hostinger Cloud Startup, LiteSpeed, PHP, MariaDB e hosts `*.aculta.org`.
+
+O deploy no Hostinger acontece no Beta, depois de Alpha validado. A troca de domínio para `*.aculta.org` acontece no Alpha, no servidor de desenvolvimento.
 Em 2026-10-15, a resposta HTTPS pública de `aculta.org` retornou
 `platform: hostinger` e `x-turbo-charged-by: LiteSpeed`; o cabeçalho `server`
 identifica Cloudflare.
@@ -94,7 +96,7 @@ Preservar o `.htaccess` Drupal e validar por ambiente:
 O código da aplicação e o tema não devem depender de comportamento exclusivo
 da configuração local. VirtualHosts, caminhos, usuários, certificados e
 configuração Virtualmin/Hostinger não devem ser copiados literalmente entre os
-ambientes. Regras de noindex pertencem somente ao Homelab.
+ambientes. Regras de noindex pertencem ao servidor de desenvolvimento e são mantidas até o Beta, mesmo quando ele serve `*.aculta.org` no Alpha.
 
 Ordem lógica: dependências lockadas, settings/segredos do ambiente, updates
 necessários, Configuration Sync, provisionamento idempotente aprovado, cache e

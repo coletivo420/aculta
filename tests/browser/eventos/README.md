@@ -1,6 +1,6 @@
 # Navegador — eventos (agenda e incorporação)
 
-Smoke visual das páginas públicas do purpose `eventos`, no **servidor de testes**
+Smoke visual das páginas públicas do purpose `eventos`, no **servidor de desenvolvimento**
 `https://eventos.aculta.toca.net.br`. Não autentica, não envia formulário e não
 escreve no banco: só carrega as páginas, mede e captura.
 
@@ -77,4 +77,4 @@ configuração do servidor.
   incorporação nem o iframe real em outro host; isso se confere com `curl -I`.
 - Não mede contraste, foco por teclado nem leitor de tela (ver `VISUAL.md` do
   módulo e `docs/operations/NAVEGADOR-TESTES.md`).
-- Roda só no servidor de testes; produção fica fora.
+- Roda só no servidor de desenvolvimento; produção fica fora.

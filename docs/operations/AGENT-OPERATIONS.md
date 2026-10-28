@@ -4,15 +4,15 @@ Estas regras foram realocadas do arquivo histórico de instruções; aplique som
 
 ## Ambientes
 
-- `*.aculta.toca.net.br` é o servidor de testes (Homelab); `*.aculta.org` é produção. Os hosts por purpose estão em `docs/architecture/multidomain.md`.
+- `*.aculta.toca.net.br` é o servidor de desenvolvimento (Homelab); `*.aculta.org` é produção. Os hosts por purpose estão em `docs/architecture/multidomain.md`.
 - Para Drush e operações do Runtime, siga `docs/architecture/environments.md`; não presuma um caminho de checkout, necessidade de SSH ou URI padrão.
 - **Antes de qualquer operação de ambiente**, confirme `hostname`, `pwd`, branch/estado Git e `php vendor/drush/drush/drush.php status`. Confirme no Drush o site URI e o banco conectados antes de executar comandos que alterem estado.
-- Se `hostname` for `toca` e o Drush confirmar o Runtime `aculta_runtime`, trate a sessão como já estando no servidor de testes: use o checkout e o Drush locais. A saída `Site URI: http://default` sem `--uri` é esperada neste ambiente e não significa produção nem erro de conexão. Para operações sensíveis ao purpose, passe `--uri` com um host de teste documentado. SSH só se justifica quando a operação necessária não estiver disponível localmente e o destino tiver sido confirmado pela documentação de ambientes.
-- **Padrão de desenvolvimento funcional:** quando a sessão for confirmada como o servidor de testes, aplique mudanças funcionais no Runtime assim que o escopo estiver coerente para smoke test contínuo. Verifique URI, banco, configuração e efeitos antes de cada alteração persistente. Isso não autoriza operações destrutivas nem alterações em produção.
+- Se `hostname` for `toca` e o Drush confirmar o Runtime `aculta_runtime`, trate a sessão como já estando no servidor de desenvolvimento: use o checkout e o Drush locais. A saída `Site URI: http://default` sem `--uri` é esperada neste ambiente e não significa produção nem erro de conexão. Para operações sensíveis ao purpose, passe `--uri` com um host de teste documentado. SSH só se justifica quando a operação necessária não estiver disponível localmente e o destino tiver sido confirmado pela documentação de ambientes.
+- **Padrão de desenvolvimento funcional:** quando a sessão for confirmada como o servidor de desenvolvimento, aplique mudanças funcionais no Runtime assim que o escopo estiver coerente para smoke test contínuo. Verifique URI, banco, configuração e efeitos antes de cada alteração persistente. Isso não autoriza operações destrutivas nem alterações em produção.
 - Não executar `updb`, import/export de configuração, deploy ou outras operações persistentes sem primeiro inspecionar o estado, os efeitos e a possibilidade de recuperação; nunca apontar procedimentos de teste para produção.
 - Se um problema pontual e verificável bloquear diretamente uma entrega autorizada, agentes podem corrigi-lo durante o desenvolvimento sem interromper a tarefa. Inspecione primeiro o impacto e a reversão, limite a correção ao bloqueador, preserve o estado recuperável quando necessário e registre a causa e o resultado no changelog/documentação pertinente. Não use essa regra para ampliar escopo, remover conteúdo ou fazer alterações destrutivas.
 - Não inventar ambientes, hosts ou nomes de servidor. Use somente os definidos em `docs/architecture/environments.md` e `docs/architecture/multidomain.md`.
-- Testes em `127.0.0.1` com resolução de host própria simulam o servidor de testes, mas não são o servidor de testes; registre-os como tal.
+- Testes em `127.0.0.1` com resolução de host própria simulam o servidor de desenvolvimento, mas não são o servidor de desenvolvimento; registre-os como tal.
 
 ## Servidor web
 
@@ -71,7 +71,7 @@ Os testes de Kernel usam o MariaDB dedicado `aculta_simpletest`, com a configura
 
 - Seguir `docs/operations/RELEASE-LIFECYCLE.md` para classificar entregas. RC é
   por unidade e requer validação visual pré-deploy quando houver interface; a
-  validação do servidor ocorre em Alpha, após deploy autorizado.
+  validação do servidor ocorre em Alpha, após deploy autorizado; o deploy no Hostinger (produção) ocorre no Beta, depois de Alpha validado.
 - Um submódulo fora de RC não bloqueia automaticamente o trabalho ou a entrega
   de outro componente. Escopo de release central é decidido pelo responsável.
 - Não abrir PR nesta frente nem como encerramento automático de fase. Permanecer

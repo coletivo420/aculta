@@ -1,6 +1,6 @@
 # Migração de domínios: teste → produção
 
-Escopo: transição de `*.aculta.toca.net.br` (servidor de testes) para `*.aculta.org` (produção), para todos os domínios registrados no Portal. A tabela canônica é `config/deploy.json`, em `domain_transition`. O comando `aculta-deployer domains` confere, somente leitura, essa tabela contra `config/sync/domain.record.*.yml`.
+Escopo: transição de `*.aculta.toca.net.br` (servidor de desenvolvimento) para `*.aculta.org` (produção), para todos os domínios registrados no Portal. A tabela canônica é `config/deploy.json`, em `domain_transition`. O comando `aculta-deployer domains` confere, somente leitura, essa tabela contra `config/sync/domain.record.*.yml`.
 
 ## Domínios
 
@@ -19,14 +19,23 @@ Escopo: transição de `*.aculta.toca.net.br` (servidor de testes) para `*.acult
 
 Em 2026-10-28, o responsável decidiu que os hosts da Revista passam a ser `revista.aculta.toca.net.br` no Homelab e `revista.aculta.org` em produção. `deploy.json` e os registros de domínio/alias em `config/sync` refletem essa decisão. O DNS de produção será configurado no Cloudflare pelo responsável.
 
-## Passos no RC (não executar antes)
+## Passos no Alpha (não executar antes)
+
+Decisões de 2026-10-28:
+
+- **Cookie de sessão:** a troca de `cookie_domain` de `.aculta.toca.net.br` para `.aculta.org` acontece no Alpha. Usuários entram de novo (ver `config/deploy.json`, `session_cookie`).
+- **Noindex:** o servidor de desenvolvimento mantém `noindex, nofollow, noarchive` nos hosts `*.aculta.org` até o Beta. Por isso `robots --env=production` daria FAIL no Alpha e não é gate dessa etapa; a verificação de indexação roda no Beta (passo 7).
 
 1. `aculta-deployer domains`: todas as linhas devem estar "ok" e não pendentes.
 2. `aculta-deployer transition --target=production --out=DIR`: gera o build e o plano (`transition-plan.json`). Não altera Runtime.
 3. Importar a configuração parcial no Runtime de produção conforme o plano, com backup antes (`config:export`).
 4. DNS dos hosts `*.aculta.org` (fora do repositório, painel do provedor).
 5. Certificados dos hosts de produção (fora do repositório).
-6. Verificação pós-deploy: `aculta-deployer robots --env=production` e `aculta-deployer sitemap --env=production`.
+
+## Passos no Beta (deploy no Hostinger)
+
+6. Deploy do mesmo candidato no Hostinger, depois de Alpha validado.
+7. Verificação pós-deploy: `aculta-deployer robots --env=production` e `aculta-deployer sitemap --env=production`.
 
 ## Rollback
 
@@ -51,4 +60,4 @@ DNS, VirtualHosts e certificados de cada ambiente são configurados fora do Git.
 
 - Teste: `loja.aculta.toca.net.br`. Produção: `loja.aculta.org`.
 - A página do produto só responde no host da loja (rota `entity.commerce_product.canonical`, purpose `shop`).
-- Na transição, o host de produção precisa existir no DNS e com certificado antes do deploy do RC.
+- Na transição, o host de produção precisa existir no DNS e com certificado antes da troca de domínio no Alpha.

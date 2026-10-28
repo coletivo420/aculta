@@ -5,7 +5,7 @@ Melhor Envio. Frente: ME-0.1-C (`aculta_commerce_melhorenvio`).
 
 ## Ambiente
 
-- **Servidor de testes** (`loja.aculta.toca.net.br`). Não é o ambiente local.
+- **Servidor de desenvolvimento** (`loja.aculta.toca.net.br`). Não é o ambiente local.
 - Firefox ESR visível (`DISPLAY=:0`), geckodriver via `wdlib.py` da frente `aculta-cpf-checkout`. Nunca headless.
 - Não altera tema, configuração nem carrinho. O cenário cria uma sessão anônima de teste e grava nela somente o CEP e a cotação sintéticos usados para verificar persistência; não autentica nem modifica dados de conta.
 
@@ -33,7 +33,7 @@ Saída: JSON com os resultados e `FALHAS: nenhuma` quando tudo passa. PNG em `SU
   medido em `iframe`, e não redimensionando a janela.
 - **Olivero não coberto:** trocar o tema é mudança global. A verificação com Olivero fica para um roteiro com
   `trap` de restauração do tema.
-- **Carrinho não coberto:** adicionar produto ao carrinho cria dados no servidor de testes. Fica fora deste roteiro.
+- **Carrinho não coberto:** adicionar produto ao carrinho cria dados no servidor de desenvolvimento. Fica fora deste roteiro.
 - **Conta autenticada:** persistência via `user.data` e preenchimento inicial pelo CEP do perfil cobertos em Unit; este roteiro não autentica usuário nem altera dados de conta.
 - **Pacote padrão:** o teste assume o pacote cadastrado (16 × 2 × 11 cm, 0,3 kg). Se ele mudar, o resultado da cotação
   muda, mas o teste continua válido.

@@ -13,7 +13,7 @@ nativa no tópico do Fórum. A Flag é restaurada ao estado inicial no `finally`
 
 ## Ambiente e execução
 
-- Servidor de testes ACULTA (`*.aculta.toca.net.br`), checkout em
+- Servidor de desenvolvimento ACULTA (`*.aculta.toca.net.br`), checkout em
   `/home/piradopirata/projetos/aculta`.
 - Firefox ESR visível em `DISPLAY=:0`, controlado por geckodriver e perfil
   temporário em `/tmp`; nunca Chromium/headless.

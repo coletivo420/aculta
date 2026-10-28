@@ -193,7 +193,7 @@ final class Cli {
   /**
    * Descoberta e sitemaps por ambiente (GET somente leitura):
    * 1) o índice responde e cada filho está na base do ambiente (sem host de teste
-   *    em produção, e sem host de produção no servidor de testes além do canônico);
+   *    em produção, e sem host de produção no servidor de desenvolvimento além do canônico);
    * 2) as URLs dos filhos pertencem aos hosts de produção da política e esses hosts
    *    respondem (cross-host, por exemplo apoio.aculta.org).
    *
@@ -248,7 +248,7 @@ final class Cli {
       $this->say(sprintf('PASS %s: %d URL(s) de conteúdo', $child, count($locs)));
     }
     foreach (array_keys($contentHosts) as $h) {
-      // No servidor de testes, o host de conteúdo é verificado pelo equivalente de teste.
+      // No servidor de desenvolvimento, o host de conteúdo é verificado pelo equivalente de teste.
       $target = $env === 'test' ? Verify::testEquivalent((string) $h) : (string) $h;
       $probe = Verify::fetchWithHeaders("https://$target/");
       $ok = $probe !== null && (Verify::statusCode($probe['headers']) ?? 500) < 400;
@@ -1104,10 +1104,10 @@ final class Cli {
         $this->say("ok $id: config/sync = $prod ($rule)");
       } else {
         $pending++;
-        $this->say("pendente $id: config/sync diz $current; destino de produção $prod ($rule); muda no deploy do RC");
+        $this->say("pendente $id: config/sync diz $current; destino de produção $prod ($rule); muda na troca de domínio no Alpha");
       }
     }
-    $this->say(sprintf('domains: %d alinhado(s), %d pendente(s) de RC; somente leitura', $aligned, $pending));
+    $this->say(sprintf('domains: %d alinhado(s), %d pendente(s) de Alpha; somente leitura', $aligned, $pending));
     return 0;
   }
 

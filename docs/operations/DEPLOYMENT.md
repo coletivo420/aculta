@@ -198,7 +198,8 @@ Política aprovada pelo responsável em 2026-10-09.
 - **Produção indexável:** todos os domínios e subdomínios de produção (`aculta.org`,
   `conta.`, `apoio.`, `revista420.`, `wiki420.`, `loja.`, `cursos.`) não enviam `X-Robots-Tag`
   com `noindex`.
-- **Servidor de testes não indexável:** `*.aculta.toca.net.br` envia `noindex, nofollow, noarchive`.
+- **Servidor de desenvolvimento não indexável:** `*.aculta.toca.net.br` envia `noindex, nofollow, noarchive`. Essa regra continua valendo no Alpha, mesmo com os hosts `*.aculta.org` servidos por ele, e só sai no Beta, com a produção indexável.
+- **Cookie de sessão:** a troca para `.aculta.org` acontece no Alpha (decisão de 2026-10-28).
 - **Páginas privadas da conta** continuam com `noindex` em nível de rota (meta `robots` do
   `aculta_portal`). Essa proteção não é removida pelo deploy.
 - **Quem garante:** o `aculta_deployer` (`robots --env=production|test`, `build` com trava de
@@ -209,5 +210,5 @@ Política aprovada pelo responsável em 2026-10-09.
 **Fluxo vigente:** validar visualmente o candidato antes de RC; após autorização,
 implantar em Alpha (servidor de desenvolvimento) e validar esse Runtime. Seguir
 [`RELEASE-LIFECYCLE.md`](RELEASE-LIFECYCLE.md) e o runbook de ambiente. Produção
-é uma decisão separada e explícita do responsável; os comandos de produção não
+é o Beta: decisão separada e explícita do responsável, depois de Alpha validado; os comandos de produção não
 são ensaios substitutos de deploy.

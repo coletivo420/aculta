@@ -1,3 +1,11 @@
+## Não lançado — ciclo Alpha/Beta
+
+- Fluxo vigente passa a Dev → RC → Alpha → Beta. A troca de domínio para `*.aculta.org` acontece no Alpha, no servidor de desenvolvimento (`*.aculta.toca.net.br`). O deploy no Hostinger (produção) fica para o Beta.
+- `config/deploy.json`: textos de `domain_transition.note`, `provision` (ação) e `session_cookie.transition` trocados de "deploy do RC" para Alpha/Beta. Identificadores `production`/`test` não mudaram.
+- `domains` (Cli): pendências mostradas como "pendente(s) de Alpha" e "muda na troca de domínio no Alpha". `tests/run.php` acompanha o texto.
+- Documentação: `MIGRACAO-DOMINIOS.md` com passos separados em Alpha e Beta; `PLANEJAMENTO.md` e `COOKIES-AMBIENTE.md` alinhados; "servidor de testes" renomeado para "servidor de desenvolvimento" nos textos.
+- Sem alteração de comportamento de comando. Testes: os mesmos 3 FAIL de antes da mudança (fronteiras, nove domínios de produção, contrato em SECRETS.md).
+
 ## Não lançado — correções de configuração (agente executor 2)
 
 - `config/deploy.json`: removida a entrada órfã `PublicationBundleMigrationCommand.php` de `environment_bound`. O arquivo

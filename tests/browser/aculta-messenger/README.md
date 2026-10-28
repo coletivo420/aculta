@@ -5,7 +5,7 @@ Sem dependências npm: usa o Node 22 (`fetch` e `child_process`) e o Drush do pr
 
 ## Onde roda
 
-Somente no **servidor de teste** (`https://aculta.toca.net.br`, runtime `aculta_runtime`). Nunca em produção.
+Somente no **servidor de desenvolvimento** (`https://aculta.toca.net.br`, runtime `aculta_runtime`). Nunca em produção.
 A preparação cria contas e fixtures de conversa no banco de teste. As senhas são aleatórias e não são mostradas.
 
 ## Pré-requisitos

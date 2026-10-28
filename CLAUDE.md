@@ -4,9 +4,9 @@ Siga `AGENTS.md` como contrato comum (Claude, Codex e DeepSeek). Use `docs/opera
 
 ## Preferências do responsável (prevalecem sobre regras conflitantes)
 
-- **Deploy:** produção só recebe deploy quando todos os módulos, temas e subtemas estiverem em RC. Merge em `main` não é deploy.
-- **Ambientes:** produção é `*.aculta.org`; servidor de testes é `*.aculta.toca.net.br` (com `.br`). Testes locais em `127.0.0.1` simulam o servidor de testes, mas não são o servidor de testes. Não confundir nem inventar hosts.
-- **Credenciais:** em produção as chaves ficam no banco, criptografadas, provisionadas pelo `aculta_deployer` após o deploy. Arquivos em `secrets/` são só do servidor de testes.
+- **Deploy:** o deploy no Hostinger (produção) só acontece no Beta, depois de Alpha validado. Para chegar lá, todos os módulos, temas e subtemas precisam estar em RC. Merge em `main` não é deploy. A troca de domínio para `*.aculta.org` acontece no Alpha.
+- **Ambientes:** produção é `*.aculta.org`; servidor de desenvolvimento (Alpha) é `*.aculta.toca.net.br` (com `.br`). Testes locais em `127.0.0.1` simulam o servidor de desenvolvimento, mas não são o servidor de desenvolvimento. Não confundir nem inventar hosts.
+- **Credenciais:** em produção as chaves ficam no banco, criptografadas, provisionadas pelo `aculta_deployer` após o deploy. Arquivos em `secrets/` são só do servidor de desenvolvimento.
 - **Pesquisa na web:** liberada. Pesquisar quando ajudar a resolver a tarefa, sem pedir permissão antes. Continua valendo não publicar nem enviar conteúdo para fora sem confirmação.
 - **Testes de Portal, Revista e Fórum:** rodar também com o tema Olivero, além do ACULTA420. Tudo que é do módulo deve funcionar sem o tema.
 - **Mercado Pago:** o prefixo do token não identifica o ambiente (`APP_USR-` pode ser de teste). Decidir pelo modo configurado e pelo `live_mode` dos pagamentos.

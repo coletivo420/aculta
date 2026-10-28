@@ -5,7 +5,7 @@ Script `verifica_qrcode.py`. Roda no **Firefox ESR visível** na sessão X11 loc
 
 ## O que cobre
 
-| Caminho | Host | Esperado | Último resultado (servidor de teste) |
+| Caminho | Host | Esperado | Último resultado (servidor de desenvolvimento) |
 | --- | --- | --- | --- |
 | `/painel-administrativo/aculta/codigos-qr` | `aculta.toca.net.br` | 403 para anônimo | PASS |
 | `/painel-administrativo/aculta/codigos-qr/previa?url=...` | `aculta.toca.net.br` | 403 para anônimo | **FAIL: 404**, rota não publicada |
@@ -19,10 +19,10 @@ Resultado da última execução: 5 de 7 verificações OK.
 
 - **Prévia e lote com administrador logado.** Exigem sessão e um código existente. Não há credenciais de teste no
   repositório, e o script não as usa.
-- **Layout das micropáginas `/pagina/{slug}`.** Exige um slug publicado no servidor de teste.
-- **`/redes-sociais`.** Responde 404 no servidor de teste: a rota ainda não está publicada. Fica fora da lista até lá.
-- **Código desta branch.** O servidor de teste serve o checkout principal (`docs/aculta-forum-0.1.0-dev.1`), que não
-  tem a prévia nem o lote. Os dois FAIL acima são esperados enquanto a branch não for publicada no servidor de teste.
+- **Layout das micropáginas `/pagina/{slug}`.** Exige um slug publicado no servidor de desenvolvimento.
+- **`/redes-sociais`.** Responde 404 no servidor de desenvolvimento: a rota ainda não está publicada. Fica fora da lista até lá.
+- **Código desta branch.** O servidor de desenvolvimento serve o checkout principal (`docs/aculta-forum-0.1.0-dev.1`), que não
+  tem a prévia nem o lote. Os dois FAIL acima são esperados enquanto a branch não for publicada no servidor de desenvolvimento.
 
 ## Como executar
 
@@ -38,5 +38,5 @@ Código de saída: `0` se tudo passou; `1` se alguma verificação falhou.
 
 ## Ambiente
 
-Servidor de testes (`*.aculta.toca.net.br`). Não é produção. Evidência (PNG e `resultado.json`) fica em `SUITE_OUT`,
+Servidor de desenvolvimento (`*.aculta.toca.net.br`). Não é produção. Evidência (PNG e `resultado.json`) fica em `SUITE_OUT`,
 fora do repositório.

@@ -1,7 +1,7 @@
 # Navegador — CPF/checkout compartilhado Loja/LMS
 
 Scripts de verificação manual automatizada usados na frente "ACULTA CPF ID +
-checkout compartilhado Loja/LMS", no servidor de testes
+checkout compartilhado Loja/LMS", no servidor de desenvolvimento
 `*.aculta.toca.net.br`. Falam WebDriver W3C direto com o geckodriver
 (`wdlib.py`), sem Selenium.
 
@@ -65,7 +65,7 @@ Evidências (PNG e um HTML) em `$SUITE_OUT`, padrão `/tmp/aculta-cpf-checkout`.
 ### `olivero-smoke.py`
 
 Verificação do tema **Olivero** nas páginas públicas, feita no **ambiente
-local** e não no servidor de testes. O Apache local responde pelos mesmos
+local** e não no servidor de desenvolvimento. O Apache local responde pelos mesmos
 hostnames de teste; o perfil do Firefox recebe `network.dns.localDomains`
 com a lista de hosts, então tudo resolve para 127.0.0.1.
 

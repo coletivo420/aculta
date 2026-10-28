@@ -1,6 +1,6 @@
 # Planejamento de construção do ACULTA Deployer
 
-**Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Em RC, toda preparação, código, gates e revisão visual aplicável estão concluídos. Alpha é deploy no servidor de desenvolvimento; depois de validar Alpha, preparar a migração do mesmo candidato a produção e realizar a validação pós-deploy. Esta nota substitui marcos antigos que adiavam preparação essencial para o RC.
+**Ciclo vigente:** seguir [Dev → RC → Alpha → Beta](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Em RC, toda preparação, código, gates e revisão visual aplicável estão concluídos. Alpha é deploy no servidor de desenvolvimento, com a troca de domínio para `*.aculta.org`; depois de validar Alpha, o mesmo candidato vai ao Beta (deploy no Hostinger), com a validação pós-deploy. Esta nota substitui marcos antigos que adiavam preparação essencial para o RC.
 
 Este documento define as fases de construção do submódulo `aculta_deployer`
 (versão atual: 0.1.22, conforme `VERSION`; estado de testes e de `check` em
@@ -12,7 +12,7 @@ anterior com pendência de segurança aberta.
 ## Premissas
 
 - A ferramenta é standalone: sem Drupal, Drush ou vendor (ver `ARQUITETURA.md`).
-- **Produção:** preparar todos os requisitos para que o RC esteja pronto para deploy. Depois do deploy e validação Alpha no servidor de desenvolvimento, preparar a migração do mesmo candidato para produção; aplicar guardrails de ambiente, autorização e validação pós-deploy. Merge em `main` não publica nada no Hostinger.
+- **Produção:** preparar todos os requisitos para que o RC esteja pronto para deploy. Depois da validação Alpha no servidor de desenvolvimento, com a troca de domínio, o mesmo candidato vai ao Beta (deploy no Hostinger); aplicar guardrails de ambiente, autorização e validação pós-deploy. Merge em `main` não publica nada no Hostinger.
 - O build de produção nunca grava dentro do repositório.
 - Correções que o código não resolve são registradas em `registry/deploy-registry.json`.
 - Segredos não entram no build nem no registro (ver `GUARDRAILS.md`).
@@ -76,7 +76,7 @@ domínio e rota técnica própria é do responsável. Esta fase não começa sem
   de dependência Composer (exigência do `AGENTS.md`).
 - Se rota própria: controlador no Portal com purpose SUPPORT, sem conflito com a rota
   `/sitemap.xml` do simple_sitemap, com teste de precedência de rotas.
-- Atualizar DEP-0002 para `resolved` após verificação no servidor de testes.
+- Atualizar DEP-0002 para `resolved` após verificação no servidor de desenvolvimento.
 
 Gate de segurança ao fim da fase 4: ver seção "Gate S4".
 
@@ -102,11 +102,11 @@ Gate de segurança ao fim da fase 5: ver seção "Gate S5".
 - `robots --env=production`: diretiva `Sitemap:` com o índice de produção e ausência de
   `Disallow: /` em cada host.
 - `web/robots.txt` anuncia `Sitemap: https://aculta.org/sitemap.xml`.
-- Provisionamento do servidor de testes: `simple_sitemap.settings:base_url` = host de teste no
+- Provisionamento do servidor de desenvolvimento: `simple_sitemap.settings:base_url` = host de teste no
   runtime (`drush config:set`, não versionado). A produção usa `https://aculta.org` em `config/sync`.
 
 Pendências desta fase (não fechadas):
-1. Deixar código, configuração, gates e verificações prontos em RC; após o deploy/validação Alpha, executar `robots --env=production` e `sitemap --env=production` como validação pós-deploy produtivo.
+1. Deixar código, configuração, gates e verificações prontos em RC; no Beta, após o deploy no Hostinger, executar `robots --env=production` e `sitemap --env=production` como validação pós-deploy produtivo.
 2. Cross-host: `apoio.aculta.org`, `wiki420`, `coletivo420` e `cursos` precisam responder em produção
    (DEP-0001, DEP-0002 e DEP-0003 no registro). Verificação de propriedade no Search Console é
    manual e fica fora do deployer (ADR-009).
@@ -141,16 +141,16 @@ Pendências desta fase:
 
 ## Fase 11 — Migração de domínios teste → produção (0.1.15)
 
-**Status: preparação concluída; execução após RC, no fluxo Alpha → produção.** Tabela `domain_transition` em `config/deploy.json`, comando `domains` (somente leitura) e guia em `docs/MIGRACAO-DOMINIOS.md`.
+**Status: preparação concluída; execução após RC: troca de domínio no Alpha e deploy no Beta.** Tabela `domain_transition` em `config/deploy.json`, comando `domains` (somente leitura) e guia em `docs/MIGRACAO-DOMINIOS.md`.
 
 Pendências:
 1. Host de produção decidido pelo responsável em 2026-10-28: `revista.aculta.org`.
-2. Antes de RC, deixar comando, configuração, gate e rollback prontos. Após Alpha validado, `domains` sem pendências, `transition --target=production`, importação parcial com backup, DNS/certificados (fora do repositório) e verificação pós-deploy.
+2. Antes de RC, deixar comando, configuração, gate e rollback prontos. No Alpha: `domains` sem pendências, `transition --target=production`, importação parcial com backup e DNS/certificados (fora do repositório). No Beta: deploy no Hostinger e verificação pós-deploy.
 
 ## Fase 6 — Release 0.2.0 (curta)
 
 - Atualizar CHANGELOG, VERSION e `info.yml`; a tag só é criada sob pedido do responsável.
-- Esta fase fecha os requisitos do Deployer antes de RC; deploy Alpha e migração produtiva ocorrem depois, conforme o ciclo vigente.
+- Esta fase fecha os requisitos do Deployer antes de RC; deploy Alpha, troca de domínio e Beta ocorrem depois, conforme o ciclo vigente.
 - Revisão final da documentação e das fronteiras.
 
 ## Gates de segurança
@@ -167,8 +167,8 @@ Os gates são obrigatórios e devem ser registrados no CHANGELOG da versão.
 
 ### Gate S4 (sitemap)
 
-- [x] Nenhuma rota nova sobrepõe `/sitemap.xml` (evidência 0.1.0-G: a única rota é `simple_sitemap.sitemap_default`, que entrega o índice; `/sitemaps/{variant}/sitemap.xml` é a rota de variantes). Precedência confirmada por GET no servidor de testes.
-- [x] O host de apoio aparece somente com URL do próprio host no sitemap de SUPPORT (`https://apoio.aculta.org/`). Verificado no servidor de testes; a verificação em produção depende de DEP-0001/0002.
+- [x] Nenhuma rota nova sobrepõe `/sitemap.xml` (evidência 0.1.0-G: a única rota é `simple_sitemap.sitemap_default`, que entrega o índice; `/sitemaps/{variant}/sitemap.xml` é a rota de variantes). Precedência confirmada por GET no servidor de desenvolvimento.
+- [x] O host de apoio aparece somente com URL do próprio host no sitemap de SUPPORT (`https://apoio.aculta.org/`). Verificado no servidor de desenvolvimento; a verificação em produção depende de DEP-0001/0002.
 - [x] Nenhuma dependência nova: a G e a H usam `simple_sitemap`, `domain` e `domain_config` já presentes no projeto.
 - [x] Nenhum vazamento de dados pessoais: as 18 URLs são de nós publicados com acesso anônimo, raízes de purpose e `/contato` (webform público). Nenhuma rota de conta, admin, carrinho ou checkout aparece.
 

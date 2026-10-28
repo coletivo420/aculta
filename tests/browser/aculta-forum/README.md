@@ -229,7 +229,7 @@ DISPLAY=:0 SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-sintetic
 
 - Ambiente: **local** (`127.0.0.1` com os hosts no perfil do Firefox).
 - Muta somente o Runtime local e limpa tudo ao final; nenhum formulário é
-  submetido, nenhum e-mail é disparado e o servidor de testes não é tocado.
+  submetido, nenhum e-mail é disparado e o servidor de desenvolvimento não é tocado.
 - Cobre: imagem renderizada com `alt` no tópico sintético, sem erro visível do
   Fórum; formulário de mover comentário com destinos, confirmação e submit.
 - Mensagens globais de conta/atualizações são ignoradas por não pertencerem ao

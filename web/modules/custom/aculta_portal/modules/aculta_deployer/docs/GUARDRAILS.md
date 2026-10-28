@@ -1,7 +1,7 @@
 # Guardrails
 
 1. **Canonical com problema exige registro.** Qualquer página cujo canonical ou
-   sitemap não aponte para produção, no servidor de testes, deve ter uma entrada no
+   sitemap não aponte para produção, no servidor de desenvolvimento, deve ter uma entrada no
    registro com `kind` `canonical` ou `sitemap`, o host atual e o host esperado em
    produção. A correção no código não é suficiente quando o canonical é gerado a
    partir do host da requisição.
@@ -22,14 +22,14 @@
    A dívida técnica de código correspondente é registrada em
    `docs/operations/DEBT-REGISTER.md`.
 9. **Indexação por ambiente.** Produção indexável em todos os domínios e subdomínios;
-   servidor de testes com noindex. `build` recusa política de produção com noindex e
+   servidor de desenvolvimento com noindex. `build` recusa política de produção com noindex e
    `robots --env=production` é ensaio até a decisão do responsável de entregar em produção, no fim do projeto.
    Páginas privadas da conta mantêm noindex no Portal. O `robots --env=production` confere
    esses caminhos (`private_probes`) pelo cabeçalho ou pelo meta robots, e aceita 401, 403,
    404 ou 410. Não bloquear esses caminhos no `robots.txt`: um bloqueio impede o crawler de
    ler o noindex.
 10. **Divergência entre ambientes passa pelo deployer.** Qualquer diferença de host, `base_url`,
-   `robots.txt`, sitemap ou noindex entre o servidor de testes e a produção deve ser declarada em
+   `robots.txt`, sitemap ou noindex entre o servidor de desenvolvimento e a produção deve ser declarada em
    `config/deploy.json` e conferida por um comando do deployer (`sitemap`, `robots`, `verify`). Não
    se resolve por edição manual sem verificação. Um problema que o deployer não consegue
    verificar fica registrado em `registry/deploy-registry.json`.

@@ -4,7 +4,7 @@ Suíte no Firefox ESR visível na sessão X11 local (`DISPLAY=:0`), pelo geckodr
 (troca de aba sem recarregar a página), `aria-current`, largura de 320 a 1440 px emulada pelo BiDi, contraste claro/escuro,
 navegação por teclado, ausência de rolagem horizontal e de erros de JavaScript.
 
-Somente no servidor de teste, com a conta `teste.comum` (login único por Drush, sem senha no repositório). O
+Somente no servidor de desenvolvimento, com a conta `teste.comum` (login único por Drush, sem senha no repositório). O
 Studio precisa estar habilitado no Runtime e a conta precisar de uma aba visível (permissão `create revista content`).
 O wrapper consulta a rota `aculta_studio.home` antes de abrir o Firefox e interrompe com diagnóstico se o Runtime ainda não expõe `/studio/marley`.
 A listagem deve mostrar conteúdo ou seu estado vazio; a checagem de link de edição fica `SKIP` quando a conta não possui publicação própria publicada.

@@ -1,4 +1,4 @@
-# Ciclo de desenvolvimento, RC e Alpha
+# Ciclo de desenvolvimento, RC, Alpha e Beta
 
 Revisado em 2026-10-20. Este documento define o fluxo vigente para todos os
 módulos, submódulos e o tema. Ele substitui instruções anteriores que exigiam
@@ -12,13 +12,15 @@ CHANGELOG e relatórios históricos preservam o que ocorreu sob as regras antiga
 | --- | --- | --- |
 | **Dev** | Implementação ou revisão funcional ainda em andamento; código pode estar incompleto. | Checkout/branch de desenvolvimento. Validar automaticamente o que estiver implementado; não declarar a entrega pronta. |
 | **RC** | Tudo necessário para a entrega está pronto antes do deploy: código completo, gates, testes automatizados, revisão de código e revisão visual/acessível pré-deploy aplicável. | Candidato aprovado para deploy em Alpha. Não deixar trabalho funcional, visual ou teste conhecido para “completar depois” do deploy. |
-| **Alpha** | Status/etapa de deploy e ambiente do servidor de desenvolvimento. | Implantar o RC autorizado e validar a integração no servidor, configuração/runtime, rotas, logs, cache, permissões e comportamento aplicável. Registrar PASS/PARTIAL/FAIL e evidências por componente. |
+| **Alpha** | Status/etapa de deploy e ambiente do servidor de desenvolvimento. | Implantar o RC autorizado e validar a integração no servidor, configuração/runtime, rotas, logs, cache, permissões e comportamento aplicável. Na mesma etapa, a troca de domínio para `*.aculta.org` (`aculta_deployer/docs/MIGRACAO-DOMINIOS.md`). Registrar PASS/PARTIAL/FAIL e evidências por componente. |
+| **Beta** | Deploy no Hostinger (produção, `*.aculta.org`) do candidato já validado em Alpha. | Ambiente: Hostinger Cloud Startup (LiteSpeed). Só com autorização do responsável, depois de Alpha validado. Registrar PASS/PARTIAL/FAIL e evidências de produção, incluindo robots e sitemap pós-deploy. |
 
-Fluxo: **Dev → RC (pronto para deploy) → deploy/validação em Alpha → migração
-para produção**. Se a validação Alpha encontrar defeito, voltar o componente a
-Dev, corrigir, repetir as verificações afetadas e promover novo candidato. Alpha
-validado é o gate para preparar a migração a produção; checks específicos de
-produção, incluindo LiteSpeed/Cloudflare, são feitos depois do deploy produtivo.
+Fluxo: **Dev → RC (pronto para deploy) → Alpha (deploy e validação no servidor
+de desenvolvimento, com troca de domínio para `*.aculta.org`) → Beta (deploy no
+Hostinger, produção)**. Se a validação Alpha encontrar defeito, voltar o componente
+a Dev, corrigir, repetir as verificações afetadas e promover novo candidato. Alpha
+validado é o gate para o Beta; checks específicos de produção, incluindo
+LiteSpeed/Cloudflare, são feitos depois do deploy no Beta.
 Operações persistentes em produção continuam exigindo confirmação do ambiente,
 inspeção de efeitos e autorização conforme os guardrails de ambiente.
 
@@ -49,8 +51,8 @@ um sufixo histórico no manifesto não transforma sozinho um componente em RC.
 - No Alpha, registrar versão/SHA, host/purpose, validações realizadas, resultado,
   pendências e rollback no changelog/roadmap dono. Não afirmar Runtime PASS com
   evidência apenas local.
-- Após Alpha validado, preparar a migração do mesmo candidato para produção e
-  executar a validação pós-deploy definida para produção. O agendamento e os
+- Após Alpha validado, preparar o deploy do mesmo candidato no Hostinger (Beta) e
+  executar a validação pós-deploy definida para produção, no Beta. O agendamento e os
   comandos seguem os guardrails de ambiente e autorização do responsável.
 - Desenvolvimento autorizado continua no branch que o responsável abriu. Fazer
   commits pequenos e atômicos; não abrir PR, trocar de branch, fazer merge ou
