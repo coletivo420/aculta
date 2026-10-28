@@ -1,6 +1,6 @@
 # ACULTA Content Index — esquema IDX 0.1-C
 
-**Estado:** implementado localmente em `aculta_index.install`; ainda não instalado nem homologado no Runtime.
+**Status do componente:** [aculta_index.yml](../operations/status/aculta_index.yml). O estado de implantação do componente é mantido somente nesse registro.
 **Decisões aplicadas:** identidade por entidade/idioma; nenhuma identidade de revisão; `generation_id` em dados projetados e ponteiro único para geração ativa.
 
 ## Tabelas

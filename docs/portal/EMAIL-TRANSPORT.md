@@ -1,6 +1,6 @@
 # Transporte de e-mail do Portal (migração para camada de envio E-Mails ACULTA)
 
-Status: **M0/M1/M2 e R3 concluídas; R4 alinha o template administrativo e registra a política atual do Webform.** Documento normativo da arquitetura de transporte.
+Status do componente de envio: [aculta_mailer.yml](../operations/status/aculta_mailer.yml). Este documento é a referência normativa da arquitetura de transporte.
 
 Documentos relacionados: [DEBT-REGISTER](../operations/DEBT-REGISTER.md) (DT-P05, DT-P09, DT-O07),
 [EMAIL-CONFIRMATION-POLICY.md](EMAIL-CONFIRMATION-POLICY.md), [GUARDRAILS.md](GUARDRAILS.md),

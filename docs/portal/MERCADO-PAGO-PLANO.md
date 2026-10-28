@@ -2,7 +2,7 @@
 
 **Ciclo vigente:** este plano segue [Dev → RC → deploy/validação Alpha → produção](../operations/RELEASE-LIFECYCLE.md). Concluir integração, testes/gates e revisão visual aplicável antes de RC; validar o candidato em Alpha antes da migração a produção.
 
-Status atualizado em 2026-10-27: a integração está em desenvolvimento ativo; o submódulo está em `0.1.0-dev.77`. Este documento contém decisões e evidências históricas abaixo; pendências atuais estão resumidas na seção [8](#8-testes-e-evidências) e no status do componente.
+Status canônico do submódulo: [aculta_pagamentos_mercadopago.yml](../operations/status/aculta_pagamentos_mercadopago.yml). Este documento contém decisões e evidências históricas abaixo; pendências atuais também constam no status do componente.
 
 Base: SDK `mercadopago/dx-php` instalado em `vendor/`; gateway Commerce `mercado_pago`, plugin `aculta_mercadopago_checkout_pro` (Checkout Pro).
 
