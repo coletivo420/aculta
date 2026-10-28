@@ -35,7 +35,7 @@ Status: a fazer, salvo onde indicado.
 
 - [x] I1 — fonte de calendário como entidade de configuração e itens importados como entidade revisável; UID deduplicado por fonte.
 - [x] I2 — contrato e leitor local de `.ics`, com limites de 2 MB e 2.000 eventos; sem biblioteca externa.
-- [ ] I3 — normalização, sanitização de conteúdo e tratamento de fuso/status cancelado.
+- [x] I3 — normalização, sanitização de conteúdo e tratamento de fuso/status cancelado.
 - [ ] I4 — reimportação idempotente, atualização como revisão e marcação de itens ausentes.
 - [ ] I5 — buscar por URL: bloqueada até confirmação da D-21; sem acesso de rede antes disso.
 - [ ] I6 — painel de revisão editorial, acesso restrito, sem publicação automática.

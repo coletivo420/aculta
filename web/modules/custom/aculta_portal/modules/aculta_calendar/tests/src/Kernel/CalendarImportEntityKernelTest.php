@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_calendar\Kernel;
 
 use Drupal\aculta_calendar\Entity\CalendarImportSource;
+use Drupal\aculta_calendar\Import\CalendarEventNormalizer;
 use Drupal\aculta_calendar\Import\IcsCalendarFileReader;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -52,6 +53,10 @@ final class CalendarImportEntityKernelTest extends KernelTestBase {
     $this->assertInstanceOf(
       IcsCalendarFileReader::class,
       $this->container->get('aculta_calendar.import_reader'),
+    );
+    $this->assertInstanceOf(
+      CalendarEventNormalizer::class,
+      $this->container->get('aculta_calendar.import_normalizer'),
     );
   }
 

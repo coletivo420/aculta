@@ -7,6 +7,7 @@ namespace Drupal\aculta_calendar;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\aculta_calendar\Import\IcsCalendarFileReader;
 use Drupal\aculta_calendar\Import\CalendarImportRepository;
+use Drupal\aculta_calendar\Import\CalendarEventNormalizer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -18,6 +19,7 @@ final class AcultaCalendarServiceProvider extends ServiceProviderBase {
     $container->register('aculta_calendar.import_repository', CalendarImportRepository::class)
       ->addArgument(new Reference('entity_type.manager'));
     $container->register('aculta_calendar.import_reader', IcsCalendarFileReader::class);
+    $container->register('aculta_calendar.import_normalizer', CalendarEventNormalizer::class);
   }
 
 }
