@@ -1,3 +1,8 @@
+## 0.1.0-dev.48 — serializar também o retorno do navegador (2026-10-27)
+
+- `onReturn()` agora adquire o lock compartilhado pelo ID remoto antes de qualquer consulta ao Mercado Pago e o mantém até persistir no Commerce. Lock ocupado encerra com exceção segura sem chamar o provedor; falhas liberam o lock em `finally`.
+- Regressão cobre disputa do lock antes da consulta. Unit MP: 203 testes / 861 assertions PASS; Kernel `CheckoutProTest`: 2 testes / 91 assertions PASS (77 depreciações upstream); PHPCS Drupal/DrupalPractice e PHP lint PASS.
+
 ## 0.1.0-dev.47 — serializar consulta e gravação do webhook de pagamento (2026-10-27)
 
 - `onNotify()` adquire o lock pelo ID remoto antes de consultar o Mercado Pago e mantém a seção crítica até concluir a conciliação Commerce. Uma notificação concorrente recebe 503 antes da consulta e pode ser reenviada; isso impede que uma leitura remota antiga, obtida antes do lock, seja aplicada depois de um estado mais recente.
