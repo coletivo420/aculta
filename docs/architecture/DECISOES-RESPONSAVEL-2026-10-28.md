@@ -23,6 +23,7 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 | D-11 | Anti-spam (I-14) | **Manter só o captcha atual** (Turnstile). Honeypot não entra agora. | I-14 fica fora da fase U5. |
 | D-12 | Cores de seção (I-09) | **Lista fechada aprovada**: os quatro tokens da paleta (vermelho, verde, amarelo, verde-escuro). | Revista, item I-09 liberado para implementação. |
 | D-13 | Campo de data do evento (F2) | **`daterange` do core com `field_dia_inteiro`**, sem `smart_date`. O `smart_date` 4.x exige `simshaun/recurr`, que não aceita `doctrine/collections` 3.x; instalá-lo obrigaria a rebaixar a biblioteca. Recorrência, quando entrar, será própria do ACULTA. | `MODELO-DE-DADOS.md` (`field_quando`, `field_dia_inteiro`) e `aculta_calendar` F5. |
+| D-14 | Recorrência de eventos | **Entra na v1.** Subconjunto próprio do RFC 5545 (`FREQ` DAILY/WEEKLY/MONTHLY, `INTERVAL`, `BYDAY`, `BYMONTHDAY`, `COUNT`/`UNTIL`, `EXDATE`), calculado na leitura, sem materializar ocorrências. Estudo em `aculta_calendar/docs/RECORRENCIA.md`, com três pontos abertos (contagem de cancelados, edição de uma ocorrência, série aberta). | `MODELO-DE-DADOS.md` (`field_regra`, `field_excecoes`), F2 e F5 ampliadas. Substitui a parte "pós-v1" de D9 e do modelo. |
 
 ## Pendente
 

@@ -25,7 +25,7 @@ Base de portabilidade no OpenCulturas 3.1.4:
 5. **Incorporação por iframe** para sites de terceiros: rota pública com a agenda, código para copiar
    e `frame-ancestors` decidido na fase F5. Incorporação não exibe dados pessoais.
 
-Fora da v1: recorrência (pós-v1), calendário pessoal na conta, sincronização bidirecional com
+Recorrência (decisão D-14) entra na v1; ver `RECORRENCIA.md`. Fora da v1: calendário pessoal na conta, sincronização bidirecional com
 Google ou Outlook, lembretes e notificações.
 
 ## Rotas (caminhos públicos em português)

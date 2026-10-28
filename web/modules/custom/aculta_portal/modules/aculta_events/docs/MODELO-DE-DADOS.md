@@ -37,7 +37,9 @@ Uma ocorrência do evento, em um local, em um intervalo.
 | `field_organizador` | entity_reference | `field_organizer` (date) | Pode diferir do organizador do evento |
 | `field_gratuito` | boolean | `field_forfree` | Entrada gratuita |
 | `field_estreia` | boolean | `field_premiere` | Sinalização de estreia |
-| `field_data_pai` | entity_reference (`aculta_event_date`) | `field_parent_date` | Subdatas de uma data (ex.: sessões de um mesmo dia); recorrência fica para o pós-v1 |
+| `field_data_pai` | entity_reference (`aculta_event_date`) | `field_parent_date` | Subdatas de uma data (ex.: sessões de um mesmo dia) |
+| `field_regra` | string (255) | `field_date` (recorrência do `smartdate`) | RRULE do subconjunto da v1 (`FREQ`, `INTERVAL`, `BYDAY`, `BYMONTHDAY`, `COUNT`/`UNTIL`). Vazio = evento único. Ver `aculta_calendar/docs/RECORRENCIA.md` |
+| `field_excecoes` | datetime (multivalor) | `field_date` (exceções) | Datas de início canceladas nesta série; a ocorrência cancelada conta na regra, como no RFC 5545 |
 | `field_abertura_portas` | string | `field_door_time_relative` | Horário relativo de abertura |
 | `field_seguranca` | text | `field_safety_info` | Informações de segurança do local |
 

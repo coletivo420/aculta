@@ -66,7 +66,7 @@ Recomendação em negrito. Até a confirmação, a implementação não começa 
 | D6 | Calendário no `main` | Só no subdomínio / também no `main` | **Decidido: também no `main`.** Mesmas rotas de agenda nos dois purposes; canonical e sitemap seguem a regra de produção (ver `aculta_calendar/docs/PLANO-IMPLANTACAO.md`) |
 | D7 | Provedor do mapa | Google Maps / Leaflet com OSM / tiles próprios | **Decidido: Google Maps Platform** (Maps JavaScript API para o mapa; Geocoding API no servidor para coordenadas). Exige chave de API, restrição por domínio em cada ambiente e aviso de privacidade (ver riscos e fase F4) |
 | D8 | Dependências contrib | `smart_date`, `geofield`, mapa | **`smart_date` e `geofield` para avaliação**; mapa com JavaScript próprio sobre a Maps JavaScript API (ou módulo contrib, se compatível com Core ^11.4). ICS próprio em vez de `addtocal_augment`. Leaflet não entra |
-| D9 | Fuso e recorrência | Fuso do site / por local | **`America/Sao_Paulo` do site** (`config/sync/system.date.yml`); recorrência fica para fase posterior |
+| D9 | Fuso e recorrência | Fuso do site / por local | **`America/Sao_Paulo` do site** (`config/sync/system.date.yml`); recorrência entra na v1 (D-14, `aculta_calendar/docs/RECORRENCIA.md`) |
 | D10 | Organizadores | Texto livre / perfil | **Referência a perfil** (`aculta_user`), com opt-in de identidade pública |
 | D11 | Estratégia de branch | Nova PR / PR atual | **Decidido: commits na PR atual** (`chore/aculta-m0-integridade`), publicados por fast-forward, sem force |
 
