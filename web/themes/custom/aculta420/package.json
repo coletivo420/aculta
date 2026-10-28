@@ -1,0 +1,16 @@
+{
+  "name": "aculta420-theme",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint:css": "stylelint \"css/**/*.css\" \"components/**/*.css\"",
+    "lint:js": "eslint \"js/**/*.js\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
+    "stylelint": "^17.16.0",
+    "stylelint-config-recommended": "^18.0.0"
+  }
+}
