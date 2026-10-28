@@ -1,3 +1,8 @@
+## 0.1.0-dev.52 — reentregar webhook durante vínculo da assinatura (2026-10-27)
+
+- `subscription_preapproval` agora retorna erro retryable quando o ID remoto chega enquanto o pedido ainda tem `mp_subscription_creation_pending` e ainda não salvou o vínculo. O evento assinado não é descartado com HTTP 200 antes da conclusão da gravação local.
+- Regressão reproduz a janela entre criação remota e persistência do ID: nenhuma alteração local ocorre e o lock é liberado após a exceção 503. Unit MP: 212 testes / 951 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint focais PASS. Kernel `CheckoutProTest`: 2 testes / 91 assertions PASS (77 depreciações upstream). Homologação sandbox pendente.
+
 ## 0.1.0-dev.51 — validar vínculo da resposta de estorno (2026-10-27)
 
 - `refundPayment()` só atualiza o pagamento Commerce quando a API retorna um estorno aprovado com ID positivo e `payment_id` igual ao pagamento solicitado. Respostas incompletas ou vinculadas a outro pagamento falham fechadas.
