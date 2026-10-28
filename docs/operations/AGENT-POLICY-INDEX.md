@@ -27,6 +27,10 @@ O arquivo `docs/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histórico de 
 | CPF/CNPJ | `web/modules/custom/aculta_portal/modules/aculta_id_cpf/AGENTS.md` |
 | Messenger | `web/modules/custom/aculta_portal/modules/aculta_messenger/AGENTS.md` |
 | Cache e saídas | `docs/operations/AGENT-CACHE.md` e `docs/operations/AGENT-OUTPUT.md` |
+| Mapa do projeto | `docs/operations/MAPA-PARA-AGENTES.md` (leia antes de uma tarefa nova) |
+| Decisões do responsável | `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` (D-01 a D-43); prevalecem sobre planos |
+| Checkouts, carrinho e pagamentos | `docs/decisions/ADR-032-portal-multi-cart-checkout.md`; `aculta_pagamentos_mercadopago/README.md`; `aculta_commerce/docs/PAYMENT-FLOW-CONTRACTS-0.1.0-B.md` |
+| Ingressos pagos (planejamento) | `web/modules/custom/aculta_portal/modules/aculta_events/docs/PLANO-INGRESSOS-PAGOS.md`; sem código ainda |
 
 ## Duplicação e obsolescência
 

@@ -1,8 +1,9 @@
 # ACULTA — agentes CLI
 
 ## REGRA GERAL PARA AGENTES (vale para todos, sem exceção)
-1. Uma PR, um branch: chore/aculta-m0-integridade. Todo trabalho é commit nele.
-   Não criar branch de frente, PR nova ou branch de publicação.
+1. Um único branch de trabalho, definido pelo responsável. **Pendente de definição**: até lá,
+   trabalhe no branch atual do checkout. Todo trabalho é commit nele.
+   Não criar branch de frente, PR nova ou branch de publicação, nem trocar de branch sem ordem.
 2. O servidor de desenvolvimento (checkout /home/piradopirata/projetos/aculta) acompanha
    SEMPRE o head da PR. Toda publicação é seguida de git checkout --detach no novo head.
    Não esperar janela para isso.
@@ -53,13 +54,13 @@ Drupal 11.3+, PHP conforme `docs/architecture/environments.md`; Drupal root `web
 ## Testes de navegador
 - Use **Firefox ESR visível na sessão X11 local** (`DISPLAY=:0`), controlado pelo geckodriver via WebDriver. Referência: Firefox ESR 153.4 e geckodriver 0.37.1.
 - **Não use Chromium headless nem Firefox headless** para validar páginas. O motivo e o histórico estão em `docs/operations/NAVEGADOR-TESTES.md`.
-- Confirme `DISPLAY=:0` antes de abrir o navegador. Use perfil temporário em `/tmp`, criado para a sessão; nunca o perfil pessoal.
+- Confirme `DISPLAY=:0` antes de abrir o navegador. Use perfil temporário em `$SUITE_OUT` (fora do repositório), criado para a sessão e removido ao final; nunca o perfil pessoal. Não use `/tmp`: é tmpfs, com cerca de 3,9 GB, e costuma estar cheio.
 - O agente pode fechar Firefox ESR aberto sem uso. Antes, confirme que nenhum teste está em andamento e que nenhuma sessão WebDriver usa esse Firefox; se alguma estiver em uso, não feche.
 - **Testes visuais são reutilizáveis:** todo script de teste visual (navegador, screenshot, medição de renderização) que um agente criar deve ser salvo no repositório em `tests/browser/<frente>/`, com `README.md` na pasta dizendo o que cobre, o ambiente (servidor de desenvolvimento ou local), as variáveis e as limitações. Nunca deixe o script só em `/tmp` ou em diretório pessoal: ele se perde e a sessão seguinte refaz o trabalho. Artefatos (PNG, HTML, logs) ficam fora do repositório, em `$SUITE_OUT`. Consulte `tests/browser/README.md` antes de escrever um script novo e reaproveite `wdlib.py`. Se o teste troca estado global (tema, configuração), o comando de execução documentado deve restaurar com `trap`.
 
 ## Procedimento de trabalho dos agentes
 Vale para todos os agentes. Detalhes: docs/operations/AGENTES-PROCEDIMENTO.md.
-- Uma PR, um branch: chore/aculta-m0-integridade (PR #298). Todo trabalho é commit nele.
+- Um único branch de trabalho, definido pelo responsável (pendente; ver regra 1 acima). Todo trabalho é commit nele.
 - O servidor de desenvolvimento é o checkout /home/piradopirata/projetos/aculta, sempre no
   head da PR, em HEAD destacado.
 - Bancos: só os existentes. Nunca criar banco. Nunca site:install em banco com tabelas.

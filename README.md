@@ -89,8 +89,8 @@ submódulos e tema.
 
 Estados vigentes: **Dev** indica implementação/revisão em andamento; **RC** indica
 código concluído, gates/testes e revisão visual pré-deploy aprovados; **Alpha**
-indica deploy no servidor de desenvolvimento e validação de ambiente em andamento
-ou registrada; a troca de domínio para `*.aculta.org` também ocorre em Alpha. **Beta** indica deploy no Hostinger (produção), depois de Alpha validado. Alpha e Beta são status e ambiente. `preRC` foi aposentado. Fluxo e critérios:
+indica deploy em `*.aculta.org` depois do RC, na migração de domínio, com validação de ambiente em andamento
+ou registrada. O servidor de desenvolvimento (`*.aculta.toca.net.br`) não é Alpha. **Beta** indica deploy no Hostinger (produção), depois de Alpha validado. Alpha e Beta são status e ambiente. `preRC` foi aposentado. Fluxo e critérios:
 [ciclo de releases](docs/operations/RELEASE-LIFECYCLE.md). O sufixo no manifesto,
 sozinho, não determina o estado.
 

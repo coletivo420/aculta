@@ -3,7 +3,7 @@
 Revisado em 2026-10-20. Este documento define o fluxo vigente para todos os
 módulos, submódulos e o tema. Ele substitui instruções anteriores que exigiam
 `preRC`, visualização depois do RC, PR obrigatório por fase ou validação no
-servidor de desenvolvimento antes de o deploy chegar a Alpha. Registros em
+servidor de desenvolvimento antes de o deploy chegar a Alpha. O Alpha começa depois do RC, na migração para `*.aculta.org`. Registros em
 CHANGELOG e relatórios históricos preservam o que ocorreu sob as regras antigas.
 
 ## Estados e ambientes
@@ -12,7 +12,7 @@ CHANGELOG e relatórios históricos preservam o que ocorreu sob as regras antiga
 | --- | --- | --- |
 | **Dev** | Implementação ou revisão funcional ainda em andamento; código pode estar incompleto. | Checkout/branch de desenvolvimento. Validar automaticamente o que estiver implementado; não declarar a entrega pronta. |
 | **RC** | Tudo necessário para a entrega está pronto antes do deploy: código completo, gates, testes automatizados, revisão de código e revisão visual/acessível pré-deploy aplicável. | Candidato aprovado para deploy em Alpha. Não deixar trabalho funcional, visual ou teste conhecido para “completar depois” do deploy. |
-| **Alpha** | Status/etapa de deploy e ambiente do servidor de desenvolvimento. | Implantar o RC autorizado e validar a integração no servidor, configuração/runtime, rotas, logs, cache, permissões e comportamento aplicável. Na mesma etapa, a troca de domínio para `*.aculta.org` (`aculta_deployer/docs/MIGRACAO-DOMINIOS.md`). Registrar PASS/PARTIAL/FAIL e evidências por componente. |
+| **Alpha** | Status/etapa de deploy no ambiente `*.aculta.org`, depois do RC, na migração de domínio. O servidor de desenvolvimento (`*.aculta.toca.net.br`) não é Alpha. | Implantar o RC autorizado e validar a integração no servidor, configuração/runtime, rotas, logs, cache, permissões e comportamento aplicável. Na mesma etapa, a troca de domínio para `*.aculta.org` (`aculta_deployer/docs/MIGRACAO-DOMINIOS.md`). Registrar PASS/PARTIAL/FAIL e evidências por componente. |
 | **Beta** | Deploy no Hostinger (produção, `*.aculta.org`) do candidato já validado em Alpha. | Ambiente: Hostinger Cloud Startup (LiteSpeed). Só com autorização do responsável, depois de Alpha validado. Registrar PASS/PARTIAL/FAIL e evidências de produção, incluindo robots e sitemap pós-deploy. |
 
 Fluxo: **Dev → RC (pronto para deploy) → Alpha (deploy e validação no servidor
