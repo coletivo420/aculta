@@ -1551,30 +1551,91 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       ])->fetchField();
   }
   /**
-   * @return mixed
+   * Replaces the Content Hub metadata cache for one language.
+   *
+   * H5P core calls this after a successful metadata fetch. The ACULTA
+   * installation keeps the Hub disabled, so this adapter persists the payload
+   * for a later retry instead of contacting the Hub itself.
+   *
+   * @param \JsonSerializable|string $metadata
+   *   Metadata received from the Content Hub.
+   * @param string $lang
+   *   Language code in ISO 639-1.
+   *
+   * @return string
+   *   The stored payload.
    */
   public function replaceContentHubMetadataCache($metadata, $lang) {
-    // TODO: Implement replaceContentHubMetadataCache() method.
+    $payload = is_string($metadata)
+      ? $metadata
+      : json_encode($metadata, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $this->state->set($this->contentHubMetadataKey($lang), $payload);
+    return $payload;
   }
 
   /**
-   * @return \JsonSerializable
+   * Returns the stored Content Hub metadata cache for one language.
+   *
+   * @param string $lang
+   *   Language code in ISO 639-1.
+   *
+   * @return string|null
+   *   The stored JSON payload, or NULL when no cache was stored yet.
    */
   public function getContentHubMetadataCache($lang = 'en') {
-    // TODO: Implement getContentHubMetadataCache() method.
+    $payload = $this->state->get($this->contentHubMetadataKey($lang));
+    return is_string($payload) ? $payload : NULL;
   }
 
   /**
-   * @return ?string
+   * Returns when the Content Hub metadata was last checked.
+   *
+   * @param string $lang
+   *   Language code in ISO 639-1.
+   *
+   * @return string|null
+   *   RFC 7231 timestamp, or NULL when the metadata was never checked.
    */
   public function getContentHubMetadataChecked($lang = 'en') {
-    // TODO: Implement getContentHubMetadataChecked() method.
+    $checked = $this->state->get($this->contentHubMetadataKey($lang, TRUE));
+    return is_string($checked) ? $checked : NULL;
   }
 
   /**
+   * Records when the Content Hub metadata was last checked.
+   *
+   * @param int|string|null $time
+   *   Unix timestamp or RFC 7231 string; NULL clears the marker.
+   * @param string $lang
+   *   Language code in ISO 639-1.
+   *
    * @return bool
+   *   TRUE when the value was stored or cleared, FALSE for an invalid time.
    */
   public function setContentHubMetadataChecked($time, $lang = 'en') {
-    // TODO: Implement setContentHubMetadataChecked() method.
+    $key = $this->contentHubMetadataKey($lang, TRUE);
+    if ($time === NULL) {
+      $this->state->delete($key);
+      return TRUE;
+    }
+    $timestamp = is_numeric($time) ? (int) $time : strtotime((string) $time);
+    if ($timestamp === FALSE || $timestamp < 0) {
+      return FALSE;
+    }
+    $this->state->set($key, gmdate('D, d M Y H:i:s \G\M\T', $timestamp));
+    return TRUE;
+  }
+
+  /**
+   * Builds a stable state key for Content Hub metadata.
+   *
+   * @param string $lang
+   *   Language code in ISO 639-1.
+   * @param bool $checked
+   *   Whether the key stores the last-check timestamp.
+   */
+  private function contentHubMetadataKey($lang, $checked = FALSE) {
+    $lang = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $lang);
+    return 'h5p.content_hub_metadata' . ($checked ? '_checked' : '') . '.' . ($lang !== '' ? $lang : 'en');
   }
 }
