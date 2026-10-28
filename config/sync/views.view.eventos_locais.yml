@@ -1,4 +1,5 @@
 # Adaptado de OpenCulturas 3.1.4 (GPL-2.0-or-later), profile/config/install/views.view.locations.yml
+uuid: 2b9ba206-8700-4256-9c56-f2e5938f1aba
 langcode: pt-br
 status: true
 dependencies:
@@ -21,20 +22,15 @@ display:
     position: 0
     display_options:
       title: Locais
-      access:
-        type: role
-        options:
-          role:
-            administrator: administrator
       fields:
         title:
           id: title
           table: aculta_event_location
           field: title
           relationship: none
-          plugin_id: field
           entity_type: aculta_event_location
           entity_field: title
+          plugin_id: field
           label: Local
           type: string
           settings:
@@ -43,10 +39,30 @@ display:
         type: full
         options:
           items_per_page: 50
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Aplicar
+          reset_button: false
+          exposed_sorts_label: 'Ordenar por'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      access:
+        type: role
+        options:
+          role:
+            administrator: administrator
+      cache:
+        type: tag
+        options: {  }
+      empty: {  }
+      sorts: {  }
+      arguments: {  }
+      filters: {  }
       style:
         type: table
         options:
-          class: ''
           columns:
             title: title
           default: title
@@ -58,6 +74,7 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
+          class: ''
       row:
         type: fields
       query:
@@ -67,33 +84,22 @@ display:
           disable_sql_rewrite: false
           distinct: false
           replica: false
-          query_tags: []
+          query_tags: {  }
+      relationships: {  }
       use_ajax: false
-      header: { }
-      footer: { }
-      empty: { }
-      sorts: { }
-      arguments: { }
-      filters: { }
-      relationships: { }
-      exposed_form:
-        type: basic
-        options:
-          submit_button: Aplicar
-          reset_button: false
-          exposed_sorts_label: 'Ordenar por'
-          expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-      cache:
-        type: tag
-        options: { }
+      header: {  }
+      footer: {  }
   page:
     id: page
     display_title: Página
     display_plugin: page
     position: 1
     display_options:
+      access:
+        type: role
+        options:
+          role:
+            administrator: administrator
       path: painel-administrativo/eventos/locais
       menu:
         type: none
@@ -103,11 +109,6 @@ display:
         expanded: false
         menu_name: admin
         parent: system.admin_content
-      access:
-        type: role
-        options:
-          role:
-            administrator: administrator
       tab_options:
         type: none
         title: Locais
