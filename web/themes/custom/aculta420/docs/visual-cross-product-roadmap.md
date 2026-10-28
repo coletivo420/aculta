@@ -11,7 +11,7 @@ O planejamento inicial nasceu na UX do estudante [GanjaLab420 0.8](../../../../.
 ## Inventário / escolhas atuais
 - Confirmado na árvore do tema: `patterns/card` com slots e variantes; `content/course_card`; `patterns/rail`, `content-grid`, `content-section`, `figure`, `quote`; `content/author-card`; componentes Messenger, avisos, QR e Fórum.
 - Existe shell multidomínio, Bootstrap 5, tokens semânticos e catálogo UI Patterns stories.
-- **Lacunas candidatas, não implementadas:** context-header, context-tabs, empty/state, content-reader, resource-list, status-timeline, next-action. Primeiro verificar se Core/Bootstrap/SDCs atuais já satisfazem o uso.
+- `context-header`, `context-tabs` e `empty-state` já existem na árvore; sua aprovação depende de integração e validação conforme o catálogo. **Lacunas ainda não implementadas:** content-reader, resource-list, status-timeline e next-action. Primeiro verificar se Core/Bootstrap/SDCs atuais já satisfazem o uso.
 - Evidência apenas de inventário estático; uso em Runtime e componentes realmente renderizados ainda requerem inspeção.
 
 ## Matriz de reuso
@@ -54,17 +54,32 @@ cada candidato só vira componente depois de verificar se um SDC existente já a
 `.component.yml`, slots explícitos, story no UI Patterns, tokens, WCAG 2.2 AA, modo claro e escuro, e
 pelo menos um consumidor real. Template ou bloco do OpenCulturas é referência, nunca cópia.
 
-| Candidato | Uso | Classificação inicial | Verificar antes de criar |
-| --- | --- | --- | --- |
-| `content/press-mention` (I-26) | "Na imprensa" | Nova | `content/editorial-card` cobre o caso? |
-| `content/sponsor-logos` (I-27) | Apoiadores e parceiros | Nova; exige consentimento | — |
-| `content/accessibility-badges` (I-28) | Selos de acessibilidade | Nova | `patterns/figure` com legenda? |
-| `feedback/stat-counter` (I-29 e presença) | Contagem com supressão abaixo de 5 | Nova | `feedback/empty-state` para o caso "menos de 5" |
-| `patterns/bookmark-toggle` (I-31) | Salvar e salvo | Nova; estado por flag | Controle de flag já existente no Forum |
-| Layout 5 regiões (I-21) | Página de evento | Via UI Patterns Layouts | `patterns/rail` e `content-section` |
-| Layout 1, 2 e 3 colunas (I-22) | Composição de página | Via UI Patterns Layouts | `patterns/rail` |
+| Padrão | Resultado da auditoria B3/B4 | Estado atual |
+| --- | --- | --- |
+| `feedback/stat-counter` (I-29) | Não há SDC equivalente; criado com valor/rótulo, e a supressão abaixo de cinco fica no provider. | Candidato; sem consumidor real. |
+| `content/accessibility-badges` (I-28) | `patterns/figure` cobre mídia/legenda, não a lista de recursos; candidato textual criado. | Candidato; sem consumidor real de eventos/locais. |
+| Menção na imprensa (I-26) | `content/editorial-card` atende via slots; story de uso adicionada, sem SDC duplicado. | Candidato de uso; sem consumidor real. |
+| `content/sponsor-logos` (I-27) | Candidato criado com slot para mídia do Drupal/aculta_image. | Sem consumidor; cada marca exige autorização registrada. |
+| `patterns/bookmark-toggle` (I-31) | Composição do SDC envolve a ação nativa `flag_salvar_topico` no tópico completo do Fórum. | Candidato consumido por código; validação visual Runtime pendente. |
+| Layout 5 regiões (I-21) | UI Patterns Layouts 2.0.23 está instalado no código e habilitado em Config Sync; layout criado com cinco slots. | Experimental; sem consumidor real enquanto `aculta_events` não implementar F3. |
 
-Gate: nenhum candidato entra em consumidor antes da story e do teste de cache renderizável.
+Resultado: stories existem; não declarar aprovação sem validação do schema,
+renderização/cache no Runtime e revisão visual autorizada.
+
+## Execução Frente B — 2026-10-28
+
+- **B1:** `patterns/card` ganhou `compact`, story e consumidor na View de álbuns.
+- **B2:** tokens e modificadores fechados de seção; contraste mínimo calculado de
+  4,69:1. O bloco básico ainda precisa receber a opção `section_color` pela
+  Frente A (`Pede-A` no commit).
+- **B3:** cada padrão avaliado; novos SDCs ficam experimentais/candidatos sem
+  consumidor ou validação suficientes. `editorial-card` foi reutilizado para
+  menções; a flag do Fórum foi composta por `bookmark-toggle`.
+- **B4:** layout UI Patterns de cinco regiões criado; o módulo Eventos ainda não
+  fornece consumidor.
+- **B5:** Stylelint e ESLint configurados em `package.json`; os dois scripts
+  passaram. Verificação visual das mudanças Twig continua pendente de autorização
+  para `drush cr`.
 
 ## Links
 - [Shell multidomínio](shell.md)

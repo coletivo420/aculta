@@ -26,7 +26,14 @@ não requer uma aplicação Storybook separada.
 - Componentes com integração Core/contrib mantêm os nomes dos seus contratos;
   stories não alteram o presenter nem simulam autorização ou cache.
 - Ao criar um SDC, atualizar o índice de componentes e seu story no mesmo
-commit. O catálogo por provider lista os 34 SDCs atuais do ACULTA420.
+  commit.
+
+## Inventário estático atual — 2026-10-28
+
+Na árvore deste commit há **52 arquivos `.component.yml`, 52 Twig, 43 CSS e 91
+stories** em `components/`. A contagem inclui componentes experimentais e
+candidatos abaixo; não demonstra validação do schema no Runtime, renderização na
+UI Patterns Library nem aprovação visual.
 
 ## UI Styles
 
@@ -48,9 +55,35 @@ contraste inadequado. Não disponibilizar texto inverso sem superfície compatí
 e é usada pela View de álbuns. `teaser`, `destaque` e `busca` permanecem itens de planejamento até que
 contratos e consumidores reais autorizem sua implementação; não são componentes disponíveis.
 
+## Candidatos OpenCulturas avaliados — 2026-10-28
+
+| Padrão | Situação | Consumidor / pendência |
+| --- | --- | --- |
+| `feedback/stat-counter` | Candidato experimental, com schema e story | Nenhum consumidor real. O provider deve omitir valores abaixo de cinco; o tema não aplica essa política. |
+| `content/accessibility-badges` | Candidato experimental, com rótulos textuais | Nenhum consumidor real de local/evento; `patterns/figure` atende mídia com legenda, não a lista de selos. |
+| Menção na imprensa | Story de uso de `content/editorial-card`; nenhum SDC novo | A View/consumer de menção real ainda não existe. |
+| `content/sponsor-logos` | Candidato experimental, sem marcas reais | Nenhum consumidor; marca só entra após autorização registrada e mídia pelo pipeline `aculta_image`. |
+| `patterns/bookmark-toggle` | Candidato experimental, com estados em stories | Consumido pelo tópico completo do Fórum através da ação nativa `flag_salvar_topico`; validação visual no Runtime pendente. A Flag mantém comportamento e acesso. |
+| `layouts/event-page-five-regions` | Layout UI Patterns experimental | UI Patterns Layouts está no código e em Config Sync. Sem consumidor real: o módulo `aculta_events` ainda não tem implementação funcional. |
+
+As quatro cores fechadas de seção têm tokens, pares de contraste e stories no
+`content-section`. A seleção no bloco básico ainda depende do pedido `Pede-A`
+registrado no commit B2. Nenhuma destas entregas novas está declarada aprovada:
+falta renderização/homologação visual com autorização para `drush cr`.
+
+## Gates do tema — 2026-10-28
+
+O tema tem `npm run lint:css` e `npm run lint:js`. Ambos passaram na microfase
+B5. O inventário estático acima não substitui revisão WCAG 2.2 AA, testes de
+consumidores, modos claro/escuro e renderização no Firefox ESR.
+
 ## Backlog do catálogo — padrões transversais ainda não implementados
 
-O [roadmap visual próprio do tema](visual-cross-product-roadmap.md) define candidatos `context-header`, `context-tabs`, `empty-state`, `content-reader`, `resource-list`, `status-timeline` e outros. **Não listar como SDC existente nem contabilizar nos componentes disponíveis.** Quando qualquer padrão entrar no código, adicionar um story `.story.yml` real, atualizar contagem/inventário e criar demonstrações de mobile, desktop, claro/escuro e estados pertinentes. Preservar o shell global e priorizar variantes dos SDC atuais.
+`context-header`, `context-tabs` e `empty-state` já existem na árvore e não são
+itens pendentes de criação. Permanecem no backlog `content-reader`,
+`resource-list`, `status-timeline` e `next-action`; antes de criar qualquer um,
+verificar os SDCs existentes e exigir um consumidor real. Preservar o shell
+global e priorizar variantes dos SDC atuais.
 
 ## Cobertura de stories — fotografia de 2026-10-22
 
