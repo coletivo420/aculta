@@ -70,13 +70,19 @@ final class EventCatalogueController extends ControllerBase {
     $itens = [];
     foreach ($resultados as $item) {
       $evento = $item['evento'];
-      $url = Url::fromRoute('aculta_events.page', ['slug' => (string) $evento->get('field_slug')->value])->toString();
-      $linha = '<a href="' . Html::escape($url) . '">' . Html::escape((string) $evento->label()) . '</a>'
-        . ' — ' . Html::escape($item['proxima']['inicio']->format('d/m/Y H:i'));
-      if ($evento->get('field_status')->value === 'cancelado') {
-        $linha .= ' <strong>(cancelado)</strong>';
-      }
-      $itens[] = ['#markup' => $linha];
+      $itens[] = [
+        '#type' => 'component',
+        '#component' => 'aculta420:event_card',
+        '#props' => [
+          'title' => (string) $evento->label(),
+          'url' => Url::fromRoute('aculta_events.page', ['slug' => (string) $evento->get('field_slug')->value])->toString(),
+          'subtitle' => (string) $evento->get('field_subtitulo')->value ?: NULL,
+          'tipo' => $evento->get('field_tipo')->entity?->label(),
+          'proxima' => $item['proxima']['inicio']->format('d/m/Y H:i'),
+          'local' => NULL,
+          'cancelado' => $evento->get('field_status')->value === 'cancelado',
+        ],
+      ];
     }
 
     return [

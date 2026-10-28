@@ -1,0 +1,13 @@
+{#
+  Cartão de evento. Texto em português; data no formato brasileiro, montada pelo módulo de eventos.
+#}
+<article class="event-card{% if cancelado %} event-card--cancelado{% endif %}">
+  {% if tipo %}<p class="event-card__tipo">{{ tipo }}</p>{% endif %}
+  <h3 class="event-card__titulo"><a href="{{ url }}">{{ title }}</a></h3>
+  {% if subtitle %}<p class="event-card__subtitulo">{{ subtitle }}</p>{% endif %}
+  <ul class="event-card__meta">
+    {% if proxima %}<li><span class="event-card__rotulo">Próxima data:</span> {{ proxima }}</li>{% endif %}
+    {% if local %}<li><span class="event-card__rotulo">Local:</span> {{ local }}</li>{% endif %}
+  </ul>
+  {% if cancelado %}<p class="event-card__aviso" role="status"><strong>Cancelado</strong></p>{% endif %}
+</article>

@@ -1,0 +1,11 @@
+name: Evento
+description: Exemplo estático. Dados reais vêm do ACULTA Eventos (datas em horário de Brasília).
+component: aculta420:event_card
+props:
+  title: Oficina de cerâmica
+  url: '#oficina-de-ceramica'
+  subtitle: Introdução ao torno e à queima
+  tipo: Oficina
+  proxima: '10/05/2030 19:00'
+  local: Casa de cultura
+  cancelado: false

@@ -1,0 +1,10 @@
+name: Evento cancelado
+description: Mostra o aviso de cancelamento e risca o título.
+component: aculta420:event_card
+props:
+  title: Feira do livro
+  url: '#feira-do-livro'
+  tipo: Feira
+  proxima: '12/05/2030 09:00'
+  local: Praça pública
+  cancelado: true
