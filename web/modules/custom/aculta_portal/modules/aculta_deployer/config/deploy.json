@@ -66,6 +66,11 @@
         "domain_id": "links_aculta_org",
         "test_host": "links.aculta.toca.net.br",
         "production_host": "links.aculta.org"
+      },
+      {
+        "domain_id": "eventos_aculta_org",
+        "test_host": "eventos.aculta.toca.net.br",
+        "production_host": "eventos.aculta.org"
       }
     ]
   },
@@ -110,7 +115,8 @@
         "https://loja.aculta.toca.net.br/",
         "https://growroom420.aculta.toca.net.br/",
         "https://wiki420.aculta.toca.net.br/",
-        "https://links.aculta.toca.net.br/"
+        "https://links.aculta.toca.net.br/",
+        "https://eventos.aculta.toca.net.br/"
       ],
       "note": "Servidor de testes não indexável."
     }
@@ -269,6 +275,14 @@
       "reason": "alias do host do servidor de testes; excluído no build de produção"
     },
     {
+      "file": "config/sync/domain.record.eventos_aculta_org.yml",
+      "reason": "hostname canônico do purpose de eventos por ambiente"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.eventos_aculta_toca_net_br.yml",
+      "reason": "alias do host do servidor de testes; excluído no build de produção"
+    },
+    {
       "file": "config/sync/aculta_mailer.transport.smtp_hostinger.yml",
       "reason": "servidor e usuário de envio SMTP (endereço de envio do domínio) por ambiente"
     },
@@ -362,6 +376,11 @@
           "file": "config/sync/domain.record.links_aculta_org.yml",
           "pattern": "^hostname: .*$",
           "with": "hostname: links.aculta.org"
+        },
+        {
+          "file": "config/sync/domain.record.eventos_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: eventos.aculta.org"
         },
         {
           "file": "config/sync/domain/links_aculta_org/metatag.metatag_defaults.front.yml",
@@ -494,6 +513,11 @@
           "with": "hostname: links.aculta.toca.net.br"
         },
         {
+          "file": "config/sync/domain.record.eventos_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: eventos.aculta.toca.net.br"
+        },
+        {
           "file": "config/sync/domain/links_aculta_org/metatag.metatag_defaults.front.yml",
           "pattern": "^  canonical_url: .*$",
           "with": "  canonical_url: 'https://links.aculta.toca.net.br/'"
@@ -617,6 +641,11 @@
           "file": "config/sync/domain_alias.alias.links_aculta_toca_net_br.yml",
           "pattern": "^pattern: .*$",
           "with": "pattern: links.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.eventos_aculta_toca_net_br.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: eventos.aculta.toca.net.br"
         },
         {
           "file": "config/sync/aculta_mailer.brand.aculta.yml",

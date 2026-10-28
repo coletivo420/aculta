@@ -60,6 +60,7 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
         'courses' => $this->t('Courses'),
         'forum' => $this->t('Forum'),
         'links' => $this->t('Social links'),
+        'eventos' => $this->t('Events'),
       ],
       '#default_value' => $this->configuration['purpose'],
     ];

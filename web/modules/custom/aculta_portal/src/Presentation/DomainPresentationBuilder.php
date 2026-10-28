@@ -56,6 +56,10 @@ final class DomainPresentationBuilder {
       'title' => 'Redes sociais da ACULTA',
       'short_title' => 'Redes sociais',
     ],
+    'eventos' => [
+      'title' => 'Eventos da ACULTA',
+      'short_title' => 'Eventos',
+    ],
   ];
 
   public function __construct(
