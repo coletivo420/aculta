@@ -252,93 +252,11 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildConfigurationForm($form, $form_state);
 
-    $mode_name = 'configuration[' . $this->pluginId . '][mode]';
-    $form['#attached']['library'][] = 'aculta_pagamentos_mercadopago/gateway_admin';
-
-    $form['credentials_test'] = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('Sandbox - Test account'),
-      '#description' => $this->t('Use your Mercado Pago test account credentials (Public key and Access token from the test environment). Use them to simulate payments and test your integrations from a trial account. For more information visit: https://www.mercadopago.com/developers/en/docs/your-integrations/test/accounts'),
-      '#attributes' => ['data-portal-ui' => 'mercado-pago-credentials-test'],
-      '#states' => [
-        'visible' => [
-          ':input[name="' . $mode_name . '"]' => ['value' => 'test'],
-        ],
-      ],
-    ];
-    $form['credentials_test']['public_key_test'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Public key'),
-      '#description' => $this->t('Public key for Mercado Pago.'),
-      '#default_value' => $this->configuration['public_key_test'],
-    ];
-    $form['credentials_test']['access_token_test'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Access token'),
-      '#description' => $this->t('Access token for Mercado Pago.'),
-      '#default_value' => $this->configuration['access_token_test'],
-    ];
-
-    $form['credentials_stage'] = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('Stage - Production account & Test credentials'),
-      '#description' => $this->t('Use test credentials (Public key and Access token) against your production account to try the flow without real charges. For more information visit: https://www.mercadopago.com/developers/en/docs/your-integrations/credentials'),
-      '#attributes' => ['data-portal-ui' => 'mercado-pago-credentials-stage'],
-      '#states' => [
-        'visible' => [
-          ':input[name="' . $mode_name . '"]' => ['value' => 'stage'],
-        ],
-      ],
-    ];
-    $form['credentials_stage']['public_key_stage'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Public key'),
-      '#description' => $this->t('Public key for Mercado Pago.'),
-      '#default_value' => $this->configuration['public_key_stage'],
-    ];
-    $form['credentials_stage']['access_token_stage'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Access token'),
-      '#description' => $this->t('Access token for Mercado Pago.'),
-      '#default_value' => $this->configuration['access_token_stage'],
-    ];
-
-    $form['credentials_prod'] = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('Live - Production account & Production credentials'),
-      '#description' => $this->t('Use your production credentials (Public key and Access token) for real payments. For more information visit: https://www.mercadopago.com/developers/en/docs/your-integrations/credentials'),
-      '#attributes' => ['data-portal-ui' => 'mercado-pago-credentials-prod'],
-      '#states' => [
-        'visible' => [
-          ':input[name="' . $mode_name . '"]' => ['value' => 'live'],
-        ],
-      ],
-    ];
-    $form['credentials_prod']['public_key_prod'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Public key'),
-      '#description' => $this->t('Public key for Mercado Pago.'),
-      '#default_value' => $this->configuration['public_key_prod'],
-    ];
-    $form['credentials_prod']['access_token_prod'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Access token'),
-      '#description' => $this->t('Access token for Mercado Pago.'),
-      '#default_value' => $this->configuration['access_token_prod'],
-    ];
-
-    $form['client_id'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Client id'),
-      '#description' => $this->t('The Client id for Mercado Pago.'),
-      '#default_value' => $this->configuration['client_id'],
-    ];
-
-    $form['client_secret'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Client Secret'),
-      '#description' => $this->t('The Client Secret for Mercado Pago.'),
-      '#default_value' => $this->configuration['client_secret'],
+    $form['credentials_environment'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Credentials'),
+      '#markup' => $this->t('Mercado Pago credentials are supplied by the active environment and cannot be edited here.'),
+      '#weight' => -10,
     ];
 
     $form['redirect_mode'] = [
@@ -738,33 +656,6 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       $form_state->setError($form['max_installments'], $this->t('Maximum installments must be between 1 and 12.'));
     }
 
-    $creds_test = $values['credentials_test'] ?? [];
-    $creds_stage = $values['credentials_stage'] ?? [];
-    $creds_prod = $values['credentials_prod'] ?? [];
-    if ($values['mode'] === 'test') {
-      if (empty($creds_test['access_token_test'])) {
-        $form_state->setError($form['credentials_test']['access_token_test'], $this->t('Access token cannot be empty.'));
-      }
-      if (empty($creds_test['public_key_test'])) {
-        $form_state->setError($form['credentials_test']['public_key_test'], $this->t('Public key cannot be empty.'));
-      }
-    }
-    elseif ($values['mode'] === 'stage') {
-      if (empty($creds_stage['access_token_stage'])) {
-        $form_state->setError($form['credentials_stage']['access_token_stage'], $this->t('Access token cannot be empty.'));
-      }
-      if (empty($creds_stage['public_key_stage'])) {
-        $form_state->setError($form['credentials_stage']['public_key_stage'], $this->t('Public key cannot be empty.'));
-      }
-    }
-    else {
-      if (empty($creds_prod['access_token_prod'])) {
-        $form_state->setError($form['credentials_prod']['access_token_prod'], $this->t('Access token cannot be empty.'));
-      }
-      if (empty($creds_prod['public_key_prod'])) {
-        $form_state->setError($form['credentials_prod']['public_key_prod'], $this->t('Public key cannot be empty.'));
-      }
-    }
   }
 
   /**
@@ -781,17 +672,6 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     parent::submitConfigurationForm($form, $form_state);
     if (!$form_state->getErrors()) {
       $values = $form_state->getValue($form['#parents']);
-      $creds_test = $values['credentials_test'] ?? [];
-      $creds_stage = $values['credentials_stage'] ?? [];
-      $creds_prod = $values['credentials_prod'] ?? [];
-      $this->configuration['public_key_test'] = $creds_test['public_key_test'] ?? '';
-      $this->configuration['access_token_test'] = $creds_test['access_token_test'] ?? '';
-      $this->configuration['public_key_stage'] = $creds_stage['public_key_stage'] ?? '';
-      $this->configuration['access_token_stage'] = $creds_stage['access_token_stage'] ?? '';
-      $this->configuration['public_key_prod'] = $creds_prod['public_key_prod'] ?? '';
-      $this->configuration['access_token_prod'] = $creds_prod['access_token_prod'] ?? '';
-      $this->configuration['client_id'] = $values['client_id'];
-      $this->configuration['client_secret'] = $values['client_secret'];
       $this->configuration['redirect_mode'] = $values['redirect_mode'];
       $country = $values['country'] ?? '';
       $this->configuration['country'] = $country;
@@ -1063,7 +943,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     catch (PaymentGatewayException $exception) {
       throw $exception;
     }
-    catch (\Throwable $exception) {
+    catch (\Throwable) {
       // Provider responses can include private information. Log no response
       // bodies, access tokens, or SDK exception messages.
       $logger->error('Mercado Pago refund request failed for payment @remote_id.', ['@remote_id' => $remote_id]);
@@ -1116,7 +996,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
           }
         }
       }
-      catch (\Throwable $exception) {
+      catch (\Throwable) {
         $logger->error('Mercado Pago webhook lookup failed for payment @id.', ['@id' => $payment_id]);
         return new JsonResponse([], 503);
       }

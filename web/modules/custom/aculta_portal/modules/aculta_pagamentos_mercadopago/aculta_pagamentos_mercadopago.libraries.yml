@@ -13,12 +13,6 @@ checkout_pro_review:
     - core/once
     - aculta_pagamentos_mercadopago/mp_sdk
 
-gateway_admin:
-  version: VERSION
-  css:
-    theme:
-      css/gateway-admin.css: {}
-
 checkout_popup:
   version: VERSION
   js:

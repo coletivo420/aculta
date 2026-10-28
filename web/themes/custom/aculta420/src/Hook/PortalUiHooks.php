@@ -148,9 +148,6 @@ final class PortalUiHooks {
     'checkout-guest-registration' => ['card', 'card-body', 'mb-3'],
     'checkout-google' => ['d-flex', 'justify-content-center', 'mb-3'],
     'gallery-dialog' => ['aculta-gallery-dialog'],
-    'mercado-pago-credentials-test' => ['mercado-pago-credentials', 'mercado-pago-credentials-test'],
-    'mercado-pago-credentials-stage' => ['mercado-pago-credentials', 'mercado-pago-credentials-stage'],
-    'mercado-pago-credentials-prod' => ['mercado-pago-credentials', 'mercado-pago-credentials-prod'],
     'icon-search' => ['bi', 'bi-search'],
     'visually-hidden' => ['visually-hidden'],
     // Wiki e cursos.

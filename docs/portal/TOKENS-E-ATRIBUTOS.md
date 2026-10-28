@@ -460,9 +460,6 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `checkout-help` | `checkout-help` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/PluginForm/Checkout/RedirectCheckoutForm.php` |
 | `checkout-guest-registration` | `card`, `card-body`, `mb-3` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/AcultaCheckoutLogin.php` |
 | `checkout-google` | `d-flex`, `justify-content-center`, `mb-3` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/AcultaCheckoutLogin.php` |
-| `mercado-pago-credentials-test` | `mercado-pago-credentials`, `mercado-pago-credentials-test` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
-| `mercado-pago-credentials-stage` | `mercado-pago-credentials`, `mercado-pago-credentials-stage` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
-| `mercado-pago-credentials-prod` | `mercado-pago-credentials`, `mercado-pago-credentials-prod` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
 | `forum-category-count` | `aculta-forum-category__count` | `web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/ForumCategoryTopicCount.php` |
 
 ## Painéis de vendas e doações (dev.69 e 0.6.0-dev.67)

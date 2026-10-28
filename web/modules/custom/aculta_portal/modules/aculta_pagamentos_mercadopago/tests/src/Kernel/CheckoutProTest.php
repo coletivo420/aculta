@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\aculta_pagamentos_mercadopago\Kernel;
 
 use Drupal\commerce_payment\Entity\PaymentGateway;
@@ -84,6 +86,12 @@ class CheckoutProTest extends OrderKernelTestBase {
       $this->assertSame('aculta_mercadopago', $plugin->getPaymentType()->getPluginId());
       $configuration_form = $plugin->buildConfigurationForm([], new FormState());
       $this->assertArrayNotHasKey('autofee', $configuration_form);
+      $this->assertArrayHasKey('credentials_environment', $configuration_form);
+      $this->assertArrayNotHasKey('credentials_test', $configuration_form);
+      $this->assertArrayNotHasKey('credentials_stage', $configuration_form);
+      $this->assertArrayNotHasKey('credentials_prod', $configuration_form);
+      $this->assertArrayNotHasKey('client_id', $configuration_form);
+      $this->assertArrayNotHasKey('client_secret', $configuration_form);
       $this->assertStringContainsString('Payer details are removed', (string) $configuration_form['debug_logging']['#description']);
       $this->assertStringNotContainsString('webhook data', (string) $configuration_form['debug_logging']['#description']);
       $configuration_form['#parents'] = ['configuration', 'aculta_mercadopago_checkout_pro'];
@@ -93,11 +101,6 @@ class CheckoutProTest extends OrderKernelTestBase {
         'mode' => 'test',
         'payment_method_types' => [],
         'collect_billing_information' => FALSE,
-        'credentials_test' => [],
-        'credentials_stage' => [],
-        'credentials_prod' => [],
-        'client_id' => '',
-        'client_secret' => '',
         'redirect_mode' => 'redirect',
         'country' => 'AR',
         'payment_options_wrapper' => [],

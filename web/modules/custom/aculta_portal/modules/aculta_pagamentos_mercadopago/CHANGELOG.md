@@ -312,7 +312,7 @@
 ## 0.1.0-dev.6 — marcação do checkout e das credenciais por token — 2026-10-19
 
 - Aviso do checkout (`checkout-help`) e fieldsets de credenciais (`mercado-pago-credentials-*`) usam `data-portal-ui`. O mapa das classes fica no tema.
-- Pendência: o estilo das credenciais continua em `css/gateway-admin.css` deste submódulo, e deveria ir para o tema.
+- Situação histórica: essa folha e os campos de credenciais foram removidos em `0.1.0-dev.61`; as chaves são exclusivamente fornecidas pelo ambiente ativo.
 - RUNTIME STATUS: DEFERRED.
 
 ## 0.1.0-dev.5 — retorno do popup e onReturn endurecidos — 2026-10-19
@@ -361,4 +361,9 @@
 - PHP lint PASS. PHPCS Drupal e DrupalPractice no `RedirectCheckoutForm`: zero
   erros; seis avisos antigos de linhas acima de 80 caracteres permanecem.
 
+
+## 0.1.0-dev.61 — remover configuração manual de credenciais (2026-10-27)
+
+- A tela do gateway não exibe nem grava campos de credenciais; as chaves vêm exclusivamente do ambiente ativo. Removidos a validação de campos ausentes que já não existem, o hook de mascaramento obsoleto, a folha administrativa sem consumidor no tema ativo e seus tokens órfãos. O Kernel verifica que o formulário informa a origem ambiental e não contém campos secretos.
+- Unit MP: 220 testes / 977 assertions PASS (1 depreciação PHPUnit); Kernel `CheckoutProTest`: 3 testes / 135 assertions PASS (78 depreciações Core/contrib); PHPCS Drupal/PHP lint e gates de mapa (200 checks), fronteira (3123 checks) e índice de status PASS. `validate-portal-ui-docs.php` continua FAIL por 89 divergências em outros contratos/tokens, sem ocorrência de Mercado Pago no relatório.
 
