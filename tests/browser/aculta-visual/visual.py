@@ -100,16 +100,33 @@ def album_metrics(driver):
           width: Math.round(r.width), height: Math.round(r.height)};
       }).filter(item => item.width > 0 && item.height > 0
         && (item.width < 44 || item.height < 44));
-      const emptyLinks = cards.flatMap(card => [...card.querySelectorAll('a')])
-        .filter(link => !(link.innerText || '').trim() && !link.getAttribute('aria-label'))
-        .length;
+      const cardLinks = cards.flatMap(card => [...card.querySelectorAll('a')]);
+      const unnamedLinks = cardLinks.filter(link => {
+        const text = (link.innerText || '').trim();
+        const imageText = [...link.querySelectorAll('img[alt]')]
+          .map(image => image.alt.trim()).filter(Boolean).join(' ');
+        const svgText = [...link.querySelectorAll('svg[aria-label], svg title')]
+          .map(element => (element.getAttribute('aria-label') || element.textContent || '').trim())
+          .filter(Boolean).join(' ');
+        return !text && !imageText && !svgText && !link.getAttribute('aria-label')
+          && !link.getAttribute('aria-labelledby');
+      });
+      const placeholderLinks = cardLinks.filter(link => {
+        const href = (link.getAttribute('href') || '').toLowerCase();
+        return href.includes('%5bpath%5d') || href.includes('[path]');
+      })
+        .map(link => ({href: link.getAttribute('href'),
+          text: (link.innerText || '').trim(),
+          ariaLabel: link.getAttribute('aria-label'),
+          imageAlts: [...link.querySelectorAll('img[alt]')].map(image => image.alt)}));
       const originalScrollX = scrollX;
       window.scrollTo(10000, 0);
       const maxScrollX = scrollX;
       window.scrollTo(originalScrollX, 0);
       return {title: document.title, heading: document.querySelector('main h1, h1')?.innerText || '',
         viewport: innerWidth, documentWidth: document.documentElement.scrollWidth, maxScrollX,
-        compactCards: cards.length, smallActions, emptyLinks,
+        compactCards: cards.length, smallActions,
+        unnamedLinks: unnamedLinks.length, placeholderLinks,
         firstCardText: cards[0]?.innerText?.trim().slice(0, 180) || ''};
     })();""")
 
@@ -173,8 +190,10 @@ def inspect_album(prefs=None, dark=False):
             snapshots[label] = metrics
             if metrics["maxScrollX"] > 0:
                 print(f"BLOCK horizontal scroll album {label}: maxScrollX={metrics['maxScrollX']}")
-            if metrics["emptyLinks"] > 0:
-                print(f"BLOCK unnamed links album {label}: {metrics['emptyLinks']}")
+            if metrics["unnamedLinks"] > 0:
+                print(f"BLOCK unnamed links album {label}: {metrics['unnamedLinks']}")
+            if metrics["placeholderLinks"]:
+                print(f"BLOCK placeholder links album {label}: {metrics['placeholderLinks']}")
             suffix = "-dark" if dark else ""
             save_screenshot(driver, f"albums-{label}{suffix}.png")
             if actual != width:
@@ -381,7 +400,8 @@ def main():
                 print(f"album {variant}/{size}: {data['compactCards']} cards compact; "
                       f"viewport={data['viewport']}; documento={data['documentWidth']}; "
                       f"alvos pequenos={len(data['smallActions'])}; "
-                      f"links vazios sem nome={data['emptyLinks']}")
+                      f"links sem nome={data['unnamedLinks']}; "
+                      f"links placeholder={len(data['placeholderLinks'])}")
     print("UI Patterns bloqueada:", story["blocked"])
     if os.environ.get("STORY_ONLY") != "1":
         print("Flag Fórum: estados salvo/não salvo capturados; estado inicial restaurado:",
