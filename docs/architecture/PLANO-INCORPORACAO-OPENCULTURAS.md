@@ -13,7 +13,7 @@ Regra de cópia: nenhum arquivo é copiado como está. Cada trecho derivado tem 
 | Id | Origem no OpenCulturas | Destino no ACULTA | Situação | Evidência |
 | --- | --- | --- | --- | --- |
 | E0 | Dependências do `info.yml` | `aculta_events`, `aculta_calendar` sem `openculturas_custom` | **Feito.** Recorrência usa `rlanvin/php-rrule` 3.0 e a local usa `drupal/geofield`, ambos autorizados pelo responsável (D-16). `smart_date` não entra (D-13); nenhum submódulo do OpenCulturas é dependência | `7ae9e54e4`, D-16 |
-| E1 | `node.type.event/date/location` e campos | Entidades `Evento`, `Local`, data com exceção; `aculta_event_type` e `aculta_location_type` | **Feito na parte de tipos.** Os dois vocabulários existem, com os 17 tipos de local do OpenCulturas em português. Campos de venda seguem fora (`drupal/geofield` instalado para as coordenadas). | `0e6d81397`, `bb0a907c8`, `8668fc957`, `fd70ddd8a` |
+| E1 | `node.type.event/date/location` e campos | Entidades `Evento`, `Local`, data com exceção; `aculta_event_type` e `aculta_location_type` | **Feito na parte de tipos.** Os dois vocabulários existem, com os 17 tipos de local do OpenCulturas em português. Campos de venda seguem fora (`drupal/geofield` instalado para as coordenadas). Testes Kernel cobrem criação/listagem e negação de `/locais` fora do purpose `eventos`; vocabulário sincronizado. | `0e6d81397`, `bb0a907c8`, `8668fc957`, `fd70ddd8a`, `b1f897b48` |
 | E2 | Views `event_catalogue`, `locations`, `related_dates_*` | Catálogo e lista de locais em controller (desvio registrado no roadmap); views de datas relacionadas e exportação pendentes | **Parcial.** Catálogo e `/locais` textuais feitos. Faltam as views de datas relacionadas e a exportação administrativa, que continua sem decisão do responsável (S5) | `0174e641c`, `fd70ddd8a` |
 | E3 | `DateEventHooks::nodeViewAlter` e `viewsPostExecute` | Listagens sem data passada e cache até a próxima data (`EventDateHooks`, `UpcomingDates`) | **Feito, com desvio.** `viewsPostExecute` virou `#[Hook('views_post_execute')]`; `nodeViewAlter` não tem equivalente em entity view no ACULTA, então a regra vive nos controllers da página e do catálogo. Sem cron (T5). `nodePrepareForm` (S1) não copiado. | `8bd6d832b` |
 | E4 | `DateEventHooks::nodePrepareForm` | **Não copiar** (S1). Pré-preenchimento só com checagem de acesso, se for necessário | **Decidido: não copiado.** Pedido pendente se o responsável quiser o recurso | — |
@@ -89,12 +89,12 @@ integrações). Não há `/admin` nas telas novas.
 | `moderated_content` | Conteúdo moderado | Só fórum e wiki por workflow | ADM1: mesmo painel, com filtro por área |
 | `legal_terms`, `legal_users` | Histórico de termos e aceites | `/painel-administrativo/termos/aceites` | Já existe. Sem ação |
 | `user_admin_people` | Lista de pessoas | Não há painel geral (há `contas/nao-confirmadas`) | ADM2: lista administrativa mínima, sem dado sensível; revisão de LGPD antes |
-| `media`, `media_library`, `files` (uso de arquivo) | Mídia e uso de arquivos | `/painel-administrativo/imagens` (catálogo, quarentena, limpeza, relatório) | ADM3: acrescentar a visão "onde este arquivo é usado" |
+| `media`, `media_library`, `files` (uso de arquivo) | Mídia e uso de arquivos | `/painel-administrativo/imagens` e `/painel-administrativo/imagens/{file}/usos` | ADM3: consulta somente leitura, restrita a quem administra imagens (commit `d80b4a748`) |
 | `oc_comments` | Comentários de todas as áreas | Só fórum (`forum/comentarios/...`) | Coberto por ADM1 quando houver comentário fora do fórum |
 | `faq` (`/admin/content/faq`) | Perguntas frequentes | Não existe | ADM4: FAQ editável (I-15), com painel próprio |
 | `block_content` (`/admin/content/block`) | Blocos de conteúdo editáveis | Não existe | ADM4: avaliar com o responsável; pode ficar como editorial highlight |
 | `content` (`/admin/content/node`) | Lista geral de conteúdo, com filtro | Drupal padrão, sem painel do ACULTA | ADM5: painel geral com filtro por área, status e autor, sem exportar dado pessoal |
-| `search_api` (índice) | Estado do índice de busca | Só Drush (`aculta_index`) | ADM6: painel de estado do índice (última reconstrução, pendências), só leitura |
+| `search_api` (índice) | Estado do índice de busca | `/painel-administrativo/indice` (ADM6; geração ativa, última reconstrução, pendências, só leitura) e Drush (`aculta_index`, commit `867bb05da`) |
 | `related_dates_export` (CSV, JSON, XML) | Exportação de datas | Não existe | Entra com E2, com campos mínimos (S5), sem telefone nem e-mail |
 | `watchdog` | Log do sistema | Log do Drupal | Não copiar: é operação, não painel de conteúdo |
 | `openculturas_map` (configuração) | Centro, zoom e ícone do mapa | Não existe | ADM7: configuração do mapa do Google (ADR-014), por ambiente, sem chave no formulário |
@@ -110,16 +110,16 @@ integrações). Não há `/admin` nas telas novas.
 Cada painel é uma microfase, com permissão própria, teste Kernel de acesso negado para usuário comum e um item no
 índice de administração.
 
-| Id | Painel | Módulo dono | Dependência |
-| --- | --- | --- | --- |
-| ADM1 | Denúncias e conteúdo moderado, todas as áreas | `aculta_ugc` | Plano U1–U4 de `aculta_ugc` |
-| ADM2 | Lista administrativa de pessoas (mínima) | `aculta_user` | Revisão de LGPD |
-| ADM3 | Uso de arquivos em `imagens` | `aculta_image` | — |
-| ADM4 | FAQ e blocos editáveis | `aculta_portal` (decisão sobre blocos) | Decisão do responsável |
-| ADM5 | Conteúdo geral com filtros | `aculta_portal` | Lista de áreas e papéis |
-| ADM6 | Estado do índice de busca (só leitura) | `aculta_index` | — |
-| ADM7 | Configuração de mapa (provedor, chave, centro, zoom) e URL de rota configurável | `aculta_events` | ADR-030 (D-18) e F4 |
-| ADM8 | Painel de embed do calendário | `aculta_calendar` | E5 com rota (F5) |
+| Id | Painel | Módulo dono | Dependência | Situação |
+| --- | --- | --- | --- | --- |
+| ADM1 | Denúncias e conteúdo moderado, todas as áreas | `aculta_ugc` | Plano U1–U4 de `aculta_ugc` | Planejado |
+| ADM2 | Lista administrativa de pessoas (mínima) | `aculta_user` | Revisão de LGPD | Pendente de decisão |
+| ADM3 | Uso de arquivos em `imagens` | `aculta_image` | — | **Feito**, commit `d80b4a748` |
+| ADM4 | FAQ e blocos editáveis | `aculta_portal` (decisão sobre blocos) | Decisão do responsável | Pendente de decisão |
+| ADM5 | Conteúdo geral com filtros | `aculta_portal` | Lista de áreas e papéis | Pendente de decisão |
+| ADM6 | Estado do índice de busca (só leitura) | `aculta_index` | — | **Feito**, commit `867bb05da` |
+| ADM7 | Configuração de mapa (provedor, chave, centro, zoom) e URL de rota configurável | `aculta_events` | ADR-030 (D-18) e F4 | Pendente da F4 |
+| ADM8 | Painel de embed do calendário | `aculta_calendar` | E5 com rota (F5) | Pendente da F5 |
 
 ### Decisões necessárias antes de ADM2, ADM4 e ADM5
 
