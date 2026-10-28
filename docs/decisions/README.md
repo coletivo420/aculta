@@ -14,6 +14,7 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 - [ADR-015 — Purpose de eventos](ADR-015-purpose-eventos.md)
 - [ADR-016 — Links de acesso único](ADR-016-links-de-acesso-unico-24-horas.md)
 - [ADR-017 — Avisos educacionais acionáveis](ADR-017-avisos-educacionais-acionaveis.md)
+- [ADR-018 — Messenger como núcleo de mensagens](ADR-018-messenger-como-nucleo-de-mensagens.md)
 
 ADRs históricos e decisões locais de arquitetura também podem ser encontrados
 neste diretório e em `docs/architecture/`. Para registrar uma decisão nova,
