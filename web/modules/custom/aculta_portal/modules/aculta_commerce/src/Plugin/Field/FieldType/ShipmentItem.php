@@ -105,6 +105,7 @@ class ShipmentItem extends FieldItemBase {
       );
     }
     catch (\Throwable) {
+      // Malformed stored data yields no item instead of breaking the field.
       return NULL;
     }
   }

@@ -659,7 +659,10 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
     try {
       return $this->fileUrlGenerator->generateAbsoluteString($uri);
     }
-    catch (\Exception $e) {
+    catch (\Exception $exception) {
+      $this->loggerFactory->get('Mercado Pago')->warning('Could not generate the product image URL: @exception.', [
+        '@exception' => get_class($exception),
+      ]);
       return '';
     }
   }

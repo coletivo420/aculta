@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Checks structured and rich-text references to entities across revisions.
@@ -20,6 +21,7 @@ final class FileReferenceInspector implements FileReferenceInspectorInterface {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly EntityFieldManagerInterface $fieldManager,
     private readonly Connection $database,
+    private readonly ?LoggerInterface $logger = NULL,
   ) {}
 
   /**
@@ -36,8 +38,8 @@ final class FileReferenceInspector implements FileReferenceInspectorInterface {
         $definition = $this->entityTypeManager->getDefinition($entityTypeId);
         $storage = $this->entityTypeManager->getStorage($entityTypeId);
       }
-      catch (\Throwable) {
-        return FileReferenceStatus::Unverifiable;
+      catch (\Throwable $exception) {
+        return $this->unverifiable($entityTypeId, $exception);
       }
 
       // A registered entity type whose storage was never installed cannot
@@ -59,8 +61,8 @@ final class FileReferenceInspector implements FileReferenceInspectorInterface {
         }
         $definitions = $this->fieldManager->getFieldStorageDefinitions($entityTypeId);
       }
-      catch (\Throwable) {
-        return FileReferenceStatus::Unverifiable;
+      catch (\Throwable $exception) {
+        return $this->unverifiable($entityTypeId, $exception);
       }
 
       foreach ($definitions as $fieldName => $definition) {
@@ -76,8 +78,8 @@ final class FileReferenceInspector implements FileReferenceInspectorInterface {
               $found = TRUE;
             }
           }
-          catch (\Throwable) {
-            return FileReferenceStatus::Unverifiable;
+          catch (\Throwable $exception) {
+            return $this->unverifiable($entityTypeId, $exception);
           }
         }
 
@@ -91,8 +93,8 @@ final class FileReferenceInspector implements FileReferenceInspectorInterface {
               $found = TRUE;
             }
           }
-          catch (\Throwable) {
-            return FileReferenceStatus::Unverifiable;
+          catch (\Throwable $exception) {
+            return $this->unverifiable($entityTypeId, $exception);
           }
         }
 
@@ -111,14 +113,25 @@ final class FileReferenceInspector implements FileReferenceInspectorInterface {
               $found = TRUE;
             }
           }
-          catch (\Throwable) {
-            return FileReferenceStatus::Unverifiable;
+          catch (\Throwable $exception) {
+            return $this->unverifiable($entityTypeId, $exception);
           }
         }
       }
     }
 
     return $found ? FileReferenceStatus::Referenced : FileReferenceStatus::Clear;
+  }
+
+  /**
+   * Logs an inspection failure and fails closed.
+   */
+  private function unverifiable(string $entityTypeId, \Throwable $exception): FileReferenceStatus {
+    $this->logger?->warning('File reference inspection could not verify entity type @type: @exception.', [
+      '@type' => $entityTypeId,
+      '@exception' => get_class($exception),
+    ]);
+    return FileReferenceStatus::Unverifiable;
   }
 
 }

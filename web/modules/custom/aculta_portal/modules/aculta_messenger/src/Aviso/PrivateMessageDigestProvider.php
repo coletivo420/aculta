@@ -15,6 +15,7 @@ use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\user\UserInterface;
 use Drupal\user\UserDataInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Supplies privacy-minimal weekly summaries of pending private messages. */
@@ -37,6 +38,7 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
     private readonly ConfigFactoryInterface $configFactory,
     private readonly UserDataInterface $userData,
     private readonly TimeInterface $time,
+    private readonly ?LoggerInterface $logger = NULL,
   ) {}
 
   /**
@@ -217,7 +219,10 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
     try {
       $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $anchor, new \DateTimeZone($timezone));
     }
-    catch (\Throwable) {
+    catch (\Throwable $exception) {
+      $this->logger?->warning('Private message digest anchor could not be parsed: @exception.', [
+        '@exception' => get_class($exception),
+      ]);
       return FALSE;
     }
     // An invalid or malformed administrative date must not silently turn the

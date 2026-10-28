@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Provider;
 
 use Drupal\aculta_mailer\Transport\SecretProviderInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
@@ -24,6 +25,7 @@ final class BrevoEventStatus {
   public function __construct(
     private readonly ?SecretProviderInterface $secrets = NULL,
     private readonly ?HttpClientInterface $http = NULL,
+    private readonly ?LoggerInterface $logger = NULL,
   ) {}
 
   /**
@@ -55,7 +57,11 @@ final class BrevoEventStatus {
       }
       $data = $response->toArray(FALSE);
     }
-    catch (\Throwable) {
+    catch (\Throwable $exception) {
+      // The API key and response body are never logged.
+      $this->logger?->warning('Brevo event lookup failed: @exception.', [
+        '@exception' => get_class($exception),
+      ]);
       return NULL;
     }
     // A resposta é um objeto com a chave `events` (verificado em 2026-10-20); lista direta também é aceita.

@@ -53,6 +53,8 @@ final class WikiPublishedParticipationLookup implements PublishedParticipationLo
       }
     }
     catch (\Throwable) {
+      // The unavailable status records the failure and keeps the lookup
+      // fail-closed: it is never evidence that publication has occurred.
       return PublishedParticipationEvidence::unavailable();
     }
 

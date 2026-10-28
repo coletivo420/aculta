@@ -68,7 +68,7 @@ services:
 
   Drupal\aculta_mailer\Provider\BrevoEventStatus:
     class: Drupal\aculta_mailer\Provider\BrevoEventStatus
-    arguments: ['@?Drupal\aculta_mailer\Transport\SecretProviderInterface', '@aculta_mailer.brevo_http_client']
+    arguments: ['@?Drupal\aculta_mailer\Transport\SecretProviderInterface', '@aculta_mailer.brevo_http_client', '@logger.channel.aculta_mailer']
 
   aculta_mailer.smtp_classifier:
     class: Drupal\aculta_mailer\Delivery\SmtpReplyClassifier

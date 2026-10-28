@@ -51,7 +51,7 @@ services:
     arguments: [!tagged_iterator aculta_user.published_participation_lookup]
   aculta_user.participation_edit_window:
     class: Drupal\aculta_user\ParticipationEditWindow
-    arguments: ['@config.factory', '@datetime.time', !tagged_iterator aculta_user.edit_window_exemption]
+    arguments: ['@config.factory', '@datetime.time', !tagged_iterator aculta_user.edit_window_exemption, '@logger.channel.default']
   aculta_user.avatar_pool:
     class: Drupal\aculta_user\Avatar\AvatarPool
     arguments: ['@extension.list.module', '@file_system', '@entity_type.manager', '@user.data', '%app.root%']

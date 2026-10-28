@@ -8,6 +8,7 @@ use Drupal\aculta_portal_cep\Local\CepLocalStore;
 use Drupal\aculta_portal_cep\Settings\CepSources;
 use Drupal\Core\Cache\CacheBackendInterface;
 use GuzzleHttp\ClientInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -34,6 +35,8 @@ final class CepLookupService implements CepLookupInterface {
     private readonly CacheBackendInterface $cache,
     #[Autowire(service: 'aculta_portal_cep.sources')]
     private readonly CepSources $sources,
+    #[Autowire(service: 'logger.channel.default')]
+    private readonly ?LoggerInterface $logger = NULL,
   ) {}
 
   /**
@@ -108,8 +111,12 @@ final class CepLookupService implements CepLookupInterface {
           return NULL;
         }
       }
-      catch (\Throwable) {
+      catch (\Throwable $exception) {
         // Tenta de novo; depois cai para a outra fonte.
+        $this->logger?->warning('ViaCEP lookup failed on attempt @attempt: @exception.', [
+          '@attempt' => $attempt + 1,
+          '@exception' => get_class($exception),
+        ]);
       }
     }
     return NULL;
@@ -133,8 +140,11 @@ final class CepLookupService implements CepLookupInterface {
         return $this->mapped($cep, $raw['street'] ?? '', $raw['neighborhood'] ?? '', $raw['city'] ?? '', $raw['state'] ?? '');
       }
     }
-    catch (\Throwable) {
+    catch (\Throwable $exception) {
       // Sem fonte disponível.
+      $this->logger?->warning('BrasilAPI lookup failed: @exception.', [
+        '@exception' => get_class($exception),
+      ]);
     }
     return NULL;
   }

@@ -120,8 +120,8 @@ final class FriendshipNoticeQueue implements FriendshipNoticeQueueInterface {
         $this->enqueue($message);
       }
       catch (\Throwable) {
-        // Leave failures visible and let the next cron pass advance the
-        // bounded enqueue retry count for this message.
+        // enqueue() already logs the failure. Leave the message visible and
+        // let the next cron pass advance the bounded enqueue retry count.
       }
     }
   }

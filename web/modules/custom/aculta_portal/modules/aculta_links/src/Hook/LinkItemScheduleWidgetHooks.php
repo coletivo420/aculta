@@ -41,6 +41,7 @@ final class LinkItemScheduleWidgetHooks {
       $date_timezone = new \DateTimeZone($timezone);
     }
     catch (\Exception) {
+      // An invalid configured timezone falls back to the storage timezone.
       $date_timezone = new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE);
       $timezone = DateTimeItemInterface::STORAGE_TIMEZONE;
     }

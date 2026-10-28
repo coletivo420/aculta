@@ -13,6 +13,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Component\Datetime\TimeInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Enforces each discussion consumer's author edit window.
@@ -28,11 +29,14 @@ final class ParticipationEditWindow {
    *   Request time source used to measure the window boundary.
    * @param iterable<\Drupal\aculta_user\EditWindowExemptionInterface> $exemptions
    *   Consumer exemptions, such as contextual educator rights in a course.
+   * @param \Psr\Log\LoggerInterface|null $logger
+   *   Optional logger for exemption failures that are skipped fail-closed.
    */
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
     private readonly TimeInterface $time,
     private readonly iterable $exemptions = [],
+    private readonly ?LoggerInterface $logger = NULL,
   ) {}
 
   /**
@@ -64,7 +68,11 @@ final class ParticipationEditWindow {
       try {
         $exempt = $exemption->access($entity, $account);
       }
-      catch (\Throwable) {
+      catch (\Throwable $exception) {
+        $this->logger?->warning('Participation edit-window exemption failed for @type: @exception.', [
+          '@type' => $entity->getEntityTypeId(),
+          '@exception' => get_class($exception),
+        ]);
         continue;
       }
       if ($exempt->isAllowed()) {

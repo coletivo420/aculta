@@ -22,6 +22,7 @@ final class StorageDateTime {
       return (new \DateTimeImmutable($value, new \DateTimeZone('UTC')))->getTimestamp();
     }
     catch (\Exception) {
+      // Invalid stored data has no timestamp; callers treat NULL as unknown.
       return NULL;
     }
   }

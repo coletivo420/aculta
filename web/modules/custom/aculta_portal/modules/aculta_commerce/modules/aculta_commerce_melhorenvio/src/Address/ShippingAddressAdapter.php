@@ -57,6 +57,8 @@ final class ShippingAddressAdapter {
       $found = $this->lookup->lookup($postalCode);
     }
     catch (\Throwable) {
+      // A lookup failure becomes STATUS_UNAVAILABLE; freight availability is
+      // decided by the real Melhor Envio quote, never here.
       return $this->result(self::STATUS_UNAVAILABLE, $postalCode, $missing, []);
     }
     if ($found === NULL) {
