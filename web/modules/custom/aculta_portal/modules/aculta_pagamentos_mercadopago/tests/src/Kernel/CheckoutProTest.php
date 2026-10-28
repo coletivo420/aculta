@@ -84,6 +84,8 @@ class CheckoutProTest extends OrderKernelTestBase {
       $this->assertSame('aculta_mercadopago', $plugin->getPaymentType()->getPluginId());
       $configuration_form = $plugin->buildConfigurationForm([], new FormState());
       $this->assertArrayNotHasKey('autofee', $configuration_form);
+      $this->assertStringContainsString('Payer details are removed', (string) $configuration_form['debug_logging']['#description']);
+      $this->assertStringNotContainsString('webhook data', (string) $configuration_form['debug_logging']['#description']);
       $configuration_form['#parents'] = ['configuration', 'aculta_mercadopago_checkout_pro'];
       $form_state = new FormState();
       $form_state->setValue($configuration_form['#parents'], [

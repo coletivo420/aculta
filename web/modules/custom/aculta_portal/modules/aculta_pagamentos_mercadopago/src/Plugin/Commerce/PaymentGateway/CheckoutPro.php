@@ -175,19 +175,6 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   }
 
   /**
-   * Whether extra debug logging is enabled for this gateway.
-   *
-   * When true, "Mercado Pago debug" logs (request payloads, webhook data, etc.)
-   * are written to the log.
-   *
-   * @return bool
-   *   Whether debug logging is enabled.
-   */
-  protected function isDebugLoggingEnabled(): bool {
-    return !empty($this->configuration['debug_logging']);
-  }
-
-  /**
    * Returns the Access token for the current mode (test, stage, or live).
    *
    * @return string
@@ -404,7 +391,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     $form['debug_logging'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable extra debug logging'),
-      '#description' => $this->t('When enabled, detailed Mercado Pago debug messages (e.g. request payloads and webhook data) are written to the log. Useful for integration troubleshooting; leave disabled in production to reduce log volume.'),
+      '#description' => $this->t('When enabled, a sanitized Checkout Pro preference payload is logged for troubleshooting. Payer details are removed; order and item details remain. Leave disabled in production.'),
       '#default_value' => $this->configuration['debug_logging'],
     ];
 
