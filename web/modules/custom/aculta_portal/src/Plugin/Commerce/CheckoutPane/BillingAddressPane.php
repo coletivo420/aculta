@@ -59,6 +59,10 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       'status' => TRUE,
       'is_default' => TRUE,
     ]);
+    // Liga a cópia de cobrança ao pedido antes do pane de pagamento. Sem isso,
+    // o PaymentInformation do Commerce, em pedido de saldo zero, cria um perfil
+    // do tipo `customer`, que o site não tem. A cópia é do tipo authenticated.
+    $this->syncBillingCopy($profile);
     // O formulário mostra só a rua. A cópia é usada só no formulário; o perfil do cliente não muda até o envio.
     $parts = $this->savedParts($profile);
     $editable = $profile;
@@ -161,6 +165,12 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     $storage = $this->entityTypeManager->getStorage('profile');
     $billing = $this->order->getBillingProfile() ?? $storage->create(['type' => 'authenticated', 'uid' => 0]);
     $address = $customer->get('field_address')->getValue();
+    // O CustomerProfile do Commerce lê o campo base `address`; o pane do Portal
+    // usa `field_address`. Mantém os dois iguais na cópia de cobrança para o
+    // pane de pagamento não pedir o endereço de novo.
+    if ($billing->hasField('address')) {
+      $billing->set('address', $address);
+    }
     if ($billing->isNew() || $billing->get('field_address')->getValue() !== $address) {
       $billing->set('field_address', $address);
       $billing->save();
