@@ -50,6 +50,7 @@ submódulos e tema.
 | [`aculta_donation`](web/modules/custom/aculta_portal/modules/aculta_donation/README.md) | `0.1.0-dev.29` | Dev.29 adiciona descoberta Kernel da pane de autorização recorrente (5/196 PASS, 88 depreciações upstream). Dev.28: pane delega ao recorder MP; criação usa lock por pedido, reload sob lock, marcador em erro remoto ambíguo e retry validado por external_reference. Unit Doações 24/84 PASS. Sandbox financeiro e Runtime seguem pendentes. | Validar os avisos financeiros em sandbox controlada e Runtime autorizado; cada cobrança recorrente confirmada emite aviso próprio ([README](web/modules/custom/aculta_portal/modules/aculta_donation/README.md)) | Dev |
 | [`aculta_editor`](web/modules/custom/aculta_portal/modules/aculta_editor/README.md) | `0.1.0-dev.5` | Runtime MAIN read-only: Editor e 16 dependências ativos; os 17 IDs agora constam no core.extension do Sync. Os oito templates e ckeditor5_plugin_pack.settings foram reconciliados a partir dos defaults versionados; 9/9 configs editor/Plugin Pack ativas agora têm equivalente no Sync. `full_html` permanece restrito a administrator; Kernel Editor 8/127 PASS. O shell aculta_lms_messenger é o único ID ativo fora do Sync e segue pendente de uninstall autorizada. | Testar importação limpa em banco efêmero; executar Browser de acesso/sanitização e manter aculta_adm restrito à administração ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md)) | Dev |
 | [`aculta_events`](web/modules/custom/aculta_portal/modules/aculta_events/README.md) | `0.1.0-dev.1` | F1–F3 e itens de incorporação: E1 campos informativos de preço e compra externa (D-29), E2 views administrativas, E4 referência segura (D-28), R recorrência na v1, E5 e E6 embed e `.ics`. Mapa parcial (E7). Ingressos pagos fora da v1 (D-30). | F0: revisar termos da Google Maps Platform e licenças. F4: agrupamento de marcadores e link de privacidade. Ingressos pagos: fase P1 em [plano](web/modules/custom/aculta_portal/modules/aculta_events/docs/PLANO-INGRESSOS-PAGOS.md). Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_events/docs/ROADMAP.md). | Dev |
+| [`aculta_events_openstreetmap`](web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap/README.md) | `0.1.0-dev.1` | E10-A: conexão OAuth2 com o OpenStreetMap pelo popup do Portal, endpoint explícito por ambiente, recusa de ambiente cruzado, token cifrado no State API. E10-B: busca por tipo e ID, seleção e revisão dos dados, gravação do local e envio só das diferenças após confirmação. Kernel de segurança do OAuth cobre rotas, ambiente, credenciais ausentes e armazenamento cifrado. | Teste de envio real no servidor de desenvolvimento, com credenciais próprias em secrets/ e dados fictícios; depois revisão de termos ODbL e atribuição antes de qualquer envio fora do teste. Ver [README](web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap/README.md). | Dev |
 | [`aculta_faq`](web/modules/custom/aculta_portal/modules/aculta_faq/README.md) | `0.1.0-dev.1` | FAQ e blocos editoriais (ADM4 e E9), com texto formatado sanitizado (D-23, D-25). | Cadastrar e revisar o conteúdo editorial antes da publicação (F1). Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_faq/docs/ROADMAP.md). | Dev |
 | [`aculta_forum`](web/modules/custom/aculta_portal/modules/aculta_forum/README.md) | `0.1.0-dev.323` | Dev.323: PublicForumLastActivityAuthorHooks agora usa buildLegacyForum e aplica -gr ao cartão de autoria histórica da última atividade. Correção de contrato F-D44; Unit/visual focal pendente. RC.2 reclassificado como histórico; importador de conteúdo/assets, banco efêmero e homologação do acervo pendentes. Sem Runtime write. | Reexecutar testes focais de autoria histórica e revisar cartões da última atividade e do conteúdo no Firefox ESR; preparar/validar importador Growroom idempotente em banco efêmero. RC.2 é histórico, sem candidato vigente. | Dev |
 | [`aculta_forum_lms`](web/modules/custom/aculta_portal/modules/aculta_forum_lms/README.md) | `0.1.0-dev.29` |  | F15: smoke e revisão visual autenticados do vínculo H5P–Fórum ainda dependem de conteúdo/tópico no Runtime; avançar notificações e integrações Gallery, Magazine e Wiki ([CHANGELOG](web/modules/custom/aculta_portal/modules/aculta_forum_lms/CHANGELOG.md)) | Dev |
@@ -130,3 +131,43 @@ Detalhes e regras operacionais: [ambientes](docs/architecture/environments.md),
 
 O índice de versão/fase acima é uma exceção fixa solicitada pelo responsável;
 resultados de testes e status de PR continuam apenas nos changelogs e no GitHub.
+
+## Bibliotecas usadas
+
+Versões declaradas nos manifestos (`composer.json` e `web/themes/custom/aculta420/package.json`). A lista completa de pacotes Composer está no `composer.json`; esta tabela cobre as bibliotecas que o projeto usa diretamente ou que aparecem no código.
+
+| Biblioteca | Versão declarada | Origem | Uso no projeto |
+| --- | --- | --- | --- |
+| Drupal core (`core-recommended`) | ^11.4 | Composer | Base do site (Drupal 11); PHP `>=8.3` no `composer.json` |
+| Drush | ^13.8 | Composer | Linha de comando e operações de cache, banco e configuração |
+| `drupal/commerce`, `commerce_cart`, `commerce_checkout` | ^3.3 / 3.3.10 | Composer | Loja, carrinhos e checkouts (base de `aculta_commerce` e dos checkouts por contexto) |
+| `drupal/bootstrap` | ^5.0 | Composer | Tema base do ACULTA420 |
+| `mercadopago/dx-php` | ^3 | Composer | SDK do Mercado Pago, usado pelo `aculta_pagamentos_mercadopago` |
+| SDK JavaScript do Mercado Pago (`sdk.mercadopago.com`) | v2 | Carregado de fora | Checkout Pro no navegador |
+| `rlanvin/php-rrule` | ^3.0 | Composer | Recorrência de eventos (`aculta_calendar`, D-14, D-16) |
+| `drupal/geofield` | ^1 | Composer | Coordenadas de locais (`aculta_events`) |
+| `drupal/search_api` | ^1.40 | Composer | Índice de busca (`aculta_index`) |
+| `drupal/webform` | ^6.3 | Composer | Formulários do site (uso pontual) |
+| `drupal/group` | ^3.3 | Composer | Turmas e grupos do LMS |
+| `drupal/lms` | ^1.2 | Composer | Base de cursos do LMS |
+| `h5p/h5p-core`, `h5p/h5p-editor` | ^1.28 / ^1.25 | Composer | Conteúdo interativo H5P (`aculta_lms_h5p`) |
+| `mozilla/pdfjs-dist` | 6.4.299 | Composer | Visualização de PDF (`aculta_pdf_viewer`) |
+| `endroid/qr-code` | ^6.1.3 | Composer | Geração de QR codes (`aculta_qrcode`). QR de ingressos é planejado |
+| `google/apiclient` | ^2.18 | Composer | Conectores do `aculta_statistics` (GA4 e Search Console) |
+| `symfony/brevo-mailer`, `symfony/http-client` | ^7.4 | Composer | Envio de e-mail e cliente HTTP das integrações |
+| `drupal/ckeditor5_plugin_pack`, `codemirror` | ^1.5 / 5.65.12 | Composer | Editor de texto rico e edição de código |
+| `drupal/csp`, `drupal/turnstile`, `drupal/captcha` | ^2.2 / ^1.2 / ^2.0 | Composer | Política de segurança de conteúdo e proteção contra robôs |
+| `drupal/key` | ^1.22 | Composer | Chaves usadas pelo `SecretsManager` do `aculta_portal` |
+| `photoswipe` | 5.4.4 | Composer | Galerias de imagem (`aculta_gallery`) |
+| `select2`, `intl-tel-input`, `inputmask`, `timepicker`, `rateit`, `textcounter` | 4.0.13 / 17.0.19 / 5.0.9 / 1.14.0 / 1.1.5 / 0.9.1 | Composer (jQuery) | Campos de formulário (seleção, telefone, máscara, horário, avaliação e contador) |
+| `tippyjs`, `popperjs`, `tabby`, `progress-tracker`, `signature_pad` | 6.3.7 / 2.11.6 / 12.0.3 / 2.0.7 / 2.3.0 | Composer | Dicas, posicionamento, abas, progresso e assinatura |
+| Bootstrap Icons | (no tema) | Arquivos no tema | Ícones do ACULTA420 (`web/themes/custom/aculta420/assets/icons`) |
+| DHTMLX Scheduler | 7.2.15 (edição GPL-2.0) | Arquivos copiados no módulo | Visão interativa do calendário (`aculta_calendar`), com decisão de adoção D-21 e critérios do estudo |
+| ESLint | ^10.13 | npm (tema) | Lint de JavaScript do tema |
+| Stylelint | ^17.16 | npm (tema) | Lint de CSS do tema |
+
+**Planejado, ainda não instalado:**
+- **Leaflet e OpenStreetMap** (mapa padrão de locais, ADR-030). O submódulo `aculta_maps` existe só como documentação.
+- **Google Maps JavaScript e Geocoding APIs** (opcional, com chave em `aculta_secrets`). Ainda não estão implementadas.
+
+**Licenças:** o projeto é GPLv3 e a origem reaproveitada do OpenCulturas é GPL-2.0-or-later (`web/modules/custom/aculta_portal/modules/aculta_events/docs/ORIGEM-OPENCULTURAS.md`). Confira a licença de cada biblioteca antes de adicionar uma nova.

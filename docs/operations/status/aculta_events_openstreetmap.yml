@@ -1,0 +1,6 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: '0.1.0-dev.1'
+state: Dev
+progress_note: >-
+  E10-A: conexão OAuth2 com o OpenStreetMap pelo popup do Portal, endpoint explícito por ambiente, recusa de ambiente cruzado, token cifrado no State API. E10-B: busca por tipo e ID, seleção e revisão dos dados, gravação do local e envio só das diferenças após confirmação. Kernel de segurança do OAuth cobre rotas, ambiente, credenciais ausentes e armazenamento cifrado.
+next_phase: 'Teste de envio real no servidor de desenvolvimento, com credenciais próprias em secrets/ e dados fictícios; depois revisão de termos ODbL e atribuição antes de qualquer envio fora do teste. Ver [README](web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap/README.md).'
