@@ -1,5 +1,10 @@
 # Changelog — aculta_calendar
 
+## 2026-10-28 — reimportação idempotente e itens ausentes (I4)
+
+- Reimportação igual não cria revisão; alterações de item publicado geram revisão de rascunho sem trocar a versão pública.
+- UID removido da fonte recebe presença `ausente`, permanece armazenado e não perde publicação; retorno à fonte restaura presença.
+
 ## 2026-10-28 — normalização segura dos eventos importados (I3)
 
 - Removidos markup e blocos executáveis, decodificadas entidades e limitados título, descrição e local.

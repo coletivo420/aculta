@@ -22,3 +22,24 @@ function aculta_calendar_update_10001(): void {
     ->getFieldStorageDefinitions($entity_type_id);
   $definition_update_manager->installFieldableEntityType($entity_type, $field_definitions);
 }
+
+/**
+ * Adds non-revisioned source presence metadata to imported calendar items.
+ */
+function aculta_calendar_update_10002(): string {
+  $entity_type_id = 'aculta_calendar_imported_item';
+  $field_name = 'source_presence';
+  $definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+  if ($definition_update_manager->getFieldStorageDefinition($field_name, $entity_type_id) !== NULL) {
+    return 'Calendar import source presence field already exists.';
+  }
+
+  $definitions = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions($entity_type_id);
+  $definition_update_manager->installFieldStorageDefinition(
+    $field_name,
+    $entity_type_id,
+    'aculta_calendar',
+    $definitions[$field_name],
+  );
+  return 'Installed calendar import source presence field.';
+}

@@ -52,6 +52,16 @@ final class CalendarImportedItem extends EditorialContentEntityBase {
     'cancelado' => 'Cancelado',
   ];
 
+  /**
+   * Whether the external source still contains this UID.
+   *
+   * @var array<string, string>
+   */
+  public const SOURCE_PRESENCE = [
+    'presente' => 'Presente na fonte',
+    'ausente' => 'Ausente da fonte',
+  ];
+
   /** {@inheritdoc} */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
@@ -116,6 +126,14 @@ final class CalendarImportedItem extends EditorialContentEntityBase {
       ->setRequired(TRUE)
       ->setRevisionable(TRUE);
 
+    // Source presence is synchronization metadata, not editorial content.
+    // It intentionally remains outside revisions so an absent upstream UID
+    // cannot hide a currently published item from the site.
+    $fields['source_presence'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Presença na fonte'))
+      ->setSetting('max_length', 8)
+      ->setDefaultValue('presente');
+
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(new TranslatableMarkup('Criado em'))
       ->setRevisionable(TRUE);
@@ -124,6 +142,21 @@ final class CalendarImportedItem extends EditorialContentEntityBase {
       ->setRevisionable(TRUE);
 
     return $fields;
+  }
+
+  /** Sets the import workflow state and its corresponding Drupal publish flag. */
+  public function setImportState(string $state): static {
+    if (!isset(self::IMPORT_STATES[$state])) {
+      throw new \InvalidArgumentException("Estado de importação inválido: $state.");
+    }
+    $this->set('import_state', $state);
+    if ($state === 'publicado') {
+      $this->setPublished();
+    }
+    else {
+      $this->setUnpublished();
+    }
+    return $this;
   }
 
 }
