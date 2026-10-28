@@ -23,6 +23,8 @@ Evidência de MP0: `9ff609c1e`. MP1: `917cce3f1`.
 - [x] Permissão própria. Kernel nega acesso ao usuário comum.
 - [x] Kernel salva as opções e confirma que nenhum valor de chave aparece na configuração exportada; URL rejeita `javascript:` e hosts não aprovados.
 
+Evidência de MP2: `cac0efbba`.
+
 ## MP3 — Engine OpenStreetMap (padrão e fallback)
 
 - [ ] Leaflet e agrupamento de marcadores como arquivos locais, com LICENSE no pacote. Sem CDN.
