@@ -12,6 +12,16 @@
   --aculta-cream: #fbf4e8;
   --aculta-white: #ffffff;
 
+  /* Section title colors use fixed, contrast-tested foreground/background pairs. */
+  --aculta-section-red-bg: var(--aculta-red);
+  --aculta-section-red-text: #000000;
+  --aculta-section-green-bg: var(--aculta-green);
+  --aculta-section-green-text: #111111;
+  --aculta-section-yellow-bg: var(--aculta-yellow);
+  --aculta-section-yellow-text: var(--aculta-green-dark);
+  --aculta-section-green-dark-bg: var(--aculta-green-dark);
+  --aculta-section-green-dark-text: var(--aculta-white);
+
   /* Semantic surfaces. */
   --aculta-surface-page: #f2f7f0;
   --aculta-surface-page-rgb: 242, 247, 240;

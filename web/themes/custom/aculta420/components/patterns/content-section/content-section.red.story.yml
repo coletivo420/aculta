@@ -1,0 +1,9 @@
+name: Faixa vermelha
+description: Título obrigatório sobre a cor vermelha fechada, com texto escuro de contraste AA.
+component: aculta420:content-section
+props:
+  title: Cultura e direitos
+  color: red
+slots:
+  body:
+    markup: '<p>Texto de exemplo da seção.</p>'

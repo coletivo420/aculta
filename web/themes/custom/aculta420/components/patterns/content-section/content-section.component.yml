@@ -19,6 +19,12 @@ props:
       description: 'Visual variant. Maps to the legacy modifier classes.'
       enum: [default, city, transparency]
       default: default
+    color:
+      type: string
+      title: Cor da seção
+      description: Cor fechada aplicada à faixa do título; o texto do título permanece obrigatório para exibir a cor.
+      enum: [default, red, green, yellow, green-dark]
+      default: default
 slots:
   body:
     title: Body

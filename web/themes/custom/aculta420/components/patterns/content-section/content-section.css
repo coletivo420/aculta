@@ -26,6 +26,26 @@
 }
 .aculta-main .aculta-section-title { margin-block: var(--aculta-space-section) 1.125rem; }
 
+.aculta-section-title--red {
+  color: var(--aculta-section-red-text);
+  background-color: var(--aculta-section-red-bg);
+}
+
+.aculta-section-title--green {
+  color: var(--aculta-section-green-text);
+  background-color: var(--aculta-section-green-bg);
+}
+
+.aculta-section-title--yellow {
+  color: var(--aculta-section-yellow-text);
+  background-color: var(--aculta-section-yellow-bg);
+}
+
+.aculta-section-title--green-dark {
+  color: var(--aculta-section-green-dark-text);
+  background-color: var(--aculta-section-green-dark-bg);
+}
+
 @media (max-width: 575.98px) {
   .aculta-section-title { gap: 0.75rem; }
 }

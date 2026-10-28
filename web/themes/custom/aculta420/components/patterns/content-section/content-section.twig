@@ -6,8 +6,14 @@
   city: 'aculta-city',
   transparency: 'aculta-transparency-sections',
 }[variant] %}
+{% set color_class = {
+  red: 'aculta-section-title--red',
+  green: 'aculta-section-title--green',
+  yellow: 'aculta-section-title--yellow',
+  'green-dark': 'aculta-section-title--green-dark',
+}[color] %}
 <section class="aculta-editorial-section{{ variant_class ? ' ' ~ variant_class }}">
-  {% if title %}<h2 class="aculta-section-title">{{ title }}</h2>{% endif %}
+  {% if title %}<h2 class="aculta-section-title{{ color_class ? ' ' ~ color_class }}">{{ title }}</h2>{% endif %}
   {% if heading %}<h3 class="aculta-editorial-heading">{{ heading }}</h3>{% endif %}
   {{ body }}
 </section>

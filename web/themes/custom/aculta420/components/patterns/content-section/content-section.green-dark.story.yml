@@ -1,0 +1,9 @@
+name: Faixa verde-escura
+description: Título obrigatório sobre a cor verde-escura fechada, com texto claro de contraste AA.
+component: aculta420:content-section
+props:
+  title: Transparência
+  color: green-dark
+slots:
+  body:
+    markup: '<p>Texto de exemplo da seção.</p>'

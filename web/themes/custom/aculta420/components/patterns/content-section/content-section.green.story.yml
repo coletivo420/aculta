@@ -1,0 +1,9 @@
+name: Faixa verde
+description: Título obrigatório sobre a cor verde fechada, com texto escuro de contraste AA.
+component: aculta420:content-section
+props:
+  title: Participação
+  color: green
+slots:
+  body:
+    markup: '<p>Texto de exemplo da seção.</p>'
