@@ -20,6 +20,7 @@ const FIREFOX = process.env.FIREFOX || '/usr/bin/firefox-esr';
 mkdirSync(OUT, { recursive: true });
 
 const PAGES = [
+  ['lista', '/', /Eventos/],
   ['agenda', '/calendario', /Calendário de eventos/],
   ['mes', '/calendario/mes/2026/10', /Calendário/],
   ['dia', '/calendario/dia/2026/10/28', /Calendário/],
@@ -77,7 +78,21 @@ try {
   const tree = await bsend('browsingContext.getTree', {});
   const context = tree.result.contexts[0].context;
 
-  for (const [nome, caminho, tituloEsperado] of PAGES) {
+  // Página de evento: descobre o primeiro link da lista, se houver.
+  await bsend('browsingContext.setViewport', { context, viewport: { width: 1280, height: 900 } });
+  await wd('POST', p('/url'), { url: BASE + '/' });
+  await sleep(1000);
+  const eventoHref = await exec(`var a = document.querySelector('a[href^="/eventos/"]'); return a ? a.getAttribute('href') : '';`);
+  const paginas = [...PAGES];
+  if (eventoHref) {
+    paginas.push(['evento', eventoHref, /./]);
+  }
+  else {
+    results.push({ name: 'evento: página publicada', ok: null, detail: 'sem evento publicado no Runtime' });
+    console.log('SKIP  evento: página publicada  -- sem evento publicado no Runtime');
+  }
+
+  for (const [nome, caminho, tituloEsperado] of paginas) {
     const url = BASE + caminho;
     for (const largura of WIDTHS) {
       await bsend('browsingContext.setViewport', { context, viewport: { width: largura, height: largura < 500 ? 844 : 900 } });
@@ -118,6 +133,9 @@ try {
       check(`${nome} ${largura}px: sem rolagem horizontal`, info.overflow <= 0, `${info.overflow}px ${info.estouros.join(' | ')} || LARGOS: ${info.largos.join(' | ')} || ROLAGENS: ${info.rolagens.join(' | ')}`);
       check(`${nome} ${largura}px: sem erro visível`, info.erros.length === 0, info.erros.join(' | '));
       check(`${nome} ${largura}px: conteúdo`, info.texto.length > 0, info.texto);
+      if (nome === 'evento') {
+        check(`${nome} ${largura}px: página existe`, !/não foi encontrada/i.test(info.titulo), info.titulo);
+      }
       if (nome === 'embed') {
         check(`${nome} ${largura}px: noindex`, /noindex/.test(info.noindex), info.noindex);
       }

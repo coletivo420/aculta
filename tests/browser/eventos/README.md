@@ -34,7 +34,11 @@ qualquer verificação falhar.
 
 | Página | Caminho |
 | --- | --- |
+| Lista de eventos (home do purpose) | `/` |
+| Página de evento (primeiro link da lista) | `/eventos/{slug}` |
 | Agenda pública por dia | `/calendario` |
+| Grade do mês | `/calendario/mes/2026/10` |
+| Agenda de um dia | `/calendario/dia/2026/10/28` |
 | Página feita para iframe | `/calendario/incorporar` |
 | Mapa de locais | `/mapa` |
 
@@ -52,7 +56,11 @@ Quando nenhum local tem coordenadas, o mapa não é desenhado e não há requisi
 ao Google: a verificação da chave aparece como **SKIP** em vez de passar por
 omissão.
 
-Última execução (2026-10-28): **51 ok, 3 ignoradas, 0 falhas**.
+No fim, o script alterna o atributo `data-bs-theme="dark"` na própria página (o mecanismo do
+ACULTA420; o site de teste está em claro) e captura a grade em modo escuro, sem mudar a
+configuração do servidor.
+
+Última execução (2026-10-28): **126 ok, 3 ignoradas, 0 falhas**.
 
 ## Limites conhecidos
 
