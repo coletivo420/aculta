@@ -147,7 +147,7 @@ Saída: calendário e exportação em teste, nos dois purposes (`main` e `evento
 - [x] Formatter de datas futuras (T5, commit `56725c71d`), sem smart_date e sem cron de invalidação.
 - [x] E3: datas passadas fora das listagens, com cache até a próxima data (commit `8bd6d832b`). `viewsPostExecute` virou `#[Hook('views_post_execute')]` em `EventDateHooks`; o `nodeViewAlter` não tem equivalente em entity view no ACULTA e a regra vive no builder da página e do catálogo (`UpcomingDates`). Sem cron. A tag `aculta_event_list`, antes declarada e nunca invalidada, agora é invalidada por hook ao salvar ou excluir evento e data.
 - [ ] E4: pré-preenchimento de data com checagem de acesso, **se** for necessário. O `nodePrepareForm` original não é copiado (S1).
-- [ ] E2: views de locais e de datas relacionadas, sem export com telefone e e-mail (S5).
+- [x] E2 (views): locais e datas relacionadas em português, acesso administrativo e campos mínimos; Kernel nega acesso comum e fixa a allowlist de campos. A exportação administrativa estruturada segue pendente: `aculta_calendar` hoje exporta agenda por provedores em `.ics`, mas ainda não oferece exportação de dados administrativos; não criar uma exportação paralela em `aculta_events`.
 - [ ] E9 (opcional, I-15): FAQ. Só se o responsável pedir.
 
 ## Integração com LMS (D-15)

@@ -35,4 +35,25 @@ final class EventRelatedViewsAccessKernelTest extends KernelTestBase {
     }
   }
 
+  public function testAdministrativeViewsExposeOnlyMinimalFields(): void {
+    $this->installConfig(['aculta_events']);
+    $expected = [
+      'eventos_locais' => ['title'],
+      'eventos_datas_relacionadas' => ['title', 'field_quando'],
+    ];
+
+    foreach ($expected as $id => $allowedFields) {
+      $view = View::load($id);
+      $this->assertNotNull($view, "$id is installed.");
+      $displays = $view->get('display');
+      $fields = $displays['default']['display_options']['fields'] ?? [];
+      $this->assertSame($allowedFields, array_keys($fields), "$id only exposes approved fields.");
+
+      $serialized = serialize($view->toArray());
+      foreach (['field_email', 'field_phone', 'field_address', 'field_address_data', 'field_endereco'] as $sensitiveField) {
+        $this->assertStringNotContainsString($sensitiveField, $serialized, "$id does not expose $sensitiveField.");
+      }
+    }
+  }
+
 }
