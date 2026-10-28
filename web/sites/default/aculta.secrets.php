@@ -43,6 +43,7 @@ if ($permissions === FALSE || ($permissions & 0007) !== 0 || ($permissions & 002
 $allowed_variables = [
   'GOOGLE_OAUTH_CLIENT_ID',
   'GOOGLE_OAUTH_CLIENT_SECRET',
+  'GOOGLE_MAPS_API_KEY',
   'MERCADOPAGO_PRODUCTION_PUBLIC_KEY',
   'MERCADOPAGO_PRODUCTION_ACCESS_TOKEN',
   'MERCADOPAGO_WEBHOOK_SECRET',

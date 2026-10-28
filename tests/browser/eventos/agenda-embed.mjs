@@ -16,7 +16,11 @@ const GECKO = process.env.GECKODRIVER_BIN || 'geckodriver';
 const FIREFOX = process.env.FIREFOX || '/usr/bin/firefox-esr';
 mkdirSync(OUT, { recursive: true });
 
-const PAGES = [['agenda', '/calendario'], ['embed', '/calendario/incorporar']];
+const PAGES = [
+  ['agenda', '/calendario', /Calendário de eventos/],
+  ['embed', '/calendario/incorporar', /Calendário de eventos/],
+  ['mapa', '/mapa', /Locais|Mapa/],
+];
 const WIDTHS = [1280, 390, 320];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
@@ -68,7 +72,7 @@ try {
   const tree = await bsend('browsingContext.getTree', {});
   const context = tree.result.contexts[0].context;
 
-  for (const [nome, caminho] of PAGES) {
+  for (const [nome, caminho, tituloEsperado] of PAGES) {
     const url = BASE + caminho;
     for (const largura of WIDTHS) {
       await bsend('browsingContext.setViewport', { context, viewport: { width: largura, height: largura < 500 ? 844 : 900 } });
@@ -89,7 +93,7 @@ try {
         noindex: (document.querySelector('meta[name=robots]') || {}).content || ''
       });`));
 
-      check(`${nome} ${largura}px: título`, /Calendário de eventos/.test(info.titulo), info.titulo);
+      check(`${nome} ${largura}px: título`, tituloEsperado.test(info.titulo), info.titulo);
       check(`${nome} ${largura}px: viewport real`, info.viewport === largura, `pedido ${largura}, efetivo ${info.viewport}`);
       check(`${nome} ${largura}px: sem rolagem horizontal`, info.overflow <= 0, `${info.overflow}px`);
       check(`${nome} ${largura}px: sem erro visível`, info.erros.length === 0, info.erros.join(' | '));
@@ -97,17 +101,37 @@ try {
       if (nome === 'embed') {
         check(`${nome} ${largura}px: noindex`, /noindex/.test(info.noindex), info.noindex);
       }
+      if (nome === 'mapa') {
+        // O Google desenha um aviso dentro do container quando a chave é recusada.
+        await sleep(2500);
+        const mapa = JSON.parse(await exec(`var m = document.getElementById('aculta-map');
+          return JSON.stringify({
+            existe: !!m,
+            filhos: m ? m.children.length : -1,
+            texto: m ? m.innerText.replace(/\\s+/g, ' ').trim().slice(0, 200) : ''
+          });`));
+        check(`${nome} ${largura}px: container do mapa`, mapa.existe, mapa.existe ? 'div #aculta-map presente' : 'div ausente');
+        // Sem marcador não há requisição ao Google: a chave não é exercitada.
+        if (/Nenhum local com localização/i.test(mapa.texto) || mapa.filhos === 0) {
+          results.push({ name: `${nome} ${largura}px: chave aceita pelo Google`, ok: null, detail: 'sem local com coordenadas' });
+          console.log(`SKIP  ${nome} ${largura}px: chave aceita pelo Google  -- sem local com coordenadas`);
+        }
+        else {
+          check(`${nome} ${largura}px: chave aceita pelo Google`, !/didn.t load|for development purposes|não foi possível carregar/i.test(mapa.texto), mapa.texto);
+        }
+      }
       await shot(`${nome}_${largura}`);
     }
   }
 } finally {
-  const linhas = results.map((r) => `${r.ok ? 'ok' : 'FALHA'},${r.name},"${String(r.detail).replace(/"/g, "'")}"`);
+  const linhas = results.map((r) => `${r.ok === null ? 'ignorado' : r.ok ? 'ok' : 'FALHA'},${r.name},"${String(r.detail).replace(/"/g, "'")}"`);
   writeFileSync(join(OUT, 'resumo.txt'), linhas.join('\n') + '\n');
   if (bidi) bidi.close();
   if (session) { try { await wd('DELETE', `/session/${session.id}`); } catch { /* sessão já encerrada */ } }
   driver.kill();
 }
 
-const falhas = results.filter((r) => !r.ok).length;
-console.log(`\n${results.length - falhas}/${results.length} verificações ok. Saída em ${OUT}`);
+const falhas = results.filter((r) => r.ok === false).length;
+const ignoradas = results.filter((r) => r.ok === null).length;
+console.log(`\n${results.length - falhas - ignoradas}/${results.length} verificações ok, ${ignoradas} ignoradas, ${falhas} falhas. Saída em ${OUT}`);
 process.exit(falhas === 0 ? 0 : 1);

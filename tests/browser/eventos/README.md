@@ -36,6 +36,7 @@ qualquer verificação falhar.
 | --- | --- |
 | Agenda pública por dia | `/calendario` |
 | Página feita para iframe | `/calendario/incorporar` |
+| Mapa de locais | `/mapa` |
 
 Larguras: **1280** (desktop), **390** (celular) e **320** (menor suportada). As
 duas menores passam por `browsingContext.setViewport` (WebDriver BiDi), porque o
@@ -44,14 +45,26 @@ teste diria "320 px" medindo 500 px.
 
 Por página e largura: título, largura efetiva do viewport, rolagem horizontal
 (`scrollWidth - clientWidth`), erro visível (`.messages--error`, `[role=alert]`),
-texto principal e, na incorporação, `noindex`.
+texto principal e, na incorporação, `noindex`. No mapa, confere o container
+`#aculta-map` e, quando há local com coordenadas, se o Google recusou a chave.
 
-Última execução (2026-10-28): **33/33 verificações ok**.
+Quando nenhum local tem coordenadas, o mapa não é desenhado e não há requisição
+ao Google: a verificação da chave aparece como **SKIP** em vez de passar por
+omissão.
+
+Última execução (2026-10-28): **51 ok, 3 ignoradas, 0 falhas**.
 
 ## Limites conhecidos
 
 - O Runtime de teste está com **0 eventos e 0 datas**: o teste cobre carregamento,
   layout e estado vazio, não a renderização de ocorrências.
+- O mapa só desenha com local que tenha coordenadas. O local de teste tem
+  endereço, mas estava sem `field_coordenadas`, então a chave do Maps não é
+  exercitada (SKIP).
+- A chave de teste provisionada tem **restrição por referenciador** e o Google
+  a recusa na Geocoding API (`REQUEST_DENIED`: "API keys with referer
+  restrictions cannot be used with this API"). Geocodificação no servidor exige
+  chave restrita por IP, separada da chave do navegador.
 - Não verifica o cabeçalho `Content-Security-Policy: frame-ancestors` da rota de
   incorporação nem o iframe real em outro host; isso se confere com `curl -I`.
 - Não mede contraste, foco por teclado nem leitor de tela (ver `VISUAL.md` do
