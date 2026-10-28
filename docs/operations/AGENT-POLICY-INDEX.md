@@ -18,6 +18,12 @@ O arquivo `docs/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histórico de 
 | Estatísticas | `web/modules/custom/aculta_portal/modules/aculta_statistics/AGENTS.md` |
 | Galerias | `web/modules/custom/aculta_portal/modules/aculta_gallery/AGENTS.md` |
 | Imagens/uploads | `web/modules/custom/aculta_portal/modules/aculta_image/AGENTS.md` |
+| Eventos | `web/modules/custom/aculta_portal/modules/aculta_events/docs/README.md`; decisões do domínio em `docs/decisions/ADR-015-purpose-eventos.md` |
+| Calendário | `web/modules/custom/aculta_portal/modules/aculta_calendar/docs/RECORRENCIA.md` |
+| Agenda LMS | `web/modules/custom/aculta_portal/modules/aculta_lms_agenda/docs/INTEGRACAO.md` |
+| UGC | `web/modules/custom/aculta_portal/modules/aculta_ugc/docs/README.md` |
+| Visualização de documentos | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/README.md` |
+| Visualização de PDF | `web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/README.md` |
 | CPF/CNPJ | `web/modules/custom/aculta_portal/modules/aculta_id_cpf/AGENTS.md` |
 | Messenger | `web/modules/custom/aculta_portal/modules/aculta_messenger/AGENTS.md` |
 | Cache e saídas | `docs/operations/AGENT-CACHE.md` e `docs/operations/AGENT-OUTPUT.md` |
