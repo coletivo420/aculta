@@ -129,6 +129,16 @@ já decididas acima; não reordenam saneamento, F1–F4 nem a política de uploa
 Critério de aceite comum: cada item tem teste automatizado (Unit ou Kernel), gates do projeto verdes,
 revisão visual com Firefox ESR no servidor de testes (quando houver interface) e versões ACULTA420 e Olivero.
 
+## Segunda leva inspirada no OpenCulturas — visual, blocos e views (2026-10-28)
+
+Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`, seção 9. Itens de componente seguem o roadmap
+visual do tema (classificação SDC antes de criar).
+
+- **I-26** menções na imprensa; **I-27** apoiadores e parceiros (com autorização registrada).
+- **I-29 e presença agregada:** contagens com supressão abaixo de 5 (ver Statistics).
+- Já existem, sem ação: busca no hub (I-32), carrossel (I-33) e cartão de membro (I-35).
+- Não adotar: `user_admin_people` sem revisão de LGPD; marca "powered by" como bloco; Layout Builder paralelo.
+
 ## Ordem de execução
 
 1. **Saneamento (S0–S6)**: resolver as dívidas antes de qualquer feature.

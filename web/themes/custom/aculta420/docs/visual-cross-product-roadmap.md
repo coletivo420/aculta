@@ -47,6 +47,25 @@ O planejamento inicial nasceu na UX do estudante [GanjaLab420 0.8](../../../../.
 - Biblioteca UI Patterns: story simples, variações, vazio/erro se necessário; componente permanece `experimental` até integração validada.
 - Evidência de consumidores reais e testes; sem declarar PASS com base em wireframe.
 
+## Candidatos da segunda leva OpenCulturas (2026-10-28)
+
+Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`, seção 9. **Regra da revisão de 2026-10-22 vale:**
+cada candidato só vira componente depois de verificar se um SDC existente já atende, e precisa de
+`.component.yml`, slots explícitos, story no UI Patterns, tokens, WCAG 2.2 AA, modo claro e escuro, e
+pelo menos um consumidor real. Template ou bloco do OpenCulturas é referência, nunca cópia.
+
+| Candidato | Uso | Classificação inicial | Verificar antes de criar |
+| --- | --- | --- | --- |
+| `content/press-mention` (I-26) | "Na imprensa" | Nova | `content/editorial-card` cobre o caso? |
+| `content/sponsor-logos` (I-27) | Apoiadores e parceiros | Nova; exige consentimento | — |
+| `content/accessibility-badges` (I-28) | Selos de acessibilidade | Nova | `patterns/figure` com legenda? |
+| `feedback/stat-counter` (I-29 e presença) | Contagem com supressão abaixo de 5 | Nova | `feedback/empty-state` para o caso "menos de 5" |
+| `patterns/bookmark-toggle` (I-31) | Salvar e salvo | Nova; estado por flag | Controle de flag já existente no Forum |
+| Layout 5 regiões (I-21) | Página de evento | Via UI Patterns Layouts | `patterns/rail` e `content-section` |
+| Layout 1, 2 e 3 colunas (I-22) | Composição de página | Via UI Patterns Layouts | `patterns/rail` |
+
+Gate: nenhum candidato entra em consumidor antes da story e do teste de cache renderizável.
+
 ## Links
 - [Shell multidomínio](shell.md)
 - [Arquitetura](architecture.md) · [Componentes](components.md) · [Catálogo de SDCs](component-catalog.md)

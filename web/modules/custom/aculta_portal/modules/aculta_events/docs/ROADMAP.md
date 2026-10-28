@@ -131,6 +131,12 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 - F7 inclui JSON-LD de Event e Place (I-12).
 - Imagens de eventos e locais declaram licença (I-13).
 
+## Segunda leva OpenCulturas aplicada a eventos (2026-10-28)
+
+- **I-21** página de evento em cinco regiões (V-9), via UI Patterns Layouts, na F3.
+- **I-28** selos de acessibilidade do local e do evento (`content/accessibility-badges`), na F4 e F6.
+- **I-30** "próximos eventos" na vitrine e na home de eventos, na F3.
+
 ## Pós-v1 (sem data)
 
 - Recorrência de eventos.

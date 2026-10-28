@@ -105,8 +105,8 @@ Referência: `who_s_online`, `who_s_new`, `watchdog`, `flagged_content`, `modera
 
 - **I-03:** o painel de moderação mostra **contagens e tempos agregados** (denúncias abertas, idade da mais
   antiga, sinalizações por tipo). Não mostra quem denunciou nem quem está online.
-- "Quem está online" do OpenCulturas **não entra**: é um dado individual de presença. No lugar, o módulo
-  pode publicar uma contagem agregada por hora, sem identificação.
+- "Quem está online" **entra no Statistics** (decisão do responsável, 2026-10-28), como contagem agregada com
+  supressão abaixo de 5 pessoas e sem nomes. A lista nominal do OpenCulturas (nome de login) não é copiada.
 - Encaixa no roadmap 0.8.0 (Dashboards) já previsto no módulo.
 
 ### 4.3 ACULTA Magazine (`aculta_magazine`)
@@ -326,7 +326,7 @@ busca     Título  ·  trecho com o termo destacado  ·  purpose
 | --- | --- |
 | ECA para notificações e fluxos | Regras em código são testáveis e revisáveis; o Aculta já usa código |
 | `oc_admin` com 108 permissões | Contraria privilégio mínimo; o Aculta mantém papéis com escopo |
-| "Quem está online" individual | Dado de presença por pessoa; substituído por contagem agregada |
+| Lista nominal de "quem está online" | Mostra o nome de login da conta; no ACULTA só contagem agregada (seção 4.2) |
 | Redirect automático de URL antiga | Política do Aculta: sem alias ou redirect temporário |
 | Cookies popover e dark mode toggle | Aceite único e tokens já cobrem |
 | Bookable e ingressos | Venda fora da v1 de eventos (`aculta_commerce` e Mercado Pago) |
@@ -347,3 +347,90 @@ busca     Título  ·  trecho com o termo destacado  ·  purpose
 - Auditoria de cópia do OpenCulturas: `web/modules/custom/aculta_portal/modules/aculta_events/docs/AUDITORIA-OPENCULTURAS.md`
 - Plano de UGC: `web/modules/custom/aculta_portal/modules/aculta_ugc/docs/PLANO-IMPLANTACAO.md`
 - Roadmap do portal: `docs/portal/ROADMAP.md` (seção "Melhorias inspiradas no OpenCulturas")
+
+## 9. Segunda leva: visual, blocos e views (2026-10-28)
+
+### 9.1 Inventário comparado
+
+| Lado | Quantidade | Observação |
+| --- | --- | --- |
+| OpenCulturas: views de configuração | 42 | Conteúdo, listagens (`content`, `locations`, `event_catalogue`, `glossary`, `faq`), relacionados (`related_*`, `recommended_by`), usuários (`who_s_new`, `who_s_online`, `main_profile`), moderação (`flagged_content`, `moderated_content`) e exportação |
+| OpenCulturas: plugins de bloco | 7 | Mapa, cookies, modo escuro, hero, título de página, marca "powered by", ícone de favorito |
+| OpenCulturas: layouts | 4 | 1, 2, 3 colunas e "5 seções" (título, destaque, essenciais, conteúdo, lateral) |
+| OpenCulturas: tipos de parágrafo | 19 | Grade de teasers, carrossel de texto, galeria, menção na imprensa, membro, texto, bloco, view embutida, contato, download, acessibilidade |
+| ACULTA: componentes SDC | 47 | Padrões (`card`, `carousel`, `content-grid`, `rail`, `hero`, `figure`, `quote`), conteúdo (`author-card`, `course_card`, `editorial-card`), doação, feedback, Messenger e QR |
+| ACULTA: blocos (plugins) | 3 | Doação, retorno ao site e doação rápida |
+
+A regra de reuso do roadmap visual (2026-10-22) classifica cada peça do OpenCulturas: template Twig e
+bloco PHP sem contrato SDC são **LEGADO-MIGRAR** (referência, nunca cópia). Por isso todo item abaixo vira
+**SDC candidato** ou **view**, com story, consumidor real e WCAG 2.2 AA.
+
+### 9.2 Ideias
+
+| ID | Peça do OpenCulturas | Ideia no ACULTA | Tipo | Classificação inicial | Destino |
+| --- | --- | --- | --- | --- | --- |
+| I-21 | Layout "OC 5 sections" | Página de evento com cinco regiões (título, destaque, essenciais, conteúdo, lateral) | Layout | Verificar UI Patterns Layouts (já é dependência do Aculta) antes de criar | `aculta_events` F3/F6 |
+| I-22 | Layouts 1, 2 e 3 colunas | Composição de página em 1, 2 ou 3 colunas | Layout | Verificar `patterns/rail` e `content-section` antes de criar | Catálogo do tema |
+| I-23 | View `content_recent` | "Recentes e em destaque" com "mais lidos" por contagem agregada, sem cookie | View + cartão | Depende de I-10 e de Statistics | Revista; Wiki |
+| I-24 | View `archive` | Arquivo por ano e mês da Revista | View | Nova view | Revista |
+| I-25 | Views `taxonomy_term` e `vocabulary` | Página de termo ou categoria com listagem filtrável | View | Depende de I-01 | Revista; Wiki |
+| I-26 | Parágrafo `media_mention` | "Na imprensa": veículo, data e link externo | SDC candidato `content/press-mention` | Nova | Portal (`ROADMAP.md`) |
+| I-27 | View `related_sponsor` | Apoiadores e parceiros com logotipo, só com autorização registrada | SDC candidato `content/sponsor-logos` | Nova; exige consentimento | Apoio; Institucional |
+| I-28 | Parágrafo `a11y_wheelchair` | Selos de acessibilidade do local ou evento (ícone e texto) | SDC candidato `content/accessibility-badges` | Nova; cor nunca é o único sinal | `aculta_events` F4 e F6 |
+| I-29 | View `who_s_new` (sem nomes) | Contagem de novos membros na semana | SDC candidato `feedback/stat-counter` | Nova; supressão de 5 | Statistics |
+| I-30 | View `related_date` | "Próximos eventos" na vitrine e na home de eventos | View + cartão | Depende de I-10 | `aculta_events`; vitrine do main |
+| I-31 | Bloco `BookmarkFlagIconBlock` | Botão de salvar no cartão, com estado salvo ou não | SDC candidato `patterns/bookmark-toggle` | Nova; sobre a flag existente | Studio (I-07) |
+| I-32 | View `dashboard: finder` | Busca no hub de conta | — | **Já existe** no hub do Studio | Nenhuma ação |
+| I-33 | Parágrafo `text_slider` (swiffy) | Carrossel de texto | — | **Já existe** (`patterns/carousel`); não adotar a biblioteca swiffy | Nenhuma ação |
+| I-34 | Parágrafo `teaser_wrapper` | Grade mista (conteúdo, termo e link externo) | — | `patterns/content-grid` existe; verificar se aceita mistura | Catálogo do tema |
+| I-35 | Parágrafo `member` | Cartão de membro da equipe | — | **Já existe** (`content/author-card`) | Nenhuma ação |
+
+### 9.3 Views e blocos não adotados
+
+| Item | Motivo |
+| --- | --- |
+| `user_admin_people` | Lista de pessoas com dados de conta; exige revisão de LGPD e de minimização antes de qualquer uso |
+| `legal_users` | Já coberto pelo registro de aceite único (`ACEITE-UNICO.md`) |
+| `watchdog` | Log de sistema não é painel de conteúdo; fica com a operação |
+| `oc_er_mod_states` | Estados de moderação já ficam nos workflows e na fila do `aculta_ugc` |
+| Bloco "marca powered by" | Não agrega à missão; o crédito de software vive na documentação |
+| Dark mode e cookies como blocos | Tokens e aceite único já cobrem (ver seção 6) |
+| Layout Builder genérico | Composição fica com UI Patterns Layouts, para não criar um segundo sistema de layout |
+
+### 9.4 Visuais novos
+
+**V-9 — Página de evento em cinco regiões (I-21)**
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ TÍTULO                                    [Ver no mapa]    │
+├──────────────────────────────────────────┬───────────────┤
+│ DESTAQUE (imagem com proporção fixa)       │ ESSENCIAIS     │
+│                                           │ data · local   │
+│                                           │ gratuito       │
+│                                           │ acessibilidade │
+├──────────────────────────────────────────┴───────────────┤
+│ CONTEÚDO (descrição, datas, organizador)                  │
+├──────────────────────────────────────────────────────────┤
+│ LATERAL: eventos relacionados (I-02)                       │
+└──────────────────────────────────────────────────────────┘
+Em telas pequenas: uma coluna na ordem TÍTULO, DESTAQUE, ESSENCIAIS, CONTEÚDO, LATERAL.
+```
+
+**V-10 — Contagem agregada com supressão (I-29 e presença)**
+
+```
+Pessoas online agora            Novos membros nesta semana
+┌───────────────┐               ┌───────────────┐
+│      23       │               │   menos de 5  │   ← abaixo do limite: sem número
+│   visitantes │               │               │
+└───────────────┘               └───────────────┘
+Sem nomes, sem lista. Atualização a cada minuto; texto alternativo com o período.
+```
+
+### 9.5 Destinos
+
+- Itens de layout e componente: `web/themes/custom/aculta420/docs/visual-cross-product-roadmap.md`
+  (seção "Candidatos da segunda leva OpenCulturas").
+- Itens de view e de módulo: roadmap de cada módulo (Statistics, Revista, `aculta_events`, Studio, Apoio).
+- Itens de portal: `docs/portal/ROADMAP.md`.

@@ -80,6 +80,13 @@ formulário foi enviado, e a contagem de Comments permaneceu zero.
   `busca` (resultado). Cada variação é um SDC com as mesmas regras de imagem. Referência: V-8.
 - Editor da revista: continua com `content_editor` e permissões de revista. Sem papel novo (privilégio mínimo).
 
+## Recentes, arquivo e termos (inspirado no OpenCulturas, 2026-10-28)
+
+- **I-23 — Recentes e em destaque.** Lista de "mais lidos no período" a partir de contagem agregada do
+  Statistics, com supressão abaixo de 5. Sem cookie. Cartões na variação `compact` (I-10).
+- **I-24 — Arquivo por ano e mês.** View com navegação por período. Mesma ordenação e paginação do catálogo (I-01).
+- **I-25 — Página de categoria.** Página de termo com listagem filtrável; depende de I-01.
+
 ## Categorias editoriais
 
 As categorias em `editorial_category` classificam o conteúdo: Editorial, Blog/Opinião, Notícias, Reportagens,

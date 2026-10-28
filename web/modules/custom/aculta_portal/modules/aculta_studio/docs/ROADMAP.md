@@ -12,6 +12,11 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`. Entram depois do fecham
   Lista os locais, eventos e perfis que a organização reivindicou ou criou.
 - Visual de referência: V-6 do comparativo.
 
+## Complemento: salvar no cartão (2026-10-28)
+
+- **I-31** botão de salvar em cartões (`patterns/bookmark-toggle`), com estado salvo ou não. Usa a flag
+  existente; a lista "Salvos" da I-07 mostra o mesmo conjunto. Sem novo dado coletado.
+
 ## S-R5 — instrumentação e matriz de paridade (2026-10-25; sem homologação)
 
 - **Frente iniciada no código de testes e documentação:** [matriz S-R5](S-R5-MATRIZ-COMPARACAO.md) e [suíte Firefox ESR](../../../../../../../tests/browser/aculta-studio/README.md) para comparar Conta Studio, Conta legada e Perfil em MAIN, sem criar novo storage, rotas ou operações.

@@ -157,8 +157,32 @@ da mais antiga, resolvidas no período, tempo médio de decisão, e totais por t
 wiki, eventos). Não mostra quem denunciou, nem a lista de quem está online. Acesso: papel de moderação.
 Dados vêm do `aculta_ugc` (plano U4). Referência visual: V-3 do comparativo.
 
-Fora de escopo: "quem está online" individual (dado de presença por pessoa). Se for necessário, é
-contagem agregada por hora, sem identificação, com decisão própria.
+## Presença e atividade agregadas (decidido pelo responsável em 2026-10-28; inspirado no OpenCulturas)
+
+Decisão: "quem está online" entra no Statistics. A forma segue o padrão de privacidade do módulo.
+
+- **Forma:** contagem de visitantes ativos nos últimos 15 minutos (a mesma janela do `who_s_online` do
+  OpenCulturas), por purpose. Usa o `VisitorKey` já existente: identificador pseudonimizado (HMAC com
+  escopo e salt; IP nunca guardado em claro). Visitante anônimo e conta logada contam uma vez.
+- **Supressão:** a contagem só aparece com 5 ou mais pessoas (`CellSuppression::MINIMUM_PUBLIC_COUNT`).
+  Abaixo disso, a tela não mostra número.
+- **Sem nome e sem lista.** O OpenCulturas mostra o nome de login de cada conta online; isso não é copiado.
+  Lista nominal só para perfil público com opt-in, pela identidade pública do `aculta_user`. Fica fora desta
+  fase e exige decisão própria.
+- **Retenção:** só a contagem agregada é guardada (por hora, se for necessário histórico). Não há
+  histórico por pessoa.
+- **Onde aparece:** painel administrativo do Statistics (recomendado). Exibição pública depende de confirmação
+  do responsável.
+- **Gates:** inventário LGPD atualizado antes da métrica; teste de supressão abaixo de 5; teste de que a
+  resposta não contém identificador, nome nem lista. Componente de número: `feedback/stat-counter` (candidato
+  SDC, ver `visual-cross-product-roadmap.md`).
+
+- **I-29 — Novos membros nesta semana (contagem).** O `who_s_new` do OpenCulturas lista nomes. Aqui é só a
+  contagem agregada, com a mesma supressão de 5. Mesmo componente.
+- **I-23 — Recentes e em destaque.** O `content_recent` do OpenCulturas ordena por data. Aqui, "mais lidos no
+  período" usa contagem agregada de visualização de conteúdo, sem cookie e com supressão. Usado pela Revista
+  e pela Wiki (ver roadmap da Revista).
+
 
 ## 0.8.0 — Dashboards
 
