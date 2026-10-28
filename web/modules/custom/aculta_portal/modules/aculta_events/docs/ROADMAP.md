@@ -174,8 +174,9 @@ Saída: revisão visual aprovada pelo responsável.
 
 Entrada: F3 e F4 concluídas.
 
-- [ ] Sitemap do purpose (produção indexável; teste `noindex`).
-- [ ] Metadados de página e dados estruturados de evento (schema.org `Event`), se o `json_ld_schema` do ACULTA for usado.
+- [x] Sitemap do purpose responde no Runtime de teste; index e filho do purpose retornam HTTP 200 com `X-Robots-Tag: noindex, nofollow, noarchive`. O sitemap lista as rotas públicas e eventos publicados com URLs canônicas de produção, conforme ADR-009.
+- [x] Página de evento emite JSON-LD `schema.org/Event`, com datas e estado de cancelamento.
+- [ ] Resolver a divergência de canonical: o sitemap lista host de produção, enquanto a página de evento no teste aponta para `eventos.aculta.toca.net.br`; `deploy.json` também diz que o filho de teste usa hosts de teste. O teste permanece `noindex`. Ver decisão pendente do responsável.
 - [ ] `validate-final-sitemap.php` verde no ambiente de teste.
 
 Saída: sitemap e robots conferidos pelo `aculta_deployer`.
