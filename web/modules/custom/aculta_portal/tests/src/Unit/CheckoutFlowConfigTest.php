@@ -56,7 +56,8 @@ final class CheckoutFlowConfigTest extends UnitTestCase {
 
     $this->assertSame('multistep_default', $this->sync('commerce_checkout.commerce_checkout_flow.curso')['plugin']);
     $this->assertSame('_disabled', $panes['aculta_shipping_information']['step'] ?? NULL);
-    $this->assertSame('_disabled', $panes['aculta_billing_address']['step'] ?? NULL);
+    // O Mercado Pago exige endereço de cobrança; não é frete nem envio.
+    $this->assertSame('order_information', $panes['aculta_billing_address']['step'] ?? NULL);
     $this->assertArrayHasKey('aculta_fiscal_identity', $panes);
     $this->assertSame('review', $panes['aculta_fiscal_identity']['step']);
     $this->assertArrayHasKey('aculta_personal_name', $panes);
