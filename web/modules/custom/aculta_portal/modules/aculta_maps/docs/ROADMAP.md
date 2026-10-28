@@ -43,6 +43,8 @@ Evidência técnica MP3: `58359728f`.
 - [x] Fallback para OSM sem chave ou quando a API falha; aviso só para o administrador.
 - [x] Documentar restrições por referenciador/API no navegador e por IP/API no servidor.
 
+Evidência MP4: `d9ae563d4`.
+
 ## MP5 — Link de rota sem API
 
 - [ ] `RouteLinkBuilder` usa o modelo configurável e codifica o destino.

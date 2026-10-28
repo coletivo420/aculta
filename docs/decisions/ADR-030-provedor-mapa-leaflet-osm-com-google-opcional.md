@@ -87,7 +87,7 @@ O mapa e a geocodificação ficam no submódulo `aculta_maps`, e não em `aculta
 chave no `aculta_secrets`, fallback, link de rota e privacidade) valem para o submódulo. Plano e roadmap:
 `web/modules/custom/aculta_portal/modules/aculta_maps/docs/`.
 
-## Estado de implementação (MP0–MP3)
+## Estado de implementação (MP0–MP4)
 
 `aculta_maps` contém o renderer compartilhado, o painel ADM7 e a engine padrão Leaflet 1.9.4 com tiles OSM,
 atribuição visível e agrupamento local de marcadores. Leaflet fica em `assets/vendor/leaflet/` sob BSD-2-Clause;
