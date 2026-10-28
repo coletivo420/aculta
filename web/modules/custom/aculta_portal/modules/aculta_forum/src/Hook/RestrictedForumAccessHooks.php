@@ -34,8 +34,9 @@ use Psr\Log\LoggerInterface;
  *
  * Operação de instalação/ativação: como o Core passa a usar o sistema de
  * grants assim que existe implementação de `node_grants`, ativar o recurso
- * exige `node_access_rebuild()` para que grants por nó substituam o grant
- * global `nid = 0` e as listagens passem a ser filtradas. Documentado em
+ * exige a reconstrução de grants (`node_access_rebuild`) para que grants por
+ * nó substituam o grant global `nid = 0` e as listagens passem a ser
+ * filtradas. Documentado em
  * `docs/RESTRICTED-FORUMS.md`.
  */
 final class RestrictedForumAccessHooks {

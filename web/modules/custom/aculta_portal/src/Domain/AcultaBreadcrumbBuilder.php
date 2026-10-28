@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\Domain;
 
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\TitleResolverInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Path\PathMatcherInterface;
@@ -46,13 +47,15 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   ) {}
 
   /** {@inheritdoc} */
-  public function applies(RouteMatchInterface $route_match): bool {
+  public function applies(RouteMatchInterface $route_match, ?CacheableMetadata $cacheable_metadata = NULL): bool {
     $route = $route_match->getRouteObject();
     // Claro keeps its own breadcrumb behavior.
     if (!$route || $route->getOption('_admin_route')) {
       return FALSE;
     }
-    return $this->domainPurpose->getCurrentPurpose() !== NULL;
+    $purpose = $this->domainPurpose->getCurrentPurpose();
+    $cacheable_metadata?->addCacheContexts(['route', 'domain']);
+    return $purpose !== NULL;
   }
 
   /** {@inheritdoc} */

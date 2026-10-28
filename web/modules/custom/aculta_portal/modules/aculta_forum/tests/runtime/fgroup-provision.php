@@ -182,7 +182,8 @@ $accounts = [
 $ids = [];
 foreach ($accounts as $suffix => $data) {
   $name = FGROUP_PREFIX . $suffix;
-  $user = user_load_by_name($name) ?: User::create([
+  $matches = \Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['name' => $name]);
+  $user = $matches ? reset($matches) : User::create([
     'name' => $name,
     'mail' => $name . '@example.invalid',
     'status' => 1,

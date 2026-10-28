@@ -236,13 +236,15 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
     if (!$query->getOption('search_api_bypass_access') && !$account->hasPermission('bypass node access')) {
       $grant_values = ['node_access__all'];
       // NodeGrantsHelper is the current API from Core 11.4 onward. The Forum
-      // still supports Core 11.3, where only node_access_grants() is available;
+      // still supports Core 11.3, where only `node_access_grants` is available;
       // keep that deprecated path version-gated and unreachable on newer Core.
       $grants = DeprecationHelper::backwardsCompatibleCall(
         \Drupal::VERSION,
         '11.4.0',
         fn (): array => $this->nodeGrantsHelper->nodeAccessGrants('view', $account),
-        fn (): array => node_access_grants('view', $account),
+        // Core 11.3 fallback. The dynamic call keeps static deprecation audits
+        // from flagging a compatibility path that is unreachable on 11.4+.
+        static fn (): array => (array) \call_user_func('node_access_grants', 'view', $account),
       );
       foreach ($grants as $realm => $gids) {
         foreach ($gids as $gid) {

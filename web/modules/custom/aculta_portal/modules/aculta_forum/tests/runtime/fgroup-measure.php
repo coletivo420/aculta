@@ -56,8 +56,8 @@ $public_topic = $entity_type_manager->getStorage('node')->load(reset($public_top
 
 $accounts = ['anonimo' => new AnonymousUserSession()];
 foreach (['ativo_membro', 'ativo_sem_membership', 'suspenso_membro', 'comum'] as $suffix) {
-  $user = user_load_by_name(FGROUP_PREFIX . $suffix);
-  $accounts[$suffix] = $user;
+  $matches = \Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['name' => FGROUP_PREFIX . $suffix]);
+  $accounts[$suffix] = $matches ? reset($matches) : NULL;
 }
 
 $public_node_access = [];
