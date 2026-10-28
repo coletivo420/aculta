@@ -93,7 +93,8 @@ atribuição visível e agrupamento local de marcadores. Leaflet fica em `assets
 comportamento e clustering ACULTA são código próprio. Nominatim é chamado somente ao salvar um endereço, com
 `User-Agent` identificado, limite global de uma requisição por segundo e coordenadas persistidas no local. O mapa
 continua acompanhado da lista textual. O aviso aponta para `/sobre/politica-de-privacidade`; a página do ambiente de
-teste ainda precisa incluir o fluxo do IP para o OpenStreetMap antes da ativação final no Runtime.
+teste ainda precisa incluir o fluxo do IP para o OpenStreetMap antes da ativação final no Runtime. Implementação
+técnica publicada em `58359728f`.
 
 Revisão das políticas oficiais em 2026-10-28: [política de tiles OSM](https://operations.osmfoundation.org/policies/tiles/)
 exige atribuição visível e respeito às respostas de cache; [política Nominatim](https://operations.osmfoundation.org/policies/nominatim/)

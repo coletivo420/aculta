@@ -34,6 +34,8 @@ Evidência de MP2: `cac0efbba`.
 
 Pendente para fechar a ativação de MP3 no Runtime: adicionar à política pública a informação sobre tiles OSM e envio do IP. A página de teste atual ainda não menciona os provedores; a decisão sobre a alteração de conteúdo está aguardando resposta.
 
+Evidência técnica MP3: `58359728f`.
+
 ## MP4 — Engine Google (opção) e fallback
 
 - [ ] Maps JavaScript API com a chave lida do `aculta_secrets`.
