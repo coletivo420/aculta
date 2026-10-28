@@ -78,3 +78,9 @@ O responsável fixou a configuração final do mapa:
 4. **URL de rota configurável** no painel do mapa, no mesmo padrão da configuração de links de rota do OpenCulturas (`openculturas_address_links`). O administrador troca o modelo de URL sem alterar código.
 
 Consequência: o visitante só sai do ACULTA por clique, em qualquer modo. Não há dado de visitante enviado ao Google sem ação dele.
+
+## Localização do código (D-19, 2026-10-28)
+
+O mapa e a geocodificação ficam no submódulo `aculta_maps`, e não em `aculta_events`. As regras deste ADR (provedores,
+chave no `aculta_secrets`, fallback, link de rota e privacidade) valem para o submódulo. Plano e roadmap:
+`web/modules/custom/aculta_portal/modules/aculta_maps/docs/`.
