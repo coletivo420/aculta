@@ -1,17 +1,24 @@
 <?php
 
+/**
+ * @file
+ * Read-only validation gate for the ACULTA420 theme foundation.
+ */
+
 declare(strict_types=1);
 
 /**
  * Read-only Runtime gate for the ACULTA420 0.1.0 Foundation.
  */
 
+use Twig\Source;
+use Drupal\aculta420\Hook\ThemeHooks;
 use Symfony\Component\Yaml\Yaml;
 
 $root = dirname(__DIR__);
 
-// O gate lê o Runtime pela API do Drupal. Chamado com php direto (sem Drupal), delega ao Drush (scr) e repassa
-// a saída e o código de saída, para que `php scripts/validate-aculta420-foundation.php` funcione como os demais gates.
+// The gate reads Runtime through Drupal. When called directly, it delegates
+// to Drush and forwards its output and exit code.
 if (!class_exists(\Drupal::class)) {
   $drush = $root . '/vendor/drush/drush/drush.php';
   if (!is_file($drush)) {
@@ -137,14 +144,14 @@ $assert(($bootstrapInfo['version'] ?? NULL) === '5.0.2', 'Installed Drupal Boots
 $hookSourcePath = $themeRoot . '/src/Hook/ThemeHooks.php';
 $assert(is_file($hookSourcePath), 'OOP theme hook class exists.');
 $hookSource = file_get_contents($hookSourcePath);
-$assert(class_exists(\Drupal\aculta420\Hook\ThemeHooks::class), 'Drupal can autoload the ACULTA420 hook class.');
+$assert(class_exists(ThemeHooks::class), 'Drupal can autoload the ACULTA420 hook class.');
 $assert(!str_contains($hookSource, '\\Drupal::'), 'Theme hook class uses DI instead of the Drupal service locator.');
 $assert(!str_contains($hookSource, 'aculta_portal'), 'Theme hook class has no direct dependency on aculta_portal.');
 
 $libraries = Yaml::parseFile($themeRoot . '/aculta420.libraries.yml');
 $libraryIntegrationDependencies = [];
 foreach ($libraries as $libraryName => $definition) {
-  foreach (($definition['css'] ?? []) as $group => $assets) {
+  foreach (($definition['css'] ?? []) as $assets) {
     foreach (array_keys($assets ?? []) as $asset) {
       if (preg_match('#^https?://#', (string) $asset)) {
         continue;
@@ -173,7 +180,7 @@ $assert(
 $expectedWebAssets = [
   'aculta420-favicon.ico',
   'logo-aculta420-horizontal-branco-900x300.png',
-  // Logo da barra institucional (0.6.0-dev.6): tamanhos 1x e 2x, consumidos pelo page.html.twig.
+  // Institutional header logo: 1x and 2x sizes used by page.html.twig.
   'logo-aculta420-horizontal-branco-78x26.webp',
   'logo-aculta420-horizontal-branco-156x52.webp',
 ];
@@ -207,7 +214,7 @@ $assert(
 $portalSettings = \Drupal::config('aculta_portal.settings');
 $assert(trim((string) $portalSettings->get('institution_data_uuid')) !== '', 'Portal owns the institutional block UUID.');
 $assert((int) $portalSettings->get('institution_transparency_nid') > 0, 'Portal owns the institutional transparency page reference.');
-// P2.1 moved the institutional token lookup from the removed .module to TokenHooks.
+// P2.1 moved the institutional token lookup to TokenHooks.
 $portalModule = (string) file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/TokenHooks.php');
 $emptyUuidGuard = strpos($portalModule, "if (\$uuid === '')") ?: FALSE;
 $uuidLookup = strpos($portalModule, "loadByProperties(['uuid' => \$uuid])") ?: FALSE;
@@ -295,10 +302,10 @@ foreach (glob($root . '/config/sync/block.block.aculta_*.yml') ?: [] as $path) {
 $expectedTemplates = [
   'block--block-content--type--aculta-institution.html.twig',
   'block--system-branding-block.html.twig',
-  // Formulários Commerce preservam a apresentação ACULTA dos dois panes de apoio.
+  // Commerce forms preserve ACULTA presentation for support panes.
   'commerce-checkout-pane--commerce-donation-pane.html.twig',
   'commerce-checkout-pane--commerce-memorial-pane.html.twig',
-  // Página do produto da loja (0.6.0-dev.7): composição só com componentes SDC do tema.
+  // Store product page composes only the theme's SDC components.
   'commerce-product--produto-loja.html.twig',
   // Formulários nativos de doação e resumo do pedido.
   'aculta-donation-back.html.twig',
@@ -314,19 +321,19 @@ $expectedTemplates = [
   'content/off-canvas-page-wrapper.html.twig',
   'navigation/breadcrumb.html.twig',
   'node--editorial-highlight.html.twig',
-  // ACULTA Forum topic uses the aculta_user card and omits Core's unfiltered user picture/byline.
+  // Forum topic uses the ACULTA user card without Core's unfiltered byline.
   'node--aculta-forum-topic.html.twig',
-  // Shared discussion comment presenter added in 0.6.0-dev.96.
+  // Shared discussion comment presenter.
   'comment--aculta-discussion-post.html.twig',
-  // Caixa do Google com logo do tema e estado "Conectado" (f96bb4d, já no main; a allowlist não foi atualizada na época).
+  // Google button with the theme logo and its connected state.
   'login-with.html.twig',
-  // Modelo canônico da Revista reutiliza o componente editorial compartilhado.
+  // The magazine page reuses the shared editorial component.
   'node--revista--full.html.twig',
-  // Site Alert keeps native scheduling/access and delegates presentation to the theme SDC.
+  // Site Alert keeps native scheduling and access, using the theme SDC.
   'site-alert.html.twig',
-  // Private Message thread wrapper exposes only its native rendered content and supplied read state.
+  // Private Message wrapper exposes native content and supplied read state.
   'private-message-thread.html.twig',
-  // Wiki article and teaser presenters intentionally omit submitted-byline metadata.
+  // Wiki article and teaser omit submitted-byline metadata.
   'node--wiki-entry--full.html.twig',
   'node--wiki-entry--teaser.html.twig',
   // Página pública LINKS e micropáginas usam presenters neutros e SDCs do tema.
@@ -339,7 +346,7 @@ $expectedTemplates = [
   'views-view-fields--aculta-forum-categories--page-categories.html.twig',
   // The landing-page category block reuses the same neutral fields and SDC.
   'views-view-fields--aculta-forum-categories--block-landing.html.twig',
-  // The categories page uses a grid wrapper while preserving each row's attributes.
+  // Categories use a grid wrapper and preserve row attributes.
   'views-view-unformatted--aculta-forum-categories--page-categories.html.twig',
   'page.html.twig',
   'portal-cart-status.html.twig',
@@ -348,10 +355,11 @@ $expectedTemplates = [
   'portal-search-trigger.html.twig',
   'views-view-unformatted--courses-catalog.html.twig',
   'views-view-vvjb.html.twig',
-  // Álbumes: os campos e a View permanecem Drupal; o tema compõe o SDC card overlay.
+  // Album fields stay in Drupal; the theme composes the card SDC.
   'views-view-fields--aculta-albuns.html.twig',
   'views/views-view-table.html.twig',
-  // Envelope HTML dos e-mails do aculta_mailer: cores dos tokens, claro e escuro inline (clientes de e-mail não carregam tokens.css).
+  // Mail HTML envelope uses inline light and dark token colors because clients
+  // do not load tokens.css.
   'aculta-mailer-wrap.html.twig',
   'portal-component.html.twig',
 ];
@@ -409,14 +417,14 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot
     Yaml::parseFile($file->getPathname());
   }
   if ($extension === 'twig') {
-    // SDC templates are compiled under their namespaced component id, e.g. aculta420:editorial-card.
+    // SDC templates use namespaced component IDs.
     $componentName = basename($file->getFilename(), '.twig');
     $isComponent = preg_match('#/components/(content|patterns)/' . preg_quote($componentName, '#') . '/' . preg_quote($componentName, '#') . '\.twig$#', $file->getPathname()) === 1;
     $themeRelativePath = str_replace($themeRoot . DIRECTORY_SEPARATOR, '', $file->getPathname());
     // Drupal's Twig loader resolves regular theme templates through the theme
     // namespace; the bare basename is not a registered loader key.
     $sourceName = $isComponent ? 'aculta420:' . $componentName : '@aculta420/' . $themeRelativePath;
-    $source = new \Twig\Source(file_get_contents($file->getPathname()), $sourceName, $file->getPathname());
+    $source = new Source(file_get_contents($file->getPathname()), $sourceName, $file->getPathname());
     $twig->compile($twig->parse($twig->tokenize($source)));
   }
 }
