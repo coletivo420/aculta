@@ -17,6 +17,12 @@ aculta_calendar.import_source.*:
     sourceUrl:
       type: uri
       label: 'Endereço do arquivo'
+    allowedHosts:
+      type: sequence
+      label: 'Hosts HTTPS permitidos'
+      sequence:
+        type: string
+        label: 'Host permitido'
     lastSync:
       type: integer
       label: 'Última sincronização (UTC)'

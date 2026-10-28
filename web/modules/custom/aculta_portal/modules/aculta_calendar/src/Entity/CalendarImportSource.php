@@ -30,14 +30,18 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
     'uuid',
     'status',
     'sourceUrl',
+    'allowedHosts',
     'lastSync',
     'lastResult',
   ],
 )]
 final class CalendarImportSource extends ConfigEntityBase {
 
-  /** URL do arquivo, sem acesso de rede nesta microfase. */
+  /** URL HTTPS do arquivo iCalendar. */
   protected string $sourceUrl = '';
+
+  /** @var string[] Hosts HTTPS permitidos para esta fonte, sem curingas. */
+  protected array $allowedHosts = [];
 
   /** Timestamp UTC do último processamento, zero quando nunca processada. */
   protected int $lastSync = 0;
@@ -47,6 +51,11 @@ final class CalendarImportSource extends ConfigEntityBase {
 
   public function sourceUrl(): string {
     return $this->sourceUrl;
+  }
+
+  /** @return string[] */
+  public function allowedHosts(): array {
+    return $this->allowedHosts;
   }
 
   public function lastSync(): int {

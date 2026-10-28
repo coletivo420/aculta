@@ -37,7 +37,7 @@ Status: a fazer, salvo onde indicado.
 - [x] I2 — contrato e leitor local de `.ics`, com limites de 2 MB e 2.000 eventos; sem biblioteca externa.
 - [x] I3 — normalização, sanitização de conteúdo e tratamento de fuso/status cancelado.
 - [x] I4 — reimportação idempotente, atualização como revisão e marcação de itens ausentes.
-- [ ] I5 — buscar por URL: bloqueada até confirmação da D-21; sem acesso de rede antes disso.
+- [x] I5 — buscar por URL: D-21 confirmada; HTTPS restrito à allowlist, sem redirecionamentos e com validação/pinagem de DNS.
 - [x] I6 — painel de revisão editorial, acesso restrito, sem publicação automática.
 - [x] I7 — somente itens publicados entram no provedor do calendário.
 - [x] I8 — documentar a API de importação e as regras no README.

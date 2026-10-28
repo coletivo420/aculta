@@ -1,5 +1,10 @@
 # Changelog — aculta_calendar
 
+## 2026-10-28 — importação remota com proteção SSRF (I5)
+
+- D-21 confirmada: fetch HTTPS apenas para hosts exatos da allowlist da fonte, DNS público fixado no cURL, TLS validado, sem redirecionamentos e com timeout.
+- A resposta respeita 2 MiB e alimenta o mesmo leitor, normalizador e processador; itens seguem como rascunhos para revisão.
+
 ## 2026-10-28 — documentação da importação (I8)
 
 - README descreve o fluxo local, os limites, a revisão editorial e a integração pelo provedor; a busca remota I5 continua bloqueada pela D-21.

@@ -10,6 +10,9 @@ use Drupal\aculta_calendar\Import\CalendarImportRepository;
 use Drupal\aculta_calendar\Import\CalendarEventNormalizer;
 use Drupal\aculta_calendar\Import\CalendarImportProcessor;
 use Drupal\aculta_calendar\Import\ImportedCalendarItemProvider;
+use Drupal\aculta_calendar\Import\NativeCalendarHostResolver;
+use Drupal\aculta_calendar\Import\CalendarIcsRemoteFetcher;
+use Drupal\aculta_calendar\Import\CalendarRemoteImportService;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -27,6 +30,15 @@ final class AcultaCalendarServiceProvider extends ServiceProviderBase {
     $container->register('aculta_calendar.imported_item_provider', ImportedCalendarItemProvider::class)
       ->addArgument(new Reference('entity_type.manager'))
       ->addTag('aculta_calendar.item_provider');
+    $container->register('aculta_calendar.import_host_resolver', NativeCalendarHostResolver::class);
+    $container->register('aculta_calendar.import_remote_fetcher', CalendarIcsRemoteFetcher::class)
+      ->addArgument(new Reference('http_client'))
+      ->addArgument(new Reference('aculta_calendar.import_host_resolver'));
+    $container->register('aculta_calendar.remote_import', CalendarRemoteImportService::class)
+      ->addArgument(new Reference('aculta_calendar.import_remote_fetcher'))
+      ->addArgument(new Reference('aculta_calendar.import_reader'))
+      ->addArgument(new Reference('aculta_calendar.import_normalizer'))
+      ->addArgument(new Reference('aculta_calendar.import_processor'));
   }
 
 }
