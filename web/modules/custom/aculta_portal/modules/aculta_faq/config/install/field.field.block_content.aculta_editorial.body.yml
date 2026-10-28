@@ -1,0 +1,25 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_editorial
+    - filter.format.aculta_editorial
+  module:
+    - text
+id: block_content.aculta_editorial.body
+field_name: body
+entity_type: block_content
+bundle: aculta_editorial
+label: Texto
+description: 'Aceita negrito, itálico, listas e links seguros.'
+required: true
+translatable: true
+default_value: { }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+  allowed_formats:
+    - aculta_editorial
+field_type: text_with_summary
+

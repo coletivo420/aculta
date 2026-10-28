@@ -1,0 +1,21 @@
+# Adaptado de OpenCulturas 3.1.4 (GPL-2.0-or-later), profile/modules/custom/openculturas_faq/config/install/node.type.faq.yml
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - menu_ui
+  enforced:
+    module:
+      - aculta_faq
+third_party_settings:
+  menu_ui:
+    available_menus: { }
+    parent: ''
+name: 'Pergunta frequente'
+type: aculta_faq
+description: 'Pergunta no título e resposta em texto formatado e sanitizado.'
+help: ''
+new_revision: true
+preview_mode: 0
+display_submitted: false
+

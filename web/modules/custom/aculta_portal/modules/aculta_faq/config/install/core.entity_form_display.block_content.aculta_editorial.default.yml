@@ -1,0 +1,32 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_editorial
+    - field.field.block_content.aculta_editorial.body
+  module:
+    - text
+id: block_content.aculta_editorial.default
+targetEntityType: block_content
+bundle: aculta_editorial
+mode: default
+content:
+  body:
+    type: text_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 8
+      placeholder: ''
+    third_party_settings: { }
+  info:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: { }
+hidden:
+  langcode: true
+
