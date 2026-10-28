@@ -4,7 +4,7 @@
  * Só inicializa na rota /calendario/interativo. O componente apresenta os itens
  * do aculta_calendar; nenhuma regra de dados fica aqui.
  */
-((Drupal) => {
+((Drupal, drupalSettings) => {
   Drupal.behaviors.acultaCalendarInteractive = {
     attach(context) {
       const container = context.querySelector('#aculta-calendar-interactive');
@@ -19,7 +19,13 @@
       if (typeof window.scheduler.plugins === 'function') {
         window.scheduler.plugins({ key_nav: true });
       }
-      window.scheduler.init(container, new Date(), 'month');
+      const settings = drupalSettings.acultaCalendar || {};
+      const inicio = settings.date ? new Date(settings.date.replace(' ', 'T') + ':00') : new Date();
+      window.scheduler.init(container, inicio, 'month');
+      const items = settings.items || [];
+      if (items.length > 0) {
+        window.scheduler.parse(items, 'json');
+      }
     },
   };
-})(Drupal);
+})(Drupal, drupalSettings);

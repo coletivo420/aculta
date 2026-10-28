@@ -33,6 +33,14 @@ variável `--dhx-scheduler-font-family`, que agora usa `inherit`. O CSS do repos
 nem referência a Inter: nenhuma requisição a terceiros por padrão. O tema ACULTA420 continua carregando
 Inter e Oswald do Google em todas as páginas; isso é do tema, não do componente, e segue a frente visual.
 
+## Dados (DH-D)
+
+O componente recebe `drupalSettings.acultaCalendar.items` (`id`, `text`, `start_date`, `end_date`, `local`,
+`url`, `cancelado`) e `date` (mês inicial). O `InteractiveController` consulta `aculta_calendar.item_source`,
+expande com `CalendarOccurrences` (motor do calendário) e entrega as ocorrências; o componente só apresenta.
+O período é o mês anterior e o seguinte, e a grade abre no mês da primeira ocorrência. Cancelados saem com
+`[Cancelado]`. O motor de recorrência, o `.ics` e a regra de acesso continuam no `aculta_calendar`.
+
 ## Teclado (DH-B)
 
 Medido no Firefox ESR (geckodriver, `DISPLAY=:0`) em 1280 e 320 px: com `scheduler.plugins({ key_nav: true })`
