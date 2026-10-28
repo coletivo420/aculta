@@ -64,7 +64,9 @@ Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero r
 
 Nota de ambiente (2026-10-28): o host de teste da Revista foi renomeado para
 `revista.aculta.toca.net.br`. A matriz acima registra a medição histórica de
-2026-10-11; o novo hostname depende da conclusão da configuração de Virtualmin e TLS.
+2026-10-11. O novo hostname responde HTTPS 200 com certificado válido e
+`X-Robots-Tag: noindex, nofollow, noarchive`; os vhosts exclusivos antigos foram
+desativados.
 
 ## Pendências para deixar os hosts iguais
 

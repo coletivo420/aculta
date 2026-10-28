@@ -15,7 +15,7 @@ Regra uniforme, implementada em `src/Domain/FrontPathPolicy.php` e aplicada por 
 | `cursos.aculta.toca.net.br` | 200 (cursos) | 404 | |
 | `growroom420.aculta.toca.net.br` | 200 (View `aculta_forum_public_topics`) | 404 (`/discussoes` e `/forum`) | HTTP validado no Runtime de teste em 2026-10-19; produção não confirmada |
 | `wiki420.aculta.toca.net.br` | 200 (wiki) | 404 | |
-| `revista.aculta.toca.net.br` | não verificado | — | Host renomeado em 2026-10-28; validação HTTP após Virtualmin/TLS pendente |
+| `revista.aculta.toca.net.br` | 200 | 404 | HTTPS válido; `X-Robots-Tag: noindex, nofollow, noarchive`, validado em 2026-10-28 |
 | `loja.aculta.toca.net.br` | **404: pendência de conteúdo** | 404 | A página inicial da loja é a rota `/loja` (`aculta_portal.shop_home`), que mostra o nó 372 "Loja da Associação". O nó 372 não é público direto (404). Decisão do responsável: criar o conteúdo |
 | `aculta.toca.net.br` (principal) | 200 | 404 para `/apoio` (não é finalidade do principal) | Carrinho e checkout pertencem ao principal |
 | `conta.aculta.toca.net.br` | 302 para `/entrar` (anônimo) ou hub do ACULTA Studio (logado) | `/studio` direto: 404 | Caminho interno do hub: `/studio`. A Minha Conta original fica em `/conta-legada`, que não é a raiz |

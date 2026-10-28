@@ -3962,6 +3962,7 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 
 ## 0.4.1-dev.42 — domínio público da revista (2026-10-28)
 
-- Os hosts da Revista passam a ser `revista.aculta.org` em produção e `revista.aculta.toca.net.br` no Homelab; configuração do Domain, aliases, política do Deployer, sitemap e documentação ativa foram alinhados. O ID interno `revista420_aculta_org` não muda.
+- Os hosts da Revista passam a ser `revista.aculta.org` em produção e `revista.aculta.toca.net.br` no Homelab; configuração do Domain, aliases, política do Deployer, sitemap e documentação ativa foram alinhados. O ID técnico do Domain `revista420_aculta_org` permanece; IDs de aliases acompanham os novos hosts.
 - O DNS e o certificado de produção serão configurados pelo responsável no Cloudflare/Hostinger; esta alteração prepara configuração e URLs canônicas no repositório e não faz deploy.
+- No Homelab, o alias `revista.aculta.toca.net.br` agora usa o VirtualHost compartilhado do Virtualmin e o certificado multi-SAN do domínio principal; os vhosts próprios do host antigo foram desativados. HTTPS 200 e `noindex` foram confirmados.
 
