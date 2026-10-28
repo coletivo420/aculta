@@ -19,6 +19,7 @@ esta página não replica listas de versões ou de módulos habilitados.
 - [Editorial e mídia](EDITORIAL-MEDIA.md)
 - [Plataforma de formulários Webform](WEBFORM-PLATFORM.md)
 - [LMS e Group](LMS-GROUP.md)
+- [Acesso contextual Fórum/LMS](../architecture/aculta_forum_lms.md)
 - [Compatibilidade LMS/PDF](LMS-COMPATIBILITY.md)
 - [Arquitetura do leitor PDF](../architecture/aculta_pdf_viewer.md)
 - [Operações de módulos e infraestrutura](OPERATIONS.md)
