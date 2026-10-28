@@ -15,6 +15,7 @@ use Drupal\aculta_pagamentos_mercadopago\Event\RefundEligibilityEvent;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
 use Drupal\commerce_price\Price;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Render\Element\Checkboxes;
@@ -953,6 +954,33 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   }
 
   /**
+   * Finds the unique Commerce payment associated with a provider payment ID.
+   *
+   * A Mercado Pago payment must not be attached to multiple orders, nor may a
+   * duplicate local row be selected arbitrarily during reconciliation.
+   *
+   * @throws \Drupal\commerce_payment\Exception\PaymentGatewayException
+   *   When the provider payment has conflicting Commerce associations.
+   */
+  private function existingCommercePayment(EntityStorageInterface $storage, OrderInterface $order, string $remoteId): ?PaymentInterface {
+    $matches = $storage->loadByProperties([
+      'payment_gateway' => $this->parentEntity->id(),
+      'remote_id' => $remoteId,
+    ]);
+    if (count($matches) > 1) {
+      throw new PaymentGatewayException('Payment has multiple conflicting Commerce records.', 0);
+    }
+    if ($matches === []) {
+      return NULL;
+    }
+    $payment = reset($matches);
+    if (!$payment instanceof PaymentInterface || (string) $payment->getOrderId() !== (string) $order->id()) {
+      throw new PaymentGatewayException('Payment does not belong to this order.', 0);
+    }
+    return $payment;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function refundPayment(PaymentInterface $payment, ?Price $amount = NULL): void {
@@ -1160,18 +1188,16 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       }
 
       $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
-      $payment_ids = $payment_storage->getQuery()
-        ->condition('order_id', $order->id())
-        ->condition('payment_gateway', $this->parentEntity->id())
-        ->condition('remote_id', $payment_id)
-        ->accessCheck(FALSE)
-        ->sort('payment_id', 'DESC')
-        ->range(0, 1)
-        ->execute();
+      try {
+        $commerce_payment = $this->existingCommercePayment($payment_storage, $order, $payment_id);
+      }
+      catch (PaymentGatewayException) {
+        $logger->warning('Payment @id has conflicting Commerce associations.', ['@id' => $payment_id]);
+        return new JsonResponse([], 503);
+      }
       $payment_created = FALSE;
 
-      if ($payment_ids) {
-        $commerce_payment = $payment_storage->load(reset($payment_ids));
+      if ($commerce_payment instanceof PaymentInterface) {
       }
       elseif (!$terminal_status && (in_array($remote_status, ['approved', 'refunded'], TRUE) || $pending_status)) {
         $payment_method = NULL;
@@ -1443,16 +1469,15 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
     // If payment was already saved from a signed webhook (OnNotify)
     // no need to save the payment again.
-    $payment_ids = $payment_storage->getQuery()
-      ->condition('order_id', $order->id())
-      ->condition('payment_gateway', $this->parentEntity->id())
-      ->condition('remote_id', $payment_id)
-      ->accessCheck(FALSE)
-      ->range(0, 1)
-      ->execute();
+    try {
+      $existing_payment = $this->existingCommercePayment($payment_storage, $order, $payment_id);
+    }
+    catch (PaymentGatewayException $exception) {
+      $logger->error('Payment @id has conflicting Commerce associations.', ['@id' => $payment_id]);
+      throw $exception;
+    }
 
-    if (count($payment_ids) > 0) {
-      $existing_payment = $payment_storage->load(reset($payment_ids));
+    if ($existing_payment instanceof PaymentInterface) {
       $existing_state = $existing_payment->getState()->getId();
       if ($verified_status === 'approved' && in_array($existing_state, ['new', 'authorization', 'pending'], TRUE)) {
         $existing_payment->setRemoteState($verified_status);
