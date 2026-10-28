@@ -93,6 +93,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       public function get(int $id): object {
         return (object) [
           'external_reference' => '42',
+          'id' => '123',
           'status' => 'rejected',
         ];
       }
@@ -146,6 +147,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       public function get(int $id): object {
         return (object) [
           'external_reference' => '42',
+          'id' => '123',
           'status' => 'approved',
           'order' => (object) ['id' => '900'],
         ];
@@ -211,6 +213,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       public function get(int $id): object {
         return (object) [
           'external_reference' => '42',
+          'id' => '123',
           'status' => 'approved',
           'transaction_amount' => '10.00',
           'currency_id' => 'BRL',
@@ -299,6 +302,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       public function get(int $id): object {
         return (object) [
           'external_reference' => '42',
+          'id' => '123',
           'status' => 'in_process',
           'transaction_amount' => '10.00',
           'currency_id' => 'BRL',
@@ -375,6 +379,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
       public function get(int $id): object {
         return (object) [
           'external_reference' => '42',
+          'id' => '123',
           'status' => $this->status,
           'transaction_amount' => '10.00',
           'currency_id' => 'BRL',
@@ -442,6 +447,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
        */
       public function get(int $id): object {
         return (object) [
+          'id' => '123',
           'status' => 'approved',
           'transaction_amount' => '10.00',
           'currency_id' => 'BRL',
@@ -544,6 +550,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
        */
       public function get(int $id): object {
         return (object) [
+          'id' => '123',
           'status' => 'authorized',
           'transaction_amount' => '10.00',
           'currency_id' => 'BRL',
@@ -636,6 +643,97 @@ final class CheckoutProNotificationTest extends UnitTestCase {
 
     $this->expectException(PaymentGatewayException::class);
     $this->expectExceptionMessage('Payment verification is already being processed.');
+    $gateway->onReturn($order, new Request([
+      'payment_id' => '123',
+      'merchant_order_id' => '900',
+      'status' => 'approved',
+    ]));
+  }
+
+  /**
+   * A notification never reconciles a different provider payment ID.
+   */
+  public function testNotificationRejectsProviderResponseWithDifferentPaymentId(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $payment_client = new class {
+
+      /**
+       * Returns an unexpected payment record for the requested ID.
+       */
+      public function get(int $id): object {
+        return (object) ['id' => '456', 'status' => 'approved'];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($payment_client);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->once())
+      ->method('acquire')
+      ->with('aculta_pagamentos_mercadopago.payment.123', 300)
+      ->willReturn(TRUE);
+    $lock->expects($this->once())->method('release')->with('aculta_pagamentos_mercadopago.payment.123');
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects($this->once())
+      ->method('warning')
+      ->with('Payment lookup for @id returned a conflicting ID.', ['@id' => '123']);
+    $logger_factory->method('get')->willReturn($logger);
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->expects($this->never())->method('getStorage');
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'lock', $lock);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+    $this->setGatewayProperty($gateway, 'entityTypeManager', $entity_manager);
+
+    $response = $gateway->onNotify(new Request(['topic' => 'payment', 'id' => '123']));
+
+    self::assertSame(503, $response->getStatusCode());
+  }
+
+  /**
+   * A return rejects a different provider payment ID.
+   */
+  public function testReturnRejectsProviderResponseWithDifferentPaymentId(): void {
+    $gateway = (new \ReflectionClass(CheckoutPro::class))->newInstanceWithoutConstructor();
+    $parent_gateway = $this->createMock(PaymentGatewayInterface::class);
+    $payment_client = new class {
+
+      /**
+       * Returns a different payment ID than requested.
+       */
+      public function get(int $id): object {
+        return (object) ['id' => '456', 'status' => 'approved'];
+      }
+
+    };
+    $client_factory = $this->createMock(MercadoPagoClientFactory::class);
+    $client_factory->expects($this->once())
+      ->method('criar')
+      ->with('pagamentos', $parent_gateway)
+      ->willReturn($payment_client);
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects($this->once())
+      ->method('error')
+      ->with('Payment lookup for @id returned a conflicting ID.', ['@id' => '123']);
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($logger);
+    $this->setGatewayProperty($gateway, 'parentEntity', $parent_gateway);
+    $this->setGatewayProperty($gateway, 'clientFactory', $client_factory);
+    $this->setGatewayProperty($gateway, 'loggerFactory', $logger_factory);
+    $this->setSuccessfulPaymentLock($gateway);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('getData')
+      ->with('commerce_mercado_pago_checkout')
+      ->willReturn(['preference_id' => 'pref-1']);
+
+    $this->expectException(PaymentGatewayException::class);
+    $this->expectExceptionMessage('Could not verify payment with Mercado Pago.');
     $gateway->onReturn($order, new Request([
       'payment_id' => '123',
       'merchant_order_id' => '900',
@@ -822,6 +920,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
        */
       public function get(int $id): object {
         return (object) [
+          'id' => '123',
           'status' => 'approved',
           'transaction_amount' => '10.00',
           'currency_id' => 'BRL',
@@ -881,7 +980,7 @@ final class CheckoutProNotificationTest extends UnitTestCase {
        * Returns the simulated pending payment.
        */
       public function get(int $id): object {
-        return (object) ['status' => 'pending'];
+        return (object) ['id' => '123', 'status' => 'pending'];
       }
 
     };

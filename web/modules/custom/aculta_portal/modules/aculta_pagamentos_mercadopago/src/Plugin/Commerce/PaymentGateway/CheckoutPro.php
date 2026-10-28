@@ -1064,6 +1064,10 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       try {
         $payment_client = $this->clientFactory->criar('pagamentos', $this->parentEntity);
         $payment = $payment_client->get((int) $payment_id);
+        if (!is_scalar($payment->id ?? NULL) || (string) $payment->id !== $payment_id) {
+          $logger->warning('Payment lookup for @id returned a conflicting ID.', ['@id' => $payment_id]);
+          return new JsonResponse([], 503);
+        }
         $merchant_order = NULL;
         $merchant_order_id = NULL;
         if (isset($payment->order)) {
@@ -1286,6 +1290,10 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     }
     catch (\Throwable $exception) {
       $logger->error('Mercado Pago API error verifying payment @id.', ['@id' => $payment_id]);
+      throw new PaymentGatewayException('Could not verify payment with Mercado Pago.', 0);
+    }
+    if (!is_scalar($mp_payment->id ?? NULL) || (string) $mp_payment->id !== (string) $payment_id) {
+      $logger->error('Payment lookup for @id returned a conflicting ID.', ['@id' => (string) $payment_id]);
       throw new PaymentGatewayException('Could not verify payment with Mercado Pago.', 0);
     }
 
