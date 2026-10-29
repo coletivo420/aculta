@@ -328,7 +328,11 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
       return [];
     }
     $options = [];
-    foreach ($course->getRelatedEntities('aculta_document_viewer_group:course_document') as $media) {
+    $related = $course->getRelatedEntities('aculta_document_viewer:course_document');
+    if (empty($related)) {
+      $related = $course->getRelatedEntities('aculta_document_viewer_group:course_document');
+    }
+    foreach ($related as $media) {
       if ($media->getEntityTypeId() === 'media'
         && $media->bundle() === 'course_document'
         && $media->access('view', $this->currentUser)) {

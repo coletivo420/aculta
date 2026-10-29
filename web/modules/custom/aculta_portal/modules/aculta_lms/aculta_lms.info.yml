@@ -11,7 +11,7 @@ dependencies:
   - aculta_portal:aculta_pagamentos_mercadopago
   - aculta_portal:aculta_studio
   - aculta_portal:aculta_image
-  - aculta_portal:aculta_document_viewer_group
+  - aculta_portal:aculta_document_viewer
   - aculta_portal:aculta_qrcode
   - aculta_portal:aculta_user
   - entity_print:entity_print

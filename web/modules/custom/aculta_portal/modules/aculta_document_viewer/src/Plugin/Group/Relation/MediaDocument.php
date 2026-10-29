@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_document_viewer_group\Plugin\Group\Relation;
+namespace Drupal\aculta_document_viewer\Plugin\Group\Relation;
 
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Plugin\Attribute\GroupRelationType;
@@ -12,7 +12,7 @@ use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
  * Provides the Group relation that protects private course-document Media.
  */
 #[GroupRelationType(
-  id: 'aculta_document_viewer_group',
+  id: 'aculta_document_viewer',
   entity_type_id: 'media',
   label: new TranslatableMarkup('Group Media document'),
   description: new TranslatableMarkup('Adds document Media to a group and applies group access to the Media entity.'),
@@ -20,7 +20,7 @@ use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
   reference_description: new TranslatableMarkup('The document Media attached to this group.'),
   entity_access: TRUE,
   enforced: FALSE,
-  deriver: 'Drupal\\aculta_document_viewer_group\\Plugin\\Group\\Relation\\MediaDocumentDeriver'
+  deriver: 'Drupal\aculta_document_viewer\Plugin\Group\Relation\MediaDocumentDeriver'
 )]
 final class MediaDocument extends GroupRelationBase {
 
@@ -38,7 +38,7 @@ final class MediaDocument extends GroupRelationBase {
    */
   public function calculateDependencies(): array {
     return [
-      'module' => ['aculta_document_viewer_group', 'media'],
+      'module' => ['aculta_document_viewer', 'media'],
       'config' => ['media.type.' . $this->getRelationType()->getEntityBundle()],
     ];
   }

@@ -71,7 +71,7 @@ padrão e respeita a opção explícita do painel/formatter.
   leitura. Config Sync concede `view media` aos papéis anônimo e autenticado;
   Media publicada com arquivo privado pode ser lida por ambos. Não usar esse
   fluxo para documentos confidenciais de turma.
-- A integração opcional `aculta_document_viewer_group` vincula Media `document` ao
+- A integração Group é interna a `aculta_document_viewer` (módulo único); vincula Media `course_document` ao
   Group `lms_course` e faz Group controlar o acesso à entidade. Para conteúdo de
   turma, use `private://`; o bundle `document` existente continua público e não
   pode receber arquivos confidenciais.
@@ -170,10 +170,10 @@ serviço e plugin sem storage ou hook de download próprio.
 PHPUnit é executado com a configuração `web/core/phpunit.xml.dist`. Kernel
 valida Media Embed, endpoint privado Core, acesso autorizado/negado, publicação
 da Media e o efeito de `view media` para o papel anônimo. O Kernel
-`aculta_document_viewer_group` valida membro, não membro, remoção da relação Group e
+`CourseDocumentAccessTest` valida membro, não membro, remoção da relação Group e
 revogação de membership pela URL privada conhecida. No Runtime de teste, PV5 está
 ativa por importação parcial dirigida:
-submódulo, bundle privado, relação `lms_course` e permissões de turma estão
+bundle privado, relação `lms_course` e permissões de turma estão
 sincronizados. Firefox 153.4 ESR validou o viewer privado embutido em página:
 membro recebeu 200 e renderizou 14 páginas; não membro e anônimo receberam 403;
 remover a relação Media↔Group ou a membership negou a mesma URL (403), e

@@ -46,8 +46,9 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    */
   public function getProjectionVersion(): int {
     // Version 4/3 adds the explicit course_video relation; the document edge
-    // remains optional depending on the PDF Group plugin.
-    return $this->relationTypeManager->hasDefinition('aculta_document_viewer_group:course_document') ? 4 : 3;
+    // remains optional depending on the Document Viewer Group plugin.
+    return $this->relationTypeManager->hasDefinition('aculta_document_viewer:course_document')
+      || $this->relationTypeManager->hasDefinition('aculta_document_viewer_group:course_document') ? 4 : 3;
   }
 
   /**
@@ -206,7 +207,9 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    *   Relations to append.
    */
   private function appendDocumentRelations(CourseInterface $course, array &$relations): void {
-    $pluginId = 'aculta_document_viewer_group:course_document';
+    $pluginId = $this->relationTypeManager->hasDefinition('aculta_document_viewer:course_document')
+      ? 'aculta_document_viewer:course_document'
+      : 'aculta_document_viewer_group:course_document';
     if (!$this->relationTypeManager->hasDefinition($pluginId)) {
       return;
     }

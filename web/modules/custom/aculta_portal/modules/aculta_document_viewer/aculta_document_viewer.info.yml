@@ -11,3 +11,4 @@ dependencies:
   - reporting:reporting
   - drupal:file
   - drupal:media
+  - group:group

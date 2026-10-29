@@ -12,7 +12,6 @@ dependencies:
   - aculta_portal:aculta_image
   - aculta_portal:aculta_lms
   - aculta_portal:aculta_document_viewer
-  - aculta_portal:aculta_document_viewer_group
   - group:group
   - ctools:ctools
   - lms:lms

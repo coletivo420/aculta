@@ -25,6 +25,16 @@
   `js/pdf-viewer-wrapper.mjs`, `css/pdf-viewer-wrapper.css`,
   `viewer-wrapper.html`, `CspReportRequestGuardSubscriber` e o `config/install`
   do bundle `course_document` em `aculta_document_viewer_group`.
+- Unifica a integração Group diretamente em `aculta_document_viewer` (módulo
+  único, eliminando o submódulo independente `aculta_document_viewer_group`):
+  o plugin `MediaDocument` e seu deriver `MediaDocumentDeriver` registram a
+  relação `aculta_document_viewer:course_document`; `CourseDocumentHooks`
+  garante via `#[Hook('entity_presave')]` que Media privada permaneça
+  despublicada fora de turma; a configuração `config/install` do bundle
+  `course_document`, campos e displays passam a pertencer a
+  `aculta_document_viewer`; e o provedor de Content Index
+  `aculta_document_viewer.course_document_content_index_provider` é registrado
+  com alias de compatibilidade. Consumidores e Config Sync migrados.
 - Renomeia as classes de formulário e testes gerais para `DocumentViewerSettingsForm`,
   `DocumentViewerFormatterSettingsTrait`, `AcultaDocumentViewerInstallTest` e
   `AcultaDocumentMediaEmbedTest`.

@@ -57,7 +57,6 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     'csp',
     'reporting',
     'aculta_document_viewer',
-    'aculta_document_viewer_group',
     'aculta_image',
     'aculta_lms_h5p',
   ];
@@ -96,7 +95,6 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       'group',
       'media',
       'aculta_document_viewer',
-      'aculta_document_viewer_group',
     ]);
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
@@ -257,12 +255,12 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       ->getStorage('group_relationship_type');
     $relationshipTypeId = $relationshipTypes->getRelationshipTypeId(
       'lms_course',
-      'aculta_document_viewer_group:course_document',
+      'aculta_document_viewer:course_document',
     );
     if (!$relationshipTypes->load($relationshipTypeId)) {
       $relationshipTypes->createFromPlugin(
         GroupType::load('lms_course'),
-        'aculta_document_viewer_group:course_document',
+        'aculta_document_viewer:course_document',
       )->save();
     }
 
@@ -350,10 +348,10 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     $unlinkedCourseDocument->save();
     $relationship = $course->addRelationship(
       $courseDocument,
-      'aculta_document_viewer_group:course_document',
+      'aculta_document_viewer:course_document',
     );
     $relationship->save();
-    $courseRelationships = $course->getRelationships('aculta_document_viewer_group:course_document');
+    $courseRelationships = $course->getRelationships('aculta_document_viewer:course_document');
     self::assertCount(1, $courseRelationships);
     self::assertSame((int) $courseDocument->id(), (int) reset($courseRelationships)->getEntityId());
     $content->set('course_documents', [
@@ -372,7 +370,7 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     $course->get('field_h5p_activities')->appendItem(['h5p_content_id' => $content->id()]);
     $course->save();
     self::assertInstanceOf(CourseInterface::class, $course);
-    self::assertCount(1, $course->getRelationships('aculta_document_viewer_group:course_document'));
+    self::assertCount(1, $course->getRelationships('aculta_document_viewer:course_document'));
     self::assertCount(3, $content->get('course_documents')->referencedEntities());
 
     $access = $this->container->get('aculta_lms_h5p.course_access');

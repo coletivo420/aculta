@@ -24,7 +24,6 @@ use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Verifies Index rechecks Group-controlled access for private course documents.
@@ -49,7 +48,7 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'domain',
-    'aculta_document_viewer_group',
+    'aculta_document_viewer',
     'aculta_index',
   ];
 
@@ -65,18 +64,16 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
       new Reference('request_stack'),
     ]))->setPublic(TRUE));
 
-    // Use the exact owner declaration while keeping the Portal dependency
-    // chain out of this focused authorization harness.
-    $serviceMap = Yaml::parseFile(
-      dirname(__DIR__, 5) . '/modules/aculta_document_viewer/modules/aculta_document_viewer_group/aculta_document_viewer_group.services.yml',
-      Yaml::PARSE_CUSTOM_TAGS,
-    )['services'];
-    $service = $serviceMap['aculta_document_viewer_group.course_document_content_index_provider'];
-    $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
-    foreach ($service['tags'] as $tag) {
-      $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    foreach ([
+      'aculta_image.pdf_thumbnail',
+      'aculta_image.generated_file',
+      'aculta_image.render',
+      'aculta_image.inspector',
+    ] as $serviceId) {
+      if (!$container->hasDefinition($serviceId)) {
+        $container->register($serviceId, \stdClass::class)->setPublic(TRUE);
+      }
     }
-    $container->setDefinition('aculta_document_viewer_group.course_document_content_index_provider', $definition);
   }
 
   /**
@@ -150,7 +147,7 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
     ]);
     $document->setOwner($teacher);
     $document->save();
-    $relationship = $group->addRelationship($document, 'aculta_document_viewer_group:course_document');
+    $relationship = $group->addRelationship($document, 'aculta_document_viewer:course_document');
     $relationship->save();
 
     $providers = $this->container->get('aculta_index.provider_registry');
@@ -228,12 +225,12 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
     self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $relationshipTypes);
     $relationshipId = $relationshipTypes->getRelationshipTypeId(
       'lms_course',
-      'aculta_document_viewer_group:course_document',
+      'aculta_document_viewer:course_document',
     );
     if (!$relationshipTypes->load($relationshipId)) {
       $relationshipTypes->createFromPlugin(
         GroupType::load('lms_course'),
-        'aculta_document_viewer_group:course_document',
+        'aculta_document_viewer:course_document',
       )->save();
     }
 
@@ -243,8 +240,8 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
       'group_type' => 'lms_course',
       'scope' => 'individual',
       'permissions' => [
-        'view aculta_document_viewer_group:course_document entity',
-        'view any unpublished aculta_document_viewer_group:course_document entity',
+        'view aculta_document_viewer:course_document entity',
+        'view any unpublished aculta_document_viewer:course_document entity',
       ],
       'weight' => 0,
       'admin' => FALSE,

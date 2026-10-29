@@ -60,7 +60,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
       'aculta_portal',
       'aculta_lms',
       'aculta_lms_resources',
-      'aculta_document_viewer_group',
+      'aculta_document_viewer',
       'aculta_forum',
       'aculta_wiki',
       'aculta_statistics',
@@ -467,7 +467,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
 
     $relationManager = $this->container->get('group_relation_type.manager');
     $relationManager->clearCachedDefinitions();
-    $definition = $relationManager->getDefinition('aculta_document_viewer_group:course_document');
+    $definition = $relationManager->getDefinition('aculta_document_viewer:course_document');
     self::assertSame('media', $definition->getEntityTypeId());
     self::assertSame('course_document', $definition->getEntityBundle());
 
@@ -476,7 +476,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $relationshipTypeStorage);
     $relationshipType = $relationshipTypeStorage->createFromPlugin(
       GroupType::load('lms_course'),
-      'aculta_document_viewer_group:course_document',
+      'aculta_document_viewer:course_document',
     );
     $relationshipType->save();
 
@@ -492,9 +492,9 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
       'status' => FALSE,
     ]);
     $document->save();
-    $relationship = $course->addRelationship($document, 'aculta_document_viewer_group:course_document');
+    $relationship = $course->addRelationship($document, 'aculta_document_viewer:course_document');
 
-    self::assertSame('aculta_document_viewer_group:course_document', $relationship->getPluginId());
+    self::assertSame('aculta_document_viewer:course_document', $relationship->getPluginId());
     self::assertSame((string) $document->id(), (string) $relationship->getEntity()->id());
   }
 

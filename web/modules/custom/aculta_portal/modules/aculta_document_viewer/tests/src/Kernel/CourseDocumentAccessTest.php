@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_document_viewer_group\Kernel;
+namespace Drupal\Tests\aculta_document_viewer\Kernel;
 
 use Drupal\Core\DrupalKernel;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -24,7 +24,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Verifies private course PDFs follow Group membership at the Core endpoint.
  */
-#[TestGroup('aculta_document_viewer_group')]
+#[TestGroup('aculta_document_viewer')]
 #[RunTestsInSeparateProcesses]
 final class CourseDocumentAccessTest extends KernelTestBase {
 
@@ -35,9 +35,8 @@ final class CourseDocumentAccessTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->register('stream_wrapper.private', 'Drupal\\Core\\StreamWrapper\\PrivateStream')
+    $container->register('stream_wrapper.private', 'Drupal\Core\StreamWrapper\PrivateStream')
       ->addTag('stream_wrapper', ['scheme' => 'private']);
-
   }
 
   /**
@@ -65,7 +64,7 @@ final class CourseDocumentAccessTest extends KernelTestBase {
       'domain',
       'search_api_db',
       'aculta_user',
-      'aculta_document_viewer_group',
+      'aculta_document_viewer',
     ]);
     parent::bootKernel();
   }
@@ -95,12 +94,10 @@ final class CourseDocumentAccessTest extends KernelTestBase {
     $this->assertTrue($this->container->get('module_installer')->install([
       'aculta_user',
       'aculta_document_viewer',
-      'aculta_document_viewer_group',
     ], TRUE));
     $this->installConfig([
       'aculta_user',
       'aculta_document_viewer',
-      'aculta_document_viewer_group',
     ]);
     foreach ($this->container->get('entity_type.manager')->getStorage('profile_type')->loadMultiple() as $bundle => $_profile_type) {
       FieldConfig::create([
@@ -131,12 +128,12 @@ final class CourseDocumentAccessTest extends KernelTestBase {
     assert($relationship_types instanceof GroupRelationshipTypeStorageInterface);
     $relationship_id = $relationship_types->getRelationshipTypeId(
       'lms_course',
-      'aculta_document_viewer_group:course_document',
+      'aculta_document_viewer:course_document',
     );
     if (!$relationship_types->load($relationship_id)) {
       $relationship_types->createFromPlugin(
         GroupType::load('lms_course'),
-        'aculta_document_viewer_group:course_document',
+        'aculta_document_viewer:course_document',
       )->save();
     }
 
@@ -146,8 +143,8 @@ final class CourseDocumentAccessTest extends KernelTestBase {
       'group_type' => 'lms_course',
       'scope' => 'individual',
       'permissions' => [
-        'view aculta_document_viewer_group:course_document entity',
-        'view any unpublished aculta_document_viewer_group:course_document entity',
+        'view aculta_document_viewer:course_document entity',
+        'view any unpublished aculta_document_viewer:course_document entity',
       ],
       'weight' => 0,
       'admin' => FALSE,
@@ -250,7 +247,7 @@ final class CourseDocumentAccessTest extends KernelTestBase {
     ]);
     $group->save();
     $group->addMember($member, ['group_roles' => ['lms_course-member']]);
-    $relationship = $group->addRelationship($media, 'aculta_document_viewer_group:course_document');
+    $relationship = $group->addRelationship($media, 'aculta_document_viewer:course_document');
     $relationship->save();
 
     $this->container->get('current_user')->setAccount($member);
@@ -277,7 +274,7 @@ final class CourseDocumentAccessTest extends KernelTestBase {
 
     // Reattach the Media so outsider and membership-revocation checks exercise
     // their own access conditions rather than the detached state above.
-    $group->addRelationship($media, 'aculta_document_viewer_group:course_document');
+    $group->addRelationship($media, 'aculta_document_viewer:course_document');
     $entity_access->resetCache();
     $file_access->resetCache();
     $this->assertSame(200, $kernel->handle(Request::create($private_url))->getStatusCode());

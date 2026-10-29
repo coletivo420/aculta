@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_document_viewer_group\Plugin\Group\Relation;
+namespace Drupal\aculta_document_viewer\Plugin\Group\Relation;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;

@@ -64,7 +64,8 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
     'file',
     'image',
     'media',
-    'aculta_document_viewer_group',
+    'aculta_image',
+    'aculta_document_viewer',
     // Enabled so the exported module dependency is satisfiable; the fixture
     // supplies the external services the module declares.
     'aculta_forum_lms',
@@ -185,13 +186,13 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
         'group_type' => 'lms_course',
         'relationship' => $courseRelationship,
         'global_role' => 'lms_teacher',
-        'modules' => ['aculta_document_viewer_group', 'aculta_forum_lms'],
+        'modules' => ['aculta_document_viewer', 'aculta_forum_lms'],
       ],
       'lms_course-member' => [
         'group_type' => 'lms_course',
         'relationship' => $courseRelationship,
         'global_role' => 'authenticated',
-        'modules' => ['aculta_document_viewer_group', 'aculta_forum_lms'],
+        'modules' => ['aculta_document_viewer', 'aculta_forum_lms'],
       ],
       'lms_course-course_creator' => [
         'group_type' => 'lms_course',

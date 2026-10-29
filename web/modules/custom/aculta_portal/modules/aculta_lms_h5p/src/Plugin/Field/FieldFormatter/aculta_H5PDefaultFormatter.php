@@ -228,8 +228,9 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
       ) {
         $documents = [];
         $cacheability->addCacheableDependency($course);
+        $documentPluginId = 'aculta_document_viewer:course_document';
         $relationshipListTag = 'group_relationship_list:plugin:'
-          . 'aculta_document_viewer_group:course_document:group:' . $course->id();
+          . $documentPluginId . ':group:' . $course->id();
         $cacheability->addCacheTags([
           $relationshipListTag,
         ]);
@@ -241,7 +242,11 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
             continue;
           }
           $belongsToCourse = FALSE;
-          foreach ($course->getRelationships('aculta_document_viewer_group:course_document') as $relationship) {
+          $relationships = $course->getRelationships($documentPluginId);
+          if (empty($relationships)) {
+            $relationships = $course->getRelationships('aculta_document_viewer_group:course_document');
+          }
+          foreach ($relationships as $relationship) {
             $cacheability->addCacheableDependency($relationship);
             if ((int) $relationship->getEntityId() === (int) $media->id()) {
               $belongsToCourse = TRUE;

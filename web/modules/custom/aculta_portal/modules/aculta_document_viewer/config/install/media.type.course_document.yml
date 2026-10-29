@@ -3,7 +3,7 @@ status: true
 dependencies:
   enforced:
     module:
-      - aculta_document_viewer_group
+      - aculta_document_viewer
   module:
     - file
     - media

@@ -123,29 +123,57 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
       'settings' => ['file_extensions' => 'pdf'],
     ])->save();
 
-    $course_media_type = MediaType::create([
-      'id' => 'course_document',
-      'label' => 'Course document',
-      'source' => 'file',
-      'source_configuration' => ['source_field' => 'field_media_course_document'],
-    ]);
-    $course_media_type->getSource()->setConfiguration(['source_field' => 'field_media_course_document']);
-    $course_media_type->save();
-    $course_field_storage = FieldStorageConfig::create([
-      'field_name' => 'field_media_course_document',
-      'entity_type' => 'media',
-      'type' => 'file',
-      'cardinality' => 1,
-      'settings' => ['uri_scheme' => 'private'],
-    ]);
-    $course_field_storage->save();
-    FieldConfig::create([
-      'field_storage' => $course_field_storage,
-      'bundle' => 'course_document',
-      'label' => 'Course PDF',
-      'required' => TRUE,
-      'settings' => ['file_extensions' => 'pdf'],
-    ])->save();
+    if (MediaType::load('course_document') === NULL) {
+      $course_media_type = MediaType::create([
+        'id' => 'course_document',
+        'label' => 'Course document',
+        'source' => 'file',
+        'source_configuration' => ['source_field' => 'field_media_course_document'],
+      ]);
+      $course_media_type->getSource()->setConfiguration(['source_field' => 'field_media_course_document']);
+      $course_media_type->save();
+      $course_field_storage = FieldStorageConfig::create([
+        'field_name' => 'field_media_course_document',
+        'entity_type' => 'media',
+        'type' => 'file',
+        'cardinality' => 1,
+        'settings' => ['uri_scheme' => 'private'],
+      ]);
+      $course_field_storage->save();
+      FieldConfig::create([
+        'field_storage' => $course_field_storage,
+        'bundle' => 'course_document',
+        'label' => 'Course PDF',
+        'required' => TRUE,
+        'settings' => ['file_extensions' => 'pdf'],
+      ])->save();
+    }
+    if (MediaType::load('forum_attachment') === NULL) {
+      $forum_media_type = MediaType::create([
+        'id' => 'forum_attachment',
+        'label' => 'Forum attachment',
+        'source' => 'file',
+        'source_configuration' => ['source_field' => 'field_media_forum_attachment'],
+      ]);
+      $forum_media_type->getSource()->setConfiguration(['source_field' => 'field_media_forum_attachment']);
+      $forum_media_type->save();
+      $forum_field_storage = FieldStorageConfig::create([
+        'field_name' => 'field_media_forum_attachment',
+        'entity_type' => 'media',
+        'type' => 'file',
+        'cardinality' => 1,
+        'settings' => ['uri_scheme' => 'private'],
+      ]);
+      $forum_field_storage->save();
+      FieldConfig::create([
+        'field_storage' => $forum_field_storage,
+        'bundle' => 'forum_attachment',
+        'label' => 'Forum attachment PDF',
+        'required' => TRUE,
+        'settings' => ['file_extensions' => 'pdf'],
+      ])->save();
+    }
+
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
     $this->container->get('current_user')->setAccount($this->createUser(['view media']));
 
@@ -162,12 +190,16 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
       'weight' => 0,
       'region' => 'content',
     ])->save();
-    EntityViewDisplay::create([
-      'targetEntityType' => 'media',
-      'bundle' => 'course_document',
-      'mode' => 'default',
-      'status' => TRUE,
-    ])->setComponent('field_media_course_document', [
+    $course_display = EntityViewDisplay::load('media.course_document.default');
+    if ($course_display === NULL) {
+      $course_display = EntityViewDisplay::create([
+        'targetEntityType' => 'media',
+        'bundle' => 'course_document',
+        'mode' => 'default',
+        'status' => TRUE,
+      ]);
+    }
+    $course_display->setComponent('field_media_course_document', [
       'type' => 'aculta_document_viewer_pdf',
       'label' => 'visually_hidden',
       'settings' => [],
@@ -411,15 +443,15 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
     $file->setPermanent();
     $file->save();
     $media = Media::create([
-      'bundle' => 'course_document',
+      'bundle' => 'forum_attachment',
       'name' => 'PDF privado Kernel fixture',
       'status' => TRUE,
-      'field_media_course_document' => [['target_id' => $file->id()]],
+      'field_media_forum_attachment' => [['target_id' => $file->id()]],
     ]);
     $media->setOwner($user);
     $media->save();
 
-    $build = $this->container->get('aculta_document_viewer.pdf_builder')->build($media, 'field_media_course_document');
+    $build = $this->container->get('aculta_document_viewer.pdf_builder')->build($media, 'field_media_forum_attachment');
     $private_url = $build['#attributes']['data-aculta-pdf-url'];
     $this->assertSame('/system/files?file=pdf-viewer/aculta-private-fixture.pdf', $private_url);
     $this->assertSame(0, $build['#cache']['max-age']);

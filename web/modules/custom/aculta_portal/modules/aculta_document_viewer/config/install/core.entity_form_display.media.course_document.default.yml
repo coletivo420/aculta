@@ -9,7 +9,7 @@ dependencies:
     - path
   enforced:
     module:
-      - aculta_document_viewer_group
+      - aculta_document_viewer
 id: media.course_document.default
 targetEntityType: media
 bundle: course_document

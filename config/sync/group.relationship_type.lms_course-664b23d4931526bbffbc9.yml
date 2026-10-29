@@ -6,11 +6,11 @@ dependencies:
     - group.type.lms_course
     - media.type.course_document
   module:
-    - aculta_document_viewer_group
+    - aculta_document_viewer
     - media
-id: lms_course-af8ec2205541224f9d8c4
+id: lms_course-664b23d4931526bbffbc9
 group_type: lms_course
-content_plugin: 'aculta_document_viewer_group:course_document'
+content_plugin: 'aculta_document_viewer:course_document'
 plugin_config:
   group_cardinality: 0
   entity_cardinality: 1

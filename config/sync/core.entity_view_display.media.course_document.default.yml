@@ -9,7 +9,7 @@ dependencies:
     - aculta_document_viewer
   enforced:
     module:
-      - aculta_document_viewer_group
+      - aculta_document_viewer
 _core:
   default_config_hash: A1M77DsxQn8py1vPkHRo62hUNChAv2GrFhaAR4xtvIo
 id: media.course_document.default

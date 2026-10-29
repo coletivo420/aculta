@@ -5,7 +5,7 @@ dependencies:
     - media
   enforced:
     module:
-      - aculta_document_viewer_group
+      - aculta_document_viewer
 id: media.field_media_course_document
 field_name: field_media_course_document
 entity_type: media

@@ -71,9 +71,9 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     $videos->method('referencedEntities')->willReturn([$video, $wrongVideo]);
     $course = $this->createCourse($readings, $galleries, [$documents, $wrongDocument], $videos);
     $relationManager = $this->createMock(GroupRelationTypeManagerInterface::class);
-    $relationManager->method('hasDefinition')->with('aculta_document_viewer_group:course_document')->willReturn(TRUE);
+    $relationManager->method('hasDefinition')->with('aculta_document_viewer:course_document')->willReturn(TRUE);
     $course->method('getRelatedEntities')
-      ->with('aculta_document_viewer_group:course_document')
+      ->with('aculta_document_viewer:course_document')
       ->willReturn([$documents, $wrongDocument]);
     $projection = $this->createProvider($relationManager)->project($course);
     self::assertSame(4, $this->createProvider($relationManager)->getProjectionVersion());
@@ -99,7 +99,7 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     $course = $this->createCourse();
     $course->expects(self::never())->method('getRelatedEntities');
     $manager = $this->createMock(GroupRelationTypeManagerInterface::class);
-    $manager->method('hasDefinition')->with('aculta_document_viewer_group:course_document')->willReturn(FALSE);
+    $manager->method('hasDefinition')->willReturn(FALSE);
 
     $projection = $this->createProvider($manager)->project($course);
 
@@ -169,7 +169,7 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     $course->method('getCacheTags')->willReturn([]);
     $course->method('getCacheMaxAge')->willReturn(-1);
     if ($documents !== []) {
-      $course->method('getRelatedEntities')->with('aculta_document_viewer_group:course_document')->willReturn($documents);
+      $course->method('getRelatedEntities')->with('aculta_document_viewer:course_document')->willReturn($documents);
     }
     $course->method('hasField')->willReturnMap([
       ['field_lms_readings', $readings !== NULL],
