@@ -1,5 +1,28 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.20 — propagação JS e validação Firefox das opções D-48 (2026-10-29)
+
+- `js/docx-viewer-behavior.mjs`, `js/docx-viewer.mjs` e `docx/docx-frame.js`
+  agora leem `data-aculta-docx-render-options` e aplicam `renderHeaders`,
+  `renderFooters`, `renderFootnotes`, `renderEndnotes` e `breakPages`
+  (`respectPageBreaks`) no `docx-preview` dentro do iframe sandboxed.
+- `js/spreadsheet-viewer.mjs` declara `defaultMode` e `pageSize` a partir de
+  `data-aculta-sheet-default-mode` e `data-aculta-sheet-page-size`, inicia no
+  modo configurado (`show(defaultMode)`) e aplica 25/50/100 linhas por página no
+  Tabulator.
+- Eliminados os 2 avisos PHPCS restantes em `MediaDocumentDeriver`, a
+  depreciação PHPUnit de doc-comment em `AcultaDocumentMediaFormatterTest` e o
+  schema ausente `aculta_user_nickname` em `CourseDocumentAccessTest`.
+- Suíte completa do módulo e submódulo: 56 testes / 645 assertions PASS, 0
+  depreciações PHPUnit e 156 depreciações Core/contrib; PHP lint 39/39 PASS;
+  PHPCS Drupal/DrupalPractice 0 erros e 0 avisos; `node --check` 8/8 PASS.
+- Firefox ESR visível (`DISPLAY=:0`): `tests/browser/aculta-document-viewer/office-options.py`
+  passou 17/17 verificações em ACULTA420 e Olivero (1280/390/320 px), com
+  evidências em `/home/piradopirata/aculta-suite-out/aculta-document-viewer-office`.
+- Conflito documental registrado: menções anteriores que condicionavam o RC à
+  validação no FPM Hostinger conflitam com `docs/operations/RELEASE-LIFECYCLE.md`,
+  segundo o qual Hostinger/LiteSpeed/Cloudflare pertence à etapa Beta pós-Alpha.
+
 ## 0.1.0-dev.19 — padrões administrativos DOCX e planilhas (2026-10-29)
 
 - A subaba ACULTA > Site > Leitor de documentos agora reúne os padrões globais

@@ -3,25 +3,30 @@
 ## Miniaturas PDF em Hostinger (2026-10-29)
 
 - PDF Preview passou a usar o serviço `aculta_image.pdf_thumbnail`, com extensão PHP Imagick/Ghostscript; não depende do executável CLI ImageMagick.
-- Suíte completa: 52 testes/570 assertions PASS, com 147 depreciações Core/contrib e uma depreciação PHPUnit.
-- Runtime não alterado. Após o candidato ser servido, confirmar PDF pelo FPM Hostinger junto à revisão visual de DOCX/planilhas, CSP e acessibilidade.
+- Suíte completa: 56 testes/645 assertions PASS, com 156 depreciações Core/contrib e zero depreciações PHPUnit.
+- Runtime não alterado. **Nota de reconciliação (`RELEASE-LIFECYCLE.md`):** notas anteriores deste roadmap listavam a confirmação no FPM Hostinger antes de RC; conforme `docs/operations/RELEASE-LIFECYCLE.md`, o fluxo vigente é `Dev → RC → Alpha (*.aculta.org) → Beta (Hostinger)`, de modo que a verificação em FPM Hostinger/LiteSpeed/Cloudflare pertence à etapa **Beta** pós-Alpha, e não bloqueia a promoção a RC.
 
-## Opções administrativas globais (2026-10-29, dev.19)
+## Opções administrativas globais (2026-10-29, dev.19–dev.20)
 
 - ACULTA > Site > Leitor de documentos reúne os controles globais PDF já
-  existentes e agora inclui opções de renderização DOCX (cabeçalhos, rodapés,
+  existentes e inclui opções de renderização DOCX (cabeçalhos, rodapés,
   notas e quebras de página) e planilhas (modo inicial e linhas por página).
-- Os valores viajam por atributos de dados validados. DOCX permanece isolado
-  em iframe sandboxed; planilhas continuam somente para leitura. Tetos de 20
+- Os valores viajam por atributos de dados validados (`data-aculta-docx-render-options`,
+  `data-aculta-sheet-default-mode`, `data-aculta-sheet-page-size`) e, a partir
+  da `0.1.0-dev.20`, são consumidos efetivamente por `docx-viewer-behavior.mjs`
+  → `docx-viewer.mjs` → `docx-frame.js` e `spreadsheet-viewer.mjs`. DOCX permanece
+  isolado em iframe sandboxed; planilhas continuam somente para leitura. Tetos de 20
   abas, 2000 linhas, 100 colunas e 500 caracteres por célula não são editáveis.
-- Config Sync foi atualizado, mas não importado no Runtime. A suíte completa
-  passou em 52 testes/575 assertions, com 147 depreciações Core/contrib e uma
-  depreciação PHPUnit. Firefox visual autenticado permanece gate antes de RC.
-- D-48 registra o escopo desta tela: padrões PDF existentes, renderização DOCX
-  e apresentação de planilhas. A página fica em ACULTA > Site > Leitor de
-  documentos; os controles não ampliam acesso aos arquivos, nem permitem editar
-  planilhas. A classificação permanece Dev até validação visual autenticada,
-  FPM Hostinger, CSP e acessibilidade ampliada.
+- Config Sync foi atualizado, mas não importado no Runtime (conforme regra operacional).
+  A suíte completa (módulo + submódulo Group) passou em 56 testes/645 assertions,
+  zero depreciações PHPUnit e 156 depreciações Core/contrib; PHPCS Drupal/DrupalPractice
+  0/0 em todos os 39 arquivos PHP; `node --check` 8/8.
+- D-48 validada em Firefox ESR visível (`DISPLAY=:0`) por
+  `tests/browser/aculta-document-viewer/office-options.py`: 17/17 verificações PASS
+  em ACULTA420 e Olivero (1280/390/320 px), cobrindo rotulagem e foco `:focus-visible`
+  dos controles administrativos, ativação/desativação de cabeçalhos/rodapés/notas e
+  quebra de página no DOCX isolado, modo inicial Tabela e paginação de 25 linhas nas
+  planilhas. Evidências em `/home/piradopirata/aculta-suite-out/aculta-document-viewer-office`.
 
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). PV7 só pode ser classificada RC quando todo o escopo e testes, CSP em Report-Only configurada sem enforcement, acessibilidade e validação visual pré-deploy aplicável estiverem concluídos. Alpha valida a coleta/análise dos relatórios no servidor de desenvolvimento; enforcement será decidido após Alpha. LiteSpeed/Cloudflare são validados depois do deploy em produção.
 

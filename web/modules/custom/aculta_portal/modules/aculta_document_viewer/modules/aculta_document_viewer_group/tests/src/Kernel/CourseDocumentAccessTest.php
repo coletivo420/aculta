@@ -78,7 +78,7 @@ final class CourseDocumentAccessTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installSchema('user', ['users_data']);
-    $this->installSchema('aculta_user', ['aculta_user_agreement']);
+    $this->installSchema('aculta_user', ['aculta_user_agreement', 'aculta_user_nickname']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('comment', ['comment_entity_statistics']);
@@ -104,6 +104,22 @@ final class CourseDocumentAccessTest extends KernelTestBase {
       'aculta_document_viewer',
       'aculta_document_viewer_group',
     ]);
+    foreach ($this->container->get('entity_type.manager')->getStorage('profile_type')->loadMultiple() as $bundle => $_profile_type) {
+      FieldConfig::create([
+        'field_name' => 'field_nickname',
+        'entity_type' => 'profile',
+        'bundle' => $bundle,
+        'type' => 'string',
+        'label' => 'Apelido',
+      ])->save();
+      FieldConfig::create([
+        'field_name' => 'field_perfil_publico',
+        'entity_type' => 'profile',
+        'bundle' => $bundle,
+        'type' => 'boolean',
+        'label' => 'Perfil público',
+      ])->save();
+    }
 
     // The course bundle and field are owned by versioned Config Sync, not by
     // config/install. Create the same Media contract in this isolated Kernel.

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_document_viewer_group\Plugin\Group\Relation;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeInterface;
 use Drupal\media\Entity\MediaType;
 
@@ -12,6 +13,8 @@ use Drupal\media\Entity\MediaType;
  * Derives the Group relation for the document Media bundle.
  */
 final class MediaDocumentDeriver extends DeriverBase {
+
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -27,8 +30,8 @@ final class MediaDocumentDeriver extends DeriverBase {
 
       $derivative = clone $base_plugin_definition;
       $derivative->set('entity_bundle', $id);
-      $derivative->set('label', t('Group Media document'));
-      $derivative->set('description', t('Adds document Media to a group and applies group access to the Media entity.'));
+      $derivative->set('label', $this->t('Group Media document'));
+      $derivative->set('description', $this->t('Adds document Media to a group and applies group access to the Media entity.'));
       $this->derivatives[$id] = $derivative;
     }
 

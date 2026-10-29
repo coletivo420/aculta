@@ -11,10 +11,22 @@
  *   timeoutMs: prazo para concluir a renderização.
  * @returns {Promise<{status: 'done'|'error'|'timeout'|'unsupported', reason?: string}>}
  */
-export function mountDocxViewer(host, { url, frameUrl, libs, timeoutMs = 60000 }) {
+function normalizeRenderOptions(raw) {
+  const source = raw && typeof raw === 'object' ? raw : {};
+  return {
+    renderHeaders: source.renderHeaders !== undefined ? Boolean(source.renderHeaders) : true,
+    renderFooters: source.renderFooters !== undefined ? Boolean(source.renderFooters) : true,
+    renderFootnotes: source.renderFootnotes !== undefined ? Boolean(source.renderFootnotes) : true,
+    renderEndnotes: source.renderEndnotes !== undefined ? Boolean(source.renderEndnotes) : true,
+    respectPageBreaks: source.respectPageBreaks !== undefined ? Boolean(source.respectPageBreaks) : false,
+  };
+}
+
+export function mountDocxViewer(host, { url, frameUrl, libs, renderOptions = {}, timeoutMs = 60000 }) {
   return new Promise((resolve) => {
     // A página filha resolve caminhos a partir de docx/; por isso as URLs vão absolutas.
     const absoluteLibs = libs.map((lib) => new URL(lib, document.baseURI).href);
+    const normalizedOptions = normalizeRenderOptions(renderOptions);
     const frame = document.createElement('iframe');
     frame.setAttribute('sandbox', 'allow-scripts');
     frame.setAttribute('title', 'Documento DOCX');
@@ -57,7 +69,11 @@ export function mountDocxViewer(host, { url, frameUrl, libs, timeoutMs = 60000 }
           return;
         }
         bufferPromise
-          .then((buffer) => frame.contentWindow.postMessage({ type: 'render', buffer }, '*'))
+          .then((buffer) => frame.contentWindow.postMessage({
+            type: 'render',
+            buffer,
+            options: normalizedOptions,
+          }, '*'))
           .catch((error) => finish('error', String(error && error.name)));
       } else if (message.type === 'done') {
         finish('done');

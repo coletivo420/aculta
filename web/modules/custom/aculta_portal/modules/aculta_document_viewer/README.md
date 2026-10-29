@@ -135,7 +135,7 @@ JavaScript registra `Drupal.behaviors.acultaPdfViewer.attach()` e também inicia
 em `DOMContentLoaded` para renderizações fora de attach Drupal. A biblioteca é
 anexada pelo render array somente quando o builder autoriza e reconhece PDF.
 
-O display padrão `media.document` seleciona `aculta_document_pdf_media`; os displays
+O display padrão `media.document` seleciona `aculta_document_media`; os displays
 `node.document.default` e `node.document.full` selecionam `aculta_document_pdf_file` em
 Config Sync.
 O módulo depende do Portal (painel de administração), aculta_image, Core File e
@@ -176,14 +176,16 @@ conteúdo e tokens de login de teste foram removidos. Nesta homologação
 não houve `drush cim` global nem `updb`;
 CDN, policy ImageMagick e migração de arquivos também não fazem parte do módulo.
 
-Em 2026-10-29, a suíte completa passou com 48 testes / 524 assertions e 147
-deprecações Core/contrib. Firefox ESR no servidor de desenvolvimento exibiu o
-viewer de uma Media `document` pública embutida numa página temporária: 7/7
-checks de título, controles, canvas, teclado/foco e reflow em 1280/390/320 px.
-A página foi removida e sua rota passou a 404. Script reutilizável:
+Em 2026-10-29, a suíte completa (módulo + submódulo Group) passou com 56 testes /
+645 assertions, 0 depreciações PHPUnit e 156 depreciações Core/contrib; PHPCS
+Drupal/DrupalPractice passou com 0 erros e 0 avisos nos 39 arquivos PHP e `node
+--check` nos 8 arquivos JS/MJS. Firefox ESR visível (`DISPLAY=:0`) validou o
+viewer PDF público (`visual.py`: 7/7 checks em 1280/390/320 px) e as opções
+administrativas D-48 de DOCX e planilhas (`office-options.py`: 17/17 checks em
+ACULTA420 e Olivero, 1280/390/320 px, cabeçalho/rodapé/notas/quebra de página em
+iframe sandboxed, modo inicial Tabela, paginação de 25 linhas e foco visível por
+`Tab`). Scripts reutilizáveis:
 [`tests/browser/aculta-document-viewer/`](../../../../../../tests/browser/aculta-document-viewer/).
-O PHPCS Drupal restrito a PHP ainda encontra 10 erros e 23 avisos anteriores
-à microfase; detalhes e próximo passo estão no roadmap.
 
 ## Documentação de arquitetura
 

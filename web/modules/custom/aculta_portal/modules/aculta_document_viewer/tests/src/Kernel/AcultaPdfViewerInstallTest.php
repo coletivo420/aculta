@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_document_viewer\Kernel;
 
 use Drupal\aculta_document_viewer\Docx\DocxViewerBuilderInterface;
+use Drupal\aculta_document_viewer\Form\PdfViewerSettingsForm;
 use Drupal\aculta_document_viewer\Pdf\PdfViewerBuilderInterface;
 use Drupal\aculta_document_viewer\Pdf\PdfPreviewThumbnailBuilderInterface;
 use Drupal\aculta_document_viewer\Spreadsheet\SpreadsheetViewerBuilderInterface;
+use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -81,6 +83,12 @@ final class AcultaPdfViewerInstallTest extends KernelTestBase {
     $this->assertSame(50, $settings->get('spreadsheet_page_size'));
     $route = $container->get('router.route_provider')->getRouteByName('aculta_document_viewer.settings');
     $this->assertSame('administer site configuration', $route->getRequirement('_permission'));
+    $form = $container->get('form_builder')->buildForm(PdfViewerSettingsForm::class, new FormState());
+    $this->assertSame('aculta_document_viewer.settings:docx_render_headers', $form['docx']['docx_render_headers']['#config_target']);
+    $this->assertSame('aculta_document_viewer.settings:docx_respect_page_breaks', $form['docx']['docx_respect_page_breaks']['#config_target']);
+    $this->assertSame('aculta_document_viewer.settings:spreadsheet_default_mode', $form['spreadsheet']['spreadsheet_default_mode']['#config_target']);
+    $this->assertSame('aculta_document_viewer.settings:spreadsheet_page_size', $form['spreadsheet']['spreadsheet_page_size']['#config_target']);
+    $this->assertSame([25 => 25, 50 => 50, 100 => 100], $form['spreadsheet']['spreadsheet_page_size']['#options']);
     $this->assertFalse($module_handler->hasImplementations('file_download', ['aculta_document_viewer']));
     $this->assertFalse($module_handler->hasImplementations('install', ['aculta_document_viewer']));
   }

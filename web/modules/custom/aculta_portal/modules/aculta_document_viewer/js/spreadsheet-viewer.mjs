@@ -34,7 +34,7 @@ function spreadsheetOptions(definitions) {
   };
 }
 
-function tableOptions(definition) {
+function tableOptions(definition, pageSize = 50) {
   const [headerRow = [], ...body] = definition.data;
   const seen = new Map();
   const columns = headerRow.map((text, index) => {
@@ -60,7 +60,7 @@ function tableOptions(definition) {
     columns,
     layout: 'fitDataStretch',
     pagination: 'local',
-    paginationSize: 50,
+    paginationSize: pageSize,
     placeholder: translate('Nenhum registro nesta aba.'),
   };
 }
@@ -117,6 +117,10 @@ async function mountSpreadsheet(host, frame) {
   const tabulatorUrl = new URL(host.dataset.acultaSheetTabulator, document.baseURI).href;
   const { TabulatorFull } = await import(tabulatorUrl);
 
+  const defaultMode = host.dataset.acultaSheetDefaultMode === 'table' ? 'table' : 'sheet';
+  const rawPageSize = Number(host.dataset.acultaSheetPageSize);
+  const pageSize = [25, 50, 100].includes(rawPageSize) ? rawPageSize : 50;
+
   let table = null;
   const show = (mode, sheetIndex = 0) => {
     if (table) {
@@ -125,7 +129,7 @@ async function mountSpreadsheet(host, frame) {
     frame.textContent = '';
     table = mode === 'sheet'
       ? new TabulatorFull(frame, spreadsheetOptions(definitions))
-      : new TabulatorFull(frame, tableOptions(definitions[sheetIndex]));
+      : new TabulatorFull(frame, tableOptions(definitions[sheetIndex], pageSize));
   };
   renderModes(
     chrome.toolbar,
@@ -133,7 +137,7 @@ async function mountSpreadsheet(host, frame) {
     (mode, index) => show(mode, index),
     defaultMode,
   );
-  show('sheet');
+  show(defaultMode);
 
   const truncated = definitions.some((definition) => definition.truncated);
   host.dataset.acultaSheetStatus = truncated ? 'truncated' : 'ok';

@@ -15,12 +15,14 @@ use Drupal\file\FileInterface;
 use Drupal\file\Plugin\Field\FieldType\FileFieldItemList;
 use Drupal\media\MediaInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests format dispatch and access handling for document Media.
- *
- * @group aculta_document_viewer
  */
+#[CoversClass(AcultaDocumentMediaFormatter::class)]
+#[Group('aculta_document_viewer')]
 final class AcultaDocumentMediaFormatterTest extends UnitTestCase {
 
   /**

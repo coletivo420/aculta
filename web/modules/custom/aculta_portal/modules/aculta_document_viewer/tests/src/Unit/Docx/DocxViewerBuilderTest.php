@@ -6,11 +6,14 @@ namespace Drupal\Tests\aculta_document_viewer\Unit\Docx;
 
 use Drupal\aculta_document_viewer\Docx\DocxPackageValidator;
 use Drupal\aculta_document_viewer\Docx\DocxViewerBuilder;
-use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
+use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
 use Drupal\file\FileInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -49,28 +52,41 @@ final class DocxViewerBuilderTest extends UnitTestCase {
 
   /**
    * Cria o builder com o validador real e um realpath apontando para $path.
+   *
+   * @param string $path
+   *   Caminho absoluto resolvido para o arquivo.
+   * @param array<string, mixed> $settings
+   *   Valores retornados por aculta_document_viewer.settings.
    */
-  private function builder(string $path): DocxViewerBuilder {
+  private function builder(string $path, array $settings = []): DocxViewerBuilder {
+    $container = new ContainerBuilder();
+    $assembler = $this->createMock(UnroutedUrlAssemblerInterface::class);
+    $assembler->method('assemble')->willReturnCallback(
+      static fn(string $uri): string => '/' . substr($uri, strlen('base:')),
+    );
+    $container->set('unrouted_url_assembler', $assembler);
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+
     $fileSystem = $this->createMock(FileSystemInterface::class);
     $fileSystem->method('realpath')->willReturn($path);
-    $config = new class {
-
-      /**
-       * Returns no override for the requested setting.
-       */
-      public function get(string $key): NULL {
-        return NULL;
-      }
-
-    };
+    $fileUrlGenerator = $this->createMock(FileUrlGeneratorInterface::class);
+    $fileUrlGenerator->method('generateString')->willReturn('/sites/default/files/valido.docx');
+    $moduleList = $this->createMock(ModuleExtensionList::class);
+    $moduleList->method('getPath')->with('aculta_document_viewer')->willReturn('modules/custom/aculta_document_viewer');
+    $config = $this->createMock(ImmutableConfig::class);
+    $config->method('get')->willReturnCallback(
+      static fn(string $key): mixed => $settings[$key] ?? NULL,
+    );
+    $config->method('getCacheTags')->willReturn(['config:aculta_document_viewer.settings']);
     $config_factory = $this->createMock(ConfigFactoryInterface::class);
     $config_factory->method('get')->with('aculta_document_viewer.settings')->willReturn($config);
     return new DocxViewerBuilder(
-      $this->createMock(FileUrlGeneratorInterface::class),
+      $fileUrlGenerator,
       $this->createMock(UrlGeneratorInterface::class),
       $fileSystem,
       new DocxPackageValidator(),
-      $this->createMock(ModuleExtensionList::class),
+      $moduleList,
       $this->createMock(LoggerInterface::class),
       $config_factory,
     );
@@ -109,6 +125,37 @@ final class DocxViewerBuilderTest extends UnitTestCase {
    */
   public function testUnresolvedPathIsRefused(): void {
     $this->assertNull($this->builder($this->dir . '/nao-existe.docx')->build($this->file('private://x.docx'), 'Título'));
+  }
+
+  /**
+   * Propagates configured DOCX rendering flags and settings cache tags.
+   */
+  public function testValidDocxPropagatesConfiguredRenderOptions(): void {
+    $path = $this->dir . '/valido.docx';
+    $zip = new \ZipArchive();
+    $zip->open($path, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+    $zip->addFromString('[Content_Types].xml', '<Types><Override PartName="/word/document.xml" ContentType="' . DocxPackageValidator::MAIN_CONTENT_TYPE . '"/></Types>');
+    $zip->addFromString('word/document.xml', '<w:document/>');
+    $zip->close();
+
+    $render = $this->builder($path, [
+      'docx_render_headers' => FALSE,
+      'docx_render_footers' => TRUE,
+      'docx_render_footnotes' => FALSE,
+      'docx_render_endnotes' => TRUE,
+      'docx_respect_page_breaks' => TRUE,
+    ])->build($this->file('public://valido.docx'), 'Ata da reunião');
+
+    $this->assertNotNull($render);
+    $this->assertSame(['config:aculta_document_viewer.settings'], $render['#cache']['tags']);
+    $options = json_decode((string) $render['#attributes']['data-aculta-docx-render-options'], TRUE, 512, JSON_THROW_ON_ERROR);
+    $this->assertSame([
+      'renderHeaders' => FALSE,
+      'renderFooters' => TRUE,
+      'renderFootnotes' => FALSE,
+      'renderEndnotes' => TRUE,
+      'respectPageBreaks' => TRUE,
+    ], $options);
   }
 
 }

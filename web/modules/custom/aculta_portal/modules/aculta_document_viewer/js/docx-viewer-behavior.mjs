@@ -24,12 +24,22 @@ const translate = (text) => (Drupal && typeof Drupal.t === 'function' ? Drupal.t
         } catch (error) {
           libs = [];
         }
+        let renderOptions = {};
+        try {
+          const parsed = JSON.parse(host.dataset.acultaDocxRenderOptions || '{}');
+          if (parsed && typeof parsed === 'object') {
+            renderOptions = parsed;
+          }
+        } catch (error) {
+          renderOptions = {};
+        }
         const chrome = setupDocumentChrome(host, frameHost);
         chrome.setStatus(translate('Carregando documento…'));
         mountDocxViewer(frameHost, {
           url: host.dataset.acultaDocxUrl,
           frameUrl: host.dataset.acultaDocxFrameUrl,
           libs,
+          renderOptions,
         }).then((result) => {
           host.dataset.acultaDocxStatus = result.status;
           if (result.status === 'done') {
