@@ -710,3 +710,16 @@ CSS, sintaxe Python, Design Foundations e índice de status PASS; Firefox visív
 DEFERRED porque `DISPLAY` não está disponível e sessões geckodriver concorrentes
 estão ativas. A fixture não valida conteúdo ou ACL de perfil real. THEME-MF3
 continua pendente.
+
+### THEME-MF2 — menu de opções do Messenger mobile-first (2026-10-29)
+
+`messenger-drawer.css` agora oculta o rótulo “Opções” e usa o controle compacto
+como base. A partir de `min-width: 36rem` (576 CSS px), mostra o rótulo e
+restaura dimensões e espaçamento do botão desktop. A barra de retorno, ações,
+contratos de formulário e comportamento da gaveta não mudam.
+
+`tests/browser/aculta-messenger/suite.mjs` verifica o rótulo e o botão largo em
+desktop, depois as dimensões compactas, alinhamento e overflow a 390px. Lint CSS
+e sintaxe JS PASS; Firefox E2E DEFERRED porque a suíte prepara e altera dados de
+teste do Runtime, `DISPLAY` está ausente e sessões concorrentes estão ativas.
+THEME-MF3 continua pendente.

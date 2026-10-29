@@ -665,7 +665,9 @@ Messenger, alertas e carrinho compartilham `aculta-utility-offcanvas`; a largura
 edge-to-edge é a base móvel, com limite 420px após 560 CSS px. O smoke
 read-only do Messenger agora injeta CSS candidato e verifica a fronteira usando
 o viewport efetivo do Firefox. Execução DEFERRED pelas sessões concorrentes;
-Alertas e Carrinho ainda precisam de consumidores visuais próprios. Ver
+Alertas e Carrinho ainda precisam de consumidores visuais próprios. No menu de
+opções da conversa, rótulo oculto e botão de ícone são a base; o rótulo e as
+dimensões largas voltam em 576px, com assertions desktop/mobile na suíte. Ver
 `mobile-first-audit.md` e `tests/browser/aculta-messenger/README.md`.
 
 ### THEME-MF2 — rodapé global

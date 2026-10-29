@@ -114,6 +114,10 @@ check('group create: return to the one-to-one thread', directThreadId > 0 && awa
 const tbv = JSON.parse(await b.exec(`const t = ${b.C}.querySelector('.aculta-messenger-conversation-toolbar'); const back = t.querySelector('.aculta-messenger-back-link').getBoundingClientRect(); const opt = t.querySelector('.aculta-messenger-options__summary').getBoundingClientRect(); const box = t.querySelector('.aculta-messenger-options').getBoundingClientRect(); return JSON.stringify({ backLeft: back.left < opt.left, sameTop: Math.abs(back.top - box.top) < 4 });`));
 check('A: "← Todas as conversas" is on the left of "Opções"', tbv.backLeft);
 check('A: "← Todas as conversas" and "Opções" are on the same row', tbv.sameTop);
+const desktopOptions = JSON.parse(await b.exec(`const C = ${b.C}; const t = C.querySelector('.aculta-messenger-conversation-toolbar'); const l = t.querySelector('.aculta-messenger-options__label'); const s = t.querySelector('.aculta-messenger-options__summary'); const c = getComputedStyle(s); return JSON.stringify({ width: innerWidth, labelVisible: !!l && getComputedStyle(l).display !== 'none', minWidth: c.minWidth, paddingInlineStart: parseFloat(c.paddingInlineStart) });`));
+check('desktop: options label and original button spacing are restored', desktopOptions.width >= 576
+  && desktopOptions.labelVisible && desktopOptions.minWidth === 'auto'
+  && Math.abs(desktopOptions.paddingInlineStart - 10.4) < 0.1, JSON.stringify(desktopOptions));
 await b.openOptions();
 const items1 = await b.panelItems();
 check('A: thread menu contains only "Limpar histórico"', JSON.stringify(items1) === JSON.stringify(['button:Limpar histórico']), JSON.stringify(items1));
@@ -245,9 +249,10 @@ await b.shot('A-replied');
 await b.open(A, { width: 390, height: 844 });
 await b.openDrawer();
 await b.openThread(directThreadId);
-const mob = JSON.parse(await b.exec(`const C = ${b.C}; const t = C.querySelector('.aculta-messenger-conversation-toolbar'); const back = t.querySelector('.aculta-messenger-back-link').getBoundingClientRect(); const s = t.querySelector('.aculta-messenger-options'); const label = t.querySelector('.aculta-messenger-options__label'); return JSON.stringify({ sameTop: Math.abs(back.top - s.getBoundingClientRect().top) < 4, labelHidden: !label || getComputedStyle(label).display === 'none', noOverflow: document.documentElement.scrollWidth <= window.innerWidth + 1 });`));
+const mob = JSON.parse(await b.exec(`const C = ${b.C}; const t = C.querySelector('.aculta-messenger-conversation-toolbar'); const back = t.querySelector('.aculta-messenger-back-link').getBoundingClientRect(); const s = t.querySelector('.aculta-messenger-options'); const label = t.querySelector('.aculta-messenger-options__label'); const summary = getComputedStyle(t.querySelector('.aculta-messenger-options__summary')); return JSON.stringify({ sameTop: Math.abs(back.top - s.getBoundingClientRect().top) < 4, labelHidden: !label || getComputedStyle(label).display === 'none', compactButton: summary.minWidth === '36px' && Math.abs(parseFloat(summary.paddingInlineStart) - 7.2) < 0.1, noOverflow: document.documentElement.scrollWidth <= window.innerWidth + 1 });`));
 check('mobile: "← Todas as conversas" and the hamburger share the row', mob.sameTop);
 check('mobile: the "Opções" label is hidden, only the icon shows', mob.labelHidden);
+check('mobile: the icon control uses compact dimensions', mob.compactButton);
 check('mobile: no horizontal page overflow', mob.noOverflow);
 await b.openOptions('teste.b');
 const itemsM = await b.panelItems();

@@ -74,7 +74,7 @@ O grupo criado pela interface usa `teste.b` e `teste.d` como destinatários e `t
 | 6 | Desbloqueio pelo menu |
 | 7 | Escape fecha só a janela de bloqueio e mantém a gaveta aberta; bloqueio e desbloqueio pelo aviso |
 | 8 | Resposta depois do desbloqueio |
-| 9 | Layout em 390 px: alinhamento, rótulo oculto, sem rolagem horizontal, menu |
+| 9 | Layout em 390 px: alinhamento, rótulo oculto, botão compacto, sem rolagem horizontal, menu |
 | 10 | "Limpar histórico" só para quem confirma, e a outra parte continua vendo o histórico |
 | 11 | Caixa "Opções" do perfil `/u/teste-b`: sem "Limpar histórico", "Iniciar conversa" abre a gaveta na nova conversa |
 | 12 | Conversa em grupo: menu só com "Limpar histórico", limpeza só para quem confirma |

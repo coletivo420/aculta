@@ -72,6 +72,13 @@
 /* On the same row as the back link: both start at the top of the toolbar, with no inherited block margin. */
 .aculta-messenger-conversation-toolbar .aculta-messenger-options { margin-block: 0; align-self: start; }
 .aculta-messenger-options__summary { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 2.25rem; padding: 0.3rem 0.65rem; border: 1px solid var(--aculta-border-default); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); color: var(--aculta-text-primary); font-weight: 600; list-style: none; cursor: pointer; }
+/* Compact mobile control: keep only the icon beside the conversation back link. */
+.aculta-messenger-options__label { display: none; }
+.aculta-messenger-options__summary { min-width: 2.25rem; justify-content: center; padding-inline: 0.45rem; }
+@media (min-width: 36rem) {
+  .aculta-messenger-options__label { display: inline; }
+  .aculta-messenger-options__summary { min-width: auto; justify-content: normal; padding-inline: 0.65rem; }
+}
 .aculta-messenger-options__summary::-webkit-details-marker { display: none; }
 .aculta-messenger-options__summary:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 .aculta-messenger-options__summary .bi { font-size: 1.1rem; line-height: 1; }
@@ -86,11 +93,6 @@ form[data-aculta-drawer-action] .form-actions { display: flex; flex-direction: c
 /* The relationship buttons are Form API submits: they get the same item look and body font as the Opções links. */
 form[data-aculta-drawer-action] .form-actions :is(button, input[type="submit"]) { display: block; width: 100%; margin: 0; padding: 0.6rem 0.75rem; border: 0; border-bottom: 1px solid var(--aculta-border-subtle); border-radius: 0; background: transparent; color: var(--aculta-text-primary); font: inherit; text-align: start; cursor: pointer; }
 form[data-aculta-drawer-action] .aculta-messenger-options__status { margin: 0; padding: 0.6rem 0.75rem; color: var(--aculta-text-secondary); font-size: 0.875rem; }
-/* Narrow screens: only the hamburger icon, so the toolbar always fits next to the back link. */
-@media (max-width: 575.98px) {
-  .aculta-messenger-options__label { display: none; }
-  .aculta-messenger-options__summary { min-width: 2.25rem; justify-content: center; padding-inline: 0.45rem; }
-}
 .aculta-messenger-back-link:hover, .aculta-messenger-back-link:focus-visible { text-decoration: underline; }
 /* Notice in place of the reply box: a blocked or friends-only conversation keeps its history and says why. */
 .aculta-messenger-notice { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; margin-block: 0.75rem; padding: 0.75rem; border: 1px solid var(--aculta-border-subtle); border-radius: 0.5rem; background: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
