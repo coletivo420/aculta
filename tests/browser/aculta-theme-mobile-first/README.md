@@ -22,6 +22,28 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/navigation-top-bar
 visível via geckodriver; PNGs e `summary.json` são gravados em `$SUITE_OUT`.
 Não cobre zoom, tema escuro, reduced motion, teclado completo ou WCAG 2.2 AA.
 
+## Identidade SDC de Perfil mobile-first
+
+`profile-identity-layout.py` compara a CSS baseline/candidata do SDC
+`profile-identity` em 320/352/353/360/390/575/576/599/600/767/768/1024/1280/
+1440px. Mede alinhamento, tamanho do avatar, direção, overflow, ordem DOM e
+capturas. A composição compacta deve ocupar até 352px e o avatar de 72px volta
+a partir de 353px. Usa fixture local, sem Runtime nem dados de perfil reais.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-profile-identity
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/profile-identity-layout.py
+```
+
+`PROFILE_IDENTITY_BASELINE_REF` escolhe a CSS baseline (padrão `HEAD^`) e
+`PROFILE_IDENTITY_WIDTHS` aceita larguras focais. Requer Firefox ESR visível,
+geckodriver e `websockets`; os PNGs e o resumo ficam em `$SUITE_OUT`. Não
+substitui validação das rotas privadas/públicas, teclado, zoom, modo escuro ou
+WCAG 2.2 AA.
+
 `author-card.py` valida o SDC de autoria no consumer público da lista de tópicos
 do Fórum. O script usa GETs e mudança de viewport; não autentica, submete
 formulários nem altera dados. Confere o breakpoint de alinhamento em 576 CSS px,

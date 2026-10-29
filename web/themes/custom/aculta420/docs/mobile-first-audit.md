@@ -696,3 +696,17 @@ grade larga. Lint CSS e sintaxe Python são gates estáticos desta microfase;
 Firefox visível fica DEFERRED porque `DISPLAY` não está disponível e há sessões
 geckodriver concorrentes. A fixture não substitui validação autenticada da
 Navigation top-bar servida no Runtime. THEME-MF3 continua pendente.
+
+### THEME-MF2 — identidade SDC de Perfil mobile-first (2026-10-29)
+
+`profile-identity.css` agora usa alinhamento inicial e avatar de `3.5rem` como
+base. Em `min-width: 22.0625rem` (353 CSS px), restaura o avatar de `4.5rem` e
+alinhamento central, preservando o breakpoint de composição horizontal em
+`48rem`. O consumer Studio e seus props/slots não mudam.
+
+`profile-identity-layout.py` compara baseline/candidato em 14 larguras, mede o
+avatar, alinhamento, overflow, ordem DOM e mantém captura de cada estado. Lint
+CSS, sintaxe Python, Design Foundations e índice de status PASS; Firefox visível
+DEFERRED porque `DISPLAY` não está disponível e sessões geckodriver concorrentes
+estão ativas. A fixture não valida conteúdo ou ACL de perfil real. THEME-MF3
+continua pendente.

@@ -256,6 +256,9 @@ a foto própria exibida no editor é privada à sessão titular.
 
 A mudança foi no consumidor Studio; as APIs do tema (Twig, CSS,
 props e slots) não foram alteradas e a versão fica `0.7.0-dev.1`.
+No visual responsivo, `profile-identity` inicia com avatar de `3.5rem` e
+alinhamento superior; em 353px restaura o avatar de `4.5rem` e o alinhamento
+central, mantendo a composição lateral de desktop em 768px.
 Sinais de código não equivalem a render validado: Unit, Kernel,
 UI Patterns Library e Firefox ESR/X11 seguem pendentes.
 
