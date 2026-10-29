@@ -99,6 +99,26 @@ final class EventDate extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Limite de série aberta (meses)'))
       ->setDefaultValue(12);
 
+    // Modalidade do evento (ARQ-04 / OpenCulturas 3.1.5 attendance_mode).
+    $fields['field_modo'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(new TranslatableMarkup('Modalidade'))
+      ->setDefaultValue('presencial')
+      ->setSetting('allowed_values', [
+        'presencial' => new TranslatableMarkup('Presencial'),
+        'online' => new TranslatableMarkup('On-line / Virtual'),
+        'hibrido' => new TranslatableMarkup('Híbrido'),
+      ]);
+
+    // Link para acesso virtual / transmissão on-line.
+    $fields['field_link_virtual'] = BaseFieldDefinition::create('link')
+      ->setLabel(new TranslatableMarkup('Link de transmissão virtual'))
+      ->setSetting('link_type', LinkItemInterface::LINK_EXTERNAL);
+
+    // Horário de abertura de portas ou orientação de acesso antecipado.
+    $fields['field_abertura_portas'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Abertura de portas'))
+      ->setSetting('max_length', 255);
+
     return $fields;
   }
 

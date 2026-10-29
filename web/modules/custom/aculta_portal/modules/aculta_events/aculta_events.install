@@ -228,3 +228,44 @@ function aculta_events_update_10004(): string {
     ? 'Campos informativos de preço e compra externa já existiam.'
     : 'Instalados em aculta_event_date: ' . implode(', ', $installed) . '.';
 }
+
+/**
+ * Instala campos estruturados de acessibilidade, modo e segurança (ARQ-04).
+ */
+function aculta_events_update_10005(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $fieldManager = \Drupal::service('entity_field.manager');
+  $installed = [];
+
+  // 1. Campos em aculta_event.
+  $eventDefs = $fieldManager->getBaseFieldDefinitions('aculta_event');
+  foreach (['field_classificacao_etaria', 'field_acessibilidade', 'field_seguranca'] as $fieldName) {
+    if ($manager->getFieldStorageDefinition($fieldName, 'aculta_event') !== NULL) {
+      continue;
+    }
+    $definition = $eventDefs[$fieldName] ?? NULL;
+    if ($definition === NULL) {
+      throw new \RuntimeException("$fieldName não está declarado em aculta_event.");
+    }
+    $manager->installFieldStorageDefinition($fieldName, 'aculta_event', 'aculta_events', $definition);
+    $installed[] = "aculta_event.$fieldName";
+  }
+
+  // 2. Campos em aculta_event_date.
+  $dateDefs = $fieldManager->getBaseFieldDefinitions('aculta_event_date');
+  foreach (['field_modo', 'field_link_virtual', 'field_abertura_portas'] as $fieldName) {
+    if ($manager->getFieldStorageDefinition($fieldName, 'aculta_event_date') !== NULL) {
+      continue;
+    }
+    $definition = $dateDefs[$fieldName] ?? NULL;
+    if ($definition === NULL) {
+      throw new \RuntimeException("$fieldName não está declarado em aculta_event_date.");
+    }
+    $manager->installFieldStorageDefinition($fieldName, 'aculta_event_date', 'aculta_events', $definition);
+    $installed[] = "aculta_event_date.$fieldName";
+  }
+
+  return $installed === []
+    ? 'Campos estruturados de ARQ-04 já existiam.'
+    : 'Campos instalados: ' . implode(', ', $installed) . '.';
+}

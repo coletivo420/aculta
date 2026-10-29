@@ -47,7 +47,6 @@ final class Event extends ContentEntityBase {
     }
   }
 
-
   /**
    * {@inheritdoc}
    */
@@ -66,12 +65,14 @@ final class Event extends ContentEntityBase {
     $fields['body'] = BaseFieldDefinition::create('string_long')
       ->setLabel(new TranslatableMarkup('Descrição'));
 
-    // Slug público, gerado na criação (EventSlugGenerator). Não muda depois de publicado.
+    // Slug público, gerado na criação (EventSlugGenerator). Não muda depois de
+    // publicado.
     $fields['field_slug'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Endereço (slug)'))
       ->setSetting('max_length', 255);
 
-    // Tipo de evento: termo do vocabulário aculta_event_type (migrado em aculta_events_update_10001).
+    // Tipo de evento: termo do vocabulário aculta_event_type (migrado em
+    // aculta_events_update_10001).
     $fields['field_tipo'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Tipo de evento'))
       ->setSetting('target_type', 'taxonomy_term')
@@ -85,7 +86,8 @@ final class Event extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Organizador'))
       ->setSetting('target_type', 'user');
 
-    // Status do evento: rascunho não aparece no sitemap; cancelado mantém a página com aviso.
+    // Status do evento: rascunho não aparece no sitemap; cancelado mantém a
+    // página com aviso.
     $fields['field_status'] = BaseFieldDefinition::create('list_string')
       ->setLabel(new TranslatableMarkup('Situação'))
       ->setDefaultValue('rascunho')
@@ -94,6 +96,25 @@ final class Event extends ContentEntityBase {
         'publicado' => new TranslatableMarkup('Publicado'),
         'cancelado' => new TranslatableMarkup('Cancelado'),
       ]);
+
+    // Dados estruturados aditivos (ARQ-04 / OpenCulturas 3.1.5).
+    $fields['field_classificacao_etaria'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(new TranslatableMarkup('Classificação etária'))
+      ->setDefaultValue('livre')
+      ->setSetting('allowed_values', [
+        'livre' => new TranslatableMarkup('Livre para todos os públicos'),
+        '10' => new TranslatableMarkup('Não recomendado para menores de 10 anos'),
+        '12' => new TranslatableMarkup('Não recomendado para menores de 12 anos'),
+        '14' => new TranslatableMarkup('Não recomendado para menores de 14 anos'),
+        '16' => new TranslatableMarkup('Não recomendado para menores de 16 anos'),
+        '18' => new TranslatableMarkup('Não recomendado para menores de 18 anos'),
+      ]);
+
+    $fields['field_acessibilidade'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(new TranslatableMarkup('Recursos de acessibilidade'));
+
+    $fields['field_seguranca'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(new TranslatableMarkup('Informações de segurança e orientações'));
 
     return $fields;
   }
