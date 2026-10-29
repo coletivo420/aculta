@@ -2,4 +2,4 @@
 version: 0.1.0-dev.42
 state: Dev
 next_phase: 'PV7: concluir revisão ampliada de acessibilidade/leitura, validar CSP e checagens visuais pré-RC; a closure Kernel real do Portal já passa sem mocks ([roadmap](web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/docs/ROADMAP.md))'
-progress_note: '2026-10-29: PV7 carregou closure real de Portal/User/Commerce/LMS sem mocks. Suíte completa: 36 testes, 371 assertions, 137 deprecações. Corrigido schema ausente dos settings dos formatters PDF; php -l (25 arquivos), PHPCS nos dois Kernel tests e git diff --check passaram. Sem escrita no Runtime. Seguem revisão ampliada de acessibilidade/leitura e gates CSP/visual antes de RC.'
+progress_note: '2026-10-29: PV7 (d78ce158d) carregou closure real de Portal/User/Commerce/LMS sem mocks. Suíte completa: 36 testes, 371 assertions, 137 deprecações. Corrigido schema ausente dos settings dos formatters PDF; php -l (25 arquivos), PHPCS nos dois Kernel tests e git diff --check passaram. Sem escrita no Runtime. Seguem revisão ampliada de acessibilidade/leitura e gates CSP/visual antes de RC.'

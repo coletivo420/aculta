@@ -11,7 +11,7 @@
 - O Config Schema Checker revelou que os dois formatters não declaravam o
   schema dos próprios settings. O contrato foi acrescentado em
   `config/schema/aculta_pdf_viewer.schema.yml`.
-- Evidência: commit da microfase PV7 deve ser registrado aqui após o commit.
+- Evidência: commit `d78ce158d` — `test(aculta-pdf-viewer): PV7 fecha closure Kernel real`.
   PV7 segue Dev; falta revisão ampliada de acessibilidade/leitura e concluir os
   gates de CSP e validação visual pré-RC já descritos abaixo.
 
