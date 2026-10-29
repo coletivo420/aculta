@@ -21,7 +21,8 @@ tagged não torna `aculta_index` uma dependência obrigatória do módulo.
 `CourseDocumentAccessTest` agora carrega a closure real do Portal e prepara os
 schemas de User, Profile, Path Alias, Domain, Commerce Order e Entity Usage,
 sem substituir serviços. A matriz de acesso privado sob purpose `courses`
-passou no banco `aculta_simpletest`: 1 teste, 52 assertions e 145 deprecações.
+passou no banco `aculta_simpletest`: 1 teste, 52 assertions e 145 deprecações
+(commit `667c1ce60`).
 O teste verifica acesso de membro, negação a não membro, revogação ao remover
 a relação e revogação após remover a membership. O harness anterior falhava
 antes das assertions por ausência de serviços/schemas; essa falha está
