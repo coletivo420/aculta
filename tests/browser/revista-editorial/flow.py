@@ -128,7 +128,23 @@ def wait_for(driver, script, timeout=20.0):
 MEDIA_DIALOG = """!!Array.from(document.querySelectorAll('.ui-dialog')).find((e)=>e.innerText.includes('Adicionar ou selecionar mídia') && (e.offsetWidth||e.offsetHeight))"""
 
 
+def load_add_form(driver, attempts: int = 5) -> bool:
+    """Abre o formulário de criação aguardando o widget de mídia.
+
+    Sob carga concorrente o primeiro render pode chegar sem o widget; recarrega
+    sem perder dados porque é chamado antes do preenchimento.
+    """
+    for _ in range(attempts):
+        driver.get(f"{BASE}/node/add/revista")
+        if wait_for(driver, "return !!document.querySelector('#edit-field-media-image-open-button');", timeout=15):
+            return True
+        time.sleep(3)
+    return False
+
+
 def open_media_dialog(driver):
+    if not wait_for(driver, "return !!document.querySelector('#edit-field-media-image-open-button');", timeout=25):
+        raise AssertionError(f"botão de mídia ausente em {driver.url()}")
     driver.click("#edit-field-media-image-open-button")
     if not wait_for(driver, f"return {MEDIA_DIALOG};", timeout=25):
         raise AssertionError("biblioteca de mídia não abriu")
@@ -159,26 +175,13 @@ def attach_media(driver):
     aplica os comandos ``invoke val``/``invoke trigger mousedown``/``closeDialog``
     e deixa o widget reconstruir a seleção.
     """
+    # Caminho AJAX equivalente ao do Core, com o FormData completo da grade.
+    # A tentativa pelo botão visual fica fora do caminho padrão: ela reproduz o
+    # TypeError conhecido e o erro AJAX substitui o widget, removendo o botão
+    # de reabertura. A evidência do defeito está no README e no watchdog.
     media_id = open_media_dialog(driver)
     if not media_id:
         raise AssertionError("biblioteca de mídia sem itens para selecionar")
-    driver.js("""const item=document.querySelector('.media-library-item__click-to-select-trigger');
-                 if (item) item.click(); return true;""")
-    time.sleep(0.6)
-    # Ação visual real do usuário.
-    driver.click("button.media-library-select")
-    closed = wait_for(driver, f"return !({MEDIA_DIALOG});", timeout=10)
-    if closed and driver.js("return document.querySelectorAll('.media-library-selection .media-library-item').length;"):
-        return "visual-button"
-    results["media_library_visual_failure"] = driver.js(
-        """return Array.from(document.querySelectorAll('.ui-dialog .messages'))
-                 .map((e)=>e.innerText.trim()).filter(Boolean).slice(0,3);"""
-    )
-    close_media_dialog(driver)
-    time.sleep(1)
-
-    # Caminho AJAX equivalente, com o FormData completo do formulário da grade.
-    media_id = open_media_dialog(driver)
     driver.js("""const item=document.querySelector('.media-library-item__click-to-select-trigger');
                  if (item) item.click(); return true;""")
     time.sleep(0.6)
@@ -296,7 +299,8 @@ def main():
         check("create.validation_errors", bool(errors["texts"]), errors)
         check("create.no_node_on_invalid", node_id_by_title(title) is None)
 
-        # 2b. Criacao valida.
+        # 2b. Criacao valida: recarrega o formulario limpo depois dos erros.
+        check("create.form_reloaded", load_add_form(editor))
         set_value(editor, "#edit-title-0-value", title)
         set_value(editor, "#edit-field-subtitle-0-value", "Chamada editorial de teste")
         set_value(editor, "#edit-field-summary-0-value", "Resumo editorial de teste para SEO e listagens.")
@@ -416,10 +420,17 @@ def main():
         check("seo.canonical", presentation["canonical"].startswith(MAGAZINE_BASE), presentation["canonical"])
         check("seo.description", len(presentation["metaDescription"]) > 10, presentation["metaDescription"])
         check("seo.jsonld", bool(presentation["jsonld"]), presentation["jsonld"])
-        check("presentation.overflow", anonymous.js(
-            "return document.documentElement.scrollWidth - window.innerWidth;") <= 2,
-            anonymous.js("return document.documentElement.scrollWidth - window.innerWidth;"))
-        screenshot(anonymous, "02-published")
+        # Paridade de viewport da pagina publicada (mobile-first do ACULTA420).
+        viewport_results = {}
+        for width, height in VIEWPORTS:
+            anonymous.req("POST", f"/session/{anonymous.session}/window/rect", {"width": width, "height": height})
+            time.sleep(0.6)
+            overflow = anonymous.js("return document.documentElement.scrollWidth - window.innerWidth;")
+            viewport_results[width] = overflow
+            check(f"presentation.overflow_{width}", overflow <= 2, overflow)
+            screenshot(anonymous, f"02-published-{width}")
+        results["viewports"] = viewport_results
+        anonymous.req("POST", f"/session/{anonymous.session}/window/rect", {"width": 1280, "height": 900})
 
         # 8. Comentarios reais e visibilidade.
         # O comentario exige e-mail confirmado pela politica do Portal.
