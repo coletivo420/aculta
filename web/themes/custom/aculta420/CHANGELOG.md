@@ -1,3 +1,8 @@
+# 0.7.0-dev.22 — converter exceção estreita da Institution Bar para mobile-first (2026-10-29)
+
+- A marca da Institution Bar fica visualmente oculta como base nos viewports abaixo de 375px e reaparece em `min-width: 23.4375rem`; o link permanece na árvore de acessibilidade. Sticky, estrutura e navegação não mudam.
+- O harness existente cobre 320/374/375/600/767/768/1440px e os dez purposes; Firefox/runtime DEFERRED por sessões concorrentes. Stylelint CSS, inventário, índice de status, schema SDC e Design Foundations PASS; THEME-MF3 permanece pendente.
+
 # 0.7.0-dev.21 — migrar a grade do rodapé para mobile-first (2026-10-29)
 
 - O rodapé global começa em uma coluna; `min-width: 36rem` restaura duas colunas e `min-width: 62rem` restaura a grade ampla de quatro colunas. Ordem DOM e conteúdo não mudam.

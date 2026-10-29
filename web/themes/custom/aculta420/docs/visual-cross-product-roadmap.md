@@ -646,3 +646,10 @@ A grade do rodapé passa a uma coluna como base, duas colunas em `min-width:
 Lint CSS/validação estática executados; comparação no Firefox e páginas reais
 DEFERRED por sessões concorrentes. Não aprova THEME-MF3; ver
 `mobile-first-audit.md`.
+
+### THEME-MF2 — Institution Bar em viewport estreito
+
+A marca é ocultada como base e volta a ser exibida em `min-width: 23.4375rem`;
+o harness existente confere a fronteira 374/375px nos dez purposes. Firefox e
+rotas reais DEFERRED por sessões concorrentes; não é gate MF3. O comportamento
+de shell fica documentado em `mobile-first-audit.md`.

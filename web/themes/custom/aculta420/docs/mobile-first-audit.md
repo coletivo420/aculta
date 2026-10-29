@@ -17,6 +17,15 @@ marca em proporção dupla. A ordem DOM, os blocos e a tipografia não mudam.
 Firefox e inspeção das páginas reais estão DEFERRED enquanto sessões visíveis
 concorrentes ocupam o ambiente. Este resultado não aprova THEME-MF3.
 
+### THEME-MF2 — Institution Bar abaixo de 375px (2026-10-29)
+
+A marca da barra multidomínio agora fica oculta visualmente como estilo-base
+para o viewport mais estreito e reaparece em `min-width: 23.4375rem` (375 CSS
+px). O link permanece acessível; sticky, DOM e contratos de shell não mudam.
+O harness existente cobre a fronteira 374/375 e todos os dez purposes, mas a
+execução Firefox/runtime fica DEFERRED por sessões visíveis concorrentes. Lint
+CSS e validações estáticas são executados. Esta fatia não aprova THEME-MF3.
+
 ### THEME-MF2 — Perfil público (2026-10-29)
 
 `public-profile.css` declara o perfil empilhado e seus espaçamentos compactos

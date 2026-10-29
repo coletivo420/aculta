@@ -64,6 +64,10 @@ O rodapé global também é composição do tema, não SDC; sua grade móvel com
 uma coluna e amplia progressivamente sem alterar blocos ou ordem DOM. A auditoria
 de cobertura por purpose e as evidências ficam em `mobile-first-audit.md`.
 
+A Institution Bar multidomínio também pertence ao shell, não ao catálogo SDC; em
+viewports abaixo de 375px a marca é ocultada visualmente como base, preservando
+o link acessível, e reaparece progressivamente em `min-width: 23.4375rem`.
+
 
 ## UI Styles
 

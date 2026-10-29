@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.21
+version: 0.7.0-dev.22
 state: Dev
 progress_note: >-
-  0.7.0-dev.21 / THEME-MF2: rodapé global usa uma coluna como base, duas a partir de 576px e quatro a partir de 992px, preservando a ordem DOM. Firefox comparativo e páginas reais DEFERRED por sessões concorrentes; MF3 não aprovado.
-next_phase: 'Repetir Firefox para rodapé, gavetas utilitárias, Webform, PDF, carrossel, autenticação e Perfil quando sessões concorrentes encerrarem; revisar rotas reais após sincronização/cache pelo owner. Continuar demais superfícies MF2 antes de THEME-MF3.'
+  0.7.0-dev.22 / THEME-MF2: Institution Bar mobile-first: marca oculta como base abaixo de 375px e reaparece em min-width 23.4375rem, mantendo-a no accessibility tree; shell sticky e consumers inalterados. Firefox nas dez purposes DEFERRED por sessões concorrentes; MF3 não aprovado.
+next_phase: 'Repetir Firefox para Institution Bar, rodapé, gavetas utilitárias, Webform, PDF, carrossel, autenticação e Perfil quando sessões concorrentes encerrarem; revisar rotas reais após sincronização/cache pelo owner. Continuar demais superfícies MF2 antes de THEME-MF3.'
