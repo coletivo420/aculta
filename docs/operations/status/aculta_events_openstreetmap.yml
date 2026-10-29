@@ -1,18 +1,15 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: '0.1.0-dev.1'
+version: '0.1.0-dev.2'
 state: Dev
 progress_note: >-
-  E10-A: conexão OAuth2 com o OpenStreetMap pelo popup do Portal, endpoint
-  explícito por ambiente, recusa de ambiente cruzado, token cifrado no State API.
-  E10-B: busca por tipo e ID, seleção e revisão dos dados, gravação do local e
-  envio só das diferenças após confirmação. Kernel de segurança do OAuth 4
-  testes/53 assertions PASS no worktree (12 depreciações), cobrindo rotas,
-  ambiente, credenciais ausentes e armazenamento cifrado. Sonda no Runtime em
-  2026-10-29: site=test, ambiente OSM efetivo=production (D-45),
-  OSM_PRODUCTION_CLIENT_ID/SECRET e a chave de cifra presentes, OSM_TEST_*
-  ausente e nenhum token OAuth conectado. A credencial única de produção
-  compartilhada por teste, desenvolvimento e produção é a exceção registrada em
-  docs/operations/SECRETS.md. A autorização OAuth ainda exige login humano no
-  OSM e cada escrita no mapa público exige revisão e confirmação explícita.
-  Nenhuma chamada externa ou envio foi feito.
-next_phase: 'Concluir a autorização OAuth com login humano no OSM (a credencial única de produção já está em secrets) e confirmar previamente cada escrita real (D-45); depois testar envio de dados fictícios no servidor de desenvolvimento e revisar termos ODbL e atribuição antes de qualquer envio fora do teste.'
+  Dev.2: ensaio de escrita fictícia concluído no OSM de produção com a conta
+  autorizada e limpeza confirmada. Nó 14331309082 criado no Atlântico Sul
+  (changeset 191197897), atualizado pelo caminho real do módulo
+  (OpenStreetMapApiClient::update, changeset 191197899, versão 2) e removido
+  (changeset 191197900); a verificação posterior confirmou a ausência do nó.
+  Nenhum token ou corpo sensível foi impresso. Dev.1: E10-A/E10-B com OAuth2
+  pelo popup, endpoint explícito por ambiente, token cifrado no State e Kernel
+  de segurança 4 testes/53 assertions PASS (12 depreciações); a credencial única
+  de produção é a exceção registrada em docs/operations/SECRETS.md; token
+  conectado e leitura da API ativa confirmada.
+next_phase: 'Revisar termos ODbL e atribuição antes de qualquer envio fora do teste; depois avaliar o fechamento do E10 e a promoção junto do Events.'

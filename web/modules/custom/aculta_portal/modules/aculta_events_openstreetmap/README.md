@@ -32,16 +32,21 @@ produção. Em `secrets/` ficam `OSM_PRODUCTION_CLIENT_ID`,
 credencial de produção com `aculta_openstreetmap_environment=production` (D-45);
 sem essa seleção usa a API de desenvolvimento e não tem credencial.
 
-O token do usuário é cifrado no State por ambiente. A sonda de 2026-10-29
-confirmou `site=test`, ambiente efetivo `production`, credencial presente e
-nenhum token conectado: a autorização OAuth ainda exige login humano no OSM. Cada
-escrita no mapa público exige revisão e confirmação explícita (D-45). Nenhum
-valor de credencial é versionado nem exibido em log.
+O token do usuário é cifrado no State por ambiente. Em 2026-10-29 a conta
+autorizada conectou o app (`site=test`, ambiente efetivo `production`) e o
+ensaio de escrita foi concluído com limpeza. Cada escrita no mapa público exige
+revisão e confirmação explícita (D-45). Nenhum valor de credencial é versionado
+nem exibido em log.
 
 ## Testes
 
 Kernel: `tests/src/Kernel/OpenStreetMapOAuthSafetyKernelTest.php` cobre permissão de rotas,
 ambiente de desenvolvimento, recusa de ambiente cruzado, recusa sem credenciais,
-armazenamento cifrado do token e escrita simulada no endpoint configurado. O ensaio de envio
-real continua pendente até concluir a autorização OAuth e revisar uma alteração fictícia no
-assistente; cada envio ainda exige confirmação explícita.
+armazenamento cifrado do token e escrita simulada no endpoint configurado.
+
+Ensaio real de 2026-10-29: nó fictício `14331309082` criado no Atlântico Sul
+(changeset `191197897`), atualizado pelo `OpenStreetMapApiClient::update`
+(changeset `191197899`, versão 2) e removido (changeset `191197900`); a leitura
+posterior confirmou a ausência do nó. Nenhum token ou corpo sensível foi
+impresso. Um envio fora do teste continua dependendo da revisão de termos ODbL
+e atribuição.
