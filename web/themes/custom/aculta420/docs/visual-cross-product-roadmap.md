@@ -741,3 +741,13 @@ o markup produzido pelo provider; o harness compara os dois formatos em catorze
 larguras, incluindo 368/369px e os nove viewports globais, ordem, foco/tamanho dos alvos e overflow. Lint
 CSS e sintaxe Python PASS; Firefox visível e validação UI Patterns ficam
 DEFERRED sem `DISPLAY=:0`. Não homologa THEME-MF3.
+
+
+### THEME-MF2 — composer de resposta Messenger
+
+O composer de resposta usa padding e altura compactos como base; o espaçamento
+anterior e a altura natural da caixa retornam em 576px.
+`tests/browser/aculta-theme-mobile-first/messenger-reply-layout.py` compara a
+fixture com baseline e candidata nas larguras globais, mantendo a ordem
+mensagem/ação e o alvo de toque. Firefox visível está DEFERRED nesta sessão; o
+teste não altera conversas nem substitui homologação da gaveta real.

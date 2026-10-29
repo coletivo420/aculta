@@ -755,3 +755,15 @@ ordem/acessibilidade e overflow em catorze larguras, incluindo os viewports
 globais 320/360/390/599/600/768/1024/1280/1440px. Lint CSS, validação estática
 do catálogo e sintaxe Python passaram; Firefox e UI Patterns Runtime ficam
 DEFERRED nesta sessão sem `DISPLAY=:0`. MF3 permanece pendente.
+
+
+### THEME-MF2 — composer de resposta da gaveta Messenger (2026-10-29)
+
+`messenger-drawer.css` agora usa como base móvel o padding compacto da gaveta e
+do formulário, margem curta entre mensagem e ação e caixa de texto de 5.5rem.
+Em `min-width: 36rem` (576 CSS px), restaura os espaçamentos anteriores e a
+altura natural da textarea. Markup, ordem DOM, Form API e envio continuam no
+módulo. `messenger-reply-layout.py` compara baseline e candidata nas larguras
+globais e na fronteira 575/576px; sintaxe Python e lint CSS passam. Firefox
+visível fica DEFERRED sem `DISPLAY=:0`; o fixture não cobre envio, ACL nem a
+gaveta real no Runtime. THEME-MF3 continua pendente.
