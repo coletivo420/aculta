@@ -126,8 +126,8 @@ já decididas acima; não reordenam saneamento, F1–F4 nem a política de uploa
 | I-01 | Listagem filtrável padrão (View, filtros expostos, cartão SDC, contagem, paginação sem JS obrigatório) | Portal; catálogo de `aculta_events` | Lista oficial de variações de cartão (I-10) |
 | I-02 | Blocos de conteúdo relacionado sobre as relações nomeadas do `aculta_index` | `aculta_index` + Portal | Relação nomeada com dono |
 | I-12 | JSON-LD de Event, Article, Place e Organization | Portal (metatag) | Auditoria de metatags atuais |
-| I-13 | Licença por mídia obrigatória para upload público | `aculta_image`; `USER-UPLOADS.md` | Decisão de licença padrão |
-| I-14 | Honeypot e limite de taxa antes do captcha externo | `aculta_ugc` | Plano U0 |
+| I-13 | **Não adotado:** licença obrigatória foi rejeitada pela D-10; metadados de autoria/crédito são opcionais | `aculta_image`; `USER-UPLOADS.md` | Preservar D-10 |
+| I-14 | **Não adotado nesta fase:** Honeypot foi rejeitado pela D-11; manter Turnstile e avaliar limites separadamente | `aculta_ugc` | Preservar D-11 |
 | I-15 | FAQ editável para apoio e institucional | Apoio; Institucional | — |
 | I-16 | Índice A-Z da wiki | `aculta_wiki` | I-01 |
 | I-17 | Página de divulgação responsável (`SECURITY.md`) | Raiz do repositório | Contato informado pelo responsável |
@@ -317,3 +317,16 @@ Plano completo, inventário e gates: [CPF-CONSOLIDACAO-E-CHECKOUT.md](CPF-CONSOL
 - **CPF-R3 (remoção do associado):** BLOQUEADA até verificar Runtime de teste e produção. Local: não habilitado, não instalado.
 - **CPF-CHECKOUT-0.2-I (identidade fiscal compartilhada Loja e LMS):** política implementada no Portal; Loja e cursos pagos exigem CPF/CNPJ, cursos gratuitos e Doações permanecem dispensados. Unit 13/30 e Kernel do pane 12/343 PASS; regressão Functional/Browser e homologação por propósito pendentes.
 - **Pendências transversais:** gate de status do índice (falta `aculta_commerce`) e gate Drupal 11 (falta `WikiController.php`), ambos anteriores a esta frente.
+
+## Programa OC315 aprovado - auditoria 3.1.5 (2026-10-29)
+
+Fonte normativa: [nova auditoria 3.1.5](../architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). As melhorias I-xx anteriores são históricas; OC315 é **backlog aprovado, não implementação concluída**. Respeitar gates e prioridades preexistentes.
+
+- **OC-A / P0:** busca cultural sobre Search API + dados públicos de Events/Locais, filtros progressivos e pagination; respeitar propósito de domínio e ACL dos providers; auditar `LocationCatalogue` e custo de expansão de recorrências.
+- **OC-B / P1:** metadados de eventos/locais e consumidores SDC de acessibilidade, cartões e layout; nenhuma duplicação do sistema visual.
+- **OC-C / P1:** salvos, recomendações, organizações e reivindicação através de vínculos aprovados e fila UGC; sem papel `organizador` novo e sem confundir conta/perfil.
+- **OC-D / P2:** menções na imprensa, apoiadores com autorização, download rico, override editorial de teaser, arquivo editorial **opcional** (a View upstream vem desabilitada).
+- **OC-E / P2:** Office Hours/OSM como estudo condicionado, breadcrumb sem duplicar serviço.
+- **OC-F:** homologação explícita por módulo (Unit/Kernel/Functional e acessibilidade no Runtime), registrar o que foi realmente executado.
+
+Não adicionar `drupal/facets`, `office_hours`, `paragraphs` ou outra dependência por efeito desta aprovação documental; requer decisão técnica e atualização de README. Não executar importações de configuração, migrações, alterações de banco ou deploy nesta fase.

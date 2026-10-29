@@ -336,3 +336,14 @@ Esses resultados não substituem as suítes Kernel nem o boot dos owners.
 
 
 **Correção do harness Kernel (2026-10-26):** os testes de providers usam agora o caminho do checkout do módulo em vez de `DRUPAL_ROOT` do checkout compartilhado. Os testes Group inicializam o owner `aculta_document_viewer_group`; fixtures Wiki instalam os schemas `flagging` e `history` ativados pelos hooks reais. Execuções focais após a correção: Media 5/101 PASS; Group/owner/Wiki 10/361 PASS (272 depreciações Core/contrib). Suíte Kernel completa após reparo: 111 testes / 1.852 assertions PASS; 280 depreciações e 54 PHPUnit depreciações reportadas separadamente, sem erro/falha.
+
+## Backlog OC315 - descoberta cultural (2026-10-29)
+
+O [OpenCulturas 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md) usa Search API + view mode de indexação + três facetas. O ACULTA **já possui** providers de Index, relações nomeadas, consulta paginada e ACL: **não reimplementar** esses mecanismos.
+
+- **OC-IDX1 / P0:** mapear integração de `aculta_event` e `aculta_event_location` com descoberta cultural, mantendo Search API como índice textual e `aculta_index` como catálogo transversal/relacional. Documentar possíveis sobreposições antes de criar nova projeção.
+- **OC-IDX2 / P0:** consulta/publicação restrita ao purpose, entidade e usuários habilitados; evitar renderização indiscriminada de dados privados e referências LMS em páginas globais.
+- **OC-IDX3 / P1:** facetas opcionais (tipo, categoria, período, localidade, acessibilidade) e componentes de listagem com paginação sem JS obrigatório. `drupal/facets` **não está aprovado como dependência** por esta auditoria.
+- **OC-IDX4 / P1:** testes de duas contas e propósito de domínio diferente, invalidação por atualização/remoção e benchmark de volume. Sem `accessCheck(FALSE)` propagado à vitrine pública.
+
+Estado: **planejado; nenhum provider, índice, schema ou configuração modificados**.

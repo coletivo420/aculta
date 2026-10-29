@@ -161,3 +161,21 @@ Medição com `grep` e leitura de código. O tamanho de funções foi conferido 
 - Auditoria de cópia: `web/modules/custom/aculta_portal/modules/aculta_events/docs/AUDITORIA-OPENCULTURAS.md`
 - Plano de UGC: `web/modules/custom/aculta_portal/modules/aculta_ugc/docs/PLANO-IMPLANTACAO.md`
 - Papéis e reivindicação: `docs/portal/ACULTA-USER-PLAN.md` (9A)
+
+## Nova rodada de candidatos de código (OpenCulturas 3.1.5, 2026-10-29)
+
+Revisão estática, **nenhuma portabilidade executada**; referência verificável: [AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md](AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). A lista C-01 a C-10 anterior refere-se à revisão de 3.1.4.
+
+| Origem relativa a `profile/modules/custom/` | Destino | Contrato antes da adaptação |
+| --- | --- | --- |
+| `openculturas_media/src/Service/ReadableMime.php` | Document Viewer | tipo/label MIME seguro e sanitizado |
+| `openculturas_media/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` | Document Viewer | tamanho/idioma/formato sem expor arquivo restrito |
+| `openculturas_custom/src/Entity/EcaNotificationRecipient.php` | UGC/Mailer | entidade de destinatários por purpose sem ECA |
+| `openculturas_custom/src/Plugin/ExtraField/Display/EventSupporters.php` | Events | perfis vinculados e marcas autorizadas |
+| `openculturas_custom/src/Plugin/ExtraField/Display/EventPressQuotes.php` | Events/Magazine | menção externa validada e atribuída |
+| `openculturas_teaser/src/Plugin/paragraphs/Behavior/TeaserBehaviorBase.php` | Magazine/tema | override de cartão sem exigir Paragraphs |
+| `openculturas_openstreetmap/src/OpenStreetMap/OfficeHoursToOsmFormatter.php` | Maps | horário tipado, direitos OSM, revisão humana |
+| `openculturas_map/src/Plugin/Form/OpenCulturasMapFilterForm.php` | Maps/Events | filtros sem depender do módulo original |
+| `openculturas_custom/src/TermPathBasedBreadcrumbBuilder.php` | Portal | teste de equivalência com `AcultaBreadcrumbBuilder`, sem duplicação |
+
+Todo código derivado exige atribuição por arquivo e entrada em `ORIGEM-OPENCULTURAS.md`, análise de dependência/segurança, DI, controle de acesso, cache, e testes. **Não portar nesta PR documental**. Geometrias editáveis e metadados de IA não foram validados como funcionalidades do pacote 3.1.5 nesta auditoria.

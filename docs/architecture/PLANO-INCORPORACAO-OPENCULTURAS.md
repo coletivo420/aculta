@@ -125,3 +125,18 @@ Cada painel é uma microfase, com permissão própria, teste Kernel de acesso ne
 | ADM8 | Painel de embed do calendário | `aculta_calendar` | E5 com rota (F5 concluída) | Implementado como consulta somente leitura dos hosts de teste e produção declarados em `aculta_deployer/config/deploy.json`; sem edição de allowlist. Kernel cobre acesso negado a usuário comum e acesso autorizado. Commit `1a423c042`. |
 
 ADM2, ADM4 e ADM5 têm decisões registradas em D-22, D-23 e D-24. A confirmação posterior de ADM5 inclui rotas de listagem de controllers e requer allowlist explícita.
+
+## Ampliação aprovada após nova auditoria do pacote 3.1.5 (2026-10-29)
+
+[Inventário, matriz OC315-01 a OC315-16 e gates](AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). As fases E0–E10 acima continuam com seu status histórico; a tabela seguinte **não** declara código concluído.
+
+| Onda | Prioridade | Donos | Entrega prevista | Dependência / gate |
+| --- | --- | --- | --- | --- |
+| OC-A | P0 | Events, Index, Portal | Auditoria ACL para locais, consulta paginada/benchmark de eventos, busca cultural respeitando purpose e grants | Kernel A/B, resultados privados excluídos e teste de escala |
+| OC-B | P1 | Events, Maps, tema | Acessibilidade estruturada, horário/agenda de locais, eventos online/híbridos, situação/idade/avisos, SDCs com consumidores | esquema idempotente, contrato SDC e WCAG AA |
+| OC-C | P1 | User, Studio, UGC, Mailer | Organização distinta de conta/perfil, reivindicação com moderação, salvos, recomendações, avisos por purpose | D-01/D-03, cache privado e migração segura |
+| OC-D | P2 | Magazine, Document Viewer, Image, tema | Clipping, apoiadores, metadados de download, override de teasers, arquivo opcional | autorização de marcas, revisão de licenças e consumers |
+| OC-E | P2 | Maps, Portal | Horários estruturados para OSM e comparação do breadcrumb existente | OC-B; não duplicar serviço |
+| OC-F | fechamento | Donos | Verificação integrada e rastreabilidade do 3.1.5 | testes efetivamente executados + Firefox ESR |
+
+Proibições mantidas: sem cópia de `opcult` ou templates Twig, sem ECA, `smart_date`, Facets ou Office Hours adicionados sem decisão, nem `config:import` global. Separar código presente de integração funcional e homologação no Runtime. **Não reescrever `aculta_index`**, que já fornece índice transversal e providers próprios.

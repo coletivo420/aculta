@@ -304,3 +304,7 @@ outros ambientes nem substitui a repetição do inventário antes de executar um
 migração. O arquivo de status do Image está sendo editado por outra sessão no
 checkout servido; essa alteração foi preservada e o manifesto permanece sem
 atualização nesta microfase.
+
+## Incremento OC315 - mídia e transparência opcional (2026-10-29)
+
+Auditoria: [OpenCulturas 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). Estudar metadados **opcionais** de autoria/crédito, origem, licença informada e contexto de utilização em upload público; preservar D-10 (nenhuma licença obrigatória e nenhum filtro por licença na biblioteca). Downloads com formato/tamanho/idioma pertencem ao `aculta_document_viewer` e devem respeitar acesso por entidade. Transparência de criação/alteração por IA é **ideia independente**, não paridade verificada do pacote 3.1.5. Sem alteração de biblioteca, esquema ou fluxo de upload nesta rodada.

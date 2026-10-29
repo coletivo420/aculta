@@ -8,7 +8,7 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`. Entram depois do fecham
 - **I-08 — Primeiro acesso em cartões.** Passos reais (escolher apelido, completar perfil, salvar um
   conteúdo) no hub. Sem JavaScript obrigatório, sem biblioteca de tour. Fechamento por "Não mostrar de novo",
   gravado na conta.
-- **I-06 — Seção "Minha organização".** Só para o papel `organizador` (ver `ACULTA-USER-PLAN.md`, seção 9A).
+- **I-06 — Seção "Minha organização".** Por vínculo verificado com organização e escopo de `content_editor` (D-01); **não** criar papel `organizador`.
   Lista os locais, eventos e perfis que a organização reivindicou ou criou.
 - Visual de referência: V-6 do comparativo.
 
@@ -405,3 +405,13 @@ sendo a plataforma compartilhada. As seções abaixo de G420/GanjaLab preservam
 o histórico das fases anteriores; nomes e caminhos atuais estão no
 [contrato de identidade](../../../../../../../docs/portal/ACULTA-STUDIO-IDENTITY.md).
 
+
+## OC315 - complementar experiência, sem misturar Conta, Perfil e Organização (2026-10-29)
+
+Referência: [auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). **Planejamento aprovado**, após gates S-R4/S-R5 já definidos.
+
+- **OC-ST1:** "Meus salvos" combina flags existentes respeitando dono e purpose; `bookmark-toggle` **já possui** consumer em tópico do Fórum. Estado visual do botão ≠ lista privada concluída. Testar contas A/B e cache por UID.
+- **OC-ST2:** "Minhas recomendações" terá storage/flag/autoridade separados de favoritos e seguidores; não inferir vínculo organizacional de bookmark.
+- **OC-ST3:** "Minha organização" usa vínculo de representação aprovado pela moderação, nunca credencial de **Conta** ou papel global `organizador` por si. **Perfil** público continua entidade/experiência distinta; mudanças organizacionais exigem aprovação e trilha de auditoria.
+- **OC-ST4:** primeiro acesso em cartões existentes; sem depender de Tours do OpenCulturas, sem JS obrigatório e sem duplicar onboarding.
+- Gates: grants Entity/Domain, acesso negado em cross-account/cross-purpose, cache A/B, Firefox ESR e Olivero.

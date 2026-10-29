@@ -90,3 +90,13 @@ para mapa, atribuição, avisos e links. PortalUiHooks mapeia as classes no tema
 Gate global módulo–tema PASS (3397 verificações); suíte Maps 10/39 PASS, duas
 depreciações Core. A revisão de privacidade e a verificação visual continuam
 pendentes.
+
+## Backlog OC315 - Maps e locais (2026-10-29)
+
+Fonte: [auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). **Nenhuma mudança no provedor OSM/Leaflet padrão** (D-17 a D-20).
+
+- **OC-M1/P0:** testar proteção de locais no catálogo/mapa; revisar `accessCheck(FALSE)` de `LocationCatalogue`; garantir que precise de política explícita para expor dados pessoais/privados.
+- **OC-M2/P0:** aceitar coordenadas 0 e 0.0 sem eliminá-las por `!empty()`; testar range lat/lon e precisão aproximada.
+- **OC-M3/P1:** integrar dados estruturados de acessibilidade/horários a filtros e popups, quando schema de Eventos existir.
+- **OC-M4/P2:** revisar `OfficeHoursToOsmFormatter.php` da origem após adoção de dados estruturados; não importar edição OSM sem revisão humana.
+- **Exploratório fora da paridade 3.1.5:** geometrias Polygon/MultiPolygon para circuitos e trajetos de eventos; **não** tratar como característica confirmada da origem nem implementar sem ADR de privacidade/custo.

@@ -445,3 +445,11 @@ reuso: `docs/architecture/OPENCULTURAS-INCORPORACAO-CODIGO.md`.
 As perguntas da seção 7 foram respondidas. Decisões, impactos e pendências estão em
 `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Pendente: endereço de divulgação responsável
 (I-17) e ADR do provedor de mapa (D-08).
+
+## 10. Retificação auditada para OpenCulturas 3.1.5 (2026-10-29)
+
+**Fonte de verdade para a nova rodada:** [AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md](AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md), no HEAD da PR #299. As seções 1–9 registram análise histórica do **3.1.4** e decisões preliminares; não equivalem ao inventário do 3.1.5. Este pacote possui **42 Views (7 desabilitadas)**, **9 vocabulários**, **19 tipos de parágrafos**, **14 módulos próprios**, **3 facetas**, **5 flags**, **3 workflows** e **4 automações ECA**. `archive`, `glossary` e `content_recent` vêm desabilitadas, e `views.view.oc_map_dates.yml` não foi encontrado em `config/install`.
+
+**Decisões posteriores prevalecem:** D-01 usa vínculo/escopo editorial e não papel `organizador`; D-10 não torna licença de mídia obrigatória; D-11 não autoriza Honeypot; D-17/D-20 preservam Maps/Calendar próprios. Este ajuste **não** reabre decisões e não marca itens antigos como implementados.
+
+**Nova prioridade aprovada:** OC-A (auditoria de acesso/performance e busca de eventos/locais), OC-B (campos e consumidores SDC), OC-C (organizações/Studio/UGC), OC-D (imprensa, apoiadores, download, teasers e arquivo opcional), OC-E (horários OSM e breadcrumbs, condicionados à comparação). Os critérios e arquivos exatos estão na nova auditoria. Nenhuma alteração de código nesta rodada.

@@ -329,3 +329,7 @@ All custom interfaces (GanjaLab, GanjaLab420, WE SATIVA and future consumers) sh
 ## Atualização STUDIO 0.1-B / D-A.2-T2
 
 STUDIO 0.1-B: providers de experiência propostos para GanjaLab, WE SATIVA e futuras interfaces, com SDC/UI Suite como única camada de apresentação. D-A.2-T2 endurece listing de estados; nova fila Wiki somente após provider seguro e testes. Nenhuma alteração visual nesta etapa.
+
+## OC315 - novo backlog de integração visual (2026-10-29)
+
+Origem: [auditoria 3.1.5](../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). A presença estática dos SDCs não prova homologação. Integração funcional proposta, após gates existentes: (1) página de evento em cinco regiões e H1 único; (2) selos acessíveis ligados a campos reais; (3) listagem cultural filtrável com cartão atual e paginação; (4) marcas autorizadas, imprensa e overrides editoriais; (5) salvos por usuário com estado seguro. Registrar consumers e evidências de cada SDC; não importar CSS/Twig do `opcult`.

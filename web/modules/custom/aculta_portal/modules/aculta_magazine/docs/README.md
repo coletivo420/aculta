@@ -200,3 +200,7 @@ rascunho, revisão, publicado e arquivado; a UI autenticada e a moderação de
 comentários ainda precisam de homologação no navegador.
 
 Norma: [Kernel ACULTA](../../../../../../../docs/architecture/aculta-kernels.md). Planejamento: [Studio e Revista](../../../../../../../docs/portal/STUDIO-MAGAZINE-ROADMAP.md).
+
+## Backlog editorial OC315 (2026-10-29)
+
+Após o roadmap MAG vigente, aproveitar como padrões opcionais do OpenCulturas 3.1.5: menções à imprensa (`media_mention`), cartão `editorial-card` já disponível, dados de apoiadores verificados e override de título/resumo/imagem só na apresentação do teaser. `views.view.archive.yml` da origem vem **desabilitada**: só criar arquivo mensal se houver demanda. Exigir autoria e links verificáveis, ACL por purpose, cache, esquema de campos próprio e consumidor UI Patterns real. Ver [auditoria](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). Não introduzir Paragraphs, ECA ou bibliotecas novas só para copiar o comportamento.

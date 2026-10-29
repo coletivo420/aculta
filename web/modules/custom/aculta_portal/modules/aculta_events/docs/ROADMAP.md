@@ -93,7 +93,8 @@ com o mesmo papel do OpenCulturas. `[x]` = já existe; `[ ]` = a fazer.
 - [x] Nome do local (`title`).
 - [x] Tipo de local: `aculta_location_type` (vocabulário próprio).
 - [x] Endereço, coordenadas e precisão do endereço (`aculta_events`, F4).
-- [x] Horário de funcionamento (campo estruturado, equivalente a `field_office_hours`).
+- [x] Horário em texto livre (`EventLocation::field_horario`, `string_long`), **não estruturado**.
+- [ ] Horários estruturados equivalentes a `field_office_hours` (dia/intervalo/exceção); avaliar Office Hours versus solução própria antes de decidir dependência.
 - [ ] Nome alternativo (`field_alternative_title`, string).
 - [ ] Subtítulo ou chamada (`field_subtitle`, texto curto).
 - [ ] Descrição (`body`, texto longo com formatação).
@@ -235,3 +236,19 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 - Gate módulo–tema PASS (3397 verificações); Events 55/669 PASS, 26
   depreciações upstream. Confirmar a apresentação no Firefox ESR após servir o
   candidato.
+
+## Incremento OC315 aprovado - matriz de eventos e locais (2026-10-29)
+
+[Auditoria OpenCulturas 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). **Backlog; nenhum campo alterado nesta revisão.** As implementações E0–E10/F0–F9 acima preservam seu estado.
+
+| Ordem | Incremento | Evidência no código | Gate |
+| --- | --- | --- | --- |
+| OC-EV1 / P0 | ACL de locais | `LocationCatalogue::busca()` usa `accessCheck(FALSE)` sem `access('view')` por item; definir se locais são sempre públicos | Kernel anônimo, editor e dois purposes; dados negados ausentes de lista, mapa e cache |
+| OC-EV2 / P0 | desempenho do catálogo | `EventCatalogue::busca()` carrega eventos + datas e expande em PHP | paginação efetiva, benchmark de recorrência extensa, limites e cache |
+| OC-EV3 / P1 | eventos híbridos e informação | OpenCulturas: `field_attendance_mode`, `field_location_virtual`, `field_min_age`, `field_safety_info`, `field_door_time_relative`, `field_event_status` | modelo/tipos acordados, update idempotente, Form API, ACL e tests |
+| OC-EV4 / P1 | horário estruturado e acessibilidade | hoje `field_horario` é texto; `accessibility-badges` não recebe dados reais | tipagem, exceções, safe markup, consumer evento/local e busca |
+| OC-EV5 / P1 | página real com layout SDC | `EventPageController` usa `#theme=aculta_event_page` e o Twig próprio contém H1; `event-page-five-regions` é candidato | consumidor real, eliminar H1 duplicado sem perder título acessível, desktop/320/zoom/teclado |
+| OC-EV6 / P2 | imprensa, apoiadores e pessoas | campos/consumidores ausentes ou parciais | vínculos verificados, autorização de marca e pipeline de imagem |
+| OC-EV7 / P2 | geodados | mapa atual é de pontos; `MapController` usa `!empty` para lat/lon | aceitar coordenada 0; estudar polígonos **como ideia, não paridade comprovada 3.1.5** |
+
+**Dependências:** indexação cruzada via `aculta_index`/Search API; `aculta_maps` continua dono do renderer; não introduzir novo papel `organizador`, ECA ou `smart_date`. Revisar code owner e autorização antes de qualquer alteração de esquema ou Runtime.

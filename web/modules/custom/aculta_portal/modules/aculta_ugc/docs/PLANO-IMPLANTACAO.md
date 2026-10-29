@@ -5,7 +5,7 @@ aviso aos moderadores, anti-spam sem terceiros e licença de mídia. Hoje essas 
 (fórum, `aculta_user`, Marley, WE SATIVA, Wiki). Este plano define o que sai de onde, sem mudar os
 contratos de moderação de cada frente.
 
-Status: **plano**. Nenhum código foi criado. Decisões em aberto na seção 6.
+Status: **plano**. Nenhum código foi criado. Decisões D-01 a D-12 já registradas; a seção 6 distingue decisões vigentes de parâmetros futuros.
 
 ## 1. Problema
 
@@ -92,14 +92,15 @@ Ordem de dependência: U0 → U1 → (U2, U5) → U3 → U4; U6 pode correr em p
 - Gates existentes: `validate-single-acceptance.php` (se houver consentimento), `validate-public-slugs.php`
   (rotas de denúncia em português), `validate-no-temporary-route-aliases.php`.
 
-## 6. Decisões para o responsável
+## 6. Decisões vigentes e parâmetros ainda pendentes (2026-10-29)
 
-1. **Fronteira com `aculta_user`:** `ReportQueue` migra para `aculta_ugc` (recomendado) ou continua lá e
-   `aculta_ugc` só consome?
-2. **Destinatários do aviso:** equipe de moderação global, por purpose ou por área (recomendado: por purpose).
-3. **Limite de denúncias:** valor por conta e por dia.
-4. **Contato de divulgação responsável:** informado em `SECURITY.md` (I-17).
-5. **Honeypot antes do captcha:** aprovar a troca de ordem nos formulários públicos.
+- **D-04:** migrar `ReportQueue` para uma fila comum de `aculta_ugc`, com contagem pré/pós e testes de equivalência.
+- **D-03:** destinatários de denúncias por **purpose**, em entidade de configuração; avisos por código/Mailer, sem ECA.
+- **D-01/D-02:** reivindicação de local/evento/organização depende de vínculo verificado e decisão da moderação; padrão fechado, sem criar papel `organizador`.
+- **D-10:** licença de mídia **opcional**; retirar qualquer imposição de Creative Commons e filtro de biblioteca por licença.
+- **D-11:** manter captcha Turnstile atual; **não** instalar Honeypot nesta fase.
+- **Pendente de decisão própria:** limites numéricos de denúncia/rate limit, retenção e política de recurso contra decisão. Não preencher valores automaticamente.
+- **Contato de divulgação:** `abuso@aculta.org` já consta no `SECURITY.md` (P-01 resolvido).
 
 ## 7. Riscos
 
@@ -109,8 +110,8 @@ Ordem de dependência: U0 → U1 → (U2, U5) → U3 → U4; U6 pode correr em p
 | Vazamento de quem denunciou | Nenhum dado do denunciante em aviso e painel; teste de regressão |
 | Duplicar contratos de Marley e WE SATIVA | Cada frente mantém o seu; `aculta_ugc` oferece o serviço |
 | Migração de denúncias antigas perder histórico | U3 com contagem antes e depois e teste de equivalência |
-| Honeypot quebrar acessibilidade | Campo oculto de forma que leitor de tela e teclado não o alcancem; teste |
-| Licença de mídia confusa para o usuário | Padrão pré-selecionado com explicação curta; ajuda contextual |
+| Proteção contra abuso com captcha vigente | Testar Turnstile, limites de taxa aprovados e caminhos acessíveis, sem introduzir Honeypot |
+| Metadados opcionais de mídia | Informação clara sobre crédito e licença quando informados, sem preenchimento obrigatório (D-10) |
 
 ## 8. Documentos relacionados
 
@@ -129,3 +130,7 @@ Padrões a reescrever (não copiar), com defeitos a evitar:
   livre de `alerts_recipients` do `aculta_mailer` para a finalidade de denúncia.
 - **C-05:** cache por usuário invalidado ao salvar um flag (confirmar antes do "Meus salvos").
 - Fonte e defeitos: `docs/architecture/OPENCULTURAS-INCORPORACAO-CODIGO.md`.
+
+## 10. Incremento OC315: integração de denúncias, perfis e organizações
+
+[Auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md) / OC315-05 e OC315-07. Planejar sob U2/U3, não criar fila paralela. Registrar quem reivindicou, entidade reivindicada, vínculo alegado, decisão administrativa e quando cada permissão começa/cessa. Não transferir propriedade em envio de pedido. Garantir notificações por purpose e interfaces sem exposição de identidade do denunciante, com testes de acesso e de migração. **Nenhum código executado nesta rodada.**
