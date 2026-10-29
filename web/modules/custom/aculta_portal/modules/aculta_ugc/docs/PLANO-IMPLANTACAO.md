@@ -1,7 +1,7 @@
 # Plano de implantação — ACULTA UGC (`aculta_ugc`)
 
 Submódulo proposto para reunir a infraestrutura comum ao conteúdo criado por usuários: denúncia,
-aviso aos moderadores, anti-spam sem terceiros e licença de mídia. Hoje essas peças existem espalhadas
+aviso aos moderadores, limites de uso e metadados opcionais de mídia. Hoje essas peças existem espalhadas
 (fórum, `aculta_user`, Marley, WE SATIVA, Wiki). Este plano define o que sai de onde, sem mudar os
 contratos de moderação de cada frente.
 
@@ -17,8 +17,8 @@ O ACULTA recebe conteúdo de usuários em várias frentes, e cada uma resolve pa
 | Conta (`aculta_user`) | `ReportQueue` (fila de denúncias de conteúdo público) | Fila sem painel de acompanhamento e sem prazo |
 | Marley e WE SATIVA | Contratos de moderação próprios (`MARLEY-WIKI-MODERATION.md`, `WE-SATIVA-C01-B-CONTRIBUTOR-MODERATION-CONTRACT.md`) | Regras de denúncia repetidas, sem reuso |
 | Wiki (`aculta_wiki`) | Moderação do Core (workflow editorial) | Sem denúncia de verbete |
-| Uploads (`aculta_image`, `aculta_gallery`, Fórum) | Política central em `USER-UPLOADS.md` | Licença da mídia não é declarada |
-| Formulários públicos | Captcha externo (Turnstile) | Sem camada local antes do captcha (privacidade e custo) |
+| Uploads (`aculta_image`, `aculta_gallery`, Fórum) | Política central em `USER-UPLOADS.md` | Metadados opcionais de crédito/autoria ainda dependem de contrato |
+| Formulários públicos | Turnstile vigente | Limites por conta/tempo ainda não fixados; Honeypot rejeitado em D-11 |
 
 ## 2. Escopo
 
@@ -28,8 +28,8 @@ Dentro:
    objeto denunciado (tópico, comentário, post, verbete, evento, perfil).
 2. **Aviso aos moderadores:** aviso por código a cada denúncia nova, com destinatários por área (purpose).
 3. **Painel de acompanhamento:** contagens e tempos agregados (ver `aculta_statistics`, I-03).
-4. **Anti-spam local:** honeypot e limite de taxa antes do captcha externo (I-14).
-5. **Licença de mídia de UGC:** campo de licença obrigatório quando a mídia é pública (I-13).
+4. **Controle de abuso:** limites de taxa a decidir e testar, sem substituir o Turnstile vigente (D-11).
+5. **Mídia de UGC:** estudar crédito/autoria e licença **opcionais** sem filtro compulsório (D-10).
 
 Fora:
 
@@ -46,14 +46,14 @@ Fora:
 Frente (fórum, wiki, eventos, conta)
         │  registra denúncia (objeto, motivo, pessoa)
         ▼
-aculta_ugc  ── ReportService ── limite de taxa e honeypot (entrada)
+aculta_ugc  ── ReportService ── limite de taxa aprovado (entrada)
         │
         ├── ModerationNotifier ──▶ aculta_messenger (aviso por código)
         ├── ReportRepository (entidade própria, sem dado pessoal além do UID)
         └── MetricsPublisher ──▶ aculta_statistics (só contagens)
 
 Política de upload ─ USER-UPLOADS.md (consumida, não duplicada)
-Licença de mídia ─ campo no uploader do aculta_image (consumido)
+Metadados opcionais ─ política do aculta_image (consumida)
 ```
 
 Regras de desenho:
@@ -75,8 +75,8 @@ Regras de desenho:
 | U2 | Aviso aos moderadores por código, com teste de destinatário e de não vazamento do denunciante | Aviso em teste |
 | U3 | Migração das denúncias de `ReportQueue` e dos flags de fórum para a entidade nova, sem perda de histórico | Histórico preservado |
 | U4 | Painel de acompanhamento (I-03) em `aculta_statistics`, só com agregados | Painel em teste |
-| U5 | Honeypot e limite de taxa em formulários públicos (I-14), sem captcha externo como primeira barreira | Formulários protegidos |
-| U6 | Campo de licença de mídia (I-13) no uploader, com padrão e validação | Licença obrigatória para mídia pública |
+| U5 | Política de limite de taxa aprovada, integrada ao Turnstile atual (D-11); sem Honeypot | Formulários protegidos e acessíveis |
+| U6 | Metadados opcionais de autoria/crédito/licença, só após contrato com aculta_image (D-10) | Nenhuma exigência de licença ou filtro compulsório |
 | U7 | Revisão visual (V-4 do `OPENCULTURAS-COMPARATIVO.md`) e acessibilidade | Revisão aprovada |
 
 Ordem de dependência: U0 → U1 → (U2, U5) → U3 → U4; U6 pode correr em paralelo a U2.
@@ -85,7 +85,7 @@ Ordem de dependência: U0 → U1 → (U2, U5) → U3 → U4; U6 pode correr em p
 
 - Kernel: duplicidade, limite por dia, acesso do moderador e do usuário comum, denúncia de objeto
   inexistente ou sem acesso, e ausência de dado pessoal no aviso.
-- Unit: regras de limite e de honeypot.
+- Unit: limites de taxa aprovados e integração do fluxo atual de proteção.
 - Navegador (Firefox ESR, `DISPLAY=:0`): formulário de denúncia com teclado e leitor de tela, e
   mensagem genérica quando bloqueado.
 - Temas: ACULTA420 e Olivero.
@@ -128,7 +128,7 @@ Padrões a reescrever (não copiar), com defeitos a evitar:
 
 - **C-01:** destinatários de aviso como entidade de configuração, sem ECA (U2). Substitui o campo de texto
   livre de `alerts_recipients` do `aculta_mailer` para a finalidade de denúncia.
-- **C-05:** cache por usuário invalidado ao salvar um flag (confirmar antes do "Meus salvos").
+- **C-05:** cache por usuário da lista "Meus salvos": contexto de UID e teste de duas contas antes de adicionar invalidação customizada.
 - Fonte e defeitos: `docs/architecture/OPENCULTURAS-INCORPORACAO-CODIGO.md`.
 
 ## 10. Incremento OC315: integração de denúncias, perfis e organizações

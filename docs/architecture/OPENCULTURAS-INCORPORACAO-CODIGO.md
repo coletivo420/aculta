@@ -1,5 +1,7 @@
 # OpenCulturas → ACULTA: o que incorporar no código (funções e hooks)
 
+**Atualização 2026-10-29:** este documento registra a revisão histórica 3.1.4. Os candidatos verificáveis do tarball **3.1.5**, os riscos corrigidos e o status documental aprovado estão na [nova auditoria](AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). A expressão “nada implementado” abaixo descreve a data daquela rodada, não o estado global atual.
+
 Rodada de revisão de código, focada no que pode entrar no ACULTA. O OpenCulturas é mais maduro na
 organização de hooks e de configuração; o ACULTA tem mais código e mais testes próprios. Este documento
 registra o que vale copiar **como padrão** (reescrito, com teste), o que corrigir antes de reusar e o que não levar.

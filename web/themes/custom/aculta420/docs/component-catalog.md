@@ -189,4 +189,4 @@ Novo inventário estático no HEAD da PR #299: **54 arquivos `.component.yml`** 
 - `editorial-card` (imprensa) e `patterns/card` (teasers): preferir reuso com dados editoriais consistentes; não criar SDC alternativo sem gate.
 - Acessibilidade: modo escuro/claro, 320 px, zoom 200%, teclado, contraste WCAG 2.2 AA, no-JS quando aplicável e Olivero. Não marcar "concluído" sem evidência no Runtime.
 
-Fonte: [auditoria OpenCulturas 3.1.5](../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md).
+Fonte: [auditoria OpenCulturas 3.1.5](../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md).

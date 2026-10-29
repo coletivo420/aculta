@@ -1,5 +1,7 @@
 # Comparativo OpenCulturas × ACULTA — ideias, visuais e destinos
 
+**Retificação em 2026-10-29:** para o pacote **3.1.5** e prioridades aprovadas, consulte [a nova auditoria](AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). Contagens, propostas de licença obrigatória, Honeypot e criação de papel `organizador` abaixo são **históricas**, supersedidas por decisões D-01/D-10/D-11. Não executar itens I-xx sem reconciliar com o programa OC315.
+
 Documento de arquitetura. Compara o ACULTA com o OpenCulturas 3.1.4 (distribuição Drupal, GPL-2.0-or-later)
 e decide o que vira melhoria, em qual módulo e em qual roadmap. Não copia código: a auditoria de cópia está
 em `web/modules/custom/aculta_portal/modules/aculta_events/docs/AUDITORIA-OPENCULTURAS.md`.

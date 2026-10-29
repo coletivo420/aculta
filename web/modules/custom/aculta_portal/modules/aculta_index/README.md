@@ -339,7 +339,7 @@ Esses resultados não substituem as suítes Kernel nem o boot dos owners.
 
 ## Backlog OC315 - descoberta cultural (2026-10-29)
 
-O [OpenCulturas 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md) usa Search API + view mode de indexação + três facetas. O ACULTA **já possui** providers de Index, relações nomeadas, consulta paginada e ACL: **não reimplementar** esses mecanismos.
+O [OpenCulturas 3.1.5](../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md) usa Search API + view mode de indexação + três facetas. O ACULTA **já possui** providers de Index, relações nomeadas, consulta paginada e ACL: **não reimplementar** esses mecanismos.
 
 - **OC-IDX1 / P0:** mapear integração de `aculta_event` e `aculta_event_location` com descoberta cultural, mantendo Search API como índice textual e `aculta_index` como catálogo transversal/relacional. Documentar possíveis sobreposições antes de criar nova projeção.
 - **OC-IDX2 / P0:** consulta/publicação restrita ao purpose, entidade e usuários habilitados; evitar renderização indiscriminada de dados privados e referências LMS em páginas globais.
