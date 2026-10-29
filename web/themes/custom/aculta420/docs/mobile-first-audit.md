@@ -733,3 +733,14 @@ semântica e Form API não mudam. `support-form.py` mede padding, largura das
 ações, grade de doações e overflow em 320–1440px. Lint CSS e sintaxe Python
 foram executados; Firefox/Runtime ficam DEFERRED sem `DISPLAY=:0`. Esta fatia
 não homologa SUPPORT nem THEME-MF3.
+
+### THEME-MF2 — View de projetos institucionais
+
+O override mobile de `.aculta-project-list .view-content` foi migrado de
+`max-width: 767.98px` para uma grade de uma coluna como base; `min-width: 48rem`
+restaura duas colunas e o gap horizontal do SDC `content-grid`, e `62rem`
+restaura o row-gap de desktop. `institutional-layout.py` agora injeta o CSS do
+SDC e compara também a View de projetos nas fronteiras 576/767/768/992px,
+mantendo os testes existentes de CTA, áreas, detalhes, screenshots e overflow.
+Lint CSS e sintaxe Python passaram. Firefox/Runtime DEFERRED sem `DISPLAY=:0`;
+nenhum gate global MF3 é declarado.

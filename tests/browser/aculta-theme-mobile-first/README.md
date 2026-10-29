@@ -270,9 +270,10 @@ DISPLAY=:0 python3 tests/browser/aculta-theme-mobile-first/account-orders.py
 `institutional-layout.py` roda em Firefox ESR visível com fixture sintético,
 comparando o CSS anterior (Git `HEAD^` por padrão) ao candidato em
 320/360/390/575/576/599/600/767/768/1024/1280/1440 px. Mede direction/alinhamento
-de CTAs, tracks da grade institucional e pares de detalhes; guarda PNGs e
-`summary.json` fora do repositório. Não acessa Runtime, não envia dados e não
-substitui a inspeção das páginas reais nem a cobertura de zoom, teclado,
+de CTAs, tracks da grade institucional, a View `content-grid--2` de projetos e
+pares de detalhes; guarda PNGs e `summary.json` fora do repositório. Não acessa
+Runtime, não envia dados e não substitui a inspeção das páginas reais nem a
+cobertura de zoom, teclado,
 claro/escuro, reduced motion ou WCAG completa.
 
 ```sh

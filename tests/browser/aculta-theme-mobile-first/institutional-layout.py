@@ -90,6 +90,17 @@ padding:8px 12px;text-align:center}.fixture{box-sizing:border-box;width:100%;pad
 <dl class="aculta-institution-details"><div><dt>Natureza jurídica</dt><dd>Associação cultural sem fins lucrativos</dd></div>
 <div><dt>Endereço</dt><dd>Rua de exemplo, 123, bairro central, município</dd></div></dl>
 </main></body></html>"""
+fixture = fixture.replace(
+    "</style>",
+    (ROOT / "web/themes/custom/aculta420/components/patterns/content-grid/content-grid.css").read_text()
+    + "</style>",
+)
+fixture = fixture.replace(
+    '<dl class="aculta-institution-details">',
+    '<div class="aculta-project-list"><div class="view-content aculta-content-grid aculta-content-grid--2">'
+    '<section>Projeto um</section><section>Projeto dois</section></div></div>'
+    '<dl class="aculta-institution-details">',
+)
 
 driver = Driver(bidi=True)
 viewport = Viewport(driver)
@@ -104,21 +115,27 @@ try:
         actual_width = viewport.set(driver, width)
         baseline_metrics = driver.js("""const actions=document.querySelector('.aculta-actions');
           const button=actions.querySelector('.btn');const areas=document.querySelector('.aculta-areas');
+          const projects=document.querySelector('.aculta-project-list .view-content');
           const details=document.querySelector('.aculta-institution-details > div');
-          const a=getComputedStyle(actions),b=getComputedStyle(button),c=getComputedStyle(areas),d=getComputedStyle(details);
+          const a=getComputedStyle(actions),b=getComputedStyle(button),c=getComputedStyle(areas),p=getComputedStyle(projects),d=getComputedStyle(details);
           return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,
             actions:{direction:a.flexDirection,alignItems:a.alignItems,gap:a.gap,buttonText:b.textAlign},
-            areas:{columns:c.gridTemplateColumns,gap:c.gap},details:{columns:d.gridTemplateColumns,gap:d.gap}};""")
+            areas:{columns:c.gridTemplateColumns,gap:c.gap},
+            projects:{columns:p.gridTemplateColumns,gap:p.gap},
+            details:{columns:d.gridTemplateColumns,gap:d.gap}};""")
         baseline_png = base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot"))
         (OUT / f"baseline-{width}.png").write_bytes(baseline_png)
         driver.js("document.querySelector('#theme-candidate').textContent=arguments[0]", [candidate])
         candidate_metrics = driver.js("""const actions=document.querySelector('.aculta-actions');
           const button=actions.querySelector('.btn');const areas=document.querySelector('.aculta-areas');
+          const projects=document.querySelector('.aculta-project-list .view-content');
           const details=document.querySelector('.aculta-institution-details > div');
-          const a=getComputedStyle(actions),b=getComputedStyle(button),c=getComputedStyle(areas),d=getComputedStyle(details);
+          const a=getComputedStyle(actions),b=getComputedStyle(button),c=getComputedStyle(areas),p=getComputedStyle(projects),d=getComputedStyle(details);
           return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,
             actions:{direction:a.flexDirection,alignItems:a.alignItems,gap:a.gap,buttonText:b.textAlign},
-            areas:{columns:c.gridTemplateColumns,gap:c.gap},details:{columns:d.gridTemplateColumns,gap:d.gap}};""")
+            areas:{columns:c.gridTemplateColumns,gap:c.gap},
+            projects:{columns:p.gridTemplateColumns,gap:p.gap},
+            details:{columns:d.gridTemplateColumns,gap:d.gap}};""")
         candidate_png = base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot"))
         (OUT / f"candidate-{width}.png").write_bytes(candidate_png)
         no_overflow = baseline_metrics["documentWidth"] <= width and candidate_metrics["documentWidth"] <= width
@@ -131,13 +148,17 @@ try:
         if width < 768:
             mobile_expectation = mobile_expectation and len(candidate_metrics["areas"]["columns"].split()) == 1
             mobile_expectation = mobile_expectation and len(candidate_metrics["details"]["columns"].split()) == 1
+            mobile_expectation = mobile_expectation and len(candidate_metrics["projects"]["columns"].split()) == 1
         else:
             mobile_expectation = mobile_expectation and len(candidate_metrics["areas"]["columns"].split()) == 2
             mobile_expectation = mobile_expectation and len(candidate_metrics["details"]["columns"].split()) == 2
+            mobile_expectation = mobile_expectation and len(candidate_metrics["projects"]["columns"].split()) == 2
         same_pixels = hashlib.sha256(baseline_png).hexdigest() == hashlib.sha256(candidate_png).hexdigest()
         record(f"{width}px: geometria computada preservada", actual_width == width and equal_layout and no_overflow,
                {"documentWidth": candidate_metrics["documentWidth"], "actions": candidate_metrics["actions"],
-                "areaColumns": candidate_metrics["areas"]["columns"], "detailColumns": candidate_metrics["details"]["columns"]})
+                "areaColumns": candidate_metrics["areas"]["columns"],
+                "projectColumns": candidate_metrics["projects"]["columns"],
+                "detailColumns": candidate_metrics["details"]["columns"]})
         record(f"{width}px: mobile-first esperado e captura idêntica", mobile_expectation and same_pixels,
                {"expectedLayout": mobile_expectation, "sameScreenshot": same_pixels})
 finally:

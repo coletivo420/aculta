@@ -724,3 +724,11 @@ ordem DOM e Form API permanecem iguais. `tests/browser/aculta-theme-mobile-first
 support-form.py` mede os estados em onze larguras; lint CSS e compilação Python
 são gates desta fatia. Firefox visível e a página real ficam DEFERRED sem
 `DISPLAY=:0`; esta microfase não aprova THEME-MF3.
+
+### THEME-MF2 — View de projetos institucionais
+
+A View mantém uma coluna como base móvel; em 768px recupera duas colunas e o
+gap progressivo do SDC `content-grid`, incluindo o row-gap desktop em 992px.
+`institutional-layout.py` compara baseline/candidato e adiciona a View às
+medições existentes de layout institucional. Lint CSS e compilação Python
+PASS; Firefox visível DEFERRED sem `DISPLAY=:0`. Não conclui THEME-MF3.

@@ -52,8 +52,15 @@
   .aculta-actions { flex-direction: row; }
 }
 
-/* Keep the View override scoped to the mobile consumer: the content-grid SDC
-   owns its 2/3-column desktop variants and has a more specific contract. */
-@media (max-width: 767.98px) {
-  .aculta-project-list .view-content { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+/* Project list remains stacked below tablet; restore the SDC's exact wide gap values above it. */
+.aculta-project-list .view-content { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+@media (min-width: 48rem) {
+  .aculta-project-list .view-content {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(1.25rem, 3vw, 3rem);
+    row-gap: 1.5rem;
+  }
+}
+@media (min-width: 62rem) {
+  .aculta-project-list .view-content { row-gap: 2rem; }
 }
