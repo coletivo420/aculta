@@ -341,3 +341,18 @@ O teste reutilizável é `tests/browser/aculta-theme-mobile-first/navigation.py`
 ele cobre somente a home MAIN e não substitui regressão nos outros purposes.
 Zoom, teclado focado completo, modo escuro, reduced motion e WCAG 2.2 AA seguem
 pendentes.
+
+### THEME-MF2 — Institution Bar global (2026-10-29)
+
+A geometria compacta passa a ser a base mobile; `min-width: 768px` restaura as
+dimensões desktop. A regra foi estendida ao `<ul class="nav flex-row">` realmente
+renderizado no menu de conta, além da variante `.navbar-nav`; nenhum Twig ou JS
+foi alterado. O baseline servido e o CSS candidato passaram 84/84 verificações
+cada no Firefox ESR visível: seis páginas (MAIN, Conta, SUPPORT, Wiki, Loja,
+Fórum), sete larguras (320/374/375/600/767/768/1440px), Institution Bar única e
+sem overflow. Evidências em
+`/home/piradopirata/aculta-suite-out/aculta-institution-bar-{baseline,candidate}/`.
+O Domain Header não aparece em SUPPORT, Conta, Loja ou Fórum nestas rotas; essa
+lacuna permanece Pede-A. Este slice não valida outros caminhos por purpose, zoom,
+teclado completo, modo escuro, reduced motion ou WCAG 2.2 AA e não aprova MF3.
+Teste reutilizável: `tests/browser/aculta-theme-mobile-first/institution-bar.py`.

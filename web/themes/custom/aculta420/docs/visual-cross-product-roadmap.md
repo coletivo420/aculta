@@ -506,3 +506,13 @@ abertura do botão, menu sem JavaScript, presença de Institution Bar e Domain
 Header e zero overflow. A validação integrada após publicação/cache e os demais
 purposes continuam pendentes; MF2 segue parcial. Ver detalhes em
 `mobile-first-audit.md`.
+
+### THEME-MF2 — Institution Bar global (2026-10-29)
+
+As dimensões compactas agora são CSS base; `min-width: 768px` recupera o layout
+desktop. O seletor móvel foi estendido ao `<ul class="nav flex-row">` usado
+pela conta real, além de preservar o `.navbar-nav`. O baseline servido e a folha
+candidata passaram 84/84 verificações no Firefox ESR, seis rotas e sete larguras
+de 320 a 1440px, sem overflow. Capturas e JSON ficam em
+`/home/piradopirata/aculta-suite-out/aculta-institution-bar-{baseline,candidate}/`.
+Isto é um slice de MF2, não valida todo o shell/purposes e não conclui MF3.

@@ -291,3 +291,13 @@ valores computados e passou 28/28 checks, inclusive fallback sem JavaScript.
 Este padrão do shell não cria SDC nem altera os headers institucionais. A
 validação se limita à home MAIN; a auditoria detalha os limites.
 
+## THEME-MF2 — Institution Bar global
+
+As regras compactas do shell passaram a ser a base mobile; `min-width: 768px`
+restaura as dimensões e o espaçamento desktop. A regra contempla `.navbar-nav`
+e o consumer real de conta, `<ul class="nav flex-row">`, sem alterar Twig ou
+contrato do shell. Firefox ESR candidato passou 84/84 checks nas páginas MAIN,
+Conta, SUPPORT, Wiki, Loja e Fórum, em 320/374/375/600/767/768/1440px, sem
+overflow. O baseline também passou 84/84. Isso não aprova MF3 nem cobre Domain
+Header nos purposes que hoje não o renderizam; ver `mobile-first-audit.md`.
+

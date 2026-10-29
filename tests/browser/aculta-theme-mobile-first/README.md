@@ -98,3 +98,26 @@ DISPLAY=:0 python3 tests/browser/aculta-theme-mobile-first/navigation.py
 candidato antes de publicar; sem essa variável, usa a CSS servida. A suíte mede
 somente a home MAIN e não substitui a regressão da navegação nos demais purposes,
 nem cobre zoom, leitor de tela ou WCAG completa.
+
+## Institution Bar global
+
+`institution-bar.py` compara o CSS servido ou uma folha local candidata na
+Institution Bar em MAIN, Conta, SUPPORT, Wiki, Loja e Fórum. Mede o consumer
+real `ul.nav` (além da variante `.navbar-nav`), dimensões responsivas, presença
+única da barra e overflow em 320/374/375/600/767/768/1440 px. Só faz GET e salva
+capturas em `$SUITE_OUT`.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-institution-bar
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 tests/browser/aculta-theme-mobile-first/institution-bar.py
+```
+
+Para auditar o layout servido antes da mudança, use `INSTITUTION_BAR_EXPECT=baseline`.
+Para injetar o CSS do checkout e validar o candidato antes da publicação,
+defina `INSTITUTION_BAR_EXPECT=candidate INSTITUTION_BAR_CSS_OVERRIDE=1`.
+`INSTITUTION_BAR_EXPECT` sem override espera a geometria compacta integrada.
+O smoke cobre seis rotas públicas e a página inicial da Conta sem autenticação;
+não testa menus autenticados completos, teclado, zoom real, tema escuro ou WCAG
+2.2 AA.
