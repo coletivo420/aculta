@@ -449,6 +449,14 @@ smoke autenticado e revisão visual; esses itens bloqueiam RC.
 
 Em `aculta_lms_resources` 0.1.0-dev.16, a classe Kernel LMS/Index passou novamente em MariaDB (4 testes / 208 assertions; 53 depreciações Core/contrib). Cobre policy de estudante e educador, terceiro negado e relações de leitura, galeria e `course_document`; providers vêm dos YAMLs owner, mas a relação PDF usa plugin Group fixture. Boot/DI completo dos módulos owner, instalação e Runtime permanecem pendentes.
 
+Em `aculta_lms_resources` 0.1.0-dev.19, Unit + Kernel passaram nesta revisão:
+20 testes / 375 assertions, com 53 depreciações de Core/contrib. No Runtime de
+teste, leitura confirmou `aculta_lms_resources` habilitado, o campo
+`group.field_lms_videos`, o bundle Media `remote_video`, o provider de vídeo no
+Content Index e `updatedb:status` sem pendências. Nenhum update ou conteúdo foi
+aplicado ao Runtime nesta verificação. A revisão visual integrada e o boot da
+cadeia completa dos owners seguem pendentes; não promover a RC.
+
 Em `aculta_lms_resources` 0.1.0-dev.12, o Kernel do Content Index consulta a
 relação outgoing `course_gallery` com providers LMS e Gallery carregados dos
 YAMLs owner. Estudante autorizado por `take course` e educador por `grade
