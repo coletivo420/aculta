@@ -482,3 +482,13 @@
   Não há sessão autenticada de Educador nem Comments LMS para validar a
   renderização de linhas e operações. RUNTIME STATUS: PARTIAL.
 
+## Revalidação F15 — 2026-10-29
+
+- Unit: 33 testes/320 assertions PASS. Kernel: 27 testes/1.318 assertions, 48
+  depreciações de Core/contrib e 1 erro no container antes das asserções do
+  teste de vínculo H5P–Fórum: `aculta_lms.class_roster_manager` requer o serviço
+  ausente `aculta_user.author_card_builder`.
+- Smoke e revisão visual autenticados não foram executados; a suíte falhou e a
+  regra de trabalho manda parar esta frente sem alterar a fixture para contornar
+  o resultado. Nenhum Runtime ou conteúdo de teste foi alterado.
+

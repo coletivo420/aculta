@@ -1,4 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.29
 state: Dev
-next_phase: 'F15: smoke e revisão visual autenticados do vínculo H5P–Fórum ainda dependem de conteúdo/tópico no Runtime; avançar notificações e integrações Gallery, Magazine e Wiki ([CHANGELOG](web/modules/custom/aculta_portal/modules/aculta_forum_lms/CHANGELOG.md))'
+progress_note: "F15 revalidada em 2026-10-29: Unit 33/320 PASS. Kernel 27/1318 com 48 depreciações e 1 erro de container no vínculo H5P–Fórum: serviço aculta_user.author_card_builder ausente para aculta_lms.class_roster_manager. Suíte interrompida antes do smoke Runtime; nenhum conteúdo alterado."
+next_phase: 'F15 bloqueada pelo harness Kernel: investigar em rodada própria a ausência de `aculta_user.author_card_builder`, sem substituir serviço nem relaxar as regras; depois repetir Kernel antes de retomar smoke e revisão visual autenticados. Notificações e integrações Gallery/Magazine/Wiki seguem pendentes ([CHANGELOG](web/modules/custom/aculta_portal/modules/aculta_forum_lms/CHANGELOG.md))'
