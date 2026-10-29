@@ -1,4 +1,4 @@
-tipo	caminho	media_count	media_queries	container_count	fixed_dimensions	overflow_declarations
+tipo	caminho	media_count	media_queries	container_count	width_related_matches	overflow_declarations
 estilo	web/themes/custom/aculta420/assets/icons/bootstrap-icons/font/bootstrap-icons.min.css	0	—	0	—	—
 estilo	web/themes/custom/aculta420/components/content/accessibility-badges/accessibility-badges.css	0	—	0	—	—
 template	web/themes/custom/aculta420/components/content/accessibility-badges/accessibility-badges.twig	—	—	—	—	—

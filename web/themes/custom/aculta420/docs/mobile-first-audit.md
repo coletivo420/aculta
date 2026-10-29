@@ -11,11 +11,12 @@ de runtime. Nenhuma escrita persistente foi executada no Runtime.
 
 Varredura recursiva de `web/themes/custom/aculta420`, excluindo `node_modules`
 e `vendor`: 537 arquivos, 92 CSS/Sass, 11 JavaScript e 98 templates Twig/HTML.
-A recontagem literal encontrou 53 arquivos com `@media` ou largura/min/max
-fixa: 44 arquivos com `@media` (78 blocos), 50 com largura fixa (146
-declarações) e 22 com `overflow` (39 declarações); zero `@container`. A
-expressão de largura considera valores `px`, `rem`, `em` ou `vw`; são
-contagens lexicais, sem análise de cascata ou efeito calculado.
+A recontagem literal encontrou 53 arquivos com `@media` ou expressão de
+`width`: 44 arquivos com `@media` (78 blocos), 50 com matches de largura
+(146 matches) e 22 com `overflow` (39 declarações); zero `@container`. Os 146
+matches incluem condições de breakpoints `min-width`/`max-width`, portanto não
+são 146 declarações de dimensão fixa. A busca aceita valores `px`, `rem`, `em`
+ou `vw` e é lexical, sem análise de cascata ou efeito calculado.
 O inventário é estrutural; não mede overflow nem prova comportamento renderizado.
 
 | Camada | Arquivos identificados | Observação da auditoria |
@@ -39,7 +40,8 @@ declarações por bloco):
 | Bootstrap distribuído | 2 | Regras do tema base; não substituir infraestrutura nem alterar a cópia do Core/contrib. |
 | `css/tokens.css` | 1 | Preferência light/dark não deve alterar geometria ou ocultar conteúdo. |
 
-Arquivos com maior quantidade de declarações fixas identificadas incluem
+Arquivos com mais matches lexicais de largura (incluindo condições de media
+query) incluem
 `css/components/portal-account.css`, `forum-index.css`, `messenger-drawer.css`,
 `navigation.css`, `discussion.css`, `institution-bar.css` e SDCs
 `author-card`, `profile-identity`, `content-grid`, `context-tabs` e
