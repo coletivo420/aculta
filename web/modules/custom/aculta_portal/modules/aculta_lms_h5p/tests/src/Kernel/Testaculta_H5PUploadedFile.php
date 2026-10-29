@@ -20,43 +20,37 @@ final class Testaculta_H5PUploadedFile implements UploadedFileInterface {
   public function __construct(private readonly UploadedFile $uploadedFile) {}
 
   /**
-   *
-   */
+   * {@inheritdoc} */
   public function getClientOriginalName(): string {
     return $this->uploadedFile->getClientOriginalName();
   }
 
   /**
-   *
-   */
+   * {@inheritdoc} */
   public function getSize(): int {
     return $this->uploadedFile->getSize();
   }
 
   /**
-   *
-   */
+   * {@inheritdoc} */
   public function getRealPath(): string|false {
     return $this->uploadedFile->getRealPath();
   }
 
   /**
-   *
-   */
+   * {@inheritdoc} */
   public function getPathname(): string {
     return $this->uploadedFile->getPathname();
   }
 
   /**
-   *
-   */
+   * {@inheritdoc} */
   public function getFilename(): string {
     return $this->uploadedFile->getFilename();
   }
 
   /**
-   *
-   */
+   * {@inheritdoc} */
   public function validate(ValidatorInterface $validator, array $options = []): ConstraintViolationListInterface {
     return $validator->validate($this->uploadedFile, new UploadedFileConstraint(...$options));
   }

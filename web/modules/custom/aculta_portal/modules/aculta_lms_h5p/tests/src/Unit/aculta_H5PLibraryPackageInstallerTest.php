@@ -22,8 +22,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 final class aculta_H5PLibraryPackageInstallerTest extends UnitTestCase {
 
   /**
-   *
-   */
+   * Rejects files without the H5P package extension before framework boot. */
   public function testRejectsNonH5pFileBeforeBootstrap(): void {
     $file = tempnam(sys_get_temp_dir(), 'aculta-h5p-invalid-');
     self::assertNotFalse($file);
@@ -47,8 +46,7 @@ final class aculta_H5PLibraryPackageInstallerTest extends UnitTestCase {
   }
 
   /**
-   *
-   */
+   * Rejects archive entries that attempt to escape the extraction directory. */
   public function testRejectsZipPathTraversalBeforeH5pExtraction(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-traversal-');
     self::assertNotFalse($path);
@@ -75,8 +73,7 @@ final class aculta_H5PLibraryPackageInstallerTest extends UnitTestCase {
   }
 
   /**
-   *
-   */
+   * Creates the cache invalidator double used by installer tests. */
   private function createCacheInvalidator(): aculta_H5PLibraryCacheInvalidator {
     return new aculta_H5PLibraryCacheInvalidator(
       $this->createMock(CacheBackendInterface::class),

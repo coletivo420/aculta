@@ -17,10 +17,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 final class aculta_H5PContentTest extends UnitTestCase {
 
   /**
- *
- */
+ * Verifies embed-mode selection against the H5P Core supported types. */
   #[DataProvider('embedTypesProvider')]
-  public function testEmbedModeUsesSupportedH5PCoreEmbedTypes(string $embedTypes, ?string $expected): void {
+  public function testEmbedModeUsesSupportedH5pCoreEmbedTypes(string $embedTypes, ?string $expected): void {
     $content = (new \ReflectionClass(aculta_H5PContent::class))->newInstanceWithoutConstructor();
     (new \ReflectionProperty(aculta_H5PContent::class, 'library'))->setValue($content, (object) ['embed_types' => $embedTypes]);
 
@@ -29,8 +28,7 @@ final class aculta_H5PContentTest extends UnitTestCase {
   }
 
   /**
-   *
-   */
+   * Provides supported, unknown, and empty embed type combinations. */
   public static function embedTypesProvider(): array {
     return [
       'div only' => ['div', 'div'],

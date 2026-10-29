@@ -1,3 +1,17 @@
+## 0.4.0-dev.156 — limpar documentação dos testes Unit/Kernel (2026-10-29)
+
+- Sete arquivos de teste receberam PHPDoc descritivo no lugar de comentários
+  vazios; os dois nomes de métodos PHPUnit com sigla `H5P` foram padronizados
+  sem alterar APIs do módulo. Removidos também itens de retorno não utilizados
+  dos testes de acesso a curso.
+- PHPCS do módulo caiu de 263 erros/33 avisos em 38 arquivos para 232/30 em 31
+  arquivos. Não há PHPCBF seguro restante na extensão PHP; as 22 correções
+  auto-disponíveis no relatório geral pertencem a outras extensões e JS não foi
+  formatado.
+- Unit + Kernel no `aculta_simpletest`: 43 testes / 481 asserções PASS, 41
+  depreciações de Core/contrib. PHP lint dos sete arquivos e PHPCS neles PASS.
+  Nenhuma alteração Runtime.
+
 ## 0.4.0-dev.154 — preservar nomes de classes H5P (2026-10-29)
 
 - Nomes históricos de classes H5P permanecem estáveis para discovery e integrações; 45 exceções são locais, limitadas aos dois sniffers de naming e justificadas no código, sem alterar o padrão PHPCS.

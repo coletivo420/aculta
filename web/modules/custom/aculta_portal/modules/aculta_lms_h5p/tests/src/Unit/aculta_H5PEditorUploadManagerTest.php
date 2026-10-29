@@ -31,8 +31,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
 
   /**
-   *
-   */
+   * Rejects SVG files uploaded as H5P content images. */
   public function testRejectsSvgAsAnUploadedContentImage(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-svg-');
     self::assertNotFalse($path);
@@ -49,8 +48,7 @@ final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
   }
 
   /**
-   *
-   */
+   * Rejects uploads without an H5P field type. */
   public function testRejectsMissingH5pFieldType(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-file-');
     self::assertNotFalse($path);
@@ -65,8 +63,7 @@ final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
   }
 
   /**
-   *
-   */
+   * Stores raster uploads through the shared image and file APIs. */
   public function testStoresRasterUploadThroughAcultaImageAndCoreFileApi(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-image-');
     self::assertNotFalse($path);
@@ -121,8 +118,7 @@ final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
   }
 
   /**
-   *
-   */
+   * Creates the upload manager with minimal mocked dependencies. */
   private function manager(): aculta_H5PEditorUploadManager {
     $inspector = new ImageInspector($this->createMock(ImageFactory::class));
     return new aculta_H5PEditorUploadManager(
@@ -136,8 +132,7 @@ final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
   }
 
   /**
-   *
-   */
+   * Creates the framework double with its default content whitelist. */
   private function framework(): aculta_H5PDrupal {
     $framework = $this->createMock(aculta_H5PDrupal::class);
     $framework->method('getWhitelist')->willReturn(\H5PCore::$defaultContentWhitelist);

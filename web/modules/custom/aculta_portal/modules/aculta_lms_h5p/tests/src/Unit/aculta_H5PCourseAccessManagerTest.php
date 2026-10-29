@@ -24,19 +24,17 @@ use PHPUnit\Framework\Attributes\CoversClass;
 final class aculta_H5PCourseAccessManagerTest extends UnitTestCase {
 
   /**
-   *
-   */
+   * Restricts student playback to content referenced by their course. */
   public function testStudentCanAccessOnlyContentReferencedByTheirCourse(): void {
-    [$manager, $course, $items] = $this->managerForCourse([41]);
+    [$manager] = $this->managerForCourse([41]);
     self::assertTrue($manager->studentAccess(8, 41, $this->createMock(AccountInterface::class))->isAllowed());
     self::assertFalse($manager->studentAccess(8, 42, $this->createMock(AccountInterface::class))->isAllowed());
   }
 
   /**
-   *
-   */
+   * Includes course and H5P content cache metadata in access results. */
   public function testStudentAccessIncludesGroupAndContentCacheability(): void {
-    [$manager, $course] = $this->managerForCourse([41]);
+    [$manager] = $this->managerForCourse([41]);
     $result = $manager->studentAccess(8, 41, $this->createMock(AccountInterface::class));
     self::assertContains('user', $result->getCacheContexts());
     self::assertContains('user.group_permissions', $result->getCacheContexts());
@@ -45,8 +43,7 @@ final class aculta_H5PCourseAccessManagerTest extends UnitTestCase {
   }
 
   /**
-   *
-   */
+   * Requires Group update access and an existing course reference to edit. */
   public function testEditorNeedsGroupUpdateAccessAndExistingReference(): void {
     [$manager] = $this->managerForCourse([41], FALSE);
     self::assertFalse($manager->editorAccess(8, 41, $this->createMock(AccountInterface::class))->isAllowed());
@@ -55,7 +52,13 @@ final class aculta_H5PCourseAccessManagerTest extends UnitTestCase {
   /**
    * Creates the course/content storage boundary used by the access manager.
    *
+   * @param int[] $contentIds
+   *   H5P content IDs linked from the mocked course.
+   * @param bool $allowed
+   *   Whether the Group permits the requested access operation.
+   *
    * @return array{0: \Drupal\aculta_lms_h5p\Access\aculta_H5PCourseAccessManager, 1: \Drupal\lms\Entity\Bundle\CourseInterface}
+   *   The access manager and its mocked course.
    */
   private function managerForCourse(array $contentIds, bool $allowed = TRUE): array {
     $course = $this->createMock(CourseInterface::class);
@@ -84,7 +87,7 @@ final class aculta_H5PCourseAccessManagerTest extends UnitTestCase {
       'group' => $groupStorage,
       'aculta_h5p_content' => $contentStorage,
     });
-    return [new aculta_H5PCourseAccessManager($entityTypeManager), $course, $items];
+    return [new aculta_H5PCourseAccessManager($entityTypeManager), $course];
   }
 
 }
