@@ -38,6 +38,15 @@ Excluir um registro não remove arquivos históricos gerados: a revisão Git
 decide quando removê-los. O acesso é restrito porque patches podem introduzir
 código executável. Não usar o formulário como editor de produção.
 
+## Prontidão da próxima fase — 2026-10-28
+
+- Suíte Unit: 38 testes / 65 assertions PASS; inclui exportação e comparação
+  byte a byte dos artefatos em duas execuções num projeto temporário.
+- PHP lint do módulo PASS.
+- PHPCS Drupal falha no estado atual: 24 erros e 16 avisos em arquivos PHP do
+  módulo. O ciclo com Composer não foi executado; primeiro corrija o gate e
+  depois valide exportação/aplicação e idempotência em cópia isolada.
+
 ## Patch H5P inicial
 
 O registro `h5p_restricted_upload` valida a permissão `CREATE_RESTRICTED` no
