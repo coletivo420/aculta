@@ -222,7 +222,9 @@ o reflow; a inspeção de todas as combinações de cor continua na suíte
 
 `forum-index-visual.mjs` percorre 320/360/390/575/576/600/767/768/1024/1280/
 1440px, mede cartões reais de categoria e injeta uma linha de tópico sintética
-somente no DOM para conferir a mudança de uma para duas colunas em 576px.
+somente no DOM para conferir a mudança de uma para duas colunas em 576px. Mede
+também as dimensões responsivas de uma ação da listagem de tópicos usando um
+fixture DOM, inclusive as fronteiras 575/576 e 991/992px.
 `FORUM_INDEX_CSS_OVERRIDE=1` injeta a folha candidata local; use
 `ACULTA_THEME_ROOT` para selecionar o worktree. Não cria nem altera conteúdo.
 

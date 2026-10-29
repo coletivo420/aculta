@@ -1,5 +1,6 @@
 # Alterações pendentes de validação visual — ainda sem nova marcação de versão
 
+- `forum-index.css` converteu o tamanho das ações de listagem do Fórum de uma media query limitada por `max-width` para aprimoramento progressivo em `36rem`/`62rem`, preservando as três faixas existentes. O harness de índice agora mede o consumer sintético. Firefox visual DEFERRED.
 - `profile-identity` não cria inicial nem placeholder quando o slot de avatar está vazio; o AvatarResolver central é a única fonte da imagem. Atualizado schema, story, catálogo e Kernel para impedir fallback paralelo. Firefox visual DEFERRED.
 - `drupal-bootstrap.css` empilha a Navigation top-bar como base móvel e restaura a grade de três regiões em 768px. Lint CSS e sintaxe do smoke Firefox PASS; execução visual DEFERRED por `DISPLAY` indisponível e sessões concorrentes.
 - `wiki-entry.css` agora usa margem compacta das abas como base e restaura o espaçamento anterior em 768px; o smoke de Wiki mede margem, grade e ordem do aside. Lint CSS e sintaxe Python PASS; Firefox/Runtime DEFERRED.

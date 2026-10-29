@@ -89,7 +89,9 @@ em `48rem`, validado no mesmo consumer público.
 O índice do Fórum usa Twig/Views e classes de apresentação já existentes; linhas
 de tópico empilham seus metadados até `36rem`. Não houve SDC novo nem alteração
 dos dados/handlers da View. O teste visual sintético está documentado em
-`tests/browser/aculta-forum/README.md`.
+`tests/browser/aculta-forum/README.md`. As ações do cabeçalho da listagem usam
+dimensão compacta em `36rem` e restauram o tamanho em `62rem`, com progressão
+mobile-first e medição sintética nas fronteiras 575/576 e 991/992px.
 
 A fila de denúncias do Fórum não cria SDC: `ReportQueueController` emite os
 tokens neutros `forum-report-queue` e `forum-report-pager`; `PortalUiHooks`

@@ -763,3 +763,12 @@ cache; campos sem dados reais permanecem ausentes. Unit, schema/discovery SDC e
 lint CSS precisam passar. Firefox ESR e captura com eventos reais ficam
 DEFERRED enquanto `DISPLAY=:0` não estiver disponível; esta fatia não conclui
 THEME-MF3.
+
+### THEME-MF2 — ações do índice público do Fórum
+
+A regra de tamanho das ações da View de tópicos deixou de usar um intervalo
+com `max-width`: dimensões compactas começam em `36rem` e o tamanho original é
+restaurado em `62rem`. O harness `forum-index-visual.mjs` inclui um fixture DOM
+do consumer e verifica 575/576 e 991/992px entre as onze larguras existentes.
+Lint CSS e sintaxe JavaScript passam; Firefox/runtime ficam DEFERRED sem
+`DISPLAY=:0`. Ver `mobile-first-audit.md`; THEME-MF3 continua pendente.

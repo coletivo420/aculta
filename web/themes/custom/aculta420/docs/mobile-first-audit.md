@@ -31,6 +31,13 @@ fronteiras 575/576 e 991/992, além das larguras de regressão. Stylelint e
 sintaxe JS PASS; Firefox/runtime DEFERRED por sessões concorrentes. A linha
 sintética não substitui a inspeção de tópico real; MF3 permanece pendente.
 
+As ações do cabeçalho da View de tópicos também foram migradas da media query
+com limite superior para aprimoramento progressivo: dimensões compactas a
+partir de `36rem` e dimensões originais restauradas em `62rem`. Os mesmos
+valores permanecem em 320–575, 576–991 e 992px ou mais. O harness agora mede o
+consumer por fixture DOM nas onze larguras; Firefox/runtime continuam DEFERRED
+nesta sessão, sem alterar o status global MF3.
+
 ### THEME-MF2 — busca e listagens Wiki (2026-10-29)
 
 `wiki.css` declara tamanhos compactos do header como base; `36rem` reintroduz
@@ -138,8 +145,8 @@ O inventário foi regenerado em 2026-10-29 por
 `scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 205 arquivos-
 fonte: 93 folhas CSS/Sass, 12 scripts JavaScript (11 de produção e um de teste)
 e 100 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
-lexical atual encontra `@media` em 46 folhas (81 blocos), zero `@container`,
-expressões de dimensão em 73 folhas (632 matches) e declarações `overflow`,
+lexical atual encontra `@media` em 46 folhas (82 blocos), zero `@container`,
+expressões de dimensão em 74 folhas (633 matches) e declarações `overflow`,
 `overflow-x` ou `overflow-y` em 28 folhas (54 declarações). A expressão de
 dimensão inclui width/height/inline-size/block-size, variantes min/max e
 condições de media query. As contagens não analisam cascata nem efeito
@@ -162,7 +169,7 @@ declarações por bloco):
 
 | Grupo observado | Arquivos com `@media` | Risco inicial a verificar |
 |---|---:|---|
-| `css/components/` | 27 | Cascata carregada globalmente; breakpoints em portal-account (6), forum-index e institutional (4 cada), wiki, discussion, institution-bar, navigation e portal-support (3 cada). |
+| `css/components/` | 27 | 59 blocos. Cascata carregada globalmente; breakpoints em portal-account (6), forum-index (5), institutional (4), wiki, discussion, institution-bar, navigation e portal-support (3 cada). |
 | `components/**` (SDC) | 16 de 45 | 19 blocos `@media`; variantes locais devem ser testadas em consumers reais e contra a cascata global. |
 | Bootstrap distribuído | 2 | Regras do tema base; não substituir infraestrutura nem alterar a cópia do Core/contrib. |
 | `css/tokens.css` | 1 | Preferência light/dark não deve alterar geometria ou ocultar conteúdo. |
@@ -255,15 +262,16 @@ e captura Firefox visível antes e depois da migração.
 
 ### Maior frequência de media queries encontradas
 
-Recontagem lexical de 81 blocos em 46 folhas de estilo do tema. `@media`
+Recontagem lexical de 82 blocos em 46 folhas de estilo do tema. `@media`
 contém também preferências/recursos de acessibilidade, não só breakpoints:
 
 | Query literal | Blocos | Arquivos |
 |---|---:|---:|
-| `min-width: 36rem` | 15 | 12 |
+| `min-width: 36rem` | 16 | 13 |
 | `min-width: 48rem` | 15 | 12 |
 | `prefers-reduced-motion: reduce` | 13 | 12 |
 | `min-width: 768px` | 5 | 5 |
+| `min-width: 62rem` | 4 | 4 |
 | `min-width: 48.0625rem` | 3 | 3 |
 | `min-width: 576px` | 3 | 3 |
 | `min-width: 62rem` | 3 | 3 |

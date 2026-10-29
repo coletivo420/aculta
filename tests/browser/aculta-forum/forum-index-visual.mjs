@@ -168,6 +168,13 @@ try {
       const authorStyle = getComputedStyle(row.querySelector('.aculta-forum-topic-list-row__last-author'));
       const topicLayout = {columns:rowStyle.gridTemplateColumns.split(' ').length,metaTop:metaStyle.borderBlockStartStyle,metaInline:metaStyle.borderInlineStartStyle,authorAlign:authorStyle.justifyContent};
       row.remove();
+      const topicHeader = document.createElement('section');
+      topicHeader.className = 'view-aculta-forum-public-topics';
+      topicHeader.innerHTML = '<div class="view-header"><p><a href="#fixture">Ação sintética da listagem</a></p></div>';
+      main.append(topicHeader);
+      const actionStyle = getComputedStyle(topicHeader.querySelector('.view-header a'));
+      const topicAction = {paddingInlineStart:parseFloat(actionStyle.paddingInlineStart),fontSize:parseFloat(actionStyle.fontSize)};
+      topicHeader.remove();
       const cards = [...document.querySelectorAll('.aculta-forum-category')].map(e => {
         const r=e.getBoundingClientRect();
         return {left:Math.round(r.left),right:Math.round(r.right),width:Math.round(r.width)};
@@ -175,7 +182,7 @@ try {
       const outside = cards.filter(r => r.left < -1 || r.right > viewport + 1);
       return {viewport, document:document.documentElement.scrollWidth, body:document.body.scrollWidth,
         mainLeft:rect ? Math.round(rect.left) : null, mainRight:rect ? Math.round(rect.right) : null,
-        topicLayout,
+        topicLayout,topicAction,
         cards:cards.length, outside:outside.slice(0,4)};
     `);
     check(`Viewport CSS ${width}px mantém categorias no enquadramento`,
@@ -187,6 +194,12 @@ try {
       : metrics.topicLayout.columns === 2 && metrics.topicLayout.metaTop === 'none'
         && metrics.topicLayout.metaInline === 'solid' && metrics.topicLayout.authorAlign === 'flex-end';
     check(`Linha de tópico usa layout apropriado em ${width}px`, mobileTopicLayout, JSON.stringify(metrics.topicLayout));
+    const compactTopicAction = width >= 576 && width < 992;
+    const expectedAction = compactTopicAction ? {paddingInlineStart:8,fontSize:13.12} : {paddingInlineStart:12,fontSize:14.4};
+    check(`Ações do índice preservam o tamanho responsivo em ${width}px`,
+      Math.abs(metrics.topicAction.paddingInlineStart - expectedAction.paddingInlineStart) < 0.1
+      && Math.abs(metrics.topicAction.fontSize - expectedAction.fontSize) < 0.1,
+      JSON.stringify(metrics.topicAction));
 
     for (const mode of ['light', 'dark']) {
       await execute(`document.documentElement.setAttribute('data-bs-theme', ${JSON.stringify(mode)}); return true;`);
