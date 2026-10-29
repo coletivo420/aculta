@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Plugin\Field;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -142,21 +142,29 @@ abstract class aculta_H5PWidgetBase extends WidgetBase {
    * Help message out each value from the submitted form.
    *
    * @param array $value
+   *   Submitted field values for this item.
    * @param int $delta
+   *   Delta of the field item being processed.
    * @param bool $do_new_revision
+   *   Whether the entity submission creates a new revision.
+   *
+   * @return array
+   *   Values to persist for the H5P field item.
    */
   protected function massageFormValue(array $value, $delta, $do_new_revision) {
     return [];
   }
 
   /**
-   * Determine if the current entity is creating a new revision.
-   * This is useful to avoid changing the H5P content belonging to
-   * an older revision of the entity.
+   * Determines whether the current entity is creating a new revision.
+   *
+   * Avoids changing H5P content belonging to an older entity revision.
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state containing the submitted revision value.
    *
    * @return bool
+   *   TRUE when revisioning is enabled and a new revision is being created.
    */
   private static function doNewRevision(FormStateInterface $form_state) {
     $form_object = $form_state->getFormObject();

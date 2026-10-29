@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-dev.167
+version: 0.4.0-dev.168
 state: Dev
-progress_note: "Dev.167: PHPDoc dos utilitários do editor H5P concluído e cabeçalho GPL reposicionado. PHPCS integral: 82 erros/4 avisos em 7 arquivos (antes 94/5 em 8); arquivo alterado passa lint e PHPCS. Unit + Kernel 43/481 PASS no aculta_simpletest, 41 depreciações Core/contrib no Kernel e 0 no Unit. Restam violações PHPCS no módulo; F15 permanece Dev. Smokes de player, PDF e conversa H5P–Fórum seguem registrados; sem escrita Runtime."
+progress_note: "Dev.168: PHPDoc de WidgetBase ampliado, documentação das factories e arrays multilinha nos controllers, mantendo valores e lógica. PHPCS integral: 75 erros/4 avisos em 6 arquivos (antes 82/4 em 7); arquivos alterados passam lint e PHPCS. Unit + Kernel 43/481 PASS no aculta_simpletest, 41 depreciações Core/contrib no Kernel e 0 no Unit. Restam violações PHPCS no módulo; F15 permanece Dev. Smokes de player, PDF e conversa H5P–Fórum seguem registrados; sem escrita Runtime."
 next_phase: 'F15: resolver violações PHPCS remanescentes sem alterar regras nem identificadores públicos, rodar lint, revisar diff e repetir gates antes de avaliar RC; player H5P, PDF privado e discussão H5P–Fórum seguem homologados conforme [README](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md). F10 permanece homologada.'

@@ -439,3 +439,12 @@
 - Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
   depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
 
+## 0.4.0-dev.168 — documentar integração do widget H5P (2026-10-29)
+
+- Documenta o contrato do widget base e formata factories, arrays de assets e
+  respostas do editor, sem alterar comportamento nem identificadores H5P.
+- PHPCS integral caiu de 82 erros/4 avisos em 7 arquivos para 75/4 em 6
+  arquivos; os arquivos alterados passam Drupal/DrupalPractice e PHP lint.
+- Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
+  depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
+
