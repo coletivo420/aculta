@@ -1,21 +1,21 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
 **Estado em 2026-10-29: inventário estático parcial, sem implementação ou aceite.**
-Esta rodada foi executada no checkout servidor `ded8a6181`, detached, que é
-o HEAD atual da branch `refactor/opencultures-codigo-visual` também aberta em
-`/home/piradopirata/worktrees/opencultures-f0-adm8-e8`. O checkout foi fornecido
-pelo responsável como ambiente de desenvolvimento. `config:status` apresenta
-drift amplo e `updatedb:status` relata módulos não presentes no schema ativo;
-nenhuma escrita persistente foi executada. O inventário não representa o HEAD
-remoto mais recente se a PR avançar durante esta auditoria.
+A auditoria original foi registrada no checkout servidor `ded8a6181`. Em
+2026-10-29, a recontagem foi executada na branch atualizada
+`0a479dde3` em `/home/piradopirata/worktrees/opencultures-f0-adm8-e8`; a
+varredura abaixo cobre os arquivos atuais do tema, mas não altera a evidência
+de runtime. Nenhuma escrita persistente foi executada no Runtime.
 
 ## Escopo quantificado
 
 Varredura recursiva de `web/themes/custom/aculta420`, excluindo `node_modules`
 e `vendor`: 537 arquivos, 92 CSS/Sass, 11 JavaScript e 98 templates Twig/HTML.
-Foram encontrados 53 arquivos de estilo com pelo menos uma declaração
-`@media` ou largura/min/max fixa (78 blocos `@media`, 139 declarações de largura
-fixa, zero `@container` nos estilos do tema).
+A recontagem literal encontrou 53 arquivos com `@media` ou largura/min/max
+fixa: 44 arquivos com `@media` (78 blocos), 50 com largura fixa (146
+declarações) e 22 com `overflow` (39 declarações); zero `@container`. A
+expressão de largura considera valores `px`, `rem`, `em` ou `vw`; são
+contagens lexicais, sem análise de cascata ou efeito calculado.
 O inventário é estrutural; não mede overflow nem prova comportamento renderizado.
 
 | Camada | Arquivos identificados | Observação da auditoria |
