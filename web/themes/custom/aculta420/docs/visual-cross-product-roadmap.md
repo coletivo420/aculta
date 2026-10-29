@@ -469,7 +469,10 @@ segue parcial. Evidência em `/home/piradopirata/suite-out/aculta-mf2-content-se
 
 Migrada a base móvel do cartão SDC compartilhado por Fórum, LMS e Wiki; 36rem
 restaura a variante inline, mantendo os layouts editorial/empilhado, tamanhos e
-overrides das listagens. Stories Fórum, LMS e Wiki atualizadas. Lint CSS depende
-de `stylelint`, ausente no checkout. O Firefox encontrou 1px de overflow na data
+overrides das listagens. Stories Fórum, LMS e Wiki atualizadas. `npm run lint:css`
+e `npm run lint:js` passaram após instalar as dependências já fixadas no lockfile.
+O Firefox encontrou 1px de overflow na data
 em 576/600px; retirada a regra `nowrap` para permitir quebra natural. O teste
-reutilizável do consumer precisa confirmar a correção após a publicação.
+reutilizável confirmou a correção: 32/32 checks, consumer presente, alinhamento
+mobile/inline correto e zero overflow em 320/360/390/575/576/600/768/1024/1280/
+1440px. Capturas/JSON em `/home/piradopirata/suite-out/aculta-theme-author-card-892f803d5/`.

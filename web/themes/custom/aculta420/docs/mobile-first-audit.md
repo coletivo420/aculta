@@ -267,8 +267,9 @@ mantendo o reflow visual. As cinco stories agora descrevem a base compacta com
 progressão fluida. Consumers reais encontrados na Wiki: `WikiProposalSubmissionForm`,
 `WikiProposalDecisionForm`, `WikiContributorWorkspace` e
 `WikiProposalStatusController`. Schemas SDC e fronteira tema/módulo passaram.
-O lint CSS não executou: o script existe, mas `stylelint` não está instalado
-neste checkout. Firefox ESR visível testou a área WE SATIVA autenticada e o
+O lint CSS/JS não executou na primeira rodada porque `stylelint` não estava
+instalado; depois `npm ci` do lockfile, `npm run lint:css` e `npm run lint:js`
+passaram no worktree. Firefox ESR visível testou a área WE SATIVA autenticada e o
 workspace Wiki em 34/34 verificações, incluindo 320/360/390/640/768/1024/1280/1440
 px sem overflow; PNG/JSON em `/home/piradopirata/suite-out/aculta-mf2-content-section-dd37b35d5/`.
 O smoke cobre a tela real do workspace, mas não mede diretamente o gap do SDC;
@@ -283,6 +284,9 @@ editorial e empilhado preservam seu alinhamento próprio. Variantes `sm`/`lg` e
 as regras específicas das listagens do Fórum mantêm precedência. Firefox real
 mostrou também overflow de 1px a 576/600px na data da última atividade da
 listagem. Removido `white-space: nowrap` para permitir quebra natural em colunas
-estreitas; a confirmação browser dessa correção segue pendente. O script
+estreitas; o Firefox ESR confirmou 32/32 checks com consumer presente, alinhamento
+flex-start a 320/360/390/575 e central a partir de 576px, e sem overflow em
+320/360/390/575/576/600/768/1024/1280/1440. Capturas/JSON em
+`/home/piradopirata/suite-out/aculta-theme-author-card-892f803d5/`. O script
 reutilizável `tests/browser/aculta-theme-mobile-first/author-card.py` registra
-consumer e breakpoint.
+consumer e breakpoint; não cobre teclado, zoom real ou WCAG completa.

@@ -258,6 +258,8 @@ A base mobile usa avatar 2.5rem, alinhamento inicial e gap 0.5rem; o breakpoint
 de 36rem restaura dimensões/alinhamento da variante inline. O cartão empilhado,
 editorial e os tamanhos `sm`/`lg` mantêm suas regras. Stories Fórum, LMS e Wiki
 documentam os estados. No consumer do Fórum, a data de última atividade agora
-pode quebrar em colunas estreitas. Firefox do consumer aguarda reexecução após
-a correção do overflow.
+pode quebrar em colunas estreitas. Firefox ESR passou 32/32 checks, incluindo
+320/360/390/575/576/600/768/1024/1280/1440 sem overflow; a quebra entre
+575/576px foi confirmada. Capturas em
+`/home/piradopirata/suite-out/aculta-theme-author-card-892f803d5/`.
 
