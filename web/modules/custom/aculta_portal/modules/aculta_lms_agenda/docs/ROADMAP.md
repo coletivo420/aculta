@@ -8,12 +8,13 @@
 - [x] Catálogo público consulta o access handler e varia o cache por usuário.
 - [x] Kernel cobre matrícula na turma correta, matrícula exclusivamente em outra turma (vê só o evento da própria turma), ausência de matrícula, página direta e callback das rotas de `.ics`/página.
 - [x] Painel do aluno usa o mesmo provedor e revalida acesso.
+- [x] O hook `hook_simple_sitemap_links_alter()` remove do sitemap eventos vinculados a turmas.
 - [x] O fixture Kernel instala o módulo Core `link`, necessário pela definição `field_ticketing` de `aculta_event`.
 
-Verificação em 2026-10-28: `AgendaEntriesProviderKernelTest`, 4 testes / 226 assertions; 92 depreciações de Core e
-contrib. Suítes completas: Eventos 57/671/26 depreciações; Agenda LMS 12/226/92. PHP lint (64 arquivos), PHPCS,
-`git diff --check` e `drush cr` no Runtime de teste passaram. O provedor registrado em `aculta_calendar` usa
-contexto `user`, max-age zero e retorna vazio para visitante anônimo. URLs de eventos de turma ainda aparecem no
-sitemap: a correção depende de autorização para editar o gerador protegido por outra frente. Uma regressão também
-confirma que a rota continua respeitando a permissão existente de prévia de rascunho em evento sem turma.
-Nenhum envio de e-mail, escrita externa ou dado real foi usado. Código: `1b932d29c`, `dbf2d94e8`.
+Verificação em 2026-10-28: suíte completa Agenda LMS, 12 testes / 227 assertions / 92 depreciações de Core e
+contrib; Eventos 57/671/26 depreciações. PHP lint dos arquivos alterados, PHPCS e `git diff --check` passaram.
+O provedor registrado em `aculta_calendar` usa contexto `user`, max-age zero e retorna vazio para visitante anônimo.
+A correção do sitemap usa o hook oficial de alteração de links do Simple Sitemap, sem alteração do gerador.
+Uma regressão também confirma que a rota continua respeitando a permissão existente de prévia de rascunho em evento
+sem turma. Nenhum envio de e-mail, escrita externa ou dado real foi usado. Código: `1b932d29c`, `dbf2d94e8`,
+`3be40be71`.
