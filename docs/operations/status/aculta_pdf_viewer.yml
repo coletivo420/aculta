@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.40
+version: 0.1.0-dev.41
 state: Dev
-next_phase: 'PV7 bloqueada: corrigir o harness Kernel para instalar a dependência real `aculta_user.aculta_user_agreement_ledger`; depois reexecutar a suíte completa e revisar acessibilidade/leitura antes de RC ([roadmap](web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/docs/ROADMAP.md))'
+next_phase: 'PV7 bloqueada: carregar a closure real do Portal no harness Kernel (incluindo `key.repository` e dependências subsequentes), sem mocks; repetir a suíte completa e revisar acessibilidade/leitura antes de RC ([roadmap](web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/docs/ROADMAP.md))'

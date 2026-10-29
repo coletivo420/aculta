@@ -1,5 +1,15 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.41 — revalidar dependências do harness PV7 (2026-10-29)
+
+- Tentativa de carregar o ledger real adicionou `aculta_user` e revelou a
+  dependência Core `path_alias.manager`. Com `path_alias`, Portal e Image reais,
+  o container avançou e parou em `key.repository` (`aculta_portal.turnstile_toggle`):
+  Kernel focal 4 erros / 0 assertions.
+- As alterações experimentais da fixture foram removidas. Não se substituiu o
+  ledger nem se flexibilizou o harness. PV7 permanece bloqueada pela cadeia de
+  dependências completa do Portal; revisar acessibilidade/leitura também falta.
+
 ## 0.1.0-dev.40 — reconhece anexos PDF privados do Fórum — 2026-10-21
 
 - O mapa de campos reconhece `forum_attachment.field_media_forum_attachment`; a validação de acesso exige o esquema `private` e entrega o arquivo pela rota protegida do Core.
@@ -213,13 +223,3 @@ Classificação: PATCH (habilita processamento de Media `document` no formato Wi
 - `filter.format.wiki` permite o elemento `drupal-media` e processa Media Embed após os filtros HTML, restrito ao bundle `document`; o display Media compartilhado mantém as verificações de acesso do Core.
 - Kernel confirma que embed em formato compatível renderiza o formatter PDF compartilhado. Na PV6, CKEditor também foi habilitado e validado sem incompatibilizar a lista HTML histórica.
 - Runtime de teste `https://aculta.toca.net.br`: formato `wiki` atualizado por entidade de configuração e cache reconstruído. Esta entrega foi homologada na versão .17, sem conteúdo PDF preexistente na Wiki para screenshot dedicado.
-
-## 0.1.0-dev.15 — viewer compartilhado em campos File institucionais — 2026-10-17
-
-Classificação: MINOR (novo formatter compatível com File API e sem storage próprio).
-
-- Adicionado `aculta_pdf_file`, formatter para campos File diretos. Ele usa o builder compartilhado somente para PDF público permanente, depois de validar acesso da entidade, do campo e de download do File. Tipos não PDF, arquivos privados e falhas do viewer mantêm o link Core autorizado.
-- Os displays `node.document.default` e `node.document.full` passam a usar o formatter para `field_document`; nenhum node, Media ou File é migrado ou regravado.
-- PHPUnit: Unit 11/11 (145 asserções) e Kernel 4/4 (87 asserções) PASS no MariaDB dedicado `aculta_simpletest`; quatro deprecações de Core/contrib registradas. Drupal 11+ Gate (888 checks), image, public-slugs e module/theme-boundary gates PASS.
-- Drush confirmou no Runtime de teste que `aculta_pdf_viewer` está ativo e que ambos os displays já usam `aculta_pdf_file`; não alterei configuração nesta sessão. RUNTIME STATUS: DEFERRED para smoke visual/HTTP do novo campo; Kernel confirma o render funcional.
-

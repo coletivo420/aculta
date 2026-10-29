@@ -1,5 +1,17 @@
 # Roadmap — ACULTA PDF Viewer
 
+## PV7 — revalidação do bloqueio de bootstrap em 2026-10-29
+
+- A tentativa de incluir o provider real `aculta_user.aculta_user_agreement_ledger`
+  no harness Kernel descobriu dependências da cadeia Portal. Com `aculta_user`,
+  `path_alias`, Portal e Image incluídos, o container falhou em
+  `aculta_portal.turnstile_toggle` por ausência de `key.repository` (4 erros / 0
+  assertions no teste focal).
+- As linhas experimentais foram removidas do teste; não substituímos o ledger,
+  os serviços do Portal ou regras de acesso. Parar PV7 até preparar um harness
+  que carregue a closure real completa; em seguida repetir a suíte e concluir a
+  revisão ampliada de acessibilidade/leitura. Permanece Dev.
+
 ## PV7 — bloqueio de suíte em 2026-10-28
 
 - Suíte completa: 36 testes iniciados, 237 assertions, 5 erros de bootstrap e

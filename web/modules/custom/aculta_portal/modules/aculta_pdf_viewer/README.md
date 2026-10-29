@@ -1,5 +1,12 @@
 # ACULTA PDF Viewer
 
+**Revalidação 2026-10-29 (0.1.0-dev.41):** PV7 continua bloqueada. Carregar o
+ledger real do `aculta_user` avançou o bootstrap; depois de incluir os módulos
+reais `path_alias`, Portal e Image na investigação, o container exigiu também
+`key.repository`. A tentativa terminou em 4 Kernel errors / 0 assertions; a
+fixture experimental foi revertida. Não substituir serviços reais nem declarar
+RC até carregar uma closure válida e repetir a suíte.
+
 `aculta_pdf_viewer` é o submódulo que fornece a leitura de PDFs compartilhada
 pelas experiências do site. Não pertence ao LMS: conteúdo pode usar o formatter
 de Media `document` ou o formatter `aculta_pdf_file` em um campo File direto.
