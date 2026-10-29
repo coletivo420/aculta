@@ -308,3 +308,7 @@ atualização nesta microfase.
 ## Incremento OC315 - mídia e transparência opcional (2026-10-29)
 
 Auditoria: [OpenCulturas 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). Estudar metadados **opcionais** de autoria/crédito, origem, licença informada e contexto de utilização em upload público; preservar D-10 (nenhuma licença obrigatória e nenhum filtro por licença na biblioteca). Downloads com formato/tamanho/idioma pertencem ao `aculta_document_viewer` e devem respeitar acesso por entidade. Transparência de criação/alteração por IA é **ideia independente**, não paridade verificada do pacote 3.1.5. Sem alteração de biblioteca, esquema ou fluxo de upload nesta rodada.
+
+## Candidatos OC-D - OpenCulturas 3.1.5 (2026-10-29)
+
+Estudar autoria/crédito/licença como **metadados opcionais** (D-10), preservando pipeline, segurança e política de upload. `ReadableMime` e `DownloadWithMetaFormatter` são referências para mostrar formato/tamanho/idioma de arquivos acessíveis, em conjunto com `aculta_document_viewer`, sem oferecer link privado indevido. Declaração de uso de IA **não foi comprovada** no tarball 3.1.5; pesquisar separadamente, sem alegar paridade. Revisar licenças e atribuição de qualquer código efetivamente derivado.
