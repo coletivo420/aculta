@@ -36,30 +36,26 @@ final class GroupHasaculta_H5PActivities extends ConditionPluginBase {
   }
 
   /**
-   *
-   */
+   * Summarizes the condition for displays that require H5P activities. */
   public function summary(): string {
     return (string) $this->t('O curso contém pelo menos uma atividade H5P.');
   }
 
   /**
-   *
-   */
+   * Returns cache tags for the current course or the group list. */
   public function getCacheTags(): array {
     $course = $this->getContextValue('group');
     return $course instanceof CourseInterface ? Cache::mergeTags($course->getCacheTags(), ['aculta_h5p_content_list']) : ['group_list'];
   }
 
   /**
-   *
-   */
+   * Returns no additional cache contexts for this condition. */
   public function getCacheContexts(): array {
     return [];
   }
 
   /**
-   *
-   */
+   * Returns permanent cacheability for the course activity condition. */
   public function getCacheMaxAge(): int {
     return Cache::PERMANENT;
   }

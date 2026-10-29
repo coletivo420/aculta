@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Event;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -14,6 +14,8 @@ class aculta_H5PFinishedEvent extends Event {
   const FINISHED_EVENT = 'h5p.finished';
 
   /**
+   * H5P result data emitted after activity completion.
+   *
    * @var array
    */
   protected $quizData;
@@ -29,6 +31,8 @@ class aculta_H5PFinishedEvent extends Event {
   }
 
   /**
+   * Returns completion fields recorded by H5P.
+   *
    * @return array
    *   Quiz data.
    */

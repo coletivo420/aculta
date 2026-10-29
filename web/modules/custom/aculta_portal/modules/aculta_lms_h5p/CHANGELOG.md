@@ -1,3 +1,14 @@
+## 0.4.0-dev.159 — documentar plugins e hooks H5P (2026-10-29)
+
+- PHPDoc dos plugins Condition, Field Type e Views Access, hook de bibliotecas,
+  esquema de entidade, acesso a curso e evento H5P foi completado. Nomes de
+  discovery e protocolo foram preservados; exceção local registrada para a
+  função estática de limpeza do conteúdo H5P.
+- PHPCS integral caiu de 188 erros/21 avisos em 26 arquivos para 174/20 em 19
+  arquivos. Os sete arquivos desta rodada passam PHPCS Drupal/DrupalPractice.
+- Unit + Kernel no `aculta_simpletest`: 43 testes / 481 asserções PASS, 41
+  depreciações Core/contrib. PHP lint e `git diff --check` PASS; sem Runtime.
+
 ## 0.4.0-dev.158 — documentar entidade de conteúdo H5P (2026-10-29)
 
 - PHPDoc da entidade de conteúdo foi completado sem mudar campos, armazenamento

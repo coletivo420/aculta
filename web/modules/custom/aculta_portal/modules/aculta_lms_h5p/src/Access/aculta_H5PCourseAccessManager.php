@@ -31,14 +31,14 @@ final class aculta_H5PCourseAccessManager {
   }
 
   /**
-   * Checks access for student playback, progress and protected content files. */
+   * Checks access for student playback, progress, and protected content files.
+   */
   public function studentAccess(int $groupId, int $contentId, AccountInterface $account): AccessResult {
     return $this->courseAccess($groupId, $contentId, $account, FALSE);
   }
 
   /**
-   *
-   */
+   * Combines Group access with the course's H5P content reference. */
   private function courseAccess(int $groupId, int $contentId, AccountInterface $account, bool $editor): AccessResult {
     $cacheContexts = ['user', 'user.permissions', 'user.group_permissions'];
     $course = $this->entityTypeManager->getStorage('group')->load($groupId);

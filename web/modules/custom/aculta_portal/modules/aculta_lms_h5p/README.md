@@ -7,14 +7,15 @@ Composer independentes, sob GPL-3.0-only.
 
 ## Estado
 
-**Revalidação 2026-10-29 (0.4.0-dev.158):** Unit + Kernel 43/481 passaram
+**Revalidação 2026-10-29 (0.4.0-dev.159):** Unit + Kernel 43/481 passaram
 no MariaDB `aculta_simpletest`; o Kernel reportou 41 depreciações Core/contrib.
-PHPCS integral registra 188 erros e 21 avisos em 26 arquivos, abaixo de
-203/21 em 27 arquivos na rodada anterior. Sete arquivos de teste, quatro
-formulários administrativos e a entidade de conteúdo agora têm PHPCS limpo;
-nomes de protocolo H5P permanecem estáveis com exceções locais justificadas.
-O módulo permanece em Dev enquanto o gate integral continuar vermelho. PHP lint
-dos 12 arquivos modificados passou. Nenhum Runtime foi alterado.
+PHPCS integral registra 174 erros e 20 avisos em 19 arquivos, abaixo de
+188/21 em 26 arquivos na rodada anterior. Sete arquivos de teste, quatro
+formulários administrativos, a entidade e sete classes auxiliares têm PHPCS
+limpo; nomes de discovery/protocolo permanecem estáveis com exceções locais
+justificadas. O módulo permanece em Dev enquanto o gate integral continuar
+vermelho. PHP lint passou nos 19 arquivos tocados acumulados nesta rodada.
+Nenhum Runtime foi alterado.
 
 F10 foi homologada no Runtime de teste `cursos`: o pacote de biblioteca foi
 instalado pela tela administrativa, uma atividade foi salva pelo editor e

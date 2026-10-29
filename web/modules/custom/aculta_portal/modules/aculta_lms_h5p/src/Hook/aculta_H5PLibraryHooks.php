@@ -28,8 +28,7 @@ final class aculta_H5PLibraryHooks {
   ) {}
 
   /**
- *
- */
+ * Builds asset libraries from installed H5P core and content libraries. */
   #[Hook('library_info_build')]
   public function libraryInfoBuild(): array {
     $database = $this->database;

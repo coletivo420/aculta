@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Plugin\views\access;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Drupal\views\Plugin\views\access\AccessPluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -25,6 +25,8 @@ use Symfony\Component\Routing\Route;
 // phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PAccessUserPoints extends AccessPluginBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * Resolves the route whose account profile may expose H5P results. */
   protected RouteMatchInterface $currentRouteMatch;
 
   public function __construct(

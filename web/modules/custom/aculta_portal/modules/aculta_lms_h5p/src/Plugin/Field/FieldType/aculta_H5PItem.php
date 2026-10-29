@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Plugin\Field\FieldType;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\Attribute\FieldType;
 use Drupal\Core\Field\FieldItemInterface;
@@ -126,7 +126,7 @@ class aculta_H5PItem extends FieldItemBase implements FieldItemInterface {
       // Only delete the referenced H5P if this is the default translation
       // or that the field is translatable.
       // (If it's not translatable the H5P is shared between translations)
-      // (The content can be translated without having enabled translation for the field)
+      // The content can be translated even if field translation is disabled.
       self::deleteaculta_H5PContent($this->get('h5p_content_id')->getValue());
     }
 
@@ -176,8 +176,9 @@ class aculta_H5PItem extends FieldItemBase implements FieldItemInterface {
   }
 
   /**
-   * Delete the H5P Content referenced by this field.
+   * Deletes H5P content referenced by this field.
    */
+  // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Retain the H5P content cleanup method identifier.
   public static function deleteaculta_H5PContent($content_id) {
     if (empty($content_id)) {
       // Nothing to delete.
