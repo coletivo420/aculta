@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.14
+version: 0.7.0-dev.15
 state: Dev
 progress_note: >-
-  0.7.0-dev.14 / THEME-MF2: Perfil público migrado para base empilhada com aprimoramento em 36rem, mantendo o layout anterior. Lint CSS, compilação do harness, SDC schemas (734) e Design Foundations (2434) PASS. Comparação Firefox da fixture iniciou e revelou diferença em 320px, corrigida; repetição DEFERRED enquanto sessões visíveis de outra frente ocupam o Firefox/geckodriver. Página real ainda depende de sync/cache pelo owner; MF3 global não aprovado.
-next_phase: 'Repetir a comparação Firefox da fixture quando o driver compartilhado estiver livre; depois sincronização/cache pelo owner e revisar Perfil público renderizado. Continuar THEME-MF2 nos demais purposes antes de THEME-MF3.'
+  0.7.0-dev.15 / THEME-MF2: formulários públicos de autenticação passaram a usar espaçamento mobile-first, com restauração em 36rem. Lint CSS, Python compile, SDC schemas (734), Design Foundations (2434) PASS. Fixture Firefox e rotas reais DEFERRED enquanto sessões visíveis da Revista ocupam os recursos; THEME-MF3 não aprovado.
+next_phase: 'Repetir Firefox para autenticação e Perfil público quando as sessões concorrentes encerrarem; sincronização/cache pelo owner e revisão das páginas reais continuam pendentes. Seguir outras superfícies MF2 antes do gate THEME-MF3.'

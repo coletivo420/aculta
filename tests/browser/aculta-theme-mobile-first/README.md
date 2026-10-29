@@ -235,3 +235,18 @@ export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-profile-mobile-first
 export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
 DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/public-profile-layout.py
 ```
+
+## Formulários públicos de autenticação
+
+`auth-layout.py` compara espaçamentos computados e screenshots dos estilos de
+login/registro/recuperação antes e depois da migração, em 320/360/390/575/576/
+599/600/768/1024/1280/1440 px. Usa fixture, não Runtime. Requer Firefox ESR
+visível, `DISPLAY=:0`, geckodriver e `websockets`; artefatos ficam em `$SUITE_OUT`.
+`AUTH_BASELINE_REF` e `AUTH_WIDTHS` selecionam baseline e larguras.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-auth-mobile-first
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/auth-layout.py
+```

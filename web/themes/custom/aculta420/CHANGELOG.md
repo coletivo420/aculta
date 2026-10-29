@@ -1,3 +1,8 @@
+# 0.7.0-dev.15 — migrar formulários públicos de autenticação para mobile-first (2026-10-29)
+
+- `/entrar`, registro e recuperação passam a usar espaçamento compacto como base; `min-width: 36rem` restaura o painel amplo anterior.
+- Firefox ESR candidato/baseline está DEFERRED enquanto sessões visíveis da Revista consomem os recursos locais. Lint CSS e validações estáticas são executados; sem homologação Runtime ou THEME-MF3.
+
 # 0.7.0-dev.14 — migrar o Perfil público para mobile-first (2026-10-29)
 
 - Perfil público usa composição empilhada e espaçamento móvel como base; `min-width: 36rem` restaura a apresentação ampla anterior.

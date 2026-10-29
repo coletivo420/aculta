@@ -582,3 +582,12 @@ memória baixa. A página real ainda depende de sincronização/cache rebuild no
 servidor de desenvolvimento. Esta fatia não aprova THEME-MF3. Ver
 `mobile-first-audit.md` e
 `tests/browser/aculta-theme-mobile-first/public-profile-layout.py`.
+
+### THEME-MF2 — autenticação pública (2026-10-29)
+
+`auth.css` usa espaçamentos compactos de login, registro e recuperação como
+base, restaurando padding e margem amplos em `min-width: 36rem`. O harness de
+fixture em 11 larguras foi criado; Firefox e validação das páginas reais estão
+DEFERRED por falta de recursos enquanto a suíte visível da Revista está ativa.
+Não é gate MF3. Ver `mobile-first-audit.md` e
+`tests/browser/aculta-theme-mobile-first/auth-layout.py`.

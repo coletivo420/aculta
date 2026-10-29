@@ -481,3 +481,13 @@ sem updates; `config:status` ainda divergente (377 linhas), sem import. Snapshot
 e gates do Runtime estão em `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 Esta rodada integrada também não aprova THEME-MF3. Teste reutilizável:
 `tests/browser/aculta-theme-mobile-first/account-orders.py`.
+
+### THEME-MF2 — autenticação pública (2026-10-29)
+
+`auth.css` declara padding compacto para cabeçalho e formulário como base e
+restaura o painel amplo em `min-width: 36rem`, preservando os mesmos valores
+computados em cada lado do breakpoint. A fixture
+`tests/browser/aculta-theme-mobile-first/auth-layout.py` foi criada para
+comparar candidato/baseline em 11 larguras; a execução Firefox está DEFERRED
+enquanto sessões da Revista mantêm geckodriver e memória ocupados. Rotas reais
+e páginas servidas após cache rebuild também permanecem pendentes.
