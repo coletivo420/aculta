@@ -40,7 +40,7 @@ coordenador do Portal e pelo proprietário Image.
 | M1 a M3 consumidores | feito | Gallery, Magazine, Usuário, Portal, PDF migrados para o `aculta_image` |
 | M4 miniatura de PDF | implementado com PHP Imagick | Serviço `aculta_image.pdf_thumbnail` usa a extensão PHP Imagick e Ghostscript, sem depender do CLI `magick`/`convert`; limita entrada a PDF público/permanente de até 20 MiB, renderiza só a primeira página, aplica limites temporários de recursos e grava JPEG 480×640 mantendo proporção. Suporte Hostinger confirmado por SSH somente leitura; suíte gera fixture sintética local. Validação via aplicação no FPM Hostinger segue pendente |
 | M11 opções de processamento e painel ACULTA | implementado em dev.45–.46 (`d0ad722db`) | ACULTA > Imagens > Processamento e formatos; detecta Imagick/GD e otimizadores, limita seleção a backend disponível, permite configurar compressão, WebP, MIME de entrada/saída, largura e qualidade. WebP inline substitui o original com qualidade 82 e atualiza metadados do File. Acesso comum negado por Kernel; suíte Image 33/169, PHPCS e gate específico passaram conforme CHANGELOG. Revisão visual no Runtime pendente |
-| M12 migração de formatos existentes | pendente | Requer inventário por File ID, referências em File Usage, Entity Usage, campos e textos/revisões; executar em lotes com plano de reversão e atualização de URLs. Nenhum arquivo existente foi alterado |
+| M12 migração de formatos existentes | inventário do Runtime de desenvolvimento sem candidatos (2026-10-29) | No head `c6f40d420`, `file_managed` e `public://inline-images` têm zero arquivos; File Usage e Entity Usage também têm zero referências nesse diretório. Nenhum arquivo foi alterado. Repetir o inventário quando o acervo desse ambiente mudar; só migrar candidatos após fechar referências, cache/derivados e reversão por lote. |
 | M5 duplicatas exatas | feito | `media_duplicates` 2.0.4; os dois grupos reais da galeria 11 foram mesclados, uma ocorrência por arquivo, mantendo o `alt` do menor ID |
 | M6 auditoria de uso | feito | `entity_usage` 5.0.1; candidatas com motivos |
 | M7 quarentena | parcial | 30 dias; restauração preservada; mover e excluir exigem verificação pelo coordenador global. Testes Unit confirmam retenção com referência File API e indisponibilidade do coordenador. Falta validar Kernel/integração em instalação limpa e revisão operacional. |
@@ -294,16 +294,15 @@ arquivo existente foi migrado nesta fase.
 ### Inventário inicial M12 — 2026-10-29
 
 Consulta somente leitura ao banco `aculta_runtime` no servidor de
-desenvolvimento: `file_managed` contém zero registros com URI
-`public://inline-images/%`; a pasta correspondente no public files também
-contém zero arquivos. Assim, o conjunto atual de candidatos inline é vazio e
-nenhuma conversão ou reescrita de referência foi necessária. Esta medição foi
-feita no Runtime enquanto o checkout servido estava em `355e48a89`, antes de
-servir o candidato `0.1.0-dev.46`; ela não demonstra ausência de arquivos em
-outros ambientes nem substitui a repetição do inventário antes de executar uma
-migração. O arquivo de status do Image está sendo editado por outra sessão no
-checkout servido; essa alteração foi preservada e o manifesto permanece sem
-atualização nesta microfase.
+desenvolvimento, repetida com o checkout em `c6f40d420`: `file_managed` contém
+zero registros com URI `public://inline-images/%`; a pasta correspondente no
+public files também contém zero arquivos. File Usage e Entity Usage retornam
+zero referências para esse conjunto. Portanto, não há candidatos a converter
+nem URLs/referências a reescrever neste ambiente. Nenhum arquivo, cache ou dado
+Runtime foi alterado. Esta evidência vale somente para o servidor de
+desenvolvimento; não demonstra ausência de arquivos em outros ambientes. M12
+permanece pendente para nova execução quando surgirem candidatos, com lote e
+reversão documentados antes de qualquer gravação.
 
 ## Incremento OC315 - mídia e transparência opcional (2026-10-29)
 
