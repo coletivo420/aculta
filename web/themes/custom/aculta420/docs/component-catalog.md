@@ -146,7 +146,8 @@ contratos e consumidores reais autorizem sua implementação; não são componen
 | Menção na imprensa | Story de uso de `content/editorial-card`; nenhum SDC novo | A View/consumer de menção real ainda não existe. |
 | `content/sponsor-logos` | Candidato experimental, sem marcas reais | Nenhum consumidor; marca só entra após autorização registrada e mídia pelo pipeline `aculta_image`. |
 | `patterns/bookmark-toggle` | Candidato experimental, com estados em stories | Consumido pelo tópico completo do Fórum através da ação nativa `flag_salvar_topico`; validação visual no Runtime pendente. A Flag mantém comportamento e acesso. |
-| `layouts/event-page-five-regions` | Layout UI Patterns experimental | UI Patterns Layouts está no código e em Config Sync. Sem consumidor real: `aculta_events` já tem controller e Twig públicos, mas ainda não consome este SDC. |
+| `content/event_card` | Experimental com consumidor real | `ThemeHooks::preprocessEventCatalogue()` adapta os render arrays neutros de `/eventos`; dados, filtros, acesso e cache continuam no `aculta_events`. |
+| `layouts/event-page-five-regions` | Experimental com consumidor real | O override de tema `aculta-event-page.html.twig` compõe `/eventos/{slug}` em cinco regiões; o título de página é suprimido apenas nessa rota para manter um H1. |
 | `layouts/page-columns` (I-22) | Layout UI Patterns experimental com variações 1, 2 e 3 colunas e ordem DOM preservada no mobile | Sem consumidor real; permanece candidato. `rail` é horizontal e `content-section` não compõe regiões em colunas. |
 
 `layouts/page-columns` agora empilha todas as variantes como base; duas/três
@@ -271,7 +272,7 @@ UI Patterns Library e Firefox ESR/X11 seguem pendentes.
 
 Novo inventário estático no HEAD da PR #299: **54 arquivos `.component.yml`** no tema; os 52 do histórico acima eram fotografia anterior. Contagem de arquivos não equivale a componentes aprovados, consumidores reais ou testes visuais.
 
-- `layouts/event-page-five-regions`: integrar ao controller/tema de Eventos sem H1 duplicado; não criar Layout Builder paralelo.
+- `content/event_card` e `layouts/event-page-five-regions`: homologar páginas de lista e detalhe de Eventos em Firefox ESR, incluindo dados reais, reflow, estados, teclado e claro/escuro; não criar Layout Builder paralelo.
 - `content/accessibility-badges`: criar integração de campo estruturado em local/evento, não apenas carregar rótulos fictícios da story.
 - `content/sponsor-logos`: integrar dados autorizados e mídia pela cadeia de `aculta_image`; evitar URL arbitrária.
 - `patterns/bookmark-toggle`: o consumidor do Fórum existe; ampliar sem duplicar Flag e com controle de cache por usuário.

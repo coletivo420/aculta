@@ -112,6 +112,20 @@ Pendências da 0.4:
 
 ## Componentes atuais
 
+### Eventos públicos
+
+O catálogo `/eventos` é apresentado pelo SDC `aculta420:event_card`. A hook
+`ThemeHooks::preprocessEventCatalogue()` só adapta os render arrays que o
+`aculta_events` já entrega; tipos, datas, links, cancelamento, filtros e cache
+continuam no módulo. O local fica ausente enquanto o catálogo não o fornecer.
+
+A página `/eventos/{slug}` usa o SDC `aculta420:event-page-five-regions` pelo
+override `templates/aculta-event-page.html.twig`. Título, datas, organizador,
+descrição, acesso e JSON-LD continuam vindo do controller de Eventos. A hook de
+`preprocess_page` remove o page-title block apenas nessa rota porque o SDC
+apresenta o único H1. A base CSS é uma coluna; a região complementar passa a
+coluna lateral a partir de 992 px.
+
 ### `aculta420:forum-category`
 
 Status: experimental. Local: `components/content/forum-category/`.

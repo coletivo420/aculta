@@ -391,6 +391,7 @@ final class PortalUiHooks {
     'messenger-sender-date' => ['aculta-messenger-sender__date'],
     'messenger-sender-name' => ['aculta-messenger-sender__name'],
     'messenger-sender-avatar' => ['aculta-messenger-sender__avatar'],
+    'messenger-sender-avatar-image' => ['aculta-messenger-sender__avatar-image'],
     // Avisos na gaveta: resumo em caixa de botão (como uma conversa); o aviso
     // completo abre na mesma gaveta.
     'notice-summary' => ['aculta-messenger-sender', 'aculta-notice-summary'],

@@ -24,7 +24,7 @@ final class PortalUiHooksTest extends UnitTestCase {
   public function testMapsKnownTokensOnAttributeObjectAndRemovesTheTokenAttribute(): void {
     $variables = [
       'attributes' => new Attribute([
-        'data-portal-ui' => 'notice-warning email-notice lms-activity-discussions lms-h5p-activity lms-h5p-discussions',
+        'data-portal-ui' => 'notice-warning email-notice lms-activity-discussions lms-h5p-activity lms-h5p-discussions messenger-sender-avatar-image',
         'class' => ['existente'],
       ]),
     ];
@@ -41,6 +41,7 @@ final class PortalUiHooksTest extends UnitTestCase {
     $this->assertTrue($attributes->hasClass('mt-3'));
     $this->assertTrue($attributes->hasClass('d-grid'));
     $this->assertTrue($attributes->hasClass('gap-3'));
+    $this->assertTrue($attributes->hasClass('aculta-messenger-sender__avatar-image'));
     $this->assertTrue($attributes->hasClass('existente'));
     $this->assertFalse($attributes->offsetExists('data-portal-ui'));
   }

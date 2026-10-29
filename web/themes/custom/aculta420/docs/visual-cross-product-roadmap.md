@@ -105,7 +105,8 @@ pelo menos um consumidor real. Template ou bloco do OpenCulturas é referência,
 | Menção na imprensa (I-26) | `content/editorial-card` atende via slots; story de uso adicionada, sem SDC duplicado. | Candidato de uso; sem consumidor real. |
 | `content/sponsor-logos` (I-27) | Candidato criado com slot para mídia do Drupal/aculta_image. | Sem consumidor; cada marca exige autorização registrada. |
 | `patterns/bookmark-toggle` (I-31) | Composição do SDC envolve a ação nativa `flag_salvar_topico` no tópico completo do Fórum. | Candidato consumido por código; validação visual Runtime pendente. |
-| Layout 5 regiões (I-21) | UI Patterns Layouts 2.0.23 está instalado no código e habilitado em Config Sync; layout criado com cinco slots. | Experimental; sem consumidor real enquanto `aculta_events` não implementar F3. |
+| `content/event_card` | O presenter do tema adapta os render arrays do catálogo sem movimentar dados ou acesso do módulo. | Consumidor real em `/eventos`; reflow visual e stories no Runtime pendentes. |
+| Layout 5 regiões (I-21) | UI Patterns Layouts 2.0.23 está instalado no código e habilitado em Config Sync; o override do tema compõe o detalhe público. | Consumidor real em `/eventos/{slug}`; reflow visual e stories no Runtime pendentes. |
 | `layouts/page-columns` (I-22) | Layout SDC com regiões nomeadas principal/secundária/complementar, stories 1/2/3 colunas e colapso mobile em ordem DOM. | Candidato sem consumidor real; story não renderizada no Runtime UI Patterns. |
 
 Resultado: stories existem; não declarar aprovação sem validação do schema,
@@ -751,3 +752,14 @@ anterior e a altura natural da caixa retornam em 576px. O teste
 fixture com baseline e candidata nas larguras globais, mantendo a ordem
 mensagem/ação e o alvo de toque. Firefox visível ficou DEFERRED nesta sessão; o
 script não altera conversas nem substitui homologação da gaveta real.
+
+### THEME-MF2 — catálogo e detalhe de Eventos (2026-10-29)
+
+O catálogo público adapta os render arrays existentes para o SDC `event_card`;
+a grade começa em uma coluna, passa a duas em 768px e três em 1200px. O detalhe
+usa `event-page-five-regions` pelo override de tema, mantém H1 único e vira duas
+colunas em 992px. `aculta_events` permanece dono de datas, acesso, links e
+cache; campos sem dados reais permanecem ausentes. Unit, schema/discovery SDC e
+lint CSS precisam passar. Firefox ESR e captura com eventos reais ficam
+DEFERRED enquanto `DISPLAY=:0` não estiver disponível; esta fatia não conclui
+THEME-MF3.

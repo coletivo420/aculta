@@ -415,6 +415,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `messenger-sender-date` | `aculta-messenger-sender__date` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `messenger-sender-name` | `aculta-messenger-sender__name` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `messenger-sender-avatar` | `aculta-messenger-sender__avatar` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-sender-avatar-image` | `aculta-messenger-sender__avatar-image` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `notice-summary` | `aculta-messenger-sender`, `aculta-notice-summary` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `notice-summary-link` | `aculta-messenger-sender__link` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `notice-summary-persistent` | `aculta-notice-summary--persistent` | (montado dinamicamente ou só no tema) |

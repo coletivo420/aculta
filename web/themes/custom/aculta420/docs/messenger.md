@@ -84,6 +84,7 @@ O módulo marca o elemento com um token semântico. `PortalUiHooks::TOKENS` troc
 | `messenger-sender-link` | `aculta-messenger-sender__link` | Link que abre a conversa |
 | `messenger-sender-date` / `messenger-sender-name` | `aculta-messenger-sender__date` / `__name` | Data e nome na linha |
 | `messenger-sender-avatar` | `aculta-messenger-sender__avatar` | Avatar na linha |
+| `messenger-sender-avatar-image` | `aculta-messenger-sender__avatar-image` | Imagem do avatar; herda o recorte do container |
 | `notice-read-status` | `aculta-messenger-read-status` | Aviso persistente já lido |
 | `notice-unread-status` | `aculta-messenger-read-status aculta-messenger-read-status--unread` | Aviso persistente não lido |
 | `messenger-state` | `aculta-messenger-state` | Estado de aviso vazio/carregando/erro |

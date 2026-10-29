@@ -1,9 +1,29 @@
 /* Cartão de evento. Usa a fonte e as cores herdadas do tema; sem cores fixas. */
 .event-card {
-  border: 1px solid currentColor;
+  min-width: 0;
+  border: 1px solid var(--aculta-border-default);
   border-radius: 0.5rem;
-  padding: 1rem;
-  margin-block-end: 1rem;
+  padding: clamp(0.875rem, 3vw, 1.25rem);
+  color: var(--aculta-text-primary);
+  background: var(--aculta-surface-raised);
+}
+
+.event-catalogue__list > ul {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.event-catalogue__list > ul > li {
+  min-width: 0;
+}
+
+.event-card,
+.event-card * {
+  overflow-wrap: anywhere;
 }
 
 .event-card__tipo {
@@ -34,4 +54,16 @@
 
 .event-card--cancelado .event-card__titulo {
   text-decoration: line-through;
+}
+
+@media (min-width: 48rem) {
+  .event-catalogue__list > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 75rem) {
+  .event-catalogue__list > ul {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }

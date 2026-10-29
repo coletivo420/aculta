@@ -16,9 +16,10 @@ específicos de Views.
 | `preprocess_views_view_vvjb` | `preprocessViewsViewVvjb()` | Desativa controles e autoplay quando o destaque editorial da home tem um único slide. |
 | `preprocess_views_view_vvjs_fields` | `deferInactiveAlbumSlideImages()` | Adia o `src` das imagens de slides inativos da View `aculta_album_fotos`, display `block_1`. |
 | `preprocess_views_view_vvjs` | `deferInactiveProductSlideImages()` | Adia imagens de slides de produto na View `galeria_produto`. |
+| `preprocess_item_list` | `preprocessEventCatalogue()` | Adapta os itens neutros de `/eventos` para o SDC `aculta420:event_card`, preservando acesso e cache do módulo. |
 | `preprocess_node` | `preprocessNode()` | Constrói o SDC `aculta420:hero` para nós `page` em visualização completa quando há título de hero. |
 | `preprocess_field` | `preprocessField()` | Aplica a classe de prosa aos corpos editoriais e envolve o formulário de resposta privada no SDC `aculta420:messenger-compose`. |
-| `preprocess_page` | `preprocessPage()` | Compõe a página, adapta marca neutra, move blocos de cabeçalho para variáveis dedicadas e converte ações neutras do Messenger/Avisos em SDCs. |
+| `preprocess_page` | `preprocessPage()` | Compõe a página, adapta marca neutra, move blocos de cabeçalho para variáveis dedicadas, suprime o título redundante do detalhe de evento e converte ações neutras do Messenger/Avisos em SDCs. |
 | `preprocess_private_message_thread` | `preprocessPrivateMessageThread()` | Apresenta o estado nativo de leitura como `aculta420:messenger-read-status`. |
 | `preprocess_private_message` | `preprocessPrivateMessage()` | Envolve conteúdo, avatar e direção da mensagem em `aculta420:messenger-item`. |
 | `preprocess_html` | `preprocessHtml()` | Aplica o modo de cor resolvido pelo Portal e o título de documento fornecido pelo contrato. |
