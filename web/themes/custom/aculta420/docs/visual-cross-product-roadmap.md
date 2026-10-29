@@ -521,6 +521,12 @@ busca começa em uma coluna, passa a duas em 576px e três em 992px. Os harnesse
 de categorias e busca aceitam a CSS candidata e cobrem as fronteiras; Firefox
 DEFERRED. Ver `mobile-first-audit.md`.
 
+### THEME-MF2 — layout interno do Studio
+
+Sidebar e conteúdo usam uma coluna como base e retomam a composição horizontal
+em 768px; o smoke do Hub injeta CSS candidata e cobre 767/768px. Firefox e
+Runtime DEFERRED. Isso não fecha a fidelidade OCS-F11 nem o gate global MF3.
+
 ### THEME-MF2 — composição institucional mobile-first (2026-10-29)
 
 CTAs do hero e as grades institucionais/detalhes agora declaram primeiro o

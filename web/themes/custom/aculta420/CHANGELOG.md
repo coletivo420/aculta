@@ -1,3 +1,8 @@
+# 0.7.0-dev.26 — migrar navegação interna do Studio para mobile-first (2026-10-29)
+
+- Navegação lateral e painel do Studio empilham como base; `min-width: 48rem` restaura o layout horizontal com sidebar de 14rem. Sem alteração de markup, ACL, rotas ou shell.
+- `tests/browser/aculta-studio/visual.mjs` injeta CSS candidata e verifica composição/overflow em 320/390/767/768/1024/1440px. Stylelint e sintaxe JS PASS; Firefox e Runtime DEFERRED por sessões concorrentes; THEME-MF3 pendente.
+
 # 0.7.0-dev.25 — migrar busca e metadados do Fórum para mobile-first (2026-10-29)
 
 - Busca de tópicos começa em uma coluna, cresce para duas em 576px e três em 992px; metadados da linha de tópico empilham em mobile e voltam à coluna lateral em 576px.

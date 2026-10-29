@@ -82,6 +82,10 @@ de tópico empilham seus metadados até `36rem`. Não houve SDC novo nem altera�
 dos dados/handlers da View. O teste visual sintético está documentado em
 `tests/browser/aculta-forum/README.md`.
 
+`studio.css` compõe navegação e painel internos com os elementos neutros do
+Studio. O mobile usa coluna única como base e recupera a sidebar lateral em
+`48rem`; nenhum SDC paralelo ou novo contrato foi criado.
+
 A barra de progresso de comentários é CSS compartilhada de Fórum/Wiki/Revista,
 com markup e ações emitidos pelo Portal; a grade começa compacta e cresce em
 `22.5rem` e `36rem`. O harness e os limites por consumer estão documentados em

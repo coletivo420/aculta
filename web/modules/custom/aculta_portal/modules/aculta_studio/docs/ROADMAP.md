@@ -623,3 +623,12 @@ Firefox no checkout servido passou 29 verificações, 1 SKIP e zero falhas na
 rota Marley, com contraste mínimo 7,05:1 claro e 11,51:1 escuro. Tipografia
 aguarda licença verificável e outras áreas Studio precisam de captura; F1
 permanece parcial. Referência e limites em `studio-visual/upstream-inventory.md`.
+
+### THEME-MF2 — layout responsivo interno do Studio (2026-10-29)
+
+`studio.css` empilha sidebar e painel como base e restaura a navegação lateral
+em `min-width: 48rem`, sem alterar os SDCs, markup, providers, links, ACL ou o
+shell multidomínio. O smoke visual passou a injetar a CSS candidata e verificar
+320/390/767/768/1024/1440px. Stylelint e sintaxe JS PASS; Firefox/Runtime
+DEFERRED por sessões concorrentes. Esta alteração é somente responsividade do
+tema: não conclui F0/F1 nem homologa OCS-F11 ou THEME-MF3.

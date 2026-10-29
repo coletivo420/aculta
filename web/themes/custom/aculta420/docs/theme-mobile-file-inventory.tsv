@@ -140,7 +140,7 @@ estilo	web/themes/custom/aculta420/css/components/revista-post.css	1	(max-width:
 estilo	web/themes/custom/aculta420/css/components/sales-panel.css	0	—	0	min-width: 100%	overflow-x: auto
 estilo	web/themes/custom/aculta420/css/components/search.css	2	(min-width: 768px) | (prefers-reduced-motion: reduce)	0	max-width: 48rem | max-height: 40vh | width: 100% | min-height: 2.75rem | min-height: 2.75rem | min-height: 0 | min-width: 768px)	overflow-y: auto
 estilo	web/themes/custom/aculta420/css/components/statistics.css	1	(max-width: 575.98px)	0	min-width: 12rem | max-width: 100% | height: auto | width: 100% | max-width: 575.98px) | width: 100% | min-width: 0	overflow-x: auto
-estilo	web/themes/custom/aculta420/css/components/studio.css	2	(max-width: 767.98px) | (prefers-reduced-motion: reduce)	0	max-width: 14rem | min-width: 0 | max-width: 767.98px) | width: 100% | max-width: 100% | min-width: 0	—
+estilo	web/themes/custom/aculta420/css/components/studio.css	2	(min-width: 48rem) | (prefers-reduced-motion: reduce)	0	width: 100% | max-width: 100% | min-width: 0 | width: 100% | max-width: 100% | min-width: 0 | min-width: 48rem) | width: auto | max-width: 14rem | min-width: auto | width: auto | max-width: none | min-width: 0	—
 estilo	web/themes/custom/aculta420/css/components/ui-styles.css	0	—	0	—	—
 estilo	web/themes/custom/aculta420/css/components/unread-count.css	0	—	0	min-width: 1.25rem | min-height: 1.25rem	—
 estilo	web/themes/custom/aculta420/css/components/webform.css	2	(min-width: 48.0625rem) | only screen and (max-width: 650px)	0	width: inherit | width: auto | min-width: 48.0625rem) | max-width: 650px) | width: 90% !important | width: auto | height: auto | min-width: 2.25rem | min-height: 2.25rem | width: 1%	overflow-x: auto

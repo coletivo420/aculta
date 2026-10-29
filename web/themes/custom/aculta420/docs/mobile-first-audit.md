@@ -7,6 +7,16 @@ A auditoria original foi registrada no checkout servidor `ded8a6181`. Em
 varredura abaixo cobre os arquivos atuais do tema, mas não altera a evidência
 de runtime. Nenhuma escrita persistente foi executada no Runtime.
 
+### THEME-MF2 — layout interno do Studio (2026-10-29)
+
+`studio.css` passa a empilhar sidebar e conteúdo como base; `min-width: 48rem`
+restaura a composição lateral e a largura de 14rem anterior. Shell global,
+markup, links, AJAX e ACL não mudam. O smoke visual do Studio aceita injeção da
+folha candidata via `STUDIO_CSS_OVERRIDE` e mede direção, dimensões e overflow
+em 320/390/767/768/1024/1440px. Stylelint e sintaxe JS PASS; execução
+Firefox/Runtime DEFERRED por sessões concorrentes. Não homologa OCS-F11 nem
+THEME-MF3.
+
 ### THEME-MF2 — busca e linhas de tópicos do Fórum (2026-10-29)
 
 `forum-index.css` usa uma coluna como base na linha de tópico e no formulário

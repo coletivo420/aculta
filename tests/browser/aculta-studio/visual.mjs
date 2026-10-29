@@ -2,7 +2,7 @@
 // Confere: seção "Estúdio" no shell da conta, abas e painel, navegação AJAX (sem recarregar a página),
 // largura de celular emulada pelo BiDi (390 px) e ausência de erros de JavaScript.
 // Ver README.md desta pasta. Somente no servidor de teste, com sessão de conta de teste.
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
@@ -13,6 +13,8 @@ const LOGIN_URI = process.env.STUDIO_LOGIN_URI || 'https://conta.aculta.toca.net
 const USER = process.env.STUDIO_USER || 'teste.comum';
 const OUT = process.env.SUITE_OUT || '/tmp/aculta-studio-visual';
 const GD = process.env.GECKODRIVER || 'http://127.0.0.1:4444';
+const CSS_OVERRIDE = process.env.STUDIO_CSS_OVERRIDE === '1';
+const CSS_ROOT = process.env.STUDIO_CSS_ROOT || PROJECT;
 const USER_ID = Number(process.env.STUDIO_USER_ID || '5');
 mkdirSync(OUT, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -60,6 +62,11 @@ try {
     const pageState = await exec(`return JSON.stringify({ url: location.href, title: document.title, message: document.body.innerText.slice(0, 240) });`);
     throw new Error(`Página sem navegação do Studio: ${pageState}`);
   }
+  if (CSS_OVERRIDE) {
+    const css = readFileSync(join(CSS_ROOT, 'web/themes/custom/aculta420/css/components/studio.css'), 'utf8');
+    const loaded = await exec(`const style=document.createElement('style');style.id='aculta-studio-css-candidate';style.textContent=arguments[0];document.head.append(style);return !!style.sheet&&style.sheet.cssRules.length>0;`, [css]);
+    check('CSS candidata do Studio injetada', loaded);
+  }
   await exec(`window.__errs = []; window.addEventListener('error', (e) => window.__errs.push(String(e.message))); window.__marker = 'sem-recarga';`);
   await sleep(1000);
 
@@ -103,11 +110,12 @@ try {
   const offenders = m.overflow ? await exec(`return [...document.querySelectorAll('body *')].filter((e) => e.getBoundingClientRect().right > window.innerWidth + 1 && !e.closest('.offcanvas, [data-aculta-studio="listing-wrap"]')).slice(0, 6).map((e) => e.tagName + '.' + String(e.className).slice(0, 50) + ' ' + Math.round(e.getBoundingClientRect().right));`) : [];
   check('sem rolagem horizontal em 390 px', !m.overflow, offenders.join(' | '));
   await shot('02-celular');
-  for (const width of [320, 768, 1024, 1440]) {
+  for (const width of [320, 767, 768, 1024, 1440]) {
     await setViewport(width, width < 500 ? 844 : 900);
     await sleep(300);
-    const responsive = JSON.parse(await exec(`return JSON.stringify({ w: window.innerWidth, overflow: document.documentElement.scrollWidth > window.innerWidth });`));
+    const responsive = JSON.parse(await exec(`const layout=document.querySelector('.studio__layout');const sidebar=layout?.querySelector('.studio__sidebar');const main=layout?.querySelector('.studio__main');const lr=layout?.getBoundingClientRect();const sr=sidebar?.getBoundingClientRect();const mr=main?.getBoundingClientRect();return JSON.stringify({w:window.innerWidth,overflow:document.documentElement.scrollWidth>window.innerWidth,direction:layout?getComputedStyle(layout).flexDirection:null,layoutWidth:lr?.width,sidebarWidth:sr?.width,mainWidth:mr?.width,childrenFit:!!lr&&!!sr&&!!mr&&sr.right<=lr.right+1&&mr.right<=lr.right+1});`));
     check(`sem rolagem horizontal em ${width}px`, !responsive.overflow, `innerWidth=${responsive.w}`);
+    check(`composição do Studio correta em ${width}px`, responsive.direction === (width < 768 ? 'column' : 'row') && responsive.sidebarWidth > 0 && responsive.mainWidth > 0 && responsive.childrenFit, JSON.stringify(responsive));
   }
   await setViewport(1280, 900);
 
