@@ -9,6 +9,13 @@ Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá
 
 **Revalidação 2026-10-29 (dev.178):** Unit Index 51/265, Kernel Index 120/2.020 e Unit File 2/21 passaram no MariaDB `aculta_simpletest`; o Kernel reportou 270 depreciações upstream, sem falhas. PHP lint passou nos 85 arquivos PHP do módulo e PHPCS Drupal/DrupalPractice passou após corrigir docblocks no controlador e teste de acesso do painel. A cobertura de acesso/Domain usa owners reais em Wiki, Fórum, Revista, Gallery e LMS no harness, mas não ativa as cadeias completas de todos os owners nem substitui homologação de grants operacionais com dados representativos. Nenhum rebuild ou escrita no Runtime foi executado.
 
+**Runtime read-only (2026-10-29):** o checkout de teste em `355e48a89` serve
+`aculta_index` dev.177; `aculta_index_file` está desabilitado. O gate da fila
+está pronto (0 queued/processing/retry/dead). Uma auditoria já existente está
+`running` (id 1), com 1 projeção stale e `valid=false`; não iniciei nem avancei
+auditoria e não executei rebuild. Essa auditoria precisa ser retomada ou
+resolvida por operador autorizado antes de nova homologação do catálogo.
+
 **Boot/DI combinado (dev.164):** `ContentIndexOwnerIntegrationKernelTest` carrega
 roots owners independentes para validar seus adapters no container do Index.
 Além do registry/tag real, agora persiste uma relação com o plugin Group real

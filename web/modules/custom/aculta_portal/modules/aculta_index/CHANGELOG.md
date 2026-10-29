@@ -9,6 +9,10 @@
 - A cobertura atual prova adapters, acesso/Domain em Wiki, Fórum, Revista,
   Gallery e LMS pelo harness; não substitui grants operacionais nem conteúdo
   representativo real dos owners. Estado permanece Dev.
+- Reconsulta somente leitura no Runtime (2026-10-29): código dev.177, submódulo
+  File desabilitado, fila sem jobs e pronta. A auditoria existente id 1 segue
+  running, com 1 projeção stale e `valid=false`; nenhum lote foi executado nem
+  rebuild iniciado nesta fase.
 
 ## 0.1.0-dev.177 — painel somente de leitura do estado do índice (2026-10-28)
 

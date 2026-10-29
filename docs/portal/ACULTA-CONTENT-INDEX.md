@@ -11,6 +11,12 @@ status. A revalidação confirma o harness, não a ativação completa dos owner
 Grants operacionais e carga representativa continuam pendentes; nenhum rebuild
 ou escrita no Runtime foi executado. O módulo permanece Dev.
 
+Consulta read-only repetida em 2026-10-29 no Runtime de teste: código ativo
+dev.177, `aculta_index_file` Disabled, fila vazia e pronta; uma auditoria já
+existente (id 1) permanece `running`, com 1 projeção stale e `valid=false`.
+Não avancei essa auditoria nem iniciei rebuild. Resolver a auditoria pendente
+com operador autorizado é pré-requisito para nova homologação do catálogo.
+
 **Versão da iniciativa:** 0.1.0 — IDX 0.1-F/G em desenvolvimento; fundamentos de schema, providers, manutenção, consulta e bridge implementados, integração progressiva pendente.
 **Dono:** Kernel `aculta_portal`, submódulo opcional `aculta_index`.
 **ADR:** [ADR-013](../decisions/ADR-013-aculta-content-index.md).
