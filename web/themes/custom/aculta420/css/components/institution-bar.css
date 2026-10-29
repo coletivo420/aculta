@@ -44,6 +44,13 @@
 .aculta-institution-bar__home { display: inline-flex; line-height: 0; }
 .aculta-institution-bar__home:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 
+/* Preserve separation from the fixed Drupal Navigation top-bar without JS. */
+@media (min-width: 64rem) {
+  html:not(.js):has(.top-bar[data-drupal-admin-styles]) .aculta-institution-bar {
+    top: var(--admin-toolbar-top-bar-height, 4rem);
+  }
+}
+
 /* Mobile is the base: keep the shell bar compact from 320px and let larger screens add space. */
 .aculta-institution-bar__inner { flex-wrap: nowrap; gap: 0.125rem; }
 .aculta-institution-bar__brand { flex-shrink: 0; }

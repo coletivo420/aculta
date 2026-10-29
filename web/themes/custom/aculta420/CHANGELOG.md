@@ -1,3 +1,9 @@
+# 0.7.0-dev.12 — corrigir deslocamento da barra multidomínio no mobile (2026-10-29)
+
+- A barra top-bar do Drupal Navigation em fluxo normal já não desloca a Institution Bar sticky no mobile; em desktop fixo, mantém o deslocamento real.
+- Firefox ESR visível com candidato CSS/JS: admin 38/38, fallback sem JavaScript 38/38; homes anônimas dos dez purposes 99/99. Evidências e limites em `docs/mobile-first-audit.md`.
+- Lint CSS/JS e validadores de design foundations, SDC e fronteira módulo-tema executados; gate transversal THEME-MF3 continua pendente.
+
 # 0.7.0-dev.11 — tokens de Eventos, Calendar e Maps (2026-10-29)
 
 - PortalUiHooks mapeia cartões de evento, calendário interativo e mapa. O

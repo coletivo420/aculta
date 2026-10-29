@@ -125,3 +125,33 @@ para ler os `production_host` da mesma tabela. O teste não presume que o host d
 teste continue sendo canônico depois dessa migração. Não testa menus autenticados
 completos, teclado, zoom real, tema escuro ou WCAG 2.2 AA; registra a presença do
 Domain Header para o Pede-A de composição.
+
+## Institution Bar durante scroll e Toolbar administrativa
+
+`institution-bar-scroll.py` compara o comportamento da barra ao carregar e
+rolar as homes dos dez purposes em 320/390 px como anônimo e a home MAIN como
+UID administrativo em 320/390/1023/1024/1280 px. Confirma a autenticação antes
+de medir toolbar/deslocamento, testa a mudança de breakpoint sem recarregar a
+página, amostra a estabilização e guarda screenshots em `$SUITE_OUT`. O ULI
+fica em memória; o teste não submete conteúdo nem altera configuração.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-institution-bar-scroll
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+export ACULTA_PROJECT_ROOT=/home/piradopirata/projetos/aculta
+DISPLAY=:0 python3 tests/browser/aculta-theme-mobile-first/institution-bar-scroll.py
+```
+
+Para injetar a folha CSS local, defina `INSTITUTION_BAR_SCROLL_CSS_OVERRIDE=1`;
+para injetar o JavaScript candidato, use `INSTITUTION_BAR_SCROLL_JS_OVERRIDE=1`.
+`INSTITUTION_BAR_SCROLL_BASE_URL` restringe o teste a um host e
+`INSTITUTION_BAR_DOMAIN_ENV=test|production` selecionam o host; a conta usada
+é configurável com `INSTITUTION_BAR_ADMIN_UID` e deve ser autorizada para o
+ambiente. `INSTITUTION_BAR_LOGIN_URI` pode apontar ao host de Conta para iniciar
+a sessão antes de voltar à home MAIN. `INSTITUTION_BAR_SCROLL_SCENARIOS` aceita
+`anonymous`, `admin` ou ambos (padrão). O relatório lista os elementos
+`data-offset-top` sem recolher seus textos. A captura usa Firefox ESR visível.
+`INSTITUTION_BAR_SCROLL_DISABLE_JS=1` testa o fallback CSS em um perfil Firefox
+com JavaScript de página desativado. Esse teste focal não substitui a
+matriz completa de larguras, teclado, zoom, dark mode ou WCAG 2.2 AA.

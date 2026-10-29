@@ -307,3 +307,11 @@ hosts vêm do manifesto de transição; LINKS não exige menu utilitário porque
 Portal o omite deliberadamente. Domain Header apareceu somente em MAIN e Wiki;
 seguem pendentes Pede-A e validação MF3.
 
+
+### THEME-MF2 — Institution Bar e Navigation top-bar
+
+Reutilizados os elementos de shell existentes; nenhum SDC novo. A biblioteca
+global do tema corrige o deslocamento Drupal quando a top-bar está no fluxo
+móvel, mantendo o cálculo nativo quando a top-bar fica fixa no desktop. O
+fallback sem JavaScript usa o token de altura existente. Comportamento, testes
+e limites estão em [`mobile-first-audit.md`](mobile-first-audit.md).

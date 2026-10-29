@@ -50,7 +50,10 @@ CSS_OVERRIDE = os.environ.get("INSTITUTION_BAR_CSS_OVERRIDE") == "1"
 checks = []
 candidate = None
 if CSS_OVERRIDE:
-    candidate = (ROOT / "web/themes/custom/aculta420/css/components/institution-bar.css").read_text()
+    candidate = [
+        (ROOT / "web/themes/custom/aculta420/css/components/institution-bar.css").read_text(),
+        (ROOT / "web/themes/custom/aculta420/css/components/header.css").read_text(),
+    ]
 
 
 def check(name, ok, detail=""):
@@ -90,9 +93,11 @@ class Viewport:
 
 def apply_candidate(driver):
     if candidate is not None:
-        driver.js("""const style=document.createElement('style');
+        driver.js("""for (const css of arguments[0]) {
+          const style=document.createElement('style');
           style.dataset.institutionBarCandidate='true';
-          style.textContent=arguments[0];document.head.append(style);return true;""", [candidate])
+          style.textContent=css;document.head.append(style);
+        }return true;""", [candidate])
 
 
 def expected_geometry(width, purpose):
@@ -137,6 +142,16 @@ def expected_geometry(width, purpose):
     return expected
 
 
+def expected_domain_header(width):
+    desktop = width >= 1100
+    return {
+        "brandingGrow": "0" if desktop else "1",
+        "brandingShrink": "1",
+        "brandingBasis": "22%" if desktop else "0px",
+        "sloganWhiteSpace": "nowrap" if desktop else "normal",
+    }
+
+
 if os.environ.get("DISPLAY") != ":0":
     raise SystemExit("Execute com DISPLAY=:0 e Firefox ESR visível.")
 
@@ -158,6 +173,9 @@ try:
               const utility=bar?.querySelector('.aculta-utility');
               const list=utility?.querySelector('ul.nav');
               const link=list?.querySelector('.nav-link');
+              const header=document.querySelector('.aculta-header');
+              const branding=header?.querySelector('.aculta-branding');
+              const slogan=header?.querySelector('.site-slogan');
               const style=(element, property)=>element ? getComputedStyle(element).getPropertyValue(property) : null;
               return {
                 width:innerWidth,
@@ -175,6 +193,11 @@ try:
                 fontSize:style(link,'font-size'),
                 whiteSpace:style(link,'white-space'),
                 navLinks:list?.querySelectorAll('.nav-link').length ?? 0,
+                headerCount:document.querySelectorAll('.aculta-header').length,
+                brandingGrow:style(branding,'flex-grow'),
+                brandingShrink:style(branding,'flex-shrink'),
+                brandingBasis:style(branding,'flex-basis'),
+                sloganWhiteSpace:style(slogan,'white-space'),
                 documentWidth:document.documentElement.scrollWidth,
                 domainHeaders:document.querySelectorAll('.aculta-header').length
               };
@@ -188,6 +211,15 @@ try:
                 geometry = all(metrics.get(key) == value for key, value in expected.items())
                 geometry = geometry and (purpose == "links" or metrics["navLinks"] > 0)
                 check(f"{purpose} {width}px: geometria responsiva", geometry,
+                      json.dumps(metrics, ensure_ascii=False))
+
+            if purpose == "main" and metrics["headerCount"] > 0 and metrics["brandingGrow"] is not None:
+                header_expected = expected_domain_header(width)
+                header_geometry = all(
+                    metrics.get(key) == value for key, value in header_expected.items()
+                    if key != "sloganWhiteSpace" or metrics["sloganWhiteSpace"] is not None
+                )
+                check(f"{purpose} {width}px: geometria Domain Header", header_geometry,
                       json.dumps(metrics, ensure_ascii=False))
 
             if purpose in ("main", "support") and width in (320, 768, 1440):

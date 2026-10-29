@@ -528,3 +528,11 @@ apenas em MAIN e Wiki (2/10 purposes); o Pede-A mantém a política de
 rotas/disponibilidade no `aculta_portal`, sem regra funcional no tema. Links
 esconde o utilitário por contrato e foi tratado como tal. Evidência e limites em
 `mobile-first-audit.md`; MF3 não aprovado.
+
+### THEME-MF2 — correção da Institution Bar ao rolar com Navigation
+
+O tema agora exclui a Navigation top-bar em fluxo do cálculo de obstrução no
+mobile e mantém o offset real quando ela fica fixa no desktop. Testes Firefox
+visíveis de candidato autenticado, fallback sem JavaScript e homes anônimas dos
+dez purposes passaram; validação pós-publicação/cache e o gate transversal
+THEME-MF3 permanecem pendentes. Evidências e escopo em `mobile-first-audit.md`.

@@ -376,3 +376,28 @@ O Domain Header não aparece em SUPPORT, Conta, Loja ou Fórum nestas rotas; ess
 lacuna permanece Pede-A. Este slice não valida outros caminhos por purpose, zoom,
 teclado completo, modo escuro, reduced motion ou WCAG 2.2 AA e não aprova MF3.
 Teste reutilizável: `tests/browser/aculta-theme-mobile-first/institution-bar.py`.
+
+### THEME-MF2 — deslocamento da Institution Bar com Navigation top-bar
+
+O Firefox ESR visível reproduziu o problema autenticado: a top-bar do módulo
+Navigation permanece em fluxo normal abaixo de 64rem, mas o `data-offset-top`
+vazio fazia `Drupal.displace` tratar sua altura e posição documental como um
+obstáculo fixo. O deslocamento observado era 185,1px em 320px, 142px em 390px
+e 100px em 1023px; em 1024px e acima, a top-bar é fixa e o deslocamento correto
+é sua altura de 64px. O tema agora zera o atributo no layout móvel e restaura o
+cálculo nativo no desktop, inclusive quando se cruza o breakpoint sem recarga.
+Sem JavaScript, o CSS mantém 4rem de separação no desktop.
+
+Firefox ESR visível com CSS/JS candidato injetados passou 38/38 verificações
+autenticadas em 320/390/1023/1024/1280px, incluindo resize e scroll. O fallback
+CSS com JavaScript desativado passou 38/38. Homes anônimas dos dez purposes
+passaram 99/99 verificações em 320/390px; não houve reprodução anônima nessas
+homes, o que não exclui rotas internas. Evidências externas ao repositório:
+`/home/piradopirata/aculta-suite-out/aculta-navigation-top-bar-candidate-c3b697e10-final2/`,
+`/home/piradopirata/aculta-suite-out/aculta-navigation-top-bar-nojs-candidate-c3b697e10/`
+e `/home/piradopirata/aculta-suite-out/aculta-institution-bar-scroll-all-anon-c3b697e10/`.
+Os testes usaram a página servida pelo head `c3b697e10` e injetaram os arquivos
+candidatos da worktree; validação integrada servida após cache rebuild é
+pendente. Esta correção pontual não aprova THEME-MF3 nem os gates completos de
+teclado, zoom, tema escuro, reduced motion, leitores de tela ou WCAG 2.2 AA.
+Teste reutilizável: `tests/browser/aculta-theme-mobile-first/institution-bar-scroll.py`.

@@ -6,7 +6,7 @@
 }
 /* Keeps anchored content and focused controls below the single sticky institution bar. */
 html { scroll-padding-top: calc(var(--drupal-displace-offset-top, 0px) + 3rem); }
-.aculta-branding { min-width: 0; flex: 0 1 27%; }
+.aculta-branding { min-width: 0; flex: 1 1 0; }
 .aculta-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem; }
 .aculta-header .site-title {
   display: block;
@@ -26,12 +26,8 @@ html { scroll-padding-top: calc(var(--drupal-displace-offset-top, 0px) + 3rem); 
 .aculta-brand .site-logo img { display: block; width: 100%; max-width: 18rem; height: auto; filter: var(--aculta-shell-logo-filter); }
 
 @media (min-width: 1100px) {
-  .aculta-branding { flex-basis: 22%; }
+  .aculta-branding { flex: 0 1 22%; }
   .aculta-header .site-slogan { white-space: nowrap; }
-}
-
-@media (max-width: 1099.98px) {
-  .aculta-branding { flex: 1 1 0; }
 }
 
 /* Optional neutral Domain Presentation branding; no purpose-specific selectors. */

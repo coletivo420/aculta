@@ -47,12 +47,14 @@ global:
     js/counters.js: {}
     js/alerts-dismiss.js: {}
     js/address-layout.js: {}
+    js/navigation-top-bar-displace.js: {}
   dependencies:
     - bootstrap/bootstrap
     - bootstrap/global-styling
     - aculta420/bootstrap-icons
     - core/drupal
     - core/once
+    - core/drupal.displace
 
 bootstrap-icons:
   version: 1.11.0
