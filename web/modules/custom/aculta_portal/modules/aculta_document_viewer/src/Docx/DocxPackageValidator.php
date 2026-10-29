@@ -53,7 +53,7 @@ final class DocxPackageValidator {
    * @param string[] $requiredParts
    *   Partes exigidas no pacote (padrão: DOCX).
    * @param string $mainContentType
-   *   Tipo de conteúdo principal declarado em [Content_Types].xml (padrão: DOCX).
+   *   Tipo de conteúdo principal declarado no XML (padrão: DOCX).
    */
   public function __construct(
     private readonly int $maxBytes = 25 * 1024 * 1024,
@@ -65,7 +65,7 @@ final class DocxPackageValidator {
   ) {}
 
   /**
-   * Nome de entrada inseguro: absoluto, com barra invertida, letra de unidade ou segmento `..`.
+   * Nome inseguro: absoluto, com barra invertida, unidade ou segmento `..`.
    *
    * Compartilhado por todos os validadores de ZIP (DOCX, XLSX e ODS).
    */
@@ -84,8 +84,8 @@ final class DocxPackageValidator {
   /**
    * Bytes realmente descompactados de uma entrada, lidos até $budget + 1.
    *
-   * O tamanho declarado no diretório central pode ser falso; por isso o conteúdo é lido
-   * de fato, com teto. Retorna o número de bytes lidos (pode passar do teto para indicar excesso).
+   * O tamanho declarado no diretório central pode ser falso. O conteúdo é lido
+   * com teto; retorna bytes lidos e pode excedê-lo para indicar excesso.
    */
   public static function measureEntry(\ZipArchive $zip, string $name, int $budget): int {
     $stream = $zip->getStream($name);
@@ -177,7 +177,7 @@ final class DocxPackageValidator {
       }
       $declared = (int) $stat['size'];
       $compressed = max(1, (int) $stat['comp_size']);
-      // Mede o conteúdo real, não o tamanho declarado: o teto de entrada também limita a leitura.
+      // Mede conteúdo real, não o tamanho declarado. O teto limita a leitura.
       $size = self::measureEntry($zip, $name, $this->maxUncompressedBytes - $total);
       if ($size > $this->maxUncompressedBytes - $total) {
         throw new DocxValidationException('uncompressed_too_large', 'Conteúdo descompactado acima do limite.');

@@ -8,7 +8,7 @@ use Drupal\aculta_document_viewer\Docx\DocxPackageValidator;
 use Drupal\aculta_document_viewer\Docx\DocxValidationException;
 
 /**
- * Valida planilhas antes da leitura, conforme o formato declarado pela extensão.
+ * Valida planilhas antes da leitura conforme a extensão declarada.
  *
  * Formatos aceitos no leitor: XLSX, ODS, XLS (BIFF) e CSV. Nenhum formato é
  * executado: macros e scripts são recusados quando o contêiner os traz.
@@ -120,8 +120,9 @@ final class SpreadsheetFileValidator {
   }
 
   /**
-   * XLS é um arquivo OLE2: só a assinatura é verificada aqui. Macros VBA dentro do XLS
-   * não são inspecionadas; o leitor não as executa (SheetJS só lê valores).
+   * Valida a assinatura OLE2 do arquivo XLS.
+   *
+   * Macros VBA não são inspecionadas; o leitor SheetJS não as executa.
    */
   private function validateXls(string $path): void {
     $signature = file_get_contents($path, FALSE, NULL, 0, 8);

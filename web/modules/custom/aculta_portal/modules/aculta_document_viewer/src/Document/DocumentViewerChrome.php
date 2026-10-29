@@ -8,10 +8,10 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Cabeçalho e barra de controles compartilhados pelos leitores DOCX e planilhas.
+ * Cabeçalho e controles compartilhados pelos leitores DOCX e de planilhas.
  *
- * Emite só marcação neutra com os atributos documentados em TOKENS-E-ATRIBUTOS. Cores, espaçamento
- * e foco ficam no tema ACULTA420. Títulos e rótulos são escapados aqui.
+ * Emite marcação neutra com atributos documentados em TOKENS-E-ATRIBUTOS.
+ * Cores, espaçamento e foco ficam no tema. Títulos e rótulos são escapados.
  */
 final class DocumentViewerChrome {
 

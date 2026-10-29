@@ -119,7 +119,7 @@ final class DocxMediaFormatter extends FormatterBase implements ContainerFactory
   }
 
   /**
-   * Confirms MIME and extension of a DOCX candidate (structure is validated later).
+   * Confirms MIME and extension; the structure is validated later.
    */
   private function isDocx(FileInterface $file): bool {
     $mime = strtolower((string) $file->getMimeType());

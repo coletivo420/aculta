@@ -18,7 +18,7 @@ use PHPUnit\Framework\Attributes\Group;
 final class DocumentViewerChromeTest extends UnitTestCase {
 
   /**
-   * Título com HTML sai escapado; a barra e o status existem com atributos neutros.
+   * Título com HTML sai escapado; barra e status usam atributos neutros.
    */
   public function testTitleIsEscapedAndControlsAreNeutral(): void {
     $elements = DocumentViewerChrome::elements('<img src=x onerror=alert(1)> Relatório', new TranslatableMarkup('Planilha', [], [], $this->getStringTranslationStub()));

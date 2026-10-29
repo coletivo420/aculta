@@ -44,7 +44,10 @@ final class SpreadsheetFileValidatorTest extends UnitTestCase {
   /**
    * Gera um ZIP com as entradas indicadas.
    *
+   * @param string $name
+   *   Nome do arquivo de planilha.
    * @param array<string, string> $entries
+   *   Nome da entrada => conteúdo.
    */
   private function zip(string $name, array $entries): string {
     $path = $this->dir . '/' . $name;
@@ -59,6 +62,13 @@ final class SpreadsheetFileValidatorTest extends UnitTestCase {
 
   /**
    * Asserts a validation rejection with the given reason.
+   *
+   * @param string $reason
+   *   Código de rejeição esperado.
+   * @param string $path
+   *   Caminho do arquivo de teste.
+   * @param string $extension
+   *   Extensão declarada do arquivo.
    */
   private function assertRejected(string $reason, string $path, string $extension): void {
     try {
@@ -103,7 +113,7 @@ final class SpreadsheetFileValidatorTest extends UnitTestCase {
   }
 
   /**
-   * Nomes de entrada inseguros são recusados por uma única regra para DOCX, XLSX e ODS.
+   * Nomes de entrada inseguros seguem uma regra para DOCX, XLSX e ODS.
    */
   public function testUnsafeEntryNamesAreRefused(): void {
     foreach (['/etc/passwd', '..\\x', 'a/..', '..', 'C:/x', 'pasta/../../x'] as $name) {

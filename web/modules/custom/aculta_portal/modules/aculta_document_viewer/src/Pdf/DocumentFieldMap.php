@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Drupal\aculta_document_viewer\Pdf;
 
 /**
- * Single source of the Media bundle to document field mapping.
+ * Single source of the Media bundle to document-field mapping.
  *
- * The builder (access and markup) and the formatter (field selection) must agree on which field carries the PDF.
- * Keeping the mapping here prevents a new document bundle from being accepted in one place and refused in the other.
+ * The builder and formatter must agree on which field carries the PDF.
+ * This mapping keeps bundle support consistent across both classes.
  */
 final class DocumentFieldMap {
 
   /**
-   * Returns the document field of a Media bundle, or NULL when the bundle carries no PDF viewer.
+   * Returns a Media bundle's document field, or NULL if it has no PDF viewer.
    *
-   * A NULL bundle (a Media entity without bundle) is refused the same way as an unknown bundle.
+   * A NULL bundle is refused like an unknown bundle.
    */
   public static function fieldForBundle(?string $bundle): ?string {
     return match ($bundle) {

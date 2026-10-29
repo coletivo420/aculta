@@ -227,6 +227,23 @@ separada, posterior ao deploy; nenhum deploy foi feito nesta fase.
   nos helper registry e CHANGELOG raiz do Portal, fora deste módulo. O gate de
   fronteira módulo–tema permanece vermelho em Events/Calendar/Magazine.
 
+### PV7 — limpeza PHPCS e inspeção da configuração — 2026-10-29
+
+- O gate PHPCS foi repetido somente em PHP, excluindo o submódulo
+  `aculta_document_viewer_group`: havia 10 erros e 26 avisos. Após correções de
+  comentários, arrays, linhas longas e strings traduzíveis, PHPCS Drupal e
+  DrupalPractice passou com zero erros/avisos.
+- Unit: 43/43 (228 assertions). Kernel: 5/5 (296 assertions, 147 depreciações
+  Core/contrib). PHP lint: 30/30 arquivos do módulo. Nenhuma configuração ou conteúdo do
+  Runtime foi alterado.
+- A inspeção somente leitura do Runtime encontrou `media.document.default`
+  usando `aculta_document_pdf_media` e nenhum display usando
+  `aculta_document_docx_media` ou `aculta_document_spreadsheet_media`. Assim,
+  não foi possível fazer smoke visual de Office/planilhas sem configurar uma
+  apresentação; isso exige definir e ativar o formatter apropriado na
+  configuração do ambiente. CSP e revisão ampliada de acessibilidade seguem
+  pendentes para RC.
+
 ### Auditoria do contrib Drupal 3D Flipbook
 
 O release 11.0.2 foi inspecionado diretamente no commit registrado acima. Ele

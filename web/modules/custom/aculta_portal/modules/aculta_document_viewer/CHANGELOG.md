@@ -1,5 +1,11 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.16 — baseline PHPCS PHP limpo — 2026-10-29
+
+- Corrigidos 10 erros e 26 avisos PHPCS Drupal/DrupalPractice nos PHP do módulo e testes; as opções de zoom agora passam pela tradução Drupal. PHPCS `--extensions=php`: zero erros/avisos.
+- Unit: 43 testes/228 assertions; Kernel: 5 testes/296 assertions. PASS, com 147 depreciações de Core/contrib. PHP lint: 30/30 arquivos.
+- Nenhuma alteração de Runtime. O formatter atual `media.document` é o de PDF; não há display ativo usando os formatters de DOCX ou planilha. A validação visual Office/planilhas continua pendente junto a CSP e acessibilidade ampliada.
+
 ## Revisão PHPCS M-0 (2026-10-26)
 
 - Corrigida a indentação de arrays em `PdfViewerBuilder` e adicionados imports
@@ -256,10 +262,4 @@
 - O mapa transversal de caminhos registra o viewer na mesma origem para MAIN, Revista, Wiki, Fórum e Cursos.
 - Homelab: HTTP GET de `viewer.html` respondeu 200 em MAIN, Revista, Wiki, Fórum e Cursos; `viewer.mjs` e locale `pt-BR/viewer.ftl` também responderam 200. Isso confirma apenas a entrega estática; ainda validar abertura do PDF pelo parâmetro `file`, foco/teclado, leitor de tela, PDFs marcados/não marcados e CSP Report-Only. RUNTIME STATUS: DEFERRED para o fluxo funcional.
 
-## Documentação PV7 — validar traduções locais, text layer e decisão CSP — 2026-10-20
-
-- Arquivos gettext pt-BR disponíveis foram conferidos pelo parser do Drupal Core: Core e 12 PO contrib não têm entradas traduzíveis com `msgstr` vazio; o pacote PDF.js também contém `web/locale/pt-BR/viewer.ftl`. A contagem não representa cobertura integral dos módulos instalados.
-- A investigação do PDF.js 6.4.299 recomenda prototipar o viewer completo oficial antes de criar uma camada custom: o `TextLayer` isolado não contém toda a integração de foco/acessibilidade/estrutura do viewer. Nenhuma camada foi implementada nem considerada prova de conformidade WCAG.
-- Decisão do responsável: manter CSP em Report-Only, enforcement desligado, e `dblog.settings:row_limit` atual de 1000 registros. DBLog usa limite por quantidade, não retenção por prazo, e armazena URL/User-Agent; rever acesso e retenção antes da produção.
-- Acessibilidade ampliada, testes do protótipo com PDFs marcados/não marcados e leitores de tela, e demais gates PV7 continuam pendentes; o módulo permanece Dev.
 

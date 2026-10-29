@@ -74,8 +74,8 @@ trait PdfViewerFormatterSettingsTrait {
       '#title' => $this->t('Zoom inicial'),
       '#options' => [
         'fit-width' => $this->t('Ajustar à largura'),
-        '100' => '100%',
-        '125' => '125%',
+        '100' => $this->t('100%'),
+        '125' => $this->t('125%'),
       ],
       '#default_value' => $this->getSetting('default_zoom'),
     ];
@@ -118,7 +118,15 @@ trait PdfViewerFormatterSettingsTrait {
    */
   public function settingsSummary(): array {
     $enabled = [];
-    foreach (['show_download', 'show_print', 'show_zoom', 'show_fullscreen', 'show_search', 'show_page_navigation', 'show_full_viewer'] as $key) {
+    foreach ([
+      'show_download',
+      'show_print',
+      'show_zoom',
+      'show_fullscreen',
+      'show_search',
+      'show_page_navigation',
+      'show_full_viewer',
+    ] as $key) {
       if ($this->getSetting($key)) {
         $enabled[] = $key;
       }
@@ -127,7 +135,8 @@ trait PdfViewerFormatterSettingsTrait {
       '@count' => count($enabled),
       '@zoom' => $this->getSetting('default_zoom'),
       '@scroll' => $this->getSetting('default_scroll'),
-    ])];
+    ]),
+    ];
   }
 
   /**

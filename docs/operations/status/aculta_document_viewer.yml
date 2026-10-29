@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.15
+version: 0.1.0-dev.16
 state: Dev
-next_phase: 'Resolver PHPCS Drupal PHP (10 erros/23 avisos preexistentes); validar prévias Office/planilhas em viewports móveis, CSP e acessibilidade ampliada antes de avaliar RC ([roadmap](web/modules/custom/aculta_portal/modules/aculta_document_viewer/docs/ROADMAP.md))'
-progress_note: '2026-10-29: suíte completa 48/524 PASS (147 deprecações); Firefox ESR no Runtime 7/7 em 1280/390/320px com Media PDF temporária, página removida depois. PHP lint 34/34 PASS. PHPCS Drupal PHP falha com 10 erros/23 avisos preexistentes. Gate Portal Drupal 11+ também aponta documentação ausente de helpers/changelog raiz; Office/planilhas, CSP e acessibilidade ampliada seguem pendentes para RC.'
+next_phase: 'Definir e ativar formatter de Office/planilhas para apresentação descartável; validar em 1280/390/320px, CSP Report-Only e acessibilidade ampliada antes de avaliar RC ([roadmap](web/modules/custom/aculta_portal/modules/aculta_document_viewer/docs/ROADMAP.md))'
+progress_note: '0.1.0-dev.16: PHPCS Drupal/DrupalPractice PHP PASS (0 erros/avisos); Unit 43/228 e Kernel 5/296 PASS (147 depreciações). Firefox ESR no Runtime já validou PDF 7/7 em 1280/390/320px. O Runtime só usa formatter PDF no display Media document; formatters Office/planilha, CSP e revisão ampliada de acessibilidade ainda precisam de apresentação configurada antes de RC.'

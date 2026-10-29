@@ -44,6 +44,7 @@ final class SpreadsheetPackageValidatorTest extends UnitTestCase {
    * Gera um ZIP com as entradas indicadas.
    *
    * @param array<string, string> $entries
+   *   Nome da entrada => conteúdo.
    */
   private function package(array $entries): string {
     $path = $this->dir . '/pacote.xlsx';

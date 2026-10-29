@@ -58,7 +58,10 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->installConfig(['system', 'language', 'user', 'media', 'filter', 'image', 'node', 'aculta_user', 'domain_source']);
+    $this->installConfig([
+      'system', 'language', 'user', 'media', 'filter', 'image', 'node',
+      'aculta_user', 'domain_source',
+    ]);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('user', ['users_data']);
     $this->installEntitySchema('user');

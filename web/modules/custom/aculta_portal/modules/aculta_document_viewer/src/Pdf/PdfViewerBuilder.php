@@ -562,7 +562,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
    *
    * The Runtime's front controller does not resolve Core's path-processor
    * form `/system/files/{filepath}` reliably. The same Core route accepts
-   * `?file={filepath}` and still rechecks the Media/File access on each request.
+   * `?file={filepath}` and rechecks Media/File access on every request.
    */
   private function privateFileUrl(string $uri): string {
     $path = substr($uri, strlen('private://'));

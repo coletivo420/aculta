@@ -45,6 +45,8 @@ final class DocxPackageValidatorTest extends UnitTestCase {
    *
    * @param array<string, string> $entries
    *   Nome da entrada => conteúdo.
+   * @param string $name
+   *   Nome do arquivo de pacote.
    */
   private function package(array $entries, string $name = 'pacote.docx'): string {
     $path = $this->dir . '/' . $name;
@@ -61,6 +63,7 @@ final class DocxPackageValidatorTest extends UnitTestCase {
    * Conteúdo mínimo de um DOCX válido.
    *
    * @return array<string, string>
+   *   Entradas mínimas exigidas por um pacote DOCX.
    */
   private function validEntries(): array {
     return [

@@ -34,7 +34,7 @@ final class SpreadsheetViewerBuilder {
   public const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
   /**
-   * Mapa extensão => MIME aceito pelo leitor (CSV aceita text/plain, comum no Drupal).
+   * Mapeia extensões para MIME aceitos; CSV também aceita text/plain no Drupal.
    */
   public const FORMATS = [
     'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
@@ -56,7 +56,7 @@ final class SpreadsheetViewerBuilder {
   ) {}
 
   /**
-   * Builds the viewer for an authorized spreadsheet, or NULL to use the Core link.
+   * Builds the viewer or returns NULL to use the Core link.
    *
    * @return array<string, mixed>|null
    *   Render array, or NULL when the file must not be rendered.

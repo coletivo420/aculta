@@ -17,7 +17,7 @@ use Drupal\file\Plugin\Field\FieldType\FileFieldItemList;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Exibe planilhas autorizadas (XLSX, ODS, XLS e CSV) em abas, somente leitura, com download.
+ * Exibe planilhas permitidas (XLSX, ODS, XLS e CSV) em abas e só para leitura.
  *
  * Mesmas checagens do formatter DOCX: entidade hospedeira, campo e download.
  * Sem leitor, o link do Core permanece.
@@ -118,7 +118,7 @@ final class SpreadsheetMediaFormatter extends FormatterBase implements Container
   }
 
   /**
-   * Confirms MIME and extension of a supported spreadsheet (structure is validated later).
+   * Confirms MIME and extension; the structure is validated later.
    */
   private function isSupported(FileInterface $file): bool {
     $mime = strtolower((string) $file->getMimeType());
