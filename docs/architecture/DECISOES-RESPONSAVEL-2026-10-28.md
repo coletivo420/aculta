@@ -64,6 +64,7 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 | D-52 | Aviso de privacidade do mapa | **Sem texto inline de envio de IP.** A página do mapa mantém apenas o link para a Política de Privacidade e a atribuição do provedor (Leaflet/OpenStreetMap); o texto explicativo sai da página. | `aculta_events` (mapa de locais); a política publicada continua sendo o local do detalhamento. |
 | D-53 | Credencial OAuth do OpenStreetMap | **Uma única aplicação OAuth de produção atende teste, desenvolvimento e produção**, exceção registrada em `docs/operations/SECRETS.md`; `OSM_TEST_*` não é provisionada. O token do usuário continua cifrado no State por ambiente e cada escrita exige confirmação explícita (D-45). | `aculta_events_openstreetmap`; não altera a separação das demais credenciais. |
 | D-54 | Formulário de endereço do site | **Uma única implementação central em `aculta_portal`**, integrada a `aculta_portal_cep`. Todos os módulos/fluxos que capturam ou editam endereços reutilizam o formulário e adaptam o mapeamento de entidade, sem criar formulários paralelos nem duplicar o cliente/lookup CEP. Os modelos, dados e regras de cada entidade continuam distintos. | `docs/portal/ACCOUNT-ADDRESS.md` e `docs/portal/GUARDRAILS.md`; Conta legada, Conta, Studio, checkout, loja e perfis usam `AccountAddressForm`. |
+| D-55 | Endereços de Mapas e Eventos | **Brasil fixo e sem seletor de país** nos formulários de endereço de locais e eventos. Usar o formulário/adaptador central de `aculta_portal` e a integração `aculta_portal_cep` para busca e preenchimento automático por CEP; não duplicar cliente nem endpoint. Manter dados nas entidades próprias de mapa/evento. | `aculta_maps` e `aculta_events`; aplicar após a microfase do formulário central, com teste de criação/edição e preservação de dados. |
 
 ## Pendente
 
@@ -85,6 +86,7 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 - 2026-10-28: P-02 resolvido com o ADR-014 (provedor de mapa).
 - 2026-10-28: P-01 resolvido com o endereço `abuso@aculta.org` e criado o `SECURITY.md`.
 - 2026-10-29: D-54 registrada conforme decisão direta do responsável; é contrato de arquitetura vigente, não apenas teste de regressão.
+- 2026-10-29: D-55 registrada conforme decisão direta do responsável para os campos de endereço de Mapas e Eventos.
 - 2026-10-28 (alteração): D-08 deixa de ser exceção. O mapa carrega na exibição da página, como padrão. Motivo: pedido do responsável.
 - 2026-10-28: D-16 registrada — autorização do responsável para `rlanvin/php-rrule` e `drupal/geofield`. Resolve a pendência 1 do plano de incorporação.
 - 2026-10-28: D-21 registrada — responsável autorizou I5 com allowlist exata por fonte, HTTPS/TLS validado, bloqueio e fixação de IPs não globais, sem redirecionamentos e com timeouts.
