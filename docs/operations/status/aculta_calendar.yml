@@ -2,5 +2,8 @@
 version: 0.1.0-dev.1
 state: Dev
 progress_note: >-
-  CA0–CA6 e I1–I8 concluídos conforme o ROADMAP: motor de recorrência, `.ics`, embed, visões de agenda e mês, provedores de itens. Importação iCalendar revisável (I5 com D-21, I7 provedor, I8 documentação). Visão interativa DHTMLX com teclado, alto contraste e leitor de tela verificados (DH-A a DH-F).
-next_phase: 'Pendências do ROADMAP: provedor de prazos de turma para `aculta_lms_agenda` (CA5, D-15). Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_calendar/docs/ROADMAP.md).'
+  CA0–CA6, ADM8, DH-A–DH-F e I1–I8 implementados; CA5 LMS presente desde
+  7c37023ef. Suíte Calendar 117/398 PASS (2 depreciações); PHP lint 60/60 PASS.
+  PHPCS Drupal em PHP: 261 erros/35 warnings em 44 arquivos. Revisão Firefox
+  autenticada do painel ADM8 pendente por falta de conta com permissão específica.
+next_phase: 'Resolver PHPCS, obter acesso de teste para revisar ADM8 visualmente e concluir revisão de código antes de RC. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_calendar/docs/ROADMAP.md).'

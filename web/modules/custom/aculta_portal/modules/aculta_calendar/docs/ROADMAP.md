@@ -67,3 +67,18 @@ Decisão do responsável em 2026-10-28; detalhes, origem e hashes em `DHTMLX.md`
 - [x] I6 — painel de revisão editorial, acesso restrito, sem publicação automática.
 - [x] I7 — somente itens publicados entram no provedor do calendário.
 - [x] I8 — documentar a API de importação e as regras no README.
+
+## Prontidão para RC — verificação de 2026-10-28
+
+- CA0–CA6, ADM8, DH-A–DH-F e I1–I8 estão implementadas; CA5 inclui o provedor
+  de prazos e eventos LMS (`aculta_lms_agenda`, commit `7c37023ef`). O `next_phase`
+  do manifesto que indicava CA5 pendente estava desatualizado.
+- Suíte completa: 117 testes / 398 assertions PASS, 2 depreciações Core/contrib.
+  PHP lint: 60 arquivos PASS. PHPCS Drupal restrito aos PHP: 261 erros e 35
+  warnings em 44 arquivos; gate vermelho, sem correção de baseline nesta fase.
+- Firefox ESR anterior cobre agenda/mês/interativo, Olivero e leitor de tela;
+  a nova página administrativa ADM8 ainda requer revisão visual autenticada.
+  A conta/credencial com `administer aculta calendar embedding` não está
+  configurada em `secrets/`; a pergunta ao responsável permanece aberta.
+- Manter `state: Dev` até PHPCS, revisão visual de ADM8 e revisão de código
+  estarem concluídos. Nenhuma configuração Runtime foi importada.
