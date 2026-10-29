@@ -1,3 +1,9 @@
+## Correção da frente visual Studio - todas as experiências (2026-10-29)
+
+O roteiro OCS-F0-F7 resumido anteriormente foi **substituído** pela [sequência transversal OCS-F0-F10](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md), seguida de OCS-A1-A4. É obrigatório aplicar padrões OpenCulturas Next ao hub, Marley, GanjaLab, WE Sativa, Conta privada, Perfil público e demais experiências reais detectadas em F0. Não existe prioridade exclusiva Marley.
+
+O tema fornece padrões transversais de grid, cards, tabs, edição, seções, estados e navegação contextual; cada experiência expõe render arrays/ACL/links pelos serviços donos. Menu Studio deriva do registro de experiências e permissões, não é uma lista estática no CSS/Twig. Não criar SDCs específicos de GanjaLab/WE Sativa se um componente transversal com variante resolve. Instituição/Domain Header continuam invariáveis. **OCS-F10** é o gate de fidelidade; identidade Aculta apenas após aceite. Testar também outros purposes para evitar vazamento CSS.
+
 ## Frente Studio: Fidelity → Identity - OCS-F/OCS-A (2026-10-29)
 
 [Plano de implementação e critérios](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). **Tema de origem é `opcult` (OpenCulturas Next)**; `openculturas_base` é legado. Etapa F reproduz estrutura, tipografia, espaçamento, componentes, cards, navegação e formulários do Next, mas somente **no contexto interno do Studio**. Etapa A substitui a identidade visual por tokens institucionais, sem reimplementar contratos funcionais.
