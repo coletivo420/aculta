@@ -12,6 +12,13 @@
 
 # Changelog — aculta_image
 
+## 0.1.0-dev.46 — seção administrativa integrada ao ACULTA (2026-10-29)
+
+- O item Imagens e suas configurações de processamento ficam na raiz do painel
+  ACULTA; rota `/painel-administrativo/imagens/configuracoes` preservada.
+- Suíte Image 33/169 PASS (4 depreciações), PHPCS Drupal/DrupalPractice limpo e
+  gate específico do módulo PASS.
+
 ## 0.1.0-dev.45 — opções administrativas de processamento (2026-10-29)
 
 - `/painel-administrativo/imagens/configuracoes` detecta Imagick/GD, formatos PHP

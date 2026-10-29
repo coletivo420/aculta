@@ -276,3 +276,17 @@ testes de integração serem concluídos.
 - Hostinger: páginas de suporte sobre PHP e binários consultadas em 2026-10-17 (ver seção 7)
 - Hostinger: documentação oficial de ferramentas de imagem e mídia reconsultada em 2026-10-29 (ver seção 7)
 - Modelos de imagem dos veículos: ver `MODELOS-DE-IMAGEM.md`, seção 2
+
+## 13. Opções administrativas de processamento (M11, 2026-10-29)
+
+O painel fica em **ACULTA → Imagens → Processamento e formatos**, protegido por
+`administer aculta images`. Detecta Imagick/GD e os otimizadores instalados; a
+seleção manual só oferece um backend disponível. O administrador pode ligar ou
+desligar compressão, escolher largura máxima, tipos de entrada e formatos de
+saída, e ajustar qualidade JPEG/PNG/WebP. WebP fica ligado por padrão para
+uploads inline, com qualidade 82 e substituição do original.
+
+A decisão D-47 também autoriza converter o acervo existente. Isso não ocorre ao
+salvar as opções: M12 deve inventariar referências, definir execução em lotes,
+preservar metadados/URLs e preparar reversão antes de qualquer migração. Nenhum
+arquivo existente foi migrado nesta fase.

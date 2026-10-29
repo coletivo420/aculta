@@ -64,6 +64,8 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 - `/painel-administrativo/imagens/limpeza`: executar até 100 itens da fila e temporários vencidos.
 - `/painel-administrativo/imagens/quarentena`: enviar candidatas, restaurar e excluir vencidas. Arquivos já quarentenados não voltam a aparecer como candidatas.
 - Permissão: `administer aculta images`.
+- Navegação: ACULTA > Imagens > Processamento e formatos. O painel permanece
+  sob a permissão restrita de administração de imagens.
 
 ## Dependências
 

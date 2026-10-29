@@ -2,7 +2,7 @@ aculta_image.admin:
   title: 'Imagens'
   description: 'Inventário, limpeza segura e quarentena de imagens.'
   route_name: aculta_image.audit
-  parent: system.admin_config_media
+  parent: aculta_portal.admin
   weight: 30
 
 aculta_image.settings:
