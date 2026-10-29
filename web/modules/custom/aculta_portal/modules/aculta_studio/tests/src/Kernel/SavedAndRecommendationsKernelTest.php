@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Kernel;
 
-use Drupal\aculta_studio\Controller\SavedContentController;
+use Drupal\Core\Session\AnonymousUserSession;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Drupal\user\Entity\Role;
+use Symfony\Component\DependencyInjection\Reference;
+use Drupal\aculta_portal\Saved\SavedContentQuery;
 use Drupal\aculta_studio\Recommendation\RecommendationService;
 use Drupal\aculta_studio\Saved\SavedContentService;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -24,7 +30,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Validates saved content, account isolation, transparent recommendations and cache.
+ * Validates saved content, account isolation, and recommendations.
  */
 #[Group('aculta_studio')]
 #[RunTestsInSeparateProcesses]
@@ -47,7 +53,14 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     'aculta_studio',
   ];
 
+  /**
+   * The saved content service.
+   */
   protected SavedContentService $savedContentService;
+
+  /**
+   * The recommendation service.
+   */
   protected RecommendationService $recommendationService;
 
   /**
@@ -58,9 +71,15 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $root = dirname(__DIR__, 9);
     $loader = require $root . '/vendor/autoload.php';
     $loader->addPsr4('Drupal\\aculta_studio\\', $root . '/web/modules/custom/aculta_portal/modules/aculta_studio/src');
+    $loader->addPsr4('Drupal\\aculta_portal\\', $root . '/web/modules/custom/aculta_portal/src');
 
     // Supply dummy domain_purpose service required by MarleyListingBuilder.
     $container->register('aculta_portal.domain_purpose', \stdClass::class);
+
+    // Register transversal saved content query.
+    $container->register('aculta_portal.saved_content_query', SavedContentQuery::class)
+      ->addArgument(new Reference('database'))
+      ->addArgument(new Reference('entity_type.manager'));
   }
 
   /**
@@ -76,6 +95,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $this->installEntitySchema('flagging');
     $this->installSchema('system', ['sequences']);
     $this->installSchema('flag', ['flag_counts']);
+    $this->installSchema('node', ['node_access']);
     $this->installConfig(['system', 'filter', 'node', 'flag']);
 
     $nodeType = NodeType::create([
@@ -129,7 +149,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $flagFollow->save();
 
     // Create member role with basic content access permissions.
-    $role = \Drupal\user\Entity\Role::create([
+    $role = Role::create([
       'id' => 'member',
       'label' => 'Member',
     ]);
@@ -146,7 +166,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
   }
 
   /**
-   * Proves bookmarks and followed items are isolated per account with no data leaks.
+   * Proves bookmarks and followed items are isolated per account.
    */
   public function testSavedItemsIsolationBetweenAccounts(): void {
     $userA = User::create(['name' => 'user_a', 'status' => 1, 'roles' => ['member']]);
@@ -244,7 +264,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
   }
 
   /**
-   * Proves recommendations provide transparent, contextual reasons based on user interests.
+   * Proves recommendations provide transparent, contextual reasons.
    */
   public function testTransparentRecommendations(): void {
     $user = User::create(['name' => 'culture_fan', 'status' => 1, 'roles' => ['member']]);
@@ -298,7 +318,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
   }
 
   /**
-   * Proves controller page renders with user cache context and proper structure.
+   * Proves controller page renders with user cache context and structure.
    */
   public function testSavedControllerRenderingAndCacheContexts(): void {
     $user = User::create(['name' => 'studio_user', 'status' => 1, 'roles' => ['member']]);
@@ -306,7 +326,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
 
     // Mock request with session and tab=salvos.
     $request = Request::create('/studio/salvos', 'GET', ['tab' => 'salvos']);
-    $session = new \Symfony\Component\HttpFoundation\Session\Session(new \Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage());
+    $session = new Session(new MockArraySessionStorage());
     $request->setSession($session);
     $this->container->get('request_stack')->push($request);
 
@@ -321,6 +341,133 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $this->assertContains('user', $build['#cache']['contexts']);
     $this->assertContains('url.query_args:tab', $build['#cache']['contexts']);
     $this->assertContains('flagging_list', $build['#cache']['tags']);
+  }
+
+  /**
+   * Proves anonymous users cannot access the personal saved library.
+   */
+  public function testAnonymousUserAccessDenied(): void {
+    $this->expectException(AccessDeniedHttpException::class);
+
+    $anon = new AnonymousUserSession();
+    $this->setCurrentUser($anon);
+
+    /** @var \Drupal\aculta_studio\Controller\SavedContentController $controller */
+    $controller = $this->container->get('aculta_studio.saved_controller');
+    $controller->page();
+  }
+
+  /**
+   * Proves pagination controls and items per page work as expected.
+   */
+  public function testPaginationAndFilters(): void {
+    $user = User::create(['name' => 'pager_user', 'status' => 1, 'roles' => ['member']]);
+    $user->save();
+
+    for ($i = 1; $i <= 20; $i++) {
+      $node = Node::create([
+        'type' => 'article',
+        'title' => "Artigo Paginado $i",
+        'status' => 1,
+      ]);
+      $node->save();
+
+      Flagging::create([
+        'flag_id' => 'salvar_topico',
+        'entity_type' => 'node',
+        'entity_id' => $node->id(),
+        'uid' => $user->id(),
+      ])->save();
+    }
+
+    $this->setCurrentUser($user);
+    $controller = $this->container->get('aculta_studio.saved_controller');
+
+    // Page 0 (items 1 to 15).
+    $request0 = Request::create('/studio/salvos', 'GET', ['tab' => 'salvos', 'page' => '0']);
+    $request0->setSession(new Session(new MockArraySessionStorage()));
+    $this->container->get('request_stack')->push($request0);
+
+    $build0 = $controller->page();
+    $this->assertNotEmpty($build0['content']['list']['#items']);
+    $this->assertCount(15, $build0['content']['list']['#items']);
+    $this->assertNotEmpty($build0['content']['pager']['links']);
+
+    // Page 1 (items 16 to 20).
+    $request1 = Request::create('/studio/salvos', 'GET', ['tab' => 'salvos', 'page' => '1']);
+    $request1->setSession(new Session(new MockArraySessionStorage()));
+    $this->container->get('request_stack')->push($request1);
+
+    $build1 = $controller->page();
+    $this->assertNotEmpty($build1['content']['list']['#items']);
+    $this->assertCount(5, $build1['content']['list']['#items']);
+  }
+
+  /**
+   * Proves moderation flags are strictly excluded from personal bookmarks.
+   */
+  public function testModerationFlagsExcluded(): void {
+    $user = User::create(['name' => 'mod_test_user', 'status' => 1, 'roles' => ['member']]);
+    $user->save();
+
+    Flag::create([
+      'id' => 'sinalizar_topico',
+      'label' => 'Sinalizar',
+      'entity_type' => 'node',
+      'flag_type' => 'entity:node',
+      'link_type' => 'reload',
+      'bundles' => ['article'],
+    ])->save();
+
+    $node = Node::create(['type' => 'article', 'title' => 'Nó Moderado', 'status' => 1]);
+    $node->save();
+
+    Flagging::create([
+      'flag_id' => 'sinalizar_topico',
+      'entity_type' => 'node',
+      'entity_id' => $node->id(),
+      'uid' => $user->id(),
+    ])->save();
+
+    $items = $this->savedContentService->getSavedItems($user, 'saved');
+    $this->assertEmpty($items);
+
+    $counts = $this->savedContentService->getSavedCounts($user);
+    $this->assertSame(0, $counts['total']);
+  }
+
+  /**
+   * Proves deleting an entity does not cause fatal errors when querying.
+   */
+  public function testDeletedEntityResilience(): void {
+    $user = User::create(['name' => 'orphan_user', 'status' => 1, 'roles' => ['member']]);
+    $user->save();
+
+    $node = Node::create(['type' => 'article', 'title' => 'Nó Efêmero', 'status' => 1]);
+    $node->save();
+
+    Flagging::create([
+      'flag_id' => 'salvar_topico',
+      'entity_type' => 'node',
+      'entity_id' => $node->id(),
+      'uid' => $user->id(),
+    ])->save();
+
+    // Delete node so flagging becomes orphan.
+    $node->delete();
+
+    $items = $this->savedContentService->getSavedItems($user, 'saved');
+    $this->assertEmpty($items);
+
+    $this->setCurrentUser($user);
+    $request = Request::create('/studio/salvos', 'GET', ['tab' => 'salvos']);
+    $request->setSession(new Session(new MockArraySessionStorage()));
+    $this->container->get('request_stack')->push($request);
+
+    /** @var \Drupal\aculta_studio\Controller\SavedContentController $controller */
+    $controller = $this->container->get('aculta_studio.saved_controller');
+    $build = $controller->page();
+    $this->assertNotEmpty($build['content']['list']['message']);
   }
 
 }
