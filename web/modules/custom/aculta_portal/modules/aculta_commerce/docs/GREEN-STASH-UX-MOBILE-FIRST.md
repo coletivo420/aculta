@@ -1,3 +1,9 @@
+## Retificação de arquitetura aprovada pelo responsável - 2026-10-29
+
+**Green Stash NÃO é uma experiência independente do Aculta Studio.** É a **área operacional/comercial integrada ao Studio**, com serviços proprietários do `aculta_commerce`. O `GreenStashExperienceProvider` e seu ID `green_stash` são mecanismos técnicos de integração ao registro de entradas, não motivo para criar plataforma, shell, login, navegação global ou marca visual independentes. Toda menção antiga neste documento a "experiência independente" deve ser lida como **área funcional integrada**. Preservar a navegação operacional **contextual** específica, mobile-first, dentro do Studio, sem duplicar o shell e o carrinho.
+
+**O requisito mobile-first é global ao tema `aculta420`**, abrangendo todos os purposes; Green Stash é um consumidor especializado dessa fundação global. Consultar `docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md` e `web/themes/custom/aculta420/docs/visual-cross-product-roadmap.md`. Nenhuma mudança funcional/Commerce decorre desta retificação.
+
 # Green Stash — Arquitetura de experiência e navegação mobile-first
 
 Status: **projeto visual e funcional**, não interface operacional implementada. 2026-10-23. Branch `docs/aculta-forum-0.1.0-dev.1`.

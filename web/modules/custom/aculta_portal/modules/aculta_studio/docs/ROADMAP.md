@@ -1,3 +1,9 @@
+## DECISÃO SUPERSESSIVA - Green Stash integrado e fundação mobile-first global (2026-10-29)
+
+A expressão antiga "Green Stash como experiência independente" está **revogada**. Green Stash é **a área de gestão comercial integrada ao Aculta Studio**; `green_stash` no registry é identificador técnico de entrada, não produto, shell, sistema ou identidade autônoma. Os serviços Commerce seguem como owners operacionais. **F8 continua dedicada a Green Stash, mas como área integrada**, sem menu global/checkout/conta paralelos.
+
+O requisito **mobile-first vale para TODO o tema ACULTA420 e todos os purposes** (THEME-MF0 a MF3), não só Studio, Marley ou Green Stash. O plano normativo vigente é [plano visual retificado](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). Sequência: F0+MF0 → MF1/MF2 e F1-F10 conforme dependências → **MF3 e F11 obrigatórios** → somente então A1-A4. Sem declarar F11 se a regressão mobile-first global não estiver aprovada. Preservar S-R4/S-R5 e `/conta-legada`.
+
 ## Retificação final OCS: Green Stash incluído (2026-10-29)
 
 **Normativa:** [plano atualizado](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). O plano anterior F0-F10 foi substituído por **OCS-F0-F11**. Green Stash é experiência Studio independente (provider `green_stash` do `aculta_commerce`), não parte de Marley, e deve aparecer no inventário, no hub conforme autorização, na paridade visual e na futura identidade Aculta.
