@@ -1,3 +1,7 @@
+## Retificação da subfrente B - experiência Studio completa (2026-10-29)
+
+A sequência OCS-F0-F7 anteriormente descrita foi **revogada** pelo [plano vinculante OCS-F0-F10](PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). O trabalho da Frente B abrange hub, Marley, GanjaLab, WE Sativa, Conta, Perfil e experiências extras verificadas no registry, com os respectivos donos funcionais preservados. Etapa A1-A4 somente após **OCS-F10 homologada**. A Frente B não modifica controllers/services/rotas/ACL da Frente A. Conflitos ou dependências entre frentes viram `Pede-A`; manter commits isolados e push fast-forward na PR #299, sem branch/PR adicional e sem merge.
+
 ## Subfrente visual Studio OCS-F → OCS-A (2026-10-29)
 
 Aprovação posterior à execução B1-B5: [plano detalhado](PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). Primeiro uma reprodução visual fiel do OpenCulturas **Next** (tema `opcult`); depois uma variante de identidade Aculta usando os mesmos SDCs e contratos. É subfrente da **Frente B**, não altera ownership da tabela acima: B é responsável por tema/SDC/CSS/Twig/stories; novos providers, PHP, rotas, acesso e services exigem handoff à A. Não abrir branch/PR nova.
