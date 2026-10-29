@@ -1,3 +1,20 @@
+## Retificação de escopo OCS - plataforma completa (2026-10-29)
+
+**Substitui o bloco inicial "Frente visual aprovada" onde limita F5 ao Marley e encerra fidelidade em F7.** A fonte normativa agora é [plano visual atualizado](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md), seção "Retificação vinculante de escopo transversal".
+
+- [ ] **OCS-F0:** auditar todo `StudioTab`, providers, rotas e consumidores. Cobertura inicial: hub, Marley, GanjaLab, WE Sativa, Conta, Perfil e **demais experiências efetivamente registradas**; distinguir existentes, opcionais e planejadas.
+- [ ] **OCS-F1-F3:** tokens Next escopados, navegação interna **derivada do registry/ACL**, SDCs e histórias reutilizáveis, sem shell institucional paralelo.
+- [ ] **OCS-F4:** hub e grade dinâmica de experiências autorizadas, links reais e estados de ausência.
+- [ ] **OCS-F5:** Marley e experiências editoriais proprietárias.
+- [ ] **OCS-F6:** GanjaLab, cursos, turmas, biblioteca e jornada educacional nos limites do LMS existente.
+- [ ] **OCS-F7:** WE Sativa, autoria Wiki e fluxos realmente presentes; autoria não é moderação.
+- [ ] **OCS-F8:** Conta privada e Perfil público em separados; S-R4/S-R5 e `/conta-legada` preservados.
+- [ ] **OCS-F9:** experiências adicionais inventariadas em F0, incluindo módulos opcionais e estados desligados.
+- [ ] **OCS-F10:** **gate final da fidelidade**, com matriz interexperiências, screenshots e testes; **somente então** iniciar OCS-A1-A4.
+- [ ] **OCS-A1-A4:** tokens e identidade Aculta, componentes, aplicação **a todas as experiências** e consolidação sem alterar contratos funcionais.
+
+Não substituir o conteúdo de uma experiência pelo de outra. O Studio compõe e apresenta; LMS/Wiki/editorial/User/Portal continuam os donos de dados, formulários, permissões, eventos e workflow. Itens ausentes não devem ser renderizados nem anunciados como existentes. Nenhuma fase está concluída por esta retificação.
+
 ## Frente visual aprovada - OCS-F → OCS-A (2026-10-29)
 
 **Ordem obrigatória:** primeiro reproduzir fielmente a aparência OpenCulturas **Next** (`opcult`, não `openculturas_base`); só depois do gate de fidelidade passar para identidade própria Aculta Studio. Plano técnico: [PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md).
