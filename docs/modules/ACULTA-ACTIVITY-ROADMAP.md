@@ -39,6 +39,20 @@ release independente enquanto o módulo for apenas o adapter e sua fronteira.
   `0.1.0-dev.8`; manifesto/grafo e status index validados. A matriz de
   ownership e a homologação de acesso/formulários continuam no gate conjunto.
 
+### Bloqueio de verificação — 2026-10-28
+
+- Baseline revalidado: Unit 6 testes / 19 assertions; Kernel 3 testes / 49
+  assertions, com 5 depreciações de Core/contrib.
+- A tentativa de acrescentar cobertura de `EntityHooks` do Portal falhou no
+  Kernel ao afirmar que `aculta_portal` estava habilitado. A fixture atual
+  registra um `DomainPurposeManager` substituto e não carrega esse módulo; a
+  falha ocorreu antes das novas asserções de acesso. Os testes Unit exploratórios
+  de formulário e Metatag passaram (11/33), mas não foram mantidos após a falha
+  do gate do módulo. Nenhum comportamento de produção foi alterado.
+- O boot Kernel sem `aculta_index` não foi executado. Reabrir esta fase com um
+  harness que carregue o Portal real, sem substituir sua regra de acesso. A
+  homologação Runtime segue pendente; Activity permanece em Dev.
+
 ## Posterior
 
 Workflow editorial, campos, experiência de edição, migração de dados e relações
