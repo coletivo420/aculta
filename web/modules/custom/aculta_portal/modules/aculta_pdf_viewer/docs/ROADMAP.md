@@ -2,6 +2,17 @@
 
 ## PV7 — revalidação do bloqueio de bootstrap em 2026-10-29
 
+- Tentativa focal em `AcultaPdfViewerInstallTest`: ao habilitar `key` e
+  prover somente `system.menu.admin`, a instalação avançou até a compilação do
+  container e parou porque `aculta_portal.aculta_user_agreement_registration`
+  exige `aculta_user.aculta_user_agreement_ledger`, ausente no harness. Resultado:
+  1 teste / 0 assertions / 1 erro. Uma tentativa ampla de instalar toda a
+  configuração `system` também foi descartada por depender de ação opcional de
+  Media, fora do requisito do caso.
+- Os ajustes exploratórios em fixtures foram revertidos. Sem mock do ledger,
+  substituição de serviço ou relaxamento das regras do Portal. Próximo passo:
+  carregar a closure real completa antes de repetir a suíte; PV7 segue bloqueada.
+
 - A tentativa de incluir o provider real `aculta_user.aculta_user_agreement_ledger`
   no harness Kernel descobriu dependências da cadeia Portal. Com `aculta_user`,
   `path_alias`, Portal e Image incluídos, o container falhou em
