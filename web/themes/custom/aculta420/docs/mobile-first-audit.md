@@ -300,5 +300,6 @@ links não mudaram. Firefox ESR autenticado em `/configuracoes` passou 33/33
 checks com a folha candidata injetada, em 320/360/390/599/600/767/768/1024/
 1280/1440 px, sem overflow; a Institution Bar apareceu uma vez. O teste não
 envia o formulário e não cobre tabelas, teclado completo, A/B, zoom real ou
-WCAG. Após publicar, ainda falta repetir sem override para validar a agregação
-CSS do Runtime.
+WCAG. Após publicar e reconstruir caches, a repetição sem override também passou
+33/33, confirmando a folha CSS agregada no Runtime. Evidência em
+`/home/piradopirata/suite-out/aculta-account-shell-8768825cf/`.

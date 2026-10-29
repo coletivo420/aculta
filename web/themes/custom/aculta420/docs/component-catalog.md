@@ -268,6 +268,7 @@ pode quebrar em colunas estreitas. Firefox ESR passou 32/32 checks, incluindo
 A sanfona já usada em mobile virou base; o breakpoint de 48rem restaura o menu
 desktop sticky e o layout de duas colunas. Sem alteração no template do módulo,
 DOM ou atributos AJAX. A folha candidata passou 33/33 checks Firefox autenticados
-em dez larguras e sem overflow. A repetição integrada sem CSS override segue
-pendente após sincronizar o head no servidor.
+em dez larguras e sem overflow. A repetição integrada sem CSS override passou
+33/33 após commit e `drush cr`; a agregação ativa foi verificada. Evidência em
+`/home/piradopirata/suite-out/aculta-account-shell-8768825cf/`.
 
