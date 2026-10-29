@@ -2,5 +2,13 @@
 version: '0.1.0-dev.1'
 state: Dev
 progress_note: >-
-  E10-A: conexão OAuth2 com o OpenStreetMap pelo popup do Portal, endpoint explícito por ambiente, recusa de ambiente cruzado, token cifrado no State API. E10-B: busca por tipo e ID, seleção e revisão dos dados, gravação do local e envio só das diferenças após confirmação. Kernel de segurança do OAuth cobre rotas, ambiente, credenciais ausentes e armazenamento cifrado.
-next_phase: 'Teste de envio real no servidor de desenvolvimento, com credenciais próprias em secrets/ e dados fictícios; depois revisão de termos ODbL e atribuição antes de qualquer envio fora do teste. Ver [README](web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap/README.md).'
+  E10-A: conexão OAuth2 com o OpenStreetMap pelo popup do Portal, endpoint
+  explícito por ambiente, recusa de ambiente cruzado, token cifrado no State API.
+  E10-B: busca por tipo e ID, seleção e revisão dos dados, gravação do local e
+  envio só das diferenças após confirmação. Kernel de segurança do OAuth 4
+  testes/53 assertions PASS no worktree (12 depreciações), cobrindo rotas,
+  ambiente, credenciais ausentes e armazenamento cifrado. As credenciais do app
+  estão em secrets (client id/secret e chave de cifra), mas não há login de conta
+  OSM disponível; por D-45 cada escrita real no mapa público exige revisão e
+  confirmação explícita. Nenhuma chamada externa ou envio foi feito.
+next_phase: 'Obter conta OSM de teste e confirmar previamente cada escrita real (D-45); depois testar envio de dados fictícios no servidor de desenvolvimento e revisar termos ODbL e atribuição antes de qualquer envio fora do teste.'
