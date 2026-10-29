@@ -70,14 +70,28 @@ final class RevistaFormHooks {
     }
 
     $errors = $form_state->getErrors();
-    if ($this->hasErrorBelow(self::GROUP, $errors)) {
+    // Core widgets can report their original field path even after the
+    // presentation wrapper moves that element into a details group.
+    // Normalize only the lookup keys, never the FormState errors themselves.
+    $groupErrors = [];
+    foreach ($errors as $path => $message) {
+      $path = (string) $path;
+      foreach (self::SECONDARY as $field) {
+        if (isset($secondary[$field]) && ($path === $field || str_starts_with($path, $field . ']['))) {
+          $path = self::GROUP . '][' . $path;
+          break;
+        }
+      }
+      $groupErrors[$path] = $message;
+    }
+    if ($this->hasErrorBelow(self::GROUP, $groupErrors)) {
       // A closed group hides the field that failed validation. Open it so the
       // message and the field stay visible without JavaScript.
       $secondary['#open'] = TRUE;
       // Only take the focus when the group owns the first error of the form;
       // an earlier invalid field keeps the default reading order.
-      if ($this->firstErrorStartsAt(self::GROUP, $errors)) {
-        $this->focusFirstInvalid($secondary, $errors, [self::GROUP]);
+      if ($this->firstErrorStartsAt(self::GROUP, $groupErrors)) {
+        $this->focusFirstInvalid($secondary, $groupErrors, [self::GROUP]);
       }
     }
     $form[self::GROUP] = $secondary;
