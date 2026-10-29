@@ -10,6 +10,7 @@ use Drupal\aculta_qrcode\Exception\InvalidQrCodeException;
 use Drupal\aculta_qrcode\Value\QrCodeFormat;
 use Drupal\aculta_qrcode\Value\QrCodePreset;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\File\FileExists;
 use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
 
 /**
@@ -84,9 +85,10 @@ final class QrCodeExporter {
 
     $realpath = $this->fileSystem->realpath($uri);
     if ($realpath === FALSE || !is_file($realpath)) {
-      $this->fileSystem->prepareDirectory(self::DIRECTORY, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+      $directory = self::DIRECTORY;
+      $this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
       $bytes = $this->generator->generate($payload, $preset, $format);
-      if ($this->fileSystem->saveData($bytes, $uri, FileSystemInterface::EXISTS_REPLACE) === FALSE) {
+      if ($this->fileSystem->saveData($bytes, $uri, FileExists::Replace) === FALSE) {
         throw new \RuntimeException('Não foi possível gravar o derivado do QR Code.');
       }
       $realpath = $this->fileSystem->realpath($uri);

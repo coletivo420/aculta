@@ -1,5 +1,12 @@
 # Changelog — ACULTA QR Code
 
+## 0.4.0-dev.3 — correção de exportação raster — 2026-10-29
+
+- Corrigido o preparo do diretório de derivados para passar uma variável à API Drupal `FileSystemInterface::prepareDirectory()`, que recebe o caminho por referência. A gravação usa `FileExists::Replace`, API atual do Drupal 11.
+- Kernel focal: 1 teste/9 assertions, sem depreciações. Suítes do módulo: Unit 46/75 e Kernel 18/136, sem depreciações.
+- O smoke visual no Runtime com a versão servida anterior validou painel, prévia SVG, SVG, PDF, redirecionamento e larguras 1280/390/320; PNG e WebP retornaram 500 pelo defeito agora corrigido. Revalidar esses downloads quando o candidato chegar ao checkout servido.
+- Logo por arquivo e prévia integrada ao formulário continuam pendentes; estado permanece Dev.
+
 ## 0.4.0-dev.2 — personalização visual do QR dinâmico — 2026-10-20
 
 - Campos opcionais `foreground` e `background` (`#RRGGBB`) sobrescrevem as cores do preset. A cor é validada pelo contraste mínimo de 4,5:1 no formulário e na exportação (`QrCodePresetRegistry::customized()`).

@@ -1,5 +1,14 @@
 # Execução contínua ACULTA — PR #298
 
+## QR Code — smoke do Runtime e correção raster candidata — 2026-10-29
+
+- Ambiente verificado: host `toca`, checkout servido em `/home/piradopirata/projetos/aculta`, Drupal 11.4.10, URI Drush `http://default`, banco `aculta_runtime`; antes da fixture havia 607 tabelas e zero entidades `aculta_qr_code`.
+- Criada pelo agente, com autorização do responsável, a entidade temporária ID 2, título `[TESTE] QR Code de homologação`, destino reservado `https://example.invalid/qa-qr`. Não houve chamada ao destino.
+- Firefox ESR visível: painel e fixture presentes; prévia SVG, download SVG, PDF, redirecionamento público e reflow 1280/390/320 passaram. PNG e WebP retornaram 500. O log Drupal atribuiu ambos a `FileSystem::prepareDirectory()` recebendo string literal por referência.
+- Corrigido o candidato em `aculta_qrcode`: caminho local passado por variável e `FileExists::Replace` no `saveData()`. Kernel focal 1/9, Unit 46/75 e Kernel do módulo 18/136 passaram sem depreciações no banco `aculta_simpletest`.
+- Limpeza: antes da remoção, banco e contagem confirmados como `aculta_runtime`/607 tabelas; título e código da fixture conferidos pelo ID. A entidade ID 2 foi removida; contagem final de QR Codes = 0. Não foram encontrados arquivos temporários `public://aculta-qrcode` registrados. Nenhum `updatedb`, importação ou `drush cr` executado.
+- O checkout servido continua no HEAD `355e48a89`, anterior ao candidato. Portanto, PNG/WebP ainda não foram revalidados contra o código corrigido no Runtime.
+
 ## Aliases dos documentos institucionais — PR #299 — 2026-10-28
 
 - Operação autorizada pelo responsável: mover os Termos de Uso e a Política de Privacidade para `/sobre/termos-de-uso` e `/sobre/politica-de-privacidade`, sem manter compatibilidade temporária. Host `toca`; checkout `/home/piradopirata/projetos/aculta`; branch `refactor/opencultures-codigo-visual`; HEAD no início `cdc462295`; Drush URI `http://default`; root `/home/piradopirata/projetos/aculta/web`; Drupal 11.4.10; banco `aculta_runtime` com 605 tabelas (igual ao registro anterior).

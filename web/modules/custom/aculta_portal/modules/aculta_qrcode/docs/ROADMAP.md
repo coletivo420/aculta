@@ -34,7 +34,19 @@ Itens originais:
 
 ## 0.4.0 — painel e exportação (em andamento: 0.4.0-dev.1)
 
-Feito em 0.4.0-dev.1: painel administrativo (lista, criação, edição, exclusão e downloads), exportação SVG/PNG/WebP/PDF pelo exportador, com regras de arquivo do `aculta_image`. Pendente: personalização visual, logo por arquivo do `aculta_image`, prévia e componentes ACULTA420 (tema, exige autorização explícita). Validação no Runtime e download PDF/PNG com `aculta_image` ativo: DEFERRED.
+Feito em 0.4.0-dev.1: painel administrativo (lista, criação, edição, exclusão e downloads), exportação SVG/PNG/WebP/PDF pelo exportador, com regras de arquivo do `aculta_image`. Pendente: personalização visual, logo por arquivo do `aculta_image`, prévia integrada ao formulário e componentes ACULTA420. O responsável autorizou ajustes do tema com foco mobile-first em 2026-10-29. Validação no Runtime e download PDF/PNG com `aculta_image` ativo: DEFERRED.
+
+Validação do candidato `0.4.0-dev.3` em 2026-10-29: o Firefox ESR visível validou
+painel, prévia SVG, download SVG/PDF, redirecionamento e reflow em 1280/390/320
+px no Runtime. PNG e WebP falharam com HTTP 500 porque `prepareDirectory()`
+recebia uma string literal por referência; a chamada foi corrigida e o Kernel
+focal com `aculta_image` passou (1/9). As suítes completas passaram (Unit
+46/75; Kernel 18/136). O Runtime servido ainda usa o código anterior; os dois
+downloads precisam de smoke após a atualização autorizada do checkout.
+
+Ainda pendentes para RC nesta trilha: integrar a prévia ao formulário, decidir
+e implementar logo por arquivo via `aculta_image`, concluir componentes do tema
+com validação visual e continuar as fases 0.5–0.8/1.0 previstas acima.
 
 Itens originais:
 

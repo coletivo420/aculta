@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-dev.2
+version: 0.4.0-dev.3
 state: Dev
-progress_note: 'Runtime MAIN ativo; Unit e Kernel passaram na suíte focal conjunta (91 testes/566 assertions agregados com Melhor Envio, Links e Activity); rotas, painel e downloads ainda exigem homologação funcional.'
-next_phase: Serviço compartilhado de geração usado pelo `aculta_links`; validar rotas, painel e downloads no Runtime isolado e completar preview/logo conforme roadmap ([roadmap](web/modules/custom/aculta_portal/modules/aculta_qrcode/docs/ROADMAP.md))
+progress_note: 'Candidato com Unit 46/75 e Kernel 18/136 passando; smoke Firefox no Runtime serviu painel, SVG, PDF, prévia e redirecionamento, mas PNG/WebP retornaram 500 na versão instalada. Correção raster passou Kernel 1/9; revalidar PNG/WebP após atualizar o checkout servido.'
+next_phase: 'Atualizar o checkout servido pelo fluxo autorizado e repetir downloads PNG/WebP; integrar prévia ao formulário, fechar logo via aculta_image e componentes ACULTA420 antes de avaliar RC (roadmap: web/modules/custom/aculta_portal/modules/aculta_qrcode/docs/ROADMAP.md).'

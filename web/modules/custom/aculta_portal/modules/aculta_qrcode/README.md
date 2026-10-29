@@ -4,13 +4,14 @@ Serviço central de QR Codes do ACULTA Portal, planejado para uso por todos os m
 
 ## Estado
 
-- Versão: `0.4.0-dev.2`. Estado: **Dev**.
+- Versão: `0.4.0-dev.3`. Estado: **Dev**.
 - Runtime de testes: ativo e listado em `config/sync/core.extension.yml` (verificação somente leitura em 2026-10-26). A ativação não equivale à homologação de rotas, painel ou downloads.
 - Entregue na 0.2.0: geração estática em SVG e PNG em memória, presets com contraste validado (mínimo 4,5:1) e validação de URL e texto.
 - Entregue na 0.3.0: entidade `aculta_qr_code` com validade e histórico revisionável, manager de gravação, redirecionamento público `/qr/{codigo}` e permissão própria. Testes Unit e Kernel em `tests/`.
 - Entregue na 0.4.0 (backend): painel administrativo em `/painel-administrativo/aculta/codigos-qr` e exportação SVG, PNG, WebP e PDF.
 - Entregue em 0.4.0-dev.2: personalização visual (cores validadas, legenda e moldura em PDF).
-- Ainda não existe: logo por arquivo, prévia no painel, estatística de acesso, integração com outros módulos.
+- Entregue em 0.4.0-dev.3: correção de gravação raster compatível com Drupal 11 e teste Kernel do registro temporário via `aculta_image`.
+- Ainda não existe: logo por arquivo, prévia integrada ao formulário, estatística de acesso, integração com outros módulos.
 
 ## Documentação
 

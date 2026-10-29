@@ -68,6 +68,13 @@ pasta.
 
 Raiz da Conta (Domain ACCOUNT) sem sessão: `/` e `/conta-legada` levam ao login, `/minha-conta` e `/studio` dão 404, e o login não tem rolagem horizontal em 390 px e 1280 px. Servidor de desenvolvimento, Firefox ESR em `DISPLAY=:0`. Não cobre o estado logado. Ver `aculta-conta-raiz/README.md`.
 
+### `aculta-qrcode/`
+
+`visual.py` valida painel, prévia SVG, downloads SVG/PNG/WebP/PDF, redirecionamento
+público e reflow 1280/390/320 px usando uma entidade temporária `[TESTE]` no
+Runtime de desenvolvimento. Requer uma sessão administrativa efêmera. Ver o
+README local para criação e limpeza da fixture.
+
 ### Fora da convenção de pasta
 
 Scripts de teste visual anteriores à regra, mantidos onde a frente dona os

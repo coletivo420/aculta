@@ -1,42 +1,35 @@
-# QR Code e mobile dos links: verificação no navegador
+# Validação visual do ACULTA QR Code
 
-Script `verifica_qrcode.py`. Roda no **Firefox ESR visível** na sessão X11 local (`DISPLAY=:0`), pelo geckodriver, via
-`tests/browser/aculta-cpf-checkout/wdlib.py`. Não usa Chromium nem headless.
-
-## O que cobre
-
-| Caminho | Host | Esperado | Último resultado (servidor de desenvolvimento) |
-| --- | --- | --- | --- |
-| `/painel-administrativo/aculta/codigos-qr` | `aculta.toca.net.br` | 403 para anônimo | PASS |
-| `/painel-administrativo/aculta/codigos-qr/previa?url=...` | `aculta.toca.net.br` | 403 para anônimo | **FAIL: 404**, rota não publicada |
-| `/painel-administrativo/aculta/codigos-qr/lote?ids=...` | `aculta.toca.net.br` | 403 para anônimo | **FAIL: 404**, rota não publicada |
-| `/` (links) em 390 e 1280 px | `links.aculta.toca.net.br` | sem rolagem horizontal, HTTP 200 | PASS |
-| `/entrar` (conta) em 390 e 1280 px | `conta.aculta.toca.net.br` | sem rolagem horizontal, HTTP 200 | PASS |
-
-Resultado da última execução: 5 de 7 verificações OK.
-
-## O que não cobre
-
-- **Prévia e lote com administrador logado.** Exigem sessão e um código existente. Não há credenciais de teste no
-  repositório, e o script não as usa.
-- **Layout das micropáginas `/pagina/{slug}`.** Exige um slug publicado no servidor de desenvolvimento.
-- **`/redes-sociais`.** Responde 404 no servidor de desenvolvimento: a rota ainda não está publicada. Fica fora da lista até lá.
-- **Código desta branch.** O servidor de desenvolvimento serve o checkout principal (`docs/aculta-forum-0.1.0-dev.1`), que não
-  tem a prévia nem o lote. Os dois FAIL acima são esperados enquanto a branch não for publicada no servidor de desenvolvimento.
-
-## Como executar
-
-```sh
-DISPLAY=:0 SUITE_OUT=/tmp/aculta-qrcode python3 tests/browser/aculta-qrcode/verifica_qrcode.py
-```
-
-Variáveis: `QR_HOST` (padrão `https://aculta.toca.net.br`), `LINKS_HOST` (padrão `https://links.aculta.toca.net.br`),
-`CONTA_HOST` (padrão `https://conta.aculta.toca.net.br`), `SUITE_OUT` (padrão `/tmp/aculta-qrcode`), `TIMEOUT`,
-`FIREFOX`, `GECKODRIVER`.
-
-Código de saída: `0` se tudo passou; `1` se alguma verificação falhou.
+Valida o painel administrativo no servidor de desenvolvimento, sua adaptação
+em 1280, 390 e 320 px, a prévia SVG e os downloads SVG, PNG, WebP e PDF.
 
 ## Ambiente
 
-Servidor de desenvolvimento (`*.aculta.toca.net.br`). Não é produção. Evidência (PNG e `resultado.json`) fica em `SUITE_OUT`,
-fora do repositório.
+- Firefox ESR visível em `DISPLAY=:0` via geckodriver.
+- Site `https://aculta.toca.net.br`, servido pelo checkout
+  `/home/piradopirata/projetos/aculta`.
+- O módulo `aculta_qrcode` e `aculta_image` precisam estar ativos.
+- `ACULTA_QR_ID` e `ACULTA_QR_CODE` apontam para uma entidade temporária
+  `[TESTE]`, criada no Runtime com destino `https://example.invalid/qa-qr`.
+- `SUITE_OUT` aponta para diretório fora do repositório; capturas e resumo ficam
+  nele. O perfil Firefox temporário também é criado e removido nesse diretório.
+
+## Execução
+
+```sh
+qr_login=$(php /home/piradopirata/projetos/aculta/vendor/drush/drush/drush.php uli --uid=1 --uri=https://conta.aculta.toca.net.br 2>/dev/null)
+DISPLAY=:0 SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-qrcode \
+ACULTA_QR_ID=ID ACULTA_QR_CODE=CODIGO ACULTA_TEST_LOGIN_URL="$qr_login" \
+python3 tests/browser/aculta-qrcode/visual.py
+unset qr_login
+```
+
+O comando fornece um link de sessão administrativa efêmero pelo Drush em
+memória; não grave nem imprima o link. Depois do teste, remova a entidade `[TESTE]`
+usando o ID e confirme o título antes da exclusão.
+
+## Limites
+
+O teste usa uma entidade efêmera real do Runtime de desenvolvimento. Não cria
+arquivos permanentes no repositório nem acessa produção. O PDF pode depender do
+motor Entity Print instalado no Runtime.
