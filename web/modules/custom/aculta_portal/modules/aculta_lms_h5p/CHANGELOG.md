@@ -1,3 +1,9 @@
+## 0.4.0-dev.153 — exceções PHPCS pontuais e justificadas (2026-10-29)
+
+- `aculta_H5PUploadWidget` e `aculta_H5PFileUsageManager` preservam identificadores de descoberta/integração por exceções PHPCS locais, com justificativa; o widget agora passa sem erros ou avisos.
+- PHPCS do módulo reduziu para 340 erros e 33 avisos em 46 arquivos.
+- Suítes Unit + Kernel: 43 testes / 481 assertions PASS, com 41 depreciações Core/contrib.
+
 ## 0.4.0-dev.152 — primeira rodada de limpeza PHPCS (2026-10-29)
 
 - PHPCBF Drupal/DrupalPractice corrigiu automaticamente 838 violações de estilo em 46 arquivos, sem mudar regras e preservando os nomes históricos `aculta_H5P*`.

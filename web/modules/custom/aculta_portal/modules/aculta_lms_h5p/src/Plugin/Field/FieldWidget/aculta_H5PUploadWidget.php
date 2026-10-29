@@ -1,11 +1,11 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; upload path disabled pending image ingestion.
-
 declare(strict_types=1);
 
 namespace Drupal\aculta_lms_h5p\Plugin\Field\FieldWidget;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1;
+// upload path disabled pending image ingestion.
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Attribute\FieldWidget;
 use Drupal\Core\Form\FormStateInterface;
@@ -15,21 +15,35 @@ use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\Plugin\Field\aculta_H5PWidgetBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Field widget placeholder for unavailable legacy content-package uploads. */
+/**
+ * Field widget placeholder for unavailable legacy content-package uploads.
+ */
 #[FieldWidget(
   id: 'h5p_upload',
   label: new TranslatableMarkup('Envio de pacote H5P indisponível'),
   field_types: ['h5p'],
 )]
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Legacy H5P plugin name is retained for field widget discovery.
 final class aculta_H5PUploadWidget extends aculta_H5PWidgetBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * H5P framework adapter retained for compatibility with the base widget.
+   *
+   * @var \Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal
+   */
   protected aculta_H5PDrupal $framework;
 
+  /**
+   * {@inheritdoc}
+   */
   public function __construct($plugin_id, $plugin_definition, $field_definition, array $settings, array $third_party_settings, aculta_H5PDrupal $framework) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->framework = $framework;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $plugin_id,

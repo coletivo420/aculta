@@ -7,12 +7,13 @@ Composer independentes, sob GPL-3.0-only.
 
 ## Estado
 
-**Revalidação 2026-10-29 (0.4.0-dev.152):** Unit + Kernel 43/481 passaram
+**Revalidação 2026-10-29 (0.4.0-dev.153):** Unit + Kernel 43/481 passaram
 no MariaDB `aculta_simpletest`; o Kernel reportou 41 depreciações Core/contrib.
 Uma rodada PHPCBF corrigiu automaticamente 838 violações, preservando regras e
 identificadores H5P; PHPCS integral ainda aponta 349 erros e 36 avisos em 48
-arquivos. O módulo permanece em Dev enquanto esse gate continuar vermelho.
-Nenhum Runtime foi alterado.
+arquivos. A correção pontual de duas classes resultou em 340 erros e 33 avisos
+em 46 arquivos; o widget de upload passa localmente. O módulo permanece em Dev
+enquanto o gate integral continuar vermelho. Nenhum Runtime foi alterado.
 
 F10 foi homologada no Runtime de teste `cursos`: o pacote de biblioteca foi
 instalado pela tela administrativa, uma atividade foi salva pelo editor e

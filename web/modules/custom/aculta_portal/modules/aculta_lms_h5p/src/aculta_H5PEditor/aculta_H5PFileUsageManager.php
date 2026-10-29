@@ -12,6 +12,7 @@ use Drupal\file\FileUsage\FileUsageInterface;
 
 /**
  * Keeps H5P media records synchronized with Drupal's managed file lifecycle. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Retained to preserve the H5P storage adapter's public service class.
 final class aculta_H5PFileUsageManager {
 
   public function __construct(
