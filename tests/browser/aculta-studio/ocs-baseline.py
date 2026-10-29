@@ -19,7 +19,12 @@ from wdlib import Driver  # noqa: E402
 URI = os.environ.get("STUDIO_LOGIN_URI", "https://conta.aculta.toca.net.br")
 PAGE = os.environ.get("STUDIO_PAGE", URI + "/studio/marley")
 USER = os.environ.get("STUDIO_USER", "teste.comum")
-WIDTHS = [(1440, 1000), (390, 844)]
+DEFAULT_WIDTHS = [(1440, 1000), (390, 844)]
+GATE_WIDTHS = (320, 360, 390, 599, 600, 768, 1024, 1280, 1440)
+WIDTHS = [
+    (width, 1000 if width >= 1000 else 844)
+    for width in map(int, os.environ.get("OCS_WIDTHS", "").split(",") if os.environ.get("OCS_WIDTHS") else [])
+] or DEFAULT_WIDTHS
 CAPTURES = []
 DEFAULT_STUDIO_PAGES = [
     ("hub", "/studio"),
