@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -48,6 +49,45 @@ function aculta_lms_agenda_entity_access(EntityInterface $entity, string $operat
   }
 
   return \Drupal::service('aculta_lms_agenda.event_access')->access($entity, $account);
+}
+
+/**
+ * Implements hook_simple_sitemap_links_alter().
+ *
+ * The public sitemap must not advertise events that the public cannot view.
+ */
+function aculta_lms_agenda_simple_sitemap_links_alter(array &$links, SimpleSitemapInterface $sitemap): void {
+  $slugsByKey = [];
+  foreach ($links as $key => $link) {
+    $path = $link['meta']['path'] ?? NULL;
+    if (!is_string($path)) {
+      continue;
+    }
+    $path = trim($path, '/');
+    if (preg_match('/^eventos\/([a-z0-9]+(?:-[a-z0-9]+)*)$/', $path, $matches) === 1) {
+      $slugsByKey[$key] = $matches[1];
+    }
+  }
+  if ($slugsByKey === []) {
+    return;
+  }
+
+  $ids = \Drupal::entityTypeManager()->getStorage('aculta_event')->getQuery()
+    ->condition('field_slug', array_values(array_unique($slugsByKey)), 'IN')
+    ->accessCheck(FALSE)
+    ->execute();
+  $restrictedSlugs = [];
+  foreach (\Drupal::entityTypeManager()->getStorage('aculta_event')->loadMultiple($ids) as $event) {
+    if ($event->hasField('field_turma') && !$event->get('field_turma')->isEmpty()) {
+      $restrictedSlugs[(string) $event->get('field_slug')->value] = TRUE;
+    }
+  }
+
+  foreach ($slugsByKey as $key => $slug) {
+    if (isset($restrictedSlugs[$slug])) {
+      unset($links[$key]);
+    }
+  }
 }
 
 /**

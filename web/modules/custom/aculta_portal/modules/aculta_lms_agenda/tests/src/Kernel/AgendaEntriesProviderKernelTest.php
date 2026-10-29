@@ -14,6 +14,7 @@ use Drupal\lms\Entity\Activity;
 use Drupal\lms\Entity\ActivityType;
 use Drupal\lms\Entity\Lesson;
 use Drupal\group\Entity\Group;
+use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 use Drupal\Tests\aculta_lms\Kernel\AcultaLmsDependencyHarnessTrait;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\KernelTests\KernelTestBase;
@@ -205,6 +206,23 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $titulosVisitante = array_map(static fn (array $row): string => (string) $row['evento']->label(), $catalogo->busca(NULL, NULL, NULL, $agoraCatalogo));
     $this->assertNotContains('Roda de conversa', $titulosVisitante);
     $this->assertNotContains('Aula da Turma B', $titulosVisitante);
+
+    $eventoPublico = Event::create([
+      'title' => 'Evento aberto',
+      'field_status' => 'publicado',
+    ]);
+    $eventoPublico->save();
+    $linksSitemap = [
+      'turma-a' => ['meta' => ['path' => 'eventos/' . $evento->get('field_slug')->value]],
+      'turma-b' => ['meta' => ['path' => 'eventos/' . $eventoDaOutraTurma->get('field_slug')->value]],
+      'publico' => ['meta' => ['path' => 'eventos/' . $eventoPublico->get('field_slug')->value]],
+      'agenda' => ['meta' => ['path' => 'calendario']],
+    ];
+    aculta_lms_agenda_simple_sitemap_links_alter(
+      $linksSitemap,
+      $this->createMock(SimpleSitemapInterface::class),
+    );
+    $this->assertSame(['publico', 'agenda'], array_keys($linksSitemap));
 
     $pilha = $this->container->get('request_stack');
     $pilha->push(Request::create('/eventos'));
