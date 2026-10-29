@@ -157,7 +157,11 @@ python3 tests/browser/aculta-studio/ocs-baseline.py
 
 As capturas e os dois JSONs ficam fora do Git. Cada imagem usa slug da rota e
 largura, por exemplo `openculturas-1440.png` e `studio-marley-390.png`. O JSON
-registra `innerWidth`, largura de documento/scroll e altura do conteúdo. A
+registra `innerWidth`, largura de documento/scroll e altura do conteúdo.
+Também registra classes de `body`, marcadores `data-aculta-studio` e presença
+da Institution Bar/Domain Header para mapear o escopo sem alterar contratos.
+`ACULTA_ROOT` pode apontar para o checkout servido quando o script é executado
+em outra worktree; Drush e o helper WebDriver são carregados desse checkout. A
 captura expandida posterior completou as oito rotas em 1440/390 (18 imagens
 incluindo a homepage); a tentativa anterior bloqueada no ULI permanece em
 `baseline-deferred.json`. A captura revelou `/studio` vazio, `/studio/ganjalab`

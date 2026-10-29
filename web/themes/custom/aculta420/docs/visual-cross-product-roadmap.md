@@ -402,4 +402,6 @@ URLs Studio a 390/1440, não o conjunto de purposes. `/studio` está vazio,
 GanjaLab aponta conteúdo de Conta e Green Stash requer fixture autorizada. Ver
 [`mobile-first-audit.md`](mobile-first-audit.md) e
 [`studio-visual/visual-parity-matrix.md`](studio-visual/visual-parity-matrix.md).
-Nenhum gate MF3/F11 foi aprovado.
+Uma repetição instrumentada encontrou Institution Bar presente nas sete rotas
+renderizadas, Domain Header ausente nas oito URLs capturadas e marcadores
+`data-aculta-studio` somente em Marley. Nenhum gate MF3/F11 foi aprovado.

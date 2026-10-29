@@ -567,4 +567,8 @@ viewport nessas capturas, sem constituir gate mobile-first. Evidências estão e
 `studio-visual/visual-parity-matrix.md` detalham limites e Pede-A. MF0/F0 não
 foram aprovadas; não iniciar F1/MF1 até resolver o Hub e obter fixture
 autorizada/comprovação da rota LMS. Todos os purposes ainda carecem de baselines
-runtime.
+runtime. Uma repetição instrumentada do baseline confirmou `Institution Bar`
+presente nas sete rotas que renderizaram, mas `.aculta-header` ausente em todas;
+apenas Marley expõe marcadores `[data-aculta-studio]`. A disponibilidade do
+Domain Header em `account` e a política de marcadores das outras áreas ficam
+registradas como Pede-A, não como workaround da Frente B.
