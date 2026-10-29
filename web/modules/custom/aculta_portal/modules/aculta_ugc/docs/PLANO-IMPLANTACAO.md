@@ -134,3 +134,9 @@ Padrões a reescrever (não copiar), com defeitos a evitar:
 ## 10. Incremento OC315: integração de denúncias, perfis e organizações
 
 [Auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md) / OC315-05 e OC315-07. Planejar sob U2/U3, não criar fila paralela. Registrar quem reivindicou, entidade reivindicada, vínculo alegado, decisão administrativa e quando cada permissão começa/cessa. Não transferir propriedade em envio de pedido. Garantir notificações por purpose e interfaces sem exposição de identidade do denunciante, com testes de acesso e de migração. **Nenhum código executado nesta rodada.**
+
+## Complemento aprovado OC-C - 2026-10-29
+
+`aculta_ugc` é **plano**, ainda não submódulo executável. Integrar, sem substituir silenciosamente, denúncias/Flags/workflows existentes: fila comum com migração contabilizada, decisão auditável, acesso por purpose, avisos e testes. Adaptar como conceito `EcaNotificationRecipient` para destinatários de notificação por purpose (D-03), sem instalar ECA. Reivindicação: padrão fechado e decisão humana vinculada à organização verificada, nunca transferência automática. Manter D-11 (sem Honeypot) e D-10 (licença de mídia opcional).
+
+Referência: `docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md`.
