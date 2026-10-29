@@ -629,3 +629,12 @@ jQuery UI/Webform dinâmicas, sem contrato fixo do tema. Harness comparativo
 Firefox criado em 14 larguras; a execução está DEFERRED por sessões
 concorrentes. Ver `mobile-first-audit.md` e
 `tests/browser/aculta-theme-mobile-first/webform-layout.py`.
+
+### THEME-MF2 — gavetas utilitárias do shell
+
+Messenger, alertas e carrinho compartilham `aculta-utility-offcanvas`; a largura
+edge-to-edge é a base móvel, com limite 420px após 560 CSS px. O smoke
+read-only do Messenger agora injeta CSS candidato e verifica a fronteira usando
+o viewport efetivo do Firefox. Execução DEFERRED pelas sessões concorrentes;
+Alertas e Carrinho ainda precisam de consumidores visuais próprios. Ver
+`mobile-first-audit.md` e `tests/browser/aculta-messenger/README.md`.

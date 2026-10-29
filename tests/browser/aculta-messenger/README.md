@@ -133,3 +133,24 @@ busca GET, seleção cumulativa de duas pessoas, restauração/remoção de chip
 presença do formulário POST sem submetê-lo. Não cria conversas nem altera dados.
 Exige que a versão Dev.374 esteja instalada no Runtime; o teste está versionado,
 mas ainda não foi executado.
+
+## CSS candidato da gaveta utilitária mobile-first
+
+`conversation-list-readonly.mjs` pode injetar a folha candidata do worktree antes
+de abrir a gaveta Messenger com `SUITE_CSS_OVERRIDE=1`. Mantenha
+`SUITE_PROJECT_ROOT=/home/piradopirata/projetos/aculta` para os comandos Drush e
+`SUITE_CSS_ROOT=/home/piradopirata/worktrees/opencultures-f0-adm8-e8` para ler
+somente o CSS candidato. O smoke registra o viewport que Firefox realmente
+entregou, largura do painel e o limite de 560/561 CSS px; não altera conversas,
+avisos ou preferências.
+
+```sh
+export DISPLAY=:0
+export SUITE_PROJECT_ROOT=/home/piradopirata/projetos/aculta
+export SUITE_CSS_ROOT=/home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export SUITE_CSS_OVERRIDE=1
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-utility-drawer-mobile-first
+for width in 390 560 561 1280; do
+  DISPLAY=:0 SUITE_WIDTH="$width" node tests/browser/aculta-messenger/conversation-list-readonly.mjs
+done
+```

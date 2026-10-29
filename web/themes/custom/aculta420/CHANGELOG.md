@@ -1,3 +1,8 @@
+# 0.7.0-dev.20 — migrar gavetas utilitárias compartilhadas para mobile-first (2026-10-29)
+
+- Gavetas de Messenger, alertas e carrinho agora ocupam a viewport como base; `min-width: 35.0625rem` restaura o limite de 420px anterior. Smoke real da gaveta Messenger ampliado com injeção do CSS candidato e validação de 560/561px.
+- Execução Firefox DEFERRED porque 13 sessões visíveis de outra frente permanecem ativas. Gates estáticos executados; sem homologação THEME-MF3.
+
 # 0.7.0-dev.19 — migrar conteúdo Likert do Webform para mobile-first (2026-10-29)
 
 - Ajuda e descrição Likert passam a ser visíveis como base e voltam a `display:none` acima de 768px. Override mobile do modal fica como exceção porque largura/minWidth são opções dinâmicas do Webform/jQuery UI.

@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.19
+version: 0.7.0-dev.20
 state: Dev
 progress_note: >-
-  0.7.0-dev.19 / THEME-MF2: conteúdo oculto de Likert agora visível em base mobile, restaurando display:none acima de 768px. Modal permanece com exceção max-width por largura dinâmica do consumidor. Harness Firefox em 14 larguras criado; Firefox DEFERRED por sessões concorrentes. MF3 não aprovado.
-next_phase: 'Repetir Firefox para Webform, PDF, carrossel, autenticação e Perfil quando sessões concorrentes encerrarem; revisar rotas reais após sincronização/cache pelo owner. Continuar demais superfícies MF2 antes de THEME-MF3.'
+  0.7.0-dev.20 / THEME-MF2: gavetas compartilhadas de Messenger/alertas/carrinho usam viewport inteira como base e restauram limite 420px após 560 CSS px. Smoke Firefox Messenger ampliado para override candidato e assertiva 560/561px. Fixture visual e página real DEFERRED por 13 sessões concorrentes; MF3 não aprovado.
+next_phase: 'Repetir Firefox para gavetas utilitárias, Webform, PDF, carrossel, autenticação e Perfil quando sessões concorrentes encerrarem; revisar rotas reais após sincronização/cache pelo owner. Continuar demais superfícies MF2 antes de THEME-MF3.'

@@ -530,3 +530,15 @@ calculada pelo consumidor jQuery UI/Webform a partir de opções dinâmicas
 geometria e capturas em 14 larguras, incluindo 650/651 e 768/769. Firefox e
 rotas Webform reais estão DEFERRED enquanto sessões concorrentes ocupam o
 browser. THEME-MF3 segue pendente.
+
+### THEME-MF2 — gavetas utilitárias compartilhadas (2026-10-29)
+
+`portal-cart.css` agora declara `--bs-offcanvas-width: 100vw` como base, cobrindo
+Messenger, alertas e carrinho; `min-width: 35.0625rem` restaura o limite anterior
+de 420px acima de 560 CSS px. O smoke real read-only
+`tests/browser/aculta-messenger/conversation-list-readonly.mjs` aceita injeção
+explícita da folha candidata (`SUITE_CSS_OVERRIDE=1`) e verifica a largura do
+consumer Messenger, incluindo a fronteira 560/561 conforme o viewport efetivo.
+A execução Firefox está DEFERRED por sessões concorrentes; os consumers de
+Alertas e Carrinho seguem requerendo revisão visual própria. THEME-MF3 permanece
+pendente.

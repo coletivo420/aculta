@@ -46,7 +46,6 @@
 }
 
 .aculta-utility-offcanvas {
-  --bs-offcanvas-width: min(420px, 100vw);
   background: var(--aculta-surface-raised);
   color: var(--aculta-text-primary);
 }
@@ -148,7 +147,8 @@
 
 /* Shared utility drawers: fluid width and scrollable bodies on narrow/mobile screens. */
 .aculta-utility-offcanvas {
-  --bs-offcanvas-width: min(26.25rem, 100vw);
+  /* Mobile base is edge-to-edge; the wide screen cap is applied below. */
+  --bs-offcanvas-width: 100vw;
   max-height: 100dvh;
   min-height: 0;
 }
@@ -180,6 +180,6 @@
   border-radius: var(--bs-border-radius);
   background: var(--aculta-surface-muted);
 }
-@media (max-width: 35rem) {
-  .aculta-utility-offcanvas { --bs-offcanvas-width: 100vw; }
+@media (min-width: 35.0625rem) {
+  .aculta-utility-offcanvas { --bs-offcanvas-width: min(26.25rem, 100vw); }
 }
