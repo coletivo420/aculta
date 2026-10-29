@@ -29,6 +29,12 @@
       "command": "/home/piradopirata/.local/share/codex-mcp/osm-mcp-server-0.1.1/bin/osm-mcp-server",
       "args": [],
       "env": {}
+    },
+    "aculta-drupal": {
+      "command": "/usr/bin/python3",
+      "args": [
+        "${CLAUDE_PROJECT_DIR}/scripts/mcp/aculta-drupal/server.py"
+      ]
     }
   }
 }
