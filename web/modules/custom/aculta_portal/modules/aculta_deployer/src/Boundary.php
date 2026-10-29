@@ -33,9 +33,9 @@ final class Boundary {
           continue;
         }
         $text = (string) file_get_contents($file);
-        // Pasta de leitura neutra do painel: pode citar a ferramenta, mas não executá-la nem usar seu código.
-        $allowed = array_filter($this->rules['consumer_tool_reference_allowed'] ?? [], static fn(string $x): bool => str_starts_with($rel, $x . '/'));
-        if ($allowed !== []) {
+        // Adaptadores explicitamente read-only podem citar o contrato de dados
+        // da ferramenta, sem executá-la nem importar suas classes.
+        if ($this->consumerReferenceAllowed($rel)) {
           foreach ($this->rules['consumer_allowed_forbidden'] ?? [] as $token) {
             if (str_contains($text, $token)) {
               $violations[] = $rel . " usa '$token' na pasta de leitura neutra; o Portal não executa a ferramenta";
@@ -69,6 +69,26 @@ final class Boundary {
       }
     }
     return $violations;
+  }
+
+  /**
+   * Checks whether a consumer file is allowed to read the data contract.
+   *
+   * Directories are reserved for neutral reporting adapters. Other
+   * integrations must be listed as individual files to keep the exception
+   * narrow.
+   */
+  private function consumerReferenceAllowed(string $relativePath): bool {
+    $allowedFiles = $this->rules['consumer_tool_reference_allowed_files'] ?? [];
+    if (in_array($relativePath, $allowedFiles, TRUE)) {
+      return TRUE;
+    }
+    foreach ($this->rules['consumer_tool_reference_allowed'] ?? [] as $directory) {
+      if (str_starts_with($relativePath, rtrim($directory, '/') . '/')) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
   /** @return string[] */

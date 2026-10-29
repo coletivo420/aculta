@@ -37,6 +37,13 @@
   "consumer_tool_reference_allowed": [
     "web/modules/custom/aculta_portal/src/Deployer"
   ],
+  "consumer_tool_reference_allowed_files": [
+    "web/modules/custom/aculta_portal/src/Environment/DeployerEnvironment.php",
+    "web/modules/custom/aculta_portal/tests/src/Unit/DeployerEnvironmentTest.php",
+    "web/modules/custom/aculta_portal/modules/aculta_calendar/src/Embed/DeployerHostDirectory.php",
+    "web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Unit/DeployerHostDirectoryTest.php",
+    "web/modules/custom/aculta_portal/modules/aculta_events/src/EventSubscriber/EmbedFrameSubscriber.php"
+  ],
   "consumer_allowed_forbidden": [
     "exec(",
     "shell_exec(",

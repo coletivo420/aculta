@@ -4,7 +4,15 @@
 - `config/deploy.json`: textos de `domain_transition.note`, `provision` (ação) e `session_cookie.transition` trocados de "deploy do RC" para Alpha/Beta. Identificadores `production`/`test` não mudaram.
 - `domains` (Cli): pendências mostradas como "pendente(s) de Alpha" e "muda na troca de domínio no Alpha". `tests/run.php` acompanha o texto.
 - Documentação: `MIGRACAO-DOMINIOS.md` com passos separados em Alpha e Beta; `PLANEJAMENTO.md` e `COOKIES-AMBIENTE.md` alinhados; "servidor de testes" renomeado para "servidor de desenvolvimento" nos textos.
-- Sem alteração de comportamento de comando. Testes: os mesmos 3 FAIL de antes da mudança (fronteiras, nove domínios de produção, contrato em SECRETS.md).
+- Sem alteração de comportamento de comando. No estado daquela integração, os testes ainda apontavam três falhas: fronteira, expectativa de nove domínios e contrato em `SECRETS.md`; a revalidação de 0.1.28 abaixo registra o estado atual.
+
+## 0.1.28 — allowlist exata para contratos somente leitura — 2026-10-29
+
+- `boundaries` permite referências ao manifesto de domínios somente nos adaptadores read-only já usados por Portal, Calendar e Events; arquivos vizinhos continuam proibidos e os arquivos permitidos continuam sem comandos de execução/importação.
+- A fixture de limites verifica inclusão por arquivo exato e rejeição de execução. A política de robôs inclui Eventos entre os dez domínios de produção declarados.
+- `tests/run.php`: 119 verificações PASS. `boundaries`, `check` e `cookies` PASS; `cookies` mantém o aviso não bloqueante de `services.local.yml` com `.aculta.test`. Nenhuma escrita no Runtime ou produção.
+- PHPCS Drupal do módulo permanece com baseline de 331 erros / 56 avisos em arquivos existentes; esta microfase não fez limpeza de estilo ampla.
+- A dívida de cookie local, PHPCS e a conclusão dos gates de segurança continuam antes de RC.
 
 ## Não lançado — correções de configuração (agente executor 2)
 

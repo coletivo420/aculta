@@ -159,10 +159,26 @@ Pendências:
 
 - `tests/run.php` passou por 24 verificações, mas `fronteiras atuais passam`
   falhou. O runner iniciou `report` e não concluiu dentro da janela de execução;
-  a execução foi encerrada e seus artefatos temporários próprios removidos.
-- A execução não é PASS integral. Não repetir nem alterar regras de fronteira
-  nesta fase; investigar em ambiente isolado antes de continuar. A pendência de
-  `session_cookie` permanece registrada em `docs/COOKIES-AMBIENTE.md`.
+  a execução foi encerrada e seus artefatos temporários próprios removidos. Esse
+  era o estado observado em 2026-10-28; foi reavaliado em isolamento abaixo.
+- A execução não era PASS integral. A pendência de `session_cookie` permanecia
+  registrada em `docs/COOKIES-AMBIENTE.md`.
+
+Reexecução isolada em 2026-10-29:
+
+- A fronteira revelou cinco adaptadores de leitura do manifesto de domínios em
+  Portal, Calendar e Events. A decisão do painel ADM8 permite exibir os hosts do
+  Deployer em modo somente leitura; a regra agora lista esses cinco arquivos
+  exatos, enquanto continua reprovando referências em arquivos vizinhos e
+  qualquer chamada para executar a ferramenta.
+- `tests/run.php`: 119 verificações PASS. `boundaries`, `check` e `cookies`
+  PASS. A suíte preservou e restaurou `var/deployer` e executou verificações
+  externas somente contra o ambiente de desenvolvimento.
+- `cookies` ainda registra a dívida não bloqueante de `services.local.yml`
+  (`.aculta.test`), que não é carregado no Runtime de desenvolvimento. A decisão
+  de como declarar ou remover esse ambiente continua com o responsável.
+- PHPCS Drupal reporta 331 erros e 56 avisos no módulo, baseline legado que
+  permanece antes de RC; esta microfase não aplicou limpeza ampla de estilo.
 
 Os gates são obrigatórios e devem ser registrados no CHANGELOG da versão.
 

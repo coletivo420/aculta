@@ -110,6 +110,30 @@ catch (\InvalidArgumentException) {
 $repo = dirname($toolRoot, 6);
 $rules = json_decode((string) file_get_contents($toolRoot . '/config/boundary.json'), TRUE, 512, JSON_THROW_ON_ERROR);
 $assert((new Boundary($repo, $toolRoot, $rules))->check() === [], 'fronteiras atuais passam');
+$boundaryFixtureRoot = sys_get_temp_dir() . '/aculta-boundary-test-' . getmypid();
+mkdir($boundaryFixtureRoot . '/consumer', 0777, TRUE);
+mkdir($boundaryFixtureRoot . '/tool', 0777, TRUE);
+file_put_contents($boundaryFixtureRoot . '/consumer/allowed.php', "<?php // aculta_deployer data\n");
+file_put_contents($boundaryFixtureRoot . '/consumer/sibling.php', "<?php // aculta_deployer data\n");
+$fixtureRules = [
+  'consumers' => ['consumer'],
+  'tool_terms' => ['aculta_deployer'],
+  'tool_dirs' => [],
+  'forbidden_dependencies' => [],
+  'consumer_exclude' => [],
+  'consumer_tool_reference_allowed' => [],
+  'consumer_tool_reference_allowed_files' => ['consumer/allowed.php'],
+  'consumer_allowed_forbidden' => ['exec('],
+];
+$fixtureBoundary = new Boundary($boundaryFixtureRoot, $boundaryFixtureRoot . '/tool', $fixtureRules);
+$assert(count($fixtureBoundary->check()) === 1, 'allowlist read-only aceita arquivo exato e reprova vizinho');
+file_put_contents($boundaryFixtureRoot . '/consumer/allowed.php', "<?php exec('forbidden'); // aculta_deployer\n");
+$assert(count($fixtureBoundary->check()) === 2, 'allowlist read-only não permite execução da ferramenta');
+unlink($boundaryFixtureRoot . '/consumer/allowed.php');
+unlink($boundaryFixtureRoot . '/consumer/sibling.php');
+rmdir($boundaryFixtureRoot . '/consumer');
+rmdir($boundaryFixtureRoot . '/tool');
+rmdir($boundaryFixtureRoot);
 $probe = $toolRoot . '/src/__probe.php';
 // Build the forbidden token at runtime so it is absent from this source file.
 $needle = implode('', ['Dru', 'pal', '::']);
@@ -358,12 +382,13 @@ $expectedProd = [
   'https://loja.aculta.org/',
   'https://cursos.aculta.org/',
   'https://links.aculta.org/',
+  'https://eventos.aculta.org/',
   'https://growroom420.aculta.org/',
 ];
 $assert(sort($prodHosts) === TRUE && $prodHosts === (function () use ($expectedProd) {
   sort($expectedProd);
   return $expectedProd;
-})(), 'os nove domínios de produção declarados estão na política (um por purpose)');
+})(), 'os dez domínios de produção declarados estão na política (um por purpose)');
 $assert(!array_filter($prodHosts, static fn($h) => str_contains($h, 'toca.net.br')), 'nenhum host de teste na política de produção');
 $badRobots = ['robots_policy' => ['production' => ['x_robots_tag' => 'noindex']]];
 $guard = Verify::isNoindex($badRobots['robots_policy']['production']['x_robots_tag']);
