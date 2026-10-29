@@ -619,6 +619,7 @@ limites por purpose e estados vazios.
 OCS-F1 iniciou a camada visual de fidelidade com tokens de cor OpenCulturas
 3.1.5 e acabamento das abas nos seletores de apresentação Studio já existentes.
 O SDC `context-tabs` foi reutilizado; nenhum contrato funcional foi alterado.
-Tipografia aguarda licença verificável e captura pós-alteração no checkout
-servido; F1 permanece parcial. Referência e contraste registrado em
-`studio-visual/upstream-inventory.md`.
+Firefox no checkout servido passou 29 verificações, 1 SKIP e zero falhas na
+rota Marley, com contraste mínimo 7,05:1 claro e 11,51:1 escuro. Tipografia
+aguarda licença verificável e outras áreas Studio precisam de captura; F1
+permanece parcial. Referência e limites em `studio-visual/upstream-inventory.md`.

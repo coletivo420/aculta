@@ -38,12 +38,15 @@ purposes não recebem esses acabamentos. Nenhum CSS upstream foi copiado.
 Os pares aplicados ao layout e às abas têm contraste calculado acima de 7:1 no
 claro e acima de 12:1 no escuro. A cor muted clara upstream `#7b7d85` tem
 4,11:1 sobre branco; foi registrada como referência, mas não é usada como texto
-normal. A validação final continua pendente no Firefox e com componentes reais.
+normal. A suíte Firefox no Marley passou contraste e navegação; a validação de
+todos os componentes e áreas permanece pendente.
 
 Montserrat/Open Sans continuam sem uso: o pacote contém arquivos de fonte mas
 não licença comprovável. Tipografia fiel, cartões, formulários e demais
-componentes permanecem pendentes. Esta fase F1 é parcial e não possui captura
-pós-alteração no checkout servido.
+componentes permanecem pendentes. Firefox pós-alteração no checkout servido
+confirmou abas, contraste e navegação em Marley, mas não compara a experiência
+com dashboard autenticado upstream nem cobre todas as telas; F1 permanece
+parcial.
 
 ## Referências visuais e limites
 

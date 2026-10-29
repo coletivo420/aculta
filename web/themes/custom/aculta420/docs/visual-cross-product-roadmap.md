@@ -434,21 +434,24 @@ funcionais não foram exercitados. Detalhes e Pede-A em `mobile-first-audit.md`.
 Adicionados tokens mobile-first para gutter, largura máxima e espaçamento
 vertical, com aprimoramento a partir de 48rem; o container mantém o limite
 existente de 1280px. A escala H1 agora começa em 2rem em 320px para reduzir
-quebras forçadas de títulos longos. Esta fundação estática ainda não foi
-renderizada no checkout servido e não conclui MF1 nem inicia MF2. Ver
-`mobile-first-audit.md`.
+quebras forçadas de títulos longos. Firefox no checkout servido passou a suíte
+Studio Marley nos viewports 320/390/768/1024/1440, mas isso não homologa toda a
+fundação global nem conclui MF1. Ver `mobile-first-audit.md`.
 
 ### OCS-F1 — tokens de fidelidade iniciais
 
 Mapeados ao prefixo `--aculta-studio-fidelity-*` os valores de cor e tabulação
 do `opcult` 3.1.5, aplicados somente ao layout Studio de Marley. Nenhuma fonte
-ou folha upstream foi copiada. A tipografia aguarda licença verificável, e a
-captura visual pós-alteração está pendente; F1 segue parcial. Detalhes em
-`studio-visual/upstream-inventory.md`.
+ou folha upstream foi copiada. A tipografia aguarda licença verificável.
+Firefox pós-alteração passou a navegação, contraste e reflow em Marley; a
+comparação não cobre todas as áreas nem um dashboard autenticado upstream, por
+isso F1 segue parcial. Detalhes em `studio-visual/upstream-inventory.md`.
 
 ### THEME-MF2 — `content-grid`
 
 Primeiro SDC global migrado: uma coluna na base mobile, duas colunas a partir
 de 576px e três a partir de 992px. Consumidores encontrados em Marley, LMS e
-Wiki; stories atualizadas. O Firefox pós-alteração desses consumidores está
-pendente, portanto MF2 permanece em andamento.
+Wiki; stories atualizadas. Firefox confirmou Marley em nove larguras sem
+overflow e reflow esperado para a variante 2 colunas. LMS/Wiki e a variante de
+3 colunas não tiveram consumer visível nesta rodada; MF2 permanece em
+andamento.

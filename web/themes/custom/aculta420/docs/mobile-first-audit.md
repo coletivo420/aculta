@@ -237,9 +237,12 @@ continua limitado a 80rem; o max-width existente de 1280px foi promovido a
 token sem mudar seu valor. As regras preservam a ordem DOM e o layout Bootstrap.
 
 Arquivos alterados: `css/tokens.css`, `css/base.css` e `css/layout.css`. Esta é
-uma fundação parcial: componentes específicos ainda precisam ser migrados e o
-resultado visual pós-alteração não foi capturado no checkout servido. Portanto
-MF1 está **em andamento**, MF2/MF3 seguem pendentes e nenhum gate é declarado.
+uma fundação parcial: componentes específicos ainda precisam ser migrados. A
+captura visível pós-alteração da rota Studio Marley foi executada após
+reconstruir os caches (`drush cr`): a suíte reportou 29 PASS, 1 SKIP e 0 FAIL,
+em 320/390/768/1024/1440px,
+claro e escuro. Essa rota não comprova toda a fundação global; MF1 permanece
+**em andamento**, MF2/MF3 seguem pendentes e nenhum gate global é declarado.
 
 ### THEME-MF2 — primeira família migrada: `content-grid`
 
@@ -248,5 +251,9 @@ MF1 está **em andamento**, MF2/MF3 seguem pendentes e nenhum gate é declarado.
 três cartões estreitos em telas médias. Consumidores verificados no código:
 Marley (`MarleyController`), painel LMS (`LearnerDashboardComposer`) e Wiki
 (`WikiContributorWorkspace`/`WikiContributionIntentController`). As três
-stories descrevem o reflow esperado. A captura Firefox pós-alteração está
-pendente; não se declara aprovação visual nem cobertura dos três consumidores.
+stories descrevem o reflow esperado. Firefox visível capturou Marley em nove
+larguras (320/360/390/599/600/768/1024/1280/1440), sem overflow; screenshots
+599/600/768 confirmam visualmente duas colunas para a variante `--2`. Os
+consumidores do LMS e Wiki não foram exercitados nesta rodada, e nenhuma rota
+real usa `columns: 3` no código encontrado (essa variante está nas stories).
+Evidência em `$SUITE_OUT/aculta-ocs-mf2-grid-20261029/`; MF2 segue parcial.

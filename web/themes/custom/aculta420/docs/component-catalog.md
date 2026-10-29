@@ -227,10 +227,12 @@ pendentes de captura.
 
 ## THEME-MF2 — `patterns/content-grid`
 
-O SDC experimental tem consumidores reais em Marley, LMS e Wiki. Sua base
-responsiva agora empilha os itens no mobile, passa a duas colunas em 576px e a
-três em 992px; as stories declaram esse reflow. O aceite visual dos consumers
-continua pendente de Firefox no Runtime.
+O SDC experimental tem consumidores de duas colunas em Marley, LMS e Wiki; os
+consumidores LMS/Wiki não foram exercitados nesta captura. A base responsiva
+empilha itens no mobile, passa a duas colunas em 576px e a três em 992px; as
+stories declaram esse reflow. Firefox confirmou visualmente Marley 1→2 colunas
+e zero overflow em nove larguras. A variante 3 colunas ainda não tem consumer
+Runtime real confirmado, somente story.
 # Retificação de escopo visual (2026-10-29)
 
 O inventário deste catálogo é uma referência histórica de componentes, não uma

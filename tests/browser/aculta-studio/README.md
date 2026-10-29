@@ -256,3 +256,25 @@ avaliar os componentes editoriais. Inspecionadas manualmente algumas telas 320
 no meio da palavra sem gerar overflow. Este baseline público não cobre as
 áreas autenticadas, formulários, fixtures de conteúdo completos nem todos os
 consumidores/views anexados.
+
+### Execução pós-MF1/OCS-F1 e content-grid (2026-10-29)
+
+Após `drush cr` no HEAD servido `0b0531aa0`, `run-visual.sh` rodou em Firefox
+ESR visível com a conta sintética `teste.comum`: 29 PASS, 1 SKIP esperado
+(sem publicação própria para testar edição), 0 FAIL. Verificou navegação AJAX,
+`aria-current`, Enter, nomes acessíveis, erros JS, modo claro/escuro e ausência
+de overflow em 320/390/768/1024/1440px. Contraste calculado nos elementos
+Studio observados: mínimo 7,05:1 claro e 11,51:1 escuro. A preferência original
+foi restaurada e lida como `light`. Artefatos em
+`$SUITE_OUT/aculta-ocs-mf2-post-63be6b8d7/`.
+
+`ocs-baseline.py` também capturou nove viewports em MAIN público, Marley e WE
+Sativa (27 PNG/JSON records); zero overflow foi medido nas 18 páginas Studio.
+Marley mostrou visualmente a variante de duas colunas do `content-grid` em
+599/600/768px, empilhada abaixo de 576px. A variante `columns: 3` está coberta
+por story, mas não houve consumer Runtime visível com essa prop; LMS/Wiki
+também não foram exercitados como consumers. A página WE Sativa renderizou sem
+overflow, mas sem marcadores `data-aculta-studio`, portanto não conta como
+validação de consumer Studio. Capturas em
+`$SUITE_OUT/aculta-ocs-mf2-grid-20261029/`. Isso é evidência parcial, não gate
+MF3/F11 ou homologação global.
