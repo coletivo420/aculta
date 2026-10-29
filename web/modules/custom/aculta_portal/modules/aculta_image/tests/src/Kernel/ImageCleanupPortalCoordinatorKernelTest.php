@@ -94,7 +94,7 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
       'bundle' => 'image',
       'label' => 'Test image',
     ])->save();
-    NodeType::create(['type' => 'page', 'name' => 'Page'])->save();
+    NodeType::create(['type' => 'page', 'name' => 'Page', 'new_revision' => TRUE])->save();
     FieldStorageConfig::create([
       'field_name' => 'body',
       'entity_type' => 'node',
@@ -110,6 +110,7 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
     $referencedFile = $this->createFixtureImage('referenced');
     $structuredFile = $this->createFixtureImage('structured');
     $embeddedFile = $this->createFixtureImage('embedded');
+    $revisionFile = $this->createFixtureImage('revision');
     $this->container->get('file.usage')->add($referencedFile, 'test', 'node', '123');
     Media::create([
       'bundle' => 'image',
@@ -124,16 +125,29 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
         'format' => 'plain_text',
       ],
     ])->save();
+    $revisionNode = Node::create([
+      'type' => 'page',
+      'title' => 'Fixture historical reference',
+      'body' => [
+        'value' => '<drupal-entity data-entity-uuid="' . $revisionFile->uuid() . '"></drupal-entity>',
+        'format' => 'plain_text',
+      ],
+    ]);
+    $revisionNode->save();
+    $revisionNode->setNewRevision(TRUE);
+    $revisionNode->set('body', ['value' => 'Historical reference replaced.', 'format' => 'plain_text']);
+    $revisionNode->save();
 
     $queue = $this->container->get('queue')->get('aculta_image_replaced_files', TRUE);
     $queue->createItem(['fid' => (int) $file->id()]);
     $queue->createItem(['fid' => (int) $referencedFile->id()]);
     $queue->createItem(['fid' => (int) $structuredFile->id()]);
     $queue->createItem(['fid' => (int) $embeddedFile->id()]);
+    $queue->createItem(['fid' => (int) $revisionFile->id()]);
 
-    $result = $this->container->get('aculta_image.cleanup')->run(4);
+    $result = $this->container->get('aculta_image.cleanup')->run(5);
 
-    self::assertSame(['processed' => 4, 'deleted' => 1], $result);
+    self::assertSame(['processed' => 5, 'deleted' => 1], $result);
     self::assertNull($this->container->get('entity_type.manager')->getStorage('file')->load($file->id()));
     self::assertFalse(file_exists($this->container->get('file_system')->realpath($file->getFileUri())));
     self::assertNotNull($this->container->get('entity_type.manager')->getStorage('file')->load($referencedFile->id()));
@@ -142,6 +156,8 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
     self::assertNotNull($this->container->get('file_system')->realpath($structuredFile->getFileUri()));
     self::assertNotNull($this->container->get('entity_type.manager')->getStorage('file')->load($embeddedFile->id()));
     self::assertNotNull($this->container->get('file_system')->realpath($embeddedFile->getFileUri()));
+    self::assertNotNull($this->container->get('entity_type.manager')->getStorage('file')->load($revisionFile->id()));
+    self::assertNotNull($this->container->get('file_system')->realpath($revisionFile->getFileUri()));
   }
 
   /**

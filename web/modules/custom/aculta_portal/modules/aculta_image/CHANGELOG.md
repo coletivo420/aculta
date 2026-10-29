@@ -12,6 +12,11 @@
 
 # Changelog — aculta_image
 
+## 0.1.0-dev.41 — referências em revisões históricas (2026-10-29)
+
+- Kernel cria uma revisão antiga de página com UUID de File embutido, salva uma revisão nova sem essa referência e confirma que o coordenador preserva o arquivo ainda usado pelo histórico.
+- Suíte do módulo: 31 testes / 146 assertions PASS; quatro depreciações upstream de `media_duplicates`/Drupal.
+
 ## 0.1.0-dev.40 — referência embutida em texto (2026-10-29)
 
 - Kernel salva uma página com referência UUID a um File em texto formatado e confirma que o coordenador Portal mantém o arquivo.

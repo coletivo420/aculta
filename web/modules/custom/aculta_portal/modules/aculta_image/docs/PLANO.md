@@ -174,6 +174,16 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
   revisões, validação da instalação completa do Portal, binários Hostinger e
   integração Growroom permanecem pendentes.
 
+### Referência em revisão histórica — 2026-10-29
+
+- O Kernel salva a referência UUID em uma revisão anterior de página, grava uma
+  revisão corrente sem o embed e confirma que a busca de todas as revisões
+  impede a remoção do File histórico. A suíte completa passa: 31 testes / 146
+  assertions, quatro depreciações upstream de `media_duplicates`/Drupal.
+- Referências ativas e históricas de campo e texto agora são verificadas na
+  fixture. Permanecem validação da instalação completa do Portal, binários
+  Hostinger e integração Growroom.
+
 Fora deste ciclo: bloqueio automático de duplicatas durante o upload. O relatório continua sugerindo revisão administrativa.
 
 ## 6. Perguntas abertas
