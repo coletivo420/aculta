@@ -205,6 +205,28 @@ PDFPreview/ImageMagick. Auditar CSP estrita e ampliar a revisão acessível no
 Homelab. LiteSpeed/Cloudflare e renderização após deploy são uma validação
 separada, posterior ao deploy; nenhum deploy foi feito nesta fase.
 
+### Validação visual adicional — 2026-10-29
+
+- O código do `aculta_document_viewer` neste candidato é igual ao checkout de
+  desenvolvimento em `355e48a89`.
+- A suíte completa do módulo passou: 48 testes / 524 assertions; 147
+  deprecações Core/contrib.
+- No Runtime, dois PDFs públicos de homologação existentes (MIDs 234 e 237)
+  não tinham página referenciadora. Usei o MID 234 para uma página `page`
+  temporária, com `field_domain_source=aculta_org`, embutido por
+  `revista_editorial`. HTTP 200 confirmou viewer e PDF.js; Firefox ESR visível
+  passou 7/7 checks em 1280/390/320 px, incluindo canvas, controles, teclado e
+  foco visível. A captura em 320 px foi revisada. NID 574 foi removido e a rota
+  agora retorna 404. Os dois Media pré-existentes foram preservados.
+- PHP lint: 34/34 arquivos PASS. PHPCS Drupal com `--extensions=php`: FAIL,
+  10 erros e 23 avisos em código/testes já existentes; não alterados nesta
+  validação. O gate global de fronteira continua vermelho em outros módulos.
+- Seguem pendentes para PV7: Office/planilhas em matriz móvel, CSP, revisão
+  ampliada de acessibilidade e resolução do baseline PHPCS antes de RC.
+- `validate-aculta-portal-drupal11.php` também falha por documentação ausente
+  nos helper registry e CHANGELOG raiz do Portal, fora deste módulo. O gate de
+  fronteira módulo–tema permanece vermelho em Events/Calendar/Magazine.
+
 ### Auditoria do contrib Drupal 3D Flipbook
 
 O release 11.0.2 foi inspecionado diretamente no commit registrado acima. Ele

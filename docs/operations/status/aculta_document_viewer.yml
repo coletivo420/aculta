@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.15
 state: Dev
-next_phase: 'Validar provider `media:document`, prévias Office, viewports e Runtime antes de avaliar RC ([roadmap](web/modules/custom/aculta_portal/modules/aculta_document_viewer/docs/ROADMAP.md))'
-progress_note: 'PDF.js, wrapper e CSS agora têm owner único aculta_pdf_viewer; builder e acesso Document próprios preservados. Unit 43/228 PASS (inclui equivalência de buildFile em 8 cenários). Harness Kernel corrigido em 2026-10-28 com a closure real em tests/src/Kernel/DocumentViewerKernelClosureTrait.php: instalação 1/11 e embed 4/285 PASS. DOCX, planilhas, viewports menores e Runtime pendentes.'
+next_phase: 'Resolver PHPCS Drupal PHP (10 erros/23 avisos preexistentes); validar prévias Office/planilhas em viewports móveis, CSP e acessibilidade ampliada antes de avaliar RC ([roadmap](web/modules/custom/aculta_portal/modules/aculta_document_viewer/docs/ROADMAP.md))'
+progress_note: '2026-10-29: suíte completa 48/524 PASS (147 deprecações); Firefox ESR no Runtime 7/7 em 1280/390/320px com Media PDF temporária, página removida depois. PHP lint 34/34 PASS. PHPCS Drupal PHP falha com 10 erros/23 avisos preexistentes. Gate Portal Drupal 11+ também aponta documentação ausente de helpers/changelog raiz; Office/planilhas, CSP e acessibilidade ampliada seguem pendentes para RC.'

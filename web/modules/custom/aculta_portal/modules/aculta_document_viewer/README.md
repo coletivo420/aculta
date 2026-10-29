@@ -162,6 +162,15 @@ conteúdo e tokens de login de teste foram removidos. Nesta homologação
 não houve `drush cim` global nem `updb`;
 CDN, policy ImageMagick e migração de arquivos também não fazem parte do módulo.
 
+Em 2026-10-29, a suíte completa passou com 48 testes / 524 assertions e 147
+deprecações Core/contrib. Firefox ESR no servidor de desenvolvimento exibiu o
+viewer de uma Media `document` pública embutida numa página temporária: 7/7
+checks de título, controles, canvas, teclado/foco e reflow em 1280/390/320 px.
+A página foi removida e sua rota passou a 404. Script reutilizável:
+[`tests/browser/aculta-document-viewer/`](../../../../../../tests/browser/aculta-document-viewer/).
+O PHPCS Drupal restrito a PHP ainda encontra 10 erros e 23 avisos anteriores
+à microfase; detalhes e próximo passo estão no roadmap.
+
 ## Documentação de arquitetura
 
 - [Arquitetura, hooks, classes e fluxo](docs/ARQUITETURA.md)
