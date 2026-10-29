@@ -22,6 +22,13 @@ Não há props funcionais, estado, consulta de serviços, storage, Node, Commerc
 
 O componente não possui JavaScript.
 
+## Layout responsivo
+
+A apresentação compacta (`min-height: 0`, `padding: 1.25rem`) é a base desde
+320px. A partir de `48.0625rem` (769 CSS px com raiz de 16px), a altura mínima
+de 390px e o padding de 1.5rem retomam a composição ampla anterior. A ordem do
+markup e os slots não mudam.
+
 Continuam globais apenas contratos compartilhados, como tokens e a base `.aculta-category`. Regras de layout/controles do VVJB permanecem em `css/components/editorial-carousel.css`, pois pertencem ao pattern/engine de carousel e não ao card.
 
 ## Presenter

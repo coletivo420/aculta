@@ -6,7 +6,7 @@ estilo	web/themes/custom/aculta420/components/content/author-card/author-card.cs
 template	web/themes/custom/aculta420/components/content/author-card/author-card.twig	—	—	—	—	—
 estilo	web/themes/custom/aculta420/components/content/course_card/course_card.css	1	(prefers-reduced-motion: reduce)	0	min-height: 0 | min-width: 120px | min-width: 120px	overflow: clip | overflow: hidden
 template	web/themes/custom/aculta420/components/content/course_card/course_card.twig	—	—	—	—	—
-estilo	web/themes/custom/aculta420/components/content/editorial-card/editorial-card.css	1	(max-width: 768px)	0	min-height: 390px | max-width: 768px) | min-height: 0	—
+estilo	web/themes/custom/aculta420/components/content/editorial-card/editorial-card.css	1	(min-width: 48.0625rem)	0	min-height: 0 | min-width: 48.0625rem) | min-height: 390px	—
 template	web/themes/custom/aculta420/components/content/editorial-card/editorial-card.twig	—	—	—	—	—
 estilo	web/themes/custom/aculta420/components/content/event_card/event_card.css	0	—	0	—	—
 template	web/themes/custom/aculta420/components/content/event_card/event_card.twig	—	—	—	—	—

@@ -86,6 +86,10 @@ dos dados/handlers da View. O teste visual sintético está documentado em
 Studio. O mobile usa coluna única como base e recupera a sidebar lateral em
 `48rem`; nenhum SDC paralelo ou novo contrato foi criado.
 
+`content/editorial-card` mantém os slots e o consumer atuais; altura mínima e
+padding compactos são a base, com composição ampla em `48.0625rem`. A validação
+visual do consumer real `node--editorial-highlight` segue pendente.
+
 A barra de progresso de comentários é CSS compartilhada de Fórum/Wiki/Revista,
 com markup e ações emitidos pelo Portal; a grade começa compacta e cresce em
 `22.5rem` e `36rem`. O harness e os limites por consumer estão documentados em

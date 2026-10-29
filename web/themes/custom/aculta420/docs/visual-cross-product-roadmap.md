@@ -682,3 +682,11 @@ barra sticky de 7 trilhas a partir de 576px; o formulário de resposta também
 começa compacto. O harness do Fórum passou a aceitar CSS candidata e cobre
 320/360/390/500/575/576/900px, mas a execução Firefox fica DEFERRED. Deve ser
 rodado em consumers de Fórum, Wiki e Revista. Ver `mobile-first-audit.md`.
+
+### THEME-MF2 — SDC editorial-card
+
+O card editorial usa altura mínima e padding compactos como base; em
+`min-width: 48.0625rem`, amplia para a composição anterior. A fronteira
+768/769px e o consumer real ainda precisam de validação visual; não aprova
+THEME-MF3. Ver `mobile-first-audit.md` e
+`components/content/editorial-card/README.md`.

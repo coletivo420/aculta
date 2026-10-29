@@ -6,8 +6,8 @@
  * generic .aculta-category foundation remain global.
  */
 .aculta-editorial-card {
-  min-height: 390px;
-  padding: 1.5rem;
+  min-height: 0;
+  padding: 1.25rem;
   border: 1px solid var(--aculta-border-default);
   border-top: 3px solid var(--aculta-border-accent);
   border-radius: 3px;
@@ -65,9 +65,9 @@
   content: ' →';
 }
 
-@media (max-width: 768px) {
+@media (min-width: 48.0625rem) {
   .aculta-editorial-card {
-    min-height: 0;
-    padding: 1.25rem;
+    min-height: 390px;
+    padding: 1.5rem;
   }
 }

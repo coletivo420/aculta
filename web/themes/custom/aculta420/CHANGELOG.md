@@ -3,6 +3,7 @@
 - `revista-post.css` (commit `e40c39265`) usa figuras full-width/static como base e restaura proporções editoriais em `min-width: 36rem`; `npm run lint:css` passou posteriormente na raiz do tema. Firefox e consumer real permanecem pendentes.
 - `statistics.css` empilha os filtros como base e restaura os controles em linha em `min-width: 36rem`. Lint CSS, Python compile, schemas SDC, Design Foundations e índice de status passaram nesta microfase. Firefox/Runtime estão DEFERRED; atribuir a próxima versão somente após a validação visual prevista pelo versionamento do tema.
 - A limpeza da fronteira substitui classes de apresentação emitidas por downloads, conteúdo salvo, editorial de eventos e variações de cartão por tokens do Portal mapeados no tema. Gates estáticos da fronteira/tokens e Unit do registry passaram; Kernel e Runtime ainda pendentes.
+- `editorial-card.css` usa altura e espaçamento compactos como base e só amplia em `min-width: 48.0625rem`. Lint CSS e auditoria estática SDC passaram; Firefox/consumer real permanecem DEFERRED.
 
 # 0.7.0-dev.26 — migrar navegação interna do Studio para mobile-first (2026-10-29)
 

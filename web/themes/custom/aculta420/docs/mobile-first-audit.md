@@ -632,3 +632,13 @@ centralizados. A regra móvel redundante para o subtítulo foi removida. A
 alteração foi commitada em `e40c39265`. O lint CSS foi executado posteriormente
 na raiz correta do tema e PASS; não houve ainda comparação Firefox nem revisão
 visual do consumer real, que seguem DEFERRED.
+
+### THEME-MF2 — SDC editorial-card
+
+`editorial-card.css` agora começa com `min-height: 0` e padding de `1.25rem`.
+Em `min-width: 48.0625rem` (769 CSS px com raiz de 16px), amplia para a altura
+mínima de 390px e padding de `1.5rem`. Isso mantém os valores anteriores em
+ambos os lados da fronteira 768/769px e preserva DOM e slots. Lint CSS e os
+gates estáticos SDC passaram; Firefox/inspeção do consumer
+`node--editorial-highlight` estão DEFERRED sem `DISPLAY` e com 13 sessões
+geckodriver ativas. THEME-MF3 permanece pendente.
