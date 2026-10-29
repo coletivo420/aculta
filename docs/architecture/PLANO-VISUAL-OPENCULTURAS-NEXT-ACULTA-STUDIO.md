@@ -1,3 +1,30 @@
+## Correção normativa 2026-10-29 - Green Stash e cobertura completa
+
+**Esta correção prevalece sobre a numeração OCS-F0-F10 anterior, inclusive quando repetida nas seções históricas.** Green Stash é uma experiência independente e obrigatória da cobertura visual transversal do Studio, não uma função do Marley ou da Loja pública. Código verificado: `aculta_commerce/src/Experience/GreenStashExperienceProvider.php`, ID `green_stash`, route `aculta_commerce.green_stash`, purpose `account`, ACL `GreenStashAccessPolicy`. A presença do provider **não** significa que todas as operações de loja estejam implementadas: o método `build()` atual ainda fornece mensagem de preparação. Conferir estado da rota e dos consumidores no HEAD antes de marcar implementação.
+
+**Fontes contratuais indispensáveis:** `web/modules/custom/aculta_portal/modules/aculta_commerce/docs/GREEN-STASH-UX-MOBILE-FIRST.md`, `GREEN-STASH-OPERATIONS-CONTRACT.md` e `GREEN-STASH-0.1.0-D.md`. Green Stash usa Commerce, Commerce Stock, Commerce Shipping/Melhor Envio e Statistics nos respectivos estágios; não duplica entities nem usa telas administrativas nativas para operadores. Preservar carrinho/checkout multidomínio, ACL por loja/entidade/operação, formulários próprios em Form API, PT-BR, navegação própria mobile-first dentro do shell do Studio, sem bottom-nav global adicional.
+
+### Sequência executável definitiva
+
+- **OCS-F0:** auditar TODOS os providers/rotas/consumers do Studio: hub, Marley, GanjaLab, WE Sativa, **Green Stash**, Conta, Perfil e quaisquer outros existentes, opcionais ou planejados. Matriz por experiência, owner, ACL, estados, progresso e paridade `opcult`.
+- **OCS-F1:** tokens de fidelidade OpenCulturas Next escopados ao Studio.
+- **OCS-F2:** shell interno e navegação contextual orientados ao registry/ACL, mantendo Institution Bar e Domain Header.
+- **OCS-F3:** SDCs transversais, variantes, stories e consumers reais.
+- **OCS-F4:** hub dinâmico, com Green Stash somente para usuários autorizados.
+- **OCS-F5:** Marley e edição editorial.
+- **OCS-F6:** GanjaLab e jornada LMS.
+- **OCS-F7:** WE Sativa e autoria Wiki.
+- **OCS-F8:** **Green Stash** e operações de loja realmente disponíveis. Aplicar layout mobile-first, navegação comercial independente, listagens e estados reais. Auditar produtos/pedidos/estoque/envios/promoções/clientes/relatórios/configurações contra seus marcos GS: **não renderizar operações planejadas como prontas**, não incluir links administrativos de edição, não contornar grants nem duplicar checkout.
+- **OCS-F9:** Conta privada e Perfil público distintos; S-R4/S-R5 e `/conta-legada`.
+- **OCS-F10:** demais experiências do registry e opções ausentes, com estados honestos.
+- **OCS-F11:** gate de fidelidade transversal, incluindo testes de Green Stash autorizados/não autorizados, ACL loja/produtos/pedidos, mobile 320 px, sem JS, cache por usuário e isolamento de purpose.
+
+**OCS-F11 substitui OCS-F10 como gate obrigatório antes de OCS-A1.** As fases OCS-A1-A4 abrangem expressamente **Green Stash**, além de todas as experiências já listadas. Qualquer menção histórica de F7 ou F10 como gate final está revogada. Nova experiência descoberta não deve depender de o usuário nomeá-la: inventário dinâmico obrigatório em F0.
+
+### Handoff comercial
+
+A frente visual não deve alterar `GreenStashAccessPolicy`, `GreenStashExperienceProvider`, controllers, forms, navigation service, routing, entities, Commerce, Stock, Shipping ou configurações. Qualquer lacuna de operação vira `Pede-A`, com arquivo, contrato e teste, sem botão falso. Referência para o executor: o contrato de operações tem precedência sobre propostas visuais genéricas.
+
 ## Retificação vinculante de escopo transversal - 2026-10-29
 
 **Esta seção substitui a numeração e o escopo restrito das fases F4-F7 na seção 4, as referências a F7 como gate final e qualquer interpretação de que Marley é a única experiência integrada.** O objetivo é reproduzir fielmente o OpenCulturas Next na **plataforma inteira Aculta Studio** antes da identidade própria. As seções anteriores continuam como histórico técnico, mas a matriz abaixo é a sequência executável vigente.
