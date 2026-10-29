@@ -5,20 +5,18 @@ Core e de módulos contrib para as experiências de conta, conteúdo, Commerce,
 aprendizagem e domínios. Core/contrib continuam donos das entidades e regras que
 já fornecem.
 
-## Situação vigente — Portal `0.4.1-dev.36` (2026-10-26)
+## Situação vigente — Portal `0.4.1-dev.46` (2026-10-29)
 
-Os testes Unit do Portal foram executados nesta revisão: 353 testes / 914
-assertions PASS (6 depreciações PHPUnit). A suíte Kernel (execução anterior) passou com 53 testes /
-831 assertions (90 depreciações Drupal/Core/contrib), usando MariaDB isolado.
-O teste de retorno Studio/legado inicializa e restaura o container Drupal
-global, conforme exigido por `Url::fromUserInput()` no teste Unit. Essa evidência
-não equivale a homologação de rotas no Runtime, revisão visual nem RC.
+Unit: 323 testes / 974 assertions PASS. Kernel: 80 testes / 1.530 assertions
+PASS, com 96 depreciações Core/contrib. Gate Drupal 11+: 1.163 checks PASS;
+PHPCS Drupal/DrupalPractice e PHP lint dos arquivos desta microfase PASS.
+Dev.46 integra CPF ao login principal e popup; os testes de ambos os módulos
+estão no changelog. Nenhuma configuração ou dado Runtime foi alterado.
 
-O manifesto declara o backend `search_api_db`, exigido pela configuração
-instalável `search_api.server.aculta_database` do próprio Portal. A instalação
-limpa passou dessa dependência e chegou à compilação dos serviços; com o User
-incluído na fixture, prossegue. O Browser do Statistics ainda falha no helper
-de login antes das assertions do painel. Runtime não foi alterado.
+O checkout servido está em `04a8dfa55`, anterior a este candidato; a
+revisão Firefox do login ainda precisa ser feita depois de servir o commit.
+Portal permanece Dev por fases de B1/B2, Content Index, vídeo e limpeza
+compartilhada listadas no roadmap.
 
 Minha Conta Studio `/studio/conta/dados` reutiliza o Form API de Profile
 do Portal para os dados cadastrais privados (nome e WhatsApp), excluindo

@@ -1,18 +1,19 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.3.0-dev.7
+version: 0.3.0-dev.8
 state: Dev
 progress_note: >-
-  Dev.7: PHPCS Drupal/DrupalPractice integral 0 erros/0 avisos após corrigir
-  docblocks e formatação; Runner de domínio 248 PASS, Unit 48/116 e Kernel 7/46
-  PASS, com 8 depreciações Core/contrib. Sem mudança funcional. Dev.6 integrou
+  Dev.8 integra login por CPF em /entrar e no popup, mantendo a autenticação de
+  senha nativa, flood, confirmação de e-mail, CAPTCHA, Social Auth e respostas
+  genéricas. Domínio 248 checks; Unit 48/116; Kernel 11/75 (8 depreciações).
+  Portal Unit 323/974; Kernel 80/1530 (96 depreciações). Gate Drupal 11+, PHPCS
+  Drupal/DrupalPractice e PHP lint PASS. Visual aguarda servir o candidato.
+  Dev.7 limpou PHPCS integral; Kernel 7/46 PASS. Dev.6 integrou
   o AccountOtherDataForm ao AccountDocumentStore real e validou rollback de
   10002. Runtime read-only 2026-10-29, checkout detached 355e48a89: módulo ativo
   0.3.0-dev.4, schema 10002, índice presente, 2 linhas de documentos, 0 sem
-  fingerprint e 0 duplicados. Nenhuma escrita foi feita; Runtime não serve .7.
+  fingerprint e 0 duplicados. Nenhuma escrita foi feita; Runtime não serve .8.
 next_phase: >-
-  Integrar login por CPF em todas as superfícies locais (formulário principal e
-  popup), preservando flood, confirmação de e-mail, CAPTCHA, Social Auth e
-  respostas genéricas, conforme D-51. A integração depende de os arquivos dos
-  formulários do Portal serem liberados pela outra frente; depois, validar o
-  formulário visualmente quando o candidato estiver servido e rever os gates
+  Confirmar visualmente no Firefox o login por CPF em /entrar e no popup quando
+  este candidato estiver servido; rever os gates restantes e o Runtime conforme
+  o plano de identidade fiscal
   ([README](web/modules/custom/aculta_portal/modules/aculta_id_cpf/README.md))

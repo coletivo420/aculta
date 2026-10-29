@@ -384,6 +384,25 @@ O que o teste prova é que o tema carrega e renderiza as páginas sem erro. Há 
     - **LMS:** `cursos.aculta.toca.net.br/group/1` é página informativa do grupo, sem preço, matrícula ou entrada de checkout; não há fluxo de compra no LMS para percorrer o pane fiscal. Coerente com a ADR-013 e coberto no nível Kernel.
     - **PASS — tema Olivero (ambiente local):** Portal, Fórum e Revista renderizam com Olivero, 6 assets do tema e nenhum de `aculta420`, sem mensagens de erro; a view do Fórum renderiza completa. Feito no ambiente local, não no servidor de testes, com restauração de `aculta420` ao final. Limitação de conteúdo registrada em 9.6.
 
+## 11. Login local por CPF — D-51 (2026-10-29)
+
+O login local aceita o CPF cadastrado em `/entrar` e no popup. O submódulo
+`aculta_id_cpf` calcula o fingerprint com a chave existente e resolve um único
+perfil `associado`; então troca temporariamente o campo pelo nome de conta
+durante a validação nativa da senha e restaura a entrada original antes da
+resposta. CPF e fingerprint não são expostos nem registrados.
+
+Conta sem perfil/chave, CPF inválido/desconhecido ou resultado ambíguo não
+interrompe login por usuário/e-mail. Core e Portal continuam responsáveis por
+senha, bloqueio, flood e finalização; o popup também usa o wrapper de resposta
+genérica. CAPTCHA do formulário principal e Social Auth permanecem intactos.
+
+Evidência: domínio 248 checks, Unit 48/116, Kernel 11/75 (8 depreciações);
+Portal Unit 323/974, Kernel 80/1530 (96 depreciações), gate Drupal 11+ (1.163
+checks), PHP lint e PHPCS Drupal/DrupalPractice PASS. A revisão Firefox das
+duas superfícies ficou pendente até servir o candidato ao checkout de
+desenvolvimento.
+
 
 ## Atualização de política — matrícula gratuita no LMS (2026-10-26)
 

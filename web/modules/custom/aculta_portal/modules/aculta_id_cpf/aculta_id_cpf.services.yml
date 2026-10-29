@@ -20,4 +20,10 @@ services:
   aculta_id_cpf.fingerprint:
     class: Drupal\aculta_id_cpf\Service\DocumentFingerprint
     arguments: ['@aculta_id_cpf.validator', '@key.repository']
+  aculta_id_cpf.login_identifier_resolver:
+    class: Drupal\aculta_id_cpf\Service\CpfLoginIdentifierResolver
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@aculta_id_cpf.validator', '@aculta_id_cpf.fingerprint']
+  aculta_id_cpf.login_form_callbacks:
+    class: Drupal\aculta_id_cpf\Service\CpfLoginFormCallbacks
+    arguments: ['@aculta_id_cpf.login_identifier_resolver']
 

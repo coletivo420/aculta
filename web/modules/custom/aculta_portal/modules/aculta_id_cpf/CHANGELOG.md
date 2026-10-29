@@ -14,6 +14,18 @@
 
 # Changelog
 
+## 0.3.0-dev.8 — login local por CPF (2026-10-29)
+
+- `/entrar` e o popup aceitam CPF como identificador e o mostram no rótulo. O
+  CPF válido é convertido temporariamente para o nome de conta durante a
+  validação nativa da senha; a entrada original é restaurada antes da resposta.
+- Flood, confirmação de e-mail, CAPTCHA e Social Auth seguem seus fluxos. CPF
+  inválido, desconhecido, ambíguo ou sem chave/perfil não interrompe login por
+  usuário ou e-mail. O popup reutiliza o wrapper Portal para respostas genéricas.
+- Domínio 248 checks; Unit 48/116; Kernel 11/75 (8 depreciações); Portal Unit
+  323/974 e Kernel 80/1530 (96 depreciações). Gate Drupal 11+, PHP lint e PHPCS
+  Drupal/DrupalPractice PASS. Revisão visual aguarda o candidato servido.
+
 ## 0.3.0-dev.7 — limpar PHPCS Drupal/DrupalPractice (2026-10-29)
 
 - Removidos docblocks vazios, descrições e quebras de linha ausentes nos
@@ -22,8 +34,7 @@
 - Runner de domínio: 248 PASS; Unit: 48 testes/116 assertions PASS; Kernel:
   7 testes/46 assertions PASS, 8 deprecações Core/contrib. PHPCS integral e
   PHP lint dos arquivos alterados PASS. Sem mudança funcional ou Runtime.
-- D-51 autoriza login por CPF em todas as superfícies locais antes do RC; a
-  implementação permanece pendente de integração com os formulários do Portal.
+- D-51 autoriza login por CPF em todas as superfícies locais antes do RC.
 
 ## 0.3.0-dev.6 — integrar o formulário Portal ao store e testar rollback — 2026-10-29
 

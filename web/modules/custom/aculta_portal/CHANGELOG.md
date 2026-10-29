@@ -1,3 +1,13 @@
+# Changelog
+
+## 0.4.1-dev.46 — login por CPF em todas as superfícies locais (2026-10-29)
+
+- O formulário principal e o popup informam que aceitam CPF. A resolução fica
+  no módulo `aculta_id_cpf`; a senha segue pela autenticação nativa do Portal.
+- Testes CPF: domínio 248, Unit 48/116 e Kernel 11/75 (8 depreciações). Portal:
+  Unit 323/974 e Kernel 80/1530 (96 depreciações). Gate Drupal 11+, PHP lint e
+  PHPCS Drupal/DrupalPractice PASS. Revisão visual aguarda o candidato servido.
+
 ## 0.4.1-dev.45 — completar inventário de helpers de imagem no Status (2026-10-29)
 
 - O catálogo administrativo do Portal agora documenta `aculta_image.capabilities`

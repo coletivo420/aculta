@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
+use Drupal\aculta_portal\Account\StreetNumberField;
+use Drupal\node\NodeInterface;
+use Drupal\Core\Menu\MenuLinkInterface;
+use Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber;
+use Drupal\aculta_portal\Account\EmailConfirmationNotice;
+use Drupal\aculta_portal\Cart\CartUtility;
+use Drupal\aculta_portal\Search\SearchUtility;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Render\PortalLinkElement;
@@ -16,7 +23,6 @@ use Drupal\aculta_portal\Form\LoginPopupForm;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\aculta_portal\Account\AccountAddressForm;
-use Drupal\aculta_portal\Account\StreetNumberField;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -41,10 +47,8 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
 final class PortalHooks {
 
   /**
-   * Entradas públicas de purpose, indexáveis e fora do noindex padrão do Portal.
-   * Rotas `aculta_portal.*` não listadas aqui recebem noindex.
+   * Rotas de autenticação e conta do Core (user.*), sempre com noindex.
    */
-  /** Rotas de autenticação e conta do Core (user.*), sempre com noindex. */
   private const AUTH_ROUTES = [
     'user.login',
     'user.login_status.http',
@@ -87,9 +91,9 @@ final class PortalHooks {
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configFactory,
     #[Autowire(service: 'aculta_portal.search_utility')]
-    private readonly \Drupal\aculta_portal\Search\SearchUtility $searchUtility,
+    private readonly SearchUtility $searchUtility,
     #[Autowire(service: 'aculta_portal.cart_utility')]
-    private readonly \Drupal\aculta_portal\Cart\CartUtility $cartUtility,
+    private readonly CartUtility $cartUtility,
     #[Autowire(service: 'extension.list.module')]
     private readonly ModuleExtensionList $moduleList,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
@@ -99,7 +103,7 @@ final class PortalHooks {
     #[Autowire(service: 'aculta_portal.account_shell_builder')]
     private readonly AccountShellBuilder $accountShellBuilder,
     #[Autowire(service: 'aculta_portal.email_confirmation_notice')]
-    private readonly \Drupal\aculta_portal\Account\EmailConfirmationNotice $emailConfirmationNotice,
+    private readonly EmailConfirmationNotice $emailConfirmationNotice,
     #[Autowire(service: 'aculta_portal.breadcrumb_builder')]
     private readonly AcultaBreadcrumbBuilder $breadcrumbBuilder,
     #[Autowire(service: 'aculta_portal.presentation.domain')]
@@ -107,7 +111,6 @@ final class PortalHooks {
     #[Autowire(service: 'renderer')]
     private readonly RendererInterface $renderer,
   ) {}
-
 
   /**
    * Implements hook_preprocess_page().
@@ -117,7 +120,8 @@ final class PortalHooks {
     $domainPresentation = $this->domainPresentationBuilder->buildCurrent();
     $variables['domain_presentation'] = $domainPresentation?->toThemeArray();
     $variables['aculta_search_utility'] = $this->searchUtility->build();
-    // Ícone da ACULTA na barra multidomínio: página inicial do domínio principal (purpose main), nunca fixa no código.
+    // Ícone da ACULTA na barra multidomínio: página inicial do domínio
+    // principal (purpose main), nunca fixa no código.
     $mainHome = $this->domainPurposeManager->pathUrl('main', '/');
     $variables['aculta_brand_home'] = $mainHome !== NULL ? $mainHome->toString() : '/';
     $cart = $this->cartUtility->build();
@@ -140,7 +144,7 @@ final class PortalHooks {
       && preg_match('#^/user/([1-9][0-9]*)/edit$#D', $path, $matches)) {
       $target_uid = (int) $matches[1];
       if ($target_uid === (int) $account->id()
-        && !\Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber::isValidCorePasswordResetRequest($request, $target_uid, (int) $account->id())) {
+        && !AccountRouteSubscriber::isValidCorePasswordResetRequest($request, $target_uid, (int) $account->id())) {
         $variables['aculta_account_edit_blocked'] = TRUE;
         $variables['aculta_account_security_url'] = Url::fromRoute('aculta_portal.security')->toString();
       }
@@ -154,7 +158,8 @@ final class PortalHooks {
       $this->removeHeaderBlockByPlugin($variables['page']['header'], 'page_title_block');
     }
 
-    // Aviso de e-mail não confirmado em "Minha conta" (não descartável): acima do conteúdo da página.
+    // Aviso de e-mail não confirmado em "Minha conta" (não descartável):
+    // acima do conteúdo da página.
     if (($notice = $this->emailConfirmationNotice->build()) !== NULL && isset($variables['page']['content'])) {
       $variables['page']['content'] = [
         '#type' => 'container',
@@ -188,11 +193,13 @@ final class PortalHooks {
   /**
    * Supplies presentation-only data for the institutional content block.
    */
+
   /**
    * Implements hook_preprocess_aculta_portal_element().
    *
-   * Os elementos de presentation (ex.: busca da Wiki) chegam ao tema como array, sem objetos. O atributo é montado aqui,
-   * no último passo antes do template, que espera um Attribute.
+   * Os elementos de presentation (ex.: busca da Wiki) chegam ao tema como
+   * array, sem objetos. O atributo é montado aqui, no último passo antes do
+   * template, que espera um Attribute.
    */
   #[Hook('preprocess_aculta_portal_element')]
   public function preprocessPortalElement(array &$variables): void {
@@ -201,6 +208,9 @@ final class PortalHooks {
     }
   }
 
+  /**
+   * Adds institution content to the block template variables.
+   */
   #[Hook('preprocess_block')]
   public function preprocessBlock(array &$variables): void {
     $entity = $variables['elements']['content']['#block_content'] ?? NULL;
@@ -240,7 +250,8 @@ final class PortalHooks {
     }
   }
 
-  /** Sends identity, support and editorial links to their canonical domains. */
+  /**
+ * Sends identity, support and editorial links to their canonical domains. */
   #[Hook('preprocess_menu')]
   public function preprocessMenu(array &$variables): void {
     if (empty($variables['items']) || !is_array($variables['items'])) {
@@ -258,7 +269,9 @@ final class PortalHooks {
     }
   }
 
-  /** Sends editorial author and category links to MAGAZINE. */
+  /**
+   * Sends editorial author and category links to MAGAZINE.
+   */
   #[Hook('preprocess_links')]
   public function preprocessLinks(array &$variables): void {
     if (!isset($variables['links']) || !is_array($variables['links'])) {
@@ -300,21 +313,17 @@ final class PortalHooks {
     unset($link);
   }
 
-  /** Rewrites only known cross-domain links, keeping their menu structure. */
   /**
-   * "Entrar" para visitante anônimo abre o popup de login no próprio host (use-ajax modal, mesma origem). O link
-   * /entrar continua valendo sem JavaScript: a rota do popup também mostra o formulário em página.
-   */
-  /**
-   * Marks the "Minha conta" link with a semantic token. The item is identified by its menu link, so a
-   * domain rewrite of its URL does not affect the marking. Whether it is highlighted is a theme decision
-   * taken from the purpose presented by the domain_presentation contract.
+   * Marks the "Minha conta" link with a semantic token.
+   *
+   * A domain rewrite does not affect identification by menu link. Highlighting
+   * remains a theme decision based on the domain_presentation contract.
    */
   private function markAccountHomeItems(array &$items): void {
     foreach ($items as &$item) {
       $link = $item['original_link'] ?? NULL;
       $url = $item['url'] ?? NULL;
-      if ($link instanceof \Drupal\Core\Menu\MenuLinkInterface && $link->getPluginId() === 'aculta_portal.dashboard' && $url instanceof Url) {
+      if ($link instanceof MenuLinkInterface && $link->getPluginId() === 'aculta_portal.dashboard' && $url instanceof Url) {
         $attributes = $url->getOption('attributes') ?? [];
         $url->setOption('attributes', array_merge($attributes, ['data-portal-ui' => 'account-home']));
       }
@@ -325,6 +334,11 @@ final class PortalHooks {
     unset($item);
   }
 
+  /**
+   * Decorates anonymous login links to open the same-host modal popup.
+   *
+   * The /entrar route remains available when JavaScript is disabled.
+   */
   private function decorateLoginPopupItems(array &$items): void {
     if ($this->currentUser->isAuthenticated()) {
       return;
@@ -348,7 +362,10 @@ final class PortalHooks {
     }
   }
 
-  private function rewriteDomainMenuItems(array &$items, \Drupal\aculta_portal\Domain\DomainPurposeManager $resolver): void {
+  /**
+   * Rewrites only known cross-domain links while preserving menu structure.
+   */
+  private function rewriteDomainMenuItems(array &$items, DomainPurposeManager $resolver): void {
     foreach ($items as &$item) {
       $url = $item['url'] ?? NULL;
       if ($url instanceof Url) {
@@ -385,8 +402,8 @@ final class PortalHooks {
         elseif ($route === 'entity.node.canonical') {
           $parameters = $url->getRouteParameters();
           $node_parameter = $parameters['node'] ?? NULL;
-          $node = $node_parameter instanceof \Drupal\node\NodeInterface
-            ? $node_parameter
+          $node = $node_parameter instanceof
+          NodeInterface ? $node_parameter
             : (is_numeric($node_parameter) ? $this->entityTypeManager->getStorage('node')->load((int) $node_parameter) : NULL);
           if ($node && $node->hasField('field_domain_source') && !$node->get('field_domain_source')->isEmpty()) {
             $purpose = $resolver->getPurposeForDomainId((string) $node->get('field_domain_source')->target_id);
@@ -413,8 +430,9 @@ final class PortalHooks {
   }
 
   /**
-   * Detalhe do pedido (Minha conta): a situação sai pelo nome do Portal, traduzido ("Concluído"), e não pelo rótulo
-   * em inglês do workflow do Commerce. O título do campo vira "Situação".
+   * Replaces the workflow state with its translated Portal label.
+   *
+   * The order detail does not expose Commerce's English workflow label.
    */
   #[Hook('entity_view_alter')]
   public function commerceOrderUserView(array &$build, $entity, $display): void {
@@ -437,7 +455,7 @@ final class PortalHooks {
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     $route = $this->routeMatch->getRouteName();
-    // O "Entrar" da barra abre o popup por use-ajax modal (visitante anônimo, em qualquer host).
+    // O "Entrar" da barra abre o popup use-ajax para visitantes anônimos.
     if (!$this->currentUser->isAuthenticated()) {
       $attachments['#attached']['library'][] = 'core/drupal.dialog.ajax';
     }
@@ -458,17 +476,20 @@ final class PortalHooks {
   }
 
   /**
-   * Keep the two Profile subsections focused while using the Profile entity form.
+   * Adapts login and Profile forms to the Portal's focused workflows.
    */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
     if ($form_id === 'user_login_form') {
-      $form['name']['#title'] = $this->translation->translate('Nome de usuário ou e-mail');
-      $form['name']['#description'] = $this->translation->translate('Informe seu e-mail ou nome de usuário.');
-      $form['password_reset_link'] = [
-        ...PortalLinkElement::build($this->translation->translate('Esqueci minha senha'), Url::fromRoute('user.pass'), ['data-portal-ui' => 'login-reset-link']),
-        '#weight' => 10,
-      ];
+      $form['name']['#title'] = $this->translation->translate('Nome de usuário, e-mail ou CPF');
+      $form['name']['#description'] = $this->translation->translate('Informe seu e-mail, nome de usuário ou CPF.');
+      $password_reset_link = PortalLinkElement::build(
+        $this->translation->translate('Esqueci minha senha'),
+        Url::fromRoute('user.pass'),
+        ['data-portal-ui' => 'login-reset-link'],
+      );
+      $password_reset_link['#weight'] = 10;
+      $form['password_reset_link'] = $password_reset_link;
       $form['registration_notice'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'login-registration'],
@@ -490,9 +511,17 @@ final class PortalHooks {
       $form['social_auth_divider'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'login-divider'],
-        'line_before' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['aria-hidden' => 'true'])],
+        'line_before' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'span',
+          '#element_attributes' => new Attribute(['aria-hidden' => 'true']),
+        ],
         'label' => ['#plain_text' => $this->translation->translate('ou')],
-        'line_after' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['aria-hidden' => 'true'])],
+        'line_after' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'span',
+          '#element_attributes' => new Attribute(['aria-hidden' => 'true']),
+        ],
         '#weight' => 20,
       ];
       $form['social_auth'] = [
@@ -522,8 +551,9 @@ final class PortalHooks {
       'aculta_portal.my_data_address',
       'aculta_studio.account_address',
     ], TRUE);
-    // /dados/endereco é tratado pelo bloco de endereço logo abaixo (país padrão, número e S/N). Este bloco de papel
-    // retorna antes e não pode engolir essa página: o tipo authenticated também é tipo de papel.
+    // /dados/endereco é tratado pelo bloco logo abaixo (país padrão, número e
+    // S/N). Este bloco retorna antes e não pode engolir essa página: o tipo
+    // authenticated também é tipo de papel.
     if ($entity->getEntityTypeId() === 'profile' && PerfilDoPapel::ehTipoDePapel($entity) && !$isAddressRoute) {
       if ($path === '/dados' || $isStudioDataRoute) {
         // Keep this tab limited to personal basics, even if older active
@@ -561,7 +591,8 @@ final class PortalHooks {
       return;
     }
 
-    // Portal (/dados/endereco) e Studio (/studio/conta/endereco) usam o mesmo editor de endereço.
+    // Portal (/dados/endereco) e Studio (/studio/conta/endereco) usam o mesmo
+    // editor de endereço.
     if ($entity->getEntityTypeId() === 'profile' && $entity->bundle() === 'authenticated'
       && $isAddressRoute
       && (int) $entity->getOwnerId() === (int) $this->currentUser->id()) {
@@ -586,19 +617,20 @@ final class PortalHooks {
         }
         unset($address_element);
       }
-      // Número e S/N: subcampos do endereço, logo depois da rua (StreetNumberField). Valores do perfil salvo.
+      // Número e S/N são subcampos logo depois da rua. Os valores vêm do
+      // perfil salvo.
       $parts = ['street' => '', 'number' => '', 'sn' => FALSE];
       if ($entity->id()) {
         $saved = $this->entityTypeManager->getStorage('profile')->load($entity->id());
         if ($saved && $saved->hasField('field_address') && !$saved->get('field_address')->isEmpty()) {
-          $parts = \Drupal\aculta_portal\Account\StreetNumberField::split((string) $saved->get('field_address')->first()->getAddressLine1());
+          $parts = StreetNumberField::split((string) $saved->get('field_address')->first()->getAddressLine1());
         }
       }
       if (isset($form['field_address']['widget'][0]['address'])) {
         AccountAddressForm::apply($form['field_address']['widget'][0]['address'], $parts['number'], $parts['sn']);
         $form['#attached']['library'][] = AccountAddressForm::LIBRARY;
       }
-      // Junta rua e número antes do save (PortalFormCallbacks::buildStreetNumber).
+      // Junta rua e número antes do save em buildStreetNumber().
       $form['#entity_builders'][] = 'aculta_portal.form_callbacks:buildStreetNumber';
       if (isset($form['actions']['submit'])) {
         $form['actions']['submit']['#value'] = $this->translation->translate('Salvar endereço');
@@ -668,7 +700,7 @@ final class PortalHooks {
         'template' => 'portal-element',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
-      // Componente neutro: o módulo pede pelo nome; o tema monta o componente SDC.
+      // O módulo pede pelo nome; o tema monta o componente SDC.
       'aculta_portal_component' => [
         'variables' => [
           'name' => NULL,

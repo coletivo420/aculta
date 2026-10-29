@@ -12,7 +12,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Url;
 use Drupal\Core\Render\BareHtmlPageRendererInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\user\Form\UserLoginForm;
@@ -25,11 +24,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Login do popup "Entrar" da barra multidomínio.
  *
- * Herda do Core a validação (user.auth, flood control e bloqueio de conta). Troca só o ID do formulário, então o
- * desafio Turnstile de user_login_form não se aplica. Exceção registrada em Captcha\TurnstileToggle e no gate
- * validate-turnstile-exceptions.php. O envio é AJAX no mesmo host do link; sucesso redireciona para o destino
- * (mesmo host) e erro recoloca o formulário. O flood do Core responde com página HTML, que o AJAX não aceita; aqui
- * ele vira mensagem de erro no formulário.
+ * Herda do Core a validação (user.auth, flood control e bloqueio de conta).
+ * Troca só o ID do formulário, então o desafio Turnstile de user_login_form
+ * não se aplica. Exceção registrada em Captcha\TurnstileToggle e no gate
+ * validate-turnstile-exceptions.php. O envio é AJAX no mesmo host do link;
+ * sucesso redireciona para o destino (mesmo host) e erro recoloca o formulário.
+ * O flood do Core responde com página HTML, que o AJAX não aceita; aqui ele
+ * vira mensagem de erro no formulário.
  */
 final class LoginPopupForm extends UserLoginForm {
 
@@ -74,7 +75,7 @@ final class LoginPopupForm extends UserLoginForm {
   }
 
   /**
-   * Destino seguro após o login: caminho local do mesmo host, fora das rotas de autenticação.
+   * Returns a local same-host destination outside authentication routes.
    */
   public static function safeDestination(mixed $value): string {
     $path = is_string($value) ? $value : '';
@@ -88,10 +89,24 @@ final class LoginPopupForm extends UserLoginForm {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
-    $form['name']['#title'] = $this->t('Nome de usuário ou endereço de e-mail');
+    $validators = $form['#validate'] ?? [];
+    $authentication_wrapper = 'aculta_portal.form_callbacks:validateLoginAuthentication';
+    $authentication_validators = array_values(array_filter(
+      $validators,
+      static fn($validator) => $validator !== $authentication_wrapper,
+    ));
+    $authentication_index = array_search('::validateAuthentication', $authentication_validators, TRUE);
+    if ($authentication_index === FALSE) {
+      array_unshift($authentication_validators, $authentication_wrapper);
+    }
+    else {
+      $authentication_validators[$authentication_index] = $authentication_wrapper;
+    }
+    $form['#validate'] = $authentication_validators;
+    $form['name']['#title'] = $this->t('Nome de usuário, e-mail ou CPF');
     $form['pass']['#title'] = $this->t('Senha');
     $form['actions']['submit']['#value'] = $this->t('Entrar');
-    // Wrapper de substituição do AJAX (o formulário inteiro é trocado em caso de erro).
+    // O wrapper AJAX troca o formulário inteiro em caso de erro.
     $form['#prefix'] = '<div id="' . self::WRAPPER_ID . '">';
     $form['#suffix'] = '</div>';
     $form['#attributes']['data-portal-ui'] = 'login-popup';
@@ -109,7 +124,11 @@ final class LoginPopupForm extends UserLoginForm {
     $registerUrl = $this->domainPurpose->routeUrl('account', 'user.register');
     if ($registerUrl !== NULL) {
       // Divisor entre "Esqueceu sua senha?" e "Cadastre-se", como no anexo.
-      $links['divider'] = ['#type' => 'html_tag', '#tag' => 'hr', '#attributes' => ['data-portal-ui' => 'login-popup-divider']];
+      $links['divider'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'hr',
+        '#attributes' => ['data-portal-ui' => 'login-popup-divider'],
+      ];
       $links['register'] = ['#type' => 'link', '#title' => $this->t('Cadastre-se'), '#url' => $registerUrl];
     }
     $form['links'] = [
@@ -117,8 +136,9 @@ final class LoginPopupForm extends UserLoginForm {
       '#attributes' => ['data-portal-ui' => 'login-popup-links'],
     ] + $links;
 
-    // Google (Social Auth, mesmo fluxo do /entrar). A rota OAuth é a do host da conta, onde as URIs de retorno estão
-    // cadastradas; o retorno volta ao host de origem pelo destino (aculta_destination_purpose, como em /entrar).
+    // Google (Social Auth, mesmo fluxo do /entrar). A rota OAuth é a do host
+    // da conta, onde as URIs de retorno estão cadastradas; o retorno volta ao
+    // host de origem pelo destino (aculta_destination_purpose).
     if ($this->moduleHandler->moduleExists('social_auth') && $this->authIntegration->isGoogleConfigured()) {
       $google = $this->googleButton($form['destination']['#value']);
       if ($google !== NULL) {
@@ -132,8 +152,9 @@ final class LoginPopupForm extends UserLoginForm {
       }
     }
 
-    // Entrar logo após a senha e os links depois dele. O contêiner não é "form-actions": assim o Core não copia o
-    // botão para o rodapé do diálogo (dialog.jquery-ui.js, prepareDialogButtons).
+    // Entrar logo após a senha e os links depois dele. O contêiner não é
+    // "form-actions": assim o Core não copia o botão para o rodapé do diálogo
+    // (dialog.jquery-ui.js, prepareDialogButtons).
     $form['actions']['#type'] = 'container';
     $form['actions']['#weight'] = 5;
     $form['links']['#weight'] = 10;
@@ -146,7 +167,7 @@ final class LoginPopupForm extends UserLoginForm {
   }
 
   /**
-   * Botão "Continuar com Google" do popup. Retorna NULL se a rota OAuth do host da conta não existir.
+   * Returns the popup's Google sign-in link when its route exists.
    */
   private function googleButton(string $destination): ?array {
     $url = $this->domainPurpose->routeUrl('account', 'social_auth.network.redirect', ['network' => 'google']);
@@ -196,7 +217,10 @@ final class LoginPopupForm extends UserLoginForm {
       ));
     }
     elseif ($triggered) {
-      $form_state->setErrorByName('name', $this->t('Too many failed login attempts from your IP address. This IP address is temporarily blocked. Try again later or <a href=":url">request a new password</a>.', [':url' => $passwordUrl]));
+      $form_state->setErrorByName('name', $this->t(
+        'Too many failed login attempts from your IP address. This IP address is temporarily blocked. Try again later or <a href=":url">request a new password</a>.',
+        [':url' => $passwordUrl],
+      ));
     }
     else {
       $form_state->setErrorByName('name', $this->t('Unrecognized username or password. <a href=":password">Forgot your password?</a>', [':password' => $passwordUrl]));
@@ -207,7 +231,8 @@ final class LoginPopupForm extends UserLoginForm {
   /**
    * {@inheritdoc}
    *
-   * Não chama o submitForm do Core: ele define um redirect que o AJAX ignora. O destino fica no ajaxSubmit.
+   * Não chama o submitForm do Core: ele define um redirect que o AJAX ignora.
+   * O destino fica no ajaxSubmit.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $uid = $form_state->get('uid');
@@ -218,7 +243,9 @@ final class LoginPopupForm extends UserLoginForm {
   }
 
   /**
-   * Callback AJAX do botão Entrar: erro recoloca o formulário; sucesso redireciona para o destino.
+   * Processes the popup's AJAX login response.
+   *
+   * Errors replace the form; success redirects to the safe destination.
    */
   public function ajaxSubmit(array &$form, FormStateInterface $form_state): array|AjaxResponse {
     if ($form_state->hasAnyErrors()) {

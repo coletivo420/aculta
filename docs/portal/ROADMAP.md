@@ -325,6 +325,7 @@ Plano completo, inventário e gates: [CPF-CONSOLIDACAO-E-CHECKOUT.md](CPF-CONSOL
 - **CPF-R0 a R2 (consolidação):** concluídas. `aculta_portal` usa só `aculta_id_cpf.account_document`.
 - **CPF-R3 (remoção do associado):** BLOQUEADA até verificar Runtime de teste e produção. Local: não habilitado, não instalado.
 - **CPF-CHECKOUT-0.2-I (identidade fiscal compartilhada Loja e LMS):** política implementada no Portal; Loja e cursos pagos exigem CPF/CNPJ, cursos gratuitos e Doações permanecem dispensados. Unit 13/30 e Kernel do pane 12/343 PASS; regressão Functional/Browser e homologação por propósito pendentes.
+- **D-51 (login por CPF):** implementação em 0.3.0-dev.8/0.4.1-dev.46 para `/entrar` e popup; integra o CPF salvo ao login nativo e preserva os controles existentes. Runner, Unit/Kernel do CPF e Unit/Kernel do Portal, gate Drupal 11+ e PHPCS passaram. Revisão visual Firefox aguarda o candidato servido.
 - **Pendências transversais:** gate de status do índice (falta `aculta_commerce`) e gate Drupal 11 (falta `WikiController.php`), ambos anteriores a esta frente.
 
 ## Programa OC315 aprovado - auditoria 3.1.5 (2026-10-29)
