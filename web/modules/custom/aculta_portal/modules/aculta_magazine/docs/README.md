@@ -1,3 +1,9 @@
+## ARQ-08 - Encerramento do editorial existente (2026-10-29)
+
+O único bundle de publicação editorial permanece `revista`. Não criar `article`, `blog`, press mention, entidades de apoiadores, campos de chamada/resumo nem editor paralelo. [Plano atualizado](../../../../../../../docs/architecture/PLANO-ARQUITETURAL-OPENCULTURAS-ACULTA-ARQ-01-09.md), microfases ARQ-08A-D: fluxo Studio/Core, exibição dos campos e mídia existentes, descoberta via Views/Index, autoria/coautoria/comentários/SEO/anexos.
+
+**Incremento 08A, em progresso:** `RevistaFormHooks` reconhece erros do Form API reportados no caminho original de campos secundários ou no caminho agrupado e abre o `details` para exibir o campo inválido, sem regravar erros do Core. Testes Unit adicionados para caminho original e precedência do primeiro erro. **PHPUnit, Kernel, HTTP e navegador ainda não executados nesta rodada; não homologar.** Permanecem pendentes confirmação das operações de criação/edição/revisão, discussões e integração Studio em Runtime.
+
 # aculta_magazine (Revista)
 
 **Roadmap vigente de realinhamento MAG 0.5:** [ACULTA Magazine — Roadmap](../../../../../../../docs/portal/STUDIO-MAGAZINE-ROADMAP.md). A sequência antiga que condicionava o Studio à conclusão do Magazine foi superada: Magazine fornece capacidades editoriais, GanjaLab/Studio orquestra a experiência e ACULTA420 apresenta por SDC/UI Suite. Implementação futura não é validação Runtime.
