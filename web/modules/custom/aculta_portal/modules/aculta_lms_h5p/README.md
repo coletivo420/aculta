@@ -7,15 +7,15 @@ Composer independentes, sob GPL-3.0-only.
 
 ## Estado
 
-**Revalidação 2026-10-29 (0.4.0-dev.171):** Unit + Kernel 43/481 passaram
+**Revalidação 2026-10-29 (0.4.0-dev.172):** Unit + Kernel 43/481 passaram
 no MariaDB `aculta_simpletest`; o Kernel reportou 41 depreciações Core/contrib,
-Unit não teve depreciações. PHPCS integral registra 39 erros e 2 avisos em 3
-arquivos, abaixo de 174/20 em 19 arquivos na rodada anterior. Sete arquivos de
-teste, quatro formulários administrativos, entidade, sete classes auxiliares e
-o adaptador central têm PHPCS limpo; nomes de discovery/protocolo permanecem
-estáveis com exceções locais justificadas. O módulo permanece em Dev enquanto o
-gate integral continuar vermelho. PHP lint passou nos 20 arquivos tocados
-acumulados nesta série. Nenhum Runtime foi alterado.
+Unit não teve depreciações. PHPCS Drupal/DrupalPractice aplicado somente a PHP
+passa sem erros ou avisos; `node --check` passou em todos os JavaScript do
+módulo. A invocação bruta de PHPCS no diretório também analisa JS com sniffs de
+PHP e marca os literais válidos `true`, `false` e `null`, por isso não é usada
+como gate para JS. Vinte arquivos PHP tocados nesta série passaram PHP lint.
+F15 está tecnicamente completa; o estado continua Dev enquanto o gate global
+módulo–tema reprovar em módulos fora deste escopo. Nenhum Runtime foi alterado.
 
 F10 foi homologada no Runtime de teste `cursos`: o pacote de biblioteca foi
 instalado pela tela administrativa, uma atividade foi salva pelo editor e

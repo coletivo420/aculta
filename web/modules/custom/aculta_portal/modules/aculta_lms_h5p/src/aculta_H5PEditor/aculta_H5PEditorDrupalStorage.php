@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\aculta_H5PEditor;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -21,19 +21,21 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
   ) {}
 
   /**
-   * Load language file(JSON) from database.
-   * This is used to translate the editor fields(title, description etc.)
+   * Loads a language file from the database.
    *
-   * @param string $machineName
-   *   The machine readable name of the library(content type)
-   * @param int $majorVersion
-   *   Major part of version number.
+   * Used to translate editor fields such as title and description.
+   *
+   * @param string $name
+   *   Machine name of the H5P library.
+   * @param int $major
+   *   Major version number of the library.
    * @param int $minor
-   *   Minor part of version number.
+   *   Minor version number of the library.
    * @param string $lang
-   *   Language code.
+   *   Language code requested by the editor.
    *
-   * @return string Translation in JSON format
+   * @return string|null
+   *   Translation JSON, or NULL when the language is not installed.
    */
   public function getLanguage($name, $major, $minor, $lang) {
     $lang = $this->database->query(
@@ -56,16 +58,17 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
   }
 
   /**
-   * Load a list of available language codes from the database.
+   * Loads available language codes from the database.
    *
    * @param string $machineName
-   *   The machine readable name of the library(content type)
+   *   Machine name of the H5P library.
    * @param int $majorVersion
    *   Major part of version number.
    * @param int $minor
    *   Minor part of version number.
    *
-   * @return array List of possible language codes
+   * @return array<int, string>
+   *   Available language codes, including English as the default.
    */
   public function getAvailableLanguages($machineName, $majorVersion, $minor) {
     $results = $this->database->query(
@@ -92,30 +95,26 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
   }
 
   /**
-   * "Callback" for mark the given file as a permanent file.
-   * Used when saving content that has new uploaded files.
+   * Marks an uploaded file as permanent when saving H5P content.
    *
    * @param string $path
-   *   To new file.
+   *   URI of the uploaded file.
    */
   public function keepFile($path) {
     $this->fileUsageManager->keep((string) $path);
   }
 
   /**
-   * Decides which content types the editor should have.
+   * Determines which content types are available to the editor.
    *
-   * Two usecases:
-   * 1. No input, will list all the available content types.
-   * 2. Libraries supported are specified, load additional data and verify
-   * that the content types are available. Used by e.g. the Presentation Tool
-   * Editor that already knows which content types are supported in its
-   * slides.
+   * Without a list, returns every available type. With a list, loads details
+   * for those types, as used by editors that already know supported libraries.
    *
-   * @param array $libraries
-   *   List of library names + version to load info for.
+   * @param array<int, object>|null $libraries
+   *   Optional library names and versions for which to load details.
    *
-   * @return array List of all libraries loaded
+   * @return array<int, object>
+   *   Available libraries with details needed by the H5P editor.
    */
   public function getLibraries($libraries = NULL) {
     $database = $this->database;
@@ -200,15 +199,12 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
   }
 
   /**
-   * Allow for other plugins to decide which styles and scripts are attached.
-   * This is useful for adding and/or modifing the functionality and look of
-   * the content types.
+   * Allows modules to alter the scripts and styles attached by H5P.
    *
    * @param array $files
-   *   List of files as objects with path and version as properties.
+   *   File assets with path and version properties, passed by reference.
    * @param array $libraries
-   *   List of libraries indexed by machineName with objects as values. The objects
-   *   have majorVersion and minorVersion as properties.
+   *   Libraries keyed by machine name, with major and minor version values.
    */
   public function alterLibraryFiles(&$files, $libraries) {
     $mode = 'editor';
@@ -228,23 +224,28 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
    * Saves a file temporarily with a given name.
    *
    * @param string $data
+   *   File data provided by the legacy editor callback.
    * @param bool $move_file
    *   Only move the uploaded file.
    *
-   * @return bool|false|string Real absolute path of the temporary folder
+   * @return false
+   *   Always FALSE because temporary package writes are disabled.
    */
   public static function saveFileTemporarily($data, $move_file = FALSE) {
-    // Package import must go through aculta_H5PLibraryPackageInstaller; this legacy
-    // editor callback cannot provide the required managed-file lifecycle.
+    // Package import uses the installer; this legacy callback cannot provide
+    // the required managed-file lifecycle.
     return FALSE;
   }
 
   /**
-   * Marks a file for later cleanup, useful when files are not instantly cleaned
-   * up. E.g. for files that are uploaded through the editor.
+   * Rejects legacy temporary-file cleanup requests.
+   *
+   * Editor uploads now use Drupal's managed-file lifecycle.
    *
    * @param \H5peditorFile $file
-   * @param int $content_id
+   *   Legacy editor file object scheduled for cleanup.
+   * @param int|null $content_id
+   *   Content ID associated with the temporary file.
    */
   public static function markFileForCleanup($file, $content_id = NULL) {
     throw new \LogicException('Legacy H5P editor file cleanup is disabled; use managed H5P uploads.');

@@ -475,3 +475,14 @@
 - Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
   depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
 
+## 0.4.0-dev.172 — concluir gate PHP e JavaScript de F15 (2026-10-29)
+
+- Completa PHPDoc do adapter de armazenamento do editor H5P; o cabeçalho de
+  atribuição GPL continua presente após o namespace.
+- PHPCS Drupal/DrupalPractice com `--extensions=php` passa; todos os JS do
+  módulo passam `node --check`. A checagem bruta PHPCS no diretório aplica
+  sniff de constantes PHP a literais JavaScript e não é apropriada como gate JS.
+- Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
+  depreciações Core/contrib no Kernel e 0 no Unit. F15 está tecnicamente
+  completa; RC aguarda somente o gate global módulo–tema externo a H5P.
+
