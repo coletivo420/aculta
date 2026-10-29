@@ -181,3 +181,9 @@ Revisão estática, **nenhuma portabilidade executada**; referência verificáve
 | `openculturas_custom/src/TermPathBasedBreadcrumbBuilder.php` | Portal | teste de equivalência com `AcultaBreadcrumbBuilder`, sem duplicação |
 
 Todo código derivado exige atribuição por arquivo e entrada em `ORIGEM-OPENCULTURAS.md`, análise de dependência/segurança, DI, controle de acesso, cache, e testes. **Não portar nesta PR documental**. Geometrias editáveis e metadados de IA não foram validados como funcionalidades do pacote 3.1.5 nesta auditoria.
+
+## Candidatos revisados para OpenCulturas 3.1.5 - 2026-10-29
+
+Confrontar com a [auditoria 3.1.5](AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md) antes de portar: `ReadableMime`, `DownloadWithMetaFormatter` (metadados seguros de downloads), `EcaNotificationRecipient` (somente modelo de configuração, sem ECA), `EventSupporters`, `EventPressQuotes`, `TeaserBehaviorBase` (conceito, sem instalar Paragraphs), `OfficeHoursToOsmFormatter` (após horário estruturado), `OpenCulturasMapFilterForm` (UX) e `TermPathBasedBreadcrumbBuilder` (comparar com `AcultaBreadcrumbBuilder`, sem duplicar).
+
+Não copiar módulos/Views/UUIDs diretamente. Código derivado exige GPL/proveniência, DI, access/cache, Drupal 11+/PHP 8.4, Unit/Kernel e consumidores reais. Recursos de IA/polígonos não são paridade comprovada. Plano aprovado **somente como backlog**, sem install/update/deploy automático.
