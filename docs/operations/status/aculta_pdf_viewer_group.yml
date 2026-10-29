@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.6
+version: 0.1.0-dev.7
 state: Dev
-next_phase: 'Preparar harness Kernel com a closure real do Portal, incluindo `aculta_user.aculta_user_agreement_ledger`; então repetir teste de acesso Group sob purpose `courses` ([README](web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/README.md))'
-progress_note: "2026-10-29: CourseDocumentAccessTest parou antes das assertions; o container real exige `aculta_user.aculta_user_agreement_ledger`, ausente na fixture reduzida. Sem alteração de regras de acesso. Provider e relação Group persistidos já foram exercitados no teste transversal do aculta_index; acesso sob purpose courses permanece bloqueado pelo harness."
+next_phase: 'Validar instalação e Config Sync por purpose em ambiente isolado; confirmar a ativação por ambiente e planejar migração de ownership do bundle Media legado ([README](web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/README.md))'
+progress_note: '2026-10-29: closure real do Portal passou em CourseDocumentAccessTest, 1 teste, 52 assertions, 145 deprecações; membro acessa e não membro, relação removida e membership revogada recebem negação. PHP lint, PHPCS e diff-check focais passaram. Runtime/Config Sync não alterados. Ativação por ambiente e ownership legado seguem como bloqueios da próxima etapa.'

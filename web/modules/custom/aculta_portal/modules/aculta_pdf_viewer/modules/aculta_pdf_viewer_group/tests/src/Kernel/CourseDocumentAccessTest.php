@@ -6,13 +6,15 @@ namespace Drupal\Tests\aculta_pdf_viewer_group\Kernel;
 
 use Drupal\Core\DrupalKernel;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\media\Entity\Media;
-use Drupal\media\Entity\MediaType;
+use Drupal\profile\Entity\ProfileType;
 use Drupal\file\Entity\File;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
@@ -41,18 +43,76 @@ final class CourseDocumentAccessTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system',
-    'user',
+    'address',
+    'block',
+    'comment',
+    'commerce',
+    'commerce_cart',
+    'commerce_checkout',
+    'commerce_number_pattern',
+    'commerce_order',
+    'commerce_payment',
+    'commerce_price',
+    'commerce_store',
+    'ctools',
+    'ctools_views',
+    'datetime',
+    'domain',
+    'domain_alias',
+    'domain_config',
+    'domain_source',
+    'entity',
+    'entity_reference_revisions',
+    'entity_usage',
     'field',
     'file',
-    'image',
-    'media',
-    'path_alias',
-    'path',
-    'options',
-    'entity',
+    'filter',
     'flexible_permissions',
     'group',
+    'image',
+    'inline_entity_form',
+    'key',
+    'language',
+    'link',
+    'lms',
+    'login_emailusername',
+    'media',
+    'media_duplicates',
+    'metatag',
+    'text',
+    'node',
+    'options',
+    'path',
+    'path_alias',
+    'physical',
+    'profile',
+    'schema_article',
+    'schema_event',
+    'schema_image_object',
+    'schema_metatag',
+    'schema_organization',
+    'schema_product',
+    'schema_web_page',
+    'schema_web_site',
+    'search_api',
+    'search_api_db',
+    'social_api',
+    'social_auth',
+    'state_machine',
+    'system',
+    'taxonomy',
+    'token',
+    'user',
+    'views',
+    'vvj_core',
+    'vvjs',
+    'aculta_image',
+    'aculta_mail_confirmer',
+    'aculta_mail_confirmer_user',
+    'aculta_mailer',
+    'aculta_portal',
+    'aculta_portal_cep',
+    'aculta_user',
   ];
 
   /**
@@ -62,13 +122,49 @@ final class CourseDocumentAccessTest extends KernelTestBase {
     parent::setUp();
     $this->installSchema('file', ['file_usage']);
     $this->installEntitySchema('user');
+    $this->installEntitySchema('profile');
+    $this->installEntitySchema('path_alias');
+    $this->installEntitySchema('comment');
+    $this->installEntitySchema('domain');
+    $this->installEntitySchema('commerce_order');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
+    $this->installEntitySchema('node');
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
-    $this->installEntitySchema('path_alias');
-    $this->installConfig(['system', 'user', 'media', 'path_alias', 'path', 'group']);
+    $this->installSchema('user', ['users_data']);
+    $this->installSchema('aculta_user', ['aculta_user_agreement', 'aculta_user_nickname']);
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installSchema('entity_usage', ['entity_usage']);
+    $this->installSchema('node', ['node_access']);
+    $this->installConfig([
+      'system',
+      'user',
+      'language',
+      'media',
+      'filter',
+      'image',
+      'node',
+      'domain',
+      'domain_source',
+      'aculta_user',
+      'group',
+    ]);
+
+    foreach (PerfilDoPapel::TIPOS as $bundle) {
+      if (ProfileType::load($bundle) === NULL) {
+        continue;
+      }
+      foreach (['field_nickname' => 'Nickname', 'field_perfil_publico' => 'Public profile'] as $field_name => $label) {
+        FieldConfig::create([
+          'entity_type' => 'profile',
+          'bundle' => $bundle,
+          'field_name' => $field_name,
+          'label' => $label,
+        ])->save();
+      }
+    }
 
     $this->assertTrue($this->container->get('module_installer')->install([
       'aculta_pdf_viewer',

@@ -18,13 +18,19 @@ tagged não torna `aculta_index` uma dependência obrigatória do módulo.
 
 ### Validação de acesso no Kernel — 2026-10-29
 
-O teste local `CourseDocumentAccessTest` foi executado no banco dedicado e
-parou antes das assertions porque a compilação da closure real do Portal
-requer `aculta_user.aculta_user_agreement_ledger`, ausente na fixture Kernel
-reduzida (1 erro / 0 assertions). Nenhuma regra de acesso foi alterada. O teste
-transversal do `aculta_index` cobre descoberta do provider e persistência da
-relação; a matriz de download atualizada sob purpose `courses` segue pendente
-até preparar a closure real completa, sem mocks.
+`CourseDocumentAccessTest` agora carrega a closure real do Portal e prepara os
+schemas de User, Profile, Path Alias, Domain, Commerce Order e Entity Usage,
+sem substituir serviços. A matriz de acesso privado sob purpose `courses`
+passou no banco `aculta_simpletest`: 1 teste, 52 assertions e 145 deprecações.
+O teste verifica acesso de membro, negação a não membro, revogação ao remover
+a relação e revogação após remover a membership. O harness anterior falhava
+antes das assertions por ausência de serviços/schemas; essa falha está
+resolvida, sem alteração da regra de acesso.
+
+Próxima etapa: validar instalação e Config Sync por purpose em ambiente
+isolado e planejar a migração de ownership do bundle Media legado. A ativação
+do submódulo por ambiente requer confirmação explícita; nenhuma configuração
+do Runtime foi alterada nesta microfase.
 
 O boot/DI desse provider foi validado pelo teste transversal
 `ContentIndexOwnerIntegrationKernelTest` do Index (dev.161, 1 teste / 8
