@@ -60,7 +60,7 @@ final class AcultaPdfFileFormatterTest extends UnitTestCase {
       ->willReturn($viewer);
 
     $formatter = new AcultaPdfFileFormatter(
-      'aculta_document_pdf_file',
+      'aculta_document_viewer_pdf_file',
       [],
       $this->createMock(FieldDefinitionInterface::class),
       [],
@@ -192,7 +192,7 @@ final class AcultaPdfFileFormatterTest extends UnitTestCase {
    */
   private function createFormatter(PdfViewerBuilderInterface $builder): AcultaPdfFileFormatter {
     return new AcultaPdfFileFormatter(
-      'aculta_document_pdf_file',
+      'aculta_document_viewer_pdf_file',
       [],
       $this->createMock(FieldDefinitionInterface::class),
       [],

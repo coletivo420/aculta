@@ -27,7 +27,7 @@ final class DocxViewerBuilder implements DocxViewerBuilderInterface {
   /**
    * Biblioteca do leitor DOCX (behavior e estilos).
    */
-  public const LIBRARY = 'aculta_document_viewer/docx';
+  public const LIBRARY = 'aculta_document_viewer/aculta_document_viewer_doc';
 
   /**
    * MIME type of WordprocessingML documents.

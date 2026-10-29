@@ -96,7 +96,7 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     self::assertArrayNotHasKey('#access', $build);
     self::assertSame('true', $build['#attributes']['data-aculta-pdf-viewer']);
     self::assertSame('/sites/default/files/documento.pdf', $build['#attributes']['data-aculta-pdf-url']);
-    self::assertSame(['aculta_pdf_viewer/viewer'], $build['#attached']['library']);
+    self::assertSame(['aculta_document_viewer/aculta_document_viewer_pdf'], $build['#attached']['library']);
     self::assertContains('user.permissions', $build['#cache']['contexts']);
     self::assertContains('media:7', $build['#cache']['tags']);
     self::assertContains('file:11', $build['#cache']['tags']);

@@ -90,7 +90,6 @@ trait DocumentViewerKernelClosureTrait {
     'schema_web_page',
     'search_api_db',
     'search_api',
-    'aculta_pdf_viewer',
     'csp',
     'reporting',
     'aculta_user',

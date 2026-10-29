@@ -112,7 +112,7 @@ final class AcultaDocumentMediaFormatterTest extends UnitTestCase {
     SpreadsheetViewerBuilderInterface $spreadsheet,
   ): AcultaDocumentMediaFormatter {
     return new AcultaDocumentMediaFormatter(
-      'aculta_document_media',
+      'aculta_document_viewer_media',
       [],
       $this->createMock(FieldDefinitionInterface::class),
       [],

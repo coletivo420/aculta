@@ -21,13 +21,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Displays authorized Media documents with the shared PDF.js viewer.
  */
 #[FieldFormatter(
-  id: 'aculta_document_pdf_media',
+  id: 'aculta_document_viewer_pdf',
   label: new TranslatableMarkup('Visualizador PDF ACULTA e link de documento'),
   field_types: ['file'],
 )]
 final class AcultaPdfMediaFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
-  use PdfViewerFormatterSettingsTrait;
+  use DocumentViewerFormatterSettingsTrait;
 
   public function __construct(
     $plugin_id,
@@ -54,7 +54,7 @@ final class AcultaPdfMediaFormatter extends FormatterBase implements ContainerFa
       $configuration['label'],
       $configuration['view_mode'],
       $configuration['third_party_settings'],
-      $container->get('aculta_document_viewer.builder'),
+      $container->get('aculta_document_viewer.pdf_builder'),
     );
   }
 

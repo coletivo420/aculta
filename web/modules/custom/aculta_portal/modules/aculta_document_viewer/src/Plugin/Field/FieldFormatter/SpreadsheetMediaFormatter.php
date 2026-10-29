@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Sem leitor, o link do Core permanece.
  */
 #[FieldFormatter(
-  id: 'aculta_document_spreadsheet_media',
+  id: 'aculta_document_viewer_sheet',
   label: new TranslatableMarkup('Leitor de planilhas ACULTA e link de documento'),
   field_types: ['file'],
 )]
@@ -57,7 +57,7 @@ final class SpreadsheetMediaFormatter extends FormatterBase implements Container
       $configuration['label'],
       $configuration['view_mode'],
       $configuration['third_party_settings'],
-      $container->get('aculta_document_viewer.spreadsheet_builder'),
+      $container->get('aculta_document_viewer.sheet_builder'),
     );
   }
 

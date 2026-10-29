@@ -1,8 +1,31 @@
 aculta_document_viewer.settings:
   path: '/painel-administrativo/aculta/leitor-documentos'
   defaults:
-    _form: '\Drupal\aculta_document_viewer\Form\PdfViewerSettingsForm'
+    _form: '\Drupal\aculta_document_viewer\Form\DocumentViewerSettingsForm'
     _title: 'Leitor de documentos'
+    section: 'aculta_document_viewer_pdf'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: true
+
+aculta_document_viewer.settings_doc:
+  path: '/painel-administrativo/aculta/leitor-documentos/documentos'
+  defaults:
+    _form: '\Drupal\aculta_document_viewer\Form\DocumentViewerSettingsForm'
+    _title: 'Leitor de documentos — Documentos'
+    section: 'aculta_document_viewer_doc'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: true
+
+aculta_document_viewer.settings_sheet:
+  path: '/painel-administrativo/aculta/leitor-documentos/planilhas'
+  defaults:
+    _form: '\Drupal\aculta_document_viewer\Form\DocumentViewerSettingsForm'
+    _title: 'Leitor de documentos — Planilhas'
+    section: 'aculta_document_viewer_sheet'
   requirements:
     _permission: 'administer site configuration'
   options:

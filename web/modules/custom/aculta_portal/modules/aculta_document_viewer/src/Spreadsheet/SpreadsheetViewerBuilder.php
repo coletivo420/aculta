@@ -27,7 +27,7 @@ final class SpreadsheetViewerBuilder implements SpreadsheetViewerBuilderInterfac
   /**
    * Biblioteca do leitor de planilhas (SheetJS, Tabulator e behavior).
    */
-  public const LIBRARY = 'aculta_document_viewer/spreadsheet';
+  public const LIBRARY = 'aculta_document_viewer/aculta_document_viewer_sheet';
 
   /**
    * MIME type de planilhas XLSX (SpreadsheetML).

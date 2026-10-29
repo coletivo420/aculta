@@ -196,9 +196,16 @@ def build_test_page(theme: str) -> str:
 <body class="{body_class}">
   <main>
     <h1>Leitor de documentos — opções administrativas D-48 ({theme})</h1>
+    <nav aria-label="Subabas horizontais do Leitor de documentos">
+      <ul class="tabs tabs--secondary" style="display:flex; gap:8px; list-style:none; padding:0; margin:0 0 12px 0;">
+        <li><a href="/painel-administrativo/aculta/leitor-documentos" data-subtab="aculta_document_viewer_pdf">PDF</a></li>
+        <li><a href="/painel-administrativo/aculta/leitor-documentos/documentos" data-subtab="aculta_document_viewer_doc" aria-current="page">Documentos</a></li>
+        <li><a href="/painel-administrativo/aculta/leitor-documentos/planilhas" data-subtab="aculta_document_viewer_sheet">Planilhas</a></li>
+      </ul>
+    </nav>
     <form id="aculta-document-viewer-settings" aria-label="Configurações globais do leitor de documentos">
-      <p>Estes são os padrões globais de PDF, DOCX e planilhas. A autorização do arquivo no Drupal continua prevalecendo para leitura e download.</p>
-      <details open id="edit-docx">
+      <p>Estes são os padrões globais de PDF, documentos DOCX e planilhas. A autorização do arquivo no Drupal continua prevalecendo para leitura e download.</p>
+      <details open id="edit-docx" data-aculta-document-admin-section="aculta_document_viewer_doc">
         <summary>Apresentação de documentos DOCX</summary>
         <div class="description">As opções só afetam a prévia no navegador. O arquivo original e o link autorizado para download permanecem disponíveis.</div>
         <div class="form-item">
@@ -223,7 +230,7 @@ def build_test_page(theme: str) -> str:
         </div>
       </details>
 
-      <details open id="edit-spreadsheet">
+      <details open id="edit-spreadsheet" data-aculta-document-admin-section="aculta_document_viewer_sheet">
         <summary>Apresentação de planilhas</summary>
         <div class="description">As planilhas continuam somente para leitura. Os limites máximos de abas, linhas, colunas e texto de célula não podem ser aumentados pelo painel.</div>
         <div class="form-item">

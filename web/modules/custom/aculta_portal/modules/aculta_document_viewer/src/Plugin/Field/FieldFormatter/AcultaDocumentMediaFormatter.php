@@ -29,13 +29,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Host, field and download access are checked before any builder is called.
  */
 #[FieldFormatter(
-  id: 'aculta_document_media',
+  id: 'aculta_document_viewer_media',
   label: new TranslatableMarkup('Leitores de documentos ACULTA e link de arquivo'),
   field_types: ['file'],
 )]
 final class AcultaDocumentMediaFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
-  use PdfViewerFormatterSettingsTrait;
+  use DocumentViewerFormatterSettingsTrait;
 
   public function __construct(
     $plugin_id,
@@ -64,9 +64,9 @@ final class AcultaDocumentMediaFormatter extends FormatterBase implements Contai
       $configuration['label'],
       $configuration['view_mode'],
       $configuration['third_party_settings'],
-      $container->get('aculta_document_viewer.builder'),
-      $container->get('aculta_document_viewer.docx_builder'),
-      $container->get('aculta_document_viewer.spreadsheet_builder'),
+      $container->get('aculta_document_viewer.pdf_builder'),
+      $container->get('aculta_document_viewer.doc_builder'),
+      $container->get('aculta_document_viewer.sheet_builder'),
     );
   }
 

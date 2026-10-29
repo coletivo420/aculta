@@ -1,6 +1,6 @@
 aculta_document_viewer.settings:
   type: config_object
-  label: 'Configurações do leitor PDF ACULTA'
+  label: 'Configurações dos leitores de documentos ACULTA'
   mapping:
     show_download:
       type: boolean
@@ -126,14 +126,24 @@ aculta_document_viewer.formatter_settings:
     css_class:
       type: string
 
-field.formatter.settings.aculta_document_pdf_media:
+field.formatter.settings.aculta_document_viewer_pdf:
   type: aculta_document_viewer.formatter_settings
   label: 'Configurações do formatter de mídia PDF ACULTA'
 
-field.formatter.settings.aculta_document_media:
+field.formatter.settings.aculta_document_viewer_media:
   type: aculta_document_viewer.formatter_settings
   label: 'Configurações dos leitores de mídia documental ACULTA'
 
-field.formatter.settings.aculta_document_pdf_file:
+field.formatter.settings.aculta_document_viewer_pdf_file:
   type: aculta_document_viewer.formatter_settings
   label: 'Configurações do formatter de arquivo PDF ACULTA'
+
+field.formatter.settings.aculta_document_viewer_doc:
+  type: mapping
+  label: 'Configurações do formatter de documentos DOCX ACULTA'
+  mapping: {}
+
+field.formatter.settings.aculta_document_viewer_sheet:
+  type: mapping
+  label: 'Configurações do formatter de planilhas ACULTA'
+  mapping: {}

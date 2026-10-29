@@ -13,9 +13,7 @@ use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\media\Entity\Media;
-use Drupal\media\Entity\MediaType;
 use Drupal\file\Entity\File;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
@@ -120,47 +118,6 @@ final class CourseDocumentAccessTest extends KernelTestBase {
         'label' => 'Perfil público',
       ])->save();
     }
-
-    // The course bundle and field are owned by versioned Config Sync, not by
-    // config/install. Create the same Media contract in this isolated Kernel.
-    FieldStorageConfig::create([
-      'entity_type' => 'media',
-      'field_name' => 'field_media_course_document',
-      'type' => 'file',
-      'settings' => [
-        'target_type' => 'file',
-        'display_field' => FALSE,
-        'display_default' => FALSE,
-        'uri_scheme' => 'private',
-      ],
-      'cardinality' => 1,
-      'translatable' => TRUE,
-    ])->save();
-    MediaType::create([
-      'id' => 'course_document',
-      'label' => 'Documento de turma',
-      'description' => 'PDF privado associado a uma turma de aprendizagem.',
-      'source' => 'file',
-      'source_configuration' => ['source_field' => 'field_media_course_document'],
-      'queue_thumbnail_downloads' => FALSE,
-      'new_revision' => TRUE,
-      'field_map' => ['name' => 'name'],
-    ])->save();
-    FieldConfig::create([
-      'entity_type' => 'media',
-      'bundle' => 'course_document',
-      'field_name' => 'field_media_course_document',
-      'label' => 'PDF da turma',
-      'required' => TRUE,
-      'settings' => [
-        'handler' => 'default:file',
-        'handler_settings' => [],
-        'file_directory' => 'turmas/[date:custom:Y]-[date:custom:m]',
-        'file_extensions' => 'pdf',
-        'max_filesize' => '',
-        'description_field' => FALSE,
-      ],
-    ])->save();
 
     GroupType::create([
       'id' => 'lms_course',
@@ -297,7 +254,7 @@ final class CourseDocumentAccessTest extends KernelTestBase {
     $relationship->save();
 
     $this->container->get('current_user')->setAccount($member);
-    $build = $this->container->get('aculta_document_viewer.builder')->build($media, 'field_media_course_document');
+    $build = $this->container->get('aculta_document_viewer.pdf_builder')->build($media, 'field_media_course_document');
     $private_url = $build['#attributes']['data-aculta-pdf-url'];
     $this->assertSame('/system/files?file=course-pdf/membership-fixture.pdf', $private_url);
     $this->assertSame(0, $build['#cache']['max-age']);

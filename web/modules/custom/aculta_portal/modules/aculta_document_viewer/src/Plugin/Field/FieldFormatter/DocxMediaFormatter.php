@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * não pode ser montado, o link do Core permanece como fallback.
  */
 #[FieldFormatter(
-  id: 'aculta_document_docx_media',
+  id: 'aculta_document_viewer_doc',
   label: new TranslatableMarkup('Leitor DOCX ACULTA e link de documento'),
   field_types: ['file'],
 )]
@@ -58,7 +58,7 @@ final class DocxMediaFormatter extends FormatterBase implements ContainerFactory
       $configuration['label'],
       $configuration['view_mode'],
       $configuration['third_party_settings'],
-      $container->get('aculta_document_viewer.docx_builder'),
+      $container->get('aculta_document_viewer.doc_builder'),
     );
   }
 

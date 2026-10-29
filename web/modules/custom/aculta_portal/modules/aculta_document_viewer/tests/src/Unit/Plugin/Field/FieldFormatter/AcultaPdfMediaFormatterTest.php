@@ -151,7 +151,7 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
    */
   private function formatter(PdfViewerBuilderInterface $builder): AcultaPdfMediaFormatter {
     return new AcultaPdfMediaFormatter(
-      'aculta_document_pdf_media',
+      'aculta_document_viewer_pdf',
       [],
       $this->createMock(FieldDefinitionInterface::class),
       [],

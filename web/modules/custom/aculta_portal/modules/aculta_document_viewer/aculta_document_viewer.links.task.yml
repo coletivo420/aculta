@@ -1,6 +1,26 @@
-aculta_document_viewer.admin_subtab_reader:
+aculta_document_viewer.admin_tab_reader:
   title: 'Leitor de documentos'
   route_name: aculta_document_viewer.settings
   base_route: aculta_portal.admin
-  parent_id: aculta_portal.admin_tab_site
-  weight: 3
+  weight: 4
+
+aculta_document_viewer.admin_subtab_pdf:
+  title: 'PDF'
+  route_name: aculta_document_viewer.settings
+  base_route: aculta_portal.admin
+  parent_id: aculta_document_viewer.admin_tab_reader
+  weight: 0
+
+aculta_document_viewer.admin_subtab_doc:
+  title: 'Documentos'
+  route_name: aculta_document_viewer.settings_doc
+  base_route: aculta_portal.admin
+  parent_id: aculta_document_viewer.admin_tab_reader
+  weight: 1
+
+aculta_document_viewer.admin_subtab_sheet:
+  title: 'Planilhas'
+  route_name: aculta_document_viewer.settings_sheet
+  base_route: aculta_portal.admin
+  parent_id: aculta_document_viewer.admin_tab_reader
+  weight: 2

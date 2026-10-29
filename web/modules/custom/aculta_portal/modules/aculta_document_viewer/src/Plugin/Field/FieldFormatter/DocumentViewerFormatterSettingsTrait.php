@@ -7,9 +7,9 @@ namespace Drupal\aculta_document_viewer\Plugin\Field\FieldFormatter;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Provides native Drupal configuration for the ACULTA PDF reader.
+ * Provides native Drupal configuration for the ACULTA document readers.
  */
-trait PdfViewerFormatterSettingsTrait {
+trait DocumentViewerFormatterSettingsTrait {
 
   /**
    * {@inheritdoc}
@@ -46,7 +46,7 @@ trait PdfViewerFormatterSettingsTrait {
     $form['use_site_settings'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Usar padrões do painel ACULTA'),
-      '#description' => $this->t('Quando ativado, os padrões em ACULTA → Leitor de PDF controlam este campo. Desative para configurar opções locais abaixo.'),
+      '#description' => $this->t('Quando ativado, os padrões em ACULTA → Leitor de documentos controlam este campo. Desative para configurar opções locais abaixo.'),
       '#default_value' => (bool) $this->getSetting('use_site_settings'),
     ];
     foreach ([

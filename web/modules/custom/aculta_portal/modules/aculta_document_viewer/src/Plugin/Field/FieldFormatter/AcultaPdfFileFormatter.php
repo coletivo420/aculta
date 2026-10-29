@@ -19,13 +19,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Displays authorized public PDF file fields with the shared PDF.js viewer.
  */
 #[FieldFormatter(
-  id: 'aculta_document_pdf_file',
+  id: 'aculta_document_viewer_pdf_file',
   label: new TranslatableMarkup('Visualizador PDF ACULTA e link de arquivo'),
   field_types: ['file'],
 )]
 final class AcultaPdfFileFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
-  use PdfViewerFormatterSettingsTrait;
+  use DocumentViewerFormatterSettingsTrait;
 
   public function __construct(
     $plugin_id,
@@ -52,7 +52,7 @@ final class AcultaPdfFileFormatter extends FormatterBase implements ContainerFac
       $configuration['label'],
       $configuration['view_mode'],
       $configuration['third_party_settings'],
-      $container->get('aculta_document_viewer.builder'),
+      $container->get('aculta_document_viewer.pdf_builder'),
     );
   }
 

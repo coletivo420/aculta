@@ -1,4 +1,12 @@
-docx:
+aculta_document_viewer_pdf:
+  js:
+    js/pdf-viewer.mjs:
+      attributes:
+        type: module
+  dependencies:
+    - core/drupal
+
+aculta_document_viewer_doc:
   js:
     js/docx-viewer-behavior.mjs:
       attributes:
@@ -7,7 +15,7 @@ docx:
     - core/drupal
     - core/once
 
-spreadsheet:
+aculta_document_viewer_sheet:
   css:
     component:
       /libraries/tabulator/dist/tabulator.min.css: {}

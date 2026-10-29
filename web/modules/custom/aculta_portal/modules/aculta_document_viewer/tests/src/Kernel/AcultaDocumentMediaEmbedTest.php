@@ -33,7 +33,7 @@ require_once __DIR__ . '/DocumentViewerKernelClosureTrait.php';
  */
 #[Group('aculta_document_viewer')]
 #[RunTestsInSeparateProcesses]
-final class AcultaPdfMediaEmbedTest extends KernelTestBase {
+final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
 
   use UserCreationTrait;
   use DocumentViewerKernelClosureTrait;
@@ -155,7 +155,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
       'mode' => 'default',
       'status' => TRUE,
     ])->setComponent('field_media_document', [
-      'type' => 'aculta_document_pdf_media',
+      'type' => 'aculta_document_viewer_pdf',
       'label' => 'visually_hidden',
       'settings' => [],
       'third_party_settings' => [],
@@ -168,7 +168,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
       'mode' => 'default',
       'status' => TRUE,
     ])->setComponent('field_media_course_document', [
-      'type' => 'aculta_document_pdf_media',
+      'type' => 'aculta_document_viewer_pdf',
       'label' => 'visually_hidden',
       'settings' => [],
       'third_party_settings' => [],
@@ -205,7 +205,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
       'mode' => 'default',
       'status' => TRUE,
     ])->setComponent('field_document', [
-      'type' => 'aculta_document_pdf_file',
+      'type' => 'aculta_document_viewer_pdf_file',
       'label' => 'hidden',
       'settings' => [],
       'third_party_settings' => [],
@@ -272,7 +272,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
 
     $this->assertTrue($media->hasField('field_media_document'));
     $this->assertSame(
-      'aculta_document_pdf_media',
+      'aculta_document_viewer_pdf',
       EntityViewDisplay::load('media.document.default')->getComponent('field_media_document')['type'] ?? NULL,
     );
 
@@ -310,7 +310,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $this->assertStringContainsString('data-aculta-pdf-control="zoom-reset"', $processed);
     $this->assertStringContainsString('data-aculta-pdf-control="search-input"', $processed);
     $this->assertStringContainsString('data-aculta-pdf-control="fullscreen"', $processed);
-    $this->assertContains('aculta_pdf_viewer/viewer', $result->getAttachments()['library'] ?? []);
+    $this->assertContains('aculta_document_viewer/aculta_document_viewer_pdf', $result->getAttachments()['library'] ?? []);
     $this->assertContains('media:' . $media->id(), $result->getCacheTags());
   }
 
@@ -419,7 +419,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $media->setOwner($user);
     $media->save();
 
-    $build = $this->container->get('aculta_document_viewer.builder')->build($media, 'field_media_course_document');
+    $build = $this->container->get('aculta_document_viewer.pdf_builder')->build($media, 'field_media_course_document');
     $private_url = $build['#attributes']['data-aculta-pdf-url'];
     $this->assertSame('/system/files?file=pdf-viewer/aculta-private-fixture.pdf', $private_url);
     $this->assertSame(0, $build['#cache']['max-age']);

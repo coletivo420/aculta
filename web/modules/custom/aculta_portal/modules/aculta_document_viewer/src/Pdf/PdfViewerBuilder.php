@@ -24,7 +24,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
   /**
    * Local wrapper that applies per-document defaults to the pinned PDF.js UI.
    */
-  private const VIEWER_WRAPPER_PATH = '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/viewer-wrapper.html';
+  private const VIEWER_WRAPPER_PATH = '/modules/custom/aculta_portal/modules/aculta_document_viewer/viewer-wrapper.html';
 
   /**
    * Render defaults for a viewer, overridden by site and formatter settings.
@@ -85,7 +85,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       return $this->denied($cacheability);
     }
 
-    $expected_scheme = $bundle === 'course_document' ? 'private' : 'public';
+    $expected_scheme = in_array($bundle, ['course_document', 'forum_attachment'], TRUE) ? 'private' : 'public';
     return $this->buildFile($file, $media->label() ?: $file->getFilename(), $expected_scheme, $cacheability, TRUE, $settings);
   }
 
@@ -230,7 +230,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       'page_thumbnails' => $this->buildPageThumbnails(),
       'page_stage' => $this->buildPageStage(),
       ...$this->buildActionLinks($url, $full_viewer_url, $settings),
-      '#attached' => ['library' => ['aculta_pdf_viewer/viewer']],
+      '#attached' => ['library' => ['aculta_document_viewer/aculta_document_viewer_pdf']],
     ];
 
     $this->applyVisibility($build, $settings);
