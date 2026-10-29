@@ -6,7 +6,8 @@
 - Kernel focal 1/23 PASS; suíte Kernel 151/2.886 PASS (42 depreciações);
   Unit 186/1.337 PASS; PHP lint e PHPCS dos arquivos alterados PASS.
 - Suíte combinada: 337 testes / 4.223 assertions PASS. Nenhuma escrita no
-  Runtime ocorreu; o teste de importador Growroom idempotente segue pendente.
+  Runtime ocorreu. A idempotência do lote já é coberta pelo teste existente;
+  a equivalência sintética completa da migração segue pendente.
 
 ## `0.1.0-dev.325` — revisão visual do cartão de autoria histórica
 
@@ -16,8 +17,9 @@
   injetado somente no DOM para a revisão visual. A integração de dados reais
   segue coberta pelo Kernel dev.324. Script e limites estão em
   `tests/browser/aculta-forum/`.
-- Importador Growroom idempotente ainda não tem cenário dedicado em
-  `aculta_simpletest`; sem mudança em Runtime.
+- A observação de que faltava teste idempotente foi corrigida em dev.326: o
+  Kernel `ForumCommentMigrationBatchKernelTest` já cobre reexecução e
+  continuidade em `aculta_simpletest`; esta fase visual não alterou Runtime.
 
 ## `0.1.0-dev.323` — aplicar `-gr` no cartão da última atividade
 

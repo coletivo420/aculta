@@ -39,8 +39,9 @@ cartão histórico em 1280/390/320 CSS px, 7/7 verificações, sem overflow
 horizontal. Como o Runtime não tem post público com `LegacyAuthor`, o cartão
 foi fixture sintética injetada apenas no DOM. A integração real da View continua
 coberta pelo Kernel registrado abaixo. Script, execução e limitação estão em
-`tests/browser/aculta-forum/`. O importador Growroom ainda precisa de cenário
-idempotente em `aculta_simpletest`.
+`tests/browser/aculta-forum/`. `ForumCommentMigrationBatchKernelTest` já prova
+idempotência e continuidade da importação em `aculta_simpletest`; falta auditar
+a equivalência sintética completa de F-M5.
 
 **Verificação dev.324 (2026-10-29):** `PublicForumLastActivityAuthorKernelTest`
 passa com 1/23, e a suíte completa passa com 343/4.223, 42 depreciações e 6

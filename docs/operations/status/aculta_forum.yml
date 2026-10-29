@@ -2,11 +2,12 @@
 version: 0.1.0-dev.326
 state: Dev
 next_phase: >-
-  Criar cenário idempotente do importador Growroom em `aculta_simpletest`;
-  depois reavaliar as pendências F-M3/F-M5/F-M6/F-M7, gates e revisão visual antes
-  de RC. Não executar migração de dados no Runtime. RC.2 é histórico, sem
-  candidato vigente.
-progress_note: "Dev.326: fixture exclusiva `aculta_forum_last_activity_test` fornece o campo-base histórico pelo hook de produção; Kernel focal 1/23 PASS. Suíte Kernel 151/2.886 PASS (42 depreciações), Unit 186/1.337 PASS; combinado 337/4.223 PASS. PHP lint/PHPCS focais PASS; índice de status PASS. Nenhuma escrita no Runtime. Próxima pendência técnica: cenário idempotente do importador Growroom no banco de teste."
+  Completar a matriz sintética F-M5 para flags, denúncias, anexos, permalinks,
+  índices e marcadores de aviso; conferir cada item contra os Kernels já
+  existentes antes de implementar lacunas. Não executar migração de dados no
+  Runtime. Depois reavaliar as pendências F-M3/F-M6/F-M7, gates e revisão visual
+  antes de RC. RC.2 é histórico, sem candidato vigente.
+progress_note: "Dev.326: fixture exclusiva `aculta_forum_last_activity_test` fornece o campo-base histórico pelo hook de produção; Kernel focal 1/23 PASS. Suíte Kernel 151/2.886 PASS (42 depreciações), Unit 186/1.337 PASS; combinado 337/4.223 PASS. `ForumCommentMigrationBatchKernelTest::testBatchImportIsIdempotentAndContinues` reexecutado 1/26 PASS (5 depreciações de contrib); PHP lint/PHPCS focais PASS; índice de status PASS. Nenhuma escrita no Runtime. O cenário idempotente já existe; a matriz sintética F-M5 ainda requer auditoria de equivalência."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; gate: scripts/validate-no-temporary-route-aliases.php.
