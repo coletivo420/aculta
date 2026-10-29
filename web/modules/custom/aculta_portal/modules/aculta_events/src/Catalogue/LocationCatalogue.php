@@ -6,12 +6,14 @@ namespace Drupal\aculta_events\Catalogue;
 
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Lista pública de locais (/locais), com filtro por tipo (F4).
  *
- * Privacidade (MODELO-DE-DADOS.md): local com precisão "aproximado" mostra só bairro e município;
- * a rua e o CEP não saem. Endereço completo só para local exato.
+ * Privacidade (MODELO-DE-DADOS.md): local com precisão "aproximado" mostra
+ * só bairro e município; a rua e o CEP não saem. Endereço completo só para
+ * local exato.
  */
 final class LocationCatalogue {
 
@@ -20,14 +22,17 @@ final class LocationCatalogue {
    */
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ?AccountInterface $currentUser = NULL,
   ) {}
 
   /**
    * Locais, opcionalmente de um tipo, em ordem alfabética.
    *
    * @return array<int, array{local: \Drupal\aculta_events\Entity\EventLocation, endereco: string}>
+   *   Lista de locais com seus respectivos endereços formatados.
    */
-  public function busca(?int $tipo): array {
+  public function busca(?int $tipo, ?AccountInterface $account = NULL): array {
+    $conta = $account ?? $this->currentUser;
     $storage = $this->entityTypeManager->getStorage('aculta_event_location');
     $consulta = $storage->getQuery()->sort('title')->accessCheck(FALSE);
     if ($tipo !== NULL) {
@@ -35,7 +40,7 @@ final class LocationCatalogue {
     }
     $saida = [];
     foreach ($storage->loadMultiple($consulta->execute()) as $local) {
-      if ($local instanceof EventLocation) {
+      if ($local instanceof EventLocation && ($conta === NULL || $local->access('view', $conta))) {
         $saida[] = ['local' => $local, 'endereco' => $this->enderecoPublico($local)];
       }
     }
@@ -43,7 +48,7 @@ final class LocationCatalogue {
   }
 
   /**
-   * Endereço para exibição, conforme a precisão do local (privacidade do modelo).
+   * Endereço para exibição, conforme a precisão do local.
    */
   public function enderecoPublico(EventLocation $local): string {
     $item = $local->get('field_endereco')->first();

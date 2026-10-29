@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_events\Kernel;
 
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -17,6 +19,8 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
 final class LocationCatalogueKernelTest extends KernelTestBase {
+
+  use UserCreationTrait;
 
   /**
    * {@inheritdoc}
@@ -102,6 +106,41 @@ final class LocationCatalogueKernelTest extends KernelTestBase {
     $this->assertSame(['Teatro Municipal'], $nomes);
     $todos = array_map(static fn (array $i): string => (string) $i['local']->label(), $servico->busca(NULL));
     $this->assertSame(['Museu da Cidade', 'Sala sem tipo', 'Teatro Municipal'], $todos);
+  }
+
+  /**
+   * Controle de acesso: view é pública; mutações exigem permissão.
+   */
+  public function testLocationAccessAndMutations(): void {
+    $local = $this->local('Centro Cultural Teste', 'exato');
+
+    // Cria o UID 1 (superadmin) para que os usuários seguintes não
+    // recebam privilégios totais do core.
+    $this->createUser();
+
+    $anonimo = new AnonymousUserSession();
+    $comum = $this->createUser();
+    $admin = $this->createUser(['administer aculta events']);
+
+    $accessControl = $this->container->get('entity_type.manager')->getAccessControlHandler('aculta_event_location');
+
+    // Leitura permitida para todos.
+    $this->assertTrue($local->access('view', $anonimo));
+    $this->assertTrue($local->access('view', $comum));
+    $this->assertTrue($local->access('view', $admin));
+
+    // Mutações proibidas para anônimo e usuário comum.
+    $this->assertFalse($local->access('update', $anonimo));
+    $this->assertFalse($local->access('update', $comum));
+    $this->assertFalse($local->access('delete', $anonimo));
+    $this->assertFalse($local->access('delete', $comum));
+    $this->assertFalse($accessControl->createAccess(NULL, $anonimo));
+    $this->assertFalse($accessControl->createAccess(NULL, $comum));
+
+    // Mutações permitidas para administrador de eventos.
+    $this->assertTrue($local->access('update', $admin));
+    $this->assertTrue($local->access('delete', $admin));
+    $this->assertTrue($accessControl->createAccess(NULL, $admin));
   }
 
 }

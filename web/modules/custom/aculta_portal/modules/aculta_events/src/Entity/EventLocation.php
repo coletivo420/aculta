@@ -29,6 +29,7 @@ use Drupal\views\EntityViewsData;
   ],
   handlers: [
     'storage' => 'Drupal\Core\Entity\Sql\SqlContentEntityStorage',
+    'access' => 'Drupal\aculta_events\Access\EventLocationAccessControlHandler',
     'views_data' => EntityViewsData::class,
   ],
 )]

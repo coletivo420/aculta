@@ -1,6 +1,10 @@
 ## Integração arquitetural OpenCulturas - ARQ-01 a ARQ-04 (2026-10-29)
 
-Fonte: [plano normativo](../../../../../../../docs/architecture/PLANO-ARQUITETURAL-OPENCULTURAS-ACULTA-ARQ-01-09.md). **ARQ-01:** corrigir/verificar acesso `view` e precisão de `LocationCatalogue::busca()` em listagem, mapas e APIs; **ARQ-02:** benchmark/paginação/projeção de ocorrências com ACL e RRULE existente; **ARQ-03:** provider/Index para eventos e locais, incluindo descoberta cultural com grants; **ARQ-04:** modelo aditivo para horários, acessibilidade, eventos híbridos/virtuais, informações e exceções. Não copiar Views/Smart Date/Office Hours sem decisão ou migração idempotente. Estado: aprovado para planejamento, código e Runtime ainda não validados nestas fases.
+Fonte: [plano normativo](../../../../../../../docs/architecture/PLANO-ARQUITETURAL-OPENCULTURAS-ACULTA-ARQ-01-09.md).
+- [x] **ARQ-01 (IMPLEMENTADO):** formalizado `EventLocationAccessControlHandler` em `aculta_event_location`, cobrindo leitura pública, mutações restritas a administradores e respeito a hooks de acesso. `LocationCatalogue::busca()` corrigido para filtrar por `access('view')` do usuário atual. Validação de privacidade preservada (aproximado vs exato sem vazamento de rua/CEP). Testes Kernel cobrindo anônimo, usuário autenticado e admin (`LocationCatalogueKernelTest`, `LocationPurposeAccessKernelTest`, `MapControllerKernelTest` PASS).
+- [ ] **ARQ-02:** benchmark/paginação/projeção de ocorrências com ACL e RRULE existente.
+- [ ] **ARQ-03:** provider/Index para eventos e locais, incluindo descoberta cultural com grants.
+- [ ] **ARQ-04:** modelo aditivo para horários, acessibilidade, eventos híbridos/virtuais, informações e exceções. Não copiar Views/Smart Date/Office Hours sem decisão ou migração idempotente.
 
 # Roadmap — ACULTA Eventos (`aculta_events` + `aculta_calendar`)
 

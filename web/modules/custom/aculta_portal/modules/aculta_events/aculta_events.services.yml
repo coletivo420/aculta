@@ -10,7 +10,7 @@ services:
     arguments: ['@entity_type.manager', '@aculta_events.occurrences']
   aculta_events.locations:
     class: Drupal\aculta_events\Catalogue\LocationCatalogue
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@current_user']
   aculta_events.upcoming:
     class: Drupal\aculta_events\Occurrence\UpcomingDates
     arguments: ['@entity_type.manager', '@aculta_events.occurrences']
