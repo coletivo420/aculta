@@ -220,3 +220,11 @@ representa análise WCAG, teclado completo/Shift+Tab, modais, widgets ou outros
 purposes. O servidor rodava o código visual de tema/Studio/Commerce comum aos
 heads `f2708e60f` e `5734bed87`, com mudanças locais restritas a Eventos; essa
 evidência não homologa o head completo da PR.
+
+**Atualização do probe:** uma segunda execução percorreu a grade completa
+(320/360/390/599/600/768/1024/1280/1440) com Tab e Shift+Tab em Marley, Conta
+e Perfil. Foram 648 observações: 621 alvos focáveis, todos com
+`:focus-visible` e outline calculado presente; as 27 restantes retornaram ao
+`body` após completar o percurso reverso. As 27 capturas estão em
+`$SUITE_OUT/aculta-ocs-f0-keyboard-full-20261029/`; Marley/320 foi inspecionada.
+Continua sendo amostra de 12 passos, não auditoria WCAG nem percurso completo.

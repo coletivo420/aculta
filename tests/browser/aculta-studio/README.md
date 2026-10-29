@@ -173,9 +173,9 @@ todas as larguras ou paridade visual do Studio.
 
 ### Probe de foco por teclado
 
-`keyboard-focus.py` registra os primeiros 12 alvos ao pressionar Tab nas rotas
+`keyboard-focus.py` registra 12 passos de Tab e 12 de Shift+Tab nas rotas
 Studio listadas em `STUDIO_ROUTES` (padrão Marley, Conta e Perfil) e nos
-viewports `OCS_FOCUS_WIDTHS` (padrão 320/1440). É somente leitura: não envia
+viewports `OCS_FOCUS_WIDTHS` (padrão grade completa do gate). É somente leitura: não envia
 forms nem aciona links. Exige Firefox ESR visível (`DISPLAY=:0`), checkout
 servido apontado por `ACULTA_ROOT`, Drush no `aculta_runtime` e uma conta de
 teste existente em `STUDIO_USER`. O JSON contém alvo, `:focus-visible`, outline,
@@ -192,3 +192,12 @@ calculado diferente de `none`. As seis capturas estão em
 `$SUITE_OUT/aculta-ocs-f0-keyboard-20261029/`; a de Marley/320 foi inspecionada
 e mostra o foco em “Pular para o conteúdo principal”. Isso não valida ordem
 completa, Shift+Tab, teclado de widgets, diálogos, outros estados/telas ou WCAG.
+
+**Execução expandida em 2026-10-29:** `OCS_FOCUS_WIDTHS` cobriu os nove
+viewports do gate. Para três rotas (Marley, Conta, Perfil) foram feitas 12
+passagens de Tab e 12 de Shift+Tab por viewport: 648 observações, 621 alvos
+focáveis (todos `:focus-visible` e com `outlineStyle` calculado diferente de
+`none`) e 27 retornos esperados ao `body` ao desfazer o percurso. Foram salvas
+27 capturas, uma após o primeiro Tab por rota/largura. A captura Marley/320 foi
+inspecionada. Essa contagem não avalia contraste, ordem semântica completa,
+componentes customizados, toda a página nem todos os estados.

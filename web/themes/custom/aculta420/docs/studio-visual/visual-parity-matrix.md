@@ -63,3 +63,12 @@ com 72 de 72 alvos correspondendo a `:focus-visible` e outline calculado.
 Marley/320 foi inspecionada e exibe o foco do link de skip. Cobertura não inclui
 Shift+Tab, percurso inteiro, widgets/modais, fluxos de formulário ou os demais
 purposes. Não é aceite WCAG 2.2 AA.
+
+### Repetição ampliada — teclado na grade completa
+
+A repetição em nove larguras e duas direções produziu 648 observações nas três
+rotas: 621 elementos focáveis com `:focus-visible` e outline calculado, mais
+27 retornos ao `body` no final do Shift+Tab. As capturas estão fora do Git em
+`$SUITE_OUT/aculta-ocs-f0-keyboard-full-20261029/`; Marley/320 foi inspecionada.
+Amostra de 12 passos não equivale à análise de todos os focáveis nem ao aceite
+WCAG 2.2 AA.

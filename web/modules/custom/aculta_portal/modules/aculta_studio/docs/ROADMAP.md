@@ -591,3 +591,8 @@ O probe adicional de foco por teclado percorreu 12 Tabs em Marley, Conta e
 Perfil a 320/1440 px (72/72 `:focus-visible`, outline calculado presente). A
 captura Marley/320 mostrou foco visível no skip link. É evidência parcial e não
 substitui percurso integral, Shift+Tab, modal/widgets, WCAG ou o gate F7.
+
+A repetição ampliada do probe usou os nove viewports e Tab/Shift+Tab nas mesmas
+três rotas: 648 observações, 621 alvos focáveis com `:focus-visible` e outline,
+27 retornos ao `body` ao terminar a volta. Capturas em `$SUITE_OUT` e detalhes
+no inventário visual. A amostra não fecha o gate WCAG/F7.

@@ -18,8 +18,9 @@ from wdlib import Driver  # noqa: E402
 URI = os.environ.get("STUDIO_LOGIN_URI", "https://conta.aculta.toca.net.br")
 USER = os.environ.get("STUDIO_USER", "teste.comum")
 PAGES = os.environ.get("STUDIO_ROUTES", "/studio/marley,/studio/conta,/studio/perfil").split(",")
-WIDTHS = tuple(map(int, os.environ.get("OCS_FOCUS_WIDTHS", "320,1440").split(",")))
+WIDTHS = tuple(map(int, os.environ.get("OCS_FOCUS_WIDTHS", "320,360,390,599,600,768,1024,1280,1440").split(",")))
 TAB = "\uE004"
+SHIFT = "\uE008"
 
 
 def drush(*args):
@@ -46,11 +47,15 @@ socket.onmessage = (event) => {
     subprocess.run(["node", "-e", node, driver.websocket_url, str(width), str(height)], check=True)
 
 
-def press_tab(driver):
+def press_tab(driver, reverse=False):
+    actions = []
+    if reverse:
+        actions.append({"type": "keyDown", "value": SHIFT})
+    actions.extend([{"type": "keyDown", "value": TAB}, {"type": "keyUp", "value": TAB}])
+    if reverse:
+        actions.append({"type": "keyUp", "value": SHIFT})
     driver.req("POST", f"/session/{driver.session}/actions", {
-        "actions": [{"type": "key", "id": "studio-focus-probe", "actions": [
-            {"type": "keyDown", "value": TAB}, {"type": "keyUp", "value": TAB}
-        ]}]
+        "actions": [{"type": "key", "id": "studio-focus-probe", "actions": actions}]
     })
 
 
@@ -74,22 +79,23 @@ def main():
                 set_viewport(driver, width, height)
                 driver.get(url)
                 time.sleep(1)
-                for index in range(1, 13):
-                    press_tab(driver)
-                    time.sleep(0.05)
-                    info = json.loads(driver.js("""
+                for direction, reverse in (("tab", False), ("shift-tab", True)):
+                    for index in range(1, 13):
+                        press_tab(driver, reverse=reverse)
+                        time.sleep(0.05)
+                        info = json.loads(driver.js("""
 const el=document.activeElement, s=getComputedStyle(el), r=el.getBoundingClientRect();
-return JSON.stringify({tag:el.tagName,id:el.id,className:typeof el.className==='string'?el.className:'',role:el.getAttribute('role'),ariaLabel:el.getAttribute('aria-label'),focusVisible:el.matches(':focus-visible'),outlineStyle:s.outlineStyle,outlineWidth:s.outlineWidth,outlineColor:s.outlineColor,boxShadow:s.boxShadow,left:r.left,top:r.top,width:r.width,height:r.height,scrollX:scrollX,scrollY:scrollY});
+return JSON.stringify({tag:el.tagName,focusTarget:el!==document.body&&el!==document.documentElement,id:el.id,className:typeof el.className==='string'?el.className:'',role:el.getAttribute('role'),ariaLabel:el.getAttribute('aria-label'),focusVisible:el.matches(':focus-visible'),outlineStyle:s.outlineStyle,outlineWidth:s.outlineWidth,outlineColor:s.outlineColor,boxShadow:s.boxShadow,left:r.left,top:r.top,width:r.width,height:r.height,scrollX:scrollX,scrollY:scrollY});
 """))
-                    info.update({"url": url, "viewport": width, "tab": index})
-                    if index == 1:
-                        shot = driver.req("GET", f"/session/{driver.session}/screenshot")
-                        name = f"focus-{url.rstrip('/').split('/')[-1] or 'hub'}-{width}.png"
-                        (OUT / name).write_bytes(base64.b64decode(shot))
-                        info["screenshot"] = name
-                    records.append(info)
+                        info.update({"url": url, "viewport": width, "direction": direction, "step": index})
+                        if direction == "tab" and index == 1:
+                            shot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                            name = f"focus-{url.rstrip('/').split('/')[-1] or 'hub'}-{width}.png"
+                            (OUT / name).write_bytes(base64.b64decode(shot))
+                            info["screenshot"] = name
+                        records.append(info)
         (OUT / "keyboard-focus.json").write_text(json.dumps(records, indent=2) + "\n")
-        print(json.dumps({"records": len(records), "focus_visible": sum(r["focusVisible"] for r in records), "screenshots": sum("screenshot" in r for r in records), "output": str(OUT / "keyboard-focus.json")}))
+        print(json.dumps({"observations": len(records), "focus_targets": sum(r["focusTarget"] for r in records), "targets_focus_visible": sum(r["focusTarget"] and r["focusVisible"] for r in records), "targets_with_outline": sum(r["focusTarget"] and r["outlineStyle"] != "none" for r in records), "body_returns": sum(r["tag"] == "BODY" for r in records), "screenshots": sum("screenshot" in r for r in records), "output": str(OUT / "keyboard-focus.json")}))
     finally:
         driver.close()
 
