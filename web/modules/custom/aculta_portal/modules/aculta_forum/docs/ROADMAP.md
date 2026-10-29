@@ -61,6 +61,14 @@ teste existente; uma retomada deve isolar o suporte da migration em fixture
 Kernel dedicada antes de executar a suíte de novo. Nenhuma migration ou escrita
 no Runtime ocorreu.
 
+**Retomada da fixture (dev.326, 2026-10-29):** a cobertura de autoria histórica
+foi isolada em `aculta_forum_last_activity_test`, fixture exclusiva que delega
+ao hook de produção a definição do campo-base `legacy_author`. O teste não cria
+mais field storage configurável para o mesmo campo. Kernel focal: 1/23 PASS;
+suíte Kernel: 151/2.886 PASS, 42 depreciações; Unit: 186/1.337 PASS; suíte
+combinada: 337/4.223 PASS. O importador Growroom ainda precisa de cenário
+idempotente em `aculta_simpletest`; migração de dados Runtime não foi executada.
+
 **Ownership compartilhado vigente:** o Fórum mantém produtores, assinaturas e
 seleção de destinatários. Todos os consumers/adapters, agregação, persistência
 compartilhada, preferências, filas, workers e coordenação dos modos de e-mail

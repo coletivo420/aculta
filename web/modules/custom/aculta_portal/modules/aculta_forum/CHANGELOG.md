@@ -1,3 +1,13 @@
+## `0.1.0-dev.326` — isolar fixture de autoria histórica
+
+- `PublicForumLastActivityAuthorKernelTest` usa fixture dedicada para fornecer
+  o campo-base de autoria histórica, delegando a definição ao hook de produção.
+  Removeu o field storage configurável que colidia com o campo-base.
+- Kernel focal 1/23 PASS; suíte Kernel 151/2.886 PASS (42 depreciações);
+  Unit 186/1.337 PASS; PHP lint e PHPCS dos arquivos alterados PASS.
+- Suíte combinada: 337 testes / 4.223 assertions PASS. Nenhuma escrita no
+  Runtime ocorreu; o teste de importador Growroom idempotente segue pendente.
+
 ## `0.1.0-dev.325` — revisão visual do cartão de autoria histórica
 
 - Firefox ESR visível em X11 confirmou o cartão de autoria histórica em 1280,

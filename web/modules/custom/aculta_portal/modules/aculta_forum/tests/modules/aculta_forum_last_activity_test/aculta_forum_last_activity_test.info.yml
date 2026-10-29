@@ -1,0 +1,7 @@
+name: 'ACULTA Forum last activity test fixture'
+type: module
+description: 'Provides migration base fields for the isolated historical-author Kernel test.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:content_moderation

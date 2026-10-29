@@ -20,8 +20,6 @@ use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\User;
@@ -55,6 +53,7 @@ final class PublicForumLastActivityAuthorKernelTest extends KernelTestBase {
     'comment',
     'views',
     'aculta_forum_post_test',
+    'aculta_forum_last_activity_test',
   ];
 
   /**
@@ -73,18 +72,6 @@ final class PublicForumLastActivityAuthorKernelTest extends KernelTestBase {
 
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Tópico'])->save();
     $this->addDefaultCommentField('node', 'aculta_forum_topic', 'field_aculta_discussion', CommentingStatus::Open, 'aculta_discussion_post');
-    FieldStorageConfig::create([
-      'entity_type' => 'aculta_forum_post',
-      'field_name' => 'legacy_author',
-      'type' => 'entity_reference',
-      'settings' => ['target_type' => 'aculta_legado_autor'],
-    ])->save();
-    FieldConfig::create([
-      'entity_type' => 'aculta_forum_post',
-      'bundle' => 'aculta_forum_post',
-      'field_name' => 'legacy_author',
-      'label' => 'Autoria histórica',
-    ])->save();
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
   }
 
