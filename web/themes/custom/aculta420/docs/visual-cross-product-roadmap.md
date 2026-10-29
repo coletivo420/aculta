@@ -555,6 +555,8 @@ a partir de `48rem`, o tema restaura a tabela e confirma equivalência com as
 medidas desktop Bootstrap anteriores. Firefox ESR visível passou 22 checks no
 estado real vazio e em fixture sintético nas dez larguras de 320 a 1440px, sem
 overflow. A linha real de pedido e o atributo `data-label` ainda estão DEFERRED,
-pois a conta autorizada não tem pedido não-rascunho. A implementação é parcial
+pois a conta autorizada não tem pedido não-rascunho. Após publicação e rebuild,
+a CSS servida repetiu 22 PASS/0 FAIL e uma DEFERRED; o snapshot e os validadores
+estão registrados em `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`. A implementação é parcial
 da THEME-MF2 e não homologa o gate THEME-MF3. Detalhes e limites em
 `mobile-first-audit.md`.

@@ -438,6 +438,9 @@ de tabela do Drupal converte as chaves de células de `#rows` em atributos HTML;
 a hipótese anterior de que `data-label` era descartado foi refutada e não gerou
 Pede-A. Evidência:
 `/home/piradopirata/aculta-suite-out/account-orders-868f18e22-final2/summary.json`.
-A rodada não valida zoom, teclado completo, dark mode, reduced motion, leitores
-de tela ou WCAG 2.2 AA e não aprova THEME-MF3. Teste reutilizável:
+Após publicar `11eb83644` e reconstruir cache no Runtime, a folha servida sem
+override repetiu 22 PASS/0 FAIL e uma DEFERRED nas mesmas larguras. `updatedb:status`
+sem updates; `config:status` ainda divergente (377 linhas), sem import. Snapshot
+e gates do Runtime estão em `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
+Esta rodada integrada também não aprova THEME-MF3. Teste reutilizável:
 `tests/browser/aculta-theme-mobile-first/account-orders.py`.
