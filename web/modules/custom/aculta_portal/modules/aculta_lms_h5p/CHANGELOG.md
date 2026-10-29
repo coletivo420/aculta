@@ -466,3 +466,12 @@
 - Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
   depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
 
+## 0.4.0-dev.171 — documentar adapter AJAX do editor H5P (2026-10-29)
+
+- Documenta retornos, parâmetros e formatos do adapter de consulta do editor;
+  reordena o cabeçalho de atribuição adaptada após o namespace.
+- PHPCS integral caiu de 50 erros/3 avisos em 4 arquivos para 39/2 em 3
+  arquivos; o adapter passa Drupal/DrupalPractice e PHP lint.
+- Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
+  depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
+

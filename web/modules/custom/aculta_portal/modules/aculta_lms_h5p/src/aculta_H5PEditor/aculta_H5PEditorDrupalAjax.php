@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\aculta_H5PEditor;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountProxyInterface;
 
@@ -20,7 +20,8 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
   /**
    * Gets latest library versions that exists locally.
    *
-   * @return array Latest version of all local libraries
+   * @return array<int, object>
+   *   Latest local version row for each runnable library.
    */
   public function getLatestLibraryVersions() {
     $connection = $this->database;
@@ -76,12 +77,15 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
   }
 
   /**
-   * Get locally stored Content Type Cache. If machine name is provided
-   * it will only get the given content type from the cache
+   * Gets locally stored Content Type Cache entries.
    *
-   * @param $machineName
+   * When a machine name is provided, only its cached content type is returned.
    *
-   * @return array|object|null Returns results from querying the database
+   * @param string|null $machineName
+   *   Optional content type machine name to filter the cache result.
+   *
+   * @return array<int, object>|object|null
+   *   Matching cache row, all cache rows, or NULL when no row matches.
    */
   public function getContentTypeCache($machineName = NULL) {
     $database = $this->database;
@@ -101,10 +105,10 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
   }
 
   /**
-   * Create a list of the recently used libraries.
+   * Creates a list of the recently used libraries.
    *
-   * @return array machine names. The first element in the array is the most
-   *   recently used.
+   * @return array<int, string>
+   *   Library machine names, ordered from most to least recently used.
    */
   public function getAuthorsRecentlyUsedLibraries() {
     $uid = $this->currentUser->id();
@@ -131,22 +135,26 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
    * Checks if the provided token is valid for this endpoint.
    *
    * @param string $token
-   *   The token that will be validated for.
+   *   Token to validate for the editor AJAX endpoint.
    *
-   * @return bool True if successful validation
+   * @return bool
+   *   TRUE when the token is valid for the editor AJAX endpoint.
    */
   public function validateEditorToken($token) {
     return \H5PCore::validToken('editorajax', $token);
   }
 
   /**
-   * Get translations for a language for a list of libraries.
+   * Gets translations for a language for a list of libraries.
    *
-   * @param array $libraries
-   *   An array of libraries, in the form "<machineName> <majorVersion>.<minorVersion>.
+   * @param array<int, string> $libraries
+   *   Library identifiers in the form
+   *   "<machineName> <majorVersion>.<minorVersion>".
    * @param string $language_code
+   *   Language code used to find each library translation.
    *
-   * @return array
+   * @return array<string, string>
+   *   Translation JSON keyed by the original library identifier.
    */
   public function getTranslations($libraries, $language_code) {
     $translations = [];
