@@ -44,6 +44,7 @@ no ambiente ativo (host de teste em teste; `eventos.aculta.org` em produção). 
 evita conteúdo duplicado e acompanha a troca de domínio feita pelo Deployer. O `ROUTES-SITEMAP.md`
 registra os dois purposes. No Runtime de teste, as seis rotas respondem nos dois hosts e a página
 em cada host declara o mesmo canonical de teste.
+O sitemap de `eventos` lista essa URL canônica e o sitemap de `main` não a duplica.
 Implementação: `9800e0d62`.
 
 | Caminho | Função | Observação |

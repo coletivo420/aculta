@@ -23,7 +23,7 @@ Status: D6 implementada no Runtime de teste; as rotas públicas do calendário t
 ## D6 — calendário também no purpose `main`
 - [x] Agenda, mês, dia, `.ics`, embed e visão interativa aceitam os purposes `eventos` e `main`; rotas administrativas não são compartilhadas.
 - [x] Páginas HTML declaram canonical no host do purpose `eventos` resolvido pelo ACULTA Deployer no ambiente ativo.
-- [x] Runtime de teste: todas as seis rotas retornam HTTP 200 em `aculta.toca.net.br` e `eventos.aculta.toca.net.br`; `/calendario` declara um único canonical para `eventos.aculta.toca.net.br` em ambos.
+- [x] Runtime de teste: todas as seis rotas retornam HTTP 200 em `aculta.toca.net.br` e `eventos.aculta.toca.net.br`; `/calendario` declara canonical único para `eventos.aculta.toca.net.br` em ambos. O sitemap de `eventos` inclui o canonical; o sitemap de `main` não duplica a URL.
 - [x] Suítes Kernel/Unit do calendário e Unit da política de purpose; 126 testes, 414 assertions, 2 depreciações. PHP lint e PHPCS passaram.
 - Evidência de código: `9800e0d62`.
 
