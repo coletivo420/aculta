@@ -273,3 +273,12 @@ workspace Wiki em 34/34 verificações, incluindo 320/360/390/640/768/1024/1280/
 px sem overflow; PNG/JSON em `/home/piradopirata/suite-out/aculta-mf2-content-section-dd37b35d5/`.
 O smoke cobre a tela real do workspace, mas não mede diretamente o gap do SDC;
 zoom real, teclado nesse formulário e WCAG completa permanecem sem evidência.
+
+### THEME-MF2 — `author-card`
+
+O SDC já era consumido por cartões públicos de autoria do Fórum, LMS e Wiki.
+Migrei a base visual para 2.5rem de avatar, alinhamento inicial e gap compacto;
+a partir de 36rem, cartões inline recuperam 3rem e alinhamento central, enquanto
+editorial e empilhado preservam seu alinhamento próprio. Variantes `sm`/`lg` e
+as regras específicas das listagens do Fórum mantêm precedência. A validação
+Firefox da página pública com consumer segue pendente.

@@ -1,5 +1,5 @@
 name: Autoria em discussão
-description: Cartão público compacto para autor de resposta no fórum.
+description: Cartão público de autoria; base móvel compacta com avatar de 2.5rem e alinhamento inicial, que retoma avatar de 3rem e alinhamento central a partir de 36rem.
 component: aculta420:author-card
 props:
   variant: author_forum

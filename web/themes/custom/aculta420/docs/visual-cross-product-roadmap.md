@@ -464,3 +464,10 @@ consumers reais identificados na Wiki. A captura pós-alteração da rota consum
 autenticada WE SATIVA/workspace passou 34/34 checks em 320/360/390/640/768/1024/
 1280/1440 px sem overflow. O script não mede o gap do SDC diretamente; MF2
 segue parcial. Evidência em `/home/piradopirata/suite-out/aculta-mf2-content-section-dd37b35d5/`.
+
+### THEME-MF2 — `author-card`
+
+Migrada a base móvel do cartão SDC compartilhado por Fórum, LMS e Wiki; 36rem
+restaura a variante inline, mantendo os layouts editorial/empilhado, tamanhos e
+overrides das listagens. Stories Fórum, LMS e Wiki atualizadas. Lint CSS depende
+de `stylelint`, ausente no checkout; Firefox pós-alteração segue pendente.

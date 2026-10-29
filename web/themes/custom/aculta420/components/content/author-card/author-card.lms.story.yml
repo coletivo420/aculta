@@ -1,5 +1,5 @@
 name: Participação educacional
-description: Identidade de autoria em discussão de curso, sem exibir matrícula ou papel global.
+description: Identidade de autoria em discussão de curso; usa base compacta móvel e preserva os dados autorizados sem exibir matrícula ou papel global.
 component: aculta420:author-card
 props:
   variant: author_lms

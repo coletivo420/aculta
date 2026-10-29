@@ -251,3 +251,11 @@ alterar tokens/acabamento após THEME-MF3 e OCS-F11 aprovados. A auditoria
 estática inicial e suas limitações estão em
 [`mobile-first-audit.md`](mobile-first-audit.md).
 
+## THEME-MF2 — `content/author-card`
+
+SDC existente reutilizado pelos consumidores de autoria do Fórum, LMS e Wiki.
+A base mobile usa avatar 2.5rem, alinhamento inicial e gap 0.5rem; o breakpoint
+de 36rem restaura dimensões/alinhamento da variante inline. O cartão empilhado,
+editorial e os tamanhos `sm`/`lg` mantêm suas regras. Stories Fórum, LMS e Wiki
+documentam os estados. O browser smoke do consumer ainda está pendente.
+
