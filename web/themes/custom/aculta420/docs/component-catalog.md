@@ -301,3 +301,9 @@ Conta, SUPPORT, Wiki, Loja e Fórum, em 320/374/375/600/767/768/1440px, sem
 overflow. O baseline também passou 84/84. Isso não aprova MF3 nem cobre Domain
 Header nos purposes que hoje não o renderizam; ver `mobile-first-audit.md`.
 
+Após publicar e reconstruir cache, o consumer integrado passou 140/140 checks
+em todos os dez purposes, agora incluindo Revista, Cursos, Links e Eventos. Os
+hosts vêm do manifesto de transição; LINKS não exige menu utilitário porque o
+Portal o omite deliberadamente. Domain Header apareceu somente em MAIN e Wiki;
+seguem pendentes Pede-A e validação MF3.
+

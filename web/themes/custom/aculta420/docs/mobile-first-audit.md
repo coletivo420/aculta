@@ -227,6 +227,26 @@ reduced motion, ausência de overflow em componentes não carregados ou gate MF3
 | Owner/caminho | Contrato e pergunta técnica | Aceite esperado |
 |---|---|---|
 | Domain/Portal; composição de `AccountShellBuilder`, tema `templates/layout/page.html.twig` e attachments por purpose | Confirmar por que `.aculta-header` aparece somente em MAIN e Wiki nos oito propósitos públicos restantes, embora Institution Bar esteja presente em todos; confirmar se há intentionally hidden/unavailable state ou composição ausente. | Resposta/patch do owner sem duplicar shell; teste Firefox por purpose confirmando Institution Bar e Domain Header conforme decisão, incluindo ACCOUNT anônimo/autenticado e navegação canônica. |
+| Frente A / `aculta_portal`: `src/Presentation/DomainPresentationBuilder.php`, `src/Hook/PortalHooks.php`, contrato `DomainPresentation` e integração de rotas/menus | Toda regra de propósito/rota, disponibilidade, links e dados do Domain Header permanece no Portal; o tema deve somente renderizar o contrato neutro. Hoje `DomainPresentationBuilder` expõe `show_site_header` apenas para Wiki e homepage MAIN e o Twig consome o boolean; confirmar e implementar no Portal a política aprovada para os dez purposes, sem decisão funcional no tema. Usar `DomainPurposeManager`/`aculta_deployer` para hosts, nunca fixar URLs de teste no contrato. | Pede-A: patch do owner Portal, com contrato de apresentação/cache contexts/tags/max-age e testes das dez rotas/purposes; Firefox deve confirmar Institution Bar e Domain Header sem duplicação em test host e durante a migração Alpha para `production_host`. A Frente B não altera rotas, serviços nem regras funcionais do Portal. |
+
+### THEME-MF2 — Institution Bar integrada em todos os dez domains (2026-10-29)
+
+Após `drush cr` no head `4d8993645`, o Firefox ESR visível passou 140/140
+verificações integradas: 10 purposes × sete larguras (320/374/375/600/767/768/
+1440px), uma Institution Bar por página e zero overflow horizontal. A lista de
+hosts foi carregada de `aculta_deployer/config/deploy.json`, incluindo MAGAZINE
+(`revista.aculta.toca.net.br`); `INSTITUTION_BAR_DOMAIN_ENV=production` seleciona
+os hosts canônicos cadastrados para a migração Alpha. O purpose LINKS oculta
+intencionalmente a área utilitária, conforme `DomainPresentation`, e foi medido
+sem exigir um menu ausente.
+
+O seletor `.aculta-header` esteve presente somente em MAIN e Wiki (14/70
+combinações por purpose/largura; 2/10 propósitos), ausente em Conta, SUPPORT,
+Revista, Loja, Cursos, Fórum, Links e Eventos. Isso confirma o Pede-A acima: não
+é correção CSS; o owner Portal deve decidir/aplicar o contrato funcional e o
+tema só o renderiza. Evidência: `/home/piradopirata/aculta-suite-out/aculta-institution-bar-integrated-all-domains-4d8993645-final/`.
+O smoke não cobre rotas internas de cada área, autenticação, zoom, teclado
+completo nem WCAG 2.2 AA; THEME-MF3 permanece pendente.
 
 ## THEME-MF1 — primeira camada de fundação global
 

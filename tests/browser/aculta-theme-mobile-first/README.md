@@ -102,10 +102,11 @@ nem cobre zoom, leitor de tela ou WCAG completa.
 ## Institution Bar global
 
 `institution-bar.py` compara o CSS servido ou uma folha local candidata na
-Institution Bar em MAIN, Conta, SUPPORT, Wiki, Loja e Fórum. Mede o consumer
-real `ul.nav` (além da variante `.navbar-nav`), dimensões responsivas, presença
-única da barra e overflow em 320/374/375/600/767/768/1440 px. Só faz GET e salva
-capturas em `$SUITE_OUT`.
+Institution Bar em todos os dez purposes atuais: MAIN, Conta, SUPPORT, Revista,
+Wiki, Loja, Cursos, Fórum, Links e Eventos. Lê os hosts de
+`aculta_deployer/config/deploy.json`, testa o consumer real `ul.nav` (além de
+`.navbar-nav`), as dimensões, a presença única da barra e overflow em
+320/374/375/600/767/768/1440 px. Só faz GET e salva capturas em `$SUITE_OUT`.
 
 ```sh
 export DISPLAY=:0
@@ -118,6 +119,9 @@ Para auditar o layout servido antes da mudança, use `INSTITUTION_BAR_EXPECT=bas
 Para injetar o CSS do checkout e validar o candidato antes da publicação,
 defina `INSTITUTION_BAR_EXPECT=candidate INSTITUTION_BAR_CSS_OVERRIDE=1`.
 `INSTITUTION_BAR_EXPECT` sem override espera a geometria compacta integrada.
-O smoke cobre seis rotas públicas e a página inicial da Conta sem autenticação;
-não testa menus autenticados completos, teclado, zoom real, tema escuro ou WCAG
-2.2 AA.
+`INSTITUTION_BAR_DOMAIN_ENV=test` (padrão) escolhe os `test_host`; use `production`
+durante a transição Alpha, após verificar DNS, TLS e qual ambiente está servido,
+para ler os `production_host` da mesma tabela. O teste não presume que o host de
+teste continue sendo canônico depois dessa migração. Não testa menus autenticados
+completos, teclado, zoom real, tema escuro ou WCAG 2.2 AA; registra a presença do
+Domain Header para o Pede-A de composição.

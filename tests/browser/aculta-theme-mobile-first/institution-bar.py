@@ -18,13 +18,32 @@ OUT = Path(os.environ["SUITE_OUT"])
 OUT.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault("ACULTA_FF_PROFILE_ROOT", str(OUT / "profiles"))
 WIDTHS = [320, 374, 375, 600, 767, 768, 1440]
+DOMAIN_IDS = {
+    "main": "aculta_org",
+    "account": "conta_aculta_org",
+    "support": "apoio_aculta_org",
+    "magazine": "revista420_aculta_org",
+    "wiki": "wiki420_aculta_org",
+    "shop": "loja_aculta_org",
+    "courses": "cursos_aculta_org",
+    "forum": "forum_aculta_org",
+    "links": "links_aculta_org",
+    "eventos": "eventos_aculta_org",
+}
+DOMAIN_ENV = os.environ.get("INSTITUTION_BAR_DOMAIN_ENV", "test")
+if DOMAIN_ENV not in ("test", "production"):
+    raise SystemExit("INSTITUTION_BAR_DOMAIN_ENV deve ser test ou production.")
+DEPLOY_CONFIG = ROOT / "web/modules/custom/aculta_portal/modules/aculta_deployer/config/deploy.json"
+domain_entries = json.loads(DEPLOY_CONFIG.read_text())["domain_transition"]["entries"]
+domain_hosts = {
+    entry["domain_id"]: entry[f"{DOMAIN_ENV}_host"] for entry in domain_entries
+}
+missing_domains = set(DOMAIN_IDS.values()) - set(domain_hosts)
+if missing_domains:
+    raise SystemExit(f"Faltam domínios no deploy.json: {', '.join(sorted(missing_domains))}")
 PURPOSES = [
-    ("main", "https://aculta.toca.net.br/"),
-    ("account", "https://conta.aculta.toca.net.br/"),
-    ("support", "https://apoio.aculta.toca.net.br/"),
-    ("wiki", "https://wiki420.aculta.toca.net.br/"),
-    ("shop", "https://loja.aculta.toca.net.br/"),
-    ("forum", "https://growroom420.aculta.toca.net.br/"),
+    (purpose, f"https://{domain_hosts[domain_id]}/")
+    for purpose, domain_id in DOMAIN_IDS.items()
 ]
 EXPECT = os.environ.get("INSTITUTION_BAR_EXPECT", "candidate")
 CSS_OVERRIDE = os.environ.get("INSTITUTION_BAR_CSS_OVERRIDE") == "1"
@@ -76,11 +95,11 @@ def apply_candidate(driver):
           style.textContent=arguments[0];document.head.append(style);return true;""", [candidate])
 
 
-def expected_geometry(width):
+def expected_geometry(width, purpose):
     mobile = width < 768
     narrow = width < 375
     if EXPECT == "baseline":
-        return {
+        expected = {
             "innerWrap": "nowrap" if mobile else "wrap",
             "innerGap": "2px" if mobile else "4px 16px",
             "logoWidth": "56px" if mobile else "78px",
@@ -94,20 +113,28 @@ def expected_geometry(width):
             "whiteSpace": "normal",
             "brandPosition": "absolute" if narrow else "static",
         }
-    return {
-        "innerWrap": "nowrap" if mobile else "wrap",
-        "innerGap": "2px" if mobile else "4px 16px",
-        "logoWidth": "56px" if mobile else "78px",
-        "logoHeight": "19px" if mobile else "26px",
-        "utilityGap": "2px" if mobile else "8px",
-        "utilityMinWidth": "0px" if mobile else "auto",
-        "navWrap": "nowrap" if mobile else "wrap",
-        "navGap": "0px 4px" if mobile else "normal",
-        "linkPadding": "2px" if mobile else "16px",
-        "fontSize": "12px" if mobile else "13px",
-        "whiteSpace": "nowrap" if mobile else "normal",
-        "brandPosition": "absolute" if narrow else "static",
-    }
+    else:
+        expected = {
+            "innerWrap": "nowrap" if mobile else "wrap",
+            "innerGap": "2px" if mobile else "4px 16px",
+            "logoWidth": "56px" if mobile else "78px",
+            "logoHeight": "19px" if mobile else "26px",
+            "utilityGap": "2px" if mobile else "8px",
+            "utilityMinWidth": "0px" if mobile else "auto",
+            "navWrap": "nowrap" if mobile else "wrap",
+            "navGap": "0px 4px" if mobile else "normal",
+            "linkPadding": "2px" if mobile else "16px",
+            "fontSize": "12px" if mobile else "13px",
+            "whiteSpace": "nowrap" if mobile else "normal",
+            "brandPosition": "absolute" if narrow else "static",
+        }
+    # The social links landing intentionally hides the utility menu in Portal's
+    # domain presentation; test the shell dimensions without assuming nav links.
+    if purpose == "links":
+        for key in ("utilityGap", "utilityMinWidth", "navWrap", "navGap",
+                    "linkPadding", "fontSize", "whiteSpace"):
+            expected.pop(key)
+    return expected
 
 
 if os.environ.get("DISPLAY") != ":0":
@@ -157,9 +184,9 @@ try:
                   json.dumps(metrics, ensure_ascii=False))
 
             if EXPECT in ("baseline", "candidate"):
-                expected = expected_geometry(width)
+                expected = expected_geometry(width, purpose)
                 geometry = all(metrics.get(key) == value for key, value in expected.items())
-                geometry = geometry and metrics["navLinks"] > 0
+                geometry = geometry and (purpose == "links" or metrics["navLinks"] > 0)
                 check(f"{purpose} {width}px: geometria responsiva", geometry,
                       json.dumps(metrics, ensure_ascii=False))
 
@@ -168,7 +195,8 @@ try:
                 (OUT / f"institution-bar-{purpose}-{width}.png").write_bytes(base64.b64decode(image))
 
     (OUT / "results.json").write_text(json.dumps({
-        "expected": EXPECT, "cssOverride": CSS_OVERRIDE, "purposes": PURPOSES,
+        "expected": EXPECT, "cssOverride": CSS_OVERRIDE, "domainEnv": DOMAIN_ENV,
+        "purposes": PURPOSES,
         "widths": WIDTHS, "checks": checks,
     }, ensure_ascii=False, indent=2) + "\n")
 finally:

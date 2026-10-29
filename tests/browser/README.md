@@ -151,6 +151,7 @@ variáveis e limitações. `support-form.py` registra o baseline do formulário 
 apoio e do SDC `donation-quick`; `navigation.py` compara o shell de navegação
 global no MAIN, incluindo fallback sem JavaScript. Ambos usam Firefox ESR
 visível e gravam capturas em `$SUITE_OUT` sem submeter formulários.
-`institution-bar.py` compara a Institution Bar mobile-first em MAIN, Conta,
-SUPPORT, Wiki, Loja e Fórum, incluindo o `ul.nav` realmente renderizado e zero
-overflow; veja o README local para execução e limites.
+`institution-bar.py` compara a Institution Bar mobile-first nos dez purposes
+atuais, inclusive Revista, lendo os hosts do manifesto de transição para
+acompanhar Alpha. Inclui o `ul.nav` realmente renderizado e overflow; veja o
+README local para execução e limites.

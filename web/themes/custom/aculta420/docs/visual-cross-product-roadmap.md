@@ -516,3 +516,15 @@ candidata passaram 84/84 verificações no Firefox ESR, seis rotas e sete largur
 de 320 a 1440px, sem overflow. Capturas e JSON ficam em
 `/home/piradopirata/aculta-suite-out/aculta-institution-bar-{baseline,candidate}/`.
 Isto é um slice de MF2, não valida todo o shell/purposes e não conclui MF3.
+
+### THEME-MF2 — Institution Bar integrada nos dez purposes (2026-10-29)
+
+Após publicar `4d8993645` e reconstruir cache, Firefox ESR passou 140/140 checks
+na Institution Bar em MAIN, Conta, SUPPORT, Revista, Wiki, Loja, Cursos, Fórum,
+Links e Eventos, em sete larguras de 320 a 1440px, sem overflow. Hosts lidos de
+`aculta_deployer/config/deploy.json`; `INSTITUTION_BAR_DOMAIN_ENV` permite
+selecionar `production_host` na transição Alpha. `.aculta-header` foi renderizado
+apenas em MAIN e Wiki (2/10 purposes); o Pede-A mantém a política de
+rotas/disponibilidade no `aculta_portal`, sem regra funcional no tema. Links
+esconde o utilitário por contrato e foi tratado como tal. Evidência e limites em
+`mobile-first-audit.md`; MF3 não aprovado.
