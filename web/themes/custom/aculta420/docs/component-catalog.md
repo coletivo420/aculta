@@ -263,3 +263,11 @@ pode quebrar em colunas estreitas. Firefox ESR passou 32/32 checks, incluindo
 575/576px foi confirmada. Capturas em
 `/home/piradopirata/suite-out/aculta-theme-author-card-892f803d5/`.
 
+## THEME-MF2 — navegação do shell `portal-account`
+
+A sanfona já usada em mobile virou base; o breakpoint de 48rem restaura o menu
+desktop sticky e o layout de duas colunas. Sem alteração no template do módulo,
+DOM ou atributos AJAX. A folha candidata passou 33/33 checks Firefox autenticados
+em dez larguras e sem overflow. A repetição integrada sem CSS override segue
+pendente após sincronizar o head no servidor.
+

@@ -144,5 +144,7 @@ pagamento. Ver `aculta-mercadopago/README.md`.
 
 `author-card.py` valida o breakpoint do cartão de autoria no consumer público do
 Fórum (`/discussoes/novas`), além de overflow horizontal em 320–1440 px. Roda no
-servidor de desenvolvimento, Firefox ESR visível, sem autenticação ou escrita;
-consulte o README local para variáveis e limitações.
+servidor de desenvolvimento, Firefox ESR visível, sem escrita. `account-shell.py`
+confere a navegação autenticada da Conta por GET com link Drush efêmero e compara
+o CSS servido com a folha candidata opcional. Consulte o README local para
+variáveis e limitações.

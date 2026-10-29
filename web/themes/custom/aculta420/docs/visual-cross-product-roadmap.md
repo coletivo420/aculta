@@ -476,3 +476,11 @@ em 576/600px; retirada a regra `nowrap` para permitir quebra natural. O teste
 reutilizável confirmou a correção: 32/32 checks, consumer presente, alinhamento
 mobile/inline correto e zero overflow em 320/360/390/575/576/600/768/1024/1280/
 1440px. Capturas/JSON em `/home/piradopirata/suite-out/aculta-theme-author-card-892f803d5/`.
+
+### THEME-MF2 — navegação `portal-account`
+
+Migradas as regras do shell autenticado para mobile-first: sanfona e coluna única
+na base; menu lateral, sticky e duas colunas a partir de 48rem. CSS candidato
+passou 33/33 checks autenticados no Firefox em 320/360/390/599/600/767/768/
+1024/1280/1440px sem overflow. Falta validar o CSS agregado pós-publicação;
+tabelas de pedido continuam com regras móveis próprias para fase posterior.

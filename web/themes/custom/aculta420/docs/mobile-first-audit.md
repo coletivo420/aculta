@@ -290,3 +290,15 @@ flex-start a 320/360/390/575 e central a partir de 576px, e sem overflow em
 `/home/piradopirata/suite-out/aculta-theme-author-card-892f803d5/`. O script
 reutilizável `tests/browser/aculta-theme-mobile-first/author-card.py` registra
 consumer e breakpoint; não cobre teclado, zoom real ou WCAG completa.
+
+### THEME-MF2 — menu responsivo do shell da Conta
+
+O layout do shell passou a usar uma coluna, navegação em sanfona e controles
+compactos como base; `min-width: 48rem` restaura a lista lateral desktop, duas
+colunas e sticky. O DOM, os atributos de `account-navigation.js` e os dados dos
+links não mudaram. Firefox ESR autenticado em `/configuracoes` passou 33/33
+checks com a folha candidata injetada, em 320/360/390/599/600/767/768/1024/
+1280/1440 px, sem overflow; a Institution Bar apareceu uma vez. O teste não
+envia o formulário e não cobre tabelas, teclado completo, A/B, zoom real ou
+WCAG. Após publicar, ainda falta repetir sem override para validar a agregação
+CSS do Runtime.
