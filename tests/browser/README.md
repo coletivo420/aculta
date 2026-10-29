@@ -83,6 +83,14 @@ Usa conta descartável e link ULI; não submete o formulário. A ativação temp
 do tema deve ser restaurada pelo `trap` documentado no README local. Capturas e
 link ULI ficam em `$SUITE_OUT`.
 
+### `aculta-image-admin/`
+
+`visual.py` abre as opções de processamento de imagens com Firefox ESR, verifica
+compressão, WebP, formatos de entrada/saída, detecção de bibliotecas e reflow
+em 1280/390/320 px. Cria e remove conta/papel temporários com permissão restrita;
+não salva configuração nem altera arquivos. Servidor de desenvolvimento; ver o
+README local para execução e limitações.
+
 ### `aculta-forum-lms/`
 
 `h5p-discussions.py` prepara um curso LMS, uma conta Educadora temporária e um
