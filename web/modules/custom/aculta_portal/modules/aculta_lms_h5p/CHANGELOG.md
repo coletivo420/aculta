@@ -1,3 +1,13 @@
+## 0.4.0-dev.158 — documentar entidade de conteúdo H5P (2026-10-29)
+
+- PHPDoc da entidade de conteúdo foi completado sem mudar campos, armazenamento
+  ou métodos do protocolo H5P. Três exceções locais documentam nomes de método
+  exigidos pelo H5P; o lint e PHPCS do arquivo passam sem erros/avisos.
+- PHPCS integral caiu de 203 erros/21 avisos em 27 arquivos para 188/21 em 26
+  arquivos. Regras e identificadores H5P permanecem intactos.
+- Unit + Kernel no `aculta_simpletest`: 43 testes / 481 asserções PASS, 41
+  depreciações Core/contrib. PHP lint e `git diff --check` PASS; sem Runtime.
+
 ## 0.4.0-dev.157 — documentar contratos dos formulários H5P (2026-10-29)
 
 - PHPDoc dos quatro formulários administrativos foi completado; removidos

@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Entity;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -29,10 +29,15 @@ use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PEvent;
 // phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterface {
 
+  /**
+   * Cached library metadata for the H5P content entity.
+   *
+   * @var \stdClass|null
+   */
   protected $library;
 
   /**
-   *
+   * Defines base fields for H5P content and course document references.
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
@@ -176,7 +181,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
   }
 
   /**
-   *
+   * Returns library metadata in the requested format.
    */
   public function getLibrary($assoc = FALSE) {
     if (empty($this->library)) {
@@ -196,7 +201,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
   }
 
   /**
-   *
+   * Returns the H5P library name and version.
    */
   public function getLibraryString() {
     if (empty($this->library)) {
@@ -207,7 +212,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
   }
 
   /**
-   *
+   * Returns the library database ID used by this content entity.
    */
   public function getLibraryId() {
     return $this->get('library_id')->value;
@@ -235,15 +240,16 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
   }
 
   /**
-   *
+   * Reports whether the library supports div embedding.
    */
   public function isDivEmbeddable(): bool {
     return $this->getEmbedType() === 'div';
   }
 
   /**
-   *
+   * Keeps H5P's export hook disabled to avoid exposing package sources.
    */
+  // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Preserve the H5P export hook identifier.
   protected function getExportURL() {
     // Exports contain all package source files. Do not expose a direct URL;
     // an authenticated export endpoint requires a separate access contract.
@@ -258,7 +264,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
   }
 
   /**
-   *
+   * Returns parameters filtered by H5P Core for presentation.
    */
   public function getFilteredParameters() {
     if (empty($this->library)) {
@@ -293,6 +299,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
    * Get an array containing all the metadata fields.
    *
    * @return array
+   *   Content metadata validated by the H5P library.
    */
   public function getMetadata() {
     $metadata = [
@@ -324,14 +331,17 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
    * Get parameters + metadata in JSON format for the editor.
    *
    * @return string
+   *   Filtered parameters and content metadata encoded as JSON.
    */
+  // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Preserve the H5P editor protocol method identifier.
   public function getEditorJSON() {
     return '{"params":' . $this->getFilteredParameters() . ',"metadata":' . json_encode($this->getMetadata()) . '}';
   }
 
   /**
-   *
+   * Builds H5P integration settings for the current user and content.
    */
+  // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Preserve the H5P integration protocol method identifier.
   public function getaculta_H5PIntegrationSettings($canUpdateEntity = FALSE) {
     if (empty($this->library)) {
       $this->loadLibrary();
