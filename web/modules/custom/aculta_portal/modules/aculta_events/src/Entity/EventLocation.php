@@ -31,6 +31,18 @@ use Drupal\views\EntityViewsData;
     'storage' => 'Drupal\Core\Entity\Sql\SqlContentEntityStorage',
     'access' => 'Drupal\aculta_events\Access\EventLocationAccessControlHandler',
     'views_data' => EntityViewsData::class,
+    'form' => [
+      'default' => 'Drupal\aculta_events\Form\EventLocationForm',
+      'add' => 'Drupal\aculta_events\Form\EventLocationForm',
+      'edit' => 'Drupal\aculta_events\Form\EventLocationForm',
+      'delete' => 'Drupal\aculta_events\Form\EventLocationDeleteForm',
+    ],
+  ],
+  links: [
+    'canonical' => '/locais/{aculta_event_location}',
+    'add-form' => '/locais/adicionar',
+    'edit-form' => '/locais/{aculta_event_location}/editar',
+    'delete-form' => '/locais/{aculta_event_location}/excluir',
   ],
 )]
 final class EventLocation extends ContentEntityBase {
@@ -131,7 +143,7 @@ final class EventLocation extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Versão do elemento do OpenStreetMap'))
       ->setSetting('max_length', 32);
 
-        $fields['field_allow_claiming'] = BaseFieldDefinition::create('boolean')
+    $fields['field_allow_claiming'] = BaseFieldDefinition::create('boolean')
       ->setLabel(new TranslatableMarkup('Permitir reivindicação de posse'))
       ->setDescription(new TranslatableMarkup('Permite que outros usuários solicitem a titularidade deste local à moderação.'))
       ->setDefaultValue(FALSE);
@@ -139,6 +151,25 @@ final class EventLocation extends ContentEntityBase {
     $fields['field_organizador'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Organizador / Responsável'))
       ->setSetting('target_type', 'user');
+
+    $fields['field_status'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(new TranslatableMarkup('Situação'))
+      ->setDefaultValue('publicado')
+      ->setSetting('allowed_values', [
+        'rascunho' => new TranslatableMarkup('Rascunho'),
+        'publicado' => new TranslatableMarkup('Publicado'),
+        'privado' => new TranslatableMarkup('Privado'),
+      ]);
+
+    $fields['field_descricao'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(new TranslatableMarkup('Descrição do local'));
+
+    $fields['field_telefone'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Telefone de contato'))
+      ->setSetting('max_length', 32);
+
+    $fields['field_site'] = BaseFieldDefinition::create('uri')
+      ->setLabel(new TranslatableMarkup('Site ou página do local'));
 
     return $fields;
   }

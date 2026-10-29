@@ -21,13 +21,20 @@ final class EventLocationAccessControlHandler extends EntityAccessControlHandler
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
-    if ($operation === 'view') {
-      return AccessResult::allowed()->addCacheableDependency($entity);
-    }
+    $status = (string) ($entity->get('field_status')->value ?? 'publicado');
 
-    if ($operation === 'update' || $operation === 'delete') {
+    if ($operation === 'view') {
+      if ($status === 'publicado') {
+        return AccessResult::allowed()->addCacheableDependency($entity);
+      }
+
       if ($account->hasPermission('administer aculta events')) {
-        return AccessResult::allowed()->cachePerPermissions();
+        return AccessResult::allowed()->cachePerPermissions()->addCacheableDependency($entity);
+      }
+
+      $organizadorUid = (int) ($entity->get('field_organizador')->target_id ?? 0);
+      if ($organizadorUid > 0 && (int) $account->id() === $organizadorUid) {
+        return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
       }
 
       if (in_array('content_editor', $account->getRoles(), TRUE)) {
@@ -38,7 +45,50 @@ final class EventLocationAccessControlHandler extends EntityAccessControlHandler
             return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
           }
         }
-        return AccessResult::forbidden('Editor sem vínculo comprovado com a organização do local.')->cachePerUser()->addCacheableDependency($entity);
+      }
+
+      return AccessResult::forbidden('Local em rascunho ou privado não é visível publicamente.')
+        ->cachePerUser()
+        ->addCacheableDependency($entity);
+    }
+
+    if ($operation === 'update' || $operation === 'delete') {
+      if ($operation === 'delete') {
+        // Bloqueia exclusão de local associado a datas de evento (LOC-01/02).
+        if (\Drupal::hasService('entity_type.manager') && \Drupal::entityTypeManager()->hasDefinition('aculta_event_date')) {
+          $inUse = count(\Drupal::entityTypeManager()->getStorage('aculta_event_date')
+            ->getQuery()
+            ->accessCheck(FALSE)
+            ->condition('field_local', (int) $entity->id())
+            ->execute());
+          if ($inUse > 0) {
+            return AccessResult::forbidden('Local em uso por datas de eventos não pode ser excluído.')
+              ->addCacheableDependency($entity)
+              ->addCacheTags(['aculta_event_date_list']);
+          }
+        }
+      }
+
+      if ($account->hasPermission('administer aculta events')) {
+        return AccessResult::allowed()->cachePerPermissions();
+      }
+
+      $organizadorUid = (int) ($entity->get('field_organizador')->target_id ?? 0);
+      if ($organizadorUid > 0 && (int) $account->id() === $organizadorUid) {
+        return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
+      }
+
+      if (in_array('content_editor', $account->getRoles(), TRUE)) {
+        if (\Drupal::hasService('aculta_user.organization_access_service')) {
+          /** @var \Drupal\aculta_user\Organization\OrganizationAccessService $orgAccess */
+          $orgAccess = \Drupal::service('aculta_user.organization_access_service');
+          if ($orgAccess->isContentEditorScoped($entity, $account)) {
+            return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
+          }
+        }
+        return AccessResult::forbidden('Editor sem vínculo comprovado com a organização do local.')
+          ->cachePerUser()
+          ->addCacheableDependency($entity);
       }
     }
 

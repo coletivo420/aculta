@@ -296,3 +296,33 @@ function aculta_events_update_10006(): string {
     ? 'Campos de ARQ-05 já existiam em aculta_event e aculta_event_location.'
     : 'Campos instalados: ' . implode(', ', $installed) . '.';
 }
+
+/**
+ * Instala campos de status, descrição, telefone e site em aculta_event_location (LOC-01/02).
+ */
+function aculta_events_update_10007(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $fieldManager = \Drupal::service('entity_field.manager');
+  $installed = [];
+
+  $locDefs = $fieldManager->getBaseFieldDefinitions('aculta_event_location');
+  foreach (['field_status', 'field_descricao', 'field_telefone', 'field_site'] as $fieldName) {
+    if ($manager->getFieldStorageDefinition($fieldName, 'aculta_event_location') === NULL) {
+      $definition = $locDefs[$fieldName] ?? NULL;
+      if ($definition !== NULL) {
+        $manager->installFieldStorageDefinition($fieldName, 'aculta_event_location', 'aculta_events', $definition);
+        $installed[] = "aculta_event_location.$fieldName";
+      }
+    }
+  }
+
+  // Preenche field_status = 'publicado' para locais pré-existentes.
+  \Drupal::database()->update('aculta_event_location')
+    ->fields(['field_status' => 'publicado'])
+    ->isNull('field_status')
+    ->execute();
+
+  return $installed === []
+    ? 'Campos de LOC-01/02 já existiam em aculta_event_location.'
+    : 'Campos instalados: ' . implode(', ', $installed) . '.';
+}
