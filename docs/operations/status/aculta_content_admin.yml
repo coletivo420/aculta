@@ -1,6 +1,11 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.2
-state: Dev
+version: 0.1.0-rc.1
+state: RC
 progress_note: >-
-  ADM5: rota mudou para /painel-administrativo/colecoes-moderaveis após colisão confirmada com view.content.page_1 em /painel-administrativo/conteudo. Kernel 4/56 PASS, PHP lint 3/3 PASS; revisão visual/acessível do candidato pendente porque o Runtime não serve este commit.
-next_phase: 'Validar visual e acesso autenticado do caminho canônico quando este candidato estiver servido; repetir a auditoria quando surgirem novas coleções editoriais. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_content_admin/docs/ROADMAP.md).'
+  ADM5 RC 0.1.0-rc.1: Firefox ESR no Runtime em bad8ef5fe, rota 200; conta de
+  teste viu somente seis coleções com acesso nativo; foco visível 6/6; sem
+  overflow em 1280/390/320 px (7/7 checks). Kernel 4/56 PASS, zero
+  depreciações; PHP lint 3/3 e PHPCS Drupal/DrupalPractice PASS. Gates de rotas,
+  Drupal 11+ e fronteira módulo/tema (3366 verificações) PASS. Nenhum conteúdo
+  criado ou editado. Próxima fase: Alpha após release autorizado.
+next_phase: 'Alpha (*.aculta.org): repetir a revisão de acesso autenticado da rota canônica após o fluxo de release autorizado ([roadmap](web/modules/custom/aculta_portal/modules/aculta_content_admin/docs/ROADMAP.md))'

@@ -1,5 +1,16 @@
 # Changelog — aculta_content_admin
 
+## 0.1.0-rc.1 — validar ADM5 no candidato servido (2026-10-29)
+
+- Firefox ESR autenticado no Runtime: rota canônica 200; somente as seis
+  coleções nativas acessíveis à conta de teste apareceram; foco visível 6/6;
+  reflow sem overflow em 1280/390/320 CSS px (7/7 checks).
+- `ModeratableCollectionAccessKernelTest`: 4 testes/56 assertions PASS; PHPCS
+  Drupal/DrupalPractice PASS; PHP lint 3/3; gates de alias temporário, Drupal
+  11+ e fronteira módulo/tema PASS. Sem conteúdo criado/editado.
+- A conta UID 5 foi usada por ULI, sem alteração de papéis ou dados. Capturas
+  ficaram fora do repositório em `$SUITE_OUT`.
+
 ## 2026-10-29 — evitar colisão com a listagem Core de conteúdo
 
 - Movido o painel para `/painel-administrativo/colecoes-moderaveis`, pois o caminho anterior colidia com `view.content.page_1`.
