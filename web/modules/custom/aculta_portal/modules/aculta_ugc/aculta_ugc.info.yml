@@ -1,0 +1,7 @@
+name: 'ACULTA UGC'
+type: module
+description: 'Infraestrutura comum de moderação transversal, denúncias e conteúdo gerado por usuários (ARQ-06).'
+package: Custom
+core_version_requirement: ^11
+dependencies:
+  - aculta_portal:aculta_portal

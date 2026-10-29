@@ -1,0 +1,4 @@
+moderar denuncias ugc:
+  title: 'Moderar denúncias transversais de UGC'
+  description: 'Permite visualizar a fila de denúncias e emitir decisões de moderação.'
+  restrict access: true
