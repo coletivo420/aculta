@@ -44,9 +44,9 @@ $controller = (string) file_get_contents($controllerFile);
 foreach ([
   "'scan_all' => TRUE",
   "'name' => 'ACULTA Image'",
-  "'name' => 'ACULTA PDF Viewer'",
+  "'name' => 'ACULTA Document Viewer'",
   "'modules' => ['aculta_image']",
-  "'modules' => ['aculta_pdf_viewer']",
+  "'modules' => ['aculta_document_viewer']",
   "requirements-php-extensions",
 ] as $required) {
   if (!str_contains($controller, $required)) {

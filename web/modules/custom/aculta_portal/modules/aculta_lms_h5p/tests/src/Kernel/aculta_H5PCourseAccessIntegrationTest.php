@@ -8,7 +8,7 @@ use Drupal\aculta_lms_h5p\Controller\aculta_H5PAJAX;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\Core\Form\FormState;
 use Drupal\aculta_lms_h5p\Plugin\Field\FieldWidget\aculta_H5PEditorWidget;
-use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface;
+use Drupal\aculta_document_viewer\Pdf\PdfViewerBuilderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -54,10 +54,11 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     'group',
     'views',
     'lms',
+    'csp',
+    'reporting',
+    'aculta_document_viewer',
     'aculta_document_viewer_group',
     'aculta_image',
-    'aculta_pdf_viewer',
-    'aculta_pdf_viewer_group',
     'aculta_lms_h5p',
   ];
 
@@ -85,7 +86,7 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->container->set(
-      'aculta_pdf_viewer.builder',
+      'aculta_document_viewer.pdf_builder',
       $this->createMock(PdfViewerBuilderInterface::class),
     );
     $this->installConfig([
@@ -94,8 +95,8 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       'filter',
       'group',
       'media',
-      'aculta_pdf_viewer',
-      'aculta_pdf_viewer_group',
+      'aculta_document_viewer',
+      'aculta_document_viewer_group',
     ]);
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
@@ -405,7 +406,7 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       '#attributes' => ['data-aculta-pdf-viewer' => 'true'],
     ];
     $courseDocumentId = (int) $courseDocument->id();
-    $this->container->get('aculta_pdf_viewer.builder')
+    $this->container->get('aculta_document_viewer.pdf_builder')
       ->expects(self::once())
       ->method('build')
       ->with(

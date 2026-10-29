@@ -51,7 +51,6 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
     'domain',
     'aculta_document_viewer_group',
     'aculta_index',
-    'aculta_index_course_document_access_test',
   ];
 
   /**

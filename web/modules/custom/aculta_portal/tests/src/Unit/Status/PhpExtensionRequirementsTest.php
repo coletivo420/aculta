@@ -61,7 +61,7 @@ final class PhpExtensionRequirementsTest extends UnitTestCase {
   public function testMapsImageAndPdfPackageRequirements(): void {
     $requirements = [
       ['name' => 'ACULTA Image', 'modules' => ['aculta_image'], 'packages' => ['drupal/imageapi_optimize']],
-      ['name' => 'ACULTA PDF Viewer', 'modules' => ['aculta_pdf_viewer'], 'packages' => ['drupal/pdfpreview']],
+      ['name' => 'ACULTA Document Viewer', 'modules' => ['aculta_document_viewer'], 'packages' => ['drupal/pdfpreview']],
     ];
     $packages = [
       ['name' => 'drupal/imageapi_optimize', 'require' => ['vendor/image-lib' => '^1']],
@@ -72,7 +72,7 @@ final class PhpExtensionRequirementsTest extends UnitTestCase {
     $rows = PhpExtensionRequirements::build($requirements, $packages, ['gd', 'fileinfo']);
 
     self::assertSame(['ext-fileinfo', 'ext-gd'], array_column($rows, 'extension'));
-    self::assertSame(['aculta_pdf_viewer'], $rows[0]['modules']);
+    self::assertSame(['aculta_document_viewer'], $rows[0]['modules']);
     self::assertSame(['aculta_image'], $rows[1]['modules']);
   }
 

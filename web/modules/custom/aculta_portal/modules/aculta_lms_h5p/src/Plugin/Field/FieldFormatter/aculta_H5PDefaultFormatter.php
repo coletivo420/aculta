@@ -16,7 +16,7 @@ use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PLibraryIdentifier;
 use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
 use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface;
+use Drupal\aculta_document_viewer\Pdf\PdfViewerBuilderInterface;
 use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -74,7 +74,7 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
       $container->get('config.factory'),
       $container->get('current_user'),
       $container->get('aculta_lms_h5p.framework'),
-      $container->get('aculta_pdf_viewer.builder'),
+      $container->get('aculta_document_viewer.pdf_builder'),
     );
   }
 

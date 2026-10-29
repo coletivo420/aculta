@@ -48,7 +48,6 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     'aculta_mailer',
     'aculta_messenger',
     'aculta_pagamentos_mercadopago',
-    'aculta_pdf_viewer',
     'aculta_portal',
     'aculta_portal_cep',
     'aculta_studio',

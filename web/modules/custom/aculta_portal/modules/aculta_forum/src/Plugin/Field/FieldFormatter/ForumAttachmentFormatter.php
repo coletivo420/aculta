@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Plugin\Field\FieldFormatter;
 
 use Drupal\aculta_document_viewer\Docx\DocxViewerBuilder;
+use Drupal\aculta_document_viewer\Pdf\PdfViewerBuilderInterface;
 use Drupal\aculta_document_viewer\Spreadsheet\SpreadsheetViewerBuilder;
 use Drupal\aculta_image\ImageRenderer;
-use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -58,9 +58,9 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
       $configuration['view_mode'],
       $configuration['third_party_settings'],
       $container->get('aculta_image.render'),
-      $container->get('aculta_document_viewer.docx_builder'),
-      $container->get('aculta_document_viewer.spreadsheet_builder'),
-      $container->get('aculta_pdf_viewer.builder'),
+      $container->get('aculta_document_viewer.doc_builder'),
+      $container->get('aculta_document_viewer.sheet_builder'),
+      $container->get('aculta_document_viewer.pdf_builder'),
     );
   }
 
