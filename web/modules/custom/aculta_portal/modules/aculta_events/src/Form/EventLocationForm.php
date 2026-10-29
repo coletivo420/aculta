@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Form;
 
+use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -24,6 +25,13 @@ final class EventLocationForm extends ContentEntityForm {
     // o usuário corrente.
     if ($entity->isNew() && $entity->get('field_organizador')->isEmpty()) {
       $entity->set('field_organizador', $this->currentUser()->id());
+    }
+
+    // Aplica o formulário central de endereço brasileiro (D-54/D-55).
+    if (isset($form['field_endereco'])) {
+      $parts = AccountAddressForm::savedParts($entity->isNew() ? NULL : $entity, 'field_endereco');
+      AccountAddressForm::apply($form['field_endereco'], $parts['number'], $parts['sn']);
+      $form['#entity_builders'][] = [AccountAddressForm::class, 'buildStreetNumber'];
     }
 
     return $form;

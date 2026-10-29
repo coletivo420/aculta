@@ -102,7 +102,9 @@ final class EventLocation extends ContentEntityBase {
     $fields['title'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Nome do local'))
       ->setRequired(TRUE)
-      ->setSetting('max_length', 255);
+      ->setSetting('max_length', 255)
+      ->setDisplayOptions('form', ['type' => 'string_textfield', 'weight' => 0])
+      ->setDisplayConfigurable('form', TRUE);
 
     // Exato ou aproximado. Campo próprio, sem origem no OpenCulturas.
     // Ver auditoria T9.
@@ -112,7 +114,9 @@ final class EventLocation extends ContentEntityBase {
       ->setSetting('allowed_values', [
         'exato' => new TranslatableMarkup('Exato'),
         'aproximado' => new TranslatableMarkup('Aproximado (só bairro e município)'),
-      ]);
+      ])
+      ->setDisplayOptions('form', ['type' => 'options_select', 'weight' => 25])
+      ->setDisplayConfigurable('form', TRUE);
 
     // Tipo de local: termo do vocabulário aculta_location_type.
     // O vocabulário é portado do OpenCulturas.
@@ -120,12 +124,16 @@ final class EventLocation extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Tipo de local'))
       ->setSetting('target_type', 'taxonomy_term')
       ->setSetting('handler', 'default:taxonomy_term')
-      ->setSetting('handler_settings', ['target_bundles' => ['aculta_location_type' => 'aculta_location_type']]);
+      ->setSetting('handler_settings', ['target_bundles' => ['aculta_location_type' => 'aculta_location_type']])
+      ->setDisplayOptions('form', ['type' => 'options_select', 'weight' => 5])
+      ->setDisplayConfigurable('form', TRUE);
 
     // Endereço postal (módulo address). Só Brasil no ACULTA.
     $fields['field_endereco'] = BaseFieldDefinition::create('address')
       ->setLabel(new TranslatableMarkup('Endereço'))
-      ->setSetting('available_countries', ['BR']);
+      ->setSetting('available_countries', ['BR'])
+      ->setDisplayOptions('form', ['type' => 'address_default', 'weight' => 20])
+      ->setDisplayConfigurable('form', TRUE);
 
     // Coordenadas para o mapa (geofield).
     // O endereço é geocodificado no servidor (ADR-014).
@@ -133,7 +141,9 @@ final class EventLocation extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Coordenadas'));
 
     $fields['field_horario'] = BaseFieldDefinition::create('string_long')
-      ->setLabel(new TranslatableMarkup('Horário de funcionamento'));
+      ->setLabel(new TranslatableMarkup('Horário de funcionamento'))
+      ->setDisplayOptions('form', ['type' => 'string_textarea', 'weight' => 30])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['field_osm_id'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Identificador do OpenStreetMap'))
@@ -146,7 +156,9 @@ final class EventLocation extends ContentEntityBase {
     $fields['field_allow_claiming'] = BaseFieldDefinition::create('boolean')
       ->setLabel(new TranslatableMarkup('Permitir reivindicação de posse'))
       ->setDescription(new TranslatableMarkup('Permite que outros usuários solicitem a titularidade deste local à moderação.'))
-      ->setDefaultValue(FALSE);
+      ->setDefaultValue(FALSE)
+      ->setDisplayOptions('form', ['type' => 'boolean_checkbox', 'weight' => 45])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['field_organizador'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Organizador / Responsável'))
@@ -159,17 +171,25 @@ final class EventLocation extends ContentEntityBase {
         'rascunho' => new TranslatableMarkup('Rascunho'),
         'publicado' => new TranslatableMarkup('Publicado'),
         'privado' => new TranslatableMarkup('Privado'),
-      ]);
+      ])
+      ->setDisplayOptions('form', ['type' => 'options_select', 'weight' => 10])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['field_descricao'] = BaseFieldDefinition::create('string_long')
-      ->setLabel(new TranslatableMarkup('Descrição do local'));
+      ->setLabel(new TranslatableMarkup('Descrição do local'))
+      ->setDisplayOptions('form', ['type' => 'string_textarea', 'weight' => 15])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['field_telefone'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Telefone de contato'))
-      ->setSetting('max_length', 32);
+      ->setSetting('max_length', 32)
+      ->setDisplayOptions('form', ['type' => 'string_textfield', 'weight' => 35])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['field_site'] = BaseFieldDefinition::create('uri')
-      ->setLabel(new TranslatableMarkup('Site ou página do local'));
+      ->setLabel(new TranslatableMarkup('Site ou página do local'))
+      ->setDisplayOptions('form', ['type' => 'uri', 'weight' => 40])
+      ->setDisplayConfigurable('form', TRUE);
 
     return $fields;
   }

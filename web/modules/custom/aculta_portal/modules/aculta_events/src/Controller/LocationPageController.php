@@ -95,6 +95,21 @@ final class LocationPageController extends ControllerBase {
       ];
     }
 
+    if ($aculta_event_location->access('update', $this->currentUser())) {
+      $build['header']['actions'] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['location-actions', 'mt-2', 'mb-3']],
+        'edit_link' => [
+          '#type' => 'link',
+          '#title' => $this->t('Editar este local'),
+          '#url' => Url::fromRoute('aculta_events.location_edit', [
+            'aculta_event_location' => $aculta_event_location->id(),
+          ]),
+          '#attributes' => ['class' => ['button', 'button--secondary', 'button--small']],
+        ],
+      ];
+    }
+
     $details = [];
     if ($endereco !== '') {
       $details['endereco'] = [
