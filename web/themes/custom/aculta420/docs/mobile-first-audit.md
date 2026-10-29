@@ -268,4 +268,8 @@ progressão fluida. Consumers reais encontrados na Wiki: `WikiProposalSubmission
 `WikiProposalDecisionForm`, `WikiContributorWorkspace` e
 `WikiProposalStatusController`. Schemas SDC e fronteira tema/módulo passaram.
 O lint CSS não executou: o script existe, mas `stylelint` não está instalado
-neste checkout. Validação Firefox pós-alteração ainda pendente.
+neste checkout. Firefox ESR visível testou a área WE SATIVA autenticada e o
+workspace Wiki em 34/34 verificações, incluindo 320/360/390/640/768/1024/1280/1440
+px sem overflow; PNG/JSON em `/home/piradopirata/suite-out/aculta-mf2-content-section-dd37b35d5/`.
+O smoke cobre a tela real do workspace, mas não mede diretamente o gap do SDC;
+zoom real, teclado nesse formulário e WCAG completa permanecem sem evidência.

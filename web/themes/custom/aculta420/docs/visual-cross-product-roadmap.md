@@ -461,4 +461,6 @@ andamento.
 Removido o `max-width: 575.98px` redundante: o gap `clamp(.75rem, 2vw, 1.5rem)`
 já garante a base móvel e cresce fluidamente. Atualizadas cinco stories do SDC;
 consumers reais identificados na Wiki. A captura pós-alteração da rota consumer
-ainda está pendente; MF2 segue parcial.
+autenticada WE SATIVA/workspace passou 34/34 checks em 320/360/390/640/768/1024/
+1280/1440 px sem overflow. O script não mede o gap do SDC diretamente; MF2
+segue parcial. Evidência em `/home/piradopirata/suite-out/aculta-mf2-content-section-dd37b35d5/`.
