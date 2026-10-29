@@ -269,84 +269,98 @@
   margin-block: 0.75rem;
 }
 
-/* Meus pedidos no celular: cada pedido vira um bloco com o nome do campo ao lado do valor (data-label do Portal).
-   O cabeçalho da tabela continua no código para leitores de tela. */
-@media (max-width: 767.98px) {
-  .portal-account__commerce--orders thead {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+/* Pedidos e tabelas de detalhe partem do reflow móvel; telas maiores restauram
+   a semântica de tabela do navegador e os espaçamentos da biblioteca Bootstrap. */
+.portal-account__commerce--orders thead,
+.portal-account__body table thead {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.portal-account__commerce--orders table,
+.portal-account__commerce--orders tbody,
+.portal-account__commerce--orders tr,
+.portal-account__commerce--orders td,
+.portal-account__body table,
+.portal-account__body tbody,
+.portal-account__body tr,
+.portal-account__body td {
+  display: block;
+  width: 100%;
+}
+
+.portal-account__commerce--orders tr,
+.portal-account__body tr {
+  padding-block: 0.5rem;
+  border-block-end: 1px solid var(--aculta-border-subtle);
+}
+
+.portal-account__commerce--orders td,
+.portal-account__body td {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0.25rem;
+  border-width: 0;
+  text-align: end;
+}
+
+.portal-account__commerce--orders td::before,
+.portal-account__body td[data-label]::before {
+  content: attr(data-label);
+  font-weight: 600;
+  text-align: start;
+}
+
+@media (min-width: 48rem) {
+  .portal-account__commerce--orders thead,
+  .portal-account__body table thead {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
   }
 
   .portal-account__commerce--orders table,
-  .portal-account__commerce--orders tbody,
-  .portal-account__commerce--orders tr,
-  .portal-account__commerce--orders td {
-    display: block;
+  .portal-account__body table {
+    display: revert;
     width: 100%;
   }
 
-  .portal-account__commerce--orders tr {
-    padding-block: 0.5rem;
-    border-block-end: 1px solid var(--aculta-border-subtle);
-  }
-
-  .portal-account__commerce--orders td {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.35rem 0.25rem;
-    border: 0;
-    text-align: end;
-  }
-
-  .portal-account__commerce--orders td::before {
-    content: attr(data-label);
-    font-weight: 600;
-    text-align: start;
-  }
-}
-
-/* Tabelas de pedido (detalhe do pedido, itens) no celular: linhas empilhadas com o nome da coluna (data-label). */
-@media (max-width: 767.98px) {
-  .portal-account__body table thead {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .portal-account__body table,
+  .portal-account__commerce--orders tbody,
+  .portal-account__commerce--orders tr,
+  .portal-account__commerce--orders td,
   .portal-account__body tbody,
   .portal-account__body tr,
   .portal-account__body td {
-    display: block;
-    width: 100%;
+    display: revert;
+    width: auto;
   }
 
+  .portal-account__commerce--orders tr,
   .portal-account__body tr {
-    padding-block: 0.5rem;
-    border-block-end: 1px solid var(--aculta-border-subtle);
+    padding: 0;
+    border: none;
   }
 
+  .portal-account__commerce--orders td,
   .portal-account__body td {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.35rem 0.25rem;
-    border: 0;
-    text-align: end;
+    justify-content: normal;
+    gap: normal;
+    padding: var(--bs-table-cell-padding-y, 0.5rem) var(--bs-table-cell-padding-x, 0.5rem);
+    border-width: var(--bs-border-width, 1px);
+    text-align: left;
   }
 
+  .portal-account__commerce--orders td::before,
   .portal-account__body td[data-label]::before {
-    content: attr(data-label);
-    font-weight: 600;
-    text-align: start;
+    content: none;
   }
 }
 

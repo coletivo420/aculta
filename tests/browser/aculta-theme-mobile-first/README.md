@@ -181,3 +181,18 @@ a sessão antes de voltar à home MAIN. `INSTITUTION_BAR_SCROLL_SCENARIOS` aceit
 `INSTITUTION_BAR_SCROLL_DISABLE_JS=1` testa o fallback CSS em um perfil Firefox
 com JavaScript de página desativado. Esse teste focal não substitui a
 matriz completa de larguras, teclado, zoom, dark mode ou WCAG 2.2 AA.
+
+
+## Tabela de pedidos da Conta
+
+`account-orders.py` usa Firefox ESR visível no servidor de desenvolvimento, abre `/pedidos` com uma sessão Drush efêmera e não submete formulários. Confere a tabela realmente renderizada (inclusive o estado vazio), overflow nas larguras padrão 320/360/390/599/600/767/768/1024/1280/1440 px e uma tabela sintética com quatro células/atributos `data-label`, sem dados de pedido. Quando `ACCOUNT_ORDERS_CSS_OVERRIDE=1`, compara o CSS candidato local com o CSS servido: em desktop, largura da tabela, padding/borda da célula e alinhamento devem permanecer idênticos ao baseline; no mobile, tabela/células empilham e o cabeçalho visualmente oculto continua no DOM.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-account-orders
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+export ACULTA_PROJECT_ROOT=/home/piradopirata/projetos/aculta
+DISPLAY=:0 python3 tests/browser/aculta-theme-mobile-first/account-orders.py
+```
+
+`ACCOUNT_ORDERS_BASE_URL`, `ACCOUNT_ORDERS_LOGIN_URI` e `ACCOUNT_ORDERS_UID` selecionam o host e a conta autorizada; `ACCOUNT_ORDERS_WIDTHS` permite rodadas focais. `ACCOUNT_ORDERS_CSS_OVERRIDE=1` injeta `css/components/portal-account.css` do checkout do script. O runtime usado nesta rodada só tinha pedidos em rascunho para a conta autorizada, portanto não havia linha real de pedido para verificar a emissão de `data-label`; o teste registra essa parte como DEFERRED. Não cobre zoom, teclado completo, claro/escuro, reduced motion ou WCAG 2.2 AA.

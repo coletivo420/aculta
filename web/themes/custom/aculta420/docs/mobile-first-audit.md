@@ -422,3 +422,22 @@ Evidência: 15 PNGs anônimos e `results.json` em
 Esta rodada confirma o comportamento focal servido, mas não exercita outras
 rotas internas autenticadas, teclado completo, zoom real, contraste, dark mode,
 reduced motion ou WCAG 2.2 AA; portanto THEME-MF3 continua pendente.
+
+
+### THEME-MF2 — tabela de pedidos na Conta (2026-10-29)
+
+A tabela da Conta passa a usar o empilhamento como regra-base e restaura a
+semântica de tabela a partir de `48rem`. A restauração mantém largura, padding,
+bordas e alinhamento Bootstrap medidos antes da mudança; os rótulos continuam
+como `data-label` nas células. No Firefox ESR visível, a rota real `/pedidos` e
+um fixture sintético sem dados pessoais passaram 22 verificações em
+320/360/390/599/600/767/768/1024/1280/1440px, com zero overflow. O caso real
+mostrou o estado vazio: a conta de teste só tem pedidos em rascunho, por isso a
+linha real com dados e seus atributos não foi exercitada (DEFERRED). O preprocess
+de tabela do Drupal converte as chaves de células de `#rows` em atributos HTML;
+a hipótese anterior de que `data-label` era descartado foi refutada e não gerou
+Pede-A. Evidência:
+`/home/piradopirata/aculta-suite-out/account-orders-868f18e22-final2/summary.json`.
+A rodada não valida zoom, teclado completo, dark mode, reduced motion, leitores
+de tela ou WCAG 2.2 AA e não aprova THEME-MF3. Teste reutilizável:
+`tests/browser/aculta-theme-mobile-first/account-orders.py`.

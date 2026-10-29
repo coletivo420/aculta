@@ -546,3 +546,15 @@ a top-bar enquanto visível e passa ao topo quando ela sai da viewport; no
 desktop acompanha o offset de 64px. Evidências e limites completos em
 [`mobile-first-audit.md`](mobile-first-audit.md). Esta validação focal não
 aprova THEME-MF3.
+
+
+### THEME-MF2 — tabela mobile-first de pedidos na Conta
+
+A apresentação das tabelas de pedidos e detalhes agora começa no layout mobile;
+a partir de `48rem`, o tema restaura a tabela e confirma equivalência com as
+medidas desktop Bootstrap anteriores. Firefox ESR visível passou 22 checks no
+estado real vazio e em fixture sintético nas dez larguras de 320 a 1440px, sem
+overflow. A linha real de pedido e o atributo `data-label` ainda estão DEFERRED,
+pois a conta autorizada não tem pedido não-rascunho. A implementação é parcial
+da THEME-MF2 e não homologa o gate THEME-MF3. Detalhes e limites em
+`mobile-first-audit.md`.
