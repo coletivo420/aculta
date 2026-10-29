@@ -8,6 +8,27 @@ aculta_events.catalogue:
   options:
     _aculta_domain_purpose: eventos
 
+aculta_events.event_add:
+  path: '/eventos/adicionar'
+  defaults:
+    _entity_form: 'aculta_event.add'
+    _title: 'Cadastrar evento'
+  requirements:
+    _entity_create_access: 'aculta_event'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.event_edit:
+  path: '/eventos/{aculta_event}/editar'
+  defaults:
+    _entity_form: 'aculta_event.edit'
+    _title: 'Editar evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    aculta_event: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+
 aculta_events.page:
   path: '/eventos/{slug}'
   defaults:

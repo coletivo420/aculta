@@ -1,3 +1,17 @@
+aculta_events.admin_event_add:
+  title: 'Cadastrar evento'
+  description: 'Criar um novo evento cultural com data e local.'
+  route_name: aculta_events.event_add
+  parent: system.admin_content
+  weight: 29
+
+aculta_events.admin_date_add:
+  title: 'Adicionar data de evento'
+  description: 'Criar uma nova data ou sessão para um evento existente.'
+  route_name: aculta_events.date_add
+  parent: system.admin_content
+  weight: 30
+
 aculta_events.admin_export:
   title: 'Exportar eventos (CSV)'
   description: 'Baixa datas de eventos publicados por período, com campos administrativos mínimos.'

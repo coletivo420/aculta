@@ -31,6 +31,16 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   handlers: [
     'storage' => 'Drupal\Core\Entity\Sql\SqlContentEntityStorage',
     'access' => 'Drupal\aculta_events\Access\EventAccessControlHandler',
+    'form' => [
+      'default' => 'Drupal\aculta_events\Form\EventForm',
+      'add' => 'Drupal\aculta_events\Form\EventForm',
+      'edit' => 'Drupal\aculta_events\Form\EventForm',
+    ],
+  ],
+  links: [
+    'canonical' => '/eventos/{slug}',
+    'add-form' => '/eventos/adicionar',
+    'edit-form' => '/eventos/{aculta_event}/editar',
   ],
 )]
 final class Event extends ContentEntityBase {
@@ -56,14 +66,20 @@ final class Event extends ContentEntityBase {
     $fields['title'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Título'))
       ->setRequired(TRUE)
-      ->setSetting('max_length', 255);
+      ->setSetting('max_length', 255)
+      ->setDisplayOptions('form', ['type' => 'string_textfield', 'weight' => 0])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['field_subtitulo'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Subtítulo'))
-      ->setSetting('max_length', 255);
+      ->setSetting('max_length', 255)
+      ->setDisplayOptions('form', ['type' => 'string_textfield', 'weight' => 5])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['body'] = BaseFieldDefinition::create('string_long')
-      ->setLabel(new TranslatableMarkup('Descrição'));
+      ->setLabel(new TranslatableMarkup('Descrição'))
+      ->setDisplayOptions('form', ['type' => 'string_textarea', 'weight' => 10])
+      ->setDisplayConfigurable('form', TRUE);
 
     // Slug público, gerado na criação (EventSlugGenerator). Não muda depois de
     // publicado.
@@ -77,15 +93,21 @@ final class Event extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Tipo de evento'))
       ->setSetting('target_type', 'taxonomy_term')
       ->setSetting('handler', 'default:taxonomy_term')
-      ->setSetting('handler_settings', ['target_bundles' => ['aculta_event_type' => 'aculta_event_type']]);
+      ->setSetting('handler_settings', ['target_bundles' => ['aculta_event_type' => 'aculta_event_type']])
+      ->setDisplayOptions('form', ['type' => 'options_select', 'weight' => 15])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['field_url'] = BaseFieldDefinition::create('uri')
-      ->setLabel(new TranslatableMarkup('Site do evento'));
+      ->setLabel(new TranslatableMarkup('Site do evento'))
+      ->setDisplayOptions('form', ['type' => 'uri', 'weight' => 40])
+      ->setDisplayConfigurable('form', TRUE);
 
-        $fields['field_allow_claiming'] = BaseFieldDefinition::create('boolean')
+    $fields['field_allow_claiming'] = BaseFieldDefinition::create('boolean')
       ->setLabel(new TranslatableMarkup('Permitir reivindicação de posse'))
       ->setDescription(new TranslatableMarkup('Permite que outros usuários solicitem a titularidade deste evento à moderação.'))
-      ->setDefaultValue(FALSE);
+      ->setDefaultValue(FALSE)
+      ->setDisplayOptions('form', ['type' => 'boolean_checkbox', 'weight' => 50])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['field_organizador'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Organizador'))
@@ -95,12 +117,14 @@ final class Event extends ContentEntityBase {
     // página com aviso.
     $fields['field_status'] = BaseFieldDefinition::create('list_string')
       ->setLabel(new TranslatableMarkup('Situação'))
-      ->setDefaultValue('rascunho')
+      ->setDefaultValue('publicado')
       ->setSetting('allowed_values', [
         'rascunho' => new TranslatableMarkup('Rascunho'),
         'publicado' => new TranslatableMarkup('Publicado'),
         'cancelado' => new TranslatableMarkup('Cancelado'),
-      ]);
+      ])
+      ->setDisplayOptions('form', ['type' => 'options_select', 'weight' => 20])
+      ->setDisplayConfigurable('form', TRUE);
 
     // Dados estruturados aditivos (ARQ-04 / OpenCulturas 3.1.5).
     $fields['field_classificacao_etaria'] = BaseFieldDefinition::create('list_string')
@@ -113,13 +137,19 @@ final class Event extends ContentEntityBase {
         '14' => new TranslatableMarkup('Não recomendado para menores de 14 anos'),
         '16' => new TranslatableMarkup('Não recomendado para menores de 16 anos'),
         '18' => new TranslatableMarkup('Não recomendado para menores de 18 anos'),
-      ]);
+      ])
+      ->setDisplayOptions('form', ['type' => 'options_select', 'weight' => 25])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['field_acessibilidade'] = BaseFieldDefinition::create('string_long')
-      ->setLabel(new TranslatableMarkup('Recursos de acessibilidade'));
+      ->setLabel(new TranslatableMarkup('Recursos de acessibilidade'))
+      ->setDisplayOptions('form', ['type' => 'string_textarea', 'weight' => 30])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['field_seguranca'] = BaseFieldDefinition::create('string_long')
-      ->setLabel(new TranslatableMarkup('Informações de segurança e orientações'));
+      ->setLabel(new TranslatableMarkup('Informações de segurança e orientações'))
+      ->setDisplayOptions('form', ['type' => 'string_textarea', 'weight' => 35])
+      ->setDisplayConfigurable('form', TRUE);
 
     // Recursos editoriais adicionais (ARQ-08 / OpenCulturas 3.1.5).
     $fields['field_apoiadores'] = BaseFieldDefinition::create('string_long')

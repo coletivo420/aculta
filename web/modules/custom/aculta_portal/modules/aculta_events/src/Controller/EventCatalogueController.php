@@ -68,6 +68,18 @@ final class EventCatalogueController extends ControllerBase {
     $validade = $this->proximas->validade($fins, $agoraSegundos) ?? self::VALIDADE_PADRAO;
 
     $itens = [];
+    if ($this->entityTypeManager()->getAccessControlHandler('aculta_event')->createAccess(NULL, $this->currentUser())) {
+      $itens[] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['actions-bar', 'my-3']],
+        'add_btn' => [
+          '#type' => 'link',
+          '#title' => $this->t('+ Cadastrar novo evento'),
+          '#url' => Url::fromRoute('aculta_events.event_add'),
+          '#attributes' => ['class' => ['button', 'button--primary', 'button--action']],
+        ],
+      ];
+    }
     foreach ($resultados as $item) {
       $evento = $item['evento'];
       $cancelado = $evento->get('field_status')->value === 'cancelado';
