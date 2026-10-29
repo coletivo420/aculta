@@ -38,16 +38,22 @@ Excluir um registro não remove arquivos históricos gerados: a revisão Git
 decide quando removê-los. O acesso é restrito porque patches podem introduzir
 código executável. Não usar o formulário como editor de produção.
 
-## Prontidão da próxima fase — 2026-10-28
+## Verificação de ciclo e prontidão — 2026-10-28
 
 - Suíte Unit: 38 testes / 65 assertions PASS; inclui exportação e comparação
   byte a byte dos artefatos em duas execuções num projeto temporário.
-- PHP lint do módulo PASS.
 - PHP lint: 12 arquivos PASS; PHPCS Drupal no módulo PASS após corrigir a
   documentação de classe, propriedades e métodos.
-- Falta validar exportação/aplicação Composer e idempotência em cópia isolada.
-  A instalação Runtime continua separada; este teste não altera Runtime nem
-  executa `composer require` ou `composer update`.
+- O comando `aculta:patcher-export --check` no Runtime de teste validou o
+  registro ativo sem gravar artefatos.
+- Em cópia isolada do projeto, `composer patches-relock` e duas execuções de
+  `composer patches-repatch` passaram com rede desabilitada. Quatro pacotes
+  patchados, `composer.lock`, `patches.lock.json`, `.htaccess` e assets de
+  Bootstrap tiveram hashes iguais após a segunda execução.
+- Exportação de artefatos no Runtime não foi executada. Revisão visual do
+  formulário administrativo e auditoria final continuam pendentes; manter
+  `Dev` até concluir essas etapas. Nenhum `composer require` ou `composer
+  update` foi executado.
 
 ## Patch H5P inicial
 
