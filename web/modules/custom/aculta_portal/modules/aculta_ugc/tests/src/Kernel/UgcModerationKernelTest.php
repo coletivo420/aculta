@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_ugc\Kernel;
 
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_ugc\Entity\UgcRecipientConfig;
@@ -22,6 +23,9 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 #[RunTestsInSeparateProcesses]
 final class UgcModerationKernelTest extends KernelTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'system',
     'user',
@@ -35,11 +39,25 @@ final class UgcModerationKernelTest extends KernelTestBase {
     'aculta_ugc',
   ];
 
+  /**
+   * Usuário moderador.
+   */
   private User $adminModerator;
+
+  /**
+   * Usuário denunciante.
+   */
   private User $reporterUser;
+
+  /**
+   * Usuário comum.
+   */
   private User $commonUser;
 
-  public function register(\Drupal\Core\DependencyInjection\ContainerBuilder $container): void {
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
     parent::register($container);
 
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
@@ -47,6 +65,9 @@ final class UgcModerationKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_events\\', dirname(__DIR__, 5) . '/modules/aculta_events/src', TRUE);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
 
@@ -77,6 +98,9 @@ final class UgcModerationKernelTest extends KernelTestBase {
     $this->commonUser->save();
   }
 
+  /**
+   * Valida ciclo de vida e privacidade de denúncias.
+   */
   public function testReportLifecycleAndPrivacy(): void {
     /** @var \Drupal\aculta_ugc\Service\ReportService $reportService */
     $reportService = $this->container->get('aculta_ugc.report_service');
@@ -124,6 +148,9 @@ final class UgcModerationKernelTest extends KernelTestBase {
     $reportService->createReport($event, $this->reporterUser, 'spam');
   }
 
+  /**
+   * Valida decisão de moderação e restrições de acesso.
+   */
   public function testModerationDecisionAndAccess(): void {
     /** @var \Drupal\aculta_ugc\Service\ReportService $reportService */
     $reportService = $this->container->get('aculta_ugc.report_service');
@@ -152,6 +179,9 @@ final class UgcModerationKernelTest extends KernelTestBase {
     $this->assertSame('Conteúdo em conformidade.', $report->get('decision_notes')->value);
   }
 
+  /**
+   * Valida agrupamento de itens na fila pendente.
+   */
   public function testPendingQueueGrouping(): void {
     /** @var \Drupal\aculta_ugc\Service\ReportService $reportService */
     $reportService = $this->container->get('aculta_ugc.report_service');
@@ -170,11 +200,11 @@ final class UgcModerationKernelTest extends KernelTestBase {
     // Reporter 1 denuncia Event 2.
     $reportService->createReport($event2, $this->reporterUser, 'outro', 'eventos');
 
-    $pending = $queue->getPendingItems('eventos');
+    $pending = $queue->getPendingItems('eventos', 50, $this->adminModerator);
     $this->assertCount(2, $pending);
 
     // Event 1 deve ter total = 2 denúncias acumuladas.
-    $event1Queue = null;
+    $event1Queue = NULL;
     foreach ($pending as $item) {
       if ($item['target_id'] === (int) $event1->id()) {
         $event1Queue = $item;
@@ -185,6 +215,9 @@ final class UgcModerationKernelTest extends KernelTestBase {
     $this->assertSame(2, $event1Queue['total']);
   }
 
+  /**
+   * Valida idempotência da migração de flags legadas.
+   */
   public function testMigrationIdempotence(): void {
     /** @var \Drupal\aculta_ugc\Service\UgcReportQueue $queue */
     $queue = $this->container->get('aculta_ugc.report_queue');

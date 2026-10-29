@@ -435,13 +435,8 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     ]);
 
     // O hook de bridge não deve criar denúncia se não houver acesso de view.
+    $this->expectException(AccessDeniedHttpException::class);
     $this->container->get('aculta_forum.report_ugc_bridge')->flaggingInsert($flagging);
-
-    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
-    $reports = $reportStorage->loadByProperties([
-      'target_id' => $privateTopic->id(),
-    ]);
-    $this->assertEmpty($reports);
   }
 
   /**
@@ -611,6 +606,189 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     $page1 = $this->queue->getQueueItems($this->forumModerator, 'forum', 'pendente', 1, 2);
     $this->assertCount(1, $page1['items']);
     $this->assertSame((int) $topics[1]->id(), $page1['items'][0]['target_id']);
+  }
+
+  /**
+   * Valida rejeição imediata de flag quando denunciante atinge limite diário.
+   */
+  public function testFlagDeniedIfDailyLimitReached(): void {
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $now = \Drupal::time()->getRequestTime();
+
+    // Cria 20 denúncias no mesmo dia para o denunciante.
+    for ($i = 0; $i < 20; $i++) {
+      $reportStorage->create([
+        'target_type' => 'node',
+        'target_id' => 999000 + $i,
+        'uid' => $this->reporter->id(),
+        'motivo' => 'spam',
+        'purpose' => 'forum',
+        'status' => 'pendente',
+        'created' => $now - 60,
+      ])->save();
+    }
+
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Tópico Limite Diário',
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->container->get('current_user')->setAccount($this->reporter);
+    $flagging = Flagging::create([
+      'flag_id' => 'sinalizar_topico',
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'uid' => $this->reporter->id(),
+      'created' => $now,
+    ]);
+
+    $this->expectException(AccessDeniedHttpException::class);
+    $this->container->get('aculta_forum.report_ugc_bridge')->flaggingInsert($flagging);
+  }
+
+  /**
+   * Valida que a reconciliação ignora flags pertencentes a contas inativas.
+   */
+  public function testReconciliationIgnoresBlockedUserFlags(): void {
+    $blockedUser = User::create([
+      'name' => 'blocked_user',
+      'mail' => 'blocked@example.com',
+      'status' => 0,
+    ]);
+    $blockedUser->save();
+
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Tópico Marcado Por Bloqueado',
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    // Cria flag no banco ignorando o hook para simular registro legado pré-existente.
+    \Drupal::database()->insert('flagging')->fields([
+      'flag_id' => 'sinalizar_topico',
+      'uuid' => \Drupal::service('uuid')->generate(),
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'uid' => $blockedUser->id(),
+      'session_id' => NULL,
+      'created' => 1700000000,
+      'global' => 0,
+    ])->execute();
+
+    // A fila pendente não deve conter este item, pois a conta está bloqueada.
+    $pending = $this->queue->getQueueItems($this->forumModerator, 'forum');
+    $this->assertSame(0, $pending['total_items']);
+  }
+
+  /**
+   * Valida agrupamento independente para mesmo alvo com purposes distintos.
+   */
+  public function testMultiplePurposesForSameTargetGenerateDistinctGroups(): void {
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Tópico Multi-Propósito',
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+
+    // Denúncia no propósito 'forum'.
+    $reportStorage->create([
+      'target_type' => 'node',
+      'target_id' => $topic->id(),
+      'uid' => $this->reporter->id(),
+      'motivo' => 'spam',
+      'purpose' => 'forum',
+      'status' => 'pendente',
+      'created' => 1700000100,
+    ])->save();
+
+    // Denúncia do mesmo alvo no propósito 'revista'.
+    $reportStorage->create([
+      'target_type' => 'node',
+      'target_id' => $topic->id(),
+      'uid' => $this->reporter->id(),
+      'motivo' => 'direitos_autorais',
+      'purpose' => 'revista',
+      'status' => 'pendente',
+      'created' => 1700000200,
+    ])->save();
+
+    // Moderador transversal (tem acesso a todos os escopos).
+    $allItems = $this->queue->getQueueItems($this->globalModerator, NULL, 'pendente');
+    $this->assertSame(2, $allItems['total_items'], 'Mesmo alvo com purposes distintos gera 2 grupos separados.');
+
+    $purposes = array_column($allItems['items'], 'purpose');
+    $this->assertContains('forum', $purposes);
+    $this->assertContains('revista', $purposes);
+
+    // Moderador do fórum só deve ver 1 item (apenas forum).
+    $forumItems = $this->queue->getQueueItems($this->forumModerator, 'forum', 'pendente');
+    $this->assertSame(1, $forumItems['total_items']);
+    $this->assertSame('forum', $forumItems['items'][0]['purpose']);
+  }
+
+  /**
+   * Valida que motivos de denúncias são isolados por purpose e status.
+   */
+  public function testReasonsAreIsolatedByPurposeAndStatus(): void {
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Tópico Teste Motivos',
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+
+    // Motivo em forum / pendente.
+    $reportStorage->create([
+      'target_type' => 'node',
+      'target_id' => $topic->id(),
+      'uid' => $this->reporter->id(),
+      'motivo' => 'ofensa',
+      'purpose' => 'forum',
+      'status' => 'pendente',
+      'created' => 1700000100,
+    ])->save();
+
+    // Motivo em forum / deferido (não deve aparecer nos motivos pendentes).
+    $reportStorage->create([
+      'target_type' => 'node',
+      'target_id' => $topic->id(),
+      'uid' => $this->reporter->id(),
+      'motivo' => 'assédio_resolvido',
+      'purpose' => 'forum',
+      'status' => 'deferido',
+      'created' => 1700000150,
+    ])->save();
+
+    // Motivo em revista / pendente (não deve aparecer no grupo do fórum).
+    $reportStorage->create([
+      'target_type' => 'node',
+      'target_id' => $topic->id(),
+      'uid' => $this->reporter->id(),
+      'motivo' => 'plagio_editorial',
+      'purpose' => 'revista',
+      'status' => 'pendente',
+      'created' => 1700000200,
+    ])->save();
+
+    $forumItems = $this->queue->getQueueItems($this->forumModerator, 'forum', 'pendente');
+    $this->assertSame(1, $forumItems['total_items']);
+    $this->assertSame(['ofensa'], $forumItems['items'][0]['motivos']);
+  }
+
+  /**
+   * Valida que getPendingItems exige autorização no escopo ou lança exceção.
+   */
+  public function testGetPendingItemsRequiresPermission(): void {
+    $this->expectException(AccessDeniedHttpException::class);
+    $this->queue->getPendingItems('forum', 50, $this->outsider);
   }
 
 }
