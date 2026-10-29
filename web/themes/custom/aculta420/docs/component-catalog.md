@@ -116,6 +116,12 @@ a partir de `36rem` restaura padding de 1rem e altura mínima de 60vh. O harness
 `tests/browser/aculta-document-viewer/office-options.py` cobre 575/576px nos
 temas ACULTA420 e Olivero.
 
+O modal de confirmação Webform preserva a largura dinâmica do consumidor em
+desktop e adapta o `minWidth: 600` definido pelo jQuery UI ao gutter disponível
+em telas estreitas. O teste reproduz essa configuração em
+`tests/browser/aculta-theme-mobile-first/webform-layout.py`; não há SDC novo nem
+mudança no Form API.
+
 A barra de progresso de comentários é CSS compartilhada de Fórum/Wiki/Revista,
 com markup e ações emitidos pelo Portal; a grade começa compacta e cresce em
 `22.5rem` e `36rem`. O harness e os limites por consumer estão documentados em

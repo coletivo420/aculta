@@ -139,7 +139,7 @@ O inventário foi regenerado em 2026-10-29 por
 fonte: 93 folhas CSS/Sass, 12 scripts JavaScript (11 de produção e um de teste)
 e 100 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
 lexical atual encontra `@media` em 46 folhas (81 blocos), zero `@container`,
-expressões de dimensão em 73 folhas (631 matches) e declarações `overflow`,
+expressões de dimensão em 73 folhas (632 matches) e declarações `overflow`,
 `overflow-x` ou `overflow-y` em 28 folhas (54 declarações). A expressão de
 dimensão inclui width/height/inline-size/block-size, variantes min/max e
 condições de media query. As contagens não analisam cascata nem efeito
@@ -611,13 +611,17 @@ estado precisa de revisão posterior. THEME-MF3 não aprovado.
 
 A ajuda e descrição Likert recebem `display` mobile como base; acima de
 768 CSS px o tema volta a ocultar ambos, preservando o conteúdo desktop. O
-modal de confirmação mantém a exceção `max-width: 650px`: a largura de desktop é
-calculada pelo consumidor jQuery UI/Webform a partir de opções dinâmicas
-`width`/`minWidth`, portanto o tema não impõe um valor fixo. O harness
-`tests/browser/aculta-theme-mobile-first/webform-layout.py` compara fixture,
-geometria e capturas em 14 larguras, incluindo 650/651 e 768/769. Firefox e
-rotas Webform reais estão DEFERRED enquanto sessões concorrentes ocupam o
-browser. THEME-MF3 segue pendente.
+768 CSS px o tema volta a ocultar ambos, preservando o conteúdo desktop. O
+behavior do modal Webform define `minWidth: 600`; a regra anterior só alterava
+`width` abaixo de 650px e deixava a largura mínima fixa, causando overflow em
+viewports menores que 616px. O tema agora reduz essa largura mínima conforme o
+gutter disponível, mantendo os 600px em desktop e preservando a largura
+configurada pelo consumidor. O harness
+`tests/browser/aculta-theme-mobile-first/webform-layout.py` reproduz o mínimo do
+jQuery UI, compara baseline/candidato e captura 14 larguras, incluindo
+650/651 e 768/769. Sintaxe Python e lint CSS PASS; Firefox e rotas Webform reais
+estão DEFERRED enquanto `DISPLAY` estiver vazio e sessões concorrentes ocuparem
+o browser. THEME-MF3 segue pendente.
 
 ### THEME-MF2 — gavetas utilitárias compartilhadas (2026-10-29)
 
