@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Drupal\views\EntityViewsData;
 use Drupal\views\EntityViewsDataInterface;
 
@@ -45,7 +45,7 @@ class aculta_H5PContentViewsData extends EntityViewsData implements EntityViewsD
         'base' => 'users_field_data',
         'base field' => 'uid',
         'id' => 'standard',
-        'label' => t('H5P user points'),
+        'label' => $this->t('H5P user points'),
       ],
     ];
 

@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-dev.164
+version: 0.4.0-dev.165
 state: Dev
-progress_note: "Dev.164: PHPDoc do armazenamento de assets Composer do H5P concluído; cabeçalho GPL preservado após namespace e linhas reformatadas. PHPCS integral: 105 erros/6 avisos em 11 arquivos (antes 107/7 em 12); arquivo alterado passa lint e PHPCS. Unit + Kernel 43/481 PASS no aculta_simpletest, 41 depreciações Core/contrib no Kernel e 0 no Unit. Restam violações PHPCS no módulo; F15 permanece Dev. Smokes de player, PDF e conversa H5P–Fórum seguem registrados; sem escrita Runtime."
+progress_note: "Dev.165: entrada de relationship em Views utiliza StringTranslation da classe e o cabeçalho GPL permanece após o namespace. PHPCS integral: 104 erros/5 avisos em 10 arquivos (antes 105/6 em 11); arquivo alterado passa lint e PHPCS. Unit + Kernel 43/481 PASS no aculta_simpletest, 41 depreciações Core/contrib no Kernel e 0 no Unit. Restam violações PHPCS no módulo; F15 permanece Dev. Smokes de player, PDF e conversa H5P–Fórum seguem registrados; sem escrita Runtime."
 next_phase: 'F15: resolver violações PHPCS remanescentes sem alterar regras nem identificadores públicos, rodar lint, revisar diff e repetir gates antes de avaliar RC; player H5P, PDF privado e discussão H5P–Fórum seguem homologados conforme [README](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md). F10 permanece homologada.'

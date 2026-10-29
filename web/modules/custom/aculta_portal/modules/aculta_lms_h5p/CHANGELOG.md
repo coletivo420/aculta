@@ -412,3 +412,12 @@
 - Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
   depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
 
+## 0.4.0-dev.165 — ajustar tradução do relacionamento Views H5P (2026-10-29)
+
+- Padroniza a tradução do label de relacionamento com `StringTranslation`
+  existente na classe e posiciona a atribuição GPL após o namespace.
+- PHPCS integral caiu de 105 erros/6 avisos em 11 arquivos para 104/5 em 10
+  arquivos; arquivo alterado passa Drupal/DrupalPractice e PHP lint.
+- Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
+  depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
+
