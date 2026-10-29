@@ -94,3 +94,17 @@ Decisão do responsável em 2026-10-28; detalhes, origem e hashes em `DHTMLX.md`
 - Sem revisão visual autenticada nova. Revalidar calendário interativo e ADM8
   no Firefox ESR quando o candidato estiver servido; acesso ADM8 continua
   limitado pela credencial documentada no status do módulo.
+
+## CA — correção da revisão de cancelamentos importados (2026-10-29, dev.6)
+
+- A fila editorial agora distingue `STATUS:CANCELLED` e oferece “Publicar
+  cancelamento”; a ação mantém `import_state=cancelado` e publica o aviso. A
+  ação comum de publicação recusa um cancelamento.
+- O provedor de itens propaga o marcador para agenda e exportações `.ics`, sem
+  exibir o cancelamento como evento ativo.
+- Kernel cobre a ação do formulário, estado publicado e marcador na agenda.
+- Suíte integrada: 126 testes, 428 assertions PASS, 2 depreciações Core.
+- PHPCS dos arquivos da microfase PASS. A checagem integral do módulo tem 0
+  erros e 1 aviso em `CalendarAgenda.php`, alterado na revisão dev.5.
+- A correção não conclui a revisão de código restante nem promove o módulo a
+  RC.

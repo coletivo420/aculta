@@ -18,6 +18,7 @@ e [tests/browser/aculta-calendar-interactive](../../../../../../tests/browser/ac
 A revisão cobre o markup `data-portal-ui` do dev.4. O dev.5 corrige os achados
 da revisão de código (sobreposição de eventos, UID numérico, janela de 366 dias,
 isolamento de série inválida, `RECURRENCE-ID`, `UNTIL`, fonte órfã, fuso da
-revisão, filtros da exportação e dia inteiro). A revalidação visual do candidato
-corrigido está pendente porque o checkout de teste tem trabalho concorrente não
+revisão, filtros da exportação e dia inteiro). Dev.6 preserva cancelamentos
+importados na revisão e na agenda. A revalidação visual do candidato corrigido
+está pendente porque o checkout de teste tem trabalho concorrente não
 commitado. Eventos de vários dias ainda são agrupados pelo dia inicial.

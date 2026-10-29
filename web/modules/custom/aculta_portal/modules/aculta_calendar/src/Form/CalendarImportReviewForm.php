@@ -83,11 +83,12 @@ final class CalendarImportReviewForm extends FormBase {
       ];
       $form['items'][$key]['state'] = ['#plain_text' => $latest->get('import_state')->value];
       $form['items'][$key]['presence'] = ['#plain_text' => $item->get('source_presence')->value];
+      $is_cancellation = $latest->get('import_state')->value === 'cancelado';
       $form['items'][$key]['publish'] = [
         '#type' => 'submit',
-        '#value' => $this->t('Publicar'),
+        '#value' => $is_cancellation ? $this->t('Publicar cancelamento') : $this->t('Publicar'),
         '#name' => 'publish_' . $key,
-        '#submit' => ['::publishItem'],
+        '#submit' => [$is_cancellation ? '::publishCancellation' : '::publishItem'],
         '#item_id' => $key,
         '#limit_validation_errors' => [],
       ];
@@ -113,12 +114,37 @@ final class CalendarImportReviewForm extends FormBase {
    */
   public function publishItem(array &$form, FormStateInterface $form_state): void {
     $item = $this->latestItem((string) $form_state->getTriggeringElement()['#item_id']);
+    if ($item->get('import_state')->value === 'cancelado') {
+      $this->importMessenger->addError($this->t('Este item é um cancelamento; use “Publicar cancelamento” para exibir o aviso.'));
+      $form_state->setRedirect('aculta_calendar.import_review');
+      return;
+    }
     $item->setImportState('publicado');
     $item->setNewRevision(TRUE);
     $item->isDefaultRevision(TRUE);
     $item->setRevisionLogMessage((string) $this->t('Publicado após revisão editorial da importação.'));
     $item->save();
     $this->importMessenger->addStatus($this->t('O item foi publicado.'));
+    $form_state->setRedirect('aculta_calendar.import_review');
+  }
+
+  /**
+   * Publishes a cancellation notice without presenting it as an active event.
+   */
+  public function publishCancellation(array &$form, FormStateInterface $form_state): void {
+    $item = $this->latestItem((string) $form_state->getTriggeringElement()['#item_id']);
+    if ($item->get('import_state')->value !== 'cancelado') {
+      $this->importMessenger->addError($this->t('Este item não está marcado como cancelado.'));
+      $form_state->setRedirect('aculta_calendar.import_review');
+      return;
+    }
+    $item->setImportState('cancelado');
+    $item->setPublished();
+    $item->setNewRevision(TRUE);
+    $item->isDefaultRevision(TRUE);
+    $item->setRevisionLogMessage((string) $this->t('Cancelamento publicado após revisão editorial da importação.'));
+    $item->save();
+    $this->importMessenger->addStatus($this->t('O cancelamento foi publicado.'));
     $form_state->setRedirect('aculta_calendar.import_review');
   }
 

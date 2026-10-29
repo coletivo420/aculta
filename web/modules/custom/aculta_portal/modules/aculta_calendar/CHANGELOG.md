@@ -1,5 +1,15 @@
 # Changelog — aculta_calendar
 
+## 0.1.0-dev.6 — publicação explícita de cancelamentos (2026-10-29)
+
+- A revisão de importação oferece uma ação própria para publicar `CANCELLED`;
+  a ação comum não converte cancelamento em evento ativo.
+- O provedor de itens propaga o marcador de cancelado para agenda e exportação.
+- Kernel cobre a revisão, publicação e apresentação do aviso de cancelamento.
+- Suíte integrada: 126 testes/428 assertions PASS; 2 depreciações Core.
+- PHPCS dos arquivos da microfase PASS; a checagem integral tem 0 erros e 1
+  aviso em `CalendarAgenda.php`, tocado pela revisão dev.5.
+
 ## 0.1.0-dev.5 — correções da revisão de código (2026-10-29)
 
 - Ocorrência única em curso, iniciada antes da janela, deixa de ser descartada;

@@ -51,6 +51,7 @@ final class ImportedCalendarItemProvider implements CalendarItemProviderInterfac
         fuso: $zone->getName(),
         local: (string) $entity->get('location')->value,
         origem: $this->id(),
+        cancelado: $entity->get('import_state')->value === 'cancelado',
       );
     }
   }

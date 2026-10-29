@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_calendar\Kernel;
 
 use Drupal\aculta_calendar\Entity\CalendarImportSource;
+use Drupal\aculta_calendar\Form\CalendarImportReviewForm;
 use Drupal\aculta_calendar\Import\NormalizedCalendarEvent;
 use Drupal\aculta_calendar\Item\CalendarQuery;
+use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -88,6 +90,63 @@ final class ImportedCalendarItemProviderKernelTest extends KernelTestBase {
 
     $days = $this->container->get('aculta_calendar.agenda')->dias($query);
     self::assertSame(['Evento público importado'], array_column($days['2030-05-10'], 'titulo'));
+  }
+
+  /**
+   * Verifies a reviewed cancellation stays marked when published.
+   */
+  public function testPublishedCancellationRemainsMarkedAsCancelled(): void {
+    $source = CalendarImportSource::create([
+      'id' => 'fonte_cancelamento',
+      'label' => 'Fonte de cancelamento',
+      'sourceUrl' => '',
+      'status' => TRUE,
+    ]);
+    $source->save();
+    $timezone = new \DateTimeZone('America/Sao_Paulo');
+    $event = new NormalizedCalendarEvent(
+      'uid-cancelado@example.invalid',
+      new \DateTimeImmutable('2030-05-12 10:00', $timezone),
+      new \DateTimeImmutable('2030-05-12 11:00', $timezone),
+      FALSE,
+      'America/Sao_Paulo',
+      FALSE,
+      'Evento cancelado',
+      '',
+      'Local',
+      'CANCELLED',
+    );
+    $repository = $this->container->get('aculta_calendar.import_repository');
+    $item = $repository->createFromEvent($source, $event);
+    $form = CalendarImportReviewForm::create($this->container);
+    $form_state = new FormState();
+    $build = $form->buildForm([], $form_state);
+    $key = (string) $item->id();
+
+    self::assertSame('Publicar cancelamento', (string) $build['items'][$key]['publish']['#value']);
+    self::assertSame(['::publishCancellation'], $build['items'][$key]['publish']['#submit']);
+
+    $form_state->setTriggeringElement(['#item_id' => $key]);
+    $form_array = [];
+    $form->publishCancellation($form_array, $form_state);
+
+    $published = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_calendar_imported_item')
+      ->load($item->id());
+    self::assertTrue($published->isPublished());
+    self::assertSame('cancelado', $published->get('import_state')->value);
+
+    $query = new CalendarQuery(
+      new \DateTimeImmutable('2030-05-01 00:00', $timezone),
+      new \DateTimeImmutable('2030-05-31 23:59:59', $timezone),
+      new \DateTimeImmutable('2030-05-01 00:00', $timezone),
+    );
+    $items = iterator_to_array($this->container->get('aculta_calendar.imported_item_provider')->items($query));
+    self::assertCount(1, $items);
+    self::assertTrue($items[0]->cancelado);
+
+    $days = $this->container->get('aculta_calendar.agenda')->dias($query);
+    self::assertTrue($days['2030-05-12'][0]['cancelada']);
   }
 
 }

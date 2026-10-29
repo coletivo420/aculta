@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.5
+version: 0.1.0-dev.6
 state: Dev
 progress_note: >-
   Dev.5: correções da revisão de código. Ocorrência única em curso iniciada antes
@@ -16,6 +16,11 @@ progress_note: >-
   tem trabalho concorrente não commitado. Dev.4: ADM8 autenticada no candidato
   a4f878d55 (403 anônimo/200 autenticado, tabela somente leitura, sem overflow
   em 1270/500 px) e visão interativa com DHTMLX 7.2.15, contraste e fallback
-  móvel. Runtime sem config:import; só a conta descartável foi criada e
-  removida.
+  móvel. Dev.6: revisão de código também corrigiu publicação de cancelamentos
+  importados: ação explícita preserva o estado e a agenda propaga o marcador.
+  Suíte integrada: 126 testes, 428 assertions PASS (2 depreciações); lint PASS.
+  PHPCS dos arquivos desta microfase PASS; PHPCS integral tem 0 erros e 1 aviso
+  em CalendarAgenda.php, alterado na revisão anterior. Aliases, fronteira
+  módulo/tema, Drupal 11+ e índice PASS. Runtime sem config:import; só a conta
+  descartável foi criada e removida.
 next_phase: 'Revalidar agenda e visão interativa no candidato com as correções quando o checkout de teste estiver livre (há trabalho concorrente não commitado); decidir a expansão por dia de eventos de vários dias antes de RC.'
