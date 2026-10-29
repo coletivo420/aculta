@@ -206,3 +206,17 @@ submeteu formulários. Isso prova apenas medidas de largura/scroll e estados
 capturados; não prova fidelidade comparativa, acessibilidade, zoom, teclado,
 modos claro/escuro, reduced motion, AJAX/no-JS, outros purposes ou conteúdo LMS/
 Commerce autorizado. O status permanece **PARCIAL**, não PASS.
+
+### OCS-F0 — probe de teclado e foco visível (2026-10-29)
+
+`tests/browser/aculta-studio/keyboard-focus.py` usou Firefox ESR visível no
+servidor de desenvolvimento, com 12 Tabs por rota em Marley, Conta e Perfil,
+nas larguras 320/1440. Foram 72 registros; todos tiveram `:focus-visible`
+verdadeiro e outline calculado diferente de `none`. As seis capturas ficaram
+em `$SUITE_OUT/aculta-ocs-f0-keyboard-20261029/`; a tela Marley/320 foi
+inspecionada e mostra outline no link de skip. Nenhum formulário foi enviado.
+O probe cobre somente os primeiros 12 Tabs por três rotas/duas larguras, não
+representa análise WCAG, teclado completo/Shift+Tab, modais, widgets ou outros
+purposes. O servidor rodava o código visual de tema/Studio/Commerce comum aos
+heads `f2708e60f` e `5734bed87`, com mudanças locais restritas a Eventos; essa
+evidência não homologa o head completo da PR.

@@ -586,3 +586,8 @@ servidor estava no head `f2708e60f`, com arquivos de tema/Studio/Commerce
 idênticos à PR então em `5734bed87`, mas tinha mudanças locais de Eventos. As
 capturas e limitações estão em `studio-visual/upstream-inventory.md`; esta
 execução aumenta a evidência responsiva, mas não fecha F0/MF0 nem permite F1/MF1.
+
+O probe adicional de foco por teclado percorreu 12 Tabs em Marley, Conta e
+Perfil a 320/1440 px (72/72 `:focus-visible`, outline calculado presente). A
+captura Marley/320 mostrou foco visível no skip link. É evidência parcial e não
+substitui percurso integral, Shift+Tab, modal/widgets, WCAG ou o gate F7.

@@ -170,3 +170,25 @@ negado para a conta sintética sem permissão. Marley, WE Sativa, Conta, Perfil 
 Planos Mercado Pago renderizaram. Ausência de overflow foi observada apenas nas
 rotas/estados e larguras capturados. Essas evidências não aceitam MF3, WCAG,
 todas as larguras ou paridade visual do Studio.
+
+### Probe de foco por teclado
+
+`keyboard-focus.py` registra os primeiros 12 alvos ao pressionar Tab nas rotas
+Studio listadas em `STUDIO_ROUTES` (padrão Marley, Conta e Perfil) e nos
+viewports `OCS_FOCUS_WIDTHS` (padrão 320/1440). É somente leitura: não envia
+forms nem aciona links. Exige Firefox ESR visível (`DISPLAY=:0`), checkout
+servido apontado por `ACULTA_ROOT`, Drush no `aculta_runtime` e uma conta de
+teste existente em `STUDIO_USER`. O JSON contém alvo, `:focus-visible`, outline,
+box-shadow e posição; salva uma captura no primeiro Tab por rota/largura. Tudo
+fica em `$SUITE_OUT`, fora do Git. Os screenshots ainda requerem revisão visual;
+o probe não homologa WCAG, todos os componentes, teclado Shift+Tab, modais,
+widgets customizados nem as demais áreas/purposes.
+
+**Execução em 2026-10-29:** `keyboard-focus.py` rodou com Firefox ESR visível
+no servidor de desenvolvimento, em `/studio/marley`, `/studio/conta` e
+`/studio/perfil`, 320/1440 px e 12 pressionamentos de Tab por combinação. Foram
+registrados 72 focos; os 72 correspondiam a `:focus-visible` e tinham outline
+calculado diferente de `none`. As seis capturas estão em
+`$SUITE_OUT/aculta-ocs-f0-keyboard-20261029/`; a de Marley/320 foi inspecionada
+e mostra o foco em “Pular para o conteúdo principal”. Isso não valida ordem
+completa, Shift+Tab, teclado de widgets, diálogos, outros estados/telas ou WCAG.

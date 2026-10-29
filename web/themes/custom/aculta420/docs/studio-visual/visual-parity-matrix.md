@@ -55,3 +55,11 @@ alterações locais de Eventos, então esta evidência não aprova o head comple
 nem a regressão global. Os screenshots Marley 320/1440 foram inspecionados; as
 capturas não equivalem a referência autenticada upstream nem aprovam a
 fidelidade ou os gates de acessibilidade. Status geral continua **PARCIAL**.
+
+## Foco por teclado — evidência parcial (2026-10-29)
+
+O probe em Marley, Conta e Perfil a 320/1440 px registrou 12 Tabs por tela,
+com 72 de 72 alvos correspondendo a `:focus-visible` e outline calculado.
+Marley/320 foi inspecionada e exibe o foco do link de skip. Cobertura não inclui
+Shift+Tab, percurso inteiro, widgets/modais, fluxos de formulário ou os demais
+purposes. Não é aceite WCAG 2.2 AA.
