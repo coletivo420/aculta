@@ -341,6 +341,9 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $this->assertContains('user', $build['#cache']['contexts']);
     $this->assertContains('url.query_args:tab', $build['#cache']['contexts']);
     $this->assertContains('flagging_list', $build['#cache']['tags']);
+    $this->assertContains('user.permissions', $build['#cache']['contexts']);
+    $this->assertContains('url.query_args:purpose', $build['#cache']['contexts']);
+    $this->assertSame(\Drupal\Core\Cache\Cache::PERMANENT, $build['#cache']['max-age']);
   }
 
   /**
