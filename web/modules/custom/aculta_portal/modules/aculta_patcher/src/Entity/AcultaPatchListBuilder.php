@@ -14,6 +14,21 @@ final class AcultaPatchListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
+  public function render(): array {
+    $build = parent::render();
+    $table = $build['table'];
+    $build['table'] = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['aculta-patcher-table-wrapper']],
+      'table' => $table,
+    ];
+    $build['#attached']['library'][] = 'aculta_patcher/admin';
+    return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildHeader(): array {
     $header = parent::buildHeader();
     $operations = $header['operations'];

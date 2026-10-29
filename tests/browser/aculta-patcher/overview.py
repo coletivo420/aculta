@@ -74,10 +74,13 @@ def wait_for(script, timeout=25):
 def close_mobile_admin_menu(width):
     if width > 767:
         return
-    visible = driver.js("""const button = document.querySelector('button.admin-toolbar__close-button');
-      return !!button && button.getClientRects().length > 0;""")
-    if visible:
-        driver.js("document.querySelector('button.admin-toolbar__close-button')?.click()")
+    clicked = driver.js("""const buttons = [...document.querySelectorAll(
+      'button.admin-toolbar__close-button')].filter(button =>
+        button.getClientRects().length > 0 &&
+        getComputedStyle(button).visibility !== 'hidden');
+      buttons.forEach(button => button.click());
+      return buttons.length;""")
+    if clicked:
         time.sleep(0.25)
 
 

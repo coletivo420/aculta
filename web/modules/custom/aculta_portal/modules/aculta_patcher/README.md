@@ -51,13 +51,13 @@ código executável. Não usar o formulário como editor de produção.
   patchados, `composer.lock`, `patches.lock.json`, `.htaccess` e assets de
   Bootstrap tiveram hashes iguais após a segunda execução.
 - Firefox ESR autenticado no Runtime de teste: lista e formulário abriram, o
-  patch H5P e a ação de inclusão aparecem, os campos mínimos estão presentes e
-  ambos ficam visíveis em 1280px. A listagem ultrapassa a largura do viewport
-  em 390px; a navegação lateral encobre o título da lista em 320px e do
-  formulário em 390px. A revisão de responsividade falhou nesses tamanhos.
-- Exportação de artefatos no Runtime não foi executada. Corrigir/revisar o
-  overflow da tabela e concluir auditoria final antes de avaliar RC. Nenhum
-  `composer require` ou `composer update` foi executado.
+  patch H5P e a ação de inclusão aparecem e os campos mínimos estão presentes.
+  Com o menu lateral recolhido, os títulos ficam visíveis em 1280/390/320px; a
+  tabela ampliava o documento para 545px nos dois viewports móveis. O wrapper
+  rolável foi implementado em dev.4 e ainda requer validação no Runtime.
+- Exportação de artefatos no Runtime não foi executada. Após validar a tabela,
+  concluir auditoria final antes de avaliar RC. Nenhum `composer require` ou
+  `composer update` foi executado.
 
 ## Patch H5P inicial
 

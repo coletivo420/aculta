@@ -1,5 +1,14 @@
 # Changelog — aculta_patcher
 
+## 0.1.0-dev.4 — rolagem horizontal na tabela administrativa
+
+- A tabela de registros é envolvida por contêiner rolável em viewports estreitos;
+  estilo carregado apenas pela listagem do Patcher.
+- Unit 38/65, lint 12/12 e PHPCS Drupal passaram. O Firefox autenticado anterior
+  identificou overflow da tabela em 390/320px; repetir a validação após o cache
+  rebuild do candidato no servidor de teste.
+
+
 ## 0.1.0-dev.3 — proteção da raiz de artefatos — 2026-10-26
 
 - O exportador recusa diretórios `patches/` e `patches/aculta_patcher/` que resolvam por symlink para fora da raiz do projeto.
