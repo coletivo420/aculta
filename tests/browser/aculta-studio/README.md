@@ -201,3 +201,26 @@ focáveis (todos `:focus-visible` e com `outlineStyle` calculado diferente de
 27 capturas, uma após o primeiro Tab por rota/largura. A captura Marley/320 foi
 inspecionada. Essa contagem não avalia contraste, ordem semântica completa,
 componentes customizados, toda a página nem todos os estados.
+
+### Prova de color scheme e reduced motion
+
+`theme-modes.py` captura as rotas `STUDIO_ROUTES` (padrão Marley, Conta e
+Perfil) nos viewports `OCS_MODE_WIDTHS` (320/1440). `OCS_COLOR_SCHEME` aceita
+`auto`, `light` ou `dark`; modo explícito aplica `data-bs-theme` somente ao DOM
+local da página. `OCS_REDUCED_MOTION=1` configura a preferência do perfil
+Firefox temporário. O script registra `matchMedia`, tokens computados,
+shell/overflow e screenshots em `$SUITE_OUT`; não salva preferências nem altera
+a configuração Drupal. Execute cada combinação em diretório `$SUITE_OUT`
+separado. Exige Firefox ESR visível, Drush no `aculta_runtime` e conta de teste.
+Isso testa tokens e media queries nas rotas/estados capturados, não contraste
+completo, acessibilidade nem todos os purposes.
+
+**Execução de modos em 2026-10-29:** o probe capturou seis combinações de
+rota/largura em cada modo (`light`, `dark` + reduced motion e `auto`): Marley,
+Conta e Perfil em 320/1440 px. `matchMedia` confirmou dark 6/6 no modo escuro e
+reduced motion 6/6 no modo combinado; ambos foram 0/6 no modo claro/auto da
+sessão padrão. Os tokens registrados diferiram: claro `#f2f7f0`/`#0c3c29`,
+escuro `#171513`/`#f4efe8`. Nenhum overflow horizontal foi medido nessas 18
+páginas. A captura escura Marley/320 foi inspecionada. Esta matriz limita-se a
+tokens e rotas/viewport indicados; não testa contraste completo, todos os
+componentes, todos os purposes nem conformidade WCAG.

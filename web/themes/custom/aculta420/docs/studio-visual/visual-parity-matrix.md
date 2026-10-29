@@ -72,3 +72,16 @@ rotas: 621 elementos focáveis com `:focus-visible` e outline calculado, mais
 `$SUITE_OUT/aculta-ocs-f0-keyboard-full-20261029/`; Marley/320 foi inspecionada.
 Amostra de 12 passos não equivale à análise de todos os focáveis nem ao aceite
 WCAG 2.2 AA.
+
+## Modos claro/escuro e reduced motion — evidência parcial
+
+O probe `theme-modes.py` capturou Marley, Conta e Perfil em 320/1440 px sob
+`data-bs-theme=light`, `data-bs-theme=dark` com `prefers-reduced-motion: reduce`
+e modo auto sem atributo (Firefox padrão claro). O browser confirmou dark 6/6
+e reduced motion 6/6 na combinação escuro/reduzido; o modo claro/auto confirmou
+ambos falsos. Tokens `--aculta-surface-page`/`--aculta-text-primary` foram
+`#f2f7f0`/`#0c3c29` no claro e `#171513`/`#f4efe8` no escuro. Scroll width não
+excedeu o viewport nas 18 capturas; Marley/320 escuro foi inspecionada. Os
+atributos foram aplicados somente no DOM temporário; nenhuma preferência
+Drupal foi salva. Isso não aprova contraste WCAG nem os demais componentes/
+purposes.

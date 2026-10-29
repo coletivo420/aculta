@@ -596,3 +596,9 @@ A repetição ampliada do probe usou os nove viewports e Tab/Shift+Tab nas mesma
 três rotas: 648 observações, 621 alvos focáveis com `:focus-visible` e outline,
 27 retornos ao `body` ao terminar a volta. Capturas em `$SUITE_OUT` e detalhes
 no inventário visual. A amostra não fecha o gate WCAG/F7.
+
+A prova de modos também cobriu claro, escuro e `prefers-reduced-motion` nas
+rotas Marley, Conta e Perfil em 320/1440 px. O modo escuro alterou os tokens
+computados e confirmou as media queries dark/reduced; o modo auto refletiu a
+preferência padrão clara do Firefox. Capturas e limites estão na matriz F0; não
+são aprovação de contraste WCAG nem cobertura global.

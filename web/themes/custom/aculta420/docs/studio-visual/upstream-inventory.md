@@ -228,3 +228,17 @@ e Perfil. Foram 648 observações: 621 alvos focáveis, todos com
 `body` após completar o percurso reverso. As 27 capturas estão em
 `$SUITE_OUT/aculta-ocs-f0-keyboard-full-20261029/`; Marley/320 foi inspecionada.
 Continua sendo amostra de 12 passos, não auditoria WCAG nem percurso completo.
+
+### OCS-F0 — modos de cor e movimento (2026-10-29)
+
+`theme-modes.py` rodou em Firefox ESR visível para Marley, Conta e Perfil,
+nas larguras 320/1440, em claro explícito, escuro explícito + reduced motion e
+auto. As 18 capturas não apresentaram overflow medido. `matchMedia` confirmou
+`prefers-color-scheme: dark` em 6/6 páginas dark e
+`prefers-reduced-motion: reduce` em 6/6 da execução combinada; ambos falsos
+em light/auto no perfil padrão. Tokens de superfície/texto primário: claro
+`#f2f7f0`/`#0c3c29`, escuro `#171513`/`#f4efe8`. O screenshot escuro Marley/320
+foi inspecionado. O tema explícito foi aplicado apenas no atributo DOM dentro
+do browser temporário, sem salvar configuração/preferência Drupal. A evidência
+não substitui avaliação de contraste AA, demais states/components/purposes ou
+o gate visual completo.
