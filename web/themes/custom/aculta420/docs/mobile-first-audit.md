@@ -189,3 +189,41 @@ caminhos/linhas ainda existem e cada linha continua contendo o call site de
 anexação declarado. Isso confirma apenas que o índice está referenciando linhas
 válidas; chamadas dinâmicas, condições de execução, associação à rota/purpose e
 carregamento efetivo no browser permanecem sem comprovação.
+
+## THEME-MF0 — baseline público dos dez purposes
+
+Em 2026-10-29, `purpose-matrix.py` capturou anonimamente as raízes do
+`ROUTES-SITEMAP.md` nos nove viewports (320/360/390/599/600/768/1024/1280/1440):
+90/90 registros completos e zero casos com `documentScrollWidth` ou
+`bodyScrollWidth` maior que o viewport. A Institution Bar apareceu em 90/90;
+o seletor de Domain Header `.aculta-header` apareceu somente em MAIN e Wiki
+(18/90), ausente nos demais oito purposes. Isso diverge da decisão de preservar
+ambos os headers e exige esclarecimento de composition/availability pelo owner;
+a Frente B não adicionará um header visual paralelo.
+
+| Purpose | Estado capturado | Limite da evidência |
+|---|---|---|
+| MAIN | homepage pública renderiza; em 320 px o título “ANTIPROIBICIONISTA” quebra no meio da palavra sem overflow. | Captura somente homepage, sem validar outras páginas/estados. |
+| ACCOUNT | raiz redireciona para `/entrar`; Institution Bar presente. | Não cobre Conta, Perfil ou Studio autenticados; Green Stash autorizado permanece fora. |
+| SUPPORT | formulário público de valor renderiza. | Não submetido; não valida estados Form API/AJAX/erro. |
+| MAGAZINE | título de página presente, corpo visual vazio e rodapé. | Conteúdo editorial não apareceu; layout de listagem/artigo não avaliado. |
+| WIKI | homepage Wiki420 renderiza; ambos os headers presentes. | Não cobre autoria/revisão/moderação nem grants. |
+| SHOP | vitrine pública de produtos renderiza. | Não cobre variações, carrinho/checkout, estoque ou loja autorizada. |
+| COURSES | catálogo inicial renderiza sem H1 no DOM. | Não valida matrículas, turma, LMS privado nem estado sem conteúdo. |
+| FORUM | índice público e cartões renderizam; Institution Bar presente. | Não cobre tópicos autenticados, anexos ou Messenger. |
+| LINKS | landing social renderiza. | Apenas homepage, sem explorar links externos/QR. |
+| EVENTOS | listagem pública de evento/data renderiza. | Não cobre mapa, filtros, calendário, RSVP ou editor. |
+
+As capturas, no Firefox ESR visível, estão fora do Git em
+`$SUITE_OUT/aculta-theme-mf0-purposes-20261029/`. O checkout servidor era
+`75f049fd1`; os arquivos de tema/Studio/Commerce versionados eram iguais aos
+da PR `b75857a5f` (diferenças apenas em documentação), mas os commits ainda
+precisam ser comparados no head de uma futura rodada. Este resultado é baseline
+público, não prova responsividade semântica, WCAG, zoom, keyboard, modo escuro,
+reduced motion, ausência de overflow em componentes não carregados ou gate MF3.
+
+### Pede-A — composição do Domain Header por purpose
+
+| Owner/caminho | Contrato e pergunta técnica | Aceite esperado |
+|---|---|---|
+| Domain/Portal; composição de `AccountShellBuilder`, tema `templates/layout/page.html.twig` e attachments por purpose | Confirmar por que `.aculta-header` aparece somente em MAIN e Wiki nos oito propósitos públicos restantes, embora Institution Bar esteja presente em todos; confirmar se há intentionally hidden/unavailable state ou composição ausente. | Resposta/patch do owner sem duplicar shell; teste Firefox por purpose confirmando Institution Bar e Domain Header conforme decisão, incluindo ACCOUNT anônimo/autenticado e navegação canônica. |

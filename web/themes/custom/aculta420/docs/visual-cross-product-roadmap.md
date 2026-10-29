@@ -418,3 +418,13 @@ A captura foi feita no checkout servidor `f2708e60f`, com árvore versionada
 visual idêntica à PR em `5734bed87`, mas havia trabalho local de Eventos; logo a
 evidência não é gate global nem homologação da cabeça atual da PR. MF3/F11
 continuam pendentes.
+
+### THEME-MF0 — raízes públicas por purpose (2026-10-29)
+
+Foram capturadas as dez raízes canônicas nos nove viewports do gate: 90/90
+páginas completaram e não tiveram overflow horizontal medido. Institution Bar
+estava em todas; `.aculta-header` apenas em MAIN e Wiki (18/90), então o shell
+multidomínio precisa de decisão/validação do owner em oito purposes. ACCOUNT
+redirecionou ao login; Revista mostrou corpo vazio; a página MAIN divide a
+palavra longa do título em 320 px. Conteúdo autenticado, formulários e fluxos
+funcionais não foram exercitados. Detalhes e Pede-A em `mobile-first-audit.md`.

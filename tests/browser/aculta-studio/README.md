@@ -232,3 +232,27 @@ Light: dark/reduced `0/27`, tokens `#f2f7f0`/`#0c3c29`; dark + reduced:
 claro, `0/27` em ambos. Não houve overflow horizontal medido. Artefatos em
 `$SUITE_OUT/aculta-ocs-f0-mode-{light-full,dark-reduced-full,auto-full}-20261029/`.
 Isso estende o registro anterior de 320/1440; continua limitado a três rotas.
+
+### Matriz mobile-first por purpose (somente leitura)
+
+`purpose-matrix.py` abre anonimamente as dez raízes de `ROUTES-SITEMAP.md`
+(MAIN, ACCOUNT, SUPPORT, MAGAZINE, WIKI, SHOP, COURSES, FORUM, LINKS e
+EVENTOS) nos nove viewports `OCS_WIDTHS`. Registra URL final, título, H1s,
+Institution Bar/Domain Header, largura/overflow e screenshot. Requer Firefox
+ESR visível (`DISPLAY=:0`), `SUITE_OUT` externo e hosts do servidor de
+Desenvolvimento. O purpose ACCOUNT pode redirecionar ao login; isso não é
+contornado e não representa Conta/Studio autenticado ou Green Stash autorizado.
+O script não cria conteúdo nem submete forms; os artefatos ficam fora do Git.
+
+**Execução THEME-MF0 em 2026-10-29:** as dez raízes canônicas foram
+capturadas anonimamente nos nove viewports (90/90 páginas concluídas, sem
+overflow horizontal medido). A Institution Bar esteve presente em 90/90; o
+Domain Header `.aculta-header` em 18/90, somente MAIN e WIKI. ACCOUNT raiz
+redirecionou a `/entrar`, portanto não cobre Conta/Studio privado. Os arquivos
+JSON/PNG estão em `$SUITE_OUT/aculta-theme-mf0-purposes-20261029/`. A homepage
+da Revista exibiu espaço de conteúdo vazio e rodapé; esse estado não permite
+avaliar os componentes editoriais. Inspecionadas manualmente algumas telas 320
+(MAIN, Fórum, Wiki, Revista e Loja); o título MAIN quebra “ANTIPROIBICIONISTA”
+no meio da palavra sem gerar overflow. Este baseline público não cobre as
+áreas autenticadas, formulários, fixtures de conteúdo completos nem todos os
+consumidores/views anexados.

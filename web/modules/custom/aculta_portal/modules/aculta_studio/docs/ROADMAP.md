@@ -608,3 +608,10 @@ grade de nove viewports para Marley, Conta e Perfil (81 capturas). As media
 queries e tokens esperados foram observados em 27/27 capturas por modo, sem
 overflow medido. Isso aumenta a evidência das três rotas; não cobre todos os
 componentes/purposes, não aprova WCAG nem encerra F0/MF0.
+
+A auditoria global THEME-MF0 também capturou anonimamente as raízes dos dez
+purposes em nove larguras (90 telas, sem overflow medido). Esse dado não cobre
+Studio autenticado além das rotas registradas no baseline OCS; a raiz ACCOUNT
+leva ao login e o Domain Header faltou em oito purposes públicos, apesar da
+Institution Bar presente em todos. Ver `mobile-first-audit.md` para Pede-A,
+limites por purpose e estados vazios.
