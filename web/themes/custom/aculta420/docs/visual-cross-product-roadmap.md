@@ -6,16 +6,19 @@
 
 A fidelidade visual ao OpenCulturas Next (`opcult`) continua **escopada ao Studio**; a fundação mobile-first é **global**. O Green Stash é uma **área integrada ao Studio**, não uma experiência independente ou shell próprio; utiliza Commerce como owner funcional e componentes do tema. Dependência: THEME-MF3 aprovado antes de OCS-F11. [Plano vigente](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md).
 
-## Green Stash na frente visual Studio - correção 2026-10-29
+## Green Stash na frente visual Studio - correção inicial (superada)
 
-O escopo vigente é **OCS-F0-F11**, seguido por **OCS-A1-A4**, conforme [plano normativo](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). A experiência independente **Green Stash** (Commerce) é expressamente incluída ao lado de Marley, GanjaLab, WE Sativa, Conta, Perfil e demais experiências descobertas. **F8 = Green Stash; F9 = Conta/Perfil; F10 = adicionais; F11 = gate de fidelidade**. Referências anteriores a F10 como gate final estão superadas.
+Este registro preserva uma retificação intermediária que foi corrigida pelo
+plano normativo posterior. Green Stash é área de gestão comercial **integrada**
+ao Studio. A sequência de fases e entregas é a do plano vigente, não a deste
+trecho histórico.
 
 Para Green Stash, usar SDCs compartilhados com variantes adaptadas a operação comercial e navegação interna mobile-first, nunca duplicar shell, checkout ou UI administrativa. Não mostrar recursos ainda em plano como operacionais; ACL por loja, dados privados e ações de pagamento/estoque/envio permanecem em serviços Commerce. Capturas e testes devem incluir usuários de lojas distintas, sem JS, 320 px e modo escuro. Só após F11 homologada aplicar Aculta Identity em toda a plataforma, inclusive Green Stash.
 
 
-## Correção da frente visual Studio - todas as experiências (2026-10-29)
+## Correção da frente visual Studio - todas as experiências (superada)
 
-O roteiro OCS-F0-F7 resumido anteriormente foi **substituído** pela [sequência transversal OCS-F0-F10](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md), seguida de OCS-A1-A4. É obrigatório aplicar padrões OpenCulturas Next ao hub, Marley, GanjaLab, WE Sativa, Conta privada, Perfil público e demais experiências reais detectadas em F0. Não existe prioridade exclusiva Marley.
+O roteiro resumido nesta seção foi substituído pela sequência vigente do [plano visual](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md), que define OCS-F0-F11 antes de OCS-A1-A4. É obrigatório aplicar padrões Next ao Hub, Marley, GanjaLab, WE Sativa, Green Stash integrado, Conta, Perfil e demais experiências reais inventariadas.
 
 O tema fornece padrões transversais de grid, cards, tabs, edição, seções, estados e navegação contextual; cada experiência expõe render arrays/ACL/links pelos serviços donos. Menu Studio deriva do registro de experiências e permissões, não é uma lista estática no CSS/Twig. Não criar SDCs específicos de GanjaLab/WE Sativa se um componente transversal com variante resolve. Instituição/Domain Header continuam invariáveis. **OCS-F10** é o gate de fidelidade; identidade Aculta apenas após aceite. Testar também outros purposes para evitar vazamento CSS.
 
@@ -33,7 +36,15 @@ O tema fornece padrões transversais de grid, cards, tabs, edição, seções, e
 
 # ACULTA420 — Roadmap visual transversal (planejamento)
 
-**Linha de planejamento:** THEME-UX 0.8 · **Data:** 2026-10-22 · **Estado:** plano, sem implementação e sem gates Runtime aprovados.
+**Linha de planejamento:** THEME-UX 0.8 · **Data:** 2026-10-22 · **Estado:** plano; OCS-F0 documental em andamento, sem alteração visual nem gates Runtime aprovados.
+
+## OCS-F0 — OpenCulturas Next → Studio (2026-10-29)
+
+Inventário 3.1.5 e matriz de paridade inicial ficam em
+`studio-visual/upstream-inventory.md` e `studio-visual/visual-parity-matrix.md`.
+O escopo permanece no Studio. Institution Bar e Domain Header não entram na
+camada de fidelidade. Nenhuma paridade de tela autenticada está homologada por
+esta documentação.
 
 ## Decisão arquitetural obrigatória
 **Preservar Institution Bar + Domain Header multidomínio existentes em TODAS as áreas.** A evolução visual pode aperfeiçoar responsividade, contraste, espaçamento, navegação mobile e light/dark, mas não substitui, oculta ou duplica o shell. O futuro Context Header é **subcabeçalho de página** e não um cabeçalho global. Domain/purpose, URLs, dados, ACL e cache ficam no Portal/providers; tema somente apresenta.
@@ -366,3 +377,29 @@ STUDIO 0.1-B: providers de experiência propostos para GanjaLab, WE SATIVA e fut
 ## OC315 - novo backlog de integração visual (2026-10-29)
 
 Origem: [auditoria 3.1.5](../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). A presença estática dos SDCs não prova homologação. Integração funcional proposta, após gates existentes: (1) página de evento em cinco regiões e H1 único; (2) selos acessíveis ligados a campos reais; (3) listagem cultural filtrável com cartão atual e paginação; (4) marcas autorizadas, imprensa e overrides editoriais; (5) salvos por usuário com estado seguro. Registrar consumers e evidências de cada SDC; não importar CSS/Twig do `opcult`.
+# Retificação de escopo — THEME-MF e OCS-F11 (2026-10-29)
+
+Esta retificação é a decisão vigente para o trabalho visual: mobile-first
+abrange **todo o tema ACULTA420 e todos os purposes**, enquanto a fidelidade
+OpenCulturas Next é aplicada inicialmente somente ao conteúdo do Studio. A
+Etapa de identidade Aculta não começa até a aprovação de THEME-MF3 e OCS-F11.
+Green Stash é gestão comercial integrada ao ACULTA Studio; um provider técnico
+do Studio não constitui shell, menu, autenticação ou plataforma independentes.
+
+THEME-MF0 está parcialmente inventariada em
+[`mobile-first-audit.md`](mobile-first-audit.md) e
+[`theme-mobile-file-inventory.tsv`](theme-mobile-file-inventory.tsv). Este
+inventário estático não prova responsividade. MF1–MF3, o gate OCS-F11 e
+OCS-A1–A4 continuam pendentes; consultar o plano e a matriz de paridade atual.
+
+
+## THEME-MF0 e OCS-F0 — evidência parcial (2026-10-29)
+
+O inventário estático inclui 92 folhas CSS/Sass, 11 scripts, 98 templates,
+20 bibliotecas e 85 pontos custom de anexação; os 10 purposes declarados estão
+mapeados. A captura Firefox visível cobre homepage pública OpenCulturas e oito
+URLs Studio a 390/1440, não o conjunto de purposes. `/studio` está vazio,
+GanjaLab aponta conteúdo de Conta e Green Stash requer fixture autorizada. Ver
+[`mobile-first-audit.md`](mobile-first-audit.md) e
+[`studio-visual/visual-parity-matrix.md`](studio-visual/visual-parity-matrix.md).
+Nenhum gate MF3/F11 foi aprovado.

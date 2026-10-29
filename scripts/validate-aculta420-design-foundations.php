@@ -50,7 +50,9 @@ foreach ($iterator as $file) {
     continue;
   }
   $path = $file->getPathname();
-  if (str_contains($path, DIRECTORY_SEPARATOR . 'docs' . DIRECTORY_SEPARATOR)) {
+  $relative_path = substr($path, strlen($theme) + 1);
+  $path_parts = explode(DIRECTORY_SEPARATOR, $relative_path);
+  if (array_intersect(['docs', 'node_modules', 'vendor'], $path_parts) !== []) {
     continue;
   }
   $runtime_files[] = $path;
@@ -167,7 +169,12 @@ $check($catch_all === [], 'No catch-all CSS file has been introduced.');
 
 $bootstrap_copies = [];
 foreach ($iterator as $file) {
-  if ($file->isFile() && preg_match('/^bootstrap(?:\.min)?\.(?:css|js)$/i', $file->getFilename()) === 1) {
+  if (!$file->isFile() || preg_match('/^bootstrap(?:\.min)?\.(?:css|js)$/i', $file->getFilename()) !== 1) {
+    continue;
+  }
+  $relative_path = substr($file->getPathname(), strlen($theme) + 1);
+  $path_parts = explode(DIRECTORY_SEPARATOR, $relative_path);
+  if (array_intersect(['docs', 'node_modules', 'vendor'], $path_parts) === []) {
     $bootstrap_copies[] = $file->getPathname();
   }
 }

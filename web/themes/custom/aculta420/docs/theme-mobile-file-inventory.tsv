@@ -1,0 +1,202 @@
+tipo	caminho	media_count	media_queries	container_count	fixed_dimensions	overflow_declarations
+estilo	web/themes/custom/aculta420/assets/icons/bootstrap-icons/font/bootstrap-icons.min.css	0	—	0	—	—
+estilo	web/themes/custom/aculta420/components/content/accessibility-badges/accessibility-badges.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/content/accessibility-badges/accessibility-badges.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/author-card/author-card.css	1	(max-width: 575.98px)	0	min-width: 0 | width: 3rem | width: 100% | min-width: 0 | inline-size: 1.75rem | width: 2.5rem | max-width: 575.98px) | width: 2.5rem | width: 2.25rem | width: 4rem	overflow: hidden
+template	web/themes/custom/aculta420/components/content/author-card/author-card.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/course_card/course_card.css	1	(prefers-reduced-motion: reduce)	0	min-width: 120px | min-width: 120px	overflow: clip | overflow: hidden
+template	web/themes/custom/aculta420/components/content/course_card/course_card.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/editorial-card/editorial-card.css	1	(max-width: 768px)	0	max-width: 768px)	—
+template	web/themes/custom/aculta420/components/content/editorial-card/editorial-card.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/event_card/event_card.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/content/event_card/event_card.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/forum-category/forum-category.css	0	—	0	min-width: 0	—
+template	web/themes/custom/aculta420/components/content/forum-category/forum-category.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/institutional-notice/institutional-notice.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/content/institutional-notice/institutional-notice.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/messenger-compose/messenger-compose.css	0	—	0	min-width: 0	—
+template	web/themes/custom/aculta420/components/content/messenger-compose/messenger-compose.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/messenger-item/messenger-item.css	0	—	0	min-width: 0 | width: 2.25rem | width: 100% | min-width: 0 | max-width: min(82%, 38rem) | width: 2rem | max-width: 100%	overflow: hidden
+template	web/themes/custom/aculta420/components/content/messenger-item/messenger-item.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/messenger-notification/messenger-notification.css	0	—	0	min-width: 0	—
+template	web/themes/custom/aculta420/components/content/messenger-notification/messenger-notification.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/product-buy/product-buy.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/content/product-buy/product-buy.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/product-details/product-details.css	0	—	0	width: 100% | width: 35%	—
+template	web/themes/custom/aculta420/components/content/product-details/product-details.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/profile-bio/profile-bio.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/content/profile-bio/profile-bio.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/profile-identity/profile-identity.css	2	(min-width: 48rem) | (max-width: 22rem)	0	inline-size: 4.5rem | inline-size: 100% | min-width: 48rem) | max-width: 22rem) | inline-size: 3.5rem	overflow: hidden
+template	web/themes/custom/aculta420/components/content/profile-identity/profile-identity.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/profile-social/profile-social.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/content/profile-social/profile-social.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/components/content/qr-download/qr-download.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/components/content/qr-preview/qr-preview.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/shipping-calculator/shipping-calculator.css	1	(min-width: 576px)	0	min-width: 0 | min-width: 576px)	—
+javascript	web/themes/custom/aculta420/components/content/shipping-calculator/shipping-calculator.js	—	—	—	—	—
+template	web/themes/custom/aculta420/components/content/shipping-calculator/shipping-calculator.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/shipping-summary/shipping-summary.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/content/shipping-summary/shipping-summary.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/content/sponsor-logos/sponsor-logos.css	0	—	0	max-width: 100%	—
+template	web/themes/custom/aculta420/components/content/sponsor-logos/sponsor-logos.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/donation-card/donation-card.css	1	(prefers-reduced-motion: reduce)	0	width: max-content | max-width: 100%	—
+template	web/themes/custom/aculta420/components/donation-card/donation-card.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/components/donation-dedication/donation-dedication.twig	—	—	—	—	—
+javascript	web/themes/custom/aculta420/components/donation-notification/donation-notification.js	—	—	—	—	—
+template	web/themes/custom/aculta420/components/donation-notification/donation-notification.twig	—	—	—	—	—
+javascript	web/themes/custom/aculta420/components/donation-pane/donation-pane.js	—	—	—	—	—
+template	web/themes/custom/aculta420/components/donation-pane/donation-pane.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/donation-quick/donation-quick.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/donation-quick/donation-quick.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/donation-summary-container/donation-summary-container.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/donation-summary-container/donation-summary-container.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/components/feedback/consent-banner/consent-banner.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/feedback/empty-state/empty-state.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/feedback/empty-state/empty-state.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/feedback/messenger-state/messenger-state.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/feedback/messenger-state/messenger-state.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/feedback/stat-counter/stat-counter.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/feedback/stat-counter/stat-counter.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/components/feedback/unread-badge/unread-badge.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/layouts/event-page-five-regions/event-page-five-regions.css	1	(min-width: 992px)	0	min-width: 992px)	—
+template	web/themes/custom/aculta420/components/layouts/event-page-five-regions/event-page-five-regions.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/layouts/page-columns/page-columns.css	1	(max-width: 767.98px)	0	min-width: 0 | max-width: 767.98px)	—
+template	web/themes/custom/aculta420/components/layouts/page-columns/page-columns.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/alerts-trigger/alerts-trigger.css	0	—	0	min-width: 0 | width: 100%	overflow-y: auto
+template	web/themes/custom/aculta420/components/patterns/alerts-trigger/alerts-trigger.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/bookmark-toggle/bookmark-toggle.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/patterns/bookmark-toggle/bookmark-toggle.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/card/card.css	0	—	0	width: 100% | min-width: 0 | max-width: 100% | width: 100% | width: 100% | width: 100%	overflow: hidden
+template	web/themes/custom/aculta420/components/patterns/card/card.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/components/patterns/carousel/carousel.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/cart-offcanvas/cart-offcanvas.css	0	—	0	—	overflow-y: auto
+template	web/themes/custom/aculta420/components/patterns/cart-offcanvas/cart-offcanvas.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/content-grid/content-grid.css	1	(max-width: 575.98px)	0	max-width: 575.98px) | min-width: 0	—
+template	web/themes/custom/aculta420/components/patterns/content-grid/content-grid.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/content-section/content-section.css	1	(max-width: 575.98px)	0	max-width: 575.98px)	—
+template	web/themes/custom/aculta420/components/patterns/content-section/content-section.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/context-header/context-header.css	1	(min-width: 48rem)	0	max-width: 70ch | min-width: 48rem)	—
+template	web/themes/custom/aculta420/components/patterns/context-header/context-header.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/context-tabs/context-tabs.css	1	(max-width: 23rem)	0	max-width: 100% | max-width: 23rem)	—
+template	web/themes/custom/aculta420/components/patterns/context-tabs/context-tabs.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/figure/figure.css	0	—	0	max-width: 100%	—
+template	web/themes/custom/aculta420/components/patterns/figure/figure.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/hero/hero.css	0	—	0	max-width: 22ch | max-width: 60ch	—
+template	web/themes/custom/aculta420/components/patterns/hero/hero.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/messenger-list/messenger-list.css	0	—	0	min-width: 0	—
+template	web/themes/custom/aculta420/components/patterns/messenger-list/messenger-list.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/messenger-read-status/messenger-read-status.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/patterns/messenger-read-status/messenger-read-status.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/messenger-trigger/messenger-trigger.css	0	—	0	width: 100%	—
+template	web/themes/custom/aculta420/components/patterns/messenger-trigger/messenger-trigger.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/product-tabs/product-tabs.css	1	(prefers-reduced-motion: reduce)	0	max-width: 46rem	—
+template	web/themes/custom/aculta420/components/patterns/product-tabs/product-tabs.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/profile-editor/profile-editor.css	1	(min-width: 48rem)	0	min-width: 48rem)	—
+template	web/themes/custom/aculta420/components/patterns/profile-editor/profile-editor.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/components/patterns/quote/quote.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/rail/rail.css	0	—	0	min-width: 0	overflow-x: auto
+template	web/themes/custom/aculta420/components/patterns/rail/rail.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/revista-publication/revista-publication.css	0	—	0	—	—
+template	web/themes/custom/aculta420/components/patterns/revista-publication/revista-publication.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/social-links-page/social-links-page.css	1	(prefers-reduced-motion: reduce)	0	width: 100% | width: min(100%, 34rem) | width: min(100%, 12rem) | width: 100% | width: 2.75rem | width: 1px	overflow: hidden
+template	web/themes/custom/aculta420/components/patterns/social-links-page/social-links-page.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/components/patterns/wiki-entry/wiki-entry.css	1	(max-width: 767.98px)	0	width: min(100%, 78rem) | max-width: 70ch | min-width: 0 | max-width: 100% | max-width: 100% | width: 100% | max-width: 767.98px)	overflow: hidden
+template	web/themes/custom/aculta420/components/patterns/wiki-entry/wiki-entry.twig	—	—	—	—	—
+estilo	web/themes/custom/aculta420/css/base.css	0	—	0	min-width: 2.75rem	overflow-x: clip
+estilo	web/themes/custom/aculta420/css/ckeditor5.css	0	—	0	width: 100%	—
+estilo	web/themes/custom/aculta420/css/components/account.css	0	—	0	max-width: 48rem | max-width: 40rem	—
+estilo	web/themes/custom/aculta420/css/components/album-slideshow.css	1	(max-width: 479.98px)	0	width: 100% | min-width: 0 | max-width: 100% | width: 100% | width: 100% | min-width: 0 | width: 100% | width: 100% | width: 100% | min-width: 2.5rem | width: 100% | max-width: 479.98px) | width: 2.5rem	overflow: hidden | overflow-y: auto
+estilo	web/themes/custom/aculta420/css/components/auth.css	2	(max-width: 575.98px) | (prefers-reduced-motion: reduce)	0	max-width: 34rem | max-width: 34rem | width: 100% | width: 100% | max-width: 575.98px) | inline-size: 1.5rem	—
+estilo	web/themes/custom/aculta420/css/components/breadcrumb.css	0	—	0	—	—
+estilo	web/themes/custom/aculta420/css/components/buttons.css	0	—	0	—	—
+estilo	web/themes/custom/aculta420/css/components/consent-banner.css	1	(min-width: 768px)	0	min-width: 768px)	—
+estilo	web/themes/custom/aculta420/css/components/content.css	2	(min-width: 768px) | (min-width: 1200px)	0	max-width: 70ch | width: auto !important | min-width: 0 | min-width: 768px) | min-width: 1200px)	—
+estilo	web/themes/custom/aculta420/css/components/dialog.css	0	—	0	inline-size: min(420px, 100vw) !important | width: 1px | width: 2.75rem | inline-size: min(100%, 14rem) | width: 100% | inline-size: min(100%, 14rem) | inline-size: min(440px, calc(100vw - 2rem)) !important | inline-size: min(40rem, calc(100vw - 2rem)) !important | inline-size: min(40rem, calc(100vw - 2rem)) !important | inline-size: min(40rem, calc(100vw - 2rem)) !important | inline-size: min(48rem, calc(100vw - 2rem)) !important | inline-size: min(520px, calc(100vw - 2rem)) !important | inline-size: min(560px, calc(100vw - 2rem)) !important | inline-size: min(480px, calc(100vw - 2rem)) !important	overflow: visible !important | overflow-y: auto | overflow: hidden | overflow-y: auto | overflow-y: auto | overflow-y: auto | overflow-y: auto
+estilo	web/themes/custom/aculta420/css/components/discussion.css	4	(min-width: 576px) | (max-width: 575.98px) | (max-width: 359.98px) | (max-width: 575.98px)	0	min-width: 0 | inline-size: calc(100% - 1.5rem) | inline-size: 100% | min-width: 576px) | inline-size: 1px | max-width: 575.98px) | inline-size: 100% | inline-size: auto | max-width: 359.98px) | inline-size: 100% | inline-size: 100% | max-width: 575.98px)	overflow: hidden | overflow: visible
+estilo	web/themes/custom/aculta420/css/components/document-viewer.css	1	(max-width: 575.98px)	0	width: 100% | min-width: 0 | min-width: 0 | min-width: 0 | min-width: 3.5rem | max-width: 100% | min-width: 0 | width: 100% | max-width: 575.98px)	overflow: auto | overflow: auto
+estilo	web/themes/custom/aculta420/css/components/editorial-carousel.css	2	(prefers-reduced-motion: reduce) | (max-width: 768px)	0	width: 100% | max-width: 764px | width: min(370px, 100%) | width: auto | width: 40px | width: 10px | max-width: 768px) | max-width: 390px | width: 100%	—
+estilo	web/themes/custom/aculta420/css/components/editorial-content.css	0	—	0	—	—
+estilo	web/themes/custom/aculta420/css/components/footer.css	2	(max-width: 991.98px) | (max-width: 575.98px)	0	max-width: 26ch | max-width: 35ch | width: 2.25rem | min-width: 0 | max-width: 36ch | width: fit-content | max-width: 991.98px) | max-width: 575.98px)	—
+estilo	web/themes/custom/aculta420/css/components/forms.css	0	—	0	—	—
+estilo	web/themes/custom/aculta420/css/components/forum-index.css	5	(min-width: 576px) and (max-width: 991.98px) | (min-width: 992px) | (min-width: 992px) | (max-width: 575.98px) | (max-width: 575.98px)	0	width: 2rem | width: 1.5rem | min-width: 576px) and (max-width: 991.98px) | min-width: 0 | min-width: 992px) | min-width: 0 | max-width: 100% | width: auto | min-width: 7rem | min-width: 992px) | max-width: 575.98px) | max-width: 575.98px) | min-width: 1.75rem	—
+estilo	web/themes/custom/aculta420/css/components/header.css	2	(min-width: 1100px) | (max-width: 1099.98px)	0	min-width: 0 | max-width: 26ch | width: min(100%, 18rem) | width: 100% | max-width: 18rem | min-width: 1100px) | max-width: 1099.98px) | width: min(100%, 18rem) | width: 100%	—
+estilo	web/themes/custom/aculta420/css/components/institution-bar.css	2	(max-width: 767.98px) | (max-width: 374.98px)	0	width: 78px | max-width: none | max-width: 767.98px) | width: 56px | min-width: 0 | max-width: 374.98px) | width: 1px	overflow: hidden
+estilo	web/themes/custom/aculta420/css/components/institutional.css	2	(max-width: 767.98px) | (max-width: 575.98px)	0	max-width: 72ch | max-width: 65ch | max-width: 72ch | min-width: 0 | min-width: 0 | max-width: 72ch | max-width: 48rem | max-width: 767.98px) | max-width: 575.98px)	—
+estilo	web/themes/custom/aculta420/css/components/messenger-drawer.css	2	(max-width: 575.98px) | (max-width: 575.98px)	0	width: 3rem | width: 100% | min-width: 0 | min-width: 0 | max-width: 100% | width: 100% | min-width: 2.25rem | width: min(18rem, 80vw) | min-width: 0 | min-width: 0 | min-width: 0 | width: 100% | min-width: 0 | max-width: 575.98px) | width: fit-content | min-width: 0 | min-width: 14rem | max-width: min(18rem, 80vw) | width: 100% | width: 100% | max-width: 575.98px) | min-width: 2.25rem | width: auto | max-width: 100% | max-width: 100% | max-width: 14rem | width: 1.5rem | max-width: 42rem | width: 2.5rem	overflow: hidden | overflow: hidden | overflow: hidden | overflow-y: auto | overflow-y: auto | overflow: visible | overflow-y: auto | overflow: hidden | overflow: hidden | overflow: hidden
+estilo	web/themes/custom/aculta420/css/components/messenger-notices.css	0	—	0	min-width: 0	—
+estilo	web/themes/custom/aculta420/css/components/navigation.css	5	(min-width: 1100px) | (max-width: 1099.98px) | (max-width: 575.98px) | (max-width: 1099.98px) | (prefers-reduced-motion: reduce)	0	width: 100% | width: 1.25rem | min-width: 1100px) | max-width: 1099.98px) | max-width: 575.98px) | max-width: 1099.98px)	overflow-y: auto
+estilo	web/themes/custom/aculta420/css/components/pdf-viewer.css	1	(max-width: 40rem)	0	width: 100% | min-width: 0 | min-width: 0 | min-width: min(100%, 12rem) | min-width: 0 | max-width: 100% | width: auto | max-width: 100% | width: auto | max-width: none | width: 100% | max-width: 40rem) | min-width: 0	overflow: auto | overflow: auto
+estilo	web/themes/custom/aculta420/css/components/portal-account-terms-modal.css	0	—	0	inline-size: 1.25rem | inline-size: min(520px, calc(100vw - 2rem)) !important	overflow-y: auto
+estilo	web/themes/custom/aculta420/css/components/portal-account.css	7	(max-width: 767.98px) | (prefers-reduced-motion: no-preference) | (hover: none) | (prefers-reduced-motion: reduce) | (max-width: 767.98px) | (max-width: 767.98px) | (max-width: 767.98px)	0	min-width: 0 | min-width: 0 | width: 100% | width: auto | max-width: 14rem | width: 5rem | width: 5rem | width: 2rem | width: 1rem | max-width: 24rem | max-width: 100% | width: 1px | max-width: 767.98px) | min-width: 0 | max-width: 767.98px) | width: 1px | width: 100% | max-width: 767.98px) | width: 1px | width: 100% | max-width: 767.98px)	overflow: hidden | overflow: hidden | overflow: hidden | overflow: hidden | overflow-y: auto | overflow-x: auto
+estilo	web/themes/custom/aculta420/css/components/portal-address-number.css	0	—	0	max-width: 5.5rem	—
+estilo	web/themes/custom/aculta420/css/components/portal-cart.css	1	(max-width: 35rem)	0	width: 2.75rem | width: 2rem | min-width: 0 | max-width: 35rem)	overflow-y: auto
+estilo	web/themes/custom/aculta420/css/components/portal-payment-notice.css	0	—	0	width: 9.5rem	—
+estilo	web/themes/custom/aculta420/css/components/portal-requirements-report.css	1	(forced-colors: active)	0	—	—
+estilo	web/themes/custom/aculta420/css/components/portal-support.css	3	(max-width: 480px) | (prefers-reduced-motion: reduce) | (prefers-reduced-motion: reduce)	0	max-width: 72ch | max-width: 480px) | width: 100%	—
+estilo	web/themes/custom/aculta420/css/components/product-gallery.css	0	—	0	width: 100% | width: 100%	—
+estilo	web/themes/custom/aculta420/css/components/product.css	0	—	0	—	—
+estilo	web/themes/custom/aculta420/css/components/public-profile.css	1	(max-width: 575.98px)	0	inline-size: 6.5rem | inline-size: 4rem | max-width: 575.98px)	overflow: hidden
+estilo	web/themes/custom/aculta420/css/components/revista-post.css	1	(max-width: 575.98px)	0	inline-size: min(100%, 40rem) | inline-size: 100% | inline-size: auto | inline-size: 100% | inline-size: min(50%, 20rem) | inline-size: min(100%, 36.25rem) | inline-size: min(56.25rem, calc(100vw - 2rem)) | inline-size: min(60rem, calc(100vw - 2rem)) | inline-size: 100% | inline-size: 100% | max-width: 575.98px) | inline-size: 100% | inline-size: 2.75rem | inline-size: 100% | inline-size: 100% | inline-size: 100% | inline-size: 100%	—
+estilo	web/themes/custom/aculta420/css/components/sales-panel.css	0	—	0	min-width: 100%	overflow-x: auto
+estilo	web/themes/custom/aculta420/css/components/search.css	2	(min-width: 768px) | (prefers-reduced-motion: reduce)	0	max-width: 48rem | width: 100% | min-width: 768px)	overflow-y: auto
+estilo	web/themes/custom/aculta420/css/components/statistics.css	1	(max-width: 575.98px)	0	min-width: 12rem | max-width: 100% | width: 100% | max-width: 575.98px) | width: 100% | min-width: 0	overflow-x: auto
+estilo	web/themes/custom/aculta420/css/components/studio.css	2	(max-width: 767.98px) | (prefers-reduced-motion: reduce)	0	max-width: 14rem | min-width: 0 | max-width: 767.98px) | width: 100% | max-width: 100% | min-width: 0	—
+estilo	web/themes/custom/aculta420/css/components/ui-styles.css	0	—	0	—	—
+estilo	web/themes/custom/aculta420/css/components/unread-count.css	0	—	0	min-width: 1.25rem	—
+estilo	web/themes/custom/aculta420/css/components/webform.css	2	(max-width: 768px) | only screen and (max-width: 650px)	0	width: inherit | width: auto | max-width: 768px) | max-width: 650px) | width: 90% !important | width: auto | min-width: 2.25rem | width: 1%	overflow-x: auto
+estilo	web/themes/custom/aculta420/css/components/wiki.css	3	(max-width: 767.98px) | (max-width: 575.98px) | (max-width: 767.98px)	0	width: min(100%, 76rem) | width: min(100%, 12rem) | min-width: 0 | max-width: 44rem | width: 100% | min-width: 0 | width: 100% | width: auto | max-width: 767.98px) | max-width: 575.98px) | max-width: 76ch | max-width: 50rem | min-width: 0 | max-width: 767.98px)	overflow-y: auto
+estilo	web/themes/custom/aculta420/css/drupal-bootstrap.css	2	(max-width: 767.98px) | (prefers-reduced-motion: reduce)	0	max-width: 767.98px) | min-width: 0 | min-width: 0 | max-width: 100% | min-width: 0 | max-width: 100% | width: 0.75rem | min-width: 1.5rem	—
+estilo	web/themes/custom/aculta420/css/layout.css	0	—	0	width: 100% | max-width: 1280px | min-width: 0	—
+estilo	web/themes/custom/aculta420/css/tokens.css	1	(prefers-color-scheme: dark)	0	—	—
+javascript	web/themes/custom/aculta420/js/address-layout.js	—	—	—	—	—
+javascript	web/themes/custom/aculta420/js/album-slideshow.js	—	—	—	—	—
+javascript	web/themes/custom/aculta420/js/alerts-dismiss.js	—	—	—	—	—
+javascript	web/themes/custom/aculta420/js/counters.js	—	—	—	—	—
+javascript	web/themes/custom/aculta420/js/editorial-carousel.js	—	—	—	—	—
+javascript	web/themes/custom/aculta420/js/messenger-drawers.js	—	—	—	—	—
+javascript	web/themes/custom/aculta420/js/navigation.js	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-donation-back.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-donation-donate.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-donation-quick.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-donation-summary-container.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-donation-summary.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-links-landing.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-links-page.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-mailer-wrap.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-portal-account-terms-modal.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-portal-photo-editor.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-portal-shell.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-section.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-user-author-card.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/block--block-content--type--aculta-institution.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/block--system-branding-block.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/comment--aculta-discussion-post.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/commerce-checkout-pane--commerce-donation-pane.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/commerce-checkout-pane--commerce-memorial-pane.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/commerce-product--produto-loja.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/content/off-canvas-page-wrapper.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/login-with.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/navigation/breadcrumb.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/node--aculta-forum-topic.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/node--editorial-highlight.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/node--revista--full.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/node--social-links.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/node--wiki-entry--full.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/node--wiki-entry--teaser.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/page.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/portal-cart-panel.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/portal-cart-status.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/portal-component.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/portal-payment-notice.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/portal-search-trigger.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/private-message-thread.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/site-alert.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/views/views-view-table.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/views-view-fields--aculta-albuns.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/views-view-fields--aculta-forum-categories--block-landing.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/views-view-fields--aculta-forum-categories--page-categories.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/views-view-fields--aculta-forum-public-topics.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/views-view-unformatted--aculta-forum-categories--page-categories.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/views-view-unformatted--courses-catalog.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/views-view-vvjb.html.twig	—	—	—	—	—
+javascript	web/themes/custom/aculta420/tests/js/messenger-counter.test.js	—	—	—	—	—

@@ -4,9 +4,18 @@ A expressão antiga "Green Stash como experiência independente" está **revogad
 
 O requisito **mobile-first vale para TODO o tema ACULTA420 e todos os purposes** (THEME-MF0 a MF3), não só Studio, Marley ou Green Stash. O plano normativo vigente é [plano visual retificado](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). Sequência: F0+MF0 → MF1/MF2 e F1-F10 conforme dependências → **MF3 e F11 obrigatórios** → somente então A1-A4. Sem declarar F11 se a regressão mobile-first global não estiver aprovada. Preservar S-R4/S-R5 e `/conta-legada`.
 
-## Retificação final OCS: Green Stash incluído (2026-10-29)
+## Retificação consolidada vigente: Green Stash integrado (2026-10-29)
 
-**Normativa:** [plano atualizado](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). O plano anterior F0-F10 foi substituído por **OCS-F0-F11**. Green Stash é experiência Studio independente (provider `green_stash` do `aculta_commerce`), não parte de Marley, e deve aparecer no inventário, no hub conforme autorização, na paridade visual e na futura identidade Aculta.
+A seção imediatamente abaixo registra uma decisão histórica posteriormente
+revogada. Green Stash **não é experiência independente**: é a área de gestão
+comercial integrada ao Studio, preservando Commerce como owner funcional.
+
+## Retificação histórica substituída: Green Stash incluído (2026-10-29)
+
+**Não normativa; contradiz a decisão consolidada acima e não deve orientar
+implementação.** Preservada apenas como histórico de decisão anterior.
+
+**Registro normativo histórico da decisão anterior, substituído acima.** O plano anterior F0-F10 foi substituído por **OCS-F0-F11**. A afirmação de que Green Stash seria experiência independente está revogada; Green Stash é a área comercial integrada do Studio.
 
 - [ ] OCS-F0: inventário dinâmico completo, **incluindo Green Stash**, Marley, GanjaLab, WE Sativa, Conta, Perfil e demais providers.
 - [ ] OCS-F1-F4: fidelidade Next, shell contextual, SDCs reutilizados e hub orientado ao registry/ACL.
@@ -471,6 +480,36 @@ Referência: [auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-
 - **OC-ST4:** primeiro acesso em cartões existentes; sem depender de Tours do OpenCulturas, sem JS obrigatório e sem duplicar onboarding.
 - Gates: grants Entity/Domain, acesso negado em cross-account/cross-purpose, cache A/B, Firefox ESR e Olivero.
 
+## OCS-F0 — inventário visual (2026-10-29)
+
+**Registro da primeira captura, atualizado pelos resultados posteriores no fim
+deste documento.** A captura ampliada inicialmente foi adiada por falha de ULI;
+ela foi executada depois e encontrou Hub vazio, conteúdo inesperado em GanjaLab
+e acesso negado ao Green Stash para a conta de teste. Consulte a atualização
+mais recente antes de avaliar o estado da fase.
+
+Inventário upstream e matriz inicial adicionados em
+[`aculta420/docs/studio-visual/`](../../../../../../themes/custom/aculta420/docs/studio-visual/upstream-inventory.md)
+e [matriz de paridade](../../../../../../themes/custom/aculta420/docs/studio-visual/visual-parity-matrix.md).
+O tarball oficial 3.1.5 foi obtido e seu SHA-256 confere com a auditoria
+registrada; o CSS servido pelo site público também tem o mesmo hash do CSS do
+pacote. A página pública serve como referência geral, mas não substitui uma
+captura do dashboard autenticado OpenCulturas. Em 2026-10-29, o script
+WebDriver BiDi capturou homepage OpenCulturas e `/studio/marley` autenticado em
+1440×1000 e 390×844 CSS px; as quatro imagens foram inspecionadas manualmente e
+estão fora do Git em `/home/piradopirata/suite-out/aculta-studio-ocs-f0/`.
+Isso estabelece baseline inicial em duas larguras, não valida todas as telas
+nem os breakpoints do gate. Boundary e schema SDC passaram na execução anterior;
+o gate do índice de status permanece vermelho por tabela raiz desatualizada.
+**F0 segue parcial**: falta comparação equivalente ao dashboard autenticado
+upstream, cobertura visual de toda área real e resolução/registro dos gates. A
+tentativa seguinte de ampliar para oito entradas do Studio ficou `DEFERRED`
+antes do login quando Drush não descobriu
+`aculta_document_viewer_group:course_document`; a evidência está separada em
+`baseline-deferred.json` no diretório externo da suíte. Em tentativa posterior,
+o script capturou as oito rotas; o resultado e os bloqueios constam no registro
+mais recente abaixo.
+
 ## Complemento OC-C - OpenCulturas 3.1.5 (2026-10-29)
 
 - [ ] Vínculo verificável e revogável entre conta, perfil público e organização. Área "Minha organização" por escopo de `content_editor`, com reivindicação moderada e estado inicial fechado. **Não** criar papel genérico organizador (D-01) nem confundir conta com perfil.
@@ -478,3 +517,50 @@ Referência: [auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-
 - [ ] Isolamento por purpose, acesso, WCAG, teclado, no-JS, 320 px e zoom 200%.
 
 Backlog aprovado sem reclassificar S-R4/S-R5 como homologadas. Referência: `docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md`.
+## Retificação vigente — THEME-MF0–MF3, OCS-F0–F11 e OCS-A1–A4 (2026-10-29)
+
+Esta seção substitui a numeração resumida das propostas visuais históricas
+abaixo, sem alterar seus registros de implementação ou homologação. O trabalho
+é sequencial: auditar e tornar todo ACULTA420 mobile-first (MF0–MF3), concluir
+a fidelidade OpenCulturas Next de todas as áreas reais do Studio (F0–F11), e
+só então aplicar a identidade Aculta aos mesmos SDCs (A1–A4). **A1–A4 não
+iniciam antes de MF3 e F11 aprovados.** Nenhuma fase é considerada concluída
+somente porque há documentação.
+
+- **THEME-MF0:** inventário de todos os estilos, scripts, templates, consumers,
+  larguras/overflow e purposes. Estado estático parcial, sem captura completa:
+  [`mobile-first-audit.md`](../../../../../../themes/custom/aculta420/docs/mobile-first-audit.md).
+- **THEME-MF1–MF2:** fundação mobile desde 320 CSS px e migração progressiva,
+  preservando Bootstrap, semântica, shell e owners dos módulos.
+- **THEME-MF3:** gate transversal para todos os purposes e breakpoints definidos
+  no prompt vigente; ainda não executado.
+- **OCS-F0–F11:** baseline, tokens, navegação/composição, SDCs e Hub, Marley,
+  GanjaLab editorial/LMS, WE Sativa, Green Stash integrado, Conta/Perfil e
+  demais áreas reais. A matriz inicial e os `Pede-A` estão em
+  [`studio-visual`](../../../../../../themes/custom/aculta420/docs/studio-visual/).
+- **OCS-A1–A4:** identidade Aculta após ambos os gates, mantendo props/slots,
+  render arrays e contratos SDC da Etapa 1.
+
+**Green Stash é a área comercial integrada ao ACULTA Studio.** O registro
+técnico `GreenStashExperienceProvider` não cria experiência de produto
+independente. Operações de Commerce, ACL, formulários, dados e transições
+permanecem com seus owners; a apresentação só pode promover capacidades
+confirmadas no código. O inventário identificou Produtos e Envios no código;
+Pedidos/Estoque/Promoções/Clientes/Relatórios/Configurações ainda exigem
+verificação individual e não devem ser anunciados como ativos.
+
+
+## OCS-F0 / THEME-MF0 — evidência de execução (2026-10-29)
+
+Inventário estrutural e matriz de paridade foram produzidos; os gates continuam
+**parciais**, sem aceite. Firefox ESR visível capturou homepage OpenCulturas e
+oito URLs Studio em 1440/390: `/studio` respondeu documento vazio;
+`/studio/ganjalab` renderizou Minha Conta em vez do dashboard LMS;
+`/estudio/loja` negou acesso à conta sintética sem permissão; Marley, WE Sativa,
+Conta, Perfil e Planos Mercado Pago renderizaram. Scroll width coincidiu com
+viewport nessas capturas, sem constituir gate mobile-first. Evidências estão em
+`$SUITE_OUT/aculta-studio-ocs-f0`; `mobile-first-audit.md` e
+`studio-visual/visual-parity-matrix.md` detalham limites e Pede-A. MF0/F0 não
+foram aprovadas; não iniciar F1/MF1 até resolver o Hub e obter fixture
+autorizada/comprovação da rota LMS. Todos os purposes ainda carecem de baselines
+runtime.

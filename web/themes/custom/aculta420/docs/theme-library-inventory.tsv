@@ -1,0 +1,90 @@
+origem	library_id	dependencias	tipo	grupo	asset
+web/modules/custom/aculta_portal/aculta_portal.libraries.yml	account-navigation	core/drupal | core/once			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/aculta_portal.libraries.yml	search-preview	core/drupal | core/once			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/aculta_portal.libraries.yml	account-password-modal	core/drupal | core/once | core/drupal.dialog			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/aculta_portal.libraries.yml	account-terms-modal	core/drupal | core/once | core/drupal.dialog			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/aculta_portal.libraries.yml	cart-status	core/drupal | core/once			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/aculta_portal.libraries.yml	integration-popup	core/drupal | core/once			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_calendar/aculta_calendar.libraries.yml	agenda	core/drupal	css	theme	css/agenda.css
+web/modules/custom/aculta_portal/modules/aculta_calendar/aculta_calendar.libraries.yml	dhtmlx	core/drupal | core/drupalSettings	css	theme	css/dhtmlx/dhtmlxscheduler.css
+web/modules/custom/aculta_portal/modules/aculta_calendar/aculta_calendar.libraries.yml	dhtmlx	core/drupal | core/drupalSettings	css	theme	css/dhtmlx/contrast_white.css
+web/modules/custom/aculta_portal/modules/aculta_calendar/aculta_calendar.libraries.yml	dhtmlx	core/drupal | core/drupalSettings	css	theme	css/dhtmlx/contrast_black.css
+web/modules/custom/aculta_portal/modules/aculta_calendar/aculta_calendar.libraries.yml	dhtmlx	core/drupal | core/drupalSettings	js	js/dhtmlx/dhtmlxscheduler.js	preprocess
+web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/aculta_commerce_melhorenvio.libraries.yml	shipping-calculator	core/drupal | core/once	css	component	assets/shipping-calculator.css
+web/modules/custom/aculta_portal/modules/aculta_document_viewer/aculta_document_viewer.libraries.yml	aculta_document_viewer_pdf	core/drupal	js	js/pdf-viewer.mjs	attributes
+web/modules/custom/aculta_portal/modules/aculta_document_viewer/aculta_document_viewer.libraries.yml	aculta_document_viewer_doc	core/drupal | core/once	js	js/docx-viewer-behavior.mjs	attributes
+web/modules/custom/aculta_portal/modules/aculta_document_viewer/aculta_document_viewer.libraries.yml	aculta_document_viewer_sheet	core/drupal | core/once	css	component	/libraries/tabulator/dist/tabulator.min.css
+web/modules/custom/aculta_portal/modules/aculta_document_viewer/aculta_document_viewer.libraries.yml	aculta_document_viewer_sheet	core/drupal | core/once	js	js/spreadsheet-viewer.mjs	attributes
+web/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.libraries.yml	discussion-progress	core/drupal | core/once			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.libraries.yml	forum-post-history	core/jquery | core/once | core/drupal | history/api			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.libraries.yml	ckeditor5.attachment	core/ckeditor5 | core/drupal.ajax | core/drupal.dialog.ajax | entity_embed/entity_embed			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_gallery/aculta_gallery.libraries.yml	ckeditor5.create	core/ckeditor5 | core/drupal.ajax | core/drupal.dialog.ajax | entity_embed/entity_embed			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_image/aculta_image.libraries.yml	ckeditor5.image_model	core/ckeditor5 | core/ckeditor5.image | ckeditor5/internal.drupal.ckeditor5.image			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_links/aculta_links.libraries.yml	micropagina		css	component	css/micropagina.css
+web/modules/custom/aculta_portal/modules/aculta_lms/aculta_lms.libraries.yml	admin_toolbar_icon		css	theme	css/admin-toolbar-icon.css
+web/modules/custom/aculta_portal/modules/aculta_magazine/aculta_magazine.libraries.yml	revista-form	core/drupal | core/once			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_mailer/aculta_mailer.libraries.yml	admin		css	theme	css/admin.css
+web/modules/custom/aculta_portal/modules/aculta_maps/aculta_maps.libraries.yml	map	core/drupal | core/drupalSettings	css	component	assets/vendor/leaflet/leaflet.css
+web/modules/custom/aculta_portal/modules/aculta_maps/aculta_maps.libraries.yml	map	core/drupal | core/drupalSettings	css	component	css/aculta-map.css
+web/modules/custom/aculta_portal/modules/aculta_maps/aculta_maps.libraries.yml	map	core/drupal | core/drupalSettings	js	assets/vendor/leaflet/leaflet.js	minified
+web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/aculta_pagamentos_mercadopago.libraries.yml	mp_sdk		js	https://sdk.mercadopago.com/js/v2	minified
+web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/aculta_pagamentos_mercadopago.libraries.yml	checkout_pro_review	core/drupalSettings | core/drupal | core/jquery | core/once | aculta_pagamentos_mercadopago/mp_sdk			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/aculta_pagamentos_mercadopago.libraries.yml	checkout_popup	core/drupal | core/once			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_patcher/aculta_patcher.libraries.yml	admin		css	theme	css/admin.css
+web/modules/custom/aculta_portal/modules/aculta_portal_cep/aculta_portal_cep.libraries.yml	cep-address	core/drupal | core/drupalSettings | core/once			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_secrets_manager/aculta_secrets_manager.libraries.yml	secrets-tabs	core/drupal | core/once	css	component	css/secrets-tabs.css
+web/modules/custom/aculta_portal/modules/aculta_statistics/aculta_statistics.libraries.yml	consent	core/drupal | core/once			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_statistics/aculta_statistics.libraries.yml	wiki-read	core/drupal | core/once			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_statistics/aculta_statistics.libraries.yml	dashboard		css	theme	css/statistics-dashboard.css
+web/modules/custom/aculta_portal/modules/aculta_studio/aculta_studio.libraries.yml	navigation	core/drupal | core/drupal.ajax | core/once			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_user/aculta_user.libraries.yml	photo-flow	core/drupal | core/once | core/drupal.ajax | core/drupal.dialog.ajax			(sem assets CSS/JS locais declarados)
+web/modules/custom/aculta_portal/modules/aculta_user/aculta_user.libraries.yml	account-bio-form	core/drupal | core/once | core/drupal.dialog			(sem assets CSS/JS locais declarados)
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/tokens.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/ui-styles.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/base.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/layout.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/institution-bar.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/header.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/navigation.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/breadcrumb.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/content.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/buttons.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/pdf-viewer.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/document-viewer.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/drupal-bootstrap.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/institutional.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/footer.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/forms.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/webform.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/search.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/wiki.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/product.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/product-gallery.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/account.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/portal-account.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/public-profile.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/revista-post.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/discussion.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/forum-index.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/portal-account-terms-modal.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/dialog.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/portal-address-number.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/portal-cart.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/unread-count.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/consent-banner.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/portal-payment-notice.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/portal-requirements-report.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/sales-panel.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/statistics.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/portal-support.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/studio.css
+web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap | bootstrap/global-styling | aculta420/bootstrap-icons | core/drupal | core/once	css	theme	css/components/auth.css
+web/themes/custom/aculta420/aculta420.libraries.yml	bootstrap-icons		css	component	assets/icons/bootstrap-icons/font/bootstrap-icons.min.css
+web/themes/custom/aculta420/aculta420.libraries.yml	album-slideshow	core/drupal | core/once	css	theme	css/components/album-slideshow.css
+web/themes/custom/aculta420/aculta420.libraries.yml	editorial-content		css	theme	css/components/editorial-content.css
+web/themes/custom/aculta420/aculta420.libraries.yml	editorial-carousel	core/drupal | core/once	css	theme	css/components/editorial-carousel.css
+web/themes/custom/aculta420/aculta420.libraries.yml	messenger-drawers	core/drupal | core/drupal.dialog | core/once | bootstrap/bootstrap	css	theme	components/content/messenger-item/messenger-item.css
+web/themes/custom/aculta420/aculta420.libraries.yml	messenger-drawers	core/drupal | core/drupal.dialog | core/once | bootstrap/bootstrap	css	theme	components/feedback/messenger-state/messenger-state.css
+web/themes/custom/aculta420/aculta420.libraries.yml	messenger-drawers	core/drupal | core/drupal.dialog | core/once | bootstrap/bootstrap	css	theme	css/components/messenger-drawer.css
+web/themes/custom/aculta420/aculta420.libraries.yml	messenger-notices		css	theme	css/components/messenger-notices.css

@@ -143,3 +143,26 @@ pendentes da S-R4 e não promove SDCs experimentais para stable.
 Matriz de casos e critérios: 
 `web/modules/custom/aculta_portal/modules/aculta_studio/docs/S-R5-MATRIZ-COMPARACAO.md`.
 
+## OCS-F0 — baseline comparativo
+
+O script `ocs-baseline.py` captura, com Firefox ESR visível, a homepage pública e, por padrão, as entradas de Studio `/studio`, `/studio/marley`, `/studio/ganjalab`, `/studio/we-sativa`, `/studio/conta`, `/studio/perfil`, `/estudio/loja` e `/studio/conta/mercado-pago/planos`. Requer `DISPLAY=:0`, `SUITE_OUT` fora do repositório e Drush local apontando para `aculta_runtime`; usa perfil temporário em `$SUITE_OUT/profiles`. `STUDIO_PAGE` limita a uma URL customizada; `STUDIO_ROUTES` aceita uma lista separada por vírgulas. Imagens e JSON ficam em `$SUITE_OUT`. Se ULI falhar, a tentativa vai a `baseline-deferred.json` e preserva a última execução bem-sucedida em `baseline.json`. O screenshot público não representa dashboard autenticado OpenCulturas; rotas com indicação de acesso negado ou sem captura são parciais, não PASS.
+
+Execução de referência no servidor de desenvolvimento:
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/suite-out/aculta-studio-ocs-f0
+python3 tests/browser/aculta-studio/ocs-baseline.py
+```
+
+As capturas e os dois JSONs ficam fora do Git. Cada imagem usa slug da rota e
+largura, por exemplo `openculturas-1440.png` e `studio-marley-390.png`. O JSON
+registra `innerWidth`, largura de documento/scroll e altura do conteúdo. A
+captura expandida posterior completou as oito rotas em 1440/390 (18 imagens
+incluindo a homepage); a tentativa anterior bloqueada no ULI permanece em
+`baseline-deferred.json`. A captura revelou `/studio` vazio, `/studio/ganjalab`
+renderizando Minha Conta em vez do dashboard LMS esperado e `/estudio/loja`
+negado para a conta sintética sem permissão. Marley, WE Sativa, Conta, Perfil e
+Planos Mercado Pago renderizaram. Ausência de overflow foi observada apenas nas
+rotas/estados e larguras capturados. Essas evidências não aceitam MF3, WCAG,
+todas as larguras ou paridade visual do Studio.

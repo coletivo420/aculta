@@ -1,194 +1,123 @@
-# Auditoria Mobile First — ACULTA420 e Studio
+# Auditoria mobile-first ACULTA420 — THEME-MF0
 
-**Fase:** MF-0.1 — auditoria responsiva
+**Estado em 2026-10-29: inventário estático parcial, sem implementação ou aceite.**
+Esta rodada foi executada no checkout servidor `ded8a6181`, detached, que é
+o HEAD atual da branch `refactor/opencultures-codigo-visual` também aberta em
+`/home/piradopirata/worktrees/opencultures-f0-adm8-e8`. O checkout foi fornecido
+pelo responsável como ambiente de desenvolvimento. `config:status` apresenta
+drift amplo e `updatedb:status` relata módulos não presentes no schema ativo;
+nenhuma escrita persistente foi executada. O inventário não representa o HEAD
+remoto mais recente se a PR avançar durante esta auditoria.
 
-**Estado:** inventário concluído; inspeção visual de toda a matriz pendente.
+## Escopo quantificado
 
-**Data da fotografia:** 2026-10-21.
+Varredura recursiva de `web/themes/custom/aculta420`, excluindo `node_modules`
+e `vendor`: 537 arquivos, 92 CSS/Sass, 11 JavaScript e 98 templates Twig/HTML.
+Foram encontrados 53 arquivos de estilo com pelo menos uma declaração
+`@media` ou largura/min/max fixa (78 blocos `@media`, 139 declarações de largura
+fixa, zero `@container` nos estilos do tema).
+O inventário é estrutural; não mede overflow nem prova comportamento renderizado.
 
-**HEAD auditado:** `36857b12` (`docs/aculta-forum-0.1.0-dev.1`, PR #297).
+| Camada | Arquivos identificados | Observação da auditoria |
+|---|---|---|
+| Fundação | `css/base.css`, `css/layout.css`, `css/tokens.css`, `css/drupal-bootstrap.css` | `base.css`/`layout.css` quase sem media queries; tokens têm preferência de tema; Bootstrap injeta regras próprias. |
+| Shell global | `css/components/header.css`, `navigation.css`, `institution-bar.css`, `breadcrumb.css`, `footer.css`, `institutional.css` | Afeta todos os purposes; Institution Bar e Domain Header são invariantes. |
+| Componentes compartilhados | 41 folhas em `css/components/` e 45 folhas CSS de SDC | Mistura estilos sem breakpoint e media queries; os consumidores reais precisam ser correlacionados antes da migração. |
+| Áreas de produto | account/portal, fórum/discussion, wiki, editorial/revista, product/cart/sales, eventos, messenger, mídia/documentos, doações e suporte | Não podem ser excluídas por ausência de rota no Studio. |
+| JavaScript | 10 scripts de apresentação mais um teste JS | Auditar progressive enhancement, estado de navegação, carrosséis/slideshows, drawer Messenger, calculadora de envio, doação e notificações. |
+| Templates/layouts | 98 Twig/HTML | A contagem inclui componentes SDC e templates do tema; precisa cruzamento com bibliotecas anexadas por módulos e Views. |
 
-Esta fotografia separa código committed de declarações de planejamento. A
-worktree continha alterações concorrentes em README, sitemap, Forum, User, PDF
-Viewer e tokens do Portal; elas não foram alteradas nem usadas como código-base
-desta auditoria. Durante a inspeção, commits do outro agente acrescentaram
-paridade claro/escuro, Wiki e Cursos ao Studio. O inventário foi atualizado para
-o HEAD `36857b12`; o script visual atualmente tem uma alteração não commitada
-do outro agente, que não foi modificada nem tratada como evidência.
+## Registro responsivo reproduzível
 
-## Método e limites
+Contagens por arquivo, não por regra única (valores podem ter múltiplas
+declarações por bloco):
 
-- Inventário estático dos CSS, bibliotecas, templates, SDCs, documentação e
-  scripts de navegador committed no HEAD acima.
-- Leitura do código instalado em `web/core`, no tema Bootstrap contrib, na
-  biblioteca local do Bootstrap e nos módulos UI Patterns/UI Styles.
-- Consultas somente de leitura no Runtime de teste `aculta_runtime`, usando o
-  purpose `account`. Nenhuma configuração, cache ou conteúdo foi alterado.
-- Esta fase não muda CSS/JS funcional e não executa a suíte visual. Resultados
-  anteriores de navegador são reportados como evidência existente, não como
-  teste executado nesta auditoria.
+| Grupo observado | Arquivos com `@media` | Risco inicial a verificar |
+|---|---:|---|
+| `css/components/` | 26 | Cascata carregada globalmente; breakpoints em portal-account (7), navigation (5), forum-index (5), discussion (4), wiki e portal-support (3 cada). |
+| `components/**` (SDC) | 16 de 45 | 17 blocos `@media`; variantes locais devem ser testadas em consumers reais e contra a cascata global. |
+| Bootstrap distribuído | 2 | Regras do tema base; não substituir infraestrutura nem alterar a cópia do Core/contrib. |
+| `css/tokens.css` | 1 | Preferência light/dark não deve alterar geometria ou ocultar conteúdo. |
 
-## Ambiente observado
+Arquivos com maior quantidade de declarações fixas identificadas incluem
+`css/components/portal-account.css`, `forum-index.css`, `messenger-drawer.css`,
+`navigation.css`, `discussion.css`, `institution-bar.css` e SDCs
+`author-card`, `profile-identity`, `content-grid`, `context-tabs` e
+`social-links-page`. A busca detecta declarações CSS literais em `px`, `rem`,
+`em` e `vw`; não detecta limites impostos por HTML, tabelas, imagens, JS,
+terceiros, estilos inline ou comportamento de conteúdo real.
 
-| Item | Evidência |
-| --- | --- |
-| Servidor e checkout | `hostname=toca`; branch `docs/aculta-forum-0.1.0-dev.1`; PR #297 aberta para `main`. |
-| HEAD local/remoto na última conferência | `36857b12`, igual ao OID da PR no GitHub. |
-| Runtime de teste | Drush 13.8.0; Drupal 11.4.10; URI `https://conta.aculta.toca.net.br`; banco conectado `aculta_runtime`; tema padrão `aculta420`. |
-| CLI | PHP 8.4.26; o baseline do projeto é PHP 8.5, portanto a versão do CLI não serve como evidência de compatibilidade com 8.5. |
-| Studio | `aculta_studio` habilitado, `0.1.0-dev.1`. |
-| Apresentação | Bootstrap local 5.3.8; tema contrib `bootstrap` 5.0.2; `ui_patterns` 2.0.23 e `ui_styles` 8.x-1.22 habilitados. SDC é fornecido pelo Core instalado. |
+## Matriz de cobertura por purpose
 
-Para a conta de teste consultada (UID 5), `StudioPresenter::visibleTabs()`
-retornou `revista`, `forum`, `wiki`, `cursos` e `projetos`. Os níveis finais
-visíveis foram: Revista (`publicacoes`: `todos`, `rascunhos`, `em-revisao`,
-`publicados`, `arquivados`; `criar`: `nova-publicacao`); Fórum (`discussoes`:
-`publicas`, `novas`; `moderacao`: `fila`, `denuncias`); Wiki (`verbetes` por
-estado editorial e `revisoes/todas`); Cursos (`criar/novo-curso`, `turmas` com
-`curso-1` e `todas`); Projetos (`criar/novo-projeto`). `galerias`, Biblioteca,
-Métricas e Eventos não apareceram para essa conta nessa consulta. Isso registra
-o resultado de access para uma conta, não a disponibilidade universal dos
-subsistemas.
+| Purpose/experiência | Ponto inicial auditado | Prioridade para MF1/MF2 | Status MF0 |
+|---|---|---|---|
+| MAIN público/institucional | `institutional.css`, hero, navegação, busca, conteúdo, mídia, rodapé | Reflow do shell, cabeçalhos longos, cards, mídia e teclado | CSS mapeado; rotas/estados e captura pendentes |
+| ACCOUNT/Conta privada | `account.css`, `portal-account.css`, `portal-address-number.css`, formulários/modais | Form API, tabelas de pedidos, endereços, foco e zoom | CSS mapeado; cenários S-R4/S-R5 pendentes |
+| Perfil público e editor privado | `public-profile.css`, `profile-*` SDCs | Separação de dados privados/públicos e formulário/upload | Componentes identificados; captura e acesso pendentes |
+| Studio/Marley | `studio.css`, `context-*`, `content-*`, formulários/editorial | Dashboard, navegação interna, listagens e editor | Parcial; matriz OCS separada |
+| GanjaLab/LMS | `course_card`, `content-grid`, `context-header`, `empty-state` | Cursos, progresso, certificados, sala/turma e tabela | SDCs candidatos identificados; runtime não homologado |
+| WE Sativa/Wiki | `wiki.css`, `wiki-entry`, autoria/revisão | Longas tabelas, propostas, estados de revisão e moderação | CSS e SDC identificados; captura autorizada pendente |
+| Fórum | `discussion.css`, `forum-index.css`, `forum-category`, `messenger-*`, `bookmark-toggle` | Tópicos, respostas, paginação e navegação sem overflow horizontal | CSS/SDCs mapeados; teste em purpose pendente |
+| Revista/editorial | `revista-post.css`, `editorial-content.css`, carousel, editorial-card | Texto, imagens, metadados, carrossel e controles sem JS | CSS/JS/SDCs mapeados; render e estados pendentes |
+| Loja/Commerce | `product.css`, gallery, tabs, cart, shipping, sales panel, product SDCs | Variações, tabelas, checkout, estoque/envios e ACL por loja | Camada de tema mapeada; operação/loja reais pendentes |
+| Green Stash (integrado ao Studio) | UI provider/controladores do módulo Commerce e `studio.css` | Produtos, pedidos, estoque, envios, promoções, clientes, relatórios e configurações | Rotas encontradas; capacidades disponíveis precisam ser distinguidas das planejadas |
+| Eventos | `event_card`, `event-page-five-regions`, `statistics.css` | Agenda, datas, participantes e layout com cinco regiões | CSS/SDCs identificados; estados/capturas pendentes |
+| Messenger/alertas | drawers, compose/item/state, `alerts-dismiss.js` | Drawer acessível, lista, teclado, mensagens e fallback sem JS | Componentes/JS mapeados; acesso e cache pendentes |
+| GanjaLab editorial, Galerias e demais abas Marley | Plugins de aba e seus consumers reais | Variação de conteúdo, paginação e formulários owner | Providers/plugins listados; matriz de consumers incompleta |
 
-## Arquitetura responsiva existente
+Esta tabela não é evidência de cobertura homologada. Cada purpose ainda exige
+inventário de biblioteca anexada por controller/View/form, estados vazio/erro/
+sucesso/carregando e capturas em navegador visível.
 
-| Área | Estado observado | Implicação para as próximas fases |
-| --- | --- | --- |
-| Foundations | `tokens.css`, `base.css` e `layout.css` fornecem paleta/modos, tipografia, foco, movimento, spacing e containers; `--aculta-space-section` e outros valores fluidos já usam `clamp()`. | Evoluir tokens responsivos existentes antes de criar novos; não mudar a geometria entre modos de cor. |
-| Breakpoints | Foram encontradas 47 media queries de largura em 28 CSS do tema. Os limiares incluem `359.98`, `374.98`, `479.98/480`, `575.98/576`, `767.98/768`, `991.98/992`, `1099.98/1100` px e `40rem`. | Há padrões Bootstrap junto de limiares locais. Auditar intenção e consumidor por componente; não normalizar mecanicamente. |
-| Espaço do componente | Há 49 usos de `clamp()` em 21 CSS e várias regras `min-width: 0`; nenhuma regra `@container` foi encontrada nos CSS do tema. | Container queries podem ser avaliadas onde o componente é colocado em containers de larguras distintas; não são pré-requisito geral. |
-| Shell | A biblioteca global carrega `institution-bar.css`, `header.css`, `navigation.css`, `footer.css` e `layout.css`. A Institution Bar é sticky; os CSS também contêm regras para navegação compacta e larguras menores. | Testar os domínios e estados autenticado/anônimo em retrato, paisagem e zoom; medir a disputa entre barra sticky, menus e conteúdo. |
-| Elementos sobrepostos | Permanecem usos de `position: fixed` ou `sticky`, incluindo barra institucional, diálogos, discussão e interface da conta. O banner de consentimento agora ocupa o fluxo normal após o rodapé. | Conferir foco não obscurecido, teclado, altura disponível e convivência dos overlays restantes em viewport pequena. |
-| Tabelas e Views | Rolagem horizontal localizada está explícita em `webform.css`, `sales-panel.css`, `statistics.css` e no rail SDC. O Studio gera tabelas Core para listagens. | Verificar largura mínima e semântica tabular. A tabela do Studio deve ter rolagem isolada ou uma apresentação adaptada sem duplicar dados/lógica. |
-| Formulários e edição | `forms.css`/`webform.css` são globais; `ckeditor5.css` estiliza o conteúdo do editor. | O inventário CSS não mede teclado virtual, toolbar, Media Library, erros ou perda de dados; cobrir isso na MF-0.6. |
-| Mídia e documentos | Há CSS próprio para Galeria, PDF, Document Viewer e produto; alguns usam viewport units, dimensões mínimas ou rolagem interna. | Testar mídia real e arquivos longos sem criar pipeline, viewer ou storage paralelo. |
-| Components e patterns | SDCs mantêm CSS local e stories; regras reutilizáveis do Portal são mapeadas por `data-portal-ui` e `PortalUiHooks`. | Usar os contratos existentes, documentar stories para variantes responsivas e preservar access/cache/render arrays. |
-| CSS/JS carregados | `aculta420/global` carrega a maior parte dos CSS de shell, formulários, Portal, comércio, visualizadores e `studio.css`; também carrega `navigation.js`, `counters.js`, `alerts-dismiss.js` e `address-layout.js`. O tema declara ainda `album-slideshow` globalmente. A navegação AJAX do Studio pertence à biblioteca do módulo e é anexada à página do Studio. | Avaliar carregamento contextual depois da estabilização visual (MF-0.10), sem mover regras de negócio para o tema. |
-| Viewport | ACULTA420 não possui `html.html.twig`; herda o template do tema base. O único `<meta name="viewport">` encontrado no tema é do envelope de e-mail. | Confirmar a saída HTML efetiva do shell no Runtime e conservar o viewport do Core/base theme; não adicionar um segundo meta tag no escuro. |
+### Domínios/purposes estáveis encontrados
 
-Os números de consultas de mídia, `clamp()` e posicionamento são contagens
-estáticas para localizar o trabalho. Não classificam automaticamente uma regra
-como defeito. `max-width` continua apropriado para exceções locais, conteúdo
-bidimensional e correções de limite.
+O contrato multidomínio e `DomainPurposeManager::DOMAIN_IDS` declaram dez
+purposes. A tabela abaixo cruza os dez com superfícies do tema; não implica que
+cada purpose carregue só uma categoria de CSS.
 
-## Studio — implementação atual
+| Purpose | Superfícies que entram na regressão | Prioridade de inventário/render |
+|---|---|---|
+| `main` | Institucional, Fórum público/vitrine de projetos, calendário público, auth e checkout central | Home, busca, shell, header, formulário e carrinho |
+| `account` | Conta, Studio inteiro, Perfil editor, Messenger, preferências e área comercial Green Stash | Institution/Domain Header, subnav, formulários, dashboard, dados privados/cache |
+| `support` | Apoio/doação, formulários e confirmação | Form API, pagamento, aviso e foco/status |
+| `magazine` | Revista pública e conteúdos editoriais | Texto longo, mídia, teaser, autoria, exposed filters |
+| `wiki` | Wiki420, verbetes, propostas e revisão | Conteúdo longo, listas, ação de autoria vs moderação, mídia |
+| `shop` | Loja pública, catálogo, detalhes, variações, carrinho de origem | Grade de produto, galeria, tabs, preços, filtros e responsividade |
+| `courses` | Catálogo/páginas de curso do LMS | Conteúdo educacional, matrículas e cards/listas |
+| `forum` | Índice, categorias, tópicos, comentários e anexos | Discussão extensa, controles, mídia, paginação e estado de leitura |
+| `links` | Landing e micropáginas de links sociais | Botões, links longos, QR/mídia e reflow em tela estreita |
+| `eventos` | Catálogo, detalhes, calendário e agenda | Datas, filtros, mapas, listas, cards e layout de cinco regiões |
 
-### Estrutura e acesso
+Cobertura de runtime ainda pendente para todos os dez; os outros purposes e
+rotas encontradas não podem ser omitidos se a associação route/library revelar
+consumidores adicionais.
 
-- Há três níveis de navegação (área, seção, aba), publicados em quatro formas
-  de URL: `/studio`, `/studio/{área}`, `/studio/{área}/{seção}` e
-  `/studio/{área}/{seção}/{aba}`. Os links são destinos reais, e a página não
-  usa o shell nem o menu de Minha Conta.
-- Os plugins existentes no HEAD incluem Revista, Fórum, Wiki, Cursos, Galerias
-  e Projetos. Disponibilidade, permissão da área e acesso da rota proprietária
-  são avaliados antes de mostrar ações. Um plugin no código não prova que uma
-  área esteja disponível a qualquer conta.
-- A rota e a listagem utilizam operações dos módulos proprietários/Core; o
-  Studio não é dono de conteúdo, workflow ou permissão.
+O inventário reproduzível dos 92 estilos, 11 scripts e 98 templates encontra-se
+em [`theme-mobile-file-inventory.tsv`](theme-mobile-file-inventory.tsv), com
+contagens literais e expressões de media/container/largura/overflow por folha de
+estilo. Contagens podem incluir declarações sem efeito em um purpose e não
+substituem análise de cascata. A enumeração de bibliotecas anexadas
+dinamicamente por Views e módulos consumidores continua pendente. As 20
+manifestações custom `*.libraries.yml` foram enumeradas em
+[`theme-library-inventory.tsv`](theme-library-inventory.tsv), incluindo
+dependências e assets. Os 85 call sites de produção custom (80 usos de
+`#attached` e cinco de `attach_library()`) estão indexados em
+[`theme-library-attachment-sites.tsv`](theme-library-attachment-sites.tsv).
+Testes e documentação foram excluídos da contagem. Isso não resolve expressões
+dinâmicas nem relaciona cada attach à rota/purpose e consumer; declaração em
+YAML não prova carregamento em runtime.
 
-### Layout e navegação visual
+## Regras para a migração
 
-- `css/components/studio.css` usa flex horizontal como base, sidebar com
-  `14rem`, e muda para coluna em `max-width: 767.98px`. A área principal tem
-  `min-width: 0`; abas de área e subabas flexionam e quebram linha.
-- Em mobile, a sidebar e a área principal empilham, mas as navegações de área,
-  seção e aba ainda podem aparecer juntas. O código não apresenta um seletor de
-  área nem uma disclosure móvel nesta fotografia.
-- A área será o primeiro refinamento de navegação: o responsável escolheu
-  seletor nativo compacto. A interação tem de manter links para URLs reais e
-  fallback sem JavaScript; protótipo e validação pertencem à MF-0.4.
-- `StudioListingBuilder` produz tabelas Core. A suíte visual atual consulta a
-  presença de filas/listagens e overflow, mas não cobre ainda toda a matriz de
-  viewports.
-
-### AJAX e comportamento
-
-- `studio-navigation.js` usa `Drupal.Ajax`, behaviors e `once()`, substitui a
-  raiz do Studio, atualiza URL com `pushState`, responde a `popstate`, anuncia
-  loading/falha por `aria-live` e leva o foco ao título após sucesso. Links
-  continuam sendo fallback sem JavaScript; em falha AJAX o navegador abre a URL
-  completa.
-- Não há controle explícito de sequência/cancelamento de respostas concorrentes
-  no arquivo auditado. Também não há confirmação de formulário alterado antes
-  de navegar. Clique rápido, resposta fora de ordem, erros e formulários não
-  salvos precisam de teste e decisão antes de alterar o comportamento na MF-0.5.
-
-### Cobertura registrada
-
-- O script `tests/browser/aculta-studio/visual.mjs` usa Firefox/geckodriver e
-  exercita 1280 × 900 e 390 × 844 CSS px, AJAX, histórico, foco/teclado, fila do
-  Fórum, listagem da Revista, ausência de erros JavaScript e geometria light/dark.
-- O README raiz committed em `c3a04cf0` registra 20/20 verificações no Firefox
-  X11 para essa suíte. Esse resultado não cobre 320, 375, 768, 1024 ou 1440 px,
-  WebKit/Chromium ou aparelho real; não foi reexecutado na MF-0.1.
-- Não foi feita inspeção visual manual ampla de shell, formulários/CKEditor,
-  Messenger, Carrinho, Media Library, Wiki, LMS, galerias, documentos e estados
-  anônimo/autenticado em todos os domínios.
-
-## Divergências documentais que precisam de sincronização
-
-- `aculta_studio/README.md` e a linha de Studio em `MAPA-MODULO-TEMA.md` não
-  refletem o conjunto atual de plugins/áreas nem as últimas evidências de
-  Runtime. O README do módulo lista somente Revista, enquanto o Runtime de teste
-  consultado expôs também Fórum, Wiki, Cursos e Projetos para a conta avaliada.
-- `STUDIO-MAGAZINE-ROADMAP.md` ainda descreve a criação do Studio como fase
-  futura e chama a matriz de áreas de disponibilidade planejada. O código e o
-  Runtime já têm implementação parcial. A fase MF-0.1 não reescreveu esse
-  roadmap, que mantém a história e a governança da frente Portal; sincronização
-  de contrato e estado deve ser feita por seu responsável.
-- `components.md` conserva trechos rotulados como “contrato futuro” para
-  componentes de discussão que têm implementação e evidência mais recentes.
-  Corrigir essa divergência quando a frente de cada componente for consolidada.
-
-## Priorização
-
-| Prioridade | Frente | Evidência e foco |
-| --- | --- | --- |
-| P0 | MF-0.4 — estrutura visual do Studio | Três níveis simultâneos em telas estreitas; seletor de área preferido pelo responsável; manter URL, access, indicadores ativos e fallback. |
-| P0 | MF-0.5 — navegação AJAX | Concorrência, cliques rápidos, retorno/avanço, foco, live region, erros e dados não salvos; validar com rotas e resposta reais. |
-| P1 | MF-0.2 — fundamentos | Variação de breakpoints e regras locais; estabelecer critério por conteúdo/container sem duplicar tokens. |
-| P1 | MF-0.3 — shell e overlays | Institution Bar sticky, menus/offcanvas, Messenger, Carrinho, alertas, consentimento e diálogos. |
-| P1 | MF-0.6/MF-0.7 — autoria e operação | Formulários/CKEditor/Media, tabelas de revisão, fila de moderação e conteúdo real por proprietário. |
-| P2 | MF-0.8/MF-0.9 — padrões e domínios | Cards, Forum, Wiki, Cursos, Galeria, leitores de documento e conteúdo público após padrões do Studio. |
-| P2 | MF-0.10/MF-0.11/MF-0.12 | Carregamento contextual, acessibilidade, zoom, aparelhos e homologação ampla. |
-
-## Plano de verificação para as próximas fases
-
-- Viewports iniciais: 320, 375, 390, 576, 768, 992, 1024, 1200 e 1440 CSS px;
-  320/400% zoom para o critério de reflow; retrato e paisagem em shells e
-  ferramentas com overlays.
-- Registrar o consumidor, URL/purpose, identidade/permissão, estado de
-  publicação, modo de cor, navegador, viewport, overflow e resultado de teclado
-  antes de declarar cobertura.
-- Distinguir fixture local, navegador X11 no Runtime de teste e dispositivo
-  Android/iPhone real. Nenhum aparelho real foi validado nesta fase.
-- Executar os gates do tema e módulo–tema antes de RC; não desativar regras ou
-  atualizar versões de consumidores apenas por terem sido inspecionados.
-
-## Próximas fases
-
-1. **MF-0.2:** fundamentos responsivos compartilhados alinhados a tokens.
-2. **MF-0.3:** shell global multidomínio e overlays.
-3. **MF-0.4:** navegação e layout mobile do Studio, incluindo protótipo do
-   seletor nativo da área.
-4. **MF-0.5:** robustez do AJAX progressivo.
-
-O roadmap do tema contém a sequência completa MF-0.1 a MF-1.0.
-
-
-## Delta mobile-first — 2026-10-29
-
-- Firefox ESR no Runtime de teste encontrou que `.top-bar__actions` do Core
-  Navigation excedia a viewport em páginas de álbum autenticadas: borda direita
-  em 439px num viewport de 320px e 474px em 390px. Em 320px, isso ampliava o
-  documento para 439px; em 390px, o conteúdo ficava cortado apesar de o
-  `scrollWidth` reportar 390px.
-- A regra pertence à integração Drupal/Bootstrap (`css/drupal-bootstrap.css`):
-  a grade original de três colunas usa uma coluna central com largura intrínseca
-  longa. A regra agora empilha as regiões em uma coluna até 767.98px, permite
-  quebra do contexto e refluência das ações Editar/Mais ações.
-- Firefox ESR com a folha local injetada passou 8/8 verificações nos álbuns
-  autenticados do host principal/Fórum (1280/390/320px), sem overflow e com
-  ações visíveis. Design Foundations 2379 e SDC schemas 54 componentes/734
-  checks PASS. O CSS ainda não está servido pelo Runtime; repetir após cache
-  rebuild. O diálogo, zoom, modo escuro e a matriz inteira não foram validados.
+- Começar com 320 CSS px e estilos mobile como base; media queries devem
+  acrescentar capacidade em breakpoints coerentes com Bootstrap, não apenas
+  inverter mecanicamente regras atuais.
+- Manter semântica e ordem DOM; usar scroll horizontal somente quando o dado for
+  intrinsecamente tabular e houver alternativa acessível.
+- Auditar CSS/JS próprio e bibliotecas de módulos/views que afetem a aparência;
+  não editar módulos de outra frente. Registrar dependências como `Pede-A`.
+- Regressão em Fórum, Wiki, Revista, Loja, Eventos, Conta, Studio, GanjaLab e
+  todos os purposes adicionais encontrados é parte do gate MF3.
+- Comparar claro/escuro, reduced motion, teclado/foco, zoom e larguras 320, 360,
+  390, 599, 600, 768, 1024, 1280 e 1440 px; sem Firefox ESR visível, o gate
+  permanece `DEFERRED`.

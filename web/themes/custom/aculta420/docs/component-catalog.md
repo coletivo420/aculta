@@ -35,6 +35,15 @@ stories** em `components/`. A contagem inclui componentes experimentais e
 candidatos abaixo; não demonstra validação do schema no Runtime, renderização na
 UI Patterns Library nem aprovação visual.
 
+### OCS-F0 — reuso antes de criar (2026-10-29)
+
+O inventário OpenCulturas Next confirma equivalentes existentes em
+`patterns/card`, `context-header`, `context-tabs`, `content-section`,
+`content-grid`, `empty-state` e nos componentes de Perfil. Esta fase não cria
+nem promove SDCs. Componentes experimentais (`stat-counter`,
+`accessibility-badges`, `sponsor-logos`) só entram em uma tela após validar
+schema, story, consumer real e status no catálogo.
+
 ## UI Styles
 
 O catálogo está em `aculta420.ui_styles.yml`; `css/components/ui-styles.css`
@@ -190,3 +199,13 @@ Novo inventário estático no HEAD da PR #299: **54 arquivos `.component.yml`** 
 - Acessibilidade: modo escuro/claro, 320 px, zoom 200%, teclado, contraste WCAG 2.2 AA, no-JS quando aplicável e Olivero. Não marcar "concluído" sem evidência no Runtime.
 
 Fonte: [auditoria OpenCulturas 3.1.5](../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md).
+# Retificação de escopo visual (2026-10-29)
+
+O inventário deste catálogo é uma referência histórica de componentes, não uma
+lista de aceites responsivos. THEME-MF audita e valida todos os SDCs e todos os
+purposes do ACULTA420, incluindo consumers de módulos/Views que não estejam
+listados aqui. Studio reutiliza estes contratos durante OCS-F; OCS-A só pode
+alterar tokens/acabamento após THEME-MF3 e OCS-F11 aprovados. A auditoria
+estática inicial e suas limitações estão em
+[`mobile-first-audit.md`](mobile-first-audit.md).
+
