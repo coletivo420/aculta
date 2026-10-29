@@ -14,6 +14,7 @@ use Drupal\aculta_ugc\Service\ReportService;
 use Drupal\flag\FlaggingInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Conecta sinalizações do Fórum à infraestrutura UGC (ARQ-06F, ARQ-06G).
@@ -73,17 +74,17 @@ final class ForumReportUgcBridgeHooks {
     $userStorage = $this->entityTypeManager->getStorage('user');
     $account = $userStorage->load($uid);
     if (!$account instanceof AccountInterface || !$account->isActive()) {
-      return;
+      throw new AccessDeniedHttpException('Conta inválida ou inativa não pode denunciar.');
     }
 
     // 4. Entity Access: a conta só pode denunciar o que tem permissão para ver.
     if (!$target->access('view', $account)) {
-      return;
+      throw new AccessDeniedHttpException('A conta não pode denunciar conteúdo que não tem permissão para visualizar.');
     }
 
     // 5. Valida se o conteúdo pertence ao propósito do Fórum.
     if (!$this->isForumContent($target)) {
-      return;
+      throw new AccessDeniedHttpException('O conteúdo denunciado não pertence ao Fórum.');
     }
 
     $reportStorage = $this->entityTypeManager->getStorage('aculta_ugc_report');
@@ -136,7 +137,7 @@ final class ForumReportUgcBridgeHooks {
         if ($this->logger !== NULL) {
           $this->logger->warning('Conta @uid excedeu o limite diário de denúncias via Fórum.', ['@uid' => $uid]);
         }
-        return;
+        throw new AccessDeniedHttpException('Limite diário de denúncias atingido.');
       }
 
       $flagIdNum = (int) $entity->id();
