@@ -1,5 +1,13 @@
 # Changelog — aculta_events
 
+## 0.1.0-dev.4 — validar UNTIL contra o início da série (2026-10-29)
+
+- O formulário de recorrência recusa `UNTIL` anterior ao início da série, com
+  mensagem no campo, em vez de gravar uma série que se expandiria para nada.
+  O expansor mantém a mesma regra como guarda de dados.
+- Suíte Events: 55 testes/669 assertions PASS (26 depreciações); PHPCS sem
+  erros nos arquivos alterados.
+
 ## 0.1.0-dev.3 — smoke visual do purpose eventos (2026-10-29)
 
 - `tests/browser/eventos/agenda-embed.mjs` passou 129/129 verificações no

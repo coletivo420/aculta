@@ -1,5 +1,30 @@
 # Changelog — aculta_calendar
 
+## 0.1.0-dev.5 — correções da revisão de código (2026-10-29)
+
+- Ocorrência única em curso, iniciada antes da janela, deixa de ser descartada;
+  usa a mesma sobreposição dos provedores (`start <= ate` e `end >= de`).
+- UID externo numérico não vira chave inteira e não interrompe a importação.
+- Janela de 366 dias inclusivos é aceita; 367 dias é recusada na agenda e no
+  `.ics`, sem estourar o teto de 366 ocorrências.
+- Uma série inválida é isolada: a agenda registra a falha e continua com os
+  demais itens, em vez de derrubar a página.
+- `RECURRENCE-ID` é revalidado contra a janela: ocorrência movida para dentro é
+  incluída e a movida para fora não vaza para o dia original.
+- `UNTIL` anterior ao início da série é erro explícito no expansor e no
+  formulário de recorrência, em vez de série vazia.
+- Revisão de importação mostra o início no fuso do site e ignora referência de
+  fonte órfã sem WSOD; a exportação do dia mantém os filtros ativos.
+- Dia inteiro aparece como "Dia inteiro" na agenda e o interativo recebe
+  `all_day` com duração não nula.
+- Limite conhecido: eventos de vários dias continuam agrupados pelo dia inicial
+  na agenda e na grade do mês; a definição de expansão por dia depende de
+  decisão de produto.
+- Validação: Unit 98/299 PASS; Kernel 27/120 PASS (2 depreciações); PHPCS 0
+  erros e `php -l` nos arquivos alterados. Revisão visual do candidato com
+  estas correções pendente porque o checkout de teste está com trabalho
+  concorrente não commitado de outra sessão.
+
 ## 0.1.0-dev.4 — revisão visual ADM8 e visão interativa (2026-10-29)
 
 - ADM8 revisada no candidato atual `a4f878d55` (dev.4), servido com `drush cr`,

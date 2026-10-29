@@ -1,16 +1,21 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.4
+version: 0.1.0-dev.5
 state: Dev
 progress_note: >-
-  Dev.4: revisão visual concluída no candidato atual a4f878d55 (calendar dev.4),
-  servido no checkout de teste com drush cr. ADM8 autenticada em
-  /painel-administrativo/calendario/incorporacao com conta descartável de
-  permissão única: anônimo 403, autenticado 200, tabela somente leitura com 3
-  cabeçalhos e 10 linhas, zero formulários ou botões de edição e sem overflow
-  em 1270 e 500 px reais; conta e papel removidos no fim. Visão interativa:
-  200, DHTMLX 7.2.15, grade com 7 dias, alto contraste alternando para
-  contrast-black, fallback de agenda abaixo de md e sem overflow. Scripts em
-  tests/browser/aculta-calendar-admin e tests/browser/aculta-calendar-interactive.
-  Suíte atual: Calendar 117/399 PASS (2 depreciações); PHPCS e lint PASS. Runtime
-  sem config:import; só a conta descartável foi criada e removida.
-next_phase: 'Concluir a revisão de código antes de RC; a revisão visual já cobre o markup data-portal-ui do dev.4 no candidato a4f878d55.'
+  Dev.5: correções da revisão de código. Ocorrência única em curso iniciada antes
+  da janela deixa de ser descartada; UID externo numérico não quebra a
+  importação; janela de 366 dias inclusivos é aceita e 367 é recusada na agenda
+  e no .ics; uma série inválida é isolada e a agenda segue; RECURRENCE-ID é
+  revalidado contra a janela; UNTIL anterior ao início é erro explícito na
+  expansão e no formulário de recorrência; revisão de importação usa o fuso do
+  site e ignora fonte órfã; exportação do dia mantém filtros; dia inteiro
+  aparece como "Dia inteiro" e o interativo recebe all_day. Unit 98/299 PASS;
+  Kernel 27/120 PASS (2 depreciações); PHPCS 0 erros e lint PASS. Limite
+  conhecido: eventos de vários dias seguem agrupados pelo dia inicial. A
+  revisão visual do candidato corrigido está pendente porque o checkout de teste
+  tem trabalho concorrente não commitado. Dev.4: ADM8 autenticada no candidato
+  a4f878d55 (403 anônimo/200 autenticado, tabela somente leitura, sem overflow
+  em 1270/500 px) e visão interativa com DHTMLX 7.2.15, contraste e fallback
+  móvel. Runtime sem config:import; só a conta descartável foi criada e
+  removida.
+next_phase: 'Revalidar agenda e visão interativa no candidato com as correções quando o checkout de teste estiver livre (há trabalho concorrente não commitado); decidir a expansão por dia de eventos de vários dias antes de RC.'

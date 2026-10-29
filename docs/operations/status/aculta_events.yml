@@ -1,13 +1,14 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.3
+version: 0.1.0-dev.4
 state: Dev
 progress_note: >-
-  Dev.3: smoke visual concluído no candidato atual a4f878d55 (events dev.3),
-  servido no checkout de teste, pelo purpose eventos com
-  tests/browser/eventos/agenda-embed.mjs: 129/129 verificações PASS (0 falhas,
-  0 ignoradas) em 1280/390/320 px reais via BiDi, cobrindo catálogo, página de
-  evento, agenda, grade do mês, agenda do dia, incorporação e mapa, com modo
-  escuro, sem rolagem horizontal e sem erro visível. Suíte atual: 55
-  testes/669 assertions PASS (26 depreciações). E10/OAuth e a decisão editorial
-  dos tiles seguem pendentes; nenhuma escrita no OSM. Runtime sem atualização.
-next_phase: 'Concluir a validação OAuth de teste sem escrita no OSM (exige login de conta OSM, ausente em secrets) e aguardar a decisão editorial da divulgação dos tiles; a revisão visual já cobre o dev.3 no candidato a4f878d55.'
+  Dev.4: o formulário de recorrência recusa UNTIL anterior ao início da série,
+  com mensagem no campo, e o expansor mantém a mesma regra como guarda de dados.
+  Suíte Events: 55 testes/669 assertions PASS (26 depreciações); PHPCS sem erros
+  nos arquivos alterados. Dev.3: smoke visual no candidato a4f878d55 pelo purpose
+  eventos com tests/browser/eventos/agenda-embed.mjs, 129/129 verificações PASS
+  em 1280/390/320 px reais via BiDi, cobrindo catálogo, página de evento, agenda,
+  grade do mês, agenda do dia, incorporação e mapa, com modo escuro, sem rolagem
+  horizontal e sem erro visível. E10/OAuth e a decisão editorial dos tiles
+  seguem pendentes; nenhuma escrita no OSM. Runtime sem atualização.
+next_phase: 'Revalidar catálogo e mapa no candidato com estas correções quando o checkout de teste estiver livre; concluir a validação OAuth de teste sem escrita no OSM (exige login de conta OSM) e aguardar a decisão editorial da divulgação dos tiles.'

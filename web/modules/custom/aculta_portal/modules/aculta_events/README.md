@@ -17,3 +17,6 @@ O smoke do purpose `eventos` passou 129/129 verificações no candidato atual
 `a4f878d55` (events dev.3), servido no checkout de teste, em 1280/390/320 px
 reais, com modo escuro. Script e instruções:
 [tests/browser/eventos](../../../../../../tests/browser/eventos/README.md).
+
+O dev.4 recusa `UNTIL` anterior ao início da série no formulário de recorrência,
+com a mesma regra no expansor como guarda de dados.

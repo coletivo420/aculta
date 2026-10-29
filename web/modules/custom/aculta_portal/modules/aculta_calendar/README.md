@@ -15,5 +15,9 @@ ADM8 autenticada e visão interativa foram revisadas no candidato atual `a4f878d
 (calendar dev.4), servido no checkout de teste com `drush cr`. Scripts reutilizáveis:
 [tests/browser/aculta-calendar-admin](../../../../../../tests/browser/aculta-calendar-admin/README.md)
 e [tests/browser/aculta-calendar-interactive](../../../../../../tests/browser/aculta-calendar-interactive/README.md).
-A revisão cobre o markup `data-portal-ui` do dev.4; resta a revisão de código
-antes de RC.
+A revisão cobre o markup `data-portal-ui` do dev.4. O dev.5 corrige os achados
+da revisão de código (sobreposição de eventos, UID numérico, janela de 366 dias,
+isolamento de série inválida, `RECURRENCE-ID`, `UNTIL`, fonte órfã, fuso da
+revisão, filtros da exportação e dia inteiro). A revalidação visual do candidato
+corrigido está pendente porque o checkout de teste tem trabalho concorrente não
+commitado. Eventos de vários dias ainda são agrupados pelo dia inicial.
