@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-**Ciclo vigente:** [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Status em 2026-10-29: versão **0.1.0-dev.46**. M11 implementa as opções administrativas de compressão e formatos, conforme D-47; a inclusão do atalho no painel ACULTA também está concluída. Permanecem a migração reversível do acervo existente (M12), a integração Growroom dependente da F3 do Fórum e validações operacionais/visuais pré-RC. A classificação permanece **Dev**. Alpha é deploy/validação no servidor de desenvolvimento; produção ocorre depois da aprovação Alpha.
+**Ciclo vigente:** [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Status em 2026-10-29: versão **0.1.0-dev.46**. M11 implementa as opções administrativas de compressão e formatos, conforme D-47; atalho e revisão visual responsiva no Runtime estão concluídos. M12 não encontrou arquivos inline candidatos no Runtime atual. Permanecem a integração Growroom dependente da F3 do Fórum e a revisão da instalação integrada do Portal antes de RC. FPM Hostinger/LiteSpeed/Cloudflare pertence à etapa Beta pós-Alpha. A classificação permanece **Dev**.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -38,8 +38,8 @@ coordenador do Portal e pelo proprietário Image.
 | M0 inventário | feito | relatório `/painel-administrativo/imagens` |
 | M0.5 barreiras | feito | gate com tolerância zero (R1 a R10), incluindo Views, modos de exibição e assets |
 | M1 a M3 consumidores | feito | Gallery, Magazine, Usuário, Portal, PDF migrados para o `aculta_image` |
-| M4 miniatura de PDF | implementado com PHP Imagick | Serviço `aculta_image.pdf_thumbnail` usa a extensão PHP Imagick e Ghostscript, sem depender do CLI `magick`/`convert`; limita entrada a PDF público/permanente de até 20 MiB, renderiza só a primeira página, aplica limites temporários de recursos e grava JPEG 480×640 mantendo proporção. Suporte Hostinger confirmado por SSH somente leitura; suíte gera fixture sintética local. Validação via aplicação no FPM Hostinger segue pendente |
-| M11 opções de processamento e painel ACULTA | implementado em dev.45–.46 (`d0ad722db`) | ACULTA > Imagens > Processamento e formatos; detecta Imagick/GD e otimizadores, limita seleção a backend disponível, permite configurar compressão, WebP, MIME de entrada/saída, largura e qualidade. WebP inline substitui o original com qualidade 82 e atualiza metadados do File. Acesso comum negado por Kernel; suíte Image 33/169, PHPCS e gate específico passaram conforme CHANGELOG. Revisão visual no Runtime pendente |
+| M4 miniatura de PDF | implementado com PHP Imagick | Serviço `aculta_image.pdf_thumbnail` usa a extensão PHP Imagick e Ghostscript, sem depender do CLI `magick`/`convert`; limita entrada a PDF público/permanente de até 20 MiB, renderiza só a primeira página, aplica limites temporários de recursos e grava JPEG 480×640 mantendo proporção. Suporte Hostinger confirmado por SSH somente leitura; suíte gera fixture sintética local. Validação via aplicação no FPM Hostinger/LiteSpeed/Cloudflare pertence à etapa Beta pós-Alpha |
+| M11 opções de processamento e painel ACULTA | implementado em dev.45–.46 (`d0ad722db`) | ACULTA > Imagens > Processamento e formatos; detecta Imagick/GD e otimizadores, limita seleção a backend disponível, permite configurar compressão, WebP, MIME de entrada/saída, largura e qualidade. WebP inline substitui o original com qualidade 82 e atualiza metadados do File. Acesso comum negado por Kernel; suíte Image 33/169, PHPCS e gate específico passaram conforme CHANGELOG. Firefox ESR no Runtime: painel e controles em 1280/390/320 px, sem overflow, 14/14 checks; conta/papel temporários removidos e configuração não salva |
 | M12 migração de formatos existentes | inventário do Runtime de desenvolvimento sem candidatos (2026-10-29) | No head `c6f40d420`, `file_managed` e `public://inline-images` têm zero arquivos; File Usage e Entity Usage também têm zero referências nesse diretório. Nenhum arquivo foi alterado. Repetir o inventário quando o acervo desse ambiente mudar; só migrar candidatos após fechar referências, cache/derivados e reversão por lote. |
 | M5 duplicatas exatas | feito | `media_duplicates` 2.0.4; os dois grupos reais da galeria 11 foram mesclados, uma ocorrência por arquivo, mantendo o `alt` do menor ID |
 | M6 auditoria de uso | feito | `entity_usage` 5.0.1; candidatas com motivos |
@@ -284,7 +284,10 @@ O painel fica em **ACULTA → Imagens → Processamento e formatos**, protegido 
 seleção manual só oferece um backend disponível. O administrador pode ligar ou
 desligar compressão, escolher largura máxima, tipos de entrada e formatos de
 saída, e ajustar qualidade JPEG/PNG/WebP. WebP fica ligado por padrão para
-uploads inline, com qualidade 82 e substituição do original.
+uploads inline, com qualidade 82 e substituição do original. Firefox ESR
+revisou a tela em 1280, 390 e 320 CSS px (14/14 checks); não salvou a
+configuração. A conta descartável e o papel limitado a `administer aculta
+images` foram removidos após o teste.
 
 A decisão D-47 também autoriza converter o acervo existente. Isso não ocorre ao
 salvar as opções: M12 deve inventariar referências, definir execução em lotes,

@@ -7,7 +7,7 @@
 - [x] Kernel cobre coleção escondida/negada e coleção liberada pelo acesso nativo.
 - [x] Auditar rotas administrativas servidas por controllers no checkout de 2026-10-28; filas editoriais existentes estão na allowlist e nenhum controller adicional atende ao critério.
 - [x] Corrigir colisão de caminho: `/painel-administrativo/conteudo` era compartilhado com a listagem Core `view.content.page_1`; rota customizada agora é `/painel-administrativo/colecoes-moderaveis`, sem alias transitório.
-- [ ] Repetir revisão visual/acessível autenticada do candidato servido. A rodada no Runtime (HEAD `355e48a89`) abriu a rota Core antiga e não é evidência do novo caminho.
+- [x] Repetir revisão visual/acessível autenticada do candidato servido. Evidência atualizada na seção RC abaixo.
 
 ### Auditoria de controllers — 2026-10-28
 
@@ -30,6 +30,20 @@
 - Drush read-only no Runtime confirmou `aculta_content_admin.overview` e `view.content.page_1` no mesmo caminho `/painel-administrativo/conteudo`. O navegador autenticado abriu a View Core, não o painel customizado.
 - Rota customizada renomeada para `/painel-administrativo/colecoes-moderaveis`; o Kernel confirma esse caminho e sua distinção da rota Core.
 - Kernel: 4 testes / 56 assertions PASS. PHP lint: 3 arquivos PASS. `git diff --check`: PASS.
-- Revisão visual do novo caminho permanece pendente, pois o Runtime testado ainda estava em `355e48a89`, sem este candidato. Manter `Dev`.
-- `validate-module-theme-boundary.php` permanece bloqueado por violações em outros módulos, inclusive rotas de eventos/calendário e teste da Revista.
+- Na rodada inicial, a revisão visual ainda estava pendente porque o Runtime permanecia em `355e48a89`. A fronteira global também acusava violações externas; ambas foram revalidadas na seção RC abaixo.
+
+### Candidato RC — 2026-10-29
+
+- Firefox ESR visível no Runtime de desenvolvimento, candidato `bad8ef5fe`:
+  painel autenticado abriu em 200 e mostrou somente seis coleções de Fórum
+  acessíveis à conta de teste UID 5; os seis links tiveram foco visível.
+- Reflow sem overflow em 1280, 390 e 320 CSS px; 7/7 checks visuais PASS.
+  Sem criação/edição de conteúdo. Evidências em
+  `/home/piradopirata/aculta-suite-out/aculta-content-admin`.
+- Kernel 4 testes/56 assertions PASS, zero depreciações; PHP lint 3/3 e PHPCS
+  Drupal/DrupalPractice PASS. Gates globais de rotas, Drupal 11+ e fronteira
+  módulo/tema também passaram (3366 verificações nesta última).
+- ADM5 recebe `0.1.0-rc.1`. Não há configuração própria a importar. Alpha
+  deve repetir a verificação de acesso no host definitivo após o fluxo de
+  release autorizado.
 

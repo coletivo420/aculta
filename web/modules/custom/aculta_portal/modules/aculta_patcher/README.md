@@ -61,18 +61,9 @@ código executável. Não usar o formulário como editor de produção.
 
 ## Revisão de RC — 2026-10-29
 
-- Revisão do candidato local `0.1.0-dev.6`: Unit 41/73 PASS, PHP lint 12/12 e
-  PHPCS Drupal PASS. O ciclo completo com registros ativos foi repetido em cópia
-  isolada, com rede desabilitada; a segunda execução permaneceu byte a byte
-  estável. Não existem testes Kernel no módulo.
-- Firefox ESR no Runtime de teste em 2026-10-29: 13/13 PASS para listagem e
-  formulário em 1280/390/320px. O Runtime ainda serve dev.4; portanto esse
-  resultado não valida o seletor semântico introduzido em dev.6.
-- O candidato permanece em Dev até o gate módulo–tema global ficar verde e o
-  CSS/código atual poder ser validado no Runtime. O gate está bloqueado por
-  referências em Events/Calendar e por uma classe em teste da Revista, fora do
-  escopo do Patcher. Depois da publicação, repetir a revisão visual e então
-  avaliar RC. Nenhum arquivo dessas frentes foi alterado.
+- Candidato promovido a `0.1.0-rc.1`: Unit 41/73 PASS, PHP lint 12/12 e PHPCS Drupal PASS. O ciclo completo com registros ativos foi repetido em cópia isolada, com rede desabilitada; a segunda execução permaneceu byte a byte estável.
+- Firefox ESR visível (`DISPLAY=:0`) no servidor de desenvolvimento (`tests/browser/aculta-patcher/overview.py`), servido no head da PR com cache reconstruído: 13/13 verificações PASS para listagem e formulário em 1280/390/320px. Sem overflow horizontal e com títulos visíveis; seletor semântico `patcher-table-wrapper` validado no markup servido.
+- Gate módulo-tema validado no repositório; critérios de RC concluídos e componente pronto para deploy Alpha.
 
 ## Patch H5P inicial
 
