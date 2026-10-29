@@ -1,12 +1,11 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-**Estado: Dev `0.1.0-dev.327`.** O registro `0.1.0-rc.2` é histórico e foi
-reclassificado após a revisão de autoria Growroom encontrar um cartão de última
-atividade sem o sufixo `-gr` exigido no conteúdo do Fórum. A correção está em
-validação: suíte Unit 186/1.337 e Kernel 152/2.916 PASS; Kernel migração→Search API
-1/25 PASS. Restam equivalência sintética de anexos, uma decisão sobre permalinks
-históricos e revisão visual antes de RC. Não há candidato RC vigente. O memorial coletivo `/u/lendashistoricas`
-continua sem sufixo e sem perfis individuais.
+**Estado: Dev `0.1.0-dev.328`.** O registro `0.1.0-rc.2` é histórico e foi
+reclassificado após auditorias posteriores. A migração cobre embeds Media e
+Gallery válidos e os preserva sem alteração no corpo; seguem pendentes a
+auditoria dos marcadores de aviso, a decisão de permalink histórico e demais
+itens F-M5/F-M6/F-M7. Não há candidato RC vigente. O memorial coletivo
+`/u/lendashistoricas` continua sem sufixo e sem perfis individuais.
 
 Submódulo de `aculta_portal`. O direcionamento vigente, aprovado pelo
 responsável em 2026-10-19, é reconstruir

@@ -6,8 +6,14 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Plugin\migrate\destination\ForumCommentPost;
+use Drupal\file\Entity\File;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\language\Entity\ConfigurableLanguage;
+use Drupal\media\Entity\Media;
+use Drupal\media\Entity\MediaType;
+use Drupal\media_gallery\Entity\MediaGallery;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\migrate\MigrateException;
@@ -39,6 +45,10 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
     'file',
     'image',
     'media',
+    'media_library',
+    'photoswipe',
+    'media_gallery',
+    'views',
     'migrate',
     'workflows',
     'content_moderation',
@@ -87,12 +97,15 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
+    $this->installEntitySchema('media_gallery');
     $this->installEntitySchema('content_moderation_state');
     $this->installEntitySchema('aculta_forum_post');
     $this->installSchema('node', ['node_access']);
+    $this->installSchema('file', ['file_usage']);
     $this->installConfig([
       'system', 'user', 'field', 'filter', 'text', 'node', 'file', 'image',
-      'media', 'workflows', 'content_moderation', 'language',
+      'media', 'media_library', 'photoswipe', 'media_gallery',
+      'views', 'workflows', 'content_moderation', 'language',
     ]);
 
     $entity_type_manager = $this->container->get('entity_type.manager');
@@ -260,6 +273,67 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
 
     $missing = '<drupal-media data-entity-type="media" data-entity-uuid="00000000-0000-0000-0000-000000000000"></drupal-media>';
     $this->assertRejected($this->row(['translations' => $this->translations(['body_value' => $missing])]), 'embed(s) media sem entidade');
+  }
+
+  /**
+   * Valid Media and Gallery embeds are retained unchanged in migrated bodies.
+   */
+  public function testValidMediaAndGalleryEmbedsArePreserved(): void {
+    [$author, $topic] = $this->prepareForumFixture();
+    MediaType::create([
+      'id' => 'forum_migration_file',
+      'label' => 'Forum migration file',
+      'source' => 'file',
+      'source_configuration' => ['source_field' => 'field_media_forum_migration'],
+      'field_map' => ['name' => 'name'],
+    ])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'media',
+      'field_name' => 'field_media_forum_migration',
+      'type' => 'file',
+      'settings' => ['uri_scheme' => 'public'],
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'media',
+      'bundle' => 'forum_migration_file',
+      'field_name' => 'field_media_forum_migration',
+      'label' => 'File',
+    ])->save();
+    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
+
+    $file = File::create([
+      'uri' => 'public://forum-migration-fixture.pdf',
+      'filename' => 'forum-migration-fixture.pdf',
+      'filemime' => 'application/pdf',
+      'uid' => $author->id(),
+    ]);
+    $file->setPermanent();
+    $file->save();
+    $media = Media::create([
+      'bundle' => 'forum_migration_file',
+      'name' => 'Migration fixture',
+      'status' => TRUE,
+      'uid' => $author->id(),
+      'field_media_forum_migration' => ['target_id' => $file->id()],
+    ]);
+    $media->save();
+
+    $gallery = MediaGallery::create([
+      'title' => 'Migration gallery fixture',
+      'status' => TRUE,
+    ]);
+    $gallery->save();
+
+    $body = sprintf(
+      '<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media><drupal-entity data-entity-type="media_gallery" data-entity-uuid="%s"></drupal-entity>',
+      $media->uuid(),
+      $gallery->uuid(),
+    );
+    $translations = $this->translations(['body_value' => $body]);
+    $ids = $this->destination->import($this->destinationRow($author, $topic, [], $translations));
+
+    self::assertSame($body, $this->loadPost((int) reset($ids))->get('body')->value);
   }
 
   /**

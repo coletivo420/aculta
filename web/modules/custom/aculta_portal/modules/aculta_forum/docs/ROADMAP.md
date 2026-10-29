@@ -78,6 +78,14 @@ migração sem criar duplicata no índice (1/25 assertions). Isso cobre indexaç
 do destino; não substitui a auditoria da equivalência completa de embeds e
 marcadores. Nenhuma escrita foi feita no Runtime.
 
+**Embeds válidos na migração (dev.328, 2026-10-29):** o Kernel cria entidades
+Media e Media Gallery reais na fixture, migra um post com ambos os embeds e
+confirma que o corpo mantém o markup original. Os casos de UUID vazio e
+entidade de destino ausente continuam falhando fechados. Isso prova a resolução
+e a preservação do corpo em cenário sintético; não executa migração Runtime nem
+fecha a auditoria completa de marcadores de aviso, permalink, anexos ou
+rollback operacional.
+
 **Ownership compartilhado vigente:** o Fórum mantém produtores, assinaturas e
 seleção de destinatários. Todos os consumers/adapters, agregação, persistência
 compartilhada, preferências, filas, workers e coordenação dos modos de e-mail

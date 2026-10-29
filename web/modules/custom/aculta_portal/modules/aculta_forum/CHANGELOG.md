@@ -1,3 +1,15 @@
+## `0.1.0-dev.328` — preservar embeds válidos na migração sintética
+
+- O Kernel cria entidades Media e Media Gallery reais no banco de teste,
+  migra uma resposta com ambos os embeds e confirma que o corpo do post mantém
+  o markup original. Os testes de referência ausente continuam negando a
+  migração.
+- Suíte Kernel 153/2.968 PASS (42 depreciações); Unit 186/1.337 PASS; PHPCS e
+  PHP lint do arquivo de teste PASS. Nenhuma migration ou escrita Runtime foi
+  executada.
+- Marcadores de aviso e permalink histórico continuam pendentes; a decisão de
+  permalink permanece com o responsável.
+
 ## `0.1.0-dev.327` — provar indexação Search API após migração
 
 - `ForumCommentMigrationBatchKernelTest::testMigratedPostIsIndexedWithoutDuplicatesOnReplay`

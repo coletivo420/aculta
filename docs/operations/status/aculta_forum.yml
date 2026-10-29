@@ -1,13 +1,12 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.327
+version: 0.1.0-dev.328
 state: Dev
 next_phase: >-
-  Provar preservação de embeds válidos de Media/Gallery na migração e auditar
-  marcadores de aviso. A decisão do responsável sobre o destino dos antigos
+  Auditar marcadores de aviso. A decisão do responsável sobre o destino dos antigos
   `/comment/{cid}` está em aberto; não implementar redirect ou aposentadoria
   antes da resposta. Não executar migração de dados no Runtime. Depois reavaliar
   F-M3/F-M6/F-M7, gates e revisão visual antes de RC. RC.2 é histórico.
-progress_note: "Dev.327: fixture de autoria histórica isolada; migração→Search API coberta no Kernel 1/25, com resultado encontrado uma vez após replay. Suíte Kernel 152/2.916 PASS (42 depreciações), Unit 186/1.337 PASS; combinado 338/4.253 PASS. PHP lint/PHPCS focais PASS; índice de status PASS. Nenhuma escrita no Runtime. A idempotência já era coberta; continua pendente a equivalência de embeds válidos e a decisão sobre permalinks históricos."
+progress_note: "Dev.328: Kernel cria Media e Media Gallery de teste, migra ambos os embeds e comprova que o markup sobrevive sem alteração (25 assertions no caso focal). Suíte Kernel 153/2.968 PASS (42 depreciações), Unit 186/1.337 PASS; PHP lint e PHPCS do teste PASS. Sem migration ou escrita Runtime. Pendem auditoria dos marcadores de aviso e decisão sobre permalinks históricos."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; gate: scripts/validate-no-temporary-route-aliases.php.
