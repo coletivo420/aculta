@@ -75,6 +75,15 @@ público e reflow 1280/390/320 px usando uma entidade temporária `[TESTE]` no
 Runtime de desenvolvimento. Requer uma sessão administrativa efêmera. Ver o
 README local para criação e limpeza da fixture.
 
+### `aculta-forum-lms/`
+
+`h5p-discussions.py` prepara um curso LMS, uma conta Educadora temporária e um
+tópico ligado a um conteúdo H5P existente, e verifica o link de discussão em
+1280/390/320 px no Firefox ESR. A fixture é removida no `finally`. A execução
+atual no Runtime de desenvolvimento foi bloqueada antes do navegador porque
+`private://h5p` não permite escrita ao Drush; ver o README local. Não altere
+permissões para contornar esse bloqueio sem autorização.
+
 ### `aculta-game/`
 
 `smoke.mjs` verifica a área de conta, perfil público e alternativas de texto das

@@ -1,3 +1,17 @@
+## `0.1.0-dev.30` — corrigir o harness Kernel da integração H5P–Fórum — 2026-10-29
+
+- O teste focal usa os helpers de dependências reais do LMS e de limpeza do
+  Portal, além do módulo `domain`; não substitui `aculta_user.author_card_builder`
+  nem flexibiliza autorização.
+- Unit: 33 testes / 320 assertions PASS. Kernel: 27 testes / 1.355 assertions
+  PASS, 53 depreciações de Core/contrib. `php -l` e PHPCS Drupal/DrupalPractice
+  do teste focal PASS.
+- O script de smoke Firefox foi preparado, mas a preparação de fixture no
+  Runtime para em `private://h5p`, que não é gravável pelo Drush. A falha ocorre
+  antes de iniciar o navegador; as fixtures parciais foram removidas. Nenhuma
+  permissão ou configuração do Runtime foi alterada. O smoke visual segue
+  bloqueado até haver uma forma autorizada de escrita nessa pasta.
+
 ## `0.1.0-dev.44` — corrigir a expectativa de formato de comentário — 2026-10-22
 
 - Corrige a falha registrada no dev.43, sem tocar o Runtime.

@@ -5,11 +5,15 @@ privado para Nodes `aculta_lms_topic` e delega a
 autorização do marcador de moderação aos Educadores com `grade students` no
 curso contextual.
 
-**Revalidação de F15 (2026-10-29):** Unit 33 testes/320 assertions PASS. Kernel
-27 testes/1.318 assertions, com 48 depreciações e 1 erro antes do teste de vínculo
-H5P–Fórum: o container não encontra `aculta_user.author_card_builder`, requerido
-por `aculta_lms.class_roster_manager`. A fase foi interrompida antes do smoke no
-Runtime; nenhum conteúdo foi criado nem alterado nesta rodada.
+**Revalidação de F15 (2026-10-29, dev.30):** Unit 33 testes/320 assertions e
+Kernel 27 testes/1.355 assertions passaram; Kernel reportou 53 depreciações de
+Core/contrib. O harness parcial agora registra as dependências reais do LMS e
+Portal e habilita `domain`, sem substituir o serviço sob teste nem relaxar
+regras. `php -l` e PHPCS do Kernel focal passaram. O smoke autenticado ainda
+está bloqueado: `private://h5p` existe, mas não permite escrita pelo Drush do
+Runtime. A preparação falhou antes de abrir Firefox e removeu as fixtures
+parciais; não alterei permissões ou configuração do Runtime. Revisão visual e
+integrações Gallery/Magazine/Wiki continuam pendentes.
 
 Na dev.27, o adapter também permite associar diretamente um tópico a um
 `h5p_content` e renderiza as conversas autorizadas sob o player H5P. A

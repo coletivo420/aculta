@@ -17,10 +17,13 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\NodeType;
 use Drupal\Tests\user\Traits\UserCreationTrait;
+use Drupal\Tests\aculta_lms\Kernel\AcultaLmsDependencyHarnessTrait;
+use Drupal\Tests\aculta_lms_h5p\Kernel\PortalCleanupKernelServicesTrait;
 use Drupal\user\Entity\Role;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -28,14 +31,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Tests H5P discussion links with real H5P, Node, and Group entities. */
 #[TestGroup('aculta_forum_lms')]
 #[RunTestsInSeparateProcesses]
-final class Lmsaculta_H5PDiscussionResolverKernelTest extends KernelTestBase {
+final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
 
   use UserCreationTrait;
+  use AcultaLmsDependencyHarnessTrait;
+  use PortalCleanupKernelServicesTrait;
 
   /**
    * {@inheritdoc} */
   protected static $modules = [
     'system',
+    'domain',
     'user',
     'field',
     'file',
@@ -57,6 +63,15 @@ final class Lmsaculta_H5PDiscussionResolverKernelTest extends KernelTestBase {
     'aculta_lms',
     'aculta_lms_h5p',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerLmsDependencyServices($container);
+    $this->registerPortalCleanupServices($container);
+  }
 
   /**
    * {@inheritdoc} */
