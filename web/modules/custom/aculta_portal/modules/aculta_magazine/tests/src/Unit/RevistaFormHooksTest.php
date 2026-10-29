@@ -181,6 +181,34 @@ final class RevistaFormHooksTest extends UnitTestCase {
   }
 
   /**
+   * Hidden controls and inaccessible inputs cannot receive validation focus.
+   */
+  public function testInvalidFieldSkipsHiddenAndInaccessibleInputs(): void {
+    $form = [
+      'field_credits' => [
+        '#type' => 'container',
+        'token' => ['#type' => 'hidden', '#value' => 'test'],
+        'disabled' => [
+          '#type' => 'textfield',
+          '#access' => FALSE,
+        ],
+        'credit' => [
+          '#type' => 'textfield',
+          '#attributes' => [],
+        ],
+      ],
+    ];
+    $form_state = new FormState();
+    $form_state->setErrorByName('field_credits', 'Crédito obrigatório.');
+    (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_form');
+
+    self::assertTrue($form['revista_secondary']['#open']);
+    self::assertSame('autofocus', $form['revista_secondary']['field_credits']['credit']['#attributes']['autofocus'] ?? NULL);
+    self::assertFalse($this->hasAutofocus($form['revista_secondary']['field_credits']['token']));
+    self::assertFalse($this->hasAutofocus($form['revista_secondary']['field_credits']['disabled']));
+  }
+
+  /**
    * An earlier error keeps the focus; the group still opens.
    */
   public function testEarlierErrorKeepsTheFocusButGroupStillOpens(): void {
