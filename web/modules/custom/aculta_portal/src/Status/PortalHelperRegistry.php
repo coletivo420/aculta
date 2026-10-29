@@ -79,6 +79,16 @@ final class PortalHelperRegistry {
       'summary' => 'Apaga arquivo de imagem somente quando file_usage e entity_usage não apontam para ele; invalida derivados e metadados.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
+    'aculta_image.capabilities' => [
+      'label' => 'Capacidades de processamento de imagem',
+      'summary' => 'Detecta backends PHP, formatos e otimizadores disponíveis no servidor.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/README.md',
+    ],
+    'aculta_image.pdf_thumbnail' => [
+      'label' => 'Geração de miniaturas de PDF',
+      'summary' => 'Gera JPEG da primeira página de PDFs públicos com PHP Imagick, sem depender do binário de linha de comando.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
     'aculta_portal.unused_file_cleaner' => [
       'label' => 'Coordenação de limpeza de arquivos sem uso',
       'summary' => 'Revalida File Usage, Entity Usage, referências estruturadas e embeds versionados; delega imagens ao aculta_image.',

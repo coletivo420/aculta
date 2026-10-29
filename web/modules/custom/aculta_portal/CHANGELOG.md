@@ -1,3 +1,10 @@
+## 0.4.1-dev.45 — completar inventário de helpers de imagem no Status (2026-10-29)
+
+- O catálogo administrativo do Portal agora documenta `aculta_image.capabilities`
+  e `aculta_image.pdf_thumbnail`, mantendo o registro alinhado às tags ativas.
+- Gate Portal Drupal 11+ (1.163 checks), índice de status, PHP lint e PHPCS
+  Drupal/DrupalPractice passaram. Nenhum dado ou configuração Runtime mudou.
+
 ## 0.4.1-dev.44 — reparar referências documentais do Status e do checkout (2026-10-29)
 
 - Os catálogos de helpers e implementações apontam à ADR-032 vigente para

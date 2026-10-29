@@ -1,5 +1,14 @@
 # Roadmap do aculta_portal
 
+## Inventário de helpers de imagem — 2026-10-29
+
+`PortalHelperRegistry` agora inclui `aculta_image.capabilities` e
+`aculta_image.pdf_thumbnail`, cujas tags já estavam ativas nos serviços do
+submódulo. O gate Drupal 11+ verifica a igualdade entre serviços marcados e
+metadados documentados; a diferença foi corrigida sem alteração de comportamento
+ou escrita no Runtime. Portal segue Dev; as fases funcionais abaixo permanecem
+pendentes.
+
 ## Revalidação documental — 2026-10-29
 
 O manifesto e o status usam `0.4.1-dev.44`. Os metadados do catálogo de helpers

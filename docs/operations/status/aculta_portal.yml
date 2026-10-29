@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.1-dev.44
+version: 0.4.1-dev.45
 state: Dev
 next_phase: 'Executar testes B1/B2 de Form API CPF/CNPJ, checkout, cache e legado; homologar no Kernel domínio/grants dos providers do Content Index incluindo Activity; avançar relações allowlisted dos vídeos embutidos em Revista, Wiki, Fórum e LMS; homologar as APIs de limpeza compartilhada de Media/File, depois implementar prévia e execução explícita de posts com backup ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [limpeza](docs/portal/CONTENT-CLEANUP-POLICY.md), [roadmap Portal](docs/portal/ROADMAP.md))'
-progress_note: "Dev.44: manifesto/status alinhados ao changelog e referências dos catálogos corrigidas para ADR-032. Gate Portal Drupal 11+ PASS (1.162 checks); Unit Portal 323/974 e Kernel Portal 80/1.530 PASS, com 96 depreciações Core/contrib. Estado funcional do checkout não foi revalidado nesta rodada. Permanecem fases B1/B2, Content Index, vídeo, limpeza compartilhada, testes e revisão visual listados em next_phase; Portal continua Dev."
+progress_note: "Dev.45: inventário Status passou a documentar os serviços tagged aculta_image.capabilities e aculta_image.pdf_thumbnail. Gate Portal Drupal 11+ PASS; sem mudança de configuração ou dados Runtime. Dev.44: gate 1.162 checks, Unit Portal 323/974 e Kernel Portal 80/1.530 PASS (96 depreciações Core/contrib). Estado funcional do checkout não foi revalidado nesta rodada. Permanecem fases B1/B2, Content Index, vídeo, limpeza compartilhada, testes e revisão visual listados em next_phase; Portal continua Dev."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
