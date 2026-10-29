@@ -23,6 +23,9 @@ final class ContentIndexStatusController extends ControllerBase {
     private readonly ContentIndexProviderRegistry $providers,
   ) {}
 
+  /**
+   * Creates the controller from Drupal's service container.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('database'),
@@ -82,7 +85,8 @@ final class ContentIndexStatusController extends ControllerBase {
     ];
   }
 
-  /** Formats timestamps while keeping missing history explicit. */
+  /**
+   * Formats timestamps while keeping missing history explicit. */
   private function formatTimestamp(int $timestamp): string {
     return $timestamp > 0 ? $this->dateFormatter->format($timestamp, 'short') : (string) $this->t('Nunca');
   }

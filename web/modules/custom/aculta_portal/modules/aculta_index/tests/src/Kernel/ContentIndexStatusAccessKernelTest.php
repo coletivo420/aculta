@@ -24,13 +24,15 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[RunTestsInSeparateProcesses]
 final class ContentIndexStatusAccessKernelTest extends KernelTestBase {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected static $modules = [
     'system', 'user', 'field', 'file', 'image', 'media', 'entity_usage', 'media_duplicates',
     'aculta_image', 'aculta_index',
   ];
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
@@ -41,6 +43,9 @@ final class ContentIndexStatusAccessKernelTest extends KernelTestBase {
     ));
   }
 
+  /**
+   * Checks access for an authenticated user without the status permission.
+   */
   public function testRegularUserCannotReadIndexStatus(): void {
     $route = $this->container->get('router.route_provider')->getRouteByName('aculta_index.status');
     $request = Request::create('/painel-administrativo/indice');

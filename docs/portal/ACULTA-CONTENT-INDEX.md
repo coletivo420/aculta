@@ -1,5 +1,16 @@
 # ACULTA Content Index
 
+## Revalidação em 2026-10-29
+
+No branch `refactor/opencultures-codigo-visual`, as suítes atuais no MariaDB
+`aculta_simpletest` passaram: Unit Index 51 testes / 265 assertions; Kernel
+Index 120 / 2.020, com 270 depreciações Core/contrib/PHPUnit; Unit opcional
+`aculta_index_file` 2 / 21. O lint dos 85 arquivos PHP e PHPCS
+Drupal/DrupalPractice passaram depois de corrigir os docblocks do painel de
+status. A revalidação confirma o harness, não a ativação completa dos owners.
+Grants operacionais e carga representativa continuam pendentes; nenhum rebuild
+ou escrita no Runtime foi executado. O módulo permanece Dev.
+
 **Versão da iniciativa:** 0.1.0 — IDX 0.1-F/G em desenvolvimento; fundamentos de schema, providers, manutenção, consulta e bridge implementados, integração progressiva pendente.
 **Dono:** Kernel `aculta_portal`, submódulo opcional `aculta_index`.
 **ADR:** [ADR-013](../decisions/ADR-013-aculta-content-index.md).

@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.178 — revalidar grants, acesso e qualidade estática (2026-10-29)
+
+- Revalidação atual: Unit 51/265, Kernel 120/2.020 e `aculta_index_file` Unit
+  2/21 passaram no MariaDB dedicado; o Kernel completo reportou 270 depreciações
+  upstream. PHP lint e PHPCS Drupal/DrupalPractice passaram após corrigir
+  docblocks do painel de status.
+- A cobertura atual prova adapters, acesso/Domain em Wiki, Fórum, Revista,
+  Gallery e LMS pelo harness; não substitui grants operacionais nem conteúdo
+  representativo real dos owners. Estado permanece Dev.
+
 ## 0.1.0-dev.177 — painel somente de leitura do estado do índice (2026-10-28)
 
 - Adicionado `/painel-administrativo/indice`, com geração ativa, última reconstrução concluída e contagem de trabalho pendente. A permissão é restrita e a tela não executa rebuild, retry ou outra escrita.
@@ -322,25 +332,4 @@
   iniciou: este repositório proíbe SQLite para testes Drupal e exige
   `SIMPLETEST_DB` MariaDB.
 
-## 0.1.0-dev.148 — repetir gates Unit e Kernel após otimização de auditoria
-
-- Unit completo passou (50 testes / 241 assertions; 14 depreciações PHPUnit).
-- `ContentIndexSchemaKernelTest` passou no MariaDB (53 / 570; 1 depreciação
-  Drupal Core e 54 PHPUnit). `ContentIndexRebuilderKernelTest` passou (21 /
-  295), incluindo a regressão de limpeza de cache adicionada em dev.146.
-- Nenhuma falha. O aviso de diretório browser_output não gravável é do setup
-  PHPUnit e não afeta estas suítes de Kernel.
-
-## 0.1.0-dev.147 — validar reconciliação 100k após limpeza de cache
-
-- Repetição MariaDB em 100k com limite operacional 5.000 e a limpeza de cache
-  da auditoria: rebuild 204,842 s; auditoria 92,913 s; pico 137,5 MiB; zero
-  divergências. A fase source→catalog levou 63,178 s (p95 645 ms; máximo
-  885 ms). Uma execução diagnóstica, sem SLO.
-- Comparação com a execução 100k anterior de limite 500: auditoria 471,662 s,
-  fase source→catalog 437,109 s, limpeza de cache do enumerador 379,890 s e
-  pico 492 MiB. São execuções únicas e houve mudança de código; a comparação
-  mostra que 500 é uma escolha ruim neste harness, não isola causalidade.
-- Benchmark, suíte Kernel Rebuilder (21 / 295), PHPCS, lint e índice de status
-  do projeto passaram. O padrão operacional permanece 5.000.
 
