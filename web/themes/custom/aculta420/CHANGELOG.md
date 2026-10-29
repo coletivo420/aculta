@@ -1,3 +1,8 @@
+# 0.7.0-dev.18 — migrar o visual do leitor PDF para mobile-first (2026-10-29)
+
+- Reader PDF usa controles em fluxo compacto, busca em linha própria e superfície reduzida como base; `min-width: 40.0001rem` restaura a composição ampla após 640px.
+- Smoke Firefox existente expandido a 1280/768/641/640/390/320px e opção de injeção da folha candidata criada. Execução Firefox e rota real DEFERRED por sessões visíveis concorrentes; sem homologação MF3.
+
 # 0.7.0-dev.17 — migrar carrossel editorial para mobile-first (2026-10-29)
 
 - O carrossel da View editorial na home MAIN usa limite compacto (390px) e item fluido como base; `min-width: 48.0625rem` restaura os limites amplos anteriores, mantendo a transição original após 768 CSS px.

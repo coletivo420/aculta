@@ -506,3 +506,15 @@ Destaques editoriais da home MAIN. Foi criado
 comparar geometria e capturas baseline/candidato em 12 larguras; Firefox e a
 página servida estão DEFERRED pelas sessões concorrentes visíveis. THEME-MF3
 segue pendente.
+
+### THEME-MF2 — leitor PDF de Media (2026-10-29)
+
+`pdf-viewer.css` agora usa gap/padding compactos, controles flexíveis e busca em
+linha própria como base. `min-width: 40.0001rem` restaura a superfície ampla,
+controle não expansível, busca de 14rem e o espaço de palco original; no modo
+fullscreen também restaura padding e max-height. O smoke reutilizável
+`tests/browser/aculta-document-viewer/visual.py` foi ampliado para 1280/768/641/
+640/390/320 px e aceita `PDF_VIEWER_CSS_OVERRIDE=1` para injetar a folha
+candidata. A execução Firefox e a página Runtime estão DEFERRED enquanto as
+sessões visíveis da Revista ocupam o browser. O smoke não ativa fullscreen; esse
+estado precisa de revisão posterior. THEME-MF3 não aprovado.

@@ -17,7 +17,10 @@ from wdlib import Driver  # noqa: E402
 URL = os.environ["ACULTA_TEST_URL"]
 EXPECTED_TITLE = os.environ.get("ACULTA_EXPECTED_TITLE", "")
 OUT = Path(os.environ["SUITE_OUT"])
-WIDTHS = [(1280, "desktop"), (390, "mobile-390"), (320, "mobile-320")]
+CSS_OVERRIDE = os.environ.get("PDF_VIEWER_CSS_OVERRIDE") == "1"
+CSS_PATH = PROJECT / "web/themes/custom/aculta420/css/components/pdf-viewer.css"
+WIDTHS = [(1280, "desktop"), (768, "tablet-768"), (641, "wide-641"),
+          (640, "compact-640"), (390, "mobile-390"), (320, "mobile-320")]
 results = []
 
 
@@ -96,6 +99,12 @@ try:
     driver.get(URL)
     loaded = wait_for("document.readyState === 'complete' && !!document.querySelector('[data-aculta-pdf-viewer=\"true\"]')")
     check("página incorpora o viewer PDF", loaded)
+    if loaded and CSS_OVERRIDE:
+        candidate_css = CSS_PATH.read_text()
+        injected = driver.js("""const style=document.createElement('style');
+          style.id='aculta-pdf-viewer-candidate';style.textContent=arguments[0];
+          document.head.append(style);return Boolean(document.getElementById(style.id));""", [candidate_css])
+        check("CSS candidato do worktree injetado", injected, str(CSS_PATH))
     title = driver.js("return document.querySelector('main h1')?.innerText.trim() || ''") if loaded else ""
     check("título da página de teste está visível", bool(title) and (not EXPECTED_TITLE or title == EXPECTED_TITLE), title)
 
@@ -141,11 +150,19 @@ try:
             document: document.documentElement.scrollWidth,
             viewerVisible: Boolean(rect && rect.width > 0 && rect.left >= 0 && rect.right <= window.innerWidth),
             canvasVisible: Boolean(viewer?.querySelector('canvas')?.getClientRects().length),
+            gap: getComputedStyle(viewer).gap,
+            padding: getComputedStyle(viewer).padding,
+            searchBasis: viewer.querySelector('[data-aculta-pdf-control="search-input"]')
+              ? getComputedStyle(viewer.querySelector('[data-aculta-pdf-control="search-input"]')).flexBasis : null,
           };""")
         screenshot(label)
         check(f"viewer sem overflow em {width}px",
               actual == width and metrics["document"] <= width and metrics["viewerVisible"]
               and metrics["canvasVisible"], str(metrics))
+        expected_compact = width <= 640
+        check(f"composição {'compacta' if expected_compact else 'ampla'} em {width}px",
+              metrics["gap"] == ("10px" if expected_compact else "12px")
+              and metrics["padding"] == ("12px" if expected_compact else "16px"), str(metrics))
 finally:
     if bidi:
         bidi.close()

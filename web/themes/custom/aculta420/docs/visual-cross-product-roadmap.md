@@ -610,3 +610,12 @@ compacto, e restaura largura ampla do wrapper e dos slides em
 criado; execução Firefox e conferência da rota servida estão DEFERRED por
 sessões concorrentes. Não aprova MF3. Evidência e limites em `mobile-first-audit.md`
 e `tests/browser/aculta-theme-mobile-first/editorial-carousel-layout.py`.
+
+### THEME-MF2 — leitor PDF de Media
+
+A folha visual do contrato `aculta_pdf_viewer` declara primeiro toolbar/busca
+compactos e restaura a apresentação ampla acima de 640 CSS px. O smoke Firefox
+reutilizável agora mede a fronteira 640/641 além de 320–1280 e pode injetar o
+CSS candidato local na rota servida. Runtime/Firefox estão DEFERRED enquanto há
+sessões concorrentes; fullscreen não é exercitado. Evidência em
+`mobile-first-audit.md` e `tests/browser/aculta-document-viewer/README.md`.

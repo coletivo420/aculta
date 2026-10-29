@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.17
+version: 0.7.0-dev.18
 state: Dev
 progress_note: >-
-  0.7.0-dev.17 / THEME-MF2: carrossel editorial da home MAIN migrou de max-width para base compacta com restauração ampla após 768px; harness em 12 viewports criado. Firefox e página real DEFERRED enquanto as sessões visíveis da Revista ocupam os recursos; MF3 não aprovado.
-next_phase: 'Repetir Firefox para carrossel, autenticação e Perfil público quando sessões concorrentes encerrarem; sincronização/cache pelo owner e revisão das páginas reais permanecem pendentes. Continuar demais superfícies MF2 antes de THEME-MF3.'
+  0.7.0-dev.18 / THEME-MF2: leitor PDF migrou para controles/busca compactos como base; restauração ampla em telas acima de 640px. Smoke Firefox ampliado para 1280/768/641/640/390/320px e override de folha candidata. Firefox e página real DEFERRED por sessões concorrentes visíveis; MF3 não aprovado.
+next_phase: 'Repetir Firefox para PDF, carrossel, autenticação e Perfil quando sessões concorrentes encerrarem; revisar páginas reais após sincronização/cache pelo owner. Continuar demais superfícies MF2 antes de THEME-MF3.'

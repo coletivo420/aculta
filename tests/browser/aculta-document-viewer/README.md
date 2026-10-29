@@ -4,8 +4,11 @@ Firefox ESR visível no servidor de desenvolvimento. `ACULTA_TEST_URL` deve
 apontar para uma página pública descartável que incorpora uma Media `document`
 de teste pelo filtro `media_embed`; não use PDF confidencial. O script confirma
 o viewer e controles básicos, percorre controles por Tab e verifica o reflow
-em 1280, 390 e 320 CSS px. Capturas e `summary.json` ficam fora do repositório,
-em `SUITE_OUT`.
+em 1280/768/641/640/390/320 CSS px. As métricas distinguem valores compactos
+até 640px e amplos acima desse limite. `PDF_VIEWER_CSS_OVERRIDE=1` injeta a
+folha do worktree configurado em `ACULTA_PROJECT_ROOT` após carregar a página
+do servidor, para comparar o candidato sem rebuild de cache. Capturas e
+`summary.json` ficam fora do repositório, em `SUITE_OUT`.
 
 ```sh
 DISPLAY=:0 \
@@ -13,12 +16,14 @@ SUITE_OUT=/caminho/fora-do-repositorio/aculta-document-viewer \
 ACULTA_TEST_URL=https://aculta.toca.net.br/node/ID \
 ACULTA_EXPECTED_TITLE='Título do conteúdo de teste' \
 ACULTA_PROJECT_ROOT=/home/piradopirata/worktrees/opencultures-f0-adm8-e8 \
+PDF_VIEWER_CSS_OVERRIDE=1 \
 python3 -I tests/browser/aculta-document-viewer/visual.py
 ```
 
 Requer Firefox ESR, geckodriver e `websockets` Python. Não altera configuração
-ou conteúdo. Não valida privacidade de documentos privados, leitor de tela,
-CSP, PDF de grande porte ou o resultado após deploy.
+ou conteúdo. Não valida privacidade de documentos privados, leitor de tela, CSP,
+PDF de grande porte nem o resultado após cache rebuild/deploy. No modo candidato,
+somente esta folha é injetada; as demais libraries vêm da página servida.
 
 ## Opções administrativas DOCX e planilhas (D-48)
 
