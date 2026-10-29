@@ -59,6 +59,32 @@ O teste cobre somente navegação responsiva e a presença da Institution Bar na
 página autenticada `/configuracoes`. Não valida as tabelas de pedidos, todos os
 submenus, teclado completo, zoom real, cache/ACL entre contas nem WCAG 2.2 AA.
 
+## Formulário unificado de endereço
+
+`account-address.py` valida por GET o formulário canônico `/dados/endereco`,
+acessado no shell legado pela navegação Meus Dados → Endereço. Confere uma
+única instância do formulário, os campos acordados, país oculto, carregamento
+do behavior de `aculta_portal_cep`, agrupamento de Número/S/N/Complemento e
+overflow em 320/360/390/599/600/768/1024/1280/1440 px. Repete a verificação de
+layout sem JavaScript em 320/390/768/1440 px. Não submete nem salva o endereço;
+valores digitados são mascarados nas capturas, que ficam fora do repositório.
+
+```sh
+cd /home/piradopirata/projetos/aculta
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-account-address
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+export ACULTA_PROJECT_ROOT=/home/piradopirata/projetos/aculta
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/account-address.py
+```
+
+`ACCOUNT_ADDRESS_BASE_URL`, `ACCOUNT_ADDRESS_DRUSH_URI` e `ACCOUNT_ADDRESS_UID`
+selecionam o host, URI Drush e conta de teste autorizada. O padrão é o host de
+Conta do servidor de desenvolvimento e UID 5. Requer Firefox ESR visível,
+geckodriver, Drush local, sessão X11 e pacote Python `websockets`. O smoke não
+substitui teste de submissão, acessibilidade completa, ACL entre contas ou
+validação do lookup ao vivo do CEP.
+
 ## Purpose SUPPORT e `donation-quick`
 
 `support-form.py` mede o formulário público e o SDC `donation-quick` em Firefox

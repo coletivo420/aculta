@@ -29,6 +29,9 @@ $editorial = $read('web/modules/custom/aculta_portal/src/Hook/EditorialHooks.php
 $cep = $read('web/modules/custom/aculta_portal/modules/aculta_portal_cep/js/cep-address.js');
 $controller = $read('web/modules/custom/aculta_portal/modules/aculta_portal_cep/src/Controller/CepLookupController.php');
 $fieldConfig = $read('config/sync/field.field.profile.authenticated.field_address.yml');
+$accountShell = $read('web/modules/custom/aculta_portal/src/AccountShellBuilder.php');
+$routes = $read('web/modules/custom/aculta_portal/aculta_portal.routing.yml');
+$form = $read('web/modules/custom/aculta_portal/src/Account/AccountAddressForm.php');
 
 // 1. O bloco de papel não pode capturar a edição de endereço do Portal
 // NEM a rota equivalente do Studio: ambas usam o mesmo Profile Commerce.
@@ -40,6 +43,18 @@ $check(
     && str_contains($hooks, 'AccountAddressForm::apply('),
   'PortalHooks: ambos os editores de endereço preservam país, Número e S/N',
 );
+$check(
+  str_contains($form, "public const LIBRARY = 'aculta_portal_cep/cep-address'")
+    && str_contains($form, 'final class AccountAddressForm'),
+  'decisão: implementação central de endereço no Portal usa a integração CEP oficial',
+);
+$check(
+  str_contains($routes, 'path: /conta-legada')
+    && str_contains($routes, 'path: /dados/endereco')
+    && str_contains($accountShell, "'aculta_portal.my_data_address' => 'aculta_portal.my_data'")
+    && str_contains($accountShell, "'aculta_portal.my_data'"),
+  'conta legada: Meus Dados → endereço canônico no shell existente',
+);
 $callbacks = $read('web/modules/custom/aculta_portal/src/Form/PortalFormCallbacks.php');
 $check(
   str_contains($callbacks, "'aculta_studio.account_address'")
@@ -49,7 +64,6 @@ $check(
 );
 // 2. País fixo em Brasil: campo oculto (não #access FALSE, que faz o módulo Address descartar a entrada inteira).
 //    O tratamento é único (AccountAddressForm) e usado por Minha conta, checkout, loja e perfis de equipe.
-$form = $read('web/modules/custom/aculta_portal/src/Account/AccountAddressForm.php');
 $check(
   str_contains($form, "['#type'] = 'hidden'") && !str_contains($form, "country_code']['#access'] = FALSE"),
   'AccountAddressForm: país oculto como campo hidden, sem #access FALSE',

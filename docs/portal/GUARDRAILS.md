@@ -33,6 +33,13 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
   decisão de access.
 - Não criar CMS, catálogo, carrinho, pedido, pagamento ou LMS paralelo a Core ou contrib.
 
+## Formulário de endereço unificado
+
+- O site tem uma única implementação central de formulário para capturar/editar endereços: `aculta_portal` (`AccountAddressForm`), integrada à biblioteca e ao serviço `aculta_portal_cep`.
+- Módulos e fluxos que precisem capturar/editar endereço devem reutilizar essa implementação, criando somente adaptadores para mapear seus campos/entidades. É proibido manter outro formulário paralelo ou duplicar a integração de CEP.
+- Os dados e modelos das entidades continuam separados conforme seus contratos; unificar o formulário não autoriza fundir campos, entidades, permissões ou regras de negócio.
+- Mudanças nesse contrato devem atualizar `docs/portal/ACCOUNT-ADDRESS.md` e executar `scripts/validate-account-address.php`; mudanças de renderização também executam o teste Firefox documentado em `tests/browser/aculta-theme-mobile-first/README.md`.
+
 ## Views e CTools
 
 - CTools é uma implementação suportada do projeto. Para blocos Views que

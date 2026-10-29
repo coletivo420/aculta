@@ -155,3 +155,6 @@ visível e gravam capturas em `$SUITE_OUT` sem submeter formulários.
 atuais, inclusive Revista, lendo os hosts do manifesto de transição para
 acompanhar Alpha. Inclui o `ul.nav` realmente renderizado e overflow; veja o
 README local para execução e limites.
+`account-address.py` verifica por GET o formulário unificado da Conta, sua
+navegação legada, a biblioteca CEP executada, os campos e o reflow com e sem
+JavaScript; não submete dados. Veja o README local para variáveis e limites.
