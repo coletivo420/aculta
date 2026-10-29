@@ -17,6 +17,11 @@
 - Config Sync foi atualizado, mas não importado no Runtime. A suíte completa
   passou em 52 testes/575 assertions, com 147 depreciações Core/contrib e uma
   depreciação PHPUnit. Firefox visual autenticado permanece gate antes de RC.
+- D-48 registra o escopo desta tela: padrões PDF existentes, renderização DOCX
+  e apresentação de planilhas. A página fica em ACULTA > Site > Leitor de
+  documentos; os controles não ampliam acesso aos arquivos, nem permitem editar
+  planilhas. A classificação permanece Dev até validação visual autenticada,
+  FPM Hostinger, CSP e acessibilidade ampliada.
 
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). PV7 só pode ser classificada RC quando todo o escopo e testes, CSP em Report-Only configurada sem enforcement, acessibilidade e validação visual pré-deploy aplicável estiverem concluídos. Alpha valida a coleta/análise dos relatórios no servidor de desenvolvimento; enforcement será decidido após Alpha. LiteSpeed/Cloudflare são validados depois do deploy em produção.
 

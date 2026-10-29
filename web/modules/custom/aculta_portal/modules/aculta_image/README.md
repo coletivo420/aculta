@@ -6,7 +6,7 @@ origem externa, auditoria, quarentena e comparação visual.
 
 | Estado do submódulo | Versão atual | Próximas fases | Classificação |
 | --- | --- | --- | --- |
-| Em desenvolvimento | `0.1.0-dev.34` ([CHANGELOG](CHANGELOG.md)) | Confirmar binários necessários para produção; concluir integração/importação Growroom conforme [PLANO](docs/PLANO.md) e [IMPORTAÇÃO](docs/IMPORTACAO-GROWROOM.md); concluir gates/testes e revisão visual pré-deploy antes de RC; depois Alpha e produção | **Dev**. Ciclo vigente: Dev → RC → deploy/validação Alpha no servidor de desenvolvimento → produção. |
+| Em desenvolvimento | `0.1.0-dev.46` ([CHANGELOG](CHANGELOG.md)) | M12: inventariar referências e preparar migração reversível do acervo existente; concluir integração Growroom após F3 do Fórum; validar FPM Hostinger e revisão visual/gates antes de RC. Ver [status](../../../../../../docs/operations/status/aculta_image.yml) e [plano](docs/PLANO.md). | **Dev**. Ciclo vigente: Dev → RC → deploy/validação Alpha no servidor de desenvolvimento → produção. |
 **Para retomar o trabalho:** [docs/HANDOFF.md](docs/HANDOFF.md).
 **Plano e fases:** [docs/PLANO.md](docs/PLANO.md). **Modelos no texto:** [docs/MODELOS-DE-IMAGEM.md](docs/MODELOS-DE-IMAGEM.md).
 **Estilos:** [docs/ESTILOS.md](docs/ESTILOS.md). **Importação do Growroom:** [docs/IMPORTACAO-GROWROOM.md](docs/IMPORTACAO-GROWROOM.md).
@@ -66,6 +66,10 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 - Permissão: `administer aculta images`.
 - Navegação: ACULTA > Imagens > Processamento e formatos. O painel permanece
   sob a permissão restrita de administração de imagens.
+- Decisão D-47: backend limitado às bibliotecas detectadas; compressão,
+  formatos aceitos/gerados e WebP são configuráveis. WebP substitui uploads
+  inline com perda, qualidade 82. A opção administrativa não migra arquivos
+  existentes; a migração requer inventário e plano de reversão (M12).
 
 ## Dependências
 
