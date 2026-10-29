@@ -50,6 +50,15 @@ duas folhas candidatas e mede colunas/posição do aside na fronteira 767/768px.
 Lint CSS e sintaxe Python PASS; Firefox/Runtime DEFERRED por `DISPLAY` ausente e
 sessões geckodriver concorrentes. MF3 segue pendente.
 
+### THEME-MF2 — layout SDC page-columns
+
+Todas as variantes do layout empilham como base; as variantes duas/três colunas
+são restauradas a partir de `48rem`. `tests/browser/aculta-theme-mobile-first/
+page-columns.py` compara baseline/candidata em dez larguras e preserva DOM e
+ordem. O SDC ainda não tem consumer de produto. Lint CSS, schema SDC e sintaxe
+Python passam; Firefox visível DEFERRED por `DISPLAY` ausente e sessões
+concorrentes. MF3 segue pendente.
+
 ### THEME-MF2 — controles da discussão (2026-10-29)
 
 `discussion.css` declara como base o arranjo de 2 colunas abaixo de 360px;

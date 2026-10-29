@@ -130,6 +130,10 @@ contratos e consumidores reais autorizem sua implementação; não são componen
 | `layouts/event-page-five-regions` | Layout UI Patterns experimental | UI Patterns Layouts está no código e em Config Sync. Sem consumidor real: `aculta_events` já tem controller e Twig públicos, mas ainda não consome este SDC. |
 | `layouts/page-columns` (I-22) | Layout UI Patterns experimental com variações 1, 2 e 3 colunas e ordem DOM preservada no mobile | Sem consumidor real; permanece candidato. `rail` é horizontal e `content-section` não compõe regiões em colunas. |
 
+`layouts/page-columns` agora empilha todas as variantes como base; duas/três
+colunas só entram em `48rem`. `tests/browser/aculta-theme-mobile-first/page-columns.py`
+compara a fixture do SDC em 320–1440px; continua sem consumer de produto.
+
 As quatro cores fechadas de seção têm tokens, pares de contraste e stories no
 `content-section`. O bloco básico expõe `field_section_color` e preserva
 `field_section_variant` como dimensão visual separada; a hook `aculta_section`

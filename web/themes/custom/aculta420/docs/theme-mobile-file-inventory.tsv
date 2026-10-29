@@ -60,7 +60,7 @@ template	web/themes/custom/aculta420/components/feedback/stat-counter/stat-count
 template	web/themes/custom/aculta420/components/feedback/unread-badge/unread-badge.twig	—	—	—	—	—
 estilo	web/themes/custom/aculta420/components/layouts/event-page-five-regions/event-page-five-regions.css	1	(min-width: 992px)	0	min-width: 992px)	—
 template	web/themes/custom/aculta420/components/layouts/event-page-five-regions/event-page-five-regions.twig	—	—	—	—	—
-estilo	web/themes/custom/aculta420/components/layouts/page-columns/page-columns.css	1	(max-width: 767.98px)	0	min-width: 0 | max-width: 767.98px)	—
+estilo	web/themes/custom/aculta420/components/layouts/page-columns/page-columns.css	1	(min-width: 48rem)	0	min-width: 0 | min-width: 48rem)	—
 template	web/themes/custom/aculta420/components/layouts/page-columns/page-columns.twig	—	—	—	—	—
 estilo	web/themes/custom/aculta420/components/patterns/alerts-trigger/alerts-trigger.css	0	—	0	min-height: 0 | min-width: 0 | min-height: 2.75rem | width: 100%	overflow-y: auto
 template	web/themes/custom/aculta420/components/patterns/alerts-trigger/alerts-trigger.twig	—	—	—	—	—

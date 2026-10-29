@@ -516,6 +516,13 @@ autenticado de WE Sativa exige rodada própria; ver `mobile-first-audit.md`.
 O verbete público também empilha conteúdo/aside como base e volta a duas colunas
 em `48rem`; o mesmo smoke mede as colunas e a posição do aside.
 
+### THEME-MF2 — layout SDC page-columns
+
+Variantes de uma, duas e três regiões usam coluna única como base e restauram
+duas/três colunas em `48rem`, com ordem DOM preservada. O SDC segue sem consumer
+de produto; a fixture comparativa está em
+`tests/browser/aculta-theme-mobile-first/page-columns.py`. Não aprova MF3.
+
 ### THEME-MF2 — índice e busca do Fórum
 
 Linhas de tópico começam empilhadas e retomam a coluna de metadados em 576px;

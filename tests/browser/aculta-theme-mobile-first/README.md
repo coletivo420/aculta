@@ -35,6 +35,28 @@ O smoke cobre o alinhamento do cartão autor no consumer de listagem, dimensões
 responsivas básicas e overflow. Não verifica o cartão em todos os purposes,
 teclado, zoom real, dark mode, leitor de tela nem WCAG 2.2 AA completa.
 
+## Layout `page-columns`
+
+`page-columns.py` compara a CSS committed em `PAGE_COLUMNS_BASELINE_REF` (padrão
+`HEAD^`) com a folha candidata local numa fixture sem dados Drupal. Mede as
+variantes de uma, duas e três colunas em 320/360/390/599/600/767/768/1024/1280/
+1440 CSS px, ausência de overflow, ordem DOM e preservação da composição ampla
+a partir de 768px. O layout SDC continua sem consumer de produto; este smoke não
+substitui renderização no UI Patterns Library nem homologação de consumer real.
+É um teste local da CSS candidata em fixture `data:`, não acessa nem valida o
+Runtime.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-page-columns \
+ACULTA_FF_PROFILE_ROOT=/home/piradopirata/aculta-suite-out/aculta-page-columns/profiles \
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/page-columns.py
+```
+
+Usa Firefox ESR visível com geckodriver e `tests/browser/aculta-cpf-checkout/wdlib.py`.
+PNG e `summary.json` ficam em `SUITE_OUT`; o perfil temporário é removido pelo
+WebDriver ao encerrar.
+
 ## Shell autenticado da Conta
 
 `account-shell.py` usa a Conta sintética UID 5 via link único de login mantido

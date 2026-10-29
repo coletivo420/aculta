@@ -5,6 +5,7 @@
 - A limpeza da fronteira substitui classes de apresentação emitidas por downloads, conteúdo salvo, editorial de eventos e variações de cartão por tokens do Portal mapeados no tema. Gates estáticos da fronteira/tokens e Unit do registry passaram; Kernel e Runtime ainda pendentes.
 - `editorial-card.css` usa altura e espaçamento compactos como base e só amplia em `min-width: 48.0625rem`. Lint CSS e auditoria estática SDC passaram; Firefox/consumer real permanecem DEFERRED.
 - `wiki-entry.css` usa uma coluna como base para verbetes públicos, com o aside antes do texto; em `48rem` restaura duas colunas. O smoke da Wiki mede a grade e aceita ambas as folhas candidatas; Firefox/Runtime seguem DEFERRED.
+- `layouts/page-columns` empilha as variantes 1/2/3 colunas como base e restaura a configuração em `48rem`. Foi criado smoke Firefox comparativo da fixture SDC; execução visual ainda pendente.
 
 # 0.7.0-dev.26 — migrar navegação interna do Studio para mobile-first (2026-10-29)
 
