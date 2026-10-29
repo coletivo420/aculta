@@ -423,3 +423,9 @@ services:
 
   aculta_portal.card_variation_manager:
     class: Drupal\aculta_portal\Editorial\CardVariationManager
+
+  aculta_portal.saved_content_query:
+    class: Drupal\aculta_portal\Saved\SavedContentQuery
+    arguments: ['@database', '@entity_type.manager', '@?aculta_portal.domain_purpose']
+
+  Drupal\aculta_portal\Saved\SavedContentQueryInterface: '@aculta_portal.saved_content_query'
