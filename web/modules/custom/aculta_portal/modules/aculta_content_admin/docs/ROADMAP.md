@@ -14,3 +14,12 @@
 - Views administrativas sobre entidades de conteúdo continuam sendo descobertas automaticamente e preservam o controle de acesso da própria View. Rotas de configuração, relatórios, ações e registros individuais não entram na allowlist.
 - Evidência: revisão de `ModeratableCollectionRegistry::CONTROLLER_COLLECTIONS`, das rotas administrativas dos módulos customizados e dos controllers acima. `ModeratableCollectionAccessKernelTest`: 3 testes, 43 assertions, 0 deprecações; cobre negação/liberação por acesso nativo e preservação do acesso da View.
 
+### Gates para RC — 2026-10-28
+
+- `ModeratableCollectionAccessKernelTest`: 3 testes / 43 assertions PASS, sem
+  depreciações.
+- PHP lint: 3 arquivos PASS; PHPCS Drupal no módulo PASS.
+- A revisão visual/acessível autenticada ainda não foi executada. A conta
+  temporária autorizada nesta sessão é específica ao ADM8 do Calendar; não foi
+  reutilizada para o painel de conteúdo. Manter `Dev` até essa revisão.
+
