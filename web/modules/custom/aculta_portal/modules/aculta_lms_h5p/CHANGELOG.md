@@ -448,3 +448,12 @@
 - Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
   depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
 
+## 0.4.0-dev.169 — documentar controller de atualização H5P (2026-10-29)
+
+- Completa os contratos PHPDoc das consultas e respostas de atualização de
+  biblioteca, com cabeçalho de atribuição adaptada após o namespace.
+- PHPCS integral caiu de 75 erros/4 avisos em 6 arquivos para 63/4 em 5
+  arquivos; o controller passa Drupal/DrupalPractice e PHP lint.
+- Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
+  depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
+

@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Controller;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PEvent;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -30,7 +30,7 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
   ) {}
 
   /**
-   *
+   * Creates the controller using Drupal's service container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -44,9 +44,13 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
   /**
    * Helper for getting library versions.
    *
+   * @param \Drupal\Core\Database\Connection $database
+   *   Drupal's active database connection.
    * @param string $library_id
+   *   ID of the installed library whose versions are requested.
    *
    * @return array
+   *   Available versions of the library, keyed by library ID.
    */
   public static function getLibraryVersions(Connection $database, $library_id) {
     $query = $database->select('h5p_libraries', 'hl1');
@@ -71,8 +75,10 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
    * Creates the title for the upgrade content page.
    *
    * @param string $library_id
+   *   ID of the installed library whose title is requested.
    *
    * @return string
+   *   Translated page title or not-found message.
    */
   public function pageTitle($library_id) {
     $query = $this->database->select('h5p_libraries', 'l');
@@ -87,11 +93,13 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
   }
 
   /**
-   * Handles saving of upgraded content. Returns new batch.
+   * Saves upgraded content and returns the next batch response.
    *
    * @param string $library_id
+   *   ID of the previous library version.
    *
-   * @return \Symfony\Component\HttpFoundation\JsonResponse|array
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   Upgrade results, errors, or the next batch of content.
    */
   public function upgrade($library_id) {
     $request = $this->requestStack->getCurrentRequest();
@@ -214,9 +222,12 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
    * @param string $name
    *   Machine name.
    * @param int $major
+   *   Major version requested by the editor.
    * @param int $minor
+   *   Minor version requested by the editor.
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   Library semantics and an optional upgrade script URL.
    */
   public function prepareUpgrade($name, $major, $minor) {
     $library = (object) [
