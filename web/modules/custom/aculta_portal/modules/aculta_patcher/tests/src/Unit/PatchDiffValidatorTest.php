@@ -92,7 +92,7 @@ class PatchDiffValidatorTest extends UnitTestCase {
   }
 
   /**
-   * Um diff com `..` dentro do nome (não como segmento) não é tratado como traversal.
+   * Um `..` dentro do nome (não como segmento) não é traversal.
    */
   public function testDotsInsideFileNameAreNotTraversal(): void {
     $diff = "--- a/src/file..name.php\n+++ b/src/file..name.php\n@@ -1 +1 @@\n-a\n+b\n";
@@ -100,7 +100,7 @@ class PatchDiffValidatorTest extends UnitTestCase {
   }
 
   /**
-   * O limite de tamanho é exatamente 256 KiB: um diff válido de tamanho máximo passa.
+   * Um diff válido de tamanho máximo (256 KiB) passa.
    */
   public function testSizeLimitIsInclusive(): void {
     $header = "--- a/a.php\n+++ b/a.php\n@@ -1 +1 @@\n";

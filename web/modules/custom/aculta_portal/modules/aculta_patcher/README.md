@@ -43,9 +43,11 @@ código executável. Não usar o formulário como editor de produção.
 - Suíte Unit: 38 testes / 65 assertions PASS; inclui exportação e comparação
   byte a byte dos artefatos em duas execuções num projeto temporário.
 - PHP lint do módulo PASS.
-- PHPCS Drupal falha no estado atual: 24 erros e 16 avisos em arquivos PHP do
-  módulo. O ciclo com Composer não foi executado; primeiro corrija o gate e
-  depois valide exportação/aplicação e idempotência em cópia isolada.
+- PHP lint: 12 arquivos PASS; PHPCS Drupal no módulo PASS após corrigir a
+  documentação de classe, propriedades e métodos.
+- Falta validar exportação/aplicação Composer e idempotência em cópia isolada.
+  A instalação Runtime continua separada; este teste não altera Runtime nem
+  executa `composer require` ou `composer update`.
 
 ## Patch H5P inicial
 

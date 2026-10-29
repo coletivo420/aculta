@@ -40,7 +40,7 @@ class PatchFormRulesTest extends UnitTestCase {
   }
 
   /**
-   * Pacote fora do formato Composer, versão com faixa e diff inválido são recusados por campo.
+   * Pacote, faixa de versão e diff inválidos são recusados por campo.
    *
    * @return array<string, array{string, string, string, string, string}>
    *   Casos com o campo esperado e o código de erro.
@@ -68,7 +68,7 @@ class PatchFormRulesTest extends UnitTestCase {
   }
 
   /**
-   * Diff acima de 256 KiB é recusado como tamanho, antes de qualquer outra checagem.
+   * Diff acima de 256 KiB é recusado antes das outras checagens.
    */
   public function testOversizeDiffIsReportedAsTooLarge(): void {
     $diff = str_repeat('x', PatchFormRules::MAX_BYTES + 1);

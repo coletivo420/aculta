@@ -7,13 +7,14 @@ namespace Drupal\aculta_patcher;
 /**
  * Valida o formato de um unified diff antes de qualquer aplicação.
  *
- * Classe pura: sem Drupal, sem sistema de arquivos e sem processo. Recusa diffs muito grandes, sem cabeçalhos,
- * sem hunks e com caminhos absolutos ou que saem do pacote (`..`).
+ * Classe pura: sem Drupal, sistema de arquivos ou processos. Recusa diffs
+ * grandes, sem cabeçalhos ou hunks, e caminhos absolutos ou fora do pacote.
  */
 final class PatchDiffValidator {
 
   /**
-   * Limite de tamanho do diff, em bytes (256 KiB). */
+   * Limite de tamanho do diff, em bytes (256 KiB).
+   */
   public const MAX_BYTES = 262144;
 
   /**
@@ -32,7 +33,7 @@ final class PatchDiffValidator {
   }
 
   /**
-   * Indica se alguma linha de cabeçalho `---` ou `+++` usa caminho absoluto, letra de unidade ou `..`.
+   * Indica se um cabeçalho usa caminho absoluto, letra de unidade ou `..`.
    *
    * `/dev/null` é aceito para criação e remoção de arquivos.
    */

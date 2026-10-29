@@ -33,7 +33,7 @@ class PatchAuditMessageTest extends UnitTestCase {
   }
 
   /**
-   * Ação fora da lista é recusada, para que nenhuma alteração seja registrada com rótulo incorreto.
+   * Ação fora da lista é recusada para preservar o rótulo da auditoria.
    */
   public function testUnknownActionIsRejected(): void {
     $this->expectException(\InvalidArgumentException::class);

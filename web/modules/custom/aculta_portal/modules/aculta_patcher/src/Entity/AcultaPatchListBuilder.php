@@ -7,9 +7,13 @@ namespace Drupal\aculta_patcher\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 
-/** Administration table for Composer patch records. */
+/**
+ * Administration table for Composer patch records. */
 final class AcultaPatchListBuilder extends ConfigEntityListBuilder {
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildHeader(): array {
     $header = parent::buildHeader();
     $operations = $header['operations'];
@@ -22,6 +26,9 @@ final class AcultaPatchListBuilder extends ConfigEntityListBuilder {
     return $header;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildRow(EntityInterface $entity): array {
     assert($entity instanceof AcultaPatch);
     $row = parent::buildRow($entity);

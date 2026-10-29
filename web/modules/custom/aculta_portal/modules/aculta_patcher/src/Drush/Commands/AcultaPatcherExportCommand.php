@@ -13,7 +13,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Export active ACULTA patch records for Composer builds. */
+/**
+ * Export active ACULTA patch records for Composer builds. */
 #[AsCommand(name: 'aculta:patcher-export', description: 'Validate and export active ACULTA Composer patches.')]
 final class AcultaPatcherExportCommand extends Command {
 
@@ -26,10 +27,16 @@ final class AcultaPatcherExportCommand extends Command {
     parent::__construct();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function configure(): void {
     $this->addOption('check', NULL, InputOption::VALUE_NONE, 'Validate only; do not write artifacts.');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function execute(InputInterface $input, OutputInterface $output): int {
     try {
       $message = $this->exporter->export((bool) $input->getOption('check'));

@@ -7,7 +7,8 @@ namespace Drupal\aculta_patcher;
 /**
  * Regras administrativas de um registro de patch: pacote, versão exata e diff.
  *
- * Classe pura. Devolve códigos de erro por campo; o formulário traduz cada código para a mensagem exibida.
+ * Classe pura. Devolve códigos de erro por campo; o formulário traduz cada
+ * código para a mensagem exibida.
  */
 final class PatchFormRules {
 
@@ -19,7 +20,8 @@ final class PatchFormRules {
   /**
    * Erros por campo. Vazio quando o registro pode ser salvo.
    *
-   * Códigos: `package_invalid`, `version_not_exact`, `patch_too_large`, `patch_not_unified`, `patch_path_escapes`.
+   * Códigos: `package_invalid`, `version_not_exact`, `patch_too_large`,
+   * `patch_not_unified` e `patch_path_escapes`.
    *
    * @return array<string, string>
    *   Código de erro indexado pelo nome do campo.

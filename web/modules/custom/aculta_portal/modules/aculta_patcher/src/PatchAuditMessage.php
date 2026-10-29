@@ -7,8 +7,8 @@ namespace Drupal\aculta_patcher;
 /**
  * Monta a linha de auditoria de uma alteração de patch.
  *
- * Registra quem, o quê e em qual estado, sem o conteúdo do diff: o diff pode ser grande e não é
- * necessário para rastrear a decisão.
+ * Registra quem, o quê e em qual estado, sem o conteúdo do diff. O diff pode
+ * ser grande e não é necessário para rastrear a decisão.
  */
 final class PatchAuditMessage {
 

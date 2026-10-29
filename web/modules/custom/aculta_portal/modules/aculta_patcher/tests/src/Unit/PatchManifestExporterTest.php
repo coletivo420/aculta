@@ -14,7 +14,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Exportador de patches contra um projeto temporário: composer.lock, pacote instalado e git apply reais.
+ * Exportador de patches contra projeto temporário.
  */
 #[CoversClass(PatchManifestExporter::class)]
 #[Group('aculta_patcher')]
@@ -86,7 +86,7 @@ class PatchManifestExporterTest extends UnitTestCase {
   }
 
   /**
-   * Exportador com os patches informados, pacote apontando para o projeto temporário.
+   * Exportador com patches e pacote apontando para o projeto temporário.
    *
    * @param array<string, object> $patches
    *   Patches simulados, indexados pelo id.
@@ -112,7 +112,7 @@ class PatchManifestExporterTest extends UnitTestCase {
    * Patch simulado com os metadados informados.
    */
   private function patch(string $id, string $version, string $diff, bool $active = TRUE): object {
-    // AcultaPatch é final e não pode ser duplicado; o exportador só usa estes métodos.
+    // AcultaPatch é final; o exportador usa somente estes métodos simulados.
     return new class($id, $version, $diff, $active) {
 
       public function __construct(
@@ -168,7 +168,7 @@ class PatchManifestExporterTest extends UnitTestCase {
   }
 
   /**
-   * Exporta um patch válido: artefato em patches/aculta_patcher e manifesto com o mesmo sha256.
+   * Exporta um patch válido e registra seu hash no manifesto.
    */
   public function testExportWritesArtifactAndMatchingManifest(): void {
     $message = $this->exporter(['ok' => $this->patch('ok', '1.0.0', self::VALID_DIFF)])->export();

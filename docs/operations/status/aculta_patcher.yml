@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.3
 state: Dev
-progress_note: 'Em 2026-10-28: suíte Unit 38/65 PASS, incluindo exportação idempotente em projeto temporário; PHP lint PASS. PHPCS Drupal falha com 24 erros e 16 avisos no módulo, então o ciclo Composer não foi executado. Runtime ativo; exportação real e aplicação Composer continuam pendentes.'
-next_phase: Corrigir PHPCS e então validar ciclo de exportação/aplicação Composer e idempotência em cópia isolada ([README](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md))
+progress_note: 'Em 2026-10-28: suíte Unit 38/65 PASS, incluindo exportação idempotente em projeto temporário; PHP lint 12/12 PASS e PHPCS Drupal PASS. Runtime ativo; validar exportação e aplicação Composer em cópia isolada antes de RC.'
+next_phase: Validar ciclo completo de exportação/aplicação Composer e idempotência em cópia isolada ([README](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md))

@@ -6,15 +6,17 @@ namespace Drupal\aculta_patcher\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\aculta_patcher\Entity\AcultaPatch;
-use Drupal\aculta_patcher\PatchDiffValidator;
 use Drupal\aculta_patcher\PatchFormRules;
 
-/** Formulário administrativo de registro de patch. */
+/**
+ * Formulário administrativo de registro de patch. */
 final class AcultaPatchForm extends EntityForm {
 
   private const MAX_PATCH_BYTES = 262144;
 
+  /**
+   * {@inheritdoc}
+   */
   public function form(array $form, FormStateInterface $form_state): array {
     $form = parent::form($form, $form_state);
     /** @var \Drupal\aculta_patcher\Entity\AcultaPatch $patch */
@@ -78,10 +80,16 @@ final class AcultaPatchForm extends EntityForm {
     return $form;
   }
 
+  /**
+   * Checks whether a patch identifier is already in use.
+   */
   public function exists(string $id): bool {
     return (bool) $this->entityTypeManager->getStorage('aculta_patch')->load($id);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
     $messages = [
@@ -101,6 +109,9 @@ final class AcultaPatchForm extends EntityForm {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function save(array $form, FormStateInterface $form_state): int {
     /** @var \Drupal\aculta_patcher\Entity\AcultaPatch $patch */
     $patch = $this->entity;
