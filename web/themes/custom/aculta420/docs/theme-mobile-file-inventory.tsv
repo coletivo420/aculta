@@ -8,7 +8,7 @@ estilo	web/themes/custom/aculta420/components/content/course_card/course_card.cs
 template	web/themes/custom/aculta420/components/content/course_card/course_card.twig	—	—	—	—	—
 estilo	web/themes/custom/aculta420/components/content/editorial-card/editorial-card.css	1	(min-width: 48.0625rem)	0	min-height: 0 | min-width: 48.0625rem) | min-height: 390px	—
 template	web/themes/custom/aculta420/components/content/editorial-card/editorial-card.twig	—	—	—	—	—
-estilo	web/themes/custom/aculta420/components/content/event_card/event_card.css	0	—	0	—	—
+estilo	web/themes/custom/aculta420/components/content/event_card/event_card.css	2	(min-width: 48rem) | (min-width: 75rem)	0	min-width: 0 | min-width: 0 | min-width: 48rem) | min-width: 75rem)	—
 template	web/themes/custom/aculta420/components/content/event_card/event_card.twig	—	—	—	—	—
 estilo	web/themes/custom/aculta420/components/content/forum-category/forum-category.css	0	—	0	min-width: 0 | height: 100%	—
 template	web/themes/custom/aculta420/components/content/forum-category/forum-category.twig	—	—	—	—	—
@@ -58,7 +58,7 @@ template	web/themes/custom/aculta420/components/feedback/messenger-state/messeng
 estilo	web/themes/custom/aculta420/components/feedback/stat-counter/stat-counter.css	0	—	0	—	—
 template	web/themes/custom/aculta420/components/feedback/stat-counter/stat-counter.twig	—	—	—	—	—
 template	web/themes/custom/aculta420/components/feedback/unread-badge/unread-badge.twig	—	—	—	—	—
-estilo	web/themes/custom/aculta420/components/layouts/event-page-five-regions/event-page-five-regions.css	1	(min-width: 992px)	0	min-width: 992px)	—
+estilo	web/themes/custom/aculta420/components/layouts/event-page-five-regions/event-page-five-regions.css	1	(min-width: 992px)	0	min-width: 0 | min-width: 0 | min-width: 992px)	—
 template	web/themes/custom/aculta420/components/layouts/event-page-five-regions/event-page-five-regions.twig	—	—	—	—	—
 estilo	web/themes/custom/aculta420/components/layouts/page-columns/page-columns.css	1	(min-width: 48rem)	0	min-width: 0 | min-width: 48rem)	—
 template	web/themes/custom/aculta420/components/layouts/page-columns/page-columns.twig	—	—	—	—	—
@@ -137,7 +137,7 @@ estilo	web/themes/custom/aculta420/css/components/product-gallery.css	0	—	0	wi
 estilo	web/themes/custom/aculta420/css/components/product.css	0	—	0	—	—
 estilo	web/themes/custom/aculta420/css/components/public-profile.css	1	(min-width: 36rem)	0	max-inline-size: 48rem | inline-size: 6.5rem | block-size: 6.5rem | min-inline-size: 0 | max-inline-size: 60ch | min-inline-size: 0 | inline-size: 4rem | block-size: 4rem | min-inline-size: 0 | min-width: 36rem) | min-inline-size: 0	overflow: hidden
 estilo	web/themes/custom/aculta420/css/components/revista-listing.css	1	(min-width: 768px)	0	height: 100% | height: 100% | width: 100% | min-width: 768px)	—
-estilo	web/themes/custom/aculta420/css/components/revista-post.css	1	(min-width: 36rem)	0	max-inline-size: 60rem | inline-size: min(100%, 40rem) | inline-size: 100% | block-size: auto | max-inline-size: 42ch | max-inline-size: 60ch | max-inline-size: 68ch | inline-size: auto | max-inline-size: 100% | block-size: auto | max-inline-size: 100% | inline-size: 100% | max-inline-size: 100% | block-size: auto | inline-size: 100% | max-inline-size: 100% | min-width: 36rem) | inline-size: min(50%, 20rem) | inline-size: min(100%, 36.25rem) | inline-size: min(56.25rem, calc(100vw - 2rem)) | max-inline-size: calc(100vw - 2rem) | inline-size: min(60rem, calc(100vw - 2rem)) | inline-size: 100% | max-inline-size: 60rem | inline-size: 100% | block-size: auto | max-inline-size: 42ch | inline-size: 2.75rem | block-size: 2.75rem | inline-size: 100% | max-inline-size: none | max-inline-size: 60ch | inline-size: 100% | max-inline-size: none | inline-size: 100% | max-inline-size: 30rem | height: auto | max-inline-size: 68ch | max-inline-size: 100% | max-inline-size: none | inline-size: 100%	—
+estilo	web/themes/custom/aculta420/css/components/revista-post.css	2	(min-width: 36rem) | (min-width: 36rem)	0	max-inline-size: 60rem | inline-size: min(100%, 40rem) | inline-size: 100% | block-size: auto | max-inline-size: 42ch | max-inline-size: 60ch | max-inline-size: 68ch | inline-size: auto | max-inline-size: 100% | block-size: auto | max-inline-size: 100% | inline-size: 100% | max-inline-size: 100% | block-size: auto | inline-size: 100% | max-inline-size: 100% | min-width: 36rem) | inline-size: min(50%, 20rem) | inline-size: min(100%, 36.25rem) | inline-size: min(56.25rem, calc(100vw - 2rem)) | max-inline-size: calc(100vw - 2rem) | inline-size: min(60rem, calc(100vw - 2rem)) | inline-size: 100% | max-inline-size: 60rem | inline-size: 100% | block-size: auto | max-inline-size: 42ch | inline-size: 2.75rem | block-size: 2.75rem | inline-size: 100% | max-inline-size: none | max-inline-size: 60ch | min-width: 36rem) | inline-size: 100% | max-inline-size: none | inline-size: 100% | max-inline-size: 30rem | height: auto | max-inline-size: 68ch | max-inline-size: 100% | max-inline-size: none | inline-size: 100%	—
 estilo	web/themes/custom/aculta420/css/components/sales-panel.css	0	—	0	min-width: 100%	overflow-x: auto
 estilo	web/themes/custom/aculta420/css/components/search.css	2	(min-width: 768px) | (prefers-reduced-motion: reduce)	0	max-width: 48rem | max-height: 40vh | width: 100% | min-height: 2.75rem | min-height: 2.75rem | min-height: 0 | min-width: 768px)	overflow-y: auto
 estilo	web/themes/custom/aculta420/css/components/statistics.css	1	(min-width: 36rem)	0	width: 100% | min-width: 0 | max-width: 100% | height: auto | width: 100% | width: 100% | min-width: 36rem) | width: auto | min-width: 12rem	overflow-x: auto
@@ -162,6 +162,7 @@ template	web/themes/custom/aculta420/templates/aculta-donation-donate.html.twig	
 template	web/themes/custom/aculta420/templates/aculta-donation-quick.html.twig	—	—	—	—	—
 template	web/themes/custom/aculta420/templates/aculta-donation-summary-container.html.twig	—	—	—	—	—
 template	web/themes/custom/aculta420/templates/aculta-donation-summary.html.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/templates/aculta-event-page.html.twig	—	—	—	—	—
 template	web/themes/custom/aculta420/templates/aculta-links-landing.html.twig	—	—	—	—	—
 template	web/themes/custom/aculta420/templates/aculta-links-page.html.twig	—	—	—	—	—
 template	web/themes/custom/aculta420/templates/aculta-mailer-wrap.html.twig	—	—	—	—	—

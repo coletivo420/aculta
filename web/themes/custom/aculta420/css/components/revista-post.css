@@ -48,7 +48,15 @@
 .node--view-mode-full .field--name-field-summary .field__item { margin: 0; }
 
 /* Corpo: largura de leitura, ritmo vertical. */
-.node--view-mode-full .field--name-body { max-inline-size: 68ch; margin-inline: auto; font-size: 1.0625rem; line-height: 1.7; text-align: justify; hyphens: auto; }
+.node--view-mode-full .field--name-body,
+.aculta-revista-publication__body {
+  max-inline-size: 68ch;
+  margin-inline: auto;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  text-align: start;
+  hyphens: auto;
+}
 /* Conteúdo embutido (vídeo, mídia) sempre centralizado no bloco do corpo. */
 .node--view-mode-full .field--name-body .media,
 .node--view-mode-full .field--name-body .media--type-remote-video { display: block; margin-inline: auto; }
@@ -56,6 +64,7 @@
 /* Intertítulos do corpo: alinhados à esquerda (o texto justificado abria espaços nos títulos). */
 .node--view-mode-full .field--name-body h2,
 .node--view-mode-full .field--name-body h3 { text-align: start; hyphens: manual; margin-block: 2rem 0.75rem; }
+.aculta-revista-publication__body :is(h2, h3) { text-align: start; hyphens: manual; margin-block: 2rem 0.75rem; }
 
 /* Imagens no corpo da publicação: centralizadas na coluna de leitura, cantos e fundo do tema, sem distorção.
    A imagem sai no tamanho do estilo do Drupal (large); só reduz quando a coluna é menor. */
@@ -203,7 +212,7 @@
 /* Resumo: caixa própria, separada da chamada e do corpo. */
 .node--view-mode-full .field--name-field-summary {
   margin-block: 0 0;
-  padding: 1.25rem 1.5rem;
+  padding: 1rem;
   border: 0;
   border-radius: 0.75rem;
   /* Creme do tema (superfície muted), o mesmo da moldura da imagem: resumo e imagem na mesma família de cor. */
@@ -223,20 +232,20 @@
 .node--view-mode-full .field--name-field-tags {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: baseline;
   gap: 0.25rem 0.5rem;
   margin-block: 1.5rem 0;
-  margin-inline-start: auto;
+  margin-inline-start: 0;
   max-inline-size: 60ch;
-  text-align: right;
+  text-align: start;
   font-size: 0.9375rem;
 }
 .node--view-mode-full .field--name-field-tags { margin-block-start: 0.5rem; }
 .node--view-mode-full .field--name-field-editorial-category .field__label,
 .node--view-mode-full .field--name-field-tags .field__label { font-weight: 600; }
 .node--view-mode-full .field--name-field-editorial-category .field__items,
-.node--view-mode-full .field--name-field-tags .field__items { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.25rem 0.5rem; }
+.node--view-mode-full .field--name-field-tags .field__items { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 0.25rem 0.5rem; }
 
 /* Categoria e tags: espaço mínimo fixo entre o rótulo e o valor (sem margens herdadas do campo). */
 .node--view-mode-full .field--name-field-editorial-category .field__label,
@@ -244,6 +253,23 @@
 .node--view-mode-full .field--name-field-tags .field__label,
 .node--view-mode-full .field--name-field-tags .field__item { margin: 0; padding: 0; }
 .node--view-mode-full .field--name-field-editorial-category { gap: 0.3rem 0.35rem; }
+
+@media (min-width: 36rem) {
+  .node--view-mode-full .field--name-body,
+  .aculta-revista-publication__body { text-align: justify; }
+
+  .node--view-mode-full .field--name-field-summary { padding: 1.25rem 1.5rem; }
+
+  .node--view-mode-full .field--name-field-editorial-category,
+  .node--view-mode-full .field--name-field-tags {
+    justify-content: flex-end;
+    margin-inline-start: auto;
+    text-align: end;
+  }
+
+  .node--view-mode-full .field--name-field-editorial-category .field__items,
+  .node--view-mode-full .field--name-field-tags .field__items { justify-content: flex-end; }
+}
 
 /* Chamada (subtítulo): logo abaixo do título, centralizada com ele, em fonte menor. */
 .node--view-mode-full .field--name-field-subtitle {

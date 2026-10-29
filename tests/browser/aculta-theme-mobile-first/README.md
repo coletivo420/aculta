@@ -1,5 +1,26 @@
 # ACULTA420 — SDC responsivos do tema
 
+## Publicação editorial da Revista
+
+`revista-article-layout.py` compara o artigo editorial antes/depois da folha
+candidata em 320/360/390/575/576/600/768/1024/1280/1440 px. Mede alinhamento
+do texto, padding do resumo, alinhamento de categoria/tags, ordem do DOM e
+overflow. As capturas ficam em `$SUITE_OUT`. Usa fixture local em `data:`; não
+acessa nem altera o Runtime e não substitui revisão do artigo real, teclado,
+zoom, modo escuro ou WCAG 2.2 AA.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-revista-article
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/revista-article-layout.py
+```
+
+`REVISTA_BASELINE_REF` escolhe a folha anterior (padrão `HEAD^`), e
+`REVISTA_ARTICLE_WIDTHS` aceita larguras focais. Requer Firefox ESR visível,
+geckodriver e `websockets`; PNGs e `summary.json` são gravados fora do Git.
+
 ## Navigation top-bar mobile-first
 
 `navigation-top-bar.py` compara a composição do Drupal Navigation top-bar antes

@@ -379,6 +379,11 @@ São estilos de consumers existentes; não criam SDC nem alteram props, slots,
 Form API ou contratos dos módulos. Evidências e limites estão em
 [`mobile-first-audit.md`](mobile-first-audit.md).
 
+No artigo da Revista, texto, resumo e metadados também usam composição legível
+desde 320px: alinhamento à esquerda e padding reduzido como base, com
+justificação editorial e espaçamento amplo a partir de 576px. O conteúdo do
+SDC `revista-publication` mantém a mesma ordem e os mesmos slots.
+
 O SDC `patterns/card` mantém as variantes atuais e aceita também
 `data-card-variation="compact"` emitido pelo contrato neutro do Portal; nenhuma
 prop ou slot foi alterado.

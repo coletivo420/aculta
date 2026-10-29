@@ -135,11 +135,11 @@ pendentes. MF2 segue parcial e MF3 não foi aprovado.
 ## Escopo quantificado
 
 O inventário foi regenerado em 2026-10-29 por
-`scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 204 arquivos-
+`scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 205 arquivos-
 fonte: 93 folhas CSS/Sass, 12 scripts JavaScript (11 de produção e um de teste)
-e 99 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
-lexical atual encontra `@media` em 45 folhas (78 blocos), zero `@container`,
-expressões de dimensão em 73 folhas (624 matches) e declarações `overflow`,
+e 100 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
+lexical atual encontra `@media` em 46 folhas (81 blocos), zero `@container`,
+expressões de dimensão em 73 folhas (631 matches) e declarações `overflow`,
 `overflow-x` ou `overflow-y` em 28 folhas (54 declarações). A expressão de
 dimensão inclui width/height/inline-size/block-size, variantes min/max e
 condições de media query. As contagens não analisam cascata nem efeito
@@ -150,10 +150,10 @@ comportamento por tela.
 |---|---|---|
 | Fundação | `css/base.css`, `css/layout.css`, `css/tokens.css`, `css/drupal-bootstrap.css` | `base.css`/`layout.css` quase sem media queries; tokens têm preferência de tema; Bootstrap injeta regras próprias. |
 | Shell global | `css/components/header.css`, `navigation.css`, `institution-bar.css`, `breadcrumb.css`, `footer.css`, `institutional.css` | Afeta todos os purposes; Institution Bar e Domain Header são invariantes. |
-| Componentes compartilhados | 41 folhas em `css/components/` e 45 folhas CSS de SDC | Mistura estilos sem breakpoint e media queries; os consumidores reais precisam ser correlacionados antes da migração. |
+| Componentes compartilhados | 42 folhas em `css/components/` e 45 folhas CSS de SDC | Mistura estilos sem breakpoint e media queries; os consumidores reais precisam ser correlacionados antes da migração. |
 | Áreas de produto | account/portal, fórum/discussion, wiki, editorial/revista, product/cart/sales, eventos, messenger, mídia/documentos, doações e suporte | Não podem ser excluídas por ausência de rota no Studio. |
 | JavaScript | 11 scripts de apresentação e um teste JS | Auditar progressive enhancement, estado de navegação, carrosséis/slideshows, drawer Messenger, calculadora de envio, doação e notificações. |
-| Templates/layouts | 98 Twig/HTML | A contagem inclui componentes SDC e templates do tema; precisa cruzamento com bibliotecas anexadas por módulos e Views. |
+| Templates/layouts | 100 Twig/HTML | A contagem inclui componentes SDC e templates do tema; precisa cruzamento com bibliotecas anexadas por módulos e Views. |
 
 ## Registro responsivo reproduzível
 
@@ -162,8 +162,8 @@ declarações por bloco):
 
 | Grupo observado | Arquivos com `@media` | Risco inicial a verificar |
 |---|---:|---|
-| `css/components/` | 26 | Cascata carregada globalmente; breakpoints em portal-account (7), navigation (5), forum-index (5), discussion (4), wiki e portal-support (3 cada). |
-| `components/**` (SDC) | 16 de 45 | 17 blocos `@media`; variantes locais devem ser testadas em consumers reais e contra a cascata global. |
+| `css/components/` | 27 | Cascata carregada globalmente; breakpoints em portal-account (6), forum-index e institutional (4 cada), wiki, discussion, institution-bar, navigation e portal-support (3 cada). |
+| `components/**` (SDC) | 16 de 45 | 19 blocos `@media`; variantes locais devem ser testadas em consumers reais e contra a cascata global. |
 | Bootstrap distribuído | 2 | Regras do tema base; não substituir infraestrutura nem alterar a cópia do Core/contrib. |
 | `css/tokens.css` | 1 | Preferência light/dark não deve alterar geometria ou ocultar conteúdo. |
 
@@ -221,7 +221,7 @@ Cobertura de runtime ainda pendente para todos os dez; os outros purposes e
 rotas encontradas não podem ser omitidos se a associação route/library revelar
 consumidores adicionais.
 
-O inventário dos 93 estilos, 12 scripts e 99 templates encontra-se em
+O inventário dos 93 estilos, 12 scripts e 100 templates encontra-se em
 [`theme-mobile-file-inventory.tsv`](theme-mobile-file-inventory.tsv); pode ser
 regenerado com `python3 scripts/audit-aculta420-responsive-inventory.py --write`.
 Ele contém contagens lexicais de media/container/dimensão/overflow por folha de
@@ -255,28 +255,27 @@ e captura Firefox visível antes e depois da migração.
 
 ### Maior frequência de media queries encontradas
 
-Recontagem lexical de 77 blocos em 44 folhas de estilo do tema. `@media`
+Recontagem lexical de 81 blocos em 46 folhas de estilo do tema. `@media`
 contém também preferências/recursos de acessibilidade, não só breakpoints:
 
 | Query literal | Blocos | Arquivos |
 |---|---:|---:|
+| `min-width: 36rem` | 15 | 12 |
+| `min-width: 48rem` | 15 | 12 |
 | `prefers-reduced-motion: reduce` | 13 | 12 |
-| `max-width: 575.98px` | 11 | 8 |
-| `max-width: 767.98px` | 7 | 6 |
-| `min-width: 48rem` | 7 | 6 |
-| `min-width: 36rem` | 5 | 5 |
-| `min-width: 768px` | 4 | 4 |
+| `min-width: 768px` | 5 | 5 |
+| `min-width: 48.0625rem` | 3 | 3 |
 | `min-width: 576px` | 3 | 3 |
+| `min-width: 62rem` | 3 | 3 |
 | `min-width: 992px` | 3 | 2 |
-| `min-width: 48.0625rem` | 2 | 2 |
 | `min-width: 1100px` | 2 | 2 |
+| `min-width: 30rem` | 2 | 1 |
 
-Há outras 20 expressões literais de uso único, incluindo 320–480 px, 992–1200
-px, `forced-colors`, `hover` e `prefers-color-scheme`. Sobreposições entre
-Bootstrap (575.98/767.98) e limites do tema (576/768/1100), além de `max-width`
-e `min-width` misturados, pedem análise de cascade por consumer; contagens não
-indicam conflito visual por si só. A saída completa foi conferida diretamente
-nos 92 CSS/Sass da worktree `7f073206a` em 2026-10-29.
+Há outras 17 expressões literais de uso único, incluindo limites estreitos,
+`forced-colors`, `hover` e `prefers-color-scheme`. As contagens mostram onde há
+mais regras, mas não provam conflito visual; a cascata precisa ser lida por
+consumer. A saída completa atual está no TSV gerado por
+`scripts/audit-aculta420-responsive-inventory.py`.
 
 ## Regras para a migração
 
@@ -651,6 +650,20 @@ centralizados. A regra móvel redundante para o subtítulo foi removida. A
 alteração foi commitada em `e40c39265`. O lint CSS foi executado posteriormente
 na raiz correta do tema e PASS; não houve ainda comparação Firefox nem revisão
 visual do consumer real, que seguem DEFERRED.
+
+### THEME-MF2 — leitura e metadados do artigo da Revista (2026-10-29)
+
+O corpo do artigo e o slot `revista-publication.body` começam alinhados ao
+início em telas estreitas; a justificação editorial volta em `36rem` (576px).
+Resumo e metadados começam compactos; a composição anterior é restaurada
+progressivamente a partir do mesmo limite. A ordem DOM, os campos, os SDCs e
+os contratos do módulo permanecem iguais. O smoke reutilizável
+`tests/browser/aculta-theme-mobile-first/revista-article-layout.py` compara
+baseline/candidato em 320–1440px e mede alinhamento, padding, ordem e overflow.
+Lint CSS, schema SDC, Design Foundations, sintaxe Python e `git diff --check`
+PASS. Execução Firefox segue DEFERRED enquanto `DISPLAY` estiver vazio e
+sessões geckodriver concorrentes estiverem ativas. Não homologa artigo real nem
+THEME-MF3.
 
 ### THEME-MF2 — SDC editorial-card
 
