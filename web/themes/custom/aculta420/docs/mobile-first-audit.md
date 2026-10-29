@@ -107,6 +107,20 @@ Testes e documentação foram excluídos da contagem. Isso não resolve express�
 dinâmicas nem relaciona cada attach à rota/purpose e consumer; declaração em
 YAML não prova carregamento em runtime.
 
+## Breakpoints de referência (comparação estática em `0a479dde3`)
+
+| Origem | Breakpoints declarados | Leitura para MF1/MF2 |
+|---|---|---|
+| OpenCulturas Next 3.1.5 (`opcult.breakpoints.yml`) | até 479 px; 480, 768, 992, 1100 e 1600 px | Evidência da estratégia upstream; os limites servem à inspeção de composição, não como valores a copiar em bloco. |
+| ACULTA420 (`aculta420.breakpoints.yml`) | base sem media query; 576, 768, 1100 e 1400 px | Contrato Breakpoint API existente, usado por imagens/galerias; preservar até auditar consumidores e dependências. |
+| Drupal Bootstrap 5.0.2 (`composer.lock`) | Infraestrutura da dependência declarada | Não inferir os breakpoints efetivos do CSS carregado só pela versão do tema; inspecionar o build e os estilos anexados por purpose. |
+
+A malha de validação aprovada (320, 360, 390, 599, 600, 768, 1024, 1280 e
+1440 px) é mais detalhada que a Breakpoint API e deve continuar medindo os
+pontos de transição existentes, inclusive 599/600 e 1024/1280. Esta comparação
+não prova que layouts se ajustem nesses tamanhos; cada tela precisa de baseline
+e captura Firefox visível antes e depois da migração.
+
 ## Regras para a migração
 
 - Começar com 320 CSS px e estilos mobile como base; media queries devem
