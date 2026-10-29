@@ -1,3 +1,7 @@
+## Dependências arquiteturais OpenCulturas - ARQ-01 a ARQ-09 (2026-10-29)
+
+[Plano arquitetural transversal](../../../../../../../docs/architecture/PLANO-ARQUITETURAL-OPENCULTURAS-ACULTA-ARQ-01-09.md): Studio é **consumidor visual e de orquestração** da descoberta, salvos (ARQ-07), vínculos de organização (ARQ-05) e moderação autorizada (ARQ-06); owners são `aculta_index`, User/organizações, UGC e módulos de conteúdo. **Não duplicar** dados/ACL/workflow, não incorporar falsas operações, manter Conta e Perfil separados e Green Stash como área integrada. Fases OCS-F/A e THEME-MF seguem em paralelo, sem confundir gates com ARQ-09.
+
 ## DECISÃO SUPERSESSIVA - Green Stash integrado e fundação mobile-first global (2026-10-29)
 
 A expressão antiga "Green Stash como experiência independente" está **revogada**. Green Stash é **a área de gestão comercial integrada ao Aculta Studio**; `green_stash` no registry é identificador técnico de entrada, não produto, shell, sistema ou identidade autônoma. Os serviços Commerce seguem como owners operacionais. **F8 continua dedicada a Green Stash, mas como área integrada**, sem menu global/checkout/conta paralelos.
