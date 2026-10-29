@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_ugc\Service;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_ugc\ModerationScope;
@@ -11,17 +12,18 @@ use Drupal\aculta_user\Moderation\ReportQueue;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
- * Fila unificada de moderação e migração controlada (ARQ-06C, ARQ-06D, D-04).
+ * Fila unificada de moderação e migração controlada (ARQ-06C, ARQ-06D, ARQ-06G).
  */
 final class UgcReportQueue {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ?AccountInterface $currentUser = NULL,
+    private readonly ?Connection $database = NULL,
   ) {}
 
   /**
-   * Retorna itens agrupados da fila de moderação com controle de acesso e paginação.
+   * Retorna itens agrupados da fila com controle de acesso, agregação e paginação.
    *
    * @param \Drupal\Core\Session\AccountInterface|null $account
    *   Conta do moderador. Se nula, usa o usuário logado atual.
@@ -49,7 +51,6 @@ final class UgcReportQueue {
       throw new AccessDeniedHttpException('Acesso negado: usuário anônimo não tem permissão para moderar.');
     }
 
-    // Valida escopo do moderador.
     if ($purpose !== NULL) {
       if (!ModerationScope::allows($moderator, $purpose)) {
         throw new AccessDeniedHttpException('Acesso negado: sem permissão para moderar o purpose informado.');
@@ -63,126 +64,195 @@ final class UgcReportQueue {
       }
     }
 
-    $storage = $this->entityTypeManager->getStorage('aculta_ugc_report');
-    $query = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('status', $status)
-      ->condition('purpose', $allowedPurposes, 'IN')
-      ->sort('created', 'DESC');
-
-    $reportIds = $query->execute();
-    /** @var \Drupal\aculta_ugc\Entity\UgcReport[] $reports */
-    $reports = !empty($reportIds) ? $storage->loadMultiple($reportIds) : [];
+    $db = $this->database;
     $grupos = [];
-    $validTargets = [];
-    $legacyFlagIds = [];
+    $migratedFlagIds = [];
+    $decidedTargets = [];
 
-    foreach ($reports as $report) {
-      $legacyId = (int) $report->get('legacy_flag_id')->value;
-      if ($legacyId > 0) {
-        $legacyFlagIds[$legacyId] = $legacyId;
-      }
+    if ($db !== NULL && $db->schema()->tableExists('aculta_ugc_report')) {
+      // 1. Identifica TODOS os legacy_flag_id já presentes na base UGC.
+      // Impede reincorporação de flags já analisadas ou decididas.
+      $migratedFlagIds = $db->select('aculta_ugc_report', 'r')
+        ->fields('r', ['legacy_flag_id'])
+        ->condition('legacy_flag_id', 0, '>')
+        ->condition('purpose', 'forum')
+        ->distinct()
+        ->execute()
+        ->fetchCol();
 
-      $targetType = (string) $report->get('target_type')->value;
-      $targetId = (int) $report->get('target_id')->value;
-      $reportPurpose = (string) $report->get('purpose')->value;
-      $key = $targetType . ':' . $targetId;
-
-      // Verifica existência da entidade denunciada para excluir alvos inexistentes.
-      if (!isset($validTargets[$key])) {
-        if (!$this->entityTypeManager->hasDefinition($targetType)) {
-          $validTargets[$key] = FALSE;
+      // Alvos já decididos não devem ser reabertos via flags legadas.
+      if ($status === 'pendente' && in_array('forum', $allowedPurposes, TRUE)) {
+        $decidedRows = $db->select('aculta_ugc_report', 'r')
+          ->fields('r', ['target_type', 'target_id'])
+          ->condition('purpose', 'forum')
+          ->condition('status', ['procedente', 'improcedente'], 'IN')
+          ->distinct()
+          ->execute()
+          ->fetchAll();
+        foreach ($decidedRows as $dRow) {
+          $decidedTargets[$dRow->target_type . ':' . $dRow->target_id] = TRUE;
         }
-        else {
-          $target = $this->entityTypeManager->getStorage($targetType)->load($targetId);
-          $validTargets[$key] = ($target !== NULL);
-        }
       }
 
-      if (!$validTargets[$key]) {
-        // Alvo excluído fisicamente: não expõe na fila de moderação ativa.
-        continue;
-      }
+      // 2. Consulta agregada SQL no status e purposes solicitados.
+      $ugcQuery = $db->select('aculta_ugc_report', 'r');
+      $ugcQuery->fields('r', ['target_type', 'target_id', 'purpose']);
+      $ugcQuery->addExpression('COUNT(*)', 'total');
+      $ugcQuery->addExpression('MAX(created)', 'ultima');
+      $ugcQuery->condition('status', $status);
+      $ugcQuery->condition('purpose', $allowedPurposes, 'IN');
+      $ugcQuery->groupBy('r.target_type');
+      $ugcQuery->groupBy('r.target_id');
+      $ugcQuery->groupBy('r.purpose');
+      $ugcRows = $ugcQuery->execute()->fetchAll();
 
-      if (!isset($grupos[$key])) {
+      foreach ($ugcRows as $row) {
+        $key = $row->target_type . ':' . $row->target_id;
         $grupos[$key] = [
-          'target_type' => $targetType,
-          'target_id' => $targetId,
-          'purpose' => $reportPurpose,
-          'total' => 0,
-          'ultima' => (int) $report->get('created')->value,
+          'target_type' => (string) $row->target_type,
+          'target_id' => (int) $row->target_id,
+          'purpose' => (string) $row->purpose,
+          'total' => (int) $row->total,
+          'ultima' => (int) $row->ultima,
           'motivos' => [],
         ];
       }
 
-      $grupos[$key]['total']++;
-      $motivo = (string) $report->get('motivo')->value;
-      if (!in_array($motivo, $grupos[$key]['motivos'], TRUE)) {
-        $grupos[$key]['motivos'][] = $motivo;
+      // 3. Reconciliação com flags legadas do Fórum pendentes de migração.
+      if (in_array('forum', $allowedPurposes, TRUE)
+        && $status === 'pendente'
+        && $db->schema()->tableExists('flagging')) {
+        $flagQuery = $db->select('flagging', 'f');
+        $flagQuery->fields('f', ['entity_type', 'entity_id']);
+        $flagQuery->addExpression('COUNT(*)', 'total');
+        $flagQuery->addExpression('MAX(created)', 'ultima');
+        $flagQuery->condition('flag_id', ReportQueue::FLAGS, 'IN');
+        if (!empty($migratedFlagIds)) {
+          $flagQuery->condition('id', $migratedFlagIds, 'NOT IN');
+        }
+        $flagQuery->groupBy('f.entity_type');
+        $flagQuery->groupBy('f.entity_id');
+        $flagRows = $flagQuery->execute()->fetchAll();
+
+        foreach ($flagRows as $fRow) {
+          $key = $fRow->entity_type . ':' . $fRow->entity_id;
+          if (isset($decidedTargets[$key])) {
+            continue;
+          }
+          if (!isset($grupos[$key])) {
+            $grupos[$key] = [
+              'target_type' => (string) $fRow->entity_type,
+              'target_id' => (int) $fRow->entity_id,
+              'purpose' => 'forum',
+              'total' => 0,
+              'ultima' => 0,
+              'motivos' => ['sinalizacao_legada_forum'],
+            ];
+          }
+          elseif (!in_array('sinalizacao_legada_forum', $grupos[$key]['motivos'], TRUE)) {
+            $grupos[$key]['motivos'][] = 'sinalizacao_legada_forum';
+          }
+          $grupos[$key]['total'] += (int) $fRow->total;
+          $grupos[$key]['ultima'] = max($grupos[$key]['ultima'], (int) $fRow->ultima);
+        }
       }
     }
 
-    // Reconciliação transparente com flags legadas do Fórum pendentes de migração (ARQ-06F).
-    if (in_array('forum', $allowedPurposes, TRUE) && $status === 'pendente' && $this->entityTypeManager->hasDefinition('flagging')) {
-      $flagStorage = $this->entityTypeManager->getStorage('flagging');
-      $flagIds = $flagStorage->getQuery()
-        ->accessCheck(FALSE)
-        ->condition('flag_id', ReportQueue::FLAGS, 'IN')
-        ->execute();
+    if (empty($grupos)) {
+      return [
+        'items' => [],
+        'total_items' => 0,
+        'total_pages' => 0,
+        'page' => $page,
+        'limit' => $limit,
+      ];
+    }
 
-      if (!empty($flagIds)) {
-        /** @var \Drupal\flag\FlaggingInterface[] $flaggings */
-        $flaggings = $flagStorage->loadMultiple($flagIds);
-        foreach ($flaggings as $flagging) {
-          $fid = (int) $flagging->id();
-          if (isset($legacyFlagIds[$fid])) {
-            // Já contabilizado através de denúncia UGC sincronizada.
-            continue;
-          }
+    // 4. Verificação em lote da existência dos alvos (sem queries N+1).
+    // Agrupa IDs por target_type e consulta apenas uma vez por tipo.
+    $idsByType = [];
+    foreach ($grupos as $g) {
+      $idsByType[$g['target_type']][] = $g['target_id'];
+    }
 
-          $targetType = $flagging->getFlaggableType();
-          $targetId = (int) $flagging->getFlaggableId();
-          $key = $targetType . ':' . $targetId;
-
-          if (!isset($validTargets[$key])) {
-            if (!$this->entityTypeManager->hasDefinition($targetType)) {
-              $validTargets[$key] = FALSE;
-            }
-            else {
-              $target = $this->entityTypeManager->getStorage($targetType)->load($targetId);
-              $validTargets[$key] = ($target !== NULL);
-            }
-          }
-
-          if (!$validTargets[$key]) {
-            continue;
-          }
-
-          if (!isset($grupos[$key])) {
-            $grupos[$key] = [
-              'target_type' => $targetType,
-              'target_id' => $targetId,
-              'purpose' => 'forum',
-              'total' => 0,
-              'ultima' => (int) $flagging->getCreatedTime(),
-              'motivos' => [],
-            ];
-          }
-
-          $grupos[$key]['total']++;
-          $grupos[$key]['ultima'] = max($grupos[$key]['ultima'], (int) $flagging->getCreatedTime());
-          if (!in_array('sinalizacao_legada_forum', $grupos[$key]['motivos'], TRUE)) {
-            $grupos[$key]['motivos'][] = 'sinalizacao_legada_forum';
+    $existingTargetIds = [];
+    foreach ($idsByType as $targetType => $tIds) {
+      if (!$this->entityTypeManager->hasDefinition($targetType)) {
+        continue;
+      }
+      $uniqueIds = array_values(array_unique($tIds));
+      $storage = $this->entityTypeManager->getStorage($targetType);
+      $idKey = $storage->getEntityType()->getKey('id');
+      if ($idKey) {
+        $foundIds = $storage->getQuery()
+          ->accessCheck(FALSE)
+          ->condition($idKey, $uniqueIds, 'IN')
+          ->execute();
+        foreach ($foundIds as $foundId) {
+          $existingTargetIds[$targetType . ':' . $foundId] = TRUE;
+        }
+      }
+      else {
+        foreach ($uniqueIds as $uId) {
+          if ($storage->load($uId) !== NULL) {
+            $existingTargetIds[$targetType . ':' . $uId] = TRUE;
           }
         }
       }
     }
 
-    $allItems = array_values($grupos);
-    $totalItems = count($allItems);
+    // Remove alvos excluídos fisicamente.
+    $validGrupos = [];
+    foreach ($grupos as $key => $g) {
+      if (isset($existingTargetIds[$key])) {
+        $validGrupos[] = $g;
+      }
+    }
+
+    // 5. Ordenação determinística: mais recentes primeiro; desempate por target_id.
+    usort($validGrupos, static function (array $a, array $b): int {
+      $cmp = $b['ultima'] <=> $a['ultima'];
+      if ($cmp !== 0) {
+        return $cmp;
+      }
+      return $b['target_id'] <=> $a['target_id'];
+    });
+
+    $totalItems = count($validGrupos);
     $totalPages = $limit > 0 ? (int) ceil($totalItems / $limit) : 1;
     $offset = max(0, $page * $limit);
-    $pagedItems = array_slice($allItems, $offset, $limit);
+    $pagedItems = array_slice($validGrupos, $offset, $limit);
+
+    // 6. Enriquecimento de motivos apenas para os itens da fatia paginada.
+    if (!empty($pagedItems) && $db !== NULL) {
+      $pagedConditions = [];
+      foreach ($pagedItems as $pItem) {
+        $pagedConditions[$pItem['target_type']][] = $pItem['target_id'];
+      }
+      foreach ($pagedConditions as $tType => $tIds) {
+        $motivoQuery = $db->select('aculta_ugc_report', 'r')
+          ->fields('r', ['target_id', 'motivo'])
+          ->condition('target_type', $tType)
+          ->condition('target_id', $tIds, 'IN')
+          ->condition('status', $status)
+          ->distinct();
+        $motivoRows = $motivoQuery->execute()->fetchAll();
+        $motivosByTarget = [];
+        foreach ($motivoRows as $mRow) {
+          $motivosByTarget[(int) $mRow->target_id][] = (string) $mRow->motivo;
+        }
+        foreach ($pagedItems as &$pItemRef) {
+          if ($pItemRef['target_type'] === $tType && isset($motivosByTarget[$pItemRef['target_id']])) {
+            foreach ($motivosByTarget[$pItemRef['target_id']] as $m) {
+              if (!in_array($m, $pItemRef['motivos'], TRUE)) {
+                $pItemRef['motivos'][] = $m;
+              }
+            }
+          }
+        }
+        unset($pItemRef);
+      }
+    }
 
     return [
       'items' => $pagedItems,

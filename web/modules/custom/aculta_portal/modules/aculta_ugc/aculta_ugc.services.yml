@@ -24,6 +24,7 @@ services:
     arguments:
       - '@entity_type.manager'
       - '@current_user'
+      - '@database'
 
   aculta_ugc.mail_type.report_notice:
     class: Drupal\aculta_ugc\Mail\UgcReportNoticeMailType
