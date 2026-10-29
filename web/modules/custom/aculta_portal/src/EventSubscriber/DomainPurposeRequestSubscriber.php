@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\EventSubscriber;
 
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\Routing\LocalRedirectResponse;
+use Drupal\aculta_portal\Checkout\CheckoutSlugMap;
+use Drupal\aculta_portal\Domain\ContentPurposeResolver;
+use Drupal\aculta_portal\Domain\DomainRoutePolicy;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\FrontPathPolicy;
 use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -14,15 +20,17 @@ use Drupal\Core\Site\Settings;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 
-/** Enforces route purpose and canonicalizes admin navigation to MAIN. */
+/**
+ * Enforces route purpose and canonicalizes admin navigation to MAIN.
+ */
 final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
   private const LOGIN_DESTINATION_SESSION_KEY = 'aculta_portal.login_destination';
@@ -32,9 +40,12 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     private readonly RequestMatcherInterface $accessFreeMatcher,
     private readonly AccountProxyInterface $currentUser,
     private readonly RouteProviderInterface $routeProvider,
-    private readonly \Drupal\aculta_portal\Domain\ContentPurposeResolver $contentPurposeResolver,
+    private readonly ContentPurposeResolver $contentPurposeResolver,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function getSubscribedEvents(): array {
     // Match the same path before RouterListener/access checks (priority 32).
     return [
@@ -66,7 +77,8 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     );
   }
 
-  /** Sends completed logouts to the public account login page. */
+  /**
+   * Sends completed logouts to the public account login page. */
   public function onResponse(ResponseEvent $event): void {
     if (!$event->isMainRequest() || !$event->getResponse()->isRedirection()) {
       return;
@@ -115,12 +127,14 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     }
   }
 
-  /** Enforces wrong-host policy before the access-aware router can return 403. */
+  /**
+   * Enforces wrong-host policy before the access-aware router can return 403.
+   */
   public function onRequestBeforeRouter(RequestEvent $event): void {
     if (!$event->isMainRequest()) {
       return;
     }
-    // Fragmentos AJAX do Drupal (_wrapper_format=drupal_ajax, ajax_form) só são entregues para requisição AJAX.
+    // Drupal AJAX fragments are only delivered for AJAX requests.
     // Acesso direto no navegador responde 403.
     $ajaxQuery = $event->getRequest()->query;
     if (!$event->getRequest()->isXmlHttpRequest() && ($ajaxQuery->get('_wrapper_format') === 'drupal_ajax' || $ajaxQuery->has('ajax_form'))) {
@@ -135,14 +149,14 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $event->setResponse(new Response('', Response::HTTP_NOT_FOUND, ['Cache-Control' => 'private, no-store']));
       return;
     }
-    // URLs antigas do checkout (/checkout/{pedido}/{etapa}, inclusive retorno e cancelamento do Mercado Pago):
-    // GET/HEAD vai com 301 para o caminho público em português (/finalizar-compra/...); outros métodos respondem 404.
+    // Old checkout URLs redirect GET/HEAD to their public Portuguese path.
+    // Other methods fail closed with 404.
     $oldCheckoutRequest = $event->getRequest();
-    $publicCheckout = \Drupal\aculta_portal\Checkout\CheckoutSlugMap::toPublic($oldCheckoutRequest->getPathInfo());
+    $publicCheckout = CheckoutSlugMap::toPublic($oldCheckoutRequest->getPathInfo());
     if ($publicCheckout !== NULL) {
       if (in_array($oldCheckoutRequest->getMethod(), ['GET', 'HEAD'], TRUE)) {
         $query = $oldCheckoutRequest->getQueryString();
-        $event->setResponse(new \Drupal\Core\Routing\LocalRedirectResponse($publicCheckout . ($query ? '?' . $query : ''), Response::HTTP_MOVED_PERMANENTLY));
+        $event->setResponse(new LocalRedirectResponse($publicCheckout . ($query ? '?' . $query : ''), Response::HTTP_MOVED_PERMANENTLY));
       }
       else {
         $event->setResponse(new Response('', Response::HTTP_NOT_FOUND, ['Cache-Control' => 'private, no-store']));
@@ -173,8 +187,8 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       }
       return;
     }
-    // Visitante não logado na raiz da Conta vai ao login do próprio host de conta (302: o estado de login muda).
-    // Feito antes do roteamento com acesso, que negaria a rota (403) antes de chegar a onRequest.
+    // Redirect anonymous visitors at the Account root to its login page.
+    // This runs before access-aware routing would return 403.
     if ($matched['_route'] === 'aculta_portal.dashboard' && !$this->currentUser->isAuthenticated()) {
       $login = $this->domainPurposeManager->routeUrl('account', 'user.login');
       if ($login !== NULL) {
@@ -182,8 +196,8 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
         return;
       }
     }
-    // A raiz da Conta serve o hub do Studio (`/` reescrito para `/studio`). O caminho técnico `/studio` responde 404,
-    // e o visitante anônimo vai ao login do host de conta, sem depender do 403 do roteador.
+    // The Account root serves the Studio hub. Its internal /studio path is
+    // unavailable directly; anonymous visitors go to the Account login page.
     $hubAction = FrontPathPolicy::acaoDoHubNaConta(
       $this->domainPurposeManager->getCurrentPurpose(),
       $event->getRequest()->getPathInfo(),
@@ -214,7 +228,8 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if (Settings::get('aculta_domain_purpose_test_relaxed', FALSE)) {
       return;
     }
-    if (is_string($requiredPurpose) && $currentPurpose !== $requiredPurpose) {
+    if (is_string($requiredPurpose)
+      && !DomainRoutePolicy::allowsSharedPurpose($route, $requiredPurpose, (string) $currentPurpose)) {
       if ($this->isPasswordResetEditException(
         $event->getRequest(),
         (string) $matched['_route'],
@@ -233,15 +248,17 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     }
   }
 
+  /**
+   * Enforces the purpose policy after the route has been matched.
+   */
   public function onRequest(RequestEvent $event): void {
     if (!$event->isMainRequest()) {
       return;
     }
     $request = $event->getRequest();
     $routeName = (string) $request->attributes->get('_route');
-    // Caminho interno da raiz de cada subdomínio (PurposeFrontPathProcessor::FRONT_PATHS, ex.: /apoio, /wiki, /cursos,
-    // /loja-da-aculta, /forum, /redes-sociais) não é público: a raiz do host serve esse conteúdo. Requisição direta ao
-    // caminho interno responde 404 (sem redirecionamento 301), antes do normalizador do módulo redirect.
+    // Internal paths for purpose roots are not public. Direct requests return
+    // 404 before Redirect can normalize them.
     if (FrontPathPolicy::bloqueiaCaminhoInterno(
       $this->domainPurposeManager->getCurrentPurpose(),
       $request->getPathInfo(),
@@ -314,7 +331,9 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       (string) $request->attributes->get('_route'),
       $currentPurpose,
     );
-    if (is_string($requiredPurpose) && $currentPurpose !== $requiredPurpose && !$resetEditException) {
+    if (is_string($requiredPurpose)
+      && !DomainRoutePolicy::allowsSharedPurpose($route, $requiredPurpose, (string) $currentPurpose)
+      && !$resetEditException) {
       if ($requiredPurpose === 'main'
         && ($this->isAdministrativeRoute($route)
           || $route->getOption('_aculta_cross_domain_canonical_purpose') === 'main')) {
@@ -326,7 +345,8 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     }
 
     $contentPurpose = $this->contentPurposeResolver->canonicalContentPurpose($request);
-    if ($contentPurpose !== NULL && $currentPurpose !== $contentPurpose) {
+    if ($contentPurpose !== NULL
+      && !DomainRoutePolicy::allowsSharedPurpose($route, $contentPurpose, (string) $currentPurpose)) {
       $this->notFound($event);
     }
   }
@@ -362,8 +382,8 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
     $query = $request->query->all();
     if (isset($query['destination']) && is_string($query['destination'])) {
-      // Core's RedirectResponseSubscriber replaces any redirect target with the request's ?destination=, resolved on
-      // the current (wrong) host. Remove it from the request and carry the return path to MAIN in this redirect.
+      // Core's RedirectResponseSubscriber resolves ?destination= on the
+      // current host. Carry a safe return path to MAIN instead.
       $mainDestination = $this->mainDestinationUrl($query['destination']);
       $request->query->remove('destination');
       if ($mainDestination !== NULL) {
@@ -384,7 +404,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Converts a relative ?destination= path into an absolute MAIN URL, or NULL if it is not a safe local path.
+   * Converts a safe relative destination into an absolute MAIN URL.
    */
   private function mainDestinationUrl(string $destination): ?string {
     if (!str_starts_with($destination, '/') || str_starts_with($destination, '//')) {
@@ -410,7 +430,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
    */
   private function retargetRedirect(ResponseEvent $event, string $target): void {
     $response = $event->getResponse();
-    if ($response instanceof \Symfony\Component\HttpFoundation\RedirectResponse) {
+    if ($response instanceof RedirectResponse) {
       $trusted = TrustedRedirectResponse::createFromRedirectResponse($response);
       $trusted->setTrustedTargetUrl($target);
       $event->setResponse($trusted);
@@ -427,6 +447,12 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
   /**
    * Preserves Core's one-time password reset reuse of user edit on ACCOUNT.
    *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Current request.
+   * @param string $routeName
+   *   Matched route name.
+   * @param string|null $currentPurpose
+   *   Purpose of the current domain.
    * @param array<string, mixed> $matched
    *   Access-free router parameters when called before RouterListener.
    */
@@ -443,7 +469,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     $raw = $request->attributes->get('_raw_variables');
     $uid = $request->attributes->get('user')
       ?? ($matched['user'] ?? NULL)
-      ?? ($raw instanceof \Symfony\Component\HttpFoundation\ParameterBag ? $raw->get('user') : NULL);
+      ?? ($raw instanceof ParameterBag ? $raw->get('user') : NULL);
 
     return is_numeric($uid)
       && AccountRouteSubscriber::isValidCorePasswordResetRequest(
@@ -491,17 +517,25 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     return ['path' => $path, 'query' => $query];
   }
 
-  /** Checks an already-parsed internal path for post-login reuse. */
+  /**
+   * Checks an already-parsed internal path for post-login reuse.
+   */
   private function isSafeLoginDestinationPath(string $path): bool {
     return str_starts_with($path, '/')
       && !str_starts_with($path, '//')
       && !preg_match('#^/(?:entrar|oauth|sair|recuperar(?:-senha|-acesso)?)(?:/|$)#', $path);
   }
 
+  /**
+   * Returns a private 404 response for a request outside its purpose.
+   */
   private function notFound(RequestEvent $event): void {
     $event->setResponse($this->notFoundResponse());
   }
 
+  /**
+   * Creates a private 404 response that search engines must not index.
+   */
   private function notFoundResponse(): Response {
     return new Response('', Response::HTTP_NOT_FOUND, [
       'Cache-Control' => 'private, no-store',

@@ -15,3 +15,7 @@ services:
   aculta_calendar.ics_exporter:
     class: Drupal\aculta_calendar\Ics\CalendarIcsExporter
     arguments: ['@aculta_calendar.item_source', '@aculta_calendar.occurrences']
+  aculta_calendar.shared_purpose_route_subscriber:
+    class: Drupal\aculta_calendar\EventSubscriber\SharedPurposeRouteSubscriber
+    tags:
+      - { name: event_subscriber }
