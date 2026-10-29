@@ -129,7 +129,11 @@ duplicidade. O teste focal emite 7 deprecações Core/contrib. O novo Unit tamb�
 comprova que a colisão concorrente retorna mensagem genérica sem preservar
 detalhe do banco/fingerprint como exceção encadeada. PHPCS e PHP lint dos arquivos
 alterados PASS. Nenhum update foi aplicado no Runtime. Teste integrado do
-formulário Portal e homologação Runtime ainda faltam. Evidência
+formulário Portal ainda falta: o Kernel focal do CPF não consegue carregar
+sozinho as definições do Portal (`file.usage`, `aculta_image.file_remover` e
+`aculta_mailer.mailer` não existem no fixture reduzido). Criar uma fixture de
+integração Portal que habilite esses owners ou um teste de formulário no
+harness próprio do Portal. Homologação Runtime também falta. Evidência
 histórica da implementação removida está em
 [ACULTA-ASSOCIADO-ID.md](../../../../../../docs/modules/ACULTA-ASSOCIADO-ID.md).
 
