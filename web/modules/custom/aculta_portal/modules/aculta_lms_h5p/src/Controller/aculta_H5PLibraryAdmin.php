@@ -20,7 +20,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Legacy H5P class identifier retained for Drupal discovery.
- *
  */
 // phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {

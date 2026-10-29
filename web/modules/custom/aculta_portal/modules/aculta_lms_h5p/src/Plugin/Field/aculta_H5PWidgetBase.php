@@ -12,7 +12,6 @@ use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
 
 /**
  * Legacy H5P class identifier retained for Drupal discovery.
- *
  */
 // phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 abstract class aculta_H5PWidgetBase extends WidgetBase {

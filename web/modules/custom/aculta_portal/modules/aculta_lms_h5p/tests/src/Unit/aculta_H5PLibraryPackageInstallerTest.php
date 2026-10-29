@@ -16,7 +16,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Legacy H5P class identifier retained for Drupal discovery.
- *
  */
 #[CoversClass(aculta_H5PLibraryPackageInstaller::class)]
 // phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.

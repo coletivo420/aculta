@@ -310,3 +310,9 @@
   montagem do formulário administrativo (36 elementos) passaram; sem updates
   de banco. Gates Drupal 11+, imagem e slugs passaram.
 
+## 0.4.0-dev.155 — limpeza incremental PHPCS em PHP (2026-10-29)
+
+- PHPCBF removeu 11 problemas de whitespace PHP; mudanças do formatter em JS foram descartadas após identificar que substituíam `true`/`false`/`null` por tokens `TRUE`/`FALSE`/`NULL` inválidos em JavaScript.
+- Recontagem completa Drupal/DrupalPractice: 263 erros e 33 avisos em 38 arquivos. A diferença em relação ao relatório anterior foi registrada sem alterar regras PHPCS ou identificadores históricos.
+- Unit + Kernel no `aculta_simpletest`: 43 testes / 481 assertions PASS, 41 depreciações Core/contrib. PHP lint dos 11 arquivos PHP alterados e `git diff --check` PASS. F15 permanece Dev.
+

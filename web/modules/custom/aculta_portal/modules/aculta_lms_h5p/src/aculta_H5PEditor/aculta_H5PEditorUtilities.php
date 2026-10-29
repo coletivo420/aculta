@@ -14,7 +14,6 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
 
 /**
  * Legacy H5P class identifier retained for Drupal discovery.
- *
  */
 // phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PEditorUtilities {

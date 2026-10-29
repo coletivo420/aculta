@@ -47,12 +47,15 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 
 ## Estado de fase
 
-**H5P PHPCS (2026-10-29, 0.4.0-dev.154):** uma rodada automática corrigiu
-838 violações de estilo em 46 arquivos sem alterar regras ou nomes históricos;
-exceções de nomenclatura permanecem locais e justificadas. PHPCS ainda registra
-252 erros e 33 avisos em 36 arquivos. Unit + Kernel
-passam (43 testes / 481 assertions, 41 depreciações Core/contrib); o submódulo
-permanece em Dev até fechar o gate e revisar o diff.
+**H5P PHPCS (2026-10-29, 0.4.0-dev.155):** rodadas automáticas corrigiram
+849 violações sem alterar regras ou nomes históricos; a microfase atual removeu
+11 problemas de whitespace PHP. PHPCS integral recontado registra 263 erros e
+33 avisos em 38 arquivos, incluindo PHPDoc, convenções legadas e estilo. O
+formatter tentou alterar booleanos JS para tokens PHP; essas mudanças foram
+revertidas e JS não foi modificado. Unit + Kernel passaram: 43 testes/481
+assertions, com 41 depreciações Core/contrib; PHP lint dos 11 arquivos PHP
+alterados e `git diff --check` passaram. F15 segue em Dev até o gate PHPCS
+completo passar.
 
 **F13 — notificações educacionais: implementação funcional; revisão visual pendente.** O responsável escolheu avisos para mudanças acionáveis persistidas; edições editoriais sem efeito acionável não notificam. Matrícula e certificado passam ao adapter
 `aculta_lms_messenger`, que grava Message, integra lista/contador do `aculta_messenger` e enfileira e-mail
