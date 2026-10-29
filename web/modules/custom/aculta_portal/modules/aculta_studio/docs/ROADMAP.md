@@ -415,3 +415,11 @@ Referência: [auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-
 - **OC-ST3:** "Minha organização" usa vínculo de representação aprovado pela moderação, nunca credencial de **Conta** ou papel global `organizador` por si. **Perfil** público continua entidade/experiência distinta; mudanças organizacionais exigem aprovação e trilha de auditoria.
 - **OC-ST4:** primeiro acesso em cartões existentes; sem depender de Tours do OpenCulturas, sem JS obrigatório e sem duplicar onboarding.
 - Gates: grants Entity/Domain, acesso negado em cross-account/cross-purpose, cache A/B, Firefox ESR e Olivero.
+
+## Complemento OC-C - OpenCulturas 3.1.5 (2026-10-29)
+
+- [ ] Vínculo verificável e revogável entre conta, perfil público e organização. Área "Minha organização" por escopo de `content_editor`, com reivindicação moderada e estado inicial fechado. **Não** criar papel genérico organizador (D-01) nem confundir conta com perfil.
+- [ ] "Meus salvos" e "Recomendações" com cache por UID e testes Kernel intercontas A/B. `bookmark-toggle` já existe e tem consumidor no Fórum; reusar, não duplicar.
+- [ ] Isolamento por purpose, acesso, WCAG, teclado, no-JS, 320 px e zoom 200%.
+
+Backlog aprovado sem reclassificar S-R4/S-R5 como homologadas. Referência: `docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md`.
