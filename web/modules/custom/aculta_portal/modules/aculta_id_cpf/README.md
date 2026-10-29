@@ -1,7 +1,7 @@
 # ACULTA CPF e CNPJ
 
 Submódulo opcional do `aculta_portal`, baseline Drupal **11.3+** e PHP **8.4**.
-Versão atual: **0.3.0-dev.4**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
+Versão atual: **0.3.0-dev.5**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
 e um índice de unicidade (fingerprint HMAC).
 
 **Runtime:** Homelab MAIN ativo, consultado somente para leitura em 2026-10-26.
@@ -119,21 +119,24 @@ vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal
 php scripts/validate-aculta-portal-drupal11.php
 ```
 
-Na validação M-1 com o autoloader isolado da branch: Unit 48 testes / 116
-assertions PASS; Kernel MariaDB 3 testes / 8 assertions PASS. O Kernel prova
-idempotência do update `10002`, bloqueio SQL de fingerprints duplicados e aborto
-seguro quando já existem grupos repetidos. O novo Unit também comprova que a
-colisão concorrente no `AccountDocumentStore` retorna a mensagem genérica sem
-preservar como exceção encadeada o detalhe do banco/fingerprint. PHPCS e PHP lint
-dos arquivos alterados PASS. Nenhum update foi aplicado no Runtime. Testes
-integrados com Profile/Form API e homologação Runtime ainda faltam. Evidência
+Na validação M-1 com o autoloader isolado da branch: Runner de domínio 248 checks
+PASS; Unit 48 testes / 116 assertions PASS; Kernel MariaDB 4 testes / 20
+assertions PASS. Além da idempotência do update `10002`, bloqueio SQL de
+fingerprints duplicados e aborto seguro com conflitos, o Kernel exercita o
+`AccountDocumentStore` com usuário, tipo Profile, campos e entidades Profile
+reais: cifra, fingerprint, perfil despublicado, máscara e mensagem genérica de
+duplicidade. O teste focal emite 7 deprecações Core/contrib. O novo Unit também
+comprova que a colisão concorrente retorna mensagem genérica sem preservar
+detalhe do banco/fingerprint como exceção encadeada. PHPCS e PHP lint dos arquivos
+alterados PASS. Nenhum update foi aplicado no Runtime. Teste integrado do
+formulário Portal e homologação Runtime ainda faltam. Evidência
 histórica da implementação removida está em
 [ACULTA-ASSOCIADO-ID.md](../../../../../../docs/modules/ACULTA-ASSOCIADO-ID.md).
 
 ## Próximas entregas
 
 1. Executar `10002` em banco isolado com dados representativos, inclusive conflito e rollback.
-2. Testes de Kernel integrados de `AccountDocumentStore` com entidades Profile e formulário (duplicidade, perfil despublicado e atualização `aculta_id_cpf_update_10001`).
+2. Testar o formulário Portal com o `AccountDocumentStore` real; validar duplicidade e perfil despublicado pela experiência do titular.
 3. Integrar login por CPF ao pipeline existente, preservando flood, confirmação,
    CAPTCHA, Social Auth e respostas genéricas.
 4. Avaliar integração Webform somente após proteção de rascunhos, tokens,

@@ -93,3 +93,16 @@ Classificação: MINOR, nova capacidade opcional em desenvolvimento.
   `Fake runtime credentials were not persisted`. Servidor remoto DEFERRED.
 - **RUNTIME STATUS: DEFERRED** — não é release homologada; sem tag.
 
+## 0.3.0-dev.5 — validar store contra entidades Profile reais (2026-10-29)
+
+- `AccountDocumentStoreProfileKernelTest` cria usuários e perfis reais no banco
+  simples: persiste apenas valor cifrado e fingerprint, lê a máscara de perfil
+  despublicado e recusa CPF duplicado com erro genérico.
+- Runner de domínio: 248 checks PASS; Unit: 48 testes / 116 assertions PASS;
+  Kernel: 4 testes / 20 assertions PASS. O teste Kernel novo emite 7
+  deprecações Core/contrib. PHPCS Drupal/DrupalPractice e PHP lint do teste PASS.
+- Chaves são valores fictícios mantidos na fixture em memória. Nenhum dado
+  pessoal real, Runtime ou atualização de schema foi usado.
+- A integração do formulário Portal e a homologação operacional de `10002`
+  continuam pendentes.
+
