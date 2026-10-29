@@ -1,3 +1,17 @@
+## 0.4.0-dev.160 — documentar o adaptador H5P central (2026-10-29)
+
+- PHPDoc da implementação de `H5PFrameworkInterface` foi completado e seus
+  métodos de protocolo mantêm os identificadores H5P com exceções PHPCS locais
+  justificadas. Atribuição GPL permanece no arquivo.
+- `loadContent()` retorna explicitamente `NULL`, preservando o valor anterior
+  implícito e documentando que o curso fornece conteúdo pela entidade Drupal;
+  isso elimina a depreciação Symfony do contrato H5P. Um ID de idioma não usado
+  foi removido sem alterar o INSERT.
+- PHPCS integral caiu de 174 erros/20 avisos em 19 arquivos para 114/9 em 18
+  arquivos. O adaptador passa PHPCS Drupal/DrupalPractice e PHP lint.
+- Unit + Kernel no `aculta_simpletest`: 43 testes / 481 asserções PASS, 41
+  depreciações Core/contrib no Kernel e zero no Unit. Nenhuma escrita Runtime.
+
 ## 0.4.0-dev.159 — documentar plugins e hooks H5P (2026-10-29)
 
 - PHPDoc dos plugins Condition, Field Type e Views Access, hook de bibliotecas,

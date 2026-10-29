@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-dev.159
+version: 0.4.0-dev.160
 state: Dev
-progress_note: "Dev.159: PHPDoc dos plugins, hook, schema, acesso a curso e evento H5P foi completado; discovery/protocol identifiers preservados com exceções locais justificadas. PHPCS integral: 174 erros/20 avisos em 19 arquivos (antes 188/21 em 26); PHPCS/PHP lint dos 7 arquivos desta rodada PASS. Unit + Kernel 43/481 PASS no aculta_simpletest, 41 depreciações Core/contrib. Restam violações PHPCS no módulo; F15 permanece Dev. Smokes de player, PDF e conversa H5P–Fórum seguem registrados; sem escrita Runtime."
+progress_note: "Dev.160: PHPDoc do adapter H5P central foi completado, mantendo métodos de protocolo; loadContent retorna explicitamente NULL como antes, removendo depreciação Symfony. PHPCS integral: 114 erros/9 avisos em 18 arquivos (antes 174/20 em 19); PHP lint e PHPCS do adapter PASS. Unit + Kernel 43/481 PASS no aculta_simpletest, 41 depreciações Core/contrib no Kernel e 0 no Unit. Restam violações PHPCS no módulo; F15 permanece Dev. Smokes de player, PDF e conversa H5P–Fórum seguem registrados; sem escrita Runtime."
 next_phase: 'F15: resolver violações PHPCS remanescentes sem alterar regras nem identificadores públicos, rodar lint, revisar diff e repetir gates antes de avaliar RC; player H5P, PDF privado e discussão H5P–Fórum seguem homologados conforme [README](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md). F10 permanece homologada.'
