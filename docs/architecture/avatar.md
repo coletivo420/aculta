@@ -37,6 +37,15 @@ nenhum deles é uma segunda fonte de apresentação. `field_exibir_foto` é some
 uma regra de visibilidade pública. Módulos, purposes e perfis não criam cópias
 paralelas de campos de avatar; todos consomem a identidade central.
 
+O perfil da comunidade também tem uma única leitura canônica: o Profile
+principal selecionado por `PerfilDoPapel`, com os campos compartilhados do
+Portal. Instâncias de campos ligadas a bundles de Profile diferentes são a
+configuração normal do Drupal e usam o mesmo storage; não autorizam cópias de
+foto, apelido ou preferências por purpose. Studio, Conta, perfil público,
+Fórum e demais consumidores devem obter avatar e identidade por
+`AvatarResolver`/`AuthorIdentityResolver`/`AuthorCardBuilder`, sem ler ou
+persistir campos paralelos.
+
 ## 2. Fronteiras e donos
 
 | Capacidade | Dono | Onde |
