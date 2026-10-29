@@ -108,3 +108,18 @@ Fonte: [auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCU
 - [ ] Estudar `OfficeHoursToOsmFormatter` após o novo contrato de horários e revisão OSM; filtros de proximidade são referência de UX. Manter Leaflet/OSM padrão e Google opcional. Polígonos não foram comprovados no pacote 3.1.5; considerar apenas como pesquisa independente.
 
 Nenhuma autorização de escrita OSM, deploy ou substituição de geocodificador.
+
+## Plano futuro — captura e busca postal integrada
+
+- [x] Registrar que endereços de locais/eventos usam o formulário central de
+  `aculta_portal` com o preenchimento CEP de `aculta_portal_cep`; Maps não tem
+  um formulário de endereço próprio.
+- [ ] Planejar busca/autocomplete pelo nome da rua/logradouro como capacidade
+  futura de `aculta_portal_cep`, integrada ao mesmo formulário central. A busca
+  CEP → endereço já existe; a busca por rua ainda não está implementada nem
+  deve aparecer na UI como disponível.
+- [ ] Aprovar provedor, termos/atribuição, privacidade, limites e contrato antes
+  de iniciar código. Manter distinta a geocodificação de endereços salvos para
+  coordenadas, já existente em Maps.
+
+Detalhes e critérios de entrada: [`docs/portal/CEP-ADDRESS-SEARCH-PLAN.md`](../../../../../../../docs/portal/CEP-ADDRESS-SEARCH-PLAN.md).

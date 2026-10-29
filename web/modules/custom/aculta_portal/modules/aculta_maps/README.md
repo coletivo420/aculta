@@ -53,6 +53,15 @@ Map Settings não captura endereço. A geocodificação do serviço restringe a
 Nominatim ao Brasil (`countrycodes=br`); os locais de Eventos fornecem seus
 endereços pelo `AccountAddressForm` central do `aculta_portal`, com país fixo
 BR e preenchimento CEP do `aculta_portal_cep`.
+No formulário de endereço do local, a pessoa digita o CEP e o Portal CEP
+preenche os campos postais, igual ao formulário geral. Isso já está ativo no
+adaptador de `EventLocation` e na revisão de endereço do importador OSM.
+
+A busca atual por CEP já preenche o endereço. Busca/autocomplete futura pelo
+nome da rua/logradouro ainda não está disponível. Se aprovada, será capacidade
+compartilhada de `aculta_portal_cep`, consumida pelo mesmo formulário central;
+não será uma interface postal própria do Maps. Plano e critérios:
+[CEP-ADDRESS-SEARCH-PLAN](../../../../../../docs/portal/CEP-ADDRESS-SEARCH-PLAN.md).
 
 Leaflet 1.9.4 é distribuído em `assets/vendor/leaflet/` sob BSD-2-Clause. O
 mapa público não foi ativado no Runtime: o smoke visual aguarda a revisão de

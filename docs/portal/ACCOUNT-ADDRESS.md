@@ -4,6 +4,10 @@
 
 **Escopo confirmado:** a decisão inclui endereços de locais e eventos em `aculta_maps` e `aculta_events`, além de Conta, Studio, checkout, lojas, perfis de equipe e quaisquer outros consumidores encontrados. Para locais/eventos o país é sempre Brasil, sem seletor de país; o adaptador usa o widget e a biblioteca CEP centrais, enquanto os dados permanecem nas entidades próprias. Importadores podem mapear endereços de fontes externas, mas qualquer formulário de captura/revisão apresentado à pessoa deve usar o contrato central.
 
+Nos formulários de local usados por Maps/Events, a pessoa informa o CEP no mesmo campo postal e a consulta existente de `aculta_portal_cep` preenche rua, bairro, cidade e UF. Isso já está implementado por `EventLocation.field_endereco` e pela revisão do importador OSM; não é uma capacidade pendente.
+
+**Plano futuro (não implementado):** busca/autocomplete pelo nome da rua/logradouro será avaliada no `aculta_portal_cep` e integrada ao mesmo formulário central. A consulta atual de CEP já funciona; a futura busca por rua é uma capacidade distinta. Não é uma interface própria do Maps. O plano, incluindo critérios de provedor, privacidade e ativação, está em [`CEP-ADDRESS-SEARCH-PLAN.md`](CEP-ADDRESS-SEARCH-PLAN.md).
+
 A decisão amplia e consolida o comportamento aprovado em 2026-10-18. Qualquer mudança no formulário, CEP, perfil `authenticated`, checkout ou consumidor de endereço deve preservar o contrato descrito aqui. Não repetir mudanças sem atualizar esta decisão e executar os gates pertinentes.
 
 ## Comportamento esperado

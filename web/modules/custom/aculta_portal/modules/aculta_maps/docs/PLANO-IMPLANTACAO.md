@@ -83,3 +83,25 @@ O código de mapa estava em `aculta_events`. MP1 moveu `GeocodingService`, `acul
 | Chave do Google exposta no navegador | Restrição de referenciador e de API; registrado |
 | Consumidor fazer chamada direta ao provedor | Regra de uso no README e teste de regressão (grep no código dos outros módulos) |
 | Mudança de engine quebrar mapas existentes | Teste de contrato: mesma entrada, mesma saída estrutural nas duas engines |
+
+## 9. Endereço de locais e busca futura por nome de rua
+
+- A captura/edição de endereço de local/evento usa o único formulário central
+  `AccountAddressForm` de `aculta_portal`, adaptado ao campo próprio de
+  `aculta_events`; país BR fixo e sem seletor. `aculta_maps` não cria nem
+  mantém um formulário postal paralelo.
+- O autopreenchimento atual de endereços de locais por CEP usa o mesmo
+  `aculta_portal_cep` e os mesmos campos postais do formulário geral. Essa
+  integração já está implementada e é validada pelo assistente de revisão OSM.
+- A consulta CEP → endereço já existe. Uma futura busca/autocomplete pelo nome
+  da rua/logradouro pertence ao módulo compartilhado `aculta_portal_cep` e será
+  integrada ao mesmo formulário central. Ela ainda não está implementada nem
+  pode ser exibida como recurso disponível. Plano:
+  [`docs/portal/CEP-ADDRESS-SEARCH-PLAN.md`](../../../../../../../docs/portal/CEP-ADDRESS-SEARCH-PLAN.md).
+- Esta capacidade é diferente da geocodificação já existente de endereço salvo
+  para coordenadas em `GeocodingService`. Não alterar o provedor, o contrato de
+  coordenadas ou a política de privacidade dos mapas como parte do plano de
+  busca postal.
+- Provedor, termos, atribuição, privacidade, cache, limites e comportamento de
+  preenchimento devem ser revisados antes da implementação/ativação; ver os
+  critérios no plano central de busca.

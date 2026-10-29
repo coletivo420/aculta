@@ -8,6 +8,21 @@ Consulta de CEP e autocompletar do endereço do Portal. Substitui o módulo cont
 - Não faz requisição HTTP à rota AJAX. CEP não encontrado ou inválido devolve `NULL`, sem exceção.
 - Documentação da fase: `docs/portal/CEP-SHARED-LOOKUP-0.1.md`.
 
+## Plano futuro: busca por nome de rua
+
+A consulta atual de CEP → endereço já está implementada. A busca/autocomplete
+pelo nome da rua/logradouro é uma capacidade diferente, ainda **não
+implementada**, e não deve ser exibida como funcionalidade. O plano está em
+[`docs/portal/CEP-ADDRESS-SEARCH-PLAN.md`](../../../../../../docs/portal/CEP-ADDRESS-SEARCH-PLAN.md).
+Quando aprovada, a busca por rua será compartilhada por este módulo e integrada
+ao único formulário completo de `aculta_portal`; não será uma interface própria
+de Maps. A geocodificação de endereço salvo para coordenadas em `aculta_maps` é
+um fluxo distinto.
+
+O formulário atual de endereço usado por locais de Maps/Events já consulta o
+CEP neste módulo e preenche os campos postais pelo mesmo widget central do
+restante do site.
+
 ## O que faz
 
 - **Endpoint AJAX** `/aculta_portal_cep/{cep}` (8 dígitos). Responde só a requisições AJAX (`X-Requested-With`); acesso direto no navegador recebe 403.
