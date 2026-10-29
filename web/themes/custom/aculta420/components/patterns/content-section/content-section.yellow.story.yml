@@ -1,5 +1,5 @@
 name: Faixa amarela
-description: Título obrigatório sobre a cor amarela fechada, com texto verde-escuro de contraste AA.
+description: Título amarelo com texto verde-escuro e espaçamento fluido com base compacta.
 component: aculta420:content-section
 props:
   title: Formação

@@ -455,3 +455,10 @@ Wiki; stories atualizadas. Firefox confirmou Marley em nove larguras sem
 overflow e reflow esperado para a variante 2 colunas. LMS/Wiki e a variante de
 3 colunas não tiveram consumer visível nesta rodada; MF2 permanece em
 andamento.
+
+### THEME-MF2 — `content-section`
+
+Removido o `max-width: 575.98px` redundante: o gap `clamp(.75rem, 2vw, 1.5rem)`
+já garante a base móvel e cresce fluidamente. Atualizadas cinco stories do SDC;
+consumers reais identificados na Wiki. A captura pós-alteração da rota consumer
+ainda está pendente; MF2 segue parcial.

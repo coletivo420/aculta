@@ -1,5 +1,5 @@
 name: Faixa vermelha
-description: Título obrigatório sobre a cor vermelha fechada, com texto escuro de contraste AA.
+description: Título vermelho com texto escuro e espaçamento fluido com base compacta.
 component: aculta420:content-section
 props:
   title: Cultura e direitos

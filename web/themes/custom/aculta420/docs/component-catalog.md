@@ -233,6 +233,14 @@ empilha itens no mobile, passa a duas colunas em 576px e a três em 992px; as
 stories declaram esse reflow. Firefox confirmou visualmente Marley 1→2 colunas
 e zero overflow em nove larguras. A variante 3 colunas ainda não tem consumer
 Runtime real confirmado, somente story.
+
+## THEME-MF2 — `patterns/content-section`
+
+Consumers reais em formulários e workspace da Wiki usam o SDC experimental.
+Foi removido um override estreito de gap redundante: o `clamp()` base já limita
+o espaço mínimo a 0.75rem. As cinco stories registram a escala fluida; não há
+mudança de markup, props ou ordem DOM. A validação Firefox da Wiki após a
+alteração segue pendente.
 # Retificação de escopo visual (2026-10-29)
 
 O inventário deste catálogo é uma referência histórica de componentes, não uma

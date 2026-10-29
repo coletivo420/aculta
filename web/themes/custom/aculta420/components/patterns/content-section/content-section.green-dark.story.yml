@@ -1,5 +1,5 @@
 name: Faixa verde-escura
-description: Título obrigatório sobre a cor verde-escura fechada, com texto claro de contraste AA.
+description: Título verde-escuro com texto claro e espaçamento fluido com base compacta.
 component: aculta420:content-section
 props:
   title: Transparência

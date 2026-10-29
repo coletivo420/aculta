@@ -46,6 +46,3 @@
   background-color: var(--aculta-section-green-dark-bg);
 }
 
-@media (max-width: 575.98px) {
-  .aculta-section-title { gap: 0.75rem; }
-}

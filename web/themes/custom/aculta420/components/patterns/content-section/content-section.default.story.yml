@@ -1,5 +1,5 @@
 name: Padrão
-description: Seção com título, cabeçalho e corpo de texto.
+description: Seção com título, cabeçalho e corpo; a faixa usa espaçamento fluido com base compacta.
 component: aculta420:content-section
 props:
   title: Quem somos

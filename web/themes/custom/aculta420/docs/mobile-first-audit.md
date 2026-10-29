@@ -257,3 +257,15 @@ larguras (320/360/390/599/600/768/1024/1280/1440), sem overflow; screenshots
 consumidores do LMS e Wiki não foram exercitados nesta rodada, e nenhuma rota
 real usa `columns: 3` no código encontrado (essa variante está nas stories).
 Evidência em `$SUITE_OUT/aculta-ocs-mf2-grid-20261029/`; MF2 segue parcial.
+
+### THEME-MF2 — `content-section`
+
+Removida a query `max-width: 575.98px` que definia `gap: 0.75rem` já garantido
+pela base `clamp(0.75rem, 2vw, 1.5rem)`. O cálculo existente não reduz o espaço
+abaixo de 0.75rem em nenhuma largura; a alteração remove uma regra duplicada,
+mantendo o reflow visual. As cinco stories agora descrevem a base compacta com
+progressão fluida. Consumers reais encontrados na Wiki: `WikiProposalSubmissionForm`,
+`WikiProposalDecisionForm`, `WikiContributorWorkspace` e
+`WikiProposalStatusController`. Schemas SDC e fronteira tema/módulo passaram.
+O lint CSS não executou: o script existe, mas `stylelint` não está instalado
+neste checkout. Validação Firefox pós-alteração ainda pendente.
