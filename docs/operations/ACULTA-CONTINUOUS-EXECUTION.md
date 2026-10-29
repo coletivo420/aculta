@@ -1508,3 +1508,10 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - **HTTP:** `https://aculta.toca.net.br/` e `https://loja.aculta.toca.net.br/` retornaram HTTP 200.
 - **Firefox ESR visível:** script `tests/browser/revista-color/visual.py`, com amostras DOM sintéticas, verificou os quatro tokens em 1280 px e 320 px, sem overflow e com as cores computadas esperadas. Capturas/JSON em `/home/piradopirata/aculta-suite-out/e8-category`. O teste não alterou configuração, conteúdo ou termos.
 
+## Verificação visual de Eventos (F6 parcial) — 2026-10-28
+
+- Checkout servido atualizado de `da3fd99db` para `6f282312b` (documentação/teste E8). O estado Git antes da troca estava limpo; checkout destacado, sem branch nova ou stash. `hostname=toca`; Drush confirmou `aculta_runtime`, Drupal 11.4.10 e URI `http://default`.
+- `updatedb:status`: `[success] No database updates required.` A divergência global do `config:status` continua preexistente. Snapshot antes de `drush cr`: `/home/piradopirata/aculta-suite-out/aculta-runtime-before-head-6f282312b.sql`, 50.563.276 bytes, modo `0600`, SHA-256 `bc1173de8d5567d3d52718c70a8521e9d3c7bcc2462efa63617d9eacd78b7f13`. Nenhuma atualização de banco ou importação foi executada.
+- `drush cr`: `[success] Cache rebuild complete.` HTTP `https://aculta.toca.net.br/` e `https://loja.aculta.toca.net.br/`: 200.
+- Firefox ESR visível: `tests/browser/eventos/agenda-embed.mjs` passou **129/129 verificações**, 0 ignoradas, 0 falhas em 1280/390/320 px e modo escuro. O Runtime tem eventos/datas e local com coordenadas; o README anterior que dizia não haver conteúdo está desatualizado. A captura `evento_320.png` mostra o título duas vezes. Nenhum código de Eventos foi alterado; o arquivo de controller é da frente paralela. Teclado e zoom de 200% seguem sem validação, portanto F6 permanece parcial. Artefatos em `/home/piradopirata/aculta-suite-out/f6-events`.
+

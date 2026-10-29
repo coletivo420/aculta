@@ -167,7 +167,9 @@ Entrada: F3 e F5 concluídas.
 - [ ] Componentes SDC em `aculta420` com stories (`VISUAL.md`).
 - [ ] Modo claro e escuro por tokens.
 - [ ] Teste em 320 px, zoom de 200% e teclado.
-- [ ] Revisão visual no Firefox ESR (`DISPLAY=:0`), com capturas fora do repositório. Sem revisão registrada até aqui (a frente B revisou só a View de álbuns).
+- [x] Smoke visual Firefox ESR (`DISPLAY=:0`) em 1280/390/320 px e modo escuro: 129/129 verificações, sem overflow, erros visíveis ou falhas; ocorrências reais estão presentes no Runtime. Evidência em `/home/piradopirata/aculta-suite-out/f6-events`.
+- [ ] A captura da página de evento mostra o título repetido duas vezes. O render envolve `EventPageController.php`, arquivo da frente paralela; este smoke não alterou o código. Corrigir com a frente dona.
+- [ ] Completar teclado e zoom de 200%; não foram cobertos pelo smoke existente.
 
 Saída: revisão visual aprovada pelo responsável.
 
