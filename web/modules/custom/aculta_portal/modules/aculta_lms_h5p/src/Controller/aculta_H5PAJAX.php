@@ -28,7 +28,7 @@ final class aculta_H5PAJAX extends ControllerBase {
   ) {}
 
   /**
-   *
+   * Creates the controller using Drupal's service container.
    */
   public static function create(ContainerInterface $container): static {
     $controller = new static(

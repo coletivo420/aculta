@@ -395,3 +395,11 @@
 - Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
   depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
 
+## 0.4.0-dev.163 — documentar factories dos controllers H5P (2026-10-29)
+
+- Explicita o uso do container de serviços nas factories AJAX e do painel H5P.
+- PHPCS integral caiu de 109 erros/7 avisos em 14 arquivos para 107/7 em 12
+  arquivos; ambos os controllers passam Drupal/DrupalPractice e PHP lint.
+- Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
+  depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
+
