@@ -147,4 +147,7 @@ Fórum (`/discussoes/novas`), além de overflow horizontal em 320–1440 px. Rod
 servidor de desenvolvimento, Firefox ESR visível, sem escrita. `account-shell.py`
 confere a navegação autenticada da Conta por GET com link Drush efêmero e compara
 o CSS servido com a folha candidata opcional. Consulte o README local para
-variáveis e limitações.
+variáveis e limitações. `support-form.py` registra o baseline do formulário de
+apoio e do SDC `donation-quick`; `navigation.py` compara o shell de navegação
+global no MAIN, incluindo fallback sem JavaScript. Ambos usam Firefox ESR
+visível e gravam capturas em `$SUITE_OUT` sem submeter formulários.

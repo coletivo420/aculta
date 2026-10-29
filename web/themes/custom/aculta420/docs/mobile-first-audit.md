@@ -322,3 +322,22 @@ purpose SUPPORT e a Institution Bar presente. O Pede-A transversal de composiç�
 do Domain Header permanece aberto; não foi criado shell visual paralelo. A
 rodada é baseline para o purpose e não valida zoom, teclado, modo escuro,
 reduced motion, Form API submetido, checkout nem WCAG completa.
+
+### THEME-MF2 — navegação global do shell (2026-10-29)
+
+As regras de colapso e alvos de toque da navegação foram movidas dos blocos
+`max-width` para a base móvel; o menu horizontal e as dimensões inline são
+restaurados em `min-width: 1100px`. A coluna entre header e menu mantém gap de
+12px até 575px, 32px entre 576–1099px e 16px no desktop. O fallback sem JavaScript
+continua com o menu visível e o botão oculto.
+
+Baseline servido e CSS candidato passaram 28/28 verificações no Firefox ESR
+visível para a home MAIN, em 13 larguras entre 320 e 1440px: sete links e ambos
+os headers, mesmos valores calculados antes/depois, sem overflow, botão abre o
+menu em mobile e o fallback permaneceu visível sem JavaScript em 320/768/1099/
+1100/1440px. Evidência candidata em
+`/home/piradopirata/aculta-suite-out/aculta-navigation-candidate-final2/`.
+O teste reutilizável é `tests/browser/aculta-theme-mobile-first/navigation.py`;
+ele cobre somente a home MAIN e não substitui regressão nos outros purposes.
+Zoom, teclado focado completo, modo escuro, reduced motion e WCAG 2.2 AA seguem
+pendentes.

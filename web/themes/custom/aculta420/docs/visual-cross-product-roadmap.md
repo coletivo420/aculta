@@ -496,3 +496,13 @@ O teste registra que a Institution Bar aparece, mas o Domain Header não é
 renderizado nesse purpose; segue o Pede-A global, sem shell paralelo. Este é
 baseline auditável, não implementação de THEME-MF2 nem gate MF3. Detalhes,
 capturas e limitações estão em `mobile-first-audit.md`.
+
+### THEME-MF2 — navegação global do shell (2026-10-29)
+
+Regras da navegação responsiva migradas para base mobile, com a apresentação
+horizontal restaurada em `min-width: 1100px`; nenhuma mudança no Twig ou JS.
+Firefox visível passou 28/28 checks na home MAIN em 13 larguras, incluindo
+abertura do botão, menu sem JavaScript, presença de Institution Bar e Domain
+Header e zero overflow. A validação integrada após publicação/cache e os demais
+purposes continuam pendentes; MF2 segue parcial. Ver detalhes em
+`mobile-first-audit.md`.

@@ -282,3 +282,12 @@ registrada no Pede-A de composição global; este baseline não homologa a
 presença do shell completo. Ver detalhes e limitações em
 [`mobile-first-audit.md`](mobile-first-audit.md).
 
+## THEME-MF2 — navegação do shell global
+
+O menu do `page.html.twig` conserva o mesmo markup e progressive enhancement.
+Regras mobile de colapso, rolagem interna e alvo de toque agora são a base;
+`min-width: 1100px` restaura o menu horizontal. Firefox MAIN manteve os mesmos
+valores computados e passou 28/28 checks, inclusive fallback sem JavaScript.
+Este padrão do shell não cria SDC nem altera os headers institucionais. A
+validação se limita à home MAIN; a auditoria detalha os limites.
+

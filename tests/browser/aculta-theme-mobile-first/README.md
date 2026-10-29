@@ -80,3 +80,21 @@ O Firefox usa perfil isolado em `$SUITE_OUT`; screenshots e `results.json` ficam
 fora do repositório. Requer DNS e acesso ao servidor de desenvolvimento. Não
 submete Form API, não exercita checkout/CAPTCHA, teclado/zoom/leitor de tela,
 dados, pagamento, cache, permissões ou WCAG completa.
+
+## Navegação global e fallback sem JavaScript
+
+`navigation.py` verifica a navegação da home MAIN em Firefox ESR visível,
+incluindo o breakpoint desktop em 1100px, o espaçamento aos lados de 576px,
+abertura do menu Bootstrap e sua apresentação sem JavaScript. É somente leitura.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-navigation-mobile-first
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 tests/browser/aculta-theme-mobile-first/navigation.py
+```
+
+`NAVIGATION_CSS_OVERRIDE=1` injeta a folha local do worktree para comparar o
+candidato antes de publicar; sem essa variável, usa a CSS servida. A suíte mede
+somente a home MAIN e não substitui a regressão da navegação nos demais purposes,
+nem cobre zoom, leitor de tela ou WCAG completa.
