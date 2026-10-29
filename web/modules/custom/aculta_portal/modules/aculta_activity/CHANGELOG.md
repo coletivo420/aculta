@@ -11,8 +11,10 @@
 - Unit + Kernel: 13 testes/143 assertions PASS no MariaDB `aculta_simpletest`,
   com 121 depreciações de Core/contrib. PHPCS Drupal/DrupalPractice e lint
   passaram para os arquivos do módulo.
-- Grants específicos do Portal, revisão visual e homologação Runtime continuam
-  pendentes; nenhum dado Runtime foi alterado.
+- O contrato do Index 0.1 dispensa eventos adicionais para grants externos;
+  Activity usa Entity Access padrão sob `main`. Revisão visual/Runtime aguarda
+  o candidato servido. O ciclo do adapter será concluído junto do Kernel Portal,
+  sem release RC independente; nenhum dado Runtime foi alterado.
 
 ## 0.1.0-dev.10 — fixture Kernel com Portal real (2026-10-29)
 

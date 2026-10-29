@@ -113,9 +113,14 @@ release independente enquanto o módulo for apenas o adapter e sua fronteira.
 - Unit + Kernel: 13 testes/143 assertions PASS; 121 depreciações upstream do
   conjunto de dependências do Portal. PHPCS Drupal/DrupalPractice e PHP lint
   8/8 PASS.
-- Entity Access com grants contextuais específicos, revisão visual e
-  homologação conjunta no Runtime autorizado continuam pendentes; Activity
-  permanece Dev.
+- O contrato de IDX 0.1 define revalidação de Entity Access por consulta e não
+  exige eventos adicionais para grants externos. O código de Activity não
+  implementa `node_grants`; a regra existente verifica publicação, consulta o
+  Domain `main` e falha fechado se ele falta. Os grants especializados do Fórum
+  pertencem ao owner Fórum e não se aplicam a `activity`.
+- Revisão visual/Runtime ainda depende de o candidato estar servido. O roadmap
+  define que o ciclo 0.1.x do adapter termina junto do Kernel `aculta_portal`,
+  sem release independente; Activity permanece Dev até essa entrega conjunta.
 
 ### Sondagem adicional da cadeia do Portal — 2026-10-29
 

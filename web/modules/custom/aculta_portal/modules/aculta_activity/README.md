@@ -21,5 +21,8 @@ Em `0.1.0-dev.11`, a suíte Unit + Kernel passou 13 testes/143 assertions no
 MariaDB `aculta_simpletest`, com 121 depreciações de Core/contrib ao carregar a
 cadeia completa. O dispatcher real cobre agrupamento do formulário, as três
 regras condicionais de validação e os metadados de localização, inclusive
-preservação de override editorial. Os grants específicos do Portal e a
-homologação visual/Runtime continuam pendentes.
+preservação de override editorial. O contrato do Index 0.1 não exige eventos
+adicionais para grants externos: Activity usa Entity Access padrão sob o
+purpose `main`, coberto no Kernel com publicação, rascunho e Domain ausente.
+Revisão visual/Runtime ainda depende de servir o candidato; o ciclo 0.1.x será
+concluído junto do Kernel `aculta_portal`, sem RC independente.
