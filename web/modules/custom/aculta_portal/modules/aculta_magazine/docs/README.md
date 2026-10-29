@@ -1,3 +1,5 @@
+**Roteiro de fechamento em ambiente Drupal:** [ARQ-08-FECHAMENTO-LOCAL.md](ARQ-08-FECHAMENTO-LOCAL.md). Inclui os gates de 08A-D, testes de acesso, consumidores reais e pendências para agente local. Nenhum gate foi aprovado apenas pelos commits remotos.
+
 ## ARQ-08A - Correção incremental de foco (2026-10-29)
 
 A validação de formulários da Revista continua usando Core Form API. Após os commits de tratamento dos caminhos originais, a busca pelo primeiro campo inválido agora evita atribuir `autofocus` a elementos não interativos (`container`, `markup`, `details` etc.). Um teste Unit cobre o erro de container sem widget. **Testes PHP e Drupal não foram executados nesta sessão**; repetir Unit, Kernel, Form API e Firefox ESR com campos vazios, widgets AJAX e erros reais antes de homologar. O fluxo editorial permanece no bundle `revista`, sem novas entidades ou campos.
