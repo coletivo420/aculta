@@ -470,4 +470,6 @@ segue parcial. Evidência em `/home/piradopirata/suite-out/aculta-mf2-content-se
 Migrada a base móvel do cartão SDC compartilhado por Fórum, LMS e Wiki; 36rem
 restaura a variante inline, mantendo os layouts editorial/empilhado, tamanhos e
 overrides das listagens. Stories Fórum, LMS e Wiki atualizadas. Lint CSS depende
-de `stylelint`, ausente no checkout; Firefox pós-alteração segue pendente.
+de `stylelint`, ausente no checkout. O Firefox encontrou 1px de overflow na data
+em 576/600px; retirada a regra `nowrap` para permitir quebra natural. O teste
+reutilizável do consumer precisa confirmar a correção após a publicação.

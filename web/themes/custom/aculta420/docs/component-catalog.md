@@ -257,5 +257,7 @@ SDC existente reutilizado pelos consumidores de autoria do Fórum, LMS e Wiki.
 A base mobile usa avatar 2.5rem, alinhamento inicial e gap 0.5rem; o breakpoint
 de 36rem restaura dimensões/alinhamento da variante inline. O cartão empilhado,
 editorial e os tamanhos `sm`/`lg` mantêm suas regras. Stories Fórum, LMS e Wiki
-documentam os estados. O browser smoke do consumer ainda está pendente.
+documentam os estados. No consumer do Fórum, a data de última atividade agora
+pode quebrar em colunas estreitas. Firefox do consumer aguarda reexecução após
+a correção do overflow.
 

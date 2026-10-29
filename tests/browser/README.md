@@ -139,3 +139,10 @@ carrinho e segue o checkout central em `aculta.toca.net.br`. Em 2026-10-27
 chegou ao login/cadastro Drupal antes da preferência Mercado Pago. Usa produto
 de teste e pode deixar carrinho anônimo no Runtime; não submete cadastro nem
 pagamento. Ver `aculta-mercadopago/README.md`.
+
+### `aculta-theme-mobile-first/`
+
+`author-card.py` valida o breakpoint do cartão de autoria no consumer público do
+Fórum (`/discussoes/novas`), além de overflow horizontal em 320–1440 px. Roda no
+servidor de desenvolvimento, Firefox ESR visível, sem autenticação ou escrita;
+consulte o README local para variáveis e limitações.

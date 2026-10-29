@@ -280,5 +280,9 @@ O SDC já era consumido por cartões públicos de autoria do Fórum, LMS e Wiki.
 Migrei a base visual para 2.5rem de avatar, alinhamento inicial e gap compacto;
 a partir de 36rem, cartões inline recuperam 3rem e alinhamento central, enquanto
 editorial e empilhado preservam seu alinhamento próprio. Variantes `sm`/`lg` e
-as regras específicas das listagens do Fórum mantêm precedência. A validação
-Firefox da página pública com consumer segue pendente.
+as regras específicas das listagens do Fórum mantêm precedência. Firefox real
+mostrou também overflow de 1px a 576/600px na data da última atividade da
+listagem. Removido `white-space: nowrap` para permitir quebra natural em colunas
+estreitas; a confirmação browser dessa correção segue pendente. O script
+reutilizável `tests/browser/aculta-theme-mobile-first/author-card.py` registra
+consumer e breakpoint.
