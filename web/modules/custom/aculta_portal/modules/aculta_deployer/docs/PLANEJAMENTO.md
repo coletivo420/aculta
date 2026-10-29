@@ -174,9 +174,8 @@ Reexecução isolada em 2026-10-29:
 - `tests/run.php`: 119 verificações PASS. `boundaries`, `check` e `cookies`
   PASS. A suíte preservou e restaurou `var/deployer` e executou verificações
   externas somente contra o ambiente de desenvolvimento.
-- `cookies` ainda registra a dívida não bloqueante de `services.local.yml`
-  (`.aculta.test`), que não é carregado no Runtime de desenvolvimento. A decisão
-  de como declarar ou remover esse ambiente continua com o responsável.
+- D-50 removeu o `cookie_domain` de `services.local.yml`; o ambiente `*.aculta.test`
+  usa cookie host-only. `cookies` verifica os ambientes compartilhados test e production.
 - PHPCS Drupal reportava 331 erros e 56 avisos. Em 2026-10-29, correções de
   estilo e documentação PHP reduziram o resultado para zero erros e avisos. A
   suíte funcional passou depois da revisão; permanecem a decisão de cookie,

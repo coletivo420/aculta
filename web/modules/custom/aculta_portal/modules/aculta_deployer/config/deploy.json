@@ -694,7 +694,7 @@
     }
   },
   "session_cookie": {
-    "note": "Cookie de sessão compartilhado entre os hosts de um mesmo ambiente (purposes de Domain). Cada ambiente define session.storage.options.cookie_domain no arquivo de serviços que o settings.php carrega. Não é configuração exportável e não vai ao Git como valor de produção. Ver docs/COOKIES-AMBIENTE.md.",
+    "note": "Cookies compartilhados por ambiente (test e production) usam session.storage.options.cookie_domain no arquivo de serviços. O ambiente local .aculta.test é host-only e omite cookie_domain. A configuração não é exportável. Ver docs/COOKIES-AMBIENTE.md.",
     "environments": {
       "production": {
         "cookie_domain": ".aculta.org",
@@ -718,13 +718,6 @@
       "decision_pending": [
         "Confirmar com o responsável que a sessão não migra entre ambientes (padrão adotado)."
       ]
-    },
-    "known_debt": [
-      {
-        "file": "web/sites/default/services.local.yml",
-        "issue": "versionado com cookie_domain '.aculta.test', valor que não corresponde a nenhum ambiente declarado e não é carregado pelo settings.local.php do Homelab",
-        "action": "alinhar ou remover em PR próprio"
-      }
-    ]
+    }
   }
 }

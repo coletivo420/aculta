@@ -108,6 +108,8 @@ catch (\InvalidArgumentException) {
 
 // Fronteiras: o código atual passa, e referência proibida é detectada.
 $repo = dirname($toolRoot, 6);
+$localServices = (string) file_get_contents($repo . '/web/sites/default/services.local.yml');
+$assert(preg_match('/^\s*cookie_domain\s*:/m', $localServices) !== 1, 'ambiente local usa cookie de sessão host-only');
 $rules = json_decode((string) file_get_contents($toolRoot . '/config/boundary.json'), TRUE, 512, JSON_THROW_ON_ERROR);
 $assert((new Boundary($repo, $toolRoot, $rules))->check() === [], 'fronteiras atuais passam');
 $boundaryFixtureRoot = sys_get_temp_dir() . '/aculta-boundary-test-' . getmypid();

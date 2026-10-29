@@ -1,5 +1,12 @@
 ## Não lançado — ciclo Alpha/Beta
 
+## Não lançado — política do cookie local (D-50) — 2026-10-29
+
+- Removido `cookie_domain: '.aculta.test'` de `services.local.yml`; o ambiente local passa a usar cookie host-only.
+- Domínios compartilhados dos ambientes `test` e `production` permanecem inalterados.
+- Runner standalone, `cookies`, PHPCS e PHP lint revalidados nesta microfase; nenhum acesso de escrita ao Runtime/produção.
+
+
 ## Não lançado — conformidade Drupal PHPCS — 2026-10-29
 
 - Correções de estilo e documentação PHP reduziram o PHPCS Drupal do módulo de 331 erros e 56 avisos para zero erros e avisos.

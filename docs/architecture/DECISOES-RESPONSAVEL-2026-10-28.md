@@ -59,6 +59,7 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 | D-47 | Administração do processamento de imagens | **Expor no ACULTA > Imagens opções para escolher somente entre bibliotecas detectadas e configurar compressão, formatos aceitos/gerados e WebP.** A conversão WebP usa perda, qualidade 82, e substitui os originais inline. A decisão inclui também o acervo existente; a migração será faseada, com inventário, referências e reversão, sem execução automática ao habilitar a opção. | `aculta_image`; a página `Processamento e formatos` mantém a permissão administrativa do módulo. A migração existente continua como fase posterior. |
 | D-48 | Opções administrativas do leitor de documentos | **Reunir os padrões globais em ACULTA > Site > Leitor de documentos.** Administrar controles PDF existentes, opções de renderização DOCX e modo/paginação de planilhas. Documentos originais, autorização Drupal e limites de segurança/volume permanecem protegidos; planilhas continuam somente para leitura. | `aculta_document_viewer`; os valores fazem parte do Config Sync e não foram importados no Runtime nesta execução. |
 | D-49 | Indexação da listagem da Wiki | **Incluir `/wiki/verbetes` no sitemap da Wiki.** | `aculta_portal_sitemap`; manter a listagem no conjunto público da variante `wiki`, sujeito aos controles `noindex` do ambiente. |
+| D-50 | Cookie de sessão no ambiente local | **Remover `cookie_domain: '.aculta.test'`; usar cookie host-only local.** Os cookies compartilhados de test e production não mudam. | `aculta_deployer`; `services.local.yml` não compartilha sessão entre subdomínios. |
 
 ## Pendente
 
@@ -96,3 +97,4 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 - 2026-10-29: D-47 e D-48 registradas — opções administrativas customizáveis para compressão/formatos/WebP do Image e padrões globais de apresentação PDF/DOCX/planilhas no Leitor de documentos. Migração WebP do acervo existente autorizada como fase explícita, sem rodar durante a configuração.
 - 2026-10-28: D-29 a D-31 registradas — campos informativos de preço e ingresso na v1; venda de ingressos em plano separado; ACULTA recebe e repassa (exige parecer fiscal e jurídico antes da implementação).
 - 2026-10-29: D-49 registrada — `/wiki/verbetes` deve constar no sitemap da Wiki.
+- 2026-10-29: D-50 registrada — remover o domínio de cookie `.aculta.test` e manter sessão host-only no ambiente local.

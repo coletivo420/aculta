@@ -16,6 +16,7 @@ não é aceito no outro (sintoma observado no Runtime: o administrador logado em
 | --- | --- | --- | --- | --- |
 | **test** (Homelab, `*.aculta.toca.net.br`) | `.aculta.toca.net.br` | `web/sites/default/services.homelab.yml` (versionado) | `settings.local.php` do Homelab | Vigente |
 | **production** (`*.aculta.org`) | `.aculta.org` | `web/sites/default/services.hostinger.yml` (provisionado no servidor; **não versionado**) | `settings.hostinger.php.example` (modelo) | Declarado; provisionar no Beta |
+| **local** (`*.aculta.test`) | host-only (sem `cookie_domain`) | `web/sites/default/services.local.yml` | Ambiente local | Vigente; sessão não é compartilhada entre subdomínios |
 
 Campos fixos em ambos os ambientes (já em `services.homelab.yml`): `cookie_samesite: Lax`, `cookie_httponly: true`,
 `cookie_secure: true`. Não mudar sem explicar (regra de segurança do AGENTS).
@@ -40,11 +41,14 @@ Na troca de domínio para `*.aculta.org` no Alpha, o cookie muda de `.aculta.toc
    de navegador, registrado em `docs/portal/TESTES-NAVEGADOR.md`).
 
 **Impacto:** o cookie é emitido para `.aculta.org`. Sessões obtidas no ambiente de teste não são aceitas em produção: os
-usuários entram de novo. Não há migração de sessão entre ambientes (padrão adotado; pendente de confirmação do responsável).
+usuários entram de novo. Não há migração de sessão entre ambientes.
+
+No ambiente local `*.aculta.test`, `services.local.yml` omite `cookie_domain`; o navegador restringe a sessão ao host. Esse
+ambiente não compartilha login entre subdomínios e não participa da transição test → production.
 
 ## Barreira para alterações futuras
 
-Quem mudar o cookie de sessão de um ambiente (no `services.homelab.yml`, no modelo de produção ou em `config/deploy.json`)
+Quem mudar o cookie de sessão de um ambiente (em `services.local.yml`, `services.homelab.yml`, no modelo de produção ou em `config/deploy.json`)
 passa por duas barreiras, ambas somente leitura:
 
 1. **Gate do repositório:** `php scripts/validate-session-cookie-policy.php`. Roda `aculta-deployer cookies` e falha se
@@ -56,12 +60,11 @@ passa por duas barreiras, ambas somente leitura:
 Se a mudança for intencional, altere `config/deploy.json` (`session_cookie`) no mesmo PR, com a transição descrita acima.
 Sem isso, o gate falha.
 
-## Dívidas conhecidas
+## Política local resolvida (D-50)
 
-- `web/sites/default/services.local.yml` está versionado com `cookie_domain: '.aculta.test'`. Esse valor não corresponde a
-  nenhum ambiente declarado e o `settings.local.php` do Homelab não carrega esse arquivo. O comando `cookies` aponta a
-  dívida. Ação: alinhar ou remover em commit próprio na branch autorizada; PR
-  somente quando solicitado.
+- D-50 removeu `cookie_domain: '.aculta.test'` de `services.local.yml`. O host local usa cookie host-only; os domínios
+  compartilhados de teste e produção permanecem `.aculta.toca.net.br` e `.aculta.org`.
+- `aculta-deployer cookies` verifica test e production e não deve reportar dívida para o ambiente local.
 
 ## Relação com outras regras
 

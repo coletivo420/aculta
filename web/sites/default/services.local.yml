@@ -11,6 +11,5 @@ parameters:
     gc_divisor: 100
     gc_maxlifetime: 200000
     cookie_lifetime: 2000000
-    cookie_domain: '.aculta.test'
     cookie_samesite: Lax
     name_suffix: ''
