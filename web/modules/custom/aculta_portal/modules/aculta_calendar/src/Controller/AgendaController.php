@@ -94,9 +94,10 @@ final class AgendaController extends ControllerBase {
       $aviso = '<p role="alert">Período inválido: a data final é anterior à inicial.</p>';
       $ate = $de->setTime(23, 59, 59);
     }
-    elseif ($de->diff($ate)->days > 366) {
+    elseif ($de->diff($ate)->days >= 366) {
+      // Include the whole first day: 366 calendar days, not 367.
       $aviso = '<p role="alert">Período acima de 366 dias. Reduza o intervalo.</p>';
-      $ate = $de->modify('+366 days')->setTime(23, 59, 59);
+      $ate = $de->modify('+365 days')->setTime(23, 59, 59);
     }
 
     return $this->renderAgenda(new CalendarQuery($de, $ate, $agora, $this->filtrosDaUrl()), $incorporado, $aviso);
@@ -177,7 +178,10 @@ final class AgendaController extends ControllerBase {
       $cabecalho = $data->format('d/m/Y') . ' — ' . self::DIAS_SEMANA[(int) $data->format('N')];
       $linhas = '';
       foreach ($itens as $item) {
-        $linha = Html::escape($item['inicio']->format('H:i') . ' às ' . $item['fim']->format('H:i') . ' — ' . $item['titulo']);
+        $horario = ($item['diaInteiro'] ?? FALSE)
+          ? 'Dia inteiro'
+          : $item['inicio']->format('H:i') . ' às ' . $item['fim']->format('H:i');
+        $linha = Html::escape($horario . ' — ' . $item['titulo']);
         if ($item['local'] !== '') {
           $linha .= Html::escape(' · ' . $item['local']);
         }
@@ -186,7 +190,10 @@ final class AgendaController extends ControllerBase {
         }
         $linhas .= '<li>' . $linha . '</li>';
       }
-      $icsDia = $this->url('ics', [], ['de' => $data->format('d/m/Y'), 'ate' => $data->format('d/m/Y')]);
+      $icsDia = $this->url('ics', [], $query->filtros + [
+        'de' => $data->format('d/m/Y'),
+        'ate' => $data->format('d/m/Y'),
+      ]);
       $exportar = $icsDia === NULL ? '' : '<p><a href="' . Html::escape($icsDia) . '">' . Html::escape((string) $this->t('Exportar o dia @data (.ics)', ['@data' => $data->format('d/m/Y')])) . '</a></p>';
       $saida[] = [
         '#markup' => Markup::create('<h2>' . Html::escape($cabecalho) . '</h2><ul>' . $linhas . '</ul>' . $exportar),

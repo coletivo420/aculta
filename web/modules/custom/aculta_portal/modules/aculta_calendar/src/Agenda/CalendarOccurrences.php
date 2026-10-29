@@ -35,7 +35,8 @@ final class CalendarOccurrences {
     $fim = $item->fim->setTimezone($fuso);
 
     if ($item->rrule === NULL || $item->rrule === '') {
-      if ($inicio < $query->de || $inicio > $query->ate) {
+      // Same overlap semantics as the providers: start <= ate and end >= de.
+      if ($fim < $query->de || $inicio > $query->ate) {
         return [];
       }
       return [[

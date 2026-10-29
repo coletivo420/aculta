@@ -72,6 +72,15 @@ final class RecurrenceExpander {
     $de = $de->setTimezone($fuso);
     $ate = $ate->setTimezone($fuso);
 
+    // RECORRENCIA.md §7: UNTIL before the series start is an error, not an
+    // empty series. The editor form validates this too; this is the data guard.
+    if (isset($partes['UNTIL'])) {
+      $ateRegra = new \DateTimeImmutable($partes['UNTIL'] . ' 00:00', $fuso);
+      if ($ateRegra < $inicio->setTime(0, 0)) {
+        throw new RecurrenceException('UNTIL anterior ao início da série');
+      }
+    }
+
     $temFim = isset($partes['COUNT']) || isset($partes['UNTIL']);
     $fimJanela = $ate;
     if (!$temFim && $limiteSerieAberta < $ate) {
@@ -89,9 +98,11 @@ final class RecurrenceExpander {
     }
 
     $saida = [];
+    $gerados = [];
     foreach ($brutas as $data) {
       $original = \DateTimeImmutable::createFromInterface($data)->setTimezone($fuso);
       $chave = $original->getTimestamp();
+      $gerados[$chave] = TRUE;
       $excecao = $excecoes[$chave] ?? NULL;
 
       if ($excecao !== NULL && $excecao['inicio'] === NULL) {
@@ -104,16 +115,41 @@ final class RecurrenceExpander {
         continue;
       }
 
-      $novoInicio = $excecao['inicio'] ?? $original;
-      $novoFim = $excecao['fim'] ?? $novoInicio->modify("+$duracaoSegundos seconds");
+      $novoInicio = ($excecao['inicio'] ?? $original)->setTimezone($fuso);
+      $novoFim = ($excecao['fim'] ?? $novoInicio->modify("+$duracaoSegundos seconds"))->setTimezone($fuso);
+      // A rescheduled occurrence moved outside the window must not leak into
+      // a day it no longer belongs to.
+      if ($excecao !== NULL && ($novoFim < $de || $novoInicio > $ate)) {
+        continue;
+      }
       $saida[] = [
-        'inicio' => $novoInicio->setTimezone($fuso),
-        'fim' => $novoFim->setTimezone($fuso),
+        'inicio' => $novoInicio,
+        'fim' => $novoFim,
         'original' => $original,
         'cancelada' => FALSE,
       ];
     }
 
+    // A RECURRENCE-ID can move an occurrence into the window even when its
+    // original date is outside it, so those overrides are added explicitly.
+    foreach ($excecoes as $chave => $excecao) {
+      if ($excecao['inicio'] === NULL || isset($gerados[$chave])) {
+        continue;
+      }
+      $novoInicio = $excecao['inicio']->setTimezone($fuso);
+      $novoFim = ($excecao['fim'] ?? $novoInicio->modify("+$duracaoSegundos seconds"))->setTimezone($fuso);
+      if ($novoFim < $de || $novoInicio > $ate) {
+        continue;
+      }
+      $saida[] = [
+        'inicio' => $novoInicio,
+        'fim' => $novoFim,
+        'original' => (new \DateTimeImmutable('@' . $chave))->setTimezone($fuso),
+        'cancelada' => FALSE,
+      ];
+    }
+
+    usort($saida, static fn (array $a, array $b): int => $a['inicio'] <=> $b['inicio']);
     return $saida;
   }
 

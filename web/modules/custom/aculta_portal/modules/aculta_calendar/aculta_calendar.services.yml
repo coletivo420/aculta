@@ -12,7 +12,7 @@ services:
     arguments: ['@aculta_calendar.recurrence_expander']
   aculta_calendar.agenda:
     class: Drupal\aculta_calendar\Agenda\CalendarAgenda
-    arguments: ['@aculta_calendar.item_source', '@aculta_calendar.occurrences']
+    arguments: ['@aculta_calendar.item_source', '@aculta_calendar.occurrences', '@logger.factory']
   aculta_calendar.month_grid:
     class: Drupal\aculta_calendar\Agenda\MonthGrid
   aculta_calendar.ics_exporter:

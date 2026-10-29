@@ -75,6 +75,20 @@ final class CalendarAgendaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Evento em curso iniciado antes da janela continua retornado.
+   *
+   * Uses the same overlap rule as the providers (start <= ate, end >= de).
+   * The agenda still groups the occurrence by its start date.
+   */
+  public function testEventoEmCursoIniciadoAntesDaJanelaPermanece(): void {
+    $item = $this->item('r', 'Retiro', '2030-05-04 08:00', '2030-05-12 18:00');
+    $dias = $this->agenda([$item])->dias($this->consulta('2030-05-10', '2030-05-12'));
+
+    $this->assertSame(['2030-05-04'], array_keys($dias));
+    $this->assertSame('Retiro', $dias['2030-05-04'][0]['titulo']);
+  }
+
+  /**
    * Ocorrência cancelada continua na agenda, marcada.
    */
   public function testOcorrenciaCanceladaApareceMarcada(): void {

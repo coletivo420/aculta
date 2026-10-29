@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Form;
 
 use Drupal\aculta_calendar\Recurrence\RecurrenceException;
+use Drupal\aculta_calendar\Recurrence\RecurrenceExpander;
 use Drupal\aculta_calendar\Recurrence\RecurrenceRuleParser;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -96,7 +97,23 @@ final class EventDateRuleForm extends FormBase {
     }
     try {
       // Grava a forma canônica: mesma regra, mesma string no campo.
-      $form_state->setValue('field_regra', $this->parser->normalize($regra));
+      $canonica = $this->parser->normalize($regra);
+      $form_state->setValue('field_regra', $canonica);
+
+      // RECORRENCIA.md §7: UNTIL before the first occurrence is an error.
+      $partes = $this->parser->parse($canonica);
+      if (isset($partes['UNTIL'])) {
+        $data = $this->entities->getStorage('aculta_event_date')->load((int) $form_state->getValue('data_id'));
+        $valores = $data instanceof EventDate ? $data->get('field_quando')->first()?->getValue() : NULL;
+        if (isset($valores['value'])) {
+          $fuso = new \DateTimeZone(RecurrenceExpander::FUSO);
+          $inicio = (new \DateTimeImmutable((string) $valores['value'], new \DateTimeZone('UTC')))->setTimezone($fuso);
+          $ateRegra = new \DateTimeImmutable($partes['UNTIL'] . ' 00:00', $fuso);
+          if ($ateRegra < $inicio->setTime(0, 0)) {
+            $form_state->setErrorByName('field_regra', $this->t('UNTIL anterior ao início da série.'));
+          }
+        }
+      }
     }
     catch (RecurrenceException $e) {
       $form_state->setErrorByName('field_regra', $this->t('Regra de recorrência inválida: @erro', ['@erro' => $e->getMessage()]));

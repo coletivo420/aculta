@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_calendar\Form;
 
 use Drupal\aculta_calendar\Entity\CalendarImportedItem;
+use Drupal\aculta_calendar\Entity\CalendarImportSource;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -20,6 +22,7 @@ final class CalendarImportReviewForm extends FormBase {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly MessengerInterface $importMessenger,
     private readonly CalendarImportRepository $repository,
+    private readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /**
@@ -30,6 +33,7 @@ final class CalendarImportReviewForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('messenger'),
       $container->get('aculta_calendar.import_repository'),
+      $container->get('date.formatter'),
     );
   }
 
@@ -62,14 +66,21 @@ final class CalendarImportReviewForm extends FormBase {
       if (!$item instanceof CalendarImportedItem) {
         continue;
       }
-      $latest = $this->repository->findLatest($item->get('source')->entity, $item->get('external_uid')->value) ?? $item;
+      $source = $item->get('source')->entity;
+      if (!$source instanceof CalendarImportSource) {
+        // A dangling source reference must not take down the whole queue.
+        continue;
+      }
+      $latest = $this->repository->findLatest($source, $item->get('external_uid')->value) ?? $item;
       if ($latest->get('import_state')->value === 'publicado') {
         continue;
       }
       $key = (string) $item->id();
       $form['items'][$key]['title'] = ['#plain_text' => $latest->get('title')->value];
       $form['items'][$key]['uid'] = ['#plain_text' => $latest->get('external_uid')->value];
-      $form['items'][$key]['start'] = ['#plain_text' => gmdate('d/m/Y H:i', (int) $latest->get('start')->value)];
+      $form['items'][$key]['start'] = [
+        '#plain_text' => $this->dateFormatter->format((int) $latest->get('start')->value, 'custom', 'd/m/Y H:i'),
+      ];
       $form['items'][$key]['state'] = ['#plain_text' => $latest->get('import_state')->value];
       $form['items'][$key]['presence'] = ['#plain_text' => $item->get('source_presence')->value];
       $form['items'][$key]['publish'] = [

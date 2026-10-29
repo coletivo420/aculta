@@ -33,14 +33,18 @@ final class CalendarImportProcessor {
       if (!$event instanceof NormalizedCalendarEvent) {
         throw new \InvalidArgumentException('Calendar import processor accepts only normalized events.');
       }
-      if (isset($incoming[$event->uid])) {
+      // Prefix the array key: a numeric UID would otherwise become an int key
+      // and the strict-typed repository calls would receive an int.
+      $key = 'event:' . $event->uid;
+      if (isset($incoming[$key])) {
         throw new \InvalidArgumentException("UID duplicado no arquivo ICS: {$event->uid}.");
       }
-      $incoming[$event->uid] = $event;
+      $incoming[$key] = $event;
     }
 
     $result = ['created' => 0, 'updated' => 0, 'unchanged' => 0, 'absent' => 0];
-    foreach ($incoming as $uid => $event) {
+    foreach ($incoming as $event) {
+      $uid = $event->uid;
       $current = $this->repository->findCurrent($source, $uid);
       if ($current === NULL) {
         $this->repository->createFromEvent($source, $event);
@@ -72,7 +76,7 @@ final class CalendarImportProcessor {
     // Mark removed UIDs as absent without deleting or unpublishing their items.
     foreach ($this->repository->itemsForSource($source) as $current) {
       $uid = (string) $current->get('external_uid')->value;
-      if (!isset($incoming[$uid]) && $current->get('source_presence')->value !== 'ausente') {
+      if (!isset($incoming['event:' . $uid]) && $current->get('source_presence')->value !== 'ausente') {
         $current->set('source_presence', 'ausente')->save();
         $result['absent']++;
       }

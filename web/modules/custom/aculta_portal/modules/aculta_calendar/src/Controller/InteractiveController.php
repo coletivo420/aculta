@@ -151,11 +151,18 @@ final class InteractiveController extends ControllerBase {
       }
       foreach ($ocorrencias as $ocorrencia) {
         $cancelada = $ocorrencia['cancelada'] || $item->cancelado;
+        $fim = $ocorrencia['fim'];
+        // All-day ranges can carry the same date on both ends; the scheduler
+        // needs a non-zero span to draw the day block.
+        if ($item->diaInteiro && $fim <= $ocorrencia['inicio']) {
+          $fim = $ocorrencia['inicio']->modify('+1 day');
+        }
         $itens[] = [
           'id' => $item->id . ':' . $ocorrencia['original']->getTimestamp(),
           'text' => $cancelada ? '[Cancelado] ' . $item->titulo : $item->titulo,
           'start_date' => $ocorrencia['inicio']->format('Y-m-d H:i'),
-          'end_date' => $ocorrencia['fim']->format('Y-m-d H:i'),
+          'end_date' => $fim->format('Y-m-d H:i'),
+          'all_day' => $item->diaInteiro,
           'local' => $item->local,
           'url' => $item->link,
           'cancelado' => $cancelada,

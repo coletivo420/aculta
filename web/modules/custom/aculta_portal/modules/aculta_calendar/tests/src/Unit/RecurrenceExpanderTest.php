@@ -240,6 +240,68 @@ class RecurrenceExpanderTest extends UnitTestCase {
   }
 
   /**
+   * UNTIL anterior ao início da série é erro explícito, não série vazia.
+   */
+  public function testUntilAntesDoInicioEerro(): void {
+    $this->expectException(RecurrenceException::class);
+    $this->expectExceptionMessage('UNTIL anterior ao início');
+    $this->expansor->expandir(
+      'FREQ=WEEKLY;UNTIL=20261001',
+      $this->data('2026-10-28 19:00'),
+      3600,
+      $this->data('2026-10-01 00:00'),
+      $this->data('2026-12-31 23:59'),
+      $this->semLimite(),
+    );
+  }
+
+  /**
+   * RECURRENCE-ID que move uma ocorrência para dentro da janela é incluído.
+   */
+  public function testOcorrenciaReagendadaEntraNaJanela(): void {
+    $original = $this->data('2026-11-04 19:00');
+    $excecoes = [
+      $original->getTimestamp() => [
+        'inicio' => $this->data('2026-11-05 20:00'),
+        'fim' => $this->data('2026-11-05 21:00'),
+      ],
+    ];
+    $ocorrencias = $this->expansor->expandir(
+      'FREQ=WEEKLY;BYDAY=WE;COUNT=4',
+      $this->data('2026-10-28 19:00'),
+      3600,
+      $this->data('2026-11-05 00:00'),
+      $this->data('2026-11-05 23:59'),
+      $this->semLimite(),
+      $excecoes,
+    );
+    $this->assertSame(['05/11/2026 20:00'], $this->inicios($ocorrencias));
+  }
+
+  /**
+   * RECURRENCE-ID que move uma ocorrência para fora da janela não vaza.
+   */
+  public function testOcorrenciaReagendadaForaDaJanelaNaoVaza(): void {
+    $original = $this->data('2026-11-04 19:00');
+    $excecoes = [
+      $original->getTimestamp() => [
+        'inicio' => $this->data('2026-11-05 20:00'),
+        'fim' => $this->data('2026-11-05 21:00'),
+      ],
+    ];
+    $ocorrencias = $this->expansor->expandir(
+      'FREQ=WEEKLY;BYDAY=WE;COUNT=4',
+      $this->data('2026-10-28 19:00'),
+      3600,
+      $this->data('2026-11-04 00:00'),
+      $this->data('2026-11-04 23:59'),
+      $this->semLimite(),
+      $excecoes,
+    );
+    $this->assertSame([], $ocorrencias);
+  }
+
+  /**
    * Regra inválida chega ao expansor como RecurrenceException.
    */
   public function testRegraInvalidaNaoExpande(): void {

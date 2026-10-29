@@ -59,7 +59,8 @@ final class IcsController extends ControllerBase {
     if ($ate < $de) {
       return new Response('Período inválido: a data final é anterior à inicial.', 400, ['Content-Type' => 'text/plain; charset=UTF-8']);
     }
-    if ($de->diff($ate)->days > self::MAXIMO_DIAS) {
+    // Inclusive window: a 366-day difference would include 367 days.
+    if ($de->diff($ate)->days >= self::MAXIMO_DIAS) {
       return new Response('Período acima de ' . self::MAXIMO_DIAS . ' dias.', 400, ['Content-Type' => 'text/plain; charset=UTF-8']);
     }
 

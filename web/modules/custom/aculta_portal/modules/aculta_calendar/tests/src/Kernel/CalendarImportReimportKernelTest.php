@@ -114,6 +114,31 @@ final class CalendarImportReimportKernelTest extends KernelTestBase {
   }
 
   /**
+   * Numeric external UIDs are imported without becoming integer array keys.
+   */
+  public function testNumericUidIsImported(): void {
+    $source = $this->source();
+    $processor = $this->container->get('aculta_calendar.import_processor');
+
+    $result = $processor->process($source, [
+      $this->event('Primeiro', '20261028'),
+      $this->event('Segundo', '20261029'),
+    ]);
+
+    self::assertSame(['created' => 2, 'updated' => 0, 'unchanged' => 0, 'absent' => 0], $result);
+    $repository = $this->container->get('aculta_calendar.import_repository');
+    self::assertNotNull($repository->findCurrent($source, '20261028'));
+    self::assertNotNull($repository->findCurrent($source, '20261029'));
+
+    $again = $processor->process($source, [
+      $this->event('Primeiro', '20261028'),
+      $this->event('Segundo', '20261029'),
+    ]);
+    self::assertSame(2, $again['unchanged']);
+    self::assertSame(0, $again['absent']);
+  }
+
+  /**
    * Describes the source value.
    */
   private function source(): CalendarImportSource {
@@ -130,10 +155,10 @@ final class CalendarImportReimportKernelTest extends KernelTestBase {
   /**
    * Describes the event value.
    */
-  private function event(string $title = 'Evento de teste'): NormalizedCalendarEvent {
+  private function event(string $title = 'Evento de teste', string $uid = 'uid@example.invalid'): NormalizedCalendarEvent {
     $timezone = new \DateTimeZone('America/Sao_Paulo');
     return new NormalizedCalendarEvent(
-      'uid@example.invalid',
+      $uid,
       new \DateTimeImmutable('2026-10-28 14:00:00', $timezone),
       new \DateTimeImmutable('2026-10-28 15:00:00', $timezone),
       FALSE,
