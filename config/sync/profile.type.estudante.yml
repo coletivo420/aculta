@@ -1,7 +1,9 @@
 uuid: 58d7c31e-bdc8-4fbb-9e8a-ff23d9f59d41
 langcode: pt-br
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - aculta_user
 id: estudante
 label: Estudante
 display_label: 'Categoria de estudante'

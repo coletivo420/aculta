@@ -1,3 +1,23 @@
+## 0.4.0-dev.91 — instalação limpa e rollback do módulo (2026-10-29)
+
+- Novo `AcultaUserInstallRollbackKernelTest` instala o `aculta_user` a partir de
+  zero sobre as dependências reais de User, Profile, Node e Comment: schema
+  próprio (`aculta_user_agreement`, `aculta_user_nickname`), as quatro entidades,
+  os sete profile types, as field storages, serviços, rotas e permissões.
+- O teste cobre a proteção de rollback: o `uninstall` é recusado enquanto houver
+  registro em `aculta_friendship`; removido o registro, o `uninstall` derruba
+  tabelas, entidades, configuração simples e profile types.
+- `profile.type.*` (config/install e `config/sync`) passam a declarar
+  `dependencies.module: aculta_user`, para que o rollback remova os bundles em
+  vez de deixá-los órfãos. As field storages do Profile não declaram o módulo e
+  permanecem após o uninstall: o Core recalcula as dependências de field storage
+  e elas guardam dados de membros.
+- Validação: Unit 142/552 PASS; Kernel do módulo 42/570 PASS (18 depreciações de
+  Core/contrib); PHPCS Drupal/DrupalPractice e `php -l` do teste PASS. Runtime
+  intocado; `config:import` das dependências novas pendente.
+- A instalação limpa da cadeia completa Portal↔Mercado Pago continua fora do
+  escopo do `aculta_user` e depende de janela operacional.
+
 ## ADM2 — lista administrativa mínima de pessoas
 
 - Criada a lista restrita a `administer users`, com nome de exibição, apelido e situação da conta; sem e-mail, documento ou endereço.

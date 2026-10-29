@@ -1,7 +1,9 @@
 uuid: 12a809cd-94ef-49ad-88c5-525b9b8a9ced
 langcode: pt-br
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - aculta_user
 id: administrator
 label: Administrador
 display_label: 'Perfil de administrador'
