@@ -60,6 +60,10 @@ Institution Bar e Domain Header são elementos do shell ACULTA, não substitutos
 para SDC de conteúdo Studio. Seus contratos e consumers continuam independentes
 desta lista.
 
+O rodapé global também é composição do tema, não SDC; sua grade móvel começa em
+uma coluna e amplia progressivamente sem alterar blocos ou ordem DOM. A auditoria
+de cobertura por purpose e as evidências ficam em `mobile-first-audit.md`.
+
 
 ## UI Styles
 

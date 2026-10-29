@@ -7,6 +7,16 @@ A auditoria original foi registrada no checkout servidor `ded8a6181`. Em
 varredura abaixo cobre os arquivos atuais do tema, mas não altera a evidência
 de runtime. Nenhuma escrita persistente foi executada no Runtime.
 
+### THEME-MF2 — rodapé global (2026-10-29)
+
+`footer.css` declara a grade em uma coluna como base móvel. A partir de
+`36rem` (576 CSS px), a grade passa a duas colunas; a partir de `62rem`
+(992 CSS px), restaura a composição anterior de quatro colunas com a coluna da
+marca em proporção dupla. A ordem DOM, os blocos e a tipografia não mudam.
+`npm run lint:css` e validações estáticas são executados. Comparação visual
+Firefox e inspeção das páginas reais estão DEFERRED enquanto sessões visíveis
+concorrentes ocupam o ambiente. Este resultado não aprova THEME-MF3.
+
 ### THEME-MF2 — Perfil público (2026-10-29)
 
 `public-profile.css` declara o perfil empilhado e seus espaçamentos compactos

@@ -6,7 +6,7 @@
 .aculta-footer :is(h1, h2, h3, h4, h5, h6) { color: var(--aculta-text-inverse); font-family: var(--aculta-font-display); }
 
 /* Footer content composition and responsive layout. */
-.aculta-footer .region-footer { display: grid; grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)); gap: 2rem; }
+.aculta-footer .region-footer { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; }
 .aculta-footer-brand { font: 600 1.5rem/1.3 var(--aculta-font-display); max-width: 26ch; }
 .aculta-footer-description { margin-block: 1rem; max-width: 35ch; }
 .aculta-footer .aculta-institution-details { font-size: 0.875rem; }
@@ -29,9 +29,9 @@
 .aculta-footer .region-footer .nav-link { display: inline-block; width: fit-content; min-height: 2.75rem; font-size: 0.95rem; }
 .aculta-footer .region-footer .menu { padding-inline-start: 0; list-style: none; }
 
-@media (max-width: 991.98px) {
+@media (min-width: 36rem) {
   .aculta-footer .region-footer { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 575.98px) {
-  .aculta-footer .region-footer { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 62rem) {
+  .aculta-footer .region-footer { grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)); }
 }

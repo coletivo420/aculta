@@ -638,3 +638,11 @@ read-only do Messenger agora injeta CSS candidato e verifica a fronteira usando
 o viewport efetivo do Firefox. Execução DEFERRED pelas sessões concorrentes;
 Alertas e Carrinho ainda precisam de consumidores visuais próprios. Ver
 `mobile-first-audit.md` e `tests/browser/aculta-messenger/README.md`.
+
+### THEME-MF2 — rodapé global
+
+A grade do rodapé passa a uma coluna como base, duas colunas em `min-width:
+36rem` e quatro colunas em `min-width: 62rem`, mantendo ordem DOM e conteúdo.
+Lint CSS/validação estática executados; comparação no Firefox e páginas reais
+DEFERRED por sessões concorrentes. Não aprova THEME-MF3; ver
+`mobile-first-audit.md`.

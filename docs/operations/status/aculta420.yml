@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.20
+version: 0.7.0-dev.21
 state: Dev
 progress_note: >-
-  0.7.0-dev.20 / THEME-MF2: gavetas compartilhadas de Messenger/alertas/carrinho usam viewport inteira como base e restauram limite 420px após 560 CSS px. Smoke Firefox Messenger ampliado para override candidato e assertiva 560/561px. Fixture visual e página real DEFERRED por 13 sessões concorrentes; MF3 não aprovado.
-next_phase: 'Repetir Firefox para gavetas utilitárias, Webform, PDF, carrossel, autenticação e Perfil quando sessões concorrentes encerrarem; revisar rotas reais após sincronização/cache pelo owner. Continuar demais superfícies MF2 antes de THEME-MF3.'
+  0.7.0-dev.21 / THEME-MF2: rodapé global usa uma coluna como base, duas a partir de 576px e quatro a partir de 992px, preservando a ordem DOM. Firefox comparativo e páginas reais DEFERRED por sessões concorrentes; MF3 não aprovado.
+next_phase: 'Repetir Firefox para rodapé, gavetas utilitárias, Webform, PDF, carrossel, autenticação e Perfil quando sessões concorrentes encerrarem; revisar rotas reais após sincronização/cache pelo owner. Continuar demais superfícies MF2 antes de THEME-MF3.'

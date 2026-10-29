@@ -1,3 +1,8 @@
+# 0.7.0-dev.21 — migrar a grade do rodapé para mobile-first (2026-10-29)
+
+- O rodapé global começa em uma coluna; `min-width: 36rem` restaura duas colunas e `min-width: 62rem` restaura a grade ampla de quatro colunas. Ordem DOM e conteúdo não mudam.
+- Lint CSS e validações estáticas são executados; Firefox comparativo e inspeção das páginas reais DEFERRED por sessões Firefox concorrentes. THEME-MF3 permanece pendente.
+
 # 0.7.0-dev.20 — migrar gavetas utilitárias compartilhadas para mobile-first (2026-10-29)
 
 - Gavetas de Messenger, alertas e carrinho agora ocupam a viewport como base; `min-width: 35.0625rem` restaura o limite de 420px anterior. Smoke real da gaveta Messenger ampliado com injeção do CSS candidato e validação de 560/561px.
