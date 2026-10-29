@@ -405,3 +405,16 @@ GanjaLab aponta conteúdo de Conta e Green Stash requer fixture autorizada. Ver
 Uma repetição instrumentada encontrou Institution Bar presente nas sete rotas
 renderizadas, Domain Header ausente nas oito URLs capturadas e marcadores
 `data-aculta-studio` somente em Marley. Nenhum gate MF3/F11 foi aprovado.
+
+### Evidência Studio ampliada — 2026-10-29
+
+A grade Firefox de nove larguras foi executada em oito URLs Studio (72
+capturas) e na homepage pública upstream (nove). As sete telas que renderizaram
+não apresentaram overflow horizontal medido; Hub vazio, GanjaLab com conteúdo
+de Conta e Green Stash com acesso negado persistem em todos os tamanhos. A
+Institution Bar apareceu nas sete páginas com conteúdo, o Domain Header não
+apareceu em nenhuma URL e marcadores Studio foram encontrados somente em Marley.
+A captura foi feita no checkout servidor `f2708e60f`, com árvore versionada
+visual idêntica à PR em `5734bed87`, mas havia trabalho local de Eventos; logo a
+evidência não é gate global nem homologação da cabeça atual da PR. MF3/F11
+continuam pendentes.

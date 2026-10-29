@@ -572,3 +572,17 @@ presente nas sete rotas que renderizaram, mas `.aculta-header` ausente em todas;
 apenas Marley expõe marcadores `[data-aculta-studio]`. A disponibilidade do
 Domain Header em `account` e a política de marcadores das outras áreas ficam
 registradas como Pede-A, não como workaround da Frente B.
+
+### Atualização visual F0 — grade responsiva expandida
+
+Em 2026-10-29, Firefox ESR visível capturou as oito URLs Studio nas nove
+larguras do gate de viewport (72 capturas Studio, mais nove da referência
+pública OpenCulturas). Nas rotas que renderizaram, scroll width coincidiu com
+o viewport; `/studio` ficou vazio, `/studio/ganjalab` continuou mostrando Minha
+Conta e `/estudio/loja` negou acesso à conta sintética em todos os tamanhos.
+Institution Bar apareceu nas sete páginas com conteúdo; Domain Header faltou
+nas oito URLs; marcadores `data-aculta-studio` apareceram só em Marley. O
+servidor estava no head `f2708e60f`, com arquivos de tema/Studio/Commerce
+idênticos à PR então em `5734bed87`, mas tinha mudanças locais de Eventos. As
+capturas e limitações estão em `studio-visual/upstream-inventory.md`; esta
+execução aumenta a evidência responsiva, mas não fecha F0/MF0 nem permite F1/MF1.

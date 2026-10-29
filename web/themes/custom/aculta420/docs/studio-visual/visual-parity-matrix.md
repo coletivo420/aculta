@@ -39,3 +39,19 @@ que pertence a código/rota/serviço fora do ownership da Frente B.
 - **Parcial:** contraste, tipografia, geometria e estados medidos em capturas equivalentes; limitações registradas.
 - **Fiel:** comparação de tela/estado/viewport equivalente revisada, sem regressões de acessibilidade ou shell.
 - **Aprovado:** gate F7 completo, evidências visíveis e validação do responsável. Nenhum status inicial desta matriz significa aprovado.
+
+## Atualização de captura Firefox — nove larguras (2026-10-29)
+
+A captura expandida `$SUITE_OUT/aculta-ocs-f0-responsive-20261029/baseline.json`
+contempla 320/360/390/599/600/768/1024/1280/1440 nas oito URLs Studio e na
+referência pública OpenCulturas. No conjunto Studio: zero overflow medido nas
+sete páginas que renderizaram; o hub está vazio nas nove larguras; Green Stash
+retorna acesso negado nas nove para a conta sintética; GanjaLab ainda apresenta
+Minha Conta, sem o painel LMS. Institution Bar presente nas sete rotas
+renderizadas, Domain Header ausente nas oito URLs, marcadores `[data-aculta-studio]`
+somente em Marley. A execução foi contra o checkout servidor `f2708e60f`, cuja
+árvore versionada de tema/Studio/Commerce coincidia com a PR `5734bed87`; havia
+alterações locais de Eventos, então esta evidência não aprova o head completo
+nem a regressão global. Os screenshots Marley 320/1440 foram inspecionados; as
+capturas não equivalem a referência autenticada upstream nem aprovam a
+fidelidade ou os gates de acessibilidade. Status geral continua **PARCIAL**.

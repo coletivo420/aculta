@@ -173,3 +173,36 @@ purpose aos estilos efetivamente carregados; tabela de breakpoints e larguras
 fixas que considere CSS inline/HTML/JS; baseline visual global por purpose; e
 captura Studio autenticada pareada. Portanto MF0/F0 continuam parciais e não
 liberam implementação além de decisões estéticas já documentadas.
+
+## OCS-F0 / THEME-MF0 — captura responsiva expandida (2026-10-29)
+
+Execução Firefox ESR visível com `OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440`,
+`ACULTA_ROOT=/home/piradopirata/projetos/aculta` e URI do servidor de
+desenvolvimento. O checkout servido estava no commit `f2708e60f`; no momento
+da captura, a branch PR estava em `5734bed87`. Os arquivos versionados do tema,
+Studio e Commerce desses dois heads eram idênticos; o checkout servidor também
+tinha alterações locais não commitadas somente no módulo Eventos. Portanto,
+esta é evidência responsiva dos arquivos visuais compartilhados, mas não é uma
+homologação do head completo nem de Eventos.
+
+O JSON contém 81 registros e 81 PNGs fora do repositório em
+`$SUITE_OUT/aculta-ocs-f0-responsive-20261029/`: nove larguras da homepage
+pública OpenCulturas e nove para cada uma das oito URLs Studio. Todas as páginas
+Studio renderizadas tiveram `documentScrollWidth == documentWidth` e
+`bodyScrollWidth == width` nas nove larguras (nenhum overflow horizontal
+medido). `/studio` permaneceu documento vazio nas nove larguras;
+`/estudio/loja` mostrou acesso negado para a conta sintética nas nove;
+`/studio/ganjalab` continuou renderizando Minha Conta em vez do painel LMS. As
+outras cinco rotas — Marley, WE Sativa, Conta, Perfil e Planos Mercado Pago —
+renderizaram nas nove larguras. A homepage pública upstream também renderizou
+nas nove e não é equivalente ao dashboard autenticado OpenCulturas.
+
+A Institution Bar estava presente nas sete URLs que renderizaram conteúdo; o
+Domain Header `.aculta-header` esteve ausente em todas as oito URLs, inclusive
+o hub vazio. Os marcadores `[data-aculta-studio]` apareceram somente em Marley.
+Screenshots de Marley em 320 e 1440 px foram inspecionados manualmente; outros
+screenshots foram guardados para revisão posterior. A conta sintética não
+submeteu formulários. Isso prova apenas medidas de largura/scroll e estados
+capturados; não prova fidelidade comparativa, acessibilidade, zoom, teclado,
+modos claro/escuro, reduced motion, AJAX/no-JS, outros purposes ou conteúdo LMS/
+Commerce autorizado. O status permanece **PARCIAL**, não PASS.
