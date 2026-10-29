@@ -262,3 +262,15 @@ Fonte: `docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md`. Preservar
 - [ ] **OC-B/P1:** modalidade virtual/híbrida, referência online, idade mínima, segurança, horário de portas, status da data, horário estruturado e acessibilidade como dados; instalar novas dependências só após aprovação própria. Updates idempotentes e testes Kernel.
 - [ ] **OC-B/P1:** ligar SDCs existentes `accessibility-badges` e `event-page-five-regions` a consumidor real; apurar duplicidade de H1, teclado, zoom 200% e 320 px.
 - [ ] **OC-C/D:** organizações verificadas, relações/apoios autorizados e imprensa, respeitando separação de conta/perfil/organização. Sem alterar regras de ingressos, frete ou pagamento nesta onda.
+
+## RC — evidência do candidato (2026-10-29, 0.1.0-rc.1)
+
+- Candidato `89efeb5b7` servido no checkout de teste com `drush cr`.
+- Smoke do purpose `eventos`: 129/129 verificações em 1280/390/320 px reais,
+  com modo escuro; o mapa não exibe o texto inline de IP e mantém os links da
+  Política de Privacidade (D-52).
+- Suíte 55 testes/670 assertions PASS (26 depreciações); PHPCS 0 erros e lint
+  do `MapController` PASS.
+- OAuth do OSM validado e ensaio de escrita fictícia com limpeza: nó
+  `14331309082`, changesets `191197897`, `191197899` e `191197900`.
+- Próxima etapa: validação Alpha após autorização de release.

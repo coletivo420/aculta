@@ -1,5 +1,17 @@
 # Changelog — aculta_events
 
+## 0.1.0-rc.1 — candidato RC (2026-10-29)
+
+- Candidato `89efeb5b7` servido no checkout de teste com `drush cr`.
+- Smoke do purpose `eventos`: 129/129 verificações PASS em 1280/390/320 px
+  reais, com modo escuro; o mapa não exibe mais o texto inline de IP e mantém
+  dois links para a Política de Privacidade (D-52).
+- Suíte Events: 55 testes/670 assertions PASS (26 depreciações); PHPCS 0 erros
+  e `php -l` do `MapController` PASS.
+- OAuth do OSM validado no Runtime e ensaio de escrita fictícia concluído com
+  limpeza (nó `14331309082`, changesets `191197897`/`191197899`/`191197900`).
+- Próxima etapa: validação Alpha após autorização de release (RELEASE-LIFECYCLE).
+
 ## 0.1.0-dev.5 — aviso do mapa e OAuth do OSM validados (2026-10-29)
 
 - D-52: a página do mapa não exibe mais o texto inline de envio de IP; ficam a

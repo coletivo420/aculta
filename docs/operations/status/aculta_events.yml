@@ -1,15 +1,14 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.5
-state: Dev
+version: 0.1.0-rc.1
+state: RC
 progress_note: >-
-  Dev.5: D-52 aplicada — a página do mapa não exibe mais o texto inline de envio
-  de IP; ficam a atribuição do provedor e o link para a Política de Privacidade,
-  e o Kernel do mapa passa a exigir o link e rejeitar o texto antigo. OAuth do
-  OSM validado no Runtime: token conectado, ambiente efetivo production (D-45) e
-  leitura real de node/1 (versão 47) sem escrita. Suíte Events 55 testes/670
-  assertions PASS (26 depreciações); PHPCS 0 erros e lint do MapController PASS.
-  Revalidação visual do aviso pendente porque o checkout aguarda a outra sessão.
-  Dev.4: UNTIL anterior ao início da série é recusado no formulário, com a mesma
-  regra no expansor. Dev.3: smoke do purpose eventos 129/129 em 1280/390/320 px
-  reais. Runtime sem atualização.
-next_phase: 'Servir o candidato dev.5 quando o checkout estiver livre, repetir o smoke do mapa e de eventos e, se passar, promover a 0.1.0-rc.1; o ensaio de escrita fictícia no OSM depende da confirmação do diff.'
+  RC 0.1.0-rc.1 (2026-10-29): candidato 89efeb5b7 servido no checkout de teste
+  com drush cr. Smoke do purpose eventos 129/129 verificações PASS em
+  1280/390/320 px reais com modo escuro; o mapa não exibe mais o texto inline de
+  envio de IP e mantém os links para a Política de Privacidade (D-52). Suíte
+  Events 55 testes/670 assertions PASS (26 depreciações); PHPCS 0 erros e lint
+  do MapController PASS. OAuth do OSM validado no Runtime e ensaio de escrita
+  fictícia concluído com limpeza (nó 14331309082; changesets 191197897,
+  191197899 e 191197900). Runtime sem atualização de configuração; a conta e o
+  conteúdo de teste foram removidos.
+next_phase: 'Aguardar autorização explícita de release para validar o candidato em Alpha (*.aculta.org) e registrar as evidências do ambiente; nenhum item de código permanece aberto no RC.'
