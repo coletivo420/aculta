@@ -420,3 +420,6 @@ services:
   aculta_portal.checkout_mapping_validator:
     class: Drupal\aculta_portal\Checkout\CheckoutMappingValidator
     arguments: ['@aculta_portal.checkout_configuration_resolver']
+
+  aculta_portal.card_variation_manager:
+    class: Drupal\aculta_portal\Editorial\CardVariationManager

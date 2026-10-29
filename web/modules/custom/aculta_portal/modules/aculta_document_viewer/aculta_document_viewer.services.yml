@@ -62,3 +62,7 @@ services:
 
   aculta_document_viewer.spreadsheet_file_validator:
     alias: aculta_document_viewer.sheet_file_validator
+
+  aculta_document_viewer.readable_mime:
+    class: Drupal\aculta_document_viewer\Document\ReadableMime
+    arguments: ['@string_translation']

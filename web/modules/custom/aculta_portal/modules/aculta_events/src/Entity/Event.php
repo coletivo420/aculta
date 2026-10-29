@@ -121,6 +121,20 @@ final class Event extends ContentEntityBase {
     $fields['field_seguranca'] = BaseFieldDefinition::create('string_long')
       ->setLabel(new TranslatableMarkup('Informações de segurança e orientações'));
 
+    // Recursos editoriais adicionais (ARQ-08 / OpenCulturas 3.1.5).
+    $fields['field_apoiadores'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(new TranslatableMarkup('Apoiadores e patrocinadores'))
+      ->setDescription(new TranslatableMarkup('Lista estruturada de parceiros, cotas de patrocínio e links.'));
+
+    $fields['field_apoiadores_autorizados'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('Autorização para exibição de marcas'))
+      ->setDescription(new TranslatableMarkup('Confirma que o organizador possui termo de autorização para o uso e exibição pública das marcas/logotipos.'))
+      ->setDefaultValue(FALSE);
+
+    $fields['field_citacoes_imprensa'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(new TranslatableMarkup('Menções na imprensa'))
+      ->setDescription(new TranslatableMarkup('Clipping e menções de veículos de comunicação sobre o evento.'));
+
     return $fields;
   }
 

@@ -41,3 +41,6 @@ services:
     class: Drupal\aculta_events\ContentIndex\LocationContentIndexProvider
     tags:
       - { name: aculta_index.provider }
+  aculta_events.editorial_presenter:
+    class: Drupal\aculta_events\Editorial\EventEditorialPresenter
+    arguments: ['@string_translation']
