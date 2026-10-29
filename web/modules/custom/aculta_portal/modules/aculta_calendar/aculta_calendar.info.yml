@@ -1,6 +1,6 @@
 name: ACULTA Calendário
 type: module
-version: '0.1.0-dev.3'
+version: '0.1.0-dev.4'
 description: 'Motor de recorrência, exportação .ics, embed e visões de agenda e de mês. Fornece conteúdo a partir de provedores de itens (ADR-031).'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3

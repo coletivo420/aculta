@@ -1,7 +1,18 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.3
+version: 0.1.0-dev.4
 state: Dev
 progress_note: >-
-  Dev.3: CA0–CA6, ADM8, DH-A–DH-F e I1–I8; Controller Interactive e EmbedHosts usam tokens `data-portal-ui`, mapeados no tema. Gate módulo–tema PASS (3397 verificações), Calendar 117/399 PASS (2 depreciações); PHPCS Drupal/DrupalPractice e lint dos arquivos tocados PASS.
-  CA5 LMS presente desde 7c37023ef. PHPCS Drupal/DrupalPractice passa nos 60 PHP, incluindo `InteractiveController.php`. A revisão Firefox autenticada do painel ADM8 segue pendente.
-next_phase: 'Obter/reusar conta com `administer aculta calendar embedding` para revisão visual Firefox ESR de ADM8; revisar calendário interativo no candidato servido, então concluir revisão de código antes de RC. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_calendar/docs/ROADMAP.md).'
+  Dev.4: revisão visual no candidato servido 355e48a89 (calendar dev.1). ADM8
+  autenticada em /painel-administrativo/calendario/incorporacao com conta
+  descartável de permissão única: anônimo 403, autenticado 200, tabela somente
+  leitura com 3 cabeçalhos e 10 linhas, zero formulários ou botões de edição e
+  sem overflow em 1270 e 500 px reais; conta e papel removidos no fim. A visão
+  interativa também foi revalidada no mesmo candidato: 200, DHTMLX 7.2.15,
+  grade com 7 dias, alto contraste alternando para contrast-black, fallback de
+  agenda abaixo de md e sem overflow. Scripts em
+  tests/browser/aculta-calendar-admin e tests/browser/aculta-calendar-interactive.
+  Suíte atual no worktree: Calendar 117/399 PASS (2 depreciações); PHPCS e lint
+  já PASS no dev.3. O checkout servido ainda é o dev.1, então o markup
+  data-portal-ui do dev.3 precisa ser revalidado quando esse commit for servido.
+  Nenhuma atualização ou config:import no Runtime.
+next_phase: 'Servir o candidato dev.3 no checkout de teste (exige autorização, backup e drush cr) para repetir ADM8 e a visão interativa no markup data-portal-ui; depois concluir a revisão de código antes de RC. O servidor servido hoje é 355e48a89 (calendar dev.1).'

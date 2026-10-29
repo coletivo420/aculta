@@ -8,3 +8,12 @@ Submódulo reutilizável de calendário (ADR-031, D-20). Fornece o motor de reco
 - Visão interativa (DHTMLX Scheduler, GPL): [docs/DHTMLX.md](docs/DHTMLX.md) e [docs/ESTUDO-DHTMLX-SCHEDULER.md](docs/ESTUDO-DHTMLX-SCHEDULER.md)
 - Documentação geral: [docs/README.md](docs/README.md)
 - Histórico de alterações: [CHANGELOG.md](CHANGELOG.md)
+
+## Validação visual (2026-10-29)
+
+ADM8 autenticada e visão interativa foram revisadas no candidato servido `355e48a89`
+(calendar dev.1). Scripts reutilizáveis:
+[tests/browser/aculta-calendar-admin](../../../../../../tests/browser/aculta-calendar-admin/README.md)
+e [tests/browser/aculta-calendar-interactive](../../../../../../tests/browser/aculta-calendar-interactive/README.md).
+O checkout servido ainda é anterior ao dev.3; o markup `data-portal-ui` deve ser
+revalidado quando esse commit for servido.

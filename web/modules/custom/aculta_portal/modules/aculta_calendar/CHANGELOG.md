@@ -1,5 +1,21 @@
 # Changelog — aculta_calendar
 
+## 0.1.0-dev.4 — revisão visual ADM8 e visão interativa (2026-10-29)
+
+- ADM8 revisada no candidato servido `355e48a89` com conta descartável de
+  permissão única: anônimo 403, autenticado 200, tabela somente leitura com três
+  cabeçalhos e 10 linhas, sem formulários/botões e sem overflow em 1270 e 500 px
+  reais. A conta e o papel foram removidos ao final.
+- Visão interativa revalidada no mesmo candidato: 200, DHTMLX 7.2.15, grade com
+  sete dias, alto contraste alternando para `contrast-black`, fallback de agenda
+  abaixo de `md` e sem overflow.
+- Scripts reutilizáveis: `tests/browser/aculta-calendar-admin/` e
+  `tests/browser/aculta-calendar-interactive/`, com os artefatos fora do
+  repositório.
+- Suíte atual no worktree: 117 testes/399 assertions PASS (2 depreciações).
+  O candidato servido é anterior ao dev.3; o markup `data-portal-ui` será
+  revalidado quando esse commit for servido. Nenhum Runtime foi alterado.
+
 ## 0.1.0-dev.3 — fronteira de apresentação via tokens (2026-10-29)
 
 - Interactive e EmbedHosts usam `data-portal-ui` em render arrays neutros; IDs e
