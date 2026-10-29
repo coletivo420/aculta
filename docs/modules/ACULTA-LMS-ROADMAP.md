@@ -457,6 +457,16 @@ Content Index e `updatedb:status` sem pendências. Nenhum update ou conteúdo fo
 aplicado ao Runtime nesta verificação. A revisão visual integrada e o boot da
 cadeia completa dos owners seguem pendentes; não promover a RC.
 
+**Revisão visual do campo `field_lms_videos` (2026-10-29):** X11 e o host
+`cursos.aculta.toca.net.br` responderam; o runner criou um Group e um Media
+temporários pela Entity API. O comando `drush uli --uid=1` para abrir sessão
+admin excedeu 60 segundos antes da navegação e dos asserts visuais. A limpeza
+foi confirmada por SQL: Group 87 e Media 270 ausentes; 607 tabelas antes/depois;
+`updatedb:status` sem pendências. Não houve alteração de schema/configuração.
+O teste visual permanece bloqueado até resolver o bootstrap de `uli`; o runner
+está em `tests/browser/aculta-lms-resources/` e foi ajustado para salvar o
+resultado e manter IDs apenas se a limpeza falhar.
+
 Em `aculta_lms_resources` 0.1.0-dev.12, o Kernel do Content Index consulta a
 relação outgoing `course_gallery` com providers LMS e Gallery carregados dos
 YAMLs owner. Estudante autorizado por `take course` e educador por `grade
