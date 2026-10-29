@@ -75,8 +75,16 @@ final class EventPageController extends ControllerBase {
     foreach ($ocorrencias as $ocorrencia) {
       $local = $ocorrencia['data']->get('field_local')->entity;
       $texto = Html::escape($ocorrencia['inicio']->format('d/m/Y H:i') . ' às ' . $ocorrencia['fim']->format('H:i'));
-      if ($local !== NULL) {
-        $texto .= ' — ' . Html::escape((string) $local->label());
+      if ($local instanceof EventLocation) {
+        if ($local->access('view', $this->currentUser())) {
+          $localUrl = Url::fromRoute('aculta_events.location_canonical', [
+            'aculta_event_location' => $local->id(),
+          ])->toString();
+          $texto .= ' — <a href="' . Html::escape($localUrl) . '">' . Html::escape((string) $local->label()) . '</a>';
+        }
+        else {
+          $texto .= ' — ' . Html::escape((string) $local->label());
+        }
         $tags = array_merge($tags, $local->getCacheTags());
       }
       if ($ocorrencia['cancelada'] || $evento->get('field_status')->value === 'cancelado') {

@@ -31,20 +31,71 @@ final class LocationCatalogue {
    * @return array<int, array{local: \Drupal\aculta_events\Entity\EventLocation, endereco: string}>
    *   Lista de locais com seus respectivos endereços formatados.
    */
-  public function busca(?int $tipo, ?AccountInterface $account = NULL): array {
+  public function busca(?int $tipo = NULL, ?AccountInterface $account = NULL): array {
+    $res = $this->buscaPaginada($tipo, NULL, 0, 0, $account);
+    return $res['items'];
+  }
+
+  /**
+   * Busca locais com filtros e paginação (LOC-05).
+   *
+   * @param int|null $tipo
+   *   Filtro por ID do termo de tipo de local.
+   * @param string|null $termo
+   *   Filtro de busca textual por nome do local.
+   * @param int $page
+   *   Número da página (0-indexed).
+   * @param int $limit
+   *   Quantidade máxima por página (0 para sem limite).
+   * @param \Drupal\Core\Session\AccountInterface|null $account
+   *   Conta para verificação de acesso.
+   *
+   * @return array{items: array<int, array{local: \Drupal\aculta_events\Entity\EventLocation, endereco: string}>, total: int}
+   *   Itens paginados e total de registros válidos.
+   */
+  public function buscaPaginada(
+    ?int $tipo = NULL,
+    ?string $termo = NULL,
+    int $page = 0,
+    int $limit = 12,
+    ?AccountInterface $account = NULL,
+  ): array {
     $conta = $account ?? $this->currentUser;
     $storage = $this->entityTypeManager->getStorage('aculta_event_location');
-    $consulta = $storage->getQuery()->sort('title')->accessCheck(FALSE);
-    if ($tipo !== NULL) {
+    $consulta = $storage->getQuery()->sort('title', 'ASC')->accessCheck(FALSE);
+
+    if ($tipo !== NULL && $tipo > 0) {
       $consulta->condition('field_tipo.target_id', $tipo);
     }
-    $saida = [];
-    foreach ($storage->loadMultiple($consulta->execute()) as $local) {
+    if ($termo !== NULL && trim($termo) !== '') {
+      $consulta->condition('title', '%' . trim($termo) . '%', 'LIKE');
+    }
+
+    $allIds = $consulta->execute();
+    if (empty($allIds)) {
+      return ['items' => [], 'total' => 0];
+    }
+
+    /** @var \Drupal\aculta_events\Entity\EventLocation[] $locais */
+    $locais = $storage->loadMultiple($allIds);
+    $validos = [];
+
+    foreach ($locais as $local) {
       if ($local instanceof EventLocation && ($conta === NULL || $local->access('view', $conta))) {
-        $saida[] = ['local' => $local, 'endereco' => $this->enderecoPublico($local)];
+        $validos[] = [
+          'local' => $local,
+          'endereco' => $this->enderecoPublico($local),
+        ];
       }
     }
-    return $saida;
+
+    $total = count($validos);
+    $items = $limit > 0 ? array_slice($validos, $page * $limit, $limit) : $validos;
+
+    return [
+      'items' => $items,
+      'total' => $total,
+    ];
   }
 
   /**
