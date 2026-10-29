@@ -18,10 +18,10 @@
 
 Formulário nativo (`node/add/revista`): criação com título, chamada, resumo, corpo (CKEditor 5), autoria e categoria editoriais, imagem via media library e seletor de moderação; envio inválido gera erros do Form API (principal e secundário) sem gravar node; recarga limpa do formulário; edição salvando nova revisão; erro em `field_references` abre o grupo "Propriedades secundárias" e mantém o erro visível; pré-visualização pela rota `entity.node.preview`; histórico de revisões; transições `draft → review → published → archived → draft`; acesso negado a anônimo e a `email_confirmed` sem papel editorial; envio do formulário de edição com JavaScript desabilitado, preservando a moderação e a mídia. Nenhum editor paralelo foi criado.
 
-## ARQ-08B - PARTIAL
+## ARQ-08B - PASS
 
 - **Full display e SDC `aculta420:revista-publication`: PASS.** Chamada, resumo, imagem, categoria, autoria, cartão do autor, 5 links de compartilhamento, metatag description, og:image, canonical e JSON-LD renderizam na publicação no propósito `magazine` (`revista.aculta.toca.net.br`). Sem overflow horizontal medido em 1280 px e no mínimo de 500 px do Firefox ESR (a janela não reduz a 320 px neste ambiente).
-- **Listagem (`revista_sessoes`, view mode `teaser`): PARTIAL/BLOCKED no tema.** A listagem exibe título, categoria, corpo e "Leia mais", mas o display `teaser` oculta `field_media_image`, `field_subtitle` e `field_summary`; o ACULTA420 não possui `node--revista--teaser` e o SDC `editorial-card` não tem slot de imagem nem é consumido pela Revista. Handoff: a frente de tema/Studio precisa definir o cartão (imagem + chamada + resumo) antes de alterar o display.
+- **Listagem (`revista_sessoes`, view mode `teaser`): PASS.** Com autorização do responsável para avançar pelo tema, o display `teaser` passou a expor `field_media_image`, `field_subtitle` e `field_summary`; o ACULTA420 ganhou `templates/node--revista--teaser.html.twig`, que reutiliza o SDC compartilhado `aculta420:card` (sem SDC alternativo, conforme `docs/component-catalog.md`) e a library `aculta420/revista-listing` (CSS mobile-first). O cartão renderiza capa 16:9, categoria, título, chamada, resumo e link de leitura, sem overflow em 1280 px e 500 px reais. Gates do tema: fundação 349 checks PASS, SDC schema 54 componentes PASS, shell 11 checks PASS.
 - **Caso sem imagem:** os campos são obrigatórios no bundle; `RevistaContentHooks::metatagsAlter()` só atua em nodes legados sem imagem e está coberto por Unit.
 
 ## ARQ-08C - PARTIAL
@@ -39,13 +39,12 @@ Formulário nativo (`node/add/revista`): criação com título, chamada, resumo,
 ## Achados fora do Magazine (handoff)
 
 1. **Media library (Core 11.4.10):** o botão visível "Inserir selecionado(s)" fica fora do `<form>` (jQuery UI) e o POST chega sem `media_library_select_form[...]`; `MediaLibrarySelectForm::viewsFormValidate()` lança `array_filter(): Argument #1 must be of type array, null given`. Evidência no watchdog (`wid` 254268, 254280, 254581). O teste usa o caminho AJAX equivalente, documentado no README da pasta.
-2. **Listagem da Revista** sem cartão com imagem/chamada/resumo - frente de tema/Studio.
-3. **`/noticias`** é alias de node 9 e sombreia o display `page_noticias` - decisão de conteúdo/rota.
-4. **`skip comment approval` ausente em `content_editor`** - decisão de política de moderação.
+2. **`/noticias`** é alias de node 9 e sombreia o display `page_noticias` - decisão de conteúdo/rota.
+3. **`skip comment approval` ausente em `content_editor`** - decisão de política de moderação.
 
 ## Limites desta rodada
 
-- Nenhum rebuild/ativação do catálogo do índice; nenhuma importação global de configuração; nenhuma alteração em `aculta_events`, `aculta_calendar`, `aculta_maps`, `aculta_studio` ou no tema.
+- Nenhum rebuild/ativação do catálogo do índice; nenhuma importação global de configuração; nenhuma alteração em `aculta_events`, `aculta_calendar`, `aculta_maps` ou `aculta_studio`. No tema, a alteração autorizada ficou restrita ao cartão da listagem (`node--revista--teaser`, library `revista-listing`) e à exposição dos campos no display `teaser`.
 - Nenhum bundle, campo, entidade ou workflow novo.
 - Contas e conteúdo de teste com prefixo `agente-teste-`/`[AGENTE ARQ-08]` foram criados para a homologação e removidos ao fim da sessão, conforme `docs/portal/GUARDRAILS.md`.
 - A execução contínua do script de navegador deve ser repetida em janela sem concorrência para registrar o PASS único; as verificações já executadas estão descritas acima.
