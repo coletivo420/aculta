@@ -12,6 +12,13 @@
 
 # Changelog — aculta_image
 
+## 0.1.0-dev.38 — integração Kernel com o coordenador Portal (2026-10-29)
+
+- Kernel registra as classes reais `FileReferenceInspector` e `UnusedFileCleaner` do Portal na fixture isolada, sem habilitar a cadeia inteira de Portal.
+- Um File de teste não referenciado é removido pelo serviço real de limpeza do Image; outro com uso registrado é preservado pelo coordenador.
+- Suíte do módulo: 31 testes / 129 assertions PASS; uma deprecação upstream de `media_duplicates_requirements`. PHPCS Drupal/DrupalPractice: 0 erros/avisos; PHP lint: 40/40.
+- A instalação completa do Portal, validação dos binários Hostinger e integração Growroom continuam pendentes.
+
 ## 0.1.0-dev.37 — PHPCS sem erros ou avisos (2026-10-29)
 
 - Corrigida a formatação Drupal em 33 arquivos PHP, sem alteração de comportamento.

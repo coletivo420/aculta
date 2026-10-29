@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.37
+version: 0.1.0-dev.38
 state: Dev
-next_phase: Cobrir integração Kernel com o coordenador real; confirmar binários necessários para produção; avançar integração Growroom após a F3 do Fórum ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
-progress_note: "Dev.37: PHPCS Drupal/DrupalPractice PASS sem erros ou avisos após limpeza de estilo em 33 arquivos. PHP lint 33/33 PASS; Unit 28 testes/118 assertions PASS; Kernel 2 testes/5 assertions PASS com 1 deprecação upstream de media_duplicates_requirements; git diff --check PASS. A integração Kernel com coordenador Portal real continua pendente; ImageMagick/Ghostscript Hostinger sem confirmação; Growroom bloqueado pela F3 do Fórum. Nenhum arquivo real foi limpo/movido; Runtime sem alteração."
+next_phase: Validar referências ainda presentes e rejeição fail-closed com o coordenador no Kernel; confirmar binários necessários para produção; avançar integração Growroom após a F3 do Fórum ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
+progress_note: "Dev.38: integração Kernel usa FileReferenceInspector e UnusedFileCleaner reais do Portal com FileRemover real do Image; File fictício sem uso é removido e File com uso registrado é preservado. Suíte do módulo 31/129 PASS, com 1 deprecação upstream de media_duplicates_requirements; PHPCS Drupal/DrupalPractice 0/0; PHP lint 40/40; gate próprio PASS. Instalação completa do Portal, ImageMagick/Ghostscript Hostinger sem confirmação e Growroom bloqueado pela F3 do Fórum permanecem pendentes. Runtime sem alteração."

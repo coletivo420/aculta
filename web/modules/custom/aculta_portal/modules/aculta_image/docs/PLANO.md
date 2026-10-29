@@ -138,6 +138,21 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
   ImageMagick/Ghostscript para produção ainda sem confirmação; Growroom depende
   da F3 do Fórum. Nenhuma operação foi feita no Runtime.
 
+### Integração Kernel com o coordenador Portal — 2026-10-29
+
+- `ImageCleanupPortalCoordinatorKernelTest` registra `FileReferenceInspector`
+  e `UnusedFileCleaner` reais do Portal, com `FileRemover` real do Image, numa
+  fixture Kernel reduzida. Isso evita habilitar o Portal inteiro e suas
+  dependências de integração não pertinentes ao caminho de limpeza.
+- Um File de imagem fictício não referenciado é removido pelo serviço
+  `aculta_image.cleanup`; um segundo File com uso registrado é mantido pelo
+  coordenador. Kernel focal: 1 teste / 6 assertions PASS, uma deprecação
+  upstream de `media_duplicates_requirements`. Suíte do módulo: 31 testes /
+  129 assertions PASS; PHPCS 0/0 e PHP lint 40/40.
+- A integração com instalação completa do Portal não está demonstrada por esta
+  fixture. Binários ImageMagick/Ghostscript no Hostinger e Growroom seguem
+  pendentes; nenhum arquivo real ou Runtime foi alterado.
+
 Fora deste ciclo: bloqueio automático de duplicatas durante o upload. O relatório continua sugerindo revisão administrativa.
 
 ## 6. Perguntas abertas
