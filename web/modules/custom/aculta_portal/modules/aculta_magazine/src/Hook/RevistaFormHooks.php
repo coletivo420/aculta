@@ -162,7 +162,14 @@ final class RevistaFormHooks {
       return FALSE;
     }
     if (isset($element['#type']) && Element::children($element) === []) {
-      if (in_array($element['#type'], ['hidden', 'value', 'token'], TRUE)) {
+      // Containers and non-interactive elements cannot receive input focus.
+      // Do not attach autofocus to a field wrapper without a usable widget.
+      if (!in_array($element['#type'], [
+        'textfield', 'textarea', 'email', 'url', 'number', 'tel',
+        'search', 'password', 'date', 'datetime', 'datetime_local',
+        'time', 'select', 'checkbox', 'checkboxes', 'radio', 'radios',
+        'entity_autocomplete', 'managed_file', 'file',
+      ], TRUE)) {
         return FALSE;
       }
       $element['#attributes']['autofocus'] = 'autofocus';
