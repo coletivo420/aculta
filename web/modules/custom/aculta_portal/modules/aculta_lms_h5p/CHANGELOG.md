@@ -377,3 +377,12 @@
 - Recontagem completa Drupal/DrupalPractice: 263 erros e 33 avisos em 38 arquivos. A diferença em relação ao relatório anterior foi registrada sem alterar regras PHPCS ou identificadores históricos.
 - Unit + Kernel no `aculta_simpletest`: 43 testes / 481 assertions PASS, 41 depreciações Core/contrib. PHP lint dos 11 arquivos PHP alterados e `git diff --check` PASS. F15 permanece Dev.
 
+## 0.4.0-dev.161 — limpar contratos do adapter H5P (2026-10-29)
+
+- Removida uma variável local sem uso do exemplo de hook; corrigidos comentários
+  de documentação e a posição do cabeçalho adaptado no evento H5P.
+- PHPCS integral caiu de 114 erros/9 avisos em 18 arquivos para 113/7 em 15
+  arquivos; os arquivos alterados passam Drupal/DrupalPractice e PHP lint.
+- Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
+  depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
+

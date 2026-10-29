@@ -108,5 +108,4 @@ function hook_h5p_scripts_alter(&$scripts, $libraries, $mode) {
  *   If this is a new library, this will be TRUE, otherwise FALSE.
  */
 function hook_h5p_library_installed($libraryData, $isNew) {
-  $machineName = $libraryData['machineName'];
 }

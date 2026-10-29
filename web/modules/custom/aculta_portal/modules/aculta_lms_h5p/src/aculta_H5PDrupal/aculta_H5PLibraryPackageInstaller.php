@@ -21,7 +21,7 @@ final class aculta_H5PLibraryPackageInstaller {
   ) {}
 
   /**
-   * Validates and installs the libraries in a package, without importing content.
+   * Validates and installs libraries in a package without importing content.
    */
   public function install(string $packagePath): int {
     $source = realpath($packagePath);
@@ -66,7 +66,8 @@ final class aculta_H5PLibraryPackageInstaller {
   }
 
   /**
-   * Rejects ZIP paths that could escape the isolated extraction directory. */
+   * Rejects ZIP paths that could escape the isolated extraction directory.
+   */
   private function assertSafeArchivePaths(string $packagePath): void {
     $zip = new \ZipArchive();
     if ($zip->open($packagePath, \ZipArchive::RDONLY) !== TRUE) {
