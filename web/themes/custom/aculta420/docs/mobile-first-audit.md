@@ -135,3 +135,20 @@ e captura Firefox visível antes e depois da migração.
 - Comparar claro/escuro, reduced motion, teclado/foco, zoom e larguras 320, 360,
   390, 599, 600, 768, 1024, 1280 e 1440 px; sem Firefox ESR visível, o gate
   permanece `DEFERRED`.
+
+## THEME-MF0 — validadores estáticos executados em `dc8a294a7`
+
+Em 2026-10-29, na worktree da branch `refactor/opencultures-codigo-visual`,
+foram executados os validadores do tema após atualizar a base até este head:
+
+- `php scripts/validate-aculta420-sdc-schemas.php`: PASS, 54 componentes, 24
+  includes e 734 verificações.
+- `php scripts/validate-aculta420-design-foundations.php`: PASS, 2.379
+  verificações; contraste do modo escuro e foco reportado acima de 4.5:1.
+- `php scripts/validate-module-theme-boundary.php`: PASS, 3.367 verificações;
+  zero tokens de apresentação e classes de design nos módulos.
+
+Esses validadores cobrem estrutura SDC, fundações/tokens e fronteira tema-módulo.
+Não exercitam CSS computado em rotas, breakpoints, shell renderizado, outros
+purposes, teclado, zoom ou conteúdo real; logo MF0 permanece parcial e MF3 não
+está aprovado.
