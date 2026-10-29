@@ -140,7 +140,7 @@ Entrada: F3 concluída.
 - [x] E4 (D-28): formulário administrativo de nova data em `/painel-administrativo/eventos/datas/adicionar`; preenche somente referência a evento com acesso de atualização autorizado. Kernel cobre editor, usuário comum, ID inexistente e rascunho não editável.
 - [x] Incorporação por iframe em `/calendario/incorporar`, com `Content-Security-Policy: frame-ancestors` explícito (lista dos hosts `*.aculta.org` e `*.aculta.toca.net.br`) e `noindex` no ambiente de teste (commit `224c3925e`).
 - [x] Smoke visual em `1280`, `390` e `320` px reais na lista de eventos, na página de evento, na agenda, na grade do mês, no dia e na incorporação, com modo escuro: `tests/browser/eventos/agenda-embed.mjs`, 126 ok, 3 ignoradas e 0 falhas (EV-M4, commit `e33636144`). O mapa depende de local com coordenadas (ignorado sem uma).
-- [ ] Calendário também no `main` (D6): mesmas rotas de agenda, canonical e sitemap conforme a regra de produção.
+- [x] Calendário também no `main` (D6): agenda, mês, dia, `.ics`, embed e visão interativa; canonical do purpose `eventos` pelo ACULTA Deployer no ambiente ativo. Runtime de teste: seis rotas HTTP 200 nos dois hosts, canonical único. Código: `9800e0d62`.
 
 Saída: calendário e exportação em teste, nos dois purposes (`main` e `eventos`).
 
@@ -158,7 +158,7 @@ Saída: calendário e exportação em teste, nos dois purposes (`main` e `evento
 - [x] `aculta_lms_agenda`: prazos e eventos de turma para matriculados (commit `ac43e7d94`).
 - [x] Bloco de próximos prazos e eventos no painel do aluno (commit `9766bb731`).
 - [x] Campo `field_turma` em `aculta_event` e acesso restrito a matriculados, conforme `aculta_lms_agenda/docs/INTEGRACAO.md`; Kernel cobre matrícula correta, outra turma e ausência de matrícula (4 testes, 176 assertions; commits `df76938ae`, `86f247d4e`).
-- [ ] Fechar a exposição em superfícies públicas. Auditoria em 2026-10-28 confirmou que `EventCatalogue::busca()` não filtra `field_turma`, `EventAccessControlHandler` permite view de publicados/cancelados e `EventIcsController::data()` não revalida membership. A agenda geral já exclui esses itens e CA5 os fornece por matrícula. A regra para catálogo, página por slug e ICS individual aguarda decisão do responsável.
+- [x] Fechar a exposição em superfícies públicas. `hook_entity_access` revalida membership e permissão do curso; o subscriber protege página e `.ics` individual, o catálogo usa access e cache por usuário, e `hook_simple_sitemap_links_alter()` remove eventos de turma do sitemap. Kernel cobre acesso correto, outra turma, ausência de matrícula, rotas diretas e sitemap; suíte Agenda LMS: 12 testes, 227 assertions e 92 depreciações. Código: `1b932d29c`, `dbf2d94e8`, `3be40be71`.
 
 ## Fase F6 — Visual e acessibilidade
 

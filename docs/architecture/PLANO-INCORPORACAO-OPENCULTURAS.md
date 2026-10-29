@@ -72,7 +72,7 @@ foi feito. Uma escrita live requer escolha de um objeto real e de uma correção
 3. E10: fluxo Find → Select → Review → Save implementado e módulo ativo no Runtime (`0f1f384d8`). D-45, commit `edb7e338f`, permite explicitamente API ativa a partir do checkout de teste; credenciais e chave de cifra foram provisionadas apenas em `secrets/` e a seleção live local foi verificada. OAuth e uma edição factual revisada ainda não foram concluídos.
 4. R: regra, ocorrência e links de administração concluídos (`c4919bbb3`).
 5. F5: **feito** no `aculta_calendar` (D-20); D6 também concluída (`9800e0d62`): agenda, grade do mês, dia, `.ics`, embed e visão interativa servidos por `eventos` e `main`, com canonical no host do purpose `eventos` definido pelo ACULTA Deployer. Runtime de teste: seis rotas HTTP 200 nos dois hosts e canonical único em `eventos.aculta.toca.net.br`.
-6. F6, F7, F8, F9.
+6. F6, F8, F9. F7 está concluída conforme o item seguinte.
 7. **F7 concluída (D-44):** página de evento e sitemap geram URLs pelos hosts de ambiente mapeados em `domain_transition.entries` do ACULTA Deployer. No teste, index e filho de eventos retornam HTTP 200 e `X-Robots-Tag: noindex, nofollow, noarchive`; o filho de eventos lista apenas URLs de `eventos.aculta.toca.net.br`, e a página declara canonical para o mesmo host. `validate-final-sitemap.php` PASS. Código: `721e9453e`.
 
 ## Painéis e opções administrativas do OpenCulturas (ADM)
