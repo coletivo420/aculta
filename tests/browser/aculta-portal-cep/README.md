@@ -54,8 +54,10 @@ autopreenchimento e reflow em 320/390/768/1440 px. O teste não clica em
 POSTs Drupal limitam-se às etapas de busca/seleção/revisão; a consulta de CEP é
 AJAX de leitura. Capturas mascaram o texto de inputs e vão para `SUITE_OUT`.
 
-Ambiente: servidor de desenvolvimento `eventos.aculta.toca.net.br`, Runtime
-`aculta_runtime`, com checkout no HEAD da PR. Requer permissão `administer
+Ambiente: servidor de desenvolvimento, Runtime `aculta_runtime`, com checkout
+no HEAD da PR. O ULI é gerado em `conta.aculta.toca.net.br`, purpose das rotas
+de autenticação; o assistente abre em `aculta.toca.net.br`, pois o Portal
+canonicaliza rotas administrativas para MAIN. Requer permissão `administer
 aculta events`, `DISPLAY=:0`, Firefox ESR, geckodriver, a conta de teste
 indicada por `OSM_ADDRESS_TEST_UID` e um elemento OSM consultável pela API ativa.
 O link ULI é gerado pelo Drush para cada execução e nunca é gravado no repositório.

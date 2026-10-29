@@ -17,8 +17,8 @@ from wdlib import Driver  # noqa: E402
 
 OUT = Path(os.environ["SUITE_OUT"])
 OUT.mkdir(parents=True, exist_ok=True)
-BASE = os.environ.get("OSM_ADDRESS_BASE_URL", "https://eventos.aculta.toca.net.br").rstrip("/")
-URI = os.environ.get("OSM_ADDRESS_DRUSH_URI", BASE)
+BASE = os.environ.get("OSM_ADDRESS_BASE_URL", "https://aculta.toca.net.br").rstrip("/")
+URI = os.environ.get("OSM_ADDRESS_DRUSH_URI", "https://conta.aculta.toca.net.br")
 UID = os.environ.get("OSM_ADDRESS_TEST_UID", "1")
 OSM_TYPE = os.environ.get("OSM_ADDRESS_TEST_TYPE", "way")
 OSM_ID = os.environ.get("OSM_ADDRESS_TEST_ID", "1370081491")
@@ -90,7 +90,15 @@ try:
     driver.get(login_url())
     driver.get(f"{BASE}{PATH}")
     time.sleep(0.8)
-    check("assistente de importação acessível", driver.exists('[name="element_id"]'))
+    assistant_loaded = driver.exists('[name="element_id"]')
+    page = driver.js("""return {host:location.host,
+      path:location.pathname.startsWith('/recuperar-acesso/')?'/recuperar-acesso/[redacted]':location.pathname,
+      title:document.title,signIn:document.body.innerText.includes('Entrar'),
+      denied:document.body.innerText.includes('Acesso negado')};""")
+    check("assistente de importação acessível", assistant_loaded, None if assistant_loaded else page)
+    if not assistant_loaded:
+        (OUT / "summary.json").write_text(json.dumps(checks, ensure_ascii=False, indent=2) + "\n")
+        sys.exit(1)
     driver.js("""const field=document.querySelector('[name="element_type"]');
       field.value=arguments[0];field.dispatchEvent(new Event('change',{bubbles:true}));""", [OSM_TYPE])
     driver.type('[name="element_id"]', OSM_ID)
