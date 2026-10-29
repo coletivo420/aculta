@@ -4,6 +4,7 @@
 - `statistics.css` empilha os filtros como base e restaura os controles em linha em `min-width: 36rem`. Lint CSS, Python compile, schemas SDC, Design Foundations e índice de status passaram nesta microfase. Firefox/Runtime estão DEFERRED; atribuir a próxima versão somente após a validação visual prevista pelo versionamento do tema.
 - A limpeza da fronteira substitui classes de apresentação emitidas por downloads, conteúdo salvo, editorial de eventos e variações de cartão por tokens do Portal mapeados no tema. Gates estáticos da fronteira/tokens e Unit do registry passaram; Kernel e Runtime ainda pendentes.
 - `editorial-card.css` usa altura e espaçamento compactos como base e só amplia em `min-width: 48.0625rem`. Lint CSS e auditoria estática SDC passaram; Firefox/consumer real permanecem DEFERRED.
+- `wiki-entry.css` usa uma coluna como base para verbetes públicos, com o aside antes do texto; em `48rem` restaura duas colunas. O smoke da Wiki mede a grade e aceita ambas as folhas candidatas; Firefox/Runtime seguem DEFERRED.
 
 # 0.7.0-dev.26 — migrar navegação interna do Studio para mobile-first (2026-10-29)
 

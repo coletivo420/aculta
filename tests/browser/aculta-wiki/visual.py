@@ -21,7 +21,7 @@ from wdlib import Driver, WDError  # noqa: E402
 
 BASE = os.environ.get("WIKI_BASE_URL", "https://wiki420.aculta.toca.net.br").rstrip("/")
 HOST = urlparse(BASE).hostname
-OUT = Path(os.environ.get("SUITE_OUT", "/tmp/aculta-wiki-visual"))
+OUT = Path(os.environ.get("SUITE_OUT", "/home/piradopirata/aculta-suite-out/aculta-wiki-visual"))
 OUT.mkdir(parents=True, exist_ok=True)
 WIDTHS = [(1440, "wide-1440"), (1280, "desktop"), (1024, "tablet-1024"),
           (768, "tablet-768"), (767, "tablet-767"), (640, "zoom-200-equiv"),
@@ -84,7 +84,10 @@ def inspect_page(name, path, width_name, expected_width):
         return
     time.sleep(1.2)
     if os.environ.get("WIKI_CSS_OVERRIDE") == "1":
-        candidate_css = (CSS_ROOT / "web/themes/custom/aculta420/css/components/wiki.css").read_text()
+        candidate_css = "\n".join([
+            (CSS_ROOT / "web/themes/custom/aculta420/css/components/wiki.css").read_text(),
+            (CSS_ROOT / "web/themes/custom/aculta420/components/patterns/wiki-entry/wiki-entry.css").read_text(),
+        ])
         css_loaded = driver.req("POST", session + "/execute/async", {
             "script": "const done = arguments[arguments.length - 1]; const style = document.createElement('style'); style.id = 'aculta-wiki-css-candidate'; style.textContent = arguments[0]; document.head.appendChild(style); requestAnimationFrame(() => done(!!style.sheet && style.sheet.cssRules.length > 0));",
             "args": [candidate_css],
@@ -118,6 +121,8 @@ def inspect_page(name, path, width_name, expected_width):
         headerSearchGap: getComputedStyle(document.querySelector('.aculta-wiki-header-search form')).gap,
         searchFormColumns: (() => { const form = document.querySelector('.aculta-wiki-search, .aculta-wiki-search-results form'); return form ? getComputedStyle(form).gridTemplateColumns.split(' ').length : null; })(),
         contentGridColumns: (() => { const grid = document.querySelector('.aculta-wiki-home .view-wiki-categories .view-content, .aculta-wiki-home .view-wiki-entries .view-content, .aculta-wiki-search-results .view-content'); return grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').length : null; })(),
+        wikiArticleColumns: (() => { const grid = document.querySelector('.aculta-wiki-article__layout'); return grid ? getComputedStyle(grid).gridTemplateColumns.trim().split(/\\s+/).length : null; })(),
+        wikiAsideRow: (() => { const aside = document.querySelector('.aculta-wiki-article__aside'); return aside ? getComputedStyle(aside).gridRowStart : null; })(),
         overflowingElements,
         errors: visibleErrors,
       };
@@ -133,6 +138,13 @@ def inspect_page(name, path, width_name, expected_width):
           and metrics["searchFormColumns"] in (None, expected_columns)
           and metrics["contentGridColumns"] in (None, expected_columns),
           f"brand={metrics['headerBrandBasis']} searchGap={metrics['headerSearchGap']} formColumns={metrics['searchFormColumns']} contentColumns={metrics['contentGridColumns']}")
+    if name == "entry":
+        expected_article_columns = 1 if expected_width < 768 else 2
+        expected_aside_row = "1" if expected_width < 768 else "auto"
+        check(f"{name}/{width_name}: composição do verbete",
+              metrics["wikiArticleColumns"] == expected_article_columns
+              and metrics["wikiAsideRow"] == expected_aside_row,
+              f"columns={metrics['wikiArticleColumns']} asideRow={metrics['wikiAsideRow']}")
     check(f"{name}/{width_name}: sem overflow horizontal", metrics["documentWidth"] <= metrics["viewport"],
           f"viewport={metrics['viewport']} document={metrics['documentWidth']} root={metrics['rootClientWidth']} body={metrics['bodyWidth']} elements={metrics['overflowingElements']}")
     check(f"{name}/{width_name}: sem erro visível", not metrics["errors"], metrics["errors"])

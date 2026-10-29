@@ -513,6 +513,8 @@ Header, formulários e grids de Wiki usam composição móvel como base e retoma
 dimensões anteriores em 576/768 CSS px. O smoke público aceita injeção da CSS
 candidata local e mede 575/576/767/768 px; execução Firefox DEFERRED. O workspace
 autenticado de WE Sativa exige rodada própria; ver `mobile-first-audit.md`.
+O verbete público também empilha conteúdo/aside como base e volta a duas colunas
+em `48rem`; o mesmo smoke mede as colunas e a posição do aside.
 
 ### THEME-MF2 — índice e busca do Fórum
 

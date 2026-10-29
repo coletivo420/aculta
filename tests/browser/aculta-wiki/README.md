@@ -14,7 +14,7 @@ somente GET. Larguras padrão: 320, 360, 390, 768, 1024, 1280 e 1440 CSS px.
 
 ```sh
 cd /home/piradopirata/projetos/aculta
-SUITE_OUT=/tmp/aculta-wiki-visual DISPLAY=:0 \
+SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-visual DISPLAY=:0 \
   python3 -I tests/browser/aculta-wiki/visual.py
 ```
 
@@ -24,8 +24,11 @@ ficam PNGs e resumo; não versione esses artefatos. `WIKI_BASE_URL` pode apontar
 a outra instalação de teste HTTP, mas o script não altera resolução de DNS nem
 tema.
 
-`WIKI_CSS_OVERRIDE=1` injeta no browser a folha `wiki.css` candidata do
-checkout/worktree e valida o layout sobre a página servida. Defina
+`WIKI_CSS_OVERRIDE=1` injeta no browser as folhas `wiki.css` e
+`patterns/wiki-entry/wiki-entry.css` candidatas do checkout/worktree e valida
+o layout sobre as páginas servidas. No verbete público, o teste mede a grade
+de uma coluna com aside primeiro abaixo de 768px e duas colunas a partir de
+768px. Defina
 `WIKI_CSS_ROOT` se o script estiver sendo executado de outro checkout. As
 larguras incluem as fronteiras 575/576 e 767/768 CSS px. Isso valida a folha
 candidata nos três caminhos públicos; não prova que o agregado ou a configuração
@@ -42,7 +45,7 @@ altera preferências ou conteúdo; grava capturas e resumo fora do repositório.
 
 ```sh
 cd /home/piradopirata/projetos/aculta
-SUITE_OUT=/tmp/aculta-wiki-we-sativa DISPLAY=:0 \
+SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-we-sativa DISPLAY=:0 \
   python3 -I tests/browser/aculta-wiki/we-sativa.py
 ```
 
@@ -52,7 +55,7 @@ Variáveis: `WIKI_HOME_URL` (padrão `https://wiki420.aculta.toca.net.br/`),
 `WIKI_STUDIO_LOGIN_URI` (padrão `https://conta.aculta.toca.net.br`),
 `WIKI_STUDIO_UID` (padrão `5`; passe vazio para usar `WIKI_STUDIO_USER`) e
 `WIKI_STUDIO_USER` (padrão vazio; usado quando `WIKI_STUDIO_UID` é vazio) e
-`SUITE_OUT` (padrão `/tmp/aculta-wiki-we-sativa`). Requer
+`SUITE_OUT` (padrão `/home/piradopirata/aculta-suite-out/aculta-wiki-we-sativa`). Requer
 Drush funcional e Firefox ESR visível. A conta precisa ter confirmação de e-mail,
 acesso ao Studio e criação Wiki. A rodada autentica e cria uma sessão de navegador;
 não reconstrói caches/configuração, não publica nem grava conteúdo. O resultado
@@ -86,7 +89,7 @@ permissões de proposta presentes em `config/sync`.
 
 ```sh
 cd /home/piradopirata/projetos/aculta
-SUITE_OUT=/tmp/aculta-wiki-moderation DISPLAY=:0 WIKI_STUDIO_UID=1 \
+SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-moderation DISPLAY=:0 WIKI_STUDIO_UID=1 \
   python3 -I tests/browser/aculta-wiki/moderation.py
 ```
 
@@ -100,7 +103,7 @@ autentica nem altera o Runtime. Resultado medido em dev.117: 16/16.
 
 ```sh
 cd /home/piradopirata/projetos/aculta
-SUITE_OUT=/tmp/aculta-wiki-no-js DISPLAY=:0 \
+SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-no-js DISPLAY=:0 \
   python3 -I tests/browser/aculta-wiki/no-js.py
 ```
 
@@ -121,7 +124,7 @@ roda a integração pública no host definido por `WIKI_BASE_URL`.
 
 ```sh
 cd /home/piradopirata/projetos/aculta
-SUITE_OUT=/tmp/aculta-wiki-keyboard DISPLAY=:0 \
+SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-keyboard DISPLAY=:0 \
   python3 -I tests/browser/aculta-wiki/keyboard.py
 ```
 

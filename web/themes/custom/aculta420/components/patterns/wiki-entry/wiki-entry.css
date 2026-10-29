@@ -93,7 +93,7 @@
 
 .aculta-wiki-article__layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(13rem, 18rem);
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(1.5rem, 4vw, 3rem);
   padding-top: 1.5rem;
 }
@@ -168,6 +168,7 @@
 
 .aculta-wiki-article__aside {
   align-self: start;
+  grid-row: 1;
   padding: 0.9rem;
   border: 1px solid var(--aculta-border-default);
   background: var(--aculta-surface-raised);
@@ -213,8 +214,13 @@
 .aculta-wiki-card__summary { color: var(--aculta-text-secondary); line-height: 1.55; }
 .aculta-wiki-card__categories { margin-top: 0.65rem; font-size: 0.875rem; }
 
+@media (min-width: 48rem) {
+  .aculta-wiki-article__layout {
+    grid-template-columns: minmax(0, 1fr) minmax(13rem, 18rem);
+  }
+  .aculta-wiki-article__aside { grid-row: auto; }
+}
+
 @media (max-width: 767.98px) {
-  .aculta-wiki-article__layout { grid-template-columns: minmax(0, 1fr); }
-  .aculta-wiki-article__aside { grid-row: 1; }
   .aculta-wiki-article__tabs { margin-bottom: 1rem; }
 }

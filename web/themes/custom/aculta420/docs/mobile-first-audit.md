@@ -43,6 +43,13 @@ Stylelint e compilação Python PASS; Firefox/runtime DEFERRED por sessões
 concorrentes. Hub autenticado do Studio não foi alterado nem homologado; MF3
 permanece pendente.
 
+O consumer público de verbete também foi migrado: `wiki-entry.css` usa uma
+coluna como base e posiciona o aside antes do texto; `min-width: 48rem` restaura
+a composição de duas colunas. `tests/browser/aculta-wiki/visual.py` injeta as
+duas folhas candidatas e mede colunas/posição do aside na fronteira 767/768px.
+Lint CSS e sintaxe Python PASS; Firefox/Runtime DEFERRED por `DISPLAY` ausente e
+sessões geckodriver concorrentes. MF3 segue pendente.
+
 ### THEME-MF2 — controles da discussão (2026-10-29)
 
 `discussion.css` declara como base o arranjo de 2 colunas abaixo de 360px;
