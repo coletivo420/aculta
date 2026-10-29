@@ -1,12 +1,14 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.328
+version: 0.1.0-dev.329
 state: Dev
 next_phase: >-
-  Auditar marcadores de aviso. A decisão do responsável sobre o destino dos antigos
-  `/comment/{cid}` está em aberto; não implementar redirect ou aposentadoria
-  antes da resposta. Não executar migração de dados no Runtime. Depois reavaliar
-  F-M3/F-M6/F-M7, gates e revisão visual antes de RC. RC.2 é histórico.
-progress_note: "Dev.328: Kernel cria Media e Media Gallery de teste, migra ambos os embeds e comprova que o markup sobrevive sem alteração (25 assertions no caso focal). Suíte Kernel 153/2.968 PASS (42 depreciações), Unit 186/1.337 PASS; PHP lint e PHPCS do teste PASS. Sem migration ou escrita Runtime. Pendem auditoria dos marcadores de aviso e decisão sobre permalinks históricos."
+  Aguardar a decisão do responsável sobre o destino dos antigos
+  `/comment/{cid}`; não implementar redirect ou aposentadoria antes da
+  resposta. Repetir o inventário de migração se surgirem Comments elegíveis;
+  o relatório atual não audita avisos globalmente. Não executar migração de
+  dados no Runtime. Depois reavaliar F-M3/F-M6/F-M7, gates e revisão visual
+  antes de RC. RC.2 é histórico.
+progress_note: "Dev.329: dry-run no Runtime de desenvolvimento encontrou 0 Comments de origem/elegíveis e 5 ForumPosts; sem escrita. O inventário de avisos retorna cedo sem tópico elegível e seus contadores não provam ausência global de marcadores. Dev.328: Kernel cria Media e Media Gallery de teste, migra ambos os embeds e preserva o markup. Suíte Kernel 153/2.968 PASS (42 depreciações), Unit 186/1.337 PASS; lint/PHPCS focais PASS."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; gate: scripts/validate-no-temporary-route-aliases.php.

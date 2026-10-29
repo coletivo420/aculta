@@ -1,3 +1,15 @@
+## `0.1.0-dev.329` — registrar auditoria de migração no Runtime de desenvolvimento
+
+- `drush aculta-forum:audit-comment-migration` foi executado somente para
+  leitura em `aculta_runtime` (host `toca`, URI do Fórum). Resultado: 0
+  Comments de origem, 0 elegíveis e 5 ForumPosts existentes.
+- Sem Comments elegíveis, o inventário de avisos retorna antes de consultar
+  `aculta_aviso`; os contadores zerados **não** provam ausência global de
+  marcadores. Não há Comments legados atuais cuja migração possa perder esses
+  marcadores; repetir a auditoria antes de qualquer migração se a origem mudar.
+- Nenhuma escrita Runtime. O destino futuro de `/comment/{cid}` continua
+  aguardando decisão do responsável.
+
 ## `0.1.0-dev.328` — preservar embeds válidos na migração sintética
 
 - O Kernel cria entidades Media e Media Gallery reais no banco de teste,

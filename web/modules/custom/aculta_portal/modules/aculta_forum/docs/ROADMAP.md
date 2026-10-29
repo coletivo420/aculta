@@ -86,6 +86,14 @@ e a preservação do corpo em cenário sintético; não executa migração Runti
 fecha a auditoria completa de marcadores de aviso, permalink, anexos ou
 rollback operacional.
 
+**Inventário de migração no Runtime (dev.329, 2026-10-29):** o comando
+somente leitura foi executado em `aculta_runtime` no host `toca`: 0 Comments de
+origem, 0 Comments elegíveis e 5 ForumPosts existentes. Como não há tópico
+elegível, a rotina de aviso retorna antes de consultar marcadores em
+`aculta_aviso`; seus contadores padrão não são uma auditoria global. Portanto,
+não há Comment de origem atual cujo marcador pudesse ser perdido, mas uma
+futura migração precisa repetir o inventário. Nenhum dado foi alterado.
+
 **Ownership compartilhado vigente:** o Fórum mantém produtores, assinaturas e
 seleção de destinatários. Todos os consumers/adapters, agregação, persistência
 compartilhada, preferências, filas, workers e coordenação dos modos de e-mail

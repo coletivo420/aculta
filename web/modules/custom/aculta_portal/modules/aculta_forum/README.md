@@ -1,10 +1,11 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-**Estado: Dev `0.1.0-dev.328`.** O registro `0.1.0-rc.2` é histórico e foi
+**Estado: Dev `0.1.0-dev.329`.** O registro `0.1.0-rc.2` é histórico e foi
 reclassificado após auditorias posteriores. A migração cobre embeds Media e
-Gallery válidos e os preserva sem alteração no corpo; seguem pendentes a
-auditoria dos marcadores de aviso, a decisão de permalink histórico e demais
-itens F-M5/F-M6/F-M7. Não há candidato RC vigente. O memorial coletivo
+Gallery válidos e os preserva sem alteração no corpo. O dry-run atual não
+localizou Comments de origem; por isso não consultou avisos globalmente. Segue
+pendente a decisão de permalink histórico e a reavaliação dos itens F-M5/F-M6/F-M7.
+Não há candidato RC vigente. O memorial coletivo
 `/u/lendashistoricas` continua sem sufixo e sem perfis individuais.
 
 Submódulo de `aculta_portal`. O direcionamento vigente, aprovado pelo
