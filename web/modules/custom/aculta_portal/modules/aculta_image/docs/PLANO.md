@@ -106,6 +106,26 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 | **R9 — Configuração de imagens** | Views e modos de exibição usam estilos presentes no catálogo | gate verifica IDs `image_style` e estilos PhotoSwipe em `views.view.*` e `core.entity_view_display.*`; PASS em 2026-10-18 | feito |
 | **Preparação de RC — validações de ambiente e integração** | Confirmar binários necessários para produção e fechar as pendências de importação/integração Growroom | Evidência, checklist, gates/testes e revisão visual pré-deploy concluídos antes de RC; Alpha valida o deploy no servidor de desenvolvimento e produção vem após aprovação | responsável e conclusão das fases do Fórum |
 
+### M7 — Kernel de instalação reduzida — 2026-10-29
+
+- `ImageFileUsageAccessKernelTest::testCleanupServicesBootWithoutPortalCoordinator`
+  carrega os serviços reais `aculta_image.cleanup` e `aculta_image.quarantine`
+  sem habilitar `aculta_portal`; confirma que a quarentena recusa a operação
+  sem o coordenador. A classe de produção e o contrato fail-closed não foram
+  substituídos.
+- Suíte completa: 30 testes / 123 assertions PASS, 1 deprecação Core/contrib.
+  PHPCS Drupal no Kernel focal, lint e `validate-aculta-image.php` PASS.
+- Auditoria completa PHPCS Drupal (`--extensions=php`) falha em 32 arquivos
+  existentes com 223 erros e 57 avisos. O novo Kernel focal está limpo; a dívida
+  de estilo integral foi registrada para fase própria e não foi alterada aqui.
+- Isso valida instalação reduzida e falha fechada. Ainda falta um Kernel de
+  integração que carregue o coordenador real Portal com seu grafo de serviços;
+  a tentativa de carregar o módulo Portal inteiro exigiu dependências além da
+  fixture reduzida. O teste Unit continua cobrindo a decisão do coordenador e
+  retenção da fila. Nenhuma escrita ou limpeza foi executada no Runtime.
+- Hostinger: ImageMagick/Ghostscript continuam sem confirmação documental;
+  Growroom continua bloqueado pela F3 do Fórum.
+
 Fora deste ciclo: bloqueio automático de duplicatas durante o upload. O relatório continua sugerindo revisão administrativa.
 
 ## 6. Perguntas abertas

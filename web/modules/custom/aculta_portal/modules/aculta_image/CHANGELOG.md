@@ -12,6 +12,12 @@
 
 # Changelog — aculta_image
 
+## 0.1.0-dev.36 — Kernel da instalação sem Portal (2026-10-29)
+
+- Kernel confirma que os serviços reais de limpeza e quarentena iniciam sem Portal e que a quarentena recusa a operação sem o coordenador compartilhado.
+- A limpeza e a remoção continuam sem apagar arquivos quando o coordenador não está disponível.
+- Auditoria PHPCS Drupal de todo o módulo encontrou 223 erros e 57 avisos em 32 arquivos existentes; a limpeza de estilo fica pendente e não foi misturada à mudança do Kernel.
+
 ## 0.1.0-dev.35 — consulta de uso de arquivo (2026-10-28)
 
 - Adicionada consulta somente de leitura em `/painel-administrativo/imagens/{file}/usos`, protegida por `administer aculta images`. Lista apenas entidades acessíveis e não altera a política de upload.

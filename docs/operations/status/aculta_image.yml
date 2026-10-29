@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.35
+version: 0.1.0-dev.36
 state: Dev
-next_phase: Completar Kernel/instalação limpa da limpeza normal e quarentena delegadas ao Portal, confirmar binários necessários para produção e avançar integração Growroom ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
-progress_note: "Dev.34: ImageCleanup e ImageQuarantine exigem `aculta_portal.unused_file_cleaner`; sem coordenador, limpeza retorna Unverifiable, retém a fila e não remove arquivos. Image Unit 28/118 PASS (9 depreciações); PHPCS/lint e `validate-aculta-image.php` PASS. Nenhum arquivo real foi limpo ou movido; Runtime não alterado."
+next_phase: Resolver PHPCS Drupal do módulo (223 erros/57 avisos); depois cobrir integração Kernel com o coordenador real, confirmar binários necessários para produção e avançar integração Growroom após a F3 do Fórum ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
+progress_note: "Dev.36: suíte 30/123 PASS (1 deprecação); novo Kernel confirma serviços de limpeza/quarentena iniciam sem Portal e quarentena recusa mover sem coordenador. PHP lint 39/39 PASS; PHPCS Drupal no Kernel focal e validate-aculta-image PASS. PHPCS Drupal do módulo completo falha em 32 arquivos existentes (223 erros/57 avisos). Integração Kernel com coordenador Portal real ainda pendente; ImageMagick/Ghostscript Hostinger sem confirmação; Growroom bloqueado por F3 do Fórum. Nenhum arquivo real foi limpo/movido; Runtime sem alteração."
