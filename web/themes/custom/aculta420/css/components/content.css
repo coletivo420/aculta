@@ -47,6 +47,28 @@
 }
 .aculta-metadata, .aculta-category { line-height: 1.5; }
 .aculta-category { color: var(--aculta-text-primary); font-weight: 600; }
+.field--name-field-editorial-category .aculta-category {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--bs-border-radius-pill);
+  text-decoration: none;
+}
+.field--name-field-editorial-category .aculta-category--red {
+  color: var(--aculta-section-red-text);
+  background-color: var(--aculta-section-red-bg);
+}
+.field--name-field-editorial-category .aculta-category--green {
+  color: var(--aculta-section-green-text);
+  background-color: var(--aculta-section-green-bg);
+}
+.field--name-field-editorial-category .aculta-category--yellow {
+  color: var(--aculta-section-yellow-text);
+  background-color: var(--aculta-section-yellow-bg);
+}
+.field--name-field-editorial-category .aculta-category--green-dark {
+  color: var(--aculta-section-green-dark-text);
+  background-color: var(--aculta-section-green-dark-bg);
+}
 
 /* Keep the compact album cards readable when the Views grid has less space. */
 .view-aculta-albuns .views-view-grid .views-row {

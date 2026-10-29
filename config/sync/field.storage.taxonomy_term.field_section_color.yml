@@ -1,0 +1,33 @@
+uuid: 95ed9c49-8085-43bd-ac61-54f59f9f616e
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - options
+    - taxonomy
+id: taxonomy_term.field_section_color
+field_name: field_section_color
+entity_type: taxonomy_term
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: red
+      label: Vermelha
+    -
+      value: green
+      label: Verde
+    -
+      value: yellow
+      label: Amarela
+    -
+      value: green-dark
+      label: Verde-escura
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,3 +1,9 @@
+## 0.5.0-dev.11 — rótulos coloridos da categoria editorial (E8/I-09)
+
+- Termos de `editorial_category` podem selecionar uma das quatro cores fixas do tema.
+- O teaser da Revista passa a renderizar a categoria como rótulo colorido; sem cor definida, permanece sem cor.
+- Testes Unit do formatador cobrem o conjunto fechado e a preservação de classes existentes. Revisão visual Runtime pendente.
+
 ## 0.5.0-dev.10 — eventos de transição editorial no Messenger
 
 - O publisher publica envio para revisão e devolução para ajustes pelo contrato

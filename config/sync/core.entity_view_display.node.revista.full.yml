@@ -22,6 +22,7 @@ dependencies:
     - field.field.node.revista.field_tags
     - node.type.revista
   module:
+    - aculta_magazine
     - comment
     - link
     - text
@@ -60,7 +61,7 @@ content:
     weight: 21
     region: content
   field_editorial_category:
-    type: entity_reference_label
+    type: aculta_editorial_category_color
     label: inline
     settings:
       link: true
