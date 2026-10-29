@@ -706,3 +706,10 @@ O palco usa uma coluna e miniaturas recolhidas como base; a partir de `30rem`
 restaura a composição ampla. `tests/browser/aculta-gallery/visual.py` mede os
 estados mobile/desktop e a fronteira 479/480px em dois domains públicos,
 incluindo a alternância de miniaturas; Firefox/Runtime permanecem pendentes.
+
+### THEME-MF2 — leitores DOCX/planilhas
+
+O iframe DOCX começa em 50vh e amplia para 60vh em `36rem`; o wrapper retoma
+padding de 1rem no mesmo breakpoint. `tests/browser/aculta-document-viewer/
+office-options.py` mede 575/576px em ACULTA420 e Olivero; revisão Firefox ainda
+pendente.

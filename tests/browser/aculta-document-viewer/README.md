@@ -4,8 +4,7 @@ Firefox ESR visível no servidor de desenvolvimento. `ACULTA_TEST_URL` deve
 apontar para uma página pública descartável que incorpora uma Media `document`
 de teste pelo filtro `media_embed`; não use PDF confidencial. O script confirma
 o viewer e controles básicos, percorre controles por Tab e verifica o reflow
-em 1280/768/641/640/390/320 CSS px. As métricas distinguem valores compactos
-até 640px e amplos acima desse limite. `PDF_VIEWER_CSS_OVERRIDE=1` injeta a
+em 1280/768/641/640/390/320 CSS px. `PDF_VIEWER_CSS_OVERRIDE=1` injeta a
 folha do worktree configurado em `ACULTA_PROJECT_ROOT` após carregar a página
 do servidor, para comparar o candidato sem rebuild de cache. Capturas e
 `summary.json` ficam fora do repositório, em `SUITE_OUT`.
@@ -49,6 +48,11 @@ memória para validar no Firefox ESR visível (`DISPLAY=:0`):
   linhas e células somente leitura;
 - navegação por `Tab` com `:focus-visible` e ausência de rolagem horizontal em
   `1280`, `390` e `320` CSS px nos temas **ACULTA420** e **Olivero**.
+
+O harness mede a altura mínima do iframe DOCX e o padding do wrapper em
+1440/1280/1024/768/600/599/576/575/390/360/320px: 60vh/1rem a partir de
+`36rem` e 50vh/0.75rem abaixo desse breakpoint no ACULTA420. Olivero continua
+com a apresentação nativa.
 
 ```sh
 DISPLAY=:0 \

@@ -670,3 +670,11 @@ e sintaxe Python passam; Firefox/Runtime DEFERRED por `DISPLAY` ausente e
 sessões concorrentes. THEME-MF3 segue pendente.
 Com JavaScript desativado, a CSS mantém as miniaturas visíveis; o botão de
 recolhimento só existe após o behavior inserir o controle acessível.
+
+### THEME-MF2 — leitor DOCX e planilhas
+
+`document-viewer.css` usa padding de `0.75rem` e iframe DOCX de `50vh` como
+base; em `min-width: 36rem` retoma padding de `1rem` e altura mínima de `60vh`.
+`office-options.py` verifica a fronteira 575/576px em ACULTA420 e Olivero, além
+do overflow. Lint CSS e sintaxe Python passam; Firefox visual DEFERRED por
+`DISPLAY` ausente e sessões concorrentes. THEME-MF3 segue pendente.

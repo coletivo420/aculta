@@ -21,7 +21,12 @@ sys.path.insert(0, str(PROJECT / "tests/browser/aculta-cpf-checkout"))
 from wdlib import Driver  # noqa: E402
 
 OUT = Path(os.environ["SUITE_OUT"])
-WIDTHS = [(1280, "desktop"), (390, "mobile-390"), (320, "mobile-320")]
+WIDTHS = [
+    (1440, "wide-1440"), (1280, "desktop-1280"), (1024, "desktop-1024"),
+    (768, "tablet-768"), (600, "tablet-600"), (599, "tablet-599"),
+    (576, "tablet-576"), (575, "tablet-575"), (390, "mobile-390"),
+    (360, "mobile-360"), (320, "mobile-320"),
+]
 results = []
 
 
@@ -182,7 +187,7 @@ def build_test_page(theme: str) -> str:
     .form-item {{ margin: 8px 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 0; }}
     select {{ max-width: 100%; }}
     .description {{ width: 100%; font-size: 0.875rem; opacity: 0.85; }}
-    [data-aculta-document-viewer] {{ border: 1px solid #8884; border-radius: 6px; padding: 10px; max-width: 100%; overflow: hidden; }}
+    [data-aculta-document-viewer] {{ border: 1px solid #8884; border-radius: 6px; max-width: 100%; overflow: hidden; }}
     [data-aculta-document-control="toolbar"] {{ display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 8px; }}
     [data-aculta-document-part="modes"] {{ display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }}
     [data-aculta-document-part="frame"] {{ width: 100%; max-width: 100%; overflow-x: auto; }}
@@ -637,6 +642,11 @@ try:
                 scrollWidth: document.documentElement.scrollWidth,
                 docxVisible: Boolean(document.querySelector('#docx-default')?.getBoundingClientRect().width > 0),
                 sheetVisible: Boolean(document.querySelector('#sheet-table-25')?.getBoundingClientRect().width > 0),
+                docxFrameMinHeight: (() => {
+                  const frame = document.querySelector('#docx-default iframe[data-aculta-document-part="document"]');
+                  return frame ? getComputedStyle(frame).minHeight : null;
+                })(),
+                docxViewerPadding: getComputedStyle(document.querySelector('#docx-default')).padding,
               };
             """)
             screenshot(f"{theme}-{label}")
@@ -646,6 +656,19 @@ try:
                 and metrics["docxVisible"] and metrics["sheetVisible"],
                 json.dumps(metrics),
             )
+            if theme == "aculta420":
+                expected_min_height = "450px" if width < 576 else "540px"
+                expected_padding = "12px" if width < 576 else "16px"
+                check(
+                    f"[aculta420] altura mínima do DOCX em {width}px",
+                    metrics["docxFrameMinHeight"] == expected_min_height,
+                    f"medida={metrics['docxFrameMinHeight']}; esperado={expected_min_height}",
+                )
+                check(
+                    f"[aculta420] padding do leitor em {width}px",
+                    metrics["docxViewerPadding"] == expected_padding,
+                    f"medida={metrics['docxViewerPadding']}; esperado={expected_padding}",
+                )
 finally:
     if bidi:
         bidi.close()

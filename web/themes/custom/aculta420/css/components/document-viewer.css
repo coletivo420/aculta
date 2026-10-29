@@ -4,7 +4,7 @@
   gap: 0.75rem;
   width: 100%;
   min-width: 0;
-  padding: 1rem;
+  padding: 0.75rem;
   border: 1px solid var(--aculta-border-subtle);
   border-radius: var(--bs-border-radius);
   background-color: var(--aculta-surface-raised);
@@ -123,7 +123,7 @@
 [data-aculta-document-viewer] iframe[data-aculta-document-part="document"] {
   display: block;
   width: 100%;
-  min-height: 60vh;
+  min-height: 50vh;
   border: 1px solid var(--aculta-border-default);
   border-radius: var(--bs-border-radius);
   background-color: var(--aculta-surface-page);
@@ -133,13 +133,13 @@
   display: none;
 }
 
-@media (max-width: 575.98px) {
+@media (min-width: 36rem) {
   [data-aculta-document-viewer] {
-    padding: 0.75rem;
+    padding: 1rem;
   }
 
   [data-aculta-document-viewer] iframe[data-aculta-document-part="document"] {
-    min-height: 50vh;
+    min-height: 60vh;
   }
 }
 

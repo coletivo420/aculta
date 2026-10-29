@@ -99,6 +99,11 @@ e do Fórum; não cria SDC nem duplicação de componente.
 Sem JavaScript, as miniaturas continuam visíveis e navegáveis; o botão de
 recolhimento só aparece quando o behavior insere o controle.
 
+O leitor DOCX/planilhas mantém seu wrapper compacto e iframes de 50vh como base;
+a partir de `36rem` restaura padding de 1rem e altura mínima de 60vh. O harness
+`tests/browser/aculta-document-viewer/office-options.py` cobre 575/576px nos
+temas ACULTA420 e Olivero.
+
 A barra de progresso de comentários é CSS compartilhada de Fórum/Wiki/Revista,
 com markup e ações emitidos pelo Portal; a grade começa compacta e cresce em
 `22.5rem` e `36rem`. O harness e os limites por consumer estão documentados em
