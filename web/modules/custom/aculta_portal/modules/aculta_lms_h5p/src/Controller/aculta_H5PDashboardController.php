@@ -15,7 +15,10 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Builds H5P entry points within the existing ACULTA LMS contexts. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PDashboardController implements ContainerInjectionInterface {
 
   public function __construct(

@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Implements the H5P Admin Settings Form.
  */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PAdminSettingsForm extends FormBase {
 
   protected FileSystemInterface $fileSystem;

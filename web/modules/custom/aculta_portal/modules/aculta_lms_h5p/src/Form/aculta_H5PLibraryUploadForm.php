@@ -14,7 +14,10 @@ use Drupal\file\Validation\FileValidatorSettingsTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Adds reviewed local H5P library packages through the H5P validator. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PLibraryUploadForm extends FormBase {
 
   use FileValidatorSettingsTrait;

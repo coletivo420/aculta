@@ -7,7 +7,10 @@ namespace Drupal\aculta_lms_h5p\aculta_H5PDrupal;
 use Drupal\Core\File\FileSystemInterface;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Installs locally reviewed H5P library packages with the official validator. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PLibraryPackageInstaller {
 
   public function __construct(

@@ -15,7 +15,10 @@ use Drupal\file\Upload\FormUploadedFile;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Validates H5P editor media and writes uploads to managed private files. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PEditorUploadManager {
 
   public function __construct(

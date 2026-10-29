@@ -11,7 +11,10 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Handles H5P lifecycle hooks through Drupal's object-oriented hook API. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PLifecycleHooks {
 
   public function __construct(

@@ -1,3 +1,8 @@
+## 0.4.0-dev.154 — preservar nomes de classes H5P (2026-10-29)
+
+- Nomes históricos de classes H5P permanecem estáveis para discovery e integrações; 45 exceções são locais, limitadas aos dois sniffers de naming e justificadas no código, sem alterar o padrão PHPCS.
+- PHPCS integral: 252 erros e 33 avisos em 36 arquivos. Unit + Kernel: 43 testes / 481 assertions PASS, 41 depreciações Core/contrib.
+
 ## 0.4.0-dev.153 — exceções PHPCS pontuais e justificadas (2026-10-29)
 
 - `aculta_H5PUploadWidget` e `aculta_H5PFileUsageManager` preservam identificadores de descoberta/integração por exceções PHPCS locais, com justificativa; o widget agora passa sem erros ou avisos.

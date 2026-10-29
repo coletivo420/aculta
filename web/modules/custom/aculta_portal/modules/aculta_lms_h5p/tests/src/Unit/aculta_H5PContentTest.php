@@ -10,9 +10,11 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
  *
  */
 #[CoversClass(aculta_H5PContent::class)]
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PContentTest extends UnitTestCase {
 
   /**

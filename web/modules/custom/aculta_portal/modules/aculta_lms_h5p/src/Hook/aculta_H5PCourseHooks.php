@@ -9,7 +9,10 @@ use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Attaches the native H5P field to LMS courses without replacing Group forms. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PCourseHooks {
 
   /**

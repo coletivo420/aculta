@@ -12,7 +12,10 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Builds dynamic Drupal libraries for installed H5P content types. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PLibraryHooks {
 
   public function __construct(

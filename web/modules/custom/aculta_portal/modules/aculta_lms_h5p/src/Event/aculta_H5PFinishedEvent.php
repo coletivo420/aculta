@@ -8,6 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 /**
  * Carries a completed H5P activity result to event listeners.
  */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PFinishedEvent extends Event {
 
   const FINISHED_EVENT = 'h5p.finished';

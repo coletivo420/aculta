@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms_h5p\aculta_H5PDrupal;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Converts an installed H5P library version to its Drupal asset library ID. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PLibraryIdentifier {
 
   /**

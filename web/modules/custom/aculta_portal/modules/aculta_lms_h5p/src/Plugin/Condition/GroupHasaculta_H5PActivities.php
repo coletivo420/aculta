@@ -22,6 +22,7 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
     'group' => new EntityContextDefinition('entity:group', new TranslatableMarkup('Curso')),
   ],
 )]
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class GroupHasaculta_H5PActivities extends ConditionPluginBase {
 
   /**

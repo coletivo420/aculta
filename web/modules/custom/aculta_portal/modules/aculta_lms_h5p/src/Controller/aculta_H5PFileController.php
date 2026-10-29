@@ -16,7 +16,10 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Serves H5P assets from private storage with explicit path and access checks. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PFileController implements ContainerInjectionInterface {
 
   public function __construct(

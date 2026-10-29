@@ -14,12 +14,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Route;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Access plugin for viewing H5P user points. */
 #[ViewsAccess(
   id: 'h5paccessuserpoints',
   title: new TranslatableMarkup('Acesso aos resultados H5P'),
   help: new TranslatableMarkup('A pessoa autenticada pode ver os resultados H5P desta conta?'),
 )]
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PAccessUserPoints extends AccessPluginBase implements ContainerFactoryPluginInterface {
 
   protected RouteMatchInterface $currentRouteMatch;

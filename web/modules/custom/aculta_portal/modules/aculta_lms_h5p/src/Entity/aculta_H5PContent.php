@@ -13,6 +13,8 @@ use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PEvent;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Defines the H5P content entity. */
 #[ContentEntityType(
   id: 'aculta_h5p_content',
@@ -24,6 +26,7 @@ use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PEvent;
   base_table: 'h5p_content',
   entity_keys: ['id' => 'id'],
 )]
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterface {
 
   protected $library;

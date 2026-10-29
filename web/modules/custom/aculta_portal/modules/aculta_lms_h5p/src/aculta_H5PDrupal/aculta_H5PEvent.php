@@ -10,6 +10,7 @@ namespace Drupal\aculta_lms_h5p\aculta_H5PDrupal;
  * @copyright 2016 Joubel AS
  * @license MIT
  */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PEvent extends \H5PEventBase {
 
   /**

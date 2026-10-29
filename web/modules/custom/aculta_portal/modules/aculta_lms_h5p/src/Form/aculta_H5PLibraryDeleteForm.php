@@ -14,6 +14,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements the aculta_H5PLibraryDeleteForm form.
  */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PLibraryDeleteForm extends FormBase {
 
   protected aculta_H5PDrupal $framework;

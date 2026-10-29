@@ -13,6 +13,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * Tests the Content Hub metadata methods of the H5P framework adapter.
  */
 #[CoversClass(aculta_H5PDrupal::class)]
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PContentHubMetadataTest extends UnitTestCase {
 
   /**

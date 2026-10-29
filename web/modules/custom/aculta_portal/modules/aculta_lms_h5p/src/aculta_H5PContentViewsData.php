@@ -9,6 +9,7 @@ use Drupal\views\EntityViewsDataInterface;
 /**
  * Provides views data for the H5P entity type.
  */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PContentViewsData extends EntityViewsData implements EntityViewsDataInterface {
 
   /**

@@ -20,6 +20,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements the aculta_H5PContentUpgradeForm form.
  */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PContentUpgradeForm extends FormBase {
 
   protected Connection $database;

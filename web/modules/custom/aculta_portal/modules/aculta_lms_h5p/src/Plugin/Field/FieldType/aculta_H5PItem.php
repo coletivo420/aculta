@@ -13,6 +13,8 @@ use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Provides the H5P field type. */
 #[FieldType(
   id: 'h5p',
@@ -22,6 +24,7 @@ use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
   default_formatter: 'h5p_default',
   default_widget: 'h5p_upload',
 )]
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PItem extends FieldItemBase implements FieldItemInterface {
 
   /**

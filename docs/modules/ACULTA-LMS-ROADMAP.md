@@ -47,9 +47,10 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 
 ## Estado de fase
 
-**H5P PHPCS (2026-10-29, 0.4.0-dev.153):** uma rodada automática corrigiu
-838 violações de estilo em 46 arquivos sem alterar regras ou nomes históricos.
-PHPCS ainda registra 340 erros e 33 avisos em 46 arquivos. Unit + Kernel
+**H5P PHPCS (2026-10-29, 0.4.0-dev.154):** uma rodada automática corrigiu
+838 violações de estilo em 46 arquivos sem alterar regras ou nomes históricos;
+exceções de nomenclatura permanecem locais e justificadas. PHPCS ainda registra
+252 erros e 33 avisos em 36 arquivos. Unit + Kernel
 passam (43 testes / 481 assertions, 41 depreciações Core/contrib); o submódulo
 permanece em Dev até fechar o gate e revisar o diff.
 

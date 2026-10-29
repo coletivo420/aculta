@@ -11,6 +11,7 @@ use Drupal\aculta_image\PackagedAssetPublisher;
 /**
  * Publishes Composer assets required by the ACULTA H5P integration.
  */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PAssetFileStorage {
 
   /**

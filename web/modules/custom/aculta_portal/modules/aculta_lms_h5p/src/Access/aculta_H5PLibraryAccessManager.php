@@ -8,7 +8,10 @@ use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorDrupalStorage;
 use Drupal\Core\Session\AccountInterface;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Centralizes the local H5P library and restricted-type policy. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PLibraryAccessManager {
 
   public function __construct(

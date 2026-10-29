@@ -24,9 +24,11 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
  *
  */
 #[CoversClass(aculta_H5PEditorUploadManager::class)]
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
 
   /**

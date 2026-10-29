@@ -11,7 +11,10 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Test upload adapter that exercises managed file movement without PHP HTTP. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class Testaculta_H5PUploadedFile implements UploadedFileInterface {
 
   public function __construct(private readonly UploadedFile $uploadedFile) {}

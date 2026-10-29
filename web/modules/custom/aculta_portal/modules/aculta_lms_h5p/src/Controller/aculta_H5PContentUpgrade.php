@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * The aculta_H5PContentUpgrade controller.
  */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
 
   /**

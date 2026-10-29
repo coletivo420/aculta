@@ -10,7 +10,10 @@ use Drupal\aculta_lms_h5p\Plugin\views\access\aculta_H5PAccessUserPoints;
 use Drupal\Tests\UnitTestCase;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Tests account-scoped access to the H5P results view. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PAccessUserPointsTest extends UnitTestCase {
 
   /**

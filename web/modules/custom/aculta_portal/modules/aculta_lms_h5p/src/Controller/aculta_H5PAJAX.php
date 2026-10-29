@@ -15,7 +15,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
  * Handles authenticated, course-scoped H5P progress requests. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 final class aculta_H5PAJAX extends ControllerBase {
 
   public function __construct(

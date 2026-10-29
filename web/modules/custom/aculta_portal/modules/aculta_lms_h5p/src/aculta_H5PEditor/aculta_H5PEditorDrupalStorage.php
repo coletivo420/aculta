@@ -8,8 +8,10 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 
 /**
+ * Legacy H5P class identifier retained for Drupal discovery.
  *
  */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
 
   public function __construct(
