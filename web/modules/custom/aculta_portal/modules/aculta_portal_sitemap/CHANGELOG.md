@@ -24,17 +24,24 @@
 
 # Changelog — ACULTA Portal Sitemap
 
+## 0.1.2-rc.1 — sitemap por purpose pronto para Alpha — 2026-10-29
+
+- `PurposeNodeUrlGenerator` resolve alias de front-page dentro do Domain da variante e restaura o Domain anterior.
+- Kernel comprova o contexto de alias, a restauração do Domain e a geração de `/wiki/verbetes` com host test do Deployer.
+- Suíte Unit/Kernel: 9 testes, 25 assertions, 72 depreciações; runner estático 13 verificações PASS; PHP lint e PHPCS Drupal/DrupalPractice PASS.
+- Nenhuma UI visual se aplica ao sitemap XML. DEP-0002 foi resolvida no servidor de testes; sonda de produção e Search Console ficam para Beta. Sem acesso a produção/deploy nesta microfase.
+
 ## 0.1.2 — decisão D-49 e listagem da Wiki — 2026-10-29
 
 - Incluído `/wiki/verbetes` em `PUBLIC_PATHS` da variante `wiki`, conforme decisão do responsável D-49.
-- Suíte Unit/Kernel: 7 testes, 14 assertions, 46 depreciações; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS.
-- DEP-0002 está resolvida no servidor de testes; a sonda de produção e Search Console ficam para Beta. Falta teste Kernel de `isPurposeFrontNode()` por domínio; sem validação de produção.
+- Suíte inicial Unit/Kernel após D-49: 7 testes, 14 assertions, 46 depreciações; os testes por domínio foram concluídos na rc.1.
+- DEP-0002 está resolvida no servidor de testes; a sonda de produção e Search Console ficam para Beta. Sem validação de produção nesta microfase.
 
 ## 0.1.2 — evidência HTTP dos hosts de teste — 2026-10-29
 
 - `php tests/run.php`: 13 verificações PASS; homologação `url.site`: 5 ciclos, 6 hosts, 2 caminhos PASS.
 - GET local do checkout servido em `662c62d43` (antes da alteração D-49), índice e sete sitemaps filhos: HTTP 200, `X-Robots-Tag: noindex, nofollow, noarchive`; 29 URLs nos filhos, todas em hosts de teste declarados no ACULTA Deployer.
-- Sem consulta a hosts de produção ou Search Console. O estado continua Dev; DEP-0002 e a validação externa permanecem pendentes.
+- Sem consulta a hosts de produção ou Search Console. DEP-0002 está resolvida no teste; as sondas externas são da etapa Beta.
 
 ## 0.1.1 — endereço do sitemap por ambiente (acabamento) — 2026-10-09
 

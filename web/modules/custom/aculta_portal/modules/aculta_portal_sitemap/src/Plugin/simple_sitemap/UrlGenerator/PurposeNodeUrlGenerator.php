@@ -278,7 +278,15 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     if (!is_string($front) || $front === '') {
       return FALSE;
     }
-    $alias = $this->aliasManager->getAliasByPath('/node/' . $node->id());
+    // O alias pode depender do Domain ativo. O índice central pode iniciar a
+    // geração em outro host, então a busca precisa usar o purpose do sitemap.
+    $alias = $this->purposes->runInPurpose(
+      $purpose,
+      fn (): string => $this->aliasManager->getAliasByPath('/node/' . $node->id()),
+    );
+    if (!is_string($alias)) {
+      return FALSE;
+    }
     return $front === $alias || $front === '/node/' . $node->id();
   }
 
