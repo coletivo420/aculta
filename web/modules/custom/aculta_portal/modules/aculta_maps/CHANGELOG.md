@@ -1,5 +1,10 @@
 # Changelog — aculta_maps
 
+## 2026-10-29 — F0: decisão D-46 e validação
+
+- A decisão D-46 está implementada: Nominatim geocodifica para todos os engines; resultados Google Geocoding não são usados nem persistidos. Quando coordenadas Nominatim aparecem no mapa Google, há atribuição OSM/ODbL.
+- Revalidação da suíte Maps: 10 testes, 39 assertions PASS; 2 depreciações do Core. A política de privacidade e o conflito editorial com ADR-030 continuam pendentes.
+
 ## 2026-10-28 — MP3, padrão Leaflet/OpenStreetMap
 
 - Leaflet 1.9.4 é servido localmente sob BSD-2-Clause, sem CDN. O controle de atribuição do mapa aponta para OpenStreetMap.

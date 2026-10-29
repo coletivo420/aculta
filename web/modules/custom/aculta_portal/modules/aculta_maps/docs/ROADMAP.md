@@ -76,3 +76,11 @@ Revisão técnica em [`REVISAO-TERMOS-MAPAS-2026-10-28.md`](REVISAO-TERMOS-MAPAS
 o engine do Runtime de teste. D-46 mantém Nominatim para todos os engines e exige atribuição OSM/ODbL quando seus
 resultados aparecem em mapa Google. A chave Google Geocoding provisionada está sem uso. A política pública não foi
 alterada e a revisão editorial sobre o provedor de tiles permanece pendente.
+
+Implementação F0 concluída em `dc032d9e0`. Revalidação em 2026-10-29: suíte Maps
+10 testes/39 assertions PASS, com 2 depreciações do Core; cobre o uso de Nominatim
+e a atribuição OSM/ODbL no engine Google. A revisão da política continua aberta:
+a preferência registrada de não mencionar o envio de IP conflita com a exigência
+de transparência do ADR-030 antes da ativação final. O gate global módulo–tema
+também acusa `aculta-map` em `MapRenderer.php`; essa marcação ainda precisa migrar
+para o contrato semântico `data-portal-ui`.

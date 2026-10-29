@@ -2,9 +2,8 @@
 version: 0.1.0-dev.4
 state: Dev
 progress_note: >-
-  MP0–MP7 concluídas e `aculta_maps` ativado no Runtime de teste com OpenStreetMap. Google permanece opcional; chave de
-  navegador e chave server-side de geocodificação são distintas. Firefox ESR verificou 1280 px, 320 px e modo escuro.
-  A política não foi alterada conforme decisão do responsável de não informar IP; revisão editorial da divulgação de
-  tiles e provedor permanece pendente. F0 identificou que a persistência de coordenadas do Google carece de origem e
-  expiração; a decisão de uso aguarda o responsável.
-next_phase: 'Definir se Google Geocoding será removido ou terá coordenadas com origem e expiração. Ver [revisão F0](web/modules/custom/aculta_portal/modules/aculta_maps/docs/REVISAO-TERMOS-MAPAS-2026-10-28.md), [roadmap](web/modules/custom/aculta_portal/modules/aculta_maps/docs/ROADMAP.md) e [ADR-030](docs/decisions/ADR-030-provedor-mapa-leaflet-osm-com-google-opcional.md).'
+  MP0–MP7 concluídas; F0 implementada em dc032d9e0 conforme D-46. Google permanece opcional; Nominatim geocodifica
+  para todos os engines e a interface atribui dados OSM/ODbL no mapa Google. Suíte Maps revalidada em 2026-10-29:
+  10 testes/39 assertions PASS, 2 depreciações do Core. A revisão da política continua pendente: a preferência de não
+  mencionar o envio de IP conflita com a transparência exigida pelo ADR-030 antes da ativação final.
+next_phase: 'Migrar `aculta-map` de MapRenderer para `data-portal-ui` e resolver a divergência editorial entre a preferência registrada de não mencionar o envio de IP e a exigência do ADR-030; depois repetir gates e revisão antes de RC ([revisão F0](web/modules/custom/aculta_portal/modules/aculta_maps/docs/REVISAO-TERMOS-MAPAS-2026-10-28.md), [roadmap](web/modules/custom/aculta_portal/modules/aculta_maps/docs/ROADMAP.md)).'
